@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.7 (Debian 11.7-2.pgdg90+1)
--- Dumped by pg_dump version 11.7 (Ubuntu 11.7-0ubuntu0.19.10.1)
+-- Dumped from database version 12.2 (Debian 12.2-2.pgdg100+1)
+-- Dumped by pg_dump version 12.2 (Ubuntu 12.2-2.pgdg19.10+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -134,7 +134,7 @@ CREATE SCHEMA trip;
 ALTER SCHEMA trip OWNER TO postgres;
 
 --
--- Name: intarray; Type: EXTENSION; Schema: -; Owner: 
+-- Name: intarray; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS intarray WITH SCHEMA public;
@@ -148,21 +148,7 @@ COMMENT ON EXTENSION intarray IS 'functions, operators, and index support for 1-
 
 
 --
--- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
-
-
---
--- Name: EXTENSION pg_stat_statements; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQL statements executed';
-
-
---
--- Name: postgis; Type: EXTENSION; Schema: -; Owner: 
+-- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
@@ -176,7 +162,7 @@ COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial
 
 
 --
--- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: 
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
@@ -210,7 +196,8 @@ ALTER TYPE auth.user_status_enum OWNER TO postgres;
 CREATE TYPE carpool.carpool_status_enum AS ENUM (
     'ok',
     'expired',
-    'canceled'
+    'canceled',
+    'fraudcheck_error'
 );
 
 
@@ -326,7 +313,7 @@ ALTER FUNCTION common.touch_updated_at() OWNER TO postgres;
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
 -- Name: acquisitions; Type: TABLE; Schema: acquisition; Owner: postgres
@@ -802,7 +789,7 @@ CREATE TABLE fraudcheck.fraudchecks (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     deleted_at timestamp with time zone,
-    acquisition_id character varying NOT NULL,
+    acquisition_id integer NOT NULL,
     method character varying(128) NOT NULL,
     status fraudcheck.status_enum DEFAULT 'pending'::fraudcheck.status_enum NOT NULL,
     karma integer DEFAULT 0,
@@ -835,6 +822,46 @@ ALTER SEQUENCE fraudcheck.fraudchecks__id_seq OWNED BY fraudcheck.fraudchecks._i
 
 
 --
+-- Name: method_repository; Type: TABLE; Schema: fraudcheck; Owner: postgres
+--
+
+CREATE TABLE fraudcheck.method_repository (
+    _id character varying(128) NOT NULL,
+    weight double precision DEFAULT (1)::double precision NOT NULL,
+    active boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE fraudcheck.method_repository OWNER TO postgres;
+
+--
+-- Name: processable_carpool; Type: MATERIALIZED VIEW; Schema: fraudcheck; Owner: postgres
+--
+
+CREATE MATERIALIZED VIEW fraudcheck.processable_carpool AS
+ WITH data AS (
+         SELECT cc.acquisition_id,
+            array_remove(array_agg(ff.method ORDER BY ff.method), NULL::character varying) AS methods
+           FROM (carpool.carpools cc
+             LEFT JOIN fraudcheck.fraudchecks ff ON (((ff.acquisition_id = cc.acquisition_id) AND (ff.status = 'done'::fraudcheck.status_enum))))
+          WHERE ((cc.datetime >= (now() - '45 days'::interval)) AND (cc.datetime < (now() - '5 days'::interval)))
+          GROUP BY cc.acquisition_id
+        ), methods AS (
+         SELECT DISTINCT fr._id AS name
+           FROM fraudcheck.method_repository fr
+          WHERE (fr.active = true)
+        )
+ SELECT DISTINCT d.acquisition_id,
+    d.methods
+   FROM data d
+  WHERE (NOT (d.methods @> ARRAY( SELECT methods.name
+           FROM methods)))
+  WITH NO DATA;
+
+
+ALTER TABLE fraudcheck.processable_carpool OWNER TO postgres;
+
+--
 -- Name: operators; Type: TABLE; Schema: operator; Owner: postgres
 --
 
@@ -851,7 +878,8 @@ CREATE TABLE operator.operators (
     company json NOT NULL,
     address json NOT NULL,
     bank json NOT NULL,
-    contacts json NOT NULL
+    contacts json NOT NULL,
+    uuid uuid DEFAULT public.uuid_generate_v4() NOT NULL
 );
 
 
@@ -939,25 +967,6 @@ CREATE TABLE policy.incentives (
 ALTER TABLE policy.incentives OWNER TO postgres;
 
 --
--- Name: fevrier; Type: VIEW; Schema: policy; Owner: postgres
---
-
-CREATE VIEW policy.fevrier AS
- SELECT to_char(date_trunc('day'::text, cc.datetime), 'YYYY-MM-DD'::text) AS day,
-    ((sum(pi.amount))::double precision / (100)::double precision) AS total,
-    oo.name AS operator,
-    count(*) AS trips,
-    (((sum(pi.amount))::double precision / (100)::double precision) / (count(*))::double precision) AS avg_per_trip
-   FROM ((policy.incentives pi
-     JOIN carpool.carpools cc ON ((pi.carpool_id = cc._id)))
-     JOIN operator.operators oo ON ((cc.operator_id = oo._id)))
-  GROUP BY (to_char(date_trunc('day'::text, cc.datetime), 'YYYY-MM-DD'::text)), oo.name
-  ORDER BY (to_char(date_trunc('day'::text, cc.datetime), 'YYYY-MM-DD'::text)), oo.name;
-
-
-ALTER TABLE policy.fevrier OWNER TO postgres;
-
---
 -- Name: incentives__id_seq; Type: SEQUENCE; Schema: policy; Owner: postgres
 --
 
@@ -1034,7 +1043,7 @@ ALTER SEQUENCE policy.policies__id_seq OWNED BY policy.policies._id;
 CREATE TABLE policy.policy_metas (
     _id integer NOT NULL,
     policy_id integer NOT NULL,
-    key character varying DEFAULT 'default'::character varying NOT NULL,
+    key character varying,
     value json,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -1145,7 +1154,7 @@ ALTER TABLE policy.trips OWNER TO postgres;
 
 CREATE TABLE public.acquisition_meta (
     acquisition_id integer,
-    created_at timestamp without time zone,
+    created_at timestamp without time zone DEFAULT now(),
     meta character varying
 );
 
@@ -1609,6 +1618,14 @@ ALTER TABLE ONLY fraudcheck.fraudchecks
 
 
 --
+-- Name: method_repository method_repository_pkey; Type: CONSTRAINT; Schema: fraudcheck; Owner: postgres
+--
+
+ALTER TABLE ONLY fraudcheck.method_repository
+    ADD CONSTRAINT method_repository_pkey PRIMARY KEY (_id);
+
+
+--
 -- Name: operators operators_pkey; Type: CONSTRAINT; Schema: operator; Owner: postgres
 --
 
@@ -1688,52 +1705,10 @@ CREATE INDEX acquisitions_journey_id_idx ON acquisition.acquisitions USING btree
 
 
 --
--- Name: acquisitions_journey_id_idx1; Type: INDEX; Schema: acquisition; Owner: postgres
---
-
-CREATE INDEX acquisitions_journey_id_idx1 ON acquisition.acquisitions USING btree (journey_id);
-
-
---
--- Name: acquisitions_journey_id_idx2; Type: INDEX; Schema: acquisition; Owner: postgres
---
-
-CREATE INDEX acquisitions_journey_id_idx2 ON acquisition.acquisitions USING btree (journey_id);
-
-
---
--- Name: acquisitions_journey_id_idx3; Type: INDEX; Schema: acquisition; Owner: postgres
---
-
-CREATE INDEX acquisitions_journey_id_idx3 ON acquisition.acquisitions USING btree (journey_id);
-
-
---
 -- Name: acquisitions_operator_id_idx; Type: INDEX; Schema: acquisition; Owner: postgres
 --
 
 CREATE INDEX acquisitions_operator_id_idx ON acquisition.acquisitions USING btree (operator_id);
-
-
---
--- Name: acquisitions_operator_id_idx1; Type: INDEX; Schema: acquisition; Owner: postgres
---
-
-CREATE INDEX acquisitions_operator_id_idx1 ON acquisition.acquisitions USING btree (operator_id);
-
-
---
--- Name: acquisitions_operator_id_idx2; Type: INDEX; Schema: acquisition; Owner: postgres
---
-
-CREATE INDEX acquisitions_operator_id_idx2 ON acquisition.acquisitions USING btree (operator_id);
-
-
---
--- Name: acquisitions_operator_id_idx3; Type: INDEX; Schema: acquisition; Owner: postgres
---
-
-CREATE INDEX acquisitions_operator_id_idx3 ON acquisition.acquisitions USING btree (operator_id);
 
 
 --
@@ -1790,13 +1765,6 @@ CREATE UNIQUE INDEX users_email_idx ON auth.users USING btree (email);
 --
 
 CREATE INDEX carpools_acquisition_id_idx ON carpool.carpools USING btree (acquisition_id);
-
-
---
--- Name: carpools_acquisition_id_idx1; Type: INDEX; Schema: carpool; Owner: postgres
---
-
-CREATE INDEX carpools_acquisition_id_idx1 ON carpool.carpools USING btree (acquisition_id);
 
 
 --
@@ -1947,10 +1915,38 @@ CREATE INDEX fraudchecks_status_idx ON fraudcheck.fraudchecks USING btree (statu
 
 
 --
+-- Name: method_repository__id_idx; Type: INDEX; Schema: fraudcheck; Owner: postgres
+--
+
+CREATE INDEX method_repository__id_idx ON fraudcheck.method_repository USING btree (_id);
+
+
+--
+-- Name: method_repository_active_idx; Type: INDEX; Schema: fraudcheck; Owner: postgres
+--
+
+CREATE INDEX method_repository_active_idx ON fraudcheck.method_repository USING btree (active);
+
+
+--
+-- Name: processable_carpool_acquisition_id_idx; Type: INDEX; Schema: fraudcheck; Owner: postgres
+--
+
+CREATE UNIQUE INDEX processable_carpool_acquisition_id_idx ON fraudcheck.processable_carpool USING btree (acquisition_id);
+
+
+--
 -- Name: operators_siret_idx; Type: INDEX; Schema: operator; Owner: postgres
 --
 
 CREATE INDEX operators_siret_idx ON operator.operators USING btree (siret);
+
+
+--
+-- Name: operators_uuid_idx; Type: INDEX; Schema: operator; Owner: postgres
+--
+
+CREATE INDEX operators_uuid_idx ON operator.operators USING btree (uuid);
 
 
 --
@@ -2038,13 +2034,6 @@ CREATE INDEX policies_territory_id_idx ON policy.policies USING btree (territory
 
 
 --
--- Name: policy_meta_unique_key; Type: INDEX; Schema: policy; Owner: postgres
---
-
-CREATE UNIQUE INDEX policy_meta_unique_key ON policy.policy_metas USING btree (policy_id, key);
-
-
---
 -- Name: policy_metas_policy_id_idx; Type: INDEX; Schema: policy; Owner: postgres
 --
 
@@ -2084,13 +2073,6 @@ CREATE INDEX trips_processable_policies_idx ON policy.trips USING btree (process
 --
 
 CREATE INDEX trips_trip_id_idx ON policy.trips USING btree (trip_id);
-
-
---
--- Name: acq_acquisition_id_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX acq_acquisition_id_idx ON public.acquisition_meta USING btree (acquisition_id);
 
 
 --
@@ -2237,56 +2219,64 @@ CREATE UNIQUE INDEX stat_cache_is_public_territory_id_operator_id_idx ON trip.st
 -- Name: users touch_users_updated_at; Type: TRIGGER; Schema: auth; Owner: postgres
 --
 
-CREATE TRIGGER touch_users_updated_at BEFORE UPDATE ON auth.users FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
+CREATE TRIGGER touch_users_updated_at BEFORE UPDATE ON auth.users FOR EACH ROW EXECUTE FUNCTION common.touch_updated_at();
 
 
 --
 -- Name: identities touch_identities_updated_at; Type: TRIGGER; Schema: carpool; Owner: postgres
 --
 
-CREATE TRIGGER touch_identities_updated_at BEFORE UPDATE ON carpool.identities FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
+CREATE TRIGGER touch_identities_updated_at BEFORE UPDATE ON carpool.identities FOR EACH ROW EXECUTE FUNCTION common.touch_updated_at();
 
 
 --
 -- Name: certificates touch_certificates_updated_at; Type: TRIGGER; Schema: certificate; Owner: postgres
 --
 
-CREATE TRIGGER touch_certificates_updated_at BEFORE UPDATE ON certificate.certificates FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
+CREATE TRIGGER touch_certificates_updated_at BEFORE UPDATE ON certificate.certificates FOR EACH ROW EXECUTE FUNCTION common.touch_updated_at();
 
 
 --
 -- Name: fraudchecks touch_fraudchecks_updated_at; Type: TRIGGER; Schema: fraudcheck; Owner: postgres
 --
 
-CREATE TRIGGER touch_fraudchecks_updated_at BEFORE UPDATE ON fraudcheck.fraudchecks FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
+CREATE TRIGGER touch_fraudchecks_updated_at BEFORE UPDATE ON fraudcheck.fraudchecks FOR EACH ROW EXECUTE FUNCTION common.touch_updated_at();
 
 
 --
 -- Name: operators touch_operators_updated_at; Type: TRIGGER; Schema: operator; Owner: postgres
 --
 
-CREATE TRIGGER touch_operators_updated_at BEFORE UPDATE ON operator.operators FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
+CREATE TRIGGER touch_operators_updated_at BEFORE UPDATE ON operator.operators FOR EACH ROW EXECUTE FUNCTION common.touch_updated_at();
 
 
 --
 -- Name: policies touch_policies_updated_at; Type: TRIGGER; Schema: policy; Owner: postgres
 --
 
-CREATE TRIGGER touch_policies_updated_at BEFORE UPDATE ON policy.policies FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
+CREATE TRIGGER touch_policies_updated_at BEFORE UPDATE ON policy.policies FOR EACH ROW EXECUTE FUNCTION common.touch_updated_at();
 
 
 --
 -- Name: policy_metas touch_policy_meta_updated_at; Type: TRIGGER; Schema: policy; Owner: postgres
 --
 
-CREATE TRIGGER touch_policy_meta_updated_at BEFORE UPDATE ON policy.policy_metas FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
+CREATE TRIGGER touch_policy_meta_updated_at BEFORE UPDATE ON policy.policy_metas FOR EACH ROW EXECUTE FUNCTION common.touch_updated_at();
 
 
 --
 -- Name: territories touch_territories_updated_at; Type: TRIGGER; Schema: territory; Owner: postgres
 --
 
-CREATE TRIGGER touch_territories_updated_at BEFORE UPDATE ON territory.territories FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
+CREATE TRIGGER touch_territories_updated_at BEFORE UPDATE ON territory.territories FOR EACH ROW EXECUTE FUNCTION common.touch_updated_at();
+
+
+--
+-- Name: acquisition_meta acquisition_meta_acquisition_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.acquisition_meta
+    ADD CONSTRAINT acquisition_meta_acquisition_id_fkey FOREIGN KEY (acquisition_id) REFERENCES acquisition.acquisitions(_id);
 
 
 --

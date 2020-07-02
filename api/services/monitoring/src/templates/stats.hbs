@@ -1,0 +1,19 @@
+<p>
+  <h2>Statistique d'acquisition</h2>
+  <ul>
+    <li>Total acquis : {{ acquired }}</li>
+    <li>Total échoué : {{ acquired_failed }}</li>
+    <li>Taux d'échec : {{ acquired_failed_ratio }}</li>
+    <li>Total enregistrés : {{ carpools }}</li>
+    <li>Total manquants: {{ missing }}</li>
+    <li>Taux de manquants : {{ missing_ratio }}</li>
+  </ul>
+</p>
+<p>
+  <h2>Par date</h2>
+  <ul>
+    {{#each last_missing_by_date}}
+    <li>{{ this.date }} : {{ this.count }}</li>
+    {{/each}}
+  </ul>
+</p>

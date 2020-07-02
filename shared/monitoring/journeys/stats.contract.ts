@@ -1,4 +1,4 @@
-export type ParamsInterface = void;
+export type ParamsInterface = number;
 
 export type ResultInterface = {
   pipeline: {
@@ -9,6 +9,10 @@ export type ResultInterface = {
     missing: number;
     missing_ratio: number;
     carpool_ratio: number;
+    last_missing_by_date: {
+      date: Date;
+      count: number;
+    }[];
   };
 };
 

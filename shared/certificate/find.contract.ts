@@ -5,7 +5,8 @@ export interface ParamsInterface {
 // export interface ResultInterface extends CertificateInterface {}
 export interface ResultInterface {
   uuid: string;
-  signature: string;
+  identity_uuid: string;
+  operator_uuid: string;
   start_at: Date;
   end_at: Date;
   created_at: Date;

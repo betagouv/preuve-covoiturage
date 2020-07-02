@@ -13,7 +13,7 @@ services:
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
-      POSTGRES_DB: 'pdc-local'
+      POSTGRES_DB: 'local'
       PGDATA: '/var/lib/postgresql/data/pgdata'
     volumes:
       - ./db/postgres:/var/lib/postgresql/data/pgdata
@@ -60,22 +60,6 @@ services:
     depends_on:
       - redis
       - postgres
-
-  printer:
-    build: './docker/printer'
-    volumes:
-      - .:/code
-    working_dir: '/code/printer'
-    command: 'yarn start'
-    ports:
-      - 3000:3000
-    env_file: ./printer/.env
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-    networks:
-      - front
-      - back
 
 networks:
   front:

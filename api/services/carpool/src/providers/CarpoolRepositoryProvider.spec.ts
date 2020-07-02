@@ -16,7 +16,7 @@ test.before(async (t) => {
     connectionString:
       'APP_POSTGRES_URL' in process.env
         ? process.env.APP_POSTGRES_URL
-        : 'postgresql://postgres:postgres@localhost:5432/pdc-local',
+        : 'postgresql://postgres:postgres@localhost:5432/local',
   });
   await t.context.connection.up();
   t.context.repository = new CarpoolRepositoryProvider(t.context.connection);

@@ -89,7 +89,13 @@ test.before(async (t) => {
     uuid: '1efacd36-a85b-47b2-99df-cabbf74202b3',
     owner_id: 1,
     owner_service: 'operator',
-    permissions: ['journey.create'],
+    permissions: [
+      'journey.create',
+      'certificate.create',
+      'certificate.download',
+      'certificate.create',
+      'certificate.download',
+    ],
   };
 
   await t.context.kernel.bootstrap();
@@ -141,7 +147,7 @@ test('Application V2 integer', async (t) => {
         a: t.context.application.uuid,
         o: 1,
         s: 'operator',
-        p: ['journey.create'],
+        p: ['journey.create', 'certificate.create', 'certificate.download'],
         v: 2,
       })}`,
     )
@@ -165,7 +171,7 @@ test('Application V2 varchar (old)', async (t) => {
         a: t.context.application.uuid,
         o: '1',
         s: 'operator',
-        p: ['journey.create'],
+        p: ['journey.create', 'certificate.create', 'certificate.download'],
         v: 2,
       })}`,
     )
@@ -189,7 +195,7 @@ test('Application Not Found', async (t) => {
         a: 'not-a-uuid',
         o: 1,
         s: 'operator',
-        p: ['journey.create'],
+        p: ['journey.create', 'certificate.create', 'certificate.download'],
         v: 2,
       })}`,
     )
@@ -213,7 +219,7 @@ test('Wrong operator', async (t) => {
         a: t.context.application.uuid,
         o: 0,
         s: 'operator',
-        p: ['journey.create'],
+        p: ['journey.create', 'certificate.create', 'certificate.download'],
         v: 2,
       })}`,
     )
@@ -269,7 +275,7 @@ test('Deleted application', async (t) => {
         a: uuid, // use the other application
         o: 2,
         s: 'operator',
-        p: ['journey.create'],
+        p: ['journey.create', 'certificate.create', 'certificate.download'],
         v: 2,
       })}`,
     )

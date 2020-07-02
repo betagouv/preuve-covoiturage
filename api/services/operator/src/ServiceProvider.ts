@@ -9,6 +9,7 @@ import { binding as createBinding } from './shared/operator/create.schema';
 import { binding as updateBinding } from './shared/operator/update.schema';
 import { binding as deleteBinding } from './shared/operator/delete.schema';
 import { binding as findBinding } from './shared/operator/find.schema';
+import { binding as quickfindBinding } from './shared/operator/quickfind.schema';
 import { binding as patchContactsBinding } from './shared/operator/patchContacts.schema';
 
 import { config } from './config';
@@ -18,18 +19,20 @@ import { CreateOperatorAction } from './actions/CreateOperatorAction';
 import { UpdateOperatorAction } from './actions/UpdateOperatorAction';
 import { DeleteOperatorAction } from './actions/DeleteOperatorAction';
 import { FindOperatorAction } from './actions/FindOperatorAction';
+import { QuickFindOperatorAction } from './actions/QuickFindOperatorAction';
 import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorAction';
 
 @serviceProvider({
   config,
   providers: [OperatorPgRepositoryProvider],
-  validator: [createBinding, updateBinding, deleteBinding, findBinding, patchContactsBinding],
+  validator: [createBinding, updateBinding, deleteBinding, findBinding, quickfindBinding, patchContactsBinding],
   handlers: [
     ListOperatorAction,
     CreateOperatorAction,
     UpdateOperatorAction,
     DeleteOperatorAction,
     FindOperatorAction,
+    QuickFindOperatorAction,
     PatchContactsOperatorAction,
   ],
   connections: [[PostgresConnection, 'connections.postgres']],

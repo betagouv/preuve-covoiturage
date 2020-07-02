@@ -5,13 +5,32 @@ import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { ResultInterface as FindResultInterface } from '~/core/entities/api/shared/certificate/find.contract';
 import {
-  ParamsInterface as FindParamsInterface,
-  ResultInterface as FindResultInterface,
-} from '~/core/entities/api/shared/certificate/find.contract';
+  ParamsInterface as ListParamsInterface,
+  ResultInterface as ListResultInterface,
+} from '~/core/entities/api/shared/certificate/list.contract';
+
 import { JsonRPC } from '~/core/services/api/json-rpc.service';
 import { ParamsInterface as DownloadParamsInterface } from '~/core/entities/api/shared/certificate/download.contract';
-// import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
+
+import { PointInterface } from '~/core/entities/api/shared/common/interfaces/PointInterface';
+
+export type IdentityIdentifiersInterface =
+  | { _id: number }
+  | { uuid: string }
+  | { phone: string }
+  | { phone_trunc: string; operator_user_id: string };
+
+export interface CreateParamsInterface {
+  tz: string;
+  identity: IdentityIdentifiersInterface;
+  operator_id: number;
+  positions?: PointInterface[];
+  start_at?: string;
+  end_at?: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -20,40 +39,26 @@ export class CertificateApiService extends JsonRPC {
   constructor(http: HttpClient, router: Router, activedRoute: ActivatedRoute) {
     super(http, router, activedRoute);
   }
-  // print(identity: string) {
-  //   throw new Error('Not implemented');
-  // }
-  // render(identity: string) {
-  //   throw new Error('Not implemented');
-  // }
 
   downloadPrint(data: DownloadParamsInterface): void {
-    // TODO use /certificates/download/:uuid
-    // const startVar = data.start_at ? `&start_at=${encodeURIComponent(data.start_at.toISOString())}` : '';
-    // const endVar = data.end_at ? `&end_at=${encodeURIComponent(data.end_at.toISOString())}` : '';
-    // const url = `${environment.apiUrl}certificates/print?identity=${encodeURIComponent(
-    //   data.identity,
-    // )}${startVar}${endVar}`;
-    // console.log({ url });
-    // window.open(url, '_blank');
+    window.open(`${environment.apiUrl}v2/certificates/${data.type}/${data.uuid}`);
+  }
+
+  getList(certificateListFilter: ListParamsInterface): Observable<ListResultInterface> {
+    return super
+      .callOne(new JsonRPCParam<ListParamsInterface>('certificate:list', certificateListFilter))
+      .pipe(map((response) => response.data));
+  }
+
+  create(certificate: CreateParamsInterface): Observable<Record<string, any>> {
+    return super
+      .callOne(new JsonRPCParam<CreateParamsInterface>('certificate:create', certificate))
+      .pipe(map((response) => response.data));
   }
 
   find(uuid: string): Observable<FindResultInterface> {
-    console.log('uuid : ', uuid);
-    // return of({
-    //   uuid: '34999a03-cfc5-463e-8d64-97af0f507004',
-    //   signature: '5xQw9KTH5Y9sIuOulU5KPEfreFPlfxljE3uwdkpDpb8=',
-    //   start_at: new Date('2019-01-01T00:00:00.000Z'),
-    //   end_at: new Date('2020-01-17T12:38:32.801Z'),
-    //   created_at: new Date('2020-01-17T12:38:32.832Z'),
-    //   total_km: 9597,
-    //   total_point: 0,
-    //   total_cost: 0,
-    //   remaining: 0,
-    // }).pipe(delay(3000));
-
-    return super
-      .callOne(new JsonRPCParam<FindParamsInterface>('certificate:find', { uuid }))
-      .pipe(map((response) => response.data));
+    return this.http
+      .get(`v2/certificates/find/${uuid}`)
+      .pipe(map((data: any) => data.result.data as FindResultInterface));
   }
 }

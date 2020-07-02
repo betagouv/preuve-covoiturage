@@ -41,7 +41,7 @@ describe('Auth pg repository', async () => {
       connectionString:
         'APP_POSTGRES_URL' in process.env
           ? process.env.APP_POSTGRES_URL
-          : 'postgresql://postgres:postgres@localhost:5432/pdc-local',
+          : 'postgresql://postgres:postgres@localhost:5432/local',
     });
 
     await connection.up();

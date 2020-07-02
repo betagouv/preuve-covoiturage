@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <link rel="stylesheet" href="{{meta.apiUrl}}/certificates/assets/certificate.css" />
+  <link rel="stylesheet" href="{{meta.apiUrl}}/v2/certificates/assets/certificate.css" />
   <title>{{meta.title}}</title>
 </head>
 
@@ -16,14 +16,14 @@
     <article class="b__article">
       <header class="b__header">
         <div class="b__column b__column--left">
-          <img src="{{meta.apiUrl}}/certificates/assets/marianne.svg" alt="Marianne" class="img--marianne" />
+          <img src="{{meta.apiUrl}}/v2/certificates/assets/marianne.svg" alt="Marianne" class="img--marianne" />
         </div>
         <div class="b__column b__column--right">
           <h1 class="h--subtitle">{{meta.title}}</h1>
           <h2 class="h--title">{{territory.name}}</h2>
           <ul class="list--unstyled">
             <li><strong>Date d'émission</strong>&nbsp;: {{certificate.created_at}}</li>
-            <li><strong>Opérateur</strong>&nbsp;: {{operator.name}}</li>
+            <li><strong>Opérateur</strong>&nbsp;: {{data.operator.name}}</li>
           </ul>
         </div>
       </header>
@@ -37,13 +37,16 @@
             {{#each data.rows}}
             <tr>
               <td>{{this.month}}</td>
+              <td>{{this.trips}}</td>
               <td>{{this.distance}}&nbsp;km</td>
+              <td>{{currency this.cost}}&nbsp;&euro;</td>
             </tr>
             {{/each}}
 
             <tr>
-              <td><strong>Total</strong></td>
+              <td colspan="2"><strong>Total</strong></td>
               <td><strong>{{data.total_km}}&nbsp;km</strong></td>
+              <td><strong>{{currency data.total_cost}}&nbsp;&euro;</strong></td>
             </tr>
           </tbody>
         </table>
@@ -61,9 +64,9 @@
       <footer class="b__footer">
         <h4 class="h--identification">Identification de l'attestation</h4>
         <ul class="list--unstyled list--uuid">
-          <li class="text--italic">Personne&nbsp;: {{identity.uuid}}</li>
-          <li class="text--italic">Opérateur&nbsp;: {{operator.uuid}}</li>
-          <li class="text--italic">Collectivité&nbsp;: {{territory.uuid}}</li>
+          <li class="text--italic">Personne&nbsp;: {{identity}}</li>
+          <li class="text--italic">Opérateur&nbsp;: {{data.operator.uuid}}</li>
+          {{#if data.territory.uuid}}<li class="text--italic">Collectivité&nbsp;: {{data.territory.uuid}}</li>{{/if}}
         </ul>
 
         {{!-- QR-code with verification URL --}}
