@@ -105,7 +105,7 @@ WITH RECURSIVE
     -- - active_children,
     -- - merge geo ?
 
-    a.ancestors[array_length(a.ancestors, 1)] as parent::int,
+    (a.ancestors[array_length(a.ancestors, 1)])::int as parent,
     a.children::int[],
     a.ancestors::int[],
     a.descendants::int[],
@@ -183,6 +183,5 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS territory.territories_breadcrumb AS (
     towngroup[1]
   from data
 );
-CREATE INDEX IF NOT EXISTS territory_territories_view_id_idx ON territory.territories_view(_id);
 
 CREATE INDEX IF NOT EXISTS territory_territories_breadcrumb_territory_id_idx ON territory.territories_breadcrumb(territory_id);
