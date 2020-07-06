@@ -88,6 +88,7 @@ export class CreateCertificateAction extends AbstractAction {
         created_at: certificate.created_at,
         pdf_url: `${this.config.get('url.certificateBaseUrl')}/pdf/${certificate.uuid}`,
         png_url: `${this.config.get('url.certificateBaseUrl')}/png/${certificate.uuid}`,
+        meta: certificate.meta,
       },
     };
   }
