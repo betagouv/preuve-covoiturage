@@ -10,7 +10,7 @@ export interface PeopleMetaInterface {
 }
 
 export interface PositionInterface extends GeoPositionInterface {
-  insee: string;
+  territory_id: number;
 }
 
 export interface PeopleInterface {
