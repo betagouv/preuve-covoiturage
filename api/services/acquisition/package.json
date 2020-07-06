@@ -40,6 +40,7 @@
     "@ilos/connection-redis": "~0",
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
+    "@pdc/helper-test": "~0",
     "@pdc/provider-acl": "~0",
     "@ilos/queue": "~0",
     "@pdc/provider-middleware": "~0",

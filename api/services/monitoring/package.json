@@ -7,13 +7,14 @@
     "cli": "ilos",
     "migrate": "ilos migrate",
     "start": "yarn serve",
-    "build": "tsc",
+    "build": "tsc && yarn copy-static",
     "watch": "tsc -w",
     "test": "echo '[monitoring] no tests'; exit 0",
     "coverage-ci": "echo '[monitoring] no tests'; exit 0",
     "coverage": "echo '[monitoring] no tests'; exit 0",
     "lint": "eslint 'src/**/*.ts'",
-    "stats:journeys": "ilos stats:journeys"
+    "stats:journeys": "ilos stats:journeys",
+    "copy-static": "cp -R ./src/templates ./dist/"
   },
   "main": "./dist/bootstrap.js",
   "config": {
@@ -27,6 +28,7 @@
     "@ilos/connection-postgres": "~0",
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
+    "@pdc/helper-test": "~0",
     "@pdc/provider-acl": "~0",
     "@pdc/provider-validator": "~0",
     "@pdc/provider-middleware": "~0"

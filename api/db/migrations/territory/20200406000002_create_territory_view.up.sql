@@ -95,7 +95,6 @@ WITH RECURSIVE
     a._id::int,
     t.active::boolean,
     t.level::territory.territory_level_enum,
-
     -- (SELECT tr.parent_territory_id FROM territory.territory_relation as tr WHERE tr.child_territory_id = a._id) as children,
     -- unnest(cp.parents),
     -- ADD
@@ -104,7 +103,6 @@ WITH RECURSIVE
     -- - latest_children/ending_children,
     -- - active_children,
     -- - merge geo ?
-
     (a.ancestors[array_length(a.ancestors, 1)])::int as parent,
     a.children::int[],
     a.ancestors::int[],

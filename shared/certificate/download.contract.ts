@@ -1,6 +1,6 @@
 export interface ParamsInterface {
   uuid: string;
-  type: string;
+  type: 'pdf' | 'png'; // PrintTypes from @pdc/provider-printer
 }
 
 // should be Buffer but fails with the frontend

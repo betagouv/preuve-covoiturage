@@ -1,7 +1,9 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
+import { handler, ConfigInterfaceResolver } from '@ilos/common';
+import { PrinterProviderInterfaceResolver } from '@pdc/provider-printer';
+import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
-import { HtmlPrinterProviderInterfaceResolver } from '../interfaces/HtmlPrinterProviderInterface';
+// import { HtmlPrinterProviderInterfaceResolver } from '../interfaces/HtmlPrinterProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/download.contract';
 import { alias } from '../shared/certificate/download.schema';
 
@@ -10,19 +12,23 @@ import { alias } from '../shared/certificate/download.schema';
   middlewares: [
     ['validate', alias],
     ['can', ['certificate.download']],
+    ['channel.service.only', ['proxy']],
   ],
 })
 export class DownloadCertificateAction extends AbstractAction {
-  constructor(private printer: HtmlPrinterProviderInterfaceResolver) {
+  constructor(
+    private config: ConfigInterfaceResolver,
+    private tokenProvider: TokenProviderInterfaceResolver,
+    private printer: PrinterProviderInterfaceResolver,
+  ) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    switch (params.type) {
-      case 'png':
-        return this.printer.png(params.uuid);
-      default:
-        return this.printer.pdf(params.uuid);
-    }
+    const { uuid, type } = params;
+    const url = `${this.config.get('url.certificateBaseUrl')}/render/${uuid}`;
+    const auth = await this.tokenProvider.sign({ uuid, iss: this.config.get('url.apiUrl') });
+
+    return this.printer.print(url, type, uuid, { auth });
   }
 }

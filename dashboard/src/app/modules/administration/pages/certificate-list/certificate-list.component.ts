@@ -1,17 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
-import { DestroyObservable } from '~/core/components/destroy-observable';
 import { BehaviorSubject } from 'rxjs';
-import { CommonDataService } from '~/core/services/common-data.service';
 import { takeUntil, finalize } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
+
+import { DestroyObservable } from '~/core/components/destroy-observable';
+import { CommonDataService } from '~/core/services/common-data.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+
+import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
 
 import {
   ParamsInterface as ListParamsInterface,
   ResultRowInterface,
 } from '~/core/entities/api/shared/certificate/list.contract';
 import { FormBuilder, Validators, FormGroup, AbstractControl, FormControl } from '@angular/forms';
-import { MatPaginator } from '@angular/material';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Component({
   selector: 'app-certificate-list',
@@ -26,6 +31,8 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     protected certificateApi: CertificateApiService,
     protected commonData: CommonDataService,
     protected fb: FormBuilder,
+    protected snackbar: MatSnackBar,
+    protected toastr: ToastrService,
   ) {
     super();
   }
@@ -38,7 +45,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   searchState = new BehaviorSubject<ListParamsInterface>({ pagination: { length: this.pageLength, start_index: 0 } });
   isLoading = false;
   showForm = false;
-  displayedColumns = ['uuid', 'operator', 'total_km', 'total_point', 'actions'];
+  displayedColumns = ['uuid', 'operator', 'total_km', 'total_point', 'total_cost', 'actions'];
   // pageChange: Subject<any> = new Subject();
   ngOnInit(): void {
     this.startIndex = 0;
@@ -174,10 +181,10 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       }
   }
 
-  download(row: ResultRowInterface, type: string): void {
+  download(row: ResultRowInterface, type: 'pdf' | 'png'): void {
     this.certificateApi.downloadPrint({
+      type,
       uuid: row.uuid,
-      type: 'pdf',
     });
   }
 
@@ -187,36 +194,71 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       operator_id: formVal.operator_id,
       // territory_id: formVal.territory_id,
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-
+      positions: [],
       identity:
         formVal.identity_type === 'phone_number'
           ? {
-              phone: formVal.phone_number,
+              phone: formVal.phone_number.trim(),
             }
           : formVal.identity_type === 'phone_number_truc'
           ? {
-              phone_trunc: formVal.phone_number_truc,
-              operator_user_id: formVal.operator_user_id,
+              phone_trunc: formVal.phone_number_truc.trim(),
+              operator_user_id: formVal.operator_user_id.trim(),
             }
           : {
-              uuid: formVal.identity_uuid,
+              uuid: formVal.identity_uuid.trim(),
             },
     };
 
+    // cast and format dates
     if (formVal.start_date) certificate.start_at = (formVal.start_date as Date).toISOString();
     if (formVal.end_date) certificate.end_at = (formVal.end_date as Date).toISOString();
 
-    if (formVal.start_lat || formVal.start_lng)
-      certificate.start_pos = { lat: parseFloat(formVal.start_lat), lon: parseFloat(formVal.start_lng) };
-    if (formVal.end_lat || formVal.end_lng)
-      certificate.end_pos = { lat: parseFloat(formVal.end_lat), lon: parseFloat(formVal.end_lng) };
+    // add start and end positions
+    if (formVal.start_lat || formVal.start_lng) {
+      certificate.positions.push({ lat: parseFloat(formVal.start_lat), lon: parseFloat(formVal.start_lng) });
+    }
+
+    if (formVal.end_lat || formVal.end_lng) {
+      certificate.positions.push({ lat: parseFloat(formVal.end_lat), lon: parseFloat(formVal.end_lng) });
+    }
+
+    // clean up if empty
+    if (certificate.positions.length === 0) {
+      delete certificate.positions;
+    }
+
+    // hide any existing snackbar
+    this.snackbar.dismiss();
 
     this.certificateApi
       .create(certificate)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
+      .pipe(
+        catchHttpStatus(400, (err) => {
+          this.toastr.error('Erreur de formulaire');
+          console.error(err);
+          throw err;
+        }),
+        catchHttpStatus(404, (err) => {
+          this.toastr.error('Identité non trouvée');
+          throw err;
+        }),
+        catchHttpStatus(500, (err) => {
+          this.toastr.error("Une erreur s'est produite");
+          throw err;
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((certResponse: { created_at: Date; pdf_url: string; png_url: string; uuid: string }) => {
         this.updateList();
         this.showForm = false;
+        const sb = this.snackbar.open('Attestation créé.', 'Télécharger le PDF', {
+          duration: 30000,
+        });
+
+        sb.onAction().subscribe(() => {
+          this.certificateApi.downloadPrint({ uuid: certResponse.uuid, type: 'pdf' });
+        });
       });
   }
   onCancelCreateCertificate(): void {

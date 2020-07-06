@@ -27,18 +27,9 @@ export interface CreateParamsInterface {
   tz: string;
   identity: IdentityIdentifiersInterface;
   operator_id: number;
-  start_pos?: PointInterface;
-  end_pos?: PointInterface;
+  positions?: PointInterface[];
   start_at?: string;
   end_at?: string;
-
-  // identity: IdentityIdentifiersInterface;
-  // operator_id: number;
-  // territory_id: number;
-
-  // tz: string;
-  // start_at?: Date;
-  // end_at?: Date;
 }
 
 @Injectable({
@@ -60,8 +51,6 @@ export class CertificateApiService extends JsonRPC {
   }
 
   create(certificate: CreateParamsInterface): Observable<Record<string, any>> {
-    // return this.http.post('v2/certificates', certificate);
-
     return super
       .callOne(new JsonRPCParam<CreateParamsInterface>('certificate:create', certificate))
       .pipe(map((response) => response.data));
@@ -71,9 +60,5 @@ export class CertificateApiService extends JsonRPC {
     return this.http
       .get(`v2/certificates/find/${uuid}`)
       .pipe(map((data: any) => data.result.data as FindResultInterface));
-
-    // return super
-    //   .callOne(new JsonRPCParam<FindParamsInterface>('certificate:find', { uuid }))
-    //   .pipe(map((response) => response.data));
   }
 }

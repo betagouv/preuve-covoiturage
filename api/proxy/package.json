@@ -34,6 +34,7 @@
     "@ilos/framework": "~0",
     "@ilos/transport-http": "~0",
     "@ilos/transport-redis": "~0",
+    "@pdc/helper-test": "~0",
     "@pdc/provider-notification": "~0",
     "@pdc/provider-sentry": "~0",
     "@pdc/provider-token": "~0",

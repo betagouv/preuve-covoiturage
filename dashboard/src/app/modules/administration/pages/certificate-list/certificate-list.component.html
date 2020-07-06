@@ -1,7 +1,7 @@
 <div>
   <div class="FilterTop">
     <h3>Attestations</h3>
-    <app-operator-autocomplete [parentForm]="filterForm"></app-operator-autocomplete>
+    <app-operator-autocomplete [parentForm]="filterForm" cancellable="true"></app-operator-autocomplete>
   </div>
 
   <div class="loading" *ngIf="isLoading">
@@ -25,21 +25,25 @@
       </td>
     </ng-container>
     <ng-container matColumnDef="total_km">
-      <th mat-header-cell *matHeaderCellDef>Distance total</th>
-      <td mat-cell *matCellDef="let row">{{ row.total_km }} km</td>
+      <th mat-header-cell *matHeaderCellDef>Distance totale</th>
+      <td mat-cell *matCellDef="let row">{{ row.total_km }}&nbsp;km</td>
     </ng-container>
     <ng-container matColumnDef="total_point">
       <th mat-header-cell *matHeaderCellDef>Points</th>
-      <td mat-cell *matCellDef="let row">{{ row.total_km }} pts</td>
+      <td mat-cell *matCellDef="let row">{{ row.total_point }}&nbsp;pts</td>
+    </ng-container>
+    <ng-container matColumnDef="total_cost">
+      <th mat-header-cell *matHeaderCellDef>Coût</th>
+      <td mat-cell *matCellDef="let row">{{ row.total_cost }}&nbsp;&euro;</td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let row" class="item-actions">
-        <button mat-icon-button (click)="download(row, 'application/pdf')">
+        <button mat-icon-button (click)="download(row, 'pdf')">
           <mat-icon color="primary" matTooltip="Télécharger la version PDF">picture_as_pdf</mat-icon>
         </button>
-        <button mat-icon-button (click)="download(row, 'image/png')">
+        <button mat-icon-button (click)="download(row, 'png')">
           <mat-icon color="primary" matTooltip="Télécharger la version image">photo_gallery</mat-icon>
         </button>
       </td>
@@ -74,6 +78,25 @@
       </div> -->
 
       <div>
+        <h3>Plage de temps</h3>
+        <div class="form-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Début</mat-label>
+            <input matInput [matDatepicker]="start_date" [formControl]="controls.start_date" />
+            <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
+            <mat-datepicker #start_date></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fin</mat-label>
+            <input matInput [matDatepicker]="end_date" [formControl]="controls.end_date" />
+            <mat-datepicker-toggle matSuffix [for]="end_date"></mat-datepicker-toggle>
+            <mat-datepicker #end_date></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div>
         <h3>Position de départ</h3>
         <div class="form-group">
           <mat-form-field appearance="outline">
@@ -83,13 +106,6 @@
           <mat-form-field appearance="outline">
             <mat-label>Longitude</mat-label>
             <input matInput type="string" placeholder="00.0000000000" formControlName="start_lng" autocomplete="off" />
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Date départ</mat-label>
-            <input matInput [matDatepicker]="start_date" [formControl]="controls.start_date" />
-            <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
-            <mat-datepicker #start_date></mat-datepicker>
           </mat-form-field>
         </div>
       </div>
@@ -103,13 +119,6 @@
           <mat-form-field appearance="outline">
             <mat-label>Longitude</mat-label>
             <input matInput type="string" placeholder="00.0000000000" formControlName="end_lng" autocomplete="off" />
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Date d'arrivée</mat-label>
-            <input matInput [matDatepicker]="end_date" [formControl]="controls.end_date" />
-            <mat-datepicker-toggle matSuffix [for]="end_date"></mat-datepicker-toggle>
-            <mat-datepicker #end_date></mat-datepicker>
           </mat-form-field>
         </div>
       </div>

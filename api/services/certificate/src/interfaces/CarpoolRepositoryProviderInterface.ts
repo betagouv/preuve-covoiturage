@@ -11,7 +11,7 @@ export interface CarpoolInterface {
 
 export interface CarpoolRepositoryProviderInterface {
   find(params: {
-    identity: number;
+    identity_ids: number[];
     start_at: Date;
     end_at: Date;
     positions?: PointInterface[];
@@ -21,7 +21,7 @@ export interface CarpoolRepositoryProviderInterface {
 
 export abstract class CarpoolRepositoryProviderInterfaceResolver implements CarpoolRepositoryProviderInterface {
   async find(params: {
-    identity: number;
+    identity_ids: number[];
     start_at: Date;
     end_at: Date;
     positions?: PointInterface[];

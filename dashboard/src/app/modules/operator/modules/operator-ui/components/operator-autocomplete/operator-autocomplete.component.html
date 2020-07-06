@@ -4,6 +4,17 @@
   <!--  <mat-form-field>-->
   <input type="text" matInput [formControl]="operatorCtrl" [matAutocomplete]="auto" (focusout)="inputLostFocus()" />
   <!--  </mat-form-field>-->
+
+  <button
+    *ngIf="cancellable"
+    type="button"
+    matSuffix
+    mat-icon-button
+    (click)="onClearSelection(); $event.stopPropagation()"
+  >
+    <mat-icon>cancel</mat-icon>
+  </button>
+
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOperatorSelect($event)">
     <mat-option *ngFor="let operator of filteredOperators | async" [value]="operator._id">
       {{ operator.name }}

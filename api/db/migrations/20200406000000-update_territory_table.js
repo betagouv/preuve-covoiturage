@@ -5,6 +5,7 @@
  * as a toString() of ObjectID objects.
  */
 var { createMigration } = require('../helpers/createMigration');
+
 var { setup, up, down } = createMigration(
   [
     'company/20200406000000_update_company_table',

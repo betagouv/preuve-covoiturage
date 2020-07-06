@@ -3,19 +3,14 @@
 # script runs from the api folder
 
 # install global dependencies
-yarn global add npm-run-all lerna typescript
+yarn global add npm-run-all lerna typescript db-migrate db-migrate-pg
 
 # install ilos dev branch
 cd ..
 git clone https://github.com/betagouv/ilos
 cd ilos
 
-# 2020/03/02 use tagged master@0.4.1 until ilos is published or completely cleaned
-if [ $NODE_ENV = 'production' ]; then
-  git checkout master
-else
-  git checkout dev
-fi
+git checkout master
 
 yarn
 yarn build
