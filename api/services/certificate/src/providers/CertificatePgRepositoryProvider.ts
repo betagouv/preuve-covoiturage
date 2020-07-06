@@ -151,11 +151,14 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     const certs = (isMany ? certificates : [certificates]) as CertificateInterface[];
 
     // search for all access_log for all certificate_id
-    const result = await this.connection.getClient().query(`
+    const result = await this.connection.getClient().query({
+      text: `
         SELECT * FROM ${this.accessLogTable}
-        WHERE certificate_id IN (${map(certs, '_id').join(',')})
+        WHERE certificate_id = ANY ($1::int[])
         ORDER BY certificate_id
-    `);
+      `,
+      values: [map(certs, '_id')],
+    });
 
     // merge access_log as a table in each certificate
     const merge = certs.map((cert: CertificateInterface) => ({

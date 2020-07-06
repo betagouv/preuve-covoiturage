@@ -40,7 +40,6 @@ export class CreateCertificateAction extends AbstractAction {
 
     // fetch the data for this identity, operator and territory and map to template object
     const person = await this.identityRepository.find(identity);
-    console.log({ person });
     const operator = await this.kernel.call(
       'operator:quickfind',
       { _id: operator_id },
