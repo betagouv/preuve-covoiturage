@@ -12,11 +12,6 @@ CREATE TYPE territory.territory_level_enum AS ENUM(
   'other'
 );
 
-CREATE TYPE territory.territory_level_name AS (
-    level territory.territory_level_enum,
-    name varchar(128)
-);
-
 CREATE TABLE IF NOT EXISTS territory.territories
 (
     _id serial primary key,

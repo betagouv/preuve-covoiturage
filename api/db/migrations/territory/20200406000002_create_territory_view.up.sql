@@ -92,10 +92,9 @@ WITH RECURSIVE
     GROUP BY c._id
   )
   SELECT
-    a._id,
-    t.active,
-    t.level,
-
+    a._id::int,
+    t.active::boolean,
+    t.level::territory.territory_level_enum,
     -- (SELECT tr.parent_territory_id FROM territory.territory_relation as tr WHERE tr.child_territory_id = a._id) as children,
     -- unnest(cp.parents),
     -- ADD
@@ -104,19 +103,83 @@ WITH RECURSIVE
     -- - latest_children/ending_children,
     -- - active_children,
     -- - merge geo ?
-
-    a.ancestors[array_length(a.ancestors, 1)] as parent,
-    a.children,
-    a.ancestors,
-    a.descendants,
-    a.insee,
-    a.postcode
+    (a.ancestors[array_length(a.ancestors, 1)])::int as parent,
+    a.children::int[],
+    a.ancestors::int[],
+    a.descendants::int[],
+    a.insee::varchar[],
+    a.postcode::varchar[]
   FROM agg AS a
   LEFT JOIN territory.territories AS t ON t._id = a._id
-  
-  
-
 );
 
 CREATE INDEX IF NOT EXISTS territory_territories_view_id_idx ON territory.territories_view(_id);
 
+CREATE MATERIALIZED VIEW IF NOT EXISTS territory.territories_breadcrumb AS (
+  WITH data AS (
+    SELECT
+      territory_id,
+      array_remove(array_agg(country), null) as country,
+      array_remove(array_agg(countrygroup), null) as countrygroup,
+      array_remove(array_agg(district), null) as district,
+      array_remove(array_agg(megalopolis), null) as megalopolis,
+      array_remove(array_agg(other), null) as other,
+      array_remove(array_agg(region), null) as region,
+      array_remove(array_agg(state), null) as state,
+      array_remove(array_agg(town), null) as town,
+      array_remove(array_agg(towngroup), null) as towngroup
+    FROM crosstab(
+      'SELECT 
+        ancestors._id as territory_id,
+        tt.level,
+        tt.name
+      FROM (
+        SELECT 
+          _id,
+          _id || ancestors as _ids
+        from territory.territories_view
+      ) as ancestors
+      JOIN UNNEST(ancestors._ids) as ancestor_id ON TRUE
+      JOIN territory.territories as tt on ancestor_id = tt._id
+      ORDER by tt.level asc',
+      'SELECT * FROM (
+        VALUES
+          (''country''),
+          (''countrygroup''),
+          (''district''),
+          (''megalopolis''),
+          (''other''),
+          (''region''),
+          (''state''),
+          (''town''),
+          (''towngroup'')
+        ) as t(v)
+      ') AS (
+        territory_id int, 
+        country varchar,
+        countrygroup varchar,
+        district varchar,
+        megalopolis varchar,
+        other varchar,
+        region varchar,
+        state varchar,
+        town varchar,
+        towngroup varchar
+      )
+    GROUP BY territory_id
+  )
+  SELECT 
+    territory_id,
+    country[1],
+    countrygroup[1],
+    district[1],
+    megalopolis[1],
+    other[1],
+    region[1],
+    state[1],
+    town[1],
+    towngroup[1]
+  from data
+);
+
+CREATE INDEX IF NOT EXISTS territory_territories_breadcrumb_territory_id_idx ON territory.territories_breadcrumb(territory_id);
