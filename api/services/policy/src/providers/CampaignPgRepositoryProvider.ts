@@ -274,42 +274,6 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows;
   }
 
-  // async findApplicableCampaigns(territories: number[], date: Date): Promise<CampaignInterface[]> {
-  //   const query = {
-  //     text: `
-  //       SELECT
-  //         _id,
-  //         parent_id,
-  //         ui_status,
-  //         territory_id,
-  //         name,
-  //         description,
-  //         start_date,
-  //         end_date,
-  //         unit,
-  //         status,
-  //         global_rules,
-  //         rules
-  //       FROM ${this.table}
-  //       WHERE
-  //         territory_id = ANY($1::integer[])
-  //         AND start_date <= $2
-  //         AND end_date >= $2
-  //         AND status = $3
-  //         AND deleted_at IS NULL
-  //     `,
-  //     values: [territories, date, 'active'],
-  //   };
-
-  //   const result = await this.connection.getClient().query(query);
-
-  //   if (result.rowCount === 0) {
-  //     return [];
-  //   }
-
-  //   return result.rows;
-  // }
-
   async getTemplates(): Promise<CampaignInterface[]> {
     const result = await this.connection.getClient().query(`
       SELECT * FROM ${this.table} WHERE status = 'template' AND deleted_at IS NULL ORDER BY slug
