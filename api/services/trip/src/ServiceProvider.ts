@@ -4,6 +4,7 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorMiddleware } from '@pdc/provider-validator';
+import { S3StorageProvider } from '@pdc/provider-file';
 import {
   ChannelTransportMiddleware,
   ScopeToSelfMiddleware,
@@ -25,7 +26,7 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
 
 @serviceProvider({
   config,
-  providers: [TripRepositoryProvider, StatCacheRepositoryProvider],
+  providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider],
   validator: [listBinding, statsBinding, exportBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],

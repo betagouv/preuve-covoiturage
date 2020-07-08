@@ -8,7 +8,7 @@ import { CryptoProvider } from '@pdc/provider-crypto';
 const execP = promisify(exec);
 
 @provider()
-export class FileStorageProvider implements ProviderInterface {
+export class FFSendStorageProvider implements ProviderInterface {
   protected readonly sha256 = '43b29791426014421563adffddc992e31046409e4dd53796cd9f0434a2a75223';
   protected readonly binpath = path.join(__dirname, '..', 'bin', 'ffsend');
   protected readonly flags = [
