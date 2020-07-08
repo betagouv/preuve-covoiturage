@@ -1,9 +1,10 @@
 import { ServiceProvider as BaseServiceProvider } from '@ilos/core';
-import { serviceProvider } from '@ilos/common';
-import { RedisConnection } from '@ilos/connection-redis';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { GeoProvider } from '@pdc/provider-geo';
+import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
+import { PostgresConnection } from '@ilos/connection-postgres';
+import { ValidatorExtension } from '@pdc/provider-validator';
+import { RedisConnection } from '@ilos/connection-redis';
+import { GeoProvider } from '@pdc/provider-geo';
 
 import { config } from './config';
 import { WorkflowProvider } from './providers/WorkflowProvider';
@@ -34,4 +35,6 @@ import { NormalizationProcessAction } from './actions/NormalizationProcessAction
   queues: ['normalization'],
   validator: [],
 })
-export class ServiceProvider extends BaseServiceProvider {}
+export class ServiceProvider extends BaseServiceProvider {
+  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
+}
