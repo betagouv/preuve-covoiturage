@@ -20,8 +20,7 @@ import { TripStoreService } from '~/modules/trip/services/trip-store.service';
   ],
 })
 export class TripExportComponent extends DestroyObservable implements OnInit {
-  isExporting: boolean;
-  exported = false;
+  isExporting = false;
   minDate = moment()
     .subtract(1, 'year')
     .toDate();
@@ -56,9 +55,13 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
           this.isExporting = true;
           this.tripService.exportTrips(filter).subscribe(
             () => {
-              this._toastr.success('Export en cours', 'Vous allez recevoir un email avec un lien de téléchargement.');
-              this.isExporting = false;
-              this.exported = true;
+              this._toastr.success(
+                'Vous allez recevoir un email avec un lien de téléchargement dans quelques minutes.',
+                'Export en cours',
+              );
+              setTimeout(() => {
+                this.isExporting = false;
+              }, 5000);
             },
             (err) => {
               this.isExporting = false;

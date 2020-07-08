@@ -14,3 +14,12 @@
     }
   }
 }
+
+.notice {
+  background-color: #dee8f5;
+  padding: 1em 2em;
+  display: inline-block;
+  p:last-of-type {
+    float: right;
+  }
+}

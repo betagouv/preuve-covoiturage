@@ -16,8 +16,9 @@
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
-    "@ilos/core": "~0",
     "@ilos/common": "~0",
-    "@pdc/provider-crypto": "~0"
+    "@ilos/core": "~0",
+    "@pdc/provider-crypto": "~0",
+    "aws-sdk": "^2.711.0"
   }
 }
