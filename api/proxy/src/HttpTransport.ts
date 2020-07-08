@@ -145,6 +145,16 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerGlobalMiddlewares(): void {
+    // maintenance mode
+    this.app.use((req, res, next) => {
+      if (env('APP_MAINTENANCE', false)) {
+        res.status(503).json({ code: 503, error: 'Service Unavailable' });
+        return;
+      }
+
+      next();
+    });
+
     this.app.use(signResponseMiddleware);
     this.app.use(dataWrapMiddleware);
   }

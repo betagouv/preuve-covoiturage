@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from '~/core/guards/auth-guard.service';
 
 import { NotFoundComponent } from '~/core/components/not-found/not-found.component';
+import { ServiceUnavailableComponent } from './core/components/service-unavailable/service-unavailable.component';
 
 // eslint-disable-next-line
 import { NotAuthenticatedLayoutComponent } from './core/components/not-authenticated-layout/not-authenticated-layout.component';
@@ -81,6 +82,16 @@ const routes: Routes = [
       {
         path: '',
         component: NotFoundComponent,
+      },
+    ],
+  },
+  {
+    path: '503',
+    component: NotAuthenticatedLayoutComponent,
+    children: [
+      {
+        path: '',
+        component: ServiceUnavailableComponent,
       },
     ],
   },

@@ -17,3 +17,7 @@ export const email_changed = {
 export const export_csv = {
   subject: 'Export des données',
 };
+
+export const export_csv_error = {
+  subject: "Erreur d'export des données",
+};
