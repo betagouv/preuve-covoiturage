@@ -14,6 +14,7 @@ var { setup, up, down } = createMigration(
     'territory/20200406000002_create_territory_view',
     'auth/20200406000000_update_territory_user_relation',
     'policy/20200406000000_update_territory_policy_relation',
+    'policy/20200406000000_update_policy_trip_view',
     'carpool/20200406000000_replace_insee_by_territory_relation',
     'trip/20200406000000_update_trip_view',
     'territory/20200406000010_cleanup_territory_table',
