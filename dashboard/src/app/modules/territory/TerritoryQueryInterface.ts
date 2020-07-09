@@ -154,7 +154,7 @@ export const directFields: ProjectionFieldsEnum = [
   BasicFieldEnum.Active,
   BasicFieldEnum.Address,
   BasicFieldEnum.Contacts,
-  GeoFieldEnum.Density,
+  //  GeoFieldEnum.Density,
   GeoFieldEnum.Geo,
   ActiveFieldEnum.CreatedAt,
   ActiveFieldEnum.UpdatedAt,
