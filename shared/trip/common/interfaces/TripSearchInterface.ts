@@ -11,7 +11,6 @@ export interface TripSearchInterface {
   days?: number[];
 
   status?: string;
-  insee?: string[];
 
   distance?: {
     min?: number;

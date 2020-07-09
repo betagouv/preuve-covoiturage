@@ -253,7 +253,10 @@ export class HttpTransport implements TransportInterface {
                 { user: req.session.user },
               ),
             );
-            req.session.user.authorizedTerritories = get(descendantTerritories, 'descendant_ids', []);
+            req.session.user.authorizedTerritories = [
+              req.session.user.territory_id,
+              ...get(descendantTerritories, 'descendant_ids', []),
+            ];
           }
 
           this.send(res, response);

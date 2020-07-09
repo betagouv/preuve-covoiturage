@@ -40,7 +40,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'date',
       'ranks',
       'distance',
-      'insee',
       // 'campaign_id',
       'days',
       'hour',
@@ -118,12 +117,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
             case 'campaign_id':
               throw new Error('Unimplemented');
-
-            case 'insee':
-              return {
-                text: '(journey_start_insee = ANY($#::text[]) OR journey_end_insee = ANY ($#::text[]))',
-                values: [filter.value, filter.value],
-              };
 
             case 'days':
               return {

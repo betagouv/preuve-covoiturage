@@ -22,8 +22,11 @@ import {
           (params, context): string => {
             if (
               'territory_id' in params &&
-              params.territory_id.length === 1 &&
-              params.territory_id[0] === context.call.user.territory_id
+              context.call.user.territory_id &&
+              context.call.user.authorizedTerritories.length &&
+              params.territory_id.length &&
+              params.territory_id.filter((id: number) => !context.call.use.authorizedTerritories.includes(id))
+                .length === 0
             ) {
               return 'territory.trip.export';
             }
@@ -31,6 +34,7 @@ import {
           (params, context): string => {
             if (
               'operator_id' in params &&
+              context.call.user.operator_id &&
               params.operator_id.length === 1 &&
               params.operator_id[0] === context.call.user.operator_id
             ) {
