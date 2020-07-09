@@ -21,7 +21,6 @@ export interface TripSearchInterface {
   ranks?: string[];
   operator_id?: number[];
   territory_id?: number[];
-  operator_territory_id?: number;
 }
 
 export interface TripSearchInterfaceWithPagination extends TripSearchInterface {
