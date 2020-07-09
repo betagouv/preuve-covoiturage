@@ -459,25 +459,24 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
   }
 
   async updateRelations(parentId: number, children: number[], deleteOld = false): Promise<void> {
+    const client = this.connection.getClient();
     if (deleteOld) {
       const deleteQuery = {
         text: `DELETE FROM ${this.relationTable} WHERE parent_territory_id = $1`,
         values: [parentId],
       };
 
-      await this.connection.getClient().query(deleteQuery);
+      await client.query(deleteQuery);
     }
 
     if (children) {
       // console.log(children);
-      for (const childId of children) {
-        const insertQuery = {
-          text: `INSERT INTO ${this.relationTable}(parent_territory_id,child_territory_id) VALUES($1,$2)`,
-          values: [parentId, childId],
-        };
 
-        await this.connection.getClient().query(insertQuery);
-      }
+      const values = children.map((childId) => `(${parentId},${childId})`).join(',');
+
+      const insertQuery = `INSERT INTO ${this.relationTable}(parent_territory_id,child_territory_id) VALUES${values}`;
+
+      await client.query(insertQuery);
     }
   }
 
