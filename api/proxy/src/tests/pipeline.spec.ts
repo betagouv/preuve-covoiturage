@@ -80,9 +80,8 @@ test.beforeEach(async (t) => {
 });
 
 test.cb('Pipeline check', (t) => {
-  const pl = payloadV2();
-  const normQueue = t.context.worker.queues.filter((q) => q.name === 'normalization').pop();
-
+  t.timeout(20000);
+  t.plan(3);
   t.context.token
     .sign({
       a: '1efacd36-a85b-47b2-99df-cabbf74202b3', // see @pdc/helper-test README.md
@@ -92,6 +91,7 @@ test.cb('Pipeline check', (t) => {
       v: 2,
     })
     .then((token) => {
+      const pl = payloadV2();
       return t.context.request
         .post(`/v2/journeys`)
         .send(pl)
@@ -99,9 +99,7 @@ test.cb('Pipeline check', (t) => {
         .set('Content-type', 'application/json')
         .set('Authorization', `Bearer ${token}`)
         .expect((response: supertest.Response) => {
-          t.timeout(20000);
-          t.plan(3);
-
+          const normQueue = t.context.worker.queues.filter((q) => q.name === 'normalization').pop();
           // make sure the journey has been sent properly
           t.is(response.status, 200);
 
