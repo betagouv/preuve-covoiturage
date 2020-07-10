@@ -2,20 +2,6 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.3
--- Dumped by pg_dump version 12.3
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
 --
 -- Name: acquisition; Type: SCHEMA; Schema: -; Owner: postgres
 --
@@ -323,6 +309,25 @@ CREATE TYPE policy.policy_unit_enum AS ENUM (
 ALTER TYPE policy.policy_unit_enum OWNER TO postgres;
 
 --
+-- Name: breadcrumb; Type: TYPE; Schema: territory; Owner: postgres
+--
+
+CREATE TYPE territory.breadcrumb AS (
+	country character varying,
+	countrygroup character varying,
+	district character varying,
+	megalopolis character varying,
+	other character varying,
+	region character varying,
+	state character varying,
+	town character varying,
+	towngroup character varying
+);
+
+
+ALTER TYPE territory.breadcrumb OWNER TO postgres;
+
+--
 -- Name: territory_level_enum; Type: TYPE; Schema: territory; Owner: postgres
 --
 
@@ -370,111 +375,67 @@ $$;
 ALTER FUNCTION common.touch_updated_at() OWNER TO postgres;
 
 --
--- Name: touch_territory_view_on_territory_change(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: breadcrumb_to_json(territory.breadcrumb); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.touch_territory_view_on_territory_change() RETURNS trigger
+CREATE FUNCTION public.breadcrumb_to_json(bc territory.breadcrumb) RETURNS json
+    LANGUAGE sql
+    AS $_$
+  select json_build_object(
+    'country', $1.country
+  , 'countrygroup', $1.countrygroup
+  , 'district', $1.district
+  , 'megalopolis', $1.megalopolis
+  , 'other', $1.other
+  , 'region', $1.region
+  , 'state', $1.state
+  , 'town', $1.town
+  , 'towngroup', $1.towngroup
+ 
+  );
+$_$;
+
+
+ALTER FUNCTION public.breadcrumb_to_json(bc territory.breadcrumb) OWNER TO postgres;
+
+--
+-- Name: get_codes(integer[]); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_codes(ids integer[]) RETURNS TABLE(territory_id integer, insee character varying[], postcode character varying[], codedep character varying[])
     LANGUAGE plpgsql
     AS $$
-BEGIN
-    --
-    -- Ajoute une ligne dans emp_audit pour refléter l'opération réalisée
-    -- sur emp,
-    -- utilise la variable spéciale TG_OP pour cette opération.
-    --
-    IF (TG_OP = 'DELETE') THEN
-        DELETE FROM territory_cache where _id = OLD._id;
-        RETURN OLD;
-    ELSIF (TG_OP = 'UPDATE') THEN
-        INSERT INTO territory_cache(_id,active,activable,level) VALUES(NEW._id,NEW.active,NEW.activable,NEW.level);
-        RETURN NEW;
-    ELSIF (TG_OP = 'INSERT') THEN
-        UPDATE territory_cache SET active = NEW._active,activable = NEW.activable ,level = NEW.level WHERE _id = NEW._id;
-        RETURN NEW;
-    END IF;
-    RETURN NULL; -- le résultat est ignoré car il s'agit d'un trigger AFTER
-END;
-$$;
 
+    BEGIN
 
-ALTER FUNCTION public.touch_territory_view_on_territory_change() OWNER TO postgres;
-
---
--- Name: touch_territory_view_on_territory_codes_change(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.touch_territory_view_on_territory_codes_change() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-r1 record;
-
-BEGIN
-
-WITH RECURSIVE
-
-  relations as(
-    (select * from relation_old_table) 
-    UNION ALL
-    (select * from relation_new_table)
-  ),
-  changed_ids as (
-      select DISTINCT unnest(array_agg(array[parent_territory_id,child_territory_id])) AS _id from relations 
-  ),
-  codes AS (
-    SELECT
-      territory_id,
-      array_remove(array_agg(insee), null) AS insee,
-      array_remove(array_agg(postcode),null) AS postcode 
+    RETURN QUERY SELECT
+      codes.territory_id,
+      array_remove(array_agg(codes.insee), null) AS insee,
+      array_remove(array_agg(codes.postcode),null) AS postcode,
+      array_remove(array_agg(codes.codedep),null) AS codedep 
     FROM crosstab(
-      'SELECT territory_id, type, value FROM territory.territory_codes order by type asc',
-      'SELECT distinct type FROM territory.territory_codes order by type asc'
-    ) AS (territory_id int, "insee" varchar, "postcode" varchar, "codedep" varchar)
-    INNER JOIN changed_ids ON changed_ids._id = territory_id
-    GROUP BY territory_id
-  )
-  
-  UPDATE territory_cache
-    SET 
-        parent = codes.insee,
-        postcode = codes.postcode,
-        codedep = codes.codedep
-    FROM
-    agg
-    WHERE
-    product._id = agg._id;
+      'SELECT territory_codes.territory_id, territory_codes.type, territory_codes.value FROM territory.territory_codes order by territory_codes.type asc',
+      'SELECT distinct territory_codes.type FROM territory.territory_codes order by territory_codes.type asc'
+    ) AS codes(territory_id int, "insee" varchar, "postcode" varchar, "codedep" varchar)
+    WHERE codes.territory_id = ANY(ids)
+    GROUP BY codes.territory_id;
 
-
-
-RETURN NEW;
-END;
+    END;
 $$;
 
 
-ALTER FUNCTION public.touch_territory_view_on_territory_codes_change() OWNER TO postgres;
+ALTER FUNCTION public.get_codes(ids integer[]) OWNER TO postgres;
 
 --
--- Name: touch_territory_view_on_territory_relation_change(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: get_territory_view_data(integer[]); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.touch_territory_view_on_territory_relation_change() RETURNS trigger
+CREATE FUNCTION public.get_territory_view_data(ids integer[]) RETURNS TABLE(_id integer, active boolean, activable boolean, level territory.territory_level_enum, parent integer, children integer[], ancestors integer[], descendants integer[], insee character varying[], postcode character varying[], codedep character varying[], breadcrumb territory.breadcrumb)
     LANGUAGE plpgsql
-    AS $$
-DECLARE
-r1 record;
-
+    AS $$ 
 BEGIN
 
-WITH RECURSIVE
-
-  relations as(
-    (select * from relation_old_table) 
-    UNION ALL
-    (select * from relation_new_table)
-  ),
-  changed_ids as (
-      select DISTINCT unnest(array_agg(array[parent_territory_id,child_territory_id])) AS _id from relations 
-  ),
+RETURN QUERY WITH RECURSIVE
   root AS (
     SELECT
       t._id,
@@ -491,23 +452,37 @@ WITH RECURSIVE
         t._id
       ) AS children 
     FROM territory.territories AS t 
-    INNER JOIN changed_ids ON changed_ids._id = t._id
     LEFT JOIN territory.territory_relation AS tr 
       ON t._id = tr.parent_territory_id 
       OR t._id = tr.child_territory_id
+
+     where t._id = ANY(ids)
     GROUP BY t._id
-  ),
-  input AS (
+   
+  )
+  ,codes AS (
+    SELECT
+    territory_id,
+    array_remove(array_agg(tc.value) FILTER(where tc.type = 'insee'), null) AS insee,
+    array_remove(array_agg(tc.value) FILTER(where tc.type = 'postcode'), null) AS postcode,
+    array_remove(array_agg(tc.value) FILTER(where tc.type = 'codedep'), null) AS codedep
+    
+FROM territory.territory_codes tc WHERE tc.territory_id = ANY(ids) GROUP BY tc.territory_id
+  )
+  ,input AS (
     SELECT 
       r._id,
       r.parents,
-      r.children
-    
+      r.children,
+      d.insee,
+      d.postcode,
+      d.codedep
     FROM root AS r 
-    
-    ORDER BY coalesce(array_length(children,1),0) ASC
-  ),
-  complete_parent AS (
+    LEFT JOIN codes AS d 
+      ON r._id = d.territory_id 
+    ORDER BY coalesce(array_length(r.children,1),0) ASC
+  )
+  ,complete_parent AS (
     SELECT t._id, t.parents FROM input AS t 
     UNION ALL 
     SELECT
@@ -515,55 +490,346 @@ WITH RECURSIVE
       t.parents AS parents
     FROM input AS t 
     JOIN complete_parent AS c ON t._id = any(c.parents)
-  ),
-  
-  complete_children AS (
-    SELECT t._id, t.children FROM input AS t 
+  )
+  ,complete_children AS (
+    SELECT t._id, t.children,t.insee,t.postcode,t.codedep FROM input AS t 
     UNION ALL 
     SELECT 
       c._id,
-      t.children AS children
+      t.children AS children,
+      t.insee,
+      t.postcode,
+      t.codedep
     FROM input AS t 
     JOIN complete_children AS c ON t._id = any(c.children)
-  ),
-  complete as (
-       SELECT cc._id, cc.children,cp.parents FROM complete_children AS cc
+  )
+  ,complete as (
+       SELECT 
+        cc._id,
+        cc.children,
+        cc.insee,
+        cc.postcode,
+        cc.codedep,
+        cp.parents 
+        
+        FROM complete_children AS cc
        LEFT JOIN complete_parent cp ON cp._id = cc._id
-  ),
-  agg AS (
+  )
+  ,agg AS (
     SELECT
         c._id,
         array_remove(array_remove(array_agg(distinct p), null), c._id) AS ancestors,
         array_remove(array_remove(array_agg(distinct b), null), c._id) AS descendants,
+        array_remove(array_agg(distinct ins), null) AS insee,
+        array_remove(array_agg(distinct pos), null) AS postcode,
+        array_remove(array_agg(distinct cdp), null) AS codedep,
         array_remove(array_agg(distinct tr.child_territory_id), null)  AS children
         
     FROM complete AS c
     left JOIN unnest(c.parents) AS p ON true
     left JOIN unnest(c.children) AS b ON true 
+    left JOIN unnest(c.insee) AS ins ON true 
+    left JOIN unnest(c.postcode) AS pos ON true
+    left JOIN unnest(c.codedep) AS cdp ON true
     left JOIN territory.territory_relation AS tr ON (tr.parent_territory_id = c._id)
 
     GROUP BY c._id
   )
   
-  UPDATE territory_cache
-    SET 
-        parent = agg.ancestors[array_length(agg.ancestors, 1)],
-        children = agg.children,
-        ancestors = agg.ancestors,
-        descendants = agg.descendants
-    FROM
-    agg
-    WHERE
-    territory_cache._id = agg._id;
+  ,bc_array AS (
+    SELECT 
+    agg._id as territory_id,
+    agg.ancestors
+    
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'country') as country
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'countrygroup') as countrygroup
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'district') as district
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'megalopolis') as megalopolis
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'other') as other
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'region') as region
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'state') as state
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'town') as town
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'towngroup') as towngroup
+
+    FROM agg
+  )
+
+    SELECT
+        a._id::int,
+        t.active::boolean,
+        t.activable::boolean,
+        t.level::territory.territory_level_enum,
+        (a.ancestors[array_length(a.ancestors, 1)])::int as parent,
+        a.children::int[],
+        a.ancestors::int[],
+        a.descendants::int[],
+        a.insee::varchar[],
+        a.postcode::varchar[],
+        a.codedep::varchar[]
+        ,row(
+            bc.country[1],
+            bc.countrygroup[1],
+            bc.district[1],
+            bc.megalopolis[1],
+            bc.other[1],
+            bc.region[1],
+            bc.state[1],
+            bc.town[1],
+            bc.towngroup[1]
+        )::territory.breadcrumb as breadcrumb
+
+    FROM agg AS a
+    LEFT JOIN territory.territories AS t ON t._id = a._id
+    LEFT JOIN bc_array AS bc ON bc.territory_id = a._id;
 
 
-
-RETURN NEW;
 END;
 $$;
 
 
-ALTER FUNCTION public.touch_territory_view_on_territory_relation_change() OWNER TO postgres;
+ALTER FUNCTION public.get_territory_view_data(ids integer[]) OWNER TO postgres;
+
+--
+-- Name: json_to_breadcrumb(json); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.json_to_breadcrumb(bc json) RETURNS territory.breadcrumb
+    LANGUAGE sql
+    AS $_$
+  select ROW(
+    $1->>'country',
+    $1->>'countrygroup',
+    $1->>'district',
+    $1->>'megalopolis',
+    $1->>'other',
+    $1->>'region',
+    $1->>'state',
+    $1->>'town',
+    $1->>'towngroup')::territory.breadcrumb;
+$_$;
+
+
+ALTER FUNCTION public.json_to_breadcrumb(bc json) OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_change(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_change() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+   
+    IF (TG_OP = 'DELETE') THEN
+        DELETE FROM territory.territories_view where _id = OLD._id;
+        RETURN OLD;
+    ELSIF (TG_OP = 'UPDATE') THEN
+        UPDATE territory.territories_view SET active = NEW.active,activable = NEW.activable ,level = NEW.level WHERE _id = NEW._id;
+        RETURN NEW;
+    ELSIF (TG_OP = 'INSERT') THEN
+        INSERT INTO territory.territories_view(_id,active,activable,level) VALUES(NEW._id,NEW.active,NEW.activable,NEW.level);
+        RETURN NEW;
+    END IF;
+    RETURN NULL; 
+END;
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_change() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_code_delete(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_code_delete() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE r RECORD;
+BEGIN
+  
+  WITH changed_ids as (
+      select DISTINCT array_agg(territory_id) AS ids from codes_old_table 
+  )
+  SELECT NULL FROM changed_ids INTO r  LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+    
+  RETURN NEW;
+END
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_code_delete() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_code_insert(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_code_insert() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE r RECORD;
+BEGIN
+  
+  WITH changed_ids as (
+      select DISTINCT array_agg(territory_id) AS ids from codes_new_table 
+  )
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+    
+  RETURN NEW;
+END
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_code_insert() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_code_update(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_code_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+  r RECORD;
+BEGIN
+  WITH codess as(
+    (select * from codes_old_table) 
+    UNION ALL
+    (select * from codes_new_table)
+  ),
+  changed_ids as (
+      select DISTINCT array_agg(territory_id) AS ids from codess 
+  )
+  
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+      
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_code_update() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_relation_delete(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_relation_delete() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE r RECORD;
+BEGIN
+  
+  WITH changed_ids as (
+      select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relation_old_table 
+  )
+  SELECT NULL FROM changed_ids INTO r  LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+    
+  RETURN NEW;
+END
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_relation_delete() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_relation_insert(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_relation_insert() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE r RECORD;
+BEGIN
+  
+  WITH changed_ids as (
+      select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relation_new_table 
+  )
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+    
+  RETURN NEW;
+END
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_relation_insert() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_relation_update(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_relation_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+  r RECORD;
+BEGIN
+  WITH relations as(
+    (select * from relation_old_table) 
+    UNION ALL
+    (select * from relation_new_table)
+  ),
+  changed_ids as (
+      select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relations 
+  )
+  
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+      
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_relation_update() OWNER TO postgres;
+
+--
+-- Name: update_territory_view_data(integer[]); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.update_territory_view_data(ids integer[]) RETURNS void
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+  WITH tv as (
+    SELECT * from get_territory_view_data(ids) 
+  )
+  UPDATE territory.territories_view
+    SET 
+        parent = tv.ancestors[array_length(tv.ancestors, 1)],
+        children = tv.children,
+        ancestors = tv.ancestors,
+        descendants = tv.descendants,
+        active = tv.active,
+        activable = tv.activable,
+        level = tv.level,
+        insee = tv.insee,
+        postcode = tv.postcode,
+        codedep = tv.codedep,
+        breadcrumb = tv.breadcrumb
+    FROM
+    tv
+    WHERE
+    territory.territories_view._id = tv._id;
+
+    RETURN;
+END
+$$;
+
+
+ALTER FUNCTION public.update_territory_view_data(ids integer[]) OWNER TO postgres;
+
+--
+-- Name: CAST (territory.breadcrumb AS json); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (territory.breadcrumb AS json) WITH FUNCTION public.breadcrumb_to_json(territory.breadcrumb) AS ASSIGNMENT;
+
+
+--
+-- Name: CAST (json AS territory.breadcrumb); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (json AS territory.breadcrumb) WITH FUNCTION public.json_to_breadcrumb(json) AS ASSIGNMENT;
+
 
 SET default_tablespace = '';
 
@@ -1061,6 +1327,7 @@ CREATE TABLE operator.operators (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     deleted_at timestamp with time zone,
+    uuid uuid NOT NULL DEFAULT public.uuid_generate_v4(),
     name character varying NOT NULL,
     legal_name character varying NOT NULL,
     siret character varying NOT NULL,
@@ -1410,6 +1677,92 @@ ALTER SEQUENCE territory.territories__id_seq1 OWNED BY territory.territories._id
 
 
 --
+-- Name: territories_breadcrumb; Type: TABLE; Schema: territory; Owner: postgres
+--
+
+CREATE TABLE territory.territories_breadcrumb (
+    _id integer NOT NULL,
+    country character varying,
+    countrygroup character varying,
+    district character varying,
+    megalopolis character varying,
+    other character varying,
+    region character varying,
+    state character varying,
+    town character varying,
+    towngroup character varying
+);
+
+
+ALTER TABLE territory.territories_breadcrumb OWNER TO postgres;
+
+--
+-- Name: territories_breadcrumb__id_seq; Type: SEQUENCE; Schema: territory; Owner: postgres
+--
+
+CREATE SEQUENCE territory.territories_breadcrumb__id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE territory.territories_breadcrumb__id_seq OWNER TO postgres;
+
+--
+-- Name: territories_breadcrumb__id_seq; Type: SEQUENCE OWNED BY; Schema: territory; Owner: postgres
+--
+
+ALTER SEQUENCE territory.territories_breadcrumb__id_seq OWNED BY territory.territories_breadcrumb._id;
+
+
+--
+-- Name: territories_view; Type: TABLE; Schema: territory; Owner: postgres
+--
+
+CREATE TABLE territory.territories_view (
+    _id integer NOT NULL,
+    active boolean DEFAULT false NOT NULL,
+    activable boolean DEFAULT false NOT NULL,
+    level territory.territory_level_enum NOT NULL,
+    parent integer,
+    children integer[] DEFAULT ARRAY[]::integer[],
+    ancestors integer[] DEFAULT ARRAY[]::integer[],
+    descendants integer[] DEFAULT ARRAY[]::integer[],
+    insee character varying[] DEFAULT ARRAY[]::character varying[],
+    postcode character varying[] DEFAULT ARRAY[]::character varying[],
+    codedep character varying[] DEFAULT ARRAY[]::character varying[],
+    breadcrumb territory.breadcrumb
+);
+
+
+ALTER TABLE territory.territories_view OWNER TO postgres;
+
+--
+-- Name: territories_view__id_seq; Type: SEQUENCE; Schema: territory; Owner: postgres
+--
+
+CREATE SEQUENCE territory.territories_view__id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE territory.territories_view__id_seq OWNER TO postgres;
+
+--
+-- Name: territories_view__id_seq; Type: SEQUENCE OWNED BY; Schema: territory; Owner: postgres
+--
+
+ALTER SEQUENCE territory.territories_view__id_seq OWNED BY territory.territories_view._id;
+
+
+--
 -- Name: territory_relation; Type: TABLE; Schema: territory; Owner: postgres
 --
 
@@ -1421,94 +1774,6 @@ CREATE TABLE territory.territory_relation (
 
 
 ALTER TABLE territory.territory_relation OWNER TO postgres;
-
---
--- Name: territories_view; Type: MATERIALIZED VIEW; Schema: territory; Owner: postgres
---
-
-CREATE MATERIALIZED VIEW territory.territories_view AS
- WITH RECURSIVE root AS (
-         SELECT t_1._id,
-            array_remove(array_agg(DISTINCT tr.parent_territory_id), t_1._id) AS parents,
-            array_remove(array_agg(DISTINCT tr.child_territory_id), t_1._id) AS children
-           FROM (territory.territories t_1
-             LEFT JOIN territory.territory_relation tr ON (((t_1._id = tr.parent_territory_id) OR (t_1._id = tr.child_territory_id))))
-          GROUP BY t_1._id
-        ), codes AS (
-         SELECT crosstab.territory_id,
-            array_remove(array_agg(crosstab.insee), NULL::character varying) AS insee,
-            array_remove(array_agg(crosstab.postcode), NULL::character varying) AS postcode
-           FROM public.crosstab('SELECT territory_id, type, value FROM territory.territory_codes order by type asc'::text, 'SELECT distinct type FROM territory.territory_codes order by type asc'::text) crosstab(territory_id integer, insee character varying, postcode character varying, codedep character varying)
-          GROUP BY crosstab.territory_id
-        ), input AS (
-         SELECT r._id,
-            r.parents,
-            r.children,
-            d.insee,
-            d.postcode
-           FROM (root r
-             LEFT JOIN codes d ON ((r._id = d.territory_id)))
-          ORDER BY COALESCE(array_length(r.children, 1), 0)
-        ), complete_parent AS (
-         SELECT t_1._id,
-            t_1.parents
-           FROM input t_1
-        UNION ALL
-         SELECT c._id,
-            t_1.parents
-           FROM (input t_1
-             JOIN complete_parent c ON ((t_1._id = ANY (c.parents))))
-        ), complete_children AS (
-         SELECT t_1._id,
-            t_1.children,
-            t_1.insee,
-            t_1.postcode
-           FROM input t_1
-        UNION ALL
-         SELECT c._id,
-            t_1.children,
-            t_1.insee,
-            t_1.postcode
-           FROM (input t_1
-             JOIN complete_children c ON ((t_1._id = ANY (c.children))))
-        ), complete AS (
-         SELECT cc._id,
-            cc.children,
-            cc.insee,
-            cc.postcode,
-            cp.parents
-           FROM (complete_children cc
-             LEFT JOIN complete_parent cp ON ((cp._id = cc._id)))
-        ), agg AS (
-         SELECT c._id,
-            array_remove(array_remove(array_agg(DISTINCT p.p), NULL::integer), c._id) AS ancestors,
-            array_remove(array_remove(array_agg(DISTINCT b.b), NULL::integer), c._id) AS descendants,
-            array_remove(array_agg(DISTINCT ins.ins), NULL::character varying) AS insee,
-            array_remove(array_agg(DISTINCT pos.pos), NULL::character varying) AS postcode,
-            array_remove(array_agg(DISTINCT tr.child_territory_id), NULL::integer) AS children
-           FROM (((((complete c
-             LEFT JOIN LATERAL unnest(c.parents) p(p) ON (true))
-             LEFT JOIN LATERAL unnest(c.children) b(b) ON (true))
-             LEFT JOIN LATERAL unnest(c.insee) ins(ins) ON (true))
-             LEFT JOIN LATERAL unnest(c.postcode) pos(pos) ON (true))
-             LEFT JOIN territory.territory_relation tr ON ((tr.parent_territory_id = c._id)))
-          GROUP BY c._id
-        )
- SELECT a._id,
-    t.active,
-    t.level,
-    a.ancestors[array_length(a.ancestors, 1)] AS parent,
-    a.children,
-    a.ancestors,
-    a.descendants,
-    a.insee,
-    a.postcode
-   FROM (agg a
-     LEFT JOIN territory.territories t ON ((t._id = a._id)))
-  WITH NO DATA;
-
-
-ALTER TABLE territory.territories_view OWNER TO postgres;
 
 --
 -- Name: territories_view_test; Type: VIEW; Schema: territory; Owner: postgres
@@ -1852,6 +2117,20 @@ ALTER TABLE ONLY territory.territories ALTER COLUMN _id SET DEFAULT nextval('ter
 
 
 --
+-- Name: territories_breadcrumb _id; Type: DEFAULT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territories_breadcrumb ALTER COLUMN _id SET DEFAULT nextval('territory.territories_breadcrumb__id_seq'::regclass);
+
+
+--
+-- Name: territories_view _id; Type: DEFAULT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territories_view ALTER COLUMN _id SET DEFAULT nextval('territory.territories_view__id_seq'::regclass);
+
+
+--
 -- Name: territory_cache _id; Type: DEFAULT; Schema: territory; Owner: postgres
 --
 
@@ -2033,11 +2312,27 @@ ALTER TABLE ONLY territory.insee
 
 
 --
+-- Name: territories_breadcrumb territories_breadcrumb_pkey; Type: CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territories_breadcrumb
+    ADD CONSTRAINT territories_breadcrumb_pkey PRIMARY KEY (_id);
+
+
+--
 -- Name: territories territories_pkey1; Type: CONSTRAINT; Schema: territory; Owner: postgres
 --
 
 ALTER TABLE ONLY territory.territories
     ADD CONSTRAINT territories_pkey1 PRIMARY KEY (_id);
+
+
+--
+-- Name: territories_view territories_view_pkey; Type: CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territories_view
+    ADD CONSTRAINT territories_view_pkey PRIMARY KEY (_id);
 
 
 --
@@ -2410,10 +2705,24 @@ CREATE INDEX territories__id_idx ON territory.territories USING btree (_id);
 
 
 --
+-- Name: territories_breadcrumb__id_idx; Type: INDEX; Schema: territory; Owner: postgres
+--
+
+CREATE INDEX territories_breadcrumb__id_idx ON territory.territories_breadcrumb USING btree (_id);
+
+
+--
 -- Name: territories_geo_idx; Type: INDEX; Schema: territory; Owner: postgres
 --
 
 CREATE INDEX territories_geo_idx ON territory.territories USING gist (geo);
+
+
+--
+-- Name: territories_view__id_idx; Type: INDEX; Schema: territory; Owner: postgres
+--
+
+CREATE INDEX territories_view__id_idx ON territory.territories_view USING btree (_id);
 
 
 --
@@ -2470,13 +2779,6 @@ CREATE INDEX territory_relation_child_territory_id_idx ON territory.territory_re
 --
 
 CREATE INDEX territory_relation_parent_territory_id_idx ON territory.territory_relation USING btree (parent_territory_id);
-
-
---
--- Name: territory_territories_view_id_idx; Type: INDEX; Schema: territory; Owner: postgres
---
-
-CREATE INDEX territory_territories_view_id_idx ON territory.territories_view USING btree (_id);
 
 
 --
@@ -2539,42 +2841,42 @@ CREATE TRIGGER touch_policy_meta_updated_at BEFORE UPDATE ON policy.policy_metas
 -- Name: territory_codes territory_codes_del; Type: TRIGGER; Schema: territory; Owner: postgres
 --
 
-CREATE TRIGGER territory_codes_del AFTER DELETE ON territory.territory_codes REFERENCING OLD TABLE AS relation_old_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_codes_change();
+CREATE TRIGGER territory_codes_del AFTER DELETE ON territory.territory_codes REFERENCING OLD TABLE AS codes_old_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_code_delete();
 
 
 --
 -- Name: territory_codes territory_codes_ins; Type: TRIGGER; Schema: territory; Owner: postgres
 --
 
-CREATE TRIGGER territory_codes_ins AFTER INSERT ON territory.territory_codes REFERENCING NEW TABLE AS relation_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_codes_change();
+CREATE TRIGGER territory_codes_ins AFTER INSERT ON territory.territory_codes REFERENCING NEW TABLE AS codes_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_code_insert();
 
 
 --
 -- Name: territory_codes territory_codes_upd; Type: TRIGGER; Schema: territory; Owner: postgres
 --
 
-CREATE TRIGGER territory_codes_upd AFTER UPDATE ON territory.territory_codes REFERENCING OLD TABLE AS relation_old_table NEW TABLE AS relation_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_codes_change();
+CREATE TRIGGER territory_codes_upd AFTER UPDATE ON territory.territory_codes REFERENCING OLD TABLE AS codes_old_table NEW TABLE AS codes_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_code_update();
 
 
 --
 -- Name: territory_relation territory_relation_del; Type: TRIGGER; Schema: territory; Owner: postgres
 --
 
-CREATE TRIGGER territory_relation_del AFTER DELETE ON territory.territory_relation REFERENCING OLD TABLE AS relation_old_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_relation_change();
+CREATE TRIGGER territory_relation_del AFTER DELETE ON territory.territory_relation REFERENCING OLD TABLE AS relation_old_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_relation_delete();
 
 
 --
 -- Name: territory_relation territory_relation_ins; Type: TRIGGER; Schema: territory; Owner: postgres
 --
 
-CREATE TRIGGER territory_relation_ins AFTER INSERT ON territory.territory_relation REFERENCING NEW TABLE AS relation_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_relation_change();
+CREATE TRIGGER territory_relation_ins AFTER INSERT ON territory.territory_relation REFERENCING NEW TABLE AS relation_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_relation_insert();
 
 
 --
 -- Name: territory_relation territory_relation_upd; Type: TRIGGER; Schema: territory; Owner: postgres
 --
 
-CREATE TRIGGER territory_relation_upd AFTER UPDATE ON territory.territory_relation REFERENCING OLD TABLE AS relation_old_table NEW TABLE AS relation_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_relation_change();
+CREATE TRIGGER territory_relation_upd AFTER UPDATE ON territory.territory_relation REFERENCING OLD TABLE AS relation_old_table NEW TABLE AS relation_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_relation_update();
 
 
 --
