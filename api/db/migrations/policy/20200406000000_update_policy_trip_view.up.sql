@@ -6,8 +6,8 @@ CREATE MATERIALIZED VIEW policy.trips AS (
     cp._id as carpool_id,
     cp.status as carpool_status,
     cp.trip_id as trip_id,
-    tsc.value as start_insee,
-    tec.value as end_insee,
+    tsc.value[1] as start_insee,
+    tec.value[1] as end_insee,
     cp.operator_id::int as operator_id,
     cp.operator_class as operator_class,
     cp.datetime as datetime, 
@@ -25,8 +25,8 @@ CREATE MATERIALIZED VIEW policy.trips AS (
     pp.processed_policies as processed_policies,
     (ap.applicable_policies - pp.processed_policies) as processable_policies
   FROM carpool.carpools as cp
-  LEFT JOIN territory.territory_view as ts ON ts._id = cp.start_territory_id
-  LEFT JOIN territory.territory_view as te ON te._id = cp.end_territory_id,
+  LEFT JOIN territory.territories_view as ts ON ts._id = cp.start_territory_id
+  LEFT JOIN territory.territories_view as te ON te._id = cp.end_territory_id,
   LATERAL (
     SELECT
       array_agg(value) as value
