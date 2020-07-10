@@ -529,26 +529,30 @@ export class HttpTransport implements TransportInterface {
    */
   private registerCallHandler(): void {
     const endpoint = this.config.get('proxy.rpc.endpoint');
-    this.app.get(
-      endpoint,
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel
-          .getContainer()
-          .getHandlers()
-          .map((def) => ({
-            service: def.service,
-            method: def.method,
-          }))
-          .reduce((acc, { service, method }) => {
-            if (!(service in acc)) {
-              acc[service] = [];
-            }
-            acc[service].push(method);
-            return acc;
-          }, {});
-        res.json(response);
-      }),
-    );
+
+    /**
+     * List all RPC actions
+     * - disabled when deployed
+     */
+    if (env('APP_ENV', 'local') === 'local') {
+      this.app.get(
+        endpoint,
+        asyncHandler(async (req, res, next) => {
+          const response = await this.kernel
+            .getContainer()
+            .getHandlers()
+            .map((def) => ({
+              service: def.service,
+              method: def.method,
+            }))
+            .reduce((acc, { service, method }) => {
+              acc.push(`${service}:${method}`);
+              return acc;
+            }, []);
+          res.json(response);
+        }),
+      );
+    }
 
     // register the POST route to /rpc
     this.app.post(

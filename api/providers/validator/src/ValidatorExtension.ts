@@ -50,5 +50,13 @@ export class ValidatorExtension extends ValidatorParentExtension {
     validator.registerCustomKeyword(macroKeyword);
     validator.registerCustomKeyword(castKeyword);
     await super.init(serviceContainer);
+
+    // dump the registered schema for debug - uncomment for use
+    // if (require('@ilos/core').env('APP_ENV', 'unknown') === 'local') {
+    //   //@ts-ignore
+    //   [...validator.bindings].map((b) => {
+    //     console.log(b[0], JSON.stringify(b[1].schema));
+    //   });
+    // }
   }
 }

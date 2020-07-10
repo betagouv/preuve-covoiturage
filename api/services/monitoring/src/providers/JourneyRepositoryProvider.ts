@@ -22,7 +22,7 @@ export class JourneyRepositoryProvider implements JourneyRepositoryProviderInter
   constructor(private pg: PostgresConnection) {}
 
   buildWhereClause(dateField: string, fromDays: number): string {
-    return `${dateField} >= (NOW() - '${fromDays} days'::interval)`;
+    return `${dateField} >= (NOW() - '${Math.abs(fromDays | 0)} days'::interval)`;
   }
 
   async acquiredJourneys(fromDays?: number): Promise<number> {
