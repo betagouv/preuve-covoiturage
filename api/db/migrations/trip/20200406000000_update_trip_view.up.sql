@@ -78,9 +78,9 @@ CREATE VIEW trip.list_view AS (
     tis.insee[1] as journey_start_insee,
     tis.postcode[1] as journey_start_postalcode,
     substring(tis.postcode[1] from 1 for 2) as journey_start_department,
-    tbs.town as journey_start_town,
-    tbs.towngroup as journey_start_towngroup,
-    tbs.country as journey_start_country,
+    (tis.breadcrumb).town::varchar as journey_start_town,
+    (tis.breadcrumb).towngroup::varchar as journey_start_towngroup,
+    (tis.breadcrumb).country::varchar as journey_start_country,
 
     ts_ceil((cpp.datetime + (cpp.duration || ' seconds')::interval), 600) as journey_end_datetime,
 
@@ -108,9 +108,9 @@ CREATE VIEW trip.list_view AS (
     tie.insee[1] as journey_end_insee,
     tie.postcode[1] as journey_end_postalcode,
     substring(tie.postcode[1] from 1 for 2) as journey_end_department,
-    tbe.town as journey_end_town,
-    tbe.towngroup as journey_end_towngroup,
-    tbe.country as journey_end_country,
+    (tie.breadcrumb).town::varchar as journey_end_town,
+    (tie.breadcrumb).towngroup::varchar as journey_end_towngroup,
+    (tie.breadcrumb).country::varchar as journey_end_country,
 
     (CASE WHEN cpp.distance IS NOT NULL THEN cpp.distance ELSE (cpp.meta::json->>'calc_distance')::int END) as journey_distance,
     cpp.distance as journey_distance_anounced,
@@ -151,8 +151,6 @@ CREATE VIEW trip.list_view AS (
   LEFT JOIN territory.territories AS tte ON tte._id = cpp.end_territory_id
   LEFT JOIN territory.territories_view AS tis ON tis._id = cpp.start_territory_id
   LEFT JOIN territory.territories_view AS tie ON tie._id = cpp.end_territory_id
-  LEFT JOIN territory.territories_breadcrumb as tbs ON tbs.territory_id = cpp.start_territory_id
-  LEFT JOIN territory.territories_breadcrumb as tbe ON tbe.territory_id = cpp.end_territory_id
 
   LEFT JOIN carpool.carpools AS cpd ON cpd.acquisition_id = cpp.acquisition_id AND cpd.is_driver = true AND cpd.status = 'ok'::carpool.carpool_status_enum
   LEFT JOIN carpool.identities AS cip ON cip._id = cpp.identity_id
