@@ -1,9 +1,10 @@
 import { CommandExtension } from '@ilos/cli';
-import { serviceProvider } from '@ilos/common';
+import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
-import { ValidatorMiddleware } from '@pdc/provider-validator';
+import { S3StorageProvider } from '@pdc/provider-file';
+import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import {
   ChannelTransportMiddleware,
   ScopeToSelfMiddleware,
@@ -24,7 +25,7 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
 
 @serviceProvider({
   config,
-  providers: [TripRepositoryProvider, StatCacheRepositoryProvider],
+  providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider],
   validator: [listBinding, statsBinding, exportBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],
@@ -40,5 +41,5 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  extensions = [CommandExtension];
+  readonly extensions: NewableType<ExtensionInterface>[] = [CommandExtension, ValidatorExtension];
 }

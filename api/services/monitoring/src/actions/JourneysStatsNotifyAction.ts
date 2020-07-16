@@ -31,20 +31,25 @@ export class JourneysStatsNotifyAction extends Action implements InitHookInterfa
   }
 
   async init(): Promise<void> {
-    await this.kernel.notify(signature, undefined, {
-      call: {
-        user: {},
-      },
-      channel: {
-        service: handlerConfig.service,
-        metadata: {
-          repeat: {
-            cron: '0 6 * * *',
-          },
-          jobId: 'monitoring.journeys_stats',
+    /**
+     * Activate daily statistics in production only
+     */
+    if (this.config.get('app.environment') === 'production') {
+      await this.kernel.notify(signature, undefined, {
+        call: {
+          user: {},
         },
-      },
-    });
+        channel: {
+          service: handlerConfig.service,
+          metadata: {
+            repeat: {
+              cron: '0 6 * * *',
+            },
+            jobId: 'monitoring.journeys_stats',
+          },
+        },
+      });
+    }
   }
 
   public async handle(_params: ParamsInterface, _context: ContextType): Promise<ResultInterface> {
