@@ -1,5 +1,3 @@
-import { TerritoryChildrenInterface } from './common/interfaces/TerritoryChildrenInterface';
-
 export interface ParamsInterface {
   _id: number;
 }
