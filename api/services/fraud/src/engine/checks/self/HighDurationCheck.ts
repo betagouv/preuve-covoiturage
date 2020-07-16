@@ -3,6 +3,7 @@ import { provider } from '@ilos/common';
 import { FraudCheckResult, HandleCheckInterface } from '../../../interfaces';
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { SelfCheckPreparator } from '../SelfCheckPreparator';
+import { step } from '../../helpers/math';
 
 /*
  * Check duration
@@ -12,8 +13,8 @@ export class HighDurationCheck implements HandleCheckInterface<SelfCheckParamsIn
   public static readonly key: string = 'highDurationCheck';
   public readonly preparer = SelfCheckPreparator;
 
-  protected readonly maxDuration: number = 43200; // above = 100
-  protected readonly minDuration: number = 7200; // below = 0
+  protected readonly max: number = 28800; // above = 100
+  protected readonly min: number = 5400; // below = 0
 
   async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
     const { driver_duration, passenger_duration } = params;
@@ -21,7 +22,6 @@ export class HighDurationCheck implements HandleCheckInterface<SelfCheckParamsIn
   }
 
   protected calc(duration: number): number {
-    const step = 100 / (this.maxDuration - this.minDuration);
-    return Math.min(100, Math.max(0, step * (duration - this.minDuration)));
+    return step(duration, this.min, this.max);
   }
 }

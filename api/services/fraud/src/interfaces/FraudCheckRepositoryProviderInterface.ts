@@ -1,11 +1,11 @@
-import { FraudCheck } from './FraudCheck';
+import { FraudCheckEntry } from './FraudCheck';
 
 export interface FraudCheckRepositoryProviderInterface {
-  createOrUpdateMany(completedFraudCheck: FraudCheck[]): Promise<void>;
-  getScore(acquisitionId: number): Promise<number>;
+  get(acquisitionId: number): Promise<FraudCheckEntry>;
+  createOrUpdate(data: FraudCheckEntry): Promise<void>;
 }
 
 export abstract class FraudCheckRepositoryProviderInterfaceResolver implements FraudCheckRepositoryProviderInterface {
-  abstract getScore(acquisitionId: number): Promise<number>;
-  abstract createOrUpdateMany(completedFraudCheck: FraudCheck[]): Promise<void>;
+  abstract get(acquisitionId: number): Promise<FraudCheckEntry>;
+  abstract createOrUpdate(data: FraudCheckEntry): Promise<void>;
 }

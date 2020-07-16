@@ -7,7 +7,6 @@ import {
 } from '../shared/fraudcheck/check.contract';
 import { handlerConfig, signature, ParamsInterface, ResultInterface } from '../shared/fraudcheck/apply.contract';
 import { ProcessableCarpoolRepositoryProviderInterfaceResolver } from '../interfaces';
-import { CheckEngine } from '../engine/CheckEngine';
 
 /*
  * Run test on trip that doest have pass all yet
@@ -19,7 +18,6 @@ import { CheckEngine } from '../engine/CheckEngine';
 export class ApplyAction extends Action implements InitHookInterface {
   constructor(
     private kernel: KernelInterfaceResolver,
-    private engine: CheckEngine,
     private repository: ProcessableCarpoolRepositoryProviderInterfaceResolver,
   ) {
     super();
@@ -53,9 +51,9 @@ export class ApplyAction extends Action implements InitHookInterface {
       const results = await cursor.next();
       done = results.done;
       if (results.value) {
-        for (const { acquisition_id, processed_methods } of results.value) {
+        for (const { acquisition_id } of results.value) {
           // add check to queue
-          await this.check(acquisition_id, this.listProcessableMethods(processed_methods));
+          await this.check(acquisition_id);
         }
       }
     } while (!done);
@@ -63,12 +61,11 @@ export class ApplyAction extends Action implements InitHookInterface {
     return;
   }
 
-  protected async check(acquisition_id: number, methods: string[]): Promise<void> {
+  protected async check(acquisition_id: number): Promise<void> {
     await this.kernel.notify<CheckParamsInterface>(
       checkSignature,
       {
         acquisition_id,
-        methods,
       },
       {
         call: {
@@ -79,10 +76,5 @@ export class ApplyAction extends Action implements InitHookInterface {
         },
       },
     );
-  }
-
-  protected listProcessableMethods(processed_methods: string[]): string[] {
-    const availableMethods = this.engine.listAvailableMethods();
-    return availableMethods.filter((x) => !processed_methods.includes(x));
   }
 }
