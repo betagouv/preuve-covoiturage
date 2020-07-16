@@ -26,6 +26,19 @@ services:
       - front
       - back
 
+  migrator:
+    build:
+      dockerfile: ../../docker/migrator/Dockerfile
+      context: ./api/db
+    volumes:
+      - ./api/db:/data
+    environment:
+      DATABASE_URL: 'postgres://postgres:postgres@postgres:5432/local'
+    networks:
+      - back
+    depends_on:
+      - postgres
+
   api:
     build: './docker/api'
     volumes:

@@ -4,4 +4,5 @@ export interface CompanyInterface {
   nature_juridique?: string;
   rna?: string;
   vat_intra?: string;
+  _id: number;
 }

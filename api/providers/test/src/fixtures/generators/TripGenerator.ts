@@ -5,13 +5,13 @@ import { PoolClient } from '@ilos/connection-postgres';
 
 import { Generator } from './Generator';
 import { IdentityInterface } from './IdentityGenerator';
-import { inseeAtlantis } from '../insee_atlantis';
-import { inseeOlympus } from '../insee_olympus';
+import { idAtlantis } from '../id_atlantis';
+import { idOlympus } from '../id_olympus';
 
 type Acquisition = {};
 type Carpool = {};
 type AcquisitionPayload = any;
-type Origin = { lon: number; lat: number; radius: number };
+type Origin = { _id: number; lon: number; lat: number; radius: number };
 type Coordinates = { lon: number; lat: number };
 
 export type TripInterface = [Acquisition, Carpool];
@@ -19,8 +19,8 @@ export type TripInterface = [Acquisition, Carpool];
 export class TripGenerator extends Generator<TripInterface> {
   private acqTable = 'acquisition.acquisitions';
   private carTable = 'carpool.carpools';
-  private originAtlantis: Origin = { lat: 47.211165, lon: -1.609713, radius: 10000 };
-  private originOlympus: Origin = { lat: 45.644597, lon: 6.015726, radius: 15000 };
+  private originAtlantis: Origin = { _id: 1, lat: 47.211165, lon: -1.609713, radius: 10000 };
+  private originOlympus: Origin = { _id: 2, lat: 45.644597, lon: 6.015726, radius: 15000 };
   private options: Partial<{
     identities: IdentityInterface[];
     inserts: number;
@@ -47,10 +47,8 @@ export class TripGenerator extends Generator<TripInterface> {
 
       let counter = 0;
       while (counter < this.options.inserts) {
-        const index = faker.random.arrayElement([0, 1]);
-        const origin = [this.originAtlantis, this.originOlympus][index];
-        const insee = [inseeAtlantis, inseeOlympus][index];
-
+        const origin = faker.random.arrayElement([this.originAtlantis, this.originOlympus]);
+        const territoryIds = origin._id === 1 ? idAtlantis : idOlympus;
         const { passenger, driver, payload } = this.getTrip(origin);
 
         const operator_id = faker.random.arrayElement([1, 2]);
@@ -99,9 +97,9 @@ export class TripGenerator extends Generator<TripInterface> {
               datetime,
               duration,
               start_position,
-              start_insee,
+              start_territory_id,
               end_position,
-              end_insee,
+              end_territory_id,
               distance,
               seats,
               identity_id,
@@ -120,9 +118,9 @@ export class TripGenerator extends Generator<TripInterface> {
             payload.passenger.start.datetime,
             payload.passenger.duration,
             `POINT(${payload.passenger.start.lon} ${payload.passenger.start.lat})`,
-            faker.random.arrayElement(insee),
+            faker.random.arrayElement(territoryIds),
             `POINT(${payload.passenger.end.lon} ${payload.passenger.end.lat})`,
-            faker.random.arrayElement(insee),
+            faker.random.arrayElement(territoryIds),
             payload.passenger.distance,
             1,
             passenger._id,
@@ -146,9 +144,9 @@ export class TripGenerator extends Generator<TripInterface> {
               datetime,
               duration,
               start_position,
-              start_insee,
+              start_territory_id,
               end_position,
-              end_insee,
+              end_territory_id,
               distance,
               seats,
               identity_id,
@@ -167,9 +165,9 @@ export class TripGenerator extends Generator<TripInterface> {
             payload.driver.start.datetime,
             payload.driver.duration,
             `POINT(${payload.driver.start.lon} ${payload.driver.start.lat})`,
-            faker.random.arrayElement(insee),
+            faker.random.arrayElement(territoryIds),
             `POINT(${payload.driver.end.lon} ${payload.driver.end.lat})`,
-            faker.random.arrayElement(insee),
+            faker.random.arrayElement(territoryIds),
             payload.driver.distance,
             1,
             driver._id,
@@ -184,6 +182,7 @@ export class TripGenerator extends Generator<TripInterface> {
     } catch (e) {
       await this.pool.query('ROLLBACK');
       console.log(`Failed to insert trips`, e.message);
+      throw e;
     }
 
     await this.pool.query('COMMIT');

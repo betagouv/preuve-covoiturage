@@ -8,6 +8,7 @@ export interface PrepareCheckInterface<P = any> {
 interface HandleInterface<P> {
   handle(data: P): Promise<FraudCheckResult>;
 }
+
 export interface HandleCheckInterface<P = any> extends HandleInterface<P> {
   readonly preparer: NewableType<PrepareCheckInterface<P>>;
 }

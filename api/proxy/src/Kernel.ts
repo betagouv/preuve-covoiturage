@@ -21,6 +21,8 @@ import { config } from './config';
 import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
 import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
 import { GeoFetchCommand } from './commands/GeoFetchCommand';
+import { SyncTerritoryInseeCommand } from './commands/SyncTerritoryInseeCommand';
+import { SyncRegionDepCommand } from './commands/SyncRegionDepCommand';
 
 @kernel({
   config,
@@ -40,6 +42,13 @@ import { GeoFetchCommand } from './commands/GeoFetchCommand';
     ...monitoringBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [ProcessJourneyCommand, MigrateInseeCommand, GeoFetchCommand, Commands.CallCommand],
+  commands: [
+    ProcessJourneyCommand,
+    MigrateInseeCommand,
+    SyncTerritoryInseeCommand,
+    SyncRegionDepCommand,
+    GeoFetchCommand,
+    Commands.CallCommand,
+  ],
 })
 export class Kernel extends BaseKernel {}

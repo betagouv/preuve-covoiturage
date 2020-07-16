@@ -7,15 +7,15 @@ CREATE TABLE IF NOT EXISTS operator.operators
   deleted_at timestamp with time zone,
 
   name varchar NOT NULL,
-  legal_name varchar NOT NULL,
-  siret varchar NOT NULL,
+  legal_name varchar NOT NULL, -- DROP
+  siret varchar NOT NULL, -- DROP
 
-  cgu_accepted_at timestamp with time zone,
-  cgu_accepted_by varchar,
+  cgu_accepted_at timestamp with time zone, -- rename active_since
+  cgu_accepted_by varchar, -- rename active boolean
 
-  company json NOT NULL,
-  address json NOT NULL,
+  company json NOT NULL, --DROP
   bank json NOT NULL,
+  address json NOT NULL, --DROP
   contacts json NOT NULL
 );
 

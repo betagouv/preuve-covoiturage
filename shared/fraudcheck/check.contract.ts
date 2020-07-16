@@ -1,6 +1,5 @@
 export interface ParamsInterface {
   acquisition_id: number;
-  methods: string[];
 }
 
 export type ResultInterface = void;

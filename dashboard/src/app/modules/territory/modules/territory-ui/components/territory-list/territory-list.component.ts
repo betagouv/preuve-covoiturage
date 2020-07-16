@@ -16,7 +16,7 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit 
 
   displayedColumns: string[] = ['name', 'actions'];
 
-  @Input() territories: Territory[];
+  @Input() territories: Territory[] = [];
   @Output() edit = new EventEmitter();
 
   constructor(public authenticationService: AuthenticationService, public territoryStore: TerritoryStoreService) {

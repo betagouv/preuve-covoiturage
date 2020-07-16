@@ -8,30 +8,39 @@
         {{ territory.name }}
       </p>
     </div>
-    <div>
+    <div *ngIf="territory.company">
       <h3>Structure</h3>
 
-      <p *ngIf="territory.company.nature_juridique">
+      <p *ngIf="territory.company.legal_name">
         <strong>Nature juridique : </strong>
-        {{ territory.company.nature_juridique }}
+        {{ territory.company.legal_name }}
       </p>
 
-      <p *ngIf="territory.siret">
+      <!-- <p *ngIf="territory.siret">
         <strong>SIRET : </strong>
         {{ territory.siret }}
-      </p>
-      <p *ngIf="territory.company.naf_entreprise">
+      </p> -->
+      <!-- <p *ngIf="territory.company.naf_entreprise">
         <strong>Naf entreprise : </strong>
         {{ territory.company.naf_entreprise }}
+      </p> -->
+
+      <p *ngIf="territory.company.siret">
+        <strong>Siret : </strong>
+        {{ territory.company.siret }}
+      </p>
+      <p *ngIf="territory.company.siren">
+        <strong>Siren : </strong>
+        {{ territory.company.siren }}
+      </p>
+      <p *ngIf="territory.company.intra_vat">
+        <strong>Numéro de TVA intracommunautaire : </strong>
+        {{ territory.company.intra_vat }}
       </p>
 
-      <p *ngIf="territory.company.rna">
-        <strong>RNA : </strong>
-        {{ territory.company.rna }}
-      </p>
-      <p *ngIf="territory.company.vat_intra">
-        <strong>Numéro de TVA intracommunautaire : </strong>
-        {{ territory.company.vat_intra }}
+      <p *ngIf="territory.company.nic">
+        <strong>Nic : </strong>
+        {{ territory.company.nic }}
       </p>
     </div>
 

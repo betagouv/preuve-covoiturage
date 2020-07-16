@@ -60,12 +60,12 @@ test.serial('Should create carpool', async (t) => {
       start: {
         lat: 0,
         lon: 0,
-        insee: '',
+        territory_id: 0,
       },
       end: {
         lat: 0,
         lon: 0,
-        insee: '',
+        territory_id: 0,
       },
       seats: 0,
       duration: 0,
@@ -85,12 +85,12 @@ test.serial('Should create carpool', async (t) => {
       start: {
         lat: 0,
         lon: 0,
-        insee: '',
+        territory_id: 0,
       },
       end: {
         lat: 0,
         lon: 0,
-        insee: '',
+        territory_id: 0,
       },
       seats: 0,
       duration: 0,

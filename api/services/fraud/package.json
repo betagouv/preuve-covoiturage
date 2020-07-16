@@ -10,9 +10,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "test:integration": "export NODE_ENV=testing; mocha --exit tests/*.spec.ts tests/**/*.spec.ts",
-    "coverage-ci": "export NODE_ENV=testing; nyc --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
-    "coverage": "export NODE_ENV=testing; nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
+    "coverage-ci": "export NODE_ENV=testing; nyc --all --reporter=lcov ava",
+    "coverage": "export NODE_ENV=testing; nyc --all --reporter=text ava",
     "lint": "eslint 'src/**/*.ts'"
   },
   "main": "./dist/bootstrap.js",
@@ -21,34 +20,21 @@
     "bootstrap": "./bootstrap.js",
     "app": {}
   },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
   "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**",
-      "src/config/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
     "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
+			"ts-node/register"
+		],
+    "exclude": [
+      "**/*.d.ts",
+      "**/*.spec.d.ts",
+      "**/index.ts",
+      "**/*Macro.ts",
+      "src/**/*.spec.ts",
+      "src/**/interfaces/**",
+      "src/**/exceptions/**",
+      "src/config/**",
+      "src/shared/**"
+    ]
   },
   "dependencies": {
     "@ilos/cli": "~0",

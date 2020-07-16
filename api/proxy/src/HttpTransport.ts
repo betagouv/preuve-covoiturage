@@ -247,14 +247,26 @@ export class HttpTransport implements TransportInterface {
           req.session.user = Array.isArray(response) ? response[0].result : response.result;
 
           if (req.session.user.territory_id) {
-            const list = await this.kernel.handle(
+            const operatorList = await this.kernel.handle(
               makeCall(
                 'territory:listOperator',
                 { territory_id: req.session.user.territory_id },
                 { user: req.session.user },
               ),
             );
-            req.session.user.authorizedOperators = get(list, 'result', []);
+            req.session.user.authorizedOperators = get(operatorList, 'result', []);
+
+            const descendantTerritories = await this.kernel.handle(
+              makeCall(
+                'territory:getParentChildren',
+                { territory_id: req.session.user.territory_id },
+                { user: req.session.user },
+              ),
+            );
+            req.session.user.authorizedTerritories = [
+              req.session.user.territory_id,
+              ...get(descendantTerritories, 'descendant_ids', []),
+            ];
           }
 
           this.send(res, response);

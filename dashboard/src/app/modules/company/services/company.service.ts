@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
 
-import { ParamsInterface as FindCompanyParamsInterface } from '~/core/entities/api/shared/company/find.contract';
+import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 
 @Injectable({
   providedIn: 'root',
@@ -17,21 +17,34 @@ export class CompanyService extends JsonRpcGetList<CompanyV2> {
     super(http, router, activatedRoute, 'company');
   }
 
-  findCompany(params: FindCompanyParamsInterface): Observable<CompanyV2> {
-    return this.get(params).pipe(
-      map((company) => {
-        const siren = parseInt(params.siret.substr(0, 9), 10);
-        let tvaPrefix = ((12 + 3 * (siren % 97)) % 97).toString();
-        for (let i = 0; i < 2 - tvaPrefix.length; i += 1) {
-          tvaPrefix = `0${tvaPrefix}`;
-        }
-        // tslint:disable-next-line:variable-name
-        const intra_vat = `FR${tvaPrefix}${siren}`;
-        return new CompanyV2({
-          ...company,
-          intra_vat,
-        });
-      }),
-    );
+  fetchCompany(siret: string): Observable<CompanyV2> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:fetch`, siret);
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
+
+  getById(id: number): Observable<CompanyV2> {
+    return this.get({ query: { _id: id } } as any);
+  }
+
+  // findCompany(siret:string): Observable<CompanyV2> {
+  //   return this.get(params).pipe(
+  //     map((company) => {
+  //       // TODO : apply company migration
+  //       return null;
+  //       /*
+  //       const siren = parseInt(params.siret.substr(0, 9), 10);
+  //       let tvaPrefix = ((12 + 3 * (siren % 97)) % 97).toString();
+  //       for (let i = 0; i < 2 - tvaPrefix.length; i += 1) {
+  //         tvaPrefix = `0${tvaPrefix}`;
+  //       }
+  //       // tslint:disable-next-line:variable-name
+  //       const intra_vat = `FR${tvaPrefix}${siren}`;
+  //       return new CompanyV2({
+  //         ...company,
+  //         intra_vat,
+  //       });
+  //       */
+  //     }),
+  //   );
+  // }
 }

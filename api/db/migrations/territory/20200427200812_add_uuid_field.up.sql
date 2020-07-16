@@ -6,3 +6,4 @@ CREATE INDEX
   ON territory.territories
   USING btree
   (uuid);
+  

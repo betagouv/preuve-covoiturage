@@ -13,6 +13,8 @@ import { TerritoryApiService } from '~/modules/territory/services/territory-api.
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { SortEnum, allBasicFieldEnum } from '../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
+import { allCompanyFieldEnum } from '~/modules/territory/TerritoryQueryInterface';
 
 @Injectable({
   providedIn: 'root',
@@ -97,7 +99,7 @@ export class CommonDataService {
 
   loadOperators(): Observable<Operator[]> {
     return this.operatorApiService.getList().pipe(
-      map((operators) => operators.sort((operatorA, operatorB) => operatorA.name.localeCompare(operatorB.name))),
+      map((operators) => operators.data.sort((operatorA, operatorB) => operatorA.name.localeCompare(operatorB.name))),
       tap((operators) => this._operators$.next(operators)),
     );
   }
@@ -105,7 +107,7 @@ export class CommonDataService {
   loadTerritories(): Observable<Territory[]> {
     return this.territoryApiService.getList().pipe(
       map((territories) =>
-        territories.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
+        territories.data.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
       ),
       tap((territories) => this._territories$.next(territories)),
     );
@@ -113,7 +115,7 @@ export class CommonDataService {
 
   loadCampaigns(): Observable<Campaign[]> {
     return this.campaignApiService.getList().pipe(
-      map((campaigns) => campaigns.sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name))),
+      map((campaigns) => campaigns.data.sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name))),
       tap((campaigns) => this._campaigns$.next(campaigns)),
     );
   }
@@ -129,7 +131,13 @@ export class CommonDataService {
           }
 
           if (user.territory_id) {
-            params.push(this.territoryApiService.paramGetById(user.territory_id));
+            params.push(
+              this.territoryApiService.paramGetById(
+                user.territory_id,
+                [SortEnum.NameAsc],
+                [...allBasicFieldEnum, ...allCompanyFieldEnum],
+              ),
+            );
           } else if (user.operator_id) {
             params.push(this.operatorApiService.paramGetById(user.operator_id));
           }

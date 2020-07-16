@@ -19,7 +19,6 @@ import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
-import { RefreshAction } from './actions/RefreshAction';
 import { ExportAction } from './actions/ExportAction';
 import { BuildExportAction } from './actions/BuildExportAction';
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
@@ -38,7 +37,7 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [ListAction, StatsAction, RefreshAction, ExportAction, BuildExportAction],
+  handlers: [ListAction, StatsAction, ExportAction, BuildExportAction],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {

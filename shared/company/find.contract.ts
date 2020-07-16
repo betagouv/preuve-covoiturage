@@ -1,8 +1,11 @@
 import { CompanyInterface } from '../common/interfaces/CompanyInterface2';
 
 export interface ParamsInterface {
-  siret: string;
-  source?: string;
+  query: {
+    siret?: string;
+    _id?: number;
+  };
+  forceRemoteUpdate?: boolean;
 }
 
 export interface ResultInterface extends CompanyInterface {}
