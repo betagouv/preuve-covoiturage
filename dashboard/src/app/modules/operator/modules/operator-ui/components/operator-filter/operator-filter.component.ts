@@ -28,13 +28,8 @@ export class OperatorFilterComponent implements OnInit {
       query: [''],
     });
 
-    this.searchFilters.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-      )
-      .subscribe((value) => {
-        this.filter();
-      });
+    this.searchFilters.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe((value) => {
+      this.filter();
+    });
   }
 }

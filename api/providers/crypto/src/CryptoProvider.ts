@@ -12,10 +12,7 @@ export class CryptoProvider implements ProviderInterface {
 
   async sha256(content: string): Promise<string> {
     // TODO get secret from config
-    return crypto
-      .createHmac('sha256', 'abcd')
-      .update(content)
-      .digest('base64');
+    return crypto.createHmac('sha256', 'abcd').update(content).digest('base64');
   }
 
   async cryptPassword(plainPassword: string): Promise<string> {

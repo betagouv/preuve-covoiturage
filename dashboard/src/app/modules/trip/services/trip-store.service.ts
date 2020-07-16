@@ -40,12 +40,8 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     // map moment to date
     const params: ExportFilterInterface = {
       date: {
-        start: moment(filter.date.start)
-          .startOf('day')
-          .toISOString(),
-        end: moment(filter.date.end)
-          .endOf('day')
-          .toISOString(),
+        start: moment(filter.date.start).startOf('day').toISOString(),
+        end: moment(filter.date.end).endOf('day').toISOString(),
       },
     };
     const loggedUser = this._authService.user;

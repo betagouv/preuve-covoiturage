@@ -46,11 +46,7 @@ async function checkApplication(
 
 async function logRequest(kernel: KernelInterface, request: Request, payload: TokenPayloadInterface): Promise<void> {
   if (get(process.env, 'NODE_ENV', '') === 'production') return;
-  if (
-    get(process.env, 'APP_DEBUG_REQUEST', 'false')
-      .trim()
-      .toLowerCase() !== 'true'
-  ) {
+  if (get(process.env, 'APP_DEBUG_REQUEST', 'false').trim().toLowerCase() !== 'true') {
     return;
   }
 

@@ -21,9 +21,7 @@ import { TripStoreService } from '~/modules/trip/services/trip-store.service';
 })
 export class TripExportComponent extends DestroyObservable implements OnInit {
   isExporting = false;
-  minDate = moment()
-    .subtract(1, 'year')
-    .toDate();
+  minDate = moment().subtract(1, 'year').toDate();
   exportFilterForm: FormGroup;
 
   constructor(
@@ -73,13 +71,8 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   private initForm(): void {
-    const start = moment()
-      .subtract(1, 'month')
-      .startOf('day')
-      .toDate();
-    const end = moment()
-      .endOf('day')
-      .toDate();
+    const start = moment().subtract(1, 'month').startOf('day').toDate();
+    const end = moment().endOf('day').toDate();
     this.exportFilterForm = this._fb.group({
       date: this._fb.group({
         start: [start],

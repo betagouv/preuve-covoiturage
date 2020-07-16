@@ -150,10 +150,7 @@ describe('Application service', () => {
             call: {
               user: {
                 // generate false operator_id
-                operator_id: String(operator_id)
-                  .split('')
-                  .reverse()
-                  .join(''),
+                operator_id: String(operator_id).split('').reverse().join(''),
                 permissions: ['application.revoke'],
               },
             },

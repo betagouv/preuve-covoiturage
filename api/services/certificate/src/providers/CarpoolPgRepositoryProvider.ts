@@ -39,14 +39,16 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
     const where_positions = positions
       .reduce((prev: string[], pos: PointInterface): string[] => {
         prev.push(
-          `ST_Distance(ST_MakePoint(\$${values.length + 1}, \$${values.length +
-            2}), cc.start_position) < \$${values.length + 3}`,
+          `ST_Distance(ST_MakePoint(\$${values.length + 1}, \$${values.length + 2}), cc.start_position) < \$${
+            values.length + 3
+          }`,
         );
         values.push(pos.lon, pos.lat, Math.abs(radius | 0));
 
         prev.push(
-          `ST_Distance(ST_MakePoint(\$${values.length + 1}, \$${values.length +
-            2}), cc.end_position) < \$${values.length + 3}`,
+          `ST_Distance(ST_MakePoint(\$${values.length + 1}, \$${values.length + 2}), cc.end_position) < \$${
+            values.length + 3
+          }`,
         );
         values.push(pos.lon, pos.lat, Math.abs(radius | 0));
 

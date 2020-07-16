@@ -121,8 +121,7 @@ export type ProjectionFieldsEnum = (
   | ActiveFieldEnum
   | GeoFieldEnum
   | TerritoryCodeEnum
-  | CompanyEnum
-)[];
+  | CompanyEnum)[];
 
 export const allGeoFieldEnum: ProjectionFieldsEnum = [GeoFieldEnum.Geo];
 
