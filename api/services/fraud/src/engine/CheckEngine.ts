@@ -1,6 +1,5 @@
 import { provider, ServiceContainerInterfaceResolver, NewableType } from '@ilos/common';
 
-import { FraudCheckRepositoryProviderInterfaceResolver } from '../interfaces/FraudCheckRepositoryProviderInterface';
 import { checks as checkList } from './checks';
 import {
   StaticCheckInterface,
@@ -8,16 +7,14 @@ import {
   HandleCheckInterface,
   PrepareCheckInterface,
 } from '../interfaces/CheckInterface';
-import { FraudCheck, FraudCheckStatusEnum } from '../interfaces';
+
+import { FraudCheck, FraudCheckStatusEnum, FraudCheckEntry } from '../interfaces';
 
 @provider()
 export class CheckEngine {
   public readonly checks: StaticCheckInterface[] = [...checkList];
 
-  constructor(
-    private repository: FraudCheckRepositoryProviderInterfaceResolver,
-    private service: ServiceContainerInterfaceResolver,
-  ) {}
+  constructor(private service: ServiceContainerInterfaceResolver) {}
 
   /**
    *  Get a processor ctor from a method string
@@ -50,17 +47,17 @@ export class CheckEngine {
         try {
           result.push({
             status: FraudCheckStatusEnum.Done,
-            acquisition_id: acquisitionId,
             method: name,
             karma: await instance.handle(line),
           });
         } catch (e) {
           result.push({
             status: FraudCheckStatusEnum.Error,
-            acquisition_id: acquisitionId,
             method: name,
             karma: null,
-            error: e.message,
+            meta: {
+              error: e.message,
+            },
           });
           throw e;
         }
@@ -73,7 +70,11 @@ export class CheckEngine {
     return (check as HandleCheckInterface).preparer !== undefined;
   }
 
-  async run(acquisitionId: number, methods: string[]): Promise<void> {
+  async run(acquisitionId: number, input: FraudCheck[]): Promise<FraudCheckEntry> {
+    const output: Map<string, FraudCheck> = new Map(input.map((i) => [i.method, i]));
+    const processedMethods = input.filter((i) => i.status === 'done').map((i) => i.method);
+    const methods = this.listAvailableMethods().filter((m) => !processedMethods.indexOf(m));
+
     const methodInstancesMap = methods
       .map((s) => {
         return [s, this.getCheckProcessor(s)];
@@ -96,17 +97,31 @@ export class CheckEngine {
         return methodMap;
       }, new Map<NewableType<PrepareCheckInterface>, Map<string, HandleCheckInterface>>());
 
-    const results: FraudCheck[] = [];
-
     for (const [preparer, checks] of methodInstancesMap) {
-      results.push(...(await this.apply(acquisitionId, checks, preparer)));
+      (await this.apply(acquisitionId, checks, preparer)).map((r) => {
+        output.set(r.method, r);
+      });
     }
 
-    await this.repository.createOrUpdateMany(results);
-    return;
+    const status = this.getStatus([...output.values()].map((v) => v.status));
+    const karma = await this.getGlobalScore(output);
+
+    return {
+      acquisition_id: acquisitionId,
+      status,
+      karma,
+      data: [...output.values()],
+    };
   }
 
-  async getGlobalScore(acquisitionId: number): Promise<number> {
-    return this.repository.getScore(acquisitionId);
+  protected getStatus(status: FraudCheckStatusEnum[]): FraudCheckStatusEnum {
+    const statusEnum = [FraudCheckStatusEnum.Done, FraudCheckStatusEnum.Pending, FraudCheckStatusEnum.Error];
+    return statusEnum[status.map((s) => statusEnum.indexOf(s)).reduce((s, c) => (c > s ? c : s), 0)];
+  }
+
+  async getGlobalScore(results: Map<string, FraudCheck>): Promise<number> {
+    // do stuff
+
+    return 0;
   }
 }
