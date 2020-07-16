@@ -13,8 +13,8 @@ export class HighDurationCheck implements HandleCheckInterface<SelfCheckParamsIn
   public static readonly key: string = 'highDurationCheck';
   public readonly preparer = SelfCheckPreparator;
 
-  protected readonly max: number = 43200; // above = 100
-  protected readonly min: number = 7200; // below = 0
+  protected readonly max: number = 28800; // above = 100
+  protected readonly min: number = 5400; // below = 0
 
   async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
     const { driver_duration, passenger_duration } = params;

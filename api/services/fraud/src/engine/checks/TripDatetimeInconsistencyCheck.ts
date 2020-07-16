@@ -12,7 +12,7 @@ interface TripDatetimeParamsInterface {
 @provider()
 export class TripDatetimeInconsistencyCheck implements CheckInterface<TripDatetimeParamsInterface> {
   public static readonly key: string = 'tripDatetimeInconsistencyCheck';
-  protected readonly min = 300; // 5 minutes MIN
+  protected readonly min = 1200; // 5 minutes MIN
   protected readonly max = 21600; // 6 hours MAX
 
   constructor(protected connection: PostgresConnection) {}

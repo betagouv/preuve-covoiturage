@@ -13,8 +13,8 @@ export class HighSeatCheck implements HandleCheckInterface<SelfCheckParamsInterf
   public static readonly key: string = 'highSeatCheck';
   public readonly preparer = SelfCheckPreparator;
 
-  protected readonly max: number = 8; // above = 100
-  protected readonly min: number = 5; // below = 0
+  protected readonly max: number = 7; // above = 100
+  protected readonly min: number = 4; // below = 0
 
   async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
     const { passenger_seats } = params;

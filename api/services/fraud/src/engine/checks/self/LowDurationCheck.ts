@@ -14,7 +14,7 @@ export class LowDurationCheck implements HandleCheckInterface<SelfCheckParamsInt
   public readonly preparer = SelfCheckPreparator;
 
   protected readonly max: number = 300; // above = 0
-  protected readonly min: number = 0; // below = 100
+  protected readonly min: number = 1; // below = 100
 
   async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
     const { driver_duration, passenger_duration } = params;
