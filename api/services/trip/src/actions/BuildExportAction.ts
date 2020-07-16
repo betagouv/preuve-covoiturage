@@ -7,7 +7,7 @@ import csvStringify, { Stringifier } from 'csv-stringify';
 
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
-import { FileStorageProvider } from '@pdc/provider-file';
+import { S3StorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
@@ -63,7 +63,7 @@ export class BuildExportAction extends Action {
   constructor(
     private config: ConfigInterfaceResolver,
     private pg: TripRepositoryProvider,
-    private file: FileStorageProvider,
+    private file: S3StorageProvider,
     private kernel: KernelInterfaceResolver,
   ) {
     super();
@@ -159,48 +159,70 @@ export class BuildExportAction extends Action {
   };
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const cursor = await this.pg.searchWithCursor(params.query, params.from.type);
+    try {
+      const cursor = await this.pg.searchWithCursor(params.query);
 
-    let count = 0;
+      let count = 0;
 
-    const filename = path.join(os.tmpdir(), v4());
-    const fd = await fs.promises.open(filename, 'a');
-    const stringifier = await this.getStringifier(fd, params.from.type);
+      const filename = path.join(os.tmpdir(), v4());
+      const fd = await fs.promises.open(filename, 'a');
+      const stringifier = await this.getStringifier(fd);
 
-    do {
-      const results = await cursor(10);
-      count = results.length;
-      for (const line of results) {
-        stringifier.write(this.normalize(line));
-      }
-    } while (count !== 0);
+      do {
+        const results = await cursor(10);
+        count = results.length;
+        for (const line of results) {
+          stringifier.write(line);
+        }
+      } while (count !== 0);
 
-    stringifier.end();
-    await fd.close();
+      stringifier.end();
+      await fd.close();
 
-    const { url, password } = await this.file.copy(filename);
-    const email = params.from.email;
-    const fullname = params.from.fullname;
+      const { url, password } = await this.file.copy(filename);
+      const email = params.from.email;
+      const fullname = params.from.fullname;
 
-    const emailParams = {
-      password,
-      email,
-      fullname,
-      template: this.config.get('email.templates.export_csv'),
-      templateId: this.config.get('notification.templateIds.export_csv'),
-      link: url,
-    };
+      const emailParams = {
+        password,
+        email,
+        fullname,
+        template: this.config.get('email.templates.export_csv'),
+        templateId: this.config.get('notification.templateIds.export_csv'),
+        link: url,
+      };
 
-    await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {
-      channel: {
-        service: 'trip',
-      },
-      call: {
-        user: {},
-      },
-    });
+      await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {
+        channel: {
+          service: 'trip',
+        },
+        call: {
+          user: {},
+        },
+      });
 
-    return;
+      return;
+    } catch (e) {
+      await this.kernel.notify<NotifyParamsInterface>(
+        notifySignature,
+        {
+          password: '',
+          email: params.from.email,
+          fullname: params.from.fullname,
+          template: this.config.get('email.templates.export_csv_error'),
+          templateId: this.config.get('notification.templateIds.export_csv_error'),
+          link: '',
+        },
+        {
+          channel: {
+            service: 'trip',
+          },
+          call: {
+            user: {},
+          },
+        },
+      );
+    }
   }
 
   protected async getStringifier(fd: fs.promises.FileHandle, type = 'opendata'): Promise<Stringifier> {
@@ -222,10 +244,6 @@ export class BuildExportAction extends Action {
     stringifier.on('error', (err) => {
       console.error(err.message);
     });
-
-    // stringifier.on('finish', async () => {
-    //
-    // });
 
     return stringifier;
   }

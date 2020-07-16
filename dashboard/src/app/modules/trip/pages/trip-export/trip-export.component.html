@@ -1,6 +1,16 @@
 <div class="exportFilter">
   <h3>Recevoir les données au format .CSV par email</h3>
-  <form [formGroup]="exportFilterForm" *ngIf="!exported">
+
+  <!-- <div class="notice">
+    <p>L'export est momentanément désactivé pour des raisons techniques.</p>
+    <p>
+      Vous pouvez contacter <a href="mailto:contact@covoiturage.beta.gouv.fr">contact@covoiturage.beta.gouv.fr</a> si
+      vous avez besoin de données spécifiques.
+    </p>
+    <p>Merci de votre compréhension</p>
+  </div> -->
+
+  <form [formGroup]="exportFilterForm">
     <div class="exportFilter-dates" formGroupName="date">
       <mat-form-field appearance="outline">
         <mat-label>Début</mat-label>
@@ -34,8 +44,4 @@
       </button>
     </div>
   </form>
-  <p class="exportFilter-message" *ngIf="exported">
-    L'export est en cours. <br />
-    Quand l'export sera prêt, vous recevrez un email avec un lien de téléchargement.
-  </p>
 </div>

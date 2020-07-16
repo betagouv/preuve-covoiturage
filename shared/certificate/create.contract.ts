@@ -1,5 +1,6 @@
 import { IdentityIdentifiersInterface } from './common/interfaces/IdentityIdentifiersInterface';
 import { PointInterface } from '../common/interfaces/PointInterface';
+import { CertificateMetaInterface } from './common/interfaces/CertificateMetaInterface';
 
 export interface ParamsInterface {
   tz: string;
@@ -15,6 +16,7 @@ export interface ResultInterface {
   created_at: Date;
   pdf_url: string;
   png_url: string;
+  meta: CertificateMetaInterface;
 }
 
 export type RepositoryInterface = Required<ParamsInterface>;

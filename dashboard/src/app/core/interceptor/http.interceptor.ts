@@ -1,17 +1,20 @@
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 
 import { environment } from '../../../environments/environment';
-import { AuthenticationService } from '../services/authentication/authentication.service';
 
 @Injectable()
 export class HttpApiInterceptor implements HttpInterceptor {
   private APIMETHODS = ['POST', 'GET', 'PATCH', 'PUT', 'DELETE'];
   private api = environment.apiUrl;
-  private currentToken: string;
+  private router;
 
-  constructor(private authService: AuthenticationService) {}
+  constructor(private injector: Injector) {
+    this.router = this.injector.get(Router);
+  }
 
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (req.url.includes('assets/icons')) {
@@ -27,6 +30,14 @@ export class HttpApiInterceptor implements HttpInterceptor {
 
     const clonedRequest: HttpRequest<any> = req.clone(update);
 
-    return next.handle(clonedRequest);
+    return next.handle(clonedRequest).pipe(
+      catchError((error) => {
+        if (error.status === 503) {
+          this.router.navigate(['/503']);
+        }
+
+        return throwError(error);
+      }),
+    );
   }
 }

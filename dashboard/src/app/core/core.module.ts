@@ -16,6 +16,7 @@ import { NotAuthenticatedLayoutComponent } from './components/not-authenticated-
 import { AuthenticatedLayoutComponent } from './components/authenticated-layout/authenticated-layout.component';
 import { HttpApiInterceptor } from './interceptor/http.interceptor';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { ServiceUnavailableComponent } from './components/service-unavailable/service-unavailable.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     NotAuthenticatedLayoutComponent,
     ConfirmDialogComponent,
     NotFoundComponent,
+    ServiceUnavailableComponent,
   ],
   imports: [
     CommonModule,
