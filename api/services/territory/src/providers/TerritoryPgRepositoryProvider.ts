@@ -221,9 +221,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           // case TerritoryCodeEnum.Postcode,
           const tableAliasName = `tc_${field}`;
 
-          selectsFields.push(
-            `array(SELECT value from territory.territory_codes as ${tableAliasName} WHERE territory_id = t._id and type = '${field}') as ${field}`,
-          );
+          /* eslint-disable */
+          // prettier-ignore
+          selectsFields.push(`array(SELECT value from territory.territory_codes as ${tableAliasName} WHERE territory_id = t._id and type = '${field}') as ${field}`);
+        /* eslint-enable */
+
         case allAncestorRelationFieldEnum.indexOf(field) !== -1:
           // selectsFields.push(`tv.${field}`);
           // autoBuildAncestorJoin();
