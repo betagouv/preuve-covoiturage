@@ -28,7 +28,7 @@ export class CheckAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const input = await this.repository.get(params.acquisition_id);
-    const results = await this.engine.run(params.acquisition_id, input.data);
+    const results = await this.engine.run(params.acquisition_id, input.data || []);
     await this.repository.createOrUpdate(results);
 
     if (results.status === FraudCheckStatusEnum.Done) {

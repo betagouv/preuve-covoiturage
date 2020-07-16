@@ -9,6 +9,7 @@ import {
 } from '../interfaces/CheckInterface';
 
 import { FraudCheck, FraudCheckStatusEnum, FraudCheckEntry } from '../interfaces';
+import { scoringRules, scoringFallback } from './helpers/scoring';
 
 @provider()
 export class CheckEngine {
@@ -73,7 +74,7 @@ export class CheckEngine {
   async run(acquisitionId: number, input: FraudCheck[]): Promise<FraudCheckEntry> {
     const output: Map<string, FraudCheck> = new Map(input.map((i) => [i.method, i]));
     const processedMethods = input.filter((i) => i.status === 'done').map((i) => i.method);
-    const methods = this.listAvailableMethods().filter((m) => !processedMethods.indexOf(m));
+    const methods = this.listAvailableMethods().filter((m) => processedMethods.indexOf(m) < 0);
 
     const methodInstancesMap = methods
       .map((s) => {
@@ -120,8 +121,49 @@ export class CheckEngine {
   }
 
   async getGlobalScore(results: Map<string, FraudCheck>): Promise<number> {
-    // do stuff
+    const rules = [...scoringRules];
+    for (const [threshold, ruleSet] of rules) {
+      if (
+        ruleSet
+          .map((name) => {
+            if (!results.has(name)) {
+              throw new Error(`Unknown test ${name}`);
+            }
+            const res = results.get(name);
+            if (res.status !== 'done') {
+              throw new Error(`Test ${res.method} has non done status (${res.status})`);
+            }
+            return results.get(name);
+          })
+          .map((r) => r.karma)
+          .reduce((acc, r) => acc + r, 0) >= threshold
+      ) {
+        return 1;
+      }
+    }
+    const fallback = [...scoringFallback];
+    const fallbackFiltered: { coef: number; rule: FraudCheck }[] = fallback.map((fb) => {
+      const [coef, ruleName] = fb;
+      if (!results.has(ruleName)) {
+        throw new Error(`Unknown test ${name}`);
+      }
+      const rule = results.get(ruleName);
+      if (rule.status !== 'done') {
+        throw new Error(`Test ${rule.method} has non done status (${rule.status})`);
+      }
+      return { coef, rule };
+    });
 
-    return 0;
+    const nb = fallbackFiltered.map((fb) => fb.coef).reduce((acc, i) => i + acc, 0);
+
+    return Math.min(
+      fallbackFiltered
+        .map((fb: { coef: number; rule: FraudCheck }) => {
+          const { coef, rule } = fb;
+          return coef * rule.karma;
+        })
+        .reduce((acc, r) => acc + r, 0) / nb,
+      1,
+    );
   }
 }
