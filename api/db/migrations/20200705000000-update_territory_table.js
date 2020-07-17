@@ -8,11 +8,28 @@ var { createMigration } = require('../helpers/createMigration');
 
 var { setup, up, down } = createMigration(
   [
+    // add _id to company.companies
     'company/20200406000000_update_company_table',
+
+    /**
+     * Create new territory.territories table
+     * Create territory.territory_codes table
+     * Create territory.territory_relation table
+     */
     'territory/20200406000000_update_territory_table',
+
+    /**
+     * Migrate data
+     * - territory.territories_old => territory.territories
+     * - common.insee => territory.territories
+     * - common.insee(postcodes) => territory.territory_codes
+     * - common.insee(insee) => territory.territory_codes
+     * - parent/child territory_id => territory.territory_relation
+     * -
+     */
     'territory/20200406000001_migrate_territory_data',
 
-    // 'territory/20200606000000_create_territory_view_table',
+    'territory/20200606000000_create_territory_view_table',
     'territory/20200606000001_create_territory_view_data_func',
     'territory/20200606000001_create_territory_view_territory_triggers',
     'territory/20200606000002_create_territory_view_relation_triggers',

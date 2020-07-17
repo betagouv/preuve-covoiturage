@@ -13,11 +13,6 @@ CREATE OR REPLACE FUNCTION get_territory_view_data(ids int[]) RETURNS TABLE(
     postcode varchar[],
     codedep varchar[],
     breadcrumb territory.breadcrumb
-
-
-
-
-    
 )  AS $$ 
 BEGIN
 
@@ -201,5 +196,3 @@ BEGIN
     RETURN;
 END
 $$ LANGUAGE plpgsql;
-
-
