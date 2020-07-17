@@ -16,7 +16,6 @@ CREATE TYPE territory.breadcrumb AS (
   towngroup varchar
 );
 
-
 DROP TYPE IF EXISTS breadcrumb_to_json; 
 
 create or replace function breadcrumb_to_json(bc territory.breadcrumb) returns json as $$
@@ -77,5 +76,3 @@ DROP TABLE IF EXISTS territory.territories_view;
 );
 
 CREATE INDEX ON territory.territories_view (_id);
-
-
