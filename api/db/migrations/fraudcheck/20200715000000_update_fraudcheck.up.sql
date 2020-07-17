@@ -41,7 +41,6 @@ $$ language sql;
 
 create cast (json as fraudcheck.result[]) with function fraudcheck.json_to_result_array(_ti json) as assignment;
 
-CREATE TYPE fraudcheck.status_enum as enum('pending', 'done', 'error');
 
 ALTER TABLE fraudcheck.fraudchecks RENAME TO fraudchecks_old;
 
