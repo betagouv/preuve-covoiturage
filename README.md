@@ -58,6 +58,17 @@ yarn run build
 
 `// TODO seed users and make easy onboarding`
 
+### Migrations
+
+```
+// use SKIP_MIGRATIONS=true to skip migrations in an automated deployment process
+
+cd api
+yarn migrate
+// OR
+docker-compose run api yarn migrate
+```
+
 ### Configuration
 
 #### Secrets configuration
