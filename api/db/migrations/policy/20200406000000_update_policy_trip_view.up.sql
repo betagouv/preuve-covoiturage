@@ -19,8 +19,8 @@ CREATE MATERIALIZED VIEW policy.trips AS (
     id.identity_uuid as identity_uuid,
     id.has_travel_pass as has_travel_pass,
     id.is_over_18 as is_over_18,
-    cp.start_territory_id as start_territory_id,
-    cp.end_territory_id as end_territory_id,
+    ts.ancestors | cp.start_territory_id as start_territory_id,
+    te.ancestors | cp.end_territory_id as end_territory_id,
     ap.applicable_policies as applicable_policies,
     pp.processed_policies as processed_policies,
     (ap.applicable_policies - pp.processed_policies) as processable_policies
