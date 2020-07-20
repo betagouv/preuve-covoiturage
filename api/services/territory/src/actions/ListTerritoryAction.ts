@@ -15,6 +15,7 @@ export class ListTerritoryAction extends AbstractAction {
   public async handle(filter?: TerritoryListFilter): Promise<ResultInterface> {
     const data = await this.territoryRepository.all(
       filter && filter.search ? filter.search : undefined,
+      filter && filter.levels ? filter.levels : undefined,
       filter && filter.limit ? filter.limit : undefined,
       filter && filter.skip ? filter.skip : undefined,
     );

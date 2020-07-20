@@ -13,6 +13,7 @@ import {
 import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
 import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
+import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
 
 export interface TerritoryRepositoryProviderInterface {
   find(
@@ -23,7 +24,12 @@ export interface TerritoryRepositoryProviderInterface {
   ): Promise<TerritoryDbMetaInterface>;
 
   getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]>;
-  all(search?: string, limit?: number, skip?: number): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }>;
+  all(
+    search?: string,
+    levels?: TerritoryLevelEnum[],
+    limit?: number,
+    skip?: number,
+  ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }>;
   create(data: CreateParams): Promise<CreateResultInterface>;
   delete(_id: number): Promise<void>;
   update(data: PatchParamsInterface): Promise<TerritoryDbMetaInterface>;
@@ -50,6 +56,7 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
 
   async all(
     search?: string,
+    levels?: TerritoryLevelEnum[],
     limit?: number,
     skip?: number,
   ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }> {
