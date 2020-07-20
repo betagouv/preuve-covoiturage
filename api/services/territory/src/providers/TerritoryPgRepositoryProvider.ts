@@ -12,6 +12,7 @@ import {
   TerritoryRepositoryProviderInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
+import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
 
 import {
   TerritoryQueryInterface,
@@ -342,20 +343,24 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   async all(
     search?: string,
+    levels?: TerritoryLevelEnum[],
     limit?: number,
     skip?: number,
   ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }> {
+    // build search filter
     const searchCondition = search
-      ? search
-          .split(/\_|\-|\,|\ /)
-          .map((word) => ` LOWER(name) LIKE '%${word.toLowerCase()}%'`)
-          .join(' AND ')
-      : null;
+      ? search.split(/\_|\-|\,|\ /).map((word) => ` LOWER(name) LIKE '%${word.toLowerCase()}%'`)
+      : [];
+
+    // build level filter
+    if (levels) searchCondition.push(`(${levels.map((level) => `level = '${level}'`).join('OR')})`);
+
+    const searchConditionString = searchCondition && searchCondition.length > 0 ? searchCondition.join('AND') : null;
 
     const client = this.connection.getClient();
 
     const countQuery = `SELECT count(*) as territory_count from ${this.table} ${
-      searchCondition ? ` WHERE ${searchCondition}` : ''
+      searchConditionString ? ` WHERE ${searchConditionString}` : ''
     }`;
 
     console.log(countQuery);
@@ -366,7 +371,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       text: `
         SELECT name,_id FROM ${this.table} t
         WHERE deleted_at IS NULL 
-        ${searchCondition ? ` AND ${searchCondition}` : ''}
+        ${searchConditionString ? ` AND ${searchConditionString}` : ''}
 
         
         ${limit !== undefined ? ` LIMIT ${limit}` : ''}
