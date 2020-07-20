@@ -363,16 +363,17 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       searchConditionString ? ` WHERE ${searchConditionString}` : ''
     }`;
 
-    console.log(countQuery);
-
     const count = parseFloat((await client.query(countQuery)).rows[0].territory_count);
 
     const query = {
       text: `
-        SELECT name,_id FROM ${this.table} t
-        WHERE deleted_at IS NULL 
-        ${searchConditionString ? ` AND ${searchConditionString}` : ''}
+        SELECT name,t._id, tc.value as insee FROM ${this.table} t
 
+        LEFT JOIN territory.territory_codes tc ON(tc.territory_id = t._id AND tc.type = 'insee')
+
+        WHERE deleted_at IS NULL
+
+        ${searchConditionString ? ` AND ${searchConditionString}` : ''}
         
         ${limit !== undefined ? ` LIMIT ${limit}` : ''}
         ${skip !== undefined ? ` OFFSET ${skip}` : ''}
@@ -381,6 +382,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     };
 
     const result = await client.query(query);
+
     return { rows: result.rows, count };
   }
 
