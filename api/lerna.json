@@ -1,5 +1,6 @@
 {
   "packages": [
+    "ilos/packages/*",
     "core",
     "proxy",
     "providers/*",
