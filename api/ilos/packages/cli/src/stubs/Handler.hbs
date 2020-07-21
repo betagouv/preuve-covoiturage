@@ -1,0 +1,22 @@
+import { Action } from '@ilos/core';
+import { handler, ParamsType, ContextType, ResultType } from '@ilos/common';
+
+@handler({
+  service: 'myService',
+  method: '{{name}}',
+})
+export class {{name}}Action extends Action {
+  constructor(
+    // here inject your dependencies
+    // private provider: MyProviderInterfaceResolver,
+  ) {
+    super();
+  }
+
+  protected async handle(
+    params: ParamsType,
+    context: ContextType,
+  ): Promise<ResultType> {
+    // 
+  }
+}

@@ -12,10 +12,6 @@ fi
 find . -type d -name node_modules -exec rm -rf {} \;
 find . -type d -name dist -exec rm -rf {} \;
 
-cd ilos
 yarn
-yarn build
+yarn build:all
 
-cd ..
-yarn
-yarn build
