@@ -14,5 +14,8 @@
     "coverage-ci": "echo '[provider-template] No tests'; exit 0",
     "coverage": "echo '[provider-template] No tests'; exit 0",
     "lint": "eslint 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "@ilos/common": "^0"
   }
 }
