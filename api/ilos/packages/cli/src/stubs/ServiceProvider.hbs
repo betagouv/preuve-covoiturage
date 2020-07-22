@@ -1,0 +1,9 @@
+import { ServiceProvider } from '@ilos/core';
+import { serviceProvider } from '@ilos/common';
+
+@serviceProvider({
+  providers: [], // Declare your providers
+  handlers: [], // Declare your handlers
+  children: [], // Declare sub service providers here  
+})
+export class {{name}}ServiceProvider extends ServiceProvider {}

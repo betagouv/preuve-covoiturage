@@ -1,0 +1,52 @@
+{
+  "name": "ilos",
+  "version": "0.0.1",
+  "description": "RPC microframework written in Typescript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/betagouv/ilos.git"
+  },
+  "license": "Apache-2.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "lint": "eslint \"packages/**/src/**/*.ts\"",
+    "clean:dep": "rm -rf packages/*/node_modules node_modules",
+    "clean": "rm -rf packages/*/dist",
+    "build": "yarn clean && yarn build:packages && yarn build:permissions",
+    "build:packages": "lerna run --sort build",
+    "build:permissions": "chmod u+x packages/framework/dist/cli.js",
+    "test": "ava",
+    "test:integration": "lerna run test:integration",
+    "coverage:ci": "nyc --all --reporter=lcov ava",
+    "coverage": "nyc --all --reporter=text ava",
+    "watch": "lerna run --parallel watch",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs",
+    "changed": "lerna changed",
+    "publish": "lerna publish"
+  },
+  "devDependencies": {
+    "@types/node": "^13.7.2",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
+    "ava": "^3.3.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "lerna": "^3.20.2",
+    "nyc": "^15.0.0",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.6.2",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^3.7.5"
+  },
+  "ava": {
+    "files": [
+      "./packages/*/dist/**/*.spec.js"
+    ]
+  }
+}

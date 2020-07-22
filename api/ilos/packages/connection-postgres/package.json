@@ -1,0 +1,31 @@
+{
+  "name": "@ilos/connection-postgres",
+  "version": "0.4.1",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "exit 0",
+    "test:integration": "echo 'No integration test'; exit 0"
+  },
+  "dependencies": {
+    "pg": "^7.18.1",
+    "pg-cursor": "^2.1.5",
+    "@ilos/common": "^0.4.1",
+    "@ilos/connection-manager": "^0.4.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^7.11.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
+  }
+}
