@@ -76,10 +76,7 @@ export class QueueExtension implements RegisterHookInterface, InitHookInterface 
 
   protected registerQueue(targets: QueueTargetType[], serviceContainer: ServiceContainerInterface) {
     for (const target of targets) {
-      serviceContainer
-        .getContainer()
-        .root.bind(QueueExtension.containerKey)
-        .toConstantValue(target);
+      serviceContainer.getContainer().root.bind(QueueExtension.containerKey).toConstantValue(target);
     }
     this.registerQueueHandlers(targets, serviceContainer);
   }

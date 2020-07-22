@@ -52,21 +52,21 @@ export const QRUtil = {
   G15: (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
   G18: (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
   G15_MASK: (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1),
-  getBCHTypeInfo: function(data) {
+  getBCHTypeInfo: function (data) {
     let d = data << 10;
     while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
       d ^= QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15));
     }
     return ((data << 10) | d) ^ QRUtil.G15_MASK;
   },
-  getBCHTypeNumber: function(data) {
+  getBCHTypeNumber: function (data) {
     let d = data << 12;
     while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
       d ^= QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18));
     }
     return (data << 12) | d;
   },
-  getBCHDigit: function(data) {
+  getBCHDigit: function (data) {
     let digit = 0;
     while (data != 0) {
       digit++;
@@ -74,10 +74,10 @@ export const QRUtil = {
     }
     return digit;
   },
-  getPatternPosition: function(typeNumber) {
+  getPatternPosition: function (typeNumber) {
     return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
   },
-  getMask: function(maskPattern, i, j) {
+  getMask: function (maskPattern, i, j) {
     switch (maskPattern) {
       case QRMaskPattern.PATTERN000:
         return (i + j) % 2 == 0;
@@ -99,14 +99,14 @@ export const QRUtil = {
         throw new Error('bad maskPattern:' + maskPattern);
     }
   },
-  getErrorCorrectPolynomial: function(errorCorrectLength) {
+  getErrorCorrectPolynomial: function (errorCorrectLength) {
     let a = new QRPolynomial([1], 0);
     for (let i = 0; i < errorCorrectLength; i++) {
       a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0));
     }
     return a;
   },
-  getLengthInBits: function(mode, type) {
+  getLengthInBits: function (mode, type) {
     if (1 <= type && type < 10) {
       switch (mode) {
         case QRMode.MODE_NUMBER:
@@ -150,7 +150,7 @@ export const QRUtil = {
       throw new Error('type:' + type);
     }
   },
-  getLostPoint: function(qrCode) {
+  getLostPoint: function (qrCode) {
     const moduleCount = qrCode.getModuleCount();
     let lostPoint = 0;
     for (var row = 0; row < moduleCount; row++) {

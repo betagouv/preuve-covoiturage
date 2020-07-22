@@ -8,7 +8,7 @@ import { ExtensionConfigurationType, extensionConfigurationMetadataKey } from '.
 type AnyConfig = { [k: string]: any };
 
 function extensionTag(config: AnyConfig) {
-  return function(target) {
+  return function (target) {
     Reflect.ownKeys(config).forEach((key: string) => {
       // Reflect.defineMetadata(`extension:${key}`, config[key], target.prototype);
       Reflect.defineMetadata(Symbol.for(`extension:${key}`), config[key], target);
@@ -18,7 +18,7 @@ function extensionTag(config: AnyConfig) {
 }
 
 export function provider(config: AnyConfig = {}) {
-  return function(target) {
+  return function (target) {
     if ('boot' in target.prototype) {
       const metadata = new Metadata(METADATA_KEY.POST_CONSTRUCT, 'boot');
       Reflect.defineMetadata(METADATA_KEY.POST_CONSTRUCT, metadata, target);
@@ -48,7 +48,7 @@ export function handler(config: HandlerConfigType & MiddlewareConfigType) {
   if (!('middlewares' in config)) {
     middlewares = [];
   }
-  return function(target) {
+  return function (target) {
     Reflect.defineMetadata(HandlerMeta.SERVICE, service, target);
     Reflect.defineMetadata(HandlerMeta.METHOD, method, target);
     Reflect.defineMetadata(HandlerMeta.VERSION, version, target);
@@ -60,13 +60,13 @@ export function handler(config: HandlerConfigType & MiddlewareConfigType) {
 }
 
 export function serviceProvider(config: AnyConfig) {
-  return function(target) {
+  return function (target) {
     return extensionTag(config)(target);
   };
 }
 
 export function kernel(config: AnyConfig) {
-  return function(target) {
+  return function (target) {
     return extensionTag(config)(target);
   };
 }
@@ -88,7 +88,7 @@ export function extension(config: ExtensionConfigurationType) {
     require: [],
   };
 
-  return function(target) {
+  return function (target) {
     const normalizedConfig = { ...defaultConfig, ...config };
 
     if (!('key' in normalizedConfig)) {

@@ -21,9 +21,6 @@ export class Config implements RegisterHookInterface {
   constructor(protected readonly params: { [k: string]: any } = {}) {}
 
   async register(serviceContainer: ServiceContainerInterface) {
-    serviceContainer
-      .getContainer()
-      .bind(ConfigInterfaceResolver)
-      .toConstantValue(new ConfigStore(this.params));
+    serviceContainer.getContainer().bind(ConfigInterfaceResolver).toConstantValue(new ConfigStore(this.params));
   }
 }
