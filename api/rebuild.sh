@@ -12,7 +12,9 @@ fi
 find . -type d -name node_modules -exec rm -rf {} \;  2>/dev/null
 find . -type d -name dist -exec rm -rf {} \;  2>/dev/null
 
-yarn
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=yes yarn
 yarn build:all
 find . -type d -name node_modules -exec rm -rf {} \;  2>/dev/null
+
+unset PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
 yarn
