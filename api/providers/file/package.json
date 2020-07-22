@@ -6,8 +6,7 @@
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
   "scripts": {
-    "fff": "mkdir -p bin && wget -nv -O bin/ffsend https://data.covoiturage.beta.gouv.fr/ffsend && chmod +x bin/ffsend",
-    "build": "yarn fff && tsc",
+    "build": "tsc",
     "watch": "tsc -w",
     "test": "echo '[provider-file] No tests'; exit 0",
     "test:integration": "echo '[provider-file] No tests'; exit 0",
