@@ -18,9 +18,12 @@ test('Helpers: normalize from string works with default version', (t) => {
 });
 
 test('Helpers: normalize from string works raise error', (t) => {
-  t.throws<MethodNotFoundException>(() => getConfigBySignature(':method')); // Invalid method string (:method)
-  t.throws<MethodNotFoundException>(() => getConfigBySignature('service:')); // Invalid method string (service:)
-  t.throws<MethodNotFoundException>(() => getConfigBySignature('service:0.0.1')); // Invalid method string (service:0.0.1)
+  // Invalid method string (:method)
+  t.throws<MethodNotFoundException>(() => getConfigBySignature(':method'));
+  // Invalid method string (service:)
+  t.throws<MethodNotFoundException>(() => getConfigBySignature('service:'));
+  // Invalid method string (service:0.0.1)
+  t.throws<MethodNotFoundException>(() => getConfigBySignature('service:0.0.1'));
 });
 
 test('Helpers: normalize from object works', (t) => {

@@ -24,10 +24,7 @@ export class CliTransport implements TransportInterface<void> {
   }
 
   async up(opts: string[] = []) {
-    this.kernel
-      .getContainer()
-      .get<CommandRegistry>(CommandRegistry)
-      .parse(opts);
+    this.kernel.getContainer().get<CommandRegistry>(CommandRegistry).parse(opts);
   }
 
   async down() {

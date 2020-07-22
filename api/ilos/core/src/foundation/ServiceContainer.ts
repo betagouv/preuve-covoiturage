@@ -95,12 +95,8 @@ export abstract class ServiceContainer
       const children = Reflect.getMetadata(Symbol.for('extension:children'), this.constructor);
       for (const child of children) {
         const childInstance = new child(this.getContainer());
-        this.getContainer()
-          .bind(child)
-          .toConstantValue(childInstance);
-        this.getContainer()
-          .bind('children')
-          .toConstantValue(child);
+        this.getContainer().bind(child).toConstantValue(childInstance);
+        this.getContainer().bind('children').toConstantValue(child);
         this.registerHooks(childInstance);
       }
     }

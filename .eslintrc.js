@@ -12,7 +12,7 @@ module.exports = {
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
   },
-  ignorePatterns: ['providers/qrcode/src/lib/*'], // some JS converted to TS. needs to be cleaned up
+  ignorePatterns: ['dist', 'api/providers/qrcode/src/lib/*'], // some JS converted to TS. needs to be cleaned up
   rules: {
     semi: ['error', 'always'],
     'prettier/prettier': 'error',
@@ -22,6 +22,8 @@ module.exports = {
     '@typescript-eslint/camelcase': 'off', // postgresql compat
     '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'none', ignoreRestSiblings: true }],
     '@typescript-eslint/no-empty-function': 'off',
-    '@typescript-eslint/ban-ts-ignore': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/ban-types': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
 };

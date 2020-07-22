@@ -10,7 +10,7 @@ const defaultContext = {
 };
 
 function setup(
-  replyFn = function(uri, req) {
+  replyFn = function (uri, req) {
     return [
       200,
       {},
@@ -23,9 +23,7 @@ function setup(
 ) {
   const url = 'http://myfakeservice:8080';
 
-  const request = nock(url)
-    .post('/')
-    .reply(replyFn);
+  const request = nock(url).post('/').reply(replyFn);
 
   const provider = new (httpHandlerFactory('service', url))();
   provider.init();
@@ -48,7 +46,7 @@ test.afterEach(() => {
 
 test.serial('Http handler: works', async (t) => {
   t.plan(3);
-  const { call } = setup(function(_, req) {
+  const { call } = setup(function (_, req) {
     t.deepEqual(req, {
       id: 1,
       jsonrpc: '2.0',

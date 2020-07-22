@@ -20,8 +20,6 @@ import { CustomProvider } from '../Providers/CustomProvider';
 export class ServiceProvider extends BaseServiceProvider {
   async init() {
     await super.init();
-    this.getContainer()
-      .get(CustomProvider)
-      .set('string:');
+    this.getContainer().get(CustomProvider).set('string:');
   }
 }

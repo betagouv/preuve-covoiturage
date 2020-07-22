@@ -1,11 +1,11 @@
 const QRMath = {
-  glog: function(n) {
+  glog: function (n) {
     if (n < 1) {
       throw new Error('glog(' + n + ')');
     }
     return QRMath.LOG_TABLE[n];
   },
-  gexp: function(n) {
+  gexp: function (n) {
     while (n < 0) {
       n += 255;
     }
