@@ -1,13 +1,8 @@
 #!/bin/sh
-lerna run --scope @pdc/* --sort build
 
-# clean up
-find . -type f -name "*.js.map" -delete
-find . -type f -name "*.d.ts" -delete
+yarn global add db-migrate db-migrate-pg
 
-# Post build
-rm -rf ./ilos/.git
-find ./ilos -type d -name node_modules -exec rm -rf {} +
+npx lerna run --sort build
 
 # clean up
 find . -type f -name "*.js.map" -delete
