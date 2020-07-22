@@ -8,7 +8,7 @@
     "proxy",
     "providers/*",
     "services/*",
-    "ilos/packages/*"
+    "ilos/*"
   ],
   "repository": "git@github.com:betagouv/preuve-covoiturage.git",
   "author": "Beta Gouv <contact@covoiturage.beta.gouv.fr>",
