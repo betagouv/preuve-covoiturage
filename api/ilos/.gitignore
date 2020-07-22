@@ -1,7 +1,0 @@
-node_modules/
-coverage/
-dist/
-.nyc_output
-lerna-debug.log
-npm-debug.log
-yarn-error.log
