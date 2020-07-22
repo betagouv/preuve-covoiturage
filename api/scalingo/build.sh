@@ -3,6 +3,7 @@
 yarn global add db-migrate db-migrate-pg
 
 npx lerna run --sort build
+yarn
 
 # clean up
 find . -type f -name "*.js.map" -delete
