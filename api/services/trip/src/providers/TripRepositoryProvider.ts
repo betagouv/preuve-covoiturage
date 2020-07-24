@@ -327,7 +327,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
 
     query.text = this.numberPlaceholders(query.text);
-    console.log(query.text);
     const result = await this.connection.getClient().query(query);
 
     const pagination = {
