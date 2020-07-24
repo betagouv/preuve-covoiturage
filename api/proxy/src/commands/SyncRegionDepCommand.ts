@@ -26,12 +26,12 @@ export class SyncRegionDepCommand implements CommandInterface {
 
       const pgClient = pgConnection.getClient();
 
+      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER territory_relation_ins;`);
+      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER territory_relation_upd;`);
+      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER territory_relation_del;`);
+
       const results = await pgClient.query(`
-        SELECT t._id, t.name, tc.value as insee
-        FROM territory.territories t
-        JOIN territory.territory_codes tc
-        ON t._id = tc.territory_id
-        WHERE t.level='region';
+        SELECT t._id, t.name, tc.value as insee FROM territory.territories t JOIN territory.territory_codes tc ON t._id = tc.territory_id  WHERE t.level='region';
      `);
 
       const regions = results.rows;
@@ -52,24 +52,17 @@ export class SyncRegionDepCommand implements CommandInterface {
         const departements = (
           await pgClient.query({
             text: `
-            SELECT t._id, tc.value as codedep
-            FROM territory.territory_codes tc
-            INNER JOIN territory.territories t
-            ON tc.territory_id = t._id
-            AND tc.type='codedep'
-            WHERE t.level = 'district'
-            AND tc.value = ANY($1)
+            SELECT t._id, tc.value as codedep FROM territory.territory_codes tc INNER JOIN territory.territories t ON tc.territory_id = t._id AND tc.type='codedep' WHERE t.level = 'district' AND tc.value = ANY($1)
           `,
             values: [codeDepartements],
           })
         ).rows;
 
         try {
-          // console.log('apiDepartmentsData', apiDepartmentsData);
           for (const department of apiDepartmentsData) {
             await pgClient.query(`BEGIN`);
+
             const dbDep = departements.find((dep) => dep.codedep === department.code);
-            console.log('dbDep', dbDep);
             // continue;
             if (dbDep) {
               const updateQuery = {
@@ -97,20 +90,12 @@ export class SyncRegionDepCommand implements CommandInterface {
               await pgClient.query(createQuery);
 
               await pgClient.query({
-                text: `
-                  INSERT INTO territory.territory_relation
-                    (parent_territory_id, child_territory_id)
-                  VALUES ($1, currval('territory.territories__id_seq1'))
-                `,
+                text: `INSERT INTO territory.territory_relation (parent_territory_id,child_territory_id) VALUES($1,currval('territory.territories__id_seq1'))`,
                 values: [region._id],
               });
 
               await pgClient.query({
-                text: `
-                  INSERT INTO territory.territory_codes
-                    (territory_id, type, value)
-                  VALUES (currval('territory.territories__id_seq1'), 'codedep', $1)
-                `,
+                text: `INSERT INTO territory.territory_codes (territory_id,type,value) VALUES(currval('territory.territories__id_seq1'),'codedep',$1)`,
                 values: [department.code],
               });
             }
@@ -124,30 +109,30 @@ export class SyncRegionDepCommand implements CommandInterface {
       }
 
       await pgClient.query(`
-        WITH tr as (
-          SELECT
-              dep_tc.territory_id as parent_territory_id,
-              t._id as child_territory_id
-          FROM territory.territory_codes tc 
-          INNER JOIN territory.territories t
-          ON t._id = tc.territory_id
-          AND tc.type = 'postcode'
-          
-          INNER JOIN territory.territory_codes dep_tc
-          ON dep_tc.value = substring(tc.value,1,2)
-          
-          LEFT JOIN territory.territory_relation tr
-          ON tr.parent_territory_id = dep_tc.territory_id
-          AND tr.child_territory_id = t._id
-          
-          WHERE tr._id IS NULL
+      
+      
+      
+      WITH tr as (
+        select  
+            dep_tc.territory_id as parent_territory_id,
+            t._id as child_territory_id
+            FROM territory.territory_codes tc 
+        INNER JOIN territory.territories t ON t._id = tc.territory_id AND tc.type = 'postcode'
+        INNER JOIN territory.territory_codes dep_tc ON dep_tc.value = substring(tc.value,1,2)
+        
+        LEFT JOIN territory.territory_relation tr ON tr.parent_territory_id = dep_tc.territory_id AND tr.child_territory_id = t._id
+        
+        where tr._id IS NULL
         )
-        INSERT INTO territory.territory_relation
-          (parent_territory_id,child_territory_id)
-            SELECT tr.parent_territory_id, tr.child_territory_id
-            FROM tr
-        ON CONFLICT DO NOTHING;
-      `);
+        
+
+        INSERT INTO territory.territory_relation(parent_territory_id,child_territory_id) SELECT tr.parent_territory_id,tr.child_territory_id from tr ON CONFLICT DO NOTHING;
+
+        `);
+
+      await pgClient.query(`ALTER TABLE territory.territory_relation ENABLE TRIGGER territory_relation_ins;`);
+      await pgClient.query(`ALTER TABLE territory.territory_relation ENABLE TRIGGER territory_relation_upd;`);
+      await pgClient.query(`ALTER TABLE territory.territory_relation ENABLE TRIGGER territory_relation_del;`);
 
       return 'OK';
     } catch (e) {
