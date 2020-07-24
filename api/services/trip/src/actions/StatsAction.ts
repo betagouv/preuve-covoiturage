@@ -23,7 +23,7 @@ import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/Stat
               context.call.user.territory_id &&
               context.call.user.authorizedTerritories.length &&
               params.territory_id.length &&
-              params.territory_id.filter((id: number) => !context.call.use.authorizedTerritories.includes(id))
+              params.territory_id.filter((id: number) => !context.call.user.authorizedTerritories.includes(id))
                 .length === 0
             ) {
               return 'territory.trip.stats';
