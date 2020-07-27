@@ -2,7 +2,7 @@
 
 yarn global add db-migrate db-migrate-pg
 
-yarn build:all
+npx lerna run --sort build
 find . -type d -name node_modules -exec rm -rf {} \;  2>/dev/null
 
 unset PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
