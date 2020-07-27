@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
-import { finalize, takeUntil } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
@@ -54,7 +53,7 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     return this.rpcGetList.exportTrips(params);
   }
 
-  public load(filter: FilterInterface | {} = {}, loadMore = false): void {
+  public load(filter: FilterInterface | {} = {}, refreshCount = true): void {
     const params = _.cloneDeep(filter);
     const loggedUser = this._authService.user;
     if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY) {
@@ -69,24 +68,14 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     if ('date' in filter && filter.date.end) {
       params['date'].end = filter.date.end.toISOString();
     }
-    this.filterSubject.next(params);
-    this.dismissGetSubject.next();
-    this.dismissGetListSubject.next();
-    this._loadCount += 1;
-    this.rpcGetList
-      .getTrips(this.filterSubject.value)
-      .pipe(
-        takeUntil(this.dismissGetListSubject),
-        finalize(() => {
-          if (this._loadCount > 0) this._loadCount -= 1;
-        }),
-      )
-      .subscribe((jsonRpcResult: any) => {
-        this._total$.next(jsonRpcResult.meta['pagination']['total']);
-        const trips = jsonRpcResult.data.map((trip) => new LightTrip(trip));
-        const storeTrips = loadMore ? this.entitiesSubject.value.concat(trips) : trips;
-        this.entitiesSubject.next(storeTrips);
+
+    if (refreshCount) {
+      this.rpcGetList.count(params).subscribe((count) => {
+        this._total$.next(count);
       });
+    }
+
+    this.filterSubject.next(params);
   }
 
   public upload(file: any): Observable<any> {

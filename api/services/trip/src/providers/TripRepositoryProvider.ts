@@ -298,6 +298,25 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>;
   }
 
+  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }> {
+    const where = this.buildWhereClauses(params);
+    const query = {
+      text: `
+        SELECT COUNT(*)
+        FROM ${this.table}
+        ${where.text ? `WHERE ${where.text}` : ''}
+      `,
+      values: [...(where ? where.values : [])],
+    };
+
+    query.text = this.numberPlaceholders(query.text);
+    const result = await this.connection.getClient().query(query);
+
+    // parse the count(*) value which is returned as varchar by Postgres
+    // do not cast as ::int in postgres to avoid overflow on huge values!
+    return { count: result.rowCount ? parseInt(result.rows[0].count, 10) : -1 };
+  }
+
   public async search(
     params: Partial<TripSearchInterfaceWithPagination>,
   ): Promise<ResultWithPagination<LightTripInterface>> {
@@ -307,7 +326,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const query = {
       text: `
         SELECT
-          (count(*) over())::int as total_count,
           trip_id,
           journey_start_town as start_town,
           journey_end_town as end_town,
@@ -331,7 +349,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     const pagination = {
       limit,
-      total: 0,
+      total: -1,
       offset: skip,
     };
 
@@ -343,8 +361,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         },
       };
     }
-
-    pagination.total = result.rows[0].total_count;
 
     const final_data = result.rows.map(({ total_count, ...data }) => ({
       ...data,

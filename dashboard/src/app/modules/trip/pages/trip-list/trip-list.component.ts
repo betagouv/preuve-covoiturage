@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
@@ -10,16 +10,20 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { TripStoreService } from '~/modules/trip/services/trip-store.service';
 import { LightTrip } from '~/core/entities/trip/trip';
+import { MatPaginator, PageEvent } from '@angular/material';
 
 @Component({
   selector: 'app-trip-list',
   templateUrl: './trip-list.component.html',
   styleUrls: ['./trip-list.component.scss'],
 })
-export class TripListComponent extends DestroyObservable implements OnInit {
+export class TripListComponent extends DestroyObservable implements OnInit, AfterViewInit {
   trips: LightTrip[] = [];
   skip = DEFAULT_TRIP_SKIP;
   limit = DEFAULT_TRIP_LIMIT;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+
+  protected _filter;
 
   constructor(
     public filterService: FilterService,
@@ -30,19 +34,27 @@ export class TripListComponent extends DestroyObservable implements OnInit {
   ) {
     super();
   }
-
-  ngOnInit(): void {
-    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
-      // reset skip when new search
+  ngAfterViewInit(): void {
+    const filterLoad = (filter: FilterInterface) => {
+      // // reset skip when new search
+      this._filter = filter;
       this.skip = 0;
-      this.loadTrips({
-        ...filter,
-        skip: 0,
-        limit: this.limit,
-      });
-    });
+      this.loadTrips(
+        {
+          ...filter,
+          skip: 0,
+          limit: this.limit,
+        },
+        true,
+      );
+
+      this.paginator.pageIndex = 0;
+    };
+    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe(filterLoad);
     this.tripService.entities$.pipe(takeUntil(this.destroy$)).subscribe((trips) => (this.trips = trips));
   }
+
+  ngOnInit(): void {}
 
   get columnsDisplayed(): string[] {
     const columns = ['startCity', 'endCity', 'date', 'campaigns', 'incentives', 'class', 'status'];
@@ -75,21 +87,32 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     return this.tripService.total;
   }
 
-  onScroll(): void {
-    this.skip += DEFAULT_TRIP_LIMIT;
-    const filter = {
-      ...this.filterService.filter$.value,
-      skip: this.skip,
-      limit: this.limit,
-    };
-    this.loadTrips(filter, true);
+  paginationUpdate(pageEvent: PageEvent): void {
+    this.loadTrips(
+      {
+        ...this._filter,
+        skip: pageEvent.pageIndex * pageEvent.pageSize,
+        limit: pageEvent.pageSize,
+      },
+      false,
+    );
   }
 
-  private loadTrips(filter: FilterInterface | {} = {}, loadMore = false): void {
-    if (this.tripService.isLoading) {
-      return;
-    }
+  // onScroll(): void {
+  // this.skip += DEFAULT_TRIP_LIMIT;
+  // const filter = {
+  //   ...this.filterService.filter$.value,
+  //   skip: this.skip,
+  //   limit: this.limit,
+  // };
+  // this.loadTrips(filter, true);
+  // }
 
-    this.tripService.load(filter);
+  private loadTrips(filter: FilterInterface | {} = {}, refreshCount = false): void {
+    // if (this.tripService.isLoading) {
+    //   return;
+    // }
+
+    this.tripService.load(filter, refreshCount);
   }
 }

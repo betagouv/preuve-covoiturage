@@ -17,6 +17,7 @@ import { TripStatsComponent } from './pages/trip-stats/trip-stats.component';
 import { TripMapsComponent } from './pages/trip-maps/trip-maps.component';
 import { TripListComponent } from './pages/trip-list/trip-list.component';
 import { TripImportComponent } from './pages/trip-import/trip-import.component';
+import { MatPaginatorModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { TripImportComponent } from './pages/trip-import/trip-import.component';
     StatUIModule,
     CampaignModule,
     ReactiveFormsModule,
+    MatPaginatorModule,
   ],
 })
 export class TripModule {}
