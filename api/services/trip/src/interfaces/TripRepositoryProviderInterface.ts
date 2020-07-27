@@ -6,6 +6,7 @@ import { ExportTripInterface } from './ExportTripInterface';
 
 export interface TripRepositoryInterface {
   stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]>;
+  searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }>;
   search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>>;
   searchWithCursor(
     params: {
@@ -22,10 +23,14 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
     throw new Error();
   }
 
+  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }> {
+    throw new Error('Not implemented');
+  }
+
   public async search(
     params: Partial<TripSearchInterfaceWithPagination>,
   ): Promise<ResultWithPagination<LightTripInterface>> {
-    throw new Error();
+    throw new Error('Not implemented');
   }
 
   public async searchWithCursor(
@@ -37,6 +42,6 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
     },
     type?: string,
   ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
-    throw new Error();
+    throw new Error('Not implemented');
   }
 }
