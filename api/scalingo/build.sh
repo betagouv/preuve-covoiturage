@@ -5,7 +5,7 @@ yarn global add db-migrate db-migrate-pg
 npx lerna run --sort build
 
 echo '[app] Clean up node_modules'
-rm -rf ${npm root}/*
+rm -rf node_modules/*
 # find . -type d -name node_modules -exec rm -rf {} \;  2>/dev/null
 
 echo '[app] Re-install dependencies'
