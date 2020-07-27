@@ -70,7 +70,7 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     }
 
     if (refreshCount) {
-      this.rpcGetList.count(this.filterSubject.value).subscribe((count) => {
+      this.rpcGetList.count(params).subscribe((count) => {
         this._total$.next(count);
       });
     }
