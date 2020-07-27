@@ -326,7 +326,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const query = {
       text: `
         SELECT
-          (count(*) over())::int as total_count,
           trip_id,
           journey_start_town as start_town,
           journey_end_town as end_town,
@@ -350,7 +349,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     const pagination = {
       limit,
-      total: 0,
+      total: -1,
       offset: skip,
     };
 
@@ -362,8 +361,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         },
       };
     }
-
-    pagination.total = result.rows[0].total_count;
 
     const final_data = result.rows.map(({ total_count, ...data }) => ({
       ...data,
