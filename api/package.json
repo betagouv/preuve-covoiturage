@@ -19,7 +19,7 @@
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
   "scripts": {
-    "scalingo-postbuild": "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=yes /bin/sh ./scalingo/build.sh",
+    "scalingo-postbuild": "/bin/sh ./scalingo/build.sh",
     "start:http": "yarn workspace @pdc/proxy ilos http $PORT",
     "start:queue": "yarn workspace @pdc/proxy ilos queue $APP_REDIS_URL",
     "clean": "rm -rf ./**/dist",
