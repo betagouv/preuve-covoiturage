@@ -259,13 +259,14 @@ export class HttpTransport implements TransportInterface {
             const descendantTerritories = await this.kernel.handle(
               makeCall(
                 'territory:getParentChildren',
-                { territory_id: req.session.user.territory_id },
+                { _id: req.session.user.territory_id },
                 { user: req.session.user },
               ),
             );
+
             req.session.user.authorizedTerritories = [
               req.session.user.territory_id,
-              ...get(descendantTerritories, 'descendant_ids', []),
+              ...get(descendantTerritories, 'result.descendant_ids', []),
             ];
           }
 
