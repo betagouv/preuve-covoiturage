@@ -5,15 +5,12 @@ yarn global add db-migrate db-migrate-pg
 npx lerna run --sort build
 
 echo '[app] Clean up node_modules'
-npm root
-npm root -g
+rm -rf ${npm root}/*
 # find . -type d -name node_modules -exec rm -rf {} \;  2>/dev/null
 
 echo '[app] Re-install dependencies'
 unset PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
 yarn
-
-ls -l node_modules
 
 # clean up
 echo '[app] Clean up dev files'
