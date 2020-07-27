@@ -66,9 +66,11 @@ export class StatsAction extends Action {
 
     switch (this.isCachable(params)) {
       case 'global':
-        return (await this.cache.getGeneralOrBuild(async () => this.pg.stats(params))) || [];
+        return (await this.cache.getOrBuild(async () => this.pg.stats(params), {})) || [];
       case 'operator':
-        return (await this.cache.getOperatorOrBuild(params.operator_id[0], async () => this.pg.stats(params))) || [];
+        return (
+          (await this.cache.getOrBuild(async () => this.pg.stats(params), { operator_id: params.operator_id[0] })) || []
+        );
       case 'territory':
         // fetch the list descendant_id
         const response = await this.kernel.call(
@@ -80,11 +82,9 @@ export class StatsAction extends Action {
         // merge all territory_id together
         set(params, 'territory_id', [...params.territory_id, ...(response.descendant_ids || [])]);
 
-        // return (await this.cache.getTerritoryOrBuild(params.territory_id, async () => this.pg.stats(params))) || [];
         return (
           (await this.cache.getOrBuild(async () => this.pg.stats(params), { territory_id: params.territory_id })) || []
         );
-      // return (await this.pg.stats(params)) || [];
       default:
         return (await this.pg.stats(this.applyDefaults(params))) || [];
     }

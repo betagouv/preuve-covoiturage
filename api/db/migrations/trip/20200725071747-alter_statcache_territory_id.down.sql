@@ -1,6 +1,12 @@
-ALTER TABLE trip.stat_cache
-  ALTER COLUMN territory_id TYPE int
-  USING territory_id[1]::int;
+DROP TABLE IF EXISTS trip.stat_cache;
 
-ALTER TABLE trip.stat_cache
-  DROP COLUMN hash;
+CREATE TABLE IF NOT EXISTS trip.stat_cache
+(
+  updated_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  is_public boolean NOT NULL DEFAULT false,
+  territory_id integer,
+  operator_id integer,
+  data json NOT NULL
+);
+
+CREATE UNIQUE INDEX ON trip.stat_cache(is_public, territory_id, operator_id);
