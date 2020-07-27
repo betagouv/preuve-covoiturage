@@ -17,6 +17,7 @@ export interface ParamsInterface extends PaginationInterface {
 interface SingleResultInterface {
   _id?: number;
   name?: string;
+  insee?: string;
   level?: TerritoryLevelEnum;
   active?: boolean;
 }

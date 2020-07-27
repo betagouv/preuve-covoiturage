@@ -7,16 +7,29 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "format:fix": "lerna run --parallel format:fix",
-    "lint": "lerna run --parallel lint"
+    "lint": "eslint 'api/**/src/**/*.ts' 'dashboard/src/**/*.ts'",
+    "prettier": "prettier --write 'api/**/src/**/*.ts' 'dashboard/src/**/*.ts'"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.7.0",
+    "@typescript-eslint/parser": "^3.7.0",
+    "eslint": "^7.5.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "husky": "^4.2.3",
-    "lerna": "^3.20.2"
+    "lerna": "^3.20.2",
+    "lint-staged": "^10.2.11",
+    "prettier": "^2.0.5",
+    "typescript": "^3.7.5"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run format:fix",
+      "pre-commit": "lint-staged",
       "pre-push": "yarn run lint"
     }
   }

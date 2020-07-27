@@ -1,0 +1,37 @@
+{
+  "name": "@ilos/queue",
+  "version": "0.4.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "Apache-2.0",
+  "author": "Nicolas Mérigot <nicolas@belenio.fr>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/betagouv/ilos.git"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "ava",
+    "test:integration": "echo 'No integration test'; exit 0",
+    "coverage-ci": "nyc --all --reporter=lcov ava",
+    "coverage": "nyc --all --reporter=text ava",
+    "watch-test": "yarn test -- --watchAll",
+    "watch": "tsc -w",
+    "lint": "eslint \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "@ilos/core": "^0.4.1",
+    "@ilos/common": "^0.4.1",
+    "@ilos/connection-manager": "^0.4.1",
+    "@ilos/connection-redis": "^0.4.1",
+    "@ilos/handler-redis": "^0.4.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
+  }
+}

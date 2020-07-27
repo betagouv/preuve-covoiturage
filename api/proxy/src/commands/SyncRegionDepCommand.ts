@@ -26,6 +26,10 @@ export class SyncRegionDepCommand implements CommandInterface {
 
       const pgClient = pgConnection.getClient();
 
+      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER territory_relation_ins;`);
+      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER territory_relation_upd;`);
+      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER territory_relation_del;`);
+
       const results = await pgClient.query(`
         SELECT t._id, t.name, tc.value as insee FROM territory.territories t JOIN territory.territory_codes tc ON t._id = tc.territory_id  WHERE t.level='region';
      `);
@@ -55,11 +59,10 @@ export class SyncRegionDepCommand implements CommandInterface {
         ).rows;
 
         try {
-          // console.log('apiDepartmentsData', apiDepartmentsData);
           for (const department of apiDepartmentsData) {
             await pgClient.query(`BEGIN`);
+
             const dbDep = departements.find((dep) => dep.codedep === department.code);
-            console.log('dbDep', dbDep);
             // continue;
             if (dbDep) {
               const updateQuery = {
@@ -105,7 +108,11 @@ export class SyncRegionDepCommand implements CommandInterface {
         }
       }
 
-      await pgClient.query(`WITH tr as (
+      await pgClient.query(`
+      
+      
+      
+      WITH tr as (
         select  
             dep_tc.territory_id as parent_territory_id,
             t._id as child_territory_id
@@ -117,8 +124,15 @@ export class SyncRegionDepCommand implements CommandInterface {
         
         where tr._id IS NULL
         )
+        
+
         INSERT INTO territory.territory_relation(parent_territory_id,child_territory_id) SELECT tr.parent_territory_id,tr.child_territory_id from tr ON CONFLICT DO NOTHING;
+
         `);
+
+      await pgClient.query(`ALTER TABLE territory.territory_relation ENABLE TRIGGER territory_relation_ins;`);
+      await pgClient.query(`ALTER TABLE territory.territory_relation ENABLE TRIGGER territory_relation_upd;`);
+      await pgClient.query(`ALTER TABLE territory.territory_relation ENABLE TRIGGER territory_relation_del;`);
 
       return 'OK';
     } catch (e) {

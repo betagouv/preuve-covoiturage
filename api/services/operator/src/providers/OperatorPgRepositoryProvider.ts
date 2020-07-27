@@ -9,7 +9,11 @@ import {
   OperatorRepositoryProviderInterfaceResolver,
 } from '../interfaces/OperatorRepositoryProviderInterface';
 
-import { signature as companyFindSignature } from '../shared/company/find.contract';
+import {
+  signature as companyFindSignature,
+  ParamsInterface as CompanyParamsInterface,
+  ResultInterface as CompanyResultInterface,
+} from '../shared/company/find.contract';
 import { signature as companyFetchSignature } from '../shared/company/fetch.contract';
 
 @provider({
@@ -39,9 +43,9 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
     const operator = result.rows[0];
     if (operator.siret) {
-      operator.company = await this.kernel.call(
+      operator.company = await this.kernel.call<CompanyParamsInterface, CompanyResultInterface>(
         companyFindSignature,
-        { siret: operator.siret },
+        { query: { siret: operator.siret } },
         { channel: { service: 'operator' }, call: { user: { permissions: ['company.find'] } } },
       );
     }

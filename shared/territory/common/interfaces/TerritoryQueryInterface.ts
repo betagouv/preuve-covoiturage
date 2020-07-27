@@ -1,5 +1,6 @@
 import { GeoPositionInterface } from '../../../common/interfaces/GeoPositionInterface';
 import { TerritoryCodesInterface } from './TerritoryCodeInterface';
+import { TerritoryLevelEnum } from './TerritoryInterface';
 
 export interface TerritoryQueryInterface extends Partial<TerritoryCodesInterface> {
   _id?: number;
@@ -111,6 +112,8 @@ export interface PaginationInterface {
 
 export type TerritoryListFilter = {
   search?: string;
+  levels?: TerritoryLevelEnum[];
+
   skip?: number;
   limit?: number;
 };
@@ -121,7 +124,8 @@ export type ProjectionFieldsEnum = (
   | ActiveFieldEnum
   | GeoFieldEnum
   | TerritoryCodeEnum
-  | CompanyEnum)[];
+  | CompanyEnum
+)[];
 
 export const allGeoFieldEnum: ProjectionFieldsEnum = [GeoFieldEnum.Geo];
 

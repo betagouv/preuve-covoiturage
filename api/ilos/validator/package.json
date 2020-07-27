@@ -1,0 +1,33 @@
+{
+  "name": "@ilos/validator",
+  "version": "0.4.1",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "ava",
+    "test:integration": "echo 'No integration test'; exit 0",
+    "coverage": "nyc --all --reporter=text ava"
+  },
+  "dependencies": {
+    "ajv": "^6.11.0",
+    "ajv-keywords": "^3.4.1",
+    "@ilos/common": "^0.4.1",
+    "@ilos/core": "^0.4.1"
+  },
+  "devDependencies": {
+    "@types/sinon": "^7.0.11",
+    "sinon": "^8.1.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
+  }
+}

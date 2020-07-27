@@ -37,39 +37,4 @@ export class TerritoryToInseesAutocompleteService {
       ),
     );
   }
-
-  // /**
-  //  * search a town by insee with GEO api
-  //  */
-  // public findTownByInsee(insee: string = ''): Observable<InseeAndTerritoryInterface[]> {
-  //   const params = `/communes/${encodeURIComponent(insee)}?fields=code,nom`;
-  //   return this.http
-  //     .get(`${this.geoApiDomain}${params}`)
-  //     .pipe(
-  //       map((response: object[]) =>
-  //         response.filter((el) => _.get(el, 'code', null)).map((el) => {
-  //           return <InseeAndTerritoryInterface>{
-  //             territory_literal: _.get(el, 'nom'),
-  //             insees: [_.get(el, 'code')],
-  //           };
-  //         }),
-  //       ),
-  //     );
-  // }
-
-  // /**
-  //  * find a departement by code with GEO api
-  //  */
-  // public findDepartementByCode(code: string = ''): Observable<InseeAndTerritoryInterface[]> {
-  //   const params = `/departements/${encodeURIComponent(code)}?fields=code,nom`;
-  //   return this.http.get(`${this.geoApiDomain}${params}`).pipe(
-  //     filter((response) => _.get(response, 'code', null)),
-  //     map((response: object) => [
-  //       <InseeAndTerritoryInterface>{
-  //         territory_literal: _.get(response, 'nom'),
-  //         insees: [_.get(response, 'code')],
-  //       },
-  //     ]),
-  //   );
-  // }
 }

@@ -1,13 +1,13 @@
 #!/bin/sh
-lerna run --scope @pdc/* --sort build
 
-# clean up
-find . -type f -name "*.js.map" -delete
-find . -type f -name "*.d.ts" -delete
+yarn global add db-migrate db-migrate-pg
 
-# Post build
-rm -rf ./ilos/.git
-find ./ilos -type d -name node_modules -exec rm -rf {} +
+npx lerna run --sort build
+find . -type d -name node_modules -exec rm -rf {} \;  2>/dev/null
+
+unset PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+yarn
+
 
 # clean up
 find . -type f -name "*.js.map" -delete

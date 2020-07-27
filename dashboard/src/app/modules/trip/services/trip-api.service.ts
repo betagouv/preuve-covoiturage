@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs/operators';
 
@@ -20,13 +20,21 @@ export class TripApiService extends JsonRpcGetList<LightTrip, LightTrip, any, Tr
     super(http, router, activatedRoute, 'trip');
   }
 
+  count(params?: TripSearchInterfaceWithPagination): Observable<number> {
+    const jsonParams = this.paramGetList(params);
+    jsonParams.method = `${this.method}:searchcount`;
+
+    return this.callOne(jsonParams).pipe(map((data) => data.data.count));
+  }
+
   exportTrips(params: ExportFilterInterface): Observable<any> {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:export`, params);
     return this.callOne(jsonRPCParam);
   }
 
   getTrips(params?: TripSearchInterfaceWithPagination): Observable<TripSearchResultInterface> {
-    return this.callOne(this.paramGetList(params)).pipe(map((data) => data));
+    return new Subject();
+    return this.callOne(this.paramGetList(params));
   }
 
   upload(file: any): Observable<any> {

@@ -8,5 +8,5 @@
   "arrowParens": "always",
   "trailingComma": "all",
   "endOfLine": "lf",
-  "jsxSingleQuote": true,
+  "jsxSingleQuote": true
 }

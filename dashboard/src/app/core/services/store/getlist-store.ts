@@ -76,7 +76,6 @@ export abstract class GetListStore<
     let firstLoad = true;
 
     this._filterSubject.subscribe((filt) => {
-      console.log('filt : ', filt);
       if (firstLoad || filt !== null) {
         this.loadList();
         firstLoad = !firstLoad || !!filt;
