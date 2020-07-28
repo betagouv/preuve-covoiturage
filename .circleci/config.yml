@@ -157,11 +157,11 @@ workflows:
   version: 2
   frontend-dev:
     jobs:
-      # - front-qa:
-      #     filters:
-      #       branches:
-      #         only:
-      #           - dev
+      - front-qa:
+          filters:
+            branches:
+              only:
+                - dev
 
       # - front-cypress:
       #     filters:
