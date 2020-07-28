@@ -11,7 +11,7 @@
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
-            Jours de la semaine
+            Jours de la semaine&nbsp;*
           </mat-panel-title>
           <mat-panel-description>
             <span [innerHTML]="showDateLabel"> </span>
@@ -111,7 +111,7 @@
       <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': controls.rank.touched && !controls.rank.valid }">
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
-            Classe de preuve
+            Classe de preuve&nbsp;*
           </mat-panel-title>
           <mat-panel-description>
             {{ showTripClassLabel }}
@@ -138,7 +138,7 @@
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
-            Cible
+            Cible&nbsp;*
           </mat-panel-title>
           <mat-panel-description>
             {{ showTargetLabel }}
@@ -184,7 +184,7 @@
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
-            Opérateurs
+            Opérateurs&nbsp;*
           </mat-panel-title>
           <mat-panel-description>
             {{ showOperatorsLabel() }}

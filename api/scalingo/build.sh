@@ -4,14 +4,6 @@ yarn global add db-migrate db-migrate-pg
 
 npx lerna run --sort build
 
-# echo '[app] Clean up node_modules'
-# rm -rf node_modules/*
-# find . -type d -name node_modules -exec rm -rf {} \;  2>/dev/null
-
-# echo '[app] Re-install dependencies'
-# unset PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
-# yarn
-
 chmod u+x node_modules/@ilos/framework/dist/cli.js
 ln -svf ../@ilos/framework/dist/cli.js node_modules/.bin/ilos
 
