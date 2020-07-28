@@ -650,7 +650,7 @@ BEGIN
   WITH changed_ids as (
       select DISTINCT array_agg(territory_id) AS ids from codes_old_table 
   )
-  SELECT NULL FROM changed_ids INTO r  LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r  LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
     
   RETURN NEW;
 END
@@ -672,7 +672,7 @@ BEGIN
   WITH changed_ids as (
       select DISTINCT array_agg(territory_id) AS ids from codes_new_table 
   )
-  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
     
   RETURN NEW;
 END
@@ -700,7 +700,7 @@ BEGIN
       select DISTINCT array_agg(territory_id) AS ids from codess 
   )
   
-  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
       
   RETURN NEW;
 END;
@@ -722,7 +722,7 @@ BEGIN
   WITH changed_ids as (
       select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relation_old_table 
   )
-  SELECT NULL FROM changed_ids INTO r  LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r  LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
     
   RETURN NEW;
 END
@@ -744,7 +744,7 @@ BEGIN
   WITH changed_ids as (
       select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relation_new_table 
   )
-  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
     
   RETURN NEW;
 END
@@ -772,7 +772,7 @@ BEGIN
       select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relations 
   )
   
-  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
       
   RETURN NEW;
 END;
@@ -782,10 +782,10 @@ $$;
 ALTER FUNCTION public.touch_territory_view_on_territory_relation_update() OWNER TO postgres;
 
 --
--- Name: update_territory_view_data(integer[]); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name:  territory.update_territory_view_data(integer[]); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.update_territory_view_data(ids integer[]) RETURNS void
+CREATE FUNCTION public. territory.update_territory_view_data(ids integer[]) RETURNS void
     LANGUAGE plpgsql
     AS $$ 
 BEGIN
@@ -815,7 +815,7 @@ END
 $$;
 
 
-ALTER FUNCTION public.update_territory_view_data(ids integer[]) OWNER TO postgres;
+ALTER FUNCTION public. territory.update_territory_view_data(ids integer[]) OWNER TO postgres;
 
 --
 -- Name: CAST (territory.breadcrumb AS json); Type: CAST; Schema: -; Owner: -

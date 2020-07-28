@@ -1,6 +1,7 @@
-DROP FUNCTION IF EXISTS get_territory_view_data;
 
-CREATE OR REPLACE FUNCTION get_territory_view_data(ids int[]) RETURNS TABLE(
+DROP FUNCTION IF EXISTS territory.get_territory_view_data;
+
+CREATE OR REPLACE FUNCTION territory.get_territory_view_data(ids int[]) RETURNS TABLE(
     _id int,
     active boolean,
     activable boolean,
@@ -168,12 +169,12 @@ END;
 $$    LANGUAGE plpgsql;
 
 
-DROP FUNCTION IF EXISTS update_territory_view_data;
+DROP FUNCTION IF EXISTS territory.update_territory_view_data;
 
-CREATE OR REPLACE FUNCTION update_territory_view_data(ids int[]) RETURNS VOID AS $$ 
+CREATE OR REPLACE FUNCTION territory.update_territory_view_data(ids int[]) RETURNS VOID AS $$ 
 BEGIN
   WITH tv as (
-    SELECT * from get_territory_view_data(ids) 
+    SELECT * from territory.get_territory_view_data(ids) 
   )
   UPDATE territory.territories_view
     SET 
