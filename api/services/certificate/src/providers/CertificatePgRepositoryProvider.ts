@@ -42,10 +42,10 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   async count(operator_id?: number): Promise<number> {
     const query = operator_id
       ? {
-          text: `SELECT COUNT(uuid) as row_count FROM ${this.table} WHERE operator_id = $1`,
+          text: `SELECT COUNT(*) as row_count FROM ${this.table} WHERE operator_id = $1`,
           values: [operator_id],
         }
-      : `SELECT COUNT(uuid) as row_count FROM ${this.table}`;
+      : `SELECT COUNT(*) as row_count FROM ${this.table}`;
 
     const countResult = await this.connection.getClient().query(query);
 
@@ -111,15 +111,16 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   }
 
   async create(params: CertificateBaseInterface): Promise<CertificateInterface> {
-    const { identity_id, operator_id, start_at, end_at, meta } = params;
+    const { identity_uuid, operator_id, start_at, end_at, meta } = params;
+
     const result = await this.connection.getClient().query({
       text: `
         INSERT INTO ${this.table}
-        ( identity_id, operator_id, start_at, end_at, meta )
+        ( identity_uuid, operator_id, start_at, end_at, meta )
         VALUES ( $1, $2, $3, $4, $5 )
         RETURNING *
       `,
-      values: [identity_id, operator_id, start_at, end_at, meta],
+      values: [identity_uuid, operator_id, start_at, end_at, meta],
     });
 
     if (!result.rowCount) throw new Error('Failed to create certificate');

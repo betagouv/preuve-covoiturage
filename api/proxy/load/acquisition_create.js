@@ -10,7 +10,7 @@ const o = {
   sleep_duration: 1,
   base_url: __ENV.LOAD_BASE_URL || 'http://localhost:8080',
   user: {
-    email: 'maxicovoit@yopmail.com',
+    email: 'operator@example.com',
     // email: 'maxicovoit.admin@example.com',
     password: 'admin1234',
   },
@@ -81,7 +81,7 @@ export function setup() {
   return store;
 }
 
-export default function(store) {
+export default function (store) {
   const start = new Date().getTime() - Math.random() * 10000000000;
   const end = start + Math.random() * 1000000;
 
