@@ -13,7 +13,7 @@ BEGIN
       select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relations 
   )
   
-  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
       
   RETURN NEW;
 END;
@@ -26,7 +26,7 @@ BEGIN
   WITH changed_ids as (
       select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relation_new_table 
   )
-  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
     
   RETURN NEW;
 END
@@ -39,7 +39,7 @@ BEGIN
   WITH changed_ids as (
       select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relation_old_table 
   )
-  SELECT NULL FROM changed_ids INTO r  LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r  LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
     
   RETURN NEW;
 END

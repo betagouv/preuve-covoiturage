@@ -14,7 +14,7 @@ BEGIN
       select DISTINCT array_agg(territory_id) AS ids from codess 
   )
   
-  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN territory.update_territory_view_data(changed_ids.ids::int[]) ON TRUE;
       
   RETURN NEW;
 END;
@@ -27,7 +27,7 @@ BEGIN
   WITH changed_ids as (
       select DISTINCT array_agg(territory_id) AS ids from codes_new_table 
   )
-  SELECT NULL FROM changed_ids INTO r LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN territory.update_territory_view_data(changed_ids.ids::int[]) ON TRUE;
     
   RETURN NEW;
 END
@@ -40,7 +40,7 @@ BEGIN
   WITH changed_ids as (
       select DISTINCT array_agg(territory_id) AS ids from codes_old_table 
   )
-  SELECT NULL FROM changed_ids INTO r  LEFT JOIN update_territory_view_data(changed_ids.ids) ON TRUE;
+  SELECT NULL FROM changed_ids INTO r  LEFT JOIN territory.update_territory_view_data(changed_ids.ids::int[]) ON TRUE;
     
   RETURN NEW;
 END
