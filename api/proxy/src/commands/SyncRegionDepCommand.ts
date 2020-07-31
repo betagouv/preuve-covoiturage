@@ -26,9 +26,7 @@ export class SyncRegionDepCommand implements CommandInterface {
 
       const pgClient = pgConnection.getClient();
 
-      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER territory_relation_ins;`);
-      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER territory_relation_upd;`);
-      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER territory_relation_del;`);
+      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER ALL;`);
 
       const results = await pgClient.query(`
         SELECT t._id, t.name, tc.value as insee FROM territory.territories t JOIN territory.territory_codes tc ON t._id = tc.territory_id  WHERE t.level='region';
@@ -130,9 +128,7 @@ export class SyncRegionDepCommand implements CommandInterface {
 
         `);
 
-      await pgClient.query(`ALTER TABLE territory.territory_relation ENABLE TRIGGER territory_relation_ins;`);
-      await pgClient.query(`ALTER TABLE territory.territory_relation ENABLE TRIGGER territory_relation_upd;`);
-      await pgClient.query(`ALTER TABLE territory.territory_relation ENABLE TRIGGER territory_relation_del;`);
+      await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER ALL;`);
 
       return 'OK';
     } catch (e) {
