@@ -27,7 +27,7 @@
 
     <div [hidden]="!displayData">
       <app-campaign-table [status]="selectedStatus" [campaigns]="campaignsToShow"></app-campaign-table>
-      <mat-paginator [length]="countCampaigns" [pageSize]="PAGE_SIZE"></mat-paginator>
+      <mat-paginator [length]="countCampaigns" [pageSize]="PAGE_SIZE" (page)="paginationUpdate()"></mat-paginator>
     </div>
 
     <div *ngIf="!displayData" class="CampaignsList-notfound">
