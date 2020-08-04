@@ -57,7 +57,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           switch (filter.key) {
             case 'territory_id':
               return {
-                text: 'tv_start._id IS NOT NULL OR tv_end._id IS NOT NULL',
+                text: '(tv_start._id IS NOT NULL OR tv_end._id IS NOT NULL)',
                 values: [],
               };
 
@@ -273,7 +273,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     if (params.territory_id) {
       // whereClausesText.push('(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))');
-      whereClausesText.push('tv_start._id IS NOT NULL OR tv_end._id IS NOT NULL');
+      whereClausesText.push('(tv_start._id IS NOT NULL OR tv_end._id IS NOT NULL)');
       // values.push(params.territory_id, params.territory_id);
     }
 
