@@ -48,16 +48,17 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       .query({ text: 'REFRESH MATERIALIZED VIEW territory.territories_view;', values: [] });
   }
 
-  async getDirectRelation(id: number): Promise<TerritoryParentChildrenInterface> {
-    const query = {
-      text: `WITH 
+  async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface> {
+    const filter = typeof id === 'number' ? ` ${id}` : ` ANY('{${id.join(',')}}')`;
+
+    const query = `WITH 
       base_relation AS(
           SELECT 
               tv._id AS base_id,
               tv.descendants,
               tv.ancestors
           FROM territory.territories_view AS tv
-          WHERE tv._id = $1
+          WHERE tv._id = ${filter}
       ),
       children AS(
           SELECT 
@@ -65,7 +66,8 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
               t._id,
               t.name 
           FROM territory.territory_relation AS tr
-          INNER JOIN territory.territories AS t ON (t._id = tr.child_territory_id AND tr.parent_territory_id = $1)
+          INNER JOIN territory.territories AS t 
+            ON (t._id = tr.child_territory_id AND tr.parent_territory_id = ${filter})
       ),
       
       parent AS(
@@ -74,7 +76,8 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
               t._id,
               t.name
           FROM territory.territory_relation AS tr
-          INNER JOIN territory.territories AS t ON (t._id = tr.parent_territory_id AND tr.child_territory_id = $1)
+          INNER JOIN territory.territories AS t 
+            ON (t._id = tr.parent_territory_id AND tr.child_territory_id = ${filter})
       )
       SELECT 
           base_relation.base_id AS _id,
@@ -90,9 +93,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           LEFT JOIN parent ON children.base_id = base_relation.base_id
           GROUP BY parent.*,base_relation.base_id,base_relation.descendants,base_relation.ancestors;
       
-      `,
-      values: [id],
-    };
+      `;
 
     const result = await this.connection.getClient().query(query);
     return result.rows.length > 0 ? result.rows[0] : [];
@@ -308,7 +309,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       `,
       values,
     };
-    // console.log(finalQuery.text, finalQuery.values);
 
     const result = await this.connection.getClient().query(finalQuery);
 
@@ -337,7 +337,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     };
 
     const rowCount = (await this.connection.getClient().query(query)).rowCount;
-    console.log('rowCount : ', rowCount);
     if (rowCount !== 0) throw new ConflictException('Double siret is not allowed for territory ' + id);
   }
 
@@ -435,21 +434,15 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       values,
     };
 
-    // console.log('query : ', query);
-
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
     }
 
     const resultData = result.rows[0];
-    // console.log('updateRelations');
     await this.updateRelations(resultData._id, data.children);
-    // console.log('updateViews');
 
     // await this.updateViews();
-
-    // console.log('data.insee : ', data.insee);
 
     if (data.insee !== undefined && data.insee.length > 0) {
       const query = {
@@ -458,12 +451,10 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           data.insee.map((insee) => `($1,'insee',${insee})`).join(','),
         values: [resultData._id],
       };
-      // console.log('query : ', query);
 
       await this.connection.getClient().query(query);
     }
 
-    // console.log('new territory', resultData._id);
     return resultData;
   }
 
@@ -479,8 +470,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     if (children) {
-      // console.log(children);
-
       const values = children.map((childId) => `(${parentId},${childId})`).join(',');
 
       const insertQuery = `INSERT INTO ${this.relationTable}(parent_territory_id,child_territory_id) VALUES${values}`;
@@ -672,8 +661,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     // if (result.rowCount !== 1) {
     //   throw new NotFoundException(`territory not found (${id})`);
     // }
-
-    // console.log('modifiedTerritoryRes ', id, modifiedTerritoryRes.rows[0]);
 
     return modifiedTerritoryRes.rowCount > 0 ? modifiedTerritoryRes.rows[0] : 0;
   }

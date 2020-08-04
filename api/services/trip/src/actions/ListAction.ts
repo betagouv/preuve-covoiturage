@@ -51,15 +51,25 @@ export class ListAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // handle territories
-    if ('territory_id' in params) {
-      const response = await this.kernel.call(
-        'territory:getParentChildren',
-        { _id: get(context, 'call.user.territory_id', null) },
-        { call: { user: { permissions: ['territory.read'] } }, channel: { service: 'stats' } },
-      );
 
-      // merge all territory_id together
-      set(params, 'territory_id', [...params.territory_id, ...(response.descendant_ids || [])]);
+    if ('territory_id' in params) {
+      const userTerritoryId = get(context, 'call.user.territory_id', null);
+
+      if (userTerritoryId) {
+        const userAllowedTerritories = (
+          await this.kernel.call(
+            'territory:getParentChildren',
+            { _id: get(context, 'call.user.territory_id', null) },
+            { call: { user: { permissions: ['territory.read'] } }, channel: { service: 'stats' } },
+          )
+        ).descendant_ids;
+
+        set(
+          params,
+          'territory_id',
+          params.territory_id.filter((terrId) => userAllowedTerritories.indexOf(terrId) !== -1),
+        );
+      }
     }
 
     // get visible operators from user context

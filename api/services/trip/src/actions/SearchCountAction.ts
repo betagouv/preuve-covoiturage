@@ -52,14 +52,23 @@ export class SearchCountAction extends Action {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // handle territories
     if ('territory_id' in params) {
-      const response = await this.kernel.call(
-        'territory:getParentChildren',
-        { _id: get(context, 'call.user.territory_id', null) },
-        { call: { user: { permissions: ['territory.read'] } }, channel: { service: 'stats' } },
-      );
+      const userTerritoryId = get(context, 'call.user.territory_id', null);
 
-      // merge all territory_id together
-      set(params, 'territory_id', [...params.territory_id, ...(response.descendant_ids || [])]);
+      if (userTerritoryId) {
+        const userAllowedTerritories = (
+          await this.kernel.call(
+            'territory:getParentChildren',
+            { _id: get(context, 'call.user.territory_id', null) },
+            { call: { user: { permissions: ['territory.read'] } }, channel: { service: 'stats' } },
+          )
+        ).descendant_ids;
+
+        set(
+          params,
+          'territory_id',
+          params.territory_id.filter((terrId) => userAllowedTerritories.indexOf(terrId) !== -1),
+        );
+      }
     }
 
     return this.pg.searchCount(params);

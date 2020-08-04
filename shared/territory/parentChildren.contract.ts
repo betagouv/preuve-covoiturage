@@ -1,7 +1,8 @@
 import { TerritoryParentChildrenInterface } from './common/interfaces/TerritoryChildrenInterface';
 
 export interface ParamsInterface {
-  _id: number;
+  _id?: number;
+  _ids?: number;
 }
 
 export type ResultInterface = TerritoryParentChildrenInterface;

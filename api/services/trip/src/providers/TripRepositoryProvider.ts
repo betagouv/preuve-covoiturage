@@ -57,8 +57,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           switch (filter.key) {
             case 'territory_id':
               return {
-                text: '(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))',
-                values: [filter.value, filter.value],
+                text: 'tv_start._id IS NOT NULL OR tv_end._id IS NOT NULL',
+                values: [],
               };
 
             case 'operator_id':
@@ -272,8 +272,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     values.push(params.date.start, params.date.end);
 
     if (params.territory_id) {
-      whereClausesText.push('(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))');
-      values.push(params.territory_id, params.territory_id);
+      // whereClausesText.push('(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))');
+      whereClausesText.push('tv_start._id IS NOT NULL OR tv_end._id IS NOT NULL');
+      // values.push(params.territory_id, params.territory_id);
     }
 
     if (params.operator_id) {
@@ -304,6 +305,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: `
         SELECT COUNT(*)
         FROM ${this.table}
+        ${this.buildJoins(params)}
         ${where.text ? `WHERE ${where.text}` : ''}
       `,
       values: [...(where ? where.values : [])],
@@ -315,6 +317,31 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     // parse the count(*) value which is returned as varchar by Postgres
     // do not cast as ::int in postgres to avoid overflow on huge values!
     return { count: result.rowCount ? parseInt(result.rows[0].count, 10) : -1 };
+  }
+
+  buildJoins(params: Partial<TripSearchInterfaceWithPagination>): string {
+    let joins = '';
+
+    if (params.territory_id) {
+      const idsSQLString = `'{${params.territory_id.join(',')}}'`;
+
+      joins += `
+        LEFT JOIN territory.territories_view tv_start ON (
+          tv_start._id = ${this.table}.start_territory_id AND (
+            tv_start._id = ANY(${idsSQLString}) OR
+            tv_start.ancestors && ${idsSQLString}
+          )
+        )
+        LEFT JOIN territory.territories_view tv_end ON (
+          tv_end._id = ${this.table}.end_territory_id AND (
+            tv_end._id = ANY(${idsSQLString}) OR
+            tv_end.ancestors && ${idsSQLString}
+          )
+        )
+      `;
+    }
+
+    return joins;
   }
 
   public async search(
@@ -336,6 +363,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           (driver_incentive_rpc_raw || passenger_incentive_rpc_raw)::json[] as campaigns_id,
           status
         FROM ${this.table}
+        ${this.buildJoins(params)}
         ${where.text ? `WHERE ${where.text}` : ''}
         ORDER BY journey_start_datetime DESC
         LIMIT $#::integer
@@ -345,6 +373,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
 
     query.text = this.numberPlaceholders(query.text);
+
     const result = await this.connection.getClient().query(query);
 
     const pagination = {
