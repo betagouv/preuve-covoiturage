@@ -30,13 +30,13 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
 
   getIconStatus(status: TripStatusEnum): string {
     switch (status) {
-      case TripStatusEnum.LOCKED:
+      case TripStatusEnum.EXPIRED:
         return 'check_circle';
-      case TripStatusEnum.ACTIVE:
+      case TripStatusEnum.OK:
         return 'check_circle';
-      case TripStatusEnum.PENDING:
+      case TripStatusEnum.EXPIRED:
         return 'warning';
-      case TripStatusEnum.ERROR:
+      case TripStatusEnum.CANCELED:
         return 'error';
       default:
         return '';
@@ -45,13 +45,13 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
 
   getIconClass(status: TripStatusEnum): string {
     switch (status) {
-      case TripStatusEnum.LOCKED:
+      case TripStatusEnum.EXPIRED:
         return 'success';
-      case TripStatusEnum.ACTIVE:
+      case TripStatusEnum.OK:
         return 'success';
-      case TripStatusEnum.PENDING:
+      case TripStatusEnum.EXPIRED:
         return 'warning';
-      case TripStatusEnum.ERROR:
+      case TripStatusEnum.CANCELED:
         return 'error';
       default:
         return '';

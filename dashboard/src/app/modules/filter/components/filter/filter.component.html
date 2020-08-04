@@ -114,10 +114,10 @@
               <mat-label>Statut</mat-label>
               <mat-select formControlName="status">
                 <!--                todo: when implemented in back-->
-                <!--                <mat-option *ngFor="let status of tripStatusList" value="{{ status }}">{{-->
-                <!--                  getStatusFrench(status)-->
-                <!--                }}</mat-option>-->
-                <mat-option value="{{ tripStatusList[2] }}">{{ getStatusFrench(tripStatusList[2]) }}</mat-option>
+                <mat-option *ngFor="let status of tripStatusList" value="{{ status }}">{{
+                  getStatusFrench(status)
+                }}</mat-option>
+                <!-- <mat-option value="{{ tripStatusList[2] }}">{{ getStatusFrench(tripStatusList[2]) }}</mat-option> -->
               </mat-select>
             </mat-form-field>
 

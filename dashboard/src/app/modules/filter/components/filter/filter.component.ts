@@ -8,7 +8,7 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-mo
 import { FilterService } from '~/modules/filter/services/filter.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
-import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
+import { TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
@@ -120,7 +120,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   public filterForm: FormGroup;
   public _showFilter = false;
   public classes = TRIP_RANKS;
-  public tripStatusList = TRIP_STATUS;
+  public tripStatusList = [TripStatusEnum.OK];
 
   public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
 
@@ -152,6 +152,11 @@ export class FilterComponent extends DestroyObservable implements OnInit {
 
   public filterClick(): void {
     const filterObj = this.filterForm.getRawValue();
+
+    // if (filterObj.date) {
+    //   if (!filterObj.date.start) delete filterObj.date.start;
+    //   if (!filterObj.date.end) delete filterObj.date.end;
+    // }
 
     this.filterService.setFilter(filterObj);
     this.filterNumber.emit(this.countFilters);
