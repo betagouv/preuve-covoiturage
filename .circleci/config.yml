@@ -179,11 +179,11 @@ workflows:
 
   frontend-staging:
     jobs:
-      - front-qa:
-          filters:
-            branches:
-              only:
-                - staging
+      # - front-qa:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - staging
       # - front-cypress:
       #     filters:
       #       branches:
