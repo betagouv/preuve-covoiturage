@@ -15,13 +15,13 @@ function QRPolynomial(num, shift) {
 }
 
 QRPolynomial.prototype = {
-  get: function(index) {
+  get: function (index) {
     return this.num[index];
   },
-  getLength: function() {
+  getLength: function () {
     return this.num.length;
   },
-  multiply: function(e) {
+  multiply: function (e) {
     const num = new Array(this.getLength() + e.getLength() - 1);
     for (let i = 0; i < this.getLength(); i++) {
       for (let j = 0; j < e.getLength(); j++) {
@@ -30,7 +30,7 @@ QRPolynomial.prototype = {
     }
     return new QRPolynomial(num, 0);
   },
-  mod: function(e) {
+  mod: function (e) {
     if (this.getLength() - e.getLength() < 0) {
       return this;
     }

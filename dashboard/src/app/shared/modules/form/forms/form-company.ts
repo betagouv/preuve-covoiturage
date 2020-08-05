@@ -19,7 +19,7 @@ export class FormCompany {
     const company = structure.company;
 
     this.siret.setValue(structure.siret);
-    this.siret.setValidators([Validators.required, Validators.pattern(REGEXP.siret)]);
+    this.siret.setValidators([Validators.pattern(REGEXP.siret)]);
 
     this.naf_entreprise.setValue(company.naf_entreprise);
     this.naf_entreprise.setValidators([Validators.pattern(REGEXP.naf)]);

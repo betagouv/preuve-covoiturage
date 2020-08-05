@@ -12,9 +12,7 @@ import {
   identifier: CarpoolRepositoryProviderInterfaceResolver,
 })
 export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInterface {
-  public readonly table = 'carpool.carpools';
-  public readonly id_table = 'certificate.identities';
-  public readonly incentive_table = 'policy.incentives';
+  public readonly table = 'trip.list';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -26,45 +24,54 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
    * TODO replace any output by proper interface
    */
   async find(params: {
-    identity_ids: number[];
+    identity_uuid: string;
     start_at: Date;
     end_at: Date;
     positions?: PointInterface[];
     radius?: number;
   }): Promise<CarpoolInterface[]> {
-    const { identity_ids, start_at, end_at, positions = [], radius = 1000 } = params;
+    const { identity_uuid, start_at, end_at, positions = [], radius = 1000 } = params;
+
+    const values: any[] = [identity_uuid, start_at, end_at];
 
     const where_positions = positions
       .reduce((prev: string[], pos: PointInterface): string[] => {
-        prev.push(`ST_Distance(ST_MakePoint(${pos.lon}, ${pos.lat}), cc.start_position) < ${Math.abs(radius | 0)}`);
-        prev.push(`ST_Distance(ST_MakePoint(${pos.lon}, ${pos.lat}), cc.end_position) < ${Math.abs(radius | 0)}`);
+        prev.push(
+          `ST_Distance(ST_MakePoint(\$${values.length + 1}, \$${values.length + 2}), cc.start_position) < \$${
+            values.length + 3
+          }`,
+        );
+        values.push(pos.lon, pos.lat, Math.abs(radius | 0));
+
+        prev.push(
+          `ST_Distance(ST_MakePoint(\$${values.length + 1}, \$${values.length + 2}), cc.end_position) < \$${
+            values.length + 3
+          }`,
+        );
+        values.push(pos.lon, pos.lat, Math.abs(radius | 0));
 
         return prev;
       }, [])
       .join(' OR ');
 
     // fetch the number of kilometers per month
-    const result = await this.connection.getClient().query({
-      text: `
-        SELECT
-          to_char(cc.datetime,'MM') AS m,
-          extract(year from cc.datetime)::text AS y,
-          count(*) as trips,
-          sum(cc.distance::float)/1000 as km,
-          sum(pi.amount::float)/100 as eur
-        FROM ${this.table} AS cc
-        LEFT JOIN ${this.incentive_table} AS pi
-        ON cc._id = pi.carpool_id
-        WHERE cc.identity_id IN (${identity_ids.join(',')})
-        AND cc.datetime >= $1 AND cc.datetime <= $2
-        ${where_positions.length ? `AND (${where_positions})` : ''}
-        GROUP BY (m, y)
-        ORDER BY y DESC, m DESC
-      `,
-      values: [start_at, end_at],
-    });
+    const text = `
+      SELECT
+        to_char(tl.journey_start_datetime,'MM') AS m,
+        extract(year from tl.journey_start_datetime)::text AS y,
+        count(*) as trips,
+        sum(tl.journey_distance::float)/1000 as km,
+        sum(tl.driver_revenue::float)/100 as eur
+      FROM ${this.table} AS tl
+      WHERE tl.driver_id = $1 OR tl.passenger_id = $1
+      AND tl.journey_start_datetime >= $2 AND tl.journey_start_datetime <= $3
+      ${where_positions.length ? `AND (${where_positions})` : ''}
+      GROUP BY (m, y)
+      ORDER BY y DESC, m DESC
+    `;
 
-    console.log('carpool find', result.rows);
+    const result = await this.connection.getClient().query(text, values);
+
     return result.rows;
   }
 }

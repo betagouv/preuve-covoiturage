@@ -30,7 +30,7 @@ export interface PersonInterface {
 }
 
 export interface FinalizePositionInterface extends GeoPositionInterface {
-  insee: string;
+  territory_id: number;
 }
 
 export interface FinalizedPersonInterface {

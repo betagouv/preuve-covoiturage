@@ -83,7 +83,10 @@ export class CampaignFormater {
         const parameters = retributionRule.parameters as MaxTripsRetributionRule['parameters'];
         campaignUx.max_trips = parameters.amount;
       }
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_AMOUNT) {
+      if (
+        retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_AMOUNT &&
+        retributionRule.parameters.period === 'campaign'
+      ) {
         const parameters = retributionRule.parameters as MaxAmountRetributionRule['parameters'];
         campaignUx.max_amount = parameters.amount;
       }
@@ -129,7 +132,10 @@ export class CampaignFormater {
         } as RestrictionUxInterface);
       }
 
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_AMOUNT) {
+      if (
+        retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_AMOUNT &&
+        retributionRule.parameters.period !== 'campaign'
+      ) {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
         campaignUx.restrictions.push({
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,

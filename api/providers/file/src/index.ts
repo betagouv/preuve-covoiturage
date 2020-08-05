@@ -1,1 +1,1 @@
-export { FileStorageProvider } from './FileStorageProvider';
+export { S3StorageProvider } from './S3StorageProvider';

@@ -39,10 +39,10 @@ function QR8bitByte(data) {
 }
 
 QR8bitByte.prototype = {
-  getLength: function(buffer) {
+  getLength: function (buffer) {
     return this.parsedData.length;
   },
-  write: function(buffer) {
+  write: function (buffer) {
     for (let i = 0, l = this.parsedData.length; i < l; i++) {
       buffer.put(this.parsedData[i], 8);
     }

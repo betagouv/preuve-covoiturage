@@ -20,11 +20,8 @@ import { TripStoreService } from '~/modules/trip/services/trip-store.service';
   ],
 })
 export class TripExportComponent extends DestroyObservable implements OnInit {
-  isExporting: boolean;
-  exported = false;
-  minDate = moment()
-    .subtract(1, 'year')
-    .toDate();
+  isExporting = false;
+  minDate = moment().subtract(1, 'year').toDate();
   exportFilterForm: FormGroup;
 
   constructor(
@@ -56,9 +53,13 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
           this.isExporting = true;
           this.tripService.exportTrips(filter).subscribe(
             () => {
-              this._toastr.success('Export en cours', 'Vous allez recevoir un email avec un lien de téléchargement.');
-              this.isExporting = false;
-              this.exported = true;
+              this._toastr.success(
+                'Vous allez recevoir un email avec un lien de téléchargement dans quelques minutes.',
+                'Export en cours',
+              );
+              setTimeout(() => {
+                this.isExporting = false;
+              }, 5000);
             },
             (err) => {
               this.isExporting = false;
@@ -70,13 +71,8 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   private initForm(): void {
-    const start = moment()
-      .subtract(1, 'month')
-      .startOf('day')
-      .toDate();
-    const end = moment()
-      .endOf('day')
-      .toDate();
+    const start = moment().subtract(1, 'month').startOf('day').toDate();
+    const end = moment().endOf('day').toDate();
     this.exportFilterForm = this._fb.group({
       date: this._fb.group({
         start: [start],

@@ -8,14 +8,20 @@ export enum FraudCheckStatusEnum {
 
 export interface FraudCheckIdentifier {
   method: string;
-  acquisition_id: number;
 }
 
 export interface FraudCheckData {
   karma: FraudCheckResult;
-  error: any;
+  meta: any;
 }
 
 export interface FraudCheck extends FraudCheckIdentifier, Partial<FraudCheckData> {
   status: FraudCheckStatusEnum;
+}
+
+export interface FraudCheckEntry {
+  acquisition_id: number;
+  status: FraudCheckStatusEnum;
+  karma: FraudCheckResult;
+  data: FraudCheck[];
 }

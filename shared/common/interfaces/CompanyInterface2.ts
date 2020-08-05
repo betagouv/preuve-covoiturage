@@ -1,5 +1,6 @@
 // FIXME: remove old CompanyInterface
 export interface CompanyInterface {
+  _id?: number;
   siret: string;
   siren: string;
   nic: string;

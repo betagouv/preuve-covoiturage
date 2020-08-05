@@ -1,0 +1,38 @@
+.mat-checkbox {
+  display: inline;
+
+  &.mat-checkbox-checked .mat-checkbox-frame {
+    display: none;
+  }
+}
+
+.mat-checkbox-frame {
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 2px solid #555;
+}
+
+.mat-checkbox-inner-container {
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  border-radius: 3px;
+  margin: 5px 10px 5px 0;
+}
+
+.mat-checkbox label {
+  // display: block;
+  overflow: hidden;
+  cursor: pointer;
+
+  line-height: 30px;
+  > * {
+    float: left;
+    display: inline-block;
+  }
+
+  > span {
+    margin-top: 5px;
+  }
+}

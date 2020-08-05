@@ -202,7 +202,9 @@ export class AuthenticationService {
   }
 
   public sendInviteEmail(user: User): Observable<JsonRPCResult> {
-    return this.jsonRPC.callOne(new JsonRPCParam<SendInviteEmailParam>('user:sendInvitationEmail', { _id: user._id }));
+    return this.jsonRPC.callOne(
+      new JsonRPCParam<SendInviteEmailParam>('user:sendInvitationEmail', { _id: user._id }),
+    );
   }
 
   /*

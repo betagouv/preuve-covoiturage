@@ -1,5 +1,6 @@
+import { get, set } from 'lodash';
 import { Action } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
+import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
@@ -15,10 +16,15 @@ import { alias } from '../shared/trip/list.schema';
         ['trip.list'],
         [
           (params, context): string => {
+            const territory_ids = params.territory_id || [context.call.user.territory_id];
+
+            const authorizedTerritories = context.call.user.authorizedTerritories;
             if (
-              'territory_id' in params &&
-              params.territory_id.length === 1 &&
-              params.territory_id[0] === context.call.user.territory_id
+              territory_ids &&
+              territory_ids.length > 0 &&
+              authorizedTerritories &&
+              authorizedTerritories.length &&
+              territory_ids.filter((id) => authorizedTerritories.indexOf(id) !== -1).length > 0
             ) {
               return 'territory.trip.list';
             }
@@ -26,8 +32,9 @@ import { alias } from '../shared/trip/list.schema';
           (params, context): string => {
             if (
               'operator_id' in params &&
+              context.call.user.operator_id &&
               params.operator_id.length === 1 &&
-              params.operator_id[0] === context.call.user.operator_id
+              params.operator_id.indexOf(context.call.user.operator_id) !== -1
             ) {
               return 'operator.trip.list';
             }
@@ -38,11 +45,33 @@ import { alias } from '../shared/trip/list.schema';
   ],
 })
 export class ListAction extends Action {
-  constructor(private pg: TripRepositoryProvider) {
+  constructor(private pg: TripRepositoryProvider, private kernel: KernelInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    // handle territories
+
+    if ('territory_id' in params) {
+      const userTerritoryId = get(context, 'call.user.territory_id', null);
+
+      if (userTerritoryId) {
+        const userAllowedTerritories = (
+          await this.kernel.call(
+            'territory:getParentChildren',
+            { _id: get(context, 'call.user.territory_id', null) },
+            { call: { user: { permissions: ['territory.read'] } }, channel: { service: 'stats' } },
+          )
+        ).descendant_ids;
+
+        set(
+          params,
+          'territory_id',
+          params.territory_id.filter((terrId) => userAllowedTerritories.indexOf(terrId) !== -1),
+        );
+      }
+    }
+
     // get visible operators from user context
     const result = await this.pg.search(params);
 
@@ -61,8 +90,6 @@ export class ListAction extends Action {
             : authorizedOperators.indexOf(r.operator_id) === -1
             ? null
             : r.operator_id,
-        campaigns_id: [],
-        status: 'locked',
       })),
     };
   }

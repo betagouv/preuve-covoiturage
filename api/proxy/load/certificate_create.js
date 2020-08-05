@@ -10,7 +10,8 @@ const o = {
   sleep_duration: 1,
   base_url: __ENV.LOAD_BASE_URL || 'http://localhost:8080',
   user: {
-    email: 'maxicovoit.admin@example.com',
+    // email: 'maxicovoit.admin@example.com',
+    email: 'operator@example.com',
     password: 'admin1234',
   },
 };
@@ -80,7 +81,7 @@ export function setup() {
   return store;
 }
 
-export default function(store) {
+export default function (store) {
   // create a certificate
   const response_cert = http.post(
     `${o.base_url}/v2/certificates`,
@@ -89,16 +90,16 @@ export default function(store) {
       identity: {
         phone: __ENV.LOAD_PHONE || '+33612345670',
       },
-      positions: [
-        {
-          lat: 47.19901,
-          lon: -1.5853,
-        },
-        {
-          lat: 47.21901,
-          lon: -1.5253,
-        },
-      ],
+      // positions: [
+      //   {
+      //     lat: 47.19901,
+      //     lon: -1.5853,
+      //   },
+      //   {
+      //     lat: 47.21901,
+      //     lon: -1.5253,
+      //   },
+      // ],
     }),
     {
       headers: {
@@ -110,6 +111,8 @@ export default function(store) {
       },
     },
   );
+
+  console.log(JSON.stringify({ status: response_cert.status }));
 
   check(response_cert, {
     'is status 201': (r) => r.status === 201,

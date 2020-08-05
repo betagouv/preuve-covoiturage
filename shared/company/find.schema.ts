@@ -2,15 +2,25 @@ export const alias = 'company.find';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['siret'],
+  required: ['query'],
   properties: {
-    siret: {
-      macro: 'siret',
+    query: {
+      type: 'object',
+      additionalProperties: false,
+      minProperties: 1,
+      maxProperties: 1,
+      properties: {
+        siret: {
+          macro: 'siret',
+        },
+        _id: {
+          macro: 'serial',
+        },
+      },
     },
-    source: {
-      type: 'string',
-      enum: ['local', 'remote'],
-      default: 'local',
+    forceRemoteUpdate: {
+      type: 'boolean',
+      default: false,
     },
   },
 };

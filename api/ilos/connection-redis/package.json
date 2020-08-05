@@ -1,0 +1,28 @@
+{
+  "name": "@ilos/connection-redis",
+  "version": "0.4.1",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "coverage": "nyc --all --reporter=text ava",
+    "test:integration": "ava",
+    "test": "exit 0"
+  },
+  "dependencies": {
+    "ioredis": "^4.14.0",
+    "@ilos/common": "^0.4.1",
+    "@ilos/connection-manager": "^0.4.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
+  }
+}

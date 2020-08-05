@@ -12,11 +12,13 @@ import {
 import { find } from './shared/territory/find.schema';
 import { create } from './shared/territory/create.schema';
 import { update } from './shared/territory/update.schema';
+import { schema as intermediaryRelationSchema } from './shared/territory/relationUiStatus.schema';
+import { schema as parentChildrenSchema } from './shared/territory/parentChildren.schema';
 import { binding as updateOperatorBinding } from './shared/territory/updateOperator.schema';
 import { binding as listOperatorBinding } from './shared/territory/listOperator.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
-import { findByInsee } from './shared/territory/findByInsee.schema';
-import { findByPosition } from './shared/territory/findByPosition.schema';
+// import { findByInsee } from './shared/territory/findByInsee.schema';
+// import { findByPosition } from './shared/territory/findByPosition.schema';
 import { patchContacts } from './shared/territory/patchContacts.schema';
 
 import { config } from './config';
@@ -24,12 +26,15 @@ import { TerritoryPgRepositoryProvider } from './providers/TerritoryPgRepository
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
 import { UpdateTerritoryOperatorAction } from './actions/UpdateTerritoryOperatorAction';
-import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction';
-import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPositionAction';
+// import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction';
+// import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPositionAction';
 import { FindTerritoryAction } from './actions/FindTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
 import { ListTerritoryOperatorAction } from './actions/ListTerritoryOperatorAction';
 import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperatorRepositoryProvider';
+import { GetTerritoryRelationUIStatusAction } from './actions/GetTerritoryRelationUIStatusAction';
+import { GetTerritoryParentChildrenAction } from './actions/GetTerritoryParentChildrenAction';
+import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 
 @serviceProvider({
   config,
@@ -39,8 +44,11 @@ import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperat
     ['territory.create', create],
     ['territory.update', update],
     ['territory.delete', deleteTerritory],
-    ['territory.findByInsee', findByInsee],
-    ['territory.findByPosition', findByPosition],
+    ['territory.getTerritoryRelationUIStatus', intermediaryRelationSchema],
+    ['territory.getParentChildren', parentChildrenSchema],
+    // TODO :  clean after territory migration
+    // ['territory.findByInsee', findByInsee],
+    // ['territory.findByPosition', findByPosition],
     ['territory.patchContacts', patchContacts],
     updateOperatorBinding,
     listOperatorBinding,
@@ -58,10 +66,14 @@ import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperat
     ListTerritoryAction,
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
-    FindTerritoryByInseeAction,
-    FindTerritoryByPositionAction,
+    // TODO :  clean after territory migration
+    // FindTerritoryByInseeAction,
+    // FindTerritoryByPositionAction,
+    CreateTerritoryAction,
     UpdateTerritoryOperatorAction,
     ListTerritoryOperatorAction,
+    GetTerritoryRelationUIStatusAction,
+    GetTerritoryParentChildrenAction,
   ],
   commands: [],
 })

@@ -16,6 +16,7 @@ import {
 })
 export class ProcessableCarpoolRepositoryProvider implements ProcessableCarpoolRepositoryProviderInterface {
   public readonly table = 'fraudcheck.processable_carpool';
+  public readonly dataTable = 'fraudcheck.fraudchecks';
 
   constructor(public connection: PostgresConnection) {}
 
@@ -34,10 +35,10 @@ export class ProcessableCarpoolRepositoryProvider implements ProcessableCarpoolR
   async *findProcessable(batchSize = 100): AsyncGenerator<ProcessableCarpool[], void, void> {
     const query = {
       text: `
-      SELECT
-        acquisition_id,
-        methods as processed_methods
-      FROM ${this.table}
+        SELECT
+          fp.acquisition_id as acquisition_id
+        FROM ${this.table} AS fp
+        ORDER BY fp.acquisition_id ASC
       `,
       values: [],
     };

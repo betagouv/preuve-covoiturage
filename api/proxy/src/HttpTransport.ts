@@ -145,6 +145,16 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerGlobalMiddlewares(): void {
+    // maintenance mode
+    this.app.use((req, res, next) => {
+      if (env('APP_MAINTENANCE', false)) {
+        res.status(503).json({ code: 503, error: 'Service Unavailable' });
+        return;
+      }
+
+      next();
+    });
+
     this.app.use(signResponseMiddleware);
     this.app.use(dataWrapMiddleware);
   }
@@ -237,14 +247,27 @@ export class HttpTransport implements TransportInterface {
           req.session.user = Array.isArray(response) ? response[0].result : response.result;
 
           if (req.session.user.territory_id) {
-            const list = await this.kernel.handle(
+            const operatorList = await this.kernel.handle(
               makeCall(
                 'territory:listOperator',
                 { territory_id: req.session.user.territory_id },
                 { user: req.session.user },
               ),
             );
-            req.session.user.authorizedOperators = get(list, 'result', []);
+            req.session.user.authorizedOperators = get(operatorList, 'result', []);
+
+            const descendantTerritories = await this.kernel.handle(
+              makeCall(
+                'territory:getParentChildren',
+                { _id: req.session.user.territory_id },
+                { user: req.session.user },
+              ),
+            );
+
+            req.session.user.authorizedTerritories = [
+              req.session.user.territory_id,
+              ...get(descendantTerritories, 'result.descendant_ids', []),
+            ];
           }
 
           this.send(res, response);
@@ -519,26 +542,30 @@ export class HttpTransport implements TransportInterface {
    */
   private registerCallHandler(): void {
     const endpoint = this.config.get('proxy.rpc.endpoint');
-    this.app.get(
-      endpoint,
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel
-          .getContainer()
-          .getHandlers()
-          .map((def) => ({
-            service: def.service,
-            method: def.method,
-          }))
-          .reduce((acc, { service, method }) => {
-            if (!(service in acc)) {
-              acc[service] = [];
-            }
-            acc[service].push(method);
-            return acc;
-          }, {});
-        res.json(response);
-      }),
-    );
+
+    /**
+     * List all RPC actions
+     * - disabled when deployed
+     */
+    if (env('APP_ENV', 'local') === 'local') {
+      this.app.get(
+        endpoint,
+        asyncHandler(async (req, res, next) => {
+          const response = await this.kernel
+            .getContainer()
+            .getHandlers()
+            .map((def) => ({
+              service: def.service,
+              method: def.method,
+            }))
+            .reduce((acc, { service, method }) => {
+              acc.push(`${service}:${method}`);
+              return acc;
+            }, []);
+          res.json(response);
+        }),
+      );
+    }
 
     // register the POST route to /rpc
     this.app.post(

@@ -1,6 +1,11 @@
-import { TripSearchInterface } from './common/interfaces/TripSearchInterface';
-
-export interface ParamsInterface extends TripSearchInterface {}
+export interface ParamsInterface {
+  date: {
+    start: Date;
+    end: Date;
+  };
+  operator_id?: number[];
+  territory_id?: number[];
+}
 export type ResultInterface = void;
 
 export const handlerConfig = {

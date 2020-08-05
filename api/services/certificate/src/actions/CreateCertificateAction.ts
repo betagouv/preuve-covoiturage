@@ -40,7 +40,6 @@ export class CreateCertificateAction extends AbstractAction {
 
     // fetch the data for this identity, operator and territory and map to template object
     const person = await this.identityRepository.find(identity);
-    console.log({ person });
     const operator = await this.kernel.call(
       'operator:quickfind',
       { _id: operator_id },
@@ -51,7 +50,7 @@ export class CreateCertificateAction extends AbstractAction {
     );
 
     // fetch the data for this identity, operator and territory and map to template object
-    const certs = await this.carpoolRepository.find({ identity_ids: person.ids, start_at, end_at, positions });
+    const certs = await this.carpoolRepository.find({ identity_uuid: person.uuid, start_at, end_at, positions });
     const rows = certs.slice(0, 11); // TODO agg the last line
     const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)) || 0;
     const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0)) || 0;
@@ -79,7 +78,7 @@ export class CreateCertificateAction extends AbstractAction {
       end_at,
       start_at,
       operator_id,
-      identity_id: person.ids[0], // ???
+      identity_uuid: person.uuid,
     });
 
     return {
@@ -89,6 +88,7 @@ export class CreateCertificateAction extends AbstractAction {
         created_at: certificate.created_at,
         pdf_url: `${this.config.get('url.certificateBaseUrl')}/pdf/${certificate.uuid}`,
         png_url: `${this.config.get('url.certificateBaseUrl')}/png/${certificate.uuid}`,
+        meta: certificate.meta,
       },
     };
   }

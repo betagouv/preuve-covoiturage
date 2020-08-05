@@ -1,11 +1,11 @@
 import { provider, NotFoundException } from '@ilos/common';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
 import {
   IdentityRepositoryProviderInterfaceResolver,
   IdentityRepositoryProviderInterface,
   IdentityParams,
 } from '../interfaces/IdentityRepositoryProviderInterface';
-import { PostgresConnection } from '@ilos/connection-postgres/dist';
 
 @provider({
   identifier: IdentityRepositoryProviderInterfaceResolver,
@@ -15,15 +15,12 @@ export class IdentityPgRepositoryProvider implements IdentityRepositoryProviderI
 
   constructor(private pg: PostgresConnection) {}
 
-  async find(params: IdentityParams): Promise<{ ids: number[]; uuid: string }> {
+  async find(params: IdentityParams): Promise<{ uuid: string }> {
     const q = {
       text: `
-        SELECT
-          array_agg(_id) as ids,
-          uuid
+        SELECT uuid
         FROM ${this.table}
         WHERE {{WHERE}}
-        GROUP BY uuid
         LIMIT 1
       `,
       values: [],
@@ -50,7 +47,6 @@ export class IdentityPgRepositoryProvider implements IdentityRepositoryProviderI
       throw new NotFoundException();
     }
 
-    console.log('find Identity', res.rows);
     return res.rows[0];
   }
 }

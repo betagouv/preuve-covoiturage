@@ -133,7 +133,7 @@ function QRCode(options) {
 }
 
 /** Generates QR Code as SVG image */
-QRCode.prototype.svg = function(opt) {
+QRCode.prototype.svg = function (opt) {
   const options = this.options || {};
   const modules = this.qrcode.modules;
 

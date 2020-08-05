@@ -2,20 +2,6 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.2 (Debian 12.2-2.pgdg100+1)
--- Dumped by pg_dump version 12.2 (Ubuntu 12.2-2.pgdg19.10+1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
 --
 -- Name: acquisition; Type: SCHEMA; Schema: -; Owner: postgres
 --
@@ -148,6 +134,20 @@ COMMENT ON EXTENSION intarray IS 'functions, operators, and index support for 1-
 
 
 --
+-- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_stat_statements; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQL statements executed';
+
+
+--
 -- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -159,6 +159,20 @@ CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+
+
+--
+-- Name: tablefunc; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS tablefunc WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION tablefunc; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION tablefunc IS 'functions that manipulate whole tables, including crosstab';
 
 
 --
@@ -196,8 +210,7 @@ ALTER TYPE auth.user_status_enum OWNER TO postgres;
 CREATE TYPE carpool.carpool_status_enum AS ENUM (
     'ok',
     'expired',
-    'canceled',
-    'fraudcheck_error'
+    'canceled'
 );
 
 
@@ -296,6 +309,56 @@ CREATE TYPE policy.policy_unit_enum AS ENUM (
 ALTER TYPE policy.policy_unit_enum OWNER TO postgres;
 
 --
+-- Name: breadcrumb; Type: TYPE; Schema: territory; Owner: postgres
+--
+
+CREATE TYPE territory.breadcrumb AS (
+	country character varying,
+	countrygroup character varying,
+	district character varying,
+	megalopolis character varying,
+	other character varying,
+	region character varying,
+	state character varying,
+	town character varying,
+	towngroup character varying
+);
+
+
+ALTER TYPE territory.breadcrumb OWNER TO postgres;
+
+--
+-- Name: territory_level_enum; Type: TYPE; Schema: territory; Owner: postgres
+--
+
+CREATE TYPE territory.territory_level_enum AS ENUM (
+    'town',
+    'towngroup',
+    'district',
+    'megalopolis',
+    'region',
+    'state',
+    'country',
+    'countrygroup',
+    'other'
+);
+
+
+ALTER TYPE territory.territory_level_enum OWNER TO postgres;
+
+--
+-- Name: territory_level_name; Type: TYPE; Schema: territory; Owner: postgres
+--
+
+CREATE TYPE territory.territory_level_name AS (
+	level territory.territory_level_enum,
+	name character varying(128)
+);
+
+
+ALTER TYPE territory.territory_level_name OWNER TO postgres;
+
+--
 -- Name: touch_updated_at(); Type: FUNCTION; Schema: common; Owner: postgres
 --
 
@@ -310,6 +373,463 @@ $$;
 
 
 ALTER FUNCTION common.touch_updated_at() OWNER TO postgres;
+
+--
+-- Name: breadcrumb_to_json(territory.breadcrumb); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.breadcrumb_to_json(bc territory.breadcrumb) RETURNS json
+    LANGUAGE sql
+    AS $_$
+  select json_build_object(
+    'country', $1.country
+  , 'countrygroup', $1.countrygroup
+  , 'district', $1.district
+  , 'megalopolis', $1.megalopolis
+  , 'other', $1.other
+  , 'region', $1.region
+  , 'state', $1.state
+  , 'town', $1.town
+  , 'towngroup', $1.towngroup
+ 
+  );
+$_$;
+
+
+ALTER FUNCTION public.breadcrumb_to_json(bc territory.breadcrumb) OWNER TO postgres;
+
+--
+-- Name: get_codes(integer[]); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_codes(ids integer[]) RETURNS TABLE(territory_id integer, insee character varying[], postcode character varying[], codedep character varying[])
+    LANGUAGE plpgsql
+    AS $$
+
+    BEGIN
+
+    RETURN QUERY SELECT
+      codes.territory_id,
+      array_remove(array_agg(codes.insee), null) AS insee,
+      array_remove(array_agg(codes.postcode),null) AS postcode,
+      array_remove(array_agg(codes.codedep),null) AS codedep 
+    FROM crosstab(
+      'SELECT territory_codes.territory_id, territory_codes.type, territory_codes.value FROM territory.territory_codes order by territory_codes.type asc',
+      'SELECT distinct territory_codes.type FROM territory.territory_codes order by territory_codes.type asc'
+    ) AS codes(territory_id int, "insee" varchar, "postcode" varchar, "codedep" varchar)
+    WHERE codes.territory_id = ANY(ids)
+    GROUP BY codes.territory_id;
+
+    END;
+$$;
+
+
+ALTER FUNCTION public.get_codes(ids integer[]) OWNER TO postgres;
+
+--
+-- Name: get_territory_view_data(integer[]); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_territory_view_data(ids integer[]) RETURNS TABLE(_id integer, active boolean, activable boolean, level territory.territory_level_enum, parent integer, children integer[], ancestors integer[], descendants integer[], insee character varying[], postcode character varying[], codedep character varying[], breadcrumb territory.breadcrumb)
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+
+RETURN QUERY WITH RECURSIVE
+  root AS (
+    SELECT
+      t._id,
+      array_remove(
+        array_agg(
+          distinct tr.parent_territory_id
+        ),
+        t._id
+      ) AS parents,
+      array_remove(
+        array_agg(
+            distinct tr.child_territory_id
+        ),
+        t._id
+      ) AS children 
+    FROM territory.territories AS t 
+    LEFT JOIN territory.territory_relation AS tr 
+      ON t._id = tr.parent_territory_id 
+      OR t._id = tr.child_territory_id
+
+     where t._id = ANY(ids)
+    GROUP BY t._id
+   
+  )
+  ,codes AS (
+    SELECT
+    territory_id,
+    array_remove(array_agg(tc.value) FILTER(where tc.type = 'insee'), null) AS insee,
+    array_remove(array_agg(tc.value) FILTER(where tc.type = 'postcode'), null) AS postcode,
+    array_remove(array_agg(tc.value) FILTER(where tc.type = 'codedep'), null) AS codedep
+    
+FROM territory.territory_codes tc WHERE tc.territory_id = ANY(ids) GROUP BY tc.territory_id
+  )
+  ,input AS (
+    SELECT 
+      r._id,
+      r.parents,
+      r.children,
+      d.insee,
+      d.postcode,
+      d.codedep
+    FROM root AS r 
+    LEFT JOIN codes AS d 
+      ON r._id = d.territory_id 
+    ORDER BY coalesce(array_length(r.children,1),0) ASC
+  )
+  ,complete_parent AS (
+    SELECT t._id, t.parents FROM input AS t 
+    UNION ALL 
+    SELECT
+      c._id,
+      t.parents AS parents
+    FROM input AS t 
+    JOIN complete_parent AS c ON t._id = any(c.parents)
+  )
+  ,complete_children AS (
+    SELECT t._id, t.children,t.insee,t.postcode,t.codedep FROM input AS t 
+    UNION ALL 
+    SELECT 
+      c._id,
+      t.children AS children,
+      t.insee,
+      t.postcode,
+      t.codedep
+    FROM input AS t 
+    JOIN complete_children AS c ON t._id = any(c.children)
+  )
+  ,complete as (
+       SELECT 
+        cc._id,
+        cc.children,
+        cc.insee,
+        cc.postcode,
+        cc.codedep,
+        cp.parents 
+        
+        FROM complete_children AS cc
+       LEFT JOIN complete_parent cp ON cp._id = cc._id
+  )
+  ,agg AS (
+    SELECT
+        c._id,
+        array_remove(array_remove(array_agg(distinct p), null), c._id) AS ancestors,
+        array_remove(array_remove(array_agg(distinct b), null), c._id) AS descendants,
+        array_remove(array_agg(distinct ins), null) AS insee,
+        array_remove(array_agg(distinct pos), null) AS postcode,
+        array_remove(array_agg(distinct cdp), null) AS codedep,
+        array_remove(array_agg(distinct tr.child_territory_id), null)  AS children
+        
+    FROM complete AS c
+    left JOIN unnest(c.parents) AS p ON true
+    left JOIN unnest(c.children) AS b ON true 
+    left JOIN unnest(c.insee) AS ins ON true 
+    left JOIN unnest(c.postcode) AS pos ON true
+    left JOIN unnest(c.codedep) AS cdp ON true
+    left JOIN territory.territory_relation AS tr ON (tr.parent_territory_id = c._id)
+
+    GROUP BY c._id
+  )
+  
+  ,bc_array AS (
+    SELECT 
+    agg._id as territory_id,
+    agg.ancestors
+    
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'country') as country
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'countrygroup') as countrygroup
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'district') as district
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'megalopolis') as megalopolis
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'other') as other
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'region') as region
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'state') as state
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'town') as town
+    ,(SELECT array_agg(row(tt.name)) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'towngroup') as towngroup
+
+    FROM agg
+  )
+
+    SELECT
+        a._id::int,
+        t.active::boolean,
+        t.activable::boolean,
+        t.level::territory.territory_level_enum,
+        (a.ancestors[array_length(a.ancestors, 1)])::int as parent,
+        a.children::int[],
+        a.ancestors::int[],
+        a.descendants::int[],
+        a.insee::varchar[],
+        a.postcode::varchar[],
+        a.codedep::varchar[]
+        ,row(
+            bc.country[1],
+            bc.countrygroup[1],
+            bc.district[1],
+            bc.megalopolis[1],
+            bc.other[1],
+            bc.region[1],
+            bc.state[1],
+            bc.town[1],
+            bc.towngroup[1]
+        )::territory.breadcrumb as breadcrumb
+
+    FROM agg AS a
+    LEFT JOIN territory.territories AS t ON t._id = a._id
+    LEFT JOIN bc_array AS bc ON bc.territory_id = a._id;
+
+
+END;
+$$;
+
+
+ALTER FUNCTION public.get_territory_view_data(ids integer[]) OWNER TO postgres;
+
+--
+-- Name: json_to_breadcrumb(json); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.json_to_breadcrumb(bc json) RETURNS territory.breadcrumb
+    LANGUAGE sql
+    AS $_$
+  select ROW(
+    $1->>'country',
+    $1->>'countrygroup',
+    $1->>'district',
+    $1->>'megalopolis',
+    $1->>'other',
+    $1->>'region',
+    $1->>'state',
+    $1->>'town',
+    $1->>'towngroup')::territory.breadcrumb;
+$_$;
+
+
+ALTER FUNCTION public.json_to_breadcrumb(bc json) OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_change(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_change() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+   
+    IF (TG_OP = 'DELETE') THEN
+        DELETE FROM territory.territories_view where _id = OLD._id;
+        RETURN OLD;
+    ELSIF (TG_OP = 'UPDATE') THEN
+        UPDATE territory.territories_view SET active = NEW.active,activable = NEW.activable ,level = NEW.level WHERE _id = NEW._id;
+        RETURN NEW;
+    ELSIF (TG_OP = 'INSERT') THEN
+        INSERT INTO territory.territories_view(_id,active,activable,level) VALUES(NEW._id,NEW.active,NEW.activable,NEW.level);
+        RETURN NEW;
+    END IF;
+    RETURN NULL; 
+END;
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_change() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_code_delete(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_code_delete() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE r RECORD;
+BEGIN
+  
+  WITH changed_ids as (
+      select DISTINCT array_agg(territory_id) AS ids from codes_old_table 
+  )
+  SELECT NULL FROM changed_ids INTO r  LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
+    
+  RETURN NEW;
+END
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_code_delete() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_code_insert(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_code_insert() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE r RECORD;
+BEGIN
+  
+  WITH changed_ids as (
+      select DISTINCT array_agg(territory_id) AS ids from codes_new_table 
+  )
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
+    
+  RETURN NEW;
+END
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_code_insert() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_code_update(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_code_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+  r RECORD;
+BEGIN
+  WITH codess as(
+    (select * from codes_old_table) 
+    UNION ALL
+    (select * from codes_new_table)
+  ),
+  changed_ids as (
+      select DISTINCT array_agg(territory_id) AS ids from codess 
+  )
+  
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
+      
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_code_update() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_relation_delete(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_relation_delete() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE r RECORD;
+BEGIN
+  
+  WITH changed_ids as (
+      select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relation_old_table 
+  )
+  SELECT NULL FROM changed_ids INTO r  LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
+    
+  RETURN NEW;
+END
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_relation_delete() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_relation_insert(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_relation_insert() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE r RECORD;
+BEGIN
+  
+  WITH changed_ids as (
+      select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relation_new_table 
+  )
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
+    
+  RETURN NEW;
+END
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_relation_insert() OWNER TO postgres;
+
+--
+-- Name: touch_territory_view_on_territory_relation_update(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.touch_territory_view_on_territory_relation_update() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+  r RECORD;
+BEGIN
+  WITH relations as(
+    (select * from relation_old_table) 
+    UNION ALL
+    (select * from relation_new_table)
+  ),
+  changed_ids as (
+      select DISTINCT array_agg(array[parent_territory_id,child_territory_id]) AS ids from relations 
+  )
+  
+  SELECT NULL FROM changed_ids INTO r LEFT JOIN  territory.update_territory_view_data(changed_ids.ids) ON TRUE;
+      
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.touch_territory_view_on_territory_relation_update() OWNER TO postgres;
+
+--
+-- Name:  territory.update_territory_view_data(integer[]); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public. territory.update_territory_view_data(ids integer[]) RETURNS void
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+  WITH tv as (
+    SELECT * from get_territory_view_data(ids) 
+  )
+  UPDATE territory.territories_view
+    SET 
+        parent = tv.ancestors[array_length(tv.ancestors, 1)],
+        children = tv.children,
+        ancestors = tv.ancestors,
+        descendants = tv.descendants,
+        active = tv.active,
+        activable = tv.activable,
+        level = tv.level,
+        insee = tv.insee,
+        postcode = tv.postcode,
+        codedep = tv.codedep,
+        breadcrumb = tv.breadcrumb
+    FROM
+    tv
+    WHERE
+    territory.territories_view._id = tv._id;
+
+    RETURN;
+END
+$$;
+
+
+ALTER FUNCTION public. territory.update_territory_view_data(ids integer[]) OWNER TO postgres;
+
+--
+-- Name: CAST (territory.breadcrumb AS json); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (territory.breadcrumb AS json) WITH FUNCTION public.breadcrumb_to_json(territory.breadcrumb) AS ASSIGNMENT;
+
+
+--
+-- Name: CAST (json AS territory.breadcrumb); Type: CAST; Schema: -; Owner: -
+--
+
+CREATE CAST (json AS territory.breadcrumb) WITH FUNCTION public.json_to_breadcrumb(json) AS ASSIGNMENT;
+
 
 SET default_tablespace = '';
 
@@ -352,53 +872,6 @@ ALTER TABLE acquisition.acquisitions__id_seq OWNER TO postgres;
 
 ALTER SEQUENCE acquisition.acquisitions__id_seq OWNED BY acquisition.acquisitions._id;
 
-
---
--- Name: carpools; Type: TABLE; Schema: carpool; Owner: postgres
---
-
-CREATE TABLE carpool.carpools (
-    _id integer NOT NULL,
-    created_at timestamp with time zone DEFAULT now(),
-    acquisition_id integer,
-    operator_id integer,
-    trip_id character varying,
-    operator_trip_id character varying,
-    is_driver boolean,
-    operator_class character(1),
-    datetime timestamp with time zone,
-    duration integer,
-    start_position public.geography,
-    start_insee character varying,
-    end_position public.geography,
-    end_insee character varying,
-    distance integer,
-    seats integer DEFAULT 1,
-    identity_id integer NOT NULL,
-    operator_journey_id character varying,
-    cost integer DEFAULT 0 NOT NULL,
-    meta json,
-    status carpool.carpool_status_enum DEFAULT 'ok'::carpool.carpool_status_enum NOT NULL
-);
-
-
-ALTER TABLE carpool.carpools OWNER TO postgres;
-
---
--- Name: carpools; Type: VIEW; Schema: acquisition; Owner: postgres
---
-
-CREATE VIEW acquisition.carpools AS
- SELECT carpools.acquisition_id,
-    carpools.operator_id,
-    carpools.operator_trip_id AS journey_id,
-    carpools.status
-   FROM carpool.carpools
-  WHERE ((carpools.is_driver = true) AND (carpools.operator_trip_id IS NOT NULL))
-  ORDER BY carpools.acquisition_id DESC;
-
-
-ALTER TABLE acquisition.carpools OWNER TO postgres;
 
 --
 -- Name: errors; Type: TABLE; Schema: acquisition; Owner: postgres
@@ -533,6 +1006,37 @@ ALTER TABLE auth.users__id_seq OWNER TO postgres;
 
 ALTER SEQUENCE auth.users__id_seq OWNED BY auth.users._id;
 
+
+--
+-- Name: carpools; Type: TABLE; Schema: carpool; Owner: postgres
+--
+
+CREATE TABLE carpool.carpools (
+    _id integer NOT NULL,
+    created_at timestamp with time zone DEFAULT now(),
+    acquisition_id integer,
+    operator_id integer,
+    trip_id character varying,
+    operator_trip_id character varying,
+    is_driver boolean,
+    operator_class character(1),
+    datetime timestamp with time zone,
+    duration integer,
+    start_position public.geography,
+    end_position public.geography,
+    distance integer,
+    seats integer DEFAULT 1,
+    identity_id integer NOT NULL,
+    operator_journey_id character varying,
+    cost integer DEFAULT 0 NOT NULL,
+    meta json,
+    status carpool.carpool_status_enum DEFAULT 'ok'::carpool.carpool_status_enum NOT NULL,
+    start_territory_id integer,
+    end_territory_id integer
+);
+
+
+ALTER TABLE carpool.carpools OWNER TO postgres;
 
 --
 -- Name: carpools__id_seq; Type: SEQUENCE; Schema: carpool; Owner: postgres
@@ -698,36 +1202,6 @@ CREATE VIEW certificate.identities AS
 ALTER TABLE certificate.identities OWNER TO postgres;
 
 --
--- Name: carpools; Type: VIEW; Schema: common; Owner: postgres
---
-
-CREATE VIEW common.carpools AS
- SELECT carpools._id,
-    carpools.created_at,
-    carpools.acquisition_id,
-    carpools.operator_id,
-    carpools.trip_id,
-    carpools.operator_trip_id,
-    carpools.is_driver,
-    carpools.operator_class,
-    carpools.datetime,
-    carpools.duration,
-    carpools.start_position,
-    carpools.start_insee,
-    carpools.end_position,
-    carpools.end_insee,
-    carpools.distance,
-    carpools.seats,
-    carpools.identity_id,
-    carpools.operator_journey_id,
-    carpools.cost,
-    carpools.meta
-   FROM carpool.carpools;
-
-
-ALTER TABLE common.carpools OWNER TO postgres;
-
---
 -- Name: insee; Type: TABLE; Schema: common; Owner: postgres
 --
 
@@ -774,11 +1248,34 @@ CREATE TABLE company.companies (
     geo public.geography,
     address character varying,
     headquarter boolean NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    _id integer NOT NULL
 );
 
 
 ALTER TABLE company.companies OWNER TO postgres;
+
+--
+-- Name: companies__id_seq; Type: SEQUENCE; Schema: company; Owner: postgres
+--
+
+CREATE SEQUENCE company.companies__id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE company.companies__id_seq OWNER TO postgres;
+
+--
+-- Name: companies__id_seq; Type: SEQUENCE OWNED BY; Schema: company; Owner: postgres
+--
+
+ALTER SEQUENCE company.companies__id_seq OWNED BY company.companies._id;
+
 
 --
 -- Name: fraudchecks; Type: TABLE; Schema: fraudcheck; Owner: postgres
@@ -789,7 +1286,7 @@ CREATE TABLE fraudcheck.fraudchecks (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     deleted_at timestamp with time zone,
-    acquisition_id integer NOT NULL,
+    acquisition_id character varying NOT NULL,
     method character varying(128) NOT NULL,
     status fraudcheck.status_enum DEFAULT 'pending'::fraudcheck.status_enum NOT NULL,
     karma integer DEFAULT 0,
@@ -822,46 +1319,6 @@ ALTER SEQUENCE fraudcheck.fraudchecks__id_seq OWNED BY fraudcheck.fraudchecks._i
 
 
 --
--- Name: method_repository; Type: TABLE; Schema: fraudcheck; Owner: postgres
---
-
-CREATE TABLE fraudcheck.method_repository (
-    _id character varying(128) NOT NULL,
-    weight double precision DEFAULT (1)::double precision NOT NULL,
-    active boolean DEFAULT true NOT NULL
-);
-
-
-ALTER TABLE fraudcheck.method_repository OWNER TO postgres;
-
---
--- Name: processable_carpool; Type: MATERIALIZED VIEW; Schema: fraudcheck; Owner: postgres
---
-
-CREATE MATERIALIZED VIEW fraudcheck.processable_carpool AS
- WITH data AS (
-         SELECT cc.acquisition_id,
-            array_remove(array_agg(ff.method ORDER BY ff.method), NULL::character varying) AS methods
-           FROM (carpool.carpools cc
-             LEFT JOIN fraudcheck.fraudchecks ff ON (((ff.acquisition_id = cc.acquisition_id) AND (ff.status = 'done'::fraudcheck.status_enum))))
-          WHERE ((cc.datetime >= (now() - '45 days'::interval)) AND (cc.datetime < (now() - '5 days'::interval)))
-          GROUP BY cc.acquisition_id
-        ), methods AS (
-         SELECT DISTINCT fr._id AS name
-           FROM fraudcheck.method_repository fr
-          WHERE (fr.active = true)
-        )
- SELECT DISTINCT d.acquisition_id,
-    d.methods
-   FROM data d
-  WHERE (NOT (d.methods @> ARRAY( SELECT methods.name
-           FROM methods)))
-  WITH NO DATA;
-
-
-ALTER TABLE fraudcheck.processable_carpool OWNER TO postgres;
-
---
 -- Name: operators; Type: TABLE; Schema: operator; Owner: postgres
 --
 
@@ -870,6 +1327,7 @@ CREATE TABLE operator.operators (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     deleted_at timestamp with time zone,
+    uuid uuid NOT NULL DEFAULT public.uuid_generate_v4(),
     name character varying NOT NULL,
     legal_name character varying NOT NULL,
     siret character varying NOT NULL,
@@ -878,8 +1336,7 @@ CREATE TABLE operator.operators (
     company json NOT NULL,
     address json NOT NULL,
     bank json NOT NULL,
-    contacts json NOT NULL,
-    uuid uuid DEFAULT public.uuid_generate_v4() NOT NULL
+    contacts json NOT NULL
 );
 
 
@@ -1043,7 +1500,7 @@ ALTER SEQUENCE policy.policies__id_seq OWNED BY policy.policies._id;
 CREATE TABLE policy.policy_metas (
     _id integer NOT NULL,
     policy_id integer NOT NULL,
-    key character varying,
+    key character varying DEFAULT 'default'::character varying NOT NULL,
     value json,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -1074,87 +1531,12 @@ ALTER SEQUENCE policy.policy_metas__id_seq OWNED BY policy.policy_metas._id;
 
 
 --
--- Name: insee; Type: TABLE; Schema: territory; Owner: postgres
---
-
-CREATE TABLE territory.insee (
-    _id character varying NOT NULL,
-    territory_id integer NOT NULL
-);
-
-
-ALTER TABLE territory.insee OWNER TO postgres;
-
---
--- Name: trips; Type: MATERIALIZED VIEW; Schema: policy; Owner: postgres
---
-
-CREATE MATERIALIZED VIEW policy.trips AS
- SELECT cp._id AS carpool_id,
-    cp.status AS carpool_status,
-    cp.trip_id,
-    cp.start_insee,
-    cp.end_insee,
-    cp.operator_id,
-    cp.operator_class,
-    cp.datetime,
-    cp.seats,
-    cp.cost,
-    cp.is_driver,
-        CASE
-            WHEN (cp.distance IS NOT NULL) THEN cp.distance
-            ELSE ((cp.meta ->> 'calc_distance'::text))::integer
-        END AS distance,
-        CASE
-            WHEN (cp.duration IS NOT NULL) THEN cp.duration
-            ELSE ((cp.meta ->> 'calc_duration'::text))::integer
-        END AS duration,
-    id.identity_uuid,
-    id.has_travel_pass,
-    id.is_over_18,
-    tis.territory_id AS start_territory_id,
-    tie.territory_id AS end_territory_id,
-    ap.applicable_policies,
-    pp.processed_policies,
-    (ap.applicable_policies OPERATOR(public.-) pp.processed_policies) AS processable_policies
-   FROM carpool.carpools cp,
-    LATERAL ( SELECT COALESCE(array_agg(ti.territory_id), ARRAY[]::integer[]) AS territory_id
-           FROM territory.insee ti
-          WHERE ((ti._id)::text = (cp.start_insee)::text)) tis,
-    LATERAL ( SELECT COALESCE(array_agg(ti.territory_id), ARRAY[]::integer[]) AS territory_id
-           FROM territory.insee ti
-          WHERE ((ti._id)::text = (cp.end_insee)::text)) tie,
-    LATERAL ( SELECT COALESCE(array_agg(pp_1._id), ARRAY[]::integer[]) AS applicable_policies
-           FROM policy.policies pp_1
-          WHERE (((pp_1.territory_id = ANY (tis.territory_id)) OR (pp_1.territory_id = ANY (tie.territory_id))) AND (pp_1.start_date <= cp.datetime) AND (pp_1.end_date >= cp.datetime) AND (pp_1.status = 'active'::policy.policy_status_enum))) ap,
-    LATERAL ( SELECT COALESCE(array_agg(pi.policy_id), ARRAY[]::integer[]) AS processed_policies
-           FROM policy.incentives pi
-          WHERE (pi.carpool_id = cp._id)) pp,
-    LATERAL ( SELECT
-                CASE
-                    WHEN (ci.travel_pass_user_id IS NOT NULL) THEN true
-                    ELSE false
-                END AS has_travel_pass,
-                CASE
-                    WHEN (ci.over_18 IS NOT NULL) THEN ci.over_18
-                    ELSE NULL::boolean
-                END AS is_over_18,
-            ci.uuid AS identity_uuid
-           FROM carpool.identities ci
-          WHERE (cp.identity_id = ci._id)) id
-  WHERE ((cp.datetime >= (now() - '45 days'::interval)) AND (cp.datetime < (now() - '5 days'::interval)))
-  WITH NO DATA;
-
-
-ALTER TABLE policy.trips OWNER TO postgres;
-
---
 -- Name: acquisition_meta; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.acquisition_meta (
     acquisition_id integer,
-    created_at timestamp without time zone DEFAULT now(),
+    created_at timestamp without time zone,
     meta character varying
 );
 
@@ -1234,33 +1616,49 @@ ALTER SEQUENCE public.migrations_id_seq OWNED BY public.migrations.id;
 
 
 --
+-- Name: insee; Type: TABLE; Schema: territory; Owner: postgres
+--
+
+CREATE TABLE territory.insee (
+    _id character varying NOT NULL,
+    territory_id integer NOT NULL
+);
+
+
+ALTER TABLE territory.insee OWNER TO postgres;
+
+--
 -- Name: territories; Type: TABLE; Schema: territory; Owner: postgres
 --
 
 CREATE TABLE territory.territories (
     _id integer NOT NULL,
-    parent_id integer,
+    company_id integer,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     deleted_at timestamp with time zone,
-    siret character varying NOT NULL,
-    name character varying NOT NULL,
-    shortname character varying,
-    cgu_accepted_at timestamp with time zone,
-    cgu_accepted_by character varying,
-    company json NOT NULL,
-    address json NOT NULL,
-    contacts json NOT NULL
+    level territory.territory_level_enum NOT NULL,
+    name character varying(128),
+    shortname character varying(128),
+    activable boolean DEFAULT false NOT NULL,
+    active boolean DEFAULT false NOT NULL,
+    active_since timestamp with time zone,
+    contacts json,
+    address json,
+    population integer,
+    surface integer,
+    geo public.geography,
+    ui_status json
 );
 
 
 ALTER TABLE territory.territories OWNER TO postgres;
 
 --
--- Name: territories__id_seq; Type: SEQUENCE; Schema: territory; Owner: postgres
+-- Name: territories__id_seq1; Type: SEQUENCE; Schema: territory; Owner: postgres
 --
 
-CREATE SEQUENCE territory.territories__id_seq
+CREATE SEQUENCE territory.territories__id_seq1
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -1269,13 +1667,278 @@ CREATE SEQUENCE territory.territories__id_seq
     CACHE 1;
 
 
-ALTER TABLE territory.territories__id_seq OWNER TO postgres;
+ALTER TABLE territory.territories__id_seq1 OWNER TO postgres;
 
 --
--- Name: territories__id_seq; Type: SEQUENCE OWNED BY; Schema: territory; Owner: postgres
+-- Name: territories__id_seq1; Type: SEQUENCE OWNED BY; Schema: territory; Owner: postgres
 --
 
-ALTER SEQUENCE territory.territories__id_seq OWNED BY territory.territories._id;
+ALTER SEQUENCE territory.territories__id_seq1 OWNED BY territory.territories._id;
+
+
+--
+-- Name: territories_breadcrumb; Type: TABLE; Schema: territory; Owner: postgres
+--
+
+CREATE TABLE territory.territories_breadcrumb (
+    _id integer NOT NULL,
+    country character varying,
+    countrygroup character varying,
+    district character varying,
+    megalopolis character varying,
+    other character varying,
+    region character varying,
+    state character varying,
+    town character varying,
+    towngroup character varying
+);
+
+
+ALTER TABLE territory.territories_breadcrumb OWNER TO postgres;
+
+--
+-- Name: territories_breadcrumb__id_seq; Type: SEQUENCE; Schema: territory; Owner: postgres
+--
+
+CREATE SEQUENCE territory.territories_breadcrumb__id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE territory.territories_breadcrumb__id_seq OWNER TO postgres;
+
+--
+-- Name: territories_breadcrumb__id_seq; Type: SEQUENCE OWNED BY; Schema: territory; Owner: postgres
+--
+
+ALTER SEQUENCE territory.territories_breadcrumb__id_seq OWNED BY territory.territories_breadcrumb._id;
+
+
+--
+-- Name: territories_view; Type: TABLE; Schema: territory; Owner: postgres
+--
+
+CREATE TABLE territory.territories_view (
+    _id integer NOT NULL,
+    active boolean DEFAULT false NOT NULL,
+    activable boolean DEFAULT false NOT NULL,
+    level territory.territory_level_enum NOT NULL,
+    parent integer,
+    children integer[] DEFAULT ARRAY[]::integer[],
+    ancestors integer[] DEFAULT ARRAY[]::integer[],
+    descendants integer[] DEFAULT ARRAY[]::integer[],
+    insee character varying[] DEFAULT ARRAY[]::character varying[],
+    postcode character varying[] DEFAULT ARRAY[]::character varying[],
+    codedep character varying[] DEFAULT ARRAY[]::character varying[],
+    breadcrumb territory.breadcrumb
+);
+
+
+ALTER TABLE territory.territories_view OWNER TO postgres;
+
+--
+-- Name: territories_view__id_seq; Type: SEQUENCE; Schema: territory; Owner: postgres
+--
+
+CREATE SEQUENCE territory.territories_view__id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE territory.territories_view__id_seq OWNER TO postgres;
+
+--
+-- Name: territories_view__id_seq; Type: SEQUENCE OWNED BY; Schema: territory; Owner: postgres
+--
+
+ALTER SEQUENCE territory.territories_view__id_seq OWNED BY territory.territories_view._id;
+
+
+--
+-- Name: territory_relation; Type: TABLE; Schema: territory; Owner: postgres
+--
+
+CREATE TABLE territory.territory_relation (
+    _id integer NOT NULL,
+    parent_territory_id integer NOT NULL,
+    child_territory_id integer NOT NULL
+);
+
+
+ALTER TABLE territory.territory_relation OWNER TO postgres;
+
+--
+-- Name: territories_view_test; Type: VIEW; Schema: territory; Owner: postgres
+--
+
+CREATE VIEW territory.territories_view_test AS
+ WITH RECURSIVE root AS (
+         SELECT t_1._id,
+            array_remove(array_agg(DISTINCT tr.parent_territory_id), t_1._id) AS parents,
+            array_remove(array_agg(DISTINCT tr.child_territory_id), t_1._id) AS children
+           FROM (territory.territories t_1
+             LEFT JOIN territory.territory_relation tr ON (((t_1._id = tr.parent_territory_id) OR (t_1._id = tr.child_territory_id))))
+          GROUP BY t_1._id
+        ), codes AS (
+         SELECT crosstab.territory_id,
+            array_remove(array_agg(crosstab.insee), NULL::character varying) AS insee,
+            array_remove(array_agg(crosstab.postcode), NULL::character varying) AS postcode
+           FROM public.crosstab('SELECT territory_id, type, value FROM territory.territory_codes order by type asc'::text, 'SELECT distinct type FROM territory.territory_codes order by type asc'::text) crosstab(territory_id integer, insee character varying, postcode character varying, codedep character varying)
+          GROUP BY crosstab.territory_id
+        ), input AS (
+         SELECT r._id,
+            r.parents,
+            r.children,
+            d.insee,
+            d.postcode
+           FROM (root r
+             LEFT JOIN codes d ON ((r._id = d.territory_id)))
+          ORDER BY COALESCE(array_length(r.children, 1), 0)
+        ), complete_parent AS (
+         SELECT t_1._id,
+            t_1.parents
+           FROM input t_1
+        UNION ALL
+         SELECT c._id,
+            t_1.parents
+           FROM (input t_1
+             JOIN complete_parent c ON ((t_1._id = ANY (c.parents))))
+        ), complete_children AS (
+         SELECT t_1._id,
+            t_1.children,
+            t_1.insee,
+            t_1.postcode
+           FROM input t_1
+        UNION ALL
+         SELECT c._id,
+            t_1.children,
+            t_1.insee,
+            t_1.postcode
+           FROM (input t_1
+             JOIN complete_children c ON ((t_1._id = ANY (c.children))))
+        ), complete AS (
+         SELECT cc._id,
+            cc.children,
+            cc.insee,
+            cc.postcode,
+            cp.parents
+           FROM (complete_children cc
+             LEFT JOIN complete_parent cp ON ((cp._id = cc._id)))
+        ), agg AS (
+         SELECT c._id,
+            array_remove(array_remove(array_agg(DISTINCT p.p), NULL::integer), c._id) AS ancestors,
+            array_remove(array_remove(array_agg(DISTINCT b.b), NULL::integer), c._id) AS descendants,
+            array_remove(array_agg(DISTINCT ins.ins), NULL::character varying) AS insee,
+            array_remove(array_agg(DISTINCT pos.pos), NULL::character varying) AS postcode,
+            array_remove(array_agg(DISTINCT tr.child_territory_id), NULL::integer) AS children
+           FROM (((((complete c
+             LEFT JOIN LATERAL unnest(c.parents) p(p) ON (true))
+             LEFT JOIN LATERAL unnest(c.children) b(b) ON (true))
+             LEFT JOIN LATERAL unnest(c.insee) ins(ins) ON (true))
+             LEFT JOIN LATERAL unnest(c.postcode) pos(pos) ON (true))
+             LEFT JOIN territory.territory_relation tr ON ((tr.parent_territory_id = c._id)))
+          GROUP BY c._id
+        )
+ SELECT a._id,
+    t.active,
+    t.level,
+    a.ancestors[array_length(a.ancestors, 1)] AS parent,
+    a.children,
+    a.ancestors,
+    a.descendants,
+    a.insee,
+    a.postcode
+   FROM (agg a
+     LEFT JOIN territory.territories t ON ((t._id = a._id)));
+
+
+ALTER TABLE territory.territories_view_test OWNER TO postgres;
+
+--
+-- Name: territory_cache; Type: TABLE; Schema: territory; Owner: postgres
+--
+
+CREATE TABLE territory.territory_cache (
+    _id integer NOT NULL,
+    active boolean DEFAULT false NOT NULL,
+    activable boolean DEFAULT false NOT NULL,
+    level territory.territory_level_enum NOT NULL,
+    parent integer,
+    children integer[] DEFAULT ARRAY[]::integer[],
+    ancestors integer[] DEFAULT ARRAY[]::integer[],
+    descendants integer[] DEFAULT ARRAY[]::integer[],
+    insee character varying[] DEFAULT ARRAY[]::character varying[],
+    postcode character varying[] DEFAULT ARRAY[]::character varying[],
+    codedep character varying[] DEFAULT ARRAY[]::character varying[]
+);
+
+
+ALTER TABLE territory.territory_cache OWNER TO postgres;
+
+--
+-- Name: territory_cache__id_seq; Type: SEQUENCE; Schema: territory; Owner: postgres
+--
+
+CREATE SEQUENCE territory.territory_cache__id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE territory.territory_cache__id_seq OWNER TO postgres;
+
+--
+-- Name: territory_cache__id_seq; Type: SEQUENCE OWNED BY; Schema: territory; Owner: postgres
+--
+
+ALTER SEQUENCE territory.territory_cache__id_seq OWNED BY territory.territory_cache._id;
+
+
+--
+-- Name: territory_codes; Type: TABLE; Schema: territory; Owner: postgres
+--
+
+CREATE TABLE territory.territory_codes (
+    _id integer NOT NULL,
+    territory_id integer NOT NULL,
+    type character varying(10) NOT NULL,
+    value character varying(64) NOT NULL
+);
+
+
+ALTER TABLE territory.territory_codes OWNER TO postgres;
+
+--
+-- Name: territory_codes__id_seq; Type: SEQUENCE; Schema: territory; Owner: postgres
+--
+
+CREATE SEQUENCE territory.territory_codes__id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE territory.territory_codes__id_seq OWNER TO postgres;
+
+--
+-- Name: territory_codes__id_seq; Type: SEQUENCE OWNED BY; Schema: territory; Owner: postgres
+--
+
+ALTER SEQUENCE territory.territory_codes__id_seq OWNED BY territory.territory_codes._id;
 
 
 --
@@ -1291,101 +1954,26 @@ CREATE TABLE territory.territory_operators (
 ALTER TABLE territory.territory_operators OWNER TO postgres;
 
 --
--- Name: export; Type: MATERIALIZED VIEW; Schema: trip; Owner: postgres
+-- Name: territory_relation__id_seq; Type: SEQUENCE; Schema: territory; Owner: postgres
 --
 
-CREATE MATERIALIZED VIEW trip.export AS
- SELECT cpp.operator_id,
-    ope.name AS operator_name,
-    tis.territory_id AS start_territory_id,
-    tie.territory_id AS end_territory_id,
-    (cpp.acquisition_id)::character varying AS journey_id,
-    cpp.trip_id,
-    cpp.datetime AS journey_start_datetime,
-    trunc((public.st_x((cpp.start_position)::public.geometry))::numeric, (round((log(((5 - cis.density))::double precision) + (2)::double precision)))::integer) AS journey_start_lon,
-    trunc((public.st_y((cpp.start_position)::public.geometry))::numeric, (round((log(((5 - cis.density))::double precision) + (2)::double precision)))::integer) AS journey_start_lat,
-    cpp.start_insee AS journey_start_insee,
-    cis.postcodes[1] AS journey_start_postcode,
-    cis.town AS journey_start_town,
-    NULL::text AS journey_start_epci,
-    cis.country AS journey_start_country,
-    (cpp.datetime + ((cpp.duration || ' seconds'::text))::interval) AS journey_end_datetime,
-    trunc((public.st_x((cpp.end_position)::public.geometry))::numeric, (round((log(((5 - cie.density))::double precision) + (2)::double precision)))::integer) AS journey_end_lon,
-    trunc((public.st_y((cpp.end_position)::public.geometry))::numeric, (round((log(((5 - cie.density))::double precision) + (2)::double precision)))::integer) AS journey_end_lat,
-    cpp.end_insee AS journey_end_insee,
-    cie.postcodes[1] AS journey_end_postcode,
-    cie.town AS journey_end_town,
-    NULL::text AS journey_end_epci,
-    cie.country AS journey_end_country,
-        CASE
-            WHEN (cpp.distance IS NOT NULL) THEN cpp.distance
-            ELSE ((cpp.meta ->> 'calc_distance'::text))::integer
-        END AS journey_distance,
-        CASE
-            WHEN (cpp.duration IS NOT NULL) THEN cpp.duration
-            ELSE ((cpp.meta ->> 'calc_duration'::text))::integer
-        END AS journey_duration,
-    (
-        CASE
-            WHEN (cid.travel_pass_name IS NOT NULL) THEN '1'::text
-            ELSE '0'::text
-        END)::boolean AS driver_card,
-    (
-        CASE
-            WHEN (cip.travel_pass_name IS NOT NULL) THEN '1'::text
-            ELSE '0'::text
-        END)::boolean AS passenger_card,
-    cpp.operator_class,
-    cip.over_18 AS passenger_over_18,
-    cpp.seats AS passenger_seats
-   FROM ((((((((carpool.carpools cpp
-     JOIN operator.operators ope ON ((ope._id = cpp.operator_id)))
-     JOIN territory.insee tis ON (((tis._id)::text = (cpp.start_insee)::text)))
-     JOIN territory.insee tie ON (((tie._id)::text = (cpp.end_insee)::text)))
-     JOIN common.insee cis ON (((cis._id)::text = (cpp.start_insee)::text)))
-     JOIN common.insee cie ON (((cie._id)::text = (cpp.end_insee)::text)))
-     JOIN carpool.carpools cpd ON (((cpd.acquisition_id = cpp.acquisition_id) AND (cpd.is_driver = true) AND (cpd.status = 'ok'::carpool.carpool_status_enum))))
-     JOIN carpool.identities cip ON ((cip._id = cpp.identity_id)))
-     JOIN carpool.identities cid ON ((cid._id = cpd.identity_id)))
-  WHERE ((cpp.is_driver = false) AND (cpp.status = 'ok'::carpool.carpool_status_enum))
-  WITH NO DATA;
+CREATE SEQUENCE territory.territory_relation__id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
-ALTER TABLE trip.export OWNER TO postgres;
+ALTER TABLE territory.territory_relation__id_seq OWNER TO postgres;
 
 --
--- Name: list; Type: MATERIALIZED VIEW; Schema: trip; Owner: postgres
+-- Name: territory_relation__id_seq; Type: SEQUENCE OWNED BY; Schema: territory; Owner: postgres
 --
 
-CREATE MATERIALIZED VIEW trip.list AS
- SELECT cp.trip_id,
-    cp.start_insee,
-    cp.end_insee,
-    cp.operator_id,
-    cp.operator_class,
-    cp.datetime,
-    date_part('isodow'::text, cp.datetime) AS weekday,
-    date_part('hour'::text, cp.datetime) AS dayhour,
-    cp.seats,
-    cp.is_driver,
-    cis.town AS start_town,
-    tis.territory_id AS start_territory_id,
-    cie.town AS end_town,
-    tie.territory_id AS end_territory_id,
-        CASE
-            WHEN (cp.distance IS NOT NULL) THEN cp.distance
-            ELSE ((cp.meta ->> 'calc_distance'::text))::integer
-        END AS distance
-   FROM ((((carpool.carpools cp
-     JOIN common.insee cis ON (((cp.start_insee)::text = (cis._id)::text)))
-     JOIN common.insee cie ON (((cp.end_insee)::text = (cie._id)::text)))
-     JOIN territory.insee tis ON (((cp.start_insee)::text = (tis._id)::text)))
-     JOIN territory.insee tie ON (((cp.end_insee)::text = (tie._id)::text)))
-  WHERE (cp.status = 'ok'::carpool.carpool_status_enum)
-  WITH NO DATA;
+ALTER SEQUENCE territory.territory_relation__id_seq OWNED BY territory.territory_relation._id;
 
-
-ALTER TABLE trip.list OWNER TO postgres;
 
 --
 -- Name: stat_cache; Type: TABLE; Schema: trip; Owner: postgres
@@ -1459,6 +2047,13 @@ ALTER TABLE ONLY certificate.certificates ALTER COLUMN _id SET DEFAULT nextval('
 
 
 --
+-- Name: companies _id; Type: DEFAULT; Schema: company; Owner: postgres
+--
+
+ALTER TABLE ONLY company.companies ALTER COLUMN _id SET DEFAULT nextval('company.companies__id_seq'::regclass);
+
+
+--
 -- Name: fraudchecks _id; Type: DEFAULT; Schema: fraudcheck; Owner: postgres
 --
 
@@ -1518,7 +2113,42 @@ ALTER TABLE ONLY public.migrations ALTER COLUMN id SET DEFAULT nextval('public.m
 -- Name: territories _id; Type: DEFAULT; Schema: territory; Owner: postgres
 --
 
-ALTER TABLE ONLY territory.territories ALTER COLUMN _id SET DEFAULT nextval('territory.territories__id_seq'::regclass);
+ALTER TABLE ONLY territory.territories ALTER COLUMN _id SET DEFAULT nextval('territory.territories__id_seq1'::regclass);
+
+
+--
+-- Name: territories_breadcrumb _id; Type: DEFAULT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territories_breadcrumb ALTER COLUMN _id SET DEFAULT nextval('territory.territories_breadcrumb__id_seq'::regclass);
+
+
+--
+-- Name: territories_view _id; Type: DEFAULT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territories_view ALTER COLUMN _id SET DEFAULT nextval('territory.territories_view__id_seq'::regclass);
+
+
+--
+-- Name: territory_cache _id; Type: DEFAULT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territory_cache ALTER COLUMN _id SET DEFAULT nextval('territory.territory_cache__id_seq'::regclass);
+
+
+--
+-- Name: territory_codes _id; Type: DEFAULT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territory_codes ALTER COLUMN _id SET DEFAULT nextval('territory.territory_codes__id_seq'::regclass);
+
+
+--
+-- Name: territory_relation _id; Type: DEFAULT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territory_relation ALTER COLUMN _id SET DEFAULT nextval('territory.territory_relation__id_seq'::regclass);
 
 
 --
@@ -1606,7 +2236,7 @@ ALTER TABLE ONLY common.roles
 --
 
 ALTER TABLE ONLY company.companies
-    ADD CONSTRAINT companies_pkey PRIMARY KEY (siret);
+    ADD CONSTRAINT companies_pkey PRIMARY KEY (_id);
 
 
 --
@@ -1615,14 +2245,6 @@ ALTER TABLE ONLY company.companies
 
 ALTER TABLE ONLY fraudcheck.fraudchecks
     ADD CONSTRAINT fraudchecks_pkey PRIMARY KEY (_id);
-
-
---
--- Name: method_repository method_repository_pkey; Type: CONSTRAINT; Schema: fraudcheck; Owner: postgres
---
-
-ALTER TABLE ONLY fraudcheck.method_repository
-    ADD CONSTRAINT method_repository_pkey PRIMARY KEY (_id);
 
 
 --
@@ -1690,25 +2312,74 @@ ALTER TABLE ONLY territory.insee
 
 
 --
--- Name: territories territories_pkey; Type: CONSTRAINT; Schema: territory; Owner: postgres
+-- Name: territories_breadcrumb territories_breadcrumb_pkey; Type: CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territories_breadcrumb
+    ADD CONSTRAINT territories_breadcrumb_pkey PRIMARY KEY (_id);
+
+
+--
+-- Name: territories territories_pkey1; Type: CONSTRAINT; Schema: territory; Owner: postgres
 --
 
 ALTER TABLE ONLY territory.territories
-    ADD CONSTRAINT territories_pkey PRIMARY KEY (_id);
+    ADD CONSTRAINT territories_pkey1 PRIMARY KEY (_id);
 
 
 --
--- Name: acquisitions_journey_id_idx; Type: INDEX; Schema: acquisition; Owner: postgres
+-- Name: territories_view territories_view_pkey; Type: CONSTRAINT; Schema: territory; Owner: postgres
 --
 
-CREATE INDEX acquisitions_journey_id_idx ON acquisition.acquisitions USING btree (journey_id);
+ALTER TABLE ONLY territory.territories_view
+    ADD CONSTRAINT territories_view_pkey PRIMARY KEY (_id);
 
 
 --
--- Name: acquisitions_operator_id_idx; Type: INDEX; Schema: acquisition; Owner: postgres
+-- Name: territory_cache territory_cache_pkey; Type: CONSTRAINT; Schema: territory; Owner: postgres
 --
 
-CREATE INDEX acquisitions_operator_id_idx ON acquisition.acquisitions USING btree (operator_id);
+ALTER TABLE ONLY territory.territory_cache
+    ADD CONSTRAINT territory_cache_pkey PRIMARY KEY (_id);
+
+
+--
+-- Name: territory_codes territory_codes_pkey; Type: CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territory_codes
+    ADD CONSTRAINT territory_codes_pkey PRIMARY KEY (_id);
+
+
+--
+-- Name: territory_codes territory_codes_territory_id_type_value_key; Type: CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territory_codes
+    ADD CONSTRAINT territory_codes_territory_id_type_value_key UNIQUE (territory_id, type, value);
+
+
+--
+-- Name: territory_relation territory_relation_parent_territory_id_child_territory_id_key; Type: CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territory_relation
+    ADD CONSTRAINT territory_relation_parent_territory_id_child_territory_id_key UNIQUE (parent_territory_id, child_territory_id);
+
+
+--
+-- Name: territory_relation territory_relation_pkey; Type: CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territory_relation
+    ADD CONSTRAINT territory_relation_pkey PRIMARY KEY (_id);
+
+
+--
+-- Name: acquisitions_application_id_idx; Type: INDEX; Schema: acquisition; Owner: postgres
+--
+
+CREATE INDEX acquisitions_application_id_idx ON acquisition.acquisitions USING btree (application_id);
 
 
 --
@@ -1719,24 +2390,10 @@ CREATE UNIQUE INDEX acquisitions_operator_id_journey_id_idx ON acquisition.acqui
 
 
 --
--- Name: errors_journey_id_idx; Type: INDEX; Schema: acquisition; Owner: postgres
---
-
-CREATE INDEX errors_journey_id_idx ON acquisition.errors USING btree (journey_id);
-
-
---
 -- Name: errors_operator_id_idx; Type: INDEX; Schema: acquisition; Owner: postgres
 --
 
 CREATE INDEX errors_operator_id_idx ON acquisition.errors USING btree (operator_id);
-
-
---
--- Name: errors_request_id_idx; Type: INDEX; Schema: acquisition; Owner: postgres
---
-
-CREATE INDEX errors_request_id_idx ON acquisition.errors USING btree (request_id);
 
 
 --
@@ -1768,6 +2425,13 @@ CREATE INDEX carpools_acquisition_id_idx ON carpool.carpools USING btree (acquis
 
 
 --
+-- Name: carpools_acquisition_id_idx1; Type: INDEX; Schema: carpool; Owner: postgres
+--
+
+CREATE INDEX carpools_acquisition_id_idx1 ON carpool.carpools USING btree (acquisition_id);
+
+
+--
 -- Name: carpools_acquisition_id_is_driver_idx; Type: INDEX; Schema: carpool; Owner: postgres
 --
 
@@ -1786,13 +2450,6 @@ CREATE INDEX carpools_datetime_idx ON carpool.carpools USING btree (datetime);
 --
 
 CREATE INDEX carpools_distance_idx ON carpool.carpools USING btree (distance);
-
-
---
--- Name: carpools_end_insee_idx; Type: INDEX; Schema: carpool; Owner: postgres
---
-
-CREATE INDEX carpools_end_insee_idx ON carpool.carpools USING btree (end_insee);
 
 
 --
@@ -1821,13 +2478,6 @@ CREATE INDEX carpools_operator_id_idx ON carpool.carpools USING btree (operator_
 --
 
 CREATE INDEX carpools_operator_trip_id_idx ON carpool.carpools USING btree (operator_trip_id);
-
-
---
--- Name: carpools_start_insee_idx; Type: INDEX; Schema: carpool; Owner: postgres
---
-
-CREATE INDEX carpools_start_insee_idx ON carpool.carpools USING btree (start_insee);
 
 
 --
@@ -1887,6 +2537,13 @@ CREATE INDEX companies_siren_idx ON company.companies USING btree (siren);
 
 
 --
+-- Name: companies_siret_idx; Type: INDEX; Schema: company; Owner: postgres
+--
+
+CREATE UNIQUE INDEX companies_siret_idx ON company.companies USING btree (siret);
+
+
+--
 -- Name: fraudchecks_acquisition_id_idx; Type: INDEX; Schema: fraudcheck; Owner: postgres
 --
 
@@ -1915,38 +2572,10 @@ CREATE INDEX fraudchecks_status_idx ON fraudcheck.fraudchecks USING btree (statu
 
 
 --
--- Name: method_repository__id_idx; Type: INDEX; Schema: fraudcheck; Owner: postgres
---
-
-CREATE INDEX method_repository__id_idx ON fraudcheck.method_repository USING btree (_id);
-
-
---
--- Name: method_repository_active_idx; Type: INDEX; Schema: fraudcheck; Owner: postgres
---
-
-CREATE INDEX method_repository_active_idx ON fraudcheck.method_repository USING btree (active);
-
-
---
--- Name: processable_carpool_acquisition_id_idx; Type: INDEX; Schema: fraudcheck; Owner: postgres
---
-
-CREATE UNIQUE INDEX processable_carpool_acquisition_id_idx ON fraudcheck.processable_carpool USING btree (acquisition_id);
-
-
---
 -- Name: operators_siret_idx; Type: INDEX; Schema: operator; Owner: postgres
 --
 
 CREATE INDEX operators_siret_idx ON operator.operators USING btree (siret);
-
-
---
--- Name: operators_uuid_idx; Type: INDEX; Schema: operator; Owner: postgres
---
-
-CREATE INDEX operators_uuid_idx ON operator.operators USING btree (uuid);
 
 
 --
@@ -2034,6 +2663,13 @@ CREATE INDEX policies_territory_id_idx ON policy.policies USING btree (territory
 
 
 --
+-- Name: policy_meta_unique_key; Type: INDEX; Schema: policy; Owner: postgres
+--
+
+CREATE UNIQUE INDEX policy_meta_unique_key ON policy.policy_metas USING btree (policy_id, key);
+
+
+--
 -- Name: policy_metas_policy_id_idx; Type: INDEX; Schema: policy; Owner: postgres
 --
 
@@ -2041,38 +2677,10 @@ CREATE INDEX policy_metas_policy_id_idx ON policy.policy_metas USING btree (poli
 
 
 --
--- Name: trips_applicable_policies_idx; Type: INDEX; Schema: policy; Owner: postgres
+-- Name: acq_acquisition_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX trips_applicable_policies_idx ON policy.trips USING btree (applicable_policies);
-
-
---
--- Name: trips_carpool_id_idx; Type: INDEX; Schema: policy; Owner: postgres
---
-
-CREATE UNIQUE INDEX trips_carpool_id_idx ON policy.trips USING btree (carpool_id);
-
-
---
--- Name: trips_datetime_idx; Type: INDEX; Schema: policy; Owner: postgres
---
-
-CREATE INDEX trips_datetime_idx ON policy.trips USING btree (datetime);
-
-
---
--- Name: trips_processable_policies_idx; Type: INDEX; Schema: policy; Owner: postgres
---
-
-CREATE INDEX trips_processable_policies_idx ON policy.trips USING btree (processable_policies);
-
-
---
--- Name: trips_trip_id_idx; Type: INDEX; Schema: policy; Owner: postgres
---
-
-CREATE INDEX trips_trip_id_idx ON policy.trips USING btree (trip_id);
+CREATE INDEX acq_acquisition_id_idx ON public.acquisition_meta USING btree (acquisition_id);
 
 
 --
@@ -2090,10 +2698,52 @@ CREATE INDEX insee_territory_id_idx ON territory.insee USING btree (territory_id
 
 
 --
--- Name: territories_siret_idx; Type: INDEX; Schema: territory; Owner: postgres
+-- Name: territories__id_idx; Type: INDEX; Schema: territory; Owner: postgres
 --
 
-CREATE INDEX territories_siret_idx ON territory.territories USING btree (siret);
+CREATE INDEX territories__id_idx ON territory.territories USING btree (_id);
+
+
+--
+-- Name: territories_breadcrumb__id_idx; Type: INDEX; Schema: territory; Owner: postgres
+--
+
+CREATE INDEX territories_breadcrumb__id_idx ON territory.territories_breadcrumb USING btree (_id);
+
+
+--
+-- Name: territories_geo_idx; Type: INDEX; Schema: territory; Owner: postgres
+--
+
+CREATE INDEX territories_geo_idx ON territory.territories USING gist (geo);
+
+
+--
+-- Name: territories_view__id_idx; Type: INDEX; Schema: territory; Owner: postgres
+--
+
+CREATE INDEX territories_view__id_idx ON territory.territories_view USING btree (_id);
+
+
+--
+-- Name: territory_cache__id_idx; Type: INDEX; Schema: territory; Owner: postgres
+--
+
+CREATE INDEX territory_cache__id_idx ON territory.territory_cache USING btree (_id);
+
+
+--
+-- Name: territory_codes_territory_id_idx; Type: INDEX; Schema: territory; Owner: postgres
+--
+
+CREATE INDEX territory_codes_territory_id_idx ON territory.territory_codes USING btree (territory_id);
+
+
+--
+-- Name: territory_codes_type_value_idx; Type: INDEX; Schema: territory; Owner: postgres
+--
+
+CREATE INDEX territory_codes_type_value_idx ON territory.territory_codes USING btree (type, value);
 
 
 --
@@ -2118,94 +2768,17 @@ CREATE UNIQUE INDEX territory_operators_territory_id_operator_id_idx ON territor
 
 
 --
--- Name: export_end_territory_id_idx; Type: INDEX; Schema: trip; Owner: postgres
+-- Name: territory_relation_child_territory_id_idx; Type: INDEX; Schema: territory; Owner: postgres
 --
 
-CREATE INDEX export_end_territory_id_idx ON trip.export USING btree (end_territory_id);
-
-
---
--- Name: export_journey_start_datetime_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX export_journey_start_datetime_idx ON trip.export USING btree (journey_start_datetime);
+CREATE INDEX territory_relation_child_territory_id_idx ON territory.territory_relation USING btree (child_territory_id);
 
 
 --
--- Name: export_operator_id_idx; Type: INDEX; Schema: trip; Owner: postgres
+-- Name: territory_relation_parent_territory_id_idx; Type: INDEX; Schema: territory; Owner: postgres
 --
 
-CREATE INDEX export_operator_id_idx ON trip.export USING btree (operator_id);
-
-
---
--- Name: export_start_territory_id_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX export_start_territory_id_idx ON trip.export USING btree (start_territory_id);
-
-
---
--- Name: list_datetime_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX list_datetime_idx ON trip.list USING btree (datetime);
-
-
---
--- Name: list_dayhour_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX list_dayhour_idx ON trip.list USING btree (dayhour);
-
-
---
--- Name: list_distance_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX list_distance_idx ON trip.list USING btree (distance);
-
-
---
--- Name: list_end_territory_id_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX list_end_territory_id_idx ON trip.list USING btree (end_territory_id);
-
-
---
--- Name: list_is_driver_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX list_is_driver_idx ON trip.list USING btree (is_driver);
-
-
---
--- Name: list_operator_class_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX list_operator_class_idx ON trip.list USING btree (operator_class);
-
-
---
--- Name: list_operator_id_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX list_operator_id_idx ON trip.list USING btree (operator_id);
-
-
---
--- Name: list_start_territory_id_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX list_start_territory_id_idx ON trip.list USING btree (start_territory_id);
-
-
---
--- Name: list_weekday_idx; Type: INDEX; Schema: trip; Owner: postgres
---
-
-CREATE INDEX list_weekday_idx ON trip.list USING btree (weekday);
+CREATE INDEX territory_relation_parent_territory_id_idx ON territory.territory_relation USING btree (parent_territory_id);
 
 
 --
@@ -2265,6 +2838,48 @@ CREATE TRIGGER touch_policy_meta_updated_at BEFORE UPDATE ON policy.policy_metas
 
 
 --
+-- Name: territory_codes territory_codes_del; Type: TRIGGER; Schema: territory; Owner: postgres
+--
+
+CREATE TRIGGER territory_codes_del AFTER DELETE ON territory.territory_codes REFERENCING OLD TABLE AS codes_old_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_code_delete();
+
+
+--
+-- Name: territory_codes territory_codes_ins; Type: TRIGGER; Schema: territory; Owner: postgres
+--
+
+CREATE TRIGGER territory_codes_ins AFTER INSERT ON territory.territory_codes REFERENCING NEW TABLE AS codes_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_code_insert();
+
+
+--
+-- Name: territory_codes territory_codes_upd; Type: TRIGGER; Schema: territory; Owner: postgres
+--
+
+CREATE TRIGGER territory_codes_upd AFTER UPDATE ON territory.territory_codes REFERENCING OLD TABLE AS codes_old_table NEW TABLE AS codes_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_code_update();
+
+
+--
+-- Name: territory_relation territory_relation_del; Type: TRIGGER; Schema: territory; Owner: postgres
+--
+
+CREATE TRIGGER territory_relation_del AFTER DELETE ON territory.territory_relation REFERENCING OLD TABLE AS relation_old_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_relation_delete();
+
+
+--
+-- Name: territory_relation territory_relation_ins; Type: TRIGGER; Schema: territory; Owner: postgres
+--
+
+CREATE TRIGGER territory_relation_ins AFTER INSERT ON territory.territory_relation REFERENCING NEW TABLE AS relation_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_relation_insert();
+
+
+--
+-- Name: territory_relation territory_relation_upd; Type: TRIGGER; Schema: territory; Owner: postgres
+--
+
+CREATE TRIGGER territory_relation_upd AFTER UPDATE ON territory.territory_relation REFERENCING OLD TABLE AS relation_old_table NEW TABLE AS relation_new_table FOR EACH STATEMENT EXECUTE FUNCTION public.touch_territory_view_on_territory_relation_update();
+
+
+--
 -- Name: territories touch_territories_updated_at; Type: TRIGGER; Schema: territory; Owner: postgres
 --
 
@@ -2272,11 +2887,42 @@ CREATE TRIGGER touch_territories_updated_at BEFORE UPDATE ON territory.territori
 
 
 --
--- Name: acquisition_meta acquisition_meta_acquisition_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: territories touch_territory_view_on_territory_change; Type: TRIGGER; Schema: territory; Owner: postgres
 --
 
-ALTER TABLE ONLY public.acquisition_meta
-    ADD CONSTRAINT acquisition_meta_acquisition_id_fkey FOREIGN KEY (acquisition_id) REFERENCES acquisition.acquisitions(_id);
+CREATE TRIGGER touch_territory_view_on_territory_change AFTER INSERT OR DELETE OR UPDATE ON territory.territories FOR EACH ROW EXECUTE FUNCTION public.touch_territory_view_on_territory_change();
+
+
+--
+-- Name: territories territories_company_id_fkey; Type: FK CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territories
+    ADD CONSTRAINT territories_company_id_fkey FOREIGN KEY (company_id) REFERENCES company.companies(_id) ON DELETE SET NULL;
+
+
+--
+-- Name: territory_codes territory_codes_territory_id_fkey; Type: FK CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territory_codes
+    ADD CONSTRAINT territory_codes_territory_id_fkey FOREIGN KEY (territory_id) REFERENCES territory.territories(_id) ON DELETE CASCADE;
+
+
+--
+-- Name: territory_relation territory_relation_child_territory_id_fkey; Type: FK CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territory_relation
+    ADD CONSTRAINT territory_relation_child_territory_id_fkey FOREIGN KEY (child_territory_id) REFERENCES territory.territories(_id) ON DELETE CASCADE;
+
+
+--
+-- Name: territory_relation territory_relation_parent_territory_id_fkey; Type: FK CONSTRAINT; Schema: territory; Owner: postgres
+--
+
+ALTER TABLE ONLY territory.territory_relation
+    ADD CONSTRAINT territory_relation_parent_territory_id_fkey FOREIGN KEY (parent_territory_id) REFERENCES territory.territories(_id) ON DELETE CASCADE;
 
 
 --

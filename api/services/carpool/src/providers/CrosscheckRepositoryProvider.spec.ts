@@ -32,12 +32,12 @@ test.serial('Should get a new uuid', async (t) => {
     start: {
       lat: 0,
       lon: 0,
-      insee: 'myinsee',
+      territory_id: 0,
     },
     end: {
       lat: 0,
       lon: 0,
-      insee: 'myinsee',
+      territory_id: 0,
     },
     identity_uuid: '973b462f-6521-4b57-85c8-970c2d34fb10',
   };

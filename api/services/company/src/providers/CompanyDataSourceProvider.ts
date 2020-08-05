@@ -23,6 +23,8 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
         throw new NotFoundException(`${data.message} (${siret})`);
       }
 
+      console.log('< data : ', data);
+
       return {
         siret: get(data, 'etablissement.siret', null),
         siren: get(data, 'etablissement.siren', null),

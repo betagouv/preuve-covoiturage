@@ -7,7 +7,6 @@ import * as moment from 'moment';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { Filter } from '~/core/entities/filter/filter';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
 @Injectable({
   providedIn: 'root',
@@ -26,13 +25,7 @@ export class FilterService {
       return;
     }
 
-    let insees = [];
-    if ('insees' in filterUx) {
-      insees = filterUx.insees.map((town: InseeAndTerritoryInterface) => town.insees).reduce((a, b) => a.concat(b), []);
-    }
-
     const filter = new Filter({
-      insee: insees,
       date: filterUx.date,
       hour: filterUx.hour as any,
       days: filterUx.days,
@@ -57,20 +50,14 @@ export class FilterService {
     } else {
       // time zone hacky fix until ddb has timezones
       if (filter.hour.start) {
-        filter.hour.start = moment()
-          .hours(filter.hour.start)
-          .utc()
-          .hours();
+        filter.hour.start = moment().hours(filter.hour.start).utc().hours();
       } else {
         filter.hour.start = 0;
       }
 
       if (filter.hour.end) {
         // time zone hacky fix until ddb has timezones
-        filter.hour.end = moment()
-          .hours(filter.hour.end)
-          .utc()
-          .hours();
+        filter.hour.end = moment().hours(filter.hour.end).utc().hours();
       } else {
         filter.hour.end = 23;
       }

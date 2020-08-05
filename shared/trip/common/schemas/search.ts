@@ -45,13 +45,6 @@ const params = {
   status: {
     type: 'string',
   },
-  insee: {
-    type: 'array',
-    minItems: 1,
-    items: {
-      macro: 'insee',
-    },
-  },
   distance: {
     type: 'object',
     additionalProperties: false,

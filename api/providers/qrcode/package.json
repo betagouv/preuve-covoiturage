@@ -13,5 +13,8 @@
     "coverage-ci": "echo '[provider-qrcode] No tests'; exit 0",
     "coverage": "echo '[provider-qrcode] No tests'; exit 0",
     "lint": "eslint 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "@ilos/common": "^0"
   }
 }

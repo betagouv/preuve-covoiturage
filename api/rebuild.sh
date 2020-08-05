@@ -9,13 +9,12 @@ if [ ${PWD##*/} != "api" ]; then
   exit 1;
 fi
 
-find . -type d -name node_modules -exec rm -rf {} \;
-find . -type d -name dist -exec rm -rf {} \;
+find . -type d -name node_modules -exec rm -rf {} \;  2>/dev/null
+find . -type d -name dist -exec rm -rf {} \;  2>/dev/null
 
-cd ilos
-yarn
-yarn build
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=yes yarn
+yarn build:all
+find . -type d -name node_modules -exec rm -rf {} \;  2>/dev/null
 
-cd ..
+unset PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
 yarn
-yarn build
