@@ -7,6 +7,7 @@ const params = {
   date: {
     type: 'object',
     additionalProperties: false,
+    minProperties: 1,
     properties: {
       start: {
         macro: 'timestamp',
@@ -48,6 +49,7 @@ const params = {
   distance: {
     type: 'object',
     additionalProperties: false,
+    minProperties: 1,
     properties: {
       min: {
         type: 'integer',

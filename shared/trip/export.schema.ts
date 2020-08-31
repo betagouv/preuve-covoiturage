@@ -5,6 +5,7 @@ export const schema = {
     date: {
       type: 'object',
       additionalProperties: false,
+      minProperties: 1,
       properties: {
         start: {
           macro: 'timestamp',
