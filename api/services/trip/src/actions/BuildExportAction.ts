@@ -172,7 +172,7 @@ export class BuildExportAction extends Action {
         const results = await cursor(10);
         count = results.length;
         for (const line of results) {
-          stringifier.write(line);
+          stringifier.write(this.normalize(line));
         }
       } while (count !== 0);
 
@@ -265,9 +265,15 @@ export class BuildExportAction extends Action {
     const data = {
       ...initialData,
       journey_start_date: initialData.journey_start_datetime.toISOString().split('T')[0],
-      journey_start_time: initialData.journey_start_datetime.toISOString().split('T')[1].split('.')[0],
+      journey_start_time: initialData.journey_start_datetime
+        .toISOString()
+        .split('T')[1]
+        .split('.')[0],
       journey_end_date: initialData.journey_end_datetime.toISOString().split('T')[0],
-      journey_end_time: initialData.journey_end_datetime.toISOString().split('T')[1].split('.')[0],
+      journey_end_time: initialData.journey_end_datetime
+        .toISOString()
+        .split('T')[1]
+        .split('.')[0],
       // distance in kilometers
       journey_distance: Math.round(initialData.journey_distance / 1000),
       journey_distance_calculated: Math.round(initialData.journey_distance_calculated / 1000),
