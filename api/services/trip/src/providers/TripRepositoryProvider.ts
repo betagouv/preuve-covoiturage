@@ -158,6 +158,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
     const where = this.buildWhereClauses(params);
 
+    const join = this.buildJoins(params, where.values);
+
     const query = {
       text: `
       SELECT
@@ -173,6 +175,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0
         ))::int as trip_subsidized
       FROM ${this.table}
+      ${join}
       ${where.text ? `WHERE ${where.text}` : ''}
       GROUP BY day
       ORDER BY day ASC`,
@@ -323,8 +326,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     let joins = '';
 
     if (params.territory_id) {
-      const ind = `$${values.length}`;
-      values.push(`'{${params.territory_id.join(',')}}'`);
+      const ind = `$${values.length + 1}`;
+      values.push(params.territory_id);
 
       joins += `
         LEFT JOIN territory.territories_view tv_start ON (
