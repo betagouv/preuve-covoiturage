@@ -305,7 +305,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: `
         SELECT COUNT(*)
         FROM ${this.table}
-        ${this.buildJoins(params)}
+        ${this.buildJoins(params, where.values)}
         ${where.text ? `WHERE ${where.text}` : ''}
       `,
       values: [...(where ? where.values : [])],
@@ -319,23 +319,24 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return { count: result.rowCount ? parseInt(result.rows[0].count, 10) : -1 };
   }
 
-  buildJoins(params: Partial<TripSearchInterfaceWithPagination>): string {
+  buildJoins(params: Partial<TripSearchInterfaceWithPagination>, values: any[]): string {
     let joins = '';
 
     if (params.territory_id) {
-      const idsSQLString = `'{${params.territory_id.join(',')}}'`;
+      const ind = `$${values.length}`;
+      values.push(`'{${params.territory_id.join(',')}}'`);
 
       joins += `
         LEFT JOIN territory.territories_view tv_start ON (
           tv_start._id = ${this.table}.start_territory_id AND (
-            tv_start._id = ANY(${idsSQLString}) OR
-            tv_start.ancestors && ${idsSQLString}
+            tv_start._id = ANY(${ind}) OR
+            tv_start.ancestors && ${ind}
           )
         )
         LEFT JOIN territory.territories_view tv_end ON (
           tv_end._id = ${this.table}.end_territory_id AND (
-            tv_end._id = ANY(${idsSQLString}) OR
-            tv_end.ancestors && ${idsSQLString}
+            tv_end._id = ANY(${ind}) OR
+            tv_end.ancestors && ${ind}
           )
         )
       `;
@@ -363,7 +364,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           (driver_incentive_rpc_raw || passenger_incentive_rpc_raw)::json[] as campaigns_id,
           status
         FROM ${this.table}
-        ${this.buildJoins(params)}
+        ${this.buildJoins(params, where.values)}
         ${where.text ? `WHERE ${where.text}` : ''}
         ORDER BY journey_start_datetime DESC
         LIMIT $#::integer
