@@ -58,8 +58,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           switch (filter.key) {
             case 'territory_id':
               return {
-                text: `
-                  (start_territory_id = ANY(
+                text: `(
+                  start_territory_id = ANY(
                     (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
                   ) OR end_territory_id = ANY(
                     (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
@@ -279,9 +279,14 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     values.push(params.date.start, params.date.end);
 
     if (params.territory_id) {
-      // whereClausesText.push('(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))');
-      whereClausesText.push('(tv_start._id IS NOT NULL OR tv_end._id IS NOT NULL)');
-      // values.push(params.territory_id, params.territory_id);
+      whereClausesText.push(`(
+        start_territory_id = ANY(
+          (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
+        ) OR end_territory_id = ANY(
+          (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
+        )
+       )`);
+      values.push(params.territory_id, params.territory_id);
     }
 
     if (params.operator_id) {
