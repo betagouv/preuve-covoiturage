@@ -41,10 +41,11 @@ create cast (json as trip.incentive) with function json_to_incentive(_ti json) a
 CREATE VIEW trip.list_view AS (
   SELECT
 
-  -- THIS IS FOR AUTH ONLY --
+  -- THIS IS FOR AUTH AND SEARCH ONLY --
     cpp.operator_id as operator_id,
     tis._id as start_territory_id,
     tie._id as end_territory_id,
+    COALESCE((pip.policy_id || pid.policy_id)::int[], ARRAY[]::int[]) as applied_policies,
 
     -- DATA --
     cpp.acquisition_id as journey_id,
@@ -167,6 +168,7 @@ CREATE VIEW trip.list_view AS (
     ),
     incentive AS (
       SELECT
+        data.policy_id as policy_id,
         ROW(
           cc.siret,
           data.amount,
@@ -184,7 +186,8 @@ CREATE VIEW trip.list_view AS (
       array_agg(
         incentive.value
       ) as incentive_raw,
-      sum(incentive.amount) as incentive_sum
+      sum(incentive.amount) as incentive_sum,
+      array_agg(incentive.policy_id) as policy_id
     FROM incentive
   ) as pip,
   LATERAL (
@@ -199,6 +202,7 @@ CREATE VIEW trip.list_view AS (
     ),
     incentive AS (
       SELECT
+        data.policy_id as policy_id,
         ROW(
           cc.siret,
           data.amount,
@@ -216,7 +220,8 @@ CREATE VIEW trip.list_view AS (
       array_agg(
         incentive.value
       ) as incentive_raw,
-      sum(incentive.amount) as incentive_sum
+      sum(incentive.amount) as incentive_sum,
+      array_agg(incentive.policy_id) as policy_id
     FROM incentive
   ) as pid,
   LATERAL (
@@ -240,6 +245,7 @@ CREATE TABLE trip.list (
  operator_id integer,
  start_territory_id integer,
  end_territory_id integer,
+ applied_policies integer[],
  journey_id integer,
  trip_id varchar(256),
  journey_start_datetime timestamp with time zone,
@@ -291,6 +297,7 @@ CREATE INDEX ON trip.list(journey_start_datetime);
 CREATE INDEX ON trip.list(start_territory_id);
 CREATE INDEX ON trip.list(end_territory_id);
 CREATE INDEX ON trip.list(operator_id);
+CREATE INDEX ON trip.list(applied_policies);
 CREATE INDEX ON trip.list(journey_start_weekday);
 CREATE INDEX ON trip.list(journey_start_dayhour);
 CREATE INDEX ON trip.list(journey_distance);
@@ -307,6 +314,7 @@ BEGIN
       operator_id,
       start_territory_id,
       end_territory_id,
+      applied_policies,
       trip_id,
       journey_start_datetime,
       journey_start_weekday,
@@ -355,6 +363,7 @@ BEGIN
       excluded.operator_id,
       excluded.start_territory_id,
       excluded.end_territory_id,
+      excluded.applied_policies,
       excluded.trip_id,
       excluded.journey_start_datetime,
       excluded.journey_start_weekday,
@@ -420,6 +429,7 @@ BEGIN
       operator_id,
       start_territory_id,
       end_territory_id,
+      applied_policies,
       trip_id,
       journey_start_datetime,
       journey_start_weekday,
@@ -468,6 +478,7 @@ BEGIN
       excluded.operator_id,
       excluded.start_territory_id,
       excluded.end_territory_id,
+      excluded.applied_policies,
       excluded.trip_id,
       excluded.journey_start_datetime,
       excluded.journey_start_weekday,

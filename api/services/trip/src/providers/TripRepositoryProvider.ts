@@ -41,7 +41,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'date',
       'ranks',
       'distance',
-      // 'campaign_id',
+      'campaign_id',
       'days',
       'hour',
     ].filter((key) => key in filters);
@@ -123,7 +123,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               };
 
             case 'campaign_id':
-              throw new Error('Unimplemented');
+              return {
+                text: 'applied_policies && $#::int[]',
+                values: [filter.value],
+              };
 
             case 'days':
               return {
