@@ -207,8 +207,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     },
     type = 'opendata',
   ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
-    const values = [];
-
     // all
     const baseFields = [
       'journey_id',
@@ -257,15 +255,17 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     ];
 
     let selectedFields = [...baseFields];
+    const { territory_authorized_operator_id, ...cleanParams } = params;
+    const values = [];
     switch (type) {
       case 'territory':
-        if (params.territory_authorized_operator_id && params.territory_authorized_operator_id.length) {
+        if (territory_authorized_operator_id && territory_authorized_operator_id.length) {
           selectedFields = [
             ...selectedFields,
             "(case when operator_id = ANY($#::int[]) then operator else 'NC' end) as operator",
             ...financialFields,
           ];
-          values.push(params.territory_authorized_operator_id);
+          values.push(territory_authorized_operator_id);
         } else {
           selectedFields = [...selectedFields, "'NC' as operator", ...financialFields];
         }
@@ -278,38 +278,18 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         break;
     }
 
-    const whereClausesText = ['$#::timestamp <= journey_start_datetime AND journey_start_datetime <= $#::timestamp'];
-    values.push(params.date.start, params.date.end);
-
-    if (params.territory_id) {
-      whereClausesText.push(`(
-        start_territory_id = ANY(
-          (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
-        ) OR end_territory_id = ANY(
-          (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
-        )
-       )`);
-      values.push(params.territory_id, params.territory_id);
-    }
-
-    if (params.operator_id) {
-      whereClausesText.push('operator_id = ANY ($#::text[])');
-      values.push(params.operator_id);
-    }
-
-    const text = `
+    const where = this.buildWhereClauses(cleanParams);
+    const queryText = this.numberPlaceholders(`
       SELECT
         ${selectedFields.join(', ')}
       FROM ${this.table}
-      WHERE 
-      ${whereClausesText.join(' AND ')}
+      ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
-    `
-      .split('$#')
-      .reduce((prev, curr, i) => prev + '$' + i + curr);
+    `);
+    const queryValues = [...values, ...where.values];
 
     const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(text, values));
+    const cursorCb = db.query(new Cursor(queryText, queryValues));
 
     return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>;
   }

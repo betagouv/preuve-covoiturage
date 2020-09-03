@@ -16,6 +16,7 @@ import { binding as listBinding } from './shared/trip/list.schema';
 import { binding as searchCountBinding } from './shared/trip/searchcount.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
 import { binding as exportBinding } from './shared/trip/export.schema';
+import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
 
 import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
@@ -29,7 +30,7 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
 @serviceProvider({
   config,
   providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider, CryptoProvider],
-  validator: [listBinding, searchCountBinding, statsBinding, exportBinding],
+  validator: [listBinding, searchCountBinding, statsBinding, exportBinding, buildExportBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],
     ['channel.service.only', ChannelServiceWhitelistMiddleware],

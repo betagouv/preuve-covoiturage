@@ -10,6 +10,7 @@ import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver 
 import { S3StorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
+import { alias } from '../shared/trip/buildExport.schema';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '../shared/user/notify.contract';
 import { ExportTripInterface } from '../interfaces';
@@ -55,6 +56,7 @@ interface FlattenTripInterface extends ExportTripInterface {
 @handler({
   ...handlerConfig,
   middlewares: [
+    ['validate', alias],
     ['channel.service.only', [handlerConfig.service]],
     ['channel.transport', ['queue']],
   ],
@@ -160,7 +162,7 @@ export class BuildExportAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
-      const cursor = await this.pg.searchWithCursor(params.query);
+      const cursor = await this.pg.searchWithCursor(params.query, params.type);
 
       let count = 0;
 
