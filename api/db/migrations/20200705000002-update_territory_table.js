@@ -12,7 +12,8 @@ var { setup, up, down } = createMigration(
     'territory/20200606000001_create_territory_view_territory_triggers',
     'territory/20200606000002_create_territory_view_relation_triggers',
     'territory/20200606000003_create_territory_view_code_triggers',
-    'territory/20200606000004_populate_territory_view',
+    'territory/20200606000004_clean_territory_names',
+    // 'territory/20200606000004_populate_territory_view',
   ],
   __dirname,
 );
