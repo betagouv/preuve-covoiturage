@@ -24,6 +24,7 @@ import { StatInterface } from '../interfaces/StatInterface';
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'trip.list';
+  public readonly territoryTable = 'territory.territories_view';
 
   constructor(public connection: PostgresConnection) {}
 
@@ -57,8 +58,14 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           switch (filter.key) {
             case 'territory_id':
               return {
-                text: '(tv_start._id IS NOT NULL OR tv_end._id IS NOT NULL)',
-                values: [],
+                text: `
+                  (start_territory_id = ANY(
+                    (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
+                  ) OR end_territory_id = ANY(
+                    (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
+                  )
+                )`,
+                values: [filter.value, filter.value],
               };
 
             case 'operator_id':
@@ -158,8 +165,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
     const where = this.buildWhereClauses(params);
 
-    const join = this.buildJoins(params, where.values);
-
     const query = {
       text: `
       SELECT
@@ -175,7 +180,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0
         ))::int as trip_subsidized
       FROM ${this.table}
-      ${join}
       ${where.text ? `WHERE ${where.text}` : ''}
       GROUP BY day
       ORDER BY day ASC`,
@@ -308,7 +312,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: `
         SELECT COUNT(*)
         FROM ${this.table}
-        ${this.buildJoins(params, where.values)}
         ${where.text ? `WHERE ${where.text}` : ''}
       `,
       values: [...(where ? where.values : [])],
@@ -320,32 +323,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     // parse the count(*) value which is returned as varchar by Postgres
     // do not cast as ::int in postgres to avoid overflow on huge values!
     return { count: result.rowCount ? parseInt(result.rows[0].count, 10) : -1 };
-  }
-
-  buildJoins(params: Partial<TripSearchInterfaceWithPagination>, values: any[]): string {
-    let joins = '';
-
-    if (params.territory_id) {
-      const ind = `$${values.length + 1}`;
-      values.push(params.territory_id);
-
-      joins += `
-        LEFT JOIN territory.territories_view tv_start ON (
-          tv_start._id = ${this.table}.start_territory_id AND (
-            tv_start._id = ANY(${ind}) OR
-            tv_start.ancestors && ${ind}
-          )
-        )
-        LEFT JOIN territory.territories_view tv_end ON (
-          tv_end._id = ${this.table}.end_territory_id AND (
-            tv_end._id = ANY(${ind}) OR
-            tv_end.ancestors && ${ind}
-          )
-        )
-      `;
-    }
-
-    return joins;
   }
 
   public async search(
@@ -367,7 +344,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           (driver_incentive_rpc_raw || passenger_incentive_rpc_raw)::json[] as campaigns_id,
           status
         FROM ${this.table}
-        ${this.buildJoins(params, where.values)}
         ${where.text ? `WHERE ${where.text}` : ''}
         ORDER BY journey_start_datetime DESC
         LIMIT $#::integer

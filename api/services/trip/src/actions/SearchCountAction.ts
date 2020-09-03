@@ -1,4 +1,3 @@
-import { get, set } from 'lodash';
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 
@@ -17,14 +16,13 @@ import { alias } from '../shared/trip/searchcount.schema';
         [
           (params, context): string => {
             const territory_ids = params.territory_id || [context.call.user.territory_id];
-
             const authorizedTerritories = context.call.user.authorizedTerritories;
             if (
               territory_ids &&
               territory_ids.length > 0 &&
               authorizedTerritories &&
-              authorizedTerritories.length &&
-              territory_ids.filter((id) => authorizedTerritories.indexOf(id) !== -1).length > 0
+              authorizedTerritories.length > 0 &&
+              territory_ids.filter((id) => authorizedTerritories.indexOf(id) < 0).length === 0
             ) {
               return 'territory.trip.list';
             }
@@ -50,27 +48,6 @@ export class SearchCountAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    // handle territories
-    if ('territory_id' in params) {
-      const userTerritoryId = get(context, 'call.user.territory_id', null);
-
-      if (userTerritoryId) {
-        const userAllowedTerritories = (
-          await this.kernel.call(
-            'territory:getParentChildren',
-            { _id: get(context, 'call.user.territory_id', null) },
-            { call: { user: { permissions: ['territory.read'] } }, channel: { service: 'stats' } },
-          )
-        ).descendant_ids;
-
-        set(
-          params,
-          'territory_id',
-          params.territory_id.filter((terrId) => userAllowedTerritories.indexOf(terrId) !== -1),
-        );
-      }
-    }
-
     return this.pg.searchCount(params);
   }
 }

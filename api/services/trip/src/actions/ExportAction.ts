@@ -20,13 +20,14 @@ import {
         ['trip.export'],
         [
           (params, context): string => {
+            const territory_ids = params.territory_id || [context.call.user.territory_id];
+            const authorizedTerritories = context.call.user.authorizedTerritories;
             if (
-              'territory_id' in params &&
-              context.call.user.territory_id &&
-              context.call.user.authorizedTerritories.length &&
-              params.territory_id.length &&
-              params.territory_id.filter((id: number) => !context.call.user.authorizedTerritories.includes(id))
-                .length === 0
+              territory_ids &&
+              territory_ids.length > 0 &&
+              authorizedTerritories &&
+              authorizedTerritories.length > 0 &&
+              territory_ids.filter((id) => authorizedTerritories.indexOf(id) < 0).length === 0
             ) {
               return 'territory.trip.export';
             }
