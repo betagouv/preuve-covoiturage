@@ -33,7 +33,6 @@ export const schema = {
         },
         territory_authorized_operator_id: {
           type: 'array',
-          minItems: 1,
           items: { macro: 'serial' },
         },
       },
@@ -60,5 +59,5 @@ export const schema = {
   },
 };
 
-export const alias = 'trip.export';
+export const alias = 'trip.buildExport';
 export const binding = [alias, schema];
