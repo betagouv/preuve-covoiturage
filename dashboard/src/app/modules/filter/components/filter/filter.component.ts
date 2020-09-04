@@ -44,6 +44,7 @@ import { dateRangeValidator } from '~/modules/filter/validators/date-range.valid
   ],
 })
 export class FilterComponent extends DestroyObservable implements OnInit {
+  minDate: string;
   @Input() set showFilter(showFilter: boolean) {
     this._showFilter = showFilter;
   }
@@ -92,11 +93,15 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   private initForm(): void {
+    const dayMinus1Year = new Date();
+    dayMinus1Year.setMonth(dayMinus1Year.getMonth() - 12);
+    this.minDate = dayMinus1Year.toISOString();
+
     this.filterForm = this.fb.group(
       {
         campaignIds: [[]],
         date: this.fb.group({
-          start: [null],
+          start: [this.minDate],
           end: [null],
         }),
         hour: this.fb.group({
@@ -180,15 +185,19 @@ export class FilterComponent extends DestroyObservable implements OnInit {
    */
   public onDateInput(): void {
     this.filterForm.updateValueAndValidity();
+
+    const startError = !this.startControl.value ? { required: true } : null;
+
     if (this.filterForm.hasError('dateRange')) {
       this.startControl.setErrors({
         dateRange: true,
+        ...startError,
       });
       this.endControl.setErrors({
         dateRange: true,
       });
     } else {
-      this.startControl.setErrors(null);
+      this.startControl.setErrors(startError);
       this.endControl.setErrors(null);
     }
   }

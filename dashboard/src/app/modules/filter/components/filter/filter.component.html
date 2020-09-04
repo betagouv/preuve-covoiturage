@@ -25,9 +25,11 @@
                 formControlName="start"
                 [matDatepicker]="startDatePicker"
                 placeholder="Choisir une date"
+                [min]="this.minDate"
                 (input)="onDateInput()"
               />
-              <mat-error *ngIf="startControl.hasError('dateRange')"> </mat-error>
+              <!-- <mat-error *ngIf="startControl.hasError('dateRange')"> </mat-error> -->
+              <mat-error *ngIf="startControl.hasError('required')"> La date début est requise </mat-error>
               <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #startDatePicker></mat-datepicker>
             </mat-form-field>
@@ -36,7 +38,7 @@
               <input matInput formControlName="end" [matDatepicker]="endDatePicker" placeholder="Choisir une date" />
               <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #endDatePicker></mat-datepicker>
-              <mat-error *ngIf="endControl.hasError('dateRange')"> </mat-error>
+              <!-- <mat-error *ngIf="endControl.hasError('dateRange')"> </mat-error> -->
             </mat-form-field>
             <mat-error *ngIf="startControl.hasError('dateRange')">
               La date de début ne peut pas être définie après la date de fin.
