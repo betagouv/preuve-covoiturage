@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, AbstractControl, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, AbstractControl, FormControl, Validators } from '@angular/forms';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { WeekDay } from '@angular/common';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
@@ -106,8 +106,8 @@ export class FilterComponent extends DestroyObservable implements OnInit {
         days: [[]],
         insees: [[]],
         distance: this.fb.group({
-          min: [null],
-          max: [null],
+          min: [null, [Validators.min(0), Validators.max(150)]],
+          max: [null, [Validators.min(0), Validators.max(150)]],
         }),
         ranks: [[]],
         status: [null],
