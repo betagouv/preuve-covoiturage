@@ -90,7 +90,7 @@ export class HttpTransport implements TransportInterface {
 
   private registerBeforeAllHandlers(): void {
     this.kernel.getContainer().get(SentryProvider);
-    this.app.use(Sentry.Handlers.requestHandler());
+    this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
   }
 
   private registerBodyHandler(): void {
@@ -531,7 +531,7 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerAfterAllHandlers(): void {
-    this.app.use(Sentry.Handlers.errorHandler());
+    this.app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
     // general error handler
     // keep last
