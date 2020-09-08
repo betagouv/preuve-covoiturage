@@ -57,6 +57,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         .map((filter) => {
           switch (filter.key) {
             case 'territory_id':
+              const territoriesIds = typeof filter.value === 'number' ? [filter.value] : filter.value;
               return {
                 text: `(
                   start_territory_id = ANY(
@@ -65,7 +66,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
                     (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
                   )
                 )`,
-                values: [filter.value, filter.value],
+                values: [territoriesIds, territoriesIds],
               };
 
             case 'operator_id':

@@ -94,14 +94,18 @@ export class FilterComponent extends DestroyObservable implements OnInit {
 
   private initForm(): void {
     const dayMinus1Year = new Date();
+    const dayMinus2Year = new Date();
+
+    dayMinus2Year.setMonth(dayMinus2Year.getMonth() - 24);
     dayMinus1Year.setMonth(dayMinus1Year.getMonth() - 12);
-    this.minDate = dayMinus1Year.toISOString();
+
+    this.minDate = dayMinus2Year.toISOString();
 
     this.filterForm = this.fb.group(
       {
         campaignIds: [[]],
         date: this.fb.group({
-          start: [this.minDate],
+          start: [dayMinus1Year.toISOString()],
           end: [null],
         }),
         hour: this.fb.group({

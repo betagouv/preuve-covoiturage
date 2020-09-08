@@ -64,6 +64,11 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     }
     if ('date' in filter && filter.date.start) {
       params['date'].start = filter.date.start.toISOString();
+    } else {
+      const nowMinus1Year = new Date();
+      nowMinus1Year.setMonth(nowMinus1Year.getMonth() - 12);
+      if (!params['date']) params['date'] = {};
+      params['date'].start = nowMinus1Year.toISOString();
     }
     if ('date' in filter && filter.date.end) {
       params['date'].end = filter.date.end.toISOString();
