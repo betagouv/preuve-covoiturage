@@ -1,5 +1,10 @@
 #!/bin/sh
 
+pwd
+VERSION=$(git describe --tags)
+echo "APP_VERSION=$VERSION"
+exit 0
+
 yarn global add db-migrate db-migrate-pg
 
 npx lerna run --sort build
