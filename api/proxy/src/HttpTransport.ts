@@ -1,5 +1,5 @@
 import http from 'http';
-import express, { Response } from 'express';
+import express from 'express';
 import expressSession from 'express-session';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -531,6 +531,14 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerAfterAllHandlers(): void {
+    // add the RPC method as tag
+    this.app.use((error, req, res, next) => {
+      const body = Array.isArray(req.body) ? req.body[0] : req.body;
+      if (body) Sentry.setTag('method', get(body, 'method', 'not set'));
+
+      next(error);
+    });
+
     this.app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
     // general error handler
