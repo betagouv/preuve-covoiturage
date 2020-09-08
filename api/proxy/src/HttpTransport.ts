@@ -1,5 +1,5 @@
 import http from 'http';
-import express from 'express';
+import express, { Response } from 'express';
 import expressSession from 'express-session';
 import helmet from 'helmet';
 import cors from 'cors';
