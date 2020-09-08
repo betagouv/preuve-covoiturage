@@ -100,8 +100,6 @@ export class StatFormatService {
       totalTrip += r.trip;
     });
 
-    console.log(ratioCarpoolersByCar, totalTrip);
-
     const cpvm = carpoolers_per_vehicule.days.reduce((acc, current) => {
       const month = moment(current.date).endOf('month').toISOString();
       if (!(month in acc)) {

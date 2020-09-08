@@ -6,9 +6,10 @@ import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/fo
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { USER_GROUP_ROLES, USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { USER_GROUP_ROLES, USER_ROLES_FR, UserRoleEnum, UserManyRoleEnum } from '~/core/enums/user/user-role.enum';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-create-edit-user-form',
@@ -27,12 +28,19 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
   operatorEditable = false;
 
   public roles = USER_GROUP_ROLES;
+  // public roles = [];
+
   public groups = USER_GROUPS;
   protected _emailHasChanged: boolean;
   protected _baseEmail: string;
   userGroup: string;
 
-  constructor(private fb: FormBuilder, private _userStoreService: UserStoreService, private toastr: ToastrService) {
+  constructor(
+    private fb: FormBuilder,
+    private _userStoreService: UserStoreService,
+    private toastr: ToastrService,
+    private auth: AuthenticationService,
+  ) {
     super();
   }
 
@@ -55,6 +63,15 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
 
   ngOnInit(): void {
     this.initForm();
+
+    // create a deep copy of all roles
+    const roles = (this.roles = JSON.parse(JSON.stringify(USER_GROUP_ROLES)));
+
+    // custom rule : remove territory demo role when admin user is not registry
+    if (this.auth.user.group !== UserGroupEnum.REGISTRY) {
+      const demoInd = roles.territories.indexOf(UserManyRoleEnum.DEMO);
+      if (demoInd !== -1) roles.territories.splice(demoInd);
+    }
   }
 
   get controls(): { [key: string]: AbstractControl } {
