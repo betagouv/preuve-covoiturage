@@ -25,8 +25,18 @@ export class SentryProvider implements ProviderInterface {
           }
 
           // filter out 401 errors on RPC route only, keep on REST routes
-          if (event.transaction.indexOf('/rpc') > -1 && hint.originalException.toString().indexOf('Unauthorized') > -1)
+          if (
+            event.transaction.indexOf('/rpc') > -1 &&
+            hint.originalException.toString().indexOf('Unauthorized') > -1
+          ) {
             return null;
+          }
+
+          console.log('SENTRY EVENT', {
+            event_id: event.event_id,
+            error: hint.originalException.toString(),
+            route: event.transaction,
+          });
 
           return event;
         },

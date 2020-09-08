@@ -4,7 +4,7 @@ import expressSession from 'express-session';
 import helmet from 'helmet';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { get } from 'lodash';
+import { get, pick } from 'lodash';
 import Redis from 'ioredis';
 import createStore from 'connect-redis';
 import {
@@ -207,6 +207,11 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
+
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
+        );
+
         const response = (await this.kernel.handle(
           makeCall('acquisition:create', req.body, { user, metadata: { req } }),
         )) as RPCResponseType;
