@@ -612,7 +612,9 @@ export class HttpTransport implements TransportInterface {
   }
 
   private start(port = 8080): void {
-    this.server = this.app.listen(port, () => console.log(`Listening on port ${port}`));
+    this.server = this.app.listen(port, () =>
+      console.log(`Listening on port ${port}. Version ${this.config.get('sentry.version')}`),
+    );
   }
 
   /**
