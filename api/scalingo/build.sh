@@ -1,7 +1,8 @@
 #!/bin/sh
 
 pwd
-VERSION=$(git describe --tags)
+env
+VERSION='version'
 echo "APP_VERSION=$VERSION"
 exit 0
 
