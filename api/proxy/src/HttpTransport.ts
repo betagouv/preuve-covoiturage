@@ -1,10 +1,10 @@
 import http from 'http';
-import express, { Response } from 'express';
+import express from 'express';
 import expressSession from 'express-session';
 import helmet from 'helmet';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { get } from 'lodash';
+import { get, pick } from 'lodash';
 import Redis from 'ioredis';
 import createStore from 'connect-redis';
 import {
@@ -90,7 +90,7 @@ export class HttpTransport implements TransportInterface {
 
   private registerBeforeAllHandlers(): void {
     this.kernel.getContainer().get(SentryProvider);
-    this.app.use(Sentry.Handlers.requestHandler());
+    this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
   }
 
   private registerBodyHandler(): void {
@@ -116,8 +116,9 @@ export class HttpTransport implements TransportInterface {
           maxAge: this.config.get('proxy.session.maxAge'),
           // https everywhere but in local development
           secure: env('APP_ENV', 'local') !== 'local',
-          sameSite: 'none',
+          sameSite: env('APP_ENV', 'local') !== 'local' ? 'none' : 'strict',
         },
+
         name: sessionName,
         secret: sessionSecret,
         resave: false,
@@ -206,6 +207,11 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
+
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
+        );
+
         const response = (await this.kernel.handle(
           makeCall('acquisition:create', req.body, { user, metadata: { req } }),
         )) as RPCResponseType;
@@ -530,7 +536,15 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerAfterAllHandlers(): void {
-    this.app.use(Sentry.Handlers.errorHandler());
+    // add the RPC method as tag
+    this.app.use((error, req, res, next) => {
+      const body = Array.isArray(req.body) ? req.body[0] : req.body;
+      if (body) Sentry.setTag('method', get(body, 'method', 'not set'));
+
+      next(error);
+    });
+
+    this.app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
     // general error handler
     // keep last

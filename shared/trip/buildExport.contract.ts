@@ -8,6 +8,7 @@ export interface ParamsInterface {
     operator_id?: number[];
     territory_id?: number[];
   };
+  type?: string;
   from: {
     type?: string;
     email: string;

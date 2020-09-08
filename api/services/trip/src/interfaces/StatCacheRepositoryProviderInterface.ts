@@ -2,7 +2,7 @@ import { StatInterface } from './StatInterface';
 
 export interface TargetInterface {
   operator_id?: number;
-  territory_id?: number[];
+  territory_id?: number;
 }
 
 export interface StatCacheRepositoryProviderInterface {

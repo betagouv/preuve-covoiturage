@@ -20,13 +20,14 @@ import {
         ['trip.export'],
         [
           (params, context): string => {
+            const territory_ids = params.territory_id || [context.call.user.territory_id];
+            const authorizedTerritories = context.call.user.authorizedTerritories;
             if (
-              'territory_id' in params &&
-              context.call.user.territory_id &&
-              context.call.user.authorizedTerritories.length &&
-              params.territory_id.length &&
-              params.territory_id.filter((id: number) => !context.call.user.authorizedTerritories.includes(id))
-                .length === 0
+              territory_ids &&
+              territory_ids.length > 0 &&
+              authorizedTerritories &&
+              authorizedTerritories.length > 0 &&
+              territory_ids.filter((id) => authorizedTerritories.indexOf(id) < 0).length === 0
             ) {
               return 'territory.trip.export';
             }
@@ -63,7 +64,7 @@ export class ExportAction extends Action {
       (params && params.date && params.date.start) || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
     const end = (params && params.date && params.date.end) || new Date();
 
-    const buildParams: BuildParamsInterface = {
+    const buildParams: BuildParamsInterface = ({
       from: {
         type: context.call.user.territory_id ? 'territory' : context.call.user.operator_id ? 'operator' : 'registry',
         fullname,
@@ -74,11 +75,11 @@ export class ExportAction extends Action {
         territory_id: params.territory_id,
         territory_authorized_operator_id: get(context, 'call.user.authorizedOperators', []),
         date: {
-          start,
-          end,
+          start: start.toISOString(),
+          end: end.toISOString(),
         },
       },
-    };
+    } as unknown) as BuildParamsInterface;
 
     await this.kernel.notify<BuildParamsInterface>(buildSignature, buildParams, {
       channel: {

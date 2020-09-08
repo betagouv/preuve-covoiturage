@@ -24,6 +24,7 @@ import { StatInterface } from '../interfaces/StatInterface';
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'trip.list';
+  public readonly territoryTable = 'territory.territories_view';
 
   constructor(public connection: PostgresConnection) {}
 
@@ -40,7 +41,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'date',
       'ranks',
       'distance',
-      // 'campaign_id',
+      'campaign_id',
       'days',
       'hour',
     ].filter((key) => key in filters);
@@ -56,9 +57,16 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         .map((filter) => {
           switch (filter.key) {
             case 'territory_id':
+              const territoriesIds = typeof filter.value === 'number' ? [filter.value] : filter.value;
               return {
-                text: '(tv_start._id IS NOT NULL OR tv_end._id IS NOT NULL)',
-                values: [],
+                text: `(
+                  start_territory_id = ANY(
+                    (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
+                  ) OR end_territory_id = ANY(
+                    (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
+                  )
+                )`,
+                values: [territoriesIds, territoriesIds],
               };
 
             case 'operator_id':
@@ -116,7 +124,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               };
 
             case 'campaign_id':
-              throw new Error('Unimplemented');
+              return {
+                text: 'applied_policies && $#::int[]',
+                values: [filter.value],
+              };
 
             case 'days':
               return {
@@ -197,8 +208,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     },
     type = 'opendata',
   ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
-    const values = [];
-
     // all
     const baseFields = [
       'journey_id',
@@ -247,15 +256,17 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     ];
 
     let selectedFields = [...baseFields];
+    const { territory_authorized_operator_id, ...cleanParams } = params;
+    const values = [];
     switch (type) {
       case 'territory':
-        if (params.territory_authorized_operator_id && params.territory_authorized_operator_id.length) {
+        if (territory_authorized_operator_id && territory_authorized_operator_id.length) {
           selectedFields = [
             ...selectedFields,
             "(case when operator_id = ANY($#::int[]) then operator else 'NC' end) as operator",
             ...financialFields,
           ];
-          values.push(params.territory_authorized_operator_id);
+          values.push(territory_authorized_operator_id);
         } else {
           selectedFields = [...selectedFields, "'NC' as operator", ...financialFields];
         }
@@ -268,33 +279,18 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         break;
     }
 
-    const whereClausesText = ['$#::timestamp <= journey_start_datetime AND journey_start_datetime <= $#::timestamp'];
-    values.push(params.date.start, params.date.end);
-
-    if (params.territory_id) {
-      // whereClausesText.push('(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))');
-      whereClausesText.push('(tv_start._id IS NOT NULL OR tv_end._id IS NOT NULL)');
-      // values.push(params.territory_id, params.territory_id);
-    }
-
-    if (params.operator_id) {
-      whereClausesText.push('operator_id = ANY ($#::text[])');
-      values.push(params.operator_id);
-    }
-
-    const text = `
+    const where = this.buildWhereClauses(cleanParams);
+    const queryText = this.numberPlaceholders(`
       SELECT
         ${selectedFields.join(', ')}
       FROM ${this.table}
-      WHERE 
-      ${whereClausesText.join(' AND ')}
+      ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
-    `
-      .split('$#')
-      .reduce((prev, curr, i) => prev + '$' + i + curr);
+    `);
+    const queryValues = [...values, ...where.values];
 
     const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(text, values));
+    const cursorCb = db.query(new Cursor(queryText, queryValues));
 
     return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>;
   }
@@ -305,7 +301,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: `
         SELECT COUNT(*)
         FROM ${this.table}
-        ${this.buildJoins(params)}
         ${where.text ? `WHERE ${where.text}` : ''}
       `,
       values: [...(where ? where.values : [])],
@@ -317,31 +312,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     // parse the count(*) value which is returned as varchar by Postgres
     // do not cast as ::int in postgres to avoid overflow on huge values!
     return { count: result.rowCount ? parseInt(result.rows[0].count, 10) : -1 };
-  }
-
-  buildJoins(params: Partial<TripSearchInterfaceWithPagination>): string {
-    let joins = '';
-
-    if (params.territory_id) {
-      const idsSQLString = `'{${params.territory_id.join(',')}}'`;
-
-      joins += `
-        LEFT JOIN territory.territories_view tv_start ON (
-          tv_start._id = ${this.table}.start_territory_id AND (
-            tv_start._id = ANY(${idsSQLString}) OR
-            tv_start.ancestors && ${idsSQLString}
-          )
-        )
-        LEFT JOIN territory.territories_view tv_end ON (
-          tv_end._id = ${this.table}.end_territory_id AND (
-            tv_end._id = ANY(${idsSQLString}) OR
-            tv_end.ancestors && ${idsSQLString}
-          )
-        )
-      `;
-    }
-
-    return joins;
   }
 
   public async search(
@@ -363,7 +333,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           (driver_incentive_rpc_raw || passenger_incentive_rpc_raw)::json[] as campaigns_id,
           status
         FROM ${this.table}
-        ${this.buildJoins(params)}
         ${where.text ? `WHERE ${where.text}` : ''}
         ORDER BY journey_start_datetime DESC
         LIMIT $#::integer

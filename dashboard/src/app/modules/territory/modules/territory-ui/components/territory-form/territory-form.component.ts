@@ -169,9 +169,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this.territoryForm = this.fb.group(formOptions);
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
 
-    this.territoryForm.controls.format.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((val) => {
-      this._relationDisplayMode = val;
-    });
+    if (this.territoryForm && this.territoryForm.controls && this.territoryForm.controls.format) {
+      this.territoryForm.controls.format.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((val) => {
+        this._relationDisplayMode = val;
+      });
+    }
 
     if (companyFormGroup) {
       this.territoryForm.controls.activable.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((val) => {

@@ -61,6 +61,7 @@ export class SyncRegionDepCommand implements CommandInterface {
             await pgClient.query(`BEGIN`);
 
             const dbDep = departements.find((dep) => dep.codedep === department.code);
+
             // continue;
             if (dbDep) {
               const updateQuery = {
@@ -106,9 +107,17 @@ export class SyncRegionDepCommand implements CommandInterface {
         }
       }
 
+      /*
+
+      WITH territory_name_init_cap AS (
+        select _id, INITCAP(name) as name FROM territory.territories where level='epic'
+        )
+        UPDATE territory.territories SET name = tc.name FROM territory_name_init_cap tc WHERE territorie	s._id = tc._id;*/
+
       await pgClient.query(`
       
-      
+     
+
       
       WITH tr as (
         select  

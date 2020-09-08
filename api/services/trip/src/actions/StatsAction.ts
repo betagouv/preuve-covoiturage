@@ -19,14 +19,13 @@ import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/Stat
         [
           (params, context): string => {
             const territory_ids = params.territory_id || [context.call.user.territory_id];
-
             const authorizedTerritories = context.call.user.authorizedTerritories;
             if (
               territory_ids &&
               territory_ids.length > 0 &&
               authorizedTerritories &&
-              authorizedTerritories.length &&
-              territory_ids.filter((id) => authorizedTerritories.indexOf(id) !== -1).length > 0
+              authorizedTerritories.length > 0 &&
+              territory_ids.filter((id) => authorizedTerritories.indexOf(id) < 0).length === 0
             ) {
               return 'territory.trip.stats';
             }
@@ -71,18 +70,9 @@ export class StatsAction extends Action {
           (await this.cache.getOrBuild(async () => this.pg.stats(params), { operator_id: params.operator_id[0] })) || []
         );
       case 'territory':
-        // fetch the list descendant_id
-        const response = await this.kernel.call(
-          'territory:getParentChildren',
-          { _id: get(context, 'call.user.territory_id', null) },
-          { call: { user: { permissions: ['territory.read'] } }, channel: { service: 'stats' } },
-        );
-
-        // merge all territory_id together
-        set(params, 'territory_id', [...params.territory_id, ...(response.descendant_ids || [])]);
-
         return (
-          (await this.cache.getOrBuild(async () => this.pg.stats(params), { territory_id: params.territory_id })) || []
+          (await this.cache.getOrBuild(async () => this.pg.stats(params), { territory_id: params.territory_id[0] })) ||
+          []
         );
       default:
         return (await this.pg.stats(this.applyDefaults(params))) || [];
