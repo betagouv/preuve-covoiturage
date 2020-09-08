@@ -14,4 +14,4 @@ find . -type f -name "*.d.ts" -delete
 
 echo -n "[app] size: "; du -ch | tail -n 1
 
-echo "APP_VERSION=$DEPLOY_GIT_REF" > ../../.env
+echo "APP_VERSION=$DEPLOY_GIT_REF" > .env
