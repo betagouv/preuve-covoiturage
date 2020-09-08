@@ -14,4 +14,8 @@ find . -type f -name "*.d.ts" -delete
 
 echo -n "[app] size: "; du -ch | tail -n 1
 
-# echo "APP_VERSION=$DEPLOY_GIT_REF" > .env
+# set the application version from git commit number
+# git and .git folder are not available at this building stage
+# a more readable value would be $(git describe --tags)
+echo "[app] version: $DEPLOY_GIT_REF"
+echo "APP_VERSION=$DEPLOY_GIT_REF" > .env
