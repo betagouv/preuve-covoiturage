@@ -24,8 +24,9 @@ export class SentryProvider implements ProviderInterface {
             if (Array.isArray(data)) event.transaction = `POST|/rpc ${get(data[0], 'method', '')}`.trim();
           }
 
-          // filter out 401 errors
-          if (hint.originalException.toString().indexOf('Unauthorized') > -1) return null;
+          // filter out 401 errors on RPC route only, keep on REST routes
+          if (event.transaction.indexOf('/rpc') > -1 && hint.originalException.toString().indexOf('Unauthorized') > -1)
+            return null;
 
           return event;
         },
