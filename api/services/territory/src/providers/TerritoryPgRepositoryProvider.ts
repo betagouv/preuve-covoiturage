@@ -371,13 +371,17 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     const query = {
       text: `
-        SELECT name,t._id, tc.value as insee FROM ${this.table} t
+      SELECT name,t._id, array_agg(tc.value) as insees FROM ${this.table} t
 
         LEFT JOIN territory.territory_codes tc ON(tc.territory_id = t._id AND tc.type = 'insee')
 
         WHERE deleted_at IS NULL
 
+
         ${searchConditionString ? ` AND ${searchConditionString}` : ''}
+
+        GROUP BY t._id,t.name
+	
         
         ${limit !== undefined ? ` LIMIT ${limit}` : ''}
         ${skip !== undefined ? ` OFFSET ${skip}` : ''}
@@ -735,7 +739,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       text: `WITH territory_codes AS (
         SELECT 
           tc.territory_id,
-          tc.value 
+          tc.value
         FROM territory.territory_codes tc 
         WHERE 
           tc.type = 'insee' AND 

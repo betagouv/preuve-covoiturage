@@ -84,26 +84,45 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       formValues.company_id = this.companyDetails ? this.companyDetails._id : null;
     }
 
-    if (this.editedId) {
-      // if (this.territoryForm.value.company) formValues.company.siret = this.territoryForm.value.company.siret;
-      const patch$ = this.fullFormMode
-        ? this.territoryStore.updateSelected(formValues)
-        : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.editedId);
+    const save = () => {
+      if (this.editedId) {
+        // if (this.territoryForm.value.company) formValues.company.siret = this.territoryForm.value.company.siret;
+        const patch$ = this.fullFormMode
+          ? this.territoryStore.updateSelected(formValues)
+          : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.editedId);
 
-      patch$.subscribe(
-        (modifiedTerritory) => {
-          this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
+        patch$.subscribe(
+          (modifiedTerritory) => {
+            this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
+            this.close.emit();
+          },
+          (err) => {
+            this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
+          },
+        );
+      } else {
+        this.territoryStore.create(formValues).subscribe((createdTerritory) => {
+          this.toastr.success(`${formValues.name} a été mis à jour !`);
           this.close.emit();
-        },
-        (err) => {
-          this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
-        },
-      );
-    } else {
-      this.territoryStore.create(formValues).subscribe((createdTerritory) => {
-        this.toastr.success(`${formValues.name} a été mis à jour !`);
-        this.close.emit();
+        });
+      }
+    };
+
+    // get territories
+    if (formValues.format === 'insee' && formValues.insee) {
+      const insees = formValues.insee.split(' ').join('').split(',');
+      this.territoryApi.findByInsees(insees).subscribe((territories) => {
+        if (insees.length === territories.length) {
+          formValues.children = territories.map((t) => t._id);
+          // delete formValues.insee;
+          save.apply(this);
+        } else {
+          const notMatchingInsees = insees.filter((insee) => !territories.find((t) => t.insee === insee));
+          this.toastr.error(`Some INSEE Have no territory match on our database : ${notMatchingInsees.join(',')}`);
+        }
       });
+    } else {
+      save.apply(this);
     }
   }
 

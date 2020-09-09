@@ -55,9 +55,16 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   geo?: any; // TODO : geography type
 }
 
+export interface TerritoryInsee {
+  _id: number;
+  name: string;
+  insee: string;
+}
+
 export interface TerritoryUIStatus {
   ui_selection_state?: TerritorySelectionUIState[];
   format?: string;
+  insee?: string;
 }
 
 export class Territory extends BaseModel
@@ -131,8 +138,8 @@ export class Territory extends BaseModel
     if (formValues.shortname) this.shortname = formValues.shortname;
     else delete this.shortname;
 
-    if (formValues.insee && formValues.format === 'insee') this.insee = formValues.insee.split(',');
-    else delete this.insee;
+    // if (formValues.insee && formValues.format === 'insee') this.insee = formValues.insee.split(',');
+    // else delete this.insee;
 
     if (formValues.geo && formValues.format === 'geo') this.geo = formValues.geo;
     else delete this.geo;
@@ -143,18 +150,22 @@ export class Territory extends BaseModel
     if (formValues.company_id) this.company_id = formValues.company_id;
     else delete this.company_id;
 
-    if (formValues.children && formValues.format === 'parent') this.children = formValues.children;
+    if (formValues.children && (formValues.format === 'parent' || formValues.format === 'insee'))
+      this.children = formValues.children;
     else delete this.children;
 
     this.ui_status = {};
     if (formValues.uiSelectionState) this.ui_status.ui_selection_state = formValues.uiSelectionState;
     if (formValues.format) this.ui_status.format = formValues.format;
+    if (formValues.format === 'insee' && formValues.insee) {
+      this.ui_status.insee = formValues.insee;
+    }
+
+    // const territories = await this.terr
 
     // assignOrDeleteProperty(formValues, this, 'shortname');
     // assignOrDeleteProperty(formValues, this, 'density');
     // assignOrDeleteProperty(formValues, this, 'company_id');
-
-    console.log('updateFromFormValues', { ...formValues }, { ...this });
   }
 
   toFormValues(fullformMode = true): any {
@@ -181,7 +192,8 @@ export class Territory extends BaseModel
               [], 
           ]
         }`,
-          insee: this.insee ? this.insee.join(',') : '',
+          insee:
+            this.ui_status && this.ui_status.format === 'insee' && this.ui_status.insee ? this.ui_status.insee : '',
         }
       : {
           contacts: new Contacts(this.contacts).toFormValues(),

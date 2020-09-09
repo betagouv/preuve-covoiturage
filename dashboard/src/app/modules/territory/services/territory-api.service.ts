@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { Territory } from '~/core/entities/territory/territory';
+import { Territory, TerritoryInsee } from '~/core/entities/territory/territory';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
@@ -60,6 +60,12 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryParentChildrenInterface>;
   }
 
+  findByInsees(insees: string[]): Observable<TerritoryInsee[]> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:findByInsees`, { insees });
+
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryInsee[]>;
+  }
+
   getRelationUIStatus(id: number): Observable<UiStatusRelationDetailsList> {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:getTerritoryRelationUIStatus`, { _id: id });
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data || [])) as Observable<UiStatusRelationDetailsList>;
@@ -82,11 +88,6 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     sort: SortEnum[] = [SortEnum.NameAsc],
     projection: any = allBasicFieldEnum,
   ): Observable<Territory> {
-    // const params: FindParamsInterface = {
-    //   query,
-    //   sort,
-    //   projection,
-    // };
     const jsonRPCParam = this.paramGet(query, sort, projection);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
