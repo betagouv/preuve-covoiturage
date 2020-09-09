@@ -1,7 +1,7 @@
 -- Insert country only if exists
 INSERT INTO territory.territories
-  (level, activable, active, name, shortname)
-  SELECT 'country', true, true, 'France', 'FR'
+  (level, name, shortname)
+  SELECT 'country', 'France', 'FR'
   WHERE NOT EXISTS (
     SELECT * FROM territory.territories WHERE name = 'France'
   );
