@@ -1,4 +1,4 @@
-// tslint:disable: no-constant-condition max-len
+/* eslint-disable no-constant-condition, max-len */
 import axios from 'axios';
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
