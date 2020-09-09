@@ -16,8 +16,8 @@ test(results, [
   { carpool_id: 35, amount: 50 },
   { carpool_id: 44, amount: 300 },
   { carpool_id: 45, amount: 75 },
-  { carpool_id: 54, amount: 1000 },
-  { carpool_id: 55, amount: 500 },
+  { carpool_id: 54, amount: 2000 },
+  { carpool_id: 55, amount: 1000 },
   { carpool_id: 66, amount: 0 },
   { carpool_id: 67, amount: 0 },
 ]);

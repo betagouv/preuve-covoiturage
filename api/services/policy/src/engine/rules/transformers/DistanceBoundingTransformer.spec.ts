@@ -6,8 +6,8 @@ import { TripInterface } from '../../../interfaces';
 
 function setup(): { rule: DistanceBoundingTransformer; trip: TripInterface } {
   const rule = new DistanceBoundingTransformer({
-    minimum: 1000,
-    maximum: 10000,
+    min: 1000,
+    max: 10000,
   });
 
   const trip = faker.trip([{ distance: 100 }, { distance: 20000 }]);

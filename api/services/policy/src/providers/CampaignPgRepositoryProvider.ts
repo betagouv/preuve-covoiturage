@@ -85,7 +85,6 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       throw new Error(`Unable to create campaign (${JSON.stringify(data)})`);
     }
 
-    return null;
     return result.rows[0];
   }
 
