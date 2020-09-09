@@ -57,57 +57,61 @@
 
       <mat-checkbox formControlName="activable">AOM</mat-checkbox>
       <mat-checkbox formControlName="active" [hidden]="!displayAOMActive">AOM active</mat-checkbox>
+      <div [hidden]="!territoryForm.get('activable').value">
+        <h3>Structure</h3>
 
-      <h3>Structure</h3>
+        <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
 
-      <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
+        <h3>Adresse</h3>
 
-      <h3>Adresse</h3>
-
-      <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
-    </div>
-    <h2>Contacts et responsables</h2>
-
-    <div class="contacts">
-      <div>
-        <h3>Délégué à la protection des données</h3>
-
-        <app-form-contact
-          [parentForm]="territoryForm.get('contacts').get('gdpr_dpo')"
-          [showPhoneNumber]="false"
-        ></app-form-contact>
-      </div>
-
-      <div>
-        <h3>Responsable du traitement</h3>
-
-        <app-form-contact
-          [parentForm]="territoryForm.get('contacts').get('gdpr_controller')"
-          [showPhoneNumber]="false"
-        ></app-form-contact>
-      </div>
-
-      <div>
-        <h3>Responsable technique</h3>
-
-        <app-form-contact [parentForm]="territoryForm.get('contacts').get('technical')"></app-form-contact>
+        <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
       </div>
     </div>
-    <div>
-      <button
-        *ngIf="authService.hasAnyPermission(['territory.update'])"
-        type="submit"
-        class="large"
-        mat-flat-button
-        (click)="onSubmit()"
-        [disabled]="!territoryForm.valid"
-        color="primary"
-      >
-        {{ !!editedId ? 'Mettre à jour les informations' : 'Créer' }}
-      </button>
-      <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">
-        Fermer
-      </button>
+
+    <div [hidden]="!territoryForm.get('activable').value">
+      <h2>Contacts et responsables</h2>
+
+      <div class="contacts">
+        <div>
+          <h3>Délégué à la protection des données</h3>
+
+          <app-form-contact
+            [parentForm]="territoryForm.get('contacts').get('gdpr_dpo')"
+            [showPhoneNumber]="false"
+          ></app-form-contact>
+        </div>
+
+        <div>
+          <h3>Responsable du traitement</h3>
+
+          <app-form-contact
+            [parentForm]="territoryForm.get('contacts').get('gdpr_controller')"
+            [showPhoneNumber]="false"
+          ></app-form-contact>
+        </div>
+
+        <div>
+          <h3>Responsable technique</h3>
+
+          <app-form-contact [parentForm]="territoryForm.get('contacts').get('technical')"></app-form-contact>
+        </div>
+      </div>
+      <div>
+        <button
+          *ngIf="authService.hasAnyPermission(['territory.update'])"
+          type="submit"
+          class="large"
+          mat-flat-button
+          (click)="onSubmit()"
+          [disabled]="!territoryForm.valid"
+          color="primary"
+        >
+          {{ !!editedId ? 'Mettre à jour les informations' : 'Créer' }}
+        </button>
+        <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">
+          Fermer
+        </button>
+      </div>
     </div>
   </form>
 </div>

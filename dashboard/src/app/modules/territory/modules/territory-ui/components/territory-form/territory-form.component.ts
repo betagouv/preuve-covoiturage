@@ -285,6 +285,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     if (this.territoryForm && this.fullFormMode) {
       this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
       this.territoryForm.controls['shortname'].setValidators(this.fullFormMode ? Validators.max(12) : null);
+
+      // address is hidden and not required if territory is not activable
+      const addressIsRequired = !!this.territoryForm.controls['activable'].value;
+      const fields = ['street', 'postcode', 'city', 'country'];
+      const addressControl = this.territoryForm.controls['address'] as FormGroup;
+      fields.forEach((field) =>
+        addressControl.controls[field].setValidators(addressIsRequired ? [Validators.required] : []),
+      );
     }
   }
 

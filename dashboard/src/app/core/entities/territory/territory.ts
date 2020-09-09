@@ -161,6 +161,12 @@ export class Territory extends BaseModel
       this.ui_status.insee = formValues.insee;
     }
 
+    if (!formValues.activable) {
+      delete this.address;
+      delete this.contacts;
+      delete this.company;
+    }
+
     // const territories = await this.terr
 
     // assignOrDeleteProperty(formValues, this, 'shortname');
