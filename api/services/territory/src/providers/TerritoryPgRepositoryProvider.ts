@@ -33,6 +33,11 @@ import {
 import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
 
+import {
+  ParamsInterface as FindByInseeParamsInterface,
+  ResultInterface as FindByInseeResultInterface,
+} from '../shared/territory/findByInsees.contract';
+
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
@@ -723,5 +728,31 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     return roots;
+  }
+  async findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
+    const client = this.connection.getClient();
+    const query = {
+      text: `WITH territory_codes AS (
+        SELECT 
+          tc.territory_id,
+          tc.value 
+        FROM territory.territory_codes tc 
+        WHERE 
+          tc.type = 'insee' AND 
+          tc.value = ANY($1) 
+        GROUP BY tc.territory_id,tc.value
+        )
+        SELECT 
+          name,
+          _id,
+          value as insee
+        FROM territory_codes as tc
+        INNER JOIN territory.territories as t ON t._id = tc.territory_id; `,
+
+      values: [params.insees],
+    };
+    const result = await client.query(query);
+
+    return result.rows as FindByInseeResultInterface;
   }
 }

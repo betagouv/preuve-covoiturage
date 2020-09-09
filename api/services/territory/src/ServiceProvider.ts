@@ -14,6 +14,7 @@ import { create } from './shared/territory/create.schema';
 import { update } from './shared/territory/update.schema';
 import { schema as intermediaryRelationSchema } from './shared/territory/relationUiStatus.schema';
 import { schema as parentChildrenSchema } from './shared/territory/parentChildren.schema';
+import { schema as findByInsee } from './shared/territory/findByInsees.schema';
 import { binding as updateOperatorBinding } from './shared/territory/updateOperator.schema';
 import { binding as listOperatorBinding } from './shared/territory/listOperator.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
@@ -36,6 +37,7 @@ import { GetTerritoryRelationUIStatusAction } from './actions/GetTerritoryRelati
 import { GetTerritoryParentChildrenAction } from './actions/GetTerritoryParentChildrenAction';
 import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 import { TreeTerritoryAction } from './actions/TreeTerritoryAction';
+import { FindTerritoryByInseesAction } from './actions/FindTerritoryByInseesAction';
 
 @serviceProvider({
   config,
@@ -48,7 +50,7 @@ import { TreeTerritoryAction } from './actions/TreeTerritoryAction';
     ['territory.getTerritoryRelationUIStatus', intermediaryRelationSchema],
     ['territory.getParentChildren', parentChildrenSchema],
     // TODO :  clean after territory migration
-    // ['territory.findByInsee', findByInsee],
+    ['territory.findByInsees', findByInsee],
     // ['territory.findByPosition', findByPosition],
     ['territory.patchContacts', patchContacts],
     updateOperatorBinding,
@@ -76,6 +78,7 @@ import { TreeTerritoryAction } from './actions/TreeTerritoryAction';
     GetTerritoryRelationUIStatusAction,
     GetTerritoryParentChildrenAction,
     TreeTerritoryAction,
+    FindTerritoryByInseesAction,
   ],
   commands: [],
 })

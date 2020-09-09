@@ -15,6 +15,11 @@ import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.co
 import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
 import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
 
+import {
+  ParamsInterface as FindByInseeParamsInterface,
+  ResultInterface as FindByInseeResultInterface,
+} from '../shared/territory/findByInsees.contract';
+
 export interface TerritoryRepositoryProviderInterface {
   find(
     query: TerritoryQueryInterface,
@@ -35,7 +40,7 @@ export interface TerritoryRepositoryProviderInterface {
   update(data: PatchParamsInterface): Promise<TerritoryDbMetaInterface>;
   patchContacts(id: number, contacts: ContactsInterface): Promise<TerritoryDbMetaInterface>;
   patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface>;
-  findByInsee(insee: string): Promise<TerritoryDbMetaInterface>;
+  findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface>;
   findByPosition(lon: number, lat: number): Promise<TerritoryDbMetaInterface>;
   getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface>;
   tree(): Promise<any>;
@@ -87,7 +92,7 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async findByInsee(insee: string): Promise<TerritoryDbMetaInterface> {
+  findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
     throw new Error();
   }
 
