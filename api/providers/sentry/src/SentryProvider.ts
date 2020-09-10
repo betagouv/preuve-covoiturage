@@ -18,6 +18,8 @@ export class SentryProvider implements ProviderInterface {
         release: `pdc-api@${release}`,
         environment,
         beforeSend(event, hint) {
+          if (!('transaction' in event)) return event;
+
           // add method name to event subtitle
           if (event.transaction === 'POST|/rpc') {
             const data = JSON.parse(get(event, 'request.data', '[]'));
@@ -26,6 +28,7 @@ export class SentryProvider implements ProviderInterface {
 
           // filter out 401 errors on RPC route only, keep on REST routes
           if (
+            'originalException' in hint &&
             event.transaction.indexOf('/rpc') > -1 &&
             hint.originalException.toString().indexOf('Unauthorized') > -1
           ) {

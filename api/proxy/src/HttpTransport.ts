@@ -91,6 +91,7 @@ export class HttpTransport implements TransportInterface {
   private registerBeforeAllHandlers(): void {
     this.kernel.getContainer().get(SentryProvider);
     this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
+    Sentry.setTag('transport', 'http');
   }
 
   private registerBodyHandler(): void {
