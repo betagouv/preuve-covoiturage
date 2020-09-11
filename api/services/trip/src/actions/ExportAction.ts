@@ -81,6 +81,7 @@ export class ExportAction extends Action {
       },
     } as unknown) as BuildParamsInterface;
 
+    // call trip:buildExport
     await this.kernel.notify<BuildParamsInterface>(buildSignature, buildParams, {
       channel: {
         service: 'trip',

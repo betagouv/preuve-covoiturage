@@ -672,4 +672,56 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
   async findByPosition(lon: number, lat: number): Promise<TerritoryDbMetaInterface> {
     throw new Error('This is not implemented here'); // move to normalization servie
   }
+
+  async tree(): Promise<any> {
+    const resultRoot = await this.connection.getClient().query({
+      text: 'SELECT _id FROM territory.territories where name = $1',
+      values: ['France'],
+    });
+
+    // prepare flat array of data
+    const query = `
+      SELECT
+        child_territory_id id,
+        parent_territory_id parent,
+        level,
+        name
+      FROM territory.territory_relation tr
+      LEFT JOIN territory.territories tt
+        ON tr.child_territory_id = tt._id
+      ORDER BY level, child_territory_id
+    `;
+
+    const result = await this.connection.getClient().query(query);
+
+    return this.toTree(result.rows, resultRoot.rows[0]._id);
+  }
+
+  private toTree(list, rootId) {
+    const map = {};
+    const roots = [];
+    let node;
+
+    for (let i = 0; i < list.length; i += 1) {
+      map[list[i].id] = i;
+      list[i].children = [];
+    }
+
+    for (let i = 0; i < list.length; i += 1) {
+      node = {
+        name: list[i].name,
+        children: list[i].children,
+      };
+
+      if (list[i].parent === rootId) {
+        roots.push(node);
+      } else {
+        if (list[map[list[i].parent]]) {
+          list[map[list[i].parent]].children.push(node);
+        }
+      }
+    }
+
+    return roots;
+  }
 }

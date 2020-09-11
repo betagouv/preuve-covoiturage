@@ -181,6 +181,8 @@ export class BuildExportAction extends Action {
       stringifier.end();
       await fd.close();
 
+      // TODO zip the file
+
       const { url, password } = await this.file.copy(filename);
       const email = params.from.email;
       const fullname = params.from.fullname;

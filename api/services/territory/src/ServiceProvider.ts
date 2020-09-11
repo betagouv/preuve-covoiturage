@@ -35,6 +35,7 @@ import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperat
 import { GetTerritoryRelationUIStatusAction } from './actions/GetTerritoryRelationUIStatusAction';
 import { GetTerritoryParentChildrenAction } from './actions/GetTerritoryParentChildrenAction';
 import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
+import { TreeTerritoryAction } from './actions/TreeTerritoryAction';
 
 @serviceProvider({
   config,
@@ -74,6 +75,7 @@ import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
     ListTerritoryOperatorAction,
     GetTerritoryRelationUIStatusAction,
     GetTerritoryParentChildrenAction,
+    TreeTerritoryAction,
   ],
   commands: [],
 })
