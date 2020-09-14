@@ -125,7 +125,7 @@ export class SyncRegionDepCommand implements CommandInterface {
             t._id as child_territory_id
             FROM territory.territory_codes tc 
         INNER JOIN territory.territories t ON t._id = tc.territory_id AND tc.type = 'postcode'
-        INNER JOIN territory.territory_codes dep_tc ON dep_tc.value = substring(tc.value,1,2)
+        INNER JOIN territory.territory_codes dep_tc ON dep_tc.value = substring(tc.value,1,2) AND dep_tc.type = 'codedep'
         
         LEFT JOIN territory.territory_relation tr ON tr.parent_territory_id = dep_tc.territory_id AND tr.child_territory_id = t._id
         
