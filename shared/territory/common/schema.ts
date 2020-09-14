@@ -36,7 +36,7 @@ export function schema(alias: string, extrafields: {[k:string]: any} = {}) {
         properties: {
           ...activeFields,
           ...geoFields,
-          ...extrafieldKeys,
+          ...extrafields,
           name: { macro: 'varchar' },
           shortname: { macro: 'varchar' },
           level: {
