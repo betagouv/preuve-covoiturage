@@ -107,31 +107,20 @@ export class SyncRegionDepCommand implements CommandInterface {
         }
       }
 
-      /*
-
-      WITH territory_name_init_cap AS (
-        select _id, INITCAP(name) as name FROM territory.territories where level='epic'
-        )
-        UPDATE territory.territories SET name = tc.name FROM territory_name_init_cap tc WHERE territorie	s._id = tc._id;*/
-
       await pgClient.query(`
-      
-     
 
-      
       WITH tr as (
-        select  
+        select
             dep_tc.territory_id as parent_territory_id,
             t._id as child_territory_id
-            FROM territory.territory_codes tc 
-        INNER JOIN territory.territories t ON t._id = tc.territory_id AND tc.type = 'postcode'
+            FROM territory.territory_codes tc
+            INNER JOIN territory.territories t ON t._id = tc.territory_id AND tc.type = 'insee' AND length(tc.value) = 5
         INNER JOIN territory.territory_codes dep_tc ON dep_tc.value = substring(tc.value,1,2) AND dep_tc.type = 'codedep'
-        
+
         LEFT JOIN territory.territory_relation tr ON tr.parent_territory_id = dep_tc.territory_id AND tr.child_territory_id = t._id
-        
+
         where tr._id IS NULL
         )
-        
 
         INSERT INTO territory.territory_relation(parent_territory_id,child_territory_id) SELECT tr.parent_territory_id,tr.child_territory_id from tr ON CONFLICT DO NOTHING;
 
