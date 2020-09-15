@@ -11,24 +11,18 @@ const process = require('process');
 var { createMigration } = require('../helpers/createMigration');
 
 var { setup, up, down } = createMigration(
-  [
-    'territory/20200606000001_create_territory_view_data_func',
-    'territory/20200606000001_create_territory_view_territory_triggers',
-    'territory/20200606000002_create_territory_view_relation_triggers',
-    'territory/20200606000003_create_territory_view_code_triggers',
-    'territory/20200606000004_clean_territory_names',
-  ],
+  ['territory/20200606000004_clean_territory_names'],
   __dirname,
   async (up = true) => {
     if (up) {
       try {
         const { stderr } = await exec(`yarn workspace @pdc/proxy ilos sync:region_dep -u ${process.env.DATABASE_URL}`, {
-          cwd: path.resolve(path.resolve(__dirname, '..', '..'))
+          cwd: path.resolve(path.resolve(__dirname, '..', '..')),
         });
         if (stderr) {
           throw new Error(stderr);
         }
-      } catch(e) {
+      } catch (e) {
         throw e;
       }
     }

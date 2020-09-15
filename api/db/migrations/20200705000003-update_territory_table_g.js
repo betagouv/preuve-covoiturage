@@ -6,10 +6,7 @@
  */
 var { createMigration } = require('../helpers/createMigration');
 
-var { setup, up, down } = createMigration(
-  ['territory/20200406000001_migrate_territory_data', 'territory/20200606000000_create_territory_view_table'],
-  __dirname,
-);
+var { setup, up, down } = createMigration(['territory/20200406000010_cleanup_territory_table'], __dirname);
 
 exports.setup = setup;
 exports.up = up;

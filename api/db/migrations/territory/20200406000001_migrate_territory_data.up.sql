@@ -104,7 +104,6 @@ SELECT parent_territory_id, child_territory_id FROM territory_insee;
 
 DROP INDEX IF EXISTS territory.territory_operators_territory_id_operator_id_idx;
 
-
 UPDATE territory.territory_operators
 SET territory_id=sub.territory_id
 FROM (
