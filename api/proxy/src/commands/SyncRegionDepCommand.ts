@@ -22,7 +22,12 @@ export class SyncRegionDepCommand implements CommandInterface {
     const pgConnection = new PostgresConnection({ connectionString: options.databaseUri });
     await pgConnection.up();
     const pgClient = pgConnection.getClient();
-    await pgClient.query(`ALTER TABLE territory.territory_relation DISABLE TRIGGER ALL;`);
+    await pgClient.query(`
+      ALTER TABLE territory.territory_relation
+        DISABLE TRIGGER territory_relation_del,
+        DISABLE TRIGGER territory_relation_ins,
+        DISABLE TRIGGER territory_relation_upd
+    `);
 
     try {
       const results = await pgClient.query(`
@@ -131,6 +136,11 @@ export class SyncRegionDepCommand implements CommandInterface {
       console.log(e);
     }
 
-    await pgClient.query(`ALTER TABLE territory.territory_relation ENABLE TRIGGER ALL;`);
+    await pgClient.query(`
+      ALTER TABLE territory.territory_relation
+        ENABLE TRIGGER territory_relation_del,
+        ENABLE TRIGGER territory_relation_ins,
+        ENABLE TRIGGER territory_relation_upd
+    `);
   }
 }
