@@ -34,6 +34,7 @@
     "set-permissions": "yarn workspace @pdc/service-user ilos set-permissions",
     "migrate": "if [ -z \"$SKIP_MIGRATIONS\" ]; then yarn migrate:up; else echo '>> Migrations skipped'; fi",
     "migrate:up": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations",
+    "migrate:one": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up -c 1 --migrations-dir=db/migrations",
     "migrate:down": "DATABASE_URL=$APP_POSTGRES_URL db-migrate down --migrations-dir=db/migrations",
     "migrate:check": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations --check",
     "process:journey": "yarn workspace @pdc/proxy ilos process:journey"

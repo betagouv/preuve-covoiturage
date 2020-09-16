@@ -165,7 +165,8 @@ INSERT INTO territory.territories_view (
 
   FROM mig.agg AS a
   LEFT JOIN territory.territories AS t ON t._id = a._id
-  LEFT JOIN mig.bc_array AS bc ON bc.territory_id = a._id;
+  LEFT JOIN mig.bc_array AS bc ON bc.territory_id = a._id
+  ON CONFLICT DO NOTHING;
 
 SELECT 'view' as name, count(*) from territory.territories_view;
 
