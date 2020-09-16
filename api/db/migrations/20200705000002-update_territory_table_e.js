@@ -17,15 +17,18 @@ var { setup, up, down } = createMigration(
     if (up) {
       console.log('call sync:region_dep');
       try {
-        const { stderr } = await exec(`yarn workspace @pdc/proxy ilos sync:region_dep -u ${process.env.DATABASE_URL}`, {
-          cwd: path.resolve(path.resolve(__dirname, '..', '..')),
-        });
+        const { stdout, stderr } = await exec(
+          `yarn workspace @pdc/proxy ilos sync:region_dep -u ${process.env.DATABASE_URL}`,
+          {
+            cwd: path.resolve(path.resolve(__dirname, '..', '..')),
+          },
+        );
+        console.log({ stdout, stderr });
         if (stderr) {
           throw new Error(stderr);
         }
       } catch (e) {
-        console.log(e.message);
-        console.log(e.stack);
+        console.log(e);
         throw e;
       }
     }
