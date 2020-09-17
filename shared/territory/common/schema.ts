@@ -83,11 +83,14 @@ export function schema(alias: string, extrafields: {[k:string]: any} = {}) {
           {
             type: 'object',
             additionalProperties: false,
-            required: ['activable'],
+            required: ['activable', 'active'],
             properties: {
               ...commonFields,
               ...geoFields,
               activable: {
+                const: false,
+              },
+              active: {
                 const: false,
               },
             }
@@ -113,7 +116,7 @@ export function schema(alias: string, extrafields: {[k:string]: any} = {}) {
               insee: {
                 type: 'array',
                 items: { macro: 'insee' },
-              },        
+              },
               postcode: {
                 type: 'array',
                 items: { macro: 'postcode' },
