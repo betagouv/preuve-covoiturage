@@ -64,7 +64,7 @@ DROP TABLE IF EXISTS territory.territories_view;
   
   level territory.territory_level_enum NOT NULL,
   
-  parent integer DEFAULT NULL,
+  parents integer[] DEFAULT NULL,
   children integer[] DEFAULT array[]::integer[],
   ancestors integer[] DEFAULT array[]::integer[],
   descendants integer[] DEFAULT array[]::integer[],
