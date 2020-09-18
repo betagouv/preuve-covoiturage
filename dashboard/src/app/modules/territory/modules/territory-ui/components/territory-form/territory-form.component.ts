@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
@@ -46,6 +46,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   public editedId: number;
   private companyDetails: CompanyInterface;
   protected _relationDisplayMode = 'geo';
+  public activable = false;
   // intermediateRelation: any;
   // protected subIgnoredIds: number[];
 
@@ -69,20 +70,27 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       this.updateValidation();
     });
 
-    this.territoryForm.controls['activable'].valueChanges.subscribe(() => this.updateValidation());
-    this.territoryForm.controls['format'].valueChanges.subscribe(() => this.updateValidation());
-
-    this.territoryForm.valueChanges.subscribe((ch) => {
-      console.log('--> valueChanges', this.territoryForm.valid);
-      Object.keys(this.territoryForm.controls).forEach((key) => {
-        const controlErrors: ValidationErrors = this.territoryForm.get(key).errors;
-        if (controlErrors != null) {
-          Object.keys(controlErrors).forEach((keyError) => {
-            console.log('Key control: ' + key + ', keyError: ' + keyError + ', err value: ', controlErrors[keyError]);
-          });
-        }
+    if (this.territoryForm.controls['activable']) {
+      this.territoryForm.controls['activable'].valueChanges.subscribe((val) => {
+        this.activable = val as boolean;
+        this.updateValidation();
       });
-    });
+    }
+
+    if (this.territoryForm.controls['format']) {
+      this.territoryForm.controls['format'].valueChanges.subscribe(() => this.updateValidation());
+    }
+
+    // this.territoryForm.valueChanges.subscribe((ch) => {
+    //   Object.keys(this.territoryForm.controls).forEach((key) => {
+    //     const controlErrors: ValidationErrors = this.territoryForm.get(key).errors;
+    //     if (controlErrors != null) {
+    //       Object.keys(controlErrors).forEach((keyError) => {
+    //         console.log('Key control: ' + key + ', keyError: ' + keyError + ', err value: ', controlErrors[keyError]);
+    //       });
+    //     }
+    //   });
+    // });
   }
 
   get controls(): { [key: string]: AbstractControl } {
@@ -159,7 +167,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private initTerritoryFormValue(): void {
-    if (this.territory) this.setTerritoryFormValue(this.territory);
+    if (this.territory) {
+      this.setTerritoryFormValue(this.territory);
+    } else {
+      this.activable = false;
+    }
   }
 
   private initTerritoryForm(): void {
@@ -343,6 +355,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   // todo: ugly ...
   private setTerritoryFormValue(territory: Territory): void {
     // base values for form
+    this.activable = !!this.territory.activable;
     this.editedId = territory ? territory._id : null;
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);

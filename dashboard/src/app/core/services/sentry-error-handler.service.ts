@@ -18,7 +18,12 @@ export class SentryErrorHandler extends ErrorHandler {
   handleError(error) {
     // Here you can provide whatever logging you want
 
-    Sentry.captureException(error);
+    Sentry.captureException(error, {
+      tags: {
+        environment: environment.name,
+        production_mode: environment.production ? 'yes' : 'no',
+      },
+    });
 
     // console.log('--err', error);
     super.handleError(error);
