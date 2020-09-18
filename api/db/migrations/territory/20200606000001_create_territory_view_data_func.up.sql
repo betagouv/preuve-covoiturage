@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION territory.get_territory_view_data(ids int[]) RETURNS 
     active boolean,
     activable boolean,
     level territory.territory_level_enum,
-    parent int,
+    parents int[],
     children int[],
     ancestors int[],
     descendants int[],
@@ -18,153 +18,134 @@ CREATE OR REPLACE FUNCTION territory.get_territory_view_data(ids int[]) RETURNS 
 BEGIN
 
 RETURN QUERY WITH RECURSIVE
-  root AS (
-    SELECT
-      t._id,
-      array_remove(
-        array_agg(
-          distinct tr.parent_territory_id
-        ),
-        t._id
-      ) AS parents,
-      array_remove(
-        array_agg(
-            distinct tr.child_territory_id
-        ),
-        t._id
-      ) AS children 
-    FROM territory.territories AS t 
-    LEFT JOIN territory.territory_relation AS tr 
-      ON t._id = tr.parent_territory_id 
-      OR t._id = tr.child_territory_id
-
-     where t._id = ANY(ids)
-    GROUP BY t._id
-   
+  input AS (
+    SELECT * FROM UNNEST(ids) as _id
   )
+  ,ancestors AS (
+    SELECT
+      i._id,
+      t.parent_territory_id AS ancestor
+    FROM territory.territory_relation AS t
+    JOIN input AS i ON i._id = t.child_territory_id
+    UNION ALL
+    SELECT
+      l._id,
+      t.parent_territory_id AS ancestor
+    FROM territory.territory_relation AS t
+    JOIN ancestors AS l ON l.ancestor = t.child_territory_id
+  )
+  ,descendants AS (
+    SELECT
+      i._id,
+      t.child_territory_id AS descendant
+    FROM territory.territory_relation AS t
+    JOIN input AS i ON i._id = t.parent_territory_id
+    UNION ALL
+    SELECT
+      l._id,
+      t.child_territory_id AS descendant
+    FROM territory.territory_relation AS t
+    JOIN descendants AS l ON l.descendant = t.parent_territory_id
+  )
+  -- REMOVE
+  ,territories AS (
+    SELECT distinct ancestors._id FROM ancestors
+    UNION
+    SELECT distinct ancestors.ancestor FROM ancestors
+    UNION
+    SELECT distinct descendants._id FROM descendants
+    UNION
+    SELECT distinct descendants.descendant FROM descendants
+  )
+  -- REFACTOR
   ,codes AS (
     SELECT
-    territory_id,
-    array_remove(array_agg(tc.value) FILTER(where tc.type = 'insee'), null) AS insee,
-    array_remove(array_agg(tc.value) FILTER(where tc.type = 'postcode'), null) AS postcode,
-    array_remove(array_agg(tc.value) FILTER(where tc.type = 'codedep'), null) AS codedep
-    
-FROM territory.territory_codes tc WHERE tc.territory_id = ANY(ids) GROUP BY tc.territory_id
+      territory_id,
+      array_remove(array_agg(tc.value) FILTER(where tc.type = 'insee'), null) AS insee,
+      array_remove(array_agg(tc.value) FILTER(where tc.type = 'postcode'), null) AS postcode,
+      array_remove(array_agg(tc.value) FILTER(where tc.type = 'codedep'), null) AS codedep
+    FROM territory.territory_codes tc
+    JOIN territories as t on t._id = tc.territory_id
+    GROUP BY tc.territory_id
   )
-  ,input AS (
-    SELECT 
-      r._id,
-      r.parents,
-      r.children,
-      d.insee,
-      d.postcode,
-      d.codedep
-    FROM root AS r 
-    LEFT JOIN codes AS d 
-      ON r._id = d.territory_id 
-    ORDER BY coalesce(array_length(r.children,1),0) ASC
-  )
-  ,complete_parent AS (
-    SELECT t._id, t.parents FROM input AS t 
-    UNION ALL 
+  ,breadcrumb AS (
     SELECT
-      c._id,
-      t.parents AS parents
-    FROM input AS t 
-    JOIN complete_parent AS c ON t._id = any(c.parents)
-  )
-  ,complete_children AS (
-    SELECT t._id, t.children,t.insee,t.postcode,t.codedep FROM input AS t 
-    UNION ALL 
-    SELECT 
-      c._id,
-      t.children AS children,
-      t.insee,
-      t.postcode,
-      t.codedep
-    FROM input AS t 
-    JOIN complete_children AS c ON t._id = any(c.children)
-  )
-  ,complete as (
-       SELECT 
-        cc._id,
-        cc.children,
-        cc.insee,
-        cc.postcode,
-        cc.codedep,
-        cp.parents 
-        
-        FROM complete_children AS cc
-       LEFT JOIN complete_parent cp ON cp._id = cc._id
+      i._id as _id,
+      array_remove(array_agg(country.name), NULL) as country,
+      array_remove(array_agg(countrygroup.name), NULL) as countrygroup,
+      array_remove(array_agg(district.name), NULL) as district,
+      array_remove(array_agg(megalopolis.name), NULL) as megalopolis,
+      array_remove(array_agg(other.name), NULL) as other,
+      array_remove(array_agg(region.name), NULL) as region,
+      array_remove(array_agg(state.name), NULL) as state,
+      array_remove(array_agg(town.name), NULL) as town,
+      array_remove(array_agg(towngroup.name), NULL) as towngroup
+    FROM input as i
+    LEFT JOIN ancestors as a on a._id = i._id
+    LEFT JOIN territory.territories as country on a.ancestor = country._id AND country.level = 'country'
+    LEFT JOIN territory.territories as countrygroup on a.ancestor = countrygroup._id AND countrygroup.level = 'countrygroup'
+    LEFT JOIN territory.territories as district on a.ancestor = district._id AND district.level = 'district'
+    LEFT JOIN territory.territories as megalopolis on a.ancestor = megalopolis._id AND megalopolis.level = 'megalopolis'
+    LEFT JOIN territory.territories as other on a.ancestor = other._id AND other.level = 'other'
+    LEFT JOIN territory.territories as region on a.ancestor = region._id AND region.level = 'region'
+    LEFT JOIN territory.territories as state on a.ancestor = state._id AND state.level = 'state'
+    LEFT JOIN territory.territories as town on a.ancestor = town._id AND town.level = 'town'
+    LEFT JOIN territory.territories as towngroup on a.ancestor = towngroup._id AND towngroup.level = 'towngroup'
+    GROUP BY i._id
   )
   ,agg AS (
     SELECT
-        c._id,
-        array_remove(array_remove(array_agg(distinct p), null), c._id) AS ancestors,
-        array_remove(array_remove(array_agg(distinct b), null), c._id) AS descendants,
-        array_remove(array_agg(distinct ins), null) AS insee,
-        array_remove(array_agg(distinct pos), null) AS postcode,
-        array_remove(array_agg(distinct cdp), null) AS codedep,
-        array_remove(array_agg(distinct tr.child_territory_id), null)  AS children
-        
-    FROM complete AS c
-    left JOIN unnest(c.parents) AS p ON true
-    left JOIN unnest(c.children) AS b ON true 
-    left JOIN unnest(c.insee) AS ins ON true 
-    left JOIN unnest(c.postcode) AS pos ON true
-    left JOIN unnest(c.codedep) AS cdp ON true
-    left JOIN territory.territory_relation AS tr ON (tr.parent_territory_id = c._id)
-
-    GROUP BY c._id
+      i._id,
+      array_remove(array_agg(distinct d.descendant), NULL) as descendants,
+      array_remove(array_agg(distinct a.ancestor), NULL) as ancestors,
+      array_remove(array_agg(distinct _insee), NULL) as insee,
+      array_remove(array_agg(distinct _postcode), NULL) as postcode,
+      array_remove(array_agg(distinct _codedep), NULL) as codedep
+    FROM input as i
+    LEFT JOIN descendants as d on i._id = d._id
+    LEFT JOIN ancestors as a on i._id = a._id
+    LEFT JOIN codes as c ON i._id = c.territory_id OR c.territory_id = d.descendant
+    LEFT JOIN unnest(c.insee) as _insee ON TRUE
+    LEFT JOIN unnest(c.postcode) as _postcode ON TRUE
+    LEFT JOIN unnest(c.codedep) as _codedep ON TRUE
+    GROUP BY i._id
   )
-  
-  ,bc_array AS (
-    SELECT 
-    agg._id as territory_id,
-    agg.ancestors
-    
-    ,(SELECT array_agg(tt.name) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'country') as country
-    ,(SELECT array_agg(tt.name) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'countrygroup') as countrygroup
-    ,(SELECT array_agg(tt.name) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'district') as district
-    ,(SELECT array_agg(tt.name) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'megalopolis') as megalopolis
-    ,(SELECT array_agg(tt.name) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'other') as other
-    ,(SELECT array_agg(tt.name) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'region') as region
-    ,(SELECT array_agg(tt.name) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'state') as state
-    ,(SELECT array_agg(tt.name) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'town') as town
-    ,(SELECT array_agg(tt.name) FROM territory.territories AS tt WHERE (tt._id = ANY(agg.ancestors) OR tt._id = agg._id) and tt.level = 'towngroup') as towngroup
-
-    FROM agg
-  )
-
-    SELECT
-        a._id::int,
-        t.active::boolean,
-        t.activable::boolean,
-        t.level::territory.territory_level_enum,
-        (a.ancestors[array_length(a.ancestors, 1)])::int as parent,
-        a.children::int[],
-        a.ancestors::int[],
-        a.descendants::int[],
-        a.insee::varchar[],
-        a.postcode::varchar[],
-        a.codedep::varchar[]
-        ,row(
-            bc.country[1],
-            bc.countrygroup[1],
-            bc.district[1],
-            bc.megalopolis[1],
-            bc.other[1],
-            bc.region[1],
-            bc.state[1],
-            bc.town[1],
-            bc.towngroup[1]
-        )::territory.breadcrumb as breadcrumb
-
-    FROM agg AS a
-    LEFT JOIN territory.territories AS t ON t._id = a._id
-    LEFT JOIN bc_array AS bc ON bc.territory_id = a._id;
-
-
+  SELECT
+    a._id::int,
+    t.active::boolean,
+    t.activable::boolean,
+    t.level::territory.territory_level_enum,
+    tp.parents as parents,
+    tc.children as children,
+    a.ancestors::int[],
+    a.descendants::int[],
+    a.insee::varchar[],
+    a.postcode::varchar[],
+    a.codedep::varchar[]
+    ,row(
+      bc.country[1],
+      bc.countrygroup[1],
+      bc.district[1],
+      bc.megalopolis[1],
+      bc.other[1],
+      bc.region[1],
+      bc.state[1],
+      bc.town[1],
+      bc.towngroup[1]
+    )::territory.breadcrumb as breadcrumb
+  FROM agg AS a
+  LEFT JOIN territory.territories AS t ON t._id = a._id
+  LEFT JOIN breadcrumb AS bc ON bc._id = a._id,
+  LATERAL (
+    SELECT array_agg(child_territory_id) as children
+    FROM territory.territory_relation
+    WHERE parent_territory_id = a._id
+  ) as tc,
+  LATERAL (
+    SELECT array_agg(parent_territory_id) as parents
+    FROM territory.territory_relation
+    WHERE child_territory_id = a._id
+  ) as tp;
 END;
 $$    LANGUAGE plpgsql;
 
@@ -178,7 +159,7 @@ BEGIN
   )
   UPDATE territory.territories_view
     SET 
-        parent = tv.ancestors[array_length(tv.ancestors, 1)],
+        parents = tv.parents,
         children = tv.children,
         ancestors = tv.ancestors,
         descendants = tv.descendants,
@@ -189,11 +170,8 @@ BEGIN
         postcode = tv.postcode,
         codedep = tv.codedep,
         breadcrumb = tv.breadcrumb
-    FROM
-    tv
-    WHERE
-    territory.territories_view._id = tv._id;
-
+    FROM tv
+    WHERE territory.territories_view._id = tv._id;
     RETURN;
 END
 $$ LANGUAGE plpgsql;
