@@ -93,10 +93,7 @@
 
           <!--          TERRITORIES -->
           <div class="filter-territories">
-            <app-territories-autocomplete
-              *ngIf="hasGroupOperatorOrRegistry"
-              [parentForm]="filterForm"
-            ></app-territories-autocomplete>
+            <app-territories-autocomplete [parentForm]="filterForm"></app-territories-autocomplete>
           </div>
         </div>
         <div class="filter-content-column">
