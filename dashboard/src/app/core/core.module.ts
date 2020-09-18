@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,6 +17,7 @@ import { AuthenticatedLayoutComponent } from './components/authenticated-layout/
 import { HttpApiInterceptor } from './interceptor/http.interceptor';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { ServiceUnavailableComponent } from './components/service-unavailable/service-unavailable.component';
+import { SentryErrorHandler } from './services/sentry-error-handler.service';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,11 @@ import { ServiceUnavailableComponent } from './components/service-unavailable/se
     MaterialModule,
     ToastrModule.forRoot(),
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpApiInterceptor, multi: true }, AuthGuard],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: HttpApiInterceptor, multi: true },
+    AuthGuard,
+    { provide: ErrorHandler, useClass: SentryErrorHandler },
+  ],
   entryComponents: [ConfirmDialogComponent],
 })
 export class CoreModule {}
