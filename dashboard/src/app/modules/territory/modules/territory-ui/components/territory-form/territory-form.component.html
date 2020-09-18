@@ -57,7 +57,7 @@
 
       <mat-checkbox formControlName="activable">AOM</mat-checkbox>
       <mat-checkbox formControlName="active" [hidden]="!displayAOMActive">AOM active</mat-checkbox>
-      <div [hidden]="!territoryForm.get('activable').value">
+      <div [hidden]="!territoryForm.get('activable.value')">
         <h3>Structure</h3>
 
         <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <div [hidden]="!territoryForm.get('activable').value">
+    <div [hidden]="!territoryForm.get('activable.value')">
       <h2>Contacts et responsables</h2>
 
       <div class="contacts">
