@@ -11,10 +11,10 @@ const commonFields = {
 const geoFields = {
   geo: {},
   density: {},
-  insee: {},        
+  insee: {},
   postcode: {},
   children: {},
-}
+};
 
 const activeFields = {
   contacts: {},
@@ -22,9 +22,9 @@ const activeFields = {
   active: {},
   company_id: {},
   address: {},
-}
+};
 
-export function schema(alias: string, extrafields: {[k:string]: any} = {}) {
+export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
   const extrafieldKeys = Reflect.ownKeys(extrafields);
   return {
     $id: alias,
@@ -41,7 +41,17 @@ export function schema(alias: string, extrafields: {[k:string]: any} = {}) {
           shortname: { macro: 'varchar' },
           level: {
             type: 'string',
-            enum: ['town', 'towngroup', 'district', 'megalopolis', 'region', 'state', 'country', 'countrygroup', 'other'],
+            enum: [
+              'town',
+              'towngroup',
+              'district',
+              'megalopolis',
+              'region',
+              'state',
+              'country',
+              'countrygroup',
+              'other',
+            ],
           },
           activable: {
             type: 'boolean',
@@ -56,7 +66,7 @@ export function schema(alias: string, extrafields: {[k:string]: any} = {}) {
         oneOf: [
           {
             type: 'object',
-            required: ['activable', 'active', 'company_id', 'contacts', 'address'],
+            required: ['activable', 'active', 'company_id', 'address'],
             additionalProperties: false,
             properties: {
               ...commonFields,
@@ -78,7 +88,7 @@ export function schema(alias: string, extrafields: {[k:string]: any} = {}) {
                 postcode: { type: 'string' },
                 street: { type: 'string' },
               },
-            }
+            },
           },
           {
             type: 'object',
@@ -93,9 +103,9 @@ export function schema(alias: string, extrafields: {[k:string]: any} = {}) {
               active: {
                 const: false,
               },
-            }
-          }
-        ]
+            },
+          },
+        ],
       },
       {
         oneOf: [
@@ -121,7 +131,7 @@ export function schema(alias: string, extrafields: {[k:string]: any} = {}) {
                 type: 'array',
                 items: { macro: 'postcode' },
               },
-            }
+            },
           },
           {
             type: 'object',
@@ -134,11 +144,10 @@ export function schema(alias: string, extrafields: {[k:string]: any} = {}) {
                 type: 'array',
                 items: { macro: 'serial' },
               },
-            }
-          }
+            },
+          },
         ],
       },
-      
     ],
-  };  
+  };
 }

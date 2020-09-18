@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Territory } from '~/core/entities/territory/territory';
 import { TerritorySelectionBlock, IdName, TerritorySelectionUIState } from '../../data/TerritorySelectionBlock';
@@ -26,11 +26,18 @@ export class TerritoryChildrenComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private api: TerritoryApiService) {}
 
+  @Output() hasTerritories = new EventEmitter<boolean>();
+
   setRelations(ui: UiStatusRelationDetails[] = []): void {
     this.territories = [];
+    this.territoriesUpdated();
     for (const uiRelation of ui) {
       this.territories.push(TerritorySelectionBlock.fromUiRelation(uiRelation));
     }
+  }
+
+  territoriesUpdated(): void {
+    this.hasTerritories.emit(this.territories.length > 0);
   }
 
   addTerritory(): void {
@@ -44,6 +51,8 @@ export class TerritoryChildrenComponent implements OnInit {
       this.subIgnoredIdsGroups.push(ignoreIds);
 
       this.territorySelection.clear();
+
+      this.territoriesUpdated();
     });
   }
 
@@ -61,6 +70,8 @@ export class TerritoryChildrenComponent implements OnInit {
     this.territories.splice(ind, 1);
     this.subIgnoredIdsGroups[ind].forEach((id) => this.subIgnoredIds.splice(this.subIgnoredIds.indexOf(id), 1));
     this.subIgnoredIdsGroups.splice(ind, 1);
+
+    this.territoriesUpdated();
   }
 
   ngOnInit(): void {
