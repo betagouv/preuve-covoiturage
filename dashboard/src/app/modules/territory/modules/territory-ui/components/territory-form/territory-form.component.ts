@@ -145,9 +145,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         } else {
           const notMatchingInsees = insees.filter((insee) => !territories.find((t) => t.insee === insee));
           this.toastr.error(
-            `Certains codes INSEE n'ont pas de territoires correspondants dans notre base donnée : ${notMatchingInsees.join(
-              ',',
-            )}`,
+            `Certains codes INSEE n'ont pas de territoires correspondants : ${notMatchingInsees.join(',')}`,
           );
         }
       });
