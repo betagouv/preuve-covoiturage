@@ -63,14 +63,18 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
 
     switch (this.selectedStatus) {
       case 'current':
-        filteredCampaigns = this.campaigns.filter((c) => c.end.toDate().getTime() > now);
+        filteredCampaigns = this.campaigns.filter(
+          (c) => c.status !== CampaignStatusEnum.DRAFT && c.end.toDate().getTime() > now,
+        );
         break;
       case 'draft':
         filteredCampaigns = this.campaigns.filter((c) => c.status === CampaignStatusEnum.DRAFT);
 
         break;
       case 'outdated':
-        filteredCampaigns = this.campaigns.filter((c) => c.end.toDate().getTime() <= now);
+        filteredCampaigns = this.campaigns.filter(
+          (c) => c.status !== CampaignStatusEnum.DRAFT && c.end.toDate().getTime() <= now,
+        );
 
         break;
     }

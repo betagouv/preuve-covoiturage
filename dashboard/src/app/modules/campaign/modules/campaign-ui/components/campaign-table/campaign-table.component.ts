@@ -42,7 +42,9 @@ export class CampaignTableComponent implements OnInit {
   }
 
   getTerritoryName(id: number): string {
-    const foundTerritory = this._commonDataService.territories.filter((territory) => territory._id === id)[0];
+    const foundTerritory = this._commonDataService.territories
+      ? this._commonDataService.territories.filter((territory) => territory._id === id)[0]
+      : null;
     if (foundTerritory) {
       return foundTerritory.shortname ? foundTerritory.shortname : foundTerritory.name;
     }
