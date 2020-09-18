@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
@@ -41,6 +41,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   fullFormMode = false;
   displayAOMActive = false;
   levelLabel = territoryLevelLabels;
+  hasTerritories = false;
 
   public editedId: number;
   private companyDetails: CompanyInterface;
@@ -67,10 +68,29 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       this.checkPermissions();
       this.updateValidation();
     });
+
+    this.territoryForm.controls['activable'].valueChanges.subscribe(() => this.updateValidation());
+    this.territoryForm.controls['format'].valueChanges.subscribe(() => this.updateValidation());
+
+    this.territoryForm.valueChanges.subscribe((ch) => {
+      console.log('--> valueChanges', this.territoryForm.valid);
+      Object.keys(this.territoryForm.controls).forEach((key) => {
+        const controlErrors: ValidationErrors = this.territoryForm.get(key).errors;
+        if (controlErrors != null) {
+          Object.keys(controlErrors).forEach((keyError) => {
+            console.log('Key control: ' + key + ', keyError: ' + keyError + ', err value: ', controlErrors[keyError]);
+          });
+        }
+      });
+    });
   }
 
   get controls(): { [key: string]: AbstractControl } {
     return this.territoryForm.controls;
+  }
+
+  public hasTerritoriesChanged(hasTerritories: boolean): void {
+    this.hasTerritories = hasTerritories;
   }
 
   public onSubmit(): void {
@@ -80,6 +100,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     if (this.territoryChildren && this.fullFormMode) {
       formValues.children = this.territoryChildren.getFlatSelectedList();
+      if (formValues.children.length === 0) {
+        this.toastr.error('Veuillez selectionner au moins un territoire enfant');
+
+        return;
+      }
+
       formValues.uiSelectionState = this.territoryChildren.getUISelectionState();
       formValues.company_id = this.companyDetails ? this.companyDetails._id : null;
     }
@@ -118,7 +144,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           save.apply(this);
         } else {
           const notMatchingInsees = insees.filter((insee) => !territories.find((t) => t.insee === insee));
-          this.toastr.error(`Some INSEE Have no territory match on our database : ${notMatchingInsees.join(',')}`);
+          this.toastr.error(
+            `Certains codes INSEE n'ont pas de territoires correspondants dans notre base donnée : ${notMatchingInsees.join(
+              ',',
+            )}`,
+          );
         }
       });
     } else {
@@ -239,17 +269,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             )
 
             .subscribe((company) => {
-              // if (company) {
-              //   this.companyDetails = {
-              //     naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
-              //     nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
-              //     rna: company.nonprofit_code ? company.nonprofit_code : '',
-              //     vat_intra: company.intra_vat ? company.intra_vat : '',
-              //     _id: company._id,
-              //   };
-
-              //   companyFormGroup.patchValue(this.companyDetails);
-              // }
               this.updateCompanyForm(company, false);
             });
         });
@@ -282,17 +301,44 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private updateValidation(): void {
+    // console.log('> updateValidation');
     if (this.territoryForm && this.fullFormMode) {
       this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
       this.territoryForm.controls['shortname'].setValidators(this.fullFormMode ? Validators.max(12) : null);
+      this.territoryForm.controls['name'].updateValueAndValidity();
+      this.territoryForm.controls['name'].markAsUntouched();
+      this.territoryForm.controls['shortname'].updateValueAndValidity();
+      this.territoryForm.controls['shortname'].markAsUntouched();
 
-      // address is hidden and not required if territory is not activable
+      // address is hidden and not required if territory is not activable (AOM)
       const addressIsRequired = !!this.territoryForm.controls['activable'].value;
       const fields = ['street', 'postcode', 'city', 'country'];
       const addressControl = this.territoryForm.controls['address'] as FormGroup;
-      fields.forEach((field) =>
-        addressControl.controls[field].setValidators(addressIsRequired ? [Validators.required] : []),
+
+      fields.forEach((field) => {
+        const ctr = addressControl.controls[field];
+        ctr.setValidators(addressIsRequired ? [Validators.required] : null);
+        ctr.updateValueAndValidity();
+        ctr.markAsUntouched();
+      });
+
+      // Siret is hidden and not required if territory is not activable (AOM)
+
+      const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
+      const siretControl = companyFormGroup.controls['siret'];
+
+      siretControl.setValidators(addressIsRequired ? [Validators.required] : null);
+      siretControl.updateValueAndValidity();
+      siretControl.markAsUntouched();
+
+      const inseeControl = this.territoryForm.controls.insee;
+      const inseeIsRequired = this.territoryForm.controls['format'].value === 'insee';
+
+      inseeControl.setValidators(
+        inseeIsRequired ? [Validators.required, Validators.pattern('^( *[0-9]{5} *,? *)+$')] : null,
       );
+      inseeControl.updateValueAndValidity();
+      inseeControl.markAsUntouched();
     }
   }
 
@@ -307,7 +353,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this.territoryForm.setValue(formValues);
 
     this._relationDisplayMode = formValues.format;
-
     if (this.editedId && this.fullFormMode) {
       this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
         this.territoryChildren.setRelations(completeRelation);

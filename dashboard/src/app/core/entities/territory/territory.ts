@@ -79,6 +79,8 @@ export class Territory extends BaseModel
   children?: number[];
 
   active_since?: Date;
+  population?: number;
+  surface?: number;
   address: Address;
   // active_since?: Date;
   contacts?: Contacts;
