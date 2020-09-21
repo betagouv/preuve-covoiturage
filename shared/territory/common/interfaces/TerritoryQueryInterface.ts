@@ -70,6 +70,7 @@ export enum BasicFieldEnum {
   Address = 'address',
   Contacts = 'contacts',
   UIStatus = 'ui_status',
+  Activable = 'activable',
 }
 
 export enum ActiveFieldEnum {
@@ -165,6 +166,7 @@ export const directFields: ProjectionFieldsEnum = [
   BasicFieldEnum.Name,
   BasicFieldEnum.ShortName,
   BasicFieldEnum.Active,
+  BasicFieldEnum.Activable,
   BasicFieldEnum.Address,
   BasicFieldEnum.Contacts,
   BasicFieldEnum.UIStatus,

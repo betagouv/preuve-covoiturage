@@ -19,6 +19,7 @@ export enum TerritoryLevelEnum {
   Town = 'town',
   Towngroup = 'towngroup',
   District = 'district',
+  Epic = 'epic',
   Megalopolis = 'megalopolis',
   Region = 'region',
   State = 'state',
@@ -29,14 +30,16 @@ export enum TerritoryLevelEnum {
 
 export const territoryLevelLabels = [
   [null, ''],
-  [TerritoryLevelEnum.Town, 'Ville'],
-  [TerritoryLevelEnum.Towngroup, 'Metropole'],
+
+  [TerritoryLevelEnum.Town, 'Commune'],
+  [TerritoryLevelEnum.Epic, 'EPCI'],
+  // [TerritoryLevelEnum.Towngroup, 'Metropole'],
   [TerritoryLevelEnum.District, 'District'],
   [TerritoryLevelEnum.Megalopolis, 'Département'],
   [TerritoryLevelEnum.Region, 'Region'],
   [TerritoryLevelEnum.State, 'Etat'],
   [TerritoryLevelEnum.Country, 'Pays'],
-  [TerritoryLevelEnum.Countrygroup, 'Group de pays'],
+  [TerritoryLevelEnum.Countrygroup, 'Groupe de pays'],
   [TerritoryLevelEnum.Other, 'Autre'],
 ];
 
@@ -79,6 +82,8 @@ export class Territory extends BaseModel
   children?: number[];
 
   active_since?: Date;
+  population?: number;
+  surface?: number;
   address: Address;
   // active_since?: Date;
   contacts?: Contacts;

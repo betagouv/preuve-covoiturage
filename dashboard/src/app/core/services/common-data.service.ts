@@ -135,7 +135,7 @@ export class CommonDataService {
               this.territoryApiService.paramGetById(
                 user.territory_id,
                 [SortEnum.NameAsc],
-                [...allBasicFieldEnum, ...allCompanyFieldEnum],
+                [...allBasicFieldEnum, ...allCompanyFieldEnum, 'activable'],
               ),
             );
           } else if (user.operator_id) {

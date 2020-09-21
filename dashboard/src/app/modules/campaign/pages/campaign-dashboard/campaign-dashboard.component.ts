@@ -56,12 +56,13 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
       const now = new Date().getTime();
 
       this.campaigns.forEach((c) => {
-        if (c.status !== CampaignStatusEnum.ARCHIVED && c.end.toDate().getTime() > now) {
-          this.currentCampaigns.push(c);
-        } else {
-          this.outdatedCampaign.push(c);
+        if (c.status !== CampaignStatusEnum.DRAFT) {
+          if (c.end.toDate().getTime() > now) {
+            this.currentCampaigns.push(c);
+          } else {
+            this.outdatedCampaign.push(c);
+          }
         }
-        return true;
       });
     });
     if (this._authService.user.group === UserGroupEnum.TERRITORY) {
