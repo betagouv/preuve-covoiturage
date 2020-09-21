@@ -120,8 +120,8 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
 
   get noCampaignMessage(): string {
     return this.searchFilters && this.searchFilters.controls.query.value
-      ? 'Pas de résultats avec vos critères de recherche'
-      : `Aucune campagne ${this.titles[this.selectedStatus]}.`;
+      ? 'Pas de résultats avec vos critères de recherche.'
+      : "Vous n'avez pas de campagnes.";
   }
 
   private initSearchForm(): void {
