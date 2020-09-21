@@ -86,7 +86,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     //     const controlErrors: ValidationErrors = this.territoryForm.get(key).errors;
     //     if (controlErrors != null) {
     //       Object.keys(controlErrors).forEach((keyError) => {
-    //         console.log('Key control: ' + key + ', keyError: ' + keyError + ', err value: ', controlErrors[keyError]);
+    //         console.log('Key control: ', key, ', keyError: ', keyError, ', err value: ', controlErrors[keyError]);
     //       });
     //     }
     //   });

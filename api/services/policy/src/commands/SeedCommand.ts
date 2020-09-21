@@ -102,6 +102,7 @@ export class SeedCommand implements CommandInterface {
    * the ones with undefined slugs
    */
   private async checkTemplateSlugs(): Promise<void> {
+    /* eslint-disable */
     const results = await this.pgClient.query(`
       SELECT _id, name, slug, array_agg(gr) || array_agg(r) AS rules
       FROM policy.policies pp,
@@ -110,6 +111,7 @@ export class SeedCommand implements CommandInterface {
       WHERE status = 'template'
       GROUP BY _id
     `);
+    /* eslint-enable */
 
     for (const template of results.rows) {
       const diff = difference(
