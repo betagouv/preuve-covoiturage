@@ -32,14 +32,14 @@ export const territoryLevelLabels = [
   [null, ''],
 
   [TerritoryLevelEnum.Town, 'Commune'],
-  [TerritoryLevelEnum.Towngroup, 'Metropole'],
+  [TerritoryLevelEnum.Epic, 'EPCI'],
+  // [TerritoryLevelEnum.Towngroup, 'Metropole'],
   [TerritoryLevelEnum.District, 'District'],
   [TerritoryLevelEnum.Megalopolis, 'Département'],
   [TerritoryLevelEnum.Region, 'Region'],
   [TerritoryLevelEnum.State, 'Etat'],
   [TerritoryLevelEnum.Country, 'Pays'],
   [TerritoryLevelEnum.Countrygroup, 'Group de pays'],
-  [TerritoryLevelEnum.Epic, 'Epic'],
   [TerritoryLevelEnum.Other, 'Autre'],
 ];
 
