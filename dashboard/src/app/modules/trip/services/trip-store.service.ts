@@ -72,7 +72,7 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     } else {
       const nowMinus1Year = new Date();
       nowMinus1Year.setMonth(nowMinus1Year.getMonth() - 12);
-      nowMinus1Year.setHours(0, 0, 0);
+      nowMinus1Year.setHours(0, 0, 0, 0);
       if (!params['date']) params['date'] = {};
       params['date'].start = nowMinus1Year.toISOString();
     }
