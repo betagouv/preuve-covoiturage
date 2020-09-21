@@ -43,6 +43,11 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
         end: moment(filter.date.end).endOf('day').toISOString(),
       },
     };
+
+    if (filter.operator_id) {
+      params.operator_id = filter.operator_id;
+    }
+
     const loggedUser = this._authService.user;
     if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY) {
       params.territory_id = [loggedUser.territory_id];
