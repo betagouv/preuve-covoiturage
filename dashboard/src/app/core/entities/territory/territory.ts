@@ -39,7 +39,7 @@ export const territoryLevelLabels = [
   [TerritoryLevelEnum.Region, 'Region'],
   [TerritoryLevelEnum.State, 'Etat'],
   [TerritoryLevelEnum.Country, 'Pays'],
-  [TerritoryLevelEnum.Countrygroup, 'Group de pays'],
+  [TerritoryLevelEnum.Countrygroup, 'Groupe de pays'],
   [TerritoryLevelEnum.Other, 'Autre'],
 ];
 
