@@ -62,6 +62,7 @@
     "@pdc/provider-file": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-validator": "~0",
+    "adm-zip": "^0.4.16",
     "csv-stringify": "^5.3.3",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
