@@ -19,6 +19,7 @@ export enum TerritoryLevelEnum {
   Town = 'town',
   Towngroup = 'towngroup',
   District = 'district',
+  Epic = 'epic',
   Megalopolis = 'megalopolis',
   Region = 'region',
   State = 'state',
@@ -29,7 +30,8 @@ export enum TerritoryLevelEnum {
 
 export const territoryLevelLabels = [
   [null, ''],
-  [TerritoryLevelEnum.Town, 'Ville'],
+
+  [TerritoryLevelEnum.Town, 'Commune'],
   [TerritoryLevelEnum.Towngroup, 'Metropole'],
   [TerritoryLevelEnum.District, 'District'],
   [TerritoryLevelEnum.Megalopolis, 'Département'],
@@ -37,6 +39,7 @@ export const territoryLevelLabels = [
   [TerritoryLevelEnum.State, 'Etat'],
   [TerritoryLevelEnum.Country, 'Pays'],
   [TerritoryLevelEnum.Countrygroup, 'Group de pays'],
+  [TerritoryLevelEnum.Epic, 'Epic'],
   [TerritoryLevelEnum.Other, 'Autre'],
 ];
 
