@@ -29,7 +29,7 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
     if (!finalParams.date.start) {
       const nowMinus1Year = new Date();
       nowMinus1Year.setMonth(nowMinus1Year.getMonth() - 12);
-      nowMinus1Year.setHours(0, 0, 0);
+      nowMinus1Year.setHours(0, 0, 0, 0);
       finalParams.date.start = nowMinus1Year.toISOString();
     }
 
