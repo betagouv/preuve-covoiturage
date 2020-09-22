@@ -85,11 +85,11 @@
                 }
               ]
             },
-            "dev": {
+            "demo": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
+                  "with": "src/environments/environment.demo.ts"
                 }
               ],
               "optimization": true,
@@ -109,11 +109,11 @@
                 }
               ]
             },
-            "review": {
+            "dev": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.review.ts"
+                  "with": "src/environments/environment.dev.ts"
                 }
               ],
               "optimization": true,
@@ -146,6 +146,9 @@
             },
             "staging": {
               "browserTarget": "dashboard:build:staging"
+            },
+            "demo": {
+              "browserTarget": "dashboard:build:demo"
             },
             "dev": {
               "browserTarget": "dashboard:build:dev"
