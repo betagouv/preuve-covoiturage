@@ -100,6 +100,12 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     return this.catchSiretConflict(super.update(item));
   }
 
+  // get only AOM territories
+  getActivableList(): Observable<Territory[]> {
+    const jsonRPCParam = this.paramGet({ activable: true });
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
+  }
+
   getOperatorVisibility(territoryId: number): Observable<OTVisibityResults> {
     const jsonRPCParam = new JsonRPCParam<OTVisibityParams>(`${this.method}:listOperator`, {
       territory_id: territoryId,

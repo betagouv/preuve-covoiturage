@@ -371,18 +371,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     const query = {
       text: `
-      SELECT name,t._id, array_agg(tc.value) as insees FROM ${this.table} t
-
+        SELECT name,t._id, array_agg(tc.value) as insees, active FROM ${this.table} t
         LEFT JOIN territory.territory_codes tc ON(tc.territory_id = t._id AND tc.type = 'insee')
-
         WHERE deleted_at IS NULL
-
-
         ${searchConditionString ? ` AND ${searchConditionString}` : ''}
-
         GROUP BY t._id,t.name
-	
-        
         ${limit !== undefined ? ` LIMIT ${limit}` : ''}
         ${skip !== undefined ? ` OFFSET ${skip}` : ''}
       `,
@@ -406,11 +399,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       data.active,
       data.activable,
     ];
-
-    // if (data.density !== undefined) {
-    //   fields.push('density');
-    //   values.push(data.density);
-    // }
 
     if (data.company_id) {
       fields.push('company_id');
