@@ -62,55 +62,13 @@ export class StatsAction extends Action {
     const context_oid = this.castTypeId('operator_id', context);
     if (context_oid) set(params, 'operator_id', context_oid);
 
-    switch (this.isCachable(params)) {
-      case 'global':
-        return (await this.cache.getOrBuild(async () => this.pg.stats(params), {})) || [];
-      case 'operator':
-        return (
-          (await this.cache.getOrBuild(async () => this.pg.stats(params), { operator_id: params.operator_id[0] })) || []
-        );
-      case 'territory':
-        return (
-          (await this.cache.getOrBuild(async () => this.pg.stats(params), { territory_id: params.territory_id[0] })) ||
-          []
-        );
-      default:
-        return (await this.pg.stats(this.applyDefaults(params))) || [];
-    }
+    return (await this.cache.getOrBuild(async () => this.pg.stats(params), params)) || [];
   }
 
   protected castTypeId(type: 'territory_id' | 'operator_id', context: ContextType): number[] {
     const val = get(context, `call.user.${type}`, undefined);
 
     return val ? (Array.isArray(val) ? val : [val]) : undefined;
-  }
-
-  protected isCachable(params: ParamsInterface): null | 'global' | 'operator' | 'territory' {
-    const keys = Object.keys(params).filter((i) => !!params[i]);
-
-    if (keys.length > 1) {
-      return;
-    }
-
-    if (keys.length === 0) {
-      return 'global';
-    }
-
-    if (keys[0] === 'operator_id') {
-      if (Array.isArray(params.operator_id) && params.operator_id.length === 1) {
-        return 'operator';
-      }
-      return;
-    }
-
-    if (keys[0] === 'territory_id') {
-      if (Array.isArray(params.territory_id) && params.territory_id.length === 1) {
-        return 'territory';
-      }
-      return;
-    }
-
-    return;
   }
 
   protected applyDefaults(params: ParamsInterface): ParamsInterface {
