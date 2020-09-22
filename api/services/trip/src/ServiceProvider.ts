@@ -26,6 +26,7 @@ import { ExportAction } from './actions/ExportAction';
 import { SearchCountAction } from './actions/SearchCountAction';
 import { BuildExportAction } from './actions/BuildExportAction';
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
+import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 
 @serviceProvider({
   config,
@@ -41,7 +42,7 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [ListAction, SearchCountAction, StatsAction, ExportAction, BuildExportAction],
+  handlers: [ListAction, SearchCountAction, StatsAction, ExportAction, BuildExportAction, TripCacheWarmCron],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
