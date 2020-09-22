@@ -251,10 +251,8 @@ export class HttpTransport implements TransportInterface {
         if (!response || Array.isArray(response) || 'error' in response) {
           res.status(mapStatusCode(response)).json(this.parseErrorData(response));
         } else {
-          req.session.user = {
-            ...(Array.isArray(response) ? response[0].result : response.result),
-            ...(await this.getTerritoryInfos(req.session.user)),
-          };
+          const user = Array.isArray(response) ? response[0].result : response.result;
+          req.session.user = { ...user, ...(await this.getTerritoryInfos(user)) };
 
           this.send(res, response);
         }
