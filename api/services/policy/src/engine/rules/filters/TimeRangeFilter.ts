@@ -31,7 +31,8 @@ export class TimeRangeFilter extends FilterRule<Range[]> {
     },
   };
   filter(ctx: RuleHandlerContextInterface): void {
-    const hours = ctx.person.datetime.getHours();
+    const date = ctx.person.datetime;
+    const hours = typeof date.getHours === 'function' ? date.getHours() : (new Date(date).getHours());
     for (const range of this.parameters) {
       if (hours >= range.start && hours <= range.end) {
         return;
