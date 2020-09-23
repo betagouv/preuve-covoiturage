@@ -42,9 +42,37 @@ export class SyncTerritoryViewCommand implements CommandInterface {
       const results = await cursor(ROW_COUNT);
       count = results.length;
       const _ids = results.map(r => r._id);
-      await pgClient.query({
+      await pgConnection.getClient().query({
         text: `
-          SELECT territory.update_territory_view_data($1::int[])
+          INSERT INTO
+            territory.territories_view
+          SELECT * FROM territory.get_data($1::int[]) ON CONFLICT (_id)
+          DO UPDATE
+            SET (
+              parents,
+              children,
+              ancestors,
+              descendants,
+              active,
+              activable,
+              level,
+              insee,
+              postcode,
+              codedep,
+              breadcrumb
+            ) = (
+              excluded.parents,
+              excluded.children,
+              excluded.ancestors,
+              excluded.descendants,
+              excluded.active,
+              excluded.activable,
+              excluded.level,
+              excluded.insee,
+              excluded.postcode,
+              excluded.codedep,
+              excluded.breadcrumb
+            );
         `,
         values: [_ids],
       });

@@ -140,8 +140,8 @@ WITH RECURSIVE
   direct_relation AS (
     SELECT
       i._id,
-      array_agg(distinct c.child_territory_id) as children,
-      array_agg(distinct p.parent_territory_id) as parents
+      array_remove(array_agg(distinct c.child_territory_id), NULL) as children,
+      array_remove(array_agg(distinct p.parent_territory_id), NULL) as parents
     FROM input as i
     LEFT JOIN territory.territory_relation as c on c.parent_territory_id = i._id
     LEFT JOIN territory.territory_relation as p on p.child_territory_id = i._id
