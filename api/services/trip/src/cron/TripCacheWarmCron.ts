@@ -1,5 +1,7 @@
 import { Action } from '@ilos/core';
-import { handler, InitHookInterface, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
+import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
+import { PostgresConnection } from '@ilos/connection-postgres';
+
 import { signature, handlerConfig } from '../shared/trip/cacheWarmCron.contract';
 
 @handler({
@@ -7,7 +9,7 @@ import { signature, handlerConfig } from '../shared/trip/cacheWarmCron.contract'
   middlewares: [['channel.service.only', [handlerConfig.service]]],
 })
 export class TripCacheWarmCron extends Action implements InitHookInterface {
-  constructor(private kernel: KernelInterfaceResolver, private config: ConfigInterfaceResolver) {
+  constructor(private kernel: KernelInterfaceResolver, private pg: PostgresConnection) {
     super();
   }
 
@@ -30,6 +32,9 @@ export class TripCacheWarmCron extends Action implements InitHookInterface {
   }
 
   public async handle(): Promise<void> {
+    // clean up cache table
+    await this.pg.getClient().query('TRUNCATE trip.stat_cache');
+
     // fetch the list of operators and territories as a list of ID
     const response = await this.kernel.call(
       'user:hasUsers',
