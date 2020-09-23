@@ -14,7 +14,6 @@ export class TripCacheWarmCron extends Action implements InitHookInterface {
   }
 
   async init(): Promise<void> {
-    // TODO kill jobs with same jobId
     await this.kernel.notify(signature, undefined, {
       call: {
         user: {},
