@@ -2,7 +2,8 @@ import path from 'path';
 import os from 'os';
 import fs from 'fs';
 import v4 from 'uuid/v4';
-import get from 'lodash/get';
+import AdmZip from 'adm-zip';
+import { get } from 'lodash';
 import csvStringify, { Stringifier } from 'csv-stringify';
 
 import { Action } from '@ilos/core';
@@ -162,13 +163,15 @@ export class BuildExportAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
-      const cursor = await this.pg.searchWithCursor(params.query, params.type);
+      const type = get(params, 'from.type', 'opendata');
+      const cursor = await this.pg.searchWithCursor(params.query, type);
 
       let count = 0;
 
-      const filename = path.join(os.tmpdir(), v4());
+      const filename = path.join(os.tmpdir(), v4()) + '.csv';
+      const zipname = filename.replace('.csv', '') + '.zip';
       const fd = await fs.promises.open(filename, 'a');
-      const stringifier = await this.getStringifier(fd);
+      const stringifier = await this.getStringifier(fd, type);
 
       do {
         const results = await cursor(10);
@@ -181,9 +184,12 @@ export class BuildExportAction extends Action {
       stringifier.end();
       await fd.close();
 
-      // TODO zip the file
+      // ZIP the file
+      const zip = new AdmZip();
+      zip.addLocalFile(filename);
+      zip.writeZip(zipname);
 
-      const { url, password } = await this.file.copy(filename);
+      const { url, password } = await this.file.copy(zipname);
       const email = params.from.email;
       const fullname = params.from.fullname;
 

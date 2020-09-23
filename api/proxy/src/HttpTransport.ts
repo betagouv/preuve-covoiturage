@@ -251,31 +251,10 @@ export class HttpTransport implements TransportInterface {
         if (!response || Array.isArray(response) || 'error' in response) {
           res.status(mapStatusCode(response)).json(this.parseErrorData(response));
         } else {
-          req.session.user = Array.isArray(response) ? response[0].result : response.result;
-
-          if (req.session.user.territory_id) {
-            const operatorList = await this.kernel.handle(
-              makeCall(
-                'territory:listOperator',
-                { territory_id: req.session.user.territory_id },
-                { user: req.session.user },
-              ),
-            );
-            req.session.user.authorizedOperators = get(operatorList, 'result', []);
-
-            const descendantTerritories = await this.kernel.handle(
-              makeCall(
-                'territory:getParentChildren',
-                { _id: req.session.user.territory_id },
-                { user: req.session.user },
-              ),
-            );
-
-            req.session.user.authorizedTerritories = [
-              req.session.user.territory_id,
-              ...get(descendantTerritories, 'result.descendant_ids', []),
-            ];
-          }
+          req.session.user = {
+            ...(Array.isArray(response) ? response[0].result : response.result),
+            ...(await this.getTerritoryInfos(req.session.user)),
+          };
 
           this.send(res, response);
         }
@@ -589,11 +568,13 @@ export class HttpTransport implements TransportInterface {
         async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
           // inject the req.session.user to context in the body
           const isBatch = Array.isArray(req.body);
-          const user = get(req, 'session.user', null);
+          let user = get(req, 'session.user', null);
 
           if (!user) {
             throw new UnauthorizedException();
           }
+
+          user = { ...user, ...(await this.getTerritoryInfos(user)) };
 
           // nest the params and _context and inject the session user
           // from { id: 1, jsonrpc: '2.0', method: 'a:b' params: {} }
@@ -679,5 +660,25 @@ export class HttpTransport implements TransportInterface {
     } catch (e) {}
 
     return response;
+  }
+
+  /**
+   * Fetch additional data for territories
+   */
+  private async getTerritoryInfos(user): Promise<any> {
+    if (user.territory_id) {
+      const operatorList = await this.kernel.handle(
+        makeCall('territory:listOperator', { territory_id: user.territory_id }, { user: user }),
+      );
+      user.authorizedOperators = get(operatorList, 'result', []);
+
+      const descendantTerritories = await this.kernel.handle(
+        makeCall('territory:getParentChildren', { _id: user.territory_id }, { user: user }),
+      );
+
+      user.authorizedTerritories = [user.territory_id, ...get(descendantTerritories, 'result.descendant_ids', [])];
+    }
+
+    return {};
   }
 }
