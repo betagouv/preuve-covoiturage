@@ -19,14 +19,14 @@ CREATE MATERIALIZED VIEW policy.trips AS (
     id.identity_uuid as identity_uuid,
     id.has_travel_pass as has_travel_pass,
     id.is_over_18 as is_over_18,
-    ts.ancestors | cp.start_territory_id as start_territory_id,
-    te.ancestors | cp.end_territory_id as end_territory_id,
+    ats | cp.start_territory_id as start_territory_id,
+    ate | cp.end_territory_id as end_territory_id,
     ap.applicable_policies as applicable_policies,
     pp.processed_policies as processed_policies,
     (ap.applicable_policies - pp.processed_policies) as processable_policies
   FROM carpool.carpools as cp
-  LEFT JOIN territory.territories_view as ts ON ts._id = cp.start_territory_id
-  LEFT JOIN territory.territories_view as te ON te._id = cp.end_territory_id,
+  LEFT JOIN territory.get_ancestors(ARRAY[cp.start_territory_id]) as ats ON TRUE
+  LEFT JOIN territory.get_ancestors(ARRAY[cp.end_territory_id]) as ate ON TRUE,
   LATERAL (
     SELECT
       array_agg(value) as value
@@ -47,7 +47,7 @@ CREATE MATERIALIZED VIEW policy.trips AS (
       COALESCE(array_agg(pp._id), ARRAY[]::int[]) as applicable_policies
     FROM policy.policies as pp
     WHERE
-      (pp.territory_id = any(ts.ancestors | ts._id) OR pp.territory_id = any(te.ancestors | te._id))
+      pp.territory_id = any(cp.start_territory_id || ats || ate || cp.end_territory_id)
       AND pp.start_date <= cp.datetime
       AND pp.end_date >= cp.datetime
       AND pp.status = 'active'

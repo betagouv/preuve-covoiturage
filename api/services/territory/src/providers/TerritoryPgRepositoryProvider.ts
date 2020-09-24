@@ -54,51 +54,72 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
   }
 
   async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface> {
-    const filter = typeof id === 'number' ? ` ${id}` : ` ANY('{${id.join(',')}}')`;
-
-    const query = `WITH 
-      base_relation AS(
-          SELECT 
-              tv._id AS base_id,
-              tv.descendants,
-              tv.ancestors
-          FROM territory.territories_view AS tv
-          WHERE tv._id = ${filter}
-      ),
-      children AS(
-          SELECT 
-              tr.parent_territory_id AS base_id,
-              t._id,
-              t.name 
-          FROM territory.territory_relation AS tr
-          INNER JOIN territory.territories AS t 
-            ON (t._id = tr.child_territory_id AND tr.parent_territory_id = ${filter})
-      ),
-      
-      parent AS(
+    const ids = typeof id === 'number' ? [id] : id;
+    const query = {
+      text: `WITH 
+      base AS (
+        SELECT
+          _id,
+          territory.get_descendants(ARRAY[_id]::int[]) as descendant_ids,
+          territory.get_ancestors(ARRAY[_id]::int[]) as ancestor_ids
+          FROM unnest($1::int[]) as _id
+        ),
+      children AS (
+        SELECT
+          a.base_id AS _id,
+          array_to_json(
+            array_agg(
+              json_build_object(
+                'base_id', a.base_id,
+                '_id', a._id,
+                'name', a.name
+              )
+            )
+          ) as children
+        FROM (
           SELECT
-              tr.child_territory_id AS base_id,
-              t._id,
-              t.name
-          FROM territory.territory_relation AS tr
-          INNER JOIN territory.territories AS t 
-            ON (t._id = tr.parent_territory_id AND tr.child_territory_id = ${filter})
+            tr.parent_territory_id AS base_id,
+            t._id as _id,
+            t.name as name
+          FROM base as b
+          JOIN territory.territory_relation AS tr ON tr.parent_territory_id = b._id
+          JOIN territory.territories AS t ON t._id = tr.child_territory_id
+        ) as a
+        GROUP BY a.base_id
+      ),
+      parent AS (
+        SELECT 
+          a.base_id AS _id,
+          array_to_json(
+            array_agg(
+              json_build_object(
+                'base_id', a.base_id,
+                '_id', a._id,
+                'name', a.name
+              )
+            )
+          ) as parent
+        FROM (
+          SELECT
+            tr.child_territory_id AS base_id,
+            t._id,
+            t.name 
+          FROM base as b
+          JOIN territory.territory_relation AS tr ON tr.child_territory_id = b._id
+          JOIN territory.territories AS t ON t._id = tr.parent_territory_id
+        ) as a
+        GROUP BY a.base_id
       )
       SELECT 
-          base_relation.base_id AS _id,
-          row_to_json(parent) AS parent,
-          to_json(array_remove(
-            array_agg(CASE WHEN children IS NOT NULL THEN children ELSE NULL END), 
-            NULL)
-          ) AS children,
-          base_relation.descendants AS descendant_ids,
-          base_relation.ancestors AS ancestor_ids
-          FROM base_relation
-          LEFT JOIN children ON children.base_id = base_relation.base_id
-          LEFT JOIN parent ON children.base_id = base_relation.base_id
-          GROUP BY parent.*,base_relation.base_id,base_relation.descendants,base_relation.ancestors;
-      
-      `;
+          base.*,
+          parent.parent AS parent,
+          children.children AS children
+          FROM base
+          LEFT JOIN children ON TRUE
+          LEFT JOIN parent ON TRUE;
+      `,
+      values: [ids]
+    };
 
     const result = await this.connection.getClient().query(query);
     return result.rows.length > 0 ? result.rows[0] : [];

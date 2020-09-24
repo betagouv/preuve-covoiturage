@@ -101,8 +101,8 @@ AS $$
       array_remove(array_agg(distinct tc.value) FILTER(where tc.type = 'insee'), null) AS insee,
       array_remove(array_agg(distinct tc.value) FILTER(where tc.type = 'postcode'), null) AS postcode,
       array_remove(array_agg(distinct tc.value) FILTER(where tc.type = 'codedep'), null) AS codedep
-    FROM unnest(descendants_ids) AS d_id
-    JOIN territory.territory_codes as tc ON tc.territory_id = target_id OR tc.territory_id = d_id
+    FROM territory.territory_codes AS tc
+    WHERE territory_id = ANY(descendants_ids || target_id)
     GROUP BY target_id
   )
   SELECT
