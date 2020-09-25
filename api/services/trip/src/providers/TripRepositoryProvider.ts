@@ -24,16 +24,15 @@ import { StatInterface } from '../interfaces/StatInterface';
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'trip.list';
-  public readonly territoryTable = 'territory.territories_view';
 
   constructor(public connection: PostgresConnection) {}
 
-  protected buildWhereClauses(
+  protected async buildWhereClauses(
     filters: Partial<TripSearchInterface>,
-  ): {
+  ): Promise<{
     text: string;
     values: any[];
-  } | null {
+  } | null> {
     const filtersToProcess = [
       'territory_id',
       'operator_id',
@@ -51,22 +50,26 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       values: [],
     };
 
+    if (filters.territory_id) {
+      const territoriesIds = typeof filters.territory_id === 'number' ? [filters.territory_id] : filters.territory_id;
+      const descendantsIds = await this.connection.getClient().query({
+        text: `SELECT * FROM territory.get_descendants($1::int[]) as _ids`,
+        values: [territoriesIds],
+      });
+      if (descendantsIds.rowCount > 0 && descendantsIds.rows[0]._ids) {
+        filters.territory_id = [...territoriesIds, ...descendantsIds.rows[0]._ids];
+      }
+    }
+
     if (filtersToProcess.length > 0) {
       orderedFilters = filtersToProcess
         .map((key) => ({ key, value: filters[key] }))
         .map((filter) => {
           switch (filter.key) {
             case 'territory_id':
-              const territoriesIds = typeof filter.value === 'number' ? [filter.value] : filter.value;
               return {
-                text: `(
-                  start_territory_id = ANY(
-                    (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
-                  ) OR end_territory_id = ANY(
-                    (SELECT _id || descendants FROM ${this.territoryTable} WHERE _id = ANY($#::int[]))::int[]
-                  )
-                )`,
-                values: [territoriesIds, territoriesIds],
+                text: `(start_territory_id = ANY($#::int[]) OR end_territory_id = ANY($#::int[]))`,
+                values: [filter.value, filter.value],
               };
 
             case 'operator_id':
@@ -167,7 +170,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   }
 
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
-    const where = this.buildWhereClauses(params);
+    const where = await this.buildWhereClauses(params);
 
     const query = {
       text: `
@@ -279,7 +282,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         break;
     }
 
-    const where = this.buildWhereClauses(cleanParams);
+    const where = await this.buildWhereClauses(cleanParams);
     const queryText = this.numberPlaceholders(`
       SELECT
         ${selectedFields.join(', ')}
@@ -296,7 +299,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   }
 
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }> {
-    const where = this.buildWhereClauses(params);
+    const where = await this.buildWhereClauses(params);
     const query = {
       text: `
         SELECT COUNT(*)
@@ -318,7 +321,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     params: Partial<TripSearchInterfaceWithPagination>,
   ): Promise<ResultWithPagination<LightTripInterface>> {
     const { limit, skip } = params;
-    const where = this.buildWhereClauses(params);
+    const where = await this.buildWhereClauses(params);
 
     const query = {
       text: `

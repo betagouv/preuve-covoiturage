@@ -1,6 +1,7 @@
 
 -- used only for temporary territories_view
 DROP MATERIALIZED VIEW IF EXISTS territory.territories_view;
+DROP TABLE IF EXISTS territory.territories_view CASCADE;
 
 DROP TYPE IF EXISTS territory.breadcrumb CASCADE; 
 CREATE TYPE territory.breadcrumb AS (
@@ -48,26 +49,3 @@ CREATE OR REPLACE FUNCTION json_to_breadcrumb(bc json) returns territory.breadcr
 $$ language sql;
 
 create cast (json as territory.breadcrumb) with function json_to_breadcrumb(_ti json) as assignment;
-
-DROP TABLE IF EXISTS territory.territories_view CASCADE;
-CREATE TABLE IF NOT EXISTS territory.territories_view
-(
-  _id serial primary key,
-  active boolean NOT NULL DEFAULT false,
-  activable boolean NOT NULL DEFAULT false,
-  
-  
-  level territory.territory_level_enum NOT NULL,
-  
-  parents integer[] DEFAULT NULL,
-  children integer[] DEFAULT array[]::integer[],
-  ancestors integer[] DEFAULT array[]::integer[],
-  descendants integer[] DEFAULT array[]::integer[],
-  insee varchar[] DEFAULT array[]::varchar[],
-  postcode varchar[] DEFAULT array[]::varchar[],
-  codedep varchar[] DEFAULT array[]::varchar[],
-  breadcrumb territory.breadcrumb DEFAULT NULL
-
-);
-
-CREATE INDEX ON territory.territories_view (_id);
