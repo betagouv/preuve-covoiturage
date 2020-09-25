@@ -24,7 +24,7 @@ export class TripCacheWarmCron extends Action implements InitHookInterface {
           repeat: {
             cron: '17 5 * * *',
           },
-          jobId: signature,
+          jobId: `${handlerConfig.service}.${handlerConfig.method}`,
         },
       },
     });

@@ -1,5 +1,5 @@
 import { Job, Queue, JobOptions } from 'bull';
-import { isString } from 'lodash';
+import { get, isString } from 'lodash';
 
 import { RedisConnection } from '@ilos/connection-redis';
 import { HandlerInterface, InitHookInterface, CallType, HasLogger } from '@ilos/common';
@@ -41,26 +41,34 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
         options = { ...options, ...context.channel.metadata };
       }
 
-      const name = this.getName(method, options);
+      // protect against char : in jobId
+      if (options.jobId && isString(options.jobId)) {
+        if ((options.jobId as string).indexOf(':') > -1) {
+          throw new Error('Character ":" is unsupported in jobId');
+        }
+      }
 
-      // remove repeatable jobs with a matching jobId before re-adding it
-      // remove delayed job matching the name (== planned repeating job)
-      if (options.jobId && options.repeat) {
+      // clean up repeatableJob and their associated delayed job
+      // works even if repeat options have changed
+      if (options.repeat) {
         for (const job of await this.client.getRepeatableJobs()) {
-          if (job.name !== name) continue;
-          await this.client.removeRepeatableByKey(job.key);
+          if (job.id === options.jobId) {
+            await this.client.removeRepeatableByKey(job.key);
+            this.logger.debug(`Removed repeatable job ${options.jobId}`);
+          }
         }
 
-        for (const job of await this.client.getDelayed()) {
-          if (job.name !== name) continue;
-          await job.remove();
+        for (const job of await this.client.getJobs(['delayed'])) {
+          if (get(job, 'opts.repeat.jobId') === options.jobId) {
+            await job.remove();
+            this.logger.debug(`Removed delayed job ${options.jobId}`);
+          }
         }
       }
 
       this.logger.debug(`Async call ${method}`, { params, context });
 
       const job = await this.client.add(
-        name,
         {
           method,
           jsonrpc: '2.0',
@@ -78,12 +86,5 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
       this.logger.debug(`Async call ${call.method} failed`, e);
       throw new Error('An error occured');
     }
-  }
-
-  private getName(method, options): string {
-    // jobId does not accept : char as it is used as a separator in the job.key
-    return options.jobId && isString(options.jobId)
-      ? `[cron] ${(options.jobId as string).replace(/\:/g, '_')}`
-      : method;
   }
 }
