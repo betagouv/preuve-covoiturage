@@ -5,6 +5,7 @@ import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInte
 import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
 import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
 import { UserPatchInterfaceBy } from '../shared/user/common/interfaces/UserPatchInterfaceBy';
+import { ResultInterface as HasUsersResultsInterface } from '../shared/user/hasUsers.contract';
 
 export interface UserRepositoryProviderInterface {
   create(data: UserCreateInterface): Promise<UserFindInterface>;
@@ -84,6 +85,9 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
     throw new Error();
   }
   async checkForDoubleEmailAndFail(email: string, userId = -1): Promise<void> {
+    throw new Error();
+  }
+  async hasUsers(): Promise<HasUsersResultsInterface> {
     throw new Error();
   }
 }

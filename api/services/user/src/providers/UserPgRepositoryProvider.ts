@@ -11,6 +11,7 @@ import {
 } from '../interfaces/UserRepositoryProviderInterface';
 import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
 import { UserCreateInterface } from '../shared/user/common/interfaces/UserCreateInterface';
+import { ResultInterface as HasUsersResultInterface } from '../shared/user/hasUsers.contract';
 
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,
@@ -473,5 +474,20 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
   async patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface> {
     return this.patchWhere(data, { _id, territory_id });
+  }
+
+  async hasUsers(): Promise<HasUsersResultInterface> {
+    const results = await this.connection.getClient().query({
+      text: `
+        SELECT
+          array_remove(array_agg(distinct operator_id), NULL) AS operators,
+          array_remove(array_agg(distinct territory_id), NULL) AS territories
+        FROM auth.users
+        WHERE operator_id IS NOT NULL
+        OR territory_id IS NOT NULL;
+      `,
+    });
+
+    return results.rowCount ? results.rows[0] : [];
   }
 }
