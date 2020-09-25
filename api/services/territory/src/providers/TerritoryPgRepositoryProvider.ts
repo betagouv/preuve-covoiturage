@@ -47,12 +47,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
-  async updateViews(): Promise<any> {
-    await this.connection
-      .getClient()
-      .query({ text: 'REFRESH MATERIALIZED VIEW territory.territories_view;', values: [] });
-  }
-
   async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface> {
     const ids = typeof id === 'number' ? [id] : id;
     const query = {
@@ -224,7 +218,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     function autoBuildAncestorJoin(): void {
       if (!includeRelation) {
         includeRelation = true;
-        // joins.push('LEFT JOIN territory.territories_view tv ON(tv._id = t._id)');
       }
     }
 
@@ -460,8 +453,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     const resultData = result.rows[0];
     await this.updateRelations(resultData._id, data.children);
 
-    // await this.updateViews();
-
     if (data.insee !== undefined && data.insee.length > 0) {
       const query = {
         text:
@@ -602,8 +593,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     // const resultData = result.rows[0];
 
     await this.updateRelations(data._id, data.children, true);
-
-    // await this.updateViews();
 
     return (
       await client.query({
