@@ -1,3 +1,5 @@
+import { get } from 'lodash';
+
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, ForbiddenException } from '@ilos/common';
 
 /*
@@ -6,7 +8,7 @@ import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, F
 @middleware()
 export class ChannelServiceWhitelistMiddleware implements MiddlewareInterface {
   async process(params: ParamsType, context: ContextType, next: Function, config: string[]): Promise<ResultType> {
-    const service = 'service' in context.channel ? context.channel.service : '';
+    const service = get(context, 'channel.service', '');
     if (config.indexOf(service) < 0) {
       throw new ForbiddenException(`Service is not reachable from ${service}`);
     }

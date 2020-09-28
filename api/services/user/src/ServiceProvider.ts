@@ -21,6 +21,7 @@ import { changeRole } from './shared/user/changeRole.schema';
 import { checkForgottenToken } from './shared/user/checkForgottenToken.schema';
 import { confirmEmail } from './shared/user/confirmEmail.schema';
 import { deleteUser } from './shared/user/delete.schema';
+import { deleteAssociatedUser } from './shared/user/deleteAssociated.schema';
 import { find } from './shared/user/find.schema';
 import { create } from './shared/user/create.schema';
 import { forgottenPassword } from './shared/user/forgottenPassword.schema';
@@ -40,6 +41,7 @@ import { CheckForgottenTokenUserAction } from './actions/CheckForgottenTokenUser
 import { ConfirmEmailUserAction } from './actions/ConfirmEmailUserAction';
 import { CreateUserAction } from './actions/CreateUserAction';
 import { DeleteUserAction } from './actions/DeleteUserAction';
+import { DeleteAssociatedUserAction } from './actions/DeleteAssociatedUserAction';
 import { FindUserAction } from './actions/FindUserAction';
 import { ForgottenPasswordUserAction } from './actions/ForgottenPasswordUserAction';
 import { ListUserAction } from './actions/ListUserAction';
@@ -66,6 +68,7 @@ import { HasUsersAction } from './actions/HasUsersAction';
     ['user.confirmEmail', confirmEmail],
     ['user.create', create],
     ['user.delete', deleteUser],
+    ['user.deleteAssociated', deleteAssociatedUser],
     ['user.find', find],
     ['user.forgottenPassword', forgottenPassword],
     ['user.list', list],
@@ -92,6 +95,7 @@ import { HasUsersAction } from './actions/HasUsersAction';
     ConfirmEmailUserAction,
     CreateUserAction,
     DeleteUserAction,
+    DeleteAssociatedUserAction,
     FindUserAction,
     ForgottenPasswordUserAction,
     ListUserAction,

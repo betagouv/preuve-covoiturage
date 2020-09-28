@@ -18,6 +18,7 @@ export interface UserRepositoryProviderInterface {
   delete(_id: number): Promise<boolean>;
   deleteByOperator(_id: number, operator_id: number): Promise<boolean>;
   deleteByTerritory(_id: number, territory_id: number): Promise<boolean>;
+  deleteAssociated(key: string, value: number): Promise<void>;
 
   find(_id: number): Promise<UserFindInterface | undefined>;
   findByOperator(_id: number, operator_id: number): Promise<UserFindInterface | undefined>;
@@ -50,6 +51,10 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
   }
 
   async deleteByTerritory(_id: number, territory_id: number): Promise<boolean> {
+    throw new Error();
+  }
+
+  async deleteAssociated(key: string, value: number): Promise<void> {
     throw new Error();
   }
 
