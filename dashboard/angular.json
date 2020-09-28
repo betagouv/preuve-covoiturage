@@ -23,7 +23,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "assets": ["src/favicon.ico", "src/.htaccess", "src/assets"],
+            "assets": ["src/favicon.ico", "src/.htaccess", "src/assets", "src/manual-503.html"],
             "styles": [
               "./node_modules/leaflet/dist/leaflet.css",
               "./node_modules/leaflet.markercluster/dist/MarkerCluster.css",
