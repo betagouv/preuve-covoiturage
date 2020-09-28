@@ -8,7 +8,6 @@ import { CryptoProvider } from '@pdc/provider-crypto';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import {
   ChannelTransportMiddleware,
-  ScopeToSelfMiddleware,
   ChannelServiceWhitelistMiddleware,
 } from '@pdc/provider-middleware';
 
@@ -26,6 +25,7 @@ import { ExportAction } from './actions/ExportAction';
 import { SearchCountAction } from './actions/SearchCountAction';
 import { BuildExportAction } from './actions/BuildExportAction';
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
+import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 
 @serviceProvider({
@@ -36,7 +36,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
     ['validate', ValidatorMiddleware],
     ['channel.service.only', ChannelServiceWhitelistMiddleware],
     ['channel.transport', ChannelTransportMiddleware],
-    ['scopeIt', ScopeToSelfMiddleware],
+    ['scopeToGroup', ScopeToGroupMiddleware],
   ],
   connections: [
     [RedisConnection, 'connections.redis'],
