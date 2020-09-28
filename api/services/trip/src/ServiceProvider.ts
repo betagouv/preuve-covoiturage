@@ -26,6 +26,7 @@ import { SearchCountAction } from './actions/SearchCountAction';
 import { BuildExportAction } from './actions/BuildExportAction';
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
 import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
+import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 
 @serviceProvider({
   config,
@@ -41,7 +42,7 @@ import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [ListAction, SearchCountAction, StatsAction, ExportAction, BuildExportAction],
+  handlers: [ListAction, SearchCountAction, StatsAction, ExportAction, BuildExportAction, TripCacheWarmCron],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {

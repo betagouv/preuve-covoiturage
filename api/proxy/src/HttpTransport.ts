@@ -675,6 +675,8 @@ export class HttpTransport implements TransportInterface {
       );
 
       user.authorizedTerritories = [user.territory_id, ...get(descendantTerritories, 'result.descendant_ids', [])];
+
+      return user;
     }
 
     return {};

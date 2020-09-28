@@ -11,6 +11,7 @@ import {
   ContentBlacklistMiddleware,
   ContentWhitelistMiddleware,
   ChannelServiceBlacklistMiddleware,
+  ChannelServiceWhitelistMiddleware,
 } from '@pdc/provider-middleware';
 import { TemplateExtension } from '@pdc/provider-template';
 
@@ -52,6 +53,7 @@ import { SendInvitationEmailUserAction } from './actions/SendInvitationEmailUser
 import { AuthRepositoryProvider } from './providers/AuthRepositoryProvider';
 import { UserNotificationProvider } from './providers/UserNotificationProvider';
 import { SeedUsersCommand } from './commands/SeedUsersCommand';
+import { HasUsersAction } from './actions/HasUsersAction';
 
 @serviceProvider({
   config,
@@ -78,6 +80,7 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
     ['scopeIt', ScopeToSelfMiddleware],
     ['content.blacklist', ContentBlacklistMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
+    ['channel.service.only', ChannelServiceWhitelistMiddleware],
     ['channel.service.except', ChannelServiceBlacklistMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
@@ -98,6 +101,7 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
     PatchUserAction,
     SendConfirmEmailUserAction,
     SendInvitationEmailUserAction,
+    HasUsersAction,
   ],
   template: null,
   notification: {
