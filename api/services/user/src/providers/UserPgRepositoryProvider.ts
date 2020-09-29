@@ -151,6 +151,20 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return this.deleteWhere(id, { territory_id });
   }
 
+  async deleteAssociated(key: string, value: number): Promise<void> {
+    if (['territory_id', 'operator_id'].indexOf(key) === -1) {
+      throw new Error('Only territory_id and operator_id are supported keys');
+    }
+
+    await this.connection.getClient().query({
+      text: `
+        DELETE FROM ${this.table}
+        WHERE ${key} = $1
+      `,
+      values: [value],
+    });
+  }
+
   async list(
     filters: UserListFiltersInterface,
     pagination: PaginationParamsInterface,
