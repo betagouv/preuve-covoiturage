@@ -35,7 +35,7 @@ create or replace function json_to_incentive(_ti json) returns trip.incentive as
     ($1->>'amount')::int,
     $1->>'unit',
     ($1->>'policy_id')::int,
-    ($1->>'policy_name')::int,
+    ($1->>'policy_name')::varchar,
     $1->>'type')::trip.incentive;
 $$ language sql;
 
