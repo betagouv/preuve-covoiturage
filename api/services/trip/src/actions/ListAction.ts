@@ -1,5 +1,5 @@
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';

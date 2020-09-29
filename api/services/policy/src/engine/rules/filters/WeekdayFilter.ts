@@ -15,7 +15,7 @@ export class WeekdayFilter extends FilterRule<number[]> {
   };
   filter(ctx: RuleHandlerContextInterface): void {
     const date = ctx.person.datetime;
-    const day = typeof date.getDay === 'function' ? date.getDay() : (new Date(date).getDay());
+    const day = typeof date.getDay === 'function' ? date.getDay() : new Date(date).getDay();
     if (this.parameters.indexOf(day) < 0) {
       throw new NotApplicableTargetException(WeekdayFilter.description);
     }
