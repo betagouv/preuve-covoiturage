@@ -341,7 +341,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
   }
 
-  // todo: ugly ...
   private setTerritoryFormValue(territory: Territory): void {
     // base values for form
     this.activable = !!this.territory.activable;

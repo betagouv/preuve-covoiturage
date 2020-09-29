@@ -14,6 +14,8 @@ import {
 import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
 import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
 
+import { TerritoryUIStatus } from '../shared/territory/TerritoryUIStatus';
+
 import {
   TerritoryQueryInterface,
   SortEnum,
@@ -47,7 +49,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
-  async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface> {
+  async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface[]> {
     const ids = typeof id === 'number' ? [id] : id;
     const query = {
       text: `WITH 
@@ -116,7 +118,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     };
 
     const result = await this.connection.getClient().query(query);
-    return result.rows.length > 0 ? result.rows[0] : [];
+    return result.rows.length > 0 ? result.rows : [];
   }
 
   async getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]> {
@@ -125,13 +127,13 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       values: [id],
     };
 
-    const territoryUiStatus = await this.connection.getClient().query(getQuery);
+    const territoryUiStatusQueryResult = await this.connection.getClient().query(getQuery);
 
-    if (!territoryUiStatus.rowCount) {
+    if (!territoryUiStatusQueryResult.rowCount) {
       return null;
     }
 
-    const status = territoryUiStatus.rows[0].ui_status;
+    const status: TerritoryUIStatus = territoryUiStatusQueryResult.rows[0].ui_status;
 
     if (!status || !status.ui_selection_state) return null;
 

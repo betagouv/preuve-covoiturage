@@ -307,7 +307,9 @@ export class BuildExportAction extends Action {
       passenger_contribution: get(initialData, 'passenger_contribution', 0) / 100,
     };
 
-    const driver_incentive_raw = (get(initialData, 'driver_incentive_raw', []) || []).filter((i) => i.type === 'incentive');
+    const driver_incentive_raw = (get(initialData, 'driver_incentive_raw', []) || []).filter(
+      (i) => i.type === 'incentive',
+    );
     const passenger_incentive_raw = (get(initialData, 'passenger_incentive_raw', []) || []).filter(
       (i) => i.type === 'incentive',
     );
