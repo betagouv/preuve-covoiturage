@@ -1,7 +1,7 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { captureException, init } from '@sentry/browser';
-// import {Event} from '@sentry/browser';
+
 @Injectable()
 export class SentryErrorHandler extends ErrorHandler {
   trackError: boolean;
