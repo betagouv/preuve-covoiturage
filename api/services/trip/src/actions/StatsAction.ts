@@ -1,5 +1,4 @@
 // tslint:disable:variable-name
-import { get } from 'lodash';
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
@@ -23,10 +22,7 @@ import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/Stat
   ],
 })
 export class StatsAction extends Action {
-  constructor(
-    private pg: TripRepositoryProvider,
-    private cache: StatCacheRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private pg: TripRepositoryProvider, private cache: StatCacheRepositoryProviderInterfaceResolver) {
     super();
   }
 

@@ -112,7 +112,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           LEFT JOIN children ON TRUE
           LEFT JOIN parent ON TRUE;
       `,
-      values: [ids]
+      values: [ids],
     };
 
     const result = await this.connection.getClient().query(query);

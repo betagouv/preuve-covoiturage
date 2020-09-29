@@ -1,6 +1,6 @@
 -- Apply first cap rule on name for Every AOM
 WITH territory_name_init_cap AS (
-select _id, INITCAP(name) as name FROM territory.territories where level='epic'
+select _id, INITCAP(name) as name FROM territory.territories where level='towngroup'
 )
 UPDATE territory.territories SET name = tc.name FROM territory_name_init_cap tc WHERE territories._id = tc._id;
 
