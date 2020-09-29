@@ -12,7 +12,6 @@ import {
 import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
 import { UserCreateInterface } from '../shared/user/common/interfaces/UserCreateInterface';
 import { ResultInterface as HasUsersResultInterface } from '../shared/user/hasUsers.contract';
-import { assert } from 'console';
 
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,
