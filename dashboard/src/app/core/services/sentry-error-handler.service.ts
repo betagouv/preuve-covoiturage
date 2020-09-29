@@ -1,7 +1,7 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import * as Sentry from '@sentry/browser';
-
+import { captureException, init } from '@sentry/browser';
+// import {Event} from '@sentry/browser';
 @Injectable()
 export class SentryErrorHandler extends ErrorHandler {
   trackError: boolean;
@@ -10,7 +10,7 @@ export class SentryErrorHandler extends ErrorHandler {
 
     if (environment.sentryDSN) {
       this.trackError = true;
-      Sentry.init({ dsn: environment.sentryDSN });
+      init({ dsn: environment.sentryDSN });
     } else;
     this.trackError = true;
   }
@@ -18,14 +18,14 @@ export class SentryErrorHandler extends ErrorHandler {
   handleError(error) {
     // Here you can provide whatever logging you want
 
-    Sentry.captureException(error, {
+    captureException(error.originalError || error, {
+      extra: error,
       tags: {
         environment: environment.name,
         production_mode: environment.production ? 'yes' : 'no',
       },
     });
 
-    // console.log('--err', error);
     super.handleError(error);
   }
 }
