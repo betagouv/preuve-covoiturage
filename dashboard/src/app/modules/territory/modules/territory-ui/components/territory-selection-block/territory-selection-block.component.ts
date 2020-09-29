@@ -50,7 +50,8 @@ export class TerritorySelectionBlockComponent extends DestroyObservable implemen
   prepareChildData(): void {
     if (this.childrenLoaded === false) {
       this.childrenLoaded = true;
-      this.territoryApi.getDirectRelation(this.territory.id).subscribe((relation) => {
+      this.territoryApi.getDirectRelation(this.territory.id).subscribe((relations) => {
+        const relation = relations[0];
         const children = new Array(relation.children.length);
         for (let i = 0; i < children.length; i++) {
           const child = { id: relation.children[i]._id, name: relation.children[i].name };

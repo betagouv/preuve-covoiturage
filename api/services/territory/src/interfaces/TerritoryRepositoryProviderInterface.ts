@@ -42,7 +42,7 @@ export interface TerritoryRepositoryProviderInterface {
   patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface>;
   findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface>;
   findByPosition(lon: number, lat: number): Promise<TerritoryDbMetaInterface>;
-  getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface>;
+  getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface[]>;
   tree(): Promise<any>;
 }
 
@@ -56,7 +56,7 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface> {
+  async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface[]> {
     throw new Error();
   }
 

@@ -41,10 +41,13 @@ export class TerritoryChildrenComponent implements OnInit {
   }
 
   addTerritory(): void {
-    this.api.getDirectRelation(this.selectedTerritory.id).subscribe((relation) => {
+    this.api.getDirectRelation(this.selectedTerritory.id).subscribe((relations) => {
       // we add current ,all descendant and all ancestors of currently added territory
       // to ignore list in order to avoid cross / double linking
       // console.log('relation', relation);
+
+      const relation = relations[0];
+
       const ignoreIds = [
         ...relation.ancestor_ids,
         ...(relation.descendant_ids ? relation.descendant_ids : []),

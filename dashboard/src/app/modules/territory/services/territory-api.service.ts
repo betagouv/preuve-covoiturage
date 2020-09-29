@@ -55,9 +55,9 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     return new JsonRPCParam(`${this.method}:${GetListActions.LIST}`, { ...this.defaultListParam, ...params });
   }
 
-  getDirectRelation(id: number): Observable<TerritoryParentChildrenInterface> {
+  getDirectRelation(id: number): Observable<TerritoryParentChildrenInterface[]> {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:getParentChildren`, { _id: id });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryParentChildrenInterface>;
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryParentChildrenInterface[]>;
   }
 
   findByInsees(insees: string[]): Observable<TerritoryInsee[]> {
