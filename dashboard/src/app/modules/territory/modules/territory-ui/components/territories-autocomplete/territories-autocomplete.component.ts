@@ -50,13 +50,13 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
   }
 
   private filterTerritory(literal = ''): void {
+    const params: { search?: string; parent_id?: number } = {};
+    if (literal.length) {
+      params.search = literal;
+    }
+
     this.territoryApiService
-      .getList({
-        skip: 0,
-        limit: 10,
-        search: literal,
-        // levels: [TerritoryLevelEnum.Town],
-      })
+      .dropdown(params)
       .pipe(takeUntil(this.destroy$))
       .subscribe((foundTerritories: any) => {
         this.filteredTerritories = foundTerritories.data.map((terr) => ({
