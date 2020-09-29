@@ -30,12 +30,16 @@ interface FlattenTripInterface extends ExportTripInterface {
   passenger_incentive_4_siret?: string;
   passenger_incentive_4_amount?: number;
   passenger_incentive_rpc_1_siret?: string;
+  passenger_incentive_rpc_1_name?: string;
   passenger_incentive_rpc_1_amount?: number;
   passenger_incentive_rpc_2_siret?: string;
+  passenger_incentive_rpc_2_name?: string;
   passenger_incentive_rpc_2_amount?: number;
   passenger_incentive_rpc_3_siret?: string;
+  passenger_incentive_rpc_3_name?: string;
   passenger_incentive_rpc_3_amount?: number;
   passenger_incentive_rpc_4_siret?: string;
+  passenger_incentive_rpc_4_name?: string;
   passenger_incentive_rpc_4_amount?: number;
   driver_incentive_1_siret?: string;
   driver_incentive_1_amount?: number;
@@ -46,12 +50,16 @@ interface FlattenTripInterface extends ExportTripInterface {
   driver_incentive_4_siret?: string;
   driver_incentive_4_amount?: number;
   driver_incentive_rpc_1_siret?: string;
+  driver_incentive_rpc_1_name?: string;
   driver_incentive_rpc_1_amount?: number;
   driver_incentive_rpc_2_siret?: string;
+  driver_incentive_rpc_2_name?: string;
   driver_incentive_rpc_2_amount?: number;
   driver_incentive_rpc_3_siret?: string;
+  driver_incentive_rpc_3_name?: string;
   driver_incentive_rpc_3_amount?: number;
   driver_incentive_rpc_4_siret?: string;
+  driver_incentive_rpc_4_name?: string;
   driver_incentive_rpc_4_amount?: number;
 }
 @handler({
@@ -116,12 +124,16 @@ export class BuildExportAction extends Action {
     'passenger_incentive_4_siret',
     'passenger_incentive_4_amount',
     'passenger_incentive_rpc_1_siret',
+    'passenger_incentive_rpc_1_name',
     'passenger_incentive_rpc_1_amount',
     'passenger_incentive_rpc_2_siret',
+    'passenger_incentive_rpc_2_name',
     'passenger_incentive_rpc_2_amount',
     'passenger_incentive_rpc_3_siret',
+    'passenger_incentive_rpc_3_name',
     'passenger_incentive_rpc_3_amount',
     'passenger_incentive_rpc_4_siret',
+    'passenger_incentive_rpc_4_name',
     'passenger_incentive_rpc_4_amount',
     'driver_id',
     'driver_revenue',
@@ -134,12 +146,16 @@ export class BuildExportAction extends Action {
     'driver_incentive_4_siret',
     'driver_incentive_4_amount',
     'driver_incentive_rpc_1_siret',
+    'driver_incentive_rpc_1_name',
     'driver_incentive_rpc_1_amount',
     'driver_incentive_rpc_2_siret',
+    'driver_incentive_rpc_2_name',
     'driver_incentive_rpc_2_amount',
     'driver_incentive_rpc_3_siret',
+    'driver_incentive_rpc_3_name',
     'driver_incentive_rpc_3_amount',
     'driver_incentive_rpc_4_siret',
+    'driver_incentive_rpc_4_name',
     'driver_incentive_rpc_4_amount',
   ];
 
@@ -279,30 +295,36 @@ export class BuildExportAction extends Action {
       journey_end_date: initialData.journey_end_datetime.toISOString().split('T')[0],
       journey_end_time: initialData.journey_end_datetime.toISOString().split('T')[1].split('.')[0],
       // distance in kilometers
-      journey_distance: Math.round(initialData.journey_distance / 1000),
-      journey_distance_calculated: Math.round(initialData.journey_distance_calculated / 1000),
-      journey_distance_anounced: Math.round(initialData.journey_distance_anounced / 1000),
+      journey_distance: initialData.journey_distance / 1000,
+      journey_distance_calculated: initialData.journey_distance_calculated / 1000,
+      journey_distance_anounced: initialData.journey_distance_anounced / 1000,
       // duration in minutes
       journey_duration: Math.round(initialData.journey_duration / 60),
       journey_duration_calculated: Math.round(initialData.journey_duration_calculated / 60),
       journey_duration_anounced: Math.round(initialData.journey_duration_anounced / 60),
+      // financial in euros
+      driver_revenue: get(initialData, 'driver_revenue', 0) / 100,
+      passenger_contribution: get(initialData, 'passenger_contribution', 0) / 100,
     };
 
-    const driver_incentive_raw = get(initialData, 'driver_incentive_raw', []).filter((i) => i.type === 'incentive');
-    const passenger_incentive_raw = get(initialData, 'passenger_incentive_raw', []).filter(
+    const driver_incentive_raw = (get(initialData, 'driver_incentive_raw', []) || []).filter((i) => i.type === 'incentive');
+    const passenger_incentive_raw = (get(initialData, 'passenger_incentive_raw', []) || []).filter(
       (i) => i.type === 'incentive',
     );
 
     for (let i = 0; i < 4; i++) {
       // normalize incentive in euro
-      data[`passenger_incentive_${i + 1}_siret`] = get(passenger_incentive_raw, `${i}.siret`);
-      data[`passenger_incentive_${i + 1}_amount`] = get(passenger_incentive_raw, `${i}.amount`, 0) / 100;
-      data[`passenger_incentive_rpc_${i + 1}_siret`] = get(data, `passenger_incentive_rpc_raw.${i}.siret`);
-      data[`passenger_incentive_rpc_${i + 1}_amount`] = get(data, `passenger_incentive_rpc_raw.${i}.amount`, 0) / 100;
-      data[`driver_incentive_${i + 1}_siret`] = get(driver_incentive_raw, `${i}.siret`);
-      data[`driver_incentive_${i + 1}_amount`] = get(driver_incentive_raw, `${i}.amount`, 0) / 100;
-      data[`driver_incentive_rpc_${i + 1}_siret`] = get(data, `driver_incentive_rpc_raw.${i}.siret`);
-      data[`driver_incentive_rpc_${i + 1}_amount`] = get(data, `driver_incentive_rpc_raw.${i}.amount`, 0) / 100;
+      const id = i + 1;
+      data[`passenger_incentive_${id}_siret`] = get(passenger_incentive_raw, `${i}.siret`);
+      data[`passenger_incentive_${id}_amount`] = get(passenger_incentive_raw, `${i}.amount`, 0) / 100;
+      data[`passenger_incentive_rpc_${id}_siret`] = get(data, `passenger_incentive_rpc_raw.${i}.siret`);
+      data[`passenger_incentive_rpc_${id}_name`] = get(data, `passenger_incentive_rpc_raw.${i}.policy_name`);
+      data[`passenger_incentive_rpc_${id}_amount`] = get(data, `passenger_incentive_rpc_raw.${i}.amount`, 0) / 100;
+      data[`driver_incentive_${id}_siret`] = get(driver_incentive_raw, `${i}.siret`);
+      data[`driver_incentive_${id}_amount`] = get(driver_incentive_raw, `${i}.amount`, 0) / 100;
+      data[`driver_incentive_rpc_${id}_siret`] = get(data, `driver_incentive_rpc_raw.${i}.siret`);
+      data[`driver_incentive_rpc_${id}_name`] = get(data, `driver_incentive_rpc_raw.${i}.policy_name`);
+      data[`driver_incentive_rpc_${id}_amount`] = get(data, `driver_incentive_rpc_raw.${i}.amount`, 0) / 100;
     }
 
     return data;
