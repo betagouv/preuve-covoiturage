@@ -56,6 +56,7 @@ import { AuthRepositoryProvider } from './providers/AuthRepositoryProvider';
 import { UserNotificationProvider } from './providers/UserNotificationProvider';
 import { SeedUsersCommand } from './commands/SeedUsersCommand';
 import { HasUsersAction } from './actions/HasUsersAction';
+import { FindInactiveCommand } from './commands/FindInactiveCommand';
 
 @serviceProvider({
   config,
@@ -112,7 +113,7 @@ import { HasUsersAction } from './actions/HasUsersAction';
     template: path.resolve(__dirname, 'templates'),
     templateMeta: 'template',
   },
-  commands: [SetPermissionsCommand, SeedUsersCommand],
+  commands: [SetPermissionsCommand, SeedUsersCommand, FindInactiveCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [
