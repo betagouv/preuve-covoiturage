@@ -12,7 +12,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    // ['channel.service.only', ['territory', 'operator']],
+    ['channel.service.only', ['territory', 'operator']],
   ],
 })
 export class DeleteAssociatedUserAction extends AbstractAction {
