@@ -2,7 +2,6 @@ ALTER TABLE territory.territories RENAME TO territories_old;
 
 
 CREATE TYPE territory.territory_level_enum AS ENUM(
-  'epic',
   'town',
   'towngroup',
   'district',
