@@ -2,6 +2,7 @@ import { provider, ConfigInterfaceResolver, ConflictException, NotFoundException
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
+import { UserLastLoginInterface } from '../shared/user/common/interfaces/UserLastLoginInterface';
 import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
 import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
 import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchInterface';
@@ -357,6 +358,34 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return this.findWhere({ email });
   }
 
+  async findInactive(months = 6): Promise<UserLastLoginInterface[]> {
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT
+          _id,
+          CONCAT(
+            EXTRACT(YEAR FROM age(last_login_at)),
+            ' years ',
+            EXTRACT(MONTH FROM age(last_login_at)),
+            ' months ',
+            EXTRACT(DAY FROM age(last_login_at)),
+            ' days'
+          ) AS ago,
+          last_login_at,
+          CONCAT(firstname, ' ', lastname) AS name,
+          email,
+          role,
+          status
+        FROM ${this.table}
+        WHERE last_login_at < NOW() - $1::interval
+        ORDER BY last_login_at DESC
+      `,
+      values: [`${months} months`],
+    });
+
+    return result.rowCount ? result.rows : [];
+  }
+
   protected buildSetClauses(
     sets: any,
   ): {
@@ -503,5 +532,12 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     });
 
     return results.rowCount ? results.rows[0] : [];
+  }
+
+  async touchLastLogin(_id: number): Promise<void> {
+    await this.connection.getClient().query({
+      text: `UPDATE ${this.table} SET last_login_at = NOW() WHERE _id = $1`,
+      values: [_id],
+    });
   }
 }
