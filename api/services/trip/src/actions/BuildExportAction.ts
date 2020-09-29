@@ -295,9 +295,9 @@ export class BuildExportAction extends Action {
       journey_end_date: initialData.journey_end_datetime.toISOString().split('T')[0],
       journey_end_time: initialData.journey_end_datetime.toISOString().split('T')[1].split('.')[0],
       // distance in kilometers
-      journey_distance: Math.round(initialData.journey_distance / 1000),
-      journey_distance_calculated: Math.round(initialData.journey_distance_calculated / 1000),
-      journey_distance_anounced: Math.round(initialData.journey_distance_anounced / 1000),
+      journey_distance: initialData.journey_distance / 1000,
+      journey_distance_calculated: initialData.journey_distance_calculated / 1000,
+      journey_distance_anounced: initialData.journey_distance_anounced / 1000,
       // duration in minutes
       journey_duration: Math.round(initialData.journey_duration / 60),
       journey_duration_calculated: Math.round(initialData.journey_duration_calculated / 60),
