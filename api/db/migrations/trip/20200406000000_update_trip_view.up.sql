@@ -6,6 +6,7 @@ CREATE TYPE trip.incentive AS (
   amount int,
   unit varchar,
   policy_id int,
+  policy_name varchar,
   type varchar
 );
 
@@ -21,6 +22,7 @@ create or replace function incentive_to_json(_ti trip.incentive) returns json as
   , 'amount', $1.amount
   , 'unit', $1.unit
   , 'policy_id', $1.policy_id
+  , 'policy_name', $1.policy_name
   , 'type', $1.type
   );
 $$ language sql;
@@ -33,6 +35,7 @@ create or replace function json_to_incentive(_ti json) returns trip.incentive as
     ($1->>'amount')::int,
     $1->>'unit',
     ($1->>'policy_id')::int,
+    ($1->>'policy_name')::int,
     $1->>'type')::trip.incentive;
 $$ language sql;
 
@@ -181,6 +184,7 @@ CREATE VIEW trip.list_view AS (
           data.amount,
           pp.unit::varchar,
           data.policy_id,
+          pp.name::varchar,
           'incentive'
         )::trip.incentive as value,
         data.amount as amount
@@ -215,6 +219,7 @@ CREATE VIEW trip.list_view AS (
           data.amount,
           pp.unit::varchar,
           data.policy_id,
+          pp.name::varchar,
           'incentive'
         )::trip.incentive as value,
         data.amount as amount
