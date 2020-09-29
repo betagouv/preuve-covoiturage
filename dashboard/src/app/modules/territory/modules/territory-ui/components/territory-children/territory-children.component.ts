@@ -44,7 +44,7 @@ export class TerritoryChildrenComponent implements OnInit {
     this.api.getDirectRelation(this.selectedTerritory.id).subscribe((relation) => {
       // we add current ,all descendant and all ancestors of currently added territory
       // to ignore list in order to avoid cross / double linking
-      console.log('relation', relation);
+      // console.log('relation', relation);
       const ignoreIds = [
         ...relation.ancestor_ids,
         ...(relation.descendant_ids ? relation.descendant_ids : []),
@@ -90,9 +90,9 @@ export class TerritoryChildrenComponent implements OnInit {
 
   getFlatSelectedList(list: IdName[] = []): number[] {
     for (const territory of this.territories) {
-      console.log('territory ', territory);
+      // console.log('territory ', territory);
       territory.getFlatSelectedList(list);
-      console.log('list', [...list]);
+      // console.log('list', [...list]);
     }
     return list.map((idname: IdName) => idname.id);
   }
