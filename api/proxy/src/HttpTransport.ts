@@ -674,7 +674,10 @@ export class HttpTransport implements TransportInterface {
         makeCall('territory:getParentChildren', { _id: user.territory_id }, { user: user }),
       );
 
-      user.authorizedTerritories = [user.territory_id, ...get(descendantTerritories, 'result.descendant_ids', [])];
+      const result = get(descendantTerritories, 'result', []);
+      if (result.length && 'descendant_ids' in result[0]) {
+        user.authorizedTerritories = [user.territory_id, ...result[0]['descendant_ids']];
+      }
 
       return user;
     }

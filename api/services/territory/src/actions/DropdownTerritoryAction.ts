@@ -18,11 +18,8 @@ export class DropdownTerritoryAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface[]> {
-    // set the parent_id to own territory_id if exists
-    const parent_id = get(context, 'call.user.territory_id', null);
-    if (parent_id) {
-      params.parent_id = parent_id;
-    }
+    // set the on_territories to own authorizedTerritories when user is a territory
+    params.on_territories = get(context, 'call.user.authorizedTerritories', []);
 
     return this.territoryRepository.dropdown(params);
   }

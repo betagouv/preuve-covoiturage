@@ -1,6 +1,6 @@
 export interface ParamsInterface {
   search?: string;
-  parent_id?: number;
+  on_territories?: number[];
 }
 
 export interface ResultInterface {

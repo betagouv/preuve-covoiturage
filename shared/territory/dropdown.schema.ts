@@ -9,8 +9,9 @@ export const dropdown = {
       minLength: 1,
       maxLength: 256,
     },
-    parent_id: {
-      macro: 'serial',
+    on_territories: {
+      type: 'array',
+      items: { macro: 'serial' },
     },
   },
 };

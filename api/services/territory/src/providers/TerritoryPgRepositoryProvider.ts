@@ -208,17 +208,17 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   /**
    * Searchable / scopable dropdown list (_id, name)
-   * Can be scoped by parent_id (searches for all descendants)
+   * Can be scoped by territories (searches for all descendants)
    */
   async dropdown(params: DropdownParamsInterface): Promise<TerritoryDropdownInterface[]> {
-    const { search, parent_id } = params;
+    const { search, on_territories } = params;
 
     const where = [];
     const values = [];
 
-    if (parent_id) {
-      where.push(`_id = ANY(territory.get_descendants($${where.length + 1}))`);
-      values.push([parent_id]);
+    if (on_territories && on_territories.length) {
+      where.push(`_id = ANY($${where.length + 1})`);
+      values.push(on_territories);
     }
 
     if (search) {
