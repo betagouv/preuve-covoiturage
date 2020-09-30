@@ -1,5 +1,5 @@
 export const alias = 'territory.list';
-export const find = {
+export const list = {
   $id: alias,
   type: 'object',
   required: ['query'],

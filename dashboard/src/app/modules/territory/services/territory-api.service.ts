@@ -27,6 +27,7 @@ import { TerritoryParentChildrenInterface } from '../../../../../../shared/terri
 // eslint-disable-next-line
 import { ResultInterface as UiStatusRelationDetailsList } from '../../../../../../shared/territory/relationUiStatus.contract';
 import { GetListActions } from '~/core/services/api/json-rpc.getlist';
+import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 
 @Injectable({
   providedIn: 'root',
@@ -81,6 +82,10 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
 
   paramGet(params: any, sort: SortEnum[] = [SortEnum.NameAsc], projection: any = allBasicFieldEnum): JsonRPCParam<any> {
     return new JsonRPCParam(`${this.method}:${GetListActions.FIND}`, { query: { ...params }, sort, projection });
+  }
+
+  dropdown(params: { search?: string; parent_id?: number }): Observable<JsonRPCResult> {
+    return this.callOne(new JsonRPCParam(`${this.method}:dropdown`, params));
   }
 
   find(

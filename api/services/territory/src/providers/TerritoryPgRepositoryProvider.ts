@@ -5,6 +5,7 @@ import {
   ParamsInterface as CreateParams,
   ResultInterface as CreateResultInterface,
 } from '../shared/territory/create.contract';
+import { ParamsInterface as DropdownParamsInterface } from '../shared/territory/dropdown.contract';
 
 import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 import {
@@ -13,6 +14,7 @@ import {
 } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
 import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryDropdownInterface } from '../shared/territory/common/interfaces/TerritoryDropdownInterface';
 
 import { TerritoryUIStatus } from '../shared/territory/TerritoryUIStatus';
 
@@ -204,6 +206,38 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     // return null;
   }
 
+  /**
+   * Searchable / scopable dropdown list (_id, name)
+   * Can be scoped by territories (searches for all descendants)
+   */
+  async dropdown(params: DropdownParamsInterface): Promise<TerritoryDropdownInterface[]> {
+    const { search, on_territories } = params;
+
+    const where = [];
+    const values = [];
+
+    if (on_territories && on_territories.length) {
+      where.push(`_id = ANY($${where.length + 1})`);
+      values.push(on_territories);
+    }
+
+    if (search) {
+      where.push(`LOWER(name) LIKE $${where.length + 1}`);
+      values.push(`%${search.toLowerCase().trim()}%`);
+    }
+
+    const results = await this.connection.getClient().query({
+      values,
+      text: `
+        SELECT _id, name FROM ${this.table}
+        ${where.length ? ` WHERE ${where.join(' AND ')}` : ''}
+        ORDER BY name ASC
+      `,
+    });
+
+    return results.rowCount ? results.rows : [];
+  }
+
   async find(
     query: TerritoryQueryInterface,
     sort: SortEnum[],
@@ -240,6 +274,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
         case directFields.indexOf(field) !== -1:
           selectsFields.push(`t.${field}`);
           break;
+
         case allTerritoryCodeEnum.indexOf(field) !== -1:
           // case TerritoryCodeEnum.Postcode,
           const tableAliasName = `tc_${field}`;
@@ -247,7 +282,8 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           /* eslint-disable */
           // prettier-ignore
           selectsFields.push(`array(SELECT value from territory.territory_codes as ${tableAliasName} WHERE territory_id = t._id and type = '${field}') as ${field}`);
-        /* eslint-enable */
+          /* eslint-enable */
+          break;
 
         case allAncestorRelationFieldEnum.indexOf(field) !== -1:
           // selectsFields.push(`tv.${field}`);
@@ -258,9 +294,9 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           selectsFields.push(`c.${field}`);
           autoBuildCompanyJoin();
           break;
+
         default:
           throw new Error(`${field} not supported for territory find select builder`);
-          break;
       }
     });
 
@@ -268,6 +304,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     const queryFields: { field: TerritoryQueryEnum; value: any }[] = allTerritoryQueryFields
       .filter((field) => (query as Record<string, any>).hasOwnProperty(field))
       .map((field) => ({ field, value: (query as any)[field] }));
+
     queryFields.forEach((hash) => {
       switch (true) {
         case allTerritoryQueryDirectFields.indexOf(hash.field) !== -1:
@@ -280,9 +317,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
             case TerritoryQueryEnum.HasAncestorId:
               // whereConditions.push(`$${values.length + 1} = ANY (tv.ancestors)`);
               break;
+
             case TerritoryQueryEnum.HasDescendantId:
               // whereConditions.push(`$${values.length + 1} = ANY (tv.descendants)`);
               break;
+
             case TerritoryQueryEnum.HasChildId:
               // whereConditions.push(`$${values.length + 1} = ANY (tv.children)`);
               break;
@@ -336,6 +375,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     if (result.rowCount === 0) {
       return undefined;
     }
+
     const territory = result.rows[0];
 
     // map company to sub object

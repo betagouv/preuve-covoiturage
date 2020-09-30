@@ -5,7 +5,13 @@ import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/Terr
 import { handlerConfig, ResultInterface } from '../shared/territory/list.contract';
 import { TerritoryListFilter } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 
-@handler({ ...handlerConfig, middlewares: [] })
+@handler({
+  ...handlerConfig,
+  middlewares: [
+    // ['validate', 'territory.list'],
+    // ['can', ['territory.list']],
+  ],
+})
 export class ListTerritoryAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
