@@ -64,7 +64,8 @@ CREATE OR REPLACE FUNCTION territory.get_breadcrumb(target_id int, ancestors_ids
       array_remove(array_agg(state.name), NULL) as state,
       array_remove(array_agg(town.name), NULL) as town,
       array_remove(array_agg(towngroup.name), NULL) as towngroup
-    FROM unnest(ancestors_ids) AS a_id
+    FROM unnest(ARRAY[target_id]) AS target_id
+    LEFT JOIN unnest(ancestors_ids) AS a_id ON TRUE
     LEFT JOIN territory.territories as country on (a_id = country._id OR target_id = country._id) AND country.level = 'country'
     LEFT JOIN territory.territories as countrygroup on (a_id = countrygroup._id OR target_id = countrygroup._id) AND countrygroup.level = 'countrygroup'
     LEFT JOIN territory.territories as district on (a_id = district._id OR target_id = district._id) AND district.level = 'district'
