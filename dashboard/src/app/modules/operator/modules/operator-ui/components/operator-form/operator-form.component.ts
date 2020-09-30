@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
+import { filter, takeUntil, tap, map, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 
@@ -174,6 +174,13 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
       companyFormGroup.controls.siret.valueChanges
         .pipe(
           throttleTime(300),
+          map((value: string) => {
+            // remove all non-numbers chars and max out the length to 14
+            const val = value.replace(/[^0-9]/g, '').substring(0, 14);
+            companyFormGroup.get('siret').setValue(val, { emitEvent: false });
+
+            return val;
+          }),
           tap(() => {
             stopFindCompany.next();
             this.companyDetails = {
@@ -185,7 +192,9 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
             };
             companyFormGroup.patchValue(this.companyDetails);
           }),
-          filter((value: string) => value.length === 14 && value.match(/[0-9]{14}/) !== null),
+          filter((value: string) => {
+            return value.length === 14 && value.match(/[0-9]{14}/) !== null;
+          }),
           takeUntil(this.destroy$),
         )
         .subscribe((value) => {
@@ -201,15 +210,46 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
               }),
               takeUntil(stopFindCompany),
             )
-
             .subscribe((company) => {
               if (company) {
+                // set legal_name for empty name and legal_name values
+                if (!this.operatorForm.get('name').value) {
+                  this.operatorForm.get('name').setValue(company.legal_name);
+                }
+
+                if (!this.operatorForm.get('legal_name').value) {
+                  this.operatorForm.get('legal_name').setValue(company.legal_name);
+                }
+
+                if (!this.operatorForm.get('address.street').value) {
+                  this.operatorForm.get('address.street').setValue(company.address_street);
+                }
+
+                if (!this.operatorForm.get('address.postcode').value) {
+                  this.operatorForm.get('address.postcode').setValue(company.address_postcode);
+                }
+
+                if (!this.operatorForm.get('address.cedex').value) {
+                  this.operatorForm.get('address.cedex').setValue(company.address_cedex);
+                }
+
+                if (!this.operatorForm.get('address.city').value) {
+                  this.operatorForm.get('address.city').setValue(company.address_city);
+                }
+
+                // set country to France if we have data on the company
+                // as the API only replies for French companies
+                if (!this.operatorForm.get('address.country').value) {
+                  this.operatorForm.get('address.country').setValue('France');
+                }
+
+                // set company details
                 this.companyDetails = {
-                  naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
-                  nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
-                  rna: company.nonprofit_code ? company.nonprofit_code : '',
-                  vat_intra: company.intra_vat ? company.intra_vat : '',
                   _id: company._id,
+                  rna: company.nonprofit_code || '',
+                  vat_intra: company.intra_vat || '',
+                  naf_entreprise: company.company_naf_code || '',
+                  nature_juridique: company.legal_nature_label || '',
                 };
                 companyFormGroup.patchValue(this.companyDetails);
               }

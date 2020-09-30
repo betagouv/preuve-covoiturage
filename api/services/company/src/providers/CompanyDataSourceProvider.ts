@@ -23,8 +23,6 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
         throw new NotFoundException(`${data.message} (${siret})`);
       }
 
-      console.log('< data : ', data);
-
       return {
         siret: get(data, 'etablissement.siret', null),
         siren: get(data, 'etablissement.siren', null),
@@ -37,6 +35,10 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
         nonprofit_code: get(data, 'etablissement.numero_rna', null),
         intra_vat: get(data, 'numero_tva_intra', null), // FIXME this is not working, need to do a 2nd call on siren
         address: get(data, 'etablissement.geo_adresse', null),
+        address_street: get(data, 'etablissement.l4_normalisee', null),
+        address_postcode: get(data, 'etablissement.code_postal', null),
+        address_cedex: get(data, 'etablissement.cedex', null),
+        address_city: get(data, 'etablissement.libelle_commune', null),
         lon: Number(get(data, 'etablissement.longitude', null)) || null,
         lat: Number(get(data, 'etablissement.latitude', null)) || null,
         headquarter: get(data, 'etablissement.is_siege', null) === '1',
