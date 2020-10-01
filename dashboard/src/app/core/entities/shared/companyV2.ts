@@ -14,6 +14,10 @@ export class CompanyV2 {
   nonprofit_code?: string;
   intra_vat?: string;
   address?: string;
+  address_street?: string;
+  address_postcode?: string;
+  address_cedex?: string;
+  address_city?: string;
   lon?: number;
   lat?: number;
   headquarter: boolean;

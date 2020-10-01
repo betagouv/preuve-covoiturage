@@ -34,6 +34,10 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
         updated_at,
         nonprofit_code,
         address,
+        address_street,
+        address_postcode,
+        address_cedex,
+        address_city,
         ST_X(geo::geometry) as lon,
         ST_Y(geo::geometry) as lat
       FROM ${this.table}
@@ -67,6 +71,10 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
         updated_at,
         nonprofit_code,
         address,
+        address_street,
+        address_postcode,
+        address_cedex,
+        address_city,
         ST_X(geo::geometry) as lon,
         ST_Y(geo::geometry) as lat
       FROM ${this.table}
@@ -99,6 +107,10 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
           updated_at,
           nonprofit_code,
           address,
+          address_street,
+          address_postcode,
+          address_cedex,
+          address_city,
           geo
         ) VALUES (
           $1,
@@ -114,7 +126,11 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
           $11,
           $12,
           $13,
-          $14
+          $14,
+          $15,
+          $16,
+          $17,
+          $18
         )
         ON CONFLICT (siret)
         DO UPDATE SET
@@ -130,7 +146,11 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
           updated_at = $11,
           nonprofit_code = $12,
           address = $13,
-          geo = $14
+          address_street = $14,
+          address_postcode = $15,
+          address_cedex = $16,
+          address_city = $17,
+          geo = $18
       `,
       values: [
         data.siret,
@@ -146,6 +166,10 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
         new Date(),
         data.nonprofit_code,
         data.address,
+        data.address_street,
+        data.address_postcode,
+        data.address_cedex,
+        data.address_city,
         `POINT(${data.lon} ${data.lat})`,
       ],
     };
