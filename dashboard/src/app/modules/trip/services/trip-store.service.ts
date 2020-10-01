@@ -47,29 +47,11 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
       params.operator_id = filter.operator_id;
     }
 
-    // const loggedUser = this._authService.user;
-
-    // if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY) {
-    //   params.territory_id = [loggedUser.territory_id];
-    // }
-    // if (loggedUser && loggedUser.group === UserGroupEnum.OPERATOR) {
-    //   params.operator_id = [loggedUser.operator_id];
-    // }
-
     return this.rpcGetList.exportTrips(params);
   }
 
   public load(filter: FilterInterface | {} = {}, refreshCount = true): void {
     const params = _.cloneDeep(filter);
-
-    // const loggedUser = this._authService.user;
-
-    // if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY && !filter.) {
-    //   params['territory_id'] = [loggedUser.territory_id];
-    // }
-    // if (loggedUser && loggedUser.group === UserGroupEnum.OPERATOR) {
-    //   params['operator_id'] = [loggedUser.operator_id];
-    // }
 
     if ('date' in filter && filter.date.start) {
       params['date'].start = filter.date.start.toISOString();
@@ -96,15 +78,4 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
   public upload(file: any): Observable<any> {
     return this.rpcGetList.upload(file);
   }
-
-  // todo: uncomment when api route is made
-  // public downloadModel(): Observable<any> {
-  //   const jsonRPCParam = new JsonRPCParam(`${this._method}.importModel`);
-  //   return this._jsonRPC.call(jsonRPCParam, {
-  //     headers: new HttpHeaders({
-  //       Accept: 'text/csv',
-  //     }),
-  //     responseType: 'blob',
-  //   });
-  // }
 }
