@@ -41,23 +41,28 @@
     "@pdc/service-acquisition": "~0",
     "@pdc/service-application": "~0",
     "@pdc/service-carpool": "~0",
+    "@pdc/service-certificate": "~0",
     "@pdc/service-company": "~0",
     "@pdc/service-fraud": "~0",
-    "@pdc/service-certificate": "~0",
+    "@pdc/service-monitoring": "~0",
     "@pdc/service-normalization": "~0",
     "@pdc/service-operator": "~0",
     "@pdc/service-policy": "~0",
     "@pdc/service-territory": "~0",
     "@pdc/service-trip": "~0",
     "@pdc/service-user": "~0",
-    "@pdc/service-monitoring": "~0",
     "body-parser": "^1.19.0",
     "connect-redis": "^4.0.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-mung": "^0.5.1",
+    "express-rate-limit": "^5.1.3",
     "express-session": "^1.16.2",
     "helmet": "^3.19.0",
-    "ioredis": "^4.14.1"
+    "ioredis": "^4.14.1",
+    "rate-limit-redis": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/express-rate-limit": "^5.1.0"
   }
 }
