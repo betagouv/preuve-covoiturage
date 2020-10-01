@@ -21,6 +21,7 @@ import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
+import { rateLimiter, authRateLimiter, apiRateLimiter } from './middlewares/rateLimiter';
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall } from './helpers/routeMapping';
@@ -144,6 +145,9 @@ export class HttpTransport implements TransportInterface {
         credentials: true,
       }),
     );
+
+    // rate limiter for all routes
+    this.app.use(rateLimiter());
   }
 
   private registerGlobalMiddlewares(): void {
@@ -245,6 +249,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/login',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(makeCall('user:login', req.body))) as RPCResponseType;
 
@@ -263,7 +268,7 @@ export class HttpTransport implements TransportInterface {
      * Get the user profile (reads from the session rather than the database)
      * @see user:me call for database read
      */
-    this.app.get('/profile', (req, res, next) => {
+    this.app.get('/profile', authRateLimiter(), (req, res, next) => {
       if (!('user' in req.session)) {
         throw new UnauthorizedException();
       }
@@ -274,7 +279,7 @@ export class HttpTransport implements TransportInterface {
     /**
      * Kill the current sesssion
      */
-    this.app.post('/logout', (req, res, next) => {
+    this.app.post('/logout', authRateLimiter(), (req, res, next) => {
       req.session.destroy((err) => {
         if (err) {
           throw new Error(err.message);
@@ -288,6 +293,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/reset-password',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle({
           id: 1,
@@ -305,6 +311,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/check-token',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle({
           id: 1,
@@ -322,6 +329,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/change-password',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle({
           id: 1,
@@ -339,6 +347,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/confirm-email',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle({
           id: 1,
@@ -562,6 +571,7 @@ export class HttpTransport implements TransportInterface {
     // register the POST route to /rpc
     this.app.post(
       endpoint,
+      apiRateLimiter(),
       asyncHandler(
         async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
           // inject the req.session.user to context in the body
@@ -674,7 +684,7 @@ export class HttpTransport implements TransportInterface {
         makeCall('territory:getParentChildren', { _id: user.territory_id }, { user: user }),
       );
 
-      user.authorizedTerritories = [user.territory_id, ...get(descendantTerritories, 'result.0.descendant_ids', []);
+      user.authorizedTerritories = [user.territory_id, ...get(descendantTerritories, 'result.0.descendant_ids', [])];
 
       return user;
     }
