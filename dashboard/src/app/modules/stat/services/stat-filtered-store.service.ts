@@ -33,15 +33,6 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
   public load(filter: FilterInterface | {} = {}): void {
     const params = _.cloneDeep(filter);
 
-    // const user = this._authService.user;
-
-    // if (user && user.group === UserGroupEnum.TERRITORY) {
-    //   params['territory_id'] = [user.territory_id];
-    // }
-    // if (user && user.group === UserGroupEnum.OPERATOR) {
-    //   params['operator_id'] = [user.operator_id];
-    // }
-
     if ('date' in filter && filter.date.start) {
       params['date'].start = filter.date.start.toISOString();
     }
