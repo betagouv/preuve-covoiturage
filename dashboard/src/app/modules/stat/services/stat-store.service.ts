@@ -29,16 +29,8 @@ export class StatStoreService extends GetListStore<StatInterface> {
   }
 
   public load(): void {
-    // const user = this._authService.user;
     const params = {};
-    // if (user && user.group === UserGroupEnum.TERRITORY) {
-    //   params['territory_id'] = [user.territory_id];
-    // }
-    // if (user && user.group === UserGroupEnum.OPERATOR) {
-    //   params['operator_id'] = [user.operator_id];
-    // }
     this._filterSubject.next(params);
-    //  super.loadList();
   }
 
   get stat(): FormatedStatInterface {
