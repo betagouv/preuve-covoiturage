@@ -35,7 +35,9 @@ import { SentryErrorHandler } from './services/sentry-error-handler.service';
     RouterModule,
     SharedModule,
     MaterialModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      preventDuplicates: true,
+    }),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpApiInterceptor, multi: true },

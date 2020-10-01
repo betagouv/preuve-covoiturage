@@ -111,7 +111,8 @@ export class AuthenticationService {
 
   public login(email: string, password: string): Observable<LoginResult> {
     return this.call<LoginParam>('login', { email, password }).pipe(
-      catchHttpStatus(401, (err) => null),
+      // bypass 401 errors
+      catchHttpStatus(401, () => null),
       map((loginPayload) => {
         if (loginPayload && loginPayload.result && loginPayload.result.data) {
           return loginPayload.result.data;
@@ -127,7 +128,7 @@ export class AuthenticationService {
             this.router.navigate(['/trip/stats']);
           }
         } else {
-          this.toastr.error('Mauvais Email ou mot de passe');
+          this.toastr.error('Mauvais email ou mot de passe');
         }
       }),
     );

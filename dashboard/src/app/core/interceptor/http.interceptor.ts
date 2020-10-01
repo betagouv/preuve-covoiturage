@@ -1,5 +1,6 @@
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
@@ -10,9 +11,9 @@ import { environment } from '../../../environments/environment';
 export class HttpApiInterceptor implements HttpInterceptor {
   private APIMETHODS = ['POST', 'GET', 'PATCH', 'PUT', 'DELETE'];
   private api = environment.apiUrl;
-  private router;
+  private router: Router;
 
-  constructor(private injector: Injector) {
+  constructor(private injector: Injector, public toastr: ToastrService) {
     this.router = this.injector.get(Router);
   }
 
@@ -21,7 +22,6 @@ export class HttpApiInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    // this.currentToken = this.authService.token;
     const update: any = {};
 
     if (this.APIMETHODS.indexOf(req.method) !== -1 && !req.url.startsWith('https://')) {
@@ -32,8 +32,13 @@ export class HttpApiInterceptor implements HttpInterceptor {
 
     return next.handle(clonedRequest).pipe(
       catchError((error) => {
-        if (error.status === 503) {
-          this.router.navigate(['/503']);
+        switch (error.status) {
+          case 429:
+            this.toastr.error("Trop d'essais de connexion, merci de réessayer plus tard");
+            break;
+          case 503:
+            this.router.navigate(['/503']);
+            break;
         }
 
         return throwError(error);

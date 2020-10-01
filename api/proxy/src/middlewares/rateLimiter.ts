@@ -9,7 +9,6 @@ type RateLimiterOptions = Partial<{
 }>;
 
 export function rateLimiter(opts: RateLimiterOptions = {}): RateLimit {
-  console.log('SETUP rateLimiter', process.env.APP_REDIS_URL);
   return rateLimit({
     store: new RedisStore({
       redisURL: process.env.APP_REDIS_URL,
@@ -28,7 +27,7 @@ export function rateLimiter(opts: RateLimiterOptions = {}): RateLimit {
 export function authRateLimiter(opts: RateLimiterOptions = {}): RateLimit {
   return rateLimiter({
     windowMs: 60000,
-    max: 5,
+    max: 10,
     ...opts,
   });
 }

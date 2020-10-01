@@ -26,6 +26,9 @@ export class SentryErrorHandler extends ErrorHandler {
       },
     });
 
-    super.handleError(error);
+    // throw errors in the console only if local
+    if (!environment.production) {
+      super.handleError(error);
+    }
   }
 }
