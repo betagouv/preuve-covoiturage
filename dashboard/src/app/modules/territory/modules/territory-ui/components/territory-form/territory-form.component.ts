@@ -95,7 +95,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       ...this.territoryForm.value,
     };
 
-    if (this.territoryChildren && this.fullFormMode) {
+    if (this.territoryChildren && this.fullFormMode && formValues.format === 'parent') {
       formValues.children = this.territoryChildren.getFlatSelectedList();
       if (formValues.children.length === 0) {
         this.toastr.error('Veuillez selectionner au moins un territoire enfant');
