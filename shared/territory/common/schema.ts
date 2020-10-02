@@ -66,11 +66,12 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
         oneOf: [
           {
             type: 'object',
-            required: ['activable', 'active', 'company_id', 'address'],
+            required: ['activable', 'company_id', 'address'],
             additionalProperties: false,
             properties: {
               ...commonFields,
               ...geoFields,
+              ...extrafields,
               contacts,
               activable: {
                 const: true,
@@ -93,10 +94,11 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
           {
             type: 'object',
             additionalProperties: false,
-            required: ['activable', 'active'],
+            required: ['activable'],
             properties: {
               ...commonFields,
               ...geoFields,
+              ...extrafields,
               activable: {
                 const: false,
               },
@@ -116,6 +118,7 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
             properties: {
               ...commonFields,
               ...activeFields,
+              ...extrafields,
               geo: {
                 type: 'string',
               },
@@ -140,6 +143,8 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
             properties: {
               ...commonFields,
               ...activeFields,
+              ...extrafields,
+
               children: {
                 type: 'array',
                 items: { macro: 'serial' },

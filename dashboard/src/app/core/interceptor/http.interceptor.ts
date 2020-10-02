@@ -34,7 +34,16 @@ export class HttpApiInterceptor implements HttpInterceptor {
       catchError((error) => {
         switch (error.status) {
           case 429:
-            this.toastr.error("Trop d'essais de connexion, merci de réessayer plus tard");
+            /**
+             * Display a waiting time in seconds to the user
+             * Add info() to the console
+             */
+            const { limit, current, remaining, resetTime } = error.error.error;
+            const wait = new Date(resetTime).getTime() - new Date().getTime();
+
+            this.toastr.error(`merci de réessayer dans ${(wait / 1000) | 0}s`, "Trop d'essais de connexion");
+
+            console.warn('Too many requests', { limit, current, remaining, resetTime });
             break;
           case 503:
             this.router.navigate(['/503']);

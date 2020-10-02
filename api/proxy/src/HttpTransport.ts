@@ -21,7 +21,7 @@ import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
-import { rateLimiter, authRateLimiter, apiRateLimiter } from './middlewares/rateLimiter';
+import { rateLimiter, authRateLimiter, apiRateLimiter, loginRateLimiter } from './middlewares/rateLimiter';
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall } from './helpers/routeMapping';
@@ -249,7 +249,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/login',
-      authRateLimiter(),
+      loginRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(makeCall('user:login', req.body))) as RPCResponseType;
 
