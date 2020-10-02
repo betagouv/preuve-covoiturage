@@ -68,12 +68,10 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
             type: 'object',
             required: ['activable', 'company_id', 'address'],
             additionalProperties: false,
-
             properties: {
               ...commonFields,
               ...geoFields,
               ...extrafields,
-
               contacts,
               activable: {
                 const: true,
@@ -101,7 +99,6 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
               ...commonFields,
               ...geoFields,
               ...extrafields,
-
               activable: {
                 const: false,
               },
@@ -122,7 +119,6 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
               ...commonFields,
               ...activeFields,
               ...extrafields,
-
               geo: {
                 type: 'string',
               },
