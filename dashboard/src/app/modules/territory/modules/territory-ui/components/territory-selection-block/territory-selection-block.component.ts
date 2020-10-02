@@ -39,7 +39,7 @@ export class TerritorySelectionBlockComponent extends DestroyObservable implemen
     if (changes.territory) {
       const { currentValue } = changes.territory as {
         currentValue: TerritorySelectionBlock;
-        previousValue?: TerritorySelectionBlock | null;
+        previousValue?: TerritorySelectionBlock;
         firstChange: boolean;
       };
 
