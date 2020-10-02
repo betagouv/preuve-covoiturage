@@ -163,13 +163,16 @@ export class Territory extends BaseModel
     if (formValues.format) this.ui_status.format = formValues.format;
     if (formValues.format === 'insee' && formValues.insee) {
       this.ui_status.insee = formValues.insee;
+    } else {
+      delete this.insee;
     }
 
     if (!formValues.activable) {
       delete this.address;
       delete this.contacts;
-      delete this.company;
     }
+
+    delete this.company;
 
     // const territories = await this.terr
 

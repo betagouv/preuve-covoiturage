@@ -370,7 +370,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this.territoryForm.setValue(formValues);
 
     this._relationDisplayMode = formValues.format;
-    if (this.editedId && this.fullFormMode) {
+    if (this.editedId && this.fullFormMode && formValues.format === 'parent') {
+      this.hasTerritories = !!territory.children.length;
+      console.log('this.hasTerritories', this.hasTerritories);
       this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
         this.territoryChildren.setRelations(completeRelation);
 
