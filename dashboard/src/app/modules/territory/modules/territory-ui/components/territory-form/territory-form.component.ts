@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
+import { filter, takeUntil, tap, map, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 
@@ -45,10 +45,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public editedId: number;
   private companyDetails: CompanyInterface;
-  protected _relationDisplayMode = 'geo';
+  protected _relationDisplayMode = 'parent';
   public activable = false;
-  // intermediateRelation: any;
-  // protected subIgnoredIds: number[];
 
   constructor(
     public authService: AuthenticationService,
@@ -234,6 +232,13 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       companyFormGroup.controls.siret.valueChanges
         .pipe(
           throttleTime(300),
+          map((value: string) => {
+            // remove all non-numbers chars and max out the length to 14
+            const val = value.replace(/[^0-9]/g, '').substring(0, 14);
+            companyFormGroup.get('siret').setValue(val, { emitEvent: false });
+
+            return val;
+          }),
           tap(() => {
             stopFindCompany.next();
             this.companyDetails = {
@@ -255,8 +260,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           takeUntil(this.destroy$),
         )
         .subscribe((value) => {
-          // TODO : apply company migration
-          // return null;
           this.companyService
             .fetchCompany(value)
             .pipe(
@@ -280,12 +283,27 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
     if (company) {
       this.companyDetails = {
-        naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
-        nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
-        rna: company.nonprofit_code ? company.nonprofit_code : '',
-        vat_intra: company.intra_vat ? company.intra_vat : '',
         _id: company._id,
+        naf_entreprise: company.company_naf_code || '',
+        nature_juridique: company.legal_nature_label || '',
+        rna: company.nonprofit_code || '',
+        vat_intra: company.intra_vat || '',
       };
+
+      if (this.territoryForm.get('address.street')) {
+        this.territoryForm.get('address.street').setValue(company.address_street);
+      }
+      if (this.territoryForm.get('address.postcode')) {
+        this.territoryForm.get('address.postcode').setValue(company.address_postcode);
+      }
+      if (this.territoryForm.get('address.cedex')) {
+        this.territoryForm.get('address.cedex').setValue(company.address_cedex);
+      }
+      if (this.territoryForm.get('address.city')) {
+        this.territoryForm.get('address.city').setValue(company.address_city);
+      }
+
+      this.territoryForm.get('address.country').setValue('France');
 
       companyFormGroup.patchValue({ siret: company.siret, ...this.companyDetails });
     } else if (resetIfNull) {
