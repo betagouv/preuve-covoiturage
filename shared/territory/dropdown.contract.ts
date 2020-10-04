@@ -1,6 +1,7 @@
 export interface ParamsInterface {
   search?: string;
   on_territories?: number[];
+  limit?: number;
 }
 
 export interface ResultInterface {

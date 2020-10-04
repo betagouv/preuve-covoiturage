@@ -209,9 +209,10 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
   /**
    * Searchable / scopable dropdown list (_id, name)
    * Can be scoped by territories (searches for all descendants)
+   * Default limit is set to 100
    */
   async dropdown(params: DropdownParamsInterface): Promise<TerritoryDropdownInterface[]> {
-    const { search, on_territories } = params;
+    const { search, on_territories, limit } = { limit: 100, ...params };
 
     const where = [];
     const values = [];
@@ -226,12 +227,16 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       values.push(`%${search.toLowerCase().trim()}%`);
     }
 
+    // always add the limit
+    values.push(limit);
+
     const results = await this.connection.getClient().query({
       values,
       text: `
         SELECT _id, name FROM ${this.table}
         ${where.length ? ` WHERE ${where.join(' AND ')}` : ''}
         ORDER BY name ASC
+        LIMIT $${where.length + 1}
       `,
     });
 
