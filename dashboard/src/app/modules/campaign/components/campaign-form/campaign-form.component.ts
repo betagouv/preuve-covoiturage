@@ -91,9 +91,9 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     const filtersFormGroup = this.campaignFormGroup.get('filters');
 
     const targetValid =
-      this.campaignFormGroup.get('ui_status').get('for_trip').value ||
-      this.campaignFormGroup.get('ui_status').get('for_passenger').value ||
-      this.campaignFormGroup.get('ui_status').get('for_driver').value;
+      this.campaignFormGroup.get('ui_status.for_trip').value ||
+      this.campaignFormGroup.get('ui_status.for_passenger').value ||
+      this.campaignFormGroup.get('ui_status.for_driver').value;
 
     return (
       targetValid &&
@@ -141,7 +141,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
-          console.log('data : ', data);
           this.requestLoading = false;
           this._router.navigate([`/campaign/draft/${this.campaignId}`]).then(() => {
             this._toastr.success(`La campagne ${params.name} a bien été mise à jour`);
@@ -223,7 +222,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         .pipe(
           takeUntil(this.destroy$),
           map((cas) => cas.find((ca) => ca._id === templateId)),
-          // take(1),
         )
         .subscribe(
           (template) => {
@@ -235,7 +233,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
             this.setCampaignToForm(campaign, true);
           },
           (err) => {
-            this._toastr.error('Template not found !');
+            this._toastr.error('Template non trouvé');
           },
         );
     } else {
@@ -390,7 +388,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
           this.setCampaignToForm(campaign.toFormValues(), isDuplicate);
         },
         (err) => {
-          console.log('err : ', err);
+          console.log(err);
           this._router.navigate(['/campaign']).then(() => {
             this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
           });
@@ -400,18 +398,10 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   private initCampaigns(): void {
     this._campaignStoreService.loadCampaigns();
-
-    // if (!this._campaignStoreService.loaded) {
-    // if (this._authService.user.group === UserGroupEnum.TERRITORY) {
-    //   // this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
-    //   this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
-    // }
-    // }
   }
 
   private setLastAvailableStep(): void {
     setTimeout(() => {
-      // tslint:disable-next-line:prefer-conditional-expression
       if (this.canGoToLastStep) {
         this.currentStep = 3;
       } else if (this.canGoToThirdStep) {
