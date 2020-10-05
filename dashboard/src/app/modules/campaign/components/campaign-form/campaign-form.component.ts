@@ -7,14 +7,12 @@ import { takeUntil, map } from 'rxjs/operators';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
-import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { CampaignInterface } from '~/core/entities/api/shared/policy/common/interfaces/CampaignInterface';
 
@@ -52,9 +50,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   constructor(
     private _authService: AuthenticationService,
-    private _dialog: DialogService,
     private _formBuilder: FormBuilder,
-    private _campaignApiService: CampaignApiService,
     private _campaignStoreService: CampaignStoreService,
     private _toastr: ToastrService,
     private _router: Router,
