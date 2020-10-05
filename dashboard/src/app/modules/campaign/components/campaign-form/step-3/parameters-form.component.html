@@ -182,20 +182,9 @@
             <app-restriction-form
               [restrictionformGroup]="editRestrictionForm"
               [unit]="campaignForm.controls.unit.value"
+              (add)="addRestriction($event)"
+              (cancel)="cancelEditRestriction()"
             ></app-restriction-form>
-
-            <button
-              mat-stroked-button
-              color="primary"
-              class="ConfirmBtn"
-              (click)="addRestriction()"
-              [disabled]="!editRestrictionForm.valid"
-            >
-              Confirmer
-            </button>
-            <button mat-stroked-button (click)="cancelEditRestriction()">
-              Annuler
-            </button>
           </div>
         </div>
       </mat-expansion-panel>

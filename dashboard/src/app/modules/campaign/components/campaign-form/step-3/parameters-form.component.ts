@@ -117,7 +117,7 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     delete this.editRestrictionForm;
   }
 
-  addRestriction(): void {
+  addRestriction(form): void {
     this.restrictionFormArray.push(this.editRestrictionForm);
     delete this.editRestrictionForm;
   }
