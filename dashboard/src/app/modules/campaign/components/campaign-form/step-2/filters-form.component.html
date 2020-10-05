@@ -155,8 +155,9 @@
               color="primary"
               #forPassenger
               formControlName="for_passenger"
-              >Passagers</mat-checkbox
             >
+              Passagers
+            </mat-checkbox>
             <mat-checkbox class="RulesForm-target-forTrip--hidden" color="primary" #forTrip formControlName="for_trip">
               Trajets
               <mat-icon
@@ -164,16 +165,13 @@
                 color="accent"
                 matTooltip="L'incitation sera affectée au trajet, c'est à la charge de l'opérateur de choisir la répartition entre conducteur et passager(s)"
                 aria-label="Information sur l'affection par trajet"
-                >info</mat-icon
               >
+                info
+              </mat-icon>
             </mat-checkbox>
           </ng-container>
           <ng-container [formGroup]="campaignForm">
-            <mat-checkbox
-              class="RulesForm-target-forAdult"
-              [disabled]="!forPassenger.checked && !forTrip.checked"
-              color="primary"
-              formControlName="only_adult"
+            <mat-checkbox class="RulesForm-target-forAdult" color="primary" formControlName="only_adult"
               >Personnes majeures uniquement</mat-checkbox
             >
           </ng-container>
