@@ -19,12 +19,16 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
     super();
   }
 
-  protected getQueue(): Queue {
+  protected createQueue(): Queue {
     return new Queue(this.service, { connection: this.redis.getClient() });
   }
 
+  public getClient(): Queue {
+    return this.client;
+  }
+
   public async init() {
-    this.client = this.getQueue();
+    this.client = this.createQueue();
   }
 
   public async call(call: CallType): Promise<Job> {
