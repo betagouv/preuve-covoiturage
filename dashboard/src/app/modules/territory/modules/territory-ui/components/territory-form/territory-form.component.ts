@@ -102,8 +102,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       }
 
       formValues.uiSelectionState = this.territoryChildren.getUISelectionState();
-      formValues.company_id = this.companyDetails ? this.companyDetails._id : null;
     }
+
+    formValues.company_id = this.companyDetails ? this.companyDetails._id : null;
 
     const save = () => {
       if (this.editedId) {
