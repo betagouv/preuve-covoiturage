@@ -93,6 +93,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       ...this.territoryForm.value,
     };
 
+    this.territoryForm.get('company').reset();
+    this.territoryForm.get('address').reset();
+
     if (this.territoryChildren && this.fullFormMode && formValues.format === 'parent') {
       formValues.children = this.territoryChildren.getFlatSelectedList();
       if (formValues.children.length === 0) {
@@ -157,9 +160,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     } else {
       save.apply(this);
     }
+
+    this.territoryChildren.setRelations([]);
   }
 
   public onClose(): void {
+    this.territoryChildren.setRelations([]);
+    this.territoryForm.get('company').reset();
+    this.territoryForm.get('address').reset();
     this.close.emit();
   }
 
@@ -241,6 +249,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       companyFormGroup.controls.siret.valueChanges
         .pipe(
           throttleTime(300),
+          filter((v) => !!v),
           map((value: string) => {
             // remove all non-numbers chars and max out the length to 14
             const val = value.replace(/[^0-9]/g, '').substring(0, 14);
@@ -395,20 +404,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         this.companyService.getById(territory.company_id).subscribe((company) => {
           this.updateCompanyForm(company);
         });
-      } else {
-        this.updateCompanyForm(
-          new CompanyV2({
-            siret: '',
-            siren: '',
-            nic: '',
-            legal_name: '',
-            company_naf_code: '',
-            establishment_naf_code: '',
-            legal_nature_code: '',
-            legal_nature_label: '',
-            headquarter: false,
-          }),
-        );
       }
       this.displayAOMActive = territory.activable === true;
     }

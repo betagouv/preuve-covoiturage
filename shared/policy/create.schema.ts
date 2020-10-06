@@ -53,4 +53,6 @@ export const schema = {
   },
 };
 
+console.log('schema', JSON.stringify(schema));
+
 export const binding = [alias, schema];
