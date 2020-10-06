@@ -108,6 +108,7 @@ export class Territory extends BaseModel
     assignOrDeleteProperty(base, this, 'address', (data) => new Address(data.address));
     assignOrDeleteProperty(base, this, 'company', (data) => ({ ...data.company }));
     assignOrDeleteProperty(base, this, 'geo', (data) => ({ ...data.geo }));
+    assignOrDeleteProperty(base, this, 'children', (data) => [...data.children]);
 
     if (base.shortname) this.shortname = base.shortname;
     else delete this.shortname;
@@ -171,6 +172,7 @@ export class Territory extends BaseModel
     if (!formValues.activable) {
       delete this.address;
       delete this.contacts;
+      delete this.company_id;
     }
 
     delete this.company;
@@ -186,8 +188,6 @@ export class Territory extends BaseModel
     return fullformMode
       ? {
           name: this.name ? this.name : '',
-          // level: this.level ? this.level : null,
-          // active: this.active ? this.active : false,
           uiSelectionState:
             this.ui_status && this.ui_status.ui_selection_state ? this.ui_status.ui_selection_state : [],
           format: this.ui_status && this.ui_status.format ? this.ui_status.format : 'parent',

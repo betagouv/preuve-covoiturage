@@ -93,6 +93,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       ...this.territoryForm.value,
     };
 
+    this.territoryForm.get('company').reset();
+    this.territoryForm.get('address').reset();
+
     if (this.territoryChildren && this.fullFormMode && formValues.format === 'parent') {
       formValues.children = this.territoryChildren.getFlatSelectedList();
       if (formValues.children.length === 0) {
@@ -102,8 +105,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       }
 
       formValues.uiSelectionState = this.territoryChildren.getUISelectionState();
-      formValues.company_id = this.companyDetails ? this.companyDetails._id : null;
     }
+
+    formValues.company_id = this.companyDetails ? this.companyDetails._id : null;
 
     const save = () => {
       if (this.editedId) {
@@ -156,9 +160,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     } else {
       save.apply(this);
     }
+
+    this.territoryChildren.setRelations([]);
   }
 
   public onClose(): void {
+    this.territoryChildren.setRelations([]);
+    this.territoryForm.get('company').reset();
+    this.territoryForm.get('address').reset();
     this.close.emit();
   }
 
@@ -235,12 +244,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         this.displayAOMActive = val;
         // reset is val to false if activable is off
         this.territoryForm.patchValue({ active: this.territoryForm.value.active && val });
-        // console.log('>> activable val', val);
       });
 
       companyFormGroup.controls.siret.valueChanges
         .pipe(
           throttleTime(300),
+          filter((v) => !!v),
           map((value: string) => {
             // remove all non-numbers chars and max out the length to 14
             const val = value.replace(/[^0-9]/g, '').substring(0, 14);
@@ -379,23 +388,25 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this.territoryForm.setValue(formValues);
 
     this._relationDisplayMode = formValues.format;
-    if (this.editedId && this.fullFormMode && formValues.format === 'parent') {
-      this.hasTerritories = !!territory.children.length;
-      console.log('this.hasTerritories', this.hasTerritories);
-      this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
-        this.territoryChildren.setRelations(completeRelation);
+    if (this.editedId && this.fullFormMode) {
+      if (formValues.format === 'parent') {
+        console.log('territory.children', territory.children, territory.children.length);
 
-        if (territory.company_id) {
-          this.companyService.getById(territory.company_id).subscribe((company) => {
-            this.updateCompanyForm(company);
-          });
-        }
-      });
-    } else if (this.territoryChildren) {
-      this.territoryChildren.setRelations([]);
+        this.hasTerritories = territory.children ? territory.children.length > 0 : false;
+        this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
+          this.territoryChildren.setRelations(completeRelation);
+        });
+      } else if (this.territoryChildren) {
+        this.territoryChildren.setRelations([]);
+      }
+
+      if (territory.company_id) {
+        this.companyService.getById(territory.company_id).subscribe((company) => {
+          this.updateCompanyForm(company);
+        });
+      }
+      this.displayAOMActive = territory.activable === true;
     }
-
-    this.displayAOMActive = territory.activable === true;
   }
 
   get relationDisplayMode(): string {

@@ -33,6 +33,7 @@ import {
   allTerritoryQueryFields,
   TerritoryListFilter,
   GeoFieldEnum,
+  RelationFieldEnum,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
@@ -290,9 +291,17 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           /* eslint-enable */
           break;
 
+        case field === RelationFieldEnum.Children:
+          selectsFields.push(`(
+            SELECT array_agg(tr.child_territory_id) as children 
+            FROM territory.territory_relation tr 
+            WHERE tr.parent_territory_id = t._id) as children`);
+
+          break;
         case allAncestorRelationFieldEnum.indexOf(field) !== -1:
           // selectsFields.push(`tv.${field}`);
           // autoBuildAncestorJoin();
+
           break;
 
         case allCompanyFieldEnum.indexOf(field) !== -1:
