@@ -131,14 +131,23 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     // get territories
     if (formValues.format === 'insee' && formValues.insee) {
-      const insees = formValues.insee.split(' ').join('').split(',');
-      this.territoryApi.findByInsees(insees).subscribe((territories) => {
-        if (insees.length === territories.length) {
+      // split by , or spaces and make unique
+      const inseeList = [
+        ...new Set(
+          formValues.insee
+            .split(/[\s,]/)
+            .map((s) => s.trim())
+            .filter((i) => i.length)
+            .sort(),
+        ),
+      ];
+
+      this.territoryApi.findByInsees(inseeList).subscribe((territories) => {
+        if (inseeList.length === territories.length) {
           formValues.children = territories.map((t) => t._id);
-          // delete formValues.insee;
           save.apply(this);
         } else {
-          const notMatchingInsees = insees.filter((insee) => !territories.find((t) => t.insee === insee));
+          const notMatchingInsees = inseeList.filter((insee) => !territories.find((t) => t.insee === insee));
           this.toastr.error(
             `Certains codes INSEE n'ont pas de territoires correspondants : ${notMatchingInsees.join(',')}`,
           );

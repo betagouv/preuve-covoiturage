@@ -33,6 +33,14 @@ export class HttpApiInterceptor implements HttpInterceptor {
     return next.handle(clonedRequest).pipe(
       catchError((error) => {
         switch (error.status) {
+          case 0:
+            this.toastr.error('Connexion au serveur interrompue');
+            break;
+
+          case 401:
+            // noop
+            break;
+
           case 429:
             /**
              * Display a waiting time in seconds to the user
@@ -45,9 +53,13 @@ export class HttpApiInterceptor implements HttpInterceptor {
 
             console.warn('Too many requests', { limit, current, remaining, resetTime });
             break;
+
           case 503:
             this.router.navigate(['/503']);
             break;
+
+          default:
+            this.toastr.error(error.message);
         }
 
         return throwError(error);

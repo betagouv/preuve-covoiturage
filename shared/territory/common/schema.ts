@@ -128,10 +128,16 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
               },
               insee: {
                 type: 'array',
+                uniqueItems: true,
+                minItems: 0,
+                maxItems: 2000,
                 items: { macro: 'insee' },
               },
               postcode: {
                 type: 'array',
+                uniqueItems: true,
+                minItems: 0,
+                maxItems: 2000,
                 items: { macro: 'postcode' },
               },
             },

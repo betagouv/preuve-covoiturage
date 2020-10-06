@@ -29,3 +29,16 @@
     </mat-select>
   </mat-form-field>
 </form>
+
+<button
+  mat-stroked-button
+  color="primary"
+  class="ConfirmBtn"
+  (click)="add.emit(restrictionformGroup)"
+  [disabled]="!restrictionformGroup.valid"
+>
+  Confirmer
+</button>
+<button mat-stroked-button (click)="cancel.emit()">
+  Annuler
+</button>

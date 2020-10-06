@@ -46,32 +46,27 @@ export abstract class JsonRPC {
       }
       urlWithMethods += `${method.method}`;
     });
+
     return this.http.post(urlWithMethods, methods, finalOptions).pipe(
-      // catchHttpStatus(401, (err) => {
-      //   this.router.navigate(['/login']);
-      //   throw err;
-      // }),
       map((response: JsonRPCResponse[]) => {
         const res: { id: number; data: any; meta: any }[] = [];
-        // if (response.data) {
         response.forEach((data: JsonRPCResponse) => {
           if (data.error) {
             const error = new JsonRPCError(data.error);
-
             if (throwErrors) {
               throw error;
             }
+
             console.error('RPC error ', error);
           }
 
           // temporary compatibility solver (for result | result.data)
           const resultData = data.result ? (data.result.data !== undefined ? data.result.data : data.result) : null;
-
           const resultMeta = data.result && data.result.meta ? data.result.meta : null;
 
           res.push({ id: data.id, data: resultData, meta: resultMeta });
         });
-        // }
+
         return res;
       }),
     );

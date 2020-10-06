@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import {
@@ -15,6 +15,8 @@ import {
 export class RestrictionFormComponent implements OnInit {
   @Input() restrictionformGroup: FormGroup;
   @Input() unit = 'Points';
+  @Output() add: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
+  @Output() cancel = new EventEmitter();
 
   restrictionPeriods = RESTRICTION_PERIODS;
 
@@ -32,7 +34,7 @@ export class RestrictionFormComponent implements OnInit {
     return this.restrictionformGroup.controls;
   }
 
-  getFrenchLabel(val: RestrictionPeriodsEnum): string {
+  public getFrenchLabel(val: RestrictionPeriodsEnum): string {
     return RESTRICTION_PERIODS_FR[val];
   }
 

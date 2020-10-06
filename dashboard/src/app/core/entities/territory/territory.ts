@@ -49,7 +49,7 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   company_id?: number;
   active?: boolean;
   activable?: boolean;
-  ui_status?: any;
+  ui_status?: TerritoryUIStatus;
   insee?: any;
   // active_since?: Date;
   contacts?: Contacts;
@@ -163,9 +163,10 @@ export class Territory extends BaseModel
     if (formValues.format) this.ui_status.format = formValues.format;
     if (formValues.format === 'insee' && formValues.insee) {
       this.ui_status.insee = formValues.insee;
-    } else {
-      delete this.insee;
     }
+
+    // insee are used to fetch children array (territory_id[])
+    delete this.insee;
 
     if (!formValues.activable) {
       delete this.address;

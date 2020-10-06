@@ -16,7 +16,7 @@ export class ResetPasswordGuardService implements CanActivate {
     // check if the user is connected
 
     return this.authService.checkPasswordToken(route.params.email, route.params.token).pipe(
-      catchError((err) => of(false)),
+      catchError(() => of(false)),
       map((result) => !!result),
       tap((loggedIn) => {
         if (!loggedIn) {

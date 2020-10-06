@@ -16,8 +16,6 @@ export class SentryErrorHandler extends ErrorHandler {
   }
 
   handleError(error) {
-    // Here you can provide whatever logging you want
-
     captureException(error.originalError || error, {
       extra: error,
       tags: {

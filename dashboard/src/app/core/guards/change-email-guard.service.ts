@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -12,11 +12,9 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 export class ChangeEmailGuardService implements CanActivate {
   constructor(private router: Router, private authService: AuthenticationService, private toastr: ToastrService) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    // check if the user is connected
-
+  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
     return this.authService.confirmEmail(route.params.email, route.params.token).pipe(
-      catchError((err) => of(false)),
+      catchError(() => of(false)),
       map((result) => !!result),
     );
   }
