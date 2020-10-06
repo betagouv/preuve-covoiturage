@@ -3,49 +3,19 @@ import sinon from 'sinon';
 import { Extensions, Action, ServiceProvider, Kernel } from '@ilos/core';
 import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
 import { handler, serviceProvider, kernel as kernelDecorator, ParamsType, ContextType, ResultType } from '@ilos/common';
-
-import * as Bull from './helpers/bullFactory';
 import { QueueTransport } from './QueueTransport';
 
 interface Context {
   sandbox: sinon.SinonSandbox;
+  transport: QueueTransport;
 }
 
 const test = anyTest as TestInterface<Context>;
 
-test.beforeEach((t) => {
+test.beforeEach(async (t) => {
   t.context.sandbox = sinon.createSandbox();
   process.env.APP_WORKER = 'true';
-  t.context.sandbox.stub(Bull, 'bullFactory').callsFake(
-    // @ts-ignore
-    (name) => ({
-      name,
-      async process(fn) {
-        this.fn = fn;
-        return;
-      },
-      async close() {
-        return;
-      },
-      async isReady() {
-        return this;
-      },
-      on(event: string, callback: (...args: any[]) => void) {
-        return this;
-      },
-      async add(call) {
-        const fn = this.fn;
-        return fn(call);
-      },
-    }),
-  );
-});
 
-test.afterEach((t) => {
-  t.context.sandbox.restore();
-});
-
-test('Queue transport: works', async (t) => {
   class QueueExtension extends ParentQueueExtension {
     registerQueueHandlers() {
       return;
@@ -105,11 +75,41 @@ test('Queue transport: works', async (t) => {
 
   const kernel = new BasicKernel();
   await kernel.bootstrap();
-  const queueTransport = new QueueTransport(kernel);
+  t.context.transport = new QueueTransport(kernel);
+
+  const fake = // @ts-ignore
+  (connection: any, name: string, processor: Function) => ({
+    name,
+    async close() {
+      return;
+    },
+    async waitUntilReady() {
+      return this;
+    },
+    on(event: string, callback: (...args: any[]) => void) {
+      return this;
+    },
+    async add(call) {
+      return processor(call);
+    },
+  });
+  // @ts-ignore
+  t.context.sandbox.stub(t.context.transport, 'getWorker').callsFake(fake);
+  // @ts-ignore
+  t.context.sandbox.stub(t.context.transport, 'getScheduler').callsFake(fake);
+});
+
+test.afterEach((t) => {
+  t.context.sandbox.restore();
+});
+
+test('Queue transport: works', async (t) => {
+  const queueTransport = t.context.transport;
   await queueTransport.up(['redis://localhost']);
   t.is(queueTransport.queues.length, 1);
-  t.is(queueTransport.queues[0].name, 'math');
-  const response = await queueTransport.queues[0].add({
+  t.is(queueTransport.queues[0].worker.name, 'math');
+  // @ts-ignore
+  const response = await queueTransport.queues[0].worker.add({
     data: {
       id: null,
       jsonrpc: '2.0',

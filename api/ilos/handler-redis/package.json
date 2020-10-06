@@ -23,12 +23,11 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "devDependencies": {
-    "@types/bull": "^3.12.0",
     "@types/sinon": "^7.5.1",
     "sinon": "^9.0.0"
   },
   "dependencies": {
-    "bull": "^3.13.0",
+    "bullmq": "^1.9.0",
     "@ilos/common": "^0.4.1",
     "@ilos/connection-redis": "^0.4.1"
   },

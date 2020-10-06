@@ -2,41 +2,21 @@
 import anyTest, { TestInterface } from 'ava';
 import sinon from 'sinon';
 import { RedisConnection } from '@ilos/connection-redis';
-
-import * as Bull from './helpers/bullFactory';
+import { QueueHandler } from './QueueHandler';
 import { queueHandlerFactory } from './helpers/queueHandlerFactory';
+import { ContextType } from '@ilos/common';
 
 interface Context {
   sandbox: sinon.SinonSandbox;
+  handler: QueueHandler;
+  context: ContextType;
 }
 
 const test = anyTest as TestInterface<Context>;
 
 test.beforeEach(async (t) => {
   t.context.sandbox = sinon.createSandbox();
-  t.context.sandbox.stub(Bull, 'bullFactory').callsFake(
-    // @ts-ignore
-    () => ({
-      // @ts-ignore
-      async add(data) {
-        if (!!data.method && data.method !== 'nope') {
-          return data;
-        }
-        throw new Error('Nope');
-      },
-      async isReady() {
-        return this;
-      },
-    }),
-  );
-});
-
-test.afterEach((t) => {
-  t.context.sandbox.restore();
-});
-
-function setup() {
-  const defaultContext = {
+  t.context.context = {
     channel: {
       service: '',
     },
@@ -49,16 +29,35 @@ function setup() {
   }
 
   const fakeConnection = new FakeRedis({});
-  return {
-    defaultContext,
-    fakeConnection,
-  };
-}
+
+  t.context.handler = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
+  // @ts-ignore
+  t.context.sandbox.stub(t.context.handler, 'getQueue').callsFake(
+    // @ts-ignore
+    () => ({
+      // @ts-ignore
+      async add(name, data) {
+        if (!!data.method && data.method !== 'nope') {
+          return data;
+        }
+        throw new Error('Nope');
+      },
+      async isReady() {
+        return this;
+      },
+    }),
+  );
+
+  await t.context.handler.init();
+});
+
+test.afterEach((t) => {
+  t.context.sandbox.restore();
+});
 
 test.serial('Queue handler: works', async (t) => {
-  const { fakeConnection, defaultContext } = setup();
-  const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
-  await queueProvider.init();
+  const queueProvider = t.context.handler;
+  const defaultContext = t.context.context;
   const result = (await queueProvider.call({
     method: 'basic@latest:method',
     params: { add: [1, 2] },
@@ -74,10 +73,8 @@ test.serial('Queue handler: works', async (t) => {
 });
 
 test.serial('Queue handler: raise error if fail', async (t) => {
-  const { fakeConnection, defaultContext } = setup();
-
-  const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
-  await queueProvider.init();
+  const queueProvider = t.context.handler;
+  const defaultContext = t.context.context;
   const err = await t.throwsAsync(async () =>
     queueProvider.call({
       method: 'nope',
