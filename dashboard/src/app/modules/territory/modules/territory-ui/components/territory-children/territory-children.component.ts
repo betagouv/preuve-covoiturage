@@ -30,10 +30,10 @@ export class TerritoryChildrenComponent implements OnInit {
 
   setRelations(ui: UiStatusRelationDetails[] = []): void {
     this.territories = [];
-    this.territoriesUpdated();
     for (const uiRelation of ui) {
       this.territories.push(TerritorySelectionBlock.fromUiRelation(uiRelation));
     }
+    this.territoriesUpdated();
   }
 
   territoriesUpdated(): void {

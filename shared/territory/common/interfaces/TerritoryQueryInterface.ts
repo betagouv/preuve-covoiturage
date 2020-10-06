@@ -74,6 +74,7 @@ export enum BasicFieldEnum {
 }
 
 export enum ActiveFieldEnum {
+  Activable = 'activable',
   Active = 'active',
   CreatedAt = 'created_at',
   UpdatedAt = 'updated_at',
@@ -137,6 +138,7 @@ export const allBasicFieldEnum: ProjectionFieldsEnum = [
   BasicFieldEnum.Name,
   BasicFieldEnum.ShortName,
   BasicFieldEnum.Active,
+  BasicFieldEnum.Activable,
   BasicFieldEnum.Address,
   BasicFieldEnum.Contacts,
   BasicFieldEnum.UIStatus,

@@ -236,7 +236,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         this.displayAOMActive = val;
         // reset is val to false if activable is off
         this.territoryForm.patchValue({ active: this.territoryForm.value.active && val });
-        // console.log('>> activable val', val);
       });
 
       companyFormGroup.controls.siret.valueChanges
@@ -380,23 +379,39 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this.territoryForm.setValue(formValues);
 
     this._relationDisplayMode = formValues.format;
-    if (this.editedId && this.fullFormMode && formValues.format === 'parent') {
-      this.hasTerritories = !!territory.children.length;
-      console.log('this.hasTerritories', this.hasTerritories);
-      this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
-        this.territoryChildren.setRelations(completeRelation);
+    if (this.editedId && this.fullFormMode) {
+      if (formValues.format === 'parent') {
+        console.log('territory.children', territory.children, territory.children.length);
 
-        if (territory.company_id) {
-          this.companyService.getById(territory.company_id).subscribe((company) => {
-            this.updateCompanyForm(company);
-          });
-        }
-      });
-    } else if (this.territoryChildren) {
-      this.territoryChildren.setRelations([]);
+        this.hasTerritories = territory.children ? territory.children.length > 0 : false;
+        this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
+          this.territoryChildren.setRelations(completeRelation);
+        });
+      } else if (this.territoryChildren) {
+        this.territoryChildren.setRelations([]);
+      }
+
+      if (territory.company_id) {
+        this.companyService.getById(territory.company_id).subscribe((company) => {
+          this.updateCompanyForm(company);
+        });
+      } else {
+        this.updateCompanyForm(
+          new CompanyV2({
+            siret: '',
+            siren: '',
+            nic: '',
+            legal_name: '',
+            company_naf_code: '',
+            establishment_naf_code: '',
+            legal_nature_code: '',
+            legal_nature_label: '',
+            headquarter: false,
+          }),
+        );
+      }
+      this.displayAOMActive = territory.activable === true;
     }
-
-    this.displayAOMActive = territory.activable === true;
   }
 
   get relationDisplayMode(): string {
