@@ -1,4 +1,11 @@
 RewriteEngine On
+
+# Uncomment to switch to maintenance
+#ErrorDocument 503 /manual-503.html
+#RewriteCond %{REQUEST_URI} !^/manual-503.html$
+#RewriteRule ^ - [R=503]
+# End of maintenance mode
+
 # If an existing asset or directory is requested go to it as it is
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d

@@ -4,6 +4,7 @@ import {
   ResultInterface as CreateResultInterface,
 } from '../shared/territory/create.contract';
 import { ParamsInterface as PatchParamsInterface } from '../shared/territory/update.contract';
+import { ParamsInterface as DropdownParamsInterface } from '../shared/territory/dropdown.contract';
 import {
   TerritoryQueryInterface,
   SortEnum,
@@ -14,6 +15,12 @@ import { TerritoryParentChildrenInterface } from '../shared/territory/common/int
 import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
 import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
 import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryDropdownInterface } from '../shared/territory/common/interfaces/TerritoryDropdownInterface';
+
+import {
+  ParamsInterface as FindByInseeParamsInterface,
+  ResultInterface as FindByInseeResultInterface,
+} from '../shared/territory/findByInsees.contract';
 
 export interface TerritoryRepositoryProviderInterface {
   find(
@@ -24,6 +31,7 @@ export interface TerritoryRepositoryProviderInterface {
   ): Promise<TerritoryDbMetaInterface>;
 
   getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]>;
+  dropdown(params: DropdownParamsInterface): Promise<TerritoryDropdownInterface[]>;
   all(
     search?: string,
     levels?: TerritoryLevelEnum[],
@@ -35,9 +43,10 @@ export interface TerritoryRepositoryProviderInterface {
   update(data: PatchParamsInterface): Promise<TerritoryDbMetaInterface>;
   patchContacts(id: number, contacts: ContactsInterface): Promise<TerritoryDbMetaInterface>;
   patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface>;
-  findByInsee(insee: string): Promise<TerritoryDbMetaInterface>;
+  findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface>;
   findByPosition(lon: number, lat: number): Promise<TerritoryDbMetaInterface>;
-  getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface>;
+  getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface[]>;
+  tree(): Promise<any>;
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
@@ -50,7 +59,11 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface> {
+  async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface[]> {
+    throw new Error();
+  }
+
+  async dropdown(params: DropdownParamsInterface): Promise<TerritoryDropdownInterface[]> {
     throw new Error();
   }
 
@@ -86,11 +99,15 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async findByInsee(insee: string): Promise<TerritoryDbMetaInterface> {
+  findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
     throw new Error();
   }
 
   async findByPosition(lon: number, lat: number): Promise<TerritoryDbMetaInterface> {
     throw new Error();
+  }
+
+  async tree(): Promise<any> {
+    throw new Error('Not implemented');
   }
 }

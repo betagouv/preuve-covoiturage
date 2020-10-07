@@ -8,7 +8,7 @@ Bootstrap.createFromPath().then((app) => {
   app
     .boot(command, ...opts)
     .then(() => {
-      console.log('Ready!');
+      console.log('[ilos] framework ready');
     })
     .catch((e) => {
       console.error(e.message);

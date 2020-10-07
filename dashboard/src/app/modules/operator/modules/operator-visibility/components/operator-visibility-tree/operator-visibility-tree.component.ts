@@ -39,7 +39,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     this.initVisibilityForm();
 
     merge(
-      this._commonDataService.territories$.pipe(
+      this._commonDataService.activableTerritories$.pipe(
         filter((territories) => !!territories),
         tap((territories) => {
           this.territories = territories;

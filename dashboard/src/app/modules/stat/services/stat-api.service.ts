@@ -17,6 +17,22 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
   }
 
   paramGetList(params?): JsonRPCParam {
-    return new JsonRPCParam(`${this.method}:stats`, { ...this.defaultListParam, ...params });
+    const finalParams = {
+      ...this.defaultListParam,
+      ...params,
+    };
+
+    if (!finalParams.date) {
+      finalParams.date = {};
+    }
+
+    if (!finalParams.date.start) {
+      const nowMinus1Year = new Date();
+      nowMinus1Year.setMonth(nowMinus1Year.getMonth() - 12);
+      nowMinus1Year.setHours(0, 0, 0, 0);
+      finalParams.date.start = nowMinus1Year.toISOString();
+    }
+
+    return new JsonRPCParam(`${this.method}:stats`, finalParams);
   }
 }

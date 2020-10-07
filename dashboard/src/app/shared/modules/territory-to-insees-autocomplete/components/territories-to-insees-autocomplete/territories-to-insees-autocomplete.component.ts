@@ -71,27 +71,8 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
         this.searchedTerritoryInsees = foundTerritories.data.map((terr) => ({
           territory_literal: terr.name,
           context: terr.name,
-          insees: [terr.insee as string],
+          insees: terr.insees,
         }));
-
-        console.log('this.searchedTerritoryInsees', this.searchedTerritoryInsees);
       });
-
-    /*
-    const apiMethod = 'findMainInsee';
-    const selectedTerritoryInsees = this.territoryInseesControl.value || [];
-    this.inseeAutocompleteService[apiMethod](literal).subscribe(
-      (foundTerritories) =>
-        (this.searchedTerritoryInsees = foundTerritories.filter(
-          (territory) =>
-            // remove selected territories from proposed territories
-            selectedTerritoryInsees.length === 0 ||
-            selectedTerritoryInsees.filter(
-              // filter out elements that are different
-              (selectedTerritory) => _.difference(selectedTerritory.insees, territory.insees).length !== 0,
-            ).length !== 0,
-        )),
-    );
-    */
   }
 }

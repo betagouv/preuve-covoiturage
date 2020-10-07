@@ -99,6 +99,9 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     dayMinus2Year.setMonth(dayMinus2Year.getMonth() - 24);
     dayMinus1Year.setMonth(dayMinus1Year.getMonth() - 12);
 
+    dayMinus1Year.setHours(0, 0, 0, 0);
+    dayMinus2Year.setHours(0, 0, 0, 0);
+
     this.minDate = dayMinus2Year.toISOString();
 
     this.filterForm = this.fb.group(

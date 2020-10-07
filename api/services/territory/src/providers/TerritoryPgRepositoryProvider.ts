@@ -5,6 +5,7 @@ import {
   ParamsInterface as CreateParams,
   ResultInterface as CreateResultInterface,
 } from '../shared/territory/create.contract';
+import { ParamsInterface as DropdownParamsInterface } from '../shared/territory/dropdown.contract';
 
 import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 import {
@@ -13,6 +14,9 @@ import {
 } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
 import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryDropdownInterface } from '../shared/territory/common/interfaces/TerritoryDropdownInterface';
+
+import { TerritoryUIStatus } from '../shared/territory/TerritoryUIStatus';
 
 import {
   TerritoryQueryInterface,
@@ -29,9 +33,15 @@ import {
   allTerritoryQueryFields,
   TerritoryListFilter,
   GeoFieldEnum,
+  RelationFieldEnum,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
+
+import {
+  ParamsInterface as FindByInseeParamsInterface,
+  ResultInterface as FindByInseeResultInterface,
+} from '../shared/territory/findByInsees.contract';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -42,61 +52,76 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
-  async updateViews(): Promise<any> {
-    await this.connection
-      .getClient()
-      .query({ text: 'REFRESH MATERIALIZED VIEW territory.territories_view;', values: [] });
-  }
-
-  async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface> {
-    const filter = typeof id === 'number' ? ` ${id}` : ` ANY('{${id.join(',')}}')`;
-
-    const query = `WITH 
-      base_relation AS(
-          SELECT 
-              tv._id AS base_id,
-              tv.descendants,
-              tv.ancestors
-          FROM territory.territories_view AS tv
-          WHERE tv._id = ${filter}
-      ),
-      children AS(
-          SELECT 
-              tr.parent_territory_id AS base_id,
-              t._id,
-              t.name 
-          FROM territory.territory_relation AS tr
-          INNER JOIN territory.territories AS t 
-            ON (t._id = tr.child_territory_id AND tr.parent_territory_id = ${filter})
-      ),
-      
-      parent AS(
+  async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface[]> {
+    const ids = typeof id === 'number' ? [id] : id;
+    const query = {
+      text: `WITH 
+      base AS (
+        SELECT
+          _id,
+          territory.get_descendants(ARRAY[_id]::int[]) as descendant_ids,
+          territory.get_ancestors(ARRAY[_id]::int[]) as ancestor_ids
+          FROM unnest($1::int[]) as _id
+        ),
+      children AS (
+        SELECT
+          a.base_id AS _id,
+          array_to_json(
+            array_agg(
+              json_build_object(
+                'base_id', a.base_id,
+                '_id', a._id,
+                'name', a.name
+              )
+            )
+          ) as children
+        FROM (
           SELECT
-              tr.child_territory_id AS base_id,
-              t._id,
-              t.name
-          FROM territory.territory_relation AS tr
-          INNER JOIN territory.territories AS t 
-            ON (t._id = tr.parent_territory_id AND tr.child_territory_id = ${filter})
+            tr.parent_territory_id AS base_id,
+            t._id as _id,
+            t.name as name
+          FROM base as b
+          JOIN territory.territory_relation AS tr ON tr.parent_territory_id = b._id
+          JOIN territory.territories AS t ON t._id = tr.child_territory_id
+        ) as a
+        GROUP BY a.base_id
+      ),
+      parent AS (
+        SELECT 
+          a.base_id AS _id,
+          array_to_json(
+            array_agg(
+              json_build_object(
+                'base_id', a.base_id,
+                '_id', a._id,
+                'name', a.name
+              )
+            )
+          ) as parent
+        FROM (
+          SELECT
+            tr.child_territory_id AS base_id,
+            t._id,
+            t.name 
+          FROM base as b
+          JOIN territory.territory_relation AS tr ON tr.child_territory_id = b._id
+          JOIN territory.territories AS t ON t._id = tr.parent_territory_id
+        ) as a
+        GROUP BY a.base_id
       )
       SELECT 
-          base_relation.base_id AS _id,
-          row_to_json(parent) AS parent,
-          to_json(array_remove(
-            array_agg(CASE WHEN children IS NOT NULL THEN children ELSE NULL END), 
-            NULL)
-          ) AS children,
-          base_relation.descendants AS descendant_ids,
-          base_relation.ancestors AS ancestor_ids
-          FROM base_relation
-          LEFT JOIN children ON children.base_id = base_relation.base_id
-          LEFT JOIN parent ON children.base_id = base_relation.base_id
-          GROUP BY parent.*,base_relation.base_id,base_relation.descendants,base_relation.ancestors;
-      
-      `;
+          base.*,
+          parent.parent AS parent,
+          children.children AS children
+          FROM base
+          LEFT JOIN children ON TRUE
+          LEFT JOIN parent ON TRUE;
+      `,
+      values: [ids],
+    };
 
     const result = await this.connection.getClient().query(query);
-    return result.rows.length > 0 ? result.rows[0] : [];
+    return result.rows.length > 0 ? result.rows : [];
   }
 
   async getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]> {
@@ -105,13 +130,13 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       values: [id],
     };
 
-    const territoryUiStatus = await this.connection.getClient().query(getQuery);
+    const territoryUiStatusQueryResult = await this.connection.getClient().query(getQuery);
 
-    if (!territoryUiStatus.rowCount) {
+    if (!territoryUiStatusQueryResult.rowCount) {
       return null;
     }
 
-    const status = territoryUiStatus.rows[0].ui_status;
+    const status: TerritoryUIStatus = territoryUiStatusQueryResult.rows[0].ui_status;
 
     if (!status || !status.ui_selection_state) return null;
 
@@ -182,6 +207,43 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     // return null;
   }
 
+  /**
+   * Searchable / scopable dropdown list (_id, name)
+   * Can be scoped by territories (searches for all descendants)
+   * Default limit is set to 100
+   */
+  async dropdown(params: DropdownParamsInterface): Promise<TerritoryDropdownInterface[]> {
+    const { search, on_territories, limit } = { limit: 100, ...params };
+
+    const where = [];
+    const values = [];
+
+    if (on_territories && on_territories.length) {
+      where.push(`_id = ANY($${where.length + 1})`);
+      values.push(on_territories);
+    }
+
+    if (search) {
+      where.push(`LOWER(name) LIKE $${where.length + 1}`);
+      values.push(`%${search.toLowerCase().trim()}%`);
+    }
+
+    // always add the limit
+    values.push(limit);
+
+    const results = await this.connection.getClient().query({
+      values,
+      text: `
+        SELECT _id, name FROM ${this.table}
+        ${where.length ? ` WHERE ${where.join(' AND ')}` : ''}
+        ORDER BY name ASC
+        LIMIT $${where.length + 1}
+      `,
+    });
+
+    return results.rowCount ? results.rows : [];
+  }
+
   async find(
     query: TerritoryQueryInterface,
     sort: SortEnum[],
@@ -198,7 +260,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     function autoBuildAncestorJoin(): void {
       if (!includeRelation) {
         includeRelation = true;
-        // joins.push('LEFT JOIN territory.territories_view tv ON(tv._id = t._id)');
       }
     }
 
@@ -219,6 +280,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
         case directFields.indexOf(field) !== -1:
           selectsFields.push(`t.${field}`);
           break;
+
         case allTerritoryCodeEnum.indexOf(field) !== -1:
           // case TerritoryCodeEnum.Postcode,
           const tableAliasName = `tc_${field}`;
@@ -226,20 +288,29 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           /* eslint-disable */
           // prettier-ignore
           selectsFields.push(`array(SELECT value from territory.territory_codes as ${tableAliasName} WHERE territory_id = t._id and type = '${field}') as ${field}`);
-        /* eslint-enable */
+          /* eslint-enable */
+          break;
 
+        case field === RelationFieldEnum.Children:
+          selectsFields.push(`(
+            SELECT array_agg(tr.child_territory_id) as children 
+            FROM territory.territory_relation tr 
+            WHERE tr.parent_territory_id = t._id) as children`);
+
+          break;
         case allAncestorRelationFieldEnum.indexOf(field) !== -1:
           // selectsFields.push(`tv.${field}`);
           // autoBuildAncestorJoin();
+
           break;
 
         case allCompanyFieldEnum.indexOf(field) !== -1:
           selectsFields.push(`c.${field}`);
           autoBuildCompanyJoin();
           break;
+
         default:
           throw new Error(`${field} not supported for territory find select builder`);
-          break;
       }
     });
 
@@ -247,6 +318,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     const queryFields: { field: TerritoryQueryEnum; value: any }[] = allTerritoryQueryFields
       .filter((field) => (query as Record<string, any>).hasOwnProperty(field))
       .map((field) => ({ field, value: (query as any)[field] }));
+
     queryFields.forEach((hash) => {
       switch (true) {
         case allTerritoryQueryDirectFields.indexOf(hash.field) !== -1:
@@ -259,9 +331,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
             case TerritoryQueryEnum.HasAncestorId:
               // whereConditions.push(`$${values.length + 1} = ANY (tv.ancestors)`);
               break;
+
             case TerritoryQueryEnum.HasDescendantId:
               // whereConditions.push(`$${values.length + 1} = ANY (tv.descendants)`);
               break;
+
             case TerritoryQueryEnum.HasChildId:
               // whereConditions.push(`$${values.length + 1} = ANY (tv.children)`);
               break;
@@ -315,6 +389,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     if (result.rowCount === 0) {
       return undefined;
     }
+
     const territory = result.rows[0];
 
     // map company to sub object
@@ -366,14 +441,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     const query = {
       text: `
-        SELECT name,t._id, tc.value as insee FROM ${this.table} t
-
+        SELECT name,t._id, array_agg(tc.value) as insees, active FROM ${this.table} t
         LEFT JOIN territory.territory_codes tc ON(tc.territory_id = t._id AND tc.type = 'insee')
-
         WHERE deleted_at IS NULL
-
         ${searchConditionString ? ` AND ${searchConditionString}` : ''}
-        
+        GROUP BY t._id,t.name
         ${limit !== undefined ? ` LIMIT ${limit}` : ''}
         ${skip !== undefined ? ` OFFSET ${skip}` : ''}
       `,
@@ -397,11 +469,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       data.active,
       data.activable,
     ];
-
-    // if (data.density !== undefined) {
-    //   fields.push('density');
-    //   values.push(data.density);
-    // }
 
     if (data.company_id) {
       fields.push('company_id');
@@ -441,8 +508,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     const resultData = result.rows[0];
     await this.updateRelations(resultData._id, data.children);
-
-    // await this.updateViews();
 
     if (data.insee !== undefined && data.insee.length > 0) {
       const query = {
@@ -585,8 +650,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     await this.updateRelations(data._id, data.children, true);
 
-    // await this.updateViews();
-
     return (
       await client.query({
         text: `SELECT * from ${this.table} WHERE _id = $1`,
@@ -671,5 +734,83 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   async findByPosition(lon: number, lat: number): Promise<TerritoryDbMetaInterface> {
     throw new Error('This is not implemented here'); // move to normalization servie
+  }
+
+  async tree(): Promise<any> {
+    const resultRoot = await this.connection.getClient().query({
+      text: 'SELECT _id FROM territory.territories where name = $1',
+      values: ['France'],
+    });
+
+    // prepare flat array of data
+    const query = `
+      SELECT
+        child_territory_id id,
+        parent_territory_id parent,
+        level,
+        name
+      FROM territory.territory_relation tr
+      LEFT JOIN territory.territories tt
+        ON tr.child_territory_id = tt._id
+      ORDER BY level, child_territory_id
+    `;
+
+    const result = await this.connection.getClient().query(query);
+
+    return this.toTree(result.rows, resultRoot.rows[0]._id);
+  }
+
+  private toTree(list, rootId) {
+    const map = {};
+    const roots = [];
+    let node;
+
+    for (let i = 0; i < list.length; i += 1) {
+      map[list[i].id] = i;
+      list[i].children = [];
+    }
+
+    for (let i = 0; i < list.length; i += 1) {
+      node = {
+        name: list[i].name,
+        children: list[i].children,
+      };
+
+      if (list[i].parent === rootId) {
+        roots.push(node);
+      } else {
+        if (list[map[list[i].parent]]) {
+          list[map[list[i].parent]].children.push(node);
+        }
+      }
+    }
+
+    return roots;
+  }
+  async findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
+    const client = this.connection.getClient();
+    const query = {
+      text: `WITH territory_codes AS (
+        SELECT 
+          tc.territory_id,
+          tc.value
+        FROM territory.territory_codes tc 
+        WHERE 
+          tc.type = 'insee' AND 
+          tc.value = ANY($1) 
+        GROUP BY tc.territory_id,tc.value
+        )
+        SELECT 
+          name,
+          _id,
+          value as insee
+        FROM territory_codes as tc
+        INNER JOIN territory.territories as t ON t._id = tc.territory_id; `,
+
+      values: [params.insees],
+    };
+    const result = await client.query(query);
+
+    return result.rows as FindByInseeResultInterface;
   }
 }

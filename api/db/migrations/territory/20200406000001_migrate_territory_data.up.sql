@@ -5,7 +5,7 @@ WITH oldterritory(company_id, created_at, updated_at, deleted_at, level, name, a
     tt.created_at AS created_at,
     tt.updated_at AS updated_at,
     tt.deleted_at AS deleted_at,
-    'epic'::territory.territory_level_enum AS level,
+    'towngroup'::territory.territory_level_enum AS level,
     tt.name AS name,
     TRUE as active,
     TRUE as activable,
@@ -103,7 +103,6 @@ INSERT INTO territory.territory_relation (parent_territory_id, child_territory_i
 SELECT parent_territory_id, child_territory_id FROM territory_insee;
 
 DROP INDEX IF EXISTS territory.territory_operators_territory_id_operator_id_idx;
-
 
 UPDATE territory.territory_operators
 SET territory_id=sub.territory_id

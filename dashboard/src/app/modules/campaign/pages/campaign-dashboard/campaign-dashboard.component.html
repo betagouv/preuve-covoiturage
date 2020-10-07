@@ -6,6 +6,7 @@
         <button
           mat-flat-button
           [routerLink]="'/campaign/create'"
+          [disabled]="displayDemoCaption$ | async"
           class="color-punch"
           *ngIf="canCreateCampaign$ | async"
         >
@@ -28,7 +29,7 @@
         <button
           mat-flat-button
           [routerLink]="'/campaign/create'"
-          [disabled]="displayDemoCaption$"
+          [disabled]="displayDemoCaption$ | async"
           color="primary"
           *ngIf="canCreateCampaign$ | async"
         >

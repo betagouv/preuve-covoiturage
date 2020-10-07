@@ -24,10 +24,8 @@ export class FetchAction extends AbstractAction {
 
   public async handle(siret: ParamsInterface): Promise<ResultInterface> {
     const data = await this.ds.find(siret);
-    console.log('data ', data);
     await this.repository.updateOrCreate(data);
 
-    //console.log('resCompany : ', resCompany);
     return this.repository.findBySiret(siret);
   }
 }

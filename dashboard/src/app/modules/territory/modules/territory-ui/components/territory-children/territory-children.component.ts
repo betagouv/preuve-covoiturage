@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Territory } from '~/core/entities/territory/territory';
 import { TerritorySelectionBlock, IdName, TerritorySelectionUIState } from '../../data/TerritorySelectionBlock';
@@ -26,24 +26,40 @@ export class TerritoryChildrenComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private api: TerritoryApiService) {}
 
+  @Output() hasTerritories = new EventEmitter<boolean>();
+
   setRelations(ui: UiStatusRelationDetails[] = []): void {
     this.territories = [];
     for (const uiRelation of ui) {
       this.territories.push(TerritorySelectionBlock.fromUiRelation(uiRelation));
     }
+    this.territoriesUpdated();
+  }
+
+  territoriesUpdated(): void {
+    this.hasTerritories.emit(this.territories.length > 0);
   }
 
   addTerritory(): void {
-    this.api.getDirectRelation(this.selectedTerritory.id).subscribe((relation) => {
+    this.api.getDirectRelation(this.selectedTerritory.id).subscribe((relations) => {
       // we add current ,all descendant and all ancestors of currently added territory
       // to ignore list in order to avoid cross / double linking
-      const ignoreIds = [...relation.ancestor_ids, ...relation.descendant_ids, relation._id];
+      // console.log('relation', relation);
+
+      const relation = relations[0];
+
+      const ignoreIds = [relation._id];
+      if (relation.ancestor_ids) ignoreIds.push(...relation.ancestor_ids);
+      if (relation.descendant_ids) ignoreIds.push(...relation.descendant_ids);
+
       this.subIgnoredIds.push(...ignoreIds);
       // console.log('subIgnoredIds ', this.subIgnoredIds);
       this.territories.push(new TerritorySelectionBlock(this.selectedTerritory));
       this.subIgnoredIdsGroups.push(ignoreIds);
 
       this.territorySelection.clear();
+
+      this.territoriesUpdated();
     });
   }
 
@@ -61,6 +77,8 @@ export class TerritoryChildrenComponent implements OnInit {
     this.territories.splice(ind, 1);
     this.subIgnoredIdsGroups[ind].forEach((id) => this.subIgnoredIds.splice(this.subIgnoredIds.indexOf(id), 1));
     this.subIgnoredIdsGroups.splice(ind, 1);
+
+    this.territoriesUpdated();
   }
 
   ngOnInit(): void {
@@ -74,9 +92,9 @@ export class TerritoryChildrenComponent implements OnInit {
 
   getFlatSelectedList(list: IdName[] = []): number[] {
     for (const territory of this.territories) {
-      console.log('territory ', territory);
+      // console.log('territory ', territory);
       territory.getFlatSelectedList(list);
-      console.log('list', [...list]);
+      // console.log('list', [...list]);
     }
     return list.map((idname: IdName) => idname.id);
   }

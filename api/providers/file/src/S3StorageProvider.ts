@@ -23,7 +23,13 @@ export class S3StorageProvider implements ProviderInterface {
 
     try {
       const rs = fs.createReadStream(filename);
-      const keyName = path.basename(filename).replace(/[^a-z0-9_-]/g, '') + '.csv';
+      const ext = path.extname(filename);
+      const keyName =
+        path
+          .basename(filename)
+          .replace(ext, '')
+          .replace(/[^a-z0-9_-]/g, '') + ext;
+
       await this.s3.upload({ Bucket: this.bucket, Key: keyName, Body: rs }).promise();
 
       const url = await this.s3.getSignedUrlPromise('getObject', {

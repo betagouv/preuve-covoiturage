@@ -21,6 +21,7 @@ import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
+import { rateLimiter, authRateLimiter, apiRateLimiter, loginRateLimiter } from './middlewares/rateLimiter';
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall } from './helpers/routeMapping';
@@ -91,6 +92,7 @@ export class HttpTransport implements TransportInterface {
   private registerBeforeAllHandlers(): void {
     this.kernel.getContainer().get(SentryProvider);
     this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
+    Sentry.setTag('transport', 'http');
   }
 
   private registerBodyHandler(): void {
@@ -143,6 +145,9 @@ export class HttpTransport implements TransportInterface {
         credentials: true,
       }),
     );
+
+    // rate limiter for all routes
+    this.app.use(rateLimiter());
   }
 
   private registerGlobalMiddlewares(): void {
@@ -244,37 +249,15 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/login',
+      loginRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(makeCall('user:login', req.body))) as RPCResponseType;
 
         if (!response || Array.isArray(response) || 'error' in response) {
           res.status(mapStatusCode(response)).json(this.parseErrorData(response));
         } else {
-          req.session.user = Array.isArray(response) ? response[0].result : response.result;
-
-          if (req.session.user.territory_id) {
-            const operatorList = await this.kernel.handle(
-              makeCall(
-                'territory:listOperator',
-                { territory_id: req.session.user.territory_id },
-                { user: req.session.user },
-              ),
-            );
-            req.session.user.authorizedOperators = get(operatorList, 'result', []);
-
-            const descendantTerritories = await this.kernel.handle(
-              makeCall(
-                'territory:getParentChildren',
-                { _id: req.session.user.territory_id },
-                { user: req.session.user },
-              ),
-            );
-
-            req.session.user.authorizedTerritories = [
-              req.session.user.territory_id,
-              ...get(descendantTerritories, 'result.descendant_ids', []),
-            ];
-          }
+          const user = Array.isArray(response) ? response[0].result : response.result;
+          req.session.user = { ...user, ...(await this.getTerritoryInfos(user)) };
 
           this.send(res, response);
         }
@@ -285,7 +268,7 @@ export class HttpTransport implements TransportInterface {
      * Get the user profile (reads from the session rather than the database)
      * @see user:me call for database read
      */
-    this.app.get('/profile', (req, res, next) => {
+    this.app.get('/profile', authRateLimiter(), (req, res, next) => {
       if (!('user' in req.session)) {
         throw new UnauthorizedException();
       }
@@ -296,7 +279,7 @@ export class HttpTransport implements TransportInterface {
     /**
      * Kill the current sesssion
      */
-    this.app.post('/logout', (req, res, next) => {
+    this.app.post('/logout', authRateLimiter(), (req, res, next) => {
       req.session.destroy((err) => {
         if (err) {
           throw new Error(err.message);
@@ -310,6 +293,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/reset-password',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle({
           id: 1,
@@ -327,6 +311,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/check-token',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle({
           id: 1,
@@ -344,6 +329,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/change-password',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle({
           id: 1,
@@ -361,6 +347,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/confirm-email',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle({
           id: 1,
@@ -584,15 +571,18 @@ export class HttpTransport implements TransportInterface {
     // register the POST route to /rpc
     this.app.post(
       endpoint,
+      apiRateLimiter(),
       asyncHandler(
         async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
           // inject the req.session.user to context in the body
           const isBatch = Array.isArray(req.body);
-          const user = get(req, 'session.user', null);
+          let user = get(req, 'session.user', null);
 
           if (!user) {
             throw new UnauthorizedException();
           }
+
+          user = { ...user, ...(await this.getTerritoryInfos(user)) };
 
           // nest the params and _context and inject the session user
           // from { id: 1, jsonrpc: '2.0', method: 'a:b' params: {} }
@@ -678,5 +668,27 @@ export class HttpTransport implements TransportInterface {
     } catch (e) {}
 
     return response;
+  }
+
+  /**
+   * Fetch additional data for territories
+   */
+  private async getTerritoryInfos(user): Promise<any> {
+    if (user.territory_id) {
+      const operatorList = await this.kernel.handle(
+        makeCall('territory:listOperator', { territory_id: user.territory_id }, { user: user }),
+      );
+      user.authorizedOperators = get(operatorList, 'result', []);
+
+      const descendantTerritories = await this.kernel.handle(
+        makeCall('territory:getParentChildren', { _id: user.territory_id }, { user: user }),
+      );
+
+      user.authorizedTerritories = [user.territory_id, ...get(descendantTerritories, 'result.0.descendant_ids', [])];
+
+      return user;
+    }
+
+    return {};
   }
 }

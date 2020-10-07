@@ -5,7 +5,7 @@ export interface ParamsInterface {
   _ids?: number;
 }
 
-export type ResultInterface = TerritoryParentChildrenInterface;
+export type ResultInterface = TerritoryParentChildrenInterface[];
 
 export const handlerConfig = {
   service: 'territory',

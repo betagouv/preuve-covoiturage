@@ -42,6 +42,9 @@ export class LoginUserAction extends AbstractAction {
       default:
     }
 
+    // update last_login timestamp
+    await this.userRepository.touchLastLogin(user._id);
+
     return user;
   }
 }

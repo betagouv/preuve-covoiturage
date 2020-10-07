@@ -2,6 +2,7 @@
   <form class="territoryForm" [formGroup]="territoryForm">
     <div *ngIf="fullFormMode">
       <h2>Informations générales</h2>
+
       <mat-form-field class="name" appearance="outline">
         <mat-label>Nom</mat-label>
         <input matInput formControlName="name" required />
@@ -22,13 +23,25 @@
         <mat-radio-button value="geo">Personnalisé (contour géographique)</mat-radio-button>
       </mat-radio-group>
 
-      <app-territory-children [hidden]="relationDisplayMode !== 'parent'"></app-territory-children>
+      <app-territory-children
+        [hidden]="relationDisplayMode !== 'parent'"
+        (hasTerritories)="hasTerritoriesChanged($event)"
+      ></app-territory-children>
 
       <div *ngIf="relationDisplayMode === 'insee'">
-        <h4>Insees(séparé par des virgules)</h4>
+        <h4>Codes INSEE (séparés par des virgules)</h4>
         <mat-form-field class="relation-textarea" appearance="outline">
-          <mat-label>Code insees</mat-label>
+          <mat-label>Codes INSEE *</mat-label>
           <textarea matInput formControlName="insee"></textarea>
+          <mat-error *ngIf="territoryForm.controls.insee.hasError('required')"
+            >Les codes INSEE sont obligatoires.</mat-error
+          >
+          <mat-error
+            *ngIf="
+              !territoryForm.controls.insee.hasError('required') && territoryForm.controls.insee.hasError('pattern')
+            "
+            >Les codes sont au format INSEE (5 chiffres) et doivent être séparés par des virgules</mat-error
+          >
         </mat-form-field>
       </div>
       <div *ngIf="relationDisplayMode === 'geo'">
@@ -41,7 +54,12 @@
 
         <div class="subtext">
           Format geojson avec des données de type MultiPolygon
-          <a href="https://fr.wikipedia.org/wiki/GeoJSON#Objets_g%C3%A9om%C3%A9triques" target="_blank">ici</a>
+          <a
+            href="https://fr.wikipedia.org/wiki/GeoJSON#Objets_g%C3%A9om%C3%A9triques"
+            target="_blank"
+            rel="noopener noreferrer"
+            >ici</a
+          >
         </div>
       </div>
 
@@ -57,57 +75,62 @@
 
       <mat-checkbox formControlName="activable">AOM</mat-checkbox>
       <mat-checkbox formControlName="active" [hidden]="!displayAOMActive">AOM active</mat-checkbox>
+      <div [hidden]="!activable">
+        <h3>Structure</h3>
 
-      <h3>Structure</h3>
+        <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
 
-      <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
+        <h3>Adresse</h3>
 
-      <h3>Adresse</h3>
-
-      <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
+        <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
+      </div>
     </div>
-    <h2>Contacts et responsables</h2>
 
-    <div class="contacts">
-      <div>
-        <h3>Délégué à la protection des données</h3>
+    <div [hidden]="!activable">
+      <h2>Contacts et responsables</h2>
+      <div class="contacts">
+        <div>
+          <h3>Délégué à la protection des données</h3>
 
-        <app-form-contact
-          [parentForm]="territoryForm.get('contacts').get('gdpr_dpo')"
-          [showPhoneNumber]="false"
-        ></app-form-contact>
-      </div>
+          <app-form-contact
+            [parentForm]="territoryForm.get('contacts').get('gdpr_dpo')"
+            [showPhoneNumber]="false"
+          ></app-form-contact>
+        </div>
 
-      <div>
-        <h3>Responsable du traitement</h3>
+        <div>
+          <h3>Responsable du traitement</h3>
 
-        <app-form-contact
-          [parentForm]="territoryForm.get('contacts').get('gdpr_controller')"
-          [showPhoneNumber]="false"
-        ></app-form-contact>
-      </div>
+          <app-form-contact
+            [parentForm]="territoryForm.get('contacts').get('gdpr_controller')"
+            [showPhoneNumber]="false"
+          ></app-form-contact>
+        </div>
 
-      <div>
-        <h3>Responsable technique</h3>
+        <div>
+          <h3>Responsable technique</h3>
 
-        <app-form-contact [parentForm]="territoryForm.get('contacts').get('technical')"></app-form-contact>
+          <app-form-contact [parentForm]="territoryForm.get('contacts').get('technical')"></app-form-contact>
+        </div>
       </div>
     </div>
     <div>
-      <button
-        *ngIf="authService.hasAnyPermission(['territory.update'])"
-        type="submit"
-        class="large"
-        mat-flat-button
-        (click)="onSubmit()"
-        [disabled]="!territoryForm.valid"
-        color="primary"
-      >
-        {{ !!editedId ? 'Mettre à jour les informations' : 'Créer' }}
-      </button>
-      <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">
-        Fermer
-      </button>
+      <div>
+        <button
+          *ngIf="authService.hasAnyPermission(['territory.update'])"
+          type="submit"
+          class="large"
+          mat-flat-button
+          (click)="onSubmit()"
+          [disabled]="!territoryForm.valid || (!hasTerritories && relationDisplayMode === 'parent')"
+          color="primary"
+        >
+          {{ !!editedId ? 'Mettre à jour les informations' : 'Créer' }}
+        </button>
+        <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">
+          Fermer
+        </button>
+      </div>
     </div>
   </form>
 </div>

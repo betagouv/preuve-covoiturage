@@ -23,6 +23,7 @@ import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
 import { GeoFetchCommand } from './commands/GeoFetchCommand';
 import { SyncTerritoryInseeCommand } from './commands/SyncTerritoryInseeCommand';
 import { SyncRegionDepCommand } from './commands/SyncRegionDepCommand';
+import { SyncLegacyProductionCommand } from './commands/SyncLegacyProductionCommand';
 
 @kernel({
   config,
@@ -48,6 +49,7 @@ import { SyncRegionDepCommand } from './commands/SyncRegionDepCommand';
     SyncTerritoryInseeCommand,
     SyncRegionDepCommand,
     GeoFetchCommand,
+    SyncLegacyProductionCommand,
     Commands.CallCommand,
   ],
 })

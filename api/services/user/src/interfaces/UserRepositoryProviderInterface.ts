@@ -2,9 +2,11 @@ import { PaginationParamsInterface } from '../shared/common/interfaces/Paginatio
 import { UserCreateInterface } from '../shared/user/common/interfaces/UserCreateInterface';
 import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchInterface';
 import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
+import { UserLastLoginInterface } from '../shared/user/common/interfaces/UserLastLoginInterface';
 import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
 import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
 import { UserPatchInterfaceBy } from '../shared/user/common/interfaces/UserPatchInterfaceBy';
+import { ResultInterface as HasUsersResultsInterface } from '../shared/user/hasUsers.contract';
 
 export interface UserRepositoryProviderInterface {
   create(data: UserCreateInterface): Promise<UserFindInterface>;
@@ -17,15 +19,19 @@ export interface UserRepositoryProviderInterface {
   delete(_id: number): Promise<boolean>;
   deleteByOperator(_id: number, operator_id: number): Promise<boolean>;
   deleteByTerritory(_id: number, territory_id: number): Promise<boolean>;
+  deleteAssociated(key: string, value: number): Promise<void>;
 
   find(_id: number): Promise<UserFindInterface | undefined>;
   findByOperator(_id: number, operator_id: number): Promise<UserFindInterface | undefined>;
   findByTerritory(_id: number, territory_id: number): Promise<UserFindInterface | undefined>;
   findByEmail(email: string): Promise<UserFindInterface | undefined>;
+  findInactive(months?: number): Promise<UserLastLoginInterface[]>;
 
   patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface>;
   patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface>;
   patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface>;
+
+  touchLastLogin(_id: number): Promise<void>;
 }
 
 export abstract class UserRepositoryProviderInterfaceResolver implements UserRepositoryProviderInterface {
@@ -52,6 +58,10 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
     throw new Error();
   }
 
+  async deleteAssociated(key: string, value: number): Promise<void> {
+    throw new Error();
+  }
+
   async find(_id: number): Promise<UserFindInterface | undefined> {
     throw new Error();
   }
@@ -65,6 +75,10 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
   }
 
   async findByEmail(email: string): Promise<UserFindInterface | undefined> {
+    throw new Error();
+  }
+
+  async findInactive(months?: number): Promise<UserLastLoginInterface[]> {
     throw new Error();
   }
 
@@ -84,6 +98,12 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
     throw new Error();
   }
   async checkForDoubleEmailAndFail(email: string, userId = -1): Promise<void> {
+    throw new Error();
+  }
+  async hasUsers(): Promise<HasUsersResultsInterface> {
+    throw new Error();
+  }
+  async touchLastLogin(_id: number): Promise<void> {
     throw new Error();
   }
 }

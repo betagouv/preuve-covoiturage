@@ -15,35 +15,12 @@ import {
   middlewares: [
     ['validate', alias],
     [
-      'scopeIt',
-      [
-        ['trip.export'],
-        [
-          (params, context): string => {
-            const territory_ids = params.territory_id || [context.call.user.territory_id];
-            const authorizedTerritories = context.call.user.authorizedTerritories;
-            if (
-              territory_ids &&
-              territory_ids.length > 0 &&
-              authorizedTerritories &&
-              authorizedTerritories.length > 0 &&
-              territory_ids.filter((id) => authorizedTerritories.indexOf(id) < 0).length === 0
-            ) {
-              return 'territory.trip.export';
-            }
-          },
-          (params, context): string => {
-            if (
-              'operator_id' in params &&
-              context.call.user.operator_id &&
-              params.operator_id.length === 1 &&
-              params.operator_id[0] === context.call.user.operator_id
-            ) {
-              return 'operator.trip.export';
-            }
-          },
-        ],
-      ],
+      'scopeToGroup',
+      {
+        global: 'trip.export',
+        territory: 'territory.trip.export',
+        operator: 'operator.trip.export',
+      },
     ],
   ],
 })
@@ -81,6 +58,7 @@ export class ExportAction extends Action {
       },
     } as unknown) as BuildParamsInterface;
 
+    // call trip:buildExport
     await this.kernel.notify<BuildParamsInterface>(buildSignature, buildParams, {
       channel: {
         service: 'trip',
