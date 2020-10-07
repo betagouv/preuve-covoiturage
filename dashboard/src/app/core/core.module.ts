@@ -19,6 +19,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { ServiceUnavailableComponent } from './components/service-unavailable/service-unavailable.component';
 import { SentryErrorHandler } from './services/sentry-error-handler.service';
 
+
 @NgModule({
   declarations: [
     AuthenticatedLayoutComponent,

@@ -24,6 +24,7 @@ import { Observable } from 'rxjs';
 export class TripExportComponent extends DestroyObservable implements OnInit {
   isExporting = false;
   minDate = moment().subtract(1, 'year').toDate();
+
   exportFilterForm: FormGroup;
   operatorFieldVisible: Observable<boolean>;
   operatorFieldVisibleOperatorOnly: Observable<boolean>;

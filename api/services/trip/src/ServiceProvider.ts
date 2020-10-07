@@ -8,6 +8,7 @@ import { CryptoProvider } from '@pdc/provider-crypto';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { ChannelTransportMiddleware, ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
+
 import { binding as listBinding } from './shared/trip/list.schema';
 import { binding as searchCountBinding } from './shared/trip/searchcount.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
@@ -29,6 +30,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
   config,
   providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider, CryptoProvider],
   validator: [listBinding, searchCountBinding, statsBinding, exportBinding, buildExportBinding],
+
   middlewares: [
     ['validate', ValidatorMiddleware],
     ['channel.service.only', ChannelServiceWhitelistMiddleware],

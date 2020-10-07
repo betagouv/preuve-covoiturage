@@ -206,6 +206,7 @@ export class BuildExportAction extends Action {
       zip.writeZip(zipname);
 
       const { url, password } = await this.file.copy(zipname);
+
       const email = params.from.email;
       const fullname = params.from.fullname;
 
