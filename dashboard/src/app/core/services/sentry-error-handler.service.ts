@@ -16,13 +16,19 @@ export class SentryErrorHandler extends ErrorHandler {
   }
 
   handleError(error) {
-    captureException(error.originalError || error, {
-      extra: error,
-      tags: {
-        environment: environment.name,
-        production_mode: environment.production ? 'yes' : 'no',
-      },
-    });
+    // console.warn('handleError', error);
+
+    try {
+      captureException(error.originalError || new Error(error.message), {
+        extra: error,
+        tags: {
+          environment: environment.name,
+          production_mode: environment.production ? 'yes' : 'no',
+        },
+      });
+    } catch (err) {
+      console.warn('capture exception failed for ', error);
+    }
 
     // throw errors in the console only if local
     if (!environment.production) {

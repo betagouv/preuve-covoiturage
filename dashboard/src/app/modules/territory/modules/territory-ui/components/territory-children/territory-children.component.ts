@@ -48,11 +48,10 @@ export class TerritoryChildrenComponent implements OnInit {
 
       const relation = relations[0];
 
-      const ignoreIds = [
-        ...relation.ancestor_ids,
-        ...(relation.descendant_ids ? relation.descendant_ids : []),
-        relation._id,
-      ];
+      const ignoreIds = [relation._id];
+      if (relation.ancestor_ids) ignoreIds.push(...relation.ancestor_ids);
+      if (relation.descendant_ids) ignoreIds.push(...relation.descendant_ids);
+
       this.subIgnoredIds.push(...ignoreIds);
       // console.log('subIgnoredIds ', this.subIgnoredIds);
       this.territories.push(new TerritorySelectionBlock(this.selectedTerritory));
