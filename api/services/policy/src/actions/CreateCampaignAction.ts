@@ -33,7 +33,7 @@ export class CreateCampaignAction extends AbstractAction {
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     if (params.parent_id) {
       try {
-        this.campaignRepository.find(params.parent_id);
+        await this.campaignRepository.find(params.parent_id);
       } catch (e) {
         throw new InvalidParamsException(`Parent ${params.parent_id} does not exist`);
       }
