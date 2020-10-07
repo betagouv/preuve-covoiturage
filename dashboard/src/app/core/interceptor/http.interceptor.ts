@@ -37,10 +37,6 @@ export class HttpApiInterceptor implements HttpInterceptor {
             this.toastr.error('Connexion au serveur interrompue');
             break;
 
-          case 401:
-            // noop
-            break;
-
           case 429:
             /**
              * Display a waiting time in seconds to the user
