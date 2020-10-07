@@ -9,8 +9,8 @@ import {
   identifier: TerritoryProviderInterfaceResolver,
 })
 export class TerritoryProvider implements TerritoryProviderInterface {
-  protected readonly pivotTable = 'territory.insee';
-  protected readonly geoTable = 'common.insee';
+  protected readonly codeTable = 'territory.territory_codes';
+  protected readonly geoTable = 'territory.territories';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -19,8 +19,8 @@ export class TerritoryProvider implements TerritoryProviderInterface {
       const result = await this.connection.getClient().query({
         text: `
           SELECT territory_id
-          FROM ${this.pivotTable}
-          WHERE _id = $1
+          FROM ${this.codeTable}
+          WHERE type = 'insee' AND value = $1::varchar
           LIMIT 1
         `,
         values: [insee],
@@ -38,10 +38,11 @@ export class TerritoryProvider implements TerritoryProviderInterface {
     try {
       const result = await this.connection.getClient().query({
         text: `
-          SELECT territory_id
-          FROM ${this.pivotTable}
-          NATURAL JOIN ${this.geoTable}
-          WHERE ST_Intersects(ST_MakePoint($1, $2), geo)
+          SELECT _id
+          FROM ${this.geoTable}
+          WHERE geo IS NOT NULL AND 
+          ST_INTERSECTS(geo, ST_POINT($1::float, $2::float))
+          ORDER BY ST_Area(geo, true) ASC
           LIMIT 1
         `,
         values: [lon, lat],

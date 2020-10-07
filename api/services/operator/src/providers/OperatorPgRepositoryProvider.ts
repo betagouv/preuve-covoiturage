@@ -9,7 +9,11 @@ import {
   OperatorRepositoryProviderInterfaceResolver,
 } from '../interfaces/OperatorRepositoryProviderInterface';
 
-import { signature as companyFindSignature } from '../shared/company/find.contract';
+import {
+  signature as companyFindSignature,
+  ParamsInterface as CompanyParamsInterface,
+  ResultInterface as CompanyResultInterface,
+} from '../shared/company/find.contract';
 import { signature as companyFetchSignature } from '../shared/company/fetch.contract';
 
 @provider({
@@ -39,12 +43,28 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
     const operator = result.rows[0];
     if (operator.siret) {
-      operator.company = await this.kernel.call(
+      operator.company = await this.kernel.call<CompanyParamsInterface, CompanyResultInterface>(
         companyFindSignature,
-        { siret: operator.siret },
+        { query: { siret: operator.siret } },
         { channel: { service: 'operator' }, call: { user: { permissions: ['company.find'] } } },
       );
     }
+
+    return result.rows[0];
+  }
+
+  async quickFind(_id: number): Promise<{ uuid: string; name: string }> {
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT uuid, name FROM ${this.table}
+        WHERE _id = $1
+        AND deleted_at IS NULL
+        LIMIT 1
+      `,
+      values: [_id],
+    });
+
+    if (!result.rowCount) throw new NotFoundException(`Operator with _id (${_id}) not found`);
 
     return result.rows[0];
   }
@@ -54,6 +74,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       text: `
         SELECT
           _id,
+          uuid,
           name,
           legal_name,
           siret,

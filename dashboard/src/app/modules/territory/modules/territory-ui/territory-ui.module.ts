@@ -17,6 +17,16 @@ import { TerritoryFilterComponent } from './components/territory-filter/territor
 import { TerritoryListViewComponent } from './components/territory-list-view/territory-list-view.component';
 import { TerritoryViewComponent } from './components/territory-view/territory-view.component';
 import { TerritoryDetailsComponent } from './components/territory-details/territory-details.component';
+import { TerritoryChildrenComponent } from './components/territory-children/territory-children.component';
+
+// eslint-disable-next-line
+import { TerritorySelectionBlockComponent } from './components/territory-selection-block/territory-selection-block.component';
+
+// eslint-disable-next-line
+import { TerritorySelectionGroupComponent } from './components/territory-selection-group/territory-selection-group.component';
+
+// eslint-disable-next-line
+import { TerritorySelectionCheckboxComponent } from './components/territory-selection-checkbox/territory-selection-checkbox.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +38,10 @@ import { TerritoryDetailsComponent } from './components/territory-details/territ
     TerritoryListViewComponent,
     TerritoryViewComponent,
     TerritoryDetailsComponent,
+    TerritoryChildrenComponent,
+    TerritorySelectionBlockComponent,
+    TerritorySelectionGroupComponent,
+    TerritorySelectionCheckboxComponent,
   ],
   imports: [
     CommonModule,

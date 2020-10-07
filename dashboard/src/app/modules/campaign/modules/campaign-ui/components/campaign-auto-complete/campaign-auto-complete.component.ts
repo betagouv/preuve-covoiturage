@@ -8,6 +8,7 @@ import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-campaign-auto-complete',
@@ -24,7 +25,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
 
   @ViewChild('campaignInput', { static: false }) campaignInput: ElementRef;
 
-  constructor(private commonDataService: CommonDataService) {
+  constructor(private commonDataService: CommonDataService, private auth: AuthenticationService) {
     super();
   }
 
@@ -65,12 +66,16 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   }
 
   private initCampaigns(): void {
+    const userTerritoryId = this.auth.user && this.auth.user.territory_id ? this.auth.user.territory_id : null;
+
     this.commonDataService.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
       this.campaigns = campaigns
         ? campaigns
             .filter(
               (campaign) =>
-                campaign.status === CampaignStatusEnum.VALIDATED || campaign.status === CampaignStatusEnum.ARCHIVED,
+                ((!userTerritoryId || userTerritoryId === (campaign as Campaign).territory_id) &&
+                  campaign.status === CampaignStatusEnum.VALIDATED) ||
+                campaign.status === CampaignStatusEnum.ARCHIVED,
             )
             .map((campaign: Campaign) => ({
               _id: campaign._id,

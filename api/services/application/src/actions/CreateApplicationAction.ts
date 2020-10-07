@@ -26,7 +26,7 @@ export class CreateApplicationAction extends AbstractAction {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const data = setOwner<RepositoryInterface>('operator', params, context);
 
-    data.permissions = data.permissions || ['journey.create'];
+    data.permissions = data.permissions || ['journey.create', 'certificate.create', 'certificate.download'];
 
     return this.applicationRepository.create(data);
   }

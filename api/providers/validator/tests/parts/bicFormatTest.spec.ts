@@ -7,7 +7,7 @@ import { ValidatorInterface } from '../../src';
 export function bicFormatTest(getProvider, FakeObject: NewableType<any>): (this: Suite) => void {
   let provider: ValidatorInterface;
 
-  return function(): void {
+  return function (): void {
     before(async () => {
       const schema = {
         $schema: 'http://json-schema.org/draft-07/schema#',

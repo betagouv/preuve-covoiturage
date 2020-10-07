@@ -9,9 +9,12 @@
 
     <div class="CampaignAdminList-header" [hidden]="!campaigns">
       <mat-button-toggle-group [(ngModel)]="selectedStatus" name="userGroup" aria-label="Groupes d'utilisateurs">
-        <mat-button-toggle *ngFor="let status of allStatus" [value]="status">{{
+        <!-- <mat-button-toggle *ngFor="let status of allStatus" [value]="status">{{
           getFrenchStatus(status)
-        }}</mat-button-toggle>
+        }}</mat-button-toggle> -->
+        <mat-button-toggle value="current">En cours</mat-button-toggle>
+        <mat-button-toggle value="draft">Brouillons</mat-button-toggle>
+        <mat-button-toggle value="outdated">Terminées</mat-button-toggle>
       </mat-button-toggle-group>
 
       <form [formGroup]="searchFilters">
@@ -27,7 +30,7 @@
 
     <div [hidden]="!displayData">
       <app-campaign-table [status]="selectedStatus" [campaigns]="campaignsToShow"></app-campaign-table>
-      <mat-paginator [length]="countCampaigns" [pageSize]="PAGE_SIZE"></mat-paginator>
+      <mat-paginator [length]="countCampaigns" [pageSize]="PAGE_SIZE" (page)="paginationUpdate()"></mat-paginator>
     </div>
 
     <div *ngIf="!displayData" class="CampaignsList-notfound">

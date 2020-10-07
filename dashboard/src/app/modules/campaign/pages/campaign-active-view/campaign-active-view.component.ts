@@ -62,10 +62,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
   private loadCampaign(campaignId: number): void {
     this._campaignStoreService
       .selectEntityByIdFromList(campaignId)
-      .pipe(
-        take(1),
-        takeUntil(this.destroy$),
-      )
+      .pipe(take(1), takeUntil(this.destroy$))
       .subscribe(
         (campaign: Campaign) => {
           this.campaignUx = campaign.toFormValues();

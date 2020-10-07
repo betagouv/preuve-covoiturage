@@ -26,6 +26,7 @@ import { ApiComponent } from './pages/api/api.component';
 import { AllTerritoriesComponent } from './pages/all-territories/all-territories.component';
 import { AllOperatorsComponent } from './pages/all-operators/all-operators.component';
 import { OperatorVisibilityComponent } from './pages/operator-visibility/operator-visibility.component';
+import { CertificateModule } from '../certificate/certificate.module';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { OperatorVisibilityComponent } from './pages/operator-visibility/operato
     SharedModule,
     OperatorUiModule,
     OperatorModule,
+    CertificateModule,
     ApplicationUiModule,
     MatPaginatorModule,
     OperatorVisibilityModule,

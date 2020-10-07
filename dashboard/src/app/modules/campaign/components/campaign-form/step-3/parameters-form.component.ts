@@ -41,15 +41,19 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     this.initRetributionFormArray();
     this.initRestrictionFormArray();
     // check that the start date is correct
-    if (
-      this.campaignForm.get('start').value &&
-      moment()
-        .add(1, 'days')
-        .isAfter(this.campaignForm.get('start').value)
-    ) {
+    if (this.campaignForm.get('start').value && moment().add(1, 'days').isAfter(this.campaignForm.get('start').value)) {
       this.campaignForm.controls.start.markAsTouched();
       this.campaignForm.controls.start.updateValueAndValidity();
     }
+
+    // update first staggered element min distance to global min distance when it is changed
+    ((this.campaignForm.controls['filters'] as FormGroup).controls[
+      'distance_range'
+    ] as FormControl).valueChanges.subscribe((val) => {
+      if (this.retributionsFormArray.controls[0]) {
+        this.retributionsFormArray.controls[0].patchValue({ min: val[0] });
+      }
+    });
   }
 
   get controls(): { [key: string]: AbstractControl } {

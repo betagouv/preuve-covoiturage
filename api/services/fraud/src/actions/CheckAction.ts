@@ -8,6 +8,7 @@ import {
 } from '../shared/carpool/updateStatus.contract';
 import { CheckEngine } from '../engine/CheckEngine';
 import { UncompletedTestException } from '../exceptions/UncompletedTestException';
+import { FraudCheckRepositoryProviderInterfaceResolver, FraudCheckStatusEnum } from '../interfaces';
 
 /*
  * Start a check on an acquisition_id
@@ -17,20 +18,29 @@ import { UncompletedTestException } from '../exceptions/UncompletedTestException
   middlewares: [['channel.service.only', [handlerConfig.service]]],
 })
 export class CheckAction extends Action {
-  constructor(private engine: CheckEngine, private kernel: KernelInterfaceResolver) {
+  constructor(
+    private engine: CheckEngine,
+    private kernel: KernelInterfaceResolver,
+    private repository: FraudCheckRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    await this.engine.run(params.acquisition_id, params.methods);
-    await this.notifyScore(params.acquisition_id);
+    const input = await this.repository.get(params.acquisition_id);
+    const results = await this.engine.run(params.acquisition_id, input.data || []);
+    await this.repository.createOrUpdate(results);
+
+    if (results.status === FraudCheckStatusEnum.Done) {
+      await this.notifyScore(params.acquisition_id, results.karma);
+    }
+
     return;
   }
 
-  protected async notifyScore(acquisition_id: number): Promise<void> {
+  protected async notifyScore(acquisition_id: number, score: number): Promise<void> {
     try {
-      const score = await this.engine.getGlobalScore(acquisition_id);
-      if (score > 80) {
+      if (score > 0.8) {
         this.kernel.notify<UpdateStatusParamsInterface>(
           updateStatusSignature,
           {

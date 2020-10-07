@@ -15,8 +15,9 @@
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
-    "@ilos/core": "~0",
     "@ilos/common": "~0",
-    "@sentry/node": "^5.6.2"
+    "@ilos/core": "~0",
+    "@sentry/node": "^5.6.2",
+    "lodash": "^4.17.20"
   }
 }

@@ -23,10 +23,7 @@
   </mat-chip-list>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTerritoryInseeSelect($event)">
     <mat-option *ngFor="let territory of searchedTerritoryInsees" [value]="territory">
-      <span title="{{ territory.territory_literal }} ( {{ territory.context }} )"
-        >{{ territory.territory_literal }}
-        <span class="inseeAutocomplete-result-details">( {{ territory.context }} )</span></span
-      >
+      <span [title]="territory.territory_literal">{{ territory.territory_literal }} </span>
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

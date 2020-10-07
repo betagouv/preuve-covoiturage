@@ -14,24 +14,24 @@ function QRCodeModel(typeNumber, errorCorrectLevel) {
 }
 
 QRCodeModel.prototype = {
-  addData: function(data) {
+  addData: function (data) {
     const newData = new QR8bitByte(data);
     this.dataList.push(newData);
     this.dataCache = null;
   },
-  isDark: function(row, col) {
+  isDark: function (row, col) {
     if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
       throw new Error(row + ',' + col);
     }
     return this.modules[row][col];
   },
-  getModuleCount: function() {
+  getModuleCount: function () {
     return this.moduleCount;
   },
-  make: function() {
+  make: function () {
     this.makeImpl(false, this.getBestMaskPattern());
   },
-  makeImpl: function(test, maskPattern) {
+  makeImpl: function (test, maskPattern) {
     this.moduleCount = this.typeNumber * 4 + 17;
     this.modules = new Array(this.moduleCount);
     for (let row = 0; row < this.moduleCount; row++) {
@@ -54,7 +54,7 @@ QRCodeModel.prototype = {
     }
     this.mapData(this.dataCache, maskPattern);
   },
-  setupPositionProbePattern: function(row, col) {
+  setupPositionProbePattern: function (row, col) {
     for (let r = -1; r <= 7; r++) {
       if (row + r <= -1 || this.moduleCount <= row + r) continue;
       for (let c = -1; c <= 7; c++) {
@@ -71,7 +71,7 @@ QRCodeModel.prototype = {
       }
     }
   },
-  getBestMaskPattern: function() {
+  getBestMaskPattern: function () {
     let minLostPoint = 0;
     let pattern = 0;
     for (let i = 0; i < 8; i++) {
@@ -84,7 +84,7 @@ QRCodeModel.prototype = {
     }
     return pattern;
   },
-  createMovieClip: function(target_mc, instance_name, depth) {
+  createMovieClip: function (target_mc, instance_name, depth) {
     const qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
     const cs = 1;
     this.make();
@@ -105,7 +105,7 @@ QRCodeModel.prototype = {
     }
     return qr_mc;
   },
-  setupTimingPattern: function() {
+  setupTimingPattern: function () {
     for (let r = 8; r < this.moduleCount - 8; r++) {
       if (this.modules[r][6] != null) {
         continue;
@@ -119,7 +119,7 @@ QRCodeModel.prototype = {
       this.modules[6][c] = c % 2 == 0;
     }
   },
-  setupPositionAdjustPattern: function() {
+  setupPositionAdjustPattern: function () {
     const pos = QRUtil.getPatternPosition(this.typeNumber);
     for (let i = 0; i < pos.length; i++) {
       for (let j = 0; j < pos.length; j++) {
@@ -140,7 +140,7 @@ QRCodeModel.prototype = {
       }
     }
   },
-  setupTypeNumber: function(test) {
+  setupTypeNumber: function (test) {
     const bits = QRUtil.getBCHTypeNumber(this.typeNumber);
     for (var i = 0; i < 18; i++) {
       var mod = !test && ((bits >> i) & 1) == 1;
@@ -151,7 +151,7 @@ QRCodeModel.prototype = {
       this.modules[(i % 3) + this.moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
     }
   },
-  setupTypeInfo: function(test, maskPattern) {
+  setupTypeInfo: function (test, maskPattern) {
     const data = (this.errorCorrectLevel << 3) | maskPattern;
     const bits = QRUtil.getBCHTypeInfo(data);
     for (var i = 0; i < 15; i++) {
@@ -176,7 +176,7 @@ QRCodeModel.prototype = {
     }
     this.modules[this.moduleCount - 8][8] = !test;
   },
-  mapData: function(data, maskPattern) {
+  mapData: function (data, maskPattern) {
     let inc = -1;
     let row = this.moduleCount - 1;
     let bitIndex = 7;
@@ -214,7 +214,7 @@ QRCodeModel.prototype = {
 };
 QRCodeModel.PAD0 = 0xec;
 QRCodeModel.PAD1 = 0x11;
-QRCodeModel.createData = function(typeNumber, errorCorrectLevel, dataList) {
+QRCodeModel.createData = function (typeNumber, errorCorrectLevel, dataList) {
   const rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
   const buffer = new QRBitBuffer();
   for (var i = 0; i < dataList.length; i++) {
@@ -248,7 +248,7 @@ QRCodeModel.createData = function(typeNumber, errorCorrectLevel, dataList) {
   }
   return QRCodeModel.createBytes(buffer, rsBlocks);
 };
-QRCodeModel.createBytes = function(buffer, rsBlocks) {
+QRCodeModel.createBytes = function (buffer, rsBlocks) {
   let offset = 0;
   let maxDcCount = 0;
   let maxEcCount = 0;

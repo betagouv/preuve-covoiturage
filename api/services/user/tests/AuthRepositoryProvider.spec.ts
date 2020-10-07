@@ -28,7 +28,7 @@ describe('Auth pg repository', async () => {
   let connection;
   let id;
   const email = 'toto@toto.com';
-  const getUser = async function(customEmail = email): Promise<UserFindInterface> {
+  const getUser = async function (customEmail = email): Promise<UserFindInterface> {
     const result = await connection.getClient().query({
       text: 'SELECT * from auth.users where email = $1',
       values: [customEmail],
@@ -41,7 +41,7 @@ describe('Auth pg repository', async () => {
       connectionString:
         'APP_POSTGRES_URL' in process.env
           ? process.env.APP_POSTGRES_URL
-          : 'postgresql://postgres:postgres@localhost:5432/pdc-local',
+          : 'postgresql://postgres:postgres@localhost:5432/local',
     });
 
     await connection.up();

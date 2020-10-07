@@ -188,11 +188,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     });
 
     this.searchFilters.valueChanges
-      .pipe(
-        takeUntil(this.destroy$),
-        debounceTime(300),
-        distinctUntilChanged(),
-      )
+      .pipe(takeUntil(this.destroy$), debounceTime(300), distinctUntilChanged())
       .subscribe((value) => {
         if (!value) {
           return (this.usersToShow = this.users);

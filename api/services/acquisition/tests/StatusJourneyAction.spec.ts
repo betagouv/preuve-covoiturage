@@ -74,7 +74,7 @@ test('status: pending', async (t) => {
     'acquisition:status',
     { journey_id },
     {
-      call: { user: { operator_id, permissions: ['journey.create'] } },
+      call: { user: { operator_id, permissions: ['journey.create', 'certificate.create', 'certificate.download'] } },
       channel: { service: 'test' },
     },
   );
@@ -108,7 +108,7 @@ test('status: ok', async (t) => {
     'acquisition:status',
     { journey_id },
     {
-      call: { user: { operator_id, permissions: ['journey.create'] } },
+      call: { user: { operator_id, permissions: ['journey.create', 'certificate.create', 'certificate.download'] } },
       channel: { service: 'test' },
     },
   );
@@ -143,7 +143,7 @@ test('status: expired', async (t) => {
     'acquisition:status',
     { journey_id },
     {
-      call: { user: { operator_id, permissions: ['journey.create'] } },
+      call: { user: { operator_id, permissions: ['journey.create', 'certificate.create', 'certificate.download'] } },
       channel: { service: 'test' },
     },
   );
@@ -178,7 +178,7 @@ test('status: canceled', async (t) => {
     'acquisition:status',
     { journey_id },
     {
-      call: { user: { operator_id, permissions: ['journey.create'] } },
+      call: { user: { operator_id, permissions: ['journey.create', 'certificate.create', 'certificate.download'] } },
       channel: { service: 'test' },
     },
   );
@@ -204,7 +204,9 @@ test('status: not_found at all', async (t) => {
         'acquisition:status',
         { journey_id },
         {
-          call: { user: { operator_id, permissions: ['journey.create'] } },
+          call: {
+            user: { operator_id, permissions: ['journey.create', 'certificate.create', 'certificate.download'] },
+          },
           channel: { service: 'test' },
         },
       ),
@@ -232,7 +234,9 @@ test('status: not_found wrong operator_id (acquisition)', async (t) => {
         'acquisition:status',
         { journey_id },
         {
-          call: { user: { operator_id: 0, permissions: ['journey.create'] } },
+          call: {
+            user: { operator_id: 0, permissions: ['journey.create', 'certificate.create', 'certificate.download'] },
+          },
           channel: { service: 'test' },
         },
       ),
@@ -256,7 +260,7 @@ test('status: acquisition_error', async (t) => {
     'acquisition:status',
     { journey_id },
     {
-      call: { user: { operator_id, permissions: ['journey.create'] } },
+      call: { user: { operator_id, permissions: ['journey.create', 'certificate.create', 'certificate.download'] } },
       channel: { service: 'test' },
     },
   );
@@ -287,7 +291,7 @@ test('status: normalization_error', async (t) => {
     'acquisition:status',
     { journey_id },
     {
-      call: { user: { operator_id, permissions: ['journey.create'] } },
+      call: { user: { operator_id, permissions: ['journey.create', 'certificate.create', 'certificate.download'] } },
       channel: { service: 'test' },
     },
   );

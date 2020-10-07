@@ -25,38 +25,40 @@ import { groupMacro } from '../macros/groupMacro';
 import { longcharMacro } from '../macros/longcharMacro';
 import { permissionsMacro } from '../macros/permissionsMacro';
 import { integerMacro } from '../macros/integerMacro';
+import { jwtMacro } from '../macros/jwtMacro';
 
 const macroStore = {
   bic: bicMacro,
+  dbid: dbidMacro,
+  email: emailMacro,
   euvat: euVatMacro,
+  group: groupMacro,
   iban: ibanMacro,
   insee: inseeMacro,
+  integer: integerMacro,
+  jwt: jwtMacro,
   lat: latMacro,
+  longchar: longcharMacro,
   lon: lonMacro,
   naf: nafMacro,
   nic: nicMacro,
-  dbid: dbidMacro,
+  password: passwordMacro,
+  permissions: permissionsMacro,
   phone: phoneMacro,
   phonetrunc: phonetruncMacro,
   postcode: postcodeMacro,
   rna: rnaMacro,
+  role: roleMacro,
+  serial: serialMacro,
   siren: sirenMacro,
   siret: siretMacro,
+  timestamp: timestampMacro,
   createdat: timestampMacro,
   updatedat: timestampMacro,
   deletedat: timestampMacro,
-  timestamp: timestampMacro,
-  varchar: varcharMacro,
-  longchar: longcharMacro,
-  email: emailMacro,
-  password: passwordMacro,
-  role: roleMacro,
-  serial: serialMacro,
-  integer: integerMacro,
-  uuid: uuidMacro,
-  group: groupMacro,
   token: tokenMacro,
-  permissions: permissionsMacro,
+  uuid: uuidMacro,
+  varchar: varcharMacro,
 };
 
 export const macroKeyword = {

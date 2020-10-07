@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { debounceTime, distinctUntilChanged, map, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, takeUntil, tap } from 'rxjs/operators';
 import { merge } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatButtonToggleGroup, MatPaginator } from '@angular/material';
@@ -19,19 +19,17 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
   campaignsToShow: CampaignUx[];
   campaigns: CampaignUx[];
   searchFilters: FormGroup;
-  selectedStatus = CampaignStatusEnum.VALIDATED;
-  allStatus = [
-    CampaignStatusEnum.DRAFT,
-    CampaignStatusEnum.PENDING,
-    CampaignStatusEnum.VALIDATED,
-    CampaignStatusEnum.ARCHIVED,
-  ];
+  selectedStatus = 'current';
+  // allStatus = [
+  //   CampaignStatusEnum.DRAFT,
+  //   CampaignStatusEnum.PENDING,
+  //   CampaignStatusEnum.VALIDATED,
+  //   CampaignStatusEnum.ARCHIVED,
+  // ];
   titles = {
-    [CampaignStatusEnum.DRAFT]: 'Les campagnes en brouillon',
-    [CampaignStatusEnum.PENDING]: "Les campagnes en cours d'activation",
-    [CampaignStatusEnum.VALIDATED]: 'Les campagnes en cours',
-    [CampaignStatusEnum.ARCHIVED]: 'Les campagnes terminées',
-    [CampaignStatusEnum.TEMPLATE]: 'Les modèles de campagnes',
+    ['current']: 'Les campagnes en cours',
+    ['draft']: 'Les campagnes en brouillons',
+    ['outdated']: 'Les campagnes terminées',
   };
   PAGE_SIZE = 10;
   @ViewChild(MatButtonToggleGroup, { static: false }) statusToggle: MatButtonToggleGroup;
@@ -53,36 +51,55 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     this.loadCampaigns();
   }
 
+  filterCampaignList(page = this.paginator.pageIndex): CampaignUx[] {
+    // const page = this.paginator.pageIndex;
+    const start = Number(page) * this.PAGE_SIZE;
+    const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
+    const query = this.searchFilters.controls.query.value ? this.searchFilters.controls.query.value : '';
+
+    let filteredCampaigns: CampaignUx[];
+
+    const now = new Date().getTime();
+
+    switch (this.selectedStatus) {
+      case 'current':
+        filteredCampaigns = this.campaigns.filter((c) => c.end.toDate().getTime() > now);
+        break;
+      case 'draft':
+        filteredCampaigns = this.campaigns.filter((c) => c.status === CampaignStatusEnum.DRAFT);
+
+        break;
+      case 'outdated':
+        filteredCampaigns = this.campaigns.filter((c) => c.end.toDate().getTime() <= now);
+
+        break;
+    }
+
+    this.filteredCampaigns = filteredCampaigns
+      // text search
+      .filter((c) => `${c.description} ${c.name}`.toLowerCase().includes(query.toLowerCase()))
+      // order by start date
+      .sort((a, b) => (a.start.isAfter(b.start) ? -1 : 1));
+    return this.filteredCampaigns.slice(start, end);
+  }
+
   private loadCampaigns(): void {
     merge(
-      this._campaignStoreService.campaignsUx$.pipe(
-        tap((campaigns: CampaignUx[]) => (this.campaigns = campaigns)),
-        takeUntil(this.destroy$),
-      ),
+      this._campaignStoreService.campaignsUx$.pipe(tap((campaigns: CampaignUx[]) => (this.campaigns = campaigns))),
       this.searchFilters.valueChanges.pipe(debounceTime(300)),
       this.statusToggle.valueChange,
     )
-      .pipe(
-        distinctUntilChanged(),
-        map(() => {
-          const page = this.paginator.pageIndex;
-          const start = Number(page) * this.PAGE_SIZE;
-          const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
-          const query = this.searchFilters.controls.query.value ? this.searchFilters.controls.query.value : '';
-          this.filteredCampaigns = this.campaigns
-            .filter(
-              (c) =>
-                `${c.description} ${c.name}`.toLowerCase().includes(query.toLowerCase()) &&
-                (this.selectedStatus.length === 0 || this.selectedStatus.indexOf(c.status) !== -1),
-            )
-            .sort((a, b) => (a.start.isAfter(b.start) ? -1 : 1));
-          return this.filteredCampaigns.slice(start, end);
-        }),
-      )
-      .subscribe((campaigns) => {
-        this.campaignsToShow = campaigns;
+      .pipe(distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.paginator.pageIndex = 0;
+        this.campaignsToShow = this.filterCampaignList();
       });
+
     this._campaignStoreService.loadList();
+  }
+
+  paginationUpdate(): void {
+    this.campaignsToShow = this.filterCampaignList();
   }
 
   getFrenchStatus(status: CampaignStatusEnum): string {
@@ -100,7 +117,7 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
   get noCampaignMessage(): string {
     return this.searchFilters && this.searchFilters.controls.query.value
       ? 'Pas de résultats avec vos critères de recherche'
-      : `Aucune campagne ${this.getFrenchStatus(this.selectedStatus).toLowerCase()}.`;
+      : `Aucune campagne ${this.titles[this.selectedStatus]}.`;
   }
 
   private initSearchForm(): void {

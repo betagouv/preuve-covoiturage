@@ -1,15 +1,14 @@
 #!/bin/sh
-lerna run --scope @pdc/* --sort build
+
+yarn global add db-migrate db-migrate-pg
+
+npx lerna run --sort build
+
+chmod u+x node_modules/@ilos/framework/dist/cli.js
+ln -svf ../@ilos/framework/dist/cli.js node_modules/.bin/ilos
 
 # clean up
-find . -type f -name "*.js.map" -delete
-find . -type f -name "*.d.ts" -delete
-
-# Post build
-rm -rf ./ilos/.git
-find ./ilos -type d -name node_modules -exec rm -rf {} +
-
-# clean up
+echo '[app] Clean up dev files'
 find . -type f -name "*.js.map" -delete
 find . -type f -name "*.d.ts" -delete
 

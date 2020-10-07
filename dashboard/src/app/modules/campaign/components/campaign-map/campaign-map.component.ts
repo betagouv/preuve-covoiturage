@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 
 import * as L from 'leaflet';
-import * as M from 'leaflet.markercluster';
+// import * as M from 'leaflet.markercluster';
 
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
-import { Territory } from '~/core/entities/territory/territory';
+import { TerritoryBase } from '~/core/entities/territory/territory';
 import { GEOJSON_CITIES } from '~/core/const/cities.const';
+// import { TerritoryLevelEnum } from '~/core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
 
 @Component({
   selector: 'app-campaign-map',
@@ -43,9 +44,13 @@ export class CampaignMapComponent implements OnInit, OnDestroy {
 
   private initTerritoryViews(): void {
     // todo: get territories
-    const territories: Territory[] = this.campaigns.map(
-      (c) => new Territory({ siret: '', _id: c.territory_id, name: 'territory_name' }),
-    );
+
+    const territories: TerritoryBase[] = this.campaigns.map((c) => ({
+      _id: c.territory_id,
+      address: null,
+      name: 'territory_name',
+      level: '' as any,
+    }));
 
     const uniqueTerritories = Array.from(new Set(territories.map((t) => t._id))).map((id) =>
       territories.find((t) => t._id === id),
@@ -62,7 +67,8 @@ export class CampaignMapComponent implements OnInit, OnDestroy {
     this.generatePointsCluster(territories);
   }
 
-  private generatePointsCluster(territories: Territory[]): void {
+  private generatePointsCluster(territories: TerritoryBase[]): void {
+    /*
     const points = territories.map((t) => t.coordinates);
     // @ts-ignore
     const markersCluster = new M.MarkerClusterGroup({
@@ -74,6 +80,7 @@ export class CampaignMapComponent implements OnInit, OnDestroy {
       markersCluster.addLayer(marker);
     });
     this.map.addLayer(markersCluster);
+    */
   }
 
   private catchUserEvents(): void {

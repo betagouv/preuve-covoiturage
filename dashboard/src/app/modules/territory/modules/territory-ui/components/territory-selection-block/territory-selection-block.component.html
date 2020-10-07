@@ -1,0 +1,15 @@
+<mat-expansion-panel #panel>
+  <mat-expansion-panel-header>
+    <mat-icon color="error" (click)="removeTerritory.emit(territory)">delete_outline</mat-icon>
+    {{ territory.name }}
+  </mat-expansion-panel-header>
+
+  <!-- <p></p> -->
+
+  <div>
+    <app-territory-selection-group
+      *ngFor="let child of this.children"
+      [territory]="child"
+    ></app-territory-selection-group>
+  </div>
+</mat-expansion-panel>

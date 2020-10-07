@@ -157,21 +157,21 @@ workflows:
   version: 2
   frontend-dev:
     jobs:
-      - front-qa:
-          filters:
-            branches:
-              only:
-                - dev
+      # - front-qa:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - dev
 
-      - front-cypress:
-          filters:
-            branches:
-              only:
-                - dev
+      # - front-cypress:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - dev
 
       - front-deploy-dev:
           requires:
-            - front-qa
+          # - front-qa
           filters:
             branches:
               only:
@@ -179,11 +179,11 @@ workflows:
 
   frontend-staging:
     jobs:
-      - front-qa:
-          filters:
-            branches:
-              only:
-                - staging
+      # - front-qa:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - staging
       # - front-cypress:
       #     filters:
       #       branches:
@@ -192,7 +192,7 @@ workflows:
 
       - front-deploy-staging:
           requires:
-            - front-qa
+          # - front-qa
           filters:
             branches:
               only:

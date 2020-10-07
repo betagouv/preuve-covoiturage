@@ -31,18 +31,12 @@ export class StatFormatService {
     };
     const fillMonth = (acc, target, day, data = {}): void => {
       const monthIndex = acc[target].months.findIndex(
-        (month) =>
-          month.date ===
-          moment(day)
-            .startOf('month')
-            .toISOString(),
+        (month) => month.date === moment(day).startOf('month').toISOString(),
       );
       if (monthIndex === -1) {
         acc[target].months.push({
           // set first date of month
-          date: moment(day)
-            .startOf('month')
-            .toISOString(),
+          date: moment(day).startOf('month').toISOString(),
           ...data,
         });
       } else {
@@ -69,7 +63,7 @@ export class StatFormatService {
           total: current.trip,
           total_subsidized: current.trip_subsidized,
         });
-        fillDays(acc, 'carpoolers_per_vehicule', current.day, { total: current.carpoolers / current.trip });
+        fillDays(acc, 'carpoolers_per_vehicule', current.day, { total: current.average_carpoolers_by_car });
 
         return acc;
       },
@@ -98,10 +92,16 @@ export class StatFormatService {
       },
     );
 
+    let ratioCarpoolersByCar = 0;
+    let totalTrip = 0;
+
+    result.forEach((r) => {
+      ratioCarpoolersByCar += r.average_carpoolers_by_car * r.trip;
+      totalTrip += r.trip;
+    });
+
     const cpvm = carpoolers_per_vehicule.days.reduce((acc, current) => {
-      const month = moment(current.date)
-        .endOf('month')
-        .toISOString();
+      const month = moment(current.date).endOf('month').toISOString();
       if (!(month in acc)) {
         acc[month] = [];
       }
@@ -115,9 +115,7 @@ export class StatFormatService {
       distance,
       trips,
       carpoolers_per_vehicule: {
-        total:
-          carpoolers_per_vehicule.days.map((day) => day.total).reduce((acc, value) => acc + value, 0) /
-          carpoolers_per_vehicule.days.length,
+        total: ratioCarpoolersByCar / totalTrip,
         months: Object.keys(cpvm).map((key) => ({
           date: key,
           total: cpvm[key].reduce((acc, curr) => acc + curr, 0) / cpvm[key].length,
@@ -161,9 +159,7 @@ export class StatFormatService {
           x: get(d, 'trips.days', [])
             .filter(this.filterOutFutur)
             .map((val) => this.formatDate(val.date)),
-          y: get(d, 'trips.days', [])
-            .filter(this.filterOutFutur)
-            .reduce(this.reduceCumulativeData, []),
+          y: get(d, 'trips.days', []).filter(this.filterOutFutur).reduce(this.reduceCumulativeData, []),
         },
         tripsSubsidizedPerMonth: this.fixMonthDisplay({
           x: get(d, 'trips.months', [])
@@ -185,9 +181,7 @@ export class StatFormatService {
           x: get(d, 'trips.days', [])
             .filter(this.filterOutFutur)
             .map((val) => this.formatDate(val.date)),
-          y: get(d, 'trips.days', [])
-            .filter(this.filterOutFutur)
-            .reduce(this.reduceCumulativeSubsidizedData, []),
+          y: get(d, 'trips.days', []).filter(this.filterOutFutur).reduce(this.reduceCumulativeSubsidizedData, []),
         },
         distancePerMonth: this.fixMonthDisplay({
           x: get(d, 'distance.months', [])
@@ -237,9 +231,7 @@ export class StatFormatService {
           x: get(d, 'carpoolers.days', [])
             .filter(this.filterOutFutur)
             .map((val) => this.formatDate(val.date)),
-          y: get(d, 'carpoolers.days', [])
-            .filter(this.filterOutFutur)
-            .reduce(this.reduceCumulativeData, []),
+          y: get(d, 'carpoolers.days', []).filter(this.filterOutFutur).reduce(this.reduceCumulativeData, []),
         },
         petrolPerMonth: this.fixMonthDisplay({
           x: get(d, 'distance.months', [])
@@ -334,11 +326,7 @@ export class StatFormatService {
    * After 7 days ago and before today
    */
   private filterLastWeek(val, idx, arr): boolean {
-    return (
-      moment()
-        .subtract(7, 'days')
-        .isBefore(val.date) && moment().isAfter(val.date)
-    );
+    return moment().subtract(7, 'days').isBefore(val.date) && moment().isAfter(val.date);
   }
 
   /**
@@ -355,9 +343,7 @@ export class StatFormatService {
 
   // format ISO to chart js compatible
   private formatMonthDate(date: string): string {
-    return moment(date)
-      .startOf('month')
-      .format('YYYY-MM-DD');
+    return moment(date).startOf('month').format('YYYY-MM-DD');
   }
 
   /**
@@ -389,9 +375,7 @@ export class StatFormatService {
     // add first & last month date if it doesn't exist
     if (0 < data.x.length && data.x.length < 3) {
       const firstDate = moment(data.x[0]);
-      const threeMonthsAgo = moment()
-        .subtract(3, 'months')
-        .startOf('month');
+      const threeMonthsAgo = moment().subtract(3, 'months').startOf('month');
 
       // if first date is not correct
       if (firstDate.isAfter(threeMonthsAgo)) {

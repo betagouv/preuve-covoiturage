@@ -5,7 +5,7 @@ import { NewableType } from '@ilos/common';
 import { ValidatorInterface } from '../../src';
 
 export function coordinatesKeywordTest(getProvider, FakeObject: NewableType<any>): (this: Suite) => void {
-  return function(): void {
+  return function (): void {
     let provider: ValidatorInterface;
     beforeEach(async () => {
       const schema = {

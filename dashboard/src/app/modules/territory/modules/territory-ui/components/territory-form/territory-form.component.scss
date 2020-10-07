@@ -27,4 +27,28 @@ form {
       width: 150px;
     }
   }
+
+  .mat-checkbox {
+    margin: 0 10px;
+  }
+
+  .relation-textarea {
+    width: 558px;
+
+    max-width: 100%;
+
+    textarea {
+      height: 100px;
+    }
+  }
+}
+
+.subtext {
+  display: block;
+  margin: 0 0 15px;
+  font-size: 0.9em;
+}
+
+.format-radio .mat-radio-button {
+  margin: 2px 0;
 }

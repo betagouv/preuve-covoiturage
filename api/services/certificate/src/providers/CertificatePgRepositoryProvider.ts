@@ -1,7 +1,6 @@
 import { map } from 'lodash';
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
 import { CertificateMetaInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
@@ -10,6 +9,9 @@ import {
   CertificateRepositoryProviderInterface,
   CertificateRepositoryProviderInterfaceResolver,
 } from '../interfaces/CertificateRepositoryProviderInterface';
+import { Pagination } from '../shared/certificate/list.contract';
+
+type QueryConfig = { text: string; values: any[] };
 
 @provider({
   identifier: CertificateRepositoryProviderInterfaceResolver,
@@ -19,6 +21,52 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   public readonly accessLogTable = 'certificate.access_log';
 
   constructor(protected connection: PostgresConnection) {}
+
+  /**
+   * Set the limit and offset for a query
+   */
+  paginate(query: QueryConfig, pagination?: Pagination): QueryConfig {
+    if (!pagination) return query;
+
+    // limit
+    query.text += ` LIMIT \$${query.values.length + 1}`;
+    query.values.push(pagination.length ? Math.abs(pagination.length) : 25);
+
+    // offset
+    query.text += ` OFFSET \$${query.values.length + 1}`;
+    query.values.push(pagination.start_index ? Math.abs(pagination.start_index) : 0);
+
+    return query;
+  }
+
+  async count(operator_id?: number): Promise<number> {
+    const query = operator_id
+      ? {
+          text: `SELECT COUNT(*) as row_count FROM ${this.table} WHERE operator_id = $1`,
+          values: [operator_id],
+        }
+      : `SELECT COUNT(*) as row_count FROM ${this.table}`;
+
+    const countResult = await this.connection.getClient().query(query);
+
+    return countResult.rows.length > 0 ? countResult.rows[0].row_count : 0;
+  }
+
+  async find(withLog = false, pagination?: Pagination): Promise<CertificateInterface[]> {
+    const result = await this.connection.getClient().query(
+      this.paginate(
+        {
+          text: `SELECT * FROM ${this.table} ORDER BY created_at DESC`,
+          values: [],
+        },
+        pagination,
+      ),
+    );
+
+    if (!result.rowCount) return [];
+
+    return (withLog ? this.withLog(result.rows) : result.rows) as CertificateInterface[];
+  }
 
   async findByUuid(uuid: string, withLog = false): Promise<CertificateInterface> {
     const result = await this.connection.getClient().query({
@@ -42,14 +90,20 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     return withLog ? this.withLog(result.rows[0]) : result.rows[0];
   }
 
-  async findByOperatorId(operator_id: string, withLog = false): Promise<CertificateInterface[]> {
-    const result = await this.connection.getClient().query({
-      text: `
-        SELECT * FROM ${this.table}
-        WHERE operator_id = $1
-      `,
-      values: [operator_id],
-    });
+  async findByOperatorId(
+    operator_id: number,
+    withLog = false,
+    pagination?: Pagination,
+  ): Promise<CertificateInterface[]> {
+    const result = await this.connection.getClient().query(
+      this.paginate(
+        {
+          text: `SELECT * FROM ${this.table} WHERE operator_id = $1 ORDER BY created_at DESC`,
+          values: [operator_id],
+        },
+        pagination,
+      ),
+    );
 
     if (!result.rowCount) return [];
 
@@ -57,22 +111,16 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   }
 
   async create(params: CertificateBaseInterface): Promise<CertificateInterface> {
-    const {
-      identity_uuid: identity_id,
-      operator_uuid: operator_id,
-      territory_uuid: territory_id,
-      start_at,
-      end_at,
-      meta,
-    } = params;
+    const { identity_uuid, operator_id, start_at, end_at, meta } = params;
+
     const result = await this.connection.getClient().query({
       text: `
         INSERT INTO ${this.table}
-        ( identity_id, operator_id, territory_id, start_at, end_at, meta )
-        VALUES ( $1, $2, $3, $4, $5, $6 )
+        ( identity_uuid, operator_id, start_at, end_at, meta )
+        VALUES ( $1, $2, $3, $4, $5 )
         RETURNING *
       `,
-      values: [identity_id, operator_id, territory_id, start_at, end_at, meta],
+      values: [identity_uuid, operator_id, start_at, end_at, meta],
     });
 
     if (!result.rowCount) throw new Error('Failed to create certificate');
@@ -123,14 +171,17 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     const certs = (isMany ? certificates : [certificates]) as CertificateInterface[];
 
     // search for all access_log for all certificate_id
-    const result = await this.connection.getClient().query(`
+    const result = await this.connection.getClient().query({
+      text: `
         SELECT * FROM ${this.accessLogTable}
-        WHERE certificate_id IN (${map(certs, '_id').join(',')})
+        WHERE certificate_id = ANY ($1::int[])
         ORDER BY certificate_id
-    `);
+      `,
+      values: [map(certs, '_id')],
+    });
 
     // merge access_log as a table in each certificate
-    const merge = certs.map((cert) => ({
+    const merge = certs.map((cert: CertificateInterface) => ({
       ...cert,
       access_log: result.rows
         .filter((log) => log.certificate_id === cert._id)

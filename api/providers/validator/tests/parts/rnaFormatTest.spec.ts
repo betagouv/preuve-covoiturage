@@ -12,7 +12,7 @@ const { expect } = chai;
 export function rnaFormatTest(getProvider, FakeObject: NewableType<any>): (this: Suite) => void {
   let provider: ValidatorInterface;
 
-  return function(): void {
+  return function (): void {
     before(
       async (): Promise<void> => {
         const schema = {
