@@ -48,11 +48,15 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
     return new QueueScheduler(name, { connection });
   }
 
-  protected async getWorkerAndScheduler(connectionString: string, name: string, processor: Processor): Promise<WorkerWithScheduler> {
+  protected async getWorkerAndScheduler(
+    connectionString: string,
+    name: string,
+    processor: Processor,
+  ): Promise<WorkerWithScheduler> {
     const connection = await this.getRedisConnection(connectionString);
     return {
-      worker: this.getWorker(connection, name, processor),
       scheduler: this.getScheduler(connection, name),
+      worker: this.getWorker(connection, name, processor),
     };
   }
 
@@ -94,6 +98,7 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
       promises.push(scheduler.close());
     }
     await Promise.all(promises);
+    await this.connection.down();
   }
 
   protected errorHandler(_error: Error, _job?: Job) {
