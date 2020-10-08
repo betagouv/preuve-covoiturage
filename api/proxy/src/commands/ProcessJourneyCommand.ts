@@ -11,8 +11,6 @@ import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
 @command()
 export class ProcessJourneyCommand implements CommandInterface {
-  protected readonly command = 'normalization:process';
-
   static readonly signature: string = 'process:journey';
   static readonly description: string = 'Push a journey from acquisition to the pipeline';
   static readonly options: CommandOptionType[] = [
@@ -63,7 +61,7 @@ export class ProcessJourneyCommand implements CommandInterface {
     const readClient = await readConnection.getClient().connect();
     const writeClient = writeConnection.getClient();
 
-    const handler = this.kernel.getContainer().getHandler({ signature: this.command });
+    const handler = this.kernel.getContainer().getHandler({ signature: 'normalization:process' }) as any;
 
     // create metadata table
     await writeClient.query(`
@@ -121,11 +119,8 @@ export class ProcessJourneyCommand implements CommandInterface {
     const ROW_COUNT = 10000;
 
     const context: ContextType = {
-      call: {
-        user: {},
-      },
       channel: {
-        transport: 'cli',
+        // transport: 'cli',
         service: 'acquisition', // this is necessary to have right permission on normalization service
       },
     };
@@ -136,7 +131,7 @@ export class ProcessJourneyCommand implements CommandInterface {
 
       for (const line of result) {
         try {
-          await (handler as any).handle(line, context);
+          await (handler as any)({ params: line, context });
           await writeClient.query({
             text: `
                 INSERT INTO ${options.metatable}
@@ -144,7 +139,6 @@ export class ProcessJourneyCommand implements CommandInterface {
               `,
             values: [line._id, options.tag],
           });
-          // tslint:disable-next-line: no-console
           console.info(`> Operation done for ${line._id}`);
         } catch (e) {
           console.log('> FAILED', line._id, e.stack);
