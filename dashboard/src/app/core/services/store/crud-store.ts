@@ -115,7 +115,7 @@ export abstract class CrudStore<
         if (this._loadCount > 0) this._loadCount -= 1;
       }),
       map((entity) => new this.modelType().map(entity)),
-      tap((territory) => {
+      tap(() => {
         this.loadList();
       }),
     );

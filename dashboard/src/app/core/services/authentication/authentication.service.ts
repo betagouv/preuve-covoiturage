@@ -65,13 +65,12 @@ export class AuthenticationService {
   ) {
     this.userStoreService.entity$.subscribe((user: User) => {
       const loggedInUser = this.user;
-
       // if userService is updated and match current user we update its state
       if (user && loggedInUser && loggedInUser._id === user._id) {
         if (user.email !== loggedInUser.email) {
           this.logout(
-            `L'email de votre compte a été modifié. ` +
-              `Un lien de vérification vous a été envoyé à cette nouvelle adresse.`,
+            "L'email de votre compte a été modifié. " +
+              'Un lien de vérification vous a été envoyé à cette nouvelle adresse.',
           );
         } else {
           this._user$.next(user);
@@ -111,7 +110,8 @@ export class AuthenticationService {
 
   public login(email: string, password: string): Observable<LoginResult> {
     return this.call<LoginParam>('login', { email, password }).pipe(
-      catchHttpStatus(401, (err) => null),
+      // bypass 401 errors
+      catchHttpStatus(401, () => null),
       map((loginPayload) => {
         if (loginPayload && loginPayload.result && loginPayload.result.data) {
           return loginPayload.result.data;
@@ -121,13 +121,14 @@ export class AuthenticationService {
       tap((user) => {
         if (user) {
           this.onLoggin(new User(user));
+          this.toastr.clear();
           if (user.territory_id) {
             this.router.navigate(['/campaign']);
           } else {
             this.router.navigate(['/trip/stats']);
           }
         } else {
-          this.toastr.error('Mauvais Email ou mot de passe');
+          this.toastr.error('Mauvais email ou mot de passe');
         }
       }),
     );
@@ -148,12 +149,9 @@ export class AuthenticationService {
       new_password: newPassword,
     });
 
-    return this.jsonRPC.callOne(jsonRPCParam).pipe(tap(console.log));
+    return this.jsonRPC.callOne(jsonRPCParam);
   }
 
-  /**
-   * Check if connected user has any of list of permissions
-   */
   public hasAnyPermission(permissions: PermissionType[]): boolean {
     const user = this.user;
     if (!permissions.length) {
@@ -172,9 +170,6 @@ export class AuthenticationService {
     return this.user$.pipe(map((user) => this.hasAnyPermission(permissions)));
   }
 
-  /**
-   * Check if connected user has any of list of groups
-   */
   public hasAnyGroup(groups: UserGroupEnum[] | null = null): boolean {
     const user = this.user;
     if (!groups && user) {
@@ -187,9 +182,6 @@ export class AuthenticationService {
     return !groups.length || ('group' in user && groups.includes(user.group));
   }
 
-  /**
-   * Check if connected user has role
-   */
   public hasRole(role: UserRoleEnum | UserManyRoleEnum): boolean {
     if (!role) {
       return true;
@@ -206,16 +198,6 @@ export class AuthenticationService {
       new JsonRPCParam<SendInviteEmailParam>('user:sendInvitationEmail', { _id: user._id }),
     );
   }
-
-  /*
-  public restorePassword(email: string, password: string, token: string): Observable<any> {
-    return this.call('auth/change-password', {
-      email,
-      password,
-      token,
-    });
-  }
-  */
 
   public sendForgottenPasswordEmail(email: string): Observable<ForgottenPasswordResult> {
     return this.call<ForgottenPasswordParam>('auth/reset-password', { email });
@@ -239,10 +221,11 @@ export class AuthenticationService {
     return this.call<ChangePasswordWithPasswordParam>('auth/change-password', { email, password, token });
   }
 
-  check(): Observable<User> {
+  public check(): Observable<User> {
     if (this._hasChecked) {
       return of(this._user$.value);
     }
+
     return this.userMe$.pipe(
       tap((user) => {
         this._hasChecked = true;
@@ -252,12 +235,7 @@ export class AuthenticationService {
   }
 
   private onLoggin(user: User): void {
-    // const redirectToStats = !this.user && user;
     this._hasChecked = true;
-
-    if (typeof user.territory_id === 'string') user.territory_id = parseInt(user.territory_id, 10);
-    if (typeof user.operator_id === 'string') user.operator_id = parseInt(user.operator_id, 10);
-
     this._user$.next(user);
   }
 }

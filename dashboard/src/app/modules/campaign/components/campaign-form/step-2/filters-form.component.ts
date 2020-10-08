@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatTabGroup } from '@angular/material';
 
@@ -183,6 +184,15 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   }
 
   private initTargetChangeDetection(): void {
+    // Activate the adult_only checkbox
+    // when either the passengers or per trip is enabled
+    combineLatest(this.forPassengerControl.valueChanges, this.forTripControl.valueChanges)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((v) => {
+        const fn = `${v[0] || v[1] ? 'en' : 'dis'}able`;
+        this.campaignForm.get('only_adult')[fn]();
+      });
+
     this.forDriverControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
         this.forTripControl.setValue(false);

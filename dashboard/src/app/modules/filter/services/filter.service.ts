@@ -37,7 +37,13 @@ export class FilterService {
       campaign_id: filterUx.campaignIds,
     });
 
-    if (filter.date.start === null && filter.date.end === null) {
+    if (filter.date.start && typeof filter.date.start === 'string')
+      filter.date.start = moment(filter.date.start) as any;
+    if (filter.date.end && typeof filter.date.end === 'string') filter.date.end = moment(filter.date.end) as any;
+
+    // Apply default start date filter
+
+    if (!filter.date.start && !filter.date.end) {
       delete filter.date;
     } else {
       // set start at the beginning of the day and end at the end.

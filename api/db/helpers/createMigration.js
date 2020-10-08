@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-exports.createMigration = function(files, basePath = __dirname) {
+exports.createMigration = function(files, basePath = __dirname, extracb = async function() {}) {
   let dbm;
   let type;
   let seed;
@@ -25,21 +25,33 @@ exports.createMigration = function(files, basePath = __dirname) {
       seed = seedLink;
       Promise = options.Promise;
     },
-    up: function(db) {
+    up: function(db, cb) {
       let data = '';
       for (const file of files) {
         data += `${resolveFile(file, 'up.sql')}\n`;
       }
-      // console.log(data);
-      return db.runSql(data);
+      db.runSql(data, (err) => {
+        if (err) {
+          return cb(err);
+        }
+        extracb()
+          .then(() => cb())
+          .catch((e) => cb(e));
+      });
     },
-    down: async function(db) {
+    down: function(db, cb) {
       let data = '';
       for (const file of files.reverse()) {
         data += `${resolveFile(file, 'down.sql')}\n`;
       }
-      // console.log(data);
-      return db.runSql(data);
+      db.runSql(data, (err) => {
+        if (err) {
+          return cb(err);
+        }
+        extracb(false)
+          .then(() => cb())
+          .catch((e) => cb(e))
+      });
     },
   };
 };

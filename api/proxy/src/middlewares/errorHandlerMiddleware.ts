@@ -40,6 +40,11 @@ export function errorHandlerMiddleware(
       code = 409;
       break;
 
+    case 'Too Many Requests Error':
+    case 'Too Many Requests':
+      code = 429;
+      break;
+
     case 'Internal Server Error':
       code = 500;
       break;

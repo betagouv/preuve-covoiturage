@@ -45,6 +45,15 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
       this.campaignForm.controls.start.markAsTouched();
       this.campaignForm.controls.start.updateValueAndValidity();
     }
+
+    // update first staggered element min distance to global min distance when it is changed
+    ((this.campaignForm.controls['filters'] as FormGroup).controls[
+      'distance_range'
+    ] as FormControl).valueChanges.subscribe((val) => {
+      if (this.retributionsFormArray.controls[0]) {
+        this.retributionsFormArray.controls[0].patchValue({ min: val[0] });
+      }
+    });
   }
 
   get controls(): { [key: string]: AbstractControl } {
@@ -108,7 +117,7 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     delete this.editRestrictionForm;
   }
 
-  addRestriction(): void {
+  addRestriction(form): void {
     this.restrictionFormArray.push(this.editRestrictionForm);
     delete this.editRestrictionForm;
   }

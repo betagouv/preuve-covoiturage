@@ -2,6 +2,7 @@ import { provider, ConfigInterfaceResolver, ConflictException, NotFoundException
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
+import { UserLastLoginInterface } from '../shared/user/common/interfaces/UserLastLoginInterface';
 import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
 import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
 import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchInterface';
@@ -11,6 +12,7 @@ import {
 } from '../interfaces/UserRepositoryProviderInterface';
 import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
 import { UserCreateInterface } from '../shared/user/common/interfaces/UserCreateInterface';
+import { ResultInterface as HasUsersResultInterface } from '../shared/user/hasUsers.contract';
 
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,
@@ -148,6 +150,20 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
   async deleteByTerritory(id: number, territory_id: number): Promise<boolean> {
     return this.deleteWhere(id, { territory_id });
+  }
+
+  async deleteAssociated(key: string, value: number): Promise<void> {
+    if (['territory_id', 'operator_id'].indexOf(key) === -1) {
+      throw new Error('Only territory_id and operator_id are supported keys');
+    }
+
+    await this.connection.getClient().query({
+      text: `
+        DELETE FROM ${this.table}
+        WHERE ${key} = $1
+      `,
+      values: [value],
+    });
   }
 
   async list(
@@ -342,6 +358,34 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return this.findWhere({ email });
   }
 
+  async findInactive(months = 6): Promise<UserLastLoginInterface[]> {
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT
+          _id,
+          CONCAT(
+            EXTRACT(YEAR FROM age(last_login_at)),
+            ' years ',
+            EXTRACT(MONTH FROM age(last_login_at)),
+            ' months ',
+            EXTRACT(DAY FROM age(last_login_at)),
+            ' days'
+          ) AS ago,
+          last_login_at,
+          CONCAT(firstname, ' ', lastname) AS name,
+          email,
+          role,
+          status
+        FROM ${this.table}
+        WHERE last_login_at < NOW() - $1::interval
+        ORDER BY last_login_at DESC
+      `,
+      values: [`${months} months`],
+    });
+
+    return result.rowCount ? result.rows : [];
+  }
+
   protected buildSetClauses(
     sets: any,
   ): {
@@ -473,5 +517,27 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
   async patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface> {
     return this.patchWhere(data, { _id, territory_id });
+  }
+
+  async hasUsers(): Promise<HasUsersResultInterface> {
+    const results = await this.connection.getClient().query({
+      text: `
+        SELECT
+          array_remove(array_agg(distinct operator_id), NULL) AS operators,
+          array_remove(array_agg(distinct territory_id), NULL) AS territories
+        FROM auth.users
+        WHERE operator_id IS NOT NULL
+        OR territory_id IS NOT NULL;
+      `,
+    });
+
+    return results.rowCount ? results.rows[0] : [];
+  }
+
+  async touchLastLogin(_id: number): Promise<void> {
+    await this.connection.getClient().query({
+      text: `UPDATE ${this.table} SET last_login_at = NOW() WHERE _id = $1`,
+      values: [_id],
+    });
   }
 }

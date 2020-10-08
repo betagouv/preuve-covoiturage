@@ -29,14 +29,16 @@ export enum TerritoryLevelEnum {
 
 export const territoryLevelLabels = [
   [null, ''],
-  [TerritoryLevelEnum.Town, 'Ville'],
-  [TerritoryLevelEnum.Towngroup, 'Metropole'],
+
+  [TerritoryLevelEnum.Town, 'Commune'],
+  // [TerritoryLevelEnum.Epic, 'EPCI'],
+  [TerritoryLevelEnum.Towngroup, 'EPCI'],
   [TerritoryLevelEnum.District, 'District'],
   [TerritoryLevelEnum.Megalopolis, 'Département'],
   [TerritoryLevelEnum.Region, 'Region'],
   [TerritoryLevelEnum.State, 'Etat'],
   [TerritoryLevelEnum.Country, 'Pays'],
-  [TerritoryLevelEnum.Countrygroup, 'Group de pays'],
+  [TerritoryLevelEnum.Countrygroup, 'Groupe de pays'],
   [TerritoryLevelEnum.Other, 'Autre'],
 ];
 
@@ -47,7 +49,7 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   company_id?: number;
   active?: boolean;
   activable?: boolean;
-  ui_status?: any;
+  ui_status?: TerritoryUIStatus;
   insee?: any;
   // active_since?: Date;
   contacts?: Contacts;
@@ -55,9 +57,16 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   geo?: any; // TODO : geography type
 }
 
+export interface TerritoryInsee {
+  _id: number;
+  name: string;
+  insee: string;
+}
+
 export interface TerritoryUIStatus {
   ui_selection_state?: TerritorySelectionUIState[];
   format?: string;
+  insee?: string;
 }
 
 export class Territory extends BaseModel
@@ -72,6 +81,8 @@ export class Territory extends BaseModel
   children?: number[];
 
   active_since?: Date;
+  population?: number;
+  surface?: number;
   address: Address;
   // active_since?: Date;
   contacts?: Contacts;
@@ -97,6 +108,7 @@ export class Territory extends BaseModel
     assignOrDeleteProperty(base, this, 'address', (data) => new Address(data.address));
     assignOrDeleteProperty(base, this, 'company', (data) => ({ ...data.company }));
     assignOrDeleteProperty(base, this, 'geo', (data) => ({ ...data.geo }));
+    assignOrDeleteProperty(base, this, 'children', (data) => [...data.children]);
 
     if (base.shortname) this.shortname = base.shortname;
     else delete this.shortname;
@@ -131,8 +143,8 @@ export class Territory extends BaseModel
     if (formValues.shortname) this.shortname = formValues.shortname;
     else delete this.shortname;
 
-    if (formValues.insee && formValues.format === 'insee') this.insee = formValues.insee.split(',');
-    else delete this.insee;
+    // if (formValues.insee && formValues.format === 'insee') this.insee = formValues.insee.split(',');
+    // else delete this.insee;
 
     if (formValues.geo && formValues.format === 'geo') this.geo = formValues.geo;
     else delete this.geo;
@@ -143,26 +155,39 @@ export class Territory extends BaseModel
     if (formValues.company_id) this.company_id = formValues.company_id;
     else delete this.company_id;
 
-    if (formValues.children && formValues.format === 'parent') this.children = formValues.children;
+    if (formValues.children && (formValues.format === 'parent' || formValues.format === 'insee'))
+      this.children = formValues.children;
     else delete this.children;
 
     this.ui_status = {};
     if (formValues.uiSelectionState) this.ui_status.ui_selection_state = formValues.uiSelectionState;
     if (formValues.format) this.ui_status.format = formValues.format;
+    if (formValues.format === 'insee' && formValues.insee) {
+      this.ui_status.insee = formValues.insee;
+    }
+
+    // insee are used to fetch children array (territory_id[])
+    delete this.insee;
+
+    if (!formValues.activable) {
+      delete this.address;
+      delete this.contacts;
+      delete this.company_id;
+    }
+
+    delete this.company;
+
+    // const territories = await this.terr
 
     // assignOrDeleteProperty(formValues, this, 'shortname');
     // assignOrDeleteProperty(formValues, this, 'density');
     // assignOrDeleteProperty(formValues, this, 'company_id');
-
-    console.log('updateFromFormValues', { ...formValues }, { ...this });
   }
 
   toFormValues(fullformMode = true): any {
     return fullformMode
       ? {
           name: this.name ? this.name : '',
-          // level: this.level ? this.level : null,
-          // active: this.active ? this.active : false,
           uiSelectionState:
             this.ui_status && this.ui_status.ui_selection_state ? this.ui_status.ui_selection_state : [],
           format: this.ui_status && this.ui_status.format ? this.ui_status.format : 'parent',
@@ -181,7 +206,8 @@ export class Territory extends BaseModel
               [], 
           ]
         }`,
-          insee: this.insee ? this.insee.join(',') : '',
+          insee:
+            this.ui_status && this.ui_status.format === 'insee' && this.ui_status.insee ? this.ui_status.insee : '',
         }
       : {
           contacts: new Contacts(this.contacts).toFormValues(),
@@ -224,95 +250,3 @@ export interface TerritoryFormModel {
   // public cgu?: CGU;
   // public coordinates?: any[];
 }
-/*
-class Territory extends BaseModel implements Model, MapModel<Territory>, Clone<Territory> {
-  public _id: number;
-  public name: string;
-  public siret: string;
-  public shortname?: string;
-  public insee?: string[];
-
-  public company?: Company;
-  public company_id?: number;
-
-  public address?: Address;
-
-  public contacts?: Contacts;
-
-  public cgu?: CGU;
-  public coordinates?: any[];
-
-  constructor(data?: {
-    _id?: number;
-    name: string;
-    siret: string;
-    shortname?: string;
-    acronym?: string;
-    insee?: string[];
-    children?: number[];
-    company?: Company;
-    company_id?: number;
-    address?: Address;
-    contacts?: Contacts;
-
-    cgu?: CGU;
-    coordinates?: any[];
-  }) {
-    super(data);
-    if (!data) {
-      this.name = '';
-      this.siret = null;
-    }
-  }
-
-  toFormValues(fullformMode = true): any {
-    // TODO: keep it for later
-    // const cgu = new CGU(this.cgu);
-    // const formVal = cgu.toFormValues();
-
-    const val: any = fullformMode
-      ? {
-          shortname: '',
-          ...this,
-          company: { ...new Company(this.company).toFormValues(), siret: this.siret },
-          contacts: new Contacts(this.contacts).toFormValues(),
-          address: new Address(this.address).toFormValues(),
-        }
-      : {
-          contacts: new Contacts(this.contacts).toFormValues(),
-        };
-
-    delete val._id;
-    delete val.siret;
-
-    return val;
-  }
-
-  clone(): Territory {
-    return new Territory(this);
-  }
-
-  map(data: any): Territory {
-    super.map(data);
-    this.updateFromFormValues(data);
-    this._id = data._id;
-    this.siret = data.siret; // override fromFormValues behaviour with siret (in company form group)
-    this.name = data.name; // override fromFormValues behaviour with siret (in company form group)
-
-    return this;
-  }
-
-  updateFromFormValues(formValues: any): void {
-    assignOrDeleteProperties(formValues, this, ['name', 'coordinates', 'shortname', 'insee']);
-
-    this.siret = formValues.company && formValues.company.siret ? formValues.company.siret : '';
-
-    assignOrDeleteProperty(formValues, this, 'company', (data) => new Company(data.company));
-    assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
-    assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
-    assignOrDeleteProperty(formValues, this, 'cgu', (data) => new CGU(data.cgu));
-  }
-}
-
-export { Address, Bank, CGU, Company, Contacts, Territory };
-*/

@@ -42,7 +42,7 @@ test(results, [
   },
   {
     carpool_id: 54,
-    amount: 1000,
+    amount: 2000,
     meta: {
       driver_max_trip_restriction: 'max_trip_restriction.4.day.15-0-2019',
     },

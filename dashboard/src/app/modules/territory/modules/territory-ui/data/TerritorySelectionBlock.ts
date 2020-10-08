@@ -104,7 +104,6 @@ export class TerritorySelectionBlock {
       state: this._selectedState,
       children: [],
     };
-    // console.log('getSelectionUIState ', this.id, this._children.map((child) => child.id), this._selectedState);
     if (recursive && this._children) {
       for (const child of this._children) {
         if (child._selectedState !== TerritorySelectionState.NONE)

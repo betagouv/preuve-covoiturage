@@ -103,10 +103,6 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       this.updateList();
     });
 
-    // this.pageChange.pipe(takeUntil(this.destroy$)).subscribe((pageState) => {
-    //   this.updateList();
-    //   console.log('pageState', pageState);
-    // });
     this.searchState.pipe(takeUntil(this.destroy$)).subscribe((state) => this.updateList(state));
   }
 
@@ -142,7 +138,6 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
 
       formControl.updateValueAndValidity();
       formControl.markAsUntouched();
-      // console.log('formControl', identity_type, formName, formControl);
     });
     const operatorControl = this.certificateForm.get('operator_id');
     operatorControl.setValidators(!this.auth.user || !this.auth.user.operator_id ? [Validators.required] : []);

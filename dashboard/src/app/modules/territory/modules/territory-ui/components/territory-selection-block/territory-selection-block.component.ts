@@ -24,33 +24,40 @@ export class TerritorySelectionBlockComponent extends DestroyObservable implemen
   protected childrenLoaded = false;
   public children: TerritorySelectionBlock[];
 
-  // removeTerritory(){}
   ngOnInit(): void {
     this.panel.expandedChange.pipe(takeUntil(this.destroy$)).subscribe((state) => {
       if (state === true) this.prepareChildData();
     });
   }
 
+  /**
+   * ngOnChanges is fired on page load and on field value changes
+   * - load children on page load
+   * - load children on field change
+   */
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log('ngOnChanges ', changes);
     if (changes.territory) {
-      const territory = changes.territory.currentValue as TerritorySelectionBlock;
-      if (territory && territory.children) {
+      const { currentValue } = changes.territory as {
+        currentValue: TerritorySelectionBlock;
+        previousValue?: TerritorySelectionBlock;
+        firstChange: boolean;
+      };
+
+      if (currentValue && currentValue.children) {
         this.childrenLoaded = true;
-        this.children = territory.children;
+        this.children = currentValue.children;
       } else {
         this.childrenLoaded = false;
         delete this.children;
       }
-
-      console.log('this.childrenLoaded', this.childrenLoaded);
     }
   }
 
   prepareChildData(): void {
     if (this.childrenLoaded === false) {
       this.childrenLoaded = true;
-      this.territoryApi.getDirectRelation(this.territory.id).subscribe((relation) => {
+      this.territoryApi.getDirectRelation(this.territory.id).subscribe((relations) => {
+        const relation = relations[0];
         const children = new Array(relation.children.length);
         for (let i = 0; i < children.length; i++) {
           const child = { id: relation.children[i]._id, name: relation.children[i].name };

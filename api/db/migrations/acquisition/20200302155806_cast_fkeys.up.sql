@@ -1,5 +1,5 @@
 -- update all 'unknown' values to 0
-update acquisition.acquisitions set application_id = '0' where application_id = 'unknown';
+update acquisition.acquisitions set application_id = '0'  where application_id = 'unknown' OR application_id = '';
 
 -- alter acquisition table
 alter table acquisition.acquisitions

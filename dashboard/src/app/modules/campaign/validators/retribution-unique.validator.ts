@@ -5,7 +5,6 @@ export const uniqueRetributionValidator: ValidatorFn = (formGroup: FormGroup): V
 
   const errors = [];
   let hasErrors = false;
-  console.log('formGroup.value : ', formGroup.value);
 
   for (const retribution of formGroup.value) {
     const hasError =

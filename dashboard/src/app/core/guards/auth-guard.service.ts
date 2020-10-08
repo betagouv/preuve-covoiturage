@@ -4,7 +4,6 @@ import {
   CanActivate,
   CanActivateChild,
   CanLoad,
-  Route,
   Router,
   RouterStateSnapshot,
 } from '@angular/router';
@@ -21,8 +20,6 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
   constructor(private router: Router, private authService: AuthenticationService, private toastr: ToastrService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    // check if the user is connected
-
     return this.authService.check().pipe(
       map((user) => !!user),
       tap((loggedIn) => {
@@ -39,7 +36,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     );
   }
 
-  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  canActivateChild(route: ActivatedRouteSnapshot): Observable<boolean> {
     return this.authService.check().pipe(
       map((user) => {
         if (!user) {
@@ -64,17 +61,9 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
         return true;
       }),
     );
-
-    // if (!isInGroups || !hasRole) {
-    //   this.router.navigate(['/']).then(() => {
-    //     this.toastr.error('Vous n\'êtes pas autorisé à accéder à cette page.');
-    //   });
-    //   return false;
-    // }
-    // return true;
   }
 
-  canLoad(route: Route): Observable<boolean> {
+  canLoad(): Observable<boolean> {
     return this.authService.check().pipe(
       map((user) => !!user),
       tap((loggedIn) => {

@@ -8,3 +8,4 @@ export { ServiceException } from './ServiceException';
 export { UnauthorizedException } from './UnauthorizedException';
 export { NotFoundException } from './NotFoundException';
 export { ConflictException } from './ConflictException';
+export { TooManyRequestsException } from './TooManyRequestsException';

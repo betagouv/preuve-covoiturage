@@ -7,7 +7,8 @@ WITH oldterritory(company_id, created_at, updated_at, deleted_at, level, name, a
     tt.deleted_at AS deleted_at,
     'towngroup'::territory.territory_level_enum AS level,
     tt.name AS name,
-    (CASE WHEN tt.cgu_accepted_at is NULL THEN false ELSE true END) AS active,
+    TRUE as active,
+    TRUE as activable,
     tt.cgu_accepted_at AS active_since,
     tt.contacts AS contacts,
     tt._id AS old_territory_id
@@ -24,6 +25,7 @@ WITH oldterritory(company_id, created_at, updated_at, deleted_at, level, name, a
     level,
     name,
     active,
+    activable,
     active_since,
     contacts,
     old_territory_id
@@ -100,7 +102,7 @@ territory_insee AS (
 INSERT INTO territory.territory_relation (parent_territory_id, child_territory_id)
 SELECT parent_territory_id, child_territory_id FROM territory_insee;
 
-DROP INDEX territory.territory_operators_territory_id_operator_id_idx;
+DROP INDEX IF EXISTS territory.territory_operators_territory_id_operator_id_idx;
 
 UPDATE territory.territory_operators
 SET territory_id=sub.territory_id
@@ -127,4 +129,4 @@ WITH insee AS (
 ) INSERT INTO territory.territory_codes (territory_id, type, value)  SELECT  insee._id,'insee',insee.insee FROM insee;
 
 
-CREATE UNIQUE INDEX ON territory.territory_operators (territory_id, operator_id);
+CREATE UNIQUE INDEX ON territory.territory_operators (territory_id, operator_id) ;

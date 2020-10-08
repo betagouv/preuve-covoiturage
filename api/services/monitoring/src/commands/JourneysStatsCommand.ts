@@ -2,9 +2,6 @@ import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver }
 
 @command()
 export class JourneysStatsCommand implements CommandInterface {
-  protected readonly processAction = 'fraud:check';
-  protected readonly processAllAction = 'fraud:checkAll';
-
   static readonly signature: string = 'stats:journeys';
   static readonly description: string = 'Stats on journeys';
   static readonly options: CommandOptionType[] = [

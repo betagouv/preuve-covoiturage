@@ -63,7 +63,7 @@ export class StatFormatService {
           total: current.trip,
           total_subsidized: current.trip_subsidized,
         });
-        fillDays(acc, 'carpoolers_per_vehicule', current.day, { total: current.carpoolers / current.trip });
+        fillDays(acc, 'carpoolers_per_vehicule', current.day, { total: current.average_carpoolers_by_car });
 
         return acc;
       },
@@ -92,6 +92,14 @@ export class StatFormatService {
       },
     );
 
+    let ratioCarpoolersByCar = 0;
+    let totalTrip = 0;
+
+    result.forEach((r) => {
+      ratioCarpoolersByCar += r.average_carpoolers_by_car * r.trip;
+      totalTrip += r.trip;
+    });
+
     const cpvm = carpoolers_per_vehicule.days.reduce((acc, current) => {
       const month = moment(current.date).endOf('month').toISOString();
       if (!(month in acc)) {
@@ -107,9 +115,7 @@ export class StatFormatService {
       distance,
       trips,
       carpoolers_per_vehicule: {
-        total:
-          carpoolers_per_vehicule.days.map((day) => day.total).reduce((acc, value) => acc + value, 0) /
-          carpoolers_per_vehicule.days.length,
+        total: ratioCarpoolersByCar / totalTrip,
         months: Object.keys(cpvm).map((key) => ({
           date: key,
           total: cpvm[key].reduce((acc, curr) => acc + curr, 0) / cpvm[key].length,

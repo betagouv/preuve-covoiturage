@@ -4,7 +4,6 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { StatInterface } from '../interfaces/StatInterface';
 import {
-  TargetInterface,
   StatCacheRepositoryProviderInterface,
   StatCacheRepositoryProviderInterfaceResolver,
 } from '../interfaces/StatCacheRepositoryProviderInterface';
@@ -24,7 +23,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
     private crypto: CryptoProviderInterfaceResolver,
   ) {}
 
-  public async getOrBuild(fn: Function, target: TargetInterface): Promise<StatInterface[]> {
+  public async getOrBuild(fn: Function, target: any): Promise<StatInterface[]> {
     const hash = this.genHash(target);
     const result = await this.connection.getClient().query({
       text: `
@@ -50,14 +49,14 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
     return result.rows[0].data;
   }
 
-  private genHash(target: TargetInterface): string {
+  private genHash(target: any): string {
     return this.crypto.md5(JSON.stringify(target));
   }
 
   /**
    * Save the stat_cache entry
    */
-  protected async save(hash: string, target: TargetInterface, data: StatInterface): Promise<void> {
+  protected async save(hash: string, target: any, data: StatInterface): Promise<void> {
     // first, clean up the matching target before recreating
     // UNIQUE index fails on NULL values. It is safer to force delete
     // the entry before redoing the insert.
@@ -90,7 +89,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
   /**
    * Remove the matching stat_cache entry
    */
-  protected async cleanup(target: TargetInterface): Promise<boolean> {
+  protected async cleanup(target: any): Promise<boolean> {
     try {
       const deleted = await this.connection.getClient().query({
         text: `DELETE FROM ${this.table} WHERE hash = $1`,

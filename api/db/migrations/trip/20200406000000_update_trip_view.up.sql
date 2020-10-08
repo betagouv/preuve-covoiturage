@@ -6,6 +6,7 @@ CREATE TYPE trip.incentive AS (
   amount int,
   unit varchar,
   policy_id int,
+  policy_name varchar,
   type varchar
 );
 
@@ -21,6 +22,7 @@ create or replace function incentive_to_json(_ti trip.incentive) returns json as
   , 'amount', $1.amount
   , 'unit', $1.unit
   , 'policy_id', $1.policy_id
+  , 'policy_name', $1.policy_name
   , 'type', $1.type
   );
 $$ language sql;
@@ -33,6 +35,7 @@ create or replace function json_to_incentive(_ti json) returns trip.incentive as
     ($1->>'amount')::int,
     $1->>'unit',
     ($1->>'policy_id')::int,
+    ($1->>'policy_name')::varchar,
     $1->>'type')::trip.incentive;
 $$ language sql;
 
@@ -41,10 +44,11 @@ create cast (json as trip.incentive) with function json_to_incentive(_ti json) a
 CREATE VIEW trip.list_view AS (
   SELECT
 
-  -- THIS IS FOR AUTH ONLY --
+  -- THIS IS FOR AUTH AND SEARCH ONLY --
     cpp.operator_id as operator_id,
-    tis._id as start_territory_id,
-    tie._id as end_territory_id,
+    cpp.start_territory_id as start_territory_id,
+    cpp.end_territory_id as end_territory_id,
+    COALESCE((pip.policy_id || pid.policy_id)::int[], ARRAY[]::int[]) as applied_policies,
 
     -- DATA --
     cpp.acquisition_id as journey_id,
@@ -75,12 +79,12 @@ CREATE VIEW trip.list_view AS (
       END
     ) as journey_start_lat,
 
-    tis.insee[1] as journey_start_insee,
-    tis.postcode[1] as journey_start_postalcode,
-    substring(tis.postcode[1] from 1 for 2) as journey_start_department,
-    (tis.breadcrumb).town::varchar as journey_start_town,
-    (tis.breadcrumb).towngroup::varchar as journey_start_towngroup,
-    (tis.breadcrumb).country::varchar as journey_start_country,
+    cts.insee[1] as journey_start_insee,
+    cts.postcode[1] as journey_start_postalcode,
+    substring(cts.postcode[1] from 1 for 2) as journey_start_department,
+    bts.town::varchar as journey_start_town,
+    bts.towngroup::varchar as journey_start_towngroup,
+    bts.country::varchar as journey_start_country,
 
     ts_ceil((cpp.datetime + (cpp.duration || ' seconds')::interval), 600) as journey_end_datetime,
 
@@ -105,12 +109,12 @@ CREATE VIEW trip.list_view AS (
       END
     ) as journey_end_lat,
 
-    tie.insee[1] as journey_end_insee,
-    tie.postcode[1] as journey_end_postalcode,
-    substring(tie.postcode[1] from 1 for 2) as journey_end_department,
-    (tie.breadcrumb).town::varchar as journey_end_town,
-    (tie.breadcrumb).towngroup::varchar as journey_end_towngroup,
-    (tie.breadcrumb).country::varchar as journey_end_country,
+    cte.insee[1] as journey_end_insee,
+    cte.postcode[1] as journey_end_postalcode,
+    substring(cte.postcode[1] from 1 for 2) as journey_end_department,
+    bte.town::varchar as journey_end_town,
+    bte.towngroup::varchar as journey_end_towngroup,
+    bte.country::varchar as journey_end_country,
 
     (CASE WHEN cpp.distance IS NOT NULL THEN cpp.distance ELSE (cpp.meta::json->>'calc_distance')::int END) as journey_distance,
     cpp.distance as journey_distance_anounced,
@@ -149,12 +153,19 @@ CREATE VIEW trip.list_view AS (
 
   LEFT JOIN territory.territories AS tts ON tts._id = cpp.start_territory_id
   LEFT JOIN territory.territories AS tte ON tte._id = cpp.end_territory_id
-  LEFT JOIN territory.territories_view AS tis ON tis._id = cpp.start_territory_id
-  LEFT JOIN territory.territories_view AS tie ON tie._id = cpp.end_territory_id
-
   LEFT JOIN carpool.carpools AS cpd ON cpd.acquisition_id = cpp.acquisition_id AND cpd.is_driver = true AND cpd.status = 'ok'::carpool.carpool_status_enum
   LEFT JOIN carpool.identities AS cip ON cip._id = cpp.identity_id
-  LEFT JOIN carpool.identities AS cid ON cid._id = cpd.identity_id,
+  LEFT JOIN carpool.identities AS cid ON cid._id = cpd.identity_id
+  LEFT JOIN territory.get_codes(cpp.start_territory_id, ARRAY[]::int[]) AS cts ON TRUE
+  LEFT JOIN territory.get_codes(cpp.end_territory_id, ARRAY[]::int[]) AS cte ON TRUE
+  LEFT JOIN territory.get_breadcrumb(
+    cpp.start_territory_id,
+    territory.get_ancestors(ARRAY[cpp.start_territory_id])
+  ) AS bts ON TRUE
+  LEFT JOIN territory.get_breadcrumb(
+    cpp.end_territory_id,
+    territory.get_ancestors(ARRAY[cpp.end_territory_id])
+  ) AS bte ON TRUE,
   LATERAL (
     WITH data AS (
       SELECT
@@ -167,11 +178,13 @@ CREATE VIEW trip.list_view AS (
     ),
     incentive AS (
       SELECT
+        data.policy_id as policy_id,
         ROW(
           cc.siret,
           data.amount,
           pp.unit::varchar,
           data.policy_id,
+          pp.name::varchar,
           'incentive'
         )::trip.incentive as value,
         data.amount as amount
@@ -184,7 +197,8 @@ CREATE VIEW trip.list_view AS (
       array_agg(
         incentive.value
       ) as incentive_raw,
-      sum(incentive.amount) as incentive_sum
+      sum(incentive.amount) as incentive_sum,
+      array_agg(incentive.policy_id) as policy_id
     FROM incentive
   ) as pip,
   LATERAL (
@@ -199,11 +213,13 @@ CREATE VIEW trip.list_view AS (
     ),
     incentive AS (
       SELECT
+        data.policy_id as policy_id,
         ROW(
           cc.siret,
           data.amount,
           pp.unit::varchar,
           data.policy_id,
+          pp.name::varchar,
           'incentive'
         )::trip.incentive as value,
         data.amount as amount
@@ -216,7 +232,8 @@ CREATE VIEW trip.list_view AS (
       array_agg(
         incentive.value
       ) as incentive_raw,
-      sum(incentive.amount) as incentive_sum
+      sum(incentive.amount) as incentive_sum,
+      array_agg(incentive.policy_id) as policy_id
     FROM incentive
   ) as pid,
   LATERAL (
@@ -240,6 +257,7 @@ CREATE TABLE trip.list (
  operator_id integer,
  start_territory_id integer,
  end_territory_id integer,
+ applied_policies integer[],
  journey_id integer,
  trip_id varchar(256),
  journey_start_datetime timestamp with time zone,
@@ -291,6 +309,7 @@ CREATE INDEX ON trip.list(journey_start_datetime);
 CREATE INDEX ON trip.list(start_territory_id);
 CREATE INDEX ON trip.list(end_territory_id);
 CREATE INDEX ON trip.list(operator_id);
+CREATE INDEX ON trip.list(applied_policies);
 CREATE INDEX ON trip.list(journey_start_weekday);
 CREATE INDEX ON trip.list(journey_start_dayhour);
 CREATE INDEX ON trip.list(journey_distance);
@@ -307,6 +326,7 @@ BEGIN
       operator_id,
       start_territory_id,
       end_territory_id,
+      applied_policies,
       trip_id,
       journey_start_datetime,
       journey_start_weekday,
@@ -355,6 +375,7 @@ BEGIN
       excluded.operator_id,
       excluded.start_territory_id,
       excluded.end_territory_id,
+      excluded.applied_policies,
       excluded.trip_id,
       excluded.journey_start_datetime,
       excluded.journey_start_weekday,
@@ -420,6 +441,7 @@ BEGIN
       operator_id,
       start_territory_id,
       end_territory_id,
+      applied_policies,
       trip_id,
       journey_start_datetime,
       journey_start_weekday,
@@ -468,6 +490,7 @@ BEGIN
       excluded.operator_id,
       excluded.start_territory_id,
       excluded.end_territory_id,
+      excluded.applied_policies,
       excluded.trip_id,
       excluded.journey_start_datetime,
       excluded.journey_start_weekday,

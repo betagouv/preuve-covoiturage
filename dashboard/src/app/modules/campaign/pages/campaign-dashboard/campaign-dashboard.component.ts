@@ -18,6 +18,8 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
   campaignStatus = CampaignStatusEnum;
   canCreateCampaign$: Observable<boolean>;
   campaigns: CampaignUx[];
+  outdatedCampaign: CampaignUx[];
+  currentCampaigns: CampaignUx[];
   canSeeDraft$: Observable<boolean>;
   displayDemoCaption$: Observable<boolean>;
 
@@ -47,6 +49,21 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
   private loadCampaigns(): void {
     this._campaignStoreService.campaignsUx$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: CampaignUx[]) => {
       this.campaigns = campaigns;
+
+      this.outdatedCampaign = [];
+      this.currentCampaigns = [];
+
+      const now = new Date().getTime();
+
+      this.campaigns.forEach((c) => {
+        if (c.status !== CampaignStatusEnum.DRAFT) {
+          if (c.end.toDate().getTime() > now) {
+            this.currentCampaigns.push(c);
+          } else {
+            this.outdatedCampaign.push(c);
+          }
+        }
+      });
     });
     if (this._authService.user.group === UserGroupEnum.TERRITORY) {
       this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });

@@ -24,6 +24,7 @@ export class CommonDataService {
   private _currentTerritory$ = new BehaviorSubject<Territory>(null);
 
   private _territories$ = new BehaviorSubject<Territory[]>([]);
+  private _activableTerritories$ = new BehaviorSubject<Territory[]>([]);
   private _operators$ = new BehaviorSubject<Operator[]>([]);
   private _campaigns$ = new BehaviorSubject<Campaign[]>([]);
 
@@ -37,6 +38,10 @@ export class CommonDataService {
 
   get territories$(): Observable<Territory[]> {
     return this._territories$;
+  }
+
+  get activableTerritories$(): Observable<Territory[]> {
+    return this._activableTerritories$;
   }
 
   get operators$(): Observable<Operator[]> {
@@ -57,6 +62,10 @@ export class CommonDataService {
 
   get territories(): Territory[] {
     return this._territories$.value;
+  }
+
+  get activableTerritories(): Territory[] {
+    return this._activableTerritories$.value;
   }
 
   get operators(): Operator[] {
@@ -106,10 +115,19 @@ export class CommonDataService {
 
   loadTerritories(): Observable<Territory[]> {
     return this.territoryApiService.getList().pipe(
-      map((territories) =>
-        territories.data.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
-      ),
+      map((territories) => {
+        return territories.data.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name));
+      }),
       tap((territories) => this._territories$.next(territories)),
+    );
+  }
+
+  loadActivableTerritories(): Observable<Territory[]> {
+    return this.territoryApiService.getActivableList().pipe(
+      map((territories) => {
+        return territories.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name));
+      }),
+      tap((territories) => this._activableTerritories$.next(territories)),
     );
   }
 
@@ -135,7 +153,7 @@ export class CommonDataService {
               this.territoryApiService.paramGetById(
                 user.territory_id,
                 [SortEnum.NameAsc],
-                [...allBasicFieldEnum, ...allCompanyFieldEnum],
+                [...allBasicFieldEnum, ...allCompanyFieldEnum, 'activable'],
               ),
             );
           } else if (user.operator_id) {
@@ -180,6 +198,12 @@ export class CommonDataService {
           this._territories$.next(
             territoriesR.data.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
           );
+
+          this._activableTerritories$.next(
+            territoriesR.data
+              .filter((t) => t.active)
+              .sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
+          );
         }
 
         if (campaignsR && campaignsR.data) {
@@ -197,6 +221,7 @@ export class CommonDataService {
 
   public resetAll(): void {
     this._territories$.next(null);
+    this._activableTerritories$.next(null);
     this._campaigns$.next(null);
     this._operators$.next(null);
     this._currentOperator$.next(null);

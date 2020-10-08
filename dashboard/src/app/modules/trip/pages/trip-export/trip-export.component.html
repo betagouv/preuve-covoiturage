@@ -30,6 +30,13 @@
         <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
         <mat-datepicker #endDatePicker></mat-datepicker>
       </mat-form-field>
+
+      <app-operators-autocomplete
+        fieldName="operator_id"
+        [onlyVisible]="operatorFieldVisibleOperatorOnly | async"
+        *ngIf="operatorFieldVisible | async"
+        [parentForm]="exportFilterForm"
+      ></app-operators-autocomplete>
     </div>
     <div class="exportFilter-footer">
       <button

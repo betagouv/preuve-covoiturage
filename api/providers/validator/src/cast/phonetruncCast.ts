@@ -2,7 +2,7 @@ import { PhoneNumberUtil, PhoneNumber, PhoneNumberFormat } from 'google-libphone
 
 export function phonetruncCast({ data }: { data: string }): string {
   if (!data) {
-    throw new Error('Invalid Phone');
+    return data;
   }
 
   try {

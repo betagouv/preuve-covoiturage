@@ -23,11 +23,11 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
         throw new NotFoundException(`${data.message} (${siret})`);
       }
 
-      console.log('< data : ', data);
+      const siren = siret.substring(0, 9);
 
       return {
-        siret: get(data, 'etablissement.siret', null),
-        siren: get(data, 'etablissement.siren', null),
+        siret,
+        siren,
         nic: get(data, 'etablissement.nic', null),
         legal_name: get(data, 'etablissement.nom_raison_sociale', null),
         company_naf_code: get(data, 'etablissement.activite_principale_entreprise', null),
@@ -35,8 +35,12 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
         legal_nature_code: get(data, 'etablissement.nature_juridique_entreprise', null),
         legal_nature_label: get(data, 'etablissement.libelle_nature_juridique_entreprise', null),
         nonprofit_code: get(data, 'etablissement.numero_rna', null),
-        intra_vat: get(data, 'numero_tva_intra', null), // FIXME this is not working, need to do a 2nd call on siren
+        intra_vat: `FR${`0${((parseInt(siren) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
         address: get(data, 'etablissement.geo_adresse', null),
+        address_street: get(data, 'etablissement.l4_normalisee', null),
+        address_postcode: get(data, 'etablissement.code_postal', null),
+        address_cedex: get(data, 'etablissement.cedex', null),
+        address_city: get(data, 'etablissement.libelle_commune', null),
         lon: Number(get(data, 'etablissement.longitude', null)) || null,
         lat: Number(get(data, 'etablissement.latitude', null)) || null,
         headquarter: get(data, 'etablissement.is_siege', null) === '1',

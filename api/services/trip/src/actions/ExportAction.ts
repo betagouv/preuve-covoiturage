@@ -15,34 +15,12 @@ import {
   middlewares: [
     ['validate', alias],
     [
-      'scopeIt',
-      [
-        ['trip.export'],
-        [
-          (params, context): string => {
-            if (
-              'territory_id' in params &&
-              context.call.user.territory_id &&
-              context.call.user.authorizedTerritories.length &&
-              params.territory_id.length &&
-              params.territory_id.filter((id: number) => !context.call.user.authorizedTerritories.includes(id))
-                .length === 0
-            ) {
-              return 'territory.trip.export';
-            }
-          },
-          (params, context): string => {
-            if (
-              'operator_id' in params &&
-              context.call.user.operator_id &&
-              params.operator_id.length === 1 &&
-              params.operator_id[0] === context.call.user.operator_id
-            ) {
-              return 'operator.trip.export';
-            }
-          },
-        ],
-      ],
+      'scopeToGroup',
+      {
+        global: 'trip.export',
+        territory: 'territory.trip.export',
+        operator: 'operator.trip.export',
+      },
     ],
   ],
 })
@@ -63,7 +41,7 @@ export class ExportAction extends Action {
       (params && params.date && params.date.start) || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
     const end = (params && params.date && params.date.end) || new Date();
 
-    const buildParams: BuildParamsInterface = {
+    const buildParams: BuildParamsInterface = ({
       from: {
         type: context.call.user.territory_id ? 'territory' : context.call.user.operator_id ? 'operator' : 'registry',
         fullname,
@@ -74,12 +52,13 @@ export class ExportAction extends Action {
         territory_id: params.territory_id,
         territory_authorized_operator_id: get(context, 'call.user.authorizedOperators', []),
         date: {
-          start,
-          end,
+          start: start.toISOString(),
+          end: end.toISOString(),
         },
       },
-    };
+    } as unknown) as BuildParamsInterface;
 
+    // call trip:buildExport
     await this.kernel.notify<BuildParamsInterface>(buildSignature, buildParams, {
       channel: {
         service: 'trip',
