@@ -76,6 +76,7 @@ export class HttpTransport implements TransportInterface {
     this.registerApplicationRoutes();
     this.registerCertificateRoutes();
     this.registerAcquisitionRoutes();
+    this.registerUptimeRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
   }
@@ -536,6 +537,15 @@ export class HttpTransport implements TransportInterface {
     // general error handler
     // keep last
     this.app.use(errorHandlerMiddleware);
+  }
+
+  private registerUptimeRoute() {
+    this.app.get(
+      '/uptime',
+      asyncHandler(async (req, res, next) => {
+        res.json({ hello: 'world' });
+      }),
+    );
   }
 
   /**
