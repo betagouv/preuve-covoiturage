@@ -149,7 +149,7 @@ export class AuthenticationService {
       new_password: newPassword,
     });
 
-    return this.jsonRPC.callOne(jsonRPCParam).pipe(tap(console.log));
+    return this.jsonRPC.callOne(jsonRPCParam);
   }
 
   public hasAnyPermission(permissions: PermissionType[]): boolean {

@@ -20,7 +20,7 @@ export class SentryErrorHandler extends ErrorHandler {
 
     try {
       captureException(error.originalError || new Error(error.message), {
-        extra: error,
+        extra: { json_error: JSON.stringify(error) },
         tags: {
           environment: environment.name,
           production_mode: environment.production ? 'yes' : 'no',

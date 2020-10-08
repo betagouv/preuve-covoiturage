@@ -96,45 +96,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     return this.usersFiltered && this.usersFiltered.length;
   }
 
-  // addUser() {
-  //   this.isCreatingUser = true;
-
-  //   this.editUserFormVisible = true;
-  //   if (this.currentOperator) {
-  //     this.editedUser = new User({
-  //       _id: null,
-  //       email: null,
-  //       firstname: null,
-  //       lastname: null,
-  //       phone: null,
-  //       group: this.currentGroup,
-  //       operator_id: this.currentOperator,
-  //       role: <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`,
-  //       permissions: [],
-  //     });
-  //     console.log(this.editedUser);
-  //   }
-  //   if (this.currentTerritory) {
-  //     console.log('territory', this.currentTerritory);
-  //     this.editedUser = new User({
-  //       _id: null,
-  //       email: null,
-  //       firstname: null,
-  //       lastname: null,
-  //       phone: null,
-  //       group: this.currentGroup,
-  //       territory_id: this.currentTerritory,
-  //       role: <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`,
-  //       permissions: [],
-  //     });
-  //   }
-  // }
-
   showEditForm(user: User = null): void {
-    // this.isCreatingUser = false;
-    // this.editUserFormVisible = true;
-    // this.editedUser = user;
-
     if (user) {
       this.userStoreService.select(user);
     } else {

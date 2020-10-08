@@ -172,7 +172,6 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       }
       if (formVal.group !== this.userGroup) {
         this.userGroup = formVal.group;
-        console.log(this.userGroup, this.roles, this.roles[this.userGroup]);
         this.createEditUserForm.get('operator_id').setValue(null);
         this.createEditUserForm.get('territory_id').setValue(null);
         this.createEditUserForm.get('role').setValue(null);

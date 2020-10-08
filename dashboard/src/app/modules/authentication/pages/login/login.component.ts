@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
   public onLogin(): void {
     this.authService.login(this.controls.email.value, this.controls.password.value).subscribe((user) => {
       if (!user) {
-        console.log('login failed');
+        console.warn('login failed');
       }
     });
   }

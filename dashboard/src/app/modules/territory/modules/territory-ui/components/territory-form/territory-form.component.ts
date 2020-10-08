@@ -336,7 +336,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private updateValidation(): void {
-    // console.log('> updateValidation');
     if (this.territoryForm && this.fullFormMode) {
       this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
       this.territoryForm.controls['shortname'].setValidators(this.fullFormMode ? Validators.max(12) : null);
@@ -390,8 +389,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this._relationDisplayMode = formValues.format;
     if (this.editedId && this.fullFormMode) {
       if (formValues.format === 'parent') {
-        console.log('territory.children', territory.children, territory.children.length);
-
         this.hasTerritories = territory.children ? territory.children.length > 0 : false;
         this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
           this.territoryChildren.setRelations(completeRelation);

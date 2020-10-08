@@ -52,11 +52,6 @@ export class CampaignMapComponent implements OnInit, OnDestroy {
       level: '' as any,
     }));
 
-    const uniqueTerritories = Array.from(new Set(territories.map((t) => t._id))).map((id) =>
-      territories.find((t) => t._id === id),
-    );
-    console.log(uniqueTerritories);
-
     // ADD THE TERRITORIES LAYER
     // TODO GET GEOJSON FROM UNIQUE TERRITORIES
     // @ts-ignore

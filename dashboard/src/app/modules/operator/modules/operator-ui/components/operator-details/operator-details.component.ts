@@ -23,61 +23,11 @@ export class OperatorDetailsComponent extends DestroyObservable implements OnIni
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['operator']) {
-      console.log(changes['operator'].currentValue);
-
       this.setOperatorDetails(new Operator(changes['operator'].currentValue));
     }
   }
 
   private setOperatorDetails(operator: Operator): void {
     this.operator = operator.toFormValues();
-
-    // base values for form
-    // const operatorConstruct = new Operator({
-    //   _id: null,
-    //   name: null,
-    //   legal_name: null,
-    //   contacts: new Contacts(),
-    // });
-    //
-    //
-    // // @ts-ignore
-    // const { contacts, ...operatorParams } = new Operator({ ...operator });
-    // operatorParams['contacts'] = new Contacts(contacts);
-    //
-    // // // get values in correct format with initialized values
-    // this.operator = new Operator({
-    //   _id: operatorParams._id,
-    //   name: operatorParams.name,
-    //   legal_name: operatorParams.legal_name,
-    //   address: new Address({
-    //     ...operatorConstruct.address,
-    //     ...operatorParams.address,
-    //   }),
-    //   bank: new Bank({
-    //     ...operatorConstruct.bank,
-    //     ...operatorParams.bank,
-    //   }),
-    //   company: new Company({
-    //     ...operatorConstruct.company,
-    //     ...operatorParams.company,
-    //   }),
-    //   contacts: new Contacts({
-    //     gdpr_dpo: {
-    //       ...operatorConstruct.contacts.gdpr_dpo,
-    //       ...operatorParams['contacts'].gdpr_dpo,
-    //     },
-    //     gdpr_controller: {
-    //       ...operatorConstruct.contacts.gdpr_controller,
-    //       ...operatorParams['contacts'].gdpr_controller,
-    //     },
-    //     technical: {
-    //       ...operatorConstruct.contacts.technical,
-    //       ...operatorParams['contacts'].technical,
-    //     },
-    //   }),
-    // });
-    //
-    // console.log('this.operator : ', this.operator);
   }
 }
