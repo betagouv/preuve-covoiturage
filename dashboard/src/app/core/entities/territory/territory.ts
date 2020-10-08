@@ -132,7 +132,7 @@ export class Territory extends BaseModel
   updateFromFormValues(formValues: TerritoryFormModel): void {
     // this.level = formValues.level;
     // this.level = TerritoryLevelEnum.Country;
-    this.name = formValues.name;
+    (this as any).names = formValues.name;
     this.level = formValues.level !== undefined ? (formValues.level as TerritoryLevelEnum) : TerritoryLevelEnum.Country;
     this.active = formValues.active === true;
     this.activable = formValues.activable === true;
