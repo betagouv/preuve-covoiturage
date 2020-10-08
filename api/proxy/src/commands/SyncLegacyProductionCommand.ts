@@ -28,6 +28,7 @@ export class SyncLegacyProductionCommand implements CommandInterface {
     {
       signature: '-f, --from <date>',
       description: 'Sync acquisition from this date',
+      coerce: (s: string): Date => new Date(s),
     },
   ];
 
