@@ -17,8 +17,6 @@ export class TerritoryDetailsComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['territory']) {
-      console.log(changes['territory'].currentValue);
-
       this.setTerritoryDetails(new Territory(changes['territory'].currentValue));
     }
   }

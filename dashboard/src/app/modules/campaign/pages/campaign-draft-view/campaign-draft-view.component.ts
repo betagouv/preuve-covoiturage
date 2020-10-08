@@ -58,7 +58,6 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
   }
 
   private loadCampaign(campaignId: number): void {
-    console.log('> loadCampaign');
     this._campaignStoreService
       .getById(campaignId)
       .pipe(takeUntil(this.destroy$))
@@ -67,7 +66,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
           this.campaignUx = campaign.toFormValues();
         },
         (err) => {
-          console.log('err : ', err);
+          console.warn('err : ', err);
           this._router.navigate(['/campaign']).then(() => {
             this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
           });

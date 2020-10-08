@@ -83,8 +83,6 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
   }
 
   private filter(value: string): Territory[] {
-    // console.log('this.territoryFilter : ', this.territoryFilter);
-
     // apply optionnal input filter
     const territories = this.territoryFilter ? this.territories.filter(this.territoryFilter) : this.territories;
 

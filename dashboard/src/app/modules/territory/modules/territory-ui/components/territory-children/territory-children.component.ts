@@ -44,7 +44,6 @@ export class TerritoryChildrenComponent implements OnInit {
     this.api.getDirectRelation(this.selectedTerritory.id).subscribe((relations) => {
       // we add current ,all descendant and all ancestors of currently added territory
       // to ignore list in order to avoid cross / double linking
-      // console.log('relation', relation);
 
       const relation = relations[0];
 
@@ -53,7 +52,6 @@ export class TerritoryChildrenComponent implements OnInit {
       if (relation.descendant_ids) ignoreIds.push(...relation.descendant_ids);
 
       this.subIgnoredIds.push(...ignoreIds);
-      // console.log('subIgnoredIds ', this.subIgnoredIds);
       this.territories.push(new TerritorySelectionBlock(this.selectedTerritory));
       this.subIgnoredIdsGroups.push(ignoreIds);
 
@@ -65,7 +63,6 @@ export class TerritoryChildrenComponent implements OnInit {
 
   territorySelected(territory: IdName): void {
     this.selectedTerritory = territory ? { id: territory.id, name: territory.name } : null;
-    // console.log('this.selectedTerritory : ', this.selectedTerritory);
   }
 
   removeTerritory(territory: TerritorySelectionBlock): void {
@@ -86,15 +83,12 @@ export class TerritoryChildrenComponent implements OnInit {
       territory_id: [null, [Validators.required]],
     });
 
-    this.territoryAddForm.valueChanges.subscribe((val) => console.log('change', val));
     this.subIgnoredIds = [];
   }
 
   getFlatSelectedList(list: IdName[] = []): number[] {
     for (const territory of this.territories) {
-      // console.log('territory ', territory);
       territory.getFlatSelectedList(list);
-      // console.log('list', [...list]);
     }
     return list.map((idname: IdName) => idname.id);
   }

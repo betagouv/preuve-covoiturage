@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { map, takeUntil, tap } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -27,10 +27,7 @@ export class TerritoryComponent extends DestroyObservable implements OnInit {
     );
 
     this._commonDataService.currentTerritory$
-      .pipe(
-        takeUntil(this.destroy$),
-        tap((t) => console.log('t : ', t)),
-      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe((territory) => (this.territory = territory));
   }
 }
