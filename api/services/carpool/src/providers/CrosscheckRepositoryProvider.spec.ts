@@ -15,7 +15,7 @@ test.before(async (t) => {
     connectionString:
       'APP_POSTGRES_URL' in process.env
         ? process.env.APP_POSTGRES_URL
-        : 'postgresql://postgres:postgres@localhost:5432/pdc-local',
+        : 'postgresql://postgres:postgres@localhost:5432/local',
   });
   await t.context.connection.up();
   t.context.repository = new CrosscheckRepositoryProvider(t.context.connection);
@@ -32,12 +32,12 @@ test.serial('Should get a new uuid', async (t) => {
     start: {
       lat: 0,
       lon: 0,
-      insee: 'myinsee',
+      territory_id: 0,
     },
     end: {
       lat: 0,
       lon: 0,
-      insee: 'myinsee',
+      territory_id: 0,
     },
     identity_uuid: '973b462f-6521-4b57-85c8-970c2d34fb10',
   };

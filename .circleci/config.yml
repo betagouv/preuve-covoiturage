@@ -121,6 +121,38 @@ jobs:
             mv dist/dashboard dist/$CIRCLE_BRANCH
             scp -rpq -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_c7ba988b3db492c7b497d59be8c13dec dist/$CIRCLE_BRANCH covoiturage-beta-gouv@ssh-covoiturage-beta-gouv.alwaysdata.net:www/
 
+  front-deploy-demo:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo/dashboard
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+      - run: yarn install --production=false
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Build
+          command: yarn build -c demo --no-progress
+      - add_ssh_keys:
+          fingerprints:
+            - 'c7:ba:98:8b:3d:b4:92:c7:b4:97:d5:9b:e8:c1:3d:ec'
+      - run:
+          name: Clean up existing deploy
+          command: |
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_c7ba988b3db492c7b497d59be8c13dec covoiturage-beta-gouv@ssh-covoiturage-beta-gouv.alwaysdata.net rm -rf www/demo
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_c7ba988b3db492c7b497d59be8c13dec covoiturage-beta-gouv@ssh-covoiturage-beta-gouv.alwaysdata.net mkdir -p www/demo
+      - run:
+          name: Deploy to Alwaysdata
+          command: |
+            mv dist/dashboard dist/demo
+            scp -rpq -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_c7ba988b3db492c7b497d59be8c13dec dist/demo covoiturage-beta-gouv@ssh-covoiturage-beta-gouv.alwaysdata.net:www/
+
   front-deploy-staging:
     docker:
       - image: circleci/node:10
@@ -157,33 +189,41 @@ workflows:
   version: 2
   frontend-dev:
     jobs:
-      - front-qa:
-          filters:
-            branches:
-              only:
-                - dev
+      # - front-qa:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - dev
 
-      - front-cypress:
-          filters:
-            branches:
-              only:
-                - dev
+      # - front-cypress:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - dev
 
       - front-deploy-dev:
           requires:
-            - front-qa
+          # - front-qa
           filters:
             branches:
               only:
                 - dev
 
-  frontend-staging:
+  frontend-demo:
     jobs:
-      - front-qa:
+      - front-deploy-demo:
           filters:
             branches:
               only:
-                - staging
+                - demo
+
+  frontend-staging:
+    jobs:
+      # - front-qa:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - staging
       # - front-cypress:
       #     filters:
       #       branches:
@@ -192,7 +232,7 @@ workflows:
 
       - front-deploy-staging:
           requires:
-            - front-qa
+          # - front-qa
           filters:
             branches:
               only:

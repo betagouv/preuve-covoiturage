@@ -8,7 +8,7 @@ import { alias } from '../shared/territory/create.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['territory.create']],
+    // ['can', ['territory.create']],
     ['validate', alias],
   ],
 })
@@ -18,6 +18,10 @@ export class CreateTerritoryAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    // TODO : ResultInterface as repository return interface
+    // throw new Error('to migrate with new Result Interface');
+    // return this.territoryRepository.create(params);
+
     return this.territoryRepository.create(params);
   }
 }

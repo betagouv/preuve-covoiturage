@@ -2,8 +2,8 @@ import { RuleHandlerParamsInterface } from '../../interfaces';
 import { TransformerRule } from '../TransformerRule';
 
 interface DistanceBoundingTransformerParams {
-  minimum?: number;
-  maximum?: number;
+  min?: number;
+  max?: number;
   offset?: number;
 }
 
@@ -14,11 +14,11 @@ export class DistanceBoundingTransformer extends TransformerRule<DistanceBoundin
     type: 'object',
     additionalProperties: false,
     properties: {
-      minimum: {
+      min: {
         type: 'integer',
         minimum: 0,
       },
-      maximum: {
+      max: {
         type: 'integer',
         minimum: 0,
       },
@@ -26,11 +26,11 @@ export class DistanceBoundingTransformer extends TransformerRule<DistanceBoundin
   };
 
   transform(context: RuleHandlerParamsInterface): RuleHandlerParamsInterface {
-    if (this.parameters.minimum) {
-      context.person.distance = Math.max(this.parameters.minimum, context.person.distance);
+    if (this.parameters.min) {
+      context.person.distance = Math.max(this.parameters.min, context.person.distance);
     }
-    if (this.parameters.maximum) {
-      context.person.distance = Math.min(this.parameters.maximum, context.person.distance);
+    if (this.parameters.max) {
+      context.person.distance = Math.min(this.parameters.max, context.person.distance);
     }
     if (this.parameters.offset) {
       context.person.distance += this.parameters.offset;

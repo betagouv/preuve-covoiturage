@@ -30,11 +30,7 @@ const routes: Routes = [
           import('./modules/campaign/campaign.module').then((mod) => mod.CampaignModule),
         canLoad: [AuthGuard],
       },
-      {
-        path: 'certificate',
-        loadChildren: (): Promise<CertificateModule> =>
-          import('./modules/certificate/certificate.module').then((mod) => mod.CertificateModule),
-      },
+
       {
         path: 'registry',
         loadChildren: (): Promise<RegistryModule> =>
@@ -71,6 +67,11 @@ const routes: Routes = [
       {
         path: '',
         loadChildren: (): Promise<StatModule> => import('./modules/stat/stat.module').then((mod) => mod.StatModule),
+      },
+      {
+        path: 'attestation',
+        loadChildren: (): Promise<CertificateModule> =>
+          import('./modules/certificate/certificate.module').then((mod) => mod.CertificateModule),
       },
     ],
   },

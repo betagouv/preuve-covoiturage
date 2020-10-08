@@ -1,14 +1,14 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
-import * as _ from 'lodash';
 import { debounceTime, filter, takeUntil, tap } from 'rxjs/operators';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
 // eslint-disable-next-line
-import { TerritoryToInseesAutocompleteService } from '~/shared/modules/territory-to-insees-autocomplete/services/territory-to-insees-autocomplete.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { TerritoryLevelEnum } from '../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 
 @Component({
   selector: 'app-territories-insee-autocomplete',
@@ -24,7 +24,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
 
   @ViewChild('territoryInseeInput', { static: false }) territoryInseeInput: ElementRef;
 
-  constructor(private inseeAutocompleteService: TerritoryToInseesAutocompleteService) {
+  constructor(private territoryApi: TerritoryApiService) {
     super();
   }
 
@@ -59,19 +59,20 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   }
 
   private filterTerritoryInsees(literal = ''): void {
-    const apiMethod = 'findMainInsee';
-    const selectedTerritoryInsees = this.territoryInseesControl.value || [];
-    this.inseeAutocompleteService[apiMethod](literal).subscribe(
-      (foundTerritories) =>
-        (this.searchedTerritoryInsees = foundTerritories.filter(
-          (territory) =>
-            // remove selected territories from proposed territories
-            selectedTerritoryInsees.length === 0 ||
-            selectedTerritoryInsees.filter(
-              // filter out elements that are different
-              (selectedTerritory) => _.difference(selectedTerritory.insees, territory.insees).length !== 0,
-            ).length !== 0,
-        )),
-    );
+    this.territoryApi
+      .getList({
+        skip: 0,
+        limit: 10,
+        search: literal,
+        levels: [TerritoryLevelEnum.Town],
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((foundTerritories: any) => {
+        this.searchedTerritoryInsees = foundTerritories.data.map((terr) => ({
+          territory_literal: terr.name,
+          context: terr.name,
+          insees: terr.insees,
+        }));
+      });
   }
 }

@@ -19,6 +19,8 @@
       [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
       [matChipInputAddOnBlur]="false"
+      minlength="2"
+      maxlength="100"
     />
   </mat-chip-list>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTerritorySelect($event)">

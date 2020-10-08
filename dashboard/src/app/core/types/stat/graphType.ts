@@ -5,5 +5,5 @@ export type graphType = {
   [key in chartType]?: {
     title: string;
     graphs: chartNameType[];
-  }
+  };
 };

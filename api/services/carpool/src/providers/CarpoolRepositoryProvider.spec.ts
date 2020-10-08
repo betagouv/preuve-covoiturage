@@ -16,7 +16,7 @@ test.before(async (t) => {
     connectionString:
       'APP_POSTGRES_URL' in process.env
         ? process.env.APP_POSTGRES_URL
-        : 'postgresql://postgres:postgres@localhost:5432/pdc-local',
+        : 'postgresql://postgres:postgres@localhost:5432/local',
   });
   await t.context.connection.up();
   t.context.repository = new CarpoolRepositoryProvider(t.context.connection);
@@ -60,12 +60,12 @@ test.serial('Should create carpool', async (t) => {
       start: {
         lat: 0,
         lon: 0,
-        insee: '',
+        territory_id: 0,
       },
       end: {
         lat: 0,
         lon: 0,
-        insee: '',
+        territory_id: 0,
       },
       seats: 0,
       duration: 0,
@@ -85,12 +85,12 @@ test.serial('Should create carpool', async (t) => {
       start: {
         lat: 0,
         lon: 0,
-        insee: '',
+        territory_id: 0,
       },
       end: {
         lat: 0,
         lon: 0,
-        insee: '',
+        territory_id: 0,
       },
       seats: 0,
       duration: 0,

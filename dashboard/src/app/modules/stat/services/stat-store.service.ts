@@ -3,7 +3,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { GetListStore } from '~/core/services/store/getlist-store';
@@ -30,16 +29,8 @@ export class StatStoreService extends GetListStore<StatInterface> {
   }
 
   public load(): void {
-    const user = this._authService.user;
     const params = {};
-    if (user && user.group === UserGroupEnum.TERRITORY) {
-      params['territory_id'] = [user.territory_id];
-    }
-    if (user && user.group === UserGroupEnum.OPERATOR) {
-      params['operator_id'] = [user.operator_id];
-    }
     this._filterSubject.next(params);
-    super.loadList();
   }
 
   get stat(): FormatedStatInterface {

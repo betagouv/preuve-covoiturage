@@ -25,9 +25,11 @@
                 formControlName="start"
                 [matDatepicker]="startDatePicker"
                 placeholder="Choisir une date"
+                [min]="this.minDate"
                 (input)="onDateInput()"
               />
-              <mat-error *ngIf="startControl.hasError('dateRange')"> </mat-error>
+              <!-- <mat-error *ngIf="startControl.hasError('dateRange')"> </mat-error> -->
+              <mat-error *ngIf="startControl.hasError('required')"> La date début est requise </mat-error>
               <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #startDatePicker></mat-datepicker>
             </mat-form-field>
@@ -36,7 +38,7 @@
               <input matInput formControlName="end" [matDatepicker]="endDatePicker" placeholder="Choisir une date" />
               <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #endDatePicker></mat-datepicker>
-              <mat-error *ngIf="endControl.hasError('dateRange')"> </mat-error>
+              <!-- <mat-error *ngIf="endControl.hasError('dateRange')"> </mat-error> -->
             </mat-form-field>
             <mat-error *ngIf="startControl.hasError('dateRange')">
               La date de début ne peut pas être définie après la date de fin.
@@ -82,19 +84,16 @@
           </div>
 
           <!--          TOWNS -->
-          <div class="filter-insees">
+          <!-- <div class="filter-insees">
             <app-territories-insee-autocomplete
               [parentForm]="filterForm"
               fieldName="insees"
             ></app-territories-insee-autocomplete>
-          </div>
+          </div> -->
 
           <!--          TERRITORIES -->
           <div class="filter-territories">
-            <app-territories-autocomplete
-              *ngIf="hasGroupOperatorOrRegistry"
-              [parentForm]="filterForm"
-            ></app-territories-autocomplete>
+            <app-territories-autocomplete [parentForm]="filterForm"></app-territories-autocomplete>
           </div>
         </div>
         <div class="filter-content-column">
@@ -114,10 +113,10 @@
               <mat-label>Statut</mat-label>
               <mat-select formControlName="status">
                 <!--                todo: when implemented in back-->
-                <!--                <mat-option *ngFor="let status of tripStatusList" value="{{ status }}">{{-->
-                <!--                  getStatusFrench(status)-->
-                <!--                }}</mat-option>-->
-                <mat-option value="{{ tripStatusList[2] }}">{{ getStatusFrench(tripStatusList[2]) }}</mat-option>
+                <mat-option *ngFor="let status of tripStatusList" value="{{ status }}">{{
+                  getStatusFrench(status)
+                }}</mat-option>
+                <!-- <mat-option value="{{ tripStatusList[2] }}">{{ getStatusFrench(tripStatusList[2]) }}</mat-option> -->
               </mat-select>
             </mat-form-field>
 
@@ -132,7 +131,7 @@
       </div>
       <div class="filter-footer">
         <button mat-flat-button type="button" color="primary" [disabled]="!filterForm.valid" (click)="filterClick()">
-          Affiner les résultats
+          Appliquer les filtres
         </button>
         <button mat-button class="filter-footer-reinitialize" type="button" (click)="reinitializeClick()">
           Réinitialiser les filtres

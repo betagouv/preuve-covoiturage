@@ -46,7 +46,11 @@ const test = anyTest as TestInterface<ContextType>;
 test.before(async (t) => {
   t.context.transport = await bootstrap.boot('http', 0);
   t.context.request = supertest(t.context.transport.getInstance());
-  t.context.user = { operator_id: 1, operator_name: 'MaxiCovoit', permissions: ['journey.create'] };
+  t.context.user = {
+    operator_id: 1,
+    operator_name: 'MaxiCovoit',
+    permissions: ['journey.create', 'certificate.create', 'certificate.download'],
+  };
   t.context.rpcCall = callFactory(t.context.user);
 });
 

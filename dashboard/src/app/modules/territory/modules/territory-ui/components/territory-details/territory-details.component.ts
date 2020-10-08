@@ -17,13 +17,11 @@ export class TerritoryDetailsComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['territory']) {
-      console.log(changes['territory'].currentValue);
-
       this.setTerritoryDetails(new Territory(changes['territory'].currentValue));
     }
   }
 
   private setTerritoryDetails(territory: Territory): void {
-    this.territory = territory.toFormValues() as Territory;
+    this.territory = territory.clone() as Territory;
   }
 }

@@ -1,0 +1,30 @@
+<div class="add-territory">
+  <app-territory-autocomplete
+    [parentForm]="territoryAddForm"
+    [territoryFilter]="territorySelectionFilter"
+    (selected)="territorySelected($event)"
+    #territorySelection
+  ></app-territory-autocomplete>
+  <div class="mat-form-field-wrapper">
+    <button
+      type="submit"
+      class="large"
+      mat-flat-button
+      (click)="addTerritory()"
+      [disabled]="!territoryAddForm.valid"
+      color="primary"
+    >
+      Ajouter
+    </button>
+  </div>
+</div>
+
+<div class="territory-children">
+  <app-territory-selection-block
+    *ngFor="let territory of territories"
+    [territory]="territory"
+    (removeTerritory)="removeTerritory($event)"
+  ></app-territory-selection-block>
+
+  <!-- <p *ngIf="territories.length === 0">Ajouter au moins un territoire !!</p> -->
+</div>

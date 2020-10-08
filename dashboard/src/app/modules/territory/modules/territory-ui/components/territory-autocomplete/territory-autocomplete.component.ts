@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 import { map, startWith, takeUntil } from 'rxjs/operators';
 
@@ -16,6 +16,8 @@ import { TerritoryApiService } from '~/modules/territory/services/territory-api.
 })
 export class TerritoryAutocompleteComponent extends DestroyObservable implements OnInit {
   @Input() parentForm: FormGroup;
+  @Input() territoryFilter: (territory: Territory) => boolean;
+  @Output() selected: Subject<{ id: number; name: string }> = new Subject();
 
   territoryCtrl = new FormControl();
   selectedTerritory: Territory;
@@ -28,6 +30,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
   private _territoryForm: AbstractControl;
 
   private focusDebounceTimer;
+  searchText: string;
 
   constructor(private territoryApiService: TerritoryApiService, private commonDataService: CommonDataService) {
     super();
@@ -45,11 +48,17 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
     const val = this.parentForm.getRawValue();
     const newVal = this.selectedTerritory ? this.selectedTerritory._id : null;
 
-    console.log('val : ', val);
     if (!val || val.territory_id !== newVal) {
       this.parentForm.patchValue({ territory_id: newVal });
+      this.selected.next({ id: this.selectedTerritory._id, name: this.selectedTerritory.name });
     }
     // this.parentForm.patchValue({ territory: this.selectedTerritory ? this.selectedTerritory._id : null });
+  }
+
+  clear(): void {
+    this.parentForm.patchValue({ territory_id: null });
+    this.selectedTerritory = null;
+    this.selected.next(null);
   }
 
   onTerritorySelect(territory: MatAutocompleteSelectedEvent): void {
@@ -59,7 +68,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
   ngOnInit(): void {
     this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories) => {
-      this.territories = territories ? territories : null;
+      this.territories = territories ? territories : [];
     });
 
     this.filteredTerritories = this.territoryCtrl.valueChanges.pipe(
@@ -74,10 +83,13 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
   }
 
   private filter(value: string): Territory[] {
-    if (!value || typeof value !== 'string') return this.territories;
+    // apply optionnal input filter
+    const territories = this.territoryFilter ? this.territories.filter(this.territoryFilter) : this.territories;
+
+    if (!value || typeof value !== 'string') return territories.slice(0, 20);
 
     return this.territories
-      ? this.territories.filter((territory) => territory.name.toLowerCase().includes(value.toLowerCase()))
+      ? territories.filter((territory) => territory.name.toLowerCase().includes(value.toLowerCase())).slice(0, 20)
       : null;
   }
 

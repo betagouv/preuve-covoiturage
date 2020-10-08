@@ -16,10 +16,11 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(siret: string): Promise<CompanyInterface> {
+  async findById(id: number): Promise<CompanyInterface> {
     const query = {
       text: `
       SELECT
+        _id,
         siret,
         siren,
         nic,
@@ -33,10 +34,51 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
         updated_at,
         nonprofit_code,
         address,
+        address_street,
+        address_postcode,
+        address_cedex,
+        address_city,
         ST_X(geo::geometry) as lon,
         ST_Y(geo::geometry) as lat
       FROM ${this.table}
-      WHERE siret = $1
+      WHERE _id = $1::int
+      LIMIT 1`,
+      values: [id],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    if (result.rowCount !== 1) {
+      return undefined;
+    }
+    return result.rows[0];
+  }
+
+  async findBySiret(siret: string): Promise<CompanyInterface> {
+    const query = {
+      text: `
+      SELECT
+        _id,
+        siret,
+        siren,
+        nic,
+        legal_name,
+        company_naf_code,
+        establishment_naf_code,
+        legal_nature_code,
+        legal_nature_label,
+        intra_vat,
+        headquarter,
+        updated_at,
+        nonprofit_code,
+        address,
+        address_street,
+        address_postcode,
+        address_cedex,
+        address_city,
+        ST_X(geo::geometry) as lon,
+        ST_Y(geo::geometry) as lat
+      FROM ${this.table}
+      WHERE siret = $1::varchar
       LIMIT 1`,
       values: [siret],
     };
@@ -65,6 +107,10 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
           updated_at,
           nonprofit_code,
           address,
+          address_street,
+          address_postcode,
+          address_cedex,
+          address_city,
           geo
         ) VALUES (
           $1,
@@ -80,7 +126,11 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
           $11,
           $12,
           $13,
-          $14
+          $14,
+          $15,
+          $16,
+          $17,
+          $18
         )
         ON CONFLICT (siret)
         DO UPDATE SET
@@ -96,7 +146,11 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
           updated_at = $11,
           nonprofit_code = $12,
           address = $13,
-          geo = $14
+          address_street = $14,
+          address_postcode = $15,
+          address_cedex = $16,
+          address_city = $17,
+          geo = $18
       `,
       values: [
         data.siret,
@@ -112,6 +166,10 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
         new Date(),
         data.nonprofit_code,
         data.address,
+        data.address_street,
+        data.address_postcode,
+        data.address_cedex,
+        data.address_city,
         `POINT(${data.lon} ${data.lat})`,
       ],
     };

@@ -43,7 +43,7 @@ export function assignOrDeleteProperties<PropT>(
   propertyNames: string[],
   copyFunc: (source: any, propertyName: string) => PropT = defaultCopy,
 ): void {
-  for (const propName of propertyNames) assignOrDeleteProperty(source, dest, propName);
+  for (const propName of propertyNames) assignOrDeleteProperty(source, dest, propName, copyFunc);
 }
 
 export function copyOnlyDefineSourceProperties<DestT>(source: any, destination: DestT): DestT {

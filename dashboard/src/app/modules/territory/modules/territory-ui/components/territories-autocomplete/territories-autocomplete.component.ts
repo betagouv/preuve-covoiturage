@@ -1,12 +1,10 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
-import { filter, takeUntil, tap } from 'rxjs/operators';
+import { filter, takeUntil, tap, map, debounceTime } from 'rxjs/operators';
 
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CommonDataService } from '~/core/services/common-data.service';
-import { Territory } from '~/core/entities/territory/territory';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
@@ -18,71 +16,75 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
   // with control 'territoryIds'
   @Input() parentForm: FormGroup;
 
-  public territoryCtrl = new FormControl();
-
-  public filteredTerritories: TerritoryNameInterface[];
-  public territories: TerritoryNameInterface[] = [];
-
   @ViewChild('territoryInput', { static: false }) territoryInput: ElementRef;
 
-  constructor(private territoryApiService: TerritoryApiService, private commonDataService: CommonDataService) {
-    super();
-  }
+  public filteredTerritories: TerritoryNameInterface[];
+  public selectedTerritories: TerritoryNameInterface[] = [];
 
-  ngOnInit(): void {
-    this.initTerritories();
-    this.territoryCtrl.valueChanges
-      .pipe(
-        filter((literal) => literal !== null && literal !== undefined && typeof literal === 'string'),
-        tap((literal) => this.filterTerritories(literal)),
-        takeUntil(this.destroy$),
-      )
-      .subscribe();
-  }
+  public territoryCtrl = new FormControl();
 
   get territoryIdsControl(): FormControl {
     return this.parentForm.get('territoryIds') as FormControl;
   }
 
-  getTerritoryLabel(territoryId): string {
-    return this.territories.find((territory) => territory._id === territoryId).shortname;
+  constructor(private territoryApiService: TerritoryApiService) {
+    super();
   }
 
-  private initTerritories(): void {
-    this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories: Territory[]) => {
-      this.territories = territories
-        ? territories.map((territory: Territory) => ({
-            _id: territory._id,
-            shortname: territory.shortname || territory.name,
-          }))
-        : [];
-      this.filterTerritories();
-    });
+  ngOnInit(): void {
+    this.territoryCtrl.valueChanges
+      .pipe(
+        debounceTime(100),
+        map((literal) => literal.trim()),
+        filter((literal) => !!literal && literal.length > 1),
+        tap((literal) => this.filterTerritory(literal)),
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe();
   }
 
-  public remove(territoryId: string): void {
+  public getTerritoryLabel(territoryId): string {
+    return this.selectedTerritories.find((territory) => territory._id === territoryId).shortname;
+  }
+
+  public remove(territoryId: number): void {
     const index = this.territoryIdsControl.value.indexOf(territoryId);
+
     if (index >= 0) {
       const territories = [...this.territoryIdsControl.value];
       territories.splice(index, 1);
       this.territoryIdsControl.setValue(territories);
+    }
+
+    const selectedTerritoriesInd = this.selectedTerritories.findIndex((terr) => terr._id === territoryId);
+
+    if (selectedTerritoriesInd >= 0) {
+      this.selectedTerritories.splice(selectedTerritoriesInd, 1);
     }
   }
 
   public onTerritorySelect(event: MatAutocompleteSelectedEvent): void {
     const territories: TerritoryNameInterface[] = this.territoryIdsControl.value || [];
     territories.push(event.option.value);
+
+    this.selectedTerritories.push(this.filteredTerritories.find((terr) => terr._id === event.option.value));
+
     this.territoryIdsControl.setValue(territories);
     this.territoryInput.nativeElement.value = null;
     this.territoryCtrl.setValue('');
   }
 
-  private filterTerritories(literal = ''): void {
-    const selectedTerritoryIds = this.territoryIdsControl.value || [];
-    this.filteredTerritories = this.territories.filter(
-      (territory) =>
-        selectedTerritoryIds.indexOf(territory._id) === -1 &&
-        territory.shortname.toLowerCase().includes(literal.toLowerCase()),
-    );
+  private filterTerritory(literal = ''): void {
+    const params: { search?: string; parent_id?: number } = {};
+    if (literal.length) {
+      params.search = literal;
+    }
+
+    this.territoryApiService
+      .dropdown(params)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ data }: { data: { _id: number; name: string }[] }) => {
+        this.filteredTerritories = data.map(({ _id, name: shortname }) => ({ shortname, _id }));
+      });
   }
 }

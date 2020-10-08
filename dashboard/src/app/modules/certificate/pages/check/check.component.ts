@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { takeUntil, mergeMap, tap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
-// import {
-//   ParamsInterface as FindParamsInterface,
-//   ResultInterface as FindResultInterface,
-// } from '~/core/entities/api/shared/certificate/find.contract';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 import { CertificateApiService } from '../../services/certificate-api.service';
@@ -20,12 +17,20 @@ import { CertificateApiService } from '../../services/certificate-api.service';
 export class CheckComponent extends DestroyObservable implements OnInit {
   data: any;
   isLoading: boolean;
+  isSmall = false;
+
   constructor(
     protected toastr: ToastrService,
     protected activatedRoute: ActivatedRoute,
     protected certificateService: CertificateApiService,
+    protected breakpointObserver: BreakpointObserver,
   ) {
     super();
+
+    // switch table layout on mobile devices
+    breakpointObserver.observe([Breakpoints.Handset]).subscribe((result) => {
+      this.isSmall = result.matches;
+    });
   }
 
   ngOnInit(): void {

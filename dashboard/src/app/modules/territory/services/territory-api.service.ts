@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { Territory } from '~/core/entities/territory/territory';
+import { Territory, TerritoryInsee } from '~/core/entities/territory/territory';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
@@ -14,12 +14,25 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import {
   ParamsInterface as OTVisibityParams,
   ResultInterface as OTVisibityResults,
-} from '../../../core/entities/api/shared/territory/listOperator.contract';
+} from '../../../../../../shared/territory/listOperator.contract';
+import { QueryParamsInterface } from '../../../../../../shared/territory/find.contract';
+import {
+  SortEnum,
+  allBasicFieldEnum,
+  TerritoryListFilter,
+} from '../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
+
+// eslint-disable-next-line
+import { TerritoryParentChildrenInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryChildrenInterface';
+// eslint-disable-next-line
+import { ResultInterface as UiStatusRelationDetailsList } from '../../../../../../shared/territory/relationUiStatus.contract';
+import { GetListActions } from '~/core/services/api/json-rpc.getlist';
+import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TerritoryApiService extends JsonRpcCrud<Territory> {
+export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, any, any, TerritoryListFilter> {
   constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected _toastr: ToastrService) {
     super(http, router, activatedRoute, 'territory');
   }
@@ -39,12 +52,63 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
     );
   }
 
+  paramGetList(params?: TerritoryListFilter): JsonRPCParam<any> {
+    return new JsonRPCParam(`${this.method}:${GetListActions.LIST}`, { ...this.defaultListParam, ...params });
+  }
+
+  getDirectRelation(id: number): Observable<TerritoryParentChildrenInterface[]> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:getParentChildren`, { _id: id });
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryParentChildrenInterface[]>;
+  }
+
+  findByInsees(insees: string[]): Observable<TerritoryInsee[]> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:findByInsees`, { insees });
+
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryInsee[]>;
+  }
+
+  getRelationUIStatus(id: number): Observable<UiStatusRelationDetailsList> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:getTerritoryRelationUIStatus`, { _id: id });
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data || [])) as Observable<UiStatusRelationDetailsList>;
+  }
+
+  paramGetById(
+    id: number,
+    sort: SortEnum[] = [SortEnum.NameAsc],
+    projection: any = allBasicFieldEnum,
+  ): JsonRPCParam<any> {
+    return this.paramGet({ _id: id } as any, sort, projection);
+  }
+
+  paramGet(params: any, sort: SortEnum[] = [SortEnum.NameAsc], projection: any = allBasicFieldEnum): JsonRPCParam<any> {
+    return new JsonRPCParam(`${this.method}:${GetListActions.FIND}`, { query: { ...params }, sort, projection });
+  }
+
+  dropdown(params: { search?: string; parent_id?: number }): Observable<JsonRPCResult> {
+    return this.callOne(new JsonRPCParam(`${this.method}:dropdown`, params));
+  }
+
+  find(
+    query: QueryParamsInterface,
+    sort: SortEnum[] = [SortEnum.NameAsc],
+    projection: any = allBasicFieldEnum,
+  ): Observable<Territory> {
+    const jsonRPCParam = this.paramGet(query, sort, projection);
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
+  }
+
   create(item: Territory): Observable<Territory> {
     return this.catchSiretConflict(super.create(item));
   }
 
   update(item: Territory): Observable<Territory> {
     return this.catchSiretConflict(super.update(item));
+  }
+
+  // get only AOM territories
+  getActivableList(): Observable<Territory[]> {
+    const jsonRPCParam = this.paramGet({ activable: true });
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
   getOperatorVisibility(territoryId: number): Observable<OTVisibityResults> {

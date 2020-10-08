@@ -4,11 +4,13 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, map } from 'rxjs/operators';
 
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TripStoreService } from '~/modules/trip/services/trip-store.service';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-trip-export',
@@ -21,13 +23,15 @@ import { TripStoreService } from '~/modules/trip/services/trip-store.service';
 })
 export class TripExportComponent extends DestroyObservable implements OnInit {
   isExporting = false;
-  minDate = moment()
-    .subtract(1, 'year')
-    .toDate();
+  minDate = moment().subtract(1, 'year').toDate();
+
   exportFilterForm: FormGroup;
+  operatorFieldVisible: Observable<boolean>;
+  operatorFieldVisibleOperatorOnly: Observable<boolean>;
 
   constructor(
     public tripService: TripStoreService,
+    public auth: AuthenticationService,
     private _toastr: ToastrService,
     private _fb: FormBuilder,
     private _dialog: DialogService,
@@ -37,6 +41,12 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+
+    // operator field is visible if user is not an operator
+    this.operatorFieldVisible = this.auth.user$.pipe(map((u) => u && !u.operator_id));
+
+    // territory / operatory flag is enabled only if user has a territory_id
+    this.operatorFieldVisibleOperatorOnly = this.auth.user$.pipe(map((u) => u && !!u.territory_id));
   }
 
   exportTrips(): void {
@@ -73,18 +83,14 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   private initForm(): void {
-    const start = moment()
-      .subtract(1, 'month')
-      .startOf('day')
-      .toDate();
-    const end = moment()
-      .endOf('day')
-      .toDate();
+    const start = moment().subtract(1, 'month').startOf('day').toDate();
+    const end = moment().endOf('day').toDate();
     this.exportFilterForm = this._fb.group({
       date: this._fb.group({
         start: [start],
         end: [end],
       }),
+      operator_id: [null],
     });
   }
 }

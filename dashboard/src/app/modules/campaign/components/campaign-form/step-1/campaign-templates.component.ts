@@ -1,7 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
 import { FormGroup } from '@angular/forms';
-import { MatStepper } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 
 import { DialogService } from '~/core/services/dialog.service';
@@ -17,15 +15,10 @@ import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 export class CampaignTemplatesComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
   @Input() isCreating: boolean;
-  @Input() matStepper: MatStepper;
   @Output() setTemplate = new EventEmitter();
   templates: Campaign[];
 
-  constructor(
-    private _campaignStoreService: CampaignStoreService,
-    private _dialog: DialogService,
-    private _toastr: ToastrService,
-  ) {
+  constructor(private _campaignStoreService: CampaignStoreService, private _dialog: DialogService) {
     super();
   }
 
@@ -56,12 +49,10 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
         .pipe(takeUntil(this.destroy$))
         .subscribe((result) => {
           if (result) {
-            this.matStepper.next();
             this.setTemplate.emit(templateId);
           }
         });
     } else {
-      this.matStepper.next();
       this.setTemplate.emit(templateId);
     }
   }

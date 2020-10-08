@@ -7,6 +7,7 @@ const params = {
   date: {
     type: 'object',
     additionalProperties: false,
+    minProperties: 1,
     properties: {
       start: {
         macro: 'timestamp',
@@ -45,16 +46,10 @@ const params = {
   status: {
     type: 'string',
   },
-  insee: {
-    type: 'array',
-    minItems: 1,
-    items: {
-      macro: 'insee',
-    },
-  },
   distance: {
     type: 'object',
     additionalProperties: false,
+    minProperties: 1,
     properties: {
       min: {
         type: 'integer',

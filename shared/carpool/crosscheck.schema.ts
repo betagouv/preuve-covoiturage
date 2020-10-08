@@ -1,11 +1,11 @@
 const positionSchema = {
   type: 'object',
-  required: ['lat', 'lon', 'insee'],
+  required: ['lat', 'lon', 'territory_id'],
   additionalProperties: false,
   properties: {
     lat: { macro: 'lat' },
     lon: { macro: 'lon' },
-    insee: { macro: 'insee' },
+    territory_id: { macro: 'serial' },
   },
 };
 

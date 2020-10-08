@@ -6,6 +6,7 @@
         <button
           mat-flat-button
           [routerLink]="'/campaign/create'"
+          [disabled]="displayDemoCaption$ | async"
           class="color-punch"
           *ngIf="canCreateCampaign$ | async"
         >
@@ -28,7 +29,7 @@
         <button
           mat-flat-button
           [routerLink]="'/campaign/create'"
-          [disabled]="displayDemoCaption$"
+          [disabled]="displayDemoCaption$ | async"
           color="primary"
           *ngIf="canCreateCampaign$ | async"
         >
@@ -41,8 +42,8 @@
       </p>
       <div class="CampaignDashboard-content-list activeList" *ngIf="!(displayDemoCaption$ | async)">
         <app-campaigns-list
-          [campaigns]="campaigns"
-          [campaignStatusList]="[campaignStatus.VALIDATED, campaignStatus.PENDING]"
+          [campaigns]="currentCampaigns"
+          [campaignStatusList]="[campaignStatus.ARCHIVED, campaignStatus.VALIDATED, campaignStatus.PENDING]"
           [loading]="loading"
           [loaded]="loaded"
         ></app-campaigns-list>
@@ -72,8 +73,8 @@
       </p>
       <div class="CampaignDashboard-content-list archivedList" *ngIf="!(displayDemoCaption$ | async)">
         <app-campaigns-list
-          [campaigns]="campaigns"
-          [campaignStatusList]="[campaignStatus.ARCHIVED]"
+          [campaigns]="outdatedCampaign"
+          [campaignStatusList]="[campaignStatus.ARCHIVED, campaignStatus.VALIDATED, campaignStatus.PENDING]"
           [loading]="loading"
           [loaded]="loaded"
         ></app-campaigns-list>

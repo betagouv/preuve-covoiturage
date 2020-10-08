@@ -1,4 +1,4 @@
 <div class="territory">
   <app-territory-details [territory]="territory" [displayContacts]="readOnly$ | async"></app-territory-details>
-  <app-territory-form [territory]="territory" *ngIf="!(readOnly$ | async)"></app-territory-form>
+  <app-territory-form [territory]="territory" [showForm]="!(readOnly$ | async)"></app-territory-form>
 </div>

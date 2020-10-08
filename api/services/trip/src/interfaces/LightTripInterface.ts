@@ -6,4 +6,6 @@ export interface LightTripInterface {
   operator_id: number;
   incentives: any;
   operator_class: string;
+  status: string;
+  campaigns_id: number[];
 }

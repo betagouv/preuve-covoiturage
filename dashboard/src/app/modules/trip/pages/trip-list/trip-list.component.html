@@ -5,21 +5,20 @@
   [infiniteScrollThrottle]="150"
   [infiniteScrollContainer]="'.AuthenticatedLayout-body'"
   [fromRoot]="true"
-  (scrolled)="onScroll()"
 >
   <div class="TripList--loading" *ngIf="loading && !trips">
     <mat-spinner></mat-spinner>
   </div>
   <div class="TripList-message" *ngIf="showMessage">
     <p>
-      Auncun trajet n'a été réalisé ces derniers mois.
+      Aucun trajet n'a été réalisé ces derniers mois.
     </p>
   </div>
   <div class="TripList-header" *ngIf="trips && !showMessage">
     <span class="TripList-header-results" *ngIf="total !== null"> {{ total }} résultats </span>
   </div>
-  <div class="TripList-content" *ngIf="trips && !showMessage">
+  <div class="TripList-content" [hidden]="!trips || showMessage">
     <app-trip-table [data]="trips" [displayedColumns]="columnsDisplayed"></app-trip-table>
-    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+    <mat-paginator [length]="total" [pageSize]="limit" (page)="paginationUpdate($event)"> </mat-paginator>
   </div>
 </div>

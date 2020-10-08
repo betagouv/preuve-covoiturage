@@ -11,13 +11,5 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 export class NotAuthenticatedLayoutComponent implements OnInit {
   constructor(private authService: AuthenticationService, private router: Router) {}
 
-  ngOnInit(): void {
-    // Si on est logué, on s'en va de ce layout
-    // this.authService.user$.subscribe((user) => {
-    //   console.log('USER', user);
-    //   if (user) {
-    //     this.router.navigate(['/trip/stats']);
-    //   }
-    // });
-  }
+  ngOnInit(): void {}
 }

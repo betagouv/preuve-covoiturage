@@ -5,12 +5,12 @@ export const schema = {
   required: ['uuid', 'type'],
   additionalProperties: false,
   properties: {
-    uuid: { type: 'string', format: 'uuid', minLength: 36, maxLength: 36 },
+    uuid: { macro: 'uuid' },
     type: {
       type: 'string',
-      enum: ['json', 'pdf', 'png'],
+      enum: ['pdf', 'png'],
       minLength: 3,
-      maxLength: 4,
+      maxLength: 3,
     },
   },
 };

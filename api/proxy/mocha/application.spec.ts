@@ -126,7 +126,7 @@ describe('Operator applications', () => {
     it('REST create app A', async () => {
       return request
         .post(`/operators/${operatorA._id.toString()}/applications`)
-        .send({ name: 'Application A', permissions: ['journey.create'] })
+        .send({ name: 'Application A', permissions: ['journey.create', 'certificate.create', 'certificate.download'] })
         .set('Cookie', cookies)
         .set('Accept', 'application/json')
         .set('Content-type', 'application/json')
@@ -145,7 +145,7 @@ describe('Operator applications', () => {
     it('REST create app B', async () => {
       return request
         .post(`/operators/${operatorA._id.toString()}/applications`)
-        .send({ name: 'Application B', permissions: ['journey.create'] })
+        .send({ name: 'Application B', permissions: ['journey.create', 'certificate.create', 'certificate.download'] })
         .set('Cookie', cookies)
         .set('Accept', 'application/json')
         .set('Content-type', 'application/json')

@@ -62,17 +62,14 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
   private loadCampaign(campaignId: number): void {
     this._campaignStoreService
       .selectEntityByIdFromList(campaignId)
-      .pipe(
-        take(1),
-        takeUntil(this.destroy$),
-      )
+      .pipe(take(1), takeUntil(this.destroy$))
       .subscribe(
         (campaign: Campaign) => {
           this.campaignUx = campaign.toFormValues();
           this.loadTerritory(campaign.territory_id);
         },
         (err) => {
-          console.log('err : ', err);
+          console.warn('err : ', err);
           this._router.navigate(['/campaign']).then(() => {
             this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
           });

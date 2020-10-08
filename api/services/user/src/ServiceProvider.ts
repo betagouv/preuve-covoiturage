@@ -11,6 +11,7 @@ import {
   ContentBlacklistMiddleware,
   ContentWhitelistMiddleware,
   ChannelServiceBlacklistMiddleware,
+  ChannelServiceWhitelistMiddleware,
 } from '@pdc/provider-middleware';
 import { TemplateExtension } from '@pdc/provider-template';
 
@@ -20,6 +21,7 @@ import { changeRole } from './shared/user/changeRole.schema';
 import { checkForgottenToken } from './shared/user/checkForgottenToken.schema';
 import { confirmEmail } from './shared/user/confirmEmail.schema';
 import { deleteUser } from './shared/user/delete.schema';
+import { deleteAssociatedUser } from './shared/user/deleteAssociated.schema';
 import { find } from './shared/user/find.schema';
 import { create } from './shared/user/create.schema';
 import { forgottenPassword } from './shared/user/forgottenPassword.schema';
@@ -39,6 +41,7 @@ import { CheckForgottenTokenUserAction } from './actions/CheckForgottenTokenUser
 import { ConfirmEmailUserAction } from './actions/ConfirmEmailUserAction';
 import { CreateUserAction } from './actions/CreateUserAction';
 import { DeleteUserAction } from './actions/DeleteUserAction';
+import { DeleteAssociatedUserAction } from './actions/DeleteAssociatedUserAction';
 import { FindUserAction } from './actions/FindUserAction';
 import { ForgottenPasswordUserAction } from './actions/ForgottenPasswordUserAction';
 import { ListUserAction } from './actions/ListUserAction';
@@ -52,6 +55,8 @@ import { SendInvitationEmailUserAction } from './actions/SendInvitationEmailUser
 import { AuthRepositoryProvider } from './providers/AuthRepositoryProvider';
 import { UserNotificationProvider } from './providers/UserNotificationProvider';
 import { SeedUsersCommand } from './commands/SeedUsersCommand';
+import { HasUsersAction } from './actions/HasUsersAction';
+import { FindInactiveCommand } from './commands/FindInactiveCommand';
 
 @serviceProvider({
   config,
@@ -64,6 +69,7 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
     ['user.confirmEmail', confirmEmail],
     ['user.create', create],
     ['user.delete', deleteUser],
+    ['user.deleteAssociated', deleteAssociatedUser],
     ['user.find', find],
     ['user.forgottenPassword', forgottenPassword],
     ['user.list', list],
@@ -78,6 +84,7 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
     ['scopeIt', ScopeToSelfMiddleware],
     ['content.blacklist', ContentBlacklistMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
+    ['channel.service.only', ChannelServiceWhitelistMiddleware],
     ['channel.service.except', ChannelServiceBlacklistMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
@@ -89,6 +96,7 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
     ConfirmEmailUserAction,
     CreateUserAction,
     DeleteUserAction,
+    DeleteAssociatedUserAction,
     FindUserAction,
     ForgottenPasswordUserAction,
     ListUserAction,
@@ -98,13 +106,14 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
     PatchUserAction,
     SendConfirmEmailUserAction,
     SendInvitationEmailUserAction,
+    HasUsersAction,
   ],
   template: null,
   notification: {
     template: path.resolve(__dirname, 'templates'),
     templateMeta: 'template',
   },
-  commands: [SetPermissionsCommand, SeedUsersCommand],
+  commands: [SetPermissionsCommand, SeedUsersCommand, FindInactiveCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [

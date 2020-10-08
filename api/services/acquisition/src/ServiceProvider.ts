@@ -11,14 +11,12 @@ import { JourneyPgRepositoryProvider } from './providers/JourneyPgRepositoryProv
 import { ErrorPgRepositoryProvider } from './providers/ErrorPgRepositoryProvider';
 import { CarpoolRepositoryProvider } from './providers/CarpoolRepositoryProvider';
 
-import { createLegacy } from './shared/acquisition/createLegacy.schema';
 import { create } from './shared/acquisition/create.schema';
 import { cancel } from './shared/acquisition/cancel.schema';
 import { status } from './shared/acquisition/status.schema';
 import { logerror } from './shared/acquisition/logerror.schema';
 import { resolveerror } from './shared/acquisition/resolveerror.schema';
 
-import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { LogErrorAction } from './actions/LogErrorAction';
 import { LogRequestAction } from './actions/LogRequestAction';
@@ -31,7 +29,6 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
   queues: ['normalization', 'acquisition'],
   providers: [JourneyPgRepositoryProvider, ErrorPgRepositoryProvider, CarpoolRepositoryProvider],
   validator: [
-    ['journey.createLegacy', createLegacy],
     ['journey.create', create],
     ['journey.cancel', cancel],
     ['journey.status', status],
@@ -48,7 +45,6 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
     [RedisConnection, 'connections.redis'],
   ],
   handlers: [
-    CreateJourneyLegacyAction,
     CreateJourneyAction,
     LogErrorAction,
     LogRequestAction,

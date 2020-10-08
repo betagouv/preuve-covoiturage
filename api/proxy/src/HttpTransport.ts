@@ -4,7 +4,7 @@ import expressSession from 'express-session';
 import helmet from 'helmet';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { get } from 'lodash';
+import { get, pick } from 'lodash';
 import Redis from 'ioredis';
 import createStore from 'connect-redis';
 import {
@@ -14,7 +14,6 @@ import {
   ConfigInterfaceResolver,
   RPCSingleCallType,
   UnauthorizedException,
-  RPCResponseType,
   InvalidRequestException,
 } from '@ilos/common';
 import { env } from '@ilos/core';
@@ -22,11 +21,13 @@ import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
+import { rateLimiter, authRateLimiter, apiRateLimiter, loginRateLimiter } from './middlewares/rateLimiter';
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall } from './helpers/routeMapping';
 import { nestParams } from './helpers/nestParams';
 import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
+import { RPCResponseType } from './shared/common/rpc/RPCResponseType';
 import { TokenPayloadInterface } from './shared/application/common/interfaces/TokenPayloadInterface';
 
 export class HttpTransport implements TransportInterface {
@@ -90,7 +91,8 @@ export class HttpTransport implements TransportInterface {
 
   private registerBeforeAllHandlers(): void {
     this.kernel.getContainer().get(SentryProvider);
-    this.app.use(Sentry.Handlers.requestHandler());
+    this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
+    Sentry.setTag('transport', 'http');
   }
 
   private registerBodyHandler(): void {
@@ -116,8 +118,9 @@ export class HttpTransport implements TransportInterface {
           maxAge: this.config.get('proxy.session.maxAge'),
           // https everywhere but in local development
           secure: env('APP_ENV', 'local') !== 'local',
-          sameSite: 'none',
+          sameSite: env('APP_ENV', 'local') !== 'local' ? 'none' : 'strict',
         },
+
         name: sessionName,
         secret: sessionSecret,
         resave: false,
@@ -142,6 +145,9 @@ export class HttpTransport implements TransportInterface {
         credentials: true,
       }),
     );
+
+    // rate limiter for all routes
+    this.app.use(rateLimiter());
   }
 
   private registerGlobalMiddlewares(): void {
@@ -160,72 +166,21 @@ export class HttpTransport implements TransportInterface {
   }
 
   /**
-   * Operators POST to /journeys/push
-   * being authenticated by a JWT long-lived token with the payload:
-   * {
-   *    a: string,
-   *    o: string,
-   *    p: [string],
-   *    v: number
-   * }
+   * Journeys routes
+   * - check status
+   * - invalidate
+   * - save
    */
   private registerAcquisitionRoutes(): void {
-    // V1 payload
-    this.app.post(
-      '/journeys/push',
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = get(req, 'session.user', {});
-        const isLatest =
-          Array.isArray(get(req, 'body.passenger.incentives', null)) ||
-          Array.isArray(get(req, 'body.driver.incentives', null));
-
-        /**
-         * Throw a Bad Request error and give information to the user
-         * about the version mismatch
-         */
-        if (isLatest) {
-          res.status(400).json({
-            id: req.body.id,
-            jsonrpc: '2.0',
-            error: {
-              code: -32600,
-              message: 'Invalid Request',
-              data: 'Please use /v2/journeys endpoint for Schema V2',
-            },
-          });
-
-          return;
-        }
-
-        const response = await this.kernel.handle(
-          makeCall('acquisition:createLegacy', req.body, { user, metadata: { req } }),
-        );
-
-        // warn the user about this endpoint deprecation agenda
-        // https://github.com/betagouv/preuve-covoiturage/issues/383
-        // prettier-ignore
-        // eslint-disable-next-line
-        const warning = 'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
-
-        res.status(mapStatusCode(response)).json({
-          meta: {
-            warning,
-            supported_until: '2020-01-01T00:00:00Z',
-          },
-          data: this.parseErrorData(response),
-        });
-      }),
-    );
-
-    // check journey status
     this.app.get(
       '/v2/journeys/:journey_id',
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const { params } = req;
         const user = get(req, 'session.user', null);
-        const response = await this.kernel.handle(makeCall('acquisition:status', params, { user, metadata: { req } }));
+        const response = (await this.kernel.handle(
+          makeCall('acquisition:status', params, { user, metadata: { req } }),
+        )) as RPCResponseType;
         this.send(res, response);
       }),
     );
@@ -236,16 +191,16 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
-        const response = await this.kernel.handle(
+        const response = (await this.kernel.handle(
           makeCall(
             'acquisition:cancel',
             {
               ...req.body,
-              acquisition_id: parseInt(req.params.id, 10),
+              journey_id: parseInt(req.params.id, 10),
             },
             { user, metadata: { req } },
           ),
-        );
+        )) as RPCResponseType;
 
         this.send(res, response);
       }),
@@ -257,9 +212,14 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
-        const response = await this.kernel.handle(
-          makeCall('acquisition:create', req.body, { user, metadata: { req } }),
+
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
         );
+
+        const response = (await this.kernel.handle(
+          makeCall('acquisition:create', req.body, { user, metadata: { req } }),
+        )) as RPCResponseType;
 
         this.send(res, response);
       }),
@@ -270,9 +230,9 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/stats',
       asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
+        const response = (await this.kernel.handle(
           makeCall('trip:stats', {}, { user: { permissions: ['trip.stats'] } }),
-        );
+        )) as RPCResponseType;
 
         if (!response || Array.isArray(response) || 'error' in response) {
           res.status(mapStatusCode(response)).json(this.parseErrorData(response));
@@ -289,24 +249,15 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/login',
+      loginRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(makeCall('user:login', req.body));
+        const response = (await this.kernel.handle(makeCall('user:login', req.body))) as RPCResponseType;
 
         if (!response || Array.isArray(response) || 'error' in response) {
           res.status(mapStatusCode(response)).json(this.parseErrorData(response));
         } else {
-          req.session.user = Array.isArray(response) ? response[0].result : response.result;
-
-          if (req.session.user.territory_id) {
-            const list = await this.kernel.handle(
-              makeCall(
-                'territory:listOperator',
-                { territory_id: req.session.user.territory_id },
-                { user: req.session.user },
-              ),
-            );
-            req.session.user.authorizedOperators = get(list, 'result', []);
-          }
+          const user = Array.isArray(response) ? response[0].result : response.result;
+          req.session.user = { ...user, ...(await this.getTerritoryInfos(user)) };
 
           this.send(res, response);
         }
@@ -317,7 +268,7 @@ export class HttpTransport implements TransportInterface {
      * Get the user profile (reads from the session rather than the database)
      * @see user:me call for database read
      */
-    this.app.get('/profile', (req, res, next) => {
+    this.app.get('/profile', authRateLimiter(), (req, res, next) => {
       if (!('user' in req.session)) {
         throw new UnauthorizedException();
       }
@@ -328,7 +279,7 @@ export class HttpTransport implements TransportInterface {
     /**
      * Kill the current sesssion
      */
-    this.app.post('/logout', (req, res, next) => {
+    this.app.post('/logout', authRateLimiter(), (req, res, next) => {
       req.session.destroy((err) => {
         if (err) {
           throw new Error(err.message);
@@ -342,13 +293,14 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/reset-password',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle({
+        const response = (await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:forgottenPassword',
           params: { email: req.body.email },
-        });
+        })) as RPCResponseType;
 
         this.send(res, response);
       }),
@@ -359,13 +311,14 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/check-token',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle({
+        const response = (await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:checkForgottenToken',
           params: { email: req.body.email, token: req.body.token },
-        });
+        })) as RPCResponseType;
 
         this.send(res, response);
       }),
@@ -376,13 +329,14 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/change-password',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle({
+        const response = (await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:changePasswordWithToken',
           params: { email: req.body.email, token: req.body.token, password: req.body.password },
-        });
+        })) as RPCResponseType;
 
         this.send(res, response);
       }),
@@ -393,13 +347,14 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.post(
       '/auth/confirm-email',
+      authRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle({
+        const response = (await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:confirmEmail',
           params: { email: req.body.email, token: req.body.token },
-        });
+        })) as RPCResponseType;
 
         this.send(res, response);
       }),
@@ -421,7 +376,7 @@ export class HttpTransport implements TransportInterface {
         if (!user) throw new UnauthorizedException();
         if (!user.operator_id) throw new UnauthorizedException('Only operators can create applications');
 
-        const response = await this.kernel.handle({
+        const response = (await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'application:create',
@@ -429,7 +384,7 @@ export class HttpTransport implements TransportInterface {
             params: { name: req.body.name },
             _context: { call: { user } },
           },
-        });
+        })) as RPCResponseType;
 
         if ('error' in (response as any)) {
           return this.send(res, response);
@@ -459,89 +414,86 @@ export class HttpTransport implements TransportInterface {
      * - only accessible by the printer with JWT authentication
      * - requires access to public assets (images)
      *
-     * TEST ME : http://localhost:8080/certificates/render?identity=%2B
+     * TEST ME : http://localhost:8080/v2/certificates/render?identity=%2B
      */
     this.app.get(
-      '/certificates/render/:uuid',
-      asyncHandler(async (req, res, next) => {
+      '/v2/certificates/render/:uuid',
+      async (req, res, next) => {
         try {
-          if (get(req, 'headers.authorization', '') === '') {
-            throw new UnauthorizedException();
+          // check the token generated by the download action
+          const decoded = (await this.tokenProvider.verify(req.headers.authorization.replace('Bearer ', ''), {
+            issuer: this.config.get('proxy.apiUrl'),
+          })) as { uuid: string; iat: number };
+
+          // 5s expiration
+          if (!decoded?.iat || decoded.iat > new Date().getTime() + 5000) {
+            throw new UnauthorizedException('Expired token');
           }
 
-          const response = await this.kernel.call(
+          // uuid must match
+          if (decoded?.uuid !== req.params.uuid) {
+            throw new UnauthorizedException('Wrong token');
+          }
+
+          next();
+        } catch (e) {
+          next(e);
+        }
+      },
+      asyncHandler(async (req, res, next) => {
+        const response = (await this.kernel.handle(
+          makeCall(
             'certificate:render',
             {
               uuid: req.params.uuid,
-              token: String(req.headers.authorization).replace('Bearer ', ''),
+              token: get(req, 'headers.authorization', '').replace('Bearer ', ''),
             },
-            { channel: { service: 'certificate' } },
-          );
+            { user: { permissions: ['certificate.render'] } },
+          ),
+        )) as RPCResponseType;
 
-          if (!response || !response.data) {
-            throw new Error('Failed to generate certificate');
-          }
-
-          res.set('Content-type', response.type);
-          res.status(response.code);
-          res.send(response.data);
-        } catch (e) {
-          console.log('rpcError' in e ? e.rpcError : e.message);
-          console.log(e.stack);
-          throw e;
-        }
+        this.raw(res, get(response, 'result.data', response), { 'Content-type': 'text/html' });
       }),
     );
 
     // public assets routes
-    this.app.use('/certificates/assets', express.static('../../services/certificate/dist/assets'));
+    this.app.use('/v2/certificates/assets', express.static('../../services/certificate/dist/assets'));
+
+    /**
+     * Public route to check a certificate
+     */
+    this.app.get(
+      '/v2/certificates/find/:uuid',
+      asyncHandler(async (req, res, next) => {
+        const response = (await this.kernel.handle(
+          makeCall('certificate:find', { uuid: req.params.uuid }),
+        )) as RPCResponseType;
+
+        this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
+      }),
+    );
 
     /**
      * Download a PNG or PDF of the certificate
      * - accessible with an application token
-     * - uses /certificates/render to capture the rendered certificate
+     * - uses /v2/certificates/render to capture the rendered certificate
      * - uses the remote printer to capture the rendered certificate
      * - print a PDF/PNG returned back to the caller
      */
     this.app.get(
-      '/certificates/download/:uuid',
+      '/v2/certificates/:type/:uuid/',
       asyncHandler(async (req, res, next) => {
-        try {
-          if (get(req, 'headers.authorization', '') === '') {
-            throw new UnauthorizedException();
-          }
+        const type = req.params.type.toLowerCase();
+        const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
 
-          const type = this.getTypeFromHeaders(req.headers);
-          const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
+        const call = makeCall(
+          'certificate:download',
+          { uuid, type },
+          { user: { permissions: ['certificate.download'] } },
+        );
+        const response = (await this.kernel.handle(call)) as RPCResponseType;
 
-          const response = await this.kernel.call(
-            'certificate:download',
-            { uuid, type },
-            { channel: { service: 'certificate' } },
-          );
-
-          switch (type) {
-            case 'png':
-              res.set('Content-type', 'image/png');
-              res.set('Content-disposition', `attachment; filename=${uuid}.png`);
-              res.send(response);
-              break;
-            // case 'json':
-            //   res.set('Content-type', 'application/json');
-            //   res.send(response);
-            //   break;
-            default:
-              res.set('Content-type', 'application/pdf');
-              res.set('Content-disposition', `attachment; filename=${uuid}.pdf`);
-              res.send(response);
-          }
-        } catch (e) {
-          // TODO check this
-          console.log(e);
-          const htmlStatusCode = mapStatusCode({ id: 1, jsonrpc: '2.0', error: e.rpcError });
-          res.status(htmlStatusCode);
-          res.json({ error: htmlStatusCode, message: e.rpcError.data });
-        }
+        this.raw(res, get(response, 'result.body', response), get(response, 'result.headers', {}));
       }),
     );
 
@@ -549,26 +501,37 @@ export class HttpTransport implements TransportInterface {
      * Public route for operators to generate a certificate
      * based on params (identity, start date, end date, ...)
      * - accessible with an application token
-     * - generate a certificate to be printed when calling /certificates/download/{uuid}
+     * - generate a certificate to be printed when calling /v2/certificates/download/{uuid}
      */
     this.app.post(
-      '/certificates',
+      '/v2/certificates',
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.call(
-          'certificate:create',
-          { ...req.body },
-          { channel: { service: 'certificate' } },
-        );
+        const response = (await this.kernel.handle(
+          makeCall(
+            'certificate:create',
+            { ...req.body, operator_id: get(req, 'session.user.operator_id') },
+            { user: get(req, 'session.user', null) },
+          ),
+        )) as RPCResponseType;
 
-        // return 201 CREATED or 404 NOT FOUND...
-        this.send(res, response);
+        res
+          .status(get(response, 'result.meta.httpStatus', mapStatusCode(response)))
+          .send(get(response, 'result.data', this.parseErrorData(response)));
       }),
     );
   }
 
   private registerAfterAllHandlers(): void {
-    this.app.use(Sentry.Handlers.errorHandler());
+    // add the RPC method as tag
+    this.app.use((error, req, res, next) => {
+      const body = Array.isArray(req.body) ? req.body[0] : req.body;
+      if (body) Sentry.setTag('method', get(body, 'method', 'not set'));
+
+      next(error);
+    });
+
+    this.app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
     // general error handler
     // keep last
@@ -580,39 +543,46 @@ export class HttpTransport implements TransportInterface {
    */
   private registerCallHandler(): void {
     const endpoint = this.config.get('proxy.rpc.endpoint');
-    this.app.get(
-      endpoint,
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel
-          .getContainer()
-          .getHandlers()
-          .map((def) => ({
-            service: def.service,
-            method: def.method,
-          }))
-          .reduce((acc, { service, method }) => {
-            if (!(service in acc)) {
-              acc[service] = [];
-            }
-            acc[service].push(method);
-            return acc;
-          }, {});
-        res.json(response);
-      }),
-    );
+
+    /**
+     * List all RPC actions
+     * - disabled when deployed
+     */
+    if (env('APP_ENV', 'local') === 'local') {
+      this.app.get(
+        endpoint,
+        asyncHandler(async (req, res, next) => {
+          const response = await this.kernel
+            .getContainer()
+            .getHandlers()
+            .map((def) => ({
+              service: def.service,
+              method: def.method,
+            }))
+            .reduce((acc, { service, method }) => {
+              acc.push(`${service}:${method}`);
+              return acc;
+            }, []);
+          res.json(response);
+        }),
+      );
+    }
 
     // register the POST route to /rpc
     this.app.post(
       endpoint,
+      apiRateLimiter(),
       asyncHandler(
         async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
           // inject the req.session.user to context in the body
           const isBatch = Array.isArray(req.body);
-          const user = get(req, 'session.user', null);
+          let user = get(req, 'session.user', null);
 
           if (!user) {
             throw new UnauthorizedException();
           }
+
+          user = { ...user, ...(await this.getTerritoryInfos(user)) };
 
           // nest the params and _context and inject the session user
           // from { id: 1, jsonrpc: '2.0', method: 'a:b' params: {} }
@@ -622,7 +592,7 @@ export class HttpTransport implements TransportInterface {
             : nestParams(req.body, user);
 
           // pass the request to the kernel
-          const response = await this.kernel.handle(req.body);
+          const response = (await this.kernel.handle(req.body)) as RPCResponseType;
 
           // send the response
           this.send(res, response);
@@ -632,14 +602,51 @@ export class HttpTransport implements TransportInterface {
   }
 
   private start(port = 8080): void {
-    this.server = this.app.listen(port, () => console.log(`Listening on port ${port}`));
+    this.server = this.app.listen(port, () =>
+      console.log(`Listening on port ${port}. Version ${this.config.get('sentry.version')}`),
+    );
   }
 
   /**
    * Send the response to the client
+   * - set optional headers
+   * - set the status code (converted from an RPC status code)
+   * - set the body. Error patterns are parsed
    */
-  private send(res: Response, response: RPCResponseType): void {
-    res.status(mapStatusCode(response)).json(this.parseErrorData(response));
+  private send(res: Response, response: RPCResponseType, headers: { [key: string]: string } = {}): void {
+    if ('success' in (response as any)) {
+      this.setHeaders(res, headers);
+    }
+
+    // get the HTTP status code from response meta or convert RPC code
+    const status = get(response, 'result.meta.httpStatus', mapStatusCode(response));
+
+    res.status(status).json(this.parseErrorData(response));
+  }
+
+  /**
+   * Send raw response data with configured headers
+   */
+  private raw(res: Response, data: any, headers: { [key: string]: string } = {}): void {
+    if (typeof data === 'object' && 'error' in data) {
+      res.status(mapStatusCode(data));
+      res.send(data.error);
+      return;
+    }
+
+    this.setHeaders(res, headers);
+    res.send(data);
+  }
+
+  /**
+   * add non-null headers on successful responses
+   */
+  private setHeaders(res: Response, headers: { [key: string]: string } = {}): void {
+    Object.keys(headers).forEach((k: string) => {
+      if (typeof headers[k] === 'string') {
+        res.set(k, headers[k]);
+      }
+    });
   }
 
   /**
@@ -663,14 +670,25 @@ export class HttpTransport implements TransportInterface {
     return response;
   }
 
-  private getTypeFromHeaders(headers: { [key: string]: string }): 'png' | 'json' | 'pdf' {
-    switch (headers['accept']) {
-      case 'image/png':
-        return 'png';
-      case 'application/json':
-        return 'json';
-      default:
-        return 'pdf';
+  /**
+   * Fetch additional data for territories
+   */
+  private async getTerritoryInfos(user): Promise<any> {
+    if (user.territory_id) {
+      const operatorList = await this.kernel.handle(
+        makeCall('territory:listOperator', { territory_id: user.territory_id }, { user: user }),
+      );
+      user.authorizedOperators = get(operatorList, 'result', []);
+
+      const descendantTerritories = await this.kernel.handle(
+        makeCall('territory:getParentChildren', { _id: user.territory_id }, { user: user }),
+      );
+
+      user.authorizedTerritories = [user.territory_id, ...get(descendantTerritories, 'result.0.descendant_ids', [])];
+
+      return user;
     }
+
+    return {};
   }
 }

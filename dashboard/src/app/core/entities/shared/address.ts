@@ -1,4 +1,6 @@
-export class Address {
+import { TerritoryAddress } from '../api/shared/territory/common/interfaces/TerritoryInterface';
+
+export class Address implements TerritoryAddress {
   public street: string;
   public postcode: string;
   public cedex?: string;

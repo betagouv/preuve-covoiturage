@@ -9,17 +9,19 @@ export interface StructureWithCompany {
 }
 
 export class FormCompany {
-  siret = new FormControl();
-  naf_entreprise = new FormControl(); // tslint:disable-line variable-name
-  nature_juridique = new FormControl(); // tslint:disable-line variable-name
+  siret = new FormControl(null, {
+    updateOn: 'blur',
+  });
+  naf_entreprise = new FormControl();
+  nature_juridique = new FormControl();
   rna = new FormControl();
-  vat_intra = new FormControl(); // tslint:disable-line variable-name
+  vat_intra = new FormControl();
 
   constructor(structure: StructureWithCompany) {
     const company = structure.company;
 
     this.siret.setValue(structure.siret);
-    this.siret.setValidators([Validators.required, Validators.pattern(REGEXP.siret)]);
+    this.siret.setValidators([Validators.pattern(REGEXP.siret)]);
 
     this.naf_entreprise.setValue(company.naf_entreprise);
     this.naf_entreprise.setValidators([Validators.pattern(REGEXP.naf)]);

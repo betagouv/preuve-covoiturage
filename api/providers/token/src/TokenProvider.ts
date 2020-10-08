@@ -29,11 +29,11 @@ export class TokenProvider implements ProviderInterface, TokenProviderInterface,
     return jwt.sign(payload, this.secret, { ...this.signOptions, ...options });
   }
 
-  async verify<T extends string | Buffer | object>(token: string, options: jwt.VerifyOptions = {}): Promise<T> {
-    const decoded = (await jwt.verify(token, this.secret, {
+  async verify<T extends string | object>(token: string, options: jwt.VerifyOptions = {}): Promise<T> {
+    const decoded = jwt.verify(token, this.secret, {
       ...this.verifyOptions,
       ...options,
-    })) as T;
+    }) as T;
 
     // override config TTL when ignoreExpiration option is passed
     const ttl = 'ignoreExpiration' in options && options.ignoreExpiration ? -1 : this.ttl;

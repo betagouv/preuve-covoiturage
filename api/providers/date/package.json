@@ -15,6 +15,8 @@
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
-    "date-fns": "^2.10.0"
+    "@ilos/common": "^0",
+    "date-fns": "^2.12.0",
+    "date-fns-tz": "^1.0.10"
   }
 }

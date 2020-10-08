@@ -1,16 +1,4 @@
-import { create as createSchema } from './create.schema';
-
-const upd = JSON.parse(JSON.stringify(createSchema));
+import { schema } from './common/schema';
 
 export const alias = 'territory.update';
-export const update = {
-  $id: alias,
-  type: 'object',
-  required: ['_id'],
-  additionalProperties: false,
-  minProperties: 2,
-  properties: {
-    ...upd.properties,
-    _id: { macro: 'serial' },
-  },
-};
+export const update = schema(alias, { _id: { macro: 'serial' } });

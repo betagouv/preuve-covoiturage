@@ -4,7 +4,6 @@ node_modules
 .vscode
 .env
 db/*
-api/ilos
 
 yarn-error.log
 doc

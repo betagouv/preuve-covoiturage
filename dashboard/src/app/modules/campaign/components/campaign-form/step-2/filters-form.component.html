@@ -11,7 +11,7 @@
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
-            Jours de la semaine
+            Jours de la semaine&nbsp;*
           </mat-panel-title>
           <mat-panel-description>
             <span [innerHTML]="showDateLabel"> </span>
@@ -111,7 +111,7 @@
       <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': controls.rank.touched && !controls.rank.valid }">
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
-            Classe de preuve
+            Classe de preuve&nbsp;*
           </mat-panel-title>
           <mat-panel-description>
             {{ showTripClassLabel }}
@@ -138,7 +138,7 @@
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
-            Cible
+            Cible&nbsp;*
           </mat-panel-title>
           <mat-panel-description>
             {{ showTargetLabel }}
@@ -155,8 +155,9 @@
               color="primary"
               #forPassenger
               formControlName="for_passenger"
-              >Passagers</mat-checkbox
             >
+              Passagers
+            </mat-checkbox>
             <mat-checkbox class="RulesForm-target-forTrip--hidden" color="primary" #forTrip formControlName="for_trip">
               Trajets
               <mat-icon
@@ -164,16 +165,13 @@
                 color="accent"
                 matTooltip="L'incitation sera affectée au trajet, c'est à la charge de l'opérateur de choisir la répartition entre conducteur et passager(s)"
                 aria-label="Information sur l'affection par trajet"
-                >info</mat-icon
               >
+                info
+              </mat-icon>
             </mat-checkbox>
           </ng-container>
           <ng-container [formGroup]="campaignForm">
-            <mat-checkbox
-              class="RulesForm-target-forAdult"
-              [disabled]="!forPassenger.checked && !forTrip.checked"
-              color="primary"
-              formControlName="only_adult"
+            <mat-checkbox class="RulesForm-target-forAdult" color="primary" formControlName="only_adult"
               >Personnes majeures uniquement</mat-checkbox
             >
           </ng-container>
@@ -184,7 +182,7 @@
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
-            Opérateurs
+            Opérateurs&nbsp;*
           </mat-panel-title>
           <mat-panel-description>
             {{ showOperatorsLabel() }}

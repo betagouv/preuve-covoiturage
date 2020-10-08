@@ -22,6 +22,7 @@ import { TownsAutocompleteComponent } from './components/towns-autocomplete/town
     OperatorUiModule,
     TerritoryUiModule,
     CampaignModule,
+    ReactiveFormsModule,
   ],
   exports: [FilterComponent],
 })

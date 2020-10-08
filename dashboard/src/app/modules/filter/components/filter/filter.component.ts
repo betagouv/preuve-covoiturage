@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, AbstractControl, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, AbstractControl, FormControl, Validators } from '@angular/forms';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { WeekDay } from '@angular/common';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
@@ -8,7 +8,7 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-mo
 import { FilterService } from '~/modules/filter/services/filter.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
-import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
+import { TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
@@ -44,6 +44,7 @@ import { dateRangeValidator } from '~/modules/filter/validators/date-range.valid
   ],
 })
 export class FilterComponent extends DestroyObservable implements OnInit {
+  minDate: string;
   @Input() set showFilter(showFilter: boolean) {
     this._showFilter = showFilter;
   }
@@ -92,11 +93,22 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   private initForm(): void {
+    const dayMinus1Year = new Date();
+    const dayMinus2Year = new Date();
+
+    dayMinus2Year.setMonth(dayMinus2Year.getMonth() - 24);
+    dayMinus1Year.setMonth(dayMinus1Year.getMonth() - 12);
+
+    dayMinus1Year.setHours(0, 0, 0, 0);
+    dayMinus2Year.setHours(0, 0, 0, 0);
+
+    this.minDate = dayMinus2Year.toISOString();
+
     this.filterForm = this.fb.group(
       {
         campaignIds: [[]],
         date: this.fb.group({
-          start: [null],
+          start: [dayMinus1Year.toISOString()],
           end: [null],
         }),
         hour: this.fb.group({
@@ -106,8 +118,8 @@ export class FilterComponent extends DestroyObservable implements OnInit {
         days: [[]],
         insees: [[]],
         distance: this.fb.group({
-          min: [null],
-          max: [null],
+          min: [null, [Validators.min(0), Validators.max(150)]],
+          max: [null, [Validators.min(0), Validators.max(150)]],
         }),
         ranks: [[]],
         status: [null],
@@ -120,7 +132,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   public filterForm: FormGroup;
   public _showFilter = false;
   public classes = TRIP_RANKS;
-  public tripStatusList = TRIP_STATUS;
+  public tripStatusList = [TripStatusEnum.OK];
 
   public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
 
@@ -153,6 +165,11 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   public filterClick(): void {
     const filterObj = this.filterForm.getRawValue();
 
+    if (filterObj.date) {
+      if (!filterObj.date.start) delete filterObj.date.start;
+      if (!filterObj.date.end) delete filterObj.date.end;
+    }
+
     this.filterService.setFilter(filterObj);
     this.filterNumber.emit(this.countFilters);
     this.hideFilter.emit();
@@ -175,15 +192,19 @@ export class FilterComponent extends DestroyObservable implements OnInit {
    */
   public onDateInput(): void {
     this.filterForm.updateValueAndValidity();
+
+    const startError = !this.startControl.value ? { required: true } : null;
+
     if (this.filterForm.hasError('dateRange')) {
       this.startControl.setErrors({
         dateRange: true,
+        ...startError,
       });
       this.endControl.setErrors({
         dateRange: true,
       });
     } else {
-      this.startControl.setErrors(null);
+      this.startControl.setErrors(startError);
       this.endControl.setErrors(null);
     }
   }

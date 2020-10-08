@@ -1,7 +1,7 @@
 <form [formGroup]="parentForm">
   <mat-form-field class="siret" appearance="outline">
-    <mat-label>SIRET</mat-label>
-    <input matInput formControlName="siret" required />
+    <mat-label>SIRET *</mat-label>
+    <input matInput formControlName="siret" />
     <mat-error *ngIf="parentForm.controls.siret.hasError('required')">Le SIRET est obligatoire.</mat-error>
     <mat-error *ngIf="parentForm.controls.siret.hasError('pattern')">Le format du siret n'est pas valide.</mat-error>
   </mat-form-field>

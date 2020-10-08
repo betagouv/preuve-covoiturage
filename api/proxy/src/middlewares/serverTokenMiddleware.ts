@@ -31,8 +31,6 @@ async function checkApplication(
     },
   });
 
-  console.log({ checkApplication: app });
-
   const app_uuid = get(app, 'result.uuid', '');
   const owner_id = get(app, 'result.owner_id', null);
   const matchUuid = app_uuid === payload.a;
@@ -43,24 +41,12 @@ async function checkApplication(
     throw new UnauthorizedException('Unauthorized application');
   }
 
-  // check permissions
-  const app_perms = get(app, 'result.permissions', [])
-    .sort()
-    .join(',');
-  if (app_perms !== payload.p.sort().join(',')) {
-    throw new ForbiddenException('Missing application permissions');
-  }
-
   return (app as any).result as ApplicationInterface;
 }
 
 async function logRequest(kernel: KernelInterface, request: Request, payload: TokenPayloadInterface): Promise<void> {
   if (get(process.env, 'NODE_ENV', '') === 'production') return;
-  if (
-    get(process.env, 'APP_DEBUG_REQUEST', 'false')
-      .trim()
-      .toLowerCase() !== 'true'
-  ) {
+  if (get(process.env, 'APP_DEBUG_REQUEST', 'false').trim().toLowerCase() !== 'true') {
     return;
   }
 
@@ -79,7 +65,7 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
     { channel: { service: 'proxy' }, call: { user: { permissions: ['acquisition.logrequest'] } } },
   );
 
-  console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id')}`);
+  console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id', '')}`);
 }
 
 export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProviderInterfaceResolver) {
@@ -90,9 +76,15 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         return next();
       }
 
-      const payload = await (tokenProvider.verify<TokenPayloadInterface>(token.toString().replace('Bearer ', ''), {
+      const payload = await tokenProvider.verify<
+        TokenPayloadInterface & {
+          app: string;
+          id: number;
+          permissions: string[];
+        }
+      >(token.toString().replace('Bearer ', ''), {
         ignoreExpiration: true,
-      }) as Promise<any>);
+      });
 
       try {
         await logRequest(kernel, req, payload);
@@ -115,12 +107,6 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
 
       if (!payload.a || !payload.o) {
         throw new ForbiddenException();
-      }
-
-      // The only permissions now. Store in the token or retrieve
-      // from the application service later if it gets more complex.
-      if (!payload.p) {
-        payload.p = ['journey.create'];
       }
 
       // Check and get the app

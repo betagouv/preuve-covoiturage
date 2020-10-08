@@ -15,7 +15,10 @@ export class LoginComponent implements OnInit {
   constructor(private fb: FormBuilder, private authService: AuthenticationService) {}
 
   ngOnInit(): void {
-    this.initLoginForm();
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+    });
   }
 
   public get controls(): { [key: string]: AbstractControl } {
@@ -24,25 +27,13 @@ export class LoginComponent implements OnInit {
 
   public onLogin(): void {
     this.authService.login(this.controls.email.value, this.controls.password.value).subscribe((user) => {
-      if (user === null) {
-        console.log('login failed');
-      } else {
-        console.log('login success', user);
+      if (!user) {
+        console.warn('login failed');
       }
     });
   }
 
   public onPasswordTypeToggle(): void {
     this.passwordType = this.passwordType === 'password' ? 'text' : 'password';
-  }
-
-  /**
-   * PRIVATE FUNCTIONS
-   */
-  private initLoginForm(): void {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-    });
   }
 }

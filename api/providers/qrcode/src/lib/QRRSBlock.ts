@@ -167,7 +167,7 @@ QRRSBlock.RS_BLOCK_TABLE = [
   [34, 54, 24, 34, 55, 25],
   [20, 45, 15, 61, 46, 16],
 ];
-QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+QRRSBlock.getRSBlocks = function (typeNumber, errorCorrectLevel) {
   const rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
   if (rsBlock == undefined) {
     throw new Error('bad rs block @ typeNumber:' + typeNumber + '/errorCorrectLevel:' + errorCorrectLevel);
@@ -184,7 +184,7 @@ QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
   }
   return list;
 };
-QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+QRRSBlock.getRsBlockTable = function (typeNumber, errorCorrectLevel) {
   switch (errorCorrectLevel) {
     case QRErrorCorrectLevel.L:
       return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];

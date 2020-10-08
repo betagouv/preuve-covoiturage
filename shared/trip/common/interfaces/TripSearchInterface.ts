@@ -11,7 +11,6 @@ export interface TripSearchInterface {
   days?: number[];
 
   status?: string;
-  insee?: string[];
 
   distance?: {
     min?: number;
@@ -21,7 +20,6 @@ export interface TripSearchInterface {
   ranks?: string[];
   operator_id?: number[];
   territory_id?: number[];
-  operator_territory_id?: number;
 }
 
 export interface TripSearchInterfaceWithPagination extends TripSearchInterface {

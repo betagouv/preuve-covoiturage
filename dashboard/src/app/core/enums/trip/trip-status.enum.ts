@@ -1,15 +1,15 @@
 export enum TripStatusEnum {
-  PENDING = 'pending',
-  ACTIVE = 'active',
-  LOCKED = 'locked',
-  ERROR = 'error',
+  // PENDING = 'pending',
+  OK = 'ok',
+  EXPIRED = 'expired',
+  CANCELED = 'canceled',
 }
 
 export const TRIP_STATUS: TripStatusEnum[] = Object.values(TripStatusEnum);
 
 export const TRIP_STATUS_FR = {
-  pending: 'En cours',
-  active: 'Actif',
-  locked: 'Actif',
-  error: 'Anomalie',
+  // pending: 'En cours',
+  ok: 'Ok',
+  expired: 'Expiré',
+  canceled: 'Annulé',
 };

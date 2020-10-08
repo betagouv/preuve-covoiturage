@@ -13,20 +13,23 @@ export class LocalGeoProvider implements InseeCoderInterface {
     const result = await this.connection.getClient().query({
       text: `
         SELECT
-          _id
-        FROM common.insee
+          tc.value AS value
+        FROM territory.territories AS tt
+        JOIN territory.territory_codes AS tc
+        ON tc.territory_id = tt._id AND tc.type = 'insee'
         WHERE
-          ST_CONTAINS(geo::geometry, $1::geography::geometry)
-        ORDER BY ST_Area(geo::geometry) ASC
+          tt.geo IS NOT NULL AND
+          ST_INTERSECTS(tt.geo, ST_POINT($1::float, $2::float))
+        ORDER BY ST_Area(tt.geo, true) ASC
         LIMIT 1
       `,
-      values: [`POINT(${lon} ${lat})`],
+      values: [lon, lat],
     });
 
     if (result.rowCount === 0) {
       throw new NotFoundException();
     }
 
-    return result.rows[0]._id;
+    return result.rows[0].value;
   }
 }

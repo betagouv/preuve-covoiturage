@@ -51,7 +51,7 @@ export const weekdayTrafficLimitPolicy = {
   rules: [
     [
       {
-        slug: 'distance_range_filter',
+        slug: 'progressive_distance_range_meta',
         parameters: {
           min: 0,
           max: 50000,
@@ -72,7 +72,7 @@ export const weekdayTrafficLimitPolicy = {
     ],
     [
       {
-        slug: 'distance_range_filter',
+        slug: 'progressive_distance_range_meta',
         parameters: {
           min: 0,
           max: 50000,
@@ -97,7 +97,7 @@ export const weekdayTrafficLimitPolicy = {
     ],
     [
       {
-        slug: 'distance_range_filter',
+        slug: 'progressive_distance_range_meta',
         parameters: {
           min: 50000,
           max: 150000,
@@ -114,7 +114,7 @@ export const weekdayTrafficLimitPolicy = {
     ],
     [
       {
-        slug: 'distance_range_filter',
+        slug: 'progressive_distance_range_meta',
         parameters: {
           min: 50000,
           max: 150000,
