@@ -95,8 +95,6 @@ export function dbTestMacro<TestContext = unknown>(
     t.context.pool = await t.context.pg.getClient().connect();
 
     try {
-      await t.context.pool.query('BEGIN');
-
       // flash schemas
       const fixturesFolder = path.join(config.basePath, 'fixtures');
       t.log('Fixtures folder', fixturesFolder);
@@ -107,6 +105,7 @@ export function dbTestMacro<TestContext = unknown>(
       t.log('Create schemas');
       await t.context.pool.query(schemasSql);
 
+      await t.context.pool.query('BEGIN');
       // flash data
       for (const source of config.sources) {
         if (typeof source === 'string') {
@@ -136,6 +135,7 @@ export function dbTestMacro<TestContext = unknown>(
     } catch (e) {
       await t.context.pool.query('ROLLBACK');
       console.error(e);
+      throw e;
     }
   });
 
