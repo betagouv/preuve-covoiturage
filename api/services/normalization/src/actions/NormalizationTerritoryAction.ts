@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, InvalidParamsException } from '@ilos/common';
+import { handler, InvalidParamsException, NotFoundException } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/territory.contract';
 import { PositionInterface } from '../shared/common/interfaces/PositionInterface';
@@ -19,17 +19,25 @@ export class NormalizationTerritoryAction extends AbstractAction {
   }
 
   private async fillTerritories(position: PositionInterface): Promise<number> {
-    // const position: PositionInterface = get(journey, dataPath);
-    let result = 0;
-
-    if ('insee' in position) {
-      result = await this.territory.findByInsee(position.insee);
-    } else if ('lat' in position && 'lon' in position) {
-      result = await this.territory.findByPoint({ lon: position.lon, lat: position.lat });
-    } else {
+    if (!('insee' in position) && (!('lat' in position) || !('lon' in position))) {
       throw new InvalidParamsException('Missing INSEE code or lat & lon');
     }
 
-    return result;
+    let result = null;
+    if ('insee' in position) {
+      result = await this.territory.findByInsee(position.insee);
+      if (result !== null) {
+        return result;
+      }
+    }
+
+    if ('lat' in position && 'lon' in position) {
+      result = await this.territory.findByPoint({ lon: position.lon, lat: position.lat });
+      if (result !== null) {
+        return result;
+      }
+    }
+
+    throw new NotFoundException('Normalization : territory not found');
   }
 }

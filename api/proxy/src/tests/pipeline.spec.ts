@@ -48,7 +48,7 @@ import { Kernel } from '../Kernel';
 // this must be done before using the macro to make sure this hook
 // runs before the one from the macro
 const myTest = anyTest as TestInterface<ContextType>;
-myTest.after.always(async (t) => {
+myTest.serial.after.always(async (t) => {
   await t.context.worker.down();
   await t.context.app.down();
   await t.context.kernel.shutdown();
@@ -59,7 +59,7 @@ const { test } = dbTestMacro<ContextType>(myTest, {
   pgConnectionString,
 });
 
-test.before(async (t) => {
+test.serial.before(async (t) => {
   t.context.crypto = new CryptoProvider();
   t.context.token = new TokenProvider(new MockJWTConfigProvider());
   await t.context.token.init();
@@ -74,13 +74,13 @@ test.before(async (t) => {
   t.context.request = supertest(t.context.app.getInstance());
 });
 
-test.beforeEach(async (t) => {
+test.serial.beforeEach(async (t) => {
   // login with the operator admin
   t.context.cookies = await cookieLoginHelper(t.context.request, 'maxicovoit.admin@example.com', 'admin1234');
 });
 
-test.cb('Pipeline check', (t) => {
-  t.timeout(20000);
+test.serial.cb('Pipeline check', (t) => {
+  t.timeout(5*60*1000);
   t.plan(3);
   t.context.token
     .sign({
@@ -92,6 +92,20 @@ test.cb('Pipeline check', (t) => {
     })
     .then((token) => {
       const pl = payloadV2();
+      const normQueue = t.context.worker.getInstance().filter((q) => q.worker.name === 'normalization')[0].worker;
+      normQueue.on('completed', (job) => {
+        if (job.name === 'normalization:process') {
+          t.context.pool
+          .query({
+            text: 'SELECT count(*) as count FROM carpool.carpools WHERE operator_journey_id = $1',
+            values: [pl.journey_id],
+          })
+          .then((result) => {
+            t.is(get(result.rows, '0.count', '0'), '2');
+            t.end();
+          });
+        }
+      });
       return t.context.request
         .post(`/v2/journeys`)
         .send(pl)
@@ -99,30 +113,11 @@ test.cb('Pipeline check', (t) => {
         .set('Content-type', 'application/json')
         .set('Authorization', `Bearer ${token}`)
         .expect((response: supertest.Response) => {
-          const normQueue = t.context.worker.queues.filter((q) => q.name === 'normalization').pop();
           // make sure the journey has been sent properly
           t.is(response.status, 200);
 
           const operator_journey_id = get(response, 'body.result.data.journey_id', '');
           t.is(operator_journey_id, pl.journey_id);
-
-          // find the job in the queue and attach a hook to resolve when finished
-          normQueue.getJobs(['active', 'waiting']).then((jobs) => {
-            const job = jobs.filter((j) => get(j, 'data.params.params.journey_id', '') === operator_journey_id)[0];
-            if (!job) {
-              t.end(new Error('Job not found'));
-            }
-
-            job.finished().then(async () => {
-              const result = await t.context.pool.query({
-                text: 'SELECT operator_journey_id FROM carpool.carpools WHERE operator_journey_id = $1',
-                values: [operator_journey_id],
-              });
-
-              t.is(get(result.rows[0], 'operator_journey_id', 'not-found'), operator_journey_id);
-              t.end();
-            });
-          });
         });
     })
     .catch(t.end);
