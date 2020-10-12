@@ -2,7 +2,7 @@ import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/cor
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatTabGroup } from '@angular/material';
+import { MatTabGroup } from '@angular/material/tabs';
 
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';

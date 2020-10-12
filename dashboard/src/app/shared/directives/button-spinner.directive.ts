@@ -9,7 +9,7 @@ import {
   SimpleChanges,
   ViewContainerRef,
 } from '@angular/core';
-import { MatSpinner } from '@angular/material';
+import { MatSpinner } from '@angular/material/progress-spinner';
 
 @Directive({
   selector: 'button[appShowSpinner]',

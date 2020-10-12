@@ -3,7 +3,7 @@ import { NouisliderModule } from 'ng2-nouislider';
 import { NgModule } from '@angular/core';
 import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatPaginatorModule } from '@angular/material';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { CampaignRoutingModule } from '~/modules/campaign/campaign-routing.module';
 import { MaterialModule } from '~/shared/modules/material/material.module';

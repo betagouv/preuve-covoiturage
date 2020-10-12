@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatPaginatorIntl, MatSpinner } from '@angular/material';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatSpinner } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 

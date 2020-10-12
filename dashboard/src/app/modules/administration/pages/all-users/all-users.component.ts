@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { merge, Observable, of } from 'rxjs';
-import { MatButtonToggleGroup, MatPaginator } from '@angular/material';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatPaginator } from '@angular/material/paginator';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';

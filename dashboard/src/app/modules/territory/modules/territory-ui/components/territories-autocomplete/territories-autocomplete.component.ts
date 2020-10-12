@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { filter, takeUntil, tap, map, debounceTime } from 'rxjs/operators';
 
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
-import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, startWith, takeUntil } from 'rxjs/operators';
 
 import { Territory } from '~/core/entities/territory/territory';
