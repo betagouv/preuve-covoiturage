@@ -19,7 +19,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
 
   @Input() parentForm: FormGroup;
 
-  @ViewChild('townInput', { static: false }) townInput: ElementRef;
+  @ViewChild('townInput') townInput: ElementRef;
 
   constructor(private townService: TownService) {
     super();

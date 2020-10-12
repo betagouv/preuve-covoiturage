@@ -16,7 +16,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
   // with control 'territoryIds'
   @Input() parentForm: FormGroup;
 
-  @ViewChild('territoryInput', { static: false }) territoryInput: ElementRef;
+  @ViewChild('territoryInput') territoryInput: ElementRef;
 
   public filteredTerritories: TerritoryNameInterface[];
   public selectedTerritories: TerritoryNameInterface[] = [];

@@ -28,7 +28,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   operators$: Observable<Operator[]>;
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public operatorStoreService: OperatorStoreService) {
     super();

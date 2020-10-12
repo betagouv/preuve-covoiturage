@@ -139,7 +139,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   @Output() filterNumber = new EventEmitter();
   @Output() hideFilter = new EventEmitter();
 
-  @ViewChild('townInput', { static: false }) townInput: ElementRef;
+  @ViewChild('townInput') townInput: ElementRef;
 
   // delegate method
   dayLabel = dayLabelCapitalized;

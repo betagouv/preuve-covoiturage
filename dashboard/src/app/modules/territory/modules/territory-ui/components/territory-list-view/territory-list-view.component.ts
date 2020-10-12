@@ -23,7 +23,7 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
 
   ELEMENT_PER_PAGE = 10;
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   private _countTerritories = 0;
 
   constructor(private _territoryStoreService: TerritoryStoreService) {

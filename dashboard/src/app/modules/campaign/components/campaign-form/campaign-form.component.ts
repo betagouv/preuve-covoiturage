@@ -45,7 +45,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   matStepperCompleted = false;
 
   private _defaultRange: RulesRangeUxType = [0, CAMPAIGN_RULES_MAX_DISTANCE_KM];
-  @ViewChild('stepper', { static: false }) _matStepper: MatStepper;
+  @ViewChild('stepper') _matStepper: MatStepper;
   public userIsDemo: boolean;
 
   constructor(

@@ -32,8 +32,8 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     ['outdated']: 'Les campagnes terminées',
   };
   PAGE_SIZE = 10;
-  @ViewChild(MatButtonToggleGroup, { static: false }) statusToggle: MatButtonToggleGroup;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatButtonToggleGroup) statusToggle: MatButtonToggleGroup;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private _authService: AuthenticationService,

@@ -18,7 +18,7 @@ export class UploadComponent implements ControlValueAccessor {
   /*eslint-enable */
 
   @Input() progress;
-  @ViewChild('inputFile', { static: false }) inputFile;
+  @ViewChild('inputFile') inputFile;
 
   onChange: Function;
   public file: File | null = null;

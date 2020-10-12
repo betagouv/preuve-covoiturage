@@ -22,7 +22,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   @Input() parentForm: FormGroup;
   @Input() fieldName: string;
 
-  @ViewChild('territoryInseeInput', { static: false }) territoryInseeInput: ElementRef;
+  @ViewChild('territoryInseeInput') territoryInseeInput: ElementRef;
 
   constructor(private territoryApi: TerritoryApiService) {
     super();

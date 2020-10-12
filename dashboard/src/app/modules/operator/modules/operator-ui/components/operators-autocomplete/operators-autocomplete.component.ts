@@ -29,7 +29,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
 
   @Input() onlyVisible = false;
 
-  @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
+  @ViewChild('operatorInput') operatorInput: ElementRef;
   protected visibleOperatorIds: number[] | null = null;
 
   constructor(private commonDataService: CommonDataService, private territoryApiService: TerritoryApiService) {

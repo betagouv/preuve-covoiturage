@@ -23,7 +23,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   public campaigns: CampaignNameInterface[] = [];
   public filteredCampaigns: CampaignNameInterface[];
 
-  @ViewChild('campaignInput', { static: false }) campaignInput: ElementRef;
+  @ViewChild('campaignInput') campaignInput: ElementRef;
 
   constructor(private commonDataService: CommonDataService, private auth: AuthenticationService) {
     super();

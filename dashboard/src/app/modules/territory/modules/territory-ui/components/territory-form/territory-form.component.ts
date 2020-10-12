@@ -35,7 +35,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   @Input() territory: Territory = null;
 
   @Output() close = new EventEmitter();
-  @ViewChild(TerritoryChildrenComponent, { static: false })
+  @ViewChild(TerritoryChildrenComponent)
   territoryChildren: TerritoryChildrenComponent;
 
   fullFormMode = false;

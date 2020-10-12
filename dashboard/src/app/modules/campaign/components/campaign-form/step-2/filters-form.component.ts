@@ -30,7 +30,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   // delegate method
   dayLabel = dayLabelCapitalized;
 
-  @ViewChild('mtg', { static: false }) inseeFilterTabGroup: MatTabGroup;
+  @ViewChild('mtg') inseeFilterTabGroup: MatTabGroup;
   private initValue = 0;
 
   constructor(
