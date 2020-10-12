@@ -37,7 +37,7 @@
     "moment": "^2.24.0",
     "ng2-nouislider": "^1.8.2",
     "ngx-infinite-scroll": "^8.0.0",
-    "ngx-toastr": "^10.0.4",
+    "ngx-toastr": "^13.1.0",
     "nouislider": "^14.0.2",
     "ol": "^5.3.3",
     "rxjs": "~6.6.3",
@@ -60,7 +60,6 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.18.0",
     "tslint-config-airbnb": "^5.11.1",
-    "tslint-eslint-rules": "^5.4.0",
     "tslint-import-group-ordering": "^2.1.1",
     "typescript": "~3.8.3"
   },
