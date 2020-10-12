@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatPaginatorIntl } from '@angular/material/paginator';
-import { MatSpinner } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -47,6 +46,6 @@ import { UploadComponent } from './components/upload/upload.component';
     UploadComponent,
   ],
   providers: [{ provide: MatPaginatorIntl, useClass: FrenchMatPaginatorIntl }],
-  entryComponents: [MatSpinner],
+  // entryComponents: [MatSpinner],
 })
 export class SharedModule {}
