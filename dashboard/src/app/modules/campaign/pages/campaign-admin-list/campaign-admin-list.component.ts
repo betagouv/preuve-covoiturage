@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged, takeUntil, tap } from 'rxjs/operators';
 import { merge } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatButtonToggleGroup, MatPaginator } from '@angular/material';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatPaginator } from '@angular/material/paginator';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -32,8 +33,8 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     ['outdated']: 'Les campagnes terminées',
   };
   PAGE_SIZE = 10;
-  @ViewChild(MatButtonToggleGroup, { static: false }) statusToggle: MatButtonToggleGroup;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatButtonToggleGroup) statusToggle: MatButtonToggleGroup;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private _authService: AuthenticationService,

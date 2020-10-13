@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { FormBuilder, FormGroup, AbstractControl, FormControl, Validators } from '@angular/forms';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { WeekDay } from '@angular/common';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 
 import { FilterService } from '~/modules/filter/services/filter.service';
@@ -139,7 +139,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   @Output() filterNumber = new EventEmitter();
   @Output() hideFilter = new EventEmitter();
 
-  @ViewChild('townInput', { static: false }) townInput: ElementRef;
+  @ViewChild('townInput') townInput: ElementRef;
 
   // delegate method
   dayLabel = dayLabelCapitalized;

@@ -10,7 +10,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { TripStoreService } from '~/modules/trip/services/trip-store.service';
 import { LightTrip } from '~/core/entities/trip/trip';
-import { MatPaginator, PageEvent } from '@angular/material';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-trip-list',

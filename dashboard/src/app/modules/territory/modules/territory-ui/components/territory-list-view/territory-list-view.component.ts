@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { debounceTime, filter, takeUntil, tap } from 'rxjs/operators';
-import { MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
 
 import { Territory } from '~/core/entities/territory/territory';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -23,7 +23,7 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
 
   ELEMENT_PER_PAGE = 10;
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   private _countTerritories = 0;
 
   constructor(private _territoryStoreService: TerritoryStoreService) {

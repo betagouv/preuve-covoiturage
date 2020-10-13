@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { takeUntil, tap } from 'rxjs/operators';
-import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
@@ -23,7 +23,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   public campaigns: CampaignNameInterface[] = [];
   public filteredCampaigns: CampaignNameInterface[];
 
-  @ViewChild('campaignInput', { static: false }) campaignInput: ElementRef;
+  @ViewChild('campaignInput') campaignInput: ElementRef;
 
   constructor(private commonDataService: CommonDataService, private auth: AuthenticationService) {
     super();

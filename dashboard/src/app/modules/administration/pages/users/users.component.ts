@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap, map } from 'rxjs/operators';
 import { merge, Observable, of } from 'rxjs';
-import { MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
@@ -28,7 +28,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   isCreatingUser: boolean;
   PAGE_SIZE = 10;
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   private users$: Observable<UserListInterface[]>;
 
