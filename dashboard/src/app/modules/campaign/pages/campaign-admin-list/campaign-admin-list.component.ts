@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { debounceTime, distinctUntilChanged, takeUntil, tap } from 'rxjs/operators';
 import { merge } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -15,7 +15,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
   templateUrl: './campaign-admin-list.component.html',
   styleUrls: ['./campaign-admin-list.component.scss'],
 })
-export class CampaignAdminListComponent extends DestroyObservable implements OnInit {
+export class CampaignAdminListComponent extends DestroyObservable implements OnInit, AfterViewInit {
   filteredCampaigns: CampaignUx[];
   campaignsToShow: CampaignUx[];
   campaigns: CampaignUx[];
