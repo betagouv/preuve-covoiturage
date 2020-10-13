@@ -48,6 +48,8 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
         this.showForm = true;
       });
 
+    this.territories$.pipe(takeUntil(this.destroy$)).subscribe((data) => (this.territoriesToShow = data));
+
     this.loadTerritories();
   }
 
@@ -56,16 +58,9 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
   }
 
   ngAfterViewInit(): void {
-    // merge(
-    //   this._filterLiteral.pipe(
-    //     debounceTime(300),
-    //     tap(() => (this.paginator.pageIndex = 0)),
-    //   ),
-    // )
-
     merge(
       this._filterLiteral.pipe(
-        debounceTime(300),
+        debounceTime(100),
         tap(() => (this.paginator.pageIndex = 0)),
       ),
       this.paginator.page,
@@ -79,28 +74,9 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
         }),
       );
 
-    this.territories$.pipe(takeUntil(this.destroy$)).subscribe((data) => (this.territoriesToShow = data));
     this._territoryStoreService.pagination$
       .pipe(takeUntil(this.destroy$))
       .subscribe((pagination) => (this._countTerritories = pagination.total));
-
-    // merge(this.territories$)
-    //   .pipe(
-    //     switchMap(() => {
-    //       const page = this.paginator.pageIndex;
-    //       const start = Number(page) * this.ELEMENT_PER_PAGE;
-    //       const end = Number(page) * this.ELEMENT_PER_PAGE + this.ELEMENT_PER_PAGE;
-
-    //       this.territoriesFiltered = this.territories
-    //         .filter((t) => t.name.toLowerCase().includes(this._filterLiteral.value))
-    //         .sort((a, b) => a.name.localeCompare(b.name));
-    //       return of(this.territoriesFiltered.slice(start, end));
-    //     }),
-    //     takeUntil(this.destroy$),
-    //   )
-    //   .subscribe((data) => {
-    //     this.territoriesToShow = data;
-    //   });
   }
 
   get countTerritories(): number {

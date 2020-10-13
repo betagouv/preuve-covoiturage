@@ -17,7 +17,7 @@ import { ListItemComponent } from './components/list-item/list-item.component';
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { RangeTimePickerComponent } from './components/range-time-picker/range-time-picker.component';
 import { UploadComponent } from './components/upload/upload.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -47,6 +47,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     UploadComponent,
   ],
   providers: [{ provide: MatPaginatorIntl, useClass: FrenchMatPaginatorIntl }],
-  // entryComponents: [MatSpinner],
+  entryComponents: [MatSpinner],
 })
 export class SharedModule {}
