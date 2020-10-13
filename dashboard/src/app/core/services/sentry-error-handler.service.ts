@@ -16,8 +16,6 @@ export class SentryErrorHandler extends ErrorHandler {
   }
 
   handleError(error) {
-    // console.warn('handleError', error);
-
     let err = error;
     const extra: any = {};
 
@@ -33,7 +31,6 @@ export class SentryErrorHandler extends ErrorHandler {
 
     try {
       captureException(err, {
-        // extra: { json_error: JSON.stringify(error) },
         extra,
         tags: {
           environment: environment.name,
