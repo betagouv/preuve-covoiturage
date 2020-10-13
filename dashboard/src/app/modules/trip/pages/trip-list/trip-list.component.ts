@@ -58,7 +58,7 @@ export class TripListComponent extends DestroyObservable implements OnInit, Afte
 
   get columnsDisplayed(): string[] {
     const columns = ['startCity', 'endCity', 'date', 'campaigns', 'incentives', 'class', 'status'];
-    if (this.authService.user.group !== UserGroupEnum.OPERATOR) {
+    if (this.authService.user && this.authService.user.group !== UserGroupEnum.OPERATOR) {
       columns.splice(5, 0, 'operator');
     }
     return columns;
