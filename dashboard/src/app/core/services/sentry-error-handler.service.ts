@@ -11,7 +11,8 @@ export class SentryErrorHandler extends ErrorHandler {
     if (environment.sentryDSN) {
       this.trackError = true;
       init({ dsn: environment.sentryDSN });
-    } else;
+    }
+
     this.trackError = true;
   }
 
