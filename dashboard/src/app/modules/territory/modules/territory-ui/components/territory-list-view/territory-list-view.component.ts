@@ -60,7 +60,7 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
   ngAfterViewInit(): void {
     merge(
       this._filterLiteral.pipe(
-        debounceTime(300),
+        debounceTime(100),
         tap(() => (this.paginator.pageIndex = 0)),
       ),
       this.paginator.page,
