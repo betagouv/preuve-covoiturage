@@ -67,14 +67,12 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   ngAfterViewInit(): void {
     merge(
       this.users$,
-      this.searchFilters.valueChanges.pipe(
-        debounceTime(300),
-        tap(() => (this.paginator.pageIndex = 0)),
-      ),
+      this.searchFilters.valueChanges.pipe(tap(() => (this.paginator.pageIndex = 0))),
       this.paginator.page,
     )
       .pipe(
         distinctUntilChanged(),
+        debounceTime(100),
         switchMap(() => {
           this.closeUserForm();
           const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
