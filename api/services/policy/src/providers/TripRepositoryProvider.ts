@@ -75,7 +75,12 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
         const rows = await promisifiedCursorRead(batchSize);
         count = rows.length;
         if (count > 0) {
-          yield rows;
+          yield [
+            ...rows.map((r: TripInterface) => ({
+              ...r,
+              people: r.people.map((rp) => ({ ...rp, datetime2: rp.datetime, datetime: new Date(rp.datetime) })),
+            })),
+          ];
         }
       } catch (e) {
         cursor.close(() => client.release());
