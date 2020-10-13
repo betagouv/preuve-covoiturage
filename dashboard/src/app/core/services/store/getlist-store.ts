@@ -1,5 +1,5 @@
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil, debounceTime } from 'rxjs/operators';
 
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 
@@ -75,7 +75,7 @@ export abstract class GetListStore<
     this.rpcGetList = rpcGetList;
     let firstLoad = true;
 
-    this._filterSubject.subscribe((filt) => {
+    this._filterSubject.pipe(debounceTime(100)).subscribe((filt) => {
       if (firstLoad || filt !== null) {
         this.loadList();
         firstLoad = !firstLoad || !!filt;
