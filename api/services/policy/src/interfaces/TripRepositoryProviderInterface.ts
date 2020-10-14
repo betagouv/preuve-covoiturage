@@ -1,4 +1,4 @@
-import { TripInterface } from './TripInterface';
+import { TripInterface } from '.';
 
 export interface TripRepositoryProviderInterface {
   findTripByPolicy(policy_id: number, batchSize?: number): AsyncGenerator<TripInterface[], void, void>;

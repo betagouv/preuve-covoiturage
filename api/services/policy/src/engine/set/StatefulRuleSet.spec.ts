@@ -3,7 +3,7 @@ import { faker } from '../helpers/faker';
 import { MetadataWrapper } from '../meta/MetadataWrapper';
 import { StatefulRuleSet } from './StatefulRuleSet';
 import { getMetaKey } from '../helpers/getMetaKey';
-import { IncentiveStateEnum, IncentiveStatusEnum } from '../../interfaces/IncentiveInterface';
+import { IncentiveStateEnum, IncentiveStatusEnum } from '../../interfaces';
 import { MaxAmountRestriction } from '../rules/stateful/MaxAmountRestriction';
 import { MaxTripRestriction } from '../rules/stateful/MaxTripRestriction';
 import { FixedAmountSetter } from '../rules/setters/FixedAmountSetter';
