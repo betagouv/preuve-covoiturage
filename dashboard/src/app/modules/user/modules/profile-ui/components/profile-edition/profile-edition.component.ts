@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, filter } from 'rxjs/operators';
 
 import { REGEXP } from '~/core/const/validators.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -53,14 +53,19 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
   }
 
   private initProfilFormValue(): void {
-    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
-      const profileFormValues = this.authService.user.toFormValues();
-      delete profileFormValues.role;
-      delete profileFormValues.group;
-      delete profileFormValues.territory_id;
-      delete profileFormValues.operator_id;
-      this.profileForm.setValue(profileFormValues);
-    });
+    this.authService.user$
+      .pipe(
+        filter((user) => !!user),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((user) => {
+        const profileFormValues = this.authService.user.toFormValues();
+        delete profileFormValues.role;
+        delete profileFormValues.group;
+        delete profileFormValues.territory_id;
+        delete profileFormValues.operator_id;
+        this.profileForm.setValue(profileFormValues);
+      });
   }
 
   private initProfilForm(): void {
