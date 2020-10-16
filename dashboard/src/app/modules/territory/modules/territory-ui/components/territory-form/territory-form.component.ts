@@ -60,13 +60,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   ngOnInit(): void {
-    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
-      this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
-      this.initTerritoryForm();
-      this.initTerritoryFormValue();
-      this.checkPermissions();
-      this.updateValidation();
-    });
+    this.authService.user$
+      .pipe(
+        filter((user) => !!user),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((user) => {
+        this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
+        this.initTerritoryForm();
+        this.initTerritoryFormValue();
+        this.checkPermissions();
+        this.updateValidation();
+      });
 
     if (this.territoryForm.controls['activable']) {
       this.territoryForm.controls['activable'].valueChanges.subscribe((val) => {
