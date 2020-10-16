@@ -37,9 +37,13 @@ export class FilterService {
       campaign_id: filterUx.campaignIds,
     });
 
-    if (filter.date.start && typeof filter.date.start === 'string')
+    if (filter.date.start && typeof filter.date.start === 'string') {
       filter.date.start = moment(filter.date.start) as any;
-    if (filter.date.end && typeof filter.date.end === 'string') filter.date.end = moment(filter.date.end) as any;
+    }
+
+    if (filter.date.end && typeof filter.date.end === 'string') {
+      filter.date.end = moment(filter.date.end) as any;
+    }
 
     // Apply default start date filter
 
@@ -53,20 +57,6 @@ export class FilterService {
 
     if (filter.hour.start === null && filter.hour.end === null) {
       delete filter.hour;
-    } else {
-      // time zone hacky fix until ddb has timezones
-      if (filter.hour.start) {
-        filter.hour.start = moment().hours(filter.hour.start).utc().hours();
-      } else {
-        filter.hour.start = 0;
-      }
-
-      if (filter.hour.end) {
-        // time zone hacky fix until ddb has timezones
-        filter.hour.end = moment().hours(filter.hour.end).utc().hours();
-      } else {
-        filter.hour.end = 23;
-      }
     }
 
     // format distance to Number

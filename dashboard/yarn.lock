@@ -1761,13 +1761,13 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@ctrl/ngx-chartjs@^2.0.0":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@ctrl/ngx-chartjs/-/ngx-chartjs-2.0.2.tgz#0bc217d52e939779b937c1ff51ddd9f9a0454284"
-  integrity sha512-3pRoPsyixK31DuMv+UCq83G2HbCVVmnzAFWkhtDGcpejUR4DHGEvKpyKoUFgM7XB24RgYodkaKYHjAWQqNcyig==
+"@ctrl/ngx-chartjs@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@ctrl/ngx-chartjs/-/ngx-chartjs-4.0.2.tgz#26154f6278e1ee469101d65041d2b851bc55dfea"
+  integrity sha512-juNdbpUpYXEviVnqdS61wkOEzQC1+UhA6FuauXRF3yu635PeUZMnJvAJ/iONtn+m+SjAQr3CzZANJ/SGnzrNPg==
   dependencies:
-    "@types/chart.js" "^2.9.11"
-    tslib "^1.9.0"
+    "@types/chart.js" "^2.9.24"
+    tslib "^2.0.0"
 
 "@cypress/listr-verbose-renderer@0.4.1":
   version "0.4.1"
@@ -1946,10 +1946,10 @@
     "@sentry/types" "5.24.2"
     tslib "^1.9.3"
 
-"@types/chart.js@^2.9.11":
-  version "2.9.15"
-  resolved "https://registry.yarnpkg.com/@types/chart.js/-/chart.js-2.9.15.tgz#a6dba99e25258dbc0799000f11e57ed1f93ea5d9"
-  integrity sha512-PRxv/KYzmeVXDgp9nHJBoIQh9iJEyBm/OocnSrIEU9VZSNW5lcbXVkYjkb4V78VGGJESf57tk7KxK1LBAccOAQ==
+"@types/chart.js@^2.9.24":
+  version "2.9.27"
+  resolved "https://registry.yarnpkg.com/@types/chart.js/-/chart.js-2.9.27.tgz#716fd57b4cc791dc592cd424a44df95f2aefb918"
+  integrity sha512-b3ho2RpPLWzLzOXKkFwpvlRDEVWQrCknu2/p90mLY5v2DO8owk0OwWkv4MqAC91kJL52bQGXkVw/De+N/0/1+A==
   dependencies:
     moment "^2.10.2"
 
@@ -3152,10 +3152,10 @@ chardet@^0.7.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
-chart.js@^2.8.0:
-  version "2.9.3"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.9.3.tgz#ae3884114dafd381bc600f5b35a189138aac1ef7"
-  integrity sha512-+2jlOobSk52c1VU6fzkh3UwqHMdSlgH1xFv9FKMqHiNCpXsGPQa/+81AFa+i3jZ253Mq9aAycPwDjnn1XbRNNw==
+chart.js@^2.9.4:
+  version "2.9.4"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.9.4.tgz#0827f9563faffb2dc5c06562f8eb10337d5b9684"
+  integrity sha512-B07aAzxcrikjAPyV+01j7BmOpxtQETxTSlQ26BEYJ+3iUkbNKaOJ/nDbT6JjyqYxseM0ON12COHYdU2cTIjC7A==
   dependencies:
     chartjs-color "^2.1.0"
     moment "^2.10.2"

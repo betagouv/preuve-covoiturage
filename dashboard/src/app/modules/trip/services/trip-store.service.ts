@@ -5,7 +5,6 @@ import * as moment from 'moment';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { LightTrip } from '~/core/entities/trip/trip';
 import { ExportFilterUxInterface, ExportFilterInterface } from '~/core/interfaces/filter/exportFilterInterface';
 import { GetListStore } from '~/core/services/store/getlist-store';
@@ -17,7 +16,7 @@ import { TripApiService } from '~/modules/trip/services/trip-api.service';
 export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApiService> {
   protected _total$ = new BehaviorSubject<number>(null);
 
-  constructor(protected tripApi: TripApiService, private _authService: AuthenticationService) {
+  constructor(protected tripApi: TripApiService) {
     super(tripApi);
   }
 
@@ -37,6 +36,7 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
   public exportTrips(filter: ExportFilterUxInterface): Observable<any> {
     // map moment to date
     const params: ExportFilterInterface = {
+      tz: filter.tz,
       date: {
         start: moment(filter.date.start).startOf('day').toISOString(),
         end: moment(filter.date.end).endOf('day').toISOString(),
@@ -67,7 +67,8 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     }
 
     if (refreshCount) {
-      this.rpcGetList.count().subscribe((count) => {
+      // @ts-ignore Not matching TripSearchInterfaceWithPagination for params...
+      this.rpcGetList.count(params).subscribe((count) => {
         this._total$.next(count);
       });
     }

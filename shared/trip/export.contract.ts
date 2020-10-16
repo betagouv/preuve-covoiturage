@@ -1,4 +1,5 @@
 export interface ParamsInterface {
+  tz?: string;
   date: {
     start: Date;
     end: Date;

@@ -50,7 +50,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   exportTrips(): void {
-    const filter = this.exportFilterForm.getRawValue();
+    const filter = { ...this.exportFilterForm.getRawValue(), tz: Intl.DateTimeFormat().resolvedOptions().timeZone };
     this._dialog
       .confirm({
         title: 'Export des trajets',

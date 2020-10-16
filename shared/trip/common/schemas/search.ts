@@ -1,4 +1,7 @@
 const params = {
+  tz: {
+    macro: 'tz',
+  },
   campaign_id: {
     type: 'array',
     items: { macro: 'serial' },
@@ -31,6 +34,7 @@ const params = {
         type: 'integer',
         minimum: 0,
         maximum: 23,
+        exclusiveMinimum: { $data: '1/start' },
       },
     },
   },
@@ -93,6 +97,7 @@ export const search = {
     skip: {
       type: 'integer',
       minimum: 0,
+      maximum: 2147483647,
       default: 0,
     },
     limit: {

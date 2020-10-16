@@ -246,8 +246,9 @@ export class HttpTransport implements TransportInterface {
       '/stats',
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
+        console.log(req.query.tz);
         const response = (await this.kernel.handle(
-          makeCall('trip:stats', {}, { user: { permissions: ['trip.stats'] } }),
+          makeCall('trip:stats', { tz: decodeURIComponent(req.query.tz) }, { user: { permissions: ['trip.stats'] } }),
         )) as RPCResponseType;
 
         if (!response || Array.isArray(response) || 'error' in response) {

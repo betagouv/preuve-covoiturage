@@ -1,4 +1,5 @@
 export interface TripSearchInterface {
+  tz?: string;
   campaign_id?: number[];
   date?: {
     start?: Date;

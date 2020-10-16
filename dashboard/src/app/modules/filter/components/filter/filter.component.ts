@@ -112,8 +112,8 @@ export class FilterComponent extends DestroyObservable implements OnInit {
           end: [null],
         }),
         hour: this.fb.group({
-          start: [null],
-          end: [null],
+          start: [null, [Validators.min(0), Validators.max(23)]],
+          end: [null, [Validators.min(0), Validators.max(23)]],
         }),
         days: [[]],
         insees: [[]],

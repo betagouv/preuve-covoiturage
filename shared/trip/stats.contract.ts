@@ -12,7 +12,10 @@ export interface SingleResultInterface {
   operators: number;
 }
 
-export type ResultInterface = SingleResultInterface[];
+export type ResultInterface = {
+  meta: { tz: string };
+  data: SingleResultInterface[];
+};
 
 export const handlerConfig = {
   service: 'trip',

@@ -48,12 +48,12 @@
             <ng-container formGroupName="hour">
               <mat-form-field class="start-time" appearance="outline">
                 <mat-label>De</mat-label>
-                <input matInput #minTime formControlName="start" type="number" min="0" max="23" />
+                <input matInput #minTime formControlName="start" pattern="[0-9]{1,2}" />
                 <span class="filter-timeAndDays-hourUnit" *ngIf="minTime.value" matSuffix>H</span>
               </mat-form-field>
               <mat-form-field class="end-time" appearance="outline">
                 <mat-label>A</mat-label>
-                <input matInput #maxTime formControlName="end" type="number" min="0" max="23" />
+                <input matInput #maxTime formControlName="end" pattern="[0-9]{1,2}" />
                 <span class="filter-timeAndDays-hourUnit" *ngIf="maxTime.value" matSuffix>H</span>
               </mat-form-field>
             </ng-container>

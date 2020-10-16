@@ -1,6 +1,7 @@
 import { Moment } from 'moment';
 
 export interface ExportFilterInterface {
+  tz: string;
   date?: {
     start: string;
     end: string;
@@ -10,6 +11,7 @@ export interface ExportFilterInterface {
 }
 
 export interface ExportFilterUxInterface {
+  tz: string;
   date?: {
     start: Moment;
     end: Moment;

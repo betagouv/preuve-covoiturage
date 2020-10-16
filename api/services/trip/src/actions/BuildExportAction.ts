@@ -5,6 +5,7 @@ import v4 from 'uuid/v4';
 import AdmZip from 'adm-zip';
 import { get } from 'lodash';
 import csvStringify, { Stringifier } from 'csv-stringify';
+import { format, utcToZonedTime } from 'date-fns-tz';
 
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
@@ -17,8 +18,10 @@ import { signature as notifySignature, ParamsInterface as NotifyParamsInterface 
 import { ExportTripInterface } from '../interfaces';
 
 interface FlattenTripInterface extends ExportTripInterface {
+  journey_start_datetime: string;
   journey_start_date: string;
   journey_start_time: string;
+  journey_end_datetime: string;
   journey_end_date: string;
   journey_end_time: string;
   passenger_incentive_1_siret?: string;
@@ -193,7 +196,7 @@ export class BuildExportAction extends Action {
         const results = await cursor(10);
         count = results.length;
         for (const line of results) {
-          stringifier.write(this.normalize(line));
+          stringifier.write(this.normalize(line, params, context));
         }
       } while (count !== 0);
 
@@ -249,6 +252,8 @@ export class BuildExportAction extends Action {
           },
         },
       );
+
+      throw e;
     }
   }
 
@@ -288,30 +293,40 @@ export class BuildExportAction extends Action {
     }
   }
 
-  protected normalize(initialData: ExportTripInterface): FlattenTripInterface {
+  protected normalize(src: ExportTripInterface, params: ParamsInterface, context: ContextType): FlattenTripInterface {
+    const { tz: timeZone } = params.query;
+    const jsd = utcToZonedTime(src.journey_start_datetime, timeZone);
+    const jed = utcToZonedTime(src.journey_end_datetime, timeZone);
+
     const data = {
-      ...initialData,
-      journey_start_date: initialData.journey_start_datetime.toISOString().split('T')[0],
-      journey_start_time: initialData.journey_start_datetime.toISOString().split('T')[1].split('.')[0],
-      journey_end_date: initialData.journey_end_datetime.toISOString().split('T')[0],
-      journey_end_time: initialData.journey_end_datetime.toISOString().split('T')[1].split('.')[0],
+      ...src,
+
+      // format and convert to user timezone
+      journey_start_datetime: format(jsd, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone }),
+      journey_start_date: format(jsd, 'yyyy-MM-dd', { timeZone }),
+      journey_start_time: format(jsd, 'HH:mm:ss', { timeZone }),
+
+      journey_end_datetime: format(jed, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone }),
+      journey_end_date: format(jed, 'yyyy-MM-dd', { timeZone }),
+      journey_end_time: format(jed, 'HH:mm:ss', { timeZone }),
+
       // distance in kilometers
-      journey_distance: initialData.journey_distance / 1000,
-      journey_distance_calculated: initialData.journey_distance_calculated / 1000,
-      journey_distance_anounced: initialData.journey_distance_anounced / 1000,
+      journey_distance: src.journey_distance / 1000,
+      journey_distance_calculated: src.journey_distance_calculated / 1000,
+      journey_distance_anounced: src.journey_distance_anounced / 1000,
+
       // duration in minutes
-      journey_duration: Math.round(initialData.journey_duration / 60),
-      journey_duration_calculated: Math.round(initialData.journey_duration_calculated / 60),
-      journey_duration_anounced: Math.round(initialData.journey_duration_anounced / 60),
+      journey_duration: Math.round(src.journey_duration / 60),
+      journey_duration_calculated: Math.round(src.journey_duration_calculated / 60),
+      journey_duration_anounced: Math.round(src.journey_duration_anounced / 60),
+
       // financial in euros
-      driver_revenue: get(initialData, 'driver_revenue', 0) / 100,
-      passenger_contribution: get(initialData, 'passenger_contribution', 0) / 100,
+      driver_revenue: get(src, 'driver_revenue', 0) / 100,
+      passenger_contribution: get(src, 'passenger_contribution', 0) / 100,
     };
 
-    const driver_incentive_raw = (get(initialData, 'driver_incentive_raw', []) || []).filter(
-      (i) => i.type === 'incentive',
-    );
-    const passenger_incentive_raw = (get(initialData, 'passenger_incentive_raw', []) || []).filter(
+    const driver_incentive_raw = (get(src, 'driver_incentive_raw', []) || []).filter((i) => i.type === 'incentive');
+    const passenger_incentive_raw = (get(src, 'passenger_incentive_raw', []) || []).filter(
       (i) => i.type === 'incentive',
     );
 

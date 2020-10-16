@@ -7,7 +7,7 @@ export interface ExportTripInterface {
   journey_id: string;
   trip_id: string;
 
-  journey_start_datetime: Date;
+  journey_start_datetime: Date | string;
   journey_start_lon: string;
   journey_start_lat: string;
   journey_start_insee: string;
@@ -17,7 +17,7 @@ export interface ExportTripInterface {
   journey_start_towngroup: string;
   journey_start_country: string;
 
-  journey_end_datetime: Date;
+  journey_end_datetime: Date | string;
   journey_end_lon: string;
   journey_end_lat: string;
   journey_end_insee: string;

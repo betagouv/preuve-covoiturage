@@ -1,12 +1,15 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 import { promisify } from 'util';
+import { format } from 'date-fns-tz';
+import { orderBy, map } from 'lodash';
 
 import {
   TripSearchInterfaceWithPagination,
   TripSearchInterface,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
+  TzResultInterface,
   LightTripInterface,
   ExportTripInterface,
   TripRepositoryInterface,
@@ -24,6 +27,7 @@ import { StatInterface } from '../interfaces/StatInterface';
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'trip.list';
+  private defaultTz: TzResultInterface = { name: 'GMT', utc_offset: '00:00:00' };
 
   constructor(public connection: PostgresConnection) {}
 
@@ -141,7 +145,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
             case 'hour': {
               return {
-                text: '($#::int <= journey_start_dayhour AND journey_start_dayhour <= $#::int)',
+                text: '($#::int <= hour AND hour <= $#::int)',
                 values: [filter.value.start, filter.value.end],
               };
             }
@@ -171,11 +175,31 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
     const where = await this.buildWhereClauses(params);
+    const tz = await this.validateTz(params.tz);
 
-    const query = {
-      text: `
+    // We convert the timestamps to the user's timezone before truncating and grouping by day.
+    // Results are filtered by hour in the CTE, before being GROUPED BY in the query.
+    // LEFT JOIN LATERAL on hour makes the column usable in the WHERE clause.
+    const text = `
+      WITH list AS (
+        SELECT
+          (journey_start_datetime AT TIME ZONE $${where.values.length + 1})::date as day,
+          passenger_seats,
+          journey_distance,
+          driver_id,
+          passenger_id,
+          operator_id,
+          trip_id,
+          passenger_incentive_rpc_sum,
+          driver_incentive_rpc_sum
+        FROM ${this.table}
+        LEFT JOIN LATERAL
+          EXTRACT(hour FROM journey_start_datetime AT TIME ZONE $${where.values.length + 1}) as hour
+          ON true
+        ${where.text ? `WHERE ${where.text}` : ''}
+      )
       SELECT
-        journey_start_datetime::date as day,
+        day,
         sum(passenger_seats)::int as trip,
         sum(journey_distance/1000*passenger_seats)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
@@ -186,24 +210,32 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         (count(*) FILTER (
           WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0
         ))::int as trip_subsidized
-      FROM ${this.table}
-      ${where.text ? `WHERE ${where.text}` : ''}
+      FROM list
       GROUP BY day
-      ORDER BY day ASC`,
-      values: [
-        // casting to int ?
-        ...(where ? where.values : []),
-      ],
-      // count(*) FILTER (WHERE array_length(incentives, 1) > 0)
-    };
+      ORDER BY day ASC
+    `;
 
+    const values = [...(where ? where.values : []), tz.name];
+
+    const query = { text: this.numberPlaceholders(text), values };
     query.text = this.numberPlaceholders(query.text);
     const result = await this.connection.getClient().query(query);
-    return result.rows;
+
+    // fix wrong datetime casting to UTC
+    return result.rowCount
+      ? orderBy(
+          result.rows.map((line) => {
+            line.day = format(line.day, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone: tz.name }).replace(' ', 'T');
+            return line;
+          }),
+          'day',
+        )
+      : [];
   }
 
   public async searchWithCursor(
     params: {
+      tz: string;
       date: { start: Date; end: Date };
       territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
       operator_id?: number[];
@@ -283,14 +315,19 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     }
 
     const where = await this.buildWhereClauses(cleanParams);
+    const tz = await this.validateTz(params.tz);
+
+    const queryValues = [...values, ...where.values, tz.name];
     const queryText = this.numberPlaceholders(`
       SELECT
         ${selectedFields.join(', ')}
       FROM ${this.table}
+      LEFT JOIN LATERAL
+        EXTRACT(hour FROM journey_start_datetime AT TIME ZONE $${queryValues.length}) as hour
+        ON true
       ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
     `);
-    const queryValues = [...values, ...where.values];
 
     const db = await this.connection.getClient().connect();
     const cursorCb = db.query(new Cursor(queryText, queryValues));
@@ -300,13 +337,18 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }> {
     const where = await this.buildWhereClauses(params);
+    const tz = await this.validateTz(params.tz);
+
     const query = {
       text: `
         SELECT COUNT(*)
         FROM ${this.table}
+        LEFT JOIN LATERAL
+          EXTRACT(hour FROM journey_start_datetime AT TIME ZONE $${where.values.length + 1}) as hour
+          ON true
         ${where.text ? `WHERE ${where.text}` : ''}
       `,
-      values: [...(where ? where.values : [])],
+      values: [...(where ? where.values : []), tz.name],
     };
 
     query.text = this.numberPlaceholders(query.text);
@@ -322,6 +364,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   ): Promise<ResultWithPagination<LightTripInterface>> {
     const { limit, skip } = params;
     const where = await this.buildWhereClauses(params);
+    const tz = await this.validateTz(params.tz);
 
     const query = {
       text: `
@@ -329,32 +372,34 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           trip_id,
           journey_start_town as start_town,
           journey_end_town as end_town,
-          journey_start_datetime as start_datetime,
+          journey_start_datetime AT TIME ZONE $${where.values.length + 3} as start_datetime,
           (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int as incentives,
           operator_id::int,
           operator_class,
           (driver_incentive_rpc_raw || passenger_incentive_rpc_raw)::json[] as campaigns_id,
           status
         FROM ${this.table}
+        LEFT JOIN LATERAL
+          EXTRACT(hour FROM journey_start_datetime AT TIME ZONE $${where.values.length + 3}) as hour
+          ON true
         ${where.text ? `WHERE ${where.text}` : ''}
         ORDER BY journey_start_datetime DESC
         LIMIT $#::integer
         OFFSET $#::integer
       `,
-      values: [...(where ? where.values : []), limit, skip],
+      values: [...(where ? where.values : []), limit, skip, tz.name],
     };
 
     query.text = this.numberPlaceholders(query.text);
 
     const result = await this.connection.getClient().query(query);
-
     const pagination = {
       limit,
       total: -1,
       offset: skip,
     };
 
-    if (result.rows.length === 0) {
+    if (!result.rowCount) {
       return {
         data: [],
         meta: {
@@ -365,25 +410,29 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     const final_data = result.rows.map(({ total_count, ...data }) => ({
       ...data,
-      campaigns_id:
-        !data.campaigns_id || !data.campaigns_id.length
-          ? []
-          : [
-              ...data.campaigns_id.reduce((s: Set<number>, item: any) => {
-                if (item.policy_id && !s.has(item.policy_id)) {
-                  s.add(item.policy_id);
-                }
-                return s;
-              }, new Set<number>()),
-            ],
+      campaigns_id: [...new Set(map(data.campaigns_id || [], 'policy_id'))].sort(),
     }));
 
     return {
-      data: final_data,
+      data: orderBy(final_data, 'start_datetime', 'desc'),
       meta: {
         pagination,
       },
     };
+  }
+
+  // validate given timezone against PostgreSQL list.
+  // JSON schema's tzMacro should have validated this before.
+  // You might need to update the tzMacro list if PostgreSQL updates.
+  public async validateTz(tz?: string): Promise<TzResultInterface> {
+    if (!tz) return this.defaultTz;
+
+    const resTimezone = await this.connection.getClient().query<TzResultInterface>({
+      text: 'SELECT name, utc_offset::text FROM pg_timezone_names WHERE LOWER(name) = LOWER($1)',
+      values: [tz],
+    });
+
+    return resTimezone.rowCount ? resTimezone.rows[0] : this.defaultTz;
   }
 
   // replace $# in query by $1, $2, ...
