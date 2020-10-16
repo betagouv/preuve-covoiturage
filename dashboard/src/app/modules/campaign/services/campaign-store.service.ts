@@ -51,7 +51,7 @@ export class CampaignStoreService extends CrudStore<
   }
 
   launch(id: number): Observable<LaunchResultInterface> {
-    return this.rpcCrud.launch(id).pipe(tap(this.loadList));
+    return this.rpcCrud.launch(id).pipe(tap(() => this.loadList));
   }
 
   loadCampaigns(): void {
