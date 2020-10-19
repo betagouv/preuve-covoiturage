@@ -2,7 +2,7 @@
   "name": "@pdc/api",
   "private": true,
   "engines": {
-    "node": "12.x.x"
+    "node": "12"
   },
   "workspaces": [
     "proxy",

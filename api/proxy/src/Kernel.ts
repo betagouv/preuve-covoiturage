@@ -16,6 +16,7 @@ import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
 import { bootstrap as monitoringBootstrap } from '@pdc/service-monitoring';
+import { bootstrap as honorBootstrap } from '@pdc/service-honor';
 
 import { config } from './config';
 import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
@@ -41,6 +42,7 @@ import { SyncLegacyProductionCommand } from './commands/SyncLegacyProductionComm
     ...userBootstrap.serviceProviders,
     ...certificateBootstrap.serviceProviders,
     ...monitoringBootstrap.serviceProviders,
+    ...honorBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [
