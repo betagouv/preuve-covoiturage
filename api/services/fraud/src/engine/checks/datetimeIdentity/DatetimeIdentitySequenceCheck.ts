@@ -14,18 +14,18 @@ export class DatetimeIdentitySequenceCheck implements HandleCheckInterface<Datet
   protected readonly min: number = 0; // below = 100
 
   async handle(data: DatetimeIdentityCheckParamsInterface): Promise<FraudCheckResult> {
-    return (
-      1 -
-      step(
-        data
-          .filter((d) => d.interval > 0)
-          .reduce((max, i) => {
-            max = Math.max(max, i.interval);
-            return max;
-          }, 0),
-        this.min,
-        this.max,
-      )
-    );
+    return data.length === 0
+      ? 0
+      : 1 -
+          step(
+            data
+              .filter((d) => d.interval > 0)
+              .reduce((max, i) => {
+                max = Math.max(max, i.interval);
+                return max;
+              }, 0),
+            this.min,
+            this.max,
+          );
   }
 }
