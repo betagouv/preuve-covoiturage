@@ -46,7 +46,7 @@ test('should not call meta if wrong target', async (t) => {
   const context = {
     trip: trip,
     stack: [],
-    person: trip.people.find((p) => !p.is_driver),
+    person: trip.find((p) => !p.is_driver),
   };
 
   await t.notThrowsAsync(async () => rule.getState(context, meta));
@@ -55,7 +55,7 @@ test('should not call meta if wrong target', async (t) => {
 test('should properly build build meta key and set initial state', async (t) => {
   const meta = new FakeMetadataWrapper();
   const { rule, trip } = setup({ target: 'driver' });
-  const driver = trip.people.find((p) => p.is_driver);
+  const driver = trip.find((p) => p.is_driver);
   const context = {
     trip: trip,
     stack: [],

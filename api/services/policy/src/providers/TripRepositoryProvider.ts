@@ -35,8 +35,6 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
     const query = {
       text: `
       SELECT
-        trip_id,
-        MIN(datetime) as datetime,
         json_agg(
           json_build_object(
             'identity_uuid', identity_uuid,
@@ -76,10 +74,9 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
         count = rows.length;
         if (count > 0) {
           yield [
-            ...rows.map((r: TripInterface) => ({
-              ...r,
-              people: r.people.map((rp) => ({ ...rp, datetime2: rp.datetime, datetime: new Date(rp.datetime) })),
-            })),
+            ...rows.map(
+              (r) => new TripInterface(...r.people.map((rp) => ({ ...rp, datetime: new Date(rp.datetime) }))),
+            ),
           ];
         }
       } catch (e) {

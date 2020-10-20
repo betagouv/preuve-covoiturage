@@ -19,7 +19,7 @@ test('should multiply result by number of seat', async (t) => {
     trip,
     stack: [],
     result: 10,
-    person: trip.people[0],
+    person: trip[0],
   };
   await rule.apply(context);
   t.is(context.result, 10);
@@ -28,7 +28,7 @@ test('should multiply result by number of seat', async (t) => {
     trip,
     stack: [],
     result: 10,
-    person: trip.people[1],
+    person: trip[1],
   };
   await rule.apply(context2);
   t.is(context2.result, 50);

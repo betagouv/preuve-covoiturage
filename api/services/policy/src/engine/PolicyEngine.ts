@@ -20,10 +20,10 @@ export class PolicyEngine {
   }
 
   public async processStateless(pc: ProcessableCampaign, trip: TripInterface): Promise<IncentiveInterface[]> {
-    const drivers = trip.people
+    const drivers = trip
       .filter((p) => p.is_driver)
       .sort((p1, p2) => (p1.carpool_id < p2.carpool_id ? -1 : p1.carpool_id > p2.carpool_id ? 1 : 0));
-    const passengers = trip.people.filter((p) => !p.is_driver);
+    const passengers = trip.filter((p) => !p.is_driver);
     const people = [...passengers, drivers.shift()].filter((p) => p !== undefined);
 
     // Empty incitation for duplicate drivers
@@ -77,7 +77,7 @@ export class PolicyEngine {
 
   protected guard(trip: TripInterface, campaign: CampaignInterface): boolean {
     if (
-      trip.people
+      trip
         .map((p) => [...p.start_territory_id, ...p.end_territory_id])
         .reduce((s, t) => {
           t.map((v) => s.add(v));

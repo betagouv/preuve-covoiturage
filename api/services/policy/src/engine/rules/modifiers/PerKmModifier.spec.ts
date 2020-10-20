@@ -16,8 +16,8 @@ test('should multiply result by distance in km', async (t) => {
     trip,
     stack: [],
     result: 1,
-    person: trip.people[0],
+    person: trip[0],
   };
   await rule.apply(context);
-  t.is(context.result, trip.people[0].distance / 1000);
+  t.is(context.result, trip[0].distance / 1000);
 });

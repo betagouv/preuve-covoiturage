@@ -17,7 +17,7 @@ test('should throw error if person is not driver', async (t) => {
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[1],
+      person: trip[1],
     }),
   );
   t.is(err.message, DriverOnlyFilter.description);
@@ -29,7 +29,7 @@ test('should do nothing if person is driver', async (t) => {
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[0],
+      person: trip[0],
     }),
   );
 });

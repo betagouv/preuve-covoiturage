@@ -21,18 +21,10 @@ const basePerson: PersonInterface = {
   end_territory_id: [1],
 };
 
-const baseTrip: TripInterface = {
-  trip_id: 1,
-  datetime,
-  people: [],
-};
+const baseTrip: TripInterface = new TripInterface();
 
-function trip(people: Partial<PersonInterface>[] = [], shared: Partial<TripInterface> = {}): TripInterface {
-  return {
-    ...baseTrip,
-    ...shared,
-    people: [...people.map((p) => ({ ...basePerson, ...p }))],
-  };
+function trip(people: Partial<PersonInterface>[] = []): TripInterface {
+  return new TripInterface(...baseTrip, ...people.map((p) => ({ ...basePerson, ...p })));
 }
 
 export const faker = {
