@@ -34,6 +34,8 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
 import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 import { SeedCommand } from './commands/SeedCommand';
+import { ValidateDateMiddleware } from './middlewares/ValidateDateMiddleware';
+import { SimulateAction } from './actions/SimulateAction';
 
 @serviceProvider({
   config,
@@ -43,6 +45,7 @@ import { SeedCommand } from './commands/SeedCommand';
     MetadataProvider,
     TripRepositoryProvider,
     ['validate.rules', ValidateRuleParametersMiddleware],
+    ['validate.date', ValidateDateMiddleware],
     PolicyEngine,
     IncentiveRepositoryProvider,
   ],
@@ -65,6 +68,7 @@ import { SeedCommand } from './commands/SeedCommand';
     FindCampaignAction,
     ApplyAction,
     FinalizeAction,
+    SimulateAction,
   ],
   connections: [
     [PostgresConnection, 'connections.postgres'],

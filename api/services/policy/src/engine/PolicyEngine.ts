@@ -57,12 +57,11 @@ export class PolicyEngine {
     return result;
   }
 
-  public async process(trip: TripInterface, campaign: CampaignInterface): Promise<IncentiveInterface[]> {
-    if (!this.guard(trip, campaign)) {
+  public async process(pc: ProcessableCampaign, trip: TripInterface): Promise<IncentiveInterface[]> {
+    if (!this.guard(pc, trip)) {
       return [];
     }
 
-    const pc = new ProcessableCampaign(campaign);
     const incentives = await this.processStateless(pc, trip);
     for (const [i, incentive] of incentives.entries()) {
       const { amount } = await this.processStateful(pc, incentive);
@@ -75,7 +74,7 @@ export class PolicyEngine {
     return incentives;
   }
 
-  protected guard(trip: TripInterface, campaign: CampaignInterface): boolean {
+  protected guard(campaign: ProcessableCampaign, trip: TripInterface): boolean {
     if (
       trip
         .map((p) => [...p.start_territory_id, ...p.end_territory_id])

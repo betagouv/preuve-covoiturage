@@ -41,7 +41,7 @@ test('Should work', async (t) => {
     }),
   );
   // need fixture to test this behavior
+  t.log(await i.next());
   // t.log(await i.next());
-  // t.log(await i.next());
-  // t.fail();
+  t.pass();
 });

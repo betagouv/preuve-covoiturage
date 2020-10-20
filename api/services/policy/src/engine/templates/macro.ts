@@ -74,9 +74,9 @@ export function macro(
     trips: TripInterface[] = defaultTrips,
   ) => {
     const incentives = [];
-
+    const campaign = t.context.engine.buildCampaign(t.context.policy);
     for (const trip of trips) {
-      const r = await t.context.engine.process(trip, t.context.policy);
+      const r = await t.context.engine.process(campaign, trip);
       incentives.push(...r);
     }
     t.log(incentives);

@@ -55,10 +55,10 @@ function setup(): { engine: PolicyEngine; start: Date; fakeCampaign: CampaignInt
 }
 
 test('should boot', async (t) => {
-  const { engine, start, fakeCampaign } = setup();
+  const { engine, fakeCampaign } = setup();
   const trip = faker.trip([{}]);
-
-  const result = await engine.process(trip, fakeCampaign);
+  const campaign = engine.buildCampaign(fakeCampaign);
+  const result = await engine.process(campaign, trip);
 
   t.true(Array.isArray(result));
   t.is(result.length, 1);
