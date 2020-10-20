@@ -151,7 +151,7 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/honor',
       cors({
-        origin: 'https://attestation.covoiturage.beta.gouv.fr',
+        origin: this.config.get('proxy.certUrl'),
         optionsSuccessStatus: 200,
       }),
       monHonorCertificateRateLimiter(),
