@@ -3,6 +3,7 @@ import { provider } from '@ilos/common';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
 import { TripRepositoryProviderInterface, TripRepositoryProviderInterfaceResolver, TripInterface } from '../interfaces';
+import { ProcessableCampaign } from '../engine/ProcessableCampaign';
 
 @provider({
   identifier: TripRepositoryProviderInterfaceResolver,
@@ -31,36 +32,42 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
     return results.rows.map((r) => r.pp);
   }
 
-  async *findTripByPolicy(policy_id: number, batchSize = 100): AsyncGenerator<TripInterface[], void, void> {
+  async *findTripByPolicy(policy: ProcessableCampaign, batchSize = 100): AsyncGenerator<TripInterface[], void, void> {
     const query = {
       text: `
       SELECT
         json_agg(
           json_build_object(
-            'identity_uuid', identity_uuid,
-            'carpool_id', carpool_id,
-            'operator_id', operator_id,
-            'operator_class', operator_class,
-            'is_over_18', is_over_18,
-            'is_driver', is_driver,
-            'has_travel_pass', has_travel_pass,
-            'datetime', datetime,
-            'start_insee', start_insee,
-            'end_insee', end_insee,
-            'seats', seats,
-            'duration', duration,
-            'distance', distance,
-            'cost', cost,
-            'start_territory_id', start_territory_id,
-            'end_territory_id', end_territory_id
+            'identity_uuid', pt.identity_uuid,
+            'carpool_id', pt.carpool_id,
+            'operator_id', pt.operator_id,
+            'operator_class', pt.operator_class,
+            'is_over_18', pt.is_over_18,
+            'is_driver', pt.is_driver,
+            'has_travel_pass', pt.has_travel_pass,
+            'datetime', pt.datetime,
+            'start_insee', pt.start_insee,
+            'end_insee', pt.end_insee,
+            'seats', pt.seats,
+            'duration', pt.duration,
+            'distance', pt.distance,
+            'cost', pt.cost,
+            'start_territory_id', pt.start_territory_id,
+            'end_territory_id', pt.end_territory_id
           )
         ) as people
       FROM ${this.table} as pt
-      WHERE $1::int = ANY(pt.processable_policies)
+      LEFT JOIN policy.incentives as pi ON pi.carpool_id = pt.carpool_id
+      WHERE pt.datetime >= $1::timestamp AND pt.datetime <= $2::timestamp
       AND pt.carpool_status = 'ok'::carpool.carpool_status_enum
+      AND (
+        $3::int = ANY(pt.start_territory_id)
+        OR $3::int = ANY(pt.end_territory_id)
+      )
+      AND pi.carpool_id IS NULL
       GROUP BY trip_id;
       `,
-      values: [policy_id],
+      values: [policy.start_date, policy.end_date, policy.territory_id],
     };
 
     const client = await this.connection.getClient().connect();
