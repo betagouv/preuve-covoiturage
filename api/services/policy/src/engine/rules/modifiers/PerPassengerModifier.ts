@@ -6,6 +6,6 @@ export class PerPassengerModifier extends ModifierRule {
   static readonly description: string = 'Le montant est multiplié par le nombre total de passagers';
 
   modify(ctx: RuleHandlerContextInterface, result: number): number {
-    return result * ctx.trip.people.filter((p) => !p.is_driver).reduce((acc, p) => acc + (p.seats || 1), 0);
+    return result * ctx.trip.filter((p) => !p.is_driver).reduce((acc, p) => acc + (p.seats || 1), 0);
   }
 }

@@ -86,31 +86,26 @@ const tripDefinitions = [
 
 export const trips: TripInterface[] = [
   ...tripDefinitions.map((def) =>
-    faker.trip(
-      [
-        {
-          carpool_id: def.driver_carpool_id,
-          distance: def.distance,
-          datetime: new Date(def.datetime),
-          is_driver: true,
-          identity_uuid: def.driver_identity_uuid,
-          start_territory_id: def.inside ? [1] : [2],
-          end_territory_id: def.inside ? [1] : [2],
-        },
-        {
-          carpool_id: def.passenger_carpool_id,
-          distance: def.distance,
-          datetime: new Date(def.datetime),
-          is_driver: false,
-          identity_uuid: def.passenger_identity_uuid,
-          seats: def.passenger_seats,
-          start_territory_id: def.inside ? [1] : [2],
-          end_territory_id: def.inside ? [1] : [2],
-        },
-      ],
+    faker.trip([
       {
+        carpool_id: def.driver_carpool_id,
+        distance: def.distance,
         datetime: new Date(def.datetime),
+        is_driver: true,
+        identity_uuid: def.driver_identity_uuid,
+        start_territory_id: def.inside ? [1] : [2],
+        end_territory_id: def.inside ? [1] : [2],
       },
-    ),
+      {
+        carpool_id: def.passenger_carpool_id,
+        distance: def.distance,
+        datetime: new Date(def.datetime),
+        is_driver: false,
+        identity_uuid: def.passenger_identity_uuid,
+        seats: def.passenger_seats,
+        start_territory_id: def.inside ? [1] : [2],
+        end_territory_id: def.inside ? [1] : [2],
+      },
+    ]),
   ),
 ];

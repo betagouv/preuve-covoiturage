@@ -20,7 +20,7 @@ test('should update distance to minimum if result < min', async (t) => {
     trip,
     stack: [],
     result: 1,
-    person: trip.people[0],
+    person: trip[0],
   };
   rule.apply(context);
   t.is(context.person.distance, 1000);
@@ -32,7 +32,7 @@ test('should updte distance to maximum if result > max', async (t) => {
     trip,
     stack: [],
     result: 1,
-    person: trip.people[1],
+    person: trip[1],
   };
   rule.apply(context);
   t.is(context.person.distance, 10000);

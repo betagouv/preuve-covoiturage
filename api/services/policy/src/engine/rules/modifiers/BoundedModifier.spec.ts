@@ -20,7 +20,7 @@ test('should return minimum if result < min', (t) => {
     trip,
     stack: [],
     result: 1,
-    person: trip.people[0],
+    person: trip[0],
   };
   rule.apply(context);
   t.is(context.result, 10);
@@ -32,7 +32,7 @@ test('should return maximum if result > max', (t) => {
     trip,
     stack: [],
     result: 1000,
-    person: trip.people[0],
+    person: trip[0],
   };
   rule.apply(context);
   t.is(context.result, 100);

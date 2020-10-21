@@ -17,17 +17,17 @@ test('should replace result by cost', async (t) => {
     trip,
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
   };
   await rule.apply(context);
-  t.is(context.result, trip.people[0].cost);
+  t.is(context.result, trip[0].cost);
 
   const context2 = {
     trip,
     stack: [],
     result: 0,
-    person: trip.people[1],
+    person: trip[1],
   };
   await rule.apply(context2);
-  t.is(context2.result, Math.abs(trip.people[1].cost));
+  t.is(context2.result, Math.abs(trip[1].cost));
 });

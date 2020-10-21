@@ -34,7 +34,7 @@ test('should throw error if start and end is in blacklist with AND operator', as
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[0],
+      person: trip[0],
     }),
   );
   t.is(err.message, InseeBlacklistFilter.description);
@@ -52,7 +52,7 @@ test('should do nothing if start and end is in blacklist with AND operator', asy
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[1],
+      person: trip[1],
     }),
   );
 });
@@ -68,7 +68,7 @@ test('should throw error if start or end is in blacklist with OR operator', asyn
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[1],
+      person: trip[1],
     }),
   );
   t.is(err.message, InseeBlacklistFilter.description);
@@ -87,7 +87,7 @@ test('should throw error if start and end is in whitelist with AND operator', as
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[1],
+      person: trip[1],
     }),
   );
   t.is(err.message, InseeWhitelistFilter.description);
@@ -105,7 +105,7 @@ test('should do nothing if start and end is in whitelist with AND operator', asy
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[0],
+      person: trip[0],
     }),
   );
 });
@@ -120,7 +120,7 @@ test('should do nothin if start or end is in whitelist with OR operator', async 
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[1],
+      person: trip[1],
     }),
   );
 });
