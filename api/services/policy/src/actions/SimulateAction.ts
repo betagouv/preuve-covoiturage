@@ -16,7 +16,11 @@ import { TripRepositoryProviderInterfaceResolver, IncentiveInterface } from '../
         [],
         [
           (params, context): string => {
-            if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
+            if (
+              'campaign' in params &&
+              'territory_id' in params.campaign &&
+              params.campaign.territory_id === context.call.user.territory_id
+            ) {
               return 'incentive-campaign.create';
             }
           },
@@ -25,7 +29,7 @@ import { TripRepositoryProviderInterfaceResolver, IncentiveInterface } from '../
     ],
     ['validate', alias],
     'validate.rules',
-    ['validate.date', [new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), new Date()]],
+    ['validate.date', ['campaign', new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), new Date()]],
   ],
 })
 export class SimulateAction extends AbstractAction {

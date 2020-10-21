@@ -14,6 +14,7 @@ import { binding as deleteSchemaBinding } from './shared/policy/delete.schema';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as templatesSchemaBinding } from './shared/policy/templates.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
+import { binding as simulateSchemaBinding } from './shared/policy/simulate.schema';
 
 import { CreateCampaignAction } from './actions/CreateCampaignAction';
 import { PatchCampaignAction } from './actions/PatchCampaignAction';
@@ -57,6 +58,7 @@ import { SimulateAction } from './actions/SimulateAction';
     listSchemaBinding,
     templatesSchemaBinding,
     findSchemaBinding,
+    simulateSchemaBinding,
   ],
   handlers: [
     TemplatesCampaignAction,
