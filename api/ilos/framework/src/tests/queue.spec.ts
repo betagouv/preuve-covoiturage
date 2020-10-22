@@ -55,7 +55,7 @@ test.before(async (t) => {
   t.context.stringTransport = new HttpTransport(t.context.stringCallerKernel);
   await t.context.stringTransport.up([`${t.context.stringPort}`]);
 
-  process.env.APP_WORKER = "true";
+  process.env.APP_WORKER = 'true';
   t.context.stringCalleeKernel = new StringKernel();
   await t.context.stringCalleeKernel.bootstrap();
   t.context.queueTransport = new QueueTransport(t.context.stringCalleeKernel);

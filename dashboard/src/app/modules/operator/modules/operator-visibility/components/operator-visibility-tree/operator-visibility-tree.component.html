@@ -22,13 +22,18 @@
   </div>
   <div class="OperatorVisibilityTree-form" *ngIf="territoryIdsToShow && territoryIdsToShow.length > 0">
     <form [formGroup]="visibilityFormGroup">
-      <div formArrayName="territories">
-        <ng-container *ngFor="let territory of territoriesFormArray.controls; let i = index">
-          <mat-checkbox *ngIf="showTerritory(territories[i]._id)" color="primary" [formControlName]="i">
-            {{ territories[i].name }}
+      <ul class="territory-visibility-list" formArrayName="territories">
+        <li
+          *ngFor="let ter of territories"
+          [hidden]="!showTerritory(ter._id)"
+          [style]="'padding-left:' + ter.indent * (searchMode ? 0 : 23) + 'px'"
+        >
+          <mat-checkbox *ngIf="ter.control; else terr_label" color="primary" [formControl]="ter.control">
+            {{ ter.name }}
           </mat-checkbox>
-        </ng-container>
-      </div>
+          <ng-template #terr_label>{{ ter.name }} </ng-template>
+        </li>
+      </ul>
     </form>
   </div>
   <div class="OperatorVisibilityTree-actions">

@@ -35,6 +35,8 @@ export interface TerritoryRepositoryProviderInterface {
   all(
     search?: string,
     levels?: TerritoryLevelEnum[],
+    withParents?: boolean,
+    withLevel?: boolean,
     limit?: number,
     skip?: number,
   ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }>;
@@ -70,6 +72,8 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
   async all(
     search?: string,
     levels?: TerritoryLevelEnum[],
+    withParents?: boolean,
+    withLevel?: boolean,
     limit?: number,
     skip?: number,
   ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }> {

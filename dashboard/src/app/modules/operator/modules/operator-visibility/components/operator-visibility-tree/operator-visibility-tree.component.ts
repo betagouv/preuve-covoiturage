@@ -1,14 +1,17 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { merge, of } from 'rxjs';
+import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, filter, takeUntil, tap, map } from 'rxjs/operators';
+import { merge } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 
 import { CommonDataService } from '~/core/services/common-data.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Territory } from '~/core/entities/territory/territory';
+import { TerritoryTree } from '~/core/entities/territory/territory';
 import { OperatorVisilibityService } from '~/modules/operator/services/operator-visilibity.service';
 
+interface TerritoryVisibilityTree extends TerritoryTree {
+  control?: FormControl;
+}
 @Component({
   selector: 'app-operator-visibility-tree',
   templateUrl: './operator-visibility-tree.component.html',
@@ -18,11 +21,12 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   searchFilter: FormGroup;
   checkAllValue = false;
 
-  territories: Territory[] = [];
+  territories: TerritoryVisibilityTree[] = [];
   territoryIdsToShow: number[] = [];
   checkedTerritoryIds: number[] = [];
 
   visibilityFormGroup: FormGroup;
+  searchMode: boolean;
 
   constructor(
     private _commonDataService: CommonDataService,
@@ -38,12 +42,27 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     this.initVisibilityForm();
   }
 
+  flatTree(tree: TerritoryTree[], indent = 0): TerritoryTree[] {
+    const res = [];
+    if (tree)
+      for (const ter of tree) {
+        ter.indent = indent;
+        res.push(ter);
+        if (ter.children) {
+          const children = this.flatTree(ter.children, indent + 1);
+          for (const child of children) res.push(child);
+        }
+      }
+
+    return res;
+  }
+
   ngAfterViewInit() {
     merge(
-      this._commonDataService.activableTerritories$.pipe(
+      this._commonDataService.territoriesTree$.pipe(
         filter((territories) => !!territories),
         tap((territories) => {
-          this.territories = territories;
+          this.territories = this.flatTree(territories);
         }),
       ),
       this.searchFilter.valueChanges.pipe(debounceTime(100)),
@@ -55,12 +74,19 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
       .pipe(
         distinctUntilChanged(),
         debounceTime(100),
-        switchMap(() => {
-          const lowerCasedQuery = this.searchFilter ? this.searchFilter.controls.query.value.toLowerCase() : '';
-          const filteredTerritories = this.territories.filter((t) =>
-            `${t.name}`.toLowerCase().includes(lowerCasedQuery),
-          );
-          return of(filteredTerritories);
+        map(() => {
+          if (this.searchFilter && this.searchFilter.controls.query.value) {
+            this.searchMode = true;
+            const lowerCasedQuery = this.searchFilter.controls.query.value.toLowerCase();
+            const filteredTerritories = this.territories.filter(
+              (t) => t.control && `${t.name}`.toLowerCase().includes(lowerCasedQuery),
+            );
+            return filteredTerritories;
+          } else {
+            this.searchMode = false;
+
+            return this.territories;
+          }
         }),
       )
       .pipe(takeUntil(this.destroy$))
@@ -133,11 +159,18 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   private updateVisibilityForm(): void {
-    const territories = this.territories.sort((a, b) => a.name.localeCompare(b.name));
+    const territories = this.territories;
+    // const territories = this.territories.sort((a, b) => a.name.localeCompare(b.name));
     const formGroups = [];
     const territoryIds = this.checkedTerritoryIds;
     for (const territory of territories) {
-      formGroups.push(this._fb.control(territoryIds.indexOf(territory._id) !== -1));
+      if (territory.activable) {
+        const control = this._fb.control(territoryIds.indexOf(territory._id) !== -1);
+        formGroups.push(control);
+        territory.control = control;
+      } else {
+        delete territory.control;
+      }
     }
     this.visibilityFormGroup = this._fb.group({
       territories: this._fb.array(formGroups),
