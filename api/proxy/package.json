@@ -44,6 +44,7 @@
     "@pdc/service-certificate": "~0",
     "@pdc/service-company": "~0",
     "@pdc/service-fraud": "~0",
+    "@pdc/service-honor": "~0",
     "@pdc/service-monitoring": "~0",
     "@pdc/service-normalization": "~0",
     "@pdc/service-operator": "~0",
