@@ -1,0 +1,34 @@
+{
+  "name": "@pdc/service-honor",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "scripts": {
+    "cli": "ilos",
+    "migrate": "ilos migrate",
+    "start": "yarn serve",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "echo '[honor] no tests'; exit 0",
+    "coverage-ci": "echo '[honor] no tests'; exit 0",
+    "coverage": "echo '[honor] no tests'; exit 0",
+    "lint": "eslint 'src/**/*.ts'"
+  },
+  "main": "./dist/bootstrap.js",
+  "config": {
+    "workingDir": "./dist",
+    "bootstrap": "./bootstrap.js"
+  },
+  "dependencies": {
+    "@ilos/cli": "~0",
+    "@ilos/common": "~0",
+    "@ilos/connection-manager": "~0",
+    "@ilos/connection-postgres": "~0",
+    "@ilos/core": "~0",
+    "@ilos/framework": "~0",
+    "@pdc/helper-test": "~0",
+    "@pdc/provider-acl": "~0",
+    "@pdc/provider-validator": "~0",
+    "@pdc/provider-middleware": "~0"
+  }
+}
