@@ -166,12 +166,12 @@ export class HttpTransport implements TransportInterface {
     // protect with typical headers and enable cors
     this.app.use(helmet());
 
-    // set CORS with the Application URL
-    const corsOrigin = this.config.get('proxy.cors');
-
+    // apply CORS to all routes but /honor (for now)
+    // TODO: improve if more routes are concerned
     this.app.use(
+      /\/((?!honor).)*/,
       cors({
-        origin: corsOrigin,
+        origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
         // Allow-Access-Credentials lets XHR requests send Cookies to a different URL
         credentials: true,
