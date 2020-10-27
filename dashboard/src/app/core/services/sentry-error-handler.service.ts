@@ -4,34 +4,48 @@ import { captureException, init } from '@sentry/browser';
 
 @Injectable()
 export class SentryErrorHandler extends ErrorHandler {
-  trackError: boolean;
+  trackError = false;
   constructor() {
     super();
 
     if (environment.sentryDSN) {
       this.trackError = true;
       init({ dsn: environment.sentryDSN });
-    } else;
+    }
+
     this.trackError = true;
   }
 
   handleError(error) {
-    // console.warn('handleError', error);
+    if (this.trackError) {
+      let err = error;
+      const extra: any = {};
 
-    try {
-      captureException(error.originalError || new Error(error.message), {
-        extra: { json_error: JSON.stringify(error) },
-        tags: {
-          environment: environment.name,
-          production_mode: environment.production ? 'yes' : 'no',
-        },
-      });
-    } catch (err) {
-      console.warn('capture exception failed for ', error);
+      switch (true) {
+        case error.originalError !== undefined:
+          err = error.originalError;
+          break;
+        case error.status !== undefined:
+          err = new Error('API error');
+          extra.http = JSON.stringify(error);
+          break;
+      }
+
+      try {
+        captureException(err, {
+          extra,
+          tags: {
+            environment: environment.name,
+            production_mode: environment.production ? 'yes' : 'no',
+          },
+        });
+      } catch (er) {
+        console.warn('Sentry error', err);
+      }
     }
 
     // throw errors in the console only if local
-    if (!environment.production) {
+    if (!environment.production || !this.trackError) {
       super.handleError(error);
     }
   }

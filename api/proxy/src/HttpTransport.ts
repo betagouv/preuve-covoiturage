@@ -154,8 +154,6 @@ export class HttpTransport implements TransportInterface {
         credentials: true,
       }),
     );
-
-    // honor route
     this.app.use('/honor', cors({
       origin: this.config.get('proxy.certUrl'),
       optionsSuccessStatus: 200,

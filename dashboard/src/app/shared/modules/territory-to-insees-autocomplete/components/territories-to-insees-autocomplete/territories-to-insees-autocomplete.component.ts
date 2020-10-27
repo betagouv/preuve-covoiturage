@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { debounceTime, filter, takeUntil, tap } from 'rxjs/operators';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -22,7 +22,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   @Input() parentForm: FormGroup;
   @Input() fieldName: string;
 
-  @ViewChild('territoryInseeInput', { static: false }) territoryInseeInput: ElementRef;
+  @ViewChild('territoryInseeInput') territoryInseeInput: ElementRef;
 
   constructor(private territoryApi: TerritoryApiService) {
     super();

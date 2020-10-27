@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { merge, Observable, of } from 'rxjs';
-import { MatButtonToggleGroup, MatPaginator } from '@angular/material';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatPaginator } from '@angular/material/paginator';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
@@ -29,9 +30,9 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   userGroup = UserGroupEnum.TERRITORY;
   availableUserGroups = USER_GROUPS;
   PAGE_SIZE = 10;
-  @ViewChild(CreateEditUserFormComponent, { static: false }) editForm: CreateEditUserFormComponent;
-  @ViewChild(MatButtonToggleGroup, { static: false }) toggle: MatButtonToggleGroup;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(CreateEditUserFormComponent) editForm: CreateEditUserFormComponent;
+  @ViewChild(MatButtonToggleGroup) toggle: MatButtonToggleGroup;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   users$: Observable<UserListInterface[]>;
 

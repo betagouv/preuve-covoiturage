@@ -15,7 +15,7 @@ test('should throw error if operator out of whitelist', async (t) => {
   const { rule, trip } = setup();
   const err = await t.throwsAsync<NotApplicableTargetException>(async () =>
     rule.filter({
-      person: trip.people[1],
+      person: trip[1],
       trip,
       stack: [],
     }),
@@ -27,7 +27,7 @@ test('should do nothing if operator in whitelist', async (t) => {
   const { rule, trip } = setup();
   await t.notThrowsAsync(async () =>
     rule.filter({
-      person: trip.people[0],
+      person: trip[0],
       trip,
       stack: [],
     }),

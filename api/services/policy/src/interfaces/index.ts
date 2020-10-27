@@ -12,6 +12,10 @@ export {
   TripRepositoryProviderInterface,
   TripRepositoryProviderInterfaceResolver,
 } from './TripRepositoryProviderInterface';
-export { PersonInterface } from './PersonInterface';
-export { TripInterface } from './TripInterface';
-export { IncentiveInterface, IncentiveStateEnum, IncentiveStatusEnum } from './IncentiveInterface';
+export { PersonInterface } from '../shared/policy/common/interfaces/PersonInterface';
+export { TripInterface } from '../shared/policy/common/interfaces/TripInterface';
+export {
+  IncentiveInterface,
+  IncentiveStateEnum,
+  IncentiveStatusEnum,
+} from '../shared/policy/common/interfaces/IncentiveInterface';

@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { filter, takeUntil, tap, mergeMap } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { of } from 'rxjs';
 
 import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
@@ -29,7 +29,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
 
   @Input() onlyVisible = false;
 
-  @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
+  @ViewChild('operatorInput') operatorInput: ElementRef;
   protected visibleOperatorIds: number[] | null = null;
 
   constructor(private commonDataService: CommonDataService, private territoryApiService: TerritoryApiService) {

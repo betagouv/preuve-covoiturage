@@ -2,6 +2,7 @@ import anyTest, { TestInterface } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { TripRepositoryProvider } from './TripRepositoryProvider';
+import { ProcessableCampaign } from '../engine/ProcessableCampaign';
 
 interface TestContext {
   connection: PostgresConnection;
@@ -26,9 +27,21 @@ test.after.always(async (t) => {
 });
 
 test('Should work', async (t) => {
-  // const i = await t.context.repository.findTripByPolicy(3);
+  const i = await t.context.repository.findTripByPolicy(
+    new ProcessableCampaign({
+      territory_id: 310,
+      name: 'name',
+      description: 'description',
+      start_date: new Date('2019-07-15'),
+      end_date: new Date(),
+      unit: 'euros',
+      status: 'dontcare',
+      global_rules: [],
+      rules: [],
+    }),
+  );
   // need fixture to test this behavior
-  // t.log(await i.next());
+  t.log(await i.next());
   // t.log(await i.next());
   t.pass();
 });

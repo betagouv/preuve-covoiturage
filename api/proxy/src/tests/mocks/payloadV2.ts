@@ -18,13 +18,13 @@ export function payloadV2(): any {
       },
       start: {
         datetime: '2019-07-10T11:51:07Z',
-        lat: 48.77826,
-        lon: 2.21223,
+        lat: 47.202794,
+        lon: -1.459764,
       },
       end: {
         datetime: '2019-07-10T12:34:14Z',
-        lat: 48.82338,
-        lon: 1.78668,
+        lat: 47.237308,
+        lon: -1.459625,
       },
     },
     driver: {
@@ -38,13 +38,13 @@ export function payloadV2(): any {
       },
       start: {
         datetime: '2019-07-10T11:51:07Z',
-        lat: 48.77826,
-        lon: 2.21223,
+        lat: 47.202794,
+        lon: -1.459764,
       },
       end: {
         datetime: '2019-07-10T12:34:14Z',
-        lat: 48.82338,
-        lon: 1.78668,
+        lat: 47.237308,
+        lon: -1.459625,
       },
     },
   };

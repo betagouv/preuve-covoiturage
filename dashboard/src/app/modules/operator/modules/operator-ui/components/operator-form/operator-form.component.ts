@@ -50,13 +50,18 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   }
 
   ngOnInit(): void {
-    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
-      this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
-      this.initOperatorForm();
-      this.initOperatorFormValue();
-      this.checkPermissions();
-      this.updateValidation();
-    });
+    this.authService.user$
+      .pipe(
+        filter((user) => !!user),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((user) => {
+        this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
+        this.initOperatorForm();
+        this.initOperatorFormValue();
+        this.checkPermissions();
+        this.updateValidation();
+      });
   }
 
   get controls(): { [key: string]: AbstractControl } {

@@ -10,7 +10,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { TripStoreService } from '~/modules/trip/services/trip-store.service';
 import { LightTrip } from '~/core/entities/trip/trip';
-import { MatPaginator, PageEvent } from '@angular/material';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-trip-list',
@@ -58,7 +58,7 @@ export class TripListComponent extends DestroyObservable implements OnInit, Afte
 
   get columnsDisplayed(): string[] {
     const columns = ['startCity', 'endCity', 'date', 'campaigns', 'incentives', 'class', 'status'];
-    if (this.authService.user.group !== UserGroupEnum.OPERATOR) {
+    if (this.authService.user && this.authService.user.group !== UserGroupEnum.OPERATOR) {
       columns.splice(5, 0, 'operator');
     }
     return columns;

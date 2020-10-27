@@ -75,7 +75,7 @@ test('should work', async (t) => {
   const data = {
     trip,
     stack: [],
-    person: trip.people[0],
+    person: trip[0],
   };
 
   const incentive = await campaign.apply(data);

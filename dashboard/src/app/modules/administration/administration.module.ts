@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatPaginatorModule } from '@angular/material';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { ProfileUiModule } from '~/modules/user/modules/profile-ui/profile-ui.module';
 import { MaterialModule } from '~/shared/modules/material/material.module';

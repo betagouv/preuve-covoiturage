@@ -48,8 +48,8 @@ export class DatetimeIdentityCheckPreparator implements PrepareCheckInterface<Da
             CASE 
               WHEN (
                 (start_interval::int >= 0 AND end_interval::int <= 0)
-                OR (start_interval::int >= 0 AND start_interval <= duration)
-                OR (end_interval::int <= 0 AND end_interval <= duration)
+                OR (start_interval::int >= 0 AND @start_interval <= duration)
+                OR (end_interval::int <= 0 AND @end_interval <= duration)
               ) THEN true
               ELSE false
               END

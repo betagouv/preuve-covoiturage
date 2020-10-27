@@ -21,8 +21,8 @@ test('should multiply result by number of passenger', async (t) => {
     trip,
     stack: [],
     result: 1,
-    person: trip.people[0],
+    person: trip[0],
   };
   await rule.apply(context);
-  t.is(context.result, trip.people[1].seats);
+  t.is(context.result, trip[1].seats);
 });

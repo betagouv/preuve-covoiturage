@@ -23,6 +23,7 @@ import { alias } from '../shared/policy/create.schema';
     ],
     ['validate', alias],
     'validate.rules',
+    ['validate.date', ['', new Date()]],
   ],
 })
 export class CreateCampaignAction extends AbstractAction {

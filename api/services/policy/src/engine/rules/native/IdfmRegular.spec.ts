@@ -67,7 +67,7 @@ test('case 0', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await t.throwsAsync<NotApplicableTargetException>(async () => policy.apply(context));
@@ -92,7 +92,7 @@ test('case 1', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -119,7 +119,7 @@ test('case 2', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -145,7 +145,7 @@ test('case 3', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -177,7 +177,7 @@ test('case 4', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -209,7 +209,7 @@ test('case 5', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -241,7 +241,7 @@ test('case 6', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -273,7 +273,7 @@ test('case 7', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -306,7 +306,7 @@ test('case 8', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -338,7 +338,7 @@ test('case 9', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -370,7 +370,7 @@ test('case 10', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -408,7 +408,7 @@ test('case 11', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -446,7 +446,7 @@ test('case 12', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -481,7 +481,7 @@ test('case 13', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
   await policy.apply(context);
@@ -513,7 +513,7 @@ test('case 14', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
 
@@ -545,7 +545,7 @@ test('case 15', async (t) => {
   const context = {
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
     trip,
   };
 
