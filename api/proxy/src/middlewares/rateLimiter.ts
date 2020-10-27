@@ -74,3 +74,15 @@ export function acquisitionRateLimiter(opts: RateLimiterOptions = {}): RateLimit
     'rl-acquisition',
   );
 }
+
+// shortcut for /monitoring/honor route
+export function monHonorCertificateRateLimiter(opts: RateLimiterOptions = {}): RateLimit {
+  return rateLimiter(
+    {
+      windowMs: 60000,
+      max: 10,
+      ...opts,
+    },
+    'rl-monitoring-cert',
+  );
+}
