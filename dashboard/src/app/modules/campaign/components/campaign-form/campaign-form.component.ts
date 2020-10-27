@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material/stepper';
 import { takeUntil, map } from 'rxjs/operators';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
@@ -45,7 +45,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   matStepperCompleted = false;
 
   private _defaultRange: RulesRangeUxType = [0, CAMPAIGN_RULES_MAX_DISTANCE_KM];
-  @ViewChild('stepper', { static: false }) _matStepper: MatStepper;
+  @ViewChild('stepper') _matStepper: MatStepper;
   public userIsDemo: boolean;
 
   constructor(

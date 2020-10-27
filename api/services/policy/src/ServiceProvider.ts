@@ -14,6 +14,7 @@ import { binding as deleteSchemaBinding } from './shared/policy/delete.schema';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as templatesSchemaBinding } from './shared/policy/templates.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
+import { binding as simulateSchemaBinding } from './shared/policy/simulate.schema';
 
 import { CreateCampaignAction } from './actions/CreateCampaignAction';
 import { PatchCampaignAction } from './actions/PatchCampaignAction';
@@ -34,6 +35,8 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
 import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 import { SeedCommand } from './commands/SeedCommand';
+import { ValidateDateMiddleware } from './middlewares/ValidateDateMiddleware';
+import { SimulateAction } from './actions/SimulateAction';
 
 @serviceProvider({
   config,
@@ -43,6 +46,7 @@ import { SeedCommand } from './commands/SeedCommand';
     MetadataProvider,
     TripRepositoryProvider,
     ['validate.rules', ValidateRuleParametersMiddleware],
+    ['validate.date', ValidateDateMiddleware],
     PolicyEngine,
     IncentiveRepositoryProvider,
   ],
@@ -54,6 +58,7 @@ import { SeedCommand } from './commands/SeedCommand';
     listSchemaBinding,
     templatesSchemaBinding,
     findSchemaBinding,
+    simulateSchemaBinding,
   ],
   handlers: [
     TemplatesCampaignAction,
@@ -65,6 +70,7 @@ import { SeedCommand } from './commands/SeedCommand';
     FindCampaignAction,
     ApplyAction,
     FinalizeAction,
+    SimulateAction,
   ],
   connections: [
     [PostgresConnection, 'connections.postgres'],

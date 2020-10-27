@@ -23,7 +23,7 @@ test('should throw error if out of range', async (t) => {
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[1],
+      person: trip[1],
     }),
   );
   t.is(err.message, WeekdayFilter.description);
@@ -35,7 +35,7 @@ test('should do nothing if in range', async (t) => {
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[0],
+      person: trip[0],
     }),
   );
 });

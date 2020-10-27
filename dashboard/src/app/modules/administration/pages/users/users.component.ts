@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap, map } from 'rxjs/operators';
-import { merge, Observable, of } from 'rxjs';
-import { MatPaginator } from '@angular/material';
+import { debounceTime, distinctUntilChanged, takeUntil, tap, map } from 'rxjs/operators';
+import { merge, Observable } from 'rxjs';
+import { MatPaginator } from '@angular/material/paginator';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
@@ -28,7 +28,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   isCreatingUser: boolean;
   PAGE_SIZE = 10;
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   private users$: Observable<UserListInterface[]>;
 
@@ -45,9 +45,9 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     this.userStoreService.filterSubject.next({ limit: 1000 });
 
     this.users$ = this.userStoreService.entities$.pipe(
+      debounceTime(100),
       tap((users) => {
         this.users = users;
-        this.usersToShow = users;
       }),
     );
 
@@ -58,24 +58,21 @@ export class UsersComponent extends DestroyObservable implements OnInit {
       )
       .subscribe((editUserFormVisible) => (this.editUserFormVisible = editUserFormVisible));
 
-    this.loadUsers();
-    this.initSearchForm();
-
     this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
+
+    this.initSearchForm();
   }
 
   ngAfterViewInit(): void {
     merge(
       this.users$,
-      this.searchFilters.valueChanges.pipe(
-        debounceTime(300),
-        tap(() => (this.paginator.pageIndex = 0)),
-      ),
+      this.searchFilters.valueChanges.pipe(tap(() => (this.paginator.pageIndex = 0))),
       this.paginator.page,
     )
       .pipe(
         distinctUntilChanged(),
-        switchMap(() => {
+        debounceTime(100),
+        map(() => {
           this.closeUserForm();
           const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
           const page = this.paginator.pageIndex;
@@ -84,12 +81,14 @@ export class UsersComponent extends DestroyObservable implements OnInit {
           this.usersFiltered = this.users
             .filter((u) => `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query.toLowerCase()))
             .sort((a, b) => a.firstname.localeCompare(b.firstname));
-          return of(this.usersFiltered.slice(start, end));
+          return this.usersFiltered.slice(start, end);
         }),
       )
       .subscribe((filteredUsers) => {
         this.usersToShow = filteredUsers;
       });
+
+    this.loadUsers();
   }
 
   get countUsers(): number {

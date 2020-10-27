@@ -18,7 +18,7 @@ test('should throw error if person is not adult', async (t) => {
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[0],
+      person: trip[0],
     }),
   );
   t.is(err.message, AdultOnlyFilter.description);
@@ -30,7 +30,7 @@ test('should do nothing if person is adult', async (t) => {
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[1],
+      person: trip[1],
     }),
   );
 });

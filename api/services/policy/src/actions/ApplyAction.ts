@@ -78,7 +78,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     const campaign = this.engine.buildCampaign(await this.campaignRepository.find(campaign_id));
 
     // 2. Start a cursor to find trips
-    const cursor = await this.tripRepository.findTripByPolicy(campaign_id);
+    const cursor = await this.tripRepository.findTripByPolicy(campaign);
     let done = false;
     do {
       const incentives: IncentiveInterface[] = [];

@@ -27,7 +27,7 @@
     "sinon": "^8.1.1"
   },
   "dependencies": {
-    "bull": "^3.13.0",
+    "bullmq": "^1.9.0",
     "@ilos/common": "^0.4.1",
     "@ilos/core": "^0.4.1",
     "@ilos/queue": "^0.4.1"

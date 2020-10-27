@@ -44,6 +44,5 @@ import { SentryErrorHandler } from './services/sentry-error-handler.service';
     AuthGuard,
     { provide: ErrorHandler, useClass: SentryErrorHandler },
   ],
-  entryComponents: [ConfirmDialogComponent],
 })
 export class CoreModule {}

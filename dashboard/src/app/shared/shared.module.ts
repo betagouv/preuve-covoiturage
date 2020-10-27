@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatPaginatorIntl, MatSpinner } from '@angular/material';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -17,6 +17,7 @@ import { ListItemComponent } from './components/list-item/list-item.component';
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { RangeTimePickerComponent } from './components/range-time-picker/range-time-picker.component';
 import { UploadComponent } from './components/upload/upload.component';
+import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { UploadComponent } from './components/upload/upload.component';
     PageHeaderComponent,
     UploadComponent,
   ],
-  imports: [MaterialModule, CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [MaterialModule, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule],
   exports: [
     FooterComponent,
     HeaderComponent,

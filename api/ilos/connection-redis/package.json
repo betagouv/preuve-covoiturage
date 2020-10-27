@@ -15,8 +15,11 @@
     "test:integration": "ava",
     "test": "exit 0"
   },
+  "devDependencies": {
+    "@types/ioredis": "^4.17.4"
+  },
   "dependencies": {
-    "ioredis": "^4.14.0",
+    "ioredis": "^4.17.3",
     "@ilos/common": "^0.4.1",
     "@ilos/connection-manager": "^0.4.1"
   },

@@ -6,6 +6,10 @@ import { IncentiveStatusEnum, IncentiveStateEnum, IncentiveInterface, CampaignIn
 
 export class ProcessableCampaign {
   public readonly policy_id: number;
+  public readonly start_date: Date;
+  public readonly end_date: Date;
+  public readonly territory_id: number;
+
   protected globalSet: RuleSet;
   protected globalStatefulSet: StatefulRuleSet;
   protected ruleSets: RuleSet[];
@@ -13,6 +17,9 @@ export class ProcessableCampaign {
 
   constructor(protected campaign: CampaignInterface) {
     this.policy_id = campaign._id;
+    this.start_date = campaign.start_date;
+    this.end_date = campaign.end_date;
+    this.territory_id = campaign.territory_id;
     this.globalSet = new RuleSet(campaign.global_rules);
     this.ruleSets = campaign.rules.map((set) => new RuleSet(set));
   }

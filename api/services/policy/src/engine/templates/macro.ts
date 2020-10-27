@@ -45,7 +45,10 @@ export function macro(
 
   test.after.always(async (t) => {
     if (t.context.policyId) {
-      const connection = t.context.kernel.get(ServiceProvider).get(PostgresConnection).getClient();
+      const connection = t.context.kernel
+        .get(ServiceProvider)
+        .get(PostgresConnection)
+        .getClient();
       const campaignRepository = t.context.kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
       const metaRepository = t.context.kernel.get(ServiceProvider).get(MetadataProvider);
       await connection.query({
@@ -71,9 +74,9 @@ export function macro(
     trips: TripInterface[] = defaultTrips,
   ) => {
     const incentives = [];
-
+    const campaign = t.context.engine.buildCampaign(t.context.policy);
     for (const trip of trips) {
-      const r = await t.context.engine.process(trip, t.context.policy);
+      const r = await t.context.engine.process(campaign, trip);
       incentives.push(...r);
     }
     t.log(incentives);
@@ -82,7 +85,7 @@ export function macro(
       trips
         .filter(
           (tr) =>
-            tr.people
+            tr
               .map((p) => [...p.start_territory_id, ...p.end_territory_id])
               .reduce((s, t) => {
                 t.map((v) => s.add(v));
@@ -92,7 +95,7 @@ export function macro(
             tr.datetime >= policy.start_date &&
             tr.datetime <= policy.end_date,
         )
-        .map((tr) => tr.people.length)
+        .map((tr) => tr.length)
         .reduce((sum, i) => sum + i, 0),
     );
     t.is(incentives.length, expected.length, 'every trip should have an incentive');

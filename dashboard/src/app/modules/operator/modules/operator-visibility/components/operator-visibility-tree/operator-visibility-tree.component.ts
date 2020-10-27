@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { merge, of } from 'rxjs';
@@ -14,12 +14,12 @@ import { OperatorVisilibityService } from '~/modules/operator/services/operator-
   templateUrl: './operator-visibility-tree.component.html',
   styleUrls: ['./operator-visibility-tree.component.scss'],
 })
-export class OperatorVisibilityTreeComponent extends DestroyObservable implements OnInit {
+export class OperatorVisibilityTreeComponent extends DestroyObservable implements OnInit, AfterViewInit {
   searchFilter: FormGroup;
   checkAllValue = false;
 
   territories: Territory[] = [];
-  territoryIdsToShow: number[];
+  territoryIdsToShow: number[] = [];
   checkedTerritoryIds: number[] = [];
 
   visibilityFormGroup: FormGroup;
@@ -34,10 +34,11 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   ngOnInit(): void {
-    this.loadVisibility();
     this.initSearchForm();
     this.initVisibilityForm();
+  }
 
+  ngAfterViewInit() {
     merge(
       this._commonDataService.activableTerritories$.pipe(
         filter((territories) => !!territories),
@@ -45,7 +46,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
           this.territories = territories;
         }),
       ),
-      this.searchFilter.valueChanges.pipe(debounceTime(300)),
+      this.searchFilter.valueChanges.pipe(debounceTime(100)),
       this._operatorVisilibityService.operatorVisibility$.pipe(
         filter((territories) => !!territories),
         tap((territoryIds) => (this.checkedTerritoryIds = territoryIds)),
@@ -53,6 +54,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     )
       .pipe(
         distinctUntilChanged(),
+        debounceTime(100),
         switchMap(() => {
           const lowerCasedQuery = this.searchFilter ? this.searchFilter.controls.query.value.toLowerCase() : '';
           const filteredTerritories = this.territories.filter((t) =>
@@ -66,6 +68,8 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
         this.territoryIdsToShow = filteredTerritories.map((territory) => territory._id);
         this.updateVisibilityForm();
       });
+
+    this.loadVisibility();
   }
 
   get territoriesFormArray(): FormArray {

@@ -1,10 +1,7 @@
-import { Job, Queue, JobOptions } from 'bull';
+import { Job, Queue, JobsOptions } from 'bullmq';
 import { get, isString } from 'lodash';
-
 import { RedisConnection } from '@ilos/connection-redis';
 import { HandlerInterface, InitHookInterface, CallType, HasLogger } from '@ilos/common';
-
-import { bullFactory } from './helpers/bullFactory';
 
 export class QueueHandler extends HasLogger implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
@@ -12,7 +9,7 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
   protected readonly service: string;
   protected readonly version: string;
 
-  protected defaultJobOptions: JobOptions = {
+  protected defaultJobOptions: JobsOptions = {
     removeOnComplete: true,
   };
 
@@ -22,8 +19,16 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
     super();
   }
 
+  protected createQueue(): Queue {
+    return new Queue(this.service, { connection: this.redis.getClient() });
+  }
+
+  public getClient(): Queue {
+    return this.client;
+  }
+
   public async init() {
-    this.client = bullFactory(this.service, this.redis.getClient());
+    this.client = this.createQueue();
   }
 
   public async call(call: CallType): Promise<Job> {
@@ -69,6 +74,7 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
       this.logger.debug(`Async call ${method}`, { params, context });
 
       const job = await this.client.add(
+        method,
         {
           method,
           jsonrpc: '2.0',

@@ -42,4 +42,8 @@ export class SentryProvider implements ProviderInterface {
       });
     }
   }
+
+  getClient() {
+    return Sentry;
+  }
 }

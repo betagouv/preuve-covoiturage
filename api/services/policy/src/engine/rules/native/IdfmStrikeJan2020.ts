@@ -30,7 +30,7 @@ export class IdfmStrikeJan2020 extends AbstractRule<IdfmParametersInterface> {
       throw new NotApplicableTargetException(IdfmStrikeJan2020.slug);
     }
 
-    const eligibleJourneys = ctx.trip.people
+    const eligibleJourneys = ctx.trip
       // Uncomment this for debug
       // .map((p) => {
       //   console.log({

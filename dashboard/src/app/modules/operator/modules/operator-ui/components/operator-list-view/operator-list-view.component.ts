@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, merge, Observable, of } from 'rxjs';
-import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
-import { MatPaginator } from '@angular/material';
+import { BehaviorSubject, merge, Observable } from 'rxjs';
+import { debounceTime, filter, tap, map } from 'rxjs/operators';
+import { MatPaginator } from '@angular/material/paginator';
 
 import { Operator } from '~/core/entities/operator/operator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -28,14 +28,13 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   operators$: Observable<Operator[]>;
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public operatorStoreService: OperatorStoreService) {
     super();
   }
 
   ngOnInit(): void {
-    this.loadOperators();
     this.operators$ = this.operatorStoreService.entities$.pipe(
       filter((data) => !!data),
       tap((operators) => (this.operators = operators)),
@@ -44,26 +43,22 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
     this.operatorStoreService.entity$.subscribe((entity) => {
       this.showForm = !!entity;
     });
+
+    this.loadOperators();
   }
 
   ngAfterViewInit(): void {
-    merge(
-      this.operators$,
-      this._filterLiteral.pipe(
-        debounceTime(300),
-        tap(() => (this.paginator.pageIndex = 0)),
-      ),
-      this.paginator.page,
-    )
+    merge(this.operators$, this._filterLiteral.pipe(tap(() => (this.paginator.pageIndex = 0))), this.paginator.page)
       .pipe(
-        switchMap(() => {
+        debounceTime(100),
+        map(() => {
           const page = this.paginator.pageIndex;
           const start = Number(page) * this.PAGE_SIZE;
           const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
           this.operatorsFiltered = this.operators
             .filter((t) => t.name.toLowerCase().includes(this._filterLiteral.value))
             .sort((a, b) => a.name.localeCompare(b.name));
-          return of(this.operatorsFiltered.slice(start, end));
+          return this.operatorsFiltered.slice(start, end);
         }),
       )
       .subscribe((data) => {

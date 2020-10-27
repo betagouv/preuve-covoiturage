@@ -12,7 +12,6 @@ import { ApplicationModalComponent } from './components/application-modal/applic
 @NgModule({
   declarations: [ApplicationComponent, ApplicationFormComponent, ApplicationModalComponent],
   imports: [CommonModule, MaterialModule, SharedModule, ReactiveFormsModule],
-  entryComponents: [ApplicationModalComponent],
   exports: [ApplicationComponent],
 })
 export class ApplicationUiModule {}

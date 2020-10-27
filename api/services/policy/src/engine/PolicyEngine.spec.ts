@@ -55,17 +55,15 @@ function setup(): { engine: PolicyEngine; start: Date; fakeCampaign: CampaignInt
 }
 
 test('should boot', async (t) => {
-  const { engine, start, fakeCampaign } = setup();
-  const trip = faker.trip([{}], {
-    datetime: start,
-  });
-
-  const result = await engine.process(trip, fakeCampaign);
+  const { engine, fakeCampaign } = setup();
+  const trip = faker.trip([{}]);
+  const campaign = engine.buildCampaign(fakeCampaign);
+  const result = await engine.process(campaign, trip);
 
   t.true(Array.isArray(result));
   t.is(result.length, 1);
   t.true(Reflect.ownKeys(result[0]).indexOf('policy_id') >= 0);
   t.is(result[0].policy_id, fakeCampaign._id);
   t.true(Reflect.ownKeys(result[0]).indexOf('amount') >= 0);
-  t.is(result[0].amount, ((trip.people[0].distance / 1000) * fakeCampaign.rules[0][1].parameters) as number);
+  t.is(result[0].amount, ((trip[0].distance / 1000) * fakeCampaign.rules[0][1].parameters) as number);
 });

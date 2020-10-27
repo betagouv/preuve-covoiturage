@@ -18,7 +18,7 @@ test('should replace result by fixed amount', async (t) => {
     trip,
     stack: [],
     result: 0,
-    person: trip.people[0],
+    person: trip[0],
   };
   await rule.apply(context);
   t.is(context.result, amount);

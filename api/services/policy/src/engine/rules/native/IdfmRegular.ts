@@ -37,7 +37,7 @@ export class IdfmRegular extends AbstractRule<IdfmParametersInterface> {
       throw new NotApplicableTargetException(IdfmRegular.slug);
     }
 
-    const eligibleJourneys = ctx.trip.people
+    const eligibleJourneys = ctx.trip
       // Uncomment this for debug
       // .map((p) => {
       //   console.log({

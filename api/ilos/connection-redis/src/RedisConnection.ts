@@ -8,24 +8,11 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
   protected client: RedisInterface;
   protected connected = false;
 
-  constructor(config: ConnectionConfigurationType) {
-    if (config.connectionString) {
-      const { connectionString, ...other } = config;
-      this.client = new Redis(connectionString, {
-        ...other,
-        lazyConnect: true,
-      });
-    } else {
-      this.client = new Redis({
-        ...config,
-        lazyConnect: true,
-      });
-    }
-  }
+  constructor(protected readonly config: ConnectionConfigurationType) {}
 
   async up() {
-    if (!this.connected && this.client.status === 'wait') {
-      await this.client.connect();
+    if (!this.connected && this.getClient().status === 'wait') {
+      await this.getClient().connect();
       this.connected = true;
       return;
     }
@@ -33,12 +20,29 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
 
   async down() {
     if (this.connected) {
-      await this.client.disconnect();
+      await this.getClient().disconnect();
       this.connected = false;
     }
   }
 
   getClient(): RedisInterface {
+    if (!this.client) {
+      this.client = this.buildClient();
+    }
     return this.client;
+  }
+
+  protected buildClient(): RedisInterface {
+    if (this.config.connectionString) {
+      const { connectionString, ...other } = this.config;
+      return new Redis(connectionString, {
+        ...other,
+        // lazyConnect: true,
+      });
+    }
+    return new Redis({
+      ...this.config,
+      // lazyConnect: true,
+    });
   }
 }

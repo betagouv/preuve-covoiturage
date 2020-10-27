@@ -1,5 +1,5 @@
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil, debounceTime } from 'rxjs/operators';
 
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 
@@ -40,7 +40,7 @@ export abstract class GetListStore<
   protected _pagination$ = this.paginationSubject.asObservable();
   protected _entity$ = this.entitySubject.asObservable();
   protected _loadCount = 0;
-
+  protected __debounceTimeId = 0;
   // filter subject
   protected _filterSubject = new BehaviorSubject<any>(null);
 
@@ -75,7 +75,7 @@ export abstract class GetListStore<
     this.rpcGetList = rpcGetList;
     let firstLoad = true;
 
-    this._filterSubject.subscribe((filt) => {
+    this._filterSubject.pipe(debounceTime(100)).subscribe((filt) => {
       if (firstLoad || filt !== null) {
         this.loadList();
         firstLoad = !firstLoad || !!filt;
@@ -90,24 +90,31 @@ export abstract class GetListStore<
     this.entitySubject.next(null);
   }
 
-  loadList(): void {
-    if (!this.dismissGetSubject) return;
-    this.dismissGetSubject.next();
-    this.dismissGetListSubject.next();
-    this._loadCount += 1;
-    this.rpcGetList
-      .getList(this.filterSubject.value)
-      .pipe(
-        takeUntil(this.dismissGetListSubject),
-        finalize(() => {
-          if (this._loadCount > 0) this._loadCount -= 1;
-        }),
-      )
-      .subscribe((list) => {
-        this.entitiesSubject.next(list.data);
+  loadList(debounce = 300): void {
+    clearTimeout(this.__debounceTimeId);
+    if (debounce > 0) {
+      this.__debounceTimeId = setTimeout(() => {
+        this.loadList(0);
+      }, debounce) as any;
+    } else {
+      if (!this.dismissGetSubject) return;
+      this.dismissGetSubject.next();
+      this.dismissGetListSubject.next();
+      this._loadCount += 1;
+      this.rpcGetList
+        .getList(this.filterSubject.value)
+        .pipe(
+          takeUntil(this.dismissGetListSubject),
+          finalize(() => {
+            if (this._loadCount > 0) this._loadCount -= 1;
+          }),
+        )
+        .subscribe((list) => {
+          this.entitiesSubject.next(list.data);
 
-        this.paginationSubject.next(list.meta && list.meta.pagination ? list.meta.pagination : defaultPagination());
-      });
+          this.paginationSubject.next(list.meta && list.meta.pagination ? list.meta.pagination : defaultPagination());
+        });
+    }
   }
 
   dismissAllRpcActions(): void {

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { TerritorySelectionBlock } from '../../data/TerritorySelectionBlock';
 import { FormBuilder } from '@angular/forms';
-import { MatExpansionPanel } from '@angular/material';
+import { MatExpansionPanel } from '@angular/material/expansion';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { takeUntil } from 'rxjs/operators';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';

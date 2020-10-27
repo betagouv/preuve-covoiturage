@@ -1,6 +1,7 @@
 export type period = 'day' | 'month' | 'campaign';
 
-export function getMetaKey(base: string, date: Date, period: period, scope: string): string {
+export function getMetaKey(base: string, inputDate: Date, period: period, scope: string): string {
+  const date = typeof inputDate.getMonth === 'function' ? inputDate : new Date(inputDate);
   const [day, month, year] = [date.getDate(), date.getMonth(), date.getFullYear()];
 
   let keyPeriod = 'global';

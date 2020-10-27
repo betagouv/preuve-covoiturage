@@ -18,7 +18,7 @@ test('should throw error if rank out of whitelist', async (t) => {
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[1],
+      person: trip[1],
     }),
   );
   t.is(err.message, RankWhitelistFilter.description);
@@ -30,7 +30,7 @@ test('should do nothing if rank in whitelist', async (t) => {
     rule.filter({
       trip,
       stack: [],
-      person: trip.people[0],
+      person: trip[0],
     }),
   );
 });

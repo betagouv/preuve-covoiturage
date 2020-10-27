@@ -1,9 +1,13 @@
-import { Queue } from 'bull';
+import { Worker, QueueScheduler, Processor, Job } from 'bullmq';
 
 import { QueueExtension } from '@ilos/queue';
 import { TransportInterface, KernelInterface } from '@ilos/common';
+import { RedisConnection, RedisInterface } from '@ilos/connection-redis';
 
-import { bullFactory } from './helpers/bullFactory';
+interface WorkerWithScheduler {
+  worker: Worker;
+  scheduler: QueueScheduler;
+}
 
 /**
  * Queue Transport
@@ -11,9 +15,10 @@ import { bullFactory } from './helpers/bullFactory';
  * @class QueueTransport
  * @implements {TransportInterface}
  */
-export class QueueTransport implements TransportInterface<Queue[]> {
-  queues: Queue[] = [];
+export class QueueTransport implements TransportInterface<WorkerWithScheduler[]> {
+  queues: WorkerWithScheduler[] = [];
   kernel: KernelInterface;
+  connection: RedisConnection;
 
   constructor(kernel: KernelInterface) {
     this.kernel = kernel;
@@ -23,8 +28,36 @@ export class QueueTransport implements TransportInterface<Queue[]> {
     return this.kernel;
   }
 
-  getInstance(): Queue[] {
+  getInstance(): WorkerWithScheduler[] {
     return this.queues;
+  }
+
+  protected async getRedisConnection(connectionString: string): Promise<RedisInterface> {
+    if (!this.connection) {
+      this.connection = new RedisConnection({ connectionString });
+      await this.connection.up();
+    }
+    return this.connection.getClient();
+  }
+
+  protected getWorker(connection: RedisInterface, name: string, processor: Processor): Worker {
+    return new Worker(name, processor, { connection });
+  }
+
+  protected getScheduler(connection: RedisInterface, name: string): QueueScheduler {
+    return new QueueScheduler(name, { connection });
+  }
+
+  protected async getWorkerAndScheduler(
+    connectionString: string,
+    name: string,
+    processor: Processor,
+  ): Promise<WorkerWithScheduler> {
+    const connection = await this.getRedisConnection(connectionString);
+    return {
+      scheduler: this.getScheduler(connection, name),
+      worker: this.getWorker(connection, name, processor),
+    };
   }
 
   async up(opts: string[] = []) {
@@ -41,14 +74,7 @@ export class QueueTransport implements TransportInterface<Queue[]> {
     const services = container.getAll<string>(QueueExtension.containerKey);
     for (const service of services) {
       const key = service;
-      // TODO : add Sentry error handler
-      // TODO : add named job
-      const queue = bullFactory(key, redisUrl);
-      await queue.isReady();
-
-      this.registerListeners(queue, key);
-      this.queues.push(queue);
-      queue.process(async (job) =>
+      const { worker, scheduler } = await this.getWorkerAndScheduler(redisUrl, key, async (job) =>
         this.kernel.call(job.data.method, job.data.params.params, {
           ...job.data.params._context,
           channel: {
@@ -57,23 +83,32 @@ export class QueueTransport implements TransportInterface<Queue[]> {
           },
         }),
       );
+      this.registerListeners(worker, key);
+      this.queues.push({
+        worker,
+        scheduler,
+      });
     }
   }
 
   async down() {
     const promises = [];
-    for (const queue of this.queues) {
-      promises.push(queue.close());
+    for (const { worker, scheduler } of this.queues) {
+      promises.push(worker.close());
+      promises.push(scheduler.close());
     }
     await Promise.all(promises);
+    await this.connection.down();
   }
 
-  protected registerListeners(queue: Queue, name: string, errorHandler?: Function): void {
+  protected errorHandler(_error: Error, _job?: Job) {
+    // Do nothing
+  }
+
+  protected registerListeners(queue: Worker, name: string): void {
     queue.on('error', (err) => {
       console.log(`🐮/${name}: error`, err.message);
-      if (errorHandler && typeof errorHandler === 'function') {
-        errorHandler(err);
-      }
+      this.errorHandler(err);
     });
 
     queue.on('waiting', (jobId) => {
@@ -94,15 +129,11 @@ export class QueueTransport implements TransportInterface<Queue[]> {
 
     queue.on('completed', (job) => {
       console.log(`🐮/${name}: completed ${job.id} ${job.data.method}`);
-      // job.remove();
     });
 
     queue.on('failed', (job, err) => {
       console.log(`🐮/${name}: failed ${job.id}`, err.message);
-      console.log(JSON.stringify(job.data));
-      if (errorHandler && typeof errorHandler === 'function') {
-        errorHandler(err);
-      }
+      this.errorHandler(err, job);
     });
   }
 }
