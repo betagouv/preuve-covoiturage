@@ -1,8 +1,8 @@
+import { differenceWith } from 'lodash-es';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { debounceTime, takeUntil, tap } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import * as _ from 'lodash';
 
 import { TownInterface } from '~/core/interfaces/geography/townInterface';
 import { TownService } from '~/modules/filter/services/town.service';
@@ -29,7 +29,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
     this.townForm.valueChanges
       .pipe(
         tap((towns: TownInterface[]) => {
-          this.filteredTowns = _.differenceWith(this.filteredTowns, towns, (x, y) => x.name === y.name);
+          this.filteredTowns = differenceWith(this.filteredTowns, towns, (x, y) => x.name === y.name);
         }),
         takeUntil(this.destroy$),
       )
@@ -64,7 +64,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
       .findTowns(literal)
       .pipe(takeUntil(this.destroy$))
       .subscribe((towns: TownInterface[]) => {
-        this.filteredTowns = _.differenceWith<TownInterface, { [k: string]: any }>(
+        this.filteredTowns = differenceWith<TownInterface, { [k: string]: any }>(
           towns,
           this.townForm.value,
           (x, y) => x.name === y.name,

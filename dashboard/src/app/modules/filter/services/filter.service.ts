@@ -1,7 +1,7 @@
 // tslint:disable:prefer-conditional-expression
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import * as _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import * as moment from 'moment';
 
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
@@ -18,7 +18,7 @@ export class FilterService {
 
   // format filterUx to filter in api format
   public setFilter(params: FilterUxInterface | {} = {}): void {
-    const filterUx = _.cloneDeep(params);
+    const filterUx = cloneDeep(params);
 
     // if empty don't set filter
     if (!('campaignIds' in filterUx)) {

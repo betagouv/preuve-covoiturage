@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import * as _ from 'lodash';
+import { uniqWith, isEqual } from 'lodash-es';
 
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
@@ -157,9 +157,9 @@ export class CampaignFormater {
         parameters.forEach((inseeStartEnd, index) => {
           let dataError = true;
           uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
-            const startIsEqual = _.isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
+            const startIsEqual = isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
             if (startIsEqual) {
-              const endIsEqual = _.isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
+              const endIsEqual = isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
               if (endIsEqual) {
                 dataError = false;
               }
@@ -184,9 +184,9 @@ export class CampaignFormater {
         parameters.forEach((inseeStartEnd, index) => {
           let dataError = true;
           uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
-            const startIsEqual = _.isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
+            const startIsEqual = isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
             if (startIsEqual) {
-              const endIsEqual = _.isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
+              const endIsEqual = isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
               if (endIsEqual) {
                 dataError = false;
               }
@@ -270,9 +270,9 @@ export class CampaignFormater {
     });
 
     // create base retributions with unique ranges
-    const combinedRetributions = _.uniqWith(
+    const combinedRetributions = uniqWith(
       retributions.map((retribution: RetributionUxInterface) => ({ min: retribution.min, max: retribution.max })),
-      _.isEqual,
+      isEqual,
     ).map((elt) => ({
       min: elt.min,
       max: elt.max,

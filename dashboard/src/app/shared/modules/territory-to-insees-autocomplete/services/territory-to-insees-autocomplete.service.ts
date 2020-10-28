@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { get } from 'lodash-es';
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -25,13 +25,13 @@ export class TerritoryToInseesAutocompleteService {
       filter((response) => response && response['features']),
       map((response: any) =>
         response.features
-          .filter((el) => _.get(el, 'properties.citycode', null))
+          .filter((el) => get(el, 'properties.citycode', null))
           .map(
             (el) =>
               ({
-                territory_literal: _.get(el, 'properties.name'),
-                insees: [_.get(el, 'properties.citycode')],
-                context: _.get(el, 'properties.context'),
+                territory_literal: get(el, 'properties.name'),
+                insees: [get(el, 'properties.citycode')],
+                context: get(el, 'properties.context'),
               } as InseeAndTerritoryInterface),
           ),
       ),
