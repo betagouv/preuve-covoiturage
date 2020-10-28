@@ -154,10 +154,13 @@ export class HttpTransport implements TransportInterface {
         credentials: true,
       }),
     );
-    this.app.use('/honor', cors({
-      origin: this.config.get('proxy.certUrl'),
-      optionsSuccessStatus: 200,
-    }));
+    this.app.use(
+      '/honor',
+      cors({
+        origin: this.config.get('proxy.certUrl'),
+        optionsSuccessStatus: 200,
+      }),
+    );
   }
 
   private registerGlobalMiddlewares(): void {
@@ -727,16 +730,22 @@ export class HttpTransport implements TransportInterface {
    */
   private async getTerritoryInfos(user): Promise<any> {
     if (user.territory_id) {
-      const operatorList = await this.kernel.handle(
-        makeCall('territory:listOperator', { territory_id: user.territory_id }, { user: user }),
-      );
-      user.authorizedOperators = get(operatorList, 'result', []);
+      let dt = [];
 
-      const descendantTerritories = await this.kernel.handle(
-        makeCall('territory:getParentChildren', { _id: user.territory_id }, { user: user }),
-      );
+      try {
+        const operatorList = await this.kernel.handle(
+          makeCall('territory:listOperator', { territory_id: user.territory_id }, { user: user }),
+        );
+        user.authorizedOperators = get(operatorList, 'result', []);
 
-      user.authorizedTerritories = [user.territory_id, ...get(descendantTerritories, 'result.0.descendant_ids', [])];
+        const descendantTerritories = await this.kernel.handle(
+          makeCall('territory:getParentChildren', { _id: user.territory_id }, { user: user }),
+        );
+
+        dt = get(descendantTerritories, 'result.0.descendant_ids', []) || [];
+      } catch (e) {}
+
+      user.authorizedTerritories = [user.territory_id, ...dt];
 
       return user;
     }
