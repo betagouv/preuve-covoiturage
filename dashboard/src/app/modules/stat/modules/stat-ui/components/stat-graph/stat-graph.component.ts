@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 
 import { statGraphs } from '~/modules/stat/config/statGraphs';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';

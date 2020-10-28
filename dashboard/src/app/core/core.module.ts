@@ -39,6 +39,7 @@ import { SentryErrorHandler } from './services/sentry-error-handler.service';
       preventDuplicates: true,
     }),
   ],
+  // entryComponents: [ConfirmDialogComponent],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpApiInterceptor, multi: true },
     AuthGuard,

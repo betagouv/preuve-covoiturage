@@ -1,11 +1,9 @@
-// tslint:disable:no-bitwise
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import * as _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { StatFormatService } from '~/modules/stat/services/stat-format.service';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { StatApiService } from '~/modules/stat/services/stat-api.service';
@@ -19,11 +17,7 @@ import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 export class StatFilteredStoreService extends GetListStore<StatInterface> {
   private _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
 
-  constructor(
-    statApi: StatApiService,
-    private _authService: AuthenticationService,
-    private _statFormatService: StatFormatService,
-  ) {
+  constructor(statApi: StatApiService, private _statFormatService: StatFormatService) {
     super(statApi as JsonRpcGetList<StatInterface, StatInterface, any, TripSearchInterface>);
     this.entitiesSubject.subscribe((data) => {
       this._formatedStat$.next(this._statFormatService.formatData(data));
@@ -31,7 +25,7 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
   }
 
   public load(filter: FilterInterface | {} = {}): void {
-    const params = _.cloneDeep(filter);
+    const params = cloneDeep(filter);
 
     if ('date' in filter && filter.date.start) {
       params['date'].start = filter.date.start.toISOString();

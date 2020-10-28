@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import * as moment from 'moment';
 
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -51,7 +51,7 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
   }
 
   public load(filter: FilterInterface | {} = {}, refreshCount = true): void {
-    const params = _.cloneDeep(filter);
+    const params = cloneDeep(filter);
 
     if ('date' in filter && filter.date.start) {
       params['date'].start = filter.date.start.toISOString();
@@ -67,7 +67,7 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     }
 
     if (refreshCount) {
-      this.rpcGetList.count(params).subscribe((count) => {
+      this.rpcGetList.count().subscribe((count) => {
         this._total$.next(count);
       });
     }

@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { get } from 'lodash-es';
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -21,7 +21,7 @@ export class TownService {
       .get(`${this.addressApiDomain}${params}`)
       .pipe(
         map((response: object[]) =>
-          response.filter((el) => _.get(el, 'nom', null)).map((el) => ({ name: _.get(el, 'nom') } as TownInterface)),
+          response.filter((el) => get(el, 'nom', null)).map((el) => ({ name: get(el, 'nom') } as TownInterface)),
         ),
       );
   }

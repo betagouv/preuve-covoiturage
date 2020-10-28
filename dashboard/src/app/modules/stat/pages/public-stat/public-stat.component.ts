@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { get } from 'lodash-es';
 import { Component, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
@@ -31,7 +31,7 @@ export class PublicStatComponent extends DestroyObservable implements OnInit {
     this.publicStatService.stat$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       const statNumbersArray = [];
       for (const statName of this.statNumberNames) {
-        let title = _.get(this.publicStatService.stat, statNumbers[statName].path);
+        let title = get(this.publicStatService.stat, statNumbers[statName].path);
         const statCard = statNumbers[statName];
 
         if (statName === 'co2') {
