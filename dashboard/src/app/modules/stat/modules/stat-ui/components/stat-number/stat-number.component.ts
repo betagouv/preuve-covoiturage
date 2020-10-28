@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import * as _ from 'lodash';
+import { get } from 'lodash-es';
 import { takeUntil } from 'rxjs/operators';
 
 import { StatNumberInterface } from '~/core/interfaces/stat/statNumberInterface';
@@ -42,7 +42,7 @@ export class StatNumberComponent extends DestroyObservable implements OnInit {
   }
 
   private initStatNumber(statNumberName: string): void {
-    const title = _.get(this.statService.stat, statNumbers[statNumberName].path);
+    const title = get(this.statService.stat, statNumbers[statNumberName].path);
     const statCard = statNumbers[statNumberName];
 
     this.statNumber = new StatNumber({

@@ -1,6 +1,6 @@
 // tslint:disable:no-bitwise
 import { Injectable } from '@angular/core';
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import * as moment from 'moment';
 
 import { CalculatedStat } from '~/core/entities/stat/calculatedStat';
