@@ -210,7 +210,6 @@ export class HttpTransport implements TransportInterface {
           makeCall(
             'acquisition:cancel',
             {
-              ...req.body,
               journey_id: parseInt(req.params.id, 10),
             },
             { user, metadata: { req } },
@@ -234,7 +233,18 @@ export class HttpTransport implements TransportInterface {
         );
 
         const response = (await this.kernel.handle(
-          makeCall('acquisition:create', req.body, { user, metadata: { req } }),
+          makeCall(
+            'acquisition:create',
+            {
+              journey_id: req.body.journey_id,
+              operator_id: req.body.operator_id,
+              operator_journey_id: req.body.operator_journey_id,
+              operator_class: req.body.operator_class,
+              passenger: req.body.passenger,
+              driver: req.body.driver,
+            },
+            { user, metadata: { req } },
+          ),
         )) as RPCResponseType;
 
         this.send(res, response);
@@ -532,7 +542,11 @@ export class HttpTransport implements TransportInterface {
         const response = (await this.kernel.handle(
           makeCall(
             'certificate:create',
-            { ...req.body, operator_id: get(req, 'session.user.operator_id') },
+            {
+              identity: req.body.identity,
+              tz: req.body.tz,
+              operator_id: get(req, 'session.user.operator_id'),
+            },
             { user: get(req, 'session.user', null) },
           ),
         )) as RPCResponseType;
@@ -573,7 +587,7 @@ export class HttpTransport implements TransportInterface {
       '/honor',
       monHonorCertificateRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        await this.kernel.handle(makeCall('honor:save', { ...req.body }, { channel: { service: 'proxy' } }));
+        await this.kernel.handle(makeCall('honor:save', { type: req.body.type }, { channel: { service: 'proxy' } }));
         res.status(201).header('Location', `${process.env.APP_APP_URL}/stats`).json({ saved: true });
       }),
     );
