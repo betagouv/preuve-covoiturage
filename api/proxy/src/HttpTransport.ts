@@ -543,8 +543,8 @@ export class HttpTransport implements TransportInterface {
           makeCall(
             'certificate:create',
             {
-              identity: req.body.identity,
               tz: req.body.tz,
+              identity: req.body.identity,
               operator_id: get(req, 'session.user.operator_id'),
             },
             { user: get(req, 'session.user', null) },

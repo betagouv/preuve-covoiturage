@@ -15,6 +15,7 @@ import {
 
 import { hasMultipleCall } from '../helpers/types/hasMultipleCall';
 import { isAnRPCException } from '../helpers/types/isAnRPCException';
+import { clone } from '../helpers/clone';
 import { ServiceProvider } from './ServiceProvider';
 
 /**
@@ -64,7 +65,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
       throw new InvalidRequestException('jsonrpc must be equal to 2.0');
     }
 
-    if (!('method' in call)) {
+    if (!('method' in call) || typeof call.method !== 'string' || call.method === null || !call.method.length) {
       throw new InvalidRequestException('jsonrpc call must have a method property');
     }
 
@@ -134,6 +135,9 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
           params = call.params.params;
         }
       }
+
+      // clone with a clean prototype to avoid pollution
+      params = clone(params);
 
       if ('id' in call) {
         const response = await this.call(call.method, params, context);
