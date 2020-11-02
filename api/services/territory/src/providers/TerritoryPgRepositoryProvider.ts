@@ -482,8 +482,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     if (data.geo) {
-      //   fields.push('geo');
-      values.push(`${data.geo}`);
+      values.push(JSON.stringify(data.geo));
     }
 
     const query = {
@@ -498,7 +497,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       })
         RETURNING *
       `,
-
       values,
     };
 

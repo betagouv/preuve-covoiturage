@@ -1,4 +1,5 @@
 import { contacts } from '../../common/schemas/contacts';
+import { MultiPolygonSchema } from '../common/geojson/MultiPolygonSchema';
 
 const commonFields = {
   name: {},
@@ -119,12 +120,11 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
               ...commonFields,
               ...activeFields,
               ...extrafields,
-              geo: {
-                type: 'string',
-              },
+              geo: MultiPolygonSchema,
               density: {
                 type: 'integer',
                 minimum: 0,
+                maximum: 100,
               },
               insee: {
                 type: 'array',
