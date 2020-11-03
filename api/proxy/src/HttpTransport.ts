@@ -210,7 +210,6 @@ export class HttpTransport implements TransportInterface {
           makeCall(
             'acquisition:cancel',
             {
-              ...req.body,
               journey_id: parseInt(req.params.id, 10),
             },
             { user, metadata: { req } },
@@ -234,7 +233,7 @@ export class HttpTransport implements TransportInterface {
         );
 
         const response = (await this.kernel.handle(
-          makeCall('acquisition:create', req.body, { user, metadata: { req } }),
+          makeCall('acquisition:create', { ...req.body }, { user, metadata: { req } }),
         )) as RPCResponseType;
 
         this.send(res, response);
@@ -532,7 +531,11 @@ export class HttpTransport implements TransportInterface {
         const response = (await this.kernel.handle(
           makeCall(
             'certificate:create',
-            { ...req.body, operator_id: get(req, 'session.user.operator_id') },
+            {
+              tz: req.body.tz,
+              identity: req.body.identity,
+              operator_id: get(req, 'session.user.operator_id'),
+            },
             { user: get(req, 'session.user', null) },
           ),
         )) as RPCResponseType;
@@ -573,7 +576,7 @@ export class HttpTransport implements TransportInterface {
       '/honor',
       monHonorCertificateRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        await this.kernel.handle(makeCall('honor:save', { ...req.body }, { channel: { service: 'proxy' } }));
+        await this.kernel.handle(makeCall('honor:save', { type: req.body.type }, { channel: { service: 'proxy' } }));
         res.status(201).header('Location', `${process.env.APP_APP_URL}/stats`).json({ saved: true });
       }),
     );

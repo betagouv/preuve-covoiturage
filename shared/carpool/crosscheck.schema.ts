@@ -100,14 +100,8 @@ export const schema = {
                   },
                 },
               },
-              calc_distance: {
-                type: 'integer',
-                exclusiveMinimum: 0,
-              },
-              calc_duration: {
-                type: 'integer',
-                exclusiveMinimum: 0,
-              },
+              calc_distance: { type: 'integer', minimum: 1, maximum: 2147483647 },
+              calc_duration: { type: 'integer', minimum: 1, maximum: 2147483647 },
             },
           },
         },
