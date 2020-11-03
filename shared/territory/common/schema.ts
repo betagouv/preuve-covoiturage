@@ -124,7 +124,7 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
               density: {
                 type: 'integer',
                 minimum: 0,
-                maximum: 100,
+                maximum: 100000,
               },
               insee: {
                 type: 'array',
