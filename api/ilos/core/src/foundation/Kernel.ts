@@ -15,7 +15,6 @@ import {
 
 import { hasMultipleCall } from '../helpers/types/hasMultipleCall';
 import { isAnRPCException } from '../helpers/types/isAnRPCException';
-import { clone } from '../helpers/clone';
 import { ServiceProvider } from './ServiceProvider';
 
 /**
@@ -137,7 +136,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
       }
 
       // clone with a clean prototype to avoid pollution
-      params = clone(params);
+      params = JSON.parse(JSON.stringify(params));
 
       if ('id' in call) {
         const response = await this.call(call.method, params, context);
