@@ -233,18 +233,7 @@ export class HttpTransport implements TransportInterface {
         );
 
         const response = (await this.kernel.handle(
-          makeCall(
-            'acquisition:create',
-            {
-              journey_id: req.body.journey_id,
-              operator_id: req.body.operator_id,
-              operator_journey_id: req.body.operator_journey_id,
-              operator_class: req.body.operator_class,
-              passenger: req.body.passenger,
-              driver: req.body.driver,
-            },
-            { user, metadata: { req } },
-          ),
+          makeCall('acquisition:create', { ...req.body }, { user, metadata: { req } }),
         )) as RPCResponseType;
 
         this.send(res, response);
