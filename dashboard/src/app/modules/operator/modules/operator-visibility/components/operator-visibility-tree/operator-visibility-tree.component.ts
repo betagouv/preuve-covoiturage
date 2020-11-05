@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, takeUntil, tap, map } from 'rxjs/operators';
 import { merge } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
@@ -11,6 +11,7 @@ import { OperatorVisilibityService } from '~/modules/operator/services/operator-
 
 interface TerritoryVisibilityTree extends TerritoryTree {
   control?: FormControl;
+  selected: boolean;
 }
 @Component({
   selector: 'app-operator-visibility-tree',
@@ -23,9 +24,9 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
 
   territories: TerritoryVisibilityTree[] = [];
   territoryIdsToShow: number[] = [];
-  checkedTerritoryIds: number[] = [];
+  selectedTerritoryIds: number[] = [];
 
-  visibilityFormGroup: FormGroup;
+  visibilityFormControl: FormControl;
   searchMode: boolean;
 
   constructor(
@@ -37,12 +38,28 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     super();
   }
 
+  swapCheck(ter: TerritoryVisibilityTree) {
+    const selectedTerritoryIds = this.selectedTerritoryIds;
+
+    const selected = !ter.selected;
+
+    this.territories.filter((fter) => fter._id === ter._id).forEach((ter) => (ter.selected = selected));
+
+    if (selected) {
+      selectedTerritoryIds.push(ter._id);
+    } else {
+      selectedTerritoryIds.splice(selectedTerritoryIds.indexOf(ter._id), 1);
+    }
+
+    this.visibilityFormControl.setValue(selectedTerritoryIds);
+  }
+
   ngOnInit(): void {
     this.initSearchForm();
     this.initVisibilityForm();
   }
 
-  flatTree(tree: TerritoryTree[], indent = 0): TerritoryTree[] {
+  flatTree(tree: Partial<TerritoryTree>[], indent = 0): TerritoryVisibilityTree[] {
     const res = [];
     if (tree)
       for (const ter of tree) {
@@ -50,7 +67,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
         res.push(ter);
         if (ter.children) {
           const children = this.flatTree(ter.children, indent + 1);
-          for (const child of children) res.push(child);
+          for (const child of children) res.push({ ...child });
         }
       }
 
@@ -68,7 +85,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
       this.searchFilter.valueChanges.pipe(debounceTime(100)),
       this._operatorVisilibityService.operatorVisibility$.pipe(
         filter((territories) => !!territories),
-        tap((territoryIds) => (this.checkedTerritoryIds = territoryIds)),
+        tap((territoryIds) => (this.selectedTerritoryIds = territoryIds)),
       ),
     )
       .pipe(
@@ -98,10 +115,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     this.loadVisibility();
   }
 
-  get territoriesFormArray(): FormArray {
-    return this.visibilityFormGroup.get('territories') as FormArray;
-  }
-
   get hasFilter(): boolean {
     return this.searchFilter.value;
   }
@@ -111,20 +124,12 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   public updateCheckAllCheckbox(): void {
-    this.checkAllValue = this.territories.length === this.checkedTerritoryIds.length;
+    this.checkAllValue =
+      this.territories.filter((ter) => ter.activable === true).length === this.selectedTerritoryIds.length;
   }
 
   public save(): void {
-    const territoriesIds = (this.checkedTerritoryIds = this.territoriesFormArray.value.reduce(
-      (checkedTerritories: number[], checked: boolean, index: number) => {
-        if (checked) {
-          checkedTerritories.push(this.territories[index]._id);
-        }
-        return checkedTerritories;
-      },
-      [],
-    ));
-    this._operatorVisilibityService.update(territoriesIds).subscribe(
+    this._operatorVisilibityService.update(this.selectedTerritoryIds).subscribe(
       () => {
         this._toastr.success('Modifications prises en compte.');
       },
@@ -136,12 +141,13 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
 
   public checkAll($event: any): void {
     if ($event.checked) {
-      const formValues = Array(this.territories.length).fill(true);
-      this.territoriesFormArray.setValue(formValues);
+      this.territories.forEach((ter) => (ter.selected = true));
+      this.selectedTerritoryIds = this.territories.map((ter) => ter._id);
     } else {
-      const formValues = Array(this.territories.length).fill(false);
-      this.territoriesFormArray.setValue(formValues);
+      this.territories.forEach((ter) => (ter.selected = false));
+      this.selectedTerritoryIds = [];
     }
+    this.visibilityFormControl.setValue(this.selectedTerritoryIds);
   }
 
   public showTerritory(id: number): boolean {
@@ -149,32 +155,21 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   public get countCheckedTerritories(): number {
-    return this.checkedTerritoryIds.length;
+    return this.selectedTerritoryIds.length;
   }
 
   private initVisibilityForm(): void {
-    this.visibilityFormGroup = this._fb.group({
-      territories: this._fb.array([]),
-    });
+    this.visibilityFormControl = this._fb.control([]);
   }
 
   private updateVisibilityForm(): void {
-    const territories = this.territories;
-    // const territories = this.territories.sort((a, b) => a.name.localeCompare(b.name));
-    const formGroups = [];
-    const territoryIds = this.checkedTerritoryIds;
-    for (const territory of territories) {
-      if (territory.activable) {
-        const control = this._fb.control(territoryIds.indexOf(territory._id) !== -1);
-        formGroups.push(control);
-        territory.control = control;
-      } else {
-        delete territory.control;
-      }
-    }
-    this.visibilityFormGroup = this._fb.group({
-      territories: this._fb.array(formGroups),
-    });
+    if (!this.territories || !this.selectedTerritoryIds) return;
+
+    const territoryIds = this.selectedTerritoryIds;
+
+    this.territories.forEach((ter) => (ter.selected = ter.activable && territoryIds.indexOf(ter._id) !== -1));
+
+    this.visibilityFormControl.setValue(territoryIds);
   }
 
   private initSearchForm(): void {

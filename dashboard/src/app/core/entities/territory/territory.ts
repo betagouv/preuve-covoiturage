@@ -48,6 +48,7 @@ export interface TerritoryTree {
   children?: TerritoryTree[];
   level?: TerritoryLevelEnum;
   parents?: number[];
+  hasParents?: boolean;
   indent: number;
   activable;
 }

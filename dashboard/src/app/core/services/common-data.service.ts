@@ -153,9 +153,16 @@ export class CommonDataService {
       TerritoryLevelEnum.State,
       // TerritoryLevelEnum.Country,
       TerritoryLevelEnum.Towngroup,
+      // TerritoryLevelEnum.Town,
     ];
 
-    const accptedTerritories = territories.filter((ter) => acceptedLevel.indexOf(ter.level) !== -1);
+    const acceptedTerritories = territories.filter(
+      (ter) =>
+        acceptedLevel.indexOf(ter.level) !== -1 || (ter.level === TerritoryLevelEnum.Town && ter.activable === true),
+    );
+    // const acceptedTerritories = territories.filter((ter) => ter.level === 'district');
+
+    console.log('acceptedTerritories', acceptedTerritories);
 
     const territoriesInd: { [key: number]: TerritoryTree } = {};
 
@@ -163,11 +170,9 @@ export class CommonDataService {
 
     // console.log('indexing ', new Date().getTime() - t);
 
-    const tree = accptedTerritories.filter((ter) => {
+    acceptedTerritories.forEach((ter) => {
       if (ter.parents) {
-        const parents: TerritoryTree[] = ter.parents
-          // .filter((pInd) => territoriesInd[pInd])
-          .map((pInd) => territoriesInd[pInd]);
+        const parents: TerritoryTree[] = ter.parents.map((pInd) => territoriesInd[pInd]).filter((p) => !!p);
 
         for (const pTer of parents) {
           if (!pTer.children) pTer.children = [];
@@ -178,8 +183,9 @@ export class CommonDataService {
         return true;
       }
     });
+
     // console.log('build tree ', new Date().getTime() - t);
-    return tree;
+    return acceptedTerritories.filter((t) => t.level === TerritoryLevelEnum.Region);
   }
 
   public loadAll(): Observable<boolean> {
