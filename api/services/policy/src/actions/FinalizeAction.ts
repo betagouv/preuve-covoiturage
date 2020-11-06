@@ -37,7 +37,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
         service: handlerConfig.service,
         metadata: {
           repeat: {
-            cron: '* 4 6 * *',
+            cron: '0 4 6 * *',
           },
           jobId: 'policy.finalize.cron',
         },
