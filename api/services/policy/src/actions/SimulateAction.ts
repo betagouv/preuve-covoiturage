@@ -57,6 +57,21 @@ export class SimulateAction extends AbstractAction {
       // 4. Save incentives
     } while (!done);
 
-    return incentives;
+    return incentives.reduce(
+      (acc, i) => {
+        if (i.amount > 0) {
+          acc.amount += i.amount;
+          acc.trip_subsidized += 1;
+        } else {
+          acc.trip_excluded += 1;
+        }
+        return acc;
+      },
+      {
+        trip_subsidized: 0,
+        trip_excluded: 0,
+        amount: 0,
+      },
+    );
   }
 }

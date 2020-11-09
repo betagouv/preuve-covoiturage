@@ -4,7 +4,11 @@ import { IncentiveInterface } from './common/interfaces/IncentiveInterface';
 export interface ParamsInterface {
   campaign: CampaignInterface;
 }
-export type ResultInterface = IncentiveInterface[];
+export interface ResultInterface {
+  amount: number;
+  trip_subsidized: number;
+  trip_excluded: number;
+}
 
 export const handlerConfig = {
   service: 'campaign',
