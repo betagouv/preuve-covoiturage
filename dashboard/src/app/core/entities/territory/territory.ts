@@ -42,6 +42,17 @@ export const territoryLevelLabels = [
   [TerritoryLevelEnum.Other, 'Autre'],
 ];
 
+export interface TerritoryTree {
+  _id: number;
+  name: string;
+  children?: TerritoryTree[];
+  level?: TerritoryLevelEnum;
+  parents?: number[];
+  hasParents?: boolean;
+  indent: number;
+  activable;
+}
+
 export interface TerritoryBase extends TerritoryBaseEdit {
   // level: TerritoryLevelEnum;
   name: string;

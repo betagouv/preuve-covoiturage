@@ -21,6 +21,8 @@ export class ListTerritoryAction extends AbstractAction {
     const data = await this.territoryRepository.all(
       filter && filter.search ? filter.search : undefined,
       filter && filter.levels ? filter.levels : undefined,
+      filter && filter.withParents ? filter.withParents : undefined,
+      filter && filter.withLevel ? filter.withLevel : undefined,
       filter && filter.limit ? filter.limit : undefined,
       filter && filter.skip ? filter.skip : undefined,
     );
