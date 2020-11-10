@@ -33,13 +33,13 @@ function applyDefaults(params: Partial<Params>): Params {
   return {
     start: params.start || new Date(),
     end: params.end || end,
-    weekday: params.weekday || 10,
+    weekday: params.weekday || 5,
     hours: params.hours || {
-      night: 0,
-      morning: 10,
-      lunch: 0,
-      afternoon: 0,
-      evening: 0,
+      night: 1,
+      morning: 4,
+      lunch: 1,
+      afternoon: 3,
+      evening: 1,
     },
   };
 }
