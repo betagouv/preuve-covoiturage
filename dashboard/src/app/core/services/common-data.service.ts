@@ -162,13 +162,9 @@ export class CommonDataService {
     );
     // const acceptedTerritories = territories.filter((ter) => ter.level === 'district');
 
-    console.log('acceptedTerritories', acceptedTerritories);
-
     const territoriesInd: { [key: number]: TerritoryTree } = {};
 
     territories.forEach((terr) => (territoriesInd[terr._id] = terr));
-
-    // console.log('indexing ', new Date().getTime() - t);
 
     acceptedTerritories.forEach((ter) => {
       if (ter.parents) {
@@ -184,7 +180,6 @@ export class CommonDataService {
       }
     });
 
-    // console.log('build tree ', new Date().getTime() - t);
     return acceptedTerritories.filter((t) => t.level === TerritoryLevelEnum.Region);
   }
 
