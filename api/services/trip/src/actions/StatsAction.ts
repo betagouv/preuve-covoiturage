@@ -27,9 +27,6 @@ export class StatsAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    return {
-      meta: { tz: params.tz || 'GMT' },
-      data: (await this.cache.getOrBuild(async () => this.pg.stats(params), params)) || [],
-    };
+    return (await this.cache.getOrBuild(async () => this.pg.stats(params), params)) || [];
   }
 }

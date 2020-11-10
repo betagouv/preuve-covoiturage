@@ -199,7 +199,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         ${where.text ? `WHERE ${where.text}` : ''}
       )
       SELECT
-        day,
+        day::text,
         sum(passenger_seats)::int as trip,
         sum(journey_distance/1000*passenger_seats)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
@@ -221,16 +221,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     query.text = this.numberPlaceholders(query.text);
     const result = await this.connection.getClient().query(query);
 
-    // fix wrong datetime casting to UTC
-    return result.rowCount
-      ? orderBy(
-          result.rows.map((line) => {
-            line.day = format(line.day, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone: tz.name }).replace(' ', 'T');
-            return line;
-          }),
-          'day',
-        )
-      : [];
+    return result.rows;
   }
 
   public async searchWithCursor(
