@@ -18,10 +18,8 @@ import { signature as notifySignature, ParamsInterface as NotifyParamsInterface 
 import { ExportTripInterface } from '../interfaces';
 
 interface FlattenTripInterface extends ExportTripInterface {
-  journey_start_datetime: string;
   journey_start_date: string;
   journey_start_time: string;
-  journey_end_datetime: string;
   journey_end_date: string;
   journey_end_time: string;
   passenger_incentive_1_siret?: string;
@@ -302,11 +300,11 @@ export class BuildExportAction extends Action {
       ...src,
 
       // format and convert to user timezone
-      journey_start_datetime: format(jsd, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone }),
+      journey_start_datetime: format(jsd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
       journey_start_date: format(jsd, 'yyyy-MM-dd', { timeZone }),
       journey_start_time: format(jsd, 'HH:mm:ss', { timeZone }),
 
-      journey_end_datetime: format(jed, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone }),
+      journey_end_datetime: format(jed, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
       journey_end_date: format(jed, 'yyyy-MM-dd', { timeZone }),
       journey_end_time: format(jed, 'HH:mm:ss', { timeZone }),
 
