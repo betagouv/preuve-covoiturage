@@ -1,6 +1,7 @@
 import { PoolClient } from '@ilos/connection-postgres';
 
 import { IncentiveInterface } from '.';
+import { CampaignStateInterface } from './CampaignInterface';
 
 export type IncentiveCreateOptionsType = { connection?: PoolClient | null; release?: boolean };
 
@@ -10,6 +11,7 @@ export interface IncentiveRepositoryProviderInterface {
   disableOnCanceledTrip(): Promise<void>;
   lockAll(before: Date): Promise<void>;
   findDraftIncentive(before: Date, batchSize?: number): AsyncGenerator<IncentiveInterface[], void, void>;
+  getCampaignState(policy_id: number): Promise<CampaignStateInterface>;
 }
 
 export abstract class IncentiveRepositoryProviderInterfaceResolver implements IncentiveRepositoryProviderInterface {
@@ -18,4 +20,5 @@ export abstract class IncentiveRepositoryProviderInterfaceResolver implements In
   abstract async disableOnCanceledTrip(): Promise<void>;
   abstract async lockAll(before: Date): Promise<void>;
   abstract findDraftIncentive(before: Date, batchSize?: number): AsyncGenerator<IncentiveInterface[], void, void>;
+  abstract async getCampaignState(policy_id: number): Promise<CampaignStateInterface>;
 }
