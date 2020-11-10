@@ -206,9 +206,9 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     const query = {
       text: `
         SELECT
-          sum(amount) as amount,
-          count(*) FILTER (WHERE amount > 0) as trip_subsidized,
-          count(*) FILTER (WHERE amount = 0) as trip_excluded
+          sum(amount)::int as amount,
+          (count(*) FILTER (WHERE amount > 0))::int as trip_subsidized,
+          (count(*) FILTER (WHERE amount = 0))::int as trip_excluded
         FROM ${this.table}
         WHERE policy_id = $1
           AND status = 'validated'
