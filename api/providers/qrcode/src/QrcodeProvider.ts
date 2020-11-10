@@ -14,6 +14,18 @@ import { QrcodeProviderInterface, QrcodeProviderInterfaceResolver } from './inte
   identifier: QrcodeProviderInterfaceResolver,
 })
 export class QrcodeProvider implements QrcodeProviderInterface {
+  svgPath(url: string): string {
+    const svg: string = new QRCode({
+      join: true,
+      content: url,
+      padding: 0,
+      width: 256,
+      height: 256,
+    }).svg();
+
+    return svg.substr(svg.indexOf('crispEdges;" d="') + 16).replace(' " /></svg>', '');
+  }
+
   svg(url: string): string {
     return new QRCode({
       content: url,
