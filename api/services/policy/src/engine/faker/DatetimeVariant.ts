@@ -27,7 +27,7 @@ enum HourEnum {
 }
 
 function applyDefaults(params: Partial<Params>): Params {
-  let end = new Date();
+  const end = new Date();
   end.setDate((params.start ? params.start.getDate() : new Date().getDate()) + 7);
 
   return {
@@ -75,7 +75,7 @@ export class DatetimeVariant extends AbstractVariant<Partial<Params>> {
   }
 
   public generate(people: PersonInterface[]): PersonInterface[] {
-    let datetime = this.getTime(this.getDate(random(0, 10) <= this.params.weekday), sample(this.hoursSet));
+    const datetime = this.getTime(this.getDate(random(0, 10) <= this.params.weekday), sample(this.hoursSet));
     return people.map((p) => {
       return {
         ...p,
@@ -86,11 +86,11 @@ export class DatetimeVariant extends AbstractVariant<Partial<Params>> {
 
   protected getDate(wk: boolean): Date {
     function isOk(weekday: boolean, date: Date): boolean {
-      let isWeekDay = date.getDay() > 0 && date.getDay() < 6;
+      const isWeekDay = date.getDay() > 0 && date.getDay() < 6;
       return weekday ? isWeekDay : !isWeekDay;
     }
     const days: number = (this.params.end.valueOf() - this.params.start.valueOf()) / 1000 / 60 / 60 / 24;
-    let date = new Date();
+    const date = new Date();
     do {
       const diff = random(0, days);
       date.setDate(this.params.start.getDate() + diff);

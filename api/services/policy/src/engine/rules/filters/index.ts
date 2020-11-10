@@ -20,6 +20,8 @@ export const filters: StaticRuleInterface[] = [
   OperatorWhitelistFilter,
   PassengerOnlyFilter,
   RankWhitelistFilter,
+  TerritoryBlacklistFilter,
+  TerritoryWhitelistFilter,
   TimeRangeFilter,
   WeekdayFilter,
 ];

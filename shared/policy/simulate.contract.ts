@@ -1,5 +1,4 @@
 import { CampaignInterface } from './common/interfaces/CampaignInterface';
-import { IncentiveInterface } from './common/interfaces/IncentiveInterface';
 
 export interface ParamsInterface {
   campaign: CampaignInterface;

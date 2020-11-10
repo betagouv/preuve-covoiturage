@@ -38,7 +38,7 @@ export class IdentityVariant extends AbstractVariant<Params> {
 
     // TODO : add guard to avoid driver to be under 18
 
-    let identities = sampleSize([...this.identities.values()], people.length);
+    const identities = sampleSize([...this.identities.values()], people.length);
     return people.map((p, i) => {
       return {
         ...p,

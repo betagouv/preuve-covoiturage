@@ -9,7 +9,7 @@ export class DistanceVariant extends AbstractVariant<[number, number]> {
 
   constructor(protected readonly params: [number, number] = [0, 100]) {
     super(params);
-    let [min, max] = params;
+    const [min, max] = params;
     if (min >= max || min <= 0 || max >= 150) {
       throw new Error('Misconfigured variant');
     }

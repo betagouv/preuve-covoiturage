@@ -4,13 +4,13 @@ import { DatetimeVariant } from './DatetimeVariant';
 import { FakerEngine } from './FakerEngine';
 
 test('should fill datetime', (t) => {
-  let start = new Date();
+  const start = new Date();
   start.setHours(0, 0, 0, 0);
-  let end = new Date();
+  const end = new Date();
   end.setDate(start.getDate() + 7);
   end.setHours(23, 59, 59, 999);
 
-  let datetimeVariant = new DatetimeVariant({
+  const datetimeVariant = new DatetimeVariant({
     start,
     end,
     weekday: 10,
@@ -22,11 +22,11 @@ test('should fill datetime', (t) => {
       evening: 0,
     },
   });
-  let trip = FakerEngine.getBasicTrip(1);
-  let completedTrip = datetimeVariant.generate(trip);
-  let datetime = completedTrip[0].datetime;
+  const trip = FakerEngine.getBasicTrip(1);
+  const completedTrip = datetimeVariant.generate(trip);
+  const datetime = completedTrip[0].datetime;
 
-  for (let d of completedTrip.map((t) => t.datetime)) {
+  for (const d of completedTrip.map((t) => t.datetime)) {
     t.is(d, datetime);
   }
 

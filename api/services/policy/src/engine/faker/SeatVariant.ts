@@ -10,7 +10,7 @@ export class SeatVariant extends AbstractVariant<void> {
     let maxSeats = 9 - people.length;
 
     return people.map((p) => {
-      let seats = p.is_driver ? 0 : random(1, maxSeats);
+      const seats = p.is_driver ? 0 : random(1, maxSeats);
       maxSeats -= seats - 1;
       return {
         ...p,

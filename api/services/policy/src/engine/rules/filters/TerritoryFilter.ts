@@ -34,7 +34,7 @@ export abstract class TerritoryFilter extends FilterRule<TerritoryParamsInterfac
 }
 
 function inList(list: number[], territories: number[]): boolean {
-  for (let territory of territories) {
+  for (const territory of territories) {
     if (list.indexOf(territory) > -1) {
       return true;
     }
