@@ -468,14 +468,12 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
         WHERE deleted_at IS NULL
         ${searchConditionString ? ` AND ${searchConditionString}` : ''}
         GROUP BY t._id,t.name
-        ORDER BY t.name ASC
+        ORDER BY t.name, active, activable ASC
         ${limit !== undefined ? ` LIMIT ${limit}` : ''}
         ${skip !== undefined ? ` OFFSET ${skip}` : ''}
       `,
       values: [],
     };
-
-    console.log('query', query);
 
     const result = await client.query(query);
 
