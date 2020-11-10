@@ -104,12 +104,12 @@ export class SeedCommand implements CommandInterface {
   private async checkTemplateSlugs(): Promise<void> {
     /* eslint-disable */
     const results = await this.pgClient.query(`
-      SELECT _id, name, slug, array_agg(gr) || array_agg(r) AS rules
+      SELECT _id, slug, array_agg(gr) || array_agg(r) AS rules
       FROM policy.policies pp,
       LATERAL (SELECT json_array_elements(global_rules)::json->>'slug' FROM policy.policies ppg WHERE pp._id=ppg._id) as gr,
       LATERAL (SELECT json_array_elements(json_array_elements(rules))::json->>'slug' FROM policy.policies ppr WHERE pp._id=ppr._id) as r
       WHERE status = 'template'
-      GROUP BY _id
+      GROUP BY _id, slug
     `);
     /* eslint-enable */
 
@@ -125,7 +125,7 @@ export class SeedCommand implements CommandInterface {
       );
 
       if (diff.length) {
-        console.log(`\n> Unrecognized rules for template #${template._id} "${template.name}":`);
+        console.log(`\n> Unrecognized rules for template #${template._id} "${template.slug}":`);
         console.log(diff);
       }
     }
