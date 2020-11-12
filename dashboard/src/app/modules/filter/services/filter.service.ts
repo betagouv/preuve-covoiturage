@@ -27,7 +27,6 @@ export class FilterService {
 
     const filter = new Filter({
       date: filterUx.date,
-      hour: filterUx.hour as any,
       days: filterUx.days,
       distance: filterUx.distance,
       ranks: filterUx.ranks,
@@ -53,10 +52,6 @@ export class FilterService {
       // set start at the beginning of the day and end at the end.
       if (filter.date.start) filter.date.start = (filter.date.start as any).startOf('day').toDate();
       if (filter.date.end) filter.date.end = (filter.date.end as any).endOf('day').toDate();
-    }
-
-    if (filter.hour.start === null && filter.hour.end === null) {
-      delete filter.hour;
     }
 
     // format distance to Number

@@ -79,7 +79,6 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     if (filter.insees.length > 0) count += 1;
     if (filter.distance.min || filter.distance.max) count += 1;
     if (filter.date.start || filter.date.end) count += 1;
-    if (filter.hour.start || filter.hour.end) count += 1;
     if (filter.status) count += 1;
     return count;
   }
@@ -110,10 +109,6 @@ export class FilterComponent extends DestroyObservable implements OnInit {
         date: this.fb.group({
           start: [dayMinus1Year.toISOString()],
           end: [null],
-        }),
-        hour: this.fb.group({
-          start: [null, [Validators.min(0), Validators.max(23)]],
-          end: [null, [Validators.min(0), Validators.max(23)]],
         }),
         days: [[]],
         insees: [[]],

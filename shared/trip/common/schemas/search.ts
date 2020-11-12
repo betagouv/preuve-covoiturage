@@ -20,24 +20,6 @@ const params = {
       },
     },
   },
-  hour: {
-    type: 'object',
-    required: ['start', 'end'],
-    additionalProperties: false,
-    properties: {
-      start: {
-        type: 'integer',
-        minimum: 0,
-        maximum: 23,
-      },
-      end: {
-        type: 'integer',
-        minimum: 0,
-        maximum: 23,
-        exclusiveMinimum: { $data: '1/start' },
-      },
-    },
-  },
   days: {
     type: 'array',
     minItems: 1,

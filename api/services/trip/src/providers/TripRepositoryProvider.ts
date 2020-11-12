@@ -1,8 +1,7 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 import { promisify } from 'util';
-import { format } from 'date-fns-tz';
-import { orderBy, map } from 'lodash';
+import { map } from 'lodash';
 
 import {
   TripSearchInterfaceWithPagination,
@@ -142,13 +141,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
                 values: [filter.value === 0 ? 7 : filter.value],
                 // 0 = sunday ... 6 = saturday >> 1 = monday ... 7 = sunday
               };
-
-            case 'hour': {
-              return {
-                text: '($#::int <= hour AND hour <= $#::int)',
-                values: [filter.value.start, filter.value.end],
-              };
-            }
           }
         })
         .reduce(
@@ -177,29 +169,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const where = await this.buildWhereClauses(params);
     const tz = await this.validateTz(params.tz);
 
-    // We convert the timestamps to the user's timezone before truncating and grouping by day.
-    // Results are filtered by hour in the CTE, before being GROUPED BY in the query.
-    // LEFT JOIN LATERAL on hour makes the column usable in the WHERE clause.
+    const values = [...(where ? where.values : []), tz.name];
     const text = `
-      WITH list AS (
-        SELECT
-          (journey_start_datetime AT TIME ZONE $${where.values.length + 1})::date as day,
-          passenger_seats,
-          journey_distance,
-          driver_id,
-          passenger_id,
-          operator_id,
-          trip_id,
-          passenger_incentive_rpc_sum,
-          driver_incentive_rpc_sum
-        FROM ${this.table}
-        LEFT JOIN LATERAL
-          EXTRACT(hour FROM journey_start_datetime AT TIME ZONE $${where.values.length + 1}) as hour
-          ON true
-        ${where.text ? `WHERE ${where.text}` : ''}
-      )
       SELECT
-        day::text,
+        (journey_start_datetime AT TIME ZONE $${values.length})::date as day,
         sum(passenger_seats)::int as trip,
         sum(journey_distance/1000*passenger_seats)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
@@ -210,16 +183,16 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         (count(*) FILTER (
           WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0
         ))::int as trip_subsidized
-      FROM list
+      FROM ${this.table}
+      ${where.text ? `WHERE ${where.text}` : ''}
       GROUP BY day
       ORDER BY day ASC
     `;
 
-    const values = [...(where ? where.values : []), tz.name];
-
-    const query = { text: this.numberPlaceholders(text), values };
-    query.text = this.numberPlaceholders(query.text);
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query({
+      values,
+      text: this.numberPlaceholders(text),
+    });
 
     return result.rows;
   }
@@ -306,16 +279,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     }
 
     const where = await this.buildWhereClauses(cleanParams);
-    const tz = await this.validateTz(params.tz);
 
-    const queryValues = [...values, ...where.values, tz.name];
+    const queryValues = [...values, ...where.values];
     const queryText = this.numberPlaceholders(`
       SELECT
         ${selectedFields.join(', ')}
       FROM ${this.table}
-      LEFT JOIN LATERAL
-        EXTRACT(hour FROM journey_start_datetime AT TIME ZONE $${queryValues.length}) as hour
-        ON true
       ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
     `);
@@ -328,26 +297,20 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }> {
     const where = await this.buildWhereClauses(params);
-    const tz = await this.validateTz(params.tz);
 
     const query = {
       text: `
-        SELECT COUNT(*)
+        SELECT COUNT(*)::bigint
         FROM ${this.table}
-        LEFT JOIN LATERAL
-          EXTRACT(hour FROM journey_start_datetime AT TIME ZONE $${where.values.length + 1}) as hour
-          ON true
         ${where.text ? `WHERE ${where.text}` : ''}
       `,
-      values: [...(where ? where.values : []), tz.name],
+      values: [...(where ? where.values : [])],
     };
 
     query.text = this.numberPlaceholders(query.text);
     const result = await this.connection.getClient().query(query);
 
-    // parse the count(*) value which is returned as varchar by Postgres
-    // do not cast as ::int in postgres to avoid overflow on huge values!
-    return { count: result.rowCount ? parseInt(result.rows[0].count, 10) : -1 };
+    return { count: result.rowCount ? result.rows[0].count : -1 };
   }
 
   public async search(
@@ -355,7 +318,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   ): Promise<ResultWithPagination<LightTripInterface>> {
     const { limit, skip } = params;
     const where = await this.buildWhereClauses(params);
-    const tz = await this.validateTz(params.tz);
 
     const query = {
       text: `
@@ -363,53 +325,40 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           trip_id,
           journey_start_town as start_town,
           journey_end_town as end_town,
-          journey_start_datetime AT TIME ZONE $${where.values.length + 3} as start_datetime,
+          journey_start_datetime as start_datetime,
           (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int as incentives,
           operator_id::int,
           operator_class,
           (driver_incentive_rpc_raw || passenger_incentive_rpc_raw)::json[] as campaigns_id,
           status
         FROM ${this.table}
-        LEFT JOIN LATERAL
-          EXTRACT(hour FROM journey_start_datetime AT TIME ZONE $${where.values.length + 3}) as hour
-          ON true
         ${where.text ? `WHERE ${where.text}` : ''}
         ORDER BY journey_start_datetime DESC
         LIMIT $#::integer
         OFFSET $#::integer
       `,
-      values: [...(where ? where.values : []), limit, skip, tz.name],
+      values: [...(where ? where.values : []), limit, skip],
     };
 
     query.text = this.numberPlaceholders(query.text);
 
     const result = await this.connection.getClient().query(query);
-    const pagination = {
-      limit,
-      total: -1,
-      offset: skip,
-    };
+    const pagination = { limit, total: -1, offset: skip };
 
     if (!result.rowCount) {
-      return {
-        data: [],
-        meta: {
-          pagination,
-        },
-      };
+      return { data: [], meta: { pagination } };
     }
 
-    const final_data = result.rows.map(({ total_count, ...data }) => ({
-      ...data,
-      campaigns_id: [...new Set(map(data.campaigns_id || [], 'policy_id'))].sort(),
-    }));
+    // manually map results to data structure to keep pg sorting
+    const data = new Array(result.rows.length);
+    let index = 0;
+    while (index < data.length) {
+      data[index] = result.rows[index];
+      data[index]['campaigns_id'] = [...new Set(map(result.rows[index]['campaigns_id'] || [], 'policy_id'))];
+      index += 1;
+    }
 
-    return {
-      data: orderBy(final_data, 'start_datetime', 'desc'),
-      meta: {
-        pagination,
-      },
-    };
+    return { data, meta: { pagination } };
   }
 
   // validate given timezone against PostgreSQL list.
