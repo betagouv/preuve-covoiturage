@@ -80,7 +80,7 @@ export class TripListComponent extends DestroyObservable implements OnInit, Afte
     return Object.keys(this.filterService.filter$.value).length > 0;
   }
 
-  get total(): number {
+  get total(): string {
     return this.tripService.total;
   }
 

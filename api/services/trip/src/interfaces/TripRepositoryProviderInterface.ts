@@ -11,7 +11,7 @@ export interface TzResultInterface {
 
 export interface TripRepositoryInterface {
   stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]>;
-  searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }>;
+  searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }>;
   search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>>;
   searchWithCursor(
     params: {
@@ -29,7 +29,7 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
     throw new Error();
   }
 
-  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }> {
+  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {
     throw new Error('Not implemented');
   }
 

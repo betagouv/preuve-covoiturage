@@ -295,12 +295,14 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>;
   }
 
-  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }> {
+  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {
     const where = await this.buildWhereClauses(params);
 
+    // COUNT(*) is a BIGINT (int8) which is casted as string by node-postgres
+    // to avoid overflows (max value of bigint > Number.MAX_SAFE_INTEGER)
     const query = {
       text: `
-        SELECT COUNT(*)::bigint
+        SELECT COUNT(*)
         FROM ${this.table}
         ${where.text ? `WHERE ${where.text}` : ''}
       `,
