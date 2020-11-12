@@ -453,18 +453,23 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     const query = {
       text: `
-        SELECT name,t._id, array_agg(tc.value) as insees, active, activable 
+        SELECT name,t._id, array_agg(tc.value) as insees, active, activable
         ${
           withParents
             ? // eslint-disable-next-line max-len
-              `,(SELECT array_agg(tr.parent_territory_id) FROM territory.territory_relation tr WHERE tr.child_territory_id = t._id) as parents`
+              `, array_agg(tr.parent_territory_id) as parents`
             : ''
         }
         ${withLevel ? ',t.level' : ''}
         
         FROM ${this.table} t
         LEFT JOIN territory.territory_codes tc ON(tc.territory_id = t._id AND tc.type = 'insee')
-       
+        ${
+          withParents
+            ? // eslint-disable-next-line max-len
+              `LEFT JOIN territory.territory_relation tr ON tr.child_territory_id = t._id`
+            : ''
+        }
         WHERE deleted_at IS NULL
         ${searchConditionString ? ` AND ${searchConditionString}` : ''}
         GROUP BY t._id,t.name, active, activable, t.level 
