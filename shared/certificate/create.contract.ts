@@ -15,7 +15,6 @@ export interface ResultInterface {
   uuid: string;
   created_at: Date;
   pdf_url: string;
-  png_url: string;
   meta: CertificateMetaInterface;
 }
 
