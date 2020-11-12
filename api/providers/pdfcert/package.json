@@ -1,0 +1,21 @@
+{
+  "name": "@pdc/provider-pdfcert",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "echo '[provider-pdfcert] No tests'; exit 0",
+    "test:integration": "echo '[provider-pdfcert] No tests'; exit 0",
+    "coverage-ci": "echo '[provider-pdfcert] No tests'; exit 0",
+    "coverage": "echo '[provider-pdfcert] No tests'; exit 0",
+    "lint": "eslint 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "@ilos/common": "^0",
+    "pdf-lib": "^1.11.2"
+  }
+}
