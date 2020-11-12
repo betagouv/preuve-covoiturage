@@ -1,7 +1,9 @@
-import { provider } from '@ilos/common';
-import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 import { promisify } from 'util';
 import { map } from 'lodash';
+import { utcToZonedTime } from 'date-fns-tz';
+
+import { provider } from '@ilos/common';
+import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
 import {
   TripSearchInterfaceWithPagination,
@@ -194,7 +196,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: this.numberPlaceholders(text),
     });
 
-    return result.rows;
+    // convert YYYY-MM-DD date format to full Date on the right TZ
+    return result.rows.map((d) => {
+      d.day = utcToZonedTime(d.day, tz.name);
+      return d;
+    });
   }
 
   public async searchWithCursor(
