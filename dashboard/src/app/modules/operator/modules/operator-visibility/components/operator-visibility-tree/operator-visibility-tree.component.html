@@ -29,7 +29,7 @@
           [style]="'padding-left:' + ter.indent * (searchMode ? 0 : 23) + 'px'"
         >
           <mat-checkbox
-            *ngIf="ter.activable; else terr_label"
+            *ngIf="ter.activable || ter.level === 'towngroup'; else terr_label"
             color="primary"
             (change)="swapCheck(ter)"
             [checked]="ter.selected"

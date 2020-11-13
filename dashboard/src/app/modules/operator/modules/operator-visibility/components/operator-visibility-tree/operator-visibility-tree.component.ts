@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 
 import { CommonDataService } from '~/core/services/common-data.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { TerritoryTree } from '~/core/entities/territory/territory';
+import { TerritoryTree, TerritoryLevelEnum } from '~/core/entities/territory/territory';
 import { OperatorVisilibityService } from '~/modules/operator/services/operator-visilibity.service';
 
 interface TerritoryVisibilityTree extends TerritoryTree {
@@ -94,11 +94,33 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
         map(() => {
           if (this.searchFilter && this.searchFilter.controls.query.value) {
             this.searchMode = true;
-            const lowerCasedQuery = this.searchFilter.controls.query.value.toLowerCase();
-            const filteredTerritories = this.territories.filter(
-              (t) => t.control && `${t.name}`.toLowerCase().includes(lowerCasedQuery),
-            );
-            return filteredTerritories;
+
+            const words = this.searchFilter.controls.query.value.toLowerCase().split(new RegExp('[ -_]'));
+            // score search based ordering
+            const territories = this.territories
+              // get only EPCI or AOM (activable)
+              .filter((t) => t.activable || t.level === TerritoryLevelEnum.Towngroup)
+              // search for requested words and set score based on matching words amount
+              .map<TerritoryVisibilityTree & { score: number }>((t) => {
+                const nameLowerCase = t.name.toLowerCase();
+                const score = words.map((w) => nameLowerCase.split(w).length - 1).reduce((acc, score) => acc + score);
+                // return null for fast filter optimisation
+                return score > 0
+                  ? {
+                      ...t,
+                      score,
+                    }
+                  : null;
+              })
+              // filter found territory
+              .filter((t) => t !== null)
+              .sort((a, b) => {
+                if (a.score < b.score) return -1;
+                if (a.score > b.score) return 1;
+                return 0;
+              });
+
+            return territories;
           } else {
             this.searchMode = false;
 
