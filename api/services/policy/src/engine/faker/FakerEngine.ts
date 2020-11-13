@@ -36,7 +36,7 @@ export class FakerEngine {
     };
   }
 
-  public static getBasicTrip(nb: number, trip_id: number = 0): PersonInterface[] {
+  public static getBasicTrip(nb: number, trip_id = 0): PersonInterface[] {
     const array = new Array(nb);
     for (let i = 0; i < nb; i++) {
       array[i] = FakerEngine.getBasicPerson(trip_id * 10 + i, i === 0);
@@ -73,7 +73,7 @@ export class FakerEngine {
     return trips;
   }
 
-  public generateOne(trip_id: number = 0): TripInterface {
+  public generateOne(trip_id = 0): TripInterface {
     let trip = FakerEngine.getBasicTrip(random(2, 4), trip_id);
     for (const variant of this.variants) {
       trip = variant.generate(trip);
