@@ -43,6 +43,7 @@
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-validator": "~0",
     "faker": "^5.1.0",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "moment": "^2.29.1"
   }
 }

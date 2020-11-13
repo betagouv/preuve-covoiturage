@@ -1,13 +1,14 @@
 import random from 'lodash/random';
+import moment from 'moment';
 import fill from 'lodash/fill';
 import sample from 'lodash/sample';
 
 import { AbstractVariant } from './AbstractVariant';
 import { PersonInterface } from '../../shared/policy/common/interfaces/PersonInterface';
 
-type Params = {
-  start: Date;
-  end: Date;
+type Params<D = Date> = {
+  start: D;
+  end: D;
   weekday: number;
   hours: {
     night: number;
@@ -26,13 +27,13 @@ enum HourEnum {
   Evening = 'evening',
 }
 
-function applyDefaults(params: Partial<Params>): Params {
+function applyDefaults(params: Partial<Params>): Params<moment.Moment> {
   const end = new Date();
   end.setDate((params.start ? params.start.getDate() : new Date().getDate()) + 7);
 
   return {
-    start: params.start || new Date(),
-    end: params.end || end,
+    start: moment(params.start || new Date()),
+    end: moment(params.end || end),
     weekday: params.weekday || 5,
     hours: params.hours || {
       night: 1,
@@ -44,31 +45,36 @@ function applyDefaults(params: Partial<Params>): Params {
   };
 }
 
-export class DatetimeVariant extends AbstractVariant<Partial<Params>> {
+export class DatetimeVariant extends AbstractVariant<Partial<Params<moment.Moment>>> {
   readonly propertyPath: string = 'datetime';
-  readonly params: Params;
+  readonly params: Params<moment.Moment>;
   readonly hoursSet: HourEnum[];
 
   constructor(params: Partial<Params> = {}) {
-    super(params);
+    super(applyDefaults(params));
 
     this.params = applyDefaults(params);
+    if (this.params.end.isBefore(this.params.start)) {
+      throw new Error('Misconfigured variant : end should be after start');
+    }
+
+    if (this.params.end.diff(this.params.start, 'days') < 7) {
+      throw new Error('Misconfigured variant: end - start should be at least 7 days');
+    }
+
+    if (this.params.weekday > 9 || this.params.weekday < 1) {
+      throw new Error('Misconfigured variant: weekday should be between 1 and 9');
+    }
 
     if (
-      // start should be before end
-      this.params.end <= this.params.start ||
-      // weekday should be between 0-10
-      this.params.weekday > 10 ||
-      this.params.weekday < 0 ||
-      // Sum of hours should be 10
       Object.keys(this.params.hours)
         .map((k) => this.params.hours[k])
         .reduce((sum, i) => sum + i, 0) !== 10
     ) {
-      throw new Error('Misconfigured variant');
+      throw new Error('Misconfigured variant: sum of hours should be equal to 10');
     }
 
-    this.hoursSet = new Array(10);
+    this.hoursSet = [];
     Object.keys(this.params.hours).map((k) => {
       this.hoursSet.push(...fill(new Array(this.params.hours[k]), k));
     });
@@ -79,46 +85,49 @@ export class DatetimeVariant extends AbstractVariant<Partial<Params>> {
     return people.map((p) => {
       return {
         ...p,
-        [this.propertyPath]: datetime,
+        [this.propertyPath]: datetime.toDate(),
       };
     });
   }
 
-  protected getDate(wk: boolean): Date {
-    function isOk(weekday: boolean, date: Date): boolean {
-      const isWeekDay = date.getDay() > 0 && date.getDay() < 6;
+  protected getDate(wk: boolean): moment.Moment {
+    function isOk(weekday: boolean, date: moment.Moment): boolean {
+      const isWeekDay = date.day() > 0 && date.day() < 6;
       return weekday ? isWeekDay : !isWeekDay;
     }
-    const days: number = (this.params.end.valueOf() - this.params.start.valueOf()) / 1000 / 60 / 60 / 24;
-    const date = new Date();
+    const days: number = this.params.end.diff(this.params.start, 'days');
+    let date: moment.Moment;
     do {
+      date = moment(this.params.start);
       const diff = random(0, days);
-      date.setDate(this.params.start.getDate() + diff);
+      date.add(diff, 'days');
     } while (!isOk(wk, date));
-
     return date;
   }
 
-  protected getTime(date: Date, period: HourEnum): Date {
+  protected getTime(date: moment.Moment, period: HourEnum): moment.Moment {
     switch (period) {
       case HourEnum.Night:
-        date.setHours(random(0, 5), 0, 0, 0);
+        date.hour(random(0, 5));
         break;
       case HourEnum.Morning:
-        date.setHours(random(5, 11), 0, 0, 0);
+        date.hour(random(5, 11));
         break;
       case HourEnum.Lunch:
-        date.setHours(random(11, 15), 0, 0, 0);
+        date.hour(random(11, 15));
         break;
       case HourEnum.Afternoon:
-        date.setHours(random(15, 20), 0, 0, 0);
+        date.hour(random(15, 20));
         break;
       case HourEnum.Evening:
-        date.setHours(random(20, 23), 0, 0, 0);
+        date.hour(random(20, 23));
         break;
       default:
         break;
     }
+    date.minute(0);
+    date.second(0);
+    date.millisecond(0);
     return date;
   }
 }

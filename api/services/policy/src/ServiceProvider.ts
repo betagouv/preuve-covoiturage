@@ -14,7 +14,7 @@ import { binding as deleteSchemaBinding } from './shared/policy/delete.schema';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as templatesSchemaBinding } from './shared/policy/templates.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
-import { binding as simulateSchemaBinding } from './shared/policy/simulate.schema';
+import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOn.schema';
 
 import { CreateCampaignAction } from './actions/CreateCampaignAction';
 import { PatchCampaignAction } from './actions/PatchCampaignAction';
@@ -36,7 +36,8 @@ import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRulePara
 import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 import { SeedCommand } from './commands/SeedCommand';
 import { ValidateDateMiddleware } from './middlewares/ValidateDateMiddleware';
-import { SimulateAction } from './actions/SimulateAction';
+import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
+import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
 
 @serviceProvider({
   config,
@@ -58,7 +59,7 @@ import { SimulateAction } from './actions/SimulateAction';
     listSchemaBinding,
     templatesSchemaBinding,
     findSchemaBinding,
-    simulateSchemaBinding,
+    simulateOnSchemaBinding,
   ],
   handlers: [
     TemplatesCampaignAction,
@@ -70,7 +71,8 @@ import { SimulateAction } from './actions/SimulateAction';
     FindCampaignAction,
     ApplyAction,
     FinalizeAction,
-    SimulateAction,
+    SimulateOnPastAction,
+    SimulateOnFakeAction,
   ],
   connections: [
     [PostgresConnection, 'connections.postgres'],

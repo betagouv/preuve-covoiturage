@@ -4,16 +4,15 @@ import { DatetimeVariant } from './DatetimeVariant';
 import { FakerEngine } from './FakerEngine';
 
 test('should fill datetime', (t) => {
-  const start = new Date();
+  const start = new Date('2019-12-15');
   start.setHours(0, 0, 0, 0);
-  const end = new Date();
-  end.setDate(start.getDate() + 7);
+  const end = new Date('2020-01-15');
   end.setHours(23, 59, 59, 999);
 
   const datetimeVariant = new DatetimeVariant({
     start,
     end,
-    weekday: 10,
+    weekday: 9,
     hours: {
       night: 0,
       morning: 0,
@@ -30,7 +29,7 @@ test('should fill datetime', (t) => {
     t.is(d, datetime);
   }
 
-  t.log(datetime);
+  t.log(datetime, start, end);
   // is on date range
   t.true(datetime >= start);
   t.true(datetime <= end);

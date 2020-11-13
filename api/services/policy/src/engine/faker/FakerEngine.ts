@@ -15,11 +15,11 @@ import { CampaignInterface } from '../../shared/policy/common/interfaces/Campaig
 export class FakerEngine {
   constructor(protected readonly variants: AbstractVariant<any>[]) {}
 
-  public static getBasicPerson(is_driver = false): PersonInterface {
+  public static getBasicPerson(carpool_id = 1, is_driver = false): PersonInterface {
     return {
+      carpool_id,
       is_driver,
       datetime: new Date(),
-      carpool_id: 1,
       identity_uuid: 'no one',
       is_over_18: true,
       has_travel_pass: false,
@@ -36,10 +36,10 @@ export class FakerEngine {
     };
   }
 
-  public static getBasicTrip(nb: number): PersonInterface[] {
+  public static getBasicTrip(nb: number, trip_id: number = 0): PersonInterface[] {
     const array = new Array(nb);
     for (let i = 0; i < nb; i++) {
-      array[i] = FakerEngine.getBasicPerson(i === 0);
+      array[i] = FakerEngine.getBasicPerson(trip_id * 10 + i, i === 0);
     }
     return array;
   }
@@ -68,13 +68,13 @@ export class FakerEngine {
   public generate(nb: number): TripInterface[] {
     const trips = new Array(nb);
     for (let i = 0; i < nb; i++) {
-      trips.push(this.generateOne());
+      trips[i] = this.generateOne(i);
     }
     return trips;
   }
 
-  public generateOne(): TripInterface {
-    let trip = FakerEngine.getBasicTrip(random(2, 4));
+  public generateOne(trip_id: number = 0): TripInterface {
+    let trip = FakerEngine.getBasicTrip(random(2, 4), trip_id);
     for (const variant of this.variants) {
       trip = variant.generate(trip);
     }

@@ -1,6 +1,6 @@
 import { schema as campaignSchema } from './create.schema';
 
-export const alias = 'campaign.simulate';
+export const alias = 'campaign.simulateOn';
 
 export const schema = {
   type: 'object',

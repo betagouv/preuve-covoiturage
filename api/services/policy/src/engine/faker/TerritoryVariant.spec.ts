@@ -3,7 +3,7 @@ import test from 'ava';
 import { TerritoryVariant } from './TerritoryVariant';
 import { FakerEngine } from './FakerEngine';
 
-test('should fill seats', (t) => {
+test('should fill territory', (t) => {
   const params = {
     start: [1, 2],
     end: [1],

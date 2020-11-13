@@ -3,7 +3,7 @@ import test from 'ava';
 import { FakerEngine } from './FakerEngine';
 import { CampaignInterface } from '../../shared/policy/common/interfaces/CampaignInterface';
 
-test('should fill seats', (t) => {
+test('should work', (t) => {
   const start_date = new Date();
   start_date.setHours(0, 0, 0, 0);
   const end_date = new Date();
@@ -24,4 +24,5 @@ test('should fill seats', (t) => {
   const fakerEngine = FakerEngine.fromPolicy(campaign);
   const trips = fakerEngine.generate(10);
   console.table(trips.reduce((arr, i) => [...arr, ...i], []));
+  t.pass();
 });

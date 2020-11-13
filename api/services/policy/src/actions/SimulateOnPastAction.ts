@@ -1,9 +1,9 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulate.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
 
-import { alias } from '../shared/policy/simulate.schema';
+import { alias } from '../shared/policy/simulateOn.schema';
 import { PolicyEngine } from '../engine/PolicyEngine';
 import { TripRepositoryProviderInterfaceResolver, IncentiveInterface } from '../interfaces';
 
@@ -32,7 +32,7 @@ import { TripRepositoryProviderInterfaceResolver, IncentiveInterface } from '../
     ['validate.date', ['campaign', new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), new Date()]],
   ],
 })
-export class SimulateAction extends AbstractAction {
+export class SimulateOnPastAction extends AbstractAction {
   constructor(private engine: PolicyEngine, private tripRepository: TripRepositoryProviderInterfaceResolver) {
     super();
   }
