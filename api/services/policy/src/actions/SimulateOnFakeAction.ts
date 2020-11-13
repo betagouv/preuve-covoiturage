@@ -1,5 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import csvStringify, { Stringifier } from 'csv-stringify';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnFake.contract';
 
@@ -78,11 +79,55 @@ export class SimulateOnFakeAction extends AbstractAction {
           datetime: person.datetime,
           seats: person.seats,
           distance: person.distance,
-          amount: incentives.find((i) => i.carpool_id === person.carpool_id).amount,
+          amount: incentives.find((i) => i.carpool_id === person.carpool_id).amount || 0,
         });
       }
     }
-    console.table(result);
-    return;
+
+    return this.toCsv(result);
+  }
+
+  protected toCsv(result: SimulateResultInterface[]): string {
+    const data = [];
+    const stringifier = this.getStringifier(data);
+    for (let i = 0; i < result.length; i++) {
+      stringifier.write(result[i]);
+    }
+    stringifier.end();
+    return data.join('\n');
+  }
+
+  protected getStringifier(data: string[]): Stringifier {
+    const stringifier = csvStringify({
+      delimiter: ';',
+      header: true,
+      columns: [
+        'trip_id',
+        'carpool_id',
+        'identity_uuid',
+        'operator_class',
+        'is_over_18',
+        'is_driver',
+        'has_travel_pass',
+        'datetime',
+        'seats',
+        'distance',
+        'amount',
+      ],
+      cast: { date: (d: Date): string => d.toISOString() },
+    });
+    stringifier.on('readable', async () => {
+      let row;
+      // tslint:disable-next-line: no-conditional-assignment
+      while (null !== (row = stringifier.read())) {
+        data.push(row);
+      }
+    });
+
+    stringifier.on('error', (err) => {
+      console.error(err.message);
+    });
+
+    return stringifier;
   }
 }

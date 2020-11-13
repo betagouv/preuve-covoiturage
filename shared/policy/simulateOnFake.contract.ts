@@ -3,7 +3,7 @@ import { CampaignInterface } from './common/interfaces/CampaignInterface';
 export interface ParamsInterface {
   campaign: CampaignInterface;
 }
-export interface ResultInterface {}
+export type ResultInterface = string;
 
 export const handlerConfig = {
   service: 'campaign',

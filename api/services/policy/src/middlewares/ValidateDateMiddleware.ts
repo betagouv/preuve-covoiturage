@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { MiddlewareInterface, ContextType, ResultType, InvalidParamsException, middleware } from '@ilos/common';
 
 import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
@@ -34,6 +34,10 @@ export class ValidateDateMiddleware implements MiddlewareInterface {
     if (maxEnd && campaign.end_date > maxEnd) {
       throw new InvalidParamsException(`End should be before ${maxEnd.toDateString()}`);
     }
+
+    // Set proper time
+    campaign.start_date.setHours(0, 0, 0, 0);
+    campaign.end_date.setHours(23, 59, 59, 999);
 
     return next(params, context);
   }
