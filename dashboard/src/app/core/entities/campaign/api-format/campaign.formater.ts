@@ -79,17 +79,23 @@ export class CampaignFormater {
 
     // GLOBAL RULES
     campaign.global_rules.forEach((retributionRule: GlobalRetributionRuleInterface) => {
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_TRIPS) {
+      if (
+        retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_TRIPS &&
+        retributionRule.parameters.period === 'campaign' &&
+        !retributionRule.parameters.target
+      ) {
         const parameters = retributionRule.parameters as MaxTripsRetributionRule['parameters'];
         campaignUx.max_trips = parameters.amount;
       }
       if (
         retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_AMOUNT &&
-        retributionRule.parameters.period === 'campaign'
+        retributionRule.parameters.period === 'campaign' &&
+        !retributionRule.parameters.target
       ) {
         const parameters = retributionRule.parameters as MaxAmountRetributionRule['parameters'];
         campaignUx.max_amount = parameters.amount;
       }
+
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.ONLY_ADULT) {
         campaignUx.only_adult = true;
       }
@@ -122,7 +128,7 @@ export class CampaignFormater {
         campaignUx.filters.rank = retributionRule.parameters as RankGlobalRetributionRule['parameters'];
       }
 
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_TRIP) {
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_TRIPS && retributionRule.parameters.target) {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
         campaignUx.restrictions.push({
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
@@ -132,10 +138,7 @@ export class CampaignFormater {
         } as RestrictionUxInterface);
       }
 
-      if (
-        retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_AMOUNT &&
-        retributionRule.parameters.period !== 'campaign'
-      ) {
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_AMOUNT && retributionRule.parameters.target) {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
         campaignUx.restrictions.push({
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
