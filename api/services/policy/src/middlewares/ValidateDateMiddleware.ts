@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import { get } from 'lodash';
 import { MiddlewareInterface, ContextType, ResultType, InvalidParamsException, middleware } from '@ilos/common';
 
 import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
