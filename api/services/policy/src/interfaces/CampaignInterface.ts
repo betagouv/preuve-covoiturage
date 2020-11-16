@@ -14,3 +14,9 @@ export interface CampaignInterface {
   global_rules: RuleInterface[];
   rules: RuleInterface[][];
 }
+
+export interface CampaignStateInterface {
+  amount: number;
+  trip_subsidized: number;
+  trip_excluded: number;
+}

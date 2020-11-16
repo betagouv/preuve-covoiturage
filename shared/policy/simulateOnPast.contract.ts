@@ -1,19 +1,17 @@
 import { CampaignInterface } from './common/interfaces/CampaignInterface';
+
 export interface ParamsInterface {
-  _id: number;
-  territory_id: number;
+  campaign: CampaignInterface;
 }
-export interface ResultInterface extends CampaignInterface {
-  state: {
-    amount: number;
-    trip_subsidized: number;
-    trip_excluded: number;
-  };
+export interface ResultInterface {
+  amount: number;
+  trip_subsidized: number;
+  trip_excluded: number;
 }
 
 export const handlerConfig = {
   service: 'campaign',
-  method: 'find',
+  method: 'simulateOnPast',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

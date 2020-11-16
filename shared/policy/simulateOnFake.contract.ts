@@ -1,14 +1,13 @@
 import { CampaignInterface } from './common/interfaces/CampaignInterface';
-import { IncentiveInterface } from './common/interfaces/IncentiveInterface';
 
 export interface ParamsInterface {
   campaign: CampaignInterface;
 }
-export type ResultInterface = IncentiveInterface[];
+export type ResultInterface = string;
 
 export const handlerConfig = {
   service: 'campaign',
-  method: 'simulate',
+  method: 'simulateOnFake',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

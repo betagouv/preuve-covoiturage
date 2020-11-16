@@ -37,16 +37,6 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/norma
 import { PersonInterface, FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 
-const context: ContextType = {
-  call: {
-    user: {},
-  },
-  channel: {
-    service: 'normalization',
-    transport: 'queue',
-  },
-};
-
 enum NormalisationErrorStage {
   Cost = 'cost',
   Identity = 'identity',
@@ -56,23 +46,35 @@ enum NormalisationErrorStage {
 }
 
 // Enrich position data
-@handler({ ...handlerConfig, middlewares: [['channel.service.only', ['acquisition', handlerConfig.service]]] })
+@handler({
+  ...handlerConfig,
+  middlewares: [['channel.service.only', ['acquisition', 'policy', handlerConfig.service]]],
+})
 export class NormalizationProcessAction extends AbstractAction {
+  private readonly context: ContextType = {
+    call: {
+      user: {},
+    },
+    channel: {
+      service: 'normalization',
+      transport: 'queue',
+    },
+  };
+
   constructor(private kernel: KernelInterfaceResolver) {
     super();
   }
 
-  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
-    const normalizedJourney: ResultInterface = { ...journey };
+  public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const people: FinalizedPersonInterface[] = [];
 
     if (journey.payload.driver) {
-      normalizedJourney.payload.driver = await this.handlePerson(journey.payload.driver, journey);
-      people.push(this.finalizePerson(normalizedJourney.payload.driver));
+      let driver = await this.handlePerson(journey.payload.driver, journey);
+      people.push(this.finalizePerson(driver));
     }
     if (journey.payload.passenger) {
-      normalizedJourney.payload.passenger = await this.handlePerson(journey.payload.passenger, journey);
-      people.push(this.finalizePerson(journey.payload.passenger));
+      let passenger = await this.handlePerson(journey.payload.passenger, journey);
+      people.push(this.finalizePerson(passenger));
     }
 
     const normalizedData: CrossCheckParamsInterface = {
@@ -85,24 +87,27 @@ export class NormalizationProcessAction extends AbstractAction {
       operator_journey_id: journey.journey_id,
     };
 
-    // mark all previously attempted normalisation failed request as resolved
-    this.kernel.notify<ResolveErrorParamsInterface>(
-      'acquisition:resolveerror',
-      {
-        operator_id: journey.operator_id,
-        journey_id: journey.journey_id,
-        error_stage: ErrorStage.Normalisation,
-      },
-      { channel: { service: 'acquisition' } },
-    );
+    // Notify only if query is from acquisition or self
+    if (['acquisition', handlerConfig.service].indexOf(context.channel.service) > -1) {
+      // mark all previously attempted normalisation failed request as resolved
+      this.kernel.notify<ResolveErrorParamsInterface>(
+        'acquisition:resolveerror',
+        {
+          operator_id: journey.operator_id,
+          journey_id: journey.journey_id,
+          error_stage: ErrorStage.Normalisation,
+        },
+        { channel: { service: 'acquisition' } },
+      );
 
-    await this.kernel.call<CrossCheckParamsInterface, CrossCheckResultInterface>(
-      crossCheckSignature,
-      normalizedData,
-      context,
-    );
+      await this.kernel.call<CrossCheckParamsInterface, CrossCheckResultInterface>(
+        crossCheckSignature,
+        normalizedData,
+        this.context,
+      );
+    }
 
-    return normalizedJourney;
+    return normalizedData;
   }
 
   public finalizePerson(person: PersonInterface): FinalizedPersonInterface {
@@ -180,7 +185,7 @@ export class NormalizationProcessAction extends AbstractAction {
           payments: finalPerson.payments,
           isDriver: finalPerson.is_driver as boolean,
         },
-        context,
+        this.context,
       );
 
       finalPerson['cost'] = cost;
@@ -197,7 +202,7 @@ export class NormalizationProcessAction extends AbstractAction {
       finalPerson.identity = await this.kernel.call<IdentityParamsInterface, IdentityResultInterface>(
         identitySignature,
         finalPerson.identity,
-        context,
+        this.context,
       );
     } catch (e) {
       await this.logError(NormalisationErrorStage.Identity, journey, e);
@@ -213,7 +218,7 @@ export class NormalizationProcessAction extends AbstractAction {
           start: finalPerson.start,
           end: finalPerson.end,
         },
-        context,
+        this.context,
       );
 
       finalPerson.start = { ...finalPerson.start, ...start };
@@ -227,7 +232,7 @@ export class NormalizationProcessAction extends AbstractAction {
             start,
             end,
           },
-          context,
+          this.context,
         );
 
         finalPerson.calc_distance = calc_distance;
@@ -252,7 +257,7 @@ export class NormalizationProcessAction extends AbstractAction {
           start: finalPerson.start,
           end: finalPerson.end,
         },
-        context,
+        this.context,
       );
 
       finalPerson.start.territory_id = territories.start;
