@@ -6,14 +6,13 @@ import {
   CarpoolInterface,
   CarpoolRepositoryProviderInterface,
   CarpoolRepositoryProviderInterfaceResolver,
+  FindParamsInterface,
 } from '../interfaces/CarpoolRepositoryProviderInterface';
 
 @provider({
   identifier: CarpoolRepositoryProviderInterfaceResolver,
 })
 export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInterface {
-  public readonly table = 'trip.list';
-
   constructor(protected connection: PostgresConnection) {}
 
   /**
@@ -23,16 +22,20 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
    * TODO filter by operator and territory too
    * TODO replace any output by proper interface
    */
-  async find(params: {
-    identity_uuid: string;
-    start_at: Date;
-    end_at: Date;
-    positions?: PointInterface[];
-    radius?: number;
-  }): Promise<CarpoolInterface[]> {
-    const { identity_uuid, start_at, end_at, positions = [], radius = 1000 } = params;
+  async find(params: FindParamsInterface): Promise<CarpoolInterface[]> {
+    const { identity, operator_id, tz, start_at, end_at, positions = [], radius = 1000 } = params;
 
-    const values: any[] = [identity_uuid, start_at, end_at];
+    // TODO get tz
+    const values: any[] = [
+      identity.phone,
+      identity.phone_trunc,
+      operator_id,
+      identity.operator_user_id,
+      identity.travel_pass_name,
+      identity.travel_pass_user_id,
+      start_at,
+      end_at,
+    ];
 
     const where_positions = positions
       .reduce((prev: string[], pos: PointInterface): string[] => {
@@ -54,17 +57,35 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
       }, [])
       .join(' OR ');
 
+    // add Timezone
+    values.push(tz || 'GMT');
+
     // fetch the number of kilometers per month
     const text = `
+      WITH list AS (
+        (
+          SELECT _id FROM carpool.identities
+          WHERE phone IS NOT NULL and phone = $1::varchar
+        ) UNION (
+          SELECT _id FROM carpool.identities
+          WHERE phone_trunc IS NOT NULL AND phone_trunc = $2::varchar
+          AND operator_user_id = $4::varchar
+        ) UNION (
+          SELECT _id FROM carpool.identities
+          WHERE phone_trunc IS NOT NULL AND phone_trunc = $2::varchar
+          AND travel_pass_name = $5::varchar AND travel_pass_user_id = $6::varchar
+        )
+      )
       SELECT
-        to_char(tl.journey_start_datetime,'MM') AS m,
-        extract(year from tl.journey_start_datetime)::text AS y,
-        count(*) as trips,
-        sum(tl.journey_distance::float)/1000 as km,
-        sum(tl.driver_revenue::float)/100 as eur
-      FROM ${this.table} AS tl
-      WHERE tl.driver_id = $1 OR tl.passenger_id = $1
-      AND tl.journey_start_datetime >= $2 AND tl.journey_start_datetime <= $3
+        to_char(cc.datetime AT TIME ZONE $${values.length},'MM') AS m,
+        to_char(cc.datetime AT TIME ZONE $${values.length},'YYYY') AS y,
+        count(*)::int as trips,
+        sum(cc.distance::float)/1000 as km,
+        sum(cc.cost::float)/100 as eur
+      FROM list
+      LEFT JOIN carpool.carpools cc ON list._id = cc.identity_id
+      WHERE cc.operator_id = $3::int
+      AND cc.datetime >= $7 AND cc.datetime <= $8
       ${where_positions.length ? `AND (${where_positions})` : ''}
       GROUP BY (m, y)
       ORDER BY y DESC, m DESC

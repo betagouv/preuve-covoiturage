@@ -12,7 +12,6 @@ import { TemplateExtension } from '@pdc/provider-template';
 
 import { config } from './config';
 import { CertificatePgRepositoryProvider } from './providers/CertificatePgRepositoryProvider';
-import { IdentityPgRepositoryProvider } from './providers/IdentityPgRepositoryProvider';
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
 import { TerritoryPgRepository } from './providers/TerritoryPgRepositoryProvider';
 import { CreateCertificateAction } from './actions/CreateCertificateAction';
@@ -32,7 +31,6 @@ import { binding as listBinding } from './shared/certificate/list.schema';
     QrcodeProvider,
     CryptoProvider,
     CertificatePgRepositoryProvider,
-    IdentityPgRepositoryProvider,
     CarpoolPgRepositoryProvider,
     TerritoryPgRepository,
     PdfCertProvider,
