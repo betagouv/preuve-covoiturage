@@ -1,0 +1,31 @@
+name: "Global - QA"
+
+on:
+  pull_request:
+    branches: [dev, production, staging]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  exec-global-qa:
+    name: Exec QA
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: "Lint"
+        run: yarn lint
+      - name: "Audit api dependencies"
+        run: yarn audit --level moderate --groups dependencies; [[ $? -ge 8 ]] && exit 1 || exit 0
+        working-directory: api
+      - name: "Audit dashboard dependencies"
+        run: yarn audit --level moderate --groups dependencies; [[ $? -ge 8 ]] && exit 1 || exit 0
+        working-directory: dashboard
