@@ -9,6 +9,7 @@ import {
   RestrictionUxInterface,
   RetributionUxInterface,
 } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
+import { CampaignStats } from '../api-format/CampaignStats';
 
 export class CampaignUx {
   public _id: number;
@@ -19,6 +20,7 @@ export class CampaignUx {
   public end: Moment;
   public status: CampaignStatusEnum;
   public parent_id: number;
+  public state?: CampaignStats;
   public unit: IncentiveUnitEnum;
   public filters: IncentiveFiltersUxInterface;
   public max_amount: number;
@@ -77,6 +79,11 @@ export class CampaignUx {
         staggered: null,
         insee_mode: null,
       },
+      state: {
+        amount: 0,
+        trip_subsidized: 0,
+        trip_excluded: 0,
+      },
     },
   ) {
     this._id = obj._id;
@@ -92,6 +99,7 @@ export class CampaignUx {
     this.retributions = obj.retributions;
     this.only_adult = obj.only_adult;
     this.ui_status = obj.ui_status;
+    this.state = obj.state;
 
     this.max_trips = obj.max_trips;
     this.max_amount = obj.max_amount;

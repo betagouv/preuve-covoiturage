@@ -14,7 +14,7 @@
       <span class="campaignMainMetrics-budgetSpend"
         ><b>{{ budgetSpent | currency: 'EUR':'symbol':'1.0-2' }}</b></span
       >
-      sur <b>{{ campaign.max_amount | currency: 'EUR':'symbol':'1.0-2' }}</b>
+      sur <b>{{ campaign.state.amount ? campaign.state.amount : 0 | currency: 'EUR':'symbol':'1.0-2' }}</b>
     </p>
   </div>
 </div>
