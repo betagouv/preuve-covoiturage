@@ -18,7 +18,7 @@ export class S3StorageProvider implements ProviderInterface {
     this.s3 = new S3({ endpoint: this.endpoint, region: this.region, signatureVersion: 'v4' });
   }
 
-  async copy(filename: string, password = ''): Promise<{ password: string; url: string }> {
+  async copy(filename: string): Promise<{ password: string; url: string }> {
     await fs.promises.access(filename, fs.constants.R_OK);
 
     try {
@@ -47,5 +47,21 @@ export class S3StorageProvider implements ProviderInterface {
 
       throw e;
     }
+  }
+
+  async getUploadUrl(file: string, contentType: string): Promise<any> {
+    const Key = path.normalize(file);
+    const publicUrl = this.endpoint.replace('https://', `https://${this.bucket}.`) + `/${Key}`;
+
+    return {
+      filename: path.basename(Key),
+      publicUrl,
+      putUrl: await this.s3.getSignedUrlPromise('putObject', {
+        Key,
+        Bucket: this.bucket,
+        ContentType: contentType,
+        Expires: 5 * 60,
+      }),
+    };
   }
 }
