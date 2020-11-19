@@ -80,6 +80,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
           siret,
           company,
           address,
+          meta,
           cgu_accepted_at,
           cgu_accepted_by,
           created_at,
@@ -111,7 +112,8 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
           company,
           address,
           bank,
-          contacts
+          contacts,
+          meta
         ) VALUES (
           $1,
           $2,
@@ -119,7 +121,8 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
           $4,
           $5,
           $6,
-          $7
+          $7,
+          $8
         )
         RETURNING *
       `,
@@ -131,6 +134,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         data.address || '{}',
         data.bank || '{}',
         data.contacts || '{}',
+        data.meta || '{}',
       ],
     };
 
@@ -167,7 +171,8 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return this.patch(_id, {
       company: '{}',
       address: '{}',
-      contact: '{}',
+      contacts: '{}',
+      meta: '{}',
       cgu_accepted_at: null,
       cgu_accepted_by: null,
       ...patch,
@@ -190,6 +195,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       'address',
       'bank',
       'contacts',
+      'meta',
       'cgu_accepted_at',
       'cgu_accepted_by',
     ].filter((k) => Object.keys(patch).indexOf(k) >= 0);

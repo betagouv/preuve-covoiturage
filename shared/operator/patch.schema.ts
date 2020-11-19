@@ -1,6 +1,7 @@
 import { company } from '../common/schemas/company';
 import { address } from '../common/schemas/address';
 import { bank } from '../common/schemas/bank';
+import { meta } from './common/schemas/meta';
 
 export const alias = 'operator.patch';
 
@@ -19,6 +20,7 @@ export const schema = {
         company,
         address,
         bank,
+        meta,
         nom_commercial: { macro: 'varchar' },
         raison_sociale: { macro: 'varchar' },
       },
