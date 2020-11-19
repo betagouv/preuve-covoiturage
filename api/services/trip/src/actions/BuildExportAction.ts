@@ -17,7 +17,7 @@ import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '../shared/user/notify.contract';
 import { ExportTripInterface } from '../interfaces';
 
-interface FlattenTripInterface<JourneyDateTimeType> extends ExportTripInterface<JourneyDateTimeType> {
+interface FlattenTripInterface extends ExportTripInterface<string> {
   journey_start_date: string;
   journey_start_time: string;
   journey_end_date: string;
@@ -291,11 +291,7 @@ export class BuildExportAction extends Action {
     }
   }
 
-  protected normalize(
-    src: ExportTripInterface,
-    params: ParamsInterface,
-    context: ContextType,
-  ): FlattenTripInterface<string> {
+  protected normalize(src: ExportTripInterface, params: ParamsInterface, context: ContextType): FlattenTripInterface {
     const { tz: timeZone } = params.query;
     const jsd = utcToZonedTime(src.journey_start_datetime, timeZone);
     const jed = utcToZonedTime(src.journey_end_datetime, timeZone);

@@ -3,11 +3,11 @@ interface IncentiveInterface {
   amount: number;
 }
 
-export interface ExportTripInterface<JourneyDateTimeType = Date> {
+export interface ExportTripInterface<T = Date> {
   journey_id: string;
   trip_id: string;
 
-  journey_start_datetime: JourneyDateTimeType;
+  journey_start_datetime: T;
   journey_start_lon: string;
   journey_start_lat: string;
   journey_start_insee: string;
@@ -17,7 +17,7 @@ export interface ExportTripInterface<JourneyDateTimeType = Date> {
   journey_start_towngroup: string;
   journey_start_country: string;
 
-  journey_end_datetime: JourneyDateTimeType;
+  journey_end_datetime: T;
   journey_end_lon: string;
   journey_end_lat: string;
   journey_end_insee: string;

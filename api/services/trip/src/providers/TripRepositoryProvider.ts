@@ -171,10 +171,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const where = await this.buildWhereClauses(params);
     const tz = await this.validateTz(params.tz);
 
-    const values = [...(where ? where.values : []), tz.name];
+    const values = [...(where ? where.values : [])];
     const text = `
       SELECT
-        (journey_start_datetime AT TIME ZONE $${values.length})::date as day,
+        journey_start_datetime::date as day,
         sum(passenger_seats)::int as trip,
         sum(journey_distance/1000*passenger_seats)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
