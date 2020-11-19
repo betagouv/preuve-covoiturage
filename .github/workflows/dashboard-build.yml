@@ -22,6 +22,7 @@ jobs:
         uses: crazy-max/ghaction-docker-meta@v1
         with:
           images: betagouvpdc/dashboard
+          tag-sha: true
           tag-match-latest: false
           tag-match: v(.*)
       - name: Set up QEMU
@@ -52,7 +53,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ steps.docker_meta.outputs.tags }}
+          image-ref: betagouvpdc/dashboard:${{ steps.docker_meta.outputs.version }}
           format: "template"
           template: "@/contrib/sarif.tpl"
           output: "trivy-results.sarif"

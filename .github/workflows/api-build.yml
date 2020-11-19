@@ -53,7 +53,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ steps.docker_meta.outputs.tags }}
+          image-ref: betagouvpdc/api:${{ steps.docker_meta.outputs.version }}
           format: "template"
           template: "@/contrib/sarif.tpl"
           output: "trivy-results.sarif"
