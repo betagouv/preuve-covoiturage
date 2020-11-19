@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { S3StorageProvider, extensionHelper } from '@pdc/provider-file';
+import { S3StorageProvider, extensionHelper, BucketName } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/getuploadurl.contract';
 import { alias } from '../shared/operator/getuploadurl.schema';
@@ -40,6 +40,6 @@ export class GetUploadUrlAction extends AbstractAction {
 
     const key = `operators/${uuid()}.${ext}`;
 
-    return this.s3Provider.getUploadUrl(key, contentType);
+    return this.s3Provider.getUploadUrl(BucketName.Public, key, contentType);
   }
 }

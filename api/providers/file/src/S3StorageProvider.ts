@@ -4,13 +4,14 @@ import S3 from 'aws-sdk/clients/s3';
 
 import { env } from '@ilos/core';
 import { provider, ProviderInterface } from '@ilos/common';
+import { BucketName } from './interfaces/BucketName';
 
 @provider()
 export class S3StorageProvider implements ProviderInterface {
   private s3: S3;
   private endpoint = env('AWS_ENDPOINT') as string;
   private region = env('AWS_REGION') as string;
-  private bucket = env('AWS_BUCKET_NAME') as string;
+  private prefix = env('NODE_ENV', 'local');
 
   constructor() {}
 
@@ -18,7 +19,9 @@ export class S3StorageProvider implements ProviderInterface {
     this.s3 = new S3({ endpoint: this.endpoint, region: this.region, signatureVersion: 'v4' });
   }
 
-  async copy(filename: string): Promise<{ password: string; url: string }> {
+  async copy(bucket: BucketName, filename: string): Promise<{ password: string; url: string }> {
+    const Bucket = this.getBucketName(bucket);
+
     await fs.promises.access(filename, fs.constants.R_OK);
 
     try {
@@ -30,10 +33,10 @@ export class S3StorageProvider implements ProviderInterface {
           .replace(ext, '')
           .replace(/[^a-z0-9_-]/g, '') + ext;
 
-      await this.s3.upload({ Bucket: this.bucket, Key: keyName, Body: rs }).promise();
+      await this.s3.upload({ Bucket, Key: keyName, Body: rs }).promise();
 
       const url = await this.s3.getSignedUrlPromise('getObject', {
-        Bucket: this.bucket,
+        Bucket,
         Key: keyName,
         Expires: 7 * 86400,
       });
@@ -49,19 +52,24 @@ export class S3StorageProvider implements ProviderInterface {
     }
   }
 
-  async getUploadUrl(file: string, contentType: string): Promise<any> {
+  async getUploadUrl(bucket: BucketName, file: string, contentType: string): Promise<any> {
+    const Bucket = this.getBucketName(bucket);
     const Key = path.normalize(file);
-    const publicUrl = this.endpoint.replace('https://', `https://${this.bucket}.`) + `/${Key}`;
+    const publicUrl = this.endpoint.replace('https://', `https://${Bucket}.`) + `/${Key}`;
 
     return {
       filename: path.basename(Key),
       publicUrl,
       putUrl: await this.s3.getSignedUrlPromise('putObject', {
         Key,
-        Bucket: this.bucket,
+        Bucket,
         ContentType: contentType,
         Expires: 5 * 60,
       }),
     };
+  }
+
+  private getBucketName(bucket: BucketName): string {
+    return `${this.prefix}-${bucket}`;
   }
 }
