@@ -69,11 +69,11 @@ export class NormalizationProcessAction extends AbstractAction {
     const people: FinalizedPersonInterface[] = [];
 
     if (journey.payload.driver) {
-      let driver = await this.handlePerson(journey.payload.driver, journey);
+      const driver = await this.handlePerson(journey.payload.driver, journey);
       people.push(this.finalizePerson(driver));
     }
     if (journey.payload.passenger) {
-      let passenger = await this.handlePerson(journey.payload.passenger, journey);
+      const passenger = await this.handlePerson(journey.payload.passenger, journey);
       people.push(this.finalizePerson(passenger));
     }
 

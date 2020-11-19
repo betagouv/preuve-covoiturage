@@ -64,8 +64,8 @@
     "@pdc/provider-validator": "~0",
     "adm-zip": "^0.4.16",
     "csv-stringify": "^5.3.3",
+    "date-fns-tz": "^1.0.12",
     "lodash": "^4.17.11",
-    "moment": "^2.24.0",
     "uuid": "^3.3.3"
   }
 }

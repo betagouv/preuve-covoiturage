@@ -11,7 +11,6 @@ const o = {
   base_url: __ENV.LOAD_BASE_URL || 'http://localhost:8080',
   user: {
     email: 'operator@example.com',
-    // email: 'maxicovoit.admin@example.com',
     password: 'admin1234',
   },
 };

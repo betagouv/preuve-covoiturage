@@ -343,6 +343,7 @@ export class CampaignFormater {
           campaignUx.filters.time.map((timeRange) => ({
             start: Number(timeRange.start.slice(0, 2)),
             end: Number(timeRange.end.slice(0, 2)),
+            tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
           })),
         ),
       );

@@ -20,7 +20,7 @@ export class TripApiService extends JsonRpcGetList<LightTrip, LightTrip, any, Tr
     super(http, router, activatedRoute, 'trip');
   }
 
-  count(params?: TripSearchInterfaceWithPagination): Observable<number> {
+  count(params?: TripSearchInterfaceWithPagination): Observable<string> {
     const jsonParams = this.paramGetList(params);
     jsonParams.method = `${this.method}:searchcount`;
 

@@ -27,6 +27,7 @@ export const weekendTrafficLimitPolicy = {
         {
           start: 12,
           end: 23,
+          tz: 'Europe/Paris',
         },
       ],
     },

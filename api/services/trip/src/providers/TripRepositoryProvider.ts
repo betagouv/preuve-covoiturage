@@ -1,12 +1,16 @@
+import { promisify } from 'util';
+import { map } from 'lodash';
+import { utcToZonedTime } from 'date-fns-tz';
+
 import { provider } from '@ilos/common';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
-import { promisify } from 'util';
 
 import {
   TripSearchInterfaceWithPagination,
   TripSearchInterface,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
+  TzResultInterface,
   LightTripInterface,
   ExportTripInterface,
   TripRepositoryInterface,
@@ -24,6 +28,7 @@ import { StatInterface } from '../interfaces/StatInterface';
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'trip.list';
+  private defaultTz: TzResultInterface = { name: 'GMT', utc_offset: '00:00:00' };
 
   constructor(public connection: PostgresConnection) {}
 
@@ -138,13 +143,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
                 values: [filter.value === 0 ? 7 : filter.value],
                 // 0 = sunday ... 6 = saturday >> 1 = monday ... 7 = sunday
               };
-
-            case 'hour': {
-              return {
-                text: '($#::int <= journey_start_dayhour AND journey_start_dayhour <= $#::int)',
-                values: [filter.value.start, filter.value.end],
-              };
-            }
           }
         })
         .reduce(
@@ -171,9 +169,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
     const where = await this.buildWhereClauses(params);
+    const tz = await this.validateTz(params.tz);
 
-    const query = {
-      text: `
+    const values = [...(where ? where.values : [])];
+    const text = `
       SELECT
         journey_start_datetime::date as day,
         sum(passenger_seats)::int as trip,
@@ -189,21 +188,24 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
       GROUP BY day
-      ORDER BY day ASC`,
-      values: [
-        // casting to int ?
-        ...(where ? where.values : []),
-      ],
-      // count(*) FILTER (WHERE array_length(incentives, 1) > 0)
-    };
+      ORDER BY day ASC
+    `;
 
-    query.text = this.numberPlaceholders(query.text);
-    const result = await this.connection.getClient().query(query);
-    return result.rows;
+    const result = await this.connection.getClient().query({
+      values,
+      text: this.numberPlaceholders(text),
+    });
+
+    // convert YYYY-MM-DD date format to full Date on the right TZ
+    return result.rows.map((d) => {
+      d.day = utcToZonedTime(d.day, tz.name);
+      return d;
+    });
   }
 
   public async searchWithCursor(
     params: {
+      tz: string;
       date: { start: Date; end: Date };
       territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
       operator_id?: number[];
@@ -283,6 +285,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     }
 
     const where = await this.buildWhereClauses(cleanParams);
+
+    const queryValues = [...values, ...where.values];
     const queryText = this.numberPlaceholders(`
       SELECT
         ${selectedFields.join(', ')}
@@ -290,7 +294,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
     `);
-    const queryValues = [...values, ...where.values];
 
     const db = await this.connection.getClient().connect();
     const cursorCb = db.query(new Cursor(queryText, queryValues));
@@ -298,8 +301,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>;
   }
 
-  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }> {
+  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {
     const where = await this.buildWhereClauses(params);
+
+    // COUNT(*) is a BIGINT (int8) which is casted as string by node-postgres
+    // to avoid overflows (max value of bigint > Number.MAX_SAFE_INTEGER)
     const query = {
       text: `
         SELECT COUNT(*)
@@ -312,9 +318,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     query.text = this.numberPlaceholders(query.text);
     const result = await this.connection.getClient().query(query);
 
-    // parse the count(*) value which is returned as varchar by Postgres
-    // do not cast as ::int in postgres to avoid overflow on huge values!
-    return { count: result.rowCount ? parseInt(result.rows[0].count, 10) : -1 };
+    return { count: result.rowCount ? result.rows[0].count : -1 };
   }
 
   public async search(
@@ -347,43 +351,36 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     query.text = this.numberPlaceholders(query.text);
 
     const result = await this.connection.getClient().query(query);
+    const pagination = { limit, total: -1, offset: skip };
 
-    const pagination = {
-      limit,
-      total: -1,
-      offset: skip,
-    };
-
-    if (result.rows.length === 0) {
-      return {
-        data: [],
-        meta: {
-          pagination,
-        },
-      };
+    if (!result.rowCount) {
+      return { data: [], meta: { pagination } };
     }
 
-    const final_data = result.rows.map(({ total_count, ...data }) => ({
-      ...data,
-      campaigns_id:
-        !data.campaigns_id || !data.campaigns_id.length
-          ? []
-          : [
-              ...data.campaigns_id.reduce((s: Set<number>, item: any) => {
-                if (item.policy_id && !s.has(item.policy_id)) {
-                  s.add(item.policy_id);
-                }
-                return s;
-              }, new Set<number>()),
-            ],
-    }));
+    // manually map results to data structure to keep pg sorting
+    const data = new Array(result.rows.length);
+    let index = 0;
+    while (index < data.length) {
+      data[index] = result.rows[index];
+      data[index]['campaigns_id'] = [...new Set(map(result.rows[index]['campaigns_id'] || [], 'policy_id'))];
+      index += 1;
+    }
 
-    return {
-      data: final_data,
-      meta: {
-        pagination,
-      },
-    };
+    return { data, meta: { pagination } };
+  }
+
+  // validate given timezone against PostgreSQL list.
+  // JSON schema's tzMacro should have validated this before.
+  // You might need to update the tzMacro list if PostgreSQL updates.
+  public async validateTz(tz?: string): Promise<TzResultInterface> {
+    if (!tz) return this.defaultTz;
+
+    const resTimezone = await this.connection.getClient().query<TzResultInterface>({
+      text: 'SELECT name, utc_offset::text FROM pg_timezone_names WHERE LOWER(name) = LOWER($1)',
+      values: [tz],
+    });
+
+    return resTimezone.rowCount ? resTimezone.rows[0] : this.defaultTz;
   }
 
   // replace $# in query by $1, $2, ...

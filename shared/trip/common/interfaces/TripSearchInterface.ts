@@ -1,22 +1,16 @@
 export interface TripSearchInterface {
+  tz?: string;
   campaign_id?: number[];
   date?: {
     start?: Date;
     end?: Date;
   };
-  hour?: {
-    start: number;
-    end: number;
-  };
   days?: number[];
-
   status?: string;
-
   distance?: {
     min?: number;
     max?: number;
   };
-
   ranks?: string[];
   operator_id?: number[];
   territory_id?: number[];

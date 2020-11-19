@@ -50,6 +50,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
       this.loadStat(filter);
     });
+
     this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe((stats) => {
       if (stats) {
         this.graphData = stats.graph;
