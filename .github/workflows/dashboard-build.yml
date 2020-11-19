@@ -43,7 +43,6 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
           file: ./docker/prod/dashboard/Dockerfile
-          target: test
           load: true
           push: false
           tags: ${{ steps.docker_meta.outputs.tags }}
@@ -73,7 +72,6 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
           file: ./docker/prod/dashboard/Dockerfile
-          target: prod
           push: true
           pull: false
           tags: ${{ steps.docker_meta.outputs.tags }}
