@@ -98,10 +98,12 @@
       <app-page-content>
         <div class="CampaignForm-content">
           <div class="CampaignForm-content-wrapper CampaignForm-content-wrapper--summary">
+            <h4>{{ currentStep }} </h4>
             <app-summary-form
               [campaignForm]="campaignFormGroup"
               [isCreating]="creationFromScratch || creationFromParentId"
               [loading]="requestLoading"
+              [visible]="_matStepper && _matStepper.selectedIndex === 3"
               (onSaveCampaign)="saveCampaign()"
             ></app-summary-form>
           </div>

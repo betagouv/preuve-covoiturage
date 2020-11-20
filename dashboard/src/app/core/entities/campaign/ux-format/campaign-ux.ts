@@ -9,7 +9,7 @@ import {
   RestrictionUxInterface,
   RetributionUxInterface,
 } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
-import { CampaignStats } from '../api-format/CampaignStats';
+import { CampaignReducedStats } from '../api-format/CampaignStats';
 
 export class CampaignUx {
   public _id: number;
@@ -20,7 +20,7 @@ export class CampaignUx {
   public end: Moment;
   public status: CampaignStatusEnum;
   public parent_id: number;
-  public state?: CampaignStats;
+  public state?: CampaignReducedStats;
   public unit: IncentiveUnitEnum;
   public filters: IncentiveFiltersUxInterface;
   public max_amount: number;

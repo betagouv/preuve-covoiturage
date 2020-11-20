@@ -13,13 +13,13 @@ import { Clone } from '~/core/entities/IClone';
 import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.formater';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CampaignInterface } from '~/core/entities/api/shared/common/interfaces/CampaignInterface';
-import { CampaignStats } from './CampaignStats';
+import { CampaignReducedStats } from './CampaignStats';
 
 export class Campaign extends BaseModel implements FormModel, Model, MapModel<Campaign>, Clone<Campaign> {
   public _id: number;
   public territory_id: number;
   public name: string;
-  public state?: CampaignStats;
+  public state?: CampaignReducedStats;
 
   public description: string;
   public start_date: Date;

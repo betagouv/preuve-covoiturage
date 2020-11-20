@@ -42,6 +42,7 @@ import { CampaignInseeFilterStartEndViewComponent } from './components/campaign-
 import { CampaignDraftViewComponent } from './pages/campaign-draft-view/campaign-draft-view.component';
 import { CampaignActiveViewComponent } from './pages/campaign-active-view/campaign-active-view.component';
 import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign-admin-list.component';
+import { CampaignSimulationPaneComponent } from './components/campaign-simulation-pane/campaign-simulation-pane.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign
     CampaignDraftViewComponent,
     CampaignActiveViewComponent,
     CampaignAdminListComponent,
+    CampaignSimulationPaneComponent,
   ],
   imports: [
     CampaignRoutingModule,

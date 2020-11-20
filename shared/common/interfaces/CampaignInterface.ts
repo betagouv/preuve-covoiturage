@@ -1,4 +1,4 @@
-import { CampaignStats } from '~/core/entities/campaign/api-format/CampaignStats';
+import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
 import { RuleInterface } from './RuleInterface';
 
 export interface CampaignInterface {
@@ -9,7 +9,7 @@ export interface CampaignInterface {
   name: string;
   description: string;
   start_date: Date;
-  state?: CampaignStats;
+  state?: CampaignReducedStats;
   end_date: Date;
   unit: string;
   status: string;
