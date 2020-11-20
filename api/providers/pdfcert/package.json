@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@ilos/common": "^0",
+    "axios": "^0.21.0",
     "pdf-lib": "^1.11.2"
   }
 }

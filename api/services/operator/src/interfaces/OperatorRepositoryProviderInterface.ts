@@ -4,7 +4,7 @@ import { OperatorListInterface } from '../shared/operator/common/interfaces/Oper
 
 export interface OperatorRepositoryProviderInterface {
   find(id: number): Promise<OperatorDbInterface>;
-  quickFind(_id: number): Promise<{ uuid: string; name: string }>;
+  quickFind(_id: number): Promise<{ uuid: string; name: string; meta: object }>;
   all(): Promise<OperatorListInterface[]>;
   create(data: OperatorInterface): Promise<OperatorDbInterface>;
   delete(_id: number): Promise<void>;
@@ -16,7 +16,7 @@ export abstract class OperatorRepositoryProviderInterfaceResolver implements Ope
   async find(id: number): Promise<OperatorDbInterface> {
     throw new Error('Not implemented');
   }
-  async quickFind(_id: number): Promise<{ uuid: string; name: string }> {
+  async quickFind(_id: number): Promise<{ uuid: string; name: string; meta: object }> {
     throw new Error('Not implemented');
   }
   async all(): Promise<OperatorListInterface[]> {

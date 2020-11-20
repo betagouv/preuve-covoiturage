@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import {
   PDFDocument,
   PageSizes,
@@ -44,12 +46,13 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     // embed fonts
     this.fonts.regular = await this.pdfDoc.embedFont(StandardFonts.Helvetica);
     this.fonts.bold = await this.pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    this.fonts.italic = await this.pdfDoc.embedFont(StandardFonts.HelveticaOblique);
     this.fonts.monospace = await this.pdfDoc.embedFont(StandardFonts.Courier);
 
     // Add a blank page to the document
     this.page = this.pdfDoc.addPage(PageSizes.A4);
 
-    // header
+    // admin header
     this.page.drawRectangle({
       x: 28,
       y: 28,
@@ -109,6 +112,94 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       size: 9,
       rotate: { type: RotationTypes.Degrees, angle: 90 },
     });
+
+    // metadata header
+    if ('header' in data) {
+      if ('operator' in data.header) {
+        if (data.header.operator.name && data.header.operator.name !== '') {
+          this.text(data.header.operator.name.trim().substring(0, 26), {
+            x: 150,
+            y: 794,
+            size: 13,
+            font: this.fonts.bold,
+          });
+        }
+
+        if (data.header.operator.content && data.header.operator.content !== '') {
+          this.page.moveTo(150, 788);
+          data.header.operator.content
+            .split('\n')
+            .splice(0, 6)
+            .forEach((line) => {
+              this.page.moveDown(13);
+              this.text(line.trim().substr(0, 50), { size: 9 });
+            });
+        }
+
+        if (data.header.operator.image && data.header.operator.image !== '') {
+          try {
+            // gray background
+            this.page.drawRectangle({
+              x: 30,
+              y: 700,
+              width: 110,
+              height: 110,
+              color: rgb(0.95, 0.95, 0.95),
+            });
+
+            // image
+            const { data: imageBytes } = await axios.get<ArrayBuffer>(data.header.operator.image, {
+              responseType: 'arraybuffer',
+            });
+
+            const image = await this.pdfDoc.embedPng(imageBytes);
+            const { width, height } = image.scaleToFit(100, 100);
+
+            this.page.drawImage(image, {
+              x: 35 + (100 - width) / 2,
+              y: 705 + (100 - height) / 2,
+              width,
+              height,
+            });
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      }
+
+      if ('identity' in data.header) {
+        if (data.header.identity.name && data.header.identity.name !== '') {
+          this.text(data.header.identity.name.trim().substring(0, 26), {
+            x: 370,
+            y: 794,
+            size: 13,
+            font: this.fonts.bold,
+          });
+        }
+
+        if (data.header.identity.content && data.header.identity.content !== '') {
+          this.page.moveTo(370, 788);
+          data.header.identity.content
+            .split('\n')
+            .splice(0, 6)
+            .forEach((line) => {
+              this.page.moveDown(13);
+              this.text(line.trim().substr(0, 50), { size: 9 });
+            });
+        }
+      }
+
+      if ('notes' in data.header && data.header.notes !== '') {
+        this.text(data.header.notes.trim().substring(0, 440), {
+          x: 150,
+          y: 690,
+          size: 8,
+          font: this.fonts.italic,
+          maxWidth: 415,
+          lineHeight: 10,
+        });
+      }
+    }
 
     return Buffer.from(await this.pdfDoc.save());
   }

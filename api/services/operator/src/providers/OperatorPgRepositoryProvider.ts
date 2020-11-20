@@ -53,10 +53,10 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return result.rows[0];
   }
 
-  async quickFind(_id: number): Promise<{ uuid: string; name: string }> {
+  async quickFind(_id: number): Promise<{ uuid: string; name: string; meta: object }> {
     const result = await this.connection.getClient().query({
       text: `
-        SELECT uuid, name FROM ${this.table}
+        SELECT uuid, name, meta FROM ${this.table}
         WHERE _id = $1
         AND deleted_at IS NULL
         LIMIT 1

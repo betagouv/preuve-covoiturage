@@ -439,19 +439,19 @@ export class HttpTransport implements TransportInterface {
     );
 
     /**
-     * Download a PNG or PDF of the certificate
+     * Download PDF of the certificate
      * - accessible with an application token
-     * - uses /v2/certificates/render to capture the rendered certificate
-     * - uses the remote printer to capture the rendered certificate
      * - print a PDF returned back to the caller
      */
-    this.app.get(
-      '/v2/certificates/pdf/:uuid/',
+    this.app.post(
+      '/v2/certificates/pdf',
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
-
-        const call = makeCall('certificate:download', { uuid }, { user: { permissions: ['certificate.download'] } });
+        const call = makeCall(
+          'certificate:download',
+          { uuid: req.body.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase(), meta: req.body.meta },
+          { user: { permissions: ['certificate.download'] } },
+        );
         const response = (await this.kernel.handle(call)) as RPCResponseType;
 
         this.raw(res, get(response, 'result.body', response), get(response, 'result.headers', {}));

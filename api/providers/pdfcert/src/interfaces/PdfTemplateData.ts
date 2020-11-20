@@ -13,4 +13,16 @@ export interface PdfTemplateData {
     url: string;
     qrcode: string;
   };
+  header?: {
+    operator?: {
+      image?: string;
+      name?: string;
+      content?: string;
+    };
+    identity?: {
+      name?: string;
+      content?: string;
+    };
+    notes?: string;
+  };
 }

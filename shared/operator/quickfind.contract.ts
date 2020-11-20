@@ -5,6 +5,7 @@ export interface ParamsInterface {
 export interface ResultInterface {
   uuid: string;
   name: string;
+  meta: object;
 }
 
 export const handlerConfig = {

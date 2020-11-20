@@ -13,7 +13,6 @@ import { TemplateExtension } from '@pdc/provider-template';
 import { config } from './config';
 import { CertificatePgRepositoryProvider } from './providers/CertificatePgRepositoryProvider';
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
-import { TerritoryPgRepository } from './providers/TerritoryPgRepositoryProvider';
 import { CreateCertificateAction } from './actions/CreateCertificateAction';
 import { FindCertificateAction } from './actions/FindCertificateAction';
 import { ListCertificateAction } from './actions/ListCertificateAction';
@@ -32,7 +31,6 @@ import { binding as listBinding } from './shared/certificate/list.schema';
     CryptoProvider,
     CertificatePgRepositoryProvider,
     CarpoolPgRepositoryProvider,
-    TerritoryPgRepository,
     PdfCertProvider,
   ],
   validator: [createBinding, findBinding, downloadBinding, listBinding],

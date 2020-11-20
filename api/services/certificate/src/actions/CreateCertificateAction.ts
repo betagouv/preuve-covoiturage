@@ -52,7 +52,7 @@ export class CreateCertificateAction extends AbstractAction {
     const meta = {
       tz,
       identity: { uuid: personUUID },
-      operator: { uuid: operator.uuid, name: operator.name },
+      operator: { uuid: operator.uuid, name: operator.name, logo: operator.meta.logo_url }, // TODO
       total_km,
       total_cost,
       remaining,
@@ -80,7 +80,6 @@ export class CreateCertificateAction extends AbstractAction {
       data: {
         uuid: certificate.uuid,
         created_at: certificate.created_at,
-        pdf_url: `${this.config.get('url.certificateBaseUrl')}/pdf/${certificate.uuid}`,
         meta: certificate.meta,
       },
     };
