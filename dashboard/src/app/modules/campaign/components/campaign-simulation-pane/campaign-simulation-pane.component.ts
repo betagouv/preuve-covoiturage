@@ -8,6 +8,7 @@ import { CampaignApiService } from '../../services/campaign-api.service';
 import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.formater';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { takeUntil } from 'rxjs/operators';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 interface SimulationDateRange {
   startDate: Date;
@@ -38,32 +39,48 @@ function getTimeState(nbMonth): SimulationDateRange {
 })
 export class CampaignSimulationPaneComponent extends DestroyObservable implements OnInit, OnChanges {
   state: CampaignReducedStats = { trip_excluded: 0, trip_subsidized: 0, amount: 0 };
-  timeState = getTimeState(3);
   @Input() campaign: CampaignUx;
 
+  nbMonth = 1;
+  timeState = getTimeState(1);
   simulatedCampaign: CampaignUx;
 
-  constructor(protected campaignApi: CampaignApiService) {
+  constructor(protected campaignApi: CampaignApiService, protected auth: AuthenticationService) {
     super();
   }
 
-  updateCampaign(campaign: CampaignUx = this.campaign) {
-    this.simulatedCampaign = new CampaignUx(campaign);
+  updateCampaign() {
+    this.timeState = getTimeState(this.nbMonth);
     this.simulatedCampaign.start = moment(this.timeState.startDate);
     this.simulatedCampaign.end = moment(this.timeState.endDate);
-
-    this.campaignApi
-      .simulate(CampaignFormater.toApi(this.simulatedCampaign))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((state) => (this.state = state));
+    if (!this.simulatedCampaign._id) {
+      if (this.auth.user && (this.simulatedCampaign.territory_id || this.auth.user.territory_id)) {
+        const simCampaignApi = CampaignFormater.toApi(this.simulatedCampaign);
+        if (!simCampaignApi.territory_id) {
+          simCampaignApi.territory_id = this.auth.user.territory_id;
+        }
+        // console.log('simulate campaign', this.simulatedCampaign, simCampaignApi);
+        this.campaignApi
+          .simulate(simCampaignApi)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((state) => {
+            this.state = state;
+          });
+      } else {
+        console.warn(
+          // eslint-disable-next-line max-len
+          'campaign sim panel : User has to be connected and territory_id has to provider from user context or campaign',
+        );
+      }
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.campaign) {
-      this.updateCampaign(changes.campaigns.currentValue);
-    }
+      this.simulatedCampaign = new CampaignUx(changes.campaign.currentValue);
 
-    throw new Error('Method not implemented.');
+      this.updateCampaign();
+    }
   }
 
   ngOnInit(): void {

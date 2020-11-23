@@ -1,4 +1,4 @@
-import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
+// import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
 import { RuleInterface } from './RuleInterface';
 
 export interface CampaignInterface {
@@ -9,7 +9,11 @@ export interface CampaignInterface {
   name: string;
   description: string;
   start_date: Date;
-  state?: CampaignReducedStats;
+  state?: {
+    amount: number;
+    trip_subsidized: number;
+    trip_excluded: number;
+  };
   end_date: Date;
   unit: string;
   status: string;

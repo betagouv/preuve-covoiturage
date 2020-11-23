@@ -509,7 +509,7 @@ export class CampaignFormater {
     //   delete campaign.parent_id;
     // }
 
-    return {
+    const apiData: CampaignInterface = {
       _id,
       name,
       state,
@@ -517,7 +517,7 @@ export class CampaignFormater {
       territory_id,
       status,
       unit,
-      parent_id,
+      // parent_id: parent_id || 0,
       ui_status: uiStatus,
       rules: campaignRetributionRules,
       global_rules: campaignGlobalRetributionRules,
@@ -525,5 +525,9 @@ export class CampaignFormater {
       start_date: campaignUx.start.startOf('day').toISOString() as any,
       end_date: campaignUx.end.endOf('day').toISOString() as any,
     };
+
+    if (parent_id) apiData.parent_id = parent_id;
+
+    return apiData;
   }
 }

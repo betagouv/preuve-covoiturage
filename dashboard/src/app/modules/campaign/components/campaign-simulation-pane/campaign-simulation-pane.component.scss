@@ -1,0 +1,23 @@
+.SimForm-summary {
+  background-color: #fafbfd;
+  border-radius: 5px;
+  padding: 25px 50px;
+  margin: 25px 0;
+}
+
+h4,
+p {
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  max-width: 640px;
+  margin: 15px 0 20px;
+
+  h5,
+  p {
+    margin: 0 25px 0 0;
+  }
+}

@@ -30,7 +30,7 @@ import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvid
       ],
     ],
     'validate.rules',
-    ['validate.date', ['campaign', new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 64), new Date()]],
+    ['validate.date', ['campaign', new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 4), new Date()]],
   ],
 })
 export class SimulateOnPastAction extends AbstractAction {
