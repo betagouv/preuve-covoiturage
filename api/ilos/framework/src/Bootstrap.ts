@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { catchErrors, gracefulShutdown, logger } from '@banzaicloud/service-tools';
 
 import {
   kernel,
@@ -107,6 +108,8 @@ export class Bootstrap {
     command: string | ((kernel: KernelInterface) => TransportInterface) | undefined,
     ...opts: any[]
   ): Promise<TransportInterface> {
+    logger.interceptConsole();
+
     let options = [...opts];
 
     const kernelConstructor = this.kernel();
@@ -145,30 +148,8 @@ export class Bootstrap {
   }
 
   protected registerShutdownHook(kernelInstance: KernelInterface, transport: TransportInterface) {
-    function handle() {
-      setTimeout(() => {
-        process.exit(0);
-      }, 5000);
-
-      transport
-        .down()
-        .then(() => {
-          kernelInstance
-            .shutdown()
-            .then(() => {
-              process.exit(0);
-            })
-            .catch(() => {
-              process.exit(1);
-            });
-        })
-        .catch(() => {
-          process.exit(1);
-        });
-    }
-
-    process.on('SIGINT', handle);
-    process.on('SIGTERM', handle);
+    catchErrors([transport.down, kernelInstance.shutdown]);
+    gracefulShutdown([transport.down, kernelInstance.shutdown]);
   }
 
   async boot(command: string | undefined, ...opts: any[]) {

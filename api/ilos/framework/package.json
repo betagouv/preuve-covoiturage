@@ -26,6 +26,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
+    "@banzaicloud/service-tools": "^4.0.4",
     "@ilos/cli": "^0.4.1",
     "@ilos/common": "^0.4.1",
     "@ilos/connection-manager": "^0.4.1",
