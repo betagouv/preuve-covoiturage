@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
@@ -23,7 +23,7 @@ import { uniqueRetributionValidator } from '../../validators/retribution-unique.
   templateUrl: './campaign-form.component.html',
   styleUrls: ['./campaign-form.component.scss'],
 })
-export class CampaignFormComponent extends DestroyObservable implements OnInit {
+export class CampaignFormComponent extends DestroyObservable implements OnInit, AfterViewInit {
   @Input() campaignId: number;
   @Input() parentId: number;
   @Input() section: number;
@@ -57,9 +57,14 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   ) {
     super();
   }
+  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
     this.initForms();
+    this._authService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => (this.userIsDemo = user && user.role.indexOf('demo') !== -1));
+
     if (this.campaignId) {
       this.loadCampaign(this.campaignId);
     } else if (this.parentId) {
@@ -70,13 +75,8 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       this._campaignStoreService.selectNew();
       this.creationFromScratch = true;
       this.loading = false;
+      this.initCampaigns();
     }
-
-    this._authService.user$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((user) => (this.userIsDemo = user && user.role.indexOf('demo') !== -1));
-
-    this.initCampaigns();
   }
 
   public get controls(): { [key: string]: AbstractControl } {
