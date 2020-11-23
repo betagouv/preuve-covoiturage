@@ -1,0 +1,41 @@
+{
+  "defaultEnv": "ssl",
+  "ssl": {
+    "driver": "pg",
+    "user": {
+      "ENV": "APP_POSTGRES_USERNAME"
+    },
+    "password": {
+      "ENV": "APP_POSTGRES_PASSWORD"
+    },
+    "host": {
+      "ENV": "APP_POSTGRES_HOST"
+    },
+    "database": {
+      "ENV": "APP_POSTGRES_DATABASE"
+    },
+    "port": {
+      "ENV": "APP_POSTGRES_PORT"
+    },
+    "ssl": true
+  },
+  "nossl": {
+    "driver": "pg",
+    "user": {
+      "ENV": "APP_POSTGRES_USERNAME"
+    },
+    "password": {
+      "ENV": "APP_POSTGRES_PASSWORD"
+    },
+    "host": {
+      "ENV": "APP_POSTGRES_HOST"
+    },
+    "database": {
+      "ENV": "APP_POSTGRES_DATABASE"
+    },
+    "port": {
+      "ENV": "APP_POSTGRES_PORT"
+    },
+    "ssl": false
+  }
+}
