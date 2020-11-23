@@ -1,4 +1,4 @@
-import { Job, Queue, JobsOptions } from 'bullmq';
+import { Job, Queue, JobsOptions, QueueOptions } from 'bullmq';
 import { get, isString } from 'lodash';
 import { RedisConnection } from '@ilos/connection-redis';
 import { HandlerInterface, InitHookInterface, CallType, HasLogger } from '@ilos/common';
@@ -20,7 +20,8 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
   }
 
   protected createQueue(): Queue {
-    return new Queue(this.service, { connection: this.redis.getClient() });
+    const options = { connection: this.redis.getClient() } as QueueOptions;
+    return new Queue(this.service, options);
   }
 
   public getClient(): Queue {
