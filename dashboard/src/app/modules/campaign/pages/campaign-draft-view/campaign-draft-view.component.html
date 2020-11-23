@@ -22,7 +22,14 @@
 
     <div class="campaignDraftView-content">
       <div>
-        <app-campaign-main-metrics [campaign]="campaignUx"></app-campaign-main-metrics>
+        <app-campaign-simulation-pane
+          *ngIf="campaignUx && campaignUx.status === 'draft'"
+          [campaign]="campaignUx"
+        ></app-campaign-simulation-pane>
+        <app-campaign-main-metrics
+          *ngIf="campaignUx && campaignUx.status !== 'draft'"
+          [campaign]="campaignUx"
+        ></app-campaign-main-metrics>
         <app-campaign-contacts [territory]="territory"></app-campaign-contacts>
       </div>
       <div>
