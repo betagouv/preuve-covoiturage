@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { catchErrors, gracefulShutdown, logger } from '@banzaicloud/service-tools';
+import pino from 'pino';
 
 import {
   kernel,
@@ -10,6 +10,7 @@ import {
   NewableType,
   ServiceContainerInterface,
 } from '@ilos/common';
+import { catchErrors, registerGracefulShutdown, interceptConsole } from '@ilos/tools';
 import { CliTransport } from '@ilos/cli';
 import { HttpTransport } from '@ilos/transport-http';
 import { QueueTransport } from '@ilos/transport-redis';
@@ -108,7 +109,11 @@ export class Bootstrap {
     command: string | ((kernel: KernelInterface) => TransportInterface) | undefined,
     ...opts: any[]
   ): Promise<TransportInterface> {
-    logger.interceptConsole();
+    const logger = pino({
+      level: process.env.NODE_ENV !== 'production' ? 'debug' : 'error',
+    });
+
+    interceptConsole(logger);
 
     let options = [...opts];
 
@@ -123,6 +128,9 @@ export class Bootstrap {
 
     @kernel({
       children: serviceProviders,
+      config: {
+        logger,
+      },
     })
     class CustomKernel extends kernelConstructor {}
 
@@ -149,7 +157,7 @@ export class Bootstrap {
 
   protected registerShutdownHook(kernelInstance: KernelInterface, transport: TransportInterface) {
     catchErrors([transport.down, kernelInstance.shutdown]);
-    gracefulShutdown([transport.down, kernelInstance.shutdown]);
+    registerGracefulShutdown([transport.down, kernelInstance.shutdown]);
   }
 
   async boot(command: string | undefined, ...opts: any[]) {

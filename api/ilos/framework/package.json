@@ -26,15 +26,16 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@banzaicloud/service-tools": "^4.0.4",
     "@ilos/cli": "^0.4.1",
     "@ilos/common": "^0.4.1",
     "@ilos/connection-manager": "^0.4.1",
     "@ilos/core": "^0.4.1",
     "@ilos/queue": "^0.4.1",
+    "@ilos/tools": "^0.4.1",
     "@ilos/transport-http": "^0.4.1",
     "@ilos/transport-redis": "^0.4.1",
-    "@ilos/validator": "^0.4.1"
+    "@ilos/validator": "^0.4.1",
+    "pino": "^6.7.0"
   },
   "devDependencies": {
     "get-port": "^5.1.1"
