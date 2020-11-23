@@ -36,6 +36,8 @@ import { nestParams } from './helpers/nestParams';
 import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
 import { RPCResponseType } from './shared/common/rpc/RPCResponseType';
 import { TokenPayloadInterface } from './shared/application/common/interfaces/TokenPayloadInterface';
+import { healthCheckFactory } from './helpers/healthCheckFactory';
+import { prometheusMetricsFactory } from './helpers/prometheusMetricsFactory';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -77,6 +79,7 @@ export class HttpTransport implements TransportInterface {
     this.registerBodyHandler();
     this.registerSessionHandler();
     this.registerSecurity();
+    this.registerMetrics();
     this.registerGlobalMiddlewares();
     this.registerStatsRoutes();
     this.registerAuthRoutes();
@@ -177,6 +180,11 @@ export class HttpTransport implements TransportInterface {
 
     this.app.use(signResponseMiddleware);
     this.app.use(dataWrapMiddleware);
+  }
+
+  private registerMetrics(): void {
+    this.app.get('/health', rateLimiter(), healthCheckFactory([]));
+    this.app.get('/metrics', rateLimiter(), prometheusMetricsFactory());
   }
 
   /**
