@@ -1,9 +1,9 @@
 import { Job, Queue, JobsOptions, QueueOptions } from 'bullmq';
 import { get, isString } from 'lodash';
 import { RedisConnection } from '@ilos/connection-redis';
-import { HandlerInterface, InitHookInterface, CallType, HasLogger } from '@ilos/common';
+import { HandlerInterface, InitHookInterface, CallType } from '@ilos/common';
 
-export class QueueHandler extends HasLogger implements HandlerInterface, InitHookInterface {
+export class QueueHandler implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
 
   protected readonly service: string;
@@ -15,9 +15,7 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
 
   private client: Queue;
 
-  constructor(protected redis: RedisConnection) {
-    super();
-  }
+  constructor(protected redis: RedisConnection) {}
 
   protected createQueue(): Queue {
     const options = { connection: this.redis.getClient() } as QueueOptions;
@@ -60,19 +58,19 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
         for (const job of await this.client.getRepeatableJobs()) {
           if (job.id === options.jobId) {
             await this.client.removeRepeatableByKey(job.key);
-            this.logger.debug(`Removed repeatable job ${options.jobId}`);
+            console.debug(`Removed repeatable job ${options.jobId}`);
           }
         }
 
         for (const job of await this.client.getJobs(['delayed'])) {
           if (get(job, 'opts.repeat.jobId') === options.jobId) {
             await job.remove();
-            this.logger.debug(`Removed delayed job ${options.jobId}`);
+            console.debug(`Removed delayed job ${options.jobId}`);
           }
         }
       }
 
-      this.logger.debug(`Async call ${method}`, { params, context });
+      console.debug(`Async call ${method}`, { params, context });
 
       const job = await this.client.add(
         method,
@@ -90,7 +88,7 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
 
       return job;
     } catch (e) {
-      this.logger.debug(`Async call ${call.method} failed`, e);
+      console.debug(`Async call ${call.method} failed`, e);
       throw new Error('An error occured');
     }
   }

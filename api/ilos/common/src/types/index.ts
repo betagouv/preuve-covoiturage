@@ -6,7 +6,6 @@ export * from './container';
 export * from './core';
 export * from './handler';
 export * from './hooks';
-export * from './logger';
 export * from './shared';
 export * from './transport';
 export * from './queue';

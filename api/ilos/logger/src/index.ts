@@ -1,1 +1,0 @@
-export { LoggerExtension } from './LoggerExtension';

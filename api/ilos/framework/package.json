@@ -30,7 +30,6 @@
     "@ilos/common": "^0.4.1",
     "@ilos/connection-manager": "^0.4.1",
     "@ilos/core": "^0.4.1",
-    "@ilos/logger": "^0.4.1",
     "@ilos/queue": "^0.4.1",
     "@ilos/transport-http": "^0.4.1",
     "@ilos/transport-redis": "^0.4.1",
