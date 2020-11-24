@@ -3,7 +3,6 @@ import { address } from '../common/schemas/address';
 import { bank } from '../common/schemas/bank';
 import { cgu } from '../common/schemas/cgu';
 import { contacts } from '../common/schemas/contacts';
-import { meta } from './common/schemas/meta';
 
 export const alias = 'operator.create';
 export const schema = {
@@ -17,7 +16,6 @@ export const schema = {
     bank,
     contacts,
     cgu,
-    meta,
     name: { macro: 'varchar' },
     legal_name: { macro: 'varchar' },
     siret: { macro: 'siret' },

@@ -53,10 +53,10 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return result.rows[0];
   }
 
-  async quickFind(_id: number): Promise<{ uuid: string; name: string; meta: object }> {
+  async quickFind(_id: number): Promise<{ uuid: string; name: string }> {
     const result = await this.connection.getClient().query({
       text: `
-        SELECT uuid, name, meta FROM ${this.table}
+        SELECT uuid, name FROM ${this.table}
         WHERE _id = $1
         AND deleted_at IS NULL
         LIMIT 1
@@ -80,7 +80,6 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
           siret,
           company,
           address,
-          meta,
           cgu_accepted_at,
           cgu_accepted_by,
           created_at,
@@ -113,7 +112,6 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
           address,
           bank,
           contacts,
-          meta
         ) VALUES (
           $1,
           $2,
@@ -121,8 +119,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
           $4,
           $5,
           $6,
-          $7,
-          $8
+          $7
         )
         RETURNING *
       `,
@@ -134,7 +131,6 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         data.address || '{}',
         data.bank || '{}',
         data.contacts || '{}',
-        data.meta || '{}',
       ],
     };
 
@@ -172,7 +168,6 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       company: '{}',
       address: '{}',
       contacts: '{}',
-      meta: '{}',
       cgu_accepted_at: null,
       cgu_accepted_by: null,
       ...patch,
@@ -195,7 +190,6 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       'address',
       'bank',
       'contacts',
-      'meta',
       'cgu_accepted_at',
       'cgu_accepted_by',
     ].filter((k) => Object.keys(patch).indexOf(k) >= 0);
