@@ -53,12 +53,16 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return result.rows[0];
   }
 
-  async quickFind(_id: number): Promise<{ uuid: string; name: string }> {
+  async quickFind(_id: number, withThumbnail = false): Promise<{ uuid: string; name: string; thumbnail?: string }> {
+    const selectThumbnail = withThumbnail ? ", encode(ot.data, 'hex')::text AS thumbnail" : '';
+    const joinThumbnail = withThumbnail ? ' LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id' : '';
+
     const result = await this.connection.getClient().query({
       text: `
-        SELECT uuid, name FROM ${this.table}
-        WHERE _id = $1
-        AND deleted_at IS NULL
+        SELECT uuid, name ${selectThumbnail} FROM ${this.table} oo
+        ${joinThumbnail}
+        WHERE oo._id = $1
+        AND oo.deleted_at IS NULL
         LIMIT 1
       `,
       values: [_id],
@@ -66,7 +70,13 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
     if (!result.rowCount) throw new NotFoundException(`Operator with _id (${_id}) not found`);
 
-    return result.rows[0];
+    const operator = result.rows[0];
+
+    if (withThumbnail) {
+      operator.thumbnail = this.hexToB64(operator.thumbnail);
+    }
+
+    return operator;
   }
 
   async all(): Promise<OperatorListInterface[]> {
@@ -102,8 +112,9 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       });
     }
 
-    const query = {
-      text: `
+    try {
+      const query = {
+        text: `
         INSERT INTO ${this.table} (
           name,
           legal_name,
@@ -111,7 +122,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
           company,
           address,
           bank,
-          contacts,
+          contacts
         ) VALUES (
           $1,
           $2,
@@ -123,24 +134,44 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         )
         RETURNING *
       `,
-      values: [
-        data.name,
-        data.legal_name,
-        data.siret,
-        data.company || '{}',
-        data.address || '{}',
-        data.bank || '{}',
-        data.contacts || '{}',
-      ],
-    };
+        values: [
+          data.name,
+          data.legal_name,
+          data.siret,
+          data.company || '{}',
+          data.address || '{}',
+          data.bank || '{}',
+          data.contacts || '{}',
+        ],
+      };
 
-    const result = await this.connection.getClient().query(query);
-    if (result.rowCount !== 1) {
-      throw new Error(`Unable to create operator (${JSON.stringify(data)})`);
+      await this.connection.getClient().query('BEGIN');
+
+      // store the operator
+      const result = await this.connection.getClient().query(query);
+
+      if (result.rowCount !== 1) {
+        throw new Error(`Unable to create operator (${JSON.stringify(data)})`);
+      }
+
+      // store the thumbnail
+      if ('thumbnail' in data && data.thumbnail.length) {
+        await this.insertThumbnail(result.rows[0]._id, data.thumbnail);
+      }
+
+      await this.connection.getClient().query('COMMIT');
+
+      return result.rows[0];
+    } catch (e) {
+      await this.connection.getClient().query('ROLLBACK');
+      throw e;
     }
-    return result.rows[0];
   }
 
+  /**
+   * Soft delete the operator.
+   * A real delete will remove the operator.thumbnails entries too
+   */
   async delete(id: number): Promise<void> {
     const query = {
       text: `
@@ -182,52 +213,95 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       });
     }
 
-    const updatablefields = [
-      'name',
-      'legal_name',
-      'siret',
-      'company',
-      'address',
-      'bank',
-      'contacts',
-      'cgu_accepted_at',
-      'cgu_accepted_by',
-    ].filter((k) => Object.keys(patch).indexOf(k) >= 0);
+    try {
+      const updatablefields = [
+        'name',
+        'legal_name',
+        'siret',
+        'company',
+        'address',
+        'bank',
+        'contacts',
+        'cgu_accepted_at',
+        'cgu_accepted_by',
+      ].filter((k) => Object.keys(patch).indexOf(k) >= 0);
 
-    const sets = {
-      text: ['updated_at = NOW()'],
-      values: [],
-    };
+      const sets = {
+        text: ['updated_at = NOW()'],
+        values: [],
+      };
 
-    for (const fieldName of updatablefields) {
-      sets.text.push(`${fieldName} = $#`);
-      sets.values.push(patch[fieldName]);
-    }
+      for (const fieldName of updatablefields) {
+        sets.text.push(`${fieldName} = $#`);
+        sets.values.push(patch[fieldName]);
+      }
 
-    const query = {
-      text: `
+      const query = {
+        text: `
       UPDATE ${this.table}
         SET ${sets.text.join(',')}
         WHERE _id = $#
         AND deleted_at IS NULL
         RETURNING *
       `,
-      values: [...sets.values, id],
-    };
+        values: [...sets.values, id],
+      };
 
-    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
-      if (idx === origin.length - 1) {
-        return `${acc}${current}`;
+      query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
+        if (idx === origin.length - 1) {
+          return `${acc}${current}`;
+        }
+
+        return `${acc}${current}$${idx + 1}`;
+      }, '');
+
+      await this.connection.getClient().query('BEGIN');
+
+      const result = await this.connection.getClient().query(query);
+
+      if (result.rowCount !== 1) {
+        throw new NotFoundException(`operator not found (${id})`);
       }
 
-      return `${acc}${current}$${idx + 1}`;
-    }, '');
+      // store or remove the thumbnail
+      // if prop is missing, do nothing
+      if ('thumbnail' in patch) {
+        if (patch.thumbnail.length) await this.insertThumbnail(id, patch.thumbnail);
+        else if (patch.thumbnail === null) await this.removeThumbnail(id);
+      }
 
-    const result = await this.connection.getClient().query(query);
-    if (result.rowCount !== 1) {
-      throw new NotFoundException(`operator not found (${id})`);
+      await this.connection.getClient().query('COMMIT');
+
+      return result.rows[0];
+    } catch (e) {
+      await this.connection.getClient().query('ROLLBACK');
+      throw e;
     }
+  }
 
-    return result.rows[0];
+  private async insertThumbnail(operator_id, base64Thumbnail): Promise<void> {
+    // cleanup
+    await this.removeThumbnail(operator_id);
+
+    // insert
+    await this.connection.getClient().query({
+      text: `INSERT INTO operator.thumbnails ( operator_id, data ) VALUES ( $1, decode($2, 'hex'))`,
+      values: [operator_id, this.b64ToHex(base64Thumbnail)],
+    });
+  }
+
+  private async removeThumbnail(operator_id): Promise<void> {
+    await this.connection.getClient().query({
+      text: 'DELETE FROM operator.thumbnails WHERE operator_id = $1',
+      values: [operator_id],
+    });
+  }
+
+  private b64ToHex(b64: string): string {
+    return Buffer.from(b64, 'base64').toString('hex');
+  }
+
+  private hexToB64(hex: string): string {
+    return Buffer.from(hex, 'hex').toString('base64');
   }
 }

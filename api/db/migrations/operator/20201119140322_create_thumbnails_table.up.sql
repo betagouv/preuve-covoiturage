@@ -5,3 +5,5 @@ CREATE TABLE IF NOT EXISTS operator.thumbnails
   created_at timestamp with time zone NOT NULL DEFAULT NOW(),
   data bytea not null
 );
+
+CREATE INDEX ON operator.thumbnails (operator_id);

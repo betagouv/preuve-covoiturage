@@ -1,7 +1,9 @@
+import { base64Macro } from '../macros/base64Macro';
 import { lonMacro } from '../macros/lonMacro';
 import { latMacro } from '../macros/latMacro';
 import { bicMacro } from '../macros/bicMacro';
 import { euVatMacro } from '../macros/euVatMacro';
+import { groupMacro } from '../macros/groupMacro';
 import { ibanMacro } from '../macros/ibanMacro';
 import { imageContentTypeMacro } from '../macros/imageContentTypeMacro';
 import { inseeMacro } from '../macros/inseeMacro';
@@ -23,13 +25,13 @@ import { serialMacro } from '../macros/serialMacro';
 import { tokenMacro } from '../macros/tokenMacro';
 import { tzMacro } from '../macros/tzMacro';
 import { uuidMacro } from '../macros/uuidMacro';
-import { groupMacro } from '../macros/groupMacro';
 import { longcharMacro } from '../macros/longcharMacro';
 import { permissionsMacro } from '../macros/permissionsMacro';
 import { integerMacro } from '../macros/integerMacro';
 import { jwtMacro } from '../macros/jwtMacro';
 
 const macroStore = {
+  base64: base64Macro,
   bic: bicMacro,
   dbid: dbidMacro,
   email: emailMacro,
