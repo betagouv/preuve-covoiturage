@@ -1,4 +1,4 @@
-import { upperFirst } from 'lodash';
+import { upperFirst, omit } from 'lodash';
 import { handler, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
@@ -52,7 +52,7 @@ export class CreateCertificateAction extends AbstractAction {
     const meta = {
       tz,
       identity: { uuid: personUUID },
-      operator: { uuid: operator.uuid, name: operator.name, logo: operator.meta.logo_url }, // TODO
+      operator: { uuid: operator.uuid, name: operator.name, thumbnail: operator.thumbnail },
       total_km,
       total_cost,
       remaining,
@@ -80,7 +80,7 @@ export class CreateCertificateAction extends AbstractAction {
       data: {
         uuid: certificate.uuid,
         created_at: certificate.created_at,
-        meta: certificate.meta,
+        meta: omit(certificate.meta, ['identity', 'operator']),
       },
     };
   }
@@ -99,7 +99,7 @@ export class CreateCertificateAction extends AbstractAction {
   private async findOperator(operator_id: number): Promise<any> {
     return this.kernel.call(
       'operator:quickfind',
-      { _id: operator_id },
+      { _id: operator_id, thumbnail: true },
       {
         channel: { service: 'certificate' },
         call: { user: { permissions: ['operator.read'] } },

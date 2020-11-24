@@ -58,7 +58,7 @@ export class DownloadCertificateAction extends AbstractAction {
       header: {
         operator: {
           name: certificate.meta.operator.name,
-          image: certificate.meta.operator.logo,
+          image: certificate.meta.operator.thumbnail,
         },
       },
     };

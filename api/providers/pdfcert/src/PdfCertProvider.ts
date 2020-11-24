@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import {
   PDFDocument,
   PageSizes,
@@ -148,10 +146,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
             });
 
             // image
-            const { data: imageBytes } = await axios.get<ArrayBuffer>(data.header.operator.image, {
-              responseType: 'arraybuffer',
-            });
-
+            const imageBytes = Buffer.from(data.header.operator.image, 'base64');
             const image = await this.pdfDoc.embedPng(imageBytes);
             const { width, height } = image.scaleToFit(100, 100);
 
