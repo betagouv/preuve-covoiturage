@@ -25,7 +25,7 @@ import { PdfCertRow } from './interfaces/PdfCertRow';
 export class PdfCertProvider implements PdfCertProviderInterface {
   private size = 12;
   private tableX = 60;
-  private tableY = 460;
+  private tableY = 450;
   private tableLineHeight = 20;
 
   private pdfDoc: PDFDocument;
@@ -71,6 +71,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.text(`Période : du ${data.certificate.start_at} au ${data.certificate.end_at}`, { x: 160, y: 511 });
 
     // table
+    this.drawHeader();
     for (let i = 0; i < data.data.rows.length; i++) {
       this.drawRow(i, data.data.rows[i]);
     }
@@ -212,6 +213,15 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     if ('y' in opts) options.y = opts.y;
 
     this.page.drawText(str, options);
+  }
+
+  private drawHeader() {
+    const y = this.tableY + 22;
+
+    this.text('Date', { x: this.tableX, y, font: this.fonts.bold });
+    this.text('Trajets', { x: this.tableX + 150, y, font: this.fonts.bold });
+    this.text('Distance', { x: this.tableX + 300, y, font: this.fonts.bold });
+    this.text('Coût', { x: this.tableX + 400, y, font: this.fonts.bold });
   }
 
   private drawRow(index: number, row: PdfCertRow): void {
