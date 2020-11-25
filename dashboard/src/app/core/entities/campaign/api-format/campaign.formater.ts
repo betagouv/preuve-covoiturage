@@ -504,11 +504,6 @@ export class CampaignFormater {
     ui_status.for_driver = !!ui_status.for_driver;
     ui_status.for_trip = !!ui_status.for_trip;
 
-    // //  remove empty or null values
-    // if (campaign.parent_id === null) {
-    //   delete campaign.parent_id;
-    // }
-
     const apiData: CampaignInterface = {
       _id,
       name,
@@ -517,7 +512,6 @@ export class CampaignFormater {
       territory_id,
       status,
       unit,
-      // parent_id: parent_id || 0,
       ui_status: uiStatus,
       rules: campaignRetributionRules,
       global_rules: campaignGlobalRetributionRules,

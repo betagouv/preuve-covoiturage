@@ -397,18 +397,4 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
   private initCampaigns(): void {
     this._campaignStoreService.loadCampaigns();
   }
-
-  // private setLastAvailableStep(): void {
-  //   setTimeout(() => {
-  //     if (this.canGoToLastStep) {
-  //       this.currentStep = 3;
-  //     } else if (this.canGoToThirdStep) {
-  //       this.currentStep = 2;
-  //     } else {
-  //       this.currentStep = 1;
-  //     }
-  //     console.log('this.currentStep', this.currentStep);
-  //     this.loading = false;
-  //   }, 0);
-  // }
 }
