@@ -12,7 +12,6 @@ import { binding as deleteBinding } from './shared/operator/delete.schema';
 import { binding as findBinding } from './shared/operator/find.schema';
 import { binding as quickfindBinding } from './shared/operator/quickfind.schema';
 import { binding as patchContactsBinding } from './shared/operator/patchContacts.schema';
-import { binding as getUploadUrlBinding } from './shared/operator/getuploadurl.schema';
 
 import { config } from './config';
 import { OperatorPgRepositoryProvider } from './providers/OperatorPgRepositoryProvider';
@@ -23,20 +22,11 @@ import { DeleteOperatorAction } from './actions/DeleteOperatorAction';
 import { FindOperatorAction } from './actions/FindOperatorAction';
 import { QuickFindOperatorAction } from './actions/QuickFindOperatorAction';
 import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorAction';
-import { GetUploadUrlAction } from './actions/GetUploadUrlAction';
 
 @serviceProvider({
   config,
   providers: [OperatorPgRepositoryProvider, S3StorageProvider],
-  validator: [
-    createBinding,
-    updateBinding,
-    deleteBinding,
-    findBinding,
-    quickfindBinding,
-    patchContactsBinding,
-    getUploadUrlBinding,
-  ],
+  validator: [createBinding, updateBinding, deleteBinding, findBinding, quickfindBinding, patchContactsBinding],
   handlers: [
     ListOperatorAction,
     CreateOperatorAction,
@@ -45,7 +35,6 @@ import { GetUploadUrlAction } from './actions/GetUploadUrlAction';
     FindOperatorAction,
     QuickFindOperatorAction,
     PatchContactsOperatorAction,
-    GetUploadUrlAction,
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
   middlewares: [
