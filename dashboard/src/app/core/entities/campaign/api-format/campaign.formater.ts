@@ -46,13 +46,13 @@ import { CampaignInterface } from '~/core/entities/api/shared/common/interfaces/
 
 export class CampaignFormater {
   static toUx(campaign: Campaign): CampaignUx {
-    const { _id, name, description, territory_id, status, unit, parent_id, ui_status } = campaign;
-
+    const { _id, name, description, territory_id, status, unit, parent_id, ui_status, state } = campaign;
     const campaignUx = {
       _id,
       name,
       description,
       territory_id,
+      state,
       parent_id,
       status,
       unit,
@@ -79,17 +79,23 @@ export class CampaignFormater {
 
     // GLOBAL RULES
     campaign.global_rules.forEach((retributionRule: GlobalRetributionRuleInterface) => {
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_TRIPS) {
+      if (
+        retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_TRIPS &&
+        retributionRule.parameters.period === 'campaign' &&
+        !retributionRule.parameters.target
+      ) {
         const parameters = retributionRule.parameters as MaxTripsRetributionRule['parameters'];
         campaignUx.max_trips = parameters.amount;
       }
       if (
         retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_AMOUNT &&
-        retributionRule.parameters.period === 'campaign'
+        retributionRule.parameters.period === 'campaign' &&
+        !retributionRule.parameters.target
       ) {
         const parameters = retributionRule.parameters as MaxAmountRetributionRule['parameters'];
         campaignUx.max_amount = parameters.amount;
       }
+
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.ONLY_ADULT) {
         campaignUx.only_adult = true;
       }
@@ -122,7 +128,7 @@ export class CampaignFormater {
         campaignUx.filters.rank = retributionRule.parameters as RankGlobalRetributionRule['parameters'];
       }
 
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_TRIP) {
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_TRIPS && retributionRule.parameters.target) {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
         campaignUx.restrictions.push({
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
@@ -132,10 +138,7 @@ export class CampaignFormater {
         } as RestrictionUxInterface);
       }
 
-      if (
-        retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_AMOUNT &&
-        retributionRule.parameters.period !== 'campaign'
-      ) {
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_AMOUNT && retributionRule.parameters.target) {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
         campaignUx.restrictions.push({
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
@@ -329,6 +332,7 @@ export class CampaignFormater {
       max_trips,
       only_adult,
       restrictions,
+      state,
       passenger_seat,
     } = campaignUx;
 
@@ -500,19 +504,14 @@ export class CampaignFormater {
     ui_status.for_driver = !!ui_status.for_driver;
     ui_status.for_trip = !!ui_status.for_trip;
 
-    // //  remove empty or null values
-    // if (campaign.parent_id === null) {
-    //   delete campaign.parent_id;
-    // }
-
-    return {
+    const apiData: CampaignInterface = {
       _id,
       name,
+      state,
       description,
       territory_id,
       status,
       unit,
-      parent_id,
       ui_status: uiStatus,
       rules: campaignRetributionRules,
       global_rules: campaignGlobalRetributionRules,
@@ -520,5 +519,9 @@ export class CampaignFormater {
       start_date: campaignUx.start.startOf('day').toISOString() as any,
       end_date: campaignUx.end.endOf('day').toISOString() as any,
     };
+
+    if (parent_id) apiData.parent_id = parent_id;
+
+    return apiData;
   }
 }

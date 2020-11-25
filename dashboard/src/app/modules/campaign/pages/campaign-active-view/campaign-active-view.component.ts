@@ -66,7 +66,9 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
       .subscribe(
         (campaign: Campaign) => {
           this.campaignUx = campaign.toFormValues();
-          this.loadTerritory(campaign.territory_id);
+          this._commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((ts) => {
+            if (ts) this.loadTerritory(campaign.territory_id, ts);
+          });
         },
         (err) => {
           console.warn('err : ', err);
@@ -83,7 +85,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
     }
   }
 
-  private loadTerritory(id: number): void {
+  private loadTerritory(id: number, ts: Territory[]): void {
     const foundTerritory = this._commonDataService.territories.filter((territory) => territory._id === id)[0];
     if (foundTerritory) {
       this.territory = foundTerritory;

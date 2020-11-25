@@ -17,6 +17,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
   @Input() isCreating: boolean;
   @Input() loading: boolean;
+  @Input() visible: boolean;
   @Output() onSaveCampaign: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(

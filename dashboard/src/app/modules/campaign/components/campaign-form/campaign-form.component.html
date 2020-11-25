@@ -102,6 +102,7 @@
               [campaignForm]="campaignFormGroup"
               [isCreating]="creationFromScratch || creationFromParentId"
               [loading]="requestLoading"
+              [visible]="_matStepper && _matStepper.selectedIndex === 3"
               (onSaveCampaign)="saveCampaign()"
             ></app-summary-form>
           </div>

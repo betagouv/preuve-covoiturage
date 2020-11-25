@@ -6,10 +6,12 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/polic
 import { alias } from '../shared/policy/simulateOn.schema';
 import { PolicyEngine } from '../engine/PolicyEngine';
 import { TripRepositoryProviderInterfaceResolver, IncentiveInterface } from '../interfaces';
+import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvider';
 
 @handler({
   ...handlerConfig,
   middlewares: [
+    ['validate', alias],
     [
       'scope.it',
       [
@@ -27,19 +29,19 @@ import { TripRepositoryProviderInterfaceResolver, IncentiveInterface } from '../
         ],
       ],
     ],
-    ['validate', alias],
     'validate.rules',
-    ['validate.date', ['campaign', new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30), new Date()]],
+    ['validate.date', ['campaign', new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 4), new Date()]],
   ],
 })
 export class SimulateOnPastAction extends AbstractAction {
-  constructor(private engine: PolicyEngine, private tripRepository: TripRepositoryProviderInterfaceResolver) {
+  constructor(private tripRepository: TripRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     // 1. Find campaign and start engine
-    const campaign = this.engine.buildCampaign(params.campaign);
+    const engine = new PolicyEngine(new InMemoryMetadataProvider());
+    const campaign = engine.buildCampaign(params.campaign);
 
     // 2. Start a cursor to find trips
     const cursor = await this.tripRepository.findTripByPolicy(campaign);
@@ -51,7 +53,7 @@ export class SimulateOnPastAction extends AbstractAction {
       if (results.value) {
         for (const trip of results.value) {
           // 3. For each trip, process
-          incentives.push(...(await this.engine.process(campaign, trip)));
+          incentives.push(...(await engine.process(campaign, trip)));
         }
       }
       // 4. Save incentives
