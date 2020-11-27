@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
 
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -22,7 +21,7 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
   }
 
   ngOnInit(): void {
-    this.loadStat();
+    // this.loadStat();
   }
 
   get loading(): boolean {
@@ -33,19 +32,19 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
     return !!this.statService.stat;
   }
 
-  private loadStat(): void {
-    this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe((stats) => {
-      if (stats) {
-        this.graphData = stats.graph;
-      }
-    });
+  // private loadStat(): void {
+  //   this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe((stats) => {
+  //     if (stats) {
+  //       // this.graphData = stats.graph;
+  //     }
+  //   });
 
-    if (this.loading || this.loaded) {
-      return;
-    }
+  //   if (this.loading || this.loaded) {
+  //     return;
+  //   }
 
-    // reset stats on load
-    this.statService.init();
-    this.statService.load();
-  }
+  //   // reset stats on load
+  //   this.statService.init();
+  //   this.statService.load();
+  // }
 }
