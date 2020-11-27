@@ -43,26 +43,26 @@ export class CreateCertificateAction extends AbstractAction {
     // fetch the data for this identity, operator and territory and map to template object
     const certs = await this.findTrips({ identity, operator_id, tz, start_at, end_at, positions });
     const rows = certs.slice(0, 11); // TODO agg the last line
+    const total_tr = Math.round(rows.reduce((sum: number, line): number => (line.trips | 0) + sum, 0)) || 0;
     const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)) || 0;
-    const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0)) || 0;
-    const remaining = (total_km * 0.558 - total_cost) | 0;
+    const total_rm = rows.reduce((sum: number, line): number => line.rm + sum, 0) || 0;
 
-    console.log({ total_km, total_cost, remaining });
+    console.log({ total_km, total_rm, total_tr });
 
     const meta = {
       tz,
       identity: { uuid: personUUID },
       operator: { uuid: operator.uuid, name: operator.name, thumbnail: operator.thumbnail },
+      total_tr,
       total_km,
-      total_cost,
-      remaining,
+      total_rm,
       total_point: 0,
       rows: rows.map((line, index) => ({
         index,
         month: upperFirst(this.dateProvider.format(new Date(`${line.y}-${line.m}-01`), 'MMMM yyyy')),
-        trips: line.trips == 1 ? '1 trajet' : `${line.trips} trajets`,
+        trips: line.trips | 0,
         distance: line.km | 0,
-        cost: line.eur || 0,
+        remaining: line.rm || 0,
       })),
     };
 

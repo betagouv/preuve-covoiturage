@@ -42,8 +42,7 @@ export class ListCertificateAction extends AbstractAction {
             territory: cert.meta.territory || null,
             total_km: cert.meta.total_km,
             total_point: cert.meta.total_point,
-            total_cost: cert.meta.total_cost,
-            remaining: cert.meta.remaining,
+            total_rm: cert.meta.total_rm,
           };
         },
       ),

@@ -81,22 +81,17 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
     this.page.drawRectangle({
       x: this.tableX - 12,
-      y: totalY - 1.5 * this.tableLineHeight,
+      y: totalY - 0.5 * this.tableLineHeight,
       width: 490,
-      height: 2.5 * this.tableLineHeight,
+      height: 1.5 * this.tableLineHeight,
       color: rgb(0.95, 0.95, 0.95),
     });
 
-    this.text('Total :', { x: 60, y: totalY, font: this.fonts.bold });
-    this.text(`${data.data.total_km} km`, { x: 360, y: totalY, font: this.fonts.bold });
-    this.text(`${this.currency(data.data.total_cost)} €`, { x: 460, y: totalY, font: this.fonts.bold });
-
-    this.text('Reste à charge :', { x: 60, y: totalY - this.tableLineHeight, font: this.fonts.bold });
-    this.text(`${this.currency(data.data.remaining)} €`, {
-      x: 460,
-      y: totalY - this.tableLineHeight,
-      font: this.fonts.bold,
-    });
+    // this.text('Total :', { x: 60, y: totalY });
+    // this.text(`${data.data.total_tr}`, { x: 210, y: totalY });
+    // this.text(`${data.data.total_km} km`, { x: 360, y: totalY });
+    this.text('Reste à charge :', { x: 330, y: totalY, font: this.fonts.bold });
+    this.text(`${this.currency(data.data.total_rm)} €`, { x: 440, y: totalY, font: this.fonts.bold });
 
     // identification
     this.text("Identification de l'attestation", { x: 48, y: 80, font: this.fonts.bold });
@@ -220,8 +215,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
     this.text('Date', { x: this.tableX, y, font: this.fonts.bold });
     this.text('Trajets', { x: this.tableX + 150, y, font: this.fonts.bold });
-    this.text('Distance', { x: this.tableX + 300, y, font: this.fonts.bold });
-    this.text('Coût', { x: this.tableX + 400, y, font: this.fonts.bold });
+    this.text('Distance', { x: this.tableX + 270, y, font: this.fonts.bold });
+    this.text('Reste à charge', { x: this.tableX + 380, y, font: this.fonts.bold });
   }
 
   private drawRow(index: number, row: PdfCertRow): void {
@@ -237,10 +232,10 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       });
     }
 
-    this.text(row.month, { x: this.tableX, y: rowY });
-    this.text(row.trips, { x: this.tableX + 150, y: rowY });
-    this.text(`${row.distance} km`, { x: this.tableX + 300, y: rowY });
-    this.text(`${this.currency(row.cost)} €`, { x: this.tableX + 400, y: rowY });
+    this.text(`${row.month}`, { x: this.tableX, y: rowY });
+    this.text(`${row.trips}`, { x: this.tableX + 150, y: rowY });
+    this.text(`${row.distance} km`, { x: this.tableX + 270, y: rowY });
+    this.text(`${this.currency(row.remaining)} €`, { x: this.tableX + 380, y: rowY });
   }
 
   private marianne(opts: { x: number; y: number; scale: number }): void {

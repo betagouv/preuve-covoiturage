@@ -19,8 +19,7 @@ export interface ResultRowInterface {
   end_pos?: PointInterface;
   total_km: number;
   total_point: number;
-  total_cost: number;
-  remaining: number;
+  total_rm: number;
 }
 export type ResultInterface = {
   rows: ResultRowInterface[];

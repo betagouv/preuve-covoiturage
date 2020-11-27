@@ -7,7 +7,7 @@ export interface CarpoolInterface {
   y: string;
   trips: number;
   km: number;
-  eur: number;
+  rm: number;
 }
 
 export interface FindParamsInterface {
