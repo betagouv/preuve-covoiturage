@@ -20,9 +20,7 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
     super();
   }
 
-  ngOnInit(): void {
-    // this.loadStat();
-  }
+  ngOnInit(): void {}
 
   get loading(): boolean {
     return this.statService.isLoading;
@@ -31,20 +29,4 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
   get loaded(): boolean {
     return !!this.statService.stat;
   }
-
-  // private loadStat(): void {
-  //   this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe((stats) => {
-  //     if (stats) {
-  //       // this.graphData = stats.graph;
-  //     }
-  //   });
-
-  //   if (this.loading || this.loaded) {
-  //     return;
-  //   }
-
-  //   // reset stats on load
-  //   this.statService.init();
-  //   this.statService.load();
-  // }
 }
