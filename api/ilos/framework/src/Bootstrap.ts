@@ -128,9 +128,6 @@ export class Bootstrap {
 
     @kernel({
       children: serviceProviders,
-      config: {
-        logger,
-      },
     })
     class CustomKernel extends kernelConstructor {}
 
