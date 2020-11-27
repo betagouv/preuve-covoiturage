@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { mergeMap, takeUntil, tap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
@@ -12,6 +12,7 @@ import { DialogService } from '~/core/services/dialog.service';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
   selector: 'app-campaign-draft-view',
@@ -22,10 +23,12 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
   territory: Territory;
   campaignUx: CampaignUx;
   userIsDemo: boolean;
+  userIsRegistry: boolean;
 
   constructor(
     private _authService: AuthenticationService,
     private _commonDataService: CommonDataService,
+    private _territoryApi: TerritoryApiService,
     private _dialog: DialogService,
     private _router: Router,
     private _route: ActivatedRoute,
@@ -46,11 +49,12 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
         this.loadCampaign(Number(params.get('campaignId')));
       }
     });
-    this.loadTerritory();
 
-    this._authService.user$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => (this.userIsDemo = this._authService.hasRole(UserRoleEnum.TERRITORY_DEMO)));
+    this._authService.user$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.userIsDemo = this._authService.hasRole(UserRoleEnum.TERRITORY_DEMO);
+      this.userIsRegistry =
+        this._authService.hasRole(UserRoleEnum.REGISTRY_ADMIN) || this._authService.hasRole(UserRoleEnum.REGISTRY_USER);
+    });
   }
 
   get isLoading(): boolean {
@@ -60,25 +64,23 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
   private loadCampaign(campaignId: number): void {
     this._campaignStoreService
       .getById(campaignId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (campaign: Campaign) => {
-          this.campaignUx = campaign.toFormValues();
-        },
-        (err) => {
-          console.warn('err : ', err);
-          this._router.navigate(['/campaign']).then(() => {
-            this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
-          });
-        },
-      );
-
-    // if (!this._campaignStoreService.loaded) {
-    //   if (this._authService.user.group === UserGroupEnum.TERRITORY) {
-    //     this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
-    //   }
-    //   this._campaignStoreService.loadList();
-    // }
+      .pipe(
+        takeUntil(this.destroy$),
+        tap(
+          (campaign: Campaign) => {
+            this.campaignUx = campaign.toFormValues();
+          },
+          (err) => {
+            console.warn('err : ', err);
+            this._router.navigate(['/campaign']).then(() => {
+              this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
+            });
+          },
+        ),
+        mergeMap((campaign) => this._territoryApi.get(campaign.territory_id)),
+        tap((territory) => (this.territory = territory)),
+      )
+      .subscribe();
   }
 
   launchCampaign(id: number): void {
