@@ -18,7 +18,7 @@ var { setup, up, down } = createMigration(
       console.log('call sync:region_dep');
       try {
         const { stdout, stderr } = await exec(
-          `yarn workspace @pdc/proxy ilos sync:region_dep -u ${process.env.DATABASE_URL}`,
+          `yarn workspace @pdc/proxy ilos sync:region_dep -u ${process.env.APP_POSTGRES_URL}`,
           {
             cwd: path.resolve(path.resolve(__dirname, '..', '..')),
           },
