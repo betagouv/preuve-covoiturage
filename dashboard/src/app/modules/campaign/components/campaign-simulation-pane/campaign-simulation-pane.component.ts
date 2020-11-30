@@ -53,38 +53,40 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
     this.timeState = getTimeState(this.nbMonth);
     this.simulatedCampaign.start = moment(this.timeState.startDate);
     this.simulatedCampaign.end = moment(this.timeState.endDate);
-    if (!this.simulatedCampaign._id) {
-      if (this.auth.user && (this.simulatedCampaign.territory_id || this.auth.user.territory_id)) {
-        const simCampaignApi = CampaignFormater.toApi(this.simulatedCampaign);
-        if (!simCampaignApi.territory_id) {
-          simCampaignApi.territory_id = this.auth.user.territory_id;
-        }
-        // console.log('simulate campaign', this.simulatedCampaign, simCampaignApi);
-        this.campaignApi
-          .simulate(simCampaignApi)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((state) => {
-            this.state = state;
-          });
-      } else {
-        console.warn(
-          // eslint-disable-next-line max-len
-          'campaign sim panel : User has to be connected and territory_id has to provider from user context or campaign',
-        );
+    if (this.simulatedCampaign._id) delete this.simulatedCampaign._id;
+    if (this.simulatedCampaign.state) delete this.simulatedCampaign.state;
+    // if (!this.simulatedCampaign._id) {
+    if (this.auth.user && (this.simulatedCampaign.territory_id || this.auth.user.territory_id)) {
+      const simCampaignApi = CampaignFormater.toApi(this.simulatedCampaign);
+      if (!simCampaignApi.territory_id) {
+        simCampaignApi.territory_id = this.auth.user.territory_id;
       }
+      // console.log('simulate campaign', this.simulatedCampaign, simCampaignApi);
+      this.campaignApi
+        .simulate(simCampaignApi)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((state) => {
+          this.state = state;
+        });
+    } else {
+      console.warn(
+        // eslint-disable-next-line max-len
+        'campaign sim panel : User has to be connected and territory_id has to provider from user context or campaign',
+      );
     }
+    // }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.campaign) {
-      this.simulatedCampaign = new CampaignUx(changes.campaign.currentValue);
-
+      this.simulatedCampaign = new CampaignUx(JSON.parse(JSON.stringify(changes.campaign.currentValue)));
       this.updateCampaign();
     }
   }
 
   ngOnInit(): void {
     if (this.campaign) {
+      this.simulatedCampaign = new CampaignUx(JSON.parse(JSON.stringify(this.campaign)));
       this.updateCampaign();
     }
   }
