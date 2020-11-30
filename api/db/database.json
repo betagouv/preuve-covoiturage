@@ -1,5 +1,5 @@
 {
-  "defaultEnv": "ssl",
+  "defaultEnv": "nossl",
   "ssl": {
     "driver": "pg",
     "user": {
