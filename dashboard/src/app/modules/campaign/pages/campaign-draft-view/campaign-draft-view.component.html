@@ -3,7 +3,7 @@
     <mat-spinner></mat-spinner>
   </div>
   <div class="campaignDraftView" *ngIf="!isLoading">
-    <div class="campaignDraftView-header">
+    <div class="campaignDraftView-header" *ngIf="!userIsRegistry">
       <h1>{{ campaignUx.name }}</h1>
       <p>{{ territory.name }}</p>
       <div class="campaignDraftView-header-message">

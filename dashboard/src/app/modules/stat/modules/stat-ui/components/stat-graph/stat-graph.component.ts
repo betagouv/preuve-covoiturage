@@ -32,7 +32,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
 
   // data of all charts
   public data: GraphNamesInterface;
-
+  public graphVisible = true;
   // graph to be displayed
   public graphToBeDisplayed: statDataNameType = 'trips';
   public graphTitle = '';
@@ -66,15 +66,25 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
   }
 
   get canShowDaily(): boolean {
-    return !this.isEmptyDataset(this.data.trips.daily) && this.toggleChart[this.graphToBeDisplayed] === 'daily';
+    return (
+      this.data && !this.isEmptyDataset(this.data.trips.daily) && this.toggleChart[this.graphToBeDisplayed] === 'daily'
+    );
   }
 
   get canShowMonthly(): boolean {
-    return !this.isEmptyDataset(this.data.trips.monthly) && this.toggleChart[this.graphToBeDisplayed] === 'monthly';
+    return (
+      this.data &&
+      !this.isEmptyDataset(this.data.trips.monthly) &&
+      this.toggleChart[this.graphToBeDisplayed] === 'monthly'
+    );
   }
 
   get canShowCumulated(): boolean {
-    return !this.isEmptyDataset(this.data.trips.cumulated) && this.toggleChart[this.graphToBeDisplayed] === 'cumulated';
+    return (
+      this.data &&
+      !this.isEmptyDataset(this.data.trips.cumulated) &&
+      this.toggleChart[this.graphToBeDisplayed] === 'cumulated'
+    );
   }
 
   private displayGraph(name: statDataNameType): void {
@@ -95,6 +105,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['graphData']) {
+      this.graphVisible = false;
       const data: GraphNamesInterface = {
         trips: this.loadGraph('trips'),
         distance: this.loadGraph('distance'),
@@ -105,6 +116,8 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
       };
       this.graphTitle = data[this.graphToBeDisplayed][this.toggleChart[this.graphToBeDisplayed]].graphTitle;
       this.data = data;
+
+      window.requestAnimationFrame(() => (this.graphVisible = true));
     }
   }
 
@@ -124,6 +137,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
   }
 
   private loadData(name: statDataNameType, type: chartType): object {
+    this.data = null;
     const graphs = statGraphs[name][type].graphs;
     const graphTitle = statGraphs[name][type].title;
 

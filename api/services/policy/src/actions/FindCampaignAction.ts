@@ -36,7 +36,11 @@ export class FindCampaignAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
-    const campaign = await this.campaignRepository.findOneWhereTerritory(params._id, params.territory_id);
+    const campaign =
+      params.territory_id !== undefined
+        ? await this.campaignRepository.findOneWhereTerritory(params._id, params.territory_id)
+        : await this.campaignRepository.find(params._id);
+
     const state = await this.incentiveRepository.getCampaignState(campaign._id);
     return {
       ...campaign,
