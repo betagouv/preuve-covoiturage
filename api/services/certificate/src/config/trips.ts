@@ -1,3 +1,3 @@
-import { env } from '@ilos/core';
+import { ratePerKm as rate } from '../shared/configuration/constants';
 
-export const ratePerKm = env('APP_CONST_RATE_PER_KM');
+export const ratePerKm = rate;
