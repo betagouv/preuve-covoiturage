@@ -71,3 +71,15 @@ export function findInvalidControlsRecursive(formToInvestigate: FormGroup | Form
   recursiveFunc(formToInvestigate);
   return invalidControls;
 }
+
+export function removeAccents(string) {
+  const accents = 'ÀÁÂÃÄÅàáâãäåßÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž';
+  const accentsOut = 'AAAAAAaaaaaaBOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz';
+  return string
+    .split('')
+    .map((letter, index) => {
+      const accentIndex = accents.indexOf(letter);
+      return accentIndex !== -1 ? accentsOut[accentIndex] : letter;
+    })
+    .join('');
+}
