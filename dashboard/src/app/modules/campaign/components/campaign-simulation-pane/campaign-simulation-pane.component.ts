@@ -53,28 +53,29 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
     this.timeState = getTimeState(this.nbMonth);
     this.simulatedCampaign.start = moment(this.timeState.startDate);
     this.simulatedCampaign.end = moment(this.timeState.endDate);
+    delete this.simulatedCampaign._id;
+    delete this.simulatedCampaign.state;
+    // if (!this.simulatedCampaign._id) {
+    if (this.auth.user && (this.simulatedCampaign.territory_id || this.auth.user.territory_id)) {
+      const simCampaignApi = CampaignFormater.toApi(this.simulatedCampaign);
 
-    if (!this.simulatedCampaign._id) {
-      if (this.auth.user && (this.simulatedCampaign.territory_id || this.auth.user.territory_id)) {
-        const simCampaignApi = CampaignFormater.toApi(this.simulatedCampaign);
-
-        if (!simCampaignApi.territory_id) {
-          simCampaignApi.territory_id = this.auth.user.territory_id;
-        }
-        // console.log('simulate campaign', this.simulatedCampaign, simCampaignApi);
-        this.campaignApi
-          .simulate(simCampaignApi)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((state) => {
-            this.state = state;
-          });
-      } else {
-        console.warn(
-          // eslint-disable-next-line max-len
-          'campaign sim panel : User has to be connected and territory_id has to provider from user context or campaign',
-        );
+      if (!simCampaignApi.territory_id) {
+        simCampaignApi.territory_id = this.auth.user.territory_id;
       }
+      // console.log('simulate campaign', this.simulatedCampaign, simCampaignApi);
+      this.campaignApi
+        .simulate(simCampaignApi)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((state) => {
+          this.state = state;
+        });
+    } else {
+      console.warn(
+        // eslint-disable-next-line max-len
+        'campaign sim panel : User has to be connected and territory_id has to provider from user context or campaign',
+      );
     }
+    // }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

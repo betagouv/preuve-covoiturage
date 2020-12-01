@@ -111,7 +111,11 @@ export class CampaignFormater {
           parameters.max !== -1 ? Number(parameters.max) / 1000 : null,
         ];
       }
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WEEKDAY) {
+      if (
+        retributionRule.slug === GlobalRetributionRulesSlugEnum.WEEKDAY &&
+        // remove filter if all days are selected
+        (retributionRule.parameters as number[]).sort().join('') !== '01234567'
+      ) {
         campaignUx.filters.weekday = retributionRule.parameters as WeekdayRetributionRule['parameters'];
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.TIME) {
@@ -121,7 +125,10 @@ export class CampaignFormater {
           end: timeRange.end > 9 ? `${timeRange.end}:00` : `0${timeRange.end}:00`,
         }));
       }
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.OPERATOR_IDS) {
+
+      // ignore empty array
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.OPERATOR_IDS /*&& retributionRule.parameters*/) {
+        debugger;
         campaignUx.filters.operator_ids = retributionRule.parameters as OperatorIdsGlobalRetributionRule['parameters'];
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RANK) {
@@ -352,8 +359,17 @@ export class CampaignFormater {
         ),
       );
     }
-    campaignGlobalRetributionRules.push(new WeekdayRetributionRule(campaignUx.filters.weekday));
-    if (!campaignUx.filters.all_operators) {
+
+    // remove filter if all days are selected
+    if (campaignUx.filters.weekday.sort().join('') !== '0123456') {
+      campaignGlobalRetributionRules.push(new WeekdayRetributionRule(campaignUx.filters.weekday));
+    }
+
+    if (
+      !campaignUx.filters.all_operators &&
+      campaignUx.filters.operator_ids &&
+      campaignUx.filters.operator_ids.length > 0
+    ) {
       campaignGlobalRetributionRules.push(new OperatorIdsGlobalRetributionRule(campaignUx.filters.operator_ids));
     }
     campaignGlobalRetributionRules.push(
