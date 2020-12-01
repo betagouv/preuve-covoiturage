@@ -39,16 +39,15 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   swapCheck(ter: TerritoryVisibilityTree) {
+    console.log('> swapCheck', ter._id);
     const selectedTerritoryIds = this.selectedTerritoryIds;
-
-    const selected = !ter.selected;
-
-    this.territories.filter((fter) => fter._id === ter._id).forEach((ter) => (ter.selected = selected));
+    const selInd = selectedTerritoryIds.indexOf(ter._id);
+    const selected = selInd === -1;
 
     if (selected) {
       selectedTerritoryIds.push(ter._id);
     } else {
-      selectedTerritoryIds.splice(selectedTerritoryIds.indexOf(ter._id), 1);
+      selectedTerritoryIds.splice(selInd, 1);
     }
 
     this.visibilityFormControl.setValue(selectedTerritoryIds);
@@ -94,7 +93,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
         map(() => {
           if (this.searchFilter && this.searchFilter.controls.query.value) {
             this.searchMode = true;
-
             const words = this.searchFilter.controls.query.value.toLowerCase().split(new RegExp('[ -_]'));
             // score search based ordering
             const territories = this.territories
@@ -119,7 +117,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
                 if (a.score > b.score) return 1;
                 return 0;
               });
-
             return territories;
           } else {
             this.searchMode = false;

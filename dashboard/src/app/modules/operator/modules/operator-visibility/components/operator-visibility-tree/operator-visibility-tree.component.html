@@ -32,7 +32,7 @@
             *ngIf="ter.activable || ter.level === 'towngroup'; else terr_label"
             color="primary"
             (change)="swapCheck(ter)"
-            [checked]="ter.selected"
+            [checked]="selectedTerritoryIds.indexOf(ter._id) !== -1"
           >
             {{ ter.name }}
           </mat-checkbox>
@@ -47,9 +47,7 @@
       <p *ngIf="countCheckedTerritories">
         Visible sur <span>{{ countCheckedTerritories }}</span> territoires
       </p>
-      <p *ngIf="!countCheckedTerritories">
-        Visible sur aucun territoire
-      </p>
+      <p *ngIf="!countCheckedTerritories">Visible sur aucun territoire</p>
     </ng-container>
   </div>
 </div>
