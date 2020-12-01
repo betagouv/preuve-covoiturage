@@ -53,9 +53,11 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
     this.timeState = getTimeState(this.nbMonth);
     this.simulatedCampaign.start = moment(this.timeState.startDate);
     this.simulatedCampaign.end = moment(this.timeState.endDate);
+
     if (!this.simulatedCampaign._id) {
       if (this.auth.user && (this.simulatedCampaign.territory_id || this.auth.user.territory_id)) {
-        const simCampaignApi = CampaignFormater.toApi(JSON.parse(JSON.stringify(this.simulatedCampaign)));
+        const simCampaignApi = CampaignFormater.toApi(this.simulatedCampaign);
+
         if (!simCampaignApi.territory_id) {
           simCampaignApi.territory_id = this.auth.user.territory_id;
         }
