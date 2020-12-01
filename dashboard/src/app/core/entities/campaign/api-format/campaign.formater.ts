@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { uniqWith, isEqual, clone } from 'lodash-es';
+import { uniqWith, isEqual, cloneDeep } from 'lodash-es';
 
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
@@ -364,7 +364,7 @@ export class CampaignFormater {
     );
 
     // save ui status of territory names associated with insee
-    const uiStatus: UiStatusInterface = clone({
+    const uiStatus: UiStatusInterface = cloneDeep({
       ...ui_status,
       insee_filter: filters.insee,
     });
