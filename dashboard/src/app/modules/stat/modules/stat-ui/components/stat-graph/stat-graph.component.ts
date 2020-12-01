@@ -32,7 +32,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
 
   // data of all charts
   public data: GraphNamesInterface;
-  public graphVisible = true;
+  public graphVisible = false;
   // graph to be displayed
   public graphToBeDisplayed: statDataNameType = 'trips';
   public graphTitle = '';
@@ -104,7 +104,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['graphData']) {
+    if (changes.graphData && changes.graphData.currentValue && this.data) {
       this.graphVisible = false;
       const data: GraphNamesInterface = {
         trips: this.loadGraph('trips'),
@@ -137,7 +137,6 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
   }
 
   private loadData(name: statDataNameType, type: chartType): object {
-    this.data = null;
     const graphs = statGraphs[name][type].graphs;
     const graphTitle = statGraphs[name][type].title;
 
