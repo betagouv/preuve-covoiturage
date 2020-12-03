@@ -4,7 +4,11 @@ import { PermissionMiddleware } from '@pdc/provider-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { ScopeToSelfMiddleware, ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
+import {
+  ScopeToSelfMiddleware,
+  ChannelServiceWhitelistMiddleware,
+  ContextExtractMiddleware,
+} from '@pdc/provider-middleware';
 
 import { config } from './config';
 import { binding as createSchemaBinding } from './shared/policy/create.schema';
@@ -84,6 +88,7 @@ import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
     ['validate', ValidatorMiddleware],
     ['scope.it', ScopeToSelfMiddleware],
     ['channel.service.only', ChannelServiceWhitelistMiddleware],
+    ['context_extract', ContextExtractMiddleware],
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
