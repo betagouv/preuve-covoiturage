@@ -519,7 +519,7 @@ export class CampaignFormater {
     ui_status.for_driver = !!ui_status.for_driver;
     ui_status.for_trip = !!ui_status.for_trip;
 
-    const apiData: CampaignInterface = {
+    const apiData: CampaignInterface = cloneDeep({
       _id,
       name,
       state,
@@ -533,7 +533,7 @@ export class CampaignFormater {
       // format dates : moment --> Date
       start_date: campaignUx.start.startOf('day').toISOString() as any,
       end_date: campaignUx.end.endOf('day').toISOString() as any,
-    };
+    });
 
     if (parent_id) apiData.parent_id = parent_id;
 

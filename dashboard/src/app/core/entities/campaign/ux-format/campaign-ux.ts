@@ -10,6 +10,7 @@ import {
   RetributionUxInterface,
 } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
 import { CampaignReducedStats } from '../api-format/CampaignStats';
+import { cloneDeep } from 'lodash-es';
 
 export class CampaignUx {
   public _id: number;
@@ -95,8 +96,8 @@ export class CampaignUx {
     this.parent_id = obj.parent_id;
     this.unit = obj.unit;
     this.filters = obj.filters;
-    this.restrictions = obj.restrictions;
-    this.retributions = obj.retributions;
+    this.restrictions = cloneDeep(obj.restrictions);
+    this.retributions = cloneDeep(obj.retributions);
     this.only_adult = obj.only_adult;
     this.ui_status = obj.ui_status;
     this.state = obj.state;
