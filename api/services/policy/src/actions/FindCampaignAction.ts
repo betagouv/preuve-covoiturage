@@ -11,7 +11,6 @@ import { alias } from '../shared/policy/find.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['context_extract', { territory_id: 'call.user.territory_id' }],
     [
       'scope.it',
       [
@@ -25,6 +24,7 @@ import { alias } from '../shared/policy/find.schema';
         ],
       ],
     ],
+    ['context_extract', { territory_id: 'call.user.territory_id' }],
     ['validate', alias],
   ],
 })
