@@ -340,7 +340,7 @@ export class CampaignFormater {
       restrictions,
       state,
       passenger_seat,
-    } = campaignUx;
+    } = cloneDeep(campaignUx);
 
     // GLOBAL RULES
     const campaignGlobalRetributionRules: GlobalRetributionRuleType[] = [];
@@ -379,10 +379,10 @@ export class CampaignFormater {
     );
 
     // save ui status of territory names associated with insee
-    const uiStatus: UiStatusInterface = cloneDeep({
+    const uiStatus: UiStatusInterface = {
       ...ui_status,
       insee_filter: filters.insee,
-    });
+    };
 
     // WHITELIST
     if (filters.insee.whiteList.length > 0) {
@@ -519,7 +519,7 @@ export class CampaignFormater {
     ui_status.for_driver = !!ui_status.for_driver;
     ui_status.for_trip = !!ui_status.for_trip;
 
-    const apiData: CampaignInterface = cloneDeep({
+    const apiData: CampaignInterface = {
       _id,
       name,
       state,
@@ -533,7 +533,7 @@ export class CampaignFormater {
       // format dates : moment --> Date
       start_date: campaignUx.start.startOf('day').toISOString() as any,
       end_date: campaignUx.end.endOf('day').toISOString() as any,
-    });
+    };
 
     if (parent_id) apiData.parent_id = parent_id;
 

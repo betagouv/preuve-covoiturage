@@ -88,6 +88,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
 
   ngOnInit(): void {
     if (this.campaign) {
+      this.simulatedCampaign = new CampaignUx(this.campaign);
       this.updateCampaign();
     }
   }
