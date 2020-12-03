@@ -128,7 +128,6 @@ export class CampaignFormater {
 
       // ignore empty array
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.OPERATOR_IDS /*&& retributionRule.parameters*/) {
-        debugger;
         campaignUx.filters.operator_ids = retributionRule.parameters as OperatorIdsGlobalRetributionRule['parameters'];
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RANK) {
