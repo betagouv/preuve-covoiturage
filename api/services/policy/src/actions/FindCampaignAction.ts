@@ -1,4 +1,4 @@
-import { handler } from '@ilos/common';
+import { handler, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 
 import {
@@ -6,16 +6,16 @@ import {
   CampaignRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/find.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/policy/find.schema';
 
-@handler(handlerConfig)
-export class FindCampaignAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
+    ['context_extract', { territory_id: 'call.user.territory_id' }],
     [
       'scope.it',
       [
-        [],
+        ['incentive-campaign.read'],
         [
           (params, context): string => {
             if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
@@ -26,8 +26,9 @@ export class FindCampaignAction extends AbstractAction {
       ],
     ],
     ['validate', alias],
-  ];
-
+  ],
+})
+export class FindCampaignAction extends AbstractAction {
   constructor(
     private campaignRepository: CampaignRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
@@ -37,9 +38,13 @@ export class FindCampaignAction extends AbstractAction {
 
   public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
     const campaign =
-      params.territory_id !== undefined
-        ? await this.campaignRepository.findOneWhereTerritory(params._id, params.territory_id)
-        : await this.campaignRepository.find(params._id);
+      params.territory_id === null
+        ? await this.campaignRepository.find(params._id)
+        : await this.campaignRepository.findOneWhereTerritory(params._id, params.territory_id);
+
+    if (!campaign) {
+      throw new NotFoundException(`Campaign #${params._id} not found`);
+    }
 
     const state = await this.incentiveRepository.getCampaignState(campaign._id);
     return {

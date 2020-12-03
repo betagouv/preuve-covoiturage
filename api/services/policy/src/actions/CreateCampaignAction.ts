@@ -11,7 +11,7 @@ import { alias } from '../shared/policy/create.schema';
     [
       'scope.it',
       [
-        [],
+        ['incentive-campaign.create'],
         [
           (params, context): string => {
             if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
