@@ -149,7 +149,7 @@ export class CampaignFormater {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
         campaignUx.restrictions.push({
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
-          quantity: parameters.amount,
+          quantity: campaign.unit === IncentiveUnitEnum.EUR ? parameters.amount / 100 : parameters.amount,
           period: parameters.period,
           unit: RestrictionUnitEnum.AMOUNT,
         } as RestrictionUxInterface);
@@ -433,7 +433,7 @@ export class CampaignFormater {
             )
           : new AmountRestrictionRetributionRule(
               restriction.is_driver ? RestrictionTargetsEnum.DRIVER : RestrictionTargetsEnum.PASSENGER,
-              restriction.quantity,
+              unit === IncentiveUnitEnum.EUR ? restriction.quantity * 100 : restriction.quantity,
               restriction.period,
             );
 
