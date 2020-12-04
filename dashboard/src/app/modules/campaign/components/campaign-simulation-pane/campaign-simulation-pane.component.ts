@@ -9,6 +9,8 @@ import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.f
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { takeUntil } from 'rxjs/operators';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { CurrencyPipe } from '@angular/common';
 
 interface SimulationDateRange {
   startDate: Date;
@@ -67,7 +69,14 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
         .simulate(simCampaignApi)
         .pipe(takeUntil(this.destroy$))
         .subscribe((state) => {
-          this.state = state;
+          this.state = {
+            ...state,
+            // amount: new CurrencyPipe('FR').transform(state.amount, 'EUR', 'symbol', '1.0-0') as any,
+            amount:
+              this.simulatedCampaign.unit === IncentiveUnitEnum.EUR
+                ? (new CurrencyPipe('FR').transform(state.amount / 100, 'EUR', 'symbol', '1.2-2') as any)
+                : (`${state.amount} pt${state.amount > 1 ? 's' : ''}` as any),
+          };
         });
     } else {
       console.warn(

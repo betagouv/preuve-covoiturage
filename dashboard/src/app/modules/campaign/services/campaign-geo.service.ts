@@ -14,8 +14,8 @@ export class CampaignGeoService {
 
   constructor(public http: HttpClient) {}
 
-  public findGeoDataByPostCode(postcode: string): Observable<GeoDataInterface[]> {
-    const params = `/search/?q=${encodeURIComponent(postcode)}
+  public findGeoDataByPostCode(address: string, postcode: string): Observable<GeoDataInterface[]> {
+    const params = `/search/?q=${address.toLowerCase().split(' ').join('+')}
     &type=municipality&postcode=${encodeURIComponent(postcode)}`;
     return this.http.get(`${this.addressApiDomain}${params}`).pipe(
       filter((response) => response && response['features']),

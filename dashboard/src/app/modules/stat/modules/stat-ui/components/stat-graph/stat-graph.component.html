@@ -1,5 +1,4 @@
 <h3 class="graphTitle" *ngIf="!lightMode">{{ graphTitle }}</h3>
-
 <!--Distance-->
 <div class="graph" *ngIf="graphToBeDisplayed === 'distance' && graphVisible">
   <div class="graph-header" *ngIf="!lightMode">
@@ -17,21 +16,28 @@
   >
     <ngx-chartjs
       [data]="data.distance.daily"
-      *ngIf="isEmptyDataset(data.distance.daily) && toggleChart.distance === 'daily'"
+      *ngIf="this.data && this.data.distance && isEmptyDataset(data.distance.daily) && toggleChart.distance === 'daily'"
       type="bar"
       [height]="70"
       [options]="options.distancePerDay"
     ></ngx-chartjs>
     <ngx-chartjs
       [data]="data.distance.monthly"
-      *ngIf="isEmptyDataset(data.distance.monthly) && toggleChart.distance === 'monthly'"
+      *ngIf="
+        this.data && this.data.distance && isEmptyDataset(data.distance.monthly) && toggleChart.distance === 'monthly'
+      "
       type="bar"
       [height]="70"
       [options]="options.distancePerMonth"
     ></ngx-chartjs>
     <ngx-chartjs
       [data]="data.distance.cumulated"
-      *ngIf="isEmptyDataset(data.distance.cumulated) && toggleChart.distance === 'cumulated'"
+      *ngIf="
+        this.data &&
+        this.data.distance &&
+        isEmptyDataset(data.distance.cumulated) &&
+        toggleChart.distance === 'cumulated'
+      "
       type="line"
       [height]="70"
       [options]="options.distancePerDayCumulated"

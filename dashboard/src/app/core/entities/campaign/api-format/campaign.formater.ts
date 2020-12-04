@@ -73,10 +73,9 @@ export class CampaignFormater {
       max_amount: null,
       only_adult: null,
       restrictions: [],
-      start: moment(campaign.start_date),
-      end: moment(campaign.end_date),
+      start: moment(campaign.start_date).utc(true),
+      end: moment(campaign.end_date).utc(true),
     } as CampaignUx;
-
     // GLOBAL RULES
     campaign.global_rules.forEach((retributionRule: GlobalRetributionRuleInterface) => {
       if (
@@ -93,7 +92,8 @@ export class CampaignFormater {
         !retributionRule.parameters.target
       ) {
         const parameters = retributionRule.parameters as MaxAmountRetributionRule['parameters'];
-        campaignUx.max_amount = parameters.amount;
+        campaignUx.max_amount =
+          campaign.unit === IncentiveUnitEnum.POINT ? Number(parameters.amount) : Number(parameters.amount) / 100;
       }
 
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.ONLY_ADULT) {
@@ -148,7 +148,7 @@ export class CampaignFormater {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
         campaignUx.restrictions.push({
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
-          quantity: parameters.amount,
+          quantity: campaign.unit === IncentiveUnitEnum.EUR ? parameters.amount / 100 : parameters.amount,
           period: parameters.period,
           unit: RestrictionUnitEnum.AMOUNT,
         } as RestrictionUxInterface);
@@ -407,7 +407,11 @@ export class CampaignFormater {
     }
 
     if (max_amount) {
-      campaignGlobalRetributionRules.push(new MaxAmountRetributionRule(max_amount));
+      campaignGlobalRetributionRules.push(
+        new MaxAmountRetributionRule(
+          Math.floor(unit === IncentiveUnitEnum.POINT ? max_amount : Math.floor(max_amount * 100)),
+        ),
+      );
     }
 
     if (max_trips) {
@@ -428,7 +432,7 @@ export class CampaignFormater {
             )
           : new AmountRestrictionRetributionRule(
               restriction.is_driver ? RestrictionTargetsEnum.DRIVER : RestrictionTargetsEnum.PASSENGER,
-              restriction.quantity,
+              unit === IncentiveUnitEnum.EUR ? restriction.quantity * 100 : restriction.quantity,
               restriction.period,
             );
 
@@ -456,10 +460,14 @@ export class CampaignFormater {
       }
 
       retribution.for_passenger.amount =
-        unit === IncentiveUnitEnum.POINT ? retribution.for_passenger.amount : retribution.for_passenger.amount * 100;
+        unit === IncentiveUnitEnum.POINT
+          ? retribution.for_passenger.amount
+          : Math.floor(retribution.for_passenger.amount * 100);
 
       retribution.for_driver.amount =
-        unit === IncentiveUnitEnum.POINT ? retribution.for_driver.amount : retribution.for_driver.amount * 100;
+        unit === IncentiveUnitEnum.POINT
+          ? retribution.for_driver.amount
+          : Math.floor(retribution.for_driver.amount * 100);
 
       // construct rules for passenger
       if (retribution.for_passenger.amount || retribution.for_passenger.free) {

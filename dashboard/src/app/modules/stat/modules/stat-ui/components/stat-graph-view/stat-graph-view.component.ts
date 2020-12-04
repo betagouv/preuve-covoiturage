@@ -5,6 +5,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { StatStoreService } from '~/modules/stat/services/stat-store.service';
 import { chartNameType } from '~/core/types/stat/chartNameType';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
+import { takeUntil } from 'rxjs/operators';
 
 // this component displays a non filtered graph
 @Component({
@@ -20,7 +21,9 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.loadStat();
+  }
 
   get loading(): boolean {
     return this.statService.isLoading;
@@ -28,5 +31,21 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
 
   get loaded(): boolean {
     return !!this.statService.stat;
+  }
+
+  private loadStat(): void {
+    this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe((stats) => {
+      if (stats) {
+        this.graphData = stats.graph;
+      }
+    });
+
+    if (this.loading || this.loaded) {
+      return;
+    }
+
+    // reset stats on load
+    this.statService.init();
+    this.statService.load();
   }
 }

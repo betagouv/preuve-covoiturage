@@ -77,7 +77,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
             });
           },
         ),
-        mergeMap((campaign) => this._territoryApi.get(campaign.territory_id)),
+        mergeMap((campaign) => this._territoryApi.find({ _id: campaign.territory_id })),
         tap((territory) => (this.territory = territory)),
       )
       .subscribe();
