@@ -33,7 +33,6 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
   // data of all charts
   public data: GraphNamesInterface;
   public graphVisible = false;
-  // graph to be displayed
   public graphToBeDisplayed: statDataNameType = 'trips';
   public graphTitle = '';
 
@@ -51,6 +50,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
 
   ngOnInit(): void {
     this.options = statChartOptions;
+    this.updateGraph();
   }
 
   get hasFilters(): boolean {
@@ -103,9 +103,9 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
     return object.datasets[0].data.length > 0;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.graphData && changes.graphData.currentValue && this.data) {
-      this.graphVisible = false;
+  updateGraph(): void {
+    this.graphVisible = false;
+    if (this.graphData) {
       const data: GraphNamesInterface = {
         trips: this.loadGraph('trips'),
         distance: this.loadGraph('distance'),
@@ -118,6 +118,12 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
       this.data = data;
 
       window.requestAnimationFrame(() => (this.graphVisible = true));
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.graphData) {
+      this.updateGraph();
     }
   }
 
