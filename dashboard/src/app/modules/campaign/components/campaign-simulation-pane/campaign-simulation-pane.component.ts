@@ -75,7 +75,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
             amount:
               this.simulatedCampaign.unit === IncentiveUnitEnum.EUR
                 ? (new CurrencyPipe('FR').transform(state.amount / 100, 'EUR', 'symbol', '1.2-2') as any)
-                : (`state.amount ${state.amount} pt(${state.amount > 1 ? 's' : ''})` as any),
+                : (`${state.amount} pt${state.amount > 1 ? 's' : ''}` as any),
           };
         });
     } else {
