@@ -52,7 +52,10 @@ export class CampaignFormater {
       name,
       description,
       territory_id,
-      state,
+      state: {
+        ...state,
+        amount: campaign.unit === IncentiveUnitEnum.EUR ? state.amount / 100 : state.amount,
+      },
       parent_id,
       status,
       unit,
@@ -76,7 +79,6 @@ export class CampaignFormater {
       start: moment(campaign.start_date),
       end: moment(campaign.end_date),
     } as CampaignUx;
-
     // GLOBAL RULES
     campaign.global_rules.forEach((retributionRule: GlobalRetributionRuleInterface) => {
       if (
