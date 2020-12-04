@@ -13,6 +13,8 @@ interface TerritoryVisibilityTree extends TerritoryTree {
   control?: FormControl;
   selected: boolean;
 }
+
+const isSelectableFilter = (t: TerritoryVisibilityTree) => t.activable || t.level === TerritoryLevelEnum.Towngroup;
 @Component({
   selector: 'app-operator-visibility-tree',
   templateUrl: './operator-visibility-tree.component.html',
@@ -97,7 +99,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
             // score search based ordering
             const territories = this.territories
               // get only EPCI or AOM (activable)
-              .filter((t) => t.activable || t.level === TerritoryLevelEnum.Towngroup)
+              .filter(isSelectableFilter)
               // search for requested words and set score based on matching words amount
               .map<TerritoryVisibilityTree & { score: number }>((t) => {
                 const nameLowerCase = t.name.toLowerCase();
@@ -142,11 +144,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     return this._operatorVisilibityService.isLoaded;
   }
 
-  public updateCheckAllCheckbox(): void {
-    this.checkAllValue =
-      this.territories.filter((ter) => ter.activable === true).length === this.selectedTerritoryIds.length;
-  }
-
   public save(): void {
     this._operatorVisilibityService.update(this.selectedTerritoryIds).subscribe(
       () => {
@@ -160,10 +157,13 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
 
   public checkAll($event: any): void {
     if ($event.checked) {
-      this.territories.forEach((ter) => (ter.selected = true));
-      this.selectedTerritoryIds = this.territories.map((ter) => ter._id);
+      // this.territories.forEach((ter) => (ter.selected = true));
+      this.selectedTerritoryIds = this.territories
+        .filter(isSelectableFilter)
+        .map((ter) => ter._id)
+        .filter((val, ind, self) => self.indexOf(val) === ind);
     } else {
-      this.territories.forEach((ter) => (ter.selected = false));
+      // this.territories.forEach((ter) => (ter.selected = false));
       this.selectedTerritoryIds = [];
     }
     this.visibilityFormControl.setValue(this.selectedTerritoryIds);
@@ -174,7 +174,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   public get countCheckedTerritories(): number {
-    return this.selectedTerritoryIds.length;
+    return this.selectedTerritoryIds.filter((val, ind, self) => self.indexOf(val) === ind).length;
   }
 
   private initVisibilityForm(): void {
