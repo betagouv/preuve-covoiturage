@@ -73,8 +73,8 @@ export class CampaignFormater {
       max_amount: null,
       only_adult: null,
       restrictions: [],
-      start: moment(campaign.start_date),
-      end: moment(campaign.end_date),
+      start: moment(campaign.start_date).utc(true),
+      end: moment(campaign.end_date).utc(true),
     } as CampaignUx;
     // GLOBAL RULES
     campaign.global_rules.forEach((retributionRule: GlobalRetributionRuleInterface) => {
