@@ -93,7 +93,8 @@ export class CampaignFormater {
         !retributionRule.parameters.target
       ) {
         const parameters = retributionRule.parameters as MaxAmountRetributionRule['parameters'];
-        campaignUx.max_amount = parameters.amount;
+        campaignUx.max_amount =
+          campaign.unit === IncentiveUnitEnum.POINT ? Number(parameters.amount) : Number(parameters.amount) / 100;
       }
 
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.ONLY_ADULT) {
@@ -407,7 +408,11 @@ export class CampaignFormater {
     }
 
     if (max_amount) {
-      campaignGlobalRetributionRules.push(new MaxAmountRetributionRule(max_amount));
+      campaignGlobalRetributionRules.push(
+        new MaxAmountRetributionRule(
+          Math.floor(unit === IncentiveUnitEnum.POINT ? max_amount : Math.floor(max_amount * 100)),
+        ),
+      );
     }
 
     if (max_trips) {
@@ -456,10 +461,14 @@ export class CampaignFormater {
       }
 
       retribution.for_passenger.amount =
-        unit === IncentiveUnitEnum.POINT ? retribution.for_passenger.amount : retribution.for_passenger.amount * 100;
+        unit === IncentiveUnitEnum.POINT
+          ? retribution.for_passenger.amount
+          : Math.floor(retribution.for_passenger.amount * 100);
 
       retribution.for_driver.amount =
-        unit === IncentiveUnitEnum.POINT ? retribution.for_driver.amount : retribution.for_driver.amount * 100;
+        unit === IncentiveUnitEnum.POINT
+          ? retribution.for_driver.amount
+          : Math.floor(retribution.for_driver.amount * 100);
 
       // construct rules for passenger
       if (retribution.for_passenger.amount || retribution.for_passenger.free) {
