@@ -52,10 +52,7 @@ export class CampaignFormater {
       name,
       description,
       territory_id,
-      state: {
-        ...state,
-        amount: campaign.unit === IncentiveUnitEnum.EUR ? state.amount / 100 : state.amount,
-      },
+      state,
       parent_id,
       status,
       unit,
