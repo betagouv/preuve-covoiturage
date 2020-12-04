@@ -19,6 +19,7 @@ export const weekdayTrafficLimitPolicy = {
         {
           start: 6,
           end: 20,
+          tz: 'Europe/Paris',
         },
       ],
     },

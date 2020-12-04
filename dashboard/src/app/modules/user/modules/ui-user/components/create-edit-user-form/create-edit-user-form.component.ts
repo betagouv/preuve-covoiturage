@@ -10,6 +10,7 @@ import { USER_GROUP_ROLES, USER_ROLES_FR, UserRoleEnum, UserManyRoleEnum } from 
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { cloneDeep } from 'lodash-es';
 
 @Component({
   selector: 'app-create-edit-user-form',
@@ -65,7 +66,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     this.initForm();
 
     // create a deep copy of all roles
-    const roles = (this.roles = JSON.parse(JSON.stringify(USER_GROUP_ROLES)));
+    const roles = (this.roles = cloneDeep(USER_GROUP_ROLES));
 
     // custom rule : remove territory demo role when admin user is not registry
     if (this.auth.user.group !== UserGroupEnum.REGISTRY) {

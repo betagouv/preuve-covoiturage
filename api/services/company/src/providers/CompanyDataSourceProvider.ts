@@ -54,4 +54,20 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
       throw e;
     }
   }
+
+  async find_many(sirets: string[], parallelCall = 4): Promise<CompanyInterface[]> {
+    let company_count = -1;
+    const res: CompanyInterface[] = [];
+
+    const apiCall = async (): Promise<boolean> => {
+      company_count++;
+      if (company_count >= sirets.length) return Promise.resolve(true);
+      res.push(await this.find(sirets[company_count]));
+      return apiCall();
+    };
+
+    const parallelCalls = new Array(parallelCall).map(() => apiCall());
+
+    return Promise.all(parallelCalls).then(() => res);
+  }
 }

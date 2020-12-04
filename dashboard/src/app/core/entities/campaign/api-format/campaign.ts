@@ -13,11 +13,14 @@ import { Clone } from '~/core/entities/IClone';
 import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.formater';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CampaignInterface } from '~/core/entities/api/shared/common/interfaces/CampaignInterface';
+import { CampaignReducedStats } from './CampaignStats';
 
 export class Campaign extends BaseModel implements FormModel, Model, MapModel<Campaign>, Clone<Campaign> {
   public _id: number;
   public territory_id: number;
   public name: string;
+  public state?: CampaignReducedStats;
+
   public description: string;
   public start_date: Date;
   public end_date: Date;
@@ -67,6 +70,7 @@ export class Campaign extends BaseModel implements FormModel, Model, MapModel<Ca
     this.rules = data.rules;
     this.global_rules = data.global_rules;
     this.ui_status = data.ui_status;
+    this.state = data.state;
 
     if (data.territory_id) {
       this.territory_id = data.territory_id;

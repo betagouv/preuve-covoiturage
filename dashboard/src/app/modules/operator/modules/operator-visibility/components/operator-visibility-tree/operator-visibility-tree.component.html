@@ -21,14 +21,24 @@
     <p>Aucun résultat avec vos critères de recherches</p>
   </div>
   <div class="OperatorVisibilityTree-form" *ngIf="territoryIdsToShow && territoryIdsToShow.length > 0">
-    <form [formGroup]="visibilityFormGroup">
-      <div formArrayName="territories">
-        <ng-container *ngFor="let territory of territoriesFormArray.controls; let i = index">
-          <mat-checkbox *ngIf="showTerritory(territories[i]._id)" color="primary" [formControlName]="i">
-            {{ territories[i].name }}
+    <form>
+      <ul class="territory-visibility-list">
+        <li
+          *ngFor="let ter of territories"
+          [hidden]="!showTerritory(ter._id)"
+          [style]="'padding-left:' + ter.indent * (searchMode ? 0 : 23) + 'px'"
+        >
+          <mat-checkbox
+            *ngIf="ter.activable || ter.level === 'towngroup'; else terr_label"
+            color="primary"
+            (change)="swapCheck(ter)"
+            [checked]="selectedTerritoryIds.indexOf(ter._id) !== -1"
+          >
+            {{ ter.name }}
           </mat-checkbox>
-        </ng-container>
-      </div>
+          <ng-template #terr_label>{{ ter.name }} </ng-template>
+        </li>
+      </ul>
     </form>
   </div>
   <div class="OperatorVisibilityTree-actions">
@@ -37,9 +47,7 @@
       <p *ngIf="countCheckedTerritories">
         Visible sur <span>{{ countCheckedTerritories }}</span> territoires
       </p>
-      <p *ngIf="!countCheckedTerritories">
-        Visible sur aucun territoire
-      </p>
+      <p *ngIf="!countCheckedTerritories">Visible sur aucun territoire</p>
     </ng-container>
   </div>
 </div>

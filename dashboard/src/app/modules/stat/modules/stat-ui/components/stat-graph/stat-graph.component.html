@@ -1,18 +1,11 @@
 <h3 class="graphTitle" *ngIf="!lightMode">{{ graphTitle }}</h3>
-
 <!--Distance-->
-<div class="graph" *ngIf="graphToBeDisplayed === 'distance'">
+<div class="graph" *ngIf="graphToBeDisplayed === 'distance' && graphVisible">
   <div class="graph-header" *ngIf="!lightMode">
     <mat-button-toggle-group [(ngModel)]="toggleChart.distance" (ngModelChange)="setGraphTitle()">
-      <mat-button-toggle aria-label="cumulé" value="cumulated">
-        Cumulé
-      </mat-button-toggle>
-      <mat-button-toggle aria-label="par jour" value="daily">
-        Par jour
-      </mat-button-toggle>
-      <mat-button-toggle aria-label="par mois" value="monthly">
-        Par mois
-      </mat-button-toggle>
+      <mat-button-toggle aria-label="cumulé" value="cumulated"> Cumulé </mat-button-toggle>
+      <mat-button-toggle aria-label="par jour" value="daily"> Par jour </mat-button-toggle>
+      <mat-button-toggle aria-label="par mois" value="monthly"> Par mois </mat-button-toggle>
     </mat-button-toggle-group>
   </div>
   <app-stat-chart-container
@@ -23,21 +16,28 @@
   >
     <ngx-chartjs
       [data]="data.distance.daily"
-      *ngIf="isEmptyDataset(data.distance.daily) && toggleChart.distance === 'daily'"
+      *ngIf="this.data && this.data.distance && isEmptyDataset(data.distance.daily) && toggleChart.distance === 'daily'"
       type="bar"
       [height]="70"
       [options]="options.distancePerDay"
     ></ngx-chartjs>
     <ngx-chartjs
       [data]="data.distance.monthly"
-      *ngIf="isEmptyDataset(data.distance.monthly) && toggleChart.distance === 'monthly'"
+      *ngIf="
+        this.data && this.data.distance && isEmptyDataset(data.distance.monthly) && toggleChart.distance === 'monthly'
+      "
       type="bar"
       [height]="70"
       [options]="options.distancePerMonth"
     ></ngx-chartjs>
     <ngx-chartjs
       [data]="data.distance.cumulated"
-      *ngIf="isEmptyDataset(data.distance.cumulated) && toggleChart.distance === 'cumulated'"
+      *ngIf="
+        this.data &&
+        this.data.distance &&
+        isEmptyDataset(data.distance.cumulated) &&
+        toggleChart.distance === 'cumulated'
+      "
       type="line"
       [height]="70"
       [options]="options.distancePerDayCumulated"
@@ -46,7 +46,7 @@
 </div>
 
 <!--Trips-->
-<div class="graph" *ngIf="graphToBeDisplayed === 'trips'">
+<div class="graph" *ngIf="graphToBeDisplayed === 'trips' && graphVisible">
   <div class="graph-header graph-trips-header">
     <div class="graph-trips-legend-wrapper">
       <div class="graph-trips-legend">
@@ -64,15 +64,9 @@
     </div>
     <div class="graph-trips-toggle-wrapper" *ngIf="!lightMode">
       <mat-button-toggle-group [(ngModel)]="toggleChart.trips" (ngModelChange)="setGraphTitle()">
-        <mat-button-toggle aria-label="cumulé" value="cumulated">
-          Cumulé
-        </mat-button-toggle>
-        <mat-button-toggle aria-label="par jour" value="daily">
-          Par jour
-        </mat-button-toggle>
-        <mat-button-toggle aria-label="par mois" value="monthly">
-          Par mois
-        </mat-button-toggle>
+        <mat-button-toggle aria-label="cumulé" value="cumulated"> Cumulé </mat-button-toggle>
+        <mat-button-toggle aria-label="par jour" value="daily"> Par jour </mat-button-toggle>
+        <mat-button-toggle aria-label="par mois" value="monthly"> Par mois </mat-button-toggle>
       </mat-button-toggle-group>
     </div>
   </div>
@@ -107,14 +101,10 @@
 </div>
 
 <!--Carpoolers-->
-<div class="graph" *ngIf="graphToBeDisplayed === 'carpoolers'">
+<div class="graph" *ngIf="graphToBeDisplayed === 'carpoolers' && graphVisible">
   <mat-button-toggle-group [(ngModel)]="toggleChart.carpoolers" (ngModelChange)="setGraphTitle()" *ngIf="!lightMode">
-    <mat-button-toggle aria-label="cumulé" value="cumulated">
-      Cumulé
-    </mat-button-toggle>
-    <mat-button-toggle aria-label="par mois" value="monthly">
-      Par mois
-    </mat-button-toggle>
+    <mat-button-toggle aria-label="cumulé" value="cumulated"> Cumulé </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly"> Par mois </mat-button-toggle>
   </mat-button-toggle-group>
   <app-stat-chart-container
     [hasFilters]="hasFilters"
@@ -140,14 +130,10 @@
 </div>
 
 <!--Petrol-->
-<div class="graph" *ngIf="graphToBeDisplayed === 'petrol'">
+<div class="graph" *ngIf="graphToBeDisplayed === 'petrol' && graphVisible">
   <mat-button-toggle-group [(ngModel)]="toggleChart.petrol" (ngModelChange)="setGraphTitle()" *ngIf="!lightMode">
-    <mat-button-toggle aria-label="cumulé" value="cumulated">
-      Cumulé
-    </mat-button-toggle>
-    <mat-button-toggle aria-label="par mois" value="monthly">
-      Par mois
-    </mat-button-toggle>
+    <mat-button-toggle aria-label="cumulé" value="cumulated"> Cumulé </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly"> Par mois </mat-button-toggle>
   </mat-button-toggle-group>
   <app-stat-chart-container
     [hasFilters]="hasFilters"
@@ -173,14 +159,10 @@
 </div>
 
 <!--CO2-->
-<div class="graph" *ngIf="graphToBeDisplayed === 'co2'">
+<div class="graph" *ngIf="graphToBeDisplayed === 'co2' && graphVisible">
   <mat-button-toggle-group [(ngModel)]="toggleChart.co2" (ngModelChange)="setGraphTitle()" *ngIf="!lightMode">
-    <mat-button-toggle aria-label="cumulé" value="cumulated">
-      Cumulé
-    </mat-button-toggle>
-    <mat-button-toggle aria-label="par mois" value="monthly">
-      Par mois
-    </mat-button-toggle>
+    <mat-button-toggle aria-label="cumulé" value="cumulated"> Cumulé </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly"> Par mois </mat-button-toggle>
   </mat-button-toggle-group>
   <app-stat-chart-container
     [hasFilters]="hasFilters"
@@ -206,18 +188,14 @@
 </div>
 
 <!--Carpoolers per vehicule-->
-<div class="graph" *ngIf="graphToBeDisplayed === 'carpoolersPerVehicule'">
+<div class="graph" *ngIf="graphToBeDisplayed === 'carpoolersPerVehicule' && graphVisible">
   <mat-button-toggle-group
     [(ngModel)]="toggleChart.carpoolersPerVehicule"
     (ngModelChange)="setGraphTitle()"
     *ngIf="!lightMode"
   >
-    <mat-button-toggle aria-label="par jour" value="daily">
-      Par jour
-    </mat-button-toggle>
-    <mat-button-toggle aria-label="par mois" value="monthly">
-      Par mois
-    </mat-button-toggle>
+    <mat-button-toggle aria-label="par jour" value="daily"> Par jour </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly"> Par mois </mat-button-toggle>
   </mat-button-toggle-group>
   <app-stat-chart-container
     [hasFilters]="hasFilters"

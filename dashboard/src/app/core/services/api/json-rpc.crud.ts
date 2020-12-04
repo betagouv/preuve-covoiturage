@@ -24,10 +24,13 @@ export class JsonRpcCrud<
   EntityT extends Model,
   ListEntityT extends Model = EntityT,
   IPatchT = any,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IDeleteT = any,
   IGetT = any,
   IGetListT = any,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ICreateT = EntityT,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IUpdateT = EntityT
 > extends JsonRpcGetList<EntityT, ListEntityT, IGetT, IGetListT> {
   constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected method: string) {

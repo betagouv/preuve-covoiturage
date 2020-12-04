@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import * as moment from 'moment';
 import { ChartData, ChartOptions } from 'chart.js';
 
@@ -9,11 +9,12 @@ import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
   templateUrl: './campaign-main-metrics.component.html',
   styleUrls: ['./campaign-main-metrics.component.scss'],
 })
-export class CampaignMainMetricsComponent implements OnInit {
+export class CampaignMainMetricsComponent implements OnInit, OnChanges {
   @Input() campaign: CampaignUx;
   daysRemaining = 1;
   daysPassed = 0;
 
+  budgetTotal = 1;
   budgetRemaining = 1;
   budgetSpent = 0;
 
@@ -37,6 +38,12 @@ export class CampaignMainMetricsComponent implements OnInit {
   };
 
   constructor() {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.campaign) {
+      this.initPeriod();
+      this.initBudget();
+    }
+  }
 
   ngOnInit(): void {
     this.initPeriod();
@@ -65,13 +72,10 @@ export class CampaignMainMetricsComponent implements OnInit {
   }
 
   private initBudget(): void {
-    if (!this.campaign.amount_spent) {
-      this.budgetSpent = 0;
-      this.budgetRemaining = this.campaign.max_amount;
-      return;
-    }
-    this.budgetRemaining = this.campaign.max_amount - this.campaign.amount_spent;
-    this.budgetSpent = this.campaign.amount_spent;
+    this.budgetTotal = this.campaign ? this.campaign.max_amount : 0;
+
+    this.budgetSpent = this.campaign && this.campaign.state ? this.campaign.state.amount : 0;
+    this.budgetRemaining = this.campaign ? this.budgetTotal - this.budgetSpent : 1;
   }
 
   get periodChartData(): ChartData {

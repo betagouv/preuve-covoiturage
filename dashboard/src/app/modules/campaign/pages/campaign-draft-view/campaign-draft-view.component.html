@@ -3,14 +3,14 @@
     <mat-spinner></mat-spinner>
   </div>
   <div class="campaignDraftView" *ngIf="!isLoading">
-    <div class="campaignDraftView-header">
+    <div class="campaignDraftView-header" *ngIf="!userIsRegistry">
       <h1>{{ campaignUx.name }}</h1>
       <p>{{ territory.name }}</p>
       <div class="campaignDraftView-header-message">
         <div>
           <mat-icon class="dot">fiber_manual_record</mat-icon>
           <div>
-            <h4>Votre campagne est en attente et prête à être démarée</h4>
+            <h4>Votre campagne est en attente et prête à être démarrée</h4>
             <p>Vous pouvez vérifier l'ensemble des informations saisies, puis la lancer</p>
           </div>
         </div>
@@ -22,7 +22,14 @@
 
     <div class="campaignDraftView-content">
       <div>
-        <app-campaign-main-metrics [campaign]="campaignUx"></app-campaign-main-metrics>
+        <app-campaign-simulation-pane
+          *ngIf="campaignUx && campaignUx.status === 'draft'"
+          [campaign]="campaignUx"
+        ></app-campaign-simulation-pane>
+        <app-campaign-main-metrics
+          *ngIf="campaignUx && campaignUx.status !== 'draft'"
+          [campaign]="campaignUx"
+        ></app-campaign-main-metrics>
         <app-campaign-contacts [territory]="territory"></app-campaign-contacts>
       </div>
       <div>

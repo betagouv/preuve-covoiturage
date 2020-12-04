@@ -42,6 +42,17 @@ export const territoryLevelLabels = [
   [TerritoryLevelEnum.Other, 'Autre'],
 ];
 
+export interface TerritoryTree {
+  _id: number;
+  name: string;
+  children?: TerritoryTree[];
+  level?: TerritoryLevelEnum;
+  parents?: number[];
+  hasParents?: boolean;
+  indent: number;
+  activable;
+}
+
 export interface TerritoryBase extends TerritoryBaseEdit {
   // level: TerritoryLevelEnum;
   name: string;
@@ -199,13 +210,7 @@ export class Territory extends BaseModel
           company: new Company(this.company).toFormValues(),
           contacts: new Contacts(this.contacts).toFormValues(),
           address: new Address(this.address).toFormValues(),
-          geo: this.geo
-            ? this.geo
-            : `{ "type": "MultiPolygon", 
-          "coordinates": [
-              [], 
-          ]
-        }`,
+          geo: this.geo ? this.geo : '{"type": "MultiPolygon", "coordinates": [[[[],[],[],[]]]]}',
           insee:
             this.ui_status && this.ui_status.format === 'insee' && this.ui_status.insee ? this.ui_status.insee : '',
         }
@@ -242,7 +247,12 @@ export interface TerritoryFormModel {
   address?: Address;
   uiSelectionState: TerritorySelectionUIState[];
   format: string;
-  geo?: string;
+  geo?:
+    | string
+    | {
+        type: 'MultiPolygon';
+        coordinates: number[][][2];
+      };
   insee?: string;
 
   // public address?: Address;

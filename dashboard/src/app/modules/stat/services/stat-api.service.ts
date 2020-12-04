@@ -20,6 +20,7 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
     const finalParams = {
       ...this.defaultListParam,
       ...params,
+      tz: typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'Europe/Paris',
     };
 
     if (!finalParams.date) {

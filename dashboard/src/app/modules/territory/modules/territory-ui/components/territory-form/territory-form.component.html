@@ -48,7 +48,7 @@
         <h4>Contour geographique</h4>
 
         <mat-form-field class="relation-textarea" appearance="outline">
-          <mat-label>Contour geographique</mat-label>
+          <mat-label>Contour géographique</mat-label>
           <textarea matInput formControlName="geo"></textarea>
         </mat-form-field>
 
@@ -68,13 +68,11 @@
         <mat-select formControlName="level" required>
           <mat-option *ngFor="let valueLabel of levelLabel" [value]="valueLabel[0]">{{ valueLabel[1] }}</mat-option>
         </mat-select>
-        <mat-error *ngIf="controls.level.hasError('required')">
-          Le niveau du territoire est obligatoire.
-        </mat-error>
+        <mat-error *ngIf="controls.level.hasError('required')"> Le niveau du territoire est obligatoire. </mat-error>
       </mat-form-field>
 
-      <mat-checkbox formControlName="activable">AOM</mat-checkbox>
-      <mat-checkbox formControlName="active" [hidden]="!displayAOMActive">AOM active</mat-checkbox>
+      <mat-checkbox formControlName="activable">Partenaire</mat-checkbox>
+      <mat-checkbox formControlName="active" [hidden]="!displayAOMActive">AOM</mat-checkbox>
       <div [hidden]="!activable">
         <h3>Structure</h3>
 
@@ -127,9 +125,7 @@
         >
           {{ !!editedId ? 'Mettre à jour les informations' : 'Créer' }}
         </button>
-        <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">
-          Fermer
-        </button>
+        <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">Fermer</button>
       </div>
     </div>
   </form>

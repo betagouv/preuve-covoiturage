@@ -7,6 +7,7 @@ import {
   IncentiveRepositoryProviderInterface,
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStateEnum,
+  CampaignStateInterface,
 } from '../interfaces';
 
 @provider({
@@ -199,5 +200,29 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
     await this.connection.getClient().query(query);
     return;
+  }
+
+  async getCampaignState(policy_id: number): Promise<CampaignStateInterface> {
+    const query = {
+      text: `
+        SELECT
+          sum(amount)::int as amount,
+          (count(*) FILTER (WHERE amount > 0))::int as trip_subsidized,
+          (count(*) FILTER (WHERE amount = 0))::int as trip_excluded
+        FROM ${this.table}
+        WHERE policy_id = $1
+          AND status = 'validated'
+      `,
+      values: [policy_id],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    return result.rowCount
+      ? result.rows[0]
+      : {
+          sum: 0,
+          trip_excluded: 0,
+          trip_subsidized: 0,
+        };
   }
 }

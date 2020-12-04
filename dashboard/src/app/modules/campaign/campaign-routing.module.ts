@@ -20,7 +20,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        data: { groups: [UserGroupEnum.TERRITORY] },
+        data: { groups: [UserGroupEnum.TERRITORY, UserGroupEnum.REGISTRY] },
         component: CampaignDashboardComponent,
       },
       {
@@ -50,7 +50,7 @@ const routes: Routes = [
       },
       {
         path: 'draft/:campaignId',
-        data: { groups: [UserGroupEnum.TERRITORY] },
+        data: { permissions: ['incentive-campaign.read'], groups: [UserGroupEnum.TERRITORY, UserGroupEnum.REGISTRY] },
         component: CampaignDraftViewComponent,
       },
       {

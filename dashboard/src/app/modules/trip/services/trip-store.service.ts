@@ -14,7 +14,8 @@ import { TripApiService } from '~/modules/trip/services/trip-api.service';
   providedIn: 'root',
 })
 export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApiService> {
-  protected _total$ = new BehaviorSubject<number>(null);
+  // total type is string as it can overflow Number.MAX_SAFE_INTEGER
+  protected _total$ = new BehaviorSubject<string>(null);
 
   constructor(protected tripApi: TripApiService) {
     super(tripApi);
@@ -25,17 +26,18 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
   }
 
   // total
-  get total$(): Observable<number> {
+  get total$(): Observable<string> {
     return this._total$;
   }
 
-  get total(): number {
+  get total(): string {
     return this._total$.value;
   }
 
   public exportTrips(filter: ExportFilterUxInterface): Observable<any> {
     // map moment to date
     const params: ExportFilterInterface = {
+      tz: filter.tz,
       date: {
         start: moment(filter.date.start).startOf('day').toISOString(),
         end: moment(filter.date.end).endOf('day').toISOString(),

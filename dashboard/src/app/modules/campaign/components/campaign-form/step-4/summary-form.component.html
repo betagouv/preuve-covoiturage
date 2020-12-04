@@ -10,6 +10,10 @@
       <span>Attention : Texte indicatif</span>
     </div>
   </div>
+
+  
+  <app-campaign-simulation-pane v-if="isCreating" *ngIf="visible" [campaign]="campaignForm.value"></app-campaign-simulation-pane>
+
   <form [formGroup]="campaignForm">
     <mat-form-field appearance="outline">
       <mat-label>Donnez un nom à votre campagne</mat-label>
@@ -25,6 +29,8 @@
         La description de la campagne est obligatoire.
       </mat-error>
     </mat-form-field>
+
+
     <div class="SummaryForm-actions">
       <button
         *ngIf="!isCreating"

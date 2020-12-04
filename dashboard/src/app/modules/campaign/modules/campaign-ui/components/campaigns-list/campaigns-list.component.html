@@ -25,7 +25,7 @@
         </div>
         <div class="CampaignsList-item-trips">
           <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT && campaign.trips_number"
-            >{{ campaign.trips_number }} trajet(s)</span
+            >{{ campaign.trips_number }} trajet{{ campaign.trips_number > 1 ? 's' : '' }}</span
           >
           <span *ngIf="campaign.max_trips">Plafond&nbsp;:&nbsp;{{ campaign.max_trips }} trajets</span>
         </div>

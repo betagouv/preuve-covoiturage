@@ -5,6 +5,7 @@ import { RestrictionPeriodsEnum, RestrictionUnitEnum } from '~/core/enums/campai
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
+import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
 
 export interface CampaignUXInterface {
   _id: number;
@@ -15,6 +16,8 @@ export interface CampaignUXInterface {
   description: string;
   status: CampaignStatusEnum;
   unit: IncentiveUnitEnum;
+  state?: CampaignReducedStats;
+
   parent_id: number;
   amount_spent?: number;
   trips_number?: number;

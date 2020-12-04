@@ -33,6 +33,7 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     if ('date' in filter && filter.date.end) {
       params['date'].end = filter.date.end.toISOString();
     }
+
     this._filterSubject.next(params);
     super.loadList();
   }

@@ -10,10 +10,12 @@ function setup(): { rule: TimeRangeFilter; trip: TripInterface } {
     {
       start: 8,
       end: 10,
+      tz: 'Europe/Paris',
     },
     {
       start: 17,
       end: 20,
+      tz: 'Europe/Paris',
     },
   ]);
 

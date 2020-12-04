@@ -15,7 +15,7 @@
     min-width: 600px;
     overflow-y: auto;
     background-color: white;
-    padding: 20px;
+    // padding: 20px;
     border: 1px solid lightgrey;
     display: inline-block;
     margin-bottom: 5px;
@@ -28,5 +28,17 @@
     p {
       margin-left: 30px;
     }
+  }
+}
+
+.territory-visibility-list {
+  list-style: none;
+  li,
+  a,
+  span,
+  input {
+    font-family: 'OpenSans', sans-serif !important;
+    font-weight: normal !important;
+    font-size: 14px !important;
   }
 }

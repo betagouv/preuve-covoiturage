@@ -35,6 +35,10 @@ export class ValidateDateMiddleware implements MiddlewareInterface {
       throw new InvalidParamsException(`End should be before ${maxEnd.toDateString()}`);
     }
 
+    // Set proper time
+    campaign.start_date.setHours(0, 0, 0, 0);
+    campaign.end_date.setHours(23, 59, 59, 999);
+
     return next(params, context);
   }
 }

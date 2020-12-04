@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@ilos/common": "~0",
-    "lodash": "^4.17.14"
+    "lodash": "^4.17.20"
   },
   "ava": {
     "files": [

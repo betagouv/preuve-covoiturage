@@ -20,6 +20,7 @@ import { rnaMacro } from '../macros/rnaMacro';
 import { roleMacro } from '../macros/roleMacro';
 import { serialMacro } from '../macros/serialMacro';
 import { tokenMacro } from '../macros/tokenMacro';
+import { tzMacro } from '../macros/tzMacro';
 import { uuidMacro } from '../macros/uuidMacro';
 import { groupMacro } from '../macros/groupMacro';
 import { longcharMacro } from '../macros/longcharMacro';
@@ -57,6 +58,7 @@ const macroStore = {
   updatedat: timestampMacro,
   deletedat: timestampMacro,
   token: tokenMacro,
+  tz: tzMacro,
   uuid: uuidMacro,
   varchar: varcharMacro,
 };

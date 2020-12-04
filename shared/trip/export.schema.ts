@@ -2,6 +2,9 @@ export const schema = {
   type: 'object',
   additionalProperties: false,
   properties: {
+    tz: {
+      macro: 'tz',
+    },
     date: {
       type: 'object',
       additionalProperties: false,

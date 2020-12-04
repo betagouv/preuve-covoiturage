@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { uniqWith, isEqual } from 'lodash-es';
+import { uniqWith, isEqual, cloneDeep } from 'lodash-es';
 
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
@@ -46,13 +46,13 @@ import { CampaignInterface } from '~/core/entities/api/shared/common/interfaces/
 
 export class CampaignFormater {
   static toUx(campaign: Campaign): CampaignUx {
-    const { _id, name, description, territory_id, status, unit, parent_id, ui_status } = campaign;
-
+    const { _id, name, description, territory_id, status, unit, parent_id, ui_status, state } = campaign;
     const campaignUx = {
       _id,
       name,
       description,
       territory_id,
+      state,
       parent_id,
       status,
       unit,
@@ -73,10 +73,9 @@ export class CampaignFormater {
       max_amount: null,
       only_adult: null,
       restrictions: [],
-      start: moment(campaign.start_date),
-      end: moment(campaign.end_date),
+      start: moment(campaign.start_date).utc(true),
+      end: moment(campaign.end_date).utc(true),
     } as CampaignUx;
-
     // GLOBAL RULES
     campaign.global_rules.forEach((retributionRule: GlobalRetributionRuleInterface) => {
       if (
@@ -93,7 +92,8 @@ export class CampaignFormater {
         !retributionRule.parameters.target
       ) {
         const parameters = retributionRule.parameters as MaxAmountRetributionRule['parameters'];
-        campaignUx.max_amount = parameters.amount;
+        campaignUx.max_amount =
+          campaign.unit === IncentiveUnitEnum.POINT ? Number(parameters.amount) : Number(parameters.amount) / 100;
       }
 
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.ONLY_ADULT) {
@@ -111,7 +111,11 @@ export class CampaignFormater {
           parameters.max !== -1 ? Number(parameters.max) / 1000 : null,
         ];
       }
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WEEKDAY) {
+      if (
+        retributionRule.slug === GlobalRetributionRulesSlugEnum.WEEKDAY &&
+        // remove filter if all days are selected
+        (retributionRule.parameters as number[]).sort().join('') !== '01234567'
+      ) {
         campaignUx.filters.weekday = retributionRule.parameters as WeekdayRetributionRule['parameters'];
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.TIME) {
@@ -121,7 +125,9 @@ export class CampaignFormater {
           end: timeRange.end > 9 ? `${timeRange.end}:00` : `0${timeRange.end}:00`,
         }));
       }
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.OPERATOR_IDS) {
+
+      // ignore empty array
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.OPERATOR_IDS && retributionRule.parameters) {
         campaignUx.filters.operator_ids = retributionRule.parameters as OperatorIdsGlobalRetributionRule['parameters'];
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RANK) {
@@ -142,7 +148,7 @@ export class CampaignFormater {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
         campaignUx.restrictions.push({
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
-          quantity: parameters.amount,
+          quantity: campaign.unit === IncentiveUnitEnum.EUR ? parameters.amount / 100 : parameters.amount,
           period: parameters.period,
           unit: RestrictionUnitEnum.AMOUNT,
         } as RestrictionUxInterface);
@@ -332,8 +338,9 @@ export class CampaignFormater {
       max_trips,
       only_adult,
       restrictions,
+      state,
       passenger_seat,
-    } = campaignUx;
+    } = cloneDeep(campaignUx);
 
     // GLOBAL RULES
     const campaignGlobalRetributionRules: GlobalRetributionRuleType[] = [];
@@ -346,12 +353,22 @@ export class CampaignFormater {
           campaignUx.filters.time.map((timeRange) => ({
             start: Number(timeRange.start.slice(0, 2)),
             end: Number(timeRange.end.slice(0, 2)),
+            tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
           })),
         ),
       );
     }
-    campaignGlobalRetributionRules.push(new WeekdayRetributionRule(campaignUx.filters.weekday));
-    if (!campaignUx.filters.all_operators) {
+
+    // remove filter if all days are selected
+    if (campaignUx.filters.weekday.sort().join('') !== '0123456') {
+      campaignGlobalRetributionRules.push(new WeekdayRetributionRule(campaignUx.filters.weekday));
+    }
+
+    if (
+      !campaignUx.filters.all_operators &&
+      campaignUx.filters.operator_ids &&
+      campaignUx.filters.operator_ids.length > 0
+    ) {
       campaignGlobalRetributionRules.push(new OperatorIdsGlobalRetributionRule(campaignUx.filters.operator_ids));
     }
     campaignGlobalRetributionRules.push(
@@ -390,7 +407,11 @@ export class CampaignFormater {
     }
 
     if (max_amount) {
-      campaignGlobalRetributionRules.push(new MaxAmountRetributionRule(max_amount));
+      campaignGlobalRetributionRules.push(
+        new MaxAmountRetributionRule(
+          Math.floor(unit === IncentiveUnitEnum.POINT ? max_amount : Math.floor(max_amount * 100)),
+        ),
+      );
     }
 
     if (max_trips) {
@@ -411,7 +432,7 @@ export class CampaignFormater {
             )
           : new AmountRestrictionRetributionRule(
               restriction.is_driver ? RestrictionTargetsEnum.DRIVER : RestrictionTargetsEnum.PASSENGER,
-              restriction.quantity,
+              unit === IncentiveUnitEnum.EUR ? restriction.quantity * 100 : restriction.quantity,
               restriction.period,
             );
 
@@ -439,10 +460,14 @@ export class CampaignFormater {
       }
 
       retribution.for_passenger.amount =
-        unit === IncentiveUnitEnum.POINT ? retribution.for_passenger.amount : retribution.for_passenger.amount * 100;
+        unit === IncentiveUnitEnum.POINT
+          ? retribution.for_passenger.amount
+          : Math.floor(retribution.for_passenger.amount * 100);
 
       retribution.for_driver.amount =
-        unit === IncentiveUnitEnum.POINT ? retribution.for_driver.amount : retribution.for_driver.amount * 100;
+        unit === IncentiveUnitEnum.POINT
+          ? retribution.for_driver.amount
+          : Math.floor(retribution.for_driver.amount * 100);
 
       // construct rules for passenger
       if (retribution.for_passenger.amount || retribution.for_passenger.free) {
@@ -502,19 +527,14 @@ export class CampaignFormater {
     ui_status.for_driver = !!ui_status.for_driver;
     ui_status.for_trip = !!ui_status.for_trip;
 
-    // //  remove empty or null values
-    // if (campaign.parent_id === null) {
-    //   delete campaign.parent_id;
-    // }
-
-    return {
+    const apiData: CampaignInterface = {
       _id,
       name,
+      state,
       description,
       territory_id,
       status,
       unit,
-      parent_id,
       ui_status: uiStatus,
       rules: campaignRetributionRules,
       global_rules: campaignGlobalRetributionRules,
@@ -522,5 +542,9 @@ export class CampaignFormater {
       start_date: campaignUx.start.startOf('day').toISOString() as any,
       end_date: campaignUx.end.endOf('day').toISOString() as any,
     };
+
+    if (parent_id) apiData.parent_id = parent_id;
+
+    return apiData;
   }
 }
