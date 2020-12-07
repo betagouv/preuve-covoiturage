@@ -169,7 +169,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
     const where = await this.buildWhereClauses(params);
-    const tz = await this.validateTz(params.tz);
 
     const values = [...(where ? where.values : [])];
     const text = `
@@ -196,11 +195,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: this.numberPlaceholders(text),
     });
 
-    // convert YYYY-MM-DD date format to full Date on the right TZ
-    return result.rows.map((d) => {
-      d.day = utcToZonedTime(d.day, tz.name);
-      return d;
-    });
+    return result.rowCount ? result.rows : [];
   }
 
   public async searchWithCursor(
