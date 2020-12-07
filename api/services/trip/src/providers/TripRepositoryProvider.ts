@@ -169,7 +169,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
     const where = await this.buildWhereClauses(params);
-    const tz = await this.validateTz(params.tz);
 
     const values = [...(where ? where.values : [])];
     const text = `

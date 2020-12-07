@@ -21,10 +21,7 @@ export class StatPublicService {
   public loadOne(): Observable<StatInterface[]> {
     this._loading$.next(true);
 
-    // get the user's timezone with modern API or fallback to French tz
-    const tz = typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'Europe/Paris';
-
-    return this._http.get('stats', { params: { tz: encodeURIComponent(tz) } }).pipe(
+    return this._http.get('stats').pipe(
       tap((data: StatInterface[]) => {
         const formatedStat = this._statFormatService.formatData(data);
         this._formatedStat$.next(formatedStat);
