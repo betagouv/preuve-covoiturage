@@ -1,10 +1,12 @@
 export interface ParamsInterface {
   uuid: string;
-  type: 'pdf' | 'png'; // PrintTypes from @pdc/provider-printer
 }
 
 // should be Buffer but fails with the frontend
-export type ResultInterface = any;
+export interface ResultInterface {
+  headers: { [k: string]: string };
+  body: Buffer;
+}
 
 export const handlerConfig = {
   service: 'certificate',

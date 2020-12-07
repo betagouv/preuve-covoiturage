@@ -31,14 +31,18 @@ export class CampaignContactsComponent implements OnInit {
   //  }
 
   ngOnInit(): void {
-    const address = this.territory.address && this.territory.address.postcode;
-    if (!address) {
-      this.loading = false;
-      console.error("Le code postal du territoire n'est pas définit !");
-      return;
-    }
+    // const address = this.territory.address && this.territory.address.postcode;
+    // if (!address) {
+    //   this.loading = false;
+    //   console.error("Le code postal du territoire n'est pas définit !");
+    //   return;
+    // }
+
+    const postcode = this.territory.address ? this.territory.address.postcode : '';
+    const address = this.territory.address ? this.territory.address.street : '';
+
     this._geoService
-      .findGeoDataByPostCode(address)
+      .findGeoDataByPostCode(address, postcode)
       .pipe(
         // get first result
         map((coordinates: GeoDataInterface[]) => coordinates[0]),

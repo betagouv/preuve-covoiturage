@@ -4,9 +4,14 @@ import { LightTripInterface } from './LightTripInterface';
 import { StatInterface } from './StatInterface';
 import { ExportTripInterface } from './ExportTripInterface';
 
+export interface TzResultInterface {
+  name: string;
+  utc_offset: string;
+}
+
 export interface TripRepositoryInterface {
   stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]>;
-  searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }>;
+  searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }>;
   search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>>;
   searchWithCursor(
     params: {
@@ -17,13 +22,14 @@ export interface TripRepositoryInterface {
     },
     type?: string,
   ): Promise<(count: number) => Promise<ExportTripInterface[]>>;
+  validateTz(tz?: string): Promise<TzResultInterface>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
     throw new Error();
   }
 
-  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: number }> {
+  public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {
     throw new Error('Not implemented');
   }
 
@@ -42,6 +48,10 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
     },
     type?: string,
   ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
+    throw new Error('Not implemented');
+  }
+
+  public async validateTz(tz?: string): Promise<TzResultInterface> {
     throw new Error('Not implemented');
   }
 }

@@ -1,5 +1,6 @@
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { get } from 'lodash';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
@@ -29,22 +30,21 @@ export class ListAction extends Action {
     const result = await this.pg.search(params);
 
     // get visible operators from user context
-    let authorizedOperators = null;
-    if (context.call && context.call.user && context.call.user.authorizedOperators) {
-      authorizedOperators = context.call.user.authorizedOperators;
-    }
+    // unauthorized operators are replaced by null
+    const authorizedOperators = get(context, 'call.user.authorizedOperators', null) || null;
+    const data = result.data.map((r) => ({
+      ...r,
+      operator_id:
+        authorizedOperators === null
+          ? r.operator_id
+          : authorizedOperators.indexOf(r.operator_id) === -1
+          ? null
+          : r.operator_id,
+    }));
 
     return {
       ...result,
-      data: result.data.map((r) => ({
-        ...r,
-        operator_id:
-          authorizedOperators === null
-            ? r.operator_id
-            : authorizedOperators.indexOf(r.operator_id) === -1
-            ? null
-            : r.operator_id,
-      })),
+      data,
     };
   }
 }

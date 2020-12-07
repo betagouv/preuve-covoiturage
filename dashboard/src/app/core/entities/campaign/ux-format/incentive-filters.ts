@@ -34,4 +34,5 @@ export interface IncentiveTimeRuleUxInterface {
 export interface IncentiveTimeRuleInterface {
   start: number;
   end: number;
+  tz: string;
 }

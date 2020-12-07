@@ -1,3 +1,4 @@
+import { CampaignReducedStats } from './CampaignReducedStats';
 import { RuleInterface } from './RuleInterface';
 
 export interface CampaignInterface {
@@ -8,6 +9,7 @@ export interface CampaignInterface {
   name: string;
   description: string;
   start_date: Date;
+  state?: CampaignReducedStats;
   end_date: Date;
   unit: string;
   status: string;

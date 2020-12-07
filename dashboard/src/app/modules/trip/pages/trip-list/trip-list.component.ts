@@ -1,5 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
 import { FilterService } from '~/modules/filter/services/filter.service';
@@ -28,8 +27,6 @@ export class TripListComponent extends DestroyObservable implements OnInit, Afte
   constructor(
     public filterService: FilterService,
     public tripService: TripStoreService,
-    private toastr: ToastrService,
-    private cd: ChangeDetectorRef,
     private authService: AuthenticationService,
   ) {
     super();
@@ -83,7 +80,7 @@ export class TripListComponent extends DestroyObservable implements OnInit, Afte
     return Object.keys(this.filterService.filter$.value).length > 0;
   }
 
-  get total(): number {
+  get total(): string {
     return this.tripService.total;
   }
 

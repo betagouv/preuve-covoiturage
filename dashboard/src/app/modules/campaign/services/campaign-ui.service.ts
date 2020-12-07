@@ -1,12 +1,11 @@
 import { Inject, Injectable, LOCALE_ID } from '@angular/core';
-import { CurrencyPipe, DecimalPipe, WeekDay } from '@angular/common';
+import { WeekDay } from '@angular/common';
 import * as moment from 'moment';
 
 import {
   RestrictionUxInterface,
   RetributionUxInterface,
 } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
-import { INCENTIVE_UNITS_FR, IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import {
@@ -42,8 +41,9 @@ export class CampaignUiService {
 
   public retributions(campaign: CampaignUx): string {
     const retributions: RetributionUxInterface[] = campaign.retributions;
-    const unit: IncentiveUnitEnum = campaign.unit;
     const uiStatus: UiStatusInterface = campaign.ui_status;
+
+    const unit = (amount: number, unit: string): string => `${unit}${amount > 1 ? 's' : ''}`;
 
     let text = '';
     for (const retribution of retributions) {
@@ -71,7 +71,7 @@ export class CampaignUiService {
       // CONDUCTEUR
       if (valueForDriver && uiStatus.for_driver) {
         // tslint:disable-next-line:max-line-length
-        text += ` ${valueForDriver} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
+        text += ` ${valueForDriver} ${unit(valueForDriver, campaign.unit)} par trajet`;
         text += perKmForDriver ? ' par km' : '';
         text += perPassenger ? ' par passager' : '';
         if (!uiStatus.for_trip) {
@@ -85,7 +85,7 @@ export class CampaignUiService {
         if (free) {
           text += ' gratuit pour le(s) passager(s)';
         } else if (valueForPassenger !== null) {
-          text += ` ${valueForPassenger} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
+          text += ` ${valueForPassenger} ${unit(valueForPassenger, campaign.unit)} par trajet`;
           text += perKmForPassenger ? ' par km' : '';
           text += ` pour le(s) passager(s)`;
         }
@@ -94,7 +94,7 @@ export class CampaignUiService {
       // TRAJET
       if (uiStatus.for_trip) {
         // tslint:disable-next-line:max-line-length
-        text += ` ${valueForDriver} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
+        text += ` ${valueForDriver} ${unit(valueForDriver, campaign.unit)} par trajet`;
         text += perKmForDriver ? ' par km' : '';
         text += perPassenger ? ' par passager' : '';
       }
@@ -271,9 +271,12 @@ export class CampaignUiService {
 
   public restriction(restriction: RestrictionUxInterface, amountUnit: string): string {
     let text = '';
-    const unit = restriction.unit === RestrictionUnitEnum.TRIP ? 'trajet(s)' : `${amountUnit}(s)`;
+    const unit = (amount: number): string =>
+      (restriction.unit === RestrictionUnitEnum.TRIP ? 'trajet' : `${amountUnit}`) + (amount > 1 ? 's' : '');
 
-    text += `${restriction.quantity} ${unit} maximum pour le ${restriction.is_driver ? 'conducteur' : 'passager'} `;
+    text += `${restriction.quantity} ${unit(restriction.quantity)} maximum pour le ${
+      restriction.is_driver ? 'conducteur' : 'passager'
+    } `;
 
     switch (restriction.period) {
       // @ts-ignore
@@ -326,28 +329,12 @@ export class CampaignUiService {
       }`.toLowerCase();
     }
 
-    summaryText += `<p>Cette campagne est limitée à `;
-
     // MAXIMUM AMOUNT
-    switch (unit) {
-      case IncentiveUnitEnum.EUR:
-        summaryText += ` <b>${new CurrencyPipe(this.locale).transform(
-          campaign.max_amount,
-          'EUR',
-          'symbol',
-          '1.0-0',
-        )}</b>.`;
-        break;
-      case IncentiveUnitEnum.POINT:
-        // tslint:disable-next-line:max-line-length
-        summaryText += ` <b>${new DecimalPipe(this.locale).transform(
-          campaign.max_amount,
-          '1.0-0',
-          'FR',
-        )} points</b>.</p>`;
-        break;
-    }
-    summaryText += `</p>`;
+    summaryText += `
+      <p>Cette campagne est limitée à
+        <b>${campaign.max_amount} ${unit}${campaign.max_amount > 1 ? 's' : ''}</b>.
+      </p>
+    `;
 
     // TARGET
     summaryText += `<p>Les <b>`;

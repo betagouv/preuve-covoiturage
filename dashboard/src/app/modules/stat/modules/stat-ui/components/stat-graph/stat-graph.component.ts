@@ -32,8 +32,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
 
   // data of all charts
   public data: GraphNamesInterface;
-
-  // graph to be displayed
+  public graphVisible = false;
   public graphToBeDisplayed: statDataNameType = 'trips';
   public graphTitle = '';
 
@@ -51,6 +50,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
 
   ngOnInit(): void {
     this.options = statChartOptions;
+    this.updateGraph();
   }
 
   get hasFilters(): boolean {
@@ -66,15 +66,25 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
   }
 
   get canShowDaily(): boolean {
-    return !this.isEmptyDataset(this.data.trips.daily) && this.toggleChart[this.graphToBeDisplayed] === 'daily';
+    return (
+      this.data && !this.isEmptyDataset(this.data.trips.daily) && this.toggleChart[this.graphToBeDisplayed] === 'daily'
+    );
   }
 
   get canShowMonthly(): boolean {
-    return !this.isEmptyDataset(this.data.trips.monthly) && this.toggleChart[this.graphToBeDisplayed] === 'monthly';
+    return (
+      this.data &&
+      !this.isEmptyDataset(this.data.trips.monthly) &&
+      this.toggleChart[this.graphToBeDisplayed] === 'monthly'
+    );
   }
 
   get canShowCumulated(): boolean {
-    return !this.isEmptyDataset(this.data.trips.cumulated) && this.toggleChart[this.graphToBeDisplayed] === 'cumulated';
+    return (
+      this.data &&
+      !this.isEmptyDataset(this.data.trips.cumulated) &&
+      this.toggleChart[this.graphToBeDisplayed] === 'cumulated'
+    );
   }
 
   private displayGraph(name: statDataNameType): void {
@@ -93,8 +103,10 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
     return object.datasets[0].data.length > 0;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['graphData']) {
+  updateGraph(graphData = this.graphData): void {
+    console.log('> updateGraph', graphData);
+    this.graphVisible = false;
+    if (graphData) {
       const data: GraphNamesInterface = {
         trips: this.loadGraph('trips'),
         distance: this.loadGraph('distance'),
@@ -105,6 +117,15 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
       };
       this.graphTitle = data[this.graphToBeDisplayed][this.toggleChart[this.graphToBeDisplayed]].graphTitle;
       this.data = data;
+
+      window.requestAnimationFrame(() => (this.graphVisible = true));
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.graphData.currentValue) {
+      console.log('> ngOnChanges');
+      this.updateGraph(changes.graphData.currentValue);
     }
   }
 

@@ -1,4 +1,4 @@
-export { CampaignInterface } from './CampaignInterface';
+export { CampaignInterface, CampaignStateInterface } from './CampaignInterface';
 export {
   CampaignRepositoryProviderInterface,
   CampaignRepositoryProviderInterfaceResolver,

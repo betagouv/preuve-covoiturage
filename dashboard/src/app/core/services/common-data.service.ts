@@ -6,7 +6,7 @@ import { map, mergeMap, tap } from 'rxjs/operators';
 import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
-import { Territory } from '~/core/entities/territory/territory';
+import { Territory, TerritoryTree, TerritoryLevelEnum } from '~/core/entities/territory/territory';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
@@ -25,6 +25,7 @@ export class CommonDataService {
 
   private _territories$ = new BehaviorSubject<Territory[]>([]);
   private _activableTerritories$ = new BehaviorSubject<Territory[]>([]);
+  private _territoriesTree$ = new BehaviorSubject<TerritoryTree[]>([]);
   private _operators$ = new BehaviorSubject<Operator[]>([]);
   private _campaigns$ = new BehaviorSubject<Campaign[]>([]);
 
@@ -42,6 +43,10 @@ export class CommonDataService {
 
   get activableTerritories$(): Observable<Territory[]> {
     return this._activableTerritories$;
+  }
+
+  get territoriesTree$(): Observable<TerritoryTree[]> {
+    return this._territoriesTree$;
   }
 
   get operators$(): Observable<Operator[]> {
@@ -138,11 +143,54 @@ export class CommonDataService {
     );
   }
 
+  buildTerritoryTree(territories: TerritoryTree[]): TerritoryTree[] {
+    // const tree: TerritoryTree[] = [];
+    // const t = new Date().getTime();
+    const acceptedLevel = [
+      TerritoryLevelEnum.District,
+      TerritoryLevelEnum.Megalopolis,
+      TerritoryLevelEnum.Region,
+      TerritoryLevelEnum.State,
+      // TerritoryLevelEnum.Country,
+      TerritoryLevelEnum.Towngroup,
+      // TerritoryLevelEnum.Town,
+    ];
+
+    const acceptedTerritories = territories.filter(
+      (ter) =>
+        acceptedLevel.indexOf(ter.level) !== -1 || (ter.level === TerritoryLevelEnum.Town && ter.activable === true),
+    );
+    // const acceptedTerritories = territories.filter((ter) => ter.level === 'district');
+
+    const territoriesInd: { [key: number]: TerritoryTree } = {};
+
+    territories.forEach((terr) => (territoriesInd[terr._id] = terr));
+
+    acceptedTerritories.forEach((ter) => {
+      if (ter.parents) {
+        const parents: TerritoryTree[] = ter.parents.map((pInd) => territoriesInd[pInd]).filter((p) => !!p);
+
+        for (const pTer of parents) {
+          if (!pTer.children) pTer.children = [];
+          pTer.children.push(ter);
+        }
+        return false;
+      } else {
+        return true;
+      }
+    });
+
+    return acceptedTerritories.filter((t) => t.level === TerritoryLevelEnum.Region);
+  }
+
   public loadAll(): Observable<boolean> {
     return this.authenticationService.check().pipe(
       mergeMap((user) => {
         if (user) {
-          const params = [this.operatorApiService.paramGetList(), this.territoryApiService.paramGetList()];
+          const params = [
+            this.operatorApiService.paramGetList({}),
+            this.territoryApiService.paramGetList({ withParents: true, withLevel: true }),
+          ];
 
           if (this.authenticationService.hasAnyPermission(['incentive-campaign.list'])) {
             params.push(this.campaignApiService.paramGetList());
@@ -204,6 +252,8 @@ export class CommonDataService {
               .filter((t) => t.active)
               .sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
           );
+
+          this._territoriesTree$.next(this.buildTerritoryTree(territoriesR.data));
         }
 
         if (campaignsR && campaignsR.data) {

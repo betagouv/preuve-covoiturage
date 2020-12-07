@@ -176,11 +176,8 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       }
   }
 
-  download(row: ResultRowInterface, type: 'pdf' | 'png'): void {
-    this.certificateApi.downloadPrint({
-      type,
-      uuid: row.uuid,
-    });
+  download(row: ResultRowInterface): void {
+    this.certificateApi.downloadPrint({ uuid: row.uuid });
   }
 
   onCreateCertificate(): void {
@@ -244,7 +241,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
         }),
         takeUntil(this.destroy$),
       )
-      .subscribe((certResponse: { created_at: Date; pdf_url: string; png_url: string; uuid: string }) => {
+      .subscribe((certResponse: { created_at: Date; pdf_url: string; uuid: string }) => {
         this.updateList();
         this.showForm = false;
         const sb = this.snackbar.open('Attestation créé.', 'Télécharger le PDF', {
@@ -252,7 +249,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
         });
 
         sb.onAction().subscribe(() => {
-          this.certificateApi.downloadPrint({ uuid: certResponse.uuid, type: 'pdf' });
+          this.certificateApi.downloadPrint({ uuid: certResponse.uuid });
         });
       });
   }

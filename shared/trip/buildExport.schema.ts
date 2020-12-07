@@ -6,8 +6,9 @@ export const schema = {
     query: {
       type: 'object',
       additionalProperties: false,
-      required: ['date'],
+      required: ['date', 'tz'],
       properties: {
+        tz: { macro: 'tz' },
         date: {
           type: 'object',
           additionalProperties: false,

@@ -3,7 +3,9 @@
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef>Nom</th>
     <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-name">
-      {{ campaign.name }}
+      <a [routerLink]="'../draft/' + campaign._id">
+        {{ campaign.name }}
+      </a>
     </td>
   </ng-container>
 
@@ -25,9 +27,7 @@
       <ng-container *ngIf="campaign.amount_spent && !isEuro(this.campaign.unit)">
         {{ campaign.amount_spent }}
       </ng-container>
-      <ng-container *ngIf="!campaign.amount_spent">
-        -
-      </ng-container>
+      <ng-container *ngIf="!campaign.amount_spent"> - </ng-container>
     </td>
   </ng-container>
 
@@ -47,9 +47,7 @@
     <th mat-header-cell *matHeaderCellDef>Trajets</th>
     <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-territory">
       <ng-container *ngIf="campaign.amount_spent"> {{ campaign.trips_number }} tjs </ng-container>
-      <ng-container *ngIf="!campaign.amount_spent">
-        -
-      </ng-container>
+      <ng-container *ngIf="!campaign.amount_spent"> - </ng-container>
     </td>
   </ng-container>
 
@@ -58,9 +56,7 @@
     <th mat-header-cell *matHeaderCellDef>Plafond</th>
     <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-territory">
       <ng-container *ngIf="campaign.max_trips"> {{ campaign.max_trips }} tjs </ng-container>
-      <ng-container *ngIf="!campaign.max_trips">
-        -
-      </ng-container>
+      <ng-container *ngIf="!campaign.max_trips"> - </ng-container>
     </td>
   </ng-container>
 

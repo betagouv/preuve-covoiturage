@@ -418,13 +418,25 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
   async all(
     search?: string,
     levels?: TerritoryLevelEnum[],
+    withParents?: boolean,
+    withLevel?: boolean,
     limit?: number,
     skip?: number,
   ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }> {
     // build search filter
-    const searchCondition = search
-      ? search.split(/\_|\-|\,|\ /).map((word) => ` LOWER(name) LIKE '%${word.toLowerCase()}%'`)
-      : [];
+
+    // let values = [];
+    let searchCondition = [];
+
+    if (search) {
+      const spl = search.split(/\_|\-|\,|\ /);
+      searchCondition = spl.map((word, ind) => ` LOWER(name) LIKE '%${word.toLowerCase()}%'`);
+      // values = spl.map((word) => word.toLowerCase());
+    }
+
+    // const searchCondition = search
+    //   ? search.split(/\_|\-|\,|\ /).map((word) => ` LOWER(name) LIKE '%${word.toLowerCase()}%'`)
+    //   : [];
 
     // build level filter
     if (levels) searchCondition.push(`(${levels.map((level) => `level = '${level}'`).join('OR')})`);
@@ -441,11 +453,26 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     const query = {
       text: `
-        SELECT name,t._id, array_agg(tc.value) as insees, active FROM ${this.table} t
+        SELECT name,t._id, array_agg(tc.value) as insees, active, activable
+        ${
+          withParents
+            ? // eslint-disable-next-line max-len
+              `, array_agg(tr.parent_territory_id) as parents`
+            : ''
+        }
+        ${withLevel ? ',t.level' : ''}
+        
+        FROM ${this.table} t
         LEFT JOIN territory.territory_codes tc ON(tc.territory_id = t._id AND tc.type = 'insee')
+        ${
+          withParents
+            ? // eslint-disable-next-line max-len
+              `LEFT JOIN territory.territory_relation tr ON tr.child_territory_id = t._id`
+            : ''
+        }
         WHERE deleted_at IS NULL
         ${searchConditionString ? ` AND ${searchConditionString}` : ''}
-        GROUP BY t._id,t.name
+        GROUP BY t._id,t.name, active, activable, t.level 
         ORDER BY t.name ASC
         ${limit !== undefined ? ` LIMIT ${limit}` : ''}
         ${skip !== undefined ? ` OFFSET ${skip}` : ''}
@@ -482,8 +509,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     if (data.geo) {
-      //   fields.push('geo');
-      values.push(`${data.geo}`);
+      values.push(JSON.stringify(data.geo));
     }
 
     const query = {
@@ -498,7 +524,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       })
         RETURNING *
       `,
-
       values,
     };
 

@@ -98,6 +98,15 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       ...this.territoryForm.value,
     };
 
+    if ('geo' in formValues && typeof formValues.geo === 'string' && formValues.geo.length) {
+      try {
+        formValues.geo = JSON.parse(formValues.geo);
+      } catch (e) {
+        this.toastr.error("Le format du MultiPolygon n'est pas valide");
+        throw e;
+      }
+    }
+
     this.territoryForm.get('company').reset();
     this.territoryForm.get('address').reset();
 

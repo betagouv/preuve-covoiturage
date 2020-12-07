@@ -3,8 +3,8 @@ export const deleteAssociatedUser = {
   type: 'object',
   additionalProperties: false,
   properties: {
-    territory_id: { type: 'integer' },
-    operator_id: { type: 'integer' },
+    territory_id: { macro: 'serial' },
+    operator_id: { macro: 'serial' },
   },
   oneOf: [{ required: ['territory_id'] }, { required: ['operator_id'] }],
 };

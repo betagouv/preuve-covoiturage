@@ -215,7 +215,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows[0];
   }
 
-  async findOneWhereTerritory(id: number, territoryId: number): Promise<CampaignInterface> {
+  async findOneWhereTerritory(id: number, territoryId: number): Promise<CampaignInterface | null> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -229,11 +229,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
 
     const result = await this.connection.getClient().query(query);
 
-    if (result.rowCount === 0) {
-      return undefined;
-    }
-
-    return result.rows[0];
+    return result.rowCount ? result.rows[0] : null;
   }
 
   async findWhere(search: { territory_id?: number | null; status?: string }): Promise<CampaignInterface[]> {

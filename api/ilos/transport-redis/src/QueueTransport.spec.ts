@@ -77,8 +77,8 @@ test.beforeEach(async (t) => {
   await kernel.bootstrap();
   t.context.transport = new QueueTransport(kernel);
 
-  const fake = // @ts-ignore
-  (connection: any, name: string, processor: Function) => ({
+  const fake = (connection: any, name: string, processor: Function) => ({
+    // @ts-ignore
     name,
     async close() {
       return;

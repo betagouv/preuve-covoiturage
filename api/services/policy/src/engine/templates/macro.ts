@@ -45,10 +45,7 @@ export function macro(
 
   test.after.always(async (t) => {
     if (t.context.policyId) {
-      const connection = t.context.kernel
-        .get(ServiceProvider)
-        .get(PostgresConnection)
-        .getClient();
+      const connection = t.context.kernel.get(ServiceProvider).get(PostgresConnection).getClient();
       const campaignRepository = t.context.kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
       const metaRepository = t.context.kernel.get(ServiceProvider).get(MetadataProvider);
       await connection.query({

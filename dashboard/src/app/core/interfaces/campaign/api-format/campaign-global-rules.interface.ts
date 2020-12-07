@@ -22,8 +22,8 @@ export type GlobalRetributionRuleType =
 export enum GlobalRetributionRulesSlugEnum {
   PER_SEAT_MODIFIER = 'per_seat_modifier',
   MAX_AMOUNT = 'max_amount_restriction',
-  RESTRICTION_TRIP = 'max_trip_restriction',
-  RESTRICTION_AMOUNT = 'max_amount_restriction',
+  // RESTRICTION_TRIP = 'max_trip_restriction',
+  // RESTRICTION_AMOUNT = 'max_amount_restriction',
   MAX_TRIPS = 'max_trip_restriction',
   ONLY_ADULT = 'adult_only_filter',
   WEEKDAY = 'weekday_filter',
@@ -178,7 +178,7 @@ export class TripRestrictionRetributionRule implements GlobalRetributionRuleInte
   };
 
   constructor(target: RestrictionTargetsEnum, amount: number, period: RestrictionPeriodsEnum) {
-    this.slug = GlobalRetributionRulesSlugEnum.RESTRICTION_TRIP;
+    this.slug = GlobalRetributionRulesSlugEnum.MAX_TRIPS;
     this.parameters = {
       target,
       amount,
@@ -199,7 +199,7 @@ export class AmountRestrictionRetributionRule implements GlobalRetributionRuleIn
   };
 
   constructor(target: RestrictionTargetsEnum, amount: number, period: RestrictionPeriodsEnum) {
-    this.slug = GlobalRetributionRulesSlugEnum.RESTRICTION_AMOUNT;
+    this.slug = GlobalRetributionRulesSlugEnum.MAX_AMOUNT;
     this.parameters = {
       target,
       amount,

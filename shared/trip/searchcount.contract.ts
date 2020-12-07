@@ -2,7 +2,7 @@ import { TripSearchInterfaceWithPagination } from './common/interfaces/TripSearc
 
 export interface ParamsInterface extends TripSearchInterfaceWithPagination {}
 
-export type ResultInterface = { count: number };
+export type ResultInterface = { count: string };
 
 export const handlerConfig = {
   service: 'trip',

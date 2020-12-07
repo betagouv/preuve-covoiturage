@@ -1,11 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
 
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { StatStoreService } from '~/modules/stat/services/stat-store.service';
 import { chartNameType } from '~/core/types/stat/chartNameType';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
+import { takeUntil } from 'rxjs/operators';
 
 // this component displays a non filtered graph
 @Component({

@@ -115,7 +115,8 @@ export interface PaginationInterface {
 export type TerritoryListFilter = {
   search?: string;
   levels?: TerritoryLevelEnum[];
-
+  withParents?: boolean;
+  withLevel?: boolean;
   skip?: number;
   limit?: number;
 };

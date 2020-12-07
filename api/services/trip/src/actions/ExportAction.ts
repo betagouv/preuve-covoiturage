@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, InvalidParamsException } from '@ilos/common';
 
+import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
 import { alias } from '../shared/trip/export.schema';
 import {
@@ -25,7 +26,10 @@ import {
   ],
 })
 export class ExportAction extends Action {
-  constructor(private kernel: KernelInterfaceResolver) {
+  constructor(
+    private kernel: KernelInterfaceResolver,
+    private tripRepository: TripRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 
@@ -37,9 +41,12 @@ export class ExportAction extends Action {
       throw new InvalidParamsException();
     }
 
-    const start =
-      (params && params.date && params.date.start) || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
-    const end = (params && params.date && params.date.end) || new Date();
+    const tz = await this.tripRepository.validateTz(params.tz);
+
+    // use || syntax here in case we get null value from date.{start|end},
+    // which will not use the default value of get()
+    const start = get(params, 'date.start') || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+    const end = get(params, 'date.end') || new Date();
 
     const buildParams: BuildParamsInterface = ({
       from: {
@@ -50,7 +57,8 @@ export class ExportAction extends Action {
       query: {
         operator_id: params.operator_id,
         territory_id: params.territory_id,
-        territory_authorized_operator_id: get(context, 'call.user.authorizedOperators', []),
+        territory_authorized_operator_id: get(context, 'call.user.authorizedOperators', []) || [],
+        tz: tz.name,
         date: {
           start: start.toISOString(),
           end: end.toISOString(),

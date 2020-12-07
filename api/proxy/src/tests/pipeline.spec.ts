@@ -80,7 +80,7 @@ test.serial.beforeEach(async (t) => {
 });
 
 test.serial.cb('Pipeline check', (t) => {
-  t.timeout(5*60*1000);
+  t.timeout(5 * 60 * 1000);
   t.plan(3);
   t.context.token
     .sign({
@@ -96,14 +96,14 @@ test.serial.cb('Pipeline check', (t) => {
       normQueue.on('completed', (job) => {
         if (job.name === 'normalization:process') {
           t.context.pool
-          .query({
-            text: 'SELECT count(*) as count FROM carpool.carpools WHERE operator_journey_id = $1',
-            values: [pl.journey_id],
-          })
-          .then((result) => {
-            t.is(get(result.rows, '0.count', '0'), '2');
-            t.end();
-          });
+            .query({
+              text: 'SELECT count(*) as count FROM carpool.carpools WHERE operator_journey_id = $1',
+              values: [pl.journey_id],
+            })
+            .then((result) => {
+              t.is(get(result.rows, '0.count', '0'), '2');
+              t.end();
+            });
         }
       });
       return t.context.request

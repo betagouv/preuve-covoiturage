@@ -1,3 +1,5 @@
+import { utcToZonedTime } from 'date-fns-tz';
+
 import { RuleHandlerContextInterface } from '../../interfaces';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { FilterRule } from '../FilterRule';
@@ -5,6 +7,7 @@ import { FilterRule } from '../FilterRule';
 interface Range {
   start: number;
   end: number;
+  tz: string;
 }
 
 export class TimeRangeFilter extends FilterRule<Range[]> {
@@ -27,13 +30,15 @@ export class TimeRangeFilter extends FilterRule<Range[]> {
           minimum: 0,
           maximum: 23,
         },
+        tz: {
+          macro: 'tz',
+        },
       },
     },
   };
   filter(ctx: RuleHandlerContextInterface): void {
-    const date = ctx.person.datetime;
-    const hours = typeof date.getHours === 'function' ? date.getHours() : new Date(date).getHours();
     for (const range of this.parameters) {
+      const hours = utcToZonedTime(ctx.person.datetime, range.tz).getHours();
       if (hours >= range.start && hours <= range.end) {
         return;
       }
