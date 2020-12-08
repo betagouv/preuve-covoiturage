@@ -87,16 +87,17 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       color: rgb(0.95, 0.95, 0.95),
     });
 
-    // this.text('Total :', { x: 60, y: totalY });
-    // this.text(`${data.data.total_tr}`, { x: 210, y: totalY });
-    // this.text(`${data.data.total_km} km`, { x: 360, y: totalY });
+    this.text('Points :', { x: 60, y: totalY, font: this.fonts.bold });
+    this.text(`${data.data.total_pt || 0}`, { x: 110, y: totalY, font: this.fonts.bold });
+
     this.text('Reste à charge :', { x: 330, y: totalY, font: this.fonts.bold });
     this.text(`${this.currency(data.data.total_rm)} €`, { x: 440, y: totalY, font: this.fonts.bold });
 
     // identification
-    this.text("Identification de l'attestation", { x: 48, y: 80, font: this.fonts.bold });
-    this.text(`Personne  : ${data.identity}`, { x: 48, y: 60, font: this.fonts.monospace, size: 10 });
-    this.text(`Opérateur : ${data.operator}`, { x: 48, y: 44, font: this.fonts.monospace, size: 10 });
+    this.text('Identification', { x: 48, y: 96, font: this.fonts.bold });
+    this.text(`Attestation : ${data.certificate.uuid}`, { x: 48, y: 76, font: this.fonts.monospace, size: 10 });
+    this.text(`Personne    : ${data.identity}`, { x: 48, y: 60, font: this.fonts.monospace, size: 10 });
+    this.text(`Opérateur   : ${data.operator}`, { x: 48, y: 44, font: this.fonts.monospace, size: 10 });
 
     // QR-code
     this.page.drawSvgPath(data.validation.qrcode, { x: 450, y: 128, color: rgb(0, 0, 0), scale: 0.3333 });
@@ -214,8 +215,9 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     const y = this.tableY + 22;
 
     this.text('Date', { x: this.tableX, y, font: this.fonts.bold });
-    this.text('Trajets', { x: this.tableX + 150, y, font: this.fonts.bold });
-    this.text('Distance', { x: this.tableX + 270, y, font: this.fonts.bold });
+    this.text('Trajets', { x: this.tableX + 130, y, font: this.fonts.bold });
+    this.text('Distance', { x: this.tableX + 210, y, font: this.fonts.bold });
+    this.text('Points', { x: this.tableX + 300, y, font: this.fonts.bold });
     this.text('Reste à charge', { x: this.tableX + 380, y, font: this.fonts.bold });
   }
 
@@ -233,8 +235,9 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     }
 
     this.text(`${row.month}`, { x: this.tableX, y: rowY });
-    this.text(`${row.trips}`, { x: this.tableX + 150, y: rowY });
-    this.text(`${row.distance} km`, { x: this.tableX + 270, y: rowY });
+    this.text(`${row.trips}`, { x: this.tableX + 130, y: rowY });
+    this.text(`${row.distance} km`, { x: this.tableX + 210, y: rowY });
+    this.text(`${row.points || 0}`, { x: this.tableX + 300, y: rowY });
     this.text(`${this.currency(row.remaining)} €`, { x: this.tableX + 380, y: rowY });
   }
 

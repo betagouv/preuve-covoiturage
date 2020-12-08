@@ -3,8 +3,8 @@ export interface PdfTemplateData {
   data: any;
   identity: string;
   operator: string;
-  territory: string;
   certificate: {
+    uuid: string;
     created_at: string;
     start_at: string;
     end_at: string;

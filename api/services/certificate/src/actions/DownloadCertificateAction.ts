@@ -41,8 +41,8 @@ export class DownloadCertificateAction extends AbstractAction {
       data: certificate.meta,
       identity: certificate.meta.identity.uuid.toUpperCase(),
       operator: certificate.meta.operator.uuid.toUpperCase(),
-      territory: certificate.meta.territory?.uuid.toUpperCase(),
       certificate: {
+        uuid: certificate.uuid,
         created_at: `le ${this.dateProvider.format(certificate.created_at, 'd MMMM yyyy à kk:mm', {
           timeZone: certificate.meta.tz,
         })}`.replace(':', 'h'),

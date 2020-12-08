@@ -15,24 +15,28 @@
       <mat-card>
         <table class="table" [ngClass]="{ 'is-small': isSmall }">
           <tr>
+            <td>Date d'émission</td>
+            <td>{{ data.created_at | date: 'dd/MM/yyyy' }}&nbsp;à&nbsp;{{ data.created_at | date: 'HH:mm' }}</td>
+          </tr>
+          <tr>
             <td>Période</td>
             <td>du&nbsp;{{ data.start_at | date: 'dd/MM/yyyy' }} au&nbsp;{{ data.end_at | date: 'dd/MM/yyyy' }}</td>
           </tr>
+
           <tr>
-            <td>Distance totale</td>
-            <td>{{ data.total_km }}km</td>
+            <td colspan="2" class="divider">
+              <mat-divider></mat-divider>
+            </td>
           </tr>
+
           <tr *ngIf="data.total_point !== undefined">
             <td>Points</td>
-            <td>{{ data.total_point }}</td>
+            <td>{{ data.total_point }} points</td>
           </tr>
-          <tr *ngIf="data.total_cost !== undefined">
-            <td>Coût total</td>
-            <td>{{ data.total_cost }}&euro;</td>
-          </tr>
-          <tr *ngIf="data.remaining !== undefined">
+
+          <tr *ngIf="data.total_rm !== undefined">
             <td>Reste à charge</td>
-            <td>{{ data.remaining }}&euro;</td>
+            <td>{{ data.total_rm }} &euro;</td>
           </tr>
 
           <tr>
@@ -42,34 +46,27 @@
           </tr>
 
           <tr>
-            <td>Attestation générée le</td>
-            <td>{{ data.created_at | date: 'dd/MM/yyyy' }}&nbsp;à&nbsp;{{ data.created_at | date: 'HH:mm' }}</td>
-          </tr>
-          <tr>
-            <td>Identifiant attestation</td>
+            <td>Attestation</td>
             <td>{{ data.uuid }}</td>
           </tr>
           <tr>
-            <td>Identifiant personne</td>
+            <td>Personne</td>
             <td>{{ data.identity_uuid }}</td>
           </tr>
           <tr>
-            <td>Identifiant opérateur</td>
+            <td>Opérateur</td>
             <td>{{ data.operator_uuid }}</td>
           </tr>
         </table>
       </mat-card>
+    </div>
+  </div>
 
-      <p class="center-align">
-        <a
-          mat-stroked-button
-          href="https://registre-preuve-de-covoiturage.gitbook.io/produit/boite-a-outils/attestations-de-covoiturage"
-          target="_blank"
-          rel="noopener noreferrer"
-          color="primary"
-          >Accéder à la documentation</a
-        >
-      </p>
+  <div *ngIf="!data">
+    <div class="wrapper">
+      <div class="description">
+        <p>Aucun identifiant d'attestation trouvé</p>
+      </div>
     </div>
   </div>
 </div>

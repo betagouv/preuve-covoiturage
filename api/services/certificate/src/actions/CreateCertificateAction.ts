@@ -40,7 +40,7 @@ export class CreateCertificateAction extends AbstractAction {
     const personUUID = await this.findPerson(identity, operator_id);
     const operator = await this.findOperator(operator_id);
 
-    // fetch the data for this identity, operator and territory and map to template object
+    // fetch the data for this identity and operator and map to template object
     const certs = await this.findTrips({ identity, operator_id, tz, start_at, end_at, positions });
     const rows = certs.slice(0, 11); // TODO agg the last line
     const total_tr = Math.round(rows.reduce((sum: number, line): number => (line.trips | 0) + sum, 0)) || 0;

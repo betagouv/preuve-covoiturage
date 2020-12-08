@@ -11,8 +11,7 @@ export interface MetaRowInterface {
 export interface CertificateMetaInterface {
   tz: string;
   identity: { uuid: string };
-  operator: { uuid: string; name: string; thumbnail: string };
-  territory?: { uuid: string; name: string };
+  operator: { uuid: string; name: string };
   start_pos?: PointInterface;
   end_pos?: PointInterface;
   total_tr: number;
