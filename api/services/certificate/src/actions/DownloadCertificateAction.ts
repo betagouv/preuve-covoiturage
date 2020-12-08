@@ -1,7 +1,7 @@
 import { get, set } from 'lodash';
 
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ConfigInterfaceResolver } from '@ilos/common';
+import { handler, ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
 import { PdfCertProviderInterfaceResolver } from '@pdc/provider-pdfcert';
@@ -21,6 +21,7 @@ import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/Ce
 })
 export class DownloadCertificateAction extends AbstractAction {
   constructor(
+    private kernel: KernelInterfaceResolver,
     private config: ConfigInterfaceResolver,
     private pdfCert: PdfCertProviderInterfaceResolver,
     private dateProvider: DateProviderInterfaceResolver,
@@ -32,6 +33,7 @@ export class DownloadCertificateAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const certificate = await this.certRepository.findByUuid(params.uuid);
+    const thumbnail = await this.getThumbnailBase64(certificate.operator_id);
     const validationUrl = `${this.config.get('templates.certificate.validation.url')}/${params.uuid}`;
 
     const data = {
@@ -58,7 +60,7 @@ export class DownloadCertificateAction extends AbstractAction {
       header: {
         operator: {
           name: certificate.meta.operator.name,
-          image: certificate.meta.operator.thumbnail,
+          image: thumbnail,
         },
       },
     };
@@ -84,5 +86,18 @@ export class DownloadCertificateAction extends AbstractAction {
         'Content-disposition': `attachment; filename=covoiturage-${params.uuid}.pdf`,
       },
     };
+  }
+
+  private async getThumbnailBase64(operator_id: number): Promise<string | null> {
+    const operator = await this.kernel.call(
+      'operator:quickfind',
+      { _id: operator_id, thumbnail: true },
+      {
+        channel: { service: 'certificate' },
+        call: { user: { permissions: ['operator.read'] } },
+      },
+    );
+
+    return operator.thumbnail;
   }
 }

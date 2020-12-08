@@ -47,12 +47,10 @@ export class CreateCertificateAction extends AbstractAction {
     const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)) || 0;
     const total_rm = rows.reduce((sum: number, line): number => line.rm + sum, 0) || 0;
 
-    console.log({ total_km, total_rm, total_tr });
-
     const meta = {
       tz,
       identity: { uuid: personUUID },
-      operator: { uuid: operator.uuid, name: operator.name, thumbnail: operator.thumbnail },
+      operator: { uuid: operator.uuid, name: operator.name },
       total_tr,
       total_km,
       total_rm,
@@ -99,7 +97,7 @@ export class CreateCertificateAction extends AbstractAction {
   private async findOperator(operator_id: number): Promise<any> {
     return this.kernel.call(
       'operator:quickfind',
-      { _id: operator_id, thumbnail: true },
+      { _id: operator_id, thumbnail: false },
       {
         channel: { service: 'certificate' },
         call: { user: { permissions: ['operator.read'] } },
