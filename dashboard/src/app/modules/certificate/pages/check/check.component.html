@@ -12,6 +12,10 @@
         </p>
       </div>
 
+      <div class="description">
+        <h3>Données de l'attestation</h3>
+      </div>
+
       <mat-card>
         <table class="table" [ngClass]="{ 'is-small': isSmall }">
           <tr>
@@ -62,10 +66,11 @@
     </div>
   </div>
 
-  <div *ngIf="!data">
+  <div *ngIf="isOnError">
     <div class="wrapper">
-      <div class="description">
-        <p>Aucun identifiant d'attestation trouvé</p>
+      <div class="description error">
+        <h3>Erreur</h3>
+        <p>Attestation non valide</p>
       </div>
     </div>
   </div>
