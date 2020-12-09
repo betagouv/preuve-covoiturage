@@ -294,7 +294,6 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   private async insertThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {
     // cleanup
     await this.removeThumbnail(operator_id);
-    console.log('insertThumbnail');
     // insert
     await this.connection.getClient().query({
       text: `INSERT INTO operator.thumbnails ( operator_id, data ) VALUES ( $1, decode($2, 'hex'))`,
@@ -310,14 +309,10 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   }
 
   private b64ToHex(b64: string): string {
-    console.log('> b64', b64.substr(0, 50));
     return Buffer.from(b64, 'base64').toString('hex');
   }
 
   private hexToB64(hex: string): string {
-    const b64 = Buffer.from(hex, 'hex').toString('base64');
-    console.log('< b64', b64.substr(0, 50));
-
-    return b64;
+    return Buffer.from(hex, 'hex').toString('base64');
   }
 }
