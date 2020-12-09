@@ -6,7 +6,7 @@ export const schema = {
   additionalProperties: false,
   properties: {
     _id: { macro: 'serial' },
-    thumbnail: { macro: 'base64' },
+    thumbnail: { anyOf: [{ macro: 'base64' }, { type: 'null' }] },
   },
 };
 export const binding = [alias, schema];

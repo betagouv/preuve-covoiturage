@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
 
+interface CropImageOptions {
+  maxFileSize: number;
+  maxWidth: number;
+  maxHeight: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -64,14 +70,37 @@ export class UtilsService {
     targetWidth: number,
     targetHeight: number,
     format: 'image/jpeg' | 'image/png',
+    opts: Partial<CropImageOptions> = {},
   ): Promise<string | null> {
+    const options: CropImageOptions = {
+      maxFileSize: 10 * 1024 * 1024, // 10Mb
+      maxHeight: 2048,
+      maxWidth: 2048,
+      ...opts,
+    };
+
     return new Promise((resolve, reject) => {
+      if (file.size > options.maxFileSize) {
+        return reject(new Error(`File is too big. (max: ${options.maxFileSize} bytes)`));
+      }
+
       if (window.File && window.FileReader && window.FileList && window.Blob) {
         if (file) {
           const reader = new FileReader();
+
+          // Handle errors
+          reader.onerror = () => {
+            reject(reader.error);
+          };
+
           // Set the image once loaded into file reader
           reader.onload = function (e) {
             const img = document.createElement('img') as HTMLImageElement;
+
+            // Handle errors
+            img.onerror = () => {
+              reject(new Error('Failed to upload image'));
+            };
 
             img.onload = () => {
               const targetRatio = targetHeight / targetWidth;
@@ -79,6 +108,15 @@ export class UtilsService {
               const imgWidth = img.width;
               const imgHeight = img.height;
               const imgRatio = imgHeight / imgWidth;
+
+              // enforce limits
+              if (imgWidth > options.maxWidth) {
+                return reject(new Error(`Width too big. (max ${options.maxWidth} pixels)`));
+              }
+
+              if (imgHeight > options.maxHeight) {
+                return reject(new Error(`Height too big. (max ${options.maxHeight} pixels)`));
+              }
 
               const scaleFactor = imgRatio < targetRatio ? targetHeight / imgHeight : targetWidth / imgWidth;
 

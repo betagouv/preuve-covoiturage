@@ -19,13 +19,9 @@
       </mat-error>
     </mat-form-field>
 
-    <h3>Logo {{ logoHasChanged }}</h3>
-
+    <h3>Logo</h3>
+    <p><em>Le poids de l'image ne peut dépasser 2Mo. La taille recommandée est de 1024x1024 pixels</em></p>
     <app-operator-logo-upload (userChange)="logoChanged()" formControlName="thumbnail"></app-operator-logo-upload>
-
-    <!-- <input matInput formControlName="thumbnail" /> -->
-
-    <!-- <mat-form-field appearance="outline"> -->
 
     <h3>Adresse</h3>
 
@@ -37,7 +33,8 @@
   </div>
 
   <div *ngIf="!fullFormMode">
-    <h3>Logo {{ logoHasChanged }}</h3>
+    <h3>Logo</h3>
+    <p><em>Le poids de l'image ne peut dépasser 2Mo. La taille recommandée est de 1024x1024 pixels</em></p>
     <app-operator-logo-upload (userChange)="logoChanged()" formControlName="thumbnail"></app-operator-logo-upload>
   </div>
 

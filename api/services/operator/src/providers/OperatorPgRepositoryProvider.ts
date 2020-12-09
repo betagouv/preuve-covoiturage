@@ -246,12 +246,12 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
       const query = {
         text: `
-      UPDATE ${this.table}
-        SET ${sets.text.join(',')}
-        WHERE _id = $#
-        AND deleted_at IS NULL
-        RETURNING *
-      `,
+          UPDATE ${this.table}
+          SET ${sets.text.join(',')}
+          WHERE _id = $#
+          AND deleted_at IS NULL
+          RETURNING *
+        `,
         values: [...sets.values, id],
       };
 
@@ -274,8 +274,11 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       // store or remove the thumbnail
       // if prop is missing, do nothing
       if ('thumbnail' in patch) {
-        if (patch.thumbnail.length) await this.insertThumbnail(id, patch.thumbnail);
-        else if (patch.thumbnail === null) await this.removeThumbnail(id);
+        if (patch.thumbnail && patch.thumbnail.length) {
+          await this.insertThumbnail(id, patch.thumbnail);
+        } else if (patch.thumbnail === null) {
+          await this.removeThumbnail(id);
+        }
       }
 
       await this.connection.getClient().query('COMMIT');
@@ -288,7 +291,11 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   }
 
   public async patchThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {
-    await this.insertThumbnail(operator_id, base64Thumbnail);
+    if (base64Thumbnail && base64Thumbnail.length) {
+      await this.insertThumbnail(operator_id, base64Thumbnail);
+    } else if (base64Thumbnail === null) {
+      await this.removeThumbnail(operator_id);
+    }
   }
 
   private async insertThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {

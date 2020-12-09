@@ -109,6 +109,16 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     });
 
     // metadata header
+
+    // operator logo gray background - always there
+    this.page.drawRectangle({
+      x: 30,
+      y: 700,
+      width: 110,
+      height: 110,
+      color: rgb(0.95, 0.95, 0.95),
+    });
+
     if ('header' in data) {
       if ('operator' in data.header) {
         if (data.header.operator.name && data.header.operator.name !== '') {
@@ -133,16 +143,6 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
         if (data.header.operator.image && data.header.operator.image !== '') {
           try {
-            // gray background
-            this.page.drawRectangle({
-              x: 30,
-              y: 700,
-              width: 110,
-              height: 110,
-              color: rgb(0.95, 0.95, 0.95),
-            });
-
-            // image
             const imageBytes = Buffer.from(data.header.operator.image, 'base64');
             const image = await this.pdfDoc.embedPng(imageBytes);
             const { width, height } = image.scaleToFit(100, 100);

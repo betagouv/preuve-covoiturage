@@ -19,7 +19,7 @@ export const schema = {
         company,
         address,
         bank,
-        thumbnail: { macro: 'base64' },
+        thumbnail: { anyOf: [{ macro: 'base64' }, { type: 'null' }] },
         nom_commercial: { macro: 'varchar' },
         raison_sociale: { macro: 'varchar' },
       },

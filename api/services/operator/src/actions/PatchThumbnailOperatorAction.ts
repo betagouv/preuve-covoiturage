@@ -1,4 +1,4 @@
-import { handler, ContextType } from '@ilos/common';
+import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
@@ -9,6 +9,7 @@ import { alias } from '../shared/operator/patchThumbnail.schema';
   ...handlerConfig,
   middlewares: [
     ['can', ['operator.contacts.update']],
+    ['context_extract', { _id: 'call.user.operator_id' }],
     ['validate', alias],
   ],
 })
@@ -17,11 +18,7 @@ export class PatchThumbnailOperatorAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if (context.call.user.operator_id) {
-      params._id = context.call.user.operator_id;
-    }
-
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     this.operatorRepository.patchThumbnail(params._id, params.thumbnail);
 
     return { ...params };

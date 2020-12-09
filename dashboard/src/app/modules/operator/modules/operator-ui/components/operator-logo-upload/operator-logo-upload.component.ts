@@ -11,6 +11,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { UtilsService } from '~/core/services/utils.service';
 
@@ -46,7 +47,7 @@ export class OperatorLogoUploadComponent implements OnInit, ControlValueAccessor
   result = new Subject<NullableString>();
   disabled = false;
 
-  constructor(private utils: UtilsService, private cd: ChangeDetectorRef) {}
+  constructor(private cd: ChangeDetectorRef, private utils: UtilsService, private toastr: ToastrService) {}
   ngOnInit(): void {}
   writeValue(logoImg: NullableString, userChange = false): void {
     if (this.logoImg !== logoImg) {
@@ -81,11 +82,14 @@ export class OperatorLogoUploadComponent implements OnInit, ControlValueAccessor
     const browseBack = async (e: Event) => {
       file.removeEventListener('input', browseBack);
       if (file.files.length) {
-        const croppedImage = await this.utils.cropImageFromFile(file.files[0], 255, 255, IMG_FORMAT);
-        // console.log('croppedImage', croppedImage);
-        this.writeValue(croppedImage.replace(SRC_PREFIX, ''), true);
+        try {
+          const croppedImage = await this.utils.cropImageFromFile(file.files[0], 255, 255, IMG_FORMAT);
 
-        file.value = '';
+          this.writeValue(croppedImage.replace(SRC_PREFIX, ''), true);
+          file.value = '';
+        } catch (e) {
+          this.toastr.error(e.message);
+        }
       }
     };
 

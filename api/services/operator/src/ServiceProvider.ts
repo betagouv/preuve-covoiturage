@@ -3,7 +3,7 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@pdc/provider-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { ContentBlacklistMiddleware } from '@pdc/provider-middleware';
+import { ContentBlacklistMiddleware, ContextExtractMiddleware } from '@pdc/provider-middleware';
 import { S3StorageProvider } from '@pdc/provider-file';
 
 import { binding as createBinding } from './shared/operator/create.schema';
@@ -52,6 +52,7 @@ import { PatchThumbnailOperatorAction } from './actions/PatchThumbnailOperatorAc
     ['can', PermissionMiddleware],
     ['validate', ValidatorMiddleware],
     ['content.blacklist', ContentBlacklistMiddleware],
+    ['context_extract', ContextExtractMiddleware],
   ],
   commands: [],
 })
