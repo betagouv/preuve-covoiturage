@@ -19,6 +19,7 @@ export const schema = {
     name: { macro: 'varchar' },
     legal_name: { macro: 'varchar' },
     siret: { macro: 'siret' },
+    thumbnail: { anyOf: [{ macro: 'base64' }, { type: 'null' }] },
   },
 };
 export const binding = [alias, schema];

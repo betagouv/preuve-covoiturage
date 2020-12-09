@@ -18,6 +18,8 @@ import { CompanyService } from '~/modules/company/services/company.service';
 import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { UtilsService } from '~/core/services/utils.service';
+import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 
 @Component({
   selector: 'app-operator-form',
@@ -28,6 +30,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   public operatorForm: FormGroup;
 
   isCreating = false;
+  logoHasChanged = false;
 
   @Output() close = new EventEmitter();
 
@@ -42,9 +45,11 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
-    private _operatorStoreService: OperatorStoreService,
+    private operatorStoreService: OperatorStoreService,
+    private operatorApiService: OperatorApiService,
     private toastr: ToastrService,
     private companyService: CompanyService,
+    private utils: UtilsService,
   ) {
     super();
   }
@@ -71,23 +76,33 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   public onSubmit(): void {
     const operator = new Operator(this.operatorForm.value);
 
+    if (!this.logoHasChanged) delete operator.thumbnail;
+
     if (this.operatorForm.value.company) {
       operator.siret = this.operatorForm.value.company.siret;
     }
 
     if (this.editedOperatorId) {
+      if (!this.fullFormMode && this.logoHasChanged) {
+        this.operatorApiService
+          .patchThumbnail({ _id: this.editedOperatorId, thumbnail: operator.thumbnail as string })
+          .subscribe();
+      }
+
       const patch$ = this.fullFormMode
-        ? this._operatorStoreService.updateSelected({
+        ? this.operatorStoreService.updateSelected({
             ...this.operatorForm.value,
             company: {
               ...this.companyDetails,
               siret: this.operatorForm.value.company.siret,
             },
           })
-        : this._operatorStoreService.patchContact(this.operatorForm.value.contacts, this.editedOperatorId);
+        : this.operatorStoreService.patchContact(this.operatorForm.value.contacts, this.editedOperatorId);
       patch$.subscribe(
         (modifiedOperator) => {
           this.toastr.success(`${modifiedOperator.name} a été mis à jour !`);
+          this.logoHasChanged = false;
+
           this.close.emit();
         },
         (err) => {
@@ -99,9 +114,11 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
         throw new Error("Can't create operator where fullFormMode is false (non register user)");
       }
 
-      this._operatorStoreService.create(this.operatorForm.value).subscribe(
+      this.operatorStoreService.create(this.operatorForm.value).subscribe(
         (createdOperator) => {
           this.toastr.success(`L'opérateur ${createdOperator.name} a été créé !`);
+          this.logoHasChanged = false;
+
           this.close.emit();
         },
         (err) => {
@@ -127,11 +144,14 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     this.isCreating = !this.operator._id;
     // base values for form
     this.editedOperatorId = operator ? operator._id : null;
-
     const operatorFt = new Operator(operator);
     const operatorConstruct = operatorFt.toFormValues(this.fullFormMode);
-
     this.operatorForm.setValue(operatorConstruct);
+    this.logoHasChanged = false;
+  }
+
+  public logoChanged() {
+    this.logoHasChanged = true;
   }
 
   private updateValidation(): void {
@@ -148,6 +168,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
         gdpr_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
         technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
       }),
+      thumbnail: [null],
     };
 
     if (this.fullFormMode) {
@@ -165,6 +186,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
             }),
           ),
         ),
+
         company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
         bank: this.fb.group(new FormBank(new Bank()), { validators: bankValidator }),
       };

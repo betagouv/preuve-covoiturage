@@ -9,7 +9,7 @@ import { format, utcToZonedTime } from 'date-fns-tz';
 
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
-import { S3StorageProvider } from '@pdc/provider-file';
+import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
 import { alias } from '../shared/trip/buildExport.schema';
@@ -206,7 +206,7 @@ export class BuildExportAction extends Action {
       zip.addLocalFile(filename);
       zip.writeZip(zipname);
 
-      const { url, password } = await this.file.copy(zipname);
+      const { url, password } = await this.file.copy(BucketName.Export, zipname);
 
       const email = params.from.email;
       const fullname = params.from.fullname;

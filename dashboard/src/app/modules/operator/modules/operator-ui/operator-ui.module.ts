@@ -18,6 +18,7 @@ import { OperatorListViewComponent } from './components/operator-list-view/opera
 import { OperatorListComponent } from './components/operator-list/operator-list.component';
 import { OperatorFilterComponent } from './components/operator-filter/operator-filter.component';
 import { OperatorDetailsComponent } from './components/operator-details/operator-details.component';
+import { OperatorLogoUploadComponent } from './components/operator-logo-upload/operator-logo-upload.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { OperatorDetailsComponent } from './components/operator-details/operator
     OperatorListComponent,
     OperatorFilterComponent,
     OperatorDetailsComponent,
+    OperatorLogoUploadComponent,
   ],
   exports: [
     OperatorsAutocompleteComponent,

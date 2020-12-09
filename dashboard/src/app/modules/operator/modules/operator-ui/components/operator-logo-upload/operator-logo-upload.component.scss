@@ -1,0 +1,23 @@
+.logo-upload {
+  display: block;
+
+  width: 165px;
+  display: flex;
+  flex-direction: column;
+  // justify-content: space-between;
+
+  // height: 300px;
+
+  > * {
+    margin: 5px;
+  }
+
+  img {
+    width: 165px;
+    height: 165px;
+  }
+
+  input[type='file'] {
+    display: none;
+  }
+}

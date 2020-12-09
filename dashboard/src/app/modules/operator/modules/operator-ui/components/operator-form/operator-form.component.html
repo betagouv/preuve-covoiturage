@@ -19,6 +19,10 @@
       </mat-error>
     </mat-form-field>
 
+    <h3>Logo</h3>
+    <p><em>Le poids de l'image ne peut dépasser 2Mo. La taille recommandée est de 1024x1024 pixels</em></p>
+    <app-operator-logo-upload (userChange)="logoChanged()" formControlName="thumbnail"></app-operator-logo-upload>
+
     <h3>Adresse</h3>
 
     <app-form-address [parentForm]="operatorForm.get('address')"></app-form-address>
@@ -26,6 +30,12 @@
     <h3>Banque</h3>
 
     <app-form-bank [parentForm]="operatorForm.get('bank')"></app-form-bank>
+  </div>
+
+  <div *ngIf="!fullFormMode">
+    <h3>Logo</h3>
+    <p><em>Le poids de l'image ne peut dépasser 2Mo. La taille recommandée est de 1024x1024 pixels</em></p>
+    <app-operator-logo-upload (userChange)="logoChanged()" formControlName="thumbnail"></app-operator-logo-upload>
   </div>
 
   <h2>Contacts et responsables</h2>
@@ -73,8 +83,6 @@
     >
       Créer l'opérateur
     </button>
-    <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">
-      Fermer
-    </button>
+    <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">Fermer</button>
   </div>
 </form>
