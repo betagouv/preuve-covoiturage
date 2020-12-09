@@ -58,4 +58,55 @@ export class UtilsService {
     }
     return object;
   }
+
+  async cropImageFromFile(
+    file: File,
+    targetWidth: number,
+    targetHeight: number,
+    format: 'image/jpeg' | 'image/png',
+  ): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      if (window.File && window.FileReader && window.FileList && window.Blob) {
+        if (file) {
+          const reader = new FileReader();
+          // Set the image once loaded into file reader
+          reader.onload = function (e) {
+            const img = document.createElement('img') as HTMLImageElement;
+
+            img.onload = () => {
+              const targetRatio = targetHeight / targetWidth;
+
+              const imgWidth = img.width;
+              const imgHeight = img.height;
+              const imgRatio = imgHeight / imgWidth;
+
+              const scaleFactor = imgRatio < targetRatio ? targetHeight / imgHeight : targetWidth / imgWidth;
+
+              const imgDestWidth = imgWidth * scaleFactor;
+              const imgDestHeight = imgHeight * scaleFactor;
+
+              const cropX = (imgDestWidth - targetWidth) / 2;
+              const cropY = (imgDestHeight - targetWidth) / 2;
+
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0);
+
+              canvas.width = targetWidth;
+              canvas.height = targetHeight;
+              ctx.drawImage(img, 0, 0, imgWidth, imgHeight, -cropX, -cropY, imgDestWidth, imgDestHeight);
+
+              resolve(canvas.toDataURL(format));
+            };
+
+            img.src = e.target.result.toString();
+          };
+
+          reader.readAsDataURL(file);
+        } else reject('No file provided');
+      } else {
+        reject('The File APIs are not fully supported in this browser.');
+      }
+    });
+  }
 }

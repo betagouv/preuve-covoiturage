@@ -24,11 +24,15 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
-  async find(id: number): Promise<OperatorDbInterface> {
+  async find(id: number, withThumbnail = false): Promise<OperatorDbInterface> {
+    const selectThumbnail = withThumbnail ? ", encode(ot.data, 'hex')::text AS thumbnail" : '';
+    const joinThumbnail = withThumbnail ? ' LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id' : '';
+
     const query = {
       text: `
-        SELECT * FROM ${this.table}
-        WHERE _id = $1
+        SELECT oo.* ${selectThumbnail} FROM ${this.table} oo
+        ${joinThumbnail}
+        WHERE oo._id = $1
         AND deleted_at IS NULL
         LIMIT 1
       `,
@@ -50,7 +54,11 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       );
     }
 
-    return result.rows[0];
+    if (withThumbnail && operator.thumbnail) {
+      operator.thumbnail = this.hexToB64(operator.thumbnail);
+    }
+
+    return operator;
   }
 
   async quickFind(_id: number, withThumbnail = false): Promise<{ uuid: string; name: string; thumbnail?: string }> {
@@ -72,7 +80,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
     const operator = result.rows[0];
 
-    if (withThumbnail) {
+    if (withThumbnail && operator.thumbnail) {
       operator.thumbnail = this.hexToB64(operator.thumbnail);
     }
 
@@ -279,10 +287,14 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     }
   }
 
-  private async insertThumbnail(operator_id, base64Thumbnail): Promise<void> {
+  public async patchThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {
+    await this.insertThumbnail(operator_id, base64Thumbnail);
+  }
+
+  private async insertThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {
     // cleanup
     await this.removeThumbnail(operator_id);
-
+    console.log('insertThumbnail');
     // insert
     await this.connection.getClient().query({
       text: `INSERT INTO operator.thumbnails ( operator_id, data ) VALUES ( $1, decode($2, 'hex'))`,
@@ -298,10 +310,14 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   }
 
   private b64ToHex(b64: string): string {
+    console.log('> b64', b64.substr(0, 50));
     return Buffer.from(b64, 'base64').toString('hex');
   }
 
   private hexToB64(hex: string): string {
-    return Buffer.from(hex, 'hex').toString('base64');
+    const b64 = Buffer.from(hex, 'hex').toString('base64');
+    console.log('< b64', b64.substr(0, 50));
+
+    return b64;
   }
 }

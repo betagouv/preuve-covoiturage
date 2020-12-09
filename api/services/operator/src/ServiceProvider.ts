@@ -12,6 +12,7 @@ import { binding as deleteBinding } from './shared/operator/delete.schema';
 import { binding as findBinding } from './shared/operator/find.schema';
 import { binding as quickfindBinding } from './shared/operator/quickfind.schema';
 import { binding as patchContactsBinding } from './shared/operator/patchContacts.schema';
+import { binding as patchThumbnailBinding } from './shared/operator/patchThumbnail.schema';
 
 import { config } from './config';
 import { OperatorPgRepositoryProvider } from './providers/OperatorPgRepositoryProvider';
@@ -22,11 +23,20 @@ import { DeleteOperatorAction } from './actions/DeleteOperatorAction';
 import { FindOperatorAction } from './actions/FindOperatorAction';
 import { QuickFindOperatorAction } from './actions/QuickFindOperatorAction';
 import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorAction';
+import { PatchThumbnailOperatorAction } from './actions/PatchThumbnailOperatorAction';
 
 @serviceProvider({
   config,
   providers: [OperatorPgRepositoryProvider, S3StorageProvider],
-  validator: [createBinding, updateBinding, deleteBinding, findBinding, quickfindBinding, patchContactsBinding],
+  validator: [
+    createBinding,
+    updateBinding,
+    deleteBinding,
+    findBinding,
+    quickfindBinding,
+    patchContactsBinding,
+    patchThumbnailBinding,
+  ],
   handlers: [
     ListOperatorAction,
     CreateOperatorAction,
@@ -35,6 +45,7 @@ import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorActi
     FindOperatorAction,
     QuickFindOperatorAction,
     PatchContactsOperatorAction,
+    PatchThumbnailOperatorAction,
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
   middlewares: [

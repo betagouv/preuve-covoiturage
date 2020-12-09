@@ -10,13 +10,19 @@ export interface OperatorRepositoryProviderInterface {
   delete(_id: number): Promise<void>;
   patch(id: number, patch: { [k: string]: any }): Promise<OperatorDbInterface>;
   update(data: OperatorDbInterface): Promise<OperatorDbInterface>;
+  patchThumbnail(operator_id: number, base64Thumbnail: string): Promise<void>;
 }
 
 export abstract class OperatorRepositoryProviderInterfaceResolver implements OperatorRepositoryProviderInterface {
-  async find(id: number): Promise<OperatorDbInterface> {
+  async find(id: number, withThumbnail?: boolean): Promise<OperatorDbInterface> {
     throw new Error('Not implemented');
   }
-  async quickFind(_id: number, withThumbnail = false): Promise<{ uuid: string; name: string; thumbnail?: string }> {
+
+  public async patchThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {
+    throw new Error('Not implemented');
+  }
+
+  async quickFind(_id: number, withThumbnail: boolean): Promise<{ uuid: string; name: string; thumbnail?: string }> {
     throw new Error('Not implemented');
   }
   async all(): Promise<OperatorListInterface[]> {

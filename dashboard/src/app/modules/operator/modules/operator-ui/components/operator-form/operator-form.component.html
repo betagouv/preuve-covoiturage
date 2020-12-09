@@ -19,6 +19,14 @@
       </mat-error>
     </mat-form-field>
 
+    <h3>Logo {{ logoHasChanged }}</h3>
+
+    <app-operator-logo-upload (userChange)="logoChanged()" formControlName="thumbnail"></app-operator-logo-upload>
+
+    <!-- <input matInput formControlName="thumbnail" /> -->
+
+    <!-- <mat-form-field appearance="outline"> -->
+
     <h3>Adresse</h3>
 
     <app-form-address [parentForm]="operatorForm.get('address')"></app-form-address>
@@ -26,6 +34,11 @@
     <h3>Banque</h3>
 
     <app-form-bank [parentForm]="operatorForm.get('bank')"></app-form-bank>
+  </div>
+
+  <div *ngIf="!fullFormMode">
+    <h3>Logo {{ logoHasChanged }}</h3>
+    <app-operator-logo-upload (userChange)="logoChanged()" formControlName="thumbnail"></app-operator-logo-upload>
   </div>
 
   <h2>Contacts et responsables</h2>
@@ -73,8 +86,6 @@
     >
       Créer l'opérateur
     </button>
-    <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">
-      Fermer
-    </button>
+    <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">Fermer</button>
   </div>
 </form>
