@@ -30,6 +30,9 @@
     "@types/leaflet": "^1.5.1",
     "@types/leaflet.markercluster": "^1.4.0",
     "chart.js": "^2.9.4",
+    "date-fns": "^2.12.0",
+    "date-fns-tz": "^1.0.10",
+    "file-saver": "^2.0.5",
     "leaflet": "^1.5.1",
     "leaflet.markercluster": "^1.4.1",
     "lodash-es": "^4.17.15",
@@ -42,9 +45,7 @@
     "ol": "^5.3.3",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
-    "zone.js": "~0.10.2",
-    "date-fns": "^2.12.0",
-    "date-fns-tz": "^1.0.10"
+    "zone.js": "~0.10.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1001.6",
@@ -58,16 +59,16 @@
     "@typescript-eslint/parser": "^2.15.0",
     "codelyzer": "^5.1.2",
     "cypress": "^3.4.1",
+    "eslint": "^7.5.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "husky": "^3.0.9",
+    "prettier": "^2.0.5",
     "ts-loader": "^6.0.4",
     "ts-node": "~7.0.0",
     "tslint": "~6.1.0",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-import-group-ordering": "^2.1.1",
-    "typescript": "~4.0.0",
-    "eslint": "^7.5.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "prettier": "^2.0.5"
+    "typescript": "~4.0.0"
   },
   "lint-staged": {
     "*.ts": [
