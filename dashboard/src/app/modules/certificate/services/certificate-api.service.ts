@@ -1,3 +1,4 @@
+import { saveAs } from 'file-saver';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -13,7 +14,6 @@ import {
 
 import { JsonRPC } from '~/core/services/api/json-rpc.service';
 import { ParamsInterface as DownloadParamsInterface } from '~/core/entities/api/shared/certificate/download.contract';
-import { environment } from '../../../../environments/environment';
 
 import { PointInterface } from '~/core/entities/api/shared/common/interfaces/PointInterface';
 
@@ -40,8 +40,13 @@ export class CertificateApiService extends JsonRPC {
     super(http, router, activedRoute);
   }
 
-  downloadPrint(data: DownloadParamsInterface): void {
-    window.open(`${environment.apiUrl}v2/certificates/pdf/${data.uuid}`);
+  async downloadPrint(data: DownloadParamsInterface): Promise<void> {
+    return this.http
+      .post(`v2/certificates/pdf`, data, { responseType: 'arraybuffer' })
+      .toPromise()
+      .then((response) => {
+        saveAs(new Blob([response], { type: 'application/pdf' }), `covoiturage-${data.uuid}.pdf`);
+      });
   }
 
   getList(certificateListFilter: ListParamsInterface): Observable<ListResultInterface> {

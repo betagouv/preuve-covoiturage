@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "allowedCommonJsDependencies": ["@ctrl/ngx-chartjs", "nouislider"],
+            "allowedCommonJsDependencies": ["@ctrl/ngx-chartjs", "nouislider", "file-saver"],
             "outputPath": "dist/dashboard",
             "index": "src/index.html",
             "main": "src/main.ts",
