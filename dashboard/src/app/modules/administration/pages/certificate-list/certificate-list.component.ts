@@ -4,12 +4,14 @@ import { ToastrService } from 'ngx-toastr';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
+import { CertificateMetaDialogComponent } from './certificate-meta-dialog/certificate-meta-dialog.component';
 
 import {
   ParamsInterface as ListParamsInterface,
@@ -31,6 +33,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     protected certificateApi: CertificateApiService,
     protected commonData: CommonDataService,
     protected fb: FormBuilder,
+    protected dialog: MatDialog,
     protected snackbar: MatSnackBar,
     protected toastr: ToastrService,
   ) {
@@ -176,8 +179,22 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       }
   }
 
-  download(row: ResultRowInterface): void {
-    this.certificateApi.downloadPrint({ uuid: row.uuid });
+  /**
+   * Direct download the PDF certificate without meta data.
+   */
+  async download(row: ResultRowInterface): Promise<void> {
+    await this.certificateApi.downloadPrint({ uuid: row.uuid });
+    this.toastr.success('Attestation générée');
+  }
+
+  /**
+   * Open a dialog box to fill the meta and download the PDF
+   */
+  downloadWithMeta(row: ResultRowInterface): void {
+    const modal = this.dialog.open(CertificateMetaDialogComponent, { data: row });
+    modal.afterClosed().subscribe((isDone) => {
+      if (isDone) this.toastr.success('Attestation avec meta-données générée');
+    });
   }
 
   onCreateCertificate(): void {

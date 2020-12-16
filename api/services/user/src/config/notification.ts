@@ -1,4 +1,5 @@
 import { env } from '@ilos/core';
+import { templates } from '../shared/configuration/mailjet';
 
 export const mail = {
   debug: env('APP_MAILJET_DEBUG_MODE', false),
@@ -8,7 +9,7 @@ export const mail = {
     private: env('APP_MAILJET_PRIVATE_KEY', ''),
   },
   sendOptions: {
-    template: env('APP_MAILJET_TEMPLATE', ''),
+    template: templates.default,
   },
   from: {
     name: env('APP_MAILJET_FROM_NAME', ''),
@@ -22,7 +23,7 @@ export const mail = {
 };
 
 export const templateIds = {
-  invitation: env('APP_MAILJET_TEMPLATE_INVITATION', ''),
-  forgotten: env('APP_MAILJET_TEMPLATE_FORGOTTEN_PASSWORD', ''),
-  emailChange: env('APP_MAILJET_TEMPLATE_EMAIL', ''),
+  invitation: templates.invitation,
+  forgotten: templates.forgotten_password,
+  emailChange: templates.email,
 };

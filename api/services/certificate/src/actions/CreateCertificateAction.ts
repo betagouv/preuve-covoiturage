@@ -1,13 +1,18 @@
-import { upperFirst } from 'lodash';
+import { upperFirst, omit } from 'lodash';
 import { handler, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
 import { alias } from '../shared/certificate/create.schema';
+import { WithHttpStatus } from '../shared/common/handler/WithHttpStatus';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
-import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
+import {
+  CarpoolInterface,
+  CarpoolRepositoryProviderInterfaceResolver,
+  FindParamsInterface,
+} from '../interfaces/CarpoolRepositoryProviderInterface';
+import { IdentityIdentifiersInterface } from '../shared/certificate/common/interfaces/IdentityIdentifiersInterface';
 
 @handler({
   ...handlerConfig,
@@ -19,7 +24,6 @@ import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/Ident
 export class CreateCertificateAction extends AbstractAction {
   constructor(
     private kernel: KernelInterfaceResolver,
-    private identityRepository: IdentityRepositoryProviderInterfaceResolver,
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,
     private dateProvider: DateProviderInterfaceResolver,
@@ -28,47 +32,35 @@ export class CreateCertificateAction extends AbstractAction {
     super();
   }
 
-  public async handle(
-    params: ParamsInterface,
-  ): Promise<{
-    meta: {
-      httpStatus: number;
-    };
-    data: ResultInterface;
-  }> {
+  public async handle(params: ParamsInterface): Promise<WithHttpStatus<ResultInterface>> {
     const { identity, tz, operator_id, start_at, end_at, positions } = this.castParams(params);
 
-    // fetch the data for this identity, operator and territory and map to template object
-    const person = await this.identityRepository.find(identity);
-    const operator = await this.kernel.call(
-      'operator:quickfind',
-      { _id: operator_id },
-      {
-        channel: { service: 'certificate' },
-        call: { user: { permissions: ['operator.read'] } },
-      },
-    );
+    // fetch the data for this identity and operator and map to template object
+    // get the last available UUID for the person. They can have many
+    const personUUID = await this.findPerson(identity, operator_id);
+    const operator = await this.findOperator(operator_id);
 
-    // fetch the data for this identity, operator and territory and map to template object
-    const certs = await this.carpoolRepository.find({ identity_uuid: person.uuid, start_at, end_at, positions });
+    // fetch the data for this identity and operator and map to template object
+    const certs = await this.findTrips({ identity, operator_id, tz, start_at, end_at, positions });
     const rows = certs.slice(0, 11); // TODO agg the last line
+    const total_tr = Math.round(rows.reduce((sum: number, line): number => (line.trips | 0) + sum, 0)) || 0;
     const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)) || 0;
-    const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0)) || 0;
-    const remaining = (total_km * 0.558 - total_cost) | 0;
+    const total_rm = rows.reduce((sum: number, line): number => line.rm + sum, 0) || 0;
+
     const meta = {
       tz,
-      identity: { uuid: person.uuid },
+      identity: { uuid: personUUID },
       operator: { uuid: operator.uuid, name: operator.name },
+      total_tr,
       total_km,
-      total_cost,
-      remaining,
+      total_rm,
       total_point: 0,
       rows: rows.map((line, index) => ({
         index,
         month: upperFirst(this.dateProvider.format(new Date(`${line.y}-${line.m}-01`), 'MMMM yyyy')),
-        trips: line.trips == 1 ? '1 trajet' : `${line.trips} trajets`,
+        trips: line.trips | 0,
         distance: line.km | 0,
-        cost: line.eur || 0,
+        remaining: line.rm || 0,
       })),
     };
 
@@ -78,7 +70,7 @@ export class CreateCertificateAction extends AbstractAction {
       end_at,
       start_at,
       operator_id,
-      identity_uuid: person.uuid,
+      identity_uuid: meta.identity.uuid,
     });
 
     return {
@@ -86,10 +78,35 @@ export class CreateCertificateAction extends AbstractAction {
       data: {
         uuid: certificate.uuid,
         created_at: certificate.created_at,
-        pdf_url: `${this.config.get('url.certificateBaseUrl')}/pdf/${certificate.uuid}`,
-        meta: certificate.meta,
+        meta: omit(certificate.meta, ['identity', 'operator']),
       },
     };
+  }
+
+  private async findPerson(identity: IdentityIdentifiersInterface, operator_id: number): Promise<string> {
+    return this.kernel.call(
+      'carpool:finduuid',
+      { identity, operator_id },
+      {
+        channel: { service: 'certificate' },
+        call: { user: {} },
+      },
+    );
+  }
+
+  private async findOperator(operator_id: number): Promise<any> {
+    return this.kernel.call(
+      'operator:quickfind',
+      { _id: operator_id, thumbnail: false },
+      {
+        channel: { service: 'certificate' },
+        call: { user: { permissions: ['operator.read'] } },
+      },
+    );
+  }
+
+  private async findTrips(options: FindParamsInterface): Promise<CarpoolInterface[]> {
+    return this.carpoolRepository.find(options);
   }
 
   /**

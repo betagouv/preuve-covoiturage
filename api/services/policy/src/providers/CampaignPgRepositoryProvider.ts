@@ -26,6 +26,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       values: [id],
     };
 
+    console.log('find', query);
     const result = await this.connection.getClient().query(query);
 
     if (result.rowCount === 0) {
@@ -226,6 +227,8 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       `,
       values: [id, territoryId],
     };
+
+    console.log('findOneWhereTerritory', query);
 
     const result = await this.connection.getClient().query(query);
 

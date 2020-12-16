@@ -104,7 +104,6 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
   }
 
   updateGraph(graphData = this.graphData): void {
-    console.log('> updateGraph', graphData);
     this.graphVisible = false;
     if (graphData) {
       const data: GraphNamesInterface = {
@@ -124,7 +123,6 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.graphData.currentValue) {
-      console.log('> ngOnChanges');
       this.updateGraph(changes.graphData.currentValue);
     }
   }

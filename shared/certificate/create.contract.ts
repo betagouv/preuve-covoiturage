@@ -14,7 +14,6 @@ export interface ParamsInterface {
 export interface ResultInterface {
   uuid: string;
   created_at: Date;
-  pdf_url: string;
   meta: CertificateMetaInterface;
 }
 
