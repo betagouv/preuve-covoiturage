@@ -5,6 +5,8 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserManyRoleEnum } from '~/core/enums/user/user-role.enum';
 
+import { environment } from '../../../../environments/environment';
+
 @Component({
   selector: 'app-administration-layout',
   templateUrl: './administration-layout.component.html',
@@ -66,10 +68,28 @@ export class AdministrationLayoutComponent implements OnInit {
       role: UserManyRoleEnum.ADMIN,
       groups: [UserGroupEnum.OPERATOR, UserGroupEnum.REGISTRY],
       label: 'Attestations',
+      // feature flag the certificates in production for now
+      hideIn: ['production'],
     },
   ];
 
   constructor(public authenticationService: AuthenticationService) {}
 
   ngOnInit(): void {}
+
+  showTab(link: MenuTabInterface): boolean {
+    return (
+      !this.shouldHide(link) &&
+      this.authenticationService.hasAnyGroup(link.groups) &&
+      this.authenticationService.hasRole(link.role)
+    );
+  }
+
+  shouldHide(link: MenuTabInterface): boolean {
+    if ('hideIn' in link && link.hideIn.indexOf(environment.name) > -1) {
+      return true;
+    }
+
+    return false;
+  }
 }
