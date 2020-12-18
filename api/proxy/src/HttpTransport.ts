@@ -81,7 +81,8 @@ export class HttpTransport implements TransportInterface {
     this.registerStatsRoutes();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
-    this.registerCertificateRoutes();
+    // feature flag certificates until properly tested by operators
+    if (env('NODE_ENV') !== 'production') this.registerCertificateRoutes();
     this.registerAcquisitionRoutes();
     this.registerHonorRoutes();
     this.registerUptimeRoute();

@@ -17,6 +17,8 @@ import { IdentityIdentifiersInterface } from '../shared/certificate/common/inter
 @handler({
   ...handlerConfig,
   middlewares: [
+    // feature flag certificates until properly tested by operators
+    ['featureflag', { deny: ['production'] }],
     ['validate', alias],
     ['can', ['certificate.create']],
   ],
