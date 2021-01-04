@@ -74,7 +74,7 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
   private initBudget(): void {
     this.budgetTotal = this.campaign ? this.campaign.max_amount : 0;
 
-    this.budgetSpent = this.campaign && this.campaign.state ? this.campaign.state.amount : 0;
+    this.budgetSpent = this.campaign && this.campaign.state ? this.campaign.state.amount / 100 : 0;
     this.budgetRemaining = this.campaign ? this.budgetTotal - this.budgetSpent : 1;
   }
 
