@@ -43,7 +43,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   swapCheck(ter: TerritoryVisibilityTree) {
-    console.log('> swapCheck', ter._id);
     const selectedTerritoryIds = this.selectedTerritoryIds;
     const selInd = selectedTerritoryIds.indexOf(ter._id);
     const selected = selInd === -1;
@@ -204,8 +203,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
       .filter(this.selectableTerritoryFilter)
       .map((ter) => ter._id)
       .filter((val, ind, self) => self.indexOf(val) === ind);
-
-    console.log(this.selectedTerritoryIds.length, selectableTerritories.length);
 
     this.checkAllValue = this.selectedTerritoryIds.length >= selectableTerritories.length;
   }
