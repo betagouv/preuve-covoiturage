@@ -3,7 +3,8 @@ import { MiddlewareInterface, ContextType, ResultType, InvalidParamsException, m
 
 import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
 
-export type ValidateDateMiddlewareOptionsType = [string, Date, Date];
+type DateFunctionType = () => [Date, Date];
+export type ValidateDateMiddlewareOptionsType = [string, DateFunctionType];
 
 @middleware()
 export class ValidateDateMiddleware implements MiddlewareInterface {
@@ -16,7 +17,9 @@ export class ValidateDateMiddleware implements MiddlewareInterface {
     if (!options.length) {
       throw new InvalidParamsException('Middleware is not properly configured');
     }
-    const [dataPath, minStart, maxEnd] = options;
+    const [dataPath, dateFn] = options;
+    const [minStart, maxEnd] = dateFn();
+
     const campaign: CampaignInterface = get(params, dataPath, params);
 
     if (!campaign.start_date || !campaign.end_date) {
