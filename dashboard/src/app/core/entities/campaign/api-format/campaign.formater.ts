@@ -486,6 +486,7 @@ export class CampaignFormater {
                 min: Number(retribution.min) * 1000,
                 max: Number(retribution.max) * 1000,
               },
+              // eslint-disable-next-line max-len
               // handle special case of : if for one distance range a user has free contribution retribution mode is not progressive but filtered for passenger
               !isOneRangePassengerRetributionFree,
             ),
