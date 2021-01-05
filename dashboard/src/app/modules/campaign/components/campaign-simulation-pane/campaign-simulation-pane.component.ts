@@ -22,8 +22,9 @@ interface SimulationDateRange {
 
 function getTimeState(nbMonth): SimulationDateRange {
   const d = new Date();
-  const endDate = new Date(d.getFullYear(), d.getMonth(), 0);
-  const startDate = new Date(d.getFullYear(), d.getMonth() - nbMonth, 1);
+  const monthOffset = -1;
+  const endDate = new Date(d.getFullYear(), d.getMonth() + monthOffset, 0);
+  const startDate = new Date(d.getFullYear(), d.getMonth() - nbMonth + monthOffset, 1);
 
   return {
     nbMonth,
