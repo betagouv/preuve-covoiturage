@@ -45,7 +45,7 @@ interface SimulateResultInterface {
     ],
     ['validate', alias],
     'validate.rules',
-    ['validate.date', ['campaign', undefined, new Date()]],
+    ['validate.date', ['campaign', () => [undefined, new Date()]]],
   ],
 })
 export class SimulateOnFakeAction extends AbstractAction {
