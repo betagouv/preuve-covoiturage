@@ -30,6 +30,7 @@ function getTimeState(nbMonth): SimulationDateRange {
   // end last day of define of month before
   const endDate = new Date(d.getFullYear(), d.getMonth() + monthOffset, 0);
   // start first day of month before based on defined months count (1 > 3 months)
+
   const startDate = new Date(d.getFullYear(), d.getMonth() - nbMonth + monthOffset, 1);
 
   return {

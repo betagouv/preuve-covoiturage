@@ -14,6 +14,8 @@ import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/Ce
 @handler({
   ...handlerConfig,
   middlewares: [
+    // feature flag certificates until properly tested by operators
+    ['featureflag', { deny: ['production'] }],
     ['validate', alias],
     ['can', ['certificate.download']],
     ['channel.service.only', ['proxy']],

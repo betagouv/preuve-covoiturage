@@ -13,6 +13,8 @@ import { alias } from '../shared/certificate/list.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
+    // feature flag certificates until properly tested by operators
+    ['featureflag', { deny: ['production'] }],
     ['validate', alias],
     ['can', ['certificate.list']],
   ],

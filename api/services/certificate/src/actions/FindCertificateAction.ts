@@ -5,7 +5,14 @@ import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/Ce
 import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/certificate/find.contract';
 import { alias } from '../shared/certificate/find.schema';
 
-@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
+@handler({
+  ...handlerConfig,
+  middlewares: [
+    // feature flag certificates until properly tested by operators
+    ['featureflag', { deny: ['production'] }],
+    ['validate', alias],
+  ],
+})
 export class FindCertificateAction extends AbstractAction {
   constructor(private certRepository: CertificateRepositoryProviderInterfaceResolver) {
     super();
