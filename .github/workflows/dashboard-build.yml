@@ -2,7 +2,7 @@ name: "Dashboard - Build"
 
 on:
   push:
-    branches: [feat/ci, dev, master]
+    branches: [dev]
     tags: ["v*.*.*"]
     paths-ignore: [api/**]
 
