@@ -18,7 +18,7 @@ jobs:
         run: |
           cd dashboard
           yarn
-          yarn build:production
+          yarn build -c ${{ steps.extract_branch.outputs.branch }}
 
       - name: Install SSH Client 🔑
         uses: webfactory/ssh-agent@v0.4.1
