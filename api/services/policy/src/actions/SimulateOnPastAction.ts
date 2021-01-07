@@ -29,34 +29,46 @@ export class SimulateOnPastAction extends AbstractAction {
     // 2. Start a cursor to find trips
     const cursor = await this.tripRepository.findTripByPolicy(campaign);
     let done = false;
-    const incentives: IncentiveInterface[] = [];
+
+    let trip_subsidized = 0;
+    let trip_excluded = 0;
+    let amount = 0;
+
     do {
       const results = await cursor.next();
       done = results.done;
       if (results.value) {
         for (const trip of results.value) {
           // 3. For each trip, process
-          incentives.push(...(await engine.process(campaign, trip)));
+          const incentives: IncentiveInterface[] = await engine.process(campaign, trip);
+
+          // The number of passenger determines number of couples
+          const trip_nb = trip.filter((t) => !t.is_driver).length;
+          if (
+            trip
+              .filter((t) => t.is_driver)
+              .reduce((acc, ti) => acc + incentives.find((inc) => inc.carpool_id === ti.carpool_id).amount, 0) > 0
+          ) {
+            // If one driver is subsidized then all couple are (cause of engine business logic)
+            trip_subsidized += trip_nb;
+          } else {
+            const current_trip_subsidized = trip.filter(
+              (t) => !t.is_driver && incentives.find((inc) => inc.carpool_id === t.carpool_id).amount > 0,
+            ).length;
+            // Else we look the number of subsidized passengers
+            trip_subsidized += current_trip_subsidized;
+            trip_excluded += trip_nb - current_trip_subsidized;
+          }
+          // Amount sum all
+          amount += incentives.reduce((acc, i) => acc + i.amount, 0);
         }
       }
-      // 4. Save incentives
     } while (!done);
 
-    return incentives.reduce(
-      (acc, i) => {
-        if (i.amount > 0) {
-          acc.amount += i.amount;
-          acc.trip_subsidized += 1;
-        } else {
-          acc.trip_excluded += 1;
-        }
-        return acc;
-      },
-      {
-        trip_subsidized: 0,
-        trip_excluded: 0,
-        amount: 0,
-      },
-    );
+    return {
+      trip_subsidized,
+      trip_excluded,
+      amount,
+    };
   }
 }
