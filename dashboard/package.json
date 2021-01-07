@@ -4,7 +4,6 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build:production": "ng build -c production",
     "build": "ng build --configuration=$NODE_ENV",
     "lint": "eslint 'src/**/*.ts'",
     "test:integration:debug": "yarn run cypress run --env ENV_NAME=local --spec 'cypress/integration/*.integration.ts'",
