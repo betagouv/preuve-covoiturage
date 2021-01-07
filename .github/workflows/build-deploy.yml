@@ -1,8 +1,5 @@
 name: Build and Deploy
-on:
-  push:
-    branches:
-      - 'feat/prod-autodeploy'
+on: [push]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -36,4 +33,4 @@ jobs:
           key: ${{ secrets.FRONT_DEPLOY_KEY }}
           source: dashboard/dist/dashboard/*
           target: www/${{ steps.extract_branch.outputs.branch }}
-          rm: false
+          rm: true
