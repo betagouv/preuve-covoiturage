@@ -12,7 +12,7 @@
     <p>
       Rétribution totale :<br />
       <span class="campaignMainMetrics-budgetSpend"
-        ><b>{{ budgetSpent | currency: 'EUR':'symbol':'1.0-2' }}</b></span
+        ><b>{{ budgetSpent / 100 | currency: 'EUR':'symbol':'1.0-2' }}</b></span
       >
       sur <b>{{ budgetTotal | currency: 'EUR':'symbol':'1.0-2' }}</b>
     </p>
