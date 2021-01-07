@@ -332,7 +332,9 @@ export class CampaignUiService {
     // MAXIMUM AMOUNT
     summaryText += `
       <p>Cette campagne est limitée à
-        <b>${campaign.max_amount} ${unit}${campaign.max_amount > 1 ? 's' : ''}</b>.
+        <b>${campaign.max_amount} ${unit}${campaign.max_amount > 1 ? 's' : ''} et ${campaign.max_trips} trajet${
+      campaign.max_trips > 1 ? 's' : ''
+    } </b>.
       </p>
     `;
 
