@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build:review": "eval \"echo \\\"$(cat src/environments/environment.review.ts.template)\\\"\" | sed 's|$REVIEW_ID|'$REVIEW_ID'|g' | sed 's|$BRANCH|'$BRANCH'|g' > src/environments/environment.review.ts && cp -f src/environments/environment.review.ts src/environments/environment.ts && ng build --configuration=review",
+    "build:production": "ng build -c production",
     "build": "ng build --configuration=$NODE_ENV",
     "lint": "eslint 'src/**/*.ts'",
     "test:integration:debug": "yarn run cypress run --env ENV_NAME=local --spec 'cypress/integration/*.integration.ts'",
