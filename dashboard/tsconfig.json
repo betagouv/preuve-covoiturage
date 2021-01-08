@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "~/*": ["./src/app/*"]
+      "~/*": ["./src/app/*"],
+      "shared/*": ["../shared/*"]
     },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
