@@ -2,7 +2,7 @@ name: "Api - Build"
 
 on:
   push:
-    branches: [dev, master]
+    branches: [dev]
     tags: ["v*.*.*"]
     paths-ignore: [dashboard/**]
 
