@@ -1,7 +1,7 @@
-import { TripSearchInterfaceWithPagination } from '../shared/trip/common/interfaces/TripSearchInterface';
+import { TripSearchInterface, TripSearchInterfaceWithPagination } from '../shared/trip/common/interfaces/TripSearchInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { LightTripInterface } from './LightTripInterface';
-import { StatInterface } from './StatInterface';
+import { FinancialStatInterface, StatInterface } from './StatInterface';
 import { ExportTripInterface } from './ExportTripInterface';
 
 export interface TzResultInterface {
@@ -10,7 +10,8 @@ export interface TzResultInterface {
 }
 
 export interface TripRepositoryInterface {
-  stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]>;
+  stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]>;
+  financialStats(params: Partial<TripSearchInterface>): Promise<FinancialStatInterface[]>;
   searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }>;
   search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>>;
   searchWithCursor(
@@ -25,7 +26,11 @@ export interface TripRepositoryInterface {
   validateTz(tz?: string): Promise<TzResultInterface>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
-  public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
+  public async stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]> {
+    throw new Error();
+  }
+
+  public async financialStats(params: Partial<TripSearchInterface>): Promise<FinancialStatInterface[]> {
     throw new Error();
   }
 

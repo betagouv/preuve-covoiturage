@@ -96,5 +96,9 @@ export const stats = {
   additionalProperties: false,
   properties: {
     ...params,
+    group_by: {
+      type: 'string',
+      enum: ['month', 'day']
+    },
   },
 };

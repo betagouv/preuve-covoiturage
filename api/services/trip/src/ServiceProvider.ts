@@ -21,6 +21,8 @@ import { StatsAction } from './actions/StatsAction';
 import { ExportAction } from './actions/ExportAction';
 import { SearchCountAction } from './actions/SearchCountAction';
 import { BuildExportAction } from './actions/BuildExportAction';
+import { FinancialStatsAction } from './actions/FinancialStatsAction';
+
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
 import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
@@ -40,7 +42,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [ListAction, SearchCountAction, StatsAction, ExportAction, BuildExportAction, TripCacheWarmCron],
+  handlers: [ListAction, SearchCountAction, StatsAction, FinancialStatsAction, ExportAction, BuildExportAction, TripCacheWarmCron],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
