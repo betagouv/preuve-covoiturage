@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { provider, ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
