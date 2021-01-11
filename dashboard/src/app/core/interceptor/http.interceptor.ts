@@ -5,15 +5,15 @@ import { Router } from '@angular/router';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../services/config.service';
 
 @Injectable()
 export class HttpApiInterceptor implements HttpInterceptor {
   private APIMETHODS = ['POST', 'GET', 'PATCH', 'PUT', 'DELETE'];
-  private api = environment.apiUrl;
+  private api = this.config.get('apiUrl');
   private router: Router;
 
-  constructor(private injector: Injector, public toastr: ToastrService) {
+  constructor(private config: ConfigService, private injector: Injector, public toastr: ToastrService) {
     this.router = this.injector.get(Router);
   }
 

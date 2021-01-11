@@ -1,4 +1,4 @@
-import { Worker, QueueScheduler, Processor, Job } from 'bullmq';
+import { Worker, QueueScheduler, Processor, Job, WorkerOptions, QueueSchedulerOptions } from 'bullmq';
 
 import { QueueExtension } from '@ilos/queue';
 import { TransportInterface, KernelInterface } from '@ilos/common';
@@ -41,11 +41,13 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
   }
 
   protected getWorker(connection: RedisInterface, name: string, processor: Processor): Worker {
-    return new Worker(name, processor, { connection });
+    const options = { connection } as WorkerOptions;
+    return new Worker(name, processor, options);
   }
 
   protected getScheduler(connection: RedisInterface, name: string): QueueScheduler {
-    return new QueueScheduler(name, { connection });
+    const options = { connection } as QueueSchedulerOptions;
+    return new QueueScheduler(name, options);
   }
 
   protected async getWorkerAndScheduler(

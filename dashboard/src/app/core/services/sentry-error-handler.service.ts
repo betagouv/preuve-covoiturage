@@ -1,16 +1,18 @@
 import { ErrorHandler, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
 import { captureException, init } from '@sentry/browser';
+import { ConfigService } from './config.service';
 
 @Injectable()
 export class SentryErrorHandler extends ErrorHandler {
   trackError = false;
-  constructor() {
+  constructor(private config: ConfigService) {
     super();
 
-    if (environment.sentryDSN) {
+    const sentryDSN = config.get('sentryDSN');
+    console.log('sentryDSN', sentryDSN);
+    if (sentryDSN) {
       this.trackError = true;
-      init({ dsn: environment.sentryDSN });
+      init({ dsn: sentryDSN });
     }
 
     this.trackError = true;
@@ -35,8 +37,8 @@ export class SentryErrorHandler extends ErrorHandler {
         captureException(err, {
           extra,
           tags: {
-            environment: environment.name,
-            production_mode: environment.production ? 'yes' : 'no',
+            environment: this.config.get('name'),
+            production_mode: this.config.get('production') ? 'yes' : 'no',
           },
         });
       } catch (er) {
@@ -45,7 +47,7 @@ export class SentryErrorHandler extends ErrorHandler {
     }
 
     // throw errors in the console only if local
-    if (!environment.production || !this.trackError) {
+    if (!this.config.get('production') || !this.trackError) {
       super.handleError(error);
     }
   }

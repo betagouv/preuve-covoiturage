@@ -1,5 +1,5 @@
 {
-  "name": "@ilos/logger",
+  "name": "@ilos/tools",
   "version": "0.4.1",
   "publishConfig": {
     "access": "public"
@@ -22,11 +22,7 @@
     "watch": "tsc -w",
     "lint": "eslint \"src/**/*.ts\""
   },
-  "dependencies": {
-    "winston": "^3.2.1",
-    "@ilos/core": "^0.4.1",
-    "@ilos/common": "^0.4.1"
-  },
+  "dependencies": {},
   "ava": {
     "files": [
       "./dist/**/*.spec.js"
