@@ -1,8 +1,6 @@
 name: "Global - QA"
 
-on:
-  pull_request:
-    branches: [feat/ci, dev, production, staging]
+on: pull_request
 
 defaults:
   run:
