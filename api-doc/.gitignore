@@ -1,0 +1,10 @@
+node_modules
+
+# build command destination folder
+docs/.vuepress/dist
+
+# providers and services folders are generated
+docs/api/providers/*
+!docs/api/providers/README.md
+docs/api/services/*
+!docs/api/services/README.md

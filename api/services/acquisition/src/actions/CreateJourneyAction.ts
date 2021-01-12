@@ -1,3 +1,16 @@
+/**
+ * #### CreateJourneyAction
+ *
+ * - signature: `acquisition:create`
+ * - permissions: `['journey.create']`
+ *
+ * Store a journey (1 driver and 1 passenger) into `acquisition.acquisitions` and pass it
+ * to the normalisation pipeline.
+ * The normalised journey will be stored in `carpool.carpools` before being process by the
+ * fraud detection service.
+ *
+ * > _journey_ is a legacy name for acquisition.
+ */
 import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import {
