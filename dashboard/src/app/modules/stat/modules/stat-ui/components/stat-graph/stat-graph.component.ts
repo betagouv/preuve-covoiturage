@@ -122,7 +122,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.graphData.currentValue) {
+    if (changes.graphData && changes.graphData.currentValue) {
       this.updateGraph(changes.graphData.currentValue);
     }
   }

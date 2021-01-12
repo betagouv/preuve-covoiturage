@@ -5,6 +5,12 @@ import { chartNamesType } from '~/core/types/stat/chartNameType';
 const secondaryColor = '#65C8CF';
 const primaryColor = '#007AD9';
 
+export const defaultChartColors = {
+  backgroundColor: secondaryColor,
+  hoverBackgroundColor: secondaryColor,
+  borderColor: secondaryColor,
+};
+
 export const statChartColors: chartNamesType & { [key: string]: ChartDataSets } = {
   tripsPerMonth: {
     backgroundColor: secondaryColor,
