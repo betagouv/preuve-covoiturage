@@ -2,7 +2,7 @@ import { ChartOptions, TimeScale } from 'chart.js';
 
 import { chartNamesType } from '~/core/types/stat/chartNameType';
 
-const commonOptions: ChartOptions = {
+export const commonOptions: ChartOptions = {
   scales: {
     xAxes: [
       {
@@ -39,12 +39,12 @@ const commonOptions: ChartOptions = {
   },
 };
 
-const monthOptionsTime: TimeScale = {
+export const monthOptionsTime: TimeScale = {
   unit: 'month',
   tooltipFormat: 'MMMM',
 };
 
-const dayOptionsTime: TimeScale = {
+export const dayOptionsTime: TimeScale = {
   unit: 'day',
   tooltipFormat: 'D MMM',
   displayFormats: {

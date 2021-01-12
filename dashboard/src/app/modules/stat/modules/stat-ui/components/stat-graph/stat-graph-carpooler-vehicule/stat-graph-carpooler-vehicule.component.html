@@ -1,0 +1,22 @@
+<div class="graph">
+  <div class="graph-header">
+    <app-stat-graph-timemode-nav *ngIf="displayNav" [nav]="timeMode" (navChange)="navChange($event)">
+    </app-stat-graph-timemode-nav>
+  </div>
+  <div class="chart-container" [ngSwitch]="timeMode" *ngIf="data">
+    <ngx-chartjs
+      *ngSwitchCase="'day'"
+      type="bar"
+      [data]="data.daily"
+      [height]="70"
+      [options]="graphOptions.day"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      *ngSwitchCase="'month'"
+      type="bar"
+      [height]="70"
+      [data]="data.monthly"
+      [options]="graphOptions.month"
+    ></ngx-chartjs>
+  </div>
+</div>

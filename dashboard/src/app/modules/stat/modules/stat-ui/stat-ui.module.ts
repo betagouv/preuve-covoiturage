@@ -13,6 +13,13 @@ import { StatGraphViewComponent } from './components/stat-graph-view/stat-graph-
 import { StatOperatorViewComponent } from './components/stat-operator-view/stat-operator-view.component';
 // eslint-disable-next-line
 import { StatChartContainerComponent } from './components/stat-graph/stat-chart-container/stat-chart-container.component';
+import { StatGraphDistanceComponent } from './components/stat-graph/stat-graph-distance/stat-graph-distance.component';
+import { StatGraphTimeModeNavComponent } from './components/stat-graph/stat-graph-timemode-nav/stat-graph-timemode-nav.component';
+import { StatGraphTripComponent } from './components/stat-graph/stat-graph-trip/stat-graph-trip.component';
+import { StatGraphCarpoolersComponent } from './components/stat-graph/stat-graph-carpoolers/stat-graph-carpoolers.component';
+import { StatGraphPetrolComponent } from './components/stat-graph/stat-graph-petrol/stat-graph-petrol.component';
+import { StatGraphCarbonComponent } from './components/stat-graph/stat-graph-carbon/stat-graph-carbon.component';
+import { StatGraphCarpoolerVehiculeComponent } from './components/stat-graph/stat-graph-carpooler-vehicule/stat-graph-carpooler-vehicule.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +29,13 @@ import { StatChartContainerComponent } from './components/stat-graph/stat-chart-
     StatGraphViewComponent,
     StatOperatorViewComponent,
     StatChartContainerComponent,
+    StatGraphDistanceComponent,
+    StatGraphTimeModeNavComponent,
+    StatGraphTripComponent,
+    StatGraphCarpoolersComponent,
+    StatGraphPetrolComponent,
+    StatGraphCarbonComponent,
+    StatGraphCarpoolerVehiculeComponent,
   ],
   imports: [CommonModule, ChartjsModule, FormsModule, MaterialModule, SharedModule],
   exports: [

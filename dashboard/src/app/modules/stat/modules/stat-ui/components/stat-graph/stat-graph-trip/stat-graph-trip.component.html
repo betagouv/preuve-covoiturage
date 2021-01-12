@@ -1,0 +1,44 @@
+<div class="graph">
+  <div class="graph-header graph-trips-header">
+    <div class="graph-trips-legend-wrapper">
+      <div class="graph-trips-legend">
+        <div class="legend-square legend-square-secondary-color"></div>
+        <div class="graph-trips-legend-label">
+          <span>Tous les trajets réalisés</span>
+        </div>
+      </div>
+      <div class="graph-trips-legend">
+        <div class="legend-square legend-square-primary-color"></div>
+        <div class="graph-trips-legend-label">
+          <span>Trajets incités</span>
+        </div>
+      </div>
+    </div>
+
+    <app-stat-graph-timemode-nav *ngIf="displayNav" [nav]="timeMode" (navChange)="navChange($event)">
+    </app-stat-graph-timemode-nav>
+  </div>
+  <div class="chart-container" [ngSwitch]="timeMode" *ngIf="data">
+    <ngx-chartjs
+      [data]="data.daily"
+      *ngSwitchCase="'day'"
+      type="bar"
+      [height]="70"
+      [options]="graphOptions.day"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data.monthly"
+      *ngSwitchCase="'month'"
+      type="bar"
+      [height]="70"
+      [options]="graphOptions.month"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data.cumulated"
+      *ngSwitchCase="'cumulative'"
+      type="line"
+      [height]="70"
+      [options]="graphOptions.cumulative"
+    ></ngx-chartjs>
+  </div>
+</div>
