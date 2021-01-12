@@ -1,7 +1,7 @@
 node_modules
 
 # build command destination folder
-docs/.vuepress/dist
+dist
 
 # providers and services folders are generated
 docs/api/providers/*

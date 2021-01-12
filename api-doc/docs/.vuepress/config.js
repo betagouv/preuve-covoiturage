@@ -1,6 +1,7 @@
 const { fs, path } = require('@vuepress/shared-utils');
 
 module.exports = {
+  dest: './dist',
   locales: {
     '/': {
       lang: 'fr-FR',

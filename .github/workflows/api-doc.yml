@@ -29,6 +29,6 @@ jobs:
           host: ${{ secrets.FRONT_HOST }}
           username: ${{ secrets.FRONT_USERNAME }}
           key: ${{ secrets.FRONT_DEPLOY_KEY }}
-          source: api-doc/docs/.vuepress/dist
+          source: api-doc/dist
           target: www/api-doc
           rm: true
