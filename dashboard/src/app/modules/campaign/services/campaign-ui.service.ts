@@ -318,8 +318,8 @@ export class CampaignUiService {
     let summaryText = `<p>Campagne d’incitation au covoiturage du <b>`;
 
     // DATE
-    summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
-    summaryText += ` ${moment(campaign.end).format('dddd DD MMMM YYYY')}</b>, limitée à`;
+    summaryText += ` ${campaign.start.format('dddd DD MMMM YYYY')} au`;
+    summaryText += ` ${campaign.end.format('dddd DD MMMM YYYY')}</b>, limitée à`;
 
     // WEEK DAYS
 
