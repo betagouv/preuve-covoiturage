@@ -97,7 +97,7 @@ export class StatGraphTripComponent extends StatGraphBase {
 
   graphOptions = graphOptions;
 
-  setGraphTitle(): void {
-    this.title = `Trajets ${GraphTimeModeLabel[this.timeMode]}`;
+  graphTitle(): string {
+    return `Trajets ${GraphTimeModeLabel[this.timeMode]}`;
   }
 }

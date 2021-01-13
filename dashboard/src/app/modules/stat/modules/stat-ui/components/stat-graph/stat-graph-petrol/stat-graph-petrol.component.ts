@@ -69,7 +69,7 @@ export class StatGraphPetrolComponent extends StatGraphBase {
   graphOptions = graphOptions;
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Cumulative, GraphTimeMode.Month];
 
-  setGraphTitle(): void {
-    this.title = `Essence économisée ${GraphTimeModeLabel[this.timeMode]}`;
+  graphTitle(): string {
+    return `Essence économisée ${GraphTimeModeLabel[this.timeMode]}`;
   }
 }

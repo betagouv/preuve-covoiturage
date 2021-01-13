@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { GraphTimeMode } from '../GraphTimeMode';
 
 @Component({
@@ -10,19 +10,22 @@ export abstract class StatGraphBase implements OnInit {
 
   @Input() displayNav = true;
   // abstract displayNav: boolean;
+  @Output() titleUpdate = new EventEmitter<string>();
 
   timeMode = GraphTimeMode.Month;
 
-  title = '';
-
   navChange(timeMode: GraphTimeMode): void {
     this.timeMode = timeMode;
-    this.setGraphTitle();
+    this.graphTitle();
   }
 
-  abstract setGraphTitle(): void;
+  abstract graphTitle(): string;
+
+  protected updateGraphTitle(): void {
+    this.titleUpdate.emit(this.graphTitle());
+  }
 
   ngOnInit(): void {
-    this.setGraphTitle();
+    this.graphTitle();
   }
 }

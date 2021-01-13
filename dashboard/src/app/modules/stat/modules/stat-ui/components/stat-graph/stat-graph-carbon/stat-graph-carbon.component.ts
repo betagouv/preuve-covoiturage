@@ -68,7 +68,7 @@ export class StatGraphCarbonComponent extends StatGraphBase {
   graphOptions = graphOptions;
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Cumulative, GraphTimeMode.Month];
 
-  setGraphTitle(): void {
-    this.title = `Co2 économisée ${GraphTimeModeLabel[this.timeMode]}`;
+  graphTitle(): string {
+    return `Co2 économisée ${GraphTimeModeLabel[this.timeMode]}`;
   }
 }

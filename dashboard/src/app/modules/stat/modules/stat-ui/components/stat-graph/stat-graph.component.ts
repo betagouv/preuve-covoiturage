@@ -48,6 +48,10 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
     super();
   }
 
+  setTitle(title) {
+    this.graphTitle = title;
+  }
+
   ngOnInit(): void {
     this.options = statChartOptions;
     this.updateGraph();

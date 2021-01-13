@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { commonOptions, monthOptionsTime, dayOptionsTime } from '../../../../../config/statChartOptions';
 
 import { GraphTimeMode, GraphTimeModeLabel } from '../../../GraphTimeMode';
@@ -93,7 +93,7 @@ export class StatGraphDistanceComponent extends StatGraphBase {
 
   graphOptions = graphOptions;
 
-  setGraphTitle(): void {
-    this.title = `Distance parcouru ${GraphTimeModeLabel[this.timeMode]}`;
+  graphTitle(): string {
+    return `Distance parcouru ${GraphTimeModeLabel[this.timeMode]}`;
   }
 }

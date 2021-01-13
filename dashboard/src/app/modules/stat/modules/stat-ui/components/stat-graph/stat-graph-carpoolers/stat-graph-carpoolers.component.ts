@@ -69,7 +69,7 @@ export class StatGraphCarpoolersComponent extends StatGraphBase {
   graphOptions = graphOptions;
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Cumulative, GraphTimeMode.Month];
 
-  setGraphTitle(): void {
-    this.title = `Covoitureurs ${GraphTimeModeLabel[this.timeMode]}`;
+  graphTitle(): string {
+    return `Covoitureurs ${GraphTimeModeLabel[this.timeMode]}`;
   }
 }
