@@ -23,7 +23,7 @@ export class ValidateDateMiddleware implements MiddlewareInterface {
     const campaign: CampaignInterface = get(params, dataPath, params);
 
     if (!campaign.start_date || !campaign.end_date) {
-      throw new InvalidParamsException('Middleware is not properly configured, missing data');
+      throw new InvalidParamsException('Missing start/end dates');
     }
 
     if (campaign.start_date > campaign.end_date) {
@@ -37,10 +37,6 @@ export class ValidateDateMiddleware implements MiddlewareInterface {
     if (maxEnd && campaign.end_date > maxEnd) {
       throw new InvalidParamsException(`End should be before ${maxEnd.toDateString()}`);
     }
-
-    // Set proper time
-    campaign.start_date.setHours(0, 0, 0, 0);
-    campaign.end_date.setHours(23, 59, 59, 999);
 
     return next(params, context);
   }
