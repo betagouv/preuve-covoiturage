@@ -48,7 +48,7 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
           get(data, 'etablissement.updated_at', null) === null ? null : new Date(get(data, 'etablissement.updated_at')),
       };
     } catch (e) {
-      if (e.isAxiosError && e.response.status === 404) {
+      if (e.isAxiosError && e.response && e.response.status === 404) {
         throw new NotFoundException(`Company not found (${siret})`);
       }
       throw e;
