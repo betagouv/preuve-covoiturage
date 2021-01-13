@@ -4,6 +4,7 @@
   *ngIf="graphToBeDisplayed === 'distance' && graphVisible"
   [displayNav]="!lightMode"
   [data]="data.distance"
+  (titleUpdate)="setTitle($event)"
 >
 </app-stat-graph-distance>
 
@@ -11,6 +12,7 @@
   *ngIf="graphToBeDisplayed === 'trips' && graphVisible"
   [displayNav]="!lightMode"
   [data]="data.trips"
+  (titleUpdate)="setTitle($event)"
 >
 </app-stat-graph-trip>
 
@@ -18,6 +20,7 @@
   *ngIf="graphToBeDisplayed === 'carpoolers' && graphVisible"
   [displayNav]="!lightMode"
   [data]="data.carpoolers"
+  (titleUpdate)="setTitle($event)"
 >
 </app-stat-graph-carpoolers>
 
@@ -25,6 +28,7 @@
   *ngIf="graphToBeDisplayed === 'petrol' && graphVisible"
   [displayNav]="!lightMode"
   [data]="data.petrol"
+  (titleUpdate)="setTitle($event)"
 >
 </app-stat-graph-petrol>
 
@@ -38,38 +42,6 @@
   *ngIf="graphToBeDisplayed === 'carpoolersPerVehicule' && graphVisible"
   [displayNav]="!lightMode"
   [data]="data.carpoolersPerVehicule"
+  (titleUpdate)="setTitle($event)"
 >
 </app-stat-graph-carbon>
-
-<!-- 
-<div class="graph" *ngIf="graphToBeDisplayed === 'carpoolersPerVehicule' && graphVisible">
-  <mat-button-toggle-group
-    [(ngModel)]="toggleChart.carpoolersPerVehicule"
-    (ngModelChange)="setGraphTitle()"
-    *ngIf="!lightMode"
-  >
-    <mat-button-toggle aria-label="par jour" value="daily"> Par jour </mat-button-toggle>
-    <mat-button-toggle aria-label="par mois" value="monthly"> Par mois </mat-button-toggle>
-  </mat-button-toggle-group>
-  <app-stat-chart-container
-    [hasFilters]="hasFilters"
-    [showDaily]="canShowDaily"
-    [showMonthly]="canShowMonthly"
-    [showCumulated]="canShowCumulated"
-  >
-    <ngx-chartjs
-      *ngIf="isEmptyDataset(data.carpoolersPerVehicule.daily) && toggleChart.carpoolersPerVehicule === 'daily'"
-      [data]="data.carpoolersPerVehicule.daily"
-      type="bar"
-      [height]="70"
-      [options]="options.carpoolersPerVehiculePerDay"
-    ></ngx-chartjs>
-    <ngx-chartjs
-      *ngIf="isEmptyDataset(data.carpoolersPerVehicule.monthly) && toggleChart.carpoolersPerVehicule === 'monthly'"
-      [data]="data.carpoolersPerVehicule.monthly"
-      type="bar"
-      [height]="70"
-      [options]="options.carpoolersPerVehiculePerMonth"
-    ></ngx-chartjs>
-  </app-stat-chart-container>
-</div> -->
