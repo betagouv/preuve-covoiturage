@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { GraphTimeMode } from '../GraphTimeMode';
 
 @Component({
@@ -8,7 +8,8 @@ import { GraphTimeMode } from '../GraphTimeMode';
 export abstract class StatGraphBase implements OnInit {
   constructor() {}
 
-  abstract displayNav: boolean;
+  @Input() displayNav = true;
+  // abstract displayNav: boolean;
 
   timeMode = GraphTimeMode.Month;
 

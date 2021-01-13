@@ -63,7 +63,7 @@ const graphOptions = {
   styleUrls: ['./stat-graph-carpoolers.component.scss'],
 })
 export class StatGraphCarpoolersComponent extends StatGraphBase {
-  @Input() displayNav = true;
+  // @Input() displayNav = true;
   @Input() data: any = null;
 
   graphOptions = graphOptions;

@@ -63,7 +63,6 @@ const graphOptions = {
   styleUrls: ['./stat-graph-carbon.component.scss'],
 })
 export class StatGraphCarbonComponent extends StatGraphBase {
-  @Input() displayNav = true;
   @Input() data: any = null;
 
   graphOptions = graphOptions;

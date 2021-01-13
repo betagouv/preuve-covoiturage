@@ -63,7 +63,7 @@ const graphOptions = {
   styleUrls: ['./stat-graph-petrol.component.scss'],
 })
 export class StatGraphPetrolComponent extends StatGraphBase {
-  @Input() displayNav = true;
+  // @Input() displayNav = true;
   @Input() data: any = null;
 
   graphOptions = graphOptions;

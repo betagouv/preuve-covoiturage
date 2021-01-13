@@ -88,7 +88,7 @@ const graphOptions = {
   styleUrls: ['./stat-graph-distance.component.scss'],
 })
 export class StatGraphDistanceComponent extends StatGraphBase {
-  @Input() displayNav = true;
+  // @Input() displayNav = true;
   @Input() data: any = null;
 
   graphOptions = graphOptions;
