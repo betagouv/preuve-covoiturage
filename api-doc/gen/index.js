@@ -1,6 +1,7 @@
 const path = require('path');
 
 const { genServices } = require('./services');
+const { genProviders } = require('./providers');
 const { genApiLicenses } = require('./licenses');
 
 const config = {
@@ -13,6 +14,10 @@ const config = {
 // from all api/services/*
 console.log('📚 [apidoc:gen] Generate doc for services');
 genServices(config);
+
+// from all api/providers/*
+console.log('📚 [apidoc:gen] Generate doc for providers');
+genProviders(config);
 
 // generate a table of all dependencies licenses
 console.log('📚 [apidoc:gen] Generate list of licenses');

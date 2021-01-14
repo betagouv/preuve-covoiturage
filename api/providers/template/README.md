@@ -1,3 +1,7 @@
-This package is a part of Ilos framework.
+---
+title: Templates
+---
 
-See more on [http://www.ilos.tech](http://www.ilos.tech)
+# Template provider
+
+Handlebars template to be used in emails or HTML rendering.

@@ -1,22 +1,5 @@
 const fs = require('fs');
-
-function getTopComment(str) {
-  if (typeof str !== 'string') return '';
-  const firstImport = str.indexOf('import {');
-  const pos = str.indexOf('*/');
-  if (pos === -1 || firstImport < pos) return '';
-  return str
-    .substr(0, pos)
-    .replace(/^ ?\* ?/gm, '')
-    .replace('/**', '')
-    .trim();
-}
-
-function printBase(str) {
-  return str;
-  // add TOC
-  //return str.replace(/^#\s([^\n]*)/m, '# $1\n\n[[toc]]\n');
-}
+const { getTopComment, printBase } = require('./helpers');
 
 function printActions(actions) {
   const content = actions
