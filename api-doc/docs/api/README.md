@@ -88,7 +88,7 @@ api/
 - L'API est hébergée chez Scalingo
 - L'app est hébergée chez Alwaysdata
 
-La nouvelle version sera en Kubernetes. Voir [l'infrastructure](/api/infra) pour plus de détails.
+La nouvelle version sera en Kubernetes. Voir [l'infrastructure](/api/infra.html) pour plus de détails.
 
 Les environnements sont :
 
@@ -117,4 +117,4 @@ Services tierces
 
 ## Licences
 
-[Liste complète](/api/licenses-list) des licences des dépendances utilisées par l'API.
+[Liste complète](/api/licenses-list.html) des licences des dépendances utilisées par l'API.
