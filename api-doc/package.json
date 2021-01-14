@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "vuepress dev docs",
-    "gen": "node gen/generate.js",
+    "gen": "node gen/index.js",
     "build": "vuepress build docs"
   },
   "devDependencies": {

@@ -5,7 +5,7 @@ module.exports = {
   locales: {
     '/': {
       lang: 'fr-FR',
-      title: 'RPC tech',
+      title: '📚 RPC tech',
       description: 'Documentation technique du Registre de preuve de covoiturage',
     },
   },
@@ -25,6 +25,10 @@ module.exports = {
               path: '/api/',
             },
             {
+              title: 'Infrastructure',
+              path: '/api/infra',
+            },
+            {
               title: 'Proxy',
               path: '/api/proxy',
             },
@@ -37,6 +41,10 @@ module.exports = {
               title: 'Providers',
               path: '/api/providers/',
               children: getChildren('/api/providers'),
+            },
+            {
+              title: 'Licences',
+              path: '/api/licenses-list',
             },
           ],
         },
