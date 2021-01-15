@@ -211,7 +211,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           (count(*) FILTER (WHERE amount = 0))::int as trip_excluded
         FROM ${this.table}
         WHERE policy_id = $1
-          AND status = 'validated'
+          AND state = 'regular'
       `,
       values: [policy_id],
     };
