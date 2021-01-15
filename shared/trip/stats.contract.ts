@@ -1,6 +1,6 @@
 import { TripStatInterface } from './common/interfaces/TripStatInterface';
 
-export interface ParamsInterface extends TripStatInterface { }
+export interface ParamsInterface extends TripStatInterface {}
 
 interface CommonStatInterface {
   distance: number;
@@ -12,14 +12,11 @@ interface CommonStatInterface {
   incentive_sum: number;
   financial_incentive_sum: number;
 }
-interface StatByMonthInterface extends CommonStatInterface {
-  month: number;
-}
-interface StatByDayInterface extends CommonStatInterface {
-  day: Date;
-}
 
-export type SingleResultInterface = StatByDayInterface | StatByMonthInterface;
+export interface SingleResultInterface extends CommonStatInterface {
+  month?: number;
+  day?: Date;
+}
 
 export type ResultInterface = SingleResultInterface[];
 
