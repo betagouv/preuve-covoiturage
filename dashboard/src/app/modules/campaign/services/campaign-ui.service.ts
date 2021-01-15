@@ -1,6 +1,5 @@
 import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { WeekDay } from '@angular/common';
-import * as moment from 'moment';
 
 import {
   RestrictionUxInterface,

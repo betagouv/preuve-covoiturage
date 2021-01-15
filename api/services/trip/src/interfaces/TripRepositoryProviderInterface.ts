@@ -1,4 +1,7 @@
-import { TripSearchInterface, TripSearchInterfaceWithPagination } from '../shared/trip/common/interfaces/TripSearchInterface';
+import {
+  TripSearchInterface,
+  TripSearchInterfaceWithPagination,
+} from '../shared/trip/common/interfaces/TripSearchInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { LightTripInterface } from './LightTripInterface';
 import { FinancialStatInterface, StatInterface } from './StatInterface';

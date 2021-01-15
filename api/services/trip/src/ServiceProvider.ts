@@ -42,7 +42,15 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [ListAction, SearchCountAction, StatsAction, FinancialStatsAction, ExportAction, BuildExportAction, TripCacheWarmCron],
+  handlers: [
+    ListAction,
+    SearchCountAction,
+    StatsAction,
+    FinancialStatsAction,
+    ExportAction,
+    BuildExportAction,
+    TripCacheWarmCron,
+  ],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { promisify } from 'util';
 import { map } from 'lodash';
 
@@ -30,7 +31,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'trip.list';
   private defaultTz: TzResultInterface = { name: 'GMT', utc_offset: '00:00:00' };
 
-  constructor(public connection: PostgresConnection) { }
+  constructor(public connection: PostgresConnection) {}
 
   protected async buildWhereClauses(
     filters: Partial<TripSearchInterface>,
@@ -173,7 +174,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const values = [...(where ? where.values : [])];
     const text = `
       SELECT
-        ${params.group_by === 'day' ? 'journey_start_datetime::date as day' : `date_part('month', journey_start_datetime) as month`},
+        ${
+          params.group_by === 'day'
+            ? 'journey_start_datetime::date as day'
+            : `date_part('month', journey_start_datetime) as month`
+        },
         sum(passenger_seats)::int as trip,
         sum(journey_distance/1000*passenger_seats)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
@@ -188,7 +193,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         coalesce(sum(passenger_incentive_rpc_sum + driver_incentive_rpc_sum), 0)::int as incentive_sum
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
-      ${params.group_by === 'day' ? 'GROUP BY day ORDER BY day ASC' : `GROUP BY date_part('month', journey_start_datetime)`}
+      ${
+        params.group_by === 'day'
+          ? 'GROUP BY day ORDER BY day ASC'
+          : `GROUP BY date_part('month', journey_start_datetime)`
+      }
     `;
 
     const result = await this.connection.getClient().query({
@@ -205,13 +214,21 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const values = [...(where ? where.values : [])];
     const text = `
       SELECT
-        ${params.group_by === 'day' ? 'journey_start_datetime::date as day' : `date_part('month', journey_start_datetime) as month`},
+        ${
+          params.group_by === 'day'
+            ? 'journey_start_datetime::date as day'
+            : `date_part('month', journey_start_datetime) as month`
+        },
         operator_id,
         coalesce(sum(passenger_incentive_rpc_financial_sum + driver_incentive_rpc_financial_sum), 0)::int as financial_incentive_sum,
         coalesce(sum(passenger_incentive_rpc_sum + driver_incentive_rpc_sum), 0)::int as incentive_sum
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
-      ${params.group_by === 'day' ? 'GROUP BY day, operator_id' : `GROUP BY date_part('month', journey_start_datetime), operator_id`}
+      ${
+        params.group_by === 'day'
+          ? 'GROUP BY day, operator_id'
+          : `GROUP BY date_part('month', journey_start_datetime), operator_id`
+      }
     `;
 
     const result = await this.connection.getClient().query({
