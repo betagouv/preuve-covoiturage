@@ -16,13 +16,17 @@ export class FilterService {
 
   constructor() {}
 
+  public resetFilter(): void {
+    this.filter$.next({});
+  }
+
   // format filterUx to filter in api format
-  public setFilter(params: FilterUxInterface | {} = {}): void {
+  public setFilter(params: Partial<FilterUxInterface> = {}): void {
     const filterUx = cloneDeep(params);
 
     // if empty don't set filter
     if (!('campaignIds' in filterUx)) {
-      return;
+      return this.resetFilter();
     }
 
     const filter = new Filter({

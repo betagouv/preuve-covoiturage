@@ -73,6 +73,9 @@
 
 .filter-footer {
   text-align: right;
+  .mat-flat-button {
+    margin-left: 1em;
+  }
 }
 
 .start-time,

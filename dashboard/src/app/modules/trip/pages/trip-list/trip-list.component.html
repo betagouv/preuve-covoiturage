@@ -10,15 +10,13 @@
     <mat-spinner></mat-spinner>
   </div>
   <div class="TripList-message" *ngIf="showMessage">
-    <p>
-      Aucun trajet n'a été réalisé ces derniers mois.
-    </p>
+    <p>😢 Aucun trajet trouvé avec ces critères...</p>
   </div>
   <div class="TripList-header" *ngIf="trips && !showMessage">
     <span class="TripList-header-results" *ngIf="total !== null"> {{ total }} résultats </span>
   </div>
   <div class="TripList-content" [hidden]="!trips || showMessage">
     <app-trip-table [data]="trips" [displayedColumns]="columnsDisplayed"></app-trip-table>
-    <mat-paginator [length]="total" [pageSize]="limit" (page)="paginationUpdate($event)"> </mat-paginator>
+    <mat-paginator [length]="total" [pageSize]="limit" (page)="paginationUpdate($event)"></mat-paginator>
   </div>
 </div>

@@ -1,14 +1,12 @@
 <div class="TripLayout">
   <app-page-header>
-    <h1 class="page-title">
-      Les trajets
-    </h1>
+    <h1 class="page-title">Les trajets</h1>
     <div class="page-menu TripLayout-menu">
       <nav mat-tab-nav-bar>
         <ng-container *ngFor="let link of menu">
           <a
             mat-tab-link
-            *ngIf="authenticationService.hasAnyGroup(link.groups) && authenticationService.hasRole(link.role)"
+            *ngIf="hasGroupAndRole(link.groups, link.role)"
             [routerLink]="link.path"
             routerLinkActive
             #rla="routerLinkActive"
@@ -32,26 +30,27 @@
         </a>
       </nav>
       <button
-        *ngIf="pageHasFilter"
-        [matBadge]="filterNumber"
+        *ngIf="pageHasFilters"
+        [matBadge]="filtersCount"
         class="TripLayout-menu-filter-button"
         mat-flat-button
         color="primary"
         matBadgeColor="accent"
         (click)="toggleFilterDisplay()"
       >
-        <mat-icon>filter_list_rounded</mat-icon>
-        Affiner les résultats
+        <mat-icon>{{ showFilters ? 'close' : 'filter_list_rounded' }}</mat-icon>
+        {{ showFilters ? 'Cacher les filtres' : 'Affiner les résultats' }}
       </button>
     </div>
   </app-page-header>
   <app-page-content>
-    <div class="TripLayout-content" [class.filter-triangle]="showFilter && pageHasFilter">
+    <!--  UI triangle  -->
+    <div class="TripLayout-content" [class.filter-triangle]="showFilters && pageHasFilters">
+      <!--  filters' panel component  -->
       <app-filter
-        *ngIf="pageHasFilter"
-        (filterNumber)="setFilterNumber($event)"
-        [showFilter]="showFilter"
-        (hideFilter)="toggleFilterDisplay()"
+        *ngIf="pageHasFilters"
+        [(showFilters)]="showFilters"
+        (filtersCount)="setFiltersCount($event)"
       ></app-filter>
       <router-outlet></router-outlet>
     </div>
