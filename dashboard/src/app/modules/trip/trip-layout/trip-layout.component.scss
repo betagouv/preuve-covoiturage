@@ -2,24 +2,6 @@
 @import '~src/app/shared/components/page-header/page-header';
 
 .TripLayout {
-  &-content {
-    &.filter-triangle:before {
-      content: '';
-      position: relative;
-      top: 4px;
-      left: calc(100% - 110px);
-      z-index: 0;
-      width: 0;
-      height: 0;
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-bottom: 20px solid $background-white;
-      clear: both;
-      @media (min-width: 1400px) {
-        left: calc(100% - 110px);
-      }
-    }
-  }
   &-menu {
     display: flex;
     align-items: center;
@@ -29,8 +11,9 @@
       height: 40px;
     }
   }
-}
 
-.TripLayout-menu-filter-button {
-  min-width: 200px;
+  // set the button width to avoid mvt on label change
+  &-menu-filter-button {
+    min-width: 200px;
+  }
 }

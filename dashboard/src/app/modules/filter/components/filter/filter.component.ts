@@ -1,6 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, AbstractControl, FormControl, Validators } from '@angular/forms';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { WeekDay } from '@angular/common';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
@@ -23,25 +22,6 @@ import { dateRangeValidator } from '~/modules/filter/validators/date-range.valid
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
   ],
-  animations: [
-    trigger('collapse', [
-      state(
-        'open',
-        style({
-          'max-height': '1800px',
-        }),
-      ),
-      state(
-        'closed',
-        style({
-          'max-height': '0',
-          display: 'none',
-        }),
-      ),
-      transition('open => closed', [style({ 'margin-top': '30px' }), animate('0.3s')]),
-      transition('closed => open', [animate('0s')]),
-    ]),
-  ],
 })
 export class FilterComponent extends DestroyObservable implements OnInit {
   public filterForm: FormGroup;
@@ -50,6 +30,11 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   public minDate: string;
 
   public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
+
+  // delay HTTP call to let the panel close without a glitch
+  // closing animation duration is 200ms
+  // ❤️ mono-threaded JS !
+  private closingAnimationTimeout = 200;
 
   @Input() showFilters: boolean;
   @Output() showFiltersChange = new EventEmitter<boolean>();
@@ -121,14 +106,18 @@ export class FilterComponent extends DestroyObservable implements OnInit {
       if (!filterObj.date.end) delete filterObj.date.end;
     }
 
-    this.filterService.setFilter(filterObj);
+    setTimeout(() => {
+      this.filterService.setFilter(filterObj);
+    }, this.closingAnimationTimeout);
   }
 
   /**
    * Reset filters and apply the value
    */
   public onReset(): void {
-    this.filterService.resetFilter();
+    setTimeout(() => {
+      this.filterService.resetFilter();
+    }, this.closingAnimationTimeout);
   }
 
   public getStatusFrench(status: TripStatusEnum): string {

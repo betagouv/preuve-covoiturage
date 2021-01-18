@@ -1,8 +1,9 @@
 <form
+  class="filter-form"
   (submit)="onSubmit()"
   (document:keydown.control.enter)="onSubmit()"
   [formGroup]="filterForm"
-  [@collapse]="showFilters ? 'open' : 'closed'"
+  [class.visible]="showFilters"
 >
   <div class="filter-wrapper">
     <div class="filter">
