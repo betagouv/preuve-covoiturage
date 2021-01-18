@@ -29,6 +29,8 @@
           Export
         </a>
       </nav>
+
+      <!-- filter's toggle button -->
       <button
         *ngIf="pageHasFilters"
         [matBadge]="filtersCount"
@@ -37,6 +39,7 @@
         color="primary"
         matBadgeColor="accent"
         (click)="toggleFilterDisplay()"
+        (keydown.esc)="toggleFilterDisplay()"
       >
         <mat-icon>{{ showFilters ? 'close' : 'filter_list_rounded' }}</mat-icon>
         {{ showFilters ? 'Cacher les filtres' : 'Affiner les résultats' }}

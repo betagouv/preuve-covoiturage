@@ -60,23 +60,24 @@ export class TripListComponent extends DestroyObservable implements OnInit {
   }
 
   get loaded(): boolean {
-    return !!this.tripService.loaded;
+    return this.tripService.loaded;
   }
 
   /**
    * if no values in database when no filter is applied this should return true
    */
-  get showMessage(): boolean {
-    // TODO fix appearance when trips are not loaded yet
-    return !this.loading && this.loaded && !this.hasFilter && this.trips.length === 0;
-  }
+  // get showMessage(): boolean {
+  //   // TODO fix appearance when trips are not loaded yet
+  //   return !this.loading && this.loaded && !this.hasFilter && this.trips.length === 0;
+  // }
 
-  get hasFilter(): boolean {
-    return Object.keys(this.filterService.filter$.value).length > 0;
-  }
+  // get hasFilter(): boolean {
+  //   return Object.keys(this.filterService.filter$.value).length > 0;
+  // }
 
+  // not a number as this is BigInt
   get total(): string {
-    return this.tripService.total;
+    return this.tripService.total || '0';
   }
 
   paginationUpdate(pageEvent: PageEvent): void {
