@@ -65,7 +65,7 @@
     "adm-zip": "^0.4.16",
     "csv-stringify": "^5.3.3",
     "date-fns-tz": "^1.0.12",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.20",
     "uuid": "^3.3.3"
   }
 }
