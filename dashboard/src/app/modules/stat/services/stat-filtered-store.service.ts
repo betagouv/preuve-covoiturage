@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { cloneDeep } from 'lodash-es';
 
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
@@ -10,12 +10,19 @@ import { StatApiService } from '~/modules/stat/services/stat-api.service';
 import { GetListStore } from '~/core/services/store/getlist-store';
 import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
+import { debounceTime } from 'rxjs/operators';
+
+export enum ApiGraphTimeMode {
+  Month = 'month',
+  Day = 'day',
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class StatFilteredStoreService extends GetListStore<StatInterface> {
   private _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
+  protected _timeMode: BehaviorSubject<ApiGraphTimeMode>;
 
   constructor(statApi: StatApiService, private _statFormatService: StatFormatService) {
     super(statApi as JsonRpcGetList<StatInterface, StatInterface, any, TripSearchInterface>);
@@ -35,7 +42,6 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     }
 
     this._filterSubject.next(params);
-    super.loadList();
   }
 
   get stat(): FormatedStatInterface {
@@ -48,5 +54,27 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
 
   init(): void {
     this._formatedStat$.next(null);
+  }
+
+  // override filter behaviour un order to implemented DateMode input flow
+
+  protected _setupFilterSubject() {
+    let firstLoad = true;
+
+    this._timeMode = new BehaviorSubject<ApiGraphTimeMode>(ApiGraphTimeMode.Month);
+
+    merge([this._filterSubject, this._timeMode])
+      .pipe(debounceTime(100))
+      .subscribe((filt) => {
+        if (firstLoad || filt !== null) {
+          console.log(this, 'refresh from filter');
+          this.loadList();
+          firstLoad = !firstLoad || !!filt;
+        }
+      });
+  }
+
+  get finalFilterValue(): any {
+    return { ...this.filterSubject.value, group_by: this._timeMode.value };
   }
 }

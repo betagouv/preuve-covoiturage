@@ -76,16 +76,13 @@ export abstract class GetListStore<
     return this._pagination$;
   }
 
+  get finalFilterValue(): any {
+    return this.filterSubject.value;
+  }
+
   constructor(protected rpcGetList: JsonRpcGetListT) {
     this.rpcGetList = rpcGetList;
-    let firstLoad = true;
-
-    this._filterSubject.pipe(debounceTime(100)).subscribe((filt) => {
-      if (firstLoad || filt !== null) {
-        this.loadList();
-        firstLoad = !firstLoad || !!filt;
-      }
-    });
+    this._setupFilterSubject();
   }
 
   reset(): void {
@@ -109,7 +106,7 @@ export abstract class GetListStore<
       this.dismissGetListSubject.next();
       this._loadCount += 1;
       this.rpcGetList
-        .getList(this.filterSubject.value)
+        .getList(this.finalFilterValue)
         .pipe(
           takeUntil(this.dismissGetListSubject),
           finalize(() => {
@@ -128,5 +125,17 @@ export abstract class GetListStore<
   dismissAllRpcActions(): void {
     this.dismissGetListSubject.next();
     this.dismissGetSubject.next();
+  }
+
+  protected _setupFilterSubject() {
+    let firstLoad = true;
+
+    this._filterSubject.pipe(debounceTime(100)).subscribe((filt) => {
+      if (firstLoad || filt !== null) {
+        console.log(this, 'refresh from filter');
+        this.loadList();
+        firstLoad = !firstLoad || !!filt;
+      }
+    });
   }
 }
