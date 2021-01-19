@@ -1,14 +1,13 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { debounceTime, filter, takeUntil, tap, map } from 'rxjs/operators';
+
 import { FormControl, FormGroup } from '@angular/forms';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { debounceTime, filter, takeUntil, tap } from 'rxjs/operators';
 
+import { TerritoryLevelEnum } from 'shared/territory/common/interfaces/TerritoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
-
-// eslint-disable-next-line
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryLevelEnum } from '../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
 @Component({
   selector: 'app-territories-insee-autocomplete',
@@ -24,16 +23,17 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
 
   @ViewChild('territoryInseeInput') territoryInseeInput: ElementRef;
 
-  constructor(private territoryApi: TerritoryApiService) {
+  constructor(private territoryApiService: TerritoryApiService) {
     super();
   }
 
   ngOnInit(): void {
     this.territoryInseeInputCtrl.valueChanges
       .pipe(
-        debounceTime(500),
-        filter((literal) => !!literal),
-        tap((literal) => this.filterTerritoryInsees(literal)),
+        debounceTime(100),
+        map((literal) => literal.trim()),
+        filter((literal) => !!literal && literal.length > 1),
+        tap((literal) => this.filterTerritoryInsee(literal)),
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe();
@@ -58,11 +58,11 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
     this.searchedTerritoryInsees = [];
   }
 
-  private filterTerritoryInsees(literal = ''): void {
-    this.territoryApi
+  private filterTerritoryInsee(literal = ''): void {
+    this.territoryApiService
       .getList({
         skip: 0,
-        limit: 10,
+        limit: 100,
         search: literal,
         levels: [TerritoryLevelEnum.Town],
       })
