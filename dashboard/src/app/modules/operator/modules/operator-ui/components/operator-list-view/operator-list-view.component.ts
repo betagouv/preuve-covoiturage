@@ -20,7 +20,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
   public operatorsToShow: Operator[];
   public operatorsFiltered: Operator[];
 
-  PAGE_SIZE = 10;
+  PAGE_SIZE = 25;
 
   private _filterLiteral = new BehaviorSubject('');
 

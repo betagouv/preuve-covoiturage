@@ -1,26 +1,40 @@
 <div class="Users">
   <div class="Users-list" [hidden]="editUserFormVisible">
     <div class="Users-list-header">
-      <h2>
-        Utilisateurs registre autorisés
-      </h2>
+      <h2>Utilisateurs</h2>
       <mat-button-toggle-group [(ngModel)]="userGroup" name="userGroup" aria-label="Groupes d'utilisateurs">
         <mat-button-toggle *ngFor="let group of availableUserGroups" [value]="group">{{
           getFrenchGroup(group)
         }}</mat-button-toggle>
       </mat-button-toggle-group>
 
-      <form [formGroup]="searchFilters">
-        <mat-form-field appearance="outline">
-          <mat-label>Rechercher</mat-label>
-          <input matInput placeholder="Nom d'utilisateur, email" formControlName="query" />
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-      </form>
+      <!-- search bar -->
+      <div class="Users-list-actions">
+        <!-- add user -->
+        <button
+          mat-flat-button
+          *ngIf="!editUserFormVisible"
+          (click)="showEditForm()"
+          color="primary"
+          matTooltip="Ajouter un utilisateur"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+
+        <form [formGroup]="searchFilters" class="search">
+          <mat-form-field appearance="outline">
+            <mat-label>Rechercher</mat-label>
+            <input matInput placeholder="nom ou email" formControlName="query" autocomplete="off" />
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </form>
+      </div>
     </div>
+
     <div class="Users-list--loading" *ngIf="userStoreService.isLoading">
       <mat-spinner></mat-spinner>
     </div>
+
     <div class="Users-list-table">
       <app-users-list
         *ngIf="usersToShow"
@@ -36,20 +50,15 @@
       ></mat-paginator>
     </div>
   </div>
+
   <div
     class="Users-add"
     *ngIf="authenticationService.hasAnyPermission(['user.create', 'territory.users.add', 'operator.users.add'])"
   >
-    <button mat-flat-button class="large" *ngIf="!editUserFormVisible" (click)="showEditForm()" color="primary">
-      Ajouter un utilisateur
-    </button>
     <div [hidden]="!editUserFormVisible">
-      <h2 *ngIf="isCreatingUser">
-        Ajouter un utilisateur
-      </h2>
-
-      <h2 *ngIf="!isCreatingUser">
-        Modifier un utilisateur
+      <h2 class="Users-add-title">
+        {{ isCreatingUser ? 'Ajouter' : 'Modifier' }} un utilisateur
+        <button mat-button (click)="closeUserForm()">retour à la liste</button>
       </h2>
 
       <div class="Users-form">

@@ -60,7 +60,9 @@
     </div>
   </div>
 
-  <div>
+  <div class="actions">
+    <button type="button" (click)="onClose()" class="large" mat-button *ngIf="closable">Fermer</button>
+
     <button
       *ngIf="authService.hasAnyPermission(['operator.update']) && !isCreating"
       type="submit"
@@ -70,8 +72,9 @@
       [disabled]="!operatorForm.valid"
       color="primary"
     >
-      Mettre à jour les informations
+      Mettre à jour
     </button>
+
     <button
       *ngIf="isCreating"
       type="submit"
@@ -81,8 +84,7 @@
       [disabled]="!operatorForm.valid"
       color="primary"
     >
-      Créer l'opérateur
+      Créer
     </button>
-    <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">Fermer</button>
   </div>
 </form>

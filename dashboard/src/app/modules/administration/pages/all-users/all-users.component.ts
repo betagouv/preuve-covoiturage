@@ -29,7 +29,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   isCreatingUser = false;
   userGroup = UserGroupEnum.TERRITORY;
   availableUserGroups = USER_GROUPS;
-  PAGE_SIZE = 10;
+  PAGE_SIZE = 25;
   @ViewChild(CreateEditUserFormComponent) editForm: CreateEditUserFormComponent;
   @ViewChild(MatButtonToggleGroup) toggle: MatButtonToggleGroup;
   @ViewChild(MatPaginator) paginator: MatPaginator;

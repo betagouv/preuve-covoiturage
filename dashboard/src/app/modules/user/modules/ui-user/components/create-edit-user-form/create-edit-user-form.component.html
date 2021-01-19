@@ -57,8 +57,9 @@
   <!--  </mat-form-field>-->
 
   <div class="CreateEditUserForm-actions">
+    <button mat-button (click)="onCloseEditUser.emit()" type="button" color="secondary">Annuler</button>
+
     <button
-      *ngIf="isCreating"
       type="submit"
       mat-flat-button
       class="large"
@@ -67,28 +68,7 @@
       [disabled]="!createEditUserForm.valid"
       color="primary"
     >
-      Créer
-    </button>
-    <button
-      *ngIf="!isCreating"
-      type="submit"
-      mat-flat-button
-      class="large"
-      (click)="onUpdateUser()"
-      [appShowSpinner]="isCreatingUpdating"
-      [disabled]="!createEditUserForm.valid"
-      color="primary"
-    >
-      Mettre à jour
-    </button>
-    <button
-      (click)="onCloseEditUser.emit()"
-      class="CreateEditUserForm-close"
-      type="button"
-      mat-icon-button
-      color="secondary"
-    >
-      Annuler
+      {{ isCreating ? 'Créer' : 'Mettre à jour' }}
     </button>
   </div>
 </form>
