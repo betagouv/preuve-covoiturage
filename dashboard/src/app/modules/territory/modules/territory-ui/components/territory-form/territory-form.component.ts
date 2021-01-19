@@ -30,7 +30,7 @@ import { CompanyV2 } from '~/core/entities/shared/companyV2';
 export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
   public territoryForm: FormGroup;
 
-  @Input() showForm = false;
+  @Input() isFormVisible = false;
   @Input() closable = false;
   @Input() territory: Territory = null;
 
