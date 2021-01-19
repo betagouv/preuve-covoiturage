@@ -6,7 +6,7 @@
  */
 var { createMigration } = require('../helpers/createMigration');
 
-var { setup, up, down } = createMigration(['policy/20210105000000_update_policy_trip_view'], __dirname);
+var { setup, up, down } = createMigration(['trip/20210107000000-update_trip_view_financial_sum'], __dirname);
 
 exports.setup = setup;
 exports.up = up;
