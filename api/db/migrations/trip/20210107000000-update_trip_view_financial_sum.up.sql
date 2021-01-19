@@ -336,10 +336,13 @@ BEGIN
     RETURN NULL;
 END;
 $$ language plpgsql;
-        
+
+BEGIN;
+DROP TRIGGER IF EXISTS hydrate_trip_from_carpool ON carpool.carpools;
 CREATE TRIGGER hydrate_trip_from_carpool
     AFTER INSERT OR UPDATE ON carpool.carpools
     FOR EACH ROW EXECUTE PROCEDURE hydrate_trip_from_carpool();
+COMMIT;
 
 -- ADD TRIGGER WHEN INSERT/UPDATE ON policy.incentives
 CREATE OR REPLACE FUNCTION hydrate_trip_from_policy() RETURNS TRIGGER AS $$
@@ -455,6 +458,9 @@ BEGIN
 END;
 $$ language plpgsql;
 
+BEGIN;
+DROP TRIGGER IF EXISTS hydrate_trip_from_policy ON policy.incentives;
 CREATE TRIGGER hydrate_trip_from_policy
     AFTER INSERT OR UPDATE ON policy.incentives
     FOR EACH ROW EXECUTE PROCEDURE hydrate_trip_from_policy();
+COMMIT;
