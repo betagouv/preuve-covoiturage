@@ -5,26 +5,22 @@ form {
     display: flex;
     justify-content: space-around;
   }
-  mat-form-field {
-    &.name {
-      width: 558px;
-    }
-    &.acronym {
-      width: 260px;
-    }
+
+  .mat-form-field {
+    display: block;
   }
+
   .contacts {
     display: flex;
     flex-wrap: wrap;
-    //justify-content: space-evenly;
   }
-  button {
-    &:first-child {
-      width: 269px;
-      margin-right: 10px;
-    }
-    &:nth-child(2) {
-      width: 150px;
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .mat-button {
+      margin: 0 0.5em;
     }
   }
 

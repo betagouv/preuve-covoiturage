@@ -61,7 +61,7 @@
   </div>
 
   <div class="actions">
-    <button type="button" (click)="onClose()" class="large" mat-button *ngIf="closable">Fermer</button>
+    <button type="button" (click)="onClose()" class="large" mat-button *ngIf="closable">Annuler</button>
 
     <button
       *ngIf="authService.hasAnyPermission(['operator.update']) && !isCreating"
