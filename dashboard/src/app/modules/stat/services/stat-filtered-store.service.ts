@@ -52,6 +52,10 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     return this._formatedStat$;
   }
 
+  get timeModeSubject(): BehaviorSubject<ApiGraphTimeMode> {
+    return this._timeMode;
+  }
+
   init(): void {
     this._formatedStat$.next(null);
   }
@@ -63,9 +67,10 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
 
     this._timeMode = new BehaviorSubject<ApiGraphTimeMode>(ApiGraphTimeMode.Month);
 
-    merge([this._filterSubject, this._timeMode])
+    merge(this._filterSubject, this._timeMode)
       .pipe(debounceTime(100))
       .subscribe((filt) => {
+        console.log('> update stats');
         if (firstLoad || filt !== null) {
           console.log(this, 'refresh from filter');
           this.loadList();
