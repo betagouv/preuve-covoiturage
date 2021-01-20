@@ -1,60 +1,73 @@
 @import 'variables';
 
-.Header {
-  display: flex;
-  align-items: center;
-  padding: 10px 5%;
-  background: $background-white;
+.navbar {
+  display: block;
+  background: white;
 
-  &-logo {
-    & img {
-      height: 45px;
-      cursor: pointer;
+  .navbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    padding: 10px 0;
+    max-width: 1280px;
+
+    .navbar-logo {
+      margin: 0 10px;
+      img {
+        height: 45px;
+        cursor: pointer;
+      }
+    }
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+    .navbar-right {
+      display: flex;
+      align-items: center;
+
+      // icon buttons
+      .mat-button {
+        min-width: 0;
+        width: 55px;
+        height: 45px;
+        padding: 0;
+      }
     }
 
-    margin-right: 30px;
-  }
-
-  &-menu {
-    display: flex;
-
-    &-item {
-      cursor: pointer;
-      border-radius: 5px;
+    .navbar-menu-item {
       padding: 10px 15px;
-      transition: 0.3s all;
+      margin: 0 5px;
+      border-radius: 5px;
+      cursor: pointer;
 
       &:hover,
       &.active {
         background: $color-secondary;
         color: $white;
       }
+    }
 
-      &:not(:last-child) {
-        margin-right: 10px;
+    .navbar-user {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      margin-right: 10px;
+      border-right: 1px solid #b8b8b8;
+      .mat-icon {
+        // opacity: 0.8;
+        // transform: scale(0.8);
+        margin-right: 0.5em;
       }
-    }
-  }
-
-  &-user {
-    margin-left: auto;
-    &-button-text {
-      display: inline-block;
-      width: 150px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-    button {
-      height: 45px;
-      width: 240px;
-      mat-icon {
-        &:first-child {
-          margin-right: 10px;
-        }
-
-        &:last-child {
-          margin-left: 10px;
-        }
+      .navbar-user-name {
+        display: flex;
+        flex-direction: column;
+      }
+      .navbar-user-meta {
+        font-size: 80%;
+        font-style: italic;
+        opacity: 0.6;
       }
     }
   }

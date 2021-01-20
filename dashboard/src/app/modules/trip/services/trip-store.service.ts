@@ -22,10 +22,9 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
   }
 
   get loaded(): boolean {
-    return !!this.entitiesSubject.value;
+    return this.isLoaded;
   }
 
-  // total
   get total$(): Observable<string> {
     return this._total$;
   }

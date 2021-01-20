@@ -9,8 +9,6 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
-// eslint-disable-next-line
-import { CreateEditUserFormComponent } from '~/modules/user/modules/ui-user/components/create-edit-user-form/create-edit-user-form.component';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
 
@@ -29,8 +27,8 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   isCreatingUser = false;
   userGroup = UserGroupEnum.TERRITORY;
   availableUserGroups = USER_GROUPS;
-  PAGE_SIZE = 10;
-  @ViewChild(CreateEditUserFormComponent) editForm: CreateEditUserFormComponent;
+  PAGE_SIZE = 25;
+
   @ViewChild(MatButtonToggleGroup) toggle: MatButtonToggleGroup;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 

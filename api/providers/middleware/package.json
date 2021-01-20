@@ -14,8 +14,8 @@
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
-    "@ilos/core": "~0",
     "@ilos/common": "~0",
+    "@ilos/core": "~0",
     "lodash": "^4.17.20"
   },
   "ava": {

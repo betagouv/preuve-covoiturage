@@ -180,8 +180,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public onClose(): void {
     this.territoryChildren.setRelations([]);
-    this.territoryForm.get('company').reset();
-    this.territoryForm.get('address').reset();
+    // this.territoryForm.get('company').reset();
+    // this.territoryForm.get('address').reset();
+    this.territoryForm.reset();
     this.close.emit();
   }
 
@@ -392,7 +393,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   private setTerritoryFormValue(territory: Territory): void {
     // base values for form
-    this.activable = !!this.territory.activable;
+    this.activable = this.territory && this.territory.activable;
     this.editedId = territory ? territory._id : null;
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);

@@ -9,7 +9,6 @@ export class SentryErrorHandler extends ErrorHandler {
     super();
 
     const sentryDSN = config.get('sentryDSN');
-    console.log('sentryDSN', sentryDSN);
     if (sentryDSN) {
       this.trackError = true;
       init({ dsn: sentryDSN });

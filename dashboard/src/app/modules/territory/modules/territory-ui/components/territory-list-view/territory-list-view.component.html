@@ -1,7 +1,21 @@
 <div class="Territories-list" [hidden]="isFormVisible">
   <div class="Territories-header">
     <h2>Territoires</h2>
-    <app-territory-filter (filterLiteralChange)="pipeFilter($event)"></app-territory-filter>
+    <div class="Territories-list-actions">
+      <!-- add operator -->
+      <button
+        mat-flat-button
+        *ngIf="!isFormVisible"
+        (click)="onClickCreate()"
+        color="primary"
+        matTooltip="Ajouter un territoire"
+        matTooltipPosition="left"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+
+      <app-territory-filter (filterLiteralChange)="pipeFilter($event)"></app-territory-filter>
+    </div>
   </div>
   <app-territory-list (edit)="onEdit($event)" [territories]="territoriesToShow"></app-territory-list>
   <mat-paginator
@@ -11,12 +25,10 @@
   ></mat-paginator>
 </div>
 <div class="Territories-edition">
-  <div id="territoryForm-anchor"></div>
-  <button mat-flat-button class="large" *ngIf="!isFormVisible" (click)="onClickCreate()" color="primary">
-    Ajouter un territoire
-  </button>
-
-  <h3 *ngIf="isFormVisible">Edition du territoire</h3>
+  <h2 *ngIf="isFormVisible">
+    Edition du territoire
+    <button mat-button (click)="onClose()">retour à la liste</button>
+  </h2>
   <app-territory-form
     [isFormVisible]="isFormVisible"
     [territory]="territoryToEdit"

@@ -19,6 +19,7 @@ import { TripListComponent } from './pages/trip-list/trip-list.component';
 import { TripImportComponent } from './pages/trip-import/trip-import.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { OperatorUiModule } from '../operator/modules/operator-ui/operator-ui.module';
+import { TripExportDialogComponent } from './pages/trip-export-dialog/trip-export-dialog.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { OperatorUiModule } from '../operator/modules/operator-ui/operator-ui.mo
     TripListComponent,
     TripImportComponent,
     TripExportComponent,
+    TripExportDialogComponent,
   ],
   imports: [
     TripRoutingModule,

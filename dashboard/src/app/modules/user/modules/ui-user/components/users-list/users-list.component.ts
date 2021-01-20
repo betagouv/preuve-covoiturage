@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
+
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
 import { User } from '~/core/entities/authentication/user';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -109,20 +110,12 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
 
   public getOperatorName(user: User): string {
     const foundOperator = this._commonDataService.operators.find((operator) => operator._id === user.operator_id);
-    if (!foundOperator) {
-      console.error('Operator not found !');
-      return '';
-    }
-    return foundOperator.name;
+    return foundOperator ? foundOperator.name : '';
   }
 
   public getTerritoryName(user: User): string {
     const foundTerritory = this._commonDataService.territories.find((territory) => territory._id === user.territory_id);
-    if (!foundTerritory) {
-      console.error('Territory not found !');
-      return '';
-    }
-    return foundTerritory.name;
+    return foundTerritory ? foundTerritory.name : '';
   }
 
   public onSendInvitation(user: User): void {
