@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { takeUntil, map } from 'rxjs/operators';
 
-import { DialogService } from '~/core/services/dialog.service';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
+
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TripStoreService } from '~/modules/trip/services/trip-store.service';
+import { ExportFilterUxInterface } from '~/core/interfaces/filter/exportFilterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { Observable } from 'rxjs';
-
+import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dialog.component';
 @Component({
   selector: 'app-trip-export',
   templateUrl: './trip-export.component.html',
@@ -32,9 +34,9 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   constructor(
     public tripService: TripStoreService,
     public auth: AuthenticationService,
-    private _toastr: ToastrService,
-    private _fb: FormBuilder,
-    private _dialog: DialogService,
+    private toastr: ToastrService,
+    private fb: FormBuilder,
+    private dialog: MatDialog,
   ) {
     super();
   }
@@ -50,32 +52,28 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   exportTrips(): void {
-    const filter = { ...this.exportFilterForm.getRawValue(), tz: Intl.DateTimeFormat().resolvedOptions().timeZone };
-    this._dialog
-      .confirm({
-        title: 'Export des trajets',
-        message:
-          `Confirmez-vous l'export du ${moment(filter.date.start).format('D MMMM YYYY')}` +
-          ` au ${moment(filter.date.end).format('D MMMM YYYY')} ?`,
-        confirmBtn: 'Confirmer',
-      })
+    const filter: ExportFilterUxInterface = {
+      ...this.exportFilterForm.getRawValue(),
+      tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+
+    this.dialog
+      .open(TripExportDialogComponent, { data: filter })
+      .afterClosed()
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
           this.isExporting = true;
           this.tripService.exportTrips(filter).subscribe(
             () => {
-              this._toastr.success(
-                'Vous allez recevoir un email avec un lien de téléchargement dans quelques minutes.',
-                'Export en cours',
-              );
+              this.toastr.success('Export en cours');
               setTimeout(() => {
                 this.isExporting = false;
               }, 5000);
             },
             (err) => {
               this.isExporting = false;
-              this._toastr.error(err.message);
+              this.toastr.error(err.message);
             },
           );
         }
@@ -85,8 +83,8 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   private initForm(): void {
     const start = moment().subtract(1, 'month').startOf('day').toDate();
     const end = moment().endOf('day').toDate();
-    this.exportFilterForm = this._fb.group({
-      date: this._fb.group({
+    this.exportFilterForm = this.fb.group({
+      date: this.fb.group({
         start: [start],
         end: [end],
       }),
