@@ -40,8 +40,9 @@ export abstract class GetListStore<
   protected _pagination$ = this.paginationSubject.asObservable();
   protected _entity$ = this.entitySubject.asObservable();
   protected _loadCount = 0;
+  protected _isLoaded = false;
   protected __debounceTimeId = 0;
-  // filter subject
+  // filter subjectentities
   protected _filterSubject = new BehaviorSubject<any>(null);
 
   get filterSubject(): BehaviorSubject<any> {
@@ -54,6 +55,10 @@ export abstract class GetListStore<
 
   get isLoading(): boolean {
     return this._loadCount > 0;
+  }
+
+  get isLoaded(): boolean {
+    return this._isLoaded;
   }
 
   get entity$(): Observable<EntityT> {
@@ -92,6 +97,8 @@ export abstract class GetListStore<
 
   loadList(debounce = 300): void {
     clearTimeout(this.__debounceTimeId);
+    this._isLoaded = false;
+
     if (debounce > 0) {
       this.__debounceTimeId = setTimeout(() => {
         this.loadList(0);
@@ -111,6 +118,7 @@ export abstract class GetListStore<
         )
         .subscribe((list) => {
           this.entitiesSubject.next(list.data);
+          this._isLoaded = true;
 
           this.paginationSubject.next(list.meta && list.meta.pagination ? list.meta.pagination : defaultPagination());
         });

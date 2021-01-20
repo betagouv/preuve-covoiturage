@@ -49,6 +49,6 @@
     "ajv": "^6.10.2",
     "google-libphonenumber": "^3.2.9",
     "ibantools": "^2.1.0",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.20"
   }
 }

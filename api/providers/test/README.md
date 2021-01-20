@@ -1,3 +1,7 @@
+---
+title: Tests
+---
+
 # Fixtures / demo
 
 ## Export the schemas and permissions after changes

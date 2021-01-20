@@ -1,3 +1,11 @@
+/**
+ * #### CancelJourneyAction
+ *
+ * - signature: `acquisition:cancel`
+ * - permissions: `['journey.create']`
+ *
+ * Cancel a stored journey from `carpool.carpools` table by setting the status to `canceled`.
+ */
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 
@@ -46,7 +54,7 @@ export class CancelJourneyAction extends AbstractAction {
       );
     } catch (e) {
       if (e instanceof NotFoundException) {
-        throw new NotFoundException(`Journey ${params.journey_id} doest not exist`);
+        throw new NotFoundException(`Journey ${params.journey_id} does not exist`);
       }
       throw e;
     }

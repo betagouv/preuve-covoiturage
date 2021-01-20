@@ -15,6 +15,29 @@
   }
 }
 
+.exportFilter-dates {
+  display: flex;
+  flex-direction: column;
+  max-width: 550px;
+  .mat-form-field,
+  app-operators-autocomplete {
+    width: 100%;
+  }
+  .dates {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .mat-form-field {
+      width: 49%;
+      margin: 0;
+    }
+  }
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
 .notice {
   background-color: #dee8f5;
   padding: 1em 2em;

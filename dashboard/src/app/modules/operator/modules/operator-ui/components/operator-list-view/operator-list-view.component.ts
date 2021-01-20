@@ -20,7 +20,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
   public operatorsToShow: Operator[];
   public operatorsFiltered: Operator[];
 
-  PAGE_SIZE = 10;
+  PAGE_SIZE = 25;
 
   private _filterLiteral = new BehaviorSubject('');
 
@@ -40,6 +40,8 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
       tap((operators) => (this.operators = operators)),
     );
 
+    // clear and bind to entity
+    this.operatorStoreService.unselect();
     this.operatorStoreService.entity$.subscribe((entity) => {
       this.showForm = !!entity;
     });
@@ -81,7 +83,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   close(): void {
     this.loadOperators();
-    this.showForm = false;
+    this.operatorStoreService.unselect();
   }
 
   showCreationForm(): void {

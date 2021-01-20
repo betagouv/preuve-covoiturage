@@ -1,0 +1,35 @@
+name: Api doc deployment
+on:
+  push:
+    branches:
+      - doc
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+        with:
+          persist-credentials: false
+
+      - name: Install and Build 🔧
+        run: |
+          cd api-doc
+          yarn
+          yarn gen
+          yarn build
+
+      - name: Install SSH Client 🔑
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.FRONT_DEPLOY_KEY }}
+
+      - name: Deploy 🚀
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.FRONT_HOST }}
+          username: ${{ secrets.FRONT_USERNAME }}
+          key: ${{ secrets.FRONT_DEPLOY_KEY }}
+          source: api-doc/dist
+          target: www/api-doc
+          rm: true

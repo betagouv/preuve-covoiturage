@@ -76,6 +76,10 @@ export abstract class CrudStore<
     this.getById(id).subscribe();
   }
 
+  unselect(): void {
+    this.entitySubject.next(null);
+  }
+
   deleteSelected(): Observable<boolean> {
     if (this.entitySubject.value && this.entitySubject.value._id) {
       return this.deleteById(this.entitySubject.value._id);

@@ -8,7 +8,6 @@ declare const environment: { production: boolean; name: string; apiUrl: string; 
 })
 export class ConfigService {
   get<T = any>(prop: string, defaultVal?: T): T {
-    console.log('environment', environment);
     return environment && environment[prop] ? environment[prop] : env[prop] ? env[prop] : defaultVal;
   }
 }

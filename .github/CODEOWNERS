@@ -44,7 +44,7 @@
 /api/scalingo						      @jonathanfallon
 /scalingo.json						    @jonathanfallon
 
-/.circleci							      @jonathanfallon
+/.github							        @jonathanfallon
 
 /CHANGELOG.md						      @jonathanfallon
 /LICENSE							        @jonathanfallon

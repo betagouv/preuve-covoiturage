@@ -1,4 +1,4 @@
-<div [hidden]="!showForm">
+<div [hidden]="!isFormVisible">
   <form class="territoryForm" [formGroup]="territoryForm">
     <div *ngIf="fullFormMode">
       <h2>Informations générales</h2>
@@ -44,6 +44,7 @@
           >
         </mat-form-field>
       </div>
+
       <div *ngIf="relationDisplayMode === 'geo'">
         <h4>Contour geographique</h4>
 
@@ -73,6 +74,7 @@
 
       <mat-checkbox formControlName="activable">Partenaire</mat-checkbox>
       <mat-checkbox formControlName="active" [hidden]="!displayAOMActive">AOM</mat-checkbox>
+
       <div [hidden]="!activable">
         <h3>Structure</h3>
 
@@ -113,7 +115,9 @@
       </div>
     </div>
     <div>
-      <div>
+      <div class="actions">
+        <button type="button" class="large" (click)="onClose()" mat-button *ngIf="closable">Annuler</button>
+
         <button
           *ngIf="authService.hasAnyPermission(['territory.update'])"
           type="submit"
@@ -123,9 +127,8 @@
           [disabled]="!territoryForm.valid || (!hasTerritories && relationDisplayMode === 'parent')"
           color="primary"
         >
-          {{ !!editedId ? 'Mettre à jour les informations' : 'Créer' }}
+          {{ !!editedId ? 'Mettre à jour' : 'Créer' }}
         </button>
-        <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">Fermer</button>
       </div>
     </div>
   </form>

@@ -1,10 +1,11 @@
-<form [formGroup]="filterForm" [@collapse]="_showFilter ? 'open' : 'closed'">
+<form
+  class="filter-form"
+  (submit)="onSubmit()"
+  (document:keydown.control.enter)="onSubmit()"
+  [formGroup]="filterForm"
+  [class.visible]="showFilters"
+>
   <div class="filter-wrapper">
-    <div class="filter-wrapper-close">
-      <button mat-mini-fab color="primary" type="button" (click)="onCloseClick()">
-        <mat-icon>close_rounded</mat-icon>
-      </button>
-    </div>
     <div class="filter">
       <div class="filter-content">
         <div class="filter-content-column">
@@ -118,11 +119,17 @@
         </div>
       </div>
       <div class="filter-footer">
-        <button mat-flat-button type="button" color="primary" [disabled]="!filterForm.valid" (click)="filterClick()">
-          Appliquer les filtres
+        <button mat-button type="button" (click)="onReset()" matTooltip="Réinitialiser les filtres">
+          Réinitialiser
         </button>
-        <button mat-button class="filter-footer-reinitialize" type="button" (click)="reinitializeClick()">
-          Réinitialiser les filtres
+        <button
+          mat-flat-button
+          type="submit"
+          color="primary"
+          [disabled]="!filterForm.valid"
+          matTooltip="Appliquer les filtres [Ctrl + Entrée]"
+        >
+          Appliquer
         </button>
       </div>
     </div>
