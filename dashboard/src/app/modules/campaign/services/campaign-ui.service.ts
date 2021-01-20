@@ -317,8 +317,8 @@ export class CampaignUiService {
     let summaryText = `<p>Campagne d’incitation au covoiturage du <b>`;
 
     // DATE
-    summaryText += ` ${campaign.start.format('dddd DD MMMM YYYY')} au`;
-    summaryText += ` ${campaign.end.format('dddd DD MMMM YYYY')}</b>, limitée à`;
+    summaryText += campaign.start ? ` ${campaign.start.format('dddd DD MMMM YYYY')} au` : ' au';
+    summaryText += campaign.end ? ` ${campaign.end.format('dddd DD MMMM YYYY')}</b>, limitée à` : '';
 
     // WEEK DAYS
 
