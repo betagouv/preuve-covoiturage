@@ -45,11 +45,17 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
       if (!user) return;
       this.user = user;
 
+      /**
+       * Get the name of the territory or operator
+       * or tell the user she's an admin.
+       */
       let meta$ = null;
       if (this.user.territory_id) {
         meta$ = this.commonDataService.currentTerritory$;
       } else if (this.user.operator_id) {
         meta$ = this.commonDataService.currentOperator$;
+      } else {
+        this.userMeta = 'admin';
       }
 
       if (meta$) {
