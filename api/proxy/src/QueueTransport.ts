@@ -49,8 +49,6 @@ export class MyQueueTransport extends QueueTransport implements TransportInterfa
 
   async startServer() {
     const port = env('PORT', 8080);
-    this.server = this.app.listen(port, () =>
-      console.log(`Listening on port ${port}`),
-    );
+    this.server = this.app.listen(port, () => console.log(`Listening on port ${port}`));
   }
 }
