@@ -1,5 +1,6 @@
 import { get } from 'lodash';
 import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import { takeUntil } from 'rxjs/operators';
 
 import { Component, Inject, OnInit } from '@angular/core';
@@ -29,16 +30,21 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
     const p = {};
     const s = get(this.data, 'date.start');
     const e = get(this.data, 'date.end');
-    const o: number[] = get(this.data, 'operator_id', []);
+    const o: number[] = get(this.data, 'operators.list', []);
+    const c: number = get(this.data, 'operators.count', 0);
 
-    if (s) p['Début'] = format(s, 'd MMMM yyyy');
-    if (e) p['Fin'] = format(e, 'd MMMM yyyy');
-    if (o) {
+    if (s) p['Début'] = format(s, 'PPPP', { locale: fr });
+    if (e) p['Fin'] = format(e, 'PPPP', { locale: fr });
+    if (o.length === 0 || o.length === c) {
+      p['Opérateurs'] = 'tous';
+    } else if (o.length) {
       // convert operator_id to operator names
       p[`Opérateur${o.length === 1 ? '' : 's'}`] = this.operators
         .filter((op) => o.indexOf(op._id) > -1)
         .map((op) => op.name)
-        .join(', ');
+        .sort()
+        .join(', ')
+        .trim();
     }
 
     return p;
