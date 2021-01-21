@@ -1,4 +1,4 @@
-name: 'Dashboard - Build'
+name: Kube frontend
 
 on:
   push:
