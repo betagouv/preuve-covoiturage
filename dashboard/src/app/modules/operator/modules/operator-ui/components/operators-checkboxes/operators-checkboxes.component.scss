@@ -38,4 +38,16 @@
       overflow: hidden;
     }
   }
+
+  .app-operators-checkboxes {
+    .mat-hint {
+      display: block;
+      margin-bottom: 2em;
+      margin-left: 0em;
+      font-weight: normal;
+      font-style: italic;
+      font-size: 0.8em;
+      text-align: right;
+    }
+  }
 }

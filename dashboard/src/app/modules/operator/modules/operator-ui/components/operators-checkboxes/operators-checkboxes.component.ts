@@ -1,5 +1,5 @@
-import { Subject } from 'rxjs';
-import { takeUntil, filter, debounceTime } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { takeUntil, filter, debounceTime, switchMap, map } from 'rxjs/operators';
 
 import { Component, forwardRef, OnInit } from '@angular/core';
 import {
@@ -13,6 +13,7 @@ import {
 
 import { CommonDataService } from '~/core/services/common-data.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 type OperatorId = number;
@@ -53,7 +54,8 @@ export class OperatorsCheckboxesComponent extends DestroyObservable implements O
 
   constructor(
     private formBuilder: FormBuilder,
-    private user: AuthenticationService,
+    private authService: AuthenticationService,
+    private territoryApiService: TerritoryApiService,
     private commonDataService: CommonDataService,
   ) {
     super();
@@ -81,15 +83,35 @@ export class OperatorsCheckboxesComponent extends DestroyObservable implements O
       });
     });
 
-    // load operators
+    /**
+     * - Load the current territory_id (null if reg or operator) and fetch its allowed operators list.
+     * - Load whole ops list and filter with list of allowed ops
+     * - keep { _id, name } for display purpose
+     */
     this.loading = true;
-    this.commonDataService.operators$
+    this.authService.user$
       .pipe(
         takeUntil(this.destroy$),
-        filter((list) => list && list.length > 0),
+        switchMap((user) => {
+          return user && user.territory_id
+            ? this.territoryApiService.getOperatorVisibility(user.territory_id)
+            : of(null);
+        }),
+        switchMap((allowedOperators) =>
+          this.commonDataService.operators$.pipe(
+            takeUntil(this.destroy$),
+            filter((list) => list && list.length > 0),
+            map((list) =>
+              (allowedOperators
+                ? list.filter((item) => allowedOperators.indexOf(item._id) > -1)
+                : list
+              ).map(({ _id, name }) => ({ _id, name })),
+            ),
+          ),
+        ),
       )
       .subscribe((operators) => {
-        this.operators = operators.map(({ _id, name }) => ({ _id, name }));
+        this.operators = operators;
         this.operators.forEach(() => this.checkboxes.push(new FormControl(false)));
         this.form.get('operator_count').setValue(this.operators.length);
         this.loading = false;
