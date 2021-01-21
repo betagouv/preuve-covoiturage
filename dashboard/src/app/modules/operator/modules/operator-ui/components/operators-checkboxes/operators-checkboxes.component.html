@@ -1,0 +1,19 @@
+<div *ngIf="loading" class="loading-message">
+  <mat-spinner [diameter]="25"></mat-spinner>
+  <em>Chargement de la liste des opérateurs...</em>
+</div>
+
+<div class="actions" *ngIf="operators.length">
+  <span class="link" (click)="setAll(true)">Tout cocher</span> /
+  <span class="link" (click)="setAll(false)">Tout décocher</span>
+</div>
+
+<form [formGroup]="form">
+  <ul *ngIf="operators.length" class="mat-checkbox-list--vertical">
+    <li formArrayName="boxes" *ngFor="let item of checkboxes.controls; let i = index" class="mat-checkbox-list-item">
+      <mat-checkbox [formControlName]="i">
+        {{ operators[i].name }}
+      </mat-checkbox>
+    </li>
+  </ul>
+</form>

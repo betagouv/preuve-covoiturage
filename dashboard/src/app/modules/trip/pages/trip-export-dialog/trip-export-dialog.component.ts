@@ -30,11 +30,14 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
     const p = {};
     const s = get(this.data, 'date.start');
     const e = get(this.data, 'date.end');
-    const o: number[] = get(this.data, 'operator_id', []);
+    const o: number[] = get(this.data, 'operators.list', []);
+    const c: number = get(this.data, 'operators.count', 0);
 
     if (s) p['Début'] = format(s, 'PPPP', { locale: fr });
     if (e) p['Fin'] = format(e, 'PPPP', { locale: fr });
-    if (o) {
+    if (o.length === 0 || o.length === c) {
+      p['Opérateurs'] = 'tous';
+    } else if (o.length) {
       // convert operator_id to operator names
       p[`Opérateur${o.length === 1 ? '' : 's'}`] = this.operators
         .filter((op) => o.indexOf(op._id) > -1)

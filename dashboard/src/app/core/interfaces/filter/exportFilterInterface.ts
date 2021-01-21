@@ -16,6 +16,12 @@ export interface ExportFilterUxInterface {
     start: Moment;
     end: Moment;
   };
-  territory_id?: number[];
-  operator_id?: number[];
+  operators: {
+    list: number[];
+    count: number;
+  };
+  territories: {
+    list: number[];
+    count: number;
+  };
 }
