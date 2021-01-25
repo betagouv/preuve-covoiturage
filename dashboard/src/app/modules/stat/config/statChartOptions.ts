@@ -6,7 +6,7 @@ export const commonOptions: ChartOptions = {
   scales: {
     xAxes: [
       {
-        type: 'time',
+        // type: 'time',
         stacked: true,
         gridLines: {
           display: false,

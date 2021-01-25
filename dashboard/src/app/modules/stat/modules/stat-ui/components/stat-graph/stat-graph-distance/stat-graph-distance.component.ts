@@ -1,4 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { StatInterface } from '~/core/interfaces/stat/StatInterface';
+import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
 import { commonOptions, monthOptionsTime, dayOptionsTime } from '../../../../../config/statChartOptions';
 
 import { GraphTimeMode, GraphTimeModeLabel } from '../../../GraphTimeMode';
@@ -88,12 +91,15 @@ const graphOptions = {
   styleUrls: ['./stat-graph-distance.component.scss'],
 })
 export class StatGraphDistanceComponent extends StatGraphBase {
+  format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
+    throw new Error('Method not implemented.');
+  }
   // @Input() displayNav = true;
   @Input() data: any = null;
 
   graphOptions = graphOptions;
 
-  graphTitle(): string {
-    return `Distance parcouru ${GraphTimeModeLabel[this.timeMode]}`;
+  get graphTitle(): string {
+    return `Distance parcourue ${GraphTimeModeLabel[this.timeMode]}`;
   }
 }

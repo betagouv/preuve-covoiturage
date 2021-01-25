@@ -13,7 +13,6 @@
   *ngIf="graphToBeDisplayed === 'trips'"
   [hidden]="!graphVisible"
   [displayNav]="!lightMode"
-  [data]="data.trips"
   (titleUpdate)="setTitle($event)"
 >
 </app-stat-graph-trip>

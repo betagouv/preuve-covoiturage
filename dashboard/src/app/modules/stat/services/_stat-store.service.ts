@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { GetListStore } from '~/core/services/store/getlist-store';
@@ -15,7 +15,7 @@ import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
   providedIn: 'root',
 })
 export class StatStoreService extends GetListStore<StatInterface> {
-  private _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
+  private _formatedStat$ = new BehaviorSubject<FormatedStatsInterface>(null);
 
   constructor(
     protected statApi: StatApiService,
@@ -33,11 +33,11 @@ export class StatStoreService extends GetListStore<StatInterface> {
     this._filterSubject.next(params);
   }
 
-  get stat(): FormatedStatInterface {
+  get stat(): FormatedStatsInterface {
     return this._formatedStat$.value;
   }
 
-  get stat$(): Observable<FormatedStatInterface> {
+  get stat$(): Observable<FormatedStatsInterface> {
     return this._formatedStat$;
   }
 

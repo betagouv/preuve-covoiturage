@@ -4,24 +4,44 @@ import { get } from 'lodash-es';
 import * as moment from 'moment';
 
 import { CalculatedStat } from '~/core/entities/stat/calculatedStat';
-import { Axes, FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { Axes, FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 
 import { co2Factor, petrolFactor } from '../config/stat';
+
+const monthsLabel = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jui', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// format yyyy-mm formated string to month label
+export function formatMonthLabel(monthDate) {
+  const monthDateSpl = monthDate.split('-');
+  return `${monthsLabel[parseInt(monthDateSpl[1]) - 1]} ${monthDateSpl[0]}`;
+}
+
+// format iso string date to graph label
+export function formatDayLabel(dayDate) {
+  const date = new Date(dayDate);
+  return `${date.getDate()} ${monthsLabel[date.getMonth()]}`;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class StatFormatService {
-  formatData(data: StatInterface[]): FormatedStatInterface {
-    const calculatedStats = this.calculateStats(data);
-    const formatedStats = this.formatUxStats(calculatedStats);
-    return formatedStats;
+  formatData(data: StatInterface[]): FormatedStatsInterface {
+    if (data && data.length) {
+      const calculatedStats = this.calculateStats(data);
+      const formatedStats = this.formatUxStats(calculatedStats);
+      // console.log('data', data);
+      // console.log('calculatedStats', calculatedStats);
+      // console.log('formatedStats', formatedStats);
+      return formatedStats;
+    } else return null;
   }
 
   private calculateStats(result: StatInterface[]): CalculatedStat {
     const fillDays = (acc, target, date, data = {}): void => {
       Object.keys(data).forEach((key) => {
+        console.log(key, data[key]);
         acc[target][key] += data[key];
       });
       acc[target].days.push({
@@ -125,7 +145,7 @@ export class StatFormatService {
     };
   }
 
-  private formatUxStats(d: CalculatedStat): FormatedStatInterface {
+  private formatUxStats(d: CalculatedStat): FormatedStatsInterface {
     const formatedStat = {
       total: {
         trips: get(d, 'trips.total', 0),
@@ -307,7 +327,7 @@ export class StatFormatService {
             .map((val) => val.total.toFixed(2)),
         }),
       },
-    } as FormatedStatInterface;
+    } as FormatedStatsInterface;
 
     return formatedStat;
   }

@@ -177,7 +177,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         ${
           params.group_by === 'day'
             ? 'journey_start_datetime::date as day'
-            : `date_part('month', journey_start_datetime) as month`
+            : `TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm') as month`
         },
         sum(passenger_seats)::int as trip,
         sum(journey_distance/1000*passenger_seats)::int as distance,
@@ -196,9 +196,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       ${
         params.group_by === 'day'
           ? 'GROUP BY day ORDER BY day ASC'
-          : `GROUP BY date_part('month', journey_start_datetime)`
+          : `GROUP BY TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm')`
       }
     `;
+
+    console.log(values, text);
 
     const result = await this.connection.getClient().query({
       values,

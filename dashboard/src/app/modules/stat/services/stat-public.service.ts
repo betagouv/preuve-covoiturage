@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 
-import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatFormatService } from '~/modules/stat/services/stat-format.service';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 
@@ -12,7 +12,7 @@ import { StatInterface } from '~/core/interfaces/stat/StatInterface';
   providedIn: 'root',
 })
 export class StatPublicService {
-  private _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
+  private _formatedStat$ = new BehaviorSubject<FormatedStatsInterface>(null);
   private _loaded$ = new BehaviorSubject<boolean>(false);
   private _loading$ = new BehaviorSubject<boolean>(false);
 
@@ -39,11 +39,11 @@ export class StatPublicService {
     return this._loaded$.value;
   }
 
-  get stat(): FormatedStatInterface {
+  get stat(): FormatedStatsInterface {
     return this._formatedStat$.value;
   }
 
-  get stat$(): Observable<FormatedStatInterface> {
+  get stat$(): Observable<FormatedStatsInterface> {
     return this._formatedStat$;
   }
 }

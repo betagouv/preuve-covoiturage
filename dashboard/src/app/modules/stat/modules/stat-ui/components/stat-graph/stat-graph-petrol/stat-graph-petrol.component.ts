@@ -1,4 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { StatInterface } from '~/core/interfaces/stat/StatInterface';
+import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
 import { commonOptions, monthOptionsTime, dayOptionsTime } from '../../../../../config/statChartOptions';
 
 import { GraphTimeMode, GraphTimeModeLabel } from '../../../GraphTimeMode';
@@ -62,14 +65,31 @@ const graphOptions = {
   templateUrl: './stat-graph-petrol.component.html',
   styleUrls: ['./stat-graph-petrol.component.scss'],
 })
-export class StatGraphPetrolComponent extends StatGraphBase {
+export class StatGraphPetrolComponent extends StatGraphBase implements OnChanges {
   // @Input() displayNav = true;
   @Input() data: any = null;
 
   graphOptions = graphOptions;
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Cumulative, GraphTimeMode.Month];
 
-  graphTitle(): string {
+  get graphTitle(): string {
     return `Essence économisée ${GraphTimeModeLabel[this.timeMode]}`;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('>> ngOnChanges');
+    if (changes.data) {
+      console.log('data change ', changes.data);
+    }
+  }
+
+  ngOnInit() {
+    console.log('> init petrol graph');
+    console.log('data', this.data);
+  }
+
+  format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
+    // TODO: implement
+    return data as any;
   }
 }
