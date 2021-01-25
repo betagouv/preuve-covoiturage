@@ -92,19 +92,20 @@ export abstract class GetListStore<
     this.entitySubject.next(null);
   }
 
-  loadList(debounce = 300): void {
+  loadList(debounce = 300, updateLoadcount = true): void {
+    if (updateLoadcount && this.__debounceTimeId > 0) this._loadCount++;
+
     clearTimeout(this.__debounceTimeId);
     this._isLoaded = false;
 
     if (debounce > 0) {
       this.__debounceTimeId = setTimeout(() => {
-        this.loadList(0);
+        this.loadList(0, false);
       }, debounce) as any;
     } else {
       if (!this.dismissGetSubject) return;
       this.dismissGetSubject.next();
       this.dismissGetListSubject.next();
-      this._loadCount += 1;
       this.rpcGetList
         .getList(this.finalFilterValue)
         .pipe(

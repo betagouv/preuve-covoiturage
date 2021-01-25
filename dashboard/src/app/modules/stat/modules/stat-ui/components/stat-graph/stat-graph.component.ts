@@ -12,6 +12,15 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FilterService } from '~/modules/filter/services/filter.service';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
 
+export const secondaryColor = '#65C8CF';
+export const primaryColor = '#007AD9';
+
+export const defaultChartColors = {
+  backgroundColor: secondaryColor,
+  hoverBackgroundColor: secondaryColor,
+  borderColor: secondaryColor,
+};
+
 @Component({
   selector: 'app-stat-graph',
   templateUrl: './stat-graph.component.html',

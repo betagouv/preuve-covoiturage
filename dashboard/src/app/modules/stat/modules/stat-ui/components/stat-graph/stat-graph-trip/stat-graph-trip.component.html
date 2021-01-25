@@ -18,27 +18,8 @@
     <app-stat-graph-timemode-nav *ngIf="displayNav" [nav]="timeMode" (navChange)="navChange($event)">
     </app-stat-graph-timemode-nav>
   </div>
-  <div class="chart-container" [ngSwitch]="timeMode" *ngIf="data">
-    <ngx-chartjs
-      [data]="data.daily"
-      *ngSwitchCase="'day'"
-      type="bar"
-      [height]="70"
-      [options]="graphOptions.day"
-    ></ngx-chartjs>
-    <ngx-chartjs
-      [data]="data.monthly"
-      *ngSwitchCase="'month'"
-      type="bar"
-      [height]="70"
-      [options]="graphOptions.month"
-    ></ngx-chartjs>
-    <ngx-chartjs
-      [data]="data.cumulated"
-      *ngSwitchCase="'cumulative'"
-      type="line"
-      [height]="70"
-      [options]="graphOptions.cumulative"
-    ></ngx-chartjs>
+
+  <div class="chart-container" *ngIf="!statStore.isLoading && (data$ | async)">
+    <ngx-chartjs [data]="data$ | async" [type]="graphType" [options]="graphOption" [height]="70"></ngx-chartjs>
   </div>
 </div>

@@ -14,11 +14,14 @@ import { StatOperatorViewComponent } from './components/stat-operator-view/stat-
 // eslint-disable-next-line
 import { StatChartContainerComponent } from './components/stat-graph/stat-chart-container/stat-chart-container.component';
 import { StatGraphDistanceComponent } from './components/stat-graph/stat-graph-distance/stat-graph-distance.component';
+// eslint-disable-next-line
 import { StatGraphTimeModeNavComponent } from './components/stat-graph/stat-graph-timemode-nav/stat-graph-timemode-nav.component';
 import { StatGraphTripComponent } from './components/stat-graph/stat-graph-trip/stat-graph-trip.component';
+// eslint-disable-next-line
 import { StatGraphCarpoolersComponent } from './components/stat-graph/stat-graph-carpoolers/stat-graph-carpoolers.component';
 import { StatGraphPetrolComponent } from './components/stat-graph/stat-graph-petrol/stat-graph-petrol.component';
 import { StatGraphCarbonComponent } from './components/stat-graph/stat-graph-carbon/stat-graph-carbon.component';
+// eslint-disable-next-line
 import { StatGraphCarpoolerVehiculeComponent } from './components/stat-graph/stat-graph-carpooler-vehicule/stat-graph-carpooler-vehicule.component';
 
 @NgModule({

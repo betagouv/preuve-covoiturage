@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { cloneDeep } from 'lodash-es';
 
-import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { StatFormatService } from '~/modules/stat/services/stat-format.service';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
@@ -10,18 +10,13 @@ import { StatApiService } from '~/modules/stat/services/stat-api.service';
 import { GetListStore } from '~/core/services/store/getlist-store';
 import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
-import { debounceTime } from 'rxjs/operators';
-
-export enum ApiGraphTimeMode {
-  Month = 'month',
-  Day = 'day',
-}
+import { ApiGraphTimeMode } from './ApiGraphTimeMode';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StatFilteredStoreService extends GetListStore<StatInterface> {
-  private _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
+  private _formatedStat$ = new BehaviorSubject<FormatedStatsInterface>(null);
   protected _timeMode: BehaviorSubject<ApiGraphTimeMode>;
 
   constructor(statApi: StatApiService, private _statFormatService: StatFormatService) {
@@ -44,11 +39,11 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     this._filterSubject.next(params);
   }
 
-  get stat(): FormatedStatInterface {
+  get stat(): FormatedStatsInterface {
     return this._formatedStat$.value;
   }
 
-  get stat$(): Observable<FormatedStatInterface> {
+  get stat$(): Observable<FormatedStatsInterface> {
     return this._formatedStat$;
   }
 
@@ -67,16 +62,12 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
 
     this._timeMode = new BehaviorSubject<ApiGraphTimeMode>(ApiGraphTimeMode.Month);
 
-    merge(this._filterSubject, this._timeMode)
-      .pipe(debounceTime(100))
-      .subscribe((filt) => {
-        console.log('> update stats');
-        if (firstLoad || filt !== null) {
-          console.log(this, 'refresh from filter');
-          this.loadList();
-          firstLoad = !firstLoad || !!filt;
-        }
-      });
+    merge(this._filterSubject, this._timeMode).subscribe((filt) => {
+      if (firstLoad || filt !== null) {
+        this.loadList();
+        firstLoad = !firstLoad || !!filt;
+      }
+    });
   }
 
   get finalFilterValue(): any {
