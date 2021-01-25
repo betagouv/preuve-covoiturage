@@ -19,3 +19,7 @@ export {
   IncentiveStateEnum,
   IncentiveStatusEnum,
 } from '../shared/policy/common/interfaces/IncentiveInterface';
+export {
+  TerritoryRepositoryProviderInterface,
+  TerritoryRepositoryProviderInterfaceResolver,
+} from './TerritoryRepositoryProviderInterface';
