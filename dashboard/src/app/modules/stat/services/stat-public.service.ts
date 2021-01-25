@@ -5,7 +5,6 @@ import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 
 import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { StatFormatService } from '~/modules/stat/services/stat-format.service';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 
 @Injectable({
@@ -16,14 +15,15 @@ export class StatPublicService {
   private _loaded$ = new BehaviorSubject<boolean>(false);
   private _loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private _http: HttpClient, private _statFormatService: StatFormatService) {}
+  constructor(private _http: HttpClient) {}
 
   public loadOne(): Observable<StatInterface[]> {
     this._loading$.next(true);
 
     return this._http.get('stats').pipe(
       tap((data: StatInterface[]) => {
-        const formatedStat = this._statFormatService.formatData(data);
+        // const formatedStat = this._statFormatService.formatData(data);
+        const formatedStat = null;
         this._formatedStat$.next(formatedStat);
         this._loaded$.next(true);
         this._loading$.next(false);

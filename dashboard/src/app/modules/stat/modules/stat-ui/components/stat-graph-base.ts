@@ -4,7 +4,7 @@ import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
 import { GraphTimeMode } from '../GraphTimeMode';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, takeUntil, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
@@ -20,6 +20,7 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
   @Output() titleUpdate = new EventEmitter<string>();
 
   timeMode = GraphTimeMode.Month;
+  protected _nextTimeMode = GraphTimeMode.Month;
 
   protected dataSubject = new BehaviorSubject<FormatedStatInterface>(null);
 
@@ -36,6 +37,7 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
     if (this.dataSubject !== null) this.dataSubject.next(null);
     this.statStore.entities$
       .pipe(
+        tap((data) => (this.timeMode = this._nextTimeMode)),
         map((data) => this.format(this.statStore.timeModeSubject.value, data)),
         takeUntil(this.destroy$),
       )
@@ -45,18 +47,15 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
   abstract format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface;
 
   navChange(timeMode: GraphTimeMode): void {
-    this.timeMode = timeMode;
+    this._nextTimeMode = timeMode;
 
     this.updateTimeMode();
   }
 
   protected updateTimeMode(): void {
-    // month use api group by month other mode use day grouped data
-    const apiGraphTimeMode = this.timeMode === GraphTimeMode.Month ? ApiGraphTimeMode.Month : ApiGraphTimeMode.Day;
+    const apiGraphTimeMode = this._nextTimeMode === GraphTimeMode.Month ? ApiGraphTimeMode.Month : ApiGraphTimeMode.Day;
 
-    //if (apiGraphTimeMode !== this.statStore.timeModeSubject.value) {
     this.statStore.timeModeSubject.next(apiGraphTimeMode);
-    //}
   }
 
   abstract get graphTitle(): string;
