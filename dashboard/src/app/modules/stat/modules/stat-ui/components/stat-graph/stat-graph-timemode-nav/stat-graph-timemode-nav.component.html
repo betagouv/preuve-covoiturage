@@ -1,7 +1,6 @@
+{{ navList }}
 <mat-button-toggle-group class="graph-time-nav" [(ngModel)]="nav" (ngModelChange)="change()">
   <mat-button-toggle *ngFor="let navElement of navList" [aria-label]="label(navElement)" [value]="navElement">
     {{ label(navElement) }}
   </mat-button-toggle>
-  <!-- <mat-button-toggle aria-label="par jour" value="daily"> Par jour </mat-button-toggle>
-  <mat-button-toggle aria-label="par mois" value="monthly"> Par mois </mat-button-toggle> -->
 </mat-button-toggle-group>

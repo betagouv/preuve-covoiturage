@@ -1,12 +1,20 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
+import { formatMonthLabel, formatDayLabel } from '~/modules/stat/services/stat-format.service';
 import { commonOptions, monthOptionsTime, dayOptionsTime } from '../../../../../config/statChartOptions';
 
 import { GraphTimeMode, GraphTimeModeLabel } from '../../../GraphTimeMode';
-import { StatGraphBase } from '../../stat-graph-base';
+import { secondaryColor, StatGraphBase } from '../../stat-graph-base';
 
+// define for each time mode the chart type
+const graphTypes = {
+  [GraphTimeMode.Day]: 'bar',
+  [GraphTimeMode.Month]: 'bar',
+};
+
+// define for each time mode graph chart display option
 const graphOptions = {
   [GraphTimeMode.Month]: {
     ...commonOptions,
@@ -67,13 +75,32 @@ const graphOptions = {
 })
 export class StatGraphCarpoolerVehiculeComponent extends StatGraphBase {
   format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
-    throw new Error('Method not implemented.');
-  }
-  // @Input() displayNav = true;
-  @Input() data: any = null;
+    const isMonth = apiDateMode === ApiGraphTimeMode.Month;
 
-  graphOptions = graphOptions;
+    return {
+      datasets: [
+        // Carpooler / car data set
+        {
+          backgroundColor: secondaryColor,
+          borderColor: secondaryColor,
+          data: data.map((entry) => entry.average_carpoolers_by_car),
+          hoverBackgroundColor: secondaryColor,
+        },
+      ],
+      graphTitle: this.graphTitle,
+      labels: data.map((entry) => (isMonth ? formatMonthLabel(entry.month) : formatDayLabel(entry.day))),
+    } as any;
+  }
+
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Day, GraphTimeMode.Month];
+
+  get graphOption() {
+    return graphOptions[this.timeMode];
+  }
+
+  get graphType() {
+    return graphTypes[this.timeMode];
+  }
 
   get graphTitle(): string {
     return `Personnes ${GraphTimeModeLabel[this.timeMode]}`;

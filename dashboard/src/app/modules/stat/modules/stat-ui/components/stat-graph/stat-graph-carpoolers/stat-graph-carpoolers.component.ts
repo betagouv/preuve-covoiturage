@@ -1,12 +1,21 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
+import { formatMonthLabel, formatDayLabel } from '~/modules/stat/services/stat-format.service';
 import { commonOptions, monthOptionsTime, dayOptionsTime } from '../../../../../config/statChartOptions';
 
 import { GraphTimeMode, GraphTimeModeLabel } from '../../../GraphTimeMode';
-import { StatGraphBase } from '../../stat-graph-base';
+import { secondaryColor, StatGraphBase } from '../../stat-graph-base';
 
+// define for each time mode the chart type
+const graphTypes = {
+  [GraphTimeMode.Day]: 'bar',
+  [GraphTimeMode.Month]: 'bar',
+  [GraphTimeMode.Cumulative]: 'line',
+};
+
+// define for each time mode graph chart display option
 const graphOptions = {
   [GraphTimeMode.Month]: {
     ...commonOptions,
@@ -66,11 +75,36 @@ const graphOptions = {
   styleUrls: ['./stat-graph-carpoolers.component.scss'],
 })
 export class StatGraphCarpoolersComponent extends StatGraphBase {
-  format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
-    throw new Error('Method not implemented.');
+  get graphOption() {
+    return graphOptions[this.timeMode];
   }
-  // @Input() displayNav = true;
-  @Input() data: any = null;
+
+  get graphType() {
+    return graphTypes[this.timeMode];
+  }
+
+  format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
+    const isMonth = apiDateMode === ApiGraphTimeMode.Month;
+    const isCumulative = this.timeMode === GraphTimeMode.Cumulative;
+
+    let cumTrip = 0; // temp var for cumulative subsidized
+
+    return {
+      datasets: [
+        // Trip data set
+        {
+          backgroundColor: secondaryColor,
+          borderColor: secondaryColor,
+          data: isCumulative
+            ? data.map((entry) => (cumTrip += entry.carpoolers))
+            : data.map((entry) => entry.carpoolers),
+          hoverBackgroundColor: secondaryColor,
+        },
+      ],
+      graphTitle: this.graphTitle,
+      labels: data.map((entry) => (isMonth ? formatMonthLabel(entry.month) : formatDayLabel(entry.day))),
+    } as any;
+  }
 
   graphOptions = graphOptions;
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Cumulative, GraphTimeMode.Month];

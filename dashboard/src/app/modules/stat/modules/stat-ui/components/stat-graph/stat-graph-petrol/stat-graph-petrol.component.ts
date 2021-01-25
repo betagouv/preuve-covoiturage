@@ -1,11 +1,22 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
+import { petrolFactor } from '~/modules/stat/config/stat';
 import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
+import { formatMonthLabel, formatDayLabel } from '~/modules/stat/services/stat-format.service';
 import { commonOptions, monthOptionsTime, dayOptionsTime } from '../../../../../config/statChartOptions';
 
 import { GraphTimeMode, GraphTimeModeLabel } from '../../../GraphTimeMode';
-import { StatGraphBase } from '../../stat-graph-base';
+import { secondaryColor, StatGraphBase } from '../../stat-graph-base';
+
+// define for each time mode the chart type
+const graphTypes = {
+  [GraphTimeMode.Day]: 'bar',
+  [GraphTimeMode.Month]: 'bar',
+  [GraphTimeMode.Cumulative]: 'line',
+};
+
+// define for each time mode graph chart display option
 
 const graphOptions = {
   [GraphTimeMode.Month]: {
@@ -65,9 +76,8 @@ const graphOptions = {
   templateUrl: './stat-graph-petrol.component.html',
   styleUrls: ['./stat-graph-petrol.component.scss'],
 })
-export class StatGraphPetrolComponent extends StatGraphBase implements OnChanges {
+export class StatGraphPetrolComponent extends StatGraphBase {
   // @Input() displayNav = true;
-  @Input() data: any = null;
 
   graphOptions = graphOptions;
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Cumulative, GraphTimeMode.Month];
@@ -76,20 +86,34 @@ export class StatGraphPetrolComponent extends StatGraphBase implements OnChanges
     return `Essence économisée ${GraphTimeModeLabel[this.timeMode]}`;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('>> ngOnChanges');
-    if (changes.data) {
-      console.log('data change ', changes.data);
-    }
+  get graphOption() {
+    return graphOptions[this.timeMode];
   }
 
-  ngOnInit() {
-    console.log('> init petrol graph');
-    console.log('data', this.data);
+  get graphType() {
+    return graphTypes[this.timeMode];
   }
 
   format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
-    // TODO: implement
-    return data as any;
+    const isMonth = apiDateMode === ApiGraphTimeMode.Month;
+    const isCumulative = this.timeMode === GraphTimeMode.Cumulative;
+
+    let cumTrip = 0; // temp var for cumulative subsidized
+
+    return {
+      datasets: [
+        // Trip data set
+        {
+          backgroundColor: secondaryColor,
+          borderColor: secondaryColor,
+          data: isCumulative
+            ? data.map((entry) => (cumTrip += entry.distance * petrolFactor))
+            : data.map((entry) => entry.distance * petrolFactor),
+          hoverBackgroundColor: secondaryColor,
+        },
+      ],
+      graphTitle: this.graphTitle,
+      labels: data.map((entry) => (isMonth ? formatMonthLabel(entry.month) : formatDayLabel(entry.day))),
+    } as any;
   }
 }

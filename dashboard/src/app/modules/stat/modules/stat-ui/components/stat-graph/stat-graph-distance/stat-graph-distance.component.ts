@@ -1,11 +1,18 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
+import { formatMonthLabel, formatDayLabel } from '~/modules/stat/services/stat-format.service';
 import { commonOptions, monthOptionsTime, dayOptionsTime } from '../../../../../config/statChartOptions';
 
 import { GraphTimeMode, GraphTimeModeLabel } from '../../../GraphTimeMode';
-import { StatGraphBase } from '../../stat-graph-base';
+import { secondaryColor, StatGraphBase } from '../../stat-graph-base';
+
+const graphTypes = {
+  [GraphTimeMode.Day]: 'bar',
+  [GraphTimeMode.Month]: 'bar',
+  [GraphTimeMode.Cumulative]: 'line',
+};
 
 const graphOptions = {
   [GraphTimeMode.Day]: {
@@ -92,10 +99,35 @@ const graphOptions = {
 })
 export class StatGraphDistanceComponent extends StatGraphBase {
   format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
-    throw new Error('Method not implemented.');
+    const isMonth = apiDateMode === ApiGraphTimeMode.Month;
+    const isCumulative = this.timeMode === GraphTimeMode.Cumulative;
+
+    let cumulative = 0;
+
+    return {
+      datasets: [
+        // Distance data set
+        {
+          backgroundColor: secondaryColor,
+          borderColor: secondaryColor,
+          data: isCumulative
+            ? data.map((entry) => (cumulative += entry.distance))
+            : data.map((entry) => entry.distance),
+          hoverBackgroundColor: secondaryColor,
+        },
+      ],
+      graphTitle: this.graphTitle,
+      labels: data.map((entry) => (isMonth ? formatMonthLabel(entry.month) : formatDayLabel(entry.day))),
+    } as any;
   }
-  // @Input() displayNav = true;
-  @Input() data: any = null;
+
+  get graphOption() {
+    return graphOptions[this.timeMode];
+  }
+
+  get graphType() {
+    return graphTypes[this.timeMode];
+  }
 
   graphOptions = graphOptions;
 
