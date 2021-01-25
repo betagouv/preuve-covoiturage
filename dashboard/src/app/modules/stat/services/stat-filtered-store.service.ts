@@ -4,7 +4,6 @@ import { cloneDeep } from 'lodash-es';
 
 import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { StatFormatService } from '~/modules/stat/services/stat-format.service';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { StatApiService } from '~/modules/stat/services/stat-api.service';
 import { GetListStore } from '~/core/services/store/getlist-store';
@@ -19,11 +18,8 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
   private _formatedStat$ = new BehaviorSubject<FormatedStatsInterface>(null);
   protected _timeMode: BehaviorSubject<ApiGraphTimeMode>;
 
-  constructor(statApi: StatApiService, private _statFormatService: StatFormatService) {
+  constructor(statApi: StatApiService) {
     super(statApi as JsonRpcGetList<StatInterface, StatInterface, any, TripSearchInterface>);
-    this.entitiesSubject.subscribe((data) => {
-      this._formatedStat$.next(this._statFormatService.formatData(data));
-    });
   }
 
   public load(filter: FilterInterface | {} = {}): void {

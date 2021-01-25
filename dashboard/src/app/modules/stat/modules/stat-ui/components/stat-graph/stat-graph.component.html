@@ -1,46 +1,28 @@
 <h3 class="graphTitle" *ngIf="!lightMode">{{ graphTitle }}</h3>
 
-<app-stat-graph-distance
-  *ngIf="graphToBeDisplayed === 'distance'"
-  [hidden]="!graphVisible"
-  [displayNav]="!lightMode"
-  (titleUpdate)="setTitle($event)"
->
+<app-stat-graph-distance *ngIf="graphName === 'distance'" [displayNav]="!lightMode" (titleUpdate)="setTitle($event)">
 </app-stat-graph-distance>
 
-<app-stat-graph-trip
-  *ngIf="graphToBeDisplayed === 'trips'"
-  [hidden]="!graphVisible"
-  [displayNav]="!lightMode"
-  (titleUpdate)="setTitle($event)"
->
+<app-stat-graph-trip *ngIf="graphName === 'trips'" [displayNav]="!lightMode" (titleUpdate)="setTitle($event)">
 </app-stat-graph-trip>
 
 <app-stat-graph-carpoolers
-  *ngIf="graphToBeDisplayed === 'carpoolers'"
-  [hidden]="!graphVisible"
+  *ngIf="graphName === 'carpoolers'"
   [displayNav]="!lightMode"
   (titleUpdate)="setTitle($event)"
 >
 </app-stat-graph-carpoolers>
 
-<app-stat-graph-petrol
-  *ngIf="graphToBeDisplayed === 'petrol'"
-  [hidden]="!graphVisible"
-  [displayNav]="!lightMode"
-  (titleUpdate)="setTitle($event)"
->
+<app-stat-graph-petrol *ngIf="graphName === 'petrol'" [displayNav]="!lightMode" (titleUpdate)="setTitle($event)">
 </app-stat-graph-petrol>
 
 <!--CO2-->
 
-<app-stat-graph-carbon *ngIf="graphToBeDisplayed === 'co2'" [hidden]="!graphVisible" [displayNav]="!lightMode">
-</app-stat-graph-carbon>
+<app-stat-graph-carbon *ngIf="graphName === 'co2'" [displayNav]="!lightMode"> </app-stat-graph-carbon>
 
 <!--Carpoolers per vehicule-->
 <app-stat-graph-carpooler-vehicule
-  *ngIf="graphToBeDisplayed === 'carpoolersPerVehicule'"
-  [hidden]="!graphVisible"
+  *ngIf="graphName === 'carpoolersPerVehicule'"
   [displayNav]="!lightMode"
   (titleUpdate)="setTitle($event)"
 >

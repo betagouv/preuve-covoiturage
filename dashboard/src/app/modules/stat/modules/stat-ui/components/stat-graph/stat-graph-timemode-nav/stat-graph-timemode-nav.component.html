@@ -1,4 +1,3 @@
-{{ navList }}
 <mat-button-toggle-group class="graph-time-nav" [(ngModel)]="nav" (ngModelChange)="change()">
   <mat-button-toggle *ngFor="let navElement of navList" [aria-label]="label(navElement)" [value]="navElement">
     {{ label(navElement) }}

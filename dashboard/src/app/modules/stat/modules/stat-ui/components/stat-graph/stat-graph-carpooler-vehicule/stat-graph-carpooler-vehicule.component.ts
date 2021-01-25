@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
-import { formatMonthLabel, formatDayLabel } from '~/modules/stat/services/stat-format.service';
+import { formatDayLabel, formatMonthLabel } from '~/modules/stat/stat-format';
 import { commonOptions, monthOptionsTime, dayOptionsTime } from '../../../../../config/statChartOptions';
 
 import { GraphTimeMode, GraphTimeModeLabel } from '../../../GraphTimeMode';

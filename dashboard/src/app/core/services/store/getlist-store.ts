@@ -93,8 +93,6 @@ export abstract class GetListStore<
   }
 
   loadList(debounce = 300, updateLoadcount = true): void {
-    if (updateLoadcount && this.__debounceTimeId > 0) this._loadCount++;
-
     clearTimeout(this.__debounceTimeId);
     this._isLoaded = false;
 
@@ -106,6 +104,8 @@ export abstract class GetListStore<
       if (!this.dismissGetSubject) return;
       this.dismissGetSubject.next();
       this.dismissGetListSubject.next();
+      this._loadCount++;
+
       this.rpcGetList
         .getList(this.finalFilterValue)
         .pipe(
