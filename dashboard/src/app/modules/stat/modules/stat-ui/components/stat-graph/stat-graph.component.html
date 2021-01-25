@@ -4,7 +4,6 @@
   *ngIf="graphToBeDisplayed === 'distance'"
   [hidden]="!graphVisible"
   [displayNav]="!lightMode"
-  [data]="data.distance"
   (titleUpdate)="setTitle($event)"
 >
 </app-stat-graph-distance>
@@ -21,7 +20,6 @@
   *ngIf="graphToBeDisplayed === 'carpoolers'"
   [hidden]="!graphVisible"
   [displayNav]="!lightMode"
-  [data]="data.carpoolers"
   (titleUpdate)="setTitle($event)"
 >
 </app-stat-graph-carpoolers>
@@ -30,27 +28,20 @@
   *ngIf="graphToBeDisplayed === 'petrol'"
   [hidden]="!graphVisible"
   [displayNav]="!lightMode"
-  [data]="data.petrol"
   (titleUpdate)="setTitle($event)"
 >
 </app-stat-graph-petrol>
 
 <!--CO2-->
 
-<app-stat-graph-carbon
-  *ngIf="graphToBeDisplayed === 'co2'"
-  [hidden]="!graphVisible"
-  [displayNav]="!lightMode"
-  [data]="data.co2"
->
+<app-stat-graph-carbon *ngIf="graphToBeDisplayed === 'co2'" [hidden]="!graphVisible" [displayNav]="!lightMode">
 </app-stat-graph-carbon>
 
 <!--Carpoolers per vehicule-->
-<app-stat-graph-carbon
+<app-stat-graph-carpooler-vehicule
   *ngIf="graphToBeDisplayed === 'carpoolersPerVehicule'"
   [hidden]="!graphVisible"
   [displayNav]="!lightMode"
-  [data]="data.carpoolersPerVehicule"
   (titleUpdate)="setTitle($event)"
 >
-</app-stat-graph-carbon>
+</app-stat-graph-carpooler-vehicule>

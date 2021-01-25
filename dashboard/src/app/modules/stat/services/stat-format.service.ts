@@ -31,9 +31,6 @@ export class StatFormatService {
     if (data && data.length) {
       const calculatedStats = this.calculateStats(data);
       const formatedStats = this.formatUxStats(calculatedStats);
-      // console.log('data', data);
-      // console.log('calculatedStats', calculatedStats);
-      // console.log('formatedStats', formatedStats);
       return formatedStats;
     } else return null;
   }
@@ -41,7 +38,6 @@ export class StatFormatService {
   private calculateStats(result: StatInterface[]): CalculatedStat {
     const fillDays = (acc, target, date, data = {}): void => {
       Object.keys(data).forEach((key) => {
-        console.log(key, data[key]);
         acc[target][key] += data[key];
       });
       acc[target].days.push({

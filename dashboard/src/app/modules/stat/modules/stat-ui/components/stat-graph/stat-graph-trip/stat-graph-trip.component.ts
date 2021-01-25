@@ -24,9 +24,6 @@ const graphOptions = {
       xAxes: [
         {
           ...commonOptions.scales.xAxes[0],
-          // time: {
-          //   ...dayOptionsTime,
-          // },
         },
       ],
       yAxes: [
@@ -118,10 +115,9 @@ export class StatGraphTripComponent extends StatGraphBase {
 
   format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
     const isMonth = apiDateMode === ApiGraphTimeMode.Month;
-    console.log('format', this.timeMode);
-
     const isCumulative = this.timeMode === GraphTimeMode.Cumulative;
 
+    let cumTrip = 0; // temp var for cumulative subsidized
     let cumSubTrip = 0; // temp var for cumulative subsidized
 
     return {
@@ -139,7 +135,7 @@ export class StatGraphTripComponent extends StatGraphBase {
         {
           backgroundColor: secondaryColor,
           borderColor: secondaryColor,
-          data: isCumulative ? data.map((entry) => (cumSubTrip += entry.trip)) : data.map((entry) => entry.trip),
+          data: isCumulative ? data.map((entry) => (cumTrip += entry.trip)) : data.map((entry) => entry.trip),
           hoverBackgroundColor: secondaryColor,
         },
       ],
@@ -150,9 +146,6 @@ export class StatGraphTripComponent extends StatGraphBase {
 
   ngOnInit() {
     super.ngOnInit();
-    this.dataSubject.subscribe((data) => {
-      console.log('data ', data);
-    });
   }
 
   get graphTitle(): string {
