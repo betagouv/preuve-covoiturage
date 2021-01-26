@@ -1,0 +1,184 @@
+name: 'Kube - Build and deploy'
+
+on:
+  push:
+    branches: [feat/ci, dev]
+    tags: ['v*.*.*']
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  api-build:
+    name: Build api
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Prepare Docker tag
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: betagouvpdc/api
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Build api image for test
+        id: docker_test
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: ./
+          file: ./docker/prod/api/Dockerfile
+          load: true
+          push: false
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: betagouvpdc/api:${{ steps.docker_meta.outputs.version }}
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        continue-on-error: true
+        with:
+          sarif_file: 'trivy-results.sarif'
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./docker/prod/api/Dockerfile
+          push: true
+          pull: false
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - run: echo ${{ steps.docker_build.outputs.digest }} > api.digest && cat api.digest
+      - name: Upload Image digest
+        uses: actions/upload-artifact@v2
+        with:
+          path: api.digest
+  dashboard-build:
+    name: Build dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Prepare Docker tag
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: betagouvpdc/dashboard
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Build dashboard image for test
+        id: docker_test
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: ./
+          file: ./docker/prod/dashboard/Dockerfile
+          load: true
+          push: false
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: betagouvpdc/dashboard:${{ steps.docker_meta.outputs.version }}
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        continue-on-error: true
+        with:
+          sarif_file: 'trivy-results.sarif'
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./docker/prod/dashboard/Dockerfile
+          push: true
+          pull: false
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - run: echo ${{ steps.docker_build.outputs.digest }} > dashboard.digest && cat dashboard.digest
+      - name: Upload Image digest
+        uses: actions/upload-artifact@v2
+        with:
+          path: dashboard.digest
+  deploy:
+    name: Deploy
+    needs: [api-build, dashboard-build]
+    runs-on: ubuntu-latest
+      - name: Checkout infra repo
+        uses: actions/checkout@v2
+        with:
+          repository: betagouv/preuve-covoiturage-infra
+          path: infra
+      - name: Download images digests
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+      - name: Update image digests
+        run: |
+          export API=$(cat artifacts/api.digest)
+          export DASHBOARD=$(cat artifacts/dashboard.digest)
+          sh infra/cluster/overlays update.sh dev $API $DASHBOARD
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          path: infra
+          commit-message: Update dev image digest
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: false
+          branch: dev
+          delete-branch: true
+          title: 'Update dev environment'
+          body: |
+            Update dev environment
+
