@@ -79,6 +79,7 @@ jobs:
       - name: Upload Image digest
         uses: actions/upload-artifact@v2
         with:
+          name: api.digest
           path: api.digest
   dashboard-build:
     name: Build dashboard
@@ -149,6 +150,7 @@ jobs:
       - name: Upload Image digest
         uses: actions/upload-artifact@v2
         with:
+          name: dashboard.digest
           path: dashboard.digest
   deploy:
     name: Deploy
@@ -161,9 +163,17 @@ jobs:
           repository: betagouv/preuve-covoiturage-infra
           ssh-key: ${{ secrets.INFRA_SSH }}
           path: infra
-      - name: Download images digests
+      - name: Download dashboard digest
+        id: dashboard-artifact
         uses: actions/download-artifact@v2
         with:
+          name: dashboard.digest
+          path: artifacts
+      - name: Download api digest
+        id: api-artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: api.digest
           path: artifacts
       - name: Update image digests
         run: |
