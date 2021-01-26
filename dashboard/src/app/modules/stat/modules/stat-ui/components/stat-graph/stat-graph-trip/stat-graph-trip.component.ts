@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChildren } from '@angular/core';
+import { ChartjsComponent } from '@ctrl/ngx-chartjs';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
@@ -104,13 +105,12 @@ const graphOptions = {
 export class StatGraphTripComponent extends StatGraphBase {
   @Input() displayNav = true;
 
-  get graphOption() {
-    return graphOptions[this.timeMode];
-  }
+  JSON = window.JSON;
 
-  get graphType() {
-    return graphTypes[this.timeMode];
-  }
+  graphTypes = graphTypes;
+  graphOptions = graphOptions;
+
+  @ViewChildren(ChartjsComponent) chart: ChartjsComponent;
 
   format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
     const isMonth = apiDateMode === ApiGraphTimeMode.Month;

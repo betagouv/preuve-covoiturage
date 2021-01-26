@@ -7,6 +7,7 @@ import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterf
 import { map, takeUntil, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { StoreLoadingState } from '~/core/services/store/StoreLoadingState';
 
 export const secondaryColor = '#65C8CF';
 export const primaryColor = '#007AD9';
@@ -24,6 +25,21 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
 
   protected dataSubject = new BehaviorSubject<FormatedStatInterface>(null);
 
+  protected abstract readonly graphOptions: { [key: string]: any };
+  protected abstract readonly graphTypes: { [key: string]: string };
+  isLoading$: Observable<Boolean>;
+
+  protected _graphOption: any;
+  protected _graphType: string;
+
+  get graphOption() {
+    return this._graphOption;
+  }
+
+  get graphType() {
+    return this._graphType;
+  }
+
   get data$(): Observable<FormatedStatInterface> {
     return this.dataSubject;
   }
@@ -31,13 +47,25 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
   constructor(public statStore: StatFilteredStoreService) {
     super();
     this.updateTimeMode();
+
+    this.isLoading$ = statStore.listLoadingState$.pipe(
+      map((state) => state === StoreLoadingState.Debounce || state === StoreLoadingState.LoadStart),
+    );
   }
 
   ngOnInit(): void {
+    this._graphOption = this.graphOptions[this.timeMode];
+    this._graphType = this.graphTypes[this.timeMode];
+
     if (this.dataSubject !== null) this.dataSubject.next(null);
     this.statStore.entities$
       .pipe(
-        tap(() => (this.timeMode = this._nextTimeMode)),
+        tap((data) => {
+          // sync graph config update  when data are updated;
+          this.timeMode = this._nextTimeMode;
+          this._graphOption = this.graphOptions[this.timeMode];
+          this._graphType = this.graphTypes[this.timeMode];
+        }),
         map((data) => this.format(this.statStore.timeModeSubject.value, data)),
         takeUntil(this.destroy$),
       )

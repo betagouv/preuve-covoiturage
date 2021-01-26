@@ -75,13 +75,8 @@ const graphOptions = {
   styleUrls: ['./stat-graph-carbon.component.scss'],
 })
 export class StatGraphCarbonComponent extends StatGraphBase {
-  get graphOption() {
-    return graphOptions[this.timeMode];
-  }
-
-  get graphType() {
-    return graphTypes[this.timeMode];
-  }
+  graphTypes = graphTypes;
+  graphOptions = graphOptions;
 
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Cumulative, GraphTimeMode.Month];
 

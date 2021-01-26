@@ -77,21 +77,13 @@ const graphOptions = {
   styleUrls: ['./stat-graph-petrol.component.scss'],
 })
 export class StatGraphPetrolComponent extends StatGraphBase {
-  // @Input() displayNav = true;
-
+  graphTypes = graphTypes;
   graphOptions = graphOptions;
+
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Cumulative, GraphTimeMode.Month];
 
   get graphTitle(): string {
     return `Essence économisée ${GraphTimeModeLabel[this.timeMode]}`;
-  }
-
-  get graphOption() {
-    return graphOptions[this.timeMode];
-  }
-
-  get graphType() {
-    return graphTypes[this.timeMode];
   }
 
   format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {

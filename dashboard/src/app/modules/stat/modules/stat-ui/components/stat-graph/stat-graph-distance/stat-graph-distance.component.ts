@@ -98,6 +98,9 @@ const graphOptions = {
   styleUrls: ['./stat-graph-distance.component.scss'],
 })
 export class StatGraphDistanceComponent extends StatGraphBase {
+  graphTypes = graphTypes;
+  graphOptions = graphOptions;
+
   format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
     const isMonth = apiDateMode === ApiGraphTimeMode.Month;
     const isCumulative = this.timeMode === GraphTimeMode.Cumulative;
@@ -120,16 +123,6 @@ export class StatGraphDistanceComponent extends StatGraphBase {
       labels: data.map((entry) => (isMonth ? formatMonthLabel(entry.month) : formatDayLabel(entry.day))),
     } as any;
   }
-
-  get graphOption() {
-    return graphOptions[this.timeMode];
-  }
-
-  get graphType() {
-    return graphTypes[this.timeMode];
-  }
-
-  graphOptions = graphOptions;
 
   get graphTitle(): string {
     return `Distance parcourue ${GraphTimeModeLabel[this.timeMode]}`;

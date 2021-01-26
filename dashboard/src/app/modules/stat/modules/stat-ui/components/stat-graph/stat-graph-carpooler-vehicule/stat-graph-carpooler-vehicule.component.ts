@@ -74,6 +74,9 @@ const graphOptions = {
   styleUrls: ['./stat-graph-carpooler-vehicule.component.scss'],
 })
 export class StatGraphCarpoolerVehiculeComponent extends StatGraphBase {
+  graphTypes = graphTypes;
+  graphOptions = graphOptions;
+
   format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
     const isMonth = apiDateMode === ApiGraphTimeMode.Month;
 
