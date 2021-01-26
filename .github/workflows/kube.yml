@@ -179,7 +179,7 @@ jobs:
         run: |
           export API=$(cat artifacts/api.digest)
           export DASHBOARD=$(cat artifacts/dashboard.digest)
-          sh infra/cluster/overlays/update.sh dev $API $DASHBOARD
+          sh infra/cluster/app/overlays/update.sh dev $API $DASHBOARD
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
