@@ -1,29 +1,41 @@
-<h3 class="graphTitle" *ngIf="!lightMode">{{ graphTitle }}</h3>
+<div class="stats-graph" [class]="cssLoadingState | async">
+  <div [class]="cssLoadingState | async" class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
 
-<app-stat-graph-distance *ngIf="graphName === 'distance'" [displayNav]="!lightMode" (titleUpdate)="setTitle($event)">
-</app-stat-graph-distance>
+  <div class="stats-graph-content">
+    <h3 class="graphTitle" *ngIf="!lightMode">{{ graphTitle }}</h3>
 
-<app-stat-graph-trip *ngIf="graphName === 'trips'" [displayNav]="!lightMode" (titleUpdate)="setTitle($event)">
-</app-stat-graph-trip>
+    <app-stat-graph-distance
+      *ngIf="graphName === 'distance'"
+      [displayNav]="!lightMode"
+      (titleUpdate)="setTitle($event)"
+    >
+    </app-stat-graph-distance>
 
-<app-stat-graph-carpoolers
-  *ngIf="graphName === 'carpoolers'"
-  [displayNav]="!lightMode"
-  (titleUpdate)="setTitle($event)"
->
-</app-stat-graph-carpoolers>
+    <app-stat-graph-trip *ngIf="graphName === 'trips'" [displayNav]="!lightMode" (titleUpdate)="setTitle($event)">
+    </app-stat-graph-trip>
 
-<app-stat-graph-petrol *ngIf="graphName === 'petrol'" [displayNav]="!lightMode" (titleUpdate)="setTitle($event)">
-</app-stat-graph-petrol>
+    <app-stat-graph-carpoolers
+      *ngIf="graphName === 'carpoolers'"
+      [displayNav]="!lightMode"
+      (titleUpdate)="setTitle($event)"
+    >
+    </app-stat-graph-carpoolers>
 
-<!--CO2-->
+    <app-stat-graph-petrol *ngIf="graphName === 'petrol'" [displayNav]="!lightMode" (titleUpdate)="setTitle($event)">
+    </app-stat-graph-petrol>
 
-<app-stat-graph-carbon *ngIf="graphName === 'co2'" [displayNav]="!lightMode"> </app-stat-graph-carbon>
+    <!--CO2-->
 
-<!--Carpoolers per vehicule-->
-<app-stat-graph-carpooler-vehicule
-  *ngIf="graphName === 'carpoolersPerVehicule'"
-  [displayNav]="!lightMode"
-  (titleUpdate)="setTitle($event)"
->
-</app-stat-graph-carpooler-vehicule>
+    <app-stat-graph-carbon *ngIf="graphName === 'co2'" [displayNav]="!lightMode"> </app-stat-graph-carbon>
+
+    <!--Carpoolers per vehicule-->
+    <app-stat-graph-carpooler-vehicule
+      *ngIf="graphName === 'carpoolersPerVehicule'"
+      [displayNav]="!lightMode"
+      (titleUpdate)="setTitle($event)"
+    >
+    </app-stat-graph-carpooler-vehicule>
+  </div>
+</div>

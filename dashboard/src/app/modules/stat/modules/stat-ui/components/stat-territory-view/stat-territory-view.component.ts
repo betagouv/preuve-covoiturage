@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
@@ -12,6 +12,8 @@ import { chartNameType } from '~/core/types/stat/chartNameType';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
 
 import { StatFilteredStoreService } from '../../../../services/stat-filtered-store.service';
+import { StoreLoadingState } from '~/core/services/store/StoreLoadingState';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-stat-territory-view',
@@ -34,9 +36,13 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
   graphData: { [key in chartNameType]: Axes } = null;
 
   statViewConfig = TERRITORY_STATS;
+  statIsLoading: Observable<boolean>;
 
   constructor(public statService: StatFilteredStoreService, public filterService: FilterService) {
     super();
+    this.statIsLoading = statService.listLoadingState$.pipe(
+      map((state) => state === StoreLoadingState.Debounce || state === StoreLoadingState.LoadStart),
+    );
   }
 
   ngOnInit(): void {
