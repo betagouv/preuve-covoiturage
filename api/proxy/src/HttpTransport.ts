@@ -87,6 +87,7 @@ export class HttpTransport implements TransportInterface {
     // feature flag certificates until properly tested by operators
     if (env('NODE_ENV') !== 'production') this.registerCertificateRoutes();
     this.registerAcquisitionRoutes();
+    this.registerSimulationRoutes();
     this.registerHonorRoutes();
     this.registerUptimeRoute();
     this.registerCallHandler();
@@ -185,6 +186,22 @@ export class HttpTransport implements TransportInterface {
   private registerMetrics(): void {
     this.app.get('/health', rateLimiter(), healthCheckFactory([]));
     this.app.get('/metrics', rateLimiter(), prometheusMetricsFactory());
+  }
+
+  private registerSimulationRoutes(): void {
+    this.app.post(
+      '/v2/policy/simulate',
+      rateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const { params } = req;
+        const user = get(req, 'session.user', null);
+        const response = (await this.kernel.handle(
+          makeCall('campaign:simulateOnFuture', params, { user, metadata: { req } }),
+        )) as RPCResponseType;
+        this.send(res, response);
+      }),
+    );
   }
 
   /**
