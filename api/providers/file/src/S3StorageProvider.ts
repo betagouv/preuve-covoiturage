@@ -33,12 +33,15 @@ export class S3StorageProvider implements ProviderInterface {
           .replace(ext, '')
           .replace(/[^a-z0-9_-]/g, '') + ext;
 
-      await this.s3.upload({ Bucket, Key: keyName, Body: rs }).promise();
+      await this.s3
+        .upload({ Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filename=${keyName}` })
+        .promise();
 
       const url = await this.s3.getSignedUrlPromise('getObject', {
         Bucket,
         Key: keyName,
         Expires: 7 * 86400,
+        ResponseContentDisposition: `attachment; filename=${keyName}`,
       });
 
       return {
@@ -50,23 +53,6 @@ export class S3StorageProvider implements ProviderInterface {
 
       throw e;
     }
-  }
-
-  async getUploadUrl(bucket: BucketName, file: string, contentType: string): Promise<any> {
-    const Bucket = this.getBucketName(bucket);
-    const Key = path.normalize(file);
-    const publicUrl = this.endpoint.replace('https://', `https://${Bucket}.`) + `/${Key}`;
-
-    return {
-      filename: path.basename(Key),
-      publicUrl,
-      putUrl: await this.s3.getSignedUrlPromise('putObject', {
-        Key,
-        Bucket,
-        ContentType: contentType,
-        Expires: 5 * 60,
-      }),
-    };
   }
 
   private getBucketName(bucket: BucketName): string {

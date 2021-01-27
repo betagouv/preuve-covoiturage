@@ -14,7 +14,11 @@ export class NotifyUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const { templateId, template, email, fullname, ...opts } = params;
+    const { templateId, template, email, fullname, disableTracking, ...opts } = params;
+
+    const sendOptions = {};
+    if (templateId) sendOptions['template'] = templateId;
+    if (disableTracking) sendOptions['disableTracking'] = disableTracking;
 
     return this.notificationProvider.sendTemplateByEmail(
       {
@@ -23,7 +27,7 @@ export class NotifyUserAction extends AbstractAction {
         fullname,
         opts,
       },
-      templateId ? { template: templateId } : null,
+      sendOptions,
     );
   }
 }
