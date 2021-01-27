@@ -1,6 +1,6 @@
 import nodeMailjet from 'node-mailjet';
 
-import { MailDriverInterface, MailInterface } from '../interfaces';
+import { MailDriverInterface, MailInterface, SendOptionsInterface } from '../interfaces';
 
 interface MailjetConnectOptionsInterface {
   version: string;
@@ -34,7 +34,7 @@ export class MailjetDriver implements MailDriverInterface {
   }
 
   // TODO : create an interface for the return type ?
-  async send(mail: MailInterface, opts: { [key: string]: any } = {}): Promise<any> {
+  async send(mail: MailInterface, opts: Partial<SendOptionsInterface> = {}): Promise<any> {
     const { email, fullname, subject, content } = mail;
 
     let message: any = {
@@ -49,7 +49,16 @@ export class MailjetDriver implements MailDriverInterface {
         },
       ],
       Subject: subject || this.config.defaultSubject,
+      TrackOpens: 'disabled',
+      TrackClicks: 'disabled',
     };
+
+    // disable email tracking to avoid rewriting URLs
+    // with a Mailjet unsecured HTTP proxy
+    if (opts.disableTracking) {
+      message['TrackOpens'] = 'disabled';
+      message['TrackClicks'] = 'disabled';
+    }
 
     if ('template' in opts) {
       message = {
@@ -64,6 +73,8 @@ export class MailjetDriver implements MailDriverInterface {
       };
     }
 
-    return this.mj.post('send').request({ Messages: [message] });
+    return this.mj.post('send').request({ Messages: [message] }, (err) => {
+      if (err) console.error(err.message, { data: err });
+    });
   }
 }

@@ -9,6 +9,7 @@ import {
   NotificationConfigurationType,
   NotificationInterface,
   NotificationInterfaceResolver,
+  SendOptionsInterface,
   TemplateMailInterface,
 } from './interfaces';
 
@@ -46,7 +47,7 @@ export class Notification implements NotificationInterface {
     );
   }
 
-  async sendByEmail(mail: MailInterface, sendOptions: { [key: string]: any } = {}): Promise<void> {
+  async sendByEmail(mail: MailInterface, sendOptions: Partial<SendOptionsInterface> = {}): Promise<void> {
     // override the to: address when 'debug' is set in the config
     // use: APP_MAILJET_DEBUG_NAME and APP_MAILJET_DEBUG_EMAIL env vars
     if ('debug' in this.config.mail && this.config.mail.debug) {
@@ -57,7 +58,7 @@ export class Notification implements NotificationInterface {
     return this.mailDriver.send(mail, { ...this.config.mail.sendOptions, ...sendOptions });
   }
 
-  async sendTemplateByEmail(mail: TemplateMailInterface, sendOptions?: { [key: string]: any }): Promise<void> {
+  async sendTemplateByEmail(mail: TemplateMailInterface, sendOptions?: Partial<SendOptionsInterface>): Promise<void> {
     const { template, email, fullname, opts } = mail;
 
     // Get the subject from the config/template.ts file
