@@ -188,5 +188,4 @@ jobs:
           git -c user.name="GitHub Actions" -c user.email="actions@github.com" \
             commit -m "Update dev image digest" \
             --author="${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>" \
-            --force
-          git push --set-upstream origin update-${{ github.sha }}
+          git push --force --no-verify --set-upstream origin update-${{ github.sha }}
