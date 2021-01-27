@@ -187,5 +187,5 @@ jobs:
           git add .
           git -c user.name="GitHub Actions" -c user.email="actions@github.com" \
             commit -m "Update dev image digest" \
-            --author="${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>" \
+            --author="${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
           git push --force --no-verify --set-upstream origin update-${{ github.sha }}
