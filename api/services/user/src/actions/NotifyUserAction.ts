@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { ContextType, handler } from '@ilos/common';
+import { handler } from '@ilos/common';
 import { NotificationInterfaceResolver } from '@pdc/provider-notification';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/notify.contract';
@@ -13,14 +13,14 @@ export class NotifyUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const { templateId, template, email, fullname, disableTracking, ...opts } = params;
 
     const sendOptions = {};
     if (templateId) sendOptions['template'] = templateId;
     if (disableTracking) sendOptions['disableTracking'] = disableTracking;
 
-    return this.notificationProvider.sendTemplateByEmail(
+    await this.notificationProvider.sendTemplateByEmail(
       {
         template,
         email,

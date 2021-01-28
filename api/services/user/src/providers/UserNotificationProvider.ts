@@ -92,7 +92,6 @@ link:  ${link}
    */
   protected async sendMail(data: SendMailParamsInterface): Promise<void> {
     await this.kernel.notify('user:notify', data, this.defaultContext);
-    return;
   }
 
   /**
@@ -115,8 +114,6 @@ link:  ${link}
       template: this.config.get('email.templates.forgotten'),
       fullname: `${user.firstname} ${user.lastname}`,
     });
-
-    return;
   }
 
   /**
