@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChartjsModule } from '@ctrl/ngx-chartjs';
@@ -11,18 +12,15 @@ import { StatGraphComponent } from './components/stat-graph/stat-graph.component
 import { StatTerritoryViewComponent } from './components/stat-territory-view/stat-territory-view.component';
 import { StatGraphViewComponent } from './components/stat-graph-view/stat-graph-view.component';
 import { StatOperatorViewComponent } from './components/stat-operator-view/stat-operator-view.component';
-// eslint-disable-next-line
 import { StatChartContainerComponent } from './components/stat-graph/stat-chart-container/stat-chart-container.component';
 import { StatGraphDistanceComponent } from './components/stat-graph/stat-graph-distance/stat-graph-distance.component';
-// eslint-disable-next-line
 import { StatGraphTimeModeNavComponent } from './components/stat-graph/stat-graph-timemode-nav/stat-graph-timemode-nav.component';
 import { StatGraphTripComponent } from './components/stat-graph/stat-graph-trip/stat-graph-trip.component';
-// eslint-disable-next-line
 import { StatGraphCarpoolersComponent } from './components/stat-graph/stat-graph-carpoolers/stat-graph-carpoolers.component';
 import { StatGraphPetrolComponent } from './components/stat-graph/stat-graph-petrol/stat-graph-petrol.component';
 import { StatGraphCarbonComponent } from './components/stat-graph/stat-graph-carbon/stat-graph-carbon.component';
-// eslint-disable-next-line
 import { StatGraphCarpoolerVehiculeComponent } from './components/stat-graph/stat-graph-carpooler-vehicule/stat-graph-carpooler-vehicule.component';
+import { StatHonorComponent } from './components/stat-honor/stat-honor.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +37,7 @@ import { StatGraphCarpoolerVehiculeComponent } from './components/stat-graph/sta
     StatGraphPetrolComponent,
     StatGraphCarbonComponent,
     StatGraphCarpoolerVehiculeComponent,
+    StatHonorComponent,
   ],
   imports: [CommonModule, ChartjsModule, FormsModule, MaterialModule, SharedModule],
   exports: [
@@ -47,6 +46,7 @@ import { StatGraphCarpoolerVehiculeComponent } from './components/stat-graph/sta
     StatGraphViewComponent,
     StatNumberComponent,
     StatOperatorViewComponent,
+    StatHonorComponent,
   ],
 })
 export class StatUIModule {}
