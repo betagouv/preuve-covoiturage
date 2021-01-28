@@ -141,7 +141,6 @@ export abstract class GetListStore<
 
     this._filterSubject.pipe(debounceTime(100)).subscribe((filt) => {
       if (firstLoad || filt !== null) {
-        console.log(this, 'refresh from filter');
         this.loadList();
         firstLoad = !firstLoad || !!filt;
       }

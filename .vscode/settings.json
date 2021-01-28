@@ -1,11 +1,11 @@
 {
   "files.exclude": {
-    "**/*.postman_collection.json": true
+    "**/*.postman_collection.json": true,
+    "**/dist": true
   },
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
   "editor.formatOnSave": true,
-  "eslint.packageManager": "yarn"
 }
