@@ -3,12 +3,15 @@ import { ContextType, InvalidParamsException } from '@ilos/common';
 
 import { ValidateDateMiddleware, ValidateDateMiddlewareOptionsType } from './ValidateDateMiddleware';
 
-
-async function process(middlewareParams: ValidateDateMiddlewareOptionsType, callParams: any = {
-  date: {
-    start: new Date('2020-06-01'),
-    end: new Date('2020-12-01'),
-  },}) {
+async function process(
+  middlewareParams: ValidateDateMiddlewareOptionsType,
+  callParams: any = {
+    date: {
+      start: new Date('2020-06-01'),
+      end: new Date('2020-12-01'),
+    },
+  },
+) {
   const context: ContextType = {
     call: {
       user: {},
@@ -19,7 +22,7 @@ async function process(middlewareParams: ValidateDateMiddlewareOptionsType, call
   };
 
   const middleware = new ValidateDateMiddleware();
-  const next = (params, context) => ({params, context});
+  const next = (params, context) => ({ params, context });
   return middleware.process(callParams, context, next, middlewareParams);
 }
 
@@ -39,7 +42,11 @@ test('Middleware ValidateDate: should throw if start > end', async (t) => {
     },
   };
 
-  await t.throwsAsync(process(middlewareParams, callParams), { instanceOf: InvalidParamsException }, 'Start should be before end');
+  await t.throwsAsync(
+    process(middlewareParams, callParams),
+    { instanceOf: InvalidParamsException },
+    'Start should be before end',
+  );
 });
 
 test('Middleware ValidateDate: should throw if start < minstart', async (t) => {
@@ -50,7 +57,11 @@ test('Middleware ValidateDate: should throw if start < minstart', async (t) => {
     maxEnd: () => new Date('2021-02-01'),
     applyDefault: true,
   };
-  await t.throwsAsync(process(middlewareParams), { instanceOf: InvalidParamsException }, `Start should be after ${middlewareParams.minStart().toDateString()}`);
+  await t.throwsAsync(
+    process(middlewareParams),
+    { instanceOf: InvalidParamsException },
+    `Start should be after ${middlewareParams.minStart().toDateString()}`,
+  );
 });
 
 test('Middleware ValidateDate: should throw if start not exist with minStart', async (t) => {
@@ -61,9 +72,12 @@ test('Middleware ValidateDate: should throw if start not exist with minStart', a
     maxEnd: () => new Date('2021-02-01'),
     applyDefault: false,
   };
-  await t.throwsAsync(process(middlewareParams), { instanceOf: InvalidParamsException }, `Start should be after ${middlewareParams.minStart().toDateString()}`);
+  await t.throwsAsync(
+    process(middlewareParams),
+    { instanceOf: InvalidParamsException },
+    `Start should be after ${middlewareParams.minStart().toDateString()}`,
+  );
 });
-
 
 test('Middleware ValidateDate: should throw if end > maxEnd', async (t) => {
   const middlewareParams = {
@@ -73,7 +87,11 @@ test('Middleware ValidateDate: should throw if end > maxEnd', async (t) => {
     maxEnd: () => new Date('2020-02-01'),
     applyDefault: true,
   };
-  await t.throwsAsync(process(middlewareParams), { instanceOf: InvalidParamsException }, `End should be before ${middlewareParams.maxEnd().toDateString()}`);
+  await t.throwsAsync(
+    process(middlewareParams),
+    { instanceOf: InvalidParamsException },
+    `End should be before ${middlewareParams.maxEnd().toDateString()}`,
+  );
 });
 
 test('Middleware ValidateDate: should throw if end not exist with maxEnd', async (t) => {
@@ -85,7 +103,11 @@ test('Middleware ValidateDate: should throw if end not exist with maxEnd', async
     applyDefault: false,
   };
 
-  await t.throwsAsync(process(middlewareParams), { instanceOf: InvalidParamsException }, `End should be before ${middlewareParams.maxEnd().toDateString()}`);
+  await t.throwsAsync(
+    process(middlewareParams),
+    { instanceOf: InvalidParamsException },
+    `End should be before ${middlewareParams.maxEnd().toDateString()}`,
+  );
 });
 
 test('Middleware ValidateDate: should apply default if start missing', async (t) => {
