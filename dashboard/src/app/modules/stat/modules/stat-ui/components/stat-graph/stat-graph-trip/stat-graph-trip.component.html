@@ -24,22 +24,22 @@
     <ngx-chartjs
       [data]="data$ | async"
       *ngIf="timeMode === 'day'"
-      [type]="graphType"
-      [options]="graphOption"
+      [type]="graphTypes.day"
+      [options]="graphOptions.day"
       [height]="70"
     ></ngx-chartjs>
     <ngx-chartjs
       [data]="data$ | async"
       *ngIf="timeMode === 'month'"
-      [type]="graphType"
-      [options]="graphOption"
+      [type]="graphTypes.month"
+      [options]="graphOptions.month"
       [height]="70"
     ></ngx-chartjs>
     <ngx-chartjs
       [data]="data$ | async"
       *ngIf="timeMode === 'cumulative'"
-      [type]="graphType"
-      [options]="graphOption"
+      [type]="graphTypes.cumulative"
+      [options]="graphOptions.cumulative"
       [height]="70"
     ></ngx-chartjs>
   </div>

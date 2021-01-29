@@ -10,6 +10,7 @@ import { GetListStore } from '~/core/services/store/getlist-store';
 import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
+import { debounceTime, mergeMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,8 @@ import { ApiGraphTimeMode } from './ApiGraphTimeMode';
 export class StatFilteredStoreService extends GetListStore<StatInterface> {
   private _formatedStat$ = new BehaviorSubject<FormatedStatsInterface>(null);
   protected _timeMode: BehaviorSubject<ApiGraphTimeMode>;
+  protected _totalStats = new BehaviorSubject<StatInterface>(null);
+  private _currentFilterSignature: string;
 
   constructor(statApi: StatApiService) {
     super(statApi as JsonRpcGetList<StatInterface, StatInterface, any, TripSearchInterface>);
@@ -43,27 +46,62 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     return this._formatedStat$;
   }
 
+  get totalStats$(): Observable<StatInterface> {
+    return this._totalStats.asObservable();
+  }
+
   get timeModeSubject(): BehaviorSubject<ApiGraphTimeMode> {
     return this._timeMode;
   }
 
   init(): void {
     this._formatedStat$.next(null);
+
+    this._currentFilterSignature = this.filterSignature;
   }
 
   // override filter behaviour un order to implemented DateMode input flow
+
+  get filterSignature(): string {
+    return JSON.stringify({
+      filterSubject: this._filterSubject.value,
+      timeMode: this._timeMode.value,
+    });
+  }
 
   protected _setupFilterSubject() {
     let firstLoad = true;
 
     this._timeMode = new BehaviorSubject<ApiGraphTimeMode>(ApiGraphTimeMode.Month);
 
-    merge(this._filterSubject, this._timeMode).subscribe((filt) => {
-      if (firstLoad || filt !== null) {
-        this.loadList();
-        firstLoad = !firstLoad || !!filt;
-      }
-    });
+    merge(this._filterSubject, this._timeMode)
+      .pipe(debounceTime(50))
+      .subscribe((filt) => {
+        if (firstLoad || filt !== null) {
+          // use signature cache with filters data in order to resubmit stats filter
+          const currentSignature = this.filterSignature;
+          const hasChanged = this._currentFilterSignature !== currentSignature;
+
+          if (hasChanged) {
+            this._currentFilterSignature = currentSignature;
+            this.loadList();
+            firstLoad = !firstLoad || !!filt;
+          } else {
+            setTimeout(() => this.entitiesSubject.next(this.entitiesSubject.value), 0);
+          }
+        }
+      });
+
+    this._filterSubject
+      .pipe(
+        debounceTime(50),
+        mergeMap((filter) => {
+          return (this.rpcGetList as StatApiService).getTotalStats(filter);
+        }),
+      )
+      .subscribe((totalStats) => {
+        this._totalStats.next(totalStats);
+      });
   }
 
   get finalFilterValue(): any {

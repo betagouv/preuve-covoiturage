@@ -101,7 +101,6 @@ export class StatGraphCarpoolersComponent extends StatGraphBase {
     } as any;
   }
 
-  graphOptions = graphOptions;
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Cumulative, GraphTimeMode.Month];
 
   get graphTitle(): string {

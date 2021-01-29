@@ -4,7 +4,7 @@ import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
 import { GraphTimeMode } from '../GraphTimeMode';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { map, takeUntil, tap } from 'rxjs/operators';
+import { map, skip, takeUntil, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { StoreLoadingState } from '~/core/services/store/StoreLoadingState';
@@ -60,6 +60,7 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
     if (this.dataSubject !== null) this.dataSubject.next(null);
     this.statStore.entities$
       .pipe(
+        skip(1),
         tap((data) => {
           // sync graph config update  when data are updated;
           this.timeMode = this._nextTimeMode;
@@ -82,6 +83,7 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
 
   protected updateTimeMode(): void {
     const apiGraphTimeMode = this._nextTimeMode === GraphTimeMode.Month ? ApiGraphTimeMode.Month : ApiGraphTimeMode.Day;
+    // const apiGraphTimeMode = ApiGraphTimeMode.All;
 
     this.statStore.timeModeSubject.next(apiGraphTimeMode);
   }

@@ -97,14 +97,6 @@ export class StatGraphCarpoolerVehiculeComponent extends StatGraphBase {
 
   timeNavList: GraphTimeMode[] = [GraphTimeMode.Day, GraphTimeMode.Month];
 
-  get graphOption() {
-    return graphOptions[this.timeMode];
-  }
-
-  get graphType() {
-    return graphTypes[this.timeMode];
-  }
-
   get graphTitle(): string {
     return `Personnes ${GraphTimeModeLabel[this.timeMode]}`;
   }

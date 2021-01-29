@@ -7,6 +7,9 @@ import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 
 import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
+import { Observable } from 'rxjs';
+import { ApiGraphTimeMode } from './ApiGraphTimeMode';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +19,7 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
     super(http, router, activatedRoute, 'trip');
   }
 
-  paramGetList(params?): JsonRPCParam {
+  paramGetList(params?: TripSearchInterface): JsonRPCParam {
     const finalParams = {
       ...this.defaultListParam,
       ...params,
@@ -42,5 +45,16 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
     finalParams.date.end = end.toISOString();
 
     return new JsonRPCParam(`${this.method}:stats`, finalParams);
+  }
+
+  getTotalStats(params?: TripSearchInterface): Observable<StatInterface> {
+    // All graph time Mode is forced;
+    params = { ...params, group_by: ApiGraphTimeMode.All };
+
+    return this.callOne(this.paramGetList(params)).pipe(
+      map((datas) => {
+        return datas.data[0];
+      }),
+    );
   }
 }

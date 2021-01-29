@@ -1,4 +1,5 @@
 export interface StatNumberConfigInterface {
+  name?: string;
   hint: string;
   path?: string;
   svgIcon: string;

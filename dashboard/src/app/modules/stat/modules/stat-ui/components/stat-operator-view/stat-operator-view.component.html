@@ -10,14 +10,14 @@
     <app-stat-graph [graphName]="graphName" [graphData]="graphData"></app-stat-graph>
   </div>
   <div *ngIf="statService.stat" class="stats-numbers">
-    <app-stat-number
-      *ngFor="let statNumberName of statViewConfig.names"
+    <!-- <app-stat-number
+      *ngFor="let statNumberName of statViewConfig"
       [statNumberName]="statNumberName"
       [selected]="selected[statNumberName]"
       [disabled]="disabled[statNumberName]"
       (linkClicked)="showGraph($event)"
     >
-    </app-stat-number>
+    </app-stat-number> -->
   </div>
   <div class="stats-docLink">
     <a [href]="gitbookLinkStats" target="_blank" rel="noopener noreferrer">

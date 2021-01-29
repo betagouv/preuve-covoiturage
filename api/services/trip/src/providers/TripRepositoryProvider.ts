@@ -172,14 +172,22 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   public async stats(params: Partial<TripStatInterface>): Promise<StatInterface[]> {
     const where = await this.buildWhereClauses(params);
 
+    const selectSwitch = {
+      day: 'journey_start_datetime::date::text as day,',
+      month: `TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm') as month,`,
+      all: '',
+    };
+
+    const groupBySwitch = {
+      day: 'GROUP BY day ORDER BY day ASC',
+      month: `GROUP BY TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm')`,
+      all: '',
+    };
+
     const values = [...(where ? where.values : [])];
     const text = `
       SELECT
-        ${
-          params.group_by === 'day'
-            ? 'journey_start_datetime::date::text as day'
-            : `TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm') as month`
-        },
+        ${selectSwitch[params.group_by]}
         sum(passenger_seats)::int as trip,
         sum(journey_distance/1000*passenger_seats)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
@@ -194,11 +202,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         coalesce(sum(passenger_incentive_rpc_sum + driver_incentive_rpc_sum), 0)::int as incentive_sum
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
-      ${
-        params.group_by === 'day'
-          ? 'GROUP BY day ORDER BY day ASC'
-          : `GROUP BY TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm')`
-      }
+      ${groupBySwitch[params.group_by]}
     `;
 
     const result = await this.connection.getClient().query({
