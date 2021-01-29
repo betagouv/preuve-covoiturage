@@ -10,7 +10,7 @@ const params = {
   date: {
     type: 'object',
     additionalProperties: false,
-    minProperties: 1,
+    required: ['start', 'end'],
     properties: {
       start: {
         macro: 'timestamp',
