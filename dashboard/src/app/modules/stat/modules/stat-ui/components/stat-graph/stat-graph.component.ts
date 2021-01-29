@@ -1,10 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-// import { statGraphs } from '~/modules/stat/config/statGraphs';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
-// import { statChartColors } from '~/modules/stat/config/statChartColors';
-// import { chartsType, chartType } from '~/core/types/stat/chartType';
-// import { statChartOptions } from '~/modules/stat/config/statChartOptions';
 import { chartNamesType, chartNameType } from '~/core/types/stat/chartNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';

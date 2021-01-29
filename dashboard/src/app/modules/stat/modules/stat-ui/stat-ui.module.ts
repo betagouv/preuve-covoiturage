@@ -7,9 +7,7 @@ import { SharedModule } from '~/shared/shared.module';
 import { MaterialModule } from '~/shared/modules/material/material.module';
 
 import { StatGraphComponent } from './components/stat-graph/stat-graph.component';
-import { StatTerritoryViewComponent } from './components/stat-territory-view/stat-territory-view.component';
 import { StatGraphViewComponent } from './components/stat-graph-view/stat-graph-view.component';
-import { StatOperatorViewComponent } from './components/stat-operator-view/stat-operator-view.component';
 // eslint-disable-next-line
 import { StatChartContainerComponent } from './components/stat-graph/stat-chart-container/stat-chart-container.component';
 import { StatGraphDistanceComponent } from './components/stat-graph/stat-graph-distance/stat-graph-distance.component';
@@ -23,13 +21,13 @@ import { StatGraphCarbonComponent } from './components/stat-graph/stat-graph-car
 // eslint-disable-next-line
 import { StatGraphCarpoolerVehiculeComponent } from './components/stat-graph/stat-graph-carpooler-vehicule/stat-graph-carpooler-vehicule.component';
 import { StatNumbersNavComponent } from './components/stat-graph/stat-numbers-nav/stat-numbers-nav.component';
+import { StatViewComponent } from './components/stat-view/stat-view.component';
 
 @NgModule({
   declarations: [
     StatGraphComponent,
-    StatTerritoryViewComponent,
+    StatViewComponent,
     StatGraphViewComponent,
-    StatOperatorViewComponent,
     StatChartContainerComponent,
     StatGraphDistanceComponent,
     StatGraphTimeModeNavComponent,
@@ -41,6 +39,6 @@ import { StatNumbersNavComponent } from './components/stat-graph/stat-numbers-na
     StatNumbersNavComponent,
   ],
   imports: [CommonModule, ChartjsModule, FormsModule, MaterialModule, SharedModule],
-  exports: [StatGraphComponent, StatTerritoryViewComponent, StatGraphViewComponent, StatOperatorViewComponent],
+  exports: [StatGraphComponent, StatViewComponent, StatGraphViewComponent],
 })
 export class StatUIModule {}
