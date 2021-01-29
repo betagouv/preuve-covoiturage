@@ -13,7 +13,15 @@ import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvid
   middlewares: [
     ['validate', alias],
     'validate.rules',
-    ['validate.date', ['campaign', () => [new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 4), new Date()]]],
+    [
+      'validate.date',
+      {
+        startPath: 'campaign.start_date',
+        endPath: 'campaign.end_date',
+        minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 4),
+        maxEnd: () => new Date(),
+      },
+    ],
   ],
 })
 export class SimulateOnPastAction extends AbstractAction {
