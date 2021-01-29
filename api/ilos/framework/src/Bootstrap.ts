@@ -153,8 +153,8 @@ export class Bootstrap {
   }
 
   protected registerShutdownHook(kernelInstance: KernelInterface, transport: TransportInterface) {
-    catchErrors([transport.down, kernelInstance.shutdown]);
-    registerGracefulShutdown([transport.down, kernelInstance.shutdown]);
+    catchErrors([async () => transport.down(), async () => kernelInstance.shutdown()]);
+    registerGracefulShutdown([async () => transport.down(), async () => kernelInstance.shutdown()]);
   }
 
   async boot(command: string | undefined, ...opts: any[]) {
