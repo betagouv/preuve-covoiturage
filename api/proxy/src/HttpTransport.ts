@@ -183,8 +183,8 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerMetrics(): void {
-    this.app.get('/health', rateLimiter(), healthCheckFactory([]));
-    this.app.get('/metrics', rateLimiter(), prometheusMetricsFactory());
+    this.app.get('/health', rateLimiter({ windowMs: 60 * 1000, max: 60 / 5 + 1 }), healthCheckFactory([]));
+    this.app.get('/metrics', rateLimiter({ windowMs: 60 * 1000, max: 60 / 15 + 1 }), prometheusMetricsFactory());
   }
 
   /**
