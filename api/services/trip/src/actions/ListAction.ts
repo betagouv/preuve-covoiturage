@@ -19,6 +19,15 @@ import { alias } from '../shared/trip/list.schema';
         operator: 'operator.trip.list',
       },
     ],
+    [
+      'validate.date',
+      {
+        startPath: 'date.date',
+        endPath: 'date.end',
+        minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 365 * 2),
+        maxEnd: () => new Date(),
+      },
+    ],
   ],
 })
 export class ListAction extends Action {
