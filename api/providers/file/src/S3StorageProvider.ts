@@ -11,7 +11,7 @@ export class S3StorageProvider implements ProviderInterface {
   private s3: S3;
   private endpoint = env('AWS_ENDPOINT') as string;
   private region = env('AWS_REGION') as string;
-  private prefix = env('NODE_ENV', 'local');
+  private prefix = env('AWS_BUCKET_PREFIX', env('NODE_ENV', 'local'));
 
   constructor() {}
 
