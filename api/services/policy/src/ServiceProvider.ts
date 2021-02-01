@@ -8,6 +8,7 @@ import {
   ScopeToSelfMiddleware,
   ChannelServiceWhitelistMiddleware,
   ContextExtractMiddleware,
+  ValidateDateMiddleware,
 } from '@pdc/provider-middleware';
 
 import { config } from './config';
@@ -39,7 +40,6 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
 import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 import { SeedCommand } from './commands/SeedCommand';
-import { ValidateDateMiddleware } from './middlewares/ValidateDateMiddleware';
 import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
 import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
 
@@ -51,7 +51,6 @@ import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
     MetadataProvider,
     TripRepositoryProvider,
     ['validate.rules', ValidateRuleParametersMiddleware],
-    ['validate.date', ValidateDateMiddleware],
     PolicyEngine,
     IncentiveRepositoryProvider,
   ],
@@ -89,6 +88,7 @@ import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
     ['scope.it', ScopeToSelfMiddleware],
     ['channel.service.only', ChannelServiceWhitelistMiddleware],
     ['context_extract', ContextExtractMiddleware],
+    ['validate.date', ValidateDateMiddleware],
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
