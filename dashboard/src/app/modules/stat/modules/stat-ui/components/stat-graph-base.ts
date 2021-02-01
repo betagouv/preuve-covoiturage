@@ -37,7 +37,7 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
     if (this.dataSubject !== null) this.dataSubject.next(null);
     this.statStore.entities$
       .pipe(
-        tap((data) => (this.timeMode = this._nextTimeMode)),
+        tap(() => (this.timeMode = this._nextTimeMode)),
         map((data) => this.format(this.statStore.timeModeSubject.value, data)),
         takeUntil(this.destroy$),
       )

@@ -18,39 +18,48 @@
           <div class="filter-content-column-title">
             <p>Dates & horaires</p>
           </div>
+
+          <!-- Date de début -->
           <div class="filter-dates" formGroupName="date">
             <mat-form-field appearance="outline">
               <mat-label>Début</mat-label>
               <input
                 matInput
                 formControlName="start"
-                [matDatepicker]="startDatePicker"
                 placeholder="Choisir une date"
+                required
                 [min]="minDate"
-                (input)="onDateInput()"
+                [matDatepicker]="startDatePicker"
               />
-              <!-- <mat-error *ngIf="startControl.hasError('dateRange')"> </mat-error> -->
-              <mat-error *ngIf="startControl.hasError('required')"> La date début est requise </mat-error>
               <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #startDatePicker></mat-datepicker>
+
+              <!-- erreurs start -->
+              <mat-error *ngIf="startControl.hasError('matDatepickerMin')">Date trop ancienne</mat-error>
+              <mat-error *ngIf="startControl.hasError('required')">Date requise</mat-error>
             </mat-form-field>
+
+            <!-- Date de fin -->
             <mat-form-field appearance="outline">
               <mat-label>Fin</mat-label>
               <input
                 matInput
                 formControlName="end"
-                [matDatepicker]="endDatePicker"
-                [max]="maxDate"
                 placeholder="Choisir une date"
+                [matDatepicker]="endDatePicker"
+                [min]="startControl.value"
+                [max]="maxDate"
               />
               <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #endDatePicker></mat-datepicker>
-              <!-- <mat-error *ngIf="endControl.hasError('dateRange')"> </mat-error> -->
+
+              <!-- erreurs -->
+              <mat-error *ngIf="endControl.hasError('matDatepickerMax')">Date trop récente</mat-error>
+              <mat-error *ngIf="endControl.hasError('matDatepickerMin')">Date trop ancienne</mat-error>
             </mat-form-field>
-            <mat-error *ngIf="startControl.hasError('dateRange')">
-              La date de début ne peut pas être définie après la date de fin.
-            </mat-error>
           </div>
+
+          <!-- Jours de la semaine -->
           <div class="filter-timeAndDays">
             <mat-form-field class="days" appearance="outline">
               <mat-label>Jours de la semaine</mat-label>

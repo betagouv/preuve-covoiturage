@@ -8,10 +8,7 @@
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
   "editor.formatOnSave": true,
-<<<<<<< HEAD
   "prettier.configPath": "docker/lint/.prettierrc.js",
   "prettier.prettierPath": "docker/lint/node_modules/prettier",
   "prettier.packageManager": "yarn"
-=======
->>>>>>> exclude dist folders from VScode Go to file...
 }

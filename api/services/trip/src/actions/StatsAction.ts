@@ -1,6 +1,7 @@
 import { Action } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
-import { copyGroupIdFromContextMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
+import { copyGroupIdFromContextMiddlewares } from '@pdc/provider-middleware';
+
+import { handler } from '@ilos/common';
 
 import { alias } from '../shared/trip/stats.schema';
 import * as middlewareConfig from '../config/middlewares';
@@ -19,13 +20,24 @@ import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/Stat
       registry: 'registry.trip.stats',
     }),
     ['validate', alias],
-    validateDateMiddleware({
-      startPath: 'date.start',
-      endPath: 'date.end',
-      minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
-      maxEnd: () => new Date(new Date().getTime() - middlewareConfig.date.maxEndDefault),
-      applyDefault: true,
-    }),
+    [
+      'scopeToGroup',
+      {
+        global: 'trip.stats',
+        territory: 'territory.trip.stats',
+        operator: 'operator.trip.stats',
+      },
+    ],
+    [
+      'validate.date',
+      {
+        startPath: 'date.start',
+        endPath: 'date.end',
+        minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
+        maxEnd: () => new Date(new Date().getTime() - middlewareConfig.date.maxEndDefault),
+        applyDefault: true,
+      },
+    ],
   ],
 })
 export class StatsAction extends Action {
@@ -33,7 +45,7 @@ export class StatsAction extends Action {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     return (await this.cache.getOrBuild(async () => this.pg.stats(params), params)) || [];
   }
 }

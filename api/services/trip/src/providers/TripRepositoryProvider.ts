@@ -177,7 +177,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       SELECT
         ${
           params.group_by === 'day'
-            ? 'journey_start_datetime::date as day'
+            ? 'journey_start_datetime::date::text as day'
             : `TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm') as month`
         },
         sum(passenger_seats)::int as trip,
@@ -201,14 +201,32 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       }
     `;
 
-    console.log(values, text);
-
     const result = await this.connection.getClient().query({
       values,
       text: this.numberPlaceholders(text),
     });
 
-    return result.rowCount ? result.rows : [];
+    if (!result.rowCount) return [];
+
+    // fill empty days or months with 0 values to avoid gaps in the charts
+    return this.dateRange(params.group_by, params.date.start, params.date.end).map((item) => {
+      const emptyRow = {
+        trip: 0,
+        distance: 0,
+        carpoolers: 0,
+        operators: 0,
+        average_carpoolers_by_car: 0,
+        trip_subsidized: 0,
+        financial_incentive_sum: 0,
+        incentive_sum: 0,
+      };
+
+      // set 'day' or 'month' prop
+      emptyRow[params.group_by] = item;
+
+      // search for matching month or day or replace by default values
+      return result.rows.find((row) => row[params.group_by] === item) || emptyRow;
+    });
   }
 
   public async financialStats(params: Partial<TripStatInterface>): Promise<FinancialStatInterface[]> {
@@ -435,5 +453,22 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         (acc, current, idx, origin) => (idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`),
         '',
       );
+  }
+
+  private dateRange(type: 'day' | 'month', start: Date, end: Date): string[] {
+    const arr = [];
+    const len = type === 'day' ? 10 : 7;
+    const fn = type === 'day' ? 'Date' : 'Month';
+
+    if (type === 'month') {
+      start.setDate(1);
+    }
+
+    while (start <= end) {
+      arr.push(start.toISOString().substr(0, len));
+      start = new Date(start[`set${fn}`](start[`get${fn}`]() + 1));
+    }
+
+    return arr;
   }
 }

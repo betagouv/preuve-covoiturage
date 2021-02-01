@@ -1,4 +1,4 @@
-const monthsLabel = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jui', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthsLabel = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jui', 'Aou', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 // format yyyy-mm formated string to month label
 export function formatMonthLabel(monthDate) {

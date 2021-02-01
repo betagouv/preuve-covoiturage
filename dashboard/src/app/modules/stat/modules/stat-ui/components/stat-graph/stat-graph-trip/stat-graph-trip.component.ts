@@ -103,7 +103,6 @@ const graphOptions = {
 })
 export class StatGraphTripComponent extends StatGraphBase {
   @Input() displayNav = true;
-  // @Input() data: any = null;
 
   get graphOption() {
     return graphOptions[this.timeMode];
