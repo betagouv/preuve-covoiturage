@@ -43,7 +43,6 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 
 import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
-import { ValidateDateMiddleware } from './middlewares/ValidateDateMiddleware';
 
 import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 import { SeedCommand } from './commands/SeedCommand';
