@@ -185,7 +185,7 @@ export class BuildExportAction extends Action {
 
       let count = 0;
 
-      const filename = path.join(os.tmpdir(), v4()) + '.csv';
+      const filename = path.join(os.tmpdir(), `covoiturage-${v4()}`) + '.csv';
       const zipname = filename.replace('.csv', '') + '.zip';
       const fd = await fs.promises.open(filename, 'a');
       const stringifier = await this.getStringifier(fd, type);
@@ -218,6 +218,9 @@ export class BuildExportAction extends Action {
         template: this.config.get('email.templates.export_csv'),
         templateId: this.config.get('notification.templateIds.export_csv'),
         link: url,
+        // disable URL rewrite by Mailjet that makes downloading the file bug on Gmail/Chrome
+        // Mailjet replaces the S3 URL by an unsecured HTTP URL
+        disableTracking: true,
       };
 
       await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {

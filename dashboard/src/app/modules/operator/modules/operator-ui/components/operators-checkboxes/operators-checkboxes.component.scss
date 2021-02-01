@@ -1,0 +1,53 @@
+@import '../../../../../../../styles/variables';
+
+.loading-message {
+  margin: 2em 0;
+  .mat-spinner {
+    float: left;
+    margin: -4px 0.5em 0 0;
+  }
+}
+
+.mat-checkbox-list--vertical {
+  list-style: none;
+  padding-left: 0.2em;
+  columns: 3;
+  @media only screen and (max-width: 640px) {
+    columns: 2;
+  }
+  .mat-checkbox-list-item {
+    padding: 0.2em 0.1em 0.3em;
+  }
+}
+
+.link {
+  color: $color-primary;
+  cursor: pointer;
+}
+
+// make css work on the mat-checkbox items
+::ng-deep {
+  .mat-checkbox-list-item {
+    .mat-checkbox,
+    .mat-checkbox .mat-checkbox-layout {
+      max-width: 100%;
+    }
+    .mat-checkbox-layout .mat-checkbox-label {
+      text-overflow: ellipsis;
+      max-width: 100%;
+      overflow: hidden;
+    }
+  }
+
+  .app-operators-checkboxes {
+    .mat-hint {
+      display: block;
+      margin-bottom: 2em;
+      margin-left: 0em;
+      font-weight: normal;
+      font-style: italic;
+      font-size: 0.8em;
+      text-align: right;
+    }
+  }
+}

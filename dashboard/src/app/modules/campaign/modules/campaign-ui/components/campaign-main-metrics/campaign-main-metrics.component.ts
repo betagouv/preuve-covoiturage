@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import { ChartData, ChartOptions } from 'chart.js';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-campaign-main-metrics',
@@ -74,7 +75,12 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
   private initBudget(): void {
     this.budgetTotal = this.campaign ? this.campaign.max_amount : 0;
 
-    this.budgetSpent = this.campaign && this.campaign.state ? this.campaign.state.amount / 100 : 0;
+    this.budgetSpent =
+      this.campaign && this.campaign.state
+        ? this.campaign.unit === IncentiveUnitEnum.EUR
+          ? this.campaign.state.amount / 100
+          : this.campaign.state.amount
+        : 0;
     this.budgetRemaining = this.campaign ? this.budgetTotal - this.budgetSpent : 1;
   }
 

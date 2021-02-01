@@ -10,35 +10,65 @@
     <p>Merci de votre compréhension</p>
   </div> -->
 
-  <form [formGroup]="exportFilterForm">
-    <div class="exportFilter-dates" formGroupName="date">
-      <div class="dates">
+  <form [formGroup]="form">
+    <div class="exportFilter-dates">
+      <div class="dates" formGroupName="date">
+        <!-- start -->
         <mat-form-field appearance="outline">
           <mat-label>Début</mat-label>
           <input
-            [min]="minDate"
             matInput
             formControlName="start"
-            [matDatepicker]="startDatePicker"
             placeholder="Choisir une date"
+            [min]="minDateStart"
+            [max]="maxDateStart"
+            [matDatepicker]="startDatePicker"
           />
           <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #startDatePicker></mat-datepicker>
+          <mat-error *ngIf="form.get('date.start').hasError('matDatepickerParse')">
+            Utiliser le format dd/mm/yyyy
+          </mat-error>
+          <mat-error *ngIf="form.get('date.start').hasError('matDatepickerMin')">
+            La date minimum doit être supérieure à 1 an.
+          </mat-error>
+          <mat-error *ngIf="form.get('date.start').hasError('matDatepickerMax')">
+            La date maximum ne peut être supérieure à la fin.
+          </mat-error>
         </mat-form-field>
+
+        <!-- end -->
         <mat-form-field appearance="outline">
           <mat-label>Fin</mat-label>
-          <input matInput formControlName="end" [matDatepicker]="endDatePicker" placeholder="Choisir une date" />
+          <input
+            matInput
+            formControlName="end"
+            placeholder="Choisir une date"
+            [min]="minDateEnd"
+            [max]="maxDateEnd"
+            [matDatepicker]="endDatePicker"
+          />
           <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #endDatePicker></mat-datepicker>
+          <mat-error *ngIf="form.get('date.end').hasError('matDatepickerParse')">
+            Utiliser le format dd/mm/yyyy
+          </mat-error>
+          <mat-error *ngIf="form.get('date.end').hasError('matDatepickerMin')">
+            La date minimum doit être supérieure à celle de début.
+          </mat-error>
+          <mat-error *ngIf="form.get('date.end').hasError('matDatepickerMax')">
+            La date maximum ne peut être plus récente qu'il y a 5 jours.
+          </mat-error>
         </mat-form-field>
       </div>
 
-      <app-operators-autocomplete
-        *ngIf="operatorFieldVisible | async"
-        fieldName="operator_id"
-        [onlyVisible]="operatorFieldVisibleOperatorOnly | async"
-        [parentForm]="exportFilterForm"
-      ></app-operators-autocomplete>
+      <!--
+        operators' list on 3 columns
+        - visible if territory or registry
+        - an operator is visible by a territory only if it accepted to be visible
+      -->
+      <h3 *ngIf="!user.isOperator">Opérateurs</h3>
+      <app-operators-checkboxes *ngIf="!user.isOperator" formControlName="operators"></app-operators-checkboxes>
 
       <div class="actions">
         <button
@@ -47,7 +77,7 @@
           color="primary"
           [appShowSpinner]="isExporting"
           [disabled]="isExporting"
-          (click)="exportTrips()"
+          (click)="export()"
         >
           Exporter les trajets
         </button>

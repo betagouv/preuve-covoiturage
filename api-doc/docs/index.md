@@ -30,6 +30,7 @@ Plusieurs services sont gérés par l'équipe du Registre de preuve de covoitura
 - [La documentation générale](https://doc.covoiturage.beta.gouv.fr) ;
 - [L'application](https://app.covoiturage.beta.gouv.fr) permet aux opérateurs et aux territoires de gérer les campagnes ;
 - [Les statistiques](https://app.covoiturage.beta.gouv.fr) sont un observatoire de l'évolution du covoiturage en France ;
+- [Le status des applications](https://status.covoiturage.beta.gouv.fr/) pour suivre les incidents et l'accessibilité des services ;
 - [Le générateur d'attestations sur l'honneur](https://attestation.covoiturage.beta.gouv.fr) permet aux personnes qui covoiturent de produire facilement un document pour leur employeur dans le but de profiter du Forfait Mobilités Durables.
 
 ## Langues

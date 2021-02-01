@@ -5,6 +5,7 @@ export * from './ContextExtract/ContextExtractMiddleware';
 export * from './FeatureFlag/FeatureFlagMiddleware';
 export * from './FilterOutput/FilterOutputMiddleware';
 export * from './ScopeToSelf/ScopeToSelfMiddleware';
+export * from './ValidateDate/ValidateDateMiddleware';
 
 export { ChannelServiceBlacklistMiddleware } from './ChannelService/ChannelServiceBlacklistMiddleware';
 export { ChannelServiceWhitelistMiddleware } from './ChannelService/ChannelServiceWhitelistMiddleware';

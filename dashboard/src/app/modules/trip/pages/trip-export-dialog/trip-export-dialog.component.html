@@ -3,7 +3,10 @@
   <p>Export des données au format CSV compressé (.zip)</p>
 
   <ul *ngIf="hasProps">
-    <li *ngFor="let item of props | keyvalue">{{ item.key }} : {{ item.value }}</li>
+    <li *ngFor="let item of props | keyvalue">
+      <span class="key">{{ item.key }}&nbsp;:</span>
+      {{ item.value }}
+    </li>
   </ul>
 
   <p>Le fichier vous sera envoyé par email dans quelques minutes.</p>

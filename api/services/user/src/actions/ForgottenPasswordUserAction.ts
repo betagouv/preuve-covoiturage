@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
+import { handler } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/forgottenPassword.contract';
 import { alias } from '../shared/user/forgottenPassword.schema';
@@ -18,7 +18,7 @@ export class ForgottenPasswordUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const token = await this.authRepository.createTokenByEmail(
       params.email,
       this.authRepository.RESET_TOKEN,
@@ -26,6 +26,5 @@ export class ForgottenPasswordUserAction extends AbstractAction {
     );
 
     await this.notification.passwordForgotten(token, params.email);
-    return;
   }
 }

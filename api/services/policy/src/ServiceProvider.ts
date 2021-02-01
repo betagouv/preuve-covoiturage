@@ -8,6 +8,7 @@ import {
   ScopeToSelfMiddleware,
   ChannelServiceWhitelistMiddleware,
   ContextExtractMiddleware,
+  ValidateDateMiddleware,
 } from '@pdc/provider-middleware';
 
 import { config } from './config';
@@ -55,7 +56,6 @@ import { SeedCommand } from './commands/SeedCommand';
     MetadataProvider,
     TripRepositoryProvider,
     ['validate.rules', ValidateRuleParametersMiddleware],
-    ['validate.date', ValidateDateMiddleware],
     PolicyEngine,
     IncentiveRepositoryProvider,
     TerritoryRepositoryProvider,
@@ -96,6 +96,7 @@ import { SeedCommand } from './commands/SeedCommand';
     ['scope.it', ScopeToSelfMiddleware],
     ['channel.service.only', ChannelServiceWhitelistMiddleware],
     ['context_extract', ContextExtractMiddleware],
+    ['validate.date', ValidateDateMiddleware],
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {

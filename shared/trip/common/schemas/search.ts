@@ -98,7 +98,7 @@ export const stats = {
     ...params,
     group_by: {
       type: 'string',
-      enum: ['month', 'day']
+      enum: ['month', 'day'],
     },
   },
 };
