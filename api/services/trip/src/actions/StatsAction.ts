@@ -22,7 +22,7 @@ import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/Stat
     [
       'validate.date',
       {
-        startPath: 'date.date',
+        startPath: 'date.start',
         endPath: 'date.end',
         minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 365 * 2),
         maxEnd: () => new Date(),
