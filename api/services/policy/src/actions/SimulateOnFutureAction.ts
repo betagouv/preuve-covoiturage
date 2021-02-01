@@ -19,6 +19,7 @@ import { v4 } from 'uuid';
   ...handlerConfig,
   middlewares: [
     ['can', ['journey.create']],
+    ['context_extract', { operator_id: 'call.user.operator_id' }],
     ['validate', alias],
   ],
 })
