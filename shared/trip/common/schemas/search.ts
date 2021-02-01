@@ -10,7 +10,7 @@ const params = {
   date: {
     type: 'object',
     additionalProperties: false,
-    required: ['start', 'end'],
+    minProperties: 1,
     properties: {
       start: {
         macro: 'timestamp',
@@ -98,7 +98,7 @@ export const stats = {
     ...params,
     group_by: {
       type: 'string',
-      enum: ['month', 'day']
+      enum: ['month', 'day'],
     },
   },
 };

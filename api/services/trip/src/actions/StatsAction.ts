@@ -6,6 +6,7 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { alias } from '../shared/trip/stats.schema';
 import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/StatCacheRepositoryProviderInterface';
+import * as middlewareConfig from '../config/middlewares';
 
 @handler({
   ...handlerConfig,
@@ -24,8 +25,9 @@ import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/Stat
       {
         startPath: 'date.start',
         endPath: 'date.end',
-        minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 365 * 2),
+        minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
         maxEnd: () => new Date(),
+        applyDefault: true,
       },
     ],
   ],

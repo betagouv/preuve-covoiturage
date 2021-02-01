@@ -4,6 +4,7 @@ import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/searchcount.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { alias } from '../shared/trip/searchcount.schema';
+import * as middlewareConfig from '../config/middlewares';
 
 // TODO
 @handler({
@@ -23,8 +24,9 @@ import { alias } from '../shared/trip/searchcount.schema';
       {
         startPath: 'date.start',
         endPath: 'date.end',
-        minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 365 * 2),
+        minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
         maxEnd: () => new Date(),
+        applyDefault: true,
       },
     ],
   ],
