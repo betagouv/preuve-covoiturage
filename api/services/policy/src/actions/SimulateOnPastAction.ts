@@ -11,6 +11,23 @@ import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvid
 @handler({
   ...handlerConfig,
   middlewares: [
+    [
+      'scope.it',
+      [
+        [],
+        [
+          (params, context): string => {
+            if (
+              'campaign' in params &&
+              'territory_id' in params.campaign &&
+              params.campaign.territory_id === context.call.user.territory_id
+            ) {
+              return 'incentive-campaign.create';
+            }
+          },
+        ],
+      ],
+    ],
     ['validate', alias],
     'validate.rules',
     [
