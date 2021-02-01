@@ -20,6 +20,7 @@ import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as templatesSchemaBinding } from './shared/policy/templates.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
 import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOn.schema';
+import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
 
 import { CreateCampaignAction } from './actions/CreateCampaignAction';
 import { PatchCampaignAction } from './actions/PatchCampaignAction';
@@ -30,18 +31,22 @@ import { TemplatesCampaignAction } from './actions/TemplatesCampaignAction';
 import { FindCampaignAction } from './actions/FindCampaignAction';
 import { ApplyAction } from './actions/ApplyAction';
 import { FinalizeAction } from './actions/FinalizeAction';
+import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
+import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
+import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
 
 import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryProvider';
 import { PolicyEngine } from './engine/PolicyEngine';
 import { MetadataProvider } from './engine/meta/MetadataProvider';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
+import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 
 import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
+import { ValidateDateMiddleware } from './middlewares/ValidateDateMiddleware';
+
 import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 import { SeedCommand } from './commands/SeedCommand';
-import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
-import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
 
 @serviceProvider({
   config,
@@ -53,6 +58,7 @@ import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
     ['validate.rules', ValidateRuleParametersMiddleware],
     PolicyEngine,
     IncentiveRepositoryProvider,
+    TerritoryRepositoryProvider,
   ],
   validator: [
     createSchemaBinding,
@@ -63,6 +69,7 @@ import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
     templatesSchemaBinding,
     findSchemaBinding,
     simulateOnSchemaBinding,
+    simulateOnFutureSchemaBinding,
   ],
   handlers: [
     TemplatesCampaignAction,
@@ -76,6 +83,7 @@ import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
     FinalizeAction,
     SimulateOnPastAction,
     SimulateOnFakeAction,
+    SimulateOnFutureAction,
   ],
   connections: [
     [PostgresConnection, 'connections.postgres'],

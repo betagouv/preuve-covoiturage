@@ -7,7 +7,11 @@ export interface CampaignRepositoryProviderInterface {
   patchWhereTerritory(id: number, territoryId: number, patch: Partial<CampaignInterface>): Promise<CampaignInterface>;
 
   findOneWhereTerritory(id: number, territoryId: number): Promise<CampaignInterface>;
-  findWhere(search: { territory_id?: number | null; status?: string }): Promise<CampaignInterface[]>;
+  findWhere(search: {
+    territory_id?: number | number[] | null;
+    status?: string;
+    datetime?: Date;
+  }): Promise<CampaignInterface[]>;
 
   deleteDraftOrTemplate(id: number, territoryId: number): Promise<void>;
   // findApplicableCampaigns(territories: number[], date: Date): Promise<CampaignInterface[]>;
@@ -35,7 +39,11 @@ export abstract class CampaignRepositoryProviderInterfaceResolver implements Cam
     throw new Error();
   }
 
-  async findWhere(search: { territory_id?: number | null; status?: string }): Promise<CampaignInterface[]> {
+  async findWhere(search: {
+    territory_id?: number | number[] | null;
+    status?: string;
+    datetime?: Date;
+  }): Promise<CampaignInterface[]> {
     throw new Error();
   }
 
