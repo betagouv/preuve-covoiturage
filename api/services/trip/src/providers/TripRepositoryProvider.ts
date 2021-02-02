@@ -217,6 +217,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     if (!result.rowCount) return [];
 
+    // results for totals don't need filling
+    if (params.group_by === ApiGraphTimeMode.All) return result.rows;
+
     // fill empty days or months with 0 values to avoid gaps in the charts
     return this.dateRange(params.group_by, params.date.start, params.date.end).map((item) => {
       const emptyRow = {

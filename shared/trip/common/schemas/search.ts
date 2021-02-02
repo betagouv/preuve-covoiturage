@@ -107,6 +107,7 @@ export const search = {
 
 export const stats = {
   type: 'object',
+  required: ['tz', 'group_by'],
   additionalProperties: false,
   properties: {
     ...params,

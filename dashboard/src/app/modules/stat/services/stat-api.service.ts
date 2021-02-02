@@ -1,3 +1,6 @@
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -5,11 +8,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
-
 import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
-import { Observable } from 'rxjs';
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -51,10 +51,6 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
     // All graph time Mode is forced;
     params = { ...params, group_by: ApiGraphTimeMode.All };
 
-    return this.callOne(this.paramGetList(params)).pipe(
-      map((datas) => {
-        return datas.data[0];
-      }),
-    );
+    return this.callOne(this.paramGetList(params)).pipe(map(({ data }) => data[0]));
   }
 }

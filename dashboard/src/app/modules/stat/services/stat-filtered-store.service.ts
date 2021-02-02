@@ -95,9 +95,7 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     this._filterSubject
       .pipe(
         debounceTime(50),
-        mergeMap((filter) => {
-          return (this.rpcGetList as StatApiService).getTotalStats(filter);
-        }),
+        mergeMap((filter) => (this.rpcGetList as StatApiService).getTotalStats(filter)),
       )
       .subscribe((totalStats) => {
         this._totalStats.next(totalStats);
