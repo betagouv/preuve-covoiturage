@@ -8,7 +8,7 @@ import { environment as env } from './environments/environment';
 
 const globalEnv = (window as any).environment;
 
-if ((globalEnv && globalEnv.production) || env.production) {
+if ((globalEnv && globalEnv.production) || (!globalEnv && env.production)) {
   enableProdMode();
 }
 
