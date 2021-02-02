@@ -4,23 +4,22 @@
     <h3>RESOLUTION</h3>
     <p class="SummaryForm-summary-text" id="summary" [innerHTML]="getSummaryText()" #summaryText></p>
     <div class="SummaryForm-summary-actions">
-      <button mat-stroked-button (click)="copySummary(summaryText.textContent)" color="primary">
-        Copier le texte
-      </button>
+      <button mat-stroked-button (click)="copySummary()" color="primary">Copier le texte</button>
       <span>Attention : Texte indicatif</span>
     </div>
   </div>
 
-  
-  <app-campaign-simulation-pane v-if="isCreating" *ngIf="visible" [campaign]="campaignForm.value"></app-campaign-simulation-pane>
+  <app-campaign-simulation-pane
+    v-if="isCreating"
+    *ngIf="visible"
+    [campaign]="campaignForm.value"
+  ></app-campaign-simulation-pane>
 
   <form [formGroup]="campaignForm">
     <mat-form-field appearance="outline">
       <mat-label>Donnez un nom à votre campagne</mat-label>
       <input matInput formControlName="name" required autocomplete="off" />
-      <mat-error *ngIf="controls.name.hasError('required')">
-        Le nom de la campagne est obligatoire.
-      </mat-error>
+      <mat-error *ngIf="controls.name.hasError('required')"> Le nom de la campagne est obligatoire. </mat-error>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Description de la campagne</mat-label>
@@ -29,7 +28,6 @@
         La description de la campagne est obligatoire.
       </mat-error>
     </mat-form-field>
-
 
     <div class="SummaryForm-actions">
       <button
