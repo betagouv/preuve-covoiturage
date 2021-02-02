@@ -35,7 +35,7 @@ import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvid
       {
         startPath: 'campaign.start_date',
         endPath: 'campaign.end_date',
-        minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 4),
+        minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 5),
         maxEnd: () => new Date(),
       },
     ],
