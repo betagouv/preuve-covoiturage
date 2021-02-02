@@ -31,6 +31,8 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   visibilityFormControl: FormControl;
   searchMode: boolean;
 
+  selectableTerritoryFilter = (ter) => ter.activable || ter.level === 'towngroup';
+
   constructor(
     private _commonDataService: CommonDataService,
     private _operatorVisilibityService: OperatorVisilibityService,
@@ -41,7 +43,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   swapCheck(ter: TerritoryVisibilityTree) {
-    console.log('> swapCheck', ter._id);
     const selectedTerritoryIds = this.selectedTerritoryIds;
     const selInd = selectedTerritoryIds.indexOf(ter._id);
     const selected = selInd === -1;
@@ -130,6 +131,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
       .pipe(takeUntil(this.destroy$))
       .subscribe((filteredTerritories) => {
         this.territoryIdsToShow = filteredTerritories.map((territory) => territory._id);
+
         this.updateVisibilityForm();
       });
 
@@ -179,6 +181,8 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
 
   private initVisibilityForm(): void {
     this.visibilityFormControl = this._fb.control([]);
+
+    this.visibilityFormControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.updateCheckAllValue());
   }
 
   private updateVisibilityForm(): void {
@@ -189,6 +193,18 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     this.territories.forEach((ter) => (ter.selected = ter.activable && territoryIds.indexOf(ter._id) !== -1));
 
     this.visibilityFormControl.setValue(territoryIds);
+
+    this.updateCheckAllValue();
+  }
+
+  private updateCheckAllValue() {
+    //const uniqueTerritoryIdsToShow = this.visibilityFormControl.controls
+    const selectableTerritories = this.territories
+      .filter(this.selectableTerritoryFilter)
+      .map((ter) => ter._id)
+      .filter((val, ind, self) => self.indexOf(val) === ind);
+
+    this.checkAllValue = this.selectedTerritoryIds.length >= selectableTerritories.length;
   }
 
   private initSearchForm(): void {

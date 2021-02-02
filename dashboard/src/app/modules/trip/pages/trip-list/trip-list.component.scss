@@ -1,9 +1,12 @@
 .TripList {
+  position: relative;
   margin-top: 50px;
 
   &--loading {
+    position: absolute;
     display: flex;
     justify-content: space-around;
+    left: 50%;
   }
 
   &-message {

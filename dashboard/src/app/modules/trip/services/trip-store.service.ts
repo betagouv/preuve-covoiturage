@@ -22,10 +22,9 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
   }
 
   get loaded(): boolean {
-    return !!this.entitiesSubject.value;
+    return this.isLoaded;
   }
 
-  // total
   get total$(): Observable<string> {
     return this._total$;
   }
@@ -44,8 +43,12 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
       },
     };
 
-    if (filter.operator_id) {
-      params.operator_id = filter.operator_id;
+    if (filter.operators && filter.operators.list && filter.operators.list.length) {
+      params.operator_id = filter.operators.list;
+    }
+
+    if (filter.territories && filter.territories.list && filter.territories.list.length) {
+      params.territory_id = filter.territories.list;
     }
 
     return this.rpcGetList.exportTrips(params);

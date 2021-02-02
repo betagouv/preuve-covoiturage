@@ -19,6 +19,7 @@ import { OperatorListComponent } from './components/operator-list/operator-list.
 import { OperatorFilterComponent } from './components/operator-filter/operator-filter.component';
 import { OperatorDetailsComponent } from './components/operator-details/operator-details.component';
 import { OperatorLogoUploadComponent } from './components/operator-logo-upload/operator-logo-upload.component';
+import { OperatorsCheckboxesComponent } from './components/operators-checkboxes/operators-checkboxes.component';
 
 @NgModule({
   declarations: [
@@ -31,9 +32,11 @@ import { OperatorLogoUploadComponent } from './components/operator-logo-upload/o
     OperatorFilterComponent,
     OperatorDetailsComponent,
     OperatorLogoUploadComponent,
+    OperatorsCheckboxesComponent,
   ],
   exports: [
     OperatorsAutocompleteComponent,
+    OperatorsCheckboxesComponent,
     OperatorFormComponent,
     OperatorAutocompleteComponent,
     OperatorListViewComponent,

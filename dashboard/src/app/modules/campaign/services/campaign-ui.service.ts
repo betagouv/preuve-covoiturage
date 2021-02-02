@@ -1,6 +1,5 @@
 import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { WeekDay } from '@angular/common';
-import * as moment from 'moment';
 
 import {
   RestrictionUxInterface,
@@ -318,8 +317,8 @@ export class CampaignUiService {
     let summaryText = `<p>Campagne d’incitation au covoiturage du <b>`;
 
     // DATE
-    summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
-    summaryText += ` ${moment(campaign.end).format('dddd DD MMMM YYYY')}</b>, limitée à`;
+    summaryText += ` ${campaign.start.format('dddd DD MMMM YYYY')} au`;
+    summaryText += ` ${campaign.end.format('dddd DD MMMM YYYY')}</b>, limitée à`;
 
     // WEEK DAYS
 
@@ -332,7 +331,9 @@ export class CampaignUiService {
     // MAXIMUM AMOUNT
     summaryText += `
       <p>Cette campagne est limitée à
-        <b>${campaign.max_amount} ${unit}${campaign.max_amount > 1 ? 's' : ''}</b>.
+        <b>${campaign.max_amount} ${unit}${campaign.max_amount > 1 ? 's' : ''}${
+      campaign.max_trips !== null ? ` et ${campaign.max_trips} trajet${campaign.max_trips > 1 ? 's' : ''}` : ''
+    } </b>.
       </p>
     `;
 

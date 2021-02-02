@@ -36,6 +36,8 @@ import { nestParams } from './helpers/nestParams';
 import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
 import { RPCResponseType } from './shared/common/rpc/RPCResponseType';
 import { TokenPayloadInterface } from './shared/application/common/interfaces/TokenPayloadInterface';
+import { healthCheckFactory } from './helpers/healthCheckFactory';
+import { prometheusMetricsFactory } from './helpers/prometheusMetricsFactory';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -77,12 +79,15 @@ export class HttpTransport implements TransportInterface {
     this.registerBodyHandler();
     this.registerSessionHandler();
     this.registerSecurity();
+    this.registerMetrics();
     this.registerGlobalMiddlewares();
     this.registerStatsRoutes();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
-    this.registerCertificateRoutes();
+    // feature flag certificates until properly tested by operators
+    if (env('NODE_ENV') !== 'production') this.registerCertificateRoutes();
     this.registerAcquisitionRoutes();
+    this.registerSimulationRoutes();
     this.registerHonorRoutes();
     this.registerUptimeRoute();
     this.registerCallHandler();
@@ -176,6 +181,27 @@ export class HttpTransport implements TransportInterface {
 
     this.app.use(signResponseMiddleware);
     this.app.use(dataWrapMiddleware);
+  }
+
+  private registerMetrics(): void {
+    this.app.get('/health', rateLimiter({ windowMs: 60 * 1000, max: 60 / 5 + 1 }), healthCheckFactory([]));
+    this.app.get('/metrics', rateLimiter({ windowMs: 60 * 1000, max: 60 / 15 + 1 }), prometheusMetricsFactory());
+  }
+
+  private registerSimulationRoutes(): void {
+    this.app.post(
+      '/v2/policy/simulate',
+      rateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const { params } = req;
+        const user = get(req, 'session.user', null);
+        const response = (await this.kernel.handle(
+          makeCall('campaign:simulateOnFuture', params, { user, metadata: { req } }),
+        )) as RPCResponseType;
+        this.send(res, response);
+      }),
+    );
   }
 
   /**

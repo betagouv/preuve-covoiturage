@@ -8,8 +8,6 @@ import {
   IdentifierType,
   NewableType,
   ExtensionInterface,
-  DefaultLogger,
-  CONTAINER_LOGGER_KEY,
 } from '@ilos/common';
 
 import { Container, HookRegistry } from '../container';
@@ -37,19 +35,12 @@ export abstract class ServiceContainer
   constructor(container?: ContainerInterface) {
     this.container = container ? container.createChild() : new Container();
     this.registerSelf();
-    this.registerLogger();
   }
 
   protected registerSelf() {
     this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
     this.extensionRegistry = new ExtensionRegistry(this);
     this.extensionRegistry.importFromParent();
-  }
-
-  protected registerLogger() {
-    if (!this.container.isBound(CONTAINER_LOGGER_KEY)) {
-      this.container.bind(CONTAINER_LOGGER_KEY).to(DefaultLogger);
-    }
   }
 
   /**

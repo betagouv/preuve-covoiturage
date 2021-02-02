@@ -10,6 +10,7 @@ import {
   signature as buildSignature,
   ParamsInterface as BuildParamsInterface,
 } from '../shared/trip/buildExport.contract';
+import * as middlewareConfig from '../config/middlewares';
 
 @handler({
   ...handlerConfig,
@@ -21,6 +22,15 @@ import {
         global: 'trip.export',
         territory: 'territory.trip.export',
         operator: 'operator.trip.export',
+      },
+    ],
+    [
+      'validate.date',
+      {
+        startPath: 'date.start',
+        endPath: 'date.end',
+        minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
+        maxEnd: () => new Date(new Date().getTime() - middlewareConfig.date.maxEndDefault),
       },
     ],
   ],

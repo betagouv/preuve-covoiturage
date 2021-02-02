@@ -58,8 +58,15 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
     this.uiStatusControl.valueChanges.subscribe(() => {
       this.setValidators();
     });
-    this.freeControl.valueChanges.subscribe(() => {
+    this.freeControl.valueChanges.subscribe((change) => {
       this.setValidators();
+      // reset for passenger retribution form when free selected;
+      if (change === true) {
+        this.forPassengerFormGroup.patchValue({
+          per_km: false,
+          amount: 0,
+        });
+      }
     });
   }
 

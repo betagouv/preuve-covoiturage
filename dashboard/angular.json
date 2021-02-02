@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "allowedCommonJsDependencies": ["@ctrl/ngx-chartjs", "nouislider", "file-saver"],
+            "allowedCommonJsDependencies": ["@ctrl/ngx-chartjs", "nouislider", "file-saver", "lodash"],
             "outputPath": "dist/dashboard",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -42,7 +42,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "with": "src/environments/environment.production.ts"
                 }
               ],
               "optimization": true,

@@ -14,12 +14,21 @@ import { Observable } from 'rxjs';
   styleUrls: ['./trip-layout.component.scss'],
 })
 export class TripLayoutComponent extends DestroyObservable implements OnInit {
-  public filterNumber = '';
-  public showFilter = false;
-  public pageHasFilter = false;
+  public menu: MenuTabInterface[] = [
+    {
+      path: '/trip/stats',
+      label: 'Chiffres clés',
+    },
+    {
+      path: '/trip/list',
+      label: 'Liste détaillée',
+    },
+  ];
 
-  public menu: MenuTabInterface[];
-  canExport$: Observable<boolean>;
+  public filtersCount = '';
+  public showFilters = false;
+  public pageHasFilters = false;
+  public canExport$: Observable<boolean>;
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -32,7 +41,7 @@ export class TripLayoutComponent extends DestroyObservable implements OnInit {
   ngOnInit(): void {
     this.canExport$ = this.authenticationService.user$.pipe(
       takeUntil(this.destroy$),
-      map((user) =>
+      map(() =>
         this.authenticationService.hasAnyPermission([
           'trip.export',
           'operator.trip.export',
@@ -41,52 +50,31 @@ export class TripLayoutComponent extends DestroyObservable implements OnInit {
       ),
     );
 
-    this.menu = [
-      {
-        path: '/trip/stats',
-        label: 'Chiffres clés',
-      },
-      {
-        path: '/trip/list',
-        label: 'Liste détaillée',
-      },
-      // {
-      //   path: '/trip/export',
-      //   groups: [UserGroupEnum.TERRITORY, UserGroupEnum.REGISTRY],
-      //   label: 'Export',
-      // },
-    ];
-    // {
-    //   path: '/trip/maps',
-    //   groups: [UserGroupEnum.REGISTRY],
-    //   label: 'Cartes',
-    // },
-    // {
-    //   path: '/trip/import',
-    //   groups: [UserGroupEnum.OPERATOR],
-    //   label: 'Import',
-    // },
-
-    this.setShowFilter();
+    // check on init and page change
+    this.enableFiltersOnPage();
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
         takeUntil(this.destroy$),
       )
       .subscribe((event: NavigationEnd) => {
-        this.setShowFilter(event.url);
+        this.enableFiltersOnPage(event.url);
       });
   }
 
-  setShowFilter(url = this.router.url): void {
-    this.pageHasFilter = !['/trip/import', '/trip/export'].includes(url);
+  public enableFiltersOnPage(url = this.router.url): void {
+    this.pageHasFilters = !['/trip/import', '/trip/export'].includes(url);
   }
 
-  public setFilterNumber(filterNumber: number): void {
-    this.filterNumber = filterNumber === 0 ? '' : filterNumber.toString();
+  public setFiltersCount(count: number): void {
+    this.filtersCount = count === 0 ? '' : count.toString();
   }
 
   public toggleFilterDisplay(): void {
-    this.showFilter = !this.showFilter;
+    this.showFilters = !this.showFilters;
+  }
+
+  public hasGroupAndRole(groups, role): boolean {
+    return this.authenticationService.hasAnyGroup(groups) && this.authenticationService.hasRole(role);
   }
 }

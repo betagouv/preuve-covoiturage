@@ -1,0 +1,14 @@
+{
+  "name": "@pdc/migrator",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "scripts": {
+    "up": "db-migrate up",
+    "down": "db-migrate down"
+  },
+  "dependencies": {
+    "db-migrate": "^0.11.11",
+    "db-migrate-pg": "^1.2.2"
+  }
+}

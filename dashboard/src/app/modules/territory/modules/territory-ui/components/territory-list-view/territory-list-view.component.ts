@@ -1,12 +1,12 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, merge, Observable } from 'rxjs';
-import { debounceTime, filter, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, merge } from 'rxjs';
+import { debounceTime, takeUntil, tap } from 'rxjs/operators';
+
 import { MatPaginator } from '@angular/material/paginator';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 
 import { Territory } from '~/core/entities/territory/territory';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
-
 @Component({
   selector: 'app-territory-list-view',
   templateUrl: './territory-list-view.component.html',
@@ -14,47 +14,39 @@ import { TerritoryStoreService } from '~/modules/territory/services/territory-st
 })
 export class TerritoryListViewComponent extends DestroyObservable implements OnInit, AfterViewInit {
   private _filterLiteral = new BehaviorSubject('');
-  showForm = false;
+  isFormVisible = false;
   territoryToEdit: Territory = null;
 
-  public territories: Territory[] = [];
+  // public territories: Territory[] = [];
   public territoriesToShow: Territory[];
-  public territoriesFiltered: Territory[];
 
   ELEMENT_PER_PAGE = 10;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   private _countTerritories = 0;
 
-  constructor(private _territoryStoreService: TerritoryStoreService) {
+  constructor(private territoryStoreService: TerritoryStoreService) {
     super();
   }
 
-  protected territories$: Observable<Territory[]>;
-
   ngOnInit(): void {
-    this.territories$ = this._territoryStoreService.entities$.pipe(
-      filter((data) => !!data),
-      tap((territories) => (this.territories = territories)),
-    );
-
-    this._territoryStoreService.entity$
-      .pipe(
-        filter((data) => !!data),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((territory) => {
-        this.territoryToEdit = territory;
-        this.showForm = true;
-      });
-
-    this.territories$.pipe(takeUntil(this.destroy$)).subscribe((data) => (this.territoriesToShow = data));
-
+    // bind and load all territories
+    this.territoryStoreService.entities$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => (this.territoriesToShow = data));
     this.loadTerritories();
+
+    // load single entity
+    this.territoryStoreService.unselect();
+    this.territoryStoreService.entity$.subscribe((entity) => {
+      this.territoryToEdit = entity;
+      this.isFormVisible = !!entity;
+    });
   }
 
-  showAddForm(): void {
-    this._territoryStoreService.selectNew();
+  // onclick: select new
+  onClickCreate(): void {
+    this.territoryStoreService.selectNew();
   }
 
   ngAfterViewInit(): void {
@@ -67,14 +59,14 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
     )
       .pipe(takeUntil(this.destroy$))
       .subscribe(() =>
-        this._territoryStoreService.filterSubject.next({
+        this.territoryStoreService.filterSubject.next({
           skip: this.paginator.pageIndex * this.ELEMENT_PER_PAGE,
           limit: this.ELEMENT_PER_PAGE,
           search: this._filterLiteral.value ? this._filterLiteral.value : undefined,
         }),
       );
 
-    this._territoryStoreService.pagination$
+    this.territoryStoreService.pagination$
       .pipe(takeUntil(this.destroy$))
       .subscribe((pagination) => (this._countTerritories = pagination.total));
   }
@@ -88,14 +80,14 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
   }
 
   onEdit(territory: any): void {
-    this._territoryStoreService.select(territory);
+    this.territoryStoreService.select(territory);
   }
 
-  close(): void {
-    this.showForm = false;
+  onClose(): void {
+    this.territoryStoreService.unselect();
   }
 
   loadTerritories(): void {
-    this._territoryStoreService.loadList();
+    this.territoryStoreService.loadList();
   }
 }

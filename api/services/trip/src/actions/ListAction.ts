@@ -5,6 +5,7 @@ import { get } from 'lodash';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { alias } from '../shared/trip/list.schema';
+import * as middlewareConfig from '../config/middlewares';
 
 // TODO
 @handler({
@@ -17,6 +18,16 @@ import { alias } from '../shared/trip/list.schema';
         global: 'trip.list',
         territory: 'territory.trip.list',
         operator: 'operator.trip.list',
+      },
+    ],
+    [
+      'validate.date',
+      {
+        startPath: 'date.start',
+        endPath: 'date.end',
+        minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
+        maxEnd: () => new Date(),
+        applyDefault: true,
       },
     ],
   ],
