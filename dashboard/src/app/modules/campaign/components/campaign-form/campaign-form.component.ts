@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material/stepper';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
@@ -119,7 +119,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
     );
   }
 
-  saveCampaign(): void {
+  public initCampaign(): void {
+    this.campaignFormGroup.setValue(new CampaignUx());
+  }
+
+  public saveCampaign(): void {
     const formValues = this.campaignFormGroup.getRawValue();
 
     // get territory of user
@@ -132,6 +136,23 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
     } else {
       const campaign = new Campaign();
       this.patchCampaign(campaign.toCampaignPatch(formValues));
+    }
+  }
+
+  public setTemplate(template): void {
+    if (template) {
+      this.setCampaignToForm(
+        new Campaign({
+          ...template,
+          _id: null,
+          parent_id: template._id,
+        }).toFormValues(),
+        true,
+      );
+    } else {
+      const campaign = new CampaignUx();
+      campaign.filters.rank = [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C];
+      this.setCampaignToForm(campaign, true);
     }
   }
 
@@ -207,41 +228,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
       restrictions: this._formBuilder.array([]),
       retributions: this._formBuilder.array([], { validators: [uniqueRetributionValidator] }),
     });
-  }
-
-  public initCampaign(): void {
-    this.campaignFormGroup.setValue(new CampaignUx());
-  }
-
-  public setTemplate(templateId: number | null = null): void {
-    let campaign;
-
-    if (templateId) {
-      // get template from service
-      this._campaignStoreService.templates$
-        .pipe(
-          takeUntil(this.destroy$),
-          map((cas) => cas.find((ca) => ca._id === templateId)),
-        )
-        .subscribe(
-          (template) => {
-            campaign = new Campaign({
-              ...template,
-              _id: null,
-              parent_id: templateId,
-            }).toFormValues();
-            this.setCampaignToForm(campaign, true);
-          },
-          (err) => {
-            this._toastr.error('Template non trouvé');
-          },
-        );
-    } else {
-      // new campaign from scratch with default values
-      campaign = new CampaignUx();
-      campaign.filters.rank = [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C];
-      this.setCampaignToForm(campaign, true);
-    }
   }
 
   private setCampaignToForm(campaign: CampaignUx, isTemplate = false): void {

@@ -1,8 +1,12 @@
 <div class="CampaignForm">
+  <!-- Spinner -->
   <div class="CampaignForm--loading" *ngIf="loading">
     <mat-spinner></mat-spinner>
   </div>
+
+  <!-- 4 steps form -->
   <mat-horizontal-stepper #stepper [linear]="true" *ngIf="!loading" [selectedIndex]="currentStep">
+    <!-- Step 1 : pick a template-->
     <mat-step [completed]="matStepperCompleted">
       <ng-template matStepLabel>Campagne</ng-template>
       <app-page-content>
@@ -11,7 +15,7 @@
             <app-campaign-templates
               (setTemplate)="setTemplate($event)"
               [isCreating]="creationFromScratch || creationFromParentId"
-              [campaignForm]="campaignFormGroup"
+              [parentId]="campaignFormGroup.get('parent_id').value"
             ></app-campaign-templates>
             <app-help-card
               [svgIcon]="helpCard.svgIcon"
@@ -30,6 +34,8 @@
         </div>
       </app-page-content>
     </mat-step>
+
+    <!-- Step 2 : eligibility -->
     <mat-step [completed]="canGoToThirdStep">
       <ng-template matStepLabel>Éligibilité</ng-template>
       <app-page-content>
@@ -61,6 +67,8 @@
         </div>
       </app-page-content>
     </mat-step>
+
+    <!-- Step 3 : finance -->
     <mat-step [completed]="canGoToLastStep">
       <ng-template matStepLabel>Rétribution</ng-template>
       <app-page-content>
@@ -70,7 +78,6 @@
               [campaignForm]="campaignFormGroup"
               [isCreating]="creationFromScratch"
             ></app-parameters-form>
-            <!--            *ngIf="!campaignFormGroup.controls.expertMode.value"-->
             <app-help-card
               [svgIcon]="helpCard.svgIcon"
               [title]="helpCard.title"
@@ -78,7 +85,6 @@
               [link]="helpCard.link"
             >
             </app-help-card>
-            <!--            <app-formula-guide *ngIf="campaignFormGroup.controls.expertMode.value"></app-formula-guide>-->
           </div>
           <div class="CampaignForm-content-actions">
             <button mat-flat-button class="large" matStepperPrevious>
@@ -93,6 +99,8 @@
         </div>
       </app-page-content>
     </mat-step>
+
+    <!-- Step 4 : summary -->
     <mat-step>
       <ng-template matStepLabel>Récapitulatif</ng-template>
       <app-page-content>

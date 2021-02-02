@@ -23,7 +23,7 @@ export class CampaignSummaryTextComponent {
     return this._campaignUiService.summary(this.campaign);
   }
 
-  copySummary(summary: string): void {
+  copySummary(): void {
     this._utils.copySelectionToClipboarcById('summary');
     this._toastr.success('Le récapitulatif a été copié !');
   }
