@@ -1,7 +1,5 @@
 <div class="stats">
-  <div class="stats-header" *ngIf="hideStats">
-    Les statistiques ne sont pas disponibles actuellement.
-  </div>
+  <div class="stats-header" *ngIf="hideStats">Les statistiques ne sont pas disponibles actuellement.</div>
   <ng-container *ngIf="!hideStats">
     <div class="stats-header">
       <h1>Statistiques</h1>
@@ -29,10 +27,12 @@
       </div>
     </div>
 
+    <!-- spinner -->
     <div class="stats--loading" *ngIf="loading && !loaded">
       <mat-spinner></mat-spinner>
     </div>
 
+    <!-- metrics -->
     <div class="stats-numbers" *ngIf="loaded">
       <div *ngFor="let statNumber of statNumbers" class="stats-number">
         <div class="stats-number-icon">
@@ -64,4 +64,15 @@
       </div>
     </div>
   </ng-container>
+
+  <!-- honor certificates -->
+  <div class="stats-honor">
+    <h2>Attestations sur l'honneur</h2>
+    <p>
+      Le générateur d'attestations sur l'honneur facilite la création d'un document à fournir aux employeurs du secteur
+      privé et du secteur public. Chaque création d'un document est enregistrée de façon anonyme.
+    </p>
+    <p><a href="https://attestation.covoiturage.beta.gouv.fr">https://attestation.covoiturage.beta.gouv.fr</a></p>
+    <app-stat-honor></app-stat-honor>
+  </div>
 </div>

@@ -3,18 +3,21 @@ export interface HonorStatInterface {
   count: number;
 }
 
+export interface DataSetInterface {
+  label: string;
+  data: number[];
+}
+
 export interface ResultInterface {
   labels: string[];
-  sets: {
-    public: number[];
-    limited: number[];
-  };
+  datasets: DataSetInterface[];
   count: {
     total: number;
     public: number;
     limited: number;
   };
 }
+
 export interface ParamsInterface {
   tz?: string;
 }

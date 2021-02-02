@@ -18,6 +18,7 @@ import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
+import { PublicStatsAction } from './actions/PublicStatsAction';
 import { ExportAction } from './actions/ExportAction';
 import { SearchCountAction } from './actions/SearchCountAction';
 import { BuildExportAction } from './actions/BuildExportAction';
@@ -46,6 +47,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
     ListAction,
     SearchCountAction,
     StatsAction,
+    PublicStatsAction,
     FinancialStatsAction,
     ExportAction,
     BuildExportAction,
