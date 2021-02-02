@@ -8,14 +8,18 @@ import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 import {
   TripSearchInterfaceWithPagination,
   TripSearchInterface,
-  ApiGraphTimeMode,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
+import { ApiGraphTimeMode } from '../shared/trip/common/interfaces/ApiGraphTimeMode';
+import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
+import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
 import {
   TzResultInterface,
   ExportTripInterface,
   TripRepositoryInterface,
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
+
 
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
