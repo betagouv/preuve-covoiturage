@@ -29,7 +29,7 @@ interface SimulateResultInterface {
     [
       'scope.it',
       [
-        [],
+        ['incentive-campaign.simulate'],
         [
           (params, context): string => {
             if (

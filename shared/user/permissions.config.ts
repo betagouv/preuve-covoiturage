@@ -240,6 +240,7 @@ export const registry = {
         'journey.process',
         'monitoring.journeys.stats',
         'territory.create',
+        'incentive-campaign.simulate',
         ...territory.admin.permissions,
         ...operator.admin.permissions,
       ]),
@@ -265,6 +266,7 @@ export const registry = {
       'profile.update',
       'profile.password',
       'profile.delete',
+      'incentive-campaign.simulate',
     ],
   },
 };
