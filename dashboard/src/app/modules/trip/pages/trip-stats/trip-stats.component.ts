@@ -22,8 +22,4 @@ export class TripStatsComponent implements OnInit {
   get statsList(): StatNavName[] {
     return this.isTerritoryOrRegistry ? PUBLIC_STATS : OPERATOR_STATS;
   }
-
-  get isOperator(): boolean {
-    return this.auth.isOperator();
-  }
 }
