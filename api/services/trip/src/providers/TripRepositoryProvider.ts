@@ -8,6 +8,7 @@ import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 import {
   TripSearchInterfaceWithPagination,
   TripSearchInterface,
+  ApiGraphTimeMode,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
   TzResultInterface,
@@ -459,7 +460,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       );
   }
 
-  private dateRange(type: 'day' | 'month', start: Date, end: Date): string[] {
+  private dateRange(type: ApiGraphTimeMode, start: Date, end: Date): string[] {
     const arr = [];
     const len = type === 'day' ? 10 : 7;
     const fn = type === 'day' ? 'Date' : 'Month';

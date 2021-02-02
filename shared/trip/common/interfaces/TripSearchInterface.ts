@@ -1,4 +1,4 @@
-import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
+import { ApiGraphTimeMode } from './ApiGraphTimeMode';
 
 export interface TripSearchInterface {
   tz?: string;
