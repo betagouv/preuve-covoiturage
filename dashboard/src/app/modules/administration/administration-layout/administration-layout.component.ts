@@ -4,8 +4,7 @@ import { MenuTabInterface } from '~/core/interfaces/admin/adminLayoutInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserManyRoleEnum } from '~/core/enums/user/user-role.enum';
-
-import { environment } from '../../../../environments/environment';
+import { ConfigService } from '~/core/services/config.service';
 
 @Component({
   selector: 'app-administration-layout',
@@ -73,7 +72,7 @@ export class AdministrationLayoutComponent implements OnInit {
     },
   ];
 
-  constructor(public authenticationService: AuthenticationService) {}
+  constructor(public authenticationService: AuthenticationService, private configService: ConfigService) {}
 
   ngOnInit(): void {}
 
@@ -86,7 +85,7 @@ export class AdministrationLayoutComponent implements OnInit {
   }
 
   shouldHide(link: MenuTabInterface): boolean {
-    if ('hideIn' in link && link.hideIn.indexOf(environment.name) > -1) {
+    if ('hideIn' in link && link.hideIn.indexOf(this.configService.get('name')) > -1) {
       return true;
     }
 
