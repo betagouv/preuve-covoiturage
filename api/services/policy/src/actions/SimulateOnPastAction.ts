@@ -14,7 +14,7 @@ import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvid
     [
       'scope.it',
       [
-        [],
+        ['incentive-campaign.simulate'],
         [
           (params, context): string => {
             if (
