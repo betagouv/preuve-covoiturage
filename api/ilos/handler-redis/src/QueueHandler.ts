@@ -70,8 +70,6 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
         }
       }
 
-      console.debug(`Async call ${method}`, { params, context });
-
       const job = await this.client.add(
         method,
         {
@@ -88,7 +86,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
 
       return job;
     } catch (e) {
-      console.debug(`Async call ${call.method} failed`, e);
+      console.error(`Async call ${call.method} failed`, e);
       throw new Error('An error occured');
     }
   }

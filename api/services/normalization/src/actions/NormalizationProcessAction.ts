@@ -1,5 +1,8 @@
+import { get } from 'lodash';
+
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ContextType } from '@ilos/common';
+
 import { ParamsInterface as LogErrorParamsInterface } from '../shared/acquisition/logerror.contract';
 import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
 
@@ -164,6 +167,7 @@ export class NormalizationProcessAction extends AbstractAction {
         auth: {},
         headers: {},
         body: { journey, normalisationCode },
+        request_id: get(context, 'call.metadata.req.headers.x-request-id', null),
       },
       { channel: { service: 'acquisition' } },
     );
