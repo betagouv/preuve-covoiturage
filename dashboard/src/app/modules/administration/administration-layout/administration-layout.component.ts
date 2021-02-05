@@ -15,17 +15,17 @@ export class AdministrationLayoutComponent implements OnInit {
   public menu: MenuTabInterface[] = [
     {
       path: '/admin/profile',
-      label: 'Votre profil',
+      label: 'Mon profil',
     },
     {
       path: '/admin/territory',
       groups: [UserGroupEnum.TERRITORY],
-      label: 'Territoire',
+      label: 'Mon Territoire',
     },
     {
       path: '/admin/operator',
       groups: [UserGroupEnum.OPERATOR],
-      label: 'Opérateur',
+      label: 'Mon Opérateur',
     },
     {
       path: '/admin/users',

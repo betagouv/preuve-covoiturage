@@ -217,18 +217,137 @@ CREATE VIEW trip.list_view AS (
   WHERE cpp.is_driver = false AND cpp.status = 'ok'::carpool.carpool_status_enum
 );
 
-ALTER TABLE trip.list
-  ADD COLUMN driver_incentive_rpc_financial_sum int,
-  ADD COLUMN passenger_incentive_rpc_financial_sum int;
+-- avoid crashing when the columns exists.
+DO $$
+  BEGIN
+    BEGIN
+      ALTER TABLE trip.list ADD COLUMN driver_incentive_rpc_financial_sum int;
+    EXCEPTION
+      WHEN duplicate_column THEN RAISE NOTICE 'column driver_incentive_rpc_financial_sum already exists on trip.list';
+    END;
+  END;
+$$;
+
+DO $$
+  BEGIN
+    BEGIN
+      ALTER TABLE trip.list ADD COLUMN passenger_incentive_rpc_financial_sum int;
+    EXCEPTION
+      WHEN duplicate_column THEN RAISE NOTICE 'column driver_incentive_rpc_financial_sum already exists on trip.list';
+    END;
+  END;
+$$;
 
 UPDATE trip.list
   SET driver_incentive_rpc_financial_sum = driver_incentive_rpc_sum,
       passenger_incentive_rpc_financial_sum = passenger_incentive_rpc_sum;
 
+-- make fields explicit to avoid matching issues
 CREATE OR REPLACE FUNCTION hydrate_trip_from_carpool() RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO trip.list
-    SELECT * FROM trip.list_view WHERE journey_id = NEW.acquisition_id
+    INSERT INTO trip.list ( 
+      operator_id,
+      start_territory_id,
+      end_territory_id,
+      applied_policies,
+      trip_id,
+      journey_start_datetime,
+      journey_start_weekday,
+      journey_start_dayhour,
+      journey_start_lon,
+      journey_start_lat,
+      journey_start_insee,
+      journey_start_postalcode,
+      journey_start_department,
+      journey_start_town,
+      journey_start_towngroup,
+      journey_start_country,
+      journey_end_datetime,
+      journey_end_lon,
+      journey_end_lat,
+      journey_end_insee,
+      journey_end_postalcode,
+      journey_end_department,
+      journey_end_town,
+      journey_end_towngroup,
+      journey_end_country,
+      journey_distance,
+      journey_distance_anounced,
+      journey_distance_calculated,
+      journey_duration,
+      journey_duration_anounced,
+      journey_duration_calculated,
+      operator,
+      operator_class,
+      passenger_id,
+      passenger_card,
+      passenger_over_18,
+      passenger_seats,
+      passenger_contribution,
+      passenger_incentive_raw,
+      passenger_incentive_rpc_raw,
+      passenger_incentive_rpc_sum,
+      passenger_incentive_rpc_financial_sum,
+      driver_id,
+      driver_card,
+      driver_revenue,
+      driver_incentive_raw,
+      driver_incentive_rpc_raw,
+      driver_incentive_rpc_sum,
+      driver_incentive_rpc_financial_sum,
+      status
+    ) SELECT
+      operator_id,
+      start_territory_id,
+      end_territory_id,
+      applied_policies,
+      trip_id,
+      journey_start_datetime,
+      journey_start_weekday,
+      journey_start_dayhour,
+      journey_start_lon,
+      journey_start_lat,
+      journey_start_insee,
+      journey_start_postalcode,
+      journey_start_department,
+      journey_start_town,
+      journey_start_towngroup,
+      journey_start_country,
+      journey_end_datetime,
+      journey_end_lon,
+      journey_end_lat,
+      journey_end_insee,
+      journey_end_postalcode,
+      journey_end_department,
+      journey_end_town,
+      journey_end_towngroup,
+      journey_end_country,
+      journey_distance,
+      journey_distance_anounced,
+      journey_distance_calculated,
+      journey_duration,
+      journey_duration_anounced,
+      journey_duration_calculated,
+      operator,
+      operator_class,
+      passenger_id,
+      passenger_card,
+      passenger_over_18,
+      passenger_seats,
+      passenger_contribution,
+      passenger_incentive_raw,
+      passenger_incentive_rpc_raw,
+      passenger_incentive_rpc_sum,
+      passenger_incentive_rpc_financial_sum,
+      driver_id,
+      driver_card,
+      driver_revenue,
+      driver_incentive_raw,
+      driver_incentive_rpc_raw,
+      driver_incentive_rpc_sum,
+      driver_incentive_rpc_financial_sum,
+      status
+    FROM trip.list_view WHERE journey_id = NEW.acquisition_id
     ON CONFLICT (journey_id)
     DO UPDATE SET (
       operator_id,
@@ -347,8 +466,109 @@ COMMIT;
 -- ADD TRIGGER WHEN INSERT/UPDATE ON policy.incentives
 CREATE OR REPLACE FUNCTION hydrate_trip_from_policy() RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO trip.list
-    SELECT tv.* FROM carpool.carpools AS cc
+    INSERT INTO trip.list ( 
+      operator_id,
+      start_territory_id,
+      end_territory_id,
+      applied_policies,
+      trip_id,
+      journey_start_datetime,
+      journey_start_weekday,
+      journey_start_dayhour,
+      journey_start_lon,
+      journey_start_lat,
+      journey_start_insee,
+      journey_start_postalcode,
+      journey_start_department,
+      journey_start_town,
+      journey_start_towngroup,
+      journey_start_country,
+      journey_end_datetime,
+      journey_end_lon,
+      journey_end_lat,
+      journey_end_insee,
+      journey_end_postalcode,
+      journey_end_department,
+      journey_end_town,
+      journey_end_towngroup,
+      journey_end_country,
+      journey_distance,
+      journey_distance_anounced,
+      journey_distance_calculated,
+      journey_duration,
+      journey_duration_anounced,
+      journey_duration_calculated,
+      operator,
+      operator_class,
+      passenger_id,
+      passenger_card,
+      passenger_over_18,
+      passenger_seats,
+      passenger_contribution,
+      passenger_incentive_raw,
+      passenger_incentive_rpc_raw,
+      passenger_incentive_rpc_sum,
+      passenger_incentive_rpc_financial_sum,
+      driver_id,
+      driver_card,
+      driver_revenue,
+      driver_incentive_raw,
+      driver_incentive_rpc_raw,
+      driver_incentive_rpc_sum,
+      driver_incentive_rpc_financial_sum,
+      status
+    ) SELECT (
+      tv.operator_id,
+      tv.start_territory_id,
+      tv.end_territory_id,
+      tv.applied_policies,
+      tv.trip_id,
+      tv.journey_start_datetime,
+      tv.journey_start_weekday,
+      tv.journey_start_dayhour,
+      tv.journey_start_lon,
+      tv.journey_start_lat,
+      tv.journey_start_insee,
+      tv.journey_start_postalcode,
+      tv.journey_start_department,
+      tv.journey_start_town,
+      tv.journey_start_towngroup,
+      tv.journey_start_country,
+      tv.journey_end_datetime,
+      tv.journey_end_lon,
+      tv.journey_end_lat,
+      tv.journey_end_insee,
+      tv.journey_end_postalcode,
+      tv.journey_end_department,
+      tv.journey_end_town,
+      tv.journey_end_towngroup,
+      tv.journey_end_country,
+      tv.journey_distance,
+      tv.journey_distance_anounced,
+      tv.journey_distance_calculated,
+      tv.journey_duration,
+      tv.journey_duration_anounced,
+      tv.journey_duration_calculated,
+      tv.operator,
+      tv.operator_class,
+      tv.passenger_id,
+      tv.passenger_card,
+      tv.passenger_over_18,
+      tv.passenger_seats,
+      tv.passenger_contribution,
+      tv.passenger_incentive_raw,
+      tv.passenger_incentive_rpc_raw,
+      tv.passenger_incentive_rpc_sum,
+      tv.passenger_incentive_rpc_financial_sum,
+      tv.driver_id,
+      tv.driver_card,
+      tv.driver_revenue,
+      tv.driver_incentive_raw,
+      tv.driver_incentive_rpc_raw,
+      tv.driver_incentive_rpc_sum,
+      tv.driver_incentive_rpc_financial_sum,
+      tv.status
+    ) FROM carpool.carpools AS cc
     LEFT JOIN trip.list_view AS tv ON tv.journey_id = cc.acquisition_id
     WHERE cc._id = NEW.carpool_id
     ON CONFLICT (journey_id)

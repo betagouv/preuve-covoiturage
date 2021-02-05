@@ -13,8 +13,10 @@ export const logerror = {
     error_code: { oneOf: [{ type: 'null' }, { type: 'string', minLength: 0, maxLength: 32 }] },
     error_line: { oneOf: [{ type: 'null' }, { type: 'integer', minimum: 1, maximum: 1000000 }] },
     error_attempt: { type: 'integer', minimum: 1, maximum: 2147483647 },
+    error_resolved: { type: 'boolean' },
     auth: { type: 'object', additionalProperties: true },
     headers: { type: 'object', additionalProperties: true },
     body: { type: 'object', additionalProperties: true },
+    request_id: { oneOf: [{ type: 'null' }, { type: 'string', minLength: 0, maxLength: 255 }] },
   },
 };

@@ -1,5 +1,8 @@
+import { get } from 'lodash';
+
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ContextType } from '@ilos/common';
+
 import { ParamsInterface as LogErrorParamsInterface } from '../shared/acquisition/logerror.contract';
 import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
 
@@ -164,6 +167,7 @@ export class NormalizationProcessAction extends AbstractAction {
         auth: {},
         headers: {},
         body: { journey, normalisationCode },
+        request_id: get(context, 'call.metadata.req.headers.x-request-id', null),
       },
       { channel: { service: 'acquisition' } },
     );
@@ -191,9 +195,9 @@ export class NormalizationProcessAction extends AbstractAction {
       finalPerson['cost'] = cost;
       finalPerson.payments = payments;
     } catch (e) {
+      console.error(`[normalization]:cost: ${e.message}`, e);
       await this.logError(NormalisationErrorStage.Cost, journey, e);
-
-      // throw e;
+      throw e;
     }
 
     // Identity ------------------------------------------------------------------------------------
@@ -205,6 +209,7 @@ export class NormalizationProcessAction extends AbstractAction {
         this.context,
       );
     } catch (e) {
+      console.error(`[normalization]:identity: ${e.message}`, e);
       await this.logError(NormalisationErrorStage.Identity, journey, e);
       throw e;
     }
@@ -238,14 +243,15 @@ export class NormalizationProcessAction extends AbstractAction {
         finalPerson.calc_distance = calc_distance;
         finalPerson.calc_duration = calc_duration;
       } catch (e) {
+        console.error(`[normalization]:geo:route: ${e.message}`, e);
         await this.logError(NormalisationErrorStage.GeoRoute, journey, e);
         isSubGeoError = true;
 
         throw e;
       }
     } catch (e) {
+      console.error(`[normalization]:geo: ${e.message}`, e);
       if (!isSubGeoError) await this.logError(NormalisationErrorStage.Geo, journey, e);
-
       throw e;
     }
 
@@ -263,8 +269,8 @@ export class NormalizationProcessAction extends AbstractAction {
       finalPerson.start.territory_id = territories.start;
       finalPerson.end.territory_id = territories.end;
     } catch (e) {
+      console.error(`[normalization]:territory: ${e.message}`, e);
       await this.logError(NormalisationErrorStage.Territory, journey, e);
-
       throw e;
     }
 

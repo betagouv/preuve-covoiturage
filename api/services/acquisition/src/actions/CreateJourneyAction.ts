@@ -33,19 +33,6 @@ import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionE
 import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
 import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 
-const callContext: ContextType = {
-  channel: {
-    service: 'acquisition',
-    metadata: {
-      attempts: 5,
-      backoff: 300000, // 5 min delay between attempts
-    },
-  },
-  call: {
-    user: {},
-  },
-};
-
 @handler({ ...handlerConfig, middlewares: [['can', ['journey.create']]] })
 export class CreateJourneyAction extends AbstractAction {
   constructor(
@@ -63,24 +50,7 @@ export class CreateJourneyAction extends AbstractAction {
     try {
       await this.validator.validate(params, alias);
     } catch (e) {
-      await this.kernel.notify<LogErrorParamsInterface>(
-        'acquisition:logerror',
-        {
-          error_stage: ErrorStage.Acquisition,
-          error_line: null,
-          operator_id: get(context, 'call.user.operator_id', 0),
-          journey_id: params.journey_id,
-          source: 'api.v2',
-          error_message: e.message,
-          error_code: '400',
-          auth: get(context, 'call.user'),
-          headers: get(context, 'call.metadata.req.headers', {}),
-          body: params,
-          request_id: get(context, 'call.metadata.req.headers.x-request-id', null),
-        },
-        { channel: { service: 'acquisition' } },
-      );
-
+      await this.logError(params, context, e, '400');
       throw new InvalidParamsException(e.message);
     }
 
@@ -92,32 +62,17 @@ export class CreateJourneyAction extends AbstractAction {
     if (person.start.datetime > now || person.end.datetime > now) {
       throw new ParseErrorException('Journeys cannot happen in the future');
     }
-    let acquisition: AcquisitionInterface;
 
     // Store in database
+    let acquisition: AcquisitionInterface;
     try {
       acquisition = await this.journeyRepository.create(payload, {
         operator_id: context.call.user.operator_id,
         application_id: context.call.user.application_id,
       });
     } catch (e) {
-      await this.kernel.notify<LogErrorParamsInterface>(
-        'acquisition:logerror',
-        {
-          error_stage: ErrorStage.Acquisition,
-          error_line: null,
-          operator_id: get(context, 'call.user.operator_id', 0),
-          journey_id: params.journey_id,
-          source: 'api.v2',
-          error_message: e.message,
-          error_code: '500',
-          auth: get(context, 'call.user'),
-          headers: get(context, 'call.metadata.req.headers', {}),
-          body: params,
-          request_id: get(context, 'call.metadata.req.headers.x-request-id', null),
-        },
-        { channel: { service: 'acquisition' } },
-      );
+      // log any error for later debugging
+      await this.logError(params, context, e, '500');
 
       switch (e.code) {
         case '23505':
@@ -127,18 +82,18 @@ export class CreateJourneyAction extends AbstractAction {
       }
     }
 
-    await this.kernel.notify<ResolveErrorParamsInterface>(
-      'acquisition:resolveerror',
-      {
-        operator_id: get(context, 'call.user.operator_id', 0),
-        journey_id: params.journey_id,
-        error_stage: ErrorStage.Normalisation,
-      },
-      { channel: { service: 'acquisition' } },
-    );
+    // resolve any error to keep track of the pipeline process
+    await this.resolveError(params, context);
 
-    await this.kernel.notify('normalization:process', acquisition, callContext);
+    // pass the journey to normalization for further process
+    // it will end up in carpool.carpools when done.
+    // configure the queues to wait for 5 minutes between attempts
+    await this.kernel.notify('normalization:process', acquisition, {
+      channel: { service: 'acquisition', metadata: { attempts: 5, backoff: 5 * 60 * 1000 } },
+      call: { user: {} },
+    });
 
+    // send back some data to the user
     return {
       journey_id: acquisition.journey_id,
       created_at: acquisition.created_at,
@@ -167,5 +122,37 @@ export class CreateJourneyAction extends AbstractAction {
       is_driver: driver,
       seats: person && 'seats' in person ? person.seats : !driver ? 1 : 0,
     };
+  }
+
+  private async logError(params: ParamsInterface, context: ContextType, e: Error, error_code: string): Promise<void> {
+    await this.kernel.notify<LogErrorParamsInterface>(
+      'acquisition:logerror',
+      {
+        error_stage: ErrorStage.Acquisition,
+        error_line: null,
+        operator_id: get(context, 'call.user.operator_id', params.operator_id || 0),
+        journey_id: params.journey_id,
+        source: 'api.v2',
+        error_message: e.message,
+        error_code,
+        auth: get(context, 'call.user'),
+        headers: get(context, 'call.metadata.req.headers', {}),
+        body: params,
+        request_id: get(context, 'call.metadata.req.headers.x-request-id', null),
+      },
+      { channel: { service: 'acquisition' } },
+    );
+  }
+
+  private async resolveError(params: ParamsInterface, context: ContextType): Promise<void> {
+    await this.kernel.notify<ResolveErrorParamsInterface>(
+      'acquisition:resolveerror',
+      {
+        operator_id: get(context, 'call.user.operator_id', params.operator_id || 0),
+        journey_id: params.journey_id,
+        error_stage: ErrorStage.Normalisation,
+      },
+      { channel: { service: 'acquisition' } },
+    );
   }
 }

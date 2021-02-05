@@ -24,15 +24,15 @@ export class NormalizationTerritoryAction extends AbstractAction {
     }
 
     let result = null;
-    if ('insee' in position) {
-      result = await this.territory.findByInsee(position.insee);
+    if ('lat' in position && 'lon' in position) {
+      result = await this.territory.findByPoint({ lon: position.lon, lat: position.lat });
       if (result !== null) {
         return result;
       }
     }
 
-    if ('lat' in position && 'lon' in position) {
-      result = await this.territory.findByPoint({ lon: position.lon, lat: position.lat });
+    if ('insee' in position) {
+      result = await this.territory.findByInsee(position.insee);
       if (result !== null) {
         return result;
       }
