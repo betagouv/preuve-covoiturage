@@ -73,9 +73,9 @@
       </mat-form-field>
 
       <mat-checkbox formControlName="activable">Partenaire</mat-checkbox>
-      <mat-checkbox formControlName="active" [hidden]="!displayAOMActive">AOM</mat-checkbox>
+      <mat-checkbox formControlName="active" [hidden]="!isPartner">AOM</mat-checkbox>
 
-      <div [hidden]="!activable">
+      <div [hidden]="!isPartner">
         <h3>Structure</h3>
 
         <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
@@ -86,14 +86,14 @@
       </div>
     </div>
 
-    <div [hidden]="!activable">
+    <div [hidden]="!isPartner">
       <h2>Contacts et responsables</h2>
       <div class="contacts">
         <div>
           <h3>Délégué à la protection des données</h3>
 
           <app-form-contact
-            [parentForm]="territoryForm.get('contacts').get('gdpr_dpo')"
+            [parentForm]="territoryForm.get('contacts.gdpr_dpo')"
             [showPhoneNumber]="false"
           ></app-form-contact>
         </div>
@@ -102,7 +102,7 @@
           <h3>Responsable du traitement</h3>
 
           <app-form-contact
-            [parentForm]="territoryForm.get('contacts').get('gdpr_controller')"
+            [parentForm]="territoryForm.get('contacts.gdpr_controller')"
             [showPhoneNumber]="false"
           ></app-form-contact>
         </div>
@@ -110,7 +110,7 @@
         <div>
           <h3>Responsable technique</h3>
 
-          <app-form-contact [parentForm]="territoryForm.get('contacts').get('technical')"></app-form-contact>
+          <app-form-contact [parentForm]="territoryForm.get('contacts.technical')"></app-form-contact>
         </div>
       </div>
     </div>

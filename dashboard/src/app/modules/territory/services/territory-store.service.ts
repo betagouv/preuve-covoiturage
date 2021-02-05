@@ -1,5 +1,7 @@
 import { Observable } from 'rxjs';
 import { tap, finalize, takeUntil, map } from 'rxjs/operators';
+import { cloneDeep } from 'lodash-es';
+
 import { Injectable } from '@angular/core';
 
 import {
@@ -28,6 +30,21 @@ export class TerritoryStoreService extends CrudStore<
 > {
   constructor(protected territoryApi: TerritoryApiService) {
     super(territoryApi, Territory);
+  }
+
+  updateSelected(formValues: TerritoryFormModel): Observable<Territory> {
+    const filtered = cloneDeep(formValues);
+
+    // filter out props depending on activable
+    if (!filtered.activable) {
+      filtered.active = false;
+      delete filtered.address;
+      delete filtered.contacts;
+      delete filtered.company;
+      delete filtered.company_id;
+    }
+
+    return super.updateSelected(filtered);
   }
 
   patchContact(contactFormData: any, id: number): Observable<Territory> {
