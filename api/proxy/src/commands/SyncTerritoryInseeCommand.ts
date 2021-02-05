@@ -2,6 +2,8 @@ import axios from 'axios';
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
+// TODO : clean up command
+
 @command()
 export class SyncTerritoryInseeCommand implements CommandInterface {
   static readonly signature: string = 'sync:insee';
