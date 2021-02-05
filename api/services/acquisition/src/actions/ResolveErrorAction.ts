@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
+import { handler } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/resolveerror.contract';
 import { alias } from '../shared/acquisition/resolveerror.schema';
@@ -17,8 +17,7 @@ export class ResolveErrorAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    // clean up sensitive data
+  protected async handle(params: ParamsInterface): Promise<ResultInterface> {
     return this.repo.resolve(params);
   }
 }

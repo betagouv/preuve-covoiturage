@@ -5,6 +5,17 @@ import {
   TerritoryProviderInterfaceResolver,
 } from '../interfaces/TerritoryProviderInterface';
 
+interface TerritoryCodeRowInterface {
+  _id: number;
+  territory_id: number;
+  type: string;
+  value: string;
+}
+
+interface TerritoriesRowInterface {
+  _id: number;
+}
+
 @provider({
   identifier: TerritoryProviderInterfaceResolver,
 })
@@ -16,7 +27,7 @@ export class TerritoryProvider implements TerritoryProviderInterface {
 
   async findByInsee(insee: string): Promise<number> {
     try {
-      const result = await this.connection.getClient().query({
+      const result = await this.connection.getClient().query<TerritoryCodeRowInterface>({
         text: `
           SELECT territory_id
           FROM ${this.codeTable}
@@ -28,15 +39,14 @@ export class TerritoryProvider implements TerritoryProviderInterface {
 
       return result.rowCount ? result.rows[0].territory_id : null;
     } catch (e) {
-      console.log(e.message);
-      console.log(e.stack);
+      console.error(e.message);
       return null;
     }
   }
 
   async findByPoint({ lon, lat }: { lon: number; lat: number }): Promise<number> {
     try {
-      const result = await this.connection.getClient().query({
+      const result = await this.connection.getClient().query<TerritoriesRowInterface>({
         text: `
           SELECT _id
           FROM ${this.geoTable}
@@ -48,10 +58,9 @@ export class TerritoryProvider implements TerritoryProviderInterface {
         values: [lon, lat],
       });
 
-      return result.rowCount ? result.rows[0].territory_id : null;
+      return result.rowCount ? result.rows[0]._id : null;
     } catch (e) {
-      console.log(e.message);
-      console.log(e.stack);
+      console.error(e.message);
       return null;
     }
   }

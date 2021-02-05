@@ -107,8 +107,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       }
     }
 
-    this.territoryForm.get('company').reset();
-    this.territoryForm.get('address').reset();
+    if (this.territoryForm.get('company') instanceof FormGroup) this.territoryForm.get('company').reset();
+    if (this.territoryForm.get('address') instanceof FormGroup) this.territoryForm.get('address').reset();
 
     if (this.territoryChildren && this.fullFormMode && formValues.format === 'parent') {
       formValues.children = this.territoryChildren.getFlatSelectedList();
@@ -140,7 +140,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           },
         );
       } else {
-        this.territoryStore.create(formValues).subscribe((createdTerritory) => {
+        this.territoryStore.create(formValues).subscribe(() => {
           this.toastr.success(`${formValues.name} a été mis à jour !`);
           this.close.emit();
         });
@@ -175,7 +175,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       save.apply(this);
     }
 
-    this.territoryChildren.setRelations([]);
+    if (this.territoryChildren) this.territoryChildren.setRelations([]);
   }
 
   public onClose(): void {
