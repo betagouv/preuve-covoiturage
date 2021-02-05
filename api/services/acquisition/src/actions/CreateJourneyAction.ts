@@ -33,21 +33,6 @@ import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionE
 import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
 import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 
-// configure the queue when calling normalization service
-// once the payload is store in acquisition.acquisitions
-const normalizationCallContext: ContextType = {
-  channel: {
-    service: 'acquisition',
-    metadata: {
-      attempts: 5,
-      backoff: 300000, // 5 min delay between attempts
-    },
-  },
-  call: {
-    user: {},
-  },
-};
-
 @handler({ ...handlerConfig, middlewares: [['can', ['journey.create']]] })
 export class CreateJourneyAction extends AbstractAction {
   constructor(
@@ -101,8 +86,12 @@ export class CreateJourneyAction extends AbstractAction {
     await this.resolveError(params, context);
 
     // pass the journey to normalization for further process
-    // it will end up in carpool.carpools when done
-    await this.kernel.notify('normalization:process', acquisition, normalizationCallContext);
+    // it will end up in carpool.carpools when done.
+    // configure the queues to wait for 5 minutes between attempts
+    await this.kernel.notify('normalization:process', acquisition, {
+      channel: { service: 'acquisition', metadata: { attempts: 5, backoff: 5 * 60 * 1000 } },
+      call: { user: {} },
+    });
 
     // send back some data to the user
     return {

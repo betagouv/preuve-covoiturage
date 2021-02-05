@@ -1,6 +1,7 @@
 {
   "files.exclude": {
-    "**/*.postman_collection.json": true
+    "**/*.postman_collection.json": true,
+    "api/**/dist": true
   },
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
