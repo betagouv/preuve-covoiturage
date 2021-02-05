@@ -28,15 +28,15 @@ import { CompanyV2 } from '~/core/entities/shared/companyV2';
   styleUrls: ['./territory-form.component.scss'],
 })
 export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
-  public territoryForm: FormGroup;
-
   @Input() isFormVisible = false;
   @Input() closable = false;
   @Input() territory: Territory = null;
 
   @Output() close = new EventEmitter();
-  @ViewChild(TerritoryChildrenComponent)
-  territoryChildren: TerritoryChildrenComponent;
+
+  @ViewChild(TerritoryChildrenComponent) territoryChildren: TerritoryChildrenComponent;
+
+  public territoryForm: FormGroup;
 
   fullFormMode = false;
   displayAOMActive = false;
@@ -47,6 +47,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   private companyDetails: CompanyInterface;
   protected _relationDisplayMode = 'parent';
   public activable = false;
+
+  get controls(): { [key: string]: AbstractControl } {
+    return this.territoryForm.controls;
+  }
+
+  get isPartner(): boolean {
+    return this.territoryForm.get('activable').value;
+  }
+
+  get relationDisplayMode(): string {
+    return this._relationDisplayMode;
+  }
 
   constructor(
     public authService: AuthenticationService,
@@ -74,10 +86,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       });
 
     if (this.territoryForm.controls['activable']) {
-      this.territoryForm.controls['activable'].valueChanges.subscribe((val) => {
-        this.activable = val as boolean;
-        this.updateValidation();
-      });
+      this.territoryForm.controls['activable'].valueChanges.subscribe(() => this.updateValidation());
     }
 
     if (this.territoryForm.controls['format']) {
@@ -85,8 +94,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
   }
 
-  get controls(): { [key: string]: AbstractControl } {
-    return this.territoryForm.controls;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['territory'] && this.territoryForm) {
+      this.setTerritoryFormValue(changes['territory'].currentValue);
+    }
   }
 
   public hasTerritoriesChanged(hasTerritories: boolean): void {
@@ -94,9 +105,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   public onSubmit(): void {
-    const formValues: TerritoryFormModel = {
-      ...this.territoryForm.value,
-    };
+    const formValues: TerritoryFormModel = { ...this.territoryForm.value };
 
     if ('geo' in formValues && typeof formValues.geo === 'string' && formValues.geo.length) {
       try {
@@ -125,7 +134,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     const save = () => {
       if (this.editedId) {
-        // if (this.territoryForm.value.company) formValues.company.siret = this.territoryForm.value.company.siret;
         const patch$ = this.fullFormMode
           ? this.territoryStore.updateSelected(formValues)
           : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.editedId);
@@ -179,7 +187,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   public onClose(): void {
-    this.territoryChildren.setRelations([]);
+    if (this.territoryChildren) this.territoryChildren.setRelations([]);
     // this.territoryForm.get('company').reset();
     // this.territoryForm.get('address').reset();
     this.territoryForm.reset();
@@ -190,7 +198,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     if (this.territory) {
       this.setTerritoryFormValue(this.territory);
     } else {
-      this.activable = false;
+      this.territoryForm.get('activable').setValue(false);
     }
   }
 
@@ -248,21 +256,19 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this.territoryForm = this.fb.group(formOptions);
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
 
-    if (this.territoryForm && this.territoryForm.controls && this.territoryForm.controls.format) {
-      this.territoryForm.controls.format.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((val) => {
-        this._relationDisplayMode = val;
-      });
+    if (this.territoryForm && this.territoryForm.get('format')) {
+      this.territoryForm
+        .get('format')
+        .valueChanges.pipe(takeUntil(this.destroy$))
+        .subscribe((val) => {
+          this._relationDisplayMode = val;
+        });
     }
 
     if (companyFormGroup) {
-      this.territoryForm.controls.activable.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((val) => {
-        this.displayAOMActive = val;
-        // reset is val to false if activable is off
-        this.territoryForm.patchValue({ active: this.territoryForm.value.active && val });
-      });
-
-      companyFormGroup.controls.siret.valueChanges
-        .pipe(
+      companyFormGroup
+        .get('siret')
+        .valueChanges.pipe(
           throttleTime(300),
           filter((v) => !!v),
           map((value: string) => {
@@ -371,7 +377,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         ctr.markAsUntouched();
       });
 
-      // Siret is hidden and not required if territory is not activable (AOM)
+      // Siret is hidden and not required if territory is not active (AOM)
 
       const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
       const siretControl = companyFormGroup.controls['siret'];
@@ -405,11 +411,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     if (this.editedId && this.fullFormMode) {
       if (formValues.format === 'parent') {
         this.hasTerritories = territory.children ? territory.children.length > 0 : false;
-        this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
-          this.territoryChildren.setRelations(completeRelation);
-        });
-      } else if (this.territoryChildren) {
-        this.territoryChildren.setRelations([]);
+        this.territoryApi
+          .getRelationUIStatus(this.editedId)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((completeRelation) => {
+            if (this.territoryChildren) this.territoryChildren.setRelations(completeRelation);
+          });
+      } else {
+        if (this.territoryChildren) this.territoryChildren.setRelations([]);
       }
 
       if (territory.company_id) {
@@ -421,20 +430,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
   }
 
-  get relationDisplayMode(): string {
-    return this._relationDisplayMode;
-    // return this.territoryForm.value.format;
-  }
-
   private checkPermissions(): void {
     if (!this.authService.hasAnyPermission(['territory.update'])) {
       this.territoryForm.disable({ onlySelf: true });
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['territory'] && this.territoryForm) {
-      this.setTerritoryFormValue(changes['territory'].currentValue);
     }
   }
 }
