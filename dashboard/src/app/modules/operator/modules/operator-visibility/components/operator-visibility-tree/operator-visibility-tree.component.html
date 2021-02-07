@@ -1,5 +1,9 @@
+<div class="loader" *ngIf="!isLoaded">
+  <mat-spinner [diameter]="25"></mat-spinner>
+  <p>Chargement...</p>
+</div>
 <!-- SEARCH FILTER-->
-<div class="OperatorVisibilityTree">
+<div *ngIf="isLoaded" class="OperatorVisibilityTree">
   <div class="OperatorVisibilityTree-header">
     <form [formGroup]="searchFilter">
       <mat-form-field appearance="outline">
@@ -17,10 +21,14 @@
       Tous les territoires
     </mat-checkbox>
   </div>
-  <div *ngIf="territoryIdsToShow && territoryIdsToShow.length === 0 && hasFilter">
+
+  <!-- no results -->
+  <div *ngIf="territoryIdsToShow && !territoryIdsToShow.length">
     <p>Aucun résultat avec vos critères de recherches</p>
   </div>
-  <div class="OperatorVisibilityTree-form" *ngIf="territoryIdsToShow && territoryIdsToShow.length > 0">
+
+  <!-- list -->
+  <div *ngIf="territoryIdsToShow && territoryIdsToShow.length > 0" class="OperatorVisibilityTree-form">
     <form>
       <ul class="territory-visibility-list">
         <li
@@ -29,7 +37,7 @@
           [style]="'padding-left:' + ter.indent * (searchMode ? 0 : 23) + 'px'"
         >
           <mat-checkbox
-            *ngIf="ter.activable || ter.level === 'towngroup'; else terr_label"
+            *ngIf="isSelectable(ter); else terr_label"
             color="primary"
             (change)="swapCheck(ter)"
             [checked]="selectedTerritoryIds.indexOf(ter._id) !== -1"
