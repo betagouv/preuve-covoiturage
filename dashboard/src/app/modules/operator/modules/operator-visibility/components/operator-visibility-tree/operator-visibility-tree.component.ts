@@ -1,8 +1,9 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter, takeUntil, tap, map } from 'rxjs/operators';
 import { merge } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { debounceTime, distinctUntilChanged, filter, takeUntil, tap, map } from 'rxjs/operators';
+
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 
 import { CommonDataService } from '~/core/services/common-data.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -14,7 +15,6 @@ interface TerritoryVisibilityTree extends TerritoryTree {
   selected: boolean;
 }
 
-const isSelectableFilter = (t: TerritoryVisibilityTree) => t.activable || t.level === TerritoryLevelEnum.Towngroup;
 @Component({
   selector: 'app-operator-visibility-tree',
   templateUrl: './operator-visibility-tree.component.html',
@@ -31,7 +31,15 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   visibilityFormControl: FormControl;
   searchMode: boolean;
 
-  selectableTerritoryFilter = (ter) => ter.activable || ter.level === 'towngroup';
+  public isLoaded = false;
+
+  get hasFilter(): boolean {
+    return this.searchFilter.value;
+  }
+
+  get countCheckedTerritories(): number {
+    return this.selectedTerritoryIds.filter((val, ind, self) => self.indexOf(val) === ind).length;
+  }
 
   constructor(
     private _commonDataService: CommonDataService,
@@ -42,38 +50,9 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     super();
   }
 
-  swapCheck(ter: TerritoryVisibilityTree) {
-    const selectedTerritoryIds = this.selectedTerritoryIds;
-    const selInd = selectedTerritoryIds.indexOf(ter._id);
-    const selected = selInd === -1;
-
-    if (selected) {
-      selectedTerritoryIds.push(ter._id);
-    } else {
-      selectedTerritoryIds.splice(selInd, 1);
-    }
-
-    this.visibilityFormControl.setValue(selectedTerritoryIds);
-  }
-
   ngOnInit(): void {
     this.initSearchForm();
     this.initVisibilityForm();
-  }
-
-  flatTree(tree: Partial<TerritoryTree>[], indent = 0): TerritoryVisibilityTree[] {
-    const res = [];
-    if (tree)
-      for (const ter of tree) {
-        ter.indent = indent;
-        res.push(ter);
-        if (ter.children) {
-          const children = this.flatTree(ter.children, indent + 1);
-          for (const child of children) res.push({ ...child });
-        }
-      }
-
-    return res;
   }
 
   ngAfterViewInit() {
@@ -100,26 +79,18 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
             // score search based ordering
             const territories = this.territories
               // get only EPCI or AOM (activable)
-              .filter(isSelectableFilter)
+              .filter(this.isSelectable)
               // search for requested words and set score based on matching words amount
               .map<TerritoryVisibilityTree & { score: number }>((t) => {
                 const nameLowerCase = t.name.toLowerCase();
                 const score = words.map((w) => nameLowerCase.split(w).length - 1).reduce((acc, score) => acc + score);
                 // return null for fast filter optimisation
-                return score > 0
-                  ? {
-                      ...t,
-                      score,
-                    }
-                  : null;
+                return score > 0 ? { ...t, score } : null;
               })
               // filter found territory
               .filter((t) => t !== null)
-              .sort((a, b) => {
-                if (a.score < b.score) return -1;
-                if (a.score > b.score) return 1;
-                return 0;
-              });
+              .sort((a, b) => (a.score < b.score ? -1 : a.score > b.score ? 1 : 0));
+
             return territories;
           } else {
             this.searchMode = false;
@@ -127,23 +98,50 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
             return this.territories;
           }
         }),
+        tap((territories) => {
+          this.isLoaded = !this.isLoaded && !!territories.length;
+        }),
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe((filteredTerritories) => {
         this.territoryIdsToShow = filteredTerritories.map((territory) => territory._id);
-
         this.updateVisibilityForm();
       });
 
     this.loadVisibility();
   }
 
-  get hasFilter(): boolean {
-    return this.searchFilter.value;
+  public isSelectable(t: TerritoryVisibilityTree) {
+    return t.activable || t.level === TerritoryLevelEnum.Towngroup;
   }
 
-  get isLoaded(): boolean {
-    return this._operatorVisilibityService.isLoaded;
+  public swapCheck(ter: TerritoryVisibilityTree) {
+    const selectedTerritoryIds = this.selectedTerritoryIds;
+    const selInd = selectedTerritoryIds.indexOf(ter._id);
+    const selected = selInd === -1;
+
+    if (selected) {
+      selectedTerritoryIds.push(ter._id);
+    } else {
+      selectedTerritoryIds.splice(selInd, 1);
+    }
+
+    this.visibilityFormControl.setValue(selectedTerritoryIds);
+  }
+
+  public flatTree(tree: Partial<TerritoryTree>[], indent = 0): TerritoryVisibilityTree[] {
+    const res = [];
+    if (tree)
+      for (const ter of tree) {
+        ter.indent = indent;
+        res.push(ter);
+        if (ter.children) {
+          const children = this.flatTree(ter.children, indent + 1);
+          for (const child of children) res.push({ ...child });
+        }
+      }
+
+    return res;
   }
 
   public save(): void {
@@ -159,48 +157,36 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
 
   public checkAll($event: any): void {
     if ($event.checked) {
-      // this.territories.forEach((ter) => (ter.selected = true));
       this.selectedTerritoryIds = this.territories
-        .filter(isSelectableFilter)
+        .filter(this.isSelectable)
         .map((ter) => ter._id)
         .filter((val, ind, self) => self.indexOf(val) === ind);
     } else {
-      // this.territories.forEach((ter) => (ter.selected = false));
       this.selectedTerritoryIds = [];
     }
     this.visibilityFormControl.setValue(this.selectedTerritoryIds);
   }
 
   public showTerritory(id: number): boolean {
-    return this.territoryIdsToShow.indexOf(id) !== -1;
-  }
-
-  public get countCheckedTerritories(): number {
-    return this.selectedTerritoryIds.filter((val, ind, self) => self.indexOf(val) === ind).length;
+    return this.territoryIdsToShow.indexOf(id) > -1;
   }
 
   private initVisibilityForm(): void {
     this.visibilityFormControl = this._fb.control([]);
-
     this.visibilityFormControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.updateCheckAllValue());
   }
 
   private updateVisibilityForm(): void {
     if (!this.territories || !this.selectedTerritoryIds) return;
-
-    const territoryIds = this.selectedTerritoryIds;
-
-    this.territories.forEach((ter) => (ter.selected = ter.activable && territoryIds.indexOf(ter._id) !== -1));
-
-    this.visibilityFormControl.setValue(territoryIds);
-
+    this.territories.forEach((t) => (t.selected = t.activable && this.selectedTerritoryIds.indexOf(t._id) > -1));
+    this.visibilityFormControl.setValue(this.selectedTerritoryIds);
     this.updateCheckAllValue();
   }
 
   private updateCheckAllValue() {
     //const uniqueTerritoryIdsToShow = this.visibilityFormControl.controls
     const selectableTerritories = this.territories
-      .filter(this.selectableTerritoryFilter)
+      .filter(this.isSelectable)
       .map((ter) => ter._id)
       .filter((val, ind, self) => self.indexOf(val) === ind);
 
@@ -208,9 +194,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   private initSearchForm(): void {
-    this.searchFilter = this._fb.group({
-      query: [''],
-    });
+    this.searchFilter = this._fb.group({ query: [''] });
   }
 
   private loadVisibility(): void {

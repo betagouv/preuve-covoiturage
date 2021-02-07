@@ -1,3 +1,11 @@
+.loader {
+  display: flex;
+  align-items: center;
+  p {
+    margin: 1em;
+  }
+}
+
 .OperatorVisibilityTree {
   &-header {
     ::ng-deep .mat-form-field-wrapper {
