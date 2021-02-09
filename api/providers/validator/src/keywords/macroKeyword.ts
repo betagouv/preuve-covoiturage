@@ -68,17 +68,14 @@ const macroStore = {
 };
 
 export const macroKeyword = {
-  name: 'macro',
-  type: 'keyword',
-  definition: {
-    macro(schema: string, parentSchema, it): any {
-      if (schema in macroStore) {
-        return macroStore[schema](schema, parentSchema, it);
-      }
-    },
-    metaSchema: {
-      type: 'string',
-      enum: Object.keys(macroStore),
-    },
+  macro(schema: string): { [k: string]: any } {
+    if (schema in macroStore) {
+      return macroStore[schema]();
+    }
+    return {};
+  },
+  metaSchema: {
+    type: 'string',
+    enum: Object.keys(macroStore),
   },
 };
