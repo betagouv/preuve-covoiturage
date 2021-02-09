@@ -102,6 +102,7 @@ export const territory = {
       'incentive-campaign.read',
       'incentive-campaign.update',
       'incentive-campaign.delete',
+      'incentive-campaign.templates',
     ],
   },
   user: {
