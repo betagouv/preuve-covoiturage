@@ -53,7 +53,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   get isPartner(): boolean {
-    return this.territoryForm.get('activable').value;
+    const base = this.fullFormMode ? this.territoryForm.value : this.territory;
+    return base && 'activable' in base ? base.activable : false;
   }
 
   get relationDisplayMode(): string {
@@ -197,8 +198,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   private initTerritoryFormValue(): void {
     if (this.territory) {
       this.setTerritoryFormValue(this.territory);
-    } else {
-      this.territoryForm.get('activable').setValue(false);
     }
   }
 
