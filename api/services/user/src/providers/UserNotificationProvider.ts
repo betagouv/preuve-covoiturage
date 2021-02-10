@@ -30,7 +30,6 @@ export class UserNotificationProvider {
     private config: ConfigInterfaceResolver,
     private kernel: KernelInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
-    private logger = console,
   ) {
     this.INVITATION = [
       'activate',
@@ -75,7 +74,7 @@ export class UserNotificationProvider {
    */
   protected log(message: string, email: string, token: string, link: string): void {
     if (process.env.NODE_ENV === 'testing') {
-      this.logger.log(`
+      console.info(`
 ******************************************
 [test] ${message}
 email: ${email}

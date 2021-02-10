@@ -1,228 +1,243 @@
-import { describe } from 'mocha';
-import { expect } from 'chai';
+import anyTest, { TestInterface } from 'ava';
 import { ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { UserPgRepositoryProvider } from '../src/providers/UserPgRepositoryProvider';
 import { UserCreateInterface } from '../src/shared/user/common/interfaces/UserCreateInterface';
 
-class Config extends ConfigInterfaceResolver {
-  get(_k: string, fb: string): string {
-    return fb;
-  }
+interface TestContext {
+  connection: PostgresConnection;
+  repository: UserPgRepositoryProvider;
+  territory_id: number;
+  operator_id: number;
+  registry_id: number;
 }
 
-const list = [
-  'group',
-  '_id',
-  'status',
-  'created_at',
-  'updated_at',
-  'email',
-  'firstname',
-  'lastname',
-  'role',
-  'phone',
-  'operator_id',
-  'territory_id',
-];
+const test = anyTest as TestInterface<TestContext>;
 
-const find = ['ui_status', 'permissions', ...list];
+test.before(async (t) => {
+  class Config extends ConfigInterfaceResolver {
+    get(_k: string, fb: string): string {
+      return fb;
+    }
+  }
 
-const territoryInput: UserCreateInterface = {
-  email: 'territory@toto.com',
-  firstname: 'toto',
-  lastname: 'tata',
-  role: 'territory.admin',
-  phone: '0102030405',
-  // operator_id: 1,
-  territory_id: 1,
-};
+  t.context.connection = new PostgresConnection({
+    connectionString:
+      'APP_POSTGRES_URL' in process.env
+        ? process.env.APP_POSTGRES_URL
+        : 'postgresql://postgres:postgres@localhost:5432/local',
+  });
 
-const operatorInput: UserCreateInterface = {
-  email: 'operator@toto.com',
-  firstname: 'toto',
-  lastname: 'tata',
-  role: 'operator.admin',
-  phone: '0102030405',
-  operator_id: 1,
-  // territory_id: 1,
-};
+  await t.context.connection.up();
 
-const registryInput: UserCreateInterface = {
-  email: 'registry@toto.com',
-  firstname: 'toto',
-  lastname: 'tata',
-  role: 'registry.admin',
-  phone: '0102030405',
-  // operator_id: 1,
-  // territory_id: 1,
-};
+  t.context.repository = new UserPgRepositoryProvider(t.context.connection, new Config());
+});
 
-describe('User pg repository', async () => {
-  let repository;
-  let connection;
-  const id: { [k: string]: string } = {
-    territory: null,
-    operator: null,
-    registry: null,
+test.after.always(async (t) => {
+  const ids = [];
+  for (const id_type of ['territory_id', 'operator_id', 'registry_id']) {
+    if (t.context[id_type]) {
+      ids.push(t.context[id_type]);
+    }
+  }
+
+  if (ids.length) {
+    await t.context.connection.getClient().query({
+      text: `DELETE FROM ${t.context.repository.table} WHERE _id = ANY($1::int[])`,
+      values: [ids],
+    });
+  }
+
+  await t.context.connection.down();
+});
+
+function isSame(keysType: 'list' | 'find', input: (string | number | symbol)[]): boolean {
+  const keys = {
+    list: [
+      'group',
+      '_id',
+      'status',
+      'created_at',
+      'updated_at',
+      'email',
+      'firstname',
+      'lastname',
+      'role',
+      'phone',
+      'operator_id',
+      'territory_id',
+    ],
+    find: ['ui_status', 'permissions'],
   };
 
-  before(async () => {
-    connection = new PostgresConnection({
-      connectionString:
-        'APP_POSTGRES_URL' in process.env
-          ? process.env.APP_POSTGRES_URL
-          : 'postgresql://postgres:postgres@localhost:5432/local',
-    });
+  const compare = keysType === 'list' ? keys.list : [...keys.list, ...keys.find];
+  const setCompare = new Set(compare);
+  const setInput = new Set(input);
+  const setBoth = new Set([...compare, ...input]);
+  return setCompare.size === setInput.size && setCompare.size === setBoth.size;
+}
 
-    await connection.up();
+function hasFindKeys(input: { [k: string]: any }): boolean {
+  return isSame('find', Reflect.ownKeys(input));
+}
 
-    repository = new UserPgRepositoryProvider(connection, new Config());
+function hasListKeys(input: { [k: string]: any }): boolean {
+  return isSame('list', Reflect.ownKeys(input));
+}
+test.serial('should create a user', async (t) => {
+  const territoryInput: UserCreateInterface = {
+    email: 'territory@toto.com',
+    firstname: 'toto',
+    lastname: 'tata',
+    role: 'territory.admin',
+    phone: '0102030405',
+    territory_id: 1,
+  };
+
+  const operatorInput: UserCreateInterface = {
+    email: 'operator@toto.com',
+    firstname: 'toto',
+    lastname: 'tata',
+    role: 'operator.admin',
+    phone: '0102030405',
+    operator_id: 1,
+  };
+
+  const registryInput: UserCreateInterface = {
+    email: 'registry@toto.com',
+    firstname: 'toto',
+    lastname: 'tata',
+    role: 'registry.admin',
+    phone: '0102030405',
+  };
+  const territoryData = await t.context.repository.create(territoryInput);
+  t.context.territory_id = territoryData._id;
+  t.is(territoryData.email, territoryInput.email);
+  t.true(hasFindKeys(territoryData));
+
+  const operatorData = await t.context.repository.create(operatorInput);
+  t.context.operator_id = operatorData._id;
+  t.is(operatorData.email, operatorInput.email);
+  t.true(hasFindKeys(operatorData));
+
+  const registryData = await t.context.repository.create(registryInput);
+  t.context.registry_id = registryData._id;
+  t.is(registryData.email, registryInput.email);
+  t.true(hasFindKeys(registryData));
+});
+
+test.serial('should patch a user', async (t) => {
+  const data = {
+    phone: '0203040506',
+  };
+  const result = await t.context.repository.patch(t.context.operator_id, data);
+  t.is(result.phone, data.phone);
+  t.true(hasFindKeys(result));
+});
+
+test.serial('should patch the user if group matches', async (t) => {
+  const data = {
+    phone: '0304050607',
+  };
+
+  const result = await t.context.repository.patchByTerritory(t.context.territory_id, data, 1);
+  t.is(result.phone, data.phone);
+  t.true(hasFindKeys(result));
+});
+
+test.serial('should not patch the user if group does not match', async (t) => {
+  const data = {
+    phone: '0203040506',
+  };
+
+  const result = await t.context.repository.patchByOperator(t.context.operator_id, data, 111);
+  t.is(result, undefined);
+});
+
+test.serial('should list users', async (t) => {
+  const result = await t.context.repository.list({}, { offset: 0, limit: 1000 });
+  t.true('users' in result);
+  t.true(Array.isArray(result.users));
+
+  // weird behaviour. Not all users are listed by the .list() command
+  const insertedUsers = result.users.filter((u) => /@toto.com$/.test(u.email));
+  for (const r of insertedUsers) {
+    t.true(hasListKeys(r));
+  }
+});
+
+test.serial('should list users with pagination', async (t) => {
+  const result = await t.context.repository.list({}, { limit: 1, offset: 1 });
+  t.true('users' in result);
+  t.true(Array.isArray(result.users));
+  t.is(result.users.length, 1);
+  for (const r of result.users) {
+    t.true(hasListKeys(r));
+  }
+});
+
+test.serial('should list users with filters', async (t) => {
+  const result = await t.context.repository.list({ operator_id: 1 }, { limit: 10, offset: 0 });
+  t.true('total' in result);
+  t.is(result.total, 1);
+  t.true('users' in result);
+  t.true(Array.isArray(result.users));
+  t.is(result.users.length, 1);
+  for (const r of result.users) {
+    t.true(hasListKeys(r));
+  }
+});
+
+test.serial('should find user by id', async (t) => {
+  const result = await t.context.repository.find(t.context.registry_id);
+  t.is(result._id, t.context.registry_id);
+  t.true(hasFindKeys(result));
+});
+
+test.serial('should find user by id if group match', async (t) => {
+  const result = await t.context.repository.findByOperator(t.context.operator_id, 1);
+  t.is(result._id, t.context.operator_id);
+  t.true(hasFindKeys(result));
+});
+
+test.serial('should not find user by id if group dont match', async (t) => {
+  const result = await t.context.repository.findByTerritory(t.context.territory_id, 111);
+  t.is(result, undefined);
+});
+
+test.serial('should delete user by id', async (t) => {
+  await t.context.repository.delete(t.context.registry_id);
+  const result = await t.context.connection.getClient().query({
+    text: `SELECT * FROM ${t.context.repository.table} WHERE _id = $1 LIMIT 1`,
+    values: [t.context.registry_id],
   });
+  t.is(result.rowCount, 0);
 
-  after(async () => {
-    const ids = Object.values(id);
-    for (const uid of ids) {
-      if (uid) {
-        await connection.getClient().query({
-          text: `DELETE FROM ${repository.table} WHERE _id = $1`,
-          values: [uid],
-        });
-      }
-    }
+  const resultFromRepository = await t.context.repository.find(t.context.registry_id);
+  t.is(resultFromRepository, undefined);
+});
 
-    await connection.down();
+test.serial('should delete user by id if group match', async (t) => {
+  await t.context.repository.deleteByTerritory(t.context.territory_id, 1);
+  const result = await t.context.connection.getClient().query({
+    text: `SELECT * FROM ${t.context.repository.table} WHERE _id = $1 LIMIT 1`,
+    values: [t.context.territory_id],
   });
+  t.is(result.rowCount, 0);
 
-  it('should create a user', async () => {
-    const territoryData = await repository.create(territoryInput);
-    id.territory = territoryData._id;
-    expect(territoryData.email).to.eq(territoryInput.email);
-    expect(territoryData).to.have.all.keys(find);
+  const resultFromRepository = await t.context.repository.find(t.context.territory_id);
+  t.is(resultFromRepository, undefined);
+});
 
-    const operatorData = await repository.create(operatorInput);
-    id.operator = operatorData._id;
-    expect(operatorData.email).to.eq(operatorInput.email);
-    expect(operatorData).to.have.all.keys(find);
-
-    const registryData = await repository.create(registryInput);
-    id.registry = registryData._id;
-    expect(registryData.email).to.eq(registryInput.email);
-    expect(registryData).to.have.all.keys(find);
+test.serial('should not delete user by id if group dont match', async (t) => {
+  await t.context.repository.deleteByOperator(t.context.operator_id, 111);
+  const result = await t.context.connection.getClient().query({
+    text: `SELECT * FROM ${t.context.repository.table} WHERE _id = $1 LIMIT 1`,
+    values: [t.context.operator_id],
   });
+  t.is(result.rows[0]._id, t.context.operator_id);
 
-  it('should patch a user', async () => {
-    const data = {
-      phone: '0203040506',
-    };
-    const result = await repository.patch(id.operator, data);
-    expect(result.phone).to.eq(data.phone);
-    expect(result).to.have.all.keys(find);
-  });
-
-  it('should patch the user if group matches', async () => {
-    const data = {
-      phone: '0304050607',
-    };
-
-    const result = await repository.patchByTerritory(id.territory, data, 1);
-    expect(result.phone).to.eq(data.phone);
-    expect(result).to.have.all.keys(find);
-  });
-
-  it('should not patch the user if group does not match', async () => {
-    const data = {
-      phone: '0203040506',
-    };
-
-    const result = await repository.patchByOperator(id.operator, data, 111);
-    expect(result).to.eq(undefined);
-  });
-
-  it('should list users', async () => {
-    const result = await repository.list({ limit: 1000 });
-    expect(result).to.have.property('users');
-    expect(result.users).to.be.an('array');
-
-    // weird behaviour. Not all users are listed by the .list() command
-    const insertedUsers = result.users.filter((u) => /@toto.com$/.test(u.email));
-    for (const r of insertedUsers) {
-      expect(r).to.have.all.keys(list);
-    }
-  });
-
-  it('should list users with pagination', async () => {
-    const result = await repository.list({}, { limit: 1, offset: 1 });
-    expect(result).to.have.property('users');
-    expect(result.users).to.be.an('array');
-    expect(result.users.length).to.eq(1);
-    for (const r of result.users) {
-      expect(r).to.have.all.keys(list);
-    }
-  });
-
-  it('should list users with filters', async () => {
-    const result = await repository.list({ operator_id: 1 });
-    expect(result).to.have.property('total', 1);
-    expect(result).to.have.property('users');
-    expect(result.users).to.be.an('array');
-    expect(result.users.length).to.eq(1);
-    for (const r of result.users) {
-      expect(r).to.have.all.keys(list);
-    }
-  });
-
-  it('should find user by id', async () => {
-    const result = await repository.find(id.registry);
-    expect(result._id).to.eq(id.registry);
-    expect(result).to.have.all.keys(find);
-  });
-
-  it('should find user by id if group match', async () => {
-    const result = await repository.findByOperator(id.operator, 1);
-    expect(result._id).to.eq(id.operator);
-    expect(result).to.have.all.keys(find);
-  });
-
-  it('should not find user by id if group dont match', async () => {
-    const result = await repository.findByTerritory(id.territory, 111);
-    expect(result).to.be.eq(undefined);
-  });
-
-  it('should delete user by id', async () => {
-    await repository.delete(id.registry);
-    const result = await connection.getClient().query({
-      text: `SELECT * FROM ${repository.table} WHERE _id = $1 LIMIT 1`,
-      values: [id.registry],
-    });
-    expect(result.rowCount).to.eq(0);
-
-    const resultFromRepository = await repository.find(id.registry);
-    expect(resultFromRepository).to.eq(undefined);
-  });
-
-  it('should delete user by id if group match', async () => {
-    await repository.deleteByTerritory(id.territory, 1);
-    const result = await connection.getClient().query({
-      text: `SELECT * FROM ${repository.table} WHERE _id = $1 LIMIT 1`,
-      values: [id.territory],
-    });
-    expect(result.rowCount).to.eq(0);
-
-    const resultFromRepository = await repository.find(id.territory);
-    expect(resultFromRepository).to.eq(undefined);
-  });
-
-  it('should not delete user by id if group dont match', async () => {
-    await repository.deleteByOperator(id.operator, 111);
-    const result = await connection.getClient().query({
-      text: `SELECT * FROM ${repository.table} WHERE _id = $1 LIMIT 1`,
-      values: [id.operator],
-    });
-    expect(result.rows[0]._id).to.eq(id.operator);
-
-    const resultFromRepository = await repository.find(id.operator);
-    expect(resultFromRepository).not.to.eq(undefined);
-  });
+  const resultFromRepository = await t.context.repository.find(t.context.operator_id);
+  t.not(resultFromRepository, undefined);
 });
