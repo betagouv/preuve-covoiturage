@@ -1,6 +1,5 @@
 import { promisify } from 'util';
 import { map } from 'lodash';
-import { utcToZonedTime } from 'date-fns-tz';
 
 import { provider } from '@ilos/common';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
