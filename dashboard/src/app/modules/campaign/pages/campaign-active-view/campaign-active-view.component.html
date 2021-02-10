@@ -1,8 +1,9 @@
 <app-page-content>
-  <div class="campaignActiveView--loading" *ngIf="isLoading">
+  <div class="campaignActiveView--loading" *ngIf="!isLoaded">
     <mat-spinner></mat-spinner>
   </div>
-  <div class="campaignActiveView" *ngIf="!isLoading">
+
+  <div class="campaignActiveView" *ngIf="isLoaded">
     <div class="campaignActiveView-header">
       <div class="campaignActiveView-header-title">
         <h1>{{ campaignUx.name }}</h1>
@@ -32,7 +33,9 @@
       </div>
       <div class="campaignActiveView-content-summaryAction" *ngIf="!showSummary">
         <div>
-          <a mat-button (click)="displaySummary()">Voir le texte récapitulatif</a>
+          <a mat-button (click)="showSummary = !showSummary">
+            {{ showSummary ? 'Voir' : 'Cacher' }} le texte récapitulatif
+          </a>
         </div>
       </div>
       <div *ngIf="showSummary">
