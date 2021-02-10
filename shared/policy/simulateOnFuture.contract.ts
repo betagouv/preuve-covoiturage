@@ -11,7 +11,7 @@ interface IdentityInterface {
   travel_pass?: {
     name: string;
     user_id: string;
-  }
+  };
 }
 
 interface PositionInterface {
@@ -38,7 +38,7 @@ interface PassengerInterface extends PersonInterface {
 
 export interface ParamsInterface {
   journey_id: string;
-  operator_class: string;  
+  operator_class: string;
   operator_id: number;
   passenger?: PassengerInterface;
   driver?: DriverInterface;

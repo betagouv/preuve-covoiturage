@@ -1,6 +1,6 @@
 import { TripStatInterface } from './common/interfaces/TripStatInterface';
 
-export interface ParamsInterface extends TripStatInterface { }
+export interface ParamsInterface extends TripStatInterface {}
 
 interface CommonStatInterface {
   incentive_sum: number;
