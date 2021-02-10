@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@ilos/core": "~0",
-    "@types/faker": "^4.1.11"
+    "@types/faker": "^4.1.11",
+    "supertest": "^6.1.3"
   }
 }
