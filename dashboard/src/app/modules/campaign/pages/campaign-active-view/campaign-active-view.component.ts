@@ -1,17 +1,17 @@
+import { of } from 'rxjs';
+import { bufferTime, concatMap, map, take, takeUntil } from 'rxjs/operators';
+
 import { Component, OnInit } from '@angular/core';
-import { take, takeUntil } from 'rxjs/operators';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 import { Territory } from '~/core/entities/territory/territory';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { CommonDataService } from '~/core/services/common-data.service';
-import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
   selector: 'app-campaign-active-view',
@@ -22,77 +22,45 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
   territory: Territory;
   campaignUx: CampaignUx;
   showSummary = false;
-
-  constructor(
-    private _authService: AuthenticationService,
-    private _commonDataService: CommonDataService,
-    private _dialog: DialogService,
-    private _router: Router,
-    private _route: ActivatedRoute,
-    private _campaignStoreService: CampaignStoreService,
-    private _toastr: ToastrService,
-  ) {
-    super();
-  }
-
-  ngOnInit(): void {
-    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
-    this._route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
-      const notFound = !params.has('campaignId');
-      if (notFound) {
-        this._router.navigate(['/404']);
-      } else {
-        this.loadCampaign(Number(params.get('campaignId')));
-      }
-    });
-  }
-
-  get isLoading(): boolean {
-    return !this.territory || !this.campaignUx;
-  }
+  isLoaded = false;
 
   get isLoggedAsTerritory(): boolean {
     return this._authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
   }
 
-  displaySummary(): void {
-    this.showSummary = true;
+  constructor(
+    private _route: ActivatedRoute,
+    private _authService: AuthenticationService,
+    private _territoryApi: TerritoryApiService,
+    private _campaignStoreService: CampaignStoreService,
+  ) {
+    super();
   }
 
-  private loadCampaign(campaignId: number): void {
-    this._campaignStoreService
-      .selectEntityByIdFromList(campaignId)
-      .pipe(take(1), takeUntil(this.destroy$))
-      .subscribe(
-        (campaign: Campaign) => {
-          this.campaignUx = campaign.toFormValues();
-          this._commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((ts) => {
-            if (ts) this.loadTerritory(campaign.territory_id, ts);
-          });
-        },
-        (err) => {
-          console.warn('err : ', err);
-          this._router.navigate(['/campaign']).then(() => {
-            this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
-          });
-        },
-      );
-    if (!this._campaignStoreService.loaded) {
-      if (this._authService.user.group === UserGroupEnum.TERRITORY) {
-        this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
-      }
-      this._campaignStoreService.loadList();
-    }
-  }
-
-  private loadTerritory(id: number, ts: Territory[]): void {
-    const foundTerritory = this._commonDataService.territories.filter((territory) => territory._id === id)[0];
-    if (foundTerritory) {
-      this.territory = foundTerritory;
-    } else {
-      this._router.navigate(['/campaign']).then(() => {
-        this._toastr.error("Les données du territoire de la campagne n'ont pas pu être chargées");
+  ngOnInit(): void {
+    this._route.paramMap
+      .pipe(
+        // race condition on page load...
+        bufferTime(500),
+        take(1),
+        map((list) => list[0]),
+        // get the id from URL params
+        concatMap((params: ParamMap) => of(Number(params.get('campaignId')))),
+        // fetch the campaign
+        concatMap((_id: number) => this._campaignStoreService.getById(_id)),
+        // set the local var with a mapped version of the data
+        // and pass its territory_id on
+        concatMap((campaign: Campaign) => {
+          this.campaignUx = new CampaignUx(campaign.toFormValues());
+          return of(campaign.territory_id);
+        }),
+        // fetch the territory data
+        concatMap((_id) => this._territoryApi.find({ _id })),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((territory) => {
+        this.territory = territory;
+        this.isLoaded = true;
       });
-    }
   }
 }

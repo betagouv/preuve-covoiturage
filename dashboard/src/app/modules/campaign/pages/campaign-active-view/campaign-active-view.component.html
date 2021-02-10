@@ -1,14 +1,17 @@
 <app-page-content>
-  <div class="campaignActiveView--loading" *ngIf="isLoading">
+  <div class="campaignActiveView--loading" *ngIf="!isLoaded">
     <mat-spinner></mat-spinner>
   </div>
-  <div class="campaignActiveView" *ngIf="!isLoading">
+
+  <div class="campaignActiveView" *ngIf="isLoaded">
     <div class="campaignActiveView-header">
       <div class="campaignActiveView-header-title">
         <h1>{{ campaignUx.name }}</h1>
         <p>{{ territory.name }}</p>
       </div>
-      <div class="campaignDraftView-header-action">
+
+      <!-- territories can duplicate the campaign -->
+      <!-- <div class="campaignDraftView-header-action">
         <button
           *ngIf="isLoggedAsTerritory"
           mat-flat-button
@@ -18,7 +21,7 @@
         >
           Dupliquer la campagne
         </button>
-      </div>
+      </div> -->
     </div>
 
     <div class="campaignActiveView-content">
@@ -30,9 +33,13 @@
         <app-campaign-rules-view [campaign]="campaignUx"></app-campaign-rules-view>
         <app-campaign-retribution-view [campaign]="campaignUx"></app-campaign-retribution-view>
       </div>
-      <div class="campaignActiveView-content-summaryAction" *ngIf="!showSummary">
+
+      <!-- summary -->
+      <div class="campaignActiveView-content-summaryAction">
         <div>
-          <a mat-button (click)="displaySummary()">Voir le texte récapitulatif</a>
+          <a mat-button (click)="showSummary = !showSummary">
+            {{ showSummary ? 'Voir' : 'Cacher' }} le texte récapitulatif
+          </a>
         </div>
       </div>
       <div *ngIf="showSummary">

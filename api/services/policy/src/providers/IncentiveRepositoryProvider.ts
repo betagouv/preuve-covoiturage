@@ -206,7 +206,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     const query = {
       text: `
         SELECT
-          sum(amount)::int as amount,
+          coalesce(sum(amount)::int, 0) as amount,
           (count(*) FILTER (WHERE amount > 0))::int as trip_subsidized,
           (count(*) FILTER (WHERE amount = 0))::int as trip_excluded
         FROM ${this.table}
@@ -217,10 +217,11 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     };
 
     const result = await this.connection.getClient().query(query);
+
     return result.rowCount
       ? result.rows[0]
       : {
-          sum: 0,
+          amount: 0,
           trip_excluded: 0,
           trip_subsidized: 0,
         };
