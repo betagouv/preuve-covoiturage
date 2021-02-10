@@ -1,299 +1,183 @@
-// tslint:disable max-classes-per-file
-import supertest from 'supertest';
-import path from 'path';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import { describe } from 'mocha';
-import { TransportInterface } from '@ilos/common';
+import anyTest from 'ava';
+import { httpMacro } from '@pdc/helper-test';
 
 import { bootstrap } from '../src/bootstrap';
 
-let transport: TransportInterface;
-let request;
+interface TestContext {
+  application: any;
+  operator_id: number;
+}
 
-chai.use(chaiAsPromised);
-const { expect } = chai;
+const { test } = httpMacro<TestContext>(anyTest, () => bootstrap.boot('http', 0));
 
-// tslint:disable-next-line: variable-name
-const operator_id = Math.round(Math.random() * 1000);
+test.before((t) => {
+  t.context.operator_id = Math.round(Math.random() * 1000);
+});
 
-describe('Application service', () => {
-  before(async () => {
-    const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
-    process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
-
-    transport = await bootstrap.boot('http', 0);
-    request = supertest(transport.getInstance());
-  });
-
-  after(async () => {
-    await transport.down();
-  });
-
-  let application;
-
-  it('#1 - Creates an application', () =>
-    request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'application:create',
-        params: {
-          params: {
-            name: 'Application',
-          },
-          _context: {
-            call: {
-              user: {
-                operator_id,
-                permissions: ['application.create'],
-              },
-            },
-          },
+test.serial('#1 - Creates an application', async (t) => {
+  const result = await t.context.request(
+    'application:create',
+    {
+      name: 'Application',
+    },
+    {
+      call: {
+        user: {
+          operator_id: t.context.operator_id,
+          permissions: ['application.create'],
         },
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('uuid');
-        expect(response.body.result).to.have.property('name', 'Application');
-        expect(response.body.result).to.have.property('owner_id', operator_id);
-        expect(response.body.result).to.have.property('owner_service', 'operator');
-        expect(new Date(response.body.result.created_at)).is.a('date');
-        expect(response.body.result.deleted_at).is.eq(null);
+      },
+    },
+  );
+  t.true('uuid' in result);
+  t.is(result.name, 'Application');
+  t.is(result.owner_id, t.context.operator_id);
+  t.is(result.owner_service, 'operator');
+  t.context.application = result;
+});
 
-        // store the application
-        application = response.body.result;
-      }));
-
-  it('#2.0 - Find the application by id', () =>
-    request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'application:find',
-        params: {
-          params: {
-            uuid: application.uuid,
-            owner_id: application.owner_id,
-            owner_service: application.owner_service,
-          },
-          _context: {
-            call: {
-              user: {
-                operator_id,
-                permissions: ['application.find'],
-              },
-            },
-          },
+test.serial('#2.0 - Find the application by id', async (t) => {
+  const result = await t.context.request(
+    'application:find',
+    {
+      uuid: t.context.application.uuid,
+      owner_id: t.context.application.owner_id,
+      owner_service: t.context.application.owner_service,
+    },
+    {
+      call: {
+        user: {
+          operator_id: t.context.operator_id,
+          permissions: ['application.find'],
         },
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('uuid', application.uuid);
-        expect(response.body.result).to.have.property('name', 'Application');
-        expect(response.body.result).to.have.property('owner_id', operator_id);
-        expect(response.body.result).to.have.property('owner_service', 'operator');
-      }));
+      },
+    },
+  );
+  t.is(result.uuid, t.context.application.uuid);
+  t.is(result.name, 'Application');
+  t.is(result.owner_id, t.context.operator_id);
+  t.is(result.owner_service, 'operator');
+});
 
-  it('#2.1 - Fails if no owner set', () =>
-    request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'application:find',
-        params: {
-          params: {
-            uuid: application.uuid,
-            // owner_id: application.owner_id,
-            owner_service: application.owner_service,
-          },
-          _context: {
-            call: {
-              user: {
-                permissions: ['application.find'],
-              },
-            },
-          },
+test.serial('#2.1 - Fails if no owner set', async (t) => {
+  const result = await t.context.request(
+    'application:find',
+    {
+      uuid: t.context.application.uuid,
+      // owner_id: application.owner_id,
+      owner_service: t.context.application.owner_service,
+    },
+    {
+      call: {
+        user: {
+          permissions: ['application.find'],
         },
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(400);
-        expect(response.body).to.have.property('error');
-        expect(response.body.error).to.have.property('code', -32602);
-        expect(response.body.error).to.have.property('message', 'Invalid params');
-        expect(response.body.error).to.have.property('data', 'Application owner service must be set');
-      }));
+      },
+    },
+  );
 
-  it("#3.0 - Cannot revoke another op's app", () =>
-    request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'application:revoke',
-        params: {
-          params: {
-            uuid: application.uuid,
-          },
-          _context: {
-            call: {
-              user: {
-                // generate false operator_id
-                operator_id: String(operator_id).split('').reverse().join(''),
-                permissions: ['application.revoke'],
-              },
-            },
-          },
-        },
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(404);
-        expect(response.body).to.have.property('error');
-      }));
+  t.true('error' in result);
+  t.is(result.error.code, -32602);
+  t.is(result.error.message, 'Invalid params');
+  t.is(result.error.data, 'Application owner service must be set');
+});
 
-  it('#3.1 - Revoke the application OK', () =>
-    request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'application:revoke',
-        params: {
-          params: {
-            uuid: application.uuid,
-          },
-          _context: {
-            call: {
-              user: {
-                operator_id,
-                permissions: ['application.revoke'],
-              },
-            },
-          },
+test.serial("#3.0 - Cannot revoke another op's app", async (t) => {
+  const result = await t.context.request(
+    'application:revoke',
+    {
+      uuid: t.context.application.uuid,
+    },
+    {
+      call: {
+        user: {
+          operator_id: String(t.context.operator_id).split('').reverse().join(''),
+          permissions: ['application.revoke'],
         },
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(200);
-        expect(response.body).to.deep.eq({ id: 1, jsonrpc: '2.0' });
-      }));
+      },
+    },
+  );
+  t.true('error' in result);
+});
 
-  it('#3.2 - Cannot revoke twice the same app', () =>
-    request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'application:revoke',
-        params: {
-          params: {
-            uuid: application.uuid,
-          },
-          _context: {
-            call: {
-              user: {
-                operator_id,
-                permissions: ['application.revoke'],
-              },
-            },
-          },
+test.serial('#3.1 - Revoke the application OK', async (t) => {
+  const result = await t.context.request(
+    'application:revoke',
+    {
+      uuid: t.context.application.uuid,
+    },
+    {
+      call: {
+        user: {
+          operator_id: t.context.operator_id,
+          permissions: ['application.revoke'],
         },
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(404);
-        expect(response.body).to.have.property('error');
-      }));
+      },
+    },
+  );
+  t.is(result, null);
+});
 
-  it('#4 - List applications', async () => {
-    // insert 2 applications
-    // the one created by test #1 is soft deleted and should not appear in the results
-    await request
-      .post('/')
-      .send([
-        {
-          id: 1,
-          jsonrpc: '2.0',
-          method: 'application:create',
-          params: {
-            params: {
-              name: 'Application A',
-            },
-            _context: {
-              call: {
-                user: {
-                  operator_id,
-                  permissions: ['application.create'],
-                },
-              },
-            },
-          },
+test.serial('#3.2 - Cannot revoke twice the same app', async (t) => {
+  const result = await t.context.request(
+    'application:revoke',
+    { uuid: t.context.application.uuid },
+    {
+      call: {
+        user: {
+          operator_id: t.context.operator_id,
+          permissions: ['application.revoke'],
         },
-        {
-          id: 2,
-          jsonrpc: '2.0',
-          method: 'application:create',
-          params: {
-            params: {
-              name: 'Application B',
-            },
-            _context: {
-              call: {
-                user: {
-                  operator_id,
-                  permissions: ['application.create'],
-                },
-              },
-            },
-          },
-        },
-      ])
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
+      },
+    },
+  );
+  t.true('error' in result);
+});
 
-    return request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'application:list',
-        params: {
-          params: {},
-          _context: {
-            call: {
-              user: {
-                operator_id,
-                permissions: ['application.list'],
-              },
-            },
-          },
+test.serial('#4 - List applications', async (t) => {
+  await t.context.request(
+    'application:create',
+    {
+      name: 'Application A',
+    },
+    {
+      call: {
+        user: {
+          operator_id: t.context.operator_id,
+          permissions: ['application.create'],
         },
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('result');
-        expect(response.body.result.length).to.eq(2);
-        const results = response.body.result.sort((a, b) => (a._id > b._id ? 1 : -1));
-
-        expect(results[0]).to.have.property('name', 'Application A');
-        expect(results[1]).to.have.property('name', 'Application B');
-      });
-  });
+      },
+    },
+  );
+  await t.context.request(
+    'application:create',
+    {
+      name: 'Application B',
+    },
+    {
+      call: {
+        user: {
+          operator_id: t.context.operator_id,
+          permissions: ['application.create'],
+        },
+      },
+    },
+  );
+  const result = await t.context.request(
+    'application:list',
+    {},
+    {
+      call: {
+        user: {
+          operator_id: t.context.operator_id,
+          permissions: ['application.list'],
+        },
+      },
+    },
+  );
+  t.true(Array.isArray(result));
+  t.is(result.length, 2);
+  const sortedResults = result.sort((a, b) => (a._id > b._id ? 1 : -1));
+  t.is(sortedResults[0].name, 'Application A');
+  t.is(sortedResults[1].name, 'Application B');
 });
