@@ -8,17 +8,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-validator --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/**/*.spec.ts",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/**/*.spec.ts",
     "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
-    "test": "ava",
-    "test:integration": "mocha --exit tests/*.spec.ts"
-  },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
+    "test": "ava"
   },
   "nyc": {
     "include": [

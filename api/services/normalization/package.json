@@ -10,9 +10,6 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "test:integration": "NODE_ENV=testing mocha --exit tests/*.spec.ts",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/service-normalization --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
   },
   "main": "./dist/bootstrap.js",
