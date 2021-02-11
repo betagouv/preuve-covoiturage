@@ -53,11 +53,8 @@ export abstract class JsonRPC {
         response.forEach((data: JsonRPCResponse) => {
           if (data.error) {
             const error = new JsonRPCError(data.error);
-            if (throwErrors) {
-              throw error;
-            }
-
-            console.error('RPC error ', error);
+            console.error(`[${error.message}]`, data.error?.data);
+            if (throwErrors) throw error;
           }
 
           // temporary compatibility solver (for result | result.data)
