@@ -71,7 +71,7 @@ test.after.always(async (t) => {
   await t.context.transport.down();
 });
 
-test('#01 - fails on empty payload', async (t) => {
+test.serial('#01 - fails on empty payload', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall())
@@ -83,7 +83,7 @@ test('#01 - fails on empty payload', async (t) => {
     });
 });
 
-test('#02 - fails on missing user authorization', async (t) => {
+test.serial('#02 - fails on missing user authorization', async (t) => {
   return t.context.request
     .post('/')
     .send(test2MissingUserAuth)
@@ -95,7 +95,7 @@ test('#02 - fails on missing user authorization', async (t) => {
     });
 });
 
-test('#03 - fails on wrong permissions', async (t) => {
+test.serial('#03 - fails on wrong permissions', async (t) => {
   return t.context.request
     .post('/')
     .send(test3FailsOnWrongPermissions)
@@ -107,7 +107,7 @@ test('#03 - fails on wrong permissions', async (t) => {
     });
 });
 
-test('#04 - fails on method not found', async (t) => {
+test.serial('#04 - fails on method not found', async (t) => {
   return t.context.request
     .post('/')
     .send(test4FailsOnMethodNotFound)
@@ -119,7 +119,7 @@ test('#04 - fails on method not found', async (t) => {
     });
 });
 
-test('#05 - passenger only', async (t) => {
+test.serial('#05 - passenger only', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test5PassengerOnly))
@@ -133,7 +133,7 @@ test('#05 - passenger only', async (t) => {
     });
 });
 
-test('#06 - fails on no passenger and no driver', async (t) => {
+test.serial('#06 - fails on no passenger and no driver', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test6Nobody))
@@ -147,7 +147,7 @@ test('#06 - fails on no passenger and no driver', async (t) => {
     });
 });
 
-test('#07 - succeeds on missing driver', async (t) => {
+test.serial('#07 - succeeds on missing driver', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test7DriverOnly))
@@ -161,7 +161,7 @@ test('#07 - succeeds on missing driver', async (t) => {
     });
 });
 
-test('#08 - start date in the future', async (t) => {
+test.serial('#08 - start date in the future', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test8StartDateInTheFuture))
@@ -174,7 +174,7 @@ test('#08 - start date in the future', async (t) => {
     });
 });
 
-test('#09 - start date after end date', async (t) => {
+test.serial('#09 - start date after end date', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test9StartAfterEnd))
@@ -187,7 +187,7 @@ test('#09 - start date after end date', async (t) => {
     });
 });
 
-test('#10 - missing start date', async (t) => {
+test.serial('#10 - missing start date', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test10MissingStartDate))
@@ -200,7 +200,7 @@ test('#10 - missing start date', async (t) => {
     });
 });
 
-test('#11 - missing end date', async (t) => {
+test.serial('#11 - missing end date', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test11MissingEndDate))
@@ -213,7 +213,7 @@ test('#11 - missing end date', async (t) => {
     });
 });
 
-test('#12 - missing journey_id', async (t) => {
+test.serial('#12 - missing journey_id', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test12MissingJourneyId))
@@ -226,7 +226,7 @@ test('#12 - missing journey_id', async (t) => {
     });
 });
 
-test('#13 - missing operator_journey_id', async (t) => {
+test.serial('#13 - missing operator_journey_id', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test13MissingOperatorJourneyId))
@@ -240,7 +240,7 @@ test('#13 - missing operator_journey_id', async (t) => {
     });
 });
 
-test('#14 - start date is > 7 days in the past', async (t) => {
+test.serial('#14 - start date is > 7 days in the past', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test14JourneyTooOld))
@@ -254,7 +254,7 @@ test('#14 - start date is > 7 days in the past', async (t) => {
     });
 });
 
-test('#15 - passenger contribution < 0', async (t) => {
+test.serial('#15 - passenger contribution < 0', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test15ContributionTooLow))
@@ -267,7 +267,7 @@ test('#15 - passenger contribution < 0', async (t) => {
     });
 });
 
-test('#16 - driver revenue < 0', async (t) => {
+test.serial('#16 - driver revenue < 0', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test16RevenueTooLow))
@@ -280,7 +280,7 @@ test('#16 - driver revenue < 0', async (t) => {
     });
 });
 
-test('#17 - passenger seats < 1', async (t) => {
+test.serial('#17 - passenger seats < 1', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test17SeatsTooLow))
@@ -293,7 +293,7 @@ test('#17 - passenger seats < 1', async (t) => {
     });
 });
 
-test('#18 - operator_class is different than A,B,C', async (t) => {
+test.serial('#18 - operator_class is different than A,B,C', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test18WrongOperatorClass))
@@ -306,7 +306,7 @@ test('#18 - operator_class is different than A,B,C', async (t) => {
     });
 });
 
-test('#19 - wrong email format', async (t) => {
+test.serial('#19 - wrong email format', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test19WrongEmailFormat))
@@ -319,7 +319,7 @@ test('#19 - wrong email format', async (t) => {
     });
 });
 
-test('#20 - incentive SIRET is more than 14 numbers', async (t) => {
+test.serial('#20 - incentive SIRET is more than 14 numbers', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test20WrongIncentiveSiret))
@@ -332,7 +332,7 @@ test('#20 - incentive SIRET is more than 14 numbers', async (t) => {
     });
 });
 
-test('#22 - Wrong incentive index', async (t) => {
+test.serial('#22 - Wrong incentive index', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test22WrongIncentiveIndex))
@@ -345,7 +345,7 @@ test('#22 - Wrong incentive index', async (t) => {
     });
 });
 
-test('#23 - Wrong incentive amount', async (t) => {
+test.serial('#23 - Wrong incentive amount', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test23WrongIncentiveAmount))
@@ -358,7 +358,7 @@ test('#23 - Wrong incentive amount', async (t) => {
     });
 });
 
-test('#24 - Wrong payment amount', async (t) => {
+test.serial('#24 - Wrong payment amount', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test24WrongPaymentAmount))
@@ -371,7 +371,7 @@ test('#24 - Wrong payment amount', async (t) => {
     });
 });
 
-test('#25 - Unsupported travel pass', async (t) => {
+test.serial('#25 - Unsupported travel pass', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test25UnsupportedTravelPass))
@@ -384,7 +384,7 @@ test('#25 - Unsupported travel pass', async (t) => {
     });
 });
 
-test('#26 - Duplicate journey_id', async (t) => {
+test.serial('#26 - Duplicate journey_id', async (t) => {
   await t.context.request
     .post('/')
     .send(t.context.rpcCall(test26DuplicateJourneyId))
@@ -409,7 +409,7 @@ test('#26 - Duplicate journey_id', async (t) => {
     });
 });
 
-test('#27 - distance is 0', async (t) => {
+test.serial('#27 - distance is 0', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test27DistanceIsZero))
@@ -422,7 +422,7 @@ test('#27 - distance is 0', async (t) => {
     });
 });
 
-test('#28 - duration is 0', async (t) => {
+test.serial('#28 - duration is 0', async (t) => {
   return t.context.request
     .post('/')
     .send(t.context.rpcCall(test28DurationIsZero))

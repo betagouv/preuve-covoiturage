@@ -6,7 +6,7 @@ import { CompanyDataSourceProvider } from './CompanyDataSourceProvider';
 test('should fetch from data source with a siret id', async (t) => {
   const provider: CompanyDataSourceProvider = new CompanyDataSourceProvider();
   const data = await provider.find('12000101100010');
-  t.deepEqual(Reflect.ownKeys(data), [
+  t.deepEqual(Reflect.ownKeys(data).sort(), [
     'siret',
     'siren',
     'nic',
@@ -15,14 +15,18 @@ test('should fetch from data source with a siret id', async (t) => {
     'establishment_naf_code',
     'legal_nature_code',
     'legal_nature_label',
-    'nonprofit_code',
     'intra_vat',
-    'address',
-    'lon',
-    'lat',
     'headquarter',
     'updated_at',
-  ]);
+    'nonprofit_code',
+    'address',
+    'address_street',
+    'address_postcode',
+    'address_cedex',
+    'address_city',
+    'lat',
+    'lon',
+  ].sort());
 
   t.is(data.siret, '12000101100010');
   t.is(data.siren, '120001011');
@@ -33,7 +37,7 @@ test('should fetch from data source with a siret id', async (t) => {
   t.is(data.legal_nature_code, '7120');
   t.is(data.legal_nature_label, "Service central d'un ministère");
   t.is(data.nonprofit_code, null);
-  t.is(data.intra_vat, null);
+  t.is(data.intra_vat, 'FR58120001011');
   t.is(data.address, '57 Rue de Varenne 75007 Paris');
   t.is(data.lon, 2.320884);
   t.is(data.lat, 48.854634);
