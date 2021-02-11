@@ -1,8 +1,8 @@
-import { merge } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { debounceTime, distinctUntilChanged, filter, takeUntil, tap, map } from 'rxjs/operators';
+import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
 
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 
 import { CommonDataService } from '~/core/services/common-data.service';
@@ -12,142 +12,116 @@ import { OperatorVisilibityService } from '~/modules/operator/services/operator-
 
 interface TerritoryVisibilityTree extends TerritoryTree {
   control?: FormControl;
-  selected: boolean;
+  checked: boolean;
+  selectable: boolean;
+}
+
+function flatTree(tree: Partial<TerritoryTree>[], indent = 0): TerritoryVisibilityTree[] {
+  const res = [];
+  if (tree)
+    for (const ter of tree) {
+      ter.indent = indent;
+      res.push(ter);
+      if (ter.children) {
+        const children = flatTree(ter.children, indent + 1);
+        for (const child of children) res.push({ ...child });
+      }
+    }
+
+  return res;
+}
+
+function mapTerritories<T extends { _id: number; activable?: boolean; level?: TerritoryLevelEnum }>(
+  list: T[],
+  visibility: number[],
+): TerritoryVisibilityTree[] {
+  const vis = [...visibility];
+  let _index: number;
+  let _checked: boolean;
+  const output = new Array(list.length);
+  for (let i = 0; i < list.length; i++) {
+    _index = vis.indexOf(list[i]._id);
+    _checked = _index > -1;
+    output[i] = {
+      ...list[i],
+      checked: _checked,
+      selectable: list[i].activable || list[i].level === TerritoryLevelEnum.Towngroup,
+    };
+  }
+
+  return output;
 }
 
 @Component({
   selector: 'app-operator-visibility-tree',
   templateUrl: './operator-visibility-tree.component.html',
   styleUrls: ['./operator-visibility-tree.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OperatorVisibilityTreeComponent extends DestroyObservable implements OnInit, AfterViewInit {
-  searchFilter: FormGroup;
-  checkAllValue = false;
-
-  territories: TerritoryVisibilityTree[] = [];
-  territoryIdsToShow: number[] = [];
-  selectedTerritoryIds: number[] = [];
-
-  visibilityFormControl: FormControl;
-  searchMode: boolean;
-
+export class OperatorVisibilityTreeComponent extends DestroyObservable implements OnInit {
   public isLoaded = false;
+  public isSearching = false;
+  public checkAllValue = false;
+  public searchFilter: FormGroup;
+  public filteredTerritories: TerritoryVisibilityTree[] = [];
+  public checkedCount = 0;
 
-  get hasFilter(): boolean {
-    return this.searchFilter.value;
-  }
+  private visibilityStore: number[] = [];
+  private territoryStore: TerritoryVisibilityTree[] = [];
 
-  get countCheckedTerritories(): number {
-    return this.selectedTerritoryIds.filter((val, ind, self) => self.indexOf(val) === ind).length;
+  get selection(): number[] {
+    return this.territoryStore.filter((t) => t.selectable && t.checked).map((t) => t._id);
   }
 
   constructor(
     private _commonDataService: CommonDataService,
-    private _operatorVisilibityService: OperatorVisilibityService,
+    private _operatorVisibilityService: OperatorVisilibityService,
     private _fb: FormBuilder,
     private _toastr: ToastrService,
+    private cd: ChangeDetectorRef,
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.initSearchForm();
-    this.initVisibilityForm();
+    this.initStores();
+    this.initSearchFilter();
   }
 
-  ngAfterViewInit() {
-    merge(
-      this._commonDataService.territoriesTree$.pipe(
-        filter((territories) => !!territories),
-        tap((territories) => {
-          this.territories = this.flatTree(territories);
-        }),
-      ),
-      this.searchFilter.valueChanges.pipe(debounceTime(100)),
-      this._operatorVisilibityService.operatorVisibility$.pipe(
-        filter((territories) => !!territories),
-        tap((territoryIds) => (this.selectedTerritoryIds = territoryIds)),
-      ),
-    )
-      .pipe(
-        distinctUntilChanged(),
-        debounceTime(100),
-        map(() => {
-          if (this.searchFilter && this.searchFilter.controls.query.value) {
-            this.searchMode = true;
-            const words = this.searchFilter.controls.query.value.toLowerCase().split(new RegExp('[ -_]'));
-            // score search based ordering
-            const territories = this.territories
-              // get only EPCI or AOM (activable)
-              .filter(this.isSelectable)
-              // search for requested words and set score based on matching words amount
-              .map<TerritoryVisibilityTree & { score: number }>((t) => {
-                const nameLowerCase = t.name.toLowerCase();
-                const score = words.map((w) => nameLowerCase.split(w).length - 1).reduce((acc, score) => acc + score);
-                // return null for fast filter optimisation
-                return score > 0 ? { ...t, score } : null;
-              })
-              // filter found territory
-              .filter((t) => t !== null)
-              .sort((a, b) => (a.score < b.score ? -1 : a.score > b.score ? 1 : 0));
-
-            return territories;
-          } else {
-            this.searchMode = false;
-
-            return this.territories;
-          }
-        }),
-        tap((territories) => {
-          this.isLoaded = !this.isLoaded && !!territories.length;
-        }),
-      )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((filteredTerritories) => {
-        this.territoryIdsToShow = filteredTerritories.map((territory) => territory._id);
-        this.updateVisibilityForm();
-      });
-
-    this.loadVisibility();
+  // territory checkbox event
+  public onChangeTerritory({ checked }, territory: TerritoryTree): void {
+    const index = this.territoryStore.findIndex((item) => item._id === territory._id);
+    if (index > -1) this.territoryStore[index].checked = checked;
+    this.setCheckAllValue();
   }
 
+  // all territories checkbox event
+  public onChangeAll({ checked }): void {
+    const visibility = checked ? this.territoryStore.filter((t) => t.selectable).map((t) => t._id) : [];
+    this.territoryStore = mapTerritories<TerritoryVisibilityTree>(this.territoryStore, visibility);
+    this.setCheckAllValue(checked);
+    this.searchFilter.setValue({ query: '' });
+  }
+
+  // set the all territories checkbox value
+  public setCheckAllValue(val: boolean = null): void {
+    this.checkedCount = this.selection.length;
+    this.checkAllValue = val ?? this.selection.length >= this.territoryStore.filter((t) => t.selectable).length;
+  }
+
+  // territories can be selected (checkbox) if it is an AOM (activable)
+  // or is a 'communauté de communes' aka TownGroup
   public isSelectable(t: TerritoryVisibilityTree) {
     return t.activable || t.level === TerritoryLevelEnum.Towngroup;
   }
 
-  public swapCheck(ter: TerritoryVisibilityTree) {
-    const selectedTerritoryIds = this.selectedTerritoryIds;
-    const selInd = selectedTerritoryIds.indexOf(ter._id);
-    const selected = selInd === -1;
-
-    if (selected) {
-      selectedTerritoryIds.push(ter._id);
-    } else {
-      selectedTerritoryIds.splice(selInd, 1);
-    }
-
-    this.visibilityFormControl.setValue(selectedTerritoryIds);
-  }
-
-  public flatTree(tree: Partial<TerritoryTree>[], indent = 0): TerritoryVisibilityTree[] {
-    const res = [];
-    if (tree)
-      for (const ter of tree) {
-        ter.indent = indent;
-        res.push(ter);
-        if (ter.children) {
-          const children = this.flatTree(ter.children, indent + 1);
-          for (const child of children) res.push({ ...child });
-        }
-      }
-
-    return res;
-  }
-
+  // store in backend
   public save(): void {
-    this._operatorVisilibityService.update(this.selectedTerritoryIds).subscribe(
+    this._operatorVisibilityService.update(this.selection).subscribe(
       () => {
         this._toastr.success('Modifications prises en compte.');
+        // reload and reset stores to wipe history
+        this.initStores();
       },
       () => {
         this._toastr.error('Une erreur est survenue');
@@ -155,49 +129,79 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     );
   }
 
-  public checkAll($event: any): void {
-    if ($event.checked) {
-      this.selectedTerritoryIds = this.territories
-        .filter(this.isSelectable)
-        .map((ter) => ter._id)
-        .filter((val, ind, self) => self.indexOf(val) === ind);
-    } else {
-      this.selectedTerritoryIds = [];
-    }
-    this.visibilityFormControl.setValue(this.selectedTerritoryIds);
+  // reset to values from backend
+  public reset(): void {
+    this.territoryStore = mapTerritories<TerritoryVisibilityTree>(this.territoryStore, this.visibilityStore);
+    this.setCheckAllValue();
+    this.searchFilter.setValue({ query: '' });
   }
 
-  public showTerritory(id: number): boolean {
-    return this.territoryIdsToShow.indexOf(id) > -1;
+  // define _id as the unique identifier of territories list in template
+  public trackById(index, territory): number {
+    return territory._id;
   }
 
-  private initVisibilityForm(): void {
-    this.visibilityFormControl = this._fb.control([]);
-    this.visibilityFormControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.updateCheckAllValue());
+  /**
+   * Load the list of territories and the list of visible territory_id
+   * from the current operator as 2 observables.
+   * Store the list of all territories with mapped status from visibility list.
+   */
+  private initStores(): void {
+    combineLatest([
+      this._commonDataService.territoriesTree$.pipe(
+        takeUntil(this.destroy$),
+        filter((list) => !!list?.length),
+        map(flatTree),
+      ),
+      this._operatorVisibilityService.loadOne().pipe(
+        takeUntil(this.destroy$),
+        filter((list) => !!list),
+      ),
+    ]).subscribe(([territories, visibility]) => {
+      this.visibilityStore = [...visibility];
+      this.territoryStore = mapTerritories<TerritoryTree>(territories, visibility);
+      this.isLoaded = true;
+      this.setCheckAllValue();
+      this.searchFilter.setValue({ query: '' });
+    });
   }
 
-  private updateVisibilityForm(): void {
-    if (!this.territories || !this.selectedTerritoryIds) return;
-    this.territories.forEach((t) => (t.selected = t.activable && this.selectedTerritoryIds.indexOf(t._id) > -1));
-    this.visibilityFormControl.setValue(this.selectedTerritoryIds);
-    this.updateCheckAllValue();
-  }
-
-  private updateCheckAllValue() {
-    //const uniqueTerritoryIdsToShow = this.visibilityFormControl.controls
-    const selectableTerritories = this.territories
-      .filter(this.isSelectable)
-      .map((ter) => ter._id)
-      .filter((val, ind, self) => self.indexOf(val) === ind);
-
-    this.checkAllValue = this.selectedTerritoryIds.length >= selectableTerritories.length;
-  }
-
-  private initSearchForm(): void {
+  /**
+   * Initialize the search field with empty value.
+   * Subscribe to the field value and filter territories for display
+   * with a scoring algorithm.
+   */
+  private initSearchFilter(): void {
     this.searchFilter = this._fb.group({ query: [''] });
-  }
+    this.searchFilter.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(300)).subscribe(({ query }) => {
+      this.isSearching = true;
 
-  private loadVisibility(): void {
-    this._operatorVisilibityService.loadOne().subscribe();
+      const words = query.trim().toLowerCase().split(new RegExp('[ -_]'));
+
+      // no filter
+      if (words.length === 1 && words[0] === '') {
+        this.isSearching = false;
+        this.filteredTerritories = this.territoryStore;
+        this.cd.detectChanges();
+        return;
+      }
+
+      // score search based ordering
+      this.filteredTerritories = this.territoryStore
+        // get only EPCI or AOM (activable)
+        .filter(this.isSelectable)
+        // search for requested words and set score based on matching words amount
+        .map<TerritoryVisibilityTree & { score: number }>((t) => {
+          const nameLowerCase = t.name.toLowerCase();
+          const score = words.map((w) => nameLowerCase.split(w).length - 1).reduce((acc, score) => acc + score);
+          // return null for fast filter optimisation
+          return score > 0 ? { ...t, score } : null;
+        })
+        // filter found territory
+        .filter((t) => t !== null)
+        .sort((a, b) => (a.score < b.score ? -1 : a.score > b.score ? 1 : 0));
+
+      this.cd.detectChanges();
+    });
   }
 }

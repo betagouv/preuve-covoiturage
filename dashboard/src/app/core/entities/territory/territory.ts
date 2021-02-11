@@ -50,7 +50,7 @@ export interface TerritoryTree {
   parents?: number[];
   hasParents?: boolean;
   indent: number;
-  activable;
+  activable: boolean;
 }
 
 export interface TerritoryBase extends TerritoryBaseEdit {
