@@ -1,21 +1,20 @@
-import { Injectable } from '@angular/core';
+import { saveAs } from 'file-saver';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { ResultInterface as FindResultInterface } from '~/core/entities/api/shared/certificate/find.contract';
+import { JsonRPC } from '~/core/services/api/json-rpc.service';
+import { ParamsInterface as DownloadParamsInterface } from '~/core/entities/api/shared/certificate/download.contract';
+import { PointInterface } from '~/core/entities/api/shared/common/interfaces/PointInterface';
 import {
   ParamsInterface as ListParamsInterface,
   ResultInterface as ListResultInterface,
 } from '~/core/entities/api/shared/certificate/list.contract';
-
-import { JsonRPC } from '~/core/services/api/json-rpc.service';
-import { ParamsInterface as DownloadParamsInterface } from '~/core/entities/api/shared/certificate/download.contract';
-
-import { PointInterface } from '~/core/entities/api/shared/common/interfaces/PointInterface';
-import { ConfigService } from '~/core/services/config.service';
 
 export type IdentityIdentifiersInterface =
   | { _id: number }
@@ -36,12 +35,17 @@ export interface CreateParamsInterface {
   providedIn: 'root',
 })
 export class CertificateApiService extends JsonRPC {
-  constructor(private config: ConfigService, http: HttpClient, router: Router, activedRoute: ActivatedRoute) {
+  constructor(http: HttpClient, router: Router, activedRoute: ActivatedRoute) {
     super(http, router, activedRoute);
   }
 
-  downloadPrint(data: DownloadParamsInterface): void {
-    window.open(`${this.config.get('apiUrl')}v2/certificates/pdf/${data.uuid}`);
+  async downloadPrint(data: DownloadParamsInterface): Promise<void> {
+    return this.http
+      .post(`v2/certificates/pdf`, data, { responseType: 'arraybuffer' })
+      .toPromise()
+      .then((response) => {
+        saveAs(new Blob([response], { type: 'application/pdf' }), `covoiturage-${data.uuid}.pdf`);
+      });
   }
 
   getList(certificateListFilter: ListParamsInterface): Observable<ListResultInterface> {
