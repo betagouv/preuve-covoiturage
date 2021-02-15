@@ -174,11 +174,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const values = [...(where ? where.values : [])];
     const text = `
       SELECT
-        ${
-          params.group_by === 'day'
-            ? 'journey_start_datetime::date as day'
-            : `date_part('month', journey_start_datetime) as month`
-        },
+        to_char(journey_start_datetime::date, 'yyyy-mm-dd') as day,
         sum(passenger_seats)::int as trip,
         sum(journey_distance/1000*passenger_seats)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
@@ -193,11 +189,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         coalesce(sum(passenger_incentive_rpc_sum + driver_incentive_rpc_sum), 0)::int as incentive_sum
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
-      ${
-        params.group_by === 'day'
-          ? 'GROUP BY day ORDER BY day ASC'
-          : `GROUP BY date_part('month', journey_start_datetime)`
-      }
+      GROUP BY day ORDER BY day ASC
     `;
 
     const result = await this.connection.getClient().query({
