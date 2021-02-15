@@ -33,8 +33,8 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
     const o: number[] = get(this.data, 'operators.list', []);
     const c: number = get(this.data, 'operators.count', 0);
 
-    if (s) p['Début'] = format(s, 'PPPP', { locale: fr });
-    if (e) p['Fin'] = format(e, 'PPPP', { locale: fr });
+    if (s) p['Début'] = format(this.castDate(s), 'PPPP', { locale: fr });
+    if (e) p['Fin'] = format(this.castDate(e), 'PPPP', { locale: fr });
     if (o.length === 0 || o.length === c) {
       p['Opérateurs'] = 'tous';
     } else if (o.length) {
@@ -70,5 +70,10 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
 
   public decline(): void {
     this.dialogRef.close(false);
+  }
+
+  private castDate(i: any): Date {
+    if ('toDate' in i) return i.toDate();
+    return new Date(i);
   }
 }

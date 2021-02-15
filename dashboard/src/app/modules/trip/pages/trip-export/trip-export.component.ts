@@ -77,7 +77,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
 
   public export(): void {
     const data: ExportFilterUxInterface = {
-      ...this.form.getRawValue(),
+      ...this.form.value,
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
 
