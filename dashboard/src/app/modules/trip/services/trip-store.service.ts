@@ -39,7 +39,12 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
       tz: filter.tz,
       date: {
         start: moment(filter.date.start).startOf('day').toISOString(),
-        end: moment(filter.date.end).endOf('day').toISOString(),
+        end: ((): string => {
+          const end = moment(filter.date.end);
+          const endOf = end.endOf('day');
+          const ago = moment().subtract(5, 'days');
+          return endOf.toDate().getTime() > ago.toDate().getTime() ? ago.toISOString() : endOf.toISOString();
+        })(),
       },
     };
 
