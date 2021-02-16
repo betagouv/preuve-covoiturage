@@ -26,7 +26,6 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       values: [id],
     };
 
-    console.log('find', query);
     const result = await this.connection.getClient().query(query);
 
     if (result.rowCount === 0) {
