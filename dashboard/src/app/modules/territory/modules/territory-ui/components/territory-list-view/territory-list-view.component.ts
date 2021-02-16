@@ -67,7 +67,7 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
       );
 
     this.territoryStoreService.pagination$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$), debounceTime(100))
       .subscribe((pagination) => (this._countTerritories = pagination.total));
   }
 
