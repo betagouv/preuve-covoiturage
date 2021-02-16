@@ -42,7 +42,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
 
   // configure date picker limits
   public minDateStart = sub(new Date(), { years: 1 });
-  public maxDateEnd = sub(new Date(), { days: 5 });
+  public maxDateEnd = endOfDay(sub(new Date(), { days: 5 }));
 
   get maxDateStart(): Date | null {
     return this.form.get('date.end').value || null;
@@ -66,7 +66,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
     this.form = this.fb.group({
       date: this.fb.group({
         start: [startOfDay(sub(new Date(), { months: 1 }))],
-        end: [endOfDay(sub(new Date(), { days: 5 }))],
+        end: [this.maxDateEnd],
       }),
       operators: {
         list: [],
