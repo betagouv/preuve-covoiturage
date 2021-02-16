@@ -163,7 +163,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
       .subscribe(
         (data) => {
           this.requestLoading = false;
-          this._router.navigate([`/campaign/draft/${this.campaignId}`]).then(() => {
+          this._router.navigate([`/campaign/${this.campaignId}`]).then(() => {
             this._toastr.success(`La campagne ${params.name} a bien été mise à jour`);
           });
         },
