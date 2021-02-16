@@ -20,7 +20,6 @@ export const territory = {
       'territory.trip.list',
       'territory.trip.stats',
       'territory.update',
-
       'territory.stats',
       'territory.list',
       'territory.read',
@@ -102,6 +101,7 @@ export const territory = {
       'incentive-campaign.read',
       'incentive-campaign.update',
       'incentive-campaign.delete',
+      'incentive-campaign.templates',
     ],
   },
   user: {
@@ -181,8 +181,6 @@ export const operator = {
       'operator.trip.export',
       'operator.trip.list',
       'operator.trip.stats',
-      'incentive-campaign.list',
-      'incentive-campaign.templates',
       'certificate.list',
       'certificate.create',
       'certificate.download',
@@ -208,8 +206,6 @@ export const operator = {
       'operator.trip.export',
       'operator.trip.list',
       'operator.trip.stats',
-      'incentive-campaign.list',
-      'incentive-campaign.templates',
       'user.list',
       'operator.users.list',
     ],
