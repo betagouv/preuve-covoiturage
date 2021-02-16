@@ -1,133 +1,133 @@
-// tslint:disable: no-unused-expression
-import path from 'path';
-import chai from 'chai';
-import supertest from 'supertest';
-import { describe } from 'mocha';
-import { QueueTransport } from '@ilos/transport-redis';
+// // tslint:disable: no-unused-expression
+// import path from 'path';
+// import chai from 'chai';
+// import supertest from 'supertest';
+// import { describe } from 'mocha';
+// import { QueueTransport } from '@ilos/transport-redis';
 
-import { TripInterface } from '../src/shared/common/interfaces/TripInterface';
-import { HttpTransport } from '../src/HttpTransport';
-import { Kernel } from '../src/Kernel';
-import { requestJourney } from './mocks/requestJourneyV2';
+// import { TripInterface } from '../src/shared/common/interfaces/TripInterface';
+// import { HttpTransport } from '../src/HttpTransport';
+// import { Kernel } from '../src/Kernel';
+// import { requestJourney } from './mocks/requestJourneyV2';
 
-const { expect } = chai;
+// const { expect } = chai;
 
-class Queue extends QueueTransport {
-  async up(opts): Promise<void> {
-    await super.up(opts);
-  }
-}
+// class Queue extends QueueTransport {
+//   async up(opts): Promise<void> {
+//     await super.up(opts);
+//   }
+// }
 
-describe('Acquisition pipeline', () => {
-  const kernel = new Kernel();
-  const app = new HttpTransport(kernel);
-  const worker = new Queue(kernel);
-  let request;
-  let token;
-  let operator;
+// describe('Acquisition pipeline', () => {
+//   const kernel = new Kernel();
+//   const app = new HttpTransport(kernel);
+//   const worker = new Queue(kernel);
+//   let request;
+//   let token;
+//   let operator;
 
-  before(async () => {
-    const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
-    process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
+//   before(async () => {
+//     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
+//     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
-    await kernel.bootstrap();
-    await app.up(['0']);
-    await worker.up(['APP_REDIS_URL' in process.env ? process.env.APP_REDIS_URL : 'redis://127.0.0.1:6379']);
+//     await kernel.bootstrap();
+//     await app.up(['0']);
+//     await worker.up(['APP_REDIS_URL' in process.env ? process.env.APP_REDIS_URL : 'redis://127.0.0.1:6379']);
 
-    request = supertest(app.app);
+//     request = supertest(app.app);
 
-    operator = await kernel.call(
-      'operator:create',
-      {
-        nom_commercial: 'Maxi covoit',
-        raison_sociale: 'Maxi covoit inc.',
-      },
-      {
-        call: { user: { permissions: ['operator.create'] } },
-        channel: {
-          service: 'operator',
-          transport: 'http',
-        },
-      },
-    );
+//     operator = await kernel.call(
+//       'operator:create',
+//       {
+//         nom_commercial: 'Maxi covoit',
+//         raison_sociale: 'Maxi covoit inc.',
+//       },
+//       {
+//         call: { user: { permissions: ['operator.create'] } },
+//         channel: {
+//           service: 'operator',
+//           transport: 'http',
+//         },
+//       },
+//     );
 
-    const appCreateResponse = await kernel.call(
-      'application:create',
-      {
-        name: 'Application',
-        operator_id: operator._id.toString(),
-        permissions: ['journey.create', 'certificate.create', 'certificate.download'],
-      },
-      {
-        call: {
-          user: { permissions: ['application.create'] },
-        },
-        channel: {
-          service: 'application',
-          transport: 'http',
-        },
-      },
-    );
+//     const appCreateResponse = await kernel.call(
+//       'application:create',
+//       {
+//         name: 'Application',
+//         operator_id: operator._id.toString(),
+//         permissions: ['journey.create', 'certificate.create', 'certificate.download'],
+//       },
+//       {
+//         call: {
+//           user: { permissions: ['application.create'] },
+//         },
+//         channel: {
+//           service: 'application',
+//           transport: 'http',
+//         },
+//       },
+//     );
 
-    appCreateResponse.application;
-    token = appCreateResponse.token;
-  });
+//     appCreateResponse.application;
+//     token = appCreateResponse.token;
+//   });
 
-  after(async () => {
-    await app.down();
-    await kernel.shutdown();
-  });
+//   after(async () => {
+//     await app.down();
+//     await kernel.shutdown();
+//   });
 
-  it('goes to db', (done) => {
-    // step 2 - check trips existence in DB
-    const checkInDb = new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          const response: any = await kernel.handle({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'trip:list',
-            params: {
-              params: {},
-              _context: { call: { user: { permissions: ['trip.list'] } } },
-            },
-          });
+//   it('goes to db', (done) => {
+//     // step 2 - check trips existence in DB
+//     const checkInDb = new Promise((resolve, reject) => {
+//       setTimeout(async () => {
+//         try {
+//           const response: any = await kernel.handle({
+//             id: 1,
+//             jsonrpc: '2.0',
+//             method: 'trip:list',
+//             params: {
+//               params: {},
+//               _context: { call: { user: { permissions: ['trip.list'] } } },
+//             },
+//           });
 
-          expect(response).to.have.property('result');
+//           expect(response).to.have.property('result');
 
-          resolve(response.result);
-        } catch (e) {
-          reject(e);
-        }
-      }, 1000);
-    });
+//           resolve(response.result);
+//         } catch (e) {
+//           reject(e);
+//         }
+//       }, 1000);
+//     });
 
-    // step 1 - create new journey
-    request
-      .post('/rpc')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'acquisition:create',
-        params: {
-          params: requestJourney,
-        },
-      })
-      .set('Authorization', `Bearer ${token}`)
-      .set('Accept', 'application/json')
-      .set('Content-type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.eq(200);
+//     // step 1 - create new journey
+//     request
+//       .post('/rpc')
+//       .send({
+//         id: 1,
+//         jsonrpc: '2.0',
+//         method: 'acquisition:create',
+//         params: {
+//           params: requestJourney,
+//         },
+//       })
+//       .set('Authorization', `Bearer ${token}`)
+//       .set('Accept', 'application/json')
+//       .set('Content-type', 'application/json')
+//       .expect((response: supertest.Response) => {
+//         expect(response.status).to.eq(200);
 
-        // call step 2
-        checkInDb
-          .then((trips: TripInterface[]) => {
-            expect(Array.isArray(trips)).to.be.true;
-          })
-          .then(done)
-          .catch(done);
-      })
-      .then(() => {}) // this makes the test run completely
-      .catch(done);
-  });
-});
+//         // call step 2
+//         checkInDb
+//           .then((trips: TripInterface[]) => {
+//             expect(Array.isArray(trips)).to.be.true;
+//           })
+//           .then(done)
+//           .catch(done);
+//       })
+//       .then(() => {}) // this makes the test run completely
+//       .catch(done);
+//   });
+// });

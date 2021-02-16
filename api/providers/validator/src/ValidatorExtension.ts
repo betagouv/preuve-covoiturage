@@ -47,8 +47,8 @@ export class ValidatorExtension extends ValidatorParentExtension {
     validator.registerCustomKeyword({ name: 'coordinates', type: 'keyword', definition: coordinatesKeyword });
 
     // register macros
-    validator.registerCustomKeyword(macroKeyword);
-    validator.registerCustomKeyword(castKeyword);
+    validator.registerCustomKeyword({ name: 'macro', type: 'keyword', definition: macroKeyword });
+    validator.registerCustomKeyword({ name: 'cast', type: 'keyword', definition: castKeyword });
     await super.init(serviceContainer);
 
     // dump the registered schema for debug - uncomment for use

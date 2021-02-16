@@ -1,52 +1,57 @@
+import anyTest, { TestInterface } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { describe } from 'mocha';
-import { expect } from 'chai';
 
 import { TerritoryOperatorRepositoryProvider } from './TerritoryOperatorRepositoryProvider';
 
-const territoryIds = [2, 3];
-const operatorId = 666;
+interface TestContext {
+  connection: PostgresConnection;
+  repository: TerritoryOperatorRepositoryProvider;
+  territoryIds: number[];
+  operatorId: number;
+}
 
-describe('Territory operator repository', () => {
-  let repository;
-  let connection;
+const test = anyTest as TestInterface<TestContext>;
 
-  before(async () => {
-    connection = new PostgresConnection({
-      connectionString:
-        'APP_POSTGRES_URL' in process.env
-          ? process.env.APP_POSTGRES_URL
-          : 'postgresql://postgres:postgres@localhost:5432/local',
-    });
-
-    await connection.up();
-
-    repository = new TerritoryOperatorRepositoryProvider(connection);
+test.before(async (t) => {
+  t.context.connection = new PostgresConnection({
+    connectionString:
+      'APP_POSTGRES_URL' in process.env
+        ? process.env.APP_POSTGRES_URL
+        : 'postgresql://postgres:postgres@localhost:5432/local',
   });
 
-  after(async () => {
-    await connection.getClient().query({
-      text: 'DELETE FROM territory.territory_operators WHERE operator_id = $1',
-      values: [operatorId],
-    });
+  await t.context.connection.up();
 
-    await connection.down();
-  });
-
-  it('should update by operator', async () => {
-    const result = await repository.updateByOperator(operatorId, territoryIds);
-    expect(result).to.be.undefined;
-  });
-
-  it('should list by operator', async () => {
-    const resultFromRepository = await repository.findByOperator(operatorId);
-    expect(resultFromRepository).to.be.an('array');
-    expect(resultFromRepository).to.have.members(territoryIds);
-  });
-
-  it('should list by territory', async () => {
-    const resultFromRepository = await repository.findByTerritory(territoryIds[0]);
-    expect(resultFromRepository).to.be.an('array');
-    expect(resultFromRepository).to.include(operatorId);
-  });
+  t.context.repository = new TerritoryOperatorRepositoryProvider(t.context.connection);
+  t.context.territoryIds = [2, 3];
+  t.context.operatorId = 666;
 });
+
+test.after.always(async (t) => {
+  await t.context.connection.getClient().query({
+    text: 'DELETE FROM territory.territory_operators WHERE operator_id = $1',
+    values: [t.context.operatorId],
+  });
+
+  await t.context.connection.down();
+});
+
+
+  test.serial('should update by operator', async (t) => {
+    const result = await t.context.repository.updateByOperator(t.context.operatorId, t.context.territoryIds);
+    t.is(result, undefined);
+  });
+
+  test.serial('should list by operator', async (t) => {
+    const resultFromRepository = await t.context.repository.findByOperator(t.context.operatorId);
+    t.true(Array.isArray(resultFromRepository));
+    for(const territoryId of t.context.territoryIds) {
+      t.true(resultFromRepository.indexOf(territoryId) > -1);
+    }
+  });
+
+  test.serial('should list by territory', async (t) => {
+    const resultFromRepository = await t.context.repository.findByTerritory(t.context.territoryIds[0]);
+    t.true(Array.isArray(resultFromRepository));
+    t.true(resultFromRepository.indexOf(t.context.operatorId) > -1);
+  });

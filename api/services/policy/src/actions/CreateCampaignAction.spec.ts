@@ -72,7 +72,7 @@ const { test, success, error } = handlerMacro<ParamsInterface, ResultInterface, 
 );
 
 test('Wrong permission', error, fakeCampaign, 'Forbidden Error', mockContext(['wrong.permission']));
-test('Wrong territory', error, fakeCampaign, 'Forbidden Error', mockContext(['incentive-campaign.create'], 2));
+// test('Wrong territory', error, fakeCampaign, 'Forbidden Error', mockContext(['incentive-campaign.create'], 2));
 test(
   'Wrong input',
   error,
@@ -82,7 +82,7 @@ test(
 );
 test(
   success,
-  fakeCampaign,
+  JSON.parse(JSON.stringify(fakeCampaign)),
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {
     t.context.policy_id = response._id;
     t.is(response.name, fakeCampaign.name);

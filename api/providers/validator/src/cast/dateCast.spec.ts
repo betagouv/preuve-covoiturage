@@ -1,13 +1,23 @@
-import chai from 'chai';
+import test from 'ava';
 
 import { dateCast } from './dateCast';
 
-const { expect, assert } = chai;
+test('converts date full ISO', (t) => {
+  t.is(dateCast({ data: '2019-01-01T00:00:00Z' }).toISOString(), new Date('2019-01-01T00:00:00Z').toISOString());
+});
 
-describe('dateCast', () => {
-  it('converts date full ISO', () => assert(dateCast({ data: '2019-01-01T00:00:00Z' })));
-  it('converts date Y-m-d', () => assert(dateCast({ data: '2019-01-01' })));
-  it('fails string', () => expect(dateCast.bind(null, { data: 'asd' })).to.throw('Invalid Date'));
-  it('fails null', () => expect(dateCast.bind(null, { data: null })).to.throw('Invalid Date'));
-  it('fails undefined', () => expect(dateCast.bind(null, { data: undefined })).to.throw('Invalid Date'));
+test('converts date Y-m-d', (t) => {
+  t.is(dateCast({ data: '2019-01-01' }).toISOString(), new Date('2019-01-01').toISOString());
+});
+
+test('fails string', (t) => {
+  t.throws(() => dateCast({ data: 'not_a_date' }), { instanceOf: Error }, 'Invalid Date');
+});
+
+test('fails null', (t) => {
+  t.throws(() => dateCast({ data: null }), { instanceOf: Error }, 'Invalid Date');
+});
+
+test('fails undefined', (t) => {
+  t.throws(() => dateCast({ data: undefined }), { instanceOf: Error }, 'Invalid Date');
 });

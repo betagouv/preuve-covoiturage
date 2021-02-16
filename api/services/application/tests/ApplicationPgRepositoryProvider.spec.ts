@@ -1,81 +1,79 @@
-import { describe } from 'mocha';
-import { expect } from 'chai';
+import anyTest, { TestInterface } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { ApplicationPgRepositoryProvider } from '../src/providers/ApplicationPgRepositoryProvider';
 
-describe('Application pg repository', () => {
-  let repository;
-  let connection;
-  let uuid;
+interface TestContext {
+  connection: PostgresConnection;
+  repository: ApplicationPgRepositoryProvider;
+  uuid: string;
+}
 
-  const sortDesc = (a: number, b: number): number => (a > b ? -1 : 1);
+const test = anyTest.serial as TestInterface<TestContext>;
 
-  before(async () => {
-    connection = new PostgresConnection({
-      connectionString:
-        'APP_POSTGRES_URL' in process.env
-          ? process.env.APP_POSTGRES_URL
-          : 'postgresql://postgres:postgres@localhost:5432/local',
+test.before(async (t) => {
+  t.context.connection = new PostgresConnection({
+    connectionString:
+      'APP_POSTGRES_URL' in process.env
+        ? process.env.APP_POSTGRES_URL
+        : 'postgresql://postgres:postgres@localhost:5432/local',
+  });
+
+  await t.context.connection.up();
+
+  t.context.repository = new ApplicationPgRepositoryProvider(t.context.connection);
+});
+
+test.after.always(async (t) => {
+  if (t.context.uuid) {
+    await t.context.connection.getClient().query({
+      text: 'DELETE FROM application.applications WHERE uuid = $1',
+      values: [t.context.uuid],
     });
+  }
 
-    await connection.up();
+  await t.context.connection.down();
+});
 
-    repository = new ApplicationPgRepositoryProvider(connection);
+test.serial('should create an application', async (t) => {
+  const result = await t.context.repository.create({
+    name: 'Dummy Application',
+    owner_id: 12345,
+    owner_service: 'operator',
+    permissions: ['journey.create', 'certificate.create', 'certificate.download'],
   });
 
-  after(async () => {
-    if (uuid) {
-      await connection.getClient().query({
-        text: 'DELETE FROM application.applications WHERE uuid = $1',
-        values: [uuid],
-      });
-    }
+  t.context.uuid = result.uuid;
+  t.is(result.name, 'Dummy Application');
+});
 
-    await connection.down();
+test.serial("should list owner's applications", async (t) => {
+  const result = await t.context.repository.list({
+    owner_id: 12345,
+    owner_service: 'operator',
+  });
+  t.true(Array.isArray(result));
+
+  t.is(result.filter((r) => r.uuid === t.context.uuid).length, 1);
+});
+
+test.serial('should find an application', async (t) => {
+  const result = await t.context.repository.find({
+    uuid: t.context.uuid,
+    owner_id: 12345,
+    owner_service: 'operator',
   });
 
-  it('should create an application', async () => {
-    const result = await repository.create({
-      name: 'Dummy Application',
-      owner_id: '12345',
-      owner_service: 'operator',
-      permissions: ['journey.create', 'certificate.create', 'certificate.download'],
-    });
+  t.is(result.uuid, t.context.uuid);
+});
 
-    uuid = result.uuid;
-    expect(result.name).to.eq('Dummy Application');
+test.serial('should revoke application by id', async (t) => {
+  await t.context.repository.revoke({ uuid: t.context.uuid, owner_id: 12345, owner_service: 'operator' });
+  const result = await t.context.connection.getClient().query({
+    text: 'SELECT * FROM application.applications WHERE uuid = $1 LIMIT 1',
+    values: [t.context.uuid],
   });
 
-  it("should list owner's applications", async () => {
-    const result = await repository.list({
-      owner_id: '12345',
-      owner_service: 'operator',
-    });
-
-    expect(result).to.be.an('array');
-    expect(result.sort(sortDesc)[0].uuid).to.eq(uuid);
-  });
-
-  it('should find an application', async () => {
-    const result = await repository.find({
-      uuid,
-      owner_id: '12345',
-      owner_service: 'operator',
-    });
-
-    expect(result.uuid).to.eq(uuid);
-  });
-
-  it('should revoke application by id', async () => {
-    await repository.revoke({ uuid, owner_id: '12345', owner_service: 'operator' });
-    const result = await connection.getClient().query({
-      text: 'SELECT * FROM application.applications WHERE uuid = $1 LIMIT 1',
-      values: [uuid],
-    });
-
-    const rows = result.rows.sort(sortDesc);
-    expect(rows[0].uuid).to.eq(uuid);
-    expect(rows[0].deleted_at).to.be.a('date');
-  });
+  t.is(result.rows[0].uuid, t.context.uuid);
+  t.true(result.rows[0].deleted_at instanceof Date);
 });
