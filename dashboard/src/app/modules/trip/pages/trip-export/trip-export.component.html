@@ -76,7 +76,7 @@
           type="button"
           color="primary"
           [appShowSpinner]="isExporting"
-          [disabled]="isExporting"
+          [disabled]="form.invalid || isExporting"
           (click)="export()"
         >
           Exporter les trajets
