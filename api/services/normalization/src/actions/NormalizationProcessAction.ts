@@ -119,7 +119,7 @@ export class NormalizationProcessAction extends AbstractAction {
     const driverDuration = Math.floor(
       ((driverEnd.getTime ? driverEnd.getTime() : new Date(driverEnd).getTime()) -
         (driverStart.getTime ? driverStart.getTime() : new Date(driverStart).getTime())) /
-        1000,
+      1000,
     );
 
     return {
@@ -167,7 +167,6 @@ export class NormalizationProcessAction extends AbstractAction {
         auth: {},
         headers: {},
         body: { journey, normalisationCode },
-        request_id: get(context, 'call.metadata.req.headers.x-request-id', null),
       },
       { channel: { service: 'acquisition' } },
     );
