@@ -4,6 +4,7 @@ export enum CampaignStatusEnum {
   VALIDATED = 'active',
   ARCHIVED = 'archived',
   TEMPLATE = 'template',
+  ENDED = 'ended',
 }
 
 export const CAMPAIGN_STATUS: CampaignStatusEnum[] = Object.values(CampaignStatusEnum);
@@ -14,4 +15,5 @@ export const CAMPAIGN_STATUS_FR = {
   [CampaignStatusEnum.VALIDATED]: 'En cours',
   [CampaignStatusEnum.ARCHIVED]: 'Terminée',
   [CampaignStatusEnum.TEMPLATE]: 'Modèle',
+  [CampaignStatusEnum.ENDED]: 'Terminée',
 };

@@ -227,8 +227,6 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       values: [id, territoryId],
     };
 
-    console.log('findOneWhereTerritory', query);
-
     const result = await this.connection.getClient().query(query);
 
     return result.rowCount ? result.rows[0] : null;

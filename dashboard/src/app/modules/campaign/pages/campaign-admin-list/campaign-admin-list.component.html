@@ -1,40 +1,30 @@
-<div class="CampaignAdminList">
-  <app-page-header>
-    <h1>Liste des campagnes sur tous les territoires</h1>
-  </app-page-header>
-  <app-page-content>
-    <div class="CampaignAdminList--loading" *ngIf="!campaigns">
-      <mat-spinner></mat-spinner>
-    </div>
+<app-page-header>
+  <h1>Liste des campagnes sur tous les territoires</h1>
+</app-page-header>
 
-    <div class="CampaignAdminList-header" [hidden]="!campaigns">
-      <mat-button-toggle-group [(ngModel)]="selectedStatus" name="userGroup" aria-label="Groupes d'utilisateurs">
-        <!-- <mat-button-toggle *ngFor="let status of allStatus" [value]="status">{{
-          getFrenchStatus(status)
-        }}</mat-button-toggle> -->
-        <mat-button-toggle value="current">En cours</mat-button-toggle>
-        <mat-button-toggle value="draft">Brouillons</mat-button-toggle>
-        <mat-button-toggle value="outdated">Terminées</mat-button-toggle>
-      </mat-button-toggle-group>
+<app-page-content>
+  <div class="loader" *ngIf="!campaigns">
+    <mat-spinner></mat-spinner>
+  </div>
 
-      <form [formGroup]="searchFilters">
-        <mat-form-field appearance="outline">
-          <mat-label>Rechercher</mat-label>
-          <input matInput placeholder="Nom, description" formControlName="query" autocomplete="off" />
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-      </form>
-    </div>
+  <div class="header" [hidden]="!campaigns">
+    <h2>Campagnes</h2>
 
-    <h2 *ngIf="campaigns">{{ titles[selectedStatus] }}</h2>
+    <form [formGroup]="searchFilters">
+      <mat-form-field appearance="outline">
+        <mat-label>Rechercher</mat-label>
+        <input matInput placeholder="Campagne" formControlName="query" autocomplete="off" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </form>
+  </div>
 
-    <div [hidden]="!displayData">
-      <app-campaign-table [status]="selectedStatus" [campaigns]="campaignsToShow"></app-campaign-table>
-      <mat-paginator [length]="countCampaigns" [pageSize]="PAGE_SIZE" (page)="paginationUpdate()"></mat-paginator>
-    </div>
+  <div [hidden]="!displayData">
+    <app-campaign-table [campaigns]="campaignsToShow"></app-campaign-table>
+    <mat-paginator [length]="countCampaigns" [pageSize]="PAGE_SIZE" (page)="paginationUpdate()"></mat-paginator>
+  </div>
 
-    <div *ngIf="!displayData" class="CampaignsList-notfound">
-      <p>{{ noCampaignMessage }}</p>
-    </div>
-  </app-page-content>
-</div>
+  <div *ngIf="!displayData" class="notfound">
+    <p>{{ noCampaignMessage }}</p>
+  </div>
+</app-page-content>
