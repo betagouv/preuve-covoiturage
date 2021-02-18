@@ -2,7 +2,6 @@ import anyTest, { TestInterface } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { TripRepositoryProvider } from './TripRepositoryProvider';
-import { ProcessableCampaign } from '../engine/ProcessableCampaign';
 
 interface TestContext {
   connection: PostgresConnection;

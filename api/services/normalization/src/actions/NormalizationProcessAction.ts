@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ContextType } from '@ilos/common';
 
@@ -119,7 +117,7 @@ export class NormalizationProcessAction extends AbstractAction {
     const driverDuration = Math.floor(
       ((driverEnd.getTime ? driverEnd.getTime() : new Date(driverEnd).getTime()) -
         (driverStart.getTime ? driverStart.getTime() : new Date(driverStart).getTime())) /
-      1000,
+        1000,
     );
 
     return {

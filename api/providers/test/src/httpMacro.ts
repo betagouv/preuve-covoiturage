@@ -22,16 +22,10 @@ export function httpMacro<TestContext = unknown>(
   test.before(async (t) => {
     t.context.transport = await transportCtor('http', '0');
     t.context.supertest = supertest(t.context.transport.getInstance());
-    t.context.request = async <P = ParamsType, R = ResultType>(method: string, params: P, context: Partial<ContextType>) => {
+    t.context.request = async <P = ParamsType>(method: string, params: P, context: Partial<ContextType>) => {
       const mergedContext: ContextType = {
-        call: {
-          user: {},
-          ...context.call,
-        },
-        channel: {
-          service: '',
-          ...context.channel,
-        },
+        call: { user: {}, ...context.call },
+        channel: { service: '', ...context.channel },
       };
 
       const result = await t.context.supertest

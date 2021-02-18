@@ -36,22 +36,21 @@ test.after.always(async (t) => {
   await t.context.connection.down();
 });
 
+test.serial('should update by operator', async (t) => {
+  const result = await t.context.repository.updateByOperator(t.context.operatorId, t.context.territoryIds);
+  t.is(result, undefined);
+});
 
-  test.serial('should update by operator', async (t) => {
-    const result = await t.context.repository.updateByOperator(t.context.operatorId, t.context.territoryIds);
-    t.is(result, undefined);
-  });
+test.serial('should list by operator', async (t) => {
+  const resultFromRepository = await t.context.repository.findByOperator(t.context.operatorId);
+  t.true(Array.isArray(resultFromRepository));
+  for (const territoryId of t.context.territoryIds) {
+    t.true(resultFromRepository.indexOf(territoryId) > -1);
+  }
+});
 
-  test.serial('should list by operator', async (t) => {
-    const resultFromRepository = await t.context.repository.findByOperator(t.context.operatorId);
-    t.true(Array.isArray(resultFromRepository));
-    for(const territoryId of t.context.territoryIds) {
-      t.true(resultFromRepository.indexOf(territoryId) > -1);
-    }
-  });
-
-  test.serial('should list by territory', async (t) => {
-    const resultFromRepository = await t.context.repository.findByTerritory(t.context.territoryIds[0]);
-    t.true(Array.isArray(resultFromRepository));
-    t.true(resultFromRepository.indexOf(t.context.operatorId) > -1);
-  });
+test.serial('should list by territory', async (t) => {
+  const resultFromRepository = await t.context.repository.findByTerritory(t.context.territoryIds[0]);
+  t.true(Array.isArray(resultFromRepository));
+  t.true(resultFromRepository.indexOf(t.context.operatorId) > -1);
+});
