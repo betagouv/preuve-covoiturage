@@ -8,6 +8,5 @@ RUN npm install
 
 COPY . /app
 
-RUN npm run cy:verify
 ENTRYPOINT ["sh", "-c"]
 CMD ["npm run cy:verify && npm run cy:run"]

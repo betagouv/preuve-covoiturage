@@ -11,10 +11,14 @@
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "scripts": {
     "cy:verify": "cypress verify",
-    "cy:run": "cypress run"
+    "cy:run": "cypress run",
+    "cy:open": "cypress open"
   },
   "dependencies": {
     "cypress": "^6.4.0",
     "cypress-cucumber-preprocessor": "^4.0.1"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true
   }
 }

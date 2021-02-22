@@ -1,5 +1,6 @@
 {
     "baseUrl": "https://app.dev.covoiturage.beta.gouv.fr",
-    "testFiles": "**/*.feature"
+    "ignoreTestFiles": "*.js",
+    "testFiles": "**/*.{feature,features}"
 }
   
