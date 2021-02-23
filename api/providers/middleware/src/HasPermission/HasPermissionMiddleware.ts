@@ -16,7 +16,7 @@ import {
  * @returns {MiddlewareInterface}
  */
 @middleware()
-export class PermissionMiddleware implements MiddlewareInterface {
+export class HasPermissionMiddleware implements MiddlewareInterface {
   async process(
     params: ParamsType,
     context: ContextType,
