@@ -1,7 +1,8 @@
 import { ContentBlacklistMiddleware, ContentBlacklistMiddlewareParams } from './ContentBlacklist/ContentBlacklistMiddleware';
 import { ContentWhitelistMiddleware, ContentWhitelistMiddlewareParams } from './ContentWhitelist/ContentWhitelistMiddleware';
 import { ContextExtractMiddleware, ContextExtractMiddlewareParams } from './ContextExtract/ContextExtractMiddleware';
-import { FeatureFlagMiddleware, FeatureFlagMiddlewareParams } from './FeatureFlag/FeatureFlagMiddleware';
+import { EnvironmentBlacklistMiddleware, EnvironmentBlacklistMiddlewareParams } from './Environment/EnvironmentBlacklistMiddleware';
+import { EnvironmentWhitelistMiddleware, EnvironmentWhitelistMiddlewareParams } from './Environment/EnvironmentWhitelistMiddleware';
 import { ScopeToSelfMiddleware, ScopeToSelfMiddlewareParams } from './ScopeToSelf/ScopeToSelfMiddleware';
 import { ValidateDateMiddleware, ValidateDateMiddlewareParams } from './ValidateDate/ValidateDateMiddleware';
 import { HasPermissionMiddleware, HasPermissionMiddlewareParams } from './HasPermission/HasPermissionMiddleware';
@@ -12,7 +13,8 @@ export const defaultMiddlewareBindings = [
     ['content.blacklist', ContentBlacklistMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
     ['context_extract', ContextExtractMiddleware],
-    ['featureflag', FeatureFlagMiddleware],
+    ['environment.except', EnvironmentBlacklistMiddleware],
+    ['environment.only', EnvironmentWhitelistMiddleware],
     ['scope_it', ScopeToSelfMiddleware],
     ['validate.date', ValidateDateMiddleware],
     ['can', HasPermissionMiddleware],
@@ -24,7 +26,8 @@ export {
     ContentBlacklistMiddleware, ContentBlacklistMiddlewareParams,
     ContentWhitelistMiddleware, ContentWhitelistMiddlewareParams,
     ContextExtractMiddleware, ContextExtractMiddlewareParams,
-    FeatureFlagMiddleware, FeatureFlagMiddlewareParams,
+    EnvironmentBlacklistMiddleware, EnvironmentBlacklistMiddlewareParams,
+    EnvironmentWhitelistMiddleware, EnvironmentWhitelistMiddlewareParams,
     ScopeToSelfMiddleware, ScopeToSelfMiddlewareParams,
     ValidateDateMiddleware, ValidateDateMiddlewareParams,
     HasPermissionMiddleware, HasPermissionMiddlewareParams,

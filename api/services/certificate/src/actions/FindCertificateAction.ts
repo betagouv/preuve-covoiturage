@@ -9,7 +9,7 @@ import { alias } from '../shared/certificate/find.schema';
   ...handlerConfig,
   middlewares: [
     // feature flag certificates until properly tested by operators
-    ['featureflag', { deny: ['production'] }],
+    ['environment.except', ['production']],
     ['validate', alias],
   ],
 })

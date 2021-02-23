@@ -14,7 +14,7 @@ import { alias } from '../shared/certificate/list.schema';
   ...handlerConfig,
   middlewares: [
     // feature flag certificates until properly tested by operators
-    ['featureflag', { deny: ['production'] }],
+    ['environment.except', ['production']],
     ['validate', alias],
     ['can', ['certificate.list']],
   ],
