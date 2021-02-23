@@ -24,7 +24,7 @@ import { alias } from '../shared/policy/find.schema';
         ],
       ],
     ],
-    ['context_extract', { territory_id: 'call.user.territory_id' }],
+    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
     ['validate', alias],
   ],
 })

@@ -9,7 +9,7 @@ import { alias } from '../shared/operator/patchThumbnail.schema';
   ...handlerConfig,
   middlewares: [
     ['can', ['operator.contacts.update']],
-    ['context_extract', { _id: 'call.user.operator_id' }],
+    ['copy_from_context', ['call.user.operator_id', '_id']],
     ['validate', alias],
   ],
 })

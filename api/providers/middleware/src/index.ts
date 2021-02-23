@@ -1,6 +1,6 @@
 import { ContentBlacklistMiddleware, ContentBlacklistMiddlewareParams } from './ContentBlacklist/ContentBlacklistMiddleware';
 import { ContentWhitelistMiddleware, ContentWhitelistMiddlewareParams } from './ContentWhitelist/ContentWhitelistMiddleware';
-import { ContextExtractMiddleware, ContextExtractMiddlewareParams } from './ContextExtract/ContextExtractMiddleware';
+import { CopyFromContextMiddleware, CopyFromContextMiddlewareParams } from './CopyFromContext/CopyFromContextMiddleware';
 import { EnvironmentBlacklistMiddleware, EnvironmentBlacklistMiddlewareParams } from './Environment/EnvironmentBlacklistMiddleware';
 import { EnvironmentWhitelistMiddleware, EnvironmentWhitelistMiddlewareParams } from './Environment/EnvironmentWhitelistMiddleware';
 import { ScopeToSelfMiddleware, ScopeToSelfMiddlewareParams } from './ScopeToSelf/ScopeToSelfMiddleware';
@@ -12,7 +12,7 @@ import { ChannelServiceWhitelistMiddleware, ChannelServiceWhitelistMiddlewarePar
 export const defaultMiddlewareBindings = [
     ['content.blacklist', ContentBlacklistMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
-    ['context_extract', ContextExtractMiddleware],
+    ['copy_from_context', CopyFromContextMiddleware],
     ['environment.except', EnvironmentBlacklistMiddleware],
     ['environment.only', EnvironmentWhitelistMiddleware],
     ['scope_it', ScopeToSelfMiddleware],
@@ -25,7 +25,7 @@ export const defaultMiddlewareBindings = [
 export {
     ContentBlacklistMiddleware, ContentBlacklistMiddlewareParams,
     ContentWhitelistMiddleware, ContentWhitelistMiddlewareParams,
-    ContextExtractMiddleware, ContextExtractMiddlewareParams,
+    CopyFromContextMiddleware, CopyFromContextMiddlewareParams,
     EnvironmentBlacklistMiddleware, EnvironmentBlacklistMiddlewareParams,
     EnvironmentWhitelistMiddleware, EnvironmentWhitelistMiddlewareParams,
     ScopeToSelfMiddleware, ScopeToSelfMiddlewareParams,
