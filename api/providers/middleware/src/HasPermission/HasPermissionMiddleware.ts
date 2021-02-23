@@ -8,6 +8,8 @@ import {
   ForbiddenException,
 } from '@ilos/common';
 
+export type HasPermissionMiddlewareParams = string[];
+
 /**
  * Can middleware check permission in context and may throw a ForbiddenException
  *
@@ -16,12 +18,12 @@ import {
  * @returns {MiddlewareInterface}
  */
 @middleware()
-export class HasPermissionMiddleware implements MiddlewareInterface {
+export class HasPermissionMiddleware implements MiddlewareInterface<HasPermissionMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
     next: Function,
-    neededPermissions: string[],
+    neededPermissions: HasPermissionMiddlewareParams
   ): Promise<ResultType> {
     if (!Array.isArray(neededPermissions) || neededPermissions.length === 0) {
       throw new InvalidParamsException('No permissions defined');

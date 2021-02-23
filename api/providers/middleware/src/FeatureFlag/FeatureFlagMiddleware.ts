@@ -1,18 +1,18 @@
 import { env } from '@ilos/core';
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, NotFoundException } from '@ilos/common';
 
-export interface FeatureFlagOptions {
+export interface FeatureFlagMiddlewareParams {
   allow: string[];
   deny: string[];
 }
 
 @middleware()
-export class FeatureFlagMiddleware implements MiddlewareInterface {
+export class FeatureFlagMiddleware implements MiddlewareInterface<FeatureFlagMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
     next: Function,
-    environments: Partial<FeatureFlagOptions>,
+    environments: Partial<FeatureFlagMiddlewareParams>,
   ): Promise<ResultType> {
     const appEnv = env('NODE_ENV') as string;
 

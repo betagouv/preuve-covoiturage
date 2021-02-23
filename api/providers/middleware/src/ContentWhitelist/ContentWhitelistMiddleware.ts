@@ -1,12 +1,15 @@
 import { set } from 'lodash';
 
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
+
+export type ContentWhitelistMiddlewareParams = string[];
+
 /*
  * Delete properties from model or array of models on output of handler
  */
 @middleware()
-export class ContentWhitelistMiddleware implements MiddlewareInterface {
-  async process(params: ParamsType, context: ContextType, next: Function, config: string[]): Promise<ResultType> {
+export class ContentWhitelistMiddleware implements MiddlewareInterface<ContentWhitelistMiddlewareParams> {
+  async process(params: ParamsType, context: ContextType, next: Function, config: ContentWhitelistMiddlewareParams): Promise<ResultType> {
     const result = await next(params, context);
     const isArray = Array.isArray(result);
     let data = result;

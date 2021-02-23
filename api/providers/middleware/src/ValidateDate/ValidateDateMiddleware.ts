@@ -1,7 +1,7 @@
 import { get, set } from 'lodash';
 import { MiddlewareInterface, ContextType, ResultType, InvalidParamsException, middleware } from '@ilos/common';
 
-export type ValidateDateMiddlewareOptionsType = {
+export type ValidateDateMiddlewareParams = {
   startPath: string;
   endPath: string;
   minStart?: () => Date;
@@ -10,12 +10,12 @@ export type ValidateDateMiddlewareOptionsType = {
 };
 
 @middleware()
-export class ValidateDateMiddleware implements MiddlewareInterface {
+export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateMiddlewareParams> {
   async process(
     params: any,
     context: ContextType,
     next: Function,
-    options: ValidateDateMiddlewareOptionsType,
+    options: ValidateDateMiddlewareParams,
   ): Promise<ResultType> {
     if (!options.startPath || !options.endPath || Reflect.ownKeys(options).length < 3) {
       throw new InvalidParamsException('Middleware is not properly configured');

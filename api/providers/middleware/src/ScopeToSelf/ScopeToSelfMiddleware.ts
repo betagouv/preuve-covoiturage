@@ -8,18 +8,18 @@ import {
   ForbiddenException,
 } from '@ilos/common';
 
-export type ScopeToSelfMiddlewareOptionsType = [string[], Function[]];
+export type ScopeToSelfMiddlewareParams = [string[], Function[]];
 
 /*
  * Verify default permission - else verify permissions according to params, context & callback function
  */
 @middleware()
-export class ScopeToSelfMiddleware implements MiddlewareInterface {
+export class ScopeToSelfMiddleware implements MiddlewareInterface<ScopeToSelfMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
     next: Function,
-    options: ScopeToSelfMiddlewareOptionsType,
+    options: ScopeToSelfMiddlewareParams,
   ): Promise<ResultType> {
     const [basePermissions, callbackPermissions] = options;
 

@@ -1,7 +1,7 @@
 import { ParamsType, ResultType, ContextType } from '../call';
 
-export interface MiddlewareInterface {
-  process(params: ParamsType, context: ContextType, next?: Function, options?: any): Promise<ResultType>;
+export interface MiddlewareInterface<T=any> {
+  process(params: ParamsType, context: ContextType, next?: Function, options?: T): Promise<ResultType>;
 }
 
 export type FunctionMiddlewareInterface = (
