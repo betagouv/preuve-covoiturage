@@ -10,7 +10,7 @@ import { alias } from '../shared/territory/updateOperator.schema';
   ...configHandler,
   middlewares: [
     [
-      'scopeIt',
+      'scope_it',
       [
         ['this.is.not.a.valid.permission'],
         [

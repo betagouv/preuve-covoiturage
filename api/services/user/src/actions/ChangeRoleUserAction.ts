@@ -13,7 +13,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
   middlewares: [
     ['validate', alias],
     [
-      'scopeIt',
+      'scope_it',
       [
         ['user.update'],
         [

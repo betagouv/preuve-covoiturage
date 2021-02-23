@@ -15,7 +15,7 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
   middlewares: [
     ['validate', alias],
     [
-      'scopeIt',
+      'scope_it',
       [
         ['user.read'],
         [

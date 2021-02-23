@@ -11,7 +11,7 @@ import { alias } from '../shared/territory/listOperator.schema';
   middlewares: [
     ['validate', alias],
     [
-      'scopeIt',
+      'scope_it',
       [
         ['this.is.not.a.valid.permission'],
         [

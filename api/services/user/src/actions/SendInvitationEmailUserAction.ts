@@ -15,7 +15,7 @@ import { UserNotificationProvider } from '../providers/UserNotificationProvider'
   middlewares: [
     ['validate', alias],
     [
-      'scopeIt',
+      'scope_it',
       [
         ['user.send-confirm-email'],
         [

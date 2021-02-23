@@ -12,7 +12,7 @@ import { alias } from '../shared/policy/find.schema';
   ...handlerConfig,
   middlewares: [
     [
-      'scope.it',
+      'scope_it',
       [
         ['incentive-campaign.read'],
         [

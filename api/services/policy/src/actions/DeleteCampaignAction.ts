@@ -9,7 +9,7 @@ import { alias } from '../shared/policy/delete.schema';
   ...handlerConfig,
   middlewares: [
     [
-      'scope.it',
+      'scope_it',
       [
         ['incentive-campaign.delete'],
         [

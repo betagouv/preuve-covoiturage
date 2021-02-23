@@ -28,7 +28,7 @@ const whiteList = [
   middlewares: [
     ['validate', alias],
     [
-      'scopeIt',
+      'scope_it',
       [
         ['user.list'],
         [

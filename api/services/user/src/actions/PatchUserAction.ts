@@ -18,7 +18,7 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
   middlewares: [
     ['validate', alias],
     [
-      'scopeIt',
+      'scope_it',
       [
         ['user.update'],
         [

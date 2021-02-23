@@ -27,7 +27,7 @@ interface SimulateResultInterface {
   ...handlerConfig,
   middlewares: [
     [
-      'scope.it',
+      'scope_it',
       [
         ['incentive-campaign.simulate'],
         [

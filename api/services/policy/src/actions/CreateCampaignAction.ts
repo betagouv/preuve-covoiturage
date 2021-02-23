@@ -9,7 +9,7 @@ import { alias } from '../shared/policy/create.schema';
   ...handlerConfig,
   middlewares: [
     [
-      'scope.it',
+      'scope_it',
       [
         ['incentive-campaign.create'],
         [

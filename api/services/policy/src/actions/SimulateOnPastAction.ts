@@ -12,7 +12,7 @@ import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvid
   ...handlerConfig,
   middlewares: [
     [
-      'scope.it',
+      'scope_it',
       [
         ['incentive-campaign.simulate'],
         [
