@@ -3,7 +3,7 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorMiddleware, ValidatorExtension } from '@pdc/provider-validator';
-import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { config } from './config';
 import { binding as crosscheckBinding } from './shared/carpool/crosscheck.schema';
@@ -21,8 +21,8 @@ import { UpdateStatusAction } from './actions/UpdateStatusAction';
   providers: [CarpoolRepositoryProvider, CrosscheckRepositoryProvider, IdentityRepositoryProvider],
   validator: [crosscheckBinding, findUuidBinding],
   middlewares: [
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
   ],
   connections: [
     [RedisConnection, 'connections.redis'],

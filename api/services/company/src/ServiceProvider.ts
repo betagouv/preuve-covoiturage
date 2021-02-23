@@ -1,6 +1,6 @@
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { HasPermissionMiddleware } from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
@@ -17,7 +17,7 @@ import { FindAction } from './actions/FindAction';
   providers: [CompanyRepositoryProvider, CompanyDataSourceProvider],
   validator: [fetchBinding, findBinding],
   middlewares: [
-    ['can', HasPermissionMiddleware],
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],

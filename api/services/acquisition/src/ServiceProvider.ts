@@ -3,7 +3,7 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { ChannelServiceWhitelistMiddleware, HasPermissionMiddleware } from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { config } from './config';
 import { JourneyPgRepositoryProvider } from './providers/JourneyPgRepositoryProvider';
@@ -35,9 +35,8 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
     ['acquisition.resolveerror', resolveerror],
   ],
   middlewares: [
-    ['can', HasPermissionMiddleware],
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
   ],
   connections: [
     [PostgresConnection, 'connections.postgres'],

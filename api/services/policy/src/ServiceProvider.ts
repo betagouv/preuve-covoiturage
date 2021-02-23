@@ -3,13 +3,7 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import {
-  ScopeToSelfMiddleware,
-  ChannelServiceWhitelistMiddleware,
-  ContextExtractMiddleware,
-  ValidateDateMiddleware,
-  HasPermissionMiddleware,
-} from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { config } from './config';
 import { binding as createSchemaBinding } from './shared/policy/create.schema';
@@ -54,7 +48,6 @@ import { SeedCommand } from './commands/SeedCommand';
     CampaignPgRepositoryProvider,
     MetadataProvider,
     TripRepositoryProvider,
-    ['validate.rules', ValidateRuleParametersMiddleware],
     PolicyEngine,
     IncentiveRepositoryProvider,
     TerritoryRepositoryProvider,
@@ -90,12 +83,9 @@ import { SeedCommand } from './commands/SeedCommand';
   ],
   queues: ['campaign'],
   middlewares: [
-    ['can', HasPermissionMiddleware],
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['scope.it', ScopeToSelfMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
-    ['context_extract', ContextExtractMiddleware],
-    ['validate.date', ValidateDateMiddleware],
+    ['validate.rules', ValidateRuleParametersMiddleware],
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {

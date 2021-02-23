@@ -5,14 +5,7 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { NotificationExtension } from '@pdc/provider-notification';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import {
-  ScopeToSelfMiddleware,
-  ContentBlacklistMiddleware,
-  ContentWhitelistMiddleware,
-  ChannelServiceBlacklistMiddleware,
-  ChannelServiceWhitelistMiddleware,
-  HasPermissionMiddleware,
-} from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { TemplateExtension } from '@pdc/provider-template';
 
 import { changePassword } from './shared/user/changePassword.schema';
@@ -79,13 +72,8 @@ import { FindInactiveCommand } from './commands/FindInactiveCommand';
     ['user.sendInvitationEmail', sendInvitationEmail],
   ],
   middlewares: [
-    ['can', HasPermissionMiddleware],
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['scopeIt', ScopeToSelfMiddleware],
-    ['content.blacklist', ContentBlacklistMiddleware],
-    ['content.whitelist', ContentWhitelistMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
-    ['channel.service.except', ChannelServiceBlacklistMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [

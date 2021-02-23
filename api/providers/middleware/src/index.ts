@@ -8,6 +8,18 @@ import { HasPermissionMiddleware, HasPermissionMiddlewareParams } from './HasPer
 import { ChannelServiceBlacklistMiddleware, ChannelServiceBlacklistMiddlewareParams } from './ChannelService/ChannelServiceBlacklistMiddleware';
 import { ChannelServiceWhitelistMiddleware, ChannelServiceWhitelistMiddlewareParams } from './ChannelService/ChannelServiceWhitelistMiddleware';
 
+export const defaultMiddlewareBindings = [
+    ['content.blacklist', ContentBlacklistMiddleware],
+    ['content.whitelist', ContentWhitelistMiddleware],
+    ['context_extract', ContextExtractMiddleware],
+    ['featureflag', FeatureFlagMiddleware],
+    ['scope_it', ScopeToSelfMiddleware],
+    ['validate.date', ValidateDateMiddleware],
+    ['can', HasPermissionMiddleware],
+    ['channel.service.except', ChannelServiceBlacklistMiddleware],
+    ['channel.service.only', ChannelServiceWhitelistMiddleware],
+];
+
 export {
     ContentBlacklistMiddleware, ContentBlacklistMiddlewareParams,
     ContentWhitelistMiddleware, ContentWhitelistMiddlewareParams,

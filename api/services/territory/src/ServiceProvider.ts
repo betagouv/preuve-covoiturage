@@ -2,12 +2,7 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import {
-  ContentWhitelistMiddleware,
-  ContentBlacklistMiddleware,
-  ScopeToSelfMiddleware,
-  HasPermissionMiddleware,
-} from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { find } from './shared/territory/find.schema';
 import { create } from './shared/territory/create.schema';
@@ -62,11 +57,8 @@ import { DropdownTerritoryAction } from './actions/DropdownTerritoryAction';
     listOperatorBinding,
   ],
   middlewares: [
-    ['can', HasPermissionMiddleware],
-    ['scopeIt', ScopeToSelfMiddleware],
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['content.whitelist', ContentWhitelistMiddleware],
-    ['content.blacklist', ContentBlacklistMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [

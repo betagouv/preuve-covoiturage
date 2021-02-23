@@ -2,7 +2,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { config } from './config';
 import { binding as saveBinding } from './shared/honor/save.schema';
@@ -16,8 +16,8 @@ import { HonorRepositoryProvider } from './providers/HonorRepositoryProvider';
   providers: [HonorRepositoryProvider],
   validator: [saveBinding, statsBinding],
   middlewares: [
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [StatsAction, SaveAction],

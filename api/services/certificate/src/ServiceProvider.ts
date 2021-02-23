@@ -2,7 +2,7 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { HasPermissionMiddleware, ChannelServiceWhitelistMiddleware, FeatureFlagMiddleware } from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { DateProvider } from '@pdc/provider-date';
 import { QrcodeProvider } from '@pdc/provider-qrcode';
 import { CryptoProvider } from '@pdc/provider-crypto';
@@ -34,10 +34,8 @@ import { binding as listBinding } from './shared/certificate/list.schema';
   ],
   validator: [createBinding, findBinding, downloadBinding, listBinding],
   middlewares: [
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['can', HasPermissionMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
-    ['featureflag', FeatureFlagMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [DownloadCertificateAction, CreateCertificateAction, FindCertificateAction, ListCertificateAction],

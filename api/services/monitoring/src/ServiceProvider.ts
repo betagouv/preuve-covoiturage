@@ -4,7 +4,7 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { RedisConnection } from '@ilos/connection-redis';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { HasPermissionMiddleware, ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { NotificationExtension } from '@pdc/provider-notification';
 import { TemplateExtension } from '@pdc/provider-template';
 
@@ -21,9 +21,8 @@ import { binding as statsBinding } from './shared/monitoring/journeys/stats.sche
   commands: [JourneysStatsCommand],
   validator: [statsBinding],
   middlewares: [
-    ['can', PermissionMiddleware],
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
   ],
   connections: [
     [RedisConnection, 'connections.redis'],
