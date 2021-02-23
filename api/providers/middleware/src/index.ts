@@ -1,4 +1,3 @@
-export * from './ChannelTransport/ChannelTransportMiddleware';
 export * from './ContentBlacklist/ContentBlacklistMiddleware';
 export * from './ContentWhitelist/ContentWhitelistMiddleware';
 export * from './ContextExtract/ContextExtractMiddleware';
