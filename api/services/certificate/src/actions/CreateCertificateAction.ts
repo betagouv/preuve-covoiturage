@@ -20,7 +20,7 @@ import { IdentityIdentifiersInterface } from '../shared/certificate/common/inter
     // feature flag certificates until properly tested by operators
     ['environment.except', ['production']],
     ['validate', alias],
-    ['can', ['certificate.create']],
+    ['has_permission', ['certificate.create']],
   ],
 })
 export class CreateCertificateAction extends AbstractAction {

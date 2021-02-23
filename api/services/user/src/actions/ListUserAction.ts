@@ -27,21 +27,23 @@ const whiteList = [
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
+    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
+    ['copy_from_context', ['call.user.operator_id', 'operator_id']],
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['user.list'],
+        'user.list',
         [
-          (_params, context): string => {
-            if (context.call.user.territory_id) {
-              return 'territory.users.list';
-            }
-          },
-          (_params, context): string => {
-            if (context.call.user.operator_id) {
-              return 'operator.users.list';
-            }
-          },
+          [
+            'territory.users.list',
+            'call.user.territory_id',
+            'territory_id',
+          ],
+          [
+            'operator.users.list',
+            'call.user.operator_id',
+            'operator_id'
+          ],
         ],
       ],
     ],
@@ -54,17 +56,9 @@ export class ListUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
-    const contextParam: UserListFiltersInterface = {};
+    const { operator_id, territory_id, ...pagination } = params;
 
-    if (context.call.user.territory_id) {
-      contextParam.territory_id = context.call.user.territory_id;
-    }
-
-    if (context.call.user.operator_id) {
-      contextParam.operator_id = context.call.user.operator_id;
-    }
-
-    const data = await this.userRepository.list(contextParam, params);
+    const data = await this.userRepository.list({ operator_id, territory_id}, pagination);
 
     return {
       data: data.users,

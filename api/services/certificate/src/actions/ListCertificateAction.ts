@@ -16,7 +16,7 @@ import { alias } from '../shared/certificate/list.schema';
     // feature flag certificates until properly tested by operators
     ['environment.except', ['production']],
     ['validate', alias],
-    ['can', ['certificate.list']],
+    ['has_permission', ['certificate.list']],
   ],
 })
 export class ListCertificateAction extends AbstractAction {

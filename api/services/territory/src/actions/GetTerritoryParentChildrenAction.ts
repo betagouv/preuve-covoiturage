@@ -8,7 +8,7 @@ import { alias } from '../shared/territory/parentChildren.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['territory.read']],
+    ['has_permission', ['territory.read']],
     ['validate', alias],
   ],
 })

@@ -9,7 +9,7 @@ import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/terri
   ...handlerConfig,
   middlewares: [
     ['validate', 'territory.dropdown'],
-    ['can', ['territory.list']],
+    ['has_permission', ['territory.list']],
   ],
 })
 export class DropdownTerritoryAction extends AbstractAction {

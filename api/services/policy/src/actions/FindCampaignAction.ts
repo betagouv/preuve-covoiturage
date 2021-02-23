@@ -12,15 +12,15 @@ import { alias } from '../shared/policy/find.schema';
   ...handlerConfig,
   middlewares: [
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['incentive-campaign.read'],
+        'incentive-campaign.read',
         [
-          (params, context): string => {
-            if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
-              return 'incentive-campaign.read';
-            }
-          },
+          [
+            'incentive-campaign.read',
+            'call.user.territory_id',
+            'territory_id',
+          ]
         ],
       ],
     ],

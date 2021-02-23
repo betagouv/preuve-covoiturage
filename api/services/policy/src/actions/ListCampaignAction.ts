@@ -10,7 +10,7 @@ import { CampaignInterface } from '../interfaces';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['incentive-campaign.list']],
+    ['has_permission', ['incentive-campaign.list']],
     ['validate', alias],
   ],
 })

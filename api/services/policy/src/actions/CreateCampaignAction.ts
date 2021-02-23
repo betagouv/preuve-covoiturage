@@ -9,15 +9,15 @@ import { alias } from '../shared/policy/create.schema';
   ...handlerConfig,
   middlewares: [
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['incentive-campaign.create'],
+        'incentive-campaign.create',
         [
-          (params, context): string => {
-            if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
-              return 'incentive-campaign.create';
-            }
-          },
+          [
+            'incentive-campaign.create',
+            'call.user.territory_id',
+            'territory_id',
+          ],
         ],
       ],
     ],

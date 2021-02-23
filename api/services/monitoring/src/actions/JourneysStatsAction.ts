@@ -9,7 +9,7 @@ import { JourneyRepositoryProviderInterfaceResolver } from '../providers/Journey
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['can', ['monitoring.journeysstats']],
+    ['has_permission', ['monitoring.journeysstats']],
   ],
 })
 export class JourneysStatsAction extends AbstractAction {

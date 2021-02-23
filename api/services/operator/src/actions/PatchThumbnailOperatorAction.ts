@@ -8,7 +8,7 @@ import { alias } from '../shared/operator/patchThumbnail.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['operator.contacts.update']],
+    ['has_permission', ['operator.contacts.update']],
     ['copy_from_context', ['call.user.operator_id', '_id']],
     ['validate', alias],
   ],

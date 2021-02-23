@@ -15,7 +15,7 @@ import { setOwner } from '../helpers/setOwner';
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['can', ['application.find']],
+    ['has_permission', ['application.find']],
   ],
 })
 export class FindApplicationAction extends AbstractAction {

@@ -11,20 +11,20 @@ import { alias } from '../shared/territory/listOperator.schema';
   middlewares: [
     ['validate', alias],
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['this.is.not.a.valid.permission'],
+        undefined,
         [
-          (params, context): string => {
-            if ('operator_id' in params && params.operator_id === context.call.user.operator_id) {
-              return 'operator.read';
-            }
-          },
-          (params, context): string => {
-            if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
-              return 'territory.read';
-            }
-          },
+          [
+            'operator.read',
+            'call.user.operator_id',
+            'operator_id',
+          ],
+          [
+            'territory.read',
+            'call.user.territory_id',
+            'territory_id',
+          ],
         ],
       ],
     ],

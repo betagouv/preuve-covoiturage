@@ -9,7 +9,7 @@ import { TerritoryListFilter } from '../shared/territory/common/interfaces/Terri
   ...handlerConfig,
   middlewares: [
     // ['validate', 'territory.list'],
-    // ['can', ['territory.list']],
+    // ['has_permission', ['territory.list']],
   ],
 })
 export class ListTerritoryAction extends AbstractAction {

@@ -29,7 +29,7 @@ const callContext = {
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['journey.create']],
+    ['has_permission', ['journey.create']],
     ['validate', alias],
   ],
 })

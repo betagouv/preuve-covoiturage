@@ -12,19 +12,15 @@ import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvid
   ...handlerConfig,
   middlewares: [
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['incentive-campaign.simulate'],
+        'incentive-campaign.simulate',
         [
-          (params, context): string => {
-            if (
-              'campaign' in params &&
-              'territory_id' in params.campaign &&
-              params.campaign.territory_id === context.call.user.territory_id
-            ) {
-              return 'incentive-campaign.create';
-            }
-          },
+          [
+            'incentive-campaign.create',
+            'call.user.territory_id',
+            'campaign.territory_id',
+          ],
         ],
       ],
     ],

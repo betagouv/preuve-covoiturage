@@ -16,20 +16,20 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
   middlewares: [
     ['validate', alias],
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['user.create'],
+        'user.create',
         [
-          (params, context): string => {
-            if ('territory' in params && params.territory === context.call.user.territory_id) {
-              return 'territory.users.add';
-            }
-          },
-          (params, context): string => {
-            if ('operator' in params && params.operator === context.call.user.operator_id) {
-              return 'operator.users.add';
-            }
-          },
+          [
+            'territory.users.add',
+            'call.user.territory_id',
+            'territory_id',
+          ],
+          [
+            'operator.users.add',
+            'call.user.operator_id',
+            'operator_id'
+          ],
         ],
       ],
     ],

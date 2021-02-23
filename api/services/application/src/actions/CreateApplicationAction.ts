@@ -15,7 +15,7 @@ import { setOwner } from '../helpers/setOwner';
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['can', ['application.create']],
+    ['has_permission', ['application.create']],
   ],
 })
 export class CreateApplicationAction extends AbstractAction {

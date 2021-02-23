@@ -12,21 +12,23 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
+    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
+    ['copy_from_context', ['call.user.operator_id', 'operator_id']],
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['user.update'],
+        'user.update',
         [
-          (_params, context): string => {
-            if (context.call.user.territory_id) {
-              return 'territory.users.update';
-            }
-          },
-          (_params, context): string => {
-            if (context.call.user.operator_id) {
-              return 'operator.users.update';
-            }
-          },
+          [
+            'territory.users.update',
+            'call.user.territory_id',
+            'territory_id',
+          ],
+          [
+            'operator.users.update',
+            'call.user.operator_id',
+            'operator_id'
+          ],
         ],
       ],
     ],
@@ -38,19 +40,19 @@ export class ChangeRoleUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const scope = context.call.user.territory_id
-      ? 'territory'
-      : context.call.user.operator_id
-      ? 'operator'
-      : 'registry';
+    const scope = params.territory_id
+      ? 'territory_id'
+      : params.operator_id
+      ? 'operator_id'
+      : 'none';
     switch (scope) {
-      case 'territory':
-        await this.userRepository.patchByTerritory(params._id, { role: params.role }, context.call.user.territory_id);
+      case 'territory_id':
+        await this.userRepository.patchByTerritory(params._id, { role: params.role }, params[scope]);
         break;
-      case 'operator':
-        await this.userRepository.patchByOperator(params._id, { role: params.role }, context.call.user.operator_id);
+      case 'operator_id':
+        await this.userRepository.patchByOperator(params._id, { role: params.role }, params[scope]);
         break;
-      case 'registry':
+      case 'none':
         await this.userRepository.patch(params._id, { role: params.role });
         break;
     }

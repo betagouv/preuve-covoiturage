@@ -18,7 +18,7 @@ import { v4 } from 'uuid';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['journey.create']],
+    ['has_permission', ['journey.create']],
     ['copy_from_context', ['call.user.operator_id', 'operator_id']],
     ['validate', alias],
   ],

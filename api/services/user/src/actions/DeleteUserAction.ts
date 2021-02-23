@@ -13,26 +13,28 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
+    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
+    ['copy_from_context', ['call.user.operator_id', 'operator_id']],
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['user.delete'],
+        'user.delete',
         [
-          (params, context): string => {
-            if ('_id' in params && params._id === context.call.user._id) {
-              return 'profile.delete';
-            }
-          },
-          (_params, context): string => {
-            if (context.call.user.territory_id) {
-              return 'territory.users.remove';
-            }
-          },
-          (_params, context): string => {
-            if (context.call.user.operator_id) {
-              return 'operator.users.remove';
-            }
-          },
+          [
+            'profile.delete',
+            'call.user._id',
+            '_id',
+          ],
+          [
+            'territory.users.remove',
+            'call.user.territory_id',
+            'territory_id',
+          ],
+          [
+            'operator.users.remove',
+            'call.user.operator_id',
+            'operator_id',
+          ],
         ],
       ],
     ],
@@ -44,19 +46,19 @@ export class DeleteUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
-    const scope = context.call.user.territory_id
-      ? 'territory'
-      : context.call.user.operator_id
-      ? 'operator'
-      : 'registry';
+    const scope = params.territory_id
+    ? 'territory_id'
+    : params.operator_id
+    ? 'operator_id'
+    : 'none';
     switch (scope) {
-      case 'territory':
-        await this.userRepository.deleteByTerritory(params._id, context.call.user.territory_id);
+      case 'territory_id':
+        await this.userRepository.deleteByTerritory(params._id, params[scope]);
         break;
-      case 'operator':
-        await this.userRepository.deleteByOperator(params._id, context.call.user.operator_id);
+      case 'operator_id':
+        await this.userRepository.deleteByOperator(params._id, params[scope]);
         break;
-      case 'registry':
+      case 'none':
         await this.userRepository.delete(params._id);
         break;
     }

@@ -7,7 +7,7 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/opera
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['operator.list']],
+    ['has_permission', ['operator.list']],
     ['content.blacklist', ['data.*.contacts', 'data.*.bank']],
   ],
 })

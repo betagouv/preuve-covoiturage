@@ -7,7 +7,7 @@ import { alias } from '../shared/policy/patch.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['can', ['incentive-campaign.update']], ['validate', alias], 'validate.rules'],
+  middlewares: [['has_permission', ['incentive-campaign.update']], ['validate', alias], 'validate.rules'],
 })
 export class PatchCampaignAction extends AbstractAction {
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {

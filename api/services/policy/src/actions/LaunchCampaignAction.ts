@@ -9,7 +9,7 @@ import { alias } from '../shared/policy/launch.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['incentive-campaign.create', 'incentive-campaign.launch']],
+    ['has_permission', ['incentive-campaign.create', 'incentive-campaign.launch']],
     ['validate', alias],
   ],
 })

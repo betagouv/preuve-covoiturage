@@ -4,6 +4,8 @@ import { UserInterface } from './common/interfaces/UserInterface';
 export interface ParamsInterface {
   _id: number;
   patch: UserPatchInterface;
+  operator_id?: number;
+  territory_id?: number;
 }
 // TODO : to migrate to update command
 // email: string;

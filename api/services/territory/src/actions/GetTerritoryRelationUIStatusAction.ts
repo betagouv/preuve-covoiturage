@@ -8,7 +8,7 @@ import { alias } from '../shared/territory/relationUiStatus.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['territory.read']],
+    ['has_permission', ['territory.read']],
     ['validate', alias],
   ],
 })

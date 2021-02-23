@@ -9,7 +9,7 @@ import { alias } from '../shared/operator/update.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['operator.update']],
+    ['has_permission', ['operator.update']],
     ['validate', alias],
   ],
 })

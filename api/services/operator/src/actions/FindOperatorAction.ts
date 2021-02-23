@@ -8,7 +8,7 @@ import { alias } from '../shared/operator/find.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['operator.read']],
+    ['has_permission', ['operator.read']],
     ['validate', alias],
   ],
 })

@@ -12,7 +12,7 @@ import { signature as fetchSignature } from '../shared/company/fetch.contract';
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['can', ['company.find']],
+    ['has_permission', ['company.find']],
   ],
 })
 export class FindAction extends AbstractAction {

@@ -10,7 +10,7 @@ import { alias } from '../shared/operator/delete.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['operator.delete']],
+    ['has_permission', ['operator.delete']],
     ['validate', alias],
   ],
 })

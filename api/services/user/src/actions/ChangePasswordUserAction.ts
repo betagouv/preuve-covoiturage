@@ -13,7 +13,7 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['can', ['profile.update']],
+    ['has_permission', ['profile.update']],
   ],
 })
 export class ChangePasswordUserAction extends AbstractAction {

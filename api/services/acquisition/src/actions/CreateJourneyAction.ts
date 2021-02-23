@@ -33,7 +33,7 @@ import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionE
 import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
 import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 
-@handler({ ...handlerConfig, middlewares: [['can', ['journey.create']]] })
+@handler({ ...handlerConfig, middlewares: [['has_permission', ['journey.create']]] })
 export class CreateJourneyAction extends AbstractAction {
   constructor(
     private kernel: KernelInterfaceResolver,

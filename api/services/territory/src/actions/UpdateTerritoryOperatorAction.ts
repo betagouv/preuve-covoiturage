@@ -10,15 +10,15 @@ import { alias } from '../shared/territory/updateOperator.schema';
   ...configHandler,
   middlewares: [
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['this.is.not.a.valid.permission'],
+        undefined,
         [
-          (params, context): string => {
-            if ('operator_id' in params && params.operator_id === context.call.user.operator_id) {
-              return 'operator.update';
-            }
-          },
+          [
+            'operator.update',
+            'call.user.operator_id',
+            'operator_id',
+          ],
         ],
       ],
     ],

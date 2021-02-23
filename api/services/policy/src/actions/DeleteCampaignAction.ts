@@ -9,15 +9,15 @@ import { alias } from '../shared/policy/delete.schema';
   ...handlerConfig,
   middlewares: [
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['incentive-campaign.delete'],
+        'incentive-campaign.delete',
         [
-          (params, context): string => {
-            if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
-              return 'incentive-campaign.delete';
-            }
-          },
+          [
+            'incentive-campaign.delete',
+            'call.user.territory_id',
+            'territory_id',
+          ],
         ],
       ],
     ],

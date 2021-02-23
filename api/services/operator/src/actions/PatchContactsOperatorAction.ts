@@ -9,7 +9,7 @@ import { phoneComplianceHelper } from '../helpers/phoneComplianceHelper';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['operator.contacts.update']],
+    ['has_permission', ['operator.contacts.update']],
     ['validate', alias],
   ],
 })

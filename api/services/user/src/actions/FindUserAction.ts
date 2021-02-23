@@ -14,26 +14,28 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
+    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
+    ['copy_from_context', ['call.user.operator_id', 'operator_id']],
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['user.read'],
+        'user.read',
         [
-          (params, context): string => {
-            if ('_id' in params && params._id === context.call.user._id) {
-              return 'profile.read';
-            }
-          },
-          (params, context): string => {
-            if (context.call.user.territory_id) {
-              return 'territory.users.read';
-            }
-          },
-          (params, context): string => {
-            if (context.call.user.operator_id) {
-              return 'operator.users.read';
-            }
-          },
+          [
+            'profile.read',
+            'call.user._id',
+            '_id',
+          ],
+          [
+            'territory.users.read',
+            'call.user.territory_id',
+            'territory_id',
+          ],
+          [
+            'operator.users.read',
+            'call.user.operator_id',
+            'operator_id',
+          ],
         ],
       ],
     ],
@@ -46,17 +48,17 @@ export class FindUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
-    const scope = context.call.user.territory_id
-      ? 'territory'
-      : context.call.user.operator_id
-      ? 'operator'
-      : 'registry';
+    const scope = params.territory_id
+    ? 'territory_id'
+    : params.operator_id
+    ? 'operator_id'
+    : 'none';
     switch (scope) {
-      case 'territory':
-        return this.userRepository.findByTerritory(params._id, context.call.user.territory_id);
-      case 'operator':
-        return this.userRepository.findByOperator(params._id, context.call.user.operator_id);
-      case 'registry':
+      case 'territory_id':
+        return this.userRepository.findByTerritory(params._id, params[scope]);
+      case 'operator_id':
+        return this.userRepository.findByOperator(params._id, params[scope]);
+      case 'none':
         return this.userRepository.find(params._id);
     }
   }

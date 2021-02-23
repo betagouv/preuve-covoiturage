@@ -8,7 +8,7 @@ import { alias } from '../shared/territory/delete.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['territory.delete']],
+    ['has_permission', ['territory.delete']],
     ['validate', alias],
   ],
 })

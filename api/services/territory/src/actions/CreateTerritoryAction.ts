@@ -8,7 +8,7 @@ import { alias } from '../shared/territory/create.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    // ['can', ['territory.create']],
+    // ['has_permission', ['territory.create']],
     ['validate', alias],
   ],
 })

@@ -15,7 +15,7 @@ import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfac
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['journey.create']],
+    ['has_permission', ['journey.create']],
     ['validate', alias],
   ],
 })

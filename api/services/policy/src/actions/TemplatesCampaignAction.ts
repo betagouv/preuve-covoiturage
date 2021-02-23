@@ -8,7 +8,7 @@ import { alias } from '../shared/policy/templates.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['incentive-campaign.templates']],
+    ['has_permission', ['incentive-campaign.templates']],
     ['validate', alias],
   ],
 })

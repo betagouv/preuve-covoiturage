@@ -15,7 +15,7 @@ import { setOwner } from '../helpers/setOwner';
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['can', ['application.revoke']],
+    ['has_permission', ['application.revoke']],
   ],
 })
 export class RevokeApplicationAction extends AbstractAction {

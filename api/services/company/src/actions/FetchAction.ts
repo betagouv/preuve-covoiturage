@@ -11,7 +11,7 @@ import { alias } from '../shared/company/fetch.schema';
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['can', ['company.fetch']],
+    ['has_permission', ['company.fetch']],
   ],
 })
 export class FetchAction extends AbstractAction {

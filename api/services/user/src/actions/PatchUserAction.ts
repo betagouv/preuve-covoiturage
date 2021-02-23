@@ -17,26 +17,28 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
+    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
+    ['copy_from_context', ['call.user.operator_id', 'operator_id']],
     [
-      'scope_it',
+      'has_permission_by_scope',
       [
-        ['user.update'],
+        'user.update',
         [
-          (params, context): string => {
-            if ('_id' in params && params._id === context.call.user._id) {
-              return 'profile.update';
-            }
-          },
-          (_params, context): string => {
-            if (context.call.user.territory_id) {
-              return 'territory.users.update';
-            }
-          },
-          (_params, context): string => {
-            if (context.call.user.operator_id) {
-              return 'operator.users.update';
-            }
-          },
+          [
+            'profile.update',
+            'call.user._id',
+            '_id',
+          ],
+          [
+            'territory.users.update',
+            'call.user.territory_id',
+            'territory_id',
+          ],
+          [
+            'operator.users.update',
+            'call.user.operator_id',
+            'operator_id',
+          ],
         ],
       ],
     ],
@@ -53,11 +55,12 @@ export class PatchUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const scope = context.call.user.territory_id
-      ? 'territory'
-      : context.call.user.operator_id
-      ? 'operator'
-      : 'registry';
+    const scope = params.territory_id
+    ? 'territory_id'
+    : params.operator_id
+    ? 'operator_id'
+    : 'none';
+
     const _id = params._id;
     const { email, ...patch } = params.patch;
 
@@ -68,13 +71,13 @@ export class PatchUserAction extends AbstractAction {
     }
 
     switch (scope) {
-      case 'territory':
-        user = await this.userRepository.findByTerritory(_id, context.call.user.territory_id);
+      case 'territory_id':
+        user = await this.userRepository.findByTerritory(_id, params[scope]);
         break;
-      case 'operator':
-        user = await this.userRepository.findByOperator(_id, context.call.user.operator_id);
+      case 'operator_id':
+        user = await this.userRepository.findByOperator(_id, params[scope]);
         break;
-      case 'registry':
+      case 'none':
         user = await this.userRepository.find(_id);
         break;
     }

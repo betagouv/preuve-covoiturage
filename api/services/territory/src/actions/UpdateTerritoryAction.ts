@@ -9,7 +9,7 @@ import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['territory.update']],
+    ['has_permission', ['territory.update']],
     ['validate', alias],
   ],
 })

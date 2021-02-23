@@ -9,7 +9,7 @@ import { alias } from '../shared/operator/create.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['operator.create']],
+    ['has_permission', ['operator.create']],
     ['validate', alias],
   ],
 })

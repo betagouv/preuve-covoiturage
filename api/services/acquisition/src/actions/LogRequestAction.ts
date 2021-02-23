@@ -10,7 +10,7 @@ import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionE
   ...handlerConfig,
   middlewares: [
     ['channel.service.only', ['proxy']],
-    // ['can', ['acquisition.logrequest']],
+    // ['has_permission', ['acquisition.logrequest']],
   ],
 })
 export class LogRequestAction extends AbstractAction {
