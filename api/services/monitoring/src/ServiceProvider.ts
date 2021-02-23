@@ -1,11 +1,10 @@
 import path from 'path';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PermissionMiddleware } from '@pdc/provider-acl';
 import { RedisConnection } from '@ilos/connection-redis';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
+import { HasPermissionMiddleware, ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 import { NotificationExtension } from '@pdc/provider-notification';
 import { TemplateExtension } from '@pdc/provider-template';
 

@@ -1,7 +1,6 @@
 import path from 'path';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PermissionMiddleware } from '@pdc/provider-acl';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { NotificationExtension } from '@pdc/provider-notification';
@@ -12,6 +11,7 @@ import {
   ContentWhitelistMiddleware,
   ChannelServiceBlacklistMiddleware,
   ChannelServiceWhitelistMiddleware,
+  HasPermissionMiddleware,
 } from '@pdc/provider-middleware';
 import { TemplateExtension } from '@pdc/provider-template';
 
@@ -79,7 +79,7 @@ import { FindInactiveCommand } from './commands/FindInactiveCommand';
     ['user.sendInvitationEmail', sendInvitationEmail],
   ],
   middlewares: [
-    ['can', PermissionMiddleware],
+    ['can', HasPermissionMiddleware],
     ['validate', ValidatorMiddleware],
     ['scopeIt', ScopeToSelfMiddleware],
     ['content.blacklist', ContentBlacklistMiddleware],
