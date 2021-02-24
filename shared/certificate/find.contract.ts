@@ -12,8 +12,7 @@ export interface ResultInterface {
   created_at: Date;
   total_km: number;
   total_point: number;
-  total_cost: number;
-  remaining: number;
+  total_rm: number;
 }
 
 export type RepositoryInterface = Required<ParamsInterface>;

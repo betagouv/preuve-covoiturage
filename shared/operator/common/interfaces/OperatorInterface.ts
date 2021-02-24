@@ -11,6 +11,7 @@ export interface OperatorInterface {
   address?: AddressInterface;
   bank?: BankInterface;
   contacts?: ContactsInterface;
+  thumbnail?: string;
   cgu_accepted_at?: Date;
   cgu_accepted_by?: number;
 }

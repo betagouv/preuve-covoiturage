@@ -2,7 +2,7 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
+import { ChannelServiceWhitelistMiddleware, FeatureFlagMiddleware } from '@pdc/provider-middleware';
 import { PermissionMiddleware } from '@pdc/provider-acl';
 import { DateProvider } from '@pdc/provider-date';
 import { QrcodeProvider } from '@pdc/provider-qrcode';
@@ -12,9 +12,7 @@ import { TemplateExtension } from '@pdc/provider-template';
 
 import { config } from './config';
 import { CertificatePgRepositoryProvider } from './providers/CertificatePgRepositoryProvider';
-import { IdentityPgRepositoryProvider } from './providers/IdentityPgRepositoryProvider';
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
-import { TerritoryPgRepository } from './providers/TerritoryPgRepositoryProvider';
 import { CreateCertificateAction } from './actions/CreateCertificateAction';
 import { FindCertificateAction } from './actions/FindCertificateAction';
 import { ListCertificateAction } from './actions/ListCertificateAction';
@@ -32,9 +30,7 @@ import { binding as listBinding } from './shared/certificate/list.schema';
     QrcodeProvider,
     CryptoProvider,
     CertificatePgRepositoryProvider,
-    IdentityPgRepositoryProvider,
     CarpoolPgRepositoryProvider,
-    TerritoryPgRepository,
     PdfCertProvider,
   ],
   validator: [createBinding, findBinding, downloadBinding, listBinding],
@@ -42,6 +38,7 @@ import { binding as listBinding } from './shared/certificate/list.schema';
     ['validate', ValidatorMiddleware],
     ['can', PermissionMiddleware],
     ['channel.service.only', ChannelServiceWhitelistMiddleware],
+    ['featureflag', FeatureFlagMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [DownloadCertificateAction, CreateCertificateAction, FindCertificateAction, ListCertificateAction],

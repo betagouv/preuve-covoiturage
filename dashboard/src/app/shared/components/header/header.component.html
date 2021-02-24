@@ -1,39 +1,46 @@
-<div class="Header">
-  <div class="Header-logo">
-    <a [href]="homeLink">
-      <img src="assets/img/covoituragebetagouvfr.svg" alt="Logo de la Marianne, covoiturage.beta.gouv.fr" />
-    </a>
-  </div>
-  <div class="Header-menu" *ngIf="user">
-    <div
-      class="Header-menu-item campaign-menu-item"
-      *ngIf="hasTerritoryGroup || hasRegistryGroup"
-      [routerLink]="routerLink"
-      routerLinkActive="active"
-    >
-      Campagnes
+<div class="navbar">
+  <div class="navbar-content">
+    <!-- left aligned menu -->
+    <div class="navbar-left">
+      <!-- logo -->
+      <div class="navbar-logo">
+        <a [href]="homeLink" title="Registre de preuve de covoiturage">
+          <img src="assets/img/covoituragebetagouvfr.svg" alt="Registre de preuve de covoiturage" />
+        </a>
+      </div>
+
+      <!-- Trajets -->
+      <div *ngIf="user" class="navbar-menu-item trip-menu-item" [routerLink]="'/trip'" routerLinkActive="active">
+        Trajets
+      </div>
+
+      <!-- Campagnes -->
+      <div
+        *ngIf="(user && hasTerritoryGroup) || hasRegistryGroup"
+        class="navbar-menu-item campaign-menu-item"
+        [routerLink]="routerLink"
+        routerLinkActive="active"
+      >
+        Campagnes
+      </div>
     </div>
-    <div class="Header-menu-item trip-menu-item" [routerLink]="'/trip'" routerLinkActive="active">
-      Trajets
-    </div>
-  </div>
-  <div class="Header-user" *ngIf="user">
-    <button mat-stroked-button [matMenuTriggerFor]="menu">
-      <mat-icon>account_circle_outline</mat-icon>
-      <span class="Header-user-button-text">
-        {{ user.firstname + ' ' + user.lastname }}
-      </span>
-      <mat-icon>keyboard_arrow_down</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item [routerLink]="'/admin'">
+
+    <!-- right aligned menu -->
+    <div class="navbar-right" *ngIf="user">
+      <div class="navbar-user">
+        <mat-icon>{{ setUserIcon() }}</mat-icon>
+        <div class="navbar-user-name">
+          <div>{{ user.firstname + ' ' + user.lastname }}</div>
+          <div class="navbar-user-meta">{{ userMeta }}</div>
+        </div>
+      </div>
+
+      <button mat-button [routerLink]="'/admin'" matTooltip="Administration">
         <mat-icon>settings</mat-icon>
-        Administration
       </button>
-      <button mat-menu-item (click)="onLogout()">
+      <button mat-button (click)="onLogout()" matTooltip="Déconnexion">
         <mat-icon>exit_to_app</mat-icon>
-        Déconnexion
       </button>
-    </mat-menu>
+    </div>
   </div>
 </div>

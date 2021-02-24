@@ -6,6 +6,7 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { alias } from '../shared/trip/stats.schema';
 import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/StatCacheRepositoryProviderInterface';
+import * as middlewareConfig from '../config/middlewares';
 
 @handler({
   ...handlerConfig,
@@ -17,6 +18,16 @@ import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/Stat
         global: 'trip.stats',
         territory: 'territory.trip.stats',
         operator: 'operator.trip.stats',
+      },
+    ],
+    [
+      'validate.date',
+      {
+        startPath: 'date.start',
+        endPath: 'date.end',
+        minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
+        maxEnd: () => new Date(),
+        applyDefault: true,
       },
     ],
   ],

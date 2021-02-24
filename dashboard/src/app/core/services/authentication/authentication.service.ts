@@ -104,6 +104,14 @@ export class AuthenticationService {
     return this.hasRole(UserManyRoleEnum.ADMIN);
   }
 
+  public get isOperator(): boolean {
+    return this.hasRole(UserManyRoleEnum.OPERATOR);
+  }
+
+  public get isTerritory(): boolean {
+    return this.hasRole(UserManyRoleEnum.TERRITORY);
+  }
+
   public get isDemo(): boolean {
     return this.user.role === UserRoleEnum.TERRITORY_DEMO;
   }

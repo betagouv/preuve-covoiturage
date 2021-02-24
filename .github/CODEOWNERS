@@ -33,18 +33,20 @@
 #							       Frontend
 ################################################################################
 
-/dashboard					          @gillesboisson
+/dashboard					          @jonathanfallon
 
 ################################################################################
 #						         Shared Resources
 ################################################################################
-/api/shared							      @jonathanfallon @gillesboisson
+/api/shared							      @jonathanfallon
 /docker-compose*					    @jonathanfallon
 /docker								        @jonathanfallon
 /api/scalingo						      @jonathanfallon
 /scalingo.json						    @jonathanfallon
 
-/.circleci							      @jonathanfallon
+/api-doc							        @jonathanfallon
+
+/.github							        @jonathanfallon
 
 /CHANGELOG.md						      @jonathanfallon
 /LICENSE							        @jonathanfallon

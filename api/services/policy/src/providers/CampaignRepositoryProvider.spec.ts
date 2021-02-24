@@ -83,7 +83,7 @@ test.serial('Should find campaign by territory', async (t) => {
 
 test.serial('Should not find campaign by territory', async (t) => {
   const campaign = await t.context.repository.findOneWhereTerritory(t.context.campaign._id, 1);
-  t.is(campaign, undefined);
+  t.is(campaign, null);
 });
 
 test.serial('Should patch campaign', async (t) => {

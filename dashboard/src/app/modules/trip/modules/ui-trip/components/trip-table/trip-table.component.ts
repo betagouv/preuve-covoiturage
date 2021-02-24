@@ -15,7 +15,7 @@ import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
 })
 export class TripTableComponent extends DestroyObservable implements OnInit {
   @Input() displayedColumns: string[];
-  @Input() data: LightTripInterface[];
+  @Input() data: LightTripInterface[] = [];
   private operators: Operator[];
   private campaigns: Campaign[];
 

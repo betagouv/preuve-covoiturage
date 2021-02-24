@@ -1,6 +1,6 @@
-import { env } from '@ilos/core';
+import { templates } from '../shared/configuration/mailjet';
 
 export const templateIds = {
-  export_csv: env('APP_MAILJET_TEMPLATE_EXPORT', ''),
-  export_csv_error: env('APP_MAILJET_TEMPLATE_EXPORT', ''),
+  export_csv: templates.export,
+  export_csv_error: templates.export,
 };

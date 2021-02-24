@@ -144,8 +144,6 @@ export class CommonDataService {
   }
 
   buildTerritoryTree(territories: TerritoryTree[]): TerritoryTree[] {
-    // const tree: TerritoryTree[] = [];
-    // const t = new Date().getTime();
     const acceptedLevel = [
       TerritoryLevelEnum.District,
       TerritoryLevelEnum.Megalopolis,
@@ -153,6 +151,7 @@ export class CommonDataService {
       TerritoryLevelEnum.State,
       // TerritoryLevelEnum.Country,
       TerritoryLevelEnum.Towngroup,
+      TerritoryLevelEnum.Other,
       // TerritoryLevelEnum.Town,
     ];
 
@@ -160,7 +159,6 @@ export class CommonDataService {
       (ter) =>
         acceptedLevel.indexOf(ter.level) !== -1 || (ter.level === TerritoryLevelEnum.Town && ter.activable === true),
     );
-    // const acceptedTerritories = territories.filter((ter) => ter.level === 'district');
 
     const territoriesInd: { [key: number]: TerritoryTree } = {};
 

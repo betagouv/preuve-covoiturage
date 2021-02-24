@@ -73,8 +73,8 @@ export class CampaignFormater {
       max_amount: null,
       only_adult: null,
       restrictions: [],
-      start: moment(campaign.start_date).utc(true),
-      end: moment(campaign.end_date).utc(true),
+      start: moment(campaign.start_date),
+      end: moment(campaign.end_date),
     } as CampaignUx;
     // GLOBAL RULES
     campaign.global_rules.forEach((retributionRule: GlobalRetributionRuleInterface) => {
@@ -242,7 +242,10 @@ export class CampaignFormater {
 
         // construct retributions
         retributionRuleArray.forEach((retributionRule: RetributionRuleInterface) => {
-          if (retributionRule.slug === RetributionRulesSlugEnum.DISTANCE_RANGE) {
+          if (
+            retributionRule.slug === RetributionRulesSlugEnum.PROGRESSIVE_DISTANCE_RANGE ||
+            retributionRule.slug === RetributionRulesSlugEnum.FILTERED_DISTANCE_RANGE
+          ) {
             const parameters = retributionRule.parameters as DistanceRangeGlobalRetributionRule['parameters'];
             retribution.min = parameters.min !== 0 ? Number(parameters.min) / 1000 : null;
             retribution.max = Number(parameters.max) / 1000;
@@ -441,6 +444,10 @@ export class CampaignFormater {
 
     // RETRIBUTION RULES
 
+    const isOneRangePassengerRetributionFree = !!retributions.find(
+      (retribution) => retribution.for_passenger && retribution.for_passenger.free,
+    );
+
     retributions.forEach((retribution) => {
       // set defaults, reset values according to uiStatus
       if (retribution.min === null) {
@@ -474,12 +481,18 @@ export class CampaignFormater {
         const retributionRules = [];
         if (!(retribution.min === 0 && retribution.max === CAMPAIGN_RULES_MAX_DISTANCE_KM)) {
           retributionRules.push(
-            new RangeRetributionRule({
-              min: Number(retribution.min) * 1000,
-              max: Number(retribution.max) * 1000,
-            }),
+            new RangeRetributionRule(
+              {
+                min: Number(retribution.min) * 1000,
+                max: Number(retribution.max) * 1000,
+              },
+              // eslint-disable-next-line max-len
+              // handle special case of : if for one distance range a user has free contribution retribution mode is not progressive but filtered for passenger
+              !isOneRangePassengerRetributionFree,
+            ),
           );
         }
+
         if (retribution.for_passenger.free) {
           retributionRules.push(new FreeRetributionRule());
           retributionRules.push(new ForPassengerRetributionRule());

@@ -2,7 +2,6 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    mocha: true,
   },
   plugins: ['prettier'],
   extends: [

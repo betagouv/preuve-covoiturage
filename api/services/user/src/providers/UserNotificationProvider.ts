@@ -30,7 +30,6 @@ export class UserNotificationProvider {
     private config: ConfigInterfaceResolver,
     private kernel: KernelInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
-    private logger = console,
   ) {
     this.INVITATION = [
       'activate',
@@ -75,7 +74,7 @@ export class UserNotificationProvider {
    */
   protected log(message: string, email: string, token: string, link: string): void {
     if (process.env.NODE_ENV === 'testing') {
-      this.logger.log(`
+      console.info(`
 ******************************************
 [test] ${message}
 email: ${email}
@@ -92,7 +91,6 @@ link:  ${link}
    */
   protected async sendMail(data: SendMailParamsInterface): Promise<void> {
     await this.kernel.notify('user:notify', data, this.defaultContext);
-    return;
   }
 
   /**
@@ -115,8 +113,6 @@ link:  ${link}
       template: this.config.get('email.templates.forgotten'),
       fullname: `${user.firstname} ${user.lastname}`,
     });
-
-    return;
   }
 
   /**

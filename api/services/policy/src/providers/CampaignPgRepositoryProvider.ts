@@ -232,32 +232,44 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rowCount ? result.rows[0] : null;
   }
 
-  async findWhere(search: { territory_id?: number | null; status?: string }): Promise<CampaignInterface[]> {
+  async findWhere(search: {
+    territory_id?: number | null | number[];
+    status?: string;
+    datetime?: Date;
+  }): Promise<CampaignInterface[]> {
     const values = [];
-    let where = '';
-
-    if ('territory_id' in search && 'status' in search) {
-      where = `AND status::text = $1 AND territory_id ${search.territory_id === null ? 'IS NULL' : '= $2'}`;
-      values.push(search.status);
-      if (search.territory_id !== null) {
-        values.push(search.territory_id);
+    const whereClauses = ['deleted_at IS NULL'];
+    for (const key of Reflect.ownKeys(search)) {
+      switch (key) {
+        case 'status':
+          values.push(search[key]);
+          whereClauses.push(`status::text = $${values.length}`);
+          break;
+        case 'territory_id':
+          const tid = search[key];
+          if (tid === null) {
+            whereClauses.push('territory_id IS NULL');
+          } else if (Array.isArray(tid)) {
+            values.push(tid);
+            whereClauses.push(`territory_id = ANY($${values.length}::int[])`);
+          } else {
+            values.push(tid);
+            whereClauses.push(`territory_id = $${values.length}::int`);
+          }
+          break;
+        case 'datetime':
+          values.push(search[key]);
+          whereClauses.push(`start_date <= $${values.length}::timestamp AND end_date >= $${values.length}::timestamp`);
+          break;
+        default:
+          break;
       }
-    } else if ('territory_id' in search) {
-      where = `AND territory_id ${search.territory_id === null ? 'IS NULL' : '= $1'}`;
-      if (search.territory_id !== null) {
-        values.push(search.territory_id);
-      }
-    } else if ('status' in search) {
-      where = 'AND status::text = $1';
-      values.push(search.status);
     }
-
     const query = {
       values,
       text: `
         SELECT * FROM ${this.table}
-        WHERE deleted_at IS NULL
-        ${where}
+        WHERE ${whereClauses.join(' AND ')}
       `,
     };
 

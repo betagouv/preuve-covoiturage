@@ -4,13 +4,14 @@ import S3 from 'aws-sdk/clients/s3';
 
 import { env } from '@ilos/core';
 import { provider, ProviderInterface } from '@ilos/common';
+import { BucketName } from './interfaces/BucketName';
 
 @provider()
 export class S3StorageProvider implements ProviderInterface {
   private s3: S3;
   private endpoint = env('AWS_ENDPOINT') as string;
   private region = env('AWS_REGION') as string;
-  private bucket = env('AWS_BUCKET_NAME') as string;
+  private prefix = env('AWS_BUCKET_PREFIX', env('NODE_ENV', 'local'));
 
   constructor() {}
 
@@ -18,7 +19,9 @@ export class S3StorageProvider implements ProviderInterface {
     this.s3 = new S3({ endpoint: this.endpoint, region: this.region, signatureVersion: 'v4' });
   }
 
-  async copy(filename: string, password = ''): Promise<{ password: string; url: string }> {
+  async copy(bucket: BucketName, filename: string): Promise<{ password: string; url: string }> {
+    const Bucket = this.getBucketName(bucket);
+
     await fs.promises.access(filename, fs.constants.R_OK);
 
     try {
@@ -30,12 +33,15 @@ export class S3StorageProvider implements ProviderInterface {
           .replace(ext, '')
           .replace(/[^a-z0-9_-]/g, '') + ext;
 
-      await this.s3.upload({ Bucket: this.bucket, Key: keyName, Body: rs }).promise();
+      await this.s3
+        .upload({ Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filename=${keyName}` })
+        .promise();
 
       const url = await this.s3.getSignedUrlPromise('getObject', {
-        Bucket: this.bucket,
+        Bucket,
         Key: keyName,
         Expires: 7 * 86400,
+        ResponseContentDisposition: `attachment; filename=${keyName}`,
       });
 
       return {
@@ -47,5 +53,9 @@ export class S3StorageProvider implements ProviderInterface {
 
       throw e;
     }
+  }
+
+  private getBucketName(bucket: BucketName): string {
+    return `${this.prefix}-${bucket}`;
   }
 }

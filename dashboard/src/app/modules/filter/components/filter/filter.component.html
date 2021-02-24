@@ -1,10 +1,11 @@
-<form [formGroup]="filterForm" [@collapse]="_showFilter ? 'open' : 'closed'">
+<form
+  class="filter-form"
+  (submit)="onSubmit()"
+  (document:keydown.control.enter)="onSubmit()"
+  [formGroup]="filterForm"
+  [class.visible]="showFilters"
+>
   <div class="filter-wrapper">
-    <div class="filter-wrapper-close">
-      <button mat-mini-fab color="primary" type="button" (click)="onCloseClick()">
-        <mat-icon>close_rounded</mat-icon>
-      </button>
-    </div>
     <div class="filter">
       <div class="filter-content">
         <div class="filter-content-column">
@@ -25,7 +26,7 @@
                 formControlName="start"
                 [matDatepicker]="startDatePicker"
                 placeholder="Choisir une date"
-                [min]="this.minDate"
+                [min]="minDate"
                 (input)="onDateInput()"
               />
               <!-- <mat-error *ngIf="startControl.hasError('dateRange')"> </mat-error> -->
@@ -35,7 +36,13 @@
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Fin</mat-label>
-              <input matInput formControlName="end" [matDatepicker]="endDatePicker" placeholder="Choisir une date" />
+              <input
+                matInput
+                formControlName="end"
+                [matDatepicker]="endDatePicker"
+                [max]="maxDate"
+                placeholder="Choisir une date"
+              />
               <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #endDatePicker></mat-datepicker>
               <!-- <mat-error *ngIf="endControl.hasError('dateRange')"> </mat-error> -->
@@ -59,7 +66,7 @@
             <p>Géographie</p>
           </div>
 
-          <!--          DISTANCE -->
+          <!-- DISTANCE -->
           <div class="filter-distances" formGroupName="distance">
             <mat-form-field class="min-distance" appearance="outline">
               <mat-label>Km min</mat-label>
@@ -71,17 +78,16 @@
             </mat-form-field>
           </div>
 
-          <!--          TOWNS -->
-          <!-- <div class="filter-insees">
-            <app-territories-insee-autocomplete
-              [parentForm]="filterForm"
-              fieldName="insees"
-            ></app-territories-insee-autocomplete>
-          </div> -->
-
-          <!--          TERRITORIES -->
+          <!-- TERRITORIES -->
           <div class="filter-territories">
-            <app-territories-autocomplete [parentForm]="filterForm"></app-territories-autocomplete>
+            <app-territories-autocomplete
+              [parentForm]="filterForm"
+              [title]="userIsTerritory ? 'Villes' : 'Territoires'"
+              [placeholder]="userIsTerritory ? 'Ville, EPCI...' : 'Territoire, ville, EPCI...'"
+              [label]="
+                userIsTerritory ? 'Ajouter une ville, une EPCI...' : 'Ajouter un territoire, une ville, une EPCI...'
+              "
+            ></app-territories-autocomplete>
           </div>
         </div>
         <div class="filter-content-column">
@@ -90,17 +96,17 @@
           </div>
           <div class="filter-trip-types">
             <mat-form-field class="class" appearance="outline">
-              <!--              RANKS -->
+              <!-- RANKS -->
               <mat-label>Classe</mat-label>
               <mat-select formControlName="ranks" multiple>
                 <mat-option *ngFor="let name of classes" value="{{ name }}">{{ name }}</mat-option>
               </mat-select>
             </mat-form-field>
-            <!--            STATUS -->
+            <!-- STATUS -->
             <mat-form-field class="filter-status" appearance="outline">
               <mat-label>Statut</mat-label>
               <mat-select formControlName="status">
-                <!--                todo: when implemented in back-->
+                <!-- todo: when implemented in back-->
                 <mat-option *ngFor="let status of tripStatusList" value="{{ status }}">{{
                   getStatusFrench(status)
                 }}</mat-option>
@@ -108,9 +114,9 @@
               </mat-select>
             </mat-form-field>
 
-            <!--            OPERATORS-->
+            <!-- OPERATORS-->
             <app-operators-autocomplete
-              *ngIf="hasGroupRegistryOrTerritory"
+              *ngIf="userIsTerritory"
               [parentForm]="filterForm"
               [onlyVisible]="true"
             ></app-operators-autocomplete>
@@ -118,11 +124,17 @@
         </div>
       </div>
       <div class="filter-footer">
-        <button mat-flat-button type="button" color="primary" [disabled]="!filterForm.valid" (click)="filterClick()">
-          Appliquer les filtres
+        <button mat-button type="button" (click)="onReset()" matTooltip="Réinitialiser les filtres">
+          Réinitialiser
         </button>
-        <button mat-button class="filter-footer-reinitialize" type="button" (click)="reinitializeClick()">
-          Réinitialiser les filtres
+        <button
+          mat-flat-button
+          type="submit"
+          color="primary"
+          [disabled]="!filterForm.valid"
+          matTooltip="Appliquer les filtres [Ctrl + Entrée]"
+        >
+          Appliquer
         </button>
       </div>
     </div>

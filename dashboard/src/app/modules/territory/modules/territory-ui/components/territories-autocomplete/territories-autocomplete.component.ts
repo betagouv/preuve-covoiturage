@@ -16,6 +16,9 @@ import { TerritoryApiService } from '~/modules/territory/services/territory-api.
 export class TerritoriesAutocompleteComponent extends DestroyObservable implements OnInit {
   // with control 'territoryIds'
   @Input() parentForm: FormGroup;
+  @Input() placeholder = 'Ajouter un territoire';
+  @Input() title = 'Territoires';
+  @Input() label = 'Ajouter un territoire';
 
   @ViewChild('territoryInput') territoryInput: ElementRef;
 

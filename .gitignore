@@ -6,7 +6,6 @@ node_modules
 db/*
 
 yarn-error.log
-doc
 !docker/dashboard
 dashboard/src/environments/environment.review.ts
 

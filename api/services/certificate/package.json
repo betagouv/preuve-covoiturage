@@ -5,8 +5,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "ilos": "ilos",
-    "copy-static": "cp -R ./src/assets ./dist/",
-    "build": "tsc && yarn copy-static",
+    "build": "tsc",
     "watch": "tsc -w",
     "test": "ava -s",
     "lint": "eslint 'src/**/*.ts'"

@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { takeUntil, mergeMap, tap } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
+import { takeUntil, mergeMap, tap, catchError } from 'rxjs/operators';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 import { CertificateApiService } from '../../services/certificate-api.service';
 
@@ -18,9 +16,9 @@ export class CheckComponent extends DestroyObservable implements OnInit {
   data: any;
   isLoading: boolean;
   isSmall = false;
+  isOnError = false;
 
   constructor(
-    protected toastr: ToastrService,
     protected activatedRoute: ActivatedRoute,
     protected certificateService: CertificateApiService,
     protected breakpointObserver: BreakpointObserver,
@@ -40,13 +38,15 @@ export class CheckComponent extends DestroyObservable implements OnInit {
         tap(() => (this.isLoading = true)),
         mergeMap((params) =>
           this.certificateService.find(params.uuid).pipe(
-            catchHttpStatus(404, () => {
-              this.toastr.error('Attestation non valide');
+            catchError((err) => {
+              console.log(err);
+              this.isOnError = true;
               this.isLoading = false;
               return null;
             }),
           ),
         ),
+        tap(() => (this.isOnError = false)),
         tap(() => (this.isLoading = false)),
       )
       .subscribe((data) => (this.data = data));

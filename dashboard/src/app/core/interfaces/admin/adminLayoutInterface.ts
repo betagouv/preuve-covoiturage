@@ -8,4 +8,5 @@ export interface MenuTabInterface {
   label: string | SafeHtml;
   groups?: UserGroupEnum[];
   role?: UserRoleEnum | UserManyRoleEnum;
+  hideIn?: string[];
 }

@@ -4,19 +4,25 @@ import { OperatorListInterface } from '../shared/operator/common/interfaces/Oper
 
 export interface OperatorRepositoryProviderInterface {
   find(id: number): Promise<OperatorDbInterface>;
-  quickFind(_id: number): Promise<{ uuid: string; name: string }>;
+  quickFind(_id: number, withThumbnail: boolean): Promise<{ uuid: string; name: string; thumbnail?: string }>;
   all(): Promise<OperatorListInterface[]>;
   create(data: OperatorInterface): Promise<OperatorDbInterface>;
   delete(_id: number): Promise<void>;
   patch(id: number, patch: { [k: string]: any }): Promise<OperatorDbInterface>;
   update(data: OperatorDbInterface): Promise<OperatorDbInterface>;
+  patchThumbnail(operator_id: number, base64Thumbnail: string): Promise<void>;
 }
 
 export abstract class OperatorRepositoryProviderInterfaceResolver implements OperatorRepositoryProviderInterface {
-  async find(id: number): Promise<OperatorDbInterface> {
+  async find(id: number, withThumbnail?: boolean): Promise<OperatorDbInterface> {
     throw new Error('Not implemented');
   }
-  async quickFind(_id: number): Promise<{ uuid: string; name: string }> {
+
+  public async patchThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {
+    throw new Error('Not implemented');
+  }
+
+  async quickFind(_id: number, withThumbnail: boolean): Promise<{ uuid: string; name: string; thumbnail?: string }> {
     throw new Error('Not implemented');
   }
   async all(): Promise<OperatorListInterface[]> {

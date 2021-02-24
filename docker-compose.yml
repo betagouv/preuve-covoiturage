@@ -49,7 +49,6 @@ services:
       - 8080:8080
     env_file: ./api/.env
     environment:
-      NODE_ENV: local
       PORT: 8080
     networks:
       - front

@@ -83,6 +83,7 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
       finalParams,
       context,
     );
+    t.log(`Calling ${handlerConfig.service}:${handlerConfig.method}`, { params: finalParams, context });
     if (typeof response === 'function') {
       await response(result, t);
     } else {

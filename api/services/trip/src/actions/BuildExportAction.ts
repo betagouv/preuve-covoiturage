@@ -9,7 +9,7 @@ import { format, utcToZonedTime } from 'date-fns-tz';
 
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
-import { S3StorageProvider } from '@pdc/provider-file';
+import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
 import { alias } from '../shared/trip/buildExport.schema';
@@ -185,7 +185,7 @@ export class BuildExportAction extends Action {
 
       let count = 0;
 
-      const filename = path.join(os.tmpdir(), v4()) + '.csv';
+      const filename = path.join(os.tmpdir(), `covoiturage-${v4()}`) + '.csv';
       const zipname = filename.replace('.csv', '') + '.zip';
       const fd = await fs.promises.open(filename, 'a');
       const stringifier = await this.getStringifier(fd, type);
@@ -206,7 +206,7 @@ export class BuildExportAction extends Action {
       zip.addLocalFile(filename);
       zip.writeZip(zipname);
 
-      const { url, password } = await this.file.copy(zipname);
+      const { url, password } = await this.file.copy(BucketName.Export, zipname);
 
       const email = params.from.email;
       const fullname = params.from.fullname;
@@ -218,6 +218,9 @@ export class BuildExportAction extends Action {
         template: this.config.get('email.templates.export_csv'),
         templateId: this.config.get('notification.templateIds.export_csv'),
         link: url,
+        // disable URL rewrite by Mailjet that makes downloading the file bug on Gmail/Chrome
+        // Mailjet replaces the S3 URL by an unsecured HTTP URL
+        disableTracking: true,
       };
 
       await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {

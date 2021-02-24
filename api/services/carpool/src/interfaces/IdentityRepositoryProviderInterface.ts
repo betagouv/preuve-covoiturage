@@ -7,6 +7,7 @@ export interface IdentityMetaInterface {
 export interface IdentityRepositoryProviderInterface {
   create(identity: IdentityInterface, meta: IdentityMetaInterface): Promise<{ _id: number; uuid: string }>;
   delete(_id: number): Promise<void>;
+  findUuid(identity: IdentityInterface, meta: IdentityMetaInterface): Promise<string>;
 }
 
 export abstract class IdentityRepositoryProviderInterfaceResolver implements IdentityRepositoryProviderInterface {
@@ -14,10 +15,14 @@ export abstract class IdentityRepositoryProviderInterfaceResolver implements Ide
     identity: IdentityInterface,
     meta: IdentityMetaInterface,
   ): Promise<{ _id: number; uuid: string }> {
-    throw new Error();
+    throw new Error('Not implemented');
   }
 
   public async delete(_id: number): Promise<void> {
-    throw new Error();
+    throw new Error('Not implemented');
+  }
+
+  public async findUuid(identity: IdentityInterface, meta: IdentityMetaInterface): Promise<string> {
+    throw new Error('Not implemented');
   }
 }

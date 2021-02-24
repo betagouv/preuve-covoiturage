@@ -1,95 +1,92 @@
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { describe } from 'mocha';
-import { expect } from 'chai';
+import anyTest, { TestInterface } from 'ava';
 import { Kernel as AbstractKernel } from '@ilos/framework';
 import { kernel as kernelDecorator } from '@ilos/common';
 
 import { ServiceProvider } from '../src/ServiceProvider';
 import { OperatorPgRepositoryProvider } from '../src/providers/OperatorPgRepositoryProvider';
+import { PostgresConnection } from '@ilos/connection-postgres/dist';
 
-@kernelDecorator({
-  children: [ServiceProvider],
-})
-class Kernel extends AbstractKernel {}
+interface TestContext {
+  connection: PostgresConnection;
+  repository: OperatorPgRepositoryProvider;
+  _id: number;
+}
 
-describe('Operator pg repository', () => {
-  let repository;
-  let connection;
-  let id;
+const test = anyTest as TestInterface<TestContext>;
 
-  before(async () => {
-    connection = new PostgresConnection({
-      connectionString:
-        'APP_POSTGRES_URL' in process.env
-          ? process.env.APP_POSTGRES_URL
-          : 'postgresql://postgres:postgres@localhost:5432/local',
+test.before(async (t) => {
+  @kernelDecorator({
+    children: [ServiceProvider],
+  })
+  class Kernel extends AbstractKernel {}
+
+  t.context.connection = new PostgresConnection({
+    connectionString:
+      'APP_POSTGRES_URL' in process.env
+        ? process.env.APP_POSTGRES_URL
+        : 'postgresql://postgres:postgres@localhost:5432/local',
+  });
+
+  await t.context.connection.up();
+
+  t.context.repository = new OperatorPgRepositoryProvider(t.context.connection, new Kernel());
+});
+
+test.after.always(async (t) => {
+  if (t.context._id) {
+    await t.context.connection.getClient().query({
+      text: 'DELETE FROM operator.operators WHERE _id = $1',
+      values: [t.context._id],
     });
+  }
 
-    await connection.up();
+  await t.context.connection.down();
+});
 
-    repository = new OperatorPgRepositoryProvider(connection, new Kernel());
+test.serial('should create an operator', async (t) => {
+  const data = {
+    name: 'Toto',
+    legal_name: 'Toto inc.',
+    siret: '1234567890123',
+    contacts: {},
+  };
+
+  const result = await t.context.repository.create(data);
+  t.context._id = result._id;
+  t.is(result.name, data.name);
+});
+
+test.serial('should update an operator', async (t) => {
+  const data = {
+    name: 'Tata',
+  };
+
+  const result = await t.context.repository.patch(t.context._id, data);
+  t.is(result.name, data.name);
+});
+
+test.serial('should list operators', async (t) => {
+  const result = await t.context.repository.all();
+  t.true(Array.isArray(result));
+  const results = [...result.filter((r) => r._id === t.context._id)];
+  t.is(results.length, 1);
+  t.is(results[0]._id, t.context._id);
+});
+
+test.serial('should find operator by id', async (t) => {
+  const result = await t.context.repository.find(t.context._id);
+  t.is(result._id, t.context._id);
+});
+
+test.serial('should delete operator by id', async (t) => {
+  await t.context.repository.delete(t.context._id);
+  const result = await t.context.connection.getClient().query({
+    text: 'SELECT * FROM operator.operators WHERE _id = $1 LIMIT 1',
+    values: [t.context._id],
   });
+  t.is(result.rows[0]._id, t.context._id);
+  t.true(result.rows[0].deleted_at instanceof Date);
 
-  after(async () => {
-    if (id) {
-      await connection.getClient().query({
-        text: 'DELETE FROM operator.operators WHERE _id = $1',
-        values: [id],
-      });
-    }
-
-    await connection.down();
-  });
-
-  it('should create an operator', async () => {
-    const data = {
-      name: 'Toto',
-      legal_name: 'Toto inc.',
-      siret: '1234567890123',
-      company: {},
-      address: {},
-      bank: {},
-      contacts: {},
-    };
-
-    const result = await repository.create(data);
-    id = result._id;
-    expect(result.name).to.eq(data.name);
-  });
-
-  it('should update an operator', async () => {
-    const data = {
-      name: 'Tata',
-    };
-
-    const result = await repository.patch(id, data);
-    id = result._id;
-    expect(result.name).to.eq(data.name);
-  });
-
-  it('should list operators', async () => {
-    const result = await repository.all();
-    expect(result).to.be.an('array');
-    const results = [...result.filter((r) => r._id === id)];
-    expect(results.length).to.eq(1);
-    expect(results[0]._id).to.eq(id);
-  });
-
-  it('should find operator by id', async () => {
-    const result = await repository.find(id);
-    expect(result._id).to.eq(id);
-  });
-
-  it('should delete operator by id', async () => {
-    await repository.delete(id);
-    const result = await connection.getClient().query({
-      text: 'SELECT * FROM operator.operators WHERE _id = $1 LIMIT 1',
-      values: [id],
-    });
-    expect(result.rows[0]._id).to.eq(id);
-    expect(result.rows[0].deleted_at).to.be.a('date');
-
-    const resultFromRepository = await repository.find(id);
-    expect(resultFromRepository).to.eq(undefined);
-  });
+  const resultFromRepository = await t.context.repository.find(t.context._id);
+  t.is(resultFromRepository, undefined);
 });

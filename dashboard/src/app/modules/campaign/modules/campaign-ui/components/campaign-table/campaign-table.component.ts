@@ -1,8 +1,7 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
@@ -10,32 +9,21 @@ import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
   templateUrl: './campaign-table.component.html',
   styleUrls: ['./campaign-table.component.scss'],
 })
-export class CampaignTableComponent implements OnInit {
-  @Input() status: any;
+export class CampaignTableComponent {
   @Input() campaigns: CampaignUx[];
   @Input() displayedColumns = [
-    'name',
-    'territory',
-    'amount_spent',
-    'max_amount',
-    'trips_number',
-    'max_trips',
+    'status',
     'start',
     'end',
+    'name',
+    'territory',
+    // 'amount_spent',
+    'max_amount',
+    // 'trips_number',
+    // 'max_trips',
   ];
 
   constructor(private _commonDataService: CommonDataService) {}
-
-  ngOnInit(): void {}
-
-  canShowDetails(status: CampaignStatusEnum): boolean {
-    return true;
-    return (
-      status === CampaignStatusEnum.VALIDATED ||
-      status === CampaignStatusEnum.PENDING ||
-      status === CampaignStatusEnum.ARCHIVED
-    );
-  }
 
   isEuro(unit: IncentiveUnitEnum): boolean {
     return unit === IncentiveUnitEnum.EUR;
@@ -49,36 +37,6 @@ export class CampaignTableComponent implements OnInit {
       return foundTerritory.shortname ? foundTerritory.shortname : foundTerritory.name;
     }
     // todo: message to sentry
-    return 'Territoire non défini';
-  }
-
-  private ngOnChanges(changes: SimpleChanges): void {
-    this.displayedColumns = ['name', 'territory', 'amount_spent', 'max_amount', 'trips_number', 'start', 'end'];
-
-    // if (this.status === CampaignStatusEnum.ARCHIVED || this.status === CampaignStatusEnum.VALIDATED) {
-    //   this.displayedColumns = [
-    //     'name',
-    //     'territory',
-    //     'amount_spent',
-    //     'max_amount',
-    //     'trips_number',
-    //     'max_trips',
-    //     'start',
-    //     'end',
-    //   ];
-    // } else if (this.status === CampaignStatusEnum.DRAFT || this.status === CampaignStatusEnum.PENDING) {
-    //   this.displayedColumns = ['name', 'territory', 'max_amount', 'max_trips', 'start', 'end'];
-    // } else {
-    //   this.displayedColumns = [
-    //     'name',
-    //     'territory',
-    //     'amount_spent',
-    //     'max_amount',
-    //     'trips_number',
-    //     'max_trips',
-    //     'start',
-    //     'end',
-    //   ];
-    // }
+    return '-';
   }
 }

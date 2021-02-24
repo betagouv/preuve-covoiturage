@@ -10,7 +10,8 @@ export interface BaseRetributionRuleInterface {
 }
 
 export enum RetributionRulesSlugEnum {
-  DISTANCE_RANGE = 'progressive_distance_range_meta',
+  PROGRESSIVE_DISTANCE_RANGE = 'progressive_distance_range_meta',
+  FILTERED_DISTANCE_RANGE = 'distance_range_filter',
   PER_KM = 'per_km_modifier',
   FREE = 'cost_based_amount_setter',
   FOR_DRIVER = 'driver_only_filter',
@@ -37,8 +38,10 @@ export class RangeRetributionRule implements RetributionRuleInterface {
   parameters: RulesRangeInterface;
   slug: RetributionRulesSlugEnum;
 
-  constructor(distanceRange: RulesRangeInterface) {
-    this.slug = RetributionRulesSlugEnum.DISTANCE_RANGE;
+  constructor(distanceRange: RulesRangeInterface, progressive = true) {
+    this.slug = progressive
+      ? RetributionRulesSlugEnum.PROGRESSIVE_DISTANCE_RANGE
+      : RetributionRulesSlugEnum.FILTERED_DISTANCE_RANGE;
     this.parameters = distanceRange;
   }
 }

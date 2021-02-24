@@ -1,5 +1,6 @@
 export interface ParamsInterface {
   _id: number;
+  thumbnail?: boolean;
 }
 
 export interface ResultInterface {

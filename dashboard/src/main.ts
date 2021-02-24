@@ -4,9 +4,11 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from '~/app.module';
 
-import { environment } from './environments/environment';
+import { environment as env } from './environments/environment';
 
-if (environment.production) {
+const globalEnv = (window as any).environment;
+
+if ((globalEnv && globalEnv.production) || (!globalEnv && env.production)) {
   enableProdMode();
 }
 

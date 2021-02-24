@@ -26,9 +26,9 @@
     "nock": "^12.0.1"
   },
   "dependencies": {
-    "axios": "^0.19.2",
     "@ilos/common": "^0.4.1",
-    "@ilos/core": "^0.4.1"
+    "@ilos/core": "^0.4.1",
+    "axios": "^0.21.1"
   },
   "ava": {
     "files": [

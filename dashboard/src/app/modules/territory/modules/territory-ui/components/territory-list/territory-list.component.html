@@ -13,7 +13,7 @@
   <ng-container matColumnDef="actions">
     <td mat-cell *matCellDef="let territory" class="Territories-list-item-actions">
       <a class="link" *ngIf="authenticationService.hasAnyPermission([this.editPermission])" (click)="onEdit(territory)">
-        <mat-icon color="primary" matTooltip="Editer">edit</mat-icon>
+        <mat-icon color="primary" matTooltip="Editer" matTooltipPosition="left">edit</mat-icon>
       </a>
     </td>
   </ng-container>

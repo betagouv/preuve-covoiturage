@@ -1,3 +1,5 @@
+import { identity } from './common/identity.schema';
+
 const positionSchema = {
   type: 'object',
   required: ['lat', 'lon', 'territory_id'],
@@ -29,6 +31,7 @@ export const schema = {
         required: ['is_driver', 'datetime', 'start', 'end', 'seats', 'duration', 'identity', 'cost', 'meta'],
         additionalProperties: false,
         properties: {
+          identity,
           is_driver: { type: 'boolean' },
           datetime: { macro: 'timestamp' },
           start: positionSchema,
@@ -48,23 +51,6 @@ export const schema = {
             type: 'integer',
             minimum: 0,
             maximum: 1000000,
-          },
-          identity: {
-            type: 'object',
-            additionalProperties: false,
-            anyOf: [{ required: ['phone'] }, { required: ['phone_trunc', 'operator_user_id'] }],
-            properties: {
-              firstname: { macro: 'varchar' },
-              lastname: { macro: 'varchar' },
-              email: { macro: 'email' },
-              phone: { macro: 'phone' },
-              company: { macro: 'varchar' },
-              over_18: { enum: [true, false, null] },
-              phone_trunc: { macro: 'varchar' },
-              operator_user_id: { macro: 'varchar' },
-              travel_pass_name: { macro: 'varchar' },
-              travel_pass_user_id: { macro: 'varchar' },
-            },
           },
           cost: {
             type: 'integer',

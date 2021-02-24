@@ -29,7 +29,7 @@ interface SimulateResultInterface {
     [
       'scope.it',
       [
-        [],
+        ['incentive-campaign.simulate'],
         [
           (params, context): string => {
             if (
@@ -45,7 +45,14 @@ interface SimulateResultInterface {
     ],
     ['validate', alias],
     'validate.rules',
-    ['validate.date', ['campaign', () => [undefined, new Date()]]],
+    [
+      'validate.date',
+      {
+        startPath: 'campaign.start_date',
+        endPath: 'campaign.end_date',
+        maxEnd: () => new Date(),
+      },
+    ],
   ],
 })
 export class SimulateOnFakeAction extends AbstractAction {

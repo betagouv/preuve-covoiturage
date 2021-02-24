@@ -6,6 +6,7 @@ export const schema = {
   additionalProperties: false,
   properties: {
     _id: { macro: 'serial' },
+    thumbnail: { type: 'boolean' },
   },
 };
 export const binding = [alias, schema];

@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material/stepper';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
@@ -119,7 +119,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
     );
   }
 
-  saveCampaign(): void {
+  public initCampaign(): void {
+    this.campaignFormGroup.setValue(new CampaignUx());
+  }
+
+  public saveCampaign(): void {
     const formValues = this.campaignFormGroup.getRawValue();
 
     // get territory of user
@@ -135,6 +139,23 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
     }
   }
 
+  public setTemplate(template): void {
+    if (template) {
+      this.setCampaignToForm(
+        new Campaign({
+          ...template,
+          _id: null,
+          parent_id: template._id,
+        }).toFormValues(),
+        true,
+      );
+    } else {
+      const campaign = new CampaignUx();
+      campaign.filters.rank = [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C];
+      this.setCampaignToForm(campaign, true);
+    }
+  }
+
   private patchCampaign(params: CampaignInterface): void {
     this._campaignStoreService
       .patchSelected(params)
@@ -142,7 +163,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
       .subscribe(
         (data) => {
           this.requestLoading = false;
-          this._router.navigate([`/campaign/draft/${this.campaignId}`]).then(() => {
+          this._router.navigate([`/campaign/${this.campaignId}`]).then(() => {
             this._toastr.success(`La campagne ${params.name} a bien été mise à jour`);
           });
         },
@@ -207,41 +228,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
       restrictions: this._formBuilder.array([]),
       retributions: this._formBuilder.array([], { validators: [uniqueRetributionValidator] }),
     });
-  }
-
-  public initCampaign(): void {
-    this.campaignFormGroup.setValue(new CampaignUx());
-  }
-
-  public setTemplate(templateId: number | null = null): void {
-    let campaign;
-
-    if (templateId) {
-      // get template from service
-      this._campaignStoreService.templates$
-        .pipe(
-          takeUntil(this.destroy$),
-          map((cas) => cas.find((ca) => ca._id === templateId)),
-        )
-        .subscribe(
-          (template) => {
-            campaign = new Campaign({
-              ...template,
-              _id: null,
-              parent_id: templateId,
-            }).toFormValues();
-            this.setCampaignToForm(campaign, true);
-          },
-          (err) => {
-            this._toastr.error('Template non trouvé');
-          },
-        );
-    } else {
-      // new campaign from scratch with default values
-      campaign = new CampaignUx();
-      campaign.filters.rank = [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C];
-      this.setCampaignToForm(campaign, true);
-    }
   }
 
   private setCampaignToForm(campaign: CampaignUx, isTemplate = false): void {

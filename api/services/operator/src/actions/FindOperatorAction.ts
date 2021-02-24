@@ -18,6 +18,6 @@ export class FindOperatorAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.operatorRepository.find(params._id);
+    return this.operatorRepository.find(params._id, true);
   }
 }

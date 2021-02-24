@@ -1,38 +1,65 @@
-<!-- SEARCH FILTER-->
-<div class="OperatorVisibilityTree">
-  <div class="OperatorVisibilityTree-header">
-    <form [formGroup]="searchFilter">
-      <mat-form-field appearance="outline">
-        <mat-label>Rechercher</mat-label>
-        <input matInput placeholder="Nom du territoire" formControlName="query" />
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-    </form>
-    <mat-checkbox
-      *ngIf="territoryIdsToShow && territoryIdsToShow.length > 0"
-      [ngModel]="checkAllValue"
-      (change)="checkAll($event)"
-      color="primary"
-    >
-      Tous les territoires
-    </mat-checkbox>
+<div *ngIf="!isLoaded" class="loader">
+  <mat-spinner [diameter]="25"></mat-spinner>
+  <p>Chargement...</p>
+</div>
+
+<div *ngIf="isLoaded" class="OperatorVisibilityTree">
+  <div class="header">
+    <div class="left">
+      <!-- search -->
+      <form [formGroup]="searchFilter">
+        <mat-form-field appearance="outline">
+          <mat-label>Rechercher</mat-label>
+          <input matInput placeholder="Nom du territoire" formControlName="query" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </form>
+
+      <!-- toggle all -->
+      <mat-checkbox color="primary" (change)="onChangeAll($event)" [checked]="checkAllValue">
+        Tous les territoires
+      </mat-checkbox>
+    </div>
+
+    <div class="right">
+      <p>
+        Visible sur <span>{{ checkedCount }}</span> territoire{{ checkedCount === 1 ? '' : 's' }}
+      </p>
+
+      <button
+        type="button"
+        mat-button
+        color="secondary"
+        matTooltip="Revenir à l'état enregistré"
+        matTooltipPosition="above"
+        class="btn-reset"
+        (click)="reset()"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+      <button type="button" mat-flat-button color="primary" (click)="save()">Enregistrer</button>
+    </div>
   </div>
-  <div *ngIf="territoryIdsToShow && territoryIdsToShow.length === 0 && hasFilter">
-    <p>Aucun résultat avec vos critères de recherches</p>
-  </div>
-  <div class="OperatorVisibilityTree-form" *ngIf="territoryIdsToShow && territoryIdsToShow.length > 0">
+
+  <!-- no results -->
+  <!--<div *ngIf="territoryIdsToShow && !territoryIdsToShow.length && hasFilter">
+    <p>Aucun résultat avec vos critères de recherche</p>
+  </div>-->
+
+  <!-- list -->
+  <!-- <div *ngIf="territoryIdsToShow && territoryIdsToShow.length > 0" class="OperatorVisibilityTree-form"> -->
+  <div class="OperatorVisibilityTree-form">
     <form>
       <ul class="territory-visibility-list">
         <li
-          *ngFor="let ter of territories"
-          [hidden]="!showTerritory(ter._id)"
-          [style]="'padding-left:' + ter.indent * (searchMode ? 0 : 23) + 'px'"
+          *ngFor="let ter of filteredTerritories; trackBy: trackById"
+          [style]="'padding-left:' + ter.indent * (isSearching ? 0 : 23) + 'px'"
         >
           <mat-checkbox
-            *ngIf="ter.activable || ter.level === 'towngroup'; else terr_label"
+            *ngIf="isSelectable(ter); else terr_label"
             color="primary"
-            (change)="swapCheck(ter)"
-            [checked]="selectedTerritoryIds.indexOf(ter._id) !== -1"
+            (change)="onChangeTerritory($event, ter)"
+            [checked]="ter.checked"
           >
             {{ ter.name }}
           </mat-checkbox>
@@ -40,14 +67,5 @@
         </li>
       </ul>
     </form>
-  </div>
-  <div class="OperatorVisibilityTree-actions">
-    <button type="button" mat-flat-button color="primary" (click)="save()">Enregistrer les changements</button>
-    <ng-container *ngIf="isLoaded">
-      <p *ngIf="countCheckedTerritories">
-        Visible sur <span>{{ countCheckedTerritories }}</span> territoires
-      </p>
-      <p *ngIf="!countCheckedTerritories">Visible sur aucun territoire</p>
-    </ng-container>
   </div>
 </div>

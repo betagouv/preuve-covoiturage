@@ -5,7 +5,14 @@ import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/Ce
 import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/certificate/find.contract';
 import { alias } from '../shared/certificate/find.schema';
 
-@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
+@handler({
+  ...handlerConfig,
+  middlewares: [
+    // feature flag certificates until properly tested by operators
+    ['featureflag', { deny: ['production'] }],
+    ['validate', alias],
+  ],
+})
 export class FindCertificateAction extends AbstractAction {
   constructor(private certRepository: CertificateRepositoryProviderInterfaceResolver) {
     super();
@@ -25,8 +32,7 @@ export class FindCertificateAction extends AbstractAction {
       created_at: certificate.created_at,
       total_km: certificate.meta.total_km,
       total_point: certificate.meta.total_point,
-      total_cost: certificate.meta.total_cost,
-      remaining: certificate.meta.remaining,
+      total_rm: certificate.meta.total_rm,
     };
   }
 }

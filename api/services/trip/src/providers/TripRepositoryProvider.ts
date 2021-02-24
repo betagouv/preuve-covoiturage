@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { promisify } from 'util';
 import { map } from 'lodash';
 
@@ -17,7 +18,8 @@ import {
 } from '../interfaces';
 
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
-import { StatInterface } from '../interfaces/StatInterface';
+import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
+import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
 
 /*
  * Trip specific repository
@@ -166,13 +168,13 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
   }
 
-  public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
+  public async stats(params: Partial<TripStatInterface>): Promise<StatInterface[]> {
     const where = await this.buildWhereClauses(params);
 
     const values = [...(where ? where.values : [])];
     const text = `
       SELECT
-        journey_start_datetime::date as day,
+        to_char(journey_start_datetime::date, 'yyyy-mm-dd') as day,
         sum(passenger_seats)::int as trip,
         sum(journey_distance/1000*passenger_seats)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
@@ -182,11 +184,46 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         )::float as average_carpoolers_by_car,
         (count(*) FILTER (
           WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0
-        ))::int as trip_subsidized
+        ))::int as trip_subsidized,
+        coalesce(sum(passenger_incentive_rpc_financial_sum + driver_incentive_rpc_financial_sum), 0)::int as financial_incentive_sum,
+        coalesce(sum(passenger_incentive_rpc_sum + driver_incentive_rpc_sum), 0)::int as incentive_sum
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
-      GROUP BY day
-      ORDER BY day ASC
+      GROUP BY day ORDER BY day ASC
+    `;
+
+    const result = await this.connection.getClient().query({
+      values,
+      text: this.numberPlaceholders(text),
+    });
+
+    return result.rowCount ? result.rows : [];
+  }
+
+  public async financialStats(params: Partial<TripStatInterface>): Promise<FinancialStatInterface[]> {
+    const where = await this.buildWhereClauses(params);
+
+    const values = [...(where ? where.values : [])];
+    const groupBy =
+      params.group_by === 'day'
+        ? {
+            format: 'yyyy-mm-dd',
+            key: 'day',
+          }
+        : {
+            format: 'yyyy-mm',
+            key: 'month',
+          };
+    const text = `
+      SELECT
+        to_char(journey_start_datetime::date, '${groupBy.format}') as ${groupBy.key},
+        operator_id,
+        coalesce(sum(passenger_incentive_rpc_financial_sum + driver_incentive_rpc_financial_sum), 0)::int as financial_incentive_sum,
+        coalesce(sum(passenger_incentive_rpc_sum + driver_incentive_rpc_sum), 0)::int as incentive_sum
+      FROM ${this.table}
+      ${where.text ? `WHERE ${where.text}` : ''}
+      GROUP BY ${groupBy.key}, operator_id
+      ORDER BY ${groupBy.key} ASC
     `;
 
     const result = await this.connection.getClient().query({

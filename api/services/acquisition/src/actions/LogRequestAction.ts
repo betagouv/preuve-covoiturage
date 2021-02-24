@@ -25,7 +25,7 @@ export class LogRequestAction extends AbstractAction {
     await this.repo.log({
       error_stage: ErrorStage.Acquisition,
       error_line: null,
-      operator_id: get(context, 'call.user.operator_id', 0),
+      operator_id: get(context, 'call.user.operator_id', params.operator_id || 0),
       journey_id: params.journey_id,
       source: 'logrequest',
       error_message: null,

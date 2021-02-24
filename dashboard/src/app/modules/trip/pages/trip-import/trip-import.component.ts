@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
 import { requiredFileTypeValidator } from '~/modules/trip/validators/required-file-type.validator';
-import { URLS } from '~/core/const/main.const';
+// import { URLS } from '~/core/const/main.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TripStoreService } from '~/modules/trip/services/trip-store.service';
 
@@ -15,7 +15,7 @@ import { TripStoreService } from '~/modules/trip/services/trip-store.service';
   styleUrls: ['./trip-import.component.scss'],
 })
 export class TripImportComponent extends DestroyObservable implements OnInit {
-  public gitbookLinkCSVImport = URLS.gitbookLinkCSVImport;
+  public gitbookLinkCSVImport = '';
   public tripImportForm: FormGroup;
   public progress = 0;
 

@@ -1,5 +1,15 @@
 export interface ParamsInterface {
   uuid: string;
+  meta?: {
+    operator?: {
+      content?: string;
+    };
+    identity?: {
+      name?: string;
+      content?: string;
+    };
+    notes?: string;
+  };
 }
 
 // should be Buffer but fails with the frontend

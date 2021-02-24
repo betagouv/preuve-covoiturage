@@ -1,4 +1,4 @@
-<div [hidden]="!showForm">
+<div [hidden]="!isFormVisible">
   <form class="territoryForm" [formGroup]="territoryForm">
     <div *ngIf="fullFormMode">
       <h2>Informations générales</h2>
@@ -44,6 +44,7 @@
           >
         </mat-form-field>
       </div>
+
       <div *ngIf="relationDisplayMode === 'geo'">
         <h4>Contour geographique</h4>
 
@@ -72,8 +73,9 @@
       </mat-form-field>
 
       <mat-checkbox formControlName="activable">Partenaire</mat-checkbox>
-      <mat-checkbox formControlName="active" [hidden]="!displayAOMActive">AOM</mat-checkbox>
-      <div [hidden]="!activable">
+      <mat-checkbox formControlName="active" [hidden]="!isPartner">AOM</mat-checkbox>
+
+      <div [hidden]="!isPartner">
         <h3>Structure</h3>
 
         <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
@@ -84,14 +86,14 @@
       </div>
     </div>
 
-    <div [hidden]="!activable">
+    <div [hidden]="!isPartner">
       <h2>Contacts et responsables</h2>
       <div class="contacts">
         <div>
           <h3>Délégué à la protection des données</h3>
 
           <app-form-contact
-            [parentForm]="territoryForm.get('contacts').get('gdpr_dpo')"
+            [parentForm]="territoryForm.get('contacts.gdpr_dpo')"
             [showPhoneNumber]="false"
           ></app-form-contact>
         </div>
@@ -100,7 +102,7 @@
           <h3>Responsable du traitement</h3>
 
           <app-form-contact
-            [parentForm]="territoryForm.get('contacts').get('gdpr_controller')"
+            [parentForm]="territoryForm.get('contacts.gdpr_controller')"
             [showPhoneNumber]="false"
           ></app-form-contact>
         </div>
@@ -108,12 +110,14 @@
         <div>
           <h3>Responsable technique</h3>
 
-          <app-form-contact [parentForm]="territoryForm.get('contacts').get('technical')"></app-form-contact>
+          <app-form-contact [parentForm]="territoryForm.get('contacts.technical')"></app-form-contact>
         </div>
       </div>
     </div>
     <div>
-      <div>
+      <div class="actions">
+        <button type="button" class="large" (click)="onClose()" mat-button *ngIf="closable">Annuler</button>
+
         <button
           *ngIf="authService.hasAnyPermission(['territory.update'])"
           type="submit"
@@ -123,9 +127,8 @@
           [disabled]="!territoryForm.valid || (!hasTerritories && relationDisplayMode === 'parent')"
           color="primary"
         >
-          {{ !!editedId ? 'Mettre à jour les informations' : 'Créer' }}
+          {{ !!editedId ? 'Mettre à jour' : 'Créer' }}
         </button>
-        <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">Fermer</button>
       </div>
     </div>
   </form>

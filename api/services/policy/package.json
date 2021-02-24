@@ -10,8 +10,6 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "test:integration": "NODE_ENV=testing mocha --exit tests/*.spec.ts tests/**/*.spec.ts",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/service-campaign --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
     "lint": "eslint 'src/**/*.ts'"
   },
@@ -45,7 +43,7 @@
     "csv-stringify": "^5.5.1",
     "date-fns-tz": "^1.0.12",
     "faker": "^5.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
     "moment": "^2.29.1"
   }
 }

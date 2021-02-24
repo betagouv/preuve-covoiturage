@@ -18,6 +18,6 @@ export class QuickFindOperatorAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.operatorRepository.quickFind(params._id);
+    return this.operatorRepository.quickFind(params._id, params.thumbnail || false);
   }
 }

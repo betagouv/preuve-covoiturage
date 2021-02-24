@@ -1,5 +1,5 @@
 import { Action } from '@ilos/core';
-import { handler, ContextType, ConfigInterfaceResolver } from '@ilos/common';
+import { handler, ConfigInterfaceResolver } from '@ilos/common';
 
 import { FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpool/crosscheck.contract';
@@ -29,7 +29,7 @@ export class CrosscheckAction extends Action {
     super();
   }
 
-  public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
     const toProcess: PeopleWithIdInterface[] = [];
     const { people, ...sharedData } = journey;
 

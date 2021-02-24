@@ -22,4 +22,10 @@ export class OperatorApiService extends JsonRpcCrud<Operator> {
 
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
+
+  patchThumbnail(item: { _id: number; thumbnail: string }): Observable<Operator> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:patchThumbnail`, item);
+
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
+  }
 }

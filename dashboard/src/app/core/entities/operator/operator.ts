@@ -23,6 +23,7 @@ class Operator extends BaseModel implements FormModel, Model, MapModel<Operator>
 
   public address?: Address;
 
+  public thumbnail?: string | null;
   public contacts?: Contacts;
 
   public bank?: Bank;
@@ -35,6 +36,7 @@ class Operator extends BaseModel implements FormModel, Model, MapModel<Operator>
     name: string;
     siret: string;
     legal_name: string;
+    thumbnail?: string | null;
     company?: Company;
     address?: Address;
     contacts?: Contacts;
@@ -55,6 +57,7 @@ class Operator extends BaseModel implements FormModel, Model, MapModel<Operator>
     this.updateFromFormValues(data);
     this._id = data._id;
     this.siret = data.siret;
+    this.thumbnail = data.thumbnail;
 
     return this;
   }
@@ -63,6 +66,7 @@ class Operator extends BaseModel implements FormModel, Model, MapModel<Operator>
     const val: any = fullFormMode
       ? {
           ...this,
+          thumbnail: this.thumbnail ? this.thumbnail : null,
           name: this.name || '',
           legal_name: this.legal_name || '',
           company: { ...new Company(this.company).toFormValues(), siret: this.siret },
@@ -71,6 +75,8 @@ class Operator extends BaseModel implements FormModel, Model, MapModel<Operator>
           address: new Address(this.address).toFormValues(),
         }
       : {
+          thumbnail: this.thumbnail ? this.thumbnail : null,
+
           contacts: new Contacts(this.contacts).toFormValues(),
         };
 
@@ -84,6 +90,7 @@ class Operator extends BaseModel implements FormModel, Model, MapModel<Operator>
     assignOrDeleteProperties(formValues, this, ['name', 'legal_name']);
 
     this.siret = formValues.company && formValues.company.siret ? formValues.company.siret : '';
+    this.thumbnail = formValues.thumbnail;
 
     assignOrDeleteProperty(formValues, this, 'company', (data) => new Company(data.company));
     assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
