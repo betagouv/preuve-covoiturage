@@ -21,7 +21,7 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
       operator: 'operator.user.create',
     }),
     ['validate', alias],
-    contentWhitelistMiddleware(userWhiteListFilterOutput),
+    contentWhitelistMiddleware(...userWhiteListFilterOutput),
   ],
 })
 export class CreateUserAction extends AbstractAction {

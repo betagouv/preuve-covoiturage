@@ -26,7 +26,7 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
       territory: 'territory.user.update',
       operator: 'operator.user.update',
     }),
-    contentWhitelistMiddleware(userWhiteListFilterOutput),
+    contentWhitelistMiddleware(...userWhiteListFilterOutput),
   ],
 })
 export class PatchUserAction extends AbstractAction {

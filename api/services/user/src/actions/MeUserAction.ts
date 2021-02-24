@@ -17,7 +17,7 @@ import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-mid
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       user: 'common.user.find',
     }),
-    contentWhitelistMiddleware(userWhiteListFilterOutput),
+    contentWhitelistMiddleware(...userWhiteListFilterOutput),
   ],
 })
 export class MeUserAction extends AbstractAction {

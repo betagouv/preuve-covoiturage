@@ -13,7 +13,7 @@ import { blacklist } from '../config/filterOutput';
   middlewares: [
     hasPermissionMiddleware('common.territory.list'),
     ['validate', alias],
-    contentBlacklistMiddleware(blacklist),
+    contentBlacklistMiddleware(...blacklist),
   ],
 })
 export class FindTerritoryByInseesAction extends AbstractAction {

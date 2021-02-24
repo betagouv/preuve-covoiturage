@@ -17,7 +17,7 @@ import { challengePasswordMiddleware } from '../middlewares/ChallengePasswordMid
   middlewares: [
     ['validate', alias],
     challengePasswordMiddleware({ emailPath: 'email', passwordPath: 'password' }),
-    contentWhitelistMiddleware(userWhiteListFilterOutput),
+    contentWhitelistMiddleware(...userWhiteListFilterOutput),
   ],
 })
 export class LoginUserAction extends AbstractAction {

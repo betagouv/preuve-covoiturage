@@ -22,7 +22,7 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
       territory: 'territory.user.find',
       operator: 'operator.user.find',
     }),
-    contentWhitelistMiddleware(userWhiteListFilterOutput),
+    contentWhitelistMiddleware(...userWhiteListFilterOutput),
   ],
 })
 export class FindUserAction extends AbstractAction {
