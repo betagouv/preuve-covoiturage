@@ -1,8 +1,7 @@
 import { set } from 'lodash';
 
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
-
-export type ContentBlacklistMiddlewareParams = string[];
+import { ParametredMiddleware } from '../interfaces';
 
 /*
  * Delete properties from model or array of models on output of handler
@@ -46,4 +45,14 @@ export class ContentBlacklistMiddleware implements MiddlewareInterface<ContentBl
     });
     return result;
   }
+}
+
+export type ContentBlacklistMiddlewareParams = string[];
+
+const alias = 'content.blacklist';
+
+export const contentBlacklistMiddlewareBinding = [alias, ContentBlacklistMiddleware];
+
+export function contentBlacklistMiddleware(...params: ContentBlacklistMiddlewareParams): ParametredMiddleware<ContentBlacklistMiddlewareParams> {
+  return [alias, params];
 }

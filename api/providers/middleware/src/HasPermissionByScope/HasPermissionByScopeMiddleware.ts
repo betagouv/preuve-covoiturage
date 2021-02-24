@@ -8,9 +8,7 @@ import {
   ForbiddenException,
 } from '@ilos/common';
 import { get } from 'lodash';
-
-export type ScopeAndPermission = [string, string, string];
-export type HasPermissionByScopeMiddlewareParams = [string | undefined, ScopeAndPermission[]];
+import { ParametredMiddleware } from '../interfaces';
 
 /*
  * Verify default permission - else verify permissions according to params, context & callback function
@@ -51,4 +49,15 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
 
     throw new ForbiddenException('Invalid permissions');
   }
+}
+
+export type ScopeAndPermission = [string, string, string];
+export type HasPermissionByScopeMiddlewareParams = [string | undefined, ScopeAndPermission[]];
+
+const alias = 'has_permission_by_scope';
+
+export const hasPermissionByScopeMiddlewareBinding = [alias, HasPermissionByScopeMiddleware];
+
+export function hasPermissionByScopeMiddleware(globalPermission: string | null, ...scopes: ScopeAndPermission[]): ParametredMiddleware<HasPermissionByScopeMiddlewareParams> {
+  return [alias, [globalPermission, scopes]];
 }

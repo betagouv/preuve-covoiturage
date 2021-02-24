@@ -1,13 +1,6 @@
 import { get, set } from 'lodash';
 import { MiddlewareInterface, ContextType, ResultType, InvalidParamsException, middleware } from '@ilos/common';
-
-export type ValidateDateMiddlewareParams = {
-  startPath: string;
-  endPath: string;
-  minStart?: () => Date;
-  maxEnd?: () => Date;
-  applyDefault?: boolean;
-};
+import { ParametredMiddleware } from '../interfaces';
 
 @middleware()
 export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateMiddlewareParams> {
@@ -51,4 +44,22 @@ export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateM
 
     return next(params, context);
   }
+}
+
+
+
+export type ValidateDateMiddlewareParams = {
+  startPath: string;
+  endPath: string;
+  minStart?: () => Date;
+  maxEnd?: () => Date;
+  applyDefault?: boolean;
+};
+
+const alias = 'validate.date';
+
+export const validateDateMiddlewareBinding = [alias, ValidateDateMiddleware];
+
+export function validateDateMiddleware(params: ValidateDateMiddlewareParams): ParametredMiddleware<ValidateDateMiddlewareParams> {
+  return [alias, params];
 }

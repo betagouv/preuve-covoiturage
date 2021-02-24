@@ -1,7 +1,7 @@
 import { get, set } from 'lodash';
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
+import { ParametredMiddleware } from '../interfaces';
 
-export type CopyFromContextMiddlewareParams = [string, string];
 /*
  * Extract data from context and copy to request params
  */
@@ -13,14 +13,26 @@ export class CopyFromContextMiddleware implements MiddlewareInterface<CopyFromCo
     next: Function,
     mappings: CopyFromContextMiddlewareParams,
   ): Promise<ResultType> {
-    const [fromPath, toPath] = mappings;
+    const [fromPath, toPath, preserve] = mappings;
     const notFound = Symbol();
     const valueToCopy = get(context, fromPath, notFound);
 
     if (valueToCopy !== notFound) {
-      set(params, toPath, valueToCopy);
+      if (!preserve || get(params, toPath, notFound) === notFound) {
+        set(params, toPath, valueToCopy);
+      }
     }
 
     return next(params, context);
   }
+}
+
+export type CopyFromContextMiddlewareParams = [string, string, boolean];
+
+const alias = 'copy_from_context';
+
+export const copyFromContextMiddlewareBinding = [alias, CopyFromContextMiddleware];
+
+export function copyFromContextMiddleware(fromPath: string, toPath: string, preserve: boolean = false): ParametredMiddleware<CopyFromContextMiddlewareParams> {
+  return [alias, [fromPath, toPath, preserve]];
 }
