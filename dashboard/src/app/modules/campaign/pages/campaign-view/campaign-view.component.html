@@ -1,0 +1,74 @@
+<app-page-content>
+  <div class="loader" *ngIf="!isLoaded">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="isLoaded">
+    <div class="header">
+      <div class="title">
+        <h1>{{ campaignUx.name }}</h1>
+        <p>{{ territory.name }}</p>
+      </div>
+
+      <!-- territories can duplicate the campaign -->
+      <!-- <div class="action">
+        <button
+          *ngIf="isLoggedAsTerritory"
+          mat-flat-button
+          type="button"
+          color="primary"
+          routerLink="/campaign/create/{{ campaignUx._id }}"
+        >
+          Dupliquer la campagne
+        </button>
+      </div> -->
+    </div>
+
+    <div *ngIf="isDraft && userIsTerritory && !userIsDemo" class="launch-draft">
+      <div>
+        <mat-icon class="dot">fiber_manual_record</mat-icon>
+        <div>
+          <h4>Votre campagne est en attente et prête à être démarrée</h4>
+          <p>Vous pouvez vérifier l'ensemble des informations saisies, puis la lancer</p>
+        </div>
+      </div>
+      <button mat-flat-button type="button" color="primary" (click)="launchCampaign(campaignUx._id)">
+        Lancer ma campagne
+      </button>
+    </div>
+
+    <div class="content">
+      <div>
+        <app-campaign-main-metrics *ngIf="!isDraft" [campaign]="campaignUx"></app-campaign-main-metrics>
+        <app-campaign-simulation-pane *ngIf="isDraft" [campaign]="campaignUx"></app-campaign-simulation-pane>
+
+        <div class="contacts" *ngIf="territory.contacts?.technical">
+          <h4>Contact technique</h4>
+          <p>{{ territory.contacts.technical.firstname }} {{ territory.contacts.technical.lastname }}</p>
+          <p>
+            <a href="mailto:{{ territory.contacts.technical.email }}">{{ territory.contacts.technical.email }}</a>
+          </p>
+          <p>
+            <a href="tel:{{ territory.contacts.technical.phone }}">{{ territory.contacts.technical.phone }}</a>
+          </p>
+        </div>
+      </div>
+      <div>
+        <app-campaign-rules-view [campaign]="campaignUx"></app-campaign-rules-view>
+        <app-campaign-retribution-view [campaign]="campaignUx"></app-campaign-retribution-view>
+      </div>
+
+      <!-- summary -->
+      <div class="summary">
+        <div>
+          <a mat-button (click)="showSummary = !showSummary">
+            {{ showSummary ? 'Cacher' : 'Voir' }} le texte récapitulatif
+          </a>
+        </div>
+      </div>
+      <div *ngIf="showSummary">
+        <app-campaign-summary-text [campaign]="campaignUx"></app-campaign-summary-text>
+      </div>
+    </div>
+  </div>
+</app-page-content>

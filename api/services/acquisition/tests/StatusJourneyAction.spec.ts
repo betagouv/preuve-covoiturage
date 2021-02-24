@@ -61,7 +61,7 @@ test.after.always(async (t) => {
  * Behaves as if no workers are running and the journey does not
  * hit the process pipeline towards carpools.
  */
-test('status: pending', async (t) => {
+test.serial('status: pending', async (t) => {
   const { insertAcquisition } = insertFactory(t.context.pool);
 
   const journey_id = `test-${Math.random()}`;
@@ -93,7 +93,7 @@ test('status: pending', async (t) => {
  * the carpool.carpooles table with an 'ok' status.
  * Everything went fine through the pipeline.
  */
-test('status: ok', async (t) => {
+test.serial('status: ok', async (t) => {
   const { insertAcquisition, insertCarpool } = insertFactory(t.context.pool);
 
   const journey_id = `test-${Math.random()}`;
@@ -128,7 +128,7 @@ test('status: ok', async (t) => {
  * Everything went fine through the pipeline but the journey
  * was sent too late by the operator
  */
-test('status: expired', async (t) => {
+test.serial('status: expired', async (t) => {
   const { insertAcquisition, insertCarpool } = insertFactory(t.context.pool);
 
   const journey_id = `test-${Math.random()}`;
@@ -163,7 +163,7 @@ test('status: expired', async (t) => {
  * Everything went fine through the pipeline but the operator
  * canceled the journey for some reason
  */
-test('status: canceled', async (t) => {
+test.serial('status: canceled', async (t) => {
   const { insertAcquisition, insertCarpool } = insertFactory(t.context.pool);
 
   const journey_id = `test-${Math.random()}`;
@@ -194,7 +194,7 @@ test('status: canceled', async (t) => {
  * status: not_found
  * Journey does not exist at all
  */
-test('status: not_found at all', async (t) => {
+test.serial('status: not_found at all', async (t) => {
   const journey_id = `test-${Math.random()}`;
   const operator_id = 999999;
 
@@ -219,7 +219,7 @@ test('status: not_found at all', async (t) => {
  *
  * Journey exists but belongs to another operator
  */
-test('status: not_found wrong operator_id (acquisition)', async (t) => {
+test.serial('status: not_found wrong operator_id (acquisition)', async (t) => {
   const { insertAcquisition } = insertFactory(t.context.pool);
 
   const journey_id = `test-${Math.random()}`;
@@ -247,7 +247,7 @@ test('status: not_found wrong operator_id (acquisition)', async (t) => {
 /**
  * status: error
  */
-test('status: acquisition_error', async (t) => {
+test.serial('status: acquisition_error', async (t) => {
   const { insertError } = insertFactory(t.context.pool);
 
   const journey_id = `test-${Math.random()}`;
@@ -278,7 +278,7 @@ test('status: acquisition_error', async (t) => {
 /**
  * status: error
  */
-test('status: normalization_error', async (t) => {
+test.serial('status: normalization_error', async (t) => {
   const { insertError } = insertFactory(t.context.pool);
 
   const journey_id = `test-${Math.random()}`;

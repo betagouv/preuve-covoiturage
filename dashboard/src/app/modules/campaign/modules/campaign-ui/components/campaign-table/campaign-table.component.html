@@ -1,9 +1,19 @@
 <table mat-table [dataSource]="campaigns">
-  <!--      Name -->
+  <!-- Status -->
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef>Statut</th>
+    <td mat-cell *matCellDef="let campaign">
+      <mat-icon [class]="campaign.status" [matTooltip]="campaign.status_locale" matTooltipPosition="right">
+        {{ campaign.status_icon }}
+      </mat-icon>
+    </td>
+  </ng-container>
+
+  <!-- Name -->
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef>Nom</th>
     <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-name">
-      <a [routerLink]="'../draft/' + campaign._id">
+      <a class="link" [routerLink]="'../' + campaign._id">
         {{ campaign.name }}
       </a>
     </td>
@@ -64,7 +74,7 @@
   <ng-container matColumnDef="start">
     <th mat-header-cell *matHeaderCellDef>Début</th>
     <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-territory">
-      {{ campaign.start.toDate() | date: 'dd MMMM yyyy' }}
+      {{ campaign.start.toDate() | date: 'dd/MM/yyyy' }}
     </td>
   </ng-container>
 
@@ -72,7 +82,7 @@
   <ng-container matColumnDef="end">
     <th mat-header-cell *matHeaderCellDef>Fin</th>
     <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-territory">
-      {{ campaign.end.toDate() | date: 'dd MMMM yyyy' }}
+      {{ campaign.end.toDate() | date: 'dd/MM/yyyy' }}
     </td>
   </ng-container>
 
@@ -80,7 +90,7 @@
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-actions">
-      <button mat-button *ngIf="canShowDetails(campaign.status)" routerLink="/campaign/{{ campaign._id }}">
+      <button mat-button routerLink="/campaign/{{ campaign._id }}">
         <mat-icon matTooltip="voir le détail">remove_red_eye</mat-icon>
       </button>
     </td>

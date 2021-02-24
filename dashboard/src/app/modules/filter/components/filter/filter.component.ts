@@ -1,6 +1,6 @@
+import { WeekDay } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, AbstractControl, FormControl, Validators } from '@angular/forms';
-import { WeekDay } from '@angular/common';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 
@@ -28,6 +28,8 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   public classes = TRIP_RANKS;
   public tripStatusList = [TripStatusEnum.OK];
   public minDate: string;
+  public maxDate = new Date(new Date().getTime() - 86400000); // 1 day ago
+  public userIsTerritory: boolean;
 
   public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
 
@@ -38,9 +40,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
 
   @Input() showFilters: boolean;
   @Output() showFiltersChange = new EventEmitter<boolean>();
-
   @Output() filtersCount = new EventEmitter();
-
   @ViewChild('townInput') townInput: ElementRef;
 
   constructor(
@@ -63,19 +63,13 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     return this.filterForm.get('date').get('end') as FormControl;
   }
 
-  public get hasGroupOperatorOrRegistry(): boolean {
-    return this.authService.hasAnyGroup([UserGroupEnum.OPERATOR, UserGroupEnum.REGISTRY]);
-  }
-
-  public get hasGroupRegistryOrTerritory(): boolean {
-    return this.authService.hasAnyGroup([UserGroupEnum.REGISTRY, UserGroupEnum.TERRITORY]);
-  }
-
   // delegate method
   dayLabel = dayLabelCapitalized;
 
   ngOnInit(): void {
     this.initForm();
+
+    this.userIsTerritory = this.authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
 
     // reset filter on page trip page load
     this.filterService.resetFilter();

@@ -2,16 +2,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '~/core/guards/auth-guard.service';
-
-import { CampaignDashboardComponent } from '~/modules/campaign/pages/campaign-dashboard/campaign-dashboard.component';
-// eslint-disable-next-line
-import { CampaignCreateEditComponent } from '~/modules/campaign/pages/campaign-create-edit/campaign-create-edit.component';
-import { CampaignDiscoverComponent } from '~/modules/campaign/pages/campaign-discover/campaign-discover.component';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { CampaignDraftViewComponent } from '~/modules/campaign/pages/campaign-draft-view/campaign-draft-view.component';
-// eslint-disable-next-line
-import { CampaignActiveViewComponent } from '~/modules/campaign/pages/campaign-active-view/campaign-active-view.component';
-import { CampaignAdminListComponent } from '~/modules/campaign/pages/campaign-admin-list/campaign-admin-list.component';
+import { CampaignDashboardComponent } from './pages/campaign-dashboard/campaign-dashboard.component';
+import { CampaignCreateEditComponent } from './pages/campaign-create-edit/campaign-create-edit.component';
+import { CampaignDiscoverComponent } from './pages/campaign-discover/campaign-discover.component';
+import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign-admin-list.component';
+import { CampaignViewComponent } from './pages/campaign-view/campaign-view.component';
 
 const routes: Routes = [
   {
@@ -24,14 +20,14 @@ const routes: Routes = [
         component: CampaignDashboardComponent,
       },
       {
-        path: 'create',
-        data: { permissions: ['incentive-campaign.create'], groups: [UserGroupEnum.TERRITORY] },
-        component: CampaignCreateEditComponent,
-      },
-      {
         path: 'list',
         data: { groups: [UserGroupEnum.REGISTRY] },
         component: CampaignAdminListComponent,
+      },
+      {
+        path: 'create',
+        data: { permissions: ['incentive-campaign.create'], groups: [UserGroupEnum.TERRITORY] },
+        component: CampaignCreateEditComponent,
       },
       {
         path: 'create/:parentId',
@@ -49,13 +45,9 @@ const routes: Routes = [
         component: CampaignCreateEditComponent,
       },
       {
-        path: 'draft/:campaignId',
-        data: { permissions: ['incentive-campaign.read'], groups: [UserGroupEnum.TERRITORY, UserGroupEnum.REGISTRY] },
-        component: CampaignDraftViewComponent,
-      },
-      {
         path: ':campaignId',
-        component: CampaignActiveViewComponent,
+        data: { permissions: ['incentive-campaign.read'] },
+        component: CampaignViewComponent,
       },
     ],
   },

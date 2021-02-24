@@ -1,145 +1,147 @@
-import { describe } from 'mocha';
-import chai from 'chai';
-import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
-import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
+import anyTest, { TestInterface } from 'ava';
+import sinon, { SinonSpy } from 'sinon';
+import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver, ParamsType } from '@ilos/common';
 
 import { UserRepositoryProviderInterfaceResolver } from '../src/interfaces/UserRepositoryProviderInterface';
 import { UserNotificationProvider } from '../src/providers/UserNotificationProvider';
 import { UserFindInterface } from '../src/shared/user/common/interfaces/UserFindInterface';
 
-chai.use(sinonChai);
-const { expect } = chai;
-
-const cfg = {
-  'email.templates.invitation': 'invitationTemplate',
-  'notification.templateIds.invitation': 'invitationTemplateId',
-  'email.templates.forgotten': 'forgottenTemplate',
-  'notification.templateIds.forgotten': 'forgottenTemplateId',
-  'email.templates.confirmation': 'confirmationTemplate',
-  'notification.templateIds.emailChange': 'emailChangedTemplateId',
-  'email.templates.email_changed': 'emailChangedTemplate',
-  'url.appUrl': 'http://myurl',
-};
-class Config extends ConfigInterfaceResolver {
-  get(k: string, fb: string): string {
-    return k in cfg ? cfg[k] : fb;
-  }
+interface TestContext {
+  cfg: any;
+  fullname: string;
+  provider: UserNotificationProvider;
+  kernel: KernelInterfaceResolver;
+  notify: SinonSpy<[string, ParamsType, ContextType], Promise<void>>;
 }
 
-class Kernel extends KernelInterfaceResolver {
-  async notify(method: string, params: any, context: any): Promise<void> {
-    return;
+const test = anyTest as TestInterface<TestContext>;
+
+test.beforeEach((t) => {
+  t.context.cfg = {
+    'email.templates.invitation': 'invitationTemplate',
+    'notification.templateIds.invitation': 'invitationTemplateId',
+    'email.templates.forgotten': 'forgottenTemplate',
+    'notification.templateIds.forgotten': 'forgottenTemplateId',
+    'email.templates.confirmation': 'confirmationTemplate',
+    'notification.templateIds.emailChange': 'emailChangedTemplateId',
+    'email.templates.email_changed': 'emailChangedTemplate',
+    'url.appUrl': 'http://myurl',
+  };
+
+  class Config extends ConfigInterfaceResolver {
+    get(k: string, fb: string): string {
+      return k in t.context.cfg ? t.context.cfg[k] : fb;
+    }
   }
-}
 
-const firstname = 'Jean';
-const lastname = 'Valjean';
-const fullname = `${firstname} ${lastname}`;
-
-class UserRepository extends UserRepositoryProviderInterfaceResolver {
-  async findByEmail(email: string): Promise<UserFindInterface> {
-    return {
-      email,
-      firstname,
-      lastname,
-      _id: 1,
-      phone: null,
-      role: 'registry.admin',
-      group: 'registry',
-      status: 'active',
-      created_at: new Date(),
-      updated_at: new Date(),
-      permissions: [],
-    };
+  class Kernel extends KernelInterfaceResolver {
+    async notify(method: string, params: any, context: any): Promise<void> {
+      return;
+    }
   }
-}
 
-describe('User notification provider', async () => {
-  let provider: UserNotificationProvider;
-  let kernel: Kernel;
-  let logger;
+  const firstname = 'Jean';
+  const lastname = 'Valjean';
+  t.context.fullname = `${firstname} ${lastname}`;
 
-  beforeEach(() => {
-    kernel = new Kernel();
-    logger = {
-      log(_message: string): void {},
-    };
-    provider = new UserNotificationProvider(new Config(), kernel, new UserRepository(), logger);
-    sinon.spy(kernel, 'notify');
-    sinon.spy(logger, 'log');
-  });
+  class UserRepository extends UserRepositoryProviderInterfaceResolver {
+    async findByEmail(email: string): Promise<UserFindInterface> {
+      return {
+        email,
+        firstname,
+        lastname,
+        _id: 1,
+        phone: null,
+        role: 'registry.admin',
+        group: 'registry',
+        status: 'active',
+        created_at: new Date(),
+        updated_at: new Date(),
+        permissions: [],
+      };
+    }
+  }
+  t.context.kernel = new Kernel();
+  t.context.provider = new UserNotificationProvider(new Config(), t.context.kernel, new UserRepository());
+  t.context.notify = sinon.spy(t.context.kernel, 'notify');
+});
 
-  it('send passwordForgotten notification', async () => {
-    const email = 'j@vj.com';
-    const token = 'toto';
-    await provider.passwordForgotten(token, email);
-    const [segment, template, templateId] = provider.FORGOTTEN;
-    const link = `${cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
-    expect(kernel.notify).to.have.been.calledWith(
+test('send passwordForgotten notification', async (t) => {
+  const email = 'j@vj.com';
+  const token = 'toto';
+  await t.context.provider.passwordForgotten(token, email);
+  const [segment, template, templateId] = t.context.provider.FORGOTTEN;
+  const link = `${t.context.cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
+
+  t.true(
+    t.context.notify.calledWith(
       'user:notify',
       {
         email,
-        fullname,
+        fullname: t.context.fullname,
         link,
         template,
         templateId,
       },
-      provider.defaultContext,
-    );
-    expect(logger.log).to.have.been.called;
-  });
+      t.context.provider.defaultContext,
+    ),
+  );
+});
 
-  it('send emailUpdated notification', async () => {
-    const email = 'j@vj.com';
-    const oldEmail = 'j@vj.fr';
-    const token = 'toto';
-    await provider.emailUpdated(token, email, oldEmail);
+test('send emailUpdated notification', async (t) => {
+  const email = 'j@vj.com';
+  const oldEmail = 'j@vj.fr';
+  const token = 'toto';
+  await t.context.provider.emailUpdated(token, email, oldEmail);
 
-    const [segment, template, templateId] = provider.CONFIRMATION;
-    const [, emailChangedTemplate, emailChangedTemplateId] = provider.EMAIL_CHANGED;
+  const [segment, template, templateId] = t.context.provider.CONFIRMATION;
+  const [, emailChangedTemplate, emailChangedTemplateId] = t.context.provider.EMAIL_CHANGED;
 
-    const link = `${cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
-    expect(kernel.notify).to.have.been.calledWith(
+  const link = `${t.context.cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
+  t.true(
+    t.context.notify.calledWith(
       'user:notify',
       {
         email,
-        fullname,
+        fullname: t.context.fullname,
         link,
         template,
         templateId,
       },
-      provider.defaultContext,
-    );
-    expect(kernel.notify).to.have.been.calledWith(
+      t.context.provider.defaultContext,
+    ),
+  );
+  t.true(
+    t.context.notify.calledWith(
       'user:notify',
       {
-        fullname,
+        fullname: t.context.fullname,
         email: oldEmail,
         template: emailChangedTemplate,
         templateId: emailChangedTemplateId,
       },
-      provider.defaultContext,
-    );
-    expect(logger.log).to.have.been.called;
-  });
+      t.context.provider.defaultContext,
+    ),
+  );
+});
 
-  it('send userCreated notification', async () => {
-    const email = 'j@vj.com';
-    const token = 'toto';
-    await provider.userCreated(token, email);
-    const [segment, template, templateId] = provider.INVITATION;
-    const link = `${cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
-    expect(kernel.notify).to.have.been.calledWith(
+test('send userCreated notification', async (t) => {
+  const email = 'j@vj.com';
+  const token = 'toto';
+  await t.context.provider.userCreated(token, email);
+  const [segment, template, templateId] = t.context.provider.INVITATION;
+  const link = `${t.context.cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
+  t.true(
+    t.context.notify.calledWith(
       'user:notify',
       {
         email,
-        fullname,
+        fullname: t.context.fullname,
         link,
         template,
         templateId,
       },
-      provider.defaultContext,
-    );
-  });
+      t.context.provider.defaultContext,
+    ),
+  );
 });

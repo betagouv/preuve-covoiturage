@@ -517,7 +517,7 @@ BEGIN
       driver_incentive_rpc_sum,
       driver_incentive_rpc_financial_sum,
       status
-    ) SELECT (
+    ) SELECT
       tv.operator_id,
       tv.start_territory_id,
       tv.end_territory_id,
@@ -568,7 +568,7 @@ BEGIN
       tv.driver_incentive_rpc_sum,
       tv.driver_incentive_rpc_financial_sum,
       tv.status
-    ) FROM carpool.carpools AS cc
+    FROM carpool.carpools AS cc
     LEFT JOIN trip.list_view AS tv ON tv.journey_id = cc.acquisition_id
     WHERE cc._id = NEW.carpool_id
     ON CONFLICT (journey_id)
@@ -671,6 +671,7 @@ BEGIN
       excluded.driver_revenue,
       excluded.driver_incentive_raw,
       excluded.driver_incentive_rpc_raw,
+      excluded.driver_incentive_rpc_sum,
       excluded.driver_incentive_rpc_financial_sum,
       excluded.status
     );
