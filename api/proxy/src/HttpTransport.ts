@@ -273,7 +273,7 @@ export class HttpTransport implements TransportInterface {
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
-          makeCall('trip:stats', {}, { user: { permissions: ['trip.stats'] } }),
+          makeCall('trip:stats', {}, { user: { permissions: ['common.trip.stats'] } }),
         )) as RPCResponseType;
 
         if (!response || Array.isArray(response) || 'error' in response) {
@@ -457,7 +457,11 @@ export class HttpTransport implements TransportInterface {
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
-          makeCall('certificate:find', { uuid: req.params.uuid }),
+          makeCall(
+            'certificate:find',
+            { uuid: req.params.uuid },
+            { user: { permissions: ['common.certificate.find'] } },
+          ),
         )) as RPCResponseType;
 
         this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
@@ -476,7 +480,7 @@ export class HttpTransport implements TransportInterface {
         const call = makeCall(
           'certificate:download',
           { uuid: req.body.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase(), meta: req.body.meta },
-          { user: { permissions: ['certificate.download'] } },
+          { user: { permissions: ['common.certificate.download'] } },
         );
         const response = (await this.kernel.handle(call)) as RPCResponseType;
 
@@ -543,7 +547,9 @@ export class HttpTransport implements TransportInterface {
       '/honor',
       monHonorCertificateRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        await this.kernel.handle(makeCall('honor:save', { type: req.body.type }, { channel: { service: 'proxy' } }));
+        await this.kernel.handle(
+          makeCall('honor:save', { type: req.body.type }, { user: { permissions: ['common.honor.save'] } }),
+        );
         res.status(201).header('Location', `${process.env.APP_APP_URL}/stats`).json({ saved: true });
       }),
     );
@@ -608,7 +614,7 @@ export class HttpTransport implements TransportInterface {
           }
 
           user = { ...user, ...(await this.getTerritoryInfos(user)) };
-
+          // TODO : Check that shit !
           // nest the params and _context and inject the session user
           // from { id: 1, jsonrpc: '2.0', method: 'a:b' params: {} }
           // to { id: 1, jsonrpc: '2.0', method: 'a:b' params: { params: {}, _context: {} } }
@@ -704,12 +710,12 @@ export class HttpTransport implements TransportInterface {
 
       try {
         const operatorList = await this.kernel.handle(
-          makeCall('territory:listOperator', { territory_id: user.territory_id }, { user: user }),
+          makeCall('territory:listOperator', { territory_id: user.territory_id }, { user }),
         );
         user.authorizedOperators = get(operatorList, 'result', []);
 
         const descendantTerritories = await this.kernel.handle(
-          makeCall('territory:getParentChildren', { _id: user.territory_id }, { user: user }),
+          makeCall('territory:getParentChildren', { _id: user.territory_id }, { user }),
         );
 
         dt = get(descendantTerritories, 'result.0.descendant_ids', []) || [];

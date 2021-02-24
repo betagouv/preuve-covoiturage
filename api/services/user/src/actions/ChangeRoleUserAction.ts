@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/changeRole.contract';
 import { alias } from '../shared/user/changeRole.schema';
@@ -8,30 +9,16 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 /*
  * Update role of user
  */
+
 @handler({
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
-    ['copy_from_context', ['call.user.operator_id', 'operator_id']],
-    [
-      'has_permission_by_scope',
-      [
-        'user.update',
-        [
-          [
-            'territory.users.update',
-            'call.user.territory_id',
-            'territory_id',
-          ],
-          [
-            'operator.users.update',
-            'call.user.operator_id',
-            'operator_id'
-          ],
-        ],
-      ],
-    ],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      registry: 'registry.user.update',
+      territory: 'territory.user.update',
+      operator: 'operator.user.update',
+    }),
   ],
 })
 export class ChangeRoleUserAction extends AbstractAction {
@@ -40,11 +27,7 @@ export class ChangeRoleUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const scope = params.territory_id
-      ? 'territory_id'
-      : params.operator_id
-      ? 'operator_id'
-      : 'none';
+    const scope = params.territory_id ? 'territory_id' : params.operator_id ? 'operator_id' : 'none';
     switch (scope) {
       case 'territory_id':
         await this.userRepository.patchByTerritory(params._id, { role: params.role }, params[scope]);

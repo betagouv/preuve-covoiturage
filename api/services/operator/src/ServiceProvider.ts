@@ -47,10 +47,7 @@ import { PatchThumbnailOperatorAction } from './actions/PatchThumbnailOperatorAc
     PatchThumbnailOperatorAction,
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   commands: [],
 })
 export class ServiceProvider extends AbstractServiceProvider {

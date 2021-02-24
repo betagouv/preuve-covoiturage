@@ -754,14 +754,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return modifiedTerritoryRes.rowCount > 0 ? modifiedTerritoryRes.rows[0] : 0;
   }
 
-  async findByInsee(insee: string): Promise<TerritoryDbMetaInterface> {
-    throw new Error('This is not implemented here'); // move to normalization service
-  }
-
-  async findByPosition(lon: number, lat: number): Promise<TerritoryDbMetaInterface> {
-    throw new Error('This is not implemented here'); // move to normalization servie
-  }
-
   async tree(): Promise<any> {
     const resultRoot = await this.connection.getClient().query({
       text: 'SELECT _id FROM territory.territories where name = $1',

@@ -90,6 +90,7 @@ test.before(async (t) => {
     owner_id: 1,
     owner_service: 'operator',
     permissions: [
+      // import permissions
       'journey.create',
       'certificate.create',
       'certificate.download',

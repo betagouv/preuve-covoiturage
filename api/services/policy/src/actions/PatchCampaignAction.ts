@@ -1,13 +1,22 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
 
+import { validateRuleParametersMiddleware } from '../middlewares/ValidateRuleParametersMiddleware';
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/patch.contract';
 import { alias } from '../shared/policy/patch.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['has_permission', ['incentive-campaign.update']], ['validate', alias], 'validate.rules'],
+  middlewares: [
+    ['validate', alias],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      territory: 'territory.policy.patch',
+      registry: 'registry.policy.patch',
+    }),
+    validateRuleParametersMiddleware(),
+  ],
 })
 export class PatchCampaignAction extends AbstractAction {
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {
@@ -15,9 +24,8 @@ export class PatchCampaignAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
-    const { _id, patch } = params;
-    const territoryId = context.call.user.territory_id;
+    const { _id, territory_id, patch } = params;
 
-    return this.campaignRepository.patchWhereTerritory(_id, territoryId, patch);
+    return this.campaignRepository.patchWhereTerritory(_id, territory_id, patch);
   }
 }

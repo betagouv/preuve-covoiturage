@@ -59,14 +59,28 @@ const params = {
     },
   },
   operator_id: {
-    type: 'array',
-    minItems: 1,
-    items: { macro: 'serial' },
+    oneOf: [
+      {
+        type: 'array',
+        minItems: 1,
+        items: { macro: 'serial' },
+      },
+      {
+        macro: 'serial',
+      }
+    ],
   },
   territory_id: {
-    type: 'array',
-    minItems: 1,
-    items: { macro: 'serial' },
+    oneOf: [
+      {
+        type: 'array',
+        minItems: 1,
+        items: { macro: 'serial' },
+      },
+      {
+        macro: 'serial',
+      }
+    ],
   },
 };
 

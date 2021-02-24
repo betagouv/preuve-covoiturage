@@ -1,5 +1,6 @@
 import { handler, InvalidParamsException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/launch.contract';
@@ -9,8 +10,8 @@ import { alias } from '../shared/policy/launch.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['has_permission', ['incentive-campaign.create', 'incentive-campaign.launch']],
     ['validate', alias],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({ territory: 'territory.policy.launch' }),
   ],
 })
 export class LaunchCampaignAction extends AbstractAction {
@@ -19,11 +20,11 @@ export class LaunchCampaignAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
-    const territoryId = context.call.user.territory_id;
     const campaign: CampaignInterface & { start_date: Date } = await this.campaignRepository.findOneWhereTerritory(
       params._id,
-      territoryId,
+      params.territory_id,
     );
+
     const patch = {
       status: 'active',
     };

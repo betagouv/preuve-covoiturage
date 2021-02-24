@@ -1,4 +1,4 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { provider, NotFoundException, ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { RepositoryInterface as ListInterface } from '../shared/application/list.contract';
@@ -17,7 +17,7 @@ import {
 export class ApplicationPgRepositoryProvider implements ApplicationRepositoryProviderInterface {
   public readonly table = 'application.applications';
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: PostgresConnection, protected config: ConfigInterfaceResolver) {}
 
   async list({ owner_id, owner_service }: ListInterface): Promise<ApplicationInterface[]> {
     const query = {
@@ -34,7 +34,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
 
     if (!result.rowCount) return [];
 
-    return result.rows;
+    return result.rows.map((a) => this.applyDefaultPermissions(a));
   }
 
   async find({ uuid, owner_id, owner_service }: FindInterface): Promise<ApplicationInterface> {
@@ -56,26 +56,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       throw new Error(`Application not found (${uuid})`);
     }
 
-    return result.rows[0];
-  }
-
-  async findByUuid({ uuid }: { uuid: string }): Promise<ApplicationInterface> {
-    const query = {
-      text: `
-        SELECT * FROM ${this.table}
-        WHERE uuid = $1
-        LIMIT 1
-      `,
-      values: [uuid],
-    };
-
-    const result = await this.connection.getClient().query(query);
-
-    if (result.rowCount !== 1) {
-      throw new Error(`Application not found (${uuid})`);
-    }
-
-    return result.rows[0];
+    return this.applyDefaultPermissions(result.rows[0]);
   }
 
   async create({ name, owner_id, owner_service, permissions }: CreateInterface): Promise<ApplicationInterface> {
@@ -96,7 +77,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       throw new Error(`Unable to create application (${name})`);
     }
 
-    return result.rows[0];
+    return this.applyDefaultPermissions(result.rows[0]);
   }
 
   async revoke({ uuid, owner_id, owner_service }: RevokeInterface): Promise<void> {
@@ -117,5 +98,12 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
     if (result.rowCount !== 1) {
       throw new NotFoundException(`Revoking application failed (${uuid})`);
     }
+  }
+
+  applyDefaultPermissions(application: ApplicationInterface): ApplicationInterface {
+    return {
+      ...application,
+      permissions: this.config.get('permissions.application', []),
+    };
   }
 }

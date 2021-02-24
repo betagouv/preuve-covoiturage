@@ -1,5 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { hasPermissionMiddleware, contentBlacklistMiddleware } from '@pdc/provider-middleware';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/list.contract';
@@ -7,8 +8,8 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/opera
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['has_permission', ['operator.list']],
-    ['content.blacklist', ['data.*.contacts', 'data.*.bank']],
+    hasPermissionMiddleware('common.operator.list'),
+    contentBlacklistMiddleware('data.*.contacts', 'data.*.bank'),
   ],
 })
 export class ListOperatorAction extends AbstractAction {

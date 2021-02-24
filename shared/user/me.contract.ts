@@ -1,6 +1,8 @@
 import { UserInterface } from './common/interfaces/UserInterface';
 
-export type ParamsInterface = void;
+export interface ParamsInterface {
+  _id: number;
+};
 
 export interface ResultInterface extends UserInterface {}
 

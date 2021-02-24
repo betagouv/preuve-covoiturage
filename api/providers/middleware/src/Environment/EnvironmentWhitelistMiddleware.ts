@@ -26,6 +26,8 @@ const alias = 'environment.only';
 
 export const environmentWhitelistMiddlewareBinding = [alias, EnvironmentWhitelistMiddleware];
 
-export function environmentWhitelistMiddleware(...params: EnvironmentWhitelistMiddlewareParams): ParametredMiddleware<EnvironmentWhitelistMiddlewareParams> {
+export function environmentWhitelistMiddleware(
+  ...params: EnvironmentWhitelistMiddlewareParams
+): ParametredMiddleware<EnvironmentWhitelistMiddlewareParams> {
   return [alias, params];
 }

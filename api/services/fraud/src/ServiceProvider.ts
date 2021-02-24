@@ -19,10 +19,7 @@ import { ApplyAction } from './actions/ApplyAction';
   commands: [],
   providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine, ProcessableCarpoolRepositoryProvider],
   validator: [],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],

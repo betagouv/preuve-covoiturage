@@ -27,7 +27,7 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
       throw new InvalidParamsException('No permissions defined');
     }
 
-    let permissions = get(context, 'call.user.permissions', []);
+    const permissions = get(context, 'call.user.permissions', []);
 
     if (permissions.length === 0) {
       throw new ForbiddenException('Invalid permissions');
@@ -40,10 +40,10 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
 
     for (const [scopedPermission, contextPath, paramsPath] of permissionScopes) {
       if (
-        get(context, contextPath, Symbol()) === get(params, paramsPath, Symbol()) && 
+        get(context, contextPath, Symbol()) === get(params, paramsPath, Symbol()) &&
         permissions.indexOf(scopedPermission) > -1
-        ) {
-          return next(params, context);
+      ) {
+        return next(params, context);
       }
     }
 
@@ -58,6 +58,9 @@ const alias = 'has_permission_by_scope';
 
 export const hasPermissionByScopeMiddlewareBinding = [alias, HasPermissionByScopeMiddleware];
 
-export function hasPermissionByScopeMiddleware(globalPermission: string | null, ...scopes: ScopeAndPermission[]): ParametredMiddleware<HasPermissionByScopeMiddlewareParams> {
+export function hasPermissionByScopeMiddleware(
+  globalPermission: string | null,
+  ...scopes: ScopeAndPermission[]
+): ParametredMiddleware<HasPermissionByScopeMiddlewareParams> {
   return [alias, [globalPermission, scopes]];
 }

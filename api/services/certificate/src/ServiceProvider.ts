@@ -33,10 +33,7 @@ import { binding as listBinding } from './shared/certificate/list.schema';
     PdfCertProvider,
   ],
   validator: [createBinding, findBinding, downloadBinding, listBinding],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [DownloadCertificateAction, CreateCertificateAction, FindCertificateAction, ListCertificateAction],
   commands: [SeedCommand],

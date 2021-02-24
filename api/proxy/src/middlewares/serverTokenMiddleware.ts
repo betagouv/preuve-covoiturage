@@ -27,7 +27,7 @@ async function checkApplication(
     method: 'application:find',
     params: {
       params: { uuid: payload.a, owner_id: payload.o, owner_service: payload.s },
-      _context: { call: { user: { permissions: ['application.find'] } } },
+      _context: { call: { user: { permissions: ['registry.application.find'] } } },
     },
   });
 
@@ -62,7 +62,7 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
       headers: request.headers || {},
       body: request.body,
     },
-    { channel: { service: 'proxy' }, call: { user: { permissions: ['acquisition.logrequest'] } } },
+    { channel: { service: 'acquisisition' }, call: { user: {} } },
   );
 
   console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id', '')}`);

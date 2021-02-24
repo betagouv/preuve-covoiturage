@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/delete.contract';
 import { alias } from '../shared/user/delete.schema';
@@ -13,31 +14,11 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
-    ['copy_from_context', ['call.user.operator_id', 'operator_id']],
-    [
-      'has_permission_by_scope',
-      [
-        'user.delete',
-        [
-          [
-            'profile.delete',
-            'call.user._id',
-            '_id',
-          ],
-          [
-            'territory.users.remove',
-            'call.user.territory_id',
-            'territory_id',
-          ],
-          [
-            'operator.users.remove',
-            'call.user.operator_id',
-            'operator_id',
-          ],
-        ],
-      ],
-    ],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      registry: 'registry.user.delete',
+      territory: 'territory.user.delete',
+      operator: 'operator.user.delete',
+    }),
   ],
 })
 export class DeleteUserAction extends AbstractAction {
@@ -46,11 +27,7 @@ export class DeleteUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
-    const scope = params.territory_id
-    ? 'territory_id'
-    : params.operator_id
-    ? 'operator_id'
-    : 'none';
+    const scope = params.territory_id ? 'territory_id' : params.operator_id ? 'operator_id' : 'none';
     switch (scope) {
       case 'territory_id':
         await this.userRepository.deleteByTerritory(params._id, params[scope]);

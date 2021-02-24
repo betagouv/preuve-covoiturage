@@ -1,21 +1,17 @@
 import { handler, ContextType } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  RepositoryInterface,
-} from '../shared/application/create.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/application/create.contract';
 import { alias } from '../shared/application/create.schema';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
-import { setOwner } from '../helpers/setOwner';
 
 @handler({
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['has_permission', ['application.create']],
+    copyFromContextMiddleware('call.user.operator_id', 'owner_id'),
+    hasPermissionByScopeMiddleware(undefined, ['operator.application.create', 'call.user.operator_id', 'owner_id']),
   ],
 })
 export class CreateApplicationAction extends AbstractAction {
@@ -24,10 +20,10 @@ export class CreateApplicationAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const data = setOwner<RepositoryInterface>('operator', params, context);
-
-    data.permissions = data.permissions || ['journey.create', 'certificate.create', 'certificate.download'];
-
-    return this.applicationRepository.create(data);
+    return this.applicationRepository.create({
+      ...params,
+      owner_service: 'operator',
+      permissions: [],
+    });
   }
 }

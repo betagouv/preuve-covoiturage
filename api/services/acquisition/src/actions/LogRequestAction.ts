@@ -1,6 +1,7 @@
 import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/logrequest.contract';
 import { ErrorRepositoryProviderInterfaceResolver } from '../interfaces/ErrorRepositoryProviderInterface';
@@ -8,10 +9,7 @@ import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionE
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['channel.service.only', ['proxy']],
-    // ['has_permission', ['acquisition.logrequest']],
-  ],
+  middlewares: [...internalOnlyMiddlewares('acquisition')],
 })
 export class LogRequestAction extends AbstractAction {
   constructor(private repo: ErrorRepositoryProviderInterfaceResolver) {

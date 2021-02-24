@@ -36,7 +36,7 @@ import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProv
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 
-import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
+import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateRuleParametersMiddleware';
 
 import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 import { SeedCommand } from './commands/SeedCommand';
@@ -85,7 +85,7 @@ import { SeedCommand } from './commands/SeedCommand';
   middlewares: [
     ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['validate.rules', ValidateRuleParametersMiddleware],
+    validateRuleParametersMiddlewareBinding,
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {

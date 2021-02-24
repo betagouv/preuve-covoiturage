@@ -1,21 +1,17 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  RepositoryInterface,
-} from '../shared/application/list.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/application/list.contract';
 import { alias } from '../shared/application/list.schema';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
-import { setOwner } from '../helpers/setOwner';
 
 @handler({
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['has_permission', ['application.list']],
+    copyFromContextMiddleware('call.user.operator_id', 'owner_id'),
+    hasPermissionByScopeMiddleware(undefined, ['operator.application.list', 'call.user.operator_id', 'owner_id']),
   ],
 })
 export class ListApplicationAction extends AbstractAction {
@@ -24,8 +20,9 @@ export class ListApplicationAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const data = setOwner<RepositoryInterface>('operator', params, context);
-
-    return this.applicationRepository.list(data);
+    return this.applicationRepository.list({
+      ...params,
+      owner_service: 'operator',
+    });
   }
 }

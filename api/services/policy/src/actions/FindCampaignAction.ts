@@ -1,5 +1,6 @@
 import { handler, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
 
 import {
   IncentiveRepositoryProviderInterfaceResolver,
@@ -11,20 +12,10 @@ import { alias } from '../shared/policy/find.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    [
-      'has_permission_by_scope',
-      [
-        'incentive-campaign.read',
-        [
-          [
-            'incentive-campaign.read',
-            'call.user.territory_id',
-            'territory_id',
-          ]
-        ],
-      ],
-    ],
-    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      territory: 'territory.policy.find',
+      registry: 'registry.policy.find',
+    }),
     ['validate', alias],
   ],
 })

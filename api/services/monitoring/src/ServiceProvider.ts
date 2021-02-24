@@ -20,10 +20,7 @@ import { binding as statsBinding } from './shared/monitoring/journeys/stats.sche
   providers: [JourneyRepositoryProvider],
   commands: [JourneysStatsCommand],
   validator: [statsBinding],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],

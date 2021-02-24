@@ -8,7 +8,12 @@ import { ParametredMiddleware } from '../interfaces';
  */
 @middleware()
 export class ContentBlacklistMiddleware implements MiddlewareInterface<ContentBlacklistMiddlewareParams> {
-  async process(params: ParamsType, context: ContextType, next: Function, config: ContentBlacklistMiddlewareParams): Promise<ResultType> {
+  async process(
+    params: ParamsType,
+    context: ContextType,
+    next: Function,
+    config: ContentBlacklistMiddlewareParams,
+  ): Promise<ResultType> {
     const result = await next(params, context);
     const isArray = Array.isArray(result);
     let data = result;
@@ -53,6 +58,8 @@ const alias = 'content.blacklist';
 
 export const contentBlacklistMiddlewareBinding = [alias, ContentBlacklistMiddleware];
 
-export function contentBlacklistMiddleware(...params: ContentBlacklistMiddlewareParams): ParametredMiddleware<ContentBlacklistMiddlewareParams> {
+export function contentBlacklistMiddleware(
+  ...params: ContentBlacklistMiddlewareParams
+): ParametredMiddleware<ContentBlacklistMiddlewareParams> {
   return [alias, params];
 }

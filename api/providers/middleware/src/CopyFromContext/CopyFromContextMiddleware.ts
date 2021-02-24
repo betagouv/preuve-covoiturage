@@ -33,6 +33,10 @@ const alias = 'copy_from_context';
 
 export const copyFromContextMiddlewareBinding = [alias, CopyFromContextMiddleware];
 
-export function copyFromContextMiddleware(fromPath: string, toPath: string, preserve: boolean = false): ParametredMiddleware<CopyFromContextMiddlewareParams> {
+export function copyFromContextMiddleware(
+  fromPath: string,
+  toPath: string,
+  preserve = false,
+): ParametredMiddleware<CopyFromContextMiddlewareParams> {
   return [alias, [fromPath, toPath, preserve]];
 }

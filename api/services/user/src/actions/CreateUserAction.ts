@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, InvalidRequestException } from '@ilos/common';
+import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/create.contract';
 import { alias } from '../shared/user/create.schema';
@@ -14,26 +15,13 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
 @handler({
   ...handlerConfig,
   middlewares: [
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      registry: 'registry.user.create',
+      territory: 'territory.user.create',
+      operator: 'operator.user.create',
+    }),
     ['validate', alias],
-    [
-      'has_permission_by_scope',
-      [
-        'user.create',
-        [
-          [
-            'territory.users.add',
-            'call.user.territory_id',
-            'territory_id',
-          ],
-          [
-            'operator.users.add',
-            'call.user.operator_id',
-            'operator_id'
-          ],
-        ],
-      ],
-    ],
-    ['content.whitelist', userWhiteListFilterOutput],
+    contentWhitelistMiddleware(userWhiteListFilterOutput),
   ],
 })
 export class CreateUserAction extends AbstractAction {

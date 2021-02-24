@@ -23,7 +23,7 @@ export class HasPermissionMiddleware implements MiddlewareInterface<HasPermissio
     params: ParamsType,
     context: ContextType,
     next: Function,
-    neededPermissions: HasPermissionMiddlewareParams
+    neededPermissions: HasPermissionMiddlewareParams,
   ): Promise<ResultType> {
     if (!Array.isArray(neededPermissions) || neededPermissions.length === 0) {
       throw new InvalidParamsException('No permissions defined');
@@ -51,6 +51,8 @@ const alias = 'has_permission';
 
 export const hasPermissionMiddlewareBinding = [alias, HasPermissionMiddleware];
 
-export function hasPermissionMiddleware(...params: HasPermissionMiddlewareParams): ParametredMiddleware<HasPermissionMiddlewareParams> {
+export function hasPermissionMiddleware(
+  ...params: HasPermissionMiddlewareParams
+): ParametredMiddleware<HasPermissionMiddlewareParams> {
   return [alias, params];
 }

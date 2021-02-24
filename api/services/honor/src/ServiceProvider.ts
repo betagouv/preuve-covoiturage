@@ -15,10 +15,7 @@ import { HonorRepositoryProvider } from './providers/HonorRepositoryProvider';
   config,
   providers: [HonorRepositoryProvider],
   validator: [saveBinding, statsBinding],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [StatsAction, SaveAction],
 })

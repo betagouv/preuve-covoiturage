@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, UnauthorizedException } from '@ilos/common';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/sendInvitationEmail.contract';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -15,26 +16,11 @@ import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInte
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
-    ['copy_from_context', ['call.user.operator_id', 'operator_id']],
-    [
-      'has_permission_by_scope',
-      [
-        'user.send-confirm-email',
-        [
-          [
-            'territory.users.send-confirm-email',
-            'call.user.territory_id',
-            'territory_id',
-          ],
-          [
-            'operator.users.send-confirm-email',
-            'call.user.operator_id',
-            'operator_id',
-          ],
-        ],
-      ],
-    ],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      registry: 'registry.user.sendEmail',
+      territory: 'territory.user.sendEmail',
+      operator: 'operator.user.sendEmail',
+    }),
   ],
 })
 export class SendInvitationEmailUserAction extends AbstractAction {
@@ -47,11 +33,7 @@ export class SendInvitationEmailUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const scope = params.territory_id
-    ? 'territory_id'
-    : params.operator_id
-    ? 'operator_id'
-    : 'none';
+    const scope = params.territory_id ? 'territory_id' : params.operator_id ? 'operator_id' : 'none';
     let user: UserFindInterface;
 
     switch (scope) {

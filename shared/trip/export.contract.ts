@@ -4,8 +4,8 @@ export interface ParamsInterface {
     start: Date;
     end: Date;
   };
-  operator_id?: number[];
-  territory_id?: number[];
+  operator_id?: number | number[];
+  territory_id?: number | number[];
 }
 export type ResultInterface = void;
 

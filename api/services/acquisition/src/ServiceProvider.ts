@@ -34,10 +34,7 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
     ['acquisition.logerror', logerror],
     ['acquisition.resolveerror', resolveerror],
   ],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],

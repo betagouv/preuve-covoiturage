@@ -7,6 +7,7 @@ import { get } from 'lodash';
 import csvStringify, { Stringifier } from 'csv-stringify';
 import { format, utcToZonedTime } from 'date-fns-tz';
 
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
@@ -65,11 +66,7 @@ interface FlattenTripInterface extends ExportTripInterface<string> {
 }
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['validate', alias],
-    ['channel.service.only', [handlerConfig.service]],
-    ['channel.transport', ['queue']],
-  ],
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
 })
 export class BuildExportAction extends Action {
   constructor(

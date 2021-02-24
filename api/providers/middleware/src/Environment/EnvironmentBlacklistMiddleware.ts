@@ -26,6 +26,8 @@ const alias = 'environment.except';
 
 export const environmentBlacklistMiddlewareBinding = [alias, EnvironmentBlacklistMiddleware];
 
-export function environmentBlacklistMiddleware(...params: EnvironmentBlacklistMiddlewareParams): ParametredMiddleware<EnvironmentBlacklistMiddlewareParams> {
+export function environmentBlacklistMiddleware(
+  ...params: EnvironmentBlacklistMiddlewareParams
+): ParametredMiddleware<EnvironmentBlacklistMiddlewareParams> {
   return [alias, params];
 }

@@ -50,6 +50,8 @@ import { UserNotificationProvider } from './providers/UserNotificationProvider';
 import { SeedUsersCommand } from './commands/SeedUsersCommand';
 import { HasUsersAction } from './actions/HasUsersAction';
 import { FindInactiveCommand } from './commands/FindInactiveCommand';
+import { challengePasswordMiddlewareBinding } from './middlewares/ChallengePasswordMiddleware';
+import { challengeTokenMiddlewareBinding } from './middlewares/ChallengeTokenMiddleware';
 
 @serviceProvider({
   config,
@@ -73,6 +75,8 @@ import { FindInactiveCommand } from './commands/FindInactiveCommand';
   ],
   middlewares: [
     ...defaultMiddlewareBindings,
+    challengePasswordMiddlewareBinding,
+    challengeTokenMiddlewareBinding,
     ['validate', ValidatorMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],

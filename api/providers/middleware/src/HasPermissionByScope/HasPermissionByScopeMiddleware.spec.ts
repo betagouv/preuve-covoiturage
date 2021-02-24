@@ -49,16 +49,8 @@ test.before((t) => {
   t.context.middlewareConfig = [
     'user.create',
     [
-      [
-        'territory.users.add',
-        'call.user.territory',
-        'territory',
-      ],
-      [
-        'operator.users.add',
-        'call.user.operator',
-        'operator',
-      ],
+      ['territory.users.add', 'call.user.territory', 'territory'],
+      ['operator.users.add', 'call.user.operator', 'operator'],
     ],
   ];
 

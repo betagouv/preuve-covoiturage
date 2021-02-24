@@ -3,11 +3,13 @@ import { Action as AbstractAction } from '@ilos/core';
 import csvStringify, { Stringifier } from 'csv-stringify';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnFake.contract';
+import { validateRuleParametersMiddleware } from '../middlewares/ValidateRuleParametersMiddleware';
 
 import { alias } from '../shared/policy/simulateOn.schema';
 import { PolicyEngine } from '../engine/PolicyEngine';
 import { FakerEngine } from '../engine/faker/FakerEngine';
 import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvider';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
 
 interface SimulateResultInterface {
   trip_id: number;
@@ -26,29 +28,17 @@ interface SimulateResultInterface {
 @handler({
   ...handlerConfig,
   middlewares: [
-    [
-      'has_permission_by_scope',
-      [
-        'incentive-campaign.simulate',
-        [
-          [
-            'incentive-campaign.create',
-            'call.user.territory_id',
-            'campaign.territory_id',
-          ]
-        ],
-      ],
-    ],
     ['validate', alias],
-    'validate.rules',
-    [
-      'validate.date',
-      {
-        startPath: 'campaign.start_date',
-        endPath: 'campaign.end_date',
-        maxEnd: () => new Date(),
-      },
-    ],
+    validateRuleParametersMiddleware(),
+    validateDateMiddleware({
+      startPath: 'campaign.start_date',
+      endPath: 'campaign.end_date',
+      maxEnd: () => new Date(),
+    }),
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares(
+      { territory: 'territory.simulate.fake', registry: 'registry.simulate.fake' },
+      'campaign',
+    ),
   ],
 })
 export class SimulateOnFakeAction extends AbstractAction {

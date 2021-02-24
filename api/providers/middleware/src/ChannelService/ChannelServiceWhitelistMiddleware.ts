@@ -8,7 +8,12 @@ import { ParametredMiddleware } from '../interfaces';
  */
 @middleware()
 export class ChannelServiceWhitelistMiddleware implements MiddlewareInterface<ChannelServiceWhitelistMiddlewareParams> {
-  async process(params: ParamsType, context: ContextType, next: Function, config: ChannelServiceWhitelistMiddlewareParams): Promise<ResultType> {
+  async process(
+    params: ParamsType,
+    context: ContextType,
+    next: Function,
+    config: ChannelServiceWhitelistMiddlewareParams,
+  ): Promise<ResultType> {
     const service = get(context, 'channel.service', '');
     if (config.indexOf(service) < 0) {
       throw new ForbiddenException(`Service is not reachable from ${service}`);
@@ -23,6 +28,8 @@ const alias = 'channel.service.only';
 
 export const channelServiceWhitelistMiddlewareBinding = [alias, ChannelServiceWhitelistMiddleware];
 
-export function channelServiceWhitelistMiddleware(...params: ChannelServiceWhitelistMiddlewareParams): ParametredMiddleware<ChannelServiceWhitelistMiddlewareParams> {
+export function channelServiceWhitelistMiddleware(
+  ...params: ChannelServiceWhitelistMiddlewareParams
+): ParametredMiddleware<ChannelServiceWhitelistMiddlewareParams> {
   return [alias, params];
 }

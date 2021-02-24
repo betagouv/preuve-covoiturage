@@ -1,5 +1,7 @@
 import { handler, InvalidParamsException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { validateDateMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
+import { validateRuleParametersMiddleware } from '../middlewares/ValidateRuleParametersMiddleware';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/create.contract';
@@ -8,29 +10,17 @@ import { alias } from '../shared/policy/create.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    [
-      'has_permission_by_scope',
-      [
-        'incentive-campaign.create',
-        [
-          [
-            'incentive-campaign.create',
-            'call.user.territory_id',
-            'territory_id',
-          ],
-        ],
-      ],
-    ],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      territory: 'territory.policy.create',
+      registry: 'registry.policy.create',
+    }),
     ['validate', alias],
-    'validate.rules',
-    [
-      'validate.date',
-      {
-        startPath: 'start_date',
-        endPath: 'end_date',
-        minStart: () => new Date(),
-      },
-    ],
+    validateRuleParametersMiddleware(),
+    validateDateMiddleware({
+      startPath: 'start_date',
+      endPath: 'end_date',
+      minStart: () => new Date(),
+    }),
   ],
 })
 export class CreateCampaignAction extends AbstractAction {

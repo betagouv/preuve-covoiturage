@@ -1,27 +1,17 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
 // eslint-disable-next-line
 import { TerritoryOperatorRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryOperatorRepositoryProviderInterface';
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/territory/updateOperator.contract';
 import { alias } from '../shared/territory/updateOperator.schema';
 
+// TOTO : MIDDLEWARE
 @handler({
   ...configHandler,
   middlewares: [
-    [
-      'has_permission_by_scope',
-      [
-        undefined,
-        [
-          [
-            'operator.update',
-            'call.user.operator_id',
-            'operator_id',
-          ],
-        ],
-      ],
-    ],
+    hasPermissionByScopeMiddleware(undefined, ['operator.update', 'call.user.operator_id', 'operator_id']),
     ['validate', alias],
   ],
 })

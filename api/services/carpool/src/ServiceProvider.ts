@@ -10,7 +10,6 @@ import { binding as crosscheckBinding } from './shared/carpool/crosscheck.schema
 import { binding as findUuidBinding } from './shared/carpool/finduuid.schema';
 import { CarpoolRepositoryProvider } from './providers/CarpoolRepositoryProvider';
 import { CrosscheckAction } from './actions/CrosscheckAction';
-import { DispatchAction } from './actions/DispatchAction';
 import { FindUuidAction } from './actions/FindUuidAction';
 import { CrosscheckRepositoryProvider } from './providers/CrosscheckRepositoryProvider';
 import { IdentityRepositoryProvider } from './providers/IdentityRepositoryProvider';
@@ -20,15 +19,12 @@ import { UpdateStatusAction } from './actions/UpdateStatusAction';
   config,
   providers: [CarpoolRepositoryProvider, CrosscheckRepositoryProvider, IdentityRepositoryProvider],
   validator: [crosscheckBinding, findUuidBinding],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [CrosscheckAction, DispatchAction, FindUuidAction, UpdateStatusAction],
+  handlers: [CrosscheckAction, FindUuidAction, UpdateStatusAction],
   queues: ['carpool'],
 })
 export class ServiceProvider extends AbstractServiceProvider {

@@ -46,8 +46,6 @@ export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateM
   }
 }
 
-
-
 export type ValidateDateMiddlewareParams = {
   startPath: string;
   endPath: string;
@@ -60,6 +58,8 @@ const alias = 'validate.date';
 
 export const validateDateMiddlewareBinding = [alias, ValidateDateMiddleware];
 
-export function validateDateMiddleware(params: ValidateDateMiddlewareParams): ParametredMiddleware<ValidateDateMiddlewareParams> {
+export function validateDateMiddleware(
+  params: ValidateDateMiddlewareParams,
+): ParametredMiddleware<ValidateDateMiddlewareParams> {
   return [alias, params];
 }

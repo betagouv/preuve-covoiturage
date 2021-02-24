@@ -8,7 +8,12 @@ import { ParametredMiddleware } from '../interfaces';
  */
 @middleware()
 export class ContentWhitelistMiddleware implements MiddlewareInterface<ContentWhitelistMiddlewareParams> {
-  async process(params: ParamsType, context: ContextType, next: Function, config: ContentWhitelistMiddlewareParams): Promise<ResultType> {
+  async process(
+    params: ParamsType,
+    context: ContextType,
+    next: Function,
+    config: ContentWhitelistMiddlewareParams,
+  ): Promise<ResultType> {
     const result = await next(params, context);
     const isArray = Array.isArray(result);
     let data = result;
@@ -59,6 +64,8 @@ const alias = 'content.whitelist';
 
 export const contentWhitelistMiddlewareBinding = [alias, ContentWhitelistMiddleware];
 
-export function contentWhitelistMiddleware(...params: ContentWhitelistMiddlewareParams): ParametredMiddleware<ContentWhitelistMiddlewareParams> {
+export function contentWhitelistMiddleware(
+  ...params: ContentWhitelistMiddlewareParams
+): ParametredMiddleware<ContentWhitelistMiddlewareParams> {
   return [alias, params];
 }

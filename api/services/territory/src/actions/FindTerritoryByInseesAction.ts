@@ -1,5 +1,5 @@
 // Old API : TODO: remove after complete service migration
-
+import { hasPermissionMiddleware, contentBlacklistMiddleware } from '@pdc/provider-middleware';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
@@ -11,8 +11,9 @@ import { blacklist } from '../config/filterOutput';
 @handler({
   ...handlerConfig,
   middlewares: [
+    hasPermissionMiddleware('common.territory.list'),
     ['validate', alias],
-    ['content.blacklist', blacklist],
+    contentBlacklistMiddleware(blacklist),
   ],
 })
 export class FindTerritoryByInseesAction extends AbstractAction {

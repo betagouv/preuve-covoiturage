@@ -19,10 +19,7 @@ import { ApplicationPgRepositoryProvider } from './providers/ApplicationPgReposi
   config,
   providers: [ApplicationPgRepositoryProvider],
   validator: [listBinding, findBinding, createBinding, revokeBinding],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [ListApplicationAction, FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
   commands: [],

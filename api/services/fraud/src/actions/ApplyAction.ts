@@ -1,5 +1,6 @@
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, InitHookInterface } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import {
   signature as checkSignature,
@@ -13,7 +14,7 @@ import { ProcessableCarpoolRepositoryProviderInterfaceResolver } from '../interf
  */
 @handler({
   ...handlerConfig,
-  middlewares: [['channel.service.only', [handlerConfig.service]]],
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
 export class ApplyAction extends Action implements InitHookInterface {
   constructor(

@@ -1,11 +1,11 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/list.contract';
 import { alias } from '../shared/user/list.schema';
 import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
 
 const whiteList = [
   '_id',
@@ -27,27 +27,12 @@ const whiteList = [
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['copy_from_context', ['call.user.territory_id', 'territory_id']],
-    ['copy_from_context', ['call.user.operator_id', 'operator_id']],
-    [
-      'has_permission_by_scope',
-      [
-        'user.list',
-        [
-          [
-            'territory.users.list',
-            'call.user.territory_id',
-            'territory_id',
-          ],
-          [
-            'operator.users.list',
-            'call.user.operator_id',
-            'operator_id'
-          ],
-        ],
-      ],
-    ],
-    ['content.whitelist', [...whiteList.map((key: string) => `data.*.${key}`), 'meta.*']],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      registry: 'registry.user.list',
+      territory: 'territory.user.list',
+      operator: 'operator.user.list',
+    }),
+    contentWhitelistMiddleware(...whiteList.map((key: string) => `data.*.${key}`), 'meta.*'), // TODO : A VERIFIER
   ],
 })
 export class ListUserAction extends AbstractAction {
@@ -58,7 +43,7 @@ export class ListUserAction extends AbstractAction {
   public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
     const { operator_id, territory_id, ...pagination } = params;
 
-    const data = await this.userRepository.list({ operator_id, territory_id}, pagination);
+    const data = await this.userRepository.list({ operator_id, territory_id }, pagination);
 
     return {
       data: data.users,

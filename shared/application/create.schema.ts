@@ -7,7 +7,7 @@ export const schema = {
   properties: {
     name: { macro: 'varchar' },
     owner_id: { macro: 'serial' },
-    owner_service: { enum: ['operator'] },
+    owner_service: { enum: ['operator'], default: 'operator' },
     permissions: {
       type: 'array',
       minItems: 1,
