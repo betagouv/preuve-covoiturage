@@ -2,7 +2,7 @@ name: Api doc deployment
 on:
   push:
     branches:
-      - doc
+      - production
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

@@ -165,6 +165,7 @@ export class NormalizationProcessAction extends AbstractAction {
         auth: {},
         headers: {},
         body: { journey, normalisationCode },
+        request_id: null,
       },
       { channel: { service: 'acquisition' } },
     );
