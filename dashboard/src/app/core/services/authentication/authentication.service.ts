@@ -68,10 +68,12 @@ export class AuthenticationService {
       // if userService is updated and match current user we update its state
       if (user && loggedInUser && loggedInUser._id === user._id) {
         if (user.email !== loggedInUser.email) {
-          this.logout(
-            "L'email de votre compte a été modifié. " +
-              'Un lien de vérification vous a été envoyé à cette nouvelle adresse.',
-          );
+          this.logout().subscribe(() => {
+            this.toastr.info(`
+              L'email de votre compte a été modifié.
+              Un lien de vérification vous a été envoyé à cette nouvelle adresse.
+            `);
+          });
         } else {
           this._user$.next(user);
         }
@@ -142,13 +144,12 @@ export class AuthenticationService {
     );
   }
 
-  public logout(message = 'Vous avez bien été déconnecté'): void {
-    this.http.post('logout', {}, { withCredentials: true }).subscribe((response) => {
-      this._user$.next(null);
-      this.router.navigate(['/login']).then(() => {
-        this.toastr.success(message);
-      });
-    });
+  public logout(): Observable<any> {
+    return this.http.post('logout', {}, { withCredentials: true }).pipe(
+      tap(() => {
+        this._user$.next(null);
+      }),
+    );
   }
 
   public changePassword(oldPassword: string, newPassword: string): Observable<any> {

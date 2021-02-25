@@ -81,10 +81,6 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
     this.homeLink = url === '/stats' ? URLS.CMSLink : '/';
   }
 
-  public onLogout(): void {
-    this.authService.logout();
-  }
-
   public setUserIcon(): string {
     if (!this.user) return '';
     else if (this.hasTerritoryGroup) return 'public';

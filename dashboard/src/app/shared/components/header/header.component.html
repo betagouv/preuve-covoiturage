@@ -35,10 +35,10 @@
         </div>
       </div>
 
-      <button mat-button [routerLink]="'/admin'" matTooltip="Administration">
+      <button mat-button routerLink="/admin" matTooltip="Administration">
         <mat-icon>settings</mat-icon>
       </button>
-      <button mat-button (click)="onLogout()" matTooltip="Déconnexion">
+      <button mat-button routerLink="/logout" matTooltip="Déconnexion">
         <mat-icon>exit_to_app</mat-icon>
       </button>
     </div>
