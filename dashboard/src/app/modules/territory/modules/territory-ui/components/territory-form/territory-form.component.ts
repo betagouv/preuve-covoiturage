@@ -52,6 +52,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     return this.territoryForm.controls;
   }
 
+  get isAOM(): boolean {
+    const base = this.fullFormMode ? this.territoryForm.value : this.territory;
+    return base && 'active' in base ? base.active : false;
+  }
+
   get isPartner(): boolean {
     const base = this.fullFormMode ? this.territoryForm.value : this.territory;
     return base && 'activable' in base ? base.activable : false;

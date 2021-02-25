@@ -14,6 +14,15 @@
         <input matInput formControlName="shortname" />
       </mat-form-field>
 
+      <p>
+        <mat-checkbox formControlName="active">
+          {{ territoryForm.get('name')?.value || 'Ce territoire' }} a la compétence mobilité (AOM) </mat-checkbox
+        ><br />
+        <mat-checkbox formControlName="activable">
+          {{ territoryForm.get('name')?.value || 'Ce territoire' }} est partenaire du registre
+        </mat-checkbox>
+      </p>
+
       <h3>Territoire</h3>
 
       <mat-radio-group aria-label="Format" class="format-radio" formControlName="format">
@@ -72,10 +81,7 @@
         <mat-error *ngIf="controls.level.hasError('required')"> Le niveau du territoire est obligatoire. </mat-error>
       </mat-form-field>
 
-      <mat-checkbox formControlName="activable">Partenaire</mat-checkbox>
-      <mat-checkbox formControlName="active" [hidden]="!isPartner">AOM</mat-checkbox>
-
-      <div [hidden]="!isPartner">
+      <div [hidden]="!isPartner && !isAOM">
         <h3>Structure</h3>
 
         <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
@@ -86,7 +92,7 @@
       </div>
     </div>
 
-    <div [hidden]="!isPartner">
+    <div [hidden]="!isPartner && !isAOM">
       <h2>Contacts et responsables</h2>
       <div class="contacts">
         <div>
