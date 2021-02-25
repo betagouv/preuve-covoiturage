@@ -18,3 +18,13 @@
     color: $color-warning;
   }
 }
+
+.mat-cell,
+.mat-header-cell {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+.mat-cell-territory {
+  max-width: 300px;
+}
