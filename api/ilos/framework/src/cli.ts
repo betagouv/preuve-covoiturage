@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { Bootstrap } from './Bootstrap';
-console.info('Bootstraping app...');
 
 Bootstrap.createFromPath().then((app) => {
   const [, , command, ...opts] = process.argv;
