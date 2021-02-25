@@ -1,4 +1,5 @@
 import express from 'express';
+import { get } from 'lodash';
 import { KernelInterface } from '@ilos/common';
 import { mapStatusCode } from '@ilos/transport-http';
 
@@ -109,7 +110,7 @@ export function routeMapping(
                 createRPCPayload(
                   serviceDefinition.signature,
                   mapRequestFinal(req.body, req.query, req.params, req.session),
-                  'session' in req && 'user' in req.session ? req.session.user : {},
+                  get(req, 'session.user', {}),
                 ),
               );
               if (!response) {

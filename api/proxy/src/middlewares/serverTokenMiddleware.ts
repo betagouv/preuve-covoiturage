@@ -1,5 +1,5 @@
 import express from 'express';
-import { get } from 'lodash';
+import { set, get } from 'lodash';
 import { KernelInterface, UnauthorizedException, ForbiddenException } from '@ilos/common';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
@@ -114,12 +114,11 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       const app = await checkApplication(kernel, payload);
 
       // inject the operator ID and permissions in the request
-      // @ts-ignore
-      req.session = req.session || {};
-      req.session.user = req.session.user || {};
-      req.session.user.application_id = app._id;
-      req.session.user.operator_id = app.owner_id;
-      req.session.user.permissions = app.permissions;
+      set(req, 'session.user', {
+        application_id: app._id,
+        operator_id: app.owner_id,
+        permissions: app.permissions,
+      });
 
       next();
     } catch (e) {

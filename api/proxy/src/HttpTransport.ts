@@ -316,7 +316,7 @@ export class HttpTransport implements TransportInterface {
         throw new UnauthorizedException();
       }
 
-      res.json(req.session.user);
+      res.json(get(req.session, 'user'));
     });
 
     /**
