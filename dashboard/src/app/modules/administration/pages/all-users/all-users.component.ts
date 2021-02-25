@@ -18,6 +18,8 @@ import { UserListInterface } from '~/core/entities/api/shared/user/common/interf
   styleUrls: ['./all-users.component.scss'],
 })
 export class AllUsersComponent extends DestroyObservable implements OnInit {
+  public readonly PAGE_SIZE = 25;
+
   usersToShow: UserListInterface[];
   users: UserListInterface[];
   usersFiltered: UserListInterface[];
@@ -27,7 +29,6 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   isCreatingUser = false;
   userGroup = UserGroupEnum.TERRITORY;
   availableUserGroups = USER_GROUPS;
-  PAGE_SIZE = 25;
 
   @ViewChild(MatButtonToggleGroup) toggle: MatButtonToggleGroup;
   @ViewChild(MatPaginator) paginator: MatPaginator;

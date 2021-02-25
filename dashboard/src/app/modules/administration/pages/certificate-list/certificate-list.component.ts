@@ -40,12 +40,12 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     super();
   }
   @ViewChild('paginator', { static: true }) paginator: MatPaginator;
+  public readonly PAGE_SIZE = 20;
 
-  pageLength = 20;
   length = 0;
   startIndex = 0;
   certificates: ResultRowInterface[] = [];
-  searchState = new BehaviorSubject<ListParamsInterface>({ pagination: { length: this.pageLength, start_index: 0 } });
+  searchState = new BehaviorSubject<ListParamsInterface>({ pagination: { length: this.PAGE_SIZE, start_index: 0 } });
   isLoading = false;
   showForm = false;
   displayedColumns = ['uuid', 'operator', 'total_km', 'total_point', 'total_cost', 'actions'];
