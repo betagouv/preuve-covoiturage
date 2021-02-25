@@ -44,11 +44,11 @@ export class ValidatorExtension extends ValidatorParentExtension {
     validator.registerCustomKeyword({ name: 'siret', type: 'format', definition: siretCustomFormat });
 
     // register keywords (compile)
-    validator.registerCustomKeyword({ name: 'coordinates', type: 'keyword', definition: coordinatesKeyword });
+    validator.registerCustomKeyword({ type: 'keyword', definition: coordinatesKeyword });
 
     // register macros
-    validator.registerCustomKeyword({ name: 'macro', type: 'keyword', definition: macroKeyword });
-    validator.registerCustomKeyword({ name: 'cast', type: 'keyword', definition: castKeyword });
+    validator.registerCustomKeyword({ type: 'keyword', definition: macroKeyword });
+    validator.registerCustomKeyword({ type: 'keyword', definition: castKeyword });
     await super.init(serviceContainer);
 
     // dump the registered schema for debug - uncomment for use

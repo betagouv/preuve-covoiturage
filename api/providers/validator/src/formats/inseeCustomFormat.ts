@@ -1,4 +1,6 @@
-export function inseeCustomFormat(data: string): boolean {
+import { Format } from '@ilos/validator';
+
+export const inseeCustomFormat: Format = (data: string): boolean => {
   try {
     // TODO check against a real list of INSEE codes?
 

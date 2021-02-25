@@ -2,8 +2,8 @@ import test from 'ava';
 import { coordinatesKeyword } from './coordinatesKeyword';
 
 function macro(t, input: { lat: number; lon: number }, expected: boolean) {
-  const latResult = coordinatesKeyword.compile('lat')(input.lat);
-  const lonResult = coordinatesKeyword.compile('lon')(input.lon);
+  const latResult = (coordinatesKeyword as any).compile('lat')(input.lat);
+  const lonResult = (coordinatesKeyword as any).compile('lon')(input.lon);
   t.is(latResult && lonResult, expected);
 }
 
