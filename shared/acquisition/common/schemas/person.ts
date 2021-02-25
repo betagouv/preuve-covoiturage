@@ -32,8 +32,7 @@ startSchema.properties.datetime = {
   format: 'date-time',
   cast: 'date',
   maxLength: 26,
-  formatMaximum: { $data: '2/end/datetime' },
-  formatExclusiveMaximum: true,
+  formatExclusiveMaximum: { $data: '2/end/datetime' },
 };
 
 const travelPassSchema = {

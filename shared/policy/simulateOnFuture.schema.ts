@@ -10,8 +10,7 @@ function positionSchema(isStart = true) {
             format: 'date-time',
             cast: 'date',
             maxLength: 26,
-            formatMaximum: { $data: '2/end/datetime' },
-            formatExclusiveMaximum: true,
+            formatExclusiveMaximum: { $data: '2/end/datetime' },
           }
         : { macro: 'timestamp' },
       lat: { macro: 'lat' },

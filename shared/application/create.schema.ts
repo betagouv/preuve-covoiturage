@@ -12,7 +12,6 @@ export const schema = {
       type: 'array',
       minItems: 1,
       uniqueItems: true,
-      additionalItems: false,
       items: { type: 'string' },
     },
   },
