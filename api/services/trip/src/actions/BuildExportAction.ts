@@ -1,7 +1,7 @@
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
-import v4 from 'uuid/v4';
+import { v4 } from 'uuid';
 import AdmZip from 'adm-zip';
 import { get } from 'lodash';
 import csvStringify, { Stringifier } from 'csv-stringify';
