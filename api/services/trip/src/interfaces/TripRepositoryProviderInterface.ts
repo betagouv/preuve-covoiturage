@@ -3,7 +3,7 @@ import {
   TripSearchInterfaceWithPagination,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
-import { LightTripInterface } from './LightTripInterface';
+import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import { FinancialStatInterface, StatInterface } from './StatInterface';
 import { ExportTripInterface } from './ExportTripInterface';
 
