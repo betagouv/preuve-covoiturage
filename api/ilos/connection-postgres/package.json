@@ -21,7 +21,7 @@
     "@ilos/connection-manager": "^0.4.1"
   },
   "devDependencies": {
-    "@types/pg": "^7.11.1"
+    "@types/pg": "^7.14.10"
   },
   "ava": {
     "files": [

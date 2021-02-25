@@ -39,8 +39,7 @@
     "@pdc/helper-test": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-validator": "~0",
-    "lodash": "^4.17.20",
-    "moment": "^2.24.0",
-    "uuid": "^3.3.3"
+    "lodash": "^4.17.21",
+    "uuid": "^8.3.2"
   }
 }
