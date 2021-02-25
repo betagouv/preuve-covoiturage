@@ -2,7 +2,6 @@ import { get } from 'lodash';
 
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, ForbiddenException } from '@ilos/common';
 import { ConfiguredMiddleware } from '../interfaces';
-import { ChannelServiceWhitelistMiddlewareParams } from './ChannelServiceWhitelistMiddleware';
 
 /*
  * Filter call from channel service
@@ -30,7 +29,7 @@ const alias = 'channel_service.except';
 export const channelServiceBlacklistMiddlewareBinding = [alias, ChannelServiceBlacklistMiddleware];
 
 export function channelServiceBlacklistMiddleware(
-  ...params: ChannelServiceWhitelistMiddlewareParams
+  ...params: ChannelServiceBlacklistMiddlewareParams
 ): ConfiguredMiddleware<ChannelServiceBlacklistMiddlewareParams> {
   return [alias, params];
 }

@@ -2,6 +2,9 @@ import { env } from '@ilos/core';
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, NotFoundException } from '@ilos/common';
 import { ConfiguredMiddleware } from '../interfaces';
 
+/*
+ * Filter call from environment
+ */
 @middleware()
 export class EnvironmentBlacklistMiddleware implements MiddlewareInterface<EnvironmentBlacklistMiddlewareParams> {
   async process(

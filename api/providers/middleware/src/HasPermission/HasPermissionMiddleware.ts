@@ -11,11 +11,7 @@ import {
 import { ConfiguredMiddleware } from '../interfaces';
 
 /**
- * Can middleware check permission in context and may throw a ForbiddenException
- *
- * @export
- * @param {...string[]} roles
- * @returns {MiddlewareInterface}
+ * Check if user has all listed permission
  */
 @middleware()
 export class HasPermissionMiddleware implements MiddlewareInterface<HasPermissionMiddlewareParams> {

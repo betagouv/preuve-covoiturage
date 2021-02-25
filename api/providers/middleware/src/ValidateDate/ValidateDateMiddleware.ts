@@ -2,6 +2,9 @@ import { get, set } from 'lodash';
 import { MiddlewareInterface, ContextType, ResultType, InvalidParamsException, middleware } from '@ilos/common';
 import { ConfiguredMiddleware } from '../interfaces';
 
+/*
+ * Check date validity
+ */
 @middleware()
 export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateMiddlewareParams> {
   async process(

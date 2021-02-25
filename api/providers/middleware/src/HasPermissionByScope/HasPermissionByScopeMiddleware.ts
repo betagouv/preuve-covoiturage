@@ -10,8 +10,11 @@ import {
 import { get } from 'lodash';
 import { ConfiguredMiddleware } from '../interfaces';
 
-/*
- * Verify default permission - else verify permissions according to params, context & callback function
+/**
+ * Check if user has basePermission, if not check if contextPath equals paramsPath and challenge againts scoped permission.
+ * Example :
+ * [registry.user.list, [[ 'territory.user.list', 'call.user.territory_id', 'territory_id']]]
+ *    ^ base permission       ^ scoped permission    ^ context path            ^ params path
  */
 @middleware()
 export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPermissionByScopeMiddlewareParams> {
