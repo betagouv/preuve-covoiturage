@@ -29,7 +29,7 @@ export class CopyFromContextMiddleware implements MiddlewareInterface<CopyFromCo
 
 export type CopyFromContextMiddlewareParams = [string, string, boolean];
 
-const alias = 'copy_from_context';
+const alias = 'copy.from_context';
 
 export const copyFromContextMiddlewareBinding = [alias, CopyFromContextMiddleware];
 

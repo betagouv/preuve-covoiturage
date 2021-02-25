@@ -25,7 +25,7 @@ export class ChannelServiceBlacklistMiddleware implements MiddlewareInterface<Ch
 
 export type ChannelServiceBlacklistMiddlewareParams = string[];
 
-const alias = 'channel.service.except';
+const alias = 'channel_service.except';
 
 export const channelServiceBlacklistMiddlewareBinding = [alias, ChannelServiceBlacklistMiddleware];
 

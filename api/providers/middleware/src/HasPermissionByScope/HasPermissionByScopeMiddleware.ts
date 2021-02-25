@@ -54,7 +54,7 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
 export type ScopeAndPermission = [string, string, string];
 export type HasPermissionByScopeMiddlewareParams = [string | undefined, ScopeAndPermission[]];
 
-const alias = 'has_permission_by_scope';
+const alias = 'has_permission.by_scope';
 
 export const hasPermissionByScopeMiddlewareBinding = [alias, HasPermissionByScopeMiddleware];
 

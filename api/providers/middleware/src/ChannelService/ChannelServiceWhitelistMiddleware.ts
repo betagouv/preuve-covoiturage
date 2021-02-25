@@ -24,7 +24,7 @@ export class ChannelServiceWhitelistMiddleware implements MiddlewareInterface<Ch
 
 export type ChannelServiceWhitelistMiddlewareParams = string[];
 
-const alias = 'channel.service.only';
+const alias = 'channel_service.only';
 
 export const channelServiceWhitelistMiddlewareBinding = [alias, ChannelServiceWhitelistMiddleware];
 

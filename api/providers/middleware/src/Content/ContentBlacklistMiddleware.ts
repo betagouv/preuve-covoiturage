@@ -54,7 +54,7 @@ export class ContentBlacklistMiddleware implements MiddlewareInterface<ContentBl
 
 export type ContentBlacklistMiddlewareParams = string[];
 
-const alias = 'content.blacklist';
+const alias = 'content.except';
 
 export const contentBlacklistMiddlewareBinding = [alias, ContentBlacklistMiddleware];
 

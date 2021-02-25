@@ -60,7 +60,7 @@ export class ContentWhitelistMiddleware implements MiddlewareInterface<ContentWh
 
 export type ContentWhitelistMiddlewareParams = string[];
 
-const alias = 'content.whitelist';
+const alias = 'content.only';
 
 export const contentWhitelistMiddlewareBinding = [alias, ContentWhitelistMiddleware];
 
