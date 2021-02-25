@@ -5,6 +5,7 @@ import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
 import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
 import { TokenPayloadInterface } from '../shared/application/common/interfaces/TokenPayloadInterface';
+import { createRPCPayload } from '../helpers/createRPCPayload';
 
 interface Request extends express.Request {
   operator: string;
@@ -21,15 +22,13 @@ async function checkApplication(
   kernel: KernelInterface,
   payload: TokenPayloadInterface,
 ): Promise<ApplicationInterface> {
-  const app = await kernel.handle({
-    id: 1,
-    jsonrpc: '2.0',
-    method: 'application:find',
-    params: {
-      params: { uuid: payload.a, owner_id: payload.o, owner_service: payload.s },
-      _context: { call: { user: { permissions: ['registry.application.find'] } } },
-    },
-  });
+  const app = await kernel.handle(
+    createRPCPayload(
+      'application:find',
+      { uuid: payload.a, owner_id: payload.o, owner_service: payload.s },
+      { permissions: ['registry.application.find'] },
+    ),
+  );
 
   const app_uuid = get(app, 'result.uuid', '');
   const owner_id = get(app, 'result.owner_id', null);
@@ -50,19 +49,21 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
     return;
   }
 
-  await kernel.call(
-    'acquisition:logrequest',
-    {
-      operator_id: parseInt(payload.o as any, 0) || 0,
-      source: 'serverTokenMiddleware',
-      error_message: null,
-      error_code: null,
-      error_line: null,
-      auth: {},
-      headers: request.headers || {},
-      body: request.body,
-    },
-    { channel: { service: 'acquisisition' }, call: { user: {} } },
+  await kernel.handle(
+    createRPCPayload(
+      'acquisition:logrequest',
+      {
+        operator_id: parseInt(payload.o as any, 0) || 0,
+        source: 'serverTokenMiddleware',
+        error_message: null,
+        error_code: null,
+        error_line: null,
+        auth: {},
+        headers: request.headers || {},
+        body: request.body,
+      },
+      { permissions: ['acquisition.logrequest'] },
+    ),
   );
 
   console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id', '')}`);
