@@ -1,6 +1,6 @@
 import { env } from '@ilos/core';
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, NotFoundException } from '@ilos/common';
-import { ParametredMiddleware } from '../interfaces';
+import { ConfiguredMiddleware } from '../interfaces';
 
 @middleware()
 export class EnvironmentWhitelistMiddleware implements MiddlewareInterface<EnvironmentWhitelistMiddlewareParams> {
@@ -28,6 +28,6 @@ export const environmentWhitelistMiddlewareBinding = [alias, EnvironmentWhitelis
 
 export function environmentWhitelistMiddleware(
   ...params: EnvironmentWhitelistMiddlewareParams
-): ParametredMiddleware<EnvironmentWhitelistMiddlewareParams> {
+): ConfiguredMiddleware<EnvironmentWhitelistMiddlewareParams> {
   return [alias, params];
 }

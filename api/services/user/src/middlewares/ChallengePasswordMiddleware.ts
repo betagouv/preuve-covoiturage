@@ -11,7 +11,7 @@ import {
 } from '@ilos/common';
 
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
-import { ParametredMiddleware } from '@pdc/provider-middleware';
+import { ConfiguredMiddleware } from '@pdc/provider-middleware';
 
 @middleware()
 export class ChallengePasswordMiddleware implements MiddlewareInterface<ChallengePasswordMiddlewareParams> {
@@ -71,6 +71,6 @@ export const challengePasswordMiddlewareBinding = [alias, ChallengePasswordMiddl
 
 export function challengePasswordMiddleware(
   params: ChallengePasswordMiddlewareParams,
-): ParametredMiddleware<ChallengePasswordMiddlewareParams> {
+): ConfiguredMiddleware<ChallengePasswordMiddlewareParams> {
   return [alias, params];
 }

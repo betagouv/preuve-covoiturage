@@ -1,7 +1,7 @@
 import { set } from 'lodash';
 
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
-import { ParametredMiddleware } from '../interfaces';
+import { ConfiguredMiddleware } from '../interfaces';
 
 /*
  * Delete properties from model or array of models on output of handler
@@ -66,6 +66,6 @@ export const contentWhitelistMiddlewareBinding = [alias, ContentWhitelistMiddlew
 
 export function contentWhitelistMiddleware(
   ...params: ContentWhitelistMiddlewareParams
-): ParametredMiddleware<ContentWhitelistMiddlewareParams> {
+): ConfiguredMiddleware<ContentWhitelistMiddlewareParams> {
   return [alias, params];
 }

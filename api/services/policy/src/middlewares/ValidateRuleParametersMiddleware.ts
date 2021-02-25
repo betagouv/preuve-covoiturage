@@ -12,7 +12,7 @@ import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignIn
 import { rules } from '../engine/rules';
 import { RuleInterface } from '../engine/interfaces';
 import { STATEFUL, FILTER } from '../engine/helpers/type';
-import { UnparametredMiddleware } from '@pdc/provider-middleware/dist/interfaces';
+import { UnconfiguredMiddleware } from '@pdc/provider-middleware/dist/interfaces';
 
 const availablePolicieSlugs = rules.map((policy) => policy.slug);
 const noParameterRuleSlugs = rules.filter((r) => !('schema' in r)).map((r) => r.slug);
@@ -105,6 +105,6 @@ const alias = 'validate.rules';
 
 export const validateRuleParametersMiddlewareBinding = [alias, ValidateRuleParametersMiddleware];
 
-export function validateRuleParametersMiddleware(): UnparametredMiddleware {
+export function validateRuleParametersMiddleware(): UnconfiguredMiddleware {
   return alias;
 }

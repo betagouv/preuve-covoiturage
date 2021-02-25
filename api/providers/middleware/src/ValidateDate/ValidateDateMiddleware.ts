@@ -1,6 +1,6 @@
 import { get, set } from 'lodash';
 import { MiddlewareInterface, ContextType, ResultType, InvalidParamsException, middleware } from '@ilos/common';
-import { ParametredMiddleware } from '../interfaces';
+import { ConfiguredMiddleware } from '../interfaces';
 
 @middleware()
 export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateMiddlewareParams> {
@@ -60,6 +60,6 @@ export const validateDateMiddlewareBinding = [alias, ValidateDateMiddleware];
 
 export function validateDateMiddleware(
   params: ValidateDateMiddlewareParams,
-): ParametredMiddleware<ValidateDateMiddlewareParams> {
+): ConfiguredMiddleware<ValidateDateMiddlewareParams> {
   return [alias, params];
 }

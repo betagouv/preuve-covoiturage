@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { ParametredMiddleware, UnparametredMiddleware } from '@pdc/provider-middleware';
+import { ConfiguredMiddleware, UnconfiguredMiddleware } from '@pdc/provider-middleware';
 import {
   middleware,
   MiddlewareInterface,
@@ -48,6 +48,6 @@ export const challengeTokenMiddlewareBinding = [alias, ChallengeTokenMiddleware]
 
 export function challengeTokenMiddleware(
   params?: ChallengeTokenMiddlewareParams,
-): ParametredMiddleware<ChallengeTokenMiddlewareParams> | UnparametredMiddleware {
+): ConfiguredMiddleware<ChallengeTokenMiddlewareParams> | UnconfiguredMiddleware {
   return params ? [alias, params] : alias;
 }

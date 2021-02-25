@@ -8,7 +8,7 @@ import {
   InvalidParamsException,
   ForbiddenException,
 } from '@ilos/common';
-import { ParametredMiddleware } from '../interfaces';
+import { ConfiguredMiddleware } from '../interfaces';
 
 /**
  * Can middleware check permission in context and may throw a ForbiddenException
@@ -53,6 +53,6 @@ export const hasPermissionMiddlewareBinding = [alias, HasPermissionMiddleware];
 
 export function hasPermissionMiddleware(
   ...params: HasPermissionMiddlewareParams
-): ParametredMiddleware<HasPermissionMiddlewareParams> {
+): ConfiguredMiddleware<HasPermissionMiddlewareParams> {
   return [alias, params];
 }

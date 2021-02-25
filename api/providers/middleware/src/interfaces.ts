@@ -1,3 +1,3 @@
-export type UnparametredMiddleware = string;
-export type ParametredMiddleware<P = any> = [string, P];
-export type ListOfParametredMiddlewares<P = any> = ParametredMiddleware<P>[];
+export type UnconfiguredMiddleware = string;
+export type ConfiguredMiddleware<P = any> = [string, P];
+export type ListOfConfiguredMiddlewares<P = any> = ConfiguredMiddleware<P>[];

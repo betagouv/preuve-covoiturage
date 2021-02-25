@@ -1,6 +1,6 @@
 import { get, set } from 'lodash';
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
-import { ParametredMiddleware } from '../interfaces';
+import { ConfiguredMiddleware } from '../interfaces';
 
 /*
  * Extract data from context and copy to request params
@@ -37,6 +37,6 @@ export function copyFromContextMiddleware(
   fromPath: string,
   toPath: string,
   preserve = false,
-): ParametredMiddleware<CopyFromContextMiddlewareParams> {
+): ConfiguredMiddleware<CopyFromContextMiddlewareParams> {
   return [alias, [fromPath, toPath, preserve]];
 }

@@ -8,7 +8,7 @@ import {
   ForbiddenException,
 } from '@ilos/common';
 import { get } from 'lodash';
-import { ParametredMiddleware } from '../interfaces';
+import { ConfiguredMiddleware } from '../interfaces';
 
 /*
  * Verify default permission - else verify permissions according to params, context & callback function
@@ -61,6 +61,6 @@ export const hasPermissionByScopeMiddlewareBinding = [alias, HasPermissionByScop
 export function hasPermissionByScopeMiddleware(
   globalPermission: string | null,
   ...scopes: ScopeAndPermission[]
-): ParametredMiddleware<HasPermissionByScopeMiddlewareParams> {
+): ConfiguredMiddleware<HasPermissionByScopeMiddlewareParams> {
   return [alias, [globalPermission, scopes]];
 }

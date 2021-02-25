@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, ForbiddenException } from '@ilos/common';
-import { ParametredMiddleware } from '../interfaces';
+import { ConfiguredMiddleware } from '../interfaces';
 import { ChannelServiceWhitelistMiddlewareParams } from './ChannelServiceWhitelistMiddleware';
 
 /*
@@ -31,6 +31,6 @@ export const channelServiceBlacklistMiddlewareBinding = [alias, ChannelServiceBl
 
 export function channelServiceBlacklistMiddleware(
   ...params: ChannelServiceWhitelistMiddlewareParams
-): ParametredMiddleware<ChannelServiceBlacklistMiddlewareParams> {
+): ConfiguredMiddleware<ChannelServiceBlacklistMiddlewareParams> {
   return [alias, params];
 }

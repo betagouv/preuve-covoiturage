@@ -1,5 +1,5 @@
 import { channelServiceBlacklistMiddleware } from './ChannelService/ChannelServiceBlacklistMiddleware';
-import { ListOfParametredMiddlewares } from './interfaces';
+import { ListOfConfiguredMiddlewares } from './interfaces';
 import {
   ChannelServiceWhitelistMiddlewareParams,
   channelServiceWhitelistMiddleware,
@@ -20,7 +20,7 @@ export function copyGroupIdFromContextMiddlewares(
   groups = ['territory_id', 'operator_id'],
   targetPathPrefix: string = null,
   preserve = false,
-): ListOfParametredMiddlewares<CopyFromContextMiddlewareParams> {
+): ListOfConfiguredMiddlewares<CopyFromContextMiddlewareParams> {
   const middlewareParameters = [];
   for (const group of groups) {
     middlewareParameters.push(
@@ -33,7 +33,7 @@ export function copyGroupIdFromContextMiddlewares(
 export function groupPermissionMiddlewares(
   groups: { user?: string; territory?: string; operator?: string; registry?: string },
   targetPathPrefix: string = null,
-): ListOfParametredMiddlewares<HasPermissionByScopeMiddlewareParams> {
+): ListOfConfiguredMiddlewares<HasPermissionByScopeMiddlewareParams> {
   const middlewareParameters = [];
 
   const {
@@ -69,7 +69,7 @@ export function groupPermissionMiddlewares(
 export function copyGroupIdAndApplyGroupPermissionMiddlewares(
   groups: { user?: string; territory?: string; operator?: string; registry?: string },
   targetPathPrefix: string = null,
-): ListOfParametredMiddlewares {
+): ListOfConfiguredMiddlewares {
   const copyGroupsParam = [];
   if ('territory' in groups) {
     copyGroupsParam.push('territory_id');
@@ -90,7 +90,7 @@ export function copyGroupIdAndApplyGroupPermissionMiddlewares(
 
 export function internalOnlyMiddlewares(
   ...services: string[]
-): ListOfParametredMiddlewares<ChannelServiceWhitelistMiddlewareParams | ChannelServiceWhitelistMiddlewareParams> {
+): ListOfConfiguredMiddlewares<ChannelServiceWhitelistMiddlewareParams | ChannelServiceWhitelistMiddlewareParams> {
   return services.length
     ? [channelServiceWhitelistMiddleware(...services)]
     : [channelServiceBlacklistMiddleware('proxy')];
