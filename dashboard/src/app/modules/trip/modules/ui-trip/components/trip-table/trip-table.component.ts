@@ -6,7 +6,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { Operator } from '~/core/entities/operator/operator';
-import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
+import { LightTripInterface } from 'shared/trip/common/interfaces/LightTripInterface';
 
 @Component({
   selector: 'app-trip-table',
@@ -79,8 +79,7 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     if (trip.operator_id === null) return 'Non visible';
     if (!this.operators) return '';
     const operator = this.operators.find((operatorF) => operatorF._id === trip.operator_id);
-    if (!operator) throw new Error('Operator not found !');
-    return operator.name;
+    return operator ? operator.name : '';
   }
 
   getTotalIncentives(trip: LightTripInterface): number | string {

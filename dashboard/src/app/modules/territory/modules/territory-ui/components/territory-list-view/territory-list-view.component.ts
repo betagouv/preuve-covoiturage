@@ -13,14 +13,14 @@ import { TerritoryStoreService } from '~/modules/territory/services/territory-st
   styleUrls: ['./territory-list-view.component.scss'],
 })
 export class TerritoryListViewComponent extends DestroyObservable implements OnInit, AfterViewInit {
+  public readonly PAGE_SIZE = 25;
+
   private _filterLiteral = new BehaviorSubject('');
   isFormVisible = false;
   territoryToEdit: Territory = null;
 
   // public territories: Territory[] = [];
   public territoriesToShow: Territory[];
-
-  ELEMENT_PER_PAGE = 10;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   private _countTerritories = 0;
@@ -60,8 +60,8 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
       .pipe(takeUntil(this.destroy$))
       .subscribe(() =>
         this.territoryStoreService.filterSubject.next({
-          skip: this.paginator.pageIndex * this.ELEMENT_PER_PAGE,
-          limit: this.ELEMENT_PER_PAGE,
+          skip: this.paginator.pageIndex * this.PAGE_SIZE,
+          limit: this.PAGE_SIZE,
           search: this._filterLiteral.value ? this._filterLiteral.value : undefined,
         }),
       );

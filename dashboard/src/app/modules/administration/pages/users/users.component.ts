@@ -18,6 +18,7 @@ import { UserListInterface } from '~/core/entities/api/shared/user/common/interf
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent extends DestroyObservable implements OnInit {
+  public readonly PAGE_SIZE = 25;
   usersToShow: UserListInterface[];
   users: UserListInterface[];
   usersFiltered: UserListInterface[];
@@ -26,7 +27,6 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   editedUser = new User();
   canEditUser$: Observable<boolean>;
   isCreatingUser: boolean;
-  PAGE_SIZE = 10;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 

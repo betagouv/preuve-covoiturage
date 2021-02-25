@@ -14,13 +14,13 @@ import { OperatorStoreService } from '~/modules/operator/services/operator-store
   styleUrls: ['./operator-list-view.component.scss'],
 })
 export class OperatorListViewComponent extends DestroyObservable implements OnInit, AfterViewInit {
-  showForm = false;
-  isCreating = true;
+  public readonly PAGE_SIZE = 25;
+
+  public showForm = false;
+  public isCreating = true;
   public operators: Operator[];
   public operatorsToShow: Operator[];
   public operatorsFiltered: Operator[];
-
-  PAGE_SIZE = 25;
 
   private _filterLiteral = new BehaviorSubject('');
 

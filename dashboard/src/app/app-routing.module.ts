@@ -17,6 +17,7 @@ import { AdministrationModule } from './modules/administration/administration.mo
 import { UiGuideModule } from './modules/ui-guide/ui-guide.module';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { StatModule } from './modules/stat/stat.module';
+import { LogoutComponent } from './modules/logout/logout.component';
 
 const routes: Routes = [
   {
@@ -72,6 +73,16 @@ const routes: Routes = [
         path: 'attestation',
         loadChildren: (): Promise<CertificateModule> =>
           import('./modules/certificate/certificate.module').then((mod) => mod.CertificateModule),
+      },
+    ],
+  },
+  {
+    path: 'logout',
+    component: NotAuthenticatedLayoutComponent,
+    children: [
+      {
+        path: '',
+        component: LogoutComponent,
       },
     ],
   },

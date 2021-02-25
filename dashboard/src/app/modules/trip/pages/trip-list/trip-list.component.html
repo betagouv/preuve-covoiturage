@@ -22,6 +22,6 @@
 
   <div class="TripList-content" [hidden]="!loaded || !trips.length">
     <app-trip-table [data]="trips" [displayedColumns]="columnsDisplayed"></app-trip-table>
-    <mat-paginator [length]="total" [pageSize]="limit" (page)="paginationUpdate($event)"></mat-paginator>
+    <mat-paginator [length]="total" [pageSize]="PAGE_SIZE" (page)="paginationUpdate($event)"></mat-paginator>
   </div>
 </div>

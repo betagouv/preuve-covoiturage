@@ -11,7 +11,6 @@ import {
 } from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
   TzResultInterface,
-  LightTripInterface,
   ExportTripInterface,
   TripRepositoryInterface,
   TripRepositoryProviderInterfaceResolver,
@@ -20,6 +19,7 @@ import {
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
 import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
+import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 
 /*
  * Trip specific repository
@@ -363,7 +363,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         SELECT
           trip_id,
           journey_start_town as start_town,
+          journey_start_country as start_country,
           journey_end_town as end_town,
+          journey_end_country as end_country,
           journey_start_datetime as start_datetime,
           (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int as incentives,
           operator_id::int,

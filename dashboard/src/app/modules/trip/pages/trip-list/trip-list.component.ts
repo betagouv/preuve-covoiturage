@@ -17,9 +17,11 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
   styleUrls: ['./trip-list.component.scss'],
 })
 export class TripListComponent extends DestroyObservable implements OnInit {
-  trips: LightTrip[] = [];
-  skip = DEFAULT_TRIP_SKIP;
-  limit = DEFAULT_TRIP_LIMIT;
+  public readonly PAGE_SIZE = DEFAULT_TRIP_LIMIT;
+  public skip = DEFAULT_TRIP_SKIP;
+
+  public trips: LightTrip[] = [];
+
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   protected _filter;
@@ -37,7 +39,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       // reset skip when new search
       this._filter = filter;
       this.skip = 0;
-      this.loadTrips({ ...filter, skip: 0, limit: this.limit }, true);
+      this.loadTrips({ ...filter, skip: 0, limit: this.PAGE_SIZE }, true);
 
       this.paginator.pageIndex = 0;
     };
