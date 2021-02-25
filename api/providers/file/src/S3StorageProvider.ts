@@ -49,7 +49,7 @@ export class S3StorageProvider implements ProviderInterface {
         url,
       };
     } catch (e) {
-      console.log('S3StorageProvider Error', filename, e.message);
+      console.error(`S3StorageProvider Error: ${e.message} (${filename})`);
 
       throw e;
     }

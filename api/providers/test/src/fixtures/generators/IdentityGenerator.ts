@@ -65,7 +65,7 @@ export class IdentityGenerator extends Generator<IdentityInterface> {
       await this.pool.query('COMMIT');
     } catch (e) {
       await this.pool.query('ROLLBACK');
-      console.log(`IdentityGenerator insert failed: ${e.message}`);
+      console.error(`IdentityGenerator insert failed: ${e.message}`);
       throw e;
     }
   }

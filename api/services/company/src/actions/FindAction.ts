@@ -47,7 +47,7 @@ export class FindAction extends AbstractAction {
 
       return res;
     } catch (e) {
-      console.log(e);
+      console.error(e.message, e);
       return null;
     }
   }

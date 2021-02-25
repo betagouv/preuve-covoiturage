@@ -14,11 +14,8 @@ class MockedNormalizationCostAction extends NormalizationCostAction {
 }
 
 function testPayments(t, params: ParamsInterface, result: ResultInterface, userType: string): void {
-  console.log(
-    'params.payments.length : ',
-    result.payments.length,
-    params.payments.length + params.incentives.length + 1,
-    userType,
+  console.debug(
+    `params.payments.length : ${result.payments.length} | ${params.payments.length + params.incentives.length + 1} | ${userType}`,
   );
 
   t.is(
@@ -104,7 +101,7 @@ test('Passenger should', async (t) => {
 
   const passengerResult = await action.handle(passengerData);
 
-  console.log('passengerResult : ', passengerResult);
+  console.debug(`passengerResult : ${passengerResult}`);
 
   t.is(
     passengerResult.cost,

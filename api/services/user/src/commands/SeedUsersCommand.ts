@@ -65,12 +65,12 @@ export class SeedUsersCommand implements CommandInterface {
         });
 
         if (insert.rowCount !== 1) {
-          console.log(`--- Failed to insert ${email}`);
+          console.info(`--- Failed to insert ${email}`);
         }
 
-        console.log(`+++ Inserted ${email}`);
+        console.info(`+++ Inserted ${email}`);
       } catch (e) {
-        console.log(`--- Failed to insert ${email}:\n\t${e.message}`);
+        console.error(`--- Failed to insert ${email}:\n\t${e.message}`);
       }
     }
 

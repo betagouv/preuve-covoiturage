@@ -24,7 +24,7 @@ export class DeleteAssociatedUserAction extends AbstractAction {
     const key = Object.keys(params)[0];
 
     // KEEP ME
-    console.log(`> [user:deleteAssociated] ${key}: ${params[key]}`);
+    console.info(`> [user:deleteAssociated] ${key}: ${params[key]}`);
 
     await this.userRepository.deleteAssociated(key, params[key]);
   }

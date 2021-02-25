@@ -66,7 +66,7 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
     ),
   );
 
-  console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id', '')}`);
+  console.debug(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id', '')}`);
 }
 
 export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProviderInterfaceResolver) {
@@ -90,7 +90,7 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       try {
         await logRequest(kernel, req, payload);
       } catch (e) {
-        console.log('logRequest ERROR', e.message);
+        console.error(`logRequest ERROR ${e.message}`);
       }
 
       /**
@@ -123,7 +123,7 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
 
       next();
     } catch (e) {
-      console.log('[acquisition:create]', e.message);
+      console.error(`[acquisition:create] ${e.message}`, e);
       next(e);
     }
   };

@@ -181,7 +181,7 @@ export class TripGenerator extends Generator<TripInterface> {
       }
     } catch (e) {
       await this.pool.query('ROLLBACK');
-      console.log(`Failed to insert trips`, e.message);
+      console.error(`Failed to insert trips : ${e.message}`);
       throw e;
     }
 

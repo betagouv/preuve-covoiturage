@@ -60,15 +60,15 @@ export class MigrateInseeCommand implements CommandInterface {
             ],
           });
 
-          console.log('> INSERT', code, data[0].nom);
+          console.info(`> INSERT ${code} ${data[0].nom}`);
         } catch (e) {
-          console.log('> ERROR', code, e);
+          console.error(`> ERROR ${code}`, e);
         }
       }
 
       return 'All geo data found';
     } catch (e) {
-      console.log(e);
+      console.error(e.message, e);
     }
   }
 }
