@@ -167,11 +167,11 @@ export class PolicyProcessCommand implements CommandInterface {
 
       try {
         if (ids.length) {
-          console.log(`>> process ${ids.length} trips`);
+          console.info(`>> process ${ids.length} trips`);
           await this.process(ids, detach);
         }
       } catch (e) {
-        console.log(`>> Operation failed for (${e.message})`);
+        console.error(`>> Operation failed for (${e.message})`);
       }
     } while (count > 0);
 

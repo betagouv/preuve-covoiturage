@@ -73,15 +73,16 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         .map((filter) => {
           switch (filter.key) {
             case 'territory_id':
+              const territoryFilterValue = Array.isArray(filter.value) ? filter.value : [filter.value];
               return {
                 text: `(start_territory_id = ANY($#::int[]) OR end_territory_id = ANY($#::int[]))`,
-                values: [filter.value, filter.value],
+                values: [territoryFilterValue, territoryFilterValue],
               };
-
             case 'operator_id':
+              const operatorFilterValue = Array.isArray(filter.value) ? filter.value : [filter.value];
               return {
                 text: 'operator_id = ANY ($#::int[])',
-                values: [filter.value],
+                values: [operatorFilterValue],
               };
 
             case 'status':

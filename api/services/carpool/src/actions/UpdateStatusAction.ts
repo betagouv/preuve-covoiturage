@@ -1,5 +1,6 @@
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpool/updateStatus.contract';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
@@ -9,7 +10,7 @@ import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/Carpoo
  */
 @handler({
   ...handlerConfig,
-  middlewares: [['channel.service.only', ['acquisition', 'fraudcheck']]],
+  middlewares: [...internalOnlyMiddlewares('acquisition', 'fraudcheck')],
 })
 export class UpdateStatusAction extends Action {
   constructor(private carpool: CarpoolRepositoryProviderInterfaceResolver) {

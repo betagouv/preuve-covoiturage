@@ -11,7 +11,7 @@ export function catchErrors(
   // it is not safe to resume normal operation after 'uncaughtException'.
   // read more: https://nodejs.org/api/process.html#process_event_uncaughtexception
   const uncaughtExceptionHandler = async (err: Error) => {
-    console.error(err, 'uncaught exception');
+    console.error('uncaught exception', err);
 
     // shut down anyway after `timeout` seconds
     if (timeout) {
@@ -25,7 +25,7 @@ export function catchErrors(
       try {
         await Promise.resolve(handler());
       } catch (err) {
-        console.error(err, 'failed to close resource');
+        console.error('failed to close resource', err);
       }
     }
 
@@ -36,7 +36,7 @@ export function catchErrors(
   // a Promise is rejected and no error handler is attached.
   // read more: https://nodejs.org/api/process.html#process_event_unhandledrejection
   const unhandledRejectionHandler = async (reason: any = {}, promise: Promise<any>) => {
-    console.error(reason, 'unhandled promise rejection');
+    console.error('unhandled promise rejection', reason);
 
     // shut down anyway after `timeout` seconds
     if (timeout) {
@@ -50,7 +50,7 @@ export function catchErrors(
       try {
         await Promise.resolve(handler());
       } catch (err) {
-        console.error(err, 'failed to close resource');
+        console.error('failed to close resource', err);
       }
     }
 

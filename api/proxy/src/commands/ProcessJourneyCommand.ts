@@ -141,7 +141,7 @@ export class ProcessJourneyCommand implements CommandInterface {
           });
           console.info(`> Operation done for ${line._id}`);
         } catch (e) {
-          console.log('> FAILED', line._id, e.stack);
+          console.error(`> FAILED ${line._id}`, e.stack);
 
           await writeClient.query({
             text: `

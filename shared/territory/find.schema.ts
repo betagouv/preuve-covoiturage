@@ -55,7 +55,7 @@ export const find = {
       type: 'array',
       items: {
         type: 'string',
-        enum: allProjectionFields,
+        enum: JSON.parse(JSON.stringify(allProjectionFields)),
       },
     },
   },

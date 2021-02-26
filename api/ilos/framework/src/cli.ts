@@ -1,24 +1,13 @@
 #!/usr/bin/env node
 
 import { Bootstrap } from './Bootstrap';
-console.log('Bootstraping app...');
 
 Bootstrap.createFromPath().then((app) => {
   const [, , command, ...opts] = process.argv;
   app
     .boot(command, ...opts)
     .then(() => {
-      console.info(`
-
-        |      ,sss.
-      | | |    $^,^$       ██╗██╗      ██████╗ ███████╗
-      |_|_|   _/$$$\\_      ██║██║     ██╔═══██╗██╔════╝
-        |   /'  ?$?  \`.    ██║██║     ██║   ██║███████╗
-        ;,-' /\\ ,, /. |    ██║██║     ██║   ██║╚════██║
-        '-./' ;    ;: |    ██║███████╗╚██████╔╝███████║
-        |     |\`  '|\`,;    ╚═╝╚══════╝ ╚═════╝ ╚══════╝
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-`);
+      console.info('[ilos] framework ready');
     })
     .catch((e) => {
       console.error(e.message, e);

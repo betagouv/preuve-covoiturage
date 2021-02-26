@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { alias } from '../shared/monitoring/journeys/stats.schema';
 import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/monitoring/journeys/stats.contract';
@@ -7,10 +8,7 @@ import { JourneyRepositoryProviderInterfaceResolver } from '../providers/Journey
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['validate', alias],
-    ['can', ['monitoring.journeysstats']],
-  ],
+  middlewares: [['validate', alias], hasPermissionMiddleware('registry.monitoring.journeysstats')],
 })
 export class JourneysStatsAction extends AbstractAction {
   constructor(private journeyRepository: JourneyRepositoryProviderInterfaceResolver) {

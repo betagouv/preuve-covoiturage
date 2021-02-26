@@ -5,29 +5,17 @@ import { handler } from '@ilos/common';
 import { TerritoryOperatorRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryOperatorRepositoryProviderInterface';
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/territory/listOperator.contract';
 import { alias } from '../shared/territory/listOperator.schema';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
 
 @handler({
   ...configHandler,
   middlewares: [
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      registry: 'registry.territory.listOperator',
+      operator: 'operator.territory.listOperator',
+      territory: 'territory.territory.listOperator',
+    }),
     ['validate', alias],
-    [
-      'scopeIt',
-      [
-        ['this.is.not.a.valid.permission'],
-        [
-          (params, context): string => {
-            if ('operator_id' in params && params.operator_id === context.call.user.operator_id) {
-              return 'operator.read';
-            }
-          },
-          (params, context): string => {
-            if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
-              return 'territory.read';
-            }
-          },
-        ],
-      ],
-    ],
   ],
 })
 export class ListTerritoryOperatorAction extends AbstractAction {

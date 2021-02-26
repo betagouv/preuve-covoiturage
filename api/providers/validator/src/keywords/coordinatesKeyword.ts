@@ -1,11 +1,14 @@
-export const coordinatesKeyword = {
+import { KeywordDefinition } from '@ilos/validator';
+
+export const coordinatesKeyword: KeywordDefinition = {
+  keyword: 'coordinates',
   type: 'number',
-  compile(schema: string): Function {
+  compile(latOrLon: string) {
     let min: number;
     let max: number;
     let regex: RegExp;
 
-    switch (schema) {
+    switch (latOrLon) {
       case 'lon':
         min = -180;
         max = 180;
@@ -23,7 +26,7 @@ export const coordinatesKeyword = {
     return (data: number | string): boolean => {
       try {
         const decimal = parseFloat(data as string);
-        if (isNaN(decimal)) throw new Error(`${schema} must be a decimal`);
+        if (isNaN(decimal)) throw new Error(`${latOrLon} must be a decimal`);
         if (decimal < min || decimal > max) throw new Error(`lat must be between ${min} and ${max}`);
 
         return regex.test(data.toString());

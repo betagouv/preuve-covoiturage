@@ -1,6 +1,8 @@
 export interface ParamsInterface {
   _id: number;
   role: string;
+  operator_id?: number;
+  territory_id?: number;
 }
 
 export type ResultInterface = boolean;

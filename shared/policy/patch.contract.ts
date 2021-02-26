@@ -1,6 +1,7 @@
 import { CampaignInterface } from './common/interfaces/CampaignInterface';
 export interface ParamsInterface {
   _id: number;
+  territory_id: number;
   patch: CampaignInterface;
 }
 export type ResultInterface = CampaignInterface;

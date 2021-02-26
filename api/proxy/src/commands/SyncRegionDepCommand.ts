@@ -17,7 +17,7 @@ export class SyncRegionDepCommand implements CommandInterface {
 
   // tslint:disable-next-line: no-shadowed-variable
   public async call(options): Promise<string> {
-    console.log('> running sync_dep command');
+    console.info('> running sync_dep command');
 
     const pgConnection = new PostgresConnection({ connectionString: options.databaseUri });
     await pgConnection.up();
@@ -73,7 +73,7 @@ export class SyncRegionDepCommand implements CommandInterface {
                 values: [region._id, dbDep._id],
               });
 
-              console.log(`> inserted region ${region._id} and dept ${dbDep._id} in territory_relation`);
+              console.info(`> inserted region ${region._id} and dept ${dbDep._id} in territory_relation`);
             } else {
               const createQuery = {
                 text: `INSERT INTO territory.territories(name,level) VALUES($1,'district')`,
@@ -92,7 +92,7 @@ export class SyncRegionDepCommand implements CommandInterface {
                 values: [department.code],
               });
 
-              console.log(
+              console.info(
                 `> inserted region ${region._id} in territory_relation and dept ${department.code} in territory_codes`,
               );
             }
@@ -127,7 +127,7 @@ export class SyncRegionDepCommand implements CommandInterface {
         `);
       return 'OK';
     } catch (e) {
-      console.log(e);
+      console.error(e.message, e);
     }
   }
 }

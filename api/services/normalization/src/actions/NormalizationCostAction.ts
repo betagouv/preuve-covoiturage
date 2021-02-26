@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import {
   signature as operatorFindSignature,
@@ -12,8 +13,7 @@ import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
 
 import { IncentiveInterface } from '../shared/common/interfaces/IncentiveInterface';
 
-// Enrich position data
-@handler({ ...handlerConfig, middlewares: [['channel.service.only', ['acquisition', handlerConfig.service]]] })
+@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class NormalizationCostAction extends AbstractAction {
   constructor(private kernel: KernelInterfaceResolver) {
     super();

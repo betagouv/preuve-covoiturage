@@ -12,14 +12,18 @@ import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignIn
 import { rules } from '../engine/rules';
 import { RuleInterface } from '../engine/interfaces';
 import { STATEFUL, FILTER } from '../engine/helpers/type';
+import { UnconfiguredMiddleware } from '@pdc/provider-middleware/dist/interfaces';
 
 const availablePolicieSlugs = rules.map((policy) => policy.slug);
 const noParameterRuleSlugs = rules.filter((r) => !('schema' in r)).map((r) => r.slug);
 const statefuleRuleSlugs = rules.filter((r) => r.type === STATEFUL).map((r) => r.slug);
 const filterRuleSlugs = rules.filter((r) => r.type === FILTER).map((r) => r.slug);
 
+export type ValidateRuleParametersMiddlewareParams = void;
+
 @middleware()
-export class ValidateRuleParametersMiddleware implements MiddlewareInterface, InitHookInterface {
+export class ValidateRuleParametersMiddleware
+  implements MiddlewareInterface<ValidateRuleParametersMiddlewareParams>, InitHookInterface {
   constructor(private validator: ValidatorInterfaceResolver) {}
 
   async init(): Promise<void> {
@@ -30,7 +34,7 @@ export class ValidateRuleParametersMiddleware implements MiddlewareInterface, In
     }
   }
 
-  async process(params: CampaignInterface, context: ContextType, next?: Function, options?: any): Promise<ResultType> {
+  async process(params: CampaignInterface, context: ContextType, next?: Function): Promise<ResultType> {
     // TODO :
     // - uuid on stateful + no duplicate
     // - filter/stateful only on global
@@ -95,4 +99,12 @@ export class ValidateRuleParametersMiddleware implements MiddlewareInterface, In
 
     uuidSet.add(rule.parameters.uuid);
   }
+}
+
+const alias = 'validate.rules';
+
+export const validateRuleParametersMiddlewareBinding = [alias, ValidateRuleParametersMiddleware];
+
+export function validateRuleParametersMiddleware(): UnconfiguredMiddleware {
+  return alias;
 }

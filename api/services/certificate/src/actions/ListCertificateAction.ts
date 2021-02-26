@@ -1,5 +1,10 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import {
+  environmentBlacklistMiddleware,
+  copyGroupIdAndApplyGroupPermissionMiddlewares,
+} from '@pdc/provider-middleware';
+
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import {
@@ -13,10 +18,12 @@ import { alias } from '../shared/certificate/list.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    // feature flag certificates until properly tested by operators
-    ['featureflag', { deny: ['production'] }],
+    environmentBlacklistMiddleware('production'),
     ['validate', alias],
-    ['can', ['certificate.list']],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      operator: 'operator.certificate.list',
+      registry: 'registry.certificate.list',
+    }),
   ],
 })
 export class ListCertificateAction extends AbstractAction {

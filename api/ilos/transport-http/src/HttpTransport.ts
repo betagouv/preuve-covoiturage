@@ -71,7 +71,6 @@ export class HttpTransport implements TransportInterface<http.Server> {
         try {
           // Add Length check
           if (Number(req.headers['content-length']) !== data.length + 1) {
-            // console.log(Number(req.headers['content-length']), data.length)
             // TODO repair, this is not working
             // throw new Error();
           }

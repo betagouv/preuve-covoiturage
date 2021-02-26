@@ -154,7 +154,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
               height,
             });
           } catch (e) {
-            console.log(e);
+            console.error(e.message, e);
           }
         }
       }

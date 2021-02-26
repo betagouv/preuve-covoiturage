@@ -1,5 +1,6 @@
 export interface ParamsInterface {
   journey_id: string;
+  operator_id: number;
 }
 
 export type ResultInterface = void;

@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/deleteAssociated.contract';
 import { alias } from '../shared/user/deleteAssociated.schema';
@@ -8,12 +9,11 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 /*
  *  Find user by id and delete user
  */
+
+// What is the difference with DeleteUserAction
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['validate', alias],
-    ['channel.service.only', ['territory', 'operator']],
-  ],
+  middlewares: [['validate', alias], ...internalOnlyMiddlewares('territory', 'operator')],
 })
 export class DeleteAssociatedUserAction extends AbstractAction {
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
@@ -24,7 +24,7 @@ export class DeleteAssociatedUserAction extends AbstractAction {
     const key = Object.keys(params)[0];
 
     // KEEP ME
-    console.log(`> [user:deleteAssociated] ${key}: ${params[key]}`);
+    console.info(`> [user:deleteAssociated] ${key}: ${params[key]}`);
 
     await this.userRepository.deleteAssociated(key, params[key]);
   }

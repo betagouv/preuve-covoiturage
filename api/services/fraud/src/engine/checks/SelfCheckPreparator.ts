@@ -99,7 +99,7 @@ export class SelfCheckPreparator implements PrepareCheckInterface<SelfCheckParam
         },
       );
     } catch (e) {
-      console.log(e);
+      console.error(e.message, e);
       return { distance: 0, duration: 0 };
     }
   }

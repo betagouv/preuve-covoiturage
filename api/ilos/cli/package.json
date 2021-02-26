@@ -24,11 +24,11 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "devDependencies": {
-    "@types/sinon": "^7.5.1",
-    "sinon": "^8.1.1"
+    "@types/sinon": "^9.0.10",
+    "sinon": "^9.2.4"
   },
   "dependencies": {
-    "commander": "^4.1.1",
+    "commander": "^7.1.0",
     "@ilos/common": "^0.4.1",
     "@ilos/core": "^0.4.1"
   },

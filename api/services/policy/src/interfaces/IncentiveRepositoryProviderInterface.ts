@@ -15,10 +15,10 @@ export interface IncentiveRepositoryProviderInterface {
 }
 
 export abstract class IncentiveRepositoryProviderInterfaceResolver implements IncentiveRepositoryProviderInterface {
-  abstract async updateManyAmount(data: { carpool_id: number; policy_id: number; amount: number }[]): Promise<void>;
-  abstract async createOrUpdateMany(data: IncentiveInterface[]): Promise<void>;
-  abstract async disableOnCanceledTrip(): Promise<void>;
-  abstract async lockAll(before: Date): Promise<void>;
+  abstract updateManyAmount(data: { carpool_id: number; policy_id: number; amount: number }[]): Promise<void>;
+  abstract createOrUpdateMany(data: IncentiveInterface[]): Promise<void>;
+  abstract disableOnCanceledTrip(): Promise<void>;
+  abstract lockAll(before: Date): Promise<void>;
   abstract findDraftIncentive(before: Date, batchSize?: number): AsyncGenerator<IncentiveInterface[], void, void>;
-  abstract async getCampaignState(policy_id: number): Promise<CampaignStateInterface>;
+  abstract getCampaignState(policy_id: number): Promise<CampaignStateInterface>;
 }

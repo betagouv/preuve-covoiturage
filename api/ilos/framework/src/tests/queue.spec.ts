@@ -84,8 +84,7 @@ function makeRPCNotify(port: number, req: { method: string; params?: any }) {
       },
     });
   } catch (e) {
-    console.log(e.message);
-    console.log(e.response.data);
+    console.error(e.message, e.response.data);
   }
 }
 
@@ -101,7 +100,7 @@ test.cb('Queue integration: works', (t) => {
 
       setTimeout(() => {
         const content = fs.readFileSync(logPath, { encoding: 'utf8', flag: 'r' });
-        console.log({ content });
+        console.info('reading file content', { content });
         t.is(content, JSON.stringify(data));
         t.end();
       }, 200);

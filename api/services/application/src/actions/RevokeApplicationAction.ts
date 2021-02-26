@@ -1,21 +1,17 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  RepositoryInterface,
-} from '../shared/application/revoke.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/application/revoke.contract';
 import { alias } from '../shared/application/revoke.schema';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
-import { setOwner } from '../helpers/setOwner';
 
 @handler({
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['can', ['application.revoke']],
+    copyFromContextMiddleware('call.user.operator_id', 'owner_id'),
+    hasPermissionByScopeMiddleware(undefined, ['operator.application.revoke', 'call.user.operator_id', 'owner_id']),
   ],
 })
 export class RevokeApplicationAction extends AbstractAction {
@@ -24,8 +20,9 @@ export class RevokeApplicationAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const data = setOwner<RepositoryInterface>('operator', params, context);
-
-    await this.applicationRepository.revoke(data);
+    await this.applicationRepository.revoke({
+      ...params,
+      owner_service: 'operator',
+    });
   }
 }

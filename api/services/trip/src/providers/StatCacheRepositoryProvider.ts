@@ -37,14 +37,14 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
     });
 
     if (result.rowCount !== 1) {
-      console.log(`[stat cache miss] hash ${hash}`);
+      console.info(`[stat cache miss] hash ${hash}`);
 
       const data = await fn();
       await this.save(hash, target, data);
       return data;
     }
 
-    console.log(`[stat cache hit] hash ${hash}`);
+    console.info(`[stat cache hit] hash ${hash}`);
 
     return result.rows[0].data;
   }
@@ -82,7 +82,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
 
       return;
     } catch (e) {
-      console.log('[stat cache save]', e.message);
+      console.info('[stat cache save]', e.message);
     }
   }
 
@@ -98,7 +98,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
 
       return deleted.rowCount === 1;
     } catch (e) {
-      console.log('[stat cache cleanup]', e.message);
+      console.info('[stat cache cleanup]', e.message);
       return false;
     }
   }

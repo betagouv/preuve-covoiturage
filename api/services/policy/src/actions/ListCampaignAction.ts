@@ -1,6 +1,7 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { get } from 'lodash';
+import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
@@ -9,10 +10,7 @@ import { CampaignInterface } from '../interfaces';
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['can', ['incentive-campaign.list']],
-    ['validate', alias],
-  ],
+  middlewares: [hasPermissionMiddleware('common.policy.list'), ['validate', alias]],
 })
 export class ListCampaignAction extends AbstractAction {
   protected readonly sensitiveRules = ['operator_whitelist_filter'];

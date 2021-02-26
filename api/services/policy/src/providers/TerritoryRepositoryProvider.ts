@@ -33,8 +33,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
       return result.rows.map((r) => r._id);
     } catch (e) {
-      console.error(e.message);
-      console.info(e.stack);
+      console.error(e.message, e);
       return null;
     }
   }

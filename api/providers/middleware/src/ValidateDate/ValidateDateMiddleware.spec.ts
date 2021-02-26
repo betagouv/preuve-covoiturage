@@ -1,10 +1,10 @@
 import test from 'ava';
 import { ContextType, InvalidParamsException } from '@ilos/common';
 
-import { ValidateDateMiddleware, ValidateDateMiddlewareOptionsType } from './ValidateDateMiddleware';
+import { ValidateDateMiddleware, ValidateDateMiddlewareParams } from './ValidateDateMiddleware';
 
 async function process(
-  middlewareParams: ValidateDateMiddlewareOptionsType,
+  middlewareParams: ValidateDateMiddlewareParams,
   callParams: any = {
     date: {
       start: new Date('2020-06-01'),

@@ -3,7 +3,7 @@ import test from 'ava';
 import { phoneCustomFormat } from './phoneCustomFormat';
 
 function macro(t, input: string, result: boolean) {
-  t.is(phoneCustomFormat(input), result);
+  t.is((phoneCustomFormat as any)(input), result);
 }
 macro.title = (providedTitle = '', input, expected) => `${providedTitle} ${input} = ${expected}`.trim();
 

@@ -1,3 +1,5 @@
-export function objectidCustomFormat(data: string): boolean {
+import { Format } from '@ilos/validator';
+
+export const objectidCustomFormat: Format = (data: string): boolean => {
   return /^[a-f\d]{24}$/i.test(data);
 }

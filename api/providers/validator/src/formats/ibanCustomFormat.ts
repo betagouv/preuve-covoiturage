@@ -1,5 +1,6 @@
+import { Format } from '@ilos/validator';
 import { isValidIBAN } from 'ibantools';
 
-export function ibanCustomFormat(data: string): boolean {
+export const ibanCustomFormat: Format = (data: string): boolean => {
   return isValidIBAN(data);
 }

@@ -4,7 +4,6 @@ export function uuidMacro(): any {
     format: 'uuid',
     minLength: 36,
     maxLength: 36,
-    lowercase: true,
-    trim: true,
+    transform: ['trim', 'toLowerCase'],
   };
 }

@@ -76,6 +76,14 @@ export class Bootstrap {
       });
   }
 
+  static interceptConsole(): void {
+    const logger = pino({
+      level: process.env.NODE_ENV !== 'production' ? 'debug' : 'error',
+    });
+
+    interceptConsole(logger);
+  }
+
   static getBootstrapFilePath(): string {
     const basePath = Bootstrap.getWorkingPath();
     const bootstrapFile =
@@ -109,12 +117,6 @@ export class Bootstrap {
     command: string | ((kernel: KernelInterface) => TransportInterface) | undefined,
     ...opts: any[]
   ): Promise<TransportInterface> {
-    const logger = pino({
-      level: process.env.NODE_ENV !== 'production' ? 'debug' : 'error',
-    });
-
-    interceptConsole(logger);
-
     let options = [...opts];
 
     const kernelConstructor = this.kernel();
@@ -131,8 +133,10 @@ export class Bootstrap {
     })
     class CustomKernel extends kernelConstructor {}
 
+    console.debug('Kernel: starting');
     const kernelInstance = new CustomKernel();
     await kernelInstance.bootstrap();
+    console.debug('Kernel: started');
 
     let transport: TransportInterface;
 
@@ -147,7 +151,9 @@ export class Bootstrap {
 
     this.registerShutdownHook(kernelInstance, transport);
 
+    console.debug('Transport: starting');
     await transport.up(options);
+    console.debug('Transport: started');
 
     return transport;
   }
@@ -158,6 +164,9 @@ export class Bootstrap {
   }
 
   async boot(command: string | undefined, ...opts: any[]) {
+    Bootstrap.interceptConsole();
+    console.info('Bootstraping app...');
+
     Bootstrap.setPaths();
     Bootstrap.setEnv();
     Bootstrap.setEnvFromPackage();

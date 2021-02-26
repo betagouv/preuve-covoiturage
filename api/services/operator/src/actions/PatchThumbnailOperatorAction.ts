@@ -1,5 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware/dist';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared//operator/patchThumbnail.contract';
@@ -8,9 +9,13 @@ import { alias } from '../shared/operator/patchThumbnail.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['operator.contacts.update']],
-    ['context_extract', { _id: 'call.user.operator_id' }],
+    copyFromContextMiddleware('call.user.operator_id', '_id'),
     ['validate', alias],
+    hasPermissionByScopeMiddleware('registry.operator.patchThumbnail', [
+      'operator.operator.patchThumbnail',
+      'call.user.operator_id',
+      '_id',
+    ]),
   ],
 })
 export class PatchThumbnailOperatorAction extends AbstractAction {

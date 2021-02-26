@@ -1,3 +1,5 @@
+import { KeywordDefinition } from '@ilos/validator';
+
 import { base64Macro } from '../macros/base64Macro';
 import { lonMacro } from '../macros/lonMacro';
 import { latMacro } from '../macros/latMacro';
@@ -67,7 +69,8 @@ const macroStore = {
   varchar: varcharMacro,
 };
 
-export const macroKeyword = {
+export const macroKeyword: KeywordDefinition = {
+  keyword: 'macro',
   macro(schema: string): { [k: string]: any } {
     if (schema in macroStore) {
       return macroStore[schema]();

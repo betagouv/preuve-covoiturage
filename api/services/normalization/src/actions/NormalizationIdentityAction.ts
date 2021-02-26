@@ -1,10 +1,11 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/identity.contract';
 
 // Enrich position data
-@handler({ ...handlerConfig, middlewares: [['channel.service.only', ['acquisition', handlerConfig.service]]] })
+@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class NormalizationIdentityAction extends AbstractAction {
   constructor() {
     super();
