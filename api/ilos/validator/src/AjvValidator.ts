@@ -15,6 +15,7 @@ export class AjvValidator implements ValidatorInterface {
 
   boot() {
     const ajvConfig = {
+      strict: false,
       $data: true,
       logger: console,
       removeAdditional: false,
@@ -29,7 +30,8 @@ export class AjvValidator implements ValidatorInterface {
     ajvKeywords(this.ajv);
     addFormats(this.ajv)
 
-    this.isSchemaSecure = this.ajv.compile(jsonSchemaSecureJson);
+    this.isSchemaSecure = new ajv.default({ strict: false })
+      .compile(jsonSchemaSecureJson);
   }
 
   registerValidator(definition: { [k: string]: any }, target?: NewableType<any> | string): ValidatorInterface {
