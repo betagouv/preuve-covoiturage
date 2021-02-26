@@ -1,5 +1,5 @@
-const { Then } = require('cypress-cucumber-preprocessor/steps');
-const { requests } = require('../../support/requests.js');
+import { Then } from 'cypress-cucumber-preprocessor/steps';
+import { requests } from '../../support/requests';
 
 Then(`une requête {string} est envoyée`, (requestBinding) => {
   if (!requests.has(requestBinding)) {

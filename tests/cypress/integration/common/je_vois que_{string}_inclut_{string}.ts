@@ -1,5 +1,5 @@
-const { And } = require('cypress-cucumber-preprocessor/steps');
-const { elementsSelectors } = require('../../support/elementsSelectors.js');
+import { And } from 'cypress-cucumber-preprocessor/steps';
+import { elementsSelectors } from '../../support/elementsSelectors';
 
 And(`je vois que {string} inclut {string}`, (elementName, elementAssertion) => {
   if (!elementsSelectors.has(elementName)) {

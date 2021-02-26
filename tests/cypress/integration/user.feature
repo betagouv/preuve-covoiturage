@@ -1,7 +1,7 @@
 # language: fr
 Fonctionnalité: Créer un utilisateur
 
-  En tant qu'administrateur je veux pouvoir créer des utilisateurs
+  En tant qu'administrateur je veux pouvoir créer un utilisateur territoire
 
   Scénario: Créer un utilisateur découverte pour un territoire
     Étant donné que je suis connecté.e comme "administrateur du registre"

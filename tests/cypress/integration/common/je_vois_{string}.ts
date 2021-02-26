@@ -1,5 +1,5 @@
-const { Then } = require('cypress-cucumber-preprocessor/steps');
-const { elementsSelectors } = require('../../support/elementsSelectors.js');
+import { Then } from 'cypress-cucumber-preprocessor/steps';
+import { elementsSelectors } from '../../support/elementsSelectors';
 
 Then(`je vois {string}`, (elementName) => {
   if (!elementsSelectors.has(elementName)) {

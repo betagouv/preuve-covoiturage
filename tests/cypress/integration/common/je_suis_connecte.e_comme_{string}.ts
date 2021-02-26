@@ -1,10 +1,13 @@
-const { Given } = require('cypress-cucumber-preprocessor/steps');
+import { Given } from 'cypress-cucumber-preprocessor/steps';
 
 const usersCredentials = new Map([
-  ['administrateur du registre', {
-    login: process.env.REGISTRY_ADMIN_USERNAME,
-    password: process.env.REGISTRY_ADMIN_PASSWORD,
-  }],
+  [
+    'administrateur du registre',
+    {
+      login: process.env.REGISTRY_ADMIN_USERNAME,
+      password: process.env.REGISTRY_ADMIN_PASSWORD,
+    },
+  ],
 ]);
 
 Given('je suis connecté.e comme {string}', (userType) => {

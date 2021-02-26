@@ -10,13 +10,22 @@
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "scripts": {
+    "lint": "eslint --ext .ts,.js --resolve-plugins-relative-to . .",
     "cy:verify": "cypress verify",
     "cy:run": "cypress run",
     "cy:open": "cypress open"
   },
   "dependencies": {
+    "@cypress/browserify-preprocessor": "^3.0.1",
+    "@types/cypress-cucumber-preprocessor": "^4.0.0",
     "cypress": "^6.4.0",
-    "cypress-cucumber-preprocessor": "^4.0.1"
+    "cypress-cucumber-preprocessor": "^4.0.1",
+    "eslint": "^7.20.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-cypress": "^2.11.2",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.2"
   },
   "cypress-cucumber-preprocessor": {
     "nonGlobalStepDefinitions": true

@@ -1,4 +1,4 @@
-const { Then } = require('cypress-cucumber-preprocessor/steps');
+import { Then } from 'cypress-cucumber-preprocessor/steps';
 
 Then(`je vois un message indiquant {string}`, (messageText) => {
   cy.contains(messageText).should('be.visible');
