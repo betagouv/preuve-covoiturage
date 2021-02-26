@@ -8,3 +8,4 @@ export * from './Environment/EnvironmentWhitelistMiddleware';
 export * from './HasPermissionByScope/HasPermissionByScopeMiddleware';
 export * from './HasPermission/HasPermissionMiddleware';
 export * from './ValidateDate/ValidateDateMiddleware';
+export * from './Logger/LoggerMiddleware';

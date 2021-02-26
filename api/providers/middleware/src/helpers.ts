@@ -24,9 +24,10 @@ export function copyGroupIdFromContextMiddlewares(
   const middlewareParameters = [];
   for (const group of groups) {
     middlewareParameters.push(
-      copyFromContextMiddleware(`context.call.user.${group}`, buildPathWithPrefix(group, targetPathPrefix), preserve),
+      copyFromContextMiddleware(`call.user.${group}`, buildPathWithPrefix(group, targetPathPrefix), preserve),
     );
   }
+
   return middlewareParameters;
 }
 
@@ -71,9 +72,11 @@ export function copyGroupIdAndApplyGroupPermissionMiddlewares(
   targetPathPrefix: string = null,
 ): ListOfConfiguredMiddlewares {
   const copyGroupsParam = [];
+
   if ('territory' in groups) {
     copyGroupsParam.push('territory_id');
   }
+
   if ('operator' in groups) {
     copyGroupsParam.push('operator_id');
   }

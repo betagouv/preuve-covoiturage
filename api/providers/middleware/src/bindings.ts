@@ -9,6 +9,7 @@ import {
   hasPermissionMiddlewareBinding,
   hasPermissionByScopeMiddlewareBinding,
   validateDateMiddlewareBinding,
+  loggerMiddlewareBinding,
 } from './middlewares';
 
 export const bindings = [
@@ -22,4 +23,5 @@ export const bindings = [
   hasPermissionMiddlewareBinding,
   hasPermissionByScopeMiddlewareBinding,
   validateDateMiddlewareBinding,
+  loggerMiddlewareBinding,
 ];
