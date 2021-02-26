@@ -41,8 +41,10 @@ export class ChangePasswordComponent extends DestroyObservable implements OnInit
   }
 
   onChangePassword(): void {
+    const { old_password, new_password } = this.changePasswordForm.value;
+
     this.authentication
-      .changePassword(this.changePasswordForm.value.old_password, this.changePasswordForm.value.new_password)
+      .changePassword(this.authentication.user._id, old_password, new_password)
       .pipe(
         catchHttpStatus(403, (err) => {
           this.toastr.error('Ancien mot de passe non valide');
