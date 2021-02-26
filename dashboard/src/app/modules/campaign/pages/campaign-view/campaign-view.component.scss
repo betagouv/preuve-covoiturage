@@ -13,13 +13,14 @@ app-page-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  .action {
-    margin-right: 35px;
-  }
   .title {
+    padding: 1em;
     h1 {
       margin-bottom: 0;
     }
+  }
+  .action {
+    margin-right: 1em;
   }
 }
 
