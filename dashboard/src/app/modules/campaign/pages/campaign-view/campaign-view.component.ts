@@ -34,11 +34,11 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
   }
 
   constructor(
+    public auth: AuthenticationService,
     private _router: Router,
     private _route: ActivatedRoute,
     private _dialog: DialogService,
     private _toastr: ToastrService,
-    private _authService: AuthenticationService,
     private _territoryApi: TerritoryApiService,
     private _campaignStoreService: CampaignStoreService,
   ) {
@@ -46,8 +46,8 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userIsTerritory = this._authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
-    this.userIsDemo = this._authService.hasRole(UserRoleEnum.TERRITORY_DEMO);
+    this.userIsTerritory = this.auth.hasAnyGroup([UserGroupEnum.TERRITORY]);
+    this.userIsDemo = this.auth.hasRole(UserRoleEnum.TERRITORY_DEMO);
 
     this._route.paramMap
       .pipe(

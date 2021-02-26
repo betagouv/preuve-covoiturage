@@ -9,19 +9,6 @@
         <h1>{{ campaignUx.name }}</h1>
         <p>{{ territory.name }}</p>
       </div>
-
-      <!-- territories can duplicate the campaign -->
-      <!-- <div class="action">
-        <button
-          *ngIf="isLoggedAsTerritory"
-          mat-flat-button
-          type="button"
-          color="primary"
-          routerLink="/campaign/create/{{ campaignUx._id }}"
-        >
-          Dupliquer la campagne
-        </button>
-      </div> -->
     </div>
 
     <div *ngIf="isDraft && userIsTerritory && !userIsDemo" class="launch-draft">
