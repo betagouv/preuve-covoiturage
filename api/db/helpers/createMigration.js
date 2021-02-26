@@ -11,7 +11,7 @@ exports.createMigration = function (files, basePath = __dirname, extracb = async
 
   function resolveFile(file, extension = 'sql') {
     const filepath = path.join(basePath, `${file}.${extension}`);
-    console.log(filepath);
+    console.debug(`Try to load ${filepath}`);
     if (!fs.existsSync(filepath)) {
       throw new Error(`File not found (${filepath})`);
     }

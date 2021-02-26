@@ -29,8 +29,8 @@
     "@ilos/common": "~0",
     "@ilos/connection-postgres": "~0",
     "@ilos/framework": "~0",
-    "faker": "^4.1.0",
-    "uuid": "^7.0.3"
+    "faker": "^5.4.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@ilos/core": "~0",

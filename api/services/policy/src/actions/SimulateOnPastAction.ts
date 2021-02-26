@@ -1,6 +1,8 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
 
+import { validateRuleParametersMiddleware } from '../middlewares/ValidateRuleParametersMiddleware';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
 
 import { alias } from '../shared/policy/simulateOn.schema';
@@ -11,34 +13,18 @@ import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvid
 @handler({
   ...handlerConfig,
   middlewares: [
-    [
-      'scope.it',
-      [
-        ['incentive-campaign.simulate'],
-        [
-          (params, context): string => {
-            if (
-              'campaign' in params &&
-              'territory_id' in params.campaign &&
-              params.campaign.territory_id === context.call.user.territory_id
-            ) {
-              return 'incentive-campaign.create';
-            }
-          },
-        ],
-      ],
-    ],
     ['validate', alias],
-    'validate.rules',
-    [
-      'validate.date',
-      {
-        startPath: 'campaign.start_date',
-        endPath: 'campaign.end_date',
-        minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 5),
-        maxEnd: () => new Date(),
-      },
-    ],
+    validateRuleParametersMiddleware(),
+    validateDateMiddleware({
+      startPath: 'campaign.start_date',
+      endPath: 'campaign.end_date',
+      minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 5),
+      maxEnd: () => new Date(),
+    }),
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares(
+      { territory: 'territory.simulate.past', registry: 'registry.simulate.past' },
+      'campaign',
+    ),
   ],
 })
 export class SimulateOnPastAction extends AbstractAction {

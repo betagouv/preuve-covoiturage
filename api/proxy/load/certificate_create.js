@@ -112,7 +112,7 @@ export default function (store) {
     },
   );
 
-  console.log(JSON.stringify({ status: response_cert.status }));
+  console.info(JSON.stringify({ status: response_cert.status }));
 
   check(response_cert, {
     'is status 201': (r) => r.status === 201,

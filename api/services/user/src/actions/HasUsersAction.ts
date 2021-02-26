@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ResultInterface } from '../shared/user/hasUsers.contract';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -9,7 +10,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
  */
 @handler({
   ...handlerConfig,
-  middlewares: [['channel.service.only', ['trip']]],
+  middlewares: [...internalOnlyMiddlewares('trip')],
 })
 export class HasUsersAction extends AbstractAction {
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {

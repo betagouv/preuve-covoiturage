@@ -1,5 +1,6 @@
+import { Format } from '@ilos/validator';
 import { isValidBIC } from 'ibantools';
 
-export function bicCustomFormat(data: string): boolean {
+export const bicCustomFormat: Format = (data: string): boolean => {
   return isValidBIC(data);
 }

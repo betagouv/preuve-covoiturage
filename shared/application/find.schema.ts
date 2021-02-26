@@ -7,7 +7,7 @@ export const schema = {
   properties: {
     uuid: { macro: 'dbid' },
     owner_id: { anyOf: [{ macro: 'serial' }, { macro: 'varchar' }] },
-    owner_service: { enum: ['operator'] },
+    owner_service: { enum: ['operator'], default: 'operator' },
   },
 };
 export const binding = [alias, schema];

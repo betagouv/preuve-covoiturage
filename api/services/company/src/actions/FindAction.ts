@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
+import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { CompanyDataSourceProviderInterfaceResolver } from '../interfaces/CompanyDataSourceProviderInterface';
 import { CompanyRepositoryProviderInterfaceResolver } from '../interfaces/CompanyRepositoryProviderInterface';
@@ -10,10 +11,7 @@ import { signature as fetchSignature } from '../shared/company/fetch.contract';
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['validate', alias],
-    ['can', ['company.find']],
-  ],
+  middlewares: [hasPermissionMiddleware('common.company.find'), ['validate', alias]],
 })
 export class FindAction extends AbstractAction {
   constructor(
@@ -49,7 +47,7 @@ export class FindAction extends AbstractAction {
 
       return res;
     } catch (e) {
-      console.log(e);
+      console.error(e.message, e);
       return null;
     }
   }

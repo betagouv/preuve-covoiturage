@@ -1,4 +1,3 @@
-import { sprintf } from 'sprintf-js';
 import {
   ConfigInterfaceResolver,
   KernelInterfaceResolver,
@@ -60,13 +59,12 @@ export class UserNotificationProvider {
    * Generate url from email and token
    */
   protected getUrl(path: string, email: string, token: string): string {
-    return sprintf(
-      '%s/%s/%s/%s/',
+    return [
       this.config.get('url.appUrl'),
       path,
       encodeURIComponent(email),
       encodeURIComponent(token),
-    );
+    ].join('/');
   }
 
   /**

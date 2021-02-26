@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ContextType } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { ParamsInterface as LogErrorParamsInterface } from '../shared/acquisition/logerror.contract';
 import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
@@ -46,10 +47,9 @@ enum NormalisationErrorStage {
   Territory = 'territory',
 }
 
-// Enrich position data
 @handler({
   ...handlerConfig,
-  middlewares: [['channel.service.only', ['acquisition', 'policy', handlerConfig.service]]],
+  middlewares: [...internalOnlyMiddlewares('acquisition', 'policy', handlerConfig.service)],
 })
 export class NormalizationProcessAction extends AbstractAction {
   private readonly context: ContextType = {

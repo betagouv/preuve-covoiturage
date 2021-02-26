@@ -1,5 +1,6 @@
 import { Action } from '@ilos/core';
 import { handler, ConfigInterfaceResolver } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpool/crosscheck.contract';
@@ -14,10 +15,7 @@ import { PeopleWithIdInterface } from '../interfaces/Carpool';
  */
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]],
-    ['validate', alias],
-  ],
+  middlewares: [...internalOnlyMiddlewares('acquisition', 'normalization', handlerConfig.service), ['validate', alias]],
 })
 export class CrosscheckAction extends Action {
   constructor(

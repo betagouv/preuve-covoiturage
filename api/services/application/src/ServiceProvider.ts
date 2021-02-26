@@ -1,8 +1,7 @@
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PermissionMiddleware } from '@pdc/provider-acl';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { config } from './config';
@@ -20,11 +19,7 @@ import { ApplicationPgRepositoryProvider } from './providers/ApplicationPgReposi
   config,
   providers: [ApplicationPgRepositoryProvider],
   validator: [listBinding, findBinding, createBinding, revokeBinding],
-  middlewares: [
-    ['can', PermissionMiddleware],
-    ['validate', ValidatorMiddleware],
-    ['scopeIt', ScopeToSelfMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [ListApplicationAction, FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
   commands: [],

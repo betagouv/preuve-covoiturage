@@ -1,12 +1,19 @@
 import { set } from 'lodash';
 
 import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
+import { ConfiguredMiddleware } from '../interfaces';
+
 /*
  * Delete properties from model or array of models on output of handler
  */
 @middleware()
-export class ContentWhitelistMiddleware implements MiddlewareInterface {
-  async process(params: ParamsType, context: ContextType, next: Function, config: string[]): Promise<ResultType> {
+export class ContentWhitelistMiddleware implements MiddlewareInterface<ContentWhitelistMiddlewareParams> {
+  async process(
+    params: ParamsType,
+    context: ContextType,
+    next: Function,
+    config: ContentWhitelistMiddlewareParams,
+  ): Promise<ResultType> {
     const result = await next(params, context);
     const isArray = Array.isArray(result);
     let data = result;
@@ -49,4 +56,16 @@ export class ContentWhitelistMiddleware implements MiddlewareInterface {
     });
     return result;
   }
+}
+
+export type ContentWhitelistMiddlewareParams = string[];
+
+const alias = 'content.only';
+
+export const contentWhitelistMiddlewareBinding = [alias, ContentWhitelistMiddleware];
+
+export function contentWhitelistMiddleware(
+  ...params: ContentWhitelistMiddlewareParams
+): ConfiguredMiddleware<ContentWhitelistMiddlewareParams> {
+  return [alias, params];
 }

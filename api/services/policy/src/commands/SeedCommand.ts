@@ -88,7 +88,7 @@ export class SeedCommand implements CommandInterface {
       };
       await this.pgClient.query(query);
     }
-    console.log('> Policy templates seeded');
+    console.info('> Policy templates seeded');
 
     await this.checkTemplateSlugs();
 
@@ -125,8 +125,7 @@ export class SeedCommand implements CommandInterface {
       );
 
       if (diff.length) {
-        console.log(`\n> Unrecognized rules for template #${template._id} "${template.slug}":`);
-        console.log(diff);
+        console.info(`\n> Unrecognized rules for template #${template._id} "${template.slug}"`, diff);
       }
     }
   }

@@ -7,6 +7,7 @@ import {
   ConfigInterfaceResolver,
 } from '@ilos/common';
 import { NotificationInterfaceResolver } from '@pdc/provider-notification';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import {
   handlerConfig,
@@ -20,7 +21,7 @@ import {
   ParamsInterface as StatsParamsInterface,
 } from '../shared/monitoring/journeys/stats.contract';
 
-@handler({ ...handlerConfig, middlewares: [['channel.service.only', [handlerConfig.service]]] })
+@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class JourneysStatsNotifyAction extends Action implements InitHookInterface {
   constructor(
     private kernel: KernelInterfaceResolver,

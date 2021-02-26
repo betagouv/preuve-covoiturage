@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import {
   middleware,
   MiddlewareInterface,
@@ -7,36 +8,24 @@ import {
   InvalidParamsException,
   ForbiddenException,
 } from '@ilos/common';
+import { ConfiguredMiddleware } from '../interfaces';
 
 /**
- * Can middleware check permission in context and may throw a ForbiddenException
- *
- * @export
- * @param {...string[]} roles
- * @returns {MiddlewareInterface}
+ * Check if user has all listed permission
  */
 @middleware()
-export class PermissionMiddleware implements MiddlewareInterface {
+export class HasPermissionMiddleware implements MiddlewareInterface<HasPermissionMiddlewareParams> {
   async process(
     params: ParamsType,
     context: ContextType,
     next: Function,
-    neededPermissions: string[],
+    neededPermissions: HasPermissionMiddlewareParams,
   ): Promise<ResultType> {
     if (!Array.isArray(neededPermissions) || neededPermissions.length === 0) {
       throw new InvalidParamsException('No permissions defined');
     }
 
-    let permissions = [];
-
-    if (
-      !!context.call &&
-      !!context.call.user &&
-      !!context.call.user.permissions &&
-      !!context.call.user.permissions.length
-    ) {
-      permissions = context.call.user.permissions;
-    }
+    const permissions = get(context, 'call.user.permissions', []);
 
     if (permissions.length === 0) {
       throw new ForbiddenException('Invalid permissions');
@@ -50,4 +39,16 @@ export class PermissionMiddleware implements MiddlewareInterface {
 
     return next(params, context);
   }
+}
+
+export type HasPermissionMiddlewareParams = string[];
+
+const alias = 'has_permission';
+
+export const hasPermissionMiddlewareBinding = [alias, HasPermissionMiddleware];
+
+export function hasPermissionMiddleware(
+  ...params: HasPermissionMiddlewareParams
+): ConfiguredMiddleware<HasPermissionMiddlewareParams> {
+  return [alias, params];
 }

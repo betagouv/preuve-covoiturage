@@ -77,7 +77,7 @@
 //       .set('Accept', 'application/json')
 //       .set('Content-Type', 'application/json')
 //       .expect((response) => {
-//         console.log(response.body);
+//         console.debug(response.body);
 //         expect(response.status).to.eq(200);
 //       });
 //   });
@@ -170,7 +170,7 @@
 //       .set('Content-Type', 'application/json')
 //       .expect((response) => {
 //         // @TODO
-//         // console.log(response.body);
+//         // console.debug(response.body);
 //         expect(response.status).to.eq(200);
 //       });
 //   });

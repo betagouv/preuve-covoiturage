@@ -1,11 +1,11 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/list.contract';
 import { alias } from '../shared/user/list.schema';
 import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
 
 const whiteList = [
   '_id',
@@ -27,25 +27,12 @@ const whiteList = [
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    [
-      'scopeIt',
-      [
-        ['user.list'],
-        [
-          (_params, context): string => {
-            if (context.call.user.territory_id) {
-              return 'territory.users.list';
-            }
-          },
-          (_params, context): string => {
-            if (context.call.user.operator_id) {
-              return 'operator.users.list';
-            }
-          },
-        ],
-      ],
-    ],
-    ['content.whitelist', [...whiteList.map((key: string) => `data.*.${key}`), 'meta.*']],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      registry: 'registry.user.list',
+      territory: 'territory.user.list',
+      operator: 'operator.user.list',
+    }),
+    contentWhitelistMiddleware(...whiteList.map((key: string) => `data.*.${key}`), 'meta.*'), // TODO : A VERIFIER
   ],
 })
 export class ListUserAction extends AbstractAction {
@@ -54,17 +41,9 @@ export class ListUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
-    const contextParam: UserListFiltersInterface = {};
+    const { operator_id, territory_id, ...pagination } = params;
 
-    if (context.call.user.territory_id) {
-      contextParam.territory_id = context.call.user.territory_id;
-    }
-
-    if (context.call.user.operator_id) {
-      contextParam.operator_id = context.call.user.operator_id;
-    }
-
-    const data = await this.userRepository.list(contextParam, params);
+    const data = await this.userRepository.list({ operator_id, territory_id }, pagination);
 
     return {
       data: data.users,

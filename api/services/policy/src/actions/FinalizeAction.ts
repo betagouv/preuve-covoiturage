@@ -9,6 +9,7 @@ import {
 } from '../shared/policy/finalize.contract';
 import { PolicyEngine } from '../engine/PolicyEngine';
 import { ProcessableCampaign } from '../engine/ProcessableCampaign';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import {
   IncentiveRepositoryProviderInterfaceResolver,
@@ -16,7 +17,7 @@ import {
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 
-@handler({ ...handlerConfig, middlewares: [['channel.service.only', [handlerConfig.service]]] })
+@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class FinalizeAction extends AbstractAction implements InitHookInterface {
   constructor(
     private campaignRepository: CampaignRepositoryProviderInterfaceResolver,

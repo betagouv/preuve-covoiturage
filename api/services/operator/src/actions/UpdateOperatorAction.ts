@@ -1,5 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware/dist';
 
 import { phoneComplianceHelper } from '../helpers/phoneComplianceHelper';
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
@@ -9,8 +10,13 @@ import { alias } from '../shared/operator/update.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['operator.update']],
+    copyFromContextMiddleware('call.user.operator_id', '_id'),
     ['validate', alias],
+    hasPermissionByScopeMiddleware('registry.operator.update', [
+      'operator.operator.update',
+      'call.user.operator_id',
+      '_id',
+    ]),
   ],
 })
 export class UpdateOperatorAction extends AbstractAction {

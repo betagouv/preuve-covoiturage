@@ -1,5 +1,6 @@
 import { handler, KernelInterfaceResolver, ContextType, InitHookInterface } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import {
   signature as handlerSignature,
@@ -15,7 +16,7 @@ import {
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 
-@handler({ ...handlerConfig, middlewares: [['channel.service.only', [handlerConfig.service]]] })
+@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class ApplyAction extends AbstractAction implements InitHookInterface {
   private readonly context: ContextType = {
     call: {

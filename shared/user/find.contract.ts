@@ -2,6 +2,8 @@ import { UserFindInterface } from './common/interfaces/UserFindInterface';
 
 export interface ParamsInterface {
   _id: number;
+  operator_id?: number;
+  territory_id?: number;
 }
 
 export interface ResultInterface extends UserFindInterface {}

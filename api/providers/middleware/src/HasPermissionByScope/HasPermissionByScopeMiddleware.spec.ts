@@ -1,14 +1,14 @@
 import anyTest, { TestInterface } from 'ava';
 import { ContextType, ForbiddenException } from '@ilos/common';
 
-import { ScopeToSelfMiddleware } from './ScopeToSelfMiddleware';
+import { HasPermissionByScopeMiddleware } from './HasPermissionByScopeMiddleware';
 
 const test = anyTest as TestInterface<{
   mockConnectedUser: any;
   mockCreateUserParameters: any;
   contextFactory: Function;
   middlewareConfig: any;
-  middleware: ScopeToSelfMiddleware;
+  middleware: HasPermissionByScopeMiddleware;
 }>;
 
 test.before((t) => {
@@ -47,22 +47,14 @@ test.before((t) => {
   };
 
   t.context.middlewareConfig = [
-    ['user.create'],
+    'user.create',
     [
-      (params, context): string => {
-        if ('territory' in params && params.territory === context.call.user.territory) {
-          return 'territory.users.add';
-        }
-      },
-      (params, context): string => {
-        if ('operator' in params && params.territory === context.call.user.territory) {
-          return 'operator.users.add';
-        }
-      },
+      ['territory.users.add', 'call.user.territory', 'territory'],
+      ['operator.users.add', 'call.user.operator', 'operator'],
     ],
   ];
 
-  t.context.middleware = new ScopeToSelfMiddleware();
+  t.context.middleware = new HasPermissionByScopeMiddleware();
 });
 
 test('Middleware Scopetoself: has permission to create user', async (t) => {

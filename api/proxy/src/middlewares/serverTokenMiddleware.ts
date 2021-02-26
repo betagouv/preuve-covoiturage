@@ -1,10 +1,11 @@
 import express from 'express';
-import { get } from 'lodash';
+import { set, get } from 'lodash';
 import { KernelInterface, UnauthorizedException, ForbiddenException } from '@ilos/common';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
 import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
 import { TokenPayloadInterface } from '../shared/application/common/interfaces/TokenPayloadInterface';
+import { createRPCPayload } from '../helpers/createRPCPayload';
 
 interface Request extends express.Request {
   operator: string;
@@ -21,15 +22,13 @@ async function checkApplication(
   kernel: KernelInterface,
   payload: TokenPayloadInterface,
 ): Promise<ApplicationInterface> {
-  const app = await kernel.handle({
-    id: 1,
-    jsonrpc: '2.0',
-    method: 'application:find',
-    params: {
-      params: { uuid: payload.a, owner_id: payload.o, owner_service: payload.s },
-      _context: { call: { user: { permissions: ['application.find'] } } },
-    },
-  });
+  const app = await kernel.handle(
+    createRPCPayload(
+      'application:find',
+      { uuid: payload.a, owner_id: payload.o, owner_service: payload.s },
+      { permissions: ['registry.application.find'] },
+    ),
+  );
 
   const app_uuid = get(app, 'result.uuid', '');
   const owner_id = get(app, 'result.owner_id', null);
@@ -50,22 +49,24 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
     return;
   }
 
-  await kernel.call(
-    'acquisition:logrequest',
-    {
-      operator_id: parseInt(payload.o as any, 0) || 0,
-      source: 'serverTokenMiddleware',
-      error_message: null,
-      error_code: null,
-      error_line: null,
-      auth: {},
-      headers: request.headers || {},
-      body: request.body,
-    },
-    { channel: { service: 'proxy' }, call: { user: { permissions: ['acquisition.logrequest'] } } },
+  await kernel.handle(
+    createRPCPayload(
+      'acquisition:logrequest',
+      {
+        operator_id: parseInt(payload.o as any, 0) || 0,
+        source: 'serverTokenMiddleware',
+        error_message: null,
+        error_code: null,
+        error_line: null,
+        auth: {},
+        headers: request.headers || {},
+        body: request.body,
+      },
+      { permissions: ['acquisition.logrequest'] },
+    ),
   );
 
-  console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id', '')}`);
+  console.debug(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id', '')}`);
 }
 
 export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProviderInterfaceResolver) {
@@ -89,7 +90,7 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       try {
         await logRequest(kernel, req, payload);
       } catch (e) {
-        console.log('logRequest ERROR', e.message);
+        console.error(`logRequest ERROR ${e.message}`);
       }
 
       /**
@@ -113,16 +114,15 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       const app = await checkApplication(kernel, payload);
 
       // inject the operator ID and permissions in the request
-      // @ts-ignore
-      req.session = req.session || {};
-      req.session.user = req.session.user || {};
-      req.session.user.application_id = app._id;
-      req.session.user.operator_id = app.owner_id;
-      req.session.user.permissions = app.permissions;
+      set(req, 'session.user', {
+        application_id: app._id,
+        operator_id: app.owner_id,
+        permissions: app.permissions,
+      });
 
       next();
     } catch (e) {
-      console.log('[acquisition:create]', e.message);
+      console.error(`[acquisition:create] ${e.message}`, e);
       next(e);
     }
   };

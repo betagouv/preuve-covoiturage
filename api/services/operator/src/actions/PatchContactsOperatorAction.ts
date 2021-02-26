@@ -1,5 +1,6 @@
 import { handler, ContextType } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware/dist';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared//operator/patchContacts.contract';
@@ -9,8 +10,13 @@ import { phoneComplianceHelper } from '../helpers/phoneComplianceHelper';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['operator.contacts.update']],
+    copyFromContextMiddleware('call.user.operator_id', '_id'),
     ['validate', alias],
+    hasPermissionByScopeMiddleware('registry.operator.patchContacts', [
+      'operator.operator.patchContacts',
+      'call.user.operator_id',
+      '_id',
+    ]),
   ],
 })
 export class PatchContactsOperatorAction extends AbstractAction {
@@ -19,10 +25,6 @@ export class PatchContactsOperatorAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if (context.call.user.operator_id) {
-      params._id = context.call.user.operator_id;
-    }
-
     // check phone numbers
     phoneComplianceHelper(params.patch);
 

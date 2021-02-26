@@ -55,6 +55,6 @@
     "@pdc/helper-test": "~0",
     "@pdc/provider-geo": "~0",
     "@pdc/provider-middleware": "~0",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.21"
   }
 }

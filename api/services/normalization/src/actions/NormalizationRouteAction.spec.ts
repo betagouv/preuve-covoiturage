@@ -27,7 +27,6 @@ test('Route normalization action', async (t) => {
   };
   const result = await action.handle(params);
 
-  // console.log('result : ', result);
   t.is(result.calc_distance, (params.start.lat + params.end.lat) * 1000, 'have calc_distance matching params');
   t.is(result.calc_duration, (params.start.lon + params.end.lon) * 1000, 'have calc_distance matching params');
 });

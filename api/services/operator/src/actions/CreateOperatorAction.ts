@@ -1,5 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { phoneComplianceHelper } from '../helpers/phoneComplianceHelper';
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
@@ -8,10 +9,7 @@ import { alias } from '../shared/operator/create.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['can', ['operator.create']],
-    ['validate', alias],
-  ],
+  middlewares: [hasPermissionMiddleware('registry.operator.create'), ['validate', alias]],
 })
 export class CreateOperatorAction extends AbstractAction {
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {

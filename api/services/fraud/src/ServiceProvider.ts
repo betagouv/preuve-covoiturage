@@ -3,7 +3,7 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorMiddleware, ValidatorExtension } from '@pdc/provider-validator';
-import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { GeoProvider } from '@pdc/provider-geo';
 
 import { config } from './config';
@@ -19,10 +19,7 @@ import { ApplyAction } from './actions/ApplyAction';
   commands: [],
   providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine, ProcessableCarpoolRepositoryProvider],
   validator: [],
-  middlewares: [
-    ['validate', ValidatorMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],

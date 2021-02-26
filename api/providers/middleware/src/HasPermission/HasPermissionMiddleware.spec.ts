@@ -1,9 +1,9 @@
 import test from 'ava';
 import { ParamsType, ContextType, ResultType, InvalidParamsException, ForbiddenException } from '@ilos/common';
 
-import { PermissionMiddleware } from './PermissionMiddleware';
+import { HasPermissionMiddleware } from './HasPermissionMiddleware';
 
-const middleware = new PermissionMiddleware();
+const middleware = new HasPermissionMiddleware();
 
 const callFactory = (
   permissions: string[],

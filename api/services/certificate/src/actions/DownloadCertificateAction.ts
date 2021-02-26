@@ -5,8 +5,12 @@ import { handler, ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
 import { PdfCertProviderInterfaceResolver } from '@pdc/provider-pdfcert';
+import {
+  environmentBlacklistMiddleware,
+  hasPermissionMiddleware,
+  channelServiceWhitelistMiddleware,
+} from '@pdc/provider-middleware';
 
-// import { HtmlPrinterProviderInterfaceResolver } from '../interfaces/HtmlPrinterProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/download.contract';
 import { alias } from '../shared/certificate/download.schema';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
@@ -14,11 +18,10 @@ import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/Ce
 @handler({
   ...handlerConfig,
   middlewares: [
-    // feature flag certificates until properly tested by operators
-    ['featureflag', { deny: ['production'] }],
+    environmentBlacklistMiddleware('production'),
+    hasPermissionMiddleware('common.certificate.download'),
+    channelServiceWhitelistMiddleware('proxy'),
     ['validate', alias],
-    ['can', ['certificate.download']],
-    ['channel.service.only', ['proxy']],
   ],
 })
 export class DownloadCertificateAction extends AbstractAction {

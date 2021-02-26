@@ -1,8 +1,9 @@
-import { phoneCustomFormat } from './phoneCustomFormat';
+import { Format } from '@ilos/validator';
+import { validatePhone } from './phoneCustomFormat';
 
 /**
  * Append 00 to the phone number and validate it with the 'phone' format
  */
-export function phonetruncCustomFormat(data: string): boolean {
-  return phoneCustomFormat(`${data}00`);
+export const phonetruncCustomFormat: Format = (data: string): boolean => {
+  return validatePhone(`${data}00`);
 }

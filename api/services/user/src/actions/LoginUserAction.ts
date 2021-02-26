@@ -1,12 +1,13 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, UnauthorizedException } from '@ilos/common';
+import { contentWhitelistMiddleware } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/login.contract';
 import { alias } from '../shared/user/login.schema';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
+import { challengePasswordMiddleware } from '../middlewares/ChallengePasswordMiddleware';
 
 /*
  * Authenticate user by email & pwd - else throws forbidden error
@@ -15,22 +16,16 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    ['content.whitelist', userWhiteListFilterOutput],
+    challengePasswordMiddleware({ emailPath: 'email', passwordPath: 'password' }),
+    contentWhitelistMiddleware(...userWhiteListFilterOutput),
   ],
 })
 export class LoginUserAction extends AbstractAction {
-  constructor(
-    private authRepository: AuthRepositoryProviderInterfaceResolver,
-    private userRepository: UserRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (!(await this.authRepository.challengePasswordByEmail(params.email, params.password))) {
-      throw new UnauthorizedException();
-    }
-
     const user = await this.userRepository.findByEmail(params.email);
     switch (user.status) {
       case 'pending':

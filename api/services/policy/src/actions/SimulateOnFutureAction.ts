@@ -1,5 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import { differenceInSeconds } from 'date-fns';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnFuture.contract';
@@ -18,8 +19,10 @@ import { v4 } from 'uuid';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['journey.create']],
-    ['context_extract', { operator_id: 'call.user.operator_id' }],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      operator: 'operator.simulate.future',
+      registry: 'registry.simulate.future',
+    }),
     ['validate', alias],
   ],
 })
@@ -110,7 +113,7 @@ export class SimulateOnFutureAction extends AbstractAction {
       has_travel_pass: 'travel_pass' in target.identity,
       datetime: target.start.datetime,
       seats: 'seats' in target ? target.seats : 0,
-      duration: differenceInSeconds(target.end.datetime, target.start.datetime), // TODO !
+      duration: differenceInSeconds(target.end.datetime, target.start.datetime),
       distance: target.distance,
       cost: 'contribution' in target ? target.contribution : 0,
       start_territory_id: await this.territoryRepository.findByPoint(target.start),

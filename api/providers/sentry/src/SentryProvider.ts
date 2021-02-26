@@ -35,7 +35,7 @@ export class SentryProvider implements ProviderInterface {
             return null;
           }
 
-          console.log(`[sentry event] #${event.event_id} ${event.transaction} : ${hint.originalException.toString()}`);
+          console.info(`[sentry event] #${event.event_id} ${event.transaction} : ${hint.originalException.toString()}`);
 
           return event;
         },

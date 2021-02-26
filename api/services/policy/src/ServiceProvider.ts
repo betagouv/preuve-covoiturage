@@ -1,15 +1,9 @@
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PermissionMiddleware } from '@pdc/provider-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import {
-  ScopeToSelfMiddleware,
-  ChannelServiceWhitelistMiddleware,
-  ContextExtractMiddleware,
-  ValidateDateMiddleware,
-} from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { config } from './config';
 import { binding as createSchemaBinding } from './shared/policy/create.schema';
@@ -42,7 +36,7 @@ import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProv
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 
-import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
+import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateRuleParametersMiddleware';
 
 import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 import { SeedCommand } from './commands/SeedCommand';
@@ -54,7 +48,6 @@ import { SeedCommand } from './commands/SeedCommand';
     CampaignPgRepositoryProvider,
     MetadataProvider,
     TripRepositoryProvider,
-    ['validate.rules', ValidateRuleParametersMiddleware],
     PolicyEngine,
     IncentiveRepositoryProvider,
     TerritoryRepositoryProvider,
@@ -90,12 +83,9 @@ import { SeedCommand } from './commands/SeedCommand';
   ],
   queues: ['campaign'],
   middlewares: [
-    ['can', PermissionMiddleware],
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['scope.it', ScopeToSelfMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
-    ['context_extract', ContextExtractMiddleware],
-    ['validate.date', ValidateDateMiddleware],
+    validateRuleParametersMiddlewareBinding,
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
