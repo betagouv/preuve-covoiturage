@@ -26,6 +26,8 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
   styleUrls: ['./certificate-list.component.scss'],
 })
 export class CertificateListComponent extends DestroyObservable implements OnInit {
+  public readonly PAGE_SIZE = 25;
+
   certificateForm: FormGroup;
   filterForm: FormGroup;
   constructor(
@@ -40,7 +42,6 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     super();
   }
   @ViewChild('paginator', { static: true }) paginator: MatPaginator;
-  public readonly PAGE_SIZE = 20;
 
   length = 0;
   startIndex = 0;
