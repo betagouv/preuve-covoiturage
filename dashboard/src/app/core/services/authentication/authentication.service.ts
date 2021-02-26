@@ -152,13 +152,14 @@ export class AuthenticationService {
     );
   }
 
-  public changePassword(oldPassword: string, newPassword: string): Observable<any> {
-    const jsonRPCParam = new JsonRPCParam<ChangePasswordParam>('user:changePassword', {
-      old_password: oldPassword,
-      new_password: newPassword,
-    });
-
-    return this.jsonRPC.callOne(jsonRPCParam);
+  public changePassword(_id: number, old_password: string, new_password: string): Observable<any> {
+    return this.jsonRPC.callOne(
+      new JsonRPCParam<ChangePasswordParam>('user:changePassword', {
+        _id,
+        old_password,
+        new_password,
+      }),
+    );
   }
 
   public hasAnyPermission(permissions: PermissionType[]): boolean {
