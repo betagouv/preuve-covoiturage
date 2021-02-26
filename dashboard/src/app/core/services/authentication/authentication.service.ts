@@ -155,7 +155,7 @@ export class AuthenticationService {
   public changePassword(_id: number, old_password: string, new_password: string): Observable<any> {
     return this.jsonRPC.callOne(
       new JsonRPCParam<ChangePasswordParam>('user:changePassword', {
-        _id,
+        // _id,
         old_password,
         new_password,
       }),
