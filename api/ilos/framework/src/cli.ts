@@ -8,10 +8,20 @@ Bootstrap.createFromPath().then((app) => {
   app
     .boot(command, ...opts)
     .then(() => {
-      console.log('[ilos] framework ready');
+      console.info(`
+
+        |      ,sss.
+      | | |    $^,^$       ██╗██╗      ██████╗ ███████╗
+      |_|_|   _/$$$\\_      ██║██║     ██╔═══██╗██╔════╝
+        |   /'  ?$?  \`.    ██║██║     ██║   ██║███████╗
+        ;,-' /\\ ,, /. |    ██║██║     ██║   ██║╚════██║
+        '-./' ;    ;: |    ██║███████╗╚██████╔╝███████║
+        |     |\`  '|\`,;    ╚═╝╚══════╝ ╚═════╝ ╚══════╝
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`);
     })
     .catch((e) => {
-      console.error(e.message);
+      console.error(e.message, e);
       process.exit(1);
     });
 });

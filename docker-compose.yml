@@ -44,7 +44,8 @@ services:
     volumes:
       - .:/code
     working_dir: '/code/api'
-    command: 'yarn start:http'
+    command: 'bash -c "yarn start:http | pino-pretty"'
+    tty: true
     ports:
       - 8080:8080
     env_file: ./api/.env
