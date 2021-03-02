@@ -16,7 +16,7 @@ const emailInputSelector = loginFormInputsSelectors.get('email');
 const passwordInputSelector = loginFormInputsSelectors.get('mot de passe');
 const submitButtonSelector = loginFormInputsSelectors.get('boutton connexion');
 
-Cypress.Commands.add('login', (email, password) => {
+Cypress.Commands.add('login', function (email, password) {
   cy.clearCookies();
   cy.intercept('POST', '/login').as('loginRequest');
 
@@ -45,3 +45,10 @@ Cypress.Commands.add('login', (email, password) => {
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+// import { defineParameterType } from 'cucumber';
+// defineParameterType({
+//     name: 'color',
+//     regexp: /red|blue|yellow/,
+//     transformer: s => new Color(s)
+// })

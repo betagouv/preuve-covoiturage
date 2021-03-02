@@ -1,7 +1,7 @@
 import { Then } from 'cypress-cucumber-preprocessor/steps';
 import { elementsSelectors } from '../../support/elementsSelectors';
 
-Then(`je vois {string}`, (elementName) => {
+Then(`je vois {string}`, function (elementName) {
   if (!elementsSelectors.has(elementName)) {
     throw new Error(`Cant find element named ${elementName}`);
   }

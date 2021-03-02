@@ -10,7 +10,7 @@ const usersCredentials = new Map([
   ],
 ]);
 
-Given('je suis connecté.e comme {string}', (userType) => {
+Given('je suis connecté.e comme {string}', function (userType) {
   if (!usersCredentials.has(userType)) {
     throw new Error(`Cant find user of type ${userType}`);
   }

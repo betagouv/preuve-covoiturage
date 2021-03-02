@@ -1,7 +1,7 @@
 import { When } from 'cypress-cucumber-preprocessor/steps';
 import { formInputsSelectors, elementsSelectors } from '../../support/elementsSelectors';
 
-When(`je remplis {string} avec les données suivantes :`, (elementName, dataTable) => {
+When(`je remplis {string} avec les données suivantes :`, function (elementName, dataTable) {
   if (!elementsSelectors.has(elementName) || !formInputsSelectors.has(elementName)) {
     throw new Error(`Cant find element named ${elementName}`);
   }

@@ -1,7 +1,7 @@
 import { And } from 'cypress-cucumber-preprocessor/steps';
 import { elementsSelectors } from '../../support/elementsSelectors';
 
-And(`je vois que {string} n'inclut pas {string}`, (elementName, elementAssertion) => {
+And(`je vois que {string} n'inclut pas {string}`, function (elementName, elementAssertion) {
   if (!elementsSelectors.has(elementName)) {
     throw new Error(`Cant find element named ${elementName}`);
   }

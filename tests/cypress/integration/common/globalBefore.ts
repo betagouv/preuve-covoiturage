@@ -1,7 +1,6 @@
 import { requests } from '../../support/requests';
 
-before(() => {
-  // throw new Error(JSON.stringify(requests));
+before(function () {
   for (const [textBinding, [binding, method]] of requests) {
     cy.log(`binding "${method}" request to "${binding} (${textBinding})"`);
 
