@@ -1,10 +1,7 @@
 import { Then } from 'cypress-cucumber-preprocessor/steps';
-import { elementsSelectors } from '../../support/elementsSelectors';
+import '../../support/parameters/elementSelectorName';
 
-Then(`je vois {string}`, function (elementName) {
-  if (!elementsSelectors.has(elementName)) {
-    throw new Error(`Cant find element named ${elementName}`);
-  }
-  cy.log(`try to find ${elementName} with ${elementsSelectors.get(elementName)}`);
-  cy.get(elementsSelectors.get(elementName)).should('be.visible');
+Then(`je vois {elementSelectorName}`, function (elementSelector) {
+  cy.log(`try to find ${elementSelector}`);
+  cy.get(elementSelector).should('be.visible');
 });

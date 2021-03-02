@@ -1,4 +1,4 @@
-import { formInputsSelectors } from './elementsSelectors';
+import { getFormSelectorsFromName } from './helpers/getFormSelectorsFromName';
 
 // Must be declared global to be detected by typescript (allows import/export)
 // eslint-disable @typescript/interface-name
@@ -11,21 +11,18 @@ declare global {
   }
 }
 
-const loginFormInputsSelectors = formInputsSelectors.get('le formulaire de connexion');
-const emailInputSelector = loginFormInputsSelectors.get('email');
-const passwordInputSelector = loginFormInputsSelectors.get('mot de passe');
-const submitButtonSelector = loginFormInputsSelectors.get('boutton connexion');
-
 Cypress.Commands.add('login', function (email, password) {
   cy.clearCookies();
   cy.intercept('POST', '/login').as('loginRequest');
-
   cy.visit('/');
 
-  cy.get(emailInputSelector).type(email).should('have.value', email);
+  const loginFormMap = getFormSelectorsFromName('le formulaire de connexion');
+  const emailInputSelector = loginFormMap.get('email');
+  const passwordInputSelector = loginFormMap.get('mot de passe');
+  const submitButtonSelector = loginFormMap.get('boutton connexion');
 
-  cy.get(passwordInputSelector).type(password).should('have.value', password);
-
+  cy.get(emailInputSelector.selector).type(email).should('have.value', email);
+  cy.get(passwordInputSelector.selector).type(password).should('have.value', password);
   cy.get(submitButtonSelector.selector).click();
 
   cy.wait('@loginRequest');
@@ -45,10 +42,3 @@ Cypress.Commands.add('login', function (email, password) {
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-
-// import { defineParameterType } from 'cucumber';
-// defineParameterType({
-//     name: 'color',
-//     regexp: /red|blue|yellow/,
-//     transformer: s => new Color(s)
-// })

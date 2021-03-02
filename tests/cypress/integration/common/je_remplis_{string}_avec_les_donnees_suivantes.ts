@@ -1,25 +1,16 @@
 import { When } from 'cypress-cucumber-preprocessor/steps';
-import { formInputsSelectors, elementsSelectors } from '../../support/elementsSelectors';
+import '../../support/parameters/formSelectorName';
 
-When(`je remplis {string} avec les données suivantes :`, function (elementName, dataTable) {
-  if (!elementsSelectors.has(elementName) || !formInputsSelectors.has(elementName)) {
-    throw new Error(`Cant find element named ${elementName}`);
-  }
-
-  const currentFormInputsSelectors = formInputsSelectors.get(elementName);
-
+When(`je remplis {formSelectorName} avec les données suivantes :`, function (formSelectorMap, dataTable) {
   const data = dataTable.rawTable.map(([fieldName, fieldValue]) => {
-    if (!currentFormInputsSelectors.has(fieldName)) {
-      throw new Error(`Cant find element named ${fieldName} in ${elementName}`);
+    if (!formSelectorMap.has(fieldName)) {
+      throw new Error(`Cant find element named ${fieldName}`);
     }
-    const formInputSelector = currentFormInputsSelectors.get(fieldName);
-    return typeof formInputSelector === 'string'
-      ? [{ selector: formInputSelector, type: 'input' }, fieldValue]
-      : [formInputSelector, fieldValue];
+    return [formSelectorMap.get(fieldName), fieldValue];
   });
 
-  for (const [input, value] of data) {
-    const { selector: inputSelector, type: inputType } = input;
+  for (const [inputDefinition, value] of data) {
+    const { selector: inputSelector, type: inputType } = inputDefinition;
     switch (inputType) {
       case 'input':
         cy.get(inputSelector).type(value).should('have.value', value);

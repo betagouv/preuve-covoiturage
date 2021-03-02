@@ -1,10 +1,7 @@
 import { When } from 'cypress-cucumber-preprocessor/steps';
-import { elementsSelectors } from '../../support/elementsSelectors';
+import '../../support/parameters/elementSelectorName';
 
-When(`je clique sur {string}`, function (elementName) {
-  if (!elementsSelectors.has(elementName)) {
-    throw new Error(`Cant find element named ${elementName}`);
-  }
-  cy.log(`try to find ${elementName} with ${elementsSelectors.get(elementName)}`);
-  cy.get(elementsSelectors.get(elementName)).click();
+When(`je clique sur {elementSelectorName}`, function (elementSelector) {
+  cy.log(`try to find ${elementSelector}`);
+  cy.get(elementSelector).click();
 });
