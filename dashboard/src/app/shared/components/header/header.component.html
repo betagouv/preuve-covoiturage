@@ -4,7 +4,7 @@
     <div class="navbar-left">
       <!-- logo -->
       <div class="navbar-logo">
-        <a [href]="homeLink" title="Registre de preuve de covoiturage">
+        <a routerLink="/" title="Registre de preuve de covoiturage">
           <img src="assets/img/covoituragebetagouvfr.svg" alt="Registre de preuve de covoiturage" />
         </a>
       </div>
@@ -18,7 +18,7 @@
       <div
         *ngIf="(user && hasTerritoryGroup) || hasRegistryGroup"
         class="navbar-menu-item campaign-menu-item"
-        [routerLink]="routerLink"
+        [routerLink]="campaignLink"
         routerLinkActive="active"
       >
         Campagnes

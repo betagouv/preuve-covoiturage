@@ -6,4 +6,4 @@ import { validatePhone } from './phoneCustomFormat';
  */
 export const phonetruncCustomFormat: Format = (data: string): boolean => {
   return validatePhone(`${data}00`);
-}
+};

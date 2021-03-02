@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 import { DEFAULT_TRIP_LIMIT } from '~/core/const/filter.const';
 
 import { expectedFilter, filterEndMoment, filterStartMoment } from '../../expectedApiPayload/expectedFilter';
@@ -8,7 +8,7 @@ import { territoryStub } from '../../stubs/territory/territory.find';
 import { operatorStub } from '../../stubs/operator/operator.find';
 import { CI_WAIT } from '../../../config/ci.config';
 
-export function cypress_filter(e2e = false, group: UserGroupEnum): void {
+export function cypress_filter(e2e = false, group: Groups): void {
   it('clicks on trip section', () => {
     cy.get('.Header-menu .Header-menu-item.trip-menu-item').click();
   });
@@ -61,7 +61,7 @@ export function cypress_filter(e2e = false, group: UserGroupEnum): void {
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
   });
 
-  if (group === UserGroupEnum.OPERATOR || group === UserGroupEnum.REGISTRY) {
+  if (group === Groups.Operator || group === Groups.Registry) {
     it('chooses territories', () => {
       cy.get('app-territories-autocomplete mat-form-field input').type(e2e ? 'a' : territoryStub.name);
       cy.get('.mat-autocomplete-panel mat-option:first-child').click();
@@ -81,7 +81,7 @@ export function cypress_filter(e2e = false, group: UserGroupEnum): void {
     cy.get('.filter-trip-types mat-form-field:nth-child(2)').click();
     cy.get('.mat-select-panel mat-option:first-child').click();
   });
-  if (group === UserGroupEnum.TERRITORY || group === UserGroupEnum.REGISTRY) {
+  if (group === Groups.Territory || group === Groups.Registry) {
     it('chooses operators', () => {
       if (e2e) {
         cy.get('app-operators-autocomplete mat-form-field input').click();
@@ -111,14 +111,8 @@ export function cypress_filter(e2e = false, group: UserGroupEnum): void {
           ...expectedFilter,
           hour: {
             // time zone hacky fix until ddb has timezones
-            start: moment()
-              .hours(expectedFilter.hour.start)
-              .utc()
-              .hours(),
-            end: moment()
-              .hours(expectedFilter.hour.end)
-              .utc()
-              .hours(),
+            start: moment().hours(expectedFilter.hour.start).utc().hours(),
+            end: moment().hours(expectedFilter.hour.end).utc().hours(),
           },
           skip: 0,
           limit: DEFAULT_TRIP_LIMIT,
@@ -165,11 +159,11 @@ export function cypress_filter(e2e = false, group: UserGroupEnum): void {
 
         const filter = {};
 
-        if (group === UserGroupEnum.TERRITORY) {
+        if (group === Groups.Territory) {
           filter['territory_id'] = [territoryStub._id];
         }
 
-        if (group === UserGroupEnum.OPERATOR) {
+        if (group === Groups.Operator) {
           filter['operator_id'] = [operatorStub._id];
         }
 

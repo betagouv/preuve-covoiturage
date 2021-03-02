@@ -20,7 +20,7 @@ import {
   PerKmRetributionRule,
   RangeRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-rules.interface';
-import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum';
+import { Groups } from '../../../src/app/core/enums/user/groups';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
@@ -28,12 +28,8 @@ import { operatorStubs } from '../stubs/operator/operator.list';
 import { cypress_logging_users } from '../stubs/auth/login';
 
 export class CypressExpectedCampaign {
-  static startMoment = Cypress.moment()
-    .add(1, 'days')
-    .startOf('day');
-  static endMoment = Cypress.moment()
-    .add(3, 'months')
-    .endOf('day');
+  static startMoment = Cypress.moment().add(1, 'days').startOf('day');
+  static endMoment = Cypress.moment().add(3, 'months').endOf('day');
 
   static maxAmount = 10000;
   static maxTrips = 50000;
@@ -157,7 +153,7 @@ export class CypressExpectedCampaign {
       },
       status: CampaignStatusEnum.DRAFT,
       parent_id: null,
-      territory_id: cypress_logging_users[UserGroupEnum.TERRITORY].territory_id,
+      territory_id: cypress_logging_users[Groups.Territory].territory_id,
     });
   }
 

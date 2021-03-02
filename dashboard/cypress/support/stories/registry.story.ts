@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { cypress_filter } from '../reusables/filter/cypress_filter';
 import { cypress_profile } from '../reusables/profile/cypress_profile';
@@ -19,7 +19,7 @@ export function testRegistryStory(config: TestsInterface['registry']) {
   // FILTERS
   if (config.filters) {
     describe('Filter trips', () => {
-      cypress_filter(false, UserGroupEnum.REGISTRY);
+      cypress_filter(false, Groups.Registry);
     });
   }
 

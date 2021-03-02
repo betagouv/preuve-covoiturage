@@ -1,5 +1,5 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { CampaignsGenerator } from '../generators/campaigns.generator';
 import { campaignStubs } from './campaign/campaign.list';
@@ -7,11 +7,11 @@ import { territoryStubs } from './territory/territory.list';
 import { operatorStubs } from './operator/operator.list';
 import { territoryStub } from './territory/territory.find';
 
-export function stubMainLists(group: UserGroupEnum) {
+export function stubMainLists(group: Groups) {
   let url = '/rpc?methods=';
-  if (group === UserGroupEnum.TERRITORY) url += 'operator:list,territory:list,campaign:list,territory:find';
-  if (group === UserGroupEnum.OPERATOR) url += 'operator:list,territory:list,campaign:list,operator:find';
-  if (group === UserGroupEnum.REGISTRY) url += 'operator:list,territory:list,campaign:list';
+  if (group === Groups.Territory) url += 'operator:list,territory:list,campaign:list,territory:find';
+  if (group === Groups.Operator) url += 'operator:list,territory:list,campaign:list,operator:find';
+  if (group === Groups.Registry) url += 'operator:list,territory:list,campaign:list';
 
   cy.route({
     url,
@@ -41,7 +41,7 @@ export function stubMainLists(group: UserGroupEnum) {
           },
         },
       ];
-      if (group === UserGroupEnum.TERRITORY) {
+      if (group === Groups.Territory) {
         ret.push({
           id: 1568215196898,
           jsonrpc: '2.0',
@@ -51,7 +51,7 @@ export function stubMainLists(group: UserGroupEnum) {
           },
         });
       }
-      if (group === UserGroupEnum.OPERATOR) {
+      if (group === Groups.Operator) {
         ret.push({
           id: 1568215196898,
           jsonrpc: '2.0',

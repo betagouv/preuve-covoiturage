@@ -1,5 +1,5 @@
 /// <reference types="Cypress" />
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { cypress_addUser } from './addUser.cypress';
 import { closeNotification } from '../notification.cypress';
@@ -15,17 +15,17 @@ export function cypress_users(e2e = false): void {
   });
 
   it('add a registry admin user', () => {
-    cypress_addUser(UserGroupEnum.REGISTRY, e2e);
+    cypress_addUser(Groups.Registry, e2e);
   });
   closeNotification();
 
   it('add a territory admin user', () => {
-    cypress_addUser(UserGroupEnum.TERRITORY, e2e);
+    cypress_addUser(Groups.Territory, e2e);
   });
   closeNotification();
 
   it('add a operator admin user', () => {
-    cypress_addUser(UserGroupEnum.OPERATOR, e2e);
+    cypress_addUser(Groups.Operator, e2e);
   });
 
   closeNotification();

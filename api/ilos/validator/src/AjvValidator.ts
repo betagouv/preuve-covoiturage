@@ -28,10 +28,9 @@ export class AjvValidator implements ValidatorInterface {
 
     // activate ajv-keywords plugin
     ajvKeywords(this.ajv);
-    addFormats(this.ajv)
+    addFormats(this.ajv);
 
-    this.isSchemaSecure = new ajv.default({ strict: false })
-      .compile(jsonSchemaSecureJson);
+    this.isSchemaSecure = new ajv.default({ strict: false }).compile(jsonSchemaSecureJson);
   }
 
   registerValidator(definition: { [k: string]: any }, target?: NewableType<any> | string): ValidatorInterface {
@@ -54,7 +53,7 @@ export class AjvValidator implements ValidatorInterface {
     }
   }
 
-  protected validateSchema(schema: {[k: string]: any}): void {
+  protected validateSchema(schema: { [k: string]: any }): void {
     if (!this.ajv.validateSchema(schema)) {
       throw new Error(this.ajv.errorsText(this.ajv.errors));
     }
@@ -69,16 +68,18 @@ export class AjvValidator implements ValidatorInterface {
       console.debug(`Adding validator ${schema.$id} | ${target}`);
       this.validateSchema(schema);
       if (target) {
-        const compiledSchema = typeof target === 'string' ? this.ajv.compile({
-          $id: target,
-          ...schema,
-        }): this.ajv.compile(schema);
+        const compiledSchema =
+          typeof target === 'string'
+            ? this.ajv.compile({
+                $id: target,
+                ...schema,
+              })
+            : this.ajv.compile(schema);
         this.bindings.set(target, compiledSchema);
       } else {
         this.ajv.addSchema(schema);
       }
       return this;
-
     } catch (e) {
       console.error(`Error during adding validator ${schema.$id} | ${target} | ${e.message}`);
       console.error(e.message, e);
@@ -90,13 +91,13 @@ export class AjvValidator implements ValidatorInterface {
     const resolver = schema ? schema : data.constructor;
 
     if (!this.bindings.has(resolver)) {
-      throw new Error('No schema provided for this type');
+      console.error(`No schema provided for this type (${resolver})`);
+      throw new Error(`No schema provided for this type (${resolver})`);
     }
     const validator = this.bindings.get(resolver);
     const valid = await validator(data);
-    if (!valid) {
-      throw new Error(JSON.stringify(validator.errors));
-    }
+    if (!valid) throw new Error(this.ajv.errorsText(validator.errors));
+
     return true;
   }
 

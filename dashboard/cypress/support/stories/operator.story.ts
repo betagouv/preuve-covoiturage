@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { cypress_filter } from '../reusables/filter/cypress_filter';
 import { cypress_profile } from '../reusables/profile/cypress_profile';
@@ -42,7 +42,7 @@ export function testOperatorStory(config: TestsInterface['operator']) {
   // FILTERS
   if (config.filters) {
     describe('Filter trips', () => {
-      cypress_filter(false, UserGroupEnum.OPERATOR);
+      cypress_filter(false, Groups.Operator);
     });
   }
 }

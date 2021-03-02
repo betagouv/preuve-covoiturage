@@ -5,12 +5,12 @@ import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Outpu
 
 import { User } from '~/core/entities/authentication/user';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { USER_ROLES_FR, Roles } from '~/core/enums/user/roles';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 @Component({
   selector: 'app-users-list',
@@ -19,7 +19,7 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 })
 export class UsersListComponent extends DestroyObservable implements OnInit, AfterViewInit, OnChanges {
   @Input() users: User[] = [];
-  @Input() userGroup: UserGroupEnum;
+  @Input() userGroup: Groups;
   @Input() canEditUser = false;
   @Output() editUser = new EventEmitter<User>();
 
@@ -27,7 +27,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
 
   constructor(
     public userStoreService: UserStoreService,
-    public authService: AuthenticationService,
+    public auth: AuthenticationService,
     private toastr: ToastrService,
     private dialogService: DialogService,
     private _commonDataService: CommonDataService,
@@ -41,9 +41,9 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('userGroup' in changes) {
-      if (this.userGroup === UserGroupEnum.OPERATOR) {
+      if (this.userGroup === Groups.Operator) {
         this.displayedColumns = ['name', 'email', 'operator', 'role', 'actions'];
-      } else if (this.userGroup === UserGroupEnum.TERRITORY) {
+      } else if (this.userGroup === Groups.Territory) {
         this.displayedColumns = ['name', 'email', 'territory', 'role', 'actions'];
       } else {
         this.displayedColumns = ['name', 'email', 'role', 'actions'];
@@ -55,14 +55,14 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
     if (!this.userGroup) {
       return false;
     }
-    return this.userGroup === UserGroupEnum.OPERATOR;
+    return this.userGroup === Groups.Operator;
   }
 
   get isTerritory(): boolean {
     if (!this.userGroup) {
       return false;
     }
-    return this.userGroup === UserGroupEnum.TERRITORY;
+    return this.userGroup === Groups.Territory;
   }
 
   onDelete(user: User): void {
@@ -93,17 +93,19 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
 
   public canReInvite(user: User): boolean {
     return (
-      (user.status === 'invited' || user.status === 'pending') &&
-      this.authService.hasAnyPermission(['user.invite']) &&
-      !this.isCurrentUser(user._id)
+      (user.status === 'invited' || user.status === 'pending') && this.auth.isAdmin() && !this.isCurrentUser(user._id)
     );
   }
 
-  public isCurrentUser(id: number): boolean {
-    return this.authService.user._id === id;
+  public canDelete(user: User): boolean {
+    return this.auth.isAdmin() && !this.isCurrentUser(user._id);
   }
 
-  public getFrenchRole(role: UserRoleEnum): string {
+  public isCurrentUser(id: number): boolean {
+    return this.auth.user._id === id;
+  }
+
+  public getFrenchRole(role: Roles): string {
     const translatableRole = role.split('.')[1];
     return USER_ROLES_FR[translatableRole];
   }
@@ -119,7 +121,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
   }
 
   public onSendInvitation(user: User): void {
-    this.authService
+    this.auth
       .sendInviteEmail(user)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {

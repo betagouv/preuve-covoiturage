@@ -1,4 +1,5 @@
-// tslint:disable:variable-name
+import { endOfDay } from 'date-fns';
+
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
@@ -22,7 +23,7 @@ import * as middlewareConfig from '../config/middlewares';
       startPath: 'date.start',
       endPath: 'date.end',
       minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
-      maxEnd: () => new Date(),
+      maxEnd: () => endOfDay(new Date().getTime() - 86400000),
       applyDefault: true,
     }),
   ],

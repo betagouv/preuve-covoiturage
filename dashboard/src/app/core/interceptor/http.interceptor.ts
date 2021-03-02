@@ -1,6 +1,7 @@
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { get } from 'lodash-es';
 import { Router } from '@angular/router';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
@@ -31,8 +32,8 @@ export class HttpApiInterceptor implements HttpInterceptor {
     const clonedRequest: HttpRequest<any> = req.clone(update);
 
     return next.handle(clonedRequest).pipe(
-      catchError((error) => {
-        switch (error.status) {
+      catchError((err) => {
+        switch (err.status) {
           case 401:
             // ignore toastr error
             break;
@@ -41,7 +42,7 @@ export class HttpApiInterceptor implements HttpInterceptor {
              * Display a waiting time in seconds to the user
              * Add info() to the console
              */
-            const { limit, current, remaining, resetTime } = error.error.error;
+            const { limit, current, remaining, resetTime } = err.error.error;
             const wait = new Date(resetTime).getTime() - new Date().getTime();
 
             this.toastr.error(`merci de réessayer dans ${(wait / 1000) | 0}s`, "Trop d'essais de connexion");
@@ -55,10 +56,12 @@ export class HttpApiInterceptor implements HttpInterceptor {
             break;
 
           default:
-            this.toastr.error(error.message);
+            // log default errors to avoid doubling on toaster messages
+            const message = get(err, 'error.error.data', err.message);
+            console.error(message);
         }
 
-        return throwError(error);
+        return throwError(err);
       }),
     );
   }

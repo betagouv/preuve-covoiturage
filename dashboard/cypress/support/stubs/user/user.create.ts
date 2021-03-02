@@ -1,10 +1,10 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { expectedPatchedProfiles } from '../../expectedApiPayload/expectedProfile';
 import { expectedNewUsers } from '../../expectedApiPayload/expectedUser';
 
-export function stubUserCreate(group: UserGroupEnum) {
+export function stubUserCreate(group: Groups) {
   cy.route({
     method: 'POST',
     url: '/rpc?methods=user:create',

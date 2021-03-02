@@ -19,5 +19,5 @@ export function validatePhone(data: string): boolean {
  * - https://archives.arcep.fr/index.php?id=8789
  */
 export const phoneCustomFormat: Format = (data: string): boolean => {
-  return validatePhone(data); 
-}
+  return validatePhone(data);
+};

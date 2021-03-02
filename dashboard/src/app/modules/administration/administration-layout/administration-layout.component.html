@@ -6,7 +6,7 @@
         <ng-container *ngFor="let link of menu">
           <a
             mat-tab-link
-            *ngIf="showTab(link)"
+            *ngIf="link.show()"
             [routerLink]="link.path"
             routerLinkActive
             #rla="routerLinkActive"

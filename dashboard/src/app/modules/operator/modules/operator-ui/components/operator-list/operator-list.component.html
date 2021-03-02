@@ -12,10 +12,10 @@
   <!-- Actions -->
   <ng-container matColumnDef="actions">
     <td mat-cell *matCellDef="let operator" class="Operators-list-item-actions">
-      <a *ngIf="authenticationService.hasAnyPermission([this.editPermission])" (click)="onEdit(operator)">
+      <a *ngIf="canEdit" (click)="onEdit(operator)">
         <mat-icon color="primary" matTooltip="Editer">edit</mat-icon>
       </a>
-      <a *ngIf="authenticationService.hasAnyPermission([deletePermission])" (click)="onDelete(operator)">
+      <a *ngIf="canDelete" (click)="onDelete(operator)">
         <mat-icon color="error" matTooltip="Supprimer">delete_outline</mat-icon>
       </a>
     </td>

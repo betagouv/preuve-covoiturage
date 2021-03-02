@@ -18,8 +18,8 @@ export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateM
     }
 
     const { startPath, endPath, minStart: minStartFn, maxEnd: maxEndFn, applyDefault: applyDefaultOpt } = options;
-    const minStart: Date | undefined = minStartFn ? minStartFn() : undefined;
-    const maxEnd: Date | undefined = maxEndFn ? maxEndFn() : undefined;
+    const minStart: Date | undefined = minStartFn ? minStartFn(params, context) : undefined;
+    const maxEnd: Date | undefined = maxEndFn ? maxEndFn(params, context) : undefined;
     const applyDefault = applyDefaultOpt ?? false;
     const startDate: Date | undefined = get(params, startPath, undefined);
     const endDate: Date | undefined = get(params, endPath, undefined);
@@ -52,8 +52,8 @@ export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateM
 export type ValidateDateMiddlewareParams = {
   startPath: string;
   endPath: string;
-  minStart?: () => Date;
-  maxEnd?: () => Date;
+  minStart?: (params: any, context: ContextType) => Date;
+  maxEnd?: (params: any, context: ContextType) => Date;
   applyDefault?: boolean;
 };
 

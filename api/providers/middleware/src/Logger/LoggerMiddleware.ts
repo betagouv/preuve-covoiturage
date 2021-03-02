@@ -5,10 +5,15 @@ import { UnconfiguredMiddleware } from '../interfaces';
 @middleware()
 export class LoggerMiddleware implements MiddlewareInterface<LoggerMiddlewareParams> {
   async process(params: ParamsType, context: ContextType, next: Function): Promise<ResultType> {
-    console.debug('Before middlewares', { params, context });
-    const response = await next(params, context);
-    console.debug('After middlewares', { response, params, context });
-    return response;
+    try {
+      console.debug('Before middlewares', { params, context });
+      const response = await next(params, context);
+      console.debug('After middlewares', { response, params, context });
+      return response;
+    } catch (e) {
+      console.debug('ERROR', { e, params, context });
+      throw e;
+    }
   }
 }
 

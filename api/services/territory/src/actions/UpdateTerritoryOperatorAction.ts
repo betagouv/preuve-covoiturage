@@ -11,7 +11,7 @@ import { alias } from '../shared/territory/updateOperator.schema';
 @handler({
   ...configHandler,
   middlewares: [
-    hasPermissionByScopeMiddleware(undefined, ['operator.update', 'call.user.operator_id', 'operator_id']),
+    hasPermissionByScopeMiddleware(undefined, ['operator.territory.update', 'call.user.operator_id', 'operator_id']),
     ['validate', alias],
   ],
 })

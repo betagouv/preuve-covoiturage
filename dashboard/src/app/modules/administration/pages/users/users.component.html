@@ -1,9 +1,7 @@
 <div class="Users">
   <div class="Users-list" [hidden]="editUserFormVisible">
     <div class="Users-list-header">
-      <h2>
-        Utilisateurs autorisés
-      </h2>
+      <h2>Utilisateurs autorisés</h2>
       <form [formGroup]="searchFilters">
         <mat-form-field appearance="outline">
           <mat-label>Rechercher</mat-label>
@@ -19,7 +17,7 @@
       <app-users-list
         *ngIf="usersToShow"
         [users]="usersToShow"
-        [canEditUser]="canEditUser$ | async"
+        [canEditUser]="canEditUser"
         (editUser)="showEditForm($event)"
       ></app-users-list>
       <mat-paginator
@@ -29,10 +27,7 @@
       ></mat-paginator>
     </div>
   </div>
-  <div
-    class="Users-add"
-    *ngIf="authenticationService.hasAnyPermission(['user.create', 'territory.users.add', 'operator.users.add'])"
-  >
+  <div class="Users-add" *ngIf="canCreateUser">
     <button
       mat-flat-button
       class="large"
@@ -43,9 +38,7 @@
       Ajouter un utilisateur
     </button>
     <ng-template #addUserBlock>
-      <h2>
-        Ajouter un utilisateur
-      </h2>
+      <h2>Ajouter un utilisateur</h2>
       <div class="Users-form">
         <app-create-edit-user-form
           [groupEditable]="false"

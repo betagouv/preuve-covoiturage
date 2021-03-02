@@ -11,7 +11,8 @@ import { get } from 'lodash';
 import { ConfiguredMiddleware } from '../interfaces';
 
 /**
- * Check if user has basePermission, if not check if contextPath equals paramsPath and challenge againts scoped permission.
+ * Check if user has basePermission, if not check if contextPath equals paramsPath and challenge
+ * against scoped permission.
  * Example :
  * [registry.user.list, [[ 'territory.user.list', 'call.user.territory_id', 'territory_id']]]
  *    ^ base permission       ^ scoped permission    ^ context path            ^ params path

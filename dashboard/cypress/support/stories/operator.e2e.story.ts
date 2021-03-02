@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { cypress_login } from '../reusables/auth/cypress_login';
 import { cypress_filter } from '../reusables/filter/cypress_filter';
@@ -15,7 +15,7 @@ export function operatorE2EStory(config: TestsInterface['operator']) {
     {
       email: 'operator@example.com',
       password: 'admin1234',
-      group: UserGroupEnum.OPERATOR,
+      group: Groups.Operator,
     },
     true,
   );
@@ -44,7 +44,7 @@ export function operatorE2EStory(config: TestsInterface['operator']) {
   if (config.filters) {
     // FILTERS
     describe('Filter trips', () => {
-      cypress_filter(true, UserGroupEnum.OPERATOR);
+      cypress_filter(true, Groups.Operator);
     });
   }
 

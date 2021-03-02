@@ -125,7 +125,7 @@
         <button type="button" class="large" (click)="onClose()" mat-button *ngIf="closable">Annuler</button>
 
         <button
-          *ngIf="authService.hasAnyPermission(['territory.update'])"
+          *ngIf="canUpdate"
           type="submit"
           class="large"
           mat-flat-button

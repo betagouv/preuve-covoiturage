@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { cypress_login } from '../reusables/auth/cypress_login';
 import { cypress_filter } from '../reusables/filter/cypress_filter';
@@ -21,7 +21,7 @@ export function territoryE2EStory(config: TestsInterface['territory']) {
     {
       email: 'territory@example.com',
       password: 'admin1234',
-      group: UserGroupEnum.TERRITORY,
+      group: Groups.Territory,
     },
     true,
   );
@@ -73,7 +73,7 @@ export function territoryE2EStory(config: TestsInterface['territory']) {
   if (config.filters) {
     // FILTERS
     describe('Filter trips', () => {
-      cypress_filter(true, UserGroupEnum.TERRITORY);
+      cypress_filter(true, Groups.Territory);
     });
   }
 

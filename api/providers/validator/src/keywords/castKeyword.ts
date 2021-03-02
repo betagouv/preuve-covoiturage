@@ -14,10 +14,7 @@ export const castKeyword: KeywordDefinition = {
   keyword: 'cast',
   modifying: true,
   errors: false,
-  compile: (castKeyword: string) => (
-    data: any,
-    dataCtx: any,
-  ): boolean => {
+  compile: (castKeyword: string) => (data: any, dataCtx: any): boolean => {
     if (castKeyword in castStore) {
       try {
         dataCtx.parentData[dataCtx.parentDataProperty] = castStore[castKeyword](data);

@@ -39,7 +39,6 @@ import { FindUserAction } from './actions/FindUserAction';
 import { ForgottenPasswordUserAction } from './actions/ForgottenPasswordUserAction';
 import { ListUserAction } from './actions/ListUserAction';
 import { LoginUserAction } from './actions/LoginUserAction';
-import { MeUserAction } from './actions/MeUserAction';
 import { NotifyUserAction } from './actions/NotifyUserAction';
 import { PatchUserAction } from './actions/PatchUserAction';
 import { SendConfirmEmailUserAction } from './actions/SendConfirmEmailUserAction';
@@ -93,7 +92,6 @@ import { challengeTokenMiddlewareBinding } from './middlewares/ChallengeTokenMid
     ForgottenPasswordUserAction,
     ListUserAction,
     LoginUserAction,
-    MeUserAction,
     NotifyUserAction,
     PatchUserAction,
     SendConfirmEmailUserAction,

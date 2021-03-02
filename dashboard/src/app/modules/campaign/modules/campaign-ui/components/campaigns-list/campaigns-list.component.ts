@@ -7,7 +7,6 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
@@ -37,7 +36,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   ngOnInit(): void {}
 
   showEdition(status: CampaignStatusEnum): boolean {
-    return status === CampaignStatusEnum.DRAFT && this.auth.hasAnyGroup([UserGroupEnum.TERRITORY]);
+    return status === CampaignStatusEnum.DRAFT && this.auth.isTerritory();
   }
 
   showValid(status: CampaignStatusEnum): boolean {
@@ -49,10 +48,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   }
 
   showDelete(status: CampaignStatusEnum): boolean {
-    return (
-      (status === CampaignStatusEnum.ARCHIVED || status === CampaignStatusEnum.DRAFT) &&
-      this.auth.hasAnyGroup([UserGroupEnum.TERRITORY])
-    );
+    return (status === CampaignStatusEnum.ARCHIVED || status === CampaignStatusEnum.DRAFT) && this.auth.isTerritory();
   }
 
   isEuro(unit: IncentiveUnitEnum): boolean {

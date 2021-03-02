@@ -6,6 +6,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { CommonDataService } from '~/core/services/common-data.service';
 import { Territory } from '~/core/entities/territory/territory';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { Roles } from '~/core/enums/user/roles';
 
 @Component({
   selector: 'app-territory',
@@ -16,17 +17,17 @@ export class TerritoryComponent extends DestroyObservable implements OnInit {
   public readOnly$: Observable<boolean>;
   public territory: Territory;
 
-  constructor(private _authService: AuthenticationService, private _commonDataService: CommonDataService) {
+  constructor(private auth: AuthenticationService, private commonData: CommonDataService) {
     super();
   }
 
   ngOnInit(): void {
-    this.readOnly$ = this._authService.user$.pipe(
+    this.readOnly$ = this.auth.user$.pipe(
       takeUntil(this.destroy$),
-      map((user) => user && !this._authService.hasAnyPermission(['territory.update'])),
+      map((user) => user && !this.auth.hasRole([Roles.TerritoryAdmin, Roles.TerritoryDemo, Roles.RegistryAdmin])),
     );
 
-    this._commonDataService.currentTerritory$
+    this.commonData.currentTerritory$
       .pipe(takeUntil(this.destroy$))
       .subscribe((territory) => (this.territory = territory));
   }

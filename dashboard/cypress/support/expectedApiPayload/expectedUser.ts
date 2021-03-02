@@ -1,36 +1,36 @@
 import { UserInterface } from '~/core/interfaces/user/profileInterface';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { Groups } from '~/core/enums/user/groups';
+import { Roles } from '~/core/enums/user/roles';
 
 import { operatorStub } from '../stubs/operator/operator.find';
 import { territoryStub } from '../stubs/territory/territory.find';
 
-export const expectedNewUsers: { [key in UserGroupEnum]: UserInterface } = {
+export const expectedNewUsers: { [key in Groups]: UserInterface } = {
   territories: <UserInterface>{
     firstname: 'Admin',
     lastname: 'Territoire',
-    group: UserGroupEnum.TERRITORY,
+    group: Groups.Territory,
     phone: '0612345678',
     email: 'registredepreuve@yopmail.com',
-    role: UserRoleEnum.TERRITORY_ADMIN,
+    role: Roles.TerritoryAdmin,
     territory_id: territoryStub._id,
   },
   operators: <UserInterface>{
     firstname: 'Admin',
     lastname: 'Opérateur',
-    group: UserGroupEnum.OPERATOR,
+    group: Groups.Operator,
     phone: '0612345678',
     email: 'registredepreuve@yopmail.com',
-    role: UserRoleEnum.OPERATOR_ADMIN,
+    role: Roles.OperatorAdmin,
     operator_id: operatorStub._id,
   },
   registry: <UserInterface>{
     firstname: 'Admin',
     lastname: 'Registre',
-    group: UserGroupEnum.REGISTRY,
+    group: Groups.Registry,
     phone: '0612345678',
     email: 'registredepreuve@yopmail.com',
-    role: UserRoleEnum.REGISTRY_ADMIN,
+    role: Roles.RegistryAdmin,
   },
 };
 

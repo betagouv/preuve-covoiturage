@@ -8,4 +8,4 @@ export const inseeCustomFormat: Format = (data: string): boolean => {
   } catch (e) {
     return false;
   }
-}
+};

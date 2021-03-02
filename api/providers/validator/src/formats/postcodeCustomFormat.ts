@@ -6,4 +6,4 @@ export const postcodeCustomFormat: Format = (data: string): boolean => {
   } catch (e) {
     return false;
   }
-}
+};

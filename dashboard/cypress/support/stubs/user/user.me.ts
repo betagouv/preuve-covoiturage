@@ -1,9 +1,9 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 import { cypress_logging_users } from '../auth/login';
 
-export function stubUserMe(type: UserGroupEnum) {
+export function stubUserMe(type: Groups) {
   cy.route({
     method: 'POST',
     url: '/rpc?methods=user:me',

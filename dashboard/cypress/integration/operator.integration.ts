@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { stubCampaignList } from '../support/stubs/campaign/campaign.list';
 import { stubStatList } from '../support/stubs/stat/stat.list';
@@ -41,7 +41,7 @@ context('OPERATOR', () => {
     cypress_login({
       email: 'operator@example.com',
       password: 'admin1234',
-      group: UserGroupEnum.OPERATOR,
+      group: Groups.Operator,
     });
   });
 
@@ -54,11 +54,11 @@ context('OPERATOR', () => {
       stubTripList(trips);
       stubStatList();
       stubOperatorPatchContacts();
-      stubMainLists(UserGroupEnum.OPERATOR);
+      stubMainLists(Groups.Operator);
 
-      stubLogin(UserGroupEnum.OPERATOR);
-      stubUserMe(UserGroupEnum.OPERATOR);
-      stubUserPatch(UserGroupEnum.OPERATOR);
+      stubLogin(Groups.Operator);
+      stubUserMe(Groups.Operator);
+      stubUserPatch(Groups.Operator);
       stubLogout();
 
       stubApplications(applications);

@@ -4,7 +4,7 @@ import {
   MaxTripsRetributionRule,
   OperatorIdsGlobalRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 import { operatorStubs } from '../stubs/operator/operator.list';
@@ -12,12 +12,8 @@ import { cypress_logging_users } from '../stubs/auth/login';
 import { campaignTemplateStubs } from '../stubs/campaign/campaign.list';
 
 export class CypressExpectedTemplates {
-  static startMoment = Cypress.moment()
-    .add(1, 'days')
-    .startOf('day');
-  static endMoment = Cypress.moment()
-    .add(3, 'months')
-    .endOf('day');
+  static startMoment = Cypress.moment().add(1, 'days').startOf('day');
+  static endMoment = Cypress.moment().add(3, 'months').endOf('day');
 
   static maxAmount = 10000;
   static maxTrips = 50000;
@@ -37,7 +33,7 @@ export class CypressExpectedTemplates {
           ],
           status: CampaignStatusEnum.DRAFT,
           parent_id: template._id,
-          territory_id: cypress_logging_users[UserGroupEnum.TERRITORY].territory_id,
+          territory_id: cypress_logging_users[Groups.Territory].territory_id,
         }),
     );
   }

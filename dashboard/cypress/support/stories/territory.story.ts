@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { cypress_filter } from '../reusables/filter/cypress_filter';
 import {
@@ -35,7 +35,7 @@ export function testTerritoryStory(config: TestsInterface['territory']): void {
   // TEST FILTERS
   if (config.filters) {
     describe('Filter trips', () => {
-      cypress_filter(false, UserGroupEnum.TERRITORY);
+      cypress_filter(false, Groups.Territory);
     });
   }
 

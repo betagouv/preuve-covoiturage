@@ -43,7 +43,11 @@ export class ListUserAction extends AbstractAction {
   public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
     const { operator_id, territory_id, ...pagination } = params;
 
-    const data = await this.userRepository.list({ operator_id, territory_id }, pagination);
+    const p: Partial<Pick<ParamsInterface, 'operator_id' | 'territory_id'>> = {};
+    if (typeof operator_id !== 'undefined') p.operator_id = operator_id;
+    if (typeof territory_id !== 'undefined') p.territory_id = territory_id;
+
+    const data = await this.userRepository.list(p, pagination);
 
     return {
       data: data.users,

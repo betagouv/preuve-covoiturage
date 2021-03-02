@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { stubCampaignList } from '../support/stubs/campaign/campaign.list';
 import { stubStatList } from '../support/stubs/stat/stat.list';
@@ -27,14 +27,14 @@ context('REGISTRY', () => {
   if (!('registry' in config)) {
     return;
   }
-  const users = UserGenerator.generateList(UserGroupEnum.REGISTRY);
+  const users = UserGenerator.generateList(Groups.Registry);
   const trips = TripGenerator.generateTrips();
 
   describe('login', () => {
     cypress_login({
       email: 'territory@example.com',
       password: 'admin1234',
-      group: UserGroupEnum.REGISTRY,
+      group: Groups.Registry,
     });
   });
 
@@ -46,10 +46,10 @@ context('REGISTRY', () => {
       stubTerritoryList();
       stubTripList(trips);
       stubStatList();
-      stubMainLists(UserGroupEnum.REGISTRY);
-      stubLogin(UserGroupEnum.REGISTRY);
-      stubUserMe(UserGroupEnum.REGISTRY);
-      stubUserPatch(UserGroupEnum.REGISTRY);
+      stubMainLists(Groups.Registry);
+      stubLogin(Groups.Registry);
+      stubUserMe(Groups.Registry);
+      stubUserPatch(Groups.Registry);
       stubLogout();
       stubUserList(users);
     });

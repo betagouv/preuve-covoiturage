@@ -13,17 +13,19 @@ export class CopyFromContextMiddleware implements MiddlewareInterface<CopyFromCo
     next: Function,
     mappings: CopyFromContextMiddlewareParams,
   ): Promise<ResultType> {
+    const newParams = params ?? {};
+
     const [fromPath, toPath, preserve] = mappings;
     const notFound = Symbol();
     const valueToCopy = get(context, fromPath, notFound);
 
-    if (valueToCopy !== notFound) {
-      if (!preserve || get(params, toPath, notFound) === notFound) {
-        set(params, toPath, valueToCopy);
+    if (valueToCopy !== notFound && valueToCopy !== null) {
+      if (!preserve || get(newParams, toPath, notFound) === notFound) {
+        set(newParams, toPath, valueToCopy);
       }
     }
 
-    return next(params, context);
+    return next(newParams, context);
   }
 }
 

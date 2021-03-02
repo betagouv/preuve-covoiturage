@@ -3,4 +3,4 @@ import { isValidBIC } from 'ibantools';
 
 export const bicCustomFormat: Format = (data: string): boolean => {
   return isValidBIC(data);
-}
+};

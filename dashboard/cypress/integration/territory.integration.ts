@@ -1,5 +1,5 @@
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { stubCampaignList } from '../support/stubs/campaign/campaign.list';
 import { stubStatList } from '../support/stubs/stat/stat.list';
@@ -40,7 +40,7 @@ context('TERRITORY', () => {
     cypress_login({
       email: 'admin@example.com',
       password: 'admin1234',
-      group: UserGroupEnum.TERRITORY,
+      group: Groups.Territory,
     });
   });
 
@@ -54,15 +54,15 @@ context('TERRITORY', () => {
       stubStatList();
       stubCampaignTemplates();
 
-      stubLogin(UserGroupEnum.TERRITORY);
-      stubUserMe(UserGroupEnum.TERRITORY);
-      stubUserPatch(UserGroupEnum.TERRITORY);
+      stubLogin(Groups.Territory);
+      stubUserMe(Groups.Territory);
+      stubUserPatch(Groups.Territory);
       stubCampaignCreate(CampaignStatusEnum.DRAFT);
       stubCampaignFind();
       stubCampaignPatch();
       stubCampaignLaunch();
       stubTripList(trips);
-      stubMainLists(UserGroupEnum.TERRITORY);
+      stubMainLists(Groups.Territory);
       stubTerritoryPatchContacts();
       stubTripExport();
       stubApiAdress('lyo');

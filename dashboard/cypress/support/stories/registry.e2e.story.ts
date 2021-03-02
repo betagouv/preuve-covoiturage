@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { cypress_login } from '../reusables/auth/cypress_login';
 import { cypress_profile } from '../reusables/profile/cypress_profile';
@@ -13,7 +13,7 @@ export function registryE2EStory(config: TestsInterface['registry']) {
     {
       email: 'admin@example.com',
       password: 'admin1234',
-      group: UserGroupEnum.REGISTRY,
+      group: Groups.Registry,
     },
     true,
   );
@@ -28,7 +28,7 @@ export function registryE2EStory(config: TestsInterface['registry']) {
   if (config.filters) {
     // FILTERS
     describe('Filter trips', () => {
-      cypress_filter(true, UserGroupEnum.REGISTRY);
+      cypress_filter(true, Groups.Registry);
     });
   }
 

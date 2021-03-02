@@ -60,8 +60,6 @@ export class ExportAction extends Action {
         email,
       },
       query: {
-        operator_id: Array.isArray(params.operator_id) ? params.operator_id : [params.operator_id],
-        territory_id: Array.isArray(params.territory_id) ? params.territory_id : [params.territory_id],
         territory_authorized_operator_id: get(context, 'call.user.authorizedOperators', []) || [],
         tz: tz.name,
         date: {
@@ -70,6 +68,14 @@ export class ExportAction extends Action {
         },
       },
     } as unknown) as BuildParamsInterface;
+
+    if (params.operator_id) {
+      buildParams.query.operator_id = Array.isArray(params.operator_id) ? params.operator_id : [params.operator_id];
+    }
+
+    if (params.territory_id) {
+      buildParams.query.territory_id = Array.isArray(params.territory_id) ? params.territory_id : [params.territory_id];
+    }
 
     // call trip:buildExport
     await this.kernel.notify<BuildParamsInterface>(buildSignature, buildParams, {

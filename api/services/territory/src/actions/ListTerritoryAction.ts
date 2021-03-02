@@ -11,7 +11,7 @@ import { TerritoryListFilter } from '../shared/territory/common/interfaces/Terri
   ...handlerConfig,
   middlewares: [
     // ['validate', 'territory.list'],
-    hasPermissionMiddleware('territory.list'),
+    hasPermissionMiddleware('common.territory.list'),
   ],
 })
 export class ListTerritoryAction extends AbstractAction {

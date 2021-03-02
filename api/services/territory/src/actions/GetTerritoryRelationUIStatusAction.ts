@@ -9,7 +9,7 @@ import { alias } from '../shared/territory/relationUiStatus.schema';
 /// TODO
 @handler({
   ...handlerConfig,
-  middlewares: [hasPermissionMiddleware('territory.read'), ['validate', alias]],
+  middlewares: [hasPermissionMiddleware('common.territory.read'), ['validate', alias]],
 })
 export class GetTerritoryRelationUIStatusAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {

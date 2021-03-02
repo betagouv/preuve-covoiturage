@@ -55,7 +55,8 @@ export class GeoFetchCommand implements CommandInterface {
               values: [line._id, data[0].contour, data[0].codesPostaux, data[0].nom],
             });
 
-            console.debug(`> UPDATE ${line._id} ${data[0].nom} ${data[0].contour && data[0].contour !== '' ? 'contour' : ''}`);
+            // prettier-ignore
+            console.debug(`> UPDATE ${line._id} ${data[0].nom} ${data[0].contour && data[0].contour !== '' ? 'contour' : ''}`); // eslint-disable-line max-len
           } catch (e) {
             console.error(`> ERROR ${line._id}`, e);
           }

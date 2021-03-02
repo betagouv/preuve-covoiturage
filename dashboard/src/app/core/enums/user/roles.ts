@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 export enum UserManyRoleEnum {
   USER = 'user',
@@ -10,19 +10,21 @@ export enum UserManyRoleEnum {
 }
 
 export const userGroupRole = {
-  [UserGroupEnum.TERRITORY]: UserManyRoleEnum.TERRITORY,
-  [UserGroupEnum.REGISTRY]: UserManyRoleEnum.REGISTRY,
-  [UserGroupEnum.OPERATOR]: UserManyRoleEnum.OPERATOR,
+  [Groups.Territory]: UserManyRoleEnum.TERRITORY,
+  [Groups.Registry]: UserManyRoleEnum.REGISTRY,
+  [Groups.Operator]: UserManyRoleEnum.OPERATOR,
 };
 
-export enum UserRoleEnum {
-  TERRITORY_USER = 'territory.user',
-  OPERATOR_USER = 'operator.user',
-  REGISTRY_USER = 'registry.user',
-  TERRITORY_ADMIN = 'territory.admin',
-  TERRITORY_DEMO = 'territory.demo',
-  OPERATOR_ADMIN = 'operator.admin',
-  REGISTRY_ADMIN = 'registry.admin',
+export enum Roles {
+  TerritoryUser = 'territory.user',
+  TerritoryAdmin = 'territory.admin',
+  TerritoryDemo = 'territory.demo',
+
+  OperatorUser = 'operator.user',
+  OperatorAdmin = 'operator.admin',
+
+  RegistryUser = 'registry.user',
+  RegistryAdmin = 'registry.admin',
 }
 
 export const USER_GROUP_ROLES = {

@@ -1,16 +1,21 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
+import * as moment from 'moment';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import * as moment from 'moment';
-import { CampaignApiService } from '../../services/campaign-api.service';
-import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.formater';
-import { DestroyObservable } from '~/core/components/destroy-observable';
-import { takeUntil } from 'rxjs/operators';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { omit } from 'lodash-es';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+
 import { CurrencyPipe } from '@angular/common';
+import { Component, Input, OnChanges, OnInit, SimpleChange } from '@angular/core';
+
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.formater';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { DestroyObservable } from '~/core/components/destroy-observable';
+import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+
+import { CampaignApiService } from '../../services/campaign-api.service';
 
 interface SimulationDateRange {
   startDate: Date;
@@ -20,7 +25,81 @@ interface SimulationDateRange {
   nbMonth: number;
 }
 
-function getTimeState(nbMonth): SimulationDateRange {
+@Component({
+  selector: 'app-campaign-simulation-pane',
+  templateUrl: './campaign-simulation-pane.component.html',
+  styleUrls: ['./campaign-simulation-pane.component.scss'],
+})
+export class CampaignSimulationPaneComponent extends DestroyObservable implements OnInit, OnChanges {
+  @Input() campaign: CampaignUx;
+
+  public loading = true;
+  public state: CampaignReducedStats = { trip_excluded: 0, trip_subsidized: 0, amount: 0 };
+  public timeState = getTimeState(1);
+  public range$ = new BehaviorSubject<number>(1);
+  public simulatedCampaign$ = new BehaviorSubject<CampaignUx>(null);
+
+  get months(): number {
+    return this.range$.value;
+  }
+
+  set months(value: number) {
+    this.range$.next(value);
+  }
+
+  constructor(protected campaignApi: CampaignApiService, protected auth: AuthenticationService) {
+    super();
+  }
+
+  ngOnInit(): void {
+    combineLatest([this.range$, this.simulatedCampaign$])
+      .pipe(
+        debounceTime(250),
+        tap(() => (this.loading = true)),
+        filter(([, campaign]) => this.auth.user && (!!campaign.territory_id || !!this.auth.user.territory_id)),
+        map(([r, c]: [number, CampaignUx]) => {
+          this.timeState = getTimeState(r);
+          c.start = moment(this.timeState.startDate);
+          c.end = moment(this.timeState.endDate);
+          c.territory_id = c.territory_id || this.auth.user.territory_id;
+          delete c._id;
+          delete c.state;
+          return c;
+        }),
+        map(CampaignFormater.toApi),
+        switchMap((c) => this.campaignApi.simulate(c)),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((state: CampaignReducedStats) => {
+        this.state = {
+          ...state,
+          amount:
+            this.simulatedCampaign$.value.unit === IncentiveUnitEnum.EUR
+              ? (new CurrencyPipe('FR').transform(state.amount / 100, 'EUR', 'symbol', '1.2-2') as any)
+              : (`${state.amount} pt${state.amount > 1 ? 's' : ''}` as any),
+        };
+
+        this.loading = false;
+      });
+  }
+
+  ngOnChanges({ campaign }: { campaign: SimpleChange }): void {
+    const { previousValue, currentValue } = campaign;
+
+    // keys no triggering a refresh
+    const bypassKeys = ['name', 'description'];
+    const hasChanged = !deepEqual(omit(previousValue, bypassKeys), omit(currentValue, bypassKeys));
+    if (hasChanged) this.simulatedCampaign$.next(new CampaignUx(currentValue));
+  }
+}
+
+/**
+ * ------------------------------------------------------------------------------------------------
+ *  Helper functions
+ * ------------------------------------------------------------------------------------------------
+ */
+
+function getTimeState(nbMonth: number): SimulationDateRange {
   const d = new Date();
 
   // take last month if the day number is up to 5
@@ -42,71 +121,23 @@ function getTimeState(nbMonth): SimulationDateRange {
   };
 }
 
-@Component({
-  selector: 'app-campaign-simulation-pane',
-  templateUrl: './campaign-simulation-pane.component.html',
-  styleUrls: ['./campaign-simulation-pane.component.scss'],
-})
-export class CampaignSimulationPaneComponent extends DestroyObservable implements OnInit, OnChanges {
-  state: CampaignReducedStats = { trip_excluded: 0, trip_subsidized: 0, amount: 0 };
-  @Input() campaign: CampaignUx;
+function deepEqual(obj1: any, obj2: any): boolean {
+  if (typeof obj1 === 'undefined' && typeof obj2 === 'undefined') return true;
+  if (typeof obj1 === 'undefined' || typeof obj2 === 'undefined') return false;
+  if (obj1 === obj2) return true;
+  if (isPrimitive(obj1) && isPrimitive(obj2)) return obj1 === obj2;
+  if (Object.keys(obj1).length !== Object.keys(obj2).length) return false;
 
-  nbMonth = 1;
-  timeState = getTimeState(1);
-  simulatedCampaign: CampaignUx;
-
-  constructor(protected campaignApi: CampaignApiService, protected auth: AuthenticationService) {
-    super();
+  // compare objects with same number of keys
+  for (const key in obj1) {
+    if (!(key in obj2)) return false; //other object doesn't have this prop
+    if (!deepEqual(obj1[key], obj2[key])) return false;
   }
 
-  updateCampaign() {
-    this.timeState = getTimeState(this.nbMonth);
-    this.simulatedCampaign.start = moment(this.timeState.startDate);
-    this.simulatedCampaign.end = moment(this.timeState.endDate);
-    delete this.simulatedCampaign._id;
-    delete this.simulatedCampaign.state;
-    // if (!this.simulatedCampaign._id) {
-    if (this.auth.user && (this.simulatedCampaign.territory_id || this.auth.user.territory_id)) {
-      const simCampaignApi = CampaignFormater.toApi(this.simulatedCampaign);
+  return true;
+}
 
-      if (!simCampaignApi.territory_id) {
-        simCampaignApi.territory_id = this.auth.user.territory_id;
-      }
-      // console.log('simulate campaign', this.simulatedCampaign, simCampaignApi);
-      this.campaignApi
-        .simulate(simCampaignApi)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((state) => {
-          this.state = {
-            ...state,
-            // amount: new CurrencyPipe('FR').transform(state.amount, 'EUR', 'symbol', '1.0-0') as any,
-            amount:
-              this.simulatedCampaign.unit === IncentiveUnitEnum.EUR
-                ? (new CurrencyPipe('FR').transform(state.amount / 100, 'EUR', 'symbol', '1.2-2') as any)
-                : (`${state.amount} pt${state.amount > 1 ? 's' : ''}` as any),
-          };
-        });
-    } else {
-      console.warn(
-        // eslint-disable-next-line max-len
-        'campaign sim panel : User has to be connected and territory_id has to provider from user context or campaign',
-      );
-    }
-    // }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.campaign) {
-      this.simulatedCampaign = new CampaignUx(changes.campaign.currentValue);
-
-      this.updateCampaign();
-    }
-  }
-
-  ngOnInit(): void {
-    if (this.campaign) {
-      this.simulatedCampaign = new CampaignUx(this.campaign);
-      this.updateCampaign();
-    }
-  }
+//check if value is primitive
+function isPrimitive(obj) {
+  return obj !== Object(obj);
 }

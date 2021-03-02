@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 export function stubLogout() {

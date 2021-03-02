@@ -53,8 +53,8 @@ export class ValidateRuleParametersMiddleware
     for (const ruleSet of ruleSets) {
       for (const rule of ruleSet) {
         this.ruleExists(rule);
-        await this.properlyParametred(rule);
-        await this.statefulHaveUniqueUuid(rule, uuidSet);
+        await this.properlyConfigured(rule);
+        await this.statefulHasUniqueUuid(rule, uuidSet);
       }
     }
   }
@@ -73,7 +73,7 @@ export class ValidateRuleParametersMiddleware
     }
   }
 
-  protected async properlyParametred(rule: RuleInterface): Promise<void> {
+  protected async properlyConfigured(rule: RuleInterface): Promise<void> {
     if (!('parameters' in rule) && !this.shouldBeParametred(rule)) {
       return;
     }
@@ -88,7 +88,7 @@ export class ValidateRuleParametersMiddleware
     return noParameterRuleSlugs.indexOf(rule.slug) < 0;
   }
 
-  protected statefulHaveUniqueUuid(rule: RuleInterface, uuidSet: Set<string>): void {
+  protected statefulHasUniqueUuid(rule: RuleInterface, uuidSet: Set<string>): void {
     if (statefuleRuleSlugs.indexOf(rule.slug) < 0) {
       return;
     }

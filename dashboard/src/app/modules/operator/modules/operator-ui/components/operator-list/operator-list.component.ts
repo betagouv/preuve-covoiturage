@@ -2,12 +2,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
-import { RegistryPermissionsAdminType } from '~/core/types/permissionType';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Operator } from '~/core/entities/operator/operator';
 import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
 import { DialogService } from '~/core/services/dialog.service';
+import { Roles } from '~/core/enums/user/roles';
 
 @Component({
   selector: 'app-operator-list',
@@ -15,17 +15,22 @@ import { DialogService } from '~/core/services/dialog.service';
   styleUrls: ['./operator-list.component.scss'],
 })
 export class OperatorListComponent extends DestroyObservable implements OnInit {
-  public editPermission: RegistryPermissionsAdminType = 'operator.update';
-  public deletePermission: RegistryPermissionsAdminType = 'operator.delete';
-
   displayedColumns: string[] = ['name', 'actions'];
 
   @Output() edit = new EventEmitter();
   @Input() operators: Operator[];
 
+  get canEdit(): boolean {
+    return this.auth.hasRole([Roles.OperatorAdmin, Roles.RegistryAdmin]);
+  }
+
+  get canDelete(): boolean {
+    return this.auth.hasRole([Roles.RegistryAdmin]);
+  }
+
   constructor(
     public operatorStoreService: OperatorStoreService,
-    public authenticationService: AuthenticationService,
+    public auth: AuthenticationService,
     private _dialogService: DialogService,
     private _toastr: ToastrService,
   ) {

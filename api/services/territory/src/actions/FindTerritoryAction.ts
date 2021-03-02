@@ -9,7 +9,7 @@ import { alias } from '../shared/territory/find.schema';
 /// TODO
 @handler({
   ...handlerConfig,
-  middlewares: [hasPermissionMiddleware('territory.find'), ['validate', alias]],
+  middlewares: [hasPermissionMiddleware('common.territory.find'), ['validate', alias]],
 })
 export class FindTerritoryAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {

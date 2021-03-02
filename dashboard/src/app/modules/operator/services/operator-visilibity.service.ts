@@ -1,13 +1,10 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { finalize, map, tap } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
+import { Injectable } from '@angular/core';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { OperatorVisibilityType } from '~/core/interfaces/operator/operatorVisibilityType';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 
 @Injectable({
@@ -21,12 +18,7 @@ export class OperatorVisilibityService {
 
   private _method = 'territory';
 
-  constructor(
-    private _http: HttpClient,
-    private _jsonRPCService: JsonRPCService,
-    private _authService: AuthenticationService,
-    private _toastr: ToastrService,
-  ) {}
+  constructor(private _jsonRPCService: JsonRPCService, private auth: AuthenticationService) {}
 
   get isLoaded(): boolean {
     return this._loaded$.value;
@@ -42,14 +34,11 @@ export class OperatorVisilibityService {
 
   public loadOne(): Observable<OperatorVisibilityType> {
     this._loading$.next(true);
-    const user = this._authService.user;
-    const params = {};
-    if (user && user.group === UserGroupEnum.OPERATOR) {
-      params['operator_id'] = user.operator_id;
-    } else {
-      this._toastr.error('Vous devez être un opérateur pour avoir accès à cette page.');
-    }
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:listOperator`, params);
+
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:listOperator`, {
+      operator_id: this.auth.user.operator_id,
+    });
+
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap((data) => {
@@ -62,17 +51,12 @@ export class OperatorVisilibityService {
     );
   }
 
-  public update(territoryIds: number[]): Observable<OperatorVisibilityType> {
-    const user = this._authService.user;
-    const params: any = {};
-    if (user && user.group === UserGroupEnum.OPERATOR) {
-      params['operator_id'] = user.operator_id;
-    } else {
-      this._toastr.error('Vous devez être un opérateur pour avoir accès à cette page.');
-    }
-    params.territory_id = territoryIds;
+  public update(territories: number[]): Observable<OperatorVisibilityType> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:updateOperator`, {
+      operator_id: this.auth.user.operator_id,
+      territory_id: territories,
+    });
 
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:updateOperator`, params);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 }

@@ -1,5 +1,5 @@
-import { USER_GROUPS, UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { USER_GROUPS, Groups } from '~/core/enums/user/groups';
+import { Roles } from '~/core/enums/user/roles';
 import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
 import { BaseUser, User } from '~/core/entities/authentication/user';
 
@@ -12,35 +12,35 @@ import { LASTNAMES } from './const/lastnames.const';
 export class UserGenerator {
   static numberOfUsers = 50;
 
-  static generateUser(profilData: ProfileInterface, group: UserGroupEnum, id: number): BaseUser {
+  static generateUser(profilData: ProfileInterface, group: Groups, id: number): BaseUser {
     switch (group) {
-      case UserGroupEnum.TERRITORY:
+      case Groups.Territory:
         return {
           _id: id,
           ...profilData,
-          role: UserRoleEnum.TERRITORY_ADMIN,
-          group: UserGroupEnum.TERRITORY,
+          role: Roles.TerritoryAdmin,
+          group: Groups.Territory,
           territory_id: territoryStub._id,
         };
-      case UserGroupEnum.OPERATOR:
+      case Groups.Operator:
         return {
           _id: id,
           ...profilData,
-          role: UserRoleEnum.OPERATOR_ADMIN,
-          group: UserGroupEnum.OPERATOR,
+          role: Roles.OperatorAdmin,
+          group: Groups.Operator,
           operator_id: operatorStub._id,
         };
-      case UserGroupEnum.REGISTRY:
+      case Groups.Registry:
         return {
           _id: id,
           ...profilData,
-          role: UserRoleEnum.REGISTRY_ADMIN,
-          group: UserGroupEnum.REGISTRY,
+          role: Roles.RegistryAdmin,
+          group: Groups.Registry,
         };
     }
   }
 
-  static generateList(group: UserGroupEnum) {
+  static generateList(group: Groups) {
     const list = [];
 
     list.push(cypress_logging_users[group]);

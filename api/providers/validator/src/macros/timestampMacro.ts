@@ -1,7 +1,14 @@
 export function timestampMacro() {
   return {
-    type: 'string',
-    format: 'date-time',
-    cast: 'date',
+    oneOf: [
+      {
+        type: 'string',
+        format: 'date-time',
+        cast: 'date',
+      },
+      {
+        instanceof: 'Date',
+      },
+    ],
   };
 }

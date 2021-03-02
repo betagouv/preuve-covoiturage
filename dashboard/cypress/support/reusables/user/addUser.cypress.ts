@@ -1,12 +1,12 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { Groups } from '~/core/enums/user/groups';
+import { Roles } from '~/core/enums/user/roles';
 
 import { stubUserCreate } from '../../stubs/user/user.create';
 import { territoryStub } from '../../stubs/territory/territory.find';
 import { expectedNewUsers } from '../../expectedApiPayload/expectedUser';
 import { CI_WAIT } from '../../../config/ci.config';
 
-export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
+export function cypress_addUser(group: Groups, e2e = false): void {
   const userData = expectedNewUsers[group];
 
   cy.get('.Users-add > button').click();
@@ -29,22 +29,22 @@ export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
   cy.wait(CI_WAIT.waitLong);
 
   const groupIndex =
-    userData.role === UserRoleEnum.TERRITORY_ADMIN
+    userData.role === Roles.TerritoryAdmin
       ? 1
-      : userData.role === UserRoleEnum.OPERATOR_ADMIN
+      : userData.role === Roles.OperatorAdmin
       ? 2
-      : userData.role === UserRoleEnum.REGISTRY_ADMIN
+      : userData.role === Roles.RegistryAdmin
       ? 3
       : 0;
 
   cy.get(`.mat-select-panel mat-option:nth-child(${groupIndex})`).click();
 
   const roleIndex =
-    userData.role === UserRoleEnum.REGISTRY_ADMIN
+    userData.role === Roles.RegistryAdmin
       ? 2
-      : userData.role === UserRoleEnum.OPERATOR_ADMIN
+      : userData.role === Roles.OperatorAdmin
       ? 2
-      : userData.role === UserRoleEnum.TERRITORY_ADMIN
+      : userData.role === Roles.TerritoryAdmin
       ? 2
       : 1;
 

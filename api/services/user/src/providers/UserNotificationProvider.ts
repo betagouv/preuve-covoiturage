@@ -59,12 +59,7 @@ export class UserNotificationProvider {
    * Generate url from email and token
    */
   protected getUrl(path: string, email: string, token: string): string {
-    return [
-      this.config.get('url.appUrl'),
-      path,
-      encodeURIComponent(email),
-      encodeURIComponent(token),
-    ].join('/');
+    return [this.config.get('url.appUrl'), path, encodeURIComponent(email), encodeURIComponent(token)].join('/');
   }
 
   /**

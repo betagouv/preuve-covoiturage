@@ -51,6 +51,7 @@ import { SeedCommand } from './commands/SeedCommand';
     PolicyEngine,
     IncentiveRepositoryProvider,
     TerritoryRepositoryProvider,
+    validateRuleParametersMiddlewareBinding,
   ],
   validator: [
     createSchemaBinding,
@@ -82,11 +83,7 @@ import { SeedCommand } from './commands/SeedCommand';
     [RedisConnection, 'connections.redis'],
   ],
   queues: ['campaign'],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-    validateRuleParametersMiddlewareBinding,
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

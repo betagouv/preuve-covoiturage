@@ -1,3 +1,5 @@
+// prettier-ignore
+/* eslint-disable max-len */
 const permissions = {
   'acquisition.create': ['operator.application', 'operator.admin'],
   'acquisition.cancel': ['operator.application', 'operator.admin'],
@@ -28,7 +30,7 @@ const permissions = {
   'policy.launch': ['territory.admin'],
   'policy.list': ['common', 'territory.demo', 'territory.user', 'territory.admin', 'registry.user', 'registry.admin'],
   'policy.patch': ['territory.admin', 'registry.admin'],
-  'policy.simulate.past': ['territory.admin', 'registry.admin'],
+  'policy.simulate.past': ['territory.admin', 'territory.demo', 'registry.admin'],
   'policy.simulate.fake': ['territory.admin', 'registry.admin'],
   'policy.simulate.future': ['operator.application', 'operator.admin', 'territory.admin'],
   'policy.list.templates': ['common'],
@@ -38,7 +40,7 @@ const permissions = {
   'territory.update': ['territory.admin', 'registry.admin'],
   'territory.list': ['common'],
   'territory.read': ['territory.user', 'territory.admin', 'registry.user', 'registry.admin'],
-  'territory.listOperator': ['operator.user','operator.admin', 'territory.user','territory.admin', 'registry.user', 'registry.admin'],
+  'territory.listOperator': ['common'],
   'territory.patchOperator': ['operator.admin'],
   'territory.patchContacts': ['territory.admin', 'registry.admin'],
   'trip.stats': ['common', 'operator.user','operator.admin', 'territory.demo', 'territory.user','territory.admin', 'registry.user', 'registry.admin'],
@@ -87,26 +89,17 @@ export const territory = {
   admin: {
     slug: 'admin',
     name: 'Admin',
-    permissions: [
-      ...permissionsByRoles['common'],
-      ...permissionsByRoles['territory.admin'],
-    ],
+    permissions: [...permissionsByRoles['common'], ...permissionsByRoles['territory.admin']],
   },
   demo: {
     slug: 'demo',
     name: 'Demo',
-    permissions: [
-      ...permissionsByRoles['common'],
-      ...permissionsByRoles['territory.demo'],
-    ],
+    permissions: [...permissionsByRoles['common'], ...permissionsByRoles['territory.demo']],
   },
   user: {
     slug: 'user',
     name: 'User',
-    permissions: [
-      ...permissionsByRoles['common'],
-      ...permissionsByRoles['territory.user'],
-    ],
+    permissions: [...permissionsByRoles['common'], ...permissionsByRoles['territory.user']],
   },
 };
 
@@ -114,26 +107,17 @@ export const operator = {
   admin: {
     slug: 'admin',
     name: 'Admin',
-    permissions: [
-      ...permissionsByRoles['common'],
-      ...permissionsByRoles['operator.admin'],
-    ],
+    permissions: [...permissionsByRoles['common'], ...permissionsByRoles['operator.admin']],
   },
   application: {
     slug: 'application',
     name: 'Application',
-    permissions: [
-      ...permissionsByRoles['common'],
-      ...permissionsByRoles['operator.application'],
-    ],
+    permissions: [...permissionsByRoles['common'], ...permissionsByRoles['operator.application']],
   },
   user: {
     slug: 'user',
     name: 'User',
-    permissions: [
-      ...permissionsByRoles['common'],
-      ...permissionsByRoles['operator.user'],
-    ],
+    permissions: [...permissionsByRoles['common'], ...permissionsByRoles['operator.user']],
   },
 };
 
@@ -141,17 +125,11 @@ export const registry = {
   admin: {
     slug: 'admin',
     name: 'Admin',
-    permissions: [
-      ...permissionsByRoles['common'],
-      ...permissionsByRoles['registry.admin'],
-    ],
+    permissions: [...permissionsByRoles['common'], ...permissionsByRoles['registry.admin']],
   },
   user: {
     slug: 'user',
     name: 'User',
-    permissions: [
-      ...permissionsByRoles['common'],
-      ...permissionsByRoles['registry.user'],
-    ],
+    permissions: [...permissionsByRoles['common'], ...permissionsByRoles['registry.user']],
   },
 };

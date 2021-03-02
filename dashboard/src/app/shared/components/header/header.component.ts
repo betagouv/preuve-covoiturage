@@ -1,14 +1,12 @@
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
-import { URLS } from '~/core/const/main.const';
 import { User } from '~/core/entities/authentication/user';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { AuthenticationService as Auth } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-header',
@@ -18,30 +16,25 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 export class HeaderComponent extends DestroyObservable implements OnInit {
   public user: User;
   public userMeta: string | null;
-  public homeLink = '/';
 
-  get routerLink(): string {
+  get campaignLink(): string {
     return this.hasTerritoryGroup ? '/campaign' : '/campaign/list';
   }
 
   get hasTerritoryGroup(): boolean {
-    return this.authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
+    return this.auth.isTerritory();
   }
 
   get hasRegistryGroup(): boolean {
-    return this.authService.hasAnyGroup([UserGroupEnum.REGISTRY]);
+    return this.auth.isRegistry();
   }
 
-  constructor(
-    public router: Router,
-    public authService: AuthenticationService,
-    private commonDataService: CommonDataService,
-  ) {
+  constructor(public router: Router, public auth: Auth, private commonDataService: CommonDataService) {
     super();
   }
 
   ngOnInit(): void {
-    this.authService.user$.subscribe((user) => {
+    this.auth.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       if (!user) return;
       this.user = user;
 
@@ -64,21 +57,6 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
         });
       }
     });
-
-    // go back to cms page when logo clicked on public stat page
-    this.setHomeLink(this.router.url);
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((event: NavigationEnd) => {
-        this.setHomeLink(event.url);
-      });
-  }
-
-  public setHomeLink(url: string): void {
-    this.homeLink = url === '/stats' ? URLS.CMSLink : '/';
   }
 
   public setUserIcon(): string {

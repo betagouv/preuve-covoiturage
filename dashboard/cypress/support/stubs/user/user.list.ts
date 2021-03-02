@@ -1,5 +1,5 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { expectedPatchedProfiles } from '../../expectedApiPayload/expectedProfile';
 import { UserGenerator } from '../../generators/user.generator';

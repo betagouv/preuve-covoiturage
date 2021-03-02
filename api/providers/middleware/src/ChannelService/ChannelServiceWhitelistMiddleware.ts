@@ -16,6 +16,7 @@ export class ChannelServiceWhitelistMiddleware implements MiddlewareInterface<Ch
   ): Promise<ResultType> {
     const service = get(context, 'channel.service', '');
     if (config.indexOf(service) < 0) {
+      console.error(`Service is not reachable from ${service}, only [${config.join(', ')}]`);
       throw new ForbiddenException(`Service is not reachable from ${service}`);
     }
     return next(params, context);

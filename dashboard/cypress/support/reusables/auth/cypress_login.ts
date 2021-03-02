@@ -1,4 +1,4 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 
 import { stubLogin } from '../../stubs/auth/login';
 import { stubUserMe, stubUserMePermissionError } from '../../stubs/user/user.me';
@@ -7,7 +7,7 @@ import { stubStatList } from '../../stubs/stat/stat.list';
 import { stubCampaignList } from '../../stubs/campaign/campaign.list';
 import { CI_WAIT } from '../../../config/ci.config';
 
-export function cypress_login(loginData: { email: string; password: string; group: UserGroupEnum }, e2e = false): void {
+export function cypress_login(loginData: { email: string; password: string; group: Groups }, e2e = false): void {
   if (!e2e) {
     beforeEach(() => {
       cy.server();

@@ -6,7 +6,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP } from '~/core/const/filter.const';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 import { TripStoreService } from '~/modules/trip/services/trip-store.service';
 import { LightTrip } from '~/core/entities/trip/trip';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -50,7 +50,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
   get columnsDisplayed(): string[] {
     const columns = ['startCity', 'endCity', 'date', 'campaigns', 'incentives', 'class', 'status'];
-    if (this.authService.user && this.authService.user.group !== UserGroupEnum.OPERATOR) {
+    if (this.authService.user && this.authService.user.group !== Groups.Operator) {
       columns.splice(5, 0, 'operator');
     }
 

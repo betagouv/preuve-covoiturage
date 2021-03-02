@@ -1,22 +1,22 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 import { User } from '~/core/entities/authentication/user';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { Roles } from '~/core/enums/user/roles';
 
 import { OPERATORS_PERMISSIONS, REGISTRY_PERMISSIONS, TERRITORIES_PERMISSIONS } from '../user/const/permissions.const';
 import { operatorStub } from '../operator/operator.find';
 import { territoryStub } from '../territory/territory.find';
 
 // tslint:disable-next-line:variable-name
-export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
+export const cypress_logging_users: { [key in Groups]: User } = {
   territories: {
     _id: 1,
     firstname: 'AOM',
     lastname: 'Decovoit',
     phone: '0612345678',
     email: 'preuve.decovoit@yopmail.com',
-    role: UserRoleEnum.TERRITORY_ADMIN,
-    group: UserGroupEnum.TERRITORY,
+    role: Roles.TerritoryAdmin,
+    group: Groups.Territory,
     permissions: TERRITORIES_PERMISSIONS.admin,
     territory_id: territoryStub._id,
   },
@@ -26,8 +26,8 @@ export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
     lastname: 'Decovoit',
     phone: '0612345678',
     email: 'preuve.decovoit@yopmail.com',
-    role: UserRoleEnum.OPERATOR_ADMIN,
-    group: UserGroupEnum.OPERATOR,
+    role: Roles.OperatorAdmin,
+    group: Groups.Operator,
     permissions: OPERATORS_PERMISSIONS.admin,
     operator_id: operatorStub._id,
   },
@@ -37,13 +37,13 @@ export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
     lastname: 'admin',
     phone: '0612345678',
     email: 'preuve.decovoit@yopmail.com',
-    role: UserRoleEnum.REGISTRY_ADMIN,
-    group: UserGroupEnum.REGISTRY,
+    role: Roles.RegistryAdmin,
+    group: Groups.Registry,
     permissions: REGISTRY_PERMISSIONS.admin,
   },
 };
 
-export function stubLogin(type: UserGroupEnum) {
+export function stubLogin(type: Groups) {
   cy.route({
     method: 'POST',
     url: '/login',

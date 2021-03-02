@@ -8,7 +8,7 @@ import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
 /*
  * Send email to user
  */
-@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares('proxy')] })
+@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service, 'trip', 'proxy')] })
 export class NotifyUserAction extends AbstractAction {
   constructor(private notificationProvider: NotificationInterfaceResolver) {
     super();

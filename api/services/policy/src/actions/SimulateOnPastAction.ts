@@ -7,8 +7,8 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/polic
 
 import { alias } from '../shared/policy/simulateOn.schema';
 import { PolicyEngine } from '../engine/PolicyEngine';
-import { TripRepositoryProviderInterfaceResolver, IncentiveInterface } from '../interfaces';
 import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvider';
+import { TripRepositoryProviderInterfaceResolver, IncentiveInterface } from '../interfaces';
 
 @handler({
   ...handlerConfig,
@@ -22,7 +22,7 @@ import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvid
       maxEnd: () => new Date(),
     }),
     ...copyGroupIdAndApplyGroupPermissionMiddlewares(
-      { territory: 'territory.simulate.past', registry: 'registry.simulate.past' },
+      { territory: 'territory.policy.simulate.past', registry: 'registry.policy.simulate.past' },
       'campaign',
     ),
   ],

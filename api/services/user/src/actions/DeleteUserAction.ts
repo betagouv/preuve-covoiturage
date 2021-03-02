@@ -30,16 +30,13 @@ export class DeleteUserAction extends AbstractAction {
     const scope = params.territory_id ? 'territory_id' : params.operator_id ? 'operator_id' : 'none';
     switch (scope) {
       case 'territory_id':
-        await this.userRepository.deleteByTerritory(params._id, params[scope]);
-        break;
+        return this.userRepository.deleteByTerritory(params._id, params[scope]);
       case 'operator_id':
-        await this.userRepository.deleteByOperator(params._id, params[scope]);
-        break;
+        return this.userRepository.deleteByOperator(params._id, params[scope]);
       case 'none':
-        await this.userRepository.delete(params._id);
-        break;
+        return this.userRepository.delete(params._id);
+      default:
+        return false;
     }
-
-    return true;
   }
 }

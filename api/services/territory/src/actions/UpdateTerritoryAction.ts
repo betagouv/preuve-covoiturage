@@ -1,6 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
-import { hasPermissionMiddleware } from '@pdc/provider-middleware';
+import { hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface } from '../shared/territory/update.contract';
@@ -10,7 +10,14 @@ import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/
 // TOTO : MIDDLEWARE
 @handler({
   ...handlerConfig,
-  middlewares: [hasPermissionMiddleware('territory.update'), ['validate', alias]],
+  middlewares: [
+    hasPermissionByScopeMiddleware('registry.territory.update', [
+      'territory.territory.update',
+      'call.user.territory_id',
+      'territory_id',
+    ]),
+    ['validate', alias],
+  ],
 })
 export class UpdateTerritoryAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {

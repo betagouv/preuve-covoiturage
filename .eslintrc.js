@@ -11,7 +11,7 @@ module.exports = {
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
   },
-  ignorePatterns: ['dist', 'api/providers/qrcode/src/lib/*'], // some JS converted to TS. needs to be cleaned up
+  ignorePatterns: ['dist', 'api/providers/qrcode/src/lib/*', 'dashboard/cypress'], // some JS converted to TS. needs to be cleaned up
   rules: {
     semi: ['error', 'always'],
     'prettier/prettier': 'error',
