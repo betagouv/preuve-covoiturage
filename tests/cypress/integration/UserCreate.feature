@@ -24,9 +24,10 @@ Fonctionnalité: Créer un utilisateur
       | territoire | Syndicat Mixte Des Transports En Commun Du Territoire De Belfort |
     Et que je clique sur le bouton créer un utilisateur
     Alors je vois un message indiquant "L'utilisateur Jean-Claude DUSS a été créé"
+    Et un lien est envoyé par mail à "1ycau.admin@inbox.testmail.app"
     Et je vois que la liste des utilisateurs inclut "1ycau.admin@inbox.testmail.app"
     Lorsque je clique sur le bouton supprimer l'utilisateur de la ligne incluant "1ycau.admin@inbox.testmail.app" de la liste des utilisateurs
     Alors je vois une fenêtre avec le message "Voulez-vous supprimer cet utilisateur ?"
-    Lorsque je clique sur le bouton "Oui"
+    Lorsque je clique sur le bouton de confirmation
     Alors je vois un message indiquant "L'utilisateur Jean-Claude DUSS a été supprimé"
     Et je vois que la liste des utilisateurs n'inclut pas "1ycau.admin@inbox.testmail.app"

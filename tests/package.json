@@ -18,6 +18,7 @@
   "dependencies": {
     "@cypress/browserify-preprocessor": "^3.0.1",
     "@types/cypress-cucumber-preprocessor": "^4.0.0",
+    "axios": "^0.21.1",
     "cypress": "^6.4.0",
     "cypress-cucumber-preprocessor": "^4.0.1",
     "eslint": "^7.20.0",

@@ -80,6 +80,13 @@ export const formSelectors = new Map<string, FormSelectorMap>([
           type: 'mat-autocomplete',
         },
       ],
+      [
+        'opérateur',
+        {
+          selector: 'app-operator-autocomplete',
+          type: 'mat-autocomplete',
+        },
+      ],
     ]),
   ],
 ]);
