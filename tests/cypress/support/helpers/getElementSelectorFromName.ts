@@ -6,6 +6,10 @@ export const elementsSelectors = new Map<string, string>([
   ["l'écran liste des utilisateurs", 'div.Users-list'],
   ['la liste des utilisateurs', 'div.Users-list table tbody > tr'],
   ['le formulaire de création utilisateur', 'form.CreateEditUserForm'],
+  ["le bouton supprimer l'utilisateur", 'mat-icon[mattooltip="Supprimer l\'accès"]'],
+  ['une fenêtre', 'mat-dialog-container'],
+  ['le titre', '.page-title'],
+  ['le bouton "Oui"', 'button.confirm'],
 ]);
 
 export function getElementSelectorFromName(name: string): string {
