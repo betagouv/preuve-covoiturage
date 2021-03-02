@@ -9,7 +9,7 @@ export const elementsSelectors = new Map<string, string>([
   ["le bouton supprimer l'utilisateur", 'mat-icon[mattooltip="Supprimer l\'accès"]'],
   ['une fenêtre', 'mat-dialog-container'],
   ['le titre', '.page-title'],
-  ['le bouton "Oui"', 'button.confirm'],
+  ['le bouton de confirmation', 'button.confirm'],
 ]);
 
 export function getElementSelectorFromName(name: string): string {
