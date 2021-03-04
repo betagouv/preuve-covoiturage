@@ -67,7 +67,7 @@ const params = {
       },
       {
         macro: 'serial',
-      }
+      },
     ],
   },
   territory_id: {
@@ -79,7 +79,7 @@ const params = {
       },
       {
         macro: 'serial',
-      }
+      },
     ],
   },
 };

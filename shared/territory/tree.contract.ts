@@ -1,12 +1,11 @@
 import { TerritoryBaseInterface } from './common/interfaces/TerritoryInterface';
 import { TerritoryDbMetaInterface } from './common/interfaces/TerritoryDbMetaInterface';
-import { TerritoryBaseRelationInterface } from './common/interfaces/TerritoryRelationInterface';
 
 export interface Territory extends TerritoryBaseInterface {
   _id: number;
 }
 
-export type ParamsInterface = void; 
+export type ParamsInterface = void;
 export interface ResultInterface extends TerritoryBaseInterface, TerritoryDbMetaInterface {}
 
 export const handlerConfig = {
