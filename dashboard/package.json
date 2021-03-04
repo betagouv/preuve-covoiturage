@@ -5,11 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --configuration=$NODE_ENV",
-    "lint": "eslint 'src/**/*.ts'",
-    "test:integration:debug": "yarn run cypress run --env ENV_NAME=local --spec 'cypress/integration/*.integration.ts'",
-    "test:integration": "yarn run cypress run --spec cypress/integration/*.integration.ts",
-    "open:cypress:debug": "yarn run cypress open --env ENV_NAME=local",
-    "open:cypress": "yarn run cypress open"
+    "lint": "eslint 'src/**/*.ts'"
   },
   "private": true,
   "dependencies": {
@@ -51,13 +47,11 @@
     "@angular/cli": "~10.1.6",
     "@angular/compiler-cli": "~10.1.5",
     "@angular/language-service": "~10.1.5",
-    "@cypress/webpack-preprocessor": "^4.1.0",
     "@types/lodash-es": "^4.17.3",
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "^2.15.0",
     "@typescript-eslint/parser": "^2.15.0",
     "codelyzer": "^5.1.2",
-    "cypress": "^3.4.1",
     "eslint": "^7.5.0",
     "eslint-plugin-prettier": "^3.1.4",
     "husky": "^3.0.9",
