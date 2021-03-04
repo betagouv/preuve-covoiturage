@@ -1,5 +1,6 @@
 import { get, set } from 'lodash';
-import { MiddlewareInterface, ContextType, ResultType, InvalidParamsException, middleware } from '@ilos/common';
+import { startOfDay, endOfDay } from 'date-fns';
+import { MiddlewareInterface, ContextType, ParamsType, ResultType, InvalidParamsException, middleware } from '@ilos/common';
 import { ConfiguredMiddleware } from '../interfaces';
 
 /*
@@ -8,7 +9,7 @@ import { ConfiguredMiddleware } from '../interfaces';
 @middleware()
 export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateMiddlewareParams> {
   async process(
-    params: any,
+    params: ParamsType,
     context: ContextType,
     next: Function,
     options: ValidateDateMiddlewareParams,
@@ -18,8 +19,8 @@ export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateM
     }
 
     const { startPath, endPath, minStart: minStartFn, maxEnd: maxEndFn, applyDefault: applyDefaultOpt } = options;
-    const minStart: Date | undefined = minStartFn ? minStartFn(params, context) : undefined;
-    const maxEnd: Date | undefined = maxEndFn ? maxEndFn(params, context) : undefined;
+    const minStart: Date | undefined = minStartFn ? startOfDay(minStartFn(params, context)) : undefined;
+    const maxEnd: Date | undefined = maxEndFn ? endOfDay(maxEndFn(params, context)) : undefined;
     const applyDefault = applyDefaultOpt ?? false;
     const startDate: Date | undefined = get(params, startPath, undefined);
     const endDate: Date | undefined = get(params, endPath, undefined);
@@ -52,8 +53,8 @@ export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateM
 export type ValidateDateMiddlewareParams = {
   startPath: string;
   endPath: string;
-  minStart?: (params: any, context: ContextType) => Date;
-  maxEnd?: (params: any, context: ContextType) => Date;
+  minStart?: (params: ParamsType, context: ContextType) => Date;
+  maxEnd?: (params: ParamsType, context: ContextType) => Date;
   applyDefault?: boolean;
 };
 
