@@ -1,6 +1,13 @@
 import { get, set } from 'lodash';
 import { startOfDay, endOfDay } from 'date-fns';
-import { MiddlewareInterface, ContextType, ParamsType, ResultType, InvalidParamsException, middleware } from '@ilos/common';
+import {
+  MiddlewareInterface,
+  ContextType,
+  ParamsType,
+  ResultType,
+  InvalidParamsException,
+  middleware,
+} from '@ilos/common';
 import { ConfiguredMiddleware } from '../interfaces';
 
 /*
