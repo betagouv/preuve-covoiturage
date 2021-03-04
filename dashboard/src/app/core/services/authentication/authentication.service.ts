@@ -1,18 +1,15 @@
-import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { get } from 'lodash-es';
+
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { PermissionType } from '~/core/types/permissionType';
 import { User } from '~/core/entities/authentication/user';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { Roles } from '~/core/enums/user/roles';
 import { UserApiService } from '~/modules/user/services/user-api.service';
-import { UserStoreService } from '~/modules/user/services/user-store.service';
+// import { UserStoreService } from '~/modules/user/services/user-store.service';
 
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
@@ -50,38 +47,11 @@ import {
   providedIn: 'root',
 })
 export class AuthenticationService {
-  private _hasChecked: boolean;
+  private isChecked: boolean;
 
   private _user$ = new BehaviorSubject<User>(null);
-  private userMe$: Observable<User>;
 
-  constructor(
-    private userApiService: UserApiService,
-    private userStoreService: UserStoreService,
-    private jsonRPC: JsonRPCService,
-    private router: Router,
-    private toastr: ToastrService,
-    private http: HttpClient,
-  ) {
-    this.userStoreService.entity$.subscribe((user: User) => {
-      const loggedInUser = this.user;
-      // if userService is updated and match current user we update its state
-      if (user && loggedInUser && loggedInUser._id === user._id) {
-        if (user.email !== loggedInUser.email) {
-          this.logout().subscribe(() => {
-            this.toastr.info(`
-              L'email de votre compte a été modifié.
-              Un lien de vérification vous a été envoyé à cette nouvelle adresse.
-            `);
-          });
-        } else {
-          this._user$.next(user);
-        }
-      }
-    });
-
-    this.userMe$ = this.userApiService.me();
-  }
+  constructor(private userApiService: UserApiService, private jsonRPC: JsonRPCService, private http: HttpClient) {}
 
   get user$(): Observable<User> {
     return this._user$;
@@ -91,57 +61,86 @@ export class AuthenticationService {
     return this._user$.getValue();
   }
 
-  call<T = any>(url: string, payload: T, withCredentials = true): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
+  public static isAdmin(user?: User): boolean {
+    return this.hasRole([Roles.RegistryAdmin, Roles.TerritoryAdmin, Roles.OperatorAdmin], user);
+  }
 
+  public static isSuperAdmin(user?: User): boolean {
+    return this.hasRole(Roles.RegistryAdmin, user);
+  }
+
+  public static isRegistry(user?: User): boolean {
+    return this.hasRole([Roles.RegistryAdmin, Roles.RegistryUser], user);
+  }
+
+  public static isOperator(user?: User): boolean {
+    return this.hasRole([Roles.OperatorAdmin, Roles.OperatorUser], user);
+  }
+
+  public static isTerritory(user?: User): boolean {
+    return this.hasRole([Roles.TerritoryAdmin, Roles.TerritoryDemo, Roles.TerritoryUser], user);
+  }
+
+  public static hasRole(role: Roles | Roles[], user: User): boolean {
+    const roles = Array.isArray(role) ? role : [role];
+    if (!user) return false;
+    return roles.indexOf(user.role) > -1;
+  }
+
+  public isAdmin(): boolean {
+    return this.user ? AuthenticationService.isAdmin(this.user) : false;
+  }
+
+  public isSuperAdmin(): boolean {
+    return this.user ? AuthenticationService.isSuperAdmin(this.user) : false;
+  }
+
+  public isRegistry(): boolean {
+    return this.user ? AuthenticationService.isRegistry(this.user) : false;
+  }
+
+  public isOperator(): boolean {
+    return this.user ? AuthenticationService.isOperator(this.user) : false;
+  }
+
+  public isTerritory(): boolean {
+    return this.user ? AuthenticationService.isTerritory(this.user) : false;
+  }
+
+  public hasRole(role: Roles | Roles[]): boolean {
+    return this.user ? AuthenticationService.hasRole(role, this.user) : false;
+  }
+
+  public call<T = any>(url: string, payload: T, withCredentials = true): Observable<any> {
     return this.http.post(url, payload, {
-      headers,
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       withCredentials,
     });
   }
 
-  public get isAdmin(): boolean {
-    return this.hasRole(UserManyRoleEnum.ADMIN);
-  }
-
-  public get isOperator(): boolean {
-    return this.hasRole(UserManyRoleEnum.OPERATOR);
-  }
-
-  public get isTerritory(): boolean {
-    return this.hasRole(UserManyRoleEnum.TERRITORY);
-  }
-
-  public get isDemo(): boolean {
-    return this.user.role === UserRoleEnum.TERRITORY_DEMO;
-  }
-
   public login(email: string, password: string): Observable<LoginResult> {
     return this.call<LoginParam>('login', { email, password }).pipe(
-      // bypass 401 errors
-      catchHttpStatus(401, () => null),
-      map((loginPayload) => {
-        if (loginPayload && loginPayload.result && loginPayload.result.data) {
-          return loginPayload.result.data;
-        }
-        return null;
-      }),
+      map((response) => get(response, 'result.data', null)),
+      tap((user) => this.onLogin(user)),
+    );
+  }
+
+  public check(): Observable<User> {
+    if (this.isChecked) {
+      return of(this._user$.value);
+    }
+
+    return this.userApiService.me().pipe(
       tap((user) => {
-        if (user) {
-          this.onLoggin(new User(user));
-          this.toastr.clear();
-          if (user.territory_id) {
-            this.router.navigate(['/campaign']);
-          } else {
-            this.router.navigate(['/trip/stats']);
-          }
-        } else {
-          this.toastr.error('Mauvais email ou mot de passe');
-        }
+        this.isChecked = true;
+        if (user) this.onLogin(user);
       }),
     );
+  }
+
+  private onLogin(user: User): void {
+    this.isChecked = true;
+    this._user$.next(user instanceof User ? user : new User(user));
   }
 
   public logout(): Observable<any> {
@@ -152,56 +151,35 @@ export class AuthenticationService {
     );
   }
 
-  public changePassword(_id: number, old_password: string, new_password: string): Observable<any> {
-    return this.jsonRPC.callOne(
-      new JsonRPCParam<ChangePasswordParam>('user:changePassword', {
-        // _id,
-        old_password,
-        new_password,
-      }),
-    );
-  }
+  // public hasAnyPermission(permissions: PermissionType[]): boolean {
+  //   const user = this.user;
+  //   if (!permissions.length) {
+  //     return true;
+  //   }
+  //   if (!user) {
+  //     return false;
+  //   }
+  //   if ('permissions' in user) {
+  //     return user.permissions.filter((permission: PermissionType) => permissions.includes(permission)).length > 0;
+  //   }
+  //   return true;
+  // }
 
-  public hasAnyPermission(permissions: PermissionType[]): boolean {
-    const user = this.user;
-    if (!permissions.length) {
-      return true;
-    }
-    if (!user) {
-      return false;
-    }
-    if ('permissions' in user) {
-      return user.permissions.filter((permission: PermissionType) => permissions.includes(permission)).length > 0;
-    }
-    return true;
-  }
+  // public hasAnyPermissionObs(permissions: PermissionType[]): Observable<boolean> {
+  //   return this.user$.pipe(map((user) => this.hasAnyPermission(permissions)));
+  // }
 
-  public hasAnyPermissionObs(permissions: PermissionType[]): Observable<boolean> {
-    return this.user$.pipe(map((user) => this.hasAnyPermission(permissions)));
-  }
+  // public hasAnyGroup(groups: Group[] | null = null): boolean {
+  //   const user = this.user;
+  //   if (!groups && user) {
+  //     return true;
+  //   }
 
-  public hasAnyGroup(groups: UserGroupEnum[] | null = null): boolean {
-    const user = this.user;
-    if (!groups && user) {
-      return true;
-    }
-
-    if (!user) {
-      return false;
-    }
-    return !groups.length || ('group' in user && groups.includes(user.group));
-  }
-
-  public hasRole(role: UserRoleEnum | UserManyRoleEnum): boolean {
-    if (!role) {
-      return true;
-    }
-    const user = this.user;
-    if (!user) {
-      return false;
-    }
-    return !role || ('role' in user && user.role.indexOf(role) !== -1);
-  }
+  //   if (!user) {
+  //     return false;
+  //   }
+  //   return !groups.length || ('group' in user && groups.includes(user.group));
+  // }
 
   public sendInviteEmail(user: User): Observable<JsonRPCResult> {
     return this.jsonRPC.callOne(
@@ -213,39 +191,21 @@ export class AuthenticationService {
     return this.call<ForgottenPasswordParam>('auth/reset-password', { email });
   }
 
-  /**
-   * Check validity of token & reset
-   */
+  public changePassword(_id: number, old_password: string, new_password: string): Observable<any> {
+    return this.jsonRPC.callOne(
+      new JsonRPCParam<ChangePasswordParam>('user:changePassword', { _id, old_password, new_password }),
+    );
+  }
+
   public checkPasswordToken(email: string, token: string): Observable<ForgottenPasswordTokenResult> {
     return this.call<ForgottenPasswordTokenParam>('auth/check-token', { email, token });
   }
 
-  /**
-   * Check validity of token & reset
-   */
   public confirmEmail(email: string, token: string): Observable<ConfirmEmailResult> {
     return this.call<ConfirmEmailParam>('auth/confirm-email', { email, token });
   }
 
   public sendNewPassword(email: string, password: string, token: string): Observable<ChangePasswordWithPasswordResult> {
     return this.call<ChangePasswordWithPasswordParam>('auth/change-password', { email, password, token });
-  }
-
-  public check(): Observable<User> {
-    if (this._hasChecked) {
-      return of(this._user$.value);
-    }
-
-    return this.userMe$.pipe(
-      tap((user) => {
-        this._hasChecked = true;
-        if (user) this.onLoggin(user);
-      }),
-    );
-  }
-
-  private onLoggin(user: User): void {
-    this._hasChecked = true;
-    this._user$.next(user);
   }
 }

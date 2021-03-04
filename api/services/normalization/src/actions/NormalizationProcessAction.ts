@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ContextType } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { ParamsInterface as LogErrorParamsInterface } from '../shared/acquisition/logerror.contract';
 import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
@@ -46,10 +47,9 @@ enum NormalisationErrorStage {
   Territory = 'territory',
 }
 
-// Enrich position data
 @handler({
   ...handlerConfig,
-  middlewares: [['channel.service.only', ['acquisition', 'policy', handlerConfig.service]]],
+  middlewares: [...internalOnlyMiddlewares('acquisition', 'policy', handlerConfig.service)],
 })
 export class NormalizationProcessAction extends AbstractAction {
   private readonly context: ContextType = {
@@ -100,6 +100,10 @@ export class NormalizationProcessAction extends AbstractAction {
         },
         { channel: { service: 'acquisition' } },
       );
+
+      console.debug('[normalization]:call carpool:crosscheck', {
+        operator_journey_id: normalizedData.operator_journey_id,
+      });
 
       await this.kernel.call<CrossCheckParamsInterface, CrossCheckResultInterface>(
         crossCheckSignature,
@@ -177,6 +181,7 @@ export class NormalizationProcessAction extends AbstractAction {
     // Cost ------------------------------------------------------------------------------------
 
     try {
+      console.debug('[normalization]:cost start');
       const { cost, payments } = await this.kernel.call<CostParamsInterface, CostResultInterface>(
         costSignature,
         {
@@ -201,6 +206,7 @@ export class NormalizationProcessAction extends AbstractAction {
     // Identity ------------------------------------------------------------------------------------
 
     try {
+      console.debug('[normalization]:identity start');
       finalPerson.identity = await this.kernel.call<IdentityParamsInterface, IdentityResultInterface>(
         identitySignature,
         finalPerson.identity,
@@ -215,6 +221,7 @@ export class NormalizationProcessAction extends AbstractAction {
     // Geo ------------------------------------------------------------------------------------
     let isSubGeoError = false;
     try {
+      console.debug('[normalization]:geo start');
       const { start, end } = await this.kernel.call<GeoParamsInterface, GeoResultInterface>(
         geoSignature,
         {
@@ -229,6 +236,7 @@ export class NormalizationProcessAction extends AbstractAction {
 
       // Route ------------------------------------------------------------------------------------
       try {
+        console.debug('[normalization]:geo:route start');
         const { calc_distance, calc_duration } = await this.kernel.call<RouteParamsInterface, RouteResultInterface>(
           routeSignature,
           {
@@ -255,6 +263,7 @@ export class NormalizationProcessAction extends AbstractAction {
 
     // Territory ------------------------------------------------------------------------------------
     try {
+      console.debug('[normalization]:territory start');
       const territories = await this.kernel.call<TerritoryParamsInterface, TerritoryResultInterface>(
         territorySignature,
         {

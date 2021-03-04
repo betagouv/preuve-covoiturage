@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver } from '@ilos/common';
+import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/delete.contract';
@@ -7,10 +8,7 @@ import { alias } from '../shared/territory/delete.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['can', ['territory.delete']],
-    ['validate', alias],
-  ],
+  middlewares: [hasPermissionMiddleware('registry.territory.delete'), ['validate', alias]],
 })
 export class DeleteTerritoryAction extends AbstractAction {
   constructor(

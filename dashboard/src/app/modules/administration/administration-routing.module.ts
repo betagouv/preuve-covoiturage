@@ -4,8 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '~/core/guards/auth-guard.service';
 import { ApiComponent } from '~/modules/administration/pages/api/api.component';
 import { AllUsersComponent } from '~/modules/administration/pages/all-users/all-users.component';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserManyRoleEnum } from '~/core/enums/user/user-role.enum';
+import { Groups } from '~/core/enums/user/groups';
+import { Roles, UserManyRoleEnum } from '~/core/enums/user/roles';
 import { AllTerritoriesComponent } from '~/modules/administration/pages/all-territories/all-territories.component';
 import { AllOperatorsComponent } from '~/modules/administration/pages/all-operators/all-operators.component';
 // eslint-disable-next-line
@@ -35,36 +35,37 @@ const routes: Routes = [
       {
         path: 'api',
         component: ApiComponent,
+        data: { roles: [Roles.OperatorAdmin] },
       },
       {
         path: 'territory',
-        data: { groups: [UserGroupEnum.TERRITORY] },
         component: TerritoryComponent,
+        data: { groups: [Groups.Territory] },
       },
       {
         path: 'certificates',
-        data: { groups: [UserGroupEnum.OPERATOR, UserGroupEnum.REGISTRY], role: UserManyRoleEnum.ADMIN },
         component: CertificateListComponent,
+        data: { roles: [Roles.OperatorAdmin, Roles.RegistryAdmin] },
       },
       {
         path: 'users',
-        data: { groups: [UserGroupEnum.TERRITORY, UserGroupEnum.OPERATOR] },
         component: UsersComponent,
+        data: { groups: [Groups.Territory, Groups.Operator] },
       },
       {
         path: 'all-users',
-        data: { groups: [UserGroupEnum.REGISTRY], role: UserManyRoleEnum.ADMIN },
         component: AllUsersComponent,
+        data: { groups: [Groups.Registry], role: UserManyRoleEnum.ADMIN },
       },
       {
         path: 'all-territories',
-        data: { groups: [UserGroupEnum.REGISTRY], role: UserManyRoleEnum.ADMIN },
         component: AllTerritoriesComponent,
+        data: { groups: [Groups.Registry], role: UserManyRoleEnum.ADMIN },
       },
       {
         path: 'all-operators',
-        data: { groups: [UserGroupEnum.REGISTRY], role: UserManyRoleEnum.ADMIN },
         component: AllOperatorsComponent,
+        data: { groups: [Groups.Registry], role: UserManyRoleEnum.ADMIN },
       },
       {
         path: '',
@@ -74,6 +75,7 @@ const routes: Routes = [
       {
         path: 'visibility',
         component: OperatorVisibilityComponent,
+        data: { roles: [Roles.OperatorAdmin] },
       },
     ],
   },

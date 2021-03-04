@@ -45,9 +45,4 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# cypress
-
-/cypress/screenshots
-/cypress/videos
-
 package-lock.json

@@ -11,7 +11,7 @@ import { Contact } from '~/core/entities/shared/contact';
 import { Territory, territoryLevelLabels, TerritoryFormModel } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
@@ -21,6 +21,7 @@ import { TerritoryChildrenComponent } from '../territory-children/territory-chil
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
+import { Roles } from '~/core/enums/user/roles';
 
 @Component({
   selector: 'app-territory-form',
@@ -66,6 +67,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     return this._relationDisplayMode;
   }
 
+  get canUpdate(): boolean {
+    return this.authService.hasRole([Roles.TerritoryAdmin, Roles.RegistryAdmin]);
+  }
+
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
@@ -84,7 +89,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         takeUntil(this.destroy$),
       )
       .subscribe((user) => {
-        this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
+        this.fullFormMode = user && user.group === Groups.Registry;
         this.initTerritoryForm();
         this.initTerritoryFormValue();
         this.checkPermissions();
@@ -435,7 +440,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private checkPermissions(): void {
-    if (!this.authService.hasAnyPermission(['territory.update'])) {
+    if (!this.authService.hasRole([Roles.TerritoryAdmin, Roles.RegistryAdmin])) {
       this.territoryForm.disable({ onlySelf: true });
     }
   }

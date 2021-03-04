@@ -1,6 +1,6 @@
 import { ServiceProvider as BaseServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension } from '@pdc/provider-validator';
 import { RedisConnection } from '@ilos/connection-redis';
@@ -26,7 +26,7 @@ import { NormalizationProcessAction } from './actions/NormalizationProcessAction
     NormalizationCostAction,
     NormalizationIdentityAction,
   ],
-  middlewares: [['channel.service.only', ChannelServiceWhitelistMiddleware]],
+  middlewares: [...defaultMiddlewareBindings],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],

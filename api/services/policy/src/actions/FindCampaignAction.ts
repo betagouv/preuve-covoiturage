@@ -1,5 +1,6 @@
 import { handler, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
 
 import {
   IncentiveRepositoryProviderInterfaceResolver,
@@ -11,20 +12,10 @@ import { alias } from '../shared/policy/find.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    [
-      'scope.it',
-      [
-        ['incentive-campaign.read'],
-        [
-          (params, context): string => {
-            if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
-              return 'incentive-campaign.read';
-            }
-          },
-        ],
-      ],
-    ],
-    ['context_extract', { territory_id: 'call.user.territory_id' }],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      territory: 'territory.policy.find',
+      registry: 'registry.policy.find',
+    }),
     ['validate', alias],
   ],
 })

@@ -42,11 +42,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   @Output() filtersCount = new EventEmitter();
   @ViewChild('townInput') townInput: ElementRef;
 
-  constructor(
-    public authService: AuthenticationService,
-    private fb: FormBuilder,
-    private filterService: FilterService,
-  ) {
+  constructor(public auth: AuthenticationService, private fb: FormBuilder, private filterService: FilterService) {
     super();
   }
 
@@ -68,7 +64,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   ngOnInit(): void {
     this.initForm();
 
-    this.userIsTerritory = this.authService.isTerritory;
+    this.userIsTerritory = this.auth.isTerritory();
 
     // reset filter on page trip page load
     this.filterService.resetFilter();

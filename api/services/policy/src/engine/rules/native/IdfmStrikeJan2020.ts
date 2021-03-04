@@ -31,21 +31,6 @@ export class IdfmStrikeJan2020 extends AbstractRule<IdfmParametersInterface> {
     }
 
     const eligibleJourneys = ctx.trip
-      // Uncomment this for debug
-      // .map((p) => {
-      //   console.log({
-      //     is_not_driver: !p.is_driver,
-      //     is_over_18: p.is_over_18 !== false,
-      //     start_idf: p.start_territory_id === this.parameters.territory_id,
-      //     end_idf: p.end_territory_id === this.parameters.territory_id,
-      //     not_pp: !(
-      //       this.parameters.paris_insee_code.indexOf(p.start_insee) >= 0 &&
-      //       this.parameters.paris_insee_code.indexOf(p.end_insee) >= 0
-      //     ),
-      //     above_2km: p.distance >= 2000,
-      //   });
-      //   return p;
-      // })
       .filter(
         (p) =>
           !p.is_driver &&

@@ -1,5 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/delete.contract';
@@ -8,19 +9,10 @@ import { alias } from '../shared/policy/delete.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    [
-      'scope.it',
-      [
-        ['incentive-campaign.delete'],
-        [
-          (params, context): string => {
-            if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
-              return 'incentive-campaign.delete';
-            }
-          },
-        ],
-      ],
-    ],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      territory: 'territory.policy.delete',
+      registry: 'registry.policy.delete',
+    }),
     ['validate', alias],
   ],
 })

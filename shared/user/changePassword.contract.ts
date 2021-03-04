@@ -1,6 +1,7 @@
 export interface ParamsInterface {
   old_password: string;
   new_password: string;
+  _id: number;
 }
 
 export type ResultInterface = boolean;

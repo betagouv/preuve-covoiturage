@@ -23,7 +23,7 @@ export function healthCheckFactory(checks: Array<() => Promise<any>> = []): Requ
       try {
         await check();
       } catch (err) {
-        console.error(err, 'health check failed');
+        console.error('health check failed', err);
         res.status(500).send({
           status: 'error',
         });

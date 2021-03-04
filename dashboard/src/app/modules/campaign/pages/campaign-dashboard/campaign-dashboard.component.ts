@@ -1,13 +1,13 @@
+import { takeUntil } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-import { map, takeUntil } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { AuthenticationService as Auth } from '~/core/services/authentication/authentication.service';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
+import { Roles } from '~/core/enums/user/roles';
 
 @Component({
   selector: 'app-campaign-dashboard',
@@ -16,32 +16,21 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 })
 export class CampaignDashboardComponent extends DestroyObservable implements OnInit {
   campaignStatus = CampaignStatusEnum;
-  canCreateCampaign$: Observable<boolean>;
+  canCreate: boolean;
+  canSeeDrafts: boolean;
+  canSeeDemoCaption: boolean;
   campaigns: CampaignUx[];
   outdatedCampaign: CampaignUx[];
   currentCampaigns: CampaignUx[];
-  canSeeDraft$: Observable<boolean>;
-  displayDemoCaption$: Observable<boolean>;
 
-  constructor(private _authService: AuthenticationService, private _campaignStoreService: CampaignStoreService) {
+  constructor(private auth: Auth, private _campaignStoreService: CampaignStoreService) {
     super();
   }
 
   ngOnInit(): void {
-    this.canCreateCampaign$ = this._authService.user$.pipe(
-      map((user) => user && this._authService.hasAnyPermission(['incentive-campaign.create'])),
-      takeUntil(this.destroy$),
-    );
-
-    this.canSeeDraft$ = this._authService.user$.pipe(
-      map((user) => user && (this._authService.isAdmin || this._authService.isDemo)),
-      takeUntil(this.destroy$),
-    );
-
-    this.displayDemoCaption$ = this._authService.user$.pipe(
-      map((user) => user && this._authService.isDemo),
-      takeUntil(this.destroy$),
-    );
+    this.canCreate = this.auth.isSuperAdmin() || this.auth.hasRole([Roles.TerritoryAdmin, Roles.TerritoryDemo]);
+    this.canSeeDrafts = this.canCreate;
+    this.canSeeDemoCaption = this.auth.hasRole(Roles.TerritoryDemo);
 
     this.loadCampaigns();
   }
@@ -65,8 +54,8 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
         }
       });
     });
-    if (this._authService.user.group === UserGroupEnum.TERRITORY) {
-      this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
+    if (this.auth.user.group === Groups.Territory) {
+      this._campaignStoreService.filterSubject.next({ territory_id: this.auth.user.territory_id });
     }
     this._campaignStoreService.loadList();
   }

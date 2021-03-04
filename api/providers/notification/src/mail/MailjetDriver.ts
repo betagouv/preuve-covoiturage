@@ -76,7 +76,7 @@ export class MailjetDriver implements MailDriverInterface {
 
       return this.mj.post('send').request({ Messages: [message] });
     } catch (e) {
-      console.error(e.message, { ...e });
+      console.error(e.message, e);
       throw e;
     }
   }

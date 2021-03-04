@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { Roles } from '~/core/enums/user/roles';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
@@ -19,8 +19,8 @@ export class CampaignRetributionViewComponent implements OnInit {
 
   get canEdit(): boolean {
     return (
-      (this._authenticationService.hasRole(UserRoleEnum.TERRITORY_ADMIN) ||
-        this._authenticationService.hasRole(UserRoleEnum.TERRITORY_DEMO)) &&
+      (this._authenticationService.hasRole(Roles.TerritoryAdmin) ||
+        this._authenticationService.hasRole(Roles.TerritoryDemo)) &&
       this.campaign.status === CampaignStatusEnum.DRAFT
     );
   }

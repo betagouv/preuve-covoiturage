@@ -44,14 +44,14 @@ export class SetPermissionsCommand implements CommandInterface {
 
       // clean up the table
       await pgClient.query(`DELETE FROM ${this.table}`);
-      console.log('[set-permissions] table cleaned up');
+      console.info('[set-permissions] table cleaned up');
 
       // insert permissions
       Object.keys(perms).forEach((group: string) => {
         Object.values(perms[group]).forEach(({ slug: role, permissions }) => {
           const description = group.substr(0, 1).toUpperCase() + group.substr(1) + ` ${role}`;
 
-          console.log(`[set-permissions] ${group}:${role} (${description})`);
+          console.info(`[set-permissions] ${group}:${role} (${description})`);
 
           updates.push(
             pgClient.query({
@@ -66,11 +66,11 @@ export class SetPermissionsCommand implements CommandInterface {
 
       await pgClient.query('COMMIT');
 
-      console.log('[set-permissions] All patched!');
+      console.info('[set-permissions] All patched!');
     } catch (e) {
       if ('query' in pgClient) pgClient.query('ROLLBACK');
 
-      console.log('[set-permissions] ERROR', e.message);
+      console.error('[set-permissions] ERROR', e);
     }
 
     pgClient.release();

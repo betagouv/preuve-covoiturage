@@ -1,14 +1,5 @@
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
-import {
-  OperatorsPermissionsAdminType,
-  OperatorsPermissionsUserType,
-  RegistryPermissionsAdminType,
-  RegistryPermissionsUserType,
-  TerritoriesPermissionsAdminType,
-  TerritoriesPermissionsUserType,
-} from '~/core/types/permissionType';
-
+import { Groups } from '~/core/enums/user/groups';
+import { Roles } from '~/core/enums/user/roles';
 export interface ProfileInterface {
   email: string;
   lastname: string;
@@ -22,17 +13,9 @@ export interface UserInterface {
   lastname: string;
   firstname: string;
   phone: string;
-  group: UserGroupEnum;
-  role: UserRoleEnum;
+  group: Groups;
+  role: Roles;
   operator_id?: number;
   territory_id?: number;
-  permissions: UserPermissionsType;
+  permissions: string[];
 }
-
-export type UserPermissionsType =
-  | TerritoriesPermissionsAdminType[]
-  | TerritoriesPermissionsUserType[]
-  | OperatorsPermissionsAdminType[]
-  | OperatorsPermissionsUserType[]
-  | RegistryPermissionsAdminType[]
-  | RegistryPermissionsUserType[];

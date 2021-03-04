@@ -55,9 +55,10 @@ export class GeoFetchCommand implements CommandInterface {
               values: [line._id, data[0].contour, data[0].codesPostaux, data[0].nom],
             });
 
-            console.log('> UPDATE', line._id, data[0].nom, data[0].contour && data[0].contour !== '');
+            // prettier-ignore
+            console.debug(`> UPDATE ${line._id} ${data[0].nom} ${data[0].contour && data[0].contour !== '' ? 'contour' : ''}`); // eslint-disable-line max-len
           } catch (e) {
-            console.log('> ERROR', line._id, e);
+            console.error(`> ERROR ${line._id}`, e);
           }
         }
       } while (count !== 0);
@@ -72,7 +73,7 @@ export class GeoFetchCommand implements CommandInterface {
 
       return 'Finito';
     } catch (e) {
-      console.log(e);
+      console.error(e.message, e);
     }
   }
 }

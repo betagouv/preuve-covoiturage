@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "es2020",
     "allowJs": false,
     "declaration": true,
     "noImplicitAny": false,
@@ -10,14 +10,17 @@
     "noStrictGenericChecks": true,
     "resolveJsonModule": true,
     "sourceMap": true,
+    "skipLibCheck": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*"],
       "~/*": ["src/*"]
-    }
+    },
+    "lib": ["es2020"]
   },
   "include": ["src/**/*"],
   "exclude": [
@@ -25,5 +28,4 @@
     "src/**/*.spec.ts",
     "tests/**"
   ],
-  "libs": ["es6"]
 }

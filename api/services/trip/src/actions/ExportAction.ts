@@ -2,6 +2,7 @@ import { get } from 'lodash';
 
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, InvalidParamsException } from '@ilos/common';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
 
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
@@ -15,24 +16,18 @@ import * as middlewareConfig from '../config/middlewares';
 @handler({
   ...handlerConfig,
   middlewares: [
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      territory: 'territory.trip.export',
+      operator: 'operator.trip.export',
+      registry: 'registry.trip.export',
+    }),
     ['validate', alias],
-    [
-      'scopeToGroup',
-      {
-        global: 'trip.export',
-        territory: 'territory.trip.export',
-        operator: 'operator.trip.export',
-      },
-    ],
-    [
-      'validate.date',
-      {
-        startPath: 'date.start',
-        endPath: 'date.end',
-        minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
-        maxEnd: () => new Date(new Date().getTime() - middlewareConfig.date.maxEndDefault),
-      },
-    ],
+    validateDateMiddleware({
+      startPath: 'date.start',
+      endPath: 'date.end',
+      minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
+      maxEnd: () => new Date(new Date().getTime() - middlewareConfig.date.maxEndDefault),
+    }),
   ],
 })
 export class ExportAction extends Action {
@@ -48,7 +43,7 @@ export class ExportAction extends Action {
     const fullname = `${get(context, 'call.user.firstname', '')} ${get(context, 'call.user.lastname', '')}`;
 
     if (!email) {
-      throw new InvalidParamsException();
+      throw new InvalidParamsException('Missing user email');
     }
 
     const tz = await this.tripRepository.validateTz(params.tz);
@@ -65,8 +60,6 @@ export class ExportAction extends Action {
         email,
       },
       query: {
-        operator_id: params.operator_id,
-        territory_id: params.territory_id,
         territory_authorized_operator_id: get(context, 'call.user.authorizedOperators', []) || [],
         tz: tz.name,
         date: {
@@ -75,6 +68,14 @@ export class ExportAction extends Action {
         },
       },
     } as unknown) as BuildParamsInterface;
+
+    if (params.operator_id) {
+      buildParams.query.operator_id = Array.isArray(params.operator_id) ? params.operator_id : [params.operator_id];
+    }
+
+    if (params.territory_id) {
+      buildParams.query.territory_id = Array.isArray(params.territory_id) ? params.territory_id : [params.territory_id];
+    }
 
     // call trip:buildExport
     await this.kernel.notify<BuildParamsInterface>(buildSignature, buildParams, {

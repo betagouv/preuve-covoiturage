@@ -15,7 +15,7 @@ var { setup, up, down } = createMigration(
   __dirname,
   async (up = true) => {
     if (up) {
-      console.log('call sync:region_dep');
+      console.debug('call sync:region_dep');
       try {
         const { stdout, stderr } = await exec(
           `yarn workspace @pdc/proxy ilos sync:region_dep -u ${process.env.APP_POSTGRES_URL}`,
@@ -23,12 +23,11 @@ var { setup, up, down } = createMigration(
             cwd: path.resolve(path.resolve(__dirname, '..', '..')),
           },
         );
-        console.log({ stdout, stderr });
         if (stderr) {
           throw new Error(stderr);
         }
       } catch (e) {
-        console.log(e);
+        console.error(e.message, e);
         throw e;
       }
     }

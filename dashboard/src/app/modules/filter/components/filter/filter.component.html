@@ -116,7 +116,7 @@
 
             <!-- OPERATORS-->
             <app-operators-autocomplete
-              *ngIf="!authService.isOperator"
+              *ngIf="!auth.isOperator()"
               [parentForm]="filterForm"
               [onlyVisible]="true"
             ></app-operators-autocomplete>

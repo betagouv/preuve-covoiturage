@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material/stepper';
-import { takeUntil } from 'rxjs/operators';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
@@ -32,7 +33,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
     svgIcon: 'new_car',
     title: 'Vous êtes nouveau sur Preuve de covoiturage ?',
     hint: 'Découvrez comment développer une politique de covoiturage efficace dans votre collectivité',
-    link: 'https://registre-preuve-de-covoiturage.gitbook.io/produit/boite-a-outils/guide-des-incitations',
+    link: 'https://doc.covoiturage.beta.gouv.fr/territoires/guide-des-incitations',
   };
 
   creationFromScratch = false;

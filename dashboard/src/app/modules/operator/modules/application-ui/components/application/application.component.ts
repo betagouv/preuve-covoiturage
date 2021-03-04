@@ -7,6 +7,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
 import { ApplicationStoreService } from '~/modules/operator/services/application-store.service';
 import { Application } from '~/core/entities/operator/application';
+import { Roles } from '~/core/enums/user/roles';
 
 @Component({
   selector: 'app-application',
@@ -18,7 +19,7 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
   public showCreateApplicationForm = false;
 
   constructor(
-    private _authService: AuthenticationService,
+    private auth: AuthenticationService,
     private _applicationStoreService: ApplicationStoreService,
     private _toastr: ToastrService,
     private _dialog: DialogService,
@@ -31,7 +32,7 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
   }
 
   private loadOperatorTokens(): void {
-    const operatorId = this._authService.user.operator_id;
+    const operatorId = this.auth.user.operator_id;
     this._applicationStoreService.filterSubject.next({ owner_id: operatorId });
 
     this._applicationStoreService.entities$
@@ -55,11 +56,11 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
   }
 
   public get canRevoke(): boolean {
-    return this._authService.hasAnyPermission(['application.revoke']);
+    return this.auth.hasRole([Roles.RegistryAdmin, Roles.OperatorAdmin]);
   }
 
   public get canCreate(): boolean {
-    return this._authService.hasAnyPermission(['application.create']);
+    return this.auth.hasRole([Roles.RegistryAdmin, Roles.OperatorAdmin]);
   }
 
   public get loading(): boolean {

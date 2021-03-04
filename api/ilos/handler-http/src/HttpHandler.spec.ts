@@ -40,7 +40,6 @@ function setup(
 }
 
 test.afterEach(() => {
-  console.log('tototo');
   nock.cleanAll();
 });
 

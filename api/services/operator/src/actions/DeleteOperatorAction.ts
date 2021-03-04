@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import { ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { Sentry } from '@pdc/provider-sentry';
+import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/delete.contract';
@@ -9,10 +10,7 @@ import { alias } from '../shared/operator/delete.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['can', ['operator.delete']],
-    ['validate', alias],
-  ],
+  middlewares: [hasPermissionMiddleware('registry.operator.delete'), ['validate', alias]],
 })
 export class DeleteOperatorAction extends AbstractAction {
   constructor(
@@ -30,9 +28,9 @@ export class DeleteOperatorAction extends AbstractAction {
     // delete users associated with this operator
     try {
       await this.kernel.call('user:deleteAssociated', { operator_id: params._id }, ctx);
-      console.log(`> deleted associated users to operator ${params._id}`);
+      console.debug(`> deleted associated users to operator ${params._id}`);
     } catch (e) {
-      console.log(`> Failed to remove associated users`, e.message);
+      console.error(`> Failed to remove associated users`, e);
 
       // We want errors to be non-blocking but they are logged
       Sentry.setUser(get(context, 'call.user', null));
@@ -51,10 +49,10 @@ export class DeleteOperatorAction extends AbstractAction {
           { uuid },
           { ...ctx, ...{ call: { user: { operator_id: owner_id, permissions: ['application.revoke'] } } } },
         );
-        console.log(`> revoked app:`, { uuid, owner_id });
+        console.debug(`> revoked app:`, { uuid, owner_id });
       }
     } catch (e) {
-      console.log(`> Failed to remove associated applications`, e.message);
+      console.error(`> Failed to remove associated applications`, e);
       Sentry.setUser(get(context, 'call.user', null));
       Sentry.captureException(e);
     }

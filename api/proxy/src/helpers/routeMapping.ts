@@ -1,6 +1,9 @@
 import express from 'express';
-import { KernelInterface, ParamsType, RPCSingleCallType } from '@ilos/common';
+import { get } from 'lodash';
+import { KernelInterface } from '@ilos/common';
 import { mapStatusCode } from '@ilos/transport-http';
+
+import { createRPCPayload } from './createRPCPayload';
 
 export type MapRequestType = (body: any, query?: any, params?: any, session?: any) => any;
 export type MapResponseType = (result: any, error: any, session?: any) => any;
@@ -42,31 +45,6 @@ export type RouteHandlerType = (
   res: express.Response,
   next: express.NextFunction,
 ) => Promise<void>;
-
-export function makeCall(method: string, params: ParamsType, callContext?: any): RPCSingleCallType {
-  const baseRPCCall = {
-    jsonrpc: '2.0',
-    id: 1,
-  };
-  const call = callContext ? callContext : { user: undefined };
-
-  const context = {
-    call,
-    channel: {
-      service: 'proxy',
-      transport: 'http',
-    },
-  };
-
-  return {
-    ...baseRPCCall,
-    method,
-    params: {
-      params,
-      _context: context,
-    },
-  };
-}
 
 export function routeMapping(
   definitions: (ObjectRouteMapType | ArrayRouteMapType)[],
@@ -129,9 +107,11 @@ export function routeMapping(
           async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
             try {
               const response = await kernel.handle(
-                makeCall(serviceDefinition.signature, mapRequestFinal(req.body, req.query, req.params, req.session), {
-                  user: 'session' in req && 'user' in req.session ? req.session.user : {},
-                }),
+                createRPCPayload(
+                  serviceDefinition.signature,
+                  mapRequestFinal(req.body, req.query, req.params, req.session),
+                  get(req, 'session.user', {}),
+                ),
               );
               if (!response) {
                 res.status(204).end();

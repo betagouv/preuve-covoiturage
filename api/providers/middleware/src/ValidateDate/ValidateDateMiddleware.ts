@@ -1,29 +1,33 @@
 import { get, set } from 'lodash';
-import { MiddlewareInterface, ContextType, ResultType, InvalidParamsException, middleware } from '@ilos/common';
+import { startOfDay, endOfDay } from 'date-fns';
+import {
+  MiddlewareInterface,
+  ContextType,
+  ParamsType,
+  ResultType,
+  InvalidParamsException,
+  middleware,
+} from '@ilos/common';
+import { ConfiguredMiddleware } from '../interfaces';
 
-export type ValidateDateMiddlewareOptionsType = {
-  startPath: string;
-  endPath: string;
-  minStart?: () => Date;
-  maxEnd?: () => Date;
-  applyDefault?: boolean;
-};
-
+/*
+ * Check date validity
+ */
 @middleware()
-export class ValidateDateMiddleware implements MiddlewareInterface {
+export class ValidateDateMiddleware implements MiddlewareInterface<ValidateDateMiddlewareParams> {
   async process(
-    params: any,
+    params: ParamsType,
     context: ContextType,
     next: Function,
-    options: ValidateDateMiddlewareOptionsType,
+    options: ValidateDateMiddlewareParams,
   ): Promise<ResultType> {
     if (!options.startPath || !options.endPath || Reflect.ownKeys(options).length < 3) {
       throw new InvalidParamsException('Middleware is not properly configured');
     }
 
     const { startPath, endPath, minStart: minStartFn, maxEnd: maxEndFn, applyDefault: applyDefaultOpt } = options;
-    const minStart: Date | undefined = minStartFn ? minStartFn() : undefined;
-    const maxEnd: Date | undefined = maxEndFn ? maxEndFn() : undefined;
+    const minStart: Date | undefined = minStartFn ? startOfDay(minStartFn(params, context)) : undefined;
+    const maxEnd: Date | undefined = maxEndFn ? endOfDay(maxEndFn(params, context)) : undefined;
     const applyDefault = applyDefaultOpt ?? false;
     const startDate: Date | undefined = get(params, startPath, undefined);
     const endDate: Date | undefined = get(params, endPath, undefined);
@@ -51,4 +55,22 @@ export class ValidateDateMiddleware implements MiddlewareInterface {
 
     return next(params, context);
   }
+}
+
+export type ValidateDateMiddlewareParams = {
+  startPath: string;
+  endPath: string;
+  minStart?: (params: ParamsType, context: ContextType) => Date;
+  maxEnd?: (params: ParamsType, context: ContextType) => Date;
+  applyDefault?: boolean;
+};
+
+const alias = 'validate.date';
+
+export const validateDateMiddlewareBinding = [alias, ValidateDateMiddleware];
+
+export function validateDateMiddleware(
+  params: ValidateDateMiddlewareParams,
+): ConfiguredMiddleware<ValidateDateMiddlewareParams> {
+  return [alias, params];
 }

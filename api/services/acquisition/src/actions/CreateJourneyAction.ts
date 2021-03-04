@@ -22,6 +22,7 @@ import {
   ValidatorInterfaceResolver,
   InvalidParamsException,
 } from '@ilos/common';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/create.contract';
 import { alias } from '../shared/acquisition/create.schema';
@@ -33,7 +34,10 @@ import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionE
 import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
 import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 
-@handler({ ...handlerConfig, middlewares: [['can', ['journey.create']]] })
+@handler({
+  ...handlerConfig,
+  middlewares: [...copyGroupIdAndApplyGroupPermissionMiddlewares({ operator: 'operator.acquisition.create' })],
+})
 export class CreateJourneyAction extends AbstractAction {
   constructor(
     private kernel: KernelInterfaceResolver,
@@ -47,15 +51,17 @@ export class CreateJourneyAction extends AbstractAction {
     const now = new Date();
 
     // validate the payload manually to log rejected journeys
+    // TODO : move me to middleware and try/catch in proxy
     try {
       await this.validator.validate(params, alias);
     } catch (e) {
+      console.error(e.message, { journey_id: params.journey_id, operator_id: params.operator_id });
       await this.logError(params, context, e, '400');
       throw new InvalidParamsException(e.message);
     }
 
     // assign the operator from context
-    const payload: JourneyInterface = this.cast(params, context.call.user.operator_id);
+    const payload: JourneyInterface = this.normalize(params);
 
     // reject if happening in the future
     const person = 'passenger' in payload ? payload.passenger : payload.driver;
@@ -100,20 +106,19 @@ export class CreateJourneyAction extends AbstractAction {
     };
   }
 
-  protected cast(jrn: ParamsInterface, operator_id: number): JourneyInterface {
+  protected normalize(jrn: ParamsInterface): JourneyInterface {
     const journey = {
       ...jrn,
-      operator_id,
     };
 
     // driver AND/OR passenger
-    if ('driver' in jrn) journey.driver = this.castPerson(jrn.driver, true);
-    if ('passenger' in jrn) journey.passenger = this.castPerson(jrn.passenger, false);
+    if ('driver' in jrn) journey.driver = this.normalizePerson(jrn.driver, true);
+    if ('passenger' in jrn) journey.passenger = this.normalizePerson(jrn.passenger, false);
 
     return journey;
   }
 
-  protected castPerson(person: PersonInterface, driver = false): PersonInterface {
+  protected normalizePerson(person: PersonInterface, driver = false): PersonInterface {
     return {
       expense: 0,
       incentives: [],

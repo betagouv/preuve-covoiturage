@@ -23,8 +23,8 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "devDependencies": {
-    "@types/supertest": "^2.0.7",
-    "supertest": "^4.0.2"
+    "@types/supertest": "^2.0.10",
+    "supertest": "^6.1.3"
   },
   "dependencies": {
     "@ilos/common": "^0.4.1",

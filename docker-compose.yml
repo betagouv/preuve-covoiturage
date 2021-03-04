@@ -63,7 +63,8 @@ services:
     volumes:
       - ./api:/code
     working_dir: '/code'
-    command: 'yarn start:queue'
+    command: 'bash -c "yarn start:queue | pino-pretty"'
+    tty: true
     env_file: ./api/.env
     environment:
       APP_WORKER: 'true'

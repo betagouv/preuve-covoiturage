@@ -48,7 +48,7 @@ export class SyncLegacyProductionCommand implements CommandInterface {
       options.from = resLatest.rows[0].created_at;
     }
 
-    console.log(`> Latest acquisition on new db is: ${options.from.toISOString()}`);
+    console.info(`> Latest acquisition on new db is: ${options.from.toISOString()}`);
 
     // count acquisitions to import
     const resAcquisitions = await pgRead.query({
@@ -56,7 +56,7 @@ export class SyncLegacyProductionCommand implements CommandInterface {
       values: [options.from],
     });
 
-    console.log(`> ${resAcquisitions.rowCount} acquisitions to import`);
+    console.info(`> ${resAcquisitions.rowCount} acquisitions to import`);
 
     let counter = 0;
 
@@ -79,12 +79,12 @@ export class SyncLegacyProductionCommand implements CommandInterface {
           });
 
           counter += 1;
-          console.log(`>>> Imported ${line._id}\t${line.created_at.toISOString()}`);
+          console.debug(`>>> Imported ${line._id}\t${line.created_at.toISOString()}`);
         }
 
         await pgWrite.query('COMMIT');
       } catch (e) {
-        console.log(e);
+        console.error(e.message, e);
         await pgWrite.query('ROLLBACK');
       }
     }

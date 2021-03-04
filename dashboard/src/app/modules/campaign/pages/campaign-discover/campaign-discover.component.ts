@@ -5,7 +5,7 @@ import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
@@ -72,7 +72,7 @@ export class CampaignDiscoverComponent implements OnInit {
         this.campaignsToShow = this.campaigns;
       },
     );
-    if (this._authService.user.group === UserGroupEnum.TERRITORY) {
+    if (this._authService.user.group === Groups.Territory) {
       this.campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
     }
     this.campaignStoreService.loadList();

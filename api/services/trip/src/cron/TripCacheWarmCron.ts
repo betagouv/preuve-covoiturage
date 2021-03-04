@@ -46,7 +46,7 @@ export class TripCacheWarmCron extends Action implements InitHookInterface {
     // warm operators
     if ('operators' in response) {
       for (const operator_id of response.operators) {
-        console.log(`> Warm cache for operator ${operator_id}`);
+        console.info(`> Warm cache for operator ${operator_id}`);
         await this.kernel.notify(
           'trip:stats',
           {
@@ -64,7 +64,7 @@ export class TripCacheWarmCron extends Action implements InitHookInterface {
     // warm territories
     if ('territories' in response) {
       for (const territory_id of response.territories) {
-        console.log(`> Warm cache for territory ${territory_id}`);
+        console.info(`> Warm cache for territory ${territory_id}`);
         await this.kernel.notify(
           'trip:stats',
           {

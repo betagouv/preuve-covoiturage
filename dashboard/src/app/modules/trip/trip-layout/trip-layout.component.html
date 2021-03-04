@@ -3,27 +3,33 @@
     <h1 class="page-title">Les trajets</h1>
     <div class="page-menu TripLayout-menu">
       <nav mat-tab-nav-bar>
-        <ng-container *ngFor="let link of menu">
-          <a
-            mat-tab-link
-            *ngIf="hasGroupAndRole(link.groups, link.role)"
-            [routerLink]="link.path"
-            routerLinkActive
-            #rla="routerLinkActive"
-            [active]="rla.isActive"
-          >
-            <mat-icon *ngIf="link.label === 'Export'">get_app</mat-icon>
-            {{ link.label }}
-          </a>
-        </ng-container>
+        <a
+          mat-tab-link
+          routerLink="/trip/stats"
+          routerLinkActive
+          #rlaStats="routerLinkActive"
+          [active]="rlaStats.isActive"
+        >
+          Chiffres clés
+        </a>
 
         <a
           mat-tab-link
-          *ngIf="canExport$ | async"
+          routerLink="/trip/list"
+          routerLinkActive
+          #rlaList="routerLinkActive"
+          [active]="rlaList.isActive"
+        >
+          Liste détaillée
+        </a>
+
+        <a
+          *ngIf="canExport"
+          mat-tab-link
           routerLink="/trip/export"
           routerLinkActive
-          #rla="routerLinkActive"
-          [active]="rla.isActive"
+          #rlaExport="routerLinkActive"
+          [active]="rlaExport.isActive"
         >
           <mat-icon>get_app</mat-icon>
           Export

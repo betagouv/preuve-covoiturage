@@ -17,7 +17,7 @@ export interface CarpoolRepositoryProviderInterface {
   updateStatus(acquisition_id: number, status: string): Promise<void>;
 }
 export abstract class CarpoolRepositoryProviderInterfaceResolver implements CarpoolRepositoryProviderInterface {
-  abstract async importFromAcquisition(
+  abstract importFromAcquisition(
     shared: {
       acquisition_id: number;
       operator_id: number;
@@ -30,5 +30,5 @@ export abstract class CarpoolRepositoryProviderInterfaceResolver implements Carp
     },
     people: PeopleWithIdInterface[],
   ): Promise<void>;
-  abstract async updateStatus(acquisition_id: number, status: string): Promise<void>;
+  abstract updateStatus(acquisition_id: number, status: string): Promise<void>;
 }

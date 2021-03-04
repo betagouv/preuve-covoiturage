@@ -1,18 +1,24 @@
+import { takeUntil } from 'rxjs/operators';
+
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent extends DestroyObservable implements OnInit {
   public loginForm: FormGroup;
   public passwordType = 'password';
 
-  constructor(private fb: FormBuilder, private authService: AuthenticationService) {}
+  constructor(private fb: FormBuilder, private authService: AuthenticationService, private router: Router) {
+    super();
+  }
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -21,16 +27,15 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  public get controls(): { [key: string]: AbstractControl } {
-    return this.loginForm.controls;
-  }
-
   public onLogin(): void {
-    this.authService.login(this.controls.email.value, this.controls.password.value).subscribe((user) => {
-      if (!user) {
-        console.warn('login failed');
-      }
-    });
+    const { email, password } = this.loginForm.value;
+
+    this.authService
+      .login(email, password)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.router.navigate(['/']);
+      });
   }
 
   public onPasswordTypeToggle(): void {

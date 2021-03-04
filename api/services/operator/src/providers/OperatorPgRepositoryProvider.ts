@@ -50,7 +50,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       operator.company = await this.kernel.call<CompanyParamsInterface, CompanyResultInterface>(
         companyFindSignature,
         { query: { siret: operator.siret } },
-        { channel: { service: 'operator' }, call: { user: { permissions: ['company.find'] } } },
+        { channel: { service: 'operator' }, call: { user: { permissions: ['common.company.find'] } } },
       );
     }
 

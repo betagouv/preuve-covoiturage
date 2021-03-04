@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/find.contract';
 import { alias } from '../shared/user/find.schema';
@@ -10,34 +11,18 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * Find user by id
  */
+
 @handler({
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    [
-      'scopeIt',
-      [
-        ['user.read'],
-        [
-          (params, context): string => {
-            if ('_id' in params && params._id === context.call.user._id) {
-              return 'profile.read';
-            }
-          },
-          (params, context): string => {
-            if (context.call.user.territory_id) {
-              return 'territory.users.read';
-            }
-          },
-          (params, context): string => {
-            if (context.call.user.operator_id) {
-              return 'operator.users.read';
-            }
-          },
-        ],
-      ],
-    ],
-    ['content.whitelist', userWhiteListFilterOutput],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      user: 'common.user.find',
+      registry: 'registry.user.find',
+      territory: 'territory.user.find',
+      operator: 'operator.user.find',
+    }),
+    contentWhitelistMiddleware(...userWhiteListFilterOutput),
   ],
 })
 export class FindUserAction extends AbstractAction {
@@ -46,17 +31,13 @@ export class FindUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
-    const scope = context.call.user.territory_id
-      ? 'territory'
-      : context.call.user.operator_id
-      ? 'operator'
-      : 'registry';
+    const scope = params.territory_id ? 'territory_id' : params.operator_id ? 'operator_id' : 'none';
     switch (scope) {
-      case 'territory':
-        return this.userRepository.findByTerritory(params._id, context.call.user.territory_id);
-      case 'operator':
-        return this.userRepository.findByOperator(params._id, context.call.user.operator_id);
-      case 'registry':
+      case 'territory_id':
+        return this.userRepository.findByTerritory(params._id, params[scope]);
+      case 'operator_id':
+        return this.userRepository.findByOperator(params._id, params[scope]);
+      case 'none':
         return this.userRepository.find(params._id);
     }
   }

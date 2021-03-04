@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, ConflictException, UnauthorizedException } from '@ilos/common';
+import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/patch.contract';
 import { alias } from '../shared/user/patch.schema';
@@ -13,34 +14,19 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
  * The user is switched to 'pending' when the email is modified.
  * A confirmation link is sent to the new email and a notification to the old one.
  */
+// TODO  : MIDDLEWARE
+
 @handler({
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    [
-      'scopeIt',
-      [
-        ['user.update'],
-        [
-          (params, context): string => {
-            if ('_id' in params && params._id === context.call.user._id) {
-              return 'profile.update';
-            }
-          },
-          (_params, context): string => {
-            if (context.call.user.territory_id) {
-              return 'territory.users.update';
-            }
-          },
-          (_params, context): string => {
-            if (context.call.user.operator_id) {
-              return 'operator.users.update';
-            }
-          },
-        ],
-      ],
-    ],
-    ['content.whitelist', userWhiteListFilterOutput],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      user: 'common.user.update',
+      registry: 'registry.user.update',
+      territory: 'territory.user.update',
+      operator: 'operator.user.update',
+    }),
+    contentWhitelistMiddleware(...userWhiteListFilterOutput),
   ],
 })
 export class PatchUserAction extends AbstractAction {
@@ -53,11 +39,8 @@ export class PatchUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const scope = context.call.user.territory_id
-      ? 'territory'
-      : context.call.user.operator_id
-      ? 'operator'
-      : 'registry';
+    const scope = params.territory_id ? 'territory_id' : params.operator_id ? 'operator_id' : 'none';
+
     const _id = params._id;
     const { email, ...patch } = params.patch;
 
@@ -68,13 +51,13 @@ export class PatchUserAction extends AbstractAction {
     }
 
     switch (scope) {
-      case 'territory':
-        user = await this.userRepository.findByTerritory(_id, context.call.user.territory_id);
+      case 'territory_id':
+        user = await this.userRepository.findByTerritory(_id, params[scope]);
         break;
-      case 'operator':
-        user = await this.userRepository.findByOperator(_id, context.call.user.operator_id);
+      case 'operator_id':
+        user = await this.userRepository.findByOperator(_id, params[scope]);
         break;
-      case 'registry':
+      case 'none':
         user = await this.userRepository.find(_id);
         break;
     }

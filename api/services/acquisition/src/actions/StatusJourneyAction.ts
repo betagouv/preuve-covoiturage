@@ -1,6 +1,6 @@
-import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, NotFoundException } from '@ilos/common';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { alias } from '../shared/acquisition/status.schema';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/status.contract';
@@ -15,8 +15,8 @@ import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfac
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['journey.create']],
     ['validate', alias],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({ operator: 'operator.acquisition.status' }),
   ],
 })
 export class StatusJourneyAction extends AbstractAction {
@@ -29,10 +29,7 @@ export class StatusJourneyAction extends AbstractAction {
   }
 
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const { journey_id } = params;
-    const operator_id: number = get(context, 'call.user.operator_id', null);
-
-    if (!operator_id) throw new NotFoundException();
+    const { journey_id, operator_id } = params;
 
     /**
      * 1. check acquisition

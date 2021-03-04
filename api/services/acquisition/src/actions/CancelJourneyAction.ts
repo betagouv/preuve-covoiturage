@@ -7,7 +7,8 @@
  * Cancel a stored journey from `carpool.carpools` table by setting the status to `canceled`.
  */
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
+import { handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/cancel.contract';
 import {
@@ -29,8 +30,8 @@ const callContext = {
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['journey.create']],
     ['validate', alias],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({ operator: 'operator.acquisition.cancel' }),
   ],
 })
 export class CancelJourneyAction extends AbstractAction {
@@ -41,11 +42,10 @@ export class CancelJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  protected async handle(params: ParamsInterface): Promise<ResultInterface> {
     // Store in database
-    const { operator_id } = context.call.user;
     try {
-      const { _id: acquisition_id } = await this.journeyRepository.exists(params.journey_id, operator_id);
+      const { _id: acquisition_id } = await this.journeyRepository.exists(params.journey_id, params.operator_id);
       // Perform cancelling action :)
       await this.kernel.notify<UpdateStatusParams>(
         updateStatusSignature,
