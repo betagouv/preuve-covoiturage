@@ -6,7 +6,10 @@ export class PostgresConnection implements ConnectionInterface<Pool> {
   protected pool: Pool;
 
   constructor(protected config: PoolConfig) {
-    this.pool = new Pool(config);
+    this.pool = new Pool({
+      ssl: { rejectUnauthorized: false },
+      ...config,
+    });
   }
 
   async up() {
