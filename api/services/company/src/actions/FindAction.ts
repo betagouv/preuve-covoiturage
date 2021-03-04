@@ -2,7 +2,6 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { CompanyDataSourceProviderInterfaceResolver } from '../interfaces/CompanyDataSourceProviderInterface';
 import { CompanyRepositoryProviderInterfaceResolver } from '../interfaces/CompanyRepositoryProviderInterface';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/company/find.contract';
@@ -14,11 +13,7 @@ import { signature as fetchSignature } from '../shared/company/fetch.contract';
   middlewares: [hasPermissionMiddleware('common.company.find'), ['validate', alias]],
 })
 export class FindAction extends AbstractAction {
-  constructor(
-    private ds: CompanyDataSourceProviderInterfaceResolver,
-    private repository: CompanyRepositoryProviderInterfaceResolver,
-    private kernel: KernelInterfaceResolver,
-  ) {
+  constructor(private repository: CompanyRepositoryProviderInterfaceResolver, private kernel: KernelInterfaceResolver) {
     super();
   }
 
@@ -56,7 +51,7 @@ export class FindAction extends AbstractAction {
     await this.kernel.call(fetchSignature, siret, {
       call: {
         user: {
-          permissions: ['company.fetch'],
+          permissions: ['common.company.fetch'],
         },
       },
       channel: {

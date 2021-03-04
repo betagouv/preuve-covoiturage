@@ -31,7 +31,7 @@ startSchema.properties.datetime = {
   type: 'string',
   format: 'date-time',
   cast: 'date',
-  maxLength: 26,
+  maxLength: 64,
   formatExclusiveMaximum: { $data: '2/end/datetime' },
 };
 

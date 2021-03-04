@@ -41,7 +41,6 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
     if (permissions.indexOf(basePermission) > -1) {
       return next(params, context);
     }
-
     for (const [scopedPermission, contextPath, paramsPath] of permissionScopes) {
       if (
         get(context, contextPath, Symbol()) === get(params, paramsPath, Symbol()) &&

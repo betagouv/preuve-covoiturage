@@ -55,6 +55,7 @@ export class CreateJourneyAction extends AbstractAction {
     try {
       await this.validator.validate(params, alias);
     } catch (e) {
+      console.error(e.message, { journey_id: params.journey_id, operator_id: params.operator_id });
       await this.logError(params, context, e, '400');
       throw new InvalidParamsException(e.message);
     }

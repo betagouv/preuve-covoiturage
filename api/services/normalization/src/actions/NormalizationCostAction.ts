@@ -23,22 +23,16 @@ export class NormalizationCostAction extends AbstractAction {
     try {
       const { siret } = await this.kernel.call<OperatorFindParamsInterface, OperatorFindResultInterface>(
         operatorFindSignature,
+        { _id: Number(operatorId) },
         {
-          _id: Number(operatorId),
-        },
-        {
-          call: {
-            user: {
-              permissions: ['operator.read'],
-            },
-          },
-          channel: {
-            service: 'normalization',
-          },
+          call: { user: { permissions: ['registry.operator.find'] } },
+          channel: { service: 'normalization' },
         },
       );
+
       return siret;
     } catch (e) {
+      console.error(`[normalization]:cost:getSiret ${e.message}`, e);
       return null;
     }
   }
