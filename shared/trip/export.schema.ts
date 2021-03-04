@@ -27,7 +27,7 @@ export const schema = {
         },
         {
           macro: 'serial',
-        }
+        },
       ],
     },
     territory_id: {
@@ -39,7 +39,7 @@ export const schema = {
         },
         {
           macro: 'serial',
-        }
+        },
       ],
     },
   },
