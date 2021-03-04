@@ -64,7 +64,7 @@ test(
   'should raise exception if data is invalid',
   macro,
   { hello: 1 },
-  '[{"keyword":"type","dataPath":".hello","schemaPath":"#/properties/hello/type","params":{"type":"string"},"message":"should be string"}]',
+  '[{"keyword":"type","dataPath":".hello","schemaPath":"#/properties/hello/type","params":{"type":"string"},"message":"should be string"}]', // eslint-disable-line max-len
   {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'myschema',
