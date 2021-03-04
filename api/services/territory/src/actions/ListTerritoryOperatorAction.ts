@@ -1,6 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
-import { hasPermissionMiddleware } from '@pdc/provider-middleware';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 // eslint-disable-next-line
 import { TerritoryOperatorRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryOperatorRepositoryProviderInterface';
@@ -9,7 +9,14 @@ import { alias } from '../shared/territory/listOperator.schema';
 
 @handler({
   ...configHandler,
-  middlewares: [hasPermissionMiddleware('common.territory.listOperator'), ['validate', alias]],
+  middlewares: [
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      registry: 'registry.territory.listOperator',
+      operator: 'operator.territory.listOperator',
+      territory: 'territory.territory.listOperator',
+    }),
+    ['validate', alias],
+  ],
 })
 export class ListTerritoryOperatorAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryOperatorRepositoryProviderInterfaceResolver) {
