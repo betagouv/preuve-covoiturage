@@ -317,7 +317,6 @@ export class HttpTransport implements TransportInterface {
 
     /**
      * Get the user profile (reads from the session rather than the database)
-     * @see user:me call for database read
      */
     this.app.get('/profile', authRateLimiter(), (req, res, next) => {
       if (!('user' in req.session)) {

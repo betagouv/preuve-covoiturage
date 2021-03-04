@@ -6,7 +6,6 @@ import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/Terr
 import { handlerConfig, ResultInterface } from '../shared/territory/list.contract';
 import { TerritoryListFilter } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 
-// TODO : MIDDLEWARE
 @handler({
   ...handlerConfig,
   middlewares: [
