@@ -75,6 +75,14 @@ services:
       - redis
       - postgres
 
+  lint:
+    build: './docker/lint'
+    tty: true
+    volumes:
+      - ./docker/lint/node_modules:/code/node_modules
+      - ./api:/code/api
+      - ./dashboard:/code/dashboard
+
 networks:
   front:
   back:

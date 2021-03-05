@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --configuration=$NODE_ENV",
-    "lint": "eslint 'src/**/*.ts'"
+    "clean": "rm -rf node_modules dist; yarn install"
   },
   "private": true,
   "dependencies": {
@@ -22,14 +22,10 @@
     "@angular/router": "~10.1.5",
     "@ctrl/ngx-chartjs": "^4.0.2",
     "@sentry/browser": "^5.24.2",
-    "@types/leaflet": "^1.5.1",
-    "@types/leaflet.markercluster": "^1.4.0",
     "chart.js": "^2.9.4",
     "date-fns": "^2.12.0",
     "date-fns-tz": "^1.0.10",
     "file-saver": "^2.0.5",
-    "leaflet": "^1.5.1",
-    "leaflet.markercluster": "^1.4.1",
     "lodash-es": "^4.17.15",
     "mathjs": "^6.1.0",
     "moment": "^2.24.0",
@@ -49,24 +45,9 @@
     "@angular/language-service": "~10.1.5",
     "@types/lodash-es": "^4.17.3",
     "@types/node": "^12.11.1",
-    "@typescript-eslint/eslint-plugin": "^2.15.0",
-    "@typescript-eslint/parser": "^2.15.0",
     "codelyzer": "^5.1.2",
-    "eslint": "^7.5.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "husky": "^3.0.9",
-    "prettier": "^2.0.5",
     "ts-loader": "^6.0.4",
     "ts-node": "~7.0.0",
-    "tslint": "~6.1.0",
-    "tslint-config-airbnb": "^5.11.1",
-    "tslint-import-group-ordering": "^2.1.1",
     "typescript": "~4.0.0"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "eslint --fix"
-    ]
   }
 }

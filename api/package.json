@@ -27,7 +27,6 @@
     "build:all": "lerna run --sort build",
     "coverage-ci": "lerna run --parallel --scope @pdc/* coverage-ci",
     "coverage": "lerna run --parallel --scope @pdc/* coverage",
-    "lint": "lerna run --scope @pdc/* lint",
     "test": "run-s test:unit",
     "test:unit": "run-s test:pdc:unit test:ilos:unit",
     "test:pdc:unit": "lerna run --scope @pdc/* test",
@@ -77,12 +76,5 @@
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.2.2"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "eslint --fix",
-      "git add"
-    ]
   }
 }
