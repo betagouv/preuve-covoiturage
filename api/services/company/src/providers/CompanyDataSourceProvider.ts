@@ -13,39 +13,43 @@ import { CompanyInterface } from '../shared/common/interfaces/CompanyInterface2'
   identifier: CompanyDataSourceProviderInterfaceResolver,
 })
 export class CompanyDataSourceProvider implements CompanyDataSourceProviderInterface {
-  protected domain = 'https://entreprise.data.gouv.fr/api/sirene/v1';
+  protected domain = 'https://entreprise.data.gouv.fr/api/sirene/v3';
 
   async find(siret: string): Promise<CompanyInterface> {
     try {
-      const { data } = await axios.get(`${this.domain}/siret/${siret}`);
+      const { data } = await axios.get(`${this.domain}/etablissements/${siret}`);
 
       if (data.message) {
         throw new NotFoundException(`${data.message} (${siret})`);
       }
 
       const siren = siret.substring(0, 9);
+      const updated_at = get(data, 'etablissement.updated_at', null);
 
       return {
         siret,
         siren,
         nic: get(data, 'etablissement.nic', null),
-        legal_name: get(data, 'etablissement.nom_raison_sociale', null),
-        company_naf_code: get(data, 'etablissement.activite_principale_entreprise', null),
-        establishment_naf_code: get(data, 'etablissement.activite_principale', null),
-        legal_nature_code: get(data, 'etablissement.nature_juridique_entreprise', null),
-        legal_nature_label: get(data, 'etablissement.libelle_nature_juridique_entreprise', null),
-        nonprofit_code: get(data, 'etablissement.numero_rna', null),
-        intra_vat: `FR${`0${((parseInt(siren) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
+        legal_name: get(data, 'etablissement.unite_legale.denomination', null),
+        company_naf_code: this.cleanNaf(get(data, 'etablissement.unite_legale.activite_principale', null)),
+        establishment_naf_code: this.cleanNaf(get(data, 'etablissement.activite_principale', null)),
+        legal_nature_code: get(data, 'etablissement.unite_legale.categorie_juridique', null),
+        legal_nature_label: get(data, 'etablissement.unite_legale.categorie_juridique', null),
+        nonprofit_code: null,
+        intra_vat: get(
+          data,
+          'etablissement.unite_legale.numero_tva_intra',
+          `FR${`0${((parseInt(siren) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
+        ),
         address: get(data, 'etablissement.geo_adresse', null),
-        address_street: get(data, 'etablissement.l4_normalisee', null),
+        address_street: get(data, 'etablissement.geo_l4', null),
         address_postcode: get(data, 'etablissement.code_postal', null),
-        address_cedex: get(data, 'etablissement.cedex', null),
+        address_cedex: get(data, 'etablissement.code_cedex', null),
         address_city: get(data, 'etablissement.libelle_commune', null),
-        lon: Number(get(data, 'etablissement.longitude', null)) || null,
-        lat: Number(get(data, 'etablissement.latitude', null)) || null,
-        headquarter: get(data, 'etablissement.is_siege', null) === '1',
-        updated_at:
-          get(data, 'etablissement.updated_at', null) === null ? null : new Date(get(data, 'etablissement.updated_at')),
+        lon: Number(get(data, 'etablissement.longitude', 0)) || 0,
+        lat: Number(get(data, 'etablissement.latitude', 0)) || 0,
+        headquarter: get(data, 'etablissement.etablissement_siege', null) === 'true',
+        updated_at: updated_at ? new Date(updated_at) : null,
       };
     } catch (e) {
       if (e.isAxiosError && e.response && e.response.status === 404) {
@@ -69,5 +73,10 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
     const parallelCalls = new Array(parallelCall).map(() => apiCall());
 
     return Promise.all(parallelCalls).then(() => res);
+  }
+
+  private cleanNaf(str: string | null): string | null {
+    if (str === null) return null;
+    return str.replace(/[^A-Z0-9]/g, '');
   }
 }
