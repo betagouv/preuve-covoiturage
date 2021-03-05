@@ -14,19 +14,17 @@ module.exports = {
     locales: {
       '/': {
         nav: [
+          { text: 'Repository', link: '/repo/' },
           { text: 'App', link: '/app/' },
           { text: 'API', link: '/api/' },
         ],
         sidebar: {
+          '/repo/': 'auto',
           '/app/': 'auto',
           '/api/': [
             {
               title: 'API',
               path: '/api/',
-            },
-            {
-              title: 'Infrastructure',
-              path: '/api/infra',
             },
             {
               title: 'Proxy',
