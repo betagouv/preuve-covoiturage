@@ -13,8 +13,7 @@
   "scripts": {
     "build": "tsc",
     "test": "exit 0",
-    "watch": "tsc -w",
-    "lint": "eslint \"src/**/*.ts\""
+    "watch": "tsc -w"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

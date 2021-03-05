@@ -111,7 +111,6 @@ export class SimulateOnFakeAction extends AbstractAction {
     });
     stringifier.on('readable', async () => {
       let row;
-      // tslint:disable-next-line: no-conditional-assignment
       while (null !== (row = stringifier.read())) {
         data.push(row);
       }

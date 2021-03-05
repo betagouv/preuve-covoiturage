@@ -1,4 +1,3 @@
-// tslint:disable no-invalid-this
 import anyTest, { TestInterface } from 'ava';
 import { RedisConnection } from '@ilos/connection-redis';
 import { QueueHandler } from './QueueHandler';

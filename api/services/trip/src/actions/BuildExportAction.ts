@@ -265,7 +265,6 @@ export class BuildExportAction extends Action {
 
     stringifier.on('readable', async () => {
       let row;
-      // tslint:disable-next-line: no-conditional-assignment
       while (null !== (row = stringifier.read())) {
         await fd.appendFile(row);
       }

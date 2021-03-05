@@ -12,7 +12,6 @@
     "test": "echo '[monitoring] no tests'; exit 0",
     "coverage-ci": "echo '[monitoring] no tests'; exit 0",
     "coverage": "echo '[monitoring] no tests'; exit 0",
-    "lint": "eslint 'src/**/*.ts'",
     "stats:journeys": "ilos stats:journeys",
     "copy-static": "cp -R ./src/templates ./dist/"
   },

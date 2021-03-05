@@ -9,8 +9,7 @@
     "start": "yarn serve",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "ava",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
+    "test": "ava"
   },
   "main": "./dist/bootstrap.js",
   "config": {

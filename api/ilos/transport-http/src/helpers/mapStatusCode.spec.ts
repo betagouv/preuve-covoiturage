@@ -1,4 +1,3 @@
-// tslint:disable: prefer-type-cast
 import test from 'ava';
 import { mapStatusCode } from './mapStatusCode';
 

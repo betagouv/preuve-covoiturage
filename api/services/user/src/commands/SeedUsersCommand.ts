@@ -32,7 +32,6 @@ export class SeedUsersCommand implements CommandInterface {
 
   constructor(private crypto: CryptoProviderInterfaceResolver) {}
 
-  // tslint:disable-next-line: no-shadowed-variable
   public async call(options): Promise<string> {
     if (['local', 'dev', 'test', 'ci'].indexOf(process.env.NODE_ENV) === -1) {
       throw new Error('Cannot seed users in this environment');

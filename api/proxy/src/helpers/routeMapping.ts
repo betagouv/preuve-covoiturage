@@ -88,14 +88,12 @@ export function routeMapping(
           mapRequestFinal = defaultMapRequest;
         }
 
-        // tslint:disable-next-line: prefer-conditional-expression
         if (typeof mapRequest !== 'function') {
           mapRequestFinal = autoMapRequest;
         } else {
           mapRequestFinal = mapRequest;
         }
 
-        // tslint:disable-next-line: prefer-conditional-expression
         if (!mapResponse) {
           mapResponseFinal = defaultMapResponse;
         } else {

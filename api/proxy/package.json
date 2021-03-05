@@ -7,8 +7,7 @@
     "ilos": "ilos",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "ava --serial",
-    "lint": "eslint 'src/**/*.ts'"
+    "test": "ava --serial"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

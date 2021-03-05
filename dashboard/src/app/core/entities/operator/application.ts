@@ -6,7 +6,8 @@ import { Clone } from '~/core/entities/IClone';
 import { ApplicationInterface } from '~/core/entities/api/shared/application/common/interfaces/ApplicationInterface';
 import { FormModel } from '~/core/entities/IFormModel';
 
-export class Application extends BaseModel
+export class Application
+  extends BaseModel
   implements Model, FormModel, MapModel<Application>, Clone<Application>, ApplicationInterface {
   _id: number;
   uuid: string;

@@ -1,13 +1,14 @@
 {
   "files.exclude": {
     "**/*.postman_collection.json": true,
-    "api/**/dist": true,
-    "dashboard/cypress": true
+    "api/**/dist": true
   },
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
   "editor.formatOnSave": true,
-  "eslint.packageManager": "yarn"
+  "prettier.configPath": "docker/lint/.prettierrc.js",
+  "prettier.prettierPath": "docker/lint/node_modules/prettier",
+  "prettier.packageManager": "yarn"
 }

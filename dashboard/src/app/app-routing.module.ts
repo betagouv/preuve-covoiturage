@@ -30,31 +30,31 @@ const routes: Routes = [
         path: 'campaign',
         canLoad: [AuthGuard],
         // prettier-ignore
-        loadChildren: (): Promise<CampaignModule> => import('./modules/campaign/campaign.module').then((mod) => mod.CampaignModule)
+        loadChildren: (): Promise<CampaignModule> => import('./modules/campaign/campaign.module').then((mod) => mod.CampaignModule),
       },
 
       {
         path: 'registry',
         canLoad: [AuthGuard],
         // prettier-ignore
-        loadChildren: (): Promise<RegistryModule> => import('./modules/registry/registry.module').then((mod) => mod.RegistryModule)
+        loadChildren: (): Promise<RegistryModule> => import('./modules/registry/registry.module').then((mod) => mod.RegistryModule),
       },
       {
         path: 'trip',
         canLoad: [AuthGuard],
         // prettier-ignore
-        loadChildren: (): Promise<TripModule> => import('./modules/trip/trip.module').then((mod) => mod.TripModule)
+        loadChildren: (): Promise<TripModule> => import('./modules/trip/trip.module').then((mod) => mod.TripModule),
       },
       {
         path: 'admin',
         canLoad: [AuthGuard],
         // prettier-ignore
-        loadChildren: (): Promise<AdministrationModule> => import('./modules/administration/administration.module').then((mod) => mod.AdministrationModule)
+        loadChildren: (): Promise<AdministrationModule> => import('./modules/administration/administration.module').then((mod) => mod.AdministrationModule),
       },
       {
         path: 'ui-guide',
         // prettier-ignore
-        loadChildren: (): Promise<UiGuideModule> => import('./modules/ui-guide/ui-guide.module').then((mod) => mod.UiGuideModule)
+        loadChildren: (): Promise<UiGuideModule> => import('./modules/ui-guide/ui-guide.module').then((mod) => mod.UiGuideModule),
       },
     ],
   },
@@ -65,17 +65,17 @@ const routes: Routes = [
       {
         path: '',
         // prettier-ignore
-        loadChildren: (): Promise<AuthenticationModule> => import('./modules/authentication/authentication.module').then((mod) => mod.AuthenticationModule)
+        loadChildren: (): Promise<AuthenticationModule> => import('./modules/authentication/authentication.module').then((mod) => mod.AuthenticationModule),
       },
       {
         path: '',
         // prettier-ignore
-        loadChildren: (): Promise<StatModule> => import('./modules/stat/stat.module').then((mod) => mod.StatModule)
+        loadChildren: (): Promise<StatModule> => import('./modules/stat/stat.module').then((mod) => mod.StatModule),
       },
       {
         path: 'attestation',
         // prettier-ignore
-        loadChildren: (): Promise<CertificateModule> => import('./modules/certificate/certificate.module').then((mod) => mod.CertificateModule)
+        loadChildren: (): Promise<CertificateModule> => import('./modules/certificate/certificate.module').then((mod) => mod.CertificateModule),
       },
     ],
   },

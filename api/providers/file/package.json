@@ -11,8 +11,7 @@
     "test": "echo '[provider-file] No tests'; exit 0",
     "test:integration": "echo '[provider-file] No tests'; exit 0",
     "coverage-ci": "echo '[provider-file] No tests'; exit 0",
-    "coverage": "echo '[provider-file] No tests'; exit 0",
-    "lint": "eslint 'src/**/*.ts'"
+    "coverage": "echo '[provider-file] No tests'; exit 0"
   },
   "dependencies": {
     "@ilos/common": "~0",

@@ -10,7 +10,6 @@ export function mapStatusCode(results: RPCResponseType): number {
   // BATCH requests
   if (Array.isArray(results)) {
     if (results.length === 1) {
-      // tslint:disable-next-line: no-parameter-reassignment
       results = results[0] as RPCSingleResponseType;
     } else {
       // TODO - spec is not very clear here

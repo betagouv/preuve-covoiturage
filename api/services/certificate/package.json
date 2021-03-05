@@ -7,8 +7,7 @@
     "ilos": "ilos",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "ava -s",
-    "lint": "eslint 'src/**/*.ts'"
+    "test": "ava -s"
   },
   "main": "./dist/bootstrap.js",
   "types": "./dist/index.d.ts",

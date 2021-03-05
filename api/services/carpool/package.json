@@ -11,7 +11,6 @@
     "watch": "tsc -w",
     "test": "NODE_ENV=testing ava",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts'",
     "ilos": "ilos"
   },
   "main": "./dist/bootstrap.js",

@@ -18,8 +18,7 @@
     "coverage-ci": "nyc --all --reporter=lcov ava ",
     "coverage": "nyc --all --reporter=text ava",
     "watch-test": "yarn test -- --watchAll",
-    "watch": "tsc -w",
-    "lint": "eslint \"src/**/*.ts\""
+    "watch": "tsc -w"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

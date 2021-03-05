@@ -25,7 +25,6 @@ import { CampaignDiscoverComponent } from './pages/campaign-discover/campaign-di
 import { CampaignFormComponent } from './components/campaign-form/campaign-form.component';
 import { CampaignInseeFilterComponent } from './components/campaign-form/step-2/campaign-insee-filter/campaign-insee-filter.component';
 import { CampaignInseeFilterStartEndViewComponent } from './components/campaign-form/step-2/campaign-insee-filter/campaign-insee-filter-start-end-view/campaign-insee-filter-start-end-view.component';
-import { CampaignMapComponent } from './components/campaign-map/campaign-map.component';
 import { CampaignMenuComponent } from './components/campaign-menu/campaign-menu.component';
 import { CampaignSimulationPaneComponent } from './components/campaign-simulation-pane/campaign-simulation-pane.component';
 import { CampaignsListComponent } from './modules/campaign-ui/components/campaigns-list/campaigns-list.component';
@@ -48,7 +47,6 @@ import { SummaryFormComponent } from './components/campaign-form/step-4/summary-
     CampaignInseeFilterComponent,
     CampaignInseeFilterStartEndFormComponent,
     CampaignInseeFilterStartEndViewComponent,
-    CampaignMapComponent,
     CampaignMenuComponent,
     CampaignSimulationPaneComponent,
     CampaignsListComponent,
