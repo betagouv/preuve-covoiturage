@@ -1,4 +1,4 @@
-name: "Global - QA"
+name: 'Global - QA'
 
 on: pull_request
 
@@ -16,14 +16,16 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: "14.x"
+          node-version: '14.x'
       - name: Install dependencies
         run: yarn --frozen-lockfile
-      - name: "Lint"
-        run: yarn lint
-      - name: "Audit api dependencies"
+      - name: Build linter
+        run: docker-compose build lint && cd docker/lint && yarn install
+      - name: Run Linter
+        run: docker-compose run lint
+      - name: 'Audit API dependencies'
         run: yarn audit --level moderate --groups dependencies; [[ $? -ge 8 ]] && exit 1 || exit 0
         working-directory: api
-      - name: "Audit dashboard dependencies"
+      - name: 'Audit dashboard dependencies'
         run: yarn audit --level moderate --groups dependencies; [[ $? -ge 8 ]] && exit 1 || exit 0
         working-directory: dashboard
