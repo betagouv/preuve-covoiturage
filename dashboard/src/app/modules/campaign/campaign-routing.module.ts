@@ -6,7 +6,6 @@ import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
 import { CampaignDashboardComponent } from './pages/campaign-dashboard/campaign-dashboard.component';
 import { CampaignCreateEditComponent } from './pages/campaign-create-edit/campaign-create-edit.component';
-import { CampaignDiscoverComponent } from './pages/campaign-discover/campaign-discover.component';
 import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign-admin-list.component';
 import { CampaignViewComponent } from './pages/campaign-view/campaign-view.component';
 
@@ -34,11 +33,6 @@ const routes: Routes = [
         path: 'create/:parentId',
         component: CampaignCreateEditComponent,
         data: { roles: [Roles.TerritoryAdmin, Roles.TerritoryDemo, Roles.RegistryAdmin] },
-      },
-      {
-        path: 'discover',
-        component: CampaignDiscoverComponent,
-        data: { groups: [Groups.Territory] },
       },
       {
         path: 'edit/:campaignId',
