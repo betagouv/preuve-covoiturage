@@ -67,7 +67,7 @@ test.serial('should throw error if rule is not properly parametred (unnecessary 
   );
   t.log(err);
   t.is(err.message, 'Invalid params');
-  t.is(err.rpcError.data, 'No schema provided for this type');
+  t.is(err.rpcError.data, `No schema provided for this type (policies.${slug})`);
 });
 
 test.serial('should throw error if rule is not properly parametred (missing params)', async (t) => {
@@ -77,11 +77,7 @@ test.serial('should throw error if rule is not properly parametred (missing para
   );
   t.log(err);
   t.is(err.message, 'Invalid params');
-  t.is(
-    err.rpcError.data,
-    // eslint-disable-next-line
-    '[{"keyword":"type","dataPath":"","schemaPath":"#/type","params":{"type":"integer"},"message":"should be integer"}]',
-  );
+  t.is(err.rpcError.data, 'data should be integer');
 });
 
 test.serial('should throw error if rule is not properly parametred (wrong params)', async (t) => {
@@ -91,11 +87,7 @@ test.serial('should throw error if rule is not properly parametred (wrong params
   );
   t.log(err);
   t.is(err.message, 'Invalid params');
-  t.is(
-    err.rpcError.data,
-    // eslint-disable-next-line
-    '[{"keyword":"type","dataPath":"","schemaPath":"#/type","params":{"type":"integer"},"message":"should be integer"}]',
-  );
+  t.is(err.rpcError.data, 'data should be integer');
 });
 
 test.serial('should throw error if missing uuid in stateful rule', async (t) => {
@@ -105,11 +97,7 @@ test.serial('should throw error if missing uuid in stateful rule', async (t) => 
   );
   t.log(err);
   t.is(err.message, 'Invalid params');
-  t.is(
-    err.rpcError.data,
-    // eslint-disable-next-line
-    '[{"keyword":"required","dataPath":"","schemaPath":"#/required","params":{"missingProperty":"uuid"},"message":"should have required property \'uuid\'"}]',
-  );
+  t.is(err.rpcError.data, 'data should have required property \'uuid\'');
 });
 
 test.serial('should throw error if uuid is not unique', async (t) => {

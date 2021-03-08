@@ -91,7 +91,7 @@ test.serial(
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {
     t.is(response.status, 'active');
   },
-  mockContext(['incentive-campaign.create', 'incentive-campaign.launch']),
+  mockContext(['incentive-campaign.create', 'territory.policy.launch']),
 );
 
 test.serial(
@@ -104,5 +104,5 @@ test.serial(
     t.is(err.message, 'Invalid params');
     t.is(err.rpcError.data, `Campaign ${t.context.policy_id} must be a draft to be launched.`);
   },
-  mockContext(['incentive-campaign.create', 'incentive-campaign.launch']),
+  mockContext(['incentive-campaign.create', 'territory.policy.launch']),
 );
