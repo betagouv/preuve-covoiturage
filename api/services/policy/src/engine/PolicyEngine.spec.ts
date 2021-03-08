@@ -37,6 +37,22 @@ function setup(): { engine: PolicyEngine; start: Date; fakeCampaign: CampaignInt
           slug: 'fixed_amount_setter',
           parameters: 10,
         },
+        {
+          slug: 'passenger_only_filter',
+        },
+      ],
+      [
+        {
+          slug: 'per_km_modifier',
+          parameters: true,
+        },
+        {
+          slug: 'fixed_amount_setter',
+          parameters: 20,
+        },
+        {
+          slug: 'driver_only_filter',
+        },
       ],
     ],
   };
@@ -66,4 +82,40 @@ test('should boot', async (t) => {
   t.is(result[0].policy_id, fakeCampaign._id);
   t.true(Reflect.ownKeys(result[0]).indexOf('amount') >= 0);
   t.is(result[0].amount, ((trip[0].distance / 1000) * fakeCampaign.rules[0][1].parameters) as number);
+});
+
+test('should get result', async (t) => {
+  const { engine, fakeCampaign } = setup();
+  const trip = faker.trip([
+    {
+      carpool_id: 1,
+      is_driver: false,
+      distance: 1000,
+    },
+    {
+      carpool_id: 2,
+      is_driver: true,
+      distance: 2000,
+    },
+    {
+      carpool_id: 3,
+      is_driver: false,
+      distance: 3000,
+    },
+    {
+      carpool_id: 4,
+      is_driver: true,
+      distance: 4000,
+    },
+  ]);
+  const campaign = engine.buildCampaign(fakeCampaign);
+  const result = await engine.process(campaign, trip);
+
+  t.log(result);
+  t.true(Array.isArray(result));
+  t.is(result.length, 4);
+  t.is(result.find((p) => p.carpool_id === 1).amount, (1000 / 1000) * 10);
+  t.is(result.find((p) => p.carpool_id === 2).amount, ((4000 / 1000) * 20) / 2);
+  t.is(result.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
+  t.is(result.find((p) => p.carpool_id === 4).amount, ((4000 / 1000) * 20) / 2);
 });

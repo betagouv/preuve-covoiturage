@@ -97,7 +97,7 @@ test.serial('should throw error if missing uuid in stateful rule', async (t) => 
   );
   t.log(err);
   t.is(err.message, 'Invalid params');
-  t.is(err.rpcError.data, 'data should have required property \'uuid\'');
+  t.is(err.rpcError.data, "data should have required property 'uuid'");
 });
 
 test.serial('should throw error if uuid is not unique', async (t) => {
