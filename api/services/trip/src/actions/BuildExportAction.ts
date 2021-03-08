@@ -260,7 +260,10 @@ export class BuildExportAction extends Action {
       delimiter: ';',
       header: true,
       columns: this.getColumns(type),
-      cast: { date: (d: Date): string => d.toISOString() },
+      cast: {
+        date: (d: Date): string => d.toISOString(),
+        number: (n: Number): string => n.toString().replace('.', ','),
+      },
     });
 
     stringifier.on('readable', async () => {
