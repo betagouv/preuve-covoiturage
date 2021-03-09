@@ -10,7 +10,6 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "lint": "eslint 'src/**/*.ts'",
     "ilos": "ilos"
   },
   "main": "./dist/bootstrap.js",

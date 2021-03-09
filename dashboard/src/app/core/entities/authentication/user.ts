@@ -26,7 +26,8 @@ export class BaseUser implements Model, UserListInterface {
   territory_id: number | null;
 }
 
-export class User extends BaseUser
+export class User
+  extends BaseUser
   implements FormModel, MapModel<User, UserInterface>, Clone<User>, UserPatchInterface, UserInterface {
   public permissions: string[];
 

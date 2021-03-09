@@ -10,7 +10,6 @@
     "build": "tsc && yarn copy-static",
     "watch": "tsc -w",
     "test": "ava",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
     "copy-static": "cp -R ./src/templates ./dist/"
   },
   "main": "./dist/bootstrap.js",

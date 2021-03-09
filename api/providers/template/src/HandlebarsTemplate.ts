@@ -1,4 +1,3 @@
-// tslint:disable import-name
 import path from 'path';
 import fs from 'fs';
 import Handlebars from 'handlebars';

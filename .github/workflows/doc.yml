@@ -1,4 +1,4 @@
-name: Api doc deployment
+name: Documentation deployment
 on:
   push:
     branches:
@@ -14,7 +14,7 @@ jobs:
 
       - name: Install and Build 🔧
         run: |
-          cd api-doc
+          cd doc
           yarn
           yarn gen
           yarn build
@@ -30,6 +30,6 @@ jobs:
           host: ${{ secrets.FRONT_HOST }}
           username: ${{ secrets.FRONT_USERNAME }}
           key: ${{ secrets.FRONT_DEPLOY_KEY }}
-          source: api-doc/dist
-          target: www/api-doc
+          source: doc/dist
+          target: www/doc
           rm: true

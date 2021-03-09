@@ -80,7 +80,8 @@ export interface TerritoryUIStatus {
   insee?: string;
 }
 
-export class Territory extends BaseModel
+export class Territory
+  extends BaseModel
   implements TerritoryBase, FormModel<TerritoryFormModel>, MapModel<Territory>, Clone<Territory> {
   level: TerritoryLevelEnum;
   name: string;

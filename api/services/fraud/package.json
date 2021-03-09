@@ -11,8 +11,7 @@
     "watch": "tsc -w",
     "test": "ava",
     "coverage-ci": "export NODE_ENV=testing; nyc --all --reporter=lcov ava",
-    "coverage": "export NODE_ENV=testing; nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts'"
+    "coverage": "export NODE_ENV=testing; nyc --all --reporter=text ava"
   },
   "main": "./dist/bootstrap.js",
   "config": {

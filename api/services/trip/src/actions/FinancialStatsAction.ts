@@ -1,4 +1,3 @@
-// tslint:disable:variable-name
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';

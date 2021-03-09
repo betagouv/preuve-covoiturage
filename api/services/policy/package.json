@@ -10,8 +10,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts'"
+    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava"
   },
   "main": "./dist/bootstrap.js",
   "config": {

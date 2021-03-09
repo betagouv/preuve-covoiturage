@@ -12,7 +12,6 @@
     "test": "ava",
     "coverage-ci": "NODE_ENV=testing nyc --all --reporter=lcov ava",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
     "copy-static": "cp -R ./src/templates ./dist/"
   },
   "main": "./dist/src/bootstrap.js",

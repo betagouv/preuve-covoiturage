@@ -1,4 +1,3 @@
-// // tslint:disable: no-unused-expression
 // import path from 'path';
 // import chai from 'chai';
 // import supertest from 'supertest';

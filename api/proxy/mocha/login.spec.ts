@@ -1,4 +1,3 @@
-// // tslint:disable max-classes-per-file
 // import path from 'path';
 // import supertest from 'supertest';
 // import chai from 'chai';
@@ -76,7 +75,6 @@
 //     // cookie should not be sent
 //     const cookie = undefined;
 //     if ('set-cookie' in r.header) {
-//       // tslint:disable-next-line: no-shadowed-variable
 //       r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
 //     }
 //     expect(cookie).to.eq(undefined);
@@ -91,7 +89,6 @@
 
 //     const cookie = undefined;
 //     if ('set-cookie' in r.header) {
-//       // tslint:disable-next-line: no-shadowed-variable
 //       r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
 //     }
 //     expect(cookie).to.eq(undefined);
@@ -113,7 +110,6 @@
 //         },
 //       },
 //     });
-//     // tslint:disable-next-line: no-unused-expression
 //     expect(r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie))).to.not.be.undefined;
 //   });
 
@@ -160,7 +156,6 @@
 //     // cookie should not be sent
 //     const cookie = undefined;
 //     if ('set-cookie' in r.header) {
-//       // tslint:disable-next-line: no-shadowed-variable
 //       r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
 //     }
 //     expect(cookie).to.eq(undefined);

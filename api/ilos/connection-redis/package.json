@@ -10,7 +10,6 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\"",
     "coverage": "nyc --all --reporter=text ava",
     "test:integration": "ava",
     "test": "exit 0"

@@ -9,7 +9,7 @@ Documentation technique du Registre de preuve de covoiturage publiée sur [https
 
 ```shell
 git clone ...
-cd api-doc
+cd doc
 yarn
 yarn dev
 # browse to http://localhost:8080

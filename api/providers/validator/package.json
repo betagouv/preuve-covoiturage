@@ -8,7 +8,6 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
     "test": "ava"
   },
   "nyc": {
