@@ -366,7 +366,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           break;
         default:
           throw new Error(`${hash.field} not supported for territory find query filter`);
-          break;
       }
     });
 

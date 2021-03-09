@@ -1,6 +1,6 @@
 import { Pool, PoolConfig } from 'pg';
 
-import {env} from '@ilos/core';
+import { env } from '@ilos/core';
 import { ConnectionInterface } from '@ilos/common';
 
 export class PostgresConnection implements ConnectionInterface<Pool> {
@@ -29,7 +29,7 @@ export class PostgresConnection implements ConnectionInterface<Pool> {
 
   // https://www.postgresql.org/docs/current/libpq-ssl.html
   private hasSSL(strUrl: string): boolean {
-    const url  = new URL(strUrl);
+    const url = new URL(strUrl);
     if (!url.searchParams.has('sslmode')) return false;
     return url.searchParams.get('sslmode') !== 'disable';
   }
