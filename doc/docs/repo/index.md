@@ -20,7 +20,7 @@ docker-compose build lint
 docker-compose run lint
 ```
 
-> :info: the code is mounted in `read-only` mode to keep the linter from making changes. Fix'em yourself!
+> :information_source: the code is mounted in `read-only` mode to keep the linter from making changes. Fix'em yourself!
 
 ### Connect with VScode (optional)
 
