@@ -31,13 +31,7 @@
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": ["src/favicon.ico", "src/.htaccess", "src/assets", "src/manual-503.html"],
-            "styles": [
-              "./node_modules/leaflet/dist/leaflet.css",
-              "./node_modules/leaflet.markercluster/dist/MarkerCluster.css",
-              "./node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css",
-              "src/styles.scss",
-              "src/styles/theme.scss"
-            ],
+            "styles": ["src/styles.scss", "src/styles/theme.scss"],
             "stylePreprocessorOptions": {
               "includePaths": ["src/styles"]
             },
