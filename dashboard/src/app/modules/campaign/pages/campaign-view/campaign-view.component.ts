@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { bufferTime, concatMap, map, take, takeUntil, tap } from 'rxjs/operators';
+import { bufferTime, concatMap, map, take, takeUntil } from 'rxjs/operators';
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
@@ -52,7 +52,6 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
     this._route.paramMap
       .pipe(
         // race condition on page load...
-        tap(console.log),
         bufferTime(500),
         take(1),
         map((list) => list[0]),

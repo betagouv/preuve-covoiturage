@@ -32,7 +32,7 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
     allOf: [
       {
         type: 'object',
-        required: ['name', 'level', 'activable', ...extrafieldKeys],
+        required: ['name', 'level', 'activable', 'active', ...extrafieldKeys],
         additionalProperties: false,
         properties: {
           ...activeFields,
@@ -40,6 +40,8 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
           ...extrafields,
           name: { macro: 'varchar' },
           shortname: { macro: 'varchar' },
+          activable: { type: 'boolean' },
+          active: { type: 'boolean' },
           level: {
             type: 'string',
             enum: [
@@ -54,61 +56,54 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
               'other',
             ],
           },
-          activable: {
-            type: 'boolean',
-            default: false,
-          },
           ui_status: {
             type: 'object',
           },
         },
       },
       {
-        oneOf: [
-          {
-            type: 'object',
-            required: ['activable', 'company_id', 'address'],
-            additionalProperties: false,
-            properties: {
-              ...commonFields,
-              ...geoFields,
-              ...extrafields,
-              contacts,
-              activable: {
-                const: true,
-              },
-              active: {
-                type: 'boolean',
-                default: false,
-              },
-              company_id: {
-                macro: 'serial',
-              },
-              address: {
-                city: { type: 'string' },
-                country: { type: 'string' },
-                postcode: { type: 'string' },
-                street: { type: 'string' },
-              },
+        // activable: false && active: false -> no company, address, contacts
+        // otherwise, require the company, address, contacts
+        if: {
+          properties: {
+            activable: { type: 'boolean', const: false },
+            active: { type: 'boolean', const: false },
+          },
+        },
+        then: {
+          type: 'object',
+          required: ['name', 'level', 'activable', 'active', ...extrafieldKeys],
+          additionalProperties: false,
+          properties: {
+            ...commonFields,
+            ...geoFields,
+            ...extrafields,
+            activable: { type: 'boolean', const: false },
+            active: { type: 'boolean', const: false },
+          },
+        },
+        else: {
+          type: 'object',
+          required: ['name', 'level', 'activable', 'active', 'company_id', 'address', ...extrafieldKeys],
+          additionalProperties: false,
+          properties: {
+            ...commonFields,
+            ...geoFields,
+            ...extrafields,
+            contacts,
+            activable: { type: 'boolean' },
+            active: { type: 'boolean' },
+            company_id: {
+              macro: 'serial',
+            },
+            address: {
+              city: { type: 'string' },
+              country: { type: 'string' },
+              postcode: { type: 'string' },
+              street: { type: 'string' },
             },
           },
-          {
-            type: 'object',
-            additionalProperties: false,
-            required: ['activable'],
-            properties: {
-              ...commonFields,
-              ...geoFields,
-              ...extrafields,
-              activable: {
-                const: false,
-              },
-              active: {
-                const: false,
-              },
-            },
-          },
-        ],
+        },
       },
       {
         oneOf: [

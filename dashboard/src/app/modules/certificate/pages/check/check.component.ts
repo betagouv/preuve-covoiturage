@@ -39,7 +39,7 @@ export class CheckComponent extends DestroyObservable implements OnInit {
         mergeMap((params) =>
           this.certificateService.find(params.uuid).pipe(
             catchError((err) => {
-              console.log(err);
+              console.error(err);
               this.isOnError = true;
               this.isLoading = false;
               return null;

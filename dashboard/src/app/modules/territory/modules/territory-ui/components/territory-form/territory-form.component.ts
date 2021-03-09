@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { Subject } from 'rxjs';
 import { filter, takeUntil, tap, map, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
+import { get, cloneDeep } from 'lodash-es';
+
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
@@ -116,7 +118,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   public onSubmit(): void {
-    const formValues: TerritoryFormModel = { ...this.territoryForm.value };
+    const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
 
     if ('geo' in formValues && typeof formValues.geo === 'string' && formValues.geo.length) {
       try {
@@ -127,21 +129,17 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       }
     }
 
-    if (this.territoryForm.get('company') instanceof FormGroup) this.territoryForm.get('company').reset();
-    if (this.territoryForm.get('address') instanceof FormGroup) this.territoryForm.get('address').reset();
-
     if (this.territoryChildren && this.fullFormMode && formValues.format === 'parent') {
       formValues.children = this.territoryChildren.getFlatSelectedList();
       if (formValues.children.length === 0) {
         this.toastr.error('Veuillez selectionner au moins un territoire enfant');
-
         return;
       }
 
       formValues.uiSelectionState = this.territoryChildren.getUISelectionState();
     }
 
-    formValues.company_id = this.companyDetails ? this.companyDetails._id : null;
+    formValues.company_id = get(this, 'companyDetails._id', null);
 
     const save = () => {
       if (this.editedId) {
@@ -155,6 +153,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             this.close.emit();
           },
           (err) => {
+            console.error(err);
             this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
           },
         );
@@ -414,6 +413,15 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const formValues = territoryEd.toFormValues(this.fullFormMode);
 
     delete formValues.uiSelectionState;
+
+    if (!this.editedId) {
+      ['company', 'address', 'contacts.gdpr_dpo', 'contacts.gdpr_controller', 'contacts.technical'].forEach((key) => {
+        if (this.territoryForm.get(key) instanceof FormGroup) this.territoryForm.get(key).reset();
+      });
+
+      this.territoryForm.reset();
+    }
+
     this.territoryForm.setValue(formValues);
 
     this._relationDisplayMode = formValues.format;
