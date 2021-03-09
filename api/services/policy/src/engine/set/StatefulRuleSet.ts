@@ -7,7 +7,6 @@ import {
   StaticRuleInterface,
 } from '../interfaces';
 import { type, STATEFUL } from '../helpers/type';
-import { FakeMetadataWrapper } from '../meta/MetadataWrapper';
 import { NotApplicableTargetException } from '../exceptions/NotApplicableTargetException';
 import { AbstractRuleSet } from './AbstractRuleSet';
 
@@ -23,18 +22,13 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
     return this.ruleSet.length;
   }
 
-  buildInitialState(context: RuleHandlerContextInterface): Map<string, string> {
+  buildInitialState(context: RuleHandlerContextInterface, meta: MetaInterface): Map<string, string> {
     const incentiveState: Map<string, string> = new Map();
 
     for (const statefulRule of this.ruleSet) {
-      const fakeMeta = new FakeMetadataWrapper();
-      statefulRule.getState(context, fakeMeta);
-      const ruleStateKeys = fakeMeta.keys();
-      if (ruleStateKeys.length > 1) {
-        throw new Error('Initial state should only have one meta key');
-      }
-      if (ruleStateKeys.length === 1) {
-        incentiveState.set(statefulRule.uuid, ruleStateKeys[0]);
+      const [key] = statefulRule.getState(context, meta);
+      if (key) {
+        incentiveState.set(statefulRule.uuid, key);
       }
     }
 
@@ -53,7 +47,7 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
         const metaKey = incentive.meta[statefulRule.uuid];
         const state = meta.get(metaKey);
         try {
-          result = statefulRule.apply(incentive.result, state);
+          result = statefulRule.apply(result, state);
           meta.set(metaKey, statefulRule.setState(result, state));
         } catch (e) {
           if (!(e instanceof NotApplicableTargetException)) {

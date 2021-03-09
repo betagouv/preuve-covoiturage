@@ -46,12 +46,12 @@ test('should properly build initial state', async (t) => {
       identity_uuid: 'driver',
     },
   ]);
-
+  const meta = new MetadataWrapper();
   const incentive = statefulSet.buildInitialState({
     trip,
     person: trip[0],
     stack: [],
-  });
+  }, meta);
 
   const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
   const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip[0].identity_uuid);
@@ -113,7 +113,7 @@ test('should apply stateful rules and update meta', async (t) => {
 
   const meta = new MetadataWrapper(0, [
     [amountRestrictionKey, 50],
-    [tripRestrictionKey, 2],
+    [tripRestrictionKey, 1],
   ]);
 
   const r = statefulSet.apply(
@@ -133,13 +133,13 @@ test('should apply stateful rules and update meta', async (t) => {
     },
     meta,
   );
-  t.is(r, 0);
 
+  t.is(r, 50);
   t.true(meta.has(amountRestrictionKey));
-  t.is(meta.get(amountRestrictionKey), 150);
+  t.is(meta.get(amountRestrictionKey), 100);
 
   t.true(meta.has(tripRestrictionKey));
-  t.is(meta.get(tripRestrictionKey), 3);
+  t.is(meta.get(tripRestrictionKey), 2);
 });
 
 test('should do nothing if key is missing in incentive meta', async (t) => {
@@ -170,8 +170,8 @@ test('should do nothing if key is missing in incentive meta', async (t) => {
       status: IncentiveStatusEnum.Draft,
       meta: {
         toto: 'this should not be visible',
-        max_amount_restriction_uuid: amountRestrictionKey,
-        // max_trip_restriction_uuid: tripRestrictionKey,
+        // max_amount_restriction_uuid: amountRestrictionKey,
+        max_trip_restriction_uuid: tripRestrictionKey,
       },
     },
     meta,

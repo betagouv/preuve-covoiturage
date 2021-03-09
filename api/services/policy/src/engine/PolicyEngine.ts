@@ -5,6 +5,7 @@ import { MetadataProviderInterfaceResolver } from './interfaces';
 
 import { TripIncentives } from './TripIncentives';
 import { ProcessableCampaign } from './ProcessableCampaign';
+import { MetadataWrapper } from './meta/MetadataWrapper';
 
 @provider()
 export class PolicyEngine {
@@ -16,12 +17,12 @@ export class PolicyEngine {
 
   public async processStateless(pc: ProcessableCampaign, trip: TripInterface): Promise<IncentiveInterface[]> {
     const tripIncentives = TripIncentives.createFromTrip(trip);
-
+    const meta = new MetadataWrapper();
     for (const person of tripIncentives.getProcessablePeople()) {
       const ctx = { trip, person, result: undefined, stack: [] };
-      tripIncentives.addIncentive(pc.apply(ctx));
+      const incentive = pc.apply(ctx, meta);
+      tripIncentives.addIncentive(incentive);
     }
-
     return tripIncentives.distributeDriverIncentives().getIncentives();
   }
 

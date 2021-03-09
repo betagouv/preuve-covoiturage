@@ -22,7 +22,7 @@ export abstract class AbstractStatefulRule<P extends StatefulParametersDefaultIn
     return this.parameters.uuid;
   }
 
-  abstract getState(context: RuleHandlerContextInterface, metaGetter: MetaInterface): number;
+  abstract getState(context: RuleHandlerContextInterface, metaGetter: MetaInterface): [string | null, number];
   abstract apply(result: number, state: number): number;
   abstract setState(result: number, state: number): number;
 }

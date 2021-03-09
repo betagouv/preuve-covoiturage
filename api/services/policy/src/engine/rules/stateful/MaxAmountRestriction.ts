@@ -24,7 +24,6 @@ export class MaxAmountRestriction extends AbstractStatefulRestriction {
     if ((state + result) > this.parameters.amount) {
       return this.parameters.amount - state;
     }
-
     return result;
   }
 }
