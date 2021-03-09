@@ -17,13 +17,13 @@ export class MaxTripRestriction extends AbstractStatefulRestriction {
     return state + 1;
   }
 
-  getState(ctx: RuleHandlerContextInterface, meta: MetaInterface): [string | null, number] {
-    const result = super.getState(ctx, meta);
+  getStateKey(ctx: RuleHandlerContextInterface, meta: MetaInterface): string | undefined {
+    const result = super.getStateKey(ctx, meta);
     if (this.parameters.target !== 'driver' || !ctx.person.is_driver) {
       return result;
     }
     if (meta.get(ctx.person.identity_uuid) >= 1) {
-      return [null, 0];
+      return;
     }
     meta.set(ctx.person.identity_uuid, 1);
     return result;

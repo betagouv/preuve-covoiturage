@@ -26,7 +26,7 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
     const incentiveState: Map<string, string> = new Map();
 
     for (const statefulRule of this.ruleSet) {
-      const [key] = statefulRule.getState(context, meta);
+      const key = statefulRule.getStateKey(context, meta);
       if (key) {
         incentiveState.set(statefulRule.uuid, key);
       }

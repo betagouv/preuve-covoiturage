@@ -36,13 +36,13 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
   abstract getPrefix(): string;
   abstract getErrorMessage(): string;
 
-  getState(ctx: RuleHandlerContextInterface, meta: MetaInterface): [string | null, number] {
+  getStateKey(ctx: RuleHandlerContextInterface, meta: MetaInterface): string | undefined {
     if (
       this.parameters.target &&
       ((this.parameters.target === 'driver' && !ctx.person.is_driver) ||
         (this.parameters.target === 'passenger' && ctx.person.is_driver))
     ) {
-      return [null, 0];
+      return;
     }
 
     const key = getMetaKey(
@@ -51,7 +51,7 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
       this.parameters.period,
       this.parameters.target ? ctx.person.identity_uuid : 'global',
     );
-    return [key, meta.get(key, 0)];
+    return key;
   }
 
   apply(result: number, state: number): number {
