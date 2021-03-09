@@ -11,7 +11,7 @@ export class LoggerMiddleware implements MiddlewareInterface<LoggerMiddlewarePar
       console.debug('After middlewares', { response, params, context });
       return response;
     } catch (e) {
-      console.debug('ERROR', { e, params, context });
+      console.debug('ERROR', e);
       throw e;
     }
   }

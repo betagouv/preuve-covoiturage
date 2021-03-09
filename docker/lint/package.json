@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "yarn api; yarn dashboard",
+    "start": "yarn api && yarn dashboard",
     "api": "eslint --env node -f ./formatter.js '/code/api/**/src/**/*.ts'",
     "dashboard": "eslint --env browser -f ./formatter.js '/code/dashboard/src/**/*.ts'",
     "clean": "rm -rf node_modules/*"
