@@ -7,4 +7,5 @@ COPY .prettier* ./
 COPY package.json .
 COPY yarn.lock .
 COPY formatter.js .
+RUN yarn
 CMD yarn start
