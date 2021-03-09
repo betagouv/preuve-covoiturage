@@ -49,7 +49,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
 
   getPermissionsFromRole(role: string): string[] {
-    return this.config.get(`permissions.${role}`, []);
+    return this.config.get(`permissions.${role}.permissions`, []);
   }
 
   async checkForDoubleEmailAndFail(email: string, userId = -1): Promise<void> {
@@ -102,7 +102,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
         )
       SELECT
         data.*,
-        ${this.groupCastStatement},
+        ${this.groupCastStatement}
       FROM data
       `,
       values: [data.email, data.firstname, data.lastname, data.role, data.phone, data.operator_id, data.territory_id],
@@ -319,7 +319,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           operator_id,
           territory_id,
           ui_status,
-          ${this.groupCastStatement},
+          ${this.groupCastStatement}
         FROM ${this.table}
         ${whereClauses.text}
         LIMIT 1
@@ -455,7 +455,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
         )
       SELECT
         data.*,
-        ${this.groupCastStatement},
+        ${this.groupCastStatement}
       FROM data
       `,
       values: [...setClauses.values, ...whereClauses.values],
