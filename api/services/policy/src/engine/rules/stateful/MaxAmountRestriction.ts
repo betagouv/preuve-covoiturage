@@ -15,4 +15,16 @@ export class MaxAmountRestriction extends AbstractStatefulRestriction {
   setState(result: number, state: number): number {
     return state + result;
   }
+
+
+  apply(result: number, state: number): number {
+    super.apply(result, state);
+
+    // if consuption + current > limit, get diff
+    if ((state + result) > this.parameters.amount) {
+      return this.parameters.amount - state;
+    }
+
+    return result;
+  }
 }
