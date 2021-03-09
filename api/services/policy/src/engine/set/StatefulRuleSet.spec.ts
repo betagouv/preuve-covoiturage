@@ -47,11 +47,14 @@ test('should properly build initial state', async (t) => {
     },
   ]);
   const meta = new MetadataWrapper();
-  const incentive = statefulSet.buildInitialState({
-    trip,
-    person: trip[0],
-    stack: [],
-  }, meta);
+  const incentive = statefulSet.buildInitialState(
+    {
+      trip,
+      person: trip[0],
+      stack: [],
+    },
+    meta,
+  );
 
   const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
   const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip[0].identity_uuid);

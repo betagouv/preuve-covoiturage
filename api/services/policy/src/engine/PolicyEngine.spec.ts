@@ -123,15 +123,17 @@ test('should work and distribute incentive', async (t) => {
 });
 
 test('should work with amount restriction', async (t) => {
-  const { engine, fakeCampaign } = setup([{
-    slug: 'max_amount_restriction',
-    parameters: {
-      target: 'driver',
-      amount: 50,
-      period: 'day',
-      uuid: 'amount_uuid',
+  const { engine, fakeCampaign } = setup([
+    {
+      slug: 'max_amount_restriction',
+      parameters: {
+        target: 'driver',
+        amount: 50,
+        period: 'day',
+        uuid: 'amount_uuid',
+      },
     },
-  }]);
+  ]);
   const trip = faker.trip([
     {
       carpool_id: 1,
@@ -172,15 +174,17 @@ test('should work with amount restriction', async (t) => {
 });
 
 test('should work with trip restriction', async (t) => {
-  const { engine, fakeCampaign } = setup([{
-    slug: 'max_trip_restriction',
-    parameters: {
-      target: 'driver',
-      amount: 1,
-      period: 'day',
-      uuid: 'trip_uuid',
+  const { engine, fakeCampaign } = setup([
+    {
+      slug: 'max_trip_restriction',
+      parameters: {
+        target: 'driver',
+        amount: 1,
+        period: 'day',
+        uuid: 'trip_uuid',
+      },
     },
-  }]);
+  ]);
   const trip = faker.trip([
     {
       carpool_id: 1,
