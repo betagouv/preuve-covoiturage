@@ -43,11 +43,13 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       ELSE 'registry'
     END as group`;
 
-  protected readonly permissionsJoin = 'JOIN common.roles ON roles.slug = role';
-
-  constructor(protected connection: PostgresConnection, config: ConfigInterfaceResolver) {
+  constructor(protected connection: PostgresConnection, protected config: ConfigInterfaceResolver) {
     this.defaultLimit = config.get('pagination.defaultLimit', 10);
     this.maxLimit = config.get('pagination.maxLimit', 1000);
+  }
+
+  getPermissionsFromRole(role: string): string[] {
+    return this.config.get(`permissions.${role}`, []);
   }
 
   async checkForDoubleEmailAndFail(email: string, userId = -1): Promise<void> {
@@ -101,9 +103,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       SELECT
         data.*,
         ${this.groupCastStatement},
-        roles.permissions
       FROM data
-      ${this.permissionsJoin}
       `,
       values: [data.email, data.firstname, data.lastname, data.role, data.phone, data.operator_id, data.territory_id],
     };
@@ -114,7 +114,10 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       throw new Error(`Unable to create user (${JSON.stringify(data)})`);
     }
 
-    return result.rows[0];
+    return {
+      ...result.rows[0],
+      permissions: this.getPermissionsFromRole(result.rows[0].role),
+    };
   }
 
   protected async deleteWhere(id: number, where?: { operator_id?: number; territory_id?: number }): Promise<boolean> {
@@ -317,9 +320,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           territory_id,
           ui_status,
           ${this.groupCastStatement},
-          roles.permissions
         FROM ${this.table}
-        ${this.permissionsJoin}
         ${whereClauses.text}
         LIMIT 1
       `,
@@ -339,7 +340,10 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       return undefined;
     }
 
-    return result.rows[0];
+    return {
+      ...result.rows[0],
+      permissions: this.getPermissionsFromRole(result.rows[0].role),
+    };
   }
 
   async find(_id: number): Promise<UserFindInterface | undefined> {
@@ -452,9 +456,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       SELECT
         data.*,
         ${this.groupCastStatement},
-        roles.permissions
       FROM data
-      ${this.permissionsJoin}
       `,
       values: [...setClauses.values, ...whereClauses.values],
     };
@@ -472,7 +474,10 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       return undefined;
     }
 
-    return result.rows[0];
+    return {
+      ...result.rows[0],
+      permissions: this.getPermissionsFromRole(result.rows[0].role),
+    };
   }
 
   async patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface> {
