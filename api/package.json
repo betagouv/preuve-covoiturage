@@ -33,7 +33,6 @@
     "test:pdc:unit": "lerna run --scope @pdc/* test",
     "test:ilos:unit": "lerna run --scope @ilos/* test",
     "test:integration": "lerna run --scope @pdc/* test:integration",
-    "set-permissions": "yarn workspace @pdc/service-user ilos set-permissions",
     "seed:templates": "yarn workspace @pdc/service-policy ilos policy:seed",
     "migrate": "if [ -z \"$SKIP_MIGRATIONS\" ]; then yarn migrate:up; else echo '>> Migrations skipped'; fi",
     "migrate:up": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations",

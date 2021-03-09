@@ -24,7 +24,6 @@ import { patch } from './shared/user/patch.schema';
 import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
 import { sendInvitationEmail } from './shared/user/sendInvitationEmail.schema';
 import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
-import { SetPermissionsCommand } from './commands/SetPermissionsCommand';
 
 import { config } from './config';
 import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
@@ -103,7 +102,7 @@ import { challengeTokenMiddlewareBinding } from './middlewares/ChallengeTokenMid
     template: path.resolve(__dirname, 'templates'),
     templateMeta: 'template',
   },
-  commands: [SetPermissionsCommand, SeedUsersCommand, FindInactiveCommand],
+  commands: [SeedUsersCommand, FindInactiveCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [

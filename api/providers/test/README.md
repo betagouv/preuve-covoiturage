@@ -51,17 +51,6 @@ Refresh materialized views
 
 ### Utilisateurs
 
-`common.roles` (see set-permissions)
-
-| slug            | description | permissions |
-| --------------- | ----------- | ----------- |
-| registry.admin  |             | ...         |
-| registry.user   |             | ...         |
-| operator.admin  |             | ...         |
-| operator.user   |             | ...         |
-| territory.admin |             | ...         |
-| territory.user  |             | ...         |
-
 `auth.users`
 
 | \_id | role            | email                        | password  | territory_id | operator_id | status |
