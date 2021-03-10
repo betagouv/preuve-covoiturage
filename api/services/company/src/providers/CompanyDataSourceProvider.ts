@@ -34,7 +34,7 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
         company_naf_code: this.cleanNaf(get(data, 'etablissement.unite_legale.activite_principale', null)),
         establishment_naf_code: this.cleanNaf(get(data, 'etablissement.activite_principale', null)),
         legal_nature_code: get(data, 'etablissement.unite_legale.categorie_juridique', null),
-        legal_nature_label: get(data, 'etablissement.unite_legale.categorie_juridique', null),
+        legal_nature_label: get(data, 'etablissement.unite_legale.denomination', null),
         nonprofit_code: null,
         intra_vat: get(
           data,
