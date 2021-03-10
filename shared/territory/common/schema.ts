@@ -1,11 +1,22 @@
 import { contacts } from '../../common/schemas/contacts';
 import { MultiPolygonSchema } from '../common/geojson/MultiPolygonSchema';
 
+const address = {
+  type: 'object',
+  required: ['city', 'country', 'postcode', 'street'],
+  additionalProperties: false,
+  properties: {
+    city: { type: 'string' },
+    country: { type: 'string' },
+    postcode: { type: 'string' },
+    street: { type: 'string' },
+  },
+};
+
 const commonFields = {
   name: {},
   shortname: {},
   level: {},
-  activable: {},
   ui_status: {},
 };
 
@@ -32,7 +43,7 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
     allOf: [
       {
         type: 'object',
-        required: ['name', 'level', 'activable', 'active', ...extrafieldKeys],
+        required: ['name', 'level', ...extrafieldKeys],
         additionalProperties: false,
         properties: {
           ...activeFields,
@@ -40,8 +51,7 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
           ...extrafields,
           name: { macro: 'varchar' },
           shortname: { macro: 'varchar' },
-          activable: { type: 'boolean' },
-          active: { type: 'boolean' },
+          ui_status: { type: 'object' },
           level: {
             type: 'string',
             enum: [
@@ -56,54 +66,66 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
               'other',
             ],
           },
-          ui_status: {
-            type: 'object',
-          },
         },
       },
       {
-        // activable: false && active: false -> no company, address, contacts
-        // otherwise, require the company, address, contacts
-        if: {
-          properties: {
-            activable: { type: 'boolean', const: false },
-            active: { type: 'boolean', const: false },
-          },
-        },
-        then: {
-          type: 'object',
-          required: ['name', 'level', 'activable', 'active', ...extrafieldKeys],
-          additionalProperties: false,
-          properties: {
-            ...commonFields,
-            ...geoFields,
-            ...extrafields,
-            activable: { type: 'boolean', const: false },
-            active: { type: 'boolean', const: false },
-          },
-        },
-        else: {
-          type: 'object',
-          required: ['name', 'level', 'activable', 'active', 'company_id', 'address', ...extrafieldKeys],
-          additionalProperties: false,
-          properties: {
-            ...commonFields,
-            ...geoFields,
-            ...extrafields,
-            contacts,
-            activable: { type: 'boolean' },
-            active: { type: 'boolean' },
-            company_id: {
-              macro: 'serial',
-            },
-            address: {
-              city: { type: 'string' },
-              country: { type: 'string' },
-              postcode: { type: 'string' },
-              street: { type: 'string' },
+        oneOf: [
+          {
+            type: 'object',
+            properties: {
+              ...commonFields,
+              ...geoFields,
+              ...extrafields,
+              active: { const: false },
+              activable: { const: false },
             },
           },
-        },
+          {
+            type: 'object',
+            required: ['company_id', 'address'],
+            additionalProperties: false,
+            properties: {
+              ...commonFields,
+              ...geoFields,
+              ...extrafields,
+              contacts,
+              address,
+              company_id: { macro: 'serial' },
+              active: { const: true },
+              activable: { const: false },
+            },
+          },
+          {
+            type: 'object',
+            required: ['company_id', 'address'],
+            additionalProperties: false,
+            properties: {
+              ...commonFields,
+              ...geoFields,
+              ...extrafields,
+              contacts,
+              address,
+              company_id: { macro: 'serial' },
+              active: { const: false },
+              activable: { const: true },
+            },
+          },
+          {
+            type: 'object',
+            required: ['company_id', 'address'],
+            additionalProperties: false,
+            properties: {
+              ...commonFields,
+              ...geoFields,
+              ...extrafields,
+              contacts,
+              address,
+              company_id: { macro: 'serial' },
+              active: { const: true },
+              activable: { const: true },
+            },
+          },
+        ],
       },
       {
         oneOf: [
@@ -145,7 +167,6 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
               ...commonFields,
               ...activeFields,
               ...extrafields,
-
               children: {
                 type: 'array',
                 items: { macro: 'serial' },
