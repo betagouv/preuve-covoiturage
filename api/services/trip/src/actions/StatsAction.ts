@@ -26,7 +26,7 @@ import * as middlewareConfig from '../config/middlewares';
         startPath: 'date.start',
         endPath: 'date.end',
         minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
-        maxEnd: () => new Date(),
+        maxEnd: () => new Date(new Date().getTime() - middlewareConfig.date.maxEndDefault),
         applyDefault: true,
       },
     ],
