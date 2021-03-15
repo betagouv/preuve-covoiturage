@@ -26,7 +26,7 @@ async function checkApplication(
     createRPCPayload(
       'application:find',
       { uuid: payload.a, owner_id: payload.o, owner_service: payload.s },
-      { operator_id: payload.o, permissions: ['operator.application.find'] },
+      { permissions: ['proxy.application.find'] },
     ),
   );
 
