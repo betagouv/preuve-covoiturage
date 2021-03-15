@@ -94,8 +94,7 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
       },
     });
   } catch (e) {
-    console.log(e.message);
-    console.log(e.response.data);
+    console.error(e.message, e.response.data);
   }
 }
 

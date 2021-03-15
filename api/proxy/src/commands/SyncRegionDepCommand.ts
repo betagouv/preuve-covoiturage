@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition, max-len */
 import axios from 'axios';
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
@@ -15,9 +14,8 @@ export class SyncRegionDepCommand implements CommandInterface {
     },
   ];
 
-  // tslint:disable-next-line: no-shadowed-variable
   public async call(options): Promise<string> {
-    console.log('> running sync_dep command');
+    console.info('> running sync_dep command');
 
     const pgConnection = new PostgresConnection({ connectionString: options.databaseUri });
     await pgConnection.up();
@@ -25,8 +23,11 @@ export class SyncRegionDepCommand implements CommandInterface {
 
     try {
       const results = await pgClient.query(`
-        SELECT t._id, t.name, tc.value as insee FROM territory.territories t JOIN territory.territory_codes tc ON t._id = tc.territory_id  WHERE t.level='region';
-     `);
+        SELECT t._id, t.name, tc.value as insee
+        FROM territory.territories t
+        JOIN territory.territory_codes tc
+        ON t._id = tc.territory_id  WHERE t.level='region';
+      `);
 
       const regions = results.rows;
 
@@ -43,7 +44,11 @@ export class SyncRegionDepCommand implements CommandInterface {
 
         const departements = (
           await pgClient.query({
-            text: ` SELECT t._id, tc.value as codedep FROM territory.territory_codes tc INNER JOIN territory.territories t ON tc.territory_id = t._id AND tc.type='codedep' WHERE t.level = 'district' AND tc.value = ANY($1)`,
+            text: `
+              SELECT t._id, tc.value as codedep
+              FROM territory.territory_codes tc
+              INNER JOIN territory.territories t ON tc.territory_id = t._id AND tc.type='codedep'
+              WHERE t.level = 'district' AND tc.value = ANY($1)`,
             values: [codeDepartements],
           })
         ).rows;
@@ -73,7 +78,7 @@ export class SyncRegionDepCommand implements CommandInterface {
                 values: [region._id, dbDep._id],
               });
 
-              console.log(`> inserted region ${region._id} and dept ${dbDep._id} in territory_relation`);
+              console.info(`> inserted region ${region._id} and dept ${dbDep._id} in territory_relation`);
             } else {
               const createQuery = {
                 text: `INSERT INTO territory.territories(name,level) VALUES($1,'district')`,
@@ -83,16 +88,20 @@ export class SyncRegionDepCommand implements CommandInterface {
               await pgClient.query(createQuery);
 
               await pgClient.query({
-                text: `INSERT INTO territory.territory_relation (parent_territory_id,child_territory_id) VALUES($1,currval('territory.territories__id_seq1'))`,
+                text: `
+                  INSERT INTO territory.territory_relation (parent_territory_id,child_territory_id)
+                  VALUES($1,currval('territory.territories__id_seq1'))`,
                 values: [region._id],
               });
 
               await pgClient.query({
-                text: `INSERT INTO territory.territory_codes (territory_id,type,value) VALUES(currval('territory.territories__id_seq1'),'codedep',$1)`,
+                text: `
+                  INSERT INTO territory.territory_codes (territory_id,type,value)
+                  VALUES(currval('territory.territories__id_seq1'),'codedep',$1)`,
                 values: [department.code],
               });
 
-              console.log(
+              console.info(
                 `> inserted region ${region._id} in territory_relation and dept ${department.code} in territory_codes`,
               );
             }
@@ -111,9 +120,16 @@ export class SyncRegionDepCommand implements CommandInterface {
               dep_tc.territory_id as parent_territory_id,
               t._id as child_territory_id
               FROM territory.territory_codes tc
-              INNER JOIN territory.territories t ON t._id = tc.territory_id AND tc.type = 'insee' AND length(tc.value) = 5
-              INNER JOIN territory.territory_codes dep_tc ON dep_tc.value = substring(tc.value,1,2) AND dep_tc.type = 'codedep'
-              LEFT JOIN territory.territory_relation tr ON tr.parent_territory_id = dep_tc.territory_id AND tr.child_territory_id = t._id
+              INNER JOIN territory.territories t
+                ON t._id = tc.territory_id
+                AND tc.type = 'insee'
+                AND length(tc.value) = 5
+              INNER JOIN territory.territory_codes dep_tc
+                ON dep_tc.value = substring(tc.value,1,2)
+                AND dep_tc.type = 'codedep'
+              LEFT JOIN territory.territory_relation tr
+                ON tr.parent_territory_id = dep_tc.territory_id
+                AND tr.child_territory_id = t._id
               WHERE tr._id IS NULL
           )
 
@@ -127,7 +143,7 @@ export class SyncRegionDepCommand implements CommandInterface {
         `);
       return 'OK';
     } catch (e) {
-      console.log(e);
+      console.error(e.message, e);
     }
   }
 }

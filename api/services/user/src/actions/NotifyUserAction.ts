@@ -3,11 +3,12 @@ import { handler } from '@ilos/common';
 import { NotificationInterfaceResolver } from '@pdc/provider-notification';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/notify.contract';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
 
 /*
  * Send email to user
  */
-@handler({ ...handlerConfig, middlewares: [['channel.service.except', ['proxy']]] })
+@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service, 'trip', 'proxy')] })
 export class NotifyUserAction extends AbstractAction {
   constructor(private notificationProvider: NotificationInterfaceResolver) {
     super();

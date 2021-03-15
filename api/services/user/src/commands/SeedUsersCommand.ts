@@ -32,7 +32,6 @@ export class SeedUsersCommand implements CommandInterface {
 
   constructor(private crypto: CryptoProviderInterfaceResolver) {}
 
-  // tslint:disable-next-line: no-shadowed-variable
   public async call(options): Promise<string> {
     if (['local', 'dev', 'test', 'ci'].indexOf(process.env.NODE_ENV) === -1) {
       throw new Error('Cannot seed users in this environment');
@@ -65,12 +64,12 @@ export class SeedUsersCommand implements CommandInterface {
         });
 
         if (insert.rowCount !== 1) {
-          console.log(`--- Failed to insert ${email}`);
+          console.info(`--- Failed to insert ${email}`);
         }
 
-        console.log(`+++ Inserted ${email}`);
+        console.info(`+++ Inserted ${email}`);
       } catch (e) {
-        console.log(`--- Failed to insert ${email}:\n\t${e.message}`);
+        console.error(`--- Failed to insert ${email}:\n\t${e.message}`);
       }
     }
 

@@ -2,6 +2,10 @@ import { upperFirst, omit } from 'lodash';
 import { handler, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
+import {
+  environmentBlacklistMiddleware,
+  copyGroupIdAndApplyGroupPermissionMiddlewares,
+} from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
 import { alias } from '../shared/certificate/create.schema';
@@ -17,10 +21,12 @@ import { IdentityIdentifiersInterface } from '../shared/certificate/common/inter
 @handler({
   ...handlerConfig,
   middlewares: [
-    // feature flag certificates until properly tested by operators
-    ['featureflag', { deny: ['production'] }],
+    environmentBlacklistMiddleware('production'),
     ['validate', alias],
-    ['can', ['certificate.create']],
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      operator: 'operator.certificate.create',
+      registry: 'registry.certificate.create',
+    }),
   ],
 })
 export class CreateCertificateAction extends AbstractAction {

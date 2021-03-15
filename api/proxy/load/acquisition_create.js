@@ -160,7 +160,7 @@ export default function (store) {
       if (hasResult) {
         return true;
       }
-      console.log(JSON.stringify(body));
+      console.info(JSON.stringify(body));
       return false;
     },
   });

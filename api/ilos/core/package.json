@@ -16,13 +16,12 @@
     "test:integration": "echo 'No integration test'; exit 0",
     "coverage-ci": "nyc --all --reporter=lcov ava",
     "coverage": "nyc --all --reporter=text ava",
-    "watch": "tsc -w",
-    "lint": "eslint \"src/**/*.ts\""
+    "watch": "tsc -w"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "inversify": "^5.0.1",
+    "inversify": "^5.0.5",
     "reflect-metadata": "^0.1.13",
     "@ilos/common": "^0.4.1"
   },

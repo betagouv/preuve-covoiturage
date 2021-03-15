@@ -116,7 +116,7 @@
 
             <!-- OPERATORS-->
             <app-operators-autocomplete
-              *ngIf="userIsTerritory"
+              *ngIf="!auth.isOperator()"
               [parentForm]="filterForm"
               [onlyVisible]="true"
             ></app-operators-autocomplete>

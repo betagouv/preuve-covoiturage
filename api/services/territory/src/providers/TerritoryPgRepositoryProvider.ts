@@ -366,7 +366,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           break;
         default:
           throw new Error(`${hash.field} not supported for territory find query filter`);
-          break;
       }
     });
 
@@ -632,8 +631,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     // }
 
     if (data.geo) {
-      //   fields.push('geo');
-      values.push(`${data.geo}`);
+      values.push(JSON.stringify(data.geo));
     }
 
     const client = this.connection.getClient();
@@ -752,14 +750,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     // }
 
     return modifiedTerritoryRes.rowCount > 0 ? modifiedTerritoryRes.rows[0] : 0;
-  }
-
-  async findByInsee(insee: string): Promise<TerritoryDbMetaInterface> {
-    throw new Error('This is not implemented here'); // move to normalization service
-  }
-
-  async findByPosition(lon: number, lat: number): Promise<TerritoryDbMetaInterface> {
-    throw new Error('This is not implemented here'); // move to normalization servie
   }
 
   async tree(): Promise<any> {

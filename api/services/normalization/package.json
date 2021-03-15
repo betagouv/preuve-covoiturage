@@ -9,8 +9,7 @@
     "start": "yarn serve",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "ava",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
+    "test": "ava"
   },
   "main": "./dist/bootstrap.js",
   "config": {
@@ -55,6 +54,6 @@
     "@pdc/helper-test": "~0",
     "@pdc/provider-geo": "~0",
     "@pdc/provider-middleware": "~0",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.21"
   }
 }

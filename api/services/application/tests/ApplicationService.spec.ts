@@ -24,7 +24,7 @@ test.serial('#1 - Creates an application', async (t) => {
       call: {
         user: {
           operator_id: t.context.operator_id,
-          permissions: ['application.create'],
+          permissions: ['operator.application.create'],
         },
       },
     },
@@ -48,7 +48,7 @@ test.serial('#2.0 - Find the application by id', async (t) => {
       call: {
         user: {
           operator_id: t.context.operator_id,
-          permissions: ['application.find'],
+          permissions: ['operator.application.find'],
         },
       },
     },
@@ -70,7 +70,7 @@ test.serial('#2.1 - Fails if no owner set', async (t) => {
     {
       call: {
         user: {
-          permissions: ['application.find'],
+          permissions: ['operator.application.find'],
         },
       },
     },
@@ -92,7 +92,7 @@ test.serial("#3.0 - Cannot revoke another op's app", async (t) => {
       call: {
         user: {
           operator_id: String(t.context.operator_id).split('').reverse().join(''),
-          permissions: ['application.revoke'],
+          permissions: ['operator.application.revoke'],
         },
       },
     },
@@ -110,7 +110,7 @@ test.serial('#3.1 - Revoke the application OK', async (t) => {
       call: {
         user: {
           operator_id: t.context.operator_id,
-          permissions: ['application.revoke'],
+          permissions: ['operator.application.revoke'],
         },
       },
     },
@@ -126,7 +126,7 @@ test.serial('#3.2 - Cannot revoke twice the same app', async (t) => {
       call: {
         user: {
           operator_id: t.context.operator_id,
-          permissions: ['application.revoke'],
+          permissions: ['operator.application.revoke'],
         },
       },
     },
@@ -144,7 +144,7 @@ test.serial('#4 - List applications', async (t) => {
       call: {
         user: {
           operator_id: t.context.operator_id,
-          permissions: ['application.create'],
+          permissions: ['operator.application.create'],
         },
       },
     },
@@ -158,7 +158,7 @@ test.serial('#4 - List applications', async (t) => {
       call: {
         user: {
           operator_id: t.context.operator_id,
-          permissions: ['application.create'],
+          permissions: ['operator.application.create'],
         },
       },
     },
@@ -170,7 +170,7 @@ test.serial('#4 - List applications', async (t) => {
       call: {
         user: {
           operator_id: t.context.operator_id,
-          permissions: ['application.list'],
+          permissions: ['operator.application.list'],
         },
       },
     },

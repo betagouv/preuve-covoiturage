@@ -18,11 +18,7 @@
     </div>
   </div>
   <app-territory-list (edit)="onEdit($event)" [territories]="territoriesToShow"></app-territory-list>
-  <mat-paginator
-    [hidden]="!territoriesToShow"
-    [length]="countTerritories"
-    [pageSize]="ELEMENT_PER_PAGE"
-  ></mat-paginator>
+  <mat-paginator [hidden]="!territoriesToShow" [length]="countTerritories" [pageSize]="PAGE_SIZE"></mat-paginator>
 </div>
 <div class="Territories-edition">
   <h2 *ngIf="isFormVisible">

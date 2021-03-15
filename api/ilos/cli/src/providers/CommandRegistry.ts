@@ -12,6 +12,6 @@ import { provider, ProviderInterface } from '@ilos/common';
 @provider()
 export class CommandRegistry extends commander.Command implements ProviderInterface {
   output(...args: any[]) {
-    console.log(...args);
+    console.info(...args);
   }
 }

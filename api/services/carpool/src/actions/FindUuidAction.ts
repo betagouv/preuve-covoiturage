@@ -2,6 +2,7 @@ import { get } from 'lodash';
 
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { alias } from '../shared/carpool/finduuid.schema';
 import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
@@ -12,10 +13,7 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpo
  */
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['channel.service.only', ['certificate']],
-    ['validate', alias],
-  ],
+  middlewares: [...internalOnlyMiddlewares('certificate'), ['validate', alias]],
 })
 export class FindUuidAction extends Action {
   constructor(private repository: IdentityRepositoryProviderInterfaceResolver) {

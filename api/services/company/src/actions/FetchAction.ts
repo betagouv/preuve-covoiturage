@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { CompanyDataSourceProviderInterfaceResolver } from '../interfaces/CompanyDataSourceProviderInterface';
 import { CompanyRepositoryProviderInterfaceResolver } from '../interfaces/CompanyRepositoryProviderInterface';
@@ -9,10 +10,7 @@ import { alias } from '../shared/company/fetch.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['validate', alias],
-    ['can', ['company.fetch']],
-  ],
+  middlewares: [hasPermissionMiddleware('common.company.fetch'), ['validate', alias]],
 })
 export class FetchAction extends AbstractAction {
   constructor(

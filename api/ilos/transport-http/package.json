@@ -19,12 +19,11 @@
     "coverage-ci": "nyc --all --reporter=lcov ava",
     "coverage": "nyc --all --reporter=text ava",
     "watch-test": "yarn test -- --watchAll",
-    "watch": "tsc -w",
-    "lint": "eslint \"src/**/*.ts\""
+    "watch": "tsc -w"
   },
   "devDependencies": {
-    "@types/supertest": "^2.0.7",
-    "supertest": "^4.0.2"
+    "@types/supertest": "^2.0.10",
+    "supertest": "^6.1.3"
   },
   "dependencies": {
     "@ilos/common": "^0.4.1",

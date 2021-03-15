@@ -12,7 +12,6 @@
     "test:integration": "echo '[provider-sentry] No tests'; exit 0",
     "coverage-ci": "echo '[provider-sentry] No tests'; exit 0",
     "coverage": "nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts'",
     "copy-static": "rm -rf ./dist/fixtures && mkdir -p ./dist/fixtures && cp -R ./src/fixtures/*.sql ./dist/fixtures/"
   },
   "ava": {
@@ -29,8 +28,8 @@
     "@ilos/common": "~0",
     "@ilos/connection-postgres": "~0",
     "@ilos/framework": "~0",
-    "faker": "^4.1.0",
-    "uuid": "^7.0.3"
+    "faker": "^5.4.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@ilos/core": "~0",

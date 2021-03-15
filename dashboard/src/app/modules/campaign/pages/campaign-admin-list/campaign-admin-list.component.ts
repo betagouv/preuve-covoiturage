@@ -16,7 +16,7 @@ import { CAMPAIGN_STATUS_FR, CampaignStatusEnum } from '~/core/enums/campaign/ca
   styleUrls: ['./campaign-admin-list.component.scss'],
 })
 export class CampaignAdminListComponent extends DestroyObservable implements OnInit {
-  public readonly PAGE_SIZE = 10;
+  public readonly PAGE_SIZE = 25;
 
   // order is reflected in the data table
   public readonly statuses: string[] = [

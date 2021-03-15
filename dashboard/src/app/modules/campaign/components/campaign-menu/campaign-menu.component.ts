@@ -39,8 +39,6 @@ export class CampaignMenuComponent implements OnInit {
   }
 
   discoverCampaign(router: Router, toastr: ToastrService): void {
-    // todo: reconnect when discover is fixed
-    // router.navigate(['/campaign/discover']);
     toastr.success('Cette section sera bientôt disponible !');
   }
 }

@@ -1,15 +1,21 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface } from '../shared/territory/update.contract';
 import { alias } from '../shared/territory/update.schema';
 import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 
+// TOTO : MIDDLEWARE
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['territory.update']],
+    hasPermissionByScopeMiddleware('registry.territory.update', [
+      'territory.territory.update',
+      'call.user.territory_id',
+      'territory_id',
+    ]),
     ['validate', alias],
   ],
 })

@@ -109,32 +109,32 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
 
   protected registerListeners(queue: Worker, name: string): void {
     queue.on('error', (err) => {
-      console.log(`🐮/${name}: error`, err.message);
+      console.error(`🐮/${name}: error`, err.message);
       this.errorHandler(err);
     });
 
     queue.on('waiting', (jobId) => {
-      console.log(`🐮/${name}: waiting ${jobId}`);
+      console.info(`🐮/${name}: waiting ${jobId}`);
     });
 
     queue.on('active', (job) => {
-      console.log(`🐮/${name}: active ${job.id} ${job.data.method}`);
+      console.info(`🐮/${name}: active ${job.id} ${job.data.method}`);
     });
 
     queue.on('stalled', (job) => {
-      console.log(`🐮/${name}: stalled ${job.id} ${job.data.method}`);
+      console.info(`🐮/${name}: stalled ${job.id} ${job.data.method}`);
     });
 
     queue.on('progress', (job, progress) => {
-      console.log(`🐮/${name}: progress ${job.id} ${job.data.method} : ${progress}`);
+      console.info(`🐮/${name}: progress ${job.id} ${job.data.method} : ${progress}`);
     });
 
     queue.on('completed', (job) => {
-      console.log(`🐮/${name}: completed ${job.id} ${job.data.method}`);
+      console.info(`🐮/${name}: completed ${job.id} ${job.data.method}`);
     });
 
     queue.on('failed', (job, err) => {
-      console.log(`🐮/${name}: failed ${job.id}`, err.message);
+      console.error(`🐮/${name}: failed ${job.id}`, err.message);
       this.errorHandler(err, job);
     });
   }

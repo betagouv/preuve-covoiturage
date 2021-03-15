@@ -15,7 +15,7 @@ export class JourneysStatsCommand implements CommandInterface {
   constructor(protected kernel: KernelInterfaceResolver) {}
 
   public async call(): Promise<string> {
-    console.log('Gathering stats...');
+    console.info('Gathering stats...');
 
     const response = await this.kernel.call(
       'monitoring:journeysstats',

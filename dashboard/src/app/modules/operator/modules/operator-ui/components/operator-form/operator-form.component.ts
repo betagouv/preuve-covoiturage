@@ -13,13 +13,13 @@ import { Contact } from '~/core/entities/shared/contact';
 import { FormBank } from '~/shared/modules/form/forms/form-bank';
 import { bankValidator } from '~/shared/modules/form/validators/bank.validator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Groups } from '~/core/enums/user/groups';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-import { UtilsService } from '~/core/services/utils.service';
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
+import { Roles } from '~/core/enums/user/roles';
 
 @Component({
   selector: 'app-operator-form',
@@ -43,25 +43,24 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   private companyDetails: CompanyInterface;
 
   constructor(
-    public authService: AuthenticationService,
+    public auth: AuthenticationService,
     private fb: FormBuilder,
     private operatorStoreService: OperatorStoreService,
     private operatorApiService: OperatorApiService,
     private toastr: ToastrService,
     private companyService: CompanyService,
-    private utils: UtilsService,
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.authService.user$
+    this.auth.user$
       .pipe(
         filter((user) => !!user),
         takeUntil(this.destroy$),
       )
       .subscribe((user) => {
-        this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
+        this.fullFormMode = user && user.group === Groups.Registry;
         this.initOperatorForm();
         this.initOperatorFormValue();
         this.checkPermissions();
@@ -71,6 +70,10 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
   get controls(): { [key: string]: AbstractControl } {
     return this.operatorForm.controls;
+  }
+
+  get canUpdate(): boolean {
+    return !this.isCreating && this.auth.hasRole([Roles.OperatorAdmin, Roles.RegistryAdmin]);
   }
 
   public onSubmit(): void {
@@ -288,7 +291,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   }
 
   private checkPermissions(): void {
-    if (!this.authService.hasAnyPermission(['operator.update'])) {
+    if (!this.auth.hasRole([Roles.OperatorAdmin, Roles.RegistryAdmin])) {
       this.operatorForm.disable({ onlySelf: true });
     }
   }

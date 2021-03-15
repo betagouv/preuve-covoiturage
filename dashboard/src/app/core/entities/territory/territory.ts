@@ -80,7 +80,8 @@ export interface TerritoryUIStatus {
   insee?: string;
 }
 
-export class Territory extends BaseModel
+export class Territory
+  extends BaseModel
   implements TerritoryBase, FormModel<TerritoryFormModel>, MapModel<Territory>, Clone<Territory> {
   level: TerritoryLevelEnum;
   name: string;
@@ -118,7 +119,7 @@ export class Territory extends BaseModel
     assignOrDeleteProperty(base, this, 'contacts', (data) => new Contacts(data.contacts));
     assignOrDeleteProperty(base, this, 'address', (data) => new Address(data.address));
     assignOrDeleteProperty(base, this, 'company', (data) => ({ ...data.company }));
-    assignOrDeleteProperty(base, this, 'geo', (data) => ({ ...data.geo }));
+    assignOrDeleteProperty<string>(base, this, 'geo', (data) => data.geo);
     assignOrDeleteProperty(base, this, 'children', (data) => [...data.children]);
 
     if (base.shortname) this.shortname = base.shortname;
@@ -180,7 +181,7 @@ export class Territory extends BaseModel
     // insee are used to fetch children array (territory_id[])
     delete this.insee;
 
-    if (!formValues.activable) {
+    if (!formValues.activable && !formValues.active) {
       delete this.address;
       delete this.contacts;
       delete this.company_id;

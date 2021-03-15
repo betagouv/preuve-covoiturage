@@ -12,7 +12,6 @@
     "test": "ava",
     "coverage-ci": "NODE_ENV=testing nyc --all --reporter=lcov ava",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
     "copy-static": "cp -R ./src/templates ./dist/"
   },
   "main": "./dist/src/bootstrap.js",
@@ -42,11 +41,9 @@
     "@ilos/framework": "~0",
     "@ilos/queue": "~0",
     "@pdc/helper-test": "~0",
-    "@pdc/provider-acl": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-token": "~0",
     "@pdc/provider-validator": "~0",
-    "lodash": "^4.17.20",
-    "moment": "^2.24.0"
+    "lodash": "^4.17.21"
   }
 }

@@ -1,5 +1,6 @@
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/fraudcheck/check.contract';
 import {
@@ -15,7 +16,7 @@ import { FraudCheckRepositoryProviderInterfaceResolver, FraudCheckStatusEnum } f
  */
 @handler({
   ...handlerConfig,
-  middlewares: [['channel.service.only', [handlerConfig.service]]],
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
 export class CheckAction extends Action {
   constructor(

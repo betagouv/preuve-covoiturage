@@ -3,7 +3,6 @@ import express from 'express';
 // error handler - !! keep the next argument !!
 // otherwise Express doesn't use it as error handler
 // https://expressjs.com/en/guide/error-handling.html
-// tslint:disable-next-line: no-default-export no-unused-var
 export function errorHandlerMiddleware(
   err: Error,
   _req: express.Request,
@@ -56,7 +55,7 @@ export function errorHandlerMiddleware(
   try {
     const { id, method } = Array.isArray(_req.body) ? _req.body.pop() : _req.body;
 
-    console.error('[proxy]', err.name, code, err.message, { id, method });
+    console.error(`[proxy] ${err.name} ${code} ${err.message}`, { id, method });
   } catch (e) {}
 
   res.status(code).json({

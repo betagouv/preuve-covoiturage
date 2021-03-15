@@ -50,7 +50,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       operator.company = await this.kernel.call<CompanyParamsInterface, CompanyResultInterface>(
         companyFindSignature,
         { query: { siret: operator.siret } },
-        { channel: { service: 'operator' }, call: { user: { permissions: ['company.find'] } } },
+        { channel: { service: 'operator' }, call: { user: { permissions: ['common.company.find'] } } },
       );
     }
 
@@ -116,7 +116,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     if (data.siret) {
       await this.kernel.notify(companyFetchSignature, data.siret, {
         channel: { service: 'operator' },
-        call: { user: { permissions: ['company.fetch'] } },
+        call: { user: { permissions: ['common.company.fetch'] } },
       });
     }
 
@@ -163,7 +163,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       }
 
       // store the thumbnail
-      if ('thumbnail' in data && data.thumbnail.length) {
+      if (data?.thumbnail?.length) {
         await this.insertThumbnail(result.rows[0]._id, data.thumbnail);
       }
 
@@ -217,7 +217,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     if (patch.siret) {
       await this.kernel.notify(companyFetchSignature, patch.siret, {
         channel: { service: 'operator' },
-        call: { user: { permissions: ['company.fetch'] } },
+        call: { user: { permissions: ['common.company.fetch'] } },
       });
     }
 

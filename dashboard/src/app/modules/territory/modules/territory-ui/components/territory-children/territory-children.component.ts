@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
+
 import { Territory } from '~/core/entities/territory/territory';
-import { TerritorySelectionBlock, IdName, TerritorySelectionUIState } from '../../data/TerritorySelectionBlock';
-import { TerritoryAutocompleteComponent } from '../territory-autocomplete/territory-autocomplete.component';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { UiStatusRelationDetails } from '../../../../../../../../../shared/territory/relationUiStatus.contract';
+import { UiStatusRelationDetails } from 'shared/territory/relationUiStatus.contract';
+
+import { TerritoryAutocompleteComponent } from '../territory-autocomplete/territory-autocomplete.component';
+import { TerritorySelectionBlock, IdName, TerritorySelectionUIState } from '../../data/TerritorySelectionBlock';
 
 @Component({
   selector: 'app-territory-children',

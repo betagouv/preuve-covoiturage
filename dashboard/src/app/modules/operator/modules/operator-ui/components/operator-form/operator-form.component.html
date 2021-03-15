@@ -44,19 +44,19 @@
     <div>
       <h3>Délégué à la protection des données</h3>
 
-      <app-form-contact [parentForm]="operatorForm.get('contacts').get('gdpr_dpo')"></app-form-contact>
+      <app-form-contact [parentForm]="operatorForm.get('contacts.gdpr_dpo')"></app-form-contact>
     </div>
 
     <div>
       <h3>Responsable du traitement</h3>
 
-      <app-form-contact [parentForm]="operatorForm.get('contacts').get('gdpr_controller')"></app-form-contact>
+      <app-form-contact [parentForm]="operatorForm.get('contacts.gdpr_controller')"></app-form-contact>
     </div>
 
     <div>
       <h3>Responsable technique</h3>
 
-      <app-form-contact [parentForm]="operatorForm.get('contacts').get('technical')"></app-form-contact>
+      <app-form-contact [parentForm]="operatorForm.get('contacts.technical')"></app-form-contact>
     </div>
   </div>
 
@@ -64,7 +64,7 @@
     <button type="button" (click)="onClose()" class="large" mat-button *ngIf="closable">Annuler</button>
 
     <button
-      *ngIf="authService.hasAnyPermission(['operator.update']) && !isCreating"
+      *ngIf="canUpdate"
       type="submit"
       mat-flat-button
       class="large"

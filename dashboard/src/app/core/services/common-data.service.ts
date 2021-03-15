@@ -1,20 +1,20 @@
-// tslint:disable:prefer-conditional-expression
-import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 
-import { Operator } from '~/core/entities/operator/operator';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { SortEnum, allBasicFieldEnum } from 'shared/territory/common/interfaces/TerritoryQueryInterface';
+
 import { User } from '~/core/entities/authentication/user';
-import { Territory, TerritoryTree, TerritoryLevelEnum } from '~/core/entities/territory/territory';
+import { Operator } from '~/core/entities/operator/operator';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { SortEnum, allBasicFieldEnum } from '../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { allCompanyFieldEnum } from '~/modules/territory/TerritoryQueryInterface';
+import { Territory, TerritoryTree, TerritoryLevelEnum } from '~/core/entities/territory/territory';
+import { AuthenticationService as Auth } from '~/core/services/authentication/authentication.service';
 
 @Injectable({
   providedIn: 'root',
@@ -81,18 +81,22 @@ export class CommonDataService {
     return this._campaigns$.value;
   }
 
+  get canListCampaigns(): boolean {
+    return this.auth.isSuperAdmin() || this.auth.isTerritory();
+  }
+
   constructor(
     private operatorApiService: OperatorApiService,
     private territoryApiService: TerritoryApiService,
     private campaignApiService: CampaignApiService,
-    private authenticationService: AuthenticationService,
+    private auth: Auth,
     private jsonRPCService: JsonRPCService,
   ) {
-    this.authenticationService.user$.subscribe((user) => (user ? this.loadAll().subscribe() : this.resetAll()));
+    this.auth.user$.subscribe((user) => (user ? this.loadAll().subscribe() : this.resetAll()));
   }
 
   loadCurrentOperator(): Observable<Operator> {
-    return this.authenticationService.check().pipe(
+    return this.auth.check().pipe(
       mergeMap<User, Observable<Operator>>((user: User) => {
         if (!user || !user.operator_id) return of<Operator>(null);
         return this.operatorApiService.getById(user.operator_id);
@@ -102,7 +106,7 @@ export class CommonDataService {
   }
 
   loadCurrentTerritory(): Observable<Territory> {
-    return this.authenticationService.check().pipe(
+    return this.auth.check().pipe(
       mergeMap((user: User) => {
         if (!user || !user.territory_id) return of<Territory>(null);
         return this.territoryApiService.getById(user.territory_id);
@@ -182,7 +186,7 @@ export class CommonDataService {
   }
 
   public loadAll(): Observable<boolean> {
-    return this.authenticationService.check().pipe(
+    return this.auth.check().pipe(
       mergeMap((user) => {
         if (user) {
           const params = [
@@ -190,7 +194,7 @@ export class CommonDataService {
             this.territoryApiService.paramGetList({ withParents: true, withLevel: true }),
           ];
 
-          if (this.authenticationService.hasAnyPermission(['incentive-campaign.list'])) {
+          if (this.canListCampaigns) {
             params.push(this.campaignApiService.paramGetList());
           }
 
@@ -217,21 +221,19 @@ export class CommonDataService {
         const operatorsR = results.shift();
         const territoriesR = results.shift();
 
-        const campaignsR = this.authenticationService.hasAnyPermission(['incentive-campaign.list'])
-          ? results.shift()
-          : null;
+        const campaignsR = this.canListCampaigns ? results.shift() : null;
 
         const currentContextData = results.shift();
 
         if (currentContextData && currentContextData.data) {
-          if (this.authenticationService.user.operator_id) {
+          if (this.auth.user.operator_id) {
             this._currentOperator$.next(currentContextData.data);
           } else {
             this._currentTerritory$.next(currentContextData.data);
           }
 
-          if (!this.authenticationService.user.operator_id) this._currentOperator$.next(null);
-          if (!this.authenticationService.user.territory_id) this._currentTerritory$.next(null);
+          if (!this.auth.user.operator_id) this._currentOperator$.next(null);
+          if (!this.auth.user.territory_id) this._currentTerritory$.next(null);
         }
 
         if (operatorsR.data) {

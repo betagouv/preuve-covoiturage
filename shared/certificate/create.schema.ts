@@ -24,12 +24,17 @@ export const schema = {
     },
     tz: { macro: 'varchar' },
     identity: {
-      anyOf: [
-        { _id: { macro: 'serial' } },
-        { uuid: { macro: 'uuid' } },
-        { phone: { macro: 'phone' } },
-        { phone_trunc: { macro: 'phonetrunc' }, operator_user_id: { macro: 'varchar' } },
-      ],
+      type: 'object',
+      additionalProperties: false,
+      minProperties: 1,
+      maxProperties: 1,
+      properties: {
+        _id: { macro: 'serial' },
+        uuid: { macro: 'uuid' },
+        phone: { macro: 'phone' },
+        phone_trunc: { macro: 'phonetrunc' },
+        operator_user_id: { macro: 'varchar' },
+      },
     },
   },
 };

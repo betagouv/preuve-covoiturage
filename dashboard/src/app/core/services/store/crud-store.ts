@@ -112,7 +112,6 @@ export abstract class CrudStore<
     const modEntity = this.entitySubject.value.clone();
     modEntity.updateFromFormValues(formValues);
     this._loadCount += 1;
-
     return this.rpcCrud.update(modEntity).pipe(
       takeUntil(this.dismissUpdateCreateSubject),
       finalize(() => {

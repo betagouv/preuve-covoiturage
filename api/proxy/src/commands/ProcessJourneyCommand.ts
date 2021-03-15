@@ -45,14 +45,12 @@ export class ProcessJourneyCommand implements CommandInterface {
     {
       signature: '-l, --limit <limit>',
       description: 'Limit to apply',
-      // tslint:disable-next-line: no-unnecessary-callback-wrapper
       coerce: (s: string): number => Number(s),
     },
   ];
 
   constructor(protected kernel: KernelInterfaceResolver) {}
 
-  // tslint:disable-next-line: no-shadowed-variable
   public async call(options): Promise<ResultType> {
     const readConnection = new PostgresConnection({ connectionString: options.databaseUri });
     const writeConnection = new PostgresConnection({ connectionString: options.databaseUri });
@@ -141,7 +139,7 @@ export class ProcessJourneyCommand implements CommandInterface {
           });
           console.info(`> Operation done for ${line._id}`);
         } catch (e) {
-          console.log('> FAILED', line._id, e.stack);
+          console.error(`> FAILED ${line._id}`, e.stack);
 
           await writeClient.query({
             text: `

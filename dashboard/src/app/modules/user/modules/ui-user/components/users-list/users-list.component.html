@@ -48,13 +48,7 @@
       <a *ngIf="canEditUser && !isCurrentUser(user._id)" (click)="onEdit(user)">
         <mat-icon matTooltip="Editer" color="primary">edit_outline</mat-icon>
       </a>
-      <a
-        *ngIf="
-          authService.hasAnyPermission(['user.delete', 'territory.users.remove', 'operator.users.remove']) &&
-          !isCurrentUser(user._id)
-        "
-        (click)="onDelete(user)"
-      >
+      <a *ngIf="canDelete(user)" (click)="onDelete(user)">
         <mat-icon matTooltip="Supprimer l'accès" color="error">delete_outline</mat-icon>
       </a>
     </td>

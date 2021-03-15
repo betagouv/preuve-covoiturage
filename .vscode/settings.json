@@ -8,5 +8,7 @@
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
   "editor.formatOnSave": true,
-  "eslint.packageManager": "yarn"
+  "prettier.configPath": "docker/lint/.prettierrc.js",
+  "prettier.prettierPath": "docker/lint/node_modules/prettier",
+  "prettier.packageManager": "yarn"
 }

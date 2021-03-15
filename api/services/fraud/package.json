@@ -11,8 +11,7 @@
     "watch": "tsc -w",
     "test": "ava",
     "coverage-ci": "export NODE_ENV=testing; nyc --all --reporter=lcov ava",
-    "coverage": "export NODE_ENV=testing; nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts'"
+    "coverage": "export NODE_ENV=testing; nyc --all --reporter=text ava"
   },
   "main": "./dist/bootstrap.js",
   "config": {
@@ -46,8 +45,6 @@
     "@pdc/helper-test": "~0",
     "@pdc/provider-geo": "~0",
     "@pdc/provider-middleware": "~0",
-    "@pdc/provider-validator": "~0",
-    "lodash": "^4.17.20",
-    "moment": "^2.24.0"
+    "@pdc/provider-validator": "~0"
   }
 }

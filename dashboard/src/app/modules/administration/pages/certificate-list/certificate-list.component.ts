@@ -26,6 +26,8 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
   styleUrls: ['./certificate-list.component.scss'],
 })
 export class CertificateListComponent extends DestroyObservable implements OnInit {
+  public readonly PAGE_SIZE = 25;
+
   certificateForm: FormGroup;
   filterForm: FormGroup;
   constructor(
@@ -41,11 +43,10 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   }
   @ViewChild('paginator', { static: true }) paginator: MatPaginator;
 
-  pageLength = 20;
   length = 0;
   startIndex = 0;
   certificates: ResultRowInterface[] = [];
-  searchState = new BehaviorSubject<ListParamsInterface>({ pagination: { length: this.pageLength, start_index: 0 } });
+  searchState = new BehaviorSubject<ListParamsInterface>({ pagination: { length: this.PAGE_SIZE, start_index: 0 } });
   isLoading = false;
   showForm = false;
   displayedColumns = ['uuid', 'operator', 'total_km', 'total_point', 'total_cost', 'actions'];

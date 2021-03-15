@@ -6,11 +6,7 @@ import { RedisConnection } from '@ilos/connection-redis';
 import { S3StorageProvider } from '@pdc/provider-file';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import {
-  ChannelTransportMiddleware,
-  ChannelServiceWhitelistMiddleware,
-  ValidateDateMiddleware,
-} from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { binding as listBinding } from './shared/trip/list.schema';
 import { binding as searchCountBinding } from './shared/trip/searchcount.schema';
@@ -38,10 +34,8 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
   validator: [listBinding, searchCountBinding, statsBinding, exportBinding, buildExportBinding],
 
   middlewares: [
+    ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['validate.date', ValidateDateMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
-    ['channel.transport', ChannelTransportMiddleware],
     ['scopeToGroup', ScopeToGroupMiddleware],
   ],
   connections: [

@@ -8,7 +8,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { USER_GROUPS, USER_GROUPS_FR, Groups } from '~/core/enums/user/groups';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
 
@@ -18,6 +18,8 @@ import { UserListInterface } from '~/core/entities/api/shared/user/common/interf
   styleUrls: ['./all-users.component.scss'],
 })
 export class AllUsersComponent extends DestroyObservable implements OnInit {
+  public readonly PAGE_SIZE = 25;
+
   usersToShow: UserListInterface[];
   users: UserListInterface[];
   usersFiltered: UserListInterface[];
@@ -25,9 +27,8 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   searchFilters: FormGroup;
   editUserFormVisible = false;
   isCreatingUser = false;
-  userGroup = UserGroupEnum.TERRITORY;
+  userGroup = Groups.Territory;
   availableUserGroups = USER_GROUPS;
-  PAGE_SIZE = 25;
 
   @ViewChild(MatButtonToggleGroup) toggle: MatButtonToggleGroup;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -35,17 +36,17 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   users$: Observable<UserListInterface[]>;
 
   public editedUser: User;
-  canEditUser$: Observable<boolean>;
+  canAddUser: boolean;
+  canEditUser: boolean;
 
-  constructor(
-    public authenticationService: AuthenticationService,
-    public userStoreService: UserStoreService,
-    private fb: FormBuilder,
-  ) {
+  constructor(public auth: AuthenticationService, public userStoreService: UserStoreService, private fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
+    this.canAddUser = this.auth.isAdmin();
+    this.canEditUser = this.auth.isAdmin();
+
     this.userStoreService.reset();
     this.userStoreService.filterSubject.next({ limit: 1000 });
 
@@ -61,8 +62,6 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
 
     this.loadUsers();
     this.initSearchForm();
-
-    this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
   }
 
   ngAfterViewInit(): void {
@@ -119,7 +118,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     this.editUserFormVisible = false;
   }
 
-  getFrenchGroup(group: UserGroupEnum): string {
+  getFrenchGroup(group: Groups): string {
     return USER_GROUPS_FR[group];
   }
 

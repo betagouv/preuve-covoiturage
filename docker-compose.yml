@@ -44,7 +44,8 @@ services:
     volumes:
       - .:/code
     working_dir: '/code/api'
-    command: 'yarn start:http'
+    command: 'bash -c "yarn start:http | pino-pretty"'
+    tty: true
     ports:
       - 8080:8080
     env_file: ./api/.env
@@ -62,7 +63,8 @@ services:
     volumes:
       - ./api:/code
     working_dir: '/code'
-    command: 'yarn start:queue'
+    command: 'bash -c "yarn start:queue | pino-pretty"'
+    tty: true
     env_file: ./api/.env
     environment:
       APP_WORKER: 'true'
@@ -72,6 +74,13 @@ services:
     depends_on:
       - redis
       - postgres
+
+  lint:
+    build: './docker/lint'
+    tty: true
+    volumes:
+      - ./api:/code/api:ro
+      - ./dashboard:/code/dashboard:ro
 
 networks:
   front:

@@ -1,6 +1,6 @@
-@import '../../../../styles/variables';
+@import 'variables';
 
-.ServiceUnavailable {
+.container {
   color: $color-error;
   display: flex;
   flex-direction: column;
@@ -8,34 +8,45 @@
   font-weight: bold;
   max-height: calc(100vh - 265px);
 
-  &-error,
-  &-text {
+  .error,
+  .text {
     font-size: 40px;
   }
 
-  &-status {
+  .status {
     font-size: 130px;
   }
 
-  &-img {
+  .img {
     width: 45%;
     margin: 20px 0;
   }
 
-  @media (max-height: 800px) {
-    .ServiceUnavailable {
-      &-error,
-      &-text {
-        font-size: 30px;
+  .subtext {
+    margin-top: 1em;
+    a {
+      color: $color-primary;
+      text-decoration: none;
+      &:hover {
+        border-bottom: 1px currentColor dashed;
       }
+    }
+  }
+}
 
-      &-status {
-        font-size: 110px;
-      }
+@media (max-height: 800px) {
+  .container {
+    .error,
+    .text {
+      font-size: 30px;
+    }
 
-      &-img {
-        margin: 10px 0;
-      }
+    .status {
+      font-size: 110px;
+    }
+
+    .img {
+      margin: 10px 0;
     }
   }
 }

@@ -8,7 +8,6 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
     "test": "ava"
   },
   "nyc": {
@@ -37,9 +36,8 @@
     "@ilos/common": "~0",
     "@ilos/core": "~0",
     "@ilos/validator": "~0",
-    "ajv": "^6.10.2",
-    "google-libphonenumber": "^3.2.9",
-    "ibantools": "^2.1.0",
-    "lodash": "^4.17.20"
+    "google-libphonenumber": "^3.2.17",
+    "ibantools": "^3.2.3",
+    "lodash": "^4.17.21"
   }
 }

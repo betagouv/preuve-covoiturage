@@ -1,6 +1,6 @@
-import { userGroupRole, UserRoleEnum } from '~/core/enums/user/user-role.enum';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserInterface, UserPermissionsType } from '~/core/interfaces/user/profileInterface';
+import { userGroupRole, Roles } from '~/core/enums/user/roles';
+import { Groups } from '~/core/enums/user/groups';
+import { UserInterface } from '~/core/interfaces/user/profileInterface';
 
 import { FormModel } from '~/core/entities/IFormModel';
 import { MapModel } from '~/core/entities/IMapModel';
@@ -17,8 +17,8 @@ export class BaseUser implements Model, UserListInterface {
   public firstname: string;
   public phone: string;
   public status: string;
-  public group: UserGroupEnum;
-  public role: UserRoleEnum;
+  public group: Groups;
+  public role: Roles;
 
   // tslint:disable-next-line:variable-name
   operator_id: number | null;
@@ -26,9 +26,10 @@ export class BaseUser implements Model, UserListInterface {
   territory_id: number | null;
 }
 
-export class User extends BaseUser
+export class User
+  extends BaseUser
   implements FormModel, MapModel<User, UserInterface>, Clone<User>, UserPatchInterface, UserInterface {
-  public permissions: UserPermissionsType;
+  public permissions: string[];
 
   static formValueToUserPatch(formValues): UserPatchInterface {
     const userPatch: UserPatchInterface = {};
@@ -112,7 +113,7 @@ export class User extends BaseUser
       if (formVal.operator_id) this.operator_id = formVal.operator_id;
       else delete this.operator_id;
 
-      this.role = `${userGroupRole[formVal.group]}.${formVal.role}` as UserRoleEnum; // consolidate final role
+      this.role = `${userGroupRole[formVal.group]}.${formVal.role}` as Roles; // consolidate final role
     }
 
     delete formVal.group;

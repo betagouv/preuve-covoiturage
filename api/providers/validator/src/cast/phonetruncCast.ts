@@ -1,6 +1,6 @@
 import { PhoneNumberUtil, PhoneNumber, PhoneNumberFormat } from 'google-libphonenumber';
 
-export function phonetruncCast({ data }: { data: string }): string {
+export function phonetruncCast(data: string): string {
   if (!data) {
     return data;
   }

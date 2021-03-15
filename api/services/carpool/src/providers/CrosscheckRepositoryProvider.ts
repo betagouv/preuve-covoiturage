@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import v4 from 'uuid/v4';
+import { v4 } from 'uuid';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import {

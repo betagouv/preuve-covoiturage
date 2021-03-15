@@ -6,8 +6,8 @@ import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/fo
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { USER_GROUP_ROLES, USER_ROLES_FR, UserRoleEnum, UserManyRoleEnum } from '~/core/enums/user/user-role.enum';
-import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { USER_GROUP_ROLES, USER_ROLES_FR, Roles, UserManyRoleEnum } from '~/core/enums/user/roles';
+import { USER_GROUPS, USER_GROUPS_FR, Groups } from '~/core/enums/user/groups';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { cloneDeep } from 'lodash-es';
@@ -69,7 +69,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     const roles = (this.roles = cloneDeep(USER_GROUP_ROLES));
 
     // custom rule : remove territory demo role when admin user is not registry
-    if (this.auth.user.group !== UserGroupEnum.REGISTRY) {
+    if (this.auth.user.group !== Groups.Registry) {
       const demoInd = roles.territories.indexOf(UserManyRoleEnum.DEMO);
       if (demoInd !== -1) roles.territories.splice(demoInd);
     }
@@ -134,11 +134,11 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     }
   }
 
-  public getFrenchRole(role: UserRoleEnum): string {
+  public getFrenchRole(role: Roles): string {
     return USER_ROLES_FR[role];
   }
 
-  public getFrenchGroup(group: UserGroupEnum): string {
+  public getFrenchGroup(group: Groups): string {
     return USER_GROUPS_FR[group];
   }
 
@@ -165,7 +165,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
 
     this.createEditUserForm.valueChanges.subscribe((formVal) => {
       this._emailHasChanged = this._baseEmail !== formVal.email;
-      const territoryEditable = formVal.group === UserGroupEnum.TERRITORY;
+      const territoryEditable = formVal.group === Groups.Territory;
       let updateValidators = false;
       if (territoryEditable !== this.territoryEditable) {
         this.territoryEditable = territoryEditable;
@@ -179,7 +179,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         updateValidators = true;
       }
 
-      const operatorEditable = formVal.group === UserGroupEnum.OPERATOR;
+      const operatorEditable = formVal.group === Groups.Operator;
       if (operatorEditable !== this.operatorEditable) {
         this.operatorEditable = operatorEditable;
         // todo: not sure this is valid, operator should not be reset during edition of form

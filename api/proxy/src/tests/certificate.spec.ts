@@ -106,6 +106,6 @@ test.serial('Download the certificate', async (t) => {
     .set('Accept', 'application/pdf')
     .set('Content-type', 'application/json')
     .set('Authorization', `Bearer ${t.context.auth}`);
-  console.log(response.status, response.body);
+  console.debug(response.status, response.body);
   t.is(response.status, 200);
 });

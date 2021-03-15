@@ -20,8 +20,7 @@
     "coverage-ci": "nyc --all --reporter=lcov ava",
     "coverage": "nyc --all --reporter=text ava",
     "watch-test": "yarn test -- --watchAll",
-    "watch": "tsc -w",
-    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\""
+    "watch": "tsc -w"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -35,7 +34,7 @@
     "@ilos/transport-http": "^0.4.1",
     "@ilos/transport-redis": "^0.4.1",
     "@ilos/validator": "^0.4.1",
-    "pino": "^6.7.0"
+    "pino": "^6.11.1"
   },
   "devDependencies": {
     "get-port": "^5.1.1"

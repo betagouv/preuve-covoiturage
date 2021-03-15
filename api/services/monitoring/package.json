@@ -12,7 +12,6 @@
     "test": "echo '[monitoring] no tests'; exit 0",
     "coverage-ci": "echo '[monitoring] no tests'; exit 0",
     "coverage": "echo '[monitoring] no tests'; exit 0",
-    "lint": "eslint 'src/**/*.ts'",
     "stats:journeys": "ilos stats:journeys",
     "copy-static": "cp -R ./src/templates ./dist/"
   },
@@ -29,7 +28,6 @@
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
     "@pdc/helper-test": "~0",
-    "@pdc/provider-acl": "~0",
     "@pdc/provider-validator": "~0",
     "@pdc/provider-middleware": "~0"
   }

@@ -11,8 +11,7 @@
     "test": "echo '[provider-crypto] No tests'; exit 0",
     "test:integration": "echo '[provider-crypto] No tests'; exit 0",
     "coverage-ci": "echo '[provider-crypto] No tests'; exit 0",
-    "coverage": "echo '[provider-crypto] No tests'; exit 0",
-    "lint": "eslint 'src/**/*.ts'"
+    "coverage": "echo '[provider-crypto] No tests'; exit 0"
   },
   "dependencies": {
     "@ilos/common": "~0",
@@ -21,6 +20,6 @@
     "crypto-js": "^4.0.0"
   },
   "devDependencies": {
-    "@types/crypto-js": "^3.1.47"
+    "@types/crypto-js": "^4.0.1"
   }
 }

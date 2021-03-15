@@ -1,18 +1,11 @@
 import path from 'path';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PermissionMiddleware } from '@pdc/provider-acl';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { NotificationExtension } from '@pdc/provider-notification';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import {
-  ScopeToSelfMiddleware,
-  ContentBlacklistMiddleware,
-  ContentWhitelistMiddleware,
-  ChannelServiceBlacklistMiddleware,
-  ChannelServiceWhitelistMiddleware,
-} from '@pdc/provider-middleware';
+import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { TemplateExtension } from '@pdc/provider-template';
 
 import { changePassword } from './shared/user/changePassword.schema';
@@ -31,7 +24,6 @@ import { patch } from './shared/user/patch.schema';
 import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
 import { sendInvitationEmail } from './shared/user/sendInvitationEmail.schema';
 import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
-import { SetPermissionsCommand } from './commands/SetPermissionsCommand';
 
 import { config } from './config';
 import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
@@ -46,7 +38,6 @@ import { FindUserAction } from './actions/FindUserAction';
 import { ForgottenPasswordUserAction } from './actions/ForgottenPasswordUserAction';
 import { ListUserAction } from './actions/ListUserAction';
 import { LoginUserAction } from './actions/LoginUserAction';
-import { MeUserAction } from './actions/MeUserAction';
 import { NotifyUserAction } from './actions/NotifyUserAction';
 import { PatchUserAction } from './actions/PatchUserAction';
 import { SendConfirmEmailUserAction } from './actions/SendConfirmEmailUserAction';
@@ -57,6 +48,8 @@ import { UserNotificationProvider } from './providers/UserNotificationProvider';
 import { SeedUsersCommand } from './commands/SeedUsersCommand';
 import { HasUsersAction } from './actions/HasUsersAction';
 import { FindInactiveCommand } from './commands/FindInactiveCommand';
+import { challengePasswordMiddlewareBinding } from './middlewares/ChallengePasswordMiddleware';
+import { challengeTokenMiddlewareBinding } from './middlewares/ChallengeTokenMiddleware';
 
 @serviceProvider({
   config,
@@ -79,13 +72,10 @@ import { FindInactiveCommand } from './commands/FindInactiveCommand';
     ['user.sendInvitationEmail', sendInvitationEmail],
   ],
   middlewares: [
-    ['can', PermissionMiddleware],
+    ...defaultMiddlewareBindings,
+    challengePasswordMiddlewareBinding,
+    challengeTokenMiddlewareBinding,
     ['validate', ValidatorMiddleware],
-    ['scopeIt', ScopeToSelfMiddleware],
-    ['content.blacklist', ContentBlacklistMiddleware],
-    ['content.whitelist', ContentWhitelistMiddleware],
-    ['channel.service.only', ChannelServiceWhitelistMiddleware],
-    ['channel.service.except', ChannelServiceBlacklistMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [
@@ -101,7 +91,6 @@ import { FindInactiveCommand } from './commands/FindInactiveCommand';
     ForgottenPasswordUserAction,
     ListUserAction,
     LoginUserAction,
-    MeUserAction,
     NotifyUserAction,
     PatchUserAction,
     SendConfirmEmailUserAction,
@@ -113,7 +102,7 @@ import { FindInactiveCommand } from './commands/FindInactiveCommand';
     template: path.resolve(__dirname, 'templates'),
     templateMeta: 'template',
   },
-  commands: [SetPermissionsCommand, SeedUsersCommand, FindInactiveCommand],
+  commands: [SeedUsersCommand, FindInactiveCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [

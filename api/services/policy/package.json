@@ -10,8 +10,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts'"
+    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava"
   },
   "main": "./dist/bootstrap.js",
   "config": {
@@ -37,13 +36,12 @@
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
     "@pdc/helper-test": "~0",
-    "@pdc/provider-acl": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-validator": "~0",
-    "csv-stringify": "^5.5.1",
-    "date-fns-tz": "^1.0.12",
-    "faker": "^5.1.0",
-    "lodash": "^4.17.20",
+    "csv-stringify": "^5.6.2",
+    "date-fns-tz": "^1.1.2",
+    "faker": "^5.4.0",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1"
   }
 }

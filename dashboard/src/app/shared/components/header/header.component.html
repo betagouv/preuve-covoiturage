@@ -4,7 +4,7 @@
     <div class="navbar-left">
       <!-- logo -->
       <div class="navbar-logo">
-        <a [href]="homeLink" title="Registre de preuve de covoiturage">
+        <a routerLink="/" title="Registre de preuve de covoiturage">
           <img src="assets/img/covoituragebetagouvfr.svg" alt="Registre de preuve de covoiturage" />
         </a>
       </div>
@@ -18,7 +18,7 @@
       <div
         *ngIf="(user && hasTerritoryGroup) || hasRegistryGroup"
         class="navbar-menu-item campaign-menu-item"
-        [routerLink]="routerLink"
+        [routerLink]="campaignLink"
         routerLinkActive="active"
       >
         Campagnes
@@ -35,10 +35,10 @@
         </div>
       </div>
 
-      <button mat-button [routerLink]="'/admin'" matTooltip="Administration">
+      <button mat-button routerLink="/admin" matTooltip="Administration">
         <mat-icon>settings</mat-icon>
       </button>
-      <button mat-button (click)="onLogout()" matTooltip="Déconnexion">
+      <button mat-button routerLink="/logout" matTooltip="Déconnexion">
         <mat-icon>exit_to_app</mat-icon>
       </button>
     </div>

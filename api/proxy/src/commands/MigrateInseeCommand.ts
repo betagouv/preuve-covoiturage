@@ -1,4 +1,3 @@
-// tslint:disable: no-constant-condition
 import axios from 'axios';
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
@@ -15,7 +14,6 @@ export class MigrateInseeCommand implements CommandInterface {
     },
   ];
 
-  // tslint:disable-next-line: no-shadowed-variable
   public async call(options): Promise<string> {
     try {
       const pgConnection = new PostgresConnection({
@@ -60,15 +58,15 @@ export class MigrateInseeCommand implements CommandInterface {
             ],
           });
 
-          console.log('> INSERT', code, data[0].nom);
+          console.info(`> INSERT ${code} ${data[0].nom}`);
         } catch (e) {
-          console.log('> ERROR', code, e);
+          console.error(`> ERROR ${code}`, e);
         }
       }
 
       return 'All geo data found';
     } catch (e) {
-      console.log(e);
+      console.error(e.message, e);
     }
   }
 }

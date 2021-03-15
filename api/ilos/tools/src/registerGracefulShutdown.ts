@@ -25,7 +25,7 @@ export function registerGracefulShutdown(
       try {
         await Promise.resolve(handler());
       } catch (err) {
-        console.error(err, 'error happened during graceful shut down');
+        console.error('error happened during graceful shut down', err);
         isError = true;
       }
     }

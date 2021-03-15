@@ -31,8 +31,8 @@ import {
 } from './middlewares/rateLimiter';
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
-import { makeCall } from './helpers/routeMapping';
-import { nestParams } from './helpers/nestParams';
+import { createRPCPayload } from './helpers/createRPCPayload';
+import { injectContext } from './helpers/injectContext';
 import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
 import { RPCResponseType } from './shared/common/rpc/RPCResponseType';
 import { TokenPayloadInterface } from './shared/application/common/interfaces/TokenPayloadInterface';
@@ -184,8 +184,16 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerMetrics(): void {
-    this.app.get('/health', rateLimiter({ windowMs: 60 * 1000, max: 60 / 5 + 1 }), healthCheckFactory([]));
-    this.app.get('/metrics', rateLimiter({ windowMs: 60 * 1000, max: 60 / 15 + 1 }), prometheusMetricsFactory());
+    this.app.get(
+      '/health',
+      rateLimiter({ windowMs: 60 * 1000, max: 60 / 5 + 1 }, `rate-health-${this.config.get('proxy.hostname')}`),
+      healthCheckFactory([]),
+    );
+    this.app.get(
+      '/metrics',
+      rateLimiter({ windowMs: 60 * 1000, max: 60 / 15 + 1 }, `rate-metrics-${this.config.get('proxy.hostname')}`),
+      prometheusMetricsFactory(),
+    );
   }
 
   private registerSimulationRoutes(): void {
@@ -197,7 +205,7 @@ export class HttpTransport implements TransportInterface {
         const { params } = req;
         const user = get(req, 'session.user', null);
         const response = (await this.kernel.handle(
-          makeCall('campaign:simulateOnFuture', params, { user, metadata: { req } }),
+          createRPCPayload('campaign:simulateOnFuture', params, user, { req }),
         )) as RPCResponseType;
         this.send(res, response);
       }),
@@ -219,7 +227,7 @@ export class HttpTransport implements TransportInterface {
         const { params } = req;
         const user = get(req, 'session.user', null);
         const response = (await this.kernel.handle(
-          makeCall('acquisition:status', params, { user, metadata: { req } }),
+          createRPCPayload('acquisition:status', params, user, { req }),
         )) as RPCResponseType;
         this.send(res, response);
       }),
@@ -233,12 +241,13 @@ export class HttpTransport implements TransportInterface {
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
         const response = (await this.kernel.handle(
-          makeCall(
+          createRPCPayload(
             'acquisition:cancel',
             {
               journey_id: parseInt(req.params.id, 10),
             },
-            { user, metadata: { req } },
+            user,
+            { req },
           ),
         )) as RPCResponseType;
 
@@ -259,7 +268,7 @@ export class HttpTransport implements TransportInterface {
         );
 
         const response = (await this.kernel.handle(
-          makeCall('acquisition:create', { ...req.body }, { user, metadata: { req } }),
+          createRPCPayload('acquisition:create', { ...req.body }, user, { req }),
         )) as RPCResponseType;
 
         this.send(res, response);
@@ -273,7 +282,7 @@ export class HttpTransport implements TransportInterface {
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
-          makeCall('trip:stats', {}, { user: { permissions: ['trip.stats'] } }),
+          createRPCPayload('trip:stats', {}, { permissions: ['registry.trip.stats'] }),
         )) as RPCResponseType;
 
         if (!response || Array.isArray(response) || 'error' in response) {
@@ -293,7 +302,7 @@ export class HttpTransport implements TransportInterface {
       '/login',
       loginRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(makeCall('user:login', req.body))) as RPCResponseType;
+        const response = (await this.kernel.handle(createRPCPayload('user:login', req.body))) as RPCResponseType;
 
         if (!response || Array.isArray(response) || 'error' in response) {
           res.status(mapStatusCode(response)).json(this.parseErrorData(response));
@@ -308,14 +317,13 @@ export class HttpTransport implements TransportInterface {
 
     /**
      * Get the user profile (reads from the session rather than the database)
-     * @see user:me call for database read
      */
     this.app.get('/profile', authRateLimiter(), (req, res, next) => {
       if (!('user' in req.session)) {
         throw new UnauthorizedException();
       }
 
-      res.json(req.session.user);
+      res.json(get(req.session, 'user'));
     });
 
     /**
@@ -337,12 +345,9 @@ export class HttpTransport implements TransportInterface {
       '/auth/reset-password',
       authRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle({
-          id: 1,
-          jsonrpc: '2.0',
-          method: 'user:forgottenPassword',
-          params: { email: req.body.email },
-        })) as RPCResponseType;
+        const response = (await this.kernel.handle(
+          createRPCPayload('user:forgottenPassword', { email: req.body.email }),
+        )) as RPCResponseType;
 
         this.send(res, response);
       }),
@@ -355,12 +360,9 @@ export class HttpTransport implements TransportInterface {
       '/auth/check-token',
       authRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle({
-          id: 1,
-          jsonrpc: '2.0',
-          method: 'user:checkForgottenToken',
-          params: { email: req.body.email, token: req.body.token },
-        })) as RPCResponseType;
+        const response = (await this.kernel.handle(
+          createRPCPayload('user:checkForgottenToken', { email: req.body.email, token: req.body.token }),
+        )) as RPCResponseType;
 
         this.send(res, response);
       }),
@@ -373,12 +375,13 @@ export class HttpTransport implements TransportInterface {
       '/auth/change-password',
       authRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle({
-          id: 1,
-          jsonrpc: '2.0',
-          method: 'user:changePasswordWithToken',
-          params: { email: req.body.email, token: req.body.token, password: req.body.password },
-        })) as RPCResponseType;
+        const response = (await this.kernel.handle(
+          createRPCPayload('user:changePasswordWithToken', {
+            email: req.body.email,
+            token: req.body.token,
+            password: req.body.password,
+          }),
+        )) as RPCResponseType;
 
         this.send(res, response);
       }),
@@ -391,12 +394,9 @@ export class HttpTransport implements TransportInterface {
       '/auth/confirm-email',
       authRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle({
-          id: 1,
-          jsonrpc: '2.0',
-          method: 'user:confirmEmail',
-          params: { email: req.body.email, token: req.body.token },
-        })) as RPCResponseType;
+        const response = (await this.kernel.handle(
+          createRPCPayload('user:confirmEmail', { email: req.body.email, token: req.body.token }),
+        )) as RPCResponseType;
 
         this.send(res, response);
       }),
@@ -419,15 +419,9 @@ export class HttpTransport implements TransportInterface {
         if (!user) throw new UnauthorizedException();
         if (!user.operator_id) throw new UnauthorizedException('Only operators can create applications');
 
-        const response = (await this.kernel.handle({
-          id: 1,
-          jsonrpc: '2.0',
-          method: 'application:create',
-          params: {
-            params: { name: req.body.name },
-            _context: { call: { user } },
-          },
-        })) as RPCResponseType;
+        const response = (await this.kernel.handle(
+          createRPCPayload('application:create', { name: req.body.name }, user),
+        )) as RPCResponseType;
 
         if ('error' in (response as any)) {
           return this.send(res, response);
@@ -457,7 +451,7 @@ export class HttpTransport implements TransportInterface {
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
-          makeCall('certificate:find', { uuid: req.params.uuid }),
+          createRPCPayload('certificate:find', { uuid: req.params.uuid }, { permissions: ['common.certificate.find'] }),
         )) as RPCResponseType;
 
         this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
@@ -473,10 +467,10 @@ export class HttpTransport implements TransportInterface {
       '/v2/certificates/pdf',
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const call = makeCall(
+        const call = createRPCPayload(
           'certificate:download',
           { uuid: req.body.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase(), meta: req.body.meta },
-          { user: { permissions: ['certificate.download'] } },
+          { permissions: ['common.certificate.download'] },
         );
         const response = (await this.kernel.handle(call)) as RPCResponseType;
 
@@ -496,14 +490,14 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
-          makeCall(
+          createRPCPayload(
             'certificate:create',
             {
               tz: req.body.tz,
               identity: req.body.identity,
               operator_id: get(req, 'session.user.operator_id'),
             },
-            { user: get(req, 'session.user', null) },
+            get(req, 'session.user', undefined),
           ),
         )) as RPCResponseType;
 
@@ -543,7 +537,9 @@ export class HttpTransport implements TransportInterface {
       '/honor',
       monHonorCertificateRateLimiter(),
       asyncHandler(async (req, res, next) => {
-        await this.kernel.handle(makeCall('honor:save', { type: req.body.type }, { channel: { service: 'proxy' } }));
+        await this.kernel.handle(
+          createRPCPayload('honor:save', { type: req.body.type }, { permissions: ['common.honor.save'] }),
+        );
         res.status(201).header('Location', `${process.env.APP_APP_URL}/stats`).json({ saved: true });
       }),
     );
@@ -608,13 +604,12 @@ export class HttpTransport implements TransportInterface {
           }
 
           user = { ...user, ...(await this.getTerritoryInfos(user)) };
-
           // nest the params and _context and inject the session user
           // from { id: 1, jsonrpc: '2.0', method: 'a:b' params: {} }
           // to { id: 1, jsonrpc: '2.0', method: 'a:b' params: { params: {}, _context: {} } }
           req.body = isBatch
-            ? req.body.map((doc: RPCSingleCallType) => nestParams(doc, user))
-            : nestParams(req.body, user);
+            ? req.body.map((doc: RPCSingleCallType) => injectContext(doc, user))
+            : injectContext(req.body, user);
 
           // pass the request to the kernel
           const response = (await this.kernel.handle(req.body)) as RPCResponseType;
@@ -628,7 +623,7 @@ export class HttpTransport implements TransportInterface {
 
   private start(port = 8080): void {
     this.server = this.app.listen(port, () =>
-      console.log(`Listening on port ${port}. Version ${this.config.get('sentry.version')}`),
+      console.info(`Listening on port ${port}. Version ${this.config.get('sentry.version')}`),
     );
   }
 
@@ -704,12 +699,12 @@ export class HttpTransport implements TransportInterface {
 
       try {
         const operatorList = await this.kernel.handle(
-          makeCall('territory:listOperator', { territory_id: user.territory_id }, { user: user }),
+          createRPCPayload('territory:listOperator', { territory_id: user.territory_id }, user),
         );
         user.authorizedOperators = get(operatorList, 'result', []);
 
         const descendantTerritories = await this.kernel.handle(
-          makeCall('territory:getParentChildren', { _id: user.territory_id }, { user: user }),
+          createRPCPayload('territory:getParentChildren', { _id: user.territory_id }, user),
         );
 
         dt = get(descendantTerritories, 'result.0.descendant_ids', []) || [];

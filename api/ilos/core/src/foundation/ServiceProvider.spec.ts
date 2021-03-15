@@ -1,4 +1,3 @@
-// tslint:disable no-shadowed-variable max-classes-per-file
 import test from 'ava';
 import {
   handler,

@@ -13,14 +13,13 @@
     "watch": "tsc -w",
     "test": "echo '[provider-notification] No tests'; exit 0",
     "test:integration": "echo '[provider-notification] No tests'; exit 0",
-    "coverage": "echo '[provider-notification] No tests'; exit 0",
-    "lint": "eslint 'src/**/*.ts'"
+    "coverage": "echo '[provider-notification] No tests'; exit 0"
   },
   "dependencies": {
     "@pdc/provider-template": "~0",
     "node-mailjet": "^3.3.1"
   },
   "devDependencies": {
-    "@types/node-mailjet": "^3.3.3"
+    "@types/node-mailjet": "^3.3.4"
   }
 }

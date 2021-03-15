@@ -7,8 +7,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { Groups } from '~/core/enums/user/groups';
+import { UserManyRoleEnum, Roles } from '~/core/enums/user/roles';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
 
@@ -18,29 +18,29 @@ import { UserListInterface } from '~/core/entities/api/shared/user/common/interf
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent extends DestroyObservable implements OnInit {
+  public readonly PAGE_SIZE = 25;
   usersToShow: UserListInterface[];
   users: UserListInterface[];
   usersFiltered: UserListInterface[];
   searchFilters: FormGroup;
   editUserFormVisible = false;
   editedUser = new User();
-  canEditUser$: Observable<boolean>;
+  canEditUser: boolean;
+  canCreateUser: boolean;
   isCreatingUser: boolean;
-  PAGE_SIZE = 10;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   private users$: Observable<UserListInterface[]>;
 
-  constructor(
-    public authenticationService: AuthenticationService,
-    public userStoreService: UserStoreService,
-    private fb: FormBuilder,
-  ) {
+  constructor(public auth: AuthenticationService, public userStoreService: UserStoreService, private fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
+    this.canCreateUser = this.auth.isAdmin();
+    this.canEditUser = this.auth.isAdmin();
+
     this.userStoreService.reset();
     this.userStoreService.filterSubject.next({ limit: 1000 });
 
@@ -57,8 +57,6 @@ export class UsersComponent extends DestroyObservable implements OnInit {
         takeUntil(this.destroy$),
       )
       .subscribe((editUserFormVisible) => (this.editUserFormVisible = editUserFormVisible));
-
-    this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
 
     this.initSearchForm();
   }
@@ -104,12 +102,12 @@ export class UsersComponent extends DestroyObservable implements OnInit {
       if (this.currentOperator) {
         newUser.group = this.currentGroup;
         newUser.operator_id = this.currentOperator;
-        newUser.role = `${this.currentGroup}.'${UserManyRoleEnum.USER}` as UserRoleEnum;
+        newUser.role = `${this.currentGroup}.'${UserManyRoleEnum.USER}` as Roles;
       }
       if (this.currentTerritory) {
         newUser.group = this.currentGroup;
         newUser.territory_id = this.currentTerritory;
-        newUser.role = `${this.currentGroup}.'${UserManyRoleEnum.USER}` as UserRoleEnum;
+        newUser.role = `${this.currentGroup}.'${UserManyRoleEnum.USER}` as Roles;
       }
       this.userStoreService.selectNew(newUser);
     }
@@ -123,20 +121,16 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     this.editUserFormVisible = false;
   }
 
-  get canToCreateUser(): boolean {
-    return this.authenticationService.hasAnyPermission(['user.create', 'territory.users.add', 'operator.users.add']);
-  }
-
-  get currentGroup(): UserGroupEnum {
-    return this.authenticationService.user.group;
+  get currentGroup(): Groups {
+    return this.auth.user.group;
   }
 
   get currentOperator(): number {
-    return this.authenticationService.user.operator_id;
+    return this.auth.user.operator_id;
   }
 
   get currentTerritory(): number {
-    return this.authenticationService.user.territory_id;
+    return this.auth.user.territory_id;
   }
 
   private loadUsers(): void {

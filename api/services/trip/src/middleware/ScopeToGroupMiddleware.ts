@@ -8,11 +8,13 @@ import {
   ForbiddenException,
 } from '@ilos/common';
 
-export type ScopeToGroupMiddlewareOptionsType = {
+export type ScopeToGroupMiddlewareParams = {
   global: string;
   territory: string;
   operator: string;
 };
+
+// A VERIFIER
 
 @middleware()
 export class ScopeToGroupMiddleware implements MiddlewareInterface {
@@ -20,7 +22,7 @@ export class ScopeToGroupMiddleware implements MiddlewareInterface {
     params: ParamsType,
     context: ContextType,
     next: Function,
-    options: ScopeToGroupMiddlewareOptionsType,
+    options: ScopeToGroupMiddlewareParams,
   ): Promise<ResultType> {
     const { global: basePermission, territory: territoryPermission, operator: operatorPermission } = options;
 

@@ -1,4 +1,3 @@
-// tslint:disable max-classes-per-file
 import test from 'ava';
 import { HandlerInterface, handler, lib, provider, inject } from '@ilos/common';
 

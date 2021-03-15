@@ -1,4 +1,3 @@
-// tslint:disable max-classes-per-file
 import test from 'ava';
 import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
 import { provider, serviceProvider, ConnectionInterface } from '@ilos/common';

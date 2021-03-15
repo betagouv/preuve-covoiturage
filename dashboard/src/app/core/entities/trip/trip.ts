@@ -1,5 +1,4 @@
-import { SingleResultInterface as LightTripInterface } from '~/core/entities/api/shared/trip/list.contract';
-
+import { LightTripInterface } from 'shared/trip/common/interfaces/LightTripInterface';
 import { TripStatusEnum } from '../../enums/trip/trip-status.enum';
 
 export class LightTrip {

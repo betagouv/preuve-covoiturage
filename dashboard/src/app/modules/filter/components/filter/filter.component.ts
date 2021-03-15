@@ -9,7 +9,6 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
 import { TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { dayLabelCapitalized } from '~/core/const/days.const';
 import { dateRangeValidator } from '~/modules/filter/validators/date-range.validator';
@@ -43,11 +42,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   @Output() filtersCount = new EventEmitter();
   @ViewChild('townInput') townInput: ElementRef;
 
-  constructor(
-    public authService: AuthenticationService,
-    private fb: FormBuilder,
-    private filterService: FilterService,
-  ) {
+  constructor(public auth: AuthenticationService, private fb: FormBuilder, private filterService: FilterService) {
     super();
   }
 
@@ -69,7 +64,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   ngOnInit(): void {
     this.initForm();
 
-    this.userIsTerritory = this.authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
+    this.userIsTerritory = this.auth.isTerritory();
 
     // reset filter on page trip page load
     this.filterService.resetFilter();

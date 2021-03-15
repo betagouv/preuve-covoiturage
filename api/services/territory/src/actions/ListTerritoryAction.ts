@@ -1,5 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { handlerConfig, ResultInterface } from '../shared/territory/list.contract';
@@ -9,7 +10,7 @@ import { TerritoryListFilter } from '../shared/territory/common/interfaces/Terri
   ...handlerConfig,
   middlewares: [
     // ['validate', 'territory.list'],
-    // ['can', ['territory.list']],
+    hasPermissionMiddleware('common.territory.list'),
   ],
 })
 export class ListTerritoryAction extends AbstractAction {

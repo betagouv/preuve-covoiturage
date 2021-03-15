@@ -11,12 +11,11 @@
     "test": "echo '[provider-date] No tests'; exit 0",
     "test:integration": "echo '[provider-date] No tests'; exit 0",
     "coverage-ci": "echo '[provider-date] No tests'; exit 0",
-    "coverage": "echo '[provider-date] No tests'; exit 0",
-    "lint": "eslint 'src/**/*.ts'"
+    "coverage": "echo '[provider-date] No tests'; exit 0"
   },
   "dependencies": {
     "@ilos/common": "^0",
-    "date-fns": "^2.12.0",
-    "date-fns-tz": "^1.0.10"
+    "date-fns": "^2.17.0",
+    "date-fns-tz": "^1.1.2"
   }
 }

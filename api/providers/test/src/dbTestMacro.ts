@@ -134,7 +134,7 @@ export function dbTestMacro<TestContext = unknown>(
       await t.context.pool.query('COMMIT');
     } catch (e) {
       await t.context.pool.query('ROLLBACK');
-      console.error(e);
+      console.error(e.message, e);
       throw e;
     }
   });

@@ -1,5 +1,6 @@
 import { handler, ContextType } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface } from '../shared/territory/patchContacts.contract';
@@ -9,7 +10,12 @@ import { TerritoryDbMetaInterface } from '..//shared/territory/common/interfaces
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['can', ['territory.contacts.update']],
+    copyFromContextMiddleware('call.user.territory_id', '_id'),
+    hasPermissionByScopeMiddleware('registry.territory.patchContacts', [
+      'territory.territory.patchContacts',
+      'call.user.territory_id',
+      '_id',
+    ]),
     ['validate', alias],
   ],
 })

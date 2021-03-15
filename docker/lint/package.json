@@ -1,0 +1,22 @@
+{
+  "name": "lint",
+  "version": "1.0.0",
+  "description": "docker-lint",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "yarn api && yarn dashboard",
+    "api": "eslint --env node -f ./formatter.js '/code/api/**/src/**/*.ts'",
+    "dashboard": "eslint --env browser -f ./formatter.js '/code/dashboard/src/**/*.ts'",
+    "clean": "rm -rf node_modules/*"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.16.1",
+    "@typescript-eslint/parser": "^4.16.1",
+    "eslint": "^7.21.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.3"
+  }
+}
