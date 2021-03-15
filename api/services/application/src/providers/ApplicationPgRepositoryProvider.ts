@@ -38,19 +38,21 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
   }
 
   async find({ uuid, owner_id, owner_service }: FindInterface): Promise<ApplicationInterface> {
-    const query = {
-      text: `
-        SELECT * FROM ${this.table}
-        WHERE owner_service = $1
-        AND owner_id = $2::int
-        AND uuid = $3
-        AND deleted_at IS NULL
-        LIMIT 1
-      `,
-      values: [owner_service, owner_id, uuid],
-    };
+    const text = `
+      SELECT * FROM ${this.table}
+      WHERE owner_service = $1
+      ${owner_id ? 'AND owner_id = $3::int' : ''}
+      AND uuid = $2
+      AND deleted_at IS NULL
+      LIMIT 1
+    `;
+    const values: any[] = [owner_service, uuid];
 
-    const result = await this.connection.getClient().query(query);
+    if (owner_id) {
+      values.push(owner_id);
+    }
+
+    const result = await this.connection.getClient().query({ text, values });
 
     if (result.rowCount !== 1) {
       throw new Error(`Application not found (${uuid})`);
