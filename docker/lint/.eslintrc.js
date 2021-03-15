@@ -13,6 +13,7 @@ module.exports = {
     semi: ['error', 'always'],
     'prettier/prettier': 'error',
     'max-len': ['warn', { code: 120 }],
+    'no-console': ['error', { allow: ['warn', 'error', 'info', 'debug', 'table'] }],
     '@typescript-eslint/no-empty-interface': ['error', { allowSingleExtends: true }],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/camelcase': 'off', // postgresql compat

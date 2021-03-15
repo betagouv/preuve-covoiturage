@@ -366,7 +366,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           break;
         default:
           throw new Error(`${hash.field} not supported for territory find query filter`);
-          break;
       }
     });
 
@@ -632,8 +631,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     // }
 
     if (data.geo) {
-      //   fields.push('geo');
-      values.push(`${data.geo}`);
+      values.push(JSON.stringify(data.geo));
     }
 
     const client = this.connection.getClient();

@@ -26,7 +26,6 @@ export class ChangePasswordUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
-    await this.authRepository.updatePasswordById(params._id, params.new_password);
-    return true;
+    return this.authRepository.updatePasswordById(params._id, params.new_password);
   }
 }

@@ -11,11 +11,7 @@ import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/Ap
   middlewares: [
     ['validate', alias],
     copyFromContextMiddleware('call.user.operator_id', 'owner_id'),
-    hasPermissionByScopeMiddleware('registry.application.find', [
-      'operator.application.find',
-      'call.user.operator_id',
-      'owner_id',
-    ]),
+    hasPermissionByScopeMiddleware(undefined, ['operator.application.find', 'call.user.operator_id', 'owner_id']),
   ],
 })
 export class FindApplicationAction extends AbstractAction {

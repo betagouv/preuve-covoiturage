@@ -33,7 +33,7 @@
       </mat-radio-group>
 
       <app-territory-children
-        [hidden]="relationDisplayMode !== 'parent'"
+        *ngIf="relationDisplayMode === 'parent'"
         (hasTerritories)="hasTerritoriesChanged($event)"
       ></app-territory-children>
 

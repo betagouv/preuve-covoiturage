@@ -42,12 +42,22 @@ export class DeleteOperatorAction extends AbstractAction {
       for (const { uuid, owner_id } of await this.kernel.call(
         'application:list',
         { owner_id: params._id, owner_service: 'operator' },
-        { ...ctx, ...{ call: { user: { permissions: ['application.list'] } } } },
+        {
+          ...ctx,
+          ...{
+            call: {
+              user: {
+                operator_id: params._id,
+                permissions: ['operator.application.list'],
+              },
+            },
+          },
+        },
       )) {
         await this.kernel.call(
           'application:revoke',
           { uuid },
-          { ...ctx, ...{ call: { user: { operator_id: owner_id, permissions: ['application.revoke'] } } } },
+          { ...ctx, ...{ call: { user: { operator_id: owner_id, permissions: ['operator.application.revoke'] } } } },
         );
         console.debug(`> revoked app:`, { uuid, owner_id });
       }
