@@ -1,4 +1,4 @@
-name: 'Global - QA'
+name: 'Analysis - dep'
 
 on: pull_request
 
@@ -7,16 +7,6 @@ defaults:
     shell: bash
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build linter
-        run: touch api/.env && docker-compose build lint
-      - name: Run Linter
-        run: docker-compose run lint
   code-audit:
     name: Code audit
     runs-on: ubuntu-latest

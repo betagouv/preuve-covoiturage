@@ -1,9 +1,7 @@
-name: 'Kube - Build and deploy'
+name: 'Deploy dashboard and api - demo'
 
 on:
-  push:
-    branches: [production, dev]
-    tags: ['v*.*.*']
+  release: [published]
 
 defaults:
   run:
@@ -21,6 +19,7 @@ jobs:
         uses: crazy-max/ghaction-docker-meta@v1
         with:
           images: betagouvpdc/api
+          tag-latest: true
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -75,12 +74,7 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-      - run: echo ${{ steps.docker_build.outputs.digest }} > api.digest && cat api.digest
-      - name: Upload Image digest
-        uses: actions/upload-artifact@v2
-        with:
-          name: api.digest
-          path: api.digest
+      - run: echo ${{ steps.docker_build.outputs.digest }}
   dashboard-build:
     name: Build dashboard
     runs-on: ubuntu-latest
@@ -92,6 +86,7 @@ jobs:
         uses: crazy-max/ghaction-docker-meta@v1
         with:
           images: betagouvpdc/dashboard
+          tag-latest: true
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -146,12 +141,7 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-      - run: echo ${{ steps.docker_build.outputs.digest }} > dashboard.digest && cat dashboard.digest
-      - name: Upload Image digest
-        uses: actions/upload-artifact@v2
-        with:
-          name: dashboard.digest
-          path: dashboard.digest
+      - run: echo ${{ steps.docker_build.outputs.digest }}
   deploy:
     name: Deploy
     needs: [api-build, dashboard-build]
@@ -163,29 +153,17 @@ jobs:
           repository: betagouv/preuve-covoiturage-infra
           ssh-key: ${{ secrets.INFRA_SSH }}
           path: infra
-      - name: Download dashboard digest
-        id: dashboard-artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: dashboard.digest
-          path: artifacts
-      - name: Download api digest
-        id: api-artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: api.digest
-          path: artifacts
-      - name: Update image digests
+      - name: Update image tags
         run: |
-          export API=$(cat artifacts/api.digest)
-          export DASHBOARD=$(cat artifacts/dashboard.digest)
-          sh infra/cluster/app/overlays/update.sh dev $API $DASHBOARD
+          export RELEASE_VERSION=${GITHUB_REF#refs/*/}
+          sh infra/cluster/app/overlays/update.sh demo $RELEASE_VERSION $RELEASE_VERSION
       - name: Commit
         run: |
           cd infra
-          git checkout -b update-${{ github.sha }}
+          export RELEASE_VERSION=${GITHUB_REF#refs/*/}
+          git checkout -b update-$RELEASE_VERSION
           git add .
           git -c user.name="GitHub Actions" -c user.email="actions@github.com" \
-            commit -m "Update dev image digest" \
+            commit -m "Update deme image tag" \
             --author="${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
           git push --force --no-verify --set-upstream origin update-${{ github.sha }}
