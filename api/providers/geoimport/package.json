@@ -1,0 +1,54 @@
+{
+  "name": "@pdc/provider-geoimport",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "ava",
+    "test:integration": "ava",
+    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-geo --temp-dir=../../.nyc_output --all --reporter=lcov ava",
+    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava"
+  },
+  "dependencies": {
+    "@ilos/common": "~0",
+    "axios": "^0.21.1",
+    "stream-chain": "^2.2.4",
+    "stream-json": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.7",
+    "@types/stream-chain": "^2.0.0",
+    "@types/stream-json": "^1.5.1"
+  },
+  "ava": {
+    "files": [
+      "dist/tests/*.spec.js"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/**/*.spec.ts",
+      "src/interfaces/**",
+      "src/types/**",
+      "src/exceptions/**"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  }
+}
