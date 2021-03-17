@@ -7,8 +7,11 @@
   "private": true,
   "scripts": {
     "start": "yarn api && yarn dashboard",
-    "api": "eslint --env node -f ./formatter.js '/code/api/**/src/**/*.ts'",
-    "dashboard": "eslint --env browser -f ./formatter.js '/code/dashboard/src/**/*.ts'",
+    "start:local": "yarn api:local && yarn dashboard:local",
+    "api": "eslint --config .eslintrc.js --env node -f ./formatter.js '/code/api/**/src/**/*.ts'",
+    "api:local": "eslint --config .eslintrc.js --env node '../../api/**/src/**/*.ts'",
+    "dashboard": "eslint --config .eslintrc.js --env browser -f ./formatter.js '/code/dashboard/src/**/*.ts'",
+    "dashboard:local": "eslint --config .eslintrc.js --env browser '../../dashboard/src/**/*.ts'",
     "clean": "rm -rf node_modules/*"
   },
   "dependencies": {
