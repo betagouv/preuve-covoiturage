@@ -5,8 +5,6 @@ import { QRCodeLimitLength } from './QRCodeLimitLength';
 import { QRCodeModel } from './QRCodeModel';
 
 function QRCode(options) {
-  const instance = this;
-
   //Default options
   this.options = {
     padding: 4,
