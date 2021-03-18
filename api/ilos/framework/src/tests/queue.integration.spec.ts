@@ -15,7 +15,7 @@ import { ServiceProvider as ParentStringServiceProvider } from './mock/StringSer
 const logPath = path.join(os.tmpdir(), 'ilos-test-' + new Date().getTime());
 process.env.APP_LOG_PATH = logPath;
 
-const redisUrl = process.env.APP_REDIS_URL || 'redis://127.0.0.1:6379';
+const redisUrl = process.env.APP_REDIS_URL ?? 'redis://127.0.0.1:6379';
 
 interface Context {
   stringTransport: TransportInterface;

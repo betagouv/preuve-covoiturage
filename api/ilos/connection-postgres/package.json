@@ -10,8 +10,10 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "exit 0",
-    "test:integration": "echo 'No integration test'; exit 0"
+    "test:unit": "exit 0",
+    "test:integration": "exit 0",
+    "coverage:ci": "exit 0",
+    "coverage": "exit 0"
   },
   "dependencies": {
     "pg": "^8.5.1",
@@ -21,10 +23,5 @@
   },
   "devDependencies": {
     "@types/pg": "^7.14.10"
-  },
-  "ava": {
-    "files": [
-      "./dist/**/*.spec.js"
-    ]
   }
 }

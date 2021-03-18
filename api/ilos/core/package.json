@@ -12,10 +12,10 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "ava",
-    "test:integration": "echo 'No integration test'; exit 0",
-    "coverage-ci": "nyc --all --reporter=lcov ava",
-    "coverage": "nyc --all --reporter=text ava",
+    "test:unit": "ava --config ava.unit.cjs",
+    "test:integration": "exit 0",
+    "coverage:ci": "nyc --all --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --all --reporter=text ava --config ava.coverage.cjs",
     "watch": "tsc -w"
   },
   "main": "./dist/index.js",
@@ -24,10 +24,5 @@
     "inversify": "^5.0.5",
     "reflect-metadata": "^0.1.13",
     "@ilos/common": "^0.4.1"
-  },
-  "ava": {
-    "files": [
-      "./**/*.spec.js"
-    ]
   }
 }

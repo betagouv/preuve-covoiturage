@@ -69,15 +69,7 @@ test('Json Schema provider: should raise exception if data unvalid', async (t) =
   const err = await t.throwsAsync(async () => t.context.provider.validate(new FakeObject({ hello: 1 })));
   t.is(
     err.message,
-    JSON.stringify([
-      {
-        keyword: 'type',
-        dataPath: '.hello',
-        schemaPath: '#/properties/hello/type',
-        params: { type: 'string' },
-        message: 'should be string',
-      },
-    ]),
+    'data/hello should be string'
   );
 });
 
