@@ -1,7 +1,9 @@
 name: 'Deploy dashboard and api - demo'
 
 on:
-  release: [published]
+  release:
+    types: [published]
+
 
 defaults:
   run:
