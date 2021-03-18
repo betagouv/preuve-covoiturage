@@ -7,23 +7,16 @@
     "ilos": "ilos",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "ava -s"
+    "test:unit": "ava --config ava.unit.cjs",
+    "test:integration": "ava --config ava.integration.cjs",
+    "coverage:ci": "nyc --all --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --all --reporter=text ava --config ava.coverage.cjs"
   },
   "main": "./dist/bootstrap.js",
   "types": "./dist/index.d.ts",
   "config": {
     "workingDir": "./dist",
     "bootstrap": "./bootstrap.js"
-  },
-  "ava": {
-    "files": [
-      "src/**/*.spec.ts"
-    ],
-    "typescript": {
-      "rewritePaths": {
-        "src/": "dist/"
-      }
-    }
   },
   "dependencies": {
     "@ilos/cli": "~0",
