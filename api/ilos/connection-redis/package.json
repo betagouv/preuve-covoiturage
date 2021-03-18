@@ -12,8 +12,8 @@
     "watch": "tsc -w",
     "test:unit": "exit 0",
     "test:integration": "ava --config ava.integration.cjs",
-    "coverage:ci": "nyc --all --reporter=lcov ava --config ava.coverage.cjs",
-    "coverage": "nyc --all --reporter=text ava --config ava.coverage.cjs"
+    "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
   },
   "devDependencies": {
     "@types/ioredis": "^4.22.0"

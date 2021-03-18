@@ -9,23 +9,14 @@
     "watch": "tsc -w",
     "test:unit": "ava --config ava.unit.cjs",
     "test:integration": "ava --config ava.integration.cjs",
-    "coverage:ci": "nyc --all --reporter=lcov ava --config ava.coverage.cjs",
-    "coverage": "nyc --all --reporter=text ava --config ava.coverage.cjs"
+    "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
   },
   "main": "./dist/bootstrap.js",
   "config": {
     "workingDir": "./dist",
     "bootstrap": "./bootstrap.js",
     "app": {}
-  },
-  "nyc": {
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/**/interfaces/**",
-      "src/**/exceptions/**",
-      "src/config/**",
-      "src/shared/**"
-    ]
   },
   "dependencies": {
     "@ilos/cli": "~0",

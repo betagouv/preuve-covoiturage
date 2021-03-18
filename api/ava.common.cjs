@@ -1,9 +1,7 @@
 const common = {
-    typescript: {
-        rewritePaths: {
-            'src/': 'dist/',
-        },
-    },
+    extensions: ['ts'],
+    require: ['ts-node/register'],
+    timeout: '1m',
 };
 
 const integration = {
