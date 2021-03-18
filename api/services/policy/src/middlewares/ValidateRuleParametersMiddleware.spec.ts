@@ -67,7 +67,7 @@ test.serial('should throw error if rule is not properly parametred (unnecessary 
   );
   t.log(err);
   t.is(err.message, 'Invalid params');
-  t.is(err.rpcError.data, 'No schema provided for this type');
+  t.is(err.rpcError.data, 'No schema provided for this type (policies.adult_only_filter)');
 });
 
 test.serial('should throw error if rule is not properly parametred (missing params)', async (t) => {
@@ -79,8 +79,7 @@ test.serial('should throw error if rule is not properly parametred (missing para
   t.is(err.message, 'Invalid params');
   t.is(
     err.rpcError.data,
-    // eslint-disable-next-line
-    '[{"keyword":"type","dataPath":"","schemaPath":"#/type","params":{"type":"integer"},"message":"should be integer"}]',
+    'data should be integer',
   );
 });
 
@@ -93,8 +92,7 @@ test.serial('should throw error if rule is not properly parametred (wrong params
   t.is(err.message, 'Invalid params');
   t.is(
     err.rpcError.data,
-    // eslint-disable-next-line
-    '[{"keyword":"type","dataPath":"","schemaPath":"#/type","params":{"type":"integer"},"message":"should be integer"}]',
+    'data should be integer',
   );
 });
 
@@ -107,8 +105,7 @@ test.serial('should throw error if missing uuid in stateful rule', async (t) => 
   t.is(err.message, 'Invalid params');
   t.is(
     err.rpcError.data,
-    // eslint-disable-next-line
-    '[{"keyword":"required","dataPath":"","schemaPath":"#/required","params":{"missingProperty":"uuid"},"message":"should have required property \'uuid\'"}]',
+    "data should have required property 'uuid'"
   );
 });
 

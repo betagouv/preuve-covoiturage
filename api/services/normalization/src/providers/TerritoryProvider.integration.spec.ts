@@ -10,10 +10,8 @@ interface TestContext {
 
 const test = anyTest as TestInterface<TestContext>;
 
-test('TerritoryProvider', (t) => {
-  // NOTE : Disabling this test cause of id inconsistency.
-  t.pass();
-});
+// NOTE : Disabling this test cause of id inconsistency.
+test.todo('TerritoryProvider');
 
 // test.before(async (t) => {
 //   t.context.connection = new PostgresConnection({ connectionString: process.env.APP_POSTGRES_URL });
