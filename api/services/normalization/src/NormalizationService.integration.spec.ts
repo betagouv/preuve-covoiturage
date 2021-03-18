@@ -1,11 +1,11 @@
 import anyTest from 'ava';
 import { httpMacro } from '@pdc/helper-test';
 
-import { bootstrap } from '../src/bootstrap';
+import { bootstrap } from './bootstrap';
 
 const { test, query } = httpMacro(anyTest, () => bootstrap.boot('http', 0));
 
-test(
+test.skip(
   'normalization succeeds in metropole',
   query,
   'normalization:route',
@@ -39,7 +39,7 @@ test(
   },
 );
 
-test(
+test.skip(
   'normalization succeeds in dom-tom',
   query,
   'normalization:route',

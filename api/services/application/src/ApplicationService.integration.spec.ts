@@ -1,7 +1,7 @@
 import anyTest from 'ava';
 import { httpMacro } from '@pdc/helper-test';
 
-import { bootstrap } from '../src/bootstrap';
+import { bootstrap } from './bootstrap';
 
 interface TestContext {
   application: any;
@@ -10,11 +10,11 @@ interface TestContext {
 
 const { test } = httpMacro<TestContext>(anyTest, () => bootstrap.boot('http', 0));
 
-test.before((t) => {
+test.before.skip((t) => {
   t.context.operator_id = Math.round(Math.random() * 1000);
 });
 
-test.serial('#1 - Creates an application', async (t) => {
+test.serial.skip('#1 - Creates an application', async (t) => {
   const result = await t.context.request(
     'application:create',
     {
@@ -36,7 +36,7 @@ test.serial('#1 - Creates an application', async (t) => {
   t.context.application = result;
 });
 
-test.serial('#2.0 - Find the application by id', async (t) => {
+test.serial.skip('#2.0 - Find the application by id', async (t) => {
   const result = await t.context.request(
     'application:find',
     {
@@ -59,7 +59,7 @@ test.serial('#2.0 - Find the application by id', async (t) => {
   t.is(result.owner_service, 'operator');
 });
 
-test.serial('#2.1 - Fails if no owner set', async (t) => {
+test.serial.skip('#2.1 - Fails if no owner set', async (t) => {
   const result = await t.context.request(
     'application:find',
     {
@@ -82,7 +82,7 @@ test.serial('#2.1 - Fails if no owner set', async (t) => {
   t.is(result.error.data, 'Application owner service must be set');
 });
 
-test.serial("#3.0 - Cannot revoke another op's app", async (t) => {
+test.serial.skip("#3.0 - Cannot revoke another op's app", async (t) => {
   const result = await t.context.request(
     'application:revoke',
     {
@@ -100,7 +100,7 @@ test.serial("#3.0 - Cannot revoke another op's app", async (t) => {
   t.true('error' in result);
 });
 
-test.serial('#3.1 - Revoke the application OK', async (t) => {
+test.serial.skip('#3.1 - Revoke the application OK', async (t) => {
   const result = await t.context.request(
     'application:revoke',
     {
@@ -118,7 +118,7 @@ test.serial('#3.1 - Revoke the application OK', async (t) => {
   t.is(result, null);
 });
 
-test.serial('#3.2 - Cannot revoke twice the same app', async (t) => {
+test.serial.skip('#3.2 - Cannot revoke twice the same app', async (t) => {
   const result = await t.context.request(
     'application:revoke',
     { uuid: t.context.application.uuid },
@@ -134,7 +134,7 @@ test.serial('#3.2 - Cannot revoke twice the same app', async (t) => {
   t.true('error' in result);
 });
 
-test.serial('#4 - List applications', async (t) => {
+test.serial.skip('#4 - List applications', async (t) => {
   await t.context.request(
     'application:create',
     {

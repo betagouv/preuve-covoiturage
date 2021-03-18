@@ -16,7 +16,7 @@ interface TestContext {
 
 const test = anyTest as TestInterface<TestContext>;
 
-test.before(async (t) => {
+test.before.skip(async (t) => {
   t.context.connection = new PostgresConnection({ connectionString: process.env.APP_POSTGRES_URL });
   await t.context.connection.up();
 
@@ -46,7 +46,7 @@ test.before(async (t) => {
   ];
 });
 
-test.after.always(async (t) => {
+test.after.always.skip(async (t) => {
   await t.context.connection.getClient().query({
     text: `DELETE FROM ${t.context.repository.table} WHERE acquisition_id = $1::int`,
     values: [t.context.acquisition_id],
@@ -54,7 +54,7 @@ test.after.always(async (t) => {
   await t.context.connection.down();
 });
 
-test.serial('Should create fraudcheck entries', async (t) => {
+test.serial.skip('Should create fraudcheck entries', async (t) => {
   t.log('trololo');
 
   await t.context.repository.createOrUpdate({
@@ -87,7 +87,7 @@ test.serial('Should create fraudcheck entries', async (t) => {
   t.log(result.rows, t.context.data);
 });
 
-test.serial('Should get fraudcheck entries', async (t) => {
+test.serial.skip('Should get fraudcheck entries', async (t) => {
   const data = await t.context.repository.get(t.context.acquisition_id);
   t.log(data);
   t.deepEqual(data, {
@@ -98,7 +98,7 @@ test.serial('Should get fraudcheck entries', async (t) => {
   });
 });
 
-// test.serial('Should update fraudcheck entries', async (t) => {
+// test.serial.skip('Should update fraudcheck entries', async (t) => {
 //   const data = [...t.context.data];
 //   const karma = 50;
 //   checkList.map((method) => {
@@ -132,7 +132,7 @@ test.serial('Should get fraudcheck entries', async (t) => {
 //   );
 // });
 
-// test.serial('Should get score', async (t) => {
+// test.serial.skip('Should get score', async (t) => {
 //   const score = await t.context.repository.getScore(t.context.acquisition_id);
 //   const doneCheck = t.context.data.filter((c) => c.status === FraudCheckStatusEnum.Done);
 //   const fromDataScore = doneCheck.map((c) => c.karma).reduce((sum, i) => sum + i, 0) / doneCheck.length;

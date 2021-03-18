@@ -1,7 +1,7 @@
 import anyTest from 'ava';
 import { httpMacro } from '@pdc/helper-test';
 
-import { bootstrap } from '../src/bootstrap';
+import { bootstrap } from './bootstrap';
 import { ContextType } from '@ilos/common';
 
 interface TestContext {
@@ -23,7 +23,7 @@ function contextFactory(permissions: string[]): ContextType {
   };
 }
 
-test.serial('Fails on wrong permissions', async (t) => {
+test.serial.skip('Fails on wrong permissions', async (t) => {
   const result = await t.context.request(
     'operator:create',
     {
@@ -36,7 +36,7 @@ test.serial('Fails on wrong permissions', async (t) => {
   t.is(result.error.data, 'Invalid permissions');
 });
 
-test.serial('Create an operator', async (t) => {
+test.serial.skip('Create an operator', async (t) => {
   const result = await t.context.request(
     'operator:create',
     {
@@ -52,7 +52,7 @@ test.serial('Create an operator', async (t) => {
   t.context._id = result._id;
 });
 
-test.serial('Find an operator', async (t) => {
+test.serial.skip('Find an operator', async (t) => {
   const result = await t.context.request(
     'operator:find',
     {
@@ -65,7 +65,7 @@ test.serial('Find an operator', async (t) => {
   t.is(result.legal_name, 'Toto inc.');
 });
 
-test.serial('Update the operator', async (t) => {
+test.serial.skip('Update the operator', async (t) => {
   const result = await t.context.request(
     'operator:update',
     {
@@ -79,7 +79,7 @@ test.serial('Update the operator', async (t) => {
   t.is(result.legal_name, 'Toto inc.');
 });
 
-test.serial('List all operators', async (t) => {
+test.serial.skip('List all operators', async (t) => {
   const result = await t.context.request('operator:list', {}, contextFactory(['operator.list']));
   t.true(Array.isArray(result));
   const operator = result.filter((r) => r._id === t.context._id);
@@ -88,7 +88,7 @@ test.serial('List all operators', async (t) => {
   t.is(operator[0].name, 'Yop');
 });
 
-test.serial('Delete the operator', async (t) => {
+test.serial.skip('Delete the operator', async (t) => {
   const result = await t.context.request(
     'operator:delete',
     { _id: t.context._id },

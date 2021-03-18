@@ -11,7 +11,7 @@ interface TestContext {
 }
 const test = anyTest as TestInterface<TestContext>;
 
-test.before(async (t) => {
+test.before.skip(async (t) => {
   t.context.policyId = 0;
   t.context.connection = new PostgresConnection({
     connectionString:
@@ -24,14 +24,14 @@ test.before(async (t) => {
   t.context.repository = new MetadataProvider(t.context.connection);
 });
 
-test.beforeEach(async (t) => {
+test.beforeEach.skip(async (t) => {
   await t.context.connection.getClient().query({
     text: `DELETE from ${t.context.repository.table} WHERE policy_id = $1`,
     values: [t.context.policyId],
   });
 });
 
-test.after.always(async (t) => {
+test.after.always.skip(async (t) => {
   // clean db
   await t.context.connection.getClient().query({
     text: `DELETE from ${t.context.repository.table} WHERE policy_id = $1`,
@@ -42,13 +42,13 @@ test.after.always(async (t) => {
   await t.context.connection.down();
 });
 
-test.serial('should always return a metadata wrapper', async (t) => {
+test.serial.skip('should always return a metadata wrapper', async (t) => {
   const meta = await t.context.repository.get(t.context.policyId);
   t.true(meta instanceof MetadataWrapper);
   t.is(meta.keys().length, 0);
 });
 
-test.serial('should create metadata wrapper on database', async (t) => {
+test.serial.skip('should create metadata wrapper on database', async (t) => {
   const meta = await t.context.repository.get(t.context.policyId);
   t.true(meta instanceof MetadataWrapper);
   t.is(meta.keys().length, 0);
@@ -70,7 +70,7 @@ test.serial('should create metadata wrapper on database', async (t) => {
   ]);
 });
 
-test.serial('should update metadata wrapper on database', async (t) => {
+test.serial.skip('should update metadata wrapper on database', async (t) => {
   const meta = await t.context.repository.get(t.context.policyId);
   t.true(meta instanceof MetadataWrapper);
   t.is(meta.keys().length, 0);

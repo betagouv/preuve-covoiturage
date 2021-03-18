@@ -12,7 +12,7 @@ interface RepositoryTestInterface {
 
 const test = anyTest as TestInterface<RepositoryTestInterface>;
 
-test.before(async (t) => {
+test.before.skip(async (t) => {
   t.context.data = {
     siret: '12000101100010',
     siren: '120001011',
@@ -35,7 +35,7 @@ test.before(async (t) => {
   t.context.repository = new CompanyRepositoryProvider(t.context.connection);
 });
 
-test.after.always(async (t) => {
+test.after.always.skip(async (t) => {
   await t.context.connection.getClient().query({
     text: 'DELETE FROM company.companies WHERE siret = $1',
     values: [t.context.data.siret],
@@ -43,12 +43,12 @@ test.after.always(async (t) => {
   await t.context.connection.down();
 });
 
-test.serial('should return undefined on unknow siret', async (t) => {
+test.serial.skip('should return undefined on unknow siret', async (t) => {
   const res = await t.context.repository.findBySiret('12000101100010');
   t.is(res, undefined);
 });
 
-test.serial('should insert data on db when siret not found', async (t) => {
+test.serial.skip('should insert data on db when siret not found', async (t) => {
   await t.context.repository.updateOrCreate(t.context.data);
   const res = await t.context.connection.getClient().query({
     text: `SELECT siren from company.companies WHERE siret = $1`,
@@ -59,7 +59,7 @@ test.serial('should insert data on db when siret not found', async (t) => {
   t.is(res.rows[0].siren, t.context.data.siren);
 });
 
-test.serial('should update data if siret alread exists', async (t) => {
+test.serial.skip('should update data if siret alread exists', async (t) => {
   await t.context.repository.updateOrCreate({
     ...t.context.data,
     headquarter: false,
@@ -75,7 +75,7 @@ test.serial('should update data if siret alread exists', async (t) => {
   t.true(res.rows[0].updated_at > t.context.data.updated_at);
 });
 
-test.serial('should return a company on known siret', async (t) => {
+test.serial.skip('should return a company on known siret', async (t) => {
   const res = await t.context.repository.findBySiret('12000101100010');
   t.true(typeof res === 'object');
   t.deepEqual(

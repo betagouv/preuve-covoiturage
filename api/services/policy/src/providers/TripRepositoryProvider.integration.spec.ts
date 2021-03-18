@@ -10,7 +10,7 @@ interface TestContext {
 
 const test = anyTest as TestInterface<TestContext>;
 
-test.before(async (t) => {
+test.before.skip(async (t) => {
   t.context.connection = new PostgresConnection({
     connectionString:
       'APP_POSTGRES_URL' in process.env
@@ -21,11 +21,11 @@ test.before(async (t) => {
   t.context.repository = new TripRepositoryProvider(t.context.connection);
 });
 
-test.after.always(async (t) => {
+test.after.always.skip(async (t) => {
   await t.context.connection.down();
 });
 
-test('Should work', async (t) => {
+test.skip('Should work', async (t) => {
   // const i = await t.context.repository.findTripByPolicy(
   //   new ProcessableCampaign({
   //     territory_id: 310,

@@ -11,7 +11,7 @@ interface TestContext {
 
 const test = anyTest as TestInterface<TestContext>;
 
-test.before(async (t) => {
+test.before.skip(async (t) => {
   t.context.connection = new PostgresConnection({
     connectionString:
       'APP_POSTGRES_URL' in process.env
@@ -22,7 +22,7 @@ test.before(async (t) => {
   t.context.repository = new IncentiveRepositoryProvider(t.context.connection);
 });
 
-test.after.always(async (t) => {
+test.after.always.skip(async (t) => {
   await t.context.connection.getClient().query({
     text: `DELETE FROM ${t.context.repository.table} WHERE policy_id = $1`,
     values: [0],
@@ -30,7 +30,7 @@ test.after.always(async (t) => {
   await t.context.connection.down();
 });
 
-test.serial('Should create many incentives', async (t) => {
+test.serial.skip('Should create many incentives', async (t) => {
   const incentives = [
     {
       policy_id: 0,
@@ -77,7 +77,7 @@ test.serial('Should create many incentives', async (t) => {
   t.is(incentiveResults.rows.find((i) => i.carpool_id === 2).result, 200);
 });
 
-test.serial('Should update many incentives', async (t) => {
+test.serial.skip('Should update many incentives', async (t) => {
   const incentives = [
     {
       policy_id: 0,
@@ -127,7 +127,7 @@ test.serial('Should update many incentives', async (t) => {
   t.is(incentiveResults.rows.find((i) => i.carpool_id === 3).result, 100);
 });
 
-test.serial('Should update many incentives amount', async (t) => {
+test.serial.skip('Should update many incentives amount', async (t) => {
   const data = [
     {
       policy_id: 0,

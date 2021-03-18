@@ -38,7 +38,7 @@ test('should fetch from data source with a siret id', async (t) => {
   t.is(data.company_naf_code, '8411Z');
   t.is(data.establishment_naf_code, '8411Z');
   t.is(data.legal_nature_code, '7120');
-  t.is(data.legal_nature_label, "Service central d'un ministère");
+  t.is(data.legal_nature_label, 'SECRETARIAT GENERAL DU GOUVERNEMENT');
   t.is(data.nonprofit_code, null);
   t.is(data.intra_vat, 'FR58120001011');
   t.is(data.address, '57 Rue de Varenne 75007 Paris');

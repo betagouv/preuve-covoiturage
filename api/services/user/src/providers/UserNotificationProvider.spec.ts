@@ -2,9 +2,9 @@ import anyTest, { TestInterface } from 'ava';
 import sinon, { SinonSpy } from 'sinon';
 import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver, ParamsType } from '@ilos/common';
 
-import { UserRepositoryProviderInterfaceResolver } from '../src/interfaces/UserRepositoryProviderInterface';
-import { UserNotificationProvider } from '../src/providers/UserNotificationProvider';
-import { UserFindInterface } from '../src/shared/user/common/interfaces/UserFindInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserNotificationProvider } from './UserNotificationProvider';
+import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
 
 interface TestContext {
   cfg: any;
@@ -71,21 +71,20 @@ test('send passwordForgotten notification', async (t) => {
   const token = 'toto';
   await t.context.provider.passwordForgotten(token, email);
   const [segment, template, templateId] = t.context.provider.FORGOTTEN;
-  const link = `${t.context.cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
+  const link = `${t.context.cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}`;
 
-  t.true(
-    t.context.notify.calledWith(
-      'user:notify',
-      {
-        email,
-        fullname: t.context.fullname,
-        link,
-        template,
-        templateId,
-      },
-      t.context.provider.defaultContext,
-    ),
-  );
+  t.true(t.context.notify.calledOnce);
+  t.deepEqual(t.context.notify.getCall(0).args, [
+    'user:notify',
+    {
+      email,
+      fullname: t.context.fullname,
+      link,
+      template,
+      templateId,
+    },
+    t.context.provider.defaultContext,
+  ]);
 });
 
 test('send emailUpdated notification', async (t) => {
@@ -97,32 +96,29 @@ test('send emailUpdated notification', async (t) => {
   const [segment, template, templateId] = t.context.provider.CONFIRMATION;
   const [, emailChangedTemplate, emailChangedTemplateId] = t.context.provider.EMAIL_CHANGED;
 
-  const link = `${t.context.cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
-  t.true(
-    t.context.notify.calledWith(
-      'user:notify',
-      {
-        email,
-        fullname: t.context.fullname,
-        link,
-        template,
-        templateId,
-      },
-      t.context.provider.defaultContext,
-    ),
-  );
-  t.true(
-    t.context.notify.calledWith(
-      'user:notify',
-      {
-        fullname: t.context.fullname,
-        email: oldEmail,
-        template: emailChangedTemplate,
-        templateId: emailChangedTemplateId,
-      },
-      t.context.provider.defaultContext,
-    ),
-  );
+  const link = `${t.context.cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}`;
+  t.true(t.context.notify.called);
+  t.deepEqual(t.context.notify.getCall(0).args, [
+    'user:notify',
+    {
+      email,
+      fullname: t.context.fullname,
+      link,
+      template,
+      templateId,
+    },
+    t.context.provider.defaultContext,
+  ]);
+  t.deepEqual(t.context.notify.getCall(1).args, [
+    'user:notify',
+    {
+      fullname: t.context.fullname,
+      email: oldEmail,
+      template: emailChangedTemplate,
+      templateId: emailChangedTemplateId,
+    },
+    t.context.provider.defaultContext,
+  ]);
 });
 
 test('send userCreated notification', async (t) => {
@@ -130,18 +126,17 @@ test('send userCreated notification', async (t) => {
   const token = 'toto';
   await t.context.provider.userCreated(token, email);
   const [segment, template, templateId] = t.context.provider.INVITATION;
-  const link = `${t.context.cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
-  t.true(
-    t.context.notify.calledWith(
-      'user:notify',
-      {
-        email,
-        fullname: t.context.fullname,
-        link,
-        template,
-        templateId,
-      },
-      t.context.provider.defaultContext,
-    ),
-  );
+  const link = `${t.context.cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}`;
+  t.true(t.context.notify.calledOnce);
+  t.deepEqual(t.context.notify.getCall(0).args, [
+    'user:notify',
+    {
+      email,
+      fullname: t.context.fullname,
+      link,
+      template,
+      templateId,
+    },
+    t.context.provider.defaultContext,
+  ]);
 });

@@ -10,7 +10,7 @@ interface TestContext {
 
 const test = anyTest as TestInterface<TestContext>;
 
-test.before(async (t) => {
+test.before.skip(async (t) => {
   t.context.connection = new PostgresConnection({
     connectionString:
       'APP_POSTGRES_URL' in process.env
@@ -21,7 +21,7 @@ test.before(async (t) => {
   t.context.repository = new IdentityRepositoryProvider(t.context.connection);
 });
 
-test.after.always(async (t) => {
+test.after.always.skip(async (t) => {
   const identityIds = await t.context.connection.getClient().query({
     text: `DELETE FROM ${t.context.repository.table} WHERE phone like $1 OR phone_trunc = $2 RETURNING _id`,
     values: ['%00000000%', '00000000'],
@@ -35,7 +35,7 @@ test.after.always(async (t) => {
   await t.context.connection.down();
 });
 
-test.serial('Should save identity', async (t) => {
+test.serial.skip('Should save identity', async (t) => {
   const { _id, uuid } = await t.context.repository.create(
     {
       phone: '0000000000',
@@ -53,7 +53,7 @@ test.serial('Should save identity', async (t) => {
   t.is(r.rows[0].uuid, uuid);
 });
 
-test.serial('Should delete identity', async (t) => {
+test.serial.skip('Should delete identity', async (t) => {
   const rid = await t.context.connection.getClient().query({
     text: `SELECT _id from ${t.context.repository.table} WHERE phone = $1`,
     values: ['0000000000'],
@@ -68,7 +68,7 @@ test.serial('Should delete identity', async (t) => {
   t.is(r.rowCount, 0);
 });
 
-test.serial('Should share uuid when phone is the same', async (t) => {
+test.serial.skip('Should share uuid when phone is the same', async (t) => {
   const { uuid: uuidt } = await t.context.repository.create(
     {
       phone: '0000000009',
@@ -94,7 +94,7 @@ test.serial('Should share uuid when phone is the same', async (t) => {
   t.not(uuid1, uuidt);
 });
 
-test.serial('Should share uuid when phone trunc and operator user id is the same', async (t) => {
+test.serial.skip('Should share uuid when phone trunc and operator user id is the same', async (t) => {
   const { _id: idt, uuid: uuidt } = await t.context.repository.create(
     {
       phone: '0000000009',
@@ -140,7 +140,7 @@ test.serial('Should share uuid when phone trunc and operator user id is the same
   t.not(uuid1, uuidt);
 });
 
-test.serial('Should share uuid when phone trunc and pass user id is the same', async (t) => {
+test.serial.skip('Should share uuid when phone trunc and pass user id is the same', async (t) => {
   const { uuid: uuidt } = await t.context.repository.create(
     {
       phone: '0000000009',

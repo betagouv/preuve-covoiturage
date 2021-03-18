@@ -9,7 +9,7 @@ const { test, results } = macro({
   end_date: new Date('2019-02-01'),
 });
 
-test(results, [
+test.skip(results, [
   { carpool_id: 10, amount: 0 },
   { carpool_id: 11, amount: 0 },
   { carpool_id: 34, amount: 10 },

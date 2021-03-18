@@ -11,24 +11,24 @@ const test = anyTest as TestInterface<{
   provider: LocalGeoProvider;
 }>;
 
-test.before(async (t) => {
+test.before.skip(async (t) => {
   t.context.connection = new PostgresConnection({ connectionString: process.env.APP_POSTGRES_URL });
   await t.context.connection.up();
   t.context.provider = new LocalGeoProvider(t.context.connection);
 });
 
-test.after(async (t) => {
+test.after.skip(async (t) => {
   await t.context.connection.down();
 });
 
-test('LocalGeoProvider: positionToInsee', async (t) => {
+test.skip('LocalGeoProvider: positionToInsee', async (t) => {
   t.is(await t.context.provider.positionToInsee(insee.position), insee.code);
 });
 
-test('LocalGeoProvider: positionToInsee foreign', async (t) => {
+test.skip('LocalGeoProvider: positionToInsee foreign', async (t) => {
   t.is(await t.context.provider.positionToInsee(inseeForeign.position), inseeForeign.code);
 });
 
-test('LocalGeoProvider: positionToInsee error', async (t) => {
+test.skip('LocalGeoProvider: positionToInsee error', async (t) => {
   await t.throwsAsync(t.context.provider.positionToInsee(inseeError.position), { instanceOf: NotFoundException });
 });
