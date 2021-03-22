@@ -1,4 +1,4 @@
-name: 'Analysis - linter'
+name: 'Analysis - Lint & Audit'
 
 on: pull_request
 
