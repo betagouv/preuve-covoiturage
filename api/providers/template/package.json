@@ -9,10 +9,10 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "echo '[provider-template] No tests'; exit 0",
-    "test:integration": "echo '[provider-template] No tests'; exit 0",
-    "coverage-ci": "echo '[provider-template] No tests'; exit 0",
-    "coverage": "echo '[provider-template] No tests'; exit 0"
+    "test:unit": "ava --config ava.unit.cjs",
+    "test:integration": "exit 0",
+    "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
   },
   "dependencies": {
     "@ilos/common": "^0",

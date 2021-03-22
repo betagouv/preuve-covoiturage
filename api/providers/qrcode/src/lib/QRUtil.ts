@@ -153,8 +153,8 @@ export const QRUtil = {
   getLostPoint: function (qrCode) {
     const moduleCount = qrCode.getModuleCount();
     let lostPoint = 0;
-    for (var row = 0; row < moduleCount; row++) {
-      for (var col = 0; col < moduleCount; col++) {
+    for (let row = 0; row < moduleCount; row++) {
+      for (let col = 0; col < moduleCount; col++) {
         let sameCount = 0;
         const dark = qrCode.isDark(row, col);
         for (let r = -1; r <= 1; r++) {
@@ -178,8 +178,8 @@ export const QRUtil = {
         }
       }
     }
-    for (var row = 0; row < moduleCount - 1; row++) {
-      for (var col = 0; col < moduleCount - 1; col++) {
+    for (let row = 0; row < moduleCount - 1; row++) {
+      for (let col = 0; col < moduleCount - 1; col++) {
         let count = 0;
         if (qrCode.isDark(row, col)) count++;
         if (qrCode.isDark(row + 1, col)) count++;
@@ -190,8 +190,8 @@ export const QRUtil = {
         }
       }
     }
-    for (var row = 0; row < moduleCount; row++) {
-      for (var col = 0; col < moduleCount - 6; col++) {
+    for (let row = 0; row < moduleCount; row++) {
+      for (let col = 0; col < moduleCount - 6; col++) {
         if (
           qrCode.isDark(row, col) &&
           !qrCode.isDark(row, col + 1) &&
@@ -205,8 +205,8 @@ export const QRUtil = {
         }
       }
     }
-    for (var col = 0; col < moduleCount; col++) {
-      for (var row = 0; row < moduleCount - 6; row++) {
+    for (let col = 0; col < moduleCount; col++) {
+      for (let row = 0; row < moduleCount - 6; row++) {
         if (
           qrCode.isDark(row, col) &&
           !qrCode.isDark(row + 1, col) &&
@@ -221,8 +221,8 @@ export const QRUtil = {
       }
     }
     let darkCount = 0;
-    for (var col = 0; col < moduleCount; col++) {
-      for (var row = 0; row < moduleCount; row++) {
+    for (let col = 0; col < moduleCount; col++) {
+      for (let row = 0; row < moduleCount; row++) {
         if (qrCode.isDark(row, col)) {
           darkCount++;
         }

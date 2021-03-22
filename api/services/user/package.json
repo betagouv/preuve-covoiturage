@@ -4,12 +4,13 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "cli": "ilos",
-    "migrate": "echo 'no migrations'",
-    "start": "yarn serve",
     "build": "tsc && yarn copy-static",
+    "ilos": "ilos",
     "watch": "tsc -w",
-    "test": "ava",
+    "test:unit": "ava --config ava.unit.cjs",
+    "test:integration": "ava --config ava.integration.cjs",
+    "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs",
     "copy-static": "cp -R ./src/templates ./dist/"
   },
   "main": "./dist/bootstrap.js",
@@ -17,29 +18,6 @@
     "workingDir": "./dist",
     "bootstrap": "./bootstrap.js",
     "app": {}
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**",
-      "src/config/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
   },
   "dependencies": {
     "@ilos/cli": "~0",

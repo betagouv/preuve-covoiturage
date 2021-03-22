@@ -14,11 +14,10 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "ava",
-    "test:integration": "echo 'No integration test'; exit 0",
-    "coverage-ci": "nyc --all --reporter=lcov ava",
-    "coverage": "nyc --all --reporter=text ava",
-    "watch-test": "yarn test -- --watchAll",
+    "test:unit": "ava --config ava.unit.cjs",
+    "test:integration": "exit 0",
+    "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs",
     "watch": "tsc -w"
   },
   "devDependencies": {
@@ -30,10 +29,5 @@
     "@ilos/common": "^0.4.1",
     "@ilos/core": "^0.4.1",
     "@ilos/queue": "^0.4.1"
-  },
-  "ava": {
-    "files": [
-      "./dist/**/*.spec.js"
-    ]
   }
 }

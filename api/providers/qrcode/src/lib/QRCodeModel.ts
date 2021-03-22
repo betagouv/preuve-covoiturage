@@ -142,20 +142,20 @@ QRCodeModel.prototype = {
   },
   setupTypeNumber: function (test) {
     const bits = QRUtil.getBCHTypeNumber(this.typeNumber);
-    for (var i = 0; i < 18; i++) {
-      var mod = !test && ((bits >> i) & 1) == 1;
+    for (let i = 0; i < 18; i++) {
+      const mod = !test && ((bits >> i) & 1) == 1;
       this.modules[Math.floor(i / 3)][(i % 3) + this.moduleCount - 8 - 3] = mod;
     }
-    for (var i = 0; i < 18; i++) {
-      var mod = !test && ((bits >> i) & 1) == 1;
+    for (let i = 0; i < 18; i++) {
+      const mod = !test && ((bits >> i) & 1) == 1;
       this.modules[(i % 3) + this.moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
     }
   },
   setupTypeInfo: function (test, maskPattern) {
     const data = (this.errorCorrectLevel << 3) | maskPattern;
     const bits = QRUtil.getBCHTypeInfo(data);
-    for (var i = 0; i < 15; i++) {
-      var mod = !test && ((bits >> i) & 1) == 1;
+    for (let i = 0; i < 15; i++) {
+      const mod = !test && ((bits >> i) & 1) == 1;
       if (i < 6) {
         this.modules[i][8] = mod;
       } else if (i < 8) {
@@ -164,8 +164,8 @@ QRCodeModel.prototype = {
         this.modules[this.moduleCount - 15 + i][8] = mod;
       }
     }
-    for (var i = 0; i < 15; i++) {
-      var mod = !test && ((bits >> i) & 1) == 1;
+    for (let i = 0; i < 15; i++) {
+      const mod = !test && ((bits >> i) & 1) == 1;
       if (i < 8) {
         this.modules[8][this.moduleCount - i - 1] = mod;
       } else if (i < 9) {
@@ -217,14 +217,14 @@ QRCodeModel.PAD1 = 0x11;
 QRCodeModel.createData = function (typeNumber, errorCorrectLevel, dataList) {
   const rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
   const buffer = new QRBitBuffer();
-  for (var i = 0; i < dataList.length; i++) {
+  for (let i = 0; i < dataList.length; i++) {
     const data = dataList[i];
     buffer.put(data.mode, 4);
     buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber));
     data.write(buffer);
   }
   let totalDataCount = 0;
-  for (var i = 0; i < rsBlocks.length; i++) {
+  for (let i = 0; i < rsBlocks.length; i++) {
     totalDataCount += rsBlocks[i].dataCount;
   }
   if (buffer.getLengthInBits() > totalDataCount * 8) {
@@ -254,13 +254,13 @@ QRCodeModel.createBytes = function (buffer, rsBlocks) {
   let maxEcCount = 0;
   const dcdata = new Array(rsBlocks.length);
   const ecdata = new Array(rsBlocks.length);
-  for (var r = 0; r < rsBlocks.length; r++) {
+  for (let r = 0; r < rsBlocks.length; r++) {
     const dcCount = rsBlocks[r].dataCount;
     const ecCount = rsBlocks[r].totalCount - dcCount;
     maxDcCount = Math.max(maxDcCount, dcCount);
     maxEcCount = Math.max(maxEcCount, ecCount);
     dcdata[r] = new Array(dcCount);
-    for (var i = 0; i < dcdata[r].length; i++) {
+    for (let i = 0; i < dcdata[r].length; i++) {
       dcdata[r][i] = 0xff & buffer.buffer[i + offset];
     }
     offset += dcCount;
@@ -268,26 +268,26 @@ QRCodeModel.createBytes = function (buffer, rsBlocks) {
     const rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
     const modPoly = rawPoly.mod(rsPoly);
     ecdata[r] = new Array(rsPoly.getLength() - 1);
-    for (var i = 0; i < ecdata[r].length; i++) {
+    for (let i = 0; i < ecdata[r].length; i++) {
       const modIndex = i + modPoly.getLength() - ecdata[r].length;
       ecdata[r][i] = modIndex >= 0 ? modPoly.get(modIndex) : 0;
     }
   }
   let totalCodeCount = 0;
-  for (var i = 0; i < rsBlocks.length; i++) {
+  for (let i = 0; i < rsBlocks.length; i++) {
     totalCodeCount += rsBlocks[i].totalCount;
   }
   const data = new Array(totalCodeCount);
   let index = 0;
-  for (var i = 0; i < maxDcCount; i++) {
-    for (var r = 0; r < rsBlocks.length; r++) {
+  for (let i = 0; i < maxDcCount; i++) {
+    for (let r = 0; r < rsBlocks.length; r++) {
       if (i < dcdata[r].length) {
         data[index++] = dcdata[r][i];
       }
     }
   }
-  for (var i = 0; i < maxEcCount; i++) {
-    for (var r = 0; r < rsBlocks.length; r++) {
+  for (let i = 0; i < maxEcCount; i++) {
+    for (let r = 0; r < rsBlocks.length; r++) {
       if (i < ecdata[r].length) {
         data[index++] = ecdata[r][i];
       }

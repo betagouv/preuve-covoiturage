@@ -65,7 +65,6 @@ export class AjvValidator implements ValidatorInterface {
 
   protected addSchema(schema: { [k: string]: any }, target?: NewableType<any> | string): ValidatorInterface {
     try {
-      console.debug(`Adding validator ${schema.$id} | ${target}`);
       this.validateSchema(schema);
       if (target) {
         const compiledSchema =

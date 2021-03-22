@@ -8,40 +8,14 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "ava",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-middleware --temp-dir=../../.nyc_output --all --reporter=lcov ava",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava"
+    "test:unit": "ava --config ava.unit.cjs",
+    "test:integration": "exit 0",
+    "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
   },
   "dependencies": {
     "@ilos/common": "~0",
     "@ilos/core": "~0",
     "lodash": "^4.17.21"
-  },
-  "ava": {
-    "files": [
-      "./**/*.spec.js"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
   }
 }

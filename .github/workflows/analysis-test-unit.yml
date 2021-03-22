@@ -1,0 +1,22 @@
+name: 'Analysis - Unit test'
+
+on: pull_request
+
+defaults:
+  run:
+    shell: bash
+
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build
+        run: sh rebuild.sh
+        working-directory: api
+      - name: Run Unit test
+        run: yarn test:unit
+        working-directory: api

@@ -12,7 +12,10 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "exit 0",
+    "test:unit": "exit 0",
+    "test:integration": "exit 0",
+    "coverage:ci": "exit 0",
+    "coverage": "exit 0",
     "watch": "tsc -w"
   },
   "main": "./dist/index.js",
@@ -27,10 +30,5 @@
   "devDependencies": {
     "@types/node": "^13.7.1",
     "nock": "^12.0.0"
-  },
-  "ava": {
-    "files": [
-      "./dist/**/*.spec.js"
-    ]
   }
 }

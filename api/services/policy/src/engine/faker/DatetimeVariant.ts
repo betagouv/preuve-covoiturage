@@ -81,7 +81,7 @@ export class DatetimeVariant extends AbstractVariant<Partial<Params<moment.Momen
   }
 
   public generate(people: PersonInterface[]): PersonInterface[] {
-    const datetime = this.getTime(this.getDate(random(0, 10) <= this.params.weekday), sample(this.hoursSet));
+    const datetime = this.getTime(this.getDate(random(0, 9) <= this.params.weekday), sample(this.hoursSet));
     return people.map((p) => {
       return {
         ...p,

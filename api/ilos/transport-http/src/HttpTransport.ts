@@ -46,6 +46,7 @@ export class HttpTransport implements TransportInterface<http.Server> {
             },
           }),
         );
+        return;
       }
       // Add Host/Origin check
 
@@ -61,12 +62,19 @@ export class HttpTransport implements TransportInterface<http.Server> {
             },
           }),
         );
+        return;
       }
 
       let data = '';
       req.on('data', (chunk) => {
         data += chunk;
       });
+
+      req.on('error', () => {
+        res.statusCode = 400;
+        res.end();
+      });
+
       req.on('end', () => {
         try {
           // Add Length check
@@ -109,11 +117,6 @@ export class HttpTransport implements TransportInterface<http.Server> {
             }),
           );
         }
-      });
-
-      req.on('error', () => {
-        res.statusCode = 400;
-        res.end();
       });
     });
 

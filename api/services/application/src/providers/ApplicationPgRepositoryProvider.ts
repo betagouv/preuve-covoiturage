@@ -38,13 +38,16 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
   }
 
   async find({ uuid, owner_id, owner_service }: FindInterface): Promise<ApplicationInterface> {
-    const ownerParams = owner_id && typeof owner_id !== 'string' ? {
-      text: 'AND owner_id = $3::int',
-      values: [owner_id],
-    } : {
-      text: '',
-      values: [],
-    };
+    const ownerParams =
+      owner_id && typeof owner_id !== 'string'
+        ? {
+            text: 'AND owner_id = $3::int',
+            values: [owner_id],
+          }
+        : {
+            text: '',
+            values: [],
+          };
 
     const query = {
       text: `
