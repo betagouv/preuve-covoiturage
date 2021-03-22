@@ -3,6 +3,7 @@ import { NotApplicableTargetException } from './exceptions/NotApplicableTargetEx
 import { RuleSet } from './RuleSet';
 import { StatefulRuleSet } from './set/StatefulRuleSet';
 import { IncentiveStatusEnum, IncentiveStateEnum, IncentiveInterface, CampaignInterface } from '../interfaces';
+import { MetadataWrapper } from './meta/MetadataWrapper';
 
 export class ProcessableCampaign {
   public readonly policy_id: number;
@@ -55,19 +56,19 @@ export class ProcessableCampaign {
     };
   }
 
-  apply(context: RuleHandlerContextInterface): IncentiveInterface {
+  apply(context: RuleHandlerContextInterface, meta: MetaInterface = new MetadataWrapper()): IncentiveInterface {
     let result = 0;
 
     let incentiveState: Map<string, string> = new Map();
 
     try {
       const ctx = { ...context, result };
-      incentiveState = this.globalSet.apply(ctx);
+      incentiveState = this.globalSet.apply(ctx, meta);
 
       for (const ruleSet of this.ruleSets) {
         const currentContext = { ...ctx, result: 0 };
         try {
-          incentiveState = new Map([...incentiveState, ...ruleSet.apply(currentContext)]);
+          incentiveState = new Map([...incentiveState, ...ruleSet.apply(currentContext, meta)]);
         } catch (e) {
           if (!(e instanceof NotApplicableTargetException)) {
             throw e;
@@ -86,13 +87,13 @@ export class ProcessableCampaign {
       result = 0;
     }
 
-    const meta = [...incentiveState].reduce((obj, [k, v]) => {
+    const initialMeta = [...incentiveState].reduce((obj, [k, v]) => {
       obj[k] = v;
       return obj;
     }, {});
 
     return {
-      meta,
+      meta: initialMeta,
       carpool_id: context.person.carpool_id,
       policy_id: this.campaign._id,
       datetime: context.person.datetime,

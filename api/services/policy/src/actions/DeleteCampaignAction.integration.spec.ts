@@ -92,5 +92,5 @@ test.skip(
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {
     t.true(response);
   },
-  mockContext(['incentive-campaign.delete']),
+  mockContext(['territory.policy.delete']),
 );

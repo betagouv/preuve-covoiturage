@@ -42,13 +42,15 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         UPDATE ${this.table}
           SET status = $1::policy.incentive_status_enum
         WHERE
-          datetime <= $2::timestamp
+          datetime <= $2::timestamp AND
+          status = $3::policy.incentive_status_enum
       `,
-      values: ['validated', before],
+      values: ['validated', before, 'draft'],
     };
 
     await this.connection.getClient().query(query);
   }
+
   async updateManyAmount(data: { carpool_id: number; policy_id: number; amount: number }[]): Promise<void> {
     const idSet: Set<string> = new Set();
     const filteredData = data.reverse().filter((d) => {

@@ -10,6 +10,7 @@ const address = {
     country: { type: 'string' },
     postcode: { type: 'string' },
     street: { type: 'string' },
+    cedex: { type: 'string' },
   },
 };
 

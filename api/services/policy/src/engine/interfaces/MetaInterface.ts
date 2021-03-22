@@ -4,4 +4,5 @@ export interface MetaInterface {
   set(key: string, data: number): void;
   keys(): string[];
   values(): number[];
+  all(): [string, number][];
 }

@@ -67,7 +67,7 @@ test.serial('should throw error if rule is not properly parametred (unnecessary 
   );
   t.log(err);
   t.is(err.message, 'Invalid params');
-  t.is(err.rpcError.data, 'No schema provided for this type (policies.adult_only_filter)');
+  t.is(err.rpcError.data, `No schema provided for this type (policies.${slug})`);
 });
 
 test.serial('should throw error if rule is not properly parametred (missing params)', async (t) => {
