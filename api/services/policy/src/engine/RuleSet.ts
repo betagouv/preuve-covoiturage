@@ -64,10 +64,10 @@ export class RuleSet {
       }, []);
   }
 
-  apply(context: RuleHandlerParamsInterface): Map<string, string> {
+  apply(context: RuleHandlerParamsInterface, meta: MetaInterface): Map<string, string> {
     let { result, ...ctx } = context;
     this.filterSet.filter(ctx);
-    const initialState = this.statefulSet.buildInitialState(ctx);
+    const initialState = this.statefulSet.buildInitialState(ctx, meta);
     ctx = this.transformerSet.transform(ctx);
     result = this.setterSet.set(ctx);
     result = this.modifierSet.modify(ctx, result);

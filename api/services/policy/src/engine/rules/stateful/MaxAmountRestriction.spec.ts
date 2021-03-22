@@ -4,7 +4,7 @@ import { MaxAmountRestriction } from './MaxAmountRestriction';
 import { faker } from '../../helpers/faker';
 import { StatefulRestrictionParameters } from './AbstractStatefulRestriction';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
-import { MetadataWrapper, FakeMetadataWrapper } from '../../meta/MetadataWrapper';
+import { MetadataWrapper } from '../../meta/MetadataWrapper';
 import { TripInterface } from '../../../interfaces';
 
 function setup(cfg: Partial<StatefulRestrictionParameters> = {}): { rule: MaxAmountRestriction; trip: TripInterface } {
@@ -49,11 +49,11 @@ test('should not call meta if wrong target', async (t) => {
     person: trip.find((p) => !p.is_driver),
   };
 
-  await t.notThrowsAsync(async () => rule.getState(context, meta));
+  await t.notThrowsAsync(async () => rule.getStateKey(context, meta));
 });
 
 test('should properly build build meta key and set initial state', async (t) => {
-  const meta = new FakeMetadataWrapper();
+  const meta = new MetadataWrapper();
   const { rule, trip } = setup({ target: 'driver' });
   const driver = trip.find((p) => p.is_driver);
   const context = {
@@ -62,15 +62,11 @@ test('should properly build build meta key and set initial state', async (t) => 
     person: driver,
   };
 
-  await rule.getState(context, meta);
-  const keys = meta.keys();
-  t.true(Array.isArray(keys));
-  t.is(keys.length, 1);
+  const key = rule.getStateKey(context, meta);
   const [day, month, year] = [trip.datetime.getDate(), trip.datetime.getMonth(), trip.datetime.getFullYear()];
-
-  t.is(keys[0], `${MaxAmountRestriction.slug}.${driver.identity_uuid}.day.${day}-${month}-${year}`);
-  const values = meta.values();
-  t.is(values[0], 0);
+  t.is(key, `${MaxAmountRestriction.slug}.${driver.identity_uuid}.day.${day}-${month}-${year}`);
+  const value = meta.get(key);
+  t.is(value, 0);
 });
 
 test('should throw an exception if limit is reached', async (t) => {

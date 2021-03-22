@@ -3,8 +3,8 @@ import { MetaInterface } from '../interfaces/MetaInterface';
 export class MetadataWrapper implements MetaInterface {
   protected data: Map<string, number>;
 
-  constructor(public readonly policy_id: number, data?: [string, number][]) {
-    this.data = data ? new Map(data) : new Map();
+  constructor(public readonly policy_id: number = 0, initialData?: [string, number][]) {
+    this.data = initialData ? new Map(initialData) : new Map();
   }
 
   has(key: string): boolean {
@@ -29,31 +29,8 @@ export class MetadataWrapper implements MetaInterface {
   values(): number[] {
     return [...this.data.values()];
   }
-}
 
-export class FakeMetadataWrapper implements MetaInterface {
-  protected data: Map<string, number> = new Map();
-
-  get(key: string, fallback = 0): number {
-    if (!this.data.has(key)) {
-      this.data.set(key, fallback);
-    }
-    return this.data.get(key);
-  }
-
-  set(_key: string, _data: number): void {
-    throw new Error();
-  }
-
-  keys(): string[] {
-    return [...this.data.keys()];
-  }
-
-  values(): number[] {
-    return [...this.data.values()];
-  }
-
-  has(key: string): boolean {
-    return this.data.has(key);
+  all(): [string, number][] {
+    return [...this.data.entries()];
   }
 }

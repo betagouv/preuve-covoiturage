@@ -91,5 +91,5 @@ test(
     const policy = response.find((c) => c._id === t.context.policy_id);
     t.is(policy.name, fakeCampaign.name);
   },
-  mockContext(['incentive-campaign.templates']),
+  mockContext(['common.policy.list.templates']),
 );

@@ -72,13 +72,13 @@ const { test, success, error } = handlerMacro<ParamsInterface, ResultInterface, 
 );
 
 test('Wrong permission', error, fakeCampaign, 'Forbidden Error', mockContext(['wrong.permission']));
-// test('Wrong territory', error, fakeCampaign, 'Forbidden Error', mockContext(['incentive-campaign.create'], 2));
+test('Wrong territory', error, fakeCampaign, 'Forbidden Error', mockContext(['territory.policy.create'], 2));
 test(
   'Wrong input',
   error,
   { ...fakeCampaign, status: 'other' },
   'Invalid params',
-  mockContext(['incentive-campaign.create']),
+  mockContext(['territory.policy.create']),
 );
 test(
   success,
@@ -87,5 +87,5 @@ test(
     t.context.policy_id = response._id;
     t.is(response.name, fakeCampaign.name);
   },
-  mockContext(['incentive-campaign.create']),
+  mockContext(['territory.policy.create']),
 );

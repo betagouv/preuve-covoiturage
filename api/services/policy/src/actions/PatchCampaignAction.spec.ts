@@ -97,5 +97,5 @@ test(
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {
     t.is(response.name, 'Ma nouvelle campagne');
   },
-  mockContext(['incentive-campaign.update']),
+  mockContext(['territory.policy.patch']),
 );
