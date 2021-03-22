@@ -168,4 +168,4 @@ jobs:
           git -c user.name="GitHub Actions" -c user.email="actions@github.com" \
             commit -m "Update deme image tag" \
             --author="${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
-          git push --force --no-verify --set-upstream origin update-${{ github.sha }}
+          git push --force --no-verify --set-upstream origin update-$RELEASE_VERSION
