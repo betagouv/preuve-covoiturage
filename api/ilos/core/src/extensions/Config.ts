@@ -4,7 +4,7 @@ import { ConfigInterfaceResolver, RegisterHookInterface, ServiceContainerInterfa
 export class ConfigStore {
   constructor(protected config: { [k: string]: any }) {}
 
-  get(key: string, fallback?: any): any {
+  get<P = any>(key: string, fallback?: P): P {
     if (fallback === undefined && !has(this.config, key)) {
       throw new Error(`Unknown config key '${key}'`);
     }

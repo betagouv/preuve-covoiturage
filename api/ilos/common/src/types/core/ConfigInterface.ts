@@ -1,11 +1,11 @@
 import { ProviderInterface } from '.';
 
 export interface ConfigInterface extends ProviderInterface {
-  get(key: string, fallback?: any): any;
+  get<P = any>(key: string, fallback?: P): P;
 }
 
 export abstract class ConfigInterfaceResolver implements ConfigInterface {
-  get(key: string, fallback?: any): any {
+  get<P = any>(key: string, fallback?: P): P {
     throw new Error();
   }
 }

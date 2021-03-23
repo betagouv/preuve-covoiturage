@@ -121,7 +121,7 @@ export class HttpTransport implements TransportInterface {
 
     const sessionSecret = this.config.get('proxy.session.secret');
     const sessionName = this.config.get('proxy.session.name');
-    const redis = new Redis(this.config.get('redis.connectionString'), { keyPrefix: 'proxy:' });
+    const redis = new Redis(this.config.get<string>('redis.connectionString'), { keyPrefix: 'proxy:' });
     const redisStore = createStore(expressSession);
 
     this.app.use(
