@@ -1,0 +1,101 @@
+export enum FieldType {
+  String,
+  Boolean,
+  Integer,
+  Float,
+}
+
+export interface CsvRecordInterface {
+  journey_id: string;
+  operator_journey_id: string;
+  operator_class: string;
+  passenger_identity_firstname: string;
+  passenger_identity_lastname: string;
+  passenger_identity_email: string;
+  passenger_identity_phone: string;
+  passenger_identity_phone_trunc: string;
+  passenger_identity_operator_user_id: string;
+  passenger_identity_company: string;
+  passenger_identity_over_18: boolean;
+  passenger_identity_travel_pass: string;
+  passenger_start_datetime: string;
+  passenger_start_lat: number;
+  passenger_start_lon: number;
+  passenger_start_insee: string;
+  passenger_start_country: string;
+  passenger_start_literal: string;
+  passenger_end_datetime: string;
+  passenger_end_lat: number;
+  passenger_end_lon: number;
+  passenger_end_insee: string;
+  passenger_end_country: string;
+  passenger_end_literal: string;
+  passenger_seats: number;
+  passenger_contribution: number;
+  passenger_incentive_1_siret: string;
+  passenger_incentive_1_amount: number;
+  passenger_incentive_2_siret: string;
+  passenger_incentive_2_amount: number;
+  passenger_incentive_3_siret: string;
+  passenger_incentive_3_amount: number;
+  passenger_incentive_4_siret: string;
+  passenger_incentive_4_amount: number;
+  passenger_payment_1_type: string;
+  passenger_payment_1_siret: string;
+  passenger_payment_1_amount: number;
+  passenger_payment_2_type: string;
+  passenger_payment_2_siret: string;
+  passenger_payment_2_amount: number;
+  passenger_payment_3_type: string;
+  passenger_payment_3_siret: string;
+  passenger_payment_3_amount: number;
+  passenger_payment_4_type: string;
+  passenger_payment_4_siret: string;
+  passenger_payment_4_amount: number;
+  passenger_distance: number;
+  passenger_duration: number;
+  driver_identity_firstname: string;
+  driver_identity_lastname: string;
+  driver_identity_email: string;
+  driver_identity_phone: string;
+  driver_identity_phone_trunc: string;
+  driver_identity_operator_user_id: string;
+  driver_identity_company: string;
+  driver_identity_over_18: boolean;
+  driver_identity_travel_pass: string;
+  driver_start_datetime: string;
+  driver_start_lat: number;
+  driver_start_lon: number;
+  driver_start_insee: string;
+  driver_start_country: string;
+  driver_start_literal: string;
+  driver_end_datetime: string;
+  driver_end_lat: number;
+  driver_end_lon: number;
+  driver_end_insee: string;
+  driver_end_country: string;
+  driver_end_literal: string;
+  driver_revenue: number;
+  driver_incentive_1_siret: string;
+  driver_incentive_1_amount: number;
+  driver_incentive_2_siret: string;
+  driver_incentive_2_amount: number;
+  driver_incentive_3_siret: string;
+  driver_incentive_3_amount: number;
+  driver_incentive_4_siret: string;
+  driver_incentive_4_amount: number;
+  driver_payment_1_type: string;
+  driver_payment_1_siret: string;
+  driver_payment_1_amount: number;
+  driver_payment_2_type: string;
+  driver_payment_2_siret: string;
+  driver_payment_2_amount: number;
+  driver_payment_3_type: string;
+  driver_payment_3_siret: string;
+  driver_payment_3_amount: number;
+  driver_payment_4_type: string;
+  driver_payment_4_siret: string;
+  driver_payment_4_amount: number;
+  driver_distance: number;
+  driver_duration: number;
+}

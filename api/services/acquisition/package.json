@@ -7,7 +7,7 @@
     "ilos": "ilos",
     "build": "tsc",
     "watch": "tsc -w",
-    "test:unit": "exit 0",
+    "test:unit": "ava --config ava.unit.cjs",
     "test:integration": "ava --config ava.integration.cjs",
     "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
     "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
@@ -30,6 +30,7 @@
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-token": "~0",
     "@pdc/provider-validator": "~0",
+    "csv-parse": "^4.15.3",
     "lodash": "^4.17.21"
   }
 }

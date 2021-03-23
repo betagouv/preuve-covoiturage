@@ -22,6 +22,7 @@ import { LogRequestAction } from './actions/LogRequestAction';
 import { CancelJourneyAction } from './actions/CancelJourneyAction';
 import { ResolveErrorAction } from './actions/ResolveErrorAction';
 import { StatusJourneyAction } from './actions/StatusJourneyAction';
+import { ImportJourneyAction } from './actions/ImportJourneyAction';
 
 @serviceProvider({
   config,
@@ -46,6 +47,7 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
     ResolveErrorAction,
     CancelJourneyAction,
     StatusJourneyAction,
+    ImportJourneyAction,
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
