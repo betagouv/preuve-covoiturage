@@ -1,5 +1,4 @@
 import { provider } from '@ilos/common';
-import { Polygon, MultiPolygon } from '@types/geojson';
 
 import { PostgresConnection } from '@ilos/connection-postgres';
 
@@ -23,7 +22,7 @@ interface TerritoryDataInterface {
   level: Level;
   code: Code[];
   name: string;
-  geo?:  Polygon | MultiPolygon;
+  geo?:  GeoJSON.Polygon | GeoJSON.MultiPolygon;
   surface?: number;
   population?: number;
 }
