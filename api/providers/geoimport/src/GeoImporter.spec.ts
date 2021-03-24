@@ -1,11 +1,9 @@
 import { GeoImporter } from './GeoImporter';
 
 import anyTest, { TestInterface } from 'ava';
-import { PostgresConnection } from '@ilos/connection-postgres';
 
 
 interface TestContext {
-  connection: PostgresConnection;
   provider: GeoImporter;
 }
 

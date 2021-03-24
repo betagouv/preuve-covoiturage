@@ -8,10 +8,10 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "ava",
-    "test:integration": "ava",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-geo --temp-dir=../../.nyc_output --all --reporter=lcov ava",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava"
+    "test:unit": "exit 0",
+    "test:integration": "ava --config ava.integration.cjs",
+    "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
   },
   "dependencies": {
     "@ilos/common": "~0",
@@ -23,32 +23,5 @@
     "@types/geojson": "^7946.0.7",
     "@types/stream-chain": "^2.0.0",
     "@types/stream-json": "^1.5.1"
-  },
-  "ava": {
-    "files": [
-      "dist/tests/*.spec.js"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
   }
 }

@@ -18,7 +18,7 @@ import { GeoImporterError } from './GeoImporterError';
 export class GeoImporter implements GeoImporterInterface {
   public readonly baseApiEndpoint = 'https://geo.api.gouv.fr';
 
-  async process(url: string, handler: ImporterStreamHandlerInterface[]): Promise<void> {
+  async process(url: string, handlers: ImporterStreamHandlerInterface[]): Promise<void> {
     const { data } = await axios({
         url,
         method: 'GET',
@@ -35,12 +35,12 @@ export class GeoImporter implements GeoImporterInterface {
             const value = data.value;
             if (!value) return;
             return {
-                codes: [{ type: 'insee', value: value.properties.code }],
+                code: { type: 'insee', value: value.properties.code },
                 name: value.properties.nom,
                 geo: value.geometry,
             }
           },
-          handler
+          ...handlers
         ]),
       );
 
