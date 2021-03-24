@@ -6,14 +6,10 @@ import { TerritoryAdministrativeDataProvider, Level } from '../providers/Territo
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['can', ['territory.create']],
-  ],
+  middlewares: [['can', ['territory.create']]],
 })
 export class SyncTerritoryAction extends AbstractAction {
-  constructor(
-    protected territoryAdminDataProvider: TerritoryAdministrativeDataProvider,
-  ) {
+  constructor(protected territoryAdminDataProvider: TerritoryAdministrativeDataProvider) {
     super();
   }
 
@@ -22,14 +18,12 @@ export class SyncTerritoryAction extends AbstractAction {
     //   Level.Region,
     //   await this.territoryAdminDataProvider.listRegions()
     // );
-
     // for (const region of regions) {
     //   const districts = await this.territoryAdminDataProvider.syncData(
     //     Level.District,
     //     await this.territoryAdminDataProvider.listDistrictsByRegionCode(region.code),
     //     region.territory_id,
     //   );
-
     //   for (const district of districts) {
     //     await this.territoryAdminDataProvider.syncData(
     //       Level.City,

@@ -22,18 +22,18 @@ interface TerritoryDataInterface {
   level: Level;
   code: Code[];
   name: string;
-  geo?:  GeoJSON.Polygon | GeoJSON.MultiPolygon;
+  geo?: GeoJSON.Polygon | GeoJSON.MultiPolygon;
   surface?: number;
   population?: number;
 }
 
 @provider({
-//   identifier: TerritoryAdministrativeDataProviderInterfaceResolver,
+  //   identifier: TerritoryAdministrativeDataProviderInterfaceResolver,
 })
-export class TerritoryAdministrativeDataProvider
-//  implements TerritoryAdministrativeDataProviderInterface 
- {
-  public readonly geojsonEndpoint = 'http://etalab-datasets.geo.data.gouv.fr/contours-administratifs/latest/geojson/communes-5m.geojson.gz';
+//  implements TerritoryAdministrativeDataProviderInterface
+export class TerritoryAdministrativeDataProvider {
+  public readonly geojsonEndpoint =
+    'http://etalab-datasets.geo.data.gouv.fr/contours-administratifs/latest/geojson/communes-5m.geojson.gz';
   public readonly baseApiEndpoint = 'https://geo.api.gouv.fr';
 
   public readonly territoryTable = 'territory.territories';
@@ -43,25 +43,33 @@ export class TerritoryAdministrativeDataProvider
   constructor(protected connection: PostgresConnection) {}
 
   async updateOrCreate(data: TerritoryDataInterface | TerritoryDataInterface[]): Promise<void> {
-    const queryData = (Array.isArray(data) ? data : [data]).map(({code, ...td}) => ({ ...td, insee: code.find(c => c.type === 'insee').value, postcode: code.find(c => c.type === 'postcode').value}))
-    .reduce((acc, td) => {
-      acc.level.push(td.level);
-      acc.insee.push(td.insee);
-      acc.postcode.push(td.postcode);
-      acc.name.push(td.name);
-      acc.geo.push(td.geo);
-      acc.surface.push(td.surface);
-      acc.population.push(td.population);
-      return acc;
-    }, {
-      level: [],
-      insee: [],
-      postcode: [],
-      name: [],
-      geo: [],
-      surface: [],
-      population: [],
-    });
+    const queryData = (Array.isArray(data) ? data : [data])
+      .map(({ code, ...td }) => ({
+        ...td,
+        insee: code.find((c) => c.type === 'insee').value,
+        postcode: code.find((c) => c.type === 'postcode').value,
+      }))
+      .reduce(
+        (acc, td) => {
+          acc.level.push(td.level);
+          acc.insee.push(td.insee);
+          acc.postcode.push(td.postcode);
+          acc.name.push(td.name);
+          acc.geo.push(td.geo);
+          acc.surface.push(td.surface);
+          acc.population.push(td.population);
+          return acc;
+        },
+        {
+          level: [],
+          insee: [],
+          postcode: [],
+          name: [],
+          geo: [],
+          surface: [],
+          population: [],
+        },
+      );
 
     const query = {
       text: `
@@ -181,7 +189,7 @@ export class TerritoryAdministrativeDataProvider
         queryData.name,
         queryData.geo,
         queryData.surface,
-        queryData.population
+        queryData.population,
       ],
     };
 
@@ -189,8 +197,8 @@ export class TerritoryAdministrativeDataProvider
   }
 
   async link(parent: Code[], children: Code[][]): Promise<void> {
-    const parent_insee = parent.find(c => c.type === 'insee').value;
-    const children_insee = children.map(cc => cc.find(cdc => cdc.type === 'insee').value);
+    const parent_insee = parent.find((c) => c.type === 'insee').value;
+    const children_insee = children.map((cc) => cc.find((cdc) => cdc.type === 'insee').value);
 
     const query = {
       text: `

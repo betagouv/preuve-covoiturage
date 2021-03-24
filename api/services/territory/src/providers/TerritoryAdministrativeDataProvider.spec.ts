@@ -29,6 +29,4 @@ test.after.always(async (t) => {
   await t.context.connection.down();
 });
 
-test.skip('TerritoryAdministrativeDataProvider: should list regions', async t => {
-
-});
+test.skip('TerritoryAdministrativeDataProvider: should list regions', async (t) => {});
