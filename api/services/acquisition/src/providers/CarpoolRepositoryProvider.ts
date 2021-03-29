@@ -24,6 +24,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryInterface {
       text: `
         SELECT status FROM ${this.table}
         WHERE acquisition_id  = $1
+        ORDER BY is_driver DESC
         LIMIT 1
       `,
       values: [acquisitionId],
