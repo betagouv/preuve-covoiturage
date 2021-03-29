@@ -1,7 +1,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { Level, TerritoryAdministrativeDataProvider } from './TerritoryAdministrativeDataProvider';
+import { TerritoryAdministrativeDataProvider } from './TerritoryAdministrativeDataProvider';
 
 interface TestContext {
   connection: PostgresConnection;

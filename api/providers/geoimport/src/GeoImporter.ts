@@ -49,7 +49,7 @@ export class GeoImporter implements GeoImporterInterface {
               const value = data.value;
               if (!value) return;
               return {
-                code: { type: 'insee', value: value.properties.code },
+                codes: [{ type: 'insee', value: value.properties.code }],
                 name: value.properties.nom,
                 geo: value.geometry,
               };
@@ -80,7 +80,7 @@ export class GeoImporter implements GeoImporterInterface {
     try {
       const endpoint = `${this.baseApiEndpoint}/regions`;
       const result = await axios.get(endpoint);
-      return result.data.map((r) => ({ name: r.nom, code: { value: r.code, type: 'insee' } }));
+      return result.data.map((r) => ({ name: r.nom, codes: [{ value: r.code, type: 'insee' }] }));
     } catch (e) {
       if (e.isAxiosError && e.response.status >= 500) {
         throw new ServerUnavailableGeoImporterError(e.message);
@@ -93,7 +93,7 @@ export class GeoImporter implements GeoImporterInterface {
     try {
       const endpoint = `${this.baseApiEndpoint}/regions/${code}/departements`;
       const result = await axios.get(endpoint);
-      return result.data.map((r) => ({ name: r.nom, code: { value: r.code, type: 'insee' } }));
+      return result.data.map((r) => ({ name: r.nom, codes: [{ value: r.code, type: 'insee' }] }));
     } catch (e) {
       if (e.isAxiosError) {
         if (e.response.status === 404) {
@@ -113,8 +113,9 @@ export class GeoImporter implements GeoImporterInterface {
       const endpoint = `${this.baseApiEndpoint}/departements/${code}/communes`;
       const result = await axios.get(endpoint, { params });
       return result.data.map((r) => ({
+        // codesPostaux
         name: r.nom,
-        code: { value: r.code, type: 'insee' },
+        codes: [{ value: r.code, type: 'insee' }],
         population: r.population,
         surface: r.surface,
       }));

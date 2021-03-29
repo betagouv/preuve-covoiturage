@@ -20,7 +20,7 @@ interface Code {
 
 interface TerritoryDataInterface {
   level: Level;
-  code: Code[];
+  codes: Code[];
   name: string;
   geo?: GeoJSON.Polygon | GeoJSON.MultiPolygon;
   surface?: number;
@@ -44,10 +44,10 @@ export class TerritoryAdministrativeDataProvider {
 
   async updateOrCreate(data: TerritoryDataInterface | TerritoryDataInterface[]): Promise<void> {
     const queryData = (Array.isArray(data) ? data : [data])
-      .map(({ code, ...td }) => ({
+      .map(({ codes, ...td }) => ({
         ...td,
-        insee: code.find((c) => c.type === 'insee').value,
-        postcode: code.find((c) => c.type === 'postcode').value,
+        insee: codes.find((c) => c.type === 'insee').value,
+        postcode: codes.find((c) => c.type === 'postcode').value,
       }))
       .reduce(
         (acc, td) => {

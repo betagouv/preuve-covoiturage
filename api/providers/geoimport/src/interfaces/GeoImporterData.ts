@@ -5,7 +5,7 @@ export interface GeoCode {
 
 export interface GeoImporterData {
   name: string;
-  code: GeoCode;
+  codes: GeoCode[];
 }
 
 export interface GeoImporterDataWithGeo extends GeoImporterData {

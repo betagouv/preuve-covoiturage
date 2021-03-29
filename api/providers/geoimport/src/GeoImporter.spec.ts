@@ -33,7 +33,7 @@ test('GeoImporter: should list regions', async (t) => {
   t.is(result.length, 3);
   const resultKeys = result.map((r) => Object.keys(r));
   t.is(resultKeys.filter((rk) => rk.length !== 2).length, 0);
-  t.deepEqual([...new Set<string>(resultKeys.reduce((a, i) => [...a, ...i], []))], ['name', 'code']);
+  t.deepEqual([...new Set<string>(resultKeys.reduce((a, i) => [...a, ...i], []))], ['name', 'codes']);
   t.true(scope.isDone());
 });
 
@@ -64,7 +64,7 @@ test('GeoImporter: should list districts', async (t) => {
   t.is(result.length, 3);
   const resultKeys = result.map((r) => Object.keys(r));
   t.is(resultKeys.filter((rk) => rk.length !== 2).length, 0);
-  t.deepEqual([...new Set<string>(resultKeys.reduce((a, i) => [...a, ...i], []))], ['name', 'code']);
+  t.deepEqual([...new Set<string>(resultKeys.reduce((a, i) => [...a, ...i], []))], ['name', 'codes']);
   t.true(scope.isDone());
 });
 
@@ -108,7 +108,7 @@ test('GeoImporter: should list city', async (t) => {
   t.is(resultKeys.filter((rk) => rk.length !== 4).length, 0);
   t.deepEqual(
     [...new Set<string>(resultKeys.reduce((a, i) => [...a, ...i], []))],
-    ['name', 'code', 'population', 'surface'],
+    ['name', 'codes', 'population', 'surface'],
   );
   t.true(scope.isDone());
 });
