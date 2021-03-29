@@ -12,7 +12,7 @@ export interface JourneyRepositoryProviderInterface {
     context: { operator_id: number; application_id: number },
   ): Promise<AcquisitionInterface>;
 
-  exists(journey_id: string, operator_id: number): Promise<ExistsResultInterface>;
+  exists(journey_id: string, operator_id: number): Promise<ExistsResultInterface | undefined>;
 }
 
 export abstract class JourneyRepositoryProviderInterfaceResolver implements JourneyRepositoryProviderInterface {
@@ -23,7 +23,7 @@ export abstract class JourneyRepositoryProviderInterfaceResolver implements Jour
     throw new Error();
   }
 
-  async exists(journey_id: string, operator_id: number): Promise<ExistsResultInterface> {
+  async exists(journey_id: string, operator_id: number): Promise<ExistsResultInterface | undefined> {
     throw new Error();
   }
 }

@@ -35,7 +35,7 @@ export interface ErrorRepositoryProviderInterface {
   log(data: LogParamsInterface): Promise<LogResultInterface>;
   resolve(data: ResolveParamsInterface): Promise<number>;
   summary(filter: SummaryParamsInterface): Promise<{ [key: string]: number }>;
-  find(data: { journey_id: string; operator_id?: number }): Promise<AcquisitionErrorInterface>;
+  findByJourneyAndOperator(journey_id: string, operator_id: number): Promise<AcquisitionErrorInterface[]>;
 }
 
 export abstract class ErrorRepositoryProviderInterfaceResolver implements ErrorRepositoryProviderInterface {
@@ -55,7 +55,7 @@ export abstract class ErrorRepositoryProviderInterfaceResolver implements ErrorR
     throw new Error('Not implemented');
   }
 
-  async find(data: { journey_id: string; operator_id?: number }): Promise<AcquisitionErrorInterface> {
+  async findByJourneyAndOperator(journey_id: string, operator_id: number): Promise<AcquisitionErrorInterface[]> {
     throw new Error('Not implemented');
   }
 }

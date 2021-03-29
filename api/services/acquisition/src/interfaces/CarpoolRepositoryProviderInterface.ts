@@ -7,11 +7,11 @@ export interface StatusParamsInterface {
 export type StatusResultInterface = 'ok' | 'expired' | 'canceled';
 
 export interface CarpoolRepositoryInterface {
-  status(data: StatusParamsInterface): Promise<StatusResultInterface>;
+  getStatusByAcquisitionId(acquisitionId: number): Promise<StatusResultInterface | undefined>;
 }
 
 export abstract class CarpoolRepositoryInterfaceResolver implements CarpoolRepositoryInterface {
-  async status(data: StatusParamsInterface): Promise<StatusResultInterface> {
+  async getStatusByAcquisitionId(acquisitionId: number): Promise<StatusResultInterface | undefined> {
     throw new Error('Method not implemented.');
   }
 }

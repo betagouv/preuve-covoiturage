@@ -1,10 +1,9 @@
-import { NotFoundException, provider } from '@ilos/common';
+import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import {
   CarpoolRepositoryInterface,
   CarpoolRepositoryInterfaceResolver,
-  StatusParamsInterface,
   StatusResultInterface,
 } from '../interfaces/CarpoolRepositoryProviderInterface';
 
@@ -16,22 +15,22 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryInterface {
 
   constructor(protected connection: PostgresConnection) {}
 
-  async status(data: StatusParamsInterface): Promise<StatusResultInterface> {
-    const { acquisition_id, operator_id, journey_id } = data;
+  async getStatusByAcquisitionId(acquisitionId: number | null): Promise<StatusResultInterface | undefined> {
+    if (!acquisitionId) {
+      return undefined;
+    }
 
     const result = await this.connection.getClient().query({
       text: `
         SELECT status FROM ${this.table}
         WHERE acquisition_id  = $1
-        AND operator_id = $2
-        AND journey_id = $3
         LIMIT 1
       `,
-      values: [acquisition_id, operator_id, journey_id],
+      values: [acquisitionId],
     });
 
     if (!result.rowCount) {
-      throw new NotFoundException();
+      return undefined;
     }
 
     return result.rows[0].status;
