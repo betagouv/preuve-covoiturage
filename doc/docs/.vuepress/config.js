@@ -14,35 +14,35 @@ module.exports = {
     locales: {
       '/': {
         nav: [
-          { text: 'Repository', link: '/repo/' },
-          { text: 'App', link: '/app/' },
-          { text: 'API', link: '/api/' },
+          { text: 'Partners', link: '/partners/' },
+          { text: 'Contribute', link: '/contribute/' },
         ],
         sidebar: {
-          '/repo/': 'auto',
-          '/app/': 'auto',
-          '/api/': [
+          '/partners/': 'auto',
+          '/contribute/repo/': 'auto',
+          '/contribute/app/': 'auto',
+          '/contribute/api/': [
             {
               title: 'API',
-              path: '/api/',
+              path: '/contribute/api/',
             },
             {
               title: 'Proxy',
-              path: '/api/proxy',
+              path: '/contribute/api/proxy',
             },
             {
               title: 'Services',
-              path: '/api/services/',
-              children: getChildren('/api/services'),
+              path: '/contribute/api/services/',
+              children: getChildren('/contribute/api/services'),
             },
             {
               title: 'Providers',
-              path: '/api/providers/',
-              children: getChildren('/api/providers'),
+              path: '/contribute/api/providers/',
+              children: getChildren('/contribute/api/providers'),
             },
             {
               title: 'Licences',
-              path: '/api/licenses-list',
+              path: '/contribute/api/licenses-list',
             },
           ],
         },
