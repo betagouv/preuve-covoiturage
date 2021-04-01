@@ -13,6 +13,7 @@ import { changePasswordWithToken } from './shared/user/changePasswordWithToken.s
 import { changeRole } from './shared/user/changeRole.schema';
 import { checkForgottenToken } from './shared/user/checkForgottenToken.schema';
 import { confirmEmail } from './shared/user/confirmEmail.schema';
+import { contactform } from './shared/user/contactform.schema';
 import { deleteUser } from './shared/user/delete.schema';
 import { deleteAssociatedUser } from './shared/user/deleteAssociated.schema';
 import { find } from './shared/user/find.schema';
@@ -50,6 +51,7 @@ import { HasUsersAction } from './actions/HasUsersAction';
 import { FindInactiveCommand } from './commands/FindInactiveCommand';
 import { challengePasswordMiddlewareBinding } from './middlewares/ChallengePasswordMiddleware';
 import { challengeTokenMiddlewareBinding } from './middlewares/ChallengeTokenMiddleware';
+import { ContactformAction } from './actions/ContactformAction';
 
 @serviceProvider({
   config,
@@ -60,6 +62,7 @@ import { challengeTokenMiddlewareBinding } from './middlewares/ChallengeTokenMid
     ['user.changeRole', changeRole],
     ['user.checkForgottenToken', checkForgottenToken],
     ['user.confirmEmail', confirmEmail],
+    ['user.contactform', contactform],
     ['user.create', create],
     ['user.delete', deleteUser],
     ['user.deleteAssociated', deleteAssociatedUser],
@@ -84,6 +87,7 @@ import { challengeTokenMiddlewareBinding } from './middlewares/ChallengeTokenMid
     ChangeRoleUserAction,
     CheckForgottenTokenUserAction,
     ConfirmEmailUserAction,
+    ContactformAction,
     CreateUserAction,
     DeleteUserAction,
     DeleteAssociatedUserAction,

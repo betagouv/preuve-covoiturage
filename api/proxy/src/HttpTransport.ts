@@ -28,6 +28,7 @@ import {
   loginRateLimiter,
   acquisitionRateLimiter,
   monHonorCertificateRateLimiter,
+  contactformRateLimiter,
 } from './middlewares/rateLimiter';
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
@@ -90,6 +91,7 @@ export class HttpTransport implements TransportInterface {
     this.registerSimulationRoutes();
     this.registerHonorRoutes();
     this.registerUptimeRoute();
+    this.registerContactformRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
   }
@@ -554,6 +556,29 @@ export class HttpTransport implements TransportInterface {
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
         res.json({ hello: 'world' });
+      }),
+    );
+  }
+
+  /**
+   * Used by showcase website's contact form.
+   * Gets data and sends it by email
+   */
+  private registerContactformRoute() {
+    this.app.post(
+      '/contactform',
+      contactformRateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const { name, email, company, job, subject, body } = req.body;
+        await this.kernel.handle(
+          createRPCPayload(
+            'user:contactform',
+            { name, email, company, job, subject, body },
+            { permissions: ['common.user.contactform'] },
+          ),
+        );
+
+        res.status(204).send();
       }),
     );
   }
