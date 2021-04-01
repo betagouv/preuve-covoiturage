@@ -13,7 +13,6 @@ Le schéma complet est disponible à la fin de ce document. Afin de le rendre pl
 
 > Voir également [Alimenter le registre via l'API](./).
 
-{% hint style="warning" %}
 Les unités utilisées pour les valeurs sont :  
 - montants financiers en **centimes d'Euros**  
 - distances en **mètres**  
