@@ -1,3 +1,2 @@
-export { HandlebarsTemplate } from './HandlebarsTemplate';
-export { TemplateExtension } from './TemplateExtension';
+export { HandlebarsTemplateProvider } from './HandlebarsTemplateProvider';
 export * from './interfaces';
