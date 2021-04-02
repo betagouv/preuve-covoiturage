@@ -5,6 +5,7 @@
     "node": "14"
   },
   "workspaces": [
+    "db",
     "proxy",
     "providers/*",
     "services/*",

@@ -18,6 +18,7 @@
     "@ilos/common": "~0",
     "@ilos/connection-postgres": "~0",
     "@ilos/framework": "~0",
+    "@pdc/migrator": "~0",
     "faker": "^5.4.0",
     "uuid": "^8.3.2"
   },
