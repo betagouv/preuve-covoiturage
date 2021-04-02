@@ -26,7 +26,6 @@
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
     "@pdc/helper-test": "~0",
-    "@pdc/provider-template": "~0",
     "@pdc/provider-date": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-pdfcert": "~0",
