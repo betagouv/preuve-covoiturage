@@ -52,7 +52,6 @@ const permissions = {
   'user.find': ['common', 'operator.admin', 'territory.admin', 'registry.admin'],
   'user.list': ['operator.user','operator.admin', 'territory.demo', 'territory.user','territory.admin', 'registry.user', 'registry.admin'],
   'user.sendEmail': ['operator.admin', 'territory.admin', 'registry.admin'],
-  'user.contactform': ['common'],
 };
 
 function scopeToGroup(permissionName, group) {
