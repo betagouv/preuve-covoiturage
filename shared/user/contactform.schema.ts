@@ -4,12 +4,12 @@ export const contactform = {
   required: ['email', 'body'],
   additionalProperties: false,
   properties: {
-    job: { type: 'string', minLength: 1, maxLength: 256 },
-    name: { type: 'string', minLength: 1, maxLength: 256 },
-    body: { type: 'string', minLength: 1, maxLength: 4096 },
     email: { macro: 'email' },
-    company: { type: 'string', minLength: 1, maxLength: 256 },
-    subject: { type: 'string', minLength: 1, maxLength: 256 },
+    job: { macro: 'varchar' },
+    name: { macro: 'varchar' },
+    company: { macro: 'varchar' },
+    subject: { macro: 'varchar' },
+    body: { type: 'string', minLength: 1, maxLength: 4096, sanitize: true },
   },
 };
 

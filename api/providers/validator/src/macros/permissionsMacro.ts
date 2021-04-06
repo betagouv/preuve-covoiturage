@@ -1,6 +1,11 @@
-export function permissionsMacro(): { type: string; items: { type: string } } {
+export function permissionsMacro() {
   return {
     type: 'array',
-    items: { type: 'string' },
+    items: {
+      type: 'string',
+      pattern: '^([a-zA-Z]+.?)+$',
+      sanitize: true,
+      trim: true,
+    },
   };
 }

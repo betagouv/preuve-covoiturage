@@ -6,13 +6,12 @@ export function dbidMacro(): { anyOf: object[] } {
         type: 'string',
         minLength: 1,
         maxLength: 64,
+        sanitize: true,
       },
 
       // UUID
       {
-        type: 'string',
-        format: 'uuid',
-        maxLength: 38,
+        macro: 'uuid',
       },
 
       // serial
