@@ -7,7 +7,6 @@ import { bicMacro } from '../macros/bicMacro';
 import { euVatMacro } from '../macros/euVatMacro';
 import { groupMacro } from '../macros/groupMacro';
 import { ibanMacro } from '../macros/ibanMacro';
-import { imageContentTypeMacro } from '../macros/imageContentTypeMacro';
 import { inseeMacro } from '../macros/inseeMacro';
 import { nafMacro } from '../macros/nafMacro';
 import { nicMacro } from '../macros/nicMacro';
@@ -40,7 +39,6 @@ const macroStore = {
   euvat: euVatMacro,
   group: groupMacro,
   iban: ibanMacro,
-  imageContentType: imageContentTypeMacro,
   insee: inseeMacro,
   integer: integerMacro,
   jwt: jwtMacro,
