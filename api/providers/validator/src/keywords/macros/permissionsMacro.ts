@@ -3,7 +3,7 @@ export function permissionsMacro() {
     type: 'array',
     items: {
       type: 'string',
-      pattern: '^([a-zA-Z]+.?)+$',
+      pattern: '^([a-zA-Z]+\\.?)+$',
       sanitize: true,
       trim: true,
     },

@@ -1,4 +1,4 @@
-import { SanitizeInterface } from '../keywords/sanitizeKeyword';
+import { SanitizeInterface } from '../sanitizeKeyword';
 
 export function varcharMacro(): { type: string; minLength: number; maxLength: number; sanitize: SanitizeInterface } {
   return {
