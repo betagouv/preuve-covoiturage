@@ -3,6 +3,5 @@ export function passwordMacro(): { type: string; minLength: number; maxLength: n
     type: 'string',
     minLength: 6,
     maxLength: 256,
-    sanitize: true,
   };
 }
