@@ -3,20 +3,30 @@ import {
   KernelInterfaceResolver,
   ContextType,
   provider,
-  NotFoundException,
 } from '@ilos/common';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { ParamsInterface as SendMailParamsInterface } from '../shared/user/notify.contract';
+import { MailTemplateNotificationInterface, NotificationTransporterInterfaceResolver, StaticMailTemplateNotificationInterface } from '@pdc/provider-notification';
 
-declare type NotificationConfigInterface = [string, string, string];
+import {
+  ConfirmEmailNotification, 
+  EmailUpdatedNotification,
+  ExportCSVErrorNotification,
+  ExportCSVNotification,
+  ForgottenPasswordNotification,
+  InviteNotification,
+} from '../notifications';
+
+import { ParamsInterface as SendMailParamsInterface } from '../shared/user/notify.contract';
 
 @provider()
 export class UserNotificationProvider {
-  public readonly INVITATION: NotificationConfigInterface;
-  public readonly FORGOTTEN: NotificationConfigInterface;
-  public readonly CONFIRMATION: NotificationConfigInterface;
-  public readonly EMAIL_CHANGED: NotificationConfigInterface;
+  public readonly urlPathMap: Map<string, string> = new Map<string, string>([
+    ['InviteNotification', 'activate'],
+    ['ForgottenPasswordNotification', 'reset-forgotten-password'],
+    ['ConfirmEmailNotification', 'confirm-email'],
+    ['EmailUpdatedNotification', 'activate'],
+  ]);
+
   public readonly defaultContext: ContextType = {
     call: { user: {} },
     channel: {
@@ -25,41 +35,32 @@ export class UserNotificationProvider {
     },
   };
 
+  protected notifications: Map<string, StaticMailTemplateNotificationInterface> = new Map(
+    Object.entries({
+    'ConfirmEmailNotification': ConfirmEmailNotification,
+    'EmailUpdatedNotification': EmailUpdatedNotification,
+    'ExportCSVErrorNotification': ExportCSVErrorNotification,
+    'ExportCSVNotification': ExportCSVNotification,
+    'ForgottenPasswordNotification': ForgottenPasswordNotification,
+    'InviteNotification': InviteNotification,
+  }));
+
   constructor(
-    private config: ConfigInterfaceResolver,
-    private kernel: KernelInterfaceResolver,
-    private userRepository: UserRepositoryProviderInterfaceResolver,
-  ) {
-    this.INVITATION = [
-      'activate',
-      config.get('email.templates.invitation'),
-      config.get('notification.templateIds.invitation'),
-    ];
-
-    this.FORGOTTEN = [
-      'reset-forgotten-password',
-      config.get('email.templates.forgotten'),
-      config.get('notification.templateIds.forgotten'),
-    ];
-
-    this.CONFIRMATION = [
-      'confirm-email',
-      config.get('email.templates.confirmation'),
-      config.get('notification.templateIds.emailChange'),
-    ];
-
-    this.EMAIL_CHANGED = [
-      'activate',
-      config.get('email.templates.email_changed'),
-      config.get('notification.templateIds.emailChange'),
-    ];
-  }
+    protected config: ConfigInterfaceResolver,
+    protected kernel: KernelInterfaceResolver,
+    protected notificationTransporter: NotificationTransporterInterfaceResolver<MailTemplateNotificationInterface>,
+  ) {}
 
   /**
    * Generate url from email and token
    */
-  protected getUrl(path: string, email: string, token: string): string {
+  protected getUrl(notification: string, email: string, token: string): string {
+    const path = this.urlPathMap.get(notification);
     return [this.config.get('url.appUrl'), path, encodeURIComponent(email), encodeURIComponent(token)].join('/');
+  }
+
+  protected getTo(email: string, fullname: string): string {
+    return `${fullname} <${email}>`;
   }
 
   /**
@@ -80,82 +81,95 @@ link:  ${link}
   }
 
   /**
-   * Send mail is a wrapper around user:notify
+   * Queue email by using user:notify
    */
-  protected async sendMail(data: SendMailParamsInterface): Promise<void> {
+  protected async queueEmail(data: SendMailParamsInterface): Promise<void> {
     await this.kernel.notify('user:notify', data, this.defaultContext);
   }
 
-  /**
-   * Generate token and send forgotten password email
-   */
-  async passwordForgotten(token: string, email: string): Promise<void> {
-    const [url, , templateId] = this.FORGOTTEN;
-    const link = this.getUrl(url, email, token);
-
-    this.log('Forgotten Password', email, token, link);
-
-    const user = await this.userRepository.findByEmail(email);
-
-    if (!user) throw new NotFoundException('User not found');
-
-    await this.sendMail({
-      link,
-      email,
-      templateId,
-      template: this.config.get('email.templates.forgotten'),
-      fullname: `${user.firstname} ${user.lastname}`,
-    });
-  }
-
-  /**
-   * Generate a confirmation token and notify the new and old email addresses about the email change
-   */
-  async emailUpdated(token: string, email: string, oldEmail?: string): Promise<void> {
-    const [url, template, templateId] = this.CONFIRMATION;
-    const [, emailChangedTemplate, emailChangedTemplateId] = this.EMAIL_CHANGED;
-
-    const link = this.getUrl(url, email, token);
-
-    this.log(oldEmail ? 'Patch user' : 'Send confirm email to user', email, token, link);
-
-    const user = await this.userRepository.findByEmail(email);
-
-    // Notify the new email with a confirmation link
-    await this.sendMail({
-      link,
-      email,
-      template,
-      templateId,
-      fullname: `${user.firstname} ${user.lastname}`,
-    });
-
-    // Notify the previous email about the change
-    if (oldEmail) {
-      await this.sendMail({
-        template: emailChangedTemplate,
-        templateId: emailChangedTemplateId,
-        email: oldEmail,
-        fullname: `${user.firstname} ${user.lastname}`,
-      });
+  async sendEmail(data: SendMailParamsInterface): Promise<void> {
+    const notificationCtor = this.notifications.get(data.template);
+    if (notificationCtor) {
+      await this.notificationTransporter.send(
+        new notificationCtor(data.to, data.data),
+      );
     }
   }
 
   /**
-   * Generate confirmation token and send welcome mail
+   * Send password forgotten notification
    */
-  async userCreated(token: string, email: string): Promise<void> {
-    const [url, template, templateId] = this.INVITATION;
+  async passwordForgotten(token: string, email: string, fullname: string): Promise<void> {
+    const template = 'ForgottenPasswordNotification';
+    const link = this.getUrl(template, email, token);
+    this.log('Forgotten Password', email, token, link);
 
-    const user = await this.userRepository.findByEmail(email);
-
-    const link = this.getUrl(url, user.email, token);
-    await this.sendMail({
-      link,
-      email,
+    await this.queueEmail({
       template,
-      templateId,
-      fullname: `${user.firstname} ${user.lastname}`,
+      to: this.getTo(email, fullname),
+      data: {
+        fullname,
+        action: {
+          href: link,
+        },
+      },
+    });
+  }
+
+  /**
+   * Send email updated notifiation
+   */
+  async emailUpdated(token: string, email: string, oldEmail: string, fullname: string): Promise<void> {
+    const template = 'EmailUpdatedNotification';
+    this.log('Patch user', email, token, null);
+
+    await this.queueEmail({
+      template,
+      to: this.getTo(oldEmail, fullname),
+      data: {
+        fullname,
+      },
+    });
+    
+    await this.confirmEmail(token, email, fullname);
+  }
+
+   /**
+   * Send confirm email notification
+   */
+  async confirmEmail(token: string, email: string, fullname: string): Promise<void> {
+    const template = 'ConfirmEmailNotification';
+    const link = this.getUrl(template, email, token);
+    this.log('Confirm email', email, token, link);
+
+    await this.queueEmail({
+      template,
+      to: this.getTo(email, fullname),
+      data: {
+        fullname,
+        action: {
+          href: link,
+        },
+      },
+    });
+  }
+  /**
+   * Send invite notification
+   */
+  async invite(token: string, email: string, fullname: string): Promise<void> {
+    const template = 'InviteNotification';
+    const link = this.getUrl(template, email, token);
+    this.log('Confirm email', email, token, link);
+
+    await this.queueEmail({
+      template,
+      to: this.getTo(email, fullname),
+      data: {
+        fullname,
+        action: {
+          href: link,
+        },
+      },
     });
   }
 }

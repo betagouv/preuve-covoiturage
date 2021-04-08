@@ -59,7 +59,7 @@ export class SendConfirmEmailUserAction extends AbstractAction {
       this.authProvider.UNCONFIRMED_STATUS,
     );
 
-    await this.notification.emailUpdated(token, user.email);
+    await this.notification.confirmEmail(token, user.email, `${user.firstname} ${user.lastname}`);
     return true;
   }
 }

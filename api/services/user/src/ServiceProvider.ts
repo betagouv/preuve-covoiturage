@@ -1,12 +1,10 @@
-import path from 'path';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CryptoProvider } from '@pdc/provider-crypto';
-import { NotificationExtension } from '@pdc/provider-notification';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
-import { TemplateExtension } from '@pdc/provider-template';
+import { defaultNotificationBindings } from '@pdc/provider-notification';
 
 import { changePassword } from './shared/user/changePassword.schema';
 import { changePasswordWithToken } from './shared/user/changePasswordWithToken.schema';
@@ -55,7 +53,13 @@ import { ContactformAction } from './actions/ContactformAction';
 
 @serviceProvider({
   config,
-  providers: [UserPgRepositoryProvider, CryptoProvider, AuthRepositoryProvider, UserNotificationProvider],
+  providers: [
+    ...defaultNotificationBindings,
+    UserPgRepositoryProvider,
+    CryptoProvider,
+    AuthRepositoryProvider,
+    UserNotificationProvider,
+  ],
   validator: [
     ['user.changePassword', changePassword],
     ['user.changePasswordWithToken', changePasswordWithToken],
@@ -101,17 +105,10 @@ import { ContactformAction } from './actions/ContactformAction';
     SendInvitationEmailUserAction,
     HasUsersAction,
   ],
-  template: null,
-  notification: {
-    template: path.resolve(__dirname, 'templates'),
-    templateMeta: 'template',
-  },
   commands: [SeedUsersCommand, FindInactiveCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [
     ValidatorExtension,
-    TemplateExtension,
-    NotificationExtension,
   ];
 }
