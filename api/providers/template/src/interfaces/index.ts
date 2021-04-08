@@ -1,2 +1,2 @@
-export { TemplateInterface, TemplateImportInterface, TemplateIdentifier } from './TemplateInterface';
+export * from './TemplateInterface';
 export { TemplateProviderInterface, TemplateProviderInterfaceResolver } from './TemplateProviderInterface';

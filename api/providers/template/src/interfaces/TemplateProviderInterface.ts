@@ -1,17 +1,11 @@
 import { ProviderInterface } from '@ilos/common';
-import { TemplateInterface, TemplateImportInterface } from '.';
-import { TemplateIdentifier } from './TemplateInterface';
+import { TemplateDelegate } from 'handlebars';
+import { TemplateInterface } from '.';
 
 export interface TemplateProviderInterface extends ProviderInterface {
-  import(template: TemplateImportInterface): void;
-  get(id: TemplateIdentifier): TemplateInterface;
+  render<T = any>(template: TemplateInterface<T>): string;
 }
 
 export abstract class TemplateProviderInterfaceResolver implements TemplateProviderInterface {
-  import(_template: TemplateImportInterface): void {
-    throw new Error();
-  }
-  get(_id: TemplateIdentifier): TemplateInterface {
-    throw new Error();
-  }
+  abstract render<T = any>(template: TemplateInterface<T>): string;
 }

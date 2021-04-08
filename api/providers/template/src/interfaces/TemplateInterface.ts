@@ -1,14 +1,8 @@
-import { TemplateDelegate } from 'handlebars';
-
-export type TemplateIdentifier = string;
-
-export interface TemplateInterface {
-  template: TemplateDelegate;
-  metadata: any;
+export interface TemplateInterface<Data = any> {
+  readonly data: Data;
 }
 
-export interface TemplateImportInterface {
-  id: TemplateIdentifier;
-  template: string;
-  metadata: any;
+export interface StaticTemplateInterface<Data = any> {
+  readonly template: string;
+  new(data: Data): TemplateInterface<Data>;
 }
