@@ -46,3 +46,8 @@ export function acquisitionRateLimiter(opts: RateLimiterOptions = {}): RateLimit
 export function monHonorCertificateRateLimiter(opts: RateLimiterOptions = {}): RateLimit {
   return rateLimiter({ windowMs: 1 * minute, max: 10, ...opts }, 'rl-monitoring-cert');
 }
+
+// shortcut for /contactform route
+export function contactformRateLimiter(opts: RateLimiterOptions = {}): RateLimit {
+  return rateLimiter({ windowMs: 1 * minute, max: 3, ...opts }, 'rl-contactform');
+}

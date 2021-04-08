@@ -28,6 +28,7 @@ import {
   loginRateLimiter,
   acquisitionRateLimiter,
   monHonorCertificateRateLimiter,
+  contactformRateLimiter,
 } from './middlewares/rateLimiter';
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
@@ -90,6 +91,7 @@ export class HttpTransport implements TransportInterface {
     this.registerSimulationRoutes();
     this.registerHonorRoutes();
     this.registerUptimeRoute();
+    this.registerContactformRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
   }
@@ -151,7 +153,7 @@ export class HttpTransport implements TransportInterface {
     // apply CORS to all routes but /honor (for now)
     // TODO: improve if more routes are concerned
     this.app.use(
-      /\/((?!honor).)*/,
+      /\/((?!honor|contactform).)*/,
       cors({
         origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
@@ -163,6 +165,13 @@ export class HttpTransport implements TransportInterface {
       '/honor',
       cors({
         origin: this.config.get('proxy.certUrl'),
+        optionsSuccessStatus: 200,
+      }),
+    );
+    this.app.use(
+      '/contactform',
+      cors({
+        origin: this.config.get('proxy.showcase'),
         optionsSuccessStatus: 200,
       }),
     );
@@ -554,6 +563,29 @@ export class HttpTransport implements TransportInterface {
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
         res.json({ hello: 'world' });
+      }),
+    );
+  }
+
+  /**
+   * Used by showcase website's contact form.
+   * Gets data and sends it by email
+   */
+  private registerContactformRoute() {
+    this.app.post(
+      '/contactform',
+      contactformRateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const { name, email, company, job, subject, body } = req.body;
+        const response = await this.kernel.handle(
+          createRPCPayload(
+            'user:contactform',
+            { name, email, company, job, subject, body },
+            { permissions: ['common.user.contactform'] },
+          ),
+        );
+
+        this.send(res, response as RPCResponseType);
       }),
     );
   }

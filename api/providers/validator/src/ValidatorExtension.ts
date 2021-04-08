@@ -18,6 +18,7 @@ import { rnaCustomFormat } from './formats/rnaCustomFormat';
 
 import { macroKeyword } from './keywords/macroKeyword';
 import { castKeyword } from './keywords/castKeyword';
+import { sanitizeKeyword } from './keywords/sanitizeKeyword';
 
 @extension({
   name: 'validator',
@@ -49,6 +50,7 @@ export class ValidatorExtension extends ValidatorParentExtension {
     // register macros
     validator.registerCustomKeyword({ type: 'keyword', definition: macroKeyword });
     validator.registerCustomKeyword({ type: 'keyword', definition: castKeyword });
+    validator.registerCustomKeyword({ type: 'keyword', definition: sanitizeKeyword });
     await super.init(serviceContainer);
 
     // dump the registered schema for debug - uncomment for use
