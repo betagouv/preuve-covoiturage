@@ -10,9 +10,7 @@ import { UserNotificationProvider } from '../providers/UserNotificationProvider'
  */
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service, 'trip', 'proxy')] })
 export class NotifyUserAction extends AbstractAction {
-  constructor(
-    protected notificationProvider: UserNotificationProvider,
-  ) {
+  constructor(protected notificationProvider: UserNotificationProvider) {
     super();
   }
 

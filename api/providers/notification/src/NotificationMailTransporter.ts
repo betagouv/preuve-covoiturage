@@ -4,7 +4,12 @@ import { createTransport, Transporter } from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import mjml2html from 'mjml';
 
-import { NotificationTransporterInterface, NotificationTransporterInterfaceResolver, MailTemplateNotificationInterface, StaticMailTemplateNotificationInterface } from './interfaces';
+import {
+  NotificationTransporterInterface,
+  NotificationTransporterInterfaceResolver,
+  MailTemplateNotificationInterface,
+  StaticMailTemplateNotificationInterface,
+} from './interfaces';
 
 interface NotificationOptions {
   debug: boolean;
@@ -15,7 +20,8 @@ interface NotificationOptions {
 @provider({
   identifier: NotificationTransporterInterfaceResolver,
 })
-export class NotificationMailTransporter implements NotificationTransporterInterface<MailTemplateNotificationInterface, Partial<Mail.Options>> {
+export class NotificationMailTransporter
+  implements NotificationTransporterInterface<MailTemplateNotificationInterface, Partial<Mail.Options>> {
   transporter: Transporter;
   protected options: NotificationOptions;
 
@@ -41,7 +47,9 @@ export class NotificationMailTransporter implements NotificationTransporterInter
     this.options = {
       from: `${this.config.get('notification.mail.from.name')} <${this.config.get('notification.mail.from.email')}>`,
       debug: this.config.get('notification.mail.debug', false),
-      debugToOverride: `${this.config.get('notification.mail.to.name')} <${this.config.get('notification.mail.to.email')}>`,
+      debugToOverride: `${this.config.get('notification.mail.to.name')} <${this.config.get(
+        'notification.mail.to.email',
+      )}>`,
     };
   }
 
@@ -58,7 +66,7 @@ export class NotificationMailTransporter implements NotificationTransporterInter
 
   async send(mail: MailTemplateNotificationInterface, options = {}): Promise<void> {
     const mailCtor = mail.constructor as StaticMailTemplateNotificationInterface;
-  
+
     await this.transporter.sendMail({
       ...options,
       from: this.options.from,

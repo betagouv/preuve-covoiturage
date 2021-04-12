@@ -4,5 +4,5 @@ export interface TemplateInterface<Data = any> {
 
 export interface StaticTemplateInterface<Data = any> {
   readonly template: string;
-  new(data: Data): TemplateInterface<Data>;
+  new (data: Data): TemplateInterface<Data>;
 }

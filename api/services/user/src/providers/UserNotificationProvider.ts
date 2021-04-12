@@ -1,14 +1,13 @@
-import {
-  ConfigInterfaceResolver,
-  KernelInterfaceResolver,
-  ContextType,
-  provider,
-} from '@ilos/common';
-
-import { MailTemplateNotificationInterface, NotificationTransporterInterfaceResolver, StaticMailTemplateNotificationInterface } from '@pdc/provider-notification';
+import { ConfigInterfaceResolver, KernelInterfaceResolver, ContextType, provider } from '@ilos/common';
 
 import {
-  ConfirmEmailNotification, 
+  MailTemplateNotificationInterface,
+  NotificationTransporterInterfaceResolver,
+  StaticMailTemplateNotificationInterface,
+} from '@pdc/provider-notification';
+
+import {
+  ConfirmEmailNotification,
   EmailUpdatedNotification,
   ExportCSVErrorNotification,
   ExportCSVNotification,
@@ -37,13 +36,14 @@ export class UserNotificationProvider {
 
   protected notifications: Map<string, StaticMailTemplateNotificationInterface> = new Map(
     Object.entries({
-    'ConfirmEmailNotification': ConfirmEmailNotification,
-    'EmailUpdatedNotification': EmailUpdatedNotification,
-    'ExportCSVErrorNotification': ExportCSVErrorNotification,
-    'ExportCSVNotification': ExportCSVNotification,
-    'ForgottenPasswordNotification': ForgottenPasswordNotification,
-    'InviteNotification': InviteNotification,
-  }));
+      ConfirmEmailNotification: ConfirmEmailNotification,
+      EmailUpdatedNotification: EmailUpdatedNotification,
+      ExportCSVErrorNotification: ExportCSVErrorNotification,
+      ExportCSVNotification: ExportCSVNotification,
+      ForgottenPasswordNotification: ForgottenPasswordNotification,
+      InviteNotification: InviteNotification,
+    }),
+  );
 
   constructor(
     protected config: ConfigInterfaceResolver,
@@ -90,9 +90,7 @@ link:  ${link}
   async sendEmail(data: SendMailParamsInterface): Promise<void> {
     const notificationCtor = this.notifications.get(data.template);
     if (notificationCtor) {
-      await this.notificationTransporter.send(
-        new notificationCtor(data.to, data.data),
-      );
+      await this.notificationTransporter.send(new notificationCtor(data.to, data.data));
     }
   }
 
@@ -130,11 +128,11 @@ link:  ${link}
         fullname,
       },
     });
-    
+
     await this.confirmEmail(token, email, fullname);
   }
 
-   /**
+  /**
    * Send confirm email notification
    */
   async confirmEmail(token: string, email: string, fullname: string): Promise<void> {

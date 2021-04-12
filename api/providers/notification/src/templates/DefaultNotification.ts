@@ -121,7 +121,10 @@ export class DefaultMJMLTemplate extends AbstractTemplate<DefaultTemplateData> {
           font-size="12px"
           color="#000000"
         >
-          <span>Un service fourni grâce au soutien financier de l'ADEME, puis de la DGITM et à l’appui stratégique et opérationnel de la DINUM.</span>
+          <span>
+            Un service fourni grâce au soutien financier de l'ADEME,
+            puis de la DGITM et à l’appui stratégique et opérationnel de la DINUM.
+          </span>
         </mj-text>
           <mj-text
           align="center"
@@ -130,7 +133,9 @@ export class DefaultMJMLTemplate extends AbstractTemplate<DefaultTemplateData> {
           font-size="12px"
           color="#000000"
           >
-            <span>✉ <a style="color:#000000" href="mailto:{{contact_email}}">{{contact_email}}</a></span>
+            <span>
+              ✉ <a style="color:#000000" href="mailto:{{contact_email}}">{{contact_email}}</a>
+            </span>
         </mj-text>
         <mj-text
           align="center"
@@ -139,7 +144,15 @@ export class DefaultMJMLTemplate extends AbstractTemplate<DefaultTemplateData> {
           font-size="12px"
           color="#000000"
         >
-          <span>📍 <a target="_blank" style="color:#000000; font-size:12px" href="https://www.openstreetmap.org/node/2353712460">20 avenue de Ségur, 75007 Paris</a></span>
+          <span>📍 
+            <a
+              target="_blank"
+              style="color:#000000; font-size:12px"
+              href="https://www.openstreetmap.org/node/2353712460"
+            >
+              20 avenue de Ségur, 75007 Paris
+            </a>
+          </span>
         </mj-text>
       </mj-column>
     </mj-section>
@@ -161,11 +174,12 @@ Bonjour {{fullname}},
 A bientôt
 -- 
 Registre de preuve de covoiturage - {{ app_url }}
-Un service fourni grâce au soutien financier de l'ADEME, puis de la DGITM et à l’appui stratégique et opérationnel de la DINUM.
+Un service fourni grâce au soutien financier de l'ADEME,
+puis de la DGITM et à l’appui stratégique et opérationnel de la DINUM.
 ✉ {{contact_email}}
 📍 20 avenue de Ségur, 75007 Paris
   `;
-};
+}
 
 export class DefaultNotification extends AbstractMailNotification<DefaultTemplateData> {
   static templateText = DefaultTextTemplate;
@@ -173,16 +187,12 @@ export class DefaultNotification extends AbstractMailNotification<DefaultTemplat
   static readonly subject: string = 'Registre de preuve de covoiturage';
 
   constructor(to: string, data: Partial<DefaultTemplateData>) {
-    super(
-      to,
-      {
-        app_url: 'https://covoiturage.beta.gouv.fr',
-        contact_email: 'contact@covoiturage.beta.gouv.fr',
-        header_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6yw/vkw1r.png',
-        header_alt: 'Registre de preuve de covoiturage',
-        ...data,
-      }
-    );
+    super(to, {
+      app_url: 'https://covoiturage.beta.gouv.fr',
+      contact_email: 'contact@covoiturage.beta.gouv.fr',
+      header_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6yw/vkw1r.png',
+      header_alt: 'Registre de preuve de covoiturage',
+      ...data,
+    });
   }
 }
-

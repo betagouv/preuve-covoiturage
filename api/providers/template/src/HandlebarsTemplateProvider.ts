@@ -11,9 +11,7 @@ import { StaticTemplateInterface } from './interfaces/TemplateInterface';
   identifier: TemplateProviderInterfaceResolver,
 })
 export class HandlebarsTemplateProvider implements TemplateProviderInterface, InitHookInterface {
-  protected helpers: Map<string, HelperDelegate> = new Map([
-    ['currency', currency],
-  ]);
+  protected helpers: Map<string, HelperDelegate> = new Map([['currency', currency]]);
 
   protected templateMap: Map<StaticTemplateInterface, TemplateDelegate> = new Map();
   protected hbs: typeof Handlebars;
@@ -24,7 +22,7 @@ export class HandlebarsTemplateProvider implements TemplateProviderInterface, In
   }
 
   protected registerHelpers() {
-    for(let [id, helper] of this.helpers) {
+    for (const [id, helper] of this.helpers) {
       this.hbs.registerHelper(id, helper);
     }
   }

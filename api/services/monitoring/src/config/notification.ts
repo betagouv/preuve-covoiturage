@@ -16,4 +16,3 @@ export const mail = {
     email: env('APP_DEBUG_EMAIL', ''),
   },
 };
-

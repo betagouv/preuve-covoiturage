@@ -27,7 +27,5 @@ import { binding as statsBinding } from './shared/monitoring/journeys/stats.sche
   queues: ['monitoring'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [
-    ValidatorExtension,
-  ];
+  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

@@ -1,5 +1,4 @@
 import { ProviderInterface } from '@ilos/common';
-import { TemplateDelegate } from 'handlebars';
 import { TemplateInterface } from '.';
 
 export interface TemplateProviderInterface extends ProviderInterface {

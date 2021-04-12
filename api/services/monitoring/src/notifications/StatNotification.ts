@@ -12,7 +12,7 @@ export interface StatTemplateData {
   carpools: number;
   missing: number;
   missing_ratio: number;
-  last_missing_by_date:  {
+  last_missing_by_date: {
     date: Date;
     count: number;
   }[];
@@ -59,7 +59,7 @@ export class StatMJMLTemplate extends AbstractTemplate<StatTemplateData> {
       <mj-column>
         <mj-text align="left" line-height="22px" color="#000000" padding="20px 40px 40px 40px">
           <p>Bonjour,</p>
-          
+
           <p>
             <h2>Statistique d'acquisition</h2>
             <ul>
@@ -105,7 +105,10 @@ export class StatMJMLTemplate extends AbstractTemplate<StatTemplateData> {
           font-size="12px"
           color="#000000"
         >
-          <span>Un service fourni grâce au soutien financier de l'ADEME, puis de la DGITM et à l’appui stratégique et opérationnel de la DINUM.</span>
+          <span>
+            Un service fourni grâce au soutien financier de l'ADEME,
+            puis de la DGITM et à l’appui stratégique et opérationnel de la DINUM.
+          </span>
         </mj-text>
           <mj-text
           align="center"
@@ -114,7 +117,9 @@ export class StatMJMLTemplate extends AbstractTemplate<StatTemplateData> {
           font-size="12px"
           color="#000000"
           >
-            <span>✉ <a style="color:#000000" href="mailto:{{contact_email}}">{{contact_email}}</a></span>
+            <span>
+              ✉ <a style="color:#000000" href="mailto:{{contact_email}}">{{contact_email}}</a>
+            </span>
         </mj-text>
         <mj-text
           align="center"
@@ -123,7 +128,14 @@ export class StatMJMLTemplate extends AbstractTemplate<StatTemplateData> {
           font-size="12px"
           color="#000000"
         >
-          <span>📍 <a target="_blank" style="color:#000000; font-size:12px" href="https://www.openstreetmap.org/node/2353712460">20 avenue de Ségur, 75007 Paris</a></span>
+          <span>📍
+            <a
+              target="_blank"
+              style="color:#000000; font-size:12px"
+              href="https://www.openstreetmap.org/node/2353712460"
+            >
+              20 avenue de Ségur, 75007 Paris
+            </a>
         </mj-text>
       </mj-column>
     </mj-section>
@@ -152,13 +164,14 @@ Par date :
 {{/each}}
 
 A bientôt
--- 
+--
 Registre de preuve de covoiturage - {{ app_url }}
-Un service fourni grâce au soutien financier de l'ADEME, puis de la DGITM et à l’appui stratégique et opérationnel de la DINUM.
+Un service fourni grâce au soutien financier de l'ADEME,
+puis de la DGITM et à l’appui stratégique et opérationnel de la DINUM.
 ✉ {{contact_email}}
 📍 20 avenue de Ségur, 75007 Paris
   `;
-};
+}
 
 export class StatNotification extends AbstractMailNotification<StatTemplateData> {
   static templateText = StatTextTemplate;
@@ -166,16 +179,12 @@ export class StatNotification extends AbstractMailNotification<StatTemplateData>
   static readonly subject: string = 'Registre de preuve de covoiturage';
 
   constructor(to: string, data: Partial<StatTemplateData>) {
-    super(
-      to,
-      {
-        app_url: 'https://covoiturage.beta.gouv.fr',
-        contact_email: 'contact@covoiturage.beta.gouv.fr',
-        header_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6yw/vkw1r.png',
-        header_alt: 'Registre de preuve de covoiturage',
-        ...data,
-      }
-    );
+    super(to, {
+      app_url: 'https://covoiturage.beta.gouv.fr',
+      contact_email: 'contact@covoiturage.beta.gouv.fr',
+      header_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6yw/vkw1r.png',
+      header_alt: 'Registre de preuve de covoiturage',
+      ...data,
+    });
   }
 }
-

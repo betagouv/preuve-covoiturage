@@ -6,7 +6,10 @@ import {
   KernelInterfaceResolver,
   ConfigInterfaceResolver,
 } from '@ilos/common';
-import { MailTemplateNotificationInterface, NotificationTransporterInterfaceResolver } from '@pdc/provider-notification';
+import {
+  MailTemplateNotificationInterface,
+  NotificationTransporterInterfaceResolver,
+} from '@pdc/provider-notification';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import {

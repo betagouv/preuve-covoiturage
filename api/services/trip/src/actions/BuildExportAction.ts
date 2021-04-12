@@ -203,7 +203,7 @@ export class BuildExportAction extends Action {
       zip.addLocalFile(filename);
       zip.writeZip(zipname);
 
-      const { url, password } = await this.file.copy(BucketName.Export, zipname);
+      const { url } = await this.file.copy(BucketName.Export, zipname);
 
       const email = params.from.email;
       const fullname = params.from.fullname;
