@@ -19,6 +19,13 @@ interface TestContext {
 const test = anyTest as TestInterface<TestContext>;
 
 test.beforeEach(async (t) => {
+  class NotificationOverride extends NotificationMailTransporter {
+    async init() {
+      super.setOptionsFromConfig();
+      await super.createTransport(false);
+    }
+  }
+
   const config = {
     notification: {
       mail: {
@@ -38,10 +45,10 @@ test.beforeEach(async (t) => {
   const configProvider = new Extensions.ConfigStore(config);
   const templateProvider = new HandlebarsTemplateProvider();
   await templateProvider.init();
-  const transporter = new NotificationMailTransporter(configProvider, templateProvider);
+  const transporter = new NotificationOverride(configProvider, templateProvider);
+  await transporter.init();
   t.context.stub = sinon.stub(transporter.transporter);
   t.context.transporter = transporter;
-  await transporter.init();
 });
 
 test('should work', async (t) => {

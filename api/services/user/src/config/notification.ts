@@ -1,14 +1,16 @@
 import { env } from '@ilos/core';
 
 export const mail = {
-  smtp: env('APP_SMTP_URL'),
-  debug: env('APP_DEBUG_MODE', false),
+  smtp: {
+    url: env('APP_MAIL_SMTP_URL'),
+  },
+  debug: env('APP_MAIL_DEBUG_MODE', false),
   from: {
-    name: env('APP_FROM_NAME', ''),
-    email: env('APP_FROM_EMAIL', ''),
+    name: env('APP_MAIL_FROM_NAME', ''),
+    email: env('APP_MAIL_FROM_EMAIL', ''),
   },
   to: {
-    name: env('APP_DEBUG_NAME', ''),
-    email: env('APP_DEBUG_EMAIL', ''),
+    name: env('APP_MAIL_DEBUG_NAME', ''),
+    email: env('APP_MAIL_DEBUG_EMAIL', ''),
   },
 };

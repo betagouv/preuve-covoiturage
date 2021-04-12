@@ -90,7 +90,8 @@ link:  ${link}
   async sendEmail(data: SendMailParamsInterface): Promise<void> {
     const notificationCtor = this.notifications.get(data.template);
     if (notificationCtor) {
-      await this.notificationTransporter.send(new notificationCtor(data.to, data.data));
+      const notification = new notificationCtor(data.to, data.data);
+      await this.notificationTransporter.send(notification);
     }
   }
 
@@ -107,9 +108,7 @@ link:  ${link}
       to: this.getTo(email, fullname),
       data: {
         fullname,
-        action: {
-          href: link,
-        },
+        action_href: link,
       },
     });
   }
@@ -145,9 +144,7 @@ link:  ${link}
       to: this.getTo(email, fullname),
       data: {
         fullname,
-        action: {
-          href: link,
-        },
+        action_href: link,
       },
     });
   }
@@ -164,9 +161,7 @@ link:  ${link}
       to: this.getTo(email, fullname),
       data: {
         fullname,
-        action: {
-          href: link,
-        },
+        action_href: link,
       },
     });
   }

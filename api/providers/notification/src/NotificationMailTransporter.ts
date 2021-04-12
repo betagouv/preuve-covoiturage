@@ -28,13 +28,11 @@ export class NotificationMailTransporter
   constructor(
     protected config: ConfigInterfaceResolver,
     protected templateProvider: TemplateProviderInterfaceResolver,
-  ) {
-    this.createTransport();
-  }
+  ) {}
 
   async init(): Promise<void> {
     this.setOptionsFromConfig();
-    await this.transporter.verify();
+    await this.createTransport();
   }
 
   async destroy(): Promise<void> {
@@ -53,9 +51,12 @@ export class NotificationMailTransporter
     };
   }
 
-  protected async createTransport(): Promise<void> {
+  protected async createTransport(verify = true): Promise<void> {
     if (!this.transporter) {
       this.transporter = createTransport(this.config.get('notification.mail.smtp'));
+      if (verify) {
+        await this.transporter.verify();
+      }
     }
   }
 
