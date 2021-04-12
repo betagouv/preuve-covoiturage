@@ -1,16 +1,12 @@
 import { DefaultNotification, DefaultTemplateData } from '@pdc/provider-notification';
 
 const defaultData: Partial<DefaultTemplateData> = {
-    hero: {
-        alt: 'Mot de passe oublié',
-        imageSrc: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/q2hz/vjnmy.png',
-    },
-    action: {
-        message: 'Choisir un nouveau mot de passe',
-    },
+    hero_alt: 'Mot de passe oublié',
+    hero_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/q2hz/vjnmy.png',
+    action_message: 'Choisir un nouveau mot de passe',
     title: 'Mot de passe oublié',
     preview: "Vous avez demandé la réinitialisation de votre mot de passe.",
-    messageText: `
+    message_text: `
 Vous avez demandé la réinitialisation de votre mot de passe sur le site du Registre de preuve de covoiturage.
     `,
 };

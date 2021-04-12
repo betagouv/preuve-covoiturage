@@ -1,17 +1,15 @@
 import { DefaultNotification, DefaultTemplateData } from '@pdc/provider-notification';
 
 const defaultData: Partial<DefaultTemplateData> = {
-    hero: {
-        alt: "Changement d'adresse email",
-        imageSrc: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6ym/vjn23.png',
-    },
+    hero_alt: "Changement d'adresse email",
+    hero_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/xp6ym/vjn23.png',
     title: "Changement d'adresse email",
     preview: 'Vous avez demandé à changer votre adresse email sur le Registre de preuve de covoiturage.',
-    messageHTML: `
+    message_html: `
 <p>Vous avez demandé à changer votre adresse email sur le Registre de preuve de covoiturage.</p>
 <p>Si vous n’êtes pas à l’origine de cette modification, veuillez contacter l’administrateur du service. </p>
     `,
-    messageText: `
+    message_text: `
 Vous avez demandé à changer votre adresse email sur le Registre de preuve de covoiturage.
 Si vous n’êtes pas à l’origine de cette modification, veuillez contacter l’administrateur du service.
     `,

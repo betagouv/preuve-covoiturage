@@ -1,16 +1,12 @@
 import { DefaultNotification, DefaultTemplateData } from '@pdc/provider-notification';
 
 const defaultData: Partial<DefaultTemplateData> = {
-    hero: {
-        alt: 'Export des données',
-        imageSrc: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/x5zwm/vkxn4.png',
-    },
-    action: {
-        message: 'Télécharger le fichier',
-    },
+    hero_alt: 'Export des données',
+    hero_image_src: 'https://x0zwu.mjt.lu/tplimg/x0zwu/b/x5zwm/vkxn4.png',
+    action_message: 'Télécharger le fichier',
     title: 'Export des données',
     preview: "Votre export des trajets en données ouvertes est disponible.",
-    messageHTML: `
+    message_html: `
 <p>
 Votre export des trajets en données ouvertes est disponible.
 Vous pouvez le télécharger en cliquant sur le bouton ci-dessous.
@@ -19,7 +15,7 @@ Vous pouvez le télécharger en cliquant sur le bouton ci-dessous.
 Les données sont au format CSV et sont compressées dans un fichier ZIP.
 </p>      
     `,
-    messageText: `
+    message_text: `
 Votre export des trajets en données ouvertes est disponible.
 Vous pouvez le télécharger en cliquant sur le bouton ci-dessous.
 

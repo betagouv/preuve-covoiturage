@@ -19,6 +19,6 @@
     "handlebars": "^4.7.7"
   },
   "devDependencies": {
-    "@ilos-core": "^0"
+    "@ilos/core": "^0"
   }
 }

@@ -24,6 +24,6 @@
     "nodemailer": "^6.5.0"
   },
   "devDependencies": {
-    "@ilos-core": "^0"
+    "@ilos/core": "^0"
   }
 }

@@ -7,7 +7,7 @@ import { kernel } from '@ilos/common';
 
 @kernel({
   config: process.cwd(),
-  commands: [Commands.CallCommand, Commands.ListCommand, Commands.ScaffoldCommand],
+  commands: [Commands.CallCommand, Commands.ListCommand],
 })
 export class Kernel extends BaseKernel {
   readonly extensions = [

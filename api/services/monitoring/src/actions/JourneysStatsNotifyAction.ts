@@ -20,7 +20,7 @@ import {
   ResultInterface as StatsResultInterface,
   ParamsInterface as StatsParamsInterface,
 } from '../shared/monitoring/journeys/stats.contract';
-import { StatNotification } from 'src/notifications/StatNotification';
+import { StatNotification } from '../notifications/StatNotification';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class JourneysStatsNotifyAction extends Action implements InitHookInterface {
@@ -68,6 +68,6 @@ export class JourneysStatsNotifyAction extends Action implements InitHookInterfa
       },
     });
 
-    await this.notificationProvider.send(new StatNotification(`${fullname} <${email}>`, data));
+    await this.notificationProvider.send(new StatNotification(`${fullname} <${email}>`, data.pipeline));
   }
 }
