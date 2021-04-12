@@ -4,14 +4,13 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc && yarn copy-static",
+    "build": "tsc",
     "ilos": "ilos",
     "watch": "tsc -w",
     "test:unit": "exit 0",
     "test:integration": "ava --config ava.integration.cjs",
     "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
-    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs",
-    "copy-static": "cp -R ./src/templates ./dist/"
+    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
   },
   "main": "./dist/bootstrap.js",
   "config": {
@@ -27,6 +26,7 @@
     "@ilos/framework": "~0",
     "@pdc/helper-test": "~0",
     "@pdc/provider-validator": "~0",
-    "@pdc/provider-middleware": "~0"
+    "@pdc/provider-middleware": "~0",
+    "@pdc/provider-notification": "~0"
   }
 }

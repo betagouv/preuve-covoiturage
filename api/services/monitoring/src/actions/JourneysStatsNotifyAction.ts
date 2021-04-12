@@ -6,7 +6,7 @@ import {
   KernelInterfaceResolver,
   ConfigInterfaceResolver,
 } from '@ilos/common';
-import { NotificationInterfaceResolver } from '@pdc/provider-notification';
+import { MailTemplateNotificationInterface, NotificationTransporterInterfaceResolver } from '@pdc/provider-notification';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import {
@@ -20,12 +20,13 @@ import {
   ResultInterface as StatsResultInterface,
   ParamsInterface as StatsParamsInterface,
 } from '../shared/monitoring/journeys/stats.contract';
+import { StatNotification } from 'src/notifications/StatNotification';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class JourneysStatsNotifyAction extends Action implements InitHookInterface {
   constructor(
     private kernel: KernelInterfaceResolver,
-    private notify: NotificationInterfaceResolver,
+    private notificationProvider: NotificationTransporterInterfaceResolver<MailTemplateNotificationInterface>,
     private config: ConfigInterfaceResolver,
   ) {
     super();
@@ -67,14 +68,6 @@ export class JourneysStatsNotifyAction extends Action implements InitHookInterfa
       },
     });
 
-    await this.notify.sendTemplateByEmail({
-      email,
-      fullname,
-      template: 'stats',
-      opts: {
-        ...data.pipeline,
-        last_missing_by_date: data.pipeline.last_missing_by_date.map((d) => ({ ...d, date: d.date.toDateString() })),
-      },
-    });
+    await this.notificationProvider.send(new StatNotification(`${fullname} <${email}>`, data));
   }
 }
