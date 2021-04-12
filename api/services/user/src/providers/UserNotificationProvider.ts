@@ -8,6 +8,7 @@ import {
 
 import {
   ConfirmEmailNotification,
+  ContactFormNotification,
   EmailUpdatedNotification,
   ExportCSVErrorNotification,
   ExportCSVNotification,
@@ -37,6 +38,7 @@ export class UserNotificationProvider {
   protected notifications: Map<string, StaticMailTemplateNotificationInterface> = new Map(
     Object.entries({
       ConfirmEmailNotification: ConfirmEmailNotification,
+      ContactFormNotification: ContactFormNotification,
       EmailUpdatedNotification: EmailUpdatedNotification,
       ExportCSVErrorNotification: ExportCSVErrorNotification,
       ExportCSVNotification: ExportCSVNotification,
@@ -162,6 +164,31 @@ link:  ${link}
       data: {
         fullname,
         action_href: link,
+      },
+    });
+  }
+
+  /**
+   * Send contactForm notification
+   */
+  async contactForm(data: {
+    body: string;
+    email: string;
+    name?: string;
+    company?: string;
+    subject?: string;
+  }): Promise<void> {
+    const template = 'ContactFormNotification';
+    this.log('Contact form', data.email, null, null);
+    await this.queueEmail({
+      template,
+      to: this.config.get('contactform.to'),
+      data: {
+        contact_form_email: data.email,
+        contact_form_message: data.body,
+        contact_form_name: data.name ?? 'Sans nom',
+        contact_form_company: data.company ?? 'non précisé',
+        contact_form_subject: data.subject ?? 'non précisé',
       },
     });
   }
