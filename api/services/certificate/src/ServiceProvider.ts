@@ -7,7 +7,6 @@ import { DateProvider } from '@pdc/provider-date';
 import { QrcodeProvider } from '@pdc/provider-qrcode';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { PdfCertProvider } from '@pdc/provider-pdfcert';
-import { TemplateExtension } from '@pdc/provider-template';
 
 import { config } from './config';
 import { CertificatePgRepositoryProvider } from './providers/CertificatePgRepositoryProvider';
@@ -39,5 +38,5 @@ import { binding as listBinding } from './shared/certificate/list.schema';
   commands: [SeedCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension, TemplateExtension];
+  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

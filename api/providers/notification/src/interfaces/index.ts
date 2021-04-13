@@ -1,4 +1,2 @@
-export * from './MailDriverInterface';
-export { NotificationConfigurationType } from './NotificationConfigurationType';
-export { NotificationInterface, NotificationInterfaceResolver } from './NotificationInterface';
-export { SendOptionsInterface } from './SendOptionsInterface';
+export * from './MailTemplateNotificationInterface';
+export * from './NotificationTransporterInterface';

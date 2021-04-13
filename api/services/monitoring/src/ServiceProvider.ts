@@ -1,12 +1,10 @@
-import path from 'path';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { RedisConnection } from '@ilos/connection-redis';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
-import { NotificationExtension } from '@pdc/provider-notification';
-import { TemplateExtension } from '@pdc/provider-template';
+import { defaultNotificationBindings } from '@pdc/provider-notification';
 
 import { config } from './config';
 import { JourneysStatsAction } from './actions/JourneysStatsAction';
@@ -17,7 +15,7 @@ import { binding as statsBinding } from './shared/monitoring/journeys/stats.sche
 
 @serviceProvider({
   config,
-  providers: [JourneyRepositoryProvider],
+  providers: [JourneyRepositoryProvider, ...defaultNotificationBindings],
   commands: [JourneysStatsCommand],
   validator: [statsBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
@@ -26,20 +24,8 @@ import { binding as statsBinding } from './shared/monitoring/journeys/stats.sche
     [PostgresConnection, 'connections.postgres'],
   ],
   handlers: [JourneysStatsAction, JourneysStatsNotifyAction],
-  notification: {
-    template: path.resolve(__dirname, 'templates'),
-    templateMeta: {
-      stats: {
-        subject: "Statistique d'acquisition",
-      },
-    },
-  },
   queues: ['monitoring'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [
-    ValidatorExtension,
-    TemplateExtension,
-    NotificationExtension,
-  ];
+  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

@@ -14,8 +14,6 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
  * The user is switched to 'pending' when the email is modified.
  * A confirmation link is sent to the new email and a notification to the old one.
  */
-// TODO  : MIDDLEWARE
-
 @handler({
   ...handlerConfig,
   middlewares: [
@@ -77,7 +75,12 @@ export class PatchUserAction extends AbstractAction {
     // user changed her email -> ask for email confirmation
     try {
       const token = await this.authRepository.updateEmailById(_id, email);
-      await this.notification.emailUpdated(token, email, user.email);
+      await this.notification.emailUpdated(
+        token,
+        email,
+        user.email,
+        `${updatedUser.firstname} ${updatedUser.lastname}`,
+      );
       return {
         ...updatedUser,
         email,

@@ -203,21 +203,18 @@ export class BuildExportAction extends Action {
       zip.addLocalFile(filename);
       zip.writeZip(zipname);
 
-      const { url, password } = await this.file.copy(BucketName.Export, zipname);
+      const { url } = await this.file.copy(BucketName.Export, zipname);
 
       const email = params.from.email;
       const fullname = params.from.fullname;
 
       const emailParams = {
-        password,
-        email,
-        fullname,
-        template: this.config.get('email.templates.export_csv'),
-        templateId: this.config.get('notification.templateIds.export_csv'),
-        link: url,
-        // disable URL rewrite by Mailjet that makes downloading the file bug on Gmail/Chrome
-        // Mailjet replaces the S3 URL by an unsecured HTTP URL
-        disableTracking: true,
+        template: 'ExportCSVNotification',
+        to: `${fullname} <${email}>`,
+        data: {
+          fullname,
+          action_href: url,
+        },
       };
 
       await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {
@@ -234,12 +231,11 @@ export class BuildExportAction extends Action {
       await this.kernel.notify<NotifyParamsInterface>(
         notifySignature,
         {
-          password: '',
-          email: params.from.email,
-          fullname: params.from.fullname,
-          template: this.config.get('email.templates.export_csv_error'),
-          templateId: this.config.get('notification.templateIds.export_csv_error'),
-          link: '',
+          template: 'ExportCSVErrorNotification',
+          to: `${params.from.fullname} <${params.from.email}>`,
+          data: {
+            fullname: params.from.fullname,
+          },
         },
         {
           channel: {

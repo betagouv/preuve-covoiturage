@@ -58,7 +58,7 @@ export class SendInvitationEmailUserAction extends AbstractAction {
       this.authProvider.INVITED_STATUS,
     );
 
-    await this.notification.userCreated(token, user.email);
+    await this.notification.invite(token, user.email, `${user.firstname} ${user.lastname}`);
     return true;
   }
 }
