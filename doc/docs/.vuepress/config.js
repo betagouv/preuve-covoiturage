@@ -18,7 +18,46 @@ module.exports = {
           { text: 'Contribute', link: '/contribute/' },
         ],
         sidebar: {
-          '/partners/': 'auto',
+          '/partners/': [
+            {
+              title: 'Preuves de covoiturage',
+              path: '/partners/preuves/',
+              children: [
+                {
+                  title: "Accéder à l'API",
+                  path: 'preuves/acces',
+                },
+                {
+                  title: "Schema d'envoi JSON",
+                  path: 'preuves/schema',
+                },
+                {
+                  title: 'Vérifier le statut',
+                  path: 'preuves/statut',
+                },
+                {
+                  title: 'Invalider un trajet',
+                  path: 'preuves/invalider',
+                },
+                {
+                  title: 'Limites',
+                  path: 'preuves/limites',
+                },
+              ],
+            },
+            {
+              title: 'Visibilité opérateur',
+              path: '/partners/visibilite-du-nom-de-loperateur',
+            },
+            {
+              title: 'Générer une attestation',
+              path: '/partners/generer-attestation',
+            },
+            {
+              title: 'Outils',
+              path: '/partners/outils',
+            },
+          ],
           '/contribute/repo/': 'auto',
           '/contribute/app/': 'auto',
           '/contribute/api/': [
