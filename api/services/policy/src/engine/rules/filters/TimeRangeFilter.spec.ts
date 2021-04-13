@@ -4,6 +4,7 @@ import { faker } from '../../helpers/faker';
 import { TimeRangeFilter } from './TimeRangeFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { TripInterface } from '../../../interfaces';
+import { zonedTimeToUtc } from 'date-fns-tz';
 
 function setup(): { rule: TimeRangeFilter; trip: TripInterface } {
   const rule = new TimeRangeFilter([
@@ -25,7 +26,10 @@ function setup(): { rule: TimeRangeFilter; trip: TripInterface } {
   const startOutRange = new Date();
   startOutRange.setHours(12);
 
-  const trip = faker.trip([{ datetime: startInRange }, { datetime: startOutRange }]);
+  const trip = faker.trip([
+    { datetime: zonedTimeToUtc(startInRange, 'Europe/Paris') },
+    { datetime: zonedTimeToUtc(startOutRange, 'Europe/Paris') },
+  ]);
 
   return { rule, trip };
 }
