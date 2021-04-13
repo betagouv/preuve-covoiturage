@@ -44,19 +44,16 @@ export class CancelJourneyAction extends AbstractAction {
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
     // Store in database
-    try {
-      const { _id: acquisition_id } = await this.journeyRepository.exists(params.journey_id, params.operator_id);
-      // Perform cancelling action :)
-      await this.kernel.notify<UpdateStatusParams>(
-        updateStatusSignature,
-        { acquisition_id, status: 'canceled' },
-        callContext,
-      );
-    } catch (e) {
-      if (e instanceof NotFoundException) {
-        throw new NotFoundException(`Journey ${params.journey_id} does not exist`);
-      }
-      throw e;
+    const journeyData = await this.journeyRepository.exists(params.journey_id, params.operator_id);
+    if (!journeyData) {
+      throw new NotFoundException(`Journey ${params.journey_id} does not exist`);
     }
+
+    // Perform cancelling action :)
+    await this.kernel.notify<UpdateStatusParams>(
+      updateStatusSignature,
+      { acquisition_id: journeyData._id, status: 'canceled' },
+      callContext,
+    );
   }
 }

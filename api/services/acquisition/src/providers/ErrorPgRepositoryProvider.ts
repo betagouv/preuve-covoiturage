@@ -1,4 +1,4 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
@@ -165,29 +165,15 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     return result.rows[0];
   }
 
-  async find(data: { journey_id: string; operator_id?: number }): Promise<AcquisitionErrorInterface> {
-    const values = [data.journey_id];
-
-    let where = '';
-    if (data.operator_id) {
-      values.push(data.operator_id.toString());
-      where = 'AND operator_id = $2';
-    }
-
+  async findByJourneyAndOperator(journey_id: string, operator_id: number): Promise<AcquisitionErrorInterface[]> {
     const result = await this.connection.getClient().query({
       text: `
         SELECT * FROM ${this.table}
-        WHERE journey_id = $1
-        ${where}
-        LIMIT 1
+        WHERE journey_id = $1::varchar AND operator_id = $2::int
       `,
-      values,
+      values: [journey_id, operator_id],
     });
 
-    if (!result.rowCount) {
-      throw new NotFoundException();
-    }
-
-    return result.rows[0];
+    return result.rows;
   }
 }

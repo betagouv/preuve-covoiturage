@@ -1,4 +1,4 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import {
@@ -42,7 +42,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
     return result.rows[0];
   }
 
-  async exists(journey_id: string, operator_id: number): Promise<ExistsResultInterface> {
+  async exists(journey_id: string, operator_id: number): Promise<ExistsResultInterface | undefined> {
     const query = {
       text: `
         SELECT
@@ -58,7 +58,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
     const result = await this.connection.getClient().query(query);
 
     if (result.rowCount !== 1) {
-      throw new NotFoundException();
+      return undefined;
     }
 
     return result.rows[0];

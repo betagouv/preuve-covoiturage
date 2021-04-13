@@ -4,13 +4,9 @@ import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-mid
 
 import { alias } from '../shared/acquisition/status.schema';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/status.contract';
-import {
-  JourneyRepositoryProviderInterfaceResolver,
-  ExistsResultInterface,
-} from '../interfaces/JourneyRepositoryProviderInterface';
+import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 import { ErrorRepositoryProviderInterfaceResolver } from '../interfaces/ErrorRepositoryProviderInterface';
 import { CarpoolRepositoryInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
-import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 
 @handler({
   ...handlerConfig,
@@ -31,77 +27,92 @@ export class StatusJourneyAction extends AbstractAction {
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const { journey_id, operator_id } = params;
 
-    /**
-     * 1. check acquisition
-     * 2. check carpool if found
-     * 3. check errors on failure
-     */
+    const acquisition = await this.acquisitionRepository.exists(journey_id, operator_id);
+    const errors = (await this.errorRepository.findByJourneyAndOperator(journey_id, operator_id)).filter(
+      (e) => !e.error_resolved,
+    );
+    const carpool = await this.carpoolRepository.getStatusByAcquisitionId(acquisition?._id);
 
-    let acquisition: ExistsResultInterface;
-    let error: AcquisitionErrorInterface;
-    let carpool: string;
+    const acquisitionError = errors.find((e) => e.error_stage === 'acquisition');
+    const normalizationError = errors.find((e) => e.error_stage === 'normalization');
+    const otherError = errors.find((e) => ['acquisition', 'normalization'].indexOf(e.error_stage) < 0);
 
-    // fetch all states
-    try {
-      acquisition = await this.acquisitionRepository.exists(journey_id, operator_id);
-    } catch (e) {
-      if (!(e instanceof NotFoundException)) throw e;
-    }
+    const state = `${acquisition ? '1' : '0'}${carpool ? '1' : '0'}${
+      !errors.length ? '0' : acquisitionError ? '1' : normalizationError ? '3' : '7'
+    }`;
 
-    try {
-      error = await this.errorRepository.find({
-        journey_id,
-        operator_id,
-      });
-    } catch (e) {
-      if (!(e instanceof NotFoundException)) throw e;
-    }
+    switch (state) {
+      // no acquisition and no errors = Not found
+      case '000':
+        throw new NotFoundException();
 
-    try {
-      carpool = await this.carpoolRepository.status({
-        operator_id,
-        journey_id,
-        acquisition_id: acquisition?._id,
-      });
-    } catch (e) {
-      if (!(e instanceof NotFoundException)) throw e;
-    }
+      // no acquisition and acquisition error
+      case '001':
+        return {
+          status: `${acquisitionError.error_stage}_error`,
+          journey_id,
+          created_at: acquisitionError.created_at,
+          metadata: {
+            message: acquisitionError.error_message,
+          },
+        };
 
-    // make tree :/
-    if (!acquisition) {
-      if (!error) throw new NotFoundException();
-      return {
-        status: `${error.error_stage}_error`,
-        journey_id,
-        created_at: error.created_at,
-        metadata: {
-          message: error.error_message,
-        },
-      };
-    } else {
-      if (carpool) {
+      // acquisition ok and carpool ok
+      case '110':
         return {
           status: carpool,
           journey_id,
           created_at: acquisition.created_at,
         };
-      } else {
-        if (error) {
-          return {
-            status: `${error.error_stage}_error`,
-            journey_id,
-            created_at: error.created_at,
-            metadata: {
-              message: error.error_message,
-            },
-          };
-        }
+
+      // acquired, no carpool and no errors = Pending
+      case '100':
         return {
           status: 'pending',
           journey_id,
           created_at: acquisition.created_at,
         };
-      }
+
+      // acquired, no carpool and normalization error
+      case '103':
+        return {
+          status: `${normalizationError.error_stage}_error`,
+          journey_id,
+          created_at: normalizationError.created_at,
+          metadata: {
+            message: normalizationError.error_message,
+          },
+        };
+
+      // other errors
+      case '007':
+      case '107':
+        return {
+          status: `${otherError.error_stage}_error`,
+          journey_id,
+          created_at: otherError.created_at,
+          metadata: {
+            message: otherError.error_message,
+          },
+        };
+
+      // no acquisition, no carpool and normalization error
+      case '003':
+      // no acquisition and carpool = not possible
+      case '010':
+      case '011':
+      case '013':
+      case '017':
+      // acquisition and acquisition error = not possible
+      case '101':
+      // acquisition ok, carpool ok but still unresolved errors
+      case '111':
+      case '113':
+      case '117':
+        throw new Error(`Status system error (${state})`);
+
+      default:
+        throw new Error('Status system error');
     }
   }
 }
