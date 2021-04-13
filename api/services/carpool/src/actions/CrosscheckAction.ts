@@ -9,6 +9,7 @@ import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/Carpoo
 import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface';
 import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
 import { PeopleWithIdInterface } from '../interfaces/Carpool';
+import { getStatus } from '../helpers/getStatus';
 
 /*
  * Import journey in carpool database
@@ -67,27 +68,15 @@ export class CrosscheckAction extends Action {
       {
         ...sharedData,
         trip_id: tripId,
-        status: this.getStatus(
+        status: getStatus(
           sharedData.created_at,
           toProcess.map((e) => e.datetime),
+          this.config.get('rules.maxAge'),
         ),
       },
       toProcess,
     );
 
     return;
-  }
-
-  protected getStatus(created: Date, dates: Date[]): string {
-    const maxDiff = this.config.get('rules.maxAge');
-    return dates
-      .map(
-        (d) =>
-          // safe date casting for date array
-          (d.getTime ? d.getTime() : new Date(d).getTime()) -
-          (created.getTime ? created.getTime() : new Date(created).getTime()),
-      )
-      .map((diff) => diff >= maxDiff)
-      .reduce((status, isExpired) => (isExpired ? 'expired' : status), 'ok');
   }
 }
