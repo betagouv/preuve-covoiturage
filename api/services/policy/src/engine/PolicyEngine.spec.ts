@@ -90,14 +90,14 @@ test('should work and distribute incentive', async (t) => {
   const { engine, fakeCampaign } = setup();
   const trip = faker.trip([
     {
-      carpool_id: 1,
-      is_driver: false,
+      carpool_id: 2,
+      is_driver: true,
       distance: 1000,
     },
     {
-      carpool_id: 2,
-      is_driver: true,
-      distance: 2000,
+      carpool_id: 1,
+      is_driver: false,
+      distance: 1000,
     },
     {
       carpool_id: 3,

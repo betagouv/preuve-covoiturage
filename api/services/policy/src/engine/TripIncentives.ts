@@ -42,7 +42,7 @@ export class TripIncentives {
 
     for (const incentive of toReplaceIncentives) {
       const index = this.incentives.findIndex((i) => i.carpool_id === incentive.carpool_id);
-      if (index) {
+      if (index > -1) {
         this.incentives[index] = {
           ...incentive,
           amount: amountToDistributeEach,
