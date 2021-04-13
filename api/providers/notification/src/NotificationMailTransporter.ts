@@ -51,7 +51,7 @@ export class NotificationMailTransporter
     };
   }
 
-  protected async createTransport(verify = true): Promise<void> {
+  protected async createTransport(verify = false): Promise<void> {
     if (!this.transporter) {
       this.transporter = createTransport(this.config.get('notification.mail.smtp'));
       if (verify) {
