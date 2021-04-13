@@ -1,1 +1,1 @@
-# partners
+# Partners

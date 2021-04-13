@@ -1,31 +1,28 @@
 ---
+title: Attestations
 description: Génération d'attestations pour les utilisateurs de services de covoiturage
 ---
 
 # Attestations de covoiturage
 
-{% hint style="info" %}
 **Attestation sur l'honneur**
 
 Cette page concerne les attestations fournies par les opérateurs de covoiturage.
 
 Rendez-vous sur [https://attestation.covoiturage.beta.gouv.fr/](http://attestation.covoiturage.beta.gouv.fr/) pour générer votre attestation sur l'honneur.
-{% endhint %}
 
-{% hint style="warning" %}
 Cette fonctionnalité est en cours de développement.  
-En tant qu'opérateur de covoiturage, contactez nous si vous souhaitez y participer : [technique@covoiturage.beta.gouv.fr](mailto:technique@covoiturage.beta.gouv.fr)  
-  
+En tant qu'opérateur de covoiturage, contactez nous si vous souhaitez y participer : [technique@covoiturage.beta.gouv.fr](mailto:technique@covoiturage.beta.gouv.fr)
+
 Merci de [créer des tickets](https://github.com/betagouv/preuve-covoiturage/issues/new?template=certificate.md&labels=ATTESTATION&assignees=jonathanfallon) si vous rencontrez des problèmes.
-{% endhint %}
 
-## Statut de développement des fonctionnalités 
+## Statut de développement des fonctionnalités
 
-* [x] Génération de l'attestation par l'opérateur ;
-* [x] Téléchargement d'un PDF ;
-* [x] Page de vérification de l'attestation en ligne \(accès public\) ;
-* [x] Envoi de meta-données pour injecter les données personnelles du covoitureur ;
-* [x] Upload du logo de l'opérateur dans son profil.
+- :white_check_mark: Génération de l'attestation par l'opérateur ;
+- :white_check_mark: Téléchargement d'un PDF ;
+- :white_check_mark: Page de vérification de l'attestation en ligne \(accès public\) ;
+- :white_check_mark: Envoi de meta-données pour injecter les données personnelles du covoitureur ;
+- :white_check_mark: Upload du logo de l'opérateur dans son profil.
 
 ## **Création de l’attestation**
 
@@ -39,7 +36,7 @@ Authorization: Bearer ${application_token}
 
 Request {
     // Paramètres obligatoires
-    
+
     // const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
     "tz": "Europe/Paris",
     "identity": {
@@ -48,7 +45,7 @@ Request {
         "phone_trunc": "+336123456",
         "operator_user_id": "1111-222-333-4444"
     },
-    
+
     // Paramètres optionnels
     "start_at": "2019-01-01T00:00:00Z",
     "end_at": "2019-12-31T23:59:59Z",
@@ -161,10 +158,11 @@ Response [404 Not Found] {
 
 Ci-dessous l'attestation avec les méta-données ajoutées au PDF.
 
-* `operator.content` en **zone A**
-* `identity.name` en **zone B**
-* `identity.content` en **zone C**
-* `notes` en **zone D**
+- `operator.content` en **zone A**
+- `identity.name` en **zone B**
+- `identity.content` en **zone C**
+- `notes` en **zone D**
 
-![](../.gitbook/assets/att%20%281%29.png)
-
+```
+// TODO ajouter l'image
+```
