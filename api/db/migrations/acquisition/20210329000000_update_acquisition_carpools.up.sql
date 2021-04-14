@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS acquisition.carpools;
+
 CREATE OR REPLACE VIEW acquisition.carpools AS (
   SELECT
     acquisition_id,
