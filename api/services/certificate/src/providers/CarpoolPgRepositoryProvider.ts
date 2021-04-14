@@ -146,10 +146,10 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
         )
 
         SELECT
-          year AS y,
-          month AS m,
-          COUNT(*) AS trips,
-          SUM(km) AS km,
+          year::int AS y,
+          month::int AS m,
+          COUNT(*)::int AS trips,
+          SUM(km)::real AS km,
           GREATEST(SUM(rac), 0)::real AS rm -- cast to 4-byte float
         FROM merged
         GROUP BY year, month
