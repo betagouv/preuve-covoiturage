@@ -3,6 +3,7 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { RedisConnection } from '@ilos/connection-redis';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { defaultNotificationBindings } from '@pdc/provider-notification';
 
@@ -84,7 +85,10 @@ import { ContactformAction } from './actions/ContactformAction';
     challengeTokenMiddlewareBinding,
     ['validate', ValidatorMiddleware],
   ],
-  connections: [[PostgresConnection, 'connections.postgres']],
+  connections: [
+    [RedisConnection, 'connections.redis'],
+    [PostgresConnection, 'connections.postgres'],
+  ],
   handlers: [
     ChangePasswordUserAction,
     ChangePasswordWithTokenUserAction,
@@ -106,6 +110,7 @@ import { ContactformAction } from './actions/ContactformAction';
     HasUsersAction,
   ],
   commands: [SeedUsersCommand, FindInactiveCommand],
+  queues: ['user'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
