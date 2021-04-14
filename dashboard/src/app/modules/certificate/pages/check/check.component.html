@@ -33,6 +33,11 @@
             </td>
           </tr>
 
+          <tr *ngIf="data.total_km !== undefined">
+            <td>Distance</td>
+            <td>{{ data.total_km }} kilomètres</td>
+          </tr>
+
           <tr *ngIf="data.total_point !== undefined">
             <td>Points</td>
             <td>{{ data.total_point }} points</td>
