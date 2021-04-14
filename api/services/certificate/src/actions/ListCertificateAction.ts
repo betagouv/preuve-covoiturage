@@ -1,9 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import {
-  environmentBlacklistMiddleware,
-  copyGroupIdAndApplyGroupPermissionMiddlewares,
-} from '@pdc/provider-middleware';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
@@ -18,7 +15,6 @@ import { alias } from '../shared/certificate/list.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    environmentBlacklistMiddleware('production'),
     ['validate', alias],
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       operator: 'operator.certificate.list',

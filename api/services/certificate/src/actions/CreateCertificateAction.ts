@@ -2,10 +2,7 @@ import { upperFirst, omit } from 'lodash';
 import { handler, KernelInterfaceResolver, ConfigInterfaceResolver, ContextType } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
-import {
-  environmentBlacklistMiddleware,
-  copyGroupIdAndApplyGroupPermissionMiddlewares,
-} from '@pdc/provider-middleware';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
 import { alias } from '../shared/certificate/create.schema';
@@ -21,7 +18,6 @@ import { IdentityIdentifiersInterface } from '../shared/certificate/common/inter
 @handler({
   ...handlerConfig,
   middlewares: [
-    environmentBlacklistMiddleware('production'),
     ['validate', alias],
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       operator: 'operator.certificate.create',
