@@ -1,5 +1,5 @@
 import { upperFirst, omit } from 'lodash';
-import { handler, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
+import { handler, KernelInterfaceResolver, ConfigInterfaceResolver, ContextType } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import {
@@ -40,13 +40,13 @@ export class CreateCertificateAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<WithHttpStatus<ResultInterface>> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<WithHttpStatus<ResultInterface>> {
     const { identity, tz, operator_id, start_at, end_at, positions } = this.castParams(params);
 
     // fetch the data for this identity and operator and map to template object
     // get the last available UUID for the person. They can have many
     const personUUID = await this.findPerson(identity, operator_id);
-    const operator = await this.findOperator(operator_id);
+    const operator = await this.findOperator(operator_id, context);
 
     // fetch the data for this identity and operator and map to template object
     const certs = await this.findTrips({ identity, operator_id, tz, start_at, end_at, positions });
@@ -102,13 +102,13 @@ export class CreateCertificateAction extends AbstractAction {
     );
   }
 
-  private async findOperator(operator_id: number): Promise<any> {
+  private async findOperator(operator_id: number, context: ContextType): Promise<any> {
     return this.kernel.call(
       'operator:quickfind',
       { _id: operator_id, thumbnail: false },
       {
+        ...context,
         channel: { service: 'certificate' },
-        call: { user: { permissions: ['operator.read'] } },
       },
     );
   }
@@ -125,7 +125,7 @@ export class CreateCertificateAction extends AbstractAction {
    * Will be refactored when the ID engine is up and running
    */
   private castParams(params: ParamsInterface): ParamsInterface & { start_at: Date; end_at: Date } {
-    const origin = new Date('2020-01-01T00:00:00+0100'); // Europe/Paris
+    const origin = new Date('2019-01-01T00:00:00+0100'); // Europe/Paris
     const end_at_max = new Date().getTime() - this.config.get('delays.create.end_at_buffer', 6) * 86400000;
 
     let { start_at, end_at } = params;
