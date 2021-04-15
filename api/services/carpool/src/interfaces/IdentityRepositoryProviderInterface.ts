@@ -5,7 +5,7 @@ export interface IdentityMetaInterface {
 }
 
 export interface findUuidOptions {
-  create?: boolean;
+  generate?: boolean;
   interval?: number;
 }
 

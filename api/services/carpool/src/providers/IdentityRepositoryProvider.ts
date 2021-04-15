@@ -56,7 +56,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
         identity.travel_pass_name,
         identity.travel_pass_user_id,
         identity.over_18,
-        await this.findUuid(identity, meta, { create: true, interval: 30 }),
+        await this.findUuid(identity, meta, { generate: true, interval: 30 }),
       ],
     });
 
@@ -85,7 +85,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
     meta: IdentityMetaInterface,
     options?: findUuidOptions,
   ): Promise<string> {
-    const opts: findUuidOptions = { create: false, interval: 0, ...options };
+    const opts: findUuidOptions = { generate: false, interval: 0, ...options };
 
     /*
      * 1. Select uuid from the exact phone number
@@ -117,7 +117,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
           ${opts.interval > 0 ? `AND created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
           ORDER BY created_at DESC LIMIT 1
         )
-        ${opts.create ? ' UNION (SELECT to_timestamp(0)::timestamp as datetime, uuid_generate_v4() as uuid )' : ''}
+        ${opts.generate ? ' UNION (SELECT to_timestamp(0)::timestamp as datetime, uuid_generate_v4() as uuid )' : ''}
         ORDER BY datetime DESC
         LIMIT 1
         `,
