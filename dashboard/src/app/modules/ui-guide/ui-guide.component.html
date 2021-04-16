@@ -1,22 +1,14 @@
 <div class="UiGuide">
   <div class="page-header">
-    <h1 class="page-title">
-      UI-guide
-    </h1>
+    <h1 class="page-title">UI-guide</h1>
   </div>
   <div class="page-content">
-    <div class="UiGuide-title">
-      Menu
-    </div>
+    <div class="UiGuide-title">Menu</div>
     <div class="UiGuide-components">
       <app-header></app-header>
     </div>
-    <div class="UiGuide-title">
-      Buttons
-    </div>
-    <div class="UiGuide-subtitle">
-      Basic Buttons
-    </div>
+    <div class="UiGuide-title">Buttons</div>
+    <div class="UiGuide-subtitle">Basic Buttons</div>
     <div class="UiGuide-components">
       <button mat-button>Basic</button>
       <button mat-button color="primary">Primary</button>
@@ -25,9 +17,7 @@
       <button mat-button disabled>Disabled</button>
       <button mat-button class="color-punch">Punch</button>
     </div>
-    <div class="UiGuide-subtitle">
-      Stroked Buttons
-    </div>
+    <div class="UiGuide-subtitle">Stroked Buttons</div>
     <div class="UiGuide-components">
       <button mat-stroked-button>Basic</button>
       <button mat-stroked-button color="primary">Primary</button>
@@ -36,9 +26,7 @@
       <button mat-stroked-button disabled>Disabled</button>
       <button mat-stroked-button class="color-punch">Punch</button>
     </div>
-    <div class="UiGuide-subtitle">
-      Flat Buttons
-    </div>
+    <div class="UiGuide-subtitle">Flat Buttons</div>
     <div class="UiGuide-components">
       <button mat-flat-button>Basic</button>
       <button mat-flat-button color="primary">Primary</button>
@@ -47,9 +35,7 @@
       <button mat-flat-button disabled>Disabled</button>
       <button mat-flat-button class="color-punch">Punch</button>
     </div>
-    <div class="UiGuide-subtitle">
-      Flat Large Buttons
-    </div>
+    <div class="UiGuide-subtitle">Flat Large Buttons</div>
     <div class="UiGuide-components">
       <button mat-flat-button class="large">Basic</button>
       <button mat-flat-button class="large" color="primary">Primary</button>
@@ -58,9 +44,7 @@
       <button mat-flat-button class="large" disabled>Disabled</button>
       <button mat-flat-button class="large color-punch">Punch</button>
     </div>
-    <div class="UiGuide-subtitle">
-      Spinner Buttons
-    </div>
+    <div class="UiGuide-subtitle">Spinner Buttons</div>
     <div class="UiGuide-components">
       <button mat-flat-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="primary">Primary</button>
       <button mat-flat-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="accent">Accent</button>
@@ -69,18 +53,12 @@
       </button>
       <button mat-stroked-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="accent">Accent</button>
     </div>
-    <div class="UiGuide-title">
-      Links
-    </div>
+    <div class="UiGuide-title">Links</div>
     <div class="UiGuide-components">
       <a class="link">A Link</a>
     </div>
-    <div class="UiGuide-title">
-      Forms
-    </div>
-    <div class="UiGuide-subtitle">
-      Inputs
-    </div>
+    <div class="UiGuide-title">Forms</div>
+    <div class="UiGuide-subtitle">Inputs</div>
     <div class="UiGuide-components">
       <mat-form-field appearance="outline">
         <mat-label>Outline form field</mat-label>
@@ -96,9 +74,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="UiGuide-subtitle">
-      Inputs Small
-    </div>
+    <div class="UiGuide-subtitle">Inputs Small</div>
     <div class="UiGuide-components">
       <mat-form-field appearance="outline" class="small">
         <mat-label>Outline form field</mat-label>
@@ -114,32 +90,20 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="UiGuide-subtitle">
-      Checkboxes
-    </div>
+    <div class="UiGuide-subtitle">Checkboxes</div>
     <div class="UiGuide-components">
       <mat-checkbox color="primary">Check me!</mat-checkbox>
     </div>
-    <div class="UiGuide-subtitle">
-      Button toggle
-    </div>
+    <div class="UiGuide-subtitle">Button toggle</div>
     <div class="UiGuide-components">
       <mat-button-toggle-group>
-        <mat-button-toggle value="left" aria-label="left">
-          Left
-        </mat-button-toggle>
-        <mat-button-toggle value="center" aria-label="center">
-          center
-        </mat-button-toggle>
-        <mat-button-toggle value="right" aria-label="right">
-          right
-        </mat-button-toggle>
+        <mat-button-toggle value="left" aria-label="left"> Left </mat-button-toggle>
+        <mat-button-toggle value="center" aria-label="center"> center </mat-button-toggle>
+        <mat-button-toggle value="right" aria-label="right"> right </mat-button-toggle>
       </mat-button-toggle-group>
     </div>
 
-    <div class="UiGuide-subtitle">
-      Slider range
-    </div>
+    <div class="UiGuide-subtitle">Slider range</div>
     <div class="UiGuide-components">
       <nouislider
         [connect]="true"
@@ -151,15 +115,15 @@
       ></nouislider>
     </div>
 
-    <div class="UiGuide-title">
-      Help Card
-    </div>
+    <div class="UiGuide-title">Help Card</div>
     <div class="UiGuide-components">
       <app-help-card
         [svgIcon]="'new_car'"
         [title]="'Vous êtes nouveau sur Preuve de covoiturage ?'"
         [hint]="'Découvrez comment développer une politique de covoiturage efficace dans votre collectivité'"
-        [link]="'https://registre-preuve-de-covoiturage.gitbook.io/produit/boite-a-outils/guide-des-incitations'"
+        [link]="
+          'https://doc.covoiturage.beta.gouv.fr/territoires-beneficier-du-registre-de-preuve-de-covoiturage/guide-territoires-pour-devenir-partenaire/guide-des-incitations'
+        "
       >
       </app-help-card>
       <app-help-card
@@ -170,9 +134,7 @@
       >
       </app-help-card>
     </div>
-    <div class="UiGuide-title">
-      Menu Card
-    </div>
+    <div class="UiGuide-title">Menu Card</div>
     <div class="UiGuide-components">
       <app-menu-card
         [svgIcon]="'recherche'"
@@ -182,25 +144,19 @@
       >
       </app-menu-card>
     </div>
-    <div class="UiGuide-title">
-      Stepper
-    </div>
+    <div class="UiGuide-title">Stepper</div>
     <div class="UiGuide-components">
       <mat-horizontal-stepper #stepper>
         <mat-step>
           <ng-template matStepLabel>Step 1</ng-template>
-          <div>
-            Content 1
-          </div>
+          <div>Content 1</div>
           <div>
             <button mat-flat-button class="large" color="primary" matStepperNext>Suivant</button>
           </div>
         </mat-step>
         <mat-step>
           <ng-template matStepLabel>Step 2</ng-template>
-          <div>
-            Content 2
-          </div>
+          <div>Content 2</div>
           <div>
             <button mat-flat-button class="large" matStepperPrevious>Précédent</button>
             <button mat-flat-button class="large" color="primary" matStepperNext>Suivant</button>
@@ -208,9 +164,7 @@
         </mat-step>
         <mat-step>
           <ng-template matStepLabel>Step 3</ng-template>
-          <div>
-            Content 3
-          </div>
+          <div>Content 3</div>
           <div>
             <button mat-flat-button class="large" matStepperPrevious>Précédent</button>
             <button mat-flat-button class="large" color="primary" matStepperNext>Suivant</button>
@@ -218,18 +172,14 @@
         </mat-step>
         <mat-step>
           <ng-template matStepLabel>Step 4</ng-template>
-          <div>
-            Content 4
-          </div>
+          <div>Content 4</div>
           <div>
             <button mat-flat-button class="large" matStepperPrevious>Précédent</button>
           </div>
         </mat-step>
       </mat-horizontal-stepper>
     </div>
-    <div class="UiGuide-title">
-      Footer
-    </div>
+    <div class="UiGuide-title">Footer</div>
     <div class="UiGuide-components">
       <app-footer></app-footer>
     </div>

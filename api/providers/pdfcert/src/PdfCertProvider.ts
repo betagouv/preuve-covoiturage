@@ -87,8 +87,11 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       color: rgb(0.95, 0.95, 0.95),
     });
 
-    this.text('Points :', { x: 60, y: totalY, font: this.fonts.bold });
-    this.text(`${data.data.total_pt || 0}`, { x: 110, y: totalY, font: this.fonts.bold });
+    this.text('Distance :', { x: 60, y: totalY, font: this.fonts.bold });
+    this.text(`${data.data.total_km || 0} km`, { x: 120, y: totalY, font: this.fonts.bold });
+
+    this.text('Points :', { x: 180, y: totalY, font: this.fonts.bold });
+    this.text(`${data.data.total_pt || 0}`, { x: 230, y: totalY, font: this.fonts.bold });
 
     this.text('Reste à charge :', { x: 330, y: totalY, font: this.fonts.bold });
     this.text(`${this.currency(data.data.total_rm)} €`, { x: 440, y: totalY, font: this.fonts.bold });

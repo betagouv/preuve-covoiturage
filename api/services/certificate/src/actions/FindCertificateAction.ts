@@ -1,10 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
-import {
-  environmentBlacklistMiddleware,
-  hasPermissionMiddleware,
-  channelServiceWhitelistMiddleware,
-} from '@pdc/provider-middleware';
+import { hasPermissionMiddleware, channelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/certificate/find.contract';
@@ -13,7 +9,6 @@ import { alias } from '../shared/certificate/find.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    environmentBlacklistMiddleware('production'),
     hasPermissionMiddleware('common.certificate.find'),
     channelServiceWhitelistMiddleware('proxy'),
     ['validate', alias],

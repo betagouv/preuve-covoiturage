@@ -1,0 +1,2 @@
+DROP INDEX IF EXISTS carpool.identities_created_at_idx;
+DROP INDEX IF EXISTS carpool.identities_phone_trunc_travel_pass_name_travel_pass_user_id_idx;

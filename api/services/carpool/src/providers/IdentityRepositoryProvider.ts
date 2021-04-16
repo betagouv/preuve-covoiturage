@@ -6,6 +6,7 @@ import {
   IdentityRepositoryProviderInterface,
   IdentityRepositoryProviderInterfaceResolver,
   IdentityMetaInterface,
+  findUuidOptions,
 } from '../interfaces/IdentityRepositoryProviderInterface';
 
 /*
@@ -55,7 +56,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
         identity.travel_pass_name,
         identity.travel_pass_user_id,
         identity.over_18,
-        await this.findUuid(identity, meta),
+        await this.findUuid(identity, meta, { generate: true, interval: 30 }),
       ],
     });
 
@@ -79,7 +80,13 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
     return;
   }
 
-  public async findUuid(identity: IdentityInterface, meta: IdentityMetaInterface): Promise<string> {
+  public async findUuid(
+    identity: IdentityInterface,
+    meta: IdentityMetaInterface,
+    options?: findUuidOptions,
+  ): Promise<string> {
+    const opts: findUuidOptions = { generate: false, interval: 0, ...options };
+
     /*
      * 1. Select uuid from the exact phone number
      * 2. Select uuid from the phone_trunc and operator_user_id
@@ -92,7 +99,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
         (
           SELECT created_at as datetime, uuid FROM ${this.table}
           WHERE phone IS NOT NULL and phone = $1::varchar
-          AND created_at >= (NOW() - '30 days'::interval)::timestamp
+          ${opts.interval > 0 ? `AND created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
           ORDER BY created_at DESC LIMIT 1
         ) UNION
         (
@@ -100,19 +107,17 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
           JOIN carpool.carpools AS cp ON cp.identity_id = ci._id
           WHERE ci.phone_trunc IS NOT NULL AND ci.phone_trunc = $2::varchar
           AND cp.operator_id = $3::int AND ci.operator_user_id = $4::varchar
-          AND ci.created_at >= (NOW() - '30 days'::interval)::timestamp
+          ${opts.interval > 0 ? `AND ci.created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
           ORDER BY ci.created_at DESC LIMIT 1
         ) UNION
         (
           SELECT created_at as datetime, uuid FROM ${this.table}
           WHERE phone_trunc IS NOT NULL AND phone_trunc = $2::varchar
           AND travel_pass_name = $5::varchar AND travel_pass_user_id = $6::varchar
-          AND created_at >= (NOW() - '30 days'::interval)::timestamp
+          ${opts.interval > 0 ? `AND created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
           ORDER BY created_at DESC LIMIT 1
-        ) UNION
-        (
-          SELECT to_timestamp(0)::timestamp as datetime, uuid_generate_v4() as uuid
         )
+        ${opts.generate ? ' UNION (SELECT to_timestamp(0)::timestamp as datetime, uuid_generate_v4() as uuid )' : ''}
         ORDER BY datetime DESC
         LIMIT 1
         `,
@@ -126,10 +131,10 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
       ],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await this.connection.getClient().query<{ datetime: Date; uuid: string }>(query);
 
-    if (result.rowCount !== 1) {
-      throw new Error('Cant find uuid for this person');
+    if (!result.rowCount) {
+      throw new Error('Cannot find UUID for this person');
     }
 
     return result.rows[0].uuid;

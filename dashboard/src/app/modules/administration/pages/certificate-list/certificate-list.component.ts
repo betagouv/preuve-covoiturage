@@ -249,6 +249,14 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
           console.error(err);
           throw err;
         }),
+        catchHttpStatus(401, (err) => {
+          this.toastr.error('Non connecté');
+          throw err;
+        }),
+        catchHttpStatus(403, (err) => {
+          this.toastr.error('Action non autorisée');
+          throw err;
+        }),
         catchHttpStatus(404, (err) => {
           this.toastr.error('Identité non trouvée');
           throw err;
