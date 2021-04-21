@@ -32,7 +32,11 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
     return results.rows.map((r) => r.pp);
   }
 
-  async *findTripByPolicy(policy: ProcessableCampaign, batchSize = 100): AsyncGenerator<TripInterface[], void, void> {
+  async *findTripByPolicy(
+    policy: ProcessableCampaign,
+    batchSize = 100,
+    override = false,
+  ): AsyncGenerator<TripInterface[], void, void> {
     const query = {
       text: `
       SELECT
@@ -66,7 +70,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
         $3::int = ANY(pt.start_territory_id)
         OR $3::int = ANY(pt.end_territory_id)
       )
-      AND pi.carpool_id IS NULL
+      ${override ? '' : 'AND pi.carpool_id IS NULL'}
       GROUP BY pt.trip_id
       ORDER BY min(pt.datetime) ASC
       `,

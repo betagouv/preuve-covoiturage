@@ -11,7 +11,7 @@ interface TestContext {
 }
 const test = anyTest as TestInterface<TestContext>;
 
-test.before.skip(async (t) => {
+test.before(async (t) => {
   t.context.policyId = 0;
   t.context.connection = new PostgresConnection({
     connectionString:
@@ -24,14 +24,14 @@ test.before.skip(async (t) => {
   t.context.repository = new MetadataProvider(t.context.connection);
 });
 
-test.beforeEach.skip(async (t) => {
+test.beforeEach(async (t) => {
   await t.context.connection.getClient().query({
     text: `DELETE from ${t.context.repository.table} WHERE policy_id = $1`,
     values: [t.context.policyId],
   });
 });
 
-test.after.always.skip(async (t) => {
+test.after.always(async (t) => {
   // clean db
   await t.context.connection.getClient().query({
     text: `DELETE from ${t.context.repository.table} WHERE policy_id = $1`,
@@ -42,13 +42,13 @@ test.after.always.skip(async (t) => {
   await t.context.connection.down();
 });
 
-test.serial.skip('should always return a metadata wrapper', async (t) => {
+test.serial('should always return a metadata wrapper', async (t) => {
   const meta = await t.context.repository.get(t.context.policyId);
   t.true(meta instanceof MetadataWrapper);
   t.is(meta.keys().length, 0);
 });
 
-test.serial.skip('should create metadata wrapper on database', async (t) => {
+test.serial('should create metadata wrapper on database', async (t) => {
   const meta = await t.context.repository.get(t.context.policyId);
   t.true(meta instanceof MetadataWrapper);
   t.is(meta.keys().length, 0);
@@ -70,7 +70,7 @@ test.serial.skip('should create metadata wrapper on database', async (t) => {
   ]);
 });
 
-test.serial.skip('should update metadata wrapper on database', async (t) => {
+test.serial('should create another metadata wrapper on database', async (t) => {
   const meta = await t.context.repository.get(t.context.policyId);
   t.true(meta instanceof MetadataWrapper);
   t.is(meta.keys().length, 0);
@@ -86,11 +86,11 @@ test.serial.skip('should update metadata wrapper on database', async (t) => {
   await t.context.repository.set(t.context.policyId, meta2);
 
   const dbResult = await t.context.connection.getClient().query({
-    text: `SELECT key, value from ${t.context.repository.table} WHERE policy_id = $1 ORDER BY key`,
+    text: `SELECT key, value from ${t.context.repository.table} WHERE policy_id = $1 ORDER BY key, updated_at`,
     values: [t.context.policyId],
   });
 
-  t.is(dbResult.rowCount, 2);
+  t.is(dbResult.rowCount, 3);
   t.deepEqual(dbResult.rows, [
     {
       key: 'tata',
@@ -98,7 +98,16 @@ test.serial.skip('should update metadata wrapper on database', async (t) => {
     },
     {
       key: 'toto',
+      value: 0,
+    },
+    {
+      key: 'toto',
       value: 1,
     },
   ]);
+
+  const meta3 = await t.context.repository.get(t.context.policyId);
+  t.is(meta3.keys().length, 2);
+  t.is(meta3.get('toto'), 1);
+  t.is(meta3.get('tata'), 100);
 });
