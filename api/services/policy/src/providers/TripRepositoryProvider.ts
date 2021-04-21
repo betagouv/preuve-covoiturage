@@ -57,7 +57,9 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
           )
         ) as people
       FROM ${this.table} as pt
-      LEFT JOIN policy.incentives as pi ON pi.carpool_id = pt.carpool_id
+      LEFT JOIN policy.incentives as pi
+        ON pi.carpool_id = pt.carpool_id
+        AND pi.policy_id = $4::int
       WHERE pt.datetime >= $1::timestamp AND pt.datetime <= $2::timestamp
       AND pt.carpool_status = 'ok'::carpool.carpool_status_enum
       AND (
@@ -68,7 +70,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
       GROUP BY pt.trip_id
       ORDER BY min(pt.datetime) ASC
       `,
-      values: [policy.start_date, policy.end_date, policy.territory_id],
+      values: [policy.start_date, policy.end_date, policy.territory_id, policy.policy_id],
     };
 
     const client = await this.connection.getClient().connect();
