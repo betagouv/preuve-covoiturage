@@ -16,12 +16,12 @@ members.title = (providedTitle: string | undefined, table: string, expected: num
   providedTitle || `Check ${table} has ${expected} members`;
 
 // run tests
-macroTest.serial(members, 'common.roles', 7);
-macroTest.serial(members, 'auth.users', 10);
-macroTest.serial(members, 'company.companies', 4);
-macroTest.serial(members, 'operator.operators', 2);
-macroTest.serial(members, 'application.applications', 2);
-macroTest.serial(members, 'territory.territories', 60);
-macroTest.serial(members, 'carpool.identities', 10);
-macroTest.serial(members, 'acquisition.acquisitions', 100);
-macroTest.serial(members, 'carpool.carpools', 100 * 2);
+macroTest.serial.skip(members, 'common.roles', 7);
+macroTest.serial.skip(members, 'auth.users', 10);
+macroTest.serial.skip(members, 'company.companies', 4);
+macroTest.serial.skip(members, 'operator.operators', 2);
+macroTest.serial.skip(members, 'application.applications', 2);
+macroTest.serial.skip(members, 'territory.territories', 60);
+macroTest.serial.skip(members, 'carpool.identities', 10);
+macroTest.serial.skip(members, 'acquisition.acquisitions', 100);
+macroTest.serial.skip(members, 'carpool.carpools', 100 * 2);

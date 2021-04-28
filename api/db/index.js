@@ -11,7 +11,7 @@ async function createInstance() {
 
 }
 
-export async function migrate(...args) {
+async function migrate(...args) {
     if (!instance) {
         instance = await createInstance();
     }
@@ -19,7 +19,7 @@ export async function migrate(...args) {
     return instance.up(...args);
 }
 
-export async function createDatabase(name) {
+async function createDatabase(name) {
     if (!instance) {
         instance = await createInstance();
     }
@@ -27,10 +27,12 @@ export async function createDatabase(name) {
     return instance.createDatabase(name);
 }
 
-export async function dropDatabase(name) {
+async function dropDatabase(name) {
     if (!instance) {
         instance = await createInstance();
     }
 
     return instance.dropDatabase(name);
 }
+
+module.exports = { migrate, createDatabase, dropDatabase };
