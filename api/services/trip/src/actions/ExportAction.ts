@@ -2,7 +2,7 @@ import { get } from 'lodash';
 
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, InvalidParamsException } from '@ilos/common';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
+import { copyGroupIdFromContextMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
 
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
@@ -12,14 +12,16 @@ import {
   ParamsInterface as BuildParamsInterface,
 } from '../shared/trip/buildExport.contract';
 import * as middlewareConfig from '../config/middlewares';
+import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
 
 @handler({
   ...handlerConfig,
   middlewares: [
-    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      territory: 'territory.trip.export',
-      operator: 'operator.trip.export',
-      registry: 'registry.trip.export',
+    ...copyGroupIdFromContextMiddlewares(['territory_id', 'operator_id'], null, true),
+    ...groupPermissionMiddlewaresHelper({
+      territory: 'territory.trip.stats',
+      operator: 'operator.trip.stats',
+      registry: 'registry.trip.stats',
     }),
     ['validate', alias],
     validateDateMiddleware({

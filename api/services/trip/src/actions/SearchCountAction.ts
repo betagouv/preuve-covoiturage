@@ -1,19 +1,21 @@
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
+import { copyGroupIdFromContextMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/searchcount.contract';
-import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { alias } from '../shared/trip/searchcount.schema';
 import * as middlewareConfig from '../config/middlewares';
+import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/searchcount.contract';
+import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
 
 @handler({
   ...handlerConfig,
   middlewares: [
-    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      territory: 'territory.trip.list',
-      operator: 'operator.trip.list',
-      registry: 'registry.trip.list',
+    ...copyGroupIdFromContextMiddlewares(['territory_id', 'operator_id'], null, true),
+    ...groupPermissionMiddlewaresHelper({
+      territory: 'territory.trip.stats',
+      operator: 'operator.trip.stats',
+      registry: 'registry.trip.stats',
     }),
     ['validate', alias],
     validateDateMiddleware({

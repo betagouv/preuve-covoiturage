@@ -7,7 +7,7 @@ import {
   InvalidParamsException,
   ForbiddenException,
 } from '@ilos/common';
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 import { ConfiguredMiddleware } from '../interfaces';
 
 /**
@@ -43,7 +43,7 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
     }
     for (const [scopedPermission, contextPath, paramsPath] of permissionScopes) {
       if (
-        get(context, contextPath, Symbol()) === get(params, paramsPath, Symbol()) &&
+        this.belongsTo(get(params, paramsPath, Symbol()), get(context, contextPath, Symbol())) &&
         permissions.indexOf(scopedPermission) > -1
       ) {
         return next(params, context);
@@ -51,6 +51,12 @@ export class HasPermissionByScopeMiddleware implements MiddlewareInterface<HasPe
     }
 
     throw new ForbiddenException('Invalid permissions');
+  }
+
+  private belongsTo(value: any | any[], list: any | any[]): boolean {
+    const val = Array.isArray(value) ? value : [value];
+    const lst = Array.isArray(list) ? list : [list];
+    return val.reduce((p, c) => p && includes(lst, c), true);
   }
 }
 

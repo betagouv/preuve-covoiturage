@@ -4,10 +4,14 @@ import { ContextType, ForbiddenException } from '@ilos/common';
 import { HasPermissionByScopeMiddleware } from './HasPermissionByScopeMiddleware';
 
 const test = anyTest as TestInterface<{
-  mockConnectedUser: any;
+  mockSuperAdmin: any;
+  mockTerritoryAdmin: any;
   mockCreateUserParameters: any;
+  mockAllStatsParams: any;
+  mockTownStatsParams: any;
   contextFactory: Function;
-  middlewareConfig: any;
+  middlewareConfigUserCreate: any;
+  middlewareConfigTripStats: any;
   middleware: HasPermissionByScopeMiddleware;
 }>;
 
@@ -16,7 +20,7 @@ test.before((t) => {
     return {
       call: {
         user: {
-          ...t.context.mockConnectedUser,
+          ...t.context.mockSuperAdmin,
           ...params,
         },
       },
@@ -26,7 +30,7 @@ test.before((t) => {
     };
   };
 
-  t.context.mockConnectedUser = {
+  t.context.mockSuperAdmin = {
     _id: '1ab',
     email: 'john.schmidt@example.com',
     firstname: 'john',
@@ -34,7 +38,20 @@ test.before((t) => {
     phone: '0624857425',
     group: 'registry',
     role: 'admin',
-    permissions: ['user.create'],
+    permissions: ['registry.user.create'],
+  };
+
+  t.context.mockTerritoryAdmin = {
+    _id: 2,
+    email: 'territory.admin@example.com',
+    firstname: 'john',
+    lastname: 'schmidt',
+    phone: '0624857425',
+    group: 'territories',
+    role: 'admin',
+    territory_id: 42,
+    permissions: ['territory.trip.stats'],
+    authorizedTerritories: [42, 43, 44, 45],
   };
 
   t.context.mockCreateUserParameters = {
@@ -43,16 +60,35 @@ test.before((t) => {
     lastname: 'nelson',
     phone: '+33622222233',
     role: 'admin',
-    territory: 42,
+    territory_id: 42,
   };
 
-  t.context.middlewareConfig = [
-    'user.create',
+  t.context.middlewareConfigUserCreate = [
+    'registry.user.create',
     [
-      ['territory.users.add', 'call.user.territory', 'territory'],
-      ['operator.users.add', 'call.user.operator', 'operator'],
+      ['territory.users.add', 'call.user.territory_id', 'territory_id'],
+      ['operator.users.add', 'call.user.operator_id', 'operator_id'],
     ],
   ];
+
+  t.context.middlewareConfigTripStats = [
+    'registry.trip.stats',
+    [
+      ['territory.trip.stats', 'call.user.authorizedTerritories', 'territory_id'],
+      ['operator.trip.stats', 'call.user.operator_id', 'operator_id'],
+    ],
+  ];
+
+  t.context.mockAllStatsParams = {
+    date: { start: new Date('2020-01-01T00:00:00+0100') },
+    tz: 'Europe/Paris',
+  };
+
+  t.context.mockTownStatsParams = {
+    date: { start: new Date('2020-01-01T00:00:00+0100') },
+    territory_id: [43],
+    tz: 'Europe/Paris',
+  };
 
   t.context.middleware = new HasPermissionByScopeMiddleware();
 });
@@ -60,9 +96,9 @@ test.before((t) => {
 test('Middleware Scopetoself: has permission to create user', async (t) => {
   const result = await t.context.middleware.process(
     t.context.mockCreateUserParameters,
-    t.context.contextFactory({ permissions: ['user.create'] }),
+    t.context.contextFactory({ permissions: ['registry.user.create'] }),
     () => 'next() called',
-    t.context.middlewareConfig,
+    t.context.middlewareConfigUserCreate,
   );
 
   t.is(result, 'next() called');
@@ -73,10 +109,10 @@ test('Middleware Scopetoself: has permission to create territory user', async (t
     t.context.mockCreateUserParameters,
     t.context.contextFactory({
       permissions: ['territory.users.add'],
-      territory: t.context.mockCreateUserParameters.territory,
+      territory_id: t.context.mockCreateUserParameters.territory_id,
     }),
     () => 'next() called',
-    t.context.middlewareConfig,
+    t.context.middlewareConfigUserCreate,
   );
 
   t.is(result, 'next() called');
@@ -88,7 +124,7 @@ test('Middleware Scopetoself: territory admin - has no permission to create terr
       t.context.mockCreateUserParameters,
       t.context.contextFactory({ permissions: [], territory: t.context.mockCreateUserParameters.territory }),
       () => {},
-      t.context.middlewareConfig,
+      t.context.middlewareConfigUserCreate,
     ),
     { instanceOf: ForbiddenException },
   );
@@ -100,8 +136,61 @@ test('Middleware Scopetoself: registry admin - wrong territory', async (t) => {
       t.context.mockCreateUserParameters,
       t.context.contextFactory({ permissions: ['territory.users.add'], territory: 0 }),
       () => {},
-      t.context.middlewareConfig,
+      t.context.middlewareConfigUserCreate,
     ),
     { instanceOf: ForbiddenException },
   );
+});
+
+test('Middleware Scopetoself: super-admin can trip.stats', async (t) => {
+  const result = await t.context.middleware.process(
+    t.context.mockAllStatsParams,
+    t.context.contextFactory({ permissions: ['registry.trip.stats'] }),
+    () => 'next() called',
+    t.context.middlewareConfigTripStats,
+  );
+
+  t.is(result, 'next() called');
+});
+
+test('Middleware Scopetoself: super-admin can trip.stats with town filter', async (t) => {
+  const result = await t.context.middleware.process(
+    t.context.mockTownStatsParams,
+    t.context.contextFactory({ permissions: ['registry.trip.stats'] }),
+    () => 'next() called',
+    t.context.middlewareConfigTripStats,
+  );
+
+  t.is(result, 'next() called');
+});
+
+test('Middleware Scopetoself: territory-admin can trip.stats', async (t) => {
+  // mock territory_id being added by copy.from_context middleware
+  const params = { ...t.context.mockAllStatsParams, territory_id: t.context.mockTerritoryAdmin.territory_id };
+
+  const context = t.context.contextFactory(t.context.mockTerritoryAdmin);
+
+  const result = await t.context.middleware.process(
+    params,
+    context,
+    () => 'next() called',
+    t.context.middlewareConfigTripStats,
+  );
+
+  t.is(result, 'next() called');
+});
+
+test('Middleware Scopetoself: territory-admin can trip.stats w/ town filter', async (t) => {
+  // mock territory_id being added by copy.from_context middleware
+  const params = t.context.mockTownStatsParams;
+  const context = t.context.contextFactory(t.context.mockTerritoryAdmin);
+
+  const result = await t.context.middleware.process(
+    params,
+    context,
+    () => 'next() called',
+    t.context.middlewareConfigTripStats,
+  );
+
+  t.is(result, 'next() called');
 });
