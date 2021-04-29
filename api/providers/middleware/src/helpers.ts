@@ -51,7 +51,7 @@ export function groupPermissionMiddlewares(
   if (territoryPermission) {
     middlewareParameters.push([
       territoryPermission,
-      'call.user.territory_id',
+      'call.user.authorizedTerritories',
       buildPathWithPrefix('territory_id', targetPathPrefix),
     ]);
   }
