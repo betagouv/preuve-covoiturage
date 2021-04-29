@@ -182,7 +182,7 @@ test('Middleware Scopetoself: territory-admin can trip.stats', async (t) => {
 
 test('Middleware Scopetoself: territory-admin can trip.stats w/ town filter', async (t) => {
   // mock territory_id being added by copy.from_context middleware
-  const params = { ...t.context.mockAllStatsParams, territory_id: t.context.mockTerritoryAdmin.territory_id };
+  const params = t.context.mockTownStatsParams;
   const context = t.context.contextFactory(t.context.mockTerritoryAdmin);
 
   const result = await t.context.middleware.process(
