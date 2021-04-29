@@ -1,21 +1,23 @@
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { get } from 'lodash';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
+import { copyGroupIdFromContextMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
-import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { alias } from '../shared/trip/list.schema';
 import * as middlewareConfig from '../config/middlewares';
+import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
+import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
 
 // TODO
 @handler({
   ...handlerConfig,
   middlewares: [
-    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      territory: 'territory.trip.list',
-      operator: 'operator.trip.list',
-      registry: 'registry.trip.list',
+    ...copyGroupIdFromContextMiddlewares(['territory_id', 'operator_id'], null, true),
+    ...groupPermissionMiddlewaresHelper({
+      territory: 'territory.trip.stats',
+      operator: 'operator.trip.stats',
+      registry: 'registry.trip.stats',
     }),
     ['validate', alias],
     validateDateMiddleware({
