@@ -549,7 +549,21 @@ export class HttpTransport implements TransportInterface {
         await this.kernel.handle(
           createRPCPayload('honor:save', { type: req.body.type }, { permissions: ['common.honor.save'] }),
         );
-        res.status(201).header('Location', `${process.env.APP_APP_URL}/stats`).json({ saved: true });
+        res.status(201).header('Location', `${process.env.APP_APP_URL}/honor/stats`).json({ saved: true });
+      }),
+    );
+
+    /**
+     * Expose stats publicly
+     */
+    this.app.get(
+      '/honor/stats',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('honor:stats', {}, { permissions: ['common.honor.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
       }),
     );
   }
