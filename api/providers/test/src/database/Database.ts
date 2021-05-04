@@ -1,28 +1,66 @@
 import { createDatabase, dropDatabase, migrate } from '@pdc/migrator';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { URL } from 'url';
 
-import { Territory } from './territories';
+import { Territory, territories } from './territories';
+import { User, users } from './users';
 
 export class Database {
-  protected connection: PostgresConnection;
+  public connection: PostgresConnection;
+  public config: {
+    driver: string;
+    user: string;
+    password: string;
+    host: string;
+    database: string;
+    port: number;
+    ssl: boolean;
+  };
 
-  constructor(protected dbUrl: string, protected dbName: string) {}
-
+  constructor(dbUrlString: string, protected dbName: string = `test-${Date.now().valueOf()}`) {
+    const dbUrl = new URL(dbUrlString);
+    this.config = {
+      driver: 'pg',
+      user: dbUrl.username,
+      password: dbUrl.password,
+      host: dbUrl.hostname,
+      database: dbUrl.pathname.replace('/', ''),
+      port: parseInt(dbUrl.port),
+      ssl: false,
+    };
+  }
 
   async create() {
-    await createDatabase(this.dbName);
+    await createDatabase(this.config, this.dbName);
+    this.connection = new PostgresConnection({
+      ...this.config,
+      database: this.dbName,
+    });
   }
 
   async migrate() {
-    await migrate();
+    await migrate({
+      ...this.config,
+      database: this.dbName,
+    });
+    await this.connection.up();
   }
 
   async seed() {
+    await this.connection.getClient().query(`SET session_replication_role = 'replica'`);
+
+    for (const territory of territories) {
+      console.debug(`Seeding territory ${territory.name}`);
+      await this.seedTerritory(territory);
+    }
+
+    for (const user of users) {
+      console.debug(`Seeding user ${user.email}`);
+      await this.seedUser(user);
+    }
+
     /*
           - Territoires
-            - territory.territories
-            - territory.territory_codes
-            - territory.relation
             - company.companies
 
           - Operateurs
@@ -32,8 +70,6 @@ export class Database {
             - company.companies
             - territory.territory_operators
 
-          - Utilisateurs
-            - auth.users
           - Politiques
             - policy.policies
 
@@ -49,13 +85,44 @@ export class Database {
             - policy.policy_metas
             - policy.incentives
             +++ VIEWS +++ 
-        */
+    */
+    await this.connection.getClient().query(`SET session_replication_role = 'origin'`);
+  }
+
+  async seedUser(user: User) {
+    await this.connection.getClient().query({
+      text: `
+        INSERT INTO auth.users
+          (email, firstname, lastname, password, status, role, territory_id, operator_id)
+        VALUES (
+          $1::varchar,
+          $2::varchar,
+          $3::varchar,
+          $4::varchar,
+          $5::auth.user_status_enum,
+          $6::varchar,
+          $7::int,
+          $8::int
+        )
+        ON CONFLICT DO NOTHING 
+      `,
+      values: [
+        user.email,
+        user.firstname,
+        user.lastname,
+        user.password, // TODO: use cryptoprovider tcrypt password
+        user.status,
+        user.role,
+        user.territory?._id,
+        user.operator?._id,
+      ],
+    });
   }
 
   async seedTerritory(territory: Territory) {
     await this.connection.getClient().query({
       text: `
-        INSERT INTO terrritory.territories
+        INSERT INTO territory.territories
           (_id, name, level, geo, population, surface)
         VALUES
           (
@@ -66,20 +133,7 @@ export class Database {
             $5::int,
             $6::int
           )
-        ON CONFLICT (_id) DO UPDATE SET
-        (
-          name,
-          level,
-          geo,
-          population,
-          surface
-        ) = (
-          excluded.name,
-          excluded.level,
-          excluded.geo,
-          excluded.population,
-          excluded.surface
-        )
+        ON CONFLICT DO NOTHING
       `,
       values: [territory._id, territory.name, territory.level, territory.geo, territory.population, territory.surface],
     });
@@ -91,8 +145,8 @@ export class Database {
             INSERT INTO territory.territory_codes
               (territory_id, type, value)
             SELECT * FROM UNNEST($1::int[], $2::varchar[], $3::varchar[])
-            ON CONFLICT (territory_id, type)
-            DO UPDATE SET value = excluded.value
+            ON CONFLICT
+            DO NOTHING 
           `,
         values: [
           ...[
@@ -115,14 +169,14 @@ export class Database {
     if (territory.children && territory.children.length) {
       await this.connection.getClient().query({
         text: `
-            INSERT INTO territory.territory_relations 
+            INSERT INTO territory.territory_relation 
               (parent_territory_id, child_territory_id)
             SELECT * FROM UNNEST($1::int[], $2::int[])
             ON CONFLICT DO NOTHING
           `,
         values: [
           ...territory.children
-            .map((c) => ({ parent: territory._id, child: c }))
+            .map((c) => ({ parent: territory._id, child: c._id }))
             .reduce(
               (acc, r) => {
                 const [parent, child] = acc;
@@ -138,6 +192,9 @@ export class Database {
   }
 
   async drop() {
-    await dropDatabase(this.dbName);
+    if (this.connection) {
+      await this.connection.down();
+    }
+    await dropDatabase(this.config, this.dbName);
   }
 }

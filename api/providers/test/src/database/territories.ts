@@ -10,7 +10,6 @@ export interface Territory {
   level?: string;
   population?: number;
   surface?: number;
-  // account
 }
 
 export const belgique = {
@@ -18,6 +17,7 @@ export const belgique = {
   name: 'Belgique',
   insee: '99131',
   geo: geo.belgique,
+  level: 'country',
 };
 
 export const lille = {
@@ -25,15 +25,17 @@ export const lille = {
   name: 'Lille',
   insee: '59350',
   postcodes: ['59800', '59000', '59260', '59777', '59160'],
-  surface: 3478.89,
+  surface: 3478,
   population: 232440,
   geo: geo.lille,
+  level: 'town',
 };
 
 export const nord = {
   _id: 4,
   name: 'Nord',
   insee: '59',
+  level: 'district',
   children: [lille],
 };
 
@@ -41,6 +43,7 @@ export const hautsDeFrance = {
   _id: 3,
   name: 'Hauts-De-France',
   insee: '32',
+  level: 'region',
   children: [nord],
 };
 
@@ -49,8 +52,9 @@ export const massy = {
   name: 'Massy',
   insee: '91377',
   postcodes: ['91300'],
-  surface: 942.26,
+  surface: 942,
   population: 49924,
+  level: 'town',
   geo: geo.massy,
 };
 
@@ -59,8 +63,9 @@ export const palaiseau = {
   name: 'Palaiseau',
   insee: '91477',
   postcodes: ['91120'],
-  surface: 1165.35,
+  surface: 1165,
   population: 34120,
+  level: 'town',
   geo: geo.palaiseau,
 };
 
@@ -69,14 +74,16 @@ export const orsay = {
   name: 'Orsay',
   insee: '91471',
   postcodes: ['91400'],
-  surface: 743.53,
+  surface: 743,
   population: 16678,
+  level: 'town',
   geo: geo.orsay,
 };
 
 export const essonne = {
   _id: 17,
   name: 'Essonne',
+  level: 'district',
   insee: '91',
   children: [massy, palaiseau, orsay],
 };
@@ -84,6 +91,7 @@ export const essonne = {
 export const ileDeFrance = {
   _id: 6,
   name: 'Ile-De-France',
+  level: 'region',
   insee: '11',
   children: [essonne],
 };
@@ -93,8 +101,9 @@ export const lyon = {
   name: 'Lyon',
   insee: '69123',
   postcodes: ['69001', '69002', '69003', '69004', '69005', '69006', '69007', '69008', '69009'],
-  surface: 4797.51,
+  surface: 4797,
   population: 515695,
+  level: 'town',
   geo: geo.lyon,
 };
 
@@ -103,8 +112,9 @@ export const venissieux = {
   name: 'Vennisieux',
   insee: '69259',
   postcodes: ['69200'],
-  surface: 1545.04,
+  surface: 1545,
   population: 65405,
+  level: 'town',
   geo: geo.venissieux,
 };
 
@@ -112,6 +122,7 @@ export const rhone = {
   _id: 11,
   name: 'Rhone',
   insee: '69',
+  level: 'district',
   children: [lyon, venissieux],
 };
 
@@ -119,6 +130,7 @@ export const rhoneAlpes = {
   _id: 10,
   name: 'Rhone-Alpes',
   insee: '84',
+  level: 'region',
   children: [rhone],
 };
 
@@ -127,8 +139,9 @@ export const cayenne = {
   name: 'Cayenne',
   insee: '97302',
   postcodes: ['97300'],
-  surface: 2476.96,
+  surface: 2476,
   population: 60580,
+  level: 'town',
   geo: geo.cayenne,
 };
 
@@ -137,8 +150,9 @@ export const kourou = {
   name: 'Kourou',
   insee: '97304',
   postcodes: ['97310'],
-  surface: 230443.59,
+  surface: 230443,
   population: 26522,
+  level: 'town',
   geo: geo.kourou,
 };
 
@@ -146,12 +160,14 @@ export const guyane = {
   _id: 14,
   name: 'Guyane',
   insee: '973',
+  level: 'region',
   children: [cayenne, kourou],
 };
 
 export const france = {
   _id: 2,
   name: 'France',
+  level: 'country',
   children: [hautsDeFrance, ileDeFrance, rhoneAlpes, guyane],
 };
 
@@ -174,10 +190,3 @@ export const territories: Territory[] = [
   cayenne,
   kourou,
 ];
-
-export const operators = [{ name: 'Maxicovoit' }, { name: 'Megacovoit' }];
-
-export const users = [];
-export const policies = [];
-
-export const trips = [{}];

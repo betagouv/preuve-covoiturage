@@ -1,37 +1,39 @@
 const DBMigrate = require('db-migrate');
 
-let instance;
+const instances = new Map();
 
-async function createInstance() {
+async function createInstance(config) {
     const instance = DBMigrate.getInstance(true, {
+        config: { dev: config },
         cwd: __dirname,
         throwUncatched: true,
     });
+    instance.silence(true);
     await instance.registerAPIHook();
-
+    return instance;
 }
 
-async function migrate(...args) {
-    if (!instance) {
-        instance = await createInstance();
-    }
+function getInstance(config) {
+  return instances.get(JSON.stringify(config));
+}
 
+function setInstance(config, instance) {
+  instances.set(JSON.stringify(config), instance);
+  return instance;
+}
+
+async function migrate(config, ...args) {
+    const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
     return instance.up(...args);
 }
 
-async function createDatabase(name) {
-    if (!instance) {
-        instance = await createInstance();
-    }
-
+async function createDatabase(config, name) {
+    const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
     return instance.createDatabase(name);
 }
 
-async function dropDatabase(name) {
-    if (!instance) {
-        instance = await createInstance();
-    }
-
+async function dropDatabase(config, name) {
+    const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
     return instance.dropDatabase(name);
 }
 

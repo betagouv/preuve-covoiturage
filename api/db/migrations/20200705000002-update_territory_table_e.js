@@ -13,25 +13,6 @@ var { createMigration } = require('../helpers/createMigration');
 var { setup, up, down } = createMigration(
   ['territory/20200606000004_clean_territory_names'],
   __dirname,
-  async (up = true) => {
-    if (up) {
-      console.debug('call sync:region_dep');
-      try {
-        const { stdout, stderr } = await exec(
-          `yarn workspace @pdc/proxy ilos sync:region_dep -u ${process.env.APP_POSTGRES_URL}`,
-          {
-            cwd: path.resolve(path.resolve(__dirname, '..', '..')),
-          },
-        );
-        if (stderr) {
-          throw new Error(stderr);
-        }
-      } catch (e) {
-        console.error(e.message, e);
-        throw e;
-      }
-    }
-  },
 );
 
 exports.setup = setup;
