@@ -22,9 +22,9 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
   // order is reflected in the data table
   public readonly statuses: string[] = [
     CampaignStatusEnum.VALIDATED,
-    CampaignStatusEnum.ENDED,
     CampaignStatusEnum.PENDING,
     CampaignStatusEnum.DRAFT,
+    CampaignStatusEnum.ENDED,
     CampaignStatusEnum.ARCHIVED,
   ];
 
