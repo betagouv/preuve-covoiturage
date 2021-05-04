@@ -69,6 +69,15 @@ export class CommonDataService {
     return this._territories$.value;
   }
 
+  // indexed array with names
+  get territoryNames(): string[] {
+    const list = [];
+    this._territories$.value.map((t) => {
+      list[t._id] = t.name;
+    });
+    return list;
+  }
+
   get activableTerritories(): Territory[] {
     return this._activableTerritories$.value;
   }
