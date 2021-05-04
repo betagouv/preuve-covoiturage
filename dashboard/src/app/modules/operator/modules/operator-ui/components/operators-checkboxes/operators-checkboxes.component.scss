@@ -9,14 +9,18 @@
 }
 
 .mat-checkbox-list--vertical {
+  overflow: hidden;
   list-style: none;
-  padding-left: 0.2em;
-  columns: 3;
-  @media only screen and (max-width: 640px) {
-    columns: 2;
-  }
+  padding: 0.5em 0 0.5em 0.6em;
   .mat-checkbox-list-item {
-    padding: 0.2em 0.1em 0.3em;
+    display: inline-block;
+    width: 33%;
+    @media only screen and (max-width: 640px) {
+      width: 50%;
+    }
+    > div {
+      padding: 0.2em 0.1em 0.3em;
+    }
   }
 }
 

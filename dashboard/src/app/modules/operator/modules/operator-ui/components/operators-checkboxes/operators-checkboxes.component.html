@@ -12,9 +12,9 @@
   <form [formGroup]="form">
     <ul *ngIf="operators.length" class="mat-checkbox-list--vertical">
       <li formArrayName="boxes" *ngFor="let item of checkboxes.controls; let i = index" class="mat-checkbox-list-item">
-        <mat-checkbox [formControlName]="i">
-          {{ operators[i].name }}
-        </mat-checkbox>
+        <div>
+          <mat-checkbox [formControlName]="i">{{ operators[i].name }}</mat-checkbox>
+        </div>
       </li>
     </ul>
   </form>
