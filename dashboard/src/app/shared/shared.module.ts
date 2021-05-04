@@ -18,6 +18,7 @@ import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { RangeTimePickerComponent } from './components/range-time-picker/range-time-picker.component';
 import { UploadComponent } from './components/upload/upload.component';
 import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
+import { ButtonHrefDirective } from './directives/button-href.directive';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress
     PageContentComponent,
     PageHeaderComponent,
     UploadComponent,
+    ButtonHrefDirective,
   ],
   imports: [MaterialModule, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule],
   exports: [

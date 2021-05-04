@@ -7,6 +7,7 @@ export const URLS = {
   gitbookLinkStats: 'https://doc.covoiturage.beta.gouv.fr/specifications/statistiques',
   faqOperator: 'https://doc.covoiturage.beta.gouv.fr/fonctionnement/faq-foire-aux-questions#technique-and-donnees',
   faqTerritory: 'https://doc.covoiturage.beta.gouv.fr/fonctionnement/faq-foire-aux-questions',
+  technicalDoc: 'https://tech.covoiturage.beta.gouv.fr/',
   contactEmail: 'contact@covoiturage.beta.gouv.fr',
   legalMentions: 'https://doc.covoiturage.beta.gouv.fr/presentation/mentions-legales',
   githubLink: 'https://github.com/betagouv/preuve-covoiturage',
