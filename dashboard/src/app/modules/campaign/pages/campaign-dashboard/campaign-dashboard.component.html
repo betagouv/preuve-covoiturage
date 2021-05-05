@@ -3,13 +3,7 @@
     <div class="CampaignDashboard-trips">
       <div class="CampaignDashboard-trips-header">
         <h1>Toutes vos campagnes</h1>
-        <button
-          mat-flat-button
-          [routerLink]="'/campaign/create'"
-          [disabled]="canSeeDemoCaption"
-          class="color-punch"
-          *ngIf="canCreate"
-        >
+        <button mat-flat-button [routerLink]="'/campaign/create'" class="color-punch" *ngIf="canCreate">
           Créer une nouvelle campagne
         </button>
       </div>
@@ -26,13 +20,7 @@
       <app-campaign-menu></app-campaign-menu>
       <div class="CampaignDashboard-content-header">
         <h2>Vos campagnes en cours</h2>
-        <button
-          mat-flat-button
-          [routerLink]="'/campaign/create'"
-          [disabled]="canSeeDemoCaption"
-          color="primary"
-          *ngIf="canCreate"
-        >
+        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary" *ngIf="canCreate">
           Nouvelle campagne
         </button>
       </div>
