@@ -6,6 +6,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { CommonDataService } from '~/core/services/common-data.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { CAMPAIGN_STATUS_FR, CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
@@ -21,9 +22,9 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
   // order is reflected in the data table
   public readonly statuses: string[] = [
     CampaignStatusEnum.VALIDATED,
-    CampaignStatusEnum.ENDED,
     CampaignStatusEnum.PENDING,
     CampaignStatusEnum.DRAFT,
+    CampaignStatusEnum.ENDED,
     CampaignStatusEnum.ARCHIVED,
   ];
 
@@ -57,7 +58,11 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
       : "Vous n'avez pas de campagnes.";
   }
 
-  constructor(private _campaignStoreService: CampaignStoreService, private fb: FormBuilder) {
+  constructor(
+    private campaignStoreService: CampaignStoreService,
+    private fb: FormBuilder,
+    private commonDataService: CommonDataService,
+  ) {
     super();
   }
 
@@ -67,7 +72,7 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
 
     // API call
     merge(
-      this._campaignStoreService.campaignsUx$.pipe(
+      this.campaignStoreService.campaignsUx$.pipe(
         debounceTime(100),
         map((list: CampaignUx[]): CampaignUx[] => {
           let _ia: number, _ib: number;
@@ -96,7 +101,8 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
       });
 
     // load data
-    this._campaignStoreService.loadList();
+    this.commonDataService.loadTerritories();
+    this.campaignStoreService.loadList();
   }
 
   public paginationUpdate(): void {
@@ -111,9 +117,12 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     const query = this.searchFilters?.value?.query ?? '';
 
     // filter results using search field
-    this.filteredCampaigns = this.campaigns.filter((c) =>
-      `${c.description} ${c.name}`.toLowerCase().includes(query.toLowerCase()),
-    );
+    // inject territory name
+    this.filteredCampaigns = this.campaigns
+      .map((c) => ({ ...c, territory: this.commonDataService.territoryNames[c._id] || null }))
+      .filter((c) => {
+        return `${c.territory} ${c.description} ${c.name}`.toLowerCase().includes(query.toLowerCase());
+      });
 
     return this.filteredCampaigns.slice(start, end);
   }

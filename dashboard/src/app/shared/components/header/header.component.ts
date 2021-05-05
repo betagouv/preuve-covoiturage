@@ -7,6 +7,7 @@ import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { AuthenticationService as Auth } from '~/core/services/authentication/authentication.service';
+import { URLS } from '~/core/const/main.const';
 
 @Component({
   selector: 'app-header',
@@ -64,5 +65,9 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
     else if (this.hasTerritoryGroup) return 'public';
     else if (this.hasRegistryGroup) return 'local_police';
     return 'directions_car';
+  }
+
+  public getDocURL(): string {
+    return this.auth && this.auth.isOperator() ? URLS.technicalDoc : URLS.gitbookLink;
   }
 }

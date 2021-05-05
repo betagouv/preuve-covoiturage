@@ -67,8 +67,8 @@
         - visible if territory or registry
         - an operator is visible by a territory only if it accepted to be visible
       -->
-      <h3 *ngIf="!user.isOperator">Opérateurs</h3>
-      <app-operators-checkboxes *ngIf="!user.isOperator" formControlName="operators"></app-operators-checkboxes>
+      <h3 *ngIf="!user.isOperator()">Opérateurs</h3>
+      <app-operators-checkboxes *ngIf="!user.isOperator()" formControlName="operators"></app-operators-checkboxes>
 
       <div class="actions">
         <button

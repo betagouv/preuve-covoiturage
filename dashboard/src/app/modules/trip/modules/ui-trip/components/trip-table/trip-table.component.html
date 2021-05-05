@@ -55,7 +55,7 @@
 
   <ng-container matColumnDef="class">
     <th mat-header-cell *matHeaderCellDef>Classe</th>
-    <td mat-cell *matCellDef="let row">
+    <td mat-cell *matCellDef="let row" [matTooltip]="getRankTip(row)" matTooltipClass="allow-cr">
       {{ getTripRank(row) }}
     </td>
   </ng-container>

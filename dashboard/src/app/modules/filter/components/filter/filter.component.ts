@@ -27,7 +27,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   public classes = TRIP_RANKS;
   public tripStatusList = [TripStatusEnum.OK];
   public minDate: string;
-  public maxDate = new Date(new Date().getTime() - 86400000); // 1 day ago
+  public maxDate = new Date(new Date().getTime() - 86400000 * 5); // 5 days ago
   public userIsTerritory: boolean;
 
   public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];

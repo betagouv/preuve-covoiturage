@@ -102,3 +102,7 @@ a.link:visited {
 :focus {
   outline: none;
 }
+
+.allow-cr {
+  white-space: pre;
+}

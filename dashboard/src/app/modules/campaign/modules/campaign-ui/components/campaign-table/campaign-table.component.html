@@ -23,7 +23,7 @@
   <ng-container matColumnDef="territory">
     <th mat-header-cell *matHeaderCellDef>Territoire</th>
     <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-email">
-      {{ getTerritoryName(campaign.territory_id) }}
+      {{ campaign.territory || '-' }}
     </td>
   </ng-container>
 

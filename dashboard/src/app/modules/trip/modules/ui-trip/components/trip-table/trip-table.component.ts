@@ -7,6 +7,7 @@ import { CommonDataService } from '~/core/services/common-data.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { Operator } from '~/core/entities/operator/operator';
 import { LightTripInterface } from 'shared/trip/common/interfaces/LightTripInterface';
+import { TOOLTIPS } from '~/core/const/tooltips.const';
 
 @Component({
   selector: 'app-trip-table',
@@ -123,5 +124,9 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
 
   getTripRank(trip: LightTripInterface): string {
     return trip.operator_class;
+  }
+
+  getRankTip(trip: LightTripInterface): string {
+    return TOOLTIPS.classes[trip.operator_class] || null;
   }
 }
