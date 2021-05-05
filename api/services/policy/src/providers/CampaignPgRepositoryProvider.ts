@@ -233,14 +233,20 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
   }
 
   async findWhere(search: {
+    _id?: number;
     territory_id?: number | null | number[];
     status?: string;
     datetime?: Date;
+    ends_in_the_future?: boolean;
   }): Promise<CampaignInterface[]> {
     const values = [];
     const whereClauses = ['deleted_at IS NULL'];
     for (const key of Reflect.ownKeys(search)) {
       switch (key) {
+        case '_id':
+          values.push(search[key]);
+          whereClauses.push(`_id = $${values.length}`);
+          break;
         case 'status':
           values.push(search[key]);
           whereClauses.push(`status::text = $${values.length}`);
@@ -260,6 +266,9 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
         case 'datetime':
           values.push(search[key]);
           whereClauses.push(`start_date <= $${values.length}::timestamp AND end_date >= $${values.length}::timestamp`);
+          break;
+        case 'ends_in_the_future':
+          whereClauses.push(`end_date ${search[key] ? '>' : '<'} NOW()`);
           break;
         default:
           break;
