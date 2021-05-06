@@ -15,7 +15,7 @@ import { OperatorComponent } from './pages/operator/operator.component';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
-import { UsersComponent } from './pages/users/users.component';
+import { UsersComponent } from './pages/old-users/users.component';
 import { CertificateListComponent } from './pages/certificate-list/certificate-list.component';
 
 const routes: Routes = [
@@ -49,6 +49,10 @@ const routes: Routes = [
       },
       {
         path: 'users',
+        loadChildren: () => import('./pages/users/users.module').then((m) => m.UsersModule),
+      },
+      {
+        path: 'old-users',
         component: UsersComponent,
         data: { groups: [Groups.Territory, Groups.Operator] },
       },

@@ -86,6 +86,15 @@ export class CommonDataService {
     return this._operators$.value;
   }
 
+  // indexed array with names
+  get operatorNames(): string[] {
+    const list = [];
+    this._operators$.value.map((t) => {
+      list[t._id] = t.name;
+    });
+    return list;
+  }
+
   get campaigns(): Campaign[] {
     return this._campaigns$.value;
   }

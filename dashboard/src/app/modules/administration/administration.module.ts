@@ -28,7 +28,7 @@ import { OperatorComponent } from './pages/operator/operator.component';
 import { OperatorVisibilityComponent } from './pages/operator-visibility/operator-visibility.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
-import { UsersComponent } from './pages/users/users.component';
+import { UsersComponent } from './pages/old-users/users.component';
 
 @NgModule({
   declarations: [

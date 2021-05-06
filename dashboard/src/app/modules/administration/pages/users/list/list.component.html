@@ -1,0 +1,108 @@
+<section>
+  <header>
+    <h2>Utilisateurs</h2>
+
+    <div class="Users-list-actions">
+      <!-- add user -->
+      <button
+        mat-flat-button
+        routerLink="create"
+        color="primary"
+        matTooltip="Ajouter un utilisateur"
+        matTooltipPosition="left"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+
+      <form [formGroup]="filters" class="search">
+        <!-- list filtering -->
+        <mat-form-field appearance="outline">
+          <mat-label>Rechercher</mat-label>
+          <input matInput placeholder="nom ou email" formControlName="query" autocomplete="off" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <!-- group selection -->
+        <mat-checkbox (change)="onGroupChange($event)" value="registry" [checked]="isChecked('registry')">
+          Registre
+        </mat-checkbox>
+        <mat-checkbox (change)="onGroupChange($event)" value="operators" [checked]="isChecked('operators')">
+          Opérateurs
+        </mat-checkbox>
+        <mat-checkbox (change)="onGroupChange($event)" value="territories" [checked]="isChecked('territories')">
+          Territoires
+        </mat-checkbox>
+      </form>
+    </div>
+  </header>
+
+  <main>
+    <!-- loader -->
+    <div class="loader" *ngIf="loading">
+      <mat-spinner diameter="25"></mat-spinner>
+    </div>
+
+    <div class="datatable">
+      <table mat-table [dataSource]="users">
+        <!-- Firstname Lastname -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nom</th>
+          <td mat-cell *matCellDef="let user">{{ user?.name }} <span *ngIf="user?.is_me">(Vous)</span></td>
+        </ng-container>
+
+        <!-- Email -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let user">
+            {{ user?.email }}
+          </td>
+        </ng-container>
+
+        <!-- Role -->
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Role</th>
+          <td mat-cell *matCellDef="let user">
+            {{ user?.role }}
+          </td>
+        </ng-container>
+
+        <!-- Operator -->
+        <ng-container matColumnDef="operator">
+          <th mat-header-cell *matHeaderCellDef>Opérateur</th>
+          <td mat-cell *matCellDef="let user">
+            {{ user?.operator || '-' }}
+          </td>
+        </ng-container>
+
+        <!-- Territory -->
+        <ng-container matColumnDef="territory">
+          <th mat-header-cell *matHeaderCellDef>Territoire</th>
+          <td mat-cell *matCellDef="let user" [matTooltip]="user?.territory || '-'">
+            {{ user?.territory || '-' }}
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let user">
+            <a *ngIf="canReInvite(user)" (click)="onSendInvitation(user)">
+              <mat-icon matTooltip="Renvoyer l'invitation" color="primary">mail_outline</mat-icon>
+            </a>
+            <a *ngIf="canEdit() && !isCurrentUser(user._id)" (click)="onEdit(user)">
+              <mat-icon matTooltip="Editer" color="primary">edit_outline</mat-icon>
+            </a>
+            <a *ngIf="canDelete(user)" (click)="onDelete(user)">
+              <mat-icon matTooltip="Supprimer l'accès" color="error">delete_outline</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="headers"></tr>
+        <tr mat-row *matRowDef="let row; columns: headers"></tr>
+      </table>
+
+      <!-- paginator -->
+      <mat-paginator [length]="total" [pageSize]="PAGE_SIZE" (page)="onPageChange($event)"></mat-paginator>
+    </div>
+  </main>
+</section>
