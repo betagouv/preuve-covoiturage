@@ -1,9 +1,10 @@
 import { combineLatest, merge, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -21,6 +22,8 @@ import { Groups, USER_GROUPS_FR } from '~/core/enums/user/groups';
 export class ListComponent extends DestroyObservable implements OnInit, AfterViewInit {
   private _users: any[] = [];
   private _search: string = '';
+  private _sortKey: string = 'name';
+  private _sortDir: string = 'asc';
 
   public readonly PAGE_SIZE = 10;
   public readonly init = {
@@ -37,6 +40,7 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
   public headers: string[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     public auth: AuthenticationService,
@@ -92,6 +96,7 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
             email: u.email,
             group: u.group,
             role: roles[u.role.split('.')[1]],
+            status: u.status,
             operator: operators[u.operator_id] || null,
             territory: territories[u.territory_id] || null,
           })),
@@ -103,6 +108,8 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
       this.route.queryParamMap.pipe(
         tap((params: ParamMap) => {
           this._search = params.get('query') || '';
+          this._sortKey = params.get('sort') || 'name';
+          this._sortDir = params.get('direction') || 'asc';
 
           // reset the field value on the next tick
           // without emitting an update event to avoid
@@ -131,7 +138,11 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
                   `${u.email} ${u.name} ${u.role}`.toLowerCase().includes(this._search.toLowerCase()) &&
                   this.filters.get('groups').value.indexOf(u.group) > -1,
               )
-              .sort((a, b) => a.firstname.localeCompare(b.firstname)),
+              .sort((a, b) => {
+                const source = this._sortDir === 'asc' ? a : b;
+                const target = this._sortDir === 'asc' ? b : a;
+                return (source[this._sortKey] || '').localeCompare(target[this._sortKey] || '');
+              }),
           ),
         ),
         tap((users) => (this.total = users.length)),
@@ -146,6 +157,14 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
         this.users = users;
         this.loading = false;
       });
+  }
+
+  // sort
+  public onSortChange(): void {
+    this.router.navigate([], {
+      queryParams: { sort: this.sort.active, direction: this.sort.direction },
+      queryParamsHandling: 'merge',
+    });
   }
 
   // paginator
