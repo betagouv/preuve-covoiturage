@@ -24,3 +24,11 @@ p {
     margin: 0 25px 0 0;
   }
 }
+
+.radio-group {
+  display: block;
+  margin: 0.5em 0 1em;
+  .radio-button {
+    margin: 0.1em 0.5em;
+  }
+}
