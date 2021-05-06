@@ -33,6 +33,14 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
     return this.campaignUx?.status === 'draft';
   }
 
+  get hasExpired(): boolean {
+    return this.campaignUx?.end.toDate().getTime() < new Date().getTime();
+  }
+
+  get isLaunchable(): boolean {
+    return this.isDraft && this.userIsTerritory && !this.userIsDemo;
+  }
+
   constructor(
     public auth: AuthenticationService,
     private _router: Router,

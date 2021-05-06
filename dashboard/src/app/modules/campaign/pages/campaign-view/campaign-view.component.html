@@ -11,7 +11,8 @@
       </div>
     </div>
 
-    <div *ngIf="isDraft && userIsTerritory && !userIsDemo" class="launch-draft">
+    <!-- Launchable campaign -->
+    <div *ngIf="isLaunchable && !hasExpired" class="launch-draft">
       <div>
         <mat-icon class="dot">fiber_manual_record</mat-icon>
         <div>
@@ -21,6 +22,26 @@
       </div>
       <button mat-flat-button type="button" color="primary" (click)="launchCampaign(campaignUx._id)">
         Lancer ma campagne
+      </button>
+    </div>
+
+    <!-- Expired campaign -->
+    <div *ngIf="hasExpired" class="launch-draft">
+      <div>
+        <mat-icon class="dot">fiber_manual_record</mat-icon>
+        <div>
+          <h4>Votre campagne a expiré</h4>
+          <p>Vous pouvez modifier sa date de fin pour la réactualiser</p>
+        </div>
+      </div>
+      <button
+        mat-flat-button
+        type="button"
+        color="primary"
+        routerLink="/campaign/edit/{{ campaignUx._id }}"
+        [queryParams]="{ section: 1 }"
+      >
+        Modifier
       </button>
     </div>
 

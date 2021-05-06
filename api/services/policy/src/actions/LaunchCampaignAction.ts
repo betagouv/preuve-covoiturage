@@ -1,4 +1,4 @@
-import { handler, InvalidParamsException } from '@ilos/common';
+import { handler, InvalidParamsException, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
@@ -19,11 +19,16 @@ export class LaunchCampaignAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
-    const campaign: CampaignInterface & { start_date: Date } = await this.campaignRepository.findOneWhereTerritory(
-      params._id,
-      params.territory_id,
-    );
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    const campaigns: Array<CampaignInterface & { start_date: Date }> = await this.campaignRepository.findWhere({
+      _id: params._id,
+      territory_id: params.territory_id,
+      ends_in_the_future: true,
+    });
+
+    if (!campaigns.length) throw new NotFoundException(`Campaign ${params._id} not found`);
+
+    const campaign = campaigns[0];
 
     const patch = {
       status: 'active',

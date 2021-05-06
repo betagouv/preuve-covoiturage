@@ -40,9 +40,11 @@ export abstract class CampaignRepositoryProviderInterfaceResolver implements Cam
   }
 
   async findWhere(search: {
-    territory_id?: number | number[] | null;
+    _id?: number;
+    territory_id?: number | null | number[];
     status?: string;
     datetime?: Date;
+    ends_in_the_future?: boolean;
   }): Promise<CampaignInterface[]> {
     throw new Error();
   }
