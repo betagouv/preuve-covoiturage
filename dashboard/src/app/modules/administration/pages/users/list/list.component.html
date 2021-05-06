@@ -1,18 +1,38 @@
 <section>
   <header>
-    <h2>Utilisateurs</h2>
+    <div class="actions-left">
+      <h2>Utilisateurs</h2>
+    </div>
 
-    <div class="Users-list-actions">
+    <div class="actions-center">
+      <!-- group selection -->
+      <div *ngIf="auth.isRegistry()">
+        <mat-checkbox
+          *ngFor="let item of init.groupNames | keyvalue"
+          (change)="onGroupChange($event)"
+          [value]="item.key"
+          [checked]="isChecked(item.key)"
+        >
+          {{ item.value }}
+        </mat-checkbox>
+      </div>
+    </div>
+
+    <div class="actions-right">
       <!-- add user -->
-      <button
-        mat-flat-button
-        routerLink="create"
-        color="primary"
-        matTooltip="Ajouter un utilisateur"
-        matTooltipPosition="left"
-      >
-        <mat-icon>add</mat-icon>
-      </button>
+      <div>
+        <button
+          *ngIf="auth.isAdmin()"
+          mat-flat-button
+          routerLink="create"
+          color="primary"
+          matTooltip="Ajouter un utilisateur"
+          matTooltipPosition="left"
+          class="add-user"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
 
       <form [formGroup]="filters" class="search">
         <!-- list filtering -->
@@ -21,17 +41,6 @@
           <input matInput placeholder="nom ou email" formControlName="query" autocomplete="off" />
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
-
-        <!-- group selection -->
-        <mat-checkbox (change)="onGroupChange($event)" value="registry" [checked]="isChecked('registry')">
-          Registre
-        </mat-checkbox>
-        <mat-checkbox (change)="onGroupChange($event)" value="operators" [checked]="isChecked('operators')">
-          Opérateurs
-        </mat-checkbox>
-        <mat-checkbox (change)="onGroupChange($event)" value="territories" [checked]="isChecked('territories')">
-          Territoires
-        </mat-checkbox>
       </form>
     </div>
   </header>

@@ -11,6 +11,7 @@ import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { USER_ROLES_FR } from '~/core/enums/user/roles';
+import { Groups, USER_GROUPS_FR } from '~/core/enums/user/groups';
 
 @Component({
   selector: 'app-list',
@@ -20,22 +21,25 @@ import { USER_ROLES_FR } from '~/core/enums/user/roles';
 export class ListComponent extends DestroyObservable implements OnInit, AfterViewInit {
   private _users: any[] = [];
   private _search: string = '';
-  private init = {
+
+  public readonly PAGE_SIZE = 10;
+  public readonly init = {
     page: 0,
-    groups: 'registry,operators,territories',
+    groups: [Groups.Registry, Groups.Operator, Groups.Territory].join(','),
+    groupNames: USER_GROUPS_FR,
+    headers: ['name', 'email', 'role', 'operator', 'territory', 'actions'],
   };
 
-  public PAGE_SIZE = 10;
   public users: any[] = [];
   public total: number = 0;
   public filters: FormGroup = null;
   public loading: boolean = true;
-  public headers: string[] = ['name', 'email', 'role', 'operator', 'territory', 'actions'];
+  public headers: string[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
-    private auth: AuthenticationService,
+    public auth: AuthenticationService,
     private userStore: UserStoreService,
     private commonData: CommonDataService,
     private route: ActivatedRoute,
@@ -61,6 +65,10 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
 
     // set the query limit to get all users at once
     this.userStore.filterSubject.next({ limit: 1000 });
+
+    // set the datatable headers
+    this.headers = [...this.init.headers];
+    if (!this.auth.isRegistry()) this.headers.splice(3, 2);
   }
 
   // instead of ngOnInit to get 'this.paginator' to be loaded

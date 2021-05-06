@@ -1,0 +1,31 @@
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.actions-center {
+  .mat-checkbox {
+    line-height: 50px;
+    padding: 0 0.5em;
+  }
+}
+
+.actions-right {
+  display: flex;
+  flex-direction: row;
+  .add-user {
+    min-width: 0;
+    line-height: 50px;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline {
+    .mat-form-field-wrapper {
+      margin-top: 0;
+      margin-left: 0.5em;
+    }
+    .mat-form-field-infix {
+      padding: 0.8em 0;
+    }
+  }
+}

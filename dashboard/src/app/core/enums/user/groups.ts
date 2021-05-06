@@ -6,7 +6,7 @@ export enum Groups {
 
 export const USER_GROUPS: Groups[] = Object.values(Groups);
 export const USER_GROUPS_FR = {
-  territories: 'Territoire',
-  operators: 'Opérateur',
+  territories: 'Territoires',
+  operators: 'Opérateurs',
   registry: 'Registre',
 };
