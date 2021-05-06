@@ -34,7 +34,16 @@
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": ["src/favicon.ico", "src/.htaccess", "src/assets", "src/manual-503.html"],
-            "styles": ["src/styles.scss", "src/styles/theme.scss"],
+            "styles": [
+              {
+                "input": "src/styles.scss",
+                "bundleName": "styles"
+              },
+              {
+                "input": "src/styles/theme.scss",
+                "bundleName": "theme"
+              }
+            ],
             "stylePreprocessorOptions": {
               "includePaths": ["src/styles"]
             },
