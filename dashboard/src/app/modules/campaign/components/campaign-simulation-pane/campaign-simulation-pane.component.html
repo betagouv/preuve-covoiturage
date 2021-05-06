@@ -1,14 +1,10 @@
 <div class="SimForm-summary">
-  <h4>
-    Simulation de votre campagne sur une durée de&nbsp;&nbsp;&nbsp;<mat-form-field appearance="fill">
-      <mat-label>Nombre de mois</mat-label>
-      <mat-select [(value)]="months">
-        <mat-option [value]="1">1 mois</mat-option>
-        <mat-option [value]="2">2 mois</mat-option>
-        <mat-option [value]="3">3 mois</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </h4>
+  <h4>Simulation de votre campagne sur une durée de&nbsp;:</h4>
+  <mat-radio-group [(ngModel)]="months" aria-label="Choisir une durée de simulation" class="radio-group">
+    <mat-radio-button class="radio-button" [value]="1">1&nbsp;mois</mat-radio-button>
+    <mat-radio-button class="radio-button" [value]="2">2&nbsp;mois</mat-radio-button>
+    <mat-radio-button class="radio-button" [value]="3">3&nbsp;mois</mat-radio-button>
+  </mat-radio-group>
   <p>
     Cette estimation se base sur les trajets réalisés du {{ timeState.startDateString }} au
     {{ timeState.endDateString }}

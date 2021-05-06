@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { format } from 'date-fns';
+import { format, subDays, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { omit } from 'lodash-es';
 import { BehaviorSubject, combineLatest } from 'rxjs';
@@ -86,7 +86,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
   ngOnChanges({ campaign }: { campaign: SimpleChange }): void {
     const { previousValue, currentValue } = campaign;
 
-    // keys no triggering a refresh
+    // keys not triggering a refresh
     const bypassKeys = ['name', 'description'];
     const hasChanged = !deepEqual(omit(previousValue, bypassKeys), omit(currentValue, bypassKeys));
     if (hasChanged) this.simulatedCampaign$.next(new CampaignUx(currentValue));
@@ -100,17 +100,9 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
  */
 
 function getTimeState(nbMonth: number): SimulationDateRange {
-  const d = new Date();
-
-  // take last month if the day number is up to 5
-  // else take the month before
-  const monthOffset = d.getDate() > 5 ? 0 : -1;
-
-  // end last day of define of month before
-  const endDate = new Date(d.getFullYear(), d.getMonth() + monthOffset, 0);
-  // start first day of month before based on defined months count (1 > 3 months)
-
-  const startDate = new Date(d.getFullYear(), d.getMonth() - nbMonth + monthOffset, 1);
+  // 5 days ago
+  const endDate = subDays(new Date(), 5);
+  const startDate = subMonths(endDate, nbMonth);
 
   return {
     nbMonth,
