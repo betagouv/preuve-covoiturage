@@ -29,12 +29,7 @@ export class AdministrationLayoutComponent {
     {
       path: '/admin/users',
       label: 'Utilisateurs & accès',
-      show: () => this.auth.isOperator() || this.auth.isTerritory(),
-    },
-    {
-      path: '/admin/all-users',
-      label: 'Utilisateurs & accès',
-      show: () => this.auth.isSuperAdmin(),
+      show: () => true,
     },
     {
       path: '/admin/all-territories',

@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
-import { AllUsersComponent } from '~/modules/administration/pages/all-users/all-users.component';
 import { ApplicationUiModule } from '~/modules/operator/modules/application-ui/application-ui.module';
 import { ChangePasswordModule } from '~/modules/authentication/modules/change-password/change-password.module';
 import { MaterialModule } from '~/shared/modules/material/material.module';
@@ -28,21 +27,18 @@ import { OperatorComponent } from './pages/operator/operator.component';
 import { OperatorVisibilityComponent } from './pages/operator-visibility/operator-visibility.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
-import { UsersComponent } from './pages/old-users/users.component';
 
 @NgModule({
   declarations: [
     AdministrationLayoutComponent,
     AllOperatorsComponent,
     AllTerritoriesComponent,
-    AllUsersComponent,
     ApiComponent,
     CertificateMetaDialogComponent,
     OperatorComponent,
     OperatorVisibilityComponent,
     ProfileComponent,
     TerritoryComponent,
-    UsersComponent,
   ],
   imports: [
     AdministrationRoutingModule,
