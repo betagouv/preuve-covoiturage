@@ -96,7 +96,7 @@ a.link:link,
 a.link:visited {
   cursor: pointer;
   color: $color-primary-dark;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 :focus {

@@ -25,12 +25,13 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
   private _sortKey: string = 'name';
   private _sortDir: string = 'asc';
 
-  public readonly PAGE_SIZE = 10;
-  public readonly init = {
+  public readonly PAGE_SIZE = 25;
+  private readonly init = {
     page: 0,
     groups: [Groups.Registry, Groups.Operator, Groups.Territory].join(','),
     groupNames: USER_GROUPS_FR,
-    headers: ['name', 'email', 'role', 'operator', 'territory', 'actions'],
+    headers: ['role', 'name', 'email', 'operator', 'territory', 'actions'],
+    roleIcons: { admin: 'stars', user: 'face', demo: 'science' },
   };
 
   public users: any[] = [];
@@ -41,6 +42,10 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+
+  get groupNames(): { [key: string]: string } {
+    return this.init.groupNames;
+  }
 
   constructor(
     public auth: AuthenticationService,
@@ -70,7 +75,7 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
     // set the query limit to get all users at once
     this.userStore.filterSubject.next({ limit: 1000 });
 
-    // set the datatable headers
+    // set the datatable
     this.headers = [...this.init.headers];
     if (!this.auth.isRegistry()) this.headers.splice(3, 2);
   }
@@ -84,9 +89,10 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
         this.commonData.territories$.pipe(map(() => this.commonData.territoryNames)),
         this.commonData.operators$.pipe(map(() => this.commonData.operatorNames)),
         of(USER_ROLES_FR),
+        of(this.init.roleIcons),
         this.userStore.entities$,
       ]).pipe(
-        map(([territories, operators, roles, users]) =>
+        map(([territories, operators, roles, icons, users]) =>
           users.map((u) => ({
             _id: u._id,
             name: `${u.firstname} ${u.lastname}`,
@@ -96,8 +102,11 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
             email: u.email,
             group: u.group,
             role: roles[u.role.split('.')[1]],
+            icon: icons[u.role.split('.')[1]],
             status: u.status,
+            operator_id: u.operator_id || null,
             operator: operators[u.operator_id] || null,
+            territory_id: u.territory_id || null,
             territory: territories[u.territory_id] || null,
           })),
         ),
@@ -135,13 +144,20 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
             this._users
               .filter(
                 (u) =>
-                  `${u.email} ${u.name} ${u.role}`.toLowerCase().includes(this._search.toLowerCase()) &&
-                  this.filters.get('groups').value.indexOf(u.group) > -1,
+                  `${u.email} ${u.name} ${u.role} ${u.operator} ${u.territory}`
+                    .toLowerCase()
+                    .includes(this._search.toLowerCase()) && this.filters.get('groups').value.indexOf(u.group) > -1,
               )
               .sort((a, b) => {
-                const source = this._sortDir === 'asc' ? a : b;
-                const target = this._sortDir === 'asc' ? b : a;
-                return (source[this._sortKey] || '').localeCompare(target[this._sortKey] || '');
+                // swap source and target depending on sorting order
+                const source = this._sortDir === 'asc' ? a[this._sortKey] : b[this._sortKey];
+                const target = this._sortDir === 'asc' ? b[this._sortKey] : a[this._sortKey];
+
+                // invert sorting for null values
+                if (!source) return 1;
+                if (!target) return -1;
+
+                return source.localeCompare(target || '', { sensitivity: 'base' });
               }),
           ),
         ),
@@ -162,7 +178,7 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
   // sort
   public onSortChange(): void {
     this.router.navigate([], {
-      queryParams: { sort: this.sort.active, direction: this.sort.direction },
+      queryParams: { sort: this.sort.active, direction: this.sort.direction, page: 0 },
       queryParamsHandling: 'merge',
     });
   }

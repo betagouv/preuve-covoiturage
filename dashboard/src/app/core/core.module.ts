@@ -22,22 +22,20 @@ import { SentryErrorHandler } from './services/sentry-error-handler.service';
 @NgModule({
   declarations: [
     AuthenticatedLayoutComponent,
-    NotAuthenticatedLayoutComponent,
     ConfirmDialogComponent,
+    NotAuthenticatedLayoutComponent,
     NotFoundComponent,
     ServiceUnavailableComponent,
   ],
   imports: [
-    CommonModule,
-    BrowserModule,
     BrowserAnimationsModule,
+    BrowserModule,
+    CommonModule,
     HttpClientModule,
+    MaterialModule,
     RouterModule,
     SharedModule,
-    MaterialModule,
-    ToastrModule.forRoot({
-      preventDuplicates: true,
-    }),
+    ToastrModule.forRoot({ preventDuplicates: true }),
   ],
   // entryComponents: [ConfirmDialogComponent],
   providers: [
