@@ -1,0 +1,88 @@
+<form class="user-form" (submit)="onSubmitForm($event)" (reset)="onResetForm()" [formGroup]="form">
+  <div class="group">
+    <!-- First name -->
+    <mat-form-field appearance="outline" required>
+      <mat-label>Prénom</mat-label>
+      <input matInput formControlName="firstname" required />
+      <mat-error *ngIf="form.get('firstname').hasError('required')">Le prénom est requis.</mat-error>
+    </mat-form-field>
+
+    <!-- Last name -->
+    <mat-form-field appearance="outline">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="lastname" required />
+      <mat-error *ngIf="form.get('lastname').hasError('required')">Le nom est requis.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <!-- Email -->
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" required />
+    <mat-error *ngIf="form.get('email').hasError('required')">L'email est requis.</mat-error>
+    <mat-error *ngIf="form.get('email').hasError('pattern')">L'email est invalide.</mat-error>
+  </mat-form-field>
+
+  <!-- Phone number -->
+  <mat-form-field appearance="outline">
+    <mat-label>Numéro de téléphone</mat-label>
+    <input matInput formControlName="phone" />
+    <mat-error *ngIf="form.get('phone').hasError('pattern')">Le numéro de téléphone est invalide.</mat-error>
+  </mat-form-field>
+
+  <!-- Group -->
+  <mat-radio-group formControlName="group">
+    <mat-label>Groupe</mat-label>
+    <mat-radio-button value="registry">Registre</mat-radio-button>
+    <mat-radio-button value="operators">Opérateur</mat-radio-button>
+    <mat-radio-button value="territories" checked>Territoire</mat-radio-button>
+  </mat-radio-group>
+
+  <!-- Role -->
+  <mat-radio-group formControlName="role">
+    <mat-label>Rôle</mat-label>
+    <mat-radio-button value="admin">Administrateur</mat-radio-button>
+    <mat-radio-button value="user" checked>Consultation</mat-radio-button>
+    <mat-radio-button value="demo" *ngIf="form.get('group').value === 'territories'">Découverte</mat-radio-button>
+  </mat-radio-group>
+
+  <mat-form-field appearance="outline" *ngIf="form.get('group').value === 'territories'">
+    <mat-label>Territoire</mat-label>
+    <input matInput formControlName="territory_id" />
+    <mat-hint class="mat-error" *ngIf="form.hasError('territory_id')">Le territoire est requis</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="form.get('group').value === 'operators'">
+    <mat-label>Opérateur</mat-label>
+    <input matInput formControlName="operator_id" />
+    <mat-hint class="mat-error" *ngIf="form.hasError('operator_id')">L'opérateur est requis</mat-hint>
+  </mat-form-field>
+
+  <div class="actions">
+    <button type="reset" mat-flat-button>Annuler</button>
+    <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid">Enregistrer</button>
+  </div>
+
+  <div class="hint">
+    <p *ngIf="form.get('group').value === 'registry' && form.get('role').value === 'admin'">
+      Un super administrateur a tous les droits, gestion des utilisateurs, création de campagnes, création d'opérateurs
+      et de territoires, etc...
+    </p>
+    <p *ngIf="form.get('group').value === 'territories' && form.get('role').value === 'admin'">
+      Un administrateur a tous les droits, gestion des utilisateurs, création de campagnes, etc...
+    </p>
+    <p *ngIf="form.get('group').value === 'operators' && form.get('role').value === 'admin'">
+      Un administrateur a tous les droits, gestion des utilisateurs, création de token applicatif, etc...
+    </p>
+    <p *ngIf="form.get('role').value === 'user'">
+      Un compte 'Consultation' permet d'accéder aux données en lecture, etc...
+    </p>
+    <p *ngIf="form.get('role').value === 'demo'">
+      Un compte 'Découverte' permet aux territoires de créer et simuler des campagnes sur les données de leur
+      territoire. Un administrateur sera requis pour le lancement de la campagne
+    </p>
+  </div>
+</form>
+
+<pre>{{ form.get('email').errors | json }}</pre>
+<pre>{{ form.value | json }}</pre>

@@ -12,9 +12,10 @@ import { ListComponent } from './list/list.component';
 import { EditComponent } from './edit/edit.component';
 import { CreateComponent } from './create/create.component';
 import { UsersRoutingModule } from './users-routing.module';
+import { UpsertComponent } from './_cmp/upsert/upsert.component';
 
 @NgModule({
-  declarations: [ListComponent, CreateComponent, EditComponent],
+  declarations: [ListComponent, CreateComponent, EditComponent, UpsertComponent],
   imports: [
     CommonModule,
     FormsModule,

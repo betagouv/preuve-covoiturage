@@ -245,7 +245,7 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
       });
   }
   public onEdit(user: UiUser): void {
-    this.router.navigate(['/users', user._id]);
+    this.router.navigate(['/admin/users', user._id]);
   }
   public onDelete(user: UiUser): void {
     this.dialog
