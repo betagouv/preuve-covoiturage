@@ -92,46 +92,43 @@ export class User
     };
   }
 
-  updateFromFormValues(formVal: any): User {
-    this.map(formVal);
+  updateFromFormValues(formValues: any): User {
+    this.map(formValues);
 
-    this.email = formVal.email.trim();
-    this.lastname = formVal.lastname.trim();
-    this.firstname = formVal.firstname.trim();
+    this.email = formValues.email.trim();
+    this.lastname = formValues.lastname.trim();
+    this.firstname = formValues.firstname.trim();
+    this.role = `${userGroupRole[formValues.group]}.${formValues.role}` as Roles; // consolidate final role
 
-    formVal.phone = formVal.phone ?? null;
+    formValues.phone = formValues.phone ?? null;
 
     // remove unwanted values depending on group
     switch (this.group) {
       case Groups.Operator:
-        delete formVal.territory_id;
+        delete formValues.territory_id;
         delete this.territory_id;
-        if (formVal.operator_id) this.operator_id = +formVal.operator_id;
+        if (formValues.operator_id) this.operator_id = +formValues.operator_id;
         break;
       case Groups.Territory:
-        delete formVal.operator_id;
+        delete formValues.operator_id;
         delete this.operator_id;
-        if (formVal.territory_id) this.territory_id = +formVal.territory_id;
+        if (formValues.territory_id) this.territory_id = +formValues.territory_id;
         break;
       default:
-        delete formVal.territory_id;
+        delete formValues.territory_id;
         delete this.territory_id;
-        delete formVal.operator_id;
+        delete formValues.operator_id;
         delete this.operator_id;
     }
 
     delete this.permissions;
 
+    // patch cannot change group/territory/operator ????
     if (this._id) {
       delete this.territory_id;
       delete this.operator_id;
       delete this.group;
-      delete this.role;
-    } else {
-      this.role = `${userGroupRole[formVal.group]}.${formVal.role}` as Roles; // consolidate final role
     }
-
-    delete formVal.group;
 
     return this;
   }

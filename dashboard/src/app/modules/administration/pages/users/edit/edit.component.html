@@ -1,1 +1,11 @@
-<p>edit works!</p>
+<h2>Modifier un utilisateur</h2>
+
+<div *ngIf="!user" class="loading"><mat-spinner diameter="25"></mat-spinner></div>
+
+<app-upsert
+  *ngIf="user"
+  [user]="user"
+  [fields]="['firstname', 'lastname', 'email', 'phone', 'role']"
+  (onSubmit)="onSubmit($event)"
+  (onReset)="onReset($event)"
+></app-upsert>

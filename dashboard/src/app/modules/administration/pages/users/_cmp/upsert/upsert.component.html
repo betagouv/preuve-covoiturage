@@ -1,14 +1,14 @@
 <form class="user-form" (submit)="onSubmitForm($event)" (reset)="onResetForm()" [formGroup]="form">
   <div class="group">
     <!-- First name -->
-    <mat-form-field appearance="outline" required>
+    <mat-form-field *ngIf="isShown('firstname')" appearance="outline" required>
       <mat-label>Prénom</mat-label>
       <input matInput formControlName="firstname" required />
       <mat-error *ngIf="form.get('firstname').hasError('required')">Le prénom est requis.</mat-error>
     </mat-form-field>
 
     <!-- Last name -->
-    <mat-form-field appearance="outline">
+    <mat-form-field *ngIf="isShown('lastname')" appearance="outline">
       <mat-label>Nom</mat-label>
       <input matInput formControlName="lastname" required />
       <mat-error *ngIf="form.get('lastname').hasError('required')">Le nom est requis.</mat-error>
@@ -16,7 +16,7 @@
   </div>
 
   <!-- Email -->
-  <mat-form-field appearance="outline">
+  <mat-form-field *ngIf="isShown('email')" appearance="outline">
     <mat-label>Email</mat-label>
     <input matInput formControlName="email" required />
     <mat-error *ngIf="form.get('email').hasError('required')">L'email est requis.</mat-error>
@@ -24,14 +24,14 @@
   </mat-form-field>
 
   <!-- Phone number -->
-  <mat-form-field appearance="outline">
+  <mat-form-field *ngIf="isShown('phone')" appearance="outline">
     <mat-label>Numéro de téléphone</mat-label>
     <input matInput formControlName="phone" />
     <mat-error *ngIf="form.get('phone').hasError('pattern')">Le numéro de téléphone est invalide.</mat-error>
   </mat-form-field>
 
   <!-- Group -->
-  <mat-radio-group formControlName="group">
+  <mat-radio-group *ngIf="isShown('group')" formControlName="group">
     <mat-label>Groupe</mat-label>
     <mat-radio-button value="registry">Registre</mat-radio-button>
     <mat-radio-button value="operators">Opérateur</mat-radio-button>
@@ -39,20 +39,20 @@
   </mat-radio-group>
 
   <!-- Role -->
-  <mat-radio-group formControlName="role">
+  <mat-radio-group *ngIf="isShown('role')" formControlName="role">
     <mat-label>Rôle</mat-label>
     <mat-radio-button value="admin">Administrateur</mat-radio-button>
     <mat-radio-button value="user" checked>Consultation</mat-radio-button>
-    <mat-radio-button value="demo" *ngIf="form.get('group').value === 'territories'">Découverte</mat-radio-button>
+    <mat-radio-button value="demo" *ngIf="groupIs('territories')">Découverte</mat-radio-button>
   </mat-radio-group>
 
-  <mat-form-field appearance="outline" *ngIf="form.get('group').value === 'territories'">
+  <mat-form-field appearance="outline" *ngIf="isShown('territory_id') && groupIs('territories')">
     <mat-label>Territoire</mat-label>
     <input matInput formControlName="territory_id" />
     <mat-hint class="mat-error" *ngIf="form.hasError('territory_id')">Le territoire est requis</mat-hint>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" *ngIf="form.get('group').value === 'operators'">
+  <mat-form-field appearance="outline" *ngIf="isShown('operator_id') && groupIs('operators')">
     <mat-label>Opérateur</mat-label>
     <input matInput formControlName="operator_id" />
     <mat-hint class="mat-error" *ngIf="form.hasError('operator_id')">L'opérateur est requis</mat-hint>
@@ -64,20 +64,18 @@
   </div>
 
   <div class="hint">
-    <p *ngIf="form.get('group').value === 'registry' && form.get('role').value === 'admin'">
+    <p *ngIf="groupIs('registry') && roleIs('admin')">
       Un super administrateur a tous les droits, gestion des utilisateurs, création de campagnes, création d'opérateurs
       et de territoires, etc...
     </p>
-    <p *ngIf="form.get('group').value === 'territories' && form.get('role').value === 'admin'">
+    <p *ngIf="groupIs('territories') && roleIs('admin')">
       Un administrateur a tous les droits, gestion des utilisateurs, création de campagnes, etc...
     </p>
-    <p *ngIf="form.get('group').value === 'operators' && form.get('role').value === 'admin'">
+    <p *ngIf="groupIs('operators') && roleIs('admin')">
       Un administrateur a tous les droits, gestion des utilisateurs, création de token applicatif, etc...
     </p>
-    <p *ngIf="form.get('role').value === 'user'">
-      Un compte 'Consultation' permet d'accéder aux données en lecture, etc...
-    </p>
-    <p *ngIf="form.get('role').value === 'demo'">
+    <p *ngIf="roleIs('user')">Un compte 'Consultation' permet d'accéder aux données en lecture, etc...</p>
+    <p *ngIf="roleIs('demo')">
       Un compte 'Découverte' permet aux territoires de créer et simuler des campagnes sur les données de leur
       territoire. Un administrateur sera requis pour le lancement de la campagne
     </p>

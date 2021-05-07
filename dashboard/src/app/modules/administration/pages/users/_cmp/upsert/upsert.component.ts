@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { REGEXP } from '~/core/const/validators.const';
 
@@ -15,6 +15,16 @@ export class UpsertComponent extends DestroyObservable implements OnInit {
   public form: FormGroup;
 
   @Input() user: User;
+  @Input() fields: string[] = [
+    'firstname',
+    'lastname',
+    'email',
+    'phone',
+    'group',
+    'role',
+    'territory_id',
+    'operator_id',
+  ];
   @Output() onSubmit = new EventEmitter<User>();
   @Output() onReset = new EventEmitter<void>();
 
@@ -78,5 +88,18 @@ export class UpsertComponent extends DestroyObservable implements OnInit {
 
   public onResetForm(): void {
     this.onReset.emit();
+  }
+
+  // UI
+  public isShown(f: string): boolean {
+    return this.fields.indexOf(f) > -1;
+  }
+
+  public groupIs(g: string): boolean {
+    return this.form.get('group').value === g;
+  }
+
+  public roleIs(r: string): boolean {
+    return this.form.get('role').value === r;
   }
 }
