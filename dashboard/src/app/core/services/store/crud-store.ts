@@ -86,8 +86,9 @@ export abstract class CrudStore<
     }
   }
 
-  delete(entity: EntityT): Observable<boolean> {
-    return this.deleteById(entity._id);
+  delete(entity: EntityT | number): Observable<boolean> {
+    const _id = typeof entity === 'number' ? entity : entity._id;
+    return this.deleteById(_id);
   }
 
   protected deleteById(id: number): Observable<boolean> {

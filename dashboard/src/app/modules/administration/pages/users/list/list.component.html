@@ -64,7 +64,7 @@
         <!-- Firstname Lastname -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Nom</th>
-          <td mat-cell *matCellDef="let user">{{ user?.name }} <span *ngIf="user?.is_me">(Vous)</span></td>
+          <td mat-cell *matCellDef="let user">{{ user?.name }}</td>
         </ng-container>
 
         <!-- Email -->
@@ -106,12 +106,14 @@
         <!-- Territory -->
         <ng-container matColumnDef="territory">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Territoire</th>
-          <td mat-cell *matCellDef="let user" [matTooltip]="user?.territory || '-'" matTooltipPosition="left">
+          <td mat-cell *matCellDef="let user">
             <a
               *ngIf="user?.territory"
               routerLink="/trip/stats"
-              [queryParams]="{ territory_id: user.territory_id }"
               class="link"
+              [queryParams]="{ territory_id: user.territory_id }"
+              [matTooltip]="user?.territory || '-'"
+              matTooltipPosition="left"
             >
               {{ user?.territory | ellipsis: -25 }}
             </a>
@@ -126,7 +128,7 @@
             <a *ngIf="canReInvite(user)" (click)="onSendInvitation(user)">
               <mat-icon matTooltip="Renvoyer l'invitation" color="primary">mail_outline</mat-icon>
             </a>
-            <a *ngIf="canEdit() && !isCurrentUser(user._id)" (click)="onEdit(user)">
+            <a *ngIf="canEdit() && !user.is_me" (click)="onEdit(user)">
               <mat-icon matTooltip="Editer" color="primary">edit_outline</mat-icon>
             </a>
             <a *ngIf="canDelete(user)" (click)="onDelete(user)">
@@ -135,7 +137,7 @@
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="headers"></tr>
-        <tr mat-row *matRowDef="let row; columns: headers"></tr>
+        <tr mat-row *matRowDef="let row; columns: headers" [class]="{ is_me: row.is_me }"></tr>
       </table>
 
       <!-- paginator -->

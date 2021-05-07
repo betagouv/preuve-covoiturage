@@ -1,3 +1,4 @@
+import { ToastrService } from 'ngx-toastr';
 import { combineLatest, merge, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 
@@ -7,12 +8,31 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
+import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { USER_ROLES_FR } from '~/core/enums/user/roles';
 import { Groups, USER_GROUPS_FR } from '~/core/enums/user/groups';
+import { DialogService } from '~/core/services/dialog.service';
+import { USER_ROLES_FR } from '~/core/enums/user/roles';
+
+type UiUser = {
+  _id: number;
+  name: string;
+  firstname: string;
+  lastname: string;
+  is_me: boolean;
+  email: string;
+  group: string;
+  role: string;
+  icon: string;
+  status: string;
+  operator_id: number;
+  operator: string;
+  territory_id: number;
+  territory: string;
+};
 
 @Component({
   selector: 'app-list',
@@ -20,7 +40,7 @@ import { Groups, USER_GROUPS_FR } from '~/core/enums/user/groups';
   styleUrls: ['./list.component.scss'],
 })
 export class ListComponent extends DestroyObservable implements OnInit, AfterViewInit {
-  private _users: any[] = [];
+  private _users: UiUser[] = [];
   private _search: string = '';
   private _sortKey: string = 'name';
   private _sortDir: string = 'asc';
@@ -49,10 +69,12 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
 
   constructor(
     public auth: AuthenticationService,
-    private userStore: UserStoreService,
     private commonData: CommonDataService,
+    private dialog: DialogService,
     private route: ActivatedRoute,
     private router: Router,
+    private toastr: ToastrService,
+    private userStore: UserStoreService,
   ) {
     super();
 
@@ -92,8 +114,8 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
         of(this.init.roleIcons),
         this.userStore.entities$,
       ]).pipe(
-        map(([territories, operators, roles, icons, users]) =>
-          users.map((u) => ({
+        map(([territories, operators, roles, icons, users]): UiUser[] =>
+          users.map((u: User) => ({
             _id: u._id,
             name: `${u.firstname} ${u.lastname}`,
             firstname: u.firstname,
@@ -203,26 +225,51 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
 
   // permissions
   public canEdit(): boolean {
-    return true;
+    // console.log('reinvite', user.status);
+    return this.auth.isAdmin();
   }
-  public canReInvite(user: any): boolean {
-    return true;
+  public canReInvite(user: UiUser): boolean {
+    return ['pending', 'invited'].indexOf(user.status) > -1 && !user.is_me && this.auth.isAdmin();
   }
-  public canDelete(user: any): boolean {
-    return true;
-  }
-  public isCurrentUser(id: number): boolean {
-    return true;
+  public canDelete(user: UiUser): boolean {
+    return this.auth.isAdmin() && !user.is_me;
   }
 
   // actions
-  public onSendInvitation(user: any): boolean {
-    return true;
+  public onSendInvitation(user: UiUser): void {
+    this.auth
+      .sendInviteEmail(user._id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.toastr.success(`L'utilisateur ${user.name} va recevoir une nouvelle invitation`);
+      });
   }
-  public onEdit(user: any): boolean {
-    return true;
+  public onEdit(user: UiUser): void {
+    this.router.navigate(['/users', user._id]);
   }
-  public onDelete(user: any): boolean {
-    return true;
+  public onDelete(user: UiUser): void {
+    this.dialog
+      .confirm({
+        title: 'Voulez-vous supprimer cet utilisateur ?',
+        confirmBtn: 'Oui',
+        cancelBtn: 'Non',
+        color: 'warn',
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((hasConfirmed) => {
+        if (hasConfirmed) {
+          this.userStore
+            .delete(user._id)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(
+              () => {
+                this.toastr.success(`L'utilisateur ${user.name} a été supprimé`);
+              },
+              (err) => {
+                this.toastr.error(err.message);
+              },
+            );
+        }
+      });
   }
 }

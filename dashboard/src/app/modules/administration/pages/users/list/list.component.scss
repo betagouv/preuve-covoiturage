@@ -1,7 +1,15 @@
+@import 'variables';
+
 header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+table.mat-table .mat-row {
+  &.is_me {
+    background: transparentize($color: $color-primary, $amount: 0.9);
+  }
 }
 
 .actions-center {
