@@ -19,11 +19,8 @@ export class BaseUser implements Model, UserListInterface {
   public status: string;
   public group: Groups;
   public role: Roles;
-
-  // tslint:disable-next-line:variable-name
-  operator_id: number | null;
-  // tslint:disable-next-line:variable-name
-  territory_id: number | null;
+  public operator_id: number | null;
+  public territory_id: number | null;
 }
 
 export class User
@@ -98,7 +95,6 @@ export class User
     this.email = formValues.email.trim();
     this.lastname = formValues.lastname.trim();
     this.firstname = formValues.firstname.trim();
-    this.role = `${userGroupRole[formValues.group]}.${formValues.role}` as Roles; // consolidate final role
 
     formValues.phone = formValues.phone ?? null;
 
@@ -129,6 +125,9 @@ export class User
       delete this.operator_id;
       delete this.group;
     }
+
+    // role has a weird patch behaviour...
+    this.role = this._id ? formValues.role : (`${userGroupRole[formValues.group]}.${formValues.role}` as Roles);
 
     return this;
   }
