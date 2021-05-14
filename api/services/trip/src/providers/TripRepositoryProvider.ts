@@ -13,6 +13,7 @@ import { ApiGraphTimeMode } from '../shared/trip/common/interfaces/ApiGraphTimeM
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
 import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
+import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import {
   TzResultInterface,
   ExportTripInterface,
@@ -21,10 +22,6 @@ import {
 } from '../interfaces';
 
 
-import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
-import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
-import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
-import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 
 /*
  * Trip specific repository
