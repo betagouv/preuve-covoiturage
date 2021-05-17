@@ -21,14 +21,6 @@ import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/Stat
     }),
     ['validate', alias],
     [
-      'scopeToGroup',
-      {
-        global: 'trip.stats',
-        territory: 'territory.trip.stats',
-        operator: 'operator.trip.stats',
-      },
-    ],
-    [
       'validate.date',
       {
         startPath: 'date.start',
