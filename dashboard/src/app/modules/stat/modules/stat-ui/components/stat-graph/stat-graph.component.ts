@@ -32,7 +32,6 @@ export class StatGraphComponent extends DestroyObservable {
   public data: GraphNamesInterface;
   public graphVisible = false;
   @Input() graphName: statDataNameType = 'trips';
-  public graphTitle = '';
 
   @Input() graphData: { [key in chartNameType]: Axes };
 
@@ -49,10 +48,6 @@ export class StatGraphComponent extends DestroyObservable {
           : 'stats-graph-loading',
       ),
     );
-  }
-
-  setTitle(title) {
-    this.graphTitle = title;
   }
 
   get hasFilters(): boolean {

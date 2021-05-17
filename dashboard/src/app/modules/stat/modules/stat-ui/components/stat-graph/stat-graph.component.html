@@ -4,26 +4,22 @@
   </div>
 
   <div class="stats-graph-content">
-    <h3 class="graphTitle" *ngIf="!lightMode">{{ graphTitle }}</h3>
-
     <app-stat-graph-distance
       *ngIf="graphName === 'distance'"
       [displayNav]="!lightMode"
-      (titleUpdate)="setTitle($event)"
     >
     </app-stat-graph-distance>
 
-    <app-stat-graph-trip *ngIf="graphName === 'trips'" [displayNav]="!lightMode" (titleUpdate)="setTitle($event)">
+    <app-stat-graph-trip *ngIf="graphName === 'trips'" [displayNav]="!lightMode">
     </app-stat-graph-trip>
 
     <app-stat-graph-carpoolers
       *ngIf="graphName === 'carpoolers'"
       [displayNav]="!lightMode"
-      (titleUpdate)="setTitle($event)"
     >
     </app-stat-graph-carpoolers>
 
-    <app-stat-graph-petrol *ngIf="graphName === 'petrol'" [displayNav]="!lightMode" (titleUpdate)="setTitle($event)">
+    <app-stat-graph-petrol *ngIf="graphName === 'petrol'" [displayNav]="!lightMode">
     </app-stat-graph-petrol>
 
     <!--CO2-->
@@ -34,7 +30,6 @@
     <app-stat-graph-carpooler-vehicule
       *ngIf="graphName === 'carpoolersPerVehicule'"
       [displayNav]="!lightMode"
-      (titleUpdate)="setTitle($event)"
     >
     </app-stat-graph-carpooler-vehicule>
   </div>

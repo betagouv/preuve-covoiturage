@@ -18,7 +18,6 @@ export const primaryColor = '#007AD9';
 })
 export abstract class StatGraphBase extends DestroyObservable implements OnInit {
   @Input() displayNav = true;
-  @Output() titleUpdate = new EventEmitter<string>();
 
   timeMode = GraphTimeMode.Month;
   protected _nextTimeMode = GraphTimeMode.Month;
@@ -86,11 +85,5 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
     // const apiGraphTimeMode = ApiGraphTimeMode.All;
 
     this.statStore.timeModeSubject.next(apiGraphTimeMode);
-  }
-
-  abstract get graphTitle(): string;
-
-  protected updateGraphTitle(): void {
-    this.titleUpdate.emit(this.graphTitle);
   }
 }
