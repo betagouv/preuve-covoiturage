@@ -41,9 +41,9 @@ type UiUser = {
 })
 export class ListComponent extends DestroyObservable implements OnInit, AfterViewInit {
   private _users: UiUser[] = [];
-  private _search: string = '';
-  private _sortKey: string = 'name';
-  private _sortDir: string = 'asc';
+  private _search = '';
+  private _sortKey = 'name';
+  private _sortDir = 'asc';
 
   public readonly PAGE_SIZE = 25;
   private readonly init = {
@@ -55,9 +55,9 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
   };
 
   public users: any[] = [];
-  public total: number = 0;
+  public total = 0;
   public filters: FormGroup = null;
-  public loading: boolean = true;
+  public loading = true;
   public headers: string[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;

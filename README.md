@@ -47,6 +47,17 @@ yarn migrate
 docker-compose run api yarn migrate
 ```
 
+### Tests d'intégration
+
+```
+#term 1 : cd api && docker-compose compose up api
+#term 2 : cd dashboard && yarn start
+#term 3 :
+$ cd tests
+$ yarn
+$ CYPRESS_BASE_URL=http://localhost:4200 yarn cy:open
+```
+
 ### Configuration
 
 #### Secrets configuration

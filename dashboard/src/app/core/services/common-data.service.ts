@@ -72,7 +72,7 @@ export class CommonDataService {
   // indexed array with names
   get territoryNames(): string[] {
     const list = [];
-    this._territories$.value.map((t) => {
+    (this._territories$.value || []).map((t) => {
       list[t._id] = t.name;
     });
     return list;
@@ -89,7 +89,7 @@ export class CommonDataService {
   // indexed array with names
   get operatorNames(): string[] {
     const list = [];
-    this._operators$.value.map((t) => {
+    (this._operators$.value || []).map((t) => {
       list[t._id] = t.name;
     });
     return list;

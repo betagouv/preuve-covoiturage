@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -5,6 +7,8 @@ import { REGEXP } from '~/core/const/validators.const';
 
 import { User } from '~/core/entities/authentication/user';
 import { Groups } from '~/core/enums/user/groups';
+import { CommonDataService } from '~/core/services/common-data.service';
+import { AutocompleteItem } from '~/shared/components/autocomplete/autocomplete.component';
 
 @Component({
   selector: 'app-upsert',
@@ -12,8 +16,6 @@ import { Groups } from '~/core/enums/user/groups';
   styleUrls: ['./upsert.component.scss'],
 })
 export class UpsertComponent extends DestroyObservable implements OnInit {
-  public form: FormGroup;
-
   @Input() user: User;
   @Input() fields: string[] = [
     'firstname',
@@ -28,11 +30,29 @@ export class UpsertComponent extends DestroyObservable implements OnInit {
   @Output() onSubmit = new EventEmitter<User>();
   @Output() onReset = new EventEmitter<void>();
 
-  constructor() {
+  public form: FormGroup;
+  public territories$: Observable<AutocompleteItem[]>;
+  public operators$: Observable<AutocompleteItem[]>;
+
+  constructor(private commonData: CommonDataService) {
     super();
   }
 
   ngOnInit(): void {
+    // load territories and operators for autocomplete components
+    this.territories$ = this.commonData.territories$.pipe(
+      takeUntil(this.destroy$),
+      map((ts: Array<{ _id: number; name: string }>) => ts.map(({ _id, name }) => ({ _id, name })).sort()),
+    );
+
+    this.operators$ = this.commonData.operators$.pipe(
+      takeUntil(this.destroy$),
+      map((ts: Array<{ _id: number; name: string }>) => ts.map(({ _id, name }) => ({ _id, name })).sort()),
+    );
+
+    this.commonData.loadTerritories();
+    this.commonData.loadOperators();
+
     this.form = new FormGroup(
       {
         firstname: new FormControl(null, [Validators.required]),
@@ -59,18 +79,34 @@ export class UpsertComponent extends DestroyObservable implements OnInit {
           })(),
 
           // make sure a territory or operator is selected
+          // return errors at the form level but mark each field
+          // as invalid to keep the form status coherent.
           ((): ValidatorFn => {
             return (form: FormGroup): ValidationErrors | null => {
               switch (form.get('group').value) {
                 case Groups.Operator:
                   if (!form.get('operator_id').value) {
+                    form.get('operator_id').setErrors({ operator_id: true });
+                    form.get('territory_id').setErrors(null);
                     return { operator_id: true };
                   }
+
+                  form.get('operator_id').setErrors(null);
+                  return null;
+
                 case Groups.Territory:
                   if (!form.get('territory_id').value) {
+                    form.get('territory_id').setErrors({ territory_id: true });
+                    form.get('operator_id').setErrors(null);
                     return { territory_id: true };
                   }
+
+                  form.get('territory_id').setErrors(null);
+                  return null;
+
                 default:
+                  form.get('operator_id').setErrors(null);
+                  form.get('territory_id').setErrors(null);
                   return null;
               }
             };

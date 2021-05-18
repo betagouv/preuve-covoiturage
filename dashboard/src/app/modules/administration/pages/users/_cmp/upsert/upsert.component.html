@@ -1,4 +1,10 @@
-<form class="user-form" (submit)="onSubmitForm($event)" (reset)="onResetForm()" [formGroup]="form">
+<form
+  class="user-form"
+  (submit)="onSubmitForm($event)"
+  (reset)="onResetForm()"
+  [formGroup]="form"
+  data-test="user-upsert"
+>
   <div class="group">
     <!-- First name -->
     <mat-form-field *ngIf="isShown('firstname')" appearance="outline" required>
@@ -46,17 +52,29 @@
     <mat-radio-button value="demo" *ngIf="groupIs('territories')">Découverte</mat-radio-button>
   </mat-radio-group>
 
-  <mat-form-field appearance="outline" *ngIf="isShown('territory_id') && groupIs('territories')">
-    <mat-label>Territoire</mat-label>
-    <input matInput formControlName="territory_id" />
-    <mat-hint class="mat-error" *ngIf="form.hasError('territory_id')">Le territoire est requis</mat-hint>
-  </mat-form-field>
+  <!-- territory_id -->
+  <app-autocomplete
+    *ngIf="isShown('territory_id') && groupIs('territories')"
+    formControlName="territory_id"
+    label="Territoires"
+    [items$]="territories$"
+  >
+    <mat-error *ngIf="form.hasError('territory_id') && form.get('territory_id').touched">
+      Le territoire est requis
+    </mat-error>
+  </app-autocomplete>
 
-  <mat-form-field appearance="outline" *ngIf="isShown('operator_id') && groupIs('operators')">
-    <mat-label>Opérateur</mat-label>
-    <input matInput formControlName="operator_id" />
-    <mat-hint class="mat-error" *ngIf="form.hasError('operator_id')">L'opérateur est requis</mat-hint>
-  </mat-form-field>
+  <!-- operator_id -->
+  <app-autocomplete
+    *ngIf="isShown('operator_id') && groupIs('operators')"
+    formControlName="operator_id"
+    label="Opérateurs"
+    [items$]="operators$"
+  >
+    <mat-error *ngIf="form.hasError('operator_id') && form.get('operator_id').touched">
+      L'opérateur est requis
+    </mat-error>
+  </app-autocomplete>
 
   <div class="actions">
     <button type="reset" mat-flat-button>Annuler</button>
@@ -81,6 +99,3 @@
     </p>
   </div>
 </form>
-
-<pre>{{ form.get('email').errors | json }}</pre>
-<pre>{{ form.value | json }}</pre>

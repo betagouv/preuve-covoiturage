@@ -12,12 +12,14 @@ import { ConfirmDialogComponent } from '~/core/components/dialog/confirm-dialog.
 import { MaterialModule } from '~/shared/modules/material/material.module';
 
 // eslint-disable-next-line
-import { NotAuthenticatedLayoutComponent } from './components/not-authenticated-layout/not-authenticated-layout.component';
 import { AuthenticatedLayoutComponent } from './components/authenticated-layout/authenticated-layout.component';
 import { HttpApiInterceptor } from './interceptor/http.interceptor';
 import { NotFoundComponent } from './components/not-found/not-found.component';
-import { ServiceUnavailableComponent } from './components/service-unavailable/service-unavailable.component';
+import { ReactiveFormsModule } from '@angular/forms';
 import { SentryErrorHandler } from './services/sentry-error-handler.service';
+import { ServiceUnavailableComponent } from './components/service-unavailable/service-unavailable.component';
+// eslint-disable-next-line
+import { NotAuthenticatedLayoutComponent } from './components/not-authenticated-layout/not-authenticated-layout.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,7 @@ import { SentryErrorHandler } from './services/sentry-error-handler.service';
     CommonModule,
     HttpClientModule,
     MaterialModule,
+    ReactiveFormsModule,
     RouterModule,
     SharedModule,
     ToastrModule.forRoot({ preventDuplicates: true }),

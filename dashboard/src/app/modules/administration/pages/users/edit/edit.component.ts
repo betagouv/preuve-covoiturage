@@ -9,8 +9,6 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { User } from '~/core/entities/authentication/user';
 import { UserApiService } from '~/modules/user/services/user-api.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Roles } from '~/core/enums/user/roles';
-import { Groups } from '~/core/enums/user/groups';
 
 @Component({
   selector: 'app-edit',

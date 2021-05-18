@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { FrenchMatPaginatorIntl } from '~/shared/classes/french-paginator';
 
+import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { ButtonHrefDirective } from './directives/button-href.directive';
 import { ButtonSpinnerDirective } from './directives/button-spinner.directive';
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
@@ -23,6 +24,7 @@ import { UploadComponent } from './components/upload/upload.component';
 
 @NgModule({
   declarations: [
+    AutocompleteComponent,
     ButtonHrefDirective,
     ButtonSpinnerDirective,
     EllipsisPipe,
@@ -38,6 +40,7 @@ import { UploadComponent } from './components/upload/upload.component';
   ],
   imports: [MaterialModule, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule],
   exports: [
+    AutocompleteComponent,
     ButtonSpinnerDirective,
     CommonModule,
     EllipsisPipe,
