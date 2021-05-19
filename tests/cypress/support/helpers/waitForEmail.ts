@@ -25,7 +25,9 @@ function getParams(params: { [k: string]: string } = {}): string {
 }
 
 function getTagFromEmail(email: string): string {
-  const regexp = new RegExp(`${escapeRegExp(Cypress.env('TESTMAIL_NAMESPACE'))}\\\.([a-zA-Z0-9]+)@inbox\\\.testmail\\\.app`);
+  const regexp = new RegExp(
+    `${escapeRegExp(Cypress.env('TESTMAIL_NAMESPACE'))}\\\.([a-zA-Z0-9]+)@inbox\\\.testmail\\\.app`,
+  );
   const result = regexp.exec(email);
   if (!result) {
     throw new Error(`Cant find tag, invalid email ${email}`);

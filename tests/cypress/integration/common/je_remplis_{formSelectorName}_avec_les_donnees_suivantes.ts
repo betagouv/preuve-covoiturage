@@ -18,13 +18,18 @@ When(`je remplis {formSelectorName} avec les données suivantes :`, function (fo
       case 'select':
         cy.get(inputSelector).select(value);
         break;
+      case 'mat-radio':
+        cy.get(inputSelector).get('mat-radio-button .mat-radio-label-content').contains(value).click();
+        break;
       case 'mat-select':
         cy.get(inputSelector).focus().click('right');
         cy.get('mat-option .mat-option-text').contains(value).click();
         break;
       case 'mat-autocomplete':
-        cy.get(inputSelector).click('right').type(value.substring(0, 15));
-        cy.get('mat-option .mat-option-text').contains(value).click();
+        // wait for element to be enabled (list data is loaded) before click and type value
+        cy.get(inputSelector).get('input[type=text]').should('have.prop', 'disabled', false).click('right').type(value);
+        cy.wait(1000); // arbitrary list process time
+        cy.get('.mat-autocomplete-panel mat-option .mat-option-text').contains(value).click();
         break;
     }
   }

@@ -20,7 +20,7 @@ export const formSelectors = new Map<string, FormSelectorMap>([
         },
       ],
       [
-        'boutton connexion',
+        'bouton connexion',
         {
           selector: '.Login button[type="submit"]',
           type: 'button',
@@ -62,29 +62,41 @@ export const formSelectors = new Map<string, FormSelectorMap>([
       [
         'groupe',
         {
-          selector: 'mat-select[formcontrolname="group"]',
-          type: 'mat-select',
+          selector: 'mat-radio-group[formcontrolname="group"]',
+          type: 'mat-radio',
         },
       ],
       [
         "droits d'accès",
         {
-          selector: 'mat-select[formcontrolname="role"]',
-          type: 'mat-select',
+          selector: 'mat-radio-group[formcontrolname="role"]',
+          type: 'mat-radio',
         },
       ],
       [
         'territoire',
         {
-          selector: 'app-territory-autocomplete',
+          selector: 'app-autocomplete',
           type: 'mat-autocomplete',
         },
       ],
       [
         'opérateur',
         {
-          selector: 'app-operator-autocomplete',
+          selector: 'app-autocomplete',
           type: 'mat-autocomplete',
+        },
+      ],
+    ]),
+  ],
+  [
+    'le champ email',
+    new Map<string, FormSelector>([
+      [
+        'email',
+        {
+          selector: '[data-test="field-email"]',
+          type: 'input',
         },
       ],
     ]),

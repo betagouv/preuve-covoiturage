@@ -19,7 +19,7 @@ Cypress.Commands.add('login', function (email, password) {
   const loginFormMap = getFormSelectorsFromName('le formulaire de connexion');
   const emailInputSelector = loginFormMap.get('email');
   const passwordInputSelector = loginFormMap.get('mot de passe');
-  const submitButtonSelector = loginFormMap.get('boutton connexion');
+  const submitButtonSelector = loginFormMap.get('bouton connexion');
 
   cy.get(emailInputSelector.selector).type(email).should('have.value', email);
   cy.get(passwordInputSelector.selector).type(password).should('have.value', password);
