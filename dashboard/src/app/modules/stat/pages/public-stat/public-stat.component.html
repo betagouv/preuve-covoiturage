@@ -18,13 +18,6 @@
           <li>d'un outil permettant le calcul de part de marché d'un acteur du covoiturage.</li>
         </ul>
       </div>
-      <h4 class="subtitle has-text-centered">Calculs</h4>
-
-      <div class="has-text-centered padding-fat-bottom">
-        <a target="_blank" rel="noopener noreferrer" href="{{ gitbookLinkStats }}">
-          Informations sur les méthodes de calculs utilisées.
-        </a>
-      </div>
     </div>
 
     <!-- spinner -->
@@ -32,24 +25,8 @@
       <mat-spinner></mat-spinner>
     </div>
 
-    <!-- metrics -->
-    <div class="stats-numbers" *ngIf="loaded">
-      <div *ngFor="let statNumber of statNumbers" class="stats-number">
-        <div class="stats-number-icon">
-          <mat-icon [svgIcon]="statNumber.svgIcon"></mat-icon>
-        </div>
-        <div class="stats-number-content">
-          <div class="stats-number-title" [ngSwitch]="statNumber.svgIcon">
-            <p *ngSwitchCase="'carpooling'">{{ statNumber.title | number: '1.2' }}</p>
-            <p *ngSwitchCase="'co2'">{{ statNumber.title | number: '1.2' }} {{ statNumber.unit }}</p>
-            <p *ngSwitchDefault>{{ statNumber.title | number }} {{ statNumber.unit }}</p>
-          </div>
-          <p class="stats-number-hint">
-            {{ statNumber.hint }}
-          </p>
-        </div>
-      </div>
-    </div>
+    <!-- number navs and charts-->
+    <app-stat-view [navList]="statsList"> </app-stat-view>
 
     <div class="stats-header">
       <div class="has-text-centered padding-fat-bottom">
@@ -73,6 +50,7 @@
       privé et du secteur public. Chaque création d'un document est enregistrée de façon anonyme.
     </p>
     <p><a href="https://attestation.covoiturage.beta.gouv.fr">https://attestation.covoiturage.beta.gouv.fr</a></p>
+    <!-- TODO: fixme -->
     <app-stat-honor></app-stat-honor>
   </div>
 </div>

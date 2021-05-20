@@ -1,4 +1,15 @@
-@import 'variables';
+@import "variables";
+
+a,
+a:visited,
+a:focus {
+  color: #004ac0;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
 
 .stats {
   max-width: 100%;
