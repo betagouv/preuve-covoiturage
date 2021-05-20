@@ -22,6 +22,7 @@ You will need `docker` and `docker-compose`.
 | API         | `api`      | APP_API_URL      | http://localhost:8080      | /api       |
 | Redis       | `redis`    | APP_REDIS_URL    | redis://redis:6379         | -          |
 | Postgres    | `postgres` | APP_POSTGRES_URL | postgresql://postgres:post | -          |
+| Mailhog     | `mailhog`  |                  | http://localhost:8025      | -          |
 
 > \* The Frontend doesn't run in Docker. Install NodeJS locally and run it with `yarn start` from the `dashboard` folder.  
 > ⚠️ `docker-compose.yml` is used in `local` environment only
@@ -47,16 +48,26 @@ yarn migrate
 docker-compose run api yarn migrate
 ```
 
-### Tests d'intégration
+### End-to-end testing
+
+##### Requirements
+
+- a working DB with `admin@example.com` active user
 
 ```
 #term 1 : cd api && docker-compose compose up api
-#term 2 : cd dashboard && yarn start
-#term 3 :
+#term 2 : cd api && docker-compose compose up worker
+#term 3 : cd dashboard && yarn start
+#term 4 :
 $ cd tests
 $ yarn
 $ CYPRESS_BASE_URL=http://localhost:4200 yarn cy:open
 ```
+
+##### Notes
+
+- You can monitor your development inbox at http://localhost:8025. Emails are usually cleared in the tests.
+- Tests are not stateless yet. You might need to clean up data manually when they crash.
 
 ### Configuration
 
