@@ -52,12 +52,12 @@ const routes: Routes = [
       {
         path: 'all-territories',
         component: AllTerritoriesComponent,
-        data: { groups: [Groups.Registry], role: UserManyRoleEnum.ADMIN },
+        data: { groups: [Groups.Registry], roles: [Roles.RegistryAdmin, Roles.OperatorAdmin, Roles.TerritoryAdmin] },
       },
       {
         path: 'all-operators',
         component: AllOperatorsComponent,
-        data: { groups: [Groups.Registry], role: UserManyRoleEnum.ADMIN },
+        data: { groups: [Groups.Registry], roles: [Roles.RegistryAdmin, Roles.OperatorAdmin, Roles.TerritoryAdmin] },
       },
       {
         path: '',

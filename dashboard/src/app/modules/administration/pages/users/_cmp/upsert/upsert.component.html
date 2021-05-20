@@ -77,8 +77,10 @@
   </app-autocomplete>
 
   <div class="actions">
-    <button type="reset" mat-flat-button>Annuler</button>
-    <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid">Enregistrer</button>
+    <button type="reset" mat-flat-button data-test="button-reset">Annuler</button>
+    <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid" data-test="button-submit">
+      Enregistrer
+    </button>
   </div>
 
   <div class="hint">

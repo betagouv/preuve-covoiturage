@@ -29,7 +29,7 @@ export class AdministrationLayoutComponent {
     {
       path: '/admin/users',
       label: 'Utilisateurs & accès',
-      show: () => true,
+      show: () => this.auth.isAdmin(),
     },
     {
       path: '/admin/all-territories',

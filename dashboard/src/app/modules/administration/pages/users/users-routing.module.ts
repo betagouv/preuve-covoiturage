@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { UserManyRoleEnum } from '~/core/enums/user/roles';
+import { Roles } from '~/core/enums/user/roles';
+import { AuthGuard } from '~/core/guards/auth-guard.service';
 
 import { EditComponent } from './edit/edit.component';
 import { ListComponent } from './list/list.component';
@@ -11,17 +12,20 @@ const routes: Routes = [
   {
     path: '',
     component: ListComponent,
-    data: { role: UserManyRoleEnum.ADMIN },
+    canActivate: [AuthGuard],
+    data: { roles: [Roles.RegistryAdmin, Roles.OperatorAdmin, Roles.TerritoryAdmin] },
   },
   {
     path: 'create',
     component: CreateComponent,
-    data: { role: UserManyRoleEnum.ADMIN },
+    canActivate: [AuthGuard],
+    data: { roles: [Roles.RegistryAdmin, Roles.OperatorAdmin, Roles.TerritoryAdmin] },
   },
   {
     path: ':id',
     component: EditComponent,
-    data: { role: UserManyRoleEnum.ADMIN },
+    canActivate: [AuthGuard],
+    data: { roles: [Roles.RegistryAdmin, Roles.OperatorAdmin, Roles.TerritoryAdmin] },
   },
 ];
 

@@ -6,12 +6,12 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable<Subject> {
-      login(email: string, password: string): void;
+      login(email: string, password: string, homepage: string): void;
     }
   }
 }
 
-Cypress.Commands.add('login', function (email, password) {
+Cypress.Commands.add('login', function (email, password, homepage) {
   cy.clearCookies();
   cy.intercept('POST', '/login').as('loginRequest');
   cy.visit('/');
@@ -27,7 +27,7 @@ Cypress.Commands.add('login', function (email, password) {
 
   cy.wait('@loginRequest');
 
-  cy.location('pathname', { timeout: 1000 }).should('include', '/trip/stats');
+  cy.location('pathname', { timeout: 1000 }).should('include', homepage);
 
   cy.getCookie('pdc-session', { timeout: 1000 }).should('have.property', 'value');
 });

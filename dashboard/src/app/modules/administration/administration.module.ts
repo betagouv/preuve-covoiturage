@@ -14,7 +14,6 @@ import { OperatorVisibilityModule } from '~/modules/operator/modules/operator-vi
 import { ProfileUiModule } from '~/modules/user/modules/profile-ui/profile-ui.module';
 import { SharedModule } from '~/shared/shared.module';
 import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/territory-ui.module';
-import { UiUserModule } from '~/modules/user/modules/ui-user/ui-user.module';
 
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
 import { AdministrationRoutingModule } from './administration-routing.module';
@@ -57,7 +56,6 @@ import { TerritoryComponent } from './pages/territory/territory.component';
     SharedModule,
     TerritoryUiModule,
     ToastrModule,
-    UiUserModule,
   ],
 })
 export class AdministrationModule {}
