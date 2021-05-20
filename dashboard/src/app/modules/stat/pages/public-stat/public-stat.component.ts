@@ -20,8 +20,6 @@ export class PublicStatComponent extends DestroyObservable {
 
   @Input() statsList = PUBLIC_STATS;
 
-  hideStats = false;
-
   constructor(private publicStatService: StatPublicService) {
     super();
   }
