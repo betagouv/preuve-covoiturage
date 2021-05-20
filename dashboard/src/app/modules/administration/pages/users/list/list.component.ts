@@ -155,7 +155,6 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
           }, 0);
         }),
       ),
-      this.paginator.page,
     )
       .pipe(
         takeUntil(this.destroy$),
@@ -225,7 +224,6 @@ export class ListComponent extends DestroyObservable implements OnInit, AfterVie
 
   // permissions
   public canEdit(): boolean {
-    // console.log('reinvite', user.status);
     return this.auth.isAdmin();
   }
   public canReInvite(user: UiUser): boolean {

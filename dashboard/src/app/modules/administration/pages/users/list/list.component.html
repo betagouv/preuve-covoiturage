@@ -72,7 +72,14 @@
         <ng-container matColumnDef="email">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Email</th>
           <td mat-cell *matCellDef="let user">
-            <a [href]="'mailto:' + user?.email" target="_blank" rel="noopener noreferrer" class="link">
+            <a
+              [href]="'mailto:' + user?.email"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link"
+              [matTooltip]="user?.email"
+              matTooltipPosition="right"
+            >
               {{ user?.email | ellipsis: 25 }}
             </a>
           </td>
