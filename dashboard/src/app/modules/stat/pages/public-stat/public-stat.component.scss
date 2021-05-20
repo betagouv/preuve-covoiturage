@@ -12,17 +12,12 @@ a:hover {
 }
 
 .stats {
-  width: 1272px;
-
   &--loading {
     display: flex;
     justify-content: space-around;
   }
-  padding: 0 17%;
+
   margin: 0 auto 25px;
-  @media (max-width: 1400px) {
-    padding: 0 10px;
-  }
 
   &-header {
     text-align: center;
