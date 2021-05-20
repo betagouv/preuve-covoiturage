@@ -71,6 +71,7 @@ services:
     depends_on:
       - redis
       - postgres
+      - mailhog
 
   worker:
     build: './docker/api'
