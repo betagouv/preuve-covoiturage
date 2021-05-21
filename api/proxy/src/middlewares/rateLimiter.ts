@@ -1,5 +1,6 @@
 import rateLimit, { Store, RateLimit } from 'express-rate-limit';
 import RedisStore from 'rate-limit-redis';
+import { env } from '@ilos/core';
 
 type RateLimiterOptions = Partial<{
   store: Store;
@@ -10,7 +11,7 @@ type RateLimiterOptions = Partial<{
 const minute = 60000;
 
 export function rateLimiter(opts: RateLimiterOptions = {}, prefix = 'rl'): RateLimit {
-  return rateLimit({
+  const options = {
     store: new RedisStore({ prefix, redisURL: process.env.APP_REDIS_URL }),
     windowMs: 5 * minute,
     max: 100,
@@ -20,7 +21,12 @@ export function rateLimiter(opts: RateLimiterOptions = {}, prefix = 'rl'): RateL
       });
     },
     ...opts,
-  });
+  };
+
+  const factor = parseFloat(String(env('APP_RATE_LIMIT_MAX_FACTOR', 1)));
+  options.max = options.max * (typeof factor === 'number' && !isNaN(factor) ? factor : 1);
+
+  return rateLimit(options);
 }
 
 // shortcut for authentication routes
