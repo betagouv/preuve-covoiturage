@@ -14,6 +14,8 @@ export class HttpApiInterceptor implements HttpInterceptor {
   private api = this.config.get('apiUrl');
   private router: Router;
 
+  private readonly canSkip503 = ['trip:stats', 'trip:searchcount'];
+
   constructor(private config: ConfigService, private injector: Injector, public toastr: ToastrService) {
     this.router = this.injector.get(Router);
   }
@@ -52,7 +54,7 @@ export class HttpApiInterceptor implements HttpInterceptor {
 
           case 0: // Unknown error
           case 503: // Maintenance mode
-            this.router.navigate(['/503']);
+            if (this.can503(req)) this.router.navigate(['/503']);
             break;
 
           default:
@@ -64,5 +66,9 @@ export class HttpApiInterceptor implements HttpInterceptor {
         return throwError(err);
       }),
     );
+  }
+
+  private can503(req: HttpRequest<any>): boolean {
+    return this.canSkip503.reduce((p, c) => p && !req.url.includes(c), true);
   }
 }

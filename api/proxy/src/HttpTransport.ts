@@ -667,10 +667,12 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private start(port = 8080): void {
+  private start(port = 8080, timeout = 60000): void {
     this.server = this.app.listen(port, () =>
       console.info(`Listening on port ${port}. Version ${this.config.get('sentry.version')}`),
     );
+
+    this.server.timeout = timeout;
   }
 
   /**
