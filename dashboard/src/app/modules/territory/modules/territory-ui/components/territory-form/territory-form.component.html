@@ -37,6 +37,10 @@
         (hasTerritories)="hasTerritoriesChanged($event)"
       ></app-territory-children>
 
+      <mat-error class="no-children-error" *ngIf="!hasTerritories && relationDisplayMode === 'parent'">
+        Ajoutez au moins 1 territoire pour valider le formulaire
+      </mat-error>
+
       <div *ngIf="relationDisplayMode === 'insee'">
         <h4>Codes INSEE (séparés par des virgules)</h4>
         <mat-form-field class="relation-textarea" appearance="outline">
@@ -130,7 +134,7 @@
           class="large"
           mat-flat-button
           (click)="onSubmit()"
-          [disabled]="!territoryForm.valid || (!hasTerritories && relationDisplayMode === 'parent')"
+          [disabled]="territoryForm.invalid || (!hasTerritories && relationDisplayMode === 'parent')"
           color="primary"
         >
           {{ !!editedId ? 'Mettre à jour' : 'Créer' }}
