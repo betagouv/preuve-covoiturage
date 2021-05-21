@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '~/core/guards/auth-guard.service';
 import { ApiComponent } from '~/modules/administration/pages/api/api.component';
 import { Groups } from '~/core/enums/user/groups';
-import { Roles, UserManyRoleEnum } from '~/core/enums/user/roles';
+import { Roles } from '~/core/enums/user/roles';
 import { AllTerritoriesComponent } from '~/modules/administration/pages/all-territories/all-territories.component';
 import { AllOperatorsComponent } from '~/modules/administration/pages/all-operators/all-operators.component';
 // eslint-disable-next-line
