@@ -1,4 +1,4 @@
-@import "variables";
+@import 'variables';
 
 a,
 a:visited,
@@ -11,13 +11,13 @@ a:hover {
   text-decoration: underline;
 }
 
-.stats {
+.public-stat {
+  margin: auto 20px;
+
   &--loading {
     display: flex;
     justify-content: space-around;
   }
-
-  margin: 0 auto 25px;
 
   &-header {
     text-align: center;
@@ -43,12 +43,12 @@ a:hover {
       align-items: center;
     }
   }
-}
 
-.stats-honor {
-  max-width: 960px;
-  margin: 2em auto 1em;
-  h2 {
-    text-align: center;
+  &-honor {
+    max-width: 960px;
+    margin: 2em auto 1em;
+    h2 {
+      text-align: center;
+    }
   }
 }

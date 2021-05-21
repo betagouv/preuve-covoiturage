@@ -1,43 +1,34 @@
-<div class="stats">
-  <div class="stats-header">
-    Les statistiques ne sont pas disponibles actuellement.
-  </div>
+<div class="public-stat">
+  <div class="public-stat-header">Les statistiques ne sont pas disponibles actuellement.</div>
 
-  <div class="stats-header">
+  <div class="public-stat-header">
     <h1>Statistiques</h1>
 
     <!-- Disclaimer -->
-    <div class="stats-disclaimer">
+    <div class="public-stat-disclaimer">
       <p>
-        Ces données sont collectées à partir des informations communiquées par
-        les
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="http://covoiturage.beta.gouv.fr/#operateurs"
+        Ces données sont collectées à partir des informations communiquées par les
+        <a target="_blank" rel="noopener noreferrer" href="http://covoiturage.beta.gouv.fr/#operateurs"
           >opérateurs partenaires</a
-        >.<br />Il s'agit d'une représentation de l'activité du registre de
-        preuve de covoiturage. En outre il ne saurait s'agir&nbsp;:
+        >.<br />Il s'agit d'une représentation de l'activité du registre de preuve de covoiturage. En outre il ne
+        saurait s'agir&nbsp;:
       </p>
       <ul>
         <li>d'une représentation exhaustive du covoiturage en France&nbsp;;</li>
-        <li>
-          d'un outil permettant le calcul de part de marché d'un acteur du
-          covoiturage.
-        </li>
+        <li>d'un outil permettant le calcul de part de marché d'un acteur du covoiturage.</li>
       </ul>
     </div>
   </div>
 
   <!-- spinner -->
-  <div class="stats--loading" *ngIf="loading && !loaded">
+  <div class="public-stat--loading" *ngIf="loading && !loaded">
     <mat-spinner></mat-spinner>
   </div>
 
   <!-- number navs and charts-->
   <app-stat-view [navList]="statsList"> </app-stat-view>
 
-  <div class="stats-header">
+  <div class="public-stat-header">
     <div class="has-text-centered padding-fat-bottom">
       <a
         href="https://www.data.gouv.fr/fr/datasets/trajets-realises-en-covoiturage-registre-de-preuve-de-covoiturage/"
@@ -51,17 +42,14 @@
   </div>
 
   <!-- honor certificates -->
-  <div class="stats-honor">
+  <div class="public-stat-honor">
     <h2>Attestations sur l'honneur</h2>
     <p>
-      Le générateur d'attestations sur l'honneur facilite la création d'un
-      document à fournir aux employeurs du secteur privé et du secteur public.
-      Chaque création d'un document est enregistrée de façon anonyme.
+      Le générateur d'attestations sur l'honneur facilite la création d'un document à fournir aux employeurs du secteur
+      privé et du secteur public. Chaque création d'un document est enregistrée de façon anonyme.
     </p>
     <p>
-      <a href="https://attestation.covoiturage.beta.gouv.fr"
-        >https://attestation.covoiturage.beta.gouv.fr</a
-      >
+      <a href="https://attestation.covoiturage.beta.gouv.fr">https://attestation.covoiturage.beta.gouv.fr</a>
     </p>
     <!-- TODO: fixme -->
     <!-- <app-stat-honor></app-stat-honor> -->
