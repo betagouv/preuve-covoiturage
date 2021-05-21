@@ -13,7 +13,7 @@ When(`je remplis {formSelectorName} avec les données suivantes :`, function (fo
     const { selector: inputSelector, type: inputType } = inputDefinition;
     switch (inputType) {
       case 'input':
-        cy.get(inputSelector).type(value).should('have.value', value);
+        cy.get(inputSelector).clear().type(value).should('have.value', value);
         break;
       case 'select':
         cy.get(inputSelector).select(value);

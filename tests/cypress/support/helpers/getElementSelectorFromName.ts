@@ -3,7 +3,6 @@ export const elementsSelectors = new Map<string, string>([
   ["la navigation de l'administration", '[data-test="nav-admin"]'],
   ['le menu utilisateurs', 'a[href="/admin/users"]'],
   ["le menu création d'un nouvel utilisateur", '[data-test="user-create"]'],
-  ['le bouton créer un utilisateur', '[data-test="user-upsert"] button[type="submit"]'],
   ["l'écran liste des utilisateurs", '[data-test="user-list"]'],
   ['la liste des utilisateurs', '[data-test="user-list"] table tbody'],
   ['le formulaire de création utilisateur', '[data-test="user-upsert"]'],
@@ -16,6 +15,7 @@ export const elementsSelectors = new Map<string, string>([
   ['la section', '[data-test="section-title"]'],
   ['le bouton de confirmation', 'button.confirm'],
   ['Mot de passe oublié', '[data-test="forgotten-password"]'],
+  ['le bouton enregistrer', '[data-test="button-submit"]'],
   ['le bouton envoyer', '[data-test="button-submit"]'],
   ['le bouton annuler', '[data-test="button-reset"]'],
 ]);
