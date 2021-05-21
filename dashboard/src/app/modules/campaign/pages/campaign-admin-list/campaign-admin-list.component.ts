@@ -119,7 +119,7 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     // filter results using search field
     // inject territory name
     this.filteredCampaigns = this.campaigns
-      .map((c) => ({ ...c, territory: this.commonDataService.territoryNames[c._id] || null }))
+      .map((c) => ({ ...c, territory: this.commonDataService.territoryNames[c.territory_id] || null }))
       .filter((c) => {
         return `${c.territory} ${c.description} ${c.name}`.toLowerCase().includes(query.toLowerCase());
       });
