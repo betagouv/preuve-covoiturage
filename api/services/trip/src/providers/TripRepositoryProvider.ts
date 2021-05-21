@@ -181,7 +181,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
         count(distinct operator_id)::int as operators,
         trunc(
-          ((sum(passenger_seats + 1)::float) / count(distinct trip_id))::numeric, 2
+          (((sum(passenger_seats)::numeric) / count(distinct trip_id))+1), 2
         )::float as average_carpoolers_by_car,
         (count(*) FILTER (
           WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0
