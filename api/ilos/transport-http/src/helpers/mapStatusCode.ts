@@ -52,6 +52,10 @@ export function mapStatusCode(results: RPCResponseType): number {
       case -32509:
         return 409;
 
+      // Timeout
+      case -32408:
+        return 408;
+
       // Parse error --> Unprocessable entity
       case -32700:
         return 422;
