@@ -21,8 +21,6 @@ import {
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 
-
-
 /*
  * Trip specific repository
  */
@@ -190,13 +188,13 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const text = `
       SELECT
         ${selectSwitch[params.group_by]}
-        sum(passenger_seats)::int as trip,
-        sum(journey_distance/1000*passenger_seats)::int as distance,
+        coalesce(sum(passenger_seats), 0)::int as trip,
+        coalesce(sum(journey_distance/1000*passenger_seats), 0)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
         count(distinct operator_id)::int as operators,
-        trunc(
-          (((sum(passenger_seats)::numeric) / count(distinct trip_id))+1), 2
-        )::float as average_carpoolers_by_car,
+        coalesce(trunc(
+          ((sum(passenger_seats + 1)::float) / count(distinct trip_id))::numeric, 2
+        ), 0)::float as average_carpoolers_by_car,
         (count(*) FILTER (
           WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0
         ))::int as trip_subsidized,
