@@ -9,3 +9,4 @@ export { UnauthorizedException } from './UnauthorizedException';
 export { NotFoundException } from './NotFoundException';
 export { ConflictException } from './ConflictException';
 export { TooManyRequestsException } from './TooManyRequestsException';
+export { TimeoutException } from './TimeoutException';

@@ -2,6 +2,7 @@ import {
   ContainerInterface,
   ParamsType,
   ContextType,
+  ConfigInterfaceResolver,
   ResultType,
   KernelInterface,
   KernelInterfaceResolver,
@@ -11,6 +12,7 @@ import {
   RPCSingleResponseType,
   MethodNotFoundException,
   InvalidRequestException,
+  TimeoutException,
 } from '@ilos/common';
 
 import { hasMultipleCall } from '../helpers/types/hasMultipleCall';
@@ -83,11 +85,24 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   protected async getHandlerAndCall(config, call) {
+    const cfg = this.container.get(ConfigInterfaceResolver);
+    const timeout: number = cfg && cfg.get('kernel.timeout', 0);
+    const timer = timeout
+      ? new Promise((resolve, reject) => {
+          setTimeout(reject, timeout);
+        })
+      : undefined;
+
     const handler = this.getContainer().getHandler(config);
     if (!handler) {
       throw new MethodNotFoundException(`Unknown method or service ${config.signature}`);
     }
-    return handler(call);
+
+    return !timer
+      ? handler(call)
+      : Promise.race([timer, handler(call)]).catch(() => {
+          throw new TimeoutException(`Timeout Exception (${timeout}ms)`);
+        });
   }
 
   /**
