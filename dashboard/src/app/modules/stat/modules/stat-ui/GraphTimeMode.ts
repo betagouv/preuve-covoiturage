@@ -5,7 +5,7 @@ export enum GraphTimeMode {
 }
 
 export const GraphTimeModeLabel: { [key: string]: string } = {
-  [GraphTimeMode.Cumulative]: 'Cumulée',
+  [GraphTimeMode.Cumulative]: 'cumulée',
   [GraphTimeMode.Day]: 'par jour',
   [GraphTimeMode.Month]: 'par mois',
 };

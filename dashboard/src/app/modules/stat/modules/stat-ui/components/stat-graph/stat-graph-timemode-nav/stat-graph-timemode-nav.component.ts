@@ -19,7 +19,7 @@ export class StatGraphTimeModeNavComponent implements OnInit {
   }
 
   label(navElement: GraphTimeMode): string {
-    return GraphTimeModeLabel[navElement];
+    return GraphTimeModeLabel[navElement].charAt(0).toUpperCase() + GraphTimeModeLabel[navElement].slice(1);
   }
 
   ngOnInit(): void {}
