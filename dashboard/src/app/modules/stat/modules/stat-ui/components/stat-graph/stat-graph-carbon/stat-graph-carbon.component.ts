@@ -92,7 +92,7 @@ export class StatGraphCarbonComponent extends StatGraphBase {
 
     return {
       datasets: [
-        // Trip data set
+        // Co2 data set
         {
           backgroundColor: secondaryColor,
           borderColor: secondaryColor,

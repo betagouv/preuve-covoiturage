@@ -1,12 +1,11 @@
-<div class="graph-message" *ngIf="showDaily">
+<div class="graph-message" *ngIf="nav === 'week'">
   <p>
     Aucun trajet n'a été réalisé la semaine dernière<span *ngIf="hasFilters"> avec ces critères de recherche</span>.
   </p>
 </div>
-<div class="graph-message" *ngIf="showMonthly">
+<div class="graph-message" *ngIf="nav === 'month'">
   <p>Aucun trajet n'a été réalisé le mois dernier<span *ngIf="hasFilters"> avec ces critères de recherche</span>.</p>
 </div>
-<div class="graph-message" *ngIf="showCumulated">
+<div class="graph-message" *ngIf="nav === 'cumulative'">
   <p>Aucun trajet n'a été réalisé ces derniers mois<span *ngIf="hasFilters"> avec ces critères de recherche</span>.</p>
 </div>
-<ng-content></ng-content>

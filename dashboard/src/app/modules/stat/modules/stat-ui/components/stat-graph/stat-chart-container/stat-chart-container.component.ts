@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { GraphTimeMode } from '../../../GraphTimeMode';
 
 @Component({
   selector: 'app-stat-chart-container',
@@ -6,11 +7,9 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./stat-chart-container.component.scss'],
 })
 export class StatChartContainerComponent implements OnInit {
-  @Input() showDaily: boolean;
-  @Input() showMonthly: boolean;
-  @Input() showCumulated: boolean;
+  @Input() nav: string = GraphTimeMode.Month;
 
-  @Input() hasFilters: boolean;
+  @Input() hasFilters: boolean = false;
 
   constructor() {}
 
