@@ -86,13 +86,12 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    */
   protected async getHandlerAndCall(config, call) {
     const cfg = this.container.get(ConfigInterfaceResolver);
-    const timeout: number = cfg.get('kernel.timeout');
-    let timer = null;
-    if (timeout) {
-      timer = new Promise((resolve, reject) => {
-        setTimeout(reject, timeout);
-      });
-    }
+    const timeout: number = cfg && cfg.get('kernel.timeout', 0);
+    const timer = timeout
+      ? new Promise((resolve, reject) => {
+          setTimeout(reject, timeout);
+        })
+      : undefined;
 
     const handler = this.getContainer().getHandler(config);
     if (!handler) {
