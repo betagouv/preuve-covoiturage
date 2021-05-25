@@ -211,19 +211,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       values,
       text: this.numberPlaceholders(text),
     });
-    
+
     if (!result.rowCount) return [];
 
-    // zerofy every null values for All
-    if (params.group_by === ApiGraphTimeMode.All) {
-      result.rows[0] = Object.keys(result.rows[0]).reduce((row, key) => {
-          if(!row[key]){
-            row[key] = 0
-          }
-          return row;
-      }, {})
-      return result.rows;
-    } 
+    // results for totals don't need filling
+    if (params.group_by === ApiGraphTimeMode.All) return result.rows;
 
     // fill empty days or months with 0 values to avoid gaps in the charts
     return this.dateRange(params.group_by, params.date.start, params.date.end).map((item) => {
