@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { debounce, map, debounceTime, mergeMap } from 'rxjs/operators';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { co2Factor } from '~/modules/stat/config/stat';

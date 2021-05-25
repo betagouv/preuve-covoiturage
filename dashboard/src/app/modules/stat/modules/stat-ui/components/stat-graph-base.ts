@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { StatFilteredStoreService } from '~/modules/stat/services/stat-filtered-store.service';
-import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
-import { GraphTimeMode } from '../GraphTimeMode';
-import { StatInterface } from '~/core/interfaces/stat/StatInterface';
-import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { map, skip, takeUntil, tap } from 'rxjs/operators';
+import { Component, Input, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map, skip, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { StoreLoadingState } from '~/core/services/store/StoreLoadingState';
+import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
+import { StatFilteredStoreService } from '~/modules/stat/services/stat-filtered-store.service';
+import { GraphTimeMode } from '../GraphTimeMode';
 
 export const secondaryColor = '#65C8CF';
 export const primaryColor = '#007AD9';
@@ -30,6 +30,7 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
 
   protected _graphOption: any;
   protected _graphType: string;
+  _hasEmptyResults: Boolean;
 
   get graphOption() {
     return this._graphOption;
@@ -63,6 +64,7 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
         tap((data) => {
           // sync graph config update  when data are updated;
           this.timeMode = this._nextTimeMode;
+          this._hasEmptyResults = data.length == 0;
           this._graphOption = this.graphOptions[this.timeMode];
           this._graphType = this.graphTypes[this.timeMode];
         }),

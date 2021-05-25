@@ -38,7 +38,7 @@ export class StatGraphComponent extends DestroyObservable {
   @Input() lightMode = false;
   cssLoadingState: Observable<string>;
 
-  constructor(private filterService: FilterService, public store: StatFilteredStoreService) {
+  constructor(public store: StatFilteredStoreService) {
     super();
 
     this.cssLoadingState = store.listLoadingState$.pipe(
