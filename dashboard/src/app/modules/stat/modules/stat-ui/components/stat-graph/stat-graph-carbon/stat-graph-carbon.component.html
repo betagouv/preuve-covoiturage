@@ -11,10 +11,7 @@
     >
     </app-stat-graph-timemode-nav>
   </div>
-  <app-stat-chart-container
-    *ngIf="(data$ | async)?.datasets[0].data.length == 0"
-    [nav]="timeMode"
-  ></app-stat-chart-container>
+  <app-stat-chart-container *ngIf="(data$ | async)?.datasets[0].data.length == 0"></app-stat-chart-container>
   <div *ngIf="(data$ | async)?.datasets[0].data.length > 0" class="chart-container">
     <!-- component duplicated because of ngx-chartjs option refresh issue -->
     <ngx-chartjs

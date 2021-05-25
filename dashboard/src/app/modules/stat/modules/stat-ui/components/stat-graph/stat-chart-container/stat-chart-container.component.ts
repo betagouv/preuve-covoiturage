@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { GraphTimeMode } from '../../../GraphTimeMode';
+import { Component, OnInit } from '@angular/core';
+import { FilterService } from './../../../../../../filter/services/filter.service';
 
 @Component({
   selector: 'app-stat-chart-container',
@@ -7,11 +7,11 @@ import { GraphTimeMode } from '../../../GraphTimeMode';
   styleUrls: ['./stat-chart-container.component.scss'],
 })
 export class StatChartContainerComponent implements OnInit {
-  @Input() nav: string = GraphTimeMode.Month;
-
-  @Input() hasFilters: boolean = false;
-
-  constructor() {}
+  constructor(public filterService: FilterService) {}
 
   ngOnInit(): void {}
+
+  get hasFilters(): boolean {
+    return Object.keys(this.filterService.filter$.value).length > 0;
+  }
 }

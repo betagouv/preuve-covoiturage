@@ -49,12 +49,4 @@ export class StatGraphComponent extends DestroyObservable {
       ),
     );
   }
-
-  get hasFilters(): boolean {
-    return Object.keys(this.filterService.filter$.value).length > 0;
-  }
-
-  public isEmptyDataset(object: { datasets: { data: [] }[] }): boolean {
-    return object.datasets[0].data.length > 0;
-  }
 }
