@@ -91,12 +91,16 @@ span {
   font-size: $font-size-paragraph;
 }
 
+a:hover {
+  cursor: pointer;
+}
+
 a.link,
 a.link:link,
 a.link:visited {
   cursor: pointer;
   color: $color-primary-dark;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 :focus {

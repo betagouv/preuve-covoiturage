@@ -1,10 +1,13 @@
 import { Then } from 'cypress-cucumber-preprocessor/steps';
-import { Email, extractLinkFromEmail, waitForEmail } from '../../support/helpers/waitForEmail';
+import { mailClear, Email, mailInbox } from '../../support/helpers/mailhog';
 
 Then(`un lien est envoyé par mail à {string}`, function (email) {
   cy.log(`try to fetch mail from ${email}`);
-  cy.wrap(waitForEmail(email), { timeout: 30000 }).then((email) => {
-    const link = extractLinkFromEmail(email as Email);
-    expect(link).not.to.be.null;
-  });
+  cy.wrap(mailInbox(email), { timeout: 30000 })
+    .then((emails: Email[]) => {
+      expect(emails.length).to.be.greaterThan(0);
+    })
+    .then(() => {
+      mailClear();
+    });
 });

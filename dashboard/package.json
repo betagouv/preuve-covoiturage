@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng serve --hmr",
     "build": "ng build --configuration=$NODE_ENV",
-    "clean": "rm -rf node_modules dist; yarn install"
+    "clean": "rm -rf node_modules dist; yarn install",
+    "audit:deps": "yarn audit --level moderate --groups dependencies"
   },
   "private": true,
   "dependencies": {
@@ -27,7 +28,6 @@
     "date-fns-tz": "^1.1.3",
     "file-saver": "^2.0.5",
     "lodash-es": "^4.17.21",
-    "mathjs": "^6.1.0",
     "moment": "^2.24.0",
     "ng2-nouislider": "^1.8.2",
     "ngx-infinite-scroll": "^8.0.0",

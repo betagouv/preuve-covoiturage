@@ -37,5 +37,4 @@ export const USER_ROLES_FR = {
   user: 'Consultation',
   admin: 'Administrateur',
   demo: 'Découverte',
-  // admin: 'administrateur',
 };

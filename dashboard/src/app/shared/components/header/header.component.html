@@ -35,13 +35,13 @@
         </div>
       </div>
 
-      <button mat-button [extLink]="getDocURL()" matTooltip="Documentation">
+      <button mat-button [extLink]="getDocURL()" matTooltip="Documentation" data-test="button-doc">
         <mat-icon>info</mat-icon>
       </button>
-      <button mat-button routerLink="/admin" matTooltip="Administration">
+      <button mat-button routerLink="/admin" matTooltip="Administration" data-test="button-admin">
         <mat-icon>settings</mat-icon>
       </button>
-      <button mat-button routerLink="/logout" matTooltip="Déconnexion">
+      <button mat-button routerLink="/logout" matTooltip="Déconnexion" data-test="button-logout">
         <mat-icon>exit_to_app</mat-icon>
       </button>
     </div>

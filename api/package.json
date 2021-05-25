@@ -27,6 +27,7 @@
     "build:all": "lerna run --sort build",
     "coverage-ci": "lerna run --parallel --scope @pdc/* coverage-ci",
     "coverage": "lerna run --parallel --scope @pdc/* coverage",
+    "audit:deps": "yarn audit --level moderate --groups dependencies",
     "test": "run-s test:unit test:integration",
     "test:unit": "run-s test:pdc:unit test:ilos:unit",
     "test:pdc:unit": "lerna run --scope @pdc/* test:unit",

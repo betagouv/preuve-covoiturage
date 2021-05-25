@@ -181,9 +181,10 @@ export class AuthenticationService {
   //   return !groups.length || ('group' in user && groups.includes(user.group));
   // }
 
-  public sendInviteEmail(user: User): Observable<JsonRPCResult> {
+  public sendInviteEmail(user: User | number): Observable<JsonRPCResult> {
+    const _id = typeof user === 'number' ? user : user._id;
     return this.jsonRPC.callOne(
-      new JsonRPCParam<SendInviteEmailParam>('user:sendInvitationEmail', { _id: user._id }),
+      new JsonRPCParam<SendInviteEmailParam>('user:sendInvitationEmail', { _id }),
     );
   }
 

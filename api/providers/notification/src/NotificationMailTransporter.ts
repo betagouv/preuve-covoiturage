@@ -32,7 +32,7 @@ export class NotificationMailTransporter
 
   async init(): Promise<void> {
     this.setOptionsFromConfig();
-    await this.createTransport();
+    await this.createTransport(this.config.get('notification.mail.verifySmtp', false));
   }
 
   async destroy(): Promise<void> {
@@ -55,7 +55,12 @@ export class NotificationMailTransporter
     if (!this.transporter) {
       this.transporter = createTransport(this.config.get('notification.mail.smtp'));
       if (verify) {
-        await this.transporter.verify();
+        try {
+          await this.transporter.verify();
+        } catch (e) {
+          console.error('Failed to connect to SMTP server');
+          process.exit(1);
+        }
       }
     }
   }
