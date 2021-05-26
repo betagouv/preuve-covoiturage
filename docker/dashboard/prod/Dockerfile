@@ -13,5 +13,5 @@ RUN yarn build
 
 FROM nginx:1.19.6-alpine
 COPY --chown=nginx:nginx --from=builder /app/dashboard/dist/dashboard /usr/share/nginx/html
-COPY --chown=nginx:nginx ./docker/prod/dashboard/nginx/default.conf /etc/nginx/conf.d
+COPY --chown=nginx:nginx ./docker/dashboard/prod/nginx/default.conf /etc/nginx/conf.d
 EXPOSE 8080

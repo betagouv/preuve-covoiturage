@@ -39,7 +39,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
-          file: ./docker/prod/api/Dockerfile
+          file: ./docker/api/prod/Dockerfile
           load: true
           push: false
           tags: ${{ steps.docker_meta.outputs.tags }}
@@ -69,7 +69,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
-          file: ./docker/prod/api/Dockerfile
+          file: ./docker/api/prod/Dockerfile
           push: true
           pull: false
           tags: ${{ steps.docker_meta.outputs.tags }}
@@ -111,7 +111,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
-          file: ./docker/prod/dashboard/Dockerfile
+          file: ./docker/dashboard/prod/Dockerfile
           load: true
           push: false
           tags: ${{ steps.docker_meta.outputs.tags }}
@@ -141,7 +141,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
-          file: ./docker/prod/dashboard/Dockerfile
+          file: ./docker/dashboard/prod/Dockerfile
           push: true
           pull: false
           tags: ${{ steps.docker_meta.outputs.tags }}
