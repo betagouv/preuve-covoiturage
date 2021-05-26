@@ -5,7 +5,7 @@ import { URL } from 'url';
 import { Territory, territories } from './territories';
 import { User, users } from './users';
 
-export class Database {
+export class Migrator {
   public connection: PostgresConnection;
   public config: {
     driver: string;
@@ -16,8 +16,10 @@ export class Database {
     port: number;
     ssl: boolean;
   };
+  public readonly dbName: string;
+  public readonly dbIsCreated: boolean;
 
-  constructor(dbUrlString: string, protected dbName: string = `test-${Date.now().valueOf()}`) {
+  constructor(dbUrlString: string, newDatabase: boolean = true) {
     const dbUrl = new URL(dbUrlString);
     this.config = {
       driver: 'pg',
@@ -28,14 +30,22 @@ export class Database {
       port: parseInt(dbUrl.port),
       ssl: false,
     };
+    this.dbIsCreated = newDatabase;
+    this.dbName = newDatabase ? `test-${Date.now().valueOf()}` : dbUrl.pathname.replace('/', '');
   }
 
-  async create() {
-    await createDatabase(this.config, this.dbName);
+  async up() {
     this.connection = new PostgresConnection({
       ...this.config,
       database: this.dbName,
     });
+    await this.connection.up();
+  }
+
+  async create() {
+    if (this.dbIsCreated) {
+      await createDatabase(this.config, this.dbName);
+    }
   }
 
   async migrate() {
@@ -43,10 +53,12 @@ export class Database {
       ...this.config,
       database: this.dbName,
     });
-    await this.connection.up();
   }
 
   async seed() {
+    if (!this.connection) {
+      await this.up();
+    }
     await this.connection.getClient().query(`SET session_replication_role = 'replica'`);
 
     for (const territory of territories) {
@@ -191,10 +203,15 @@ export class Database {
     }
   }
 
-  async drop() {
+  async down() {
     if (this.connection) {
       await this.connection.down();
     }
-    await dropDatabase(this.config, this.dbName);
+  }
+
+  async drop() {
+    if (this.dbIsCreated) {
+      await dropDatabase(this.config, this.dbName);
+    }
   }
 }

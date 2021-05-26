@@ -1,14 +1,13 @@
 import { TestInterface } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
-
-import { Database } from './database/Database';
+import { Migrator } from '@pdc/helper-seed';
 
 interface TestConfig {
   connectionString: string;
 }
 
 export interface MacroTestContext {
-  db: Database;
+  db: Migrator;
   connection: PostgresConnection;
 }
 
@@ -19,7 +18,7 @@ export function dbMacro<TestContext = unknown>(
   const test = anyTest as TestInterface<TestContext & MacroTestContext>;
 
   test.serial.before(async (t) => {
-    t.context.db = new Database(cfg.connectionString);
+    t.context.db = new Migrator(cfg.connectionString);
     await t.context.db.create();
     await t.context.db.migrate();
     await t.context.db.seed();
