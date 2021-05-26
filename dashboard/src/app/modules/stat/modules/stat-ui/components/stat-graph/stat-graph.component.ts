@@ -46,22 +46,18 @@ export class StatGraphComponent extends DestroyObservable {
     super();
 
     this.cssLoadingState = store.listLoadingState$.pipe(
-      map((loadingState) =>
-        loadingState === StoreLoadingState.LoadComplete || loadingState === StoreLoadingState.Off
-          ? ''
-          : 'stats-graph-loading',
-      ),
+      map((loadingState) => (this.isLoaded(loadingState) ? '' : 'stats-graph-loading')),
     );
 
     combineLatest([
       this.store.entities$.pipe(map((data) => data.length == 0)),
-      this.store.listLoadingState$.pipe(
-        map(
-          (loadingState) => loadingState === StoreLoadingState.LoadComplete || loadingState === StoreLoadingState.Off,
-        ),
-      ),
+      this.store.listLoadingState$.pipe(map((loadingState) => this.isLoaded(loadingState))),
     ]).subscribe(([isEmpty, isLoaded]) => {
       this.isLoadedAndEmpty = isEmpty && isLoaded;
     });
+  }
+
+  private isLoaded(loadingState: StoreLoadingState): Boolean {
+    return loadingState === StoreLoadingState.LoadComplete || loadingState === StoreLoadingState.Off;
   }
 }
