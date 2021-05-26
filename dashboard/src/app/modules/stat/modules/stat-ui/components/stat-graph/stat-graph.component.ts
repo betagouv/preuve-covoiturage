@@ -39,7 +39,6 @@ export class StatGraphComponent extends DestroyObservable {
 
   @Input() graphData: { [key in chartNameType]: Axes };
 
-  @Input() lightMode = false;
   cssLoadingState: Observable<string>;
 
   constructor(public store: StatFilteredStoreService) {

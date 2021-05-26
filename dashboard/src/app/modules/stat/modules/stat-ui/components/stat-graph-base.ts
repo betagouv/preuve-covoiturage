@@ -30,7 +30,6 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
 
   protected _graphOption: any;
   protected _graphType: string;
-  _hasEmptyResults: Boolean;
 
   get graphOption() {
     return this._graphOption;
@@ -64,7 +63,6 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
         tap((data) => {
           // sync graph config update  when data are updated;
           this.timeMode = this._nextTimeMode;
-          this._hasEmptyResults = data.length == 0;
           this._graphOption = this.graphOptions[this.timeMode];
           this._graphType = this.graphTypes[this.timeMode];
         }),
