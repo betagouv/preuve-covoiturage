@@ -3,9 +3,9 @@
     <mat-spinner></mat-spinner>
   </div>
 
-  <app-stat-chart-container *ngIf="_hasEmptyResults"></app-stat-chart-container>
+  <app-stat-chart-container *ngIf="isLoadedAndEmpty"></app-stat-chart-container>
 
-  <div *ngIf="!_hasEmptyResults" class="stats-graph-content">
+  <div *ngIf="!isLoadedAndEmpty" class="stats-graph-content">
     <app-stat-graph-distance *ngIf="graphName === 'distance'" [displayNav]="!lightMode"> </app-stat-graph-distance>
 
     <app-stat-graph-trip *ngIf="graphName === 'trips'" [displayNav]="!lightMode"> </app-stat-graph-trip>

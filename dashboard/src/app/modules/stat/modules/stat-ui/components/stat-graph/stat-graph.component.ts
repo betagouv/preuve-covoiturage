@@ -8,6 +8,7 @@ import { FilterService } from '~/modules/filter/services/filter.service';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatFilteredStoreService } from '~/modules/stat/services/stat-filtered-store.service';
 import { map, skip, tap } from 'rxjs/operators';
+import { merge, combineLatest } from 'rxjs';
 import { StoreLoadingState } from '~/core/services/store/StoreLoadingState';
 import { Observable } from 'rxjs';
 
@@ -25,14 +26,15 @@ export const defaultChartColors = {
   templateUrl: './stat-graph.component.html',
   styleUrls: ['./stat-graph.component.scss'],
 })
-export class StatGraphComponent extends DestroyObservable implements OnInit {
+export class StatGraphComponent extends DestroyObservable {
   public options: chartNamesType;
 
   // data of all charts
   public data: GraphNamesInterface;
   public graphVisible = false;
 
-  public _hasEmptyResults: Boolean = false;
+  public isLoadedAndEmpty: Boolean = false;
+
   @Input() graphName: statDataNameType = 'trips';
 
   @Input() graphData: { [key in chartNameType]: Axes };
@@ -50,11 +52,16 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
           : 'stats-graph-loading',
       ),
     );
-  }
 
-  ngOnInit(): void {
-    this.store.entities$.subscribe((data) => {
-      this._hasEmptyResults = data.length == 0;
+    combineLatest([
+      this.store.entities$.pipe(map((data) => data.length == 0)),
+      this.store.listLoadingState$.pipe(
+        map(
+          (loadingState) => loadingState === StoreLoadingState.LoadComplete || loadingState === StoreLoadingState.Off,
+        ),
+      ),
+    ]).subscribe(([isEmpty, isLoaded]) => {
+      this.isLoadedAndEmpty = isEmpty && isLoaded;
     });
   }
 }
