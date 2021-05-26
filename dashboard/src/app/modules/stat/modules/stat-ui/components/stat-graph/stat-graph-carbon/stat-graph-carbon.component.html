@@ -11,7 +11,6 @@
     >
     </app-stat-graph-timemode-nav>
   </div>
-  <app-stat-chart-container *ngIf="_hasEmptyResults"></app-stat-chart-container>
   <div *ngIf="!_hasEmptyResults" class="chart-container">
     <!-- component duplicated because of ngx-chartjs option refresh issue -->
     <ngx-chartjs
