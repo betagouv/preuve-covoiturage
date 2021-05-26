@@ -10,7 +10,6 @@ h3 {
 }
 .stats-graph {
   position: relative;
-  z-index: 100;
 
   .spinner-container {
     width: 100%;
@@ -30,6 +29,10 @@ h3 {
   .stats-graph-content {
     transition: opacity 0.4s linear;
     opacity: 1;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
   }
 
   &.stats-graph-loading {
