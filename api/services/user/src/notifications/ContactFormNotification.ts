@@ -62,7 +62,6 @@ export class ContactFormMJMLTemplate extends AbstractTemplate<ContactFormTemplat
               <li>Nom: {{ contact_form_name }}</li>
               <li>Email: {{ contact_form_email }}</li>
               <li>Entité: {{ contact_form_company }}</li>
-              <li>Sujet: {{ contact_form_subject }}</li>
               <li>Message: {{ contact_form_message }}</li>
             </ul>
           </p>
