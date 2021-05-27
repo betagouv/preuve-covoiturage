@@ -60,7 +60,7 @@ export class Bootstrap {
 
   static setEnv(): void {
     process.env.APP_ENV =
-      'NODE_ENV' in process.env && process.env.NODE_ENV !== undefined ? process.env.NODE_ENV : 'dev';
+      'NODE_ENV' in process.env && process.env.NODE_ENV !== undefined ? process.env.NODE_ENV : 'local';
   }
 
   static setEnvFromPackage(): void {
@@ -131,7 +131,7 @@ export class Bootstrap {
     @kernel({
       children: serviceProviders,
     })
-    class CustomKernel extends kernelConstructor {}
+    class CustomKernel extends kernelConstructor { }
 
     console.debug('Kernel: starting');
     const kernelInstance = new CustomKernel();

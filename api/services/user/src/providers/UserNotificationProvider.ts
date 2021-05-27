@@ -51,7 +51,7 @@ export class UserNotificationProvider {
     protected config: ConfigInterfaceResolver,
     protected kernel: KernelInterfaceResolver,
     protected notificationTransporter: NotificationTransporterInterfaceResolver<MailTemplateNotificationInterface>,
-  ) {}
+  ) { }
 
   /**
    * Generate url from email and token
@@ -69,7 +69,7 @@ export class UserNotificationProvider {
    * Log in testing env
    */
   protected log(message: string, email: string, token: string, link: string): void {
-    if (process.env.NODE_ENV === 'testing') {
+    if (process.env.NODE_ENV === 'local') {
       console.info(`
 ******************************************
 [test] ${message}
