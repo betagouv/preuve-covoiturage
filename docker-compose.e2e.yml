@@ -18,6 +18,15 @@ services:
     networks:
       - back
 
+  wait:
+    image: busybox:1.33
+    environment:
+      DOMAIN: api
+      PORT: 8080
+    networks:
+      - back
+    command: ['/bin/sh', '-c', 'until nc -zv $$DOMAIN $$PORT -w1; do echo "waiting for app"; sleep 1; done']
+
   smtp:
     image: mailhog/mailhog:v1.0.1
     ports:
@@ -35,8 +44,6 @@ services:
     build:
       dockerfile: ./docker/dashboard/prod/Dockerfile
       context: .
-    ports:
-      - 8090:8080
     networks:
       - front
       - back
@@ -50,6 +57,9 @@ services:
     ports:
       - 8080:8080
     environment:
+      DEBUG: "*"
+      APP_CORS: "*"
+      APP_APP_URL: http://dashboard:8080
       APP_JWT_SECRET: thisIsASecret0000
       AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
       AWS_REGION: fr-par
