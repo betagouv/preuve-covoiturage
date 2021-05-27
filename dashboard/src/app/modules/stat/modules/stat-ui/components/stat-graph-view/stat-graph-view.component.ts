@@ -25,24 +25,12 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
     this.loadStat();
   }
 
-  // get loading(): boolean {
-  //   return this.statService.isLoading;
-  // }
-
-  // get loaded(): boolean {
-  //   return !!this.statService.stat;
-  // }
-
   private loadStat(): void {
     this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe((stats) => {
       if (stats) {
         this.graphData = stats.graph;
       }
     });
-
-    // if (this.loading || this.loaded) {
-    //   return;
-    // }
 
     // reset stats on load
     this.statService.init();
