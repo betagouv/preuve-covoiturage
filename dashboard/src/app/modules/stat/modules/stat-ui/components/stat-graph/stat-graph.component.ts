@@ -1,16 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
-
-import { statDataNameType } from '~/core/types/stat/statDataNameType';
-import { chartNamesType, chartNameType } from '~/core/types/stat/chartNameType';
-import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
+import { Component, Input } from '@angular/core';
+import { combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { FilterService } from '~/modules/filter/services/filter.service';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
-import { StatFilteredStoreService } from '~/modules/stat/services/stat-filtered-store.service';
-import { map, skip, tap } from 'rxjs/operators';
-import { merge, combineLatest } from 'rxjs';
+import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
 import { StoreLoadingState } from '~/core/services/store/StoreLoadingState';
-import { Observable } from 'rxjs';
+import { chartNamesType, chartNameType } from '~/core/types/stat/chartNameType';
+import { statDataNameType } from '~/core/types/stat/statDataNameType';
+import { StatFilteredStoreService } from '~/modules/stat/services/stat-filtered-store.service';
 
 export const secondaryColor = '#65C8CF';
 export const primaryColor = '#007AD9';

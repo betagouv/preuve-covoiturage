@@ -1,21 +1,17 @@
-import { Component } from "@angular/core";
-import { FormatedStatInterface } from "~/core/interfaces/stat/formatedStatInterface";
-import { StatInterface } from "~/core/interfaces/stat/StatInterface";
-import { ApiGraphTimeMode } from "~/modules/stat/services/ApiGraphTimeMode";
-import { formatDayLabel, formatMonthLabel } from "~/modules/stat/stat-format";
-import {
-  commonOptions,
-  monthOptionsTime,
-  dayOptionsTime,
-} from "../../../../../config/statChartOptions";
+import { Component } from '@angular/core';
+import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { StatInterface } from '~/core/interfaces/stat/StatInterface';
+import { ApiGraphTimeMode } from '~/modules/stat/services/ApiGraphTimeMode';
+import { formatDayLabel, formatMonthLabel } from '~/modules/stat/stat-format';
+import { commonOptions, monthOptionsTime, dayOptionsTime } from '../../../../../config/statChartOptions';
 
-import { GraphTimeMode, GraphTimeModeLabel } from "../../../GraphTimeMode";
-import { secondaryColor, StatGraphBase } from "../../stat-graph-base";
+import { GraphTimeMode, GraphTimeModeLabel } from '../../../GraphTimeMode';
+import { secondaryColor, StatGraphBase } from '../../stat-graph-base';
 
 // define for each time mode the chart type
 const graphTypes = {
-  [GraphTimeMode.Day]: "bar",
-  [GraphTimeMode.Month]: "bar",
+  [GraphTimeMode.Day]: 'bar',
+  [GraphTimeMode.Month]: 'bar',
 };
 
 // define for each time mode graph chart display option
@@ -73,18 +69,15 @@ const graphOptions = {
 };
 
 @Component({
-  selector: "app-stat-graph-carpooler-vehicule",
-  templateUrl: "./stat-graph-carpooler-vehicule.component.html",
-  styleUrls: ["./stat-graph-carpooler-vehicule.component.scss"],
+  selector: 'app-stat-graph-carpooler-vehicule',
+  templateUrl: './stat-graph-carpooler-vehicule.component.html',
+  styleUrls: ['./stat-graph-carpooler-vehicule.component.scss'],
 })
 export class StatGraphCarpoolerVehiculeComponent extends StatGraphBase {
   graphTypes = graphTypes;
   graphOptions = graphOptions;
 
-  format(
-    apiDateMode: ApiGraphTimeMode,
-    data: StatInterface[]
-  ): FormatedStatInterface {
+  format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface {
     const isMonth = apiDateMode === ApiGraphTimeMode.Month;
 
     return {
@@ -98,9 +91,7 @@ export class StatGraphCarpoolerVehiculeComponent extends StatGraphBase {
         },
       ],
       graphTitle: this.graphTitle,
-      labels: data.map((entry) =>
-        isMonth ? formatMonthLabel(entry.month) : formatDayLabel(entry.day)
-      ),
+      labels: data.map((entry) => (isMonth ? formatMonthLabel(entry.month) : formatDayLabel(entry.day))),
     } as any;
   }
 

@@ -1,15 +1,12 @@
-import { set } from "lodash";
-import { ChartData, ChartOptions } from "chart.js";
-
-import { Component, OnInit } from "@angular/core";
-
-import { StatHonorService } from "~/modules/stat/services/stat-honor.service";
-import { commonOptions } from "~/modules/stat/config/statChartOptions";
+import { Component, OnInit } from '@angular/core';
+import { ChartData, ChartOptions } from 'chart.js';
+import { commonOptions } from '~/modules/stat/config/statChartOptions';
+import { StatHonorService } from '~/modules/stat/services/stat-honor.service';
 
 @Component({
-  selector: "app-stat-honor",
-  templateUrl: "./stat-honor.component.html",
-  styleUrls: ["./stat-honor.component.scss"],
+  selector: 'app-stat-honor',
+  templateUrl: './stat-honor.component.html',
+  styleUrls: ['./stat-honor.component.scss'],
 })
 export class StatHonorComponent implements OnInit {
   public options: ChartOptions = commonOptions;
@@ -29,13 +26,13 @@ export class StatHonorComponent implements OnInit {
     this.api.fetch([
       {
         order: 1,
-        label: "Secteur public",
-        backgroundColor: "#65C8CF",
+        label: 'Secteur public',
+        backgroundColor: '#65C8CF',
       },
       {
         order: 0,
-        label: "Secteur privé",
-        backgroundColor: "#007AD9",
+        label: 'Secteur privé',
+        backgroundColor: '#007AD9',
       },
     ]);
   }
