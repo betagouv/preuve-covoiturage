@@ -24,4 +24,4 @@ export const rpc = {
   endpoint: env('APP_RPC_ENDPOINT', '/rpc'),
 };
 
-export const cors = appUrl;
+export const cors = env('APP_CORS', appUrl);
