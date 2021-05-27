@@ -57,4 +57,4 @@ import { SeedCommand } from './commands/SeedCommand';
     Commands.CallCommand,
   ],
 })
-export class Kernel extends BaseKernel { }
+export class Kernel extends BaseKernel {}

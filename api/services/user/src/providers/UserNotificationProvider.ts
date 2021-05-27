@@ -51,7 +51,7 @@ export class UserNotificationProvider {
     protected config: ConfigInterfaceResolver,
     protected kernel: KernelInterfaceResolver,
     protected notificationTransporter: NotificationTransporterInterfaceResolver<MailTemplateNotificationInterface>,
-  ) { }
+  ) {}
 
   /**
    * Generate url from email and token

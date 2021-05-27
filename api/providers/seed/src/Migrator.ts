@@ -19,7 +19,7 @@ export class Migrator {
   public readonly dbName: string;
   public readonly dbIsCreated: boolean;
 
-  constructor(dbUrlString: string, newDatabase: boolean = true) {
+  constructor(dbUrlString: string, newDatabase = true) {
     const dbUrl = new URL(dbUrlString);
     this.config = {
       driver: 'pg',

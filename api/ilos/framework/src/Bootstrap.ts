@@ -131,7 +131,7 @@ export class Bootstrap {
     @kernel({
       children: serviceProviders,
     })
-    class CustomKernel extends kernelConstructor { }
+    class CustomKernel extends kernelConstructor {}
 
     console.debug('Kernel: starting');
     const kernelInstance = new CustomKernel();
