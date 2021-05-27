@@ -20,7 +20,7 @@ function makeUser(role: string, user: Partial<User> = {}): User {
     .replace(' ', '')
     .toLowerCase();
   return {
-    email: `${role}.${name}@example.org`,
+    email: `${role}.${name}@example.com`,
     firstname: role,
     lastname: name,
     status: defaultStatus,

@@ -1,0 +1,110 @@
+version: '3.5'
+services:
+  postgres:
+    build: ./docker/postgres
+    ports:
+      - 5432:5432
+    networks:
+      - back
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: ${POSTGRES_DB}
+
+  redis:
+    build: './docker/redis'
+    ports:
+      - 6379:6379
+    networks:
+      - back
+
+  smtp:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - 1025:1025
+      - 8025:8025
+    environment:
+      MH_CORS_ORIGIN: '*'
+    networks:
+      - front
+      - back
+
+  dashboard:
+    volumes:
+      - ${PWD}/docker/dashboard/ci.env.js:/usr/share/nginx/html/assets/env.js
+    build:
+      dockerfile: ./docker/dashboard/prod/Dockerfile
+      context: .
+    ports:
+      - 8090:8080
+    networks:
+      - front
+      - back
+    depends_on:
+      - api
+
+  api:
+    build:
+      dockerfile: ./docker/api/prod/Dockerfile
+      context: .
+    ports:
+      - 8080:8080
+    environment:
+      APP_JWT_SECRET: thisIsASecret0000
+      AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
+      AWS_REGION: fr-par
+      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/${POSTGRES_DB}
+      APP_REDIS_URL: redis://redis:6379/1
+      APP_MAIL_SMTP_URL: smtp://smtp:1025
+      PORT: 8080
+      NODE_ENV: ${NODE_ENV}
+      APP_ENV: ${NODE_ENV}
+    networks:
+      - front
+      - back
+    depends_on:
+      - redis
+      - postgres
+      - smtp
+      - s3
+    volumes:
+      - .:/app:ro
+
+  s3:
+    image: minio/minio:edge  
+    ports:
+      - 9000:9000 
+    networks:
+      - back
+      - front
+    command: 'server /data'
+
+  s3-init:
+    image: minio/mc:edge
+    networks:
+      - back
+    environment:
+      MINIO_URL: http://s3:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    entrypoint: ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
+    depends_on:
+      - s3
+
+  cypress:
+    build:
+      dockerfile: ../docker/cypress/Dockerfile
+      context: ./tests
+    volumes:
+      - /tmp/cypress/videos:/app/cypress/videos
+    environment:
+      CYPRESS_baseUrl: http://dashboard:8080
+    depends_on:
+      - api
+    networks:
+      - back
+      - front
+
+networks:
+  front:
+  back:
