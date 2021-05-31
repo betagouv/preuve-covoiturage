@@ -193,24 +193,24 @@ export class Territory
   toFormValues(fullformMode = true): any {
     return fullformMode
       ? {
-        name: this.name ? this.name : '',
-        uiSelectionState:
-          this.ui_status && this.ui_status.ui_selection_state ? this.ui_status.ui_selection_state : [],
-        format: this.ui_status && this.ui_status.format ? this.ui_status.format : 'parent',
-        shortname: this.shortname ? this.shortname : '',
-        active: !!this.active,
-        activable: !!this.activable,
-        level: this.level ? this.level : null,
-        // children: this.children ? this.children : [],
-        company: new Company(this.company).toFormValues(),
-        contacts: new Contacts(this.contacts).toFormValues(),
-        address: new Address(this.address).toFormValues(),
-        insee:
-          this.ui_status && this.ui_status.format === 'insee' && this.ui_status.insee ? this.ui_status.insee : '',
-      }
+          name: this.name ? this.name : '',
+          uiSelectionState:
+            this.ui_status && this.ui_status.ui_selection_state ? this.ui_status.ui_selection_state : [],
+          format: this.ui_status && this.ui_status.format ? this.ui_status.format : 'parent',
+          shortname: this.shortname ? this.shortname : '',
+          active: !!this.active,
+          activable: !!this.activable,
+          level: this.level ? this.level : null,
+          // children: this.children ? this.children : [],
+          company: new Company(this.company).toFormValues(),
+          contacts: new Contacts(this.contacts).toFormValues(),
+          address: new Address(this.address).toFormValues(),
+          insee:
+            this.ui_status && this.ui_status.format === 'insee' && this.ui_status.insee ? this.ui_status.insee : '',
+        }
       : {
-        contacts: new Contacts(this.contacts).toFormValues(),
-      };
+          contacts: new Contacts(this.contacts).toFormValues(),
+        };
   }
 }
 
