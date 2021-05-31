@@ -1,0 +1,27 @@
+name: 'Analysis - E2E test'
+
+on:
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  e2e:
+    name: Test e2e
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Start
+        run: sh e2e.sh
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: videos
+          path: /tmp/cypress/videos/
+          retention-days: 3

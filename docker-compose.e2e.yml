@@ -114,9 +114,8 @@ services:
       - postgres
       - smtp
       - s3
-    # TODO: remove this !
-    volumes:
-      - .:/app:ro
+    # volumes:
+      # - .:/app:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`api.covoiturage.dev`)"
