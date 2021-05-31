@@ -15,22 +15,22 @@ export interface User {
   operator?: any;
 }
 
-function makeUser(role: string, user: Partial<User> = {}): User {
+function makeUser(email: string, role: string, user: Partial<User> = {}): User {
   const name = (user.territory ? user.territory.name : user.operator ? user.operator.name : 'registry')
     .replace(' ', '')
     .toLowerCase();
   return {
-    email: `${role}.${name}@example.com`,
-    firstname: role,
+    email,
+    role,
+    firstname: 'User',
     lastname: name,
     status: defaultStatus,
-    role: role,
     password: defaultPassword,
     ...user,
   };
 }
 
-export const adminRegistry = makeUser('admin');
-export const adminIleDeFrance = makeUser('admin', { territory: ileDeFrance });
+export const adminRegistry = makeUser('admin@example.com', 'registry.admin');
+export const adminIleDeFrance = makeUser('territory@example.com', 'territory.admin', { territory: ileDeFrance });
 
 export const users: User[] = [adminRegistry, adminIleDeFrance];
