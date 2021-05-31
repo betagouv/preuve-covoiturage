@@ -188,7 +188,6 @@ link:  ${link}
         contact_form_message: data.body,
         contact_form_name: data.name ?? 'Sans nom',
         contact_form_company: data.company ?? 'non précisé',
-        contact_form_subject: data.subject ?? 'non précisé',
       },
     });
   }
