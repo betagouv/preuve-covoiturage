@@ -120,15 +120,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
 
-    if ('geo' in formValues && typeof formValues.geo === 'string' && formValues.geo.length) {
-      try {
-        formValues.geo = JSON.parse(formValues.geo);
-      } catch (e) {
-        this.toastr.error("Le format du MultiPolygon n'est pas valide");
-        throw e;
-      }
-    }
-
     if (this.territoryChildren && this.fullFormMode && formValues.format === 'parent') {
       formValues.children = this.territoryChildren.getFlatSelectedList();
       if (formValues.children.length === 0) {
@@ -228,7 +219,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         shortname: [''],
         format: ['parent'],
         insee: [''],
-        geo: [''],
         address: this.fb.group(
           new FormAddress(
             new Address({

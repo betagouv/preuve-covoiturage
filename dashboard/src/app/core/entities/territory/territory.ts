@@ -65,7 +65,6 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   // active_since?: Date;
   contacts?: Contacts;
   density?: number;
-  geo?: any; // TODO : geography type
 }
 
 export interface TerritoryInsee {
@@ -99,7 +98,6 @@ export class Territory
   // active_since?: Date;
   contacts?: Contacts;
   density?: number;
-  geo?: any; // TODO : geography type
   insee?: string[];
 
   ui_status: TerritoryUIStatus;
@@ -119,7 +117,6 @@ export class Territory
     assignOrDeleteProperty(base, this, 'contacts', (data) => new Contacts(data.contacts));
     assignOrDeleteProperty(base, this, 'address', (data) => new Address(data.address));
     assignOrDeleteProperty(base, this, 'company', (data) => ({ ...data.company }));
-    assignOrDeleteProperty<string>(base, this, 'geo', (data) => data.geo);
     assignOrDeleteProperty(base, this, 'children', (data) => [...data.children]);
 
     if (base.shortname) this.shortname = base.shortname;
@@ -157,9 +154,6 @@ export class Territory
 
     // if (formValues.insee && formValues.format === 'insee') this.insee = formValues.insee.split(',');
     // else delete this.insee;
-
-    if (formValues.geo && formValues.format === 'geo') this.geo = formValues.geo;
-    else delete this.geo;
 
     if (formValues.density !== undefined) this.density = formValues.density;
     else delete this.density;
@@ -199,25 +193,24 @@ export class Territory
   toFormValues(fullformMode = true): any {
     return fullformMode
       ? {
-          name: this.name ? this.name : '',
-          uiSelectionState:
-            this.ui_status && this.ui_status.ui_selection_state ? this.ui_status.ui_selection_state : [],
-          format: this.ui_status && this.ui_status.format ? this.ui_status.format : 'parent',
-          shortname: this.shortname ? this.shortname : '',
-          active: !!this.active,
-          activable: !!this.activable,
-          level: this.level ? this.level : null,
-          // children: this.children ? this.children : [],
-          company: new Company(this.company).toFormValues(),
-          contacts: new Contacts(this.contacts).toFormValues(),
-          address: new Address(this.address).toFormValues(),
-          geo: this.geo ? this.geo : '{"type": "MultiPolygon", "coordinates": [[[[],[],[],[]]]]}',
-          insee:
-            this.ui_status && this.ui_status.format === 'insee' && this.ui_status.insee ? this.ui_status.insee : '',
-        }
+        name: this.name ? this.name : '',
+        uiSelectionState:
+          this.ui_status && this.ui_status.ui_selection_state ? this.ui_status.ui_selection_state : [],
+        format: this.ui_status && this.ui_status.format ? this.ui_status.format : 'parent',
+        shortname: this.shortname ? this.shortname : '',
+        active: !!this.active,
+        activable: !!this.activable,
+        level: this.level ? this.level : null,
+        // children: this.children ? this.children : [],
+        company: new Company(this.company).toFormValues(),
+        contacts: new Contacts(this.contacts).toFormValues(),
+        address: new Address(this.address).toFormValues(),
+        insee:
+          this.ui_status && this.ui_status.format === 'insee' && this.ui_status.insee ? this.ui_status.insee : '',
+      }
       : {
-          contacts: new Contacts(this.contacts).toFormValues(),
-        };
+        contacts: new Contacts(this.contacts).toFormValues(),
+      };
   }
 }
 
@@ -248,12 +241,6 @@ export interface TerritoryFormModel {
   address?: Address;
   uiSelectionState: TerritorySelectionUIState[];
   format: string;
-  geo?:
-    | string
-    | {
-        type: 'MultiPolygon';
-        coordinates: number[][][2];
-      };
   insee?: string;
 
   // public address?: Address;

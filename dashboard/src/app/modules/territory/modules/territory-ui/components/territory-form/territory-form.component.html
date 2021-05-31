@@ -29,7 +29,6 @@
         <mat-radio-button value="parent">Territoire parent (regroupe plusieurs sous territoires)</mat-radio-button
         ><br />
         <mat-radio-button value="insee">Commune ou groupe de communes</mat-radio-button><br />
-        <mat-radio-button value="geo">Personnalisé (contour géographique)</mat-radio-button>
       </mat-radio-group>
 
       <app-territory-children
@@ -56,25 +55,6 @@
             >Les codes sont au format INSEE (5 chiffres) et doivent être séparés par des virgules</mat-error
           >
         </mat-form-field>
-      </div>
-
-      <div *ngIf="relationDisplayMode === 'geo'">
-        <h4>Contour geographique</h4>
-
-        <mat-form-field class="relation-textarea" appearance="outline">
-          <mat-label>Contour géographique</mat-label>
-          <textarea matInput formControlName="geo"></textarea>
-        </mat-form-field>
-
-        <div class="subtext">
-          Format geojson avec des données de type MultiPolygon
-          <a
-            href="https://fr.wikipedia.org/wiki/GeoJSON#Objets_g%C3%A9om%C3%A9triques"
-            target="_blank"
-            rel="noopener noreferrer"
-            >ici</a
-          >
-        </div>
       </div>
 
       <mat-form-field appearance="outline">
