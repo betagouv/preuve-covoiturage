@@ -29,8 +29,8 @@ services:
       back:
       front:
           aliases:
-            - api.covoiturage.dev
-            - app.covoiturage.dev
+            - api.covoiturage.test
+            - app.covoiturage.test
 
   postgres:
     build: ./docker/postgres
@@ -83,7 +83,7 @@ services:
       - api
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.dashboard.rule=Host(`app.covoiturage.dev`)"
+      - "traefik.http.routers.dashboard.rule=Host(`app.covoiturage.test`)"
       - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.routers.dashboard.tls=true"
       - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
@@ -96,8 +96,8 @@ services:
       # - 8080:8080
     environment:
       DEBUG: "*"
-      # APP_CORS: "https://app.covoiturage.dev"
-      APP_APP_URL: https://app.covoiturage.dev
+      # APP_CORS: "https://app.covoiturage.test"
+      APP_APP_URL: https://app.covoiturage.test
       APP_JWT_SECRET: thisIsASecret0000
       AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
       AWS_REGION: fr-par
@@ -118,7 +118,7 @@ services:
       # - .:/app:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`api.covoiturage.dev`)"
+      - "traefik.http.routers.api.rule=Host(`api.covoiturage.test`)"
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.services.api.loadbalancer.server.port=8080"
       - "traefik.http.routers.api.tls=true"
@@ -150,7 +150,7 @@ services:
     volumes:
       - /tmp/cypress/videos:/app/cypress/videos
     environment:
-      CYPRESS_baseUrl: https://app.covoiturage.dev
+      CYPRESS_baseUrl: https://app.covoiturage.test
     depends_on:
       - api
     networks:

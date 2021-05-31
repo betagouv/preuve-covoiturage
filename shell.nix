@@ -6,6 +6,7 @@ stdenv.mkDerivation {
         (yarn.override { nodejs = null; })
         nodejs-14_x
         act
+        openssl
     ];
 
     shellHook = ''

@@ -2,14 +2,16 @@ DC="$(which docker-compose) -f docker-compose.e2e.yml"
 CERT_DIR="$(pwd)/docker/traefik/certs"
 
 generate_certs() {
+  echo "Generating certificates"
   openssl genrsa -out $CERT_DIR/localCA.key 2048
   openssl req -x509 -new -nodes -key $CERT_DIR/localCA.key -sha256 -days 1825 -out $CERT_DIR/localCA.pem -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=pdc/emailAddress=technique@covoiturage.beta.gouv.fr"
   openssl genrsa -out $CERT_DIR/cert.key 2048
-  openssl req -new -key $CERT_DIR/cert.key -out $CERT_DIR/cert.csr -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=*.covoiturage.dev/emailAddress=technique@covoiturage.beta.gouv.fr"
+  openssl req -new -key $CERT_DIR/cert.key -out $CERT_DIR/cert.csr -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=*.covoiturage.test/emailAddress=technique@covoiturage.beta.gouv.fr"
   openssl x509 -req -in $CERT_DIR/cert.csr -CA $CERT_DIR/localCA.pem -CAkey $CERT_DIR/localCA.key -CAcreateserial -out $CERT_DIR/cert.crt -days 500 -sha256
 }
 
 rebuild() {
+  echo "Rebuilding app image"
   $DC build api
   $DC build dashboard
 }
