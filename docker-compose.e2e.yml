@@ -34,8 +34,6 @@ services:
 
   postgres:
     build: ./docker/postgres
-    # ports:
-      # - 5432:5432
     networks:
       - back
     environment:
@@ -45,8 +43,6 @@ services:
 
   redis:
     build: './docker/redis'
-    # ports:
-      # - 6379:6379
     networks:
       - back
 
@@ -61,19 +57,14 @@ services:
 
   smtp:
     image: mailhog/mailhog:v1.0.1
-    # ports:
-      # - 1025:1025
-      # - 8025:8025
     environment:
       MH_CORS_ORIGIN: '*'
     networks:
       - back
 
   dashboard:
-    # ports:
-      # - 8080:8080
     volumes:
-      - ${PWD}/docker/dashboard/ci.env.js:/usr/share/nginx/html/assets/env.js
+      - ${PWD}/docker/dashboard/ci.env.js:/usr/share/nginx/html/assets/env.js:ro
     build:
       dockerfile: ./docker/dashboard/prod/Dockerfile
       context: .
@@ -92,11 +83,8 @@ services:
     build:
       dockerfile: ./docker/api/prod/Dockerfile
       context: .
-    # ports:
-      # - 8080:8080
     environment:
       DEBUG: "*"
-      # APP_CORS: "https://app.covoiturage.test"
       APP_APP_URL: https://app.covoiturage.test
       APP_JWT_SECRET: thisIsASecret0000
       AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
@@ -114,8 +102,6 @@ services:
       - postgres
       - smtp
       - s3
-    # volumes:
-      # - .:/app:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`api.covoiturage.test`)"
@@ -123,10 +109,33 @@ services:
       - "traefik.http.services.api.loadbalancer.server.port=8080"
       - "traefik.http.routers.api.tls=true"
 
+  worker:
+    build:
+      dockerfile: ./docker/api/prod/Dockerfile
+      context: .
+    environment:
+      DEBUG: "*"
+      APP_APP_URL: https://app.covoiturage.test
+      APP_JWT_SECRET: thisIsASecret0000
+      AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
+      AWS_REGION: fr-par
+      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
+      APP_REDIS_URL: redis://redis:6379/1
+      APP_MAIL_SMTP_URL: smtp://smtp:1025
+      PORT: 8080
+      NODE_ENV: local
+      APP_ENV: local
+    networks:
+      - back
+    depends_on:
+      - redis
+      - postgres
+      - smtp
+      - s3
+    command: ["yarn", "start:queue"]
+
   s3:
     image: minio/minio:edge  
-    # ports:
-      # - 9000:9000 
     networks:
       - back
     command: 'server /data'

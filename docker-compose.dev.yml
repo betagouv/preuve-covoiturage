@@ -1,0 +1,76 @@
+version: '3.5'
+services:
+  postgres:
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'local'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+    volumes:
+      - ${PWD}/db/postgres:/var/lib/postgresql/data/pgdata
+
+  redis:
+    ports:
+      - 6379:6379
+
+  smtp:
+    ports:
+      - 8025:8025
+    environment:
+      MH_CORS_ORIGIN: '*'
+
+  s3:
+    ports:
+      - 9000:9000
+
+  dashboard:
+    build:
+      dockerfile: ./docker/dashboard/Dockerfile
+      context: .
+    ports:
+      - 8081:8080
+    volumes:
+      - ${PWD}:/app:ro
+      - ${PWD}/docker/dashboard/ci.env.js:/app/dashboard/src/assets/env.js:ro
+  
+  api:
+    build:
+      dockerfile: ./docker/api/Dockerfile
+      context: .
+    ports:
+      - 8082:8080
+    volumes:
+      - ${PWD}:/app:ro
+    command: 'bash -c "yarn start:http | pino-pretty"'
+    tty: true
+    environment:
+      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
+  
+  worker:
+    build:
+      dockerfile: ./docker/api/Dockerfile
+      context: .
+    volumes:
+      - ${PWD}:/app:ro
+    command: 'bash -c "yarn start:queue | pino-pretty"'
+    tty: true
+    environment:
+      APP_WORKER: 'true'
+      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
+
+  cypress:
+    volumes:
+      - ${PWD}/tests:/app:ro
+
+  lint:
+    build: './docker/lint'
+    tty: true
+    volumes:
+      - ${PWD}/api:/code/api:ro
+      - ${PWD}/dashboard:/code/dashboard:ro
+
+networks:
+  front:
+  back:
