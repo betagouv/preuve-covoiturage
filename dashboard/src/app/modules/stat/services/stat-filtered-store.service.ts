@@ -12,6 +12,7 @@ import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
 import { debounceTime, map, mergeMap } from 'rxjs/operators';
 import { StatPublicService } from './stat-public.service';
+import { StoreLoadingState } from '../../../core/services/store/StoreLoadingState';
 
 @Injectable({
   providedIn: 'root',
@@ -88,6 +89,7 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
               const nowMinus1Year = new Date();
               nowMinus1Year.setMonth(nowMinus1Year.getMonth() - 12);
               nowMinus1Year.setHours(0, 0, 0, 0);
+              this._listLoadingState.next(StoreLoadingState.LoadStart);
               this.publicStatService
                 .loadOne({
                   date: {
@@ -98,7 +100,7 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
                   tz: 'Europe/Paris',
                 })
                 .subscribe((stats: StatInterface[]) => {
-                  this._isLoaded = true;
+                  this._listLoadingState.next(StoreLoadingState.LoadComplete);
                   this.entitiesSubject.next(stats);
                 });
             } else {
