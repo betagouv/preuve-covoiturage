@@ -10,7 +10,7 @@ import { GetListStore } from '~/core/services/store/getlist-store';
 import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
-import { debounceTime, map, mergeMap } from 'rxjs/operators';
+import { debounceTime, map, mergeMap, tap } from 'rxjs/operators';
 import { StatPublicService } from './stat-public.service';
 import { StoreLoadingState } from '../../../core/services/store/StoreLoadingState';
 
@@ -76,77 +76,65 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
 
     this._timeMode = new BehaviorSubject<ApiGraphTimeMode>(ApiGraphTimeMode.Month);
 
+    // Wath for changes on filters and timeMode
     merge(this._filterSubject, this._timeMode)
       .pipe(debounceTime(50))
-      .subscribe((filt) => {
-        if (firstLoad || filt !== null) {
+      .subscribe((filter) => {
+        if (firstLoad || filter !== null) {
           // use signature cache with filters data in order to resubmit stats filter
           const currentSignature = this.filterSignature;
-          const hasChanged = this._currentFilterSignature !== currentSignature;
-          if (hasChanged) {
+          if (this.hasFilterSignatureChanged(currentSignature)) {
             this._currentFilterSignature = currentSignature;
-            if (this.isPublic) {
-              // init start
-              const start: Date = new Date(new Date().setMonth(new Date().getMonth() - 12));
-              start.setHours(2, 0, 0, 0);
-
-              // init end
-              const end: Date = new Date(new Date().setDate(new Date().getDate() - 5));
-              end.setHours(2, 0, 0, 0);
-
-              this._listLoadingState.next(StoreLoadingState.LoadStart);
-              this.publicStatService
-                .load({
-                  date: {
-                    start: start,
-                    end: end,
-                  },
-                  group_by: filt as ApiGraphTimeMode,
-                  tz: 'Europe/Paris',
-                })
-                .subscribe((stats: StatInterface[]) => {
-                  this._listLoadingState.next(StoreLoadingState.LoadComplete);
-                  this.entitiesSubject.next(stats);
-                });
-            } else {
-              this.loadList();
-            }
-            firstLoad = !firstLoad || !!filt;
+            this.callStats(filter);
+            firstLoad = !firstLoad || !!filter;
           } else {
             setTimeout(() => this.entitiesSubject.next(this.entitiesSubject.value), 0);
           }
         }
       });
 
+    // Watch for changes on filters only
     this._filterSubject
       .pipe(
         debounceTime(50),
-        mergeMap((filter) => {
-          if (this.isPublic) {
-            // init start
-            const start: Date = new Date(new Date().setMonth(new Date().getMonth() - 12));
-            start.setHours(2, 0, 0, 0);
-
-            // init end
-            const end: Date = new Date(new Date().setDate(new Date().getDate() - 5));
-            end.setHours(2, 0, 0, 0);
-            return this.publicStatService
-              .load({
-                date: {
-                  start: start,
-                  end: end,
-                },
-                group_by: ApiGraphTimeMode.All,
-                tz: 'Europe/Paris',
-              })
-              .pipe(map((stats: StatInterface[]) => stats[0]));
-          } else {
-            return (this.rpcGetList as StatApiService).getTotalStats(filter);
-          }
-        }),
+        mergeMap((filter) => this.callTotalStats(filter)),
       )
       .subscribe((totalStats) => {
         this._totalStats.next(totalStats);
+      });
+  }
+
+  private callTotalStats(filter): Observable<StatInterface> {
+    return this.isPublic
+      ? this.publicStatService
+          .load({
+            group_by: ApiGraphTimeMode.All,
+          })
+          .pipe(map((stats: StatInterface[]) => stats[0]))
+      : (this.rpcGetList as StatApiService).getTotalStats(filter);
+  }
+
+  private callStats(filt: any) {
+    if (this.isPublic) {
+      this.loadPublicStats(filt as ApiGraphTimeMode);
+    } else {
+      this.loadList();
+    }
+  }
+
+  private hasFilterSignatureChanged(currentSignature: string): Boolean {
+    return this._currentFilterSignature !== currentSignature;
+  }
+
+  private loadPublicStats(filt: ApiGraphTimeMode) {
+    this._listLoadingState.next(StoreLoadingState.LoadStart);
+    this.publicStatService
+      .load({
+        group_by: filt,
+      })
+      .subscribe((stats: StatInterface[]) => {
+        this._listLoadingState.next(StoreLoadingState.LoadComplete);
+        this.entitiesSubject.next(stats);
       });
   }
 

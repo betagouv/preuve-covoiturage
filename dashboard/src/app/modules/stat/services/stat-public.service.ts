@@ -10,9 +10,21 @@ import { PublicTripSearchInterface } from '../../../core/entities/api/shared/tri
   providedIn: 'root',
 })
 export class StatPublicService {
-  constructor(private _http: HttpClient) {}
+  private DEFAULT_PUBLIC_PARAMS: PublicTripSearchInterface = {};
+
+  constructor(private _http: HttpClient) {
+    const start: Date = new Date(new Date().setMonth(new Date().getMonth() - 12));
+    start.setHours(2, 0, 0, 0);
+
+    const end: Date = new Date(new Date().setDate(new Date().getDate() - 5));
+    end.setHours(2, 0, 0, 0);
+
+    this.DEFAULT_PUBLIC_PARAMS.date = { start, end };
+    this.DEFAULT_PUBLIC_PARAMS.tz = 'Europe/Paris';
+  }
 
   public load(params: PublicTripSearchInterface): Observable<StatInterface[]> {
+    Object.assign(params, this.DEFAULT_PUBLIC_PARAMS);
     return this._http.post('stats', params).pipe(tap((data: StatInterface[]) => {}));
   }
 }
