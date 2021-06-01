@@ -86,15 +86,20 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
           if (hasChanged) {
             this._currentFilterSignature = currentSignature;
             if (this.isPublic) {
-              const nowMinus1Year = new Date();
-              nowMinus1Year.setMonth(nowMinus1Year.getMonth() - 12);
-              nowMinus1Year.setHours(0, 0, 0, 0);
+              // init start
+              const start: Date = new Date(new Date().setMonth(new Date().getMonth() - 12));
+              start.setHours(2, 0, 0, 0);
+
+              // init end
+              const end: Date = new Date(new Date().setDate(new Date().getDate() - 5));
+              end.setHours(2, 0, 0, 0);
+
               this._listLoadingState.next(StoreLoadingState.LoadStart);
               this.publicStatService
-                .loadOne({
+                .load({
                   date: {
-                    start: nowMinus1Year,
-                    end: new Date(),
+                    start: start,
+                    end: end,
                   },
                   group_by: filt as ApiGraphTimeMode,
                   tz: 'Europe/Paris',
@@ -118,14 +123,18 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
         debounceTime(50),
         mergeMap((filter) => {
           if (this.isPublic) {
-            const nowMinus1Year = new Date();
-            nowMinus1Year.setMonth(nowMinus1Year.getMonth() - 12);
-            nowMinus1Year.setHours(0, 0, 0, 0);
+            // init start
+            const start: Date = new Date(new Date().setMonth(new Date().getMonth() - 12));
+            start.setHours(2, 0, 0, 0);
+
+            // init end
+            const end: Date = new Date(new Date().setDate(new Date().getDate() - 5));
+            end.setHours(2, 0, 0, 0);
             return this.publicStatService
-              .loadOne({
+              .load({
                 date: {
-                  start: nowMinus1Year,
-                  end: new Date(),
+                  start: start,
+                  end: end,
                 },
                 group_by: ApiGraphTimeMode.All,
                 tz: 'Europe/Paris',
