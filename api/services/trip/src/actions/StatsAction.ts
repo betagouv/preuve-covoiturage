@@ -39,7 +39,7 @@ export class StatsAction extends Action {
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     return (
       (await this.cache.getOrBuild(async () => {
-        let statInterface: StatInterface[] = await this.pg.stats(params);
+        const statInterface: StatInterface[] = await this.pg.stats(params);
         return statInterface.length === 0 ? [] : this.fillWithZeroes(statInterface, params);
       }, params)) || []
     );

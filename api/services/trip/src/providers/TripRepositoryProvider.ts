@@ -9,7 +9,6 @@ import {
   TripSearchInterfaceWithPagination,
   TripSearchInterface,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
-import { ApiGraphTimeMode } from '../shared/trip/common/interfaces/ApiGraphTimeMode';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
 import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
@@ -31,7 +30,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'trip.list';
   private defaultTz: TzResultInterface = { name: 'GMT', utc_offset: '00:00:00' };
 
-  constructor(public connection: PostgresConnection) {}
+  constructor(public connection: PostgresConnection) { }
 
   protected async buildWhereClauses(
     filters: Partial<TripSearchInterface>,
@@ -220,13 +219,13 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const groupBy =
       params.group_by === 'day'
         ? {
-            format: 'yyyy-mm-dd',
-            key: 'day',
-          }
+          format: 'yyyy-mm-dd',
+          key: 'day',
+        }
         : {
-            format: 'yyyy-mm',
-            key: 'month',
-          };
+          format: 'yyyy-mm',
+          key: 'month',
+        };
     const text = `
       SELECT
         to_char(journey_start_datetime::date, '${groupBy.format}') as ${groupBy.key},
