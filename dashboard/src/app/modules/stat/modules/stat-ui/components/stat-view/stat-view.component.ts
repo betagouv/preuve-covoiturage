@@ -1,16 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-
-import { StatNavName } from '~/core/types/stat/statDataNameType';
-import { FilterService } from '~/modules/filter/services/filter.service';
-import { URLS } from '~/core/const/main.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { URLS } from '~/core/const/main.const';
+import { StatNavName } from '~/core/types/stat/statDataNameType';
 import { PUBLIC_STATS } from '~/modules/stat/config/stat';
-
 import { StatFilteredStoreService } from '../../../../services/stat-filtered-store.service';
-import { takeUntil } from 'rxjs/operators';
-import { FilterUxInterface } from '../../../../../../core/interfaces/filter/filterUxInterface';
-import { StatPublicService } from '../../../../services/stat-public.service';
-import { StatInterface } from '../../../../../../core/interfaces/stat/StatInterface';
 
 @Component({
   selector: 'app-stat-view',

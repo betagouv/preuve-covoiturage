@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { cloneDeep } from 'lodash-es';
-
-import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { StatInterface } from '~/core/interfaces/stat/StatInterface';
-import { StatApiService } from '~/modules/stat/services/stat-api.service';
-import { GetListStore } from '~/core/services/store/getlist-store';
+import { BehaviorSubject, merge, Observable } from 'rxjs';
+import { debounceTime, map, mergeMap } from 'rxjs/operators';
 import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
-import { ApiGraphTimeMode } from './ApiGraphTimeMode';
-import { debounceTime, map, mergeMap, tap } from 'rxjs/operators';
-import { StatPublicService } from './stat-public.service';
+import { GetListStore } from '~/core/services/store/getlist-store';
+import { StatApiService } from '~/modules/stat/services/stat-api.service';
 import { StoreLoadingState } from '../../../core/services/store/StoreLoadingState';
+import { ApiGraphTimeMode } from './ApiGraphTimeMode';
+import { StatPublicService } from './stat-public.service';
 
 @Injectable({
   providedIn: 'root',
