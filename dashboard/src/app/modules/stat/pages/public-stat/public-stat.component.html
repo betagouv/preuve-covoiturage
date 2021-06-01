@@ -18,13 +18,8 @@
     </div>
   </div>
 
-  <!-- spinner -->
-  <div class="public-stat--loading" *ngIf="loading && !loaded">
-    <mat-spinner></mat-spinner>
-  </div>
-
   <!-- number navs and charts-->
-  <app-stat-view [navList]="statsList"> </app-stat-view>
+  <app-stat-view [isPublic]="true" [navList]="statsList"> </app-stat-view>
 
   <div class="public-stat-header">
     <div class="has-text-centered padding-fat-bottom">

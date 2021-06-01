@@ -286,18 +286,15 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerStatsRoutes(): void {
-    this.app.get(
+    this.app.post(
       '/stats',
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
           createRPCPayload(
-            'trip:stats',
-            {
-              group_by: 'day',
-              tz: 'Europe/Paris',
-            },
-            { permissions: ['registry.trip.stats'] },
+            'trip:publicStats',
+            req.body,
+            { },
           ),
         )) as RPCResponseType;
 

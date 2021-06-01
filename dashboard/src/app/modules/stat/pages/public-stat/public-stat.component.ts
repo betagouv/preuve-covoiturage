@@ -14,15 +14,7 @@ export class PublicStatComponent extends DestroyObservable {
 
   @Input() statsList = PUBLIC_STATS;
 
-  constructor(private publicStatService: StatPublicService) {
+  constructor() {
     super();
-  }
-
-  get loading(): boolean {
-    return this.publicStatService.loading;
-  }
-
-  get loaded(): boolean {
-    return this.publicStatService.loaded;
   }
 }

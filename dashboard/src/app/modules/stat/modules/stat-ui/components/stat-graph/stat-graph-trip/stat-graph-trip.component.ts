@@ -1,4 +1,4 @@
-import { Component, Input, ViewChildren } from '@angular/core';
+import { Component, Input, ViewChildren, ɵɵtrustConstantResourceUrl } from '@angular/core';
 import { ChartjsComponent } from '@ctrl/ngx-chartjs';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';

@@ -9,6 +9,8 @@ import { PUBLIC_STATS } from '~/modules/stat/config/stat';
 import { StatFilteredStoreService } from '../../../../services/stat-filtered-store.service';
 import { takeUntil } from 'rxjs/operators';
 import { FilterUxInterface } from '../../../../../../core/interfaces/filter/filterUxInterface';
+import { StatPublicService } from '../../../../services/stat-public.service';
+import { StatInterface } from '../../../../../../core/interfaces/stat/StatInterface';
 
 @Component({
   selector: 'app-stat-view',
@@ -19,19 +21,15 @@ export class StatViewComponent extends DestroyObservable implements OnInit {
   public gitbookLinkStats: string = URLS.gitbookLinkStats;
 
   @Input() navList = PUBLIC_STATS;
+  @Input() isPublic = false;
   public graphName: StatNavName = this.navList[0];
 
-  constructor(public statService: StatFilteredStoreService, public filterService: FilterService) {
+  constructor(public statService: StatFilteredStoreService) {
     super();
   }
 
   ngOnInit(): void {
-    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
-      if (this.statService.isLoading) {
-        return;
-      }
-      this.statService.load(filter);
-    });
+    this.statService.isPublic = this.isPublic;
   }
 
   get loading(): boolean {

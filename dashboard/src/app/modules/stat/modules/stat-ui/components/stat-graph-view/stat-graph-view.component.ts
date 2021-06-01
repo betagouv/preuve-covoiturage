@@ -22,10 +22,6 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
   }
 
   ngOnInit(): void {
-    this.loadStat();
-  }
-
-  private loadStat(): void {
     this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe((stats) => {
       if (stats) {
         this.graphData = stats.graph;

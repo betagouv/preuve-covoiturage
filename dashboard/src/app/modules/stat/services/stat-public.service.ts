@@ -6,6 +6,7 @@ import { tap } from 'rxjs/operators';
 
 import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
+import { PublicTripSearchInterface } from '../../../core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 
 @Injectable({
   providedIn: 'root',
@@ -17,18 +18,10 @@ export class StatPublicService {
 
   constructor(private _http: HttpClient) {}
 
-  public loadOne(): Observable<StatInterface[]> {
+  public loadOne(params: PublicTripSearchInterface): Observable<StatInterface[]> {
     this._loading$.next(true);
 
-    return this._http.get('stats').pipe(
-      tap((data: StatInterface[]) => {
-        // const formatedStat = this._statFormatService.formatData(data);
-        const formatedStat = null;
-        this._formatedStat$.next(formatedStat);
-        this._loaded$.next(true);
-        this._loading$.next(false);
-      }),
-    );
+    return this._http.post('stats', params).pipe(tap((data: StatInterface[]) => {}));
   }
 
   get loading(): boolean {

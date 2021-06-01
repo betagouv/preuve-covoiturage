@@ -1,12 +1,16 @@
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
 
-export interface TripSearchInterface {
+export interface PublicTripSearchInterface {
   tz?: string;
-  campaign_id?: number[];
+  group_by?: ApiGraphTimeMode;
   date?: {
     start?: Date;
     end?: Date;
   };
+}
+
+export interface TripSearchInterface extends PublicTripSearchInterface {
+  campaign_id?: number[];
   days?: number[];
   status?: string;
   distance?: {
@@ -16,7 +20,6 @@ export interface TripSearchInterface {
   ranks?: string[];
   operator_id?: number[];
   territory_id?: number[];
-  group_by?: ApiGraphTimeMode;
 }
 
 export interface TripSearchInterfaceWithPagination extends TripSearchInterface {

@@ -10,7 +10,8 @@ import { GetListStore } from '~/core/services/store/getlist-store';
 import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
-import { debounceTime, mergeMap } from 'rxjs/operators';
+import { debounceTime, map, mergeMap } from 'rxjs/operators';
+import { StatPublicService } from './stat-public.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +21,9 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
   protected _timeMode: BehaviorSubject<ApiGraphTimeMode>;
   protected _totalStats = new BehaviorSubject<StatInterface>(null);
   private _currentFilterSignature: string;
+  public isPublic: Boolean;
 
-  constructor(statApi: StatApiService) {
+  constructor(statApi: StatApiService, private publicStatService: StatPublicService) {
     super(statApi as JsonRpcGetList<StatInterface, StatInterface, any, TripSearchInterface>);
   }
 
@@ -61,7 +63,6 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
   }
 
   // override filter behaviour un order to implemented DateMode input flow
-
   get filterSignature(): string {
     return JSON.stringify({
       filterSubject: this._filterSubject.value,
@@ -81,10 +82,28 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
           // use signature cache with filters data in order to resubmit stats filter
           const currentSignature = this.filterSignature;
           const hasChanged = this._currentFilterSignature !== currentSignature;
-
           if (hasChanged) {
             this._currentFilterSignature = currentSignature;
-            this.loadList();
+            if (this.isPublic) {
+              const nowMinus1Year = new Date();
+              nowMinus1Year.setMonth(nowMinus1Year.getMonth() - 12);
+              nowMinus1Year.setHours(0, 0, 0, 0);
+              this.publicStatService
+                .loadOne({
+                  date: {
+                    start: nowMinus1Year,
+                    end: new Date(),
+                  },
+                  group_by: filt as ApiGraphTimeMode,
+                  tz: 'Europe/Paris',
+                })
+                .subscribe((stats: StatInterface[]) => {
+                  this._isLoaded = true;
+                  this.entitiesSubject.next(stats);
+                });
+            } else {
+              this.loadList();
+            }
             firstLoad = !firstLoad || !!filt;
           } else {
             setTimeout(() => this.entitiesSubject.next(this.entitiesSubject.value), 0);
@@ -95,7 +114,25 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     this._filterSubject
       .pipe(
         debounceTime(50),
-        mergeMap((filter) => (this.rpcGetList as StatApiService).getTotalStats(filter)),
+        mergeMap((filter) => {
+          if (this.isPublic) {
+            const nowMinus1Year = new Date();
+            nowMinus1Year.setMonth(nowMinus1Year.getMonth() - 12);
+            nowMinus1Year.setHours(0, 0, 0, 0);
+            return this.publicStatService
+              .loadOne({
+                date: {
+                  start: nowMinus1Year,
+                  end: new Date(),
+                },
+                group_by: ApiGraphTimeMode.All,
+                tz: 'Europe/Paris',
+              })
+              .pipe(map((stats: StatInterface[]) => stats[0]));
+          } else {
+            return (this.rpcGetList as StatApiService).getTotalStats(filter);
+          }
+        }),
       )
       .subscribe((totalStats) => {
         this._totalStats.next(totalStats);
