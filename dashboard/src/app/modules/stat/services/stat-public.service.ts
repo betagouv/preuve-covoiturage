@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { PublicTripSearchInterface } from '../../../core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 
@@ -11,7 +11,7 @@ import { PublicTripSearchInterface } from '../../../core/entities/api/shared/tri
 export class StatPublicService {
   private DEFAULT_PUBLIC_PARAMS: PublicTripSearchInterface = {};
 
-  constructor(private _http: HttpClient) {
+  constructor(private http: HttpClient) {
     const start: Date = new Date(new Date().setMonth(new Date().getMonth() - 12));
     start.setHours(2, 0, 0, 0);
 
@@ -24,6 +24,6 @@ export class StatPublicService {
 
   public load(params: PublicTripSearchInterface): Observable<StatInterface[]> {
     Object.assign(params, this.DEFAULT_PUBLIC_PARAMS);
-    return this._http.post('stats', params).pipe(tap((data: StatInterface[]) => {}));
+    return this.http.post<StatInterface[]>('stats', params);
   }
 }
