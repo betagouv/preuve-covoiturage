@@ -291,11 +291,7 @@ export class HttpTransport implements TransportInterface {
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
-          createRPCPayload(
-            'trip:publicStats',
-            req.body,
-            { },
-          ),
+          createRPCPayload('trip:publicStats', req.body, {}),
         )) as RPCResponseType;
 
         if (!response || Array.isArray(response) || 'error' in response) {
