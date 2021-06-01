@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { PublicTripSearchInterface } from '../../../core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 
