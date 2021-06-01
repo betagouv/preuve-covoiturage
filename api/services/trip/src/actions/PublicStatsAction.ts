@@ -1,4 +1,3 @@
-// tslint:disable:variable-name
 import { Action } from '@ilos/core';
 import { handler } from '@ilos/common';
 
