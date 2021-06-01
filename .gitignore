@@ -8,5 +8,3 @@ db/*
 yarn-error.log
 !docker/dashboard
 dashboard/src/environments/environment.review.ts
-
-./yarn.lock
