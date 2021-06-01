@@ -507,20 +507,10 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       values.push(JSON.stringify(data.ui_status));
     }
 
-    if (data.geo) {
-      values.push(JSON.stringify(data.geo));
-    }
-
     const query = {
       text: `
-        INSERT INTO ${this.table}
-        (
-          ${fields.join(',')}
-          ${data.geo ? ',geo' : ''}
-        )
-        VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')}${
-        data.geo ? `,ST_GeomFromGeoJSON($${fields.length + 1})` : ''
-      })
+        INSERT INTO ${this.table} (${fields.join(',')})
+        VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')})
         RETURNING *
       `,
       values,
@@ -612,7 +602,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       // data.density ? data.density : null,
       data.company_id ? data.company_id : null,
       data.ui_status ? data.ui_status : '{}',
-      // data.geo ? data.geo : null,
     ];
 
     // if (data.density !== undefined) {
@@ -630,20 +619,14 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     //   values.push(JSON.stringify(data.ui_status));
     // }
 
-    if (data.geo) {
-      values.push(JSON.stringify(data.geo));
-    }
-
     const client = this.connection.getClient();
 
     const query = {
       text: `
         UPDATE ${this.table}
         SET ${fields.map((val, ind) => `${val} = $${ind + 1}`).join(',')}
-        ${data.geo ? `,geo = ST_GeomFromGeoJSON($${fields.length + 1})` : `,geo = NULL`}
         WHERE _id=${data._id}
       `,
-
       values,
     };
 
@@ -669,8 +652,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     if (result.rowCount !== 1) {
       throw new Error(`Unable to update territory (${JSON.stringify(data)})`);
     }
-
-    // const resultData = result.rows[0];
 
     await this.updateRelations(data._id, data.children, true);
 

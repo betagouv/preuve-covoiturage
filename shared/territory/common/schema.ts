@@ -22,7 +22,7 @@ const commonFields = {
 };
 
 const geoFields = {
-  geo: {},
+  // geo: {},
   density: {},
   insee: {},
   postcode: {},
@@ -132,13 +132,13 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
         oneOf: [
           {
             type: 'object',
-            required: ['geo'],
+            // required: ['geo'],
             additionalProperties: false,
             properties: {
               ...commonFields,
               ...activeFields,
               ...extrafields,
-              geo: MultiPolygonSchema,
+              // geo: MultiPolygonSchema,
               density: {
                 type: 'integer',
                 minimum: 0,
