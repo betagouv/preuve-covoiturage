@@ -2,6 +2,7 @@ import { createDatabase, dropDatabase, migrate } from '@pdc/migrator';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { URL } from 'url';
 
+import { Operator, operators } from './operators';
 import { Territory, territories } from './territories';
 import { User, users } from './users';
 
@@ -66,6 +67,11 @@ export class Migrator {
       await this.seedTerritory(territory);
     }
 
+    for (const operator of operators) {
+      console.debug(`Seeding operator ${operator.name}`);
+      await this.seedOperator(operator);
+    }
+
     for (const user of users) {
       console.debug(`Seeding user ${user.email}`);
       await this.seedUser(user);
@@ -99,6 +105,36 @@ export class Migrator {
             +++ VIEWS +++ 
     */
     await this.connection.getClient().query(`SET session_replication_role = 'origin'`);
+  }
+
+  async seedOperator(operator: Operator) {
+    await this.connection.getClient().query({
+      text: `
+        INSERT INTO operator.operators
+          (_id, name, legal_name, siret, company, address, bank, contacts)
+        VALUES (
+          $1::int,
+          $2::varchar,
+          $3::varchar,
+          $4::varchar,
+          $5::json,
+          $6::json,
+          $7::json,
+          $8::json
+        )
+        ON CONFLICT DO NOTHING
+      `,
+      values: [
+        operator._id,
+        operator.name,
+        operator.legal_name,
+        operator.siret,
+        operator.company,
+        operator.address,
+        operator.bank,
+        operator.contacts,
+      ],
+    });
   }
 
   async seedUser(user: User) {
