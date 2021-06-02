@@ -1,8 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { URLS } from '~/core/const/main.const';
 import { StatNavName } from '~/core/types/stat/statDataNameType';
 import { PUBLIC_STATS } from '~/modules/stat/config/stat';
+import { FilterUxInterface } from '../../../../../../core/interfaces/filter/filterUxInterface';
+import { FilterService } from '../../../../../filter/services/filter.service';
 import { StatFilteredStoreService } from '../../../../services/stat-filtered-store.service';
 
 @Component({
@@ -17,11 +20,17 @@ export class StatViewComponent extends DestroyObservable implements OnInit {
   @Input() isPublic = false;
   public graphName: StatNavName = this.navList[0];
 
-  constructor(public statService: StatFilteredStoreService) {
+  constructor(public statService: StatFilteredStoreService, public filterService: FilterService) {
     super();
   }
 
   ngOnInit(): void {
+    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
+      if (this.statService.isLoading) {
+        return;
+      }
+      this.statService.load(filter);
+    });
     this.statService.isPublic = this.isPublic;
   }
 
