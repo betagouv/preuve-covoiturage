@@ -25,12 +25,14 @@ export class StatViewComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit(): void {
-    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
-      if (this.statService.isLoading) {
-        return;
-      }
-      this.statService.load(filter);
-    });
+    if (!this.isPublic) {
+      this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
+        if (this.statService.isLoading) {
+          return;
+        }
+        this.statService.load(filter);
+      });
+    }
     this.statService.isPublic = this.isPublic;
   }
 

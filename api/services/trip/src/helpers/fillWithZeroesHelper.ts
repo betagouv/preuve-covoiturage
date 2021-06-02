@@ -32,6 +32,9 @@ function dateRange(type: ApiGraphTimeMode, start: Date, end: Date): string[] {
   const len = type === 'day' ? 10 : 7;
   const fn = type === 'day' ? 'Date' : 'Month';
 
+  start = new Date(start);
+  end = new Date(end);
+
   if (type === 'month') {
     start.setDate(1);
   }
