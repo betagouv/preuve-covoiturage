@@ -10,7 +10,12 @@ import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { Address } from '~/core/entities/shared/address';
 import { Contact } from '~/core/entities/shared/contact';
-import { Territory, territoryLevelLabels, TerritoryFormModel } from '~/core/entities/territory/territory';
+import {
+  Territory,
+  territoryLevelLabels,
+  TerritoryFormModel,
+  TerritoryLevelEnum,
+} from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Groups } from '~/core/enums/user/groups';
@@ -43,8 +48,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   fullFormMode = false;
   displayAOMActive = false;
-  levelLabel = territoryLevelLabels;
   hasTerritories = false;
+
+  levelLabel = territoryLevelLabels;
 
   public editedId: number;
   private companyDetails: CompanyInterface;
@@ -53,6 +59,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   get controls(): { [key: string]: AbstractControl } {
     return this.territoryForm.controls;
+  }
+
+  get needsChildren(): boolean {
+    return !this.isTown && !this.hasTerritories && this.relationDisplayMode === 'parent';
+  }
+
+  get isTown(): boolean {
+    return this.territoryForm.get('level').value === TerritoryLevelEnum.Town;
   }
 
   get isAOM(): boolean {
@@ -120,13 +134,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
 
-    if ('geo' in formValues && typeof formValues.geo === 'string' && formValues.geo.length) {
-      try {
-        formValues.geo = JSON.parse(formValues.geo);
-      } catch (e) {
-        this.toastr.error("Le format du MultiPolygon n'est pas valide");
-        throw e;
-      }
+    if (this.isTown) {
+      delete formValues.children;
+      delete formValues.insee;
+      delete formValues.format;
     }
 
     if (this.territoryChildren && this.fullFormMode && formValues.format === 'parent') {
@@ -228,7 +239,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         shortname: [''],
         format: ['parent'],
         insee: [''],
-        geo: [''],
         address: this.fb.group(
           new FormAddress(
             new Address({

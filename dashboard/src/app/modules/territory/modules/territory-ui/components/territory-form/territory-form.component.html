@@ -25,58 +25,6 @@
 
       <h3>Territoire</h3>
 
-      <mat-radio-group aria-label="Format" class="format-radio" formControlName="format">
-        <mat-radio-button value="parent">Territoire parent (regroupe plusieurs sous territoires)</mat-radio-button
-        ><br />
-        <mat-radio-button value="insee">Commune ou groupe de communes</mat-radio-button><br />
-        <mat-radio-button value="geo">Personnalisé (contour géographique)</mat-radio-button>
-      </mat-radio-group>
-
-      <app-territory-children
-        *ngIf="relationDisplayMode === 'parent'"
-        (hasTerritories)="hasTerritoriesChanged($event)"
-      ></app-territory-children>
-
-      <mat-error class="no-children-error" *ngIf="!hasTerritories && relationDisplayMode === 'parent'">
-        Ajoutez au moins 1 territoire pour valider le formulaire
-      </mat-error>
-
-      <div *ngIf="relationDisplayMode === 'insee'">
-        <h4>Codes INSEE (séparés par des virgules)</h4>
-        <mat-form-field class="relation-textarea" appearance="outline">
-          <mat-label>Codes INSEE *</mat-label>
-          <textarea matInput formControlName="insee"></textarea>
-          <mat-error *ngIf="territoryForm.controls.insee.hasError('required')"
-            >Les codes INSEE sont obligatoires.</mat-error
-          >
-          <mat-error
-            *ngIf="
-              !territoryForm.controls.insee.hasError('required') && territoryForm.controls.insee.hasError('pattern')
-            "
-            >Les codes sont au format INSEE (5 chiffres) et doivent être séparés par des virgules</mat-error
-          >
-        </mat-form-field>
-      </div>
-
-      <div *ngIf="relationDisplayMode === 'geo'">
-        <h4>Contour geographique</h4>
-
-        <mat-form-field class="relation-textarea" appearance="outline">
-          <mat-label>Contour géographique</mat-label>
-          <textarea matInput formControlName="geo"></textarea>
-        </mat-form-field>
-
-        <div class="subtext">
-          Format geojson avec des données de type MultiPolygon
-          <a
-            href="https://fr.wikipedia.org/wiki/GeoJSON#Objets_g%C3%A9om%C3%A9triques"
-            target="_blank"
-            rel="noopener noreferrer"
-            >ici</a
-          >
-        </div>
-      </div>
-
       <mat-form-field appearance="outline">
         <mat-label>Niveau</mat-label>
         <mat-select formControlName="level" required>
@@ -84,6 +32,40 @@
         </mat-select>
         <mat-error *ngIf="controls.level.hasError('required')"> Le niveau du territoire est obligatoire. </mat-error>
       </mat-form-field>
+
+      <div *ngIf="!isTown">
+        <mat-radio-group aria-label="Format" class="format-radio" formControlName="format">
+          <mat-radio-button value="parent">Territoire parent (regroupe plusieurs sous territoires)</mat-radio-button
+          ><br />
+          <mat-radio-button value="insee">Commune ou groupe de communes</mat-radio-button><br />
+        </mat-radio-group>
+
+        <app-territory-children
+          *ngIf="relationDisplayMode === 'parent'"
+          (hasTerritories)="hasTerritoriesChanged($event)"
+        ></app-territory-children>
+
+        <mat-error class="no-children-error" *ngIf="needsChildren">
+          Ajoutez au moins 1 territoire pour valider le formulaire
+        </mat-error>
+
+        <div *ngIf="relationDisplayMode === 'insee'">
+          <h4>Codes INSEE (séparés par des virgules)</h4>
+          <mat-form-field class="relation-textarea" appearance="outline">
+            <mat-label>Codes INSEE *</mat-label>
+            <textarea matInput formControlName="insee"></textarea>
+            <mat-error *ngIf="territoryForm.controls.insee.hasError('required')"
+              >Les codes INSEE sont obligatoires.</mat-error
+            >
+            <mat-error
+              *ngIf="
+                !territoryForm.controls.insee.hasError('required') && territoryForm.controls.insee.hasError('pattern')
+              "
+              >Les codes sont au format INSEE (5 chiffres) et doivent être séparés par des virgules</mat-error
+            >
+          </mat-form-field>
+        </div>
+      </div>
 
       <div [hidden]="!isPartner && !isAOM">
         <h3>Structure</h3>
@@ -134,7 +116,7 @@
           class="large"
           mat-flat-button
           (click)="onSubmit()"
-          [disabled]="territoryForm.invalid || (!hasTerritories && relationDisplayMode === 'parent')"
+          [disabled]="territoryForm.invalid || needsChildren"
           color="primary"
         >
           {{ !!editedId ? 'Mettre à jour' : 'Créer' }}

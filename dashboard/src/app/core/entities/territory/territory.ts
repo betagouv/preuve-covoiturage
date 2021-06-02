@@ -33,12 +33,12 @@ export const territoryLevelLabels = [
   [TerritoryLevelEnum.Town, 'Commune'],
   // [TerritoryLevelEnum.Epic, 'EPCI'],
   [TerritoryLevelEnum.Towngroup, 'EPCI'],
-  [TerritoryLevelEnum.District, 'District'],
+  // [TerritoryLevelEnum.District, 'District'],
   [TerritoryLevelEnum.Megalopolis, 'Département'],
   [TerritoryLevelEnum.Region, 'Region'],
-  [TerritoryLevelEnum.State, 'Etat'],
+  // [TerritoryLevelEnum.State, 'Etat'],
   [TerritoryLevelEnum.Country, 'Pays'],
-  [TerritoryLevelEnum.Countrygroup, 'Groupe de pays'],
+  // [TerritoryLevelEnum.Countrygroup, 'Groupe de pays'],
   [TerritoryLevelEnum.Other, 'Autre'],
 ];
 
@@ -65,7 +65,6 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   // active_since?: Date;
   contacts?: Contacts;
   density?: number;
-  geo?: any; // TODO : geography type
 }
 
 export interface TerritoryInsee {
@@ -99,7 +98,6 @@ export class Territory
   // active_since?: Date;
   contacts?: Contacts;
   density?: number;
-  geo?: any; // TODO : geography type
   insee?: string[];
 
   ui_status: TerritoryUIStatus;
@@ -119,7 +117,6 @@ export class Territory
     assignOrDeleteProperty(base, this, 'contacts', (data) => new Contacts(data.contacts));
     assignOrDeleteProperty(base, this, 'address', (data) => new Address(data.address));
     assignOrDeleteProperty(base, this, 'company', (data) => ({ ...data.company }));
-    assignOrDeleteProperty<string>(base, this, 'geo', (data) => data.geo);
     assignOrDeleteProperty(base, this, 'children', (data) => [...data.children]);
 
     if (base.shortname) this.shortname = base.shortname;
@@ -157,9 +154,6 @@ export class Territory
 
     // if (formValues.insee && formValues.format === 'insee') this.insee = formValues.insee.split(',');
     // else delete this.insee;
-
-    if (formValues.geo && formValues.format === 'geo') this.geo = formValues.geo;
-    else delete this.geo;
 
     if (formValues.density !== undefined) this.density = formValues.density;
     else delete this.density;
@@ -211,7 +205,6 @@ export class Territory
           company: new Company(this.company).toFormValues(),
           contacts: new Contacts(this.contacts).toFormValues(),
           address: new Address(this.address).toFormValues(),
-          geo: this.geo ? this.geo : '{"type": "MultiPolygon", "coordinates": [[[[],[],[],[]]]]}',
           insee:
             this.ui_status && this.ui_status.format === 'insee' && this.ui_status.insee ? this.ui_status.insee : '',
         }
@@ -248,12 +241,6 @@ export interface TerritoryFormModel {
   address?: Address;
   uiSelectionState: TerritorySelectionUIState[];
   format: string;
-  geo?:
-    | string
-    | {
-        type: 'MultiPolygon';
-        coordinates: number[][][2];
-      };
   insee?: string;
 
   // public address?: Address;
