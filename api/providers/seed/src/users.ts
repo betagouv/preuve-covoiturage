@@ -33,6 +33,7 @@ function makeUser(email: string, role: string, user: Partial<User> = {}): User {
 
 export const adminRegistry = makeUser('admin@example.com', 'registry.admin');
 export const adminIleDeFrance = makeUser('territory@example.com', 'territory.admin', { territory: ileDeFrance });
+export const demoIleDeFrance = makeUser('demo@example.com', 'territory.demo', { territory: ileDeFrance });
 export const adminMaxiCovoit = makeUser('operator@example.com', 'operator.admin', { operator: maxiCovoit });
 
 export const users: User[] = [adminRegistry, adminIleDeFrance];

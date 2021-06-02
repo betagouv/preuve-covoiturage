@@ -61,6 +61,12 @@ services:
       MH_CORS_ORIGIN: '*'
     networks:
       - back
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.smtp.rule=Host(`smtp.covoiturage.test`)"
+      - "traefik.http.routers.smtp.entrypoints=websecure"
+      - "traefik.http.routers.smtp.tls=true"
+      - "traefik.http.services.smtp.loadbalancer.server.port=8025"
 
   dashboard:
     volumes:
@@ -160,6 +166,7 @@ services:
       - /tmp/cypress/videos:/app/cypress/videos
     environment:
       CYPRESS_baseUrl: https://app.covoiturage.test
+      CYPRESS_MAILHOG_URL: https://smtp.covoiturage.test:8025/api
     depends_on:
       - api
     networks:

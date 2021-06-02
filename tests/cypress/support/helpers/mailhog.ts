@@ -33,7 +33,7 @@ interface HttpResponse {
   items: Email[];
 }
 
-const http = axios.create({ baseURL: 'http://localhost:8025/api' });
+const http = axios.create({ baseURL: Cypress.env('MAILHOG_URL') ?? 'http://localhost:8025/api' });
 
 // get an email by its MailHog ID
 export async function mailGet(id?: string): Promise<Email> {
