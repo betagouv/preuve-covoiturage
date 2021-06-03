@@ -19,7 +19,6 @@ export class ChangePasswordWithTokenUserAction extends AbstractAction {
     await this.authRepository.updatePasswordByEmail(
       params.email,
       params.password,
-      this.authRepository.CONFIRMED_STATUS,
     );
 
     return true;

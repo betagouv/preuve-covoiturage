@@ -25,7 +25,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     protected connection: PostgresConnection,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private config: ConfigInterfaceResolver,
-  ) {}
+  ) { }
 
   /**
    * Get password from id or undefined if not found
@@ -116,7 +116,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   async createTokenByEmail(
     email: string,
     type: string,
-    status: string = this.UNCONFIRMED_STATUS,
   ): Promise<string | undefined> {
     const plainToken = this.cryptoProvider.generateToken();
     const cryptedToken = await this.cryptoProvider.cryptToken(plainToken);
@@ -126,11 +125,10 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       text: `
       UPDATE ${this.table}
         SET token = $2,
-        token_expires_at = $3::timestamp,
-        status = $4
+        token_expires_at = $3::timestamp
       WHERE email = $1
       `,
-      values: [email, cryptedToken, token_expires_at, status],
+      values: [email, cryptedToken, token_expires_at],
     };
 
     const result = await this.connection.getClient().query(query);
