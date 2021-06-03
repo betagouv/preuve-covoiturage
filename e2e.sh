@@ -18,8 +18,8 @@ rebuild() {
 
 start_services() {
   echo "Start services"
-  echo "$DC up -d s3 postgres redis smtp"
-  $DC up -d s3 postgres redis smtp
+  echo "$DC up -d s3 postgres"
+  $DC up -d s3 postgres
 }
 
 start_app() {
