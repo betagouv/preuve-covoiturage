@@ -22,7 +22,10 @@ test('should work', (t) => {
     rules: [],
   };
   const fakerEngine = FakerEngine.fromPolicy(campaign);
-  const trips = fakerEngine.generate(10);
+  fakerEngine.generate(10);
+
+  // const trips = fakerEngine.generate(10);
   // console.table(trips.reduce((arr, i) => [...arr, ...i], []));
+
   t.pass();
 });
