@@ -23,6 +23,6 @@ test('should work', (t) => {
   };
   const fakerEngine = FakerEngine.fromPolicy(campaign);
   const trips = fakerEngine.generate(10);
-  console.table(trips.reduce((arr, i) => [...arr, ...i], []));
+  // console.table(trips.reduce((arr, i) => [...arr, ...i], []));
   t.pass();
 });
