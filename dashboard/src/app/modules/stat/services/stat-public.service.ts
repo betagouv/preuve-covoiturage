@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
-import { PublicTripSearchInterface } from '../../../core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
+import { PublicTripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 
 @Injectable({
   providedIn: 'root',

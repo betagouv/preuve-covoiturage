@@ -2,11 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { URLS } from '~/core/const/main.const';
+import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { StatNavName } from '~/core/types/stat/statDataNameType';
+import { FilterService } from '~/modules/filter/services/filter.service';
 import { PUBLIC_STATS } from '~/modules/stat/config/stat';
-import { FilterUxInterface } from '../../../../../../core/interfaces/filter/filterUxInterface';
-import { FilterService } from '../../../../../filter/services/filter.service';
-import { StatFilteredStoreService } from '../../../../services/stat-filtered-store.service';
+import { StatFilteredStoreService } from '~/modules/stat/services/stat-filtered-store.service';
 
 @Component({
   selector: 'app-stat-view',

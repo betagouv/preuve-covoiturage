@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FilterService } from './../../../../../../filter/services/filter.service';
+import { FilterService } from '~/modules/filter/services/filter.service';
 
 @Component({
   selector: 'app-stat-chart-container',

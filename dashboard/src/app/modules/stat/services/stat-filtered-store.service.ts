@@ -8,8 +8,8 @@ import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInter
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 import { GetListStore } from '~/core/services/store/getlist-store';
+import { StoreLoadingState } from '~/core/services/store/StoreLoadingState';
 import { StatApiService } from '~/modules/stat/services/stat-api.service';
-import { StoreLoadingState } from '../../../core/services/store/StoreLoadingState';
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
 import { StatPublicService } from './stat-public.service';
 
