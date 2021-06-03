@@ -28,8 +28,6 @@ export const maxiCovoit: Operator = {
   name: 'MaxiCovoit',
   legal_name: 'Max y co',
   siret: '89248032800012',
-}
+};
 
-export const operators: Operator[] = [
-  maxiCovoit,
-];
+export const operators: Operator[] = [maxiCovoit];
