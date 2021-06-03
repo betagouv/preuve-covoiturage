@@ -182,6 +182,14 @@ services:
     networks:
       - front
 
+  lint:
+    build: './docker/lint'
+    tty: true
+    volumes:
+      - ${PWD}/api:/code/api:ro
+      - ${PWD}/dashboard:/code/dashboard:ro
+
+
 networks:
   front:
   back:
