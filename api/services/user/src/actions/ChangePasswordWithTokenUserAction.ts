@@ -16,11 +16,7 @@ export class ChangePasswordWithTokenUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    await this.authRepository.updatePasswordByEmail(
-      params.email,
-      params.password,
-      this.authRepository.CONFIRMED_STATUS,
-    );
+    await this.authRepository.updatePasswordByEmail(params.email, params.password);
 
     return true;
   }

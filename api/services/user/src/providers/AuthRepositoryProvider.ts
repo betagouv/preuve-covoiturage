@@ -113,11 +113,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   /**
    * Create a token by email, set status to unconfirmed by default, return the token
    */
-  async createTokenByEmail(
-    email: string,
-    type: string,
-    status: string = this.UNCONFIRMED_STATUS,
-  ): Promise<string | undefined> {
+  async createTokenByEmail(email: string, type: string): Promise<string | undefined> {
     const plainToken = this.cryptoProvider.generateToken();
     const cryptedToken = await this.cryptoProvider.cryptToken(plainToken);
     const token_expires_at = this.getTokenExpiresAt(type);
@@ -126,11 +122,10 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       text: `
       UPDATE ${this.table}
         SET token = $2,
-        token_expires_at = $3::timestamp,
-        status = $4
+        token_expires_at = $3::timestamp
       WHERE email = $1
       `,
-      values: [email, cryptedToken, token_expires_at, status],
+      values: [email, cryptedToken, token_expires_at],
     };
 
     const result = await this.connection.getClient().query(query);

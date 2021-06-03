@@ -13,7 +13,7 @@ interface CommandOptions {
 export class SeedCommand implements CommandInterface {
   private db;
 
-  static readonly signature: string = 'seed';
+  static readonly signature: string = 'seed:certificate';
   static readonly description: string = 'Seed fake identities, carpools and policies to fill out certificates';
   static readonly options: CommandOptionType[] = [
     {

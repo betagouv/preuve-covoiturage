@@ -3,9 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "license": "Apache-2.0",
+  "main": "index.js",
   "scripts": {
     "up": "db-migrate up",
-    "down": "db-migrate down"
+    "down": "db-migrate down",
+    "build": "exit 0",
+    "watch": "exit 0",
+    "test:unit": "exit 0",
+    "test:integration": "exit 0",
+    "coverage:ci": "exit 0",
+    "coverage": "exit 0"
   },
   "dependencies": {
     "db-migrate": "^0.11.11",

@@ -25,7 +25,7 @@ Fonctionnalité: Créer un utilisateur
       | numéro de téléphone | 0600000000 |
       | groupe | Territoire |
       | droits d'accès | Découverte |
-      | territoire | Syndicat Mixte Des Transports En Commun Du Territoire De Belfort |
+      | territoire | Ile-De-France | 
     Et que je clique sur le bouton enregistrer
     Alors je vois un message indiquant "L'utilisateur Jean-Claude DUSS a été créé"
     Et un lien est envoyé par mail à "jcduss@example.com"

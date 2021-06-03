@@ -25,6 +25,7 @@ import { GeoFetchCommand } from './commands/GeoFetchCommand';
 import { SyncTerritoryInseeCommand } from './commands/SyncTerritoryInseeCommand';
 import { SyncRegionDepCommand } from './commands/SyncRegionDepCommand';
 import { SyncLegacyProductionCommand } from './commands/SyncLegacyProductionCommand';
+import { SeedCommand } from './commands/SeedCommand';
 
 @kernel({
   config,
@@ -52,6 +53,7 @@ import { SyncLegacyProductionCommand } from './commands/SyncLegacyProductionComm
     SyncRegionDepCommand,
     GeoFetchCommand,
     SyncLegacyProductionCommand,
+    SeedCommand,
     Commands.CallCommand,
   ],
 })

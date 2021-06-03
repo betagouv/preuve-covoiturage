@@ -69,7 +69,7 @@ export class UserNotificationProvider {
    * Log in testing env
    */
   protected log(message: string, email: string, token: string, link: string): void {
-    if (process.env.NODE_ENV === 'testing') {
+    if (process.env.NODE_ENV === 'local') {
       console.info(`
 ******************************************
 [test] ${message}
