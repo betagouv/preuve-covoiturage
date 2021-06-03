@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
@@ -46,8 +46,11 @@ export class StatGraphComponent extends DestroyObservable {
     );
 
     combineLatest([
-      this.store.entities$.pipe(map((data) => data.length == 0)),
-      this.store.listLoadingState$.pipe(map((loadingState) => this.isLoaded(loadingState))),
+      this.store.entities$.pipe(
+        map((data) => data.length == 0),
+        takeUntil(this.destroy$),
+      ),
+      this.store.listLoadingState$.pipe(map((loadingState) => this.isLoaded(loadingState), takeUntil(this.destroy$))),
     ]).subscribe(([isEmpty, isLoaded]) => {
       this.isLoadedAndEmpty = isEmpty && isLoaded;
     });
