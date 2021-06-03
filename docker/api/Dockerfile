@@ -11,4 +11,4 @@ RUN sh rebuild.sh production
 RUN yarn global add pino-pretty
 
 EXPOSE 8080
-CMD ["yarn", "start:http"]
+CMD ["/bin/bash", "-c", "yarn start:http | pino-pretty"]

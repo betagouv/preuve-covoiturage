@@ -15,7 +15,7 @@ services:
     ports:
       - 6379:6379
 
-  smtp:
+  mailer:
     ports:
       - 8025:8025
     environment:
@@ -43,7 +43,6 @@ services:
       - 8082:8080
     volumes:
       - ${PWD}:/app:ro
-    command: 'bash -c "yarn start:http | pino-pretty"'
     tty: true
     environment:
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
@@ -54,7 +53,7 @@ services:
       context: .
     volumes:
       - ${PWD}:/app:ro
-    command: 'bash -c "yarn start:queue | pino-pretty"'
+    command: ['/bin/bash', '-c', 'yarn start:queue | pino-pretty']
     tty: true
     environment:
       APP_WORKER: 'true'
@@ -62,7 +61,7 @@ services:
 
   cypress:
     volumes:
-      - ${PWD}/tests:/app:ro
+      - ${PWD}/tests:/app
 
   lint:
     build: './docker/lint'

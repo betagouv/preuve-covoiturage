@@ -31,6 +31,8 @@ services:
           aliases:
             - api.covoiturage.test
             - app.covoiturage.test
+            - mailer.covoiturage.test
+            - s3.covoiturage.test
 
   postgres:
     build: ./docker/postgres
@@ -55,7 +57,7 @@ services:
       - back
     command: ['/bin/sh', '-c', 'until nc -zv $$DOMAIN $$PORT -w1; do echo "waiting for app"; sleep 1; done']
 
-  smtp:
+  mailer:
     image: mailhog/mailhog:v1.0.1
     environment:
       MH_CORS_ORIGIN: '*'
@@ -63,10 +65,10 @@ services:
       - back
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.smtp.rule=Host(`smtp.covoiturage.test`)"
-      - "traefik.http.routers.smtp.entrypoints=websecure"
-      - "traefik.http.routers.smtp.tls=true"
-      - "traefik.http.services.smtp.loadbalancer.server.port=8025"
+      - "traefik.http.routers.mailer.rule=Host(`mailer.covoiturage.test`)"
+      - "traefik.http.routers.mailer.entrypoints=websecure"
+      - "traefik.http.routers.mailer.tls=true"
+      - "traefik.http.services.mailer.loadbalancer.server.port=8025"
 
   dashboard:
     volumes:
@@ -97,7 +99,7 @@ services:
       AWS_REGION: fr-par
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
       APP_REDIS_URL: redis://redis:6379/1
-      APP_MAIL_SMTP_URL: smtp://smtp:1025
+      APP_MAIL_SMTP_URL: smtp://mailer:1025
       PORT: 8080
       NODE_ENV: local
       APP_ENV: local
@@ -106,8 +108,9 @@ services:
     depends_on:
       - redis
       - postgres
-      - smtp
+      - mailer
       - s3
+      - worker
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`api.covoiturage.test`)"
@@ -127,7 +130,8 @@ services:
       AWS_REGION: fr-par
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
       APP_REDIS_URL: redis://redis:6379/1
-      APP_MAIL_SMTP_URL: smtp://smtp:1025
+      APP_MAIL_SMTP_URL: smtp://mailer:1025
+      APP_MAIL_VERIFY_SMTP: "true"
       PORT: 8080
       NODE_ENV: local
       APP_ENV: local
@@ -136,7 +140,7 @@ services:
     depends_on:
       - redis
       - postgres
-      - smtp
+      - mailer
       - s3
     command: ["yarn", "start:queue"]
 
@@ -145,6 +149,12 @@ services:
     networks:
       - back
     command: 'server /data'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.s3.rule=Host(`s3.covoiturage.test`)"
+      - "traefik.http.routers.s3.entrypoints=websecure"
+      - "traefik.http.services.s3.loadbalancer.server.port=9000"
+      - "traefik.http.routers.s3.tls=true"
 
   s3-init:
     image: minio/mc:edge
@@ -166,7 +176,7 @@ services:
       - /tmp/cypress/videos:/app/cypress/videos
     environment:
       CYPRESS_baseUrl: https://app.covoiturage.test
-      CYPRESS_MAILHOG_URL: https://smtp.covoiturage.test:8025/api
+      CYPRESS_MAILHOG_URL: https://mailer.covoiturage.test/api
     depends_on:
       - api
     networks:
