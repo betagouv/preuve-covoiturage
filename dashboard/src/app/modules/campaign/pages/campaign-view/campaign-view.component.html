@@ -31,17 +31,17 @@
         <mat-icon class="dot">fiber_manual_record</mat-icon>
         <div>
           <h4>Votre campagne a expiré</h4>
-          <p>Vous pouvez modifier sa date de fin pour la réactualiser</p>
+          <p>Vous pouvez relancer une autre campagne à partir des mêmes règles</p>
         </div>
       </div>
       <button
         mat-flat-button
         type="button"
         color="primary"
-        routerLink="/campaign/edit/{{ campaignUx._id }}"
+        routerLink="/campaign/create/{{ campaignUx._id }}"
         [queryParams]="{ section: 1 }"
       >
-        Modifier
+        Relancer
       </button>
     </div>
 
