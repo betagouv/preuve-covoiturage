@@ -18,7 +18,7 @@ import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
   styleUrls: ['./stat-operator-view.component.scss'],
 })
 export class StatOperatorViewComponent extends DestroyObservable implements OnInit {
-  public gitbookLinkStats: string = URLS.gitbookLinkStats;
+  public statsCalculationDoc: string = URLS.statsCalculationDoc;
   public graphName: statDataNameType;
   public selected: GraphNamesInterface;
   public disabled: GraphNamesInterface = {
