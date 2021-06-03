@@ -32,7 +32,7 @@
     "ng2-nouislider": "^1.8.2",
     "ngx-infinite-scroll": "^8.0.0",
     "ngx-toastr": "^13.1.0",
-    "nouislider": "14.6.4",
+    "nouislider": "^14.6.2",
     "ol": "^5.3.3",
     "rxjs": "^6.6.6",
     "tslib": "^2.1.0",
