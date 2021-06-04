@@ -6,6 +6,7 @@ import { takeUntil, mergeMap, tap, catchError } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
 import { CertificateApiService } from '../../services/certificate-api.service';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-check',
@@ -39,10 +40,9 @@ export class CheckComponent extends DestroyObservable implements OnInit {
         mergeMap((params) =>
           this.certificateService.find(params.uuid).pipe(
             catchError((err) => {
-              console.error(err);
               this.isOnError = true;
               this.isLoading = false;
-              return null;
+              return throwError(err);
             }),
           ),
         ),
