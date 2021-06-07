@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
-import { PublicTripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
+import { PublicTripSearchInterface } from '../../../core/entities/api/shared/trip/common/interfaces/PublicTripStatInterface';
+import { TripStatInterface } from '../../../core/entities/api/shared/trip/common/interfaces/TripStatInterface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StatPublicService {
-  private DEFAULT_PUBLIC_PARAMS: PublicTripSearchInterface = {};
+  private DEFAULT_PUBLIC_PARAMS: TripStatInterface = {};
 
   constructor(private http: HttpClient) {
     const start: Date = new Date(new Date().setMonth(new Date().getMonth() - 12));

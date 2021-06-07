@@ -8,18 +8,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
-import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
+import { TripStatInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripStatInterface';
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
 
 @Injectable({
   providedIn: 'root',
 })
-export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface, any, TripSearchInterface> {
+export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface, any, TripStatInterface> {
   constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute) {
     super(http, router, activatedRoute, 'trip');
   }
 
-  paramGetList(params?: TripSearchInterface): JsonRPCParam {
+  paramGetList(params?: TripStatInterface): JsonRPCParam {
     const finalParams = {
       ...this.defaultListParam,
       ...params,
@@ -47,7 +47,7 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
     return new JsonRPCParam(`${this.method}:stats`, finalParams);
   }
 
-  getTotalStats(params?: TripSearchInterface): Observable<StatInterface> {
+  getTotalStats(params?: TripStatInterface): Observable<StatInterface> {
     // All graph time Mode is forced;
     params = { ...params, group_by: ApiGraphTimeMode.All };
 
