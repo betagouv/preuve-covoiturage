@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
+/* eslint-disable max-len */
 import { PublicTripSearchInterface } from '../../../core/entities/api/shared/trip/common/interfaces/PublicTripStatInterface';
 import { TripStatInterface } from '../../../core/entities/api/shared/trip/common/interfaces/TripStatInterface';
 
