@@ -5,13 +5,14 @@ description: Génération d'attestations pour les utilisateurs de services de co
 
 # Attestations de covoiturage
 
-**Attestation sur l'honneur**
-
+::: tip Attestation sur l'honneur
 Cette page concerne les attestations fournies par les opérateurs de covoiturage.
 
 Rendez-vous sur [https://attestation.covoiturage.beta.gouv.fr/](http://attestation.covoiturage.beta.gouv.fr/) pour générer votre attestation sur l'honneur.
+:::
 
-Cette fonctionnalité est en cours de développement.  
+:warning: Cette fonctionnalité est en cours de développement.
+
 En tant qu'opérateur de covoiturage, contactez nous si vous souhaitez y participer : [technique@covoiturage.beta.gouv.fr](mailto:technique@covoiturage.beta.gouv.fr)
 
 Merci de [créer des tickets](https://github.com/betagouv/preuve-covoiturage/issues/new?template=certificate.md&labels=ATTESTATION&assignees=jonathanfallon) si vous rencontrez des problèmes.
@@ -24,11 +25,20 @@ Merci de [créer des tickets](https://github.com/betagouv/preuve-covoiturage/iss
 - :white_check_mark: Envoi de meta-données pour injecter les données personnelles du covoitureur ;
 - :white_check_mark: Upload du logo de l'opérateur dans son profil.
 
+## Étapes de génération d'une attestation PDF
+
+1. [Création de l'attestation](#creation-de-l-attestation)  
+   Sur la base des données d'identité fournies, les données de trajet liées à cette personne sont compilées et sauvegardées avec un identifiant unique qui permettra de récupérer et vérifier l'attestation.
+2. [Téléchargement du PDF](#telecharger-une-attestation)  
+   L'identifiant unique de l'attestation est utilisé pour générer un PDF imprimable. Les données stockées lors de la création de l'attestation sont mises en forme sur un document au format A4.
+
 ## **Création de l’attestation**
 
 La requête est faite par le serveur de l’opérateur et authentifiée avec un token applicatif dans les _headers_ \(même token que pour envoyer des preuves\).
 
 Chaque appel crée un nouveau certificat même si les paramètres sont exactement les mêmes, les valeurs calculées ont pu changer entre deux appels.
+
+Les données sont calculées et stockées au moment de la création de l'attestation. Elles ne peuvent pas être modifiées. La génération du PDF, même si sa mise en forme peut évoluer, se basera toujours sur les mêmes données. La page de vérification
 
 ```javascript
 POST /v2/certificates
@@ -113,7 +123,11 @@ Response [404 Not Found] {
 
 Une fois l’attestation créée en base \(201 created\), on peut télécharger un PDF en y ajoutant des données permettant une identification simplifiée de la personne.
 
-Ces données ne sont pas stockées sur nos serveurs, elles sont ajoutées au document généré à la volée.
+Ces meta-données optionnelles ne sont pas stockées sur nos serveurs, elles sont ajoutées au document généré à la volée.
+
+En tant qu'opérateur, vous pouvez ajouter un logo à votre profile opérateur ([prod](https://app.covoiturage.beta.gouv.fr/admin/operator) / [démo](https://app.demo.covoiturage.beta.gouv.fr/admin/operator)) qui sera inséré sur le PDF.
+
+Le PDF généré n'est pas stocké sur nos serveurs. L'appel d'API vous renvoie un fichier binaire que vous sauvegardez de votre côté. Vous pouvez générer la même attestation plusieurs fois de suite.
 
 ```javascript
 POST /v2/certificates/pdf
@@ -163,6 +177,8 @@ Ci-dessous l'attestation avec les méta-données ajoutées au PDF.
 - `identity.content` en **zone C**
 - `notes` en **zone D**
 
-```
-// TODO ajouter l'image
-```
+## Exemples
+
+#### Avec ou sans méta-données
+
+![Attestations](/attestations.png)
