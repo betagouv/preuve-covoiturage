@@ -123,10 +123,25 @@ export const publicStats = {
   required: ['tz', 'group_by', 'date'],
   additionalProperties: false,
   properties: {
-    ...params,
+    tz: {
+      macro: 'tz',
+    },
     group_by: {
       type: 'string',
       enum: ['month', 'day', 'all'],
     },
+    date: {
+      type: 'object',
+      additionalProperties: false,
+      minProperties: 1,
+      properties: {
+        start: {
+          macro: 'timestamp',
+        },
+        end: {
+          macro: 'timestamp',
+        },
+      },
+    },
   },
-}; 
+};
