@@ -117,3 +117,16 @@ export const stats = {
     },
   },
 };
+
+export const publicStats = {
+  type: 'object',
+  required: ['tz', 'group_by', 'date'],
+  additionalProperties: false,
+  properties: {
+    ...params,
+    group_by: {
+      type: 'string',
+      enum: ['month', 'day', 'all'],
+    },
+  },
+}; 
