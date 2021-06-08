@@ -15,7 +15,7 @@ export interface AuthRepositoryProviderInterface {
   challengePasswordById(_id: number, password: string): Promise<boolean>;
   challengeTokenByEmail(email: string, clearToken: string): Promise<boolean>;
   updatePasswordById(_id: number, password: string): Promise<boolean>;
-  updatePasswordByEmail(email: string, password: string, status?: string): Promise<boolean>;
+  updatePasswordByEmail(email: string, password: string): Promise<boolean>;
   updateEmailById(_id: number, email: string, status?: string): Promise<string>;
 }
 
@@ -54,7 +54,7 @@ export abstract class AuthRepositoryProviderInterfaceResolver implements AuthRep
     throw new Error();
   }
 
-  async updatePasswordByEmail(email: string, password: string, status?: string): Promise<boolean> {
+  async updatePasswordByEmail(email: string, password: string): Promise<boolean> {
     throw new Error();
   }
 

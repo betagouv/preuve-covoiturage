@@ -8,11 +8,11 @@ export class SentryProvider implements ProviderInterface {
   constructor(protected config: ConfigInterfaceResolver) {}
 
   boot(): void {
-    const dsn = this.config.get('sentry.dsn', null);
-    const environment = this.config.get('sentry.environment', null);
-    const release = this.config.get('sentry.version', null);
+    const dsn = this.config.get('sentry.dsn', '');
+    const environment = this.config.get('sentry.environment', '');
+    const release = this.config.get('sentry.version', '');
 
-    if (dsn && environment && release) {
+    if (dsn !== '' && environment !== '' && release !== '') {
       Sentry.init({
         dsn,
         release: `pdc-api@${release}`,

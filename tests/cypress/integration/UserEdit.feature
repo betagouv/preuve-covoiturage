@@ -24,7 +24,7 @@ Fonctionnalité: Créer un utilisateur
       | numéro de téléphone | 0600000000 |
       | groupe | Opérateur |
       | droits d'accès | Administrateur |
-      | opérateur | Maxicovoit |
+      | opérateur | MaxiCovoit |
     Et que je clique sur le bouton enregistrer
     Alors je vois un message indiquant "L'utilisateur Mega Covoiturix a été créé"
     Et un lien est envoyé par mail à "covoiturix@example.com"

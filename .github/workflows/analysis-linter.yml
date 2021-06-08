@@ -14,6 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build linter
-        run: touch api/.env && docker-compose build lint
+        run: touch api/.env && docker-compose -f docker-compose.e2e.yml build lint
       - name: Run Linter
-        run: docker-compose run lint
+        run: docker-compose -f docker-compose.e2e.yml run lint

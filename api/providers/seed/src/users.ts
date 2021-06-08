@@ -1,0 +1,39 @@
+import { Territory, ileDeFrance } from './territories';
+import { Operator, maxiCovoit } from './operators';
+
+export const defaultStatus = 'active';
+export const defaultPassword = '$2a$10$iSm6l7.Yb9n.peL2Sgf8PumUujREjnwfCjL6orAcGN0Iowv4fqPeO';
+export const defaultRole = 'admin';
+
+export interface User {
+  email: string;
+  firstname: string;
+  lastname: string;
+  status: string;
+  role: string;
+  password: string;
+  territory?: Territory;
+  operator?: Operator;
+}
+
+function makeUser(email: string, role: string, user: Partial<User> = {}): User {
+  const name = (user.territory ? user.territory.name : user.operator ? user.operator.name : 'registry')
+    .replace(' ', '')
+    .toLowerCase();
+  return {
+    email,
+    role,
+    firstname: 'User',
+    lastname: name,
+    status: defaultStatus,
+    password: defaultPassword,
+    ...user,
+  };
+}
+
+export const adminRegistry = makeUser('admin@example.com', 'registry.admin');
+export const adminIleDeFrance = makeUser('territory@example.com', 'territory.admin', { territory: ileDeFrance });
+export const demoIleDeFrance = makeUser('demo@example.com', 'territory.demo', { territory: ileDeFrance });
+export const adminMaxiCovoit = makeUser('operator@example.com', 'operator.admin', { operator: maxiCovoit });
+
+export const users: User[] = [adminRegistry, adminIleDeFrance];
