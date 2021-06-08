@@ -1,5 +1,5 @@
 import { contacts } from '../../common/schemas/contacts';
-import { MultiPolygonSchema } from '../common/geojson/MultiPolygonSchema';
+// import { MultiPolygonSchema } from '../common/geojson/MultiPolygonSchema';
 
 const address = {
   type: 'object',
