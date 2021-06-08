@@ -1,5 +1,3 @@
-import { ApiGraphTimeMode } from './ApiGraphTimeMode';
-
 export interface TripSearchInterface {
   campaign_id?: number[];
   tz?: string;
