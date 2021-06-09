@@ -49,9 +49,11 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
     await this.register();
     await this.init();
 
-    const cfg = this.container.get(ConfigInterfaceResolver);
-    this.callTimeout = cfg ? cfg.get('kernel.timeout', 0) : 0;
-    this.notifyTimeout = cfg ? cfg.get('kernel.notifyTimeout', 0) : 0;
+    try {
+      const cfg = this.container.get(ConfigInterfaceResolver);
+      this.callTimeout = cfg ? cfg.get('kernel.timeout', 0) : 0;
+      this.notifyTimeout = cfg ? cfg.get('kernel.notifyTimeout', 0) : 0;
+    } catch (e) {}
   }
 
   async shutdown() {
