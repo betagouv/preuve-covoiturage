@@ -2,7 +2,6 @@ import {
   ContainerInterface,
   ParamsType,
   ContextType,
-  ConfigInterfaceResolver,
   ResultType,
   KernelInterface,
   KernelInterfaceResolver,
@@ -12,6 +11,9 @@ import {
   RPCSingleResponseType,
   MethodNotFoundException,
   InvalidRequestException,
+  HandlerConfigType,
+  CallType,
+  ConfigInterfaceResolver,
 } from '@ilos/common';
 
 import { promiseTimeout } from '../helpers';
@@ -28,6 +30,9 @@ import { ServiceProvider } from './ServiceProvider';
  * @implements {KernelInterface}
  */
 export abstract class Kernel extends ServiceProvider implements KernelInterface {
+  protected callTimeout = 0;
+  protected notifyTimeout = 0;
+
   /**
    * Creates an instance of Kernel.
    * @param {ContainerInterface} [container]
@@ -43,6 +48,10 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
   async bootstrap() {
     await this.register();
     await this.init();
+
+    const cfg = this.container.get(ConfigInterfaceResolver);
+    this.callTimeout = cfg ? cfg.get('kernel.timeout', 0) : 0;
+    this.notifyTimeout = cfg ? cfg.get('kernel.notifyTimeout', 0) : 0;
   }
 
   async shutdown() {
@@ -81,17 +90,15 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @protected
    * @param {*} config
    * @param {*} call
+   * @param {number} timeout
    * @returns
    * @memberof Kernel
    */
-  protected async getHandlerAndCall(config, call) {
+  protected async getHandlerAndCall(config: HandlerConfigType, call: CallType, timeout = 0) {
     const handler = this.getContainer().getHandler(config);
     if (!handler) {
       throw new MethodNotFoundException(`Unknown method or service ${config.signature}`);
     }
-
-    const cfg = this.container.get(ConfigInterfaceResolver);
-    const timeout: number = cfg ? cfg.get('kernel.timeout', 0) : 0;
 
     if (timeout === 0) {
       return handler(call);
@@ -109,7 +116,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async call<P = ParamsType, R = ResultType>(method: string, params: P, context: ContextType): Promise<R> {
-    return this.getHandlerAndCall({ signature: method }, { method, params, context });
+    return this.getHandlerAndCall({ signature: method }, { method, params, context }, this.callTimeout);
   }
 
   /**
@@ -121,7 +128,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async notify<P = ParamsType>(method: string, params: P, context: ContextType): Promise<void> {
-    return this.getHandlerAndCall({ signature: method, queue: true }, { method, params, context });
+    return this.getHandlerAndCall({ signature: method, queue: true }, { method, params, context }, this.notifyTimeout);
   }
 
   /**
