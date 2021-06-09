@@ -50,7 +50,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     // Get last day of previous month
     const before = new Date();
     before.setDate(1);
-    before.setSeconds(0, -1);
+    before.setHours(0, 0, 0, -1);
 
     // Refresh table
     await this.tripRepository.refresh();
