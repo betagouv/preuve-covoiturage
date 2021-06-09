@@ -8,8 +8,13 @@ export class PostgresConnection implements ConnectionInterface<Pool> {
   protected pool: Pool;
 
   constructor(protected config: PoolConfig) {
+    const timeout = parseInt(env('APP_POSTGRES_TIMEOUT', '60000') as string, 10);
+
     this.pool = new Pool({
       ssl: this.hasSSL(this.pgUrl) ? { rejectUnauthorized: false } : false,
+      statement_timeout: timeout,
+      query_timeout: timeout,
+      idle_in_transaction_session_timeout: timeout,
       ...config,
     });
   }
