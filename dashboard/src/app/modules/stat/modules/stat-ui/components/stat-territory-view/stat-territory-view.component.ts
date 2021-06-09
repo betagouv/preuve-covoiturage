@@ -19,7 +19,7 @@ import { StatFilteredStoreService } from '../../../../services/stat-filtered-sto
   styleUrls: ['./stat-territory-view.component.scss'],
 })
 export class StatTerritoryViewComponent extends DestroyObservable implements OnInit {
-  public gitbookLinkStats: string = URLS.gitbookLinkStats;
+  public statsCalculationDoc: string = URLS.statsCalculationDoc;
   public graphName: statDataNameType;
   public selected: GraphNamesInterface;
   public disabled: GraphNamesInterface = {

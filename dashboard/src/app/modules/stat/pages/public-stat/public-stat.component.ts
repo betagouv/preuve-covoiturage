@@ -16,7 +16,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 })
 export class PublicStatComponent extends DestroyObservable implements OnInit {
   statNumbers: StatNumber[] = [];
-  gitbookLinkStats = URLS.gitbookLinkStats;
+  statsCalculationDoc = URLS.statsCalculationDoc;
 
   statNumberNames = PUBLIC_STATS.names;
 

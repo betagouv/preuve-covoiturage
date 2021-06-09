@@ -8,8 +8,8 @@ import { URLS } from '~/core/const/main.const';
   styleUrls: ['./api.component.scss'],
 })
 export class ApiComponent implements OnInit {
-  public gitbookLinkAPIConnexion = URLS.gitbookLinkAPIConnexion;
-  public gitbookLinkAPIFormat = URLS.gitbookLinkAPIFormat;
+  public apiAccessDoc = URLS.apiAccessDoc;
+  public apiSchemaDoc = URLS.apiSchemaDoc;
   public faqOperator = URLS.faqOperator;
 
   constructor() {}
