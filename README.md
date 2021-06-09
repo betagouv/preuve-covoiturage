@@ -16,13 +16,14 @@ Le registre de preuve de covoiturage est un projet [beta.gouv.fr](https://beta.g
 An easy way to boot the application on your local machine is by using Docker.
 You will need `docker` and `docker-compose`.
 
-| Service     | slug       | ENV              | URL                        | Folder     |
-| ----------- | ---------- | ---------------- | -------------------------- | ---------- |
-| Frontend \* | `-`        | APP_APP_URL      | http://localhost:4200      | /dashboard |
-| API         | `api`      | APP_API_URL      | http://localhost:8080      | /api       |
-| Redis       | `redis`    | APP_REDIS_URL    | redis://redis:6379         | -          |
-| Postgres    | `postgres` | APP_POSTGRES_URL | postgresql://postgres:post | -          |
-| Mailhog     | `mailhog`  |                  | http://localhost:8025      | -          |
+| Service     | slug       | ENV               | URL                        | Folder     |
+| ----------- | ---------- | ----------------- | -------------------------- | ---------- |
+| Frontend \* | `-`        | APP_APP_URL       | http://localhost:4200      | /dashboard |
+| API         | `api`      | APP_API_URL       | http://localhost:8080      | /api       |
+| Redis       | `redis`    | APP_REDIS_URL     | redis://redis:6379         | -          |
+| Postgres    | `postgres` | APP_POSTGRES_URL  | postgresql://postgres:post | -          |
+| Mailhog     | `mailer`   | APP_MAIL_SMTP_URL | http://localhost:8025      | -          |
+| S3          | `s3`       | AWS\_\*           | http://localhost:9000      | -          |
 
 > \* The Frontend doesn't run in Docker. Install NodeJS locally and run it with `yarn start` from the `dashboard` folder.  
 > ⚠️ `docker-compose.yml` is used in `local` environment only
@@ -35,7 +36,11 @@ You will need `docker` and `docker-compose`.
 4. `docker-compose build`
 5. `./rebuild.sh`
 6. `docker-compose run api yarn migrate`
-7. `docker-compose run api yarn set-permissions`
+
+```
+docker-compose up api
+docker-compose up worker
+```
 
 ### Migrations
 
@@ -49,6 +54,10 @@ docker-compose run api yarn migrate
 ```
 
 ### End-to-end testing
+
+```
+TODO
+```
 
 ##### Requirements
 
