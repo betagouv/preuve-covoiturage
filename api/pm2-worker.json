@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "worker",
   "script": "../ilos/framework/dist/cli.js",
   "args": "queue redis://redis:6379",
   "cwd": "dist",
