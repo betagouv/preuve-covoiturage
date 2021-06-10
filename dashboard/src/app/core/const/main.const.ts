@@ -1,5 +1,5 @@
 // prettier-ignore
-// eslint-disable: max-len
+/* eslint-disable max-len */
 export const URLS = {
   betagouv: 'https://beta.gouv.fr',
   showcase: 'https://covoiturage.beta.gouv.fr',
