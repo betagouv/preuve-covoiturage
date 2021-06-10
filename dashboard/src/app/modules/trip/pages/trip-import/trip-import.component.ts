@@ -15,7 +15,7 @@ import { TripStoreService } from '~/modules/trip/services/trip-store.service';
   styleUrls: ['./trip-import.component.scss'],
 })
 export class TripImportComponent extends DestroyObservable implements OnInit {
-  public gitbookLinkCSVImport = '';
+  public mainDocCSVImport = '';
   public tripImportForm: FormGroup;
   public progress = 0;
 

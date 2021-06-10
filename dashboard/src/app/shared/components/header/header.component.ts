@@ -68,6 +68,6 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
   }
 
   public getDocURL(): string {
-    return this.auth && this.auth.isOperator() ? URLS.technicalDoc : URLS.gitbookLink;
+    return this.auth && this.auth.isOperator() ? URLS.technicalDoc : URLS.mainDoc;
   }
 }

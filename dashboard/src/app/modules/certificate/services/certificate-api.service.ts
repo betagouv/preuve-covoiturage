@@ -1,20 +1,18 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Router, ActivatedRoute } from '@angular/router';
-
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { ResultInterface as FindResultInterface } from '~/core/entities/api/shared/certificate/find.contract';
-import { JsonRPC } from '~/core/services/api/json-rpc.service';
 import { ParamsInterface as DownloadParamsInterface } from '~/core/entities/api/shared/certificate/download.contract';
-import { PointInterface } from '~/core/entities/api/shared/common/interfaces/PointInterface';
+import { ResultInterface as FindResultInterface } from '~/core/entities/api/shared/certificate/find.contract';
 import {
   ParamsInterface as ListParamsInterface,
   ResultInterface as ListResultInterface,
 } from '~/core/entities/api/shared/certificate/list.contract';
+import { PointInterface } from '~/core/entities/api/shared/common/interfaces/PointInterface';
+import { JsonRPC } from '~/core/services/api/json-rpc.service';
 
 export type IdentityIdentifiersInterface =
   | { _id: number }

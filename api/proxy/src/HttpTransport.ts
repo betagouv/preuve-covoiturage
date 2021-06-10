@@ -84,8 +84,7 @@ export class HttpTransport implements TransportInterface {
     this.registerStatsRoutes();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
-    // feature flag certificates until properly tested by operators
-    if (env('NODE_ENV') !== 'production') this.registerCertificateRoutes();
+    this.registerCertificateRoutes();
     this.registerAcquisitionRoutes();
     this.registerSimulationRoutes();
     this.registerHonorRoutes();
@@ -477,7 +476,7 @@ export class HttpTransport implements TransportInterface {
       asyncHandler(async (req, res, next) => {
         const call = createRPCPayload(
           'certificate:download',
-          { uuid: req.body.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase(), meta: req.body.meta },
+          { ...req.body },
           { permissions: ['common.certificate.download'] },
         );
         const response = (await this.kernel.handle(call)) as RPCResponseType;

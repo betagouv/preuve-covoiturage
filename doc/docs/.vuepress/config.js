@@ -10,18 +10,18 @@ module.exports = {
     },
   },
   themeConfig: {
-    logo: 'https://vuepress.vuejs.org/hero.png',
+    logo: '/logo-rpc.png',
     locales: {
       '/': {
         nav: [
-          { text: 'Partners', link: '/partners/' },
-          { text: 'Contribute', link: '/contribute/' },
+          { text: 'Opérateurs', link: '/operateurs/' },
+          { text: 'Contribuer', link: '/contribuer/' },
         ],
         sidebar: {
-          '/partners/': [
+          '/operateurs/': [
             {
               title: 'Preuves de covoiturage',
-              path: '/partners/preuves/',
+              path: '/operateurs/preuves/',
               children: [
                 {
                   title: "Accéder à l'API",
@@ -47,41 +47,41 @@ module.exports = {
             },
             {
               title: 'Visibilité opérateur',
-              path: '/partners/visibilite-du-nom-de-loperateur',
+              path: '/operateurs/visibilite-du-nom-de-loperateur',
             },
             {
               title: 'Générer une attestation',
-              path: '/partners/generer-attestation',
+              path: '/operateurs/generer-attestation',
             },
             {
               title: 'Outils',
-              path: '/partners/outils',
+              path: '/operateurs/outils',
             },
           ],
-          '/contribute/repo/': 'auto',
-          '/contribute/app/': 'auto',
-          '/contribute/api/': [
+          '/contribuer/repo/': 'auto',
+          '/contribuer/app/': 'auto',
+          '/contribuer/api/': [
             {
               title: 'API',
-              path: '/contribute/api/',
+              path: '/contribuer/api/',
             },
             {
               title: 'Proxy',
-              path: '/contribute/api/proxy',
+              path: '/contribuer/api/proxy',
             },
             {
               title: 'Services',
-              path: '/contribute/api/services/',
-              children: getChildren('/contribute/api/services'),
+              path: '/contribuer/api/services/',
+              children: getChildren('/contribuer/api/services'),
             },
             {
               title: 'Providers',
-              path: '/contribute/api/providers/',
-              children: getChildren('/contribute/api/providers'),
+              path: '/contribuer/api/providers/',
+              children: getChildren('/contribuer/api/providers'),
             },
             {
               title: 'Licences',
-              path: '/contribute/api/licenses-list',
+              path: '/contribuer/api/licenses-list',
             },
           ],
         },
