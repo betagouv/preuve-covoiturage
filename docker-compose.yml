@@ -74,6 +74,7 @@ services:
       - redis
       - postgres
       - mailer
+      - worker
 
   worker:
     build:
