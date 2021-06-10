@@ -14,7 +14,7 @@ import { StatFilteredStoreService } from '~/modules/stat/services/stat-filtered-
   styleUrls: ['./stat-view.component.scss'],
 })
 export class StatViewComponent extends DestroyObservable implements OnInit {
-  public gitbookLinkStats: string = URLS.gitbookLinkStats;
+  public statsCalculationDoc: string = URLS.statsCalculationDoc;
 
   @Input() navList = PUBLIC_STATS;
   @Input() isPublic = false;
