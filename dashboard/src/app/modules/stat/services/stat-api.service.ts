@@ -38,7 +38,6 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
     finalParams.date.start = start.toISOString();
 
     // init end
-    console.info(params);
     if (params.group_by === ApiGraphTimeMode.Day) {
       const end: Date = finalParams.date.end
         ? new Date(finalParams.date.end)
@@ -52,7 +51,6 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
       end.setHours(2, 0, 0, 0);
       finalParams.date.end = end.toISOString();
     }
-    console.info(finalParams);
 
     return new JsonRPCParam(`${this.method}:stats`, finalParams);
   }
