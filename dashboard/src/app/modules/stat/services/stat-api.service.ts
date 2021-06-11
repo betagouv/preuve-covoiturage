@@ -1,3 +1,4 @@
+import { DEFAULT } from './../../../../../../api/services/policy/src/engine/helpers/type';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -15,13 +16,16 @@ import { ApiGraphTimeMode } from './ApiGraphTimeMode';
   providedIn: 'root',
 })
 export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface, any, TripStatInterface> {
+  private static DEFAULT_START_DATE: Date = new Date(new Date().setMonth(new Date().getMonth() - 12));
+  private static DEFAULT_END_DATE: Date = new Date(new Date().setDate(new Date().getDate() - 5));
+
   constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute) {
     super(http, router, activatedRoute, 'trip');
   }
 
   paramGetList(params?: TripStatInterface): JsonRPCParam {
+    // Merge default values with provided ones
     const finalParams = {
-      ...this.defaultListParam,
       ...params,
       tz: typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'Europe/Paris',
     };
@@ -30,27 +34,27 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
       finalParams.date = {};
     }
 
-    // init start
-    const start: Date = finalParams.date.start
-      ? new Date(finalParams.date.start)
-      : new Date(new Date().setMonth(new Date().getMonth() - 12));
-    start.setHours(2, 0, 0, 0);
-    finalParams.date.start = start.toISOString();
-
-    // init end
-    if (params.group_by === ApiGraphTimeMode.Day) {
-      const end: Date = finalParams.date.end
-        ? new Date(finalParams.date.end)
-        : new Date(start.setDate(start.getDate() + 14));
-      end.setHours(2, 0, 0, 0);
-      finalParams.date.end = end.toISOString();
+    // Set default start date if none and add hours
+    if (!finalParams.date.start) {
+      finalParams.date.start = StatApiService.DEFAULT_START_DATE;
     } else {
-      const end: Date = finalParams.date.end
-        ? new Date(finalParams.date.end)
-        : new Date(new Date().setDate(new Date().getDate() - 5));
-      end.setHours(2, 0, 0, 0);
-      finalParams.date.end = end.toISOString();
+      finalParams.date.start = new Date(finalParams.date.start);
     }
+    finalParams.date.start.setHours(2, 0, 0, 0);
+
+    // Set default end date if none and add hours
+    console.log(finalParams.date.end);
+    if (!finalParams.date.end) {
+      if (params.group_by === ApiGraphTimeMode.Day) {
+        finalParams.date.end = new Date(finalParams.date.start.setDate(finalParams.date.start.getDate() + 14));
+      } else {
+        finalParams.date.end = StatApiService.DEFAULT_END_DATE;
+      }
+      console.log(finalParams.date.end);
+    } else {
+      finalParams.date.end = new Date(finalParams.date.end);
+    }
+    finalParams.date.end.setHours(2, 0, 0, 0);
 
     return new JsonRPCParam(`${this.method}:stats`, finalParams);
   }

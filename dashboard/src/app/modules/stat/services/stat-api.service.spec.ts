@@ -35,7 +35,8 @@ describe('StatApiService', () => {
     // Assert
     expect(statApiService).toBeTruthy();
     expect(jsonRPCParam.params.date.end).toBeTruthy();
-    expect(jsonRPCParam.params.date.end).toBe(expectedEndDate.toISOString());
+    expect(jsonRPCParam.params.date.start).toEqual(start);
+    expect(jsonRPCParam.params.date.end).toEqual(expectedEndDate);
   });
 
   it('should generate day RPC request param with a valid end date if none provided', () => {
@@ -53,7 +54,8 @@ describe('StatApiService', () => {
     const expectedEndDate: Date = new Date(start.setDate(start.getDate() + 14));
     expectedEndDate.setHours(2, 0, 0, 0);
     expect(jsonRPCParam.params.date.end).toBeTruthy();
-    expect(jsonRPCParam.params.date.end).toBe(expectedEndDate.toISOString());
+    expect(jsonRPCParam.params.date.start).toEqual(start);
+    expect(jsonRPCParam.params.date.end).toEqual(expectedEndDate);
   });
 
   it('should not generate end date request param when day time period is requested with a valid end date', () => {
@@ -73,6 +75,7 @@ describe('StatApiService', () => {
     // Assert
     expect(statApiService).toBeTruthy();
     expect(jsonRPCParam.params.date.end).toBeTruthy();
-    expect(jsonRPCParam.params.date.end).toBe(endDate.toISOString());
+    expect(jsonRPCParam.params.date.start).toEqual(start);
+    expect(jsonRPCParam.params.date.end).toEqual(endDate);
   });
 });
