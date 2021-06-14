@@ -43,14 +43,15 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
     finalParams.date.start.setHours(2, 0, 0, 0);
 
     // Set default end date if none and add hours
-    console.log(finalParams.date.end);
     if (!finalParams.date.end) {
       if (params.group_by === ApiGraphTimeMode.Day) {
-        finalParams.date.end = new Date(finalParams.date.start.setDate(finalParams.date.start.getDate() + 14));
+        const endDate: Date = new Date();
+        endDate.setDate(finalParams.date.start.getDate() + 14);
+        endDate.setFullYear(finalParams.date.start.getFullYear());
+        finalParams.date.end = new Date(endDate);
       } else {
         finalParams.date.end = StatApiService.DEFAULT_END_DATE;
       }
-      console.log(finalParams.date.end);
     } else {
       finalParams.date.end = new Date(finalParams.date.end);
     }

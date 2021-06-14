@@ -37,5 +37,12 @@ module.exports = function (config) {
     browsers: ['Chrome'],
     singleRun: false,
     restartOnFileChange: true,
+    browsers: ['ChromeDebugging'],
+    customLaunchers: {
+      ChromeDebugging: {
+        base: 'Chrome',
+        flags: ['--remote-debugging-port=9333'],
+      },
+    },
   });
 };
