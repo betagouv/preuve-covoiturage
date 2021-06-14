@@ -56,21 +56,19 @@ docker-compose run api yarn migrate
 ### End-to-end testing
 
 ```
-TODO
+# standalone e2e (running in CI)
+docker-compose -f docker-compose.e2e.yml build
+bash e2e.sh e2e
 ```
 
-##### Requirements
-
-- a working DB with `admin@example.com` active user
-
 ```
-#term 1 : cd api && docker-compose compose up api
-#term 2 : cd api && docker-compose compose up worker
-#term 3 : cd dashboard && yarn start
-#term 4 :
-$ cd tests
-$ yarn
-$ CYPRESS_BASE_URL=http://localhost:4200 yarn cy:open
+# local e2e
+docker-compose up api (worker is started too)
+docker-compose up dashboard
+vi .env (set your database to 'test')
+docker-compose run api yarn workspace ilos seed
+cd tests
+CYPRESS_BASE_URL=http://localhost:4200 yarn cy:open
 ```
 
 ##### Notes
