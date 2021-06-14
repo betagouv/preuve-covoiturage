@@ -60,8 +60,8 @@ services:
       context: .
     volumes:
       - ./api:/app/api
-      - ./shared:/app/shared
-    command: 'bash -c "pm2-runtime start ../pm2-api.json | pino-pretty"'
+      - ./shared:/app/shared:ro
+    command: 'sh -c "pm2-runtime start ../pm2-api.json | pino-pretty"'
     tty: true
     env_file: ./api/.env
     environment:
@@ -82,8 +82,8 @@ services:
       context: .
     volumes:
       - ./api:/app/api
-      - ./shared:/app/shared
-    command: 'bash -c "pm2-runtime start ../pm2-worker.json | pino-pretty"'
+      - ./shared:/app/shared:ro
+    command: 'sh -c "pm2-runtime start ../pm2-worker.json | pino-pretty"'
     tty: true
     env_file: ./api/.env
     environment:
@@ -107,8 +107,8 @@ services:
       context: .
     volumes:
       - ./dashboard:/app/dashboard
-      - ./docker/dashboard/dev.env.js:/app/dashboard/src/assets/env.js
-      - ./shared:/app/shared
+      - ./docker/dashboard/dev.env.js:/app/dashboard/src/assets/env.js:ro
+      - ./shared:/app/shared:ro
     tty: true
     ports:
       - 4200:4200

@@ -25,7 +25,6 @@ You will need `docker` and `docker-compose`.
 | Mailhog     | `mailer`   | APP_MAIL_SMTP_URL | http://localhost:8025      | -          |
 | S3          | `s3`       | AWS\_\*           | http://localhost:9000      | -          |
 
-> \* The Frontend doesn't run in Docker. Install NodeJS locally and run it with `yarn start` from the `dashboard` folder.  
 > ⚠️ `docker-compose.yml` is used in `local` environment only
 
 ### Installation
@@ -37,14 +36,15 @@ You will need `docker` and `docker-compose`.
 5. `./rebuild.sh`
 6. `docker-compose run api yarn migrate`
 
-```
-docker-compose up api
-docker-compose up worker
+```shell
+terminal 1: docker-compose up api
+terminal 2: docker-compose up dashboard
+# nav to http://localhost:4200
 ```
 
 ### Migrations
 
-```
+```shell
 // use SKIP_MIGRATIONS=true to skip migrations in an automated deployment process
 
 cd api
@@ -55,12 +55,12 @@ docker-compose run api yarn migrate
 
 ### End-to-end testing
 
-```
+```shell
 # standalone e2e (running in CI)
 bash e2e.sh
 ```
 
-```
+```shell
 # local e2e
 docker-compose up api (worker is started too)
 docker-compose up dashboard

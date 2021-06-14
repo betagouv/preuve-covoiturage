@@ -1,5 +1,4 @@
-FROM node:14
-RUN curl -s --compressed -o- -L https://yarnpkg.com/install.sh | bash
+FROM node:14-alpine
 RUN mkdir -p /code
 WORKDIR /code
 COPY .eslint* ./
