@@ -27,7 +27,14 @@
           </button>
         </mat-form-field>
 
-        <button type="submit" mat-flat-button (click)="onLogin()" [disabled]="!loginForm.valid" color="primary">
+        <button
+          type="submit"
+          mat-flat-button
+          (click)="onLogin()"
+          [disabled]="!loginForm.valid"
+          color="primary"
+          data-test="button-submit"
+        >
           Connexion
         </button>
       </form>
