@@ -101,6 +101,20 @@ services:
       - mailer
       # - s3
 
+  dashboard:
+    build:
+      dockerfile: ./docker/dashboard/Dockerfile
+      context: .
+    volumes:
+      - ./dashboard:/app/dashboard
+      - ./docker/dashboard/dev.env.js:/app/dashboard/src/assets/env.js
+      - ./shared:/app/shared
+    tty: true
+    ports:
+      - 4200:4200
+    depends_on:
+      - api
+
   lint:
     build: './docker/lint'
     tty: true
