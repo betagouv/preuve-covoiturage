@@ -57,8 +57,7 @@ docker-compose run api yarn migrate
 
 ```
 # standalone e2e (running in CI)
-docker-compose -f docker-compose.e2e.yml build
-bash e2e.sh e2e
+bash e2e.sh
 ```
 
 ```
@@ -68,6 +67,7 @@ docker-compose up dashboard
 vi .env (set your database to 'test')
 docker-compose run api yarn workspace ilos seed
 cd tests
+yarn
 CYPRESS_BASE_URL=http://localhost:4200 yarn cy:open
 ```
 
