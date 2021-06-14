@@ -42,6 +42,7 @@ describe('StatApiService', () => {
   it('should generate day RPC request param with a valid end date if none provided', () => {
     // Act
     const start = new Date('2020-06-03T00:00:00.000Z');
+    const expectedEndDate = new Date('2020-06-17T00:00:00.000Z');
     const jsonRPCParam: JsonRPCParam = statApiService.paramGetList({
       group_by: ApiGraphTimeMode.Day,
       tz: 'Europe/Paris',
@@ -54,7 +55,8 @@ describe('StatApiService', () => {
     expect(statApiService).toBeTruthy();
     expect(jsonRPCParam.params.date.end).toBeTruthy();
     expect(jsonRPCParam.params.date.start).toEqual(start);
-    expect(jsonRPCParam.params.date.end).toEqual(new Date('2020-06-17T00:00:00.000Z'));
+    expect(jsonRPCParam.params.date.end).toEqual(expectedEndDate);
+    expect(jsonRPCParam.params.date.start).not.toEqual(expectedEndDate);
   });
 
   it('should not generate end date request param when day time period is requested with a valid end date', () => {
