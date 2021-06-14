@@ -9,5 +9,18 @@
   "typescript.preferences.quoteStyle": "single",
   "editor.formatOnSave": true,
   "prettier.configPath": "docker/lint/.prettierrc.js",
-  "prettier.prettierPath": "docker/lint/node_modules/prettier"
+  "prettier.prettierPath": "docker/lint/node_modules/prettier",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

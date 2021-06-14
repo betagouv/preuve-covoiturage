@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 export const TOOLTIPS = {
   classes: {
     A: 'Classe A : l’opérateur certifie la mise en relation avec intention de covoiturer',

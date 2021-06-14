@@ -29,29 +29,30 @@ services:
     networks:
       - back
 
-  s3:
-    image: minio/minio:edge
-    networks:
-      - back
-    command: 'server /data'
-    volumes:
-      - ./db/s3:/data
-    ports:
-      - 9000:9000
-
-  # pass BUCKET env var with bucket name to create
-  s3-init:
-    image: minio/mc:edge
-    networks:
-      - back
-    environment:
-      MINIO_URL: http://s3:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-    entrypoint:
-      ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
-    depends_on:
-      - s3
+  #  TODO
+  #  s3:
+  #    image: minio/minio:edge
+  #    networks:
+  #      - back
+  #    command: 'server /data'
+  #    volumes:
+  #      - ./db/s3:/data
+  #    ports:
+  #      - 9000:9000
+  #
+  #  # pass BUCKET env var with bucket name to create
+  #  s3-init:
+  #    image: minio/mc:edge
+  #    networks:
+  #      - back
+  #    environment:
+  #      MINIO_URL: http://s3:9000
+  #      MINIO_ACCESS_KEY: minioadmin
+  #      MINIO_SECRET_KEY: minioadmin
+  #    entrypoint:
+  #      ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
+  #    depends_on:
+  #      - s3
 
   api:
     build:
@@ -72,6 +73,8 @@ services:
     depends_on:
       - redis
       - postgres
+      - mailer
+      - worker
 
   worker:
     build:
@@ -96,7 +99,7 @@ services:
       - redis
       - postgres
       - mailer
-      - s3
+      # - s3
 
   lint:
     build: './docker/lint'
@@ -104,18 +107,6 @@ services:
     volumes:
       - ./api:/code/api:ro
       - ./dashboard:/code/dashboard:ro
-
-  migrator:
-    build:
-      dockerfile: ../../docker/migrator/Dockerfile
-      context: ./api/db
-    volumes:
-      - ./api/db:/data
-    env_file: ./api/.env
-    networks:
-      - back
-    depends_on:
-      - postgres
 
 networks:
   back:

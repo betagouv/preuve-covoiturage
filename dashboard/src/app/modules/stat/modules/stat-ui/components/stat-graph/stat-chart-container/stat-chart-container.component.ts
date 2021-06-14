@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FilterService } from '~/modules/filter/services/filter.service';
 
 @Component({
   selector: 'app-stat-chart-container',
@@ -6,13 +7,11 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./stat-chart-container.component.scss'],
 })
 export class StatChartContainerComponent implements OnInit {
-  @Input() showDaily: boolean;
-  @Input() showMonthly: boolean;
-  @Input() showCumulated: boolean;
-
-  @Input() hasFilters: boolean;
-
-  constructor() {}
+  constructor(public filterService: FilterService) {}
 
   ngOnInit(): void {}
+
+  get hasFilters(): boolean {
+    return Object.keys(this.filterService.filter$.value).length > 0;
+  }
 }

@@ -1,0 +1,49 @@
+<div class="graph">
+  <h3>
+    {{ graphTitle }}
+  </h3>
+  <div class="graph-header graph-trips-header">
+    <div class="graph-trips-legend-wrapper">
+      <div class="graph-trips-legend">
+        <div class="legend-square legend-square-secondary-color"></div>
+        <div class="graph-trips-legend-label">
+          <span>Tous les trajets réalisés</span>
+        </div>
+      </div>
+      <div class="graph-trips-legend">
+        <div class="legend-square legend-square-primary-color"></div>
+        <div class="graph-trips-legend-label">
+          <span>Trajets incités</span>
+        </div>
+      </div>
+    </div>
+
+    <app-stat-graph-timemode-nav *ngIf="displayNav" [nav]="timeMode" (navChange)="navChange($event)">
+    </app-stat-graph-timemode-nav>
+  </div>
+
+  <div class="chart-container">
+    <!-- component duplicated because of ngx-chartjs option refresh issue -->
+    <ngx-chartjs
+      [data]="data$ | async"
+      *ngIf="timeMode === 'day'"
+      [type]="graphTypes.day"
+      [options]="graphOptions.day"
+      [height]="70"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data$ | async"
+      *ngIf="timeMode === 'month'"
+      [type]="graphTypes.month"
+      [options]="graphOptions.month"
+      [height]="70"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data$ | async"
+      *ngIf="timeMode === 'cumulative'"
+      [type]="graphTypes.cumulative"
+      [options]="graphOptions.cumulative"
+      [height]="70"
+    ></ngx-chartjs>
+  </div>
+</div>

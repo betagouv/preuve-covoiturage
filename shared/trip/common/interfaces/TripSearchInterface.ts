@@ -1,6 +1,6 @@
 export interface TripSearchInterface {
-  tz?: string;
   campaign_id?: number[];
+  tz?: string;
   date?: {
     start?: Date;
     end?: Date;
@@ -12,8 +12,8 @@ export interface TripSearchInterface {
     max?: number;
   };
   ranks?: string[];
-  operator_id?: number | number[];
-  territory_id?: number | number[];
+  operator_id?: number[];
+  territory_id?: number[];
 }
 
 export interface TripSearchInterfaceWithPagination extends TripSearchInterface {

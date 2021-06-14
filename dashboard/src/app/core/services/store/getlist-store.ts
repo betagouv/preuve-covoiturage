@@ -2,12 +2,8 @@ import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { finalize, takeUntil, debounceTime } from 'rxjs/operators';
 
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
-
-export interface PaginationState {
-  limit: number;
-  offset: number;
-  total: number;
-}
+import { PaginationState } from './PaginationState';
+import { StoreLoadingState } from './StoreLoadingState';
 
 function defaultPagination(): PaginationState {
   return {
@@ -34,6 +30,8 @@ export abstract class GetListStore<
   // dismiss subject triggered in order to cancel current rpc calls
   protected dismissGetSubject = new Subject();
   protected dismissGetListSubject = new Subject();
+
+  protected _listLoadingState = new BehaviorSubject<StoreLoadingState>(StoreLoadingState.Off);
 
   // content
   protected _entities$ = this.entitiesSubject.asObservable();
@@ -76,16 +74,17 @@ export abstract class GetListStore<
     return this._pagination$;
   }
 
+  get finalFilterValue(): any {
+    return this.filterSubject.value;
+  }
+
+  get listLoadingState$(): Observable<StoreLoadingState> {
+    return this._listLoadingState.asObservable();
+  }
+
   constructor(protected rpcGetList: JsonRpcGetListT) {
     this.rpcGetList = rpcGetList;
-    let firstLoad = true;
-
-    this._filterSubject.pipe(debounceTime(100)).subscribe((filt) => {
-      if (firstLoad || filt !== null) {
-        this.loadList();
-        firstLoad = !firstLoad || !!filt;
-      }
-    });
+    this._setupFilterSubject();
   }
 
   reset(): void {
@@ -95,25 +94,30 @@ export abstract class GetListStore<
     this.entitySubject.next(null);
   }
 
-  loadList(debounce = 300): void {
+  loadList(debounce = 300, updateLoadcount = true): Observable<StoreLoadingState> {
     clearTimeout(this.__debounceTimeId);
     this._isLoaded = false;
 
+    this._listLoadingState.next(StoreLoadingState.Off);
+
     if (debounce > 0) {
+      this._listLoadingState.next(StoreLoadingState.Debounce);
       this.__debounceTimeId = setTimeout(() => {
-        this.loadList(0);
+        this.loadList(0, false);
       }, debounce) as any;
     } else {
       if (!this.dismissGetSubject) return;
       this.dismissGetSubject.next();
       this.dismissGetListSubject.next();
-      this._loadCount += 1;
+      if (updateLoadcount) this._loadCount++;
+      this._listLoadingState.next(StoreLoadingState.LoadStart);
       this.rpcGetList
-        .getList(this.filterSubject.value)
+        .getList(this.finalFilterValue)
         .pipe(
           takeUntil(this.dismissGetListSubject),
           finalize(() => {
-            if (this._loadCount > 0) this._loadCount -= 1;
+            this._listLoadingState.next(StoreLoadingState.LoadComplete);
+            if (this._loadCount > 0 && updateLoadcount) this._loadCount -= 1;
           }),
         )
         .subscribe((list) => {
@@ -123,10 +127,23 @@ export abstract class GetListStore<
           this.paginationSubject.next(list.meta && list.meta.pagination ? list.meta.pagination : defaultPagination());
         });
     }
+
+    return this._listLoadingState.asObservable();
   }
 
   dismissAllRpcActions(): void {
     this.dismissGetListSubject.next();
     this.dismissGetSubject.next();
+  }
+
+  protected _setupFilterSubject() {
+    let firstLoad = true;
+
+    this._filterSubject.pipe(debounceTime(100)).subscribe((filt) => {
+      if (firstLoad || filt !== null) {
+        this.loadList();
+        firstLoad = !firstLoad || !!filt;
+      }
+    });
   }
 }

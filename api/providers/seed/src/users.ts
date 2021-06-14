@@ -35,5 +35,16 @@ export const adminRegistry = makeUser('admin@example.com', 'registry.admin');
 export const adminIleDeFrance = makeUser('territory@example.com', 'territory.admin', { territory: ileDeFrance });
 export const demoIleDeFrance = makeUser('demo@example.com', 'territory.demo', { territory: ileDeFrance });
 export const adminMaxiCovoit = makeUser('operator@example.com', 'operator.admin', { operator: maxiCovoit });
+export const userMaxiCovoit = makeUser('operator-user@example.com', 'operator.user', { operator: maxiCovoit });
+export const userRegistry = makeUser('user@example.com', 'registry.user');
+export const userTerritory = makeUser('territory-user@example.com', 'territory.user', { territory: ileDeFrance });
 
-export const users: User[] = [adminRegistry, adminIleDeFrance];
+export const users: User[] = [
+  adminRegistry,
+  adminIleDeFrance,
+  demoIleDeFrance,
+  adminMaxiCovoit,
+  userMaxiCovoit,
+  userTerritory,
+  userRegistry,
+];

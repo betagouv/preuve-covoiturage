@@ -13,11 +13,13 @@ import { binding as searchCountBinding } from './shared/trip/searchcount.schema'
 import { binding as statsBinding } from './shared/trip/stats.schema';
 import { binding as exportBinding } from './shared/trip/export.schema';
 import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
+import { binding as publicStatsBinding } from './shared/trip/publicStats.schema';
 
 import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
+import { PublicStatsAction } from './actions/PublicStatsAction';
 import { ExportAction } from './actions/ExportAction';
 import { SearchCountAction } from './actions/SearchCountAction';
 import { BuildExportAction } from './actions/BuildExportAction';
@@ -31,7 +33,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 @serviceProvider({
   config,
   providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider, CryptoProvider],
-  validator: [listBinding, searchCountBinding, statsBinding, exportBinding, buildExportBinding],
+  validator: [listBinding, searchCountBinding, statsBinding, exportBinding, buildExportBinding, publicStatsBinding],
 
   middlewares: [
     ...defaultMiddlewareBindings,
@@ -46,6 +48,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
     ListAction,
     SearchCountAction,
     StatsAction,
+    PublicStatsAction,
     FinancialStatsAction,
     ExportAction,
     BuildExportAction,

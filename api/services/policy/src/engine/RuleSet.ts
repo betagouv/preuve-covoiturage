@@ -55,7 +55,7 @@ export class RuleSet {
         return { ctor, params: def.parameters };
       })
       .reduce((acc, { ctor, params }) => {
-        if (ctor.type === META) {
+        if ((ctor.type as number) === META) {
           acc.push(...this.resolve((new ctor(params) as MetaRuleInterface).build()));
         } else {
           acc.push({ ctor, params });

@@ -1,49 +1,30 @@
-// tslint:disable:no-bitwise
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
-
-import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { StatFormatService } from '~/modules/stat/services/stat-format.service';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
+/* eslint-disable max-len */
+import { PublicTripSearchInterface } from '../../../core/entities/api/shared/trip/common/interfaces/PublicTripStatInterface';
+import { TripStatInterface } from '../../../core/entities/api/shared/trip/common/interfaces/TripStatInterface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StatPublicService {
-  private _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
-  private _loaded$ = new BehaviorSubject<boolean>(false);
-  private _loading$ = new BehaviorSubject<boolean>(false);
+  private DEFAULT_PUBLIC_PARAMS: TripStatInterface = {};
 
-  constructor(private _http: HttpClient, private _statFormatService: StatFormatService) {}
+  constructor(private http: HttpClient) {
+    const start: Date = new Date(new Date().setMonth(new Date().getMonth() - 12));
+    start.setHours(2, 0, 0, 0);
 
-  public loadOne(): Observable<StatInterface[]> {
-    this._loading$.next(true);
+    const end: Date = new Date(new Date().setDate(new Date().getDate() - 5));
+    end.setHours(2, 0, 0, 0);
 
-    return this._http.get('stats').pipe(
-      tap((data: StatInterface[]) => {
-        const formatedStat = this._statFormatService.formatData(data);
-        this._formatedStat$.next(formatedStat);
-        this._loaded$.next(true);
-        this._loading$.next(false);
-      }),
-    );
+    this.DEFAULT_PUBLIC_PARAMS.date = { start, end };
+    this.DEFAULT_PUBLIC_PARAMS.tz = 'Europe/Paris';
   }
 
-  get loading(): boolean {
-    return this._loading$.value;
-  }
-
-  get loaded(): boolean {
-    return this._loaded$.value;
-  }
-
-  get stat(): FormatedStatInterface {
-    return this._formatedStat$.value;
-  }
-
-  get stat$(): Observable<FormatedStatInterface> {
-    return this._formatedStat$;
+  public load(params: PublicTripSearchInterface): Observable<StatInterface[]> {
+    Object.assign(params, this.DEFAULT_PUBLIC_PARAMS);
+    return this.http.post<StatInterface[]>('stats', params);
   }
 }

@@ -1,3 +1,14 @@
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  forwardRef,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { ControlValueAccessor, FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { BehaviorSubject, merge, of, Subject } from 'rxjs';
 import {
   debounceTime,
@@ -9,20 +20,7 @@ import {
   tap,
   throttleTime,
 } from 'rxjs/operators';
-
-import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { ControlValueAccessor, FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  forwardRef,
-  Input,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-
-import { DestroyObservable } from '../../../core/components/destroy-observable';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 export interface AutocompleteItem {
   _id: number;

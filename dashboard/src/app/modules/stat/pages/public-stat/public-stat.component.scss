@@ -1,14 +1,22 @@
 @import 'variables';
 
-.stats {
+a,
+a:visited,
+a:focus {
+  color: #004ac0;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.public-stat {
+  margin: auto 20px;
+
   &--loading {
     display: flex;
     justify-content: space-around;
-  }
-  padding: 0 17%;
-  margin: 0 auto 25px;
-  @media (max-width: 1400px) {
-    padding: 0 10px;
   }
 
   &-header {
@@ -36,47 +44,11 @@
     }
   }
 
-  &-numbers {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    @include supportEdge(justify-content, space-around);
-  }
-  &-number {
-    pointer-events: none;
-    width: 360px;
-    height: 120px;
-    margin: 10px;
-    padding: 20px;
-    background: $background-white;
-    border: 2px solid $background-white;
-    border-radius: 5px;
-    display: flex;
-    transition: 0.3s all;
-
-    &-icon {
-      width: 80px;
-      margin-right: 40px;
-
-      .mat-icon {
-        height: 100%;
-        width: 100%;
-      }
-    }
-
-    &-hint {
-      margin-top: 3px;
-    }
-
-    &-content {
-      margin-right: 20px;
-    }
-
-    &-title > p {
-      font-weight: 600;
-      font-size: $font-size-title;
-      margin-bottom: 0;
-      margin-top: 9px;
+  &-honor {
+    max-width: 960px;
+    margin: 2em auto 1em;
+    h2 {
+      text-align: center;
     }
   }
 }

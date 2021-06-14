@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
+import { OPERATOR_STATS, PUBLIC_STATS } from '~/modules/stat/config/stat';
+import { StatNavName } from '~/core/types/stat/statDataNameType';
+
 @Component({
   selector: 'app-trip-stats',
   templateUrl: './trip-stats.component.html',
@@ -16,7 +19,7 @@ export class TripStatsComponent implements OnInit {
     return this.auth.isTerritory() || this.auth.isRegistry();
   }
 
-  get isOperator(): boolean {
-    return this.auth.isOperator();
+  get statsList(): StatNavName[] {
+    return this.isTerritoryOrRegistry ? PUBLIC_STATS : OPERATOR_STATS;
   }
 }

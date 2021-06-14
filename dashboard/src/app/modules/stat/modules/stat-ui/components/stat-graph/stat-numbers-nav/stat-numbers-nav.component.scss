@@ -1,4 +1,13 @@
 @import 'variables';
+.stat-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  margin: auto;
+
+  @media (max-width: 1400px) {
+    justify-content: space-evenly;
+  }
+}
 
 .stat-number {
   width: 360px;
@@ -11,14 +20,16 @@
   display: flex;
   transition: 0.3s all;
 
+  cursor: pointer;
+
   &:hover,
-  &--selected {
+  &.stat-number-selected {
     border: 2px solid $color-primary;
   }
 
-  &--disabled {
-    pointer-events: none;
-  }
+  // &--disabled {
+  //   pointer-events: none;
+  // }
 
   &-icon {
     width: 80px;

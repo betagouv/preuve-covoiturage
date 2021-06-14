@@ -1,9 +1,14 @@
 import { chartNameType } from '~/core/types/stat/chartNameType';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 
-export interface FormatedStatInterface {
+export interface FormatedStatsInterface {
   total: { [key in statDataNameType]: number };
   graph: { [key in chartNameType]: Axes };
+}
+
+export interface FormatedStatInterface {
+  total: number;
+  graph: Axes;
 }
 
 export interface Axes {

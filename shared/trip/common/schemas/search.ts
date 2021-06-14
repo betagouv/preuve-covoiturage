@@ -107,12 +107,41 @@ export const search = {
 
 export const stats = {
   type: 'object',
+  required: ['tz', 'group_by'],
   additionalProperties: false,
   properties: {
     ...params,
     group_by: {
       type: 'string',
-      enum: ['month', 'day'],
+      enum: ['month', 'day', 'all'],
+    },
+  },
+};
+
+export const publicStats = {
+  type: 'object',
+  required: ['tz', 'group_by', 'date'],
+  additionalProperties: false,
+  properties: {
+    tz: {
+      macro: 'tz',
+    },
+    group_by: {
+      type: 'string',
+      enum: ['month', 'day', 'all'],
+    },
+    date: {
+      type: 'object',
+      additionalProperties: false,
+      minProperties: 1,
+      properties: {
+        start: {
+          macro: 'timestamp',
+        },
+        end: {
+          macro: 'timestamp',
+        },
+      },
     },
   },
 };

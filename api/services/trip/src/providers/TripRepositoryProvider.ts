@@ -9,17 +9,16 @@ import {
   TripSearchInterfaceWithPagination,
   TripSearchInterface,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
+import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
+import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
+import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import {
   TzResultInterface,
   ExportTripInterface,
   TripRepositoryInterface,
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
-
-import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
-import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
-import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
-import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 
 /*
  * Trip specific repository
@@ -172,12 +171,24 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   public async stats(params: Partial<TripStatInterface>): Promise<StatInterface[]> {
     const where = await this.buildWhereClauses(params);
 
+    const selectSwitch = {
+      day: 'journey_start_datetime::date::text as day,',
+      month: `TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm') as month,`,
+      all: '',
+    };
+
+    const groupBySwitch = {
+      day: 'GROUP BY day ORDER BY day ASC',
+      month: `GROUP BY TO_CHAR(journey_start_datetime::DATE, 'yyyy-mm')`,
+      all: '',
+    };
+
     const values = [...(where ? where.values : [])];
     const text = `
       SELECT
-        to_char(journey_start_datetime::date, 'yyyy-mm-dd') as day,
-        sum(passenger_seats)::int as trip,
-        sum(journey_distance/1000*passenger_seats)::int as distance,
+        ${selectSwitch[params.group_by]}
+        coalesce(sum(passenger_seats), 0)::int as trip,
+        coalesce(sum(journey_distance/1000*passenger_seats), 0)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
         count(distinct operator_id)::int as operators,
         trunc(
@@ -190,7 +201,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         coalesce(sum(passenger_incentive_rpc_sum + driver_incentive_rpc_sum), 0)::int as incentive_sum
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
-      GROUP BY day ORDER BY day ASC
+      ${groupBySwitch[params.group_by]}
     `;
 
     const result = await this.connection.getClient().query({
@@ -198,7 +209,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: this.numberPlaceholders(text),
     });
 
-    return result.rowCount ? result.rows : [];
+    return !result.rowCount ? [] : result.rows;
   }
 
   public async financialStats(params: Partial<TripStatInterface>): Promise<FinancialStatInterface[]> {
