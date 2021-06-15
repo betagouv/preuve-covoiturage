@@ -11,7 +11,7 @@ module.exports = {
         : '```\n// TODO\n```';
 
       // create folder and file
-      const target = `${config.root}/docs/api/providers/${provider}`;
+      const target = `${config.root}/docs/contribuer/api/providers/${provider}`;
       if (!fs.existsSync(target)) fs.mkdirSync(target, { recursive: true });
       fs.writeFileSync(`${target}/index.md`, content);
     }

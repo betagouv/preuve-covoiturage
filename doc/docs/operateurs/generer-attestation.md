@@ -11,11 +11,18 @@ Cette page concerne les attestations fournies par les opérateurs de covoiturage
 Rendez-vous sur [https://attestation.covoiturage.beta.gouv.fr/](http://attestation.covoiturage.beta.gouv.fr/) pour générer votre attestation sur l'honneur.
 :::
 
-:warning: Cette fonctionnalité est en cours de développement.
+::: warning Cette fonctionnalité est en cours de développement.
 
 En tant qu'opérateur de covoiturage, contactez nous si vous souhaitez y participer : [technique@covoiturage.beta.gouv.fr](mailto:technique@covoiturage.beta.gouv.fr)
 
 Merci de [créer des tickets](https://github.com/betagouv/preuve-covoiturage/issues/new?template=certificate.md&labels=ATTESTATION&assignees=jonathanfallon) si vous rencontrez des problèmes.
+:::
+
+---
+
+[[toc]]
+
+---
 
 ## Statut de développement des fonctionnalités
 
@@ -119,6 +126,14 @@ Response [404 Not Found] {
 }
 ```
 
+### Upload du logo opérateur
+
+L'upload du logo qui sera utilisé sur l'attestation se fait via l'interface d'administration.  
+_Le poids de l'image est de 2Mo maximum et sa taille de 1024x1024 pixels._
+
+- [Ajouter mon logo en production](https://app.covoiturage.beta.gouv.fr/admin/operator)
+- [Ajouter mon logo pour les tests](https://app.demo.covoiturage.beta.gouv.fr/admin/operator)
+
 ## Télécharger une attestation
 
 Une fois l’attestation créée en base \(201 created\), on peut télécharger un PDF en y ajoutant des données permettant une identification simplifiée de la personne.
@@ -182,3 +197,154 @@ Ci-dessous l'attestation avec les méta-données ajoutées au PDF.
 #### Avec ou sans méta-données
 
 ![Attestations](/attestations.png)
+
+### Exemple en PHP
+
+#### Prérequis
+
+- [Générer un token applicatif](/operateurs/preuves/acces.html)
+- Avoir des trajets de plus de 5 jours sur l'environnement de test pour une identité (`phone: +33611223344`) ([voir comment envoyer des preuves](/operateurs/preuves/schema.html))
+
+#### Création de l'attestation
+
+##### Requête
+
+```PHP
+<?php
+
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => "https://api.demo.covoiturage.beta.gouv.fr/v2/certificates",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS =>'{"tz":"Europe/Paris","identity":{"phone":"+33611223344"}}',
+  CURLOPT_HTTPHEADER => array(
+    "Content-Type: application/json",
+    "Authorization: Bearer ey..."
+  ),
+));
+
+$response = curl_exec($curl);
+
+curl_close($curl);
+echo $response;
+```
+
+##### Réponse
+
+> Les données calculées sont données à titre d'exemple
+
+```json
+{
+  "uuid": "1b37ff76-dac6-44b0-ba78-9015a8a198fc",
+  "created_at": "2021-03-14T10:12:02.119Z",
+  "meta": {
+    "tz": "Europe/Paris",
+    "rows": [
+      {
+        "index": 0,
+        "month": "Mai 2021",
+        "trips": 20,
+        "distance": 180,
+        "remaining": 6.621
+      }
+    ],
+    "total_km": 180,
+    "total_rm": 6.621,
+    "total_tr": 20,
+    "total_point": 0
+  }
+}
+```
+
+#### Téléchargement du PDF sans meta-données
+
+##### Requête
+
+> Utiliser le UUID retourné par la création d'attestation pour récupérer le PDF
+
+```php
+<?php
+
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => "https://api.demo.covoiturage.beta.gouv.fr/v2/certificates/pdf",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS =>'{"uuid":"1b37ff76-dac6-44b0-ba78-9015a8a198fc"}',
+  CURLOPT_HTTPHEADER => array(
+    "Content-Type: application/json",
+    "Authorization: Bearer ey..."
+  ),
+));
+
+$response = curl_exec($curl);
+
+curl_close($curl);
+echo $response;
+```
+
+##### Réponse
+
+> Réponse binaire de type application/pdf
+
+#### Téléchargement du PDF avec meta-données
+
+##### Requête
+
+> Utiliser le UUID retourné par la création d'attestation pour récupérer le PDF
+
+```php
+<?php
+
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => "https://api.demo.covoiturage.beta.gouv.fr/v2/certificates/pdf",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS =>'{
+    "uuid": "1b37ff76-dac6-44b0-ba78-9015a8a198fc",
+    "meta": {
+        "operator": {
+            "content": "Informations\nsur l\'opérateur"
+        },
+        "identity": {
+            "name": "Jean-Michel Toutenauto",
+            "content": "1 rue du Paradis\n75010\nParis"
+        },
+        "notes": "Vestibulum ac urna eleifend, sodales metus sit amet, pretium lectus. Curabitur ut congue dolor, viverra finibus felis. Donec sodales, nisi id finibus auctor, quam tellus eleifend leo, sed tempus quam augue ac lacus. Nulla lorem augue, placerat ut tristique sed, suscipit eu purus."
+    }
+}',
+  CURLOPT_HTTPHEADER => array(
+    "Content-Type: application/json",
+    "Authorization: Bearer ey..."
+  ),
+));
+
+$response = curl_exec($curl);
+
+curl_close($curl);
+echo $response;
+```
+
+##### Réponse
+
+> Réponse binaire de type application/pdf

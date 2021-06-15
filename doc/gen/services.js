@@ -40,7 +40,7 @@ ${printActions(actions)}
 `.trim();
 
       // create folder and file
-      const target = `${config.root}/docs/api/services/${service}`;
+      const target = `${config.root}/docs/contribuer/api/services/${service}`;
       if (!fs.existsSync(target)) fs.mkdirSync(target, { recursive: true });
       fs.writeFileSync(`${target}/index.md`, content.length ? content : '```\n// TODO\n```');
     }
