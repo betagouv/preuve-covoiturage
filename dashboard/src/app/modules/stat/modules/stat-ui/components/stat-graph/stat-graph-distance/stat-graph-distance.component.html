@@ -8,27 +8,7 @@
   </div>
 
   <div class="chart-container">
-    <!-- component duplicated because of ngx-chartjs option refresh issue -->
-    <ngx-chartjs
-      [data]="data$ | async"
-      *ngIf="timeMode === 'day'"
-      [type]="graphType"
-      [options]="graphOption"
-      [height]="70"
-    ></ngx-chartjs>
-    <ngx-chartjs
-      [data]="data$ | async"
-      *ngIf="timeMode === 'month'"
-      [type]="graphType"
-      [options]="graphOption"
-      [height]="70"
-    ></ngx-chartjs>
-    <ngx-chartjs
-      [data]="data$ | async"
-      *ngIf="timeMode === 'cumulative'"
-      [type]="graphType"
-      [options]="graphOption"
-      [height]="70"
-    ></ngx-chartjs>
+    <ngx-chartjs [data]="data$ | async" [type]="graphType" [redraw]="update$" [options]="graphOption" [height]="70">
+    </ngx-chartjs>
   </div>
 </div>

@@ -29,13 +29,13 @@ export const statNavCards: { [key: string]: StatNumberConfigInterface } = {
   },
   [StatNavName.CarPoolers]: {
     svgIcon: 'carpooler',
-    hint: 'covoitureurs',
+    hint: 'covoitureur⸱euses',
     path: 'total.carpoolers',
     link: 'Voir en graphique',
   },
   [StatNavName.CO2]: {
     svgIcon: 'co2',
-    hint: 'de CO₂ économisés',
+    hint: "CO₂ d'économisés",
     path: 'total.co2',
     unit: 'kg',
     link: 'Voir en graphique',
@@ -49,7 +49,7 @@ export const statNavCards: { [key: string]: StatNumberConfigInterface } = {
   },
   [StatNavName.Operators]: {
     svgIcon: 'operator',
-    hint: 'opérateurs',
+    hint: 'opérateur(s) actif(s)',
     path: 'total.operators',
   },
   [StatNavName.Petrol]: {
