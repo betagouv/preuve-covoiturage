@@ -35,19 +35,20 @@ function getTagFromEmail(email: string): string {
   return result[1];
 }
 
-export function extractLinkFromEmail(email: Email): string {
-  const emailText = email.text;
-
+export function extractLinkFromEmail(emailText: string): string {
   if (!emailText) {
     throw new Error(`Invalid email payload (missing text)`);
   }
+
   const baseUrl = Cypress.config('baseUrl');
-  const regexp = new RegExp(`\\\[${escapeRegExp(baseUrl)}(.*)\\\]`);
+  const regexp = new RegExp(`\\\[(${escapeRegExp(baseUrl)}([^\\]]*))`);
   const result = regexp.exec(emailText);
+
   if (!result) {
     throw new Error(`Invalid email payload (missing url)`);
   }
-  return `${baseUrl}${result[1]}`;
+
+  return result[1].replace(/[^a-z0-9:\/%.]/gi, '');
 }
 
 export async function waitForEmail(email: string, timestamp = Date.now()): Promise<Email> {

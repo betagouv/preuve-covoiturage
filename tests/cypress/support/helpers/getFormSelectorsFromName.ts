@@ -101,6 +101,25 @@ export const formSelectors = new Map<string, FormSelectorMap>([
       ],
     ]),
   ],
+  [
+    "le formulaire de confirmation de l'adresse email",
+    new Map<string, FormSelector>([
+      [
+        'mot de passe',
+        {
+          selector: '[data-test="field-password"]',
+          type: 'input',
+        },
+      ],
+      [
+        'confirmation du mot de passe',
+        {
+          selector: '[data-test="field-confirm-password"]',
+          type: 'input',
+        },
+      ],
+    ]),
+  ],
 ]);
 
 export function getFormSelectorsFromName(name: string, inputName?: string): FormSelectorMap {

@@ -17,6 +17,7 @@ export const elementsSelectors = new Map<string, string>([
   ['Mot de passe oublié', '[data-test="forgotten-password"]'],
   ['le bouton enregistrer', '[data-test="button-submit"]'],
   ['le bouton envoyer', '[data-test="button-submit"]'],
+  ['le bouton connexion', '[data-test="button-submit"]'],
   ['le bouton annuler', '[data-test="button-reset"]'],
 ]);
 
