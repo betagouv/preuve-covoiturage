@@ -65,7 +65,7 @@ bash e2e.sh
 docker-compose up api (worker is started too)
 docker-compose up dashboard
 vi .env (set your database to 'test')
-docker-compose run api yarn workspace ilos seed
+docker-compose run api yarn workspace @pdc/proxy ilos seed
 cd tests
 yarn
 CYPRESS_BASE_URL=http://localhost:4200 yarn cy:open
