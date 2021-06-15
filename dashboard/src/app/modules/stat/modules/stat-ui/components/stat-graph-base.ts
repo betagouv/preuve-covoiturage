@@ -23,6 +23,7 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
   protected _nextTimeMode = GraphTimeMode.Month;
 
   protected dataSubject = new BehaviorSubject<FormatedStatInterface>(null);
+  protected update = new BehaviorSubject<Boolean>(null);
 
   protected abstract readonly graphOptions: { [key: string]: any };
   protected abstract readonly graphTypes: { [key: string]: string };
@@ -41,6 +42,10 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
 
   get data$(): Observable<FormatedStatInterface> {
     return this.dataSubject;
+  }
+
+  get update$(): Observable<Boolean> {
+    return this.update;
   }
 
   constructor(public statStore: StatFilteredStoreService) {
@@ -69,7 +74,10 @@ export abstract class StatGraphBase extends DestroyObservable implements OnInit 
         map((data) => this.format(this.statStore.timeModeSubject.value, data)),
         takeUntil(this.destroy$),
       )
-      .subscribe((data) => this.dataSubject.next(data));
+      .subscribe((data) => {
+        this.dataSubject.next(data);
+        this.update.next(true);
+      });
   }
 
   abstract format(apiDateMode: ApiGraphTimeMode, data: StatInterface[]): FormatedStatInterface;

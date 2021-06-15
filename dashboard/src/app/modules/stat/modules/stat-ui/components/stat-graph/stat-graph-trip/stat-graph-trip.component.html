@@ -35,6 +35,7 @@
       [data]="data$ | async"
       *ngIf="timeMode === 'month'"
       [type]="graphTypes.month"
+      [redraw]="update$"
       [options]="graphOptions.month"
       [height]="70"
     ></ngx-chartjs>

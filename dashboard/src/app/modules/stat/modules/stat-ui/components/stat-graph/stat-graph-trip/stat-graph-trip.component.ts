@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import { Component, Input, ViewChildren } from '@angular/core';
 import { ChartjsComponent } from '@ctrl/ngx-chartjs';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';

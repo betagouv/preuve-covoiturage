@@ -167,6 +167,7 @@
   },
   "defaultProject": "dashboard",
   "cli": {
+    "analytics": false,
     "packageManager": "yarn"
   }
 }
