@@ -25,7 +25,6 @@ You will need `docker` and `docker-compose`.
 | Mailhog     | `mailer`   | APP_MAIL_SMTP_URL | http://localhost:8025      | -          |
 | S3          | `s3`       | AWS\_\*           | http://localhost:9000      | -          |
 
-> \* The Frontend doesn't run in Docker. Install NodeJS locally and run it with `yarn start` from the `dashboard` folder.  
 > ⚠️ `docker-compose.yml` is used in `local` environment only
 
 ### Installation
@@ -37,14 +36,15 @@ You will need `docker` and `docker-compose`.
 5. `./rebuild.sh`
 6. `docker-compose run api yarn migrate`
 
-```
-docker-compose up api
-docker-compose up worker
+```shell
+terminal 1: docker-compose up api
+terminal 2: docker-compose up dashboard
+# nav to http://localhost:4200
 ```
 
 ### Migrations
 
-```
+```shell
 // use SKIP_MIGRATIONS=true to skip migrations in an automated deployment process
 
 cd api
@@ -55,22 +55,20 @@ docker-compose run api yarn migrate
 
 ### End-to-end testing
 
-```
-TODO
+```shell
+# standalone e2e (running in CI)
+bash e2e.sh
 ```
 
-##### Requirements
-
-- a working DB with `admin@example.com` active user
-
-```
-#term 1 : cd api && docker-compose compose up api
-#term 2 : cd api && docker-compose compose up worker
-#term 3 : cd dashboard && yarn start
-#term 4 :
-$ cd tests
-$ yarn
-$ CYPRESS_BASE_URL=http://localhost:4200 yarn cy:open
+```shell
+# local e2e
+docker-compose up api (worker is started too)
+docker-compose up dashboard
+vi .env (set your database to 'test')
+docker-compose run api yarn workspace ilos seed
+cd tests
+yarn
+CYPRESS_BASE_URL=http://localhost:4200 yarn cy:open
 ```
 
 ##### Notes

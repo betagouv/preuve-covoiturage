@@ -60,8 +60,8 @@ services:
       context: .
     volumes:
       - ./api:/app/api
-      - ./shared:/app/shared
-    command: 'bash -c "pm2-runtime start ../pm2-api.json | pino-pretty"'
+      - ./shared:/app/shared:ro
+    command: 'sh -c "pm2-runtime start ../pm2-api.json | pino-pretty"'
     tty: true
     env_file: ./api/.env
     environment:
@@ -82,8 +82,8 @@ services:
       context: .
     volumes:
       - ./api:/app/api
-      - ./shared:/app/shared
-    command: 'bash -c "pm2-runtime start ../pm2-worker.json | pino-pretty"'
+      - ./shared:/app/shared:ro
+    command: 'sh -c "pm2-runtime start ../pm2-worker.json | pino-pretty"'
     tty: true
     env_file: ./api/.env
     environment:
@@ -100,6 +100,20 @@ services:
       - postgres
       - mailer
       # - s3
+
+  dashboard:
+    build:
+      dockerfile: ./docker/dashboard/Dockerfile
+      context: .
+    volumes:
+      - ./dashboard:/app/dashboard
+      - ./docker/dashboard/dev.env.js:/app/dashboard/src/assets/env.js:ro
+      - ./shared:/app/shared:ro
+    tty: true
+    ports:
+      - 4200:4200
+    depends_on:
+      - api
 
   lint:
     build: './docker/lint'
