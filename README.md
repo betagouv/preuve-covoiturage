@@ -53,6 +53,20 @@ yarn migrate
 docker-compose run api yarn migrate
 ```
 
+### Frontend testing
+
+```shell
+# default browser is Chrome
+yarn test
+yarn test --browsers ChromeHeadless
+CHROME_BIN=$(which chrome) yarn test
+CHROME_BIN=$(which chromium) yarn test
+CHROME_BIN=$(which brave-browser) yarn test
+
+# requires karma-firefox-launcher (installed)
+yarn test --browsers Firefox
+```
+
 ### End-to-end testing
 
 ```
