@@ -1,3 +1,5 @@
+import { findIdentity } from '../common/schemas/findIdentity';
+
 export const alias = 'certificate.create';
 export const schema = {
   $id: alias,
@@ -16,26 +18,19 @@ export const schema = {
         type: 'object',
         additionalProperties: false,
         minProperties: 2,
+        maxProperties: 2,
         properties: {
           lat: { macro: 'lat' },
           lon: { macro: 'lon' },
         },
+        dependencies: {
+          lon: ['lat'],
+          lat: ['lon'],
+        },
       },
     },
     tz: { macro: 'varchar' },
-    identity: {
-      type: 'object',
-      additionalProperties: false,
-      minProperties: 1,
-      maxProperties: 1,
-      properties: {
-        _id: { macro: 'serial' },
-        uuid: { macro: 'uuid' },
-        phone: { macro: 'phone' },
-        phone_trunc: { macro: 'phonetrunc' },
-        operator_user_id: { macro: 'varchar' },
-      },
-    },
+    identity: findIdentity,
   },
 };
 
