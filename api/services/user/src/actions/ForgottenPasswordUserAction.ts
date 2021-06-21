@@ -29,7 +29,6 @@ export class ForgottenPasswordUserAction extends AbstractAction {
     const token = await this.authRepository.createTokenByEmail(
       params.email,
       this.authRepository.RESET_TOKEN,
-      this.authRepository.UNCONFIRMED_STATUS,
     );
 
     await this.notification.passwordForgotten(token, params.email, `${user.firstname} ${user.lastname}`);
