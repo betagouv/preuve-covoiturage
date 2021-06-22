@@ -1,13 +1,12 @@
-import { provider } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-
-import { IdentityInterface } from '../shared/common/interfaces/IdentityInterface';
 import {
+  findUuidOptions,
+  IdentityMetaInterface,
   IdentityRepositoryProviderInterface,
   IdentityRepositoryProviderInterfaceResolver,
-  IdentityMetaInterface,
-  findUuidOptions,
 } from '../interfaces/IdentityRepositoryProviderInterface';
+import { IdentityInterface } from '../shared/common/interfaces/IdentityInterface';
 
 /*
  * Trip specific repository
@@ -134,7 +133,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
     const result = await this.connection.getClient().query<{ datetime: Date; uuid: string }>(query);
 
     if (!result.rowCount) {
-      throw new Error('Cannot find UUID for this person');
+      throw new NotFoundException('Cannot find UUID for this person');
     }
 
     return result.rows[0].uuid;
