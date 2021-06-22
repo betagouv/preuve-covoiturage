@@ -1,15 +1,20 @@
 export const findIdentity = {
   type: 'object',
-  additionalProperties: false,
-  minProperties: 1,
-  maxProperties: 2,
-  properties: {
-    phone: { macro: 'phone' },
-    phone_trunc: { macro: 'phonetrunc' },
-    operator_user_id: { macro: 'varchar' },
-  },
-  dependencies: {
-    phone_trunc: ['operator_user_id'],
-    operator_user_id: ['phone_trunc'],
-  },
+  oneOf: [
+    {
+      additionalProperties: false,
+      required: ['phone'],
+      properties: {
+        phone: { macro: 'phone' },
+      },
+    },
+    {
+      additionalProperties: false,
+      required: ['phone_trunc', 'operator_user_id'],
+      properties: {
+        phone_trunc: { macro: 'phonetrunc' },
+        operator_user_id: { macro: 'varchar' },
+      },
+    },
+  ],
 };

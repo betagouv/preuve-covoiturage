@@ -17,15 +17,10 @@ export const schema = {
       items: {
         type: 'object',
         additionalProperties: false,
-        minProperties: 2,
-        maxProperties: 2,
+        required: ['lon', 'lat'],
         properties: {
           lat: { macro: 'lat' },
           lon: { macro: 'lon' },
-        },
-        dependencies: {
-          lon: ['lat'],
-          lat: ['lon'],
         },
       },
     },
