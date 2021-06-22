@@ -1,4 +1,4 @@
-import { identity } from './common/identity.schema';
+import { findIdentity } from '../common/schemas/findIdentity';
 
 export const alias = 'carpool.finduuid';
 export const schema = {
@@ -7,7 +7,7 @@ export const schema = {
   required: ['identity'],
   additionalProperties: false,
   properties: {
-    identity,
+    identity: findIdentity,
     operator_id: { macro: 'serial' },
   },
 };
