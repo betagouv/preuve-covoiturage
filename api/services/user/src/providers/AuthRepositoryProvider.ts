@@ -117,7 +117,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     const plainToken = this.cryptoProvider.generateToken();
     const cryptedToken = await this.cryptoProvider.cryptToken(plainToken);
     const token_expires_at = this.getTokenExpiresAt(type);
-    
+
     const values = [email, cryptedToken, token_expires_at];
     const query = {
       text: `

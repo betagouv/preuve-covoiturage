@@ -1,6 +1,6 @@
 import { When } from 'cypress-cucumber-preprocessor/steps';
-import { mailContains, mailClear, Email } from '../../support/helpers/mailhog';
-import { extractLinkFromEmail } from '../../support/helpers/waitForEmail';
+import { extractLinkFromEmail } from '../../support/emails/helpers/extractLinkFromEmail';
+import { mailContains, mailClear, Email } from '../../support/emails/mailhog';
 
 When(`je clique sur le bouton {string} dans l'email {string}`, function (label: string, email: string) {
   cy.log(`try to fetch mail from ${email}`);
@@ -8,7 +8,7 @@ When(`je clique sur le bouton {string} dans l'email {string}`, function (label: 
     .then((emails: Email[]) => {
       expect(emails.length).to.be.greaterThan(0);
       const body = emails[0].Content?.Body || '';
-      const url = extractLinkFromEmail(body);
+      const url = extractLinkFromEmail(Cypress.config('baseUrl'), body);
       expect(url).to.contain(Cypress.config('baseUrl'));
       cy.visit(url);
     })

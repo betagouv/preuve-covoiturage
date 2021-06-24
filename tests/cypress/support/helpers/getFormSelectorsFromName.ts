@@ -120,6 +120,32 @@ export const formSelectors = new Map<string, FormSelectorMap>([
       ],
     ]),
   ],
+  [
+    'le formulaire de changement de mot de passe',
+    new Map<string, FormSelector>([
+      [
+        'ancien mot de passe',
+        {
+          selector: '[data-test="old-password"]',
+          type: 'input',
+        },
+      ],
+      [
+        'nouveau mot de passe',
+        {
+          selector: '[data-test="new-password"]',
+          type: 'input',
+        },
+      ],
+      [
+        'confirmation du mot de passe',
+        {
+          selector: '[data-test="new-password-confirm"]',
+          type: 'input',
+        },
+      ],
+    ]),
+  ],
 ]);
 
 export function getFormSelectorsFromName(name: string, inputName?: string): FormSelectorMap {

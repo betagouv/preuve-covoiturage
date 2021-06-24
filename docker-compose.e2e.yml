@@ -177,6 +177,7 @@ services:
       context: ./tests
     volumes:
       - /tmp/cypress/videos:/app/cypress/videos
+      - /tmp/cypress/screenshots:/app/cypress/screenshots
     environment:
       CYPRESS_baseUrl: https://app.covoiturage.test
       CYPRESS_MAILHOG_URL: https://mailer.covoiturage.test/api
