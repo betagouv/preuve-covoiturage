@@ -100,7 +100,7 @@ describe('app-territories-insee-autocomplete', () => {
     fixture.detectChanges();
 
     // Act
-    let input = fixture.debugElement.query(By.css('input'));
+    const input = fixture.debugElement.query(By.css('input'));
     input.nativeElement.dispatchEvent(new Event('focusin'));
     input.nativeElement.value = 'unknwon';
     input.nativeElement.dispatchEvent(new Event('input'));
