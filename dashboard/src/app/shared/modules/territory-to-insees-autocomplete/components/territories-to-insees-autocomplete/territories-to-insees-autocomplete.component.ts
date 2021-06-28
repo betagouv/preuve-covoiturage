@@ -1,14 +1,11 @@
-import { debounceTime, filter, takeUntil, tap, map } from 'rxjs/operators';
-
-import { FormControl, FormGroup } from '@angular/forms';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-
+import { debounceTime, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { TerritoryLevelEnum } from 'shared/territory/common/interfaces/TerritoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
-import { literal } from '@angular/compiler/src/output/output_ast';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
   selector: 'app-territories-insee-autocomplete',

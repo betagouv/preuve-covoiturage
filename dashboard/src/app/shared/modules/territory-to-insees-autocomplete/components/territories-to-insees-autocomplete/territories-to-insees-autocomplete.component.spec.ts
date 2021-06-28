@@ -5,7 +5,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { before } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { TerritoryListFilter } from '../../../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { InseeAndTerritoryInterface } from '../../../../../core/entities/campaign/ux-format/incentive-filters';
