@@ -8,6 +8,7 @@ import { TerritoryLevelEnum } from 'shared/territory/common/interfaces/Territory
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
+import { literal } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-territories-insee-autocomplete',
@@ -31,8 +32,8 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
     this.territoryInseeInputCtrl.valueChanges
       .pipe(
         debounceTime(100),
-        map((literal) => literal.trim()),
         filter((literal) => !!literal && literal.length > 1),
+        map((literal) => literal.trim()),
         tap((literal) => this.filterTerritoryInsee(literal)),
       )
       .pipe(takeUntil(this.destroy$))
