@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Observable, of } from 'rxjs';
+/* eslint-disable max-len */
 import { TerritoryListFilter } from '../../../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { InseeAndTerritoryInterface } from '../../../../../core/entities/campaign/ux-format/incentive-filters';
 import { TerritoryApiService } from '../../../../../modules/territory/services/territory-api.service';
@@ -58,7 +59,7 @@ describe('app-territories-insee-autocomplete', () => {
     fixture.componentInstance.parentForm = new FormGroup({ start: new FormControl() });
     fixture.componentInstance.fieldName = 'start';
     fixture.detectChanges();
-    let input = fixture.debugElement.query(By.css('input'));
+    const input = fixture.debugElement.query(By.css('input'));
 
     // Act : add paris10 element
     const mockEventParis: any = { option: { value: paris10 } };
