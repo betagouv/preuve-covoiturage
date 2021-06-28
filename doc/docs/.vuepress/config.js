@@ -40,6 +40,10 @@ module.exports = {
                   path: 'preuves/invalider',
                 },
                 {
+                  title: 'Simuler un trajet',
+                  path: 'preuves/simulation',
+                },
+                {
                   title: 'Limites',
                   path: 'preuves/limites',
                 },
