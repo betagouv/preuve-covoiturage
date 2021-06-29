@@ -191,7 +191,7 @@ export class BuildExportAction extends Action {
         const results = await cursor(10);
         count = results.length;
         for (const line of results) {
-          stringifier.write(this.normalize(line, params, context));
+          stringifier.write(this.normalize(line, params.format.tz));
         }
       } while (count !== 0);
 
@@ -289,8 +289,7 @@ export class BuildExportAction extends Action {
     }
   }
 
-  protected normalize(src: ExportTripInterface, params: ParamsInterface, context: ContextType): FlattenTripInterface {
-    const { tz: timeZone } = params.query;
+  protected normalize(src: ExportTripInterface, timeZone: string): FlattenTripInterface {
     const jsd = utcToZonedTime(src.journey_start_datetime, timeZone);
     const jed = utcToZonedTime(src.journey_end_datetime, timeZone);
 

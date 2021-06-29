@@ -248,7 +248,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async searchWithCursor(
     params: {
-      tz: string;
       date: { start: Date; end: Date };
       territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
       operator_id?: number[];
