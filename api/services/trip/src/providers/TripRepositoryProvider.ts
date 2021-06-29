@@ -253,6 +253,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
       operator_id?: number[];
       territory_id?: number[];
+      status?: string;
     },
     type = 'opendata',
   ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
@@ -327,10 +328,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         break;
     }
 
-    const where = await this.buildWhereClauses({
-      ...cleanParams,
-      status: 'ok',
-    });
+    const where = await this.buildWhereClauses(cleanParams);
 
     const queryValues = [...values, ...where.values];
     const queryText = this.numberPlaceholders(`
