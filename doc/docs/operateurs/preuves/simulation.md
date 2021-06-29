@@ -30,7 +30,7 @@ Les points de départ et d'arrivée du passager et du conducteur. `passenger.sta
 - `lat` \* Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84
 - `lon` \* Longitude comprise entre 180deg et -180deg décimaux en datum WSG-84
 
-Attention, contrairement à la requête pour envoyer des preuves, la simulation ne supporte que les données géographique sous forme lat/lon.
+Attention, contrairement à la requête pour envoyer des preuves, la simulation ne supporte que les données géographiques sous forme lat/lon.
 
 ### Schéma complet
 ```json
