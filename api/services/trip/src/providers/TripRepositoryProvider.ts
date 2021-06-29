@@ -327,7 +327,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         break;
     }
 
-    const where = await this.buildWhereClauses(cleanParams);
+    const where = await this.buildWhereClauses({
+      ...cleanParams,
+      status: 'ok',
+    });
 
     const queryValues = [...values, ...where.values];
     const queryText = this.numberPlaceholders(`
