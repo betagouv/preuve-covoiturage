@@ -9,7 +9,7 @@ import { format, utcToZonedTime } from 'date-fns-tz';
 
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
+import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
@@ -70,7 +70,6 @@ interface FlattenTripInterface extends ExportTripInterface<string> {
 })
 export class BuildExportAction extends Action {
   constructor(
-    private config: ConfigInterfaceResolver,
     private pg: TripRepositoryProvider,
     private file: S3StorageProvider,
     private kernel: KernelInterfaceResolver,
@@ -268,7 +267,7 @@ export class BuildExportAction extends Action {
     stringifier.on('readable', async () => {
       let row;
       while (null !== (row = stringifier.read())) {
-        await fd.appendFile(row);
+        await fd.appendFile(row, { encoding: 'utf8' });
       }
     });
 
