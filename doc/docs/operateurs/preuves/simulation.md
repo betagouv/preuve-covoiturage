@@ -302,7 +302,7 @@ Attention, contrairement à la requête pour envoyer des preuves, la simulation 
 
 ## Réponse
 
-L'API retourne un objet avec les incitations passager et les incitations conducteurs sur le trajet soumit. Attention, ce calcul n'est pas définitif en raison des seuils qui peuvent s'appliquer sur une campagne. Par exemple, une campagne limitant le nombre de trajet par jour à X. C'est donc un résultat provisoire - sans valeur contractuelle - qui est retourné.
+L'API retourne un objet avec les incitations du passager et les incitations du conducteur sur le trajet soumis. Attention, ce calcul n'est pas définitif en raison des seuils qui peuvent s'appliquer sur une campagne. Par exemple, une campagne limitant le nombre de trajets par jour à X. C'est donc un résultat provisoire - sans valeur contractuelle - qui est retourné.
 
 ### Schéma complet
 ```json
