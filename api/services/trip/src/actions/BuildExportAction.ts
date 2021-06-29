@@ -308,10 +308,10 @@ export class BuildExportAction extends Action {
       journey_end_date: format(jed, 'yyyy-MM-dd', { timeZone }),
       journey_end_time: format(jed, 'HH:mm:ss', { timeZone }),
 
-      // distance in kilometers
-      journey_distance: src.journey_distance / 1000,
-      journey_distance_calculated: src.journey_distance_calculated / 1000,
-      journey_distance_anounced: src.journey_distance_anounced / 1000,
+      // distance in meters
+      journey_distance: src.journey_distance,
+      journey_distance_calculated: src.journey_distance_calculated,
+      journey_distance_anounced: src.journey_distance_anounced,
 
       // duration in minutes
       journey_duration: Math.round(src.journey_duration / 60),
