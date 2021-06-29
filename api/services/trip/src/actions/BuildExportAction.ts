@@ -178,7 +178,10 @@ export class BuildExportAction extends Action {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
       const type = get(params, 'from.type', 'opendata');
-      const cursor = await this.pg.searchWithCursor(params.query, type);
+      const cursor = await this.pg.searchWithCursor({
+        ...params.query,
+        status: 'ok',
+      }, type);
 
       let count = 0;
 
