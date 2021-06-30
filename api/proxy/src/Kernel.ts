@@ -19,12 +19,11 @@ import { bootstrap as monitoringBootstrap } from '@pdc/service-monitoring';
 import { bootstrap as honorBootstrap } from '@pdc/service-honor';
 
 import { config } from './config';
-import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
 import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
-import { GeoFetchCommand } from './commands/GeoFetchCommand';
-import { SyncTerritoryInseeCommand } from './commands/SyncTerritoryInseeCommand';
-import { SyncRegionDepCommand } from './commands/SyncRegionDepCommand';
-import { SyncLegacyProductionCommand } from './commands/SyncLegacyProductionCommand';
+import { SyncGeoShapeCommand } from './commands/SyncGeoShapeCommand';
+// import { SyncTerritoryInseeCommand } from './commands/SyncTerritoryInseeCommand';
+// import { SyncRegionDepCommand } from './commands/SyncRegionDepCommand';
+import { SyncGeoSurfacePopulationCommand } from './commands/SyncSurfacePopulationCommand';
 import { SeedCommand } from './commands/SeedCommand';
 
 @kernel({
@@ -48,12 +47,11 @@ import { SeedCommand } from './commands/SeedCommand';
   providers: [SentryProvider, TokenProvider],
   commands: [
     ProcessJourneyCommand,
-    MigrateInseeCommand,
-    SyncTerritoryInseeCommand,
-    SyncRegionDepCommand,
-    GeoFetchCommand,
-    SyncLegacyProductionCommand,
+    // SyncTerritoryInseeCommand,
+    // SyncRegionDepCommand,
+    SyncGeoShapeCommand,
     SeedCommand,
+    SyncGeoSurfacePopulationCommand,
     Commands.CallCommand,
   ],
 })
