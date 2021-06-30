@@ -66,14 +66,14 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
       WITH
         carpooler AS (
           (
-            SELECT uuid FROM carpool.identities
+            SELECT DISTINCT uuid FROM carpool.identities
             WHERE phone IS NOT NULL AND phone = $1::varchar
           ) UNION (
-            SELECT uuid FROM carpool.identities
+            SELECT DISTINCT uuid FROM carpool.identities
             WHERE phone_trunc IS NOT NULL AND phone_trunc = $2::varchar
             AND operator_user_id = $4::varchar
           ) UNION (
-            SELECT uuid FROM carpool.identities
+            SELECT DISTINCT uuid FROM carpool.identities
             WHERE phone_trunc IS NOT NULL AND phone_trunc = $2::varchar
             AND travel_pass_name = $5::varchar AND travel_pass_user_id = $6::varchar
           )
@@ -104,8 +104,8 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           SELECT
             DISTINCT tl.trip_id,
             'driver' AS type,
-            EXTRACT('YEAR' FROM journey_start_datetime) AS year,
-            EXTRACT('MONTH' FROM journey_start_datetime) AS month,
+            EXTRACT('YEAR' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS year,
+            EXTRACT('MONTH' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS month,
             TRUNC(journey_distance::decimal/1000, 3) AS km,
             TRUNC(journey_distance::decimal/1000 * $9::decimal, 3) AS max_cost,
             TRUNC(coalesce(driver_revenue, 0)::decimal/100, 3) AS cost,
