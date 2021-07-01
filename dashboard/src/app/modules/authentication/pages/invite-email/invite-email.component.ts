@@ -34,7 +34,6 @@ export class InviteEmailComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.confirmEmail();
     this.newPasswordForm = this.fb.group(
       {
         new_password: [

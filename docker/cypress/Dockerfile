@@ -9,6 +9,7 @@ ENV CI=1
 RUN yarn install
 COPY ./cypress /app/cypress
 COPY ./cypress.json /app/cypress.json
+COPY ./tsconfig.json /app/tsconfig.json
 
 ENTRYPOINT ["sh", "-c"]
 CMD ["yarn run cy:verify && yarn run cy:run"]

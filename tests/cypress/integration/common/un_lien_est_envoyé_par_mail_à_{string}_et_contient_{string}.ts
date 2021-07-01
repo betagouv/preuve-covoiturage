@@ -1,5 +1,5 @@
 import { Then } from 'cypress-cucumber-preprocessor/steps';
-import { mailContains, mailClear, Email } from '../../support/helpers/mailhog';
+import { mailContains, mailClear, Email } from '../../support/emails/mailhog';
 
 Then(`un lien est envoyé par mail à {string} et contient {string}`, function (email: string, query: string) {
   cy.log(`try to fetch mail from ${email}`);

@@ -66,6 +66,7 @@ services:
     env_file: ./api/.env
     environment:
       PORT: 8080
+      APP_RATE_LIMIT_MAX_FACTOR: '0'
     ports:
       - 8080:8080
     networks:
@@ -88,6 +89,7 @@ services:
     env_file: ./api/.env
     environment:
       APP_WORKER: 'true'
+      APP_RATE_LIMIT_MAX_FACTOR: '0'
       # TODO
       # AWS_ACCESS_KEY_ID: minioadmin
       # AWS_SECRET_ACCESS_KEY: minioadmin

@@ -43,6 +43,7 @@ create_bucket() {
 
 e2e() {
   echo "Start e2e test"
+  mkdir -p /tmp/cypress/screenshots
   mkdir -p /tmp/cypress/videos
   $DC run cypress
 }
