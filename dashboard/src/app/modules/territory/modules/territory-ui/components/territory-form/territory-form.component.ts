@@ -66,7 +66,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   get isTown(): boolean {
-    return this.territoryForm.get('level').value === TerritoryLevelEnum.Town;
+    return (
+      (this.territory && this.territory.level === TerritoryLevelEnum.Town) ||
+      (this.territoryForm.get('level') && this.territoryForm.get('level').value === TerritoryLevelEnum.Town)
+    );
   }
 
   get isAOM(): boolean {
