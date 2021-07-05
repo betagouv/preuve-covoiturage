@@ -1,4 +1,3 @@
-import { endOfDay } from 'date-fns'
 import {
   ConfigInterface,
   ConfigInterfaceResolver,
@@ -506,7 +505,7 @@ export class HttpTransport implements TransportInterface {
               operator_id: get(req, 'session.user.operator_id'),
               start_at: req.body.start_at,
               end_at: req.body.end_at,
-              positions: req.body.positions
+              positions: req.body.positions,
             },
             get(req, 'session.user', undefined),
           ),
