@@ -47,7 +47,7 @@ Le format d'échange est [JSON-RPC v2.0](https://www.jsonrpc.org/specification).
 }
 ```
 
-Les **services** ont un catalogue d'**actions** qui effectuent différentes tâches sur la base de données, l'envoi d'un message, un calcul particulier, etc... Ces **actions** utilisent des **providers** pour communiquer avec la base de données.
+Les **services** ont un catalogue d'**actions** qui effectuent différentes tâches sur la base de données, l'envoi d'un message, un calcul particulier, etc. Ces **actions** utilisent des **providers** pour communiquer avec la base de données.
 
 > Dans le modèle MVC, les **actions** sont des _contrôleurs_ et les **providers** sont des _modèles_.
 

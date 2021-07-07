@@ -47,7 +47,7 @@
   <!-- Role -->
   <mat-radio-group *ngIf="isShown('role')" formControlName="role">
     <mat-label>Rôle</mat-label>
-    <mat-radio-button value="admin">Administrateur</mat-radio-button>
+    <mat-radio-button value="admin">Administration</mat-radio-button>
     <mat-radio-button value="user" checked>Consultation</mat-radio-button>
     <mat-radio-button value="demo" *ngIf="groupIs('territories')">Découverte</mat-radio-button>
   </mat-radio-group>
@@ -86,15 +86,15 @@
   <div class="hint">
     <p *ngIf="groupIs('registry') && roleIs('admin')">
       Un super administrateur a tous les droits, gestion des utilisateurs, création de campagnes, création d'opérateurs
-      et de territoires, etc...
+      et de territoires, etc.
     </p>
     <p *ngIf="groupIs('territories') && roleIs('admin')">
-      Un administrateur a tous les droits, gestion des utilisateurs, création de campagnes, etc...
+      Un administrateur a tous les droits, gestion des utilisateurs, création de campagnes, etc.
     </p>
     <p *ngIf="groupIs('operators') && roleIs('admin')">
-      Un administrateur a tous les droits, gestion des utilisateurs, création de token applicatif, etc...
+      Un administrateur a tous les droits, gestion des utilisateurs, création de token applicatif, etc.
     </p>
-    <p *ngIf="roleIs('user')">Un compte 'Consultation' permet d'accéder aux données en lecture, etc...</p>
+    <p *ngIf="roleIs('user')">Un compte 'Consultation' permet d'accéder aux données en lecture, etc.</p>
     <p *ngIf="roleIs('demo')">
       Un compte 'Découverte' permet aux territoires de créer et simuler des campagnes sur les données de leur
       territoire. Un administrateur sera requis pour le lancement de la campagne

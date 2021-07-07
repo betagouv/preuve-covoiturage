@@ -17,7 +17,7 @@ Fonctionnalité: Inviter un utilisateur
       | email | jcduss@example.com |
       | numéro de téléphone | 0600000000 |
       | groupe | Registre |
-      | droits d'accès | Administrateur |
+      | droits d'accès | Administration |
     Et que je clique sur le bouton enregistrer
     Alors je vois un message indiquant "L'utilisateur Jean-Claude DUSS a été créé"
     Et je vois que la liste des utilisateurs inclut "jcduss@example.com"
