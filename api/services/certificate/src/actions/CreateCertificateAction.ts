@@ -18,11 +18,11 @@ import { IdentityIdentifiersInterface } from '../shared/certificate/common/inter
 @handler({
   ...handlerConfig,
   middlewares: [
-    ['validate', alias],
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       operator: 'operator.certificate.create',
       registry: 'registry.certificate.create',
     }),
+    ['validate', alias],
   ],
 })
 export class CreateCertificateAction extends AbstractAction {
