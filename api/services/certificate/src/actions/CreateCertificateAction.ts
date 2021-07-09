@@ -43,11 +43,7 @@ export class CreateCertificateAction extends AbstractAction {
     // get the last available UUID for the person. They can have many
     const b1 = new Date();
     const personUUID = await this.findPerson(identity, operator_id);
-    console.debug(
-      `[cert:create] findPerson: ${
-        (new Date().getTime() - b1.getTime()) / 1000
-      }s`,
-    );
+    console.debug(`[cert:create] findPerson: ${(new Date().getTime() - b1.getTime()) / 1000}s`);
 
     const b2 = new Date();
     const operator = await this.findOperator(operator_id, context);
@@ -56,9 +52,7 @@ export class CreateCertificateAction extends AbstractAction {
     // fetch the data for this identity and operator and map to template object
     const b3 = new Date();
     const certs = await this.findTrips({ identity, operator_id, tz, start_at, end_at, positions });
-    console.debug(
-      `[cert:create] findTrips: ${(new Date().getTime() - b3.getTime()) / 1000}s`,
-    );
+    console.debug(`[cert:create] findTrips: ${(new Date().getTime() - b3.getTime()) / 1000}s`);
 
     const rows = certs.slice(0, 11); // TODO agg the last line
     const total_tr = Math.round(rows.reduce((sum: number, line): number => (line.trips | 0) + sum, 0)) || 0;
