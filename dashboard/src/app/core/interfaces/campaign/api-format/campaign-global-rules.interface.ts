@@ -59,16 +59,24 @@ export class PassengerSeatRule implements GlobalRetributionRuleInterface {
   }
 }
 
+function getRandomNumber(): number {
+  const crypto: Crypto = window.crypto || (((window as unknown) as { msCrypto: Crypto }).msCrypto); // ie 11 crypto object
+  if ('getRandomValues' in crypto) {
+    const buf = new Uint8Array(1); // 0 -> 127
+    crypto.getRandomValues(buf);
+    return buf[0] / 16;
+  }
+
+  return Math.random() * 16;
+}
+
 function generateGuid(): string {
-  let result: string;
+  let result = '';
   let i: string;
   let j: number;
-  result = '';
   for (j = 0; j < 32; j++) {
     if (j == 8 || j == 12 || j == 16 || j == 20) result = result + '-';
-    i = Math.floor(Math.random() * 16)
-      .toString(16)
-      .toUpperCase();
+    i = Math.floor(getRandomNumber()).toString(16).toUpperCase();
     result = result + i;
   }
   return result;
