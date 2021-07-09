@@ -103,6 +103,19 @@ services:
       - mailer
       # - s3
 
+  migrator:
+    build:
+      dockerfile: ./docker/api/Dockerfile
+      context: .
+    volumes:
+      - ./api:/app/api:ro
+    working_dir: /app/api
+    command: 'yarn migrate'
+    tty: true
+    env_file: ./api/.env
+    networks:
+      - back
+
   dashboard:
     build:
       dockerfile: ./docker/dashboard/Dockerfile

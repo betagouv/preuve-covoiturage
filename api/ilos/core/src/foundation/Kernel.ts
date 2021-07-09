@@ -102,6 +102,8 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
       throw new MethodNotFoundException(`Unknown method or service ${config.signature}`);
     }
 
+    console.debug(`[kernel] ${config.signature} ${timeout}ms`);
+
     if (timeout === 0) {
       return handler(call);
     }
