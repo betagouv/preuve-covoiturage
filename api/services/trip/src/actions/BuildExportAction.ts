@@ -9,7 +9,7 @@ import { format, utcToZonedTime } from 'date-fns-tz';
 
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
+import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
@@ -70,7 +70,6 @@ interface FlattenTripInterface extends ExportTripInterface<string> {
 })
 export class BuildExportAction extends Action {
   constructor(
-    private config: ConfigInterfaceResolver,
     private pg: TripRepositoryProvider,
     private file: S3StorageProvider,
     private kernel: KernelInterfaceResolver,
@@ -178,7 +177,13 @@ export class BuildExportAction extends Action {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
       const type = get(params, 'from.type', 'opendata');
-      const cursor = await this.pg.searchWithCursor(params.query, type);
+      const cursor = await this.pg.searchWithCursor(
+        {
+          ...params.query,
+          ...(type === 'opendata' ? { status: 'ok' } : {}),
+        },
+        type,
+      );
 
       let count = 0;
 
@@ -191,7 +196,7 @@ export class BuildExportAction extends Action {
         const results = await cursor(10);
         count = results.length;
         for (const line of results) {
-          stringifier.write(this.normalize(line, params, context));
+          stringifier.write(this.normalize(line, params.format.tz));
         }
       } while (count !== 0);
 
@@ -265,7 +270,7 @@ export class BuildExportAction extends Action {
     stringifier.on('readable', async () => {
       let row;
       while (null !== (row = stringifier.read())) {
-        await fd.appendFile(row);
+        await fd.appendFile(row, { encoding: 'utf8' });
       }
     });
 
@@ -289,8 +294,7 @@ export class BuildExportAction extends Action {
     }
   }
 
-  protected normalize(src: ExportTripInterface, params: ParamsInterface, context: ContextType): FlattenTripInterface {
-    const { tz: timeZone } = params.query;
+  protected normalize(src: ExportTripInterface, timeZone: string): FlattenTripInterface {
     const jsd = utcToZonedTime(src.journey_start_datetime, timeZone);
     const jed = utcToZonedTime(src.journey_end_datetime, timeZone);
 
@@ -306,10 +310,10 @@ export class BuildExportAction extends Action {
       journey_end_date: format(jed, 'yyyy-MM-dd', { timeZone }),
       journey_end_time: format(jed, 'HH:mm:ss', { timeZone }),
 
-      // distance in kilometers
-      journey_distance: src.journey_distance / 1000,
-      journey_distance_calculated: src.journey_distance_calculated / 1000,
-      journey_distance_anounced: src.journey_distance_anounced / 1000,
+      // distance in meters
+      journey_distance: src.journey_distance,
+      journey_distance_calculated: src.journey_distance_calculated,
+      journey_distance_anounced: src.journey_distance_anounced,
 
       // duration in minutes
       journey_duration: Math.round(src.journey_duration / 60),

@@ -23,6 +23,7 @@ export interface TripRepositoryInterface {
       date: { start: Date; end: Date };
       operator_id?: number[];
       territory_id?: number[];
+      status?: string;
     },
     type?: string,
   ): Promise<(count: number) => Promise<ExportTripInterface[]>>;
@@ -53,6 +54,7 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
       territory_authorized_operator_id?: number[];
       operator_id?: number[];
       territory_id?: number[];
+      status?: string;
     },
     type?: string,
   ): Promise<(count: number) => Promise<ExportTripInterface[]>> {

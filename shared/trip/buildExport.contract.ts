@@ -1,6 +1,8 @@
 export interface ParamsInterface {
-  query: {
+  format: {
     tz: string;
+  };
+  query: {
     date: {
       start: Date;
       end: Date;

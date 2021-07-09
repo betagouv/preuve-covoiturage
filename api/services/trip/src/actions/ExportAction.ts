@@ -55,7 +55,7 @@ export class ExportAction extends Action {
     const start = get(params, 'date.start') || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
     const end = get(params, 'date.end') || new Date();
 
-    const buildParams: BuildParamsInterface = ({
+    const buildParams: BuildParamsInterface = {
       from: {
         type: context.call.user.territory_id ? 'territory' : context.call.user.operator_id ? 'operator' : 'registry',
         fullname,
@@ -63,13 +63,15 @@ export class ExportAction extends Action {
       },
       query: {
         territory_authorized_operator_id: get(context, 'call.user.authorizedOperators', []) || [],
-        tz: tz.name,
         date: {
           start: start.toISOString(),
           end: end.toISOString(),
         },
       },
-    } as unknown) as BuildParamsInterface;
+      format: {
+        tz: tz.name,
+      },
+    };
 
     if (params.operator_id) {
       buildParams.query.operator_id = Array.isArray(params.operator_id) ? params.operator_id : [params.operator_id];
