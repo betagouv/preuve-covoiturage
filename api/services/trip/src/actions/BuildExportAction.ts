@@ -180,7 +180,7 @@ export class BuildExportAction extends Action {
       const cursor = await this.pg.searchWithCursor(
         {
           ...params.query,
-          ...(type === 'opendata') ? { status: 'ok' } : {},
+          ...(type === 'opendata' ? { status: 'ok' } : {}),
         },
         type,
       );
