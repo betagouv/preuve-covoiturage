@@ -497,18 +497,7 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
-          createRPCPayload(
-            'certificate:create',
-            {
-              tz: req.body.tz,
-              identity: req.body.identity,
-              operator_id: get(req, 'session.user.operator_id'),
-              start_at: req.body.start_at,
-              end_at: req.body.end_at,
-              positions: req.body.positions,
-            },
-            get(req, 'session.user', undefined),
-          ),
+          createRPCPayload('certificate:create', req.body, get(req, 'session.user', undefined)),
         )) as RPCResponseType;
 
         res

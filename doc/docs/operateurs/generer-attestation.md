@@ -45,7 +45,10 @@ La requête est faite par le serveur de l’opérateur et authentifiée avec un 
 
 Chaque appel crée un nouveau certificat même si les paramètres sont exactement les mêmes, les valeurs calculées ont pu changer entre deux appels.
 
-Les données sont calculées et stockées au moment de la création de l'attestation. Elles ne peuvent pas être modifiées. La génération du PDF, même si sa mise en forme peut évoluer, se basera toujours sur les mêmes données. La page de vérification
+Les données sont calculées et stockées au moment de la création de l'attestation. Elles ne peuvent pas être modifiées.
+La génération du PDF, même si sa mise en forme peut évoluer, se basera toujours sur les mêmes données.
+Si les paramètres optionnels `start_at` et `end_at` ne sont pas précisés, le certificat sera généré pour l'année n.
+`end_at` ne peut pas dépasser la date du jour moins 6 jours.
 
 ```javascript
 POST /v2/certificates
