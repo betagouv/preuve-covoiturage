@@ -44,20 +44,20 @@ export class CreateCertificateAction extends AbstractAction {
     const b1 = new Date();
     const personUUID = await this.findPerson(identity, operator_id);
     console.debug(
-      `[cert:create] findPerson(${JSON.stringify(identity)}, ${operator_id}): ${
+      `[cert:create] findPerson: ${
         (new Date().getTime() - b1.getTime()) / 1000
       }s`,
     );
 
     const b2 = new Date();
     const operator = await this.findOperator(operator_id, context);
-    console.debug(`[cert:create] findOperator(${operator_id}): ${(new Date().getTime() - b2.getTime()) / 1000}s`);
+    console.debug(`[cert:create] findOperator: ${(new Date().getTime() - b2.getTime()) / 1000}s`);
 
     // fetch the data for this identity and operator and map to template object
     const b3 = new Date();
     const certs = await this.findTrips({ identity, operator_id, tz, start_at, end_at, positions });
     console.debug(
-      `[cert:create] findTrips(${JSON.stringify(identity)}): ${(new Date().getTime() - b3.getTime()) / 1000}s`,
+      `[cert:create] findTrips: ${(new Date().getTime() - b3.getTime()) / 1000}s`,
     );
 
     const rows = certs.slice(0, 11); // TODO agg the last line
