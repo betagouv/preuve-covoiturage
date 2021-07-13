@@ -1,7 +1,7 @@
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['query', 'from'],
+  required: ['query', 'from', 'format'],
   properties: {
     query: {
       type: 'object',
