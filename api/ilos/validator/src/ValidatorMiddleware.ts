@@ -16,6 +16,7 @@ export class ValidatorMiddleware implements MiddlewareInterface {
     try {
       await this.validator.validate(params, schema);
     } catch (e) {
+      console.error(e);
       throw new InvalidParamsException(e.message);
     }
 

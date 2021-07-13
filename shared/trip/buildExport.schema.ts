@@ -1,14 +1,13 @@
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['query', 'from'],
+  required: ['query', 'from', 'format'],
   properties: {
     query: {
       type: 'object',
       additionalProperties: false,
-      required: ['date', 'tz'],
+      required: ['date'],
       properties: {
-        tz: { macro: 'tz' },
         date: {
           type: 'object',
           additionalProperties: false,
@@ -56,6 +55,14 @@ export const schema = {
     },
     type: {
       macro: 'varchar',
+    },
+    format: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['tz'],
+      properties: {
+        tz: { macro: 'tz' },
+      },
     },
   },
 };
