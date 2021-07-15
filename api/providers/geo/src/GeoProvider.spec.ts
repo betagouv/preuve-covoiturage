@@ -1,10 +1,10 @@
 import test from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { GeoProvider } from '..';
-import { NotFoundException } from '../../../../ilos/common/src/exceptions/NotFoundException';
-import { GeoInterface } from '../interfaces/GeoInterface';
-import { EtalabGeoAdministriveProvider, EtalabGeoAdressProvider } from '../providers';
-import { LocalGeoProvider } from '../providers/LocalGeoProvider';
+import { GeoProvider } from '.';
+import { NotFoundException } from '@ilos/common/src/exceptions/NotFoundException';
+import { GeoInterface } from './interfaces/GeoInterface';
+import { EtalabGeoAdministriveProvider, EtalabGeoAdressProvider } from './providers';
+import { LocalGeoProvider } from './providers/LocalGeoProvider';
 
 let geoProvider: GeoProvider;
 
