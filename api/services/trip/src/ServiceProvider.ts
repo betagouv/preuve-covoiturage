@@ -29,12 +29,14 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
 import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
+import { BuildExcelExportCommand } from './commands/BuildExcelExportCommand';
+import { BuildExcelExportAction } from './actions/BuildExcelExportAction';
 
 @serviceProvider({
   config,
   providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider, CryptoProvider],
+  commands: [BuildExcelExportCommand],
   validator: [listBinding, searchCountBinding, statsBinding, exportBinding, buildExportBinding, publicStatsBinding],
-
   middlewares: [
     ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
@@ -52,6 +54,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
     FinancialStatsAction,
     ExportAction,
     BuildExportAction,
+    BuildExcelExportAction,
     TripCacheWarmCron,
   ],
   queues: ['trip'],

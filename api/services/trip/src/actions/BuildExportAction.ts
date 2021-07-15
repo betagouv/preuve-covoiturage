@@ -18,7 +18,7 @@ import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '../shared/user/notify.contract';
 import { ExportTripInterface } from '../interfaces';
 
-interface FlattenTripInterface extends ExportTripInterface<string> {
+export interface FlattenTripInterface extends ExportTripInterface<string> {
   journey_start_date: string;
   journey_start_time: string;
   journey_end_date: string;
