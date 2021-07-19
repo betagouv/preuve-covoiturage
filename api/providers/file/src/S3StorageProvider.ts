@@ -19,28 +19,27 @@ export class S3StorageProvider implements ProviderInterface {
     this.s3 = new S3({ endpoint: this.endpoint, region: this.region, signatureVersion: 'v4' });
   }
 
-  async upload(bucket: BucketName, filename: string): Promise<string> {
+  async upload(bucket: BucketName, filepath: string, filename?: string): Promise<string> {
     const Bucket = this.getBucketName(bucket);
 
-    await fs.promises.access(filename, fs.constants.R_OK);
+    await fs.promises.access(filepath, fs.constants.R_OK);
 
     try {
-      const rs = fs.createReadStream(filename);
-      const ext = path.extname(filename);
-      const keyName =
+      const rs = fs.createReadStream(filepath);
+      const ext = path.extname(filepath);
+      const keyName = filename ??
         path
-          .basename(filename)
+          .basename(filepath)
           .replace(ext, '')
           .replace(/[^a-z0-9_-]/g, '') + ext;
 
       await this.s3
-        .upload({ Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filename=${keyName}` })
+        .upload({ Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filepath=${keyName}` })
         .promise();
 
       return keyName;
     } catch (e) {
-      console.error(`S3StorageProvider Error: ${e.message} (${filename})`);
-
+      console.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
       throw e;
     }
   }
@@ -53,7 +52,7 @@ export class S3StorageProvider implements ProviderInterface {
         Bucket,
         Key: filekey,
         Expires: expires,
-        ResponseContentDisposition: `attachment; filename=${filekey}`,
+        ResponseContentDisposition: `attachment; filepath=${filekey}`,
       });
 
       return url;

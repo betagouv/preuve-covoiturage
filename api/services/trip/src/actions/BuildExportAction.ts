@@ -202,7 +202,7 @@ export class BuildExportAction extends Action {
     zip.addLocalFile(filename);
     zip.writeZip(zipname);
 
-    const fileKey = await this.file.upload(BucketName.Export, zipname);
+    const fileKey = await this.file.upload(BucketName.Export, zipname, params.format.filename);
 
     return fileKey;
   }

@@ -1,6 +1,7 @@
 export interface ParamsInterface {
   format: {
     tz: string;
+    filename?: string;
   };
   query: {
     date: {
