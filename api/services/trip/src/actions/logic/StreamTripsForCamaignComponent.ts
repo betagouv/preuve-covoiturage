@@ -1,13 +1,14 @@
-import { LoadExcelFileComponent } from './LoadExcelFileComponent'
+import { ExcelWorkbookHandler } from './ExcelWorkbookHandler'
 import { Workbook } from 'exceljs'
 import { ExportTripInterface } from '../../interfaces/ExportTripInterface';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
+import { writeToExcelSheet } from './writeToExcelSheet';
 
 export class StreamTripsForCamaignComponent {
 
   constructor(
     private tripRepositoryProvider: TripRepositoryProvider,
-    private loadExcelFileComponent: LoadExcelFileComponent) {
+    private excelWorkbookHandler: ExcelWorkbookHandler) {
     }
 
     /**
@@ -17,21 +18,15 @@ export class StreamTripsForCamaignComponent {
   async call(campaign_id: number): Promise<Workbook> {
     // Prepare excel file
     // const filename = path.join(os.tmpdir(), `covoiturage-${v4()}`) + '.csv';
-    const wb: Workbook = await this.loadExcelFileComponent.call()
+    const workbook: Workbook = await this.excelWorkbookHandler.loadTemplate()
 
-    // Prepare cursor for streaming
     const getTrips: (count: number) => Promise<ExportTripInterface[]> = await this.tripRepositoryProvider.searchWithCursorForCampaign({campaign_id})  
-    let results = await getTrips(10);
+    let results: ExportTripInterface[] = await getTrips(10);
     while(results.length !== 0) {
-      for (const line of results) {
-        console.info('line -> ' + line)
-        // Stream result in xlsx
-        // https://github.com/exceljs/exceljs/issues/91
-        // https://stackoverflow.com/questions/35272928/creating-transform-stream-using-exceljs-for-writing-xlsx
-      }
+      writeToExcelSheet(workbook, results)
       results = await getTrips(10);
     }
-    return null;
+    return workbook;
   }
 
 

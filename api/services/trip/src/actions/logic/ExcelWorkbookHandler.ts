@@ -1,13 +1,13 @@
 import { Workbook } from 'exceljs';
 
-export class LoadExcelFileComponent {
+export class ExcelWorkbookHandler {
 
   static readonly template_location: string = __dirname+'/../../fundcalls_template.xlsx';
 
   // Should be transformed to private method at some point
-  async call(): Promise<Workbook> {
+  async loadTemplate(): Promise<Workbook> {
     const wb = new Workbook();
-    return wb.xlsx.readFile(LoadExcelFileComponent.template_location);
+    return wb.xlsx.readFile(ExcelWorkbookHandler.template_location);
   }
 
   // async getwRitableXslx(): Promise<Workbook> {

@@ -1,17 +1,17 @@
 import test from 'ava';
 import { Workbook } from 'exceljs';
-import { LoadExcelFileComponent } from './LoadExcelFileComponent';
+import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
 
-let loader: LoadExcelFileComponent;
+let excelWorkbookHandler: ExcelWorkbookHandler;
 
 test.before((t) => {
-  loader = new LoadExcelFileComponent();
+  excelWorkbookHandler = new ExcelWorkbookHandler();
 })
 
 
 // TODO: order of sheet should not be tested
-test('LoadExcelFileComponent: should load excel template file', async (t) => {
-  const workbook: Workbook = await loader.call();
+test('ExcelWorkbookHandler: should load excel template file', async (t) => {
+  const workbook: Workbook = await excelWorkbookHandler.loadTemplate();
   t.true(workbook.worksheets.length !== 0)
   t.is(workbook.worksheets[0].name, 'data')
   t.is(workbook.worksheets[1].name, 'Résumé opérateurs')

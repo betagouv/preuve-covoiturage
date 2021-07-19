@@ -1,4 +1,4 @@
-import { LoadExcelFileComponent } from './../actions/logic/LoadExcelFileComponent'
+import { ExcelWorkbookHandler } from '../actions/logic/ExcelWorkbookHandler'
 import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@ilos/common';
 
 @command()
@@ -16,7 +16,7 @@ export class BuildExcelExportCommand implements CommandInterface {
 
   public async call(id: string, options): Promise<void> {
     console.info('Stating export...');
-    const laodExcelFileComponent: LoadExcelFileComponent = new LoadExcelFileComponent();
-    await laodExcelFileComponent.call();
+    const laodExcelFileComponent: ExcelWorkbookHandler = new ExcelWorkbookHandler();
+    await laodExcelFileComponent.loadTemplate();
   }
 }
