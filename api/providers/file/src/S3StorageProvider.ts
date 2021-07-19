@@ -19,6 +19,31 @@ export class S3StorageProvider implements ProviderInterface {
     this.s3 = new S3({ endpoint: this.endpoint, region: this.region, signatureVersion: 'v4' });
   }
 
+  async copy(
+    inputBucket: BucketName,
+    inputFileKey: string,
+    targetBucket: BucketName,
+    targetFileKey: string,
+  ): Promise<void> {
+    await this.s3.copyObject({
+      CopySource: `${this.getBucketName(inputBucket)}/${inputFileKey}`,
+      Bucket: this.getBucketName(targetBucket),
+      Key: targetFileKey,
+    }).promise();
+  }
+
+  async exists(bucket: BucketName, filepath: string): Promise<boolean> {
+    try {
+      await this.s3.headObject({ Bucket: this.getBucketName(bucket), Key: filepath }).promise();
+      return true;
+    } catch (e) {
+      if (e.code === 'NotFound') {
+        return false;
+      }
+      throw e;
+    }
+  }
+
   async upload(bucket: BucketName, filepath: string, filename?: string): Promise<string> {
     const Bucket = this.getBucketName(bucket);
 
@@ -27,7 +52,8 @@ export class S3StorageProvider implements ProviderInterface {
     try {
       const rs = fs.createReadStream(filepath);
       const ext = path.extname(filepath);
-      const keyName = filename ??
+      const keyName =
+        filename ??
         path
           .basename(filepath)
           .replace(ext, '')
