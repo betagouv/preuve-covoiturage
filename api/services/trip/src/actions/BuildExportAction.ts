@@ -5,7 +5,6 @@ import { v4 } from 'uuid';
 import AdmZip from 'adm-zip';
 import { get } from 'lodash';
 import csvStringify, { Stringifier } from 'csv-stringify';
-import { format, utcToZonedTime } from 'date-fns-tz';
 
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { Action } from '@ilos/core';
@@ -17,6 +16,7 @@ import { alias } from '../shared/trip/buildExport.schema';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '../shared/user/notify.contract';
 import { ExportTripInterface } from '../interfaces';
+import { normalize } from '../helpers/normalizeExportDataHelper';
 
 export interface FlattenTripInterface extends ExportTripInterface<string> {
   journey_start_date: string;
@@ -77,7 +77,7 @@ export class BuildExportAction extends Action {
     super();
   }
 
-  public readonly baseFields = [
+  public static readonly baseFields = [
     'journey_id',
     'trip_id',
     'journey_start_datetime',
@@ -109,7 +109,7 @@ export class BuildExportAction extends Action {
     'operator_class',
   ];
 
-  public readonly financialFields = [
+  public static readonly financialFields = [
     'passenger_id',
     'passenger_contribution',
     'passenger_incentive_1_siret',
@@ -156,7 +156,7 @@ export class BuildExportAction extends Action {
     'driver_incentive_rpc_4_amount',
   ];
 
-  public readonly extraFields = {
+  public static readonly extraFields = {
     opendata: ['journey_distance', 'journey_duration'],
     operator: [
       'journey_distance_anounced',
@@ -196,7 +196,7 @@ export class BuildExportAction extends Action {
         const results = await cursor(10);
         count = results.length;
         for (const line of results) {
-          stringifier.write(this.normalize(line, params.format.tz));
+          stringifier.write(normalize(line, params.format.tz));
         }
       } while (count !== 0);
 
@@ -284,67 +284,15 @@ export class BuildExportAction extends Action {
   protected getColumns(type = 'opendata'): string[] {
     switch (type) {
       case 'territory':
-        return [...this.baseFields, ...this.extraFields.territory, ...this.financialFields];
+        return [...BuildExportAction.baseFields, ...BuildExportAction.extraFields.territory, ...BuildExportAction.financialFields];
       case 'operator':
-        return [...this.baseFields, ...this.extraFields.operator, ...this.financialFields];
+        return [...BuildExportAction.baseFields, ...BuildExportAction.extraFields.operator, ...BuildExportAction.financialFields];
       case 'registry':
-        return [...this.baseFields, ...this.extraFields.registry, ...this.financialFields];
+        return [...BuildExportAction.baseFields, ...BuildExportAction.extraFields.registry, ...BuildExportAction.financialFields];
       default:
-        return [...this.baseFields, ...this.extraFields.opendata];
+        return [...BuildExportAction.baseFields, ...BuildExportAction.extraFields.opendata];
     }
   }
 
-  protected normalize(src: ExportTripInterface, timeZone: string): FlattenTripInterface {
-    const jsd = utcToZonedTime(src.journey_start_datetime, timeZone);
-    const jed = utcToZonedTime(src.journey_end_datetime, timeZone);
-
-    const data = {
-      ...src,
-
-      // format and convert to user timezone
-      journey_start_datetime: format(jsd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
-      journey_start_date: format(jsd, 'yyyy-MM-dd', { timeZone }),
-      journey_start_time: format(jsd, 'HH:mm:ss', { timeZone }),
-
-      journey_end_datetime: format(jed, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
-      journey_end_date: format(jed, 'yyyy-MM-dd', { timeZone }),
-      journey_end_time: format(jed, 'HH:mm:ss', { timeZone }),
-
-      // distance in meters
-      journey_distance: src.journey_distance,
-      journey_distance_calculated: src.journey_distance_calculated,
-      journey_distance_anounced: src.journey_distance_anounced,
-
-      // duration in minutes
-      journey_duration: Math.round(src.journey_duration / 60),
-      journey_duration_calculated: Math.round(src.journey_duration_calculated / 60),
-      journey_duration_anounced: Math.round(src.journey_duration_anounced / 60),
-
-      // financial in euros
-      driver_revenue: get(src, 'driver_revenue', 0) / 100,
-      passenger_contribution: get(src, 'passenger_contribution', 0) / 100,
-    };
-
-    const driver_incentive_raw = (get(src, 'driver_incentive_raw', []) || []).filter((i) => i.type === 'incentive');
-    const passenger_incentive_raw = (get(src, 'passenger_incentive_raw', []) || []).filter(
-      (i) => i.type === 'incentive',
-    );
-
-    for (let i = 0; i < 4; i++) {
-      // normalize incentive in euro
-      const id = i + 1;
-      data[`passenger_incentive_${id}_siret`] = get(passenger_incentive_raw, `${i}.siret`);
-      data[`passenger_incentive_${id}_amount`] = get(passenger_incentive_raw, `${i}.amount`, 0) / 100;
-      data[`passenger_incentive_rpc_${id}_siret`] = get(data, `passenger_incentive_rpc_raw.${i}.siret`);
-      data[`passenger_incentive_rpc_${id}_name`] = get(data, `passenger_incentive_rpc_raw.${i}.policy_name`);
-      data[`passenger_incentive_rpc_${id}_amount`] = get(data, `passenger_incentive_rpc_raw.${i}.amount`, 0) / 100;
-      data[`driver_incentive_${id}_siret`] = get(driver_incentive_raw, `${i}.siret`);
-      data[`driver_incentive_${id}_amount`] = get(driver_incentive_raw, `${i}.amount`, 0) / 100;
-      data[`driver_incentive_rpc_${id}_siret`] = get(data, `driver_incentive_rpc_raw.${i}.siret`);
-      data[`driver_incentive_rpc_${id}_name`] = get(data, `driver_incentive_rpc_raw.${i}.policy_name`);
-      data[`driver_incentive_rpc_${id}_amount`] = get(data, `driver_incentive_rpc_raw.${i}.amount`, 0) / 100;
-    }
-
-    return data;
-  }
+  
 }

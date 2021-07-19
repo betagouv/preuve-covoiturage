@@ -1,4 +1,3 @@
-import { search } from './../../../../../dashboard/src/app/core/entities/api/shared/trip/common/schemas/search'
 /* eslint-disable max-len */
 import { promisify } from 'util';
 import { map } from 'lodash';

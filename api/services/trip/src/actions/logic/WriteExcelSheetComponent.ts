@@ -1,15 +1,22 @@
+import { FlattenTripInterface } from './../BuildExportAction'
 import { ExportTripInterface } from './../../interfaces/ExportTripInterface'
-import { Workbook } from 'exceljs';
-import { LoadExcelFileComponent } from './LoadExcelFileComponent';
+import { Workbook, Worksheet } from 'exceljs';
+import { normalize } from '../../helpers/normalizeExportDataHelper';
 
 export class WriteExcelSheetComponent {
 
+  call(wb: Workbook, trips: ExportTripInterface[]): Workbook {
 
-  async call(wb: Workbook, trips: ExportTripInterface[]): Promise<Workbook> {
-    
+    const worsheetData: Worksheet = wb.getWorksheet('data');
+    // console.info(wb.getWorksheet('data').getTable('Données'))
+    trips.forEach(t => {
+      const normalizedTrip: FlattenTripInterface = normalize(t, 'Europe/Paris');
+      worsheetData.addRow(normalizedTrip)
+      // worsheetData.getTable('Données').addRow(Object.values(normalizedTrip))
+    });
 
-    return null;
-
+    // worsheetData.getTable('Données').commit();
+    return wb;
   }
 
 

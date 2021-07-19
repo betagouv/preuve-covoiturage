@@ -2,8 +2,6 @@ import { LoadExcelFileComponent } from './LoadExcelFileComponent'
 import { Workbook } from 'exceljs'
 import { ExportTripInterface } from '../../interfaces/ExportTripInterface';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import path from 'path';
-import os from 'os';
 
 export class StreamTripsForCamaignComponent {
 
