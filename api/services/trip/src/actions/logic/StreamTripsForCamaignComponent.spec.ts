@@ -6,6 +6,7 @@ import faker from 'faker';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { StreamTripsForCamaignComponent } from './StreamTripsForCamaignComponent';
 import { ExportTripInterface } from '../../interfaces/ExportTripInterface';
+import { LoadExcelFileComponent } from './LoadExcelFileComponent';
 
 let streamTripsForCampaginComponent: StreamTripsForCamaignComponent;
 
@@ -47,7 +48,7 @@ const data: ExportTripInterface<Date>[] = []
 
 test.before((t) => {
   tripRepositoryProvider = new TripRepositoryProvider(null)
-  streamTripsForCampaginComponent = new StreamTripsForCamaignComponent(tripRepositoryProvider);
+  streamTripsForCampaginComponent = new StreamTripsForCamaignComponent(tripRepositoryProvider, new LoadExcelFileComponent());
 })
 
 test('StreamTripsForCamaignComponent: should stream 20 row to xlsx', async (t) => {
