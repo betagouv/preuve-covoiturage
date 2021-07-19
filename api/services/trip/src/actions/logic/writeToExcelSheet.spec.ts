@@ -2,12 +2,11 @@
 import test from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import faker from 'faker';
-import { WriteExcelSheetComponent } from './WriteExcelSheetComponent';
+import { writeToExcelSheet } from './writeToExcelSheet';
 import { TableColumnProperties, Workbook, Worksheet } from 'exceljs';
 import { ExportTripInterface } from '../../interfaces';
 import { BuildExportAction, FlattenTripInterface } from '../BuildExportAction';
 
-let writeExcelSheetComponent: WriteExcelSheetComponent;
 
 const exportTripRow: ExportTripInterface<Date> = {
   journey_id: faker.random.uuid(),
@@ -111,13 +110,7 @@ const exportTripRow: ExportTripInterface<Date> = {
 
 const data : ExportTripInterface<Date>[] = [exportTripRow,exportTripRow, exportTripRow]
 
-
-test.before((t) => {
-  writeExcelSheetComponent = new WriteExcelSheetComponent();
-})
-
-
-test('WriteExcelSheetComponent: should write raws in excel workbook', async (t) => {
+test('writeToExcelSheet: should write raws in excel workbook', async (t) => {
   // Arrange
   const wb: Workbook = new Workbook()
   const worksheet: Worksheet = wb.addWorksheet('data');
@@ -139,7 +132,7 @@ test('WriteExcelSheetComponent: should write raws in excel workbook', async (t) 
 
   // Act
   // console.error('worksheet => ' +  worksheet.getTable('Donneés'))
-  const modifiedWorkbook: Workbook = writeExcelSheetComponent.call(wb, data);
+  const modifiedWorkbook: Workbook = writeToExcelSheet(wb, data);
 
   // Assert
   // t.is(modifiedWorkbook.getWorksheet('data').actualRowCount,4)
