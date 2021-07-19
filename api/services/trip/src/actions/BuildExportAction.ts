@@ -9,13 +9,12 @@ import { format, utcToZonedTime } from 'date-fns-tz';
 
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { handler, ContextType } from '@ilos/common';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
 import { alias } from '../shared/trip/buildExport.schema';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '../shared/user/notify.contract';
 import { ExportTripInterface } from '../interfaces';
 
 interface FlattenTripInterface extends ExportTripInterface<string> {
@@ -69,11 +68,7 @@ interface FlattenTripInterface extends ExportTripInterface<string> {
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
 })
 export class BuildExportAction extends Action {
-  constructor(
-    private pg: TripRepositoryProvider,
-    private file: S3StorageProvider,
-    private kernel: KernelInterfaceResolver,
-  ) {
+  constructor(private pg: TripRepositoryProvider, private file: S3StorageProvider) {
     super();
   }
 
@@ -175,86 +170,41 @@ export class BuildExportAction extends Action {
   };
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    try {
-      const type = get(params, 'from.type', 'opendata');
-      const cursor = await this.pg.searchWithCursor(
-        {
-          ...params.query,
-          ...(type === 'opendata' ? { status: 'ok' } : {}),
-        },
-        type,
-      );
+    const type = get(params, 'from.type', 'opendata');
+    const cursor = await this.pg.searchWithCursor(
+      {
+        ...params.query,
+        ...(type === 'opendata' ? { status: 'ok' } : {}),
+      },
+      type,
+    );
 
-      let count = 0;
+    let count = 0;
 
-      const filename = path.join(os.tmpdir(), `covoiturage-${v4()}`) + '.csv';
-      const zipname = filename.replace('.csv', '') + '.zip';
-      const fd = await fs.promises.open(filename, 'a');
-      const stringifier = await this.getStringifier(fd, type);
+    const filename = path.join(os.tmpdir(), `covoiturage-${v4()}`) + '.csv';
+    const zipname = filename.replace('.csv', '') + '.zip';
+    const fd = await fs.promises.open(filename, 'a');
+    const stringifier = await this.getStringifier(fd, type);
 
-      do {
-        const results = await cursor(10);
-        count = results.length;
-        for (const line of results) {
-          stringifier.write(this.normalize(line, params.format.tz));
-        }
-      } while (count !== 0);
+    do {
+      const results = await cursor(10);
+      count = results.length;
+      for (const line of results) {
+        stringifier.write(this.normalize(line, params.format.tz));
+      }
+    } while (count !== 0);
 
-      stringifier.end();
-      await fd.close();
+    stringifier.end();
+    await fd.close();
 
-      // ZIP the file
-      const zip = new AdmZip();
-      zip.addLocalFile(filename);
-      zip.writeZip(zipname);
+    // ZIP the file
+    const zip = new AdmZip();
+    zip.addLocalFile(filename);
+    zip.writeZip(zipname);
 
-      const fileKey = await this.file.upload(BucketName.Export, zipname);
-      const url = await this.file.getSignedUrl(BucketName.Export, fileKey);
+    const fileKey = await this.file.upload(BucketName.Export, zipname);
 
-      const email = params.from.email;
-      const fullname = params.from.fullname;
-
-      const emailParams = {
-        template: 'ExportCSVNotification',
-        to: `${fullname} <${email}>`,
-        data: {
-          fullname,
-          action_href: url,
-        },
-      };
-
-      await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {
-        channel: {
-          service: 'trip',
-        },
-        call: {
-          user: {},
-        },
-      });
-
-      return;
-    } catch (e) {
-      await this.kernel.notify<NotifyParamsInterface>(
-        notifySignature,
-        {
-          template: 'ExportCSVErrorNotification',
-          to: `${params.from.fullname} <${params.from.email}>`,
-          data: {
-            fullname: params.from.fullname,
-          },
-        },
-        {
-          channel: {
-            service: 'trip',
-          },
-          call: {
-            user: {},
-          },
-        },
-      );
-
-      throw e;
-    }
+    return fileKey;
   }
 
   protected async getStringifier(fd: fs.promises.FileHandle, type = 'opendata'): Promise<Stringifier> {

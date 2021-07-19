@@ -12,12 +12,17 @@ export interface ParamsInterface {
     territory_id?: number[];
   };
   type?: string;
+  from: {
+    type?: string;
+    email: string;
+    fullname: string;
+  };
 }
-export type ResultInterface = string;
+export type ResultInterface = void;
 
 export const handlerConfig = {
   service: 'trip',
-  method: 'buildExport',
+  method: 'sendExport',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

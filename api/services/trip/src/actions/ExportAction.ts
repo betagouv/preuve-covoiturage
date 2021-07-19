@@ -8,9 +8,9 @@ import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
 import { alias } from '../shared/trip/export.schema';
 import {
-  signature as buildSignature,
-  ParamsInterface as BuildParamsInterface,
-} from '../shared/trip/buildExport.contract';
+  signature as sendExportSignature,
+  ParamsInterface as SendExportParamsInterface,
+} from '../shared/trip/sendExport.contract';
 import * as middlewareConfig from '../config/middlewares';
 import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
 
@@ -55,7 +55,7 @@ export class ExportAction extends Action {
     const start = get(params, 'date.start') || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
     const end = get(params, 'date.end') || new Date();
 
-    const buildParams: BuildParamsInterface = {
+    const buildParams: SendExportParamsInterface = {
       from: {
         type: context.call.user.territory_id ? 'territory' : context.call.user.operator_id ? 'operator' : 'registry',
         fullname,
@@ -82,7 +82,7 @@ export class ExportAction extends Action {
     }
 
     // call trip:buildExport
-    await this.kernel.notify<BuildParamsInterface>(buildSignature, buildParams, {
+    await this.kernel.notify<SendExportParamsInterface>(sendExportSignature, buildParams, {
       channel: {
         service: 'trip',
       },

@@ -1,7 +1,7 @@
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['query', 'format'],
+  required: ['query', 'from', 'format'],
   properties: {
     query: {
       type: 'object',
@@ -34,6 +34,22 @@ export const schema = {
         territory_authorized_operator_id: {
           type: 'array',
           items: { macro: 'serial' },
+        },
+      },
+    },
+    from: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['email', 'fullname'],
+      properties: {
+        email: {
+          macro: 'email',
+        },
+        fullname: {
+          macro: 'varchar',
+        },
+        type: {
+          macro: 'varchar',
         },
       },
     },
