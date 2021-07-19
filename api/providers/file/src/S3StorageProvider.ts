@@ -19,7 +19,7 @@ export class S3StorageProvider implements ProviderInterface {
     this.s3 = new S3({ endpoint: this.endpoint, region: this.region, signatureVersion: 'v4' });
   }
 
-  async copy(bucket: BucketName, filename: string): Promise<{ password: string; url: string }> {
+  async upload(bucket: BucketName, filename: string): Promise<string> {
     const Bucket = this.getBucketName(bucket);
 
     await fs.promises.access(filename, fs.constants.R_OK);
@@ -37,19 +37,28 @@ export class S3StorageProvider implements ProviderInterface {
         .upload({ Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filename=${keyName}` })
         .promise();
 
-      const url = await this.s3.getSignedUrlPromise('getObject', {
-        Bucket,
-        Key: keyName,
-        Expires: 7 * 86400,
-        ResponseContentDisposition: `attachment; filename=${keyName}`,
-      });
-
-      return {
-        password: '',
-        url,
-      };
+      return keyName;
     } catch (e) {
       console.error(`S3StorageProvider Error: ${e.message} (${filename})`);
+
+      throw e;
+    }
+  }
+
+  async getSignedUrl(bucket: BucketName, filekey: string, expires: number = 7 * 86400): Promise<string> {
+    try {
+      const Bucket = this.getBucketName(bucket);
+
+      const url = await this.s3.getSignedUrlPromise('getObject', {
+        Bucket,
+        Key: filekey,
+        Expires: expires,
+        ResponseContentDisposition: `attachment; filename=${filekey}`,
+      });
+
+      return url;
+    } catch (e) {
+      console.error(`S3StorageProvider Error: ${e.message} (${filekey})`);
 
       throw e;
     }
