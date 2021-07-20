@@ -35,7 +35,15 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 @serviceProvider({
   config,
   providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider, CryptoProvider],
-  validator: [listBinding, searchCountBinding, statsBinding, exportBinding, buildExportBinding, sendExportBinding, publicStatsBinding],
+  validator: [
+    listBinding,
+    searchCountBinding,
+    statsBinding,
+    exportBinding,
+    buildExportBinding,
+    sendExportBinding,
+    publicStatsBinding,
+  ],
 
   middlewares: [
     ...defaultMiddlewareBindings,
