@@ -8,7 +8,7 @@ test.before((t) => {
   excelWorkbookHandler = new ExcelWorkbookHandler();
 })
 
-
+// TODO Should be integration test
 // TODO: order of sheet should not be tested
 test('ExcelWorkbookHandler: should load excel template file', async (t) => {
   const workbook: Workbook = await excelWorkbookHandler.loadWorkbookTemplate();

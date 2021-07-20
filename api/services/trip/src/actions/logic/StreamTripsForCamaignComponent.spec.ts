@@ -1,13 +1,13 @@
-import { NotFoundException } from './../../../../../ilos/common/src/exceptions/NotFoundException'
-import { random } from 'lodash/random'
 import test from 'ava';
-import sinon, { SinonStub } from 'sinon';
+import { Workbook } from 'exceljs';
 import faker from 'faker';
-
-import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { StreamTripsForCamaignComponent } from './StreamTripsForCamaignComponent';
+import sinon, { SinonStub } from 'sinon';
 import { ExportTripInterface } from '../../interfaces/ExportTripInterface';
+import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
+import { StreamTripsForCamaignComponent } from './StreamTripsForCamaignComponent';
+import { exportTripInterface as eti} from './writeToWorkbookSheet.spec';
+
 
 let streamTripsForCampaginComponent: StreamTripsForCamaignComponent;
 
@@ -20,32 +20,61 @@ test.before((t) => {
   streamTripsForCampaginComponent = new StreamTripsForCamaignComponent(tripRepositoryProvider, new ExcelWorkbookHandler());
 })
 
-test('StreamTripsForCamaignComponent: should stream 20 row to xlsx', async (t) => {
-  const elem1: ExportTripInterface<Date> = faker.random.objectElement<ExportTripInterface<Date>>();
-
-  const cursorResult1 = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
-    resolve([elem1, elem1, elem1, elem1, elem1, elem1, elem1, elem1, elem1, elem1]);
+test('StreamTripsForCampaignComponent: should stream 20 rows 10 by ten', async (t) => {
+  // Arrange
+  const cursorResult = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
+    resolve([eti, eti, eti, eti, eti, eti, eti, eti, eti, eti]);
   })
 
-  const endingPromise = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
+  const cursorEndingResult = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
     resolve([]);
   })
-  
-  // Arrange
-  tripRepositoryProviderStub = sinon.stub(tripRepositoryProvider, 'searchWithCursorForCampaign');
   let counter: number = 20;
-  let myFirstResolvedFunction = (count: number): Promise<ExportTripInterface[]> => {
-      if(counter !== 0){
-        counter = counter - 10;
-        return cursorResult1;
-      }else {
-        return endingPromise
-      }
-    
+  let returnedFunction = (count: number): Promise<ExportTripInterface[]> => {
+    if(counter <= 0 ) {
+      return cursorEndingResult
+    }
+    counter = counter - 10;
+    return cursorResult;
   }
-  tripRepositoryProviderStub.resolves(myFirstResolvedFunction)
 
+  tripRepositoryProviderStub = sinon.stub(tripRepositoryProvider, 'searchWithCursorForCampaign');
+  tripRepositoryProviderStub.resolves(returnedFunction)
+  
   // Act
-  streamTripsForCampaginComponent.call(896523)
-  t.is(true, true)
+  const updatedWorkbook: Workbook = await streamTripsForCampaginComponent.call(896523)
+  
+  // Assert
+  sinon.assert.called(tripRepositoryProviderStub)
+  t.true(updatedWorkbook !== undefined)
+  t.is(updatedWorkbook.getWorksheet('data').rowCount, 21)
 });
+
+// test('StreamTripsForCampaignComponent: should return a valid excel file path', async (t) => {
+//   // Arrange
+//   const cursorResult = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
+//     resolve([eti, eti, eti, eti, eti, eti, eti, eti, eti, eti]);
+//   })
+
+//   const cursorEndingResult = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
+//     resolve([]);
+//   })
+//   let counter: number = 20;
+//   let returnedFunction = (count: number): Promise<ExportTripInterface[]> => {
+//     if(counter <= 0 ) {
+//       return cursorEndingResult
+//     }
+//     counter = counter - 10;
+//     return cursorResult;
+//   }
+
+//   tripRepositoryProviderStub = sinon.stub(tripRepositoryProvider, 'searchWithCursorForCampaign');
+//   tripRepositoryProviderStub.resolves(returnedFunction)
+  
+//   // Act
+//   const excelFilepath: string = await streamTripsForCampaginComponent.getExcelFile(896523)
+  
+//   // Assert
+//   sinon.assert.called(tripRepositoryProviderStub)
+//   t.true(excelFilepath !== undefined)
+// });

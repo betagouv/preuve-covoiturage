@@ -13,7 +13,6 @@ export class BuildExcelExportAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    let param: GetCampaignParamInterface;
-    const campaign: GetCampaignResultInterface = await this.kernel.call<GetCampaignParamInterface, GetCampaignResultInterface>(GetCampaignSignature, param, { channel: {service : handlerConfig.service}, call: {user: { permissions: ['registry.policy.find']}}})
+    
   }
 }
