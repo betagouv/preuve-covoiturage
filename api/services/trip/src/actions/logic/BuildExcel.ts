@@ -12,7 +12,7 @@ export class BuildExcel {
     private buildExcelFileForCampaign: BuildExcelFileForCampaign) {
   }
     
-  async call(campaign_id: number, start_date: Date, end_date: Date) {
+  async call(campaign_id: number, start_date: Date, end_date: Date): Promise<string> {
     const getCampaignParamInterface: GetCampaignParamInterface = { _id: campaign_id  };
     const campaign: GetCampaignResultInterface = await this.kernel.call<GetCampaignParamInterface, GetCampaignResultInterface>(
         getCampaignSignature, 
@@ -23,7 +23,7 @@ export class BuildExcel {
     
     //
 
-    this.buildExcelFileForCampaign.call(campaign_id);
+    return await this.buildExcelFileForCampaign.call(campaign_id);
   }
 
 }
