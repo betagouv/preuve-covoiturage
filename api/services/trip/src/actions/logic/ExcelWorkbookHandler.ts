@@ -1,18 +1,20 @@
 import { Workbook } from 'exceljs';
+import os from 'os';
+import path from 'path';
+import { v4 } from 'uuid';
 
 export class ExcelWorkbookHandler {
 
   static readonly template_location: string = __dirname+'/../../fundcalls_template.xlsx';
 
-  // Should be transformed to private method at some point
-  async loadTemplate(): Promise<Workbook> {
+  async loadWorkbookTemplate(): Promise<Workbook> {
     const wb = new Workbook();
     return wb.xlsx.readFile(ExcelWorkbookHandler.template_location);
   }
 
-  // async getwRitableXslx(): Promise<Workbook> {
-  //   const wb = new Workbook();
-  //   wb.xlsx.writeFile
-  // }
+  async writeWorkbookToTempFile(workbook: Workbook): Promise<void> {
+    const filename = path.join(os.tmpdir(), `appel-${v4()}`) + '.xlsx';
+    await workbook.xlsx.writeFile(filename);
+  }
 
 }

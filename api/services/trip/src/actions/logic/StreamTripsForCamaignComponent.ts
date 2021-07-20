@@ -11,14 +11,12 @@ export class StreamTripsForCamaignComponent {
     private excelWorkbookHandler: ExcelWorkbookHandler) {
     }
 
-    /**
-     * @param campaign_id 
-     * @returns a reference to the written xlsx  file
-     */
+  /**
+   * @param campaign_id 
+   * @returns a reference to the written xlsx  file
+   */
   async call(campaign_id: number): Promise<Workbook> {
-    // Prepare excel file
-    // const filename = path.join(os.tmpdir(), `covoiturage-${v4()}`) + '.csv';
-    const workbook: Workbook = await this.excelWorkbookHandler.loadTemplate()
+    const workbook: Workbook = await this.excelWorkbookHandler.loadWorkbookTemplate()
 
     const getTrips: (count: number) => Promise<ExportTripInterface[]> = await this.tripRepositoryProvider.searchWithCursorForCampaign({campaign_id})  
     let results: ExportTripInterface[] = await getTrips(10);

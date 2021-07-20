@@ -16,7 +16,5 @@ export class BuildExcelExportCommand implements CommandInterface {
 
   public async call(id: string, options): Promise<void> {
     console.info('Stating export...');
-    const laodExcelFileComponent: ExcelWorkbookHandler = new ExcelWorkbookHandler();
-    await laodExcelFileComponent.loadTemplate();
   }
 }

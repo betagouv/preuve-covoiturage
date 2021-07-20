@@ -1,3 +1,4 @@
+import { NotFoundException } from './../../../../../ilos/common/src/exceptions/NotFoundException'
 import { random } from 'lodash/random'
 import test from 'ava';
 import sinon, { SinonStub } from 'sinon';
@@ -6,7 +7,7 @@ import faker from 'faker';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { StreamTripsForCamaignComponent } from './StreamTripsForCamaignComponent';
 import { ExportTripInterface } from '../../interfaces/ExportTripInterface';
-import { LoadExcelFileComponent } from './LoadExcelFileComponent';
+import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
 
 let streamTripsForCampaginComponent: StreamTripsForCamaignComponent;
 
@@ -16,7 +17,7 @@ let tripRepositoryProviderStub: SinonStub
 
 test.before((t) => {
   tripRepositoryProvider = new TripRepositoryProvider(null)
-  streamTripsForCampaginComponent = new StreamTripsForCamaignComponent(tripRepositoryProvider, new LoadExcelFileComponent());
+  streamTripsForCampaginComponent = new StreamTripsForCamaignComponent(tripRepositoryProvider, new ExcelWorkbookHandler());
 })
 
 test('StreamTripsForCamaignComponent: should stream 20 row to xlsx', async (t) => {
