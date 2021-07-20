@@ -72,6 +72,13 @@ export class S3StorageProvider implements ProviderInterface {
     }
   }
 
+  async getPublicUrl(bucket: BucketName, filekey: string): Promise<string> {
+    if (bucket !== BucketName.Public) {
+      return this.getSignedUrl(bucket, filekey);
+    }
+    return `${this.endpoint}/${this.getBucketName(bucket)}/${filekey}`;
+  }
+
   async getSignedUrl(bucket: BucketName, filekey: string, expires: number = 7 * 86400): Promise<string> {
     try {
       const Bucket = this.getBucketName(bucket);

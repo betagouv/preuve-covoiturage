@@ -15,6 +15,7 @@ import { binding as exportBinding } from './shared/trip/export.schema';
 import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
 import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
 import { binding as publicStatsBinding } from './shared/trip/publicStats.schema';
+import { binding as publishOpenDataBinding } from './shared/trip/publishOpenData.schema';
 
 import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
@@ -26,6 +27,7 @@ import { SearchCountAction } from './actions/SearchCountAction';
 import { BuildExportAction } from './actions/BuildExportAction';
 import { FinancialStatsAction } from './actions/FinancialStatsAction';
 import { SendExportAction } from './actions/SendExportAction';
+import { PublishOpenDataAction } from './actions/PublishOpenDataAction';
 
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
 import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
@@ -43,6 +45,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
     buildExportBinding,
     sendExportBinding,
     publicStatsBinding,
+    publishOpenDataBinding,
   ],
 
   middlewares: [
@@ -64,6 +67,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
     BuildExportAction,
     TripCacheWarmCron,
     SendExportAction,
+    PublishOpenDataAction,
   ],
   queues: ['trip'],
 })
