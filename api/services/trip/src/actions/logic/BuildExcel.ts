@@ -1,7 +1,7 @@
 import { KernelInterfaceResolver, provider } from '@ilos/common';
 import { ParamsInterface as GetCampaignParamInterface, ResultInterface as GetCampaignResultInterface, signature as getCampaignSignature } from '../../shared/policy/find.contract';
 import { handlerConfig } from '../../shared/trip/buildExcelExport.contract';
-import { StreamTripsForCamaignComponent } from './StreamTripsForCamaignComponent';
+import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
 
 
 @provider()
@@ -9,7 +9,7 @@ export class BuildExcel {
 
   constructor(
     private kernel: KernelInterfaceResolver,
-    private streamTripsForCamaignComponent: StreamTripsForCamaignComponent) {
+    private buildExcelFileForCampaign: BuildExcelFileForCampaign) {
   }
     
   async call(campaign_id: number, start_date: Date, end_date: Date) {
@@ -23,7 +23,7 @@ export class BuildExcel {
     
     //
 
-    this.streamTripsForCamaignComponent.getExcelFile(campaign_id);
+    this.buildExcelFileForCampaign.call(campaign_id);
   }
 
 }

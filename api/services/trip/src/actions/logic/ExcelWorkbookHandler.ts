@@ -3,7 +3,6 @@ import os from 'os';
 import path from 'path';
 import { v4 } from 'uuid';
 
-// TODO Should be integration test
 export class ExcelWorkbookHandler {
 
   static readonly template_location: string = __dirname+'/../../fundcalls_template.xlsx';
