@@ -25,11 +25,13 @@ export class S3StorageProvider implements ProviderInterface {
     targetBucket: BucketName,
     targetFileKey: string,
   ): Promise<void> {
-    await this.s3.copyObject({
-      CopySource: `${this.getBucketName(inputBucket)}/${inputFileKey}`,
-      Bucket: this.getBucketName(targetBucket),
-      Key: targetFileKey,
-    }).promise();
+    await this.s3
+      .copyObject({
+        CopySource: `${this.getBucketName(inputBucket)}/${inputFileKey}`,
+        Bucket: this.getBucketName(targetBucket),
+        Key: targetFileKey,
+      })
+      .promise();
   }
 
   async exists(bucket: BucketName, filepath: string): Promise<boolean> {

@@ -13,6 +13,7 @@ import { binding as searchCountBinding } from './shared/trip/searchcount.schema'
 import { binding as statsBinding } from './shared/trip/stats.schema';
 import { binding as exportBinding } from './shared/trip/export.schema';
 import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
+import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
 import { binding as publicStatsBinding } from './shared/trip/publicStats.schema';
 
 import { config } from './config';
@@ -34,7 +35,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 @serviceProvider({
   config,
   providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider, CryptoProvider],
-  validator: [listBinding, searchCountBinding, statsBinding, exportBinding, buildExportBinding, publicStatsBinding],
+  validator: [listBinding, searchCountBinding, statsBinding, exportBinding, buildExportBinding, sendExportBinding, publicStatsBinding],
 
   middlewares: [
     ...defaultMiddlewareBindings,

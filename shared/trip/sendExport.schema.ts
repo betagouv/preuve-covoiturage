@@ -67,5 +67,5 @@ export const schema = {
   },
 };
 
-export const alias = 'trip.buildExport';
+export const alias = 'trip.sendExport';
 export const binding = [alias, schema];
