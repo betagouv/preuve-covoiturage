@@ -48,9 +48,6 @@ export const schema = {
         fullname: {
           macro: 'varchar',
         },
-        type: {
-          macro: 'varchar',
-        },
       },
     },
     type: {

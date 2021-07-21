@@ -56,8 +56,8 @@ export class ExportAction extends Action {
     const end = get(params, 'date.end') || new Date();
 
     const buildParams: SendExportParamsInterface = {
+      type: context.call.user.territory_id ? 'territory' : context.call.user.operator_id ? 'operator' : 'registry',
       from: {
-        type: context.call.user.territory_id ? 'territory' : context.call.user.operator_id ? 'operator' : 'registry',
         fullname,
         email,
       },
@@ -81,7 +81,6 @@ export class ExportAction extends Action {
       buildParams.query.territory_id = Array.isArray(params.territory_id) ? params.territory_id : [params.territory_id];
     }
 
-    // call trip:buildExport
     await this.kernel.notify<SendExportParamsInterface>(sendExportSignature, buildParams, {
       channel: {
         service: 'trip',

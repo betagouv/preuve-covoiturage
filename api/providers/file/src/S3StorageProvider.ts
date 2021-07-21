@@ -17,7 +17,12 @@ export class S3StorageProvider implements ProviderInterface {
   constructor() {}
 
   async init(): Promise<void> {
-    this.s3 = new S3({ s3ForcePathStyle: this.pathStyle, endpoint: this.endpoint, region: this.region, signatureVersion: 'v4' });
+    this.s3 = new S3({
+      s3ForcePathStyle: this.pathStyle,
+      endpoint: this.endpoint,
+      region: this.region,
+      signatureVersion: 'v4',
+    });
   }
 
   async copy(

@@ -1,5 +1,5 @@
 export const schema = {
-  oneOf: [
+  anyOf: [
     {
       type: 'object',
       additionalProperties: false,

@@ -31,15 +31,16 @@ export class SendExportAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
+      const { from, ...exportParams } = params;
       const fileKey = await this.kernel.call<BuildExportParamsInterface>(
         buildExportSignature,
-        params,
+        JSON.parse(JSON.stringify(exportParams)),
         this.defaultContext,
       );
       const url = await this.file.getSignedUrl(BucketName.Export, fileKey);
 
-      const email = params.from.email;
-      const fullname = params.from.fullname;
+      const email = from.email;
+      const fullname = from.fullname;
 
       const emailParams = {
         template: 'ExportCSVNotification',
