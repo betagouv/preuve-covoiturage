@@ -39,8 +39,8 @@ export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<S
     if (theorical === 0) {
       return 1;
     }
-    if(announced == 0) {
-      return 0.5
+    if (announced === 0) {
+      return 0.5;
     }
 
     return limit(Math.abs(announced - theorical) / announced, 0, 1);
