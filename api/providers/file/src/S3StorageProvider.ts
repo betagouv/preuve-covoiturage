@@ -12,11 +12,12 @@ export class S3StorageProvider implements ProviderInterface {
   private endpoint = env('AWS_ENDPOINT') as string;
   private region = env('AWS_REGION') as string;
   private prefix = env('AWS_BUCKET_PREFIX', env('NODE_ENV', 'local'));
+  private pathStyle = env('AWS_S3_PATH_STYLE', false) ? true : false;
 
   constructor() {}
 
   async init(): Promise<void> {
-    this.s3 = new S3({ endpoint: this.endpoint, region: this.region, signatureVersion: 'v4' });
+    this.s3 = new S3({ s3ForcePathStyle: this.pathStyle, endpoint: this.endpoint, region: this.region, signatureVersion: 'v4' });
   }
 
   async copy(

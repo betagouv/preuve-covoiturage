@@ -95,8 +95,13 @@ services:
       DEBUG: '*'
       APP_APP_URL: https://app.covoiturage.test
       APP_JWT_SECRET: thisIsASecret0000
+      APP_SESSION_SECRET: thisIsAlsoASecret0000
+      AWS_S3_PATH_STYLE: 'true'
+      AWS_BUCKET_PREFIX: local-pdc
       AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
       AWS_REGION: fr-par
+      AWS_ACCESS_KEY_ID: minioadmin 
+      AWS_SECRET_ACCESS_KEY: minioadmin
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
       APP_REDIS_URL: redis://redis:6379/1
       APP_MAIL_SMTP_URL: smtp://mailer:1025
@@ -125,10 +130,16 @@ services:
       context: .
     environment:
       DEBUG: '*'
+      APP_WORKER: 'true'
       APP_APP_URL: https://app.covoiturage.test
       APP_JWT_SECRET: thisIsASecret0000
+      APP_SESSION_SECRET: thisIsAlsoASecret0000
+      AWS_S3_PATH_STYLE: 'true'
+      AWS_BUCKET_PREFIX: local-pdc
       AWS_ENDPOINT: http://minioadmin:minioadmin@s3:9000
       AWS_REGION: fr-par
+      AWS_ACCESS_KEY_ID: minioadmin 
+      AWS_SECRET_ACCESS_KEY: minioadmin
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
       APP_REDIS_URL: redis://redis:6379/1
       APP_MAIL_SMTP_URL: smtp://mailer:1025
@@ -166,6 +177,7 @@ services:
       MINIO_URL: http://s3:9000
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
+      MINIO_REGION_NAME: fr-par
     entrypoint:
       ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
     depends_on:
