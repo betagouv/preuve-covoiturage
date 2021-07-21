@@ -7,7 +7,7 @@ export const schema = {
       macro: 'timestamp',
     },
     publish: {
-      macro: 'boolean',
+      type: 'boolean',
     },
   },
 };
