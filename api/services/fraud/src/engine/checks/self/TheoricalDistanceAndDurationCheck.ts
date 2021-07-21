@@ -35,11 +35,14 @@ export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<S
     return Math.max(driver_distance_karma, driver_duration_karma, passenger_distance_karma, passenger_duration_karma);
   }
 
-  protected calc(theorical: number, announced: number): number {
-    if (announced === 0 || theorical === 0) {
+  protected calc(announced: number, theorical: number): number {
+    if (theorical === 0) {
       return 1;
     }
+    if(announced == 0) {
+      return 0.5
+    }
 
-    return limit(Math.abs(theorical - announced) / theorical, 0, 1);
+    return limit(Math.abs(announced - theorical) / announced, 0, 1);
   }
 }
