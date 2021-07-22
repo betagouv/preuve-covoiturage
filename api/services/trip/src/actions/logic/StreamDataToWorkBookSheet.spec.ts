@@ -92,7 +92,7 @@ test('StreamDataToWorkBookSheet: should stream 20 rows to workbook', async (t) =
   wb.addWorksheet('data');
   
   // Act
-  const generatedWorkbook: Workbook = await streamTripsForCampaginComponent.call(896523, wb)
+  const generatedWorkbook: Workbook = await streamTripsForCampaginComponent.call(896523, wb, new Date(), new Date())
   
   // Assert
   sinon.assert.called(tripRepositoryProviderStub)

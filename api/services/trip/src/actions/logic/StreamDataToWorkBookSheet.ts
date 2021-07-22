@@ -12,7 +12,7 @@ export class StreamDataToWorkBookSheet {
     private tripRepositoryProvider: TripRepositoryProvider) {
     }
 
-    async call(campaign_id: number, wb: Workbook): Promise<Workbook> {
+    async call(campaign_id: number, wb: Workbook, start_date: Date, end_date: Date): Promise<Workbook> {
       const getTrips: (count: number) => Promise<ExportTripInterface[]> = await this.tripRepositoryProvider.searchWithCursorForCampaign({campaign_id})  
       let results: ExportTripInterface[] = await getTrips(10);
       while(results.length !== 0) {

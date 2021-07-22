@@ -1,3 +1,4 @@
+import { startOfDay } from 'date-fns'
 import { provider } from '@ilos/common';
 import { Workbook } from 'exceljs';
 import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
@@ -11,9 +12,9 @@ export class BuildExcelFileForCampaign {
     private streamDataToWorkBookSheet: StreamDataToWorkBookSheet) {
   }
 
-  async call(campaign_id: number): Promise<string> {
+  async call(campaign_id: number, start_date: Date, end_date: Date): Promise<string> {
     const templateWorkbook: Workbook = await this.excelWorkbookHandler.loadWorkbookTemplate();
-    const processedWorkbook: Workbook = await this.streamDataToWorkBookSheet.call(campaign_id, templateWorkbook)
+    const processedWorkbook: Workbook = await this.streamDataToWorkBookSheet.call(campaign_id, templateWorkbook, start_date, end_date)
     return await this.excelWorkbookHandler.writeWorkbookToTempFile(processedWorkbook);
   }
 }

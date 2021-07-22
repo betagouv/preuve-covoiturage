@@ -32,11 +32,14 @@ test('BuildExcelFileForCampaign : should return path to excel file', async (t) =
   const writeWorkBookToTempFileStub = sinon.stub(excelWorkbookHandler, 'writeWorkbookToTempFile')
   writeWorkBookToTempFileStub.resolves(RETURNED_EXCEL_PATH)
 
+  const startDate: Date = new Date();
+  const endDate: Date = startDate;
+
   // Act
-  const excelPath: string = await buildExcelFileForCampaign.call(CAMPAIGN_ID);
+  const excelPath: string = await buildExcelFileForCampaign.call(CAMPAIGN_ID, new Date(), new Date());
 
   // Assert
-  sinon.assert.calledWith(streamTripsForCampaginComponentStub, CAMPAIGN_ID, TEMPLATE_WORKBOOK)
+  sinon.assert.calledWith(streamTripsForCampaginComponentStub, CAMPAIGN_ID, TEMPLATE_WORKBOOK,startDate, endDate)
   sinon.assert.called(writeWorkBookToTempFileStub)
   t.is(excelPath, RETURNED_EXCEL_PATH)
 })
