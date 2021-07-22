@@ -3,7 +3,7 @@ import { InvalidRequestException } from './../../../../../ilos/common/src/except
 import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import test, { serial } from 'ava';
 import faker from 'faker';
-import sinon, { SinonExpectation, SinonMock } from 'sinon';
+import sinon, { SinonExpectation, SinonMock, SinonStub } from 'sinon';
 import { ParamsInterface as GetCampaignParamInterface, ResultInterface as GetCampaignResultInterface } from '../../shared/policy/find.contract';
 import { BuildExcel } from './BuildExcel';
 import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
@@ -54,34 +54,35 @@ const DRAFT_CAMPAIGN: GetCampaignResultInterface = {
   }
 }
 
-class MockKernelInterfaceResolver extends KernelInterfaceResolver {
+class FakeKernelInterfaceResolver extends KernelInterfaceResolver {
   call(method: string, params: GetCampaignParamInterface, context: ContextType) {
     return null;
   }
 }
 
-let mockKernelInterfaceResolver: MockKernelInterfaceResolver;
+let fakeKernelInterfaceResolver: FakeKernelInterfaceResolver;
 let buildExcelFileForCampaign: BuildExcelFileForCampaign;
 
 let kernelInterfaceResolverMock: SinonMock;
+let buildExcelFileForCampaignStub: SinonStub;
 
 test.beforeEach((t) => {
-  mockKernelInterfaceResolver = new MockKernelInterfaceResolver();
+  fakeKernelInterfaceResolver = new FakeKernelInterfaceResolver();
   buildExcelFileForCampaign = new BuildExcelFileForCampaign(null, null);
-  buildExcel = new BuildExcel(mockKernelInterfaceResolver, buildExcelFileForCampaign)
+  buildExcel = new BuildExcel(fakeKernelInterfaceResolver, buildExcelFileForCampaign)
 })
 
 
-// test.afterEach((t) => {
-//   mockKernelInterfaceResolverStub.restore();
-// })
+test.afterEach((t) => {
+  buildExcelFileForCampaignStub.restore();
+})
 
 serial('BuildExcel: should create xlsx file if campaign date are in date range', async (t) => {
   // Arrange
-  kernelInterfaceResolverMock = sinon.mock(mockKernelInterfaceResolver);
+  kernelInterfaceResolverMock = sinon.mock(fakeKernelInterfaceResolver);
   kernelInterfaceResolverMock.expects('call').once().resolves(ACTIVE_CAMPAIGN);
 
-  const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
+  buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
   buildExcelFileForCampaignStub.resolves(RETURNED_EXCEL_PATH)
 
   const startOfMonth: Date = new Date();
@@ -98,15 +99,14 @@ serial('BuildExcel: should create xlsx file if campaign date are in date range',
   kernelInterfaceResolverMock.verify();
 
   kernelInterfaceResolverMock.restore();
-  buildExcelFileForCampaignStub.restore();
 })
 
 serial('BuildExcel: should create xlsx file if campaign date are in larger date range', async (t) => {
   // Arrange
-  kernelInterfaceResolverMock = sinon.mock(mockKernelInterfaceResolver);
+  kernelInterfaceResolverMock = sinon.mock(fakeKernelInterfaceResolver);
   kernelInterfaceResolverMock.expects('call').once().resolves(ACTIVE_CAMPAIGN);
 
-  const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
+  buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
   buildExcelFileForCampaignStub.resolves(RETURNED_EXCEL_PATH)
 
   const todayMinus3Years: Date = new Date();
@@ -123,13 +123,12 @@ serial('BuildExcel: should create xlsx file if campaign date are in larger date 
   kernelInterfaceResolverMock.verify();
 
   kernelInterfaceResolverMock.restore();
-  buildExcelFileForCampaignStub.restore();
 })
 
 serial('BuildExcel: should throw NotFoundException if no campaign with id', async (t) => {
   // Arrange
-  const kernelInterfaceResolverStub = sinon.stub(mockKernelInterfaceResolver, 'call');
-  const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
+  const kernelInterfaceResolverStub = sinon.stub(fakeKernelInterfaceResolver, 'call');
+  buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
   kernelInterfaceResolverStub.rejects(new NotFoundException())
   let excelPath: string; 
 
@@ -143,13 +142,12 @@ serial('BuildExcel: should throw NotFoundException if no campaign with id', asyn
   t.is(excelPath, undefined)
   
   buildExcelFileForCampaignStub.restore();
-  kernelInterfaceResolverStub.restore();
 })
 
 serial('BuildExcel: should throw InvalidRequestException if draft campaign', async (t) => {
   // Arrange
-  const kernelInterfaceResolverStub = sinon.stub(mockKernelInterfaceResolver, 'call');
-  const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
+  const kernelInterfaceResolverStub = sinon.stub(fakeKernelInterfaceResolver, 'call');
+  buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
   kernelInterfaceResolverStub.resolves(DRAFT_CAMPAIGN)
   let excelPath: string
   // Act 
@@ -161,14 +159,13 @@ serial('BuildExcel: should throw InvalidRequestException if draft campaign', asy
   sinon.assert.notCalled(buildExcelFileForCampaignStub)
   t.is(excelPath, undefined)
   
-  buildExcelFileForCampaignStub.restore();
   kernelInterfaceResolverStub.restore();
 })
 
 serial('BuildExcel: should throw InvalidRequestException if campaign dates are not in date range', async (t) => {
   // Arrange
-  const kernelInterfaceResolverStub = sinon.stub(mockKernelInterfaceResolver, 'call');
-  const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
+  const kernelInterfaceResolverStub = sinon.stub(fakeKernelInterfaceResolver, 'call');
+  buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
   kernelInterfaceResolverStub.resolves(ACTIVE_CAMPAIGN)
   let excelPath: string;
   
@@ -181,6 +178,5 @@ serial('BuildExcel: should throw InvalidRequestException if campaign dates are n
   sinon.assert.notCalled(buildExcelFileForCampaignStub)
   t.is(excelPath, undefined)
   
-  buildExcelFileForCampaignStub.restore();
   kernelInterfaceResolverStub.restore();
 })
