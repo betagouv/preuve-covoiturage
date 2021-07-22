@@ -1,3 +1,4 @@
+import { date } from './../../config/middlewares'
 import { InvalidRequestException } from './../../../../../ilos/common/src/exceptions/InvalidRequestException'
 import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import test, { serial } from 'ava';
@@ -16,7 +17,6 @@ const RETURNED_EXCEL_PATH: string= faker.system.directoryPath();
 const NOT_FOUND_CAMPAIGN_ID: number = faker.random.number();
 const DRAFT_CAMPAIGN_ID: number = faker.random.number();
 const ACTIVE_CAMPAIGN_ID: number = faker.random.number();
-const EXPIRED_CAMPAIGN_ID: number = faker.random.number();
 
 const ACTIVE_CAMPAIGN: GetCampaignResultInterface = {
   _id: ACTIVE_CAMPAIGN_ID,
@@ -26,7 +26,7 @@ const ACTIVE_CAMPAIGN: GetCampaignResultInterface = {
   rules: [], 
   global_rules: [],
   territory_id: faker.random.number(),
-  start_date: new Date(),
+  start_date: faker.date.past(1),
   end_date: faker.date.future(1),
   status: 'active',
   state: {
@@ -44,8 +44,8 @@ const DRAFT_CAMPAIGN: GetCampaignResultInterface = {
   rules: [], 
   global_rules: [],
   territory_id: faker.random.number(),
-  start_date: new Date(),
-  end_date: new Date(),
+  start_date: faker.date.past(1),
+  end_date: faker.date.future(1),
   status: 'draft',
   state: {
     amount: 85,
@@ -53,25 +53,6 @@ const DRAFT_CAMPAIGN: GetCampaignResultInterface = {
     trip_subsidized: 89
   }
 }
-
-const EXPIRED_CAMPAIGN: GetCampaignResultInterface = {
-  _id: EXPIRED_CAMPAIGN_ID,
-  name: faker.random.word(),
-  unit: '',
-  description: 'Une campagne qui a eu lieu dans le passé',
-  rules: [], 
-  global_rules: [],
-  territory_id: faker.random.number(),
-  start_date: faker.date.past(2),
-  end_date: faker.date.past(1),
-  status: 'active',
-  state: {
-    amount: 85,
-    trip_excluded: 96,
-    trip_subsidized: 89
-  }
-}
-
 
 // TODO: remove
 class MockKernelInterfaceResolver extends KernelInterfaceResolver {
@@ -105,11 +86,12 @@ test.beforeEach((t) => {
   buildExcel = new BuildExcel(mockKernelInterfaceResolver, buildExcelFileForCampaign)
 })
 
+
 // test.afterEach((t) => {
 //   mockKernelInterfaceResolverStub.restore();
 // })
 
-serial('BuildExcel: should create xlsx file', async (t) => {
+serial('BuildExcel: should create xlsx file if campaign date are in date range', async (t) => {
   // Arrange
   mockKernelInterfaceResolverStub = sinon.mock(mockKernelInterfaceResolver);
   mockKernelInterfaceResolverStub.expects('call').once().resolves(ACTIVE_CAMPAIGN);
@@ -117,8 +99,14 @@ serial('BuildExcel: should create xlsx file', async (t) => {
   const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
   buildExcelFileForCampaignStub.resolves(RETURNED_EXCEL_PATH)
 
+  const startOfMonth: Date = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setMonth(startOfMonth.getMonth() -1 );
+
+  const endOfMonth: Date = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0);
+
   // Act 
-  const excelPath: string = await buildExcel.call(ACTIVE_CAMPAIGN_ID, new Date(), new Date())
+  const excelPath: string = await buildExcel.call(ACTIVE_CAMPAIGN_ID, startOfMonth, endOfMonth)
 
   // Assert
   t.is(excelPath, RETURNED_EXCEL_PATH)
@@ -128,6 +116,30 @@ serial('BuildExcel: should create xlsx file', async (t) => {
   buildExcelFileForCampaignStub.restore();
 })
 
+serial('BuildExcel: should create xlsx file if campaign date are in larger date range', async (t) => {
+  // Arrange
+  mockKernelInterfaceResolverStub = sinon.mock(mockKernelInterfaceResolver);
+  mockKernelInterfaceResolverStub.expects('call').once().resolves(ACTIVE_CAMPAIGN);
+
+  const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
+  buildExcelFileForCampaignStub.resolves(RETURNED_EXCEL_PATH)
+
+  const todayMinus3Years: Date = new Date();
+  todayMinus3Years.setFullYear(todayMinus3Years.getFullYear() - 3);
+
+  const todayPlus3Years: Date = new Date();
+  todayPlus3Years.setFullYear(todayPlus3Years.getFullYear() + 3)
+
+  // Act 
+  const excelPath: string = await buildExcel.call(ACTIVE_CAMPAIGN_ID, todayMinus3Years, todayPlus3Years)
+
+  // Assert
+  t.is(excelPath, RETURNED_EXCEL_PATH)
+  mockKernelInterfaceResolverStub.verify();
+
+  mockKernelInterfaceResolverStub.restore();
+  buildExcelFileForCampaignStub.restore();
+})
 
 serial('BuildExcel: should throw NotFoundException if no campaign with id', async (t) => {
   // Arrange
@@ -168,15 +180,16 @@ serial('BuildExcel: should throw InvalidRequestException if draft campaign', asy
   kernelInterfaceResolverStub.restore();
 })
 
-serial('BuildExcel: should throw InvalidRequestException if campaign is expired', async (t) => {
+serial('BuildExcel: should throw InvalidRequestException if campaign dates are not in date range', async (t) => {
   // Arrange
   const kernelInterfaceResolverStub = sinon.stub(mockKernelInterfaceResolver, 'call');
   const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
-  kernelInterfaceResolverStub.resolves(EXPIRED_CAMPAIGN)
+  kernelInterfaceResolverStub.resolves(ACTIVE_CAMPAIGN)
   let excelPath: string;
+  
   // Act 
   await t.throwsAsync(async () => {
-   excelPath = await buildExcel.call(DRAFT_CAMPAIGN_ID, null, null)
+   excelPath = await buildExcel.call(ACTIVE_CAMPAIGN_ID, faker.date.past(3), faker.date.past(2))
   })
   
   // Assert

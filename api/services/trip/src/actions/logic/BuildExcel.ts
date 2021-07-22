@@ -20,16 +20,31 @@ export class BuildExcel {
         { channel: {service : handlerConfig.service}, call: {user: { permissions: ['registry.policy.find']}}}
       )
 
-    if(campaign.status === 'draft' || campaign.status === 'template'){
-      throw new InvalidRequestException(campaign)
+    if(!this.isCampaignActive(campaign)){
+      throw new InvalidRequestException({
+        'campaign.status': campaign.status, 
+        required_campaign_status: 'active'
+      })
     }
 
-    const today:Date = new Date()
-    if(!(campaign.start_date < today && campaign.end_date > today)) {
-      throw new InvalidRequestException(campaign)
+    if(!this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
+      throw new InvalidRequestException({
+        'campaign.start_date': campaign.start_date,
+         'campaign.end_date': campaign.end_date, 
+         export_start_date: start_date, 
+         export_end_date: end_date
+      })
     }
     
     return await this.buildExcelFileForCampaign.call(campaign_id);
+  }
+
+  private isCampaignActive(campaign): boolean {
+    return campaign.status === 'active'
+  }
+
+  private isDateRangeInsideCampagnDate(campaign: GetCampaignResultInterface,  start_date: Date, end_date): boolean {
+    return campaign.start_date < start_date && campaign.end_date > end_date || campaign.start_date > start_date && campaign.end_date < end_date;
   }
 
 }
