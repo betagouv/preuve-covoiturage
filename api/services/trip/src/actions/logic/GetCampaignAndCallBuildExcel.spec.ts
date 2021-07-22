@@ -34,7 +34,7 @@ test.afterEach((t) => {
   kernelInterfaceResolverStub.restore();
 })
 
-serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are in date range', async (t) => {
+serial.only('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are in date range', async (t) => {
   // Arrange
   successStubArrange();
 
@@ -45,26 +45,25 @@ serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date a
   const endOfMonth: Date = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0);
 
   // Act 
-  const excelPath: string = await getCampaignAndCallBuildExcel.call(faker.random.number(), startOfMonth, endOfMonth)
+  const excelPath: string = await getCampaignAndCallBuildExcel.call(campaign._id, startOfMonth, endOfMonth)
 
   // Assert
   t.is(excelPath, RETURNED_EXCEL_PATH);
   sinon.assert.calledOnce(kernelInterfaceResolverStub)
-  sinon.assert.calledOnce(buildExcelFileForCampaignStub)
-  // sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub, campaign._id)
+  sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub, campaign._id, startOfMonth, endOfMonth)
 })
 
-serial('GetCampaignAndCallBuildExcel: should create xlsx file for last month if not provided', async (t) => {
+serial('GetCampaignAndCallBuildExcel: should create xlsx file for last month if no date provided provided', async (t) => {
   // Arrange
   successStubArrange();
 
   // Act 
-  const excelPath: string = await getCampaignAndCallBuildExcel.call(faker.random.number())
+  const excelPath: string = await getCampaignAndCallBuildExcel.call(campaign._id)
 
   // Assert
   t.is(excelPath, RETURNED_EXCEL_PATH);
+  sinon.assert.calledOnce(buildExcelFileForCampaignStub)
   sinon.assert.calledOnce(kernelInterfaceResolverStub);
-  // sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub,campaign._id)
 })
 
 serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are in larger date range', async (t) => {
@@ -78,12 +77,12 @@ serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date a
   todayPlus3Years.setFullYear(todayPlus3Years.getFullYear() + 3)
 
   // Act 
-  const excelPath: string = await getCampaignAndCallBuildExcel.call(faker.random.number(), todayMinus3Years, todayPlus3Years)
+  const excelPath: string = await getCampaignAndCallBuildExcel.call(campaign._id, todayMinus3Years, todayPlus3Years)
 
   // Assert
   t.is(excelPath, RETURNED_EXCEL_PATH);
   sinon.assert.calledOnce(kernelInterfaceResolverStub)
-  // sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub,campaign._id)
+  sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub,campaign._id, todayMinus3Years, todayPlus3Years)
 })
 
 serial('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaign with id', async (t) => {
