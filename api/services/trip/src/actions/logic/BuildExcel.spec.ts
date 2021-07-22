@@ -1,3 +1,4 @@
+import { InvalidRequestException } from './../../../../../ilos/common/src/exceptions/InvalidRequestException'
 import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import test, { serial } from 'ava';
 import faker from 'faker';
@@ -11,37 +12,23 @@ import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
 let buildExcel: BuildExcel;
 
 const RETURNED_EXCEL_PATH: string= faker.system.directoryPath();
+
 const NOT_FOUND_CAMPAIGN_ID: number = faker.random.number();
-const INACTIVE_CAMPAIGN_ID: number = faker.random.number();
+const DRAFT_CAMPAIGN_ID: number = faker.random.number();
 const ACTIVE_CAMPAIGN_ID: number = faker.random.number();
+const EXPIRED_CAMPAIGN_ID: number = faker.random.number();
+
 const ACTIVE_CAMPAIGN: GetCampaignResultInterface = {
   _id: ACTIVE_CAMPAIGN_ID,
-  name: '',
+  name: faker.random.word(),
   unit: '',
-  description: '',
+  description: 'Une camapgne active',
   rules: [], 
   global_rules: [],
-  territory_id: 856232332,
+  territory_id: faker.random.number(),
   start_date: new Date(),
-  end_date: new Date(),
-  status: '',
-  state: {
-    amount: 85,
-    trip_excluded: 96,
-    trip_subsidized: 89
-  }
-}
-const INACTIVE_CAMPAIGN: GetCampaignResultInterface = {
-  _id: ACTIVE_CAMPAIGN_ID,
-  name: '',
-  unit: '',
-  description: '',
-  rules: [], 
-  global_rules: [],
-  territory_id: 856232332,
-  start_date: new Date(),
-  end_date: new Date(),
-  status: '',
+  end_date: faker.date.future(1),
+  status: 'active',
   state: {
     amount: 85,
     trip_excluded: 96,
@@ -49,6 +36,44 @@ const INACTIVE_CAMPAIGN: GetCampaignResultInterface = {
   }
 }
 
+const DRAFT_CAMPAIGN: GetCampaignResultInterface = {
+  _id: DRAFT_CAMPAIGN_ID,
+  name: faker.random.word(),
+  unit: '',
+  description: 'Une campagne encore en draft',
+  rules: [], 
+  global_rules: [],
+  territory_id: faker.random.number(),
+  start_date: new Date(),
+  end_date: new Date(),
+  status: 'draft',
+  state: {
+    amount: 85,
+    trip_excluded: 96,
+    trip_subsidized: 89
+  }
+}
+
+const EXPIRED_CAMPAIGN: GetCampaignResultInterface = {
+  _id: EXPIRED_CAMPAIGN_ID,
+  name: faker.random.word(),
+  unit: '',
+  description: 'Une campagne qui a eu lieu dans le passé',
+  rules: [], 
+  global_rules: [],
+  territory_id: faker.random.number(),
+  start_date: faker.date.past(2),
+  end_date: faker.date.past(1),
+  status: 'active',
+  state: {
+    amount: 85,
+    trip_excluded: 96,
+    trip_subsidized: 89
+  }
+}
+
+
+// TODO: remove
 class MockKernelInterfaceResolver extends KernelInterfaceResolver {
   call(method: string, params: GetCampaignParamInterface, context: ContextType) {
     switch(params._id) {
@@ -56,9 +81,9 @@ class MockKernelInterfaceResolver extends KernelInterfaceResolver {
         return new Promise<GetCampaignResultInterface>((resolve, reject) => {
           resolve(ACTIVE_CAMPAIGN);
         })
-      case INACTIVE_CAMPAIGN_ID: 
+      case DRAFT_CAMPAIGN_ID: 
         return new Promise<GetCampaignResultInterface>((resolve, reject) => {
-          resolve(INACTIVE_CAMPAIGN);
+          resolve(DRAFT_CAMPAIGN);
         })
       case NOT_FOUND_CAMPAIGN_ID:
         return;
@@ -104,7 +129,7 @@ serial('BuildExcel: should create xlsx file', async (t) => {
 })
 
 
-serial('BuildExcel: should throw NotFound exception if no campaign with id', async (t) => {
+serial('BuildExcel: should throw NotFoundException if no campaign with id', async (t) => {
   // Arrange
   const kernelInterfaceResolverStub = sinon.stub(mockKernelInterfaceResolver, 'call');
   const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
@@ -124,14 +149,40 @@ serial('BuildExcel: should throw NotFound exception if no campaign with id', asy
   kernelInterfaceResolverStub.restore();
 })
 
-test.skip('BuildExcel: should throw InvalidRequest exception if no active campaign for that date range', async (t) => {
+serial('BuildExcel: should throw InvalidRequestException if draft campaign', async (t) => {
   // Arrange
- //  tripRepositoryProviderStub = sinon.stub(tripRepositoryProvider, 'searchWithCursorForCampaign');
-  // tripRepositoryProviderStub.throws(NotFoundException)
-
+  const kernelInterfaceResolverStub = sinon.stub(mockKernelInterfaceResolver, 'call');
+  const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
+  kernelInterfaceResolverStub.resolves(DRAFT_CAMPAIGN)
+  let excelPath: string
   // Act 
-  const excelPath: string = await buildExcel.call(INACTIVE_CAMPAIGN_ID, null, null)
-
+  await t.throwsAsync(async () => {
+    excelPath = await buildExcel.call(DRAFT_CAMPAIGN_ID, null, null)
+  })
+  
   // Assert
+  sinon.assert.notCalled(buildExcelFileForCampaignStub)
   t.is(excelPath, undefined)
+  
+  buildExcelFileForCampaignStub.restore();
+  kernelInterfaceResolverStub.restore();
+})
+
+serial('BuildExcel: should throw InvalidRequestException if campaign is expired', async (t) => {
+  // Arrange
+  const kernelInterfaceResolverStub = sinon.stub(mockKernelInterfaceResolver, 'call');
+  const buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
+  kernelInterfaceResolverStub.resolves(EXPIRED_CAMPAIGN)
+  let excelPath: string;
+  // Act 
+  await t.throwsAsync(async () => {
+   excelPath = await buildExcel.call(DRAFT_CAMPAIGN_ID, null, null)
+  })
+  
+  // Assert
+  sinon.assert.notCalled(buildExcelFileForCampaignStub)
+  t.is(excelPath, undefined)
+  
+  buildExcelFileForCampaignStub.restore();
+  kernelInterfaceResolverStub.restore();
 })

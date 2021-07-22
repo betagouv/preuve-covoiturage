@@ -1,4 +1,4 @@
-import { KernelInterfaceResolver, provider } from '@ilos/common';
+import { KernelInterfaceResolver, provider, InvalidRequestException } from '@ilos/common';
 import { ParamsInterface as GetCampaignParamInterface, ResultInterface as GetCampaignResultInterface, signature as getCampaignSignature } from '../../shared/policy/find.contract';
 import { handlerConfig } from '../../shared/trip/buildExcelExport.contract';
 import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
@@ -19,10 +19,16 @@ export class BuildExcel {
         getCampaignParamInterface, 
         { channel: {service : handlerConfig.service}, call: {user: { permissions: ['registry.policy.find']}}}
       )
-    // TODO Check campaign is effective for that date range
-    
-    //
 
+    if(campaign.status === 'draft' || campaign.status === 'template'){
+      throw new InvalidRequestException(campaign)
+    }
+
+    const today:Date = new Date()
+    if(!(campaign.start_date < today && campaign.end_date > today)) {
+      throw new InvalidRequestException(campaign)
+    }
+    
     return await this.buildExcelFileForCampaign.call(campaign_id);
   }
 
