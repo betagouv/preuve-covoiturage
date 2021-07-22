@@ -5,7 +5,7 @@ import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
 
 
 @provider()
-export class BuildExcel {
+export class GetCampaignAndCallBuildExcel {
 
   constructor(
     private kernel: KernelInterfaceResolver,
