@@ -24,6 +24,11 @@ test.before((t) => {
   getCampaignAndCallBuildExcel = new GetCampaignAndCallBuildExcel(fakeKernelInterfaceResolver, buildExcelFileForCampaign)
 })
 
+test.beforeEach(t => {
+  kernelInterfaceResolverStub = sinon.stub(fakeKernelInterfaceResolver, 'call');
+  buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
+})
+
 test.afterEach((t) => {
   buildExcelFileForCampaignStub.restore();
   kernelInterfaceResolverStub.restore();
@@ -43,9 +48,10 @@ serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date a
   const excelPath: string = await getCampaignAndCallBuildExcel.call(faker.random.number(), startOfMonth, endOfMonth)
 
   // Assert
-  sinon.assert.calledOnce(kernelInterfaceResolverStub)
-  sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub,campaign._id)
   t.is(excelPath, RETURNED_EXCEL_PATH);
+  sinon.assert.calledOnce(kernelInterfaceResolverStub)
+  sinon.assert.calledOnce(buildExcelFileForCampaignStub)
+  // sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub, campaign._id)
 })
 
 serial('GetCampaignAndCallBuildExcel: should create xlsx file for last month if not provided', async (t) => {
@@ -82,8 +88,6 @@ serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date a
 
 serial('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaign with id', async (t) => {
   // Arrange
-  kernelInterfaceResolverStub = sinon.stub(fakeKernelInterfaceResolver, 'call');
-  buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
   kernelInterfaceResolverStub.rejects(new NotFoundException())
   let excelPath: string; 
 
@@ -100,8 +104,6 @@ serial('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campa
 
 serial('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if draft campaign', async (t) => {
   // Arrange
-  kernelInterfaceResolverStub = sinon.stub(fakeKernelInterfaceResolver, 'call');
-  buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
   kernelInterfaceResolverStub.resolves(createGetCampaignResultInterface('draft'))
   let excelPath: string
   // Act 
@@ -117,8 +119,6 @@ serial('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if dr
 
 serial('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if campaign dates are not in date range', async (t) => {
   // Arrange
-  kernelInterfaceResolverStub = sinon.stub(fakeKernelInterfaceResolver, 'call');
-  buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
   kernelInterfaceResolverStub.resolves(createGetCampaignResultInterface('active',
     new Date(new Date().getTime() - (1 * 365 * 24 * 60 * 60 * 1000 )),
     new Date(new Date().getTime() + (1 * 365 * 24 * 60 * 60 * 1000 ))));
@@ -166,10 +166,7 @@ const successStubArrange = () => {
   new Date(new Date().getTime() - (1 * 365 * 24 * 60 * 60 * 1000 )),
   new Date(new Date().getTime() + (1 * 365 * 24 * 60 * 60 * 1000 )));
 
-  kernelInterfaceResolverStub = sinon.stub(fakeKernelInterfaceResolver, 'call');
   kernelInterfaceResolverStub.resolves(campaign)
-
-  buildExcelFileForCampaignStub = sinon.stub(buildExcelFileForCampaign, 'call');
   buildExcelFileForCampaignStub.resolves(RETURNED_EXCEL_PATH);
 }
 
