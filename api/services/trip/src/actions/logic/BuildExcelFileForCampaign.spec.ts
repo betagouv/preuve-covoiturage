@@ -15,13 +15,15 @@ const RETURNED_EXCEL_PATH: string= faker.system.directoryPath();
 const TEMPLATE_WORKBOOK: Workbook = new Workbook();
 const GENERATED_WORKBOOK: Workbook = new Workbook();
 
+const date: Date = faker.date.past();
+
 test.before((t) => {
   excelWorkbookHandler = new ExcelWorkbookHandler();
   streamTripsForCampaginComponent = new StreamDataToWorkBookSheet(null);
   buildExcelFileForCampaign = new BuildExcelFileForCampaign(excelWorkbookHandler, streamTripsForCampaginComponent);
 })
 
-test('BuildExcelFileForCampaign : should return path to excel file', async (t) => {
+test('BuildExcelFileForCampaign: should return path to excel file', async (t) => {
   // Arrange
   const streamTripsForCampaginComponentStub = sinon.stub(streamTripsForCampaginComponent, 'call');
   streamTripsForCampaginComponentStub.resolves(GENERATED_WORKBOOK)
@@ -32,14 +34,11 @@ test('BuildExcelFileForCampaign : should return path to excel file', async (t) =
   const writeWorkBookToTempFileStub = sinon.stub(excelWorkbookHandler, 'writeWorkbookToTempFile')
   writeWorkBookToTempFileStub.resolves(RETURNED_EXCEL_PATH)
 
-  const startDate: Date = new Date();
-  const endDate: Date = startDate;
-
   // Act
-  const excelPath: string = await buildExcelFileForCampaign.call(CAMPAIGN_ID, new Date(), new Date());
+  const excelPath: string = await buildExcelFileForCampaign.call(CAMPAIGN_ID, date, date);
 
   // Assert
-  sinon.assert.calledWith(streamTripsForCampaginComponentStub, CAMPAIGN_ID, TEMPLATE_WORKBOOK,startDate, endDate)
-  sinon.assert.called(writeWorkBookToTempFileStub)
+  sinon.assert.calledOnceWithExactly(streamTripsForCampaginComponentStub, CAMPAIGN_ID, TEMPLATE_WORKBOOK, date, date)
+  sinon.assert.calledOnceWithExactly(writeWorkBookToTempFileStub, GENERATED_WORKBOOK)
   t.is(excelPath, RETURNED_EXCEL_PATH)
 })

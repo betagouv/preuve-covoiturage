@@ -1,6 +1,5 @@
 import { ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { ParamsInterface as GetCampaignParamInterface, ResultInterface as GetCampaignResultInterface, signature as GetCampaignSignature } from '../shared/policy/find.contract';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExcelExport.contract';
 
 @handler({

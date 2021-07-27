@@ -246,26 +246,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return result.rowCount ? result.rows : [];
   }
 
-  public async searchWithCursorForCampaign(
-    params: {
-      campaign_id: number;
-    }
-  ) : Promise<(count: number) => Promise<ExportTripInterface[]>> {
-    const db = await this.connection.getClient().connect();
-
-    const queryText = 'SELECT * FROM trip.list as tl WHERE $1 = ANY(tl.applied_policies) LIMIT 100';
-    const queryValues = [params.campaign_id]
-    const cursorCb = db.query(new Cursor(queryText, queryValues));
-
-    return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>;
-  
-  }
-
   public async searchWithCursor(
     params: {
       date: { start: Date; end: Date };
       territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
       operator_id?: number[];
+      campaign_id?: number[];
       territory_id?: number[];
       status?: string;
     },

@@ -1,7 +1,7 @@
 
 import test from 'ava';
-import { Workbook } from 'exceljs';
 import faker from 'faker';
+import { Workbook } from 'exceljs';
 import sinon, { SinonStub } from 'sinon';
 import { ExportTripInterface } from '../../interfaces';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
@@ -57,10 +57,12 @@ export const exportTripInterface: ExportTripInterface<Date> = {
 }
 
 let streamTripsForCampaginComponent: StreamDataToWorkBookSheet;
-
 let tripRepositoryProvider: TripRepositoryProvider;
 
 let tripRepositoryProviderStub: SinonStub
+
+const date: Date = faker.date.past();
+const campaign_id: number = faker.random.number();
 
 test.before((t) => {
   tripRepositoryProvider = new TripRepositoryProvider(null)
@@ -85,17 +87,17 @@ test('StreamDataToWorkBookSheet: should stream 20 rows to workbook', async (t) =
     return cursorResult;
   }
 
-  tripRepositoryProviderStub = sinon.stub(tripRepositoryProvider, 'searchWithCursorForCampaign');
+  tripRepositoryProviderStub = sinon.stub(tripRepositoryProvider, 'searchWithCursor');
   tripRepositoryProviderStub.resolves(returnedFunction)
 
   const wb: Workbook = new Workbook()
   wb.addWorksheet('data');
   
   // Act
-  const generatedWorkbook: Workbook = await streamTripsForCampaginComponent.call(896523, wb, new Date(), new Date())
+  const generatedWorkbook: Workbook = await streamTripsForCampaginComponent.call(campaign_id, wb, date, date)
   
   // Assert
-  sinon.assert.called(tripRepositoryProviderStub)
+  sinon.assert.calledOnceWithExactly(tripRepositoryProviderStub, { date: { start: date, end: date }, campaign_id: [campaign_id]})
   t.is(generatedWorkbook.getWorksheet('data').rowCount, 20)
 });
 
