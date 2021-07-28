@@ -18,8 +18,7 @@ export class BuildExcelExportAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if(!params.query.territory_id && !params.query.campaign_id) {
-    // if(!params.query.territory_id && (!params.query.campaign_id || params.query.campaign_id.length === 0)){
+    if(!params.query.territory_id && (!params.query.campaign_id || params.query.campaign_id.length === 0)){
       throw new InvalidParamsException({
         'params' : params,
         'messsage' : 'Missing territory_id or campaign id'
