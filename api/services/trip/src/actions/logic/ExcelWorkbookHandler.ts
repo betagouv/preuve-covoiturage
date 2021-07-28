@@ -1,8 +1,10 @@
 import { Workbook } from 'exceljs';
+import { provider } from '@ilos/common';
 import os from 'os';
 import path from 'path';
 import { v4 } from 'uuid';
 
+@provider()
 export class ExcelWorkbookHandler {
 
   static readonly template_location: string = __dirname+'/../../fundcalls_template.xlsx';

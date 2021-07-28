@@ -19,7 +19,7 @@ export class GetCampaignAndCallBuildExcel {
       end_date = this.endOfPreviousMonthDate();
     }
 
-    const getCampaignParamInterface: GetCampaignParamInterface = { _id: campaign_id  };
+    const getCampaignParamInterface: GetCampaignParamInterface = { _id: Number(campaign_id)  };
     const campaign: GetCampaignResultInterface = await this.kernel.call<GetCampaignParamInterface, GetCampaignResultInterface>(
         getCampaignSignature, 
         getCampaignParamInterface, 

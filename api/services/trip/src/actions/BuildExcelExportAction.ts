@@ -1,6 +1,5 @@
-import { schema } from './../../../../../shared/monitoring/journeys/stats.schema'
 import { GetCampaignAndCallBuildExcel } from './logic/GetCampaignAndCallBuildExcel'
-import { ContextType, handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
+import { ContextType, handler, InvalidParamsException } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExcelExport.contract';
 import { alias } from '../shared/trip/buildExcelExport.schema';
@@ -27,6 +26,7 @@ export class BuildExcelExportAction extends Action {
     if(!params.query.date){
       params.query.date = { start: null, end: null}
     }
+    // TODO: Promisify all
     params.query.campaign_id.map(async c_id => {
       await this.getCampaignAndCallBuildExcel.call(c_id, params.query.date.start, params.query.date.end)
     })
