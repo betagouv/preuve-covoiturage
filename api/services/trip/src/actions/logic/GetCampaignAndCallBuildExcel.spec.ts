@@ -34,7 +34,7 @@ test.afterEach((t) => {
   kernelInterfaceResolverStub.restore();
 })
 
-serial.only('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are in date range', async (t) => {
+serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are in date range', async (t) => {
   // Arrange
   successStubArrange();
 
@@ -105,6 +105,7 @@ serial('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if dr
   // Arrange
   kernelInterfaceResolverStub.resolves(createGetCampaignResultInterface('draft'))
   let excelPath: string
+  
   // Act 
   await t.throwsAsync(async () => {
     excelPath = await getCampaignAndCallBuildExcel.call(faker.random.number(), null, null)

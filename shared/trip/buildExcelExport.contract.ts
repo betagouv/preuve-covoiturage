@@ -7,7 +7,7 @@ export interface ParamsInterface {
       start: Date;
       end: Date;
     };
-    territory_id: number;
+    territory_id?: number;
     campaign_id?: number[];
   };
 }
