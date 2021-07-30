@@ -1,3 +1,4 @@
+import { BuildExportAction, FlattenTripInterface } from './../BuildExportAction'
 
 import test from 'ava';
 import faker from 'faker';
@@ -72,7 +73,17 @@ test.before((t) => {
 test('StreamDataToWorkBookSheet: should stream 20 rows to workbook', async (t) => {
   // Arrange
   const cursorResult = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
-    resolve([exportTripInterface, exportTripInterface, exportTripInterface, exportTripInterface, exportTripInterface, exportTripInterface, exportTripInterface, exportTripInterface, exportTripInterface, exportTripInterface]);
+    resolve([
+      exportTripInterface, 
+      exportTripInterface, 
+      exportTripInterface, 
+      exportTripInterface, 
+      exportTripInterface, 
+      exportTripInterface, 
+      exportTripInterface, 
+      exportTripInterface, 
+      exportTripInterface, 
+      exportTripInterface]);
   })
 
   const cursorEndingResult = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
@@ -97,33 +108,9 @@ test('StreamDataToWorkBookSheet: should stream 20 rows to workbook', async (t) =
   const generatedWorkbook: Workbook = await streamTripsForCampaginComponent.call(campaign_id, wb, date, date)
   
   // Assert
-  sinon.assert.calledOnceWithExactly(tripRepositoryProviderStub, { date: { start: date, end: date }, campaign_id: [campaign_id]})
-  t.is(generatedWorkbook.getWorksheet('data').rowCount, 20)
+  sinon.assert.calledOnceWithExactly(tripRepositoryProviderStub, { date: { start: date, end: date }, campaign_id: [campaign_id]});
+  t.deepEqual(generatedWorkbook.getWorksheet('data').getRow(1).values, [ undefined, ...BuildExportAction.getColumns('territory')]);
+  t.is(generatedWorkbook.getWorksheet('data').getRow(2).values.length, BuildExportAction.getColumns('territory').length + 1);
+  t.is(generatedWorkbook.getWorksheet('data').getRow(2).getCell(2).value, exportTripInterface.trip_id)
+  t.is(generatedWorkbook.getWorksheet('data').rowCount, 21)
 });
-
-
-// test('StreamDataToWorkBookSheet: should write raws in workbook', async (t) => {
-//   // Arrange
-//   const wb: Workbook = new Workbook()
-//   const worksheet: Worksheet = wb.addWorksheet('data');
-//   // const headers: string[]= [...BuildExportAction.baseFields, ...BuildExportAction.financialFields]
-
-//   // worksheet.addTable({ name: 'Données', ref: 'A1',  style: {
-//   //   theme: 'TableStyleDark3',
-//   //   showRowStripes: true,
-//   // }, columns: headers.map(h => {
-//   //   let columnProperty: TableColumnProperties = {
-//   //     filterButton: true,
-//   //     name: h,
-//   //   };
-//   //   return columnProperty
-//   // }), rows: []})
-//   // worksheet.commit()
-
-//   // Act
-//   // console.error('worksheet => ' +  worksheet.getTable('Donneés'))
-//   writeToWorkbookSheet(wb, data);
-
-//   // Assert
-//   t.is(wb.getWorksheet('data').actualRowCount, 4)
-// })

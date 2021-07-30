@@ -6,9 +6,9 @@ import { alias } from '../shared/trip/buildExcelExport.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['validate', alias]
-  ]
+  // middlewares: [
+  //   ['validate', alias]
+  // ]
 })
 export class BuildExcelExportAction extends Action {
 

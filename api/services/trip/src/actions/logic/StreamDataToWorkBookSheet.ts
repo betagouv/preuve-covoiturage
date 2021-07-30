@@ -1,4 +1,4 @@
-import { FlattenTripInterface } from '../BuildExportAction'
+import { BuildExportAction, FlattenTripInterface } from '../BuildExportAction'
 import { ExportTripInterface } from '../../interfaces/ExportTripInterface'
 import { Workbook, Worksheet } from 'exceljs';
 import { normalize } from '../../helpers/normalizeExportDataHelper';
@@ -19,7 +19,10 @@ export class StreamDataToWorkBookSheet {
           end: end_date
         },
         campaign_id: [campaign_id]
-      })  
+      });
+      wb.getWorksheet('data').columns =  BuildExportAction.getColumns('territory').map(c => { 
+        return { header: c, key: c}
+      });
       let results: ExportTripInterface[] = await getTrips(10);
       while(results.length !== 0) {
         this.writeToWorkbookSheet(wb, results)
@@ -30,11 +33,10 @@ export class StreamDataToWorkBookSheet {
 
     private writeToWorkbookSheet(wb: Workbook, trips: ExportTripInterface[]): void {
       const worsheetData: Worksheet = wb.getWorksheet('data');
+      console.debug('writting -> ' + trips.length + ' trips')
       trips.forEach(t => {
         const normalizedTrip: FlattenTripInterface = normalize(t, 'Europe/Paris');
-        worsheetData.addRow(normalizedTrip)
-        // worsheetData.getTable('Données').addRow(Object.values(normalizedTrip))
+        worsheetData.addRow(normalizedTrip);
       });
-      // worsheetData.getTable('Données').commit();
     }
 }

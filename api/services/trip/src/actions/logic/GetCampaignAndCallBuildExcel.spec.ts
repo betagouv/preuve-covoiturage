@@ -34,6 +34,8 @@ test.afterEach((t) => {
   kernelInterfaceResolverStub.restore();
 })
 
+// TODO: improve test case to match runtime example
+
 serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are in date range', async (t) => {
   // Arrange
   successStubArrange();

@@ -25,21 +25,12 @@ export class GetCampaignAndCallBuildExcel {
         getCampaignParamInterface, 
         { channel: {service : handlerConfig.service}, call: {user: { permissions: ['registry.policy.find']}}}
       )
-
     if(!this.isCampaignActive(campaign)){
-      throw new InvalidRequestException({
-        'campaign.status': campaign.status, 
-        required_campaign_status: 'active'
-      })
+      throw new InvalidRequestException('Campaign is not active')
     }
 
-    if(!this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
-      throw new InvalidRequestException({
-        'campaign.start_date': campaign.start_date,
-        'campaign.end_date': campaign.end_date, 
-         export_start_date: start_date, 
-         export_end_date: end_date
-      })
+    if(this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
+      throw new InvalidRequestException('Provided date range are not inside campagne periode')
     }
     
     return await this.buildExcelFileForCampaign.call(campaign_id, start_date, end_date);
@@ -62,7 +53,10 @@ export class GetCampaignAndCallBuildExcel {
   }
 
   private isDateRangeInsideCampagnDate(campaign: GetCampaignResultInterface,  start_date: Date, end_date): boolean {
-    return campaign.start_date < start_date && campaign.end_date > end_date || campaign.start_date > start_date && campaign.end_date < end_date;
+    console.debug('start -> ' + start_date)
+    console.debug('end -> ' + end_date)
+    return campaign.start_date < start_date && campaign.end_date > end_date || 
+           campaign.start_date > start_date && campaign.end_date < end_date;
   }
 
 }

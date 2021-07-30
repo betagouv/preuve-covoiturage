@@ -260,7 +260,7 @@ export class BuildExportAction extends Action {
     const stringifier = csvStringify({
       delimiter: ';',
       header: true,
-      columns: this.getColumns(type),
+      columns: BuildExportAction.getColumns(type),
       cast: {
         date: (d: Date): string => d.toISOString(),
         number: (n: Number): string => n.toString().replace('.', ','),
@@ -281,7 +281,7 @@ export class BuildExportAction extends Action {
     return stringifier;
   }
 
-  protected getColumns(type = 'opendata'): string[] {
+  public static getColumns(type = 'opendata'): string[] {
     switch (type) {
       case 'territory':
         return [...BuildExportAction.baseFields, ...BuildExportAction.extraFields.territory, ...BuildExportAction.financialFields];
