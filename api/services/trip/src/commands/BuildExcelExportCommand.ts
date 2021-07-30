@@ -21,7 +21,6 @@ export class BuildExcelExportCommand implements CommandInterface {
 
   public async call(options: { territory_id: number; campaign_id: number }): Promise<void> {
     const { territory_id, campaign_id } = options;
-    console.info('Stating export for policy number ' + campaign_id)
     const builExcelExportActionInterface: BuilExcelExportActionInterface = { query: { campaign_id: [campaign_id] }, format: { tz : 'Europe/Paris'}};
     await this.kernel.call<BuilExcelExportActionInterface, BuilExcelExportActionInterfaceResultInterface>(
       buildExcelEportSignature, 
