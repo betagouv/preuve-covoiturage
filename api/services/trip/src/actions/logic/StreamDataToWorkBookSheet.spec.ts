@@ -112,5 +112,6 @@ test('StreamDataToWorkBookSheet: should stream 20 rows to workbook', async (t) =
   t.deepEqual(generatedWorkbook.getWorksheet('data').getRow(1).values, [ undefined, ...BuildExportAction.getColumns('territory')]);
   t.is(generatedWorkbook.getWorksheet('data').getRow(2).values.length, BuildExportAction.getColumns('territory').length + 1);
   t.is(generatedWorkbook.getWorksheet('data').getRow(2).getCell(2).value, exportTripInterface.trip_id)
+  t.true(generatedWorkbook.getWorksheet('data').getRow(2).getCell('operator').value !== undefined)
   t.is(generatedWorkbook.getWorksheet('data').rowCount, 22)
 });
