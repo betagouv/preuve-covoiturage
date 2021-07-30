@@ -53,8 +53,6 @@ export class GetCampaignAndCallBuildExcel {
   }
 
   private isDateRangeInsideCampagnDate(campaign: GetCampaignResultInterface,  start_date: Date, end_date): boolean {
-    console.debug('start -> ' + start_date)
-    console.debug('end -> ' + end_date)
     return campaign.start_date < start_date && campaign.end_date > end_date || 
            campaign.start_date > start_date && campaign.end_date < end_date;
   }

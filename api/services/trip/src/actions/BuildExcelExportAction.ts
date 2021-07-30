@@ -26,9 +26,8 @@ export class BuildExcelExportAction extends Action {
     if(!params.query.date){
       params.query.date = { start: null, end: null}
     }
-    // TODO: Promisify all
-    params.query.campaign_id.map(async c_id => {
-      await this.getCampaignAndCallBuildExcel.call(c_id, params.query.date.start, params.query.date.end)
-    })
+    await Promise.all(params.query.campaign_id.map(c_id => {
+      this.getCampaignAndCallBuildExcel.call(c_id, params.query.date.start, params.query.date.end)
+    }));
   }
 }

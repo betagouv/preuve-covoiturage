@@ -101,7 +101,7 @@ test('StreamDataToWorkBookSheet: should stream 20 rows to workbook', async (t) =
   tripRepositoryProviderStub = sinon.stub(tripRepositoryProvider, 'searchWithCursor');
   tripRepositoryProviderStub.resolves(returnedFunction)
 
-  const wb: Workbook = new Workbook()
+  const wb: Workbook = new Workbook();
   wb.addWorksheet('data');
   
   // Act
