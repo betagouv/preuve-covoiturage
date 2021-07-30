@@ -18,8 +18,8 @@ export class StreamDataToWorkBookSheet {
           start: start_date,
           end: end_date
         },
-        campaign_id: [campaign_id]
-      });
+        campaign_id: [campaign_id],
+      }, 'territory');
       this.addColumnHeaders(wb);
       await this.happenTripsToWorkbook(getTripsCallback, wb);
       this.createTableFromRows(wb);
