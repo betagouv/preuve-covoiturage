@@ -42,7 +42,7 @@ export class CreateCertificateAction extends AbstractAction {
     // fetch the data for this identity and operator and map to template object
     // get the last available UUID for the person. They can have many
     const b1 = new Date();
-    const personUUID = await this.findPerson(identity, operator_id);
+    const personUUID: string = await this.findPerson(identity, operator_id);
     console.debug(`[cert:create] findPerson: ${(new Date().getTime() - b1.getTime()) / 1000}s`);
 
     const b2 = new Date();
@@ -51,38 +51,66 @@ export class CreateCertificateAction extends AbstractAction {
 
     // fetch the data for this identity and operator and map to template object
     const b3 = new Date();
-    const certs = await this.findTrips({ identity, operator_id, tz, start_at, end_at, positions });
+    let carpools:CarpoolInterface[] = await this.findTrips({ personUUID, operator_id, tz, start_at, end_at, positions });
     console.debug(`[cert:create] findTrips: ${(new Date().getTime() - b3.getTime()) / 1000}s`);
 
-    const rows = certs.slice(0, 11); // TODO agg the last line
-    const total_tr = Math.round(rows.reduce((sum: number, line): number => (line.trips | 0) + sum, 0)) || 0;
-    const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)) || 0;
-    const total_rm = rows.reduce((sum: number, line): number => line.rm + sum, 0) || 0;
+    // get totals
+    const total_tr = new Set(carpools.map(c => c.trip_id)).size;
+    const total_km = Math.round(carpools.reduce((sum: number, line): number => line.km + sum, 0));
+    const total_rm = carpools.reduce((sum: number, line): number => line.rac + sum, 0);
 
-    const meta = {
-      tz,
-      identity: { uuid: personUUID },
-      operator: { uuid: operator.uuid, name: operator.name },
-      total_tr,
-      total_km,
-      total_rm,
-      total_point: 0,
-      rows: rows.map((line, index) => ({
-        index,
-        month: upperFirst(this.dateProvider.format(new Date(`${line.y}-${line.m}-01`), 'MMMM yyyy')),
-        trips: line.trips | 0,
-        distance: line.km | 0,
-        remaining: line.rm || 0,
-      })),
-    };
+    // aggregate by year-month
+    let index: number = 0;
+    let results = [];
+
+    carpools
+    .map((c:CarpoolInterface) => {
+      c.month = upperFirst(this.dateProvider.format(new Date(`${c.year}-${c.month}-01`), 'MMMM yyyy'));
+      return c;
+    })
+    .reduce((acc, val)=> {
+      if(!acc[val.month]){
+        acc[val.month] = {
+          month: val.month,
+          index:index++,
+          distance: 0,
+          remaining: 0,
+          trips : 0,
+        };
+        results.push(acc[val.month]);
+      }
+      let operator_incentives = JSON.parse(val.payments).filter(p => p.type === 'incentive').reduce((incentive_sum, p) => incentive_sum + p.amount/100, 0);
+      acc[val.month].distance = acc[val.month].distance + val.km;
+      acc[val.month].remaining = acc[val.month].remaining + val.rac - operator_incentives;
+      acc[val.month].trips = acc[val.month].trips + 1;
+      return acc;
+    }, {});
+
+    // truncate totals
+    results = results.map(r => {
+      return {
+        ...r,
+        remaining: parseInt(r.remaining),
+        distance: parseInt(r.distance)
+      }
+    })
 
     // store the certificate
     const certificate = await this.certRepository.create({
-      meta,
+      meta: {
+        tz,
+        identity: { uuid: personUUID },
+        operator: { uuid: operator.uuid, name: operator.name },
+        total_tr,
+        total_km,
+        total_rm,
+        total_point: 0,
+        rows: results.slice(0, 11),  // TODO agg the last line
+      },
       end_at,
       start_at,
       operator_id,
-      identity_uuid: meta.identity.uuid,
+      identity_uuid: personUUID,
     });
 
     return {
