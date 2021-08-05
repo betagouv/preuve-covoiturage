@@ -1,8 +1,4 @@
 {
-  "files.exclude": {
-    "**/*.postman_collection.json": true,
-    "api/**/dist": true
-  },
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
   "javascript.preferences.quoteStyle": "single",
@@ -22,5 +18,19 @@
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.watcherExclude": {
+    "**/node_modules": true,
+    "**/*.postman_collection.json": true,
+    "**/dist/**": false
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "files.exclude": {
+    "**/*.postman_collection.json": true,
+    "api/**/dist": true,
+    "**/node_modules/**": true
   }
 }
