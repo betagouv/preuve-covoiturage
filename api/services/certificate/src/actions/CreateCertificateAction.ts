@@ -54,9 +54,13 @@ export class CreateCertificateAction extends AbstractAction {
     let carpools:CarpoolInterface[] = await this.findTrips({ personUUID, operator_id, tz, start_at, end_at, positions });
     console.debug(`[cert:create] findTrips: ${(new Date().getTime() - b3.getTime()) / 1000}s`);
 
+    // no trips found
     if(carpools.length === 0) {
       throw new NotFoundException('No trips found for provided identity')
     }
+
+    // remove duplicate trip_id
+    carpools = carpools.filter((item, index, array) => array.findIndex(t => (t.trip_id === item.trip_id)) === index)
 
     // get totals
     const total_tr = new Set(carpools.map(c => c.trip_id)).size;
@@ -94,7 +98,7 @@ export class CreateCertificateAction extends AbstractAction {
     results = results.map(r => {
       return {
         ...r,
-        remaining: parseInt(r.remaining),
+        remaining: Math.floor(r.remaining*100)/100,
         distance: parseInt(r.distance)
       }
     })
