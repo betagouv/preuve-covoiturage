@@ -1,4 +1,3 @@
-import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
 import { PointInterface } from '../shared/common/interfaces/PointInterface';
 
 // TODO replace any output by proper interface

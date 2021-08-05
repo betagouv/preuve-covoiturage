@@ -27,13 +27,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
     const { personUUID, operator_id, tz, start_at, end_at, positions = [], radius = 1000 } = params;
 
     // TODO get tz
-    const values: any[] = [
-      personUUID,
-      operator_id,
-      start_at,
-      end_at,
-      this.config.get('trips.ratePerKm'),
-    ];
+    const values: any[] = [personUUID, operator_id, start_at, end_at, this.config.get('trips.ratePerKm')];
 
     const where_positions = positions
       .reduce((prev: string[], pos: PointInterface): string[] => {
