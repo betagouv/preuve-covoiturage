@@ -1,5 +1,5 @@
 import { upperFirst, omit } from 'lodash';
-import { handler, KernelInterfaceResolver, ConfigInterfaceResolver, ContextType } from '@ilos/common';
+import { handler, KernelInterfaceResolver, ConfigInterfaceResolver, ContextType, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
@@ -53,6 +53,10 @@ export class CreateCertificateAction extends AbstractAction {
     const b3 = new Date();
     let carpools:CarpoolInterface[] = await this.findTrips({ personUUID, operator_id, tz, start_at, end_at, positions });
     console.debug(`[cert:create] findTrips: ${(new Date().getTime() - b3.getTime()) / 1000}s`);
+
+    if(carpools.length === 0) {
+      throw new NotFoundException('No trips found for provided identity')
+    }
 
     // get totals
     const total_tr = new Set(carpools.map(c => c.trip_id)).size;
