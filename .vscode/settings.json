@@ -4,21 +4,16 @@
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
   "editor.formatOnSave": true,
-  "prettier.configPath": "docker/lint/.prettierrc.js",
-  "prettier.prettierPath": "docker/lint/node_modules/prettier",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
   },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "eslint.nodePath": "/home/parmentier/Developements/preuve-covoiturage/docker/lint/node_modules",
+  "eslint.options": {
+    "configFile": "docker/lint/.eslintrc.js"
   },
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
+  "eslint.alwaysShowStatus": true,
+  "eslint.format.enable": true,
   "files.watcherExclude": {
     "**/node_modules": true,
     "**/*.postman_collection.json": true,
