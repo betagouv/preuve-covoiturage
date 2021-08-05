@@ -8,7 +8,7 @@
     "source.fixAll.eslint": true
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "eslint.nodePath": "/home/parmentier/Developements/preuve-covoiturage/docker/lint/node_modules",
+  "eslint.nodePath": "./docker/lint/node_modules",
   "eslint.options": {
     "configFile": "docker/lint/.eslintrc.js"
   },
