@@ -4,7 +4,7 @@ import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { ExportTripInterface } from '../../interfaces';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { BuildExportAction } from './../BuildExportAction';
+import { BuildExportAction } from '../BuildExportAction';
 import { StreamDataToWorkBookSheet } from './StreamDataToWorkBookSheet';
 
 export const exportTripInterface: ExportTripInterface<Date> = {

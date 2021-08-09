@@ -1,7 +1,7 @@
 import test, { serial } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { BuildExcelExportAction } from './BuildExcelExportAction';
-import { GetCampaignAndCallBuildExcel } from './logic/GetCampaignAndCallBuildExcel';
+import { GetCampaignAndCallBuildExcel } from './excel/GetCampaignAndCallBuildExcel';
 import faker from 'faker';
 
 let buildExcelExportAction: BuildExcelExportAction;

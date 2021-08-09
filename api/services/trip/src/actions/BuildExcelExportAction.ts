@@ -1,7 +1,7 @@
 import { ContextType, handler, InvalidParamsException } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExcelExport.contract';
-import { GetCampaignAndCallBuildExcel } from './logic/GetCampaignAndCallBuildExcel';
+import { GetCampaignAndCallBuildExcel } from './excel/GetCampaignAndCallBuildExcel';
 
 @handler({
   ...handlerConfig,
