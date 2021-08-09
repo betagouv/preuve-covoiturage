@@ -164,7 +164,7 @@ export class CreateCertificateAction extends AbstractAction {
     return metaRows.map((r) => {
       return {
         ...r,
-        remaining: Math.floor(r.remaining * 100) / 100,
+        remaining: r.remaining < 0 ? 0 : Math.floor(r.remaining * 100) / 100,
         distance: parseInt(r.distance.toString()),
       };
     });
