@@ -1,6 +1,5 @@
 import { PointInterface } from '../shared/common/interfaces/PointInterface';
 
-// TODO replace any output by proper interface
 export interface CarpoolInterface {
   month: string;
   year: string;

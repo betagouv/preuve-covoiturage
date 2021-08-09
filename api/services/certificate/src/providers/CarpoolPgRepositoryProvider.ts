@@ -20,8 +20,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
    * Find all carpools for an identity on a given period of time
    *
    * TODO find a more elegant way to use the join on carpool AND policy schemas
-   * TODO filter by operator AND territory too
-   * TODO replace any output by proper interface
+   * TODO filter by territory
    */
   async find(params: FindParamsInterface): Promise<CarpoolInterface[]> {
     const { personUUID, operator_id, tz, start_at, end_at, positions = [], radius = 1000 } = params;
