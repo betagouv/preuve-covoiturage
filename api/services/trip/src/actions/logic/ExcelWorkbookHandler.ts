@@ -6,8 +6,7 @@ import { v4 } from 'uuid';
 
 @provider()
 export class ExcelWorkbookHandler {
-
-  static readonly template_location: string = __dirname+'/../../fundcalls_template.xlsx';
+  static readonly template_location: string = __dirname + '/../../fundcalls_template.xlsx';
 
   async loadWorkbookTemplate(): Promise<Workbook> {
     const wb = new Workbook();
@@ -19,5 +18,4 @@ export class ExcelWorkbookHandler {
     await workbook.xlsx.writeFile(filename);
     return filename;
   }
-
 }

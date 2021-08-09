@@ -284,15 +284,25 @@ export class BuildExportAction extends Action {
   public static getColumns(type = 'opendata'): string[] {
     switch (type) {
       case 'territory':
-        return [...BuildExportAction.baseFields, ...BuildExportAction.extraFields.territory, ...BuildExportAction.financialFields];
+        return [
+          ...BuildExportAction.baseFields,
+          ...BuildExportAction.extraFields.territory,
+          ...BuildExportAction.financialFields,
+        ];
       case 'operator':
-        return [...BuildExportAction.baseFields, ...BuildExportAction.extraFields.operator, ...BuildExportAction.financialFields];
+        return [
+          ...BuildExportAction.baseFields,
+          ...BuildExportAction.extraFields.operator,
+          ...BuildExportAction.financialFields,
+        ];
       case 'registry':
-        return [...BuildExportAction.baseFields, ...BuildExportAction.extraFields.registry, ...BuildExportAction.financialFields];
+        return [
+          ...BuildExportAction.baseFields,
+          ...BuildExportAction.extraFields.registry,
+          ...BuildExportAction.financialFields,
+        ];
       default:
         return [...BuildExportAction.baseFields, ...BuildExportAction.extraFields.opendata];
     }
   }
-
-  
 }
