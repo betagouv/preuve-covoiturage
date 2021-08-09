@@ -1,5 +1,5 @@
 import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
-import test, { only, serial } from 'ava';
+import test, { serial } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import {
