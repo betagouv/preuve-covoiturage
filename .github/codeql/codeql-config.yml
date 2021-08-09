@@ -1,0 +1,3 @@
+## Ignore cypress invalid SARIF to avoid codeQL error
+paths-ignore:
+  - tests/cypress/integration/common/*.ts
