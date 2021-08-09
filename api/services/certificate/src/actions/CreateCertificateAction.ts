@@ -77,7 +77,7 @@ export class CreateCertificateAction extends AbstractAction {
     const total_rm = carpools.reduce((sum: number, line): number => line.rac + sum, 0);
     const metaRows: MetaRowInterface[] = this.aggregateTripByYearMonth(carpools);
 
-    const certificate = await this.storeCertificate(
+    const certificate: CertificateInterface = await this.storeCertificate(
       tz,
       personUUID,
       operator,
