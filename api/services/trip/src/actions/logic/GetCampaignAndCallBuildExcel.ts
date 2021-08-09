@@ -29,7 +29,7 @@ export class GetCampaignAndCallBuildExcel {
       throw new InvalidRequestException('Campaign is not active');
     }
 
-    if (this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
+    if (!this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
       throw new InvalidRequestException('Provided date range are not inside campagne periode');
     }
 
@@ -54,8 +54,9 @@ export class GetCampaignAndCallBuildExcel {
 
   private isDateRangeInsideCampagnDate(campaign: GetCampaignResultInterface, start_date: Date, end_date): boolean {
     return (
-      (campaign.start_date < start_date && campaign.end_date > end_date) ||
-      (campaign.start_date > start_date && campaign.end_date < end_date)
+      (campaign.start_date > start_date && campaign.start_date < end_date) ||
+      (campaign.end_date < end_date && campaign.end_date > start_date) ||
+      (campaign.start_date < start_date && campaign.end_date > end_date)
     );
   }
 }

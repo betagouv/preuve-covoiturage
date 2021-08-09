@@ -1,13 +1,13 @@
 import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
-import test, { serial } from 'ava';
+import test, { only, serial } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import {
   ParamsInterface as GetCampaignParamInterface,
   ResultInterface as GetCampaignResultInterface,
 } from '../../shared/policy/find.contract';
-import { GetCampaignAndCallBuildExcel } from './GetCampaignAndCallBuildExcel';
 import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
+import { GetCampaignAndCallBuildExcel } from './GetCampaignAndCallBuildExcel';
 
 const RETURNED_EXCEL_PATH: string = faker.system.directoryPath();
 
@@ -40,8 +40,6 @@ test.afterEach((t) => {
   kernelInterfaceResolverStub.restore();
 });
 
-// TODO: improve test case to match runtime example
-
 serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are in date range', async (t) => {
   // Arrange
   successStubArrange();
@@ -59,6 +57,25 @@ serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date a
   t.is(excelPath, RETURNED_EXCEL_PATH);
   sinon.assert.calledOnce(kernelInterfaceResolverStub);
   sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub, campaign._id, startOfMonth, endOfMonth);
+});
+
+serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date intersect range', async (t) => {
+  // Arrange
+  successStubArrange();
+
+  const todayMinus3Years: Date = new Date();
+  todayMinus3Years.setFullYear(todayMinus3Years.getFullYear() - 3);
+
+  const todayPlus1Year: Date = new Date();
+  todayPlus1Year.setFullYear(todayPlus1Year.getFullYear() + 1);
+
+  // Act
+  const excelPath: string = await getCampaignAndCallBuildExcel.call(campaign._id, todayMinus3Years, todayPlus1Year);
+
+  // Assert
+  t.is(excelPath, RETURNED_EXCEL_PATH);
+  sinon.assert.calledOnce(kernelInterfaceResolverStub);
+  sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub, campaign._id, todayMinus3Years, todayPlus1Year);
 });
 
 serial(

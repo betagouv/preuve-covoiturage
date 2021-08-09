@@ -45,7 +45,7 @@ serial('BuildExcelExportAction: should create 1 xlsx file if no date range provi
 });
 
 serial(
-  'BuildExcelExportAction: should throw BadRequestException if at least one of campaign_id or territory_id is not provided',
+  'BuildExcelExportAction: should throw BadRequestException if at least 1 campaign_id or territory_id is not provided',
   async (t) => {
     // Arrange
 
