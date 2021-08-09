@@ -16,7 +16,7 @@
   "files.watcherExclude": {
     "**/node_modules": true,
     "**/*.postman_collection.json": true,
-    "**/dist/**": false
+    "**/dist/**": true
   },
   "search.exclude": {
     "**/node_modules": true,
