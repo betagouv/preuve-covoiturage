@@ -1,8 +1,5 @@
+name: "CodeQL config"
+
 ## Ignore cypress invalid SARIF to avoid codeQL error
-paths:
-  - api
-  - shared
-  - dashboard
-  - doc
 paths-ignore:
   - tests/cypress/integration/common/*.ts
