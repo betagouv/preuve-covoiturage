@@ -5,16 +5,17 @@
 # or to provide custom queries or build logic.
 name: "Analysis - CodeQL"
 
-## Ignore cypress invalid SARIF to avoid codeQL error
-paths-ignore:
-  - tests/cypress/integration/common/*.ts
-
 on:
   push:
     branches: [dev]
+    ## Ignore cypress invalid SARIF to avoid codeQL error
+    paths-ignore:
+      - tests/cypress/integration/common/*.ts
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [dev]
+    paths-ignore:
+      - tests/cypress/integration/common/*.ts
   schedule:
     - cron: '0 1 * * 5'
 
