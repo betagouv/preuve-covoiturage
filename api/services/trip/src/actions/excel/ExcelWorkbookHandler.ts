@@ -14,8 +14,12 @@ export class ExcelWorkbookHandler {
   }
 
   async writeWorkbookToTempFile(workbook: Workbook, campaign_name: string): Promise<string> {
-    const filepath = path.join(os.tmpdir(), `apdf-${campaign_name}-${v4()}`) + '.xlsx';
+    const filepath = path.join(os.tmpdir(), `apdf-${this.sanitazeString(campaign_name)}-${v4()}`) + '.xlsx';
     await workbook.xlsx.writeFile(filepath);
     return filepath;
+  }
+
+  private sanitazeString(campaign_name: string): string {
+    return campaign_name.toLowerCase().substring(0, 8).replace(/\ /g, '_');
   }
 }
