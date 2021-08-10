@@ -25,6 +25,7 @@ export class GetCampaignAndCallBuildExcel {
       channel: { service: handlerConfig.service },
       call: { user: { permissions: ['registry.policy.find'] } },
     });
+    // TODO remove that case ?
     if (!this.isCampaignActive(campaign)) {
       throw new InvalidRequestException('Campaign is not active');
     }

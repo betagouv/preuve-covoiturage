@@ -24,7 +24,9 @@ export class StreamDataToWorkBookSheet {
       'territory',
     );
     this.addColumnHeaders(wb);
+    const emptyRowsCount: number = wb.getWorksheet('data').lastRow.number;
     await this.happenTripsToWorkbook(getTripsCallback, wb);
+    wb.getWorksheet('data').spliceRows(1, emptyRowsCount - 1);
     this.createTableFromRows(wb);
     return wb;
   }

@@ -18,3 +18,5 @@ export const handlerConfig = {
   service: 'trip',
   method: 'buildExcelExport',
 };
+
+export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

@@ -1,14 +1,13 @@
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { ContextType, handler, InvalidParamsException } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExcelExport.contract';
 import { GetCampaignAndCallBuildExcel } from './excel/GetCampaignAndCallBuildExcel';
 import { alias } from '../shared/trip/buildExcelExport.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
+  // middlewares: [['validate', alias]],
 })
 export class BuildExcelExportAction extends Action {
   constructor(
@@ -20,19 +19,24 @@ export class BuildExcelExportAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     this.throwInvalidParamsIfMissings(params);
-    this.setDefaultDates(params);
+    this.castOrSetDefaultDates(params);
     await Promise.all(
       params.query.campaign_id.map((c_id) =>
         this.getCampaignAndCallBuildExcel
           .call(c_id, params.query.date.start, params.query.date.end)
-          .then((filepath) => this.s3StorageProvider.upload(BucketName.Export, filepath)),
+          .then((filepath) => this.s3StorageProvider.upload(BucketName.Export, filepath))
+          .catch((error) => console.error('Could not process campaign export')),
       ),
     );
   }
 
-  private setDefaultDates(params: ParamsInterface) {
+  private castOrSetDefaultDates(params: ParamsInterface) {
     if (!params.query.date) {
       params.query.date = { start: null, end: null };
+    } else {
+      const start = new Date(params.query.date.start);
+      const end = new Date(params.query.date.end);
+      params.query.date = { start, end };
     }
   }
 

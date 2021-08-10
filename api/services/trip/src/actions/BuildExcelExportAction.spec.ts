@@ -54,6 +54,39 @@ serial('BuildExcelExportAction: should create 1 xlsx file if no date range provi
   t.pass();
 });
 
+serial('BuildExcelExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
+  // Arrange
+  const filepath = '/tmp/exports/campaign-' + uuid() + '.xlsx';
+  getCampaignAndCallBuildExcelStub.resolves(filepath);
+  s3StorageProviderStub.resolves('s3-key');
+
+  // Act
+  await buildExcelExportAction.handle(
+    {
+      format: { tz: 'Europe/Paris' },
+      query: {
+        campaign_id: [CAMPAIGN_ID],
+        date: {
+          start: '2020-01-08T00:00:00Z',
+          end: '2020-02-08T00:00:00Z',
+        },
+      },
+      // Cast to check date type conversion
+    } as any,
+    null,
+  );
+
+  // Assert
+  sinon.assert.calledOnceWithExactly(
+    getCampaignAndCallBuildExcelStub,
+    CAMPAIGN_ID,
+    new Date('2020-01-08T00:00:00Z'),
+    new Date('2020-02-08T00:00:00Z'),
+  );
+  sinon.assert.calledOnceWithExactly(s3StorageProviderStub, BucketName.Export, filepath);
+  t.pass();
+});
+
 serial(
   'BuildExcelExportAction: should throw BadRequestException if at least 1 campaign_id or territory_id is not provided',
   async (t) => {
