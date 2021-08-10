@@ -48,7 +48,7 @@ import { BuildExcelExportAction } from './actions/BuildExcelExportAction';
     sendExportBinding,
     publicStatsBinding,
     publishOpenDataBinding,
-    // buildExcelExportBinding,
+    buildExcelExportBinding,
   ],
   middlewares: [
     ...defaultMiddlewareBindings,
