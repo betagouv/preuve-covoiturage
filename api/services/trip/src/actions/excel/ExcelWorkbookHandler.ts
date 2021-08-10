@@ -14,8 +14,8 @@ export class ExcelWorkbookHandler {
   }
 
   async writeWorkbookToTempFile(workbook: Workbook): Promise<string> {
-    const filename = path.join(os.tmpdir(), `appel-${v4()}`) + '.xlsx';
-    await workbook.xlsx.writeFile(filename);
-    return filename;
+    const filepath = path.join(os.tmpdir(), `appel-${v4()}`) + '.xlsx';
+    await workbook.xlsx.writeFile(filepath);
+    return filepath;
   }
 }
