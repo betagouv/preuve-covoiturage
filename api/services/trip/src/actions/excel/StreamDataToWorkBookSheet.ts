@@ -5,12 +5,11 @@ import { normalize } from '../../helpers/normalizeExportDataHelper';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { provider } from '@ilos/common';
 
-// TODO: fix writing to table. Issue probably from column/row length difference
 @provider()
 export class StreamDataToWorkBookSheet {
   constructor(private tripRepositoryProvider: TripRepositoryProvider) {}
 
-  async call(campaign_id: number, wb: Workbook, start_date: Date, end_date: Date): Promise<Workbook> {
+  async call(campaign_id: number, workbook: Workbook, start_date: Date, end_date: Date): Promise<Workbook> {
     const getTripsCallback: (
       count: number,
     ) => Promise<ExportTripInterface[]> = await this.tripRepositoryProvider.searchWithCursor(
@@ -23,21 +22,26 @@ export class StreamDataToWorkBookSheet {
       },
       'territory',
     );
-    this.addColumnHeaders(wb);
-    const emptyRowsCount: number = wb.getWorksheet('data').lastRow.number;
-    await this.happenTripsToWorkbook(getTripsCallback, wb);
-    wb.getWorksheet('data').spliceRows(1, emptyRowsCount - 1);
-    this.createTableFromRows(wb);
-    return wb;
+    this.addColumnHeaders(workbook);
+    const emptyRowsCount: number = workbook.getWorksheet('data').lastRow.number;
+    const b1 = new Date();
+    await this.happenTripsToWorkbook(getTripsCallback, workbook);
+    console.debug(`[trip:buildExcelExport] happenTripsToWorkbook: ${(new Date().getTime() - b1.getTime()) / 1000}s`);
+    // Discard empty rows from worksheet, should not be there in the first place ...
+    workbook.getWorksheet('data').spliceRows(1, emptyRowsCount - 1);
+    const b2 = new Date();
+    this.createTableFromRows(workbook);
+    console.debug(`[trip:buildExcelExport] createTableFromRows: ${(new Date().getTime() - b2.getTime()) / 1000}s`);
+    return workbook;
   }
 
-  private createTableFromRows(wb: Workbook) {
-    const rowArray: any[] = wb
+  private createTableFromRows(workbook: Workbook) {
+    const rowArray: any[] = workbook
       .getWorksheet('data')
-      .getRows(2, wb.getWorksheet('data').rowCount)
+      .getRows(2, workbook.getWorksheet('data').rowCount)
       .map((r) => Object.values(r.values));
 
-    wb.getWorksheet('data').addTable({
+    workbook.getWorksheet('data').addTable({
       name: 'Données',
       ref: 'A1',
       style: {
@@ -55,10 +59,10 @@ export class StreamDataToWorkBookSheet {
     });
   }
 
-  private async happenTripsToWorkbook(getTrips: (count: number) => Promise<ExportTripInterface[]>, wb: Workbook) {
+  private async happenTripsToWorkbook(getTrips: (count: number) => Promise<ExportTripInterface[]>, workbook: Workbook) {
     let results: ExportTripInterface[] = await getTrips(10);
     while (results.length !== 0) {
-      this.writeToWorkbookSheet(wb, results);
+      this.writeToWorkbookSheet(workbook, results);
       results = await getTrips(10);
     }
   }
