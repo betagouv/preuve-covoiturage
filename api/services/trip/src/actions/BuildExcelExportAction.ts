@@ -20,13 +20,11 @@ export class BuildExcelExportAction extends Action {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     this.throwInvalidParamsIfMissings(params);
     this.castOrSetDefaultDates(params);
-    await Promise.all(
-      params.query.campaign_id.map((c_id) =>
-        this.getCampaignAndCallBuildExcel
-          .call(c_id, params.query.date.start, params.query.date.end)
-          .then((filepath) => this.s3StorageProvider.upload(BucketName.Export, filepath))
-          .catch((error) => console.error('Could not process campaign export')),
-      ),
+    params.query.campaign_id.map((c_id) =>
+      this.getCampaignAndCallBuildExcel
+        .call(c_id, params.query.date.start, params.query.date.end)
+        .then((filepath) => this.s3StorageProvider.upload(BucketName.Export, filepath))
+        .catch((error) => console.error('Could not process campaign export')),
     );
   }
 

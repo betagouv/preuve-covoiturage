@@ -13,8 +13,8 @@ export class ExcelWorkbookHandler {
     return wb.xlsx.readFile(ExcelWorkbookHandler.template_location);
   }
 
-  async writeWorkbookToTempFile(workbook: Workbook): Promise<string> {
-    const filepath = path.join(os.tmpdir(), `appel-${v4()}`) + '.xlsx';
+  async writeWorkbookToTempFile(workbook: Workbook, campaign_name: string): Promise<string> {
+    const filepath = path.join(os.tmpdir(), `apdf-${campaign_name}-${v4()}`) + '.xlsx';
     await workbook.xlsx.writeFile(filepath);
     return filepath;
   }

@@ -10,6 +10,7 @@ import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
 import { GetCampaignAndCallBuildExcel } from './GetCampaignAndCallBuildExcel';
 
 const RETURNED_EXCEL_PATH: string = faker.system.directoryPath();
+const CAMPAIGN_NAME: string = faker.random.word();
 
 let getCampaignAndCallBuildExcel: GetCampaignAndCallBuildExcel;
 
@@ -56,7 +57,13 @@ serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date a
   // Assert
   t.is(excelPath, RETURNED_EXCEL_PATH);
   sinon.assert.calledOnce(kernelInterfaceResolverStub);
-  sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub, campaign._id, startOfMonth, endOfMonth);
+  sinon.assert.calledOnceWithExactly(
+    buildExcelFileForCampaignStub,
+    campaign._id,
+    startOfMonth,
+    endOfMonth,
+    CAMPAIGN_NAME,
+  );
 });
 
 serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date intersect range', async (t) => {
@@ -75,7 +82,13 @@ serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date i
   // Assert
   t.is(excelPath, RETURNED_EXCEL_PATH);
   sinon.assert.calledOnce(kernelInterfaceResolverStub);
-  sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub, campaign._id, todayMinus3Years, todayPlus1Year);
+  sinon.assert.calledOnceWithExactly(
+    buildExcelFileForCampaignStub,
+    campaign._id,
+    todayMinus3Years,
+    todayPlus1Year,
+    CAMPAIGN_NAME,
+  );
 });
 
 serial(
@@ -110,7 +123,13 @@ serial('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date a
   // Assert
   t.is(excelPath, RETURNED_EXCEL_PATH);
   sinon.assert.calledOnce(kernelInterfaceResolverStub);
-  sinon.assert.calledOnceWithExactly(buildExcelFileForCampaignStub, campaign._id, todayMinus3Years, todayPlus3Years);
+  sinon.assert.calledOnceWithExactly(
+    buildExcelFileForCampaignStub,
+    campaign._id,
+    todayMinus3Years,
+    todayPlus3Years,
+    CAMPAIGN_NAME,
+  );
 });
 
 serial('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaign with id', async (t) => {
@@ -183,7 +202,7 @@ const createGetCampaignResultInterface = (
 ): GetCampaignResultInterface => {
   return {
     _id: faker.random.number(),
-    name: faker.random.word(),
+    name: CAMPAIGN_NAME,
     unit: '',
     description: faker.random.words(8),
     rules: [],

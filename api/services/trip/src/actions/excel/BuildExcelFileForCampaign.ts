@@ -10,7 +10,7 @@ export class BuildExcelFileForCampaign {
     private streamDataToWorkBookSheet: StreamDataToWorkBookSheet,
   ) {}
 
-  async call(campaign_id: number, start_date: Date, end_date: Date): Promise<string> {
+  async call(campaign_id: number, start_date: Date, end_date: Date, campaign_name: string): Promise<string> {
     const templateWorkbook: Workbook = await this.excelWorkbookHandler.loadWorkbookTemplate();
     const processedWorkbook: Workbook = await this.streamDataToWorkBookSheet.call(
       campaign_id,
@@ -18,6 +18,6 @@ export class BuildExcelFileForCampaign {
       start_date,
       end_date,
     );
-    return await this.excelWorkbookHandler.writeWorkbookToTempFile(processedWorkbook);
+    return await this.excelWorkbookHandler.writeWorkbookToTempFile(processedWorkbook, campaign_name);
   }
 }

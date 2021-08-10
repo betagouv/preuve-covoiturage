@@ -11,6 +11,7 @@ let excelWorkbookHandler: ExcelWorkbookHandler;
 let streamTripsForCampaginComponent: StreamDataToWorkBookSheet;
 
 const CAMPAIGN_ID: number = faker.random.number();
+const CAMPAIGN_NAME: string = faker.random.alphaNumeric();
 const RETURNED_EXCEL_PATH: string = faker.system.directoryPath();
 const TEMPLATE_WORKBOOK: Workbook = new Workbook();
 const GENERATED_WORKBOOK: Workbook = new Workbook();
@@ -35,10 +36,10 @@ test('BuildExcelFileForCampaign: should return path to excel file', async (t) =>
   writeWorkBookToTempFileStub.resolves(RETURNED_EXCEL_PATH);
 
   // Act
-  const excelPath: string = await buildExcelFileForCampaign.call(CAMPAIGN_ID, date, date);
+  const excelPath: string = await buildExcelFileForCampaign.call(CAMPAIGN_ID, date, date, CAMPAIGN_NAME);
 
   // Assert
   sinon.assert.calledOnceWithExactly(streamTripsForCampaginComponentStub, CAMPAIGN_ID, TEMPLATE_WORKBOOK, date, date);
-  sinon.assert.calledOnceWithExactly(writeWorkBookToTempFileStub, GENERATED_WORKBOOK);
+  sinon.assert.calledOnceWithExactly(writeWorkBookToTempFileStub, GENERATED_WORKBOOK, CAMPAIGN_NAME);
   t.is(excelPath, RETURNED_EXCEL_PATH);
 });

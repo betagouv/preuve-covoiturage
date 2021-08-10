@@ -32,7 +32,7 @@ export class GetCampaignAndCallBuildExcel {
     if (!this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
       throw new InvalidRequestException('Provided date range are not inside campagne periode');
     }
-    return await this.buildExcelFileForCampaign.call(campaign_id, start_date, end_date);
+    return await this.buildExcelFileForCampaign.call(campaign_id, start_date, end_date, campaign.name);
   }
 
   private endOfPreviousMonthDate(): Date {
