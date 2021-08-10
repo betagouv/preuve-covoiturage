@@ -13,7 +13,9 @@ import { binding as searchCountBinding } from './shared/trip/searchcount.schema'
 import { binding as statsBinding } from './shared/trip/stats.schema';
 import { binding as exportBinding } from './shared/trip/export.schema';
 import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
+import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
 import { binding as publicStatsBinding } from './shared/trip/publicStats.schema';
+import { binding as publishOpenDataBinding } from './shared/trip/publishOpenData.schema';
 
 import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
@@ -24,19 +26,29 @@ import { ExportAction } from './actions/ExportAction';
 import { SearchCountAction } from './actions/SearchCountAction';
 import { BuildExportAction } from './actions/BuildExportAction';
 import { FinancialStatsAction } from './actions/FinancialStatsAction';
+import { SendExportAction } from './actions/SendExportAction';
+import { PublishOpenDataAction } from './actions/PublishOpenDataAction';
 
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
 import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
-import { BuildExcelExportCommand } from './commands/BuildExcelExportCommand';
 import { BuildExcelExportAction } from './actions/BuildExcelExportAction';
 
 @serviceProvider({
   config,
   providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider, CryptoProvider],
-  commands: [BuildExcelExportCommand],
-  validator: [listBinding, searchCountBinding, statsBinding, exportBinding, buildExportBinding, publicStatsBinding],
+  validator: [
+    listBinding,
+    searchCountBinding,
+    statsBinding,
+    exportBinding,
+    buildExportBinding,
+    sendExportBinding,
+    publicStatsBinding,
+    publishOpenDataBinding,
+  ],
+
   middlewares: [
     ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
@@ -56,6 +68,8 @@ import { BuildExcelExportAction } from './actions/BuildExcelExportAction';
     BuildExportAction,
     BuildExcelExportAction,
     TripCacheWarmCron,
+    SendExportAction,
+    PublishOpenDataAction,
   ],
   queues: ['trip'],
 })

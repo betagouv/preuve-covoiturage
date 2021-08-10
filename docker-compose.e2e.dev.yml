@@ -1,0 +1,72 @@
+version: '3.5'
+services:
+  postgres:
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'local'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+    volumes:
+      - ${PWD}/db/postgres:/var/lib/postgresql/data/pgdata
+
+  redis:
+    ports:
+      - 6379:6379
+
+  mailer:
+    ports:
+      - 8025:8025
+
+  dashboard:
+    build:
+      dockerfile: ./docker/dashboard/Dockerfile
+      context: .
+    volumes:
+      - ${PWD}/dashboard:/app/dashboard
+      - ${PWD}/docker/dashboard/ci.env.js:/app/dashboard/src/assets/env.js:ro
+      - ${PWD}/shared:/app/shared:ro
+    tty: true
+    labels:
+      - 'traefik.http.services.dashboard.loadbalancer.server.port=4200'
+
+  
+  api:
+    environment:
+      PORT: 8080
+      APP_RATE_LIMIT_MAX_FACTOR: '0'
+    
+  api:
+    build:
+      dockerfile: ./docker/api/Dockerfile
+      context: .
+    volumes:
+      - ${PWD}/api:/app/api
+      - ${PWD}/shared:/app/shared:ro
+    command: 'sh -c "pm2-runtime start ../pm2-api.json | pino-pretty"'
+    tty: true
+    environment:
+      DEBUG: 'api'
+      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
+
+  worker:
+    build:
+      dockerfile: ./docker/api/Dockerfile
+      context: .
+    volumes:
+      - ${PWD}/api:/app/api
+      - ${PWD}/shared:/app/shared:ro
+    command: 'sh -c "pm2-runtime start ../pm2-worker.json | pino-pretty"'
+    tty: true 
+    environment:
+      DEBUG: 'worker'
+      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
+
+  s3:
+    ports:
+      - 9000:9000
+
+networks:
+  front:
+  back:
