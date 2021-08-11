@@ -11,7 +11,7 @@
 # API services
 /api/services/acquisition			@jonathanfallon
 /api/services/application			@jonathanfallon
-/api/services/certificate			@jonathanfallon
+/api/services/certificate			@jonathanfallon @P3rceval
 /api/services/company				  @nmrgt
 /api/services/fraud					  @nmrgt
 /api/services/normalization		@jonathanfallon
