@@ -89,7 +89,6 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
     this.text('Distance :', { x: 60, y: totalY, font: this.fonts.bold });
     this.text(`${data.data.total_km || 0} km`, { x: 120, y: totalY, font: this.fonts.bold });
-    console.debug('data' + JSON.stringify(data));
     if (data.data.total_point !== 0) {
       this.text('Points :', { x: 180, y: totalY, font: this.fonts.bold });
       this.text(`${data.data.total_point}`, { x: 230, y: totalY, font: this.fonts.bold });
