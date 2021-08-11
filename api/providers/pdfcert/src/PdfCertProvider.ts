@@ -71,9 +71,9 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.text(`Période : du ${data.certificate.start_at} au ${data.certificate.end_at}`, { x: 160, y: 511 });
 
     // table
-    this.drawHeader();
+    this.drawHeader(data.data.total_point !== 0);
     for (let i = 0; i < data.data.rows.length; i++) {
-      this.drawRow(i, data.data.rows[i]);
+      this.drawRow(i, data.data.rows[i], data.data.total_point !== 0);
     }
 
     // summary
@@ -89,9 +89,11 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
     this.text('Distance :', { x: 60, y: totalY, font: this.fonts.bold });
     this.text(`${data.data.total_km || 0} km`, { x: 120, y: totalY, font: this.fonts.bold });
-
-    this.text('Points :', { x: 180, y: totalY, font: this.fonts.bold });
-    this.text(`${data.data.total_pt || 0}`, { x: 230, y: totalY, font: this.fonts.bold });
+    console.debug('data' + JSON.stringify(data));
+    if (data.data.total_point !== 0) {
+      this.text('Points :', { x: 180, y: totalY, font: this.fonts.bold });
+      this.text(`${data.data.total_point}`, { x: 230, y: totalY, font: this.fonts.bold });
+    }
 
     this.text('Reste à charge :', { x: 330, y: totalY, font: this.fonts.bold });
     this.text(`${this.currency(data.data.total_rm)} €`, { x: 440, y: totalY, font: this.fonts.bold });
@@ -214,17 +216,19 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.page.drawText(str, options);
   }
 
-  private drawHeader() {
+  private drawHeader(withPoints: boolean) {
     const y = this.tableY + 22;
 
     this.text('Date', { x: this.tableX, y, font: this.fonts.bold });
     this.text('Trajets', { x: this.tableX + 130, y, font: this.fonts.bold });
     this.text('Distance', { x: this.tableX + 210, y, font: this.fonts.bold });
-    this.text('Points', { x: this.tableX + 300, y, font: this.fonts.bold });
+    if (withPoints) {
+      this.text('Points', { x: this.tableX + 300, y, font: this.fonts.bold });
+    }
     this.text('Reste à charge', { x: this.tableX + 380, y, font: this.fonts.bold });
   }
 
-  private drawRow(index: number, row: PdfCertRow): void {
+  private drawRow(index: number, row: PdfCertRow, withPoints: boolean): void {
     const rowY = this.tableY - index * this.tableLineHeight;
 
     if (index % 2 === 0) {
@@ -240,7 +244,9 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.text(`${row.month}`, { x: this.tableX, y: rowY });
     this.text(`${row.trips}`, { x: this.tableX + 130, y: rowY });
     this.text(`${row.distance} km`, { x: this.tableX + 210, y: rowY });
-    this.text(`${row.points || 0}`, { x: this.tableX + 300, y: rowY });
+    if (withPoints) {
+      this.text(`${row.points}`, { x: this.tableX + 300, y: rowY });
+    }
     this.text(`${this.currency(row.remaining)} €`, { x: this.tableX + 380, y: rowY });
   }
 

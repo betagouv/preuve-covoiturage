@@ -73,8 +73,8 @@ export class CreateCertificateAction extends AbstractAction {
 
     // get totals
     const total_tr = new Set(carpools.map((c) => c.trip_id)).size;
-    const total_km = Math.round(carpools.reduce((sum: number, line): number => line.km + sum, 0));
     const metaRows: MetaRowInterface[] = this.aggregateTripByYearMonth(carpools);
+    const total_km = Math.round(metaRows.reduce((sum: number, line): number => line.distance + sum, 0));
     const total_rm = metaRows.reduce((sum: number, line): number => line.remaining + sum, 0);
 
     const certificate: CertificateInterface = await this.storeCertificate(
@@ -165,7 +165,7 @@ export class CreateCertificateAction extends AbstractAction {
       return {
         ...r,
         remaining: r.remaining < 0 ? 0 : Math.floor(r.remaining * 100) / 100,
-        distance: parseInt(r.distance.toString()),
+        distance: Math.round(r.distance),
       };
     });
   }
