@@ -17,7 +17,7 @@ Les données de la requête sont les mêmes que pour envoyer une preuve, avec un
 - `journey_id`**\*** :  
   identifiant généré par l'opérateur. Doit être unique \(couple passager-conducteur\)
 - `operator_class`**\*** :  
-  classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/territoires-beneficier-du-registre-de-preuve-de-covoiturage/classes-de-preuve-de-covoiturage).
+  classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c).
 
 ### Données géographiques
 

@@ -31,7 +31,7 @@ Les unités utilisées pour les valeurs sont :
 - `operator_journey_id` :  
   identifiant généré par l'opérateur pour regrouper des trajets \(plusieurs passagers avec un même conducteur\)
 - `operator_class`**\*** :  
-  classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/territoires-beneficier-du-registre-de-preuve-de-covoiturage/classes-de-preuve-de-covoiturage).
+  classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c).
 
 ### Données sur l'identité de l'occupant
 
