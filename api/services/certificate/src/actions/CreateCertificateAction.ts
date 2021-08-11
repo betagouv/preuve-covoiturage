@@ -74,8 +74,8 @@ export class CreateCertificateAction extends AbstractAction {
     // get totals
     const total_tr = new Set(carpools.map((c) => c.trip_id)).size;
     const total_km = Math.round(carpools.reduce((sum: number, line): number => line.km + sum, 0));
-    const total_rm = carpools.reduce((sum: number, line): number => line.rac + sum, 0);
     const metaRows: MetaRowInterface[] = this.aggregateTripByYearMonth(carpools);
+    const total_rm = metaRows.reduce((sum: number, line): number => line.remaining + sum, 0);
 
     const certificate: CertificateInterface = await this.storeCertificate(
       tz,
