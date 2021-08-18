@@ -20,11 +20,6 @@ export const schema = {
             },
           },
         },
-        territory_id: {
-          type: 'integer',
-          minItems: 1,
-          items: { macro: 'serial' },
-        },
         campaign_id: {
           type: 'array',
           minItems: 1,
@@ -43,5 +38,5 @@ export const schema = {
   },
 };
 
-export const alias = 'trip.buildExcelExport';
+export const alias = 'trip.excelExport';
 export const binding = [alias, schema];

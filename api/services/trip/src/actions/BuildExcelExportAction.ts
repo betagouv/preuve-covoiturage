@@ -1,13 +1,14 @@
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { ContextType, handler, InvalidParamsException } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExcelExport.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/excelExport.contract';
 import { GetCampaignAndCallBuildExcel } from './excel/GetCampaignAndCallBuildExcel';
-import { alias } from '../shared/trip/buildExcelExport.schema';
+import { alias } from '../shared/trip/excelExport.schema';
+import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias]],
+  middlewares: [['validate', alias], hasPermissionMiddleware('registry.trip.excelExport')],
 })
 export class BuildExcelExportAction extends Action {
   constructor(
@@ -39,7 +40,7 @@ export class BuildExcelExportAction extends Action {
   }
 
   private throwInvalidParamsIfMissings(params: ParamsInterface) {
-    if (!params.query.territory_id && (!params.query.campaign_id || params.query.campaign_id.length === 0)) {
+    if (!params.query.campaign_id || params.query.campaign_id.length === 0) {
       throw new InvalidParamsException('Missing territory_id or campaign id parameters');
     }
   }

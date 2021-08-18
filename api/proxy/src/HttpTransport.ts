@@ -92,6 +92,7 @@ export class HttpTransport implements TransportInterface {
     this.registerContactformRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
+    this.registerExportRoutes();
   }
 
   getApp(): express.Express {
@@ -297,6 +298,23 @@ export class HttpTransport implements TransportInterface {
         } else {
           res.json(response.result);
         }
+      }),
+    );
+  }
+
+  private registerExportRoutes(): void {
+    this.app.post(
+      '/trip/excel',
+      rateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const response = (await this.kernel.handle(
+          createRPCPayload('trip:excelExport', req.body, get(req, 'session.user', undefined)),
+        )) as RPCResponseType;
+
+        res
+          .status(get(response, 'result.meta.httpStatus', mapStatusCode(response)))
+          .send(get(response, 'result.data', this.parseErrorData(response)));
       }),
     );
   }
@@ -515,21 +533,6 @@ export class HttpTransport implements TransportInterface {
         )) as RPCResponseType;
 
         this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
-      }),
-    );
-
-    this.app.post(
-      '/export/campaign',
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
-          createRPCPayload('trip:buildExcelExport', req.body, get(req, 'session.user', undefined)),
-        )) as RPCResponseType;
-
-        res
-          .status(get(response, 'result.meta.httpStatus', mapStatusCode(response)))
-          .send(get(response, 'result.data', this.parseErrorData(response)));
       }),
     );
   }

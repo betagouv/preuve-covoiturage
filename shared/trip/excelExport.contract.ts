@@ -7,7 +7,6 @@ export interface ParamsInterface {
       start: Date;
       end: Date;
     };
-    territory_id?: number;
     campaign_id?: number[];
   };
 }
@@ -16,7 +15,7 @@ export type ResultInterface = void;
 
 export const handlerConfig = {
   service: 'trip',
-  method: 'buildExcelExport',
+  method: 'excelExport',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

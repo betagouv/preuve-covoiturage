@@ -4,7 +4,7 @@ import {
   ResultInterface as GetCampaignResultInterface,
   signature as getCampaignSignature,
 } from '../../shared/policy/find.contract';
-import { handlerConfig } from '../../shared/trip/buildExcelExport.contract';
+import { handlerConfig } from '../../shared/trip/excelExport.contract';
 import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
 
 @provider()

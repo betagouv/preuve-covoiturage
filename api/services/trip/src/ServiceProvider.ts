@@ -16,7 +16,7 @@ import { binding as buildExportBinding } from './shared/trip/buildExport.schema'
 import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
 import { binding as publicStatsBinding } from './shared/trip/publicStats.schema';
 import { binding as publishOpenDataBinding } from './shared/trip/publishOpenData.schema';
-import { binding as buildExcelExportBinding } from './shared/trip/buildExcelExport.schema';
+import { binding as excelExportBinding } from './shared/trip/excelExport.schema';
 
 import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
@@ -48,7 +48,7 @@ import { BuildExcelExportAction } from './actions/BuildExcelExportAction';
     sendExportBinding,
     publicStatsBinding,
     publishOpenDataBinding,
-    buildExcelExportBinding,
+    excelExportBinding,
   ],
   middlewares: [
     ...defaultMiddlewareBindings,
