@@ -195,7 +195,7 @@ serial(
   },
 );
 
-const createGetCampaignResultInterface = (
+export const createGetCampaignResultInterface = (
   status: string,
   start_date?: Date,
   end_date?: Date,
