@@ -44,10 +44,6 @@ export class StreamDataToWorkBookSheet {
     workbook.getWorksheet('data').addTable({
       name: 'Données',
       ref: 'A1',
-      style: {
-        theme: 'TableStyleDark3',
-        showRowStripes: true,
-      },
       columns: BuildExportAction.getColumns('territory').map((h) => {
         const columnProperty: TableColumnProperties = {
           filterButton: true,
