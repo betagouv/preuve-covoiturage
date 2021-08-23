@@ -153,7 +153,7 @@
           <input
             matInput
             type="string"
-            placeholder="+33300000000"
+            placeholder="+333000000"
             formControlName="phone_number_trunc"
             autocomplete="off"
           />
@@ -164,7 +164,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Id utilisateur opérateur (operator_user_id)</mat-label>
-          <input matInput type="number" placeholder="0" formControlName="operator_user_id" autocomplete="off" />
+          <input matInput placeholder="0" formControlName="operator_user_id" autocomplete="off" />
 
           <mat-error *ngIf="controls.operator_user_id.hasError('required')"> L'id est obligatoire </mat-error>
         </mat-form-field>

@@ -210,9 +210,9 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
           ? {
               phone: formVal.phone_number.trim(),
             }
-          : formVal.identity_type === 'phone_number_truc'
+          : formVal.identity_type === 'phone_number_trunc'
           ? {
-              phone_trunc: formVal.phone_number_truc.trim(),
+              phone_trunc: formVal.phone_number_trunc.trim(),
               operator_user_id: formVal.operator_user_id.trim(),
             }
           : {
