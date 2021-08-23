@@ -70,12 +70,6 @@
         <app-operator-autocomplete [parentForm]="certificateForm"></app-operator-autocomplete>
         <mat-error *ngIf="controls.operator_id.hasError('required')"> L'opérateur est obligatoire </mat-error>
       </div>
-      <!-- <div>
-        <app-territory-autocomplete [parentForm]="certificateForm"></app-territory-autocomplete>
-        <mat-error *ngIf="controls.territory_id.hasError('required')">
-          Le territoire est obligatoire
-        </mat-error>
-      </div> -->
 
       <div>
         <h3>Plage de temps</h3>
@@ -102,10 +96,16 @@
           <mat-form-field appearance="outline">
             <mat-label>Latitude</mat-label>
             <input matInput type="string" placeholder="00.0000000000" formControlName="start_lat" autocomplete="off" />
+            <mat-error *ngIf="controls.start_lat.hasError('pattern')">
+              La coordonnée n'est pas valide
+            </mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Longitude</mat-label>
             <input matInput type="string" placeholder="00.0000000000" formControlName="start_lng" autocomplete="off" />
+            <mat-error *ngIf="controls.start_lng.hasError('pattern')">
+              La coordonnée n'est pas valide
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -115,10 +115,16 @@
           <mat-form-field appearance="outline">
             <mat-label>Latitude</mat-label>
             <input matInput type="string" placeholder="00.0000000000" formControlName="end_lat" autocomplete="off" />
+            <mat-error *ngIf="controls.end_lat.hasError('pattern')">
+              La coordonnée n'est pas valide
+            </mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Longitude</mat-label>
             <input matInput type="string" placeholder="00.0000000000" formControlName="end_lng" autocomplete="off" />
+            <mat-error *ngIf="controls.end_lng.hasError('pattern')">
+              La coordonnée n'est pas valide
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -144,6 +150,9 @@
           <mat-error *ngIf="controls.phone_number.hasError('required')">
             Le numéro de téléphone est obligatoire
           </mat-error>
+          <mat-error *ngIf="controls.phone_number.hasError('pattern')">
+            Le numéro de téléphone est invalide.
+          </mat-error>
         </mat-form-field>
       </div>
 
@@ -160,6 +169,9 @@
 
           <mat-error *ngIf="controls.phone_number_trunc.hasError('required')">
             Le numéro de téléphone tronqué est obligatoire
+          </mat-error>
+          <mat-error *ngIf="controls.phone_number_trunc.hasError('pattern')">
+            Le numéro de téléphone tronqué est invalide.
           </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">

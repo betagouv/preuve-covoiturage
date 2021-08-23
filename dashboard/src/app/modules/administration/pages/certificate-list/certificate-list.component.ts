@@ -19,6 +19,7 @@ import {
 } from '~/core/entities/api/shared/certificate/list.contract';
 import { FormBuilder, Validators, FormGroup, AbstractControl, FormControl } from '@angular/forms';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { REGEXP } from '~/core/const/validators.const';
 
 @Component({
   selector: 'app-certificate-list',
@@ -50,7 +51,6 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   isLoading = false;
   showForm = false;
   displayedColumns = ['uuid', 'operator', 'total_km', 'total_point', 'total_cost', 'actions'];
-  // pageChange: Subject<any> = new Subject();
   ngOnInit(): void {
     this.startIndex = 0;
     this.length = 0;
@@ -74,16 +74,15 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
 
     this.certificateForm = this.fb.group({
       operator_id: [null, []],
-      // territory_id: [null, [Validators.required]],
       identity_type: ['phone_number', [Validators.required]],
+      start_lat: [null, [Validators.pattern(REGEXP.lat)]],
+      start_lng: [null, [Validators.pattern(REGEXP.lon)]],
+      end_lat: [null, [Validators.pattern(REGEXP.lat)]],
+      end_lng: [null, [Validators.pattern(REGEXP.lon)]],
       phone_number_trunc: [],
       operator_user_id: [],
       phone_number: [],
       identity_uuid: [],
-      start_lat: [],
-      start_lng: [],
-      end_lat: [],
-      end_lng: [],
     });
 
     this.certificateForm.setControl('start_date', new FormControl());
@@ -123,15 +122,20 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   }
 
   updateValidation(identity_type = this.certificateForm.value.identity_type): void {
-    // const identity_type = this.certificateForm.value.identity_type;
     ['phone_number_trunc', 'operator_user_id', 'phone_number', 'identity_uuid'].forEach((formName) => {
       const formControl = this.certificateForm.get(formName);
       formControl.setValue(null);
       switch (formName) {
         case 'phone_number':
-          formControl.setValidators(identity_type === 'phone_number' ? [Validators.required] : []);
+          formControl.setValidators(
+            identity_type === 'phone_number' ? [Validators.required, Validators.pattern(REGEXP.phone)] : [],
+          );
           break;
         case 'phone_number_trunc':
+          formControl.setValidators(
+            identity_type === 'phone_number_trunc' ? [Validators.required, Validators.pattern(REGEXP.phone_trunc)] : [],
+          );
+          break;
         case 'operator_user_id':
           formControl.setValidators(identity_type === 'phone_number_trunc' ? [Validators.required] : []);
           break;
@@ -156,7 +160,6 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   showCreationForm(): void {
     this.certificateForm.setValue({
       operator_id: this.auth.user.operator_id ? this.auth.user.operator_id : null,
-      // territory_id: null,
       identity_type: 'phone_number',
       phone_number_trunc: null,
       operator_user_id: null,
@@ -202,7 +205,6 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     const formVal = this.certificateForm.value;
     const certificate: CreateParamsInterface = {
       operator_id: formVal.operator_id,
-      // territory_id: formVal.territory_id,
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
       positions: [],
       identity:
