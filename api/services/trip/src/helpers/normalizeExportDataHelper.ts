@@ -35,9 +35,7 @@ export function normalize(src: ExportTripInterface, timeZone: string): FlattenTr
   };
 
   const driver_incentive_raw = (get(src, 'driver_incentive_raw', []) || []).filter((i) => i.type === 'incentive');
-  const passenger_incentive_raw = (get(src, 'passenger_incentive_raw', []) || []).filter(
-    (i) => i.type === 'incentive',
-  );
+  const passenger_incentive_raw = (get(src, 'passenger_incentive_raw', []) || []).filter((i) => i.type === 'incentive');
 
   for (let i = 0; i < 4; i++) {
     // normalize incentive in euro
