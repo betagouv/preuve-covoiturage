@@ -1,7 +1,7 @@
 import { ContextType } from '@ilos/common';
 import test, { serial } from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { FakeKernelInterfaceResolver } from '../helpers/fakeIlosClasses.spec';
+import { FakeKernelInterfaceResolver } from '../helpers/fakeIlosClasses.helper.spec';
 import { ActiveCampaignExcelExportAction } from './ActiveCampaignExcelExportAction';
 import { createGetCampaignResultInterface } from './excel/GetCampaignAndCallBuildExcel.spec';
 
