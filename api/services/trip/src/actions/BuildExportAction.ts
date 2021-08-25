@@ -246,7 +246,6 @@ export class BuildExportAction extends Action implements InitHookInterface {
       const results = await cursor(10);
       count = results.length;
       for (const line of results) {
-        console.error(line);
         stringifier.write(normalize(line, tz));
       }
     } while (count !== 0);
