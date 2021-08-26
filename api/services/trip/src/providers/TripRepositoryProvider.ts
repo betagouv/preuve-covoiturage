@@ -330,14 +330,41 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const where = await this.buildWhereClauses(cleanParams);
 
     const queryValues = [...values, ...where.values];
-    const queryText = this.numberPlaceholders(`
+
+    let queryText: string;
+
+    if (type === 'opendata') {
+      // TODO: (perf) use JSON object instead of concatenated string for AGGREGATED_TRIPS_ARRAY ?
+      queryText = `
+      WITH AGG_INCLUDED_TRIPS AS
+                (SELECT ARRAY_AGG(CONCAT(TRIP_ID,'~',JOURNEY_ID)) AS AGGREGATED_TRIPS_ARRAY
+                FROM ${this.table}
+                WHERE ${this.numberPlaceholders(where.text)}
+                GROUP BY JOURNEY_START_INSEE
+                HAVING COUNT(JOURNEY_START_INSEE) > 5),
+	         UNNESTED_TRIPS AS
+	             (SELECT SPLIT_PART(JTC.TRIP_JOURNEY_COUPLE,'~',1) AS TRIP_ID,
+			                 SPLIT_PART(JTC.TRIP_JOURNEY_COUPLE,'~', 2)::int AS JOURNEY_ID
+		            FROM
+			          (SELECT UNNEST(AGGREGATED_TRIPS_ARRAY) AS TRIP_JOURNEY_COUPLE
+				         FROM AGG_INCLUDED_TRIPS) AS JTC)
+       SELECT
+          ${selectedFields.map((s) => (s === 'journey_id' || s === 'trip_id' ? 'tl.' + s : s)).join(', ')}
+        FROM ${this.table} as tl
+        INNER JOIN UNNESTED_TRIPS AS UTID
+              ON UTID.TRIP_ID = TL.TRIP_ID
+              AND UTID.JOURNEY_ID = TL.JOURNEY_ID WHERE ${this.numberPlaceholders(where.text)}
+        ORDER BY journey_start_datetime ASC
+    `;
+    } else {
+      queryText = this.numberPlaceholders(`
       SELECT
         ${selectedFields.join(', ')}
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
     `);
-
+    }
     const db = await this.connection.getClient().connect();
     const cursorCb = db.query(new Cursor(queryText, queryValues));
 
