@@ -1,24 +1,25 @@
-export interface ParamsInterface {
-  format: {
-    tz: string;
-  };
-  query: {
-    date: {
-      start: Date;
-      end: Date;
-    };
-    territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
-    operator_id?: number[];
-    territory_id?: number[];
-  };
-  type?: string;
-  from: {
-    type?: string;
-    email: string;
-    fullname: string;
-  };
+export interface FormatInterface {
+  tz: string;
+  filename?: string;
 }
-export type ResultInterface = void;
+
+export interface QueryInterface {
+  date: {
+    start: Date;
+    end: Date;
+  };
+  territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
+  operator_id?: number[];
+  territory_id?: number[];
+}
+
+export interface ParamsInterface {
+  format?: FormatInterface;
+  query?: QueryInterface;
+  type?: string;
+}
+
+export type ResultInterface = string;
 
 export const handlerConfig = {
   service: 'trip',

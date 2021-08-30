@@ -12,44 +12,93 @@ export class S3StorageProvider implements ProviderInterface {
   private endpoint = env('AWS_ENDPOINT') as string;
   private region = env('AWS_REGION') as string;
   private prefix = env('AWS_BUCKET_PREFIX', env('NODE_ENV', 'local'));
+  private pathStyle = env('AWS_S3_PATH_STYLE', false) ? true : false;
 
   constructor() {}
 
   async init(): Promise<void> {
-    this.s3 = new S3({ endpoint: this.endpoint, region: this.region, signatureVersion: 'v4' });
+    this.s3 = new S3({
+      s3ForcePathStyle: this.pathStyle,
+      endpoint: this.endpoint,
+      region: this.region,
+      signatureVersion: 'v4',
+    });
   }
 
-  async copy(bucket: BucketName, filename: string): Promise<{ password: string; url: string }> {
+  async copy(
+    inputBucket: BucketName,
+    inputFileKey: string,
+    targetBucket: BucketName,
+    targetFileKey: string,
+  ): Promise<void> {
+    await this.s3
+      .copyObject({
+        CopySource: `${this.getBucketName(inputBucket)}/${inputFileKey}`,
+        Bucket: this.getBucketName(targetBucket),
+        Key: targetFileKey,
+      })
+      .promise();
+  }
+
+  async exists(bucket: BucketName, filepath: string): Promise<boolean> {
+    try {
+      await this.s3.headObject({ Bucket: this.getBucketName(bucket), Key: filepath }).promise();
+      return true;
+    } catch (e) {
+      if (e.code === 'NotFound') {
+        return false;
+      }
+      throw e;
+    }
+  }
+
+  async upload(bucket: BucketName, filepath: string, filename?: string): Promise<string> {
     const Bucket = this.getBucketName(bucket);
 
-    await fs.promises.access(filename, fs.constants.R_OK);
+    await fs.promises.access(filepath, fs.constants.R_OK);
 
     try {
-      const rs = fs.createReadStream(filename);
-      const ext = path.extname(filename);
+      const rs = fs.createReadStream(filepath);
+      const ext = path.extname(filepath);
       const keyName =
+        filename ??
         path
-          .basename(filename)
+          .basename(filepath)
           .replace(ext, '')
           .replace(/[^a-z0-9_-]/g, '') + ext;
 
       await this.s3
-        .upload({ Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filename=${keyName}` })
+        .upload({ Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filepath=${keyName}` })
         .promise();
+
+      return keyName;
+    } catch (e) {
+      console.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
+      throw e;
+    }
+  }
+
+  async getPublicUrl(bucket: BucketName, filekey: string): Promise<string> {
+    if (bucket !== BucketName.Public) {
+      return this.getSignedUrl(bucket, filekey);
+    }
+    return `${this.endpoint}/${this.getBucketName(bucket)}/${filekey}`;
+  }
+
+  async getSignedUrl(bucket: BucketName, filekey: string, expires: number = 7 * 86400): Promise<string> {
+    try {
+      const Bucket = this.getBucketName(bucket);
 
       const url = await this.s3.getSignedUrlPromise('getObject', {
         Bucket,
-        Key: keyName,
-        Expires: 7 * 86400,
-        ResponseContentDisposition: `attachment; filename=${keyName}`,
+        Key: filekey,
+        Expires: expires,
+        ResponseContentDisposition: `attachment; filepath=${filekey}`,
       });
 
-      return {
-        password: '',
-        url,
-      };
+      return url;
     } catch (e) {
-      console.error(`S3StorageProvider Error: ${e.message} (${filename})`);
+      console.error(`S3StorageProvider Error: ${e.message} (${filekey})`);
 
       throw e;
     }

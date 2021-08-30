@@ -61,7 +61,7 @@ if [ ! -f $CERT_DIR/cert.key ]; then
     generate_certs
 fi
 
-start_services && seed_data && create_bucket local && start_app && wait_for_app && e2e 2> /dev/null
+start_services && seed_data && create_bucket local-pdc-export && create_bucket local-pdc-public && start_app && wait_for_app && e2e 2> /dev/null
 EXIT=$?
 stop
 exit $EXIT
