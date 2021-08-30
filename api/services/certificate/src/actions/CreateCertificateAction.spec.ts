@@ -1,6 +1,7 @@
+/* eslint-disable max-len */
 import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { DateProvider } from '@pdc/provider-date/dist';
-import test, { serial } from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
@@ -12,32 +13,36 @@ import { ParamsInterface, ResultInterface } from '../shared/certificate/create.c
 import { WithHttpStatus } from '../shared/common/handler/WithHttpStatus';
 import { CreateCertificateAction } from './CreateCertificateAction';
 
-// Tested token
-let createCertificateAction: CreateCertificateAction;
+interface Context {
+  // Injected tokens
+  fakeKernelInterfaceResolver: KernelInterfaceResolver;
+  certificateRepositoryProviderInterface: CertificateRepositoryProviderInterfaceResolver;
+  carpoolRepositoryProviderInterfaceResolver: CarpoolRepositoryProviderInterfaceResolver;
+  configInterfaceResolver: ConfigInterfaceResolver;
 
-// Injected tokens
-let fakeKernelInterfaceResolver: KernelInterfaceResolver;
-let certificateRepositoryProviderInterface: CertificateRepositoryProviderInterfaceResolver;
-let carpoolRepositoryProviderInterfaceResolver: CarpoolRepositoryProviderInterfaceResolver;
-let configInterfaceResolver: ConfigInterfaceResolver;
+  // Injected tokens method's stubs
+  carpoolRepositoryFindStub: SinonStub;
+  certificateRepositoryCreateStub: SinonStub<[params: CertificateBaseInterface]>;
+  kernelCallStub: SinonStub<[method: string, params: any, context: ContextType]>;
+  configGetStub: SinonStub;
 
-// Injected tokens method's stubs
-let carpoolRepositoryFindStub: SinonStub;
-let certificateRepositoryCreateStub: SinonStub<[params: CertificateBaseInterface]>;
-let kernelCallStub: SinonStub<[method: string, params: any, context: ContextType]>;
-let configGetStub: SinonStub;
+  // Constants
+  OPERATOR_UUID: string;
+  USER_RPC_UUID: string;
+  CERTIFICATE_UUID: string;
 
-// Constants
-const OPERATOR_UUID: string = faker.random.uuid();
-const USER_RPC_UUID: string = faker.random.uuid();
-const CERTIFICATE_UUID: string = faker.random.uuid();
+  // Tested token
+  createCertificateAction: CreateCertificateAction;
+}
 
-test.before(() => {
-  fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
-  configInterfaceResolver = new (class extends ConfigInterfaceResolver {})();
-  certificateRepositoryProviderInterface = new (class extends CertificateRepositoryProviderInterfaceResolver {})();
-  carpoolRepositoryProviderInterfaceResolver = new (class extends CarpoolRepositoryProviderInterfaceResolver {})();
-  createCertificateAction = new CreateCertificateAction(
+const test = anyTest as TestInterface<Partial<Context>>;
+
+test.beforeEach((t) => {
+  const fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
+  const configInterfaceResolver = new (class extends ConfigInterfaceResolver {})();
+  const certificateRepositoryProviderInterface = new (class extends CertificateRepositoryProviderInterfaceResolver {})();
+  const carpoolRepositoryProviderInterfaceResolver = new (class extends CarpoolRepositoryProviderInterfaceResolver {})();
+  const createCertificateAction = new CreateCertificateAction(
     fakeKernelInterfaceResolver,
     certificateRepositoryProviderInterface,
     carpoolRepositoryProviderInterfaceResolver,
@@ -46,127 +51,134 @@ test.before(() => {
   );
 
   // Unchanged stubs results
-  configGetStub = sinon.stub(configInterfaceResolver, 'get');
+  const configGetStub = sinon.stub(configInterfaceResolver, 'get');
   configGetStub.returns(6);
+
+  t.context = {
+    OPERATOR_UUID: faker.random.uuid(),
+    USER_RPC_UUID: faker.random.uuid(),
+    CERTIFICATE_UUID: faker.random.uuid(),
+    fakeKernelInterfaceResolver,
+    configInterfaceResolver,
+    certificateRepositoryProviderInterface,
+    carpoolRepositoryProviderInterfaceResolver,
+    createCertificateAction,
+    configGetStub,
+  };
+  t.context.certificateRepositoryCreateStub = sinon.stub(t.context.certificateRepositoryProviderInterface, 'create');
+  t.context.carpoolRepositoryFindStub = sinon.stub(t.context.carpoolRepositoryProviderInterfaceResolver, 'find');
+  t.context.kernelCallStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call');
+
+  t.context.kernelCallStub.onCall(0).resolves(t.context.USER_RPC_UUID);
+  t.context.kernelCallStub.onCall(1).resolves({ uuid: t.context.OPERATOR_UUID, name: 'Klaxit' });
 });
 
-test.beforeEach(() => {
-  certificateRepositoryCreateStub = sinon.stub(certificateRepositoryProviderInterface, 'create');
-  carpoolRepositoryFindStub = sinon.stub(carpoolRepositoryProviderInterfaceResolver, 'find');
-  kernelCallStub = sinon.stub(fakeKernelInterfaceResolver, 'call');
-  kernelCallStub.onCall(0).resolves(USER_RPC_UUID);
-  kernelCallStub.onCall(1).resolves({ uuid: OPERATOR_UUID, name: 'Klaxit' });
+test.afterEach((t) => {
+  t.context.certificateRepositoryCreateStub.restore();
+  t.context.carpoolRepositoryFindStub.restore();
+  t.context.kernelCallStub.restore();
 });
 
-test.afterEach(() => {
-  certificateRepositoryCreateStub.restore();
-  carpoolRepositoryFindStub.restore();
-  kernelCallStub.restore();
-});
+test('CreateCertificateAction: should generate certificate with 0 rac amount for 2 trips with operator incentive', async (t) => {
+  // Arrange
+  const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
+  t.context.carpoolRepositoryFindStub.resolves([
+    {
+      month: 9,
+      year: 2021,
+      type: 'passenger',
+      trip_id: faker.random.uuid(),
+      km: 10,
+      rac: 1.5,
+      payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
+    },
+    {
+      month: 9,
+      year: 2021,
+      type: 'passenger',
+      trip_id: faker.random.uuid(),
+      km: 10,
+      rac: 1.5,
+      payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
+    },
+  ]);
 
-serial(
-  'CreateCertificateAction: should generate certificate with 0 rac amount for 2 trips with operator incentive',
-  async (t) => {
-    // Arrange
-    const params: ParamsInterface = stubCertificateCreateAndGetParams();
-    carpoolRepositoryFindStub.resolves([
-      {
-        month: 9,
-        year: 2021,
-        type: 'passenger',
-        trip_id: faker.random.uuid(),
-        km: 10,
-        rac: 1.5,
-        payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
-      },
-      {
-        month: 9,
-        year: 2021,
-        type: 'passenger',
-        trip_id: faker.random.uuid(),
-        km: 10,
-        rac: 1.5,
-        payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
-      },
-    ]);
+  // Act
+  const result: WithHttpStatus<ResultInterface> = await t.context.createCertificateAction.handle(params, null);
 
-    // Act
-    const result: WithHttpStatus<ResultInterface> = await createCertificateAction.handle(params, null);
-
-    // Assert
-    const expectCreateCertificateParams: CertificateBaseInterface = {
-      meta: {
-        tz: 'Europe/Paris',
-        identity: { uuid: USER_RPC_UUID },
-        operator: { uuid: OPERATOR_UUID, name: 'Klaxit' },
-        total_tr: 2,
-        total_km: 20,
-        total_rm: 0,
-        total_point: 0,
-        rows: [{ month: 'Août 2021', index: 0, distance: 20, remaining: 0, trips: 2 }],
-      },
-      end_at: certificateRepositoryCreateStub.args[0][0].end_at,
-      start_at: new Date('2019-01-01T00:00:00+0100'),
-      operator_id: 4,
-      identity_uuid: USER_RPC_UUID,
-    };
-    sinon.assert.calledOnceWithExactly(certificateRepositoryCreateStub, expectCreateCertificateParams);
-    sinon.assert.calledOnce(carpoolRepositoryFindStub);
-    sinon.assert.calledTwice(kernelCallStub);
-    t.is(result.meta.httpStatus, 201);
-    t.is(result.data.uuid, CERTIFICATE_UUID);
-  },
-);
-
-serial(
-  'CreateCertificateAction: should generate certificate with 0 rac for 2 trips with operator incentive and 0 rpc rac',
-  async (t) => {
-    // Arrange
-    const params: ParamsInterface = stubCertificateCreateAndGetParams();
-    carpoolRepositoryFindStub.resolves([
-      {
-        month: 9,
-        year: 2021,
-        type: 'passenger',
-        trip_id: faker.random.uuid(),
-        km: 10,
-        rac: 0,
-        payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
-      },
-      {
-        month: 9,
-        year: 2021,
-        type: 'passenger',
-        trip_id: faker.random.uuid(),
-        km: 10,
-        rac: 0,
-        payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
-      },
-    ]);
-
-    // Act
-    const result: WithHttpStatus<ResultInterface> = await createCertificateAction.handle(params, null);
-    const expectCreateCertificateParams: CertificateBaseInterface = getExpectedCertificateParams({
+  // Assert
+  const expectCreateCertificateParams: CertificateBaseInterface = {
+    meta: {
+      tz: 'Europe/Paris',
+      identity: { uuid: t.context.USER_RPC_UUID },
+      operator: { uuid: t.context.OPERATOR_UUID, name: 'Klaxit' },
       total_tr: 2,
       total_km: 20,
       total_rm: 0,
       total_point: 0,
       rows: [{ month: 'Août 2021', index: 0, distance: 20, remaining: 0, trips: 2 }],
-    });
+    },
+    end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,
+    start_at: new Date('2019-01-01T00:00:00+0100'),
+    operator_id: 4,
+    identity_uuid: t.context.USER_RPC_UUID,
+  };
+  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
+  sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
+  sinon.assert.calledTwice(t.context.kernelCallStub);
+  t.is(result.meta.httpStatus, 201);
+  t.is(result.data.uuid, t.context.CERTIFICATE_UUID);
+});
 
-    // Assert
-    sinon.assert.calledOnceWithExactly(certificateRepositoryCreateStub, expectCreateCertificateParams);
-    sinon.assert.calledOnce(carpoolRepositoryFindStub);
-    sinon.assert.calledTwice(kernelCallStub);
-    t.is(result.meta.httpStatus, 201);
-    t.is(result.data.uuid, CERTIFICATE_UUID);
-  },
-);
-
-serial('CreateCertificateAction: should generate certificate with rac amount split by month', async (t) => {
+test('CreateCertificateAction: should generate certificate with 0 rac for 2 trips with operator incentive and 0 rpc rac', async (t) => {
   // Arrange
-  const params: ParamsInterface = stubCertificateCreateAndGetParams();
-  carpoolRepositoryFindStub.resolves([
+  const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
+  t.context.carpoolRepositoryFindStub.resolves([
+    {
+      month: 9,
+      year: 2021,
+      type: 'passenger',
+      trip_id: faker.random.uuid(),
+      km: 10,
+      rac: 0,
+      payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
+    },
+    {
+      month: 9,
+      year: 2021,
+      type: 'passenger',
+      trip_id: faker.random.uuid(),
+      km: 10,
+      rac: 0,
+      payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
+    },
+  ]);
+
+  // Act
+  const result: WithHttpStatus<ResultInterface> = await t.context.createCertificateAction.handle(params, null);
+  const expectCreateCertificateParams: CertificateBaseInterface = getExpectedCertificateParams(
+    {
+      total_tr: 2,
+      total_km: 20,
+      total_rm: 0,
+      total_point: 0,
+      rows: [{ month: 'Août 2021', index: 0, distance: 20, remaining: 0, trips: 2 }],
+    },
+    t,
+  );
+
+  // Assert
+  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
+  sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
+  sinon.assert.calledTwice(t.context.kernelCallStub);
+  t.is(result.meta.httpStatus, 201);
+  t.is(result.data.uuid, t.context.CERTIFICATE_UUID);
+});
+
+test('CreateCertificateAction: should generate certificate with rac amount split by month', async (t) => {
+  // Arrange
+  const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
+  t.context.carpoolRepositoryFindStub.resolves([
     {
       month: 9,
       year: 2021,
@@ -188,49 +200,52 @@ serial('CreateCertificateAction: should generate certificate with rac amount spl
   ]);
 
   // Act
-  const result: WithHttpStatus<ResultInterface> = await createCertificateAction.handle(params, null);
+  const result: WithHttpStatus<ResultInterface> = await t.context.createCertificateAction.handle(params, null);
 
   // Assert
-  const expectCreateCertificateParams: CertificateBaseInterface = getExpectedCertificateParams({
-    total_tr: 2,
-    total_km: 20,
-    total_rm: 3,
-    total_point: 0,
-    rows: [
-      { month: 'Août 2021', index: 0, distance: 10, remaining: 1.5, trips: 1 },
-      { month: 'Juillet 2021', index: 1, distance: 10, remaining: 1.5, trips: 1 },
-    ],
-  });
-  sinon.assert.calledOnceWithExactly(certificateRepositoryCreateStub, expectCreateCertificateParams);
-  sinon.assert.calledOnce(carpoolRepositoryFindStub);
-  sinon.assert.calledTwice(kernelCallStub);
+  const expectCreateCertificateParams: CertificateBaseInterface = getExpectedCertificateParams(
+    {
+      total_tr: 2,
+      total_km: 20,
+      total_rm: 3,
+      total_point: 0,
+      rows: [
+        { month: 'Août 2021', index: 0, distance: 10, remaining: 1.5, trips: 1 },
+        { month: 'Juillet 2021', index: 1, distance: 10, remaining: 1.5, trips: 1 },
+      ],
+    },
+    t,
+  );
+  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
+  sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
+  sinon.assert.calledTwice(t.context.kernelCallStub);
   t.is(result.meta.httpStatus, 201);
-  t.is(result.data.uuid, CERTIFICATE_UUID);
+  t.is(result.data.uuid, t.context.CERTIFICATE_UUID);
 });
 
-function getExpectedCertificateParams(certificateMeta: Partial<CertificateMetaInterface>): CertificateBaseInterface {
+function getExpectedCertificateParams(certificateMeta: Partial<CertificateMetaInterface>, t): CertificateBaseInterface {
   return {
     meta: {
       tz: 'Europe/Paris',
-      identity: { uuid: USER_RPC_UUID },
-      operator: { uuid: OPERATOR_UUID, name: 'Klaxit' },
+      identity: { uuid: t.context.USER_RPC_UUID },
+      operator: { uuid: t.context.OPERATOR_UUID, name: 'Klaxit' },
       ...certificateMeta,
     } as CertificateMetaInterface,
-    end_at: certificateRepositoryCreateStub.args[0][0].end_at,
+    end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,
     start_at: new Date('2019-01-01T00:00:00+0100'),
     operator_id: 4,
-    identity_uuid: USER_RPC_UUID,
+    identity_uuid: t.context.USER_RPC_UUID,
   };
 }
 
-function stubCertificateCreateAndGetParams() {
-  certificateRepositoryCreateStub.resolves({
+function stubCertificateCreateAndGetParams(t) {
+  t.context.certificateRepositoryCreateStub.resolves({
     _id: 1,
-    uuid: CERTIFICATE_UUID,
-    identity_uuid: USER_RPC_UUID,
+    uuid: t.context.CERTIFICATE_UUID,
+    identity_uuid: t.context.USER_RPC_UUID,
     operator_id: 4,
     meta: {
-      identity: { uuid: USER_RPC_UUID },
+      identity: { uuid: t.context.USER_RPC_UUID },
     },
   } as CertificateInterface);
   const params: ParamsInterface = {
@@ -238,7 +253,7 @@ function stubCertificateCreateAndGetParams() {
     operator_id: 4,
     identity: {
       phone_trunc: '+33696989598',
-      uuid: USER_RPC_UUID,
+      uuid: t.context.USER_RPC_UUID,
     },
   };
   return params;
