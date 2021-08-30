@@ -8,10 +8,25 @@ module.exports = {
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
   },
-  ignorePatterns: ['dist', 'api/providers/qrcode/src/lib/*'], // some JS converted to TS. needs to be cleaned up
+  // some JS converted to TS. needs to be cleaned up
+  ignorePatterns: ['dist', 'api/providers/qrcode/src/lib/*', '**/ava.*.cjs'],
   rules: {
     semi: ['error', 'always'],
-    'prettier/prettier': 'error',
+    'prettier/prettier': [
+      'error', // /!\ integrating prettier for eslint not working -> https://github.com/prettier/eslint-plugin-prettier
+      {
+        printWidth: 120,
+        singleQuote: true,
+        useTabs: false,
+        tabWidth: 2,
+        semi: true,
+        bracketSpacing: true,
+        arrowParens: 'always',
+        trailingComma: 'all',
+        endOfLine: 'lf',
+        jsxSingleQuote: true,
+      },
+    ],
     'max-len': ['warn', { code: 120 }],
     'no-console': ['error', { allow: ['warn', 'error', 'info', 'debug', 'table'] }],
     'prefer-template': 'error',

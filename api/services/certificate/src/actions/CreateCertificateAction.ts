@@ -1,19 +1,26 @@
-import { upperFirst, omit } from 'lodash';
-import { handler, KernelInterfaceResolver, ConfigInterfaceResolver, ContextType } from '@ilos/common';
+import {
+  ConfigInterfaceResolver,
+  ContextType,
+  handler,
+  KernelInterfaceResolver,
+  NotFoundException,
+} from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
-
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
-import { alias } from '../shared/certificate/create.schema';
-import { WithHttpStatus } from '../shared/common/handler/WithHttpStatus';
-import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
+import { omit, upperFirst } from 'lodash';
 import {
   CarpoolInterface,
   CarpoolRepositoryProviderInterfaceResolver,
   FindParamsInterface,
 } from '../interfaces/CarpoolRepositoryProviderInterface';
+import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
+import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
+import { MetaRowInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
 import { IdentityIdentifiersInterface } from '../shared/certificate/common/interfaces/IdentityIdentifiersInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
+import { alias } from '../shared/certificate/create.schema';
+import { WithHttpStatus } from '../shared/common/handler/WithHttpStatus';
 
 @handler({
   ...handlerConfig,
@@ -42,7 +49,7 @@ export class CreateCertificateAction extends AbstractAction {
     // fetch the data for this identity and operator and map to template object
     // get the last available UUID for the person. They can have many
     const b1 = new Date();
-    const personUUID = await this.findPerson(identity, operator_id);
+    const personUUID: string = await this.findPerson(identity, operator_id);
     console.debug(`[cert:create] findPerson: ${(new Date().getTime() - b1.getTime()) / 1000}s`);
 
     const b2 = new Date();
@@ -51,39 +58,37 @@ export class CreateCertificateAction extends AbstractAction {
 
     // fetch the data for this identity and operator and map to template object
     const b3 = new Date();
-    const certs = await this.findTrips({ identity, operator_id, tz, start_at, end_at, positions });
+    let carpools: CarpoolInterface[] = await this.findTrips({
+      personUUID,
+      operator_id,
+      tz,
+      start_at,
+      end_at,
+      positions,
+    });
     console.debug(`[cert:create] findTrips: ${(new Date().getTime() - b3.getTime()) / 1000}s`);
 
-    const rows = certs.slice(0, 11); // TODO agg the last line
-    const total_tr = Math.round(rows.reduce((sum: number, line): number => (line.trips | 0) + sum, 0)) || 0;
-    const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)) || 0;
-    const total_rm = rows.reduce((sum: number, line): number => line.rm + sum, 0) || 0;
+    this.throwNotFoundIfEmpty(carpools);
+    carpools = this.removeDuplicateTripId(carpools);
 
-    const meta = {
+    // get totals
+    const total_tr = new Set(carpools.map((c) => c.trip_id)).size;
+    const metaRows: MetaRowInterface[] = this.aggregateTripByYearMonth(carpools);
+    const total_km = Math.round(metaRows.reduce((sum: number, line): number => line.distance + sum, 0));
+    const total_rm = metaRows.reduce((sum: number, line): number => line.remaining + sum, 0);
+
+    const certificate: CertificateInterface = await this.storeCertificate(
       tz,
-      identity: { uuid: personUUID },
-      operator: { uuid: operator.uuid, name: operator.name },
+      personUUID,
+      operator,
       total_tr,
       total_km,
       total_rm,
-      total_point: 0,
-      rows: rows.map((line, index) => ({
-        index,
-        month: upperFirst(this.dateProvider.format(new Date(`${line.y}-${line.m}-01`), 'MMMM yyyy')),
-        trips: line.trips | 0,
-        distance: line.km | 0,
-        remaining: line.rm || 0,
-      })),
-    };
-
-    // store the certificate
-    const certificate = await this.certRepository.create({
-      meta,
+      metaRows,
       end_at,
       start_at,
       operator_id,
-      identity_uuid: meta.identity.uuid,
-    });
+    );
 
     return {
       meta: { httpStatus: 201 },
@@ -93,6 +98,86 @@ export class CreateCertificateAction extends AbstractAction {
         meta: omit(certificate.meta, ['identity', 'operator']),
       },
     };
+  }
+
+  private async storeCertificate(
+    tz: string,
+    personUUID: string,
+    operator: any,
+    total_tr: number,
+    total_km: number,
+    total_rm: number,
+    results: MetaRowInterface[],
+    end_at: Date,
+    start_at: Date,
+    operator_id: number,
+  ): Promise<CertificateInterface> {
+    return this.certRepository.create({
+      meta: {
+        tz,
+        identity: { uuid: personUUID },
+        operator: { uuid: operator.uuid, name: operator.name },
+        total_tr,
+        total_km,
+        total_rm,
+        total_point: 0,
+        rows: results.slice(0, 11), // TODO agg the last line
+      },
+      end_at,
+      start_at,
+      operator_id,
+      identity_uuid: personUUID,
+    });
+  }
+
+  private aggregateTripByYearMonth(carpools: CarpoolInterface[]): MetaRowInterface[] {
+    let index = 0;
+    const metaRows: MetaRowInterface[] = [];
+
+    // aggregate and sum by year month
+    carpools
+      .map((c: CarpoolInterface) => {
+        c.month = upperFirst(this.dateProvider.format(new Date(`${c.year}-${c.month}-01`), 'MMMM yyyy'));
+        return c;
+      })
+      .reduce((acc, val) => {
+        if (!acc[val.month]) {
+          acc[val.month] = {
+            month: val.month,
+            index: index++,
+            distance: 0,
+            remaining: 0,
+            trips: 0,
+          };
+          metaRows.push(acc[val.month]);
+        }
+        const operator_incentives = JSON.parse(val.payments)
+          .filter((p) => p.type === 'incentive')
+          .reduce((incentive_sum, p) => incentive_sum + p.amount / 100, 0);
+        acc[val.month].distance = acc[val.month].distance + val.km;
+        acc[val.month].remaining = acc[val.month].remaining + val.rac - operator_incentives;
+        acc[val.month].trips = acc[val.month].trips + 1;
+        return acc;
+      }, {});
+
+    // truncate totals
+    return metaRows.map((r) => {
+      return {
+        ...r,
+        remaining: r.remaining < 0 ? 0 : Math.floor(r.remaining * 100) / 100,
+        distance: Math.round(r.distance),
+      };
+    });
+  }
+
+  private removeDuplicateTripId(carpools: CarpoolInterface[]): CarpoolInterface[] {
+    return carpools.filter((item, index, array) => array.findIndex((t) => t.trip_id === item.trip_id) === index);
+  }
+
+  private throwNotFoundIfEmpty(carpools: CarpoolInterface[]) {
+    if (carpools.length === 0) {
+      throw new NotFoundException('No trips found for provided identity');
+    }
   }
 
   private async findPerson(identity: IdentityIdentifiersInterface, operator_id: number): Promise<string> {
