@@ -1,7 +1,7 @@
 const QRMath = {
   glog: function (n) {
     if (n < 1) {
-      throw new Error('glog(' + n + ')');
+      throw new Error(`glog(${n})`);
     }
     return QRMath.LOG_TABLE[n];
   },

@@ -21,7 +21,7 @@ QRCodeModel.prototype = {
   },
   isDark: function (row, col) {
     if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
-      throw new Error(row + ',' + col);
+      throw new Error(`${row},${col}`);
     }
     return this.modules[row][col];
   },
@@ -228,7 +228,7 @@ QRCodeModel.createData = function (typeNumber, errorCorrectLevel, dataList) {
     totalDataCount += rsBlocks[i].dataCount;
   }
   if (buffer.getLengthInBits() > totalDataCount * 8) {
-    throw new Error('code length overflow. (' + buffer.getLengthInBits() + '>' + totalDataCount * 8 + ')');
+    throw new Error(`code length overflow. (${buffer.getLengthInBits()}>${totalDataCount * 8})`);
   }
   if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
     buffer.put(0, 4);

@@ -62,7 +62,7 @@ function QRCode(options) {
         return QRErrorCorrectLevel.H;
 
       default:
-        throw new Error('Unknwon error correction level: ' + ecl);
+        throw new Error(`Unknwon error correction level: ${ecl}`);
     }
   }
 
@@ -75,7 +75,7 @@ function QRCode(options) {
     for (let i = 0, len = QRCodeLimitLength.length; i <= len; i++) {
       const table = QRCodeLimitLength[i];
       if (!table) {
-        throw new Error('Content too long: expected ' + limit + ' but got ' + length);
+        throw new Error(`Content too long: expected ${limit} but got ${length}`);
       }
 
       switch (ecl) {
@@ -96,7 +96,7 @@ function QRCode(options) {
           break;
 
         default:
-          throw new Error('Unknwon error correction level: ' + ecl);
+          throw new Error(`Unknwon error correction level: ${ecl}`);
       }
 
       if (length <= limit) {
@@ -162,28 +162,11 @@ QRCode.prototype.svg = function (opt) {
   //Populate with predefined shape instead of "rect" elements, thanks to @kkocdko
   const predefined = typeof options.predefined != 'undefined' ? !!options.predefined : false;
   const defs = predefined
-    ? indent +
-      '<defs><path id="qrmodule" d="M0 0 h' +
-      ysize +
-      ' v' +
-      xsize +
-      ' H0 z" style="fill:' +
-      options.color +
-      ';shape-rendering:crispEdges;" /></defs>' +
-      EOL
+    ? `${indent}<defs><path id="qrmodule" d="M0 0 h${ysize} v${xsize} H0 z" style="fill:${options.color};shape-rendering:crispEdges;" /></defs>${EOL}`
     : '';
 
   //Background rectangle
-  const bgrect =
-    indent +
-    '<rect x="0" y="0" width="' +
-    width +
-    '" height="' +
-    height +
-    '" style="fill:' +
-    options.background +
-    ';shape-rendering:crispEdges;"/>' +
-    EOL;
+  const bgrect = `${indent}<rect x="0" y="0" width="${width}" height="${height}" style="fill:${options.background};shape-rendering:crispEdges;"/>${EOL}`;
 
   //Rectangles representing modules
   let modrect = '';
@@ -213,39 +196,22 @@ QRCode.prototype.svg = function (opt) {
           w = (Number.isInteger(w) ? Number(w) : w.toFixed(2)) as number;
           h = (Number.isInteger(h) ? Number(h) : h.toFixed(2)) as number;
 
-          pathdata += 'M' + px + ',' + py + ' V' + h + ' H' + w + ' V' + py + ' H' + px + ' Z ';
+          pathdata += `M${px},${py} V${h} H${w} V${py} H${px} Z `;
         } else if (predefined) {
           //Module as a predefined shape, thanks to @kkocdko
-          modrect += indent + '<use x="' + px.toString() + '" y="' + py.toString() + '" href="#qrmodule" />' + EOL;
+          modrect += `${indent}<use x="${px.toString()}" y="${py.toString()}" href="#qrmodule" />${EOL}`;
         } else {
           //Module as rectangle element
-          modrect +=
-            indent +
-            '<rect x="' +
-            px.toString() +
-            '" y="' +
-            py.toString() +
-            '" width="' +
-            xsize +
-            '" height="' +
-            ysize +
-            '" style="fill:' +
-            options.color +
-            ';shape-rendering:crispEdges;"/>' +
-            EOL;
+          modrect += `${indent}<rect x="${px.toString()}" y="${py.toString()}" width="${xsize}" height="${ysize}" style="fill:${
+            options.color
+          };shape-rendering:crispEdges;"/>${EOL}`;
         }
       }
     }
   }
 
   if (join) {
-    modrect =
-      indent +
-      '<path x="0" y="0" style="fill:' +
-      options.color +
-      ';shape-rendering:crispEdges;" d="' +
-      pathdata +
-      '" />';
+    modrect = `${indent}<path x="0" y="0" style="fill:${options.color};shape-rendering:crispEdges;" d="${pathdata}" />`;
   }
 
   let svg = '';
@@ -253,10 +219,9 @@ QRCode.prototype.svg = function (opt) {
     //Wrapped in SVG document
     case 'svg':
       if (xmlDeclaration) {
-        svg += '<?xml version="1.0" standalone="yes"?>' + EOL;
+        svg += `<?xml version="1.0" standalone="yes"?>${EOL}`;
       }
-      svg +=
-        '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="' + width + '" height="' + height + '">' + EOL;
+      svg += `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${width}" height="${height}">${EOL}`;
       svg += defs + bgrect + modrect;
       svg += '</svg>';
       break;
@@ -264,16 +229,16 @@ QRCode.prototype.svg = function (opt) {
     //Viewbox for responsive use in a browser, thanks to @danioso
     case 'svg-viewbox':
       if (xmlDeclaration) {
-        svg += '<?xml version="1.0" standalone="yes"?>' + EOL;
+        svg += `<?xml version="1.0" standalone="yes"?>${EOL}`;
       }
-      svg += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 ' + width + ' ' + height + '">' + EOL;
+      svg += `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 ${width} ${height}">${EOL}`;
       svg += defs + bgrect + modrect;
       svg += '</svg>';
       break;
 
     //Wrapped in group element
     case 'g':
-      svg += '<g width="' + width + '" height="' + height + '">' + EOL;
+      svg += `<g width="${width}" height="${height}">${EOL}`;
       svg += defs + bgrect + modrect;
       svg += '</g>';
       break;
