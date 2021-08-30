@@ -14,6 +14,7 @@ module.exports = {
     'prettier/prettier': 'error',
     'max-len': ['warn', { code: 120 }],
     'no-console': ['error', { allow: ['warn', 'error', 'info', 'debug', 'table'] }],
+    'prefer-template': 'error',
     '@typescript-eslint/no-empty-interface': ['error', { allowSingleExtends: true }],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/camelcase': 'off', // postgresql compat
