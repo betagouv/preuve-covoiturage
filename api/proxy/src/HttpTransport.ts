@@ -523,18 +523,6 @@ export class HttpTransport implements TransportInterface {
           .send(get(response, 'result.data', this.parseErrorData(response)));
       }),
     );
-
-    this.app.get(
-      '/v2/certificates/find/:uuid',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
-          createRPCPayload('certificate:find', { uuid: req.params.uuid }, { permissions: ['common.certificate.find'] }),
-        )) as RPCResponseType;
-
-        this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
-      }),
-    );
   }
 
   private registerAfterAllHandlers(): void {
