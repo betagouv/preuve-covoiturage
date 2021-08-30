@@ -411,7 +411,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     };
 
     const rowCount = (await this.connection.getClient().query(query)).rowCount;
-    if (rowCount !== 0) throw new ConflictException('Double siret is not allowed for territory ' + id);
+    if (rowCount !== 0) throw new ConflictException(`Double siret is not allowed for territory ${id}`);
   }
 
   async all(
@@ -526,9 +526,9 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     if (data.insee !== undefined && data.insee.length > 0) {
       const query = {
-        text:
-          `INSERT INTO territory.territory_codes(territory_id,type,value) VALUES ` +
-          data.insee.map((insee) => `($1,'insee',${insee})`).join(','),
+        text: `INSERT INTO territory.territory_codes(territory_id,type,value) VALUES ${data.insee
+          .map((insee) => `($1,'insee',${insee})`)
+          .join(',')}`,
         values: [resultData._id],
       };
 
@@ -640,9 +640,9 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     if (data.insee !== undefined && data.insee.length > 0) {
       const query = {
-        text:
-          `INSERT INTO territory.territory_codes(territory_id,type,value) VALUES ` +
-          data.insee.map((insee) => `($1,'insee',${insee})`).join(','),
+        text: `INSERT INTO territory.territory_codes(territory_id,type,value) VALUES ${data.insee
+          .map((insee) => `($1,'insee',${insee})`)
+          .join(',')}`,
         values: [data._id],
       };
 

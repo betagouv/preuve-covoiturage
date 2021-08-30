@@ -30,32 +30,32 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     const values = [];
 
     if (data.journey_id !== undefined) {
-      wheres.push('journey_id = $' + (wheres.length + 1));
+      wheres.push(`journey_id = $${wheres.length + 1}`);
       values.push(data.journey_id);
     }
 
     if (data.error_stage !== undefined) {
-      wheres.push('error_stage = $' + (wheres.length + 1));
+      wheres.push(`error_stage = $${wheres.length + 1}`);
       values.push(data.error_stage);
     }
 
     if (data.operator_id !== undefined) {
-      wheres.push('operator_id = $' + (wheres.length + 1));
+      wheres.push(`operator_id = $${wheres.length + 1}`);
       values.push(data.operator_id);
     }
 
     if (data.error_code !== undefined) {
-      wheres.push('error_code = $' + (wheres.length + 1));
+      wheres.push(`error_code = $${wheres.length + 1}`);
       values.push(data.error_code);
     }
 
     if (data.start_date !== undefined) {
-      wheres.push('created_at >= $' + (wheres.length + 1));
+      wheres.push(`created_at >= $${wheres.length + 1}`);
       values.push(data.start_date.toISOString());
     }
 
     if (data.end_date !== undefined) {
-      wheres.push('created_at < $' + (wheres.length + 1));
+      wheres.push(`created_at < $${wheres.length + 1}`);
       values.push(data.end_date.toISOString());
     }
 
