@@ -1,5 +1,5 @@
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
-import { ContextType, handler, InvalidParamsException } from '@ilos/common';
+import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/excelExport.contract';
 import { GetCampaignAndCallBuildExcel } from './excel/GetCampaignAndCallBuildExcel';

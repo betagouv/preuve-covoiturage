@@ -223,7 +223,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     let count = 0;
 
     const { filename, tz } = this.castFormat(type, params);
-    const zipname = filename.replace('.csv', '') + '.zip';
+    const zipname = `${filename.replace('.csv', '')}.zip`;
 
     const filepath = path.join(os.tmpdir(), filename);
     const zippath = path.join(os.tmpdir(), zipname);
