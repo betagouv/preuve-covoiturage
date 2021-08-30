@@ -223,9 +223,10 @@ export class BuildExportAction extends Action implements InitHookInterface {
     let count = 0;
 
     const { filename, tz } = this.castFormat(type, params);
+    const zipname = filename.replace('.csv', '') + '.zip';
 
     const filepath = path.join(os.tmpdir(), filename);
-    const zipname = filepath.replace('.csv', '') + '.zip';
+    const zippath = path.join(os.tmpdir(), zipname);
     const fd = await fs.promises.open(filepath, 'a');
     const stringifier = await this.getStringifier(fd, type);
 
@@ -243,9 +244,9 @@ export class BuildExportAction extends Action implements InitHookInterface {
     // ZIP the file
     const zip = new AdmZip();
     zip.addLocalFile(filepath);
-    zip.writeZip(zipname);
+    zip.writeZip(zippath);
 
-    const fileKey = await this.file.upload(BucketName.Export, zipname, filename);
+    const fileKey = await this.file.upload(BucketName.Export, zippath, zipname);
 
     return fileKey;
   }
