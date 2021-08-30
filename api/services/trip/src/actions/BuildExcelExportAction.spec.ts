@@ -87,18 +87,15 @@ serial('BuildExcelExportAction: should create 1 xlsx file if date range provided
   t.pass();
 });
 
-serial(
-  'BuildExcelExportAction: should throw BadRequestException if at least 1 campaign_id is not provided',
-  async (t) => {
-    // Arrange
+serial('BuildExcelExportAction: should throw InvalidParam if at least 1 campaign_id is not provided', async (t) => {
+  // Arrange
 
-    // Act
-    await t.throwsAsync(async () => {
-      await buildExcelExportAction.handle({ format: { tz: 'Europe/Paris' }, query: {} }, null);
-    });
+  // Act
+  await t.throwsAsync(async () => {
+    await buildExcelExportAction.handle({ format: { tz: 'Europe/Paris' }, query: {} }, null);
+  });
 
-    // Assert
-    sinon.assert.notCalled(getCampaignAndCallBuildExcelStub);
-    sinon.assert.notCalled(s3StorageProviderStub);
-  },
-);
+  // Assert
+  sinon.assert.notCalled(getCampaignAndCallBuildExcelStub);
+  sinon.assert.notCalled(s3StorageProviderStub);
+});

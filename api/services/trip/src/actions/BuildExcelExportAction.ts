@@ -19,7 +19,6 @@ export class BuildExcelExportAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    this.throwInvalidParamsIfMissings(params);
     const { start_date, end_date } = this.castOrGetDefaultDates(params);
     params.query.campaign_id.map((c_id) =>
       this.getCampaignAndCallBuildExcel
@@ -36,12 +35,6 @@ export class BuildExcelExportAction extends Action {
       const start_date = new Date(params.query.date.start);
       const end_date = new Date(params.query.date.end);
       return { start_date, end_date };
-    }
-  }
-
-  private throwInvalidParamsIfMissings(params: ParamsInterface) {
-    if (!params.query.campaign_id || params.query.campaign_id.length === 0) {
-      throw new InvalidParamsException('Missing territory_id or campaign id parameters');
     }
   }
 }
