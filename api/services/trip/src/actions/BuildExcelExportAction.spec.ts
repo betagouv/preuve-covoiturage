@@ -1,71 +1,82 @@
 import { S3StorageProvider, BucketName } from '@pdc/provider-file';
-import test, { serial } from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { BuildExcelExportAction } from './BuildExcelExportAction';
 import { GetCampaignAndCallBuildExcel } from './excel/GetCampaignAndCallBuildExcel';
 import faker from 'faker';
 import { uuid } from '@pdc/helper-test/dist';
 
-let buildExcelExportAction: BuildExcelExportAction;
-let getCampaignAndCallBuildExcel: GetCampaignAndCallBuildExcel;
-let s3StorageProvider: S3StorageProvider;
+interface Context {
+  // Injected tokens
+  getCampaignAndCallBuildExcel: GetCampaignAndCallBuildExcel;
+  s3StorageProvider: S3StorageProvider;
 
-let getCampaignAndCallBuildExcelStub: SinonStub;
-let s3StorageProviderStub: SinonStub;
+  // Injected tokens method's stubs
+  getCampaignAndCallBuildExcelStub: SinonStub;
+  s3StorageProviderStub: SinonStub;
 
-const CAMPAIGN_ID = faker.random.number();
+  // Constants
+  CAMPAIGN_ID: number;
 
-test.before((t) => {
-  getCampaignAndCallBuildExcel = new GetCampaignAndCallBuildExcel(null, null);
-  s3StorageProvider = new S3StorageProvider();
-  buildExcelExportAction = new BuildExcelExportAction(getCampaignAndCallBuildExcel, s3StorageProvider);
-});
+  // Tested token
+  buildExcelExportAction: BuildExcelExportAction;
+}
+
+const test = anyTest as TestInterface<Partial<Context>>;
 
 test.beforeEach((t) => {
-  getCampaignAndCallBuildExcelStub = sinon.stub(getCampaignAndCallBuildExcel, 'call');
-  s3StorageProviderStub = sinon.stub(s3StorageProvider, 'upload');
+  t.context.getCampaignAndCallBuildExcel = new GetCampaignAndCallBuildExcel(null, null);
+  t.context.s3StorageProvider = new S3StorageProvider();
+  t.context.buildExcelExportAction = new BuildExcelExportAction(
+    t.context.getCampaignAndCallBuildExcel,
+    t.context.s3StorageProvider,
+  );
+
+  t.context.getCampaignAndCallBuildExcelStub = sinon.stub(t.context.getCampaignAndCallBuildExcel, 'call');
+  t.context.s3StorageProviderStub = sinon.stub(t.context.s3StorageProvider, 'upload');
+  t.context.CAMPAIGN_ID = faker.random.number();
 });
 
 test.afterEach((t) => {
-  getCampaignAndCallBuildExcelStub.restore();
-  s3StorageProviderStub.restore();
+  t.context.getCampaignAndCallBuildExcelStub.restore();
+  t.context.s3StorageProviderStub.restore();
 });
 
-serial('BuildExcelExportAction: should create 1 xlsx file if no date range provided and 1 campaign id', async (t) => {
+test('BuildExcelExportAction: should create 1 xlsx file if no date range provided and 1 campaign id', async (t) => {
   // Arrange
-  const filepath = '/tmp/exports/campaign-' + uuid() + '.xlsx';
-  getCampaignAndCallBuildExcelStub.resolves(filepath);
-  s3StorageProviderStub.resolves('s3-key');
+  const filepath = `/tmp/exports/campaign-${uuid()}.xlsx`;
+  t.context.getCampaignAndCallBuildExcelStub.resolves(filepath);
+  t.context.s3StorageProviderStub.resolves('s3-key');
 
   // Act
-  await buildExcelExportAction.handle(
+  await t.context.buildExcelExportAction.handle(
     {
       format: { tz: 'Europe/Paris' },
       query: {
-        campaign_id: [CAMPAIGN_ID],
+        campaign_id: [t.context.CAMPAIGN_ID],
       },
     },
     null,
   );
 
   // Assert
-  sinon.assert.calledOnceWithExactly(getCampaignAndCallBuildExcelStub, CAMPAIGN_ID, null, null);
-  sinon.assert.calledOnceWithExactly(s3StorageProviderStub, BucketName.Export, filepath);
+  sinon.assert.calledOnceWithExactly(t.context.getCampaignAndCallBuildExcelStub, t.context.CAMPAIGN_ID, null, null);
+  sinon.assert.calledOnceWithExactly(t.context.s3StorageProviderStub, BucketName.Export, filepath);
   t.pass();
 });
 
-serial('BuildExcelExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
+test('BuildExcelExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
   // Arrange
-  const filepath = '/tmp/exports/campaign-' + uuid() + '.xlsx';
-  getCampaignAndCallBuildExcelStub.resolves(filepath);
-  s3StorageProviderStub.resolves('s3-key');
+  const filepath = `/tmp/exports/campaign-${uuid()}.xlsx`;
+  t.context.getCampaignAndCallBuildExcelStub.resolves(filepath);
+  t.context.s3StorageProviderStub.resolves('s3-key');
 
   // Act
-  await buildExcelExportAction.handle(
+  await t.context.buildExcelExportAction.handle(
     {
       format: { tz: 'Europe/Paris' },
       query: {
-        campaign_id: [CAMPAIGN_ID],
+        campaign_id: [t.context.CAMPAIGN_ID],
         date: {
           start: '2020-01-08T00:00:00Z',
           end: '2020-02-08T00:00:00Z',
@@ -78,24 +89,22 @@ serial('BuildExcelExportAction: should create 1 xlsx file if date range provided
 
   // Assert
   sinon.assert.calledOnceWithExactly(
-    getCampaignAndCallBuildExcelStub,
-    CAMPAIGN_ID,
+    t.context.getCampaignAndCallBuildExcelStub,
+    t.context.CAMPAIGN_ID,
     new Date('2020-01-08T00:00:00Z'),
     new Date('2020-02-08T00:00:00Z'),
   );
-  sinon.assert.calledOnceWithExactly(s3StorageProviderStub, BucketName.Export, filepath);
+  sinon.assert.calledOnceWithExactly(t.context.s3StorageProviderStub, BucketName.Export, filepath);
   t.pass();
 });
 
-serial('BuildExcelExportAction: should throw InvalidParam if at least 1 campaign_id is not provided', async (t) => {
-  // Arrange
-
+test('BuildExcelExportAction: should throw InvalidParam if at least 1 campaign_id is not provided', async (t) => {
   // Act
   await t.throwsAsync(async () => {
-    await buildExcelExportAction.handle({ format: { tz: 'Europe/Paris' }, query: {} }, null);
+    await t.context.buildExcelExportAction.handle({ format: { tz: 'Europe/Paris' }, query: {} }, null);
   });
 
   // Assert
-  sinon.assert.notCalled(getCampaignAndCallBuildExcelStub);
-  sinon.assert.notCalled(s3StorageProviderStub);
+  sinon.assert.notCalled(t.context.getCampaignAndCallBuildExcelStub);
+  sinon.assert.notCalled(t.context.s3StorageProviderStub);
 });
