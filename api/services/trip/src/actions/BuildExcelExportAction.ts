@@ -24,7 +24,7 @@ export class BuildExcelExportAction extends Action {
       this.getCampaignAndCallBuildExcel
         .call(c_id, start_date, end_date)
         .then((filepath) => this.s3StorageProvider.upload(BucketName.Export, filepath))
-        .catch((error) => console.error('Could not process campaign export')),
+        .catch((error) => console.error('Could not process campaign export ', error)),
     );
   }
 

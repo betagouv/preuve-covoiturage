@@ -62,7 +62,7 @@ test('BuildExcelExportAction: should create 1 xlsx file if no date range provide
   // Assert
   sinon.assert.calledOnceWithExactly(t.context.getCampaignAndCallBuildExcelStub, t.context.CAMPAIGN_ID, null, null);
   sinon.assert.calledOnceWithExactly(t.context.s3StorageProviderStub, BucketName.Export, filepath);
-  t.pass();
+  t.is(t.context.getCampaignAndCallBuildExcelStub.args[0][0], t.context.CAMPAIGN_ID);
 });
 
 test('BuildExcelExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
@@ -95,7 +95,7 @@ test('BuildExcelExportAction: should create 1 xlsx file if date range provided a
     new Date('2020-02-08T00:00:00Z'),
   );
   sinon.assert.calledOnceWithExactly(t.context.s3StorageProviderStub, BucketName.Export, filepath);
-  t.pass();
+  t.is(t.context.getCampaignAndCallBuildExcelStub.args[0][0], t.context.CAMPAIGN_ID);
 });
 
 test('BuildExcelExportAction: should throw InvalidParam if at least 1 campaign_id is not provided', async (t) => {
