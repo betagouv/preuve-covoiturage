@@ -2,6 +2,7 @@ import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/c
 import anyTest, { TestInterface } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
+import { createGetCampaignResultInterface } from '../../helpers/fakeCampaign.helper.spec';
 import {
   ParamsInterface as GetCampaignParamInterface,
   ResultInterface as GetCampaignResultInterface,
@@ -161,7 +162,7 @@ test('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaig
 
 test('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if draft campaign', async (t) => {
   // Arrange
-  t.context.kernelInterfaceResolverStub.resolves(createGetCampaignResultInterface('draft', t));
+  t.context.kernelInterfaceResolverStub.resolves(createGetCampaignResultInterface('draft', t.context.CAMPAIGN_NAME));
   let excelPath: string;
 
   // Act
@@ -180,7 +181,7 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign date
   t.context.kernelInterfaceResolverStub.resolves(
     createGetCampaignResultInterface(
       'active',
-      t,
+      t.context.CAMPAIGN_NAME,
       new Date(new Date().getTime() - 1 * 365 * 24 * 60 * 60 * 1000),
       new Date(new Date().getTime() + 1 * 365 * 24 * 60 * 60 * 1000),
     ),
@@ -208,35 +209,10 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign date
   t.is(excelPath, undefined);
 });
 
-export const createGetCampaignResultInterface = (
-  status: string,
-  t: any,
-  start_date?: Date,
-  end_date?: Date,
-): GetCampaignResultInterface => {
-  return {
-    _id: faker.random.number(),
-    name: t.context.CAMPAIGN_NAME,
-    unit: '',
-    description: faker.random.words(8),
-    rules: [],
-    global_rules: [],
-    territory_id: faker.random.number(),
-    start_date: start_date ? start_date : faker.date.past(1),
-    end_date: end_date ? end_date : faker.date.future(1),
-    status: status,
-    state: {
-      amount: faker.random.number(),
-      trip_excluded: faker.random.number(),
-      trip_subsidized: faker.random.number(),
-    },
-  };
-};
-
 const successStubArrange = (t): GetCampaignResultInterface => {
   const campaign: GetCampaignResultInterface = createGetCampaignResultInterface(
     'active',
-    t,
+    t.context.CAMPAIGN_NAME,
     new Date(new Date().getTime() - 1 * 365 * 24 * 60 * 60 * 1000),
     new Date(new Date().getTime() + 1 * 365 * 24 * 60 * 60 * 1000),
   );

@@ -1,54 +1,62 @@
 import { ContextType } from '@ilos/common';
-import test, { serial } from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import sinon, { SinonStub } from 'sinon';
+import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
 import { FakeKernelInterfaceResolver } from '../helpers/fakeIlosClasses.helper.spec';
+import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
 import { ActiveCampaignExcelExportAction } from './ActiveCampaignExcelExportAction';
-import { createGetCampaignResultInterface } from './excel/GetCampaignAndCallBuildExcel.spec';
 
-// Tested classes
-let activeCampaignExcelExportAction: ActiveCampaignExcelExportAction;
+interface Context {
+  // Injected tokens
+  fakeKernelInterfaceResolver: FakeKernelInterfaceResolver;
 
-// Injected tokens
-let fakeKernelInterfaceResolver: FakeKernelInterfaceResolver;
+  // Injected tokens method's stubs
+  kernelInterfaceResolverStub: SinonStub<[method: string, params: any, context: ContextType]>;
 
-// Stubs
-let kernelInterfaceResolverStub: SinonStub<[method: string, params: any, context: ContextType]>;
+  // Constants
+  CAMPAIGNS: CampaignInterface[];
 
-const CAMPAIGNS = [createGetCampaignResultInterface('active'), createGetCampaignResultInterface('active')];
+  // Tested token
+  activeCampaignExcelExportAction: ActiveCampaignExcelExportAction;
+}
 
-test.before((t) => {
-  fakeKernelInterfaceResolver = new FakeKernelInterfaceResolver();
-  activeCampaignExcelExportAction = new ActiveCampaignExcelExportAction(null, fakeKernelInterfaceResolver);
-});
+const test = anyTest as TestInterface<Partial<Context>>;
 
 test.beforeEach((t) => {
-  kernelInterfaceResolverStub = sinon.stub(fakeKernelInterfaceResolver, 'call');
+  t.context.fakeKernelInterfaceResolver = new FakeKernelInterfaceResolver();
+  t.context.activeCampaignExcelExportAction = new ActiveCampaignExcelExportAction(
+    null,
+    t.context.fakeKernelInterfaceResolver,
+  );
+
+  t.context.kernelInterfaceResolverStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call');
+  t.context.CAMPAIGNS = [createGetCampaignResultInterface('active'), createGetCampaignResultInterface('active')];
 });
 
 test.afterEach((t) => {
-  kernelInterfaceResolverStub.restore();
+  t.context.kernelInterfaceResolverStub.restore();
 });
 
-serial('ActiveCampaignExportAction: should export 2 active campaigns and call build excel once', async (t) => {
+test('ActiveCampaignExportAction: should export 2 active campaigns and call build excel once', async (t) => {
   // Arrange
-  kernelInterfaceResolverStub.resolves(CAMPAIGNS);
+  t.context.kernelInterfaceResolverStub.resolves(t.context.CAMPAIGNS);
 
   // Act
-  await activeCampaignExcelExportAction.handle({}, null);
+  await t.context.activeCampaignExcelExportAction.handle({}, null);
 
   // Assert
   sinon.assert.calledWithExactly(
-    kernelInterfaceResolverStub,
+    t.context.kernelInterfaceResolverStub,
     'campaign:list',
     { status: 'active' },
     { channel: { service: 'trip' }, call: { user: { permissions: ['common.policy.list'] } } },
   );
   sinon.assert.calledWithExactly(
-    kernelInterfaceResolverStub,
+    t.context.kernelInterfaceResolverStub,
     'trip:excelExport',
     {
       format: { tz: 'Europe/Paris' },
-      query: { campaign_id: CAMPAIGNS.map((c) => c._id) },
+      query: { campaign_id: t.context.CAMPAIGNS.map((c) => c._id) },
     },
     { channel: { service: 'trip' }, call: { user: { permissions: ['registry.trip.excelExport'] } } },
   );
