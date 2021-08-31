@@ -83,8 +83,8 @@ export interface FlattenTripInterface extends ExportTripInterface<string> {
 })
 export class BuildExportAction extends Action implements InitHookInterface {
   constructor(
-    private pg: TripRepositoryProvider,
-    private file: S3StorageProvider,
+    private tripRepository: TripRepositoryProvider,
+    private fileProvider: S3StorageProvider,
     private config: ConfigInterfaceResolver,
     private kernel: KernelInterfaceResolver,
   ) {
@@ -231,7 +231,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const type = get(params, 'type', 'opendata');
-    const cursor = await this.pg.searchWithCursor(this.castQueryParams(type, params), type);
+    const cursor = await this.tripRepository.searchWithCursor(this.castQueryParams(type, params), type);
 
     let count = 0;
 
@@ -259,7 +259,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     zip.addLocalFile(filepath);
     zip.writeZip(zippath);
 
-    const fileKey = await this.file.upload(BucketName.Export, zippath, zipname);
+    const fileKey = await this.fileProvider.upload(BucketName.Export, zippath, zipname);
 
     return fileKey;
   }

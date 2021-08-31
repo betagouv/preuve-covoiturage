@@ -3,7 +3,6 @@ export const schema = {
     {
       type: 'object',
       additionalProperties: false,
-      required: ['query', 'format'],
       properties: {
         query: {
           type: 'object',
