@@ -51,6 +51,5 @@ export function normalize(src: ExportTripInterface, timeZone: string): FlattenTr
     data[`driver_incentive_rpc_${id}_name`] = get(data, `driver_incentive_rpc_raw.${i}.policy_name`);
     data[`driver_incentive_rpc_${id}_amount`] = get(data, `driver_incentive_rpc_raw.${i}.amount`, 0) / 100;
   }
-
   return data;
 }

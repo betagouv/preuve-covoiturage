@@ -2,7 +2,7 @@ import { QRMath } from './QRMath';
 
 function QRPolynomial(num, shift) {
   if (num.length == undefined) {
-    throw new Error(num.length + '/' + shift);
+    throw new Error(`${num.length}/${shift}`);
   }
   let offset = 0;
   while (offset < num.length && num[offset] == 0) {

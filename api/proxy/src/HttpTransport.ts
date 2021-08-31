@@ -92,7 +92,6 @@ export class HttpTransport implements TransportInterface {
     this.registerContactformRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
-    this.registerExportRoutes();
   }
 
   getApp(): express.Express {
@@ -302,23 +301,6 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private registerExportRoutes(): void {
-    this.app.post(
-      '/trip/excel',
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
-          createRPCPayload('trip:excelExport', req.body, get(req, 'session.user', undefined)),
-        )) as RPCResponseType;
-
-        res
-          .status(get(response, 'result.meta.httpStatus', mapStatusCode(response)))
-          .send(get(response, 'result.data', this.parseErrorData(response)));
-      }),
-    );
-  }
-
   private registerAuthRoutes(): void {
     /**
      * Log the user in based on email and password combination
@@ -521,18 +503,6 @@ export class HttpTransport implements TransportInterface {
         res
           .status(get(response, 'result.meta.httpStatus', mapStatusCode(response)))
           .send(get(response, 'result.data', this.parseErrorData(response)));
-      }),
-    );
-
-    this.app.get(
-      '/v2/certificates/find/:uuid',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
-          createRPCPayload('certificate:find', { uuid: req.params.uuid }, { permissions: ['common.certificate.find'] }),
-        )) as RPCResponseType;
-
-        this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
       }),
     );
   }

@@ -170,7 +170,7 @@ QRRSBlock.RS_BLOCK_TABLE = [
 QRRSBlock.getRSBlocks = function (typeNumber, errorCorrectLevel) {
   const rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
   if (rsBlock == undefined) {
-    throw new Error('bad rs block @ typeNumber:' + typeNumber + '/errorCorrectLevel:' + errorCorrectLevel);
+    throw new Error(`bad rs block @ typeNumber:${typeNumber}/errorCorrectLevel:${errorCorrectLevel}`);
   }
   const length = rsBlock.length / 3;
   const list = [];

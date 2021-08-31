@@ -177,14 +177,27 @@ export class BuildExportAction extends Action implements InitHookInterface {
       'journey_distance_calculated',
       'journey_duration_anounced',
       'journey_duration_calculated',
+      'operator_journey_id',
+      'operator_passenger_id',
+      'operator_driver_id',
     ],
-    territory: ['journey_distance', 'journey_duration', 'operator'],
+    territory: [
+      'journey_distance',
+      'journey_duration',
+      'operator',
+      'operator_journey_id',
+      'operator_passenger_id',
+      'operator_driver_id',
+    ],
     registry: [
       'operator',
       'journey_distance_anounced',
       'journey_distance_calculated',
       'journey_duration_anounced',
       'journey_duration_calculated',
+      'operator_journey_id',
+      'operator_passenger_id',
+      'operator_driver_id',
     ],
   };
 
@@ -223,9 +236,10 @@ export class BuildExportAction extends Action implements InitHookInterface {
     let count = 0;
 
     const { filename, tz } = this.castFormat(type, params);
+    const zipname = `${filename.replace('.csv', '')}.zip`;
 
     const filepath = path.join(os.tmpdir(), filename);
-    const zipname = filepath.replace('.csv', '') + '.zip';
+    const zippath = path.join(os.tmpdir(), zipname);
     const fd = await fs.promises.open(filepath, 'a');
     const stringifier = await this.getStringifier(fd, type);
 
@@ -243,9 +257,9 @@ export class BuildExportAction extends Action implements InitHookInterface {
     // ZIP the file
     const zip = new AdmZip();
     zip.addLocalFile(filepath);
-    zip.writeZip(zipname);
+    zip.writeZip(zippath);
 
-    const fileKey = await this.file.upload(BucketName.Export, zipname, filename);
+    const fileKey = await this.file.upload(BucketName.Export, zippath, zipname);
 
     return fileKey;
   }

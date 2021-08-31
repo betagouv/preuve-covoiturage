@@ -123,15 +123,14 @@ export class PolicyProcessCommand implements CommandInterface {
     const whereClause =
       text.length === 0
         ? ''
-        : 'WHERE ' +
-          text
+        : `WHERE ${text
             .join(' AND ')
             .split('$#')
             .reduce(
               (acc, current, idx, origin) =>
                 idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`,
               '',
-            );
+            )}`;
 
     const connection = new PostgresConnection({
       connectionString: databaseUri,

@@ -52,9 +52,6 @@ test('GeoProvider: should throw Error exception all 3 providers fails to find in
   sinon.stub(etalabGeoAdressProvider, 'positionToInsee').throws(new NotFoundException());
   const end: GeoInterface = { lat: 43.72953, lon: 7.4166, insee: null };
 
-  // Act
-  const error = await t.throwsAsync(() => geoProvider.checkAndComplete(end));
-
-  // Assert
-  t.truthy(error instanceof Error);
+  // Act  // Assert
+  await t.throwsAsync(() => geoProvider.checkAndComplete(end), { instanceOf: Error });
 });

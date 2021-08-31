@@ -1,45 +1,78 @@
+import anyTest, { TestInterface } from 'ava';
 import { Workbook } from 'exceljs';
-import test from 'ava';
+import faker from 'faker';
 import sinon from 'sinon';
 import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
 import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
 import { StreamDataToWorkBookSheet } from './StreamDataToWorkBookSheet';
-import faker from 'faker';
 
-let buildExcelFileForCampaign: BuildExcelFileForCampaign;
-let excelWorkbookHandler: ExcelWorkbookHandler;
-let streamTripsForCampaginComponent: StreamDataToWorkBookSheet;
+interface Context {
+  // Injected tokens
+  excelWorkbookHandler: ExcelWorkbookHandler;
+  streamTripsForCampaginComponent: StreamDataToWorkBookSheet;
 
-const CAMPAIGN_ID: number = faker.random.number();
-const CAMPAIGN_NAME: string = faker.random.alphaNumeric();
-const RETURNED_EXCEL_PATH: string = faker.system.directoryPath();
-const TEMPLATE_WORKBOOK: Workbook = new Workbook();
-const GENERATED_WORKBOOK: Workbook = new Workbook();
+  // Injected tokens method's stubs
 
-const date: Date = faker.date.past();
+  // Constants
+  CAMPAIGN_ID: number;
+  CAMPAIGN_NAME: string;
+  RETURNED_EXCEL_PATH;
+  TEMPLATE_WORKBOOK: Workbook;
+  GENERATED_WORKBOOK: Workbook;
 
-test.before((t) => {
-  excelWorkbookHandler = new ExcelWorkbookHandler();
-  streamTripsForCampaginComponent = new StreamDataToWorkBookSheet(null);
-  buildExcelFileForCampaign = new BuildExcelFileForCampaign(excelWorkbookHandler, streamTripsForCampaginComponent);
+  // Tested token
+  buildExcelFileForCampaign: BuildExcelFileForCampaign;
+}
+
+const test = anyTest as TestInterface<Partial<Context>>;
+
+test.beforeEach((t) => {
+  t.context.excelWorkbookHandler = new ExcelWorkbookHandler();
+  t.context.streamTripsForCampaginComponent = new StreamDataToWorkBookSheet(null);
+  t.context.buildExcelFileForCampaign = new BuildExcelFileForCampaign(
+    t.context.excelWorkbookHandler,
+    t.context.streamTripsForCampaginComponent,
+  );
+
+  t.context.CAMPAIGN_ID = faker.random.number();
+  t.context.CAMPAIGN_NAME = faker.random.alphaNumeric();
+  t.context.RETURNED_EXCEL_PATH = faker.system.directoryPath();
+  t.context.TEMPLATE_WORKBOOK = new Workbook();
+  t.context.GENERATED_WORKBOOK = new Workbook();
 });
 
 test('BuildExcelFileForCampaign: should return path to excel file', async (t) => {
   // Arrange
-  const streamTripsForCampaginComponentStub = sinon.stub(streamTripsForCampaginComponent, 'call');
-  streamTripsForCampaginComponentStub.resolves(GENERATED_WORKBOOK);
+  const streamTripsForCampaginComponentStub = sinon.stub(t.context.streamTripsForCampaginComponent, 'call');
+  streamTripsForCampaginComponentStub.resolves(t.context.GENERATED_WORKBOOK);
+  const date: Date = faker.date.past();
 
-  const loadWorkkBookStub = sinon.stub(excelWorkbookHandler, 'loadWorkbookTemplate');
-  loadWorkkBookStub.resolves(TEMPLATE_WORKBOOK);
+  const loadWorkkBookStub = sinon.stub(t.context.excelWorkbookHandler, 'loadWorkbookTemplate');
+  loadWorkkBookStub.resolves(t.context.TEMPLATE_WORKBOOK);
 
-  const writeWorkBookToTempFileStub = sinon.stub(excelWorkbookHandler, 'writeWorkbookToTempFile');
-  writeWorkBookToTempFileStub.resolves(RETURNED_EXCEL_PATH);
+  const writeWorkBookToTempFileStub = sinon.stub(t.context.excelWorkbookHandler, 'writeWorkbookToTempFile');
+  writeWorkBookToTempFileStub.resolves(t.context.RETURNED_EXCEL_PATH);
 
   // Act
-  const excelPath: string = await buildExcelFileForCampaign.call(CAMPAIGN_ID, date, date, CAMPAIGN_NAME);
+  const excelPath: string = await t.context.buildExcelFileForCampaign.call(
+    t.context.CAMPAIGN_ID,
+    date,
+    date,
+    t.context.CAMPAIGN_NAME,
+  );
 
   // Assert
-  sinon.assert.calledOnceWithExactly(streamTripsForCampaginComponentStub, CAMPAIGN_ID, TEMPLATE_WORKBOOK, date, date);
-  sinon.assert.calledOnceWithExactly(writeWorkBookToTempFileStub, GENERATED_WORKBOOK, CAMPAIGN_NAME);
-  t.is(excelPath, RETURNED_EXCEL_PATH);
+  sinon.assert.calledOnceWithExactly(
+    streamTripsForCampaginComponentStub,
+    t.context.CAMPAIGN_ID,
+    t.context.TEMPLATE_WORKBOOK,
+    date,
+    date,
+  );
+  sinon.assert.calledOnceWithExactly(
+    writeWorkBookToTempFileStub,
+    t.context.GENERATED_WORKBOOK,
+    t.context.CAMPAIGN_NAME,
+  );
+  t.is(excelPath, t.context.RETURNED_EXCEL_PATH);
 });

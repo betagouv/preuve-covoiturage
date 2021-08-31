@@ -1,17 +1,17 @@
-import { IdentityInterface } from '../shared/common/interfaces/IdentityInterface';
 import { PointInterface } from '../shared/common/interfaces/PointInterface';
 
-// TODO replace any output by proper interface
 export interface CarpoolInterface {
-  m: string;
-  y: string;
-  trips: number;
+  month: string;
+  year: string;
+  trip_id: number;
   km: number;
-  rm: number;
+  rac: number;
+  payments: string;
+  type: string;
 }
 
 export interface FindParamsInterface {
-  identity: IdentityInterface;
+  personUUID: string;
   operator_id: number;
   tz: string;
   start_at: Date;
