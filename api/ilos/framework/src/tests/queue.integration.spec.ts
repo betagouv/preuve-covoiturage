@@ -12,7 +12,7 @@ import { TransportInterface, KernelInterface, serviceProvider, kernel as kernelD
 import { Kernel } from '../Kernel';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
 
-const logPath = path.join(os.tmpdir(), 'ilos-test-' + new Date().getTime());
+const logPath = path.join(os.tmpdir(), `ilos-test-${new Date().getTime()}`);
 process.env.APP_LOG_PATH = logPath;
 
 const redisUrl = process.env.APP_REDIS_URL ?? 'redis://127.0.0.1:6379';

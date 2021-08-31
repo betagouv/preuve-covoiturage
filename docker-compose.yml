@@ -31,30 +31,16 @@ services:
     networks:
       - back
 
-  #  TODO
-  #  s3:
-  #    image: minio/minio:edge
-  #    networks:
-  #      - back
-  #    command: 'server /data'
-  #    volumes:
-  #      - ./db/s3:/data
-  #    ports:
-  #      - 9000:9000
-  #
-  #  # pass BUCKET env var with bucket name to create
-  #  s3-init:
-  #    image: minio/mc:edge
-  #    networks:
-  #      - back
-  #    environment:
-  #      MINIO_URL: http://s3:9000
-  #      MINIO_ACCESS_KEY: minioadmin
-  #      MINIO_SECRET_KEY: minioadmin
-  #    entrypoint:
-  #      ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
-  #    depends_on:
-  #      - s3
+  s3:
+    image: minio/minio:edge
+    environment: 
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=admin789456123
+    networks:
+      - back
+    command: 'server /data'
+    ports:
+      - 9000:9000
 
   api:
     build:
@@ -78,6 +64,7 @@ services:
       - postgres
       - mailer
       - worker
+      - s3
 
   worker:
     build:

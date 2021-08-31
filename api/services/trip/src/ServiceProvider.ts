@@ -16,6 +16,7 @@ import { binding as buildExportBinding } from './shared/trip/buildExport.schema'
 import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
 import { binding as publicStatsBinding } from './shared/trip/publicStats.schema';
 import { binding as publishOpenDataBinding } from './shared/trip/publishOpenData.schema';
+import { binding as excelExportBinding } from './shared/trip/excelExport.schema';
 
 import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
@@ -33,6 +34,7 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
 import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
+import { BuildExcelExportAction } from './actions/BuildExcelExportAction';
 
 @serviceProvider({
   config,
@@ -46,8 +48,8 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
     sendExportBinding,
     publicStatsBinding,
     publishOpenDataBinding,
+    excelExportBinding,
   ],
-
   middlewares: [
     ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
@@ -65,6 +67,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
     FinancialStatsAction,
     ExportAction,
     BuildExportAction,
+    BuildExcelExportAction,
     TripCacheWarmCron,
     SendExportAction,
     PublishOpenDataAction,

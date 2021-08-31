@@ -251,6 +251,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       date: { start: Date; end: Date };
       territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
       operator_id?: number[];
+      campaign_id?: number[];
       territory_id?: number[];
       status?: string;
     },

@@ -60,7 +60,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await geocoder.literalToPosition(literal);
       } catch (e) {
-        failure.push('literalToPosition ' + e.message);
+        failure.push(`literalToPosition ${e.message}`);
       }
     }
     throw new Error(failure.join(', '));
@@ -72,7 +72,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await inseeReverseCoder.inseeToPosition(insee);
       } catch (e) {
-        failure.push('inseeToPosition ' + e.message);
+        failure.push(`inseeToPosition ${e.message}`);
       }
     }
 
@@ -85,7 +85,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await inseecoder.positionToInsee(geo);
       } catch (e) {
-        failure.push('positionToInsee ' + e.message);
+        failure.push(`positionToInsee ${e.message}`);
       }
     }
     throw new Error(failure.join(', '));
@@ -97,7 +97,7 @@ export class GeoProvider implements GeoProviderInterface {
       try {
         return await routeMeta.getRouteMeta(start, end);
       } catch (e) {
-        failure.push('getRouteMeta ' + e.message);
+        failure.push(`getRouteMeta ${e.message}`);
       }
     }
     throw new Error(failure.join(', '));

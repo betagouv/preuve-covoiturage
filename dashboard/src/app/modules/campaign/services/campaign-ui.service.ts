@@ -388,11 +388,10 @@ export class CampaignUiService {
       summaryText += `est limitée  ${
         campaign.filters.operator_ids.length === 1 ? "à l'opérateur " : 'aux opérateurs '
       } `;
-      summaryText +=
-        this.commonData.operators
-          .filter((operator) => campaign.filters.operator_ids.indexOf(operator._id) !== -1)
-          .map((operator) => operator.name)
-          .join(', ') + ' ';
+      summaryText += `${this.commonData.operators
+        .filter((operator) => campaign.filters.operator_ids.indexOf(operator._id) !== -1)
+        .map((operator) => operator.name)
+        .join(', ')} `;
     }
 
     // RANKS
