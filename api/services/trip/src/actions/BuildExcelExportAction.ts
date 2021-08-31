@@ -1,14 +1,14 @@
-import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
+import { BucketName, S3StorageProvider } from '@pdc/provider-file';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/excelExport.contract';
-import { GetCampaignAndCallBuildExcel } from './excel/GetCampaignAndCallBuildExcel';
 import { alias } from '../shared/trip/excelExport.schema';
-import { hasPermissionMiddleware } from '@pdc/provider-middleware';
+import { GetCampaignAndCallBuildExcel } from './excel/GetCampaignAndCallBuildExcel';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias], hasPermissionMiddleware('registry.trip.excelExport')],
+  middlewares: [...internalOnlyMiddlewares('trip'), ['validate', alias]],
 })
 export class BuildExcelExportAction extends Action {
   constructor(
