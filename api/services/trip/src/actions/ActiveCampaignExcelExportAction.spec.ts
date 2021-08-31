@@ -1,14 +1,13 @@
-import { ContextType } from '@ilos/common';
+import { ContextType, KernelInterfaceResolver } from '@ilos/common';
 import anyTest, { TestInterface } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
-import { FakeKernelInterfaceResolver } from '../helpers/fakeIlosClasses.helper.spec';
 import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
 import { ActiveCampaignExcelExportAction } from './ActiveCampaignExcelExportAction';
 
 interface Context {
   // Injected tokens
-  fakeKernelInterfaceResolver: FakeKernelInterfaceResolver;
+  fakeKernelInterfaceResolver: KernelInterfaceResolver;
 
   // Injected tokens method's stubs
   kernelInterfaceResolverStub: SinonStub<[method: string, params: any, context: ContextType]>;
@@ -23,7 +22,7 @@ interface Context {
 const test = anyTest as TestInterface<Partial<Context>>;
 
 test.beforeEach((t) => {
-  t.context.fakeKernelInterfaceResolver = new FakeKernelInterfaceResolver();
+  t.context.fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   t.context.activeCampaignExcelExportAction = new ActiveCampaignExcelExportAction(
     null,
     t.context.fakeKernelInterfaceResolver,

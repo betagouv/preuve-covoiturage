@@ -3,21 +3,18 @@ import anyTest, { TestInterface } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../../helpers/fakeCampaign.helper.spec';
-import {
-  ParamsInterface as GetCampaignParamInterface,
-  ResultInterface as GetCampaignResultInterface,
-} from '../../shared/policy/find.contract';
+import { ResultInterface as GetCampaignResultInterface } from '../../shared/policy/find.contract';
 import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
 import { GetCampaignAndCallBuildExcel } from './GetCampaignAndCallBuildExcel';
 
 interface Context {
   // Injected tokens
-  fakeKernelInterfaceResolver: FakeKernelInterfaceResolver;
+  kernelInterfaceResolver: KernelInterfaceResolver;
   buildExcelFileForCampaign: BuildExcelFileForCampaign;
 
   // Injected tokens method's stubs
   buildExcelFileForCampaignStub: SinonStub;
-  kernelInterfaceResolverStub: SinonStub<[method: string, params: GetCampaignParamInterface, context: ContextType]>;
+  kernelInterfaceResolverStub: SinonStub<[method: string, params: any, context: ContextType]>;
 
   // Constants
   RETURNED_EXCEL_PATH: string;
@@ -30,14 +27,14 @@ interface Context {
 const test = anyTest as TestInterface<Partial<Context>>;
 
 test.beforeEach((t) => {
-  t.context.fakeKernelInterfaceResolver = new FakeKernelInterfaceResolver();
+  t.context.kernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   t.context.buildExcelFileForCampaign = new BuildExcelFileForCampaign(null, null);
   t.context.getCampaignAndCallBuildExcel = new GetCampaignAndCallBuildExcel(
-    t.context.fakeKernelInterfaceResolver,
+    t.context.kernelInterfaceResolver,
     t.context.buildExcelFileForCampaign,
   );
 
-  t.context.kernelInterfaceResolverStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call');
+  t.context.kernelInterfaceResolverStub = sinon.stub(t.context.kernelInterfaceResolver, 'call');
   t.context.buildExcelFileForCampaignStub = sinon.stub(t.context.buildExcelFileForCampaign, 'call');
   t.context.RETURNED_EXCEL_PATH = faker.system.directoryPath();
   t.context.CAMPAIGN_NAME = faker.random.word();
@@ -221,9 +218,3 @@ const successStubArrange = (t): GetCampaignResultInterface => {
   t.context.buildExcelFileForCampaignStub.resolves(t.context.RETURNED_EXCEL_PATH);
   return campaign;
 };
-
-class FakeKernelInterfaceResolver extends KernelInterfaceResolver {
-  call(method: string, params: GetCampaignParamInterface, context: ContextType) {
-    return null;
-  }
-}
