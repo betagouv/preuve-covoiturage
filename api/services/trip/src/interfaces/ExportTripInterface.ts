@@ -32,6 +32,9 @@ export interface ExportTripInterface<T = Date> {
   passenger_over_18: boolean;
   passenger_seats: number;
   operator_class: string;
+  operator_journey_id: string;
+  operator_passenger_id: string;
+  operator_driver_id: string;
 
   journey_distance: number;
   journey_duration: number;

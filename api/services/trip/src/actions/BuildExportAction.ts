@@ -177,14 +177,27 @@ export class BuildExportAction extends Action implements InitHookInterface {
       'journey_distance_calculated',
       'journey_duration_anounced',
       'journey_duration_calculated',
+      'operator_journey_id',
+      'operator_passenger_id',
+      'operator_driver_id',
     ],
-    territory: ['journey_distance', 'journey_duration', 'operator'],
+    territory: [
+      'journey_distance',
+      'journey_duration',
+      'operator',
+      'operator_journey_id',
+      'operator_passenger_id',
+      'operator_driver_id',
+    ],
     registry: [
       'operator',
       'journey_distance_anounced',
       'journey_distance_calculated',
       'journey_duration_anounced',
       'journey_duration_calculated',
+      'operator_journey_id',
+      'operator_passenger_id',
+      'operator_driver_id',
     ],
   };
 

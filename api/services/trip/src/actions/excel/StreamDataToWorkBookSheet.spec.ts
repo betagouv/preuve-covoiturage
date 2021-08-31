@@ -36,6 +36,9 @@ export const exportTripInterface: ExportTripInterface<Date> = {
   passenger_over_18: true,
   passenger_seats: 1,
   operator_class: 'C',
+  operator_journey_id: faker.random.uuid(),
+  operator_passenger_id: faker.random.uuid(),
+  operator_driver_id: faker.random.uuid(),
 
   journey_distance: 865,
   journey_duration: 78,
