@@ -18,5 +18,8 @@
     "@ilos/core": "~0",
     "@pdc/provider-crypto": "~0",
     "aws-sdk": "^2.851.0"
+  },
+  "devDependencies": {
+    "axios": "^0.21.1"
   }
 }

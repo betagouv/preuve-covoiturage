@@ -1,8 +1,10 @@
 import { get, has } from 'lodash';
 import { ConfigInterfaceResolver, RegisterHookInterface, ServiceContainerInterface, extension } from '@ilos/common';
 
-export class ConfigStore {
-  constructor(protected config: { [k: string]: any }) {}
+export class ConfigStore extends ConfigInterfaceResolver {
+  constructor(protected config: { [k: string]: any }) {
+    super();
+  }
 
   get(key: string, fallback?: any): any {
     if (fallback === undefined && !has(this.config, key)) {

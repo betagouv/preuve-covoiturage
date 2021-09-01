@@ -33,6 +33,8 @@ services:
           - app.covoiturage.test
           - mailer.covoiturage.test
           - s3.covoiturage.test
+          - download.covoiturage.test
+          - local-pdc-export.s3.covoiturage.test
 
   postgres:
     build: ./docker/postgres
@@ -111,6 +113,7 @@ services:
       APP_ENV: local
     networks:
       - back
+      - front
     depends_on:
       - redis
       - postgres
@@ -150,6 +153,7 @@ services:
       APP_ENV: local
     networks:
       - back
+      - front
     depends_on:
       - redis
       - postgres
@@ -162,9 +166,11 @@ services:
     networks:
       - back
     command: 'server /data'
+    environment:
+      MINIO_DOMAIN: s3.covoiturage.test
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.s3.rule=Host(`s3.covoiturage.test`)'
+      - 'traefik.http.routers.s3.rule=Host(`s3.covoiturage.test`, `local-pdc-export.s3.covoiturage.test`, `download.covoiturage.test`)'
       - 'traefik.http.routers.s3.entrypoints=websecure'
       - 'traefik.http.routers.s3.tls=true'
       - 'traefik.http.services.s3.loadbalancer.server.port=9000'

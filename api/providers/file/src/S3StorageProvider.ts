@@ -3,7 +3,7 @@ import path from 'path';
 import S3 from 'aws-sdk/clients/s3';
 
 import { env } from '@ilos/core';
-import { provider, ProviderInterface } from '@ilos/common';
+import { ConfigInterfaceResolver, provider, ProviderInterface } from '@ilos/common';
 import { BucketName } from './interfaces/BucketName';
 
 @provider()
@@ -14,7 +14,7 @@ export class S3StorageProvider implements ProviderInterface {
   private prefix: string;
   private pathStyle: boolean;
 
-  constructor() {}
+  constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {
     this.endpoint = env('AWS_ENDPOINT') as string;
@@ -35,6 +35,7 @@ export class S3StorageProvider implements ProviderInterface {
       region: this.region,
       signatureVersion: 'v4',
       s3BucketEndpoint,
+      ...this.config.get('file.bucket.options', {}),
     });
   }
 
@@ -84,10 +85,8 @@ export class S3StorageProvider implements ProviderInterface {
           .replace(ext, '')
           .replace(/[^a-z0-9_-]/g, '') + ext;
 
-      await this.s3Instances
-        .get(bucket)
-        .upload({ Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filepath=${keyName}` })
-        .promise();
+      const params = { Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filepath=${keyName}` };
+      await this.s3Instances.get(bucket).upload(params).promise();
 
       return keyName;
     } catch (e) {
