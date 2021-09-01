@@ -11,8 +11,6 @@ interface Context {
   excelWorkbookHandler: ExcelWorkbookHandler;
   streamTripsForCampaginComponent: StreamDataToWorkBookSheet;
 
-  // Injected tokens method's stubs
-
   // Constants
   CAMPAIGN_ID: number;
   CAMPAIGN_NAME: string;

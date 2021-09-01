@@ -14,6 +14,7 @@ const unit = {
     files: [
         "src/**/*.spec.ts",
         "!src/**/*.integration.spec.ts",
+        "!src/**/*.helper.spec.ts"
     ],
 };
 

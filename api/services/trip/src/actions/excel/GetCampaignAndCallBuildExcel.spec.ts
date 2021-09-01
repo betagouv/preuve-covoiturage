@@ -2,21 +2,19 @@ import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/c
 import anyTest, { TestInterface } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
-import {
-  ParamsInterface as GetCampaignParamInterface,
-  ResultInterface as GetCampaignResultInterface,
-} from '../../shared/policy/find.contract';
+import { createGetCampaignResultInterface } from '../../helpers/fakeCampaign.helper.spec';
+import { ResultInterface as GetCampaignResultInterface } from '../../shared/policy/find.contract';
 import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
 import { GetCampaignAndCallBuildExcel } from './GetCampaignAndCallBuildExcel';
 
 interface Context {
   // Injected tokens
-  fakeKernelInterfaceResolver: FakeKernelInterfaceResolver;
+  kernelInterfaceResolver: KernelInterfaceResolver;
   buildExcelFileForCampaign: BuildExcelFileForCampaign;
 
   // Injected tokens method's stubs
   buildExcelFileForCampaignStub: SinonStub;
-  kernelInterfaceResolverStub: SinonStub<[method: string, params: GetCampaignParamInterface, context: ContextType]>;
+  kernelInterfaceResolverStub: SinonStub<[method: string, params: any, context: ContextType]>;
 
   // Constants
   RETURNED_EXCEL_PATH: string;
@@ -29,14 +27,14 @@ interface Context {
 const test = anyTest as TestInterface<Partial<Context>>;
 
 test.beforeEach((t) => {
-  t.context.fakeKernelInterfaceResolver = new FakeKernelInterfaceResolver();
+  t.context.kernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   t.context.buildExcelFileForCampaign = new BuildExcelFileForCampaign(null, null);
   t.context.getCampaignAndCallBuildExcel = new GetCampaignAndCallBuildExcel(
-    t.context.fakeKernelInterfaceResolver,
+    t.context.kernelInterfaceResolver,
     t.context.buildExcelFileForCampaign,
   );
 
-  t.context.kernelInterfaceResolverStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call');
+  t.context.kernelInterfaceResolverStub = sinon.stub(t.context.kernelInterfaceResolver, 'call');
   t.context.buildExcelFileForCampaignStub = sinon.stub(t.context.buildExcelFileForCampaign, 'call');
   t.context.RETURNED_EXCEL_PATH = faker.system.directoryPath();
   t.context.CAMPAIGN_NAME = faker.random.word();
@@ -161,7 +159,7 @@ test('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaig
 
 test('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if draft campaign', async (t) => {
   // Arrange
-  t.context.kernelInterfaceResolverStub.resolves(createGetCampaignResultInterface('draft', t));
+  t.context.kernelInterfaceResolverStub.resolves(createGetCampaignResultInterface('draft', t.context.CAMPAIGN_NAME));
   let excelPath: string;
 
   // Act
@@ -180,7 +178,7 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign date
   t.context.kernelInterfaceResolverStub.resolves(
     createGetCampaignResultInterface(
       'active',
-      t,
+      t.context.CAMPAIGN_NAME,
       new Date(new Date().getTime() - 1 * 365 * 24 * 60 * 60 * 1000),
       new Date(new Date().getTime() + 1 * 365 * 24 * 60 * 60 * 1000),
     ),
@@ -208,35 +206,10 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign date
   t.is(excelPath, undefined);
 });
 
-const createGetCampaignResultInterface = (
-  status: string,
-  t: any,
-  start_date?: Date,
-  end_date?: Date,
-): GetCampaignResultInterface => {
-  return {
-    _id: faker.random.number(),
-    name: t.context.CAMPAIGN_NAME,
-    unit: '',
-    description: faker.random.words(8),
-    rules: [],
-    global_rules: [],
-    territory_id: faker.random.number(),
-    start_date: start_date ? start_date : faker.date.past(1),
-    end_date: end_date ? end_date : faker.date.future(1),
-    status: status,
-    state: {
-      amount: faker.random.number(),
-      trip_excluded: faker.random.number(),
-      trip_subsidized: faker.random.number(),
-    },
-  };
-};
-
 const successStubArrange = (t): GetCampaignResultInterface => {
   const campaign: GetCampaignResultInterface = createGetCampaignResultInterface(
     'active',
-    t,
+    t.context.CAMPAIGN_NAME,
     new Date(new Date().getTime() - 1 * 365 * 24 * 60 * 60 * 1000),
     new Date(new Date().getTime() + 1 * 365 * 24 * 60 * 60 * 1000),
   );
@@ -245,9 +218,3 @@ const successStubArrange = (t): GetCampaignResultInterface => {
   t.context.buildExcelFileForCampaignStub.resolves(t.context.RETURNED_EXCEL_PATH);
   return campaign;
 };
-
-class FakeKernelInterfaceResolver extends KernelInterfaceResolver {
-  call(method: string, params: GetCampaignParamInterface, context: ContextType) {
-    return null;
-  }
-}
