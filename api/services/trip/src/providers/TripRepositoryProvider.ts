@@ -204,9 +204,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       ${groupBySwitch[params.group_by]}
     `;
 
-    console.debug(text);
-    console.debug(values);
-
     const result = await this.connection.getClient().query({
       values,
       text: this.numberPlaceholders(text),
