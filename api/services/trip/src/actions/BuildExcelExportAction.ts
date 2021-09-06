@@ -20,12 +20,17 @@ export class BuildExcelExportAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const { start_date, end_date } = this.castOrGetDefaultDates(params);
-    params.query.campaign_id.map((c_id) =>
+
+    params.query.campaign_id.forEach((c_id) => {
       this.getCampaignAndCallBuildExcel
         .call(c_id, start_date, end_date)
-        .then((filepath) => this.s3StorageProvider.upload(BucketName.Export, filepath))
-        .catch((error) => console.error('Could not process campaign export ', error)),
-    );
+        .then((filepathes) => {
+          filepathes.forEach((filepath) => {
+            this.s3StorageProvider.upload(BucketName.Export, filepath);
+          });
+        })
+        .catch((error) => console.error('Could not process campaign export ', error));
+    });
   }
 
   private castOrGetDefaultDates(params: ParamsInterface): { start_date: Date; end_date: Date } {

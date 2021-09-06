@@ -44,8 +44,8 @@ test.afterEach((t) => {
 
 test('BuildExcelExportAction: should create 1 xlsx file if no date range provided and 1 campaign id', async (t) => {
   // Arrange
-  const filepath = `/tmp/exports/campaign-${uuid()}.xlsx`;
-  t.context.getCampaignAndCallBuildExcelStub.resolves(filepath);
+  const FILEPATHES = [`/tmp/exports/campaign-${uuid()}.xlsx`];
+  t.context.getCampaignAndCallBuildExcelStub.resolves(FILEPATHES);
   t.context.s3StorageProviderStub.resolves('s3-key');
 
   // Act
@@ -61,14 +61,14 @@ test('BuildExcelExportAction: should create 1 xlsx file if no date range provide
 
   // Assert
   sinon.assert.calledOnceWithExactly(t.context.getCampaignAndCallBuildExcelStub, t.context.CAMPAIGN_ID, null, null);
-  sinon.assert.calledOnceWithExactly(t.context.s3StorageProviderStub, BucketName.Export, filepath);
+  sinon.assert.calledOnceWithExactly(t.context.s3StorageProviderStub, BucketName.Export, FILEPATHES[0]);
   t.is(t.context.getCampaignAndCallBuildExcelStub.args[0][0], t.context.CAMPAIGN_ID);
 });
 
 test('BuildExcelExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
   // Arrange
-  const filepath = `/tmp/exports/campaign-${uuid()}.xlsx`;
-  t.context.getCampaignAndCallBuildExcelStub.resolves(filepath);
+  const FILEPATHES = [`/tmp/exports/campaign-${uuid()}.xlsx`];
+  t.context.getCampaignAndCallBuildExcelStub.resolves(FILEPATHES);
   t.context.s3StorageProviderStub.resolves('s3-key');
 
   // Act
@@ -94,8 +94,57 @@ test('BuildExcelExportAction: should create 1 xlsx file if date range provided a
     new Date('2020-01-08T00:00:00Z'),
     new Date('2020-02-08T00:00:00Z'),
   );
-  sinon.assert.calledOnceWithExactly(t.context.s3StorageProviderStub, BucketName.Export, filepath);
+  sinon.assert.calledOnceWithExactly(t.context.s3StorageProviderStub, BucketName.Export, FILEPATHES[0]);
   t.is(t.context.getCampaignAndCallBuildExcelStub.args[0][0], t.context.CAMPAIGN_ID);
+});
+
+// eslint-disable-next-line max-len
+test('BuildExcelExportAction: should create 4 xlsx file if date range provided and 2 campaigns with 2 operators each', async (t) => {
+  // Arrange
+  const CAMPAIGN_IDS = [5, 8];
+  const FILEPATHES = [
+    `/tmp/exports/campaign-c1-op3-${uuid()}.xlsx`,
+    `/tmp/exports/campaign-c1-op4-${uuid()}.xlsx`,
+    `/tmp/exports/campaign-c2-op3-${uuid()}.xlsx`,
+    `/tmp/exports/campaign-c2-op4-${uuid()}.xlsx`,
+  ];
+  t.context.getCampaignAndCallBuildExcelStub.resolves(FILEPATHES);
+  t.context.s3StorageProviderStub.resolves('s3-key');
+
+  // Act
+  await t.context.buildExcelExportAction.handle(
+    {
+      format: { tz: 'Europe/Paris' },
+      query: {
+        campaign_id: CAMPAIGN_IDS,
+        date: {
+          start: '2020-01-08T00:00:00Z',
+          end: '2020-02-08T00:00:00Z',
+        },
+      },
+      // Cast to check date type conversion
+    } as any,
+    null,
+  );
+
+  // Assert
+  sinon.assert.calledWithExactly(
+    t.context.getCampaignAndCallBuildExcelStub.firstCall,
+    CAMPAIGN_IDS[0],
+    new Date('2020-01-08T00:00:00Z'),
+    new Date('2020-02-08T00:00:00Z'),
+  );
+  sinon.assert.calledWithExactly(
+    t.context.getCampaignAndCallBuildExcelStub.secondCall,
+    CAMPAIGN_IDS[1],
+    new Date('2020-01-08T00:00:00Z'),
+    new Date('2020-02-08T00:00:00Z'),
+  );
+  FILEPATHES.forEach((f, i) =>
+    sinon.assert.calledWithExactly(t.context.s3StorageProviderStub.getCall(i), BucketName.Export, FILEPATHES[i]),
+  );
+  t.is(t.context.getCampaignAndCallBuildExcelStub.args[0][0], CAMPAIGN_IDS[0]);
+  t.is(t.context.getCampaignAndCallBuildExcelStub.args[1][0], CAMPAIGN_IDS[1]);
 });
 
 test('BuildExcelExportAction: should throw InvalidParam if at least 1 campaign_id is not provided', async (t) => {

@@ -107,12 +107,12 @@ test('StreamDataToWorkBookSheet: should stream 20 rows to workbook', async (t) =
   wb.addWorksheet('data');
 
   // Act
-  const generatedWorkbook: Workbook = await streamTripsForCampaginComponent.call(campaign_id, wb, date, date);
+  const generatedWorkbook: Workbook = await streamTripsForCampaginComponent.call(campaign_id, wb, date, date, 5);
 
   // Assert
   sinon.assert.calledOnceWithExactly(
     tripRepositoryProviderStub,
-    { date: { start: date, end: date }, campaign_id: [campaign_id] },
+    { date: { start: date, end: date }, campaign_id: [campaign_id], operator_id: [5] },
     'territory',
   );
   t.deepEqual(generatedWorkbook.getWorksheet('data').getRow(1).values, [

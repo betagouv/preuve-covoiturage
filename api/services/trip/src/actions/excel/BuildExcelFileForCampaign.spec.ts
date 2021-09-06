@@ -57,6 +57,7 @@ test('BuildExcelFileForCampaign: should return path to excel file', async (t) =>
     date,
     date,
     t.context.CAMPAIGN_NAME,
+    5,
   );
 
   // Assert
@@ -66,11 +67,13 @@ test('BuildExcelFileForCampaign: should return path to excel file', async (t) =>
     t.context.TEMPLATE_WORKBOOK,
     date,
     date,
+    5,
   );
   sinon.assert.calledOnceWithExactly(
     writeWorkBookToTempFileStub,
     t.context.GENERATED_WORKBOOK,
     t.context.CAMPAIGN_NAME,
+    5,
   );
   t.is(excelPath, t.context.RETURNED_EXCEL_PATH);
 });

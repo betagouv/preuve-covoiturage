@@ -1,3 +1,4 @@
+import { operator } from './../../../../../../dashboard/src/app/core/entities/api/shared/user/permissions.config';
 import { BuildExportAction, FlattenTripInterface } from '../BuildExportAction';
 import { ExportTripInterface } from '../../interfaces/ExportTripInterface';
 import { TableColumnProperties, Workbook, Worksheet } from 'exceljs';
@@ -9,7 +10,13 @@ import { provider } from '@ilos/common';
 export class StreamDataToWorkBookSheet {
   constructor(private tripRepositoryProvider: TripRepositoryProvider) {}
 
-  async call(campaign_id: number, workbook: Workbook, start_date: Date, end_date: Date): Promise<Workbook> {
+  async call(
+    campaign_id: number,
+    workbook: Workbook,
+    start_date: Date,
+    end_date: Date,
+    operator_id: number,
+  ): Promise<Workbook> {
     const getTripsCallback: (
       count: number,
     ) => Promise<ExportTripInterface[]> = await this.tripRepositoryProvider.searchWithCursor(
@@ -19,6 +26,7 @@ export class StreamDataToWorkBookSheet {
           end: end_date,
         },
         campaign_id: [campaign_id],
+        operator_id: [operator_id],
       },
       'territory',
     );

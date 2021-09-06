@@ -11,7 +11,7 @@ import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
 export class GetCampaignAndCallBuildExcel {
   constructor(private kernel: KernelInterfaceResolver, private buildExcelFileForCampaign: BuildExcelFileForCampaign) {}
 
-  async call(campaign_id: number, start_date?: Date, end_date?: Date): Promise<string> {
+  async call(campaign_id: number, start_date?: Date, end_date?: Date): Promise<string[]> {
     if (!start_date && !end_date) {
       start_date = this.startOfPreviousMonthDate();
       end_date = this.endOfPreviousMonthDate();
@@ -32,7 +32,14 @@ export class GetCampaignAndCallBuildExcel {
     if (!this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
       throw new InvalidRequestException('Provided date range are not inside campagne periode');
     }
-    return await this.buildExcelFileForCampaign.call(campaign_id, start_date, end_date, campaign.name);
+    return Promise.all(
+      campaign.global_rules
+        .filter((g) => g.slug === 'operator_whitelist_filter')
+        .flatMap((owf) => owf.parameters)
+        .map((operator_id) =>
+          this.buildExcelFileForCampaign.call(campaign_id, start_date, end_date, campaign.name, operator_id),
+        ),
+    );
   }
 
   private endOfPreviousMonthDate(): Date {
