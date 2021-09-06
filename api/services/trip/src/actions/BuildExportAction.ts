@@ -1,3 +1,4 @@
+import { StartTerritoryCountInterface } from './../interfaces/StartTerritoryCountInterface';
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
@@ -231,7 +232,16 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const type = get(params, 'type', 'opendata');
-    const cursor = await this.tripRepository.searchWithCursor(this.castQueryParams(type, params), type);
+
+    const queryParam = this.castQueryParams(type, params);
+    if (type === 'opendata') {
+      // eslint-disable-next-line max-len
+      const excluded_start_territories: StartTerritoryCountInterface[] = await this.tripRepository.getOpenDataExcludedTerritories(
+        queryParam,
+      );
+      queryParam.excluded_start_territory_id = excluded_start_territories.map((t) => t.start_territory_id);
+    }
+    const cursor = await this.tripRepository.searchWithCursor(queryParam, type);
 
     let count = 0;
 
@@ -264,7 +274,10 @@ export class BuildExportAction extends Action implements InitHookInterface {
     return fileKey;
   }
 
-  protected castQueryParams(type: string, params: ParamsInterface): QueryInterface & { status?: string } {
+  protected castQueryParams(
+    type: string,
+    params: ParamsInterface,
+  ): QueryInterface & { status?: string } & { excluded_start_territory_id?: number[] } {
     if (type !== 'opendata') {
       return params.query;
     }
@@ -280,7 +293,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
       date: {
         start: startDate,
         end: endDate,
-        ...params.query.date,
+        ...params.query?.date,
       },
       ...params.query,
       status: 'ok',
