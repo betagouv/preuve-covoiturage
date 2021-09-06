@@ -3,18 +3,18 @@ import path from 'path';
 import S3 from 'aws-sdk/clients/s3';
 
 import { env } from '@ilos/core';
-import { provider, ProviderInterface } from '@ilos/common';
+import { ConfigInterfaceResolver, provider, ProviderInterface } from '@ilos/common';
 import { BucketName } from './interfaces/BucketName';
 
 @provider()
 export class S3StorageProvider implements ProviderInterface {
-  private s3: S3;
+  private s3Instances: Map<BucketName, S3> = new Map();
   private endpoint: string;
   private region: string;
   private prefix: string;
   private pathStyle: boolean;
 
-  constructor() {}
+  constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {
     this.endpoint = env('AWS_ENDPOINT') as string;
@@ -22,11 +22,20 @@ export class S3StorageProvider implements ProviderInterface {
     this.prefix = env('AWS_BUCKET_PREFIX', env('NODE_ENV', 'local')) as string;
     this.pathStyle = env('AWS_S3_PATH_STYLE', false) ? true : false;
 
-    this.s3 = new S3({
+    this.s3Instances.set(BucketName.Export, this.createInstance(BucketName.Export));
+    this.s3Instances.set(BucketName.Public, this.createInstance(BucketName.Public));
+  }
+
+  protected createInstance(bucket: BucketName): S3 {
+    const bucketUrl = this.getBucketUrl(bucket);
+    const s3BucketEndpoint = !this.pathStyle && bucketUrl !== '';
+    return new S3({
       s3ForcePathStyle: this.pathStyle,
-      endpoint: this.endpoint,
+      endpoint: s3BucketEndpoint ? bucketUrl : this.endpoint,
       region: this.region,
       signatureVersion: 'v4',
+      s3BucketEndpoint,
+      ...this.config.get('file.bucket.options', {}),
     });
   }
 
@@ -36,7 +45,8 @@ export class S3StorageProvider implements ProviderInterface {
     targetBucket: BucketName,
     targetFileKey: string,
   ): Promise<void> {
-    await this.s3
+    await this.s3Instances
+      .get(inputBucket)
       .copyObject({
         CopySource: `${this.getBucketName(inputBucket)}/${inputFileKey}`,
         Bucket: this.getBucketName(targetBucket),
@@ -47,7 +57,10 @@ export class S3StorageProvider implements ProviderInterface {
 
   async exists(bucket: BucketName, filepath: string): Promise<boolean> {
     try {
-      await this.s3.headObject({ Bucket: this.getBucketName(bucket), Key: filepath }).promise();
+      await this.s3Instances
+        .get(bucket)
+        .headObject({ Bucket: this.getBucketName(bucket), Key: filepath })
+        .promise();
       return true;
     } catch (e) {
       if (e.code === 'NotFound') {
@@ -72,9 +85,8 @@ export class S3StorageProvider implements ProviderInterface {
           .replace(ext, '')
           .replace(/[^a-z0-9_-]/g, '') + ext;
 
-      await this.s3
-        .upload({ Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filepath=${keyName}` })
-        .promise();
+      const params = { Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filepath=${keyName}` };
+      await this.s3Instances.get(bucket).upload(params).promise();
 
       return keyName;
     } catch (e) {
@@ -94,7 +106,7 @@ export class S3StorageProvider implements ProviderInterface {
     try {
       const Bucket = this.getBucketName(bucket);
 
-      const url = await this.s3.getSignedUrlPromise('getObject', {
+      const url = await this.s3Instances.get(bucket).getSignedUrlPromise('getObject', {
         Bucket,
         Key: filekey,
         Expires: expires,
@@ -111,5 +123,9 @@ export class S3StorageProvider implements ProviderInterface {
 
   private getBucketName(bucket: BucketName): string {
     return `${this.prefix}-${bucket}`;
+  }
+
+  private getBucketUrl(bucket: BucketName): string {
+    return env(`AWS_BUCKET_${bucket.toUpperCase()}_URL`, '') as string;
   }
 }

@@ -5,6 +5,7 @@ import { BuildExcelExportAction } from './BuildExcelExportAction';
 import { GetCampaignAndCallBuildExcel } from './excel/GetCampaignAndCallBuildExcel';
 import faker from 'faker';
 import { uuid } from '@pdc/helper-test/dist';
+import { ConfigStore } from '@ilos/core/dist/extensions';
 
 interface Context {
   // Injected tokens
@@ -26,7 +27,7 @@ const test = anyTest as TestInterface<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.getCampaignAndCallBuildExcel = new GetCampaignAndCallBuildExcel(null, null);
-  t.context.s3StorageProvider = new S3StorageProvider();
+  t.context.s3StorageProvider = new S3StorageProvider(new ConfigStore({}));
   t.context.buildExcelExportAction = new BuildExcelExportAction(
     t.context.getCampaignAndCallBuildExcel,
     t.context.s3StorageProvider,
