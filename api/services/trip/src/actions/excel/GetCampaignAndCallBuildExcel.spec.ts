@@ -1,4 +1,3 @@
-import { operator } from './../../../../../../dashboard/src/app/core/entities/api/shared/user/permissions.config';
 import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import anyTest, { TestInterface } from 'ava';
 import faker from 'faker';

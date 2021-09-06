@@ -1,4 +1,4 @@
-import { KernelInterfaceResolver, provider, InvalidRequestException } from '@ilos/common';
+import { InvalidRequestException, KernelInterfaceResolver, provider } from '@ilos/common';
 import {
   ParamsInterface as GetCampaignParamInterface,
   ResultInterface as GetCampaignResultInterface,

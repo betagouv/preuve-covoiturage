@@ -1,10 +1,9 @@
-import { operator } from './../../../../../../dashboard/src/app/core/entities/api/shared/user/permissions.config';
-import { BuildExportAction, FlattenTripInterface } from '../BuildExportAction';
-import { ExportTripInterface } from '../../interfaces/ExportTripInterface';
+import { provider } from '@ilos/common';
 import { TableColumnProperties, Workbook, Worksheet } from 'exceljs';
 import { normalize } from '../../helpers/normalizeExportDataHelper';
+import { ExportTripInterface } from '../../interfaces/ExportTripInterface';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { provider } from '@ilos/common';
+import { BuildExportAction, FlattenTripInterface } from '../BuildExportAction';
 
 @provider()
 export class StreamDataToWorkBookSheet {
