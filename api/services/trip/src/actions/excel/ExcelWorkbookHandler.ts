@@ -13,10 +13,12 @@ export class ExcelWorkbookHandler {
     return wb.xlsx.readFile(ExcelWorkbookHandler.template_location);
   }
 
-  async writeWorkbookToTempFile(workbook: Workbook, campaign_name: string, operator_id: number): Promise<string> {
+  async writeWorkbookToTempFile(workbook: Workbook, campaign_name: string, operator_id?: number): Promise<string> {
     const filepath = `${path.join(
       os.tmpdir(),
-      `apdf-${this.sanitazeString(campaign_name)}-${operator_id}-${this.getMonthString()}-${v4().substring(0, 6)}`,
+      `apdf-${this.sanitazeString(campaign_name)}-${
+        operator_id ? `${operator_id}-` : ''
+      } ${this.getMonthString()}-${v4().substring(0, 6)}`,
     )}.xlsx `;
     await workbook.xlsx.writeFile(filepath);
     return filepath;
