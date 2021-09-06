@@ -14,7 +14,7 @@ export class StreamDataToWorkBookSheet {
     workbook: Workbook,
     start_date: Date,
     end_date: Date,
-    operator_id: number,
+    operator_id?: number,
   ): Promise<Workbook> {
     const getTripsCallback: (
       count: number,
@@ -25,7 +25,7 @@ export class StreamDataToWorkBookSheet {
           end: end_date,
         },
         campaign_id: [campaign_id],
-        operator_id: [operator_id],
+        operator_id: operator_id ? [operator_id] : null,
       },
       'territory',
     );

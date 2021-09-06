@@ -157,6 +157,36 @@ test('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are
   );
 });
 
+// eslint-disable-next-line max-len
+test('GetCampaignAndCallBuildExcel: should create 1 xlsx file if campaign date are in larger date range and no operator whitelist', async (t) => {
+  // Arrange
+  const campaign: GetCampaignResultInterface = successStubArrange(t, null);
+
+  const todayMinus3Years: Date = new Date();
+  todayMinus3Years.setFullYear(todayMinus3Years.getFullYear() - 3);
+
+  const todayPlus3Years: Date = new Date();
+  todayPlus3Years.setFullYear(todayPlus3Years.getFullYear() + 3);
+
+  // Act
+  const excelPath: string[] = await t.context.getCampaignAndCallBuildExcel.call(
+    campaign._id,
+    todayMinus3Years,
+    todayPlus3Years,
+  );
+
+  // Assert
+  t.is(excelPath[0], t.context.RETURNED_EXCEL_PATH);
+  sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
+  sinon.assert.calledOnceWithExactly(
+    t.context.buildExcelFileForCampaignStub,
+    campaign._id,
+    todayMinus3Years,
+    todayPlus3Years,
+    t.context.CAMPAIGN_NAME,
+  );
+});
+
 test('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaign with id', async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub.rejects(new NotFoundException());

@@ -32,6 +32,13 @@ export class GetCampaignAndCallBuildExcel {
     if (!this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
       throw new InvalidRequestException('Provided date range are not inside campagne periode');
     }
+
+    if (!this.hasCampaignOperatorWhitelist(campaign)) {
+      return this.buildExcelFileForCampaign
+        .call(campaign_id, start_date, end_date, campaign.name)
+        .then((excel) => [excel]);
+    }
+
     return Promise.all(
       campaign.global_rules
         .filter((g) => g.slug === 'operator_whitelist_filter')
@@ -40,6 +47,10 @@ export class GetCampaignAndCallBuildExcel {
           this.buildExcelFileForCampaign.call(campaign_id, start_date, end_date, campaign.name, operator_id),
         ),
     );
+  }
+
+  private hasCampaignOperatorWhitelist(campaign: GetCampaignResultInterface) {
+    return campaign.global_rules.find((g) => g.slug === 'operator_whitelist_filter');
   }
 
   private endOfPreviousMonthDate(): Date {

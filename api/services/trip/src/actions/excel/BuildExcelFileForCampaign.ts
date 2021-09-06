@@ -15,7 +15,7 @@ export class BuildExcelFileForCampaign {
     start_date: Date,
     end_date: Date,
     campaign_name: string,
-    operator_id: number,
+    operator_id?: number,
   ): Promise<string> {
     const templateWorkbook: Workbook = await this.excelWorkbookHandler.loadWorkbookTemplate();
     const processedWorkbook: Workbook = await this.streamDataToWorkBookSheet.call(
