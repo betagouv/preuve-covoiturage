@@ -7,7 +7,7 @@ export interface ParamsInterface {
       start: Date;
       end: Date;
     };
-    campaign_id?: number[];
+    campaign_id: number[];
   };
 }
 

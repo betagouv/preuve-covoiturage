@@ -6,6 +6,7 @@ export const schema = {
     query: {
       type: 'object',
       additionalProperties: false,
+      required: ['campaign_id'],
       properties: {
         date: {
           type: 'object',
