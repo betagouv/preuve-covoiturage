@@ -6,7 +6,10 @@
  */
 var { createMigration } = require('../helpers/createMigration');
 
-var { setup, up, down } = createMigration(['policy/20210420000000_update_policy_meta'], __dirname);
+var { setup, up, down } = createMigration([
+    'policy/20210901000000_update_policy_meta',
+    'policy/20210901000000_update_policy_trip',
+], __dirname);
 
 exports.setup = setup;
 exports.up = up;
