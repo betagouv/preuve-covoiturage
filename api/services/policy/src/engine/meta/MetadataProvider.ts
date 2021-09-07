@@ -31,7 +31,7 @@ export class MetadataProvider implements MetadataProviderInterface {
       });
     }
 
-    if(datetime) {
+    if (datetime) {
       whereClauses.push({
         text: `datetime <= ${keys.length ? '$3' : '$4'}::timestamp`,
         value: datetime,

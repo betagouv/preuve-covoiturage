@@ -54,7 +54,7 @@ test.serial('should create metadata wrapper on database', async (t) => {
   t.is(meta.keys().length, 0);
   meta.set('toto', 0);
 
-  await t.context.repository.set(t.context.policyId, meta);
+  await t.context.repository.set(t.context.policyId, meta, new Date());
 
   const dbResult = await t.context.connection.getClient().query({
     text: `SELECT value from ${t.context.repository.table} WHERE policy_id = $1 AND key = $2`,
@@ -75,7 +75,7 @@ test.serial('should create another metadata wrapper on database', async (t) => {
   t.true(meta instanceof MetadataWrapper);
   t.is(meta.keys().length, 0);
   meta.set('toto', 0);
-  await t.context.repository.set(t.context.policyId, meta);
+  await t.context.repository.set(t.context.policyId, meta, new Date());
 
   const meta2 = await t.context.repository.get(t.context.policyId);
   t.is(meta2.keys().length, 1);
@@ -83,10 +83,10 @@ test.serial('should create another metadata wrapper on database', async (t) => {
   meta2.set('toto', 1);
   meta2.set('tata', 100);
 
-  await t.context.repository.set(t.context.policyId, meta2);
+  await t.context.repository.set(t.context.policyId, meta2, new Date());
 
   const dbResult = await t.context.connection.getClient().query({
-    text: `SELECT key, value from ${t.context.repository.table} WHERE policy_id = $1 ORDER BY key, updated_at`,
+    text: `SELECT key, value from ${t.context.repository.table} WHERE policy_id = $1 ORDER BY key, datetime`,
     values: [t.context.policyId],
   });
 
