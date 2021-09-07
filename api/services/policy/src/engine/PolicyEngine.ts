@@ -33,7 +33,7 @@ export class PolicyEngine {
     const keys = pc.getMetaKeys(incentive);
     const meta = await this.metaRepository.get(pc.policy_id, keys);
     const result = pc.applyStateful(incentive, meta);
-    await this.metaRepository.set(pc.policy_id, meta);
+    await this.metaRepository.set(pc.policy_id, meta, incentive.datetime);
     return result;
   }
 
