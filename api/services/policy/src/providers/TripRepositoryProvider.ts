@@ -71,7 +71,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
         OR $3::int = ANY(pt.end_territory_id)
       )
       ${override ? '' : 'AND pi.carpool_id IS NULL'}
-      GROUP BY pt.trip_id
+      GROUP BY pt.acquisition_id
       ORDER BY min(pt.datetime) ASC
       `,
       values: [policy.start_date, policy.end_date, policy.territory_id, policy.policy_id],
