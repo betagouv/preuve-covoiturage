@@ -23,7 +23,7 @@ export class PolicyEngine {
       const incentive = pc.apply(ctx, meta);
       tripIncentives.addIncentive(incentive);
     }
-    return tripIncentives.distributeDriverIncentives().getIncentives();
+    return tripIncentives.getIncentives();
   }
 
   public async processStateful(

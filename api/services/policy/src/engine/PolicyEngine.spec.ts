@@ -86,42 +86,6 @@ test('should boot', async (t) => {
   t.is(result[0].amount, ((trip[0].distance / 1000) * fakeCampaign.rules[0][1].parameters) as number);
 });
 
-test('should work and distribute incentive', async (t) => {
-  const { engine, fakeCampaign } = setup();
-  const trip = faker.trip([
-    {
-      carpool_id: 2,
-      is_driver: true,
-      distance: 1000,
-    },
-    {
-      carpool_id: 1,
-      is_driver: false,
-      distance: 1000,
-    },
-    {
-      carpool_id: 3,
-      is_driver: false,
-      distance: 3000,
-    },
-    {
-      carpool_id: 4,
-      is_driver: true,
-      distance: 4000,
-    },
-  ]);
-  const campaign = engine.buildCampaign(fakeCampaign);
-  const result = await engine.process(campaign, trip);
-
-  t.log(result);
-  t.true(Array.isArray(result));
-  t.is(result.length, 4);
-  t.is(result.find((p) => p.carpool_id === 1).amount, (1000 / 1000) * 10);
-  t.is(result.find((p) => p.carpool_id === 2).amount, ((4000 / 1000) * 20) / 2);
-  t.is(result.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
-  t.is(result.find((p) => p.carpool_id === 4).amount, ((4000 / 1000) * 20) / 2);
-});
-
 test('should work with amount restriction', async (t) => {
   const { engine, fakeCampaign } = setup([
     {
