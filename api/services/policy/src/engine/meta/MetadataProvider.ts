@@ -77,7 +77,7 @@ export class MetadataProvider implements MetadataProviderInterface {
     return;
   }
 
-  async wayback(policyId: number, from: Date): Promise<void> {
+  async deleteFrom(policyId: number, from: Date): Promise<void> {
     const query = {
       text: `
         DELETE FROM ${this.table}
