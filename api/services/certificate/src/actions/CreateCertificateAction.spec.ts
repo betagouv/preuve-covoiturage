@@ -81,11 +81,17 @@ test.afterEach((t) => {
   t.context.kernelCallStub.restore();
 });
 
+/**
+ * -----------------------------------------------------------------------------------------------------------------------------------
+ * RAC (reste à charge)
+ * -----------------------------------------------------------------------------------------------------------------------------------
+ */
 test('CreateCertificateAction: should generate certificate with 0 rac amount for 2 trips with operator incentive', async (t) => {
   // Arrange
   const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
   t.context.carpoolRepositoryFindStub.resolves([
     {
+      day: 1,
       month: 9,
       year: 2021,
       type: 'passenger',
@@ -102,6 +108,7 @@ test('CreateCertificateAction: should generate certificate with 0 rac amount for
       ]),
     },
     {
+      day: 1,
       month: 9,
       year: 2021,
       type: 'passenger',
@@ -131,8 +138,9 @@ test('CreateCertificateAction: should generate certificate with 0 rac amount for
       total_tr: 2,
       total_km: 20,
       total_rm: 0,
+      total_days: 1,
       total_point: 0,
-      rows: [{ month: 'Septembre 2021', index: 0, distance: 20, remaining: 0, trips: 2 }],
+      rows: [{ month: 'Septembre 2021', index: 0, distance: 20, remaining: 0, trips: 2, days: 1 }],
     },
     end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,
     start_at: t.context.certificateRepositoryCreateStub.args[0][0].start_at,
@@ -151,6 +159,7 @@ test('CreateCertificateAction: should generate certificate with 0 rac for 2 trip
   const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
   t.context.carpoolRepositoryFindStub.resolves([
     {
+      day: 1,
       month: 9,
       year: 2021,
       type: 'passenger',
@@ -167,6 +176,7 @@ test('CreateCertificateAction: should generate certificate with 0 rac for 2 trip
       ]),
     },
     {
+      day: 1,
       month: 9,
       year: 2021,
       type: 'passenger',
@@ -191,6 +201,7 @@ test('CreateCertificateAction: should generate certificate with 0 rac for 2 trip
       total_tr: 2,
       total_km: 20,
       total_rm: 0,
+      total_days: 1,
       total_point: 0,
       rows: [
         {
@@ -199,6 +210,7 @@ test('CreateCertificateAction: should generate certificate with 0 rac for 2 trip
           distance: 20,
           remaining: 0,
           trips: 2,
+          days: 1,
         },
       ],
     },
@@ -218,6 +230,7 @@ test('CreateCertificateAction: should generate certificate with rac amount split
   const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
   t.context.carpoolRepositoryFindStub.resolves([
     {
+      day: 1,
       month: 9,
       year: 2021,
       type: 'passenger',
@@ -234,6 +247,7 @@ test('CreateCertificateAction: should generate certificate with rac amount split
       ]),
     },
     {
+      day: 1,
       month: 8,
       year: 2021,
       type: 'passenger',
@@ -260,6 +274,7 @@ test('CreateCertificateAction: should generate certificate with rac amount split
       total_tr: 2,
       total_km: 20,
       total_rm: 3,
+      total_days: 2,
       total_point: 0,
       rows: [
         {
@@ -268,6 +283,7 @@ test('CreateCertificateAction: should generate certificate with rac amount split
           distance: 10,
           remaining: 1.5,
           trips: 1,
+          days: 1,
         },
         {
           month: 'Août 2021',
@@ -275,6 +291,7 @@ test('CreateCertificateAction: should generate certificate with rac amount split
           distance: 10,
           remaining: 1.5,
           trips: 1,
+          days: 1,
         },
       ],
     },

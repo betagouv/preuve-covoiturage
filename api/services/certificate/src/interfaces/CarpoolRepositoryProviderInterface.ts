@@ -3,6 +3,7 @@ import { PointInterface } from '../shared/common/interfaces/PointInterface';
 export interface CarpoolInterface {
   month: string;
   year: string;
+  day: number;
   trip_id: number;
   km: number;
   rac: number;
