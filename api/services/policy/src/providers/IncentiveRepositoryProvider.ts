@@ -97,7 +97,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     return;
   }
 
-  async *findDraftIncentive(before: Date, batchSize = 100): AsyncGenerator<IncentiveInterface[], void, void> {
+  async *findDraftIncentive(to: Date, batchSize = 100, from?: Date): AsyncGenerator<IncentiveInterface[], void, void> {
     const query = {
       text: `
       SELECT
@@ -113,9 +113,10 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       WHERE
         status = $1::policy.incentive_status_enum AND
         datetime <= $2::timestamp
+        ${from ? 'AND datetime >= $3::timestamp' : ''}
       ORDER BY datetime ASC;
       `,
-      values: ['draft', before],
+      values: ['draft', to, ...(from ? [from] : [])],
     };
 
     const client = await this.connection.getClient().connect();

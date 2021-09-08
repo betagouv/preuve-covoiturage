@@ -48,9 +48,11 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     // Get last day of previous month
-    const before = new Date();
-    before.setDate(1);
-    before.setHours(0, 0, 0, -1);
+    const defaultTo = new Date();
+    defaultTo.setDate(1);
+    defaultTo.setHours(0, 0, 0, -1);
+
+    const to = params.to ?? defaultTo;
 
     // Refresh table
     await this.tripRepository.refresh();
@@ -61,17 +63,21 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     const policyMap: Map<number, ProcessableCampaign> = new Map();
 
     // Apply internal restriction of policies
-    await this.processStatefulCampaigns(policyMap, before);
+    await this.processStatefulCampaigns(policyMap, params.to ?? to, params.from);
 
     // TODO: Apply external restriction (order) of policies
 
     // Lock all
-    await this.incentiveRepository.lockAll(before);
+    await this.incentiveRepository.lockAll(to);
   }
 
-  protected async processStatefulCampaigns(policyMap: Map<number, ProcessableCampaign>, before: Date): Promise<void> {
+  protected async processStatefulCampaigns(
+    policyMap: Map<number, ProcessableCampaign>,
+    to: Date,
+    from?: Date,
+  ): Promise<void> {
     // 1. Start a cursor to find incentives
-    const cursor = await this.incentiveRepository.findDraftIncentive(before);
+    const cursor = await this.incentiveRepository.findDraftIncentive(to, 100, from);
     let done = false;
     do {
       const updatedIncentives: { carpool_id: number; policy_id: number; amount: number }[] = [];

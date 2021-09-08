@@ -72,7 +72,13 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
       GROUP BY pt.acquisition_id
       ORDER BY min(pt.datetime) ASC
       `,
-      values: [policy.start_date, policy.end_date, policy.territory_id, policy.policy_id, ...overrideFrom ? [overrideFrom] : []],
+      values: [
+        policy.start_date,
+        policy.end_date,
+        policy.territory_id,
+        policy.policy_id,
+        ...(overrideFrom ? [overrideFrom] : []),
+      ],
     };
 
     const client = await this.connection.getClient().connect();

@@ -10,7 +10,7 @@ export interface IncentiveRepositoryProviderInterface {
   createOrUpdateMany(data: IncentiveInterface[]): Promise<void>;
   disableOnCanceledTrip(): Promise<void>;
   lockAll(before: Date): Promise<void>;
-  findDraftIncentive(before: Date, batchSize?: number): AsyncGenerator<IncentiveInterface[], void, void>;
+  findDraftIncentive(to: Date, batchSize?: number, from?: Date): AsyncGenerator<IncentiveInterface[], void, void>;
   getCampaignState(policy_id: number): Promise<CampaignStateInterface>;
 }
 
@@ -19,6 +19,10 @@ export abstract class IncentiveRepositoryProviderInterfaceResolver implements In
   abstract createOrUpdateMany(data: IncentiveInterface[]): Promise<void>;
   abstract disableOnCanceledTrip(): Promise<void>;
   abstract lockAll(before: Date): Promise<void>;
-  abstract findDraftIncentive(before: Date, batchSize?: number): AsyncGenerator<IncentiveInterface[], void, void>;
+  abstract findDraftIncentive(
+    to: Date,
+    batchSize?: number,
+    from?: Date,
+  ): AsyncGenerator<IncentiveInterface[], void, void>;
   abstract getCampaignState(policy_id: number): Promise<CampaignStateInterface>;
 }

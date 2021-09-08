@@ -1,4 +1,7 @@
-export type ParamsInterface = void;
+export interface ParamsInterface {
+  to?: Date;
+  from?: Date;
+}
 
 export type ResultInterface = void;
 
