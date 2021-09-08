@@ -1,5 +1,5 @@
 ALTER TABLE policy.policy_metas
-    ADD COLUMN datetime INT,
+    ADD COLUMN datetime timestamp,
     ALTER COLUMN value TYPE INT 
      USING CASE 
         WHEN value::text = '{}' THEN 0 
