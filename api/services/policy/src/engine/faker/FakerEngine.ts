@@ -25,8 +25,6 @@ export class FakerEngine {
       has_travel_pass: false,
       operator_id: 1,
       operator_class: 'C',
-      start_insee: '91377',
-      end_insee: '91377',
       seats: 1,
       duration: 600,
       distance: 5000,

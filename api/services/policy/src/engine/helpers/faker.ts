@@ -11,8 +11,6 @@ const basePerson: PersonInterface = {
   operator_id: 1,
   operator_class: 'C',
   is_driver: false,
-  start_insee: '91377',
-  end_insee: '91377',
   seats: 1,
   duration: 600,
   distance: 5000,

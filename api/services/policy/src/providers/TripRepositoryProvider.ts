@@ -50,8 +50,6 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
             'is_driver', pt.is_driver,
             'has_travel_pass', pt.has_travel_pass,
             'datetime', pt.datetime,
-            'start_insee', pt.start_insee,
-            'end_insee', pt.end_insee,
             'seats', pt.seats,
             'duration', pt.duration,
             'distance', pt.distance,
