@@ -43,7 +43,7 @@ create_bucket() {
 
 integration() {
   echo "Start integration test"
-  $DC run api test:integration
+  $DC run api sh -c "yarn install && yarn test:integration"
 }
 
 stop() {
