@@ -2,9 +2,9 @@ import test from 'ava';
 
 import { faker } from './helpers/faker';
 import { CampaignInterface } from '../interfaces';
-import { MetadataProviderInterfaceResolver, MetaInterface } from './interfaces';
+import { MetadataRepositoryProviderInterfaceResolver, MetadataWrapperInterface } from '../interfaces';
 import { PolicyEngine } from './PolicyEngine';
-import { MetadataWrapper } from './meta/MetadataWrapper';
+import { MetadataWrapper } from '../providers/MetadataWrapper';
 import { RuleInterface } from '../shared/common/interfaces/RuleInterface';
 
 function setup(rules: RuleInterface[] = []): { engine: PolicyEngine; start: Date; fakeCampaign: CampaignInterface } {
@@ -59,11 +59,11 @@ function setup(rules: RuleInterface[] = []): { engine: PolicyEngine; start: Date
     ],
   };
 
-  class CampaignMetadataRepositoryProvider extends MetadataProviderInterfaceResolver {
-    async get(id: number, keys = ['default']): Promise<MetaInterface> {
+  class CampaignMetadataRepositoryProvider extends MetadataRepositoryProviderInterfaceResolver {
+    async get(id: number, keys = ['default']): Promise<MetadataWrapperInterface> {
       return meta;
     }
-    async set(id: number, meta: MetaInterface): Promise<void> {
+    async set(id: number, meta: MetadataWrapperInterface): Promise<void> {
       return;
     }
   }

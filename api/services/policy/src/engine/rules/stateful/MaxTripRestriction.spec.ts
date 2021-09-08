@@ -4,7 +4,7 @@ import { MaxTripRestriction } from './MaxTripRestriction';
 import { faker } from '../../helpers/faker';
 import { StatefulRestrictionParameters } from './AbstractStatefulRestriction';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
-import { MetadataWrapper } from '../../meta/MetadataWrapper';
+import { MetadataWrapper } from '../../../providers/MetadataWrapper';
 import { TripInterface } from '../../../interfaces';
 
 function setup(cfg: Partial<StatefulRestrictionParameters> = {}): { rule: MaxTripRestriction; trip: TripInterface } {

@@ -1,15 +1,15 @@
 import { provider } from '@ilos/common';
 
 import { CampaignInterface, IncentiveInterface, TripInterface } from '../interfaces';
-import { MetadataProviderInterfaceResolver } from './interfaces';
+import { MetadataRepositoryProviderInterfaceResolver } from '../interfaces';
 
 import { TripIncentives } from './TripIncentives';
 import { ProcessableCampaign } from './ProcessableCampaign';
-import { MetadataWrapper } from './meta/MetadataWrapper';
+import { MetadataWrapper } from '../providers/MetadataWrapper';
 
 @provider()
 export class PolicyEngine {
-  constructor(protected metaRepository: MetadataProviderInterfaceResolver) {}
+  constructor(protected metaRepository: MetadataRepositoryProviderInterfaceResolver) {}
 
   public buildCampaign(campaign: CampaignInterface): ProcessableCampaign {
     return new ProcessableCampaign(campaign);

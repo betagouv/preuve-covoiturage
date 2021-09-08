@@ -1,11 +1,11 @@
 import anyTest, { TestInterface } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { MetadataProvider } from './MetadataProvider';
+import { MetadataRepositoryProvider } from './MetadataRepositoryProvider';
 import { MetadataWrapper } from './MetadataWrapper';
 
 interface TestContext {
-  repository: MetadataProvider;
+  repository: MetadataRepositoryProvider;
   connection: PostgresConnection;
   policyId: number;
 }
@@ -21,7 +21,7 @@ test.before(async (t) => {
   });
 
   await t.context.connection.up();
-  t.context.repository = new MetadataProvider(t.context.connection);
+  t.context.repository = new MetadataRepositoryProvider(t.context.connection);
 });
 
 test.after.always(async (t) => {
@@ -132,9 +132,9 @@ test.serial('should delete from datetime', async (t) => {
     text: `SELECT key, value from ${t.context.repository.table} WHERE policy_id = $1 ORDER BY key, datetime`,
     values: [t.context.policyId],
   });
-  
+
   t.is(dbResult.rowCount, 2);
-  
+
   t.deepEqual(dbResult.rows, [
     {
       key: 'toto',
@@ -148,12 +148,12 @@ test.serial('should delete from datetime', async (t) => {
 });
 
 test.serial('should delete', async (t) => {
-  await t.context.repository.delete(t.context.policyId); 
+  await t.context.repository.delete(t.context.policyId);
 
   const dbResult = await t.context.connection.getClient().query({
     text: `SELECT key, value from ${t.context.repository.table} WHERE policy_id = $1 ORDER BY key, datetime`,
     values: [t.context.policyId],
   });
-  
+
   t.is(dbResult.rowCount, 0);
 });

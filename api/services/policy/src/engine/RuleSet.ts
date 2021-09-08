@@ -10,11 +10,10 @@ import {
   RuleHandlerParamsInterface,
   AppliableRuleInterface,
   StatefulRuleSetInterface,
-  MetaInterface,
   StaticRuleInterface,
   MetaRuleInterface,
 } from './interfaces';
-import { IncentiveInterface } from '../interfaces';
+import { IncentiveInterface, MetadataWrapperInterface } from '../interfaces';
 import { UnprocessableRuleSetException } from './exceptions/UnprocessableRuleSetException';
 import { META } from './helpers/type';
 
@@ -64,7 +63,7 @@ export class RuleSet {
       }, []);
   }
 
-  apply(context: RuleHandlerParamsInterface, meta: MetaInterface): Map<string, string> {
+  apply(context: RuleHandlerParamsInterface, meta: MetadataWrapperInterface): Map<string, string> {
     let { result, ...ctx } = context;
     this.filterSet.filter(ctx);
     const initialState = this.statefulSet.buildInitialState(ctx, meta);
@@ -81,7 +80,7 @@ export class RuleSet {
     return this.statefulSet.listStateKeys(incentive);
   }
 
-  applyStateful(incentive: IncentiveInterface, meta: MetaInterface): number {
+  applyStateful(incentive: IncentiveInterface, meta: MetadataWrapperInterface): number {
     return this.statefulSet.apply(incentive, meta);
   }
 }

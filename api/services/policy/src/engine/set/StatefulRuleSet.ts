@@ -1,8 +1,7 @@
-import { IncentiveInterface } from '../../interfaces';
+import { IncentiveInterface, MetadataWrapperInterface } from '../../interfaces';
 import {
   RuleHandlerContextInterface,
   StatefulRuleInterface,
-  MetaInterface,
   StatefulRuleSetInterface,
   StaticRuleInterface,
 } from '../interfaces';
@@ -22,7 +21,7 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
     return this.ruleSet.length;
   }
 
-  buildInitialState(context: RuleHandlerContextInterface, meta: MetaInterface): Map<string, string> {
+  buildInitialState(context: RuleHandlerContextInterface, meta: MetadataWrapperInterface): Map<string, string> {
     const incentiveState: Map<string, string> = new Map();
 
     for (const statefulRule of this.ruleSet) {
@@ -40,7 +39,7 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
     return [...keys];
   }
 
-  apply(incentive: IncentiveInterface, meta: MetaInterface): number {
+  apply(incentive: IncentiveInterface, meta: MetadataWrapperInterface): number {
     let result = incentive.result;
     for (const statefulRule of this.ruleSet) {
       if (statefulRule.uuid in incentive.meta) {

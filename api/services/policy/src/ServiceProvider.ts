@@ -31,7 +31,7 @@ import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
 
 import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryProvider';
 import { PolicyEngine } from './engine/PolicyEngine';
-import { MetadataProvider } from './engine/meta/MetadataProvider';
+import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvider';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
@@ -46,7 +46,7 @@ import { SeedCommand } from './commands/SeedCommand';
   commands: [PolicyProcessCommand, SeedCommand],
   providers: [
     CampaignPgRepositoryProvider,
-    MetadataProvider,
+    MetadataRepositoryProvider,
     TripRepositoryProvider,
     PolicyEngine,
     IncentiveRepositoryProvider,

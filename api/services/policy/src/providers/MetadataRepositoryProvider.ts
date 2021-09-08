@@ -1,19 +1,22 @@
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { provider } from '@ilos/common';
 
-import { MetadataProviderInterface, MetadataProviderInterfaceResolver } from '../interfaces/MetadataProviderInterface';
+import {
+  MetadataWrapperInterface,
+  MetadataRepositoryProviderInterface,
+  MetadataRepositoryProviderInterfaceResolver,
+} from '../interfaces';
 import { MetadataWrapper } from './MetadataWrapper';
-import { MetaInterface } from '../interfaces';
 
 @provider({
-  identifier: MetadataProviderInterfaceResolver,
+  identifier: MetadataRepositoryProviderInterfaceResolver,
 })
-export class MetadataProvider implements MetadataProviderInterface {
+export class MetadataRepositoryProvider implements MetadataRepositoryProviderInterface {
   public readonly table = 'policy.policy_metas';
 
   constructor(protected connection: PostgresConnection) {}
 
-  async get(id: number, keys: string[] = [], datetime?: Date): Promise<MetaInterface> {
+  async get(id: number, keys: string[] = [], datetime?: Date): Promise<MetadataWrapperInterface> {
     const whereClauses: {
       text: string;
       value: any;
@@ -60,7 +63,7 @@ export class MetadataProvider implements MetadataProviderInterface {
     return new MetadataWrapper(id, result.rows);
   }
 
-  async set(policyId: number, metadata: MetaInterface, date: Date): Promise<void> {
+  async set(policyId: number, metadata: MetadataWrapperInterface, date: Date): Promise<void> {
     const keys = metadata.keys();
     const values = metadata.values();
     const policyIds = new Array(keys.length).fill(policyId);
@@ -84,7 +87,7 @@ export class MetadataProvider implements MetadataProviderInterface {
           WHERE policy_id = $1::int
           ${from ? 'AND datetime >= $2::timestamp' : ''}
       `,
-      values: [policyId, ...from ? [from] : []],
+      values: [policyId, ...(from ? [from] : [])],
     };
 
     await this.connection.getClient().query(query);
