@@ -8,7 +8,8 @@ var { createMigration } = require('../helpers/createMigration');
 
 var { setup, up, down } = createMigration([
     'policy/20210901000000_update_policy_meta',
-    'policy/20210901000000_update_policy_trip',
+    'policy/20210901000000_update_policy_trip_view',
+    'trip/20210901000000_add_territory_index'
 ], __dirname);
 
 exports.setup = setup;
