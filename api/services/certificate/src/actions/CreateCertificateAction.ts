@@ -68,7 +68,8 @@ export class CreateCertificateAction extends AbstractAction {
     const total_tr = new Set(carpools.map((c) => c.trip_id)).size;
     const metaRows: MetaRowInterface[] = this.aggregateTripByYearMonth(carpools);
     const total_km = Math.round(metaRows.reduce((sum: number, line): number => line.distance + sum, 0));
-    const total_rm = metaRows.reduce((sum: number, line): number => line.remaining + sum, 0);
+    const total_rm = Math.round(metaRows.reduce((sum: number, line): number => line.remaining + sum, 0) * 100) / 100;
+    const total_days = Math.round(metaRows.reduce((sum: number, line): number => line.days + sum, 0));
 
     const certificate: CertificateInterface = await this.storeCertificate(
       tz,
@@ -77,6 +78,7 @@ export class CreateCertificateAction extends AbstractAction {
       total_tr,
       total_km,
       total_rm,
+      total_days,
       metaRows,
       end_at,
       start_at,
@@ -100,6 +102,7 @@ export class CreateCertificateAction extends AbstractAction {
     total_tr: number,
     total_km: number,
     total_rm: number,
+    total_days: number,
     results: MetaRowInterface[],
     end_at: Date,
     start_at: Date,
@@ -113,6 +116,7 @@ export class CreateCertificateAction extends AbstractAction {
         total_tr,
         total_km,
         total_rm,
+        total_days,
         total_point: 0,
         rows: results.slice(0, 11), // TODO agg the last line
       },
@@ -125,7 +129,9 @@ export class CreateCertificateAction extends AbstractAction {
 
   private aggregateTripByYearMonth(carpools: CarpoolInterface[]): MetaRowInterface[] {
     let index = 0;
-    const metaRows: MetaRowInterface[] = [];
+
+    // add a 'daysSet' prop to store trip dates as unique values. Sum is calculated at the end
+    const metaRows: Array<MetaRowInterface & { daysSet: Set<string> }> = [];
 
     // aggregate and sum by year month
     carpools
@@ -141,6 +147,7 @@ export class CreateCertificateAction extends AbstractAction {
             distance: 0,
             remaining: 0,
             trips: 0,
+            daysSet: new Set(),
           };
           metaRows.push(acc[val.month]);
         }
@@ -150,15 +157,19 @@ export class CreateCertificateAction extends AbstractAction {
         acc[val.month].distance = acc[val.month].distance + val.km;
         acc[val.month].remaining = acc[val.month].remaining + val.rac - operator_incentives;
         acc[val.month].trips = acc[val.month].trips + 1;
+        acc[val.month].daysSet.add(`${val.month}-${val.day}`);
         return acc;
       }, {});
 
     // truncate totals
     return metaRows.map((r) => {
       return {
-        ...r,
-        remaining: r.remaining < 0 ? 0 : Math.floor(r.remaining * 100) / 100,
+        index: r.index,
+        month: r.month,
+        days: r.daysSet.size,
+        trips: r.trips,
         distance: Math.round(r.distance),
+        remaining: r.remaining < 0 ? 0 : Math.floor(r.remaining * 100) / 100,
       };
     });
   }

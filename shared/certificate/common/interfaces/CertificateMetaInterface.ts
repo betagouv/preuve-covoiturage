@@ -3,6 +3,7 @@ import { PointInterface } from '../../../common/interfaces/PointInterface';
 export interface MetaRowInterface {
   index: number;
   month: string;
+  days: number;
   trips: number;
   distance: number;
   remaining: number;
@@ -18,5 +19,6 @@ export interface CertificateMetaInterface {
   total_km: number;
   total_point: number;
   total_rm: number;
+  total_days: number;
   rows: MetaRowInterface[];
 }
