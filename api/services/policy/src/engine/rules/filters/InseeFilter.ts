@@ -1,7 +1,6 @@
 import { RuleHandlerContextInterface } from '../../interfaces';
 import { FilterRule } from '../FilterRule';
 
-
 // This rule is deprecated, please migrate to territory filter instead
 interface InseeParamsInterface {
   start: string[];
@@ -44,6 +43,6 @@ export class InseeWhitelistFilter extends InseeFilter {
 export class InseeBlacklistFilter extends InseeFilter {
   static readonly slug: string = 'insee_blacklist_filter';
   static readonly description: string = 'Liste noire de codes INSEE';
-  
+
   filter(ctx: RuleHandlerContextInterface): void {}
 }

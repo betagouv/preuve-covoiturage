@@ -44,7 +44,7 @@ export class IdfmRegular extends AbstractRule<IdfmParametersInterface> {
           p.is_over_18 !== false && // accept TRUE and NULL @issue #848
           p.start_territory_id.indexOf(this.parameters.territory_id) >= 0 && // au départ
           p.end_territory_id.indexOf(this.parameters.territory_id) >= 0 && // et à l'arrivée de l'ile de france
-          p.distance >= 2000 // trajet supérieur à 2km seulement
+          p.distance >= 2000, // trajet supérieur à 2km seulement
       )
       .map((p) => ({ distance: p.distance, seats: p.seats }))
       .sort((p1, p2) => (p1.distance > p2.distance ? 1 : p1.distance < p2.distance ? -1 : 0));
