@@ -49,12 +49,12 @@ export function macro(
       const campaignRepository = t.context.kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
       const metaRepository = t.context.kernel.get(ServiceProvider).get(MetadataRepositoryProvider);
       await connection.query({
-        text: `DELETE FROM ${campaignRepository.table} WHERE _id = $1`,
+        text: `DELETE FROM ${campaignRepository.table} WHERE _id = $1::int`,
         values: [t.context.policyId],
       });
 
       await connection.query({
-        text: `DELETE FROM ${metaRepository.table} WHERE policy_id = $1`,
+        text: `DELETE FROM ${metaRepository.table} WHERE policy_id = $1::int`,
         values: [t.context.policyId],
       });
     }

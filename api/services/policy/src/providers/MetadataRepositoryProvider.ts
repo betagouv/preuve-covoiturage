@@ -36,7 +36,7 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
 
     if (datetime) {
       whereClauses.push({
-        text: `datetime <= ${keys.length ? '$3' : '$4'}::timestamp`,
+        text: `datetime <= ${keys.length ? '$3' : '$2'}::timestamp`,
         value: datetime,
       });
     }

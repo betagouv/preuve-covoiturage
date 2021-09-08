@@ -73,7 +73,7 @@ const { test, success, error } = handlerMacro<ParamsInterface, ResultInterface, 
   handlerConfig,
 );
 
-test.before.skip(async (t) => {
+test.before(async (t) => {
   const policy = await t.context.kernel
     .get(ServiceProvider)
     .get(CampaignRepositoryProviderInterfaceResolver)
@@ -82,7 +82,7 @@ test.before.skip(async (t) => {
   t.context.policy_id = policy._id;
 });
 
-test.serial.skip(
+test.serial(
   success,
   (t: ExecutionContext<TestContext>) =>
     (({
@@ -94,7 +94,7 @@ test.serial.skip(
   mockContext(['incentive-campaign.create', 'territory.policy.launch']),
 );
 
-test.serial.skip(
+test.serial(
   error,
   (t: ExecutionContext<TestContext>) =>
     (({

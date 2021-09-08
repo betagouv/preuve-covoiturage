@@ -33,7 +33,7 @@ function makeCampaign(data: Partial<CampaignInterface> = {}): CampaignInterface 
   };
 }
 
-test.before.skip(async (t) => {
+test.before(async (t) => {
   t.context.territory_id = 0;
   t.context.connection = new PostgresConnection({
     connectionString:
@@ -46,7 +46,7 @@ test.before.skip(async (t) => {
   t.context.campaign = await t.context.repository.create(makeCampaign());
 });
 
-test.after.always.skip(async (t) => {
+test.after.always(async (t) => {
   await t.context.connection.getClient().query({
     text: `DELETE FROM ${t.context.repository.table} WHERE territory_id = $1`,
     values: [t.context.territory_id],
@@ -54,7 +54,7 @@ test.after.always.skip(async (t) => {
   await t.context.connection.down();
 });
 
-test.serial.skip('Should create campaign', async (t) => {
+test.serial('Should create campaign', async (t) => {
   const campaignData = makeCampaign();
   const campaign = await t.context.repository.create(campaignData);
 
@@ -68,25 +68,25 @@ test.serial.skip('Should create campaign', async (t) => {
   t.is(result.rows[0].status, 'draft');
 });
 
-test.serial.skip('Should find campaign', async (t) => {
+test.serial('Should find campaign', async (t) => {
   t.log(t.context.campaign);
   const campaign = await t.context.repository.find(t.context.campaign._id);
   t.is(campaign.name, t.context.campaign.name);
   t.is(campaign.status, t.context.campaign.status);
 });
 
-test.serial.skip('Should find campaign by territory', async (t) => {
+test.serial('Should find campaign by territory', async (t) => {
   const campaign = await t.context.repository.findOneWhereTerritory(t.context.campaign._id, t.context.territory_id);
   t.is(campaign.name, t.context.campaign.name);
   t.is(campaign.status, t.context.campaign.status);
 });
 
-test.serial.skip('Should not find campaign by territory', async (t) => {
+test.serial('Should not find campaign by territory', async (t) => {
   const campaign = await t.context.repository.findOneWhereTerritory(t.context.campaign._id, 1);
   t.is(campaign, null);
 });
 
-test.serial.skip('Should patch campaign', async (t) => {
+test.serial('Should patch campaign', async (t) => {
   const name = 'Awesome campaign';
   const campaign = await t.context.repository.patch(t.context.campaign._id, { name });
 
@@ -102,7 +102,7 @@ test.serial.skip('Should patch campaign', async (t) => {
   t.context.campaign.name = name;
 });
 
-test.serial.skip('Should patch campaign by territory id', async (t) => {
+test.serial('Should patch campaign by territory id', async (t) => {
   const name = 'Awesome campaign 2';
   const campaign = await t.context.repository.patchWhereTerritory(t.context.campaign._id, t.context.territory_id, {
     name,
@@ -120,7 +120,7 @@ test.serial.skip('Should patch campaign by territory id', async (t) => {
   t.context.campaign.name = name;
 });
 
-test.serial.skip('Should not patch campaign by territory id', async (t) => {
+test.serial('Should not patch campaign by territory id', async (t) => {
   const name = 'Not updating!';
   const err = await t.throwsAsync(async () =>
     t.context.repository.patchWhereTerritory(t.context.campaign._id, 1, { name }),
@@ -135,7 +135,7 @@ test.serial.skip('Should not patch campaign by territory id', async (t) => {
   t.not(result.rows[0].name, name);
 });
 
-// test.serial.skip('Should not patch campaign if active', async (t) => {
+// test.serial('Should not patch campaign if active', async (t) => {
 
 //   const name = 'Nope!';
 //   const err = await t.throwsAsync(async () => t.context.repository.patch(t.context.campaign._id, { name }));
@@ -149,7 +149,7 @@ test.serial.skip('Should not patch campaign by territory id', async (t) => {
 //   t.not(result.rows[0].name, name);
 // });
 
-test.serial.skip('Should not delete campaign if active', async (t) => {
+test.serial('Should not delete campaign if active', async (t) => {
   await t.context.connection.getClient().query({
     text: `UPDATE ${t.context.repository.table} SET status = 'active'::policy.policy_status_enum WHERE _id = $1`,
     values: [t.context.campaign._id],
