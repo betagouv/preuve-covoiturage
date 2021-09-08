@@ -98,43 +98,50 @@ test('should work with amount restriction', async (t) => {
       },
     },
   ]);
-  const trip = faker.trip([
-    {
-      carpool_id: 1,
-      is_driver: false,
-      distance: 1000,
-      identity_uuid: 'passenger_1',
-    },
-    {
-      carpool_id: 2,
-      is_driver: true,
-      distance: 2000,
-      identity_uuid: 'driver',
-    },
-    {
-      carpool_id: 3,
-      is_driver: false,
-      distance: 3000,
-      identity_uuid: 'passenger_2',
-    },
-    {
-      carpool_id: 4,
-      is_driver: true,
-      distance: 4000,
-      identity_uuid: 'driver',
-    },
-  ]);
 
   const campaign = engine.buildCampaign(fakeCampaign);
-  const result = await engine.process(campaign, trip);
-
+  const result = await engine.process(
+    campaign,
+    faker.trip([
+      {
+        carpool_id: 1,
+        is_driver: false,
+        distance: 1000,
+        identity_uuid: 'passenger_1',
+      },
+      {
+        carpool_id: 2,
+        is_driver: true,
+        distance: 2000,
+        identity_uuid: 'driver',
+      },
+    ]),
+  );
+  const result2 = await engine.process(
+    campaign,
+    faker.trip([
+      {
+        carpool_id: 3,
+        is_driver: false,
+        distance: 3000,
+        identity_uuid: 'passenger_2',
+      },
+      {
+        carpool_id: 4,
+        is_driver: true,
+        distance: 4000,
+        identity_uuid: 'driver',
+      },
+    ]),
+  );
   t.log(result);
   t.true(Array.isArray(result));
-  t.is(result.length, 4);
+  t.is(result.length, 2);
+  t.is(result2.length, 2);
   t.is(result.find((p) => p.carpool_id === 1).amount, (1000 / 1000) * 10);
   t.is(result.find((p) => p.carpool_id === 2).amount, ((4000 / 1000) * 20) / 2);
-  t.is(result.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
-  t.is(result.find((p) => p.carpool_id === 4).amount, 10);
+  t.is(result2.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
+  t.is(result2.find((p) => p.carpool_id === 4).amount, 10);
 });
 
 test('should work with trip restriction', async (t) => {
@@ -149,40 +156,49 @@ test('should work with trip restriction', async (t) => {
       },
     },
   ]);
-  const trip = faker.trip([
-    {
-      carpool_id: 1,
-      is_driver: false,
-      distance: 1000,
-      identity_uuid: 'passenger_1',
-    },
-    {
-      carpool_id: 2,
-      is_driver: true,
-      distance: 2000,
-      identity_uuid: 'driver',
-    },
-    {
-      carpool_id: 3,
-      is_driver: false,
-      distance: 3000,
-      identity_uuid: 'passenger_2',
-    },
-    {
-      carpool_id: 4,
-      is_driver: true,
-      distance: 4000,
-      identity_uuid: 'driver',
-    },
-  ]);
-  const campaign = engine.buildCampaign(fakeCampaign);
-  const result = await engine.process(campaign, trip);
 
+  const campaign = engine.buildCampaign(fakeCampaign);
+  const result = await engine.process(
+    campaign,
+    faker.trip([
+      {
+        carpool_id: 1,
+        is_driver: false,
+        distance: 1000,
+        identity_uuid: 'passenger_1',
+      },
+      {
+        carpool_id: 2,
+        is_driver: true,
+        distance: 2000,
+        identity_uuid: 'driver',
+      },
+    ]),
+  );
+
+  const result2 = await engine.process(
+    campaign,
+    faker.trip([
+      {
+        carpool_id: 3,
+        is_driver: false,
+        distance: 3000,
+        identity_uuid: 'passenger_2',
+      },
+      {
+        carpool_id: 4,
+        is_driver: true,
+        distance: 4000,
+        identity_uuid: 'driver',
+      },
+    ]),
+  );
   t.log(result);
   t.true(Array.isArray(result));
-  t.is(result.length, 4);
+  t.is(result.length, 2);
+  t.is(result2.length, 2);
   t.is(result.find((p) => p.carpool_id === 1).amount, (1000 / 1000) * 10);
-  t.is(result.find((p) => p.carpool_id === 2).amount, ((4000 / 1000) * 20) / 2);
-  t.is(result.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
-  t.is(result.find((p) => p.carpool_id === 4).amount, ((4000 / 1000) * 20) / 2);
+  t.is(result.find((p) => p.carpool_id === 2).amount, (2000 / 1000) * 20);
+  t.is(result2.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
+  t.is(result2.find((p) => p.carpool_id === 4).amount, (4000 / 1000) * 20 * 0);
 });

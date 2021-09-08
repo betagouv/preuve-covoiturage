@@ -42,34 +42,7 @@ function setup(): {
   };
   return { policy, defaultTripParams };
 }
-test('case 0', async (t) => {
-  const { policy, defaultTripParams } = setup();
-  const trip = faker.trip([
-    {
-      ...defaultTripParams,
-      is_driver: true,
-      distance: 1000,
-    },
-    {
-      ...defaultTripParams,
-      is_driver: false,
-      distance: 1000,
-    },
-    {
-      ...defaultTripParams,
-      is_driver: false,
-      distance: 5000,
-    },
-  ]);
 
-  const context = {
-    stack: [],
-    result: 0,
-    person: trip[0],
-    trip,
-  };
-  await t.throwsAsync<NotApplicableTargetException>(async () => policy.apply(context));
-});
 test('case 1', async (t) => {
   const { policy, defaultTripParams } = setup();
 
