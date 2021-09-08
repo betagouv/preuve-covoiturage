@@ -35,7 +35,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
   async *findTripByPolicy(
     policy: ProcessableCampaign,
     batchSize = 100,
-    override = false,
+    overrideFrom?: Date,
   ): AsyncGenerator<TripInterface[], void, void> {
     const query = {
       text: `
@@ -68,11 +68,11 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
         $3::int = ANY(pt.start_territory_id)
         OR $3::int = ANY(pt.end_territory_id)
       )
-      ${override ? '' : 'AND pi.carpool_id IS NULL'}
+      ${overrideFrom ? '' : 'AND pi.carpool_id IS NULL AND pt.datetime >= $5::timestamp'}
       GROUP BY pt.acquisition_id
       ORDER BY min(pt.datetime) ASC
       `,
-      values: [policy.start_date, policy.end_date, policy.territory_id, policy.policy_id],
+      values: [policy.start_date, policy.end_date, policy.territory_id, policy.policy_id, ...overrideFrom ? [overrideFrom] : []],
     };
 
     const client = await this.connection.getClient().connect();

@@ -63,7 +63,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       await this.refreshAndDispatch();
       return;
     }
-    await this.processCampaign(params.campaign_id, params.override);
+    await this.processCampaign(params.campaign_id, params.override_from);
   }
 
   protected async refreshAndDispatch(): Promise<void> {
@@ -74,12 +74,12 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     }
   }
 
-  protected async processCampaign(campaign_id: number, override = false): Promise<void> {
+  protected async processCampaign(campaign_id: number, override_from?: Date): Promise<void> {
     // 1. Find campaign and start engine
     const campaign = this.engine.buildCampaign(await this.campaignRepository.find(campaign_id));
 
     // 2. Start a cursor to find trips
-    const cursor = await this.tripRepository.findTripByPolicy(campaign, 100, override);
+    const cursor = await this.tripRepository.findTripByPolicy(campaign, 100, override_from);
     let done = false;
     do {
       const incentives: IncentiveInterface[] = [];

@@ -5,7 +5,7 @@ export interface TripRepositoryProviderInterface {
   findTripByPolicy(
     policy: ProcessableCampaign,
     batchSize?: number,
-    override?: boolean,
+    override_from?: Date,
   ): AsyncGenerator<TripInterface[], void, void>;
   refresh(): Promise<void>;
   listApplicablePoliciesId(): Promise<number[]>;
@@ -17,6 +17,6 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
   abstract findTripByPolicy(
     policy: ProcessableCampaign,
     batchSize?: number,
-    override?: boolean,
+    override_from?: Date,
   ): AsyncGenerator<TripInterface[], void, void>;
 }
