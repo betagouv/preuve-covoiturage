@@ -77,14 +77,14 @@ export class MetadataProvider implements MetadataProviderInterface {
     return;
   }
 
-  async deleteFrom(policyId: number, from: Date): Promise<void> {
+  async delete(policyId: number, from?: Date): Promise<void> {
     const query = {
       text: `
         DELETE FROM ${this.table}
           WHERE policy_id = $1::int
-          AND updated_at >= $2::timestamp
+          ${from ? 'AND datetime >= $2::timestamp' : ''}
       `,
-      values: [policyId, from],
+      values: [policyId, ...from ? [from] : []],
     };
 
     await this.connection.getClient().query(query);
