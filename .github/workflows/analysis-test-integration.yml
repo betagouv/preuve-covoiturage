@@ -1,0 +1,21 @@
+name: 'Analysis - Integration test'
+
+on:
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  e2e:
+    name: Test integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Start
+        run: sh integration.sh
+
