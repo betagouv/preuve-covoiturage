@@ -2,6 +2,7 @@
 import { promisify } from 'util';
 import { map } from 'lodash';
 
+import { QueryConfig } from 'pg/index';
 import { provider } from '@ilos/common';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
@@ -49,6 +50,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'campaign_id',
       'days',
       'hour',
+      'excluded_start_territory_id',
     ].filter((key) => key in filters);
 
     let orderedFilters = {
@@ -74,7 +76,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           switch (filter.key) {
             case 'excluded_start_territory_id':
               return {
-                text: `start_territory_id <> ANY($#::int[])`,
+                text: `start_territory_id <> ALL($#::int[])`,
                 values: [filter.value],
               };
             case 'territory_id':
@@ -179,7 +181,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   ): Promise<ExcludedStartTerritoryCountInterface[]> {
     const where = await this.buildWhereClauses(params);
 
-    const query = {
+    const query: QueryConfig = {
       text: `
       SELECT start_territory_id, count (1) 
       FROM ${this.table} 
@@ -187,13 +189,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       GROUP BY start_territory_id 
       HAVING COUNT (start_territory_id) < 6
       `,
-      values: [where.values],
+      values: where.values,
     };
 
     query.text = this.numberPlaceholders(query.text);
-    console.error(`text ->  ${query.text}`);
     const result = await this.connection.getClient().query(query);
-
     return !result.rowCount ? [] : result.rows;
   }
 
@@ -366,9 +366,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
     `);
-
-    console.debug(queryText);
-    console.debug(queryValues);
 
     const db = await this.connection.getClient().connect();
     const cursorCb = db.query(new Cursor(queryText, queryValues));
