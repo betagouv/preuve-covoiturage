@@ -2,7 +2,7 @@ import anyTest, { TestInterface } from 'ava';
 import { Workbook } from 'exceljs';
 import faker from 'faker';
 import sinon from 'sinon';
-import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
+import { BuildExcelFile } from './BuildExcelFile';
 import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
 import { StreamDataToWorkBookSheet } from './StreamDataToWorkBookSheet';
 
@@ -19,7 +19,7 @@ interface Context {
   GENERATED_WORKBOOK: Workbook;
 
   // Tested token
-  buildExcelFileForCampaign: BuildExcelFileForCampaign;
+  buildExcelFileForCampaign: BuildExcelFile;
 }
 
 const test = anyTest as TestInterface<Partial<Context>>;
@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<Partial<Context>>;
 test.beforeEach((t) => {
   t.context.excelWorkbookHandler = new ExcelWorkbookHandler();
   t.context.streamTripsForCampaginComponent = new StreamDataToWorkBookSheet(null);
-  t.context.buildExcelFileForCampaign = new BuildExcelFileForCampaign(
+  t.context.buildExcelFileForCampaign = new BuildExcelFile(
     t.context.excelWorkbookHandler,
     t.context.streamTripsForCampaginComponent,
   );

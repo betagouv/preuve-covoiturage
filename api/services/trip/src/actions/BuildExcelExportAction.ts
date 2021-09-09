@@ -1,19 +1,24 @@
+import { BuildExcelFile as BuildExcelFile } from './excel/BuildExcelFile';
+import { GetCampaignInvolvedOperator } from './excel/GetCampaignInvolvedOperators';
 import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/excelExport.contract';
 import { alias } from '../shared/trip/excelExport.schema';
-import { GetCampaignAndCallBuildExcel } from './excel/GetCampaignAndCallBuildExcel';
+import { CheckCampaign } from './excel/CheckCampaign';
+import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares('trip'), ['validate', alias]],
+  middlewares: [['validate', alias]],
 })
-export class BuildExcelExportAction extends Action {
+export class BuildExcelsExportAction extends Action {
   constructor(
-    private getCampaignAndCallBuildExcel: GetCampaignAndCallBuildExcel,
+    private checkCampaign: CheckCampaign,
     private s3StorageProvider: S3StorageProvider,
+    private getCampaignInvolvedOperator: GetCampaignInvolvedOperator,
+    private buildExcelFile: BuildExcelFile,
   ) {
     super();
   }
@@ -21,16 +26,33 @@ export class BuildExcelExportAction extends Action {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const { start_date, end_date } = this.castOrGetDefaultDates(params);
 
-    params.query.campaign_id.forEach((c_id) => {
-      this.getCampaignAndCallBuildExcel
-        .call(c_id, start_date, end_date)
-        .then((filepathes) => {
-          filepathes.forEach((filepath) => {
-            this.s3StorageProvider.upload(BucketName.Export, filepath);
-          });
-        })
-        .catch((error) => console.error('Could not process campaign export ', error));
-    });
+    const filepathes: string[] = [];
+    await Promise.all(
+      params.query.campaign_id.map(async (c_id) => {
+        const checkedCampaign: Campaign = await this.checkCampaign.call(c_id, start_date, end_date);
+        const involed_operators: number[] = await this.getCampaignInvolvedOperator.call(checkedCampaign);
+
+        involed_operators.map(async (o_id) => {
+          try {
+            const filepath = await this.buildExcelFile.call(
+              checkedCampaign._id,
+              start_date,
+              end_date,
+              checkedCampaign.name,
+              o_id,
+            );
+            const s3key = await this.s3StorageProvider.upload(BucketName.Export, filepath);
+            filepathes.push(s3key);
+          } catch (error) {
+            // eslint-disable-next-line max-len
+            const message = `Error processing excel export for campaign ${checkedCampaign.name} and operator id ${o_id}`;
+            console.error(message, error);
+            filepathes.push(message);
+          }
+        });
+      }),
+    );
+    return filepathes;
   }
 
   private castOrGetDefaultDates(params: ParamsInterface): { start_date: Date; end_date: Date } {

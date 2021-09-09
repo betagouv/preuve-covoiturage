@@ -4,7 +4,7 @@ import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
 import { StreamDataToWorkBookSheet } from './StreamDataToWorkBookSheet';
 
 @provider()
-export class BuildExcelFileForCampaign {
+export class BuildExcelFile {
   constructor(
     private excelWorkbookHandler: ExcelWorkbookHandler,
     private streamDataToWorkBookSheet: StreamDataToWorkBookSheet,

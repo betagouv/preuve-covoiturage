@@ -5,13 +5,13 @@ import {
   signature as getCampaignSignature,
 } from '../../shared/policy/find.contract';
 import { handlerConfig } from '../../shared/trip/excelExport.contract';
-import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
+import { BuildExcelFile } from './BuildExcelFile';
 
 @provider()
-export class GetCampaignAndCallBuildExcel {
-  constructor(private kernel: KernelInterfaceResolver, private buildExcelFileForCampaign: BuildExcelFileForCampaign) {}
+export class CheckCampaign {
+  constructor(private kernel: KernelInterfaceResolver, private buildExcelFileForCampaign: BuildExcelFile) {}
 
-  async call(campaign_id: number, start_date?: Date, end_date?: Date): Promise<string[]> {
+  async call(campaign_id: number, start_date?: Date, end_date?: Date): Promise<GetCampaignResultInterface> {
     if (!start_date && !end_date) {
       start_date = this.startOfPreviousMonthDate();
       end_date = this.endOfPreviousMonthDate();
@@ -33,24 +33,7 @@ export class GetCampaignAndCallBuildExcel {
       throw new InvalidRequestException('Provided date range are not inside campagne periode');
     }
 
-    if (!this.hasCampaignOperatorWhitelist(campaign)) {
-      return this.buildExcelFileForCampaign
-        .call(campaign_id, start_date, end_date, campaign.name)
-        .then((excel) => [excel]);
-    }
-
-    return Promise.all(
-      campaign.global_rules
-        .filter((g) => g.slug === 'operator_whitelist_filter')
-        .flatMap((owf) => owf.parameters)
-        .map((operator_id) =>
-          this.buildExcelFileForCampaign.call(campaign_id, start_date, end_date, campaign.name, operator_id),
-        ),
-    );
-  }
-
-  private hasCampaignOperatorWhitelist(campaign: GetCampaignResultInterface) {
-    return campaign.global_rules.find((g) => g.slug === 'operator_whitelist_filter');
+    return campaign;
   }
 
   private endOfPreviousMonthDate(): Date {
