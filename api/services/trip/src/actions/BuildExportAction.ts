@@ -239,7 +239,9 @@ export class BuildExportAction extends Action implements InitHookInterface {
       const excluded_start_territories: StartTerritoryCountInterface[] = await this.tripRepository.getOpenDataExcludedTerritories(
         queryParam,
       );
-      queryParam.excluded_start_territory_id = excluded_start_territories.map((t) => t.start_territory_id);
+      if (excluded_start_territories.length !== 0) {
+        queryParam.excluded_start_territory_id = excluded_start_territories.map((t) => t.start_territory_id);
+      }
     }
     const cursor = await this.tripRepository.searchWithCursor(queryParam, type);
 
