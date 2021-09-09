@@ -11,7 +11,7 @@ export interface ParamsInterface {
   };
 }
 
-export type ResultInterface = void;
+export type ResultInterface = string[];
 
 export const handlerConfig = {
   service: 'trip',
