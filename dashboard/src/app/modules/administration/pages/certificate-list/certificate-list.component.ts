@@ -50,7 +50,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   searchState = new BehaviorSubject<ListParamsInterface>({ pagination: { length: this.PAGE_SIZE, start_index: 0 } });
   isLoading = false;
   showForm = false;
-  displayedColumns = ['uuid', 'operator', 'total_km', 'total_point', 'total_cost', 'actions'];
+  displayedColumns = ['uuid', 'operator', 'total_km', 'total_point', 'total_days', 'total_cost', 'actions'];
   ngOnInit(): void {
     this.startIndex = 0;
     this.length = 0;
