@@ -12,6 +12,7 @@ export interface ResultInterface {
   created_at: Date;
   total_km: number;
   total_point: number;
+  total_days: number;
   total_rm: number;
 }
 

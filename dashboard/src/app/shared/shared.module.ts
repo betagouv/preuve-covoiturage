@@ -10,6 +10,9 @@ import { AutocompleteComponent } from './components/autocomplete/autocomplete.co
 import { ButtonHrefDirective } from './directives/button-href.directive';
 import { ButtonSpinnerDirective } from './directives/button-spinner.directive';
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
+import { EuroPipe } from './pipes/euro.pipe';
+import { PointPipe } from './pipes/point.pipe';
+import { KilometerPipe } from './pipes/km.pipe';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { HelpCardComponent } from './components/help-card/help-card.component';
@@ -28,6 +31,9 @@ import { UploadComponent } from './components/upload/upload.component';
     ButtonHrefDirective,
     ButtonSpinnerDirective,
     EllipsisPipe,
+    EuroPipe,
+    PointPipe,
+    KilometerPipe,
     FooterComponent,
     HeaderComponent,
     HelpCardComponent,
@@ -44,6 +50,9 @@ import { UploadComponent } from './components/upload/upload.component';
     ButtonSpinnerDirective,
     CommonModule,
     EllipsisPipe,
+    EuroPipe,
+    PointPipe,
+    KilometerPipe,
     FooterComponent,
     HeaderComponent,
     HelpCardComponent,

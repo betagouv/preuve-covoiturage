@@ -16,6 +16,9 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
+      "i18n": {
+        "sourceLocale": "fr-FR"
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -33,7 +36,12 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "assets": ["src/favicon.ico", "src/.htaccess", "src/assets", "src/manual-503.html"],
+            "assets": [
+              "src/favicon.ico",
+              "src/.htaccess",
+              "src/assets",
+              "src/manual-503.html"
+            ],
             "styles": [
               {
                 "input": "src/styles.scss",
@@ -45,9 +53,14 @@
               }
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["src/styles"]
+              "includePaths": [
+                "src/styles"
+              ]
             },
-            "scripts": ["./node_modules/moment/min/moment.min.js", "./node_modules/moment/locale/fr.js"]
+            "scripts": [
+              "./node_modules/moment/min/moment.min.js",
+              "./node_modules/moment/locale/fr.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -163,8 +176,13 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
             "scripts": []
           }
         },
