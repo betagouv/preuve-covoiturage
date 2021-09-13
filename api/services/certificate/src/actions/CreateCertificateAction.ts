@@ -135,10 +135,20 @@ export class CreateCertificateAction extends AbstractAction {
 
     // aggregate and sum by year month
     carpools
+      // sort trips backward
+      .sort((a, b) => {
+        const A = parseInt(`${a.year}${a.month}`, 10);
+        const B = parseInt(`${b.year}${b.month}`, 10);
+        return A < B ? 1 : A === B ? 0 : -1;
+      })
+
+      // format date for humans
       .map((c: CarpoolInterface) => {
         c.month = upperFirst(this.dateProvider.format(new Date(`${c.year}-${c.month}-02`), 'MMMM yyyy'));
         return c;
       })
+
+      // aggregate results per month
       .reduce((acc, val) => {
         if (!acc[val.month]) {
           acc[val.month] = {

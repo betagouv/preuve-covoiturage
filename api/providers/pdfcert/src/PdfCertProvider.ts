@@ -88,14 +88,18 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     });
 
     this.text('Distance :', { x: 60, y: totalY, font: this.fonts.bold });
-    this.text(`${data.data.total_km || 0} km`, { x: 120, y: totalY, font: this.fonts.bold });
+    this.text(`${data.data.total_km || 0} km`, { x: 122, y: totalY, font: this.fonts.bold });
+
+    this.text('Jours :', { x: 180, y: totalY, font: this.fonts.bold });
+    this.text(`${data.data.total_days || 0}`, { x: 222, y: totalY, font: this.fonts.bold });
+
     if (data.data.total_point !== 0) {
-      this.text('Points :', { x: 180, y: totalY, font: this.fonts.bold });
-      this.text(`${data.data.total_point}`, { x: 230, y: totalY, font: this.fonts.bold });
+      this.text('Points :', { x: 260, y: totalY, font: this.fonts.bold });
+      this.text(`${data.data.total_point || 0}`, { x: 308, y: totalY, font: this.fonts.bold });
     }
 
-    this.text('Reste à charge :', { x: 330, y: totalY, font: this.fonts.bold });
-    this.text(`${this.currency(data.data.total_rm)} €`, { x: 440, y: totalY, font: this.fonts.bold });
+    this.text('Reste à charge :', { x: 370, y: totalY, font: this.fonts.bold });
+    this.text(`${this.currency(data.data.total_rm)} €`, { x: 490, y: totalY, font: this.fonts.bold });
 
     // identification
     this.text('Identification', { x: 48, y: 96, font: this.fonts.bold });
@@ -219,7 +223,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     const y = this.tableY + 22;
 
     this.text('Date', { x: this.tableX, y, font: this.fonts.bold });
-    this.text('Trajets', { x: this.tableX + 130, y, font: this.fonts.bold });
+    this.text('Trajets', { x: this.tableX + 90, y, font: this.fonts.bold });
+    this.text('Jours', { x: this.tableX + 140, y, font: this.fonts.bold });
     this.text('Distance', { x: this.tableX + 210, y, font: this.fonts.bold });
     if (withPoints) {
       this.text('Points', { x: this.tableX + 300, y, font: this.fonts.bold });
@@ -241,7 +246,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     }
 
     this.text(`${row.month}`, { x: this.tableX, y: rowY });
-    this.text(`${row.trips}`, { x: this.tableX + 130, y: rowY });
+    this.text(`${row.trips}`, { x: this.tableX + 90, y: rowY });
+    this.text(`${row.days}`, { x: this.tableX + 140, y: rowY });
     this.text(`${row.distance} km`, { x: this.tableX + 210, y: rowY });
     if (withPoints) {
       this.text(`${row.points}`, { x: this.tableX + 300, y: rowY });
