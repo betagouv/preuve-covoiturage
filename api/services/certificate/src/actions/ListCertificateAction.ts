@@ -45,8 +45,9 @@ export class ListCertificateAction extends AbstractAction {
             tz: cert.meta.tz,
             operator: cert.meta.operator,
             total_km: cert.meta.total_km,
-            total_point: cert.meta.total_point,
-            total_rm: cert.meta.total_rm,
+            total_point: cert.meta.total_point ?? null,
+            total_days: cert.meta.total_days ?? null,
+            total_rm: cert.meta.total_rm ?? null,
           };
         },
       ),

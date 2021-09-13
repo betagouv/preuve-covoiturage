@@ -32,8 +32,9 @@ export class FindCertificateAction extends AbstractAction {
       end_at: certificate.end_at,
       created_at: certificate.created_at,
       total_km: certificate.meta.total_km,
-      total_point: certificate.meta.total_point,
-      total_rm: certificate.meta.total_rm,
+      total_point: certificate.meta.total_point ?? null,
+      total_days: certificate.meta.total_days ?? null,
+      total_rm: certificate.meta.total_rm ?? null,
     };
   }
 }
