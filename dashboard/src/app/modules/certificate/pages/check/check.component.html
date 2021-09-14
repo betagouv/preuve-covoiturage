@@ -33,17 +33,23 @@
             </td>
           </tr>
 
-          <tr *ngIf="data.total_km !== undefined">
+          <tr *ngIf="data.total_km | isNumber">
             <td>Distance</td>
             <td>{{ data.total_km }} kilomètres</td>
           </tr>
 
-          <tr *ngIf="data.total_point !== undefined">
+          <tr *ngIf="data.total_days | isNumber">
+            <td>Jours</td>
+            <td>{{ data.total_days }}</td>
+          </tr>
+
+          <!-- hide if points is falsy -->
+          <tr *ngIf="(data.total_point | isNumber) && data.total_point">
             <td>Points</td>
             <td>{{ data.total_point }} points</td>
           </tr>
 
-          <tr *ngIf="data.total_rm !== undefined">
+          <tr *ngIf="data.total_rm | isNumber">
             <td>Reste à charge</td>
             <td>{{ data.total_rm }} &euro;</td>
           </tr>
