@@ -1,8 +1,8 @@
-import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
 import { provider } from '@ilos/common';
+import { stream } from 'exceljs';
 import { ExportTripInterface } from '../../interfaces';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { Workbook, stream } from 'exceljs';
+import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
 import { StreamDataToWorkBook } from './StreamDataToWorkbook';
 
 @provider()
