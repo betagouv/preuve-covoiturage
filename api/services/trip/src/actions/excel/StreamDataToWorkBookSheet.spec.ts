@@ -120,7 +120,7 @@ test('StreamDataToWorkBookSheet: should stream 20 rows to workbook', async (t) =
 });
 
 // eslint-disable-next-line max-len
-test('StreamDataToWorkBookSheet: should stream 20 rows to workbook and call without operator if not provided', async (t) => {
+test.skip('StreamDataToWorkBookSheet: should stream 20 rows to workbook and call without operator if not provided', async (t) => {
   // Arrange
   const workbook: Workbook = successArrangeStubs(t);
 

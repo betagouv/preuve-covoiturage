@@ -14,14 +14,18 @@ export class ExcelWorkbookHandler {
   }
 
   async writeWorkbookToTempFile(workbook: Workbook, campaign_name: string, operator_id?: number): Promise<string> {
-    const filepath = `${path.join(
+    const filepath = this.buildExcelFileName(campaign_name, operator_id);
+    await workbook.xlsx.writeFile(filepath);
+    return filepath;
+  }
+
+  buildExcelFileName(campaign_name: string, operator_id: number): string {
+    return `${path.join(
       os.tmpdir(),
       `apdf-${this.sanitazeString(campaign_name)}-${
         operator_id ? `${operator_id}-` : ''
       } ${this.getMonthString()}-${v4().substring(0, 6)}`,
     )}.xlsx `;
-    await workbook.xlsx.writeFile(filepath);
-    return filepath;
   }
 
   private sanitazeString(campaign_name: string): string {

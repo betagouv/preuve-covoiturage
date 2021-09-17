@@ -34,7 +34,7 @@ interface Context {
 const test = anyTest as TestInterface<Partial<Context>>;
 
 test.beforeEach((t) => {
-  t.context.checkCampaign = new CheckCampaign(null, null);
+  t.context.checkCampaign = new CheckCampaign(null);
   t.context.s3StorageProvider = new S3StorageProvider();
   t.context.buildExcel = new BuildExcelFile(null, null);
   t.context.getCampaignInvolvedOperator = new GetCampaignInvolvedOperator(null);
