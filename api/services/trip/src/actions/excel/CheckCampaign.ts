@@ -5,11 +5,10 @@ import {
   signature as getCampaignSignature,
 } from '../../shared/policy/find.contract';
 import { handlerConfig } from '../../shared/trip/excelExport.contract';
-import { BuildExcelFile } from './BuildExcelFile';
 
 @provider()
 export class CheckCampaign {
-  constructor(private kernel: KernelInterfaceResolver, private buildExcelFileForCampaign: BuildExcelFile) {}
+  constructor(private kernel: KernelInterfaceResolver) {}
 
   async call(campaign_id: number, start_date?: Date, end_date?: Date): Promise<GetCampaignResultInterface> {
     if (!start_date && !end_date) {

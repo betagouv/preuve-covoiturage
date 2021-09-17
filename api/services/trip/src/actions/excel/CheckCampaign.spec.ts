@@ -4,16 +4,13 @@ import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../../helpers/fakeCampaign.helper.spec';
 import { ResultInterface as GetCampaignResultInterface } from '../../shared/policy/find.contract';
-import { BuildExcelFile } from './BuildExcelFile';
 import { CheckCampaign } from './CheckCampaign';
 
 interface Context {
   // Injected tokens
   kernelInterfaceResolver: KernelInterfaceResolver;
-  buildExcelFileForCampaign: BuildExcelFile;
 
   // Injected tokens method's stubs
-  buildExcelFileForCampaignStub: SinonStub;
   kernelInterfaceResolverStub: SinonStub<[method: string, params: any, context: ContextType]>;
 
   // Constants
@@ -28,17 +25,14 @@ const test = anyTest as TestInterface<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.kernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
-  t.context.buildExcelFileForCampaign = new BuildExcelFile(null, null);
-  t.context.checkCampaign = new CheckCampaign(t.context.kernelInterfaceResolver, t.context.buildExcelFileForCampaign);
+  t.context.checkCampaign = new CheckCampaign(t.context.kernelInterfaceResolver);
 
   t.context.kernelInterfaceResolverStub = sinon.stub(t.context.kernelInterfaceResolver, 'call');
-  t.context.buildExcelFileForCampaignStub = sinon.stub(t.context.buildExcelFileForCampaign, 'call');
   t.context.RETURNED_EXCEL_PATH = faker.system.directoryPath();
   t.context.CAMPAIGN_NAME = faker.random.word();
 });
 
 test.afterEach((t) => {
-  t.context.buildExcelFileForCampaignStub.restore();
   t.context.kernelInterfaceResolverStub.restore();
 });
 
@@ -58,14 +52,6 @@ test('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are
 
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
-  sinon.assert.calledOnceWithExactly(
-    t.context.buildExcelFileForCampaignStub,
-    campaign._id,
-    startOfMonth,
-    endOfMonth,
-    t.context.CAMPAIGN_NAME,
-    5,
-  );
   t.pass();
 });
 
@@ -86,22 +72,6 @@ test('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date int
 
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
-  sinon.assert.calledWithExactly(
-    t.context.buildExcelFileForCampaignStub.firstCall,
-    campaign._id,
-    todayMinus3Years,
-    todayPlus1Year,
-    t.context.CAMPAIGN_NAME,
-    5,
-  );
-  sinon.assert.calledWithExactly(
-    t.context.buildExcelFileForCampaignStub.secondCall,
-    campaign._id,
-    todayMinus3Years,
-    todayPlus1Year,
-    t.context.CAMPAIGN_NAME,
-    6,
-  );
   t.pass();
 });
 
@@ -114,7 +84,6 @@ test('GetCampaignAndCallBuildExcel: should create xlsx file for last month if no
 
   // Assert
   t.pass();
-  sinon.assert.calledOnce(t.context.buildExcelFileForCampaignStub);
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
@@ -135,14 +104,6 @@ test('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are
   // Assert
   t.pass();
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
-  sinon.assert.calledOnceWithExactly(
-    t.context.buildExcelFileForCampaignStub,
-    campaign._id,
-    todayMinus3Years,
-    todayPlus3Years,
-    t.context.CAMPAIGN_NAME,
-    5,
-  );
 });
 
 // eslint-disable-next-line max-len
@@ -162,13 +123,6 @@ test('GetCampaignAndCallBuildExcel: should create 1 xlsx file if campaign date a
   // Assert
   t.pass();
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
-  sinon.assert.calledOnceWithExactly(
-    t.context.buildExcelFileForCampaignStub,
-    campaign._id,
-    todayMinus3Years,
-    todayPlus3Years,
-    t.context.CAMPAIGN_NAME,
-  );
 });
 
 test('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaign with id', async (t) => {
@@ -182,7 +136,6 @@ test('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaig
 
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
-  sinon.assert.notCalled(t.context.buildExcelFileForCampaignStub);
 });
 
 test('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if draft campaign', async (t) => {
@@ -196,7 +149,6 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if draf
 
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
-  sinon.assert.notCalled(t.context.buildExcelFileForCampaignStub);
 });
 
 test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign dates are not in date range', async (t) => {
@@ -223,7 +175,6 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign date
 
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
-  sinon.assert.notCalled(t.context.buildExcelFileForCampaignStub);
 });
 
 const successStubArrange = (t, operator_ids: number[]): GetCampaignResultInterface => {
@@ -236,6 +187,5 @@ const successStubArrange = (t, operator_ids: number[]): GetCampaignResultInterfa
   );
 
   t.context.kernelInterfaceResolverStub.resolves(campaign);
-  t.context.buildExcelFileForCampaignStub.resolves(t.context.RETURNED_EXCEL_PATH);
   return campaign;
 };
