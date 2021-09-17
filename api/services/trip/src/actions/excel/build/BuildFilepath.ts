@@ -1,25 +1,11 @@
-import { Workbook } from 'exceljs';
 import { provider } from '@ilos/common';
 import os from 'os';
 import path from 'path';
 import { v4 } from 'uuid';
 
 @provider()
-export class ExcelWorkbookHandler {
-  static readonly template_location: string = `${__dirname}/../../fundcalls_template.xlsx`;
-
-  async loadWorkbookTemplate(): Promise<Workbook> {
-    const wb = new Workbook();
-    return wb.xlsx.readFile(ExcelWorkbookHandler.template_location);
-  }
-
-  async writeWorkbookToTempFile(workbook: Workbook, campaign_name: string, operator_id?: number): Promise<string> {
-    const filepath = this.buildExcelFileName(campaign_name, operator_id);
-    await workbook.xlsx.writeFile(filepath);
-    return filepath;
-  }
-
-  buildExcelFileName(campaign_name: string, operator_id: number): string {
+export class BuildFilepath {
+  call(campaign_name: string, operator_id: number): string {
     return `${path.join(
       os.tmpdir(),
       `apdf-${this.sanitazeString(campaign_name)}-${

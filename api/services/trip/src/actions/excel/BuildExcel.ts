@@ -1,16 +1,15 @@
 import { provider } from '@ilos/common';
-import { stream } from 'exceljs';
 import { ExportTripInterface } from '../../interfaces';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { ExcelWorkbookHandler } from './ExcelWorkbookHandler';
-import { StreamDataToWorkBook } from './StreamDataToWorkbook';
+import { BuildFilepath } from './build/BuildFilepath';
+import { StreamDataToWorkBook } from './build/StreamDataToWorkbook';
 
 @provider()
 export class BuildExcelFile {
   constructor(
     private tripRepositoryProvider: TripRepositoryProvider,
-    private excelWorkbookHandler: ExcelWorkbookHandler,
-    private streamDataToWorkBook: StreamDataToWorkBook,
+    private buildFilepath: BuildFilepath,
+    private streamDataToWorkbook: StreamDataToWorkBook,
   ) {}
 
   async call(
@@ -21,26 +20,21 @@ export class BuildExcelFile {
     operator_id?: number,
   ): Promise<string> {
     // Get cursor
-    const tripCursor: (count: number) => Promise<ExportTripInterface[]> = await this.getCursor(
+    const tripCursor: (count: number) => Promise<ExportTripInterface[]> = await this.getTripRepositoryCursor(
       campaign_id,
       start_date,
       end_date,
       operator_id,
     );
 
-    // Get filepath
-    const filename: string = this.excelWorkbookHandler.buildExcelFileName(campaign_name, operator_id);
-
-    // Build workbook stream from filepath
-    const workbookWriter: stream.xlsx.WorkbookWriter = new stream.xlsx.WorkbookWriter({
-      filename,
-    });
+    // Build filepath
+    const filepath: string = this.buildFilepath.call(campaign_name, operator_id);
 
     // Stream data and return filename
-    return this.streamDataToWorkBook.call(tripCursor, workbookWriter).then(() => filename);
+    return this.streamDataToWorkbook.call(tripCursor, filepath).then(() => filepath);
   }
 
-  private getCursor(
+  private getTripRepositoryCursor(
     campaign_id: number,
     start_date: Date,
     end_date: Date,
