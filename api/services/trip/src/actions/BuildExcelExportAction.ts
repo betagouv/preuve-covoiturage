@@ -11,7 +11,7 @@ import { BuildExcel } from './excel/BuildExcel';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias]],
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
 })
 export class BuildExcelsExportAction extends Action {
   constructor(
