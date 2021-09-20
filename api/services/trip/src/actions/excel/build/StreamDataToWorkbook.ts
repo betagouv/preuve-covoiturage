@@ -8,7 +8,7 @@ import { BuildExportAction } from '../../BuildExportAction';
 export class StreamDataToWorkBook {
   constructor() {}
 
-  private WORKSHEET_NAME = 'Données';
+  public readonly WORKSHEET_NAME = 'Données';
 
   async call(cursor: (count: number) => Promise<ExportTripInterface[]>, filepath: string): Promise<void> {
     const workbookWriter: stream.xlsx.WorkbookWriter = new stream.xlsx.WorkbookWriter({
@@ -37,6 +37,5 @@ export class StreamDataToWorkBook {
   private async writeTrips(wb: stream.xlsx.WorkbookWriter, trips: ExportTripInterface[]) {
     const worsheetData: Worksheet = wb.getWorksheet(this.WORKSHEET_NAME);
     trips.map((t) => worsheetData.addRow(normalize(t, 'Europe/Paris')).commit());
-    worsheetData.commit();
   }
 }

@@ -11,11 +11,11 @@ export class TripOperatorRepositoryProvider {
     const result = await this.connection.getClient().query({
       text: `SELECT distinct operator_id
       FROM ${this.table}
-      WHERE  JOURNEY_START_DATETIME >= $1::TIMESTAMP
-        AND JOURNEY_END_DATETIME =< $2::TIMESTAMP
+      WHERE JOURNEY_START_DATETIME >= $1::TIMESTAMP
+        AND JOURNEY_START_DATETIME <= $2::TIMESTAMP
         AND $3 = ANY(APPLIED_POLICIES);`,
       values: [start_date, end_date, campaign_id],
     });
-    return result.rows;
+    return result.rowCount ? result.rows.map((r) => r.operator_id) : [];
   }
 }

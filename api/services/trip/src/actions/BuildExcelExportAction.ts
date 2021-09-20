@@ -30,13 +30,12 @@ export class BuildExcelsExportAction extends Action {
     await Promise.all(
       params.query.campaign_id.map(async (c_id) => {
         const checkedCampaign: Campaign = await this.checkCampaign.call(c_id, start_date, end_date);
-        const involed_operators: number[] = await this.getCampaignInvolvedOperator.call(
+        const involedOperators: number[] = await this.getCampaignInvolvedOperator.call(
           checkedCampaign,
           start_date,
           end_date,
         );
-
-        involed_operators.map(async (o_id) => {
+        involedOperators.map(async (o_id) => {
           try {
             const filepath = await this.buildExcel.call(
               checkedCampaign._id,

@@ -7,7 +7,7 @@ import { StreamDataToWorkBook } from './StreamDataToWorkbook';
 
 let streamDataToWorkBook: StreamDataToWorkBook;
 
-const exportTripInterface: ExportTripInterface<Date> = {
+const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   journey_id: faker.random.uuid(),
   trip_id: faker.random.uuid(),
 
@@ -39,6 +39,7 @@ const exportTripInterface: ExportTripInterface<Date> = {
   operator_journey_id: faker.random.uuid(),
   operator_passenger_id: faker.random.uuid(),
   operator_driver_id: faker.random.uuid(),
+  operator: 'Klaxit',
 
   journey_distance: 865,
   journey_duration: 78,
@@ -97,13 +98,19 @@ test('StreamDataToWorkBook: should stream data to a workbook file', async (t) =>
 
   // Assert
   const workbook: Workbook = await new Workbook().xlsx.readFile(filename);
-  const worksheet: Worksheet = workbook.getWorksheet('Données');
+  const worksheet: Worksheet = workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME);
   t.is(worksheet.actualRowCount, 21);
-  t.deepEqual(workbook.getWorksheet('data').getRow(1).values, [
+  t.deepEqual(workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(1).values, [
     undefined,
     ...BuildExportAction.getColumns('territory'),
   ]);
-  t.is(workbook.getWorksheet('data').getRow(2).values.length, BuildExportAction.getColumns('territory').length + 1);
-  t.is(workbook.getWorksheet('data').getRow(2).getCell(2).value, exportTripInterface.trip_id);
-  t.true(workbook.getWorksheet('data').getRow(2).getCell('operator').value !== undefined);
+  t.is(
+    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).values.length,
+    BuildExportAction.getColumns('territory').length + 1,
+  );
+  t.is(
+    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell(2).value,
+    exportTripInterface.trip_id,
+  );
+  t.deepEqual(workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell('AF').value, 'Klaxit');
 });

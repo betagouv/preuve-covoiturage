@@ -35,7 +35,7 @@ export class BuildExcel {
     campaign_id: number,
     start_date: Date,
     end_date: Date,
-    operator_id?: number,
+    operator_id: number,
   ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
     return this.tripRepositoryProvider.searchWithCursor(
       {
@@ -44,7 +44,8 @@ export class BuildExcel {
           end: end_date,
         },
         campaign_id: [campaign_id],
-        operator_id: operator_id ? [operator_id] : null,
+        territory_authorized_operator_id: [operator_id],
+        operator_id: [operator_id],
       },
       'territory',
     );
