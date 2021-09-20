@@ -1,15 +1,21 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres/dist';
-import { TzResultInterface } from '../interfaces';
 
 @provider()
 export class TripOperatorRepositoryProvider {
   public readonly table = 'trip.list';
-  private defaultTz: TzResultInterface = { name: 'GMT', utc_offset: '00:00:00' };
 
   constructor(public connection: PostgresConnection) {}
 
-  public async getInvoledOperators(campaign_id: number): Promise<number[]> {
-    return null;
+  public async getInvoledOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
+    const result = await this.connection.getClient().query({
+      text: `SELECT distinct operator_id
+      FROM ${this.table}
+      WHERE  JOURNEY_START_DATETIME >= $1::TIMESTAMP
+        AND JOURNEY_END_DATETIME =< $2::TIMESTAMP
+        AND $3 = ANY(APPLIED_POLICIES);`,
+      values: [start_date, end_date, campaign_id],
+    });
+    return result.rows;
   }
 }

@@ -7,7 +7,7 @@ import { StreamDataToWorkBook } from './StreamDataToWorkbook';
 
 let streamDataToWorkBook: StreamDataToWorkBook;
 
-export const exportTripInterface: ExportTripInterface<Date> = {
+const exportTripInterface: ExportTripInterface<Date> = {
   journey_id: faker.random.uuid(),
   trip_id: faker.random.uuid(),
 
@@ -62,7 +62,7 @@ test.before((t) => {
   streamDataToWorkBook = new StreamDataToWorkBook();
 });
 
-test('StreamDataToWorkBook: should stream data to a workbook stream file', async (t) => {
+test('StreamDataToWorkBook: should stream data to a workbook file', async (t) => {
   // Arrange
   const tripCursor = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
     resolve([

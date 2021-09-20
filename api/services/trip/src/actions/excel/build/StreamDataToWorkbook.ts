@@ -16,14 +16,14 @@ export class StreamDataToWorkBook {
     });
     this.writeColumnHeaders(workbookWriter);
     const b1 = new Date();
-    console.debug(`[trip:buildExcelExport] happenTripsToWorkbook: ${(new Date().getTime() - b1.getTime()) / 1000}s`);
+    console.debug(`[trip:buildExcelExport] writeTrips: ${(new Date().getTime() - b1.getTime()) / 1000}s`);
     let results: ExportTripInterface[] = await cursor(10);
     while (results.length !== 0) {
       this.writeTrips(workbookWriter, results);
       results = await cursor(10);
     }
     const b2 = new Date();
-    console.debug(`[trip:buildExcelExport] happenTripsToWorkbook: ${(new Date().getTime() - b2.getTime()) / 1000}s`);
+    console.debug(`[trip:buildExcelExport] writeTrips: ${(new Date().getTime() - b2.getTime()) / 1000}s`);
     return await workbookWriter.commit();
   }
 

@@ -1,18 +1,12 @@
 import anyTest, { TestInterface } from 'ava';
-import { GetCampaignInvolvedOperator } from './GetCampaignInvolvedOperators';
-import {
-  ParamsInterface as GetCampaignParamInterface,
-  ResultInterface as Campaign,
-  signature as getCampaignSignature,
-} from '../../shared/policy/find.contract';
+import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../../helpers/fakeCampaign.helper.spec';
-import { SinonStub } from 'sinon';
 import { TripOperatorRepositoryProvider } from '../../providers/TripOperatorRepositoryProvider';
-import sinon from 'sinon';
+import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
+import { GetCampaignInvolvedOperator } from './GetCampaignInvolvedOperators';
 
 interface Context {
   // Injected tokens
-  // tripOperatorRepositoryProvider: TripOperatorRepositoryProvider;
   // Injected tokens method's stubs
   tripOperatorRepositoryProviderStub: SinonStub;
   // Tested token
@@ -36,7 +30,7 @@ test('GetCampaignInvolvedOperator: should get slug if present', async (t) => {
   const campaignWithSlug: Campaign = createGetCampaignResultInterface('active', null, null, null, whitelistOperators);
 
   // Act
-  const result: number[] = await t.context.getCampaignInvolvedOperator.call(campaignWithSlug);
+  const result: number[] = await t.context.getCampaignInvolvedOperator.call(campaignWithSlug, new Date(), new Date());
 
   // Assert
   t.deepEqual(result, whitelistOperators);
@@ -47,12 +41,19 @@ test('GetCampaignInvolvedOperator: should fetch involved operator if no slug', a
   // Arrange
   const campaignWithoutSlug: Campaign = createGetCampaignResultInterface('active');
   const involvedOperatord: number[] = [10, 15, 14];
+  const start_date: Date = new Date();
+  const end_date: Date = new Date();
   t.context.tripOperatorRepositoryProviderStub.resolves(involvedOperatord);
 
   // Act
-  const result: number[] = await t.context.getCampaignInvolvedOperator.call(campaignWithoutSlug);
+  const result: number[] = await t.context.getCampaignInvolvedOperator.call(campaignWithoutSlug, start_date, end_date);
 
   // Assert
   t.deepEqual(result, involvedOperatord);
-  sinon.assert.calledOnceWithExactly(t.context.tripOperatorRepositoryProviderStub, campaignWithoutSlug._id);
+  sinon.assert.calledOnceWithExactly(
+    t.context.tripOperatorRepositoryProviderStub,
+    campaignWithoutSlug._id,
+    start_date,
+    end_date,
+  );
 });

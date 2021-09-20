@@ -7,7 +7,7 @@ import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 import { BuildExcelsExportAction } from './BuildExcelExportAction';
-import { BuildExcelFile } from './excel/BuildExcelFile';
+import { BuildExcel } from './excel/BuildExcel';
 import { CheckCampaign } from './excel/CheckCampaign';
 import { GetCampaignInvolvedOperator } from './excel/GetCampaignInvolvedOperators';
 
@@ -15,7 +15,7 @@ interface Context {
   // Injected tokens
   checkCampaign: CheckCampaign;
   s3StorageProvider: S3StorageProvider;
-  buildExcel: BuildExcelFile;
+  buildExcel: BuildExcel;
   getCampaignInvolvedOperator: GetCampaignInvolvedOperator;
 
   // Injected tokens method's stubs
@@ -25,7 +25,10 @@ interface Context {
   getCampaignInvolvedOperatorStub: SinonStub;
 
   // Constants
-  CAMPAIGN_ID: number;
+  START_DATE_STRING: string;
+  END_DATE_STRING: string;
+  START_DATE: Date;
+  END_DATE: Date;
 
   // Tested token
   buildExcelsExportAction: BuildExcelsExportAction;
@@ -33,10 +36,17 @@ interface Context {
 
 const test = anyTest as TestInterface<Partial<Context>>;
 
+test.before((t) => {
+  t.context.START_DATE_STRING = '2020-01-08T00:00:00Z';
+  t.context.END_DATE_STRING = '2020-02-08T00:00:00Z';
+  t.context.START_DATE = new Date(t.context.START_DATE_STRING);
+  t.context.END_DATE = new Date(t.context.END_DATE_STRING);
+});
+
 test.beforeEach((t) => {
   t.context.checkCampaign = new CheckCampaign(null);
   t.context.s3StorageProvider = new S3StorageProvider();
-  t.context.buildExcel = new BuildExcelFile(null, null);
+  t.context.buildExcel = new BuildExcel(null, null, null);
   t.context.getCampaignInvolvedOperator = new GetCampaignInvolvedOperator(null);
   t.context.buildExcelsExportAction = new BuildExcelsExportAction(
     t.context.checkCampaign,
@@ -89,20 +99,21 @@ test('BuildExcelExportAction: should create 1 xlsx file if date range provided a
   const campaign: Campaign = createGetCampaignResultInterface('active');
   const filename = `campaign-${uuid()}.xlsx`;
   const filepath = `/tmp/exports/${filename}`;
+  const s3_key: string = faker.system.fileName();
   t.context.checkCampaignStub.resolves(campaign);
   t.context.buildExcelStub.resolves(filepath);
-  t.context.s3StorageProviderStub.resolves('s3-key');
+  t.context.s3StorageProviderStub.resolves(s3_key);
   t.context.getCampaignInvolvedOperatorStub.resolves([4]);
 
   // Act
-  await t.context.buildExcelsExportAction.handle(
+  const result: string[] = await t.context.buildExcelsExportAction.handle(
     {
       format: { tz: 'Europe/Paris' },
       query: {
         campaign_id: [campaign._id],
         date: {
-          start: '2020-01-08T00:00:00Z',
-          end: '2020-02-08T00:00:00Z',
+          start: t.context.START_DATE_STRING,
+          end: t.context.END_DATE_STRING,
         },
       },
       // Cast to check date type conversion
@@ -114,11 +125,17 @@ test('BuildExcelExportAction: should create 1 xlsx file if date range provided a
   sinon.assert.calledOnceWithExactly(
     t.context.checkCampaignStub,
     campaign._id,
-    new Date('2020-01-08T00:00:00Z'),
-    new Date('2020-02-08T00:00:00Z'),
+    t.context.START_DATE,
+    t.context.END_DATE,
   );
   sinon.assert.calledOnceWithExactly(t.context.s3StorageProviderStub, BucketName.Export, filepath);
-  t.is(t.context.checkCampaignStub.args[0][0], campaign._id);
+  sinon.assert.calledOnceWithExactly(
+    t.context.getCampaignInvolvedOperatorStub,
+    campaign,
+    t.context.START_DATE,
+    t.context.END_DATE,
+  );
+  t.deepEqual(result, [s3_key]);
 });
 
 test('BuildExcelExportAction: should create 4 xlsx file if date range provided and 2 campaigns with 2 operators each', async (t) => {
@@ -142,8 +159,8 @@ test('BuildExcelExportAction: should create 4 xlsx file if date range provided a
       query: {
         campaign_id: [campaign1._id, campaign2._id],
         date: {
-          start: '2020-01-08T00:00:00Z',
-          end: '2020-02-08T00:00:00Z',
+          start: t.context.START_DATE_STRING,
+          end: t.context.END_DATE_STRING,
         },
       },
       // Cast to check date type conversion
@@ -155,14 +172,14 @@ test('BuildExcelExportAction: should create 4 xlsx file if date range provided a
   sinon.assert.calledWithExactly(
     t.context.checkCampaignStub.firstCall,
     campaign1._id,
-    new Date('2020-01-08T00:00:00Z'),
-    new Date('2020-02-08T00:00:00Z'),
+    t.context.START_DATE,
+    t.context.END_DATE,
   );
   sinon.assert.calledWithExactly(
     t.context.checkCampaignStub.secondCall,
     campaign2._id,
-    new Date('2020-01-08T00:00:00Z'),
-    new Date('2020-02-08T00:00:00Z'),
+    t.context.START_DATE,
+    t.context.END_DATE,
   );
   t.deepEqual(result, expectedFiles);
   t.is(t.context.checkCampaignStub.args[0][0], campaign1._id);
@@ -188,8 +205,8 @@ test('BuildExcelExportAction: should send error and process other if 1 export fa
       query: {
         campaign_id: [campaign1._id, campaign2._id],
         date: {
-          start: '2020-01-08T00:00:00Z',
-          end: '2020-02-08T00:00:00Z',
+          start: t.context.START_DATE_STRING,
+          end: t.context.END_DATE_STRING,
         },
       },
       // Cast to check date type conversion
@@ -201,14 +218,14 @@ test('BuildExcelExportAction: should send error and process other if 1 export fa
   sinon.assert.calledWithExactly(
     t.context.checkCampaignStub.firstCall,
     campaign1._id,
-    new Date('2020-01-08T00:00:00Z'),
-    new Date('2020-02-08T00:00:00Z'),
+    t.context.START_DATE,
+    t.context.END_DATE,
   );
   sinon.assert.calledWithExactly(
     t.context.checkCampaignStub.secondCall,
     campaign2._id,
-    new Date('2020-01-08T00:00:00Z'),
-    new Date('2020-02-08T00:00:00Z'),
+    t.context.START_DATE,
+    t.context.END_DATE,
   );
   t.deepEqual(
     result.sort(),

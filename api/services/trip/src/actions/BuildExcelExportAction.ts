@@ -1,4 +1,3 @@
-import { BuildExcelFile as BuildExcelFile } from './excel/BuildExcelFile';
 import { GetCampaignInvolvedOperator } from './excel/GetCampaignInvolvedOperators';
 import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
@@ -8,6 +7,7 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/
 import { alias } from '../shared/trip/excelExport.schema';
 import { CheckCampaign } from './excel/CheckCampaign';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
+import { BuildExcel } from './excel/BuildExcel';
 
 @handler({
   ...handlerConfig,
@@ -18,7 +18,7 @@ export class BuildExcelsExportAction extends Action {
     private checkCampaign: CheckCampaign,
     private s3StorageProvider: S3StorageProvider,
     private getCampaignInvolvedOperator: GetCampaignInvolvedOperator,
-    private buildExcelFile: BuildExcelFile,
+    private buildExcel: BuildExcel,
   ) {
     super();
   }
@@ -30,11 +30,15 @@ export class BuildExcelsExportAction extends Action {
     await Promise.all(
       params.query.campaign_id.map(async (c_id) => {
         const checkedCampaign: Campaign = await this.checkCampaign.call(c_id, start_date, end_date);
-        const involed_operators: number[] = await this.getCampaignInvolvedOperator.call(checkedCampaign);
+        const involed_operators: number[] = await this.getCampaignInvolvedOperator.call(
+          checkedCampaign,
+          start_date,
+          end_date,
+        );
 
         involed_operators.map(async (o_id) => {
           try {
-            const filepath = await this.buildExcelFile.call(
+            const filepath = await this.buildExcel.call(
               checkedCampaign._id,
               start_date,
               end_date,

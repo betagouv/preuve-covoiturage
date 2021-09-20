@@ -5,7 +5,7 @@ import { BuildFilepath } from './build/BuildFilepath';
 import { StreamDataToWorkBook } from './build/StreamDataToWorkbook';
 
 @provider()
-export class BuildExcelFile {
+export class BuildExcel {
   constructor(
     private tripRepositoryProvider: TripRepositoryProvider,
     private buildFilepath: BuildFilepath,
@@ -17,9 +17,8 @@ export class BuildExcelFile {
     start_date: Date,
     end_date: Date,
     campaign_name: string,
-    operator_id?: number,
+    operator_id: number,
   ): Promise<string> {
-    // Get cursor
     const tripCursor: (count: number) => Promise<ExportTripInterface[]> = await this.getTripRepositoryCursor(
       campaign_id,
       start_date,
@@ -27,10 +26,8 @@ export class BuildExcelFile {
       operator_id,
     );
 
-    // Build filepath
     const filepath: string = this.buildFilepath.call(campaign_name, operator_id);
 
-    // Stream data and return filename
     return this.streamDataToWorkbook.call(tripCursor, filepath).then(() => filepath);
   }
 
