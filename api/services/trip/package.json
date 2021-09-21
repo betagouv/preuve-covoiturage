@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "ilos": "ilos",
-    "build": "tsc && cp ./assets/* ./dist/",
+    "build": "tsc",
     "watch": "tsc -w",
     "test:unit": "ava --config ava.unit.cjs",
     "test:integration": "ava --config ava.integration.cjs",
