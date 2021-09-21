@@ -28,10 +28,9 @@ docker-compose run lint
 
 ```shell
 cd docker/lint && yarn
-```
 
-2. Install [Prettier Code Formatter extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-3. Il should detect the config from `.vscode/settings.json` and use the configured `prettier` module from `docker/lint/node_modules`. Check the _Ouput_ panel in VScode (Menu > View > Output)
+2. Install [Eslint extension](https://open-vsx.org/vscode/item?itemName=dbaeumer.vscode-eslint)
+3. Il should detect the config from `.vscode/settings.json` and use the configured module from `docker/lint/node_modules`. Check the _Ouput_ panel in VScode (Menu > View > Output)
 
 > :warning: Do not install `eslint` or `prettier` locally or globally
 
