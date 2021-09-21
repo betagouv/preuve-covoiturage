@@ -100,7 +100,7 @@ test('Json Schema provider: should works with ref', async (t) => {
 });
 
 test('Json Schema provider: should work with inherance', async (t) => {
-  class FakeObjectExtended extends FakeObject { }
+  class FakeObjectExtended extends FakeObject {}
 
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
