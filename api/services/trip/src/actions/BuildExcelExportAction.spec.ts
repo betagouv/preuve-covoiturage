@@ -45,7 +45,7 @@ test.before((t) => {
 
 test.beforeEach((t) => {
   t.context.checkCampaign = new CheckCampaign(null);
-  t.context.s3StorageProvider = new S3StorageProvider();
+  t.context.s3StorageProvider = new S3StorageProvider(null);
   t.context.buildExcel = new BuildExcel(null, null, null);
   t.context.getCampaignInvolvedOperator = new GetCampaignInvolvedOperator(null);
   t.context.buildExcelsExportAction = new BuildExcelsExportAction(
