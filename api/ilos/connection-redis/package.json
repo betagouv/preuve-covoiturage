@@ -16,11 +16,11 @@
     "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
   },
   "devDependencies": {
-    "@types/ioredis": "^4.22.0"
+    "@types/ioredis": "^4.27.4"
   },
   "dependencies": {
-    "ioredis": "^4.22.0",
     "@ilos/common": "^0.4.1",
-    "@ilos/connection-manager": "^0.4.1"
+    "@ilos/connection-manager": "^0.4.1",
+    "ioredis": "^4.27.9"
   }
 }
