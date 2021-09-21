@@ -96,6 +96,10 @@ export class DefaultMJMLTemplate extends AbstractTemplate<DefaultTemplateData> {
         >
           {{ action_message }}
         </mj-button>
+        <mj-text align="left" line-height="22px" color="#000000" padding="20px 40px 40px 40px">
+          <p>ou cliquez sur le lien suivant :</p>
+          <p>{{action_href}}</p>
+        </mj-text>
         {{/if}}
         <mj-text align="left" line-height="22px" color="#000000" padding="20px 40px 40px 40px">
           A bientôt
