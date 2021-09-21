@@ -31,9 +31,10 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
 
   helpCard = {
     svgIcon: 'new_car',
-    title: 'Vous êtes nouveau sur Preuve de covoiturage ?',
+    title: "Besoin d'accompagnement ?",
     hint: 'Découvrez comment développer une politique de covoiturage efficace dans votre collectivité',
-    link: 'https://doc.covoiturage.beta.gouv.fr/territoires/guide-des-incitations',
+    // eslint-disable-next-line
+    link: 'https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/devenir-partenaire/je-suis-un-territoire/guide-des-incitations',
   };
 
   creationFromScratch = false;
