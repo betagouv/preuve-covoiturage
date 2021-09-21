@@ -49,7 +49,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'campaign_id',
       'days',
       'hour',
-      'excluded_territory_id',
+      'excluded_start_territory_id',
+      'excluded_end_territory_id',
     ].filter((key) => key in filters);
 
     let orderedFilters = {
@@ -73,9 +74,14 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         .map((key) => ({ key, value: filters[key] }))
         .map((filter) => {
           switch (filter.key) {
-            case 'excluded_territory_id':
+            case 'excluded_start_territory_id':
               return {
                 text: `start_territory_id <> ALL($#::int[])`,
+                values: [filter.value],
+              };
+            case 'excluded_end_territory_id':
+              return {
+                text: `end_territory_id <> ALL($#::int[])`,
                 values: [filter.value],
               };
             case 'territory_id':
@@ -178,20 +184,22 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   public async getOpenDataExcludedTerritories(params: Partial<TripStatInterface>): Promise<TerritoryTripsInterface[]> {
     const where = await this.buildWhereClauses(params);
 
+    const excluded_start_sql_text = this.numberPlaceholders(`
+    SELECT start_territory_id, null as end_territory_id, ARRAY_AGG(CONCAT(TRIP_ID,'~',JOURNEY_ID)) AS AGGREGATED_TRIPS_JOURNEYS
+    FROM ${this.table} 
+    WHERE ${where.text} 
+    GROUP BY start_territory_id 
+    HAVING COUNT (start_territory_id) < 6`);
+
+    const excluded_end_sql_text = this.numberPlaceholders(`
+    SELECT null as start_territory_id, end_territory_id, ARRAY_AGG(CONCAT(TRIP_ID,'~',JOURNEY_ID)) AS AGGREGATED_TRIPS_JOURNEYS
+    FROM ${this.table} 
+    WHERE ${where.text} 
+    GROUP BY end_territory_id 
+    HAVING COUNT (end_territory_id) < 6`);
+
     const query = {
-      text: `
-        SELECT start_territory_id, null as end_territory_id, ARRAY_AGG(CONCAT(TRIP_ID,'~',JOURNEY_ID)) AS AGGREGATED_TRIPS_JOURNEYS
-        FROM ${this.table} 
-        WHERE ${where.text} 
-        GROUP BY start_territory_id 
-        HAVING COUNT (start_territory_id) < 6
-      UNION ALL
-        SELECT null as start_territory_id, end_territory_id, ARRAY_AGG(CONCAT(TRIP_ID,'~',JOURNEY_ID)) AS AGGREGATED_TRIPS_JOURNEYS
-        FROM ${this.table} 
-        WHERE ${where.text} 
-        GROUP BY end_territory_id 
-        HAVING COUNT (end_territory_id) < 6
-      `,
+      text: `${excluded_start_sql_text} UNION ALL ${excluded_end_sql_text}`,
       values: where.values,
     };
 

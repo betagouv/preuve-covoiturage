@@ -240,7 +240,12 @@ export class BuildExportAction extends Action implements InitHookInterface {
         queryParam,
       );
       if (excluded_territories.length !== 0) {
-        queryParam.excluded_territory_id = excluded_territories.map((t) => t.start_territory_id || t.end_territory_id);
+        queryParam.excluded_start_territory_id = excluded_territories
+          .filter((t) => t.start_territory_id)
+          .map((t) => t.start_territory_id);
+        queryParam.excluded_end_territory_id = excluded_territories
+          .filter((t) => t.end_territory_id)
+          .map((t) => t.end_territory_id);
       }
     }
     const cursor = await this.tripRepository.searchWithCursor(queryParam, type);
@@ -279,7 +284,11 @@ export class BuildExportAction extends Action implements InitHookInterface {
   protected castQueryParams(
     type: string,
     params: ParamsInterface,
-  ): QueryInterface & { status?: string } & { excluded_territory_id?: number[] } {
+  ): QueryInterface & {
+    status?: string;
+    excluded_end_territory_id?: number[];
+    excluded_start_territory_id?: number[];
+  } {
     if (type !== 'opendata') {
       return params.query;
     }
