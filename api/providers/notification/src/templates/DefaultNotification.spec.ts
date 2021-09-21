@@ -64,7 +64,6 @@ test('should work', async (t) => {
   const { text, html, subject, to } = t.context.stub.sendMail.getCall(0).args[0];
   t.is(subject, notificationCtor.subject);
   t.is(to, sendTo);
-  t.log({ text, html, subject });
   t.true((text as string).search(sendMessage) > -1);
   t.true((html as string).search(sendMessage) > -1);
 

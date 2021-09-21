@@ -65,7 +65,7 @@ test.before(async (t) => {
 
   t.context.httpTransport = new HttpTransport(kernel);
 
-  await t.context.httpTransport.up();
+  await t.context.httpTransport.up(['0']);
 
   t.context.request = supertest(t.context.httpTransport.getInstance());
 });
