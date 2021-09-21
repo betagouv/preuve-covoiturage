@@ -197,8 +197,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         (count(*) FILTER (
           WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0
         ))::int as trip_subsidized,
-        coalesce(sum(passenger_incentive_rpc_financial_sum + driver_incentive_rpc_financial_sum), 0)::int as financial_incentive_sum,
-        coalesce(sum(passenger_incentive_rpc_sum + driver_incentive_rpc_sum), 0)::int as incentive_sum
+        coalesce(sum(COALESCE(passenger_incentive_rpc_financial_sum, 0) + COALESCE(driver_incentive_rpc_financial_sum, 0)), 0)::int as financial_incentive_sum,
+        coalesce(sum(COALESCE(passenger_incentive_rpc_sum, 0) + COALESCE(driver_incentive_rpc_sum, 0)), 0)::int as incentive_sum
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
       ${groupBySwitch[params.group_by]}
