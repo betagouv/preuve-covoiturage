@@ -50,7 +50,7 @@ export class CampaignUx {
       name: '',
       territory_id: null,
       description: '',
-      unit: null,
+      unit: IncentiveUnitEnum.EUR,
       start: null,
       end: null,
       status: null,
