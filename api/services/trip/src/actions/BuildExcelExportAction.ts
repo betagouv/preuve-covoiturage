@@ -1,13 +1,13 @@
-import { GetCampaignInvolvedOperator } from './excel/GetCampaignInvolvedOperators';
 import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/excelExport.contract';
 import { alias } from '../shared/trip/excelExport.schema';
-import { CheckCampaign } from './excel/CheckCampaign';
-import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 import { BuildExcel } from './excel/BuildExcel';
+import { CheckCampaign } from './excel/CheckCampaign';
+import { GetCampaignInvolvedOperator } from './excel/GetCampaignInvolvedOperators';
 
 @handler({
   ...handlerConfig,
@@ -35,24 +35,26 @@ export class BuildExcelsExportAction extends Action {
           start_date,
           end_date,
         );
-        involedOperators.map(async (o_id) => {
-          try {
-            const filepath = await this.buildExcel.call(
-              checkedCampaign._id,
-              start_date,
-              end_date,
-              checkedCampaign.name,
-              o_id,
-            );
-            const s3key = await this.s3StorageProvider.upload(BucketName.Export, filepath);
-            filepathes.push(s3key);
-          } catch (error) {
-            // eslint-disable-next-line max-len
-            const message = `Error processing excel export for campaign ${checkedCampaign.name} and operator id ${o_id}`;
-            console.error(message, error);
-            filepathes.push(message);
-          }
-        });
+        await Promise.all(
+          involedOperators.map(async (o_id) => {
+            try {
+              const filepath = await this.buildExcel.call(
+                checkedCampaign._id,
+                start_date,
+                end_date,
+                checkedCampaign.name,
+                o_id,
+              );
+              const s3key = await this.s3StorageProvider.upload(BucketName.Export, filepath);
+              filepathes.push(s3key);
+            } catch (error) {
+              // eslint-disable-next-line max-len
+              const message = `Error processing excel export for campaign ${checkedCampaign.name} and operator id ${o_id}`;
+              console.error(message, error);
+              filepathes.push(message);
+            }
+          }),
+        );
       }),
     );
     return filepathes;

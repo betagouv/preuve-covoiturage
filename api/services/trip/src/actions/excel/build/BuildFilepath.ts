@@ -9,7 +9,7 @@ export class BuildFilepath {
     return `${path.join(
       os.tmpdir(),
       `apdf-${this.sanitazeString(campaign_name)}-${operator_id}-${this.getMonthString()}-${v4().substring(0, 6)}`,
-    )}.xlsx `;
+    )}.xlsx`;
   }
 
   private sanitazeString(campaign_name: string): string {
