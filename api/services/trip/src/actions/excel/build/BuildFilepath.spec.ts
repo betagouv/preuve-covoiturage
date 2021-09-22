@@ -12,6 +12,6 @@ test('BuildFilepath: should build filename from parameter', async (t) => {
   const filepath: string = buildFilepath.call('IDFM normal', 4);
 
   // Assert
-  t.log(filepath);
   t.true(filepath.startsWith('/tmp/apdf-idfm_nor-4'));
+  t.true(filepath.endsWith('.xlsx'));
 });
