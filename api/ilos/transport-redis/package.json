@@ -21,13 +21,13 @@
     "watch": "tsc -w"
   },
   "devDependencies": {
-    "@types/sinon": "^9.0.10",
-    "sinon": "^9.2.4"
+    "@types/sinon": "^10.0.3",
+    "sinon": "^11.1.2"
   },
   "dependencies": {
-    "bullmq": "^1.14.7",
     "@ilos/common": "^0.4.1",
     "@ilos/core": "^0.4.1",
-    "@ilos/queue": "^0.4.1"
+    "@ilos/queue": "^0.4.1",
+    "bullmq": "^1.47.1"
   }
 }

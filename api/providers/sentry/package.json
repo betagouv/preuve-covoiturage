@@ -16,7 +16,7 @@
   "dependencies": {
     "@ilos/common": "~0",
     "@ilos/core": "~0",
-    "@sentry/node": "^6.2.0",
+    "@sentry/node": "^6.13.1",
     "lodash": "^4.17.21"
   }
 }

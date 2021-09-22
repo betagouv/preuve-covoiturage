@@ -67,7 +67,7 @@ test('Json Schema provider: should raise exception if data unvalid', async (t) =
 
   t.context.provider.registerValidator(schema, FakeObject);
   const err = await t.throwsAsync(async () => t.context.provider.validate(new FakeObject({ hello: 1 })));
-  t.is(err.message, 'data/hello should be string');
+  t.is(err.message, 'data/hello must be string');
 });
 
 test('Json Schema provider: should works with ref', async (t) => {
