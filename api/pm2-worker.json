@@ -4,6 +4,17 @@
   "args": "queue redis://redis:6379",
   "cwd": "dist",
   "watch_delay": 1000,
-  "watch": ["../../ilos", "../../proxy", "../../providers", "../../services"],
-  "ignore_watch": ["node_modules", "src"]
+  "watch": [
+    "../../ilos/*/dist/**/*.js",
+    "../../proxy/dist/**/*.js",
+    "../../providers/*/dist/**/*.js",
+    "../../services/*/dist/**/*.js"
+  ],
+  "ignore_watch": [
+    "node_modules",
+    "src"
+  ],
+  "env": {
+    "NODE_OPTIONS": "--trace-warnings"
+  }
 }
