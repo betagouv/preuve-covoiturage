@@ -3,10 +3,11 @@ import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/commo
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { signature, handlerConfig } from '../shared/trip/cacheWarmCron.contract';
+import { ApiGraphTimeMode } from '../shared/trip/common/interfaces/ApiGraphTimeMode';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['channel.service.only', [handlerConfig.service]]],
+  // middlewares: [['channel.service.only', [handlerConfig.service]]],
 })
 export class TripCacheWarmCron extends Action implements InitHookInterface {
   constructor(private kernel: KernelInterfaceResolver, private pg: PostgresConnection) {
@@ -34,62 +35,84 @@ export class TripCacheWarmCron extends Action implements InitHookInterface {
     // clean up cache table
     await this.pg.getClient().query('TRUNCATE trip.stat_cache');
 
-    // fetch the list of operators and territories as a list of ID
-    const response = await this.kernel.call(
+    // get all operators and territories with linked users to avoid
+    // generating stats for inactive partners
+    const { operators, territories } = await this.getActivePartners();
+
+    await this.buildOperators(operators);
+    await this.buildTerritories(territories);
+    await this.buildPublic();
+  }
+
+  private async getActivePartners(): Promise<Partial<{ operators: number[]; territories: number[] }>> {
+    return this.kernel.call(
       'user:hasUsers',
       {},
       {
         channel: { service: handlerConfig.service },
       },
     );
+  }
 
-    // warm operators
-    if ('operators' in response) {
-      for (const operator_id of response.operators) {
-        console.info(`> Warm cache for operator ${operator_id}`);
+  private async buildOperators(operators: number[]): Promise<void> {
+    if (!operators) return;
+    for (const operator_id of operators) {
+      console.info(`> Warm cache for operator ${operator_id}`);
+      for (const group_by of Object.keys(ApiGraphTimeMode)) {
         await this.kernel.notify(
           'trip:stats',
           {
-            operator_id: [operator_id],
+            operator_id,
+            tz: 'Europe/Paris',
             date: { start: this.oneYearAgo() },
+            group_by: group_by.toLowerCase(),
           },
           {
-            channel: { service: handlerConfig.service },
-            call: { user: { permissions: ['trip.stats'] } },
+            channel: { service: handlerConfig.service, metadata: { timeout: 0 } },
+            call: { user: { operator_id, permissions: ['operator.trip.stats'] } },
           },
         );
       }
     }
+  }
 
-    // warm territories
-    if ('territories' in response) {
-      for (const territory_id of response.territories) {
-        console.info(`> Warm cache for territory ${territory_id}`);
+  private async buildTerritories(territories: number[]): Promise<void> {
+    if (!territories) return;
+    for (const territory_id of territories) {
+      console.info(`> Warm cache for territory ${territory_id}`);
+      for (const group_by of Object.keys(ApiGraphTimeMode)) {
         await this.kernel.notify(
           'trip:stats',
           {
-            territory_id: [territory_id],
+            territory_id,
+            tz: 'Europe/Paris',
             date: { start: this.oneYearAgo() },
+            group_by: group_by.toLowerCase(),
           },
           {
-            channel: { service: handlerConfig.service },
-            call: { user: { permissions: ['trip.stats'] } },
+            channel: { service: handlerConfig.service, metadata: { timeout: 0 } },
+            call: { user: { authorizedTerritories: [territory_id], permissions: ['territory.trip.stats'] } },
           },
         );
       }
     }
+  }
 
-    // warm global cache
-    await this.kernel.notify(
-      'trip:stats',
-      {
-        date: { start: this.oneYearAgo() },
-      },
-      {
-        channel: { service: handlerConfig.service },
-        call: { user: { permissions: ['trip.stats'] } },
-      },
-    );
+  private async buildPublic(): Promise<void> {
+    for (const group_by of Object.keys(ApiGraphTimeMode)) {
+      await this.kernel.notify(
+        'trip:stats',
+        {
+          tz: 'Europe/Paris',
+          date: { start: this.oneYearAgo() },
+          group_by: group_by.toLowerCase(),
+        },
+        {
+          channel: { service: handlerConfig.service, metadata: { timeout: 0 } },
+          call: { user: { permissions: ['registry.trip.stats'] } },
+        },
+      );
+    }
   }
 
   private oneYearAgo(): string {
