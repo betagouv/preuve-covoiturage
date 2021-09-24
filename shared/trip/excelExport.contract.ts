@@ -7,11 +7,11 @@ export interface ParamsInterface {
       start: Date;
       end: Date;
     };
-    campaign_id?: number[];
+    campaign_id: number[];
   };
 }
 
-export type ResultInterface = void;
+export type ResultInterface = string[];
 
 export const handlerConfig = {
   service: 'trip',

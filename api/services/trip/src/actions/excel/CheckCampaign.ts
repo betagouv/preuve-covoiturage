@@ -1,22 +1,16 @@
-import { KernelInterfaceResolver, provider, InvalidRequestException } from '@ilos/common';
+import { InvalidRequestException, KernelInterfaceResolver, provider } from '@ilos/common';
 import {
   ParamsInterface as GetCampaignParamInterface,
   ResultInterface as GetCampaignResultInterface,
   signature as getCampaignSignature,
 } from '../../shared/policy/find.contract';
 import { handlerConfig } from '../../shared/trip/excelExport.contract';
-import { BuildExcelFileForCampaign } from './BuildExcelFileForCampaign';
 
 @provider()
-export class GetCampaignAndCallBuildExcel {
-  constructor(private kernel: KernelInterfaceResolver, private buildExcelFileForCampaign: BuildExcelFileForCampaign) {}
+export class CheckCampaign {
+  constructor(private kernel: KernelInterfaceResolver) {}
 
-  async call(campaign_id: number, start_date?: Date, end_date?: Date): Promise<string> {
-    if (!start_date && !end_date) {
-      start_date = this.startOfPreviousMonthDate();
-      end_date = this.endOfPreviousMonthDate();
-    }
-
+  async call(campaign_id: number, start_date: Date, end_date: Date): Promise<GetCampaignResultInterface> {
     const getCampaignParamInterface: GetCampaignParamInterface = { _id: Number(campaign_id) };
     const campaign: GetCampaignResultInterface = await this.kernel.call<
       GetCampaignParamInterface,
@@ -26,25 +20,14 @@ export class GetCampaignAndCallBuildExcel {
       call: { user: { permissions: ['registry.policy.find'] } },
     });
     if (!this.isCampaignActive(campaign)) {
-      throw new InvalidRequestException('Campaign is not active');
+      throw new InvalidRequestException(`Campaign ${campaign._id} is not active`);
     }
 
     if (!this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
-      throw new InvalidRequestException('Provided date range are not inside campagne periode');
+      throw new InvalidRequestException(`Provided date range are not inside campaign ${campaign._id} periode`);
     }
-    return await this.buildExcelFileForCampaign.call(campaign_id, start_date, end_date, campaign.name);
-  }
 
-  private endOfPreviousMonthDate(): Date {
-    const endOfMonth: Date = new Date();
-    return new Date(endOfMonth.getFullYear(), endOfMonth.getMonth() + 1, 0);
-  }
-
-  private startOfPreviousMonthDate(): Date {
-    const startOfMonth: Date = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setMonth(startOfMonth.getMonth() - 1);
-    return startOfMonth;
+    return campaign;
   }
 
   private isCampaignActive(campaign): boolean {

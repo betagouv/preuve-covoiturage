@@ -34,7 +34,8 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
 import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
-import { BuildExcelExportAction } from './actions/BuildExcelExportAction';
+import { BuildExcelsExportAction } from './actions/BuildExcelExportAction';
+import { ActiveCampaignExcelExportAction } from './actions/ActiveCampaignExcelExportAction';
 
 @serviceProvider({
   config,
@@ -67,7 +68,8 @@ import { BuildExcelExportAction } from './actions/BuildExcelExportAction';
     FinancialStatsAction,
     ExportAction,
     BuildExportAction,
-    BuildExcelExportAction,
+    BuildExcelsExportAction,
+    ActiveCampaignExcelExportAction,
     TripCacheWarmCron,
     SendExportAction,
     PublishOpenDataAction,

@@ -61,6 +61,7 @@ export class ActiveCampaignExcelExportAction extends Action implements InitHookI
 
   private async buildExcelsForCampaigns(activeCampaigns: ListCampaignsResultInterface) {
     const campaign_ids: number[] = activeCampaigns.map((c) => c._id);
+    console.info(`Trying excel export for active campaign ids ${campaign_ids}`);
     const buildExcelExportParams: BuildExcelExportParamInterface = {
       format: { tz: 'Europe/Paris' },
       query: { campaign_id: campaign_ids },

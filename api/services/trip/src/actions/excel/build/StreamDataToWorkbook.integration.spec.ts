@@ -1,13 +1,13 @@
 import test from 'ava';
-import { Workbook } from 'exceljs';
+import { Workbook, Worksheet } from 'exceljs';
 import faker from 'faker';
-import sinon, { SinonStub } from 'sinon';
-import { ExportTripInterface } from '../../interfaces';
-import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { BuildExportAction } from '../BuildExportAction';
-import { StreamDataToWorkBookSheet } from './StreamDataToWorkBookSheet';
+import { ExportTripInterface } from '../../../interfaces';
+import { BuildExportAction } from '../../BuildExportAction';
+import { StreamDataToWorkBook } from './StreamDataToWorkbook';
 
-export const exportTripInterface: ExportTripInterface<Date> = {
+let streamDataToWorkBook: StreamDataToWorkBook;
+
+const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   journey_id: faker.random.uuid(),
   trip_id: faker.random.uuid(),
 
@@ -39,6 +39,7 @@ export const exportTripInterface: ExportTripInterface<Date> = {
   operator_journey_id: faker.random.uuid(),
   operator_passenger_id: faker.random.uuid(),
   operator_driver_id: faker.random.uuid(),
+  operator: faker.random.alphaNumeric(),
 
   journey_distance: 865,
   journey_duration: 78,
@@ -58,22 +59,13 @@ export const exportTripInterface: ExportTripInterface<Date> = {
   driver_incentive_rpc_raw: null,
 };
 
-let streamTripsForCampaginComponent: StreamDataToWorkBookSheet;
-let tripRepositoryProvider: TripRepositoryProvider;
-
-let tripRepositoryProviderStub: SinonStub;
-
-const date: Date = faker.date.past();
-const campaign_id: number = faker.random.number();
-
 test.before((t) => {
-  tripRepositoryProvider = new TripRepositoryProvider(null);
-  streamTripsForCampaginComponent = new StreamDataToWorkBookSheet(tripRepositoryProvider);
+  streamDataToWorkBook = new StreamDataToWorkBook();
 });
 
-test('StreamDataToWorkBookSheet: should stream 20 rows to workbook', async (t) => {
+test('StreamDataToWorkBook: should stream data to a workbook file', async (t) => {
   // Arrange
-  const cursorResult = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
+  const tripCursor = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
     resolve([
       exportTripInterface,
       exportTripInterface,
@@ -87,43 +79,41 @@ test('StreamDataToWorkBookSheet: should stream 20 rows to workbook', async (t) =
       exportTripInterface,
     ]);
   });
-
   const cursorEndingResult = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
     resolve([]);
   });
   let counter = 20;
-  const returnedFunction = (count: number): Promise<ExportTripInterface[]> => {
+  const cursorCallback = (count: number): Promise<ExportTripInterface<Date>[]> => {
     if (counter <= 0) {
       return cursorEndingResult;
     }
     counter = counter - 10;
-    return cursorResult;
+    return tripCursor;
   };
 
-  tripRepositoryProviderStub = sinon.stub(tripRepositoryProvider, 'searchWithCursor');
-  tripRepositoryProviderStub.resolves(returnedFunction);
-
-  const wb: Workbook = new Workbook();
-  wb.addWorksheet('data');
+  const filename = '/tmp/stream-data-test.xlsx';
 
   // Act
-  const generatedWorkbook: Workbook = await streamTripsForCampaginComponent.call(campaign_id, wb, date, date);
+  await streamDataToWorkBook.call(cursorCallback, filename);
 
   // Assert
-  sinon.assert.calledOnceWithExactly(
-    tripRepositoryProviderStub,
-    { date: { start: date, end: date }, campaign_id: [campaign_id] },
-    'territory',
-  );
-  t.deepEqual(generatedWorkbook.getWorksheet('data').getRow(1).values, [
+  const workbook: Workbook = await new Workbook().xlsx.readFile(filename);
+  const worksheet: Worksheet = workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME);
+  t.is(worksheet.actualRowCount, 21);
+  t.deepEqual(workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(1).values, [
     undefined,
     ...BuildExportAction.getColumns('territory'),
   ]);
   t.is(
-    generatedWorkbook.getWorksheet('data').getRow(2).values.length,
+    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).values.length,
     BuildExportAction.getColumns('territory').length + 1,
   );
-  t.is(generatedWorkbook.getWorksheet('data').getRow(2).getCell(2).value, exportTripInterface.trip_id);
-  t.true(generatedWorkbook.getWorksheet('data').getRow(2).getCell('operator').value !== undefined);
-  t.is(generatedWorkbook.getWorksheet('data').rowCount, 22);
+  t.is(
+    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell(2).value,
+    exportTripInterface.trip_id,
+  );
+  t.deepEqual(
+    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell('AF').value,
+    exportTripInterface.operator,
+  );
 });
