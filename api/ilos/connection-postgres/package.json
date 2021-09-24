@@ -16,12 +16,12 @@
     "coverage": "exit 0"
   },
   "dependencies": {
-    "pg": "^8.5.1",
-    "pg-cursor": "^2.5.2",
     "@ilos/common": "^0.4.1",
-    "@ilos/connection-manager": "^0.4.1"
+    "@ilos/connection-manager": "^0.4.1",
+    "pg": "^8.7.1",
+    "pg-cursor": "^2.7.1"
   },
   "devDependencies": {
-    "@types/pg": "^7.14.10"
+    "@types/pg": "^8.6.1"
   }
 }

@@ -19,6 +19,7 @@ import {
   TripRepositoryInterface,
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
+import { TerritoryTripsInterface } from '../interfaces/StartTerritoryCountInterface';
 
 /*
  * Trip specific repository
@@ -33,7 +34,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   constructor(public connection: PostgresConnection) {}
 
   protected async buildWhereClauses(
-    filters: Partial<TripSearchInterface>,
+    filters: Partial<TripSearchInterface & { excluded_territory_id: number[] }>,
   ): Promise<{
     text: string;
     values: any[];
@@ -48,6 +49,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'campaign_id',
       'days',
       'hour',
+      'excluded_start_territory_id',
+      'excluded_end_territory_id',
     ].filter((key) => key in filters);
 
     let orderedFilters = {
@@ -71,6 +74,16 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         .map((key) => ({ key, value: filters[key] }))
         .map((filter) => {
           switch (filter.key) {
+            case 'excluded_start_territory_id':
+              return {
+                text: `start_territory_id <> ALL($#::int[])`,
+                values: [filter.value],
+              };
+            case 'excluded_end_territory_id':
+              return {
+                text: `end_territory_id <> ALL($#::int[])`,
+                values: [filter.value],
+              };
             case 'territory_id':
               const territoryFilterValue = Array.isArray(filter.value) ? filter.value : [filter.value];
               return {
@@ -168,6 +181,33 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
   }
 
+  public async getOpenDataExcludedTerritories(params: Partial<TripStatInterface>): Promise<TerritoryTripsInterface[]> {
+    const where = await this.buildWhereClauses(params);
+
+    const excluded_start_sql_text = this.numberPlaceholders(`
+    SELECT start_territory_id, null as end_territory_id, ARRAY_AGG(CONCAT(TRIP_ID,'~',JOURNEY_ID)) AS AGGREGATED_TRIPS_JOURNEYS
+    FROM ${this.table} 
+    WHERE ${where.text} 
+    GROUP BY start_territory_id 
+    HAVING COUNT (start_territory_id) < 6`);
+
+    const excluded_end_sql_text = this.numberPlaceholders(`
+    SELECT null as start_territory_id, end_territory_id, ARRAY_AGG(CONCAT(TRIP_ID,'~',JOURNEY_ID)) AS AGGREGATED_TRIPS_JOURNEYS
+    FROM ${this.table} 
+    WHERE ${where.text} 
+    GROUP BY end_territory_id 
+    HAVING COUNT (end_territory_id) < 6`);
+
+    const query = {
+      text: `${excluded_start_sql_text} UNION ALL ${excluded_end_sql_text}`,
+      values: where.values,
+    };
+
+    query.text = this.numberPlaceholders(query.text);
+    const result = await this.connection.getClient().query(query);
+    return !result.rowCount ? [] : result.rows;
+  }
+
   public async stats(params: Partial<TripStatInterface>): Promise<StatInterface[]> {
     const where = await this.buildWhereClauses(params);
 
@@ -247,13 +287,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   }
 
   public async searchWithCursor(
-    params: {
-      date: { start: Date; end: Date };
+    params: TripSearchInterface & {
+      excluded_territory_id?: number[];
       territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
-      operator_id?: number[];
-      campaign_id?: number[];
-      territory_id?: number[];
-      status?: string;
     },
     type = 'opendata',
   ): Promise<(count: number) => Promise<ExportTripInterface[]>> {

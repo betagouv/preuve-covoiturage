@@ -28,6 +28,7 @@ interface Context {
 
   // Constants
   OPERATOR_UUID: string;
+  OPERATOR_NAME: string;
   USER_RPC_UUID: string;
   CERTIFICATE_UUID: string;
 
@@ -58,6 +59,7 @@ test.beforeEach((t) => {
     OPERATOR_UUID: faker.random.uuid(),
     USER_RPC_UUID: faker.random.uuid(),
     CERTIFICATE_UUID: faker.random.uuid(),
+    OPERATOR_NAME: faker.random.alphaNumeric(),
     fakeKernelInterfaceResolver,
     configInterfaceResolver,
     certificateRepositoryProviderInterface,
@@ -70,7 +72,7 @@ test.beforeEach((t) => {
   t.context.kernelCallStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call');
 
   t.context.kernelCallStub.onCall(0).resolves(t.context.USER_RPC_UUID);
-  t.context.kernelCallStub.onCall(1).resolves({ uuid: t.context.OPERATOR_UUID, name: 'Klaxit' });
+  t.context.kernelCallStub.onCall(1).resolves({ uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME });
 });
 
 test.afterEach((t) => {
@@ -111,7 +113,7 @@ test('CreateCertificateAction: should generate certificate with 0 rac amount for
     meta: {
       tz: 'Europe/Paris',
       identity: { uuid: t.context.USER_RPC_UUID },
-      operator: { uuid: t.context.OPERATOR_UUID, name: 'Klaxit' },
+      operator: { uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME },
       total_tr: 2,
       total_km: 20,
       total_rm: 0,
@@ -228,7 +230,7 @@ function getExpectedCertificateParams(certificateMeta: Partial<CertificateMetaIn
     meta: {
       tz: 'Europe/Paris',
       identity: { uuid: t.context.USER_RPC_UUID },
-      operator: { uuid: t.context.OPERATOR_UUID, name: 'Klaxit' },
+      operator: { uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME },
       ...certificateMeta,
     } as CertificateMetaInterface,
     end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,

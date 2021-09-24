@@ -9,7 +9,7 @@ module.exports = {
     sourceType: 'module', // Allows for the use of imports
   },
   // some JS converted to TS. needs to be cleaned up
-  ignorePatterns: ['dist', 'api/providers/qrcode/src/lib/*', '**/ava.*.cjs'],
+  ignorePatterns: ['dist', 'api/providers/qrcode/src/lib/*', '**/ava.*.cjs', 'api/db'],
   rules: {
     semi: ['error', 'always'],
     'prettier/prettier': [
