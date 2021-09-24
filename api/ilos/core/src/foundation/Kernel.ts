@@ -227,7 +227,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * Get the timeout from context (channel.metadata.timeout)
    */
   private getTimeout(context: ContextType, defaultTimeout = 0): number {
-    if ('channel' in context && 'metadata' in context.channel && 'timeout' in context.channel.metadata) {
+    if (context && 'channel' in context && 'metadata' in context.channel && 'timeout' in context.channel.metadata) {
       const { timeout } = context.channel.metadata;
       return timeout ?? defaultTimeout;
     }
