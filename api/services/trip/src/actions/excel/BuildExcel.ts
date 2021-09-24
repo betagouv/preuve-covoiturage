@@ -26,7 +26,7 @@ export class BuildExcel {
       operator_id,
     );
 
-    const filepath: string = this.buildFilepath.call(campaign_name, operator_id);
+    const filepath: string = this.buildFilepath.call(campaign_name, operator_id, start_date);
 
     return this.streamDataToWorkbook.call(tripCursor, filepath).then(() => filepath);
   }

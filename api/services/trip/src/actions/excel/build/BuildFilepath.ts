@@ -5,10 +5,13 @@ import { v4 } from 'uuid';
 
 @provider()
 export class BuildFilepath {
-  call(campaign_name: string, operator_id: number): string {
+  call(campaign_name: string, operator_id: number, start_date: Date): string {
     return `${path.join(
       os.tmpdir(),
-      `apdf-${this.sanitazeString(campaign_name)}-${operator_id}-${this.getMonthString()}-${v4().substring(0, 6)}`,
+      `apdf-${this.sanitazeString(campaign_name)}-${operator_id}-${this.getMonthString(start_date)}-${v4().substring(
+        0,
+        6,
+      )}`,
     )}.xlsx`;
   }
 
@@ -16,10 +19,8 @@ export class BuildFilepath {
     return campaign_name.toLowerCase().substring(0, 8).replace(/\ /g, '_');
   }
 
-  private getMonthString(): string {
-    const currentDateMinusOneMonth: Date = new Date();
-    currentDateMinusOneMonth.setMonth(currentDateMinusOneMonth.getMonth() - 3);
-    return currentDateMinusOneMonth
+  private getMonthString(date: Date): string {
+    return date
       .toLocaleString('fr-FR', { month: 'long' })
       .substring(0, 4)
       .normalize('NFD')

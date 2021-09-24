@@ -66,7 +66,7 @@ test.afterEach((t) => {
   t.context.s3StorageProviderStub.restore();
 });
 
-test('BuildExcelExportAction: should create 1 xlsx file if no date range provided, 1 campaign with 1 operator', async (t) => {
+test('BuildExcelExportAction: should create 1 xlsx file for last month if no date range provided, 1 campaign with 1 operator', async (t) => {
   // Arrange
   const campaign: Campaign = createGetCampaignResultInterface('active');
   const filename = `campaign-${uuid()}.xlsx`;
@@ -88,10 +88,24 @@ test('BuildExcelExportAction: should create 1 xlsx file if no date range provide
   );
 
   // Assert
+  const endDate = new Date();
+  endDate.setDate(1);
+  endDate.setHours(0, 0, 0, -1);
+  const startDate = new Date(endDate.valueOf());
+  startDate.setDate(1);
+  startDate.setHours(0, 0, 0, 0);
+
   t.deepEqual(result, [filename]);
-  sinon.assert.calledOnceWithExactly(t.context.checkCampaignStub, campaign._id, null, null);
+  sinon.assert.calledOnceWithMatch(t.context.checkCampaignStub, campaign._id);
   sinon.assert.called(t.context.s3StorageProviderStub);
-  t.is(t.context.checkCampaignStub.args[0][0], campaign._id);
+  t.true(
+    new Date(t.context.checkCampaignStub.args[0][1]).toISOString().split('T')[0] ===
+      startDate.toISOString().split('T')[0],
+  );
+  t.true(
+    new Date(t.context.checkCampaignStub.args[0][2]).toISOString().split('T')[0] ===
+      endDate.toISOString().split('T')[0],
+  );
 });
 
 test('BuildExcelExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {

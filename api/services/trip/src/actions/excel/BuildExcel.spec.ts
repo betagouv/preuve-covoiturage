@@ -61,10 +61,15 @@ test('BuildExcel: should generate excel filepath', async (t) => {
   // Assert
   sinon.assert.calledOnceWithExactly(
     t.context.tripRepositoryProviderStub,
-    { date: { start: start_date, end: end_date }, campaign_id: [campaign_id], operator_id: [operator_id] },
+    {
+      date: { start: start_date, end: end_date },
+      campaign_id: [campaign_id],
+      operator_id: [operator_id],
+      territory_authorized_operator_id: [operator_id],
+    },
     'territory',
   );
-  sinon.assert.calledOnceWithExactly(t.context.buildFilepathStub, campaign_name, operator_id);
+  sinon.assert.calledOnceWithExactly(t.context.buildFilepathStub, campaign_name, operator_id, start_date);
   sinon.assert.calledOnceWithExactly(t.context.streamDataToWorkbookStub, cursorCallback, filepath);
   t.is(result, filepath);
 });

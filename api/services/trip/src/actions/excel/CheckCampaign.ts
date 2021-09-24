@@ -10,12 +10,7 @@ import { handlerConfig } from '../../shared/trip/excelExport.contract';
 export class CheckCampaign {
   constructor(private kernel: KernelInterfaceResolver) {}
 
-  async call(campaign_id: number, start_date?: Date, end_date?: Date): Promise<GetCampaignResultInterface> {
-    if (!start_date && !end_date) {
-      start_date = this.startOfPreviousMonthDate();
-      end_date = this.endOfPreviousMonthDate();
-    }
-
+  async call(campaign_id: number, start_date: Date, end_date: Date): Promise<GetCampaignResultInterface> {
     const getCampaignParamInterface: GetCampaignParamInterface = { _id: Number(campaign_id) };
     const campaign: GetCampaignResultInterface = await this.kernel.call<
       GetCampaignParamInterface,
@@ -33,18 +28,6 @@ export class CheckCampaign {
     }
 
     return campaign;
-  }
-
-  private endOfPreviousMonthDate(): Date {
-    const endOfMonth: Date = new Date();
-    return new Date(endOfMonth.getFullYear(), endOfMonth.getMonth() + 1, 0);
-  }
-
-  private startOfPreviousMonthDate(): Date {
-    const startOfMonth: Date = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setMonth(startOfMonth.getMonth() - 1);
-    return startOfMonth;
   }
 
   private isCampaignActive(campaign): boolean {

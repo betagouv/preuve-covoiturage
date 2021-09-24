@@ -37,7 +37,7 @@ test.afterEach((t) => {
 });
 
 // eslint-disable-next-line max-len
-test('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are in date range and one operator', async (t) => {
+test('GetCampaignAndCallBuildExcel: should campaign be valid if proveded dates are in date range and one operator', async (t) => {
   // Arrange
   const campaign: GetCampaignResultInterface = successStubArrange(t, [5]);
 
@@ -56,7 +56,7 @@ test('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are
 });
 
 // eslint-disable-next-line max-len
-test('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date intersect range and 2 operators', async (t) => {
+test('GetCampaignAndCallBuildExcel: should campaign be valid provided dates intersect range and 2 operators', async (t) => {
   // Arrange
   const operator_ids = [5, 6];
   const campaign: GetCampaignResultInterface = successStubArrange(t, operator_ids);
@@ -75,20 +75,8 @@ test('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date int
   t.pass();
 });
 
-test('GetCampaignAndCallBuildExcel: should create xlsx file for last month if no date provided provided', async (t) => {
-  // Arrange
-  const campaign: GetCampaignResultInterface = successStubArrange(t, [5]);
-
-  // Act
-  await t.context.checkCampaign.call(campaign._id);
-
-  // Assert
-  t.pass();
-  sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
-});
-
 // eslint-disable-next-line max-len
-test('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are in larger date range and 1 operator', async (t) => {
+test('GetCampaignAndCallBuildExcel: should campaign be valid if dates are in larger date range and 1 operator', async (t) => {
   // Arrange
   const campaign: GetCampaignResultInterface = successStubArrange(t, [5]);
 
@@ -107,7 +95,7 @@ test('GetCampaignAndCallBuildExcel: should create xlsx file if campaign date are
 });
 
 // eslint-disable-next-line max-len
-test('GetCampaignAndCallBuildExcel: should create 1 xlsx file if campaign date are in larger date range and no operator whitelist', async (t) => {
+test('GetCampaignAndCallBuildExcel: should campaign be valid if dates are in larger date range and no operator whitelist', async (t) => {
   // Arrange
   const campaign: GetCampaignResultInterface = successStubArrange(t, null);
 

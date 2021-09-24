@@ -43,7 +43,7 @@ export class BuildExcelsExportAction extends Action {
         await Promise.all(
           involedOperators.map(async (o_id) => {
             try {
-              console.debug(`Building excel fund call for campaign ${checkedCampaign.name} and operator id ${o_id}`);
+              console.debug(`Building excel fund call for campaign ${checkedCampaign.name}, operator id ${o_id}`);
               const filepath = await this.buildExcel.call(
                 checkedCampaign._id,
                 start_date,
@@ -68,11 +68,26 @@ export class BuildExcelsExportAction extends Action {
 
   private castOrGetDefaultDates(params: ParamsInterface): { start_date: Date; end_date: Date } {
     if (!params.query.date) {
-      return { start_date: null, end_date: null };
+      const endDate: Date = this.endOfPreviousMonthDate();
+      return { start_date: this.startOfPreviousMonthDate(endDate), end_date: endDate };
     } else {
       const start_date = new Date(params.query.date.start);
       const end_date = new Date(params.query.date.end);
       return { start_date, end_date };
     }
+  }
+
+  private endOfPreviousMonthDate(): Date {
+    const endDate = new Date();
+    endDate.setDate(1);
+    endDate.setHours(0, 0, 0, -1);
+    return endDate;
+  }
+
+  private startOfPreviousMonthDate(endDate: Date): Date {
+    const startDate = new Date(endDate.valueOf());
+    startDate.setDate(1);
+    startDate.setHours(0, 0, 0, 0);
+    return startDate;
   }
 }
