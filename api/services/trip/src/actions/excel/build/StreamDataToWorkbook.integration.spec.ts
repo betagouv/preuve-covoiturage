@@ -39,7 +39,7 @@ const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   operator_journey_id: faker.random.uuid(),
   operator_passenger_id: faker.random.uuid(),
   operator_driver_id: faker.random.uuid(),
-  operator: 'Klaxit',
+  operator: faker.random.alphaNumeric(),
 
   journey_distance: 865,
   journey_duration: 78,
@@ -112,5 +112,8 @@ test('StreamDataToWorkBook: should stream data to a workbook file', async (t) =>
     workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell(2).value,
     exportTripInterface.trip_id,
   );
-  t.deepEqual(workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell('AF').value, 'Klaxit');
+  t.deepEqual(
+    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell('AF').value,
+    exportTripInterface.operator,
+  );
 });
