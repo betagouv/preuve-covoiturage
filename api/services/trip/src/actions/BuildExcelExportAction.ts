@@ -29,7 +29,12 @@ export class BuildExcelsExportAction extends Action {
     const filepathes: string[] = [];
     await Promise.all(
       params.query.campaign_id.map(async (c_id) => {
-        const checkedCampaign: Campaign = await this.checkCampaign.call(c_id, start_date, end_date);
+        const checkedCampaign: Campaign | void = await this.checkCampaign
+          .call(c_id, start_date, end_date)
+          .catch((e) => console.info(`Not processing excel fund call for campaign ${c_id} :${e}`));
+        if (!checkedCampaign) {
+          return;
+        }
         const involedOperators: number[] = await this.getCampaignInvolvedOperator.call(
           checkedCampaign,
           start_date,
@@ -38,6 +43,7 @@ export class BuildExcelsExportAction extends Action {
         await Promise.all(
           involedOperators.map(async (o_id) => {
             try {
+              console.debug(`Building excel fund call for campaign ${checkedCampaign.name} and operator id ${o_id}`);
               const filepath = await this.buildExcel.call(
                 checkedCampaign._id,
                 start_date,

@@ -25,11 +25,11 @@ export class CheckCampaign {
       call: { user: { permissions: ['registry.policy.find'] } },
     });
     if (!this.isCampaignActive(campaign)) {
-      throw new InvalidRequestException('Campaign is not active');
+      throw new InvalidRequestException(`Campaign ${campaign._id} is not active`);
     }
 
     if (!this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
-      throw new InvalidRequestException('Provided date range are not inside campagne periode');
+      throw new InvalidRequestException(`Provided date range are not inside campaign ${campaign._id} periode`);
     }
 
     return campaign;

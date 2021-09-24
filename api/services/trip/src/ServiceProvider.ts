@@ -35,6 +35,7 @@ import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 import { BuildExcelsExportAction } from './actions/BuildExcelExportAction';
+import { ActiveCampaignExcelExportAction } from './actions/ActiveCampaignExcelExportAction';
 
 @serviceProvider({
   config,
@@ -68,6 +69,7 @@ import { BuildExcelsExportAction } from './actions/BuildExcelExportAction';
     ExportAction,
     BuildExportAction,
     BuildExcelsExportAction,
+    ActiveCampaignExcelExportAction,
     TripCacheWarmCron,
     SendExportAction,
     PublishOpenDataAction,
