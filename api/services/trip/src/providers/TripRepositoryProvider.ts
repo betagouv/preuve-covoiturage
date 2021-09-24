@@ -235,8 +235,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           (((sum(passenger_seats)::numeric) / count(distinct trip_id))+1), 2
         )::float as average_carpoolers_by_car,
         (count(*) FILTER (
-          WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0
-        ))::int as trip_subsidized,
+          WHERE (COALESCE(passenger_incentive_rpc_sum, 0) + COALESCE(driver_incentive_rpc_sum, 0)::int > 0)))::int as trip_subsidized,
         coalesce(sum(COALESCE(passenger_incentive_rpc_financial_sum, 0) + COALESCE(driver_incentive_rpc_financial_sum, 0)), 0)::int as financial_incentive_sum,
         coalesce(sum(COALESCE(passenger_incentive_rpc_sum, 0) + COALESCE(driver_incentive_rpc_sum, 0)), 0)::int as incentive_sum
       FROM ${this.table}

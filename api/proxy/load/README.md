@@ -10,7 +10,7 @@
 cd api/proxy/load
 k6 run certificate_create.js
 k6 run certificate_pdf.js
-k6 run certificate_png.js
+k6 run acquisition_create.js
 ```
 
 > Runs with 10 virtual users for 10 seconds  
