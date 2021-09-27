@@ -15,7 +15,8 @@ module.exports = {
       '/': {
         nav: [
           { text: 'Opérateurs', link: '/operateurs/' },
-          { text: 'Contribuer', link: '/contribuer/' },
+          { text: 'API', link: '/contribuer/api/' },
+          { text: 'Repo', link: '/contribuer/repo/' },
         ],
         sidebar: {
           '/operateurs/': [
@@ -62,8 +63,24 @@ module.exports = {
               path: '/operateurs/outils',
             },
           ],
-          '/contribuer/repo/': 'auto',
-          '/contribuer/app/': 'auto',
+          '/contribuer/repo/': [
+            {
+              title: 'Repository',
+              path: '/contribuer/repo/'
+            },
+            {
+              title: 'Process',
+              path: '/contribuer/repo/process'
+            },
+            {
+              title: 'CI/CD',
+              path: '/contribuer/repo/cicd'
+            },
+            {
+              title: 'Infra',
+              path: '/contribuer/repo/infra'
+            }
+          ],
           '/contribuer/api/': [
             {
               title: 'API',
