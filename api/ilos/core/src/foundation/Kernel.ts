@@ -120,7 +120,11 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async call<P = ParamsType, R = ResultType>(method: string, params: P, context: ContextType): Promise<R> {
-    return this.getHandlerAndCall({ signature: method }, { method, params, context }, this.callTimeout);
+    return this.getHandlerAndCall(
+      { signature: method },
+      { method, params, context },
+      this.getTimeout(context, this.callTimeout),
+    );
   }
 
   /**
@@ -132,7 +136,11 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async notify<P = ParamsType>(method: string, params: P, context: ContextType): Promise<void> {
-    return this.getHandlerAndCall({ signature: method, queue: true }, { method, params, context }, this.notifyTimeout);
+    return this.getHandlerAndCall(
+      { signature: method, queue: true },
+      { method, params, context },
+      this.getTimeout(context, this.notifyTimeout),
+    );
   }
 
   /**
@@ -213,5 +221,17 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
 
     const responses = await Promise.all(promises);
     return responses;
+  }
+
+  /**
+   * Get the timeout from context (channel.metadata.timeout)
+   */
+  private getTimeout(context: ContextType, defaultTimeout = 0): number {
+    if (context && 'channel' in context && 'metadata' in context.channel && 'timeout' in context.channel.metadata) {
+      const { timeout } = context.channel.metadata;
+      return timeout ?? defaultTimeout;
+    }
+
+    return defaultTimeout;
   }
 }
