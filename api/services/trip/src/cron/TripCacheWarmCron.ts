@@ -7,7 +7,7 @@ import { ApiGraphTimeMode } from '../shared/trip/common/interfaces/ApiGraphTimeM
 
 @handler({
   ...handlerConfig,
-  // middlewares: [['channel.service.only', [handlerConfig.service]]],
+  middlewares: [['channel_service.only', [handlerConfig.service]]],
 })
 export class TripCacheWarmCron extends Action implements InitHookInterface {
   constructor(private kernel: KernelInterfaceResolver, private pg: PostgresConnection) {
