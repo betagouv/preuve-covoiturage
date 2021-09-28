@@ -9,4 +9,4 @@ CREATE INDEX IF NOT EXISTS idx_journey_start_dayhour ON trip.list (journey_start
 CREATE INDEX IF NOT EXISTS idx_journey_start_datetime ON trip.list (journey_start_datetime);
 CREATE INDEX IF NOT EXISTS idx_journey_start_weekday ON trip.list (journey_start_weekday);
 CREATE INDEX IF NOT EXISTS idx_passenger_id ON trip.list (passenger_id);
-CREATE INDEX IF NOT EXISTS idx_journey_id ON trip.list (journey_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_journey_id ON trip.list (journey_id);
