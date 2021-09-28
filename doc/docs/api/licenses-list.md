@@ -123,16 +123,17 @@ Liste des licences des dépendances utilisées dans l'API.
 | [@vue/babel-sugar-v-model](https://github.com/vuejs/jsx/tree/master/packages/babel-sugar-v-model) (1.2.3) | MIT | Nick Messing |
 | [@vue/babel-sugar-v-on](https://github.com/vuejs/jsx/tree/master/packages/babel-sugar-v-on) (1.2.3) | MIT | Nick Messing |
 | [@vue/component-compiler-utils](git+https://github.com/vuejs/component-compiler-utils.git) (3.2.0) | MIT | [Evan You](https://github.com/vuejs/component-compiler-utils#readme) |
-| [@vuepress/core](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [Evan You](https://github.com/vuejs/vuepress#readme) |
-| [@vuepress/markdown](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/markdown#readme) |
-| [@vuepress/markdown-loader](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/markdown-loader#readme) |
-| [@vuepress/plugin-active-header-links](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-active-header-links#readme) |
-| [@vuepress/plugin-last-updated](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-last-updated#readme) |
-| [@vuepress/plugin-nprogress](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-nprogress#readme) |
-| [@vuepress/plugin-register-components](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-register-components#readme) |
-| [@vuepress/plugin-search](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-search#readme) |
+| [@vuepress/core](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [Evan You](https://github.com/vuejs/vuepress#readme) |
+| [@vuepress/markdown](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/markdown#readme) |
+| [@vuepress/markdown-loader](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/markdown-loader#readme) |
+| [@vuepress/plugin-active-header-links](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-active-header-links#readme) |
+| [@vuepress/plugin-last-updated](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-last-updated#readme) |
+| [@vuepress/plugin-nprogress](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-nprogress#readme) |
+| [@vuepress/plugin-register-components](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-register-components#readme) |
+| [@vuepress/plugin-search](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-search#readme) |
+| [@vuepress/shared-utils](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/shared-utils#readme) |
 | [@vuepress/shared-utils](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/shared-utils#readme) |
-| [@vuepress/theme-default](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/theme-default#readme) |
+| [@vuepress/theme-default](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/theme-default#readme) |
 | [@webassemblyjs/ast](https://github.com/xtuc/webassemblyjs.git) (1.9.0) | MIT | Sven Sauleau |
 | [@webassemblyjs/floating-point-hex-parser](https://github.com/xtuc/webassemblyjs.git) (1.9.0) | MIT | Mauro Bringolf |
 | [@webassemblyjs/helper-api-error](Unknown) (1.9.0) | MIT | Sven Sauleau |
@@ -903,7 +904,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [vue-style-loader](git@github.com:vuejs/vue-style-loader.git) (4.1.2) | MIT | Evan You |
 | [vue-template-compiler](git+https://github.com/vuejs/vue.git) (2.6.12) | MIT | [Evan You](https://github.com/vuejs/vue/tree/dev/packages/vue-template-compiler#readme) |
 | [vue-template-es2015-compiler](https://github.com/vuejs/vue-template-es2015-compiler) (1.9.1) | MIT | Evan You |
-| [vuepress](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [Evan You](https://github.com/vuejs/vuepress#readme) |
+| [vuepress](git+https://github.com/vuejs/vuepress.git) (1.8.2) | MIT | [Evan You](https://github.com/vuejs/vuepress#readme) |
 | [vuepress-html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin.git) (3.2.0) | MIT | [Charles Blaxland](https://github.com/jantimon/html-webpack-plugin) |
 | [vuepress-plugin-container](git+https://github.com/vuepress/vuepress-community.git) (2.1.5) | MIT | [Shigma](https://github.com/vuepress) |
 | [vuepress-plugin-smooth-scroll](git+https://github.com/meteorlxy/vuepress-plugin-smooth-scroll.git) (0.0.3) | MIT | [meteorlxy](https://github.com/meteorlxy/vuepress-plugin-smooth-scroll#readme) |
@@ -1024,7 +1025,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [websocket-driver](git://github.com/faye/websocket-driver-node.git) (0.7.4) | Apache-2.0 | [James Coglan](https://github.com/faye/websocket-driver-node) |
 | [websocket-extensions](git://github.com/faye/websocket-extensions-node.git) (0.1.4) | Apache-2.0 | [James Coglan](http://github.com/faye/websocket-extensions-node) |
 | [atob](git://git.coolaj86.com/coolaj86/atob.js.git) (2.1.2) | (MIT OR Apache-2.0) | [AJ ONeal](https://git.coolaj86.com/coolaj86/atob.js.git) |
-| [caniuse-lite](https://github.com/ben-eb/caniuse-lite.git) (1.0.30001174) | CC-BY-4.0 | [Ben Briggs](http://beneb.info) |
+| [caniuse-lite](https://github.com/browserslist/caniuse-lite.git) (1.0.30001237) | CC-BY-4.0 | [Ben Briggs](http://beneb.info) |
 | [configstore](https://github.com/yeoman/configstore.git) (5.0.1) | BSD-2-Clause | [Sindre Sorhus](sindresorhus.com) |
 | [css-select](git://github.com/fb55/css-select.git) (2.1.0) | BSD-2-Clause | Felix Boehm |
 | [css-what](https://github.com/fb55/css-what) (3.4.2) | BSD-2-Clause | [Felix Böhm](http://feedic.com) |
