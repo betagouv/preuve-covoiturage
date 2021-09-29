@@ -1,3 +1,4 @@
+import { HappenMarkdownDescription } from './opendata/HappenMarkdownDescription';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { Action } from '@ilos/core';
 import { handler, ContextType, ConfigInterfaceResolver, NotFoundException } from '@ilos/common';
@@ -18,6 +19,7 @@ export class PublishOpenDataAction extends Action {
     private file: S3StorageProvider,
     private config: ConfigInterfaceResolver,
     private datagouv: DataGouvProvider,
+    private happenMarkdownDescription: HappenMarkdownDescription,
   ) {
     super();
   }
@@ -33,6 +35,11 @@ export class PublishOpenDataAction extends Action {
         await this.ensureExportIsReachable(filename);
         const rid = await this.datagouv.publishResource(datasetSlug, resource);
         await this.datagouv.checkResource(datasetSlug, rid);
+        const description: string = await this.happenMarkdownDescription.call(
+          context.call.metadata,
+          dataset.description,
+        );
+        dataset.description = description;
         // await this.datagouv.updateDataset(dataset);
       } else {
         await this.datagouv.unpublishResource(datasetSlug, this.findRidFromTitle(dataset, resource.title));

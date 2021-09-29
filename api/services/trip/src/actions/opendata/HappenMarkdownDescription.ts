@@ -13,7 +13,10 @@ export class HappenMarkdownDescription {
     const total: string = await this.getTotal(queryParam);
     const deleted = parseInt(total) - parseInt(total_truncated);
     const intersection = start_deleted + end_deleted - deleted;
-    return description + this.build(total, total_truncated, deleted, start_deleted, end_deleted, intersection);
+    return (
+      description +
+      this.build(total, total_truncated, deleted, start_deleted, end_deleted, intersection, queryParam.date.start)
+    );
   }
 
   private async getTotal(queryParam: OpenDataTripSearchInterface) {
@@ -33,8 +36,9 @@ export class HappenMarkdownDescription {
     start_delete: number,
     end_deleted: number,
     intersection: number,
+    start_date: Date,
   ): string {
-    return `\n\n# Spécificités jeu de données septembre 2021
+    return `\n\n# Spécificités jeu de données ${start_date.toLocaleString('fr-FR', { month: 'long' })} 2021
 Les données concernent également les trajets dont le point de départ OU d'arrivée est situé en dehors du territoire français.
 
 * Nombre trajets collectés et validés par le registre de preuve de covoiturage **${total}**
