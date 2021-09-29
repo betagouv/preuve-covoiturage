@@ -276,6 +276,12 @@ export class BuildExportAction extends Action implements InitHookInterface {
     zip.addLocalFile(filepath);
     zip.writeZip(zippath);
 
+    /**
+     * TODO
+     * * trigger async PublishOpenDataAction data if opendata type and production ?
+     * * pass query param context
+     * * pass total of trips to context
+     */
     const fileKey = await this.fileProvider.upload(BucketName.Export, zippath, zipname);
 
     return fileKey;

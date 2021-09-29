@@ -8,6 +8,7 @@ import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 import {
   TripSearchInterfaceWithPagination,
   TripSearchInterface,
+  OpenDataTripSearchInterface,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
@@ -34,7 +35,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   constructor(public connection: PostgresConnection) {}
 
   protected async buildWhereClauses(
-    filters: Partial<TripSearchInterface & { excluded_territory_id: number[] }>,
+    filters: Partial<TripSearchInterface | OpenDataTripSearchInterface>,
   ): Promise<{
     text: string;
     values: any[];
@@ -286,8 +287,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   }
 
   public async searchWithCursor(
-    params: TripSearchInterface & {
-      excluded_territory_id?: number[];
+    params: (TripSearchInterface | OpenDataTripSearchInterface) & {
       territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
     },
     type = 'opendata',
