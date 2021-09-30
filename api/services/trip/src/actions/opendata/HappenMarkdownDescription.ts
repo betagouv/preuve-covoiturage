@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { provider } from '@ilos/common';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { OpenDataTripSearchInterface } from '../../shared/trip/common/interfaces/TripSearchInterface';
