@@ -538,7 +538,7 @@ export class CampaignFormater {
     // UI_STATUS
     ui_status.for_passenger = !!ui_status.for_passenger;
     ui_status.for_driver = !!ui_status.for_driver;
-    ui_status.for_trip = !!ui_status.for_trip;
+    // ui_status.for_trip = !!ui_status.for_trip;
 
     const apiData: CampaignInterface = {
       _id,

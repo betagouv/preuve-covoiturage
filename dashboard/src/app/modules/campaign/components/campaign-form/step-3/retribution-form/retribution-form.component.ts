@@ -13,18 +13,9 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
   @Input() campaignForm: FormGroup;
   @Input() forDriver: boolean;
   @Input() forPassenger: boolean;
-  @Input() forTrip = false;
+  // @Input() forTrip = false;
   @Input() formGroup: FormGroup;
   incentiveUnitFr = INCENTIVE_UNITS_FR;
-
-  constructor() {
-    super();
-  }
-
-  ngOnInit(): void {
-    this.setValidators();
-    this.initOnChange();
-  }
 
   get uiStatusControl(): FormControl {
     return this.campaignForm.get('ui_status') as FormControl;
@@ -54,6 +45,15 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
     return this.campaignForm.controls.unit.value === IncentiveUnitEnum.EUR;
   }
 
+  constructor() {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.setValidators();
+    this.initOnChange();
+  }
+
   private initOnChange(): void {
     this.uiStatusControl.valueChanges.subscribe(() => {
       this.setValidators();
@@ -75,26 +75,9 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
     const uiStatus = this.uiStatusControl.value;
     const free = this.freeControl.value;
     const validation = {
-      driver: false,
-      passenger: false,
+      driver: !!uiStatus.driver,
+      passenger: free ? false : !!uiStatus.passenger,
     };
-
-    // set validators according to differents stats
-    if (uiStatus.for_driver && !uiStatus.for_passenger) {
-      validation.driver = true;
-      validation.passenger = false;
-    }
-    if (uiStatus.for_passenger && !uiStatus.for_driver) {
-      validation.passenger = true;
-      validation.driver = false;
-    }
-    if ((uiStatus.for_driver && uiStatus.for_passenger) || uiStatus.for_trip) {
-      validation.passenger = true;
-      validation.driver = true;
-    }
-    if (free) {
-      validation.passenger = false;
-    }
 
     validation.driver
       ? this.forDriverFormGroup.get('amount').setValidators(validators)

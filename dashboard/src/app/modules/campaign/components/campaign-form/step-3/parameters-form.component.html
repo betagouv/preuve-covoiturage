@@ -196,7 +196,7 @@
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
-            Rétribution
+            Rétribution&nbsp;*
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="CampaignSubForm-inputs ParametersForm-incentiveMode">
@@ -240,13 +240,13 @@
                   *ngIf="forPassengerControl.value"
                 >
                 </app-retribution-form>
-                <app-retribution-form
+                <!-- <app-retribution-form
                   [campaignForm]="campaignForm"
                   [formGroup]="retributionFormGroup"
                   [forTrip]="true"
                   *ngIf="forTripControl.value"
                 >
-                </app-retribution-form>
+                </app-retribution-form> -->
 
                 <mat-error
                   *ngIf="
@@ -273,14 +273,14 @@
               </button>
             </div>
             <div>
-              <mat-checkbox formControlName="passenger_seat"
-                >Prendre en compte l'ensemble des places réservées par les passagers&nbsp;
+              <mat-checkbox formControlName="passenger_seat">
+                Prendre en compte l'ensemble des places réservées par les passagers&nbsp;
                 <mat-icon
                   matTooltip="Un passager peut faire une réservation pour plusieurs sièges sur un même trajet."
-                  color="accent"
-                  >info</mat-icon
-                ></mat-checkbox
-              >
+                  color="accent">
+                  info
+                </mat-icon>
+              </mat-checkbox>
             </div>
           </ng-container>
         </div>

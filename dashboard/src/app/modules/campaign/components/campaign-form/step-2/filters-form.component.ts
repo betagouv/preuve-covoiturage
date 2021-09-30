@@ -83,9 +83,9 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     return this.filtersForm.get('insee') as FormGroup;
   }
 
-  get forTripControl(): FormControl {
-    return this.campaignForm.get('ui_status').get('for_trip') as FormControl;
-  }
+  // get forTripControl(): FormControl {
+  //   return this.campaignForm.get('ui_status').get('for_trip') as FormControl;
+  // }
 
   get timeCtrlArray(): FormArray {
     return this.filtersForm.get('time') as FormArray;
@@ -147,10 +147,11 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   get showTargetLabel(): string {
     const forDriver = this.forDriverControl.value;
     const forPassenger = this.forPassengerControl.value;
-    const forTrip = this.forTripControl.value;
+    // const forTrip = this.forTripControl.value;
     const onlyAdult = this.campaignForm.get('only_adult').value;
 
-    return this._campaignUiService.targets(forDriver, forPassenger, forTrip, onlyAdult);
+    // return this._campaignUiService.targets(forDriver, forPassenger, forTrip, onlyAdult);
+    return this._campaignUiService.targets(forDriver, forPassenger, onlyAdult);
   }
 
   /*
@@ -184,18 +185,14 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   }
 
   private initTargetChangeDetection(): void {
-    // Activate the adult_only checkbox
-    // when either the passengers or per trip is enabled
-    combineLatest(this.forPassengerControl.valueChanges, this.forTripControl.valueChanges)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((v) => {
-        const fn = `${v[0] || v[1] ? 'en' : 'dis'}able`;
-        this.campaignForm.get('only_adult')[fn]();
-      });
-
+    // Activate the adult_only checkbox for passengers
+    this.forPassengerControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((v) => {
+      const fn = `${v ? 'en' : 'dis'}able`;
+      this.campaignForm.get('only_adult')[fn]();
+    });
     this.forDriverControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
-        this.forTripControl.setValue(false);
+        // this.forTripControl.setValue(false);
         if (!this.forPassengerControl.value) {
           this.campaignForm.get('only_adult').setValue(null);
         }
@@ -203,17 +200,17 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     });
     this.forPassengerControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
-        this.forTripControl.setValue(false);
+        // this.forTripControl.setValue(false);
       } else if (this.forDriverControl.value) {
         this.campaignForm.get('only_adult').setValue(null);
       }
     });
-    this.forTripControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
-      if (checked) {
-        this.forPassengerControl.setValue(false);
-        this.forDriverControl.setValue(false);
-      }
-    });
+    // this.forTripControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
+    //   if (checked) {
+    //     this.forPassengerControl.setValue(false);
+    //     this.forDriverControl.setValue(false);
+    //   }
+    // });
   }
 
   private initSelectedInseeFilterTabIndex(): void {

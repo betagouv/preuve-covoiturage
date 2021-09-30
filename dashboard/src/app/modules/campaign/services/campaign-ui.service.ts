@@ -73,9 +73,9 @@ export class CampaignUiService {
         text += ` ${valueForDriver} ${unit(valueForDriver, campaign.unit)} par trajet`;
         text += perKmForDriver ? ' par km' : '';
         text += perPassenger ? ' par passager' : '';
-        if (!uiStatus.for_trip) {
-          text += ' pour le conducteur';
-        }
+        // if (!uiStatus.for_trip) {
+        //   text += ' pour le conducteur';
+        // }
       }
       // text += uiStatus.for_driver && uiStatus.for_passenger ? ', ' : '';
 
@@ -91,12 +91,12 @@ export class CampaignUiService {
       }
 
       // TRAJET
-      if (uiStatus.for_trip) {
-        // tslint:disable-next-line:max-line-length
-        text += ` ${valueForDriver} ${unit(valueForDriver, campaign.unit)} par trajet`;
-        text += perKmForDriver ? ' par km' : '';
-        text += perPassenger ? ' par passager' : '';
-      }
+      // if (uiStatus.for_trip) {
+      //   // tslint:disable-next-line:max-line-length
+      //   text += ` ${valueForDriver} ${unit(valueForDriver, campaign.unit)} par trajet`;
+      //   text += perKmForDriver ? ' par km' : '';
+      //   text += perPassenger ? ' par passager' : '';
+      // }
 
       text += `.</li></b>`;
     }
@@ -146,8 +146,10 @@ export class CampaignUiService {
     return ranks.join(', ');
   }
 
-  public targets(forDriver: boolean, forPassenger: boolean, forTrip: boolean, onlyAdult: boolean): string {
-    if (!(forDriver || forPassenger || forTrip)) {
+  // public targets(forDriver: boolean, forPassenger: boolean, forTrip: boolean, onlyAdult: boolean): string {
+  public targets(forDriver: boolean, forPassenger: boolean, onlyAdult: boolean): string {
+    // if (!(forDriver || forPassenger || forTrip)) {
+    if (!(forDriver || forPassenger)) {
       return '';
     }
     let label = '';
@@ -160,12 +162,12 @@ export class CampaignUiService {
         label += ', majeurs uniquement';
       }
     }
-    if (forTrip) {
-      label += 'Trajets';
-      if (onlyAdult) {
-        label += ', passagers majeurs uniquement';
-      }
-    }
+    // if (forTrip) {
+    //   label += 'Trajets';
+    //   if (onlyAdult) {
+    //     label += ', passagers majeurs uniquement';
+    //   }
+    // }
     return label;
   }
 

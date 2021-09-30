@@ -129,13 +129,7 @@
           </mat-form-field>
         </div>
       </mat-expansion-panel>
-      <mat-expansion-panel
-        [ngClass]="{
-          'mat-expansion-panel-error':
-            (forDriverControl.touched || forPassengerControl.touched || forTripControl.touched) &&
-            !(forTripControl.value || forPassengerControl.value || forDriverControl.value)
-        }"
-      >
+      <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': (forDriverControl.touched || forPassengerControl.touched) && !(forPassengerControl.value || forDriverControl.value) }">
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
             Cible&nbsp;*
@@ -158,7 +152,7 @@
             >
               Passagers
             </mat-checkbox>
-            <mat-checkbox class="RulesForm-target-forTrip--hidden" color="primary" #forTrip formControlName="for_trip">
+            <!-- <mat-checkbox class="RulesForm-target-forTrip--hidden" color="primary" #forTrip formControlName="for_trip">
               Trajets
               <mat-icon
                 matSuffix
@@ -168,7 +162,7 @@
               >
                 info
               </mat-icon>
-            </mat-checkbox>
+            </mat-checkbox> -->
           </ng-container>
           <ng-container [formGroup]="campaignForm">
             <mat-checkbox class="RulesForm-target-forAdult" color="primary" formControlName="only_adult"

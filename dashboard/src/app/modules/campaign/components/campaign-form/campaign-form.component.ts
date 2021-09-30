@@ -93,7 +93,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
     const filtersFormGroup = this.campaignFormGroup.get('filters');
 
     const targetValid =
-      this.campaignFormGroup.get('ui_status.for_trip').value ||
+      // this.campaignFormGroup.get('ui_status.for_trip').value ||
       this.campaignFormGroup.get('ui_status.for_passenger').value ||
       this.campaignFormGroup.get('ui_status.for_driver').value;
 
@@ -216,7 +216,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
       ui_status: this._formBuilder.group({
         for_driver: [null],
         for_passenger: [null],
-        for_trip: [null],
+        // for_trip: [null],
         staggered: [false],
         insee_mode: [false],
       }),
@@ -262,7 +262,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
     uiStatusForm.patchValue({
       for_driver: campaign.ui_status.for_driver,
       for_passenger: campaign.ui_status.for_passenger,
-      for_trip: campaign.ui_status.for_trip,
+      // for_trip: campaign.ui_status.for_trip,
       staggered: !!campaign.ui_status.staggered, // initialize staggered
       // initialize insee_mode
       insee_mode: campaign.ui_status.insee_mode || campaign.filters.insee.whiteList.length > 0,

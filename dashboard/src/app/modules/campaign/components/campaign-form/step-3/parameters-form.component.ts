@@ -68,9 +68,9 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     return this.campaignForm.get('ui_status').get('for_passenger') as FormControl;
   }
 
-  get forTripControl(): FormControl {
-    return this.campaignForm.get('ui_status').get('for_trip') as FormControl;
-  }
+  // get forTripControl(): FormControl {
+  //   return this.campaignForm.get('ui_status').get('for_trip') as FormControl;
+  // }
 
   get restrictionFormArray(): FormArray {
     return this.campaignForm.get('restrictions') as FormArray;
