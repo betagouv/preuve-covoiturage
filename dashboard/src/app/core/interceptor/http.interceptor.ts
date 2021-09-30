@@ -14,7 +14,7 @@ export class HttpApiInterceptor implements HttpInterceptor {
   private api = this.config.get('apiUrl');
   private router: Router;
 
-  private readonly canSkip503 = ['trip:stats', 'trip:searchcount'];
+  private readonly canSkip503 = ['trip:stats', 'trip:searchcount', 'campaign:simulateOnPast'];
 
   constructor(private config: ConfigService, private injector: Injector, public toastr: ToastrService) {
     this.router = this.injector.get(Router);
