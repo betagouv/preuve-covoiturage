@@ -1,4 +1,3 @@
-import { cancel } from './../../../../honor/src/shared/acquisition/cancel.schema';
 /* eslint-disable max-len */
 import anyTest, { TestInterface } from 'ava';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';

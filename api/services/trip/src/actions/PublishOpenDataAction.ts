@@ -1,27 +1,61 @@
-import { HappenMarkdownDescription } from './opendata/HappenMarkdownDescription';
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import {
+  ConfigInterfaceResolver,
+  ContextType,
+  handler,
+  InitHookInterface,
+  KernelInterfaceResolver,
+  NotFoundException,
+} from '@ilos/common';
 import { Action } from '@ilos/core';
-import { handler, ContextType, ConfigInterfaceResolver, NotFoundException } from '@ilos/common';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
-
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/publishOpenData.contract';
-import { alias } from '../shared/trip/publishOpenData.schema';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import { getDefaultEndDate } from '../helpers/getDefaultDates';
 import { getOpenDataExportName } from '../helpers/getOpenDataExportName';
-import { DataGouvProvider } from '../providers/DataGouvProvider';
 import { Dataset, Resource } from '../interfaces';
+import { DataGouvProvider } from '../providers/DataGouvProvider';
+import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../shared/trip/publishOpenData.contract';
+import { alias } from '../shared/trip/publishOpenData.schema';
+import { HappenMarkdownDescription } from './opendata/HappenMarkdownDescription';
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
 })
-export class PublishOpenDataAction extends Action {
+export class PublishOpenDataAction extends Action implements InitHookInterface {
   constructor(
     private file: S3StorageProvider,
     private config: ConfigInterfaceResolver,
     private datagouv: DataGouvProvider,
     private happenMarkdownDescription: HappenMarkdownDescription,
+    private kernel: KernelInterfaceResolver,
   ) {
     super();
+  }
+
+  async init(): Promise<void> {
+    if (this.config.get('app.environment') === 'production') {
+      await this.kernel.notify<ParamsInterface>(
+        signature,
+        {
+          publish: true,
+          date: getDefaultEndDate(),
+        },
+        {
+          call: {
+            user: {},
+          },
+          channel: {
+            service: handlerConfig.service,
+            metadata: {
+              repeat: {
+                cron: '0 6 6 * *',
+              },
+              jobId: 'trip.open_data_export',
+            },
+          },
+        },
+      );
+    }
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
@@ -40,10 +74,10 @@ export class PublishOpenDataAction extends Action {
           dataset.description,
         );
         dataset.description = description;
-        // await this.datagouv.updateDataset(dataset);
+        await this.datagouv.updateDataset(dataset);
       } else {
         await this.datagouv.unpublishResource(datasetSlug, this.findRidFromTitle(dataset, resource.title));
-        // await this.datagouv.updateDataset(dataset);
+        await this.datagouv.updateDataset(dataset);
       }
     } catch (e) {
       throw e;

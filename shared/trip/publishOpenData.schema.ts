@@ -1,7 +1,7 @@
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['date', 'publish'],
+  required: ['publish'],
   properties: {
     date: {
       macro: 'timestamp',

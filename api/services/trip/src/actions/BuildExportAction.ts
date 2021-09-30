@@ -6,6 +6,11 @@ import { v4 } from 'uuid';
 import AdmZip from 'adm-zip';
 import { get } from 'lodash';
 import csvStringify, { Stringifier } from 'csv-stringify';
+import {
+  signature as publishOpenDataSignature,
+  ParamsInterface as PublishOpenDataParamsInterface,
+  ResultInterface as PublishOpenDataResultInterface,
+} from '../shared/trip/publishOpenData.contract';
 
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { Action } from '@ilos/core';
@@ -31,6 +36,7 @@ import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { ExportTripInterface } from '../interfaces';
 import { normalize } from '../helpers/normalizeExportDataHelper';
 import { getOpenDataExportName } from '../helpers/getOpenDataExportName';
+import { getDefaultEndDate } from '../helpers/getDefaultDates';
 
 export interface FlattenTripInterface extends ExportTripInterface<string> {
   journey_start_date: string;
@@ -276,12 +282,6 @@ export class BuildExportAction extends Action implements InitHookInterface {
     zip.addLocalFile(filepath);
     zip.writeZip(zippath);
 
-    /**
-     * TODO
-     * * trigger async PublishOpenDataAction data if opendata type and production ?
-     * * pass query param context
-     * * pass total of trips to context
-     */
     const fileKey = await this.fileProvider.upload(BucketName.Export, zippath, zipname);
 
     return fileKey;
@@ -299,9 +299,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
       return params.query;
     }
 
-    const endDate = new Date();
-    endDate.setDate(1);
-    endDate.setHours(0, 0, 0, -1);
+    const endDate = getDefaultEndDate();
     const startDate = new Date(endDate.valueOf());
     startDate.setDate(1);
     startDate.setHours(0, 0, 0, 0);
