@@ -39,39 +39,60 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
   ): AsyncGenerator<TripInterface[], void, void> {
     const query = {
       text: `
-      SELECT
-        json_agg(
-          json_build_object(
-            'identity_uuid', pt.identity_uuid,
-            'carpool_id', pt.carpool_id,
-            'operator_id', pt.operator_id,
-            'operator_class', pt.operator_class,
-            'is_over_18', pt.is_over_18,
-            'is_driver', pt.is_driver,
-            'has_travel_pass', pt.has_travel_pass,
-            'datetime', pt.datetime,
-            'seats', pt.seats,
-            'duration', pt.duration,
-            'distance', pt.distance,
-            'cost', pt.cost,
-            'start_territory_id', pt.start_territory_id,
-            'end_territory_id', pt.end_territory_id
-          )
-        ) as people
-      FROM ${this.table} as pt
-      LEFT JOIN policy.incentives as pi
-        ON pi.carpool_id = pt.carpool_id
-        AND pi.policy_id = $4::int
-      WHERE pt.datetime >= $1::timestamp AND pt.datetime <= $2::timestamp
-      AND pt.carpool_status = 'ok'::carpool.carpool_status_enum
-      AND (
-        $3::int = ANY(pt.start_territory_id)
-        OR $3::int = ANY(pt.end_territory_id)
-      )
-      ${overrideFrom ? '' : 'AND pi.carpool_id IS NULL AND pt.datetime >= $5::timestamp'}
-      GROUP BY pt.acquisition_id
-      ORDER BY min(pt.datetime) ASC
-      `,
+        WITH d AS (
+            SELECT unnest(territory.get_descendants(array[$3::int])) _id
+        ),
+        trips AS (
+          SELECT * FROM ${this.table} pt
+          INNER JOIN d
+            ON pt.start_territory_id = d._id
+            AND pt.end_territory_id = d._id
+          WHERE
+              pt.datetime >= $1::timestamp AND pt.datetime < $2::timestamp
+              AND pt.carpool_status = 'ok'::carpool.carpool_status_enum
+        ),
+        t_start AS (
+            SELECT
+              start_territory_id, start_territory_id || territory.get_ancestors(ARRAY[cc.start_territory_id]) ancestors
+            FROM (SELECT distinct start_territory_id FROM trips) cc
+        ),
+        t_end AS (
+            SELECT
+              end_territory_id, end_territory_id || territory.get_ancestors(ARRAY[cc.end_territory_id]) ancestors
+            FROM (SELECT distinct end_territory_id FROM trips) cc
+        )
+        SELECT
+          json_agg(
+            json_build_object(
+              'identity_uuid', pt.identity_uuid,
+              'carpool_id', pt.carpool_id,
+              'operator_id', pt.operator_id,
+              'operator_class', pt.operator_class,
+              'is_over_18', pt.is_over_18,
+              'is_driver', pt.is_driver,
+              'has_travel_pass', pt.has_travel_pass,
+              'datetime', pt.datetime,
+              'seats', pt.seats,
+              'duration', pt.duration,
+              'distance', pt.distance,
+              'cost', pt.cost,
+              'start_territory_id', t_start.ancestors,
+              'end_territory_id', t_end.ancestors
+            )
+          ) AS people
+          FROM trips pt
+          LEFT JOIN policy.incentives pi
+            ON pt.carpool_id = pi.carpool_id
+            AND pi.policy_id = $4::int
+          LEFT JOIN t_start
+            ON pt.start_territory_id = t_start.start_territory_id
+          LEFT JOIN t_end
+            ON pt.end_territory_id = t_end.end_territory_id
+          ${overrideFrom ? 'AND pi.carpool_id IS NULL AND pt.datetime >= $5::timestamp' : ''}
+
+          GROUP BY pt.acquisition_id
+          ORDER BY min(pt.datetime) ASC
+          `,
       values: [
         policy.start_date,
         policy.end_date,
