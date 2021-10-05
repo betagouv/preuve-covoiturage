@@ -207,31 +207,26 @@ export class BuildExportAction extends Action implements InitHookInterface {
   };
 
   async init(): Promise<void> {
-    /**
-     * Activate open data export in production only
-     */
-    if (this.config.get('app.environment') === 'production') {
-      await this.kernel.notify<ParamsInterface>(
-        signature,
-        {
-          type: 'opendata',
+    await this.kernel.notify<ParamsInterface>(
+      signature,
+      {
+        type: 'opendata',
+      },
+      {
+        call: {
+          user: {},
         },
-        {
-          call: {
-            user: {},
-          },
-          channel: {
-            service: handlerConfig.service,
-            metadata: {
-              repeat: {
-                cron: '0 5 6 * *',
-              },
-              jobId: 'trip.open_data_export',
+        channel: {
+          service: handlerConfig.service,
+          metadata: {
+            repeat: {
+              cron: '0 5 6 * *',
             },
+            jobId: 'trip.open_data_export',
           },
         },
-      );
-    }
+      },
+    );
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
