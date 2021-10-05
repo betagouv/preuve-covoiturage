@@ -1,10 +1,4 @@
-import {
-  ConfigInterfaceResolver,
-  ContextType,
-  handler,
-  KernelInterfaceResolver,
-  NotFoundException,
-} from '@ilos/common';
+import { ConfigInterfaceResolver, ContextType, handler, NotFoundException } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
@@ -25,7 +19,6 @@ export class PublishOpenDataAction extends Action {
     private config: ConfigInterfaceResolver,
     private datagouv: DataGouvProvider,
     private happenMarkdownDescription: HappenMarkdownDescription,
-    private kernel: KernelInterfaceResolver,
   ) {
     super();
   }
@@ -51,7 +44,6 @@ export class PublishOpenDataAction extends Action {
         await this.datagouv.updateDataset(dataset);
       }
     } catch (e) {
-      console.error(e);
       throw e;
     }
   }
