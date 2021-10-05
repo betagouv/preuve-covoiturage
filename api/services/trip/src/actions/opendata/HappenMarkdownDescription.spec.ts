@@ -1,3 +1,4 @@
+import { OpenDataContextMetadata } from './HappenMarkdownDescription';
 /* eslint-disable max-len */
 import anyTest, { TestInterface } from 'ava';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
@@ -29,8 +30,8 @@ test('HappenMarkdownDescription: should happen description to existing one', asy
   // Arrange
   const existingDescription =
     "# Spécificités jeu de données janvier 2021\nLes données concernent également les trajets dont le point de départ OU d'arrivée est situé en dehors du territoire français.\n\n* Nombre trajets collectés et validés par le registre de preuve de covoiturage **96 012**\n* Nombre de trajets exposés dans le jeu de données : **90 443**\n* Nombre de trajets supprimés du jeu de données : **5 569 = 3 103 + 2 998 - 532**\n    * Nombre d’occurrences du code INSEE de départ est < 6 : **3 103**\n    * Nombre d’occurrences du code INSEE d'arrivée est < 6 : **2 998**\n    * Nombre d’occurrences du code INSEE de départ ET d'arrivée est < 6 : **532**";
-  t.context.tripRepositoryProviderStub.onCall(0).resolves({ count: '20' });
-  t.context.tripRepositoryProviderStub.onCall(1).resolves({ count: '26' });
+  t.context.tripRepositoryProviderStub.onCall(0).resolves({ count: '21' });
+  t.context.tripRepositoryProviderStub.onCall(1).resolves({ count: '30' });
 
   const openDataQueryParam: OpenDataTripSearchInterface = {
     date: {
@@ -41,12 +42,50 @@ test('HappenMarkdownDescription: should happen description to existing one', asy
     excluded_end_territory_id: [8888, 77, 5, 8],
   };
 
+  const openDataContext: OpenDataContextMetadata = {
+    queryParam: openDataQueryParam,
+    excludedTerritories: [
+      {
+        end_territory_id: 589,
+        aggregated_trips_journeys: ['trip1', 'trip2'],
+      },
+      {
+        end_territory_id: 785,
+        aggregated_trips_journeys: ['trip3', 'trip4'],
+      },
+      {
+        end_territory_id: 5,
+        aggregated_trips_journeys: ['trip5'],
+      },
+      {
+        end_territory_id: 8,
+        aggregated_trips_journeys: ['trip6'],
+      },
+      {
+        start_territory_id: 8888,
+        aggregated_trips_journeys: ['trip6'],
+      },
+      {
+        start_territory_id: 77,
+        aggregated_trips_journeys: ['trip5'],
+      },
+      {
+        start_territory_id: 5,
+        aggregated_trips_journeys: ['trip7'],
+      },
+      {
+        start_territory_id: 8,
+        aggregated_trips_journeys: ['trip8', 'trip9'],
+      },
+    ],
+  };
+
   // Act
-  const description: string = await t.context.happenMarkdownDescription.call(openDataQueryParam, existingDescription);
+  const description: string = await t.context.happenMarkdownDescription.call(openDataContext, existingDescription);
 
   // Assert
   const expected_happened_description =
-    "\n\n# Spécificités jeu de données septembre 2021\nLes données concernent également les trajets dont le point de départ OU d'arrivée est situé en dehors du territoire français.\n\n* Nombre trajets collectés et validés par le registre de preuve de covoiturage **26**\n* Nombre de trajets exposés dans le jeu de données : **20**\n* Nombre de trajets supprimés du jeu de données : **6 = 4 + 4 - 2**\n    * Nombre d’occurrences du code INSEE de départ est < 6 : **4**\n    * Nombre d’occurrences du code INSEE d'arrivée est < 6 : **4**\n    * Nombre d’occurrences du code INSEE de départ ET d'arrivée est < 6 : **2**";
+    "\n\n# Spécificités jeu de données septembre 2021\nLes données concernent également les trajets dont le point de départ OU d'arrivée est situé en dehors du territoire français.\n\n* Nombre trajets collectés et validés par le registre de preuve de covoiturage **30**\n* Nombre de trajets exposés dans le jeu de données : **21**\n* Nombre de trajets supprimés du jeu de données : **9 = 5 + 6 - 2**\n    * Nombre de trajets dont l’occurrence du code INSEE de départ est < 6 : **5**\n    * Nombre de trajets dont l’occurrence du code INSEE d'arrivée est < 6 : **6**\n    * Nombre de trajets dont l’occurrence du code INSEE de départ ET d'arrivée est < 6 : **2**";
   t.deepEqual(description, `${existingDescription}${expected_happened_description}`);
   sinon.assert.calledWithMatch(t.context.tripRepositoryProviderStub.firstCall, openDataQueryParam);
   const openDataQueryParamCopy: OpenDataTripSearchInterface = {

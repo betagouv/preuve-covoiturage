@@ -2,18 +2,16 @@ import {
   ConfigInterfaceResolver,
   ContextType,
   handler,
-  InitHookInterface,
   KernelInterfaceResolver,
   NotFoundException,
 } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { getDefaultEndDate } from '../helpers/getDefaultDates';
 import { getOpenDataExportName } from '../helpers/getOpenDataExportName';
 import { Dataset, Resource } from '../interfaces';
 import { DataGouvProvider } from '../providers/DataGouvProvider';
-import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../shared/trip/publishOpenData.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/publishOpenData.contract';
 import { alias } from '../shared/trip/publishOpenData.schema';
 import { HappenMarkdownDescription } from './opendata/HappenMarkdownDescription';
 
@@ -21,7 +19,7 @@ import { HappenMarkdownDescription } from './opendata/HappenMarkdownDescription'
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
 })
-export class PublishOpenDataAction extends Action implements InitHookInterface {
+export class PublishOpenDataAction extends Action {
   constructor(
     private file: S3StorageProvider,
     private config: ConfigInterfaceResolver,
@@ -30,32 +28,6 @@ export class PublishOpenDataAction extends Action implements InitHookInterface {
     private kernel: KernelInterfaceResolver,
   ) {
     super();
-  }
-
-  async init(): Promise<void> {
-    if (this.config.get('app.environment') === 'production') {
-      await this.kernel.notify<ParamsInterface>(
-        signature,
-        {
-          publish: true,
-          date: getDefaultEndDate(),
-        },
-        {
-          call: {
-            user: {},
-          },
-          channel: {
-            service: handlerConfig.service,
-            metadata: {
-              repeat: {
-                cron: '0 6 6 * *',
-              },
-              jobId: 'trip.open_data_export',
-            },
-          },
-        },
-      );
-    }
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
@@ -67,8 +39,7 @@ export class PublishOpenDataAction extends Action implements InitHookInterface {
       const resource = await this.createResource(filename);
       if (publish) {
         await this.ensureExportIsReachable(filename);
-        const rid = await this.datagouv.publishResource(datasetSlug, resource);
-        await this.datagouv.checkResource(datasetSlug, rid);
+        await this.datagouv.publishResource(datasetSlug, resource);
         const description: string = await this.happenMarkdownDescription.call(
           context.call.metadata,
           dataset.description,
@@ -80,6 +51,7 @@ export class PublishOpenDataAction extends Action implements InitHookInterface {
         await this.datagouv.updateDataset(dataset);
       }
     } catch (e) {
+      console.error(e);
       throw e;
     }
   }

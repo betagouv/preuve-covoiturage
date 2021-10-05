@@ -36,10 +36,11 @@ import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 import { BuildExcelsExportAction } from './actions/BuildExcelExportAction';
 import { ActiveCampaignExcelExportAction } from './actions/ActiveCampaignExcelExportAction';
+import { DataGouvProvider } from './providers/DataGouvProvider';
 
 @serviceProvider({
   config,
-  providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider, CryptoProvider],
+  providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider, CryptoProvider, DataGouvProvider],
   validator: [
     listBinding,
     searchCountBinding,

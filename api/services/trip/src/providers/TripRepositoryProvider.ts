@@ -20,7 +20,7 @@ import {
   TripRepositoryInterface,
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
-import { TerritoryTripsInterface } from '../interfaces/StartTerritoryCountInterface';
+import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
 
 /*
  * Trip specific repository
