@@ -7,7 +7,7 @@ import { Dataset, Resource } from '../interfaces';
 import { DataGouvProvider } from '../providers/DataGouvProvider';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/publishOpenData.contract';
 import { alias } from '../shared/trip/publishOpenData.schema';
-import { HappenMarkdownDescription } from './opendata/HappenMarkdownDescription';
+import { AppendMarkdownDescription } from './opendata/AppendMarkdownDescription';
 
 @handler({
   ...handlerConfig,
@@ -18,7 +18,7 @@ export class PublishOpenDataAction extends Action {
     private file: S3StorageProvider,
     private config: ConfigInterfaceResolver,
     private datagouv: DataGouvProvider,
-    private happenMarkdownDescription: HappenMarkdownDescription,
+    private appendMarkdownDescription: AppendMarkdownDescription,
   ) {
     super();
   }
@@ -33,7 +33,7 @@ export class PublishOpenDataAction extends Action {
       if (publish) {
         await this.ensureExportIsReachable(filename);
         await this.datagouv.publishResource(datasetSlug, resource);
-        const description: string = await this.happenMarkdownDescription.call(
+        const description: string = await this.appendMarkdownDescription.call(
           context.call.metadata,
           dataset.description,
         );

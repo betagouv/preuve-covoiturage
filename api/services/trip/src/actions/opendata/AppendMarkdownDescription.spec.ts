@@ -1,9 +1,9 @@
-import { OpenDataContextMetadata } from './HappenMarkdownDescription';
+import { OpenDataContextMetadata } from './AppendMarkdownDescription';
 /* eslint-disable max-len */
 import anyTest, { TestInterface } from 'ava';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { OpenDataTripSearchInterface } from '../../shared/trip/common/interfaces/TripSearchInterface';
-import { HappenMarkdownDescription } from './HappenMarkdownDescription';
+import { AppendMarkdownDescription } from './AppendMarkdownDescription';
 import sinon, { SinonStub } from 'sinon';
 
 interface Context {
@@ -12,7 +12,7 @@ interface Context {
   // Injected tokens method's stubs
   tripRepositoryProviderStub: SinonStub;
   // Tested token
-  happenMarkdownDescription: HappenMarkdownDescription;
+  happenMarkdownDescription: AppendMarkdownDescription;
   // Constants
 }
 
@@ -20,13 +20,13 @@ const test = anyTest as TestInterface<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.tripRepositoryProvider = new TripRepositoryProvider(null);
-  t.context.happenMarkdownDescription = new HappenMarkdownDescription(t.context.tripRepositoryProvider);
+  t.context.happenMarkdownDescription = new AppendMarkdownDescription(t.context.tripRepositoryProvider);
   t.context.tripRepositoryProviderStub = sinon.stub(t.context.tripRepositoryProvider, 'searchCount');
 });
 
 test.afterEach((t) => {});
 
-test('HappenMarkdownDescription: should happen description to existing one', async (t) => {
+test('AppendMarkdownDescription: should happen description to existing one', async (t) => {
   // Arrange
   const existingDescription =
     "# Spécificités jeu de données janvier 2021\nLes données concernent également les trajets dont le point de départ OU d'arrivée est situé en dehors du territoire français.\n\n* Nombre trajets collectés et validés par le registre de preuve de covoiturage **96 012**\n* Nombre de trajets exposés dans le jeu de données : **90 443**\n* Nombre de trajets supprimés du jeu de données : **5 569 = 3 103 + 2 998 - 532**\n    * Nombre d’occurrences du code INSEE de départ est < 6 : **3 103**\n    * Nombre d’occurrences du code INSEE d'arrivée est < 6 : **2 998**\n    * Nombre d’occurrences du code INSEE de départ ET d'arrivée est < 6 : **532**";

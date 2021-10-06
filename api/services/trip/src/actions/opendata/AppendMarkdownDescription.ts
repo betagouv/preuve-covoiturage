@@ -10,7 +10,7 @@ export interface OpenDataContextMetadata {
 }
 
 @provider()
-export class HappenMarkdownDescription {
+export class AppendMarkdownDescription {
   constructor(private tripRepository: TripRepositoryProvider) {}
 
   async call(openDataContext: OpenDataContextMetadata, description = ''): Promise<string> {
