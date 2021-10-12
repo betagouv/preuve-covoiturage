@@ -15,7 +15,11 @@
     "coverage": "exit 0"
   },
   "dependencies": {
-    "db-migrate": "^0.11.11",
-    "db-migrate-pg": "^1.2.2"
+    "@types/node": "^16.9.4",
+    "@types/sinon": "^10.0.3",
+    "concurrently": "^6.2.1",
+    "db-migrate": "^0.11.12",
+    "db-migrate-pg": "^1.2.2",
+    "ts-node": "^10.2.1"
   }
 }
