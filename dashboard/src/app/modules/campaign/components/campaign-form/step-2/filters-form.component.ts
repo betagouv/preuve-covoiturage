@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatTabGroup } from '@angular/material/tabs';
 
