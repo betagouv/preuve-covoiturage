@@ -1,7 +1,7 @@
 import { RuleHandlerContextInterface } from '../../interfaces';
+import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { FilterRule } from '../FilterRule';
 
-// This rule is deprecated, please migrate to territory filter instead
 interface InseeParamsInterface {
   start: string[];
   end: string[];
@@ -33,16 +33,49 @@ export abstract class InseeFilter extends FilterRule<InseeParamsInterface[]> {
   };
 }
 
+function inList(list: string[], insee: string): boolean {
+  return list.indexOf(insee) > -1;
+}
+
 export class InseeWhitelistFilter extends InseeFilter {
   static readonly slug: string = 'insee_whitelist_filter';
   static readonly description: string = 'Liste blanche de codes INSEE';
 
-  filter(ctx: RuleHandlerContextInterface): void {}
+  filter(ctx: RuleHandlerContextInterface): void {
+    let whitelisted = false;
+    for (const rule of this.parameters) {
+      if (
+        (!rule.start.length || inList(rule.start, ctx.person.start_insee)) &&
+        (!rule.end.length || inList(rule.end, ctx.person.end_insee))
+      ) {
+        whitelisted = true;
+      }
+    }
+
+    if (!whitelisted) {
+      throw new NotApplicableTargetException(InseeWhitelistFilter.description);
+    }
+  }
 }
 
 export class InseeBlacklistFilter extends InseeFilter {
   static readonly slug: string = 'insee_blacklist_filter';
   static readonly description: string = 'Liste noire de codes INSEE';
 
-  filter(ctx: RuleHandlerContextInterface): void {}
+  filter(ctx: RuleHandlerContextInterface): void {
+    let blacklisted = false;
+    for (const rule of this.parameters) {
+      if (
+        (!rule.start.length || inList(rule.start, ctx.person.start_insee)) &&
+        (!rule.end.length || inList(rule.end, ctx.person.end_insee))
+      ) {
+        blacklisted = true;
+      }
+    }
+
+    if (blacklisted) {
+      console.debug(`blacklisted: ${ctx.person.start_insee} to ${ctx.person.end_insee}`);
+      throw new NotApplicableTargetException(InseeBlacklistFilter.description);
+    }
+  }
 }

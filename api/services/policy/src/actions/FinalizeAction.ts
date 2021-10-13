@@ -14,7 +14,7 @@ import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   CampaignRepositoryProviderInterfaceResolver,
-  TripRepositoryProviderInterfaceResolver,
+  IncentiveStatusEnum,
 } from '../interfaces';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
@@ -22,7 +22,6 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
   constructor(
     private campaignRepository: CampaignRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
-    private tripRepository: TripRepositoryProviderInterfaceResolver,
     private engine: PolicyEngine,
     private kernel: KernelInterfaceResolver,
   ) {
@@ -54,21 +53,22 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
 
     const to = params.to ?? defaultTo;
 
-    // Refresh table
-    await this.tripRepository.refresh();
-
     // Update incentive on cancelled carpool
     await this.incentiveRepository.disableOnCanceledTrip();
 
     const policyMap: Map<number, ProcessableCampaign> = new Map();
 
     // Apply internal restriction of policies
+    console.debug(`START processing stateful campaigns`);
     await this.processStatefulCampaigns(policyMap, params.to ?? to, params.from);
+    console.debug(`DONE processing stateful campaigns`);
 
     // TODO: Apply external restriction (order) of policies
 
     // Lock all
+    console.debug(`LOCK_ALL incentives to: ${to}`);
     await this.incentiveRepository.lockAll(to);
+    console.debug('DONE locking');
   }
 
   protected async processStatefulCampaigns(
@@ -79,8 +79,17 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     // 1. Start a cursor to find incentives
     const cursor = await this.incentiveRepository.findDraftIncentive(to, 100, from);
     let done = false;
+    let s1 = 0;
+    let b1 = 0;
     do {
-      const updatedIncentives: { carpool_id: number; policy_id: number; amount: number }[] = [];
+      s1 = new Date().getTime();
+
+      const updatedIncentives: {
+        carpool_id: number;
+        policy_id: number;
+        amount: number;
+        status: IncentiveStatusEnum;
+      }[] = [];
       const results = await cursor.next();
       done = results.done;
       if (results.value) {
@@ -99,7 +108,15 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
         }
       }
       // 4. Update incentives
-      await this.incentiveRepository.updateManyAmount(updatedIncentives);
+      await this.incentiveRepository.updateManyAmount(updatedIncentives, IncentiveStatusEnum.Valitated);
+
+      b1 = new Date().getTime() - s1;
+      console.debug(
+        `Finalized ${updatedIncentives.length} incentives in ${b1}ms (${(
+          (updatedIncentives.length / b1) *
+          1000
+        ).toFixed(3)}/s)`,
+      );
     } while (!done);
   }
 }

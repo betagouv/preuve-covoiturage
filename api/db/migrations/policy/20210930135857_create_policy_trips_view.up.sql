@@ -19,7 +19,11 @@ CREATE VIEW policy.trips AS (
     (CASE WHEN cp.duration IS NOT NULL THEN cp.duration ELSE (cp.meta::json->>'calc_duration')::int END) as duration,
     (CASE WHEN ci.travel_pass_user_id IS NOT NULL THEN true ELSE false END) as has_travel_pass,
     (CASE WHEN ci.over_18 IS NOT NULL THEN ci.over_18 ELSE null END) as is_over_18,
-    ci.uuid as identity_uuid
+    ci.uuid as identity_uuid,
+    tcs.value AS start_insee,
+    tce.value AS end_insee
   FROM carpool.carpools as cp
   LEFT JOIN carpool.identities as ci ON cp.identity_id = ci._id
+  LEFT JOIN territory.territory_codes tcs ON cp.start_territory_id = tcs.territory_id AND tcs.type::text = 'insee'::text
+  LEFT JOIN territory.territory_codes tce ON cp.end_territory_id = tce.territory_id AND tce.type::text = 'insee'::text
 );

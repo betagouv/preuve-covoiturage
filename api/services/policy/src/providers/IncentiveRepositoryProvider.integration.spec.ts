@@ -133,11 +133,13 @@ test.serial.skip('Should update many incentives amount', async (t) => {
       policy_id: 0,
       carpool_id: 3,
       amount: 0,
+      status: IncentiveStatusEnum.Draft,
     },
     {
       policy_id: 0,
       carpool_id: 2,
       amount: 0,
+      status: IncentiveStatusEnum.Draft,
     },
   ];
 

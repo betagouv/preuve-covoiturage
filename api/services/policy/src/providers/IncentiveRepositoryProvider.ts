@@ -7,6 +7,7 @@ import {
   IncentiveRepositoryProviderInterface,
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStateEnum,
+  IncentiveStatusEnum,
   CampaignStateInterface,
 } from '../interfaces';
 
@@ -20,6 +21,11 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
   constructor(protected connection: PostgresConnection) {}
 
   async disableOnCanceledTrip(): Promise<void> {
+    console.debug(`DISABLE_ON_CANCELED_TRIPS`);
+    const client = await this.connection.getClient().connect();
+    // await client.query('BEGIN');
+    // await client.query(`ALTER TABLE ${this.table} DISABLE TRIGGER ALL`);
+
     const query = {
       text: `
         UPDATE ${this.table} AS pi
@@ -33,10 +39,18 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: ['disabled', 'canceled'],
     };
 
-    await this.connection.getClient().query(query);
+    await client.query(query);
+    // await client.query(`ALTER TABLE ${this.table} ENABLE TRIGGER ALL`);
+    // await client.query('COMMIT');
+
+    client.release();
   }
 
   async lockAll(before: Date): Promise<void> {
+    const client = await this.connection.getClient().connect();
+    // await client.query('BEGIN');
+    // await client.query(`ALTER TABLE ${this.table} DISABLE TRIGGER ALL`);
+
     const query = {
       text: `
         UPDATE ${this.table}
@@ -48,10 +62,17 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: ['validated', before, 'draft'],
     };
 
-    await this.connection.getClient().query(query);
+    await client.query(query);
+    // await client.query(`ALTER TABLE ${this.table} ENABLE TRIGGER ALL`);
+    // await client.query('COMMIT');
+
+    client.release();
   }
 
-  async updateManyAmount(data: { carpool_id: number; policy_id: number; amount: number }[]): Promise<void> {
+  async updateManyAmount(
+    data: { carpool_id: number; policy_id: number; amount: number; status: IncentiveStatusEnum }[],
+    status?: IncentiveStatusEnum,
+  ): Promise<void> {
     const idSet: Set<string> = new Set();
     const filteredData = data.reverse().filter((d) => {
       const key = `${d.policy_id}/${d.carpool_id}`;
@@ -62,7 +83,10 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       return true;
     });
 
-    const keys = ['policy_id', 'carpool_id', 'amount'].map((k) => filteredData.map((d) => d[k]));
+    // pick values for the given keys. Override status if defined
+    const values = ['policy_id', 'carpool_id', 'amount', 'status'].map((k) =>
+      filteredData.map((d) => (status && k === 'status' ? status : d[k])),
+    );
 
     const query = {
       text: `
@@ -70,34 +94,52 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         SELECT * FROM UNNEST (
           $1::int[],
           $2::int[],
-          $3::int[]
+          $3::int[],
+          $4::policy.incentive_status_enum[]
         ) as t(
           policy_id,
           carpool_id,
-          amount
+          amount,
+          status
         )
       )
       UPDATE ${this.table} as pt
       SET (
         amount,
-        state
+        state,
+        status
       ) = (
         data.amount,
-        CASE WHEN data.amount = 0 THEN 'null'::policy.incentive_state_enum ELSE state END
+        CASE WHEN data.amount = 0 THEN 'null'::policy.incentive_state_enum ELSE state END,
+        data.status
       )
       FROM data
       WHERE
         data.carpool_id = pt.carpool_id
         AND data.policy_id = pt.policy_id
       `,
-      values: [...keys],
+      values: [...values],
     };
 
     await this.connection.getClient().query(query);
-    return;
   }
 
   async *findDraftIncentive(to: Date, batchSize = 100, from?: Date): AsyncGenerator<IncentiveInterface[], void, void> {
+    const resCount = await this.connection.getClient().query({
+      text: `
+      SELECT
+        count(*)
+      FROM ${this.table}
+      WHERE
+        status = $1::policy.incentive_status_enum
+        ${from ? 'AND datetime >= $3::timestamp' : ''}
+        AND datetime <= $2::timestamp
+      `,
+      values: ['draft', to, ...(from ? [from] : [])],
+    });
+
+    console.debug(`FOUND ${resCount.rows[0].count} incentives to process`);
+
     const query = {
       text: `
       SELECT
@@ -111,9 +153,9 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         meta
       FROM ${this.table}
       WHERE
-        status = $1::policy.incentive_status_enum AND
-        datetime <= $2::timestamp
+        status = $1::policy.incentive_status_enum
         ${from ? 'AND datetime >= $3::timestamp' : ''}
+        AND datetime <= $2::timestamp
       ORDER BY datetime ASC;
       `,
       values: ['draft', to, ...(from ? [from] : [])],

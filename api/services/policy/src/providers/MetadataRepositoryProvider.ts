@@ -41,6 +41,7 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
       });
     }
 
+    // get the latest value for a key
     const query: {
       rowMode: string;
       text: string;

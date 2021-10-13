@@ -1,11 +1,14 @@
 import { provider } from '@ilos/common';
-
-import { CampaignInterface, IncentiveInterface, TripInterface } from '../interfaces';
-import { MetadataRepositoryProviderInterfaceResolver } from '../interfaces';
-
-import { TripIncentives } from './TripIncentives';
-import { ProcessableCampaign } from './ProcessableCampaign';
+import {
+  CampaignInterface,
+  IncentiveInterface,
+  IncentiveStatusEnum,
+  MetadataRepositoryProviderInterfaceResolver,
+  TripInterface,
+} from '../interfaces';
 import { MetadataWrapper } from '../providers/MetadataWrapper';
+import { ProcessableCampaign } from './ProcessableCampaign';
+import { TripIncentives } from './TripIncentives';
 
 @provider()
 export class PolicyEngine {
@@ -29,7 +32,7 @@ export class PolicyEngine {
   public async processStateful(
     pc: ProcessableCampaign,
     incentive: IncentiveInterface,
-  ): Promise<{ carpool_id: number; policy_id: number; amount: number }> {
+  ): Promise<{ carpool_id: number; policy_id: number; amount: number; status: IncentiveStatusEnum }> {
     const keys = pc.getMetaKeys(incentive);
     const meta = await this.metaRepository.get(pc.policy_id, keys, incentive.datetime);
     const result = pc.applyStateful(incentive, meta);

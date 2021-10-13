@@ -7,12 +7,10 @@ export interface TripRepositoryProviderInterface {
     batchSize?: number,
     override_from?: Date,
   ): AsyncGenerator<TripInterface[], void, void>;
-  refresh(): Promise<void>;
   listApplicablePoliciesId(): Promise<number[]>;
 }
 
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryProviderInterface {
-  abstract refresh(): Promise<void>;
   abstract listApplicablePoliciesId(): Promise<number[]>;
   abstract findTripByPolicy(
     policy: ProcessableCampaign,

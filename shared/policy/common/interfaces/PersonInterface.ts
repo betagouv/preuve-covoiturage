@@ -7,6 +7,8 @@ export interface PersonInterface {
   is_driver: boolean;
   has_travel_pass: boolean;
   datetime: Date;
+  start_insee?: string;
+  end_insee?: string;
   seats: number;
   duration: number;
   distance: number;
