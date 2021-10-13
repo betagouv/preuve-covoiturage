@@ -16,6 +16,11 @@ export interface TripSearchInterface {
   territory_id?: number[];
 }
 
+export interface OpenDataTripSearchInterface extends TripSearchInterface {
+  excluded_start_territory_id: number[];
+  excluded_end_territory_id: number[];
+}
+
 export interface TripSearchInterfaceWithPagination extends TripSearchInterface {
   skip: number;
   limit: number;

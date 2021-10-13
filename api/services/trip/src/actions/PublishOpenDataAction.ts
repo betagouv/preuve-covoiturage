@@ -1,13 +1,13 @@
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import { ConfigInterfaceResolver, ContextType, handler, NotFoundException } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { handler, ContextType, ConfigInterfaceResolver, NotFoundException } from '@ilos/common';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
-
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import { getOpenDataExportName } from '../helpers/getOpenDataExportName';
+import { Dataset, Resource } from '../interfaces';
+import { DataGouvProvider } from '../providers/DataGouvProvider';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/publishOpenData.contract';
 import { alias } from '../shared/trip/publishOpenData.schema';
-import { getOpenDataExportName } from '../helpers/getOpenDataExportName';
-import { DataGouvProvider } from '../providers/DataGouvProvider';
-import { Dataset, Resource } from '../interfaces';
+import { AppendMarkdownDescription } from './opendata/AppendMarkdownDescription';
 
 @handler({
   ...handlerConfig,
@@ -18,6 +18,7 @@ export class PublishOpenDataAction extends Action {
     private file: S3StorageProvider,
     private config: ConfigInterfaceResolver,
     private datagouv: DataGouvProvider,
+    private appendMarkdownDescription: AppendMarkdownDescription,
   ) {
     super();
   }
@@ -31,12 +32,16 @@ export class PublishOpenDataAction extends Action {
       const resource = await this.createResource(filename);
       if (publish) {
         await this.ensureExportIsReachable(filename);
-        const rid = await this.datagouv.publishResource(datasetSlug, resource);
-        await this.datagouv.checkResource(datasetSlug, rid);
-        // await this.datagouv.updateDataset(dataset);
+        await this.datagouv.publishResource(datasetSlug, resource);
+        const description: string = await this.appendMarkdownDescription.call(
+          context.call.metadata,
+          dataset.description,
+        );
+        dataset.description = description;
+        await this.datagouv.updateDataset(dataset);
       } else {
         await this.datagouv.unpublishResource(datasetSlug, this.findRidFromTitle(dataset, resource.title));
-        // await this.datagouv.updateDataset(dataset);
+        await this.datagouv.updateDataset(dataset);
       }
     } catch (e) {
       throw e;
