@@ -99,7 +99,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     }
 
     this.text('Reste à charge :', { x: 370, y: totalY, font: this.fonts.bold });
-    this.text(`${this.currency(data.data.total_rm)} €`, { x: 490, y: totalY, font: this.fonts.bold });
+    this.text(`${this.currency(data.data.total_rm)} €`, { x: 470, y: totalY, font: this.fonts.bold });
 
     // identification
     this.text('Identification', { x: 48, y: 96, font: this.fonts.bold });
@@ -223,9 +223,9 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     const y = this.tableY + 22;
 
     this.text('Date', { x: this.tableX, y, font: this.fonts.bold });
-    this.text('Trajets', { x: this.tableX + 90, y, font: this.fonts.bold });
-    this.text('Jours', { x: this.tableX + 140, y, font: this.fonts.bold });
-    this.text('Distance', { x: this.tableX + 210, y, font: this.fonts.bold });
+    this.text('Trajets', { x: this.tableX + 110, y, font: this.fonts.bold });
+    this.text('Jours', { x: this.tableX + 160, y, font: this.fonts.bold });
+    this.text('Distance', { x: this.tableX + 230, y, font: this.fonts.bold });
     if (withPoints) {
       this.text('Points', { x: this.tableX + 300, y, font: this.fonts.bold });
     }
@@ -245,14 +245,14 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       });
     }
 
-    this.text(`${row.month}`, { x: this.tableX, y: rowY });
-    this.text(`${row.trips}`, { x: this.tableX + 90, y: rowY });
-    this.text(`${row.days}`, { x: this.tableX + 140, y: rowY });
-    this.text(`${row.distance} km`, { x: this.tableX + 210, y: rowY });
+    this.text(`${row.month}`, { x: this.tableX + 2, y: rowY });
+    this.text(`${row.trips}`, { x: this.tableX + 112, y: rowY });
+    this.text(`${row.days}`, { x: this.tableX + 162, y: rowY });
+    this.text(`${row.distance} km`, { x: this.tableX + 232, y: rowY });
     if (withPoints) {
-      this.text(`${row.points}`, { x: this.tableX + 300, y: rowY });
+      this.text(`${row.points}`, { x: this.tableX + 302, y: rowY });
     }
-    this.text(`${this.currency(row.remaining)} €`, { x: this.tableX + 380, y: rowY });
+    this.text(`${this.currency(row.remaining)} €`, { x: this.tableX + 382, y: rowY });
   }
 
   private marianne(opts: { x: number; y: number; scale: number }): void {
