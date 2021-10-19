@@ -37,6 +37,7 @@ import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 import { BuildExcelsExportAction } from './actions/BuildExcelExportAction';
 import { ActiveCampaignExcelExportAction } from './actions/ActiveCampaignExcelExportAction';
 import { DataGouvProvider } from './providers/DataGouvProvider';
+import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportCommand';
 
 @serviceProvider({
   config,
@@ -61,6 +62,7 @@ import { DataGouvProvider } from './providers/DataGouvProvider';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
+  commands: [ReplayOpendataExportCommand],
   handlers: [
     ListAction,
     SearchCountAction,

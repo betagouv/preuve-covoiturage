@@ -1,9 +1,7 @@
-import { GetOldestTripDateRepositoryProvider } from './../providers/GetOldestTripRepositoryProvider';
-import { handler, KernelInterfaceResolver } from '@ilos/common';
-import { Action } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
+import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@ilos/common';
 import moment from 'moment';
-import { startOfMonth, endOfMonth } from '../helpers/getDefaultDates';
+import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates';
+import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripRepositoryProvider';
 import {
   ParamsInterface as BuildExportParamInterface,
   ResultInterface as BuildExportResultInterface,
@@ -15,35 +13,38 @@ export interface StartEndDate {
   end: Date;
 }
 
-@handler({
-  service: 'trip',
-  method: 'replayOpenData',
-  middlewares: [...internalOnlyMiddlewares('trip')],
-})
-export class ReplayOpendataExportCommand extends Action {
-  constructor(
-    private getOldestTripDateRepositoryProvider: GetOldestTripDateRepositoryProvider,
-    private kernel: KernelInterfaceResolver,
-  ) {
-    super();
-  }
+@command()
+export class ReplayOpendataExportCommand implements CommandInterface {
+  static readonly signature: string = 'trip:replayOpendata';
+  static readonly description: string = 'Replay open data exports for each month from first trip to now';
+  static readonly options: CommandOptionType[] = [];
 
-  public async handle(params: {}, context: {}): Promise<StartEndDate[]> {
+  constructor(
+    private kernel: KernelInterfaceResolver,
+    private getOldestTripDateRepositoryProvider: GetOldestTripDateRepositoryProvider,
+  ) {}
+
+  public async call(): Promise<StartEndDate[]> {
     // 0. Get first trip journey_start_datetime
     const oldestTripDate: Date = await this.getOldestTripDateRepositoryProvider.call();
     // 1. Get all month from begining trip.list
     const intervals: StartEndDate[] = this.getMonthsIntervalsFrom(oldestTripDate, new Date());
-    // 2. For each, call build opendata export
-    intervals.map(async (i) => {
+    // 2. For each, call build opendata export synchronously
+    for (const i of intervals) {
       const params: BuildExportParamInterface = {
         query: {
-          date: i,
+          date: {
+            start: (i.start.toISOString() as unknown) as Date,
+            end: (i.end.toISOString() as unknown) as Date,
+          },
         },
-        type: 'opendate',
+        type: 'opendata',
         format: { tz: 'Europe/Paris' },
       };
-      this.kernel.call<BuildExportParamInterface, BuildExportResultInterface>(buildExportSignature, params, null);
-    });
+      await this.kernel.call<BuildExportParamInterface, BuildExportResultInterface>(buildExportSignature, params, {
+        channel: { service: 'trip' },
+      });
+    }
 
     // 3. Return intervals used to create opendata exports
     return intervals;
@@ -61,7 +62,6 @@ export class ReplayOpendataExportCommand extends Action {
       });
       momentCursor.add(1, 'month');
     }
-    console.debug(intervals);
     return intervals;
   }
 }

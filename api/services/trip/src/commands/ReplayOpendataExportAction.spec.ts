@@ -1,17 +1,17 @@
 import { KernelInterfaceResolver } from '@ilos/common';
 import anyTest, { TestInterface } from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripRepositoryProvider';
+import { GetOldestTripDateRepositoryProvider } from './../providers/GetOldestTripRepositoryProvider';
 import { ReplayOpendataExportCommand, StartEndDate } from './ReplayOpendataExportCommand';
 
 interface Context {
   // Injected tokens
-  getOldestTripDateRepositoryProvider: GetOldestTripDateRepositoryProvider;
   fakeKernelInterfaceResolver: KernelInterfaceResolver;
+  getOldestTripDateRepositoryProvider: GetOldestTripDateRepositoryProvider;
 
   // Injected tokens method's stubs
-  getOldestTripDateRepositoryProviderStub: SinonStub;
   fakeKernelInterfaceResolverStub: SinonStub;
+  getOldestTripDateRepositoryProviderStub: SinonStub;
 
   // Constants
 
@@ -24,10 +24,9 @@ const test = anyTest as TestInterface<Partial<Context>>;
 test.beforeEach((t) => {
   t.context.fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   t.context.getOldestTripDateRepositoryProvider = new GetOldestTripDateRepositoryProvider(null);
-
   t.context.replayOpendataExportCommand = new ReplayOpendataExportCommand(
-    t.context.getOldestTripDateRepositoryProvider,
     t.context.fakeKernelInterfaceResolver,
+    t.context.getOldestTripDateRepositoryProvider,
   );
 
   t.context.getOldestTripDateRepositoryProviderStub = sinon.stub(t.context.getOldestTripDateRepositoryProvider, 'call');
@@ -35,7 +34,6 @@ test.beforeEach((t) => {
 });
 
 test.afterEach((t) => {
-  t.context.getOldestTripDateRepositoryProviderStub.restore();
   t.context.fakeKernelInterfaceResolverStub.restore();
 });
 
@@ -44,7 +42,7 @@ test('ReplayOpendataExportCommand: should call n times BuildExport from 08 Octob
   t.context.getOldestTripDateRepositoryProviderStub.resolves(new Date('2020-10-08T15:34:52'));
 
   // Act
-  const result: StartEndDate[] = await t.context.replayOpendataExportCommand.handle(null, null);
+  const result: StartEndDate[] = await t.context.replayOpendataExportCommand.call();
 
   // Assert
   const today: Date = new Date();
