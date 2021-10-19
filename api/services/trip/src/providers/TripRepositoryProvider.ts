@@ -21,6 +21,8 @@ import {
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
+import { resolve } from 'path/posix';
+import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 
 /*
  * Trip specific repository
@@ -291,7 +293,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
     },
     type = 'opendata',
-  ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
+  ): Promise<PgCursorHandler> {
     // all
     const baseFields = [
       'journey_id',
@@ -380,7 +382,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const db = await this.connection.getClient().connect();
     const cursorCb = db.query(new Cursor(queryText, queryValues));
 
-    return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>;
+    return {
+      read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
+      release: db.release,
+    };
   }
 
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {
