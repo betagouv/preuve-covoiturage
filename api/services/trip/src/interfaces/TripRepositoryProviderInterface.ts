@@ -1,11 +1,11 @@
+import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
-import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
-import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
+import { PgCursorHandler } from './PromisifiedPgCursor';
 import { FinancialStatInterface, StatInterface } from './StatInterface';
-import { ExportTripInterface } from './ExportTripInterface';
 
 export interface TzResultInterface {
   name: string;
@@ -26,7 +26,7 @@ export interface TripRepositoryInterface {
       status?: string;
     },
     type?: string,
-  ): Promise<(count: number) => Promise<ExportTripInterface[]>>;
+  ): Promise<PgCursorHandler>;
   validateTz(tz?: string): Promise<TzResultInterface>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
@@ -57,7 +57,7 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
       status?: string;
     },
     type?: string,
-  ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
+  ): Promise<PgCursorHandler> {
     throw new Error('Not implemented');
   }
 

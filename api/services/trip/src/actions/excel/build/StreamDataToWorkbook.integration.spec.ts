@@ -94,7 +94,7 @@ test('StreamDataToWorkBook: should stream data to a workbook file', async (t) =>
   const filename = '/tmp/stream-data-test.xlsx';
 
   // Act
-  await streamDataToWorkBook.call(cursorCallback, filename);
+  await streamDataToWorkBook.call({ read: cursorCallback, release: () => {} }, filename);
 
   // Assert
   const workbook: Workbook = await new Workbook().xlsx.readFile(filename);

@@ -1,26 +1,25 @@
 /* eslint-disable max-len */
-import { promisify } from 'util';
-import { map } from 'lodash';
-
 import { provider } from '@ilos/common';
-import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
-
+import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
+import { map } from 'lodash';
+import { promisify } from 'util';
 import {
-  TripSearchInterfaceWithPagination,
-  TripSearchInterface,
-  OpenDataTripSearchInterface,
-} from '../shared/trip/common/interfaces/TripSearchInterface';
-import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
-import { StatInterface, FinancialStatInterface } from '../interfaces/StatInterface';
-import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
-import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
-import {
-  TzResultInterface,
   ExportTripInterface,
   TripRepositoryInterface,
   TripRepositoryProviderInterfaceResolver,
+  TzResultInterface,
 } from '../interfaces';
+import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
+import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
 import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
+import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
+import {
+  OpenDataTripSearchInterface,
+  TripSearchInterface,
+  TripSearchInterfaceWithPagination,
+} from '../shared/trip/common/interfaces/TripSearchInterface';
+import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
 
 /*
  * Trip specific repository
@@ -291,7 +290,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
     },
     type = 'opendata',
-  ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
+  ): Promise<PgCursorHandler> {
     // all
     const baseFields = [
       'journey_id',
@@ -380,7 +379,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const db = await this.connection.getClient().connect();
     const cursorCb = db.query(new Cursor(queryText, queryValues));
 
-    return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>;
+    return {
+      read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
+      release: db.release,
+    };
   }
 
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {
