@@ -139,9 +139,10 @@ test('CreateCertificateAction: should generate certificate with 0 rac amount for
     operator_id: 4,
     identity_uuid: t.context.USER_RPC_UUID,
   };
-  t.log(expectCreateCertificateParams);
-  t.log(t.context.certificateRepositoryCreateStub.args[0][0]);
-  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
+  t.log(expectCreateCertificateParams.meta.rows);
+  t.log(t.context.certificateRepositoryCreateStub.args[0][0].meta.rows);
+  sinon.assert.calledOnce(t.context.certificateRepositoryCreateStub);
+  // sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
   sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
   sinon.assert.calledTwice(t.context.kernelCallStub);
   t.is(result.meta.httpStatus, 201);
