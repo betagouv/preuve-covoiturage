@@ -280,11 +280,11 @@ export class BuildExportAction extends Action implements InitHookInterface {
     const fileKey = await this.fileProvider.upload(BucketName.Export, zippath, zipname);
 
     if (type == 'opendata') {
-      await this.kernel.notify<PublishOpenDataParamsInterface>(
+      await this.kernel.call<PublishOpenDataParamsInterface>(
         publishOpenDataSignature,
         {
           publish: true,
-          date: queryParam.date.end,
+          date: (queryParam.date.end.toISOString() as unknown) as Date,
         },
         {
           call: {
