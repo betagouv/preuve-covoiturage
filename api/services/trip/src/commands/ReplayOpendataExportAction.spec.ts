@@ -1,4 +1,3 @@
-import { to } from './../../../user/src/config/contactform';
 import { KernelInterfaceResolver } from '@ilos/common';
 import anyTest, { TestInterface } from 'ava';
 import sinon, { SinonStub } from 'sinon';
