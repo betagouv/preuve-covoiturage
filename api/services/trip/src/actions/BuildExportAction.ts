@@ -232,7 +232,6 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const type = get(params, 'type', 'export');
-
     const queryParam = this.castQueryParams(type, params);
     let excluded_territories: TerritoryTripsInterface[];
     if (type === 'opendata') {
@@ -251,7 +250,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
     let count = 0;
 
-    const { filename, tz } = this.castFormat(type, params);
+    const { filename, tz } = this.castFormat(type, params, queryParam);
     const zipname = `${filename.replace('.csv', '')}.zip`;
 
     const filepath = path.join(os.tmpdir(), filename);
@@ -329,12 +328,12 @@ export class BuildExportAction extends Action implements InitHookInterface {
     };
   }
 
-  protected castFormat(type: string, params: ParamsInterface): Required<FormatInterface> {
+  protected castFormat(type: string, params: ParamsInterface, queryParam: QueryInterface): Required<FormatInterface> {
     return {
       tz: params.format?.tz ?? 'Europe/Paris',
       filename:
         params.format?.filename ?? type === 'opendata'
-          ? getOpenDataExportName('csv', params.query.date.end)
+          ? getOpenDataExportName('csv', queryParam.date.end)
           : `covoiturage-${v4()}.csv`,
     };
   }
