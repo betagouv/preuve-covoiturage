@@ -137,7 +137,7 @@ export class CreateCertificateAction extends AbstractAction {
     // aggregate and sum by year month
     carpools
       .map((c: CarpoolInterface) => {
-        c.month = upperFirst(this.dateProvider.format(new Date(`${c.year}-${c.month}-01`), 'MMMM yyyy'));
+        c.month = upperFirst(this.dateProvider.format(new Date(`${c.year}-${c.month}-02`), 'MMMM yyyy'));
         return c;
       })
       .reduce((acc, val) => {

@@ -56,10 +56,10 @@ test.beforeEach((t) => {
   configGetStub.returns(6);
 
   t.context = {
-    OPERATOR_UUID: faker.random.uuid(),
-    USER_RPC_UUID: faker.random.uuid(),
-    CERTIFICATE_UUID: faker.random.uuid(),
-    OPERATOR_NAME: faker.random.alphaNumeric(),
+    OPERATOR_UUID: faker.datatype.uuid(),
+    USER_RPC_UUID: faker.datatype.uuid(),
+    CERTIFICATE_UUID: faker.datatype.uuid(),
+    OPERATOR_NAME: faker.random.alpha(),
     fakeKernelInterfaceResolver,
     configInterfaceResolver,
     certificateRepositoryProviderInterface,
@@ -89,19 +89,33 @@ test('CreateCertificateAction: should generate certificate with 0 rac amount for
       month: 9,
       year: 2021,
       type: 'passenger',
-      trip_id: faker.random.uuid(),
+      trip_id: faker.datatype.uuid(),
       km: 10,
       rac: 1.5,
-      payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
+      payments: JSON.stringify([
+        {
+          siret: faker.random.alphaNumeric(),
+          index: 0,
+          type: 'incentive',
+          amount: 150,
+        },
+      ]),
     },
     {
       month: 9,
       year: 2021,
       type: 'passenger',
-      trip_id: faker.random.uuid(),
+      trip_id: faker.datatype.uuid(),
       km: 10,
       rac: 1.5,
-      payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
+      payments: JSON.stringify([
+        {
+          siret: faker.random.alphaNumeric(),
+          index: 0,
+          type: 'incentive',
+          amount: 150,
+        },
+      ]),
     },
   ]);
 
@@ -118,10 +132,10 @@ test('CreateCertificateAction: should generate certificate with 0 rac amount for
       total_km: 20,
       total_rm: 0,
       total_point: 0,
-      rows: [{ month: 'Août 2021', index: 0, distance: 20, remaining: 0, trips: 2 }],
+      rows: [{ month: 'Septembre 2021', index: 0, distance: 20, remaining: 0, trips: 2 }],
     },
     end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,
-    start_at: new Date('2019-01-01T00:00:00+0100'),
+    start_at: t.context.certificateRepositoryCreateStub.args[0][0].start_at,
     operator_id: 4,
     identity_uuid: t.context.USER_RPC_UUID,
   };
@@ -140,19 +154,33 @@ test('CreateCertificateAction: should generate certificate with 0 rac for 2 trip
       month: 9,
       year: 2021,
       type: 'passenger',
-      trip_id: faker.random.uuid(),
+      trip_id: faker.datatype.uuid(),
       km: 10,
       rac: 0,
-      payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
+      payments: JSON.stringify([
+        {
+          siret: faker.random.alphaNumeric(),
+          index: 0,
+          type: 'incentive',
+          amount: 150,
+        },
+      ]),
     },
     {
       month: 9,
       year: 2021,
       type: 'passenger',
-      trip_id: faker.random.uuid(),
+      trip_id: faker.datatype.uuid(),
       km: 10,
       rac: 0,
-      payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'incentive', amount: 150 }]),
+      payments: JSON.stringify([
+        {
+          siret: faker.random.alphaNumeric(),
+          index: 0,
+          type: 'incentive',
+          amount: 150,
+        },
+      ]),
     },
   ]);
 
@@ -164,7 +192,15 @@ test('CreateCertificateAction: should generate certificate with 0 rac for 2 trip
       total_km: 20,
       total_rm: 0,
       total_point: 0,
-      rows: [{ month: 'Août 2021', index: 0, distance: 20, remaining: 0, trips: 2 }],
+      rows: [
+        {
+          month: 'Septembre 2021',
+          index: 0,
+          distance: 20,
+          remaining: 0,
+          trips: 2,
+        },
+      ],
     },
     t,
   );
@@ -185,19 +221,33 @@ test('CreateCertificateAction: should generate certificate with rac amount split
       month: 9,
       year: 2021,
       type: 'passenger',
-      trip_id: faker.random.uuid(),
+      trip_id: faker.datatype.uuid(),
       km: 10,
       rac: 1.5,
-      payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'payment', amount: 150 }]),
+      payments: JSON.stringify([
+        {
+          siret: faker.random.alphaNumeric(),
+          index: 0,
+          type: 'payment',
+          amount: 150,
+        },
+      ]),
     },
     {
       month: 8,
       year: 2021,
       type: 'passenger',
-      trip_id: faker.random.uuid(),
+      trip_id: faker.datatype.uuid(),
       km: 10,
       rac: 1.5,
-      payments: JSON.stringify([{ siret: faker.random.alphaNumeric(), index: 0, type: 'payment', amount: 150 }]),
+      payments: JSON.stringify([
+        {
+          siret: faker.random.alphaNumeric(),
+          index: 0,
+          type: 'payment',
+          amount: 150,
+        },
+      ]),
     },
   ]);
 
@@ -212,8 +262,20 @@ test('CreateCertificateAction: should generate certificate with rac amount split
       total_rm: 3,
       total_point: 0,
       rows: [
-        { month: 'Août 2021', index: 0, distance: 10, remaining: 1.5, trips: 1 },
-        { month: 'Juillet 2021', index: 1, distance: 10, remaining: 1.5, trips: 1 },
+        {
+          month: 'Septembre 2021',
+          index: 0,
+          distance: 10,
+          remaining: 1.5,
+          trips: 1,
+        },
+        {
+          month: 'Août 2021',
+          index: 1,
+          distance: 10,
+          remaining: 1.5,
+          trips: 1,
+        },
       ],
     },
     t,
@@ -234,7 +296,7 @@ function getExpectedCertificateParams(certificateMeta: Partial<CertificateMetaIn
       ...certificateMeta,
     } as CertificateMetaInterface,
     end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,
-    start_at: new Date('2019-01-01T00:00:00+0100'),
+    start_at: t.context.certificateRepositoryCreateStub.args[0][0].start_at,
     operator_id: 4,
     identity_uuid: t.context.USER_RPC_UUID,
   };
