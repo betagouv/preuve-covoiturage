@@ -1,6 +1,8 @@
+import { to } from './../../../user/src/config/contactform';
 import { KernelInterfaceResolver } from '@ilos/common';
 import anyTest, { TestInterface } from 'ava';
 import sinon, { SinonStub } from 'sinon';
+import { endOfMonth } from '../helpers/getDefaultDates';
 import { GetOldestTripDateRepositoryProvider } from './../providers/GetOldestTripRepositoryProvider';
 import { ReplayOpendataExportCommand, StartEndDate } from './ReplayOpendataExportCommand';
 
@@ -51,9 +53,6 @@ test('ReplayOpendataExportCommand: should call n times BuildExport from 08 Octob
     result[result.length - 1].start.toISOString().split('T')[0],
     new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0],
   );
-  t.is(
-    result[result.length - 1].end.toISOString().split('T')[0],
-    new Date(today.getFullYear(), today.getMonth() + 1, 1).toISOString().split('T')[0],
-  );
+  t.is(result[result.length - 1].end.toISOString(), endOfMonth(today).toISOString());
   sinon.assert.callCount(t.context.fakeKernelInterfaceResolverStub, result.length);
 });
