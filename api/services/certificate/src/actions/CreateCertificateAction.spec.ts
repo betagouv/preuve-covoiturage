@@ -135,7 +135,7 @@ test('CreateCertificateAction: should generate certificate with 0 rac amount for
       rows: [{ month: 'Août 2021', index: 0, distance: 20, remaining: 0, trips: 2 }],
     },
     end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,
-    start_at: new Date('2019-01-01T00:00:00+0100'),
+    start_at: t.context.certificateRepositoryCreateStub.args[0][0].start_at,
     operator_id: 4,
     identity_uuid: t.context.USER_RPC_UUID,
   };
@@ -296,7 +296,7 @@ function getExpectedCertificateParams(certificateMeta: Partial<CertificateMetaIn
       ...certificateMeta,
     } as CertificateMetaInterface,
     end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,
-    start_at: new Date('2019-01-01T00:00:00+0100'),
+    start_at: t.context.certificateRepositoryCreateStub.args[0][0].start_at,
     operator_id: 4,
     identity_uuid: t.context.USER_RPC_UUID,
   };
