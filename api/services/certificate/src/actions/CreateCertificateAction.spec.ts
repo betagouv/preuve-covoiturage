@@ -132,17 +132,14 @@ test('CreateCertificateAction: should generate certificate with 0 rac amount for
       total_km: 20,
       total_rm: 0,
       total_point: 0,
-      rows: [{ month: 'Août 2021', index: 0, distance: 20, remaining: 0, trips: 2 }],
+      rows: [{ month: 'Septembre 2021', index: 0, distance: 20, remaining: 0, trips: 2 }],
     },
     end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,
     start_at: t.context.certificateRepositoryCreateStub.args[0][0].start_at,
     operator_id: 4,
     identity_uuid: t.context.USER_RPC_UUID,
   };
-  t.log(expectCreateCertificateParams.meta.rows);
-  t.log(t.context.certificateRepositoryCreateStub.args[0][0].meta.rows);
-  sinon.assert.calledOnce(t.context.certificateRepositoryCreateStub);
-  // sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
+  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
   sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
   sinon.assert.calledTwice(t.context.kernelCallStub);
   t.is(result.meta.httpStatus, 201);
@@ -197,7 +194,7 @@ test('CreateCertificateAction: should generate certificate with 0 rac for 2 trip
       total_point: 0,
       rows: [
         {
-          month: 'Août 2021',
+          month: 'Septembre 2021',
           index: 0,
           distance: 20,
           remaining: 0,
@@ -266,14 +263,14 @@ test('CreateCertificateAction: should generate certificate with rac amount split
       total_point: 0,
       rows: [
         {
-          month: 'Août 2021',
+          month: 'Septembre 2021',
           index: 0,
           distance: 10,
           remaining: 1.5,
           trips: 1,
         },
         {
-          month: 'Juillet 2021',
+          month: 'Août 2021',
           index: 1,
           distance: 10,
           remaining: 1.5,
