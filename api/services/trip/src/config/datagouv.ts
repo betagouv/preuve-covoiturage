@@ -1,9 +1,8 @@
 import { env } from '@ilos/core';
 
-export const baseURL = 'https://www.data.gouv.fr/api/1/';
-
 export const apiKeyHeader = 'X-API-KEY';
-export const apiKey = env('APP_DATAGOUV_KEY', 'NO_KEY');
+export const baseURL = env('APP_DATAGOUV_URL');
+export const apiKey = env('APP_DATAGOUV_KEY');
 
 export const datasetSlug = env(
   'APP_DATAGOUV_DATASET',

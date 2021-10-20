@@ -1,36 +1,40 @@
-import { TerritoryTripsInterface } from './../interfaces/StartTerritoryCountInterface';
-import path from 'path';
-import os from 'os';
-import fs from 'fs';
-import { v4 } from 'uuid';
-import AdmZip from 'adm-zip';
-import { get } from 'lodash';
-import csvStringify, { Stringifier } from 'csv-stringify';
-
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { Action } from '@ilos/core';
 import {
-  handler,
-  ContextType,
-  InitHookInterface,
   ConfigInterfaceResolver,
+  ContextType,
+  handler,
+  InitHookInterface,
   KernelInterfaceResolver,
 } from '@ilos/common';
+import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
-
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import AdmZip from 'adm-zip';
+import csvStringify, { Stringifier } from 'csv-stringify';
+import fs from 'fs';
+import { get } from 'lodash';
+import os from 'os';
+import path from 'path';
+import { v4 } from 'uuid';
+import { getDefaultEndDate } from '../helpers/getDefaultDates';
+import { getOpenDataExportName } from '../helpers/getOpenDataExportName';
+import { normalize } from '../helpers/normalizeExportDataHelper';
+import { ExportTripInterface } from '../interfaces';
+import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import {
-  signature,
+  FormatInterface,
   handlerConfig,
   ParamsInterface,
-  ResultInterface,
   QueryInterface,
-  FormatInterface,
+  ResultInterface,
+  signature,
 } from '../shared/trip/buildExport.contract';
+
+import {
+  ParamsInterface as PublishOpenDataParamsInterface,
+  signature as publishOpenDataSignature,
+} from '../shared/trip/publishOpenData.contract';
 import { alias } from '../shared/trip/buildExport.schema';
-import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { ExportTripInterface } from '../interfaces';
-import { normalize } from '../helpers/normalizeExportDataHelper';
-import { getOpenDataExportName } from '../helpers/getOpenDataExportName';
+import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
 
 export interface FlattenTripInterface extends ExportTripInterface<string> {
   journey_start_date: string;
@@ -203,42 +207,36 @@ export class BuildExportAction extends Action implements InitHookInterface {
   };
 
   async init(): Promise<void> {
-    /**
-     * Activate open data export in production only
-     */
-    if (this.config.get('app.environment') === 'production') {
-      await this.kernel.notify<ParamsInterface>(
-        signature,
-        {
-          type: 'opendata',
+    await this.kernel.notify<ParamsInterface>(
+      signature,
+      {
+        type: 'opendata',
+      },
+      {
+        call: {
+          user: {},
         },
-        {
-          call: {
-            user: {},
-          },
-          channel: {
-            service: handlerConfig.service,
-            metadata: {
-              repeat: {
-                cron: '0 5 6 * *',
-              },
-              jobId: 'trip.open_data_export',
+        channel: {
+          service: handlerConfig.service,
+          metadata: {
+            repeat: {
+              cron: '0 5 6 * *',
             },
+            jobId: 'trip.open_data_export',
           },
         },
-      );
-    }
+      },
+    );
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const type = get(params, 'type', 'opendata');
+    const type = get(params, 'type', 'export');
 
     const queryParam = this.castQueryParams(type, params);
+    let excluded_territories: TerritoryTripsInterface[];
     if (type === 'opendata') {
       // eslint-disable-next-line max-len
-      const excluded_territories: TerritoryTripsInterface[] = await this.tripRepository.getOpenDataExcludedTerritories(
-        queryParam,
-      );
+      excluded_territories = await this.tripRepository.getOpenDataExcludedTerritories(queryParam);
       if (excluded_territories.length !== 0) {
         queryParam.excluded_start_territory_id = excluded_territories
           .filter((t) => t.start_territory_id)
@@ -278,6 +276,25 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
     const fileKey = await this.fileProvider.upload(BucketName.Export, zippath, zipname);
 
+    if (type == 'opendata') {
+      await this.kernel.notify<PublishOpenDataParamsInterface>(
+        publishOpenDataSignature,
+        {
+          publish: true,
+          date: queryParam.date.end,
+        },
+        {
+          call: {
+            user: {},
+            metadata: { queryParam: queryParam, excludedTerritories: excluded_territories },
+          },
+          channel: {
+            service: handlerConfig.service,
+          },
+        },
+      );
+    }
+
     return fileKey;
   }
 
@@ -293,9 +310,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
       return params.query;
     }
 
-    const endDate = new Date();
-    endDate.setDate(1);
-    endDate.setHours(0, 0, 0, -1);
+    const endDate = getDefaultEndDate();
     const startDate = new Date(endDate.valueOf());
     startDate.setDate(1);
     startDate.setHours(0, 0, 0, 0);
@@ -315,7 +330,9 @@ export class BuildExportAction extends Action implements InitHookInterface {
     return {
       tz: params.format?.tz ?? 'Europe/Paris',
       filename:
-        params.format?.filename ?? type === 'opendata' ? getOpenDataExportName('csv') : `covoiturage-${v4()}.csv`,
+        params.format?.filename ?? type === 'opendata'
+          ? getOpenDataExportName('csv', params.query.date.end)
+          : `covoiturage-${v4()}.csv`,
     };
   }
 

@@ -93,7 +93,7 @@ La nouvelle version sera en Kubernetes. Voir [l'infrastructure](/api/infra.html)
 Les environnements sont :
 
 - Production : [https://api.covoiturage.beta.gouv.fr](https://api.covoiturage.beta.gouv.fr)
-- Pré-production : [https://api-staging.covoiturage.beta.gouv.fr](https://api-staging.covoiturage.beta.gouv.fr)
+- Démo : [https://api.demo.covoiturage.beta.gouv.fr](https://api.demo.covoiturage.beta.gouv.fr)
 - Développement : [https://api.dev.covoiturage.beta.gouv.fr](https://api.dev.covoiturage.beta.gouv.fr)
 
 ## Services externes
@@ -107,13 +107,14 @@ API publiques de l'Etat
 
 Services tierces
 
-- [Mailjet](https://www.mailjet.com/)
+- [Sendinblue](https://www.sendinblue.com/)
 - [OSRM](http://project-osrm.org/) _(auto hébergé)_
 - [Komoot Photon](https://photon.komoot.io/)
 - [Sentry](https://sentry.io/) _(auto hébergé)_
 - [Scaleway](https://www.scaleway.com/)
 - [Alwaysdata](https://www.alwaysdata.com/fr/)
 - [Scalingo](https://scalingo.com/)
+- [OpenStreetMap](https://www.openstreetmap.org/)
 
 ## Licences
 

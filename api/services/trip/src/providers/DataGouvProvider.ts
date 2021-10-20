@@ -15,6 +15,13 @@ export class DataGouvProvider implements DataGouvProviderInterface {
         [this.config.get('datagouv.apiKeyHeader')]: this.config.get('datagouv.apiKey'),
       },
     });
+    this.client.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        console.error(`Error while calling data gouv API, status ${error.response.status}`);
+        throw error;
+      },
+    );
   }
 
   async getDataset(slug: string): Promise<Dataset> {

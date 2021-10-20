@@ -1,9 +1,11 @@
-export function getOpenDataExportName(extension: string, inputDate?: Date): string {
-  const defaultDate = new Date();
-  defaultDate.setDate(1);
-  defaultDate.setHours(0, 0, 0, -1);
+import { getDefaultEndDate } from './getDefaultDates';
 
-  const date = inputDate ?? defaultDate;
+export function getOpenDataExportName(extension: string, inputDate?: Date): string {
+  const date = inputDate ?? getDefaultEndDate();
+  return `${getYearMonthString(date)}.${extension}`;
+}
+
+export function getYearMonthString(date: Date): string {
   const [year, month] = date.toJSON().split('T')[0].split('-');
-  return `${year}-${month}.${extension}`;
+  return `${year}-${month}`;
 }
