@@ -35,6 +35,7 @@ import {
 } from '../shared/trip/publishOpenData.contract';
 import { alias } from '../shared/trip/buildExport.schema';
 import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
+import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 
 export interface FlattenTripInterface extends ExportTripInterface<string> {
   journey_start_date: string;
@@ -246,7 +247,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
           .map((t) => t.end_territory_id);
       }
     }
-    const cursor = await this.tripRepository.searchWithCursor(queryParam, type);
+    const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParam, type);
 
     let count = 0;
 
@@ -259,15 +260,17 @@ export class BuildExportAction extends Action implements InitHookInterface {
     const stringifier = await this.getStringifier(fd, type);
 
     do {
-      const results = await cursor(10);
+      const results = await cursor.read(10);
       count = results.length;
       for (const line of results) {
         stringifier.write(normalize(line, tz));
       }
     } while (count !== 0);
 
+    cursor.release();
     stringifier.end();
     await fd.close();
+    console.debug(`Finished export ${filepath}`);
 
     // ZIP the file
     const zip = new AdmZip();

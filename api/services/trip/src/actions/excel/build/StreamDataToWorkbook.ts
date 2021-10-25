@@ -2,6 +2,7 @@ import { provider } from '@ilos/common';
 import { stream, Worksheet } from 'exceljs';
 import { normalize } from '../../../helpers/normalizeExportDataHelper';
 import { ExportTripInterface } from '../../../interfaces/ExportTripInterface';
+import { PgCursorHandler } from '../../../interfaces/PromisifiedPgCursor';
 import { BuildExportAction } from '../../BuildExportAction';
 
 @provider()
@@ -10,19 +11,20 @@ export class StreamDataToWorkBook {
 
   public readonly WORKSHEET_NAME = 'Données';
 
-  async call(cursor: (count: number) => Promise<ExportTripInterface[]>, filepath: string): Promise<void> {
+  async call(cursor: PgCursorHandler, filepath: string): Promise<void> {
     const workbookWriter: stream.xlsx.WorkbookWriter = new stream.xlsx.WorkbookWriter({
       filename: filepath,
     });
     this.writeColumnHeaders(workbookWriter);
     const b1 = new Date();
     console.debug(`[trip:buildExcelExport] writeTrips: ${(new Date().getTime() - b1.getTime()) / 1000}s`);
-    let results: ExportTripInterface[] = await cursor(10);
+    let results: ExportTripInterface[] = await cursor.read(10);
     while (results.length !== 0) {
       this.writeTrips(workbookWriter, results);
-      results = await cursor(10);
+      results = await cursor.read(10);
     }
     const b2 = new Date();
+    cursor.release();
     console.debug(`[trip:buildExcelExport] writeTrips: ${(new Date().getTime() - b2.getTime()) / 1000}s`);
     return await workbookWriter.commit();
   }

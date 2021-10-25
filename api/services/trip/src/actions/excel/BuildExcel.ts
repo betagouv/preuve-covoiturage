@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { ExportTripInterface } from '../../interfaces';
+import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { BuildFilepath } from './build/BuildFilepath';
 import { StreamDataToWorkBook } from './build/StreamDataToWorkbook';
@@ -19,7 +19,7 @@ export class BuildExcel {
     campaign_name: string,
     operator_id: number,
   ): Promise<string> {
-    const tripCursor: (count: number) => Promise<ExportTripInterface[]> = await this.getTripRepositoryCursor(
+    const tripCursor: PgCursorHandler = await this.getTripRepositoryCursor(
       campaign_id,
       start_date,
       end_date,
@@ -36,7 +36,7 @@ export class BuildExcel {
     start_date: Date,
     end_date: Date,
     operator_id: number,
-  ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
+  ): Promise<PgCursorHandler> {
     return this.tripRepositoryProvider.searchWithCursor(
       {
         date: {
