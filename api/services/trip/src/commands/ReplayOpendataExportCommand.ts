@@ -5,7 +5,7 @@ import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripR
 import {
   ParamsInterface as BuildExportParamInterface,
   ResultInterface as BuildExportResultInterface,
-  signature as buildExportSignature
+  signature as buildExportSignature,
 } from '../shared/trip/buildExport.contract';
 
 export interface StartEndDate {
