@@ -1,11 +1,11 @@
 import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@ilos/common';
-import moment from 'moment';
+import { add, isBefore } from 'date-fns';
 import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates';
 import { GetOldestTripDateRepositoryProvider } from '../providers/GetOldestTripRepositoryProvider';
 import {
   ParamsInterface as BuildExportParamInterface,
   ResultInterface as BuildExportResultInterface,
-  signature as buildExportSignature,
+  signature as buildExportSignature
 } from '../shared/trip/buildExport.contract';
 
 export interface StartEndDate {
@@ -52,15 +52,15 @@ export class ReplayOpendataExportCommand implements CommandInterface {
 
   private getMonthsIntervalsFrom(start: Date, end: Date): StartEndDate[] {
     const intervals: StartEndDate[] = [];
-    const momentCursor: moment.Moment = moment(start);
-    const momentEnd: moment.Moment = moment(endOfMonth(end));
+    const dateEnd: Date = endOfMonth(end);
+    let dateCursor: Date = new Date(start);
 
-    while (momentCursor.isBefore(momentEnd)) {
+    while (isBefore(dateCursor, dateEnd)) {
       intervals.push({
-        start: startOfMonth(new Date(momentCursor.toDate())),
-        end: endOfMonth(new Date(momentCursor.toDate())),
+        start: startOfMonth(dateCursor),
+        end: endOfMonth(dateCursor),
       });
-      momentCursor.add(1, 'month');
+      dateCursor = add(dateCursor, { months: 1 });
     }
     return intervals;
   }
