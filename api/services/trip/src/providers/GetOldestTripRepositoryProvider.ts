@@ -10,7 +10,7 @@ export class GetOldestTripDateRepositoryProvider {
   public async call(): Promise<Date> {
     const result = await this.connection
       .getClient()
-      .query('SELECT journey_start_datetime FROM trip.list ORDER BY journey_start_datetime ASC LIMIT 1');
+      .query(`SELECT journey_start_datetime FROM ${this.table} ORDER BY journey_start_datetime ASC LIMIT 1`);
     return result.rows[0].journey_start_datetime;
   }
 }
