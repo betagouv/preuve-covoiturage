@@ -7,7 +7,7 @@ import { Dataset, Resource } from '../interfaces';
 import { DataGouvProvider } from '../providers/DataGouvProvider';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/publishOpenData.contract';
 import { alias } from '../shared/trip/publishOpenData.schema';
-import { AppendMarkdownDescription } from './opendata/AppendMarkdownDescription';
+import { BuildResourceDescription } from './opendata/BuildResourceDescription';
 
 @handler({
   ...handlerConfig,
@@ -18,7 +18,7 @@ export class PublishOpenDataAction extends Action {
     private file: S3StorageProvider,
     private config: ConfigInterfaceResolver,
     private datagouv: DataGouvProvider,
-    private appendMarkdownDescription: AppendMarkdownDescription,
+    private buildResourceDescription: BuildResourceDescription,
   ) {
     super();
   }
@@ -29,19 +29,13 @@ export class PublishOpenDataAction extends Action {
       const filename = getOpenDataExportName('zip', date);
       const datasetSlug = this.config.get('datagouv.datasetSlug');
       const dataset = await this.datagouv.getDataset(datasetSlug);
-      const resource = await this.createResource(filename);
       if (publish) {
         await this.ensureExportIsReachable(filename);
+        const description: string = await this.buildResourceDescription.call(context.call.metadata);
+        const resource = await this.createResource(filename, description);
         await this.datagouv.publishResource(datasetSlug, resource);
-        const description: string = await this.appendMarkdownDescription.call(
-          context.call.metadata,
-          dataset.description,
-        );
-        dataset.description = description;
-        await this.datagouv.updateDataset(dataset);
       } else {
-        await this.datagouv.unpublishResource(datasetSlug, this.findRidFromTitle(dataset, resource.title));
-        await this.datagouv.updateDataset(dataset);
+        await this.datagouv.unpublishResource(datasetSlug, this.findRidFromTitle(dataset, filename));
       }
     } catch (e) {
       throw e;
@@ -71,14 +65,13 @@ export class PublishOpenDataAction extends Action {
     return resource.id;
   }
 
-  protected async createResource(filename: string): Promise<Resource> {
-    // TODO
-    // - add checksum
-    // - upload file vs public url ?
+  protected async createResource(filename: string, description: string): Promise<Resource> {
     return {
       filetype: 'remote',
       format: 'csv',
       title: filename,
+      mime: 'text/csv',
+      description: description,
       type: 'main',
       url: await this.file.getPublicUrl(BucketName.Public, filename),
     };

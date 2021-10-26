@@ -1,19 +1,14 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
-import { TerritoryTripsInterface } from '../../interfaces/TerritoryTripsInterface';
+import { OpenDataContextMetadata } from '../../interfaces/OpenDataContextMetadata';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { OpenDataTripSearchInterface } from '../../shared/trip/common/interfaces/TripSearchInterface';
 
-export interface OpenDataContextMetadata {
-  queryParam: OpenDataTripSearchInterface;
-  excludedTerritories: TerritoryTripsInterface[];
-}
-
 @provider()
-export class AppendMarkdownDescription {
+export class BuildResourceDescription {
   constructor(private tripRepository: TripRepositoryProvider) {}
 
-  async call(openDataContext: OpenDataContextMetadata, description = ''): Promise<string> {
+  async call(openDataContext: OpenDataContextMetadata): Promise<string> {
     const total_truncated: string = await (await this.tripRepository.searchCount(openDataContext.queryParam)).count;
     const start_deleted: number = openDataContext.excludedTerritories
       .filter((e) => e.start_territory_id)
@@ -24,17 +19,14 @@ export class AppendMarkdownDescription {
     const total: string = await this.getTotal(openDataContext.queryParam);
     const deleted = parseInt(total) - parseInt(total_truncated);
     const intersection = deleted - start_deleted - end_deleted;
-    return (
-      description +
-      this.build(
-        total,
-        total_truncated,
-        deleted,
-        start_deleted,
-        end_deleted,
-        Math.abs(intersection),
-        new Date(openDataContext.queryParam.date.start),
-      )
+    return this.build(
+      total,
+      total_truncated,
+      deleted,
+      start_deleted,
+      end_deleted,
+      Math.abs(intersection),
+      new Date(openDataContext.queryParam.date.start),
     );
   }
 
@@ -56,7 +48,7 @@ export class AppendMarkdownDescription {
     intersection: number,
     start_date: Date,
   ): string {
-    return `\n\n# Spécificités jeu de données ${start_date.toLocaleString('fr-FR', {
+    return `# Spécificités jeu de données ${start_date.toLocaleString('fr-FR', {
       month: 'long',
     })} ${start_date.getFullYear()}
 Les données concernent également les trajets dont le point de départ OU d'arrivée est situé en dehors du territoire français.

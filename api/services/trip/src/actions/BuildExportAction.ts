@@ -177,7 +177,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
   ];
 
   public static readonly extraFields = {
-    opendata: ['journey_distance', 'journey_duration'],
+    opendata: ['journey_distance', 'journey_duration', 'operator_class'],
     operator: [
       'journey_distance_anounced',
       'journey_distance_calculated',
@@ -232,7 +232,6 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const type = get(params, 'type', 'export');
-
     const queryParam = this.castQueryParams(type, params);
     let excluded_territories: TerritoryTripsInterface[];
     if (type === 'opendata') {
@@ -251,7 +250,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
     let count = 0;
 
-    const { filename, tz } = this.castFormat(type, params);
+    const { filename, tz } = this.castFormat(type, params, queryParam);
     const zipname = `${filename.replace('.csv', '')}.zip`;
 
     const filepath = path.join(os.tmpdir(), filename);
@@ -280,11 +279,11 @@ export class BuildExportAction extends Action implements InitHookInterface {
     const fileKey = await this.fileProvider.upload(BucketName.Export, zippath, zipname);
 
     if (type == 'opendata') {
-      await this.kernel.notify<PublishOpenDataParamsInterface>(
+      await this.kernel.call<PublishOpenDataParamsInterface>(
         publishOpenDataSignature,
         {
           publish: true,
-          date: queryParam.date.end,
+          date: (queryParam.date.end.toISOString() as unknown) as Date,
         },
         {
           call: {
@@ -329,12 +328,12 @@ export class BuildExportAction extends Action implements InitHookInterface {
     };
   }
 
-  protected castFormat(type: string, params: ParamsInterface): Required<FormatInterface> {
+  protected castFormat(type: string, params: ParamsInterface, queryParam: QueryInterface): Required<FormatInterface> {
     return {
       tz: params.format?.tz ?? 'Europe/Paris',
       filename:
         params.format?.filename ?? type === 'opendata'
-          ? getOpenDataExportName('csv', params.query.date.end)
+          ? getOpenDataExportName('csv', queryParam.date.end)
           : `covoiturage-${v4()}.csv`,
     };
   }
