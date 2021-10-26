@@ -10,9 +10,7 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 type OperatorId = number;
 
