@@ -58,7 +58,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
   }
 
   get loading(): boolean {
-    return this.tripService.isLoading;
+    return !this.tripService.loaded;
   }
 
   get loaded(): boolean {
