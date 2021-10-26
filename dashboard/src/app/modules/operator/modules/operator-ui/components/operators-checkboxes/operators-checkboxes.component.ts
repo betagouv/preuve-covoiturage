@@ -42,7 +42,6 @@ export class OperatorsCheckboxesComponent extends DestroyObservable implements O
   public form: FormGroup;
   public operators: Array<ListOperatorItem> = [];
   public result = new Subject<ResultInterface>();
-  public loading = true;
 
   private disabled = false;
 
@@ -57,6 +56,12 @@ export class OperatorsCheckboxesComponent extends DestroyObservable implements O
   ngOnInit(): void {
     // init the form
     this.form = this.formBuilder.group({ boxes: new FormArray([]), operator_count: 0 });
+
+    this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+      this.operators = operators;
+      this.operators.forEach(() => this.checkboxes.push(new FormControl(false)));
+      this.form.get('operator_count').setValue(this.operators.length);
+    });
 
     // bind checkboxes change
     this.form.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(100)).subscribe(({ boxes }) => {
@@ -74,19 +79,6 @@ export class OperatorsCheckboxesComponent extends DestroyObservable implements O
         list: res.filter((i) => !!i),
         count: boxes.length,
       });
-    });
-
-    /**
-     * - Load the current territory_id (null if reg or operator) and fetch its allowed operators list.
-     * - Load whole ops list and filter with list of allowed ops
-     * - keep { _id, name } for display purpose
-     */
-
-    this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
-      this.operators = operators;
-      this.operators.forEach(() => this.checkboxes.push(new FormControl(false)));
-      this.form.get('operator_count').setValue(this.operators.length);
-      this.loading = false;
     });
   }
 

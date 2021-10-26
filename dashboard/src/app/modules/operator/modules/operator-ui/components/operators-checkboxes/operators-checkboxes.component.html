@@ -1,5 +1,5 @@
 <div class="app-operators-checkboxes">
-  <div *ngIf="loading" class="loading-message">
+  <div *ngIf="!operators.length" class="loading-message">
     <mat-spinner [diameter]="25"></mat-spinner>
     <em>Chargement de la liste des opérateurs...</em>
   </div>
