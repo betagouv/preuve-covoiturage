@@ -16,7 +16,14 @@ const permissions = {
   'honor.stats': ['common'],
   'monitoring.journeysstats': ['registry.admin'],
   'operator.create': ['registry.admin'],
-  'operator.list': ['common'],
+  'operator.list': [
+    'operator.user',
+    'operator.admin',
+    'territory.user',
+    'territory.admin',
+    'registry.user',
+    'registry.admin',
+  ],
   'operator.find': ['common', 'operator.user', 'operator.admin', 'registry.admin'],
   'operator.delete': ['registry.admin'],
   'operator.update': ['operator.admin', 'registry.admin'],
@@ -45,15 +52,6 @@ const permissions = {
   'territory.update': ['territory.admin', 'registry.admin'],
   'territory.list': ['common'],
   'territory.read': ['common', 'territory.user', 'territory.admin', 'registry.user', 'registry.admin'],
-  'territory.listOperator': [
-    'operator.user',
-    'operator.admin',
-    'territory.user',
-    'territory.demo',
-    'territory.admin',
-    'registry.user',
-    'registry.admin',
-  ],
   'territory.patchOperator': ['operator.admin'],
   'territory.patchContacts': ['territory.admin', 'registry.admin'],
   'trip.stats': [
@@ -117,6 +115,8 @@ function dispatchPermissionsFromMatrix(permissionsObject) {
     'registry.admin': [],
   };
 
+  console.debug(`permissionsObject -> ${permissionsObject}`);
+
   for (const permissionName of Reflect.ownKeys(permissionsObject)) {
     const permissionRoles = permissionsObject[permissionName];
 
@@ -126,6 +126,7 @@ function dispatchPermissionsFromMatrix(permissionsObject) {
     }
   }
   // prefix common
+  console.debug(`permissionsByGroup -> ${permissionsByGroup}`);
   return permissionsByGroup;
 }
 
