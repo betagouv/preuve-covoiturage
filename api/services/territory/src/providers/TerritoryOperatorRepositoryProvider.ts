@@ -29,21 +29,6 @@ export class TerritoryOperatorRepositoryProvider implements TerritoryOperatorRep
     return result.rows.map((item) => item.territory_id);
   }
 
-  async findByTerritory(id: number): Promise<number[]> {
-    const query = {
-      text: `SELECT operator_id FROM ${this.table} WHERE territory_id = $1`,
-      values: [id],
-    };
-
-    const result = await this.connection.getClient().query(query);
-
-    if (result.rowCount === 0) {
-      return [];
-    }
-
-    return result.rows.map((item) => item.operator_id);
-  }
-
   async updateByOperator(id: number, list: number[]): Promise<void> {
     const client = await this.connection.getClient().connect();
     await client.query('BEGIN');
