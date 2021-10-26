@@ -10,7 +10,6 @@ import { FindTerritoryByInseesAction } from './actions/FindTerritoryByInseesActi
 import { GetTerritoryParentChildrenAction } from './actions/GetTerritoryParentChildrenAction';
 import { GetTerritoryRelationUIStatusAction } from './actions/GetTerritoryRelationUIStatusAction';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
-import { ListTerritoryOperatorAction } from './actions/ListTerritoryOperatorAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
 import { TreeTerritoryAction } from './actions/TreeTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
