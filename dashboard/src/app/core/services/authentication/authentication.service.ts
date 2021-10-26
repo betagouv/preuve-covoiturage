@@ -73,6 +73,10 @@ export class AuthenticationService {
     return this.hasRole([Roles.RegistryAdmin, Roles.RegistryUser], user);
   }
 
+  private static isTerritoryDemo(user?: User): boolean {
+    return this.hasRole([Roles.TerritoryDemo], user);
+  }
+
   public static isOperator(user?: User): boolean {
     return this.hasRole([Roles.OperatorAdmin, Roles.OperatorUser], user);
   }
@@ -101,6 +105,10 @@ export class AuthenticationService {
 
   public isOperator(): boolean {
     return this.user ? AuthenticationService.isOperator(this.user) : false;
+  }
+
+  public isTerritoryDemo(): boolean {
+    return this.user ? AuthenticationService.isTerritoryDemo(this.user) : false;
   }
 
   public isTerritory(): boolean {
