@@ -286,9 +286,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   }
 
   public async searchWithCursor(
-    params: (TripSearchInterface | OpenDataTripSearchInterface) & {
-      territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
-    },
+    params: TripSearchInterface | OpenDataTripSearchInterface,
     type = 'opendata',
   ): Promise<PgCursorHandler> {
     // all
@@ -342,21 +340,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     ];
 
     let selectedFields = [...baseFields];
-    const { territory_authorized_operator_id, ...cleanParams } = params;
     const values = [];
     switch (type) {
       case 'territory':
-        if (territory_authorized_operator_id && territory_authorized_operator_id.length) {
-          selectedFields = [
-            ...selectedFields,
-            "(case when operator_id = ANY($#::int[]) then operator else 'NC' end) as operator",
-            ...financialFields,
-          ];
-          values.push(territory_authorized_operator_id);
-        } else {
-          selectedFields = [...selectedFields, "'NC' as operator", ...financialFields];
-        }
-        break;
       case 'registry':
         selectedFields = [...selectedFields, 'operator', ...financialFields];
         break;
@@ -365,7 +351,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         break;
     }
 
-    const where = await this.buildWhereClauses(cleanParams);
+    const where = await this.buildWhereClauses(params);
 
     const queryValues = [...values, ...where.values];
     const queryText = this.numberPlaceholders(`

@@ -62,7 +62,6 @@ export class ExportAction extends Action {
         email,
       },
       query: {
-        territory_authorized_operator_id: get(context, 'call.user.authorizedOperators', []) || [],
         date: {
           start: start.toISOString(),
           end: end.toISOString(),
