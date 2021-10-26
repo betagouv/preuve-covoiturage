@@ -736,11 +736,6 @@ export class HttpTransport implements TransportInterface {
       let dt = [];
 
       try {
-        const operatorList = await this.kernel.handle(
-          createRPCPayload('territory:listOperator', { territory_id: user.territory_id }, user),
-        );
-        user.authorizedOperators = get(operatorList, 'result', []);
-
         const descendantTerritories = await this.kernel.handle(
           createRPCPayload('territory:getParentChildren', { _id: user.territory_id }, user),
         );
