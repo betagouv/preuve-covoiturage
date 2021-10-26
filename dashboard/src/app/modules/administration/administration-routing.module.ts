@@ -62,6 +62,7 @@ const routes: Routes = [
         redirectTo: 'profile',
         pathMatch: 'full',
       },
+      { path: '**', redirectTo: '/404' },
     ],
   },
 ];
