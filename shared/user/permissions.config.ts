@@ -45,15 +45,6 @@ const permissions = {
   'territory.update': ['territory.admin', 'registry.admin'],
   'territory.list': ['common'],
   'territory.read': ['common', 'territory.user', 'territory.admin', 'registry.user', 'registry.admin'],
-  'territory.listOperator': [
-    'operator.user',
-    'operator.admin',
-    'territory.user',
-    'territory.demo',
-    'territory.admin',
-    'registry.user',
-    'registry.admin',
-  ],
   'territory.patchOperator': ['operator.admin'],
   'territory.patchContacts': ['territory.admin', 'registry.admin'],
   'trip.stats': [

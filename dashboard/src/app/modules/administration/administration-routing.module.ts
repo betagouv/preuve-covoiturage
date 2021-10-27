@@ -7,8 +7,6 @@ import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
 import { AllTerritoriesComponent } from '~/modules/administration/pages/all-territories/all-territories.component';
 import { AllOperatorsComponent } from '~/modules/administration/pages/all-operators/all-operators.component';
-// eslint-disable-next-line
-import { OperatorVisibilityComponent } from '~/modules/administration/pages/operator-visibility/operator-visibility.component';
 
 import { OperatorComponent } from './pages/operator/operator.component';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
@@ -64,11 +62,7 @@ const routes: Routes = [
         redirectTo: 'profile',
         pathMatch: 'full',
       },
-      {
-        path: 'visibility',
-        component: OperatorVisibilityComponent,
-        data: { roles: [Roles.OperatorAdmin] },
-      },
+      { path: '**', redirectTo: '/404' },
     ],
   },
 ];

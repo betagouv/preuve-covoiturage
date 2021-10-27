@@ -1,33 +1,26 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
-
-import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { Territory, TerritoryInsee } from '~/core/entities/territory/territory';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
+import { Territory, TerritoryInsee } from '~/core/entities/territory/territory';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-
-import {
-  ParamsInterface as OTVisibityParams,
-  ResultInterface as OTVisibityResults,
-} from '../../../../../../shared/territory/listOperator.contract';
-import { QueryParamsInterface } from '../../../../../../shared/territory/find.contract';
-import {
-  SortEnum,
-  allBasicFieldEnum,
-  TerritoryListFilter,
-} from '../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
-
+import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
+import { GetListActions } from '~/core/services/api/json-rpc.getlist';
 // eslint-disable-next-line
 import { TerritoryParentChildrenInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryChildrenInterface';
+import {
+  allBasicFieldEnum,
+  SortEnum,
+  TerritoryListFilter,
+} from '../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
+import { QueryParamsInterface } from '../../../../../../shared/territory/find.contract';
 // eslint-disable-next-line
 import { ResultInterface as UiStatusRelationDetailsList } from '../../../../../../shared/territory/relationUiStatus.contract';
-import { GetListActions } from '~/core/services/api/json-rpc.getlist';
-import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 
 @Injectable({
   providedIn: 'root',
@@ -109,13 +102,5 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
   getActivableList(): Observable<Territory[]> {
     const jsonRPCParam = this.paramGet({ activable: true });
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
-  }
-
-  getOperatorVisibility(territoryId: number): Observable<OTVisibityResults> {
-    const jsonRPCParam = new JsonRPCParam<OTVisibityParams>(`${this.method}:listOperator`, {
-      territory_id: territoryId,
-    });
-
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data as OTVisibityResults));
   }
 }

@@ -47,11 +47,6 @@ export class AdministrationLayoutComponent {
       show: () => this.auth.hasRole(Roles.OperatorAdmin),
     },
     {
-      path: '/admin/visibility',
-      label: 'Visibilité',
-      show: () => this.auth.hasRole(Roles.OperatorAdmin),
-    },
-    {
       path: '/admin/certificates',
       label: 'Attestations',
       show: () => this.auth.hasRole([Roles.RegistryAdmin, Roles.OperatorAdmin]),

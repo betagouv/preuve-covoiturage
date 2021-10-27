@@ -77,10 +77,9 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
   }
 
   getOperator(trip: LightTripInterface): string {
-    if (trip.operator_id === null) return 'Non visible';
-    if (!this.operators) return '';
+    if (trip.operator_id === null || !this.operators) return '-';
     const operator = this.operators.find((operatorF) => operatorF._id === trip.operator_id);
-    return operator ? operator.name : '';
+    return operator ? operator.name : '-';
   }
 
   getTotalIncentives(trip: LightTripInterface): number | string {

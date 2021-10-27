@@ -48,9 +48,3 @@ test.serial.skip('should list by operator', async (t) => {
     t.true(resultFromRepository.indexOf(territoryId) > -1);
   }
 });
-
-test.serial.skip('should list by territory', async (t) => {
-  const resultFromRepository = await t.context.repository.findByTerritory(t.context.territoryIds[0]);
-  t.true(Array.isArray(resultFromRepository));
-  t.true(resultFromRepository.indexOf(t.context.operatorId) > -1);
-});

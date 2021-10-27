@@ -44,7 +44,6 @@ export class BuildExcel {
           end: end_date,
         },
         campaign_id: [campaign_id],
-        territory_authorized_operator_id: [operator_id],
         operator_id: [operator_id],
       },
       'territory',

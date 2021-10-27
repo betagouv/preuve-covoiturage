@@ -65,7 +65,6 @@ test('BuildExcel: should generate excel filepath', async (t) => {
       date: { start: start_date, end: end_date },
       campaign_id: [campaign_id],
       operator_id: [operator_id],
-      territory_authorized_operator_id: [operator_id],
     },
     'territory',
   );

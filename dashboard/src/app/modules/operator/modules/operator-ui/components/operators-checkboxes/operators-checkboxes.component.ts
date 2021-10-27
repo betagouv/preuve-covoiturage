@@ -1,6 +1,3 @@
-import { of, Subject } from 'rxjs';
-import { takeUntil, filter, debounceTime, switchMap, map } from 'rxjs/operators';
-
 import { Component, forwardRef, OnInit } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -10,11 +7,10 @@ import {
   FormGroup,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
-
-import { CommonDataService } from '~/core/services/common-data.service';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CommonDataService } from '~/core/services/common-data.service';
 
 type OperatorId = number;
 
@@ -44,7 +40,6 @@ export class OperatorsCheckboxesComponent extends DestroyObservable implements O
   public form: FormGroup;
   public operators: Array<ListOperatorItem> = [];
   public result = new Subject<ResultInterface>();
-  public loading = true;
 
   private disabled = false;
 
@@ -52,18 +47,19 @@ export class OperatorsCheckboxesComponent extends DestroyObservable implements O
     return this.form.controls.boxes as FormArray;
   }
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private authService: AuthenticationService,
-    private territoryApiService: TerritoryApiService,
-    private commonDataService: CommonDataService,
-  ) {
+  constructor(private formBuilder: FormBuilder, private commonDataService: CommonDataService) {
     super();
   }
 
   ngOnInit(): void {
     // init the form
     this.form = this.formBuilder.group({ boxes: new FormArray([]), operator_count: 0 });
+
+    this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+      this.operators = operators;
+      this.operators.forEach(() => this.checkboxes.push(new FormControl(false)));
+      this.form.get('operator_count').setValue(this.operators.length);
+    });
 
     // bind checkboxes change
     this.form.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(100)).subscribe(({ boxes }) => {
@@ -82,40 +78,6 @@ export class OperatorsCheckboxesComponent extends DestroyObservable implements O
         count: boxes.length,
       });
     });
-
-    /**
-     * - Load the current territory_id (null if reg or operator) and fetch its allowed operators list.
-     * - Load whole ops list and filter with list of allowed ops
-     * - keep { _id, name } for display purpose
-     */
-    this.loading = true;
-    this.authService.user$
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap((user) => {
-          return user && user.territory_id
-            ? this.territoryApiService.getOperatorVisibility(user.territory_id)
-            : of(null);
-        }),
-        switchMap((allowedOperators) =>
-          this.commonDataService.operators$.pipe(
-            takeUntil(this.destroy$),
-            filter((list) => list && list.length > 0),
-            map((list) =>
-              (allowedOperators
-                ? list.filter((item) => allowedOperators.indexOf(item._id) > -1)
-                : list
-              ).map(({ _id, name }) => ({ _id, name })),
-            ),
-          ),
-        ),
-      )
-      .subscribe((operators) => {
-        this.operators = operators;
-        this.operators.forEach(() => this.checkboxes.push(new FormControl(false)));
-        this.form.get('operator_count').setValue(this.operators.length);
-        this.loading = false;
-      });
   }
 
   // select all checkboxes
