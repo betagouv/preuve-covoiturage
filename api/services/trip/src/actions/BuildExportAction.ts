@@ -3,20 +3,15 @@ import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import AdmZip from 'adm-zip';
-import csvStringify, { Stringifier } from 'csv-stringify';
-import fs from 'fs';
 import { get } from 'lodash';
 import os from 'os';
 import path from 'path';
-import { v4 } from 'uuid';
 import { getDefaultEndDate } from '../helpers/getDefaultDates';
-import { getOpenDataExportName } from '../helpers/getOpenDataExportName';
 import { ExportTripInterface } from '../interfaces';
 import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import {
-  FormatInterface,
   handlerConfig,
   ParamsInterface,
   QueryInterface,
@@ -311,11 +306,12 @@ export class BuildExportAction extends Action implements InitHookInterface {
     params: ParamsInterface,
   ): QueryInterface & {
     status?: string;
-    excluded_end_territory_id?: number[];
-    excluded_start_territory_id?: number[];
   } {
-    if (type !== 'opendata') {
-      return params.query;
+    if (!this.isOpendata(type)) {
+      return {
+        ...params.query,
+        status: 'ok',
+      };
     }
 
     const endDate = getDefaultEndDate();
