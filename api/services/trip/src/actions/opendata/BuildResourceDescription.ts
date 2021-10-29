@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { provider } from '@ilos/common';
 import { OpenDataContextMetadata } from '../../interfaces/OpenDataContextMetadata';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
