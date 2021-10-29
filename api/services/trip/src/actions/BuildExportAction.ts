@@ -11,14 +11,9 @@ import { ExportTripInterface } from '../interfaces';
 import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import {
-  handlerConfig,
-  ParamsInterface,
-  QueryInterface,
-  ResultInterface,
-  signature,
-} from '../shared/trip/buildExport.contract';
+import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../shared/trip/buildExport.contract';
 import { alias } from '../shared/trip/buildExport.schema';
+import { TripSearchInterface } from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
   ParamsInterface as PublishOpenDataParamsInterface,
   signature as publishOpenDataSignature,
@@ -220,7 +215,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const type = get(params, 'type', 'export');
-    const queryParam = this.castQueryParams(params);
+    const queryParam: TripSearchInterface = this.addDefaultQueryParams(params);
     let excluded_territories: TerritoryTripsInterface[];
 
     if (this.isOpendata(type)) {
@@ -255,11 +250,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
   private addExcludedTerritoriesToQueryParams(
     excluded_territories: TerritoryTripsInterface[],
-    queryParam: QueryInterface & {
-      status?: string;
-      excluded_end_territory_id?: number[];
-      excluded_start_territory_id?: number[];
-    },
+    queryParam: TripSearchInterface,
   ) {
     if (excluded_territories.length !== 0) {
       queryParam.excluded_start_territory_id = excluded_territories
@@ -276,11 +267,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
   }
 
   private async publishOpendataExport(
-    queryParam: QueryInterface & {
-      status?: string;
-      excluded_end_territory_id?: number[];
-      excluded_start_territory_id?: number[];
-    },
+    queryParam: TripSearchInterface,
     excluded_territories: TerritoryTripsInterface[],
   ) {
     await this.kernel.call<PublishOpenDataParamsInterface>(
@@ -301,11 +288,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     );
   }
 
-  private castQueryParams(
-    params: ParamsInterface,
-  ): QueryInterface & {
-    status?: string;
-  } {
+  private addDefaultQueryParams(params: ParamsInterface): TripSearchInterface {
     const endDate = getDefaultEndDate();
     const startDate = new Date(endDate.valueOf());
     startDate.setDate(1);

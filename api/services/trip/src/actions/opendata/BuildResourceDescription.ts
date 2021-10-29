@@ -1,8 +1,7 @@
-/* eslint-disable max-len */
 import { provider } from '@ilos/common';
 import { OpenDataContextMetadata } from '../../interfaces/OpenDataContextMetadata';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { OpenDataTripSearchInterface } from '../../shared/trip/common/interfaces/TripSearchInterface';
+import { TripSearchInterface } from '../../shared/trip/common/interfaces/TripSearchInterface';
 
 @provider()
 export class BuildResourceDescription {
@@ -30,8 +29,8 @@ export class BuildResourceDescription {
     );
   }
 
-  private async getTotal(queryParam: OpenDataTripSearchInterface): Promise<string> {
-    const queryParamCopy: OpenDataTripSearchInterface = {
+  private async getTotal(queryParam: TripSearchInterface): Promise<string> {
+    const queryParamCopy: TripSearchInterface = {
       ...queryParam,
     };
     delete queryParamCopy.excluded_end_territory_id;
