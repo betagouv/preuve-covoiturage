@@ -248,16 +248,14 @@ export class BuildExportAction extends Action implements InitHookInterface {
     }
     const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParam, type);
 
-    let count = 0;
-
+    // CSV file
     const { filename, tz } = this.castFormat(type, params, queryParam);
-    const zipname = `${filename.replace('.csv', '')}.zip`;
-
     const filepath = path.join(os.tmpdir(), filename);
-    const zippath = path.join(os.tmpdir(), zipname);
     const fd = await fs.promises.open(filepath, 'a');
-    const stringifier = await this.getStringifier(fd, type);
 
+    // Write to file
+    const stringifier = await this.getStringifier(fd, type);
+    let count = 0;
     do {
       const results = await cursor.read(10);
       count = results.length;
@@ -272,6 +270,8 @@ export class BuildExportAction extends Action implements InitHookInterface {
     console.debug(`Finished export ${filepath}`);
 
     // ZIP the file
+    const zipname = `${filename.replace('.csv', '')}.zip`;
+    const zippath = path.join(os.tmpdir(), zipname);
     const zip = new AdmZip();
     zip.addLocalFile(filepath);
     zip.writeZip(zippath);
