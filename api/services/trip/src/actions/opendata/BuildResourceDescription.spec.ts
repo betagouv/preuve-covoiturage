@@ -1,10 +1,10 @@
-import { TripSearchInterface } from './../../../../../../shared/trip/common/interfaces/TripSearchInterface';
 /* eslint-disable max-len */
 import anyTest, { TestInterface } from 'ava';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import sinon, { SinonStub } from 'sinon';
 import { OpenDataContextMetadata } from '../../interfaces/OpenDataContextMetadata';
 import { BuildResourceDescription } from './BuildResourceDescription';
+import { TripSearchInterface } from '../../shared/trip/common/interfaces/TripSearchInterface';
 
 interface Context {
   // Injected tokens
