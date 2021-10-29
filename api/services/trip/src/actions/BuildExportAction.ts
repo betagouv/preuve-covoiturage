@@ -220,7 +220,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const type = get(params, 'type', 'export');
-    const queryParam = this.castQueryParams(type, params);
+    const queryParam = this.castQueryParams(params);
     let excluded_territories: TerritoryTripsInterface[];
 
     if (this.isOpendata(type)) {
@@ -302,18 +302,10 @@ export class BuildExportAction extends Action implements InitHookInterface {
   }
 
   private castQueryParams(
-    type: string,
     params: ParamsInterface,
   ): QueryInterface & {
     status?: string;
   } {
-    if (!this.isOpendata(type)) {
-      return {
-        ...params.query,
-        status: 'ok',
-      };
-    }
-
     const endDate = getDefaultEndDate();
     const startDate = new Date(endDate.valueOf());
     startDate.setDate(1);
