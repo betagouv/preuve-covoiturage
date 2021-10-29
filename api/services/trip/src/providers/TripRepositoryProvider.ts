@@ -15,7 +15,6 @@ import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import {
-  OpenDataTripSearchInterface,
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
@@ -34,7 +33,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   constructor(public connection: PostgresConnection) {}
 
   protected async buildWhereClauses(
-    filters: Partial<TripSearchInterface | OpenDataTripSearchInterface>,
+    filters: Partial<TripSearchInterface>,
   ): Promise<{
     text: string;
     values: any[];
@@ -181,7 +180,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
   }
 
-  public async getOpenDataExcludedTerritories(params: Partial<TripStatInterface>): Promise<TerritoryTripsInterface[]> {
+  public async getOpenDataExcludedTerritories(params: TripSearchInterface): Promise<TerritoryTripsInterface[]> {
     const where = await this.buildWhereClauses(params);
 
     const excluded_start_sql_text = this.numberPlaceholders(`
@@ -285,10 +284,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return result.rowCount ? result.rows : [];
   }
 
-  public async searchWithCursor(
-    params: TripSearchInterface | OpenDataTripSearchInterface,
-    type = 'opendata',
-  ): Promise<PgCursorHandler> {
+  public async searchWithCursor(params: TripSearchInterface, type = 'opendata'): Promise<PgCursorHandler> {
     // all
     const baseFields = [
       'journey_id',

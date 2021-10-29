@@ -119,7 +119,7 @@ test('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaig
 
   // Act
   await t.throwsAsync(async () => {
-    await t.context.checkCampaign.call(faker.random.number(), null, null);
+    await t.context.checkCampaign.call(faker.datatype.number(), null, null);
   });
 
   // Assert
@@ -132,7 +132,7 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if draf
 
   // Act
   await t.throwsAsync(async () => {
-    await t.context.checkCampaign.call(faker.random.number(), null, null);
+    await t.context.checkCampaign.call(faker.datatype.number(), null, null);
   });
 
   // Assert
@@ -158,7 +158,7 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign date
 
   // Act
   await t.throwsAsync(async () => {
-    await t.context.checkCampaign.call(faker.random.number(), todayMinus3Years, todayMinus2Years);
+    await t.context.checkCampaign.call(faker.datatype.number(), todayMinus3Years, todayMinus2Years);
   });
 
   // Assert
