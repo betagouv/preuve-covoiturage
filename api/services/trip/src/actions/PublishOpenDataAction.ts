@@ -26,7 +26,7 @@ export class PublishOpenDataAction extends Action {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
       const { date, publish } = params;
-      const filename = getOpenDataExportName('zip', date);
+      const filename = getOpenDataExportName('csv', date);
       const datasetSlug = this.config.get('datagouv.datasetSlug');
       const dataset = await this.datagouv.getDataset(datasetSlug);
       if (publish) {
