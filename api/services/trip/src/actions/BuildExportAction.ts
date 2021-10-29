@@ -228,23 +228,16 @@ export class BuildExportAction extends Action implements InitHookInterface {
     const queryParam = this.castQueryParams(type, params);
     let excluded_territories: TerritoryTripsInterface[];
 
-    if (type === 'opendata') {
-      // eslint-disable-next-line max-len
+    if (this.isOpendata(type)) {
       excluded_territories = await this.tripRepository.getOpenDataExcludedTerritories(queryParam);
-      if (excluded_territories.length !== 0) {
-        queryParam.excluded_start_territory_id = excluded_territories
-          .filter((t) => t.start_territory_id)
-          .map((t) => t.start_territory_id);
-        queryParam.excluded_end_territory_id = excluded_territories
-          .filter((t) => t.end_territory_id)
-          .map((t) => t.end_territory_id);
-      }
+      this.addExcludedTerritoriesToQueryParams(excluded_territories, queryParam);
     }
+
     const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParam, type);
     let filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParam.date.end);
     let filename: string = path.parse(filepath).base;
 
-    if (type !== 'opendata') {
+    if (!this.isOpendata(type)) {
       // ZIP the file
       const zipname = `${filename.replace('.csv', '')}.zip`;
       const zippath = path.join(os.tmpdir(), zipname);
@@ -258,11 +251,33 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
     const fileKey = await this.fileProvider.upload(BucketName.Export, filepath, filename);
 
-    if (type === 'opendata') {
+    if (this.isOpendata(type)) {
       await this.publishOpendataExport(queryParam, excluded_territories);
     }
 
     return fileKey;
+  }
+
+  private addExcludedTerritoriesToQueryParams(
+    excluded_territories: TerritoryTripsInterface[],
+    queryParam: QueryInterface & {
+      status?: string;
+      excluded_end_territory_id?: number[];
+      excluded_start_territory_id?: number[];
+    },
+  ) {
+    if (excluded_territories.length !== 0) {
+      queryParam.excluded_start_territory_id = excluded_territories
+        .filter((t) => t.start_territory_id)
+        .map((t) => t.start_territory_id);
+      queryParam.excluded_end_territory_id = excluded_territories
+        .filter((t) => t.end_territory_id)
+        .map((t) => t.end_territory_id);
+    }
+  }
+
+  private isOpendata(type: any): boolean {
+    return type === 'opendata';
   }
 
   private async publishOpendataExport(
