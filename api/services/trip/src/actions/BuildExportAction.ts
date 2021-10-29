@@ -215,16 +215,16 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const type = get(params, 'type', 'export');
-    const queryParam: TripSearchInterface = this.addDefaultQueryParams(params);
+    const queryParams: TripSearchInterface = this.getDefaultQueryParams(params);
     let excluded_territories: TerritoryTripsInterface[];
 
     if (this.isOpendata(type)) {
-      excluded_territories = await this.tripRepository.getOpenDataExcludedTerritories(queryParam);
-      this.addExcludedTerritoriesToQueryParams(excluded_territories, queryParam);
+      excluded_territories = await this.tripRepository.getOpenDataExcludedTerritories(queryParams);
+      this.addExcludedTerritoriesToQueryParams(excluded_territories, queryParams);
     }
 
-    const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParam, type);
-    let filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParam.date.end);
+    const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
+    let filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end);
     let filename: string = path.parse(filepath).base;
 
     if (!this.isOpendata(type)) {
@@ -242,7 +242,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     const fileKey = await this.fileProvider.upload(BucketName.Export, filepath, filename);
 
     if (this.isOpendata(type)) {
-      this.publishOpendataExport(queryParam, excluded_territories);
+      this.publishOpendataExport(queryParams, excluded_territories);
     }
 
     return fileKey;
@@ -288,7 +288,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     );
   }
 
-  private addDefaultQueryParams(params: ParamsInterface): TripSearchInterface {
+  private getDefaultQueryParams(params: ParamsInterface): TripSearchInterface {
     const endDate = getDefaultEndDate();
     const startDate = new Date(endDate.valueOf());
     startDate.setDate(1);
