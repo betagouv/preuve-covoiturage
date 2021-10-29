@@ -252,7 +252,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     const fileKey = await this.fileProvider.upload(BucketName.Export, filepath, filename);
 
     if (this.isOpendata(type)) {
-      await this.publishOpendataExport(queryParam, excluded_territories);
+      this.publishOpendataExport(queryParam, excluded_territories);
     }
 
     return fileKey;
