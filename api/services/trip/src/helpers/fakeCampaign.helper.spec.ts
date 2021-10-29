@@ -10,20 +10,20 @@ export const createGetCampaignResultInterface = (
   operator_ids?: number[],
 ): GetCampaignResultInterface => {
   const defaults: GetCampaignResultInterface = {
-    _id: faker.random.number(),
+    _id: faker.datatype.number(),
     name: name ? name : faker.random.word(),
     unit: '',
     description: faker.random.words(8),
     rules: [],
     global_rules: [],
-    territory_id: faker.random.number(),
+    territory_id: faker.datatype.number(),
     start_date: start_date ? start_date : faker.date.past(1),
     end_date: end_date ? end_date : faker.date.future(1),
     status,
     state: {
-      amount: faker.random.number(),
-      trip_excluded: faker.random.number(),
-      trip_subsidized: faker.random.number(),
+      amount: faker.datatype.number(),
+      trip_excluded: faker.datatype.number(),
+      trip_subsidized: faker.datatype.number(),
     },
   };
 
