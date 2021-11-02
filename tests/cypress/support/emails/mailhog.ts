@@ -112,7 +112,7 @@ async function mybox(kind: string, query: string, empty = false): Promise<Email[
 
 // replay a function with increasing delay
 async function replay<T>(fn: Function, ...args: any[]): Promise<T> {
-  let tries = [1000, 3000, 5000, 10000, 30000];
+  const tries = [1000, 3000, 5000, 10000, 30000];
   let error = null;
   for (const time of tries) {
     try {

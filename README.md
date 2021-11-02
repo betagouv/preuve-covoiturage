@@ -76,9 +76,9 @@ bash e2e.sh
 
 ```shell
 # local e2e
+vi .env (set your database to 'test')
 docker-compose up api (worker is started too)
 docker-compose up dashboard
-vi .env (set your database to 'test')
 docker-compose run api yarn workspace @pdc/proxy ilos seed
 cd tests
 yarn

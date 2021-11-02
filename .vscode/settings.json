@@ -26,8 +26,5 @@
     "db": true,
     "api/**/dist": false,
     "**/node_modules/**": false,
-  },
-  "[markdown]": {
-    "editor.defaultFormatter": "yzhang.markdown-all-in-one"
   }
 }
