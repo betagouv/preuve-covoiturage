@@ -19,6 +19,7 @@ import {
   signature as publishOpenDataSignature,
 } from '../shared/trip/publishOpenData.contract';
 import { BuildFile } from './file/BuildFile';
+import fs from 'fs';
 
 export interface FlattenTripInterface extends ExportTripInterface<string> {
   journey_start_date: string;
@@ -242,6 +243,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     const fileKey = await this.fileProvider.upload(BucketName.Export, filepath, filename);
 
     if (this.isOpendata(type)) {
+      fs.unlinkSync(filepath);
       this.publishOpendataExport(queryParams, excluded_territories);
     }
 

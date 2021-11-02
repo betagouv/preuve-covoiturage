@@ -28,13 +28,14 @@ export class PublishOpenDataAction extends Action {
       const { date, publish } = params;
       const filename = getOpenDataExportName('csv', date);
       const datasetSlug = this.config.get('datagouv.datasetSlug');
-      const dataset = await this.datagouv.getDataset(datasetSlug);
       if (publish) {
         await this.ensureExportIsReachable(filename);
         const description: string = await this.buildResourceDescription.call(context.call.metadata);
         const resource = await this.createResource(filename, description);
         await this.datagouv.publishResource(datasetSlug, resource);
       } else {
+        // Unused, Untested
+        const dataset = await this.datagouv.getDataset(datasetSlug);
         await this.datagouv.unpublishResource(datasetSlug, this.findRidFromTitle(dataset, filename));
       }
     } catch (e) {
