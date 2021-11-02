@@ -244,7 +244,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
     if (this.isOpendata(type)) {
       fs.unlinkSync(filepath);
-      this.publishOpendataExport(queryParams, excluded_territories);
+      this.publishOpendataExport(queryParams, excluded_territories, fileKey);
     }
 
     return fileKey;
@@ -271,12 +271,13 @@ export class BuildExportAction extends Action implements InitHookInterface {
   private async publishOpendataExport(
     queryParam: TripSearchInterface,
     excluded_territories: TerritoryTripsInterface[],
+    filekey: string,
   ) {
     await this.kernel.call<PublishOpenDataParamsInterface>(
       publishOpenDataSignature,
       {
         publish: true,
-        date: (queryParam.date.end.toISOString() as unknown) as Date,
+        filekey,
       },
       {
         call: {

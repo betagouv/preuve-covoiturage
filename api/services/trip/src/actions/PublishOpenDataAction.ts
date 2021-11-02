@@ -2,7 +2,6 @@ import { ConfigInterfaceResolver, ContextType, handler, NotFoundException } from
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { getOpenDataExportName } from '../helpers/getOpenDataExportName';
 import { Dataset, Resource } from '../interfaces';
 import { DataGouvProvider } from '../providers/DataGouvProvider';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/publishOpenData.contract';
@@ -25,18 +24,17 @@ export class PublishOpenDataAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
-      const { date, publish } = params;
-      const filename = getOpenDataExportName('csv', date);
+      const { filekey, publish } = params;
       const datasetSlug = this.config.get('datagouv.datasetSlug');
       if (publish) {
-        await this.ensureExportIsReachable(filename);
+        await this.ensureExportIsReachable(filekey);
         const description: string = await this.buildResourceDescription.call(context.call.metadata);
-        const resource = await this.createResource(filename, description);
+        const resource = await this.createResource(filekey, description);
         await this.datagouv.publishResource(datasetSlug, resource);
       } else {
         // Unused, Untested
         const dataset = await this.datagouv.getDataset(datasetSlug);
-        await this.datagouv.unpublishResource(datasetSlug, this.findRidFromTitle(dataset, filename));
+        await this.datagouv.unpublishResource(datasetSlug, this.findRidFromTitle(dataset, filekey));
       }
     } catch (e) {
       throw e;

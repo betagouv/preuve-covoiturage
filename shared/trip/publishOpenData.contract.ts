@@ -1,5 +1,5 @@
 export interface ParamsInterface {
-  date: Date;
+  filekey: string;
   publish: boolean;
 }
 
