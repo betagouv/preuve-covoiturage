@@ -89,8 +89,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
               )
       )
       `,
-      // values: [overrideFrom || policy.start_date, policy.end_date, descendants, policy.policy_id],
-      values: ['2021-05-20T00:00:00Z', '2021-05-21T00:00:00Z', descendants, policy.policy_id],
+      values: [overrideFrom || policy.start_date, policy.end_date, descendants, policy.policy_id],
     });
 
     console.debug(`CREATE TABLE in ${new Date().getTime() - s.getTime()}ms`);
