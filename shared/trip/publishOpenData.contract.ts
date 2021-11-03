@@ -1,6 +1,5 @@
 export interface ParamsInterface {
-  filekey: string;
-  publish: boolean;
+  filepath: string;
 }
 
 export type ResultInterface = void;

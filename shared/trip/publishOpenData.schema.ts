@@ -1,13 +1,10 @@
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['date', 'publish'],
+  required: ['filepath'],
   properties: {
-    date: {
-      macro: 'timestamp',
-    },
-    publish: {
-      type: 'boolean',
+    filepath: {
+      macro: 'varchar',
     },
   },
 };

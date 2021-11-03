@@ -36,6 +36,8 @@ export class DataGouvProvider implements DataGouvProviderInterface {
         ...form.getHeaders(),
         'Content-Length': form.getLengthSync(),
       },
+      maxContentLength: 100000000,
+      maxBodyLength: 1000000000,
     });
     return response.data;
   }
