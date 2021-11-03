@@ -225,29 +225,31 @@ export class BuildExportAction extends Action implements InitHookInterface {
     }
 
     const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
-    let filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end);
-    let filename: string = path.parse(filepath).base;
-
-    if (!this.isOpendata(type)) {
-      // ZIP the file
-      const zipname = `${filename.replace('.csv', '')}.zip`;
-      const zippath = path.join(os.tmpdir(), zipname);
-      const zip = new AdmZip();
-      zip.addLocalFile(filepath);
-      zip.writeZip(zippath);
-
-      filepath = zippath;
-      filename = zipname;
-    }
-
-    const fileKey = await this.fileProvider.upload(BucketName.Export, filepath, filename);
+    const filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end);
+    const filename: string = path.parse(filepath).base;
 
     if (this.isOpendata(type)) {
-      fs.unlinkSync(filepath);
-      this.publishOpendataExport(queryParams, excluded_territories, fileKey);
+      await this.publishOpendataExport(queryParams, excluded_territories, filepath);
+      this.removeFromFs(filepath);
+    } else {
+      const { zippath, zipname } = this.zip(filename, filepath);
+      await this.fileProvider.upload(BucketName.Export, zippath, zipname);
     }
 
-    return fileKey;
+    return filename;
+  }
+
+  private zip(filename: string, filepath: string) {
+    const zipname = `${filename.replace('.csv', '')}.zip`;
+    const zippath = path.join(os.tmpdir(), zipname);
+    const zip = new AdmZip();
+    zip.addLocalFile(filepath);
+    zip.writeZip(zippath);
+    return { zippath, zipname };
+  }
+
+  private removeFromFs(filepath: string) {
+    fs.unlinkSync(filepath);
   }
 
   private addExcludedTerritoriesToQueryParams(
@@ -268,16 +270,15 @@ export class BuildExportAction extends Action implements InitHookInterface {
     return type === 'opendata';
   }
 
-  private async publishOpendataExport(
+  private publishOpendataExport(
     queryParam: TripSearchInterface,
     excluded_territories: TerritoryTripsInterface[],
-    filekey: string,
+    filepath: string,
   ) {
-    await this.kernel.call<PublishOpenDataParamsInterface>(
+    return this.kernel.call<PublishOpenDataParamsInterface>(
       publishOpenDataSignature,
       {
-        publish: true,
-        filekey,
+        filepath,
       },
       {
         call: {
