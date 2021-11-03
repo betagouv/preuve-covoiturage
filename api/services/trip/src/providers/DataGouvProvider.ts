@@ -2,7 +2,7 @@ import { ConfigInterfaceResolver, provider } from '@ilos/common';
 import axios, { AxiosInstance } from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
-import { DataGouvProviderInterface, Dataset, Resource, UploadedResource } from '../interfaces';
+import { DataGouvProviderInterface, Resource, UploadedResource } from '../interfaces';
 
 @provider()
 export class DataGouvProvider implements DataGouvProviderInterface {
@@ -42,31 +42,8 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     return response.data;
   }
 
-  async getDataset(slug: string): Promise<Dataset> {
-    const response = await this.client.get<Dataset>(`/datasets/${slug}/`);
-    return response.data;
-  }
-
-  async updateDataset(dataset: Dataset): Promise<Dataset> {
-    const response = await this.client.put<Dataset>(`/datasets/${dataset.slug}/`, dataset);
-    return response.data;
-  }
-
-  async publishResource(datasetSlug: string, resource: Resource): Promise<string> {
-    const response = await this.client.post<Resource>(`/datasets/${datasetSlug}/resources/`, resource);
-    return response.data.id;
-  }
-
   async updateResource(datasetSlug: string, resource: Resource): Promise<Resource> {
     const response = await this.client.put<Resource>(`/datasets/${datasetSlug}/resources/${resource.id}`, resource);
     return response.data;
-  }
-
-  async unpublishResource(datasetSlug: string, resourceId: string): Promise<void> {
-    await this.client.delete(`/datasets/${datasetSlug}/${resourceId}/`);
-  }
-
-  async checkResource(datasetSlug: string, resourceId: string): Promise<void> {
-    await this.client.get(`/datasets/${datasetSlug}/${resourceId}/`);
   }
 }
