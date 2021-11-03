@@ -1,6 +1,6 @@
-import { MetaInterface } from '../interfaces/MetaInterface';
+import { MetadataWrapperInterface } from '../interfaces';
 
-export class MetadataWrapper implements MetaInterface {
+export class MetadataWrapper implements MetadataWrapperInterface {
   protected data: Map<string, number>;
 
   constructor(public readonly policy_id: number = 0, initialData?: [string, number][]) {

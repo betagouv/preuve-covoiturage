@@ -2,8 +2,8 @@ import * as moment from 'moment';
 import { format, subDays, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { omit } from 'lodash-es';
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, throwError } from 'rxjs';
+import { catchError, debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { CurrencyPipe } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChange } from '@angular/core';
@@ -38,6 +38,9 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
   public timeState = getTimeState(1);
   public range$ = new BehaviorSubject<number>(1);
   public simulatedCampaign$ = new BehaviorSubject<CampaignUx>(null);
+  public errors = {
+    simulation_failed: false,
+  };
 
   get months(): number {
     return this.range$.value;
@@ -55,7 +58,10 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
     combineLatest([this.range$, this.simulatedCampaign$])
       .pipe(
         debounceTime(250),
-        tap(() => (this.loading = true)),
+        tap(() => {
+          this.loading = true;
+          Object.keys(this.errors).forEach((key) => (this.errors[key] = false));
+        }),
         filter(([, campaign]) => this.auth.user && (!!campaign.territory_id || !!this.auth.user.territory_id)),
         map(([r, c]: [number, CampaignUx]) => {
           this.timeState = getTimeState(r);
@@ -67,7 +73,15 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
           return c;
         }),
         map(CampaignFormater.toApi),
-        switchMap((c) => this.campaignApi.simulate(c)),
+        switchMap((c) =>
+          this.campaignApi.simulate(c).pipe(
+            catchError((err) => {
+              this.errors.simulation_failed = true;
+              this.loading = false;
+              return throwError(err);
+            }),
+          ),
+        ),
         takeUntil(this.destroy$),
       )
       .subscribe((state: CampaignReducedStats) => {

@@ -50,7 +50,7 @@ export class Campaign extends BaseModel implements FormModel, Model, MapModel<Ca
       this.ui_status = {
         for_driver: null,
         for_passenger: null,
-        for_trip: null,
+        // for_trip: null,
         staggered: false,
         insee_mode: false,
       };

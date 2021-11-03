@@ -219,8 +219,8 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     const query = {
       text: `
         SELECT * FROM ${this.table}
-        WHERE _id = $1
-        AND territory_id = $2
+        WHERE _id = $1::int
+        AND territory_id = $2::int
         AND deleted_at IS NULL
         LIMIT 1
       `,

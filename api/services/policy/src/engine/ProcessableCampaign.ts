@@ -1,9 +1,15 @@
-import { MetaInterface, RuleHandlerContextInterface } from './interfaces';
+import { RuleHandlerContextInterface } from './interfaces';
 import { NotApplicableTargetException } from './exceptions/NotApplicableTargetException';
 import { RuleSet } from './RuleSet';
 import { StatefulRuleSet } from './set/StatefulRuleSet';
-import { IncentiveStatusEnum, IncentiveStateEnum, IncentiveInterface, CampaignInterface } from '../interfaces';
-import { MetadataWrapper } from './meta/MetadataWrapper';
+import {
+  IncentiveStatusEnum,
+  IncentiveStateEnum,
+  IncentiveInterface,
+  CampaignInterface,
+  MetadataWrapperInterface,
+} from '../interfaces';
+import { MetadataWrapper } from '../providers/MetadataWrapper';
 
 export class ProcessableCampaign {
   public readonly policy_id: number;
@@ -39,7 +45,7 @@ export class ProcessableCampaign {
     return [this.globalSet, ...this.ruleSets].map((s) => s.hasStatefulRule).reduce((r, s) => r || s, false);
   }
 
-  applyStateful(incentive: IncentiveInterface, meta: MetaInterface): IncentiveInterface {
+  applyStateful(incentive: IncentiveInterface, meta: MetadataWrapperInterface): IncentiveInterface {
     let amount = this.globalSet.applyStateful(incentive, meta);
     for (const ruleSet of this.ruleSets) {
       amount = ruleSet.applyStateful(
@@ -56,7 +62,10 @@ export class ProcessableCampaign {
     };
   }
 
-  apply(context: RuleHandlerContextInterface, meta: MetaInterface = new MetadataWrapper()): IncentiveInterface {
+  apply(
+    context: RuleHandlerContextInterface,
+    meta: MetadataWrapperInterface = new MetadataWrapper(),
+  ): IncentiveInterface {
     let result = 0;
 
     let incentiveState: Map<string, string> = new Map();

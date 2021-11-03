@@ -108,7 +108,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
       return handler(call);
     }
 
-    return promiseTimeout(timeout, handler(call));
+    return promiseTimeout(timeout, handler(call), config.signature);
   }
 
   /**

@@ -2,9 +2,9 @@ import test from 'ava';
 
 import { faker } from './helpers/faker';
 import { CampaignInterface } from '../interfaces';
-import { MetadataProviderInterfaceResolver, MetaInterface } from './interfaces';
+import { MetadataRepositoryProviderInterfaceResolver, MetadataWrapperInterface } from '../interfaces';
 import { PolicyEngine } from './PolicyEngine';
-import { MetadataWrapper } from './meta/MetadataWrapper';
+import { MetadataWrapper } from '../providers/MetadataWrapper';
 import { RuleInterface } from '../shared/common/interfaces/RuleInterface';
 
 function setup(rules: RuleInterface[] = []): { engine: PolicyEngine; start: Date; fakeCampaign: CampaignInterface } {
@@ -59,11 +59,11 @@ function setup(rules: RuleInterface[] = []): { engine: PolicyEngine; start: Date
     ],
   };
 
-  class CampaignMetadataRepositoryProvider extends MetadataProviderInterfaceResolver {
-    async get(id: number, keys = ['default']): Promise<MetaInterface> {
+  class CampaignMetadataRepositoryProvider extends MetadataRepositoryProviderInterfaceResolver {
+    async get(id: number, keys = ['default']): Promise<MetadataWrapperInterface> {
       return meta;
     }
-    async set(id: number, meta: MetaInterface): Promise<void> {
+    async set(id: number, meta: MetadataWrapperInterface): Promise<void> {
       return;
     }
   }
@@ -86,42 +86,6 @@ test('should boot', async (t) => {
   t.is(result[0].amount, ((trip[0].distance / 1000) * fakeCampaign.rules[0][1].parameters) as number);
 });
 
-test('should work and distribute incentive', async (t) => {
-  const { engine, fakeCampaign } = setup();
-  const trip = faker.trip([
-    {
-      carpool_id: 2,
-      is_driver: true,
-      distance: 1000,
-    },
-    {
-      carpool_id: 1,
-      is_driver: false,
-      distance: 1000,
-    },
-    {
-      carpool_id: 3,
-      is_driver: false,
-      distance: 3000,
-    },
-    {
-      carpool_id: 4,
-      is_driver: true,
-      distance: 4000,
-    },
-  ]);
-  const campaign = engine.buildCampaign(fakeCampaign);
-  const result = await engine.process(campaign, trip);
-
-  t.log(result);
-  t.true(Array.isArray(result));
-  t.is(result.length, 4);
-  t.is(result.find((p) => p.carpool_id === 1).amount, (1000 / 1000) * 10);
-  t.is(result.find((p) => p.carpool_id === 2).amount, ((4000 / 1000) * 20) / 2);
-  t.is(result.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
-  t.is(result.find((p) => p.carpool_id === 4).amount, ((4000 / 1000) * 20) / 2);
-});
-
 test('should work with amount restriction', async (t) => {
   const { engine, fakeCampaign } = setup([
     {
@@ -134,43 +98,50 @@ test('should work with amount restriction', async (t) => {
       },
     },
   ]);
-  const trip = faker.trip([
-    {
-      carpool_id: 1,
-      is_driver: false,
-      distance: 1000,
-      identity_uuid: 'passenger_1',
-    },
-    {
-      carpool_id: 2,
-      is_driver: true,
-      distance: 2000,
-      identity_uuid: 'driver',
-    },
-    {
-      carpool_id: 3,
-      is_driver: false,
-      distance: 3000,
-      identity_uuid: 'passenger_2',
-    },
-    {
-      carpool_id: 4,
-      is_driver: true,
-      distance: 4000,
-      identity_uuid: 'driver',
-    },
-  ]);
 
   const campaign = engine.buildCampaign(fakeCampaign);
-  const result = await engine.process(campaign, trip);
-
+  const result = await engine.process(
+    campaign,
+    faker.trip([
+      {
+        carpool_id: 1,
+        is_driver: false,
+        distance: 1000,
+        identity_uuid: 'passenger_1',
+      },
+      {
+        carpool_id: 2,
+        is_driver: true,
+        distance: 2000,
+        identity_uuid: 'driver',
+      },
+    ]),
+  );
+  const result2 = await engine.process(
+    campaign,
+    faker.trip([
+      {
+        carpool_id: 3,
+        is_driver: false,
+        distance: 3000,
+        identity_uuid: 'passenger_2',
+      },
+      {
+        carpool_id: 4,
+        is_driver: true,
+        distance: 4000,
+        identity_uuid: 'driver',
+      },
+    ]),
+  );
   t.log(result);
   t.true(Array.isArray(result));
-  t.is(result.length, 4);
+  t.is(result.length, 2);
+  t.is(result2.length, 2);
   t.is(result.find((p) => p.carpool_id === 1).amount, (1000 / 1000) * 10);
   t.is(result.find((p) => p.carpool_id === 2).amount, ((4000 / 1000) * 20) / 2);
-  t.is(result.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
-  t.is(result.find((p) => p.carpool_id === 4).amount, 10);
+  t.is(result2.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
+  t.is(result2.find((p) => p.carpool_id === 4).amount, 10);
 });
 
 test('should work with trip restriction', async (t) => {
@@ -185,40 +156,49 @@ test('should work with trip restriction', async (t) => {
       },
     },
   ]);
-  const trip = faker.trip([
-    {
-      carpool_id: 1,
-      is_driver: false,
-      distance: 1000,
-      identity_uuid: 'passenger_1',
-    },
-    {
-      carpool_id: 2,
-      is_driver: true,
-      distance: 2000,
-      identity_uuid: 'driver',
-    },
-    {
-      carpool_id: 3,
-      is_driver: false,
-      distance: 3000,
-      identity_uuid: 'passenger_2',
-    },
-    {
-      carpool_id: 4,
-      is_driver: true,
-      distance: 4000,
-      identity_uuid: 'driver',
-    },
-  ]);
-  const campaign = engine.buildCampaign(fakeCampaign);
-  const result = await engine.process(campaign, trip);
 
+  const campaign = engine.buildCampaign(fakeCampaign);
+  const result = await engine.process(
+    campaign,
+    faker.trip([
+      {
+        carpool_id: 1,
+        is_driver: false,
+        distance: 1000,
+        identity_uuid: 'passenger_1',
+      },
+      {
+        carpool_id: 2,
+        is_driver: true,
+        distance: 2000,
+        identity_uuid: 'driver',
+      },
+    ]),
+  );
+
+  const result2 = await engine.process(
+    campaign,
+    faker.trip([
+      {
+        carpool_id: 3,
+        is_driver: false,
+        distance: 3000,
+        identity_uuid: 'passenger_2',
+      },
+      {
+        carpool_id: 4,
+        is_driver: true,
+        distance: 4000,
+        identity_uuid: 'driver',
+      },
+    ]),
+  );
   t.log(result);
   t.true(Array.isArray(result));
-  t.is(result.length, 4);
+  t.is(result.length, 2);
+  t.is(result2.length, 2);
   t.is(result.find((p) => p.carpool_id === 1).amount, (1000 / 1000) * 10);
-  t.is(result.find((p) => p.carpool_id === 2).amount, ((4000 / 1000) * 20) / 2);
-  t.is(result.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
-  t.is(result.find((p) => p.carpool_id === 4).amount, ((4000 / 1000) * 20) / 2);
+  t.is(result.find((p) => p.carpool_id === 2).amount, (2000 / 1000) * 20);
+  t.is(result2.find((p) => p.carpool_id === 3).amount, (3000 / 1000) * 10);
+  t.is(result2.find((p) => p.carpool_id === 4).amount, (4000 / 1000) * 20 * 0);
 });

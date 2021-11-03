@@ -18,15 +18,9 @@ test.beforeEach(async (t) => {
     },
   };
 
-  class FakeRedis extends RedisConnection {
-    getClient() {
-      return null;
-    }
-  }
+  const connection = new RedisConnection({ connectionString: process.env.APP_REDIS_URL ?? 'redis://127.0.0.1:6379' });
 
-  const fakeConnection = new FakeRedis({});
-
-  t.context.handler = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
+  t.context.handler = new (queueHandlerFactory('basic', '0.0.1'))(connection);
   await t.context.handler.init();
 });
 

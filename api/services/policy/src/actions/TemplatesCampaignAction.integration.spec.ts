@@ -73,7 +73,7 @@ const { test, success } = handlerMacro<ParamsInterface, ResultInterface, Error, 
   handlerConfig,
 );
 
-test.before.skip(async (t) => {
+test.before(async (t) => {
   const policy = await t.context.kernel
     .get(ServiceProvider)
     .get(CampaignRepositoryProviderInterfaceResolver)
@@ -82,7 +82,7 @@ test.before.skip(async (t) => {
   t.context.policy_id = policy._id;
 });
 
-test.skip(
+test(
   success,
   {},
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {

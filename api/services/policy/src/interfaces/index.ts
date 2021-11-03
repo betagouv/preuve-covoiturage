@@ -23,3 +23,8 @@ export {
   TerritoryRepositoryProviderInterface,
   TerritoryRepositoryProviderInterfaceResolver,
 } from './TerritoryRepositoryProviderInterface';
+export {
+  MetadataRepositoryProviderInterface,
+  MetadataRepositoryProviderInterfaceResolver,
+} from './MetadataRepositoryProviderInterface';
+export { MetadataWrapperInterface } from './MetadataWrapperInterface';

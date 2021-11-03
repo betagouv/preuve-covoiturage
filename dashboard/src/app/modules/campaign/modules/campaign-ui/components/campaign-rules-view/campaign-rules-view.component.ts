@@ -36,9 +36,10 @@ export class CampaignRulesViewComponent implements OnInit {
   get targets(): string {
     const forDriver = this.campaign.ui_status.for_driver;
     const forPassenger = this.campaign.ui_status.for_passenger;
-    const forTrip = this.campaign.ui_status.for_trip;
+    // const forTrip = this.campaign.ui_status.for_trip;
     const onlyAdult = this.campaign.only_adult;
-    return this._campaignUiService.targets(forDriver, forPassenger, forTrip, onlyAdult);
+    // return this._campaignUiService.targets(forDriver, forPassenger, forTrip, onlyAdult);
+    return this._campaignUiService.targets(forDriver, forPassenger, onlyAdult);
   }
 
   get ranks(): string {

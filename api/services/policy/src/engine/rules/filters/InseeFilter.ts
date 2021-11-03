@@ -72,7 +72,9 @@ export class InseeBlacklistFilter extends InseeFilter {
         blacklisted = true;
       }
     }
+
     if (blacklisted) {
+      console.debug(`blacklisted: ${ctx.person.start_insee} to ${ctx.person.end_insee}`);
       throw new NotApplicableTargetException(InseeBlacklistFilter.description);
     }
   }

@@ -23,7 +23,7 @@ interface PhotonResponse {
 
 @provider()
 export class PhotonProvider implements GeoCoderInterface {
-  protected domain = 'https://photon.komoot.de/api';
+  protected domain = 'https://photon.komoot.io/api';
 
   async literalToPosition(literal: string): Promise<PointInterface> {
     const res: PhotonResponse = await axios.get(`${this.domain}/?q=${encodeURIComponent(literal)}&limit=1`);

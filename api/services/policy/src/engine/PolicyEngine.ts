@@ -1,15 +1,18 @@
 import { provider } from '@ilos/common';
-
-import { CampaignInterface, IncentiveInterface, TripInterface } from '../interfaces';
-import { MetadataProviderInterfaceResolver } from './interfaces';
-
-import { TripIncentives } from './TripIncentives';
+import {
+  CampaignInterface,
+  IncentiveInterface,
+  IncentiveStatusEnum,
+  MetadataRepositoryProviderInterfaceResolver,
+  TripInterface,
+} from '../interfaces';
+import { MetadataWrapper } from '../providers/MetadataWrapper';
 import { ProcessableCampaign } from './ProcessableCampaign';
-import { MetadataWrapper } from './meta/MetadataWrapper';
+import { TripIncentives } from './TripIncentives';
 
 @provider()
 export class PolicyEngine {
-  constructor(protected metaRepository: MetadataProviderInterfaceResolver) {}
+  constructor(protected metaRepository: MetadataRepositoryProviderInterfaceResolver) {}
 
   public buildCampaign(campaign: CampaignInterface): ProcessableCampaign {
     return new ProcessableCampaign(campaign);
@@ -23,17 +26,17 @@ export class PolicyEngine {
       const incentive = pc.apply(ctx, meta);
       tripIncentives.addIncentive(incentive);
     }
-    return tripIncentives.distributeDriverIncentives().getIncentives();
+    return tripIncentives.getIncentives();
   }
 
   public async processStateful(
     pc: ProcessableCampaign,
     incentive: IncentiveInterface,
-  ): Promise<{ carpool_id: number; policy_id: number; amount: number }> {
+  ): Promise<{ carpool_id: number; policy_id: number; amount: number; status: IncentiveStatusEnum }> {
     const keys = pc.getMetaKeys(incentive);
-    const meta = await this.metaRepository.get(pc.policy_id, keys);
+    const meta = await this.metaRepository.get(pc.policy_id, keys, incentive.datetime);
     const result = pc.applyStateful(incentive, meta);
-    await this.metaRepository.set(pc.policy_id, meta);
+    await this.metaRepository.set(pc.policy_id, meta, incentive.datetime);
     return result;
   }
 

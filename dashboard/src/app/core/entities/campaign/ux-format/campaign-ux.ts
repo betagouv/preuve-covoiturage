@@ -38,7 +38,7 @@ export class CampaignUx {
     insee_mode: boolean;
     for_driver: boolean;
     for_passenger: boolean;
-    for_trip: boolean;
+    // for_trip: boolean;
   };
 
   public amount_spent?: number;
@@ -50,7 +50,7 @@ export class CampaignUx {
       name: '',
       territory_id: null,
       description: '',
-      unit: null,
+      unit: IncentiveUnitEnum.EUR,
       start: null,
       end: null,
       status: null,
@@ -74,9 +74,9 @@ export class CampaignUx {
       max_amount: null,
       max_trips: null,
       ui_status: {
-        for_driver: null,
+        for_driver: true,
         for_passenger: null,
-        for_trip: null,
+        // for_trip: null,
         staggered: null,
         insee_mode: null,
       },

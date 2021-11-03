@@ -63,7 +63,6 @@ services:
       - redis
       - postgres
       - mailer
-      - worker
       - s3
 
   worker:

@@ -42,36 +42,7 @@ function setup(): {
   };
   return { policy, defaultTripParams };
 }
-test('case 0', async (t) => {
-  const { policy, defaultTripParams } = setup();
-  const trip = faker.trip([
-    {
-      ...defaultTripParams,
-      is_driver: true,
-      distance: 1000,
-    },
-    {
-      ...defaultTripParams,
-      is_driver: false,
-      distance: 1000,
-    },
-    {
-      ...defaultTripParams,
-      is_driver: false,
-      distance: 5000,
-      start_insee: '75115',
-      end_insee: '75116',
-    },
-  ]);
 
-  const context = {
-    stack: [],
-    result: 0,
-    person: trip[0],
-    trip,
-  };
-  await t.throwsAsync<NotApplicableTargetException>(async () => policy.apply(context));
-});
 test('case 1', async (t) => {
   const { policy, defaultTripParams } = setup();
 
@@ -496,8 +467,6 @@ test('case 14', async (t) => {
       is_driver: true,
       distance: 18948,
       cost: 0,
-      start_insee: '75056', // would make it fail. No Paris to Paris
-      end_insee: '75056',
     },
     {
       ...defaultTripParams,
@@ -505,8 +474,6 @@ test('case 14', async (t) => {
       distance: 6, // makes it fail. passenger dist must be > 2000
       seats: 1,
       cost: 0,
-      start_insee: '94021',
-      end_insee: '75056',
     },
   ]);
 
@@ -528,8 +495,6 @@ test('case 15', async (t) => {
       is_driver: true,
       distance: 15463,
       cost: 0,
-      start_insee: '75056',
-      end_insee: '91027',
     },
     {
       ...defaultTripParams,
@@ -537,8 +502,6 @@ test('case 15', async (t) => {
       distance: 15, // makes it fail. passenger dist must be > 2000
       seats: 1,
       cost: 0,
-      start_insee: '75056',
-      end_insee: '91027',
     },
   ]);
 

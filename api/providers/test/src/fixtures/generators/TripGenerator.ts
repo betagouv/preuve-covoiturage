@@ -212,8 +212,8 @@ export class TripGenerator extends Generator<TripInterface> {
     // calculate the number of meters for 1°
     // metersAtLat =  meterAtEquator * cos(lat)
     const metersAtLat = 111200 * Math.cos(origin.lat * (Math.PI / 180));
-    const radius = faker.random.number(origin.radius) / metersAtLat;
-    const angle = (faker.random.number(360 * 10000) * (Math.PI / 180)) / 10000;
+    const radius = faker.datatype.number(origin.radius) / metersAtLat;
+    const angle = (faker.datatype.number(360 * 10000) * (Math.PI / 180)) / 10000;
 
     return {
       lon: origin.lon + radius * Math.cos(angle),
@@ -230,11 +230,11 @@ export class TripGenerator extends Generator<TripInterface> {
   }
 
   private getPayload(payload: Partial<AcquisitionPayload> = {}): AcquisitionPayload {
-    const distance = faker.random.number(100000);
-    const passengerStart = faker.date.recent(faker.random.number(90));
-    const passengerDuration = faker.random.number(7200);
-    const driverStart = new Date(passengerStart.getTime() - faker.random.number(1800));
-    const driverDuration = passengerDuration + faker.random.number(3600);
+    const distance = faker.datatype.number(100000);
+    const passengerStart = faker.date.recent(faker.datatype.number(90));
+    const passengerDuration = faker.datatype.number(7200);
+    const driverStart = new Date(passengerStart.getTime() - faker.datatype.number(1800));
+    const driverDuration = passengerDuration + faker.datatype.number(3600);
 
     const base = {
       operator_class: faker.random.arrayElement(['A', 'B', 'C']),
@@ -244,8 +244,8 @@ export class TripGenerator extends Generator<TripInterface> {
         distance,
         duration: passengerDuration,
         incentives: [],
-        contribution: faker.random.number(2000),
-        seats: 1 + faker.random.number(7),
+        contribution: faker.datatype.number(2000),
+        seats: 1 + faker.datatype.number(7),
         start: {
           datetime: passengerStart,
           lat: 48.77826,
@@ -258,10 +258,10 @@ export class TripGenerator extends Generator<TripInterface> {
         },
       },
       driver: {
-        distance: distance + faker.random.number(10000),
+        distance: distance + faker.datatype.number(10000),
         duration: driverDuration,
         incentives: [],
-        revenue: faker.random.number(2000),
+        revenue: faker.datatype.number(2000),
         start: {
           datetime: driverStart,
           lat: 48.77826,

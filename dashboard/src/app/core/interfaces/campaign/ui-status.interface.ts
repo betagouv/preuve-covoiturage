@@ -3,7 +3,7 @@ import { IncentiveInseeFilterInterface } from '~/core/entities/campaign/ux-forma
 export interface UiStatusInterface {
   for_driver: boolean;
   for_passenger: boolean;
-  for_trip: boolean;
+  // for_trip: boolean;
   staggered: boolean;
   insee_mode: boolean;
   insee_filter?: UiStatusInseeFilterInterface;

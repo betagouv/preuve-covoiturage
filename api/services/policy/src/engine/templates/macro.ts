@@ -8,7 +8,7 @@ import { CampaignPgRepositoryProvider } from '../../providers/CampaignPgReposito
 import { ServiceProvider } from '../../ServiceProvider';
 import { CampaignInterface } from '../../interfaces';
 import { PolicyEngine } from '../PolicyEngine';
-import { MetadataProvider } from '../meta/MetadataProvider';
+import { MetadataRepositoryProvider } from '../../providers/MetadataRepositoryProvider';
 import { trips as defaultTrips } from './trips';
 
 interface TestContext {
@@ -47,14 +47,14 @@ export function macro(
     if (t.context.policyId) {
       const connection = t.context.kernel.get(ServiceProvider).get(PostgresConnection).getClient();
       const campaignRepository = t.context.kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
-      const metaRepository = t.context.kernel.get(ServiceProvider).get(MetadataProvider);
+      const metaRepository = t.context.kernel.get(ServiceProvider).get(MetadataRepositoryProvider);
       await connection.query({
-        text: `DELETE FROM ${campaignRepository.table} WHERE _id = $1`,
+        text: `DELETE FROM ${campaignRepository.table} WHERE _id = $1::int`,
         values: [t.context.policyId],
       });
 
       await connection.query({
-        text: `DELETE FROM ${metaRepository.table} WHERE policy_id = $1`,
+        text: `DELETE FROM ${metaRepository.table} WHERE policy_id = $1::int`,
         values: [t.context.policyId],
       });
     }

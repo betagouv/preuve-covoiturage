@@ -1,17 +1,17 @@
-import { MetadataProviderInterfaceResolver, MetaInterface } from '../interfaces';
-import { MetadataWrapper } from '../meta/MetadataWrapper';
+import { MetadataRepositoryProviderInterfaceResolver, MetadataWrapperInterface } from '../../interfaces';
+import { MetadataWrapper } from '../../providers/MetadataWrapper';
 
-export class InMemoryMetadataProvider extends MetadataProviderInterfaceResolver {
-  protected metamap: Map<number, MetaInterface> = new Map();
+export class InMemoryMetadataProvider extends MetadataRepositoryProviderInterfaceResolver {
+  protected metamap: Map<number, MetadataWrapperInterface> = new Map();
 
-  async get(id: number, keys = ['default']): Promise<MetaInterface> {
+  async get(id: number, keys = ['default']): Promise<MetadataWrapperInterface> {
     if (!this.metamap.has(id)) {
       await this.set(id, new MetadataWrapper(id, []));
     }
     return this.metamap.get(id);
   }
 
-  async set(id: number, meta: MetaInterface): Promise<void> {
+  async set(id: number, meta: MetadataWrapperInterface): Promise<void> {
     this.metamap.set(id, meta);
   }
 }

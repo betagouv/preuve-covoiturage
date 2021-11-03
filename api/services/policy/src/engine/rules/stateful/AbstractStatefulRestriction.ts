@@ -1,7 +1,8 @@
 import { AbstractStatefulRule } from '../AbstractStatefulRule';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { getMetaKey } from '../../helpers/getMetaKey';
-import { MetaInterface, RuleHandlerContextInterface } from '../../interfaces';
+import { RuleHandlerContextInterface } from '../../interfaces';
+import { MetadataWrapperInterface } from '../../../interfaces';
 
 export interface StatefulRestrictionParameters {
   target?: 'driver' | 'passenger';
@@ -36,7 +37,7 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
   abstract getPrefix(): string;
   abstract getErrorMessage(): string;
 
-  getStateKey(ctx: RuleHandlerContextInterface, meta: MetaInterface): string | undefined {
+  getStateKey(ctx: RuleHandlerContextInterface, meta: MetadataWrapperInterface): string | undefined {
     if (
       this.parameters.target &&
       ((this.parameters.target === 'driver' && !ctx.person.is_driver) ||

@@ -21,4 +21,7 @@
       <p *ngIf="!loading">{{ state.amount }}</p>
     </div>
   </div>
+  <div class="row" *ngIf="errors.simulation_failed">
+    <p>La simulation n'a pu être calculée.</p>
+  </div>
 </div>

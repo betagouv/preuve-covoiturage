@@ -1,5 +1,6 @@
 export type ParamsInterface = {
   campaign_id?: number;
+  override_from?: Date;
 };
 
 export type ResultInterface = void;

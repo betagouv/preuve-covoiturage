@@ -1,5 +1,6 @@
 import { AbstractStatefulRestriction } from './AbstractStatefulRestriction';
-import { MetaInterface, RuleHandlerContextInterface } from '../../interfaces';
+import { RuleHandlerContextInterface } from '../../interfaces';
+import { MetadataWrapperInterface } from '../../../interfaces';
 
 export class MaxTripRestriction extends AbstractStatefulRestriction {
   static readonly slug: string = 'max_trip_restriction';
@@ -17,7 +18,7 @@ export class MaxTripRestriction extends AbstractStatefulRestriction {
     return state + 1;
   }
 
-  getStateKey(ctx: RuleHandlerContextInterface, meta: MetaInterface): string | undefined {
+  getStateKey(ctx: RuleHandlerContextInterface, meta: MetadataWrapperInterface): string | undefined {
     const result = super.getStateKey(ctx, meta);
     if (this.parameters.target !== 'driver' || !ctx.person.is_driver) {
       return result;
