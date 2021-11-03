@@ -22,10 +22,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
   async disableOnCanceledTrip(): Promise<void> {
     console.debug(`DISABLE_ON_CANCELED_TRIPS`);
-    const client = await this.connection.getClient().connect();
-    // await client.query('BEGIN');
-    // await client.query(`ALTER TABLE ${this.table} DISABLE TRIGGER ALL`);
-
     const query = {
       text: `
         UPDATE ${this.table} AS pi
@@ -39,18 +35,10 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: ['disabled', 'canceled'],
     };
 
-    await client.query(query);
-    // await client.query(`ALTER TABLE ${this.table} ENABLE TRIGGER ALL`);
-    // await client.query('COMMIT');
-
-    client.release();
+    await this.connection.getClient().query(query);
   }
 
   async lockAll(before: Date): Promise<void> {
-    const client = await this.connection.getClient().connect();
-    // await client.query('BEGIN');
-    // await client.query(`ALTER TABLE ${this.table} DISABLE TRIGGER ALL`);
-
     const query = {
       text: `
         UPDATE ${this.table}
@@ -62,11 +50,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: ['validated', before, 'draft'],
     };
 
-    await client.query(query);
-    // await client.query(`ALTER TABLE ${this.table} ENABLE TRIGGER ALL`);
-    // await client.query('COMMIT');
-
-    client.release();
+    await this.connection.getClient().query(query);
   }
 
   async updateManyAmount(
