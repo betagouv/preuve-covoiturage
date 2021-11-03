@@ -60,7 +60,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
 
     // Apply internal restriction of policies
     console.debug(`START processing stateful campaigns`);
-    await this.processStatefulCampaigns(policyMap, params.to ?? to, params.from);
+    await this.processStatefulCampaigns(policyMap, to, params.from);
     console.debug(`DONE processing stateful campaigns`);
 
     // TODO: Apply external restriction (order) of policies
@@ -77,12 +77,10 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     from?: Date,
   ): Promise<void> {
     // 1. Start a cursor to find incentives
-    const cursor = await this.incentiveRepository.findDraftIncentive(to, 100, from);
+    const cursor = this.incentiveRepository.findDraftIncentive(to, 100, from);
     let done = false;
-    let s1 = 0;
-    let b1 = 0;
     do {
-      s1 = new Date().getTime();
+      const start = new Date().getTime();
 
       const updatedIncentives: {
         carpool_id: number;
@@ -110,10 +108,10 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
       // 4. Update incentives
       await this.incentiveRepository.updateManyAmount(updatedIncentives, IncentiveStatusEnum.Valitated);
 
-      b1 = new Date().getTime() - s1;
+      const duration = new Date().getTime() - start;
       console.debug(
-        `Finalized ${updatedIncentives.length} incentives in ${b1}ms (${(
-          (updatedIncentives.length / b1) *
+        `Finalized ${updatedIncentives.length} incentives in ${duration}ms (${(
+          (updatedIncentives.length / duration) *
           1000
         ).toFixed(3)}/s)`,
       );
