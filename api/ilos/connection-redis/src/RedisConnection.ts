@@ -19,7 +19,7 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
 
   async down() {
     if (this.connected) {
-      await this.getClient().disconnect();
+      this.getClient().disconnect();
       this.connected = false;
     }
   }
