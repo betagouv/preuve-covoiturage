@@ -226,18 +226,31 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
     const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
     const filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end);
-    const filename: string = path.parse(filepath).base;
+    
+    return this.handleCSVExport(type, filepath, queryParams, excluded_territories)
+  }
 
+  private async handleCSVExport(type: string, filepath: string, queryParams, excluded_territories): Promise<string> {
     if (this.isOpendata(type)) {
-      await this.publishOpendataExport(queryParams, excluded_territories, filepath);
+      return await this.processOpendataExport(filepath, queryParams, excluded_territories);
     } else {
-      const { zippath, zipname } = this.zip(filename, filepath);
-      await this.fileProvider.upload(BucketName.Export, zippath, zipname);
+      return await this.processOtherTypeExport(filepath);
     }
+  }
 
+  private async processOtherTypeExport(filepath: string) : Promise<string> {
+    const filename: string = path.parse(filepath).base;
+    const { zippath, zipname } = this.zip(filename, filepath);
+    await this.fileProvider.upload(BucketName.Export, zippath, zipname);
     this.removeFromFs(filepath);
+    this.removeFromFs(zippath);
+    return zippath;
+  }
 
-    return filename;
+  private async processOpendataExport(filepath: string, queryParams: any, excluded_territories: any) : Promise<string> {
+    await this.publishOpendataExport(queryParams, excluded_territories, filepath);
+    this.removeFromFs(filepath);
+    return filepath;
   }
 
   private zip(filename: string, filepath: string) {
