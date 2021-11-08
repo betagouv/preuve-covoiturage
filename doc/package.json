@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "API documentation",
   "repository": "https://github.com/betagouv/preuve-covoiturage",
+  "homepage": "https://tech.covoiturage.beta.gouv.fr",
   "author": "jonathanfallon",
   "license": "Apache-2.0",
   "private": true,
