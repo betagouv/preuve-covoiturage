@@ -110,11 +110,11 @@ export interface Dataset {
   title: string;
   uri: string;
 }
+export interface UploadedResource extends Resource {
+  success: boolean;
+}
 
 export interface DataGouvProviderInterface extends InitHookInterface {
-  getDataset(slug: string): Promise<Dataset>;
-  updateDataset(dataset: Dataset): Promise<Dataset>;
-  publishResource(datasetSlug: string, resource: Resource): Promise<string>;
-  unpublishResource(datasetSlug: string, resourceId: string): Promise<void>;
-  checkResource(datasetSlug: string, resourceId: string): Promise<void>;
+  uploadResources(slug: string, filepath: string): Promise<UploadedResource>;
+  updateResource(datasetSlug: string, resource: Resource): Promise<Resource>;
 }

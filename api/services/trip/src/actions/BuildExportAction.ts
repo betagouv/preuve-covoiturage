@@ -3,16 +3,17 @@ import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import AdmZip from 'adm-zip';
+import fs from 'fs';
 import { get } from 'lodash';
 import os from 'os';
 import path from 'path';
 import { getDefaultEndDate } from '../helpers/getDefaultDates';
 import { ExportTripInterface } from '../interfaces';
 import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
-import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../shared/trip/buildExport.contract';
 import { alias } from '../shared/trip/buildExport.schema';
+import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
 import { TripSearchInterface } from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
   ParamsInterface as PublishOpenDataParamsInterface,
@@ -219,33 +220,49 @@ export class BuildExportAction extends Action implements InitHookInterface {
     let excluded_territories: TerritoryTripsInterface[];
 
     if (this.isOpendata(type)) {
-      excluded_territories = await this.tripRepository.getOpenDataExcludedTerritories(queryParams);
+      excluded_territories = await this.tripRepository.getOpendataExcludedTerritories(queryParams);
       this.addExcludedTerritoriesToQueryParams(excluded_territories, queryParams);
     }
 
     const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
-    let filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end);
-    let filename: string = path.parse(filepath).base;
+    const filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end);
+    return this.handleCSVExport(type, filepath, queryParams, excluded_territories);
+  }
 
-    if (!this.isOpendata(type)) {
-      // ZIP the file
-      const zipname = `${filename.replace('.csv', '')}.zip`;
-      const zippath = path.join(os.tmpdir(), zipname);
-      const zip = new AdmZip();
-      zip.addLocalFile(filepath);
-      zip.writeZip(zippath);
-
-      filepath = zippath;
-      filename = zipname;
-    }
-
-    const fileKey = await this.fileProvider.upload(BucketName.Export, filepath, filename);
-
+  private async handleCSVExport(type: string, filepath: string, queryParams, excluded_territories): Promise<string> {
     if (this.isOpendata(type)) {
-      this.publishOpendataExport(queryParams, excluded_territories);
+      return this.processOpendataExport(filepath, queryParams, excluded_territories);
+    } else {
+      return this.processOtherTypeExport(filepath);
     }
+  }
 
-    return fileKey;
+  private async processOtherTypeExport(filepath: string): Promise<string> {
+    const filename: string = path.parse(filepath).base;
+    const { zippath, zipname } = this.zip(filename, filepath);
+    await this.fileProvider.upload(BucketName.Export, zippath, zipname);
+    this.removeFromFs(filepath);
+    this.removeFromFs(zippath);
+    return zippath;
+  }
+
+  private async processOpendataExport(filepath: string, queryParams: any, excluded_territories: any): Promise<string> {
+    await this.publishOpendataExport(queryParams, excluded_territories, filepath);
+    this.removeFromFs(filepath);
+    return filepath;
+  }
+
+  private zip(filename: string, filepath: string) {
+    const zipname = `${filename.replace('.csv', '')}.zip`;
+    const zippath = path.join(os.tmpdir(), zipname);
+    const zip = new AdmZip();
+    zip.addLocalFile(filepath);
+    zip.writeZip(zippath);
+    return { zippath, zipname };
+  }
+
+  private removeFromFs(filepath: string) {
+    fs.unlinkSync(filepath);
   }
 
   private addExcludedTerritoriesToQueryParams(
@@ -266,20 +283,22 @@ export class BuildExportAction extends Action implements InitHookInterface {
     return type === 'opendata';
   }
 
-  private async publishOpendataExport(
-    queryParam: TripSearchInterface,
+  private publishOpendataExport(
+    tripSearchQueryParam: TripSearchInterface,
     excluded_territories: TerritoryTripsInterface[],
+    filepath: string,
   ) {
-    await this.kernel.call<PublishOpenDataParamsInterface>(
+    return this.kernel.call<PublishOpenDataParamsInterface>(
       publishOpenDataSignature,
       {
-        publish: true,
-        date: (queryParam.date.end.toISOString() as unknown) as Date,
+        filepath,
+        tripSearchQueryParam,
+        excludedTerritories: excluded_territories,
       },
       {
         call: {
           user: {},
-          metadata: { queryParam: queryParam, excludedTerritories: excluded_territories },
+          metadata: {},
         },
         channel: {
           service: handlerConfig.service,

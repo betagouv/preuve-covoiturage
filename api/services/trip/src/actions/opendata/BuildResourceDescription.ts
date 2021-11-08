@@ -1,22 +1,25 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
-import { OpenDataContextMetadata } from '../../interfaces/OpenDataContextMetadata';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
+import { TerritoryTripsInterface } from '../../shared/trip/common/interfaces/TerritoryTripsInterface';
 import { TripSearchInterface } from '../../shared/trip/common/interfaces/TripSearchInterface';
 
 @provider()
 export class BuildResourceDescription {
   constructor(private tripRepository: TripRepositoryProvider) {}
 
-  async call(openDataContext: OpenDataContextMetadata): Promise<string> {
-    const total_truncated: string = await (await this.tripRepository.searchCount(openDataContext.queryParam)).count;
-    const start_deleted: number = openDataContext.excludedTerritories
+  async call(
+    tripSearchQueryParam: TripSearchInterface,
+    excludedTerritories: TerritoryTripsInterface[],
+  ): Promise<string> {
+    const total_truncated: string = await (await this.tripRepository.searchCount(tripSearchQueryParam)).count;
+    const start_deleted: number = excludedTerritories
       .filter((e) => e.start_territory_id)
       .reduce((count, value) => count + value.aggregated_trips_journeys.length, 0);
-    const end_deleted: number = openDataContext.excludedTerritories
+    const end_deleted: number = excludedTerritories
       .filter((e) => e.end_territory_id)
       .reduce((count, value) => count + value.aggregated_trips_journeys.length, 0);
-    const total: string = await this.getTotal(openDataContext.queryParam);
+    const total: string = await this.getTotal(tripSearchQueryParam);
     const deleted = parseInt(total) - parseInt(total_truncated);
     const intersection = deleted - start_deleted - end_deleted;
     return this.build(
@@ -26,17 +29,17 @@ export class BuildResourceDescription {
       start_deleted,
       end_deleted,
       Math.abs(intersection),
-      new Date(openDataContext.queryParam.date.start),
+      new Date(tripSearchQueryParam.date.start),
     );
   }
 
-  private async getTotal(queryParam: TripSearchInterface): Promise<string> {
-    const queryParamCopy: TripSearchInterface = {
-      ...queryParam,
+  private async getTotal(tripSearchQueryParam: TripSearchInterface): Promise<string> {
+    const tripSearchQueryParamCopy: TripSearchInterface = {
+      ...tripSearchQueryParam,
     };
-    delete queryParamCopy.excluded_end_territory_id;
-    delete queryParamCopy.excluded_start_territory_id;
-    return (await this.tripRepository.searchCount(queryParamCopy)).count;
+    delete tripSearchQueryParamCopy.excluded_end_territory_id;
+    delete tripSearchQueryParamCopy.excluded_start_territory_id;
+    return (await this.tripRepository.searchCount(tripSearchQueryParamCopy)).count;
   }
 
   private build(
