@@ -26,7 +26,7 @@ export class PublishOpenDataAction extends Action {
       const datasetSlug = this.config.get('datagouv.datasetSlug');
       const description: string = await this.buildResourceDescription.call(context.call.metadata);
       const uploadResource: UploadedResource = await this.datagouv.uploadResources(datasetSlug, filepath);
-      await this.datagouv.updateResource(datasetSlug, { ...uploadResource, description);
+      await this.datagouv.updateResource(datasetSlug, { ...uploadResource, description });
     } catch (e) {
       throw e;
     }
