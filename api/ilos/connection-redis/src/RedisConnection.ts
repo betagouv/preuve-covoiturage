@@ -32,16 +32,22 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
   }
 
   protected buildClient(): RedisInterface {
+    const defaultConfig = {
+      maxRetriesPerRequest: null,
+      enableReadyCheck: false,
+      // lazyConnect: true,
+    };
+
     if (this.config.connectionString) {
       const { connectionString, ...other } = this.config;
       return new Redis(connectionString, {
+        ...defaultConfig,
         ...other,
-        // lazyConnect: true,
       });
     }
     return new Redis({
+      ...defaultConfig,
       ...this.config,
-      // lazyConnect: true,
     });
   }
 }
