@@ -1,10 +1,4 @@
-import {
-  ConfigInterfaceResolver,
-  ContextType,
-  handler,
-  KernelInterfaceResolver,
-  NotFoundException,
-} from '@ilos/common';
+import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
@@ -68,7 +62,6 @@ export class CreateCertificateAction extends AbstractAction {
     });
     console.debug(`[cert:create] findTrips: ${(new Date().getTime() - b3.getTime()) / 1000}s`);
 
-    this.throwNotFoundIfEmpty(carpools);
     carpools = this.removeDuplicateTripId(carpools);
 
     // get totals
@@ -172,12 +165,6 @@ export class CreateCertificateAction extends AbstractAction {
 
   private removeDuplicateTripId(carpools: CarpoolInterface[]): CarpoolInterface[] {
     return carpools.filter((item, index, array) => array.findIndex((t) => t.trip_id === item.trip_id) === index);
-  }
-
-  private throwNotFoundIfEmpty(carpools: CarpoolInterface[]) {
-    if (carpools.length === 0) {
-      throw new NotFoundException('No trips found for provided identity');
-    }
   }
 
   private async findPerson(identity: IdentityIdentifiersInterface, operator_id: number): Promise<string> {
