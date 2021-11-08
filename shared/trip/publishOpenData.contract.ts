@@ -1,5 +1,10 @@
+import { TerritoryTripsInterface } from '../../interfaces/TerritoryTripsInterface';
+import { TripSearchInterface } from './common/interfaces/TripSearchInterface';
+
 export interface ParamsInterface {
   filepath: string;
+  tripSearchQueryParam: TripSearchInterface;
+  excludedTerritories: TerritoryTripsInterface[];
 }
 
 export type ResultInterface = void;

@@ -226,7 +226,6 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
     const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
     const filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end);
-    
     return this.handleCSVExport(type, filepath, queryParams, excluded_territories)
   }
 
@@ -285,7 +284,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
   }
 
   private publishOpendataExport(
-    queryParam: TripSearchInterface,
+    tripSearchQueryParam: TripSearchInterface,
     excluded_territories: TerritoryTripsInterface[],
     filepath: string,
   ) {
@@ -293,11 +292,13 @@ export class BuildExportAction extends Action implements InitHookInterface {
       publishOpenDataSignature,
       {
         filepath,
+        tripSearchQueryParam, 
+        excludedTerritories: excluded_territories 
       },
       {
         call: {
           user: {},
-          metadata: { queryParam: queryParam, excludedTerritories: excluded_territories },
+          metadata: {}
         },
         channel: {
           service: handlerConfig.service,
