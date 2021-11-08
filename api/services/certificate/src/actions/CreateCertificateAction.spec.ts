@@ -287,6 +287,32 @@ test('CreateCertificateAction: should generate certificate with rac amount split
   t.is(result.data.uuid, t.context.CERTIFICATE_UUID);
 });
 
+test('CreateCertificateAction: should return empty cert if no trips', async (t) => {
+  // Arrange
+  const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
+  t.context.carpoolRepositoryFindStub.resolves([]);
+
+  // Act
+  const result: WithHttpStatus<ResultInterface> = await t.context.createCertificateAction.handle(params, null);
+
+  // Assert
+  const expectCreateCertificateParams: CertificateBaseInterface = getExpectedCertificateParams(
+    {
+      total_tr: 0,
+      total_km: 0,
+      total_rm: 0,
+      total_point: 0,
+      rows: [],
+    },
+    t,
+  );
+  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
+  sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
+  sinon.assert.calledTwice(t.context.kernelCallStub);
+  t.is(result.meta.httpStatus, 201);
+  t.is(result.data.uuid, t.context.CERTIFICATE_UUID);
+});
+
 function getExpectedCertificateParams(certificateMeta: Partial<CertificateMetaInterface>, t): CertificateBaseInterface {
   return {
     meta: {
