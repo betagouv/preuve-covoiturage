@@ -1,57 +1,46 @@
-import {
-  ConfigInterfaceResolver,
-  ContextType,
-  handler,
-  InitHookInterface,
-  KernelInterfaceResolver,
-} from '@ilos/common';
+import { ContextType, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
 import {
   ParamsInterface as ListCampaignsParamInterface,
   ResultInterface as ListCampaignsResultInterface,
   signature as listCampaignsSignature,
 } from '../shared/policy/list.contract';
+import { handlerConfig, ResultInterface, signature } from '../shared/trip/activeCampaignExcelExport.contract';
 import {
   ParamsInterface as BuildExcelExportParamInterface,
   ResultInterface as BuildExcelExportResultInterface,
   signature as buildExcelExportSignature,
 } from '../shared/trip/excelExport.contract';
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
-import { handlerConfig, ResultInterface, signature } from '../shared/trip/activeCampaignExcelExport.contract';
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
 export class ActiveCampaignExcelExportAction extends Action implements InitHookInterface {
-  constructor(private config: ConfigInterfaceResolver, private kernel: KernelInterfaceResolver) {
+  constructor(private kernel: KernelInterfaceResolver) {
     super();
   }
 
   async init(): Promise<void> {
-    /**
-     * Activate fund call exports in production only
-     */
-    if (this.config.get('app.environment') === 'production') {
-      await this.kernel.notify<{}>(
-        signature,
-        {},
-        {
-          call: {
-            user: {},
-          },
-          channel: {
-            service: handlerConfig.service,
-            metadata: {
-              repeat: {
-                cron: '0 5 6 * *',
-              },
-              jobId: 'trip.active_campaign_excel_export',
+    await this.kernel.notify<{}>(
+      signature,
+      {},
+      {
+        call: {
+          user: {},
+        },
+        channel: {
+          service: handlerConfig.service,
+          metadata: {
+            repeat: {
+              cron: '0 5 6 * *',
             },
+            jobId: 'trip.active_campaign_excel_export',
           },
         },
-      );
-    }
+      },
+    );
   }
 
   public async handle(params: {}, context: ContextType): Promise<ResultInterface> {

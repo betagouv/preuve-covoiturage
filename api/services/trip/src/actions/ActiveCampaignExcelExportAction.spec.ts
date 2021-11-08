@@ -24,7 +24,6 @@ const test = anyTest as TestInterface<Partial<Context>>;
 test.beforeEach((t) => {
   t.context.fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   t.context.activeCampaignExcelExportAction = new ActiveCampaignExcelExportAction(
-    null,
     t.context.fakeKernelInterfaceResolver,
   );
 
