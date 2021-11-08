@@ -230,11 +230,12 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
     if (this.isOpendata(type)) {
       await this.publishOpendataExport(queryParams, excluded_territories, filepath);
-      this.removeFromFs(filepath);
     } else {
       const { zippath, zipname } = this.zip(filename, filepath);
       await this.fileProvider.upload(BucketName.Export, zippath, zipname);
     }
+
+    this.removeFromFs(filepath);
 
     return filename;
   }
