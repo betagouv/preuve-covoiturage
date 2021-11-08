@@ -1,4 +1,4 @@
-import { TerritoryTripsInterface } from '../../interfaces/TerritoryTripsInterface';
+import { TerritoryTripsInterface } from './common/interfaces/TerritoryTripsInterface';
 import { TripSearchInterface } from './common/interfaces/TripSearchInterface';
 
 export interface ParamsInterface {

@@ -1,14 +1,17 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
-import { TerritoryTripsInterface } from '../../interfaces/TerritoryTripsInterface';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
+import { TerritoryTripsInterface } from '../../shared/trip/common/interfaces/TerritoryTripsInterface';
 import { TripSearchInterface } from '../../shared/trip/common/interfaces/TripSearchInterface';
 
 @provider()
 export class BuildResourceDescription {
   constructor(private tripRepository: TripRepositoryProvider) {}
 
-  async call(tripSearchQueryParam: TripSearchInterface, excludedTerritories : TerritoryTripsInterface[]): Promise<string> {
+  async call(
+    tripSearchQueryParam: TripSearchInterface,
+    excludedTerritories: TerritoryTripsInterface[],
+  ): Promise<string> {
     const total_truncated: string = await (await this.tripRepository.searchCount(tripSearchQueryParam)).count;
     const start_deleted: number = excludedTerritories
       .filter((e) => e.start_territory_id)

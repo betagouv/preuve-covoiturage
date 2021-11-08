@@ -3,23 +3,23 @@ import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import AdmZip from 'adm-zip';
+import fs from 'fs';
 import { get } from 'lodash';
 import os from 'os';
 import path from 'path';
 import { getDefaultEndDate } from '../helpers/getDefaultDates';
 import { ExportTripInterface } from '../interfaces';
 import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
-import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../shared/trip/buildExport.contract';
 import { alias } from '../shared/trip/buildExport.schema';
+import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
 import { TripSearchInterface } from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
   ParamsInterface as PublishOpenDataParamsInterface,
   signature as publishOpenDataSignature,
 } from '../shared/trip/publishOpenData.contract';
 import { BuildFile } from './file/BuildFile';
-import fs from 'fs';
 
 export interface FlattenTripInterface extends ExportTripInterface<string> {
   journey_start_date: string;
@@ -226,18 +226,18 @@ export class BuildExportAction extends Action implements InitHookInterface {
 
     const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
     const filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end);
-    return this.handleCSVExport(type, filepath, queryParams, excluded_territories)
+    return this.handleCSVExport(type, filepath, queryParams, excluded_territories);
   }
 
   private async handleCSVExport(type: string, filepath: string, queryParams, excluded_territories): Promise<string> {
     if (this.isOpendata(type)) {
-      return await this.processOpendataExport(filepath, queryParams, excluded_territories);
+      return this.processOpendataExport(filepath, queryParams, excluded_territories);
     } else {
-      return await this.processOtherTypeExport(filepath);
+      return this.processOtherTypeExport(filepath);
     }
   }
 
-  private async processOtherTypeExport(filepath: string) : Promise<string> {
+  private async processOtherTypeExport(filepath: string): Promise<string> {
     const filename: string = path.parse(filepath).base;
     const { zippath, zipname } = this.zip(filename, filepath);
     await this.fileProvider.upload(BucketName.Export, zippath, zipname);
@@ -246,7 +246,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     return zippath;
   }
 
-  private async processOpendataExport(filepath: string, queryParams: any, excluded_territories: any) : Promise<string> {
+  private async processOpendataExport(filepath: string, queryParams: any, excluded_territories: any): Promise<string> {
     await this.publishOpendataExport(queryParams, excluded_territories, filepath);
     this.removeFromFs(filepath);
     return filepath;
@@ -292,13 +292,13 @@ export class BuildExportAction extends Action implements InitHookInterface {
       publishOpenDataSignature,
       {
         filepath,
-        tripSearchQueryParam, 
-        excludedTerritories: excluded_territories 
+        tripSearchQueryParam,
+        excludedTerritories: excluded_territories,
       },
       {
         call: {
           user: {},
-          metadata: {}
+          metadata: {},
         },
         channel: {
           service: handlerConfig.service,

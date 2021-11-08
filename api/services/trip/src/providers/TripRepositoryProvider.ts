@@ -11,9 +11,9 @@ import {
 } from '../interfaces';
 import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
-import { TerritoryTripsInterface } from '../interfaces/TerritoryTripsInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
+import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
 import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
