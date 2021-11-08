@@ -180,7 +180,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
   }
 
-  public async getOpenDataExcludedTerritories(params: TripSearchInterface): Promise<TerritoryTripsInterface[]> {
+  public async getOpendataExcludedTerritories(params: TripSearchInterface): Promise<TerritoryTripsInterface[]> {
     const where = await this.buildWhereClauses(params);
 
     const excluded_start_sql_text = this.numberPlaceholders(`

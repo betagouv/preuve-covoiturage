@@ -220,7 +220,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     let excluded_territories: TerritoryTripsInterface[];
 
     if (this.isOpendata(type)) {
-      excluded_territories = await this.tripRepository.getOpenDataExcludedTerritories(queryParams);
+      excluded_territories = await this.tripRepository.getOpendataExcludedTerritories(queryParams);
       this.addExcludedTerritoriesToQueryParams(excluded_territories, queryParams);
     }
 
