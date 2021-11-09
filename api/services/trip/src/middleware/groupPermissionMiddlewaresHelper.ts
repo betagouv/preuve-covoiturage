@@ -5,7 +5,7 @@ import {
 } from '@pdc/provider-middleware';
 
 //
-// Custom groupPermissionMiddlewares() using authorizedTerritories in place of territory_id
+// Custom groupPermissionMiddlewares() using authorizedZoneCodes in place of territory_id
 //
 export function groupPermissionMiddlewaresHelper(groups: {
   territory: string;
@@ -15,7 +15,7 @@ export function groupPermissionMiddlewaresHelper(groups: {
   const middlewareParameters = [];
   const { territory: territoryPermission, operator: operatorPermission, registry: registryPermission } = groups;
 
-  middlewareParameters.push([territoryPermission, 'call.user.authorizedTerritories', 'territory_id']);
+  middlewareParameters.push([territoryPermission, 'call.user.authorizedZoneCodes._id', 'territory_id']);
   middlewareParameters.push([operatorPermission, 'call.user.operator_id', 'operator_id']);
 
   return [hasPermissionByScopeMiddleware(registryPermission, ...middlewareParameters)];

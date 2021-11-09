@@ -51,7 +51,7 @@ test.before((t) => {
     role: 'admin',
     territory_id: 42,
     permissions: ['territory.trip.stats'],
-    authorizedTerritories: [42, 43, 44, 45],
+    authorizedZoneCodes: { _id: [42, 43, 44, 45] },
   };
 
   t.context.mockCreateUserParameters = {
@@ -74,7 +74,7 @@ test.before((t) => {
   t.context.middlewareConfigTripStats = [
     'registry.trip.stats',
     [
-      ['territory.trip.stats', 'call.user.authorizedTerritories', 'territory_id'],
+      ['territory.trip.stats', 'call.user.authorizedZoneCodes', 'territory_id'],
       ['operator.trip.stats', 'call.user.operator_id', 'operator_id'],
     ],
   ];

@@ -28,6 +28,8 @@ import { patchContacts } from './shared/territory/patchContacts.schema';
 import { schema as intermediaryRelationSchema } from './shared/territory/relationUiStatus.schema';
 import { update } from './shared/territory/update.schema';
 import { binding as updateOperatorBinding } from './shared/territory/updateOperator.schema';
+import { binding as getAuthorizedCodesBinding } from './shared/territory/getAuthorizedCodes.schema';
+import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
 
 @serviceProvider({
   config,
@@ -44,6 +46,7 @@ import { binding as updateOperatorBinding } from './shared/territory/updateOpera
     ['territory.findByInsees', findByInsee],
     ['territory.patchContacts', patchContacts],
     updateOperatorBinding,
+    getAuthorizedCodesBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [[PostgresConnection, 'connections.postgres']],
@@ -59,6 +62,7 @@ import { binding as updateOperatorBinding } from './shared/territory/updateOpera
     GetTerritoryParentChildrenAction,
     TreeTerritoryAction,
     FindTerritoryByInseesAction,
+    GetAuthorizedCodesAction,
   ],
   commands: [],
 })

@@ -54,7 +54,7 @@ export class ScopeToGroupMiddleware implements MiddlewareInterface {
         normalizedParams.territory_id = [context.call.user.territory_id];
       }
       // check if all territory_id in params are in authorized territories
-      const authorizedTerritories = context.call.user.authorizedTerritories;
+      const authorizedTerritories = context.call.user.authorizedZoneCodes?._id;
       if (
         Array.isArray(authorizedTerritories) &&
         Array.isArray(normalizedParams.territory_id) &&
