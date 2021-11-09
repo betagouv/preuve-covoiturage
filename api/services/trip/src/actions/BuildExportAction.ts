@@ -161,7 +161,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
   ];
 
   public static readonly extraFields = {
-    opendata: ['journey_distance', 'journey_duration', 'operator_class'],
+    opendata: ['journey_distance', 'journey_duration'],
     operator: [
       'journey_distance_anounced',
       'journey_distance_calculated',
