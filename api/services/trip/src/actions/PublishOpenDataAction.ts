@@ -21,14 +21,10 @@ export class PublishOpenDataAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    try {
-      const { filepath, tripSearchQueryParam, excludedTerritories } = params;
-      const datasetSlug = this.config.get('datagouv.datasetSlug');
-      const description: string = await this.buildResourceDescription.call(tripSearchQueryParam, excludedTerritories);
-      const uploadResource: UploadedResource = await this.datagouv.uploadResources(datasetSlug, filepath);
-      await this.datagouv.updateResource(datasetSlug, { ...uploadResource, description });
-    } catch (e) {
-      throw e;
-    }
+    const { filepath, tripSearchQueryParam, excludedTerritories } = params;
+    const datasetSlug = this.config.get('datagouv.datasetSlug');
+    const description: string = await this.buildResourceDescription.call(tripSearchQueryParam, excludedTerritories);
+    const uploadResource: UploadedResource = await this.datagouv.uploadResources(datasetSlug, filepath);
+    await this.datagouv.updateResource(datasetSlug, { ...uploadResource, description });
   }
 }
