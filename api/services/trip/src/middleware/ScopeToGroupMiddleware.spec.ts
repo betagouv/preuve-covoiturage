@@ -60,7 +60,7 @@ test('Middleware Scopetogroup: has territory permission', async (t) => {
     t.context.contextFactory({
       permissions: ['territory.trip.list'],
       territory_id: t.context.mockTripParameters.territory_id[0],
-      authorizedZoneCodes: { _id: [t.context.mockTripParameters.territory_id] },
+      authorizedZoneCodes: { _id: t.context.mockTripParameters.territory_id },
     }),
     () => 'next() called',
     t.context.middlewareConfig,

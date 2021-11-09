@@ -74,7 +74,7 @@ test.before((t) => {
   t.context.middlewareConfigTripStats = [
     'registry.trip.stats',
     [
-      ['territory.trip.stats', 'call.user.authorizedZoneCodes', 'territory_id'],
+      ['territory.trip.stats', 'call.user.authorizedZoneCodes._id', 'territory_id'],
       ['operator.trip.stats', 'call.user.operator_id', 'operator_id'],
     ],
   ];
