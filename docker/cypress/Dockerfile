@@ -1,4 +1,4 @@
-FROM cypress/browsers:node14.15.0-chrome86-ff82
+FROM cypress/browsers:node14.17.0-chrome91-ff89
 RUN mkdir -p /app
 WORKDIR /app
 
