@@ -10,6 +10,10 @@ stdenv.mkDerivation {
         act
         openssl
         unstable.cypress
+        # node gyp dependencies
+        python39
+        gcc10
+        cmake
     ];
 
     shellHook = ''
