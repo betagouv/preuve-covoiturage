@@ -19,7 +19,8 @@
   },
   "search.exclude": {
     "**/node_modules": true,
-    "**/dist": true
+    "**/dist": true,
+    "api/services/*/src/shared": true
   },
   "files.exclude": {
     "**/*.postman_collection.json": true,
