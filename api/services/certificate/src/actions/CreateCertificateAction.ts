@@ -1,17 +1,18 @@
 import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
-import { omit, upperFirst } from 'lodash';
+import { omit } from 'lodash';
+import { createCastParamsHelper, CreateCastParamsInterface } from '../helpers/createCastParamsHelper';
+import { findOperator, FindOperatorInterface } from '../helpers/findOperatorHelper';
+import { findPerson, FindPersonInterface } from '../helpers/findPersonHelper';
+import { MapFromCarpoolInterface, mapFromCarpoolsHelper } from '../helpers/mapFromCarpoolsHelper';
 import {
-  CarpoolInterface,
   CarpoolRepositoryProviderInterfaceResolver,
   FindParamsInterface,
 } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
+import { CarpoolInterface } from '../shared/certificate/common/interfaces/CarpoolInterface';
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
-import { MetaRowInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
-import { IdentityIdentifiersInterface } from '../shared/certificate/common/interfaces/IdentityIdentifiersInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
 import { alias } from '../shared/certificate/create.schema';
 import { WithHttpStatus } from '../shared/common/handler/WithHttpStatus';
@@ -27,63 +28,40 @@ import { WithHttpStatus } from '../shared/common/handler/WithHttpStatus';
   ],
 })
 export class CreateCertificateAction extends AbstractAction {
+  private findOperator: FindOperatorInterface;
+  private findPerson: FindPersonInterface;
+  private castParams: CreateCastParamsInterface<ParamsInterface>;
+  private store: MapFromCarpoolInterface;
+
   constructor(
     private kernel: KernelInterfaceResolver,
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,
-    private dateProvider: DateProviderInterfaceResolver,
     private config: ConfigInterfaceResolver,
   ) {
     super();
+    this.findOperator = findOperator(this.kernel);
+    this.findPerson = findPerson(this.kernel);
+    this.castParams = createCastParamsHelper(this.config);
+    this.store = mapFromCarpoolsHelper(this.certRepository);
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<WithHttpStatus<ResultInterface>> {
     const { identity, tz, operator_id, start_at, end_at, positions } = this.castParams(params);
 
     // fetch the data for this identity and operator and map to template object
-    // get the last available UUID for the person. They can have many
-    const b1 = new Date();
-    const personUUID: string = await this.findPerson(identity, operator_id);
-    console.debug(`[cert:create] findPerson: ${(new Date().getTime() - b1.getTime()) / 1000}s`);
+    const personUUID = await this.findPerson({ identity, operator_id });
+    const operator = await this.findOperator({ operator_id, context });
 
-    const b2 = new Date();
-    const operator = await this.findOperator(operator_id, context);
-    console.debug(`[cert:create] findOperator: ${(new Date().getTime() - b2.getTime()) / 1000}s`);
-
-    // fetch the data for this identity and operator and map to template object
-    const b3 = new Date();
-    let carpools: CarpoolInterface[] = await this.findTrips({
-      personUUID,
-      operator_id,
-      tz,
-      start_at,
-      end_at,
-      positions,
-    });
-    console.debug(`[cert:create] findTrips: ${(new Date().getTime() - b3.getTime()) / 1000}s`);
-
-    carpools = this.removeDuplicateTripId(carpools);
-
-    // get totals
-    const total_tr = new Set(carpools.map((c) => c.trip_id)).size;
-    const metaRows: MetaRowInterface[] = this.aggregateTripByYearMonth(carpools);
-    const total_km = Math.round(metaRows.reduce((sum: number, line): number => line.distance + sum, 0));
-    const total_rm = Math.round(metaRows.reduce((sum: number, line): number => line.remaining + sum, 0) * 100) / 100;
-    const total_days = Math.round(metaRows.reduce((sum: number, line): number => line.days + sum, 0));
-
-    const certificate: CertificateInterface = await this.storeCertificate(
-      tz,
-      personUUID,
+    // fetch the data for this identity and operator and store the compiled data
+    const findParams: FindParamsInterface = { personUUID, operator_id, tz, start_at, end_at, positions };
+    const carpools: CarpoolInterface[] = await this.carpoolRepository.find(findParams);
+    const certificate: CertificateInterface = await this.store({
+      person: { uuid: personUUID },
       operator,
-      total_tr,
-      total_km,
-      total_rm,
-      total_days,
-      metaRows,
-      end_at,
-      start_at,
-      operator_id,
-    );
+      carpools,
+      params,
+    });
 
     return {
       meta: { httpStatus: 201 },
@@ -93,159 +71,5 @@ export class CreateCertificateAction extends AbstractAction {
         meta: omit(certificate.meta, ['identity', 'operator']),
       },
     };
-  }
-
-  private async storeCertificate(
-    tz: string,
-    personUUID: string,
-    operator: any,
-    total_tr: number,
-    total_km: number,
-    total_rm: number,
-    total_days: number,
-    results: MetaRowInterface[],
-    end_at: Date,
-    start_at: Date,
-    operator_id: number,
-  ): Promise<CertificateInterface> {
-    return this.certRepository.create({
-      meta: {
-        tz,
-        identity: { uuid: personUUID },
-        operator: { uuid: operator.uuid, name: operator.name },
-        total_tr,
-        total_km,
-        total_rm,
-        total_days,
-        total_point: 0,
-        rows: results.slice(0, 11), // TODO agg the last line
-      },
-      end_at,
-      start_at,
-      operator_id,
-      identity_uuid: personUUID,
-    });
-  }
-
-  private aggregateTripByYearMonth(carpools: CarpoolInterface[]): MetaRowInterface[] {
-    let index = 0;
-
-    // add a 'daysSet' prop to store trip dates as unique values. Sum is calculated at the end
-    const metaRows: Array<MetaRowInterface & { daysSet: Set<string> }> = [];
-
-    // aggregate and sum by year month
-    carpools
-      // sort trips backward
-      .sort((a, b) => {
-        const A = parseInt(`${a.year}${a.month}`, 10);
-        const B = parseInt(`${b.year}${b.month}`, 10);
-        return A < B ? 1 : A === B ? 0 : -1;
-      })
-
-      // format date for humans
-      .map((c: CarpoolInterface) => {
-        c.month = upperFirst(this.dateProvider.format(new Date(`${c.year}-${c.month}-02`), 'MMMM yyyy'));
-        return c;
-      })
-
-      // aggregate results per month
-      .reduce((acc, val) => {
-        if (!acc[val.month]) {
-          acc[val.month] = {
-            month: val.month,
-            index: index++,
-            distance: 0,
-            remaining: 0,
-            trips: 0,
-            daysSet: new Set(),
-          };
-          metaRows.push(acc[val.month]);
-        }
-        const operator_incentives = JSON.parse(val.payments)
-          .filter((p) => p.type === 'incentive')
-          .reduce((incentive_sum, p) => incentive_sum + p.amount / 100, 0);
-        acc[val.month].distance = acc[val.month].distance + val.km;
-        acc[val.month].remaining = acc[val.month].remaining + val.rac - operator_incentives;
-        acc[val.month].trips = acc[val.month].trips + 1;
-        acc[val.month].daysSet.add(`${val.month}-${val.day}`);
-        return acc;
-      }, {});
-
-    // truncate totals
-    return metaRows.map((r) => {
-      return {
-        index: r.index,
-        month: r.month,
-        days: r.daysSet.size,
-        trips: r.trips,
-        distance: Math.round(r.distance),
-        remaining: r.remaining < 0 ? 0 : Math.floor(r.remaining * 100) / 100,
-      };
-    });
-  }
-
-  private removeDuplicateTripId(carpools: CarpoolInterface[]): CarpoolInterface[] {
-    return carpools.filter((item, index, array) => array.findIndex((t) => t.trip_id === item.trip_id) === index);
-  }
-
-  private async findPerson(identity: IdentityIdentifiersInterface, operator_id: number): Promise<string> {
-    return this.kernel.call(
-      'carpool:finduuid',
-      { identity, operator_id },
-      {
-        channel: { service: 'certificate' },
-        call: { user: {} },
-      },
-    );
-  }
-
-  private async findOperator(operator_id: number, context: ContextType): Promise<any> {
-    return this.kernel.call(
-      'operator:quickfind',
-      { _id: operator_id, thumbnail: false },
-      {
-        ...context,
-        channel: { service: 'certificate' },
-      },
-    );
-  }
-
-  private async findTrips(options: FindParamsInterface): Promise<CarpoolInterface[]> {
-    return this.carpoolRepository.find(options);
-  }
-
-  /**
-   * Make sure the start and end dates are coherent with one another.
-   * Fill in with sensible defaults when not provided.
-   *
-   * Cast the identity as a phone number for now.
-   * Will be refactored when the ID engine is up and running
-   */
-  private castParams(params: ParamsInterface): ParamsInterface & { start_at: Date; end_at: Date } {
-    const origin = new Date('2019-01-01T00:00:00+0100'); // Europe/Paris
-    const end_at_max = new Date().getTime() - this.config.get('delays.create.end_at_buffer', 6) * 86400000;
-
-    let { start_at, end_at } = params;
-
-    start_at = 'start_at' in params ? new Date(start_at) : origin;
-    end_at = 'end_at' in params ? new Date(end_at) : new Date(end_at_max);
-
-    // start_at must be older than n days + 1
-    if (start_at.getTime() > end_at_max) {
-      start_at = new Date(end_at_max - 86400000);
-    }
-
-    // end_at must be older than n days
-    if (end_at.getTime() > end_at_max) {
-      end_at = new Date(end_at_max);
-    }
-
-    // start_at must be older than end_at, otherwise we
-    // set a 24 hours slot
-    if (start_at.getTime() >= end_at.getTime()) {
-      start_at = new Date(end_at.getTime() - 86400000);
-    }
-
-    return { ...params, start_at, end_at };
   }
 }

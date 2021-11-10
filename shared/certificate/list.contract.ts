@@ -1,4 +1,5 @@
 import { PointInterface } from '../common/interfaces/PointInterface';
+import { MetaPersonDisplayInterface } from './common/interfaces/CertificateMetaInterface';
 
 export interface Pagination {
   start_index: number;
@@ -16,17 +17,15 @@ export interface ResultRowInterface {
   operator: { uuid: string; name: string };
   start_pos?: PointInterface;
   end_pos?: PointInterface;
-  total_km: number;
-  total_point: number | null;
-  total_days: number | null;
-  total_rm: number | null;
+  driver: MetaPersonDisplayInterface;
+  passenger: MetaPersonDisplayInterface;
 }
+
 export type ResultInterface = {
   rows: ResultRowInterface[];
   length: number;
 };
 
-// export type RepositoryInterface = Required<ParamsInterface>;
 export type RepositoryInterface = ParamsInterface;
 
 export const handlerConfig = {

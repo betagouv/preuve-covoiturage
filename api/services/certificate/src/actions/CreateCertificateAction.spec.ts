@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@ilos/common';
-import { DateProvider } from '@pdc/provider-date/dist';
 import anyTest, { TestInterface } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
+import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
 import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import { CertificateMetaInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
@@ -38,6 +38,25 @@ interface Context {
 
 const test = anyTest as TestInterface<Partial<Context>>;
 
+const data: CarpoolInterface[] = [
+  /* eslint-disable prettier/prettier */
+  { type: CarpoolTypeEnum.DRIVER, week: 1, month: null, datetime: new Date('2021-01-01'), uniq_days: 7, trips: 15, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 100, euros: 10 },
+  { type: CarpoolTypeEnum.DRIVER, week: 2, month: null, datetime: new Date('2021-01-08'), uniq_days: 5, trips: 10, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: false, dim: false, km: 100, euros: 10 },
+  { type: CarpoolTypeEnum.DRIVER, week: 3, month: null, datetime: new Date('2021-01-15'), uniq_days: 5, trips: 10, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: false, dim: false, km: 100, euros: 10 },
+  { type: CarpoolTypeEnum.DRIVER, week: 5, month: null, datetime: new Date('2021-02-01'), uniq_days: 1, trips: 2, lun: true, mar: false, mer: false, jeu: false, ven: false, sam: false, dim: false, km: 10, euros: 1 },
+  { type: CarpoolTypeEnum.DRIVER, week: null, month: null, datetime: new Date('2021-01-01'), uniq_days: 18, trips: 37, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 310, euros: 31 },
+  { type: CarpoolTypeEnum.PASSENGER, week: 1, month: null, datetime: new Date('2021-01-01'), uniq_days: 7, trips: 15, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 100, euros: 10 },
+  { type: CarpoolTypeEnum.PASSENGER, week: 2, month: null, datetime: new Date('2021-01-08'), uniq_days: 5, trips: 10, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 100, euros: 10 },
+  { type: CarpoolTypeEnum.PASSENGER, week: 3, month: null, datetime: new Date('2021-01-15'), uniq_days: 5, trips: 10, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 100, euros: 10 },
+  { type: CarpoolTypeEnum.PASSENGER, week: 5, month: null, datetime: new Date('2021-02-01'), uniq_days: 1, trips: 2, lun: true, mar: false, mer: false, jeu: false, ven: false, sam: false, dim: false, km: 10, euros: 1 },
+  { type: CarpoolTypeEnum.PASSENGER, week: null, month: null, datetime: new Date('2021-01-01'), uniq_days: 18, trips: 37, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 310, euros: 31 },
+  { type: CarpoolTypeEnum.DRIVER, week: null, month: 1, datetime: new Date('2021-01-01'), uniq_days: 17, trips: 35, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 300, euros: 30 },
+  { type: CarpoolTypeEnum.DRIVER, week: null, month: 2, datetime: new Date('2021-02-01'), uniq_days: 1, trips: 2, lun: true, mar: false, mer: false, jeu: false, ven: false, sam: false, dim: false, km: 10, euros: 1 },
+  { type: CarpoolTypeEnum.PASSENGER, week: null, month: 1, datetime: new Date('2021-01-01'), uniq_days: 17, trips: 35, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 300, euros: 30 },
+  { type: CarpoolTypeEnum.PASSENGER, week: null, month: 2, datetime: new Date('2021-02-01'), uniq_days: 1, trips: 2, lun: true, mar: false, mer: false, jeu: false, ven: false, sam: false, dim: false, km: 10, euros: 1 },
+  /* eslint-enable prettier/prettier */
+];
+
 test.beforeEach((t) => {
   const fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   const configInterfaceResolver = new (class extends ConfigInterfaceResolver {})();
@@ -47,7 +66,6 @@ test.beforeEach((t) => {
     fakeKernelInterfaceResolver,
     certificateRepositoryProviderInterface,
     carpoolRepositoryProviderInterfaceResolver,
-    new DateProvider(),
     configInterfaceResolver,
   );
 
@@ -81,72 +99,47 @@ test.afterEach((t) => {
   t.context.kernelCallStub.restore();
 });
 
-/**
- * -----------------------------------------------------------------------------------------------------------------------------------
- * RAC (reste à charge)
- * -----------------------------------------------------------------------------------------------------------------------------------
- */
-test('CreateCertificateAction: should generate certificate with 0 rac amount for 2 trips with operator incentive', async (t) => {
+test('CreateCertificateAction: should generate certificate payload', async (t) => {
   // Arrange
   const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
-  t.context.carpoolRepositoryFindStub.resolves([
-    {
-      day: 1,
-      month: 9,
-      year: 2021,
-      type: 'passenger',
-      trip_id: faker.datatype.uuid(),
-      km: 10,
-      rac: 1.5,
-      payments: JSON.stringify([
-        {
-          siret: faker.random.alphaNumeric(),
-          index: 0,
-          type: 'incentive',
-          amount: 150,
-        },
-      ]),
-    },
-    {
-      day: 1,
-      month: 9,
-      year: 2021,
-      type: 'passenger',
-      trip_id: faker.datatype.uuid(),
-      km: 10,
-      rac: 1.5,
-      payments: JSON.stringify([
-        {
-          siret: faker.random.alphaNumeric(),
-          index: 0,
-          type: 'incentive',
-          amount: 150,
-        },
-      ]),
-    },
-  ]);
+  t.context.carpoolRepositoryFindStub.resolves(data);
 
   // Act
   const result: WithHttpStatus<ResultInterface> = await t.context.createCertificateAction.handle(params, null);
 
   // Assert
-  const expectCreateCertificateParams: CertificateBaseInterface = {
-    meta: {
-      tz: 'Europe/Paris',
-      identity: { uuid: t.context.USER_RPC_UUID },
-      operator: { uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME },
-      total_tr: 2,
-      total_km: 20,
-      total_rm: 0,
-      total_days: 1,
-      total_point: 0,
-      rows: [{ month: 'Septembre 2021', index: 0, distance: 20, remaining: 0, trips: 2, days: 1 }],
+  /* eslint-disable prettier/prettier */
+  const expected: Pick<CertificateMetaInterface, 'driver' | 'passenger'> = {
+    driver: {
+      weeks: [
+        { type: CarpoolTypeEnum.DRIVER, week: 1, datetime: new Date('2021-01-01'), uniq_days: 7, trips: 15, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.DRIVER, week: 2, datetime: new Date('2021-01-08'), uniq_days: 5, trips: 10, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: false, dim: false, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.DRIVER, week: 3, datetime: new Date('2021-01-15'), uniq_days: 5, trips: 10, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: false, dim: false, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.DRIVER, week: 5, datetime: new Date('2021-02-01'), uniq_days: 1, trips: 2, lun: true, mar: false, mer: false, jeu: false, ven: false, sam: false, dim: false, km: 10, euros: 1 },
+      ],
+      months: [
+        { type: CarpoolTypeEnum.DRIVER, month: 1, datetime: new Date('2021-01-01'), uniq_days: 17, trips: 35, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 300, euros: 30 },
+        { type: CarpoolTypeEnum.DRIVER, month: 2, datetime: new Date('2021-02-01'), uniq_days: 1, trips: 2, lun: true, mar: false, mer: false, jeu: false, ven: false, sam: false, dim: false, km: 10, euros: 1 },      
+      ],
+      total: { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-01'), uniq_days: 18, trips: 37, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 310, euros: 31 },
     },
-    end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,
-    start_at: t.context.certificateRepositoryCreateStub.args[0][0].start_at,
-    operator_id: 4,
-    identity_uuid: t.context.USER_RPC_UUID,
+    passenger: {
+      weeks: [
+        { type: CarpoolTypeEnum.PASSENGER, week: 1, datetime: new Date('2021-01-01'), uniq_days: 7, trips: 15, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.PASSENGER, week: 2, datetime: new Date('2021-01-08'), uniq_days: 5, trips: 10, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: false, dim: false, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.PASSENGER, week: 3, datetime: new Date('2021-01-15'), uniq_days: 5, trips: 10, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: false, dim: false, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.PASSENGER, week: 5, datetime: new Date('2021-02-01'), uniq_days: 1, trips: 2, lun: true, mar: false, mer: false, jeu: false, ven: false, sam: false, dim: false, km: 10, euros: 1 },
+      ],
+      months: [
+        { type: CarpoolTypeEnum.PASSENGER, month: 1, datetime: new Date('2021-01-01'), uniq_days: 17, trips: 35, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 300, euros: 30 },
+        { type: CarpoolTypeEnum.PASSENGER, month: 2, datetime: new Date('2021-02-01'), uniq_days: 1, trips: 2, lun: true, mar: false, mer: false, jeu: false, ven: false, sam: false, dim: false, km: 10, euros: 1 },      
+      ],
+      total: { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-01'), uniq_days: 18, trips: 37, lun: true, mar: true, mer: true, jeu: true, ven: true, sam: true, dim: true, km: 310, euros: 31 },
+    },
+  /* eslint-enable prettier/prettier */
   };
+
+  const expectCreateCertificateParams: CertificateBaseInterface = getExpectedCertificateParams(expected, t);
   sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
   sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
   sinon.assert.calledTwice(t.context.kernelCallStub);
@@ -154,157 +147,7 @@ test('CreateCertificateAction: should generate certificate with 0 rac amount for
   t.is(result.data.uuid, t.context.CERTIFICATE_UUID);
 });
 
-test('CreateCertificateAction: should generate certificate with 0 rac for 2 trips with operator incentive and 0 rpc rac', async (t) => {
-  // Arrange
-  const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
-  t.context.carpoolRepositoryFindStub.resolves([
-    {
-      day: 1,
-      month: 9,
-      year: 2021,
-      type: 'passenger',
-      trip_id: faker.datatype.uuid(),
-      km: 10,
-      rac: 0,
-      payments: JSON.stringify([
-        {
-          siret: faker.random.alphaNumeric(),
-          index: 0,
-          type: 'incentive',
-          amount: 150,
-        },
-      ]),
-    },
-    {
-      day: 1,
-      month: 9,
-      year: 2021,
-      type: 'passenger',
-      trip_id: faker.datatype.uuid(),
-      km: 10,
-      rac: 0,
-      payments: JSON.stringify([
-        {
-          siret: faker.random.alphaNumeric(),
-          index: 0,
-          type: 'incentive',
-          amount: 150,
-        },
-      ]),
-    },
-  ]);
-
-  // Act
-  const result: WithHttpStatus<ResultInterface> = await t.context.createCertificateAction.handle(params, null);
-  const expectCreateCertificateParams: CertificateBaseInterface = getExpectedCertificateParams(
-    {
-      total_tr: 2,
-      total_km: 20,
-      total_rm: 0,
-      total_days: 1,
-      total_point: 0,
-      rows: [
-        {
-          month: 'Septembre 2021',
-          index: 0,
-          distance: 20,
-          remaining: 0,
-          trips: 2,
-          days: 1,
-        },
-      ],
-    },
-    t,
-  );
-
-  // Assert
-  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
-  sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
-  sinon.assert.calledTwice(t.context.kernelCallStub);
-  t.is(result.meta.httpStatus, 201);
-  t.is(result.data.uuid, t.context.CERTIFICATE_UUID);
-});
-
-test('CreateCertificateAction: should generate certificate with rac amount split by month', async (t) => {
-  // Arrange
-  const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
-  t.context.carpoolRepositoryFindStub.resolves([
-    {
-      day: 1,
-      month: 9,
-      year: 2021,
-      type: 'passenger',
-      trip_id: faker.datatype.uuid(),
-      km: 10,
-      rac: 1.5,
-      payments: JSON.stringify([
-        {
-          siret: faker.random.alphaNumeric(),
-          index: 0,
-          type: 'payment',
-          amount: 150,
-        },
-      ]),
-    },
-    {
-      day: 1,
-      month: 8,
-      year: 2021,
-      type: 'passenger',
-      trip_id: faker.datatype.uuid(),
-      km: 10,
-      rac: 1.5,
-      payments: JSON.stringify([
-        {
-          siret: faker.random.alphaNumeric(),
-          index: 0,
-          type: 'payment',
-          amount: 150,
-        },
-      ]),
-    },
-  ]);
-
-  // Act
-  const result: WithHttpStatus<ResultInterface> = await t.context.createCertificateAction.handle(params, null);
-
-  // Assert
-  const expectCreateCertificateParams: CertificateBaseInterface = getExpectedCertificateParams(
-    {
-      total_tr: 2,
-      total_km: 20,
-      total_rm: 3,
-      total_days: 2,
-      total_point: 0,
-      rows: [
-        {
-          month: 'Septembre 2021',
-          index: 0,
-          distance: 10,
-          remaining: 1.5,
-          trips: 1,
-          days: 1,
-        },
-        {
-          month: 'Août 2021',
-          index: 1,
-          distance: 10,
-          remaining: 1.5,
-          trips: 1,
-          days: 1,
-        },
-      ],
-    },
-    t,
-  );
-  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
-  sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
-  sinon.assert.calledTwice(t.context.kernelCallStub);
-  t.is(result.meta.httpStatus, 201);
-  t.is(result.data.uuid, t.context.CERTIFICATE_UUID);
-});
-
-test('CreateCertificateAction: should return empty cert if no trips', async (t) => {
+test.skip('CreateCertificateAction: should return empty cert if no trips', async (t) => {
   // Arrange
   const params: ParamsInterface = stubCertificateCreateAndGetParams(t);
   t.context.carpoolRepositoryFindStub.resolves([]);
@@ -313,16 +156,15 @@ test('CreateCertificateAction: should return empty cert if no trips', async (t) 
   const result: WithHttpStatus<ResultInterface> = await t.context.createCertificateAction.handle(params, null);
 
   // Assert
-  const expectCreateCertificateParams: CertificateBaseInterface = getExpectedCertificateParams(
-    {
-      total_tr: 0,
-      total_km: 0,
-      total_rm: 0,
-      total_point: 0,
-      rows: [],
-    },
-    t,
-  );
+  const expected: CertificateMetaInterface = {
+    tz: 'Europe/Paris',
+    identity: { uuid: t.context.USER_RPC_UUID },
+    operator: { uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME },
+    driver: { weeks: [], months: [], total: null },
+    passenger: { weeks: [], months: [], total: null },
+  };
+  const expectCreateCertificateParams: CertificateBaseInterface = getExpectedCertificateParams(expected, t);
+
   sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
   sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
   sinon.assert.calledTwice(t.context.kernelCallStub);
