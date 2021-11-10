@@ -1,13 +1,13 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
-
-import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
+import { get } from 'lodash';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
+import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import {
   handlerConfig,
-  ResultInterface,
   ParamsInterface,
+  ResultInterface,
   ResultRowInterface,
 } from '../shared/certificate/list.contract';
 import { alias } from '../shared/certificate/list.schema';
@@ -36,6 +36,8 @@ export class ListCertificateAction extends AbstractAction {
       ? await this.certRepository.findByOperatorId(operator_id, false, params.pagination)
       : await this.certRepository.find(false, params.pagination);
 
+    // TODO handle old formats
+
     return {
       length,
       rows: results.map(
@@ -44,10 +46,18 @@ export class ListCertificateAction extends AbstractAction {
             uuid: cert.uuid,
             tz: cert.meta.tz,
             operator: cert.meta.operator,
-            total_km: cert.meta.total_km,
-            total_point: cert.meta.total_point ?? null,
-            total_days: cert.meta.total_days ?? null,
-            total_rm: cert.meta.total_rm ?? null,
+            driver: {
+              uniq_days: get(cert, 'meta.driver.total.uniq_days', null),
+              trips: get(cert, 'meta.driver.total.trips', null),
+              km: get(cert, 'meta.driver.total.km', null),
+              euros: get(cert, 'meta.driver.total.euros', null),
+            },
+            passenger: {
+              uniq_days: get(cert, 'meta.passenger.total.uniq_days', null),
+              trips: get(cert, 'meta.passenger.total.trips', null),
+              km: get(cert, 'meta.passenger.total.km', null),
+              euros: get(cert, 'meta.passenger.total.euros', null),
+            },
           };
         },
       ),

@@ -1,20 +1,18 @@
-/* eslint-disable max-len */
-import { provider, ConfigInterfaceResolver } from '@ilos/common';
+import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-
-import { PointInterface } from '../shared/common/interfaces/PointInterface';
 import {
-  CarpoolInterface,
   CarpoolRepositoryProviderInterface,
   CarpoolRepositoryProviderInterfaceResolver,
   FindParamsInterface,
 } from '../interfaces/CarpoolRepositoryProviderInterface';
+import { CarpoolInterface } from '../shared/certificate/common/interfaces/CarpoolInterface';
+import { PointInterface } from '../shared/common/interfaces/PointInterface';
 
 @provider({
   identifier: CarpoolRepositoryProviderInterfaceResolver,
 })
 export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInterface {
-  constructor(protected connection: PostgresConnection, private config: ConfigInterfaceResolver) {}
+  constructor(protected connection: PostgresConnection) {}
 
   /**
    * Find all carpools for an identity on a given period of time
@@ -25,8 +23,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
   async find(params: FindParamsInterface): Promise<CarpoolInterface[]> {
     const { personUUID, operator_id, tz, start_at, end_at, positions = [], radius = 1000 } = params;
 
-    // TODO get tz
-    const values: any[] = [personUUID, operator_id, start_at, end_at, this.config.get('trips.ratePerKm')];
+    const values: any[] = [personUUID, operator_id, start_at, end_at];
 
     const where_positions = positions
       .reduce((prev: string[], pos: PointInterface): string[] => {
@@ -48,62 +45,90 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
       }, [])
       .join(' OR ');
 
-    // add Timezone
+    // add Timezone at last position of the values array
     values.push(tz || 'GMT');
 
     const text = `
-      WITH
-        -- rac = reste à charge : what is left to be subsidised without the person earning money
-        passenger AS (
-          SELECT
-            DISTINCT tl.trip_id,
-            'passenger' AS type,
-            EXTRACT('YEAR' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS year,
-            EXTRACT('MONTH' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS month,
-            EXTRACT('DAY' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS day,
-            TRUNC(journey_distance::decimal/1000, 3)::real AS km,
-            TRUNC(journey_distance::decimal/1000 * $5::decimal, 3)::real AS max_cost,
-            TRUNC(coalesce(passenger_contribution, 0)::decimal/100, 3)::real AS cost,
-            TRUNC(coalesce(passenger_incentive_rpc_sum, 0)::decimal/100, 3)::real AS incentives,
-            -- rac = what the passenger paid - incentives
-            TRUNC(coalesce(passenger_contribution, 0)::decimal/100 - coalesce(passenger_incentive_rpc_sum, 0)::decimal/100, 3)::real AS rac,
-            cc.meta->>'payments' as payments
-          FROM trip.list tl
-          INNER JOIN carpool.carpools cc ON tl.trip_id = cc.trip_id
-          WHERE tl.operator_id = $2::int
-          AND cc.is_driver = false
-          AND tl.passenger_id = $1
-          AND tl.journey_start_datetime >= $3 AND tl.journey_start_datetime <= $4
-          ${where_positions.length ? `AND (${where_positions})` : ''}
-        ),
-
-        driver AS (
+        WITH
+        trips AS (
           SELECT
             DISTINCT tl.trip_id,
             'driver' AS type,
+            journey_start_datetime AS datetime,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 1 AS lun,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 2 AS mar,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 3 AS mer,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 4 AS jeu,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 5 AS ven,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 6 AS sam,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 0 AS dim,
             EXTRACT('YEAR' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS year,
             EXTRACT('MONTH' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS month,
+            EXTRACT('WEEK' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS week,
             EXTRACT('DAY' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS day,
-            TRUNC(journey_distance::decimal/1000, 3)::real AS km,
-            TRUNC(journey_distance::decimal/1000 * $5::decimal, 3)::real AS max_cost,
-            TRUNC(coalesce(driver_revenue, 0)::decimal/100, 3)::real AS cost,
-            TRUNC(coalesce(driver_incentive_rpc_sum, 0)::decimal/100, 3)::real AS incentives,
-            -- rac = distance x bareme - money gotten FROM passengers - incentives
-            TRUNC(journey_distance::decimal/1000 * $5::decimal - coalesce(driver_revenue, 0)::decimal/100 - coalesce(driver_incentive_rpc_sum, 0)::decimal/100, 3)::real AS rac,
-            cc.meta->>'payments' as payments
+            journey_distance AS distance,
+            COALESCE(driver_revenue, 0) AS euros
             FROM trip.list tl
-          INNER JOIN carpool.carpools cc ON tl.trip_id = cc.trip_id
-          WHERE tl.operator_id = $2::int
-          AND cc.is_driver = true
-          AND tl.driver_id = $1
-          AND tl.journey_start_datetime >= $3 AND tl.journey_start_datetime <= $4
-          ${where_positions.length ? `AND (${where_positions})` : ''}
+            INNER JOIN carpool.carpools cc ON tl.trip_id = cc.trip_id
+            WHERE tl.operator_id = $2::int
+            AND cc.is_driver = true
+            AND tl.driver_id = $1::uuid
+            AND tl.journey_start_datetime >= $3 AND tl.journey_start_datetime < $4
+            ${where_positions.length ? `AND (${where_positions})` : ''}
+          UNION
+          SELECT
+            DISTINCT tl.trip_id,
+            'passenger' AS type,
+            journey_start_datetime AS datetime,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 1 AS lun,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 2 AS mar,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 3 AS mer,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 4 AS jeu,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 5 AS ven,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 6 AS sam,
+            EXTRACT('DOW' FROM journey_start_datetime AT TIME ZONE $${values.length}) = 0 AS dim,
+            EXTRACT('YEAR' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS year,
+            EXTRACT('MONTH' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS month,
+            EXTRACT('WEEK' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS week,
+            EXTRACT('DAY' FROM journey_start_datetime AT TIME ZONE $${values.length}) AS day,
+            journey_distance AS distance,
+            COALESCE(passenger_contribution, 0) AS euros
+            FROM trip.list tl
+            INNER JOIN carpool.carpools cc ON tl.trip_id = cc.trip_id
+            WHERE tl.operator_id = $2::int
+            AND cc.is_driver = false
+            AND tl.passenger_id = $1::uuid
+            AND tl.journey_start_datetime >= $3 AND tl.journey_start_datetime < $4
+            ${where_positions.length ? `AND (${where_positions})` : ''}
+        ),
+        ordered_trips AS (
+          SELECT * FROM trips
+          ORDER BY type, week
         )
-
-        SELECT * from driver union SELECT * from passenger
+        
+      SELECT
+          type,
+          week,
+          month,
+          SUBSTR((MIN(datetime) AT TIME ZONE 'Europe/Paris')::text, 1, 10) AS datetime,
+          COUNT(DISTINCT day) uniq_days,
+          COUNT(*) trips,
+          bool_or(lun) AS lun,
+          bool_or(mar) AS mar,
+          bool_or(mer) AS mer,
+          bool_or(jeu) AS jeu,
+          bool_or(ven) AS ven,
+          bool_or(sam) AS sam,
+          bool_or(dim) AS dim,
+          TRUNC(SUM(distance)::decimal/1000, 3) AS km,
+          TRUNC(SUM(euros)::decimal/100, 2) AS euros
+      FROM ordered_trips
+      GROUP BY GROUPING SETS ((type), (type, week), (type, month))
     `;
 
-    const result = await this.connection.getClient().query(text, values);
+    const result = await this.connection.getClient().query<CarpoolInterface>(text, values);
+
+    console.debug(result.rows);
 
     return result.rows;
   }

@@ -1,3 +1,5 @@
+import { MetaPersonDisplayInterface } from './common/interfaces/CertificateMetaInterface';
+
 export interface ParamsInterface {
   uuid: string;
 }
@@ -9,11 +11,9 @@ export interface ResultInterface {
   operator_uuid: string;
   start_at: Date;
   end_at: Date;
+  driver: MetaPersonDisplayInterface;
+  passenger: MetaPersonDisplayInterface;
   created_at: Date;
-  total_km: number;
-  total_point: number;
-  total_days: number;
-  total_rm: number;
 }
 
 export type RepositoryInterface = Required<ParamsInterface>;

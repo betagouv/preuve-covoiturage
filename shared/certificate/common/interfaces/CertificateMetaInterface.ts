@@ -1,12 +1,12 @@
 import { PointInterface } from '../../../common/interfaces/PointInterface';
+import { CarpoolInterface } from './CarpoolInterface';
 
-export interface MetaRowInterface {
-  index: number;
-  month: string;
-  days: number;
-  trips: number;
-  distance: number;
-  remaining: number;
+export type MetaPersonDisplayInterface = Pick<CarpoolInterface, 'uniq_days' | 'trips' | 'km' | 'euros'>;
+
+export interface MetaPersonInterface {
+  weeks: Omit<CarpoolInterface, 'month'>[];
+  months: Omit<CarpoolInterface, 'week'>[];
+  total: Omit<CarpoolInterface, 'week' | 'month'> | null;
 }
 
 export interface CertificateMetaInterface {
@@ -15,10 +15,6 @@ export interface CertificateMetaInterface {
   operator: { uuid: string; name: string };
   start_pos?: PointInterface;
   end_pos?: PointInterface;
-  total_tr: number;
-  total_km: number;
-  total_point: number;
-  total_rm: number;
-  total_days: number;
-  rows: MetaRowInterface[];
+  driver: MetaPersonInterface;
+  passenger: MetaPersonInterface;
 }
