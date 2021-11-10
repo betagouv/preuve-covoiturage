@@ -91,7 +91,7 @@ export class TripCacheWarmCron extends Action implements InitHookInterface {
           },
           {
             channel: { service: handlerConfig.service, metadata: { timeout: 0 } },
-            call: { user: { authorizedTerritories: [territory_id], permissions: ['territory.trip.stats'] } },
+            call: { user: { authorizedZoneCodes: { _id: [territory_id] }, permissions: ['territory.trip.stats'] } },
           },
         );
       }

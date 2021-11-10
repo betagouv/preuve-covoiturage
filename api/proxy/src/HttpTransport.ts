@@ -38,6 +38,11 @@ import {
 import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
 import { TokenPayloadInterface } from './shared/application/common/interfaces/TokenPayloadInterface';
 import { RPCResponseType } from './shared/common/rpc/RPCResponseType';
+import {
+  ParamsInterface as GetAuthorizedCodesParams,
+  ResultInterface as GetAuthorizedCodesResult,
+  signature as getAuthorizedCodesSignature,
+} from './shared/territory/getAuthorizedCodes.contract';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -733,17 +738,21 @@ export class HttpTransport implements TransportInterface {
    */
   private async getTerritoryInfos(user): Promise<any> {
     if (user.territory_id) {
-      let dt = [];
+      const dt = {
+        _id: [],
+      };
 
       try {
-        const descendantTerritories = await this.kernel.handle(
-          createRPCPayload('territory:getParentChildren', { _id: user.territory_id }, user),
+        const authorizedCodes = await this.kernel.call<GetAuthorizedCodesParams, GetAuthorizedCodesResult>(
+          getAuthorizedCodesSignature,
+          { _id: user.territory_id },
+          { call: { user }, channel: { service: 'proxy' } },
         );
 
-        dt = get(descendantTerritories, 'result.0.descendant_ids', []) || [];
+        dt._id = authorizedCodes._id || [];
       } catch (e) {}
 
-      user.authorizedTerritories = [user.territory_id, ...dt];
+      user.authorizedZoneCodes = { _id: [user.territory_id, ...dt._id] };
 
       return user;
     }

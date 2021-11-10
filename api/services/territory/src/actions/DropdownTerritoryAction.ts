@@ -10,8 +10,8 @@ import { alias } from '../shared/territory/dropdown.schema';
   ...handlerConfig,
   middlewares: [
     hasPermissionMiddleware('common.territory.list'),
-    // set the on_territories to own authorizedTerritories when user is a territory
-    copyFromContextMiddleware('call.user.authorizedTerritories', 'on_territories'),
+    // set the on_territories to own authorizedZoneCodes  when user is a territory
+    copyFromContextMiddleware('call.user.authorizedZoneCodes._id', 'on_territories'),
     ['validate', alias],
   ],
 })

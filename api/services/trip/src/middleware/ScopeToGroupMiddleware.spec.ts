@@ -60,7 +60,7 @@ test('Middleware Scopetogroup: has territory permission', async (t) => {
     t.context.contextFactory({
       permissions: ['territory.trip.list'],
       territory_id: t.context.mockTripParameters.territory_id[0],
-      authorizedTerritories: t.context.mockTripParameters.territory_id,
+      authorizedZoneCodes: { _id: t.context.mockTripParameters.territory_id },
     }),
     () => 'next() called',
     t.context.middlewareConfig,
@@ -75,7 +75,7 @@ test('Middleware Scopetogroup: has territory permission autoscope', async (t) =>
     t.context.contextFactory({
       permissions: ['territory.trip.list'],
       territory_id: 2,
-      authorizedTerritories: [2],
+      authorizedZoneCodes: { _id: [2] },
     }),
     (params) => params.territory_id,
     t.context.middlewareConfig,
@@ -91,7 +91,7 @@ test('Middleware Scopetogroup: has territory permission and search on authorized
     t.context.contextFactory({
       permissions: ['territory.trip.list'],
       territory_id: 2,
-      authorizedTerritories: [1, 2],
+      authorizedZoneCodes: { _id: [1, 2] },
     }),
     () => 'next() called',
     t.context.middlewareConfig,
@@ -107,7 +107,7 @@ test('Middleware Scopetogroup: has territory permission and search on unauthoriz
       t.context.contextFactory({
         permissions: ['territory.trip.list'],
         territory_id: 2,
-        authorizedTerritories: [2],
+        authorizedZoneCodes: { _id: [2] },
       }),
       () => 'next() called',
       t.context.middlewareConfig,
