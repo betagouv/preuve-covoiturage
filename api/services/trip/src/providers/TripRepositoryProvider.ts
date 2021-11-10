@@ -402,7 +402,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           journey_end_town as end_town,
           journey_end_country as end_country,
           journey_start_datetime as start_datetime,
-          (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int as incentives,
+          COALESCE(passenger_incentive_rpc_sum, 0) + COALESCE(driver_incentive_rpc_sum, 0) as incentives,
           operator_id::int,
           operator_class,
           (driver_incentive_rpc_raw || passenger_incentive_rpc_raw)::json[] as campaigns_id,
