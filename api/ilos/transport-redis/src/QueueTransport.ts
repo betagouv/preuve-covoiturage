@@ -18,7 +18,7 @@ interface WorkerWithScheduler {
 export class QueueTransport implements TransportInterface<WorkerWithScheduler[]> {
   queues: WorkerWithScheduler[] = [];
   kernel: KernelInterface;
-  connection: RedisConnection;
+  connections: RedisConnection[] = [];
 
   constructor(kernel: KernelInterface) {
     this.kernel = kernel;
@@ -33,11 +33,10 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
   }
 
   protected async getRedisConnection(connectionString: string): Promise<RedisInterface> {
-    if (!this.connection) {
-      this.connection = new RedisConnection({ connectionString });
-      await this.connection.up();
-    }
-    return this.connection.getClient();
+    const connection = new RedisConnection({ connectionString });
+    await connection.up();
+    this.connections.push(connection);
+    return connection.getClient();
   }
 
   protected getWorker(connection: RedisInterface, name: string, processor: Processor): Worker {
@@ -100,7 +99,8 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
       promises.push(scheduler.close());
     }
     await Promise.all(promises);
-    await this.connection.down();
+    await Promise.all(this.connections.map((c: RedisConnection) => c.down()));
+    this.connections = [];
   }
 
   protected errorHandler(_error: Error, _job?: Job) {
