@@ -1,15 +1,9 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
-import { get } from 'lodash';
+import { mapCertForListHelper } from '../helpers/mapCertForListHelper';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  ResultRowInterface,
-} from '../shared/certificate/list.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/list.contract';
 import { alias } from '../shared/certificate/list.schema';
 
 @handler({
@@ -36,31 +30,9 @@ export class ListCertificateAction extends AbstractAction {
       ? await this.certRepository.findByOperatorId(operator_id, false, params.pagination)
       : await this.certRepository.find(false, params.pagination);
 
-    // TODO handle old formats
-
     return {
       length,
-      rows: results.map(
-        (cert: CertificateInterface): ResultRowInterface => {
-          return {
-            uuid: cert.uuid,
-            tz: cert.meta.tz,
-            operator: cert.meta.operator,
-            driver: {
-              uniq_days: get(cert, 'meta.driver.total.uniq_days', null),
-              trips: get(cert, 'meta.driver.total.trips', null),
-              km: get(cert, 'meta.driver.total.km', null),
-              euros: get(cert, 'meta.driver.total.euros', null),
-            },
-            passenger: {
-              uniq_days: get(cert, 'meta.passenger.total.uniq_days', null),
-              trips: get(cert, 'meta.passenger.total.trips', null),
-              km: get(cert, 'meta.passenger.total.km', null),
-              euros: get(cert, 'meta.passenger.total.euros', null),
-            },
-          };
-        },
-      ),
+      rows: results.map(mapCertForListHelper),
     };
   }
 }

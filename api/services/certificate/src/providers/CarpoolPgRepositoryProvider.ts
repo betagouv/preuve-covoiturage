@@ -16,9 +16,6 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
 
   /**
    * Find all carpools for an identity on a given period of time
-   *
-   * TODO find a more elegant way to use the join on carpool AND policy schemas
-   * TODO filter by territory
    */
   async find(params: FindParamsInterface): Promise<CarpoolInterface[]> {
     const { personUUID, operator_id, tz, start_at, end_at, positions = [], radius = 1000 } = params;
@@ -111,8 +108,8 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           week,
           month,
           SUBSTR((MIN(datetime) AT TIME ZONE 'Europe/Paris')::text, 1, 10) AS datetime,
-          COUNT(DISTINCT day) uniq_days,
-          COUNT(*) trips,
+          COUNT(DISTINCT day)::int uniq_days,
+          COUNT(*)::int trips,
           bool_or(lun) AS lun,
           bool_or(mar) AS mar,
           bool_or(mer) AS mer,
@@ -120,15 +117,13 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           bool_or(ven) AS ven,
           bool_or(sam) AS sam,
           bool_or(dim) AS dim,
-          TRUNC(SUM(distance)::decimal/1000, 3) AS km,
-          TRUNC(SUM(euros)::decimal/100, 2) AS euros
+          TRUNC(SUM(distance)::decimal/1000, 3)::real AS km,
+          TRUNC(SUM(euros)::decimal/100, 2)::real AS euros
       FROM ordered_trips
       GROUP BY GROUPING SETS ((type), (type, week), (type, month))
     `;
 
     const result = await this.connection.getClient().query<CarpoolInterface>(text, values);
-
-    console.debug(result.rows);
 
     return result.rows;
   }

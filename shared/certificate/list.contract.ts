@@ -6,12 +6,13 @@ export interface Pagination {
   length: number;
 }
 
-export interface ParamsInterface {
-  operator_id?: number;
-  pagination?: Pagination;
+export enum RowType {
+  OK = 'ok',
+  EXPIRED = 'expired',
 }
 
 export interface ResultRowInterface {
+  type: RowType;
   uuid: string;
   tz: string;
   operator: { uuid: string; name: string };
@@ -19,6 +20,11 @@ export interface ResultRowInterface {
   end_pos?: PointInterface;
   driver: MetaPersonDisplayInterface;
   passenger: MetaPersonDisplayInterface;
+}
+
+export interface ParamsInterface {
+  operator_id?: number;
+  pagination?: Pagination;
 }
 
 export type ResultInterface = {
