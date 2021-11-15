@@ -9,7 +9,7 @@
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "eslint.nodePath": "./docker/lint/node_modules",
   "eslint.options": {
-    "configFile": "docker/lint/.eslintrc.js"
+    "overrideConfigFile": "docker/lint/.eslintrc.js"
   },
   "eslint.alwaysShowStatus": true,
   "eslint.format.enable": true,
