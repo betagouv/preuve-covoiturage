@@ -240,10 +240,10 @@ export class BuildExportAction extends Action implements InitHookInterface {
   private async processOtherTypeExport(filepath: string): Promise<string> {
     const filename: string = path.parse(filepath).base;
     const { zippath, zipname } = this.zip(filename, filepath);
-    await this.fileProvider.upload(BucketName.Export, zippath, zipname);
+    const fileKey = await this.fileProvider.upload(BucketName.Export, zippath, zipname);
     this.removeFromFs(filepath);
     this.removeFromFs(zippath);
-    return zippath;
+    return fileKey;
   }
 
   private async processOpendataExport(filepath: string, queryParams: any, excluded_territories: any): Promise<string> {
