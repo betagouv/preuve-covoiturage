@@ -113,6 +113,35 @@ export class BuildExportAction extends Action implements InitHookInterface {
     'operator_class',
   ];
 
+  public static readonly opendataFields = [
+    'journey_id',
+    'trip_id',
+    'journey_start_datetime',
+    'journey_start_date',
+    'journey_start_time',
+    'journey_start_lon',
+    'journey_start_lat',
+    'journey_start_insee',
+    'journey_start_postalcode',
+    'journey_start_department',
+    'journey_start_town',
+    'journey_start_country',
+    'journey_end_datetime',
+    'journey_end_date',
+    'journey_end_time',
+    'journey_end_lon',
+    'journey_end_lat',
+    'journey_end_insee',
+    'journey_end_postalcode',
+    'journey_end_department',
+    'journey_end_town',
+    'journey_end_country',
+    'passenger_seats',
+    'operator_class',
+    'journey_distance',
+    'journey_duration',
+  ];
+
   public static readonly financialFields = [
     'passenger_id',
     'passenger_contribution',
@@ -161,7 +190,6 @@ export class BuildExportAction extends Action implements InitHookInterface {
   ];
 
   public static readonly extraFields = {
-    opendata: ['journey_distance', 'journey_duration'],
     operator: [
       'journey_distance_anounced',
       'journey_distance_calculated',
@@ -345,7 +373,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
           ...BuildExportAction.financialFields,
         ];
       default:
-        return [...BuildExportAction.baseFields, ...BuildExportAction.extraFields.opendata];
+        return [...BuildExportAction.opendataFields];
     }
   }
 }
