@@ -51,10 +51,6 @@ module.exports = {
               ],
             },
             {
-              title: 'Visibilité opérateur',
-              path: '/operateurs/visibilite-du-nom-de-loperateur',
-            },
-            {
               title: 'Générer une attestation',
               path: '/operateurs/generer-attestation',
             },
