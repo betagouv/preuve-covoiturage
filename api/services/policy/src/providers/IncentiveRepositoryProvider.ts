@@ -26,13 +26,14 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       text: `
         UPDATE ${this.table} AS pi
         SET
-          state = $1::policy.incentive_state_enum
+          state = 'disabled'::policy.incentive_state_enum,
+          status = 'error'::policy.incentive_status_enum
         FROM ${this.tripTable} AS pt
         WHERE
           pt.carpool_id = pi.carpool_id AND
-          pt.carpool_status = $2::carpool.carpool_status_enum
+          pt.carpool_status <> 'ok'::carpool.carpool_status_enum
       `,
-      values: ['disabled', 'canceled'],
+      values: [],
     };
 
     await this.connection.getClient().query(query);
