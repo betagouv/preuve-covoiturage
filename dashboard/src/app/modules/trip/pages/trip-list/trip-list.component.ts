@@ -43,7 +43,6 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
       this.paginator.pageIndex = 0;
     };
-
     this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe(filterLoad);
     this.tripService.entities$.pipe(takeUntil(this.destroy$)).subscribe((trips) => (this.trips = trips));
   }
@@ -63,6 +62,10 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
   get loading(): boolean {
     return !this.tripService.loaded;
+  }
+
+  get hasError(): boolean {
+    return this.tripService.isError;
   }
 
   get loaded(): boolean {

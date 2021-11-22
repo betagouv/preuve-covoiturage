@@ -11,8 +11,13 @@
   </div>
 
   <!-- not found message -->
-  <div class="TripList-message" *ngIf="loaded && !trips.length">
-    <p>😢 Aucun trajet trouvé avec ces critères...</p>
+  <div class="TripList-message" *ngIf="loaded && !trips.length && !hasError">
+    <p>Aucun trajet n'a été réalisé sur cette période avec ces critères de recherche.</p>
+  </div>
+
+   <!-- erreur -->
+   <div class="TripList-message" *ngIf="loaded && hasError">
+    <p>Une erreur est survenue.</p>
   </div>
 
   <!-- counter and trip list -->

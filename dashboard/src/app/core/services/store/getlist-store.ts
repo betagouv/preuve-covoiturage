@@ -39,6 +39,7 @@ export abstract class GetListStore<
   protected _entity$ = this.entitySubject.asObservable();
   protected _loadCount = 0;
   protected _isLoaded = false;
+  protected _isError = false;
   protected __debounceTimeId = 0;
   // filter subjectentities
   protected _filterSubject = new BehaviorSubject<any>(null);
@@ -57,6 +58,10 @@ export abstract class GetListStore<
 
   get isLoaded(): boolean {
     return this._isLoaded;
+  }
+
+  get isError(): boolean {
+    return this._isError;
   }
 
   get entity$(): Observable<EntityT> {
@@ -120,12 +125,19 @@ export abstract class GetListStore<
             if (this._loadCount > 0 && updateLoadcount) this._loadCount -= 1;
           }),
         )
-        .subscribe((list) => {
-          this.entitiesSubject.next(list.data);
-          this._isLoaded = true;
+        .subscribe(
+          (list) => {
+            this.entitiesSubject.next(list.data);
+            this._isLoaded = true;
+            this._isError = false;
 
-          this.paginationSubject.next(list.meta && list.meta.pagination ? list.meta.pagination : defaultPagination());
-        });
+            this.paginationSubject.next(list.meta && list.meta.pagination ? list.meta.pagination : defaultPagination());
+          },
+          (error) => {
+            this._isError = true;
+            this._isLoaded = true;
+          },
+        );
     }
 
     return this._listLoadingState.asObservable();
