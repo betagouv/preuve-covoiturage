@@ -571,7 +571,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     const result = await this.connection.getClient().query(query);
 
     if (result.rowCount !== 1) {
-      throw new NotFoundException(`operator not found (${id})`);
+      throw new NotFoundException(`territory not found (${id})`);
     }
 
     return;

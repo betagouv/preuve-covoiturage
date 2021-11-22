@@ -13,9 +13,7 @@ import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
 import { TreeTerritoryAction } from './actions/TreeTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
-import { UpdateTerritoryOperatorAction } from './actions/UpdateTerritoryOperatorAction';
 import { config } from './config';
-import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperatorRepositoryProvider';
 import { TerritoryPgRepositoryProvider } from './providers/TerritoryPgRepositoryProvider';
 import { create } from './shared/territory/create.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
@@ -27,13 +25,12 @@ import { schema as parentChildrenSchema } from './shared/territory/parentChildre
 import { patchContacts } from './shared/territory/patchContacts.schema';
 import { schema as intermediaryRelationSchema } from './shared/territory/relationUiStatus.schema';
 import { update } from './shared/territory/update.schema';
-import { binding as updateOperatorBinding } from './shared/territory/updateOperator.schema';
 import { binding as getAuthorizedCodesBinding } from './shared/territory/getAuthorizedCodes.schema';
 import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
 
 @serviceProvider({
   config,
-  providers: [TerritoryPgRepositoryProvider, TerritoryOperatorRepositoryProvider],
+  providers: [TerritoryPgRepositoryProvider],
   validator: [
     ['territory.find', find],
     ['territory.list', list],
@@ -45,7 +42,6 @@ import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
     ['territory.getParentChildren', parentChildrenSchema],
     ['territory.findByInsees', findByInsee],
     ['territory.patchContacts', patchContacts],
-    updateOperatorBinding,
     getAuthorizedCodesBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
@@ -57,7 +53,6 @@ import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
     CreateTerritoryAction,
-    UpdateTerritoryOperatorAction,
     GetTerritoryRelationUIStatusAction,
     GetTerritoryParentChildrenAction,
     TreeTerritoryAction,
