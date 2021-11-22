@@ -1,6 +1,5 @@
-import { get } from 'lodash';
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
-import { ResultRowInterface, RowType } from '../shared/certificate/list.contract';
+import { ResultRowInterface, RowType } from '../shared/certificate/common/interfaces/ResultRowInterface';
 
 export function mapCertForListHelper(cert: CertificateInterface): ResultRowInterface {
   // return empty values for old format certificates
@@ -10,8 +9,8 @@ export function mapCertForListHelper(cert: CertificateInterface): ResultRowInter
       uuid: cert.uuid,
       tz: cert.meta.tz,
       operator: cert.meta.operator,
-      driver: { uniq_days: null, trips: null, km: null, euros: null },
-      passenger: { uniq_days: null, trips: null, km: null, euros: null },
+      driver: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
+      passenger: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
     };
   }
 
@@ -20,17 +19,7 @@ export function mapCertForListHelper(cert: CertificateInterface): ResultRowInter
     uuid: cert.uuid,
     tz: cert.meta.tz,
     operator: cert.meta.operator,
-    driver: {
-      uniq_days: get(cert, 'meta.driver.total.uniq_days', null),
-      trips: get(cert, 'meta.driver.total.trips', null),
-      km: get(cert, 'meta.driver.total.km', null),
-      euros: get(cert, 'meta.driver.total.euros', null),
-    },
-    passenger: {
-      uniq_days: get(cert, 'meta.passenger.total.uniq_days', null),
-      trips: get(cert, 'meta.passenger.total.trips', null),
-      km: get(cert, 'meta.passenger.total.km', null),
-      euros: get(cert, 'meta.passenger.total.euros', null),
-    },
+    driver: cert.meta.driver,
+    passenger: cert.meta.passenger,
   };
 }

@@ -1,12 +1,22 @@
 import { PointInterface } from '../../../common/interfaces/PointInterface';
 import { CarpoolInterface } from './CarpoolInterface';
 
-export type MetaPersonDisplayInterface = Pick<CarpoolInterface, 'uniq_days' | 'trips' | 'km' | 'euros'>;
+export interface MetaPersonDisplayInterface {
+  datetime: Date;
+  trips: number;
+  km: number;
+  euros: number;
+}
 
 export interface MetaPersonInterface {
-  weeks: Omit<CarpoolInterface, 'month'>[];
-  months: Omit<CarpoolInterface, 'week'>[];
-  total: Omit<CarpoolInterface, 'week' | 'month'> | null;
+  total: {
+    trips: number;
+    week_trips: number;
+    weekend_trips: number;
+    km: number;
+    euros: number;
+  };
+  trips: CarpoolInterface[];
 }
 
 export interface CertificateMetaInterface {

@@ -1,5 +1,4 @@
 /* eslint-disable max-len,prettier/prettier */
-import { omit } from 'lodash';
 import { CertificateRepositoryProviderInterfaceResolver as Store } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
@@ -55,16 +54,25 @@ type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 export const map = (type: CarpoolTypeEnum, carpools: CarpoolInterface[]): MetaPersonInterface => {
   const subset = carpools.filter((c) => c.type === type);
 
-  const weeks: PropType<MetaPersonInterface, 'weeks'> = subset
-    .filter((c) => c.week !== null)
-    .map((i) => omit(i, ['month']));
+  const total = subset.reduce<PropType<MetaPersonInterface, 'total'>>(
+    (p, c) => {
+      const isWeek = [0, 6].indexOf(c.datetime.getDay()) === -1;
+      return {
+        trips: p.trips + c.trips,
+        week_trips: p.week_trips + (isWeek ? c.trips : 0),
+        weekend_trips: p.weekend_trips + (isWeek ? 0 : c.trips),
+        km: p.km + c.km,
+        euros: p.euros + c.euros,
+      };
+    },
+    {
+      trips: 0,
+      week_trips: 0,
+      weekend_trips: 0,
+      km: 0,
+      euros: 0,
+    },
+  );
 
-  const months: PropType<MetaPersonInterface, 'months'> = subset
-    .filter((c) => c.month !== null)
-    .map((i) => omit(i, ['week']));
-
-  const totals = subset.filter((c) => c.week === null && c.month === null);
-  const total = totals.length ? omit(totals[0], ['week', 'month']) : null;
-
-  return { weeks, months, total };
+  return { total, trips: subset };
 };

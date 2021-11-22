@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import test from 'ava';
 import { mapCertForListHelper } from './mapCertForListHelper';
-import { RowType, ResultRowInterface } from '../shared/certificate/list.contract';
+import { RowType, ResultRowInterface } from '../shared/certificate/common/interfaces/ResultRowInterface';
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import { CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
 
@@ -37,10 +37,10 @@ const newEmptyFormat: CertificateInterface = {
   updated_at: new Date('2021-02-01T00:00:00Z'),
   meta: {
     tz: 'Europe/Paris',
-    driver: { total: null, weeks: [], months: [] },
     identity: { uuid: '75853df1-5d8e-406d-9fe1-7d976f4ffca1' },
     operator: { name: 'UltraCovoit', uuid: '58592037-1e25-47b7-a518-7699a4dce8d9' },
-    passenger: { total: null, weeks: [], months: [] },
+    driver: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
+    passenger: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
   },
 };
 
@@ -58,20 +58,18 @@ const newFormat: CertificateInterface = {
     tz: 'Europe/Paris',
     identity: { uuid: '75853df1-5d8e-406d-9fe1-7d976f4ffca1' },
     operator: { name: 'UltraCovoit', uuid: '58592037-1e25-47b7-a518-7699a4dce8d9' },
-    driver: {
-      total: { km: 11063.9, dim: false, jeu: true, lun: true, mar: true, mer: true, sam: false, ven: true, type: CarpoolTypeEnum.DRIVER, euros: 1364.0, trips: 310, datetime: new Date('2021-01-04T00:00:00Z'), uniq_days: 31 },
-      weeks: [
-        { km: 356.9, dim: false, jeu: true, lun: true, mar: true, mer: true, sam: false, ven: true, type: CarpoolTypeEnum.DRIVER, week: 1, euros: 44.0, trips: 10, datetime: new Date('2021-01-04T00:00:00Z'), uniq_days: 5 },
-        { km: 321.21, dim: false, jeu: true, lun: true, mar: true, mer: true, sam: false, ven: true, type: CarpoolTypeEnum.DRIVER, week: 2, euros: 39.6, trips: 9, datetime: new Date('2021-01-11T00:00:00Z'), uniq_days: 5 },
-        { km: 356.9, dim: false, jeu: true, lun: true, mar: true, mer: true, sam: false, ven: true, type: CarpoolTypeEnum.DRIVER, week: 3, euros: 44.0, trips: 10, datetime: new Date('2021-01-18T00:00:00Z'), uniq_days: 5 },
-      ],
-      months: [
-        { km: 1391.91, dim: false, jeu: true, lun: true, mar: true, mer: true, sam: false, ven: true, type: CarpoolTypeEnum.DRIVER, euros: 171.6, month: 1, trips: 39, datetime: new Date('2021-01-04T00:00:00Z'), uniq_days: 20 },
-        { km: 678.11, dim: false, jeu: true, lun: true, mar: true, mer: true, sam: false, ven: true, type: CarpoolTypeEnum.DRIVER, euros: 83.6, month: 2, trips: 19, datetime: new Date('2021-02-01T00:00:00Z'), uniq_days: 19 },
-        { km: 1463.29, dim: false, jeu: true, lun: true, mar: true, mer: true, sam: false, ven: true, type: CarpoolTypeEnum.DRIVER, euros: 180.4, month: 3, trips: 41, datetime: new Date('2021-03-01T00:00:00Z'), uniq_days: 23 },
-      ],
-    },
-    passenger: { total: null, weeks: [], months: [] },
+    driver: { total: { trips: 37, week_trips: 27, weekend_trips: 10, km: 310, euros: 31 }, trips: [
+      { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-04'), trips: 15, km: 100, euros: 10 },
+      { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-05'), trips: 10, km: 100, euros: 10 },
+      { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-09'), trips: 10, km: 100, euros: 10 },
+      { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-02-01'), trips: 2, km: 10, euros: 1 },
+    ] },
+    passenger: { total: { trips: 37, week_trips: 27, weekend_trips: 10, km: 310, euros: 31 }, trips: [
+      { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-04'), trips: 15, km: 100, euros: 10 },
+      { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-05'), trips: 10, km: 100, euros: 10 },
+      { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-09'), trips: 10, km: 100, euros: 10 },
+      { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-02-01'), trips: 2, km: 10, euros: 1 },
+    ] },
   },
 };
 /* eslint-enable prettier/prettier */
@@ -83,8 +81,8 @@ test('old format returns empty values with expired status', (t) => {
     uuid: oldFormat.uuid,
     tz: oldFormat.meta.tz,
     operator: oldFormat.meta.operator,
-    driver: { uniq_days: null, trips: null, km: null, euros: null },
-    passenger: { uniq_days: null, trips: null, km: null, euros: null },
+    driver: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
+    passenger: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
   };
 
   t.is(res.type, RowType.EXPIRED);
@@ -98,8 +96,8 @@ test('new empty format returns empty values with OK status', (t) => {
     uuid: newEmptyFormat.uuid,
     tz: newEmptyFormat.meta.tz,
     operator: newEmptyFormat.meta.operator,
-    driver: { uniq_days: null, trips: null, km: null, euros: null },
-    passenger: { uniq_days: null, trips: null, km: null, euros: null },
+    driver: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
+    passenger: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
   };
 
   t.is(res.type, RowType.OK);
@@ -113,8 +111,24 @@ test('new format returns mapped values and OK status', (t) => {
     uuid: newFormat.uuid,
     tz: newFormat.meta.tz,
     operator: newFormat.meta.operator,
-    driver: { uniq_days: 31, trips: 310, km: 11063.9, euros: 1364 },
-    passenger: { uniq_days: null, trips: null, km: null, euros: null },
+    driver: {
+      total: { trips: 37, week_trips: 27, weekend_trips: 10, km: 310, euros: 31 },
+      trips: [
+        { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-04'), trips: 15, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-05'), trips: 10, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-09'), trips: 10, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-02-01'), trips: 2, km: 10, euros: 1 },
+      ],
+    },
+    passenger: {
+      total: { trips: 37, week_trips: 27, weekend_trips: 10, km: 310, euros: 31 },
+      trips: [
+        { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-04'), trips: 15, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-05'), trips: 10, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-09'), trips: 10, km: 100, euros: 10 },
+        { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-02-01'), trips: 2, km: 10, euros: 1 },
+      ],
+    },
   };
 
   t.is(res.type, RowType.OK);
