@@ -74,5 +74,16 @@ export const map = (type: CarpoolTypeEnum, carpools: CarpoolInterface[]): MetaPe
     },
   );
 
-  return { total, trips: subset };
+  return {
+    total: {
+      ...total,
+      km: round(total.km, 3),
+      euros: round(total.euros, 2),
+    },
+    trips: subset,
+  };
 };
+
+function round(n: number, p = 3): number {
+  return Math.round(n * Math.pow(10, p)) / Math.pow(10, p);
+}
