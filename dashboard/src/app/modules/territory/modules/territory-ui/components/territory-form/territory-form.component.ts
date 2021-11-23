@@ -35,20 +35,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   @Output() close = new EventEmitter();
 
   public territoryForm: FormGroup;
+  public fullFormMode = false;
+  public territoryId: number;
 
-  fullFormMode = false;
-  hasTerritories = false;
-
-  public editedId: number;
   private companyDetails: CompanyInterface;
-
-  get controls(): { [key: string]: AbstractControl } {
-    return this.territoryForm.controls;
-  }
-
-  get canUpdate(): boolean {
-    return this.authService.hasRole([Roles.RegistryAdmin, Roles.TerritoryAdmin]);
-  }
 
   constructor(
     public authService: AuthenticationService,
@@ -75,6 +65,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       });
   }
 
+  get controls(): { [key: string]: AbstractControl } {
+    return this.territoryForm.controls;
+  }
+
+  get canUpdate(): boolean {
+    return this.authService.hasRole([Roles.RegistryAdmin, Roles.TerritoryAdmin]);
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['territory'] && this.territoryForm) {
       this.setTerritoryFormValue(changes['territory'].currentValue);
@@ -87,10 +85,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     formValues.company_id = get(this, 'companyDetails._id', null);
 
     const save = () => {
-      if (this.editedId) {
+      if (this.territoryId) {
         const patch$ = this.fullFormMode
           ? this.territoryStore.updateSelected(formValues)
-          : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.editedId);
+          : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId);
 
         patch$.subscribe(
           (modifiedTerritory) => {
@@ -164,7 +162,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         name: [''],
         level: [null, Validators.required],
         shortname: [''],
-        format: ['parent'],
         insee: [''],
         address: this.fb.group(
           new FormAddress(
@@ -317,11 +314,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       siretControl.markAsUntouched();
 
       const inseeControl = this.territoryForm.controls.insee;
-      const inseeIsRequired = this.territoryForm.controls['format'].value === 'insee';
 
-      inseeControl.setValidators(
-        inseeIsRequired ? [Validators.required, Validators.pattern('^( *[0-9]{5} *,? *)+$')] : null,
-      );
+      inseeControl.setValidators([Validators.required, Validators.pattern('^( *[0-9]{5} *,? *)+$')]);
       inseeControl.updateValueAndValidity();
       inseeControl.markAsUntouched();
     }
@@ -329,13 +323,13 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   private setTerritoryFormValue(territory: Territory): void {
     // base values for form
-    this.editedId = territory ? territory._id : null;
+    this.territoryId = territory ? territory._id : null;
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);
 
     delete formValues.uiSelectionState;
 
-    if (!this.editedId) {
+    if (!this.territoryId) {
       ['company', 'address', 'contacts.gdpr_dpo', 'contacts.gdpr_controller', 'contacts.technical'].forEach((key) => {
         if (this.territoryForm.get(key) instanceof FormGroup) this.territoryForm.get(key).reset();
       });
@@ -345,7 +339,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     this.territoryForm.setValue(formValues);
 
-    if (this.editedId && this.fullFormMode) {
+    if (this.territoryId && this.fullFormMode) {
       if (territory.company_id) {
         this.companyService.getById(territory.company_id).subscribe((company) => {
           this.updateCompanyForm(company);
