@@ -45,7 +45,6 @@ export interface TerritoryRepositoryProviderInterface {
   patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface>;
   findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface>;
   getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface[]>;
-  tree(): Promise<any>;
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
@@ -99,9 +98,5 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
 
   async findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
     throw new Error();
-  }
-
-  async tree(): Promise<any> {
-    throw new Error('Not implemented');
   }
 }

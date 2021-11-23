@@ -9,7 +9,6 @@ import { FindTerritoryAction } from './actions/FindTerritoryAction';
 import { FindTerritoryByInseesAction } from './actions/FindTerritoryByInseesAction';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
-import { TreeTerritoryAction } from './actions/TreeTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
 import { config } from './config';
 import { TerritoryPgRepositoryProvider } from './providers/TerritoryPgRepositoryProvider';
@@ -47,7 +46,6 @@ import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
     CreateTerritoryAction,
-    TreeTerritoryAction,
     FindTerritoryByInseesAction,
     GetAuthorizedCodesAction,
   ],
