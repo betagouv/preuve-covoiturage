@@ -12,7 +12,6 @@ import {
   TerritoryListFilter,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
-import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
 import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
 import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
 import { TerritoryDropdownInterface } from '../shared/territory/common/interfaces/TerritoryDropdownInterface';
@@ -30,7 +29,6 @@ export interface TerritoryRepositoryProviderInterface {
     pagination?: TerritoryListFilter,
   ): Promise<TerritoryDbMetaInterface>;
 
-  getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]>;
   dropdown(params: DropdownParamsInterface): Promise<TerritoryDropdownInterface[]>;
   all(
     search?: string,
@@ -76,9 +74,6 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     limit?: number,
     skip?: number,
   ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }> {
-    throw new Error();
-  }
-  async getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]> {
     throw new Error();
   }
 

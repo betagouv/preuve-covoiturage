@@ -7,7 +7,6 @@ import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 import { DropdownTerritoryAction } from './actions/DropdownTerritoryAction';
 import { FindTerritoryAction } from './actions/FindTerritoryAction';
 import { FindTerritoryByInseesAction } from './actions/FindTerritoryByInseesAction';
-import { GetTerritoryRelationUIStatusAction } from './actions/GetTerritoryRelationUIStatusAction';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
 import { TreeTerritoryAction } from './actions/TreeTerritoryAction';
@@ -21,7 +20,6 @@ import { find } from './shared/territory/find.schema';
 import { schema as findByInsee } from './shared/territory/findByInsees.schema';
 import { list } from './shared/territory/list.schema';
 import { patchContacts } from './shared/territory/patchContacts.schema';
-import { schema as intermediaryRelationSchema } from './shared/territory/relationUiStatus.schema';
 import { update } from './shared/territory/update.schema';
 import { binding as getAuthorizedCodesBinding } from './shared/territory/getAuthorizedCodes.schema';
 import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
@@ -36,7 +34,6 @@ import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
     ['territory.create', create],
     ['territory.update', update],
     ['territory.delete', deleteTerritory],
-    ['territory.getTerritoryRelationUIStatus', intermediaryRelationSchema],
     ['territory.findByInsees', findByInsee],
     ['territory.patchContacts', patchContacts],
     getAuthorizedCodesBinding,
@@ -50,7 +47,6 @@ import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
     CreateTerritoryAction,
-    GetTerritoryRelationUIStatusAction,
     TreeTerritoryAction,
     FindTerritoryByInseesAction,
     GetAuthorizedCodesAction,

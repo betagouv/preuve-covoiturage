@@ -12,11 +12,8 @@ import {
   TerritoryRepositoryProviderInterfaceResolver,
   TerritoryRepositoryProviderInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
-import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
 import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
 import { TerritoryDropdownInterface } from '../shared/territory/common/interfaces/TerritoryDropdownInterface';
-
-import { TerritoryUIStatus } from '../shared/territory/TerritoryUIStatus';
 
 import {
   TerritoryQueryInterface,
@@ -122,89 +119,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     const result = await this.connection.getClient().query(query);
     return result.rows.length > 0 ? result.rows : [];
-  }
-
-  async getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]> {
-    const getQuery = {
-      text: `SELECT ui_status from ${this.table} WHERE _id=$1`,
-      values: [id],
-    };
-
-    const territoryUiStatusQueryResult = await this.connection.getClient().query(getQuery);
-
-    if (!territoryUiStatusQueryResult.rowCount) {
-      return null;
-    }
-
-    const status: TerritoryUIStatus = territoryUiStatusQueryResult.rows[0].ui_status;
-
-    if (!status || !status.ui_selection_state) return null;
-
-    const selectionState = status.ui_selection_state;
-    const flatIds = [];
-
-    function getId(selState): void {
-      if (selState && selState.length) {
-        selState.forEach((child) => {
-          flatIds.push(child.id);
-          if (child.children) getId(child.children);
-        });
-      }
-    }
-    getId(selectionState);
-
-    const getChildrenQuery = {
-      text: `SELECT t._id,t.name,array_to_json(array_agg(tc.*)) children from territory.territories t
-      LEFT JOIN territory.territory_relation tr ON tr.parent_territory_id = t._id
-      LEFT JOIN territory.territories tc ON tr.child_territory_id = tc._id
-      
-      WHERE t._id = ANY ($1::int[])
-      GROUP BY t._id`,
-      values: [`{${flatIds.join(',')}}`],
-    };
-
-    const childrenRes = await this.connection.getClient().query(getChildrenQuery);
-
-    const territories = childrenRes.rows;
-    function consolidateState(selectionState, list = [], baseChildren = null): any[] {
-      selectionState.forEach((selState) => {
-        const terr = territories.find((element) => element._id === selState.id);
-        if (terr) {
-          const completeState = {
-            id: terr._id,
-            name: terr.name,
-            state: selState.state,
-            children: null,
-          };
-
-          if (selState.children && selState.children.length > 0) {
-            completeState.children = [];
-            consolidateState(selState.children, completeState.children, terr.children);
-          }
-
-          list.push(completeState);
-        }
-      });
-
-      // complete non selected children
-      if (baseChildren) {
-        baseChildren.forEach((baseChild) => {
-          if (!selectionState.find((state) => state.id === baseChild._id)) {
-            list.push({
-              id: baseChild._id,
-              name: baseChild.name,
-              state: 0,
-              children: null,
-            });
-          }
-        });
-      }
-
-      return list;
-    }
-
-    return consolidateState(selectionState);
-    // return null;
   }
 
   /**
