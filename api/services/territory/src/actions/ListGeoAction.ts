@@ -20,7 +20,7 @@ export class ListGeoAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     return this.geoRepository.list(params);
   }
 }

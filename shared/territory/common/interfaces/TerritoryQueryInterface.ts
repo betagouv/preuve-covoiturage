@@ -107,11 +107,6 @@ export enum CompanyEnum {
   LegalName = 'legal_name',
 }
 
-export interface PaginationInterface {
-  skip: number;
-  limit: number;
-}
-
 export type TerritoryListFilter = {
   search?: string;
   levels?: TerritoryLevelEnum[];

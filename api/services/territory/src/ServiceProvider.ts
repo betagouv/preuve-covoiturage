@@ -15,9 +15,9 @@ import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProv
 import { create } from './shared/territory/create.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
 import { binding as listGeoBinding } from './shared/territory/listGeo.schema';
-import { find } from './shared/territory/find.schema';
+import { binding as findBinding } from './shared/territory/find.schema';
 import { binding as findGeoByCodeBinding } from './shared/territory/findGeoByCode.schema';
-import { list } from './shared/territory/list.schema';
+import { binding as listBinding } from './shared/territory/list.schema';
 import { patchContacts } from './shared/territory/patchContacts.schema';
 import { update } from './shared/territory/update.schema';
 import { binding as getAuthorizedCodesBinding } from './shared/territory/getAuthorizedCodes.schema';
@@ -28,12 +28,12 @@ import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
   config,
   providers: [TerritoryRepositoryProvider, GeoRepositoryProvider],
   validator: [
-    ['territory.find', find],
-    ['territory.list', list],
     ['territory.create', create],
     ['territory.update', update],
     ['territory.delete', deleteTerritory],
     ['territory.patchContacts', patchContacts],
+    findBinding,
+    listBinding,
     findGeoByCodeBinding,
     listGeoBinding,
     getAuthorizedCodesBinding,

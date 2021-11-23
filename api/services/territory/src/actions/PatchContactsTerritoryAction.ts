@@ -3,9 +3,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface } from '../shared/territory/patchContacts.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/patchContacts.contract';
 import { alias } from '../shared/territory/patchContacts.schema';
-import { TerritoryDbMetaInterface } from '..//shared/territory/common/interfaces/TerritoryDbMetaInterface';
 
 @handler({
   ...handlerConfig,
@@ -24,13 +23,7 @@ export class PatchContactsTerritoryAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<TerritoryDbMetaInterface> {
-    if (context.call.user.territory_id) {
-      params._id = context.call.user.territory_id;
-    }
-    // TODO : ResultInterface as repository return interface
-    // throw new Error('to migrate with new Result Interface');
-
-    return this.territoryRepository.patchContacts(params._id, params.patch);
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    return this.territoryRepository.patchContacts(params);
   }
 }

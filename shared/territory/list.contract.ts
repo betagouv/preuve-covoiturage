@@ -1,25 +1,13 @@
-import {
-  TerritoryQueryInterface,
-  SortEnum,
-  BasicFieldEnum,
-  PaginationInterface,
-} from './common/interfaces/TerritoryQueryInterface';
-import { TerritoryLevelEnum } from './common/interfaces/TerritoryInterface';
-
 import { ResultWithPagination } from '../common/interfaces/ResultWithPagination';
+import { PaginationParamsInterface } from '../common/interfaces/PaginationParamsInterface';
 
-export interface ParamsInterface extends PaginationInterface {
-  query: TerritoryQueryInterface;
-  sort: SortEnum;
-  projection: BasicFieldEnum;
+export interface ParamsInterface extends PaginationParamsInterface {
+  search: string; 
 }
 
 interface SingleResultInterface {
-  _id?: number;
-  name?: string;
-  insee?: string;
-  level?: TerritoryLevelEnum;
-  active?: boolean;
+  _id: number;
+  name: string;
 }
 
 export type ResultInterface = ResultWithPagination<SingleResultInterface>;

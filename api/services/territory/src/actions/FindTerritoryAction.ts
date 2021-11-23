@@ -16,6 +16,6 @@ export class FindTerritoryAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.territoryRepository.find(params.query, params.sort, params.projection);
+    return this.territoryRepository.find(params);
   }
 }

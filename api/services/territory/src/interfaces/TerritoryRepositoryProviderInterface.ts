@@ -1,67 +1,63 @@
-import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 import {
-  ParamsInterface as CreateParams,
+  ParamsInterface as CreateParamsInterface,
   ResultInterface as CreateResultInterface,
 } from '../shared/territory/create.contract';
-import { ParamsInterface as PatchParamsInterface } from '../shared/territory/update.contract';
+
 import {
-  TerritoryQueryInterface,
-  SortEnum,
-  ProjectionFieldsEnum,
-  TerritoryListFilter,
-} from '../shared/territory/common/interfaces/TerritoryQueryInterface';
-import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
-import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
+  ParamsInterface as ListParamsInterface,
+  ResultInterface as ListResultInterface,
+} from '../shared/territory/list.contract';
 
+import {
+  ParamsInterface as FindParamsInterface,
+  ResultInterface as FindResultInterface,
+} from '../shared/territory/find.contract';
+
+import {
+  ParamsInterface as UpdateParamsInterface,
+  ResultInterface as UpdateResultInterface,
+} from '../shared/territory/update.contract';
+
+import {
+  ParamsInterface as PatchContactsParamsInterface,
+  ResultInterface as PatchContactsResultInterface,
+} from '../shared/territory/patchContacts.contract';
+
+export {
+  CreateParamsInterface,
+  CreateResultInterface,
+  ListParamsInterface,
+  ListResultInterface,
+  FindParamsInterface,
+  FindResultInterface,
+  UpdateParamsInterface,
+  UpdateResultInterface,
+  PatchContactsParamsInterface,
+  PatchContactsResultInterface,
+}
 export interface TerritoryRepositoryProviderInterface {
-  find(
-    query: TerritoryQueryInterface,
-    sort: SortEnum[],
-    projection: ProjectionFieldsEnum,
-    pagination?: TerritoryListFilter,
-  ): Promise<TerritoryDbMetaInterface>;
-
-  all(
-    search?: string,
-    levels?: TerritoryLevelEnum[],
-    withParents?: boolean,
-    withLevel?: boolean,
-    limit?: number,
-    skip?: number,
-  ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }>;
-  create(data: CreateParams): Promise<CreateResultInterface>;
+  list(params: ListParamsInterface): Promise<ListResultInterface>;
+  find(params: FindParamsInterface): Promise<FindResultInterface>;
+  create(data: CreateParamsInterface): Promise<CreateResultInterface>;
   delete(_id: number): Promise<void>;
-  update(data: PatchParamsInterface): Promise<TerritoryDbMetaInterface>;
-  patchContacts(id: number, contacts: ContactsInterface): Promise<TerritoryDbMetaInterface>;
-  patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface>;
+  update(data: UpdateParamsInterface): Promise<UpdateResultInterface>;
+  patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface>;
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
-  async find(
-    query: TerritoryQueryInterface,
-    sort: SortEnum[],
-    projection: ProjectionFieldsEnum,
-    pagination?: TerritoryListFilter,
-  ): Promise<TerritoryDbMetaInterface> {
+  async list(params: ListParamsInterface): Promise<ListResultInterface> {
     throw new Error();
   }
 
-  async all(
-    search?: string,
-    levels?: TerritoryLevelEnum[],
-    withParents?: boolean,
-    withLevel?: boolean,
-    limit?: number,
-    skip?: number,
-  ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }> {
+  async find(params: FindParamsInterface): Promise<FindResultInterface> {
     throw new Error();
   }
 
-  async patchContacts(id: number, contacts: ContactsInterface): Promise<TerritoryDbMetaInterface> {
+  async patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface> {
     throw new Error();
   }
 
-  async create(data: CreateParams): Promise<CreateResultInterface> {
+  async create(data: CreateParamsInterface): Promise<CreateResultInterface> {
     throw new Error();
   }
 
@@ -69,11 +65,7 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async update(data: PatchParamsInterface): Promise<TerritoryDbMetaInterface> {
-    throw new Error();
-  }
-
-  async patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface> {
+  async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
     throw new Error();
   }
 }

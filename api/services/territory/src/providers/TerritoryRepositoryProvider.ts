@@ -1,36 +1,20 @@
 import { provider, NotFoundException, KernelInterfaceResolver, ConflictException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { ParamsInterface as PatchParamsInterface } from '../shared/territory/update.contract';
-import {
-  ParamsInterface as CreateParams,
-  ResultInterface as CreateResultInterface,
-} from '../shared/territory/create.contract';
 
-import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 import {
   TerritoryRepositoryProviderInterfaceResolver,
   TerritoryRepositoryProviderInterface,
+  FindParamsInterface,
+  FindResultInterface,
+  ListResultInterface,
+  ListParamsInterface,
+  UpdateResultInterface,
+  UpdateParamsInterface,
+  PatchContactsResultInterface,
+  PatchContactsParamsInterface,
+  CreateResultInterface,
+  CreateParamsInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
-import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
-
-import {
-  TerritoryQueryInterface,
-  SortEnum,
-  ProjectionFieldsEnum,
-  directFields,
-  allTerritoryCodeEnum,
-  allAncestorRelationFieldEnum,
-  allCompanyFieldEnum,
-  allTerritoryQueryCompanyFields,
-  allTerritoryQueryRelationFields,
-  TerritoryQueryEnum,
-  allTerritoryQueryDirectFields,
-  allTerritoryQueryFields,
-  TerritoryListFilter,
-  GeoFieldEnum,
-  RelationFieldEnum,
-} from '../shared/territory/common/interfaces/TerritoryQueryInterface';
-import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -42,163 +26,20 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
   async find(
-    query: TerritoryQueryInterface,
-    sort: SortEnum[],
-    projection: ProjectionFieldsEnum,
-    pagination?: TerritoryListFilter,
-  ): Promise<TerritoryDbMetaInterface> {
-    const selectsFields = [];
-    const joins = [];
-    const whereConditions = [];
-    const values = [];
-    let includeRelation = false;
-    let includeCompany = false;
-    // let includeGeo = false;
-    function autoBuildAncestorJoin(): void {
-      if (!includeRelation) {
-        includeRelation = true;
-      }
-    }
-
-    function autoBuildCompanyJoin(): void {
-      if (!includeCompany) {
-        includeCompany = true;
-        joins.push('LEFT JOIN company.companies c ON(t.company_id = c._id)');
-      }
-    }
-
-    // build select
-    projection.forEach((field) => {
-      switch (true) {
-        case field === GeoFieldEnum.Geo:
-          selectsFields.push(`ST_AsGeoJSON(t.${field}) as ${field}`);
-          break;
-
-        case directFields.indexOf(field) !== -1:
-          selectsFields.push(`t.${field}`);
-          break;
-
-        case allTerritoryCodeEnum.indexOf(field) !== -1:
-          // case TerritoryCodeEnum.Postcode,
-          const tableAliasName = `tc_${field}`;
-
-          /* eslint-disable */
-          // prettier-ignore
-          selectsFields.push(`array(SELECT value from territory.territory_codes as ${tableAliasName} WHERE territory_id = t._id and type = '${field}') as ${field}`);
-          /* eslint-enable */
-          break;
-
-        case field === RelationFieldEnum.Children:
-          selectsFields.push(`(
-            SELECT array_agg(tr.child_territory_id) as children 
-            FROM territory.territory_relation tr 
-            WHERE tr.parent_territory_id = t._id) as children`);
-
-          break;
-        case allAncestorRelationFieldEnum.indexOf(field) !== -1:
-          // selectsFields.push(`tv.${field}`);
-          // autoBuildAncestorJoin();
-
-          break;
-
-        case allCompanyFieldEnum.indexOf(field) !== -1:
-          selectsFields.push(`c.${field}`);
-          autoBuildCompanyJoin();
-          break;
-
-        default:
-          throw new Error(`${field} not supported for territory find select builder`);
-      }
-    });
-
-    // build filter
-    const queryFields: { field: TerritoryQueryEnum; value: any }[] = allTerritoryQueryFields
-      .filter((field) => (query as Record<string, any>).hasOwnProperty(field))
-      .map((field) => ({ field, value: (query as any)[field] }));
-
-    queryFields.forEach((hash) => {
-      switch (true) {
-        case allTerritoryQueryDirectFields.indexOf(hash.field) !== -1:
-          whereConditions.push(`t.${hash.field} = $${values.length + 1}`);
-          values.push(hash.value.toString());
-          break;
-        case allTerritoryQueryRelationFields.indexOf(hash.field) !== -1:
-          // whereConditions.push(`tv.${hash.field} = $${values.length + 1}`);
-          switch (hash.field) {
-            case TerritoryQueryEnum.HasAncestorId:
-              // whereConditions.push(`$${values.length + 1} = ANY (tv.ancestors)`);
-              break;
-
-            case TerritoryQueryEnum.HasDescendantId:
-              // whereConditions.push(`$${values.length + 1} = ANY (tv.descendants)`);
-              break;
-
-            case TerritoryQueryEnum.HasChildId:
-              // whereConditions.push(`$${values.length + 1} = ANY (tv.children)`);
-              break;
-
-            case TerritoryQueryEnum.HasParentId:
-              // whereConditions.push(`$${values.length + 1} = tv.parent`);
-              break;
-          }
-          values.push(hash.value.toString());
-          autoBuildAncestorJoin();
-          break;
-        case allTerritoryQueryCompanyFields.indexOf(hash.field) !== -1:
-          whereConditions.push(`c.${hash.field.replace('company_', '')} = $${values.length + 1}`);
-          values.push(hash.value.toString());
-          autoBuildCompanyJoin();
-          break;
-        case hash.field === TerritoryQueryEnum.Search:
-          const whereOr = [];
-          hash.value
-            .toString()
-            .split(' ')
-            .forEach((word) => {
-              whereOr.push(`LOWER(t.name) LIKE $${values.length + 1}`);
-              values.push(`%${word.toLowerCase()}%`);
-            });
-
-          whereConditions.push(`(${whereOr.join(' OR ')})`);
-          break;
-        default:
-          throw new Error(`${hash.field} not supported for territory find query filter`);
-      }
-    });
-
-    // TODO: implement switch for edge cases
-    const finalSort = sort.map((sortField) => `t.${sort}`);
-
-    const finalQuery = {
-      text: `SELECT ${selectsFields.join(',')} \n FROM ${this.table} t \n ${joins.join(`\n`)} ${
-        whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : ''
-      } 
-      ${finalSort.length ? ` ORDER BY ${finalSort.join(',')}` : ''}
-      ${pagination && pagination.skip ? ` OFFSET ${pagination.skip}` : ''}
-      ${pagination && pagination.limit ? ` LIMIT ${pagination.skip}` : ''}
+    params: FindParamsInterface 
+  ): Promise<FindResultInterface> {
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT * from ${this.table} WHERE _id = $1 AND is_deleted = false
       `,
-      values,
-    };
-
-    const result = await this.connection.getClient().query(finalQuery);
+      values: [params._id]
+    });
 
     if (result.rowCount === 0) {
-      return undefined;
+      throw new NotFoundException();
     }
 
-    const territory = result.rows[0];
-
-    // map company to sub object
-    if (territory.company_id) {
-      territory.company = {};
-
-      allCompanyFieldEnum.forEach((fieldName) => {
-        territory.company[fieldName] = territory[fieldName];
-        delete territory[fieldName];
-      });
-    }
-
-    return territory;
+    return result.rows[0];
   }
 
   async hasDoubleSiretThenFail(siret: string, id = 0): Promise<void> {
@@ -211,77 +52,43 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     if (rowCount !== 0) throw new ConflictException(`Double siret is not allowed for territory ${id}`);
   }
 
-  async all(
-    search?: string,
-    levels?: TerritoryLevelEnum[],
-    withParents?: boolean,
-    withLevel?: boolean,
-    limit?: number,
-    skip?: number,
-  ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }> {
-    // build search filter
-
-    // let values = [];
-    let searchCondition = [];
+  async list(params: ListParamsInterface
+  ): Promise<ListResultInterface> {
+    const { search, offset, limit } = { limit: 100, offset: 0, ...params };
+    const values = [];
+    const whereClauses: string[] = []
 
     if (search) {
-      const spl = search.split(/\_|\-|\,|\ /);
-      searchCondition = spl.map((word, ind) => ` LOWER(name) LIKE '%${word.toLowerCase()}%'`);
-      // values = spl.map((word) => word.toLowerCase());
+      values.push(search.toLowerCase());
+      whereClauses.push(`LOWER(name) LIKE '%$${values.length}}%'`);
     }
 
-    // const searchCondition = search
-    //   ? search.split(/\_|\-|\,|\ /).map((word) => ` LOWER(name) LIKE '%${word.toLowerCase()}%'`)
-    //   : [];
-
-    // build level filter
-    if (levels) searchCondition.push(`(${levels.map((level) => `level = '${level}'`).join('OR')})`);
-
-    const searchConditionString = searchCondition && searchCondition.length > 0 ? searchCondition.join('AND') : null;
-
     const client = this.connection.getClient();
-
     const countQuery = `SELECT count(*) as territory_count from ${this.table} ${
-      searchConditionString ? ` WHERE ${searchConditionString}` : ''
+      whereClauses.length ? ` WHERE ${whereClauses.join(' AND ')}` : ''
     }`;
 
-    const count = parseFloat((await client.query(countQuery)).rows[0].territory_count);
+    const total = parseFloat((await client.query(countQuery)).rows[0].territory_count);
 
+    values.push(limit);
+    values.push(offset);
     const query = {
       text: `
-        SELECT name,t._id, array_agg(tc.value) as insees, active, activable
-        ${
-          withParents
-            ? // eslint-disable-next-line max-len
-              `, array_agg(tr.parent_territory_id) as parents`
-            : ''
-        }
-        ${withLevel ? ',t.level' : ''}
-        
-        FROM ${this.table} t
-        LEFT JOIN territory.territory_codes tc ON(tc.territory_id = t._id AND tc.type = 'insee')
-        ${
-          withParents
-            ? // eslint-disable-next-line max-len
-              `LEFT JOIN territory.territory_relation tr ON tr.child_territory_id = t._id`
-            : ''
-        }
-        WHERE deleted_at IS NULL
-        ${searchConditionString ? ` AND ${searchConditionString}` : ''}
-        GROUP BY t._id,t.name, active, activable, t.level 
-        ORDER BY t.name ASC
-        ${limit !== undefined ? ` LIMIT ${limit}` : ''}
-        ${skip !== undefined ? ` OFFSET ${skip}` : ''}
+        SELECT * FROM ${this.table}
+        WHERE is_deleted = false ${whereClauses.length ? whereClauses.join(' AND ') : ''}
+        ORDER BY name ASC
+        LIMIT $${whereClauses.length + 1}
+        OFFSET $${whereClauses.length + 2}
       `,
-      values: [],
+      values,
     };
 
     const result = await client.query(query);
 
-    return { rows: result.rows, count };
+    return { data: result.rows, meta: { pagination: { offset, limit, total }} };
   }
 
-  async create(data: CreateParams): Promise<CreateResultInterface> {
+  async create(data: CreateParamsInterface): Promise<CreateResultInterface> {
     const fields = ['name', 'shortname', 'level', 'contacts', 'address', 'active', 'activable'];
 
     const values: any[] = [
@@ -348,7 +155,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     return;
   }
 
-  async update(data: PatchParamsInterface): Promise<CreateResultInterface> {
+  async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
     const fields = [
       'name',
       'shortname',
@@ -370,25 +177,9 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       data.address || '{}',
       data.active,
       data.activable,
-      // data.density ? data.density : null,
       data.company_id ? data.company_id : null,
       data.ui_status ? data.ui_status : '{}',
     ];
-
-    // if (data.density !== undefined) {
-    //   fields.push('density');
-    //   values.push(data.density);
-    // }
-
-    // if (data.company_id) {
-    //   fields.push('company_id');
-    //   values.push(data.company_id);
-    // }
-
-    // if (data.ui_status) {
-    //   fields.push('ui_status');
-    //   values.push(JSON.stringify(data.ui_status));
-    // }
 
     const client = this.connection.getClient();
 
@@ -432,60 +223,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     ).rows[0];
   }
 
-  async patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface> {
-    const updatablefields = [
-      'siret',
-      'name',
-      'shortname',
-      'company',
-      'address',
-      'contacts',
-      'parent_id',
-      'cgu_accepted_at',
-      'cgu_accepted_by',
-    ].filter((k) => Object.keys(patch).indexOf(k) >= 0);
-
-    const sets = {
-      text: ['updated_at = NOW()'],
-      values: [],
-    };
-
-    for (const fieldName of updatablefields) {
-      sets.text.push(`${fieldName} = $#`);
-      sets.values.push(patch[fieldName]);
-    }
-
-    const query = {
-      text: `
-      UPDATE ${this.table}
-        SET ${sets.text.join(',')}
-        WHERE _id = $#
-        AND deleted_at IS NULL
-        RETURNING *
-      `,
-      values: [...sets.values, id],
-    };
-
-    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
-      if (idx === origin.length - 1) {
-        return `${acc}${current}`;
-      }
-
-      return `${acc}${current}$${idx + 1}`;
-    }, '');
-
-    const result = await this.connection.getClient().query(query);
-    if (result.rowCount !== 1) {
-      throw new NotFoundException(`territory not found (${id})`);
-    }
-
-    return result.rows[0];
-  }
-
-  async patchContacts(id: number, contacts: ContactsInterface): Promise<TerritoryDbMetaInterface> {
+  async patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface> {
     const query = {
       text: `UPDATE ${this.table} set contacts = $2 WHERE _id = $1`,
-      values: [id, JSON.stringify(contacts)],
+      values: [params._id, JSON.stringify(params.patch)],
     };
 
     const client = this.connection.getClient();
@@ -493,12 +234,9 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     const modifiedTerritoryRes = await client.query({
       text: `SELECT * FROM ${this.table} WHERE _id = $1`,
-      values: [id],
+      values: [params._id],
     });
-    // if (result.rowCount !== 1) {
-    //   throw new NotFoundException(`territory not found (${id})`);
-    // }
 
-    return modifiedTerritoryRes.rowCount > 0 ? modifiedTerritoryRes.rows[0] : 0;
+    return modifiedTerritoryRes.rows[0];
   }
 }
