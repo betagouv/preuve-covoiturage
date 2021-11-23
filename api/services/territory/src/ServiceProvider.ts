@@ -4,7 +4,7 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
-import { DropdownTerritoryAction } from './actions/DropdownTerritoryAction';
+import { ListGeoAction } from './actions/ListGeoAction';
 import { FindTerritoryAction } from './actions/FindTerritoryAction';
 import { FindTerritoryByInseesAction } from './actions/FindTerritoryByInseesAction';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
@@ -14,7 +14,7 @@ import { config } from './config';
 import { TerritoryPgRepositoryProvider } from './providers/TerritoryPgRepositoryProvider';
 import { create } from './shared/territory/create.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
-import { dropdown } from './shared/territory/dropdown.schema';
+import { binding as listGeoBinding } from './shared/territory/listGeo.schema';
 import { find } from './shared/territory/find.schema';
 import { schema as findByInsee } from './shared/territory/findByInsees.schema';
 import { list } from './shared/territory/list.schema';
@@ -29,12 +29,12 @@ import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
   validator: [
     ['territory.find', find],
     ['territory.list', list],
-    ['territory.dropdown', dropdown],
     ['territory.create', create],
     ['territory.update', update],
     ['territory.delete', deleteTerritory],
     ['territory.findByInsees', findByInsee],
     ['territory.patchContacts', patchContacts],
+    listGeoBinding,
     getAuthorizedCodesBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
@@ -42,7 +42,7 @@ import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
   handlers: [
     FindTerritoryAction,
     ListTerritoryAction,
-    DropdownTerritoryAction,
+    ListGeoAction,
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
     CreateTerritoryAction,

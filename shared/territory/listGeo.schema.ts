@@ -1,5 +1,5 @@
-export const alias = 'territory.dropdown';
-export const dropdown = {
+export const alias = 'territory.listGeo';
+export const schema = {
   $id: alias,
   type: 'object',
   additionalProperties: false,
@@ -20,3 +20,4 @@ export const dropdown = {
     },
   },
 };
+export const binding = [alias, schema];

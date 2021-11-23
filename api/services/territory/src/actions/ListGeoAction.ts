@@ -3,8 +3,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/territory/dropdown.contract';
-import { alias } from '../shared/territory/dropdown.schema';
+import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/territory/listGeo.contract';
+import { alias } from '../shared/territory/listGeo.schema';
 
 @handler({
   ...handlerConfig,
@@ -15,7 +15,7 @@ import { alias } from '../shared/territory/dropdown.schema';
     ['validate', alias],
   ],
 })
-export class DropdownTerritoryAction extends AbstractAction {
+export class ListGeoAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }

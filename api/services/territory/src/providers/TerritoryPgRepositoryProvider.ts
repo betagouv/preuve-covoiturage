@@ -5,7 +5,7 @@ import {
   ParamsInterface as CreateParams,
   ResultInterface as CreateResultInterface,
 } from '../shared/territory/create.contract';
-import { ParamsInterface as DropdownParamsInterface } from '../shared/territory/dropdown.contract';
+import { ParamsInterface as DropdownParamsInterface } from '../shared/territory/listGeo.contract';
 
 import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 import {

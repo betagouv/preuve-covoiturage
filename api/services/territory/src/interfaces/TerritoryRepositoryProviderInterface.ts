@@ -4,7 +4,7 @@ import {
   ResultInterface as CreateResultInterface,
 } from '../shared/territory/create.contract';
 import { ParamsInterface as PatchParamsInterface } from '../shared/territory/update.contract';
-import { ParamsInterface as DropdownParamsInterface } from '../shared/territory/dropdown.contract';
+import { ParamsInterface as DropdownParamsInterface } from '../shared/territory/listGeo.contract';
 import {
   TerritoryQueryInterface,
   SortEnum,
