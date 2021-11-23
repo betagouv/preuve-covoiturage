@@ -1,21 +1,10 @@
-import { Observable } from 'rxjs';
-import { tap, finalize, takeUntil, map } from 'rxjs/operators';
-
 import { Injectable } from '@angular/core';
-
-import {
-  SortEnum,
-  allBasicFieldEnum,
-  RelationFieldEnum,
-  CompanyEnum,
-  GeoFieldEnum,
-  TerritoryCodeEnum,
-} from '../TerritoryQueryInterface';
-
-import { CrudStore } from '~/core/services/store/crud-store';
-import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
-import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { Observable } from 'rxjs';
+import { finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { Contacts } from '~/core/entities/shared/contacts';
+import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
+import { CrudStore } from '~/core/services/store/crud-store';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -44,20 +33,9 @@ export class TerritoryStoreService extends CrudStore<
     this.dismissGetSubject.next();
     this._loadCount += 1;
     return (this.rpcCrud as TerritoryApiService)
-      .find(
-        {
-          _id: id,
-        },
-        [SortEnum.NameAsc],
-        [
-          ...allBasicFieldEnum,
-          RelationFieldEnum.Children,
-          RelationFieldEnum.Parent,
-          CompanyEnum.Siret,
-          GeoFieldEnum.Geo,
-          TerritoryCodeEnum.Insee,
-        ],
-      )
+      .get({
+        _id: id,
+      })
       .pipe(
         finalize(() => {
           if (this._loadCount > 0) this._loadCount -= 1;

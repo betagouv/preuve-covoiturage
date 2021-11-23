@@ -1,20 +1,16 @@
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
-import { Injectable } from '@angular/core';
-
-import { SortEnum, allBasicFieldEnum } from 'shared/territory/common/interfaces/TerritoryQueryInterface';
-
 import { User } from '~/core/entities/authentication/user';
-import { Operator } from '~/core/entities/operator/operator';
-import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
-import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
-import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
+import { Operator } from '~/core/entities/operator/operator';
+import { Territory, TerritoryLevelEnum, TerritoryTree } from '~/core/entities/territory/territory';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { allCompanyFieldEnum } from '~/modules/territory/TerritoryQueryInterface';
-import { Territory, TerritoryTree, TerritoryLevelEnum } from '~/core/entities/territory/territory';
+import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { AuthenticationService as Auth } from '~/core/services/authentication/authentication.service';
+import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
+import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -207,23 +203,14 @@ export class CommonDataService {
     return this.auth.check().pipe(
       mergeMap((user) => {
         if (user) {
-          const params = [
-            this.operatorApiService.paramGetList({}),
-            this.territoryApiService.paramGetList({ withParents: true, withLevel: true }),
-          ];
+          const params = [this.operatorApiService.paramGetList({}), this.territoryApiService.paramGetList()];
 
           if (this.canListCampaigns) {
             params.push(this.campaignApiService.paramGetList());
           }
 
           if (user.territory_id) {
-            params.push(
-              this.territoryApiService.paramGetById(
-                user.territory_id,
-                [SortEnum.NameAsc],
-                [...allBasicFieldEnum, ...allCompanyFieldEnum, 'activable'],
-              ),
-            );
+            params.push(this.territoryApiService.paramGetById(user.territory_id));
           } else if (user.operator_id) {
             params.push(this.operatorApiService.paramGetById(user.operator_id));
           }

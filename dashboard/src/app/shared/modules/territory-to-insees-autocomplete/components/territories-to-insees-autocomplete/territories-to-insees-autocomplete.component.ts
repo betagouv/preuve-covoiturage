@@ -6,6 +6,7 @@ import { TerritoryLevelEnum } from 'shared/territory/common/interfaces/Territory
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { GeoCodeTypeEnum } from '../../../../../../../../shared/territory/common/geo';
 
 @Component({
   selector: 'app-territories-insee-autocomplete',
@@ -58,11 +59,11 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
 
   private filterTerritoryInsee(literal = ''): void {
     this.territoryApiService
-      .getList({
-        skip: 0,
-        limit: 100,
+      .geo({
+        offset: 1,
+        limit: 10,
         search: literal,
-        levels: [TerritoryLevelEnum.Town],
+        type: GeoCodeTypeEnum.City,
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe((foundTerritories: any) => {

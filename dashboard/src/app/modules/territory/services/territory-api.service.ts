@@ -6,21 +6,19 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
-import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
+// eslint-disable-next-line max-len
+import { ParamsInterface as PatchContactParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
 import { Territory, TerritoryInsee } from '~/core/entities/territory/territory';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 import { GetListActions } from '~/core/services/api/json-rpc.getlist';
-// eslint-disable-next-line
-import { TerritoryParentChildrenInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryChildrenInterface';
+import { ParamsInterface as FindByIdParamsInterface } from '../../../../../../shared/territory/find.contract';
+import { ParamsInterface as TerritoryListFilter } from '../../../../../../shared/territory/list.contract';
+import { SortEnum, allBasicFieldEnum } from '../TerritoryQueryInterface';
 import {
-  allBasicFieldEnum,
-  SortEnum,
-  TerritoryListFilter,
-} from '../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
-import { QueryParamsInterface } from '../../../../../../shared/territory/find.contract';
-// eslint-disable-next-line
-import { ResultInterface as UiStatusRelationDetailsList } from '../../../../../../shared/territory/relationUiStatus.contract';
+  signature as signatureGeo,
+  ParamsInterface as ParamsInterfaceGeo,
+} from '../../../../../../shared/territory/listGeo.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +28,7 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     super(http, router, activatedRoute, 'territory');
   }
 
-  patchContact(item: ParamsInterface): Observable<Territory> {
+  patchContact(item: PatchContactParamsInterface): Observable<Territory> {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:patchContacts`, item);
 
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
@@ -49,20 +47,10 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     return new JsonRPCParam(`${this.method}:${GetListActions.LIST}`, { ...this.defaultListParam, ...params });
   }
 
-  getDirectRelation(id: number): Observable<TerritoryParentChildrenInterface[]> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:getParentChildren`, { _id: id });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryParentChildrenInterface[]>;
-  }
-
   findByInsees(insees: string[]): Observable<TerritoryInsee[]> {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:findByInsees`, { insees });
 
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryInsee[]>;
-  }
-
-  getRelationUIStatus(id: number): Observable<UiStatusRelationDetailsList> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:getTerritoryRelationUIStatus`, { _id: id });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data || [])) as Observable<UiStatusRelationDetailsList>;
   }
 
   paramGetById(
@@ -81,12 +69,13 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     return this.callOne(new JsonRPCParam(`${this.method}:dropdown`, params));
   }
 
-  find(
-    query: QueryParamsInterface,
-    sort: SortEnum[] = [SortEnum.NameAsc],
-    projection: any = allBasicFieldEnum,
-  ): Observable<Territory> {
-    const jsonRPCParam = this.paramGet(query, sort, projection);
+  geo(params: ParamsInterfaceGeo): Observable<JsonRPCResult> {
+    const jsonRPCParam: JsonRPCParam = new JsonRPCParam(signatureGeo, params);
+    return this.callOne(jsonRPCParam);
+  }
+
+  get(query: FindByIdParamsInterface): Observable<Territory> {
+    const jsonRPCParam = this.paramGet(query);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
