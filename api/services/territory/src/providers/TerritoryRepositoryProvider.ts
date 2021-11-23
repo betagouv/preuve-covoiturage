@@ -5,7 +5,6 @@ import {
   ParamsInterface as CreateParams,
   ResultInterface as CreateResultInterface,
 } from '../shared/territory/create.contract';
-import { ParamsInterface as DropdownParamsInterface } from '../shared/territory/listGeo.contract';
 
 import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 import {
@@ -13,7 +12,6 @@ import {
   TerritoryRepositoryProviderInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
-import { TerritoryDropdownInterface } from '../shared/territory/common/interfaces/TerritoryDropdownInterface';
 
 import {
   TerritoryQueryInterface,
@@ -32,13 +30,7 @@ import {
   GeoFieldEnum,
   RelationFieldEnum,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
-import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
-
-import {
-  ParamsInterface as FindByInseeParamsInterface,
-  ResultInterface as FindByInseeResultInterface,
-} from '../shared/territory/findByInsees.contract';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,

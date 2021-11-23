@@ -1,16 +1,15 @@
 import { provider, KernelInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { ParamsInterface as DropdownParamsInterface } from '../shared/territory/listGeo.contract';
-
-import { TerritoryDropdownInterface } from '../shared/territory/common/interfaces/TerritoryDropdownInterface';
 
 import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 
 import {
   ParamsInterface as FindByInseeParamsInterface,
   ResultInterface as FindByInseeResultInterface,
-} from '../shared/territory/findByInsees.contract';
+} from '../shared/territory/findGeoByCode.contract';
 import {
+  ListGeoParamsInterface,
+  ListGeoResultInterface,
   GeoRepositoryProviderInterfaceResolver,
   GeoRepositoryProviderInterface,
 } from '../interfaces/GeoRepositoryProviderInterface';
@@ -96,20 +95,15 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     return result.rows.length > 0 ? result.rows : [];
   }
 
-  /**
-   * Searchable / scopable dropdown list (_id, name)
-   * Can be scoped by territories (searches for all descendants)
-   * Default limit is set to 100
-   */
-  async dropdown(params: DropdownParamsInterface): Promise<TerritoryDropdownInterface[]> {
-    const { search, on_territories, limit } = { limit: 100, ...params };
+  async list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface> {
+    const { search, where: whereParams, limit, offset } = { limit: 100, offset: 0, ...params };
 
     const where = [];
     const values = [];
 
-    if (on_territories && on_territories.length) {
+    if (whereParams && whereParams._id && whereParams._id.length) {
       where.push(`_id = ANY($${where.length + 1})`);
-      values.push(on_territories);
+      values.push(whereParams._id);
     }
 
     if (search) {
@@ -117,9 +111,21 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
       values.push(`%${search.toLowerCase().trim()}%`);
     }
 
+    
+    const totalResult = await this.connection.getClient().query<{ count: number }>({
+      values,
+      text: `
+        SELECT count(*) FROM ${this.table}
+        ${where.length ? ` WHERE ${where.join(' AND ')}` : ''}
+      `
+    });
+    
+    const total = totalResult.rows[0].count || 0;
+
     // always add the limit
     values.push(limit);
-
+    values.push(offset);
+    
     const results = await this.connection.getClient().query({
       values,
       text: `
@@ -127,10 +133,20 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
         ${where.length ? ` WHERE ${where.join(' AND ')}` : ''}
         ORDER BY name ASC
         LIMIT $${where.length + 1}
+        OFFSET $${where.length + 2}
       `,
     });
 
-    return results.rowCount ? results.rows : [];
+    return {
+      data: results.rows,
+      meta: {
+        pagination: {
+          offset,
+          limit,
+          total,
+        }
+      }
+    }
   }
 
   async findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {

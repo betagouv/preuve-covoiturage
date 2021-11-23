@@ -1,16 +1,26 @@
-export interface ParamsInterface {
+import { PaginationParamsInterface } from '../common/interfaces/PaginationParamsInterface';
+import { ResultWithPagination } from '../common/interfaces/ResultWithPagination';
+import { GeoCodeTypeEnum } from './common/geo';
+
+export interface ParamsInterface extends Partial<PaginationParamsInterface> {
   search?: string;
-  on_territories?: number[];
-  limit?: number;
+  type?: GeoCodeTypeEnum;
+  where?: {
+    _id?: number[];
+  }
 }
 
-export interface ResultInterface {
+interface SingleResultInterface {
   _id: number;
-  name: string;
+  code: string;
+  label: string;
 }
+
+export type ResultInterface = ResultWithPagination<SingleResultInterface[]>;
 
 export const handlerConfig = {
   service: 'territory',
-  method: 'dropdown',
+  method: 'listGeo',
 };
+
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

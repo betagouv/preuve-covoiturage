@@ -11,7 +11,7 @@ import { alias } from '../shared/territory/listGeo.schema';
   middlewares: [
     hasPermissionMiddleware('common.territory.list'),
     // set the on_territories to own authorizedZoneCodes  when user is a territory
-    copyFromContextMiddleware('call.user.authorizedZoneCodes._id', 'on_territories'),
+    copyFromContextMiddleware('call.user.authorizedZoneCodes._id', 'where._id'),
     ['validate', alias],
   ],
 })
@@ -20,7 +20,7 @@ export class ListGeoAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface[]> {
-    return this.geoRepository.dropdown(params);
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    return this.geoRepository.list(params);
   }
 }

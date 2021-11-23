@@ -1,3 +1,5 @@
+import { pagination } from '../common/schemas/pagination';
+
 export const alias = 'territory.listGeo';
 export const schema = {
   $id: alias,
@@ -9,15 +11,21 @@ export const schema = {
       minLength: 1,
       maxLength: 256,
     },
-    on_territories: {
-      type: 'array',
-      items: { macro: 'serial' },
+    type: {
+      type: 'string',
+      enum: ['city', 'region'],
     },
-    limit: {
-      type: 'integer',
-      minimum: 1,
-      maximum: 50000,
+    where: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        _id: {
+          type: 'array',
+          items: { macro: 'serial' },
+        }
+      }
     },
+    ...pagination, 
   },
 };
 export const binding = [alias, schema];
