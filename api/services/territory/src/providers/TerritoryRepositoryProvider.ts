@@ -175,7 +175,6 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       data.active,
       data.activable,
       data.company_id ? data.company_id : null,
-      data.ui_status ? data.ui_status : '{}',
     ];
 
     const client = this.connection.getClient();
