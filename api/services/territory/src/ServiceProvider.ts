@@ -6,7 +6,7 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 import { ListGeoAction } from './actions/ListGeoAction';
 import { FindTerritoryAction } from './actions/FindTerritoryAction';
-import { FindTerritoryByInseesAction } from './actions/FindTerritoryByInseesAction';
+import { FindGeoByCodeAction } from './actions/FindGeoByCodeAction';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
@@ -16,7 +16,7 @@ import { create } from './shared/territory/create.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
 import { binding as listGeoBinding } from './shared/territory/listGeo.schema';
 import { find } from './shared/territory/find.schema';
-import { schema as findByInsee } from './shared/territory/findByInsees.schema';
+import { binding as findGeoByCodeBinding } from './shared/territory/findGeoByCode.schema';
 import { list } from './shared/territory/list.schema';
 import { patchContacts } from './shared/territory/patchContacts.schema';
 import { update } from './shared/territory/update.schema';
@@ -33,8 +33,8 @@ import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
     ['territory.create', create],
     ['territory.update', update],
     ['territory.delete', deleteTerritory],
-    ['territory.findByInsees', findByInsee],
     ['territory.patchContacts', patchContacts],
+    findGeoByCodeBinding,
     listGeoBinding,
     getAuthorizedCodesBinding,
   ],
@@ -47,7 +47,7 @@ import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
     CreateTerritoryAction,
-    FindTerritoryByInseesAction,
+    FindGeoByCodeAction,
     GetAuthorizedCodesAction,
   ],
   commands: [],

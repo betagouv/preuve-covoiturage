@@ -1,4 +1,4 @@
-export const alias = 'territory.findByInsees';
+export const alias = 'territory.findGeoByCode';
 export const schema = {
   $id: alias,
   type: 'object',
@@ -14,3 +14,4 @@ export const schema = {
     },
   },
 };
+export const binding = [alias, schema];

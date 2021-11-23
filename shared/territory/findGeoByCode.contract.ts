@@ -6,6 +6,6 @@ export type ResultInterface = { _id: number; name: string }[];
 
 export const handlerConfig = {
   service: 'territory',
-  method: 'findByInsees',
+  method: 'findGeoByCode',
 };
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

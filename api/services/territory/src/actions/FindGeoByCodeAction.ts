@@ -4,8 +4,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
 import { GeoRepositoryProviderInterfaceResolver } from '../interfaces/GeoRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/findByInsees.contract';
-import { alias } from '../shared/territory/findByInsees.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/findGeoByCode.contract';
+import { alias } from '../shared/territory/findGeoByCode.schema';
 import { blacklist } from '../config/filterOutput';
 
 @handler({
@@ -16,7 +16,7 @@ import { blacklist } from '../config/filterOutput';
     contentBlacklistMiddleware(...blacklist),
   ],
 })
-export class FindTerritoryByInseesAction extends AbstractAction {
+export class FindGeoByCodeAction extends AbstractAction {
   constructor(private geoRepository: GeoRepositoryProviderInterfaceResolver) {
     super();
   }
