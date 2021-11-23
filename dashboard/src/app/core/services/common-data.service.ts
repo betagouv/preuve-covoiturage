@@ -145,15 +145,6 @@ export class CommonDataService {
     );
   }
 
-  loadActivableTerritories(): Observable<Territory[]> {
-    return this.territoryApiService.getActivableList().pipe(
-      map((territories) => {
-        return territories.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name));
-      }),
-      tap((territories) => this._activableTerritories$.next(territories)),
-    );
-  }
-
   loadCampaigns(): Observable<Campaign[]> {
     return this.campaignApiService.getList().pipe(
       map((campaigns) => campaigns.data.sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name))),
