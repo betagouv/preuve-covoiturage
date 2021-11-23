@@ -18,7 +18,7 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit 
   @Output() edit = new EventEmitter();
 
   get canEdit(): boolean {
-    return this.authenticationService.hasRole([Roles.TerritoryAdmin, Roles.RegistryAdmin]);
+    return this.authenticationService.hasRole([Roles.RegistryAdmin]);
   }
 
   constructor(public authenticationService: AuthenticationService, public territoryStore: TerritoryStoreService) {

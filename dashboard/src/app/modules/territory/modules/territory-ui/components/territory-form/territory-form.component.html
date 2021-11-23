@@ -27,7 +27,6 @@
           >
         </mat-form-field>
 
-      <div [hidden]="!isPartner && !isAOM">
         <h3>Structure</h3>
 
         <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
@@ -35,12 +34,9 @@
         <h3>Adresse</h3>
 
         <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
-      </div>
     </div>
     </div>
 
-
-    <div [hidden]="!isPartner && !isAOM">
       <h2>Contacts et responsables</h2>
       <div class="contacts">
         <div>
@@ -67,7 +63,7 @@
           <app-form-contact [parentForm]="territoryForm.get('contacts.technical')"></app-form-contact>
         </div>
       </div>
-    </div>
+    
     <div>
       <div class="actions">
         <button type="button" class="large" (click)="onClose()" mat-button *ngIf="closable">Annuler</button>

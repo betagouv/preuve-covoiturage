@@ -57,18 +57,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     );
   }
 
-  get isAOM(): boolean {
-    const base = this.fullFormMode ? this.territoryForm.value : this.territory;
-    return base && 'active' in base ? base.active : false;
-  }
-
-  get isPartner(): boolean {
-    const base = this.fullFormMode ? this.territoryForm.value : this.territory;
-    return base && 'activable' in base ? base.activable : false;
-  }
-
   get canUpdate(): boolean {
-    return this.authService.hasRole([Roles.TerritoryAdmin, Roles.RegistryAdmin]);
+    return this.authService.hasRole([Roles.RegistryAdmin]);
   }
 
   constructor(
