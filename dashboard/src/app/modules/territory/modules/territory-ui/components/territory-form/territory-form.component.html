@@ -9,63 +9,23 @@
         <mat-error *ngIf="territoryForm.controls.name.hasError('required')">Le nom est obligatoire.</mat-error>
       </mat-form-field>
 
-      <mat-form-field class="shortname" appearance="outline">
-        <mat-label>Nom d'usage</mat-label>
-        <input matInput formControlName="shortname" />
-      </mat-form-field>
-
-      <p>
-        <mat-checkbox formControlName="active">
-          {{ territoryForm.get('name')?.value || 'Ce territoire' }} a la compétence mobilité (AOM) </mat-checkbox
-        ><br />
-        <mat-checkbox formControlName="activable">
-          {{ territoryForm.get('name')?.value || 'Ce territoire' }} est partenaire du registre
-        </mat-checkbox>
-      </p>
-
       <h3>Territoire</h3>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Niveau</mat-label>
-        <mat-select formControlName="level" required>
-          <mat-option *ngFor="let valueLabel of levelLabel" [value]="valueLabel[0]">{{ valueLabel[1] }}</mat-option>
-        </mat-select>
-        <mat-error *ngIf="controls.level.hasError('required')"> Le niveau du territoire est obligatoire. </mat-error>
-      </mat-form-field>
-
-      <div *ngIf="!isTown">
-        <mat-radio-group aria-label="Format" class="format-radio" formControlName="format">
-          <mat-radio-button value="parent">Territoire parent (regroupe plusieurs sous territoires)</mat-radio-button
-          ><br />
-          <mat-radio-button value="insee">Commune ou groupe de communes</mat-radio-button><br />
-        </mat-radio-group>
-
-        <app-territory-children
-          *ngIf="relationDisplayMode === 'parent'"
-          (hasTerritories)="hasTerritoriesChanged($event)"
-        ></app-territory-children>
-
-        <mat-error class="no-children-error" *ngIf="needsChildren">
-          Ajoutez au moins 1 territoire pour valider le formulaire
-        </mat-error>
-
-        <div *ngIf="relationDisplayMode === 'insee'">
-          <h4>Codes INSEE (séparés par des virgules)</h4>
-          <mat-form-field class="relation-textarea" appearance="outline">
-            <mat-label>Codes INSEE *</mat-label>
-            <textarea matInput formControlName="insee"></textarea>
-            <mat-error *ngIf="territoryForm.controls.insee.hasError('required')"
-              >Les codes INSEE sont obligatoires.</mat-error
-            >
-            <mat-error
-              *ngIf="
-                !territoryForm.controls.insee.hasError('required') && territoryForm.controls.insee.hasError('pattern')
-              "
-              >Les codes sont au format INSEE (5 chiffres) et doivent être séparés par des virgules</mat-error
-            >
-          </mat-form-field>
-        </div>
-      </div>
+      <div>
+        <h4>Codes INSEE (séparés par des virgules)</h4>
+        <mat-form-field class="relation-textarea" appearance="outline">
+          <mat-label>Codes INSEE *</mat-label>
+          <textarea matInput formControlName="insee"></textarea>
+          <mat-error *ngIf="territoryForm.controls.insee.hasError('required')"
+            >Les codes INSEE sont obligatoires.</mat-error
+          >
+          <mat-error
+            *ngIf="
+              !territoryForm.controls.insee.hasError('required') && territoryForm.controls.insee.hasError('pattern')
+            "
+            >Les codes sont au format INSEE (5 chiffres) et doivent être séparés par des virgules</mat-error
+          >
+        </mat-form-field>
 
       <div [hidden]="!isPartner && !isAOM">
         <h3>Structure</h3>
@@ -77,6 +37,8 @@
         <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
       </div>
     </div>
+    </div>
+
 
     <div [hidden]="!isPartner && !isAOM">
       <h2>Contacts et responsables</h2>
@@ -116,7 +78,7 @@
           class="large"
           mat-flat-button
           (click)="onSubmit()"
-          [disabled]="territoryForm.invalid || needsChildren"
+          [disabled]="territoryForm.invalid"
           color="primary"
         >
           {{ !!editedId ? 'Mettre à jour' : 'Créer' }}

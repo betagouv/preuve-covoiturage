@@ -3,19 +3,14 @@ import { filter, takeUntil, tap, map, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { get, cloneDeep } from 'lodash-es';
 
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { Address } from '~/core/entities/shared/address';
 import { Contact } from '~/core/entities/shared/contact';
-import {
-  Territory,
-  territoryLevelLabels,
-  TerritoryFormModel,
-  TerritoryLevelEnum,
-} from '~/core/entities/territory/territory';
+import { Territory, TerritoryFormModel, TerritoryLevelEnum } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Groups } from '~/core/enums/user/groups';
@@ -24,7 +19,6 @@ import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryChildrenComponent } from '../territory-children/territory-children.component';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
@@ -42,27 +36,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   @Output() close = new EventEmitter();
 
-  @ViewChild(TerritoryChildrenComponent) territoryChildren: TerritoryChildrenComponent;
-
   public territoryForm: FormGroup;
 
   fullFormMode = false;
   displayAOMActive = false;
   hasTerritories = false;
 
-  levelLabel = territoryLevelLabels;
-
   public editedId: number;
   private companyDetails: CompanyInterface;
-  protected _relationDisplayMode = 'parent';
   public activable = false;
 
   get controls(): { [key: string]: AbstractControl } {
     return this.territoryForm.controls;
-  }
-
-  get needsChildren(): boolean {
-    return !this.isTown && !this.hasTerritories && this.relationDisplayMode === 'parent';
   }
 
   get isTown(): boolean {
@@ -80,10 +65,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   get isPartner(): boolean {
     const base = this.fullFormMode ? this.territoryForm.value : this.territory;
     return base && 'activable' in base ? base.activable : false;
-  }
-
-  get relationDisplayMode(): string {
-    return this._relationDisplayMode;
   }
 
   get canUpdate(): boolean {
@@ -130,10 +111,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
   }
 
-  public hasTerritoriesChanged(hasTerritories: boolean): void {
-    this.hasTerritories = hasTerritories;
-  }
-
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
 
@@ -141,16 +118,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       delete formValues.children;
       delete formValues.insee;
       delete formValues.format;
-    }
-
-    if (this.territoryChildren && this.fullFormMode && formValues.format === 'parent') {
-      formValues.children = this.territoryChildren.getFlatSelectedList();
-      if (formValues.children.length === 0) {
-        this.toastr.error('Veuillez selectionner au moins un territoire enfant');
-        return;
-      }
-
-      formValues.uiSelectionState = this.territoryChildren.getUISelectionState();
     }
 
     formValues.company_id = get(this, 'companyDetails._id', null);
@@ -206,14 +173,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     } else {
       save.apply(this);
     }
-
-    if (this.territoryChildren) this.territoryChildren.setRelations([]);
   }
 
   public onClose(): void {
-    if (this.territoryChildren) this.territoryChildren.setRelations([]);
-    // this.territoryForm.get('company').reset();
-    // this.territoryForm.get('address').reset();
     this.territoryForm.reset();
     this.close.emit();
   }
@@ -276,15 +238,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     this.territoryForm = this.fb.group(formOptions);
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
-
-    if (this.territoryForm && this.territoryForm.get('format')) {
-      this.territoryForm
-        .get('format')
-        .valueChanges.pipe(takeUntil(this.destroy$))
-        .subscribe((val) => {
-          this._relationDisplayMode = val;
-        });
-    }
 
     if (companyFormGroup) {
       companyFormGroup
@@ -399,7 +352,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       });
 
       // Siret is hidden and not required if territory is not active (AOM)
-
       const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
       const siretControl = companyFormGroup.controls['siret'];
 
@@ -437,18 +389,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     this.territoryForm.setValue(formValues);
 
-    this._relationDisplayMode = formValues.format;
     if (this.editedId && this.fullFormMode) {
       if (formValues.format === 'parent') {
         this.hasTerritories = territory.children ? territory.children.length > 0 : false;
         this.territoryApi
           .getRelationUIStatus(this.editedId)
           .pipe(takeUntil(this.destroy$))
-          .subscribe((completeRelation) => {
-            if (this.territoryChildren) this.territoryChildren.setRelations(completeRelation);
-          });
+          .subscribe((completeRelation) => {});
       } else {
-        if (this.territoryChildren) this.territoryChildren.setRelations([]);
       }
 
       if (territory.company_id) {
