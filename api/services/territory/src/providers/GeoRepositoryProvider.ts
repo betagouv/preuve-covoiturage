@@ -37,21 +37,20 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
       values.push(`%${search.toLowerCase().trim()}%`);
     }
 
-    
     const totalResult = await this.connection.getClient().query<{ count: number }>({
       values,
       text: `
         SELECT count(*) FROM ${this.table}
         ${where.length ? ` WHERE ${where.join(' AND ')}` : ''}
-      `
+      `,
     });
-    
+
     const total = totalResult.rows[0].count || 0;
 
     // always add the limit
     values.push(limit);
     values.push(offset);
-    
+
     const results = await this.connection.getClient().query({
       values,
       text: `
@@ -70,9 +69,9 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
           offset,
           limit,
           total,
-        }
-      }
-    }
+        },
+      },
+    };
   }
 
   async findByCodes(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {

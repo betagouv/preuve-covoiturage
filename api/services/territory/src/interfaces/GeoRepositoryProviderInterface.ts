@@ -1,14 +1,14 @@
-import { ParamsInterface as ListGeoParamsInterface, ResultInterface as ListGeoResultInterface } from '../shared/territory/listGeo.contract';
+import {
+  ParamsInterface as ListGeoParamsInterface,
+  ResultInterface as ListGeoResultInterface,
+} from '../shared/territory/listGeo.contract';
 
 import {
   ParamsInterface as FindByInseeParamsInterface,
   ResultInterface as FindByInseeResultInterface,
 } from '../shared/territory/findGeoByCode.contract';
 
-export {
-  ListGeoParamsInterface,
-  ListGeoResultInterface,
-};
+export { ListGeoParamsInterface, ListGeoResultInterface };
 export interface GeoRepositoryProviderInterface {
   list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface>;
   findByCodes(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface>;

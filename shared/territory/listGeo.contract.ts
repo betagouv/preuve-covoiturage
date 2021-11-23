@@ -7,7 +7,7 @@ export interface ParamsInterface extends Partial<PaginationParamsInterface> {
   type?: GeoCodeTypeEnum;
   where?: {
     _id?: number[];
-  }
+  };
 }
 
 interface SingleResultInterface {

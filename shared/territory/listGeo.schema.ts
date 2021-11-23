@@ -22,10 +22,10 @@ export const schema = {
         _id: {
           type: 'array',
           items: { macro: 'serial' },
-        }
-      }
+        },
+      },
     },
-    ...pagination, 
+    ...pagination,
   },
 };
 export const binding = [alias, schema];

@@ -25,14 +25,12 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
-  async find(
-    params: FindParamsInterface 
-  ): Promise<FindResultInterface> {
+  async find(params: FindParamsInterface): Promise<FindResultInterface> {
     const result = await this.connection.getClient().query({
       text: `
         SELECT * from ${this.table} WHERE _id = $1 AND is_deleted = false
       `,
-      values: [params._id]
+      values: [params._id],
     });
 
     if (result.rowCount === 0) {
@@ -52,11 +50,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     if (rowCount !== 0) throw new ConflictException(`Double siret is not allowed for territory ${id}`);
   }
 
-  async list(params: ListParamsInterface
-  ): Promise<ListResultInterface> {
+  async list(params: ListParamsInterface): Promise<ListResultInterface> {
     const { search, offset, limit } = { limit: 100, offset: 0, ...params };
     const values = [];
-    const whereClauses: string[] = []
+    const whereClauses: string[] = [];
 
     if (search) {
       values.push(search.toLowerCase());
@@ -85,7 +82,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     const result = await client.query(query);
 
-    return { data: result.rows, meta: { pagination: { offset, limit, total }} };
+    return { data: result.rows, meta: { pagination: { offset, limit, total } } };
   }
 
   async create(data: CreateParamsInterface): Promise<CreateResultInterface> {
@@ -239,7 +236,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     return modifiedTerritoryRes.rows[0];
   }
-  
+
   async getRelationCodes(params: { _id: number }): Promise<{ _id: number[] }> {
     const query = {
       text: `

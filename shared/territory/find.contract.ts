@@ -2,7 +2,6 @@ import { TerritoryCodesInterface } from './common/interfaces/TerritoryCodeInterf
 import { TerritoryBaseInterface } from './common/interfaces/TerritoryInterface';
 import { TerritoryDbMetaInterface } from './common/interfaces/TerritoryDbMetaInterface';
 
-
 export interface ParamsInterface {
   _id: number;
 }

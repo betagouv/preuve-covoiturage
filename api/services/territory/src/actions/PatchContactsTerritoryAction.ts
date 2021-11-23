@@ -1,4 +1,4 @@
-import { handler, ContextType } from '@ilos/common';
+import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 

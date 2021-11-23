@@ -1,4 +1,3 @@
-
 export const alias = 'territory.find';
 export const schema = {
   $id: alias,

@@ -11,4 +11,4 @@ export const offset = {
 export const pagination = {
   limit,
   offset,
-}
+};
