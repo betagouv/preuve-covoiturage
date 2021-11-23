@@ -239,4 +239,19 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     return modifiedTerritoryRes.rows[0];
   }
+  
+  async getRelationCodes(params: { _id: number }): Promise<{ _id: number[] }> {
+    const query = {
+      text: `
+        SELECT *
+        FROM territory.get_descendants(ARRAY[$1]::int[]) as _id,
+      `,
+      values: [params._id],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    return {
+      _id: result.rows[0]._id || [],
+    };
+  }
 }

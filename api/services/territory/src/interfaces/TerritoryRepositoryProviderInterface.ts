@@ -42,6 +42,7 @@ export interface TerritoryRepositoryProviderInterface {
   delete(_id: number): Promise<void>;
   update(data: UpdateParamsInterface): Promise<UpdateResultInterface>;
   patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface>;
+  getRelationCodes(params: {_id: number }): Promise<{ _id: number[] }>;
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
@@ -66,6 +67,10 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
   }
 
   async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
+    throw new Error();
+  }
+
+  async getRelationCodes(params: {_id: number }): Promise<{ _id: number[] }> {
     throw new Error();
   }
 }
