@@ -416,11 +416,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       values.push(data.company_id);
     }
 
-    if (data.ui_status) {
-      fields.push('ui_status');
-      values.push(JSON.stringify(data.ui_status));
-    }
-
     const query = {
       text: `
         INSERT INTO ${this.table} (${fields.join(',')})
@@ -436,7 +431,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     const resultData = result.rows[0];
-    await this.updateRelations(resultData._id, data.children);
 
     if (data.insee !== undefined && data.insee.length > 0) {
       const query = {
@@ -450,26 +444,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     return resultData;
-  }
-
-  async updateRelations(parentId: number, children: number[], deleteOld = false): Promise<void> {
-    const client = this.connection.getClient();
-    if (deleteOld) {
-      const deleteQuery = {
-        text: `DELETE FROM ${this.relationTable} WHERE parent_territory_id = $1`,
-        values: [parentId],
-      };
-
-      await client.query(deleteQuery);
-    }
-
-    if (children) {
-      const values = children.map((childId) => `(${parentId},${childId})`).join(',');
-
-      const insertQuery = `INSERT INTO ${this.relationTable}(parent_territory_id,child_territory_id) VALUES${values}`;
-
-      await client.query(insertQuery);
-    }
   }
 
   async delete(id: number): Promise<void> {
@@ -567,8 +541,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       throw new Error(`Unable to update territory (${JSON.stringify(data)})`);
     }
 
-    await this.updateRelations(data._id, data.children, true);
-
     return (
       await client.query({
         text: `SELECT * from ${this.table} WHERE _id = $1`,
@@ -647,57 +619,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return modifiedTerritoryRes.rowCount > 0 ? modifiedTerritoryRes.rows[0] : 0;
   }
 
-  async tree(): Promise<any> {
-    const resultRoot = await this.connection.getClient().query({
-      text: 'SELECT _id FROM territory.territories where name = $1',
-      values: ['France'],
-    });
-
-    // prepare flat array of data
-    const query = `
-      SELECT
-        child_territory_id id,
-        parent_territory_id parent,
-        level,
-        name
-      FROM territory.territory_relation tr
-      LEFT JOIN territory.territories tt
-        ON tr.child_territory_id = tt._id
-      ORDER BY level, child_territory_id
-    `;
-
-    const result = await this.connection.getClient().query(query);
-
-    return this.toTree(result.rows, resultRoot.rows[0]._id);
-  }
-
-  private toTree(list, rootId) {
-    const map = {};
-    const roots = [];
-    let node;
-
-    for (let i = 0; i < list.length; i += 1) {
-      map[list[i].id] = i;
-      list[i].children = [];
-    }
-
-    for (let i = 0; i < list.length; i += 1) {
-      node = {
-        name: list[i].name,
-        children: list[i].children,
-      };
-
-      if (list[i].parent === rootId) {
-        roots.push(node);
-      } else {
-        if (list[map[list[i].parent]]) {
-          list[map[list[i].parent]].children.push(node);
-        }
-      }
-    }
-
-    return roots;
-  }
   async findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
     const client = this.connection.getClient();
     const query = {
