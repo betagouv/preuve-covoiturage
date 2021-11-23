@@ -1,28 +1,26 @@
-import { Subject } from 'rxjs';
-import { filter, takeUntil, tap, map, throttleTime } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
-import { get, cloneDeep } from 'lodash-es';
-
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-
-import { FormContact } from '~/shared/modules/form/forms/form-contact';
-import { FormAddress } from '~/shared/modules/form/forms/form-address';
-import { Address } from '~/core/entities/shared/address';
-import { Contact } from '~/core/entities/shared/contact';
-import { Territory, TerritoryFormModel, TerritoryLevelEnum } from '~/core/entities/territory/territory';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { cloneDeep, get } from 'lodash-es';
+import { ToastrService } from 'ngx-toastr';
+import { Subject } from 'rxjs';
+import { filter, map, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Groups } from '~/core/enums/user/groups';
-import { FormCompany } from '~/shared/modules/form/forms/form-company';
-import { CompanyService } from '~/modules/company/services/company.service';
-import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
-import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
+import { Contact } from '~/core/entities/shared/contact';
+import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
+import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CompanyService } from '~/modules/company/services/company.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
+import { FormAddress } from '~/shared/modules/form/forms/form-address';
+import { FormCompany } from '~/shared/modules/form/forms/form-company';
+import { FormContact } from '~/shared/modules/form/forms/form-contact';
 
 @Component({
   selector: 'app-territory-form',
@@ -39,26 +37,17 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   public territoryForm: FormGroup;
 
   fullFormMode = false;
-  displayAOMActive = false;
   hasTerritories = false;
 
   public editedId: number;
   private companyDetails: CompanyInterface;
-  public activable = false;
 
   get controls(): { [key: string]: AbstractControl } {
     return this.territoryForm.controls;
   }
 
-  get isTown(): boolean {
-    return (
-      (this.territory && this.territory.level === TerritoryLevelEnum.Town) ||
-      (this.territoryForm.get('level') && this.territoryForm.get('level').value === TerritoryLevelEnum.Town)
-    );
-  }
-
   get canUpdate(): boolean {
-    return this.authService.hasRole([Roles.RegistryAdmin]);
+    return this.authService.hasRole([Roles.RegistryAdmin, Roles.TerritoryAdmin]);
   }
 
   constructor(
@@ -82,17 +71,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         this.fullFormMode = user && user.group === Groups.Registry;
         this.initTerritoryForm();
         this.initTerritoryFormValue();
-        this.checkPermissions();
         this.updateValidation();
       });
-
-    if (this.territoryForm.controls['activable']) {
-      this.territoryForm.controls['activable'].valueChanges.subscribe(() => this.updateValidation());
-    }
-
-    if (this.territoryForm.controls['format']) {
-      this.territoryForm.controls['format'].valueChanges.subscribe(() => this.updateValidation());
-    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -103,12 +83,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
-
-    if (this.isTown) {
-      delete formValues.children;
-      delete formValues.insee;
-      delete formValues.format;
-    }
 
     formValues.company_id = get(this, 'companyDetails._id', null);
 
@@ -188,8 +162,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       formOptions = {
         ...formOptions,
         name: [''],
-        active: [false],
-        activable: [false],
         level: [null, Validators.required],
         shortname: [''],
         format: ['parent'],
@@ -204,9 +176,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             }),
           ),
         ),
-
-        // children: [],
-
         company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
         contacts: this.fb.group({
           gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
@@ -330,13 +299,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       this.territoryForm.controls['shortname'].markAsUntouched();
 
       // address is hidden and not required if territory is not activable (AOM)
-      const addressIsRequired = !!this.territoryForm.controls['activable'].value;
       const fields = ['street', 'postcode', 'city', 'country'];
       const addressControl = this.territoryForm.controls['address'] as FormGroup;
 
       fields.forEach((field) => {
         const ctr = addressControl.controls[field];
-        ctr.setValidators(addressIsRequired ? [Validators.required] : null);
         ctr.updateValueAndValidity();
         ctr.markAsUntouched();
       });
@@ -345,7 +312,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
       const siretControl = companyFormGroup.controls['siret'];
 
-      siretControl.setValidators(addressIsRequired ? [Validators.required] : null);
+      siretControl.setValidators([Validators.required]);
       siretControl.updateValueAndValidity();
       siretControl.markAsUntouched();
 
@@ -362,7 +329,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   private setTerritoryFormValue(territory: Territory): void {
     // base values for form
-    this.activable = this.territory && this.territory.activable;
     this.editedId = territory ? territory._id : null;
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);
@@ -380,27 +346,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this.territoryForm.setValue(formValues);
 
     if (this.editedId && this.fullFormMode) {
-      if (formValues.format === 'parent') {
-        this.hasTerritories = territory.children ? territory.children.length > 0 : false;
-        this.territoryApi
-          .getRelationUIStatus(this.editedId)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((completeRelation) => {});
-      } else {
-      }
-
       if (territory.company_id) {
         this.companyService.getById(territory.company_id).subscribe((company) => {
           this.updateCompanyForm(company);
         });
       }
-      this.displayAOMActive = territory.activable === true;
-    }
-  }
-
-  private checkPermissions(): void {
-    if (!this.authService.hasRole([Roles.TerritoryAdmin, Roles.RegistryAdmin])) {
-      this.territoryForm.disable({ onlySelf: true });
     }
   }
 }

@@ -27,21 +27,6 @@ export enum TerritoryLevelEnum {
   Other = 'other',
 }
 
-export const territoryLevelLabels = [
-  [null, ''],
-
-  [TerritoryLevelEnum.Town, 'Commune'],
-  // [TerritoryLevelEnum.Epic, 'EPCI'],
-  [TerritoryLevelEnum.Towngroup, 'EPCI'],
-  // [TerritoryLevelEnum.District, 'District'],
-  [TerritoryLevelEnum.Megalopolis, 'Département'],
-  [TerritoryLevelEnum.Region, 'Region'],
-  // [TerritoryLevelEnum.State, 'Etat'],
-  [TerritoryLevelEnum.Country, 'Pays'],
-  // [TerritoryLevelEnum.Countrygroup, 'Groupe de pays'],
-  [TerritoryLevelEnum.Other, 'Autre'],
-];
-
 export interface TerritoryTree {
   _id: number;
   name: string;
