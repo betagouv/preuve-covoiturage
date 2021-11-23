@@ -2,7 +2,7 @@ import { ContextType, handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
+import { GeoRepositoryProviderInterfaceResolver } from '../interfaces/GeoRepositoryProviderInterface';
 import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/territory/listGeo.contract';
 import { alias } from '../shared/territory/listGeo.schema';
 
@@ -16,11 +16,11 @@ import { alias } from '../shared/territory/listGeo.schema';
   ],
 })
 export class ListGeoAction extends AbstractAction {
-  constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
+  constructor(private geoRepository: GeoRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface[]> {
-    return this.territoryRepository.dropdown(params);
+    return this.geoRepository.dropdown(params);
   }
 }

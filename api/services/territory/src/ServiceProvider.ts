@@ -11,7 +11,7 @@ import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
 import { config } from './config';
-import { TerritoryPgRepositoryProvider } from './providers/TerritoryPgRepositoryProvider';
+import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { create } from './shared/territory/create.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
 import { binding as listGeoBinding } from './shared/territory/listGeo.schema';
@@ -22,10 +22,11 @@ import { patchContacts } from './shared/territory/patchContacts.schema';
 import { update } from './shared/territory/update.schema';
 import { binding as getAuthorizedCodesBinding } from './shared/territory/getAuthorizedCodes.schema';
 import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
+import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
 
 @serviceProvider({
   config,
-  providers: [TerritoryPgRepositoryProvider],
+  providers: [TerritoryRepositoryProvider, GeoRepositoryProvider],
   validator: [
     ['territory.find', find],
     ['territory.list', list],

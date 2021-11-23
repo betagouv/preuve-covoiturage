@@ -3,7 +3,7 @@ import { hasPermissionMiddleware, contentBlacklistMiddleware } from '@pdc/provid
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
-import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
+import { GeoRepositoryProviderInterfaceResolver } from '../interfaces/GeoRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/findByInsees.contract';
 import { alias } from '../shared/territory/findByInsees.schema';
 import { blacklist } from '../config/filterOutput';
@@ -17,11 +17,11 @@ import { blacklist } from '../config/filterOutput';
   ],
 })
 export class FindTerritoryByInseesAction extends AbstractAction {
-  constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
+  constructor(private geoRepository: GeoRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.territoryRepository.findByInsees(params);
+    return this.geoRepository.findByInsees(params);
   }
 }
