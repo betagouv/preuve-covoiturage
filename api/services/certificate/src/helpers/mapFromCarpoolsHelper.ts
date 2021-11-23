@@ -12,10 +12,9 @@ export interface ParamsInterface {
   carpools: CarpoolInterface[];
   params: Partial<{
     tz: string;
+    positions: PointInterface[];
     start_at: Date;
     end_at: Date;
-    start_pos: PointInterface;
-    end_pos: PointInterface;
   }>;
 }
 
@@ -32,19 +31,17 @@ export const mapFromCarpoolsHelper = (store: Store): MapFromCarpoolInterface => 
     person,
     operator,
     carpools,
-    params: { tz, end_at, start_at, start_pos, end_pos },
+    params: { tz, end_at, start_at, positions },
   } = params;
 
   const meta: CertificateMetaInterface = {
     tz,
+    positions,
     identity: { uuid: person.uuid },
     operator: { uuid: operator.uuid, name: operator.name },
     driver: map(CarpoolTypeEnum.DRIVER, carpools),
     passenger: map(CarpoolTypeEnum.PASSENGER, carpools),
   };
-
-  if (start_pos) meta.start_pos = start_pos;
-  if (end_pos) meta.end_pos = end_pos;
 
   return store.create({ meta, end_at, start_at, operator_id: operator._id, identity_uuid: person.uuid });
 };

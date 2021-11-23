@@ -20,6 +20,7 @@
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,
+    "api/providers/*/src/shared": true,
     "api/services/*/src/shared": true
   },
   "files.exclude": {

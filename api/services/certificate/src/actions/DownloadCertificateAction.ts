@@ -1,15 +1,13 @@
-import { get, set } from 'lodash';
-
+import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
+import { channelServiceWhitelistMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
+import { PdfCertProviderInterfaceResolver, PdfTemplateData } from '@pdc/provider-pdfcert';
 import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
-import { PdfCertProviderInterfaceResolver } from '@pdc/provider-pdfcert';
-import { hasPermissionMiddleware, channelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
-
+import { get, set } from 'lodash';
+import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/download.contract';
 import { alias } from '../shared/certificate/download.schema';
-import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 
 @handler({
   ...handlerConfig,
@@ -36,14 +34,14 @@ export class DownloadCertificateAction extends AbstractAction {
     const thumbnail = await this.getThumbnailBase64(certificate.operator_id);
     const validationUrl = `${this.config.get('templates.certificate.validation.url')}/${params.uuid}`;
 
-    const data = {
+    const data: PdfTemplateData = {
       title: this.config.get('templates.certificate.title', 'Attestation de covoiturage'),
       data: certificate.meta,
       identity: certificate.meta.identity.uuid.toUpperCase(),
       operator: certificate.meta.operator.uuid.toUpperCase(),
       certificate: {
-        uuid: certificate.uuid,
-        created_at: `le ${this.dateProvider.format(certificate.created_at, 'd MMMM yyyy à kk:mm', {
+        uuid: certificate.uuid.toUpperCase(),
+        created_at: `${this.dateProvider.format(certificate.created_at, 'd MMMM yyyy à kk:mm', {
           timeZone: certificate.meta.tz,
         })}`.replace(':', 'h'),
         start_at: this.dateProvider.format(certificate.start_at, 'd MMMM yyyy', {

@@ -10,9 +10,8 @@ export interface ResultRowInterface {
   type: RowType;
   uuid: string;
   tz: string;
+  positions: PointInterface[];
   operator: { uuid: string; name: string };
-  start_pos?: PointInterface;
-  end_pos?: PointInterface;
   driver: MetaPersonInterface;
   passenger: MetaPersonInterface;
 }

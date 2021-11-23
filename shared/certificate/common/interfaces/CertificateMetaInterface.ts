@@ -21,10 +21,9 @@ export interface MetaPersonInterface {
 
 export interface CertificateMetaInterface {
   tz: string;
+  positions: PointInterface[];
   identity: { uuid: string };
   operator: { uuid: string; name: string };
-  start_pos?: PointInterface;
-  end_pos?: PointInterface;
   driver: MetaPersonInterface;
   passenger: MetaPersonInterface;
 }

@@ -60,7 +60,7 @@ export class CreateCertificateAction extends AbstractAction {
       person: { uuid: personUUID },
       operator,
       carpools,
-      params,
+      params: { tz, start_at, end_at, positions },
     });
 
     return {

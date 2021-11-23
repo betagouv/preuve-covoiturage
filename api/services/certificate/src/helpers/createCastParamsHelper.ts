@@ -3,9 +3,11 @@
  * Fill in with sensible defaults when not provided.
  */
 
+import { PointInterface } from '~/shared/common/interfaces/PointInterface';
+
 type Dates = { start_at: Date; end_at: Date };
 
-export type ParamsInterface = Partial<Dates>;
+export type ParamsInterface = Partial<Dates & { positions: PointInterface[] | null }>;
 
 export type ResultsInterface<T> = T & Dates;
 
@@ -22,10 +24,11 @@ export const createCastParamsHelper = <T>(config: ConfigInterface): CreateCastPa
     const origin = new Date('2019-01-01T00:00:00+0100'); // Europe/Paris
     const end_at_max = new Date().getTime() - config.get('delays.create.end_at_buffer', 6) * 86400000;
 
-    let { start_at, end_at } = params;
+    let { start_at, end_at, positions } = params;
 
     start_at = 'start_at' in params ? new Date(start_at) : origin;
     end_at = 'end_at' in params ? new Date(end_at) : new Date(end_at_max);
+    positions = positions || [];
 
     // start_at must be older than n days + 1
     if (start_at.getTime() > end_at_max) {
@@ -43,5 +46,5 @@ export const createCastParamsHelper = <T>(config: ConfigInterface): CreateCastPa
       start_at = new Date(end_at.getTime() - 86400000);
     }
 
-    return { ...params, start_at, end_at };
+    return { ...params, start_at, end_at, positions };
   };
