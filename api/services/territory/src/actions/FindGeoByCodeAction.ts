@@ -22,6 +22,6 @@ export class FindGeoByCodeAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.geoRepository.findByInsees(params);
+    return this.geoRepository.findByCodes(params);
   }
 }

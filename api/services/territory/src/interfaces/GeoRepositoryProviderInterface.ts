@@ -12,8 +12,7 @@ export {
 };
 export interface GeoRepositoryProviderInterface {
   list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface>;
-  findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface>;
-  getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface[]>;
+  findByCodes(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface>;
 }
 
 export abstract class GeoRepositoryProviderInterfaceResolver implements GeoRepositoryProviderInterface {
@@ -25,7 +24,7 @@ export abstract class GeoRepositoryProviderInterfaceResolver implements GeoRepos
     throw new Error();
   }
 
-  async findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
+  async findByCodes(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
     throw new Error();
   }
 }

@@ -149,7 +149,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     }
   }
 
-  async findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
+  async findByCodes(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
     const client = this.connection.getClient();
     const query = {
       text: `WITH territory_codes AS (
