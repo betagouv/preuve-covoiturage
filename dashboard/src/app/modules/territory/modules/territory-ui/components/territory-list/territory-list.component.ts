@@ -12,22 +12,13 @@ import { TerritoryStoreService } from '~/modules/territory/services/territory-st
   styleUrls: ['./territory-list.component.scss'],
 })
 export class TerritoryListComponent extends DestroyObservable implements OnInit {
-  public readonly displayedColumns: string[] = ['name', 'actions'];
+  public readonly displayedColumns: string[] = ['name'];
 
   @Input() territories: Territory[] = [];
-  @Output() edit = new EventEmitter();
-
-  get canEdit(): boolean {
-    return this.authenticationService.hasRole([Roles.TerritoryAdmin, Roles.RegistryAdmin]);
-  }
 
   constructor(public authenticationService: AuthenticationService, public territoryStore: TerritoryStoreService) {
     super();
   }
 
   ngOnInit(): void {}
-
-  onEdit(territory: Territory): void {
-    this.edit.emit(territory);
-  }
 }
