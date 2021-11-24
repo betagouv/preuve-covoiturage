@@ -14,7 +14,6 @@ import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 import { GetListActions } from '~/core/services/api/json-rpc.getlist';
 import { ParamsInterface as FindByIdParamsInterface } from '../../../../../../shared/territory/find.contract';
 import { ParamsInterface as TerritoryListFilter } from '../../../../../../shared/territory/list.contract';
-import { SortEnum, allBasicFieldEnum } from '../TerritoryQueryInterface';
 import {
   signature as signatureGeo,
   ParamsInterface as ParamsInterfaceGeo,
@@ -53,16 +52,12 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryInsee[]>;
   }
 
-  paramGetById(
-    id: number,
-    sort: SortEnum[] = [SortEnum.NameAsc],
-    projection: any = allBasicFieldEnum,
-  ): JsonRPCParam<any> {
-    return this.paramGet({ _id: id } as any, sort, projection);
+  paramGetById(id: number): JsonRPCParam<any> {
+    return this.paramGet({ _id: id } as any);
   }
 
-  paramGet(params: any, sort: SortEnum[] = [SortEnum.NameAsc], projection: any = allBasicFieldEnum): JsonRPCParam<any> {
-    return new JsonRPCParam(`${this.method}:${GetListActions.FIND}`, { query: { ...params }, sort, projection });
+  paramGet(params: any): JsonRPCParam<any> {
+    return new JsonRPCParam(`${this.method}:${GetListActions.FIND}`, { query: { ...params } });
   }
 
   dropdown(params: { search?: string; parent_id?: number }): Observable<JsonRPCResult> {
