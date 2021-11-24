@@ -10,7 +10,7 @@ import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
 import { Contact } from '~/core/entities/shared/contact';
-import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
+import { Territory, TerritoryFormModel, TerritoryInsee } from '~/core/entities/territory/territory';
 import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
@@ -81,60 +81,72 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
-
     formValues.company_id = get(this, 'companyDetails._id', null);
 
-    const save = () => {
-      if (this.territoryId) {
-        const patch$ = this.fullFormMode
-          ? this.territoryStore.updateSelected(formValues)
-          : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId);
+    // split by and make unique
+    const inseeList: string[] = [
+      ...new Set(
+        formValues.insee
+          .split(/[\s,]/)
+          .map((s) => s.trim())
+          .filter((i) => i.length)
+          .sort(),
+      ),
+    ];
 
-        patch$.subscribe(
-          (modifiedTerritory) => {
-            this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
-            this.close.emit();
-          },
-          (err) => {
-            console.error(err);
-            this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
-          },
-        );
-      } else {
-        this.territoryStore.create(formValues).subscribe(() => {
-          this.toastr.success(`${formValues.name} a été mis à jour !`);
-          this.close.emit();
-        });
-      }
-    };
+    this.territoryApi.findByInsees(inseeList).subscribe(
+      (territories) => {
+        this.handleInseeToTerritories(inseeList, territories, formValues);
+      },
+      (err) => {
+        console.error(err);
+        this.toastr.error(`Une erreur est survenue lors de la validation des codes insees`);
+      },
+    );
+  }
 
-    // get territories
-    if (formValues.format === 'insee' && formValues.insee) {
-      // split by , or spaces and make unique
-      const inseeList = [
-        ...new Set(
-          formValues.insee
-            .split(/[\s,]/)
-            .map((s) => s.trim())
-            .filter((i) => i.length)
-            .sort(),
-        ),
-      ];
-
-      this.territoryApi.findByInsees(inseeList).subscribe((territories) => {
-        if (inseeList.length === territories.length) {
-          formValues.children = territories.map((t) => t._id);
-          save.apply(this);
-        } else {
-          const notMatchingInsees = inseeList.filter((insee) => !territories.find((t) => t.insee === insee));
-          this.toastr.error(
-            `Certains codes INSEE n'ont pas de territoires correspondants : ${notMatchingInsees.join(',')}`,
-          );
-        }
-      });
-    } else {
-      save.apply(this);
+  private handleInseeToTerritories(
+    inseeList: string[],
+    territories: TerritoryInsee[],
+    formValues: TerritoryFormModel,
+  ): void {
+    if (!this.hasSameLength(inseeList, territories)) {
+      this.toastr.error(`Certains codes INSEE n'ont pas de territoires correspondants`);
+      return;
     }
+
+    // Map insees to territory_id
+    formValues.children = territories.map((t) => t._id);
+
+    if (this.isNew()) {
+      this.territoryStore.create(formValues).subscribe(() => {
+        this.toastr.success(`${formValues.name} a été mis à jour !`);
+        this.close.emit();
+      });
+      return;
+    }
+
+    const patch$ = this.fullFormMode
+      ? this.territoryStore.updateSelected(formValues)
+      : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId);
+
+    patch$.subscribe(
+      (modifiedTerritory) => {
+        this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
+        this.close.emit();
+      },
+      (err) => {
+        this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
+      },
+    );
+  }
+
+  private isNew(): boolean {
+    return !this.territoryId;
+  }
+
+  private hasSameLength(inseeList: string[], territories: TerritoryInsee[]): boolean {
+    return inseeList.length === territories.length;
   }
 
   public onClose(): void {
@@ -160,7 +172,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       formOptions = {
         ...formOptions,
         name: [''],
-        level: [null, Validators.required],
         shortname: [''],
         insee: [''],
         address: this.fb.group(

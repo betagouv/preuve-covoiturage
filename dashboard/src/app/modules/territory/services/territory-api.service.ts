@@ -26,6 +26,11 @@ import {
   signature as signatureGeo,
 } from '../../../../../../shared/territory/listGeo.contract';
 
+import {
+  ParamsInterface as ParamsInterfaceFindByCode,
+  signature as signatureFindByCode,
+} from '../../../../../../shared/territory/findGeoByCode.contract';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -53,7 +58,7 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
   }
 
   findByInsees(insees: string[]): Observable<TerritoryInsee[]> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:findByInsees`, { insees });
+    const jsonRPCParam = new JsonRPCParam(signatureFindByCode, { insees });
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryInsee[]>;
   }
 

@@ -55,7 +55,6 @@ export interface TerritoryBase extends TerritoryBaseEdit {
 export interface TerritoryInsee {
   _id: number;
   name: string;
-  insee: string;
 }
 
 export interface TerritoryUIStatus {
