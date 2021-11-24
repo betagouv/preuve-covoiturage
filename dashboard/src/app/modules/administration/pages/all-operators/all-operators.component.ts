@@ -1,12 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-all-operators',
   templateUrl: './all-operators.component.html',
-  styleUrls: ['./all-operators.component.scss'],
 })
-export class AllOperatorsComponent implements OnInit {
+export class AllOperatorsComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }
