@@ -6,17 +6,18 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
-import {
-  ParamsInterface as PatchContactParamsInterface,
-  signature as signaturePatch,
-} from '../../../../../../shared/territory/patchContacts.contract';
-import { Territory, TerritoryInsee } from '~/core/entities/territory/territory';
+import { Territory } from '~/core/entities/territory/territory';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 import {
   ParamsInterface as FindByIdParamsInterface,
   signature as signatureFind,
 } from '../../../../../../shared/territory/find.contract';
+import {
+  ParamsInterface as ParamsInterfaceFindByCode,
+  ResultInterface as ResultInterfaceFindByCode,
+  signature as signatureFindByCode,
+} from '../../../../../../shared/territory/findGeoByCode.contract';
 import {
   ParamsInterface as TerritoryListFilter,
   signature as signatureList,
@@ -25,11 +26,10 @@ import {
   ParamsInterface as ParamsInterfaceGeo,
   signature as signatureGeo,
 } from '../../../../../../shared/territory/listGeo.contract';
-
 import {
-  ParamsInterface as ParamsInterfaceFindByCode,
-  signature as signatureFindByCode,
-} from '../../../../../../shared/territory/findGeoByCode.contract';
+  ParamsInterface as PatchContactParamsInterface,
+  signature as signaturePatch,
+} from '../../../../../../shared/territory/patchContacts.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -57,9 +57,10 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     return new JsonRPCParam(signatureList, { ...this.defaultListParam, ...params });
   }
 
-  findByInsees(insees: string[]): Observable<TerritoryInsee[]> {
-    const jsonRPCParam = new JsonRPCParam(signatureFindByCode, { insees });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryInsee[]>;
+  findByInsees(insees: string[]): Observable<ResultInterfaceFindByCode> {
+    const params: ParamsInterfaceFindByCode = { insees };
+    const jsonRPCParam = new JsonRPCParam(signatureFindByCode, params);
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
   paramGetById(id: number): JsonRPCParam<any> {

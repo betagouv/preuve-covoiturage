@@ -10,7 +10,7 @@ import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
 import { Contact } from '~/core/entities/shared/contact';
-import { Territory, TerritoryFormModel, TerritoryInsee } from '~/core/entities/territory/territory';
+import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
 import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
@@ -21,6 +21,7 @@ import { TerritoryStoreService } from '~/modules/territory/services/territory-st
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
+import { TerritoryInsee } from '../../../../../../../../../shared/territory/findGeoByCode.contract';
 
 @Component({
   selector: 'app-territory-form',
@@ -83,6 +84,19 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
     formValues.company_id = get(this, 'companyDetails._id', null);
 
+    if (!this.fullFormMode) {
+      this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId).subscribe(
+        (modifiedTerritory) => {
+          this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
+          this.close.emit();
+        },
+        (err) => {
+          this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
+        },
+      );
+      return;
+    }
+
     // split by and make unique
     const inseeList: string[] = [
       ...new Set(
@@ -96,7 +110,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     this.territoryApi.findByInsees(inseeList).subscribe(
       (territories) => {
-        this.handleInseeToTerritories(inseeList, territories, formValues);
+        this.handleInseeToTerritoriesAndUpdate(inseeList, territories, formValues);
       },
       (err) => {
         console.error(err);
@@ -105,7 +119,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     );
   }
 
-  private handleInseeToTerritories(
+  private handleInseeToTerritoriesAndUpdate(
     inseeList: string[],
     territories: TerritoryInsee[],
     formValues: TerritoryFormModel,
@@ -116,7 +130,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
 
     // Map insees to territory_id
-    formValues.children = territories.map((t) => t._id);
+    formValues.children = territories.map((t) => t.territory_id);
 
     if (this.isNew()) {
       this.territoryStore.create(formValues).subscribe(() => {
@@ -126,11 +140,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
-    const patch$ = this.fullFormMode
-      ? this.territoryStore.updateSelected(formValues)
-      : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId);
-
-    patch$.subscribe(
+    this.territoryStore.updateSelected(formValues).subscribe(
       (modifiedTerritory) => {
         this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
         this.close.emit();

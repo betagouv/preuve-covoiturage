@@ -194,7 +194,10 @@ export class CommonDataService {
     return this.auth.check().pipe(
       mergeMap((user) => {
         if (user) {
-          const params = [this.operatorApiService.paramGetList({}), this.territoryApiService.paramGetList()];
+          const params = [
+            this.operatorApiService.paramGetList({}),
+            this.territoryApiService.paramGetList({ limit: 50000, offset: 0, search: '' }),
+          ];
 
           if (this.canListCampaigns) {
             params.push(this.campaignApiService.paramGetList());
