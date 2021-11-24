@@ -5,7 +5,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 @Component({
   selector: 'app-territory-filter',
   templateUrl: './territory-filter.component.html',
-  styleUrls: ['./territory-filter.component.scss'],
 })
 export class TerritoryFilterComponent implements OnInit {
   public searchFilters: FormGroup;
