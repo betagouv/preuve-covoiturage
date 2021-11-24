@@ -28,7 +28,12 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   async find(params: FindParamsInterface): Promise<FindResultInterface> {
     const result = await this.connection.getClient().query({
       text: `
-        SELECT * from ${this.table} WHERE _id = $1 AND is_deleted = false
+        SELECT
+          _id, created_at, updated_at, name, shortname, level, company_id, contacts
+        FROM ${this.table}
+        WHERE 
+          _id = $1 AND 
+          deleted_at IS NULL
       `,
       values: [params._id],
     });
@@ -56,8 +61,8 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     const whereClauses: string[] = [];
 
     if (search) {
-      values.push(search.toLowerCase());
-      whereClauses.push(`LOWER(name) LIKE '%$${values.length}}%'`);
+      values.push(`%${search.toLowerCase()}%`);
+      whereClauses.push(`LOWER(name) LIKE $${values.length}`);
     }
 
     const client = this.connection.getClient();
@@ -65,21 +70,27 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       whereClauses.length ? ` WHERE ${whereClauses.join(' AND ')}` : ''
     }`;
 
-    const total = parseFloat((await client.query(countQuery)).rows[0].territory_count);
+    const total = parseFloat(
+      (
+        await client.query({
+          text: countQuery,
+          values,
+        })
+      ).rows[0].territory_count,
+    );
 
     values.push(limit);
     values.push(offset);
     const query = {
       text: `
-        SELECT * FROM ${this.table}
-        WHERE is_deleted = false ${whereClauses.length ? whereClauses.join(' AND ') : ''}
+        SELECT _id, name FROM ${this.table}
+        WHERE deleted_at IS NULL ${whereClauses.length ? `AND ${whereClauses.join(' AND ')}` : ''}
         ORDER BY name ASC
         LIMIT $${whereClauses.length + 1}
         OFFSET $${whereClauses.length + 2}
       `,
       values,
     };
-
     const result = await client.query(query);
 
     return { data: result.rows, meta: { pagination: { offset, limit, total } } };
@@ -153,18 +164,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   }
 
   async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
-    const fields = [
-      'name',
-      'shortname',
-      'level',
-      'contacts',
-      'address',
-      'active',
-      'activable',
-      // 'density',
-      'company_id',
-      'ui_status',
-    ];
+    const fields = ['name', 'shortname', 'level', 'contacts', 'address', 'active', 'activable', 'company_id'];
 
     const values: any[] = [
       data.name,
@@ -240,7 +240,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     const query = {
       text: `
         SELECT *
-        FROM territory.get_descendants(ARRAY[$1]::int[]) as _id,
+        FROM territory.get_descendants(ARRAY[$1]::int[]) as _id
       `,
       values: [params._id],
     };

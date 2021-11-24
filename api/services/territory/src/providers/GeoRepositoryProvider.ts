@@ -37,7 +37,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
       values.push(`%${search.toLowerCase().trim()}%`);
     }
 
-    const totalResult = await this.connection.getClient().query<{ count: number }>({
+    const totalResult = await this.connection.getClient().query<{ count: string }>({
       values,
       text: `
         SELECT count(*) FROM ${this.table}
@@ -45,7 +45,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
       `,
     });
 
-    const total = totalResult.rows[0].count || 0;
+    const total = parseFloat(totalResult.rows[0].count || '0');
 
     // always add the limit
     values.push(limit);
@@ -77,23 +77,18 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   async findByCodes(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
     const client = this.connection.getClient();
     const query = {
-      text: `WITH territory_codes AS (
-        SELECT 
-          tc.territory_id,
-          tc.value
-        FROM territory.territory_codes tc 
+      text: `
+        SELECT
+          tt.name, 
+          tc.territory_id
+        FROM territory.territory_codes AS tc
+        JOIN ${this.table} AS tt
+          ON tc.territory_id = tt._id
         WHERE 
           tc.type = 'insee' AND 
           tc.value = ANY($1) 
-        GROUP BY tc.territory_id,tc.value
-        )
-        SELECT 
-          name,
-          _id,
-          value as insee
-        FROM territory_codes as tc
-        INNER JOIN territory.territories as t ON t._id = tc.territory_id; `,
-
+        GROUP BY tc.territory_id, tt.name
+      `,
       values: [params.insees],
     };
     const result = await client.query(query);
