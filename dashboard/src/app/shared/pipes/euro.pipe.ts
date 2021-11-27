@@ -5,7 +5,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class EuroPipe implements PipeTransform {
   transform(val: number | string, length = 2): string {
-    const num: number = isNaN(val as number) === false ? (val as number) : parseFloat(val as string);
+    const str = String(val);
+    const num = parseFloat(str);
+    if (isNaN(num)) return str;
     return `${num.toFixed(length).replace('.', ',')} €`;
   }
 }
