@@ -1,10 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastrService } from 'ngx-toastr';
 import { set } from 'lodash';
-
-import { ResultRowInterface } from '~/core/entities/api/shared/certificate/list.contract';
+import { ToastrService } from 'ngx-toastr';
+import { ResultRowInterface } from '~/core/entities/api/shared/certificate/common/interfaces/ResultRowInterface';
 import { ParamsInterface as DownloadParamsInterface } from '~/core/entities/api/shared/certificate/download.contract';
 import { CertificateApiService } from '~/modules/certificate/services/certificate-api.service';
 

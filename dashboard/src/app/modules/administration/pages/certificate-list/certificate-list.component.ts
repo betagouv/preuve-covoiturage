@@ -1,25 +1,26 @@
-import { BehaviorSubject } from 'rxjs';
-import { takeUntil, finalize } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
-
+import { ToastrService } from 'ngx-toastr';
+import { BehaviorSubject } from 'rxjs';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CommonDataService } from '~/core/services/common-data.service';
+import { REGEXP } from '~/core/const/validators.const';
+import { ResultRowInterface } from '~/core/entities/api/shared/certificate/common/interfaces/ResultRowInterface';
+import { ParamsInterface as ListParamsInterface } from '~/core/entities/api/shared/certificate/list.contract';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-
+import { CommonDataService } from '~/core/services/common-data.service';
 import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
 import { CertificateMetaDialogComponent } from './certificate-meta-dialog/certificate-meta-dialog.component';
 
-import {
-  ParamsInterface as ListParamsInterface,
-  ResultRowInterface,
-} from '~/core/entities/api/shared/certificate/list.contract';
-import { FormBuilder, Validators, FormGroup, AbstractControl, FormControl } from '@angular/forms';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-import { REGEXP } from '~/core/const/validators.const';
+// somehow, importing RowType from shared crashes compilation... 🤔
+export enum CertStatusEnum {
+  OK = 'ok',
+  EXPIRED = 'expired',
+}
 
 @Component({
   selector: 'app-certificate-list',
@@ -50,7 +51,18 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   searchState = new BehaviorSubject<ListParamsInterface>({ pagination: { length: this.PAGE_SIZE, start_index: 0 } });
   isLoading = false;
   showForm = false;
-  displayedColumns = ['uuid', 'operator', 'total_km', 'total_point', 'total_days', 'total_cost', 'actions'];
+
+  displayedColumns = [
+    'status',
+    'uuid',
+    'operator',
+    'driver_km',
+    'driver_eur',
+    'passenger_km',
+    'passenger_eur',
+    'actions',
+  ];
+
   ngOnInit(): void {
     this.startIndex = 0;
     this.length = 0;
@@ -281,7 +293,42 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
         });
       });
   }
+
   onCancelCreateCertificate(): void {
     this.showForm = false;
+  }
+
+  // UI helpers
+  getIconStatus(status: CertStatusEnum): string {
+    switch (status) {
+      case CertStatusEnum.OK:
+        return 'check_circle';
+      case CertStatusEnum.EXPIRED:
+        return 'warning';
+      default:
+        return '';
+    }
+  }
+
+  getIconClass(status: CertStatusEnum): string {
+    switch (status) {
+      case CertStatusEnum.OK:
+        return 'success';
+      case CertStatusEnum.EXPIRED:
+        return 'warning';
+      default:
+        return '';
+    }
+  }
+
+  getTooltip(status: CertStatusEnum): string {
+    switch (status) {
+      case CertStatusEnum.OK:
+        return 'Valide';
+      case CertStatusEnum.EXPIRED:
+        return "Expirée. Le format d'attestation en base n'est plus valide.";
+      default:
+        return null;
+    }
   }
 }

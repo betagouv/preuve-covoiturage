@@ -1,7 +1,7 @@
 <div>
   <div class="FilterTop">
     <h3>Attestations</h3>
-    <app-operator-autocomplete *ngIf="!auth.isOperator" [parentForm]="filterForm" cancellable="true">
+    <app-operator-autocomplete *ngIf="!auth.isOperator()" [parentForm]="filterForm" cancellable="true">
     </app-operator-autocomplete>
   </div>
 
@@ -13,42 +13,47 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let row">
+        <mat-icon [ngClass]="getIconClass(row.type)" [matTooltip]="getTooltip(row.type)" matTooltipPosition="left">
+          {{ getIconStatus(row.type) }}
+        </mat-icon>
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="operator">
       <th mat-header-cell *matHeaderCellDef>Opérateur</th>
       <td mat-cell *matCellDef="let row">
         {{ row.operator.name }}
       </td>
     </ng-container>
+
     <ng-container matColumnDef="uuid">
       <th mat-header-cell *matHeaderCellDef>UUID</th>
       <td mat-cell *matCellDef="let row">
         <a class="link" href="/attestation/{{ row.uuid }}" target="_blank" rel="noopener">{{ row.uuid }}</a>
       </td>
     </ng-container>
-    <ng-container matColumnDef="total_km">
-      <th mat-header-cell *matHeaderCellDef>Distance totale</th>
-      <td mat-cell *matCellDef="let row">{{ row.total_km | km }}</td>
+
+    <ng-container matColumnDef="driver_km">
+      <th mat-header-cell *matHeaderCellDef>Distance<br>conducteur</th>
+      <td mat-cell *matCellDef="let row">{{ row.driver?.total?.km || 0 | km }}</td>
     </ng-container>
-    <ng-container matColumnDef="total_days">
-      <th mat-header-cell *matHeaderCellDef>Jours</th>
-      <td mat-cell *matCellDef="let row">
-        <span *ngIf="row.total_days !== null">{{ row.total_days }}</span>
-        <span *ngIf="row.total_days === null">-</span>
-      </td>
+
+    <ng-container matColumnDef="driver_eur">
+      <th mat-header-cell *matHeaderCellDef>Gains<br>conducteur</th>
+      <td mat-cell *matCellDef="let row">{{ row.driver?.total?.euros || 0 | euro }}</td>
     </ng-container>
-    <ng-container matColumnDef="total_point">
-      <th mat-header-cell *matHeaderCellDef>Points</th>
-      <td mat-cell *matCellDef="let row">
-        <span *ngIf="row.total_point !== null">{{ row.total_point | point }}</span>
-        <span *ngIf="row.total_point === null">-</span>
-      </td>
+
+    <ng-container matColumnDef="passenger_km">
+      <th mat-header-cell *matHeaderCellDef>Distance<br>passager</th>
+      <td mat-cell *matCellDef="let row">{{ row.passenger?.total?.km || 0 | km }}</td>
     </ng-container>
-    <ng-container matColumnDef="total_cost">
-      <th mat-header-cell *matHeaderCellDef>Reste à ch.</th>
-      <td mat-cell *matCellDef="let row">
-        <span *ngIf="row.total_rm !== null">{{ row.total_rm | euro }}</span>
-        <span *ngIf="row.total_rm === null">-</span>
-      </td>
+
+    <ng-container matColumnDef="passenger_eur">
+      <th mat-header-cell *matHeaderCellDef>Conribution<br>passager</th>
+      <td mat-cell *matCellDef="let row">{{ row.passenger?.total?.euros || 0 | euro }}</td>
     </ng-container>
 
     <ng-container matColumnDef="actions">

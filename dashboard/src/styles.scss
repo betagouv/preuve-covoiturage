@@ -1,3 +1,5 @@
+@import 'variables';
+
 /* You can add global styles to this file, and also import other style files */
 @font-face {
   font-family: 'WorkSans';
@@ -54,6 +56,20 @@
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
+}
+
+.mat-icon {
+  &.success {
+    color: $color-success;
+  }
+
+  &.warning {
+    color: $color-warning;
+  }
+
+  &.error {
+    color: $color-error;
+  }
 }
 
 @import '~ngx-toastr/toastr';
