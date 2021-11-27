@@ -2,6 +2,7 @@ import { ResultRowInterface } from './common/interfaces/ResultRowInterface';
 
 export interface ParamsInterface {
   uuid: string;
+  operator_id: number;
 }
 
 // export interface ResultInterface extends CertificateInterface {}

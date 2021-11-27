@@ -9,7 +9,7 @@ const permissions = {
   'certificate.create': ['operator.application', 'operator.admin', 'registry.admin'],
   'certificate.list': ['operator.admin', 'registry.admin'],
   'certificate.find': ['common'],
-  'certificate.download': ['common'],
+  'certificate.download': ['operator.user', 'operator.application', 'operator.admin', 'registry.admin'],
   'company.fetch': ['common'],
   'company.find': ['common'],
   'honor.save': ['common'],

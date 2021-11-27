@@ -1,7 +1,10 @@
-import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver, handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
-import { channelServiceWhitelistMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
+import {
+  channelServiceWhitelistMiddleware,
+  copyGroupIdAndApplyGroupPermissionMiddlewares,
+} from '@pdc/provider-middleware';
 import { PdfCertProviderInterfaceResolver, PdfTemplateData } from '@pdc/provider-pdfcert';
 import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
 import { get, set } from 'lodash';
@@ -12,7 +15,10 @@ import { alias } from '../shared/certificate/download.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    hasPermissionMiddleware('common.certificate.download'),
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      operator: 'operator.certificate.download',
+      registry: 'registry.certificate.download',
+    }),
     channelServiceWhitelistMiddleware('proxy'),
     ['validate', alias],
   ],
@@ -30,7 +36,11 @@ export class DownloadCertificateAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const certificate = await this.certRepository.findByUuid(params.uuid);
+    if (!params.operator_id) {
+      throw new InvalidParamsException('operator_id must be set in the payload if you are connected as super admin');
+    }
+
+    const certificate = await this.certRepository.findByUuid(params.uuid, params.operator_id);
     const thumbnail = await this.getThumbnailBase64(certificate.operator_id);
     const validationUrl = `${this.config.get('templates.certificate.validation.url')}/${params.uuid}`;
 

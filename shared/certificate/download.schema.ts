@@ -6,6 +6,7 @@ export const schema = {
   additionalProperties: false,
   properties: {
     uuid: { macro: 'uuid' },
+    operator_id: { macro: 'dbid' },
     meta: {
       type: 'object',
       additionalProperties: false,
