@@ -22,7 +22,8 @@
     "**/dist": true,
     "api/providers/*/src/shared": true,
     "api/services/*/src/shared": true,
-    "api/proxy/src/shared": true
+    "api/proxy/src/shared": true,
+    "dashboard/src/app/core/entities/api/shared": true
   },
   "files.exclude": {
     "**/*.postman_collection.json": true,
