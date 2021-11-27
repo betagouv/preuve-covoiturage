@@ -22,6 +22,8 @@ import { PdfTemplateData } from './interfaces/PdfTemplateData';
 import { CarpoolInterface, CarpoolTypeEnum } from './shared/certificate/common/interfaces/CarpoolInterface';
 import { MetaPersonInterface } from './shared/certificate/common/interfaces/CertificateMetaInterface';
 
+type TextOptions = Partial<PDFPageDrawTextOptions & { align: TextAlignment; maxChars: number; maxLines: number }>;
+
 // helpers to start positioning from top left
 const PAGE_SIZE = PageSizes.A4;
 const [PAGE_XMAX, PAGE_YMAX] = PAGE_SIZE;
@@ -99,9 +101,40 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       { x: 46, y: 220 },
     );
 
-    this.text(page, `Un problème, une question ?`, { x: 46, y: 62 });
-    this.text(page, 'Contactez nous par email à', { x: 46, y: 46 });
-    this.text(page, 'attestion@covoiturage.beta.gouv.fr', { x: 172, y: 46, color: rgb(0, 0, 0.8) });
+    // Some help?
+    this.text(page, `Un problème, une question ?`, { x: 46, y: 178 });
+    this.text(page, 'Contactez nous par email à', { x: 46, y: 164 });
+    this.text(page, 'attestion@covoiturage.beta.gouv.fr', { x: 172, y: 164, color: rgb(0, 0, 0.8) });
+
+    // Notes
+    page.drawRectangle({
+      x: 32,
+      y: 42,
+      width: 400,
+      height: 110,
+      borderWidth: 0.25,
+      borderColor: rgb(0.67, 0.67, 0.67),
+    });
+
+    // title
+    this.text(page, 'Notes', {
+      x: 48,
+      y: 128,
+      size: 9,
+      font: this.fonts.bold,
+    });
+
+    if ('notes' in data.header && data.header.notes !== '') {
+      // multilines text field
+      this.text(page, data.header.notes.trim().substring(0, 440), {
+        x: 48,
+        y: 112,
+        size: 8,
+        font: this.fonts.italic,
+        maxWidth: 380,
+        lineHeight: 11,
+      });
+    }
 
     // QR-code
     page.drawSvgPath(data.validation.qrcode, { x: 450, y: 128, color: rgb(0, 0, 0), scale: 0.3333 });
@@ -219,7 +252,12 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
     // title
     this.text(page, 'Attestation de covoiturage', { x: 116, y: 810, font: this.fonts.bold, size: 14 });
-    this.text(page, `Date d'émission : ${data.certificate.created_at}`, { x: 116, y: 794, font: this.fonts.regular });
+    this.text(page, `Date d'émission : ${data.certificate.created_at}`, {
+      x: 116,
+      y: 796,
+      font: this.fonts.regular,
+      size: 9,
+    });
 
     // metadata header
 
@@ -236,24 +274,24 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       if ('operator' in data.header) {
         if (data.header.operator.name && data.header.operator.name !== '') {
           this.text(page, data.header.operator.name.trim().substring(0, 26), {
-            x: 578,
-            y: 740,
+            x: 500,
+            y: 810,
             size: 12,
             font: this.fonts.bold,
             align: TextAlignment.Right,
           });
         }
 
-        // if (data.header.operator.content && data.header.operator.content !== '') {
-        //   page.moveTo(150, 788);
-        //   data.header.operator.content
-        //     .split('\n')
-        //     .splice(0, 6)
-        //     .forEach((line) => {
-        //       page.moveDown(13);
-        //       this.text(page, line.trim().substr(0, 50), { size: 9 });
-        //     });
-        // }
+        if (data.header.operator.content && data.header.operator.content !== '') {
+          this.multiline(page, data.header.operator.content, {
+            x: 500,
+            y: 796,
+            size: 9,
+            maxChars: 42,
+            maxLines: 6,
+            align: TextAlignment.Right,
+          });
+        }
 
         if (data.header.operator.image && data.header.operator.image !== '') {
           try {
@@ -284,27 +322,14 @@ export class PdfCertProvider implements PdfCertProviderInterface {
         }
 
         if (data.header.identity.content && data.header.identity.content !== '') {
-          page.moveTo(16, 738);
-          data.header.identity.content
-            .split('\n')
-            .splice(0, 3)
-            .forEach((line) => {
-              page.moveDown(13);
-              this.text(page, line.trim().substr(0, 50), { size: 8 });
-            });
+          this.multiline(page, data.header.identity.content, {
+            x: 16,
+            y: 728,
+            size: 8,
+            maxChars: 120,
+            maxLines: 5,
+          });
         }
-      }
-
-      // TODO
-      if ('notes' in data.header && data.header.notes !== '') {
-        this.text(page, data.header.notes.trim().substring(0, 440), {
-          x: 150,
-          y: 690,
-          size: 8,
-          font: this.fonts.italic,
-          maxWidth: 415,
-          lineHeight: 10,
-        });
       }
     }
 
@@ -349,35 +374,58 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     });
   }
 
-  private text(
-    page: PDFPage,
-    str: string,
-    opts: Partial<PDFPageDrawTextOptions & { align: TextAlignment }> = {},
-  ): void {
-    const options = {
+  private text(page: PDFPage, str: string, opts: TextOptions = {}, debug = false): void {
+    const options = this.getDefaultOptions(page, opts);
+
+    // filter out unsupported chars
+    const charSet = options.font.getCharacterSet();
+    const chars = str.split('').reduce((set: Set<string>, c: string) => set.add(c), new Set<string>());
+    const codes = [...chars].map((c: string) => c.charCodeAt(0)).sort();
+    const diff = codes.filter((n: number) => !charSet.includes(n));
+    const clean = diff.reduce((s: string, n: number) => s.replace(String.fromCharCode(n), ' '), str);
+
+    switch (options.align) {
+      case TextAlignment.Right:
+        if (!('x' in options)) throw new Error('You must set x position when aligning right');
+        options.x = options.x - (options.maxWidth || options.font.widthOfTextAtSize(clean, options.size));
+        break;
+      case TextAlignment.Center:
+        if (!('x' in options)) throw new Error('You must set x position when aligning center');
+        options.x = options.x - (options.maxWidth || options.font.widthOfTextAtSize(clean, options.size)) / 2;
+        break;
+    }
+
+    // if (debug) console.debug({ x: options.x, y: options.y });
+    page.drawText(clean, options);
+  }
+
+  private multiline(page: PDFPage, str: string, opts: TextOptions = {}): void {
+    const options = this.getDefaultOptions(page, { maxChars: 50, maxLines: 6, ...opts });
+
+    // set a default lineHeight if missing as options.y update needs it
+    if (!('lineHeight' in options)) options.lineHeight = options.size * 1.22;
+
+    // draw line by line, clipping at maxWidth
+    str
+      .trim()
+      .split('\n')
+      .splice(0, options.maxLines)
+      .map((s: string) => s.trim().substring(0, options.maxChars))
+      .forEach((line) => {
+        this.text(page, line, options);
+        options.y -= options.lineHeight;
+      });
+  }
+
+  private getDefaultOptions(page: PDFPage, opts: TextOptions = {}): TextOptions {
+    return {
+      ...page.getPosition(),
       font: this.fonts.regular,
       size: this.size,
       color: rgb(0, 0, 0),
       align: TextAlignment.Left,
       ...opts,
     };
-
-    // positions can be inherited from moveDown(), etc.
-    if ('x' in opts) options.x = opts.x;
-    if ('y' in opts) options.y = opts.y;
-
-    switch (options.align) {
-      case TextAlignment.Right:
-        if (!('x' in opts)) throw new Error('You must set x position when aligning right');
-        options.x = options.x - options.font.widthOfTextAtSize(str, options.size);
-        break;
-      case TextAlignment.Center:
-        if (!('x' in opts)) throw new Error('You must set x position when aligning center');
-        options.x = options.x - options.font.widthOfTextAtSize(str, options.size) / 2;
-        break;
-    }
-
-    page.drawText(str, options);
   }
 
   private drawRow(page: PDFPage, index: number, row: CarpoolInterface): void {
