@@ -39,6 +39,9 @@ export class CheckComponent extends DestroyObservable implements OnInit {
         tap(() => (this.isLoading = true)),
         mergeMap((params) =>
           this.certificateService.find(params.uuid).pipe(
+            tap((cert) => {
+              if (cert.type !== 'ok') throw new Error('Certificate is invalid');
+            }),
             catchError((err) => {
               this.isOnError = true;
               this.isLoading = false;
