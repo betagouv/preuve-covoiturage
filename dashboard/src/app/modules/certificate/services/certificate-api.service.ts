@@ -39,7 +39,7 @@ export class CertificateApiService extends JsonRPC {
 
   async downloadPrint(data: DownloadParamsInterface): Promise<void> {
     return this.http
-      .post(`v2/certificates/pdf`, data, { responseType: 'arraybuffer' })
+      .post(`v2/certificates/pdf`, data, { responseType: 'arraybuffer', withCredentials: true })
       .toPromise()
       .then((response) => {
         saveAs(new Blob([response], { type: 'application/pdf' }), `covoiturage-${data.uuid}.pdf`);

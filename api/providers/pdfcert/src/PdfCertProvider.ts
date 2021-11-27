@@ -382,7 +382,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     const chars = str.split('').reduce((set: Set<string>, c: string) => set.add(c), new Set<string>());
     const codes = [...chars].map((c: string) => c.charCodeAt(0)).sort();
     const diff = codes.filter((n: number) => !charSet.includes(n));
-    const clean = diff.reduce((s: string, n: number) => s.replace(String.fromCharCode(n), ' '), str);
+    const clean = diff.reduce((s: string, n: number) => s.replace(String.fromCharCode(n), '?'), str);
 
     switch (options.align) {
       case TextAlignment.Right:

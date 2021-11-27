@@ -9,7 +9,7 @@ export function mapCertForListHelper(cert: CertificateInterface): ResultRowInter
       uuid: cert.uuid,
       tz: cert.meta.tz,
       positions: [],
-      operator: cert.meta.operator,
+      operator: { _id: cert.operator_id, ...cert.meta.operator },
       driver: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
       passenger: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
     };
@@ -20,7 +20,7 @@ export function mapCertForListHelper(cert: CertificateInterface): ResultRowInter
     uuid: cert.uuid,
     tz: cert.meta.tz,
     positions: cert.meta.positions,
-    operator: cert.meta.operator,
+    operator: { _id: cert.operator_id, ...cert.meta.operator },
     driver: cert.meta.driver,
     passenger: cert.meta.passenger,
   };

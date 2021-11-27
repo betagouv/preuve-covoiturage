@@ -63,6 +63,10 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     'actions',
   ];
 
+  get controls(): { [key: string]: AbstractControl } {
+    return this.certificateForm.controls;
+  }
+
   ngOnInit(): void {
     this.startIndex = 0;
     this.length = 0;
@@ -165,10 +169,6 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     operatorControl.markAsUntouched();
   }
 
-  get controls(): { [key: string]: AbstractControl } {
-    return this.certificateForm.controls;
-  }
-
   showCreationForm(): void {
     this.certificateForm.setValue({
       operator_id: this.auth.user.operator_id ? this.auth.user.operator_id : null,
@@ -199,8 +199,12 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
    * Direct download the PDF certificate without meta data.
    */
   async download(row: ResultRowInterface): Promise<void> {
-    await this.certificateApi.downloadPrint({ uuid: row.uuid });
-    this.toastr.success('Attestation générée');
+    try {
+      await this.certificateApi.downloadPrint({ uuid: row.uuid, operator_id: row.operator._id });
+      this.toastr.success('Attestation générée');
+    } catch (e) {
+      this.toastr.error(e.message);
+    }
   }
 
   /**
@@ -208,9 +212,13 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
    */
   downloadWithMeta(row: ResultRowInterface): void {
     const modal = this.dialog.open(CertificateMetaDialogComponent, { data: row });
-    modal.afterClosed().subscribe((isDone) => {
-      if (isDone) this.toastr.success('Attestation avec meta-données générée');
-    });
+    modal
+      .afterClosed()
+      .toPromise()
+      .then((ok) => {
+        if (ok) this.toastr.success('Attestation avec meta-données générée');
+      })
+      .catch((err) => this.toastr.error(err.message));
   }
 
   onCreateCertificate(): void {
@@ -299,6 +307,10 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   }
 
   // UI helpers
+  statusIsOk(row: ResultRowInterface): boolean {
+    return row.type === 'ok';
+  }
+
   getIconStatus(status: CertStatusEnum): string {
     switch (status) {
       case CertStatusEnum.OK:

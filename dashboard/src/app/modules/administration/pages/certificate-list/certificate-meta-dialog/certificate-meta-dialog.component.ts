@@ -60,7 +60,10 @@ export class CertificateMetaDialogComponent implements OnInit {
   }
 
   private mapToParams(): DownloadParamsInterface {
-    const params: DownloadParamsInterface = { uuid: this.data.uuid };
+    const params: DownloadParamsInterface = {
+      uuid: this.data.uuid,
+      operator_id: this.data.operator._id,
+    };
 
     let field = null;
     for (const [key, value] of Object.entries(this.metaMap)) {

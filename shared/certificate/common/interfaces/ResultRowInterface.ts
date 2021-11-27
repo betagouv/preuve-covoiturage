@@ -11,7 +11,7 @@ export interface ResultRowInterface {
   uuid: string;
   tz: string;
   positions: PointInterface[];
-  operator: { uuid: string; name: string };
+  operator: { _id: number; uuid: string; name: string };
   driver: MetaPersonInterface;
   passenger: MetaPersonInterface;
 }
