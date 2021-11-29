@@ -12,7 +12,7 @@ export const schema = {
     end_at: { macro: 'timestamp' },
     positions: {
       type: 'array',
-      minItems: 0,
+      minItems: 2,
       maxItems: 2,
       items: {
         type: 'object',
