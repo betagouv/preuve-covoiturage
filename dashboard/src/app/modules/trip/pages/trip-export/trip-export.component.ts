@@ -53,7 +53,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   constructor(
-    public tripService: TripStoreService,
+    private tripService: TripStoreService,
     public user: AuthenticationService,
     private toastr: ToastrService,
     private fb: FormBuilder,

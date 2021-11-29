@@ -17,6 +17,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 })
 export class TripExportDialogComponent extends DestroyObservable implements OnInit {
   private operators: { _id: number; name: string }[];
+  private territories: { _id: number; name: string }[];
 
   // helper for display
   get hasProps() {
@@ -32,9 +33,17 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
     const e = get(this.data, 'date.end');
     const o: number[] = get(this.data, 'operators.list', []);
     const c: number = get(this.data, 'operators.count', 0);
+    const t: number[] = get(this.data, 'territoryIds', []);
 
     if (s) p['Début'] = format(this.castDate(s), 'PPPP', { locale: fr });
     if (e) p['Fin'] = format(this.castDate(e), 'PPPP', { locale: fr });
+    if (t.length !== 0)
+      p['Territoires'] = this.territories
+        .filter((ter) => t.indexOf(ter._id) > -1)
+        .map((ter) => ter.name)
+        .sort()
+        .join(', ')
+        .trim();
     if (o.length === 0 || o.length === c) {
       p['Opérateurs'] = 'tous';
     } else if (o.length) {
@@ -61,6 +70,9 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
   ngOnInit() {
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators.map(({ _id, name }) => ({ _id, name }));
+    });
+    this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories) => {
+      this.territories = territories.map(({ _id, name }) => ({ _id, name }));
     });
   }
 
