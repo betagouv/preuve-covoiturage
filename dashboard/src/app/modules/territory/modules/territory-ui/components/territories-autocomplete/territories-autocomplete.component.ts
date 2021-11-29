@@ -7,7 +7,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { ParamsInterface as ParamsInterfaceGeo } from '../../../../../../../../../shared/territory/listGeo.contract';
+import { ParamsInterface as ParamsInterfaceGeo } from 'shared/territory/listGeo.contract';
 
 @Component({
   selector: 'app-territories-autocomplete',

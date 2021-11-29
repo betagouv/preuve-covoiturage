@@ -9,27 +9,18 @@ import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { Territory } from '~/core/entities/territory/territory';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import {
-  ParamsInterface as FindByIdParamsInterface,
-  signature as signatureFind,
-} from '../../../../../../shared/territory/find.contract';
+import { ParamsInterface as FindByIdParamsInterface, signature as signatureFind } from 'shared/territory/find.contract';
 import {
   ParamsInterface as ParamsInterfaceFindByCode,
   ResultInterface as ResultInterfaceFindByCode,
   signature as signatureFindByCode,
-} from '../../../../../../shared/territory/findGeoByCode.contract';
-import {
-  ParamsInterface as TerritoryListFilter,
-  signature as signatureList,
-} from '../../../../../../shared/territory/list.contract';
-import {
-  ParamsInterface as ParamsInterfaceGeo,
-  signature as signatureGeo,
-} from '../../../../../../shared/territory/listGeo.contract';
+} from 'shared/territory/findGeoByCode.contract';
+import { ParamsInterface as TerritoryListFilter, signature as signatureList } from 'shared/territory/list.contract';
+import { ParamsInterface as ParamsInterfaceGeo, signature as signatureGeo } from 'shared/territory/listGeo.contract';
 import {
   ParamsInterface as PatchContactParamsInterface,
   signature as signaturePatch,
-} from '../../../../../../shared/territory/patchContacts.contract';
+} from 'shared/territory/patchContacts.contract';
 
 @Injectable({
   providedIn: 'root',

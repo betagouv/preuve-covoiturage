@@ -21,7 +21,7 @@ import { TerritoryStoreService } from '~/modules/territory/services/territory-st
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
-import { TerritoryInsee } from '../../../../../../../../../shared/territory/findGeoByCode.contract';
+import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
 
 @Component({
   selector: 'app-territory-form',
