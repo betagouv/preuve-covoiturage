@@ -9,7 +9,7 @@ type Dates = { start_at: Date; end_at: Date };
 
 export type ParamsInterface = Partial<Dates & { positions: PointInterface[] | null }>;
 
-export type ResultsInterface<T> = T & Dates;
+export type ResultsInterface<T> = T & Dates & { positions: PointInterface[] | null };
 
 export interface CreateCastParamsInterface<T> {
   (params: T): ResultsInterface<T>;

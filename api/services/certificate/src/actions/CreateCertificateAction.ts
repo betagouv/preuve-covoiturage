@@ -43,7 +43,7 @@ export class CreateCertificateAction extends AbstractAction {
     this.findOperator = findOperator(this.kernel);
     this.findPerson = findPerson(this.kernel);
     this.castParams = createCastParamsHelper(this.config);
-    this.store = mapFromCarpoolsHelper(this.certRepository);
+    this.store = mapFromCarpoolsHelper(this.certRepository.create);
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<WithHttpStatus<ResultInterface>> {

@@ -41,6 +41,7 @@ const newEmptyFormat: CertificateInterface = {
     operator: { name: 'UltraCovoit', uuid: '58592037-1e25-47b7-a518-7699a4dce8d9' },
     driver: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
     passenger: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
+    positions: [],
   },
 };
 
@@ -70,6 +71,7 @@ const newFormat: CertificateInterface = {
       { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-09'), trips: 10, km: 100, euros: 10 },
       { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-02-01'), trips: 2, km: 10, euros: 1 },
     ] },
+    positions: [],
   },
 };
 /* eslint-enable prettier/prettier */
@@ -80,9 +82,14 @@ test('old format returns empty values with expired status', (t) => {
     type: RowType.EXPIRED,
     uuid: oldFormat.uuid,
     tz: oldFormat.meta.tz,
-    operator: oldFormat.meta.operator,
+    start_at: oldFormat.start_at,
+    end_at: oldFormat.end_at,
+    created_at: oldFormat.created_at,
+    identity: { uuid: oldFormat.identity_uuid },
+    operator: { _id: oldFormat.operator_id, ...oldFormat.meta.operator },
     driver: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
     passenger: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
+    positions: [],
   };
 
   t.is(res.type, RowType.EXPIRED);
@@ -95,9 +102,14 @@ test('new empty format returns empty values with OK status', (t) => {
     type: RowType.OK,
     uuid: newEmptyFormat.uuid,
     tz: newEmptyFormat.meta.tz,
-    operator: newEmptyFormat.meta.operator,
+    start_at: newEmptyFormat.start_at,
+    end_at: newEmptyFormat.end_at,
+    created_at: newEmptyFormat.created_at,
+    identity: { uuid: newEmptyFormat.identity_uuid },
+    operator: { _id: newEmptyFormat.operator_id, ...newEmptyFormat.meta.operator },
     driver: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
     passenger: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
+    positions: [],
   };
 
   t.is(res.type, RowType.OK);
@@ -110,7 +122,11 @@ test('new format returns mapped values and OK status', (t) => {
     type: RowType.OK,
     uuid: newFormat.uuid,
     tz: newFormat.meta.tz,
-    operator: newFormat.meta.operator,
+    start_at: newFormat.start_at,
+    end_at: newFormat.end_at,
+    created_at: newFormat.created_at,
+    identity: { uuid: newFormat.identity_uuid },
+    operator: { _id: newFormat.operator_id, ...newFormat.meta.operator },
     driver: {
       total: { trips: 37, week_trips: 27, weekend_trips: 10, km: 310, euros: 31 },
       trips: [
@@ -129,6 +145,7 @@ test('new format returns mapped values and OK status', (t) => {
         { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-02-01'), trips: 2, km: 10, euros: 1 },
       ],
     },
+    positions: [],
   };
 
   t.is(res.type, RowType.OK);

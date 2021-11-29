@@ -1,4 +1,5 @@
 /* eslint-disable max-len,prettier/prettier */
+import { CertificateBaseInterface } from '~/shared/certificate/common/interfaces/CertificateBaseInterface';
 import { CertificateRepositoryProviderInterfaceResolver as Store } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
@@ -24,9 +25,11 @@ export interface MapFromCarpoolInterface {
   (params: ParamsInterface): Promise<ResultInterface>;
 }
 
-export const mapFromCarpoolsHelper = (store: Store): MapFromCarpoolInterface => async (
+export const mapFromCarpoolsHelper = (store: Store['create']): MapFromCarpoolInterface => async (
   params: ParamsInterface,
-): Promise<ResultInterface> => {
+): Promise<ResultInterface> => store(mapParams(params));
+
+export const mapParams = (params: ParamsInterface): CertificateBaseInterface => {
   const {
     person,
     operator,
@@ -43,7 +46,7 @@ export const mapFromCarpoolsHelper = (store: Store): MapFromCarpoolInterface => 
     passenger: map(CarpoolTypeEnum.PASSENGER, carpools),
   };
 
-  return store.create({ meta, end_at, start_at, operator_id: operator._id, identity_uuid: person.uuid });
+  return { meta, end_at, start_at, operator_id: operator._id, identity_uuid: person.uuid };
 };
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
