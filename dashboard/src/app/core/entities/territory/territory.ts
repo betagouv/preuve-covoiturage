@@ -117,7 +117,7 @@ export class Territory
     return this;
   }
 
-  // TODO fix: this
+  // TODO: refactor this
   updateFromFormValues(formValues: TerritoryFormModel): void {
     // this.level = formValues.level;
     // this.level = TerritoryLevelEnum.Country;

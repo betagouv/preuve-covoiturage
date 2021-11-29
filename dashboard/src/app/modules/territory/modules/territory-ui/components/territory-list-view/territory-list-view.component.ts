@@ -19,7 +19,6 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
   isFormVisible = false;
   territoryToEdit: Territory = null;
 
-  // public territories: Territory[] = [];
   public territoriesToShow: Territory[];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
