@@ -68,6 +68,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
         start: [startOfDay(sub(new Date(), { months: 1 }))],
         end: [this.maxDateEnd],
       }),
+      territoryIds: [],
       operators: {
         list: [],
         count: 0,
