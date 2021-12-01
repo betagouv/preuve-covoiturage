@@ -3,10 +3,11 @@ import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@
 import anyTest, { TestInterface } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
-import { ParamsInterface as MapParamsInterface } from '../helpers/mapFromCarpoolsHelper';
+import { mapFromCarpools } from '../helpers/mapFromCarpools';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
+import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import { CertificateMetaInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
 import { ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
@@ -22,7 +23,7 @@ interface Context {
 
   // Injected tokens method's stubs
   carpoolRepositoryFindStub: SinonStub;
-  certificateRepositoryStoreStub: SinonStub;
+  certificateRepositoryCreateStub: SinonStub<[params: CertificateBaseInterface]>;
   kernelCallStub: SinonStub<[method: string, params: any, context: ContextType]>;
   configGetStub: SinonStub;
 
@@ -79,7 +80,7 @@ test.beforeEach((t) => {
     createCertificateAction,
     configGetStub,
   };
-  t.context.certificateRepositoryStoreStub = sinon.stub(t.context.createCertificateAction, <any>'store');
+  t.context.certificateRepositoryCreateStub = sinon.stub(t.context.certificateRepositoryProviderInterface, 'create');
   t.context.carpoolRepositoryFindStub = sinon.stub(t.context.carpoolRepositoryProviderInterfaceResolver, 'find');
   t.context.kernelCallStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call');
 
@@ -88,7 +89,7 @@ test.beforeEach((t) => {
 });
 
 test.afterEach((t) => {
-  t.context.certificateRepositoryStoreStub.restore();
+  t.context.certificateRepositoryCreateStub.restore();
   t.context.carpoolRepositoryFindStub.restore();
   t.context.kernelCallStub.restore();
 });
@@ -112,7 +113,7 @@ test('CreateCertificateAction: should generate certificate payload', async (t) =
 
   const expectCreateCertificateParams = getExpectedCertificateParams(expected, t);
 
-  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryStoreStub, expectCreateCertificateParams);
+  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
   sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
   sinon.assert.calledTwice(t.context.kernelCallStub);
   t.is(result.meta.httpStatus, 201);
@@ -138,7 +139,7 @@ test('CreateCertificateAction: should return empty cert if no trips', async (t) 
 
   const expectCreateCertificateParams = getExpectedCertificateParams(expected, t);
 
-  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryStoreStub, expectCreateCertificateParams);
+  sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
   sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
   sinon.assert.calledTwice(t.context.kernelCallStub);
   t.is(result.meta.httpStatus, 201);
@@ -148,24 +149,24 @@ test('CreateCertificateAction: should return empty cert if no trips', async (t) 
 function getExpectedCertificateParams(
   certificateMeta: Partial<CertificateMetaInterface & { carpools: CarpoolInterface[] }>,
   t,
-): MapParamsInterface {
+): CertificateBaseInterface {
   const { identity, operator, tz, positions, carpools } = certificateMeta;
 
-  return {
+  return mapFromCarpools({
     carpools,
     operator: { _id: 4, ...operator },
     person: { uuid: identity.uuid },
     params: {
       tz,
       positions,
-      end_at: t.context.certificateRepositoryStoreStub.args[0][0].params.end_at,
-      start_at: t.context.certificateRepositoryStoreStub.args[0][0].params.start_at,
+      end_at: t.context.certificateRepositoryCreateStub.args[0][0].end_at,
+      start_at: t.context.certificateRepositoryCreateStub.args[0][0].start_at,
     },
-  };
+  });
 }
 
 function stubCertificateCreateAndGetParams(t) {
-  t.context.certificateRepositoryStoreStub.resolves({
+  t.context.certificateRepositoryCreateStub.resolves({
     _id: 1,
     uuid: t.context.CERTIFICATE_UUID,
     identity_uuid: t.context.USER_RPC_UUID,

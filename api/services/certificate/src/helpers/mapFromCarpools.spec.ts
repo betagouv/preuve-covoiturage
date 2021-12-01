@@ -2,7 +2,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
 import { MetaPersonInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
-import { map } from './mapFromCarpoolsHelper';
+import { agg } from './mapFromCarpools';
 
 interface Context {
   carpools: CarpoolInterface[];
@@ -28,7 +28,7 @@ test.beforeEach((t) => {
 });
 
 test('convert carpools to driver summary', (t) => {
-  const driver = map(CarpoolTypeEnum.DRIVER, t.context.carpools);
+  const driver = agg(CarpoolTypeEnum.DRIVER, t.context.carpools);
   const expected: MetaPersonInterface = {
     total: { trips: 37, week_trips: 27, weekend_trips: 10, km: 310, euros: 31 },
     trips: t.context.carpools.filter((i) => i.type === CarpoolTypeEnum.DRIVER),
@@ -38,7 +38,7 @@ test('convert carpools to driver summary', (t) => {
 });
 
 test('convert carpools to passenger summary', (t) => {
-  const passenger = map(CarpoolTypeEnum.PASSENGER, t.context.carpools);
+  const passenger = agg(CarpoolTypeEnum.PASSENGER, t.context.carpools);
   const expected: MetaPersonInterface = {
     total: { trips: 37, week_trips: 27, weekend_trips: 10, km: 310, euros: 31 },
     trips: t.context.carpools.filter((i) => i.type === CarpoolTypeEnum.PASSENGER),
@@ -48,7 +48,7 @@ test('convert carpools to passenger summary', (t) => {
 });
 
 test('convert carpools to empty set', (t) => {
-  const passenger = map(CarpoolTypeEnum.PASSENGER, []);
+  const passenger = agg(CarpoolTypeEnum.PASSENGER, []);
   const expected: MetaPersonInterface = {
     total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 },
     trips: [],

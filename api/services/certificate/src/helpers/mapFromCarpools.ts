@@ -1,8 +1,6 @@
 /* eslint-disable max-len,prettier/prettier */
 import { CertificateBaseInterface } from '~/shared/certificate/common/interfaces/CertificateBaseInterface';
-import { CertificateRepositoryProviderInterfaceResolver as Store } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
-import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import { CertificateMetaInterface, MetaPersonInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
 import { PointInterface } from '../shared/common/interfaces/PointInterface';
 /* eslint-enable */
@@ -19,17 +17,7 @@ export interface ParamsInterface {
   }>;
 }
 
-export type ResultInterface = CertificateInterface;
-
-export interface MapFromCarpoolInterface {
-  (params: ParamsInterface): Promise<ResultInterface>;
-}
-
-export const mapFromCarpoolsHelper = (store: Store['create']): MapFromCarpoolInterface => async (
-  params: ParamsInterface,
-): Promise<ResultInterface> => store(mapParams(params));
-
-export const mapParams = (params: ParamsInterface): CertificateBaseInterface => {
+export const mapFromCarpools = (params: ParamsInterface): CertificateBaseInterface => {
   const {
     person,
     operator,
@@ -42,8 +30,8 @@ export const mapParams = (params: ParamsInterface): CertificateBaseInterface => 
     positions,
     identity: { uuid: person.uuid },
     operator: { uuid: operator.uuid, name: operator.name },
-    driver: map(CarpoolTypeEnum.DRIVER, carpools),
-    passenger: map(CarpoolTypeEnum.PASSENGER, carpools),
+    driver: agg(CarpoolTypeEnum.DRIVER, carpools),
+    passenger: agg(CarpoolTypeEnum.PASSENGER, carpools),
   };
 
   return { meta, end_at, start_at, operator_id: operator._id, identity_uuid: person.uuid };
@@ -51,7 +39,7 @@ export const mapParams = (params: ParamsInterface): CertificateBaseInterface => 
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
-export const map = (type: CarpoolTypeEnum, carpools: CarpoolInterface[]): MetaPersonInterface => {
+export const agg = (type: CarpoolTypeEnum, carpools: CarpoolInterface[]): MetaPersonInterface => {
   const subset = carpools.filter((c) => c.type === type);
 
   const total = subset.reduce<PropType<MetaPersonInterface, 'total'>>(
