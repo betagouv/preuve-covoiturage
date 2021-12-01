@@ -9,7 +9,6 @@ import { alias } from '../shared/territory/update.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    environmentBlacklistMiddleware('production'),
     hasPermissionByScopeMiddleware('registry.territory.update', [
       'territory.territory.update',
       'call.user.territory_id',
