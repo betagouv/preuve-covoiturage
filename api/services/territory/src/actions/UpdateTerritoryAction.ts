@@ -1,7 +1,6 @@
-import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
-import { environmentBlacklistMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
-
+import { Action as AbstractAction } from '@ilos/core';
+import { hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/update.contract';
 import { alias } from '../shared/territory/update.schema';
