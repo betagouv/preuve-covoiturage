@@ -100,7 +100,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     // split by and make unique
     const inseeList: string[] = [
       ...new Set(
-        formValues.insee
+        formValues.inseeString
           .split(/[\s,]/)
           .map((s) => s.trim())
           .filter((i) => i.length)
@@ -130,7 +130,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
 
     // Map insees to territory_id
-    formValues.children = territories.map((t) => t.territory_id);
+    formValues.insee = inseeList;
 
     if (this.isNew()) {
       this.territoryStore.create(formValues).subscribe(() => {
@@ -183,7 +183,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         ...formOptions,
         name: [''],
         shortname: [''],
-        insee: [''],
+        inseeString: [''],
         address: this.fb.group(
           new FormAddress(
             new Address({
@@ -334,21 +334,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       siretControl.updateValueAndValidity();
       siretControl.markAsUntouched();
 
-      const inseeControl = this.territoryForm.controls.insee;
+      const inseeControl = this.territoryForm.controls.inseeString;
 
-      inseeControl.setValidators([Validators.required, Validators.pattern('^( *[0-9]{5} *,? *)+$')]);
+      inseeControl.setValidators([Validators.pattern('^( *[0-9]{5} *,? *)+$')]);
       inseeControl.updateValueAndValidity();
       inseeControl.markAsUntouched();
     }
   }
 
   private setTerritoryFormValue(territory: Territory): void {
-    // base values for form
     this.territoryId = territory ? territory._id : null;
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);
-
-    delete formValues.uiSelectionState;
 
     if (!this.territoryId) {
       ['company', 'address', 'contacts.gdpr_dpo', 'contacts.gdpr_controller', 'contacts.technical'].forEach((key) => {

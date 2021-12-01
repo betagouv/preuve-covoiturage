@@ -39,7 +39,6 @@ export interface TerritoryTree {
 }
 
 export interface TerritoryBase extends TerritoryBaseEdit {
-  // level: TerritoryLevelEnum;
   name: string;
   shortname?: string;
   company_id?: number;
@@ -47,7 +46,6 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   activable?: boolean;
   ui_status?: TerritoryUIStatus;
   insee?: any;
-  // active_since?: Date;
   contacts?: Contacts;
   density?: number;
 }
@@ -66,20 +64,10 @@ export class Territory
   shortname?: string;
   company_id?: number;
   company?: CompanyV2;
-  active?: boolean;
-  activable?: boolean;
-  children?: number[];
 
-  active_since?: Date;
-  population?: number;
-  surface?: number;
   address: Address;
-  // active_since?: Date;
   contacts?: Contacts;
-  density?: number;
   insee?: string[];
-
-  ui_status: TerritoryUIStatus;
 
   constructor(base: Territory) {
     super(base);
@@ -96,36 +84,23 @@ export class Territory
     assignOrDeleteProperty(base, this, 'contacts', (data) => new Contacts(data.contacts));
     assignOrDeleteProperty(base, this, 'address', (data) => new Address(data.address));
     assignOrDeleteProperty(base, this, 'company', (data) => ({ ...data.company }));
-    assignOrDeleteProperty(base, this, 'children', (data) => [...data.children]);
 
     if (base.shortname) this.shortname = base.shortname;
     else delete this.shortname;
-    if (base.density !== undefined) this.density = base.density;
-    else delete this.density;
     if (base.company_id !== undefined) this.company_id = base.company_id;
     else delete this.company_id;
     if (base._id) this._id = base._id;
     else delete this._id;
-    if (base.ui_status) this.ui_status = base.ui_status;
-    else delete this.ui_status;
     if (base.insee) this.insee = base.insee;
     else delete this.insee;
-
-    this.active = base.active === true;
-    this.activable = base.activable === true;
 
     return this;
   }
 
   // TODO: refactor this
   updateFromFormValues(formValues: TerritoryFormModel): void {
-    // this.level = formValues.level;
-    // this.level = TerritoryLevelEnum.Country;
     this.name = formValues.name;
     this.level = TerritoryLevelEnum.Towngroup;
-    this.active = true;
-    this.activable = true;
-    // this.insee = formValues.insee
 
     assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
     assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
@@ -133,41 +108,22 @@ export class Territory
     if (formValues.shortname) this.shortname = formValues.shortname;
     else delete this.shortname;
 
-    // if (formValues.insee && formValues.format === 'insee') this.insee = formValues.insee.split(',');
-    // else delete this.insee;
-
-    if (formValues.density !== undefined) this.density = formValues.density;
-    else delete this.density;
-
     if (formValues.company_id) this.company_id = formValues.company_id;
     else delete this.company_id;
 
-    this.children = formValues.children;
-
-    this.ui_status = {};
-    if (formValues.uiSelectionState) this.ui_status.ui_selection_state = formValues.uiSelectionState;
-    if (formValues.format) this.ui_status.format = formValues.format;
-    this.ui_status.insee = formValues.insee;
-
-    // const territories = await this.terr
-
-    // assignOrDeleteProperty(formValues, this, 'shortname');
-    // assignOrDeleteProperty(formValues, this, 'density');
-    // assignOrDeleteProperty(formValues, this, 'company_id');
+    if (formValues.insee) this.insee = formValues.insee;
+    else delete this.insee;
   }
 
   toFormValues(fullformMode = true): any {
     return fullformMode
       ? {
           name: this.name ? this.name : '',
-          uiSelectionState:
-            this.ui_status && this.ui_status.ui_selection_state ? this.ui_status.ui_selection_state : [],
           shortname: this.shortname ? this.shortname : '',
           company: new Company(this.company).toFormValues(),
           contacts: new Contacts(this.contacts).toFormValues(),
           address: new Address(this.address).toFormValues(),
-          insee:
-            this.ui_status && this.ui_status.format === 'insee' && this.ui_status.insee ? this.ui_status.insee : '',
+          inseeString: this.insee ? this.insee : '',
         }
       : {
           contacts: new Contacts(this.contacts).toFormValues(),
@@ -188,7 +144,6 @@ export interface TerritoryFormModel {
   shortname?: string;
   // insee?: string[];
   active?: boolean;
-  children?: number[];
   activable?: boolean;
   company?: {
     siret: string;
@@ -202,7 +157,8 @@ export interface TerritoryFormModel {
   address?: Address;
   uiSelectionState: TerritorySelectionUIState[];
   format: string;
-  insee?: string;
+  inseeString: string;
+  insee?: string[];
 
   // public address?: Address;
 
