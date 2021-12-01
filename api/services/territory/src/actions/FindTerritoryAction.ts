@@ -6,7 +6,6 @@ import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/Terr
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/find.contract';
 import { alias } from '../shared/territory/find.schema';
 
-/// TODO
 @handler({
   ...handlerConfig,
   middlewares: [hasPermissionMiddleware('common.territory.find'), ['validate', alias]],
@@ -17,6 +16,6 @@ export class FindTerritoryAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.territoryRepository.find(params.query, params.sort, params.projection);
+    return this.territoryRepository.find(params);
   }
 }

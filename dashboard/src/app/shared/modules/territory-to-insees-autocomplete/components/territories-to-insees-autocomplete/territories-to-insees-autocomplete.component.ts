@@ -2,10 +2,10 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { debounceTime, filter, map, takeUntil, tap } from 'rxjs/operators';
-import { TerritoryLevelEnum } from 'shared/territory/common/interfaces/TerritoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { GeoCodeTypeEnum } from 'shared/territory/common/geo';
 
 @Component({
   selector: 'app-territories-insee-autocomplete',
@@ -58,11 +58,9 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
 
   private filterTerritoryInsee(literal = ''): void {
     this.territoryApiService
-      .getList({
-        skip: 0,
-        limit: 100,
+      .geo({
+        type: GeoCodeTypeEnum.City,
         search: literal,
-        levels: [TerritoryLevelEnum.Town],
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe((foundTerritories: any) => {

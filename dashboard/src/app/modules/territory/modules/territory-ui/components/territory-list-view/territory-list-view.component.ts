@@ -19,7 +19,6 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
   isFormVisible = false;
   territoryToEdit: Territory = null;
 
-  // public territories: Territory[] = [];
   public territoriesToShow: Territory[];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -60,7 +59,7 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
       .pipe(takeUntil(this.destroy$))
       .subscribe(() =>
         this.territoryStoreService.filterSubject.next({
-          skip: this.paginator.pageIndex * this.PAGE_SIZE,
+          offset: this.paginator.pageIndex * this.PAGE_SIZE,
           limit: this.PAGE_SIZE,
           search: this._filterLiteral.value ? this._filterLiteral.value : undefined,
         }),

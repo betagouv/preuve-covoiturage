@@ -1,5 +1,4 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { UiStatusRelationDetails } from '../../../../../../../../shared/territory/relationUiStatus.contract';
 
 export interface IdName {
   id: number;
@@ -54,22 +53,6 @@ export class TerritorySelectionBlock {
     this._selectedState = selectedState;
     this._selectedStateBehaviour = new BehaviorSubject(this._selectedState);
     // this.updateSelectionState();
-  }
-
-  static fromUiRelation(
-    element: UiStatusRelationDetails,
-    parent?: TerritorySelectionBlock,
-    indent = 0,
-  ): TerritorySelectionBlock {
-    const block = new this(element, parent, indent, element.state);
-    // block._selectedState = element.state;
-    if (element.children) {
-      block._children = [];
-      for (const child of element.children) {
-        block._children.push(this.fromUiRelation(child, block, indent + 1));
-      }
-    }
-    return block;
   }
 
   toIdName(): IdName {

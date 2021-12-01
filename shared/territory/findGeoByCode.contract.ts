@@ -1,16 +1,16 @@
 export interface ParamsInterface {
-  search?: string;
-  on_territories?: number[];
-  limit?: number;
+  insees: string[];
 }
 
-export interface ResultInterface {
-  _id: number;
+export type ResultInterface = TerritoryInsee[];
+
+export interface TerritoryInsee {
+  territory_id: number;
   name: string;
 }
 
 export const handlerConfig = {
   service: 'territory',
-  method: 'dropdown',
+  method: 'findGeoByCode',
 };
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

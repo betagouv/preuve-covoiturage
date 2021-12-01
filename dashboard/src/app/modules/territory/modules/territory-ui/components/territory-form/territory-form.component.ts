@@ -1,34 +1,27 @@
-import { Subject } from 'rxjs';
-import { filter, takeUntil, tap, map, throttleTime } from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
-import { get, cloneDeep } from 'lodash-es';
-
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-
-import { FormContact } from '~/shared/modules/form/forms/form-contact';
-import { FormAddress } from '~/shared/modules/form/forms/form-address';
-import { Address } from '~/core/entities/shared/address';
-import { Contact } from '~/core/entities/shared/contact';
-import {
-  Territory,
-  territoryLevelLabels,
-  TerritoryFormModel,
-  TerritoryLevelEnum,
-} from '~/core/entities/territory/territory';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { Subject } from 'rxjs';
+import { filter, map, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Groups } from '~/core/enums/user/groups';
-import { FormCompany } from '~/shared/modules/form/forms/form-company';
-import { CompanyService } from '~/modules/company/services/company.service';
-import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
-import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryChildrenComponent } from '../territory-children/territory-children.component';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
+import { Contact } from '~/core/entities/shared/contact';
+import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
+import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CompanyService } from '~/modules/company/services/company.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
+import { FormAddress } from '~/shared/modules/form/forms/form-address';
+import { FormCompany } from '~/shared/modules/form/forms/form-company';
+import { FormContact } from '~/shared/modules/form/forms/form-contact';
+import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
 
 @Component({
   selector: 'app-territory-form',
@@ -42,53 +35,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   @Output() close = new EventEmitter();
 
-  @ViewChild(TerritoryChildrenComponent) territoryChildren: TerritoryChildrenComponent;
-
   public territoryForm: FormGroup;
+  public fullFormMode = false;
+  public territoryId: number;
 
-  fullFormMode = false;
-  displayAOMActive = false;
-  hasTerritories = false;
-
-  levelLabel = territoryLevelLabels;
-
-  public editedId: number;
   private companyDetails: CompanyInterface;
-  protected _relationDisplayMode = 'parent';
-  public activable = false;
-
-  get controls(): { [key: string]: AbstractControl } {
-    return this.territoryForm.controls;
-  }
-
-  get needsChildren(): boolean {
-    return !this.isTown && !this.hasTerritories && this.relationDisplayMode === 'parent';
-  }
-
-  get isTown(): boolean {
-    return (
-      (this.territory && this.territory.level === TerritoryLevelEnum.Town) ||
-      (this.territoryForm.get('level') && this.territoryForm.get('level').value === TerritoryLevelEnum.Town)
-    );
-  }
-
-  get isAOM(): boolean {
-    const base = this.fullFormMode ? this.territoryForm.value : this.territory;
-    return base && 'active' in base ? base.active : false;
-  }
-
-  get isPartner(): boolean {
-    const base = this.fullFormMode ? this.territoryForm.value : this.territory;
-    return base && 'activable' in base ? base.activable : false;
-  }
-
-  get relationDisplayMode(): string {
-    return this._relationDisplayMode;
-  }
-
-  get canUpdate(): boolean {
-    return this.authService.hasRole([Roles.TerritoryAdmin, Roles.RegistryAdmin]);
-  }
 
   constructor(
     public authService: AuthenticationService,
@@ -111,17 +62,16 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         this.fullFormMode = user && user.group === Groups.Registry;
         this.initTerritoryForm();
         this.initTerritoryFormValue();
-        this.checkPermissions();
         this.updateValidation();
       });
+  }
 
-    if (this.territoryForm.controls['activable']) {
-      this.territoryForm.controls['activable'].valueChanges.subscribe(() => this.updateValidation());
-    }
+  get controls(): { [key: string]: AbstractControl } {
+    return this.territoryForm.controls;
+  }
 
-    if (this.territoryForm.controls['format']) {
-      this.territoryForm.controls['format'].valueChanges.subscribe(() => this.updateValidation());
-    }
+  get canUpdate(): boolean {
+    return this.authService.hasRole([Roles.RegistryAdmin, Roles.TerritoryAdmin]);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -130,90 +80,86 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
   }
 
-  public hasTerritoriesChanged(hasTerritories: boolean): void {
-    this.hasTerritories = hasTerritories;
-  }
-
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
-
-    if (this.isTown) {
-      delete formValues.children;
-      delete formValues.insee;
-      delete formValues.format;
-    }
-
-    if (this.territoryChildren && this.fullFormMode && formValues.format === 'parent') {
-      formValues.children = this.territoryChildren.getFlatSelectedList();
-      if (formValues.children.length === 0) {
-        this.toastr.error('Veuillez selectionner au moins un territoire enfant');
-        return;
-      }
-
-      formValues.uiSelectionState = this.territoryChildren.getUISelectionState();
-    }
-
     formValues.company_id = get(this, 'companyDetails._id', null);
 
-    const save = () => {
-      if (this.editedId) {
-        const patch$ = this.fullFormMode
-          ? this.territoryStore.updateSelected(formValues)
-          : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.editedId);
-
-        patch$.subscribe(
-          (modifiedTerritory) => {
-            this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
-            this.close.emit();
-          },
-          (err) => {
-            console.error(err);
-            this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
-          },
-        );
-      } else {
-        this.territoryStore.create(formValues).subscribe(() => {
-          this.toastr.success(`${formValues.name} a été mis à jour !`);
+    if (!this.fullFormMode) {
+      this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId).subscribe(
+        (modifiedTerritory) => {
+          this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
           this.close.emit();
-        });
-      }
-    };
-
-    // get territories
-    if (formValues.format === 'insee' && formValues.insee) {
-      // split by , or spaces and make unique
-      const inseeList = [
-        ...new Set(
-          formValues.insee
-            .split(/[\s,]/)
-            .map((s) => s.trim())
-            .filter((i) => i.length)
-            .sort(),
-        ),
-      ];
-
-      this.territoryApi.findByInsees(inseeList).subscribe((territories) => {
-        if (inseeList.length === territories.length) {
-          formValues.children = territories.map((t) => t._id);
-          save.apply(this);
-        } else {
-          const notMatchingInsees = inseeList.filter((insee) => !territories.find((t) => t.insee === insee));
-          this.toastr.error(
-            `Certains codes INSEE n'ont pas de territoires correspondants : ${notMatchingInsees.join(',')}`,
-          );
-        }
-      });
-    } else {
-      save.apply(this);
+        },
+        (err) => {
+          this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
+        },
+      );
+      return;
     }
 
-    if (this.territoryChildren) this.territoryChildren.setRelations([]);
+    // split by and make unique
+    const inseeList: string[] = [
+      ...new Set(
+        formValues.insee
+          .split(/[\s,]/)
+          .map((s) => s.trim())
+          .filter((i) => i.length)
+          .sort(),
+      ),
+    ];
+
+    this.territoryApi.findByInsees(inseeList).subscribe(
+      (territories) => {
+        this.handleInseeToTerritoriesAndUpdate(inseeList, territories, formValues);
+      },
+      (err) => {
+        console.error(err);
+        this.toastr.error(`Une erreur est survenue lors de la validation des codes insees`);
+      },
+    );
+  }
+
+  private handleInseeToTerritoriesAndUpdate(
+    inseeList: string[],
+    territories: TerritoryInsee[],
+    formValues: TerritoryFormModel,
+  ): void {
+    if (!this.hasSameLength(inseeList, territories)) {
+      this.toastr.error(`Certains codes INSEE n'ont pas de territoires correspondants`);
+      return;
+    }
+
+    // Map insees to territory_id
+    formValues.children = territories.map((t) => t.territory_id);
+
+    if (this.isNew()) {
+      this.territoryStore.create(formValues).subscribe(() => {
+        this.toastr.success(`${formValues.name} a été mis à jour !`);
+        this.close.emit();
+      });
+      return;
+    }
+
+    this.territoryStore.updateSelected(formValues).subscribe(
+      (modifiedTerritory) => {
+        this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
+        this.close.emit();
+      },
+      (err) => {
+        this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
+      },
+    );
+  }
+
+  private isNew(): boolean {
+    return !this.territoryId;
+  }
+
+  private hasSameLength(inseeList: string[], territories: TerritoryInsee[]): boolean {
+    return inseeList.length === territories.length;
   }
 
   public onClose(): void {
-    if (this.territoryChildren) this.territoryChildren.setRelations([]);
-    // this.territoryForm.get('company').reset();
-    // this.territoryForm.get('address').reset();
     this.territoryForm.reset();
     this.close.emit();
   }
@@ -236,11 +182,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       formOptions = {
         ...formOptions,
         name: [''],
-        active: [false],
-        activable: [false],
-        level: [null, Validators.required],
         shortname: [''],
-        format: ['parent'],
         insee: [''],
         address: this.fb.group(
           new FormAddress(
@@ -252,9 +194,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             }),
           ),
         ),
-
-        // children: [],
-
         company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
         contacts: this.fb.group({
           gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
@@ -276,15 +215,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     this.territoryForm = this.fb.group(formOptions);
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
-
-    if (this.territoryForm && this.territoryForm.get('format')) {
-      this.territoryForm
-        .get('format')
-        .valueChanges.pipe(takeUntil(this.destroy$))
-        .subscribe((val) => {
-          this._relationDisplayMode = val;
-        });
-    }
 
     if (companyFormGroup) {
       companyFormGroup
@@ -387,32 +317,26 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       this.territoryForm.controls['shortname'].markAsUntouched();
 
       // address is hidden and not required if territory is not activable (AOM)
-      const addressIsRequired = !!this.territoryForm.controls['activable'].value;
       const fields = ['street', 'postcode', 'city', 'country'];
       const addressControl = this.territoryForm.controls['address'] as FormGroup;
 
       fields.forEach((field) => {
         const ctr = addressControl.controls[field];
-        ctr.setValidators(addressIsRequired ? [Validators.required] : null);
         ctr.updateValueAndValidity();
         ctr.markAsUntouched();
       });
 
       // Siret is hidden and not required if territory is not active (AOM)
-
       const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
       const siretControl = companyFormGroup.controls['siret'];
 
-      siretControl.setValidators(addressIsRequired ? [Validators.required] : null);
+      siretControl.setValidators([Validators.required]);
       siretControl.updateValueAndValidity();
       siretControl.markAsUntouched();
 
       const inseeControl = this.territoryForm.controls.insee;
-      const inseeIsRequired = this.territoryForm.controls['format'].value === 'insee';
 
-      inseeControl.setValidators(
-        inseeIsRequired ? [Validators.required, Validators.pattern('^( *[0-9]{5} *,? *)+$')] : null,
-      );
+      inseeControl.setValidators([Validators.required, Validators.pattern('^( *[0-9]{5} *,? *)+$')]);
       inseeControl.updateValueAndValidity();
       inseeControl.markAsUntouched();
     }
@@ -420,14 +344,13 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   private setTerritoryFormValue(territory: Territory): void {
     // base values for form
-    this.activable = this.territory && this.territory.activable;
-    this.editedId = territory ? territory._id : null;
+    this.territoryId = territory ? territory._id : null;
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);
 
     delete formValues.uiSelectionState;
 
-    if (!this.editedId) {
+    if (!this.territoryId) {
       ['company', 'address', 'contacts.gdpr_dpo', 'contacts.gdpr_controller', 'contacts.technical'].forEach((key) => {
         if (this.territoryForm.get(key) instanceof FormGroup) this.territoryForm.get(key).reset();
       });
@@ -437,32 +360,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     this.territoryForm.setValue(formValues);
 
-    this._relationDisplayMode = formValues.format;
-    if (this.editedId && this.fullFormMode) {
-      if (formValues.format === 'parent') {
-        this.hasTerritories = territory.children ? territory.children.length > 0 : false;
-        this.territoryApi
-          .getRelationUIStatus(this.editedId)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((completeRelation) => {
-            if (this.territoryChildren) this.territoryChildren.setRelations(completeRelation);
-          });
-      } else {
-        if (this.territoryChildren) this.territoryChildren.setRelations([]);
-      }
-
+    if (this.territoryId && this.fullFormMode) {
       if (territory.company_id) {
         this.companyService.getById(territory.company_id).subscribe((company) => {
           this.updateCompanyForm(company);
         });
       }
-      this.displayAOMActive = territory.activable === true;
-    }
-  }
-
-  private checkPermissions(): void {
-    if (!this.authService.hasRole([Roles.TerritoryAdmin, Roles.RegistryAdmin])) {
-      this.territoryForm.disable({ onlySelf: true });
     }
   }
 }

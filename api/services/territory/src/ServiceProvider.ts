@@ -4,44 +4,38 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
-import { DropdownTerritoryAction } from './actions/DropdownTerritoryAction';
+import { ListGeoAction } from './actions/ListGeoAction';
 import { FindTerritoryAction } from './actions/FindTerritoryAction';
-import { FindTerritoryByInseesAction } from './actions/FindTerritoryByInseesAction';
-import { GetTerritoryParentChildrenAction } from './actions/GetTerritoryParentChildrenAction';
-import { GetTerritoryRelationUIStatusAction } from './actions/GetTerritoryRelationUIStatusAction';
+import { FindGeoByCodeAction } from './actions/FindGeoByCodeAction';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
-import { TreeTerritoryAction } from './actions/TreeTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
 import { config } from './config';
-import { TerritoryPgRepositoryProvider } from './providers/TerritoryPgRepositoryProvider';
+import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { create } from './shared/territory/create.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
-import { dropdown } from './shared/territory/dropdown.schema';
-import { find } from './shared/territory/find.schema';
-import { schema as findByInsee } from './shared/territory/findByInsees.schema';
-import { list } from './shared/territory/list.schema';
-import { schema as parentChildrenSchema } from './shared/territory/parentChildren.schema';
+import { binding as listGeoBinding } from './shared/territory/listGeo.schema';
+import { binding as findBinding } from './shared/territory/find.schema';
+import { binding as findGeoByCodeBinding } from './shared/territory/findGeoByCode.schema';
+import { binding as listBinding } from './shared/territory/list.schema';
 import { patchContacts } from './shared/territory/patchContacts.schema';
-import { schema as intermediaryRelationSchema } from './shared/territory/relationUiStatus.schema';
 import { update } from './shared/territory/update.schema';
 import { binding as getAuthorizedCodesBinding } from './shared/territory/getAuthorizedCodes.schema';
 import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
+import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
 
 @serviceProvider({
   config,
-  providers: [TerritoryPgRepositoryProvider],
+  providers: [TerritoryRepositoryProvider, GeoRepositoryProvider],
   validator: [
-    ['territory.find', find],
-    ['territory.list', list],
-    ['territory.dropdown', dropdown],
     ['territory.create', create],
     ['territory.update', update],
     ['territory.delete', deleteTerritory],
-    ['territory.getTerritoryRelationUIStatus', intermediaryRelationSchema],
-    ['territory.getParentChildren', parentChildrenSchema],
-    ['territory.findByInsees', findByInsee],
     ['territory.patchContacts', patchContacts],
+    findBinding,
+    listBinding,
+    findGeoByCodeBinding,
+    listGeoBinding,
     getAuthorizedCodesBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
@@ -49,14 +43,11 @@ import { GetAuthorizedCodesAction } from './actions/GetAuthorizedCodesAction';
   handlers: [
     FindTerritoryAction,
     ListTerritoryAction,
-    DropdownTerritoryAction,
+    ListGeoAction,
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
     CreateTerritoryAction,
-    GetTerritoryRelationUIStatusAction,
-    GetTerritoryParentChildrenAction,
-    TreeTerritoryAction,
-    FindTerritoryByInseesAction,
+    FindGeoByCodeAction,
     GetAuthorizedCodesAction,
   ],
   commands: [],

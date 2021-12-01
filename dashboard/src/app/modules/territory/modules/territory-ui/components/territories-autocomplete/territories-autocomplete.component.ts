@@ -7,6 +7,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { ParamsInterface as ParamsInterfaceGeo } from 'shared/territory/listGeo.contract';
 
 @Component({
   selector: 'app-territories-autocomplete',
@@ -79,13 +80,9 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
   }
 
   private filterTerritory(literal = ''): void {
-    const params: { search?: string; parent_id?: number } = {};
-    if (literal.length) {
-      params.search = literal;
-    }
-
+    const params: ParamsInterfaceGeo = { search: literal };
     this.territoryApiService
-      .dropdown(params)
+      .geo(params)
       .pipe(takeUntil(this.destroy$))
       .subscribe(({ data }: { data: { _id: number; name: string }[] }) => {
         this.filteredTerritories = data.map(({ _id, name: shortname }) => ({ shortname, _id }));

@@ -1,5 +1,5 @@
 export interface ParamsInterface {
-  _id?: number;
+  _id: number;
 }
 
 export type ResultInterface = {

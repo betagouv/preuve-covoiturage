@@ -16,7 +16,6 @@ export class GetAuthorizedCodesAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const result = await this.territoryRepository.getDirectRelation(params._id);
-    return { _id: result.map((r) => r.descendant_ids).reduce((r, arr) => [...arr, ...r], []) };
+    return this.territoryRepository.getRelationCodes(params);
   }
 }

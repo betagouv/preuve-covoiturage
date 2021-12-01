@@ -1,92 +1,64 @@
-import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 import {
-  ParamsInterface as CreateParams,
+  ParamsInterface as CreateParamsInterface,
   ResultInterface as CreateResultInterface,
 } from '../shared/territory/create.contract';
-import { ParamsInterface as PatchParamsInterface } from '../shared/territory/update.contract';
-import { ParamsInterface as DropdownParamsInterface } from '../shared/territory/dropdown.contract';
-import {
-  TerritoryQueryInterface,
-  SortEnum,
-  ProjectionFieldsEnum,
-  TerritoryListFilter,
-} from '../shared/territory/common/interfaces/TerritoryQueryInterface';
-import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
-import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
-import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
-import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
-import { TerritoryDropdownInterface } from '../shared/territory/common/interfaces/TerritoryDropdownInterface';
 
 import {
-  ParamsInterface as FindByInseeParamsInterface,
-  ResultInterface as FindByInseeResultInterface,
-} from '../shared/territory/findByInsees.contract';
+  ParamsInterface as ListParamsInterface,
+  ResultInterface as ListResultInterface,
+} from '../shared/territory/list.contract';
 
+import {
+  ParamsInterface as FindParamsInterface,
+  ResultInterface as FindResultInterface,
+} from '../shared/territory/find.contract';
+
+import {
+  ParamsInterface as UpdateParamsInterface,
+  ResultInterface as UpdateResultInterface,
+} from '../shared/territory/update.contract';
+
+import {
+  ParamsInterface as PatchContactsParamsInterface,
+  ResultInterface as PatchContactsResultInterface,
+} from '../shared/territory/patchContacts.contract';
+
+export {
+  CreateParamsInterface,
+  CreateResultInterface,
+  ListParamsInterface,
+  ListResultInterface,
+  FindParamsInterface,
+  FindResultInterface,
+  UpdateParamsInterface,
+  UpdateResultInterface,
+  PatchContactsParamsInterface,
+  PatchContactsResultInterface,
+};
 export interface TerritoryRepositoryProviderInterface {
-  find(
-    query: TerritoryQueryInterface,
-    sort: SortEnum[],
-    projection: ProjectionFieldsEnum,
-    pagination?: TerritoryListFilter,
-  ): Promise<TerritoryDbMetaInterface>;
-
-  getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]>;
-  dropdown(params: DropdownParamsInterface): Promise<TerritoryDropdownInterface[]>;
-  all(
-    search?: string,
-    levels?: TerritoryLevelEnum[],
-    withParents?: boolean,
-    withLevel?: boolean,
-    limit?: number,
-    skip?: number,
-  ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }>;
-  create(data: CreateParams): Promise<CreateResultInterface>;
+  list(params: ListParamsInterface): Promise<ListResultInterface>;
+  find(params: FindParamsInterface): Promise<FindResultInterface>;
+  create(data: CreateParamsInterface): Promise<CreateResultInterface>;
   delete(_id: number): Promise<void>;
-  update(data: PatchParamsInterface): Promise<TerritoryDbMetaInterface>;
-  patchContacts(id: number, contacts: ContactsInterface): Promise<TerritoryDbMetaInterface>;
-  patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface>;
-  findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface>;
-  getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface[]>;
-  tree(): Promise<any>;
+  update(data: UpdateParamsInterface): Promise<UpdateResultInterface>;
+  patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface>;
+  getRelationCodes(params: { _id: number }): Promise<{ _id: number[] }>;
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
-  async find(
-    query: TerritoryQueryInterface,
-    sort: SortEnum[],
-    projection: ProjectionFieldsEnum,
-    pagination?: TerritoryListFilter,
-  ): Promise<TerritoryDbMetaInterface> {
+  async list(params: ListParamsInterface): Promise<ListResultInterface> {
     throw new Error();
   }
 
-  async getDirectRelation(id: number | number[]): Promise<TerritoryParentChildrenInterface[]> {
+  async find(params: FindParamsInterface): Promise<FindResultInterface> {
     throw new Error();
   }
 
-  async dropdown(params: DropdownParamsInterface): Promise<TerritoryDropdownInterface[]> {
+  async patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface> {
     throw new Error();
   }
 
-  async all(
-    search?: string,
-    levels?: TerritoryLevelEnum[],
-    withParents?: boolean,
-    withLevel?: boolean,
-    limit?: number,
-    skip?: number,
-  ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }> {
-    throw new Error();
-  }
-  async getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]> {
-    throw new Error();
-  }
-
-  async patchContacts(id: number, contacts: ContactsInterface): Promise<TerritoryDbMetaInterface> {
-    throw new Error();
-  }
-
-  async create(data: CreateParams): Promise<CreateResultInterface> {
+  async create(data: CreateParamsInterface): Promise<CreateResultInterface> {
     throw new Error();
   }
 
@@ -94,19 +66,11 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async update(data: PatchParamsInterface): Promise<TerritoryDbMetaInterface> {
+  async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
     throw new Error();
   }
 
-  async patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface> {
+  async getRelationCodes(params: { _id: number }): Promise<{ _id: number[] }> {
     throw new Error();
-  }
-
-  async findByInsees(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
-    throw new Error();
-  }
-
-  async tree(): Promise<any> {
-    throw new Error('Not implemented');
   }
 }

@@ -78,7 +78,7 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
           return of(campaign.territory_id);
         }),
         // fetch the territory data
-        concatMap((_id) => this._territoryApi.find({ _id })),
+        concatMap((_id) => this._territoryApi.get({ _id })),
         takeUntil(this.destroy$),
       )
       .subscribe((territory: Territory) => {

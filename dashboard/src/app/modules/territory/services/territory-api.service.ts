@@ -6,21 +6,21 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
-import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
-import { Territory, TerritoryInsee } from '~/core/entities/territory/territory';
+import { Territory } from '~/core/entities/territory/territory';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { GetListActions } from '~/core/services/api/json-rpc.getlist';
-// eslint-disable-next-line
-import { TerritoryParentChildrenInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryChildrenInterface';
+import { ParamsInterface as FindByIdParamsInterface, signature as signatureFind } from 'shared/territory/find.contract';
 import {
-  allBasicFieldEnum,
-  SortEnum,
-  TerritoryListFilter,
-} from '../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
-import { QueryParamsInterface } from '../../../../../../shared/territory/find.contract';
-// eslint-disable-next-line
-import { ResultInterface as UiStatusRelationDetailsList } from '../../../../../../shared/territory/relationUiStatus.contract';
+  ParamsInterface as ParamsInterfaceFindByCode,
+  ResultInterface as ResultInterfaceFindByCode,
+  signature as signatureFindByCode,
+} from 'shared/territory/findGeoByCode.contract';
+import { ParamsInterface as TerritoryListFilter, signature as signatureList } from 'shared/territory/list.contract';
+import { ParamsInterface as ParamsInterfaceGeo, signature as signatureGeo } from 'shared/territory/listGeo.contract';
+import {
+  ParamsInterface as PatchContactParamsInterface,
+  signature as signaturePatch,
+} from 'shared/territory/patchContacts.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -30,9 +30,8 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     super(http, router, activatedRoute, 'territory');
   }
 
-  patchContact(item: ParamsInterface): Observable<Territory> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:patchContacts`, item);
-
+  patchContact(item: PatchContactParamsInterface): Observable<Territory> {
+    const jsonRPCParam = new JsonRPCParam(signaturePatch, item);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
@@ -46,47 +45,26 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
   }
 
   paramGetList(params?: TerritoryListFilter): JsonRPCParam<any> {
-    return new JsonRPCParam(`${this.method}:${GetListActions.LIST}`, { ...this.defaultListParam, ...params });
+    return new JsonRPCParam(signatureList, { ...this.defaultListParam, ...params });
   }
 
-  getDirectRelation(id: number): Observable<TerritoryParentChildrenInterface[]> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:getParentChildren`, { _id: id });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryParentChildrenInterface[]>;
+  findByInsees(insees: string[]): Observable<ResultInterfaceFindByCode> {
+    const params: ParamsInterfaceFindByCode = { insees };
+    const jsonRPCParam = new JsonRPCParam(signatureFindByCode, params);
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  findByInsees(insees: string[]): Observable<TerritoryInsee[]> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:findByInsees`, { insees });
-
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryInsee[]>;
+  paramGetById(id: number): JsonRPCParam<any> {
+    return new JsonRPCParam(signatureFind, { _id: id });
   }
 
-  getRelationUIStatus(id: number): Observable<UiStatusRelationDetailsList> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:getTerritoryRelationUIStatus`, { _id: id });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data || [])) as Observable<UiStatusRelationDetailsList>;
+  geo(params: ParamsInterfaceGeo): Observable<JsonRPCResult> {
+    const jsonRPCParam: JsonRPCParam = new JsonRPCParam(signatureGeo, params);
+    return this.callOne(jsonRPCParam);
   }
 
-  paramGetById(
-    id: number,
-    sort: SortEnum[] = [SortEnum.NameAsc],
-    projection: any = allBasicFieldEnum,
-  ): JsonRPCParam<any> {
-    return this.paramGet({ _id: id } as any, sort, projection);
-  }
-
-  paramGet(params: any, sort: SortEnum[] = [SortEnum.NameAsc], projection: any = allBasicFieldEnum): JsonRPCParam<any> {
-    return new JsonRPCParam(`${this.method}:${GetListActions.FIND}`, { query: { ...params }, sort, projection });
-  }
-
-  dropdown(params: { search?: string; parent_id?: number }): Observable<JsonRPCResult> {
-    return this.callOne(new JsonRPCParam(`${this.method}:dropdown`, params));
-  }
-
-  find(
-    query: QueryParamsInterface,
-    sort: SortEnum[] = [SortEnum.NameAsc],
-    projection: any = allBasicFieldEnum,
-  ): Observable<Territory> {
-    const jsonRPCParam = this.paramGet(query, sort, projection);
+  get(query: FindByIdParamsInterface): Observable<Territory> {
+    const jsonRPCParam = this.paramGetById(query._id);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
@@ -96,11 +74,5 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
 
   update(item: Territory): Observable<Territory> {
     return this.catchSiretConflict(super.update(item));
-  }
-
-  // get only AOM territories
-  getActivableList(): Observable<Territory[]> {
-    const jsonRPCParam = this.paramGet({ activable: true });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 }
