@@ -1,7 +1,7 @@
 export interface PdfCertRow {
-  month: string;
+  dowName: string;
+  datetime: Date;
   trips: string;
   distance: number;
-  points: number;
-  remaining: number;
+  euros: number;
 }

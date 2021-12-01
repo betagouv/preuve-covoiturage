@@ -1,15 +1,5 @@
 import { PointInterface } from '../shared/common/interfaces/PointInterface';
-
-export interface CarpoolInterface {
-  month: string;
-  year: string;
-  trip_id: number;
-  km: number;
-  rac: number;
-  payments: string;
-  type: string;
-}
-
+import { CarpoolInterface } from '../shared/certificate/common/interfaces/CarpoolInterface';
 export interface FindParamsInterface {
   personUUID: string;
   operator_id: number;

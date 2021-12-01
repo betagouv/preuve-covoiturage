@@ -1,10 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastrService } from 'ngx-toastr';
 import { set } from 'lodash';
-
-import { ResultRowInterface } from '~/core/entities/api/shared/certificate/list.contract';
+import { ToastrService } from 'ngx-toastr';
+import { ResultRowInterface } from '~/core/entities/api/shared/certificate/common/interfaces/ResultRowInterface';
 import { ParamsInterface as DownloadParamsInterface } from '~/core/entities/api/shared/certificate/download.contract';
 import { CertificateApiService } from '~/modules/certificate/services/certificate-api.service';
 
@@ -61,7 +60,10 @@ export class CertificateMetaDialogComponent implements OnInit {
   }
 
   private mapToParams(): DownloadParamsInterface {
-    const params: DownloadParamsInterface = { uuid: this.data.uuid };
+    const params: DownloadParamsInterface = {
+      uuid: this.data.uuid,
+      operator_id: this.data.operator._id,
+    };
 
     let field = null;
     for (const [key, value] of Object.entries(this.metaMap)) {

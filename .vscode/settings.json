@@ -19,12 +19,19 @@
   },
   "search.exclude": {
     "**/node_modules": true,
-    "**/dist": true
+    "**/dist": true,
+    "api/providers/*/src/shared": true,
+    "api/services/*/src/shared": true,
+    "api/proxy/src/shared": true,
+    "dashboard/src/app/core/entities/api/shared": true
   },
   "files.exclude": {
     "**/*.postman_collection.json": true,
     "db": true,
     "api/**/dist": false,
     "**/node_modules/**": false,
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
   }
 }

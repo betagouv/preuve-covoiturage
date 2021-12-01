@@ -13,7 +13,10 @@
       </div>
 
       <div class="description">
-        <h3>Données de l'attestation</h3>
+        <h3>
+          <mat-icon style="vertical-align: bottom;" ngClass="success">check_circle</mat-icon>
+          Données de l'attestation
+        </h3>
       </div>
 
       <mat-card>
@@ -33,19 +36,24 @@
             </td>
           </tr>
 
-          <tr *ngIf="data.total_km !== undefined">
-            <td>Distance</td>
-            <td>{{ data.total_km }} kilomètres</td>
+          <tr *ngIf="data.driver.total.km | isNumber">
+            <td>Distance conducteur</td>
+            <td>{{ data.driver.total.km | km }}</td>
           </tr>
 
-          <tr *ngIf="data.total_point !== undefined">
-            <td>Points</td>
-            <td>{{ data.total_point }} points</td>
+          <tr *ngIf="data.driver.total.euros | isNumber">
+            <td>Gains conducteur</td>
+            <td>{{ data.driver.total.euros | euro }}</td>
           </tr>
 
-          <tr *ngIf="data.total_rm !== undefined">
-            <td>Reste à charge</td>
-            <td>{{ data.total_rm }} &euro;</td>
+          <tr *ngIf="data.passenger.total.km | isNumber">
+            <td>Distance passager</td>
+            <td>{{ data.passenger.total.km | km }}</td>
+          </tr>
+
+          <tr *ngIf="data.passenger.total.euros | isNumber">
+            <td>Contributions passager</td>
+            <td>{{ data.passenger.total.euros | euro }}</td>
           </tr>
 
           <tr>
@@ -60,18 +68,18 @@
           </tr>
           <tr>
             <td>Personne</td>
-            <td>{{ data.identity_uuid }}</td>
+            <td>{{ data.identity.uuid }}</td>
           </tr>
           <tr>
             <td>Opérateur</td>
-            <td>{{ data.operator_uuid }}</td>
+            <td>{{ data.operator.uuid }}</td>
           </tr>
         </table>
       </mat-card>
     </div>
   </div>
 
-  <div *ngIf="isOnError">
+  <div *ngIf="isOnError || data.type !== 'ok'">
     <div class="wrapper">
       <div class="description error">
         <h3>Erreur</h3>

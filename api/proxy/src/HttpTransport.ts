@@ -478,12 +478,9 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/v2/certificates/pdf',
       rateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
-        const call = createRPCPayload(
-          'certificate:download',
-          { ...req.body },
-          { permissions: ['common.certificate.download'] },
-        );
+        const call = createRPCPayload('certificate:download', { ...req.body }, get(req, 'session.user', undefined));
         const response = (await this.kernel.handle(call)) as RPCResponseType;
 
         this.raw(res, get(response, 'result.body', response), get(response, 'result.headers', {}));

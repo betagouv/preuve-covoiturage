@@ -1,4 +1,4 @@
-import { PointInterface } from '../common/interfaces/PointInterface';
+import { ResultRowInterface } from './common/interfaces/ResultRowInterface';
 
 export interface Pagination {
   start_index: number;
@@ -10,22 +10,11 @@ export interface ParamsInterface {
   pagination?: Pagination;
 }
 
-export interface ResultRowInterface {
-  uuid: string;
-  tz: string;
-  operator: { uuid: string; name: string };
-  start_pos?: PointInterface;
-  end_pos?: PointInterface;
-  total_km: number;
-  total_point: number;
-  total_rm: number;
-}
 export type ResultInterface = {
   rows: ResultRowInterface[];
   length: number;
 };
 
-// export type RepositoryInterface = Required<ParamsInterface>;
 export type RepositoryInterface = ParamsInterface;
 
 export const handlerConfig = {

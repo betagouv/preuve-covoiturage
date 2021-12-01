@@ -9,8 +9,10 @@ export const findIdentity = {
       },
     },
     {
+      // phone_trunc is not mandatory as the identity
+      // can be retrieved with an operator_id + operator_user_id tuple
       additionalProperties: false,
-      required: ['phone_trunc', 'operator_user_id'],
+      required: ['operator_user_id'],
       properties: {
         phone_trunc: { macro: 'phonetrunc' },
         operator_user_id: { macro: 'varchar' },

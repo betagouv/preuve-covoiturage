@@ -6,7 +6,7 @@ import { Pagination } from '../shared/certificate/list.contract';
 
 export interface CertificateRepositoryProviderInterface {
   find(): Promise<CertificateInterface[]>;
-  findByUuid(uuid: string, withLog: boolean): Promise<CertificateInterface>;
+  findByUuid(uuid: string, operator_id: number | null, withLog: boolean): Promise<CertificateInterface>;
   findById(_id: string, withLog: boolean): Promise<CertificateInterface>;
   findByOperatorId(operator_id: number, withLog?: boolean, pagination?: Pagination): Promise<CertificateInterface[]>;
   create(params: CertificateBaseInterface): Promise<CertificateInterface>;
@@ -19,7 +19,7 @@ export abstract class CertificateRepositoryProviderInterfaceResolver implements 
   async find(withLog = false, pagination?: Pagination): Promise<CertificateInterface[]> {
     throw new Error('Method not implemented.');
   }
-  async findByUuid(uuid: string, withLog = false): Promise<CertificateInterface> {
+  async findByUuid(uuid: string, operator_id: number | null, withLog = false): Promise<CertificateInterface> {
     throw new Error('Method not implemented.');
   }
   async findById(_id: string, withLog = false): Promise<CertificateInterface> {

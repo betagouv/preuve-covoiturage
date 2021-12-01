@@ -68,13 +68,22 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     return (withLog ? this.withLog(result.rows) : result.rows) as CertificateInterface[];
   }
 
-  async findByUuid(uuid: string, withLog = false): Promise<CertificateInterface> {
+  async findByUuid(uuid: string, operator_id: number | null, withLog = false): Promise<CertificateInterface> {
+    const values: [string, number?] = [uuid];
+    if (operator_id) values.push(operator_id);
+
     const result = await this.connection.getClient().query({
-      text: `SELECT * FROM ${this.table} WHERE uuid = $1 LIMIT 1`,
-      values: [uuid],
+      text: `
+        SELECT *
+        FROM ${this.table}
+        WHERE uuid = $1
+        ${operator_id ? `AND operator_id = $2` : ''}
+        LIMIT 1
+      `,
+      values,
     });
 
-    if (!result.rowCount) throw new NotFoundException(`Certificate not found: ${uuid}`);
+    if (!result.rowCount) throw new NotFoundException(`Certificate not found: ${operator_id} - ${uuid}`);
 
     return withLog ? this.withLog(result.rows[0]) : result.rows[0];
   }

@@ -7,9 +7,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MaterialModule } from '~/shared/modules/material/material.module';
 import { SharedModule } from '~/shared/shared.module';
 
-import { GenerateComponent } from './pages/generate/generate.component';
 import { CheckComponent } from './pages/check/check.component';
-import { MemeComponent } from './pages/meme/meme.component';
 import { CertificateLayoutComponent } from './certificate-layout/certificate-layout.component';
 import { CertificateRoutingModule } from './certificate-routing.module';
 import { CertificateListComponent } from '../administration/pages/certificate-list/certificate-list.component';
@@ -17,13 +15,7 @@ import { TerritoryUiModule } from '../territory/modules/territory-ui/territory-u
 import { OperatorUiModule } from '../operator/modules/operator-ui/operator-ui.module';
 
 @NgModule({
-  declarations: [
-    GenerateComponent,
-    CheckComponent,
-    MemeComponent,
-    CertificateLayoutComponent,
-    CertificateListComponent,
-  ],
+  declarations: [CheckComponent, CertificateLayoutComponent, CertificateListComponent],
   imports: [
     CommonModule,
     MaterialModule,

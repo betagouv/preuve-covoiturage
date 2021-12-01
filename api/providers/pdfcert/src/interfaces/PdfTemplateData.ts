@@ -1,6 +1,8 @@
+import { CertificateMetaInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
+
 export interface PdfTemplateData {
   title: string;
-  data: any;
+  data: CertificateMetaInterface;
   identity: string;
   operator: string;
   certificate: {

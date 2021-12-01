@@ -86,29 +86,44 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
   ): Promise<string> {
     const opts: findUuidOptions = { generate: false, interval: 0, ...options };
 
-    /*
-     * 1. Select uuid from the exact phone number
-     * 2. Select uuid from the phone_trunc and operator_user_id
-     * 3. Select uuid from the phone_trunc and travel_pass_user_id
-     * 4. Select uuid from uuid_generate_v4
-     * 5. From previous select, take the newest result
-     */
     const query = {
       text: `
+        -- search by complete phone number
         (
           SELECT created_at as datetime, uuid FROM ${this.table}
           WHERE phone IS NOT NULL and phone = $1::varchar
           ${opts.interval > 0 ? `AND created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
           ORDER BY created_at DESC LIMIT 1
         ) UNION
-        (
-          SELECT ci.created_at as datetime, ci.uuid FROM ${this.table} as ci
-          JOIN carpool.carpools AS cp ON cp.identity_id = ci._id
-          WHERE ci.phone_trunc IS NOT NULL AND ci.phone_trunc = $2::varchar
-          AND cp.operator_id = $3::int AND ci.operator_user_id = $4::varchar
-          ${opts.interval > 0 ? `AND ci.created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
-          ORDER BY ci.created_at DESC LIMIT 1
-        ) UNION
+
+        ${
+          // select the right query depending on params to avoid running useless queries
+          identity.phone_trunc
+            ? `
+          -- search by phone_trunc + operator_user_id + operator_id
+          (
+            SELECT ci.created_at as datetime, ci.uuid FROM ${this.table} as ci
+            JOIN carpool.carpools AS cp ON cp.identity_id = ci._id
+            WHERE ci.phone_trunc IS NOT NULL AND ci.phone_trunc = $2::varchar
+            AND cp.operator_id = $3::int AND ci.operator_user_id = $4::varchar
+            ${opts.interval > 0 ? `AND ci.created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
+            ORDER BY ci.created_at DESC LIMIT 1
+          ) UNION
+        `
+            : `
+          -- search by operator_user_id and operator_id
+          (
+            SELECT ci.created_at as datetime, ci.uuid FROM ${this.table} as ci
+            JOIN carpool.carpools AS cp ON cp.identity_id = ci._id
+            WHERE ci.operator_user_id IS NOT NULL AND ci.operator_user_id = $4::varchar
+            AND cp.operator_id = $3::int
+            ${opts.interval > 0 ? `AND ci.created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
+            ORDER BY ci.created_at DESC LIMIT 1
+          ) UNION
+        `
+        }
+
+        -- search by travel_pass name
         (
           SELECT created_at as datetime, uuid FROM ${this.table}
           WHERE phone_trunc IS NOT NULL AND phone_trunc = $2::varchar
@@ -116,8 +131,12 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
           ${opts.interval > 0 ? `AND created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
           ORDER BY created_at DESC LIMIT 1
         )
+
+        -- generate a new UUID
         ${opts.generate ? ' UNION (SELECT to_timestamp(0)::timestamp as datetime, uuid_generate_v4() as uuid )' : ''}
         ORDER BY datetime DESC
+
+        -- keep the most recent result only
         LIMIT 1
         `,
       values: [

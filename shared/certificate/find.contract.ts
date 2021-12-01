@@ -1,19 +1,12 @@
+import { ResultRowInterface } from './common/interfaces/ResultRowInterface';
+
 export interface ParamsInterface {
   uuid: string;
+  operator_id: number;
 }
 
 // export interface ResultInterface extends CertificateInterface {}
-export interface ResultInterface {
-  uuid: string;
-  identity_uuid: string;
-  operator_uuid: string;
-  start_at: Date;
-  end_at: Date;
-  created_at: Date;
-  total_km: number;
-  total_point: number;
-  total_rm: number;
-}
+export type ResultInterface = ResultRowInterface;
 
 export type RepositoryInterface = Required<ParamsInterface>;
 

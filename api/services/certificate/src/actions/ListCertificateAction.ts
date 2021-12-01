@@ -1,15 +1,9 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
-
-import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
+import { mapCertForListHelper } from '../helpers/mapCertForListHelper';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import {
-  handlerConfig,
-  ResultInterface,
-  ParamsInterface,
-  ResultRowInterface,
-} from '../shared/certificate/list.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/list.contract';
 import { alias } from '../shared/certificate/list.schema';
 
 @handler({
@@ -38,18 +32,7 @@ export class ListCertificateAction extends AbstractAction {
 
     return {
       length,
-      rows: results.map(
-        (cert: CertificateInterface): ResultRowInterface => {
-          return {
-            uuid: cert.uuid,
-            tz: cert.meta.tz,
-            operator: cert.meta.operator,
-            total_km: cert.meta.total_km,
-            total_point: cert.meta.total_point,
-            total_rm: cert.meta.total_rm,
-          };
-        },
-      ),
+      rows: results.map(mapCertForListHelper),
     };
   }
 }

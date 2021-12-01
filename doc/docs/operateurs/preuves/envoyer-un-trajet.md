@@ -1,18 +1,22 @@
 ---
-title: schema json
+title: Envoyer un trajet
 description: Version 2.0. Disponible à partir du 1er novembre 2019
 ---
 
-# Schema JSON V2
+# Envoyer un trajet
 
-Schema JSON pour l'envoi des trajets sur la route `POST /v2/journeys`  
-Le schéma de données est présenté au format [JSON Schema Draft-07](https://json-schema.org/understanding-json-schema/index.html).
+Un trajet est un couple passager.ère / conducteur.rice ayant des points et de horaires de départ et d'arrivée. Si une conductrice covoiture avec plusieurs passagères, plusieurs trajets sont déclarés.
 
-Le schéma complet est disponible à la fin de ce document. Afin de le rendre plus accessible, les données principales sont présentées en introduction.
+La documentation si dessous définit les concepts et les techniques utilisées pour transmettre un trajet au Registre de preuve de covoiturage.
 
-> Voir également [Accès API](./acces.html).
+Les propriétés obligatoires du schema sont marquées par un **\***.  
+Des [exemples](#annexes) sont disponibles en bas de page.
 
-::: tip
+[[TOC]]
+
+## Concepts généraux
+
+### Unités de mesure
 
 Les unités utilisées pour les valeurs sont :
 
@@ -20,11 +24,7 @@ Les unités utilisées pour les valeurs sont :
 - distances en **mètres**
 - durées en **secondes**
 
-:::
-
-## Propriétés
-
-**\*** Données obligatoires
+### Données générales du trajet
 
 - `journey_id`**\*** :  
   identifiant généré par l'opérateur. Doit être unique \(couple passager-conducteur\)
@@ -33,7 +33,7 @@ Les unités utilisées pour les valeurs sont :
 - `operator_class`**\*** :  
   classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c).
 
-### Données sur l'identité de l'occupant
+### Identités des personnes
 
 Ces données personnelles permettent d'identifier la personne effectuant le covoiturage afin de pouvoir comptabiliser ses trajets et lui distribuer des incitations en fonction des politiques applicables.
 
@@ -97,19 +97,30 @@ Les points de départ et d'arrivée du passager et du conducteur. `passenger.sta
 
 ### Données financières
 
-::: tip
-Le principe est de coller au plus près avec la réalité comptable \(transaction usager\) et d'avoir suffisamment d'informations pour recalculer le coût initial du trajet. Ceci afin de s'assurer du respect de la définition du covoiturage et de la bonne application des politiques incitatives gérées par le registre.
-:::
-
 - `passenger.contribution`**\*** : Coût réel total du service pour l’occupant passager en fonction du nombre de sièges réservés **APRÈS** que toutes les possibles incitations aient été versées \(subventions employeurs, promotions opérateurs, incitations AOM, etc\).
 - `driver.revenue`**\*** : La somme réellement perçue par le conducteur **APRÈS** que toutes les incitations \(subventions employeurs, promotions opérateurs, incitations AOM, etc.\), contributions des passagers aient été versées et que la commission de l’opérateur soit prise.
 - `passenger.seats`**\*** : Nombre de sièges réservés par l'occupant passager. Défault : 1
 
-**Schéma des incitations**
+Le principe est de coller au plus près avec la réalité comptable \(transaction usager\) et d'avoir suffisamment d'informations pour recalculer le coût initial du trajet.
+
+Ceci afin de s'assurer du respect de la définition du covoiturage et de la bonne application des politiques incitatives gérées par le registre.
+
+::: tip
+Les données envoyées en `passenger.contribution` et `driver.revenue` sont utilisées dans les attestations de covoiturage à destination des employeurs (Forfait Mobilités Durables).
+:::
+
+#### Les incitations
+
+::: warning ⚠️ Toutes les incitations sont versées du côté du conducteur
+
+Les propriétés `passenger.incentives` et `driver.incentives` sont en cours de dépréciation au profit d'une propriété commune au couple.
+
+Ainsi, par convention en attendant la V3 de l'API, il faut mettre l'ensemble des incitations du couple sur la propriété `driver.incentives`.
+:::
 
 - `incentives` \* : Tableau reprenant la liste complète des incitations appliquées \(ordre d'application, montant, identifiant de l'incitateur\). Si aucune incitation, envoyer un tableau vide : `[]`
 
-```text
+``` java
 {
     index: <Number>  *        // ordre d'application [0,1,2]
     amount: <Number> *        // montant de l'incitation en centimes d'euros
@@ -125,7 +136,7 @@ Par défaut, l'ordre d'application des politiques incitatives est le suivant :
 2. Sponsors \(incitations employeur, CE, etc.\)
 3. Opérateur \(opération promotionnelle, offres, etc.\)
 
-**Schéma du mode de paiement sous forme de Titre-Mobilité**
+#### Les modes de paiement
 
 ::: tip
 La prise en charge des frais de transports personnel \(carburant et forfait mobilité\) pourra prendre la forme d’une solution de paiement spécifique, dématérialisée et prépayée, intitulée « titre-mobilité ». Ainsi, il apparaît comme pertinent de détailler la solution de paiement utilisée dans le cadre d'un trajet covoituré, s'il s'agit de Titre-Mobilité.
@@ -133,7 +144,7 @@ La prise en charge des frais de transports personnel \(carburant et forfait mobi
 
 - `payments` : Zéro, une ou plusieurs méthodes de paiement utilisées \(ex. carte employeur préchargée permettant de payer directement le covoiturage sur une application\).
 
-```text
+``` java
 {
     index: <Number> *    // ordre d'application (0, 1, 2, ...)
     siret: <String> *    // n° SIRET de l'établissement payeur
@@ -142,7 +153,208 @@ La prise en charge des frais de transports personnel \(carburant et forfait mobi
 }
 ```
 
-## Schéma JSON complet
+## La technique
+
+Le schéma de données est présenté au format [JSON Schema Draft-07](https://json-schema.org/understanding-json-schema/index.html).
+
+Le payload JSON du trajet est envoyé via une [requête authentifiée](./acces.html) sur la route `POST /v2/journeys`.
+
+### Envoyer le trajet
+
+1. Avoir un token applicatif (format JWT)
+2. Construire le payload JSON
+3. Envoyer le payload en `POST`
+
+#### Requête
+
+```
+POST /v2/journeys
+Authorization: Bearer <token>
+```
+
+Exemple de payload. ([d'autres exemples](#exemples-de-payloads) sont disponibles plus bas)
+
+``` json
+{
+  "journey_id": "8c872418-37c0-4b94-8cc7-e189c1599c4c",
+  "operator_journey_id": "57d08b47-8d1c-4345-b0d2-36a20a182883",
+  "operator_class": "C",
+  "driver": {
+    "revenue": 200,
+    "incentives": [],
+    "identity": {
+      "phone_trunc": "+336123456",
+      "operator_user_id": "3085e7bb-ea8f-4e8e-87b1-d8950d8510ba",
+      "over_18": true
+    },
+    "start": {
+      "datetime": "2021-01-01T10:00:00Z",
+      "lat": 45.8500862636592,
+      "lon": 1.2677062964308117
+    },
+    "end": {
+      "datetime": "2021-01-01T11:00:00Z",
+      "lat": 45.80491919633787,
+      "lon": 1.2149815791287082
+    }
+  },
+  "passenger": {
+    "contribution": 200,
+    "seats": 1,
+    "incentives": [],
+    "identity": {
+      "phone_trunc": "+336654321",
+      "operator_user_id": "1a6b3c2c-7dbf-412c-a21d-47a37627d3c3",
+      "over_18": true
+    },
+    "start": {
+      "datetime": "2021-01-01T10:00:00Z",
+      "lat": 45.8500862636592,
+      "lon": 1.2677062964308117
+    },
+    "end": {
+      "datetime": "2021-01-01T11:00:00Z",
+      "lat": 45.80491919633787,
+      "lon": 1.2149815791287082
+    }
+  }
+}
+```
+
+#### Réponses
+
+::: details 201 Created
+```json
+{
+    "id": 1,
+    "result": {
+        "meta": null,
+        "data": {
+            "journey_id": "8c872418-37c0-4b94-8cc7-e189c1599c4c",
+            "created_at": "2021-11-08T13:32:26.307Z"
+        }
+    },
+    "jsonrpc": "2.0"
+}
+```
+:::
+
+::: details 400 Bad Request
+Exemple d'erreur de formattage du numéro de téléphone conducteur.
+
+```json
+{
+    "id": 1,
+    "error": {
+        "data": "data/driver/identity/phone_trunc must match format \"phonetrunc\", data/driver/identity/phone_trunc must pass \"macro\" keyword validation",
+        "code": -32602,
+        "message": "Invalid params"
+    },
+    "jsonrpc": "2.0"
+}
+```
+:::
+
+::: details 401 Unauthorized
+Le token applicatif est incorrect ou manquant
+
+```json
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32501,
+    "message": "Unauthorized"
+  }
+}
+```
+:::
+
+### Vérifier le statut d'un trajet envoyé
+
+Les trajets ne seront visibles dans l'interface utilisateurs que **5 jours** après leur envoi.
+
+Il est possible de vérifier le statut d'un trajet envoyé directement pour s'assurer qu'il n'y pas pas eu d'erreur de format ou de traitement.
+
+- [Vérifier le statut d'un trajet](./statut.html)
+
+### Invalider un trajet
+
+Il est également possible d'invalider un trajet envoyé dans la limite des **5 jours** après son envoi.
+
+- [Invalider un trajet envoyé](./invalider.html)
+
+## Annexes
+
+### Exemples de payloads
+
+#### Trajet gratuit pour le passager
+
+Toutes les incitations sont calculées et envoyées par l'opérateur.
+
+- le passager ne paie pas sont trajet : `passenger.contribution = 0`
+- l'AOM verse une incitation de 1,50€ `driver.incentives[0].amount = 150`
+- l'opérateur verse une incitation de 50c€ `driver.incentives[1].amount = 50`
+
+``` json
+{
+  "journey_id": "8c872418-37c0-4b94-8cc7-e189c1599c4c",
+  "operator_journey_id": "57d08b47-8d1c-4345-b0d2-36a20a182883",
+  "operator_class": "C",
+  "driver": {
+    "revenue": 200,
+    "incentives": [
+      {
+        "index": 0,
+        "amount": 150,
+        "siret": "Siret territoire"
+      },
+      {
+        "index": 0,
+        "amount": 50,
+        "siret": "Siret opérateur"
+      }
+    ],
+    "identity": {
+      "phone_trunc": "+336123456",
+      "operator_user_id": "3085e7bb-ea8f-4e8e-87b1-d8950d8510ba",
+      "over_18": true
+    },
+    "start": {
+      "datetime": "2021-01-01T10:00:00Z",
+      "lat": 45.8500862636592,
+      "lon": 1.2677062964308117
+    },
+    "end": {
+      "datetime": "2021-01-01T11:00:00Z",
+      "lat": 45.80491919633787,
+      "lon": 1.2149815791287082
+    }
+  },
+  "passenger": {
+    "contribution": 0,
+    "seats": 1,
+    "incentives": [],
+    "identity": {
+      "phone_trunc": "+336654321",
+      "operator_user_id": "1a6b3c2c-7dbf-412c-a21d-47a37627d3c3",
+      "over_18": true
+    },
+    "start": {
+      "datetime": "2021-01-01T10:00:00Z",
+      "lat": 45.8500862636592,
+      "lon": 1.2677062964308117
+    },
+    "end": {
+      "datetime": "2021-01-01T11:00:00Z",
+      "lat": 45.80491919633787,
+      "lon": 1.2149815791287082
+    }
+  }
+}
+```
+
+### Schema JSON complet
 
 ```json
 {

@@ -6,6 +6,7 @@ export const schema = {
   additionalProperties: false,
   properties: {
     uuid: { macro: 'uuid' },
+    operator_id: { macro: 'dbid' },
     meta: {
       type: 'object',
       additionalProperties: false,
@@ -16,8 +17,8 @@ export const schema = {
           properties: {
             content: {
               type: 'string',
-              minLength: 1,
-              maxLength: 305,
+              minLength: 0,
+              maxLength: 258,
               $comment: 'Multiline textarea. Max 6 lines of 50 chars. Use \n as newline',
             },
           },
@@ -29,19 +30,19 @@ export const schema = {
             name: {
               type: 'string',
               minLength: 1,
-              maxLength: 26,
+              maxLength: 42,
             },
             content: {
               type: 'string',
-              minLength: 1,
-              maxLength: 305,
+              minLength: 0,
+              maxLength: 605,
               $comment: 'Multiline textarea. Max 6 lines of 50 chars. Use \n as newline',
             },
           },
         },
         notes: {
           type: 'string',
-          minLength: 1,
+          minLength: 0,
           maxLength: 440,
           $comment: 'Multiline textarea with textWrap. Max 440 chars',
         },

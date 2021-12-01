@@ -29,8 +29,8 @@ module.exports = {
                   path: 'preuves/acces',
                 },
                 {
-                  title: "Schema d'envoi JSON",
-                  path: 'preuves/schema',
+                  title: "Envoyer un trajet",
+                  path: 'preuves/envoyer-un-trajet',
                 },
                 {
                   title: 'Vérifier le statut',

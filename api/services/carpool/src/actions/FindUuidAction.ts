@@ -1,8 +1,6 @@
-import { get } from 'lodash';
-
 import { Action } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import { handler } from '@ilos/common';
+import { copyFromContextMiddleware, internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { alias } from '../shared/carpool/finduuid.schema';
 import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
@@ -13,19 +11,19 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpo
  */
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares('certificate'), ['validate', alias]],
+  middlewares: [
+    ...internalOnlyMiddlewares('certificate'),
+    copyFromContextMiddleware('call.user.operator_id', 'operator_id'),
+    ['validate', alias],
+  ],
 })
 export class FindUuidAction extends Action {
   constructor(private repository: IdentityRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const operator_id = get(params, 'operator_id', get(context, 'call.user.operator_id', null));
-    if (!operator_id) {
-      throw new Error('operator_id must be defined when searching for an identity');
-    }
-
-    return this.repository.findUuid(params.identity, { operator_id });
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    const { identity, operator_id } = params;
+    return this.repository.findUuid(identity, { operator_id });
   }
 }

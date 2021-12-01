@@ -4,11 +4,11 @@ export const alias = 'carpool.finduuid';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['identity'],
+  required: ['identity', 'operator_id'],
   additionalProperties: false,
   properties: {
     identity: findIdentity,
-    operator_id: { macro: 'serial' },
+    operator_id: { macro: 'dbid' },
   },
 };
 
