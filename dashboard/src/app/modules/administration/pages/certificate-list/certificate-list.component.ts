@@ -15,12 +15,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { CommonDataService } from '~/core/services/common-data.service';
 import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
 import { CertificateMetaDialogComponent } from './certificate-meta-dialog/certificate-meta-dialog.component';
-
-// somehow, importing RowType from shared crashes compilation... 🤔
-export enum CertStatusEnum {
-  OK = 'ok',
-  EXPIRED = 'expired',
-}
+import { RowType } from 'shared/certificate/common/interfaces/ResultRowInterface';
 
 @Component({
   selector: 'app-certificate-list',
@@ -311,33 +306,33 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     return row.type === 'ok';
   }
 
-  getIconStatus(status: CertStatusEnum): string {
+  getIconStatus(status: RowType): string {
     switch (status) {
-      case CertStatusEnum.OK:
+      case RowType.OK:
         return 'check_circle';
-      case CertStatusEnum.EXPIRED:
+      case RowType.EXPIRED:
         return 'warning';
       default:
         return '';
     }
   }
 
-  getIconClass(status: CertStatusEnum): string {
+  getIconClass(status: RowType): string {
     switch (status) {
-      case CertStatusEnum.OK:
+      case RowType.OK:
         return 'success';
-      case CertStatusEnum.EXPIRED:
+      case RowType.EXPIRED:
         return 'warning';
       default:
         return '';
     }
   }
 
-  getTooltip(status: CertStatusEnum): string {
+  getTooltip(status: RowType): string {
     switch (status) {
-      case CertStatusEnum.OK:
+      case RowType.OK:
         return 'Valide';
-      case CertStatusEnum.EXPIRED:
+      case RowType.EXPIRED:
         return "Expirée. Le format d'attestation en base n'est plus valide.";
       default:
         return null;
