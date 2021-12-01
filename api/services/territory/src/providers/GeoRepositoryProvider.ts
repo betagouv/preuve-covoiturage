@@ -11,6 +11,7 @@ import {
   GeoRepositoryProviderInterfaceResolver,
   GeoRepositoryProviderInterface,
 } from '../interfaces/GeoRepositoryProviderInterface';
+import { GeoCodeTypeEnum } from '../shared/territory/common/geo';
 
 @provider({
   identifier: GeoRepositoryProviderInterfaceResolver,
@@ -22,7 +23,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
   async list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface> {
-    const { search, where: whereParams, limit, offset } = { limit: 100, offset: 0, ...params };
+    const { search, type, where: whereParams, limit, offset } = { limit: 100, offset: 0, ...params };
 
     const where = [];
     const values = [];
@@ -30,6 +31,13 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     if (whereParams && whereParams._id && whereParams._id.length) {
       where.push(`_id = ANY($${where.length + 1})`);
       values.push(whereParams._id);
+    }
+
+    if (type) {
+      // Ugly workaround to make new interface work with old territories model
+      const actualTerritoryType: string = type === GeoCodeTypeEnum.City ? 'town' : 'region';
+      where.push(`level = $${where.length + 1}`);
+      values.push(`${actualTerritoryType}`);
     }
 
     if (search) {

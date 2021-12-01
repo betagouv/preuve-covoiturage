@@ -5,6 +5,7 @@ import { debounceTime, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { GeoCodeTypeEnum } from 'shared/territory/common/geo';
 
 @Component({
   selector: 'app-territories-insee-autocomplete',
@@ -58,10 +59,8 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   private filterTerritoryInsee(literal = ''): void {
     this.territoryApiService
       .geo({
-        // offset: 1,
-        // limit: 10,
+        type: GeoCodeTypeEnum.City,
         search: literal,
-        // type: GeoCodeTypeEnum.City,
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe((foundTerritories: any) => {
