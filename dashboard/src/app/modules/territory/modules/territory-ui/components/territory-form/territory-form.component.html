@@ -15,13 +15,13 @@
         <h4>Codes INSEE (séparés par des virgules)</h4>
         <mat-form-field class="relation-textarea" appearance="outline">
           <mat-label>Codes INSEE *</mat-label>
-          <textarea matInput formControlName="insee"></textarea>
-          <mat-error *ngIf="territoryForm.controls.insee.hasError('required')"
+          <textarea matInput formControlName="inseeString"></textarea>
+          <mat-error *ngIf="territoryForm.controls.inseeString.hasError('required')"
             >Les codes INSEE sont obligatoires.</mat-error
           >
           <mat-error
             *ngIf="
-              !territoryForm.controls.insee.hasError('required') && territoryForm.controls.insee.hasError('pattern')
+              !territoryForm.controls.inseeString.hasError('required') && territoryForm.controls.inseeString.hasError('pattern')
             "
             >Les codes sont au format INSEE (5 chiffres) et doivent être séparés par des virgules</mat-error
           >

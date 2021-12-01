@@ -15,6 +15,7 @@ import {
   CreateResultInterface,
   CreateParamsInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
+import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -97,16 +98,15 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   }
 
   async create(data: CreateParamsInterface): Promise<CreateResultInterface> {
-    const fields = ['name', 'shortname', 'level', 'contacts', 'address', 'active', 'activable'];
+    const fields = ['name', 'level', 'contacts', 'address', 'active', 'activable'];
 
     const values: any[] = [
       data.name,
-      data.shortname || '',
-      data.level,
+      TerritoryLevelEnum.Towngroup, // level
       data.contacts || '{}',
       data.address || '{}',
-      data.active,
-      data.activable,
+      true, // active
+      true, // activable,
     ];
 
     if (data.company_id) {
@@ -168,12 +168,12 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     const values: any[] = [
       data.name,
-      data.shortname || '',
+      '',
       data.level,
       data.contacts || '{}',
       data.address || '{}',
-      data.active,
-      data.activable,
+      true,
+      true,
       data.company_id ? data.company_id : null,
     ];
 
