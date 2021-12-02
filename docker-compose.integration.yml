@@ -72,23 +72,6 @@ services:
       - 'traefik.http.routers.mailer.tls=true'
       - 'traefik.http.services.mailer.loadbalancer.server.port=8025'
 
-  dashboard:
-    volumes:
-      - ${PWD}/docker/dashboard/ci.env.js:/usr/share/nginx/html/assets/env.js:ro
-    build:
-      dockerfile: ./docker/dashboard/prod/Dockerfile
-      context: .
-    networks:
-      - back
-    depends_on:
-      - api
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.dashboard.rule=Host(`app.covoiturage.test`)'
-      - 'traefik.http.routers.dashboard.entrypoints=websecure'
-      - 'traefik.http.routers.dashboard.tls=true'
-      - 'traefik.http.services.dashboard.loadbalancer.server.port=8080'
-
   api:
     build:
       dockerfile: ./docker/api/prod/Dockerfile

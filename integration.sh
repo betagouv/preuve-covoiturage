@@ -1,4 +1,4 @@
-DC="$(which docker-compose) -p pdce2e -f docker-compose.e2e.yml"
+DC="$(which docker-compose) -p pdce2e -f docker-compose.integration.yml"
 CERT_DIR="$(pwd)/docker/traefik/certs"
 
 generate_certs() {
