@@ -13,7 +13,6 @@ generate_certs() {
 rebuild() {
   echo "Rebuilding app image"
   $DC build api
-  $DC build dashboard
 }
 
 start_services() {
