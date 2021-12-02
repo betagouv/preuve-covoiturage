@@ -33,5 +33,23 @@
   },
   "[html]": {
     "editor.defaultFormatter": "vscode.html-language-features"
-  }
+  },
+  "githubIssues.queries":[
+    {
+      "label": "Attestations",
+      "query": "repo:${owner}/${repository} is:issue is:open label:ATTESTATION"
+    },
+    {
+      "label": "BUGS",
+      "query": "repo:${owner}/${repository} is:issue is:open label:BUG"
+    },
+    {
+      "label": "Mes tickets",
+      "query": "repo:${owner}/${repository} is:issue is:open assignee:${user}"
+    },
+    {
+      "label": "Created Issues",
+      "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc"
+    }
+  ],
 }
