@@ -67,7 +67,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
         this.searchedTerritoryInsees = foundTerritories.data.map((terr) => ({
           territory_literal: terr.name,
           context: terr.name,
-          insees: terr.insees,
+          insees: terr.insee,
         }));
       });
   }
