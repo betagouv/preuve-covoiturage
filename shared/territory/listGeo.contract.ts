@@ -14,6 +14,7 @@ interface SingleResultInterface {
   _id: number;
   code: string;
   label: string;
+  insee: string;
 }
 
 export type ResultInterface = ResultWithPagination<SingleResultInterface[]>;

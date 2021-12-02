@@ -29,26 +29,26 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     const values = [];
 
     if (whereParams && whereParams._id && whereParams._id.length) {
-      where.push(`_id = ANY($${where.length + 1})`);
+      where.push(`tt._id = ANY($${where.length + 1})`);
       values.push(whereParams._id);
     }
 
     if (type) {
       // Ugly workaround to make new interface work with old territories model
       const actualTerritoryType: string = type === GeoCodeTypeEnum.City ? 'town' : 'region';
-      where.push(`level = $${where.length + 1}`);
+      where.push(`tt.level = $${where.length + 1}`);
       values.push(`${actualTerritoryType}`);
     }
 
     if (search) {
-      where.push(`LOWER(name) LIKE $${where.length + 1}`);
+      where.push(`LOWER(tt.name) LIKE $${where.length + 1}`);
       values.push(`%${search.toLowerCase().trim()}%`);
     }
 
     const totalResult = await this.connection.getClient().query<{ count: string }>({
       values,
       text: `
-        SELECT count(*) FROM ${this.table}
+        SELECT count(*) FROM ${this.table} as tt
         ${where.length ? ` WHERE ${where.join(' AND ')}` : ''}
       `,
     });
@@ -62,7 +62,9 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     const results = await this.connection.getClient().query({
       values,
       text: `
-        SELECT _id, name FROM ${this.table}
+        SELECT tt._id as _id, tt.name as name, tc.value as insee FROM ${
+          this.table
+        } as tt LEFT JOIN territory.territory_codes as tc ON tt._id = tc.territory_id
         ${where.length ? ` WHERE ${where.join(' AND ')}` : ''}
         ORDER BY name ASC
         LIMIT $${where.length + 1}
