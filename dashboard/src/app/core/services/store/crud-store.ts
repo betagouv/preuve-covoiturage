@@ -19,7 +19,7 @@ export abstract class CrudStore<
   EntityListT extends Model = EntityT,
   IPatchT = any,
   JsonRpcCrudT extends JsonRpcCrud<EntityT, EntityListT, IPatchT> = JsonRpcCrud<EntityT, EntityListT, IPatchT>,
-  FormModelT = any
+  FormModelT = any,
 > extends GetListStore<EntityT, EntityListT, JsonRpcCrudT> {
   // dismiss subject triggerd in order to cancel current rpc calls
   protected dismissDeleteSubject = new Subject();

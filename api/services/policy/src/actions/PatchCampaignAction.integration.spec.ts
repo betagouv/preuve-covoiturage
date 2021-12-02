@@ -85,7 +85,7 @@ test.before(async (t) => {
 test(
   success,
   (t: ExecutionContext<TestContext>) =>
-    (({
+    ({
       _id: t.context.policy_id,
       patch: {
         ...fakeCampaign,
@@ -93,7 +93,7 @@ test(
         end_date: fakeCampaign.end_date.toISOString(),
         name: 'Ma nouvelle campagne',
       },
-    } as unknown) as ParamsInterface),
+    } as unknown as ParamsInterface),
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {
     t.is(response.name, 'Ma nouvelle campagne');
   },

@@ -85,10 +85,10 @@ test.before(async (t) => {
 test(
   success,
   (t: ExecutionContext<TestContext>) =>
-    (({
+    ({
       _id: t.context.policy_id,
       territory_id: territory,
-    } as unknown) as ParamsInterface),
+    } as unknown as ParamsInterface),
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {
     t.true(response);
   },

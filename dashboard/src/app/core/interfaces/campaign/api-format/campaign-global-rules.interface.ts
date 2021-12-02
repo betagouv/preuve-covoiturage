@@ -60,7 +60,7 @@ export class PassengerSeatRule implements GlobalRetributionRuleInterface {
 }
 
 function getRandomNumber(): number {
-  const crypto: Crypto = window.crypto || ((window as unknown) as { msCrypto: Crypto }).msCrypto; // ie 11 crypto object
+  const crypto: Crypto = window.crypto || (window as unknown as { msCrypto: Crypto }).msCrypto; // ie 11 crypto object
   if ('getRandomValues' in crypto) {
     const buf = new Uint8Array(1); // 0 -> 127
     crypto.getRandomValues(buf);

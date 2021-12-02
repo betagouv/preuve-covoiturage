@@ -21,7 +21,8 @@ import { ExtensionRegistry } from '../container/ExtensionRegistry';
  * @implements {ServiceContainerInterface}
  */
 export abstract class ServiceContainer
-  implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface {
+  implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface
+{
   readonly extensions: NewableType<ExtensionInterface>[] = [];
 
   protected registerHookRegistry = new HookRegistry<RegisterHookInterface>('register', false);

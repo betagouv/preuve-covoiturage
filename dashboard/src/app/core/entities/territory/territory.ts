@@ -60,7 +60,8 @@ export interface TerritoryUIStatus {
 
 export class Territory
   extends BaseModel
-  implements TerritoryBase, FormModel<TerritoryFormModel>, MapModel<Territory>, Clone<Territory> {
+  implements TerritoryBase, FormModel<TerritoryFormModel>, MapModel<Territory>, Clone<Territory>
+{
   level: TerritoryLevelEnum;
   name: string;
   shortname?: string;
