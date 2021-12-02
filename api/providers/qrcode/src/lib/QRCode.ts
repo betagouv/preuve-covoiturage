@@ -1,7 +1,7 @@
+/* eslint-disable max-len */
+
 import { QRErrorCorrectLevel } from './QRErrorCorrectLevel';
-
 import { QRCodeLimitLength } from './QRCodeLimitLength';
-
 import { QRCodeModel } from './QRCodeModel';
 
 function QRCode(options) {

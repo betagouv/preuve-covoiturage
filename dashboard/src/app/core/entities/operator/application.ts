@@ -8,7 +8,8 @@ import { FormModel } from '~/core/entities/IFormModel';
 
 export class Application
   extends BaseModel
-  implements Model, FormModel, MapModel<Application>, Clone<Application>, ApplicationInterface {
+  implements Model, FormModel, MapModel<Application>, Clone<Application>, ApplicationInterface
+{
   _id: number;
   uuid: string;
   owner_id: number;

@@ -55,8 +55,10 @@ const carpoolData: CarpoolInterface[] = [
 test.beforeEach((t) => {
   const fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   const configInterfaceResolver = new (class extends ConfigInterfaceResolver {})();
-  const certificateRepositoryProviderInterface = new (class extends CertificateRepositoryProviderInterfaceResolver {})();
-  const carpoolRepositoryProviderInterfaceResolver = new (class extends CarpoolRepositoryProviderInterfaceResolver {})();
+  const certificateRepositoryProviderInterface =
+    new (class extends CertificateRepositoryProviderInterfaceResolver {})();
+  const carpoolRepositoryProviderInterfaceResolver =
+    new (class extends CarpoolRepositoryProviderInterfaceResolver {})();
   const createCertificateAction = new CreateCertificateAction(
     fakeKernelInterfaceResolver,
     certificateRepositoryProviderInterface,

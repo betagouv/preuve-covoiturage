@@ -21,13 +21,11 @@ export class UserApiService extends JsonRpcCrud<User, UserListInterface, UserPat
   }
 
   me(): Observable<User> {
-    return this.http
-      .get<UserInterface | null>('profile', { withCredentials: true })
-      .pipe(
-        catchError(() => of(null)),
-        map((data) => (data ? new User(data) : null)),
-        shareReplay(),
-      );
+    return this.http.get<UserInterface | null>('profile', { withCredentials: true }).pipe(
+      catchError(() => of(null)),
+      map((data) => (data ? new User(data) : null)),
+      shareReplay(),
+    );
   }
 
   protected catchEmailConflict<T>(obs$: Observable<T>): Observable<T> {

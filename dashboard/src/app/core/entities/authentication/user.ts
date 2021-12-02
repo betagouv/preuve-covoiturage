@@ -25,7 +25,8 @@ export class BaseUser implements Model, UserListInterface {
 
 export class User
   extends BaseUser
-  implements FormModel, MapModel<User, UserInterface>, Clone<User>, UserPatchInterface, UserInterface {
+  implements FormModel, MapModel<User, UserInterface>, Clone<User>, UserPatchInterface, UserInterface
+{
   public permissions: string[];
 
   static formValueToUserPatch(formValues): UserPatchInterface {

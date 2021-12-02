@@ -8,7 +8,8 @@ interface StatefulParametersDefaultInterface {
 }
 
 export abstract class AbstractStatefulRule<P extends StatefulParametersDefaultInterface>
-  implements StatefulRuleInterface {
+  implements StatefulRuleInterface
+{
   static readonly type: type = STATEFUL;
   static readonly priority: priority = LOWEST;
 

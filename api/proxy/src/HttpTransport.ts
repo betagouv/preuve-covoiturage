@@ -631,31 +631,29 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       endpoint,
       apiRateLimiter(),
-      asyncHandler(
-        async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
-          // inject the req.session.user to context in the body
-          const isBatch = Array.isArray(req.body);
-          let user = get(req, 'session.user', null);
+      asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
+        // inject the req.session.user to context in the body
+        const isBatch = Array.isArray(req.body);
+        let user = get(req, 'session.user', null);
 
-          if (!user) {
-            throw new UnauthorizedException();
-          }
+        if (!user) {
+          throw new UnauthorizedException();
+        }
 
-          user = { ...user, ...(await this.getTerritoryInfos(user)) };
-          // nest the params and _context and inject the session user
-          // from { id: 1, jsonrpc: '2.0', method: 'a:b' params: {} }
-          // to { id: 1, jsonrpc: '2.0', method: 'a:b' params: { params: {}, _context: {} } }
-          req.body = isBatch
-            ? req.body.map((doc: RPCSingleCallType) => injectContext(doc, user))
-            : injectContext(req.body, user);
+        user = { ...user, ...(await this.getTerritoryInfos(user)) };
+        // nest the params and _context and inject the session user
+        // from { id: 1, jsonrpc: '2.0', method: 'a:b' params: {} }
+        // to { id: 1, jsonrpc: '2.0', method: 'a:b' params: { params: {}, _context: {} } }
+        req.body = isBatch
+          ? req.body.map((doc: RPCSingleCallType) => injectContext(doc, user))
+          : injectContext(req.body, user);
 
-          // pass the request to the kernel
-          const response = (await this.kernel.handle(req.body)) as RPCResponseType;
+        // pass the request to the kernel
+        const response = (await this.kernel.handle(req.body)) as RPCResponseType;
 
-          // send the response
-          this.send(res, response);
-        },
-      ),
+        // send the response
+        this.send(res, response);
+      }),
     );
   }
 

@@ -16,7 +16,7 @@ function defaultPagination(): PaginationState {
 export abstract class GetListStore<
   EntityT,
   EntityListT = EntityT,
-  JsonRpcGetListT extends JsonRpcGetList<EntityT, EntityListT> = JsonRpcGetList<EntityT, EntityListT>
+  JsonRpcGetListT extends JsonRpcGetList<EntityT, EntityListT> = JsonRpcGetList<EntityT, EntityListT>,
 > {
   protected entitiesSubject = new BehaviorSubject<EntityListT[]>([]);
   protected paginationSubject = new BehaviorSubject<PaginationState>({

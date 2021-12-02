@@ -106,7 +106,9 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
       values: [data.operator_id, data.journey_id, data.error_stage],
     };
 
-    return await (await this.connection.getClient().query(query)).rows.length;
+    return await (
+      await this.connection.getClient().query(query)
+    ).rows.length;
   }
 
   async log(data: LogParamsInterface): Promise<LogResultInterface> {

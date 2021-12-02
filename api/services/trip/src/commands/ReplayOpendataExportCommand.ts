@@ -34,8 +34,8 @@ export class ReplayOpendataExportCommand implements CommandInterface {
       const params: BuildExportParamInterface = {
         query: {
           date: {
-            start: (i.start.toISOString() as unknown) as Date,
-            end: (i.end.toISOString() as unknown) as Date,
+            start: i.start.toISOString() as unknown as Date,
+            end: i.end.toISOString() as unknown as Date,
           },
         },
         type: 'opendata',

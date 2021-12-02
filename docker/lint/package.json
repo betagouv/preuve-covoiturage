@@ -6,8 +6,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "yarn api && yarn dashboard",
-    "start:local": "yarn api:local && yarn dashboard:local",
+    "start": "yarn api & yarn dashboard",
+    "start:local": "yarn api:local & yarn dashboard:local",
     "api": "eslint --config .eslintrc.js --env node -f ./formatter.js '/code/api/**/src/**/*.ts'",
     "api:local": "eslint --config .eslintrc.js --env node '../../api/**/src/**/*.ts'",
     "dashboard": "eslint --config .eslintrc.js --env browser -f ./formatter.js '/code/dashboard/src/**/*.ts'",
@@ -15,11 +15,11 @@
     "clean": "rm -rf node_modules/*"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.16.1",
-    "@typescript-eslint/parser": "^4.16.1",
-    "eslint": "^7.21.0",
-    "eslint-plugin-prettier": "^3.3.1",
-    "prettier": "^2.2.1",
-    "typescript": "^4.2.3"
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
+    "eslint": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.5.0",
+    "typescript": "^4.5.2"
   }
 }
