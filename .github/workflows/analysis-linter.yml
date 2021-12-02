@@ -13,6 +13,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Install NodeJS 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Build linter
         run: touch api/.env && docker-compose -f docker-compose.e2e.yml build lint
       - name: Run Linter

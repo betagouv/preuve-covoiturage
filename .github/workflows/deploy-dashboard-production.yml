@@ -11,6 +11,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install NodeJS 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
       - name: Install and Build 🔧
         run: |
           cd dashboard
