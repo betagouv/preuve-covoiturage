@@ -216,10 +216,10 @@
     "@babel/helper-validator-identifier" "^7.15.7"
     to-fast-properties "^2.0.0"
 
-"@betagouvpdc/perimeters@^1.0.0":
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@betagouvpdc/perimeters/-/perimeters-1.0.0-beta.1.tgz#7c94f566439f5fa1fcfac42fd584adf4a2c3f50f"
-  integrity sha512-nbMbfawueS6anIB/FBbJ73CprEFfsMtHXpD/271qmwOqlvGZZe8jbmVZ1vjlwhjmKvmtHjQjscLT3KOT+EC+BQ==
+"@betagouvpdc/evolution-geo@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@betagouvpdc/evolution-geo/-/evolution-geo-1.0.0.tgz#1b87e54d0a84a538d7eebbb2e3e5d685e7510416"
+  integrity sha512-oCy/1XEGtdCJEiCfTE/NsNpnyYJWV8fKCq02HeuVSzDJFm3uB8G1IETQUpoJywj9VXW/fncjSLWrBh3K3Wo7ZA==
   dependencies:
     axios "^0.21.4"
     commander "^8.3.0"
@@ -230,7 +230,6 @@
     pg "^8.5.1"
     stream-json "^1.7.3"
     xlsx "^0.17.2"
-    zlib "^1.0.5"
 
 "@concordance/react@^2.0.0":
   version "2.0.0"
@@ -9227,8 +9226,3 @@ zip-stream@^4.1.0:
     archiver-utils "^2.1.0"
     compress-commons "^4.1.0"
     readable-stream "^3.6.0"
-
-zlib@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/zlib/-/zlib-1.0.5.tgz#6e7c972fc371c645a6afb03ab14769def114fcc0"
-  integrity sha1-bnyXL8NxxkWmr7A6sUdp3vEU/MA=

@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "main": "index.js",
   "scripts": {
-    "geo": "POSTGRES_SCHEMA=geo perimeters",
+    "geo:import": "POSTGRES_SCHEMA=geo evolution-geo import",
     "up": "db-migrate up",
     "down": "db-migrate down",
     "build": "exit 0",
@@ -16,7 +16,7 @@
     "coverage": "exit 0"
   },
   "dependencies": {
-    "@betagouvpdc/perimeters": "^1.0.0",
+    "@betagouvpdc/evolution-geo": "^1.0.0",
     "@types/node": "^16.9.4",
     "@types/sinon": "^10.0.3",
     "concurrently": "^6.2.1",
