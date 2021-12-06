@@ -14,6 +14,7 @@ stdenv.mkDerivation {
         python39
         gcc10
         cmake
+        p7zip
     ];
 
     shellHook = ''
