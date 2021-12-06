@@ -90,8 +90,10 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
           duration,
           start_position,
           start_territory_id,
+          start_geo_code,
           end_position,
           end_territory_id,
+          end_geo_code,
           distance,
           seats,
           created_at,
@@ -100,7 +102,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
           operator_journey_id,
           meta
         )
-        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`,
+        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)`,
       values: [
         shared.acquisition_id,
         shared.operator_id,
@@ -113,8 +115,10 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
         person.duration,
         `POINT(${person.start.lon} ${person.start.lat})`,
         person.start.territory_id,
+        person.start.insee,
         `POINT(${person.end.lon} ${person.end.lat})`,
         person.end.territory_id,
+        person.end.insee,
         person.distance,
         person.seats,
         shared.created_at,

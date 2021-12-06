@@ -132,11 +132,13 @@ export class NormalizationProcessAction extends AbstractAction {
         lon: person.start.lon,
         lat: person.start.lat,
         territory_id: person.start.territory_id,
+        insee: person.start.insee,
       },
       end: {
         lon: person.end.lon,
         lat: person.end.lat,
         territory_id: person.end.territory_id,
+        insee: person.end.insee,
       },
       seats: person.seats || 0,
       duration: driverDuration,
