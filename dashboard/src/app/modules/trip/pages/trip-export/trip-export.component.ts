@@ -14,7 +14,7 @@ import { ExportFilterUxInterface } from '~/core/interfaces/filter/exportFilterIn
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dialog.component';
 
-import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract'
+import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
 
 @Component({
   selector: 'app-trip-export',
@@ -78,12 +78,16 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
     });
   }
 
+  // Only export if opertor_id is not null for user != operator
   public export(): void {
     const data: TripExportParamsInterface = {
       date: this.form.value.date,
-      territory_ids_filter: this.form.value.territoryIds,
       operator_id: this.form.value.operators.list,
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+
+    if (this.form.value.territoryIds && this.form.value.territoryIds.length !== 0) {
+      data.territory_ids_filter = this.form.value.territoryIds;
     }
 
     this.dialog

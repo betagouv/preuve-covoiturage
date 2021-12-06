@@ -38,7 +38,7 @@ export const schema = {
       type: 'array',
       minItems: 1,
       items: { macro: 'serial' },
-    }
+    },
   },
 };
 

@@ -46,10 +46,6 @@ export class ExportAction extends Action {
       throw new InvalidParamsException('Missing user email');
     }
 
-    console.debug(`params.operator_id ->  ${params.operator_id}`);
-    console.debug(`params.territory_id -> ${params.territory_id}`);
-    console.debug(`params.territory_ids_filter -> ${params.territory_ids_filter}`);
-
     const tz = await this.tripRepository.validateTz(params.tz);
 
     // use || syntax here in case we get null value from date.{start|end},
@@ -78,7 +74,7 @@ export class ExportAction extends Action {
       buildParams.query.operator_id = Array.isArray(params.operator_id) ? params.operator_id : [params.operator_id];
     }
 
-    if (params.territory_ids_filter) {
+    if (params.territory_ids_filter && params.territory_ids_filter.length !== 0) {
       buildParams.query.territory_id = params.territory_ids_filter;
     }
 
@@ -103,7 +99,7 @@ export class ExportAction extends Action {
 
   private async checkTerritoryFilterIsAuthorized(params: ParamsInterface) {
     const child_territory_ids: number[] = await this.tripRepository.getTerritoryDescendants(params.territory_id);
-    if (child_territory_ids.map((ct) => params.territory_ids_filter.indexOf(ct)).find((f) => f === -1)) {
+    if (params.territory_ids_filter.find((tf) => child_territory_ids.indexOf(tf) === -1)) {
       throw new InvalidParamsException('Invalid list of territory_ids_filter');
     }
   }

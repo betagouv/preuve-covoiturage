@@ -1,17 +1,12 @@
 import { Injectable } from '@angular/core';
+import { endOfDay, startOfDay } from 'date-fns';
 import { cloneDeep } from 'lodash-es';
-import * as moment from 'moment';
-
 import { BehaviorSubject, Observable } from 'rxjs';
-
-import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
 import { LightTrip } from '~/core/entities/trip/trip';
-import { ExportFilterUxInterface, ExportFilterInterface } from '~/core/interfaces/filter/exportFilterInterface';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { GetListStore } from '~/core/services/store/getlist-store';
 import { TripApiService } from '~/modules/trip/services/trip-api.service';
-import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract'
-import { endOfDay, startOfDay } from 'date-fns';
-
 
 @Injectable({
   providedIn: 'root',
@@ -41,7 +36,7 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
       ...filter,
       date: {
         start: startOfDay(filter.date.start),
-        end: endOfDay(filter.date.end)
+        end: endOfDay(filter.date.end),
         // end: ((): string => {
         //   const end = moment(filter.date.end);
         //   const endOf = end.endOf('day');
@@ -84,4 +79,3 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     return this.rpcGetList.upload(file);
   }
 }
-

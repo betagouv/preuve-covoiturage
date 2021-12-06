@@ -461,9 +461,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async getTerritoryDescendants(territory_id: number): Promise<number[]> {
     const result = await this.connection.getClient().query({
-      text: 'SELECT tt._id FROM territory.territories tt RIGHT JOIN (SELECT UNNEST(territory.get_descendants(ARRAY[$1])) _id) t ON tt._id=t._id;',
+      text: 'SELECT UNNEST(territory.get_descendants(ARRAY[$1]::int[])) as _id',
       values: [territory_id],
     });
-    return result.rows;
+    return result.rows.map((r) => r._id);
   }
 }
