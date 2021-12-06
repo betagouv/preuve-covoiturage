@@ -8,9 +8,9 @@ import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionM
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
 import { alias } from '../shared/trip/export.schema';
 import {
-  ParamsInterface as SendExportParamsInterface, signature as sendExportSignature
+  ParamsInterface as SendExportParamsInterface,
+  signature as sendExportSignature,
 } from '../shared/trip/sendExport.contract';
-
 
 @handler({
   ...handlerConfig,
@@ -46,9 +46,9 @@ export class ExportAction extends Action {
       throw new InvalidParamsException('Missing user email');
     }
 
-    console.debug('params.operator_id ->  ' + params.operator_id)
-    console.debug('params.territory_id -> ' + params.territory_id)
-    console.debug('params.territory_ids_filter -> ' + params.territory_ids_filter)
+    console.debug(`params.operator_id ->  ${params.operator_id}`);
+    console.debug(`params.territory_id -> ${params.territory_id}`);
+    console.debug(`params.territory_ids_filter -> ${params.territory_ids_filter}`);
 
     const tz = await this.tripRepository.validateTz(params.tz);
 
@@ -78,8 +78,17 @@ export class ExportAction extends Action {
       buildParams.query.operator_id = Array.isArray(params.operator_id) ? params.operator_id : [params.operator_id];
     }
 
+    if (params.territory_ids_filter) {
+      buildParams.query.territory_id = params.territory_ids_filter;
+    }
+
     if (params.territory_id) {
-      buildParams.query.territory_id = Array.isArray(params.territory_id) ? params.territory_id : [params.territory_id];
+      // territory_id is only set by middleware for territory group
+      if (!params.territory_ids_filter) {
+        buildParams.query.territory_id = [params.territory_id];
+      } else {
+        await this.checkTerritoryFilterIsAuthorized(params);
+      }
     }
 
     await this.kernel.notify<SendExportParamsInterface>(sendExportSignature, buildParams, {
@@ -90,5 +99,12 @@ export class ExportAction extends Action {
         user: {},
       },
     });
+  }
+
+  private async checkTerritoryFilterIsAuthorized(params: ParamsInterface) {
+    const child_territory_ids: number[] = await this.tripRepository.getTerritoryDescendants(params.territory_id);
+    if (child_territory_ids.map((ct) => params.territory_ids_filter.indexOf(ct)).find((f) => f === -1)) {
+      throw new InvalidParamsException('Invalid list of territory_ids_filter');
+    }
   }
 }

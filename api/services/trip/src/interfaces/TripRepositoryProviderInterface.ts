@@ -28,6 +28,7 @@ export interface TripRepositoryInterface {
     type?: string,
   ): Promise<PgCursorHandler>;
   validateTz(tz?: string): Promise<TzResultInterface>;
+  getTerritoryDescendants(territory_id: number): Promise<number[]>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]> {
@@ -62,6 +63,10 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
   }
 
   public async validateTz(tz?: string): Promise<TzResultInterface> {
+    throw new Error('Not implemented');
+  }
+
+  public async getTerritoryDescendants(territory_id: number): Promise<number[]> {
     throw new Error('Not implemented');
   }
 }
