@@ -6,9 +6,9 @@ import { takeUntil } from 'rxjs/operators';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { ExportFilterUxInterface } from '~/core/interfaces/filter/exportFilterInterface';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract'
 
 @Component({
   selector: 'app-trip-export-dialog',
@@ -31,20 +31,19 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
     const p = {};
     const s = get(this.data, 'date.start');
     const e = get(this.data, 'date.end');
-    const o: number[] = get(this.data, 'operators.list', []);
-    const c: number = get(this.data, 'operators.count', 0);
-    const t: number[] = get(this.data, 'territoryIds', []);
+    const o: number[] = get(this.data, 'operator_id', []);
+    const t: number[] = get(this.data, 'territory_ids_filter', []);
 
     if (s) p['Début'] = format(this.castDate(s), 'PPPP', { locale: fr });
     if (e) p['Fin'] = format(this.castDate(e), 'PPPP', { locale: fr });
-    if (t.length !== 0)
+    if (t && t.length !== 0)
       p['Territoires'] = this.territories
         .filter((ter) => t.indexOf(ter._id) > -1)
         .map((ter) => ter.name)
         .sort()
         .join(', ')
         .trim();
-    if (o.length === 0 || o.length === c) {
+    if (o.length === this.operators.length) {
       p['Opérateurs'] = 'tous';
     } else if (o.length) {
       // convert operator_id to operator names
@@ -60,7 +59,7 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
   }
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) private data: ExportFilterUxInterface,
+    @Inject(MAT_DIALOG_DATA) private data: TripExportParamsInterface,
     private dialogRef: MatDialogRef<TripExportDialogComponent>,
     private commonDataService: CommonDataService,
   ) {

@@ -11,6 +11,7 @@ import { LightTrip } from '~/core/entities/trip/trip';
 // eslint-disable-next-line
 import { TripSearchInterfaceWithPagination } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 import { ResultInterface as TripSearchResultInterface } from '~/core/entities/api/shared/trip/list.contract';
+import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract'
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,7 @@ export class TripApiService extends JsonRpcGetList<LightTrip, LightTrip, any, Tr
     return this.callOne(jsonParams).pipe(map((data) => data.data.count));
   }
 
-  exportTrips(params: ExportFilterInterface): Observable<any> {
+  exportTrips(params: TripExportParamsInterface): Observable<any> {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:export`, params);
     return this.callOne(jsonRPCParam);
   }

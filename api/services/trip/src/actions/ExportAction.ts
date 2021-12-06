@@ -1,23 +1,21 @@
-import { get } from 'lodash';
-
+import { ContextType, handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, InvalidParamsException } from '@ilos/common';
 import { copyGroupIdFromContextMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
-
+import { get } from 'lodash';
+import * as middlewareConfig from '../config/middlewares';
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
+import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
 import { alias } from '../shared/trip/export.schema';
 import {
-  signature as sendExportSignature,
-  ParamsInterface as SendExportParamsInterface,
+  ParamsInterface as SendExportParamsInterface, signature as sendExportSignature
 } from '../shared/trip/sendExport.contract';
-import * as middlewareConfig from '../config/middlewares';
-import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
+
 
 @handler({
   ...handlerConfig,
   middlewares: [
-    ...copyGroupIdFromContextMiddlewares(['territory_id', 'operator_id'], null, true),
+    ...copyGroupIdFromContextMiddlewares(['territory_id', 'operator_id'], null, false),
     ...groupPermissionMiddlewaresHelper({
       territory: 'territory.trip.stats',
       operator: 'operator.trip.stats',
@@ -47,6 +45,10 @@ export class ExportAction extends Action {
     if (!email) {
       throw new InvalidParamsException('Missing user email');
     }
+
+    console.debug('params.operator_id ->  ' + params.operator_id)
+    console.debug('params.territory_id -> ' + params.territory_id)
+    console.debug('params.territory_ids_filter -> ' + params.territory_ids_filter)
 
     const tz = await this.tripRepository.validateTz(params.tz);
 

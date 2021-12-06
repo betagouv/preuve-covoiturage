@@ -9,6 +9,9 @@ import { LightTrip } from '~/core/entities/trip/trip';
 import { ExportFilterUxInterface, ExportFilterInterface } from '~/core/interfaces/filter/exportFilterInterface';
 import { GetListStore } from '~/core/services/store/getlist-store';
 import { TripApiService } from '~/modules/trip/services/trip-api.service';
+import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract'
+import { endOfDay, startOfDay } from 'date-fns';
+
 
 @Injectable({
   providedIn: 'root',
@@ -33,28 +36,20 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     return this._total$.value;
   }
 
-  public exportTrips(filter: ExportFilterUxInterface): Observable<any> {
-    // map moment to date
-    const params: ExportFilterInterface = {
-      tz: filter.tz,
+  public exportTrips(filter: TripExportParamsInterface): Observable<any> {
+    const params: TripExportParamsInterface = {
+      ...filter,
       date: {
-        start: moment(filter.date.start).startOf('day').toISOString(),
-        end: ((): string => {
-          const end = moment(filter.date.end);
-          const endOf = end.endOf('day');
-          const ago = moment().subtract(5, 'days');
-          return endOf.toDate().getTime() > ago.toDate().getTime() ? ago.toISOString() : endOf.toISOString();
-        })(),
+        start: startOfDay(filter.date.start),
+        end: endOfDay(filter.date.end)
+        // end: ((): string => {
+        //   const end = moment(filter.date.end);
+        //   const endOf = end.endOf('day');
+        //   const ago = moment().subtract(5, 'days');
+        //   return endOf.toDate().getTime() > ago.toDate().getTime() ? ago.toISOString() : endOf.toISOString();
+        // })(),
       },
     };
-
-    if (filter.operators && filter.operators.list && filter.operators.list.length) {
-      params.operator_id = filter.operators.list;
-    }
-
-    if (filter.territories && filter.territories.list && filter.territories.list.length) {
-      params.territory_id = filter.territories.list;
-    }
 
     return this.rpcGetList.exportTrips(params);
   }
@@ -89,3 +84,4 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     return this.rpcGetList.upload(file);
   }
 }
+

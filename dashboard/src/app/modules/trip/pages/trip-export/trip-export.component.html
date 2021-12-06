@@ -55,8 +55,8 @@
         </div>
       </div>
     
-      <div *ngIf="!user.isTerritory()">
-        <p>Territoires</p>
+      <div>
+        <p>Zones géographiques</p>
         <app-territories-autocomplete   
         [parentForm]="form"   
         [placeholder]="'Territoire, Ville, EPCI...'"
@@ -64,11 +64,6 @@
         [label]="'Territoire, Ville, EPCI...'"></app-territories-autocomplete>
       </div>
 
-      <!--
-        operators' list on 3 columns
-        - visible if territory or registry
-        - an operator is visible by a territory only if it accepted to be visible
-      -->
       <div *ngIf="!user.isOperator()" style="width: 100%;">
         <p >Opérateurs</p>
         <app-operators-checkboxes formControlName="operators"></app-operators-checkboxes>

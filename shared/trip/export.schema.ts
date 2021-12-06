@@ -1,6 +1,7 @@
 export const schema = {
   type: 'object',
   additionalProperties: false,
+  required: ['date', 'operator_id'],
   properties: {
     tz: {
       macro: 'tz',
@@ -31,17 +32,13 @@ export const schema = {
       ],
     },
     territory_id: {
-      oneOf: [
-        {
-          type: 'array',
-          minItems: 1,
-          items: { macro: 'serial' },
-        },
-        {
-          macro: 'serial',
-        },
-      ],
+      macro: 'serial',
     },
+    territory_ids_filter: {
+      type: 'array',
+      minItems: 1,
+      items: { macro: 'serial' },
+    }
   },
 };
 

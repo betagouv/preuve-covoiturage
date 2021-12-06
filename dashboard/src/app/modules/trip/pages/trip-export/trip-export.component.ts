@@ -14,6 +14,8 @@ import { ExportFilterUxInterface } from '~/core/interfaces/filter/exportFilterIn
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dialog.component';
 
+import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract'
+
 @Component({
   selector: 'app-trip-export',
   templateUrl: './trip-export.component.html',
@@ -77,10 +79,12 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   public export(): void {
-    const data: ExportFilterUxInterface = {
-      ...this.form.value,
+    const data: TripExportParamsInterface = {
+      date: this.form.value.date,
+      territory_ids_filter: this.form.value.territoryIds,
+      operator_id: this.form.value.operators.list,
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    };
+    }
 
     this.dialog
       .open(TripExportDialogComponent, { data })
