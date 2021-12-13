@@ -4,6 +4,7 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { endOfDay, startOfDay, sub } from 'date-fns';
+import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
@@ -63,8 +64,8 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       date: this.fb.group({
-        start: [startOfDay(sub(new Date(), { months: 1 }))],
-        end: [this.maxDateEnd],
+        start: [moment(startOfDay(sub(new Date(), { months: 1 })))],
+        end: [moment(this.maxDateEnd)],
       }),
       territoryIds: [],
       operators: {
@@ -77,7 +78,10 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   // Only export if opertor_id is not null for user != operator
   public export(): void {
     const data: TripExportParamsInterface = {
-      date: this.form.value.date,
+      date: {
+        start: this.form.value.date.start.toDate(),
+        end: this.form.value.date.end.toDate(),
+      },
       operator_id: this.form.value.operators.list,
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
