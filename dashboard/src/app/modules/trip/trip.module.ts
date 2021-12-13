@@ -16,7 +16,6 @@ import { TerritoryUiModule } from '../territory/modules/territory-ui/territory-u
 import { TripExportDialogComponent } from './pages/trip-export-dialog/trip-export-dialog.component';
 import { TripImportComponent } from './pages/trip-import/trip-import.component';
 import { TripListComponent } from './pages/trip-list/trip-list.component';
-import { TripMapsComponent } from './pages/trip-maps/trip-maps.component';
 import { TripStatsComponent } from './pages/trip-stats/trip-stats.component';
 import { TripLayoutComponent } from './trip-layout/trip-layout.component';
 
@@ -24,7 +23,6 @@ import { TripLayoutComponent } from './trip-layout/trip-layout.component';
   declarations: [
     TripLayoutComponent,
     TripStatsComponent,
-    TripMapsComponent,
     TripListComponent,
     TripImportComponent,
     TripExportComponent,
