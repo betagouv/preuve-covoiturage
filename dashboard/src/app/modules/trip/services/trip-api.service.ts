@@ -35,22 +35,4 @@ export class TripApiService extends JsonRpcGetList<LightTrip, LightTrip, any, Tr
     return new Subject();
     return this.callOne(this.paramGetList(params));
   }
-
-  upload(file: any): Observable<any> {
-    const jsonRPCParam = new JsonRPCParam(`acquisition.import`, { csv: file });
-    return this.callOne(jsonRPCParam, {
-      reportProgress: true,
-      // TODO: Gilles investigate specific post option paramters
-      // observe: 'events',
-    });
-  }
-
-  // public upload(file: any): Observable<any> {
-  //   const jsonRPCParam = new JsonRPCParam(`acquisition.import`, { csv: file });
-  //   return this._jsonRPC.callOne(jsonRPCParam, {
-  //     reportProgress: true,
-  //     // TODO: Gilles investigate specific post option paramters
-  //     // observe: 'events',
-  //   });
-  // }
 }

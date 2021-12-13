@@ -74,8 +74,4 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
 
     this.filterSubject.next(params);
   }
-
-  public upload(file: any): Observable<any> {
-    return this.rpcGetList.upload(file);
-  }
 }
