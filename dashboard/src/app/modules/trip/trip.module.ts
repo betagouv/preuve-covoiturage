@@ -14,7 +14,6 @@ import { SharedModule } from '~/shared/shared.module';
 import { OperatorUiModule } from '../operator/modules/operator-ui/operator-ui.module';
 import { TerritoryUiModule } from '../territory/modules/territory-ui/territory-ui.module';
 import { TripExportDialogComponent } from './pages/trip-export-dialog/trip-export-dialog.component';
-import { TripImportComponent } from './pages/trip-import/trip-import.component';
 import { TripListComponent } from './pages/trip-list/trip-list.component';
 import { TripStatsComponent } from './pages/trip-stats/trip-stats.component';
 import { TripLayoutComponent } from './trip-layout/trip-layout.component';
@@ -24,7 +23,6 @@ import { TripLayoutComponent } from './trip-layout/trip-layout.component';
     TripLayoutComponent,
     TripStatsComponent,
     TripListComponent,
-    TripImportComponent,
     TripExportComponent,
     TripExportDialogComponent,
   ],
