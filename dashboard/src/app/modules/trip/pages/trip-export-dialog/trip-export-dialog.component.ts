@@ -8,7 +8,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { CommonDataService } from '~/core/services/common-data.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract'
+import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
 
 @Component({
   selector: 'app-trip-export-dialog',

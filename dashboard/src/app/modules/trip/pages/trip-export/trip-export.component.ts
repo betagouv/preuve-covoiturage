@@ -1,20 +1,16 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDialog } from '@angular/material/dialog';
+import { endOfDay, startOfDay, sub } from 'date-fns';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
-import { sub, startOfDay, endOfDay } from 'date-fns';
-
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MomentDateAdapter } from '@angular/material-moment-adapter';
-
-import { DestroyObservable } from '~/core/components/destroy-observable';
-import { TripStoreService } from '~/modules/trip/services/trip-store.service';
-import { ExportFilterUxInterface } from '~/core/interfaces/filter/exportFilterInterface';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dialog.component';
-
 import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
+import { DestroyObservable } from '~/core/components/destroy-observable';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { TripStoreService } from '~/modules/trip/services/trip-store.service';
+import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dialog.component';
 
 @Component({
   selector: 'app-trip-export',
