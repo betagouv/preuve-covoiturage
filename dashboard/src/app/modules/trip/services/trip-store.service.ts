@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { endOfDay, startOfDay } from 'date-fns';
 import { cloneDeep } from 'lodash-es';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
 import { LightTrip } from '~/core/entities/trip/trip';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { GetListStore } from '~/core/services/store/getlist-store';
@@ -29,24 +27,6 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
 
   get total(): string {
     return this._total$.value;
-  }
-
-  public exportTrips(filter: TripExportParamsInterface): Observable<any> {
-    const params: TripExportParamsInterface = {
-      ...filter,
-      date: {
-        start: startOfDay(filter.date.start),
-        end: endOfDay(filter.date.end),
-        // end: ((): string => {
-        //   const end = moment(filter.date.end);
-        //   const endOf = end.endOf('day');
-        //   const ago = moment().subtract(5, 'days');
-        //   return endOf.toDate().getTime() > ago.toDate().getTime() ? ago.toISOString() : endOf.toISOString();
-        // })(),
-      },
-    };
-
-    return this.rpcGetList.exportTrips(params);
   }
 
   public load(filter: FilterInterface | {} = {}, refreshCount = true): void {

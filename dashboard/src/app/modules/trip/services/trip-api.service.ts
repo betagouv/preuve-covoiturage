@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { endOfDay, startOfDay } from 'date-fns';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
@@ -26,7 +27,14 @@ export class TripApiService extends JsonRpcGetList<LightTrip, LightTrip, any, Tr
     return this.callOne(jsonParams).pipe(map((data) => data.data.count));
   }
 
-  exportTrips(params: TripExportParamsInterface): Observable<any> {
+  exportTrips(filter: TripExportParamsInterface): Observable<any> {
+    const params: TripExportParamsInterface = {
+      ...filter,
+      date: {
+        start: startOfDay(filter.date.start),
+        end: endOfDay(filter.date.end),
+      },
+    };
     const jsonRPCParam = new JsonRPCParam(`${this.method}:export`, params);
     return this.callOne(jsonRPCParam);
   }

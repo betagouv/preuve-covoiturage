@@ -10,7 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { TripStoreService } from '~/modules/trip/services/trip-store.service';
+import { TripApiService } from '../../services/trip-api.service';
 import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dialog.component';
 
 @Component({
@@ -52,7 +52,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   constructor(
-    private tripService: TripStoreService,
+    private tripService: TripApiService,
     public user: AuthenticationService,
     private toastr: ToastrService,
     private fb: FormBuilder,
