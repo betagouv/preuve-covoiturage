@@ -24,7 +24,7 @@ export class AdministrationLayoutComponent {
     {
       path: '/admin/operator',
       label: 'Mon Opérateur',
-      show: () => this.auth.isOperator(),
+      show: () => this.auth.isOperatorOrAdmin(),
     },
     {
       path: '/admin/users',

@@ -125,7 +125,7 @@
 
             <!-- OPERATORS-->
             <app-operators-autocomplete
-              *ngIf="!auth.isOperator() && !auth.isTerritoryDemo()"
+              *ngIf="!auth.isOperatorOrAdmin() && !auth.isTerritoryDemo()"
               [parentForm]="filterForm"
             ></app-operators-autocomplete>
           </div>

@@ -42,6 +42,7 @@ import {
   ParamsInterface as ConfirmEmailParam,
   ResultInterface as ConfirmEmailResult,
 } from '~/core/entities/api/shared/user/confirmEmail.contract';
+import { Groups } from '../../enums/user/groups';
 
 @Injectable({
   providedIn: 'root',
@@ -77,8 +78,12 @@ export class AuthenticationService {
     return this.hasRole([Roles.TerritoryDemo], user);
   }
 
-  public static isOperator(user?: User): boolean {
+  public static isOperatorOrAdminRoles(user?: User): boolean {
     return this.hasRole([Roles.OperatorAdmin, Roles.OperatorUser], user);
+  }
+
+  public static isOperatorGroup(user?: User): boolean {
+    return user.group === Groups.Operator;
   }
 
   public static isTerritory(user?: User): boolean {
@@ -103,8 +108,12 @@ export class AuthenticationService {
     return this.user ? AuthenticationService.isRegistry(this.user) : false;
   }
 
-  public isOperator(): boolean {
-    return this.user ? AuthenticationService.isOperator(this.user) : false;
+  public isOperatorOrAdmin(): boolean {
+    return this.user ? AuthenticationService.isOperatorOrAdminRoles(this.user) : false;
+  }
+
+  public isOperatorGroup(): boolean {
+    return this.user ? AuthenticationService.isOperatorGroup(this.user) : false;
   }
 
   public isTerritoryDemo(): boolean {

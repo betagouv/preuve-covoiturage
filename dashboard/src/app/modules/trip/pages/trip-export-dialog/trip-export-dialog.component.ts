@@ -1,14 +1,14 @@
-import { get } from 'lodash';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { takeUntil } from 'rxjs/operators';
-
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-import { CommonDataService } from '~/core/services/common-data.service';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { get } from 'lodash';
+import { takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
+import { CommonDataService } from '~/core/services/common-data.service';
+// eslint-disable-next-line max-len
+import { ListOperatorItem } from '../../../operator/modules/operator-ui/components/operators-checkboxes/operators-checkboxes.component';
+import { TripExportParamWithOperators } from '../trip-export/trip-export.component';
 
 @Component({
   selector: 'app-trip-export-dialog',
@@ -16,8 +16,8 @@ import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/ex
   styleUrls: ['./trip-export-dialog.component.scss'],
 })
 export class TripExportDialogComponent extends DestroyObservable implements OnInit {
-  private operators: { _id: number; name: string }[];
   private territories: { _id: number; name: string }[];
+  private operators_count: number;
 
   // helper for display
   get hasProps() {
@@ -31,7 +31,7 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
     const p = {};
     const s = get(this.data, 'date.start');
     const e = get(this.data, 'date.end');
-    const o: number[] = get(this.data, 'operator_id', []);
+    const o: ListOperatorItem[] = get(this.data, 'operators', []);
     const t: number[] = get(this.data, 'territory_ids_filter', []);
 
     if (s) p['Début'] = format(this.castDate(s), 'PPPP', { locale: fr });
@@ -43,12 +43,10 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
         .sort()
         .join(', ')
         .trim();
-    if (o.length === this.operators.length) {
+    if (o.length === this.operators_count) {
       p['Opérateurs'] = 'tous';
     } else if (o.length) {
-      // convert operator_id to operator names
-      p[`Opérateur${o.length === 1 ? '' : 's'}`] = this.operators
-        .filter((op) => o.indexOf(op._id) > -1)
+      p[`Opérateur${o.length === 1 ? '' : 's'}`] = o
         .map((op) => op.name)
         .sort()
         .join(', ')
@@ -59,7 +57,7 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
   }
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) private data: TripExportParamsInterface,
+    @Inject(MAT_DIALOG_DATA) private data: TripExportParamWithOperators,
     private dialogRef: MatDialogRef<TripExportDialogComponent>,
     private commonDataService: CommonDataService,
   ) {
@@ -67,9 +65,7 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
   }
 
   ngOnInit() {
-    this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
-      this.operators = operators.map(({ _id, name }) => ({ _id, name }));
-    });
+    this.operators_count = this.commonDataService.operators.length;
     this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories) => {
       this.territories = territories.map(({ _id, name }) => ({ _id, name }));
     });

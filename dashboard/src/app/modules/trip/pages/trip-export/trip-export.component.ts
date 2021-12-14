@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,8 +10,16 @@ import { takeUntil } from 'rxjs/operators';
 import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import {
+  ListOperatorItem,
+  OperatorsCheckboxesComponent,
+} from '../../../operator/modules/operator-ui/components/operators-checkboxes/operators-checkboxes.component';
 import { TripApiService } from '../../services/trip-api.service';
 import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dialog.component';
+
+export interface TripExportParamWithOperators extends TripExportParamsInterface {
+  operators: ListOperatorItem[];
+}
 
 @Component({
   selector: 'app-trip-export',
@@ -35,7 +43,10 @@ import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dia
     },
   ],
 })
+// TODO : fix form required validator for user != operator group
 export class TripExportComponent extends DestroyObservable implements OnInit {
+  @ViewChild(OperatorsCheckboxesComponent, { static: false }) checkboxesForm: OperatorsCheckboxesComponent;
+
   public isExporting = false;
   public form: FormGroup;
 
@@ -64,25 +75,29 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       date: this.fb.group({
-        start: [moment(startOfDay(sub(new Date(), { months: 1 })))],
-        end: [moment(this.maxDateEnd)],
+        start: [moment(startOfDay(sub(new Date(), { months: 1 }))), [Validators.required]],
+        end: [moment(this.maxDateEnd), [Validators.required]],
       }),
       territoryIds: [],
-      operators: {
-        list: [],
-        count: 0,
-      },
     });
+  }
+
+  ngAfterViewInit() {
+    if (!this.user.isOperatorGroup()) {
+      this.form.addControl('operators', this.checkboxesForm.form);
+      this.checkboxesForm.form.setParent(this.form);
+    }
   }
 
   // Only export if opertor_id is not null for user != operator
   public export(): void {
-    const data: TripExportParamsInterface = {
+    const data: TripExportParamWithOperators = {
       date: {
         start: this.form.value.date.start.toDate(),
         end: this.form.value.date.end.toDate(),
       },
-      operator_id: this.form.value.operators.list,
+      operators: !this.user.isOperatorGroup() ? this.checkboxesForm.selectedOperators : [],
+      operator_id: !this.user.isOperatorGroup() ? this.checkboxesForm.selectedOperators.map((o) => o._id) : [],
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
 
@@ -97,6 +112,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
       .subscribe((result) => {
         if (result) {
           this.isExporting = true;
+          delete data.operators;
           this.tripService.exportTrips(data).subscribe(
             () => {
               this.toastr.success('Export en cours');

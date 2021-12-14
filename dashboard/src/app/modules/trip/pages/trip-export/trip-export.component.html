@@ -64,9 +64,9 @@
         [label]="'Territoire, Ville, EPCI...'"></app-territories-autocomplete>
       </div>
 
-      <div *ngIf="!user.isOperator()" style="width: 100%;">
+      <div *ngIf="!user.isOperatorOrAdmin()" style="width: 100%;">
         <p >Opérateurs</p>
-        <app-operators-checkboxes formControlName="operators"></app-operators-checkboxes>
+        <app-operators-checkboxes></app-operators-checkboxes>
       </div>
 
       <div class="actions">
