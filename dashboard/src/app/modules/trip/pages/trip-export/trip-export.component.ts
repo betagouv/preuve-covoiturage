@@ -82,7 +82,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterContentInit() {
     if (!this.user.isOperatorGroup()) {
       this.form.addControl('operators', this.checkboxesForm.form);
       this.checkboxesForm.form.setParent(this.form);

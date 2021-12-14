@@ -58,14 +58,14 @@
       <div>
         <p>Zones géographiques</p>
         <app-territories-autocomplete   
-        [parentForm]="form"   
+        [parentForm]="form"
         [placeholder]="'Territoire, Ville, EPCI...'"
         [title]="'Territoires'" 
         [label]="'Territoire, Ville, EPCI...'"></app-territories-autocomplete>
       </div>
 
       <div *ngIf="!user.isOperatorOrAdmin()" style="width: 100%;">
-        <p >Opérateurs</p>
+        <p>Opérateurs</p>
         <app-operators-checkboxes></app-operators-checkboxes>
       </div>
 
