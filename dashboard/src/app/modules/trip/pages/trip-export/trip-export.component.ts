@@ -45,7 +45,7 @@ export interface TripExportParamWithOperators extends TripExportParamsInterface 
 })
 // TODO : fix form required validator for user != operator group
 export class TripExportComponent extends DestroyObservable implements OnInit {
-  @ViewChild(OperatorsCheckboxesComponent, { static: false }) checkboxesForm: OperatorsCheckboxesComponent;
+  @ViewChild(OperatorsCheckboxesComponent, { static: true }) checkboxesForm: OperatorsCheckboxesComponent;
 
   public isExporting = false;
   public form: FormGroup;
@@ -80,13 +80,6 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
       }),
       territoryIds: [],
     });
-  }
-
-  ngAfterContentInit() {
-    if (!this.user.isOperatorGroup()) {
-      this.form.addControl('operators', this.checkboxesForm.form);
-      this.checkboxesForm.form.setParent(this.form);
-    }
   }
 
   // Only export if opertor_id is not null for user != operator
