@@ -34,7 +34,7 @@ You will need `docker` and `docker-compose`.
 3. Edit the `api/.env` file
 4. `docker-compose build`
 5. `./rebuild.sh`
-6. `docker-compose run api yarn migrate`
+6. `docker-compose run --rm migrator yarn migrate`
 
 ```shell
 terminal 1: docker-compose up api
