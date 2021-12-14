@@ -1,10 +1,8 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { Operator } from '../../../../../../core/entities/operator/operator';
 
 type OperatorId = number;
 
