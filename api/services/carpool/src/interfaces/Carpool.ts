@@ -11,7 +11,7 @@ export interface PeopleMetaInterface {
 
 export interface PositionInterface extends GeoPositionInterface {
   territory_id: number;
-  insee: string;
+  geo_code: string;
 }
 
 export interface PeopleInterface {

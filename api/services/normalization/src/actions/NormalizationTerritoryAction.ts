@@ -32,8 +32,8 @@ export class NormalizationTerritoryAction extends AbstractAction {
       }
     }
 
-    if ('insee' in position) {
-      result = await this.territory.findByInsee(position.insee);
+    if ('geo_code' in position) {
+      result = await this.territory.findByInsee(position.geo_code);
       if (result !== null) {
         return result;
       }

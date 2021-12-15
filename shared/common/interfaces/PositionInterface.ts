@@ -1,7 +1,7 @@
 export interface PositionInterface {
   datetime: Date;
   country?: string;
-  insee?: string;
+  geo_code?: string;
   lon?: number;
   lat?: number;
   literal?: string;
