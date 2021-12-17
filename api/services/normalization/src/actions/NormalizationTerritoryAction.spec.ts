@@ -16,7 +16,7 @@ test('Territory normalization action', async (t) => {
   const action = new NormalizationTerritoryAction(provider);
   const params = {
     start: {
-      insee: '012345',
+      geo_code: '012345',
       datetime: new Date('2020-01-01'),
     },
     end: {
@@ -27,7 +27,7 @@ test('Territory normalization action', async (t) => {
   };
   const result = await action.handle(params);
 
-  t.is(result.start, params.start.insee.length, 'have start with territory id matching insee');
+  t.is(result.start, params.start.geo_code.length, 'have start with territory id matching insee');
 
   t.is(result.end, Math.floor(params.end.lon + params.end.lat * 1000), 'have end with territory id matching lat lng');
 });

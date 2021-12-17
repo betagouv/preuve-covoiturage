@@ -105,9 +105,9 @@ export class GeoProvider implements GeoProviderInterface {
 
   async checkAndComplete(data: PartialGeoInterface): Promise<GeoInterface> {
     const { literal } = data;
-    let { lat, lon, insee } = data;
+    let { lat, lon, geo_code } = data;
 
-    if ((!lat || !lon) && !literal && !insee) {
+    if ((!lat || !lon) && !literal && !geo_code) {
       throw new Error('Missing point param (lat/lon or literal or insee)');
     }
 
@@ -115,18 +115,18 @@ export class GeoProvider implements GeoProviderInterface {
       if (literal) {
         ({ lat, lon } = await this.literalToPosition(literal));
       } else {
-        ({ lat, lon } = await this.inseeToPosition(insee));
+        ({ lat, lon } = await this.inseeToPosition(geo_code));
       }
     }
 
-    if (!insee) {
-      insee = await this.positionToInsee({ lat, lon });
+    if (!geo_code) {
+      geo_code = await this.positionToInsee({ lat, lon });
     }
 
     return {
       lat,
       lon,
-      insee,
+      geo_code,
     };
   }
 }

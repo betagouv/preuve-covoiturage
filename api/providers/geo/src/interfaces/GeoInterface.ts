@@ -1,7 +1,7 @@
 export interface GeoInterface {
   lat: number;
   lon: number;
-  insee: string;
+  geo_code: string;
 }
 
 export interface PartialGeoInterface extends Partial<GeoInterface> {

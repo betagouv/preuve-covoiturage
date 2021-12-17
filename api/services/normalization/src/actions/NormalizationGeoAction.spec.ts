@@ -9,7 +9,7 @@ class GeoProvider extends GeoProviderInterfaceResolver {
     return {
       lat: data.lat,
       lon: data.lon,
-      insee: `${data.lat.toString(10)}_${data.lon.toString(10)}`,
+      geo_code: `${data.lat.toString(10)}_${data.lon.toString(10)}`,
     };
   }
 }
@@ -33,17 +33,17 @@ test('Geo normalization action should return expected result', async (t) => {
 
   const resultProperties = Reflect.ownKeys(result);
   t.true(resultProperties.indexOf('start') > -1);
-  t.true(Reflect.ownKeys(result.start).indexOf('insee') > -1);
+  t.true(Reflect.ownKeys(result.start).indexOf('geo_code') > -1);
   t.is(
-    result.start.insee,
+    result.start.geo_code,
     `${result.start.lat.toString(10)}_${result.start.lon.toString(10)}`,
     'have start.insee property matching lat, lon values',
   );
 
   t.true(resultProperties.indexOf('end') > -1);
-  t.true(Reflect.ownKeys(result.end).indexOf('insee') > -1);
+  t.true(Reflect.ownKeys(result.end).indexOf('geo_code') > -1);
   t.is(
-    result.end.insee,
+    result.end.geo_code,
     `${result.end.lat.toString(10)}_${result.end.lon.toString(10)}`,
     'have end.insee property matching lat, lon values',
   );
