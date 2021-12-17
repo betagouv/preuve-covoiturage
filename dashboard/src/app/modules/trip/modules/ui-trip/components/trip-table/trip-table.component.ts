@@ -36,6 +36,7 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
       case TripStatusEnum.EXPIRED:
         return 'warning';
       case TripStatusEnum.CANCELED:
+      case TripStatusEnum.FRAUD:
         return 'error';
       default:
         return '';
@@ -49,6 +50,7 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
       case TripStatusEnum.EXPIRED:
         return 'warning';
       case TripStatusEnum.CANCELED:
+      case TripStatusEnum.FRAUD:
         return 'error';
       default:
         return '';
