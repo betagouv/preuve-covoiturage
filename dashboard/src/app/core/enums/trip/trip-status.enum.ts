@@ -3,6 +3,7 @@ export enum TripStatusEnum {
   OK = 'ok',
   EXPIRED = 'expired',
   CANCELED = 'canceled',
+  FRAUD = 'fraudcheck_error',
 }
 
 export const TRIP_STATUS: TripStatusEnum[] = Object.values(TripStatusEnum);
@@ -12,4 +13,5 @@ export const TRIP_STATUS_FR = {
   ok: 'Ok',
   expired: 'Expiré',
   canceled: 'Annulé',
+  fraud: 'Anomalie',
 };
