@@ -1,4 +1,7 @@
-DC="$(which docker-compose) -p pdce2e -f docker-compose.e2e.yml"
+#!/usr/bin/env bash
+
+DC_ENV="${DC_ENV:-e2e}"
+DC="$(which docker-compose) -p pdce2e -f docker-compose.$DC_ENV.yml"
 CERT_DIR="$(pwd)/docker/traefik/certs"
 
 generate_certs() {
@@ -8,6 +11,12 @@ generate_certs() {
   openssl genrsa -out $CERT_DIR/cert.key 2048
   openssl req -new -key $CERT_DIR/cert.key -out $CERT_DIR/cert.csr -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=*.covoiturage.test/emailAddress=technique@covoiturage.beta.gouv.fr"
   openssl x509 -req -in $CERT_DIR/cert.csr -CA $CERT_DIR/localCA.pem -CAkey $CERT_DIR/localCA.key -CAcreateserial -out $CERT_DIR/cert.crt -days 500 -sha256
+}
+
+ensure_certs() {
+  if [ ! -f $CERT_DIR/cert.key ]; then
+      generate_certs
+  fi
 }
 
 rebuild() {
@@ -41,11 +50,14 @@ create_bucket() {
   $DC run -e BUCKET=$1 s3-init
 }
 
-e2e() {
-  echo "Start e2e test"
-  mkdir -p /tmp/cypress/screenshots
-  mkdir -p /tmp/cypress/videos
-  $DC run cypress
+bootstrap() {
+  ensure_certs && \
+  start_services && \
+  seed_data && \
+  create_bucket local-pdc-export && \
+  create_bucket local-pdc-public && \
+  start_app && \
+  wait_for_app
 }
 
 stop() {
@@ -53,15 +65,38 @@ stop() {
   $DC down -v
 }
 
-if [ "$1" = "rebuild" ]; then
-  rebuild
-fi
+run_e2e() {
+  echo "Start e2e test"
+  mkdir -p /tmp/cypress/screenshots
+  mkdir -p /tmp/cypress/videos
+  $DC run cypress
+}
 
-if [ ! -f $CERT_DIR/cert.key ]; then
-    generate_certs
-fi
+e2e() {
+  bootstrap && run_e2e 2> /dev/null
+  EXIT=$?
+  stop
+  exit $EXIT
+}
 
-start_services && seed_data && create_bucket local-pdc-export && create_bucket local-pdc-public && start_app && wait_for_app && e2e 2> /dev/null
-EXIT=$?
-stop
-exit $EXIT
+local_e2e() {
+  ( cd tests && \
+    CYPRESS_MAILHOG_URL=https://mailer.covoiturage.test/api \
+    CYPRESS_BASE_URL=https://app.covoiturage.test \
+    yarn cy:open
+  )
+}
+
+run_integration() {
+  echo "Start integration test"
+  $DC run api sh -c "yarn install && yarn test:integration"
+}
+
+integration() {
+  bootstrap && run_integration 2> /dev/null
+  EXIT=$?
+  stop
+  exit $EXIT
+}
+
+"$@"
