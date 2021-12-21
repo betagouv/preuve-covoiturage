@@ -17,11 +17,11 @@
   },
   "dependencies": {
     "@betagouvpdc/evolution-geo": "^1.0.0",
-    "@types/node": "^16.9.4",
-    "@types/sinon": "^10.0.3",
-    "concurrently": "^6.2.1",
-    "db-migrate": "^0.11.12",
+    "@types/node": "^17.0.2",
+    "@types/sinon": "^10.0.6",
+    "concurrently": "^6.5.1",
+    "db-migrate": "^0.11.13",
     "db-migrate-pg": "^1.2.2",
-    "ts-node": "^10.2.1"
+    "ts-node": "^10.4.0"
   }
 }
