@@ -35,7 +35,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
 
     if (type) {
       // Ugly workaround to make new interface work with old territories model
-      const actualTerritoryType: string = type === GeoCodeTypeEnum.City ? 'town' : 'region';
+      const actualTerritoryType: string = type === GeoCodeTypeEnum.City ? 'town' : type;
       where.push(`tt.level = $${where.length + 1}`);
       values.push(`${actualTerritoryType}`);
     }
@@ -48,27 +48,25 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     const totalResult = await this.connection.getClient().query<{ count: string }>({
       values,
       text: `
-        SELECT count(*) FROM ${this.table} as tt
-        ${where.length ? ` WHERE ${where.join(' AND ')}` : ''}
+        SELECT count(*) FROM ${
+          this.table
+        } as tt LEFT OUTER JOIN territory.territory_codes as tc ON tt._id = tc.territory_id
+        WHERE (tc.type = 'insee' OR tc.type = 'codedep' OR tc.type IS NULL) AND ${where.join(' AND ')}
       `,
     });
 
     const total = parseFloat(totalResult.rows[0].count || '0');
-
-    // always add the limit
-    values.push(limit);
-    values.push(offset);
 
     const results = await this.connection.getClient().query({
       values,
       text: `
         SELECT tt._id as _id, tt.name as name, tc.value as insee FROM ${
           this.table
-        } as tt LEFT JOIN territory.territory_codes as tc ON tt._id = tc.territory_id
-        ${where.length ? ` WHERE ${where.join(' AND ')}` : ''}
+        } as tt LEFT OUTER JOIN territory.territory_codes as tc ON tt._id = tc.territory_id
+        WHERE (tc.type = 'insee' OR tc.type = 'codedep' OR tc.type IS NULL) AND ${where.join(' AND ')}
         ORDER BY name ASC
-        LIMIT $${where.length + 1}
-        OFFSET $${where.length + 2}
+        LIMIT ${limit}
+        OFFSET ${offset}
       `,
     });
 
