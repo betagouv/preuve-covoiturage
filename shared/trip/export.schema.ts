@@ -1,7 +1,7 @@
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['date', 'operator_id'],
+  required: ['date'],
   properties: {
     tz: {
       macro: 'tz',

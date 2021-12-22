@@ -42,7 +42,6 @@ export class OperatorsCheckboxesComponent extends DestroyObservable implements O
 
   ngOnInit(): void {
     this.form = this.fb.group({ boxes: new FormArray([]) });
-    this.form.setValidators([Validators.required]); // Doesn't affect validation
 
     this.commonDataService.operators$
       .pipe(
