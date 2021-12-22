@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: '14'
       - name: Start
-        run: sh e2e.sh
+        run: ./tool.sh e2e
       - name: Upload videos
         if: always()
         uses: actions/upload-artifact@v2

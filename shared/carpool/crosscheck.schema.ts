@@ -8,6 +8,7 @@ const positionSchema = {
     lat: { macro: 'lat' },
     lon: { macro: 'lon' },
     territory_id: { macro: 'serial' },
+    geo_code: { macro: 'insee' },
   },
 };
 

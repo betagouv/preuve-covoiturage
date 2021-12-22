@@ -20,7 +20,7 @@ export class NormalizationTerritoryAction extends AbstractAction {
   }
 
   private async fillTerritories(position: PositionInterface): Promise<number> {
-    if (!('insee' in position) && (!('lat' in position) || !('lon' in position))) {
+    if (!('geo_code' in position) && (!('lat' in position) || !('lon' in position))) {
       throw new InvalidParamsException('Missing INSEE code or lat & lon');
     }
 
@@ -32,8 +32,8 @@ export class NormalizationTerritoryAction extends AbstractAction {
       }
     }
 
-    if ('insee' in position) {
-      result = await this.territory.findByInsee(position.insee);
+    if ('geo_code' in position) {
+      result = await this.territory.findByInsee(position.geo_code);
       if (result !== null) {
         return result;
       }

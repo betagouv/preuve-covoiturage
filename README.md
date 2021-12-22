@@ -34,7 +34,7 @@ You will need `docker` and `docker-compose`.
 3. Edit the `api/.env` file
 4. `docker-compose build`
 5. `./rebuild.sh`
-6. `docker-compose run api yarn migrate`
+6. `docker-compose run --rm migrator yarn migrate`
 
 ```shell
 terminal 1: docker-compose up api
@@ -71,18 +71,13 @@ yarn test --browsers Firefox
 
 ```shell
 # standalone e2e (running in CI)
-bash e2e.sh
+./tool.sh e2e
 ```
 
 ```shell
 # local e2e
-vi .env (set your database to 'test')
-docker-compose up api (worker is started too)
-docker-compose up dashboard
-docker-compose run api yarn workspace @pdc/proxy ilos seed
-cd tests
-yarn
-CYPRESS_BASE_URL=http://localhost:4200 yarn cy:open
+./tool.sh bootstrap
+./tool.sh local_e2e
 ```
 
 ##### Notes
