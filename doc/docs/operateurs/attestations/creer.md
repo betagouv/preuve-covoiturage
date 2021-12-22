@@ -60,7 +60,7 @@ Les dates sont au format ISO: `2021-01-01T00:00:00+0100`.
 - `start_at`: date de début
 - `end_at`: date de fin
 
-La période utilisées est supérieure ou égale à la date de début et strictement inférieure à la date de fin.
+La période utilisée est supérieure ou égale à la date de début et strictement inférieure à la date de fin.
 
 Par exemple, pour les trajets entre le 1er janvier et le 30 juin inclus :
 
