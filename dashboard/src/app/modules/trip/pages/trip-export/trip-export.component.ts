@@ -82,7 +82,6 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
     });
   }
 
-  // Only export if opertor_id is not null for user != operator
   public export(): void {
     const data: TripExportParamWithOperators = {
       date: {
