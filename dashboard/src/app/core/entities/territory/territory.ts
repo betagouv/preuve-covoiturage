@@ -1,18 +1,15 @@
 /* tslint:disable:variable-name*/
-import { assignOrDeleteProperty } from '~/core/entities/utils';
-
 import { BaseModel } from '~/core/entities/BaseModel';
+import { Clone } from '~/core/entities/IClone';
 import { FormModel } from '~/core/entities/IFormModel';
 import { MapModel } from '~/core/entities/IMapModel';
-import { Clone } from '~/core/entities/IClone';
-
+import { assignOrDeleteProperty } from '~/core/entities/utils';
+import { Territory as TerritoryBaseEdit } from '../api/shared/territory/update.contract';
 import { Address } from '../shared/address';
 import { Company } from '../shared/company';
-import { Contacts } from '../shared/contacts';
-import { Territory as TerritoryBaseEdit } from '../api/shared/territory/update.contract';
-import { Contact } from '../shared/contact';
-import { TerritorySelectionUIState } from '~/modules/territory/modules/territory-ui/data/TerritorySelectionBlock';
 import { CompanyV2 } from '../shared/companyV2';
+import { Contact } from '../shared/contact';
+import { Contacts } from '../shared/contacts';
 
 export enum TerritoryLevelEnum {
   Null = '',
@@ -33,12 +30,6 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   company_id?: number;
   insee?: any;
   contacts?: Contacts;
-}
-
-export interface TerritoryUIStatus {
-  ui_selection_state?: TerritorySelectionUIState[];
-  format?: string;
-  insee?: string;
 }
 
 export class Territory
