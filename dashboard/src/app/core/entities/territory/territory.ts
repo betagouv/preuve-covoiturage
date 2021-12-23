@@ -4,6 +4,7 @@ import { Clone } from '~/core/entities/IClone';
 import { FormModel } from '~/core/entities/IFormModel';
 import { MapModel } from '~/core/entities/IMapModel';
 import { assignOrDeleteProperty } from '~/core/entities/utils';
+import { TerritoryBaseInterface } from '../api/shared/territory/common/interfaces/TerritoryInterface';
 import { Territory as TerritoryBaseEdit } from '../api/shared/territory/update.contract';
 import { Address } from '../shared/address';
 import { Company } from '../shared/company';
@@ -26,7 +27,6 @@ export enum TerritoryLevelEnum {
 
 export interface TerritoryBase extends TerritoryBaseEdit {
   name: string;
-  shortname?: string;
   company_id?: number;
   insee?: any;
   contacts?: Contacts;
@@ -34,11 +34,10 @@ export interface TerritoryBase extends TerritoryBaseEdit {
 
 export class Territory
   extends BaseModel
-  implements TerritoryBase, FormModel<TerritoryFormModel>, MapModel<Territory>, Clone<Territory>
+  implements TerritoryBaseInterface, FormModel<TerritoryFormModel>, MapModel<Territory>, Clone<Territory>
 {
   level: TerritoryLevelEnum;
   name: string;
-  shortname?: string;
   company_id?: number;
   company?: CompanyV2;
 
@@ -62,8 +61,6 @@ export class Territory
     assignOrDeleteProperty(base, this, 'address', (data) => new Address(data.address));
     assignOrDeleteProperty(base, this, 'company', (data) => ({ ...data.company }));
 
-    if (base.shortname) this.shortname = base.shortname;
-    else delete this.shortname;
     if (base.company_id !== undefined) this.company_id = base.company_id;
     else delete this.company_id;
     if (base._id) this._id = base._id;
@@ -92,7 +89,6 @@ export class Territory
     return fullformMode
       ? {
           name: this.name ? this.name : '',
-          shortname: this.shortname ? this.shortname : '',
           company: new Company(this.company).toFormValues(),
           contacts: new Contacts(this.contacts).toFormValues(),
           address: new Address(this.address).toFormValues(),
