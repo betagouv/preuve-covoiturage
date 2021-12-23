@@ -31,12 +31,8 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   name: string;
   shortname?: string;
   company_id?: number;
-  active?: boolean;
-  activable?: boolean;
-  ui_status?: TerritoryUIStatus;
   insee?: any;
   contacts?: Contacts;
-  density?: number;
 }
 
 export interface TerritoryUIStatus {
@@ -87,16 +83,12 @@ export class Territory
     return this;
   }
 
-  // TODO: refactor this
   updateFromFormValues(formValues: TerritoryFormModel): void {
     this.name = formValues.name;
     this.level = TerritoryLevelEnum.Towngroup;
 
     assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
     assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
-
-    if (formValues.shortname) this.shortname = formValues.shortname;
-    else delete this.shortname;
 
     if (formValues.company_id) this.company_id = formValues.company_id;
     else delete this.company_id;
@@ -126,15 +118,7 @@ export interface TerritoryFormContactModel {
 }
 export interface TerritoryFormModel {
   name: string;
-  // level: TerritoryLevelEnum;
-  // active?: boolean;
   level: string;
-  // siret: string;
-  density?: number;
-  shortname?: string;
-  // insee?: string[];
-  active?: boolean;
-  activable?: boolean;
   company?: {
     siret: string;
     naf_entreprise: string; // tslint:disable-line variable-name
@@ -145,13 +129,6 @@ export interface TerritoryFormModel {
   company_id?: number;
   contacts?: { gdpr_dpo: Contact; gdpr_controller: Contact; technical: Contact };
   address?: Address;
-  uiSelectionState: TerritorySelectionUIState[];
-  format: string;
   inseeString: string;
   insee?: string[];
-
-  // public address?: Address;
-
-  // public cgu?: CGU;
-  // public coordinates?: any[];
 }
