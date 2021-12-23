@@ -57,6 +57,9 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
 
     const total = parseFloat(totalResult.rows[0].count || '0');
 
+    values.push(limit);
+    values.push(offset);
+
     const results = await this.connection.getClient().query({
       values,
       text: `
@@ -65,8 +68,8 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
         } as tt LEFT OUTER JOIN territory.territory_codes as tc ON tt._id = tc.territory_id
         WHERE (tc.type = 'insee' OR tc.type = 'codedep' OR tc.type IS NULL) AND ${where.join(' AND ')}
         ORDER BY name ASC
-        LIMIT ${limit}
-        OFFSET ${offset}
+        LIMIT $${where.length + 1}
+        OFFSET $${where.length + 2}
       `,
     });
 
