@@ -30,7 +30,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     const result = await this.connection.getClient().query({
       text: `
         SELECT
-          _id, created_at, updated_at, name, shortname, level, company_id, contacts
+          _id, created_at, updated_at, name, level, company_id, contacts
         FROM ${this.table}
         WHERE 
           _id = $1 AND 

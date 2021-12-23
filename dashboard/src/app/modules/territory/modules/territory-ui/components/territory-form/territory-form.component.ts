@@ -129,8 +129,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
-    // Map insees to territory_id
-    formValues.insee = inseeList;
     formValues.children = territories.map((t) => t.territory_id);
 
     if (this.isNew()) {

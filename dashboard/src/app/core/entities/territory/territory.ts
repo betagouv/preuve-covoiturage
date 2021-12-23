@@ -66,11 +66,6 @@ export class Territory
     else delete this.company_id;
     if (base._id) this._id = base._id;
     else delete this._id;
-    if (base.insee) this.insee = base.insee;
-    else delete this.insee;
-
-    if (base.children) this.children = base.children;
-    else delete this.children;
 
     return this;
   }
@@ -78,14 +73,11 @@ export class Territory
   updateFromFormValues(formValues: TerritoryFormModel): void {
     this.name = formValues.name;
     this.level = TerritoryLevelEnum.Towngroup;
+    this.company_id = formValues.company_id;
+    this.children = formValues.children;
 
     assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
     assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
-
-    if (formValues.company_id) this.company_id = formValues.company_id;
-    else delete this.company_id;
-
-    this.children = formValues.children;
   }
 
   toFormValues(fullformMode = true): any {
