@@ -27,17 +27,6 @@ export enum TerritoryLevelEnum {
   Other = 'other',
 }
 
-export interface TerritoryTree {
-  _id: number;
-  name: string;
-  children?: TerritoryTree[];
-  level?: TerritoryLevelEnum;
-  parents?: number[];
-  hasParents?: boolean;
-  indent: number;
-  activable: boolean;
-}
-
 export interface TerritoryBase extends TerritoryBaseEdit {
   name: string;
   shortname?: string;
