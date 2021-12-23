@@ -69,6 +69,9 @@ export class Territory
     if (base.insee) this.insee = base.insee;
     else delete this.insee;
 
+    if (base.children) this.children = base.children;
+    else delete this.children;
+
     return this;
   }
 
@@ -81,6 +84,8 @@ export class Territory
 
     if (formValues.company_id) this.company_id = formValues.company_id;
     else delete this.company_id;
+
+    this.children = formValues.children;
   }
 
   toFormValues(fullformMode = true): any {
@@ -116,4 +121,5 @@ export interface TerritoryFormModel {
   address?: Address;
   inseeString: string;
   insee?: string[];
+  children: number[];
 }

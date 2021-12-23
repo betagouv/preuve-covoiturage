@@ -5,7 +5,7 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
   return {
     $id: alias,
     type: 'object',
-    required: ['name', 'company_id', 'address', 'level', ...extrafieldKeys],
+    required: ['name', 'company_id', 'address', 'level', 'children', ...extrafieldKeys],
     additionalProperties: true,
     properties: {
       contacts: { contacts },
@@ -22,12 +22,9 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
           cedex: { type: 'string' },
         },
       },
-      insee: {
+      children: {
         type: 'array',
-        uniqueItems: true,
-        minItems: 0,
-        maxItems: 2000,
-        items: { macro: 'insee' },
+        items: { macro: 'serial' },
       },
       name: { macro: 'varchar' },
       ...extrafields,
