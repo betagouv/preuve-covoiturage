@@ -5,11 +5,11 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
   return {
     $id: alias,
     type: 'object',
-    required: ['name', 'insee', 'company_id', ...extrafieldKeys],
-    additionalProperties: false,
+    required: ['name', 'insee', 'company_id', 'address', 'level', ...extrafieldKeys],
+    additionalProperties: true,
     properties: {
       contacts: { contacts },
-      company_id: {},
+      company_id: { macro: 'serial' },
       address: {
         type: 'object',
         required: ['city', 'country', 'postcode', 'street'],

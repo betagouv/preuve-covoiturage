@@ -164,16 +164,15 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   }
 
   async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
-    const fields = ['name', 'shortname', 'level', 'contacts', 'address', 'active', 'activable', 'company_id'];
+    const fields = ['name', 'level', 'contacts', 'address', 'active', 'activable', 'company_id'];
 
     const values: any[] = [
       data.name,
-      '',
       data.level,
       data.contacts || '{}',
       data.address || '{}',
-      true,
-      true,
+      true, // active
+      true, // activable
       data.company_id ? data.company_id : null,
     ];
 
