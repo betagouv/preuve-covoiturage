@@ -24,6 +24,7 @@ export interface TerritoryBaseInterface {
   level: TerritoryLevelEnum | string;
   name: string;
   company_id?: number;
+  children: number[];
   contacts?: ContactsInterface;
   address: TerritoryAddress;
 }

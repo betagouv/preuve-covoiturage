@@ -40,6 +40,7 @@ export class Territory
   name: string;
   company_id?: number;
   company?: CompanyV2;
+  children: number[];
 
   address: Address;
   contacts?: Contacts;
