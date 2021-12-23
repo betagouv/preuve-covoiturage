@@ -130,6 +130,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     const resultData = result.rows[0];
 
+    // TODO: maybe remove this as territory_codes db is now immutable
     if (data.insee !== undefined && data.insee.length > 0) {
       const query = {
         text: `INSERT INTO territory.territory_codes(territory_id,type,value) VALUES ${data.insee

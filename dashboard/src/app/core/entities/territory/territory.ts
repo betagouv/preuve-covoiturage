@@ -80,9 +80,6 @@ export class Territory
 
     if (formValues.company_id) this.company_id = formValues.company_id;
     else delete this.company_id;
-
-    if (formValues.insee) this.insee = formValues.insee;
-    else delete this.insee;
   }
 
   toFormValues(fullformMode = true): any {
