@@ -25,26 +25,4 @@ export class CompanyService extends JsonRpcGetList<CompanyV2> {
   getById(id: number): Observable<CompanyV2> {
     return this.get({ query: { _id: id } } as any);
   }
-
-  // findCompany(siret:string): Observable<CompanyV2> {
-  //   return this.get(params).pipe(
-  //     map((company) => {
-  //       // TODO : apply company migration
-  //       return null;
-  //       /*
-  //       const siren = parseInt(params.siret.substr(0, 9), 10);
-  //       let tvaPrefix = ((12 + 3 * (siren % 97)) % 97).toString();
-  //       for (let i = 0; i < 2 - tvaPrefix.length; i += 1) {
-  //         tvaPrefix = `0${tvaPrefix}`;
-  //       }
-  //       // tslint:disable-next-line:variable-name
-  //       const intra_vat = `FR${tvaPrefix}${siren}`;
-  //       return new CompanyV2({
-  //         ...company,
-  //         intra_vat,
-  //       });
-  //       */
-  //     }),
-  //   );
-  // }
 }

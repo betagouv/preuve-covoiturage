@@ -4,11 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
-import { Territory } from '~/core/entities/territory/territory';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-import { CrudActions, JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 import { ParamsInterface as FindByIdParamsInterface, signature as signatureFind } from 'shared/territory/find.contract';
 import {
   ParamsInterface as ParamsInterfaceFindByCode,
@@ -21,6 +16,11 @@ import {
   ParamsInterface as PatchContactParamsInterface,
   signature as signaturePatch,
 } from 'shared/territory/patchContacts.contract';
+import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
+import { Territory } from '~/core/entities/territory/territory';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { CrudActions, JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 import { TerritoryBaseInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 
 @Injectable({
