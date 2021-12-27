@@ -1,8 +1,6 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { TerritoryLevelEnum } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
@@ -11,6 +9,7 @@ import { Territory, TerritoryBase } from '../../../../../../core/entities/territ
 import { Groups } from '../../../../../../core/enums/user/groups';
 import { Roles } from '../../../../../../core/enums/user/roles';
 import { AuthenticationService } from '../../../../../../core/services/authentication/authentication.service';
+import { CompanyService } from '../../../../../company/services/company.service';
 import { TerritoryApiService } from '../../../../services/territory-api.service';
 import { TerritoryStoreService } from '../../../../services/territory-store.service';
 import { TerritoryFormComponent } from './territory-form.component';
@@ -20,9 +19,9 @@ describe('TerritoryFormComponent', () => {
     TestBed.configureTestingModule({
       declarations: [TerritoryFormComponent],
       schemas: [NO_ERRORS_SCHEMA],
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
       providers: [
         FormBuilder,
+        { provide: CompanyService, useValue: {} },
         { provide: ToastrService, useValue: {} },
         { provide: TerritoryApiService, useValue: {} },
         {
@@ -67,9 +66,8 @@ describe('TerritoryFormComponent', () => {
     const territory: Territory = new Territory(null);
 
     comp.territory = new Territory(territory.map(baseTerritory));
-    console.debug(comp.territory);
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
+    await fixture.whenStable().then(() => {
       expect(comp.territoryForm.get('name').value).toEqual("Communauté de communes du Pays de L'Arbresle");
     });
   });
