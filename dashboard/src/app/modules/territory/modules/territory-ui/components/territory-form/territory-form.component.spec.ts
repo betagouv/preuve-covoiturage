@@ -5,8 +5,6 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { TerritoryLevelEnum } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { User } from '../../../../../../core/entities/authentication/user';
-import { Address } from '../../../../../../core/entities/shared/address';
-import { Company } from '../../../../../../core/entities/shared/company';
 import { CompanyV2 } from '../../../../../../core/entities/shared/companyV2';
 import { Contact } from '../../../../../../core/entities/shared/contact';
 import { Contacts } from '../../../../../../core/entities/shared/contacts';
@@ -14,9 +12,6 @@ import { Territory, TerritoryBase } from '../../../../../../core/entities/territ
 import { Groups } from '../../../../../../core/enums/user/groups';
 import { Roles } from '../../../../../../core/enums/user/roles';
 import { AuthenticationService } from '../../../../../../core/services/authentication/authentication.service';
-import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
-import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
-import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
 import { CompanyService } from '../../../../../company/services/company.service';
 import { TerritoryApiService } from '../../../../services/territory-api.service';
 import { TerritoryStoreService } from '../../../../services/territory-store.service';
@@ -122,7 +117,7 @@ describe('TerritoryFormComponent', () => {
     });
   });
 
-  // TODO: merge with previous test
+  // TODO: merge scenario with previous test
   it('should submit new territory form', async () => {
     // Arrange
     const fixture = TestBed.createComponent(TerritoryFormComponent);
@@ -136,6 +131,7 @@ describe('TerritoryFormComponent', () => {
     comp.territoryForm.controls.company.get('siret').setValue('24690062500012');
     comp.territoryForm.controls.name.setValue("Communauté de communes du Pays de L'Arbresle");
     comp.territoryForm.controls.inseeString.setValue('69010,69021');
+    comp.territoryForm.controls.contacts.get('gdpr_controller.email').setValue('gdpr_controller@mail.com');
     fixture.detectChanges();
 
     await fixture.whenStable().then(() => {
@@ -147,7 +143,12 @@ describe('TerritoryFormComponent', () => {
         name: "Communauté de communes du Pays de L'Arbresle",
         company_id: 4,
         contacts: {
-          gdpr_controller: { firstname: undefined, lastname: undefined, email: undefined, phone: undefined },
+          gdpr_controller: {
+            firstname: undefined,
+            lastname: undefined,
+            email: 'gdpr_controller@mail.com',
+            phone: undefined,
+          },
         },
         level: TerritoryLevelEnum.Towngroup,
         address: {
