@@ -23,6 +23,17 @@ import { TerritoryStoreService } from '../../../../services/territory-store.serv
 import { TerritoryFormComponent } from './territory-form.component';
 
 describe('TerritoryFormComponent', () => {
+  const company = {
+    siret: '24690062500012',
+    siren: null,
+    legal_name: 'COMMUNAUTE COMMUNES PAYS DE L ARBRESLE',
+    company_naf_code: '8411Z',
+    intra_vat: 'FR90246900625',
+    address_street: '117 RUE PIERRE PASSEMARD',
+    address_city: "L'ARBRESLE",
+    address_postcode: '69210',
+  };
+
   const territoryApiServiceSpy = jasmine.createSpyObj<TerritoryApiService>('TerritoryApiService', {
     createNew: of({
       level: TerritoryLevelEnum.Towngroup,
@@ -52,28 +63,12 @@ describe('TerritoryFormComponent', () => {
           provide: CompanyService,
           useValue: {
             getById(id: number): Observable<Partial<CompanyV2>> {
-              return of({
-                siret: '24690062500012',
-                siren: null,
-                legal_name: 'COMMUNAUTE COMMUNES PAYS DE L ARBRESLE',
-                company_naf_code: '8411Z',
-                intra_vat: 'FR90246900625',
-                address_street: '117 RUE PIERRE PASSEMARD',
-                address_city: "L'ARBRESLE",
-                address_postcode: '69210',
-              });
+              return of(company);
             },
             fetchCompany(siret: string): Observable<Partial<CompanyV2>> {
               return of({
                 _id: 4,
-                siret: '24690062500012',
-                siren: null,
-                legal_name: 'COMMUNAUTE COMMUNES PAYS DE L ARBRESLE',
-                company_naf_code: '8411Z',
-                intra_vat: 'FR90246900625',
-                address_street: '117 RUE PIERRE PASSEMARD',
-                address_city: "L'ARBRESLE",
-                address_postcode: '69210',
+                ...company,
               });
             },
           },
@@ -156,10 +151,10 @@ describe('TerritoryFormComponent', () => {
         },
         level: TerritoryLevelEnum.Towngroup,
         address: {
-          street: null,
-          postcode: null,
-          city: null,
-          country: null,
+          street: company.address_street,
+          postcode: company.address_postcode,
+          city: company.address_city,
+          country: 'France',
         },
         children: [1, 2],
       });

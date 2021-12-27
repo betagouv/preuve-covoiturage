@@ -38,12 +38,7 @@ export class TerritoryMapper {
         gdpr_controller: form.get('contacts').get('gdpr_controller').value,
       },
       level: TerritoryLevelEnum.Towngroup,
-      address: {
-        street: null,
-        postcode: null,
-        city: null,
-        country: null,
-      },
+      address: removeNullsProperties(form.get('address').value),
       children: children,
     };
   }

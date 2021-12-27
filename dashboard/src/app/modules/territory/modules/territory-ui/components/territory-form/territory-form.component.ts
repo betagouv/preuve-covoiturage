@@ -234,7 +234,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           }),
           filter((v) => !!v),
           map((value: string) => {
-            console.debug(`siret value changed -> ${value}`);
             // remove all non-numbers chars and max out the length to 14
             const val = value.replace(/[^0-9]/g, '').substring(0, 14);
             companyFormGroup.get('siret').setValue(val, { emitEvent: false });
