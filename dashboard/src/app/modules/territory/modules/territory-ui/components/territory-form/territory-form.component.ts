@@ -136,7 +136,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       //   this.close.emit();
       // });
       const model = TerritoryMapper.toModel(this.territoryForm, this.companyDetails._id, formValues.children);
-      console.debug(`model -> ${model}`);
+      console.debug(`model -> ${JSON.stringify(model)}`);
       this.territoryApi.createNew(model).subscribe(() => {
         this.toastr.success(`${formValues.name} a été mis à jour !`);
         this.close.emit();

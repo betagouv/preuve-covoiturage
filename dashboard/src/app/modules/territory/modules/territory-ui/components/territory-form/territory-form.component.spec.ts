@@ -135,42 +135,11 @@ describe('TerritoryFormComponent', () => {
     expect(comp).toBeTruthy();
 
     // Act
-    const fb: FormBuilder = new FormBuilder();
-    comp.territoryForm = fb.group({
-      name: ["Communauté de communes du Pays de L'Arbresle"],
-      inseeString: [
-        // '69010,69021,69022,69032,69057,69067,69076,69083,69086,69112,69171,69208,69216,69231,69173,69175,69177',
-      ],
-      address: fb.group(
-        new FormAddress(
-          new Address({
-            street: null,
-            city: null,
-            country: null,
-            postcode: null,
-          }),
-        ),
-      ),
-      company: fb.group(new FormCompany({ siret: '246 900 625 00012', company: new Company() })),
-      contacts: fb.group({
-        gdpr_dpo: fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        gdpr_controller: fb.group(
-          new FormContact(
-            new Contact({
-              firstname: null,
-              lastname: null,
-              email: null,
-            }),
-          ),
-        ),
-        technical: fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-      }),
-    });
-
     // detect siret change
     fixture.detectChanges();
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300)); // wait for throttleTime
     comp.territoryForm.controls.company.get('siret').setValue('24690062500012');
+    comp.territoryForm.controls.name.setValue("Communauté de communes du Pays de L'Arbresle");
     comp.territoryForm.controls.inseeString.setValue('69010,69021');
     fixture.detectChanges();
 
@@ -179,18 +148,21 @@ describe('TerritoryFormComponent', () => {
 
       // Assert
       expect(territoryApiServiceSpy.createNew).toHaveBeenCalled();
-      // expect(territoryApiServiceSpy.createNew).toHaveBeenCalledWith({
-      //   level: TerritoryLevelEnum.Towngroup,
-      //   name: "Communauté de communes du Pays de L'Arbresle",
-      //   company_id: 3,
-      //   children: [1, 2],
-      //   address: {
-      //     street: '',
-      //     postcode: '',
-      //     city: '',
-      //     country: '',
-      //   },
-      // });
+      expect(territoryApiServiceSpy.createNew).toHaveBeenCalledWith({
+        name: "Communauté de communes du Pays de L'Arbresle",
+        company_id: 4,
+        contacts: {
+          gdpr_controller: { firstname: undefined, lastname: undefined, email: undefined, phone: undefined },
+        },
+        level: TerritoryLevelEnum.Towngroup,
+        address: {
+          street: null,
+          postcode: null,
+          city: null,
+          country: null,
+        },
+        children: [1, 2],
+      });
     });
   });
 
