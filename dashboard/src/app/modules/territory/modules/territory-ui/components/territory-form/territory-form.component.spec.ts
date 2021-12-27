@@ -5,6 +5,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { TerritoryLevelEnum } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { User } from '../../../../../../core/entities/authentication/user';
+import { CompanyV2 } from '../../../../../../core/entities/shared/companyV2';
+import { Contact } from '../../../../../../core/entities/shared/contact';
+import { Contacts } from '../../../../../../core/entities/shared/contacts';
 import { Territory, TerritoryBase } from '../../../../../../core/entities/territory/territory';
 import { Groups } from '../../../../../../core/enums/user/groups';
 import { Roles } from '../../../../../../core/enums/user/roles';
@@ -21,7 +24,25 @@ describe('TerritoryFormComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         FormBuilder,
-        { provide: CompanyService, useValue: {} },
+        {
+          provide: CompanyService,
+          useValue: {
+            getById(id: number): Observable<Partial<CompanyV2>> {
+              return new Observable((subscriber) => {
+                subscriber.next({
+                  siret: '24690062500012',
+                  siren: null,
+                  legal_name: 'COMMUNAUTE COMMUNES PAYS DE L ARBRESLE',
+                  company_naf_code: '8411Z',
+                  intra_vat: 'FR90246900625',
+                  address_street: '117 RUE PIERRE PASSEMARD',
+                  address_city: "L'ARBRESLE",
+                  address_postcode: '69210',
+                });
+              });
+            },
+          },
+        },
         { provide: ToastrService, useValue: {} },
         { provide: TerritoryApiService, useValue: {} },
         {
@@ -44,15 +65,27 @@ describe('TerritoryFormComponent', () => {
     }).compileComponents(),
   );
 
-  it('should load empty form when new', () => {
+  it('should load empty form when new', async () => {
     // Arrange
     const fixture = TestBed.createComponent(TerritoryFormComponent);
     const comp = fixture.componentInstance;
     // Assert
     expect(comp).toBeTruthy();
+    fixture.detectChanges();
+    await fixture.whenStable().then(() => {
+      expect(comp.territoryForm.get('name').value).toEqual('');
+      expect(comp.territoryForm.get('address').get('street').value).toBeUndefined();
+      expect(comp.territoryForm.get('address').get('city').value).toBeUndefined();
+      expect(comp.territoryForm.get('address').get('postcode').value).toBeUndefined();
+      expect(comp.territoryForm.get('company').get('siret').value).toEqual('');
+      expect(comp.territoryForm.get('contacts').get('gdpr_dpo').get('email').value).toBeUndefined('');
+      expect(comp.territoryForm.get('contacts').get('gdpr_controller').get('email').value).toBeUndefined();
+      expect(comp.territoryForm.get('contacts').get('technical').get('email').value).toBeUndefined();
+    });
   });
 
-  it('should load existing territory if exists', async () => {
+  it('should load existing territory with company if exists', async () => {
+    // Arrange
     const fixture = TestBed.createComponent(TerritoryFormComponent);
     const comp = fixture.componentInstance;
 
@@ -60,15 +93,38 @@ describe('TerritoryFormComponent', () => {
       _id: 1,
       name: "Communauté de communes du Pays de L'Arbresle",
       level: TerritoryLevelEnum.Towngroup,
-      address: { street: '', postcode: '', city: '', country: 'France' },
-      children: [66666, 66664],
+      address: { street: undefined, postcode: undefined, city: undefined, country: undefined },
+      contacts: new Contacts({
+        gdpr_dpo: new Contact({ firstname: '', lastname: '', email: 'gdpr_dpo@mail.com' }),
+        gdpr_controller: new Contact({ firstname: '', lastname: '', email: 'gdpr_controller@mail.com' }),
+        technical: new Contact({ firstname: '', lastname: '', email: 'technical@mail.com' }),
+      }),
+      children: [],
+      company_id: 2,
     };
     const territory: Territory = new Territory(null);
 
     comp.territory = new Territory(territory.map(baseTerritory));
     fixture.detectChanges();
+
+    // Assert
     await fixture.whenStable().then(() => {
       expect(comp.territoryForm.get('name').value).toEqual("Communauté de communes du Pays de L'Arbresle");
+
+      // contacts email
+      expect(comp.territoryForm.get('contacts').get('gdpr_dpo').get('email').value).toEqual('gdpr_dpo@mail.com');
+      expect(comp.territoryForm.get('contacts').get('gdpr_controller').get('email').value).toEqual(
+        'gdpr_controller@mail.com',
+      );
+      expect(comp.territoryForm.get('contacts').get('technical').get('email').value).toEqual('technical@mail.com');
+
+      // company
+      expect(comp.territoryForm.get('company').get('siret').value).toEqual('24690062500012');
+
+      // company address
+      expect(comp.territoryForm.get('address').get('street').value).toEqual('117 RUE PIERRE PASSEMARD');
+      expect(comp.territoryForm.get('address').get('city').value).toEqual("L'ARBRESLE");
+      expect(comp.territoryForm.get('address').get('postcode').value).toEqual('69210');
     });
   });
 
