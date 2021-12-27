@@ -1,10 +1,15 @@
 /* tslint:disable:variable-name*/
+import { FormGroup } from '@angular/forms';
 import { BaseModel } from '~/core/entities/BaseModel';
 import { Clone } from '~/core/entities/IClone';
 import { FormModel } from '~/core/entities/IFormModel';
 import { MapModel } from '~/core/entities/IMapModel';
-import { assignOrDeleteProperty } from '~/core/entities/utils';
-import { TerritoryBaseInterface } from '../api/shared/territory/common/interfaces/TerritoryInterface';
+import { assignOrDeleteProperty, removeNullsProperties } from '~/core/entities/utils';
+import {
+  TerritoryAddress,
+  TerritoryBaseInterface,
+  TerritoryLevelEnum,
+} from '../api/shared/territory/common/interfaces/TerritoryInterface';
 import { Territory as TerritoryBaseEdit } from '../api/shared/territory/update.contract';
 import { Address } from '../shared/address';
 import { Company } from '../shared/company';
@@ -12,24 +17,21 @@ import { CompanyV2 } from '../shared/companyV2';
 import { Contact } from '../shared/contact';
 import { Contacts } from '../shared/contacts';
 
-export enum TerritoryLevelEnum {
-  Null = '',
-  Town = 'town',
-  Towngroup = 'towngroup',
-  District = 'district',
-  Megalopolis = 'megalopolis',
-  Region = 'region',
-  State = 'state',
-  Country = 'country',
-  Countrygroup = 'countrygroup',
-  Other = 'other',
-}
-
 export interface TerritoryBase extends TerritoryBaseEdit {
   name: string;
   company_id?: number;
   insee?: any;
   contacts?: Contacts;
+}
+
+export class TerritoryMapper {
+  static toForm(data: TerritoryBaseInterface): FormGroup {
+    throw new Error('Method not implemented.');
+  }
+
+  static toModel(form: FormGroup): TerritoryBaseInterface {
+    return null;
+  }
 }
 
 export class Territory
@@ -42,7 +44,7 @@ export class Territory
   company?: CompanyV2;
   children: number[];
 
-  address: Address;
+  address: TerritoryAddress;
   contacts?: Contacts;
   insee?: string[];
 
@@ -57,9 +59,10 @@ export class Territory
   map(base: TerritoryBase): Territory {
     this.level = base.level as TerritoryLevelEnum;
     this.name = base.name;
+    // this.address = base.address;
 
     assignOrDeleteProperty(base, this, 'contacts', (data) => new Contacts(data.contacts));
-    assignOrDeleteProperty(base, this, 'address', (data) => new Address(data.address));
+    assignOrDeleteProperty(base, this, 'address', (data) => base.address);
     assignOrDeleteProperty(base, this, 'company', (data) => ({ ...data.company }));
 
     if (base.company_id !== undefined) this.company_id = base.company_id;
@@ -77,7 +80,7 @@ export class Territory
     this.children = formValues.children;
 
     assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
-    assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
+    this.address = removeNullsProperties(formValues.address);
   }
 
   toFormValues(fullformMode = true): any {
@@ -110,7 +113,7 @@ export interface TerritoryFormModel {
   };
   company_id?: number;
   contacts?: { gdpr_dpo: Contact; gdpr_controller: Contact; technical: Contact };
-  address?: Address;
+  address?: TerritoryAddress;
   inseeString: string;
   insee?: string[];
   children: number[];

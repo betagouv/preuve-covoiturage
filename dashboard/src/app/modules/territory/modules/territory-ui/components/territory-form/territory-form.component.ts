@@ -181,7 +181,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       formOptions = {
         ...formOptions,
         name: [''],
-        shortname: [''],
         inseeString: [''],
         address: this.fb.group(
           new FormAddress(
@@ -309,11 +308,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   private updateValidation(): void {
     if (this.territoryForm && this.fullFormMode) {
       this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
-      this.territoryForm.controls['shortname'].setValidators(this.fullFormMode ? Validators.max(12) : null);
       this.territoryForm.controls['name'].updateValueAndValidity();
       this.territoryForm.controls['name'].markAsUntouched();
-      this.territoryForm.controls['shortname'].updateValueAndValidity();
-      this.territoryForm.controls['shortname'].markAsUntouched();
 
       // address is hidden and not required if territory is not activable (AOM)
       const fields = ['street', 'postcode', 'city', 'country'];
