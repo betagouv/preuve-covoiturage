@@ -84,6 +84,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
     formValues.company_id = get(this, 'companyDetails._id', null);
 
+    console.debug(`formValues.company_id -> ${formValues.company_id}`);
+
     if (!this.fullFormMode) {
       this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId).subscribe(
         (modifiedTerritory) => {
@@ -96,6 +98,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       );
       return;
     }
+
+    console.debug(`this.territoryForm.value -> ${JSON.stringify(this.territoryForm.value)}`);
 
     // split by and make unique
     const inseeList: string[] = [
@@ -124,19 +128,22 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     territories: TerritoryInsee[],
     formValues: TerritoryFormModel,
   ): void {
+    console.warn(`length ${inseeList.length} ${territories.length}`);
     if (!this.hasSameLength(inseeList, territories)) {
       this.toastr.error(`Certains codes INSEE n'ont pas de territoires correspondants`);
       return;
     }
-
+    console.warn(`this.companyDetails${this.companyDetails}`);
     formValues.children = territories.map((t) => t.territory_id);
 
-    if (this.isNew()) {
+    console.warn(`this.companyDetails${this.companyDetails}`);
+    if (this.isNew() && this.companyDetails) {
       // this.territoryStore.create(formValues).subscribe(() => {
       //   this.toastr.success(`${formValues.name} a été mis à jour !`);
       //   this.close.emit();
       // });
-      const model = TerritoryMapper.toModel(this.territoryForm);
+      const model = TerritoryMapper.toModel(this.territoryForm, this.companyDetails._id, formValues.children);
+      console.debug(model);
       this.territoryApi.createNew(model).subscribe(() => {
         this.toastr.success(`${formValues.name} a été mis à jour !`);
         this.close.emit();
@@ -223,9 +230,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       companyFormGroup
         .get('siret')
         .valueChanges.pipe(
+          map((val) => {
+            console.debug(`value -> ${val}`);
+            return val;
+          }),
           throttleTime(300),
+          map((val) => {
+            console.debug(`throttleTime value -> ${val}`);
+            return val;
+          }),
           filter((v) => !!v),
           map((value: string) => {
+            console.debug(`siret value changed -> ${value}`);
             // remove all non-numbers chars and max out the length to 14
             const val = value.replace(/[^0-9]/g, '').substring(0, 14);
             companyFormGroup.get('siret').setValue(val, { emitEvent: false });

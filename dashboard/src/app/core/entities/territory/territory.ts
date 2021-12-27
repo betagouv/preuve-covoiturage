@@ -29,8 +29,23 @@ export class TerritoryMapper {
     throw new Error('Method not implemented.');
   }
 
-  static toModel(form: FormGroup): TerritoryBaseInterface {
-    return null;
+  static toModel(form: FormGroup, company_id: number, children: number[]): TerritoryBaseInterface {
+    console.debug(form.value);
+    return {
+      name: form.get('name').value,
+      company_id: company_id,
+      contacts: {
+        gdpr_controller: form.get('contacts').get('gdpr_controller').value,
+      },
+      level: TerritoryLevelEnum.Towngroup,
+      address: {
+        street: null,
+        postcode: null,
+        city: null,
+        country: null,
+      },
+      children: children,
+    };
   }
 }
 

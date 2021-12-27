@@ -41,7 +41,7 @@ describe('TerritoryMapper', () => {
         technical: fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
       }),
     });
-    const model: TerritoryBaseInterface = TerritoryMapper.toModel(territoryForm);
+    const model: TerritoryBaseInterface = TerritoryMapper.toModel(territoryForm, null, null);
     expect(model.name).toEqual("Communauté de communes du Pays de L'Arbresle");
     expect(model.children).toEqual([66666, 66664]);
     expect(model.address.street).toEqual('117 RUE PIERRE PASSEMARD');

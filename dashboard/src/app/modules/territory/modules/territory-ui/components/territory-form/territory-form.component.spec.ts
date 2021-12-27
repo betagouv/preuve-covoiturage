@@ -1,9 +1,9 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
+import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
-import { ResultInterface as ResultInterfaceFindByCode } from 'shared/territory/findGeoByCode.contract';
 import { TerritoryLevelEnum } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { User } from '../../../../../../core/entities/authentication/user';
 import { Address } from '../../../../../../core/entities/shared/address';
@@ -54,6 +54,19 @@ describe('TerritoryFormComponent', () => {
           useValue: {
             getById(id: number): Observable<Partial<CompanyV2>> {
               return of({
+                siret: '24690062500012',
+                siren: null,
+                legal_name: 'COMMUNAUTE COMMUNES PAYS DE L ARBRESLE',
+                company_naf_code: '8411Z',
+                intra_vat: 'FR90246900625',
+                address_street: '117 RUE PIERRE PASSEMARD',
+                address_city: "L'ARBRESLE",
+                address_postcode: '69210',
+              });
+            },
+            fetchCompany(siret: string): Observable<Partial<CompanyV2>> {
+              return of({
+                _id: 4,
                 siret: '24690062500012',
                 siren: null,
                 legal_name: 'COMMUNAUTE COMMUNES PAYS DE L ARBRESLE',
@@ -121,12 +134,14 @@ describe('TerritoryFormComponent', () => {
     const fixture = TestBed.createComponent(TerritoryFormComponent);
     const comp = fixture.componentInstance;
     expect(comp).toBeTruthy();
-    fixture.detectChanges();
 
+    // Act
     const fb: FormBuilder = new FormBuilder();
     comp.territoryForm = fb.group({
       name: ["Communauté de communes du Pays de L'Arbresle"],
-      inseeString: ['45, 46'],
+      inseeString: [
+        '69010,69021,69022,69032,69057,69067,69076,69083,69086,69112,69171,69208,69216,69231,69173,69175,69177',
+      ],
       address: fb.group(
         new FormAddress(
           new Address({
@@ -137,7 +152,7 @@ describe('TerritoryFormComponent', () => {
           }),
         ),
       ),
-      company: fb.group(new FormCompany({ siret: '', company: new Company() })),
+      company: fb.group(new FormCompany({ siret: '246 900 625 00012', company: new Company() })),
       contacts: fb.group({
         gdpr_dpo: fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
         gdpr_controller: fb.group(
@@ -153,10 +168,41 @@ describe('TerritoryFormComponent', () => {
       }),
     });
 
-    comp.onSubmit();
+    // detect siret change
+    // comp.territoryForm.controls.company.get('siret').mar
+    // tick(400);
+    comp.territoryForm.updateValueAndValidity();
+    comp.territoryForm.controls.company.get('siret').setValue('24690062500012');
+    comp.territoryForm.controls.company.markAsDirty();
+    comp.territoryForm.controls.company.markAllAsTouched();
+    comp.territoryForm.controls.company.updateValueAndValidity({
+      onlySelf: true,
+      emitEvent: true,
+    });
+    // console.debug(fixture.debugElement);
+    // const siretInput = fixture.debugElement.query(By.css('[data-testid="company-siret"]'));
+    // console.debug(siretInput);
+    // siretInput.triggerEventHandler('blur', null);
+    // siretInput.nativeElement.blur();
+    // flush();
+    fixture.detectChanges();
+    comp.territoryForm.controls.company.get('siret').setValue('24690062500012');
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    fixture.detectChanges();
+    comp.territoryForm.controls.company.get('siret').setValue('24690062500012');
+    comp.territoryForm.controls.inseeString.setValue('69010,69021');
+    fixture.detectChanges();
 
-    // Assert
-    expect(territoryApiServiceSpy.createNew).toHaveBeenCalled();
+    console.debug(`form -> ${comp.territoryForm.controls.company.get('siret').value}`);
+
+    await fixture.whenStable().then(async () => {
+      comp.onSubmit();
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Assert
+      expect(territoryApiServiceSpy.createNew).toHaveBeenCalled();
+    });
+
     // expect(territoryApiServiceSpy.createNew).toHaveBeenCalledWith({
     //   level: TerritoryLevelEnum.Towngroup,
     //   name: "Communauté de communes du Pays de L'Arbresle",
@@ -169,6 +215,8 @@ describe('TerritoryFormComponent', () => {
     //     country: '',
     //   },
     // });
+
+    // await fixture.whenStable().then(() => {});
   });
 
   it('should load existing territory with company if exists', async () => {
