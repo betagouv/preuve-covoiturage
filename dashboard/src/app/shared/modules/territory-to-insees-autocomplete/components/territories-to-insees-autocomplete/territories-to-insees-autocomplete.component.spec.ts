@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Observable, of } from 'rxjs';
-import { TerritoryListFilter } from 'shared/territory/common/interfaces/TerritoryQueryInterface';
+// import { TerritoryListFilter } from '../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { InseeAndTerritoryInterface } from '../../../../../core/entities/campaign/ux-format/incentive-filters';
 import { TerritoryApiService } from '../../../../../modules/territory/services/territory-api.service';
 import { TerritoriesToInseesAutocompleteComponent } from './territories-to-insees-autocomplete.component';
@@ -24,7 +24,7 @@ const damparis: InseeAndTerritoryInterface = {
 };
 
 class TerritoryApiServiceStub {
-  public getList(params: TerritoryListFilter): Observable<any> {
+  public getList(params: any): Observable<any> {
     if (params.search.startsWith('pa')) {
       return of({
         data: [damparis, paris10],
