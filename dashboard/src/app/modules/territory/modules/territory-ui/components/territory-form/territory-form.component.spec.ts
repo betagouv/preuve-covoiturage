@@ -2,9 +2,12 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { ResultInterface as ResultInterfaceFindByCode } from 'shared/territory/findGeoByCode.contract';
 import { TerritoryLevelEnum } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { User } from '../../../../../../core/entities/authentication/user';
+import { Address } from '../../../../../../core/entities/shared/address';
+import { Company } from '../../../../../../core/entities/shared/company';
 import { CompanyV2 } from '../../../../../../core/entities/shared/companyV2';
 import { Contact } from '../../../../../../core/entities/shared/contact';
 import { Contacts } from '../../../../../../core/entities/shared/contacts';
@@ -12,12 +15,34 @@ import { Territory, TerritoryBase } from '../../../../../../core/entities/territ
 import { Groups } from '../../../../../../core/enums/user/groups';
 import { Roles } from '../../../../../../core/enums/user/roles';
 import { AuthenticationService } from '../../../../../../core/services/authentication/authentication.service';
+import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
+import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
+import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
 import { CompanyService } from '../../../../../company/services/company.service';
 import { TerritoryApiService } from '../../../../services/territory-api.service';
 import { TerritoryStoreService } from '../../../../services/territory-store.service';
 import { TerritoryFormComponent } from './territory-form.component';
 
 describe('TerritoryFormComponent', () => {
+  const territoryApiServiceSpy = jasmine.createSpyObj<TerritoryApiService>('TerritoryApiService', {
+    createNew: of({
+      level: TerritoryLevelEnum.Towngroup,
+      name: "Communauté de communes du Pays de L'Arbresle",
+      company_id: 3,
+      children: [1, 2],
+      address: {
+        street: '',
+        postcode: '',
+        city: '',
+        country: '',
+      },
+    }),
+    findByInsees: of([
+      { territory_id: 1, name: '' },
+      { territory_id: 2, name: '' },
+    ]),
+  });
+
   beforeEach(() =>
     TestBed.configureTestingModule({
       declarations: [TerritoryFormComponent],
@@ -28,23 +53,29 @@ describe('TerritoryFormComponent', () => {
           provide: CompanyService,
           useValue: {
             getById(id: number): Observable<Partial<CompanyV2>> {
-              return new Observable((subscriber) => {
-                subscriber.next({
-                  siret: '24690062500012',
-                  siren: null,
-                  legal_name: 'COMMUNAUTE COMMUNES PAYS DE L ARBRESLE',
-                  company_naf_code: '8411Z',
-                  intra_vat: 'FR90246900625',
-                  address_street: '117 RUE PIERRE PASSEMARD',
-                  address_city: "L'ARBRESLE",
-                  address_postcode: '69210',
-                });
+              return of({
+                siret: '24690062500012',
+                siren: null,
+                legal_name: 'COMMUNAUTE COMMUNES PAYS DE L ARBRESLE',
+                company_naf_code: '8411Z',
+                intra_vat: 'FR90246900625',
+                address_street: '117 RUE PIERRE PASSEMARD',
+                address_city: "L'ARBRESLE",
+                address_postcode: '69210',
               });
             },
           },
         },
-        { provide: ToastrService, useValue: {} },
-        { provide: TerritoryApiService, useValue: {} },
+        {
+          provide: ToastrService,
+          useValue: {
+            success: () => {},
+          },
+        },
+        {
+          provide: TerritoryApiService,
+          useValue: territoryApiServiceSpy,
+        },
         {
           provide: AuthenticationService,
           useValue: {
@@ -65,7 +96,7 @@ describe('TerritoryFormComponent', () => {
     }).compileComponents(),
   );
 
-  it('should load empty form when new', async () => {
+  it('should load empty form when new territory', async () => {
     // Arrange
     const fixture = TestBed.createComponent(TerritoryFormComponent);
     const comp = fixture.componentInstance;
@@ -82,6 +113,62 @@ describe('TerritoryFormComponent', () => {
       expect(comp.territoryForm.get('contacts').get('gdpr_controller').get('email').value).toBeUndefined();
       expect(comp.territoryForm.get('contacts').get('technical').get('email').value).toBeUndefined();
     });
+  });
+
+  // TODO: merge with previous test
+  it('should submit new territory form', async () => {
+    // Arrange
+    const fixture = TestBed.createComponent(TerritoryFormComponent);
+    const comp = fixture.componentInstance;
+    expect(comp).toBeTruthy();
+    fixture.detectChanges();
+
+    const fb: FormBuilder = new FormBuilder();
+    comp.territoryForm = fb.group({
+      name: ["Communauté de communes du Pays de L'Arbresle"],
+      inseeString: ['45, 46'],
+      address: fb.group(
+        new FormAddress(
+          new Address({
+            street: null,
+            city: null,
+            country: null,
+            postcode: null,
+          }),
+        ),
+      ),
+      company: fb.group(new FormCompany({ siret: '', company: new Company() })),
+      contacts: fb.group({
+        gdpr_dpo: fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+        gdpr_controller: fb.group(
+          new FormContact(
+            new Contact({
+              firstname: null,
+              lastname: null,
+              email: null,
+            }),
+          ),
+        ),
+        technical: fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+      }),
+    });
+
+    comp.onSubmit();
+
+    // Assert
+    expect(territoryApiServiceSpy.createNew).toHaveBeenCalled();
+    // expect(territoryApiServiceSpy.createNew).toHaveBeenCalledWith({
+    //   level: TerritoryLevelEnum.Towngroup,
+    //   name: "Communauté de communes du Pays de L'Arbresle",
+    //   company_id: 3,
+    //   children: [1, 2],
+    //   address: {
+    //     street: '',
+    //     postcode: '',
+    //     city: '',
+    //     country: '',
+    //   },
+    // });
   });
 
   it('should load existing territory with company if exists', async () => {
@@ -127,6 +214,4 @@ describe('TerritoryFormComponent', () => {
       expect(comp.territoryForm.get('address').get('postcode').value).toEqual('69210');
     });
   });
-
-  it('should submit form', () => {});
 });

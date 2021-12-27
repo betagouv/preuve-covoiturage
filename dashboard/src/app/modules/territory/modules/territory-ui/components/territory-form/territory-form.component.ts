@@ -10,7 +10,7 @@ import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
 import { Contact } from '~/core/entities/shared/contact';
-import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
+import { Territory, TerritoryFormModel, TerritoryMapper } from '~/core/entities/territory/territory';
 import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
@@ -132,7 +132,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     formValues.children = territories.map((t) => t.territory_id);
 
     if (this.isNew()) {
-      this.territoryStore.create(formValues).subscribe(() => {
+      // this.territoryStore.create(formValues).subscribe(() => {
+      //   this.toastr.success(`${formValues.name} a été mis à jour !`);
+      //   this.close.emit();
+      // });
+      const model = TerritoryMapper.toModel(this.territoryForm);
+      this.territoryApi.createNew(model).subscribe(() => {
         this.toastr.success(`${formValues.name} a été mis à jour !`);
         this.close.emit();
       });

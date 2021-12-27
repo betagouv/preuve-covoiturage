@@ -8,7 +8,7 @@ import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { Territory } from '~/core/entities/territory/territory';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
+import { CrudActions, JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 import { ParamsInterface as FindByIdParamsInterface, signature as signatureFind } from 'shared/territory/find.contract';
 import {
   ParamsInterface as ParamsInterfaceFindByCode,
@@ -21,6 +21,7 @@ import {
   ParamsInterface as PatchContactParamsInterface,
   signature as signaturePatch,
 } from 'shared/territory/patchContacts.contract';
+import { TerritoryBaseInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 
 @Injectable({
   providedIn: 'root',
@@ -68,8 +69,9 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  create(item: Territory): Observable<Territory> {
-    return this.catchSiretConflict(super.create(item));
+  createNew(item: TerritoryBaseInterface): Observable<TerritoryBaseInterface> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:${CrudActions.CREATE}`, item);
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
   update(item: Territory): Observable<Territory> {
