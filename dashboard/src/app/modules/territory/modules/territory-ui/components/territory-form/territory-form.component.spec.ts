@@ -284,12 +284,12 @@ describe('TerritoryFormComponent', () => {
       // Arrange
       const fixture = TestBed.createComponent(TerritoryFormComponent);
       const comp = fixture.componentInstance;
-
+      fixture.detectChanges();
+      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for throttleTime
       fixture.detectChanges();
 
       // Assert
       await fixture.whenStable().then(() => {
-        console.debug(JSON.stringify(comp.territory));
         expect(comp.territoryForm.get('name').value).toEqual(territory.name);
 
         // contacts email
@@ -327,35 +327,6 @@ describe('TerritoryFormComponent', () => {
         // Assert
         expect(territoryApiServiceSpy.createNew).not.toHaveBeenCalled();
         expect(territoryApiServiceSpy.updateNew).toHaveBeenCalled();
-        // expect(territoryApiServiceSpy.updateNew).toHaveBeenCalledWith({
-        //   name: "Communauté de communes du Pays de L'Arbresle",
-        //   company_id: 4,
-        //   contacts: {
-        //     gdpr_dpo: {
-        //       firstname: 'gdpr',
-        //       lastname: 'dpo',
-        //       email: 'gdpr_dpo@mail.com',
-        //     },
-        //     gdpr_controller: {
-        //       firstname: 'gdpr',
-        //       lastname: 'controller',
-        //       email: 'gdpr_controller@mail.com',
-        //     },
-        //     technical: {
-        //       firstname: 'technical',
-        //       lastname: 'tech',
-        //       email: 'technical@mail.com',
-        //     },
-        //   },
-        //   level: TerritoryLevelEnum.Towngroup,
-        //   address: {
-        //     street: company.address_street,
-        //     postcode: company.address_postcode,
-        //     city: company.address_city,
-        //     country: 'France',
-        //   },
-        //   children: [1, 2],
-        // });
       });
     });
   });

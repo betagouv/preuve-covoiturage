@@ -55,10 +55,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   ngOnInit(): void {
-    this.route.data.subscribe((data: { territory: Territory }) => {
-      this.territory = data.territory;
-      this.territoryId = data.territory._id;
-    });
+    this.route.data.subscribe((data: { territory: Territory }) => (this.territory = data.territory));
     this.authService.user$
       .pipe(
         filter((user) => !!user),
