@@ -74,7 +74,8 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  update(item: Territory): Observable<Territory> {
-    return this.catchSiretConflict(super.update(item));
+  updateNew(item: TerritoryBaseInterface): Observable<TerritoryBaseInterface> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:${CrudActions.UPDATE}`, item);
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 }

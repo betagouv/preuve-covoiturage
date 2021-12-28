@@ -133,12 +133,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
     formValues.children = territories.map((t) => t.territory_id);
 
+    const model = TerritoryMapper.toModel(this.territoryForm, this.companyDetails._id, formValues.children);
     if (this.isNew()) {
       // this.territoryStore.create(formValues).subscribe(() => {
       //   this.toastr.success(`${formValues.name} a été mis à jour !`);
       //   this.close.emit();
       // });
-      const model = TerritoryMapper.toModel(this.territoryForm, this.companyDetails._id, formValues.children);
       this.territoryApi.createNew(model).subscribe(() => {
         this.toastr.success(`${formValues.name} a été mis à jour !`);
         this.close.emit();
@@ -146,7 +146,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
-    this.territoryStore.updateSelected(formValues).subscribe(
+    this.territoryApi.updateNew(model).subscribe(
       (modifiedTerritory) => {
         this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
         this.close.emit();
@@ -155,6 +155,16 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
       },
     );
+
+    // this.territoryStore.updateSelected(formValues).subscribe(
+    //   (modifiedTerritory) => {
+    //     this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
+    //     this.close.emit();
+    //   },
+    //   (err) => {
+    //     this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
+    //   },
+    // );
   }
 
   private isNew(): boolean {

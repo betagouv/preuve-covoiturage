@@ -17,7 +17,6 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
 
   private _filterLiteral = new BehaviorSubject('');
   isFormVisible = false;
-  territoryToEdit: Territory = null;
 
   public territoriesToShow: Territory[];
 
@@ -38,7 +37,6 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
     // load single entity
     this.territoryStoreService.unselect();
     this.territoryStoreService.entity$.subscribe((entity) => {
-      this.territoryToEdit = entity;
       this.isFormVisible = !!entity;
     });
   }

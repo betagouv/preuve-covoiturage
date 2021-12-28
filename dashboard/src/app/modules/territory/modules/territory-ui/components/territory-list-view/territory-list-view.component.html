@@ -21,15 +21,15 @@
   <app-territory-list (edit)="onEdit($event)" [territories]="territoriesToShow"></app-territory-list>
   <mat-paginator [hidden]="!territoriesToShow" [length]="countTerritories" [pageSize]="PAGE_SIZE"></mat-paginator>
 </div>
-<div class="Territories-edition">
+<!-- TODO: remove this -->
+<!-- <div class="Territories-edition">
   <h2 *ngIf="isFormVisible">
     Edition du territoire
     <button mat-button (click)="onClose()">retour à la liste</button>
   </h2>
   <app-territory-form
     [isFormVisible]="isFormVisible"
-    [territory]="territoryToEdit"
     [closable]="true"
     (close)="onClose()"
   ></app-territory-form>
-</div>
+</div> -->

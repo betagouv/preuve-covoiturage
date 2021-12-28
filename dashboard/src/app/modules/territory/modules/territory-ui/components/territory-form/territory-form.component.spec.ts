@@ -1,14 +1,12 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { TerritoryLevelEnum } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { User } from '../../../../../../core/entities/authentication/user';
 import { CompanyV2 } from '../../../../../../core/entities/shared/companyV2';
-import { Contact } from '../../../../../../core/entities/shared/contact';
-import { Contacts } from '../../../../../../core/entities/shared/contacts';
-import { Territory, TerritoryBase } from '../../../../../../core/entities/territory/territory';
 import { Groups } from '../../../../../../core/enums/user/groups';
 import { Roles } from '../../../../../../core/enums/user/roles';
 import { AuthenticationService } from '../../../../../../core/services/authentication/authentication.service';
@@ -29,19 +27,39 @@ describe('TerritoryFormComponent', () => {
     address_postcode: '69210',
   };
 
-  const territoryApiServiceSpy = jasmine.createSpyObj<TerritoryApiService>('TerritoryApiService', {
-    createNew: of({
-      level: TerritoryLevelEnum.Towngroup,
-      name: "Communauté de communes du Pays de L'Arbresle",
-      company_id: 3,
-      children: [1, 2],
-      address: {
-        street: '',
-        postcode: '',
-        city: '',
-        country: '',
+  const territory = {
+    level: TerritoryLevelEnum.Towngroup,
+    name: "Communauté de communes du Pays de L'Arbresle",
+    company_id: 3,
+    children: [1, 2],
+    contacts: {
+      gdpr_dpo: {
+        firstname: 'gdpr',
+        lastname: 'dpo',
+        email: 'gdpr_dpo@mail.com',
       },
-    }),
+      gdpr_controller: {
+        firstname: 'gdpr',
+        lastname: 'controller',
+        email: 'gdpr_controller@mail.com',
+      },
+      technical: {
+        firstname: 'technical',
+        lastname: 'tech',
+        email: 'technical@mail.com',
+      },
+    },
+    address: {
+      street: '',
+      postcode: '',
+      city: '',
+      country: '',
+    },
+  };
+
+  const territoryApiServiceSpy = jasmine.createSpyObj<TerritoryApiService>('TerritoryApiService', {
+    createNew: of(territory),
+    updateNew: of(territory),
     findByInsees: of([
       { territory_id: 1, name: '' },
       { territory_id: 2, name: '' },
@@ -54,6 +72,17 @@ describe('TerritoryFormComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         FormBuilder,
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            data: of({
+              territory: {
+                ...territory,
+                _id: 4,
+              },
+            }),
+          },
+        },
         {
           provide: CompanyService,
           useValue: {
@@ -124,6 +153,9 @@ describe('TerritoryFormComponent', () => {
     const comp = fixture.componentInstance;
     expect(comp).toBeTruthy();
 
+    // TODO should not resolve for this one
+    delete comp.territory._id;
+
     // Act
     // detect siret change
     fixture.detectChanges();
@@ -148,6 +180,7 @@ describe('TerritoryFormComponent', () => {
       comp.onSubmit();
 
       // Assert
+      expect(territoryApiServiceSpy.updateNew).not.toHaveBeenCalled();
       expect(territoryApiServiceSpy.createNew).toHaveBeenCalled();
       expect(territoryApiServiceSpy.createNew).toHaveBeenCalledWith({
         name: "Communauté de communes du Pays de L'Arbresle",
@@ -186,27 +219,12 @@ describe('TerritoryFormComponent', () => {
     const fixture = TestBed.createComponent(TerritoryFormComponent);
     const comp = fixture.componentInstance;
 
-    const baseTerritory: TerritoryBase = {
-      _id: 1,
-      name: "Communauté de communes du Pays de L'Arbresle",
-      level: TerritoryLevelEnum.Towngroup,
-      address: { street: undefined, postcode: undefined, city: undefined, country: undefined },
-      contacts: new Contacts({
-        gdpr_dpo: new Contact({ firstname: '', lastname: '', email: 'gdpr_dpo@mail.com' }),
-        gdpr_controller: new Contact({ firstname: '', lastname: '', email: 'gdpr_controller@mail.com' }),
-        technical: new Contact({ firstname: '', lastname: '', email: 'technical@mail.com' }),
-      }),
-      children: [],
-      company_id: 2,
-    };
-    const territory: Territory = new Territory(null);
-
-    comp.territory = new Territory(territory.map(baseTerritory));
     fixture.detectChanges();
 
     // Assert
     await fixture.whenStable().then(() => {
-      expect(comp.territoryForm.get('name').value).toEqual("Communauté de communes du Pays de L'Arbresle");
+      console.debug(JSON.stringify(comp.territory));
+      expect(comp.territoryForm.get('name').value).toEqual(territory.name);
 
       // contacts email
       expect(comp.territoryForm.get('contacts').get('gdpr_dpo').get('email').value).toEqual('gdpr_dpo@mail.com');
@@ -222,6 +240,56 @@ describe('TerritoryFormComponent', () => {
       expect(comp.territoryForm.get('address').get('street').value).toEqual('117 RUE PIERRE PASSEMARD');
       expect(comp.territoryForm.get('address').get('city').value).toEqual("L'ARBRESLE");
       expect(comp.territoryForm.get('address').get('postcode').value).toEqual('69210');
+    });
+  });
+
+  // TODO : merge with previous scenario
+  it('should load existing territory and update', async () => {
+    // Arrange
+    const fixture = TestBed.createComponent(TerritoryFormComponent);
+    const comp = fixture.componentInstance;
+    fixture.detectChanges();
+
+    // Act
+    comp.territoryForm.controls.contacts.get('gdpr_dpo.lastname').setValue('lastnameUpdate');
+    comp.territoryForm.controls.inseeString.setValue('69010,69021');
+
+    // Assert
+    await fixture.whenStable().then(() => {
+      comp.onSubmit();
+
+      // Assert
+      expect(territoryApiServiceSpy.createNew).not.toHaveBeenCalled();
+      expect(territoryApiServiceSpy.updateNew).toHaveBeenCalled();
+      // expect(territoryApiServiceSpy.updateNew).toHaveBeenCalledWith({
+      //   name: "Communauté de communes du Pays de L'Arbresle",
+      //   company_id: 4,
+      //   contacts: {
+      //     gdpr_dpo: {
+      //       firstname: 'gdpr',
+      //       lastname: 'dpo',
+      //       email: 'gdpr_dpo@mail.com',
+      //     },
+      //     gdpr_controller: {
+      //       firstname: 'gdpr',
+      //       lastname: 'controller',
+      //       email: 'gdpr_controller@mail.com',
+      //     },
+      //     technical: {
+      //       firstname: 'technical',
+      //       lastname: 'tech',
+      //       email: 'technical@mail.com',
+      //     },
+      //   },
+      //   level: TerritoryLevelEnum.Towngroup,
+      //   address: {
+      //     street: company.address_street,
+      //     postcode: company.address_postcode,
+      //     city: company.address_city,
+      //     country: 'France',
+      //   },
+      //   children: [1, 2],
+      // });
     });
   });
 });

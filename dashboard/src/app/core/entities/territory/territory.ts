@@ -29,8 +29,13 @@ export class TerritoryMapper {
     throw new Error('Method not implemented.');
   }
 
-  static toModel(territoryForm: AbstractControl, company_id: number, children: number[]): TerritoryBaseInterface {
-    return {
+  static toModel(
+    territoryForm: AbstractControl,
+    company_id: number,
+    children: number[],
+    territoryId?: number,
+  ): TerritoryBaseInterface | TerritoryBaseEdit {
+    const territory: TerritoryBaseInterface = {
       name: territoryForm.get('name').value,
       company_id: company_id,
       contacts: ContactsMapper.toModel(territoryForm.get('contacts')),
@@ -38,6 +43,13 @@ export class TerritoryMapper {
       address: removeNullsProperties(territoryForm.get('address').value),
       children: children,
     };
+    if (territoryId) {
+      return {
+        _id: territoryId,
+        ...territory,
+      };
+    }
+    return territory;
   }
 }
 
