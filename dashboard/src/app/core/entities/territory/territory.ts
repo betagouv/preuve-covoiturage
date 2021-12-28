@@ -4,8 +4,7 @@ import { BaseModel } from '~/core/entities/BaseModel';
 import { Clone } from '~/core/entities/IClone';
 import { FormModel } from '~/core/entities/IFormModel';
 import { MapModel } from '~/core/entities/IMapModel';
-import { assignOrDeleteProperty, hasOneNotEmptyProperty, removeNullsProperties } from '~/core/entities/utils';
-import { ContactsInterface } from '../api/shared/common/interfaces/ContactsInterface';
+import { assignOrDeleteProperty, removeNullsProperties } from '~/core/entities/utils';
 import {
   TerritoryAddress,
   TerritoryBaseInterface,
@@ -16,7 +15,7 @@ import { Address } from '../shared/address';
 import { Company } from '../shared/company';
 import { CompanyV2 } from '../shared/companyV2';
 import { Contact } from '../shared/contact';
-import { Contacts } from '../shared/contacts';
+import { Contacts, ContactsMapper } from '../shared/contacts';
 
 export interface TerritoryBase extends TerritoryBaseEdit {
   name: string;
@@ -30,26 +29,15 @@ export class TerritoryMapper {
     throw new Error('Method not implemented.');
   }
 
-  static toModel(form: FormGroup, company_id: number, children: number[]): TerritoryBaseInterface {
+  static toModel(territoryForm: AbstractControl, company_id: number, children: number[]): TerritoryBaseInterface {
     return {
-      name: form.get('name').value,
+      name: territoryForm.get('name').value,
       company_id: company_id,
-      contacts: TerritoryMapper.toContactsModel(form.get('contacts')),
+      contacts: ContactsMapper.toModel(territoryForm.get('contacts')),
       level: TerritoryLevelEnum.Towngroup,
-      address: removeNullsProperties(form.get('address').value),
+      address: removeNullsProperties(territoryForm.get('address').value),
       children: children,
     };
-  }
-
-  private static toContactsModel(contactForm: AbstractControl): ContactsInterface {
-    const contacts: ContactsInterface = {};
-    if (hasOneNotEmptyProperty(contactForm.get('gdpr_controller').value))
-      contacts.gdpr_controller = removeNullsProperties(contactForm.get('gdpr_controller').value);
-    if (hasOneNotEmptyProperty(contactForm.get('technical').value))
-      contacts.technical = removeNullsProperties(contactForm.get('technical').value);
-    if (hasOneNotEmptyProperty(contactForm.get('gdpr_dpo').value))
-      contacts.gdpr_dpo = removeNullsProperties(contactForm.get('gdpr_dpo').value);
-    return contacts;
   }
 }
 
