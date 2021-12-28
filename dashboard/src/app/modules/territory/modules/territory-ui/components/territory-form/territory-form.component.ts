@@ -17,7 +17,6 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
@@ -50,7 +49,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     private route: ActivatedRoute,
     private toastr: ToastrService,
     private companyService: CompanyService,
-    private territoryStore: TerritoryStoreService,
     private territoryApi: TerritoryApiService,
   ) {
     super();
@@ -100,15 +98,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
         },
       );
-      // this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId).subscribe(
-      //   (modifiedTerritory) => {
-      //     this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
-      //     this.close.emit();
-      //   },
-      //   (err) => {
-      //     this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
-      //   },
-      // );
       return;
     }
 
@@ -147,10 +136,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     const model = TerritoryMapper.toModel(this.territoryForm, this.companyDetails._id, formValues.children);
     if (this.isNew()) {
-      // this.territoryStore.create(formValues).subscribe(() => {
-      //   this.toastr.success(`${formValues.name} a été mis à jour !`);
-      //   this.close.emit();
-      // });
       this.territoryApi.createNew(model).subscribe(() => {
         this.toastr.success(`${formValues.name} a été mis à jour !`);
         this.close.emit();
@@ -167,16 +152,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
       },
     );
-
-    // this.territoryStore.updateSelected(formValues).subscribe(
-    //   (modifiedTerritory) => {
-    //     this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
-    //     this.close.emit();
-    //   },
-    //   (err) => {
-    //     this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
-    //   },
-    // );
   }
 
   private isNew(): boolean {

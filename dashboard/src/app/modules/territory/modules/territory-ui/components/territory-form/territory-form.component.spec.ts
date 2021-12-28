@@ -12,7 +12,6 @@ import { Roles } from '../../../../../../core/enums/user/roles';
 import { AuthenticationService } from '../../../../../../core/services/authentication/authentication.service';
 import { CompanyService } from '../../../../../company/services/company.service';
 import { TerritoryApiService } from '../../../../services/territory-api.service';
-import { TerritoryStoreService } from '../../../../services/territory-store.service';
 import { TerritoryFormComponent } from './territory-form.component';
 
 describe('TerritoryFormComponent', () => {
@@ -118,7 +117,6 @@ describe('TerritoryFormComponent', () => {
               },
             },
           },
-          { provide: TerritoryStoreService, useValue: {} },
         ],
       }).compileComponents(),
     );
@@ -270,7 +268,6 @@ describe('TerritoryFormComponent', () => {
               },
             },
           },
-          { provide: TerritoryStoreService, useValue: {} },
         ],
       }).compileComponents(),
     );
