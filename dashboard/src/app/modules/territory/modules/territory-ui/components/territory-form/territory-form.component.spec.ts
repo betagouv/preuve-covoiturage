@@ -125,6 +125,7 @@ describe('TerritoryFormComponent', () => {
 
     afterEach(() => {
       territoryApiServiceSpy.createNew.calls.reset();
+      territoryApiServiceSpy.updateNew.calls.reset();
     });
 
     it('should load empty form when new territory', async () => {
@@ -276,6 +277,7 @@ describe('TerritoryFormComponent', () => {
 
     afterEach(() => {
       territoryApiServiceSpy.createNew.calls.reset();
+      territoryApiServiceSpy.updateNew.calls.reset();
     });
 
     it('should load existing territory with company if exists', async () => {
