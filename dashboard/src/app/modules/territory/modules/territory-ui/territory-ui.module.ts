@@ -13,6 +13,7 @@ import { TerritoryFilterComponent } from './components/territory-filter/territor
 import { TerritoryFormComponent } from './components/territory-form/territory-form.component';
 import { TerritoryListViewComponent } from './components/territory-list-view/territory-list-view.component';
 import { TerritoryListComponent } from './components/territory-list/territory-list.component';
+import { TerritoryUiRoutingModule } from './territory-ui-routing.module';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { TerritoryListComponent } from './components/territory-list/territory-li
     SharedModule,
     DetailsModule,
     MatPaginatorModule,
+    TerritoryUiRoutingModule,
   ],
   exports: [
     TerritoryFormComponent,

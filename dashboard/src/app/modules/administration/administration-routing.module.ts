@@ -49,8 +49,10 @@ const routes: Routes = [
       },
       {
         path: 'all-territories',
-        component: AllTerritoriesComponent,
-        data: { groups: [Groups.Registry], roles: [Roles.RegistryAdmin, Roles.OperatorAdmin, Roles.TerritoryAdmin] },
+        loadChildren: () =>
+          import('../territory/modules/territory-ui/territory-ui.module').then((m) => m.TerritoryUiModule),
+        // component: AllTerritoriesComponent,
+        // data: { groups: [Groups.Registry], roles: [Roles.RegistryAdmin, Roles.OperatorAdmin, Roles.TerritoryAdmin] },
       },
       {
         path: 'all-operators',

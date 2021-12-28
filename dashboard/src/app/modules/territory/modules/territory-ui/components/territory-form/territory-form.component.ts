@@ -22,6 +22,7 @@ import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-territory-form',
@@ -29,7 +30,7 @@ import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
   styleUrls: ['./territory-form.component.scss'],
 })
 export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
-  @Input() isFormVisible = false;
+  @Input() isFormVisible = true;
   @Input() closable = false;
   @Input() territory: Territory = null;
 
@@ -44,6 +45,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
+    private route: ActivatedRoute,
     private toastr: ToastrService,
     private companyService: CompanyService,
     private territoryStore: TerritoryStoreService,
@@ -53,6 +55,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   ngOnInit(): void {
+    this.route.data.subscribe((data: { territory: Territory }) => (this.territory = data.territory));
     this.authService.user$
       .pipe(
         filter((user) => !!user),

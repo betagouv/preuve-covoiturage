@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Territory } from '~/core/entities/territory/territory';
@@ -21,13 +22,17 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit 
     return this.authenticationService.hasRole([Roles.RegistryAdmin]);
   }
 
-  constructor(public authenticationService: AuthenticationService, public territoryStore: TerritoryStoreService) {
+  constructor(
+    private router: Router,
+    public authenticationService: AuthenticationService,
+    public territoryStore: TerritoryStoreService,
+  ) {
     super();
   }
 
   ngOnInit(): void {}
 
   onEdit(territory: Territory): void {
-    this.edit.emit(territory);
+    this.router.navigate(['/admin/all-territories/', territory._id]);
   }
 }
