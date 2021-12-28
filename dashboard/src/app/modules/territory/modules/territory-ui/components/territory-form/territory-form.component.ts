@@ -23,6 +23,8 @@ import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
 import { ActivatedRoute } from '@angular/router';
+import { ContactsMapper } from '../../../../../../core/entities/shared/contacts';
+import { ContactsInterface } from '../../../../../../core/entities/api/shared/common/interfaces/ContactsInterface';
 
 @Component({
   selector: 'app-territory-form',
@@ -88,7 +90,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     formValues.company_id = get(this, 'companyDetails._id', null);
 
     if (!this.fullFormMode) {
-      this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId).subscribe(
+      const contactModel: ContactsInterface = ContactsMapper.toModel(this.territoryForm.get('contacts'));
+      this.territoryApi.patchContact({ patch: contactModel, _id: this.territoryId }).subscribe(
         (modifiedTerritory) => {
           this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
           this.close.emit();
@@ -97,6 +100,15 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
         },
       );
+      // this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId).subscribe(
+      //   (modifiedTerritory) => {
+      //     this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
+      //     this.close.emit();
+      //   },
+      //   (err) => {
+      //     this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
+      //   },
+      // );
       return;
     }
 
