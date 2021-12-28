@@ -235,15 +235,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       companyFormGroup
         .get('siret')
         .valueChanges.pipe(
-          map((val) => {
-            console.debug(`value -> ${val}`);
-            return val;
-          }),
           throttleTime(300),
-          map((val) => {
-            console.debug(`throttleTime value -> ${val}`);
-            return val;
-          }),
           filter((v) => !!v),
           map((value: string) => {
             // remove all non-numbers chars and max out the length to 14
