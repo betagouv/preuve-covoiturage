@@ -132,6 +132,8 @@ describe('TerritoryFormComponent', () => {
     comp.territoryForm.controls.name.setValue("Communauté de communes du Pays de L'Arbresle");
     comp.territoryForm.controls.inseeString.setValue('69010,69021');
     comp.territoryForm.controls.contacts.get('gdpr_controller.email').setValue('gdpr_controller@mail.com');
+    comp.territoryForm.controls.contacts.get('gdpr_controller.lastname').setValue('controller');
+    comp.territoryForm.controls.contacts.get('gdpr_controller.firstname').setValue('gdpr');
     fixture.detectChanges();
 
     await fixture.whenStable().then(() => {
@@ -144,8 +146,8 @@ describe('TerritoryFormComponent', () => {
         company_id: 4,
         contacts: {
           gdpr_controller: {
-            firstname: undefined,
-            lastname: undefined,
+            firstname: 'gdpr',
+            lastname: 'controller',
             email: 'gdpr_controller@mail.com',
             phone: undefined,
           },
