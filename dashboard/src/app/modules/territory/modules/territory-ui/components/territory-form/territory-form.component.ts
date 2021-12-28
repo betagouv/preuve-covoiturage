@@ -130,13 +130,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
     formValues.children = territories.map((t) => t.territory_id);
 
-    if (this.isNew() && this.companyDetails) {
+    if (this.isNew()) {
       // this.territoryStore.create(formValues).subscribe(() => {
       //   this.toastr.success(`${formValues.name} a été mis à jour !`);
       //   this.close.emit();
       // });
       const model = TerritoryMapper.toModel(this.territoryForm, this.companyDetails._id, formValues.children);
-      console.debug(`model -> ${JSON.stringify(model)}`);
       this.territoryApi.createNew(model).subscribe(() => {
         this.toastr.success(`${formValues.name} a été mis à jour !`);
         this.close.emit();

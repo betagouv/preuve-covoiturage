@@ -1,10 +1,11 @@
 /* tslint:disable:variable-name*/
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { BaseModel } from '~/core/entities/BaseModel';
 import { Clone } from '~/core/entities/IClone';
 import { FormModel } from '~/core/entities/IFormModel';
 import { MapModel } from '~/core/entities/IMapModel';
-import { assignOrDeleteProperty, removeNullsProperties } from '~/core/entities/utils';
+import { assignOrDeleteProperty, hasOneNotEmptyProperty, removeNullsProperties } from '~/core/entities/utils';
+import { ContactsInterface } from '../api/shared/common/interfaces/ContactsInterface';
 import {
   TerritoryAddress,
   TerritoryBaseInterface,
@@ -30,17 +31,25 @@ export class TerritoryMapper {
   }
 
   static toModel(form: FormGroup, company_id: number, children: number[]): TerritoryBaseInterface {
-    console.debug(form.value);
     return {
       name: form.get('name').value,
       company_id: company_id,
-      contacts: {
-        gdpr_controller: form.get('contacts').get('gdpr_controller').value,
-      },
+      contacts: TerritoryMapper.toContactsModel(form.get('contacts')),
       level: TerritoryLevelEnum.Towngroup,
       address: removeNullsProperties(form.get('address').value),
       children: children,
     };
+  }
+
+  private static toContactsModel(contactForm: AbstractControl): ContactsInterface {
+    const contacts: ContactsInterface = {};
+    if (hasOneNotEmptyProperty(contactForm.get('gdpr_controller').value))
+      contacts.gdpr_controller = removeNullsProperties(contactForm.get('gdpr_controller').value);
+    if (hasOneNotEmptyProperty(contactForm.get('technical').value))
+      contacts.technical = removeNullsProperties(contactForm.get('technical').value);
+    if (hasOneNotEmptyProperty(contactForm.get('gdpr_dpo').value))
+      contacts.gdpr_dpo = removeNullsProperties(contactForm.get('gdpr_dpo').value);
+    return contacts;
   }
 }
 

@@ -39,7 +39,7 @@ export function assignOrDeleteProperty<PropT>(
 
 export function removeNullsProperties(source: any): any {
   return Object.keys(source)
-    .filter((k) => source[k] != null)
+    .filter((k) => source[k] != null && source[k] != undefined)
     .reduce((a, k) => ({ ...a, [k]: source[k] }), {});
 }
 

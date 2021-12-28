@@ -134,6 +134,14 @@ describe('TerritoryFormComponent', () => {
     comp.territoryForm.controls.contacts.get('gdpr_controller.email').setValue('gdpr_controller@mail.com');
     comp.territoryForm.controls.contacts.get('gdpr_controller.lastname').setValue('controller');
     comp.territoryForm.controls.contacts.get('gdpr_controller.firstname').setValue('gdpr');
+
+    comp.territoryForm.controls.contacts.get('gdpr_dpo.email').setValue('gdpr_dpo@mail.com');
+    comp.territoryForm.controls.contacts.get('gdpr_dpo.lastname').setValue('dpo');
+    comp.territoryForm.controls.contacts.get('gdpr_dpo.firstname').setValue('gdpr');
+
+    comp.territoryForm.controls.contacts.get('technical.email').setValue('technical@mail.com');
+    comp.territoryForm.controls.contacts.get('technical.firstname').setValue('technical');
+    comp.territoryForm.controls.contacts.get('technical.lastname').setValue('tech');
     fixture.detectChanges();
 
     await fixture.whenStable().then(() => {
@@ -145,11 +153,20 @@ describe('TerritoryFormComponent', () => {
         name: "Communauté de communes du Pays de L'Arbresle",
         company_id: 4,
         contacts: {
+          gdpr_dpo: {
+            firstname: 'gdpr',
+            lastname: 'dpo',
+            email: 'gdpr_dpo@mail.com',
+          },
           gdpr_controller: {
             firstname: 'gdpr',
             lastname: 'controller',
             email: 'gdpr_controller@mail.com',
-            phone: undefined,
+          },
+          technical: {
+            firstname: 'technical',
+            lastname: 'tech',
+            email: 'technical@mail.com',
           },
         },
         level: TerritoryLevelEnum.Towngroup,
