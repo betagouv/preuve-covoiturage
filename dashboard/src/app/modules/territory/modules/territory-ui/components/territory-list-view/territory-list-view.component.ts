@@ -7,6 +7,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Territory } from '~/core/entities/territory/territory';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
+
 @Component({
   selector: 'app-territory-list-view',
   templateUrl: './territory-list-view.component.html',
