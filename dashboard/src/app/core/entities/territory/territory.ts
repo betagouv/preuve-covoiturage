@@ -117,9 +117,6 @@ export class Territory
   }
 }
 
-export interface TerritoryFormContactModel {
-  contacts?: { gdpr_dpo: Contact; gdpr_controller: Contact; technical: Contact };
-}
 export interface TerritoryFormModel {
   name: string;
   level: string;
