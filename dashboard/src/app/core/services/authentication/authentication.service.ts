@@ -135,7 +135,7 @@ export class AuthenticationService {
 
   public check(): Observable<User> {
     if (this.isChecked) {
-      return of(this._user$.value);
+      return this._user$.asObservable();
     }
 
     return this.userApiService.me().pipe(

@@ -16,7 +16,6 @@ import {
 } from 'shared/territory/patchContacts.contract';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
-import { Territory } from '~/core/entities/territory/territory';
 import { CrudActions } from '~/core/services/api/json-rpc.crud';
 import { TerritoryInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { JsonRPCError } from '../../../core/entities/api/jsonRPCError';
@@ -34,7 +33,7 @@ export class TerritoryApiService {
 
   constructor(private http: HttpClient) {}
 
-  patchContact(item: PatchContactParamsInterface): Observable<Territory> {
+  patchContact(item: PatchContactParamsInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(signaturePatch, item);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }

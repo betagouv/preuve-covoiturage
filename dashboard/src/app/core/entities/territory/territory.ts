@@ -11,14 +11,13 @@ import {
   TerritoryBaseInterface,
   TerritoryLevelEnum,
 } from '../api/shared/territory/common/interfaces/TerritoryInterface';
-import { Territory as TerritoryBaseEdit } from '../api/shared/territory/update.contract';
 import { Address } from '../shared/address';
 import { Company } from '../shared/company';
 import { CompanyV2 } from '../shared/companyV2';
 import { Contact } from '../shared/contact';
 import { Contacts, ContactsMapper } from '../shared/contacts';
 
-export interface TerritoryBase extends TerritoryBaseEdit {
+export interface TerritoryBase extends TerritoryInterface {
   name: string;
   company_id?: number;
   insee?: any;

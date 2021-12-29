@@ -4,6 +4,7 @@ import { Territory } from '~/core/entities/territory/territory';
 import { Roles } from '~/core/enums/user/roles';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
+import { TerritoryInterface } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 
 @Component({
   selector: 'app-territory-list',
@@ -13,7 +14,7 @@ import { TerritoryStoreService } from '~/modules/territory/services/territory-st
 export class TerritoryListComponent {
   public readonly displayedColumns: string[] = ['name', 'actions'];
 
-  @Input() territories: Territory[] = [];
+  @Input() territories: TerritoryInterface[] = [];
 
   get canEdit(): boolean {
     return this.authenticationService.hasRole([Roles.RegistryAdmin]);
@@ -25,7 +26,7 @@ export class TerritoryListComponent {
     public territoryStore: TerritoryStoreService,
   ) {}
 
-  onEdit(territory: Territory): void {
+  onEdit(territory: TerritoryInterface): void {
     this.router.navigate(['/admin/all-territories/', territory._id]);
   }
 }

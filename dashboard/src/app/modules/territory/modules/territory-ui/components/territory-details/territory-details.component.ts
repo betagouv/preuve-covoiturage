@@ -1,27 +1,16 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-
-import { Territory } from '~/core/entities/territory/territory';
+import { Component, Input } from '@angular/core';
+import { TerritoryInterface } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { CompanyV2 } from '../../../../../../core/entities/shared/companyV2';
 
 @Component({
   selector: 'app-territory-details',
   templateUrl: './territory-details.component.html',
   styleUrls: ['./territory-details.component.scss'],
 })
-export class TerritoryDetailsComponent implements OnInit, OnChanges {
-  @Input() territory: Territory;
+export class TerritoryDetailsComponent {
+  @Input() territory: TerritoryInterface;
   @Input() displayContacts = true;
+  @Input() company: CompanyV2;
 
   constructor() {}
-
-  ngOnInit(): void {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['territory']) {
-      this.setTerritoryDetails(new Territory(changes['territory'].currentValue));
-    }
-  }
-
-  private setTerritoryDetails(territory: Territory): void {
-    this.territory = territory.clone() as Territory;
-  }
 }
