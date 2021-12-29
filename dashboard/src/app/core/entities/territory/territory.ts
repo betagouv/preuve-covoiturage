@@ -25,8 +25,17 @@ export interface TerritoryBase extends TerritoryInterface {
 }
 
 export class TerritoryMapper {
-  static toForm(data: TerritoryBaseInterface): FormGroup {
-    throw new Error('Method not implemented.');
+  static toForm(data: TerritoryBaseInterface, fullformMode = true): any {
+    return fullformMode
+      ? {
+          name: data.name ? data.name : '',
+          contacts: data.contacts ? data.contacts : undefined,
+          address: new Address(data.address).toFormValues(),
+          inseeString: '',
+        }
+      : {
+          contacts: data.contacts ? data.contacts : undefined,
+        };
   }
 
   static toModel(

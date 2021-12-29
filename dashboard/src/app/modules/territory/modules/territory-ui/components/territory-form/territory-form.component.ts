@@ -1,16 +1,18 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil, tap, throttleTime } from 'rxjs/operators';
+import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
 import { Contact } from '~/core/entities/shared/contact';
-import { Territory, TerritoryFormModel, TerritoryMapper } from '~/core/entities/territory/territory';
+import { TerritoryFormModel, TerritoryMapper } from '~/core/entities/territory/territory';
 import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
@@ -20,22 +22,20 @@ import { TerritoryApiService } from '~/modules/territory/services/territory-api.
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
-import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
-import { ActivatedRoute } from '@angular/router';
-import { ContactsMapper } from '../../../../../../core/entities/shared/contacts';
-import { ContactsInterface } from '../../../../../../core/entities/api/shared/common/interfaces/ContactsInterface';
 import {
   TerritoryBaseInterface,
   TerritoryInterface,
 } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { ContactsInterface } from '../../../../../../core/entities/api/shared/common/interfaces/ContactsInterface';
+import { ContactsMapper } from '../../../../../../core/entities/shared/contacts';
 
 @Component({
   selector: 'app-territory-form',
   templateUrl: './territory-form.component.html',
   styleUrls: ['./territory-form.component.scss'],
 })
-export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
-  @Input() territory: Territory = null;
+export class TerritoryFormComponent extends DestroyObservable implements OnInit {
+  @Input() territory: TerritoryInterface = null;
 
   public isRegistryGroup = false;
   public territoryForm: FormGroup;
@@ -55,7 +55,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   ngOnInit(): void {
-    this.route.data.subscribe((data: { territory: Territory }) => (this.territory = data.territory));
+    this.route.data.subscribe((data: { territory: TerritoryInterface }) => (this.territory = data.territory));
     this.authService.user$
       .pipe(
         filter((user) => !!user),
@@ -77,11 +77,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     return this.authService.hasRole([Roles.RegistryAdmin, Roles.TerritoryAdmin]);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['territory'] && this.territoryForm) {
-      this.setTerritoryFormValue(changes['territory'].currentValue);
-    }
-  }
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   if (changes['territory'] && this.territoryForm) {
+  //     this.setTerritoryFormValue(changes['territory'].currentValue);
+  //   }
+  // }
 
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
@@ -338,10 +338,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
   }
 
-  private setTerritoryFormValue(territory: Territory): void {
+  private setTerritoryFormValue(territory: TerritoryInterface): void {
     this.territoryId = territory ? territory._id : null;
-    const territoryEd = new Territory(territory);
-    const formValues = territoryEd.toFormValues(this.isRegistryGroup);
+
+    // const territoryEd = new Territory(territory);
+    // const formValues = territoryEd.toFormValues(this.isRegistryGroup);
 
     if (!this.territoryId) {
       ['company', 'address', 'contacts.gdpr_dpo', 'contacts.gdpr_controller', 'contacts.technical'].forEach((key) => {
@@ -351,7 +352,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       this.territoryForm.reset();
     }
 
-    this.territoryForm.setValue(formValues);
+    const territoryFormValue = TerritoryMapper.toForm(territory, this.isRegistryGroup);
+
+    this.territoryForm.patchValue(territoryFormValue);
 
     if (this.territoryId && this.isRegistryGroup) {
       if (territory.company_id) {
