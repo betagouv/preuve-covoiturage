@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { debounceTime, finalize } from 'rxjs/operators';
+import { debounceTime, finalize, skip } from 'rxjs/operators';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { TerritoryInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { PaginationState } from '../../../core/services/store/PaginationState';
@@ -54,13 +54,8 @@ export class TerritoryStoreService {
   }
 
   private _setupFilterSubject() {
-    let firstLoad = true;
-
-    this._filterSubject.pipe(debounceTime(100)).subscribe((filt) => {
-      if (firstLoad || filt !== null) {
-        this.loadList();
-        firstLoad = !firstLoad || !!filt;
-      }
+    this._filterSubject.pipe(debounceTime(100), skip(1)).subscribe((filt) => {
+      this.loadList();
     });
   }
 
