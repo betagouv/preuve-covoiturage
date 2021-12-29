@@ -73,11 +73,6 @@ export class TerritoryApiService {
     return this.callOne(jsonRPCParam);
   }
 
-  get(query: FindByIdParamsInterface): Observable<Territory> {
-    const jsonRPCParam = this.paramGetById(query._id);
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
-  }
-
   createNew(item: TerritoryBaseInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:${CrudActions.CREATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
@@ -88,20 +83,13 @@ export class TerritoryApiService {
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  private callOne(method: JsonRPCParam, options?: JsonRPCOptions, throwErrors = true): Observable<JsonRPCResult> {
-    return this.call([method], options, throwErrors).pipe(map((datas) => datas[0]));
+  public getById(id: number): Observable<TerritoryInterface> {
+    const jsonRPCParam = this.paramGetById(id);
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  public getById(id: number): Observable<TerritoryInterface> {
-    return this.getById(id).pipe(
-      finalize(() => {
-        if (this._loadCount > 0) this._loadCount -= 1;
-      }),
-      map((entity) => new this.modelType().map(entity)),
-      tap((entity) => {
-        this.entitySubject.next(entity);
-      }),
-    );
+  private callOne(method: JsonRPCParam, options?: JsonRPCOptions, throwErrors = true): Observable<JsonRPCResult> {
+    return this.call([method], options, throwErrors).pipe(map((datas) => datas[0]));
   }
 
   private call(methods: JsonRPCParam[], options?: JsonRPCOptions, throwErrors = true): Observable<JsonRPCResult[]> {

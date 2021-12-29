@@ -15,11 +15,14 @@ export class TerritoryStoreService {
   }
 
   private entitiesSubject = new BehaviorSubject<TerritoryInterface[]>([]);
-  private paginationSubject = new BehaviorSubject<PaginationState>({
+
+  private readonly DEFAULT_PAGINATION = {
     total: 0,
     limit: 0,
     offset: 0,
-  });
+  };
+
+  private paginationSubject = new BehaviorSubject<PaginationState>(this.DEFAULT_PAGINATION);
 
   private _isError: boolean;
   private _isLoaded = false;
@@ -63,8 +66,6 @@ export class TerritoryStoreService {
 
   loadList(): Observable<StoreLoadingState> {
     this._isLoaded = false;
-    this._listLoadingState.next(StoreLoadingState.Off);
-
     this._listLoadingState.next(StoreLoadingState.LoadStart);
     this.territoryApi
       .getList(this.finalFilterValue)
@@ -79,7 +80,9 @@ export class TerritoryStoreService {
           this._isLoaded = true;
           this._isError = false;
 
-          this.paginationSubject.next(list.meta && list.meta.pagination ? list.meta.pagination : defaultPagination());
+          this.paginationSubject.next(
+            list.meta && list.meta.pagination ? list.meta.pagination : this.DEFAULT_PAGINATION,
+          );
         },
         (error) => {
           this._isError = true;
@@ -88,12 +91,4 @@ export class TerritoryStoreService {
       );
     return this._listLoadingState.asObservable();
   }
-}
-
-function defaultPagination(): PaginationState {
-  return {
-    total: 0,
-    limit: 0,
-    offset: 0,
-  };
 }
