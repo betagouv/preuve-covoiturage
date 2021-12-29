@@ -14,13 +14,13 @@ import { TerritoriesToInseesAutocompleteComponent } from './territories-to-insee
 const paris10: InseeAndTerritoryInterface = {
   territory_literal: 'Paris 10ème (75)',
   context: 'Paris 10ème (75)',
-  insees: ['9333'],
+  insees: '9333',
 };
 
 const damparis: InseeAndTerritoryInterface = {
   territory_literal: 'Damparis (39)',
   context: 'Damparis (39)',
-  insees: ['9333'],
+  insees: '9333',
 };
 
 class TerritoryApiServiceStub {

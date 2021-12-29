@@ -27,6 +27,7 @@ describe('TerritoryFormComponent', () => {
   };
 
   const territory = {
+    _id: 44,
     level: TerritoryLevelEnum.Towngroup,
     name: "Communauté de communes du Pays de L'Arbresle",
     company_id: 3,
