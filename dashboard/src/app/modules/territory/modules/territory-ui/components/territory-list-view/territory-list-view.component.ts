@@ -13,14 +13,12 @@ import { TerritoryStoreService } from '~/modules/territory/services/territory-st
   styleUrls: ['./territory-list-view.component.scss'],
 })
 export class TerritoryListViewComponent extends DestroyObservable implements OnInit, AfterViewInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
   public readonly PAGE_SIZE = 25;
-
-  private _filterLiteral = new BehaviorSubject('');
-  isFormVisible = false;
-
   public territoriesToShow: Territory[];
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  private _filterLiteral = new BehaviorSubject('');
   private _countTerritories = 0;
 
   constructor(private territoryStoreService: TerritoryStoreService) {
@@ -32,18 +30,6 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
     this.territoryStoreService.entities$
       .pipe(takeUntil(this.destroy$))
       .subscribe((data) => (this.territoriesToShow = data));
-    this.loadTerritories();
-
-    // load single entity
-    this.territoryStoreService.unselect();
-    this.territoryStoreService.entity$.subscribe((entity) => {
-      this.isFormVisible = !!entity;
-    });
-  }
-
-  // onclick: select new
-  onClickCreate(): void {
-    this.territoryStoreService.selectNew();
   }
 
   ngAfterViewInit(): void {
@@ -74,17 +60,5 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
 
   pipeFilter(literal: any): void {
     this._filterLiteral.next(literal);
-  }
-
-  onEdit(territory: any): void {
-    this.territoryStoreService.select(territory);
-  }
-
-  onClose(): void {
-    this.territoryStoreService.unselect();
-  }
-
-  loadTerritories(): void {
-    this.territoryStoreService.loadList();
   }
 }

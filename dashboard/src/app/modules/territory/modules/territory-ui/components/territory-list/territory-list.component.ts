@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Territory } from '~/core/entities/territory/territory';
 import { Roles } from '~/core/enums/user/roles';
@@ -16,7 +15,6 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit 
   public readonly displayedColumns: string[] = ['name', 'actions'];
 
   @Input() territories: Territory[] = [];
-  @Output() edit = new EventEmitter();
 
   get canEdit(): boolean {
     return this.authenticationService.hasRole([Roles.RegistryAdmin]);

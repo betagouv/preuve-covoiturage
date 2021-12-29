@@ -31,14 +31,10 @@ import { ContactsInterface } from '../../../../../../core/entities/api/shared/co
   styleUrls: ['./territory-form.component.scss'],
 })
 export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
-  @Input() isFormVisible = true;
-  @Input() closable = false;
   @Input() territory: Territory = null;
 
-  @Output() close = new EventEmitter();
-
+  public isRegistryGroup = false;
   public territoryForm: FormGroup;
-  public fullFormMode = false;
   public territoryId: number;
 
   private companyDetails: CompanyInterface;
@@ -62,7 +58,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         takeUntil(this.destroy$),
       )
       .subscribe((user) => {
-        this.fullFormMode = user && user.group === Groups.Registry;
+        this.isRegistryGroup = user && user.group === Groups.Registry;
         this.initTerritoryForm();
         this.initTerritoryFormValue();
         this.updateValidation();
@@ -87,12 +83,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
     formValues.company_id = get(this, 'companyDetails._id', null);
 
-    if (!this.fullFormMode) {
+    if (!this.isRegistryGroup) {
       const contactModel: ContactsInterface = ContactsMapper.toModel(this.territoryForm.get('contacts'));
       this.territoryApi.patchContact({ patch: contactModel, _id: this.territoryId }).subscribe(
         (modifiedTerritory) => {
           this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
-          this.close.emit();
         },
         (err) => {
           this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
@@ -138,7 +133,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     if (this.isNew()) {
       this.territoryApi.createNew(model).subscribe(() => {
         this.toastr.success(`${formValues.name} a été mis à jour !`);
-        this.close.emit();
       });
       return;
     }
@@ -146,7 +140,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this.territoryApi.updateNew(model).subscribe(
       (modifiedTerritory) => {
         this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
-        this.close.emit();
       },
       (err) => {
         this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
@@ -160,11 +153,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   private hasSameLength(inseeList: string[], territories: TerritoryInsee[]): boolean {
     return inseeList.length === territories.length;
-  }
-
-  public onClose(): void {
-    this.territoryForm.reset();
-    this.close.emit();
   }
 
   private initTerritoryFormValue(): void {
@@ -181,7 +169,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
       }),
     };
-    if (this.fullFormMode) {
+    if (this.isRegistryGroup) {
       formOptions = {
         ...formOptions,
         name: [''],
@@ -310,8 +298,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private updateValidation(): void {
-    if (this.territoryForm && this.fullFormMode) {
-      this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
+    if (this.territoryForm && this.isRegistryGroup) {
+      this.territoryForm.controls['name'].setValidators(this.isRegistryGroup ? Validators.required : null);
       this.territoryForm.controls['name'].updateValueAndValidity();
       this.territoryForm.controls['name'].markAsUntouched();
 
@@ -344,7 +332,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   private setTerritoryFormValue(territory: Territory): void {
     this.territoryId = territory ? territory._id : null;
     const territoryEd = new Territory(territory);
-    const formValues = territoryEd.toFormValues(this.fullFormMode);
+    const formValues = territoryEd.toFormValues(this.isRegistryGroup);
 
     if (!this.territoryId) {
       ['company', 'address', 'contacts.gdpr_dpo', 'contacts.gdpr_controller', 'contacts.technical'].forEach((key) => {
@@ -356,7 +344,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     this.territoryForm.setValue(formValues);
 
-    if (this.territoryId && this.fullFormMode) {
+    if (this.territoryId && this.isRegistryGroup) {
       if (territory.company_id) {
         this.companyService.getById(territory.company_id).subscribe((company) => {
           this.updateCompanyForm(company);

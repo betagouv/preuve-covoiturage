@@ -1,6 +1,10 @@
-<div [hidden]="!isFormVisible">
+<h2 *ngIf="isRegistryGroup">
+  {{ !!territoryId ? 'Edition du territoire' : 'Ajouter un territoire' }}
+  <button mat-button routerLink="/admin/all-territories">retour à la liste</button>
+</h2>
+<div>
   <form class="territoryForm" [formGroup]="territoryForm">
-    <div *ngIf="fullFormMode">
+    <div *ngIf="isRegistryGroup">
       <h2>Informations générales</h2>
 
       <mat-form-field class="name" appearance="outline">
@@ -66,7 +70,7 @@
     
     <div>
       <div class="actions">
-        <button type="button" class="large" (click)="onClose()" mat-button *ngIf="closable">Annuler</button>
+        <button type="button" class="large" routerLink="/admin/all-territories" mat-button *ngIf="isRegistryGroup">Annuler</button>
 
         <button
           *ngIf="canUpdate"
