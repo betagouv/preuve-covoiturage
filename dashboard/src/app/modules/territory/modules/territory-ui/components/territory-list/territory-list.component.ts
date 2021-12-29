@@ -11,7 +11,7 @@ import { TerritoryStoreService } from '~/modules/territory/services/territory-st
   templateUrl: './territory-list.component.html',
   styleUrls: ['./territory-list.component.scss'],
 })
-export class TerritoryListComponent extends DestroyObservable implements OnInit {
+export class TerritoryListComponent {
   public readonly displayedColumns: string[] = ['name', 'actions'];
 
   @Input() territories: Territory[] = [];
@@ -24,11 +24,7 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit 
     private router: Router,
     public authenticationService: AuthenticationService,
     public territoryStore: TerritoryStoreService,
-  ) {
-    super();
-  }
-
-  ngOnInit(): void {}
+  ) {}
 
   onEdit(territory: Territory): void {
     this.router.navigate(['/admin/all-territories/', territory._id]);

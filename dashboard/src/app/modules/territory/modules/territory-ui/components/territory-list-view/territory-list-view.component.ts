@@ -26,7 +26,6 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
   }
 
   ngOnInit(): void {
-    // bind and load all territories
     this.territoryStoreService.entities$
       .pipe(takeUntil(this.destroy$))
       .subscribe((data) => (this.territoriesToShow = data));
