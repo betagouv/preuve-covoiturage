@@ -24,6 +24,10 @@ import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
 import { ActivatedRoute } from '@angular/router';
 import { ContactsMapper } from '../../../../../../core/entities/shared/contacts';
 import { ContactsInterface } from '../../../../../../core/entities/api/shared/common/interfaces/ContactsInterface';
+import {
+  TerritoryBaseInterface,
+  TerritoryInterface,
+} from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 
 @Component({
   selector: 'app-territory-form',
@@ -129,7 +133,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
     formValues.children = territories.map((t) => t.territory_id);
 
-    const model = TerritoryMapper.toModel(this.territoryForm, this.companyDetails._id, formValues.children);
+    const model: TerritoryBaseInterface = TerritoryMapper.toModel(
+      this.territoryForm,
+      this.companyDetails._id,
+      formValues.children,
+    );
     if (this.isNew()) {
       this.territoryApi.createNew(model).subscribe(() => {
         this.toastr.success(`${formValues.name} a été mis à jour !`);
@@ -137,7 +145,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
-    this.territoryApi.updateNew(model).subscribe(
+    const updateModel: TerritoryInterface = { ...model, _id: this.territoryId };
+    this.territoryApi.updateNew(updateModel).subscribe(
       (modifiedTerritory) => {
         this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
       },

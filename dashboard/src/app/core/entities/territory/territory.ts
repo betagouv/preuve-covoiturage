@@ -5,6 +5,7 @@ import { Clone } from '~/core/entities/IClone';
 import { FormModel } from '~/core/entities/IFormModel';
 import { MapModel } from '~/core/entities/IMapModel';
 import { assignOrDeleteProperty, removeNullsProperties } from '~/core/entities/utils';
+import { TerritoryInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import {
   TerritoryAddress,
   TerritoryBaseInterface,
@@ -34,7 +35,7 @@ export class TerritoryMapper {
     company_id: number,
     children: number[],
     territoryId?: number,
-  ): TerritoryBaseInterface | TerritoryBaseEdit {
+  ): TerritoryBaseInterface | TerritoryInterface {
     const territory: TerritoryBaseInterface = {
       name: territoryForm.get('name').value,
       company_id: company_id,

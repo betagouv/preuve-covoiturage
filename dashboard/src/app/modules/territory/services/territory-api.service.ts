@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { finalize, map, tap } from 'rxjs/operators';
 import { ParamsInterface as FindByIdParamsInterface, signature as signatureFind } from 'shared/territory/find.contract';
 import {
   ParamsInterface as ParamsInterfaceFindByCode,
@@ -20,16 +20,25 @@ import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { Territory } from '~/core/entities/territory/territory';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-import { CrudActions, JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { TerritoryBaseInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { CrudActions } from '~/core/services/api/json-rpc.crud';
+import { TerritoryInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { JsonRPCError } from '../../../core/entities/api/jsonRPCError';
+import { JsonRPCOptions } from '../../../core/entities/api/jsonRPCOptions';
+import { JsonRPCResponse } from '../../../core/entities/api/jsonRPCResponse';
+import { TerritoryBaseInterface } from '../../../core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, any, any, TerritoryListFilter> {
-  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected _toastr: ToastrService) {
-    super(http, router, activatedRoute, 'territory');
-  }
+export class TerritoryApiService {
+  private readonly method: string = 'territory';
+  private readonly defaultListParam: any = {};
+  private readonly url = 'rpc';
+  _loadCount: number;
+  modelType: any;
+  entitySubject: any;
+
+  constructor(private http: HttpClient, router: Router, private _toastr: ToastrService) {}
 
   patchContact(item: PatchContactParamsInterface): Observable<Territory> {
     const jsonRPCParam = new JsonRPCParam(signaturePatch, item);
@@ -69,13 +78,72 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  createNew(item: TerritoryBaseInterface): Observable<TerritoryBaseInterface> {
+  createNew(item: TerritoryBaseInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:${CrudActions.CREATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  updateNew(item: TerritoryBaseInterface): Observable<TerritoryBaseInterface> {
+  updateNew(item: TerritoryInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:${CrudActions.UPDATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
+  }
+
+  private callOne(method: JsonRPCParam, options?: JsonRPCOptions, throwErrors = true): Observable<JsonRPCResult> {
+    return this.call([method], options, throwErrors).pipe(map((datas) => datas[0]));
+  }
+
+  public getById(id: number): Observable<TerritoryInterface> {
+    return this.getById(id).pipe(
+      finalize(() => {
+        if (this._loadCount > 0) this._loadCount -= 1;
+      }),
+      map((entity) => new this.modelType().map(entity)),
+      tap((entity) => {
+        this.entitySubject.next(entity);
+      }),
+    );
+  }
+
+  private call(methods: JsonRPCParam[], options?: JsonRPCOptions, throwErrors = true): Observable<JsonRPCResult[]> {
+    // handle default withCredentials = true for empty object and undefined property
+    const finalOptions = options ? options : { withCredentials: true };
+    finalOptions.withCredentials = finalOptions.withCredentials !== undefined ? finalOptions.withCredentials : true;
+
+    let urlWithMethods = this.url;
+    methods.forEach((method, index) => {
+      // increment param id in order to avoid collisions
+      method.id += index;
+      if (index === 0) {
+        urlWithMethods += '?methods=';
+      } else {
+        urlWithMethods += ',';
+      }
+      urlWithMethods += `${method.method}`;
+    });
+
+    return this.http.post(urlWithMethods, methods, finalOptions).pipe(
+      map((response: JsonRPCResponse[]) => {
+        const res: { id: number; data: any; meta: any }[] = [];
+        response.forEach((data: JsonRPCResponse) => {
+          if (data.error) {
+            const error = new JsonRPCError(data.error);
+            console.error(`[${error.message}]`, data.error?.data);
+            if (throwErrors) throw error;
+          }
+
+          // temporary compatibility solver (for result | result.data)
+          const resultData = data.result ? (data.result.data !== undefined ? data.result.data : data.result) : null;
+          const resultMeta = data.result && data.result.meta ? data.result.meta : null;
+
+          res.push({ id: data.id, data: resultData, meta: resultMeta });
+        });
+
+        return res;
+      }),
+    );
+  }
+
+  getList(params?: any): Observable<{ data: TerritoryInterface[]; meta: any }> {
+    return this.callOne(this.paramGetList(params));
   }
 }

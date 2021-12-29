@@ -99,7 +99,7 @@ export abstract class GetListStore<
     this.entitySubject.next(null);
   }
 
-  loadList(debounce = 300, updateLoadcount = true): Observable<StoreLoadingState> {
+  loadList(debounce = 0, updateLoadcount = true): Observable<StoreLoadingState> {
     clearTimeout(this.__debounceTimeId);
     this._isLoaded = false;
 

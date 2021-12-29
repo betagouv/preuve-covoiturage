@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { map, takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CommonDataService } from '~/core/services/common-data.service';
-import { Territory } from '~/core/entities/territory/territory';
+import { map, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Roles } from '~/core/enums/user/roles';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CommonDataService } from '~/core/services/common-data.service';
+import { TerritoryInterface } from '../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 
 @Component({
   selector: 'app-territory',
@@ -15,7 +14,7 @@ import { Roles } from '~/core/enums/user/roles';
 })
 export class TerritoryComponent extends DestroyObservable implements OnInit {
   public readOnly$: Observable<boolean>;
-  public territory: Territory;
+  public territory: TerritoryInterface;
 
   constructor(private auth: AuthenticationService, private commonData: CommonDataService) {
     super();

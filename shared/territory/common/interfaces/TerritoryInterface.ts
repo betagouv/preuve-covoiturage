@@ -1,4 +1,5 @@
 import { ContactsInterface } from '../../../common/interfaces/ContactsInterface';
+import { TerritoryDbMetaInterface } from './TerritoryDbMetaInterface';
 
 export enum TerritoryLevelEnum {
   Town = 'town',
@@ -27,4 +28,8 @@ export interface TerritoryBaseInterface {
   children: number[];
   contacts?: ContactsInterface;
   address: TerritoryAddress;
+}
+
+export interface TerritoryInterface extends TerritoryBaseInterface {
+  _id: number;
 }
