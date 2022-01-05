@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { ContextType, ForbiddenException } from '@ilos/common';
 
 import { ScopeToGroupMiddleware } from './ScopeToGroupMiddleware';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   mockConnectedUser: any;
   mockTripParameters: any;
   contextFactory: Function;

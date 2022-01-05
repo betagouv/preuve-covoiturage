@@ -1,5 +1,5 @@
 import { ConfigInterfaceResolver } from '@ilos/common';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import sinon, { SinonFakeTimers, SinonStub } from 'sinon';
 import { CreateCastParamsInterface, ParamsInterface, createCastParamsHelper } from './createCastParamsHelper';
 
@@ -12,7 +12,7 @@ interface Context {
   end_at_max: Date;
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
   const configIR = new (class extends ConfigInterfaceResolver {})();

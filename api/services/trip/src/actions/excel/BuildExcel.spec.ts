@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
 import { SinonStub } from 'sinon';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
@@ -20,7 +20,7 @@ interface Context {
   // Constants
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.tripRepositoryProvider = new TripRepositoryProvider(null);

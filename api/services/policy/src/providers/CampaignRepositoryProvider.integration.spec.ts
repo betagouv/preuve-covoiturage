@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { CampaignPgRepositoryProvider } from './CampaignPgRepositoryProvider';
@@ -11,7 +11,7 @@ interface TestContext {
   territory_id: number;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 function makeCampaign(data: Partial<CampaignInterface> = {}): CampaignInterface {
   const start = new Date();

@@ -1,7 +1,7 @@
 import { NewableType, ServiceContainerInterface } from '@ilos/common';
-import { Macro, TestInterface, ExecutionContext } from 'ava';
+import { Macro, TestFn, ExecutionContext } from 'ava';
 
-import { makeKernel, KernelTestInterface } from '@pdc/helper-test';
+import { makeKernel, KernelTestFn } from '@pdc/helper-test';
 
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { HandleCheckInterface } from '../../../interfaces';
@@ -40,14 +40,14 @@ export function faker(data: Partial<SelfCheckParamsInterface> = {}, deltaMode = 
 }
 
 export function selfCheckMacro<TestContext = unknown>(
-  anyTest: TestInterface,
+  anyTest: TestFn,
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
   checkCtor: NewableType<HandleCheckInterface<SelfCheckParamsInterface>>,
 ): {
-  test: TestInterface<TestContext & KernelTestInterface>;
-  range: Macro<[Partial<SelfCheckParamsInterface>, number, number, boolean?], TestContext & KernelTestInterface>;
+  test: TestFn<TestContext & KernelTestFn>;
+  range: Macro<[Partial<SelfCheckParamsInterface>, number, number, boolean?], TestContext & KernelTestFn>;
 } {
-  const test = anyTest as TestInterface<TestContext & KernelTestInterface>;
+  const test = anyTest as TestFn<TestContext & KernelTestFn>;
 
   test.before(async (t) => {
     t.context.kernel = makeKernel(serviceProviderCtor);
@@ -60,9 +60,9 @@ export function selfCheckMacro<TestContext = unknown>(
 
   const range: Macro<
     [Partial<SelfCheckParamsInterface>, number, number, boolean?],
-    TestContext & KernelTestInterface
+    TestContext & KernelTestFn
   > = async (
-    t: ExecutionContext<TestContext & KernelTestInterface>,
+    t: ExecutionContext<TestContext & KernelTestFn>,
     input: Partial<SelfCheckParamsInterface>,
     min: number,
     max: number,

@@ -2,7 +2,7 @@ import { ServiceContainerInterface, NewableType, KernelInterface, kernel as kern
 import { Kernel as AbstractKernel } from '@ilos/framework';
 import { v4 } from 'uuid';
 
-export interface KernelTestInterface {
+export interface KernelTestFn {
   kernel: KernelInterface;
 }
 

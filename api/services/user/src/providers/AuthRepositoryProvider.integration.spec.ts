@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { CryptoProvider, CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
@@ -13,7 +13,7 @@ interface TestContext {
   email: string;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 test.before.skip(async (t) => {
   t.context.email = 'toto@toto.com';

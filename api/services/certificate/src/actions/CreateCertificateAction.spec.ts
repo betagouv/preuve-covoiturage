@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@ilos/common';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { mapFromCarpools } from '../helpers/mapFromCarpools';
@@ -37,7 +37,7 @@ interface Context {
   createCertificateAction: CreateCertificateAction;
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 const carpoolData: CarpoolInterface[] = [
   /* eslint-disable prettier/prettier */

@@ -1,11 +1,11 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { Migrator } from './Migrator';
 
 interface TestContext {
   db: Migrator;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 test.before(async (t) => {
   t.context.db = new Migrator(process.env.APP_POSTGRES_URL);

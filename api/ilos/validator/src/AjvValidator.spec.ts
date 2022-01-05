@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
 import { ConfigInterfaceResolver } from '@ilos/common';
 
@@ -9,7 +9,7 @@ interface Context {
   provider: AjvValidator;
 }
 
-const test = anyTest as TestInterface<Context>;
+const test = anyTest as TestFn<Context>;
 
 test.beforeEach((t) => {
   const fakeConfig = sinon.createStubInstance(ConfigInterfaceResolver, {

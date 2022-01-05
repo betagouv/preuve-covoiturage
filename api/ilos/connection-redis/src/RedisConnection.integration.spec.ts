@@ -1,11 +1,11 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { RedisConnection } from './RedisConnection';
 
 interface Context {
   connection: RedisConnection;
 }
 
-const test = anyTest as TestInterface<Context>;
+const test = anyTest as TestFn<Context>;
 
 test.before((t) => {
   t.context = {

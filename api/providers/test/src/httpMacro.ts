@@ -1,5 +1,5 @@
 import { ContextType, ParamsType, TransportInterface, ResultType } from '@ilos/common';
-import { Macro, TestInterface, ExecutionContext } from 'ava';
+import { Macro, TestFn, ExecutionContext } from 'ava';
 import supertest from 'supertest';
 
 type transportCtorType = (type: string, ...opts: string[]) => Promise<TransportInterface>;
@@ -11,13 +11,13 @@ interface HttpInterface {
 }
 
 export function httpMacro<TestContext = unknown>(
-  anyTest: TestInterface,
+  anyTest: TestFn,
   transportCtor: transportCtorType,
 ): {
-  test: TestInterface<TestContext & HttpInterface>;
+  test: TestFn<TestContext & HttpInterface>;
   query: Macro<[string, any, any, any], TestContext & HttpInterface>;
 } {
-  const test = anyTest as TestInterface<TestContext & HttpInterface>;
+  const test = anyTest as TestFn<TestContext & HttpInterface>;
 
   test.before(async (t) => {
     t.context.transport = await transportCtor('http', '0');

@@ -1,7 +1,7 @@
 import { ContextType, ServiceContainerInterface, NewableType } from '@ilos/common';
-import { Macro, TestInterface, ExecutionContext } from 'ava';
+import { Macro, TestFn, ExecutionContext } from 'ava';
 
-import { makeKernel, KernelTestInterface } from './helpers';
+import { makeKernel, KernelTestFn } from './helpers';
 
 interface HandlerConfigInterface {
   service: string;
@@ -13,29 +13,29 @@ type errorCheck<E = Error, C = any> = (params: E, t: ExecutionContext<C>) => Pro
 type paramsBuilder<P, C = any> = (t: ExecutionContext<C>) => Promise<P> | P;
 
 export function handlerMacro<ActionParams, ActionResult, ActionError extends Error = Error, TestContext = unknown>(
-  anyTest: TestInterface,
+  anyTest: TestFn,
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
   handlerConfig: HandlerConfigInterface,
 ): {
-  test: TestInterface<TestContext & KernelTestInterface>;
+  test: TestFn<TestContext & KernelTestFn>;
   success: Macro<
     [
-      ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestInterface>,
-      Partial<ActionResult> | successCheck<ActionResult, TestContext & KernelTestInterface>,
+      ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestFn>,
+      Partial<ActionResult> | successCheck<ActionResult, TestContext & KernelTestFn>,
       Partial<ContextType>?,
     ],
-    TestContext & KernelTestInterface
+    TestContext & KernelTestFn
   >;
   error: Macro<
     [
-      ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestInterface>,
-      string | errorCheck<ActionError, TestContext & KernelTestInterface>,
+      ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestFn>,
+      string | errorCheck<ActionError, TestContext & KernelTestFn>,
       Partial<ContextType>?,
     ],
-    TestContext & KernelTestInterface
+    TestContext & KernelTestFn
   >;
 } {
-  const test = anyTest as TestInterface<TestContext & KernelTestInterface>;
+  const test = anyTest as TestFn<TestContext & KernelTestFn>;
 
   test.before(async (t) => {
     t.context.kernel = makeKernel(serviceProviderCtor);
@@ -57,15 +57,15 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
 
   const success: Macro<
     [
-      ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestInterface>,
-      Partial<ActionResult> | successCheck<ActionResult, TestContext & KernelTestInterface>,
+      ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestFn>,
+      Partial<ActionResult> | successCheck<ActionResult, TestContext & KernelTestFn>,
       Partial<ContextType>,
     ],
-    TestContext & KernelTestInterface
+    TestContext & KernelTestFn
   > = async (
-    t: ExecutionContext<TestContext & KernelTestInterface>,
-    params: ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestInterface>,
-    response: Partial<ActionResult> | successCheck<ActionResult, TestContext & KernelTestInterface>,
+    t: ExecutionContext<TestContext & KernelTestFn>,
+    params: ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestFn>,
+    response: Partial<ActionResult> | successCheck<ActionResult, TestContext & KernelTestFn>,
     currentContext: Partial<ContextType> = {},
   ) => {
     const context = {
@@ -74,7 +74,7 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
     };
     const finalParams =
       typeof params === 'function'
-        ? await (params as paramsBuilder<ActionParams, TestContext & KernelTestInterface>)(t)
+        ? await (params as paramsBuilder<ActionParams, TestContext & KernelTestFn>)(t)
         : params;
 
     const kernel = t.context.kernel;
@@ -94,15 +94,15 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
 
   const error: Macro<
     [
-      ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestInterface>,
-      string | errorCheck<ActionError, TestContext & KernelTestInterface>,
+      ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestFn>,
+      string | errorCheck<ActionError, TestContext & KernelTestFn>,
       Partial<ContextType>,
     ],
-    TestContext & KernelTestInterface
+    TestContext & KernelTestFn
   > = async (
-    t: ExecutionContext<TestContext & KernelTestInterface>,
-    params: ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestInterface>,
-    message: string | errorCheck<ActionError, TestContext & KernelTestInterface>,
+    t: ExecutionContext<TestContext & KernelTestFn>,
+    params: ActionParams | paramsBuilder<ActionParams, TestContext & KernelTestFn>,
+    message: string | errorCheck<ActionError, TestContext & KernelTestFn>,
     currentContext: Partial<ContextType> = {},
   ) => {
     const context = {
@@ -111,7 +111,7 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
     };
     const finalParams =
       typeof params === 'function'
-        ? await (params as paramsBuilder<ActionParams, TestContext & KernelTestInterface>)(t)
+        ? await (params as paramsBuilder<ActionParams, TestContext & KernelTestFn>)(t)
         : params;
 
     const kernel = t.context.kernel;

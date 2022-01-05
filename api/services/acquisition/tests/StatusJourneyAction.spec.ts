@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 
 import { makeKernel } from '@pdc/helper-test';
 import { KernelInterface, NotFoundException } from '@ilos/common';
@@ -7,7 +7,7 @@ import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
 import { ServiceProvider } from '../src/ServiceProvider';
 import { insertFactory } from './helpers/insertFactory';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   pg: PostgresConnection;
   pool: PoolClient;
   kernel: KernelInterface;

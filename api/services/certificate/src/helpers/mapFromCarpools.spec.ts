@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
 import { MetaPersonInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
 import { agg } from './mapFromCarpools';
@@ -8,7 +8,7 @@ interface Context {
   carpools: CarpoolInterface[];
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context = {

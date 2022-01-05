@@ -1,4 +1,4 @@
-import anyTest, { TestInterface, Macro, ExecutionContext } from 'ava';
+import anyTest, { TestFn, Macro, ExecutionContext } from 'ava';
 import { kernel as kernelDecorator, KernelInterface } from '@ilos/common';
 import { Kernel as AbstractKernel } from '@ilos/framework';
 import { PostgresConnection } from '@ilos/connection-postgres';
@@ -19,13 +19,13 @@ interface TestContext {
 }
 
 export function macro(policy: CampaignInterface): {
-  test: TestInterface<TestContext>;
+  test: TestFn<TestContext>;
   results: Macro<
     [{ carpool_id: number; amount: number; meta?: { [k: string]: string } }[], TripInterface[]?],
     TestContext
   >;
 } {
-  const test = anyTest as TestInterface<TestContext>;
+  const test = anyTest as TestFn<TestContext>;
 
   @kernelDecorator({
     children: [ServiceProvider],

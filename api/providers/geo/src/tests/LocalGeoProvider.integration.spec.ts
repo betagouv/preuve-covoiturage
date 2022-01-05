@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 
 import { NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
@@ -6,7 +6,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import { LocalGeoProvider } from '../providers';
 import { insee, inseeForeign, inseeError } from './data';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   connection: PostgresConnection;
   provider: LocalGeoProvider;
 }>;

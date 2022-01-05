@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
@@ -13,7 +13,7 @@ interface TestContext {
   registry_id: number;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 test.before.skip(async (t) => {
   class Config extends ConfigInterfaceResolver {

@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { TerritoryTripsInterface } from '../../shared/trip/common/interfaces/TerritoryTripsInterface';
@@ -18,7 +18,7 @@ interface Context {
   excludedTerritories: TerritoryTripsInterface[];
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 test.before((t) => {
   t.context.tripSearchQueryParams = {

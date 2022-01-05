@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
 import { Extensions, Action, ServiceProvider, Kernel } from '@ilos/core';
 import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
@@ -10,7 +10,7 @@ interface Context {
   transport: QueueTransport;
 }
 
-const test = anyTest as TestInterface<Context>;
+const test = anyTest as TestFn<Context>;
 
 test.beforeEach(async (t) => {
   t.context.sandbox = sinon.createSandbox();

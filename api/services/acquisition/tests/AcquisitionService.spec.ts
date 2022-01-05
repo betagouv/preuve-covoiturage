@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import supertest from 'supertest';
 
 import { TransportInterface } from '@ilos/common';
@@ -41,7 +41,7 @@ interface ContextType {
   rpcCall: Function;
 }
 
-const test = anyTest as TestInterface<ContextType>;
+const test = anyTest as TestFn<ContextType>;
 
 test.before(async (t) => {
   t.context.transport = await bootstrap.boot('http', 0);

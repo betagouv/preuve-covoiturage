@@ -1,5 +1,5 @@
 import { KernelInterfaceResolver } from '@ilos/common';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates';
 import { GetOldestTripDateRepositoryProvider } from './../providers/GetOldestTripRepositoryProvider';
@@ -20,7 +20,7 @@ interface Context {
   replayOpendataExportCommand: ReplayOpendataExportCommand;
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();

@@ -1,7 +1,7 @@
 import { NewableType, ServiceContainerInterface } from '@ilos/common';
-import { Macro, TestInterface, ExecutionContext } from 'ava';
+import { Macro, TestFn, ExecutionContext } from 'ava';
 
-import { makeKernel, KernelTestInterface } from '@pdc/helper-test';
+import { makeKernel, KernelTestFn } from '@pdc/helper-test';
 
 import {
   SingleDatetimeIdentityCheckParamsInterface,
@@ -21,17 +21,17 @@ export function faker(
 }
 
 export function datetimeIdentityCheckMacro<TestContext = unknown>(
-  anyTest: TestInterface,
+  anyTest: TestFn,
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
   checkCtor: NewableType<HandleCheckInterface<DatetimeIdentityCheckParamsInterface>>,
 ): {
-  test: TestInterface<TestContext & KernelTestInterface>;
+  test: TestFn<TestContext & KernelTestFn>;
   range: Macro<
     [Partial<SingleDatetimeIdentityCheckParamsInterface>[], number, number, boolean?],
-    TestContext & KernelTestInterface
+    TestContext & KernelTestFn
   >;
 } {
-  const test = anyTest as TestInterface<TestContext & KernelTestInterface>;
+  const test = anyTest as TestFn<TestContext & KernelTestFn>;
 
   test.before(async (t) => {
     t.context.kernel = makeKernel(serviceProviderCtor);
@@ -44,9 +44,9 @@ export function datetimeIdentityCheckMacro<TestContext = unknown>(
 
   const range: Macro<
     [Partial<SingleDatetimeIdentityCheckParamsInterface>[], number, number, boolean?],
-    TestContext & KernelTestInterface
+    TestContext & KernelTestFn
   > = async (
-    t: ExecutionContext<TestContext & KernelTestInterface>,
+    t: ExecutionContext<TestContext & KernelTestFn>,
     input: Partial<SingleDatetimeIdentityCheckParamsInterface>[],
     min: number,
     max: number,

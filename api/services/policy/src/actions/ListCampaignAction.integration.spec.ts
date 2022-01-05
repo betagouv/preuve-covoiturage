@@ -1,5 +1,5 @@
-import anyTest, { TestInterface, ExecutionContext } from 'ava';
-import { handlerMacro, KernelTestInterface } from '@pdc/helper-test';
+import anyTest, { TestFn, ExecutionContext } from 'ava';
+import { handlerMacro, KernelTestFn } from '@pdc/helper-test';
 
 import { ServiceProvider } from '../ServiceProvider';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
@@ -48,11 +48,11 @@ function mockContext(permissions: string[], territory_id = territory): ContextTy
   };
 }
 
-interface TestContext extends KernelTestInterface {
+interface TestContext extends KernelTestFn {
   policy_id: number;
 }
 
-const myTest = anyTest as TestInterface<TestContext>;
+const myTest = anyTest as TestFn<TestContext>;
 
 myTest.after.always(async (t) => {
   if (t.context.policy_id) {

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { TestInterface } from 'ava';
+import { TestFn } from 'ava';
 
 import { NewableType } from '@ilos/common';
 import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
@@ -51,9 +51,9 @@ export function getDbConfig({
 }
 
 export function dbTestMacro<TestContext = unknown>(
-  anyTest: TestInterface,
+  anyTest: TestFn,
   cfg: Partial<TestConfig> = {},
-): { test: TestInterface<TestContext & MacroTestContext> } {
+): { test: TestFn<TestContext & MacroTestContext> } {
   const config = {
     basePath: __dirname,
     pgConnectionString: process.env.APP_POSTGRES_URL,
@@ -78,7 +78,7 @@ export function dbTestMacro<TestContext = unknown>(
     ...cfg,
   };
 
-  const test = anyTest as TestInterface<TestContext & MacroTestContext>;
+  const test = anyTest as TestFn<TestContext & MacroTestContext>;
 
   test.serial.before(async (t) => {
     t.context.config = config;

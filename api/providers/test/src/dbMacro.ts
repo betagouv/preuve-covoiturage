@@ -1,4 +1,4 @@
-import { TestInterface } from 'ava';
+import { TestFn } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { Migrator } from '@pdc/helper-seed';
 
@@ -12,10 +12,10 @@ export interface MacroTestContext {
 }
 
 export function dbMacro<TestContext = unknown>(
-  anyTest: TestInterface,
+  anyTest: TestFn,
   cfg: TestConfig,
-): { test: TestInterface<TestContext & MacroTestContext> } {
-  const test = anyTest as TestInterface<TestContext & MacroTestContext>;
+): { test: TestFn<TestContext & MacroTestContext> } {
+  const test = anyTest as TestFn<TestContext & MacroTestContext>;
 
   test.serial.before(async (t) => {
     t.context.db = new Migrator(cfg.connectionString);

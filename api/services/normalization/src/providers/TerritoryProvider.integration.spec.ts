@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { TerritoryProvider } from './TerritoryProvider';
 
@@ -8,7 +8,7 @@ interface TestContext {
   provider: TerritoryProvider;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 // NOTE : Disabling this test cause of id inconsistency.
 test.todo('TerritoryProvider');

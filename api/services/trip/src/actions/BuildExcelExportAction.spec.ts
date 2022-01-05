@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { uuid } from '@pdc/helper-test/dist';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
@@ -34,7 +34,7 @@ interface Context {
   buildExcelsExportAction: BuildExcelsExportAction;
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 test.before((t) => {
   t.context.START_DATE_STRING = '2020-01-08T00:00:00Z';

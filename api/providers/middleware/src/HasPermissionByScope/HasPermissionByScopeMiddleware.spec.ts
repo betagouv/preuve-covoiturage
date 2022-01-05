@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { ContextType, ForbiddenException } from '@ilos/common';
 
 import { HasPermissionByScopeMiddleware } from './HasPermissionByScopeMiddleware';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   mockSuperAdmin: any;
   mockTerritoryAdmin: any;
   mockCreateUserParameters: any;

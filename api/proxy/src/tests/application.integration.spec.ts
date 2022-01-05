@@ -17,7 +17,7 @@
 
 import { get } from 'lodash';
 import supertest from 'supertest';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 
 import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
@@ -55,7 +55,7 @@ import { payloadV2 } from './mocks/payloadV2';
 // create a test to configure the 'after' hook
 // this must be done before using the macro to make sure this hook
 // runs before the one from the macro
-const myTest = anyTest as TestInterface<ContextType>;
+const myTest = anyTest as TestFn<ContextType>;
 myTest.after.always(async (t) => {
   // clean up the stuff from the queues
   await t.context.redis.getClient().flushall();

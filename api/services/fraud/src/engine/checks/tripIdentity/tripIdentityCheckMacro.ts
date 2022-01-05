@@ -1,7 +1,7 @@
 import { NewableType, ServiceContainerInterface } from '@ilos/common';
-import { Macro, TestInterface, ExecutionContext } from 'ava';
+import { Macro, TestFn, ExecutionContext } from 'ava';
 
-import { makeKernel, KernelTestInterface } from '@pdc/helper-test';
+import { makeKernel, KernelTestFn } from '@pdc/helper-test';
 
 import {
   SingleTripIdentityCheckParamsInterface,
@@ -26,17 +26,17 @@ export function faker(data: Partial<SingleTripIdentityCheckParamsInterface>): Si
 }
 
 export function tripIdentityCheckMacro<TestContext = unknown>(
-  anyTest: TestInterface,
+  anyTest: TestFn,
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
   checkCtor: NewableType<HandleCheckInterface<TripIdentityCheckParamsInterface>>,
 ): {
-  test: TestInterface<TestContext & KernelTestInterface>;
+  test: TestFn<TestContext & KernelTestFn>;
   range: Macro<
     [Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?],
-    TestContext & KernelTestInterface
+    TestContext & KernelTestFn
   >;
 } {
-  const test = anyTest as TestInterface<TestContext & KernelTestInterface>;
+  const test = anyTest as TestFn<TestContext & KernelTestFn>;
 
   test.before(async (t) => {
     t.context.kernel = makeKernel(serviceProviderCtor);
@@ -49,9 +49,9 @@ export function tripIdentityCheckMacro<TestContext = unknown>(
 
   const range: Macro<
     [Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?],
-    TestContext & KernelTestInterface
+    TestContext & KernelTestFn
   > = async (
-    t: ExecutionContext<TestContext & KernelTestInterface>,
+    t: ExecutionContext<TestContext & KernelTestFn>,
     input: Partial<SingleTripIdentityCheckParamsInterface>[],
     min: number,
     max: number,

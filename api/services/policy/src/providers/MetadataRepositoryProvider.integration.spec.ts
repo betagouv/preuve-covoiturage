@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { MetadataRepositoryProvider } from './MetadataRepositoryProvider';
@@ -9,7 +9,7 @@ interface TestContext {
   connection: PostgresConnection;
   policyId: number;
 }
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 test.before(async (t) => {
   t.context.policyId = 0;
