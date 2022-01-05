@@ -83,7 +83,13 @@ export class ExportAction extends Action {
       if (!params.territory_ids_filter) {
         buildParams.query.territory_id = [params.territory_id];
       } else {
-        await this.checkTerritoryFilterIsAuthorized(params);
+        const authorizedCodes: number[] = get(context, 'call.user.authorizedZoneCodes')._id;
+        console.debug('params.territory_id -> ', params.territory_id);
+        console.debug('params.territory_ids_filter -> ', params.territory_ids_filter);
+        console.debug(`authorizedCodes -> ${authorizedCodes.length}`);
+        if (params.territory_ids_filter.find((tf) => authorizedCodes.indexOf(tf) === -1)) {
+          throw new InvalidParamsException('Invalid list of territory_ids_filter');
+        }
       }
     }
 
@@ -95,12 +101,5 @@ export class ExportAction extends Action {
         user: {},
       },
     });
-  }
-
-  private async checkTerritoryFilterIsAuthorized(params: ParamsInterface) {
-    const child_territory_ids: number[] = await this.tripRepository.getTerritoryDescendants(params.territory_id);
-    if (params.territory_ids_filter.find((tf) => child_territory_ids.indexOf(tf) === -1)) {
-      throw new InvalidParamsException('Invalid list of territory_ids_filter');
-    }
   }
 }

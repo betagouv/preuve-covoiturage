@@ -458,12 +458,4 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         '',
       );
   }
-
-  public async getTerritoryDescendants(territory_id: number): Promise<number[]> {
-    const result = await this.connection.getClient().query({
-      text: 'SELECT UNNEST(territory.get_descendants(ARRAY[$1]::int[])) as _id',
-      values: [territory_id],
-    });
-    return result.rows.map((r) => r._id);
-  }
 }

@@ -28,7 +28,6 @@ export interface TripRepositoryInterface {
     type?: string,
   ): Promise<PgCursorHandler>;
   validateTz(tz?: string): Promise<TzResultInterface>;
-  getTerritoryDescendants(territory_id: number): Promise<number[]>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]> {
