@@ -22,7 +22,7 @@ import anyTest, { TestFn } from 'ava';
 import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TokenProvider } from '@pdc/provider-token';
-import { dbTestMacro, getDbConfig } from '@pdc/helper-test';
+import { dbBeforeMacro, dbAfterMacro, DbContextInterface } from '@pdc/helper-test';
 import { RedisConnection } from '@ilos/connection-redis';
 
 import { HttpTransport } from '../HttpTransport';
@@ -44,33 +44,18 @@ interface ContextType {
   operatorUser: any;
   application: any;
   cookies: string;
+  db: DbContextInterface;
 }
 
-// super hackish way to change the connectionString before the Kernel is loaded
-const { pgConnectionString, database, tmpConnectionString } = getDbConfig();
-process.env.APP_POSTGRES_URL = tmpConnectionString;
 import { Kernel } from '../Kernel';
 import { payloadV2 } from './mocks/payloadV2';
 
 // create a test to configure the 'after' hook
 // this must be done before using the macro to make sure this hook
 // runs before the one from the macro
-const myTest = anyTest as TestFn<ContextType>;
-myTest.after.always(async (t) => {
-  // clean up the stuff from the queues
-  await t.context.redis.getClient().flushall();
-
-  // shutdown app and connections
-  await t.context.app.down();
-  await t.context.kernel.shutdown();
-});
-
-const { test } = dbTestMacro<ContextType>(myTest, {
-  database,
-  pgConnectionString,
-});
-
-test.before(async (t) => {
+const test = anyTest as TestFn<ContextType>;
+test.before(async(t) => {
+  t.context.db = await dbBeforeMacro();
   t.context.redis = new RedisConnection({
     connectionString: process.env.APP_REDIS_URL,
   });
@@ -102,6 +87,16 @@ test.before(async (t) => {
   await t.context.kernel.bootstrap();
   await t.context.app.up(['0']);
   t.context.request = supertest(t.context.app.getInstance());
+});
+
+test.after.always(async (t) => {
+  // clean up the stuff from the queues
+  await t.context.redis.getClient().flushall();
+
+  // shutdown app and connections
+  await t.context.app.down();
+  await t.context.kernel.shutdown();
+  await dbAfterMacro(t.context.db);
 });
 
 // test.beforeEach(async (t) => {
@@ -250,7 +245,7 @@ test('Deleted application', async (t) => {
   const uuid = '71c3c3d8-208f-455e-9c08-6ea2d48abf69';
 
   // soft-delete the application
-  await t.context.pool.query({
+  await t.context.db.tmpConnection.getClient().query({
     text: `UPDATE application.applications SET deleted_at = NOW() WHERE uuid = $1`,
     values: [uuid],
   });
@@ -275,7 +270,7 @@ test('Deleted application', async (t) => {
   t.is(get(response, 'body.error.message', ''), 'Unauthorized Error');
 
   // un-soft-delete the application
-  await t.context.pool.query({
+  await t.context.db.tmpConnection.getClient().query({
     text: `UPDATE application.applications SET deleted_at = NULL WHERE uuid = $1`,
     values: [uuid],
   });

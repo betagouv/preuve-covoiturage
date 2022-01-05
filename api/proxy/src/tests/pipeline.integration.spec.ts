@@ -15,8 +15,9 @@ import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TokenProvider } from '@pdc/provider-token';
 import { QueueTransport } from '@ilos/transport-redis';
-import { dbTestMacro, getDbConfig } from '@pdc/helper-test';
+import { dbBeforeMacro, dbAfterMacro, DbContextInterface } from '@pdc/helper-test';
 
+import { Kernel } from '../Kernel';
 import { HttpTransport } from '../HttpTransport';
 import { payloadV2 } from './mocks/payloadV2';
 import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
@@ -37,29 +38,15 @@ interface ContextType {
   operatorAUser: any;
   application: any;
   cookies: string;
+  db: DbContextInterface;
 }
-
-// super hackish way to change the connectionString before the Kernel is loaded
-const { pgConnectionString, database, tmpConnectionString } = getDbConfig();
-process.env.APP_POSTGRES_URL = tmpConnectionString;
-import { Kernel } from '../Kernel';
 
 // create a test to configure the 'after' hook
 // this must be done before using the macro to make sure this hook
 // runs before the one from the macro
-const myTest = anyTest as TestFn<ContextType>;
-myTest.after.always(async (t) => {
-  await t.context.worker.down();
-  await t.context.app.down();
-  await t.context.kernel.shutdown();
-});
-
-const { test } = dbTestMacro<ContextType>(myTest, {
-  database,
-  pgConnectionString,
-});
-
+const test = anyTest as TestFn<ContextType>;
 test.before(async (t) => {
+  t.context.db = await dbBeforeMacro();
   t.context.crypto = new CryptoProvider();
   t.context.token = new TokenProvider(new MockJWTConfigProvider());
   await t.context.token.init();
@@ -72,6 +59,13 @@ test.before(async (t) => {
   await t.context.app.up(['0']);
   await t.context.worker.up([process.env.APP_REDIS_URL]);
   t.context.request = supertest(t.context.app.getInstance());
+});
+
+test.after.always(async (t) => {
+  await t.context.worker.down();
+  await t.context.app.down();
+  await t.context.kernel.shutdown();
+  await dbAfterMacro(t.context.db);
 });
 
 test.beforeEach(async (t) => {

@@ -15,7 +15,8 @@ import anyTest, { TestFn } from 'ava';
 import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TokenProvider } from '@pdc/provider-token';
-import { dbTestMacro, getDbConfig, uuid } from '@pdc/helper-test';
+import { dbBeforeMacro, dbAfterMacro, DbContextInterface, uuid } from '@pdc/helper-test';
+import { Kernel } from '../Kernel';
 
 import { HttpTransport } from '../HttpTransport';
 import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
@@ -36,28 +37,16 @@ interface ContextType {
   operatorUser: any;
   application: any;
   cookies: string;
+  db: DbContextInterface;
 }
-
-// super hackish way to change the connectionString before the Kernel is loaded
-const { pgConnectionString, database, tmpConnectionString } = getDbConfig();
-process.env.APP_POSTGRES_URL = tmpConnectionString;
-import { Kernel } from '../Kernel';
 
 // create a test to configure the 'after' hook
 // this must be done before using the macro to make sure this hook
 // runs before the one from the macro
-const myTest = anyTest as TestFn<ContextType>;
-myTest.after.always(async (t) => {
-  await t.context.app.down();
-  await t.context.kernel.shutdown();
-});
-
-const { test } = dbTestMacro<ContextType>(myTest, {
-  database,
-  pgConnectionString,
-});
+const test = anyTest as TestFn<ContextType>;
 
 test.before(async (t) => {
+  t.context.db = await dbBeforeMacro();
   t.context.crypto = new CryptoProvider();
   t.context.token = new TokenProvider(new MockJWTConfigProvider());
   await t.context.token.init();
@@ -80,6 +69,12 @@ test.before(async (t) => {
   t.context.request = supertest(t.context.app.getInstance());
 });
 
+test.after.always(async (t) => {
+  await t.context.app.down();
+  await t.context.kernel.shutdown();
+  await dbAfterMacro(t.context.db);
+});
+
 test.beforeEach(async (t) => {
   // login with the operator admin
   t.context.cookies = await cookieLoginHelper(t.context.request, 'maxicovoit.admin@example.com', 'admin1234');
@@ -89,7 +84,7 @@ test.skip("Status: check 'pending' journey", async (t) => {
   const journey_id = uuid();
 
   // manually create a journey in database
-  const res = await t.context.pool.query({
+  const res = await t.context.db.tmpConnection.getClient().query({
     text: `
     INSERT INTO acquisition.acquisitions
     (application_id, operator_id, journey_id, payload)
@@ -155,7 +150,7 @@ test('Status: check wrong journey_id', async (t) => {
   const journey_id = uuid();
 
   // manually create a journey in database
-  await t.context.pool.query({
+  await t.context.db.tmpConnection.getClient().query({
     text: `
     INSERT INTO acquisition.acquisitions
     (application_id, operator_id, journey_id, payload)
@@ -191,7 +186,7 @@ test('Status: check wrong operator_id', async (t) => {
   const journey_id = `test-${Math.random()}`;
 
   // manually create a journey in database
-  await t.context.pool.query({
+  await t.context.db.tmpConnection.getClient().query({
     text: `
     INSERT INTO acquisition.acquisitions
     (application_id, operator_id, journey_id, payload)
