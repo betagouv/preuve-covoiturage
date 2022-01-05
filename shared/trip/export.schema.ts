@@ -32,7 +32,16 @@ export const schema = {
       ],
     },
     territory_id: {
-      macro: 'serial',
+      oneOf: [
+        {
+          type: 'array',
+          minItems: 1,
+          items: { macro: 'serial' },
+        },
+        {
+          macro: 'serial',
+        },
+      ],
     },
     territory_ids_filter: {
       type: 'array',

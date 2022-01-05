@@ -10,8 +10,7 @@ export interface BaseParamsInterface {
     end: Date;
   };
   operator_id: number[]; // operator_id(s) fetch from form (for a territory)
-  territory_id?: number; // territory_id context fetch from middleware (for a territory) null otherwise
-  territory_ids_filter?: number[]; // territory_ids fetch from form
+  territory_id?: number; // territory_id params, context fetch from middleware otherwise
 }
 
 export type ResultInterface = void;

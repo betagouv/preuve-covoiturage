@@ -94,7 +94,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
     };
 
     if (this.form.value.territoryIds && this.form.value.territoryIds.length !== 0) {
-      data.territory_ids_filter = this.form.value.territoryIds;
+      data.territory_id = this.form.value.territoryIds;
     }
 
     if (!this.user.isOperatorGroup() && this.checkboxesForm.selectedOperators.length === 0) {

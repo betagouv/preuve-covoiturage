@@ -15,7 +15,7 @@ import {
 @handler({
   ...handlerConfig,
   middlewares: [
-    ...copyGroupIdFromContextMiddlewares(['territory_id', 'operator_id'], null, false),
+    ...copyGroupIdFromContextMiddlewares(['territory_id', 'operator_id'], null, true),
     ...groupPermissionMiddlewaresHelper({
       territory: 'territory.trip.stats',
       operator: 'operator.trip.stats',
@@ -74,23 +74,8 @@ export class ExportAction extends Action {
       buildParams.query.operator_id = Array.isArray(params.operator_id) ? params.operator_id : [params.operator_id];
     }
 
-    if (params.territory_ids_filter && params.territory_ids_filter.length !== 0) {
-      buildParams.query.territory_id = params.territory_ids_filter;
-    }
-
     if (params.territory_id) {
-      // territory_id is only set by middleware for territory group
-      if (!params.territory_ids_filter) {
-        buildParams.query.territory_id = [params.territory_id];
-      } else {
-        const authorizedCodes: number[] = get(context, 'call.user.authorizedZoneCodes')._id;
-        console.debug('params.territory_id -> ', params.territory_id);
-        console.debug('params.territory_ids_filter -> ', params.territory_ids_filter);
-        console.debug(`authorizedCodes -> ${authorizedCodes.length}`);
-        if (params.territory_ids_filter.find((tf) => authorizedCodes.indexOf(tf) === -1)) {
-          throw new InvalidParamsException('Invalid list of territory_ids_filter');
-        }
-      }
+      buildParams.query.territory_id = Array.isArray(params.territory_id) ? params.territory_id : [params.territory_id];
     }
 
     await this.kernel.notify<SendExportParamsInterface>(sendExportSignature, buildParams, {
