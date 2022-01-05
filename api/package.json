@@ -68,7 +68,7 @@
     "@types/node-mailjet": "^3.3.7",
     "@types/sinon": "^10.0.3",
     "@types/uuid": "^8.3.1",
-    "ava": "^3.15.0",
+    "ava": "^4.0.0",
     "axios": "^0.25.0",
     "faker": "nmrgt/faker",
     "lerna": "^4.0.0",
