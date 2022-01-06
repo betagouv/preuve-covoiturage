@@ -33,14 +33,12 @@ services:
 
   
   api:
-    environment:
-      PORT: 8080
-      APP_RATE_LIMIT_MAX_FACTOR: '0'
-    
-  api:
     build:
       dockerfile: ./docker/api/Dockerfile
       context: .
+    environment:
+      PORT: 8080
+      APP_RATE_LIMIT_MAX_FACTOR: '0'
     volumes:
       - ${PWD}/api:/app/api
       - ${PWD}/shared:/app/shared:ro
