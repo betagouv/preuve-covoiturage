@@ -98,7 +98,7 @@ run_integration() {
 }
 
 integration() {
-  set_env "-f docker-compose.e2e.dev.yml" && bootstrap && run_integration 2> /dev/null
+  set_env "-f docker-compose.integration.yml" && bootstrap && run_integration 2> /dev/null
   EXIT=$?
   stop
   exit $EXIT
