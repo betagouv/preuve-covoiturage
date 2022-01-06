@@ -29,20 +29,24 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
   }
 
   async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(handlerSignature, null, {
-      call: {
-        user: {},
-      },
-      channel: {
-        service: handlerConfig.service,
-        metadata: {
-          repeat: {
-            cron: '0 4 6 * *',
+    await this.kernel.notify<ParamsInterface>(
+      handlerSignature,
+      {},
+      {
+        call: {
+          user: {},
+        },
+        channel: {
+          service: handlerConfig.service,
+          metadata: {
+            repeat: {
+              cron: '0 4 6 * *',
+            },
+            jobId: 'policy.finalize.cron',
           },
-          jobId: 'policy.finalize.cron',
         },
       },
-    });
+    );
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
