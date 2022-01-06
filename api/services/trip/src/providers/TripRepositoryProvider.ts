@@ -32,7 +32,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   constructor(public connection: PostgresConnection) {}
 
-  protected async buildWhereClauses(filters: Partial<TripSearchInterface>): Promise<{
+  protected async buildWhereClauses(
+    filters: Partial<TripSearchInterface>,
+  ): Promise<{
     text: string;
     values: any[];
   } | null> {

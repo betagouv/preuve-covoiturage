@@ -44,7 +44,7 @@ test.before.skip(async (t) => {
 
   t.context.provider = new AuthRepositoryProvider(
     t.context.connection,
-    new CryptoProvider() as unknown as CryptoProviderInterfaceResolver,
+    (new CryptoProvider() as unknown) as CryptoProviderInterfaceResolver,
     new Config(),
   );
 

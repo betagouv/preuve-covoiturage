@@ -6,8 +6,7 @@ export interface ProcessableCarpoolRepositoryProviderInterface {
 }
 
 export abstract class ProcessableCarpoolRepositoryProviderInterfaceResolver
-  implements ProcessableCarpoolRepositoryProviderInterface
-{
+  implements ProcessableCarpoolRepositoryProviderInterface {
   abstract refresh(): Promise<void>;
   abstract findProcessable(batchSize?: number): AsyncGenerator<ProcessableCarpool[], void, void>;
 }

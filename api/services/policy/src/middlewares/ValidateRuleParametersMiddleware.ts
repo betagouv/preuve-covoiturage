@@ -23,8 +23,7 @@ export type ValidateRuleParametersMiddlewareParams = void;
 
 @middleware()
 export class ValidateRuleParametersMiddleware
-  implements MiddlewareInterface<ValidateRuleParametersMiddlewareParams>, InitHookInterface
-{
+  implements MiddlewareInterface<ValidateRuleParametersMiddlewareParams>, InitHookInterface {
   constructor(private validator: ValidatorInterfaceResolver) {}
 
   async init(): Promise<void> {

@@ -18,7 +18,9 @@ interface TestContext {
   policy: CampaignInterface;
 }
 
-export function macro(policy: CampaignInterface): {
+export function macro(
+  policy: CampaignInterface,
+): {
   test: TestInterface<TestContext>;
   results: Macro<
     [{ carpool_id: number; amount: number; meta?: { [k: string]: string } }[], TripInterface[]?],
