@@ -42,7 +42,7 @@ services:
     volumes:
       - ${PWD}/api:/app/api
       - ${PWD}/shared:/app/shared:ro
-    command: 'sh -c "pm2-runtime start ../pm2-api.json | pino-pretty"'
+    command: 'sh -c "pm2-runtime start pm2-api.json | pino-pretty"'
     tty: true
     environment:
       DEBUG: 'api'
@@ -55,7 +55,7 @@ services:
     volumes:
       - ${PWD}/api:/app/api
       - ${PWD}/shared:/app/shared:ro
-    command: 'sh -c "pm2-runtime start ../pm2-worker.json | pino-pretty"'
+    command: 'sh -c "pm2-runtime start pm2-worker.json | pino-pretty"'
     tty: true 
     environment:
       DEBUG: 'worker'

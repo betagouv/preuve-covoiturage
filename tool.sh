@@ -32,9 +32,9 @@ start_services() {
   $DC up -d s3 postgres
 }
 
-start_app() {
-  echo "Start app"
-  $DC up -d proxy
+start() {
+  echo "Start proxy $1"
+  $DC up -d proxy $1
 }
 
 wait_for_app() {
@@ -59,11 +59,6 @@ bootstrap() {
   create_bucket local-pdc-public
 }
 
-start() {
-  start_app && \
-  wait_for_app
-}
-
 stop() {
   echo "Cleaning up"
   $DC down -v
@@ -77,7 +72,11 @@ run_e2e() {
 }
 
 e2e() {
-  set_env && bootstrap && start && run_e2e 2> /dev/null
+  set_env && \
+  bootstrap && \
+  start dashboard && \
+  wait_for_app && \
+  run_e2e 2> /dev/null
   EXIT=$?
   stop
   exit $EXIT
@@ -98,7 +97,10 @@ run_integration() {
 }
 
 integration() {
-  set_env "-f docker-compose.integration.yml" && bootstrap && run_integration 2> /dev/null
+  set_env "-f docker-compose.integration.yml" && \
+  bootstrap && \
+  start && \
+  run_integration 2> /dev/null
   EXIT=$?
   stop
   exit $EXIT
