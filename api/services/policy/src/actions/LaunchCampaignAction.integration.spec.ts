@@ -85,9 +85,9 @@ test.before(async (t) => {
 test.serial(
   success,
   (t: ExecutionContext<TestContext>) =>
-    (({
+    ({
       _id: t.context.policy_id,
-    } as unknown) as ParamsInterface),
+    } as unknown as ParamsInterface),
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {
     t.is(response.status, 'active');
   },
@@ -97,9 +97,9 @@ test.serial(
 test.serial(
   error,
   (t: ExecutionContext<TestContext>) =>
-    (({
+    ({
       _id: t.context.policy_id,
-    } as unknown) as ParamsInterface),
+    } as unknown as ParamsInterface),
   (err: RPCException, t: ExecutionContext<TestContext>) => {
     t.is(err.message, 'Invalid params');
     t.is(err.rpcError.data, `Campaign ${t.context.policy_id} must be a draft to be launched.`);

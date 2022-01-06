@@ -247,9 +247,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     };
   }
 
-  protected buildWhereClauses(
-    filters: any,
-  ): {
+  protected buildWhereClauses(filters: any): {
     text: string;
     values: any[];
   } {
@@ -390,9 +388,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return result.rowCount ? result.rows : [];
   }
 
-  protected buildSetClauses(
-    sets: any,
-  ): {
+  protected buildSetClauses(sets: any): {
     text: string;
     values: any[];
   } {

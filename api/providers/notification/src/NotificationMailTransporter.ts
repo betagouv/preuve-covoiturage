@@ -21,7 +21,8 @@ interface NotificationOptions {
   identifier: NotificationTransporterInterfaceResolver,
 })
 export class NotificationMailTransporter
-  implements NotificationTransporterInterface<MailTemplateNotificationInterface, Partial<Mail.Options>> {
+  implements NotificationTransporterInterface<MailTemplateNotificationInterface, Partial<Mail.Options>>
+{
   transporter: Transporter;
   protected options: NotificationOptions;
 

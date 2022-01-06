@@ -188,9 +188,7 @@ export class TripGenerator extends Generator<TripInterface> {
     await this.pool.query('COMMIT');
   }
 
-  private getTrip(
-    origin: Origin,
-  ): {
+  private getTrip(origin: Origin): {
     passenger: IdentityInterface;
     driver: IdentityInterface;
     payload: any;

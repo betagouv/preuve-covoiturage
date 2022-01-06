@@ -13,7 +13,7 @@ const end = new Date();
 end.setMonth(start.getMonth() + 2);
 
 const territory = 1;
-const fakeCampaign = ({
+const fakeCampaign = {
   territory_id: territory,
   name: 'Ma campagne',
   description: 'Incite les covoitureurs',
@@ -29,7 +29,7 @@ const fakeCampaign = ({
       },
     ],
   ],
-} as unknown) as ParamsInterface;
+} as unknown as ParamsInterface;
 
 function mockContext(permissions: string[], territory_id = territory): ContextType {
   return {
