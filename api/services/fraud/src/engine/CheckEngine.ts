@@ -145,7 +145,7 @@ export class CheckEngine {
     const fallbackFiltered: { coef: number; rule: FraudCheck }[] = fallback.map((fb) => {
       const [coef, ruleName] = fb;
       if (!results.has(ruleName)) {
-        throw new Error(`Unknown test ${name}`);
+        throw new Error(`Unknown test ${ruleName}`);
       }
       const rule = results.get(ruleName);
       if (rule.status !== 'done') {
