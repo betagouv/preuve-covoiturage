@@ -1,8 +1,8 @@
-import anyTest from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { handler as handlerDecorator, serviceProvider as serviceProviderDecorator, ContextType } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@ilos/core';
 
-import { handlerMacro } from './handlerMacro';
+import { handlerMacro, HandlerMacroContext } from './handlerMacro';
 
 const handlerConfig = {
   service: 'test',
@@ -32,18 +32,25 @@ class Action extends AbstractAction {
 })
 class ServiceProvider extends AbstractServiceProvider {}
 
-interface CustomInterface {
+interface CustomInterface extends HandlerMacroContext {
   hi: string;
 }
 
-const { test, success, error } = handlerMacro<ParamsInterface, ResultInterface, CustomError, CustomInterface>(
-  anyTest,
+const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface, CustomError, CustomInterface>(
   ServiceProvider,
   handlerConfig,
 );
 
-test.before((t) => {
+const test = anyTest as TestFn<CustomInterface>;
+
+test.before(async (t) => {
+  const { kernel } = await before();
+  t.context.kernel = kernel;
   t.context.hi = 'you';
+});
+
+test.after(async t => {
+  await after({ kernel: t.context.kernel });
 });
 
 test(success, 'toto', 'hello toto');

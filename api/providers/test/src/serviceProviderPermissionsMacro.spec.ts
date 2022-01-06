@@ -1,4 +1,4 @@
-import anyTest from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { get } from 'lodash';
 import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@ilos/core';
 import {
@@ -11,7 +11,7 @@ import {
   InvalidParamsException,
 } from '@ilos/common';
 
-import { handlerMacro } from './handlerMacro';
+import { handlerMacro, HandlerMacroContext } from './handlerMacro';
 
 /**
  * Mock the action
@@ -86,11 +86,19 @@ export class PermissionMiddleware implements MiddlewareInterface {
 })
 class ServiceProvider extends AbstractServiceProvider {}
 
-const { test, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
-  anyTest,
+const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
   ServiceProvider,
   handlerConfig,
 );
+
+const test = anyTest as TestFn<HandlerMacroContext>;
+test.before(async t => {
+  t.context = await before();
+});
+
+test.after(async t => {
+  await after(t.context);
+});
 
 test(success, 'call.user.permissions', ['test.run'], {
   call: { user: { permissions: ['test.run'] } },

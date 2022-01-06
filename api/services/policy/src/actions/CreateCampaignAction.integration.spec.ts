@@ -1,5 +1,5 @@
 import anyTest, { TestFn, ExecutionContext } from 'ava';
-import { handlerMacro, KernelTestFn } from '@pdc/helper-test';
+import { handlerMacro, HandlerMacroContext } from '@pdc/helper-test';
 
 import { ServiceProvider } from '../ServiceProvider';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/create.contract';
@@ -46,13 +46,27 @@ function mockContext(permissions: string[], territory_id = territory): ContextTy
   };
 }
 
-interface TestContext extends KernelTestFn {
+interface TestContext extends HandlerMacroContext {
   policy_id: number;
 }
 
-const myTest = anyTest as TestFn<TestContext>;
+const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface, Error, TestContext>(
+  ServiceProvider,
+  handlerConfig,
+);
 
-myTest.after.always(async (t) => {
+const test = anyTest as TestFn<TestContext>;
+
+test.before(async t => {
+  const { kernel } = await before();
+  t.context.kernel = kernel;
+});
+
+test.after(async t => {
+  await after(t.context);
+});
+
+test.after.always(async (t) => {
   if (t.context.policy_id) {
     t.context.kernel
       .get(ServiceProvider)
@@ -64,12 +78,6 @@ myTest.after.always(async (t) => {
       });
   }
 });
-
-const { test, success, error } = handlerMacro<ParamsInterface, ResultInterface, Error, TestContext>(
-  myTest,
-  ServiceProvider,
-  handlerConfig,
-);
 
 test('Wrong permission', error, fakeCampaign, 'Forbidden Error', mockContext(['wrong.permission']));
 // test('Wrong territory', error, fakeCampaign, 'Forbidden Error', mockContext(['territory.policy.create'], 2));
