@@ -34,7 +34,7 @@ export class ActiveCampaignExcelExportAction extends Action implements InitHookI
           service: handlerConfig.service,
           metadata: {
             repeat: {
-              cron: '0 5 6 * *',
+              cron: '30 0 7 * *',
             },
             jobId: 'trip.active_campaign_excel_export',
           },
