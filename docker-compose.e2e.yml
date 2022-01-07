@@ -23,8 +23,6 @@ services:
       - ${PWD}/docker/traefik/config.yml:/etc/traefik/dynamic/config.yml
       - ${PWD}/docker/traefik/certs:/etc/certs
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
-    depends_on:
-      - dashboard
     networks:
       back:
       front:

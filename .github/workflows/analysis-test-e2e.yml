@@ -16,10 +16,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Install NodeJS 14
+      - name: Install NodeJS 16
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - name: Start
         run: ./tool.sh e2e
       - name: Upload videos

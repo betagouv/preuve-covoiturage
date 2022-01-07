@@ -34,7 +34,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     const response = await this.client.post<UploadedResource>(`/datasets/${slug}/upload/`, form, {
       headers: {
         ...form.getHeaders(),
-        'Content-Length': form.getLengthSync(),
+        'Content-Length': form.getLengthSync().toString(),
       },
       maxContentLength: 100000000,
       maxBodyLength: 1000000000,

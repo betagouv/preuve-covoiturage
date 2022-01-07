@@ -25,7 +25,7 @@
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
     "@pdc/helper-test": "~0",
-    "@pdc/provider-validator": "~0",
-    "@pdc/provider-middleware": "~0"
+    "@pdc/provider-middleware": "~0",
+    "@pdc/provider-validator": "~0"
   }
 }
