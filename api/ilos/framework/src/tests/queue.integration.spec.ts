@@ -95,10 +95,7 @@ test('Queue integration: works', async (t) => {
   t.is(result.status, 204);
   t.is(result.statusText, 'No Content');
 
-  function timeout(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-  await timeout(200);
+  await new Promise ((resolve) => setTimeout(resolve, 200));
 
   const content = fs.readFileSync(logPath, { encoding: 'utf8', flag: 'r' });
   console.info('reading file content', { content });
