@@ -2,21 +2,14 @@
 import { AbstractControl } from '@angular/forms';
 import { removeNullsProperties } from '~/core/entities/utils';
 import { TerritoryInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { ContactInterface } from '../api/shared/common/interfaces/ContactInterface';
 import {
   TerritoryAddress,
   TerritoryBaseInterface,
   TerritoryLevelEnum,
 } from '../api/shared/territory/common/interfaces/TerritoryInterface';
 import { Address } from '../shared/address';
-import { Contact } from '../shared/contact';
-import { Contacts, ContactsMapper } from '../shared/contacts';
-
-export interface TerritoryBase extends TerritoryInterface {
-  name: string;
-  company_id?: number;
-  insee?: any;
-  contacts?: Contacts;
-}
+import { ContactsMapper } from '../shared/contacts';
 
 export class TerritoryMapper {
   static toForm(data: TerritoryBaseInterface, fullformMode = true): any {
@@ -67,7 +60,7 @@ export interface TerritoryFormModel {
     vat_intra: string; // tslint:disable-line variable-name};
   };
   company_id?: number;
-  contacts?: { gdpr_dpo: Contact; gdpr_controller: Contact; technical: Contact };
+  contacts?: { gdpr_dpo: ContactInterface; gdpr_controller: ContactInterface; technical: ContactInterface };
   address?: TerritoryAddress;
   inseeString: string;
   insee?: string[];

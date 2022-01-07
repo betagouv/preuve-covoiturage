@@ -140,9 +140,9 @@ describe('TerritoryFormComponent', () => {
         expect(comp.territoryForm.get('address').get('city').value).toBeUndefined();
         expect(comp.territoryForm.get('address').get('postcode').value).toBeUndefined();
         expect(comp.territoryForm.get('company').get('siret').value).toEqual('');
-        expect(comp.territoryForm.get('contacts').get('gdpr_dpo').get('email').value).toBeUndefined('');
-        expect(comp.territoryForm.get('contacts').get('gdpr_controller').get('email').value).toBeUndefined();
-        expect(comp.territoryForm.get('contacts').get('technical').get('email').value).toBeUndefined();
+        expect(comp.territoryForm.get('contacts').get('gdpr_dpo').get('email').value).toBeNull();
+        expect(comp.territoryForm.get('contacts').get('gdpr_controller').get('email').value).toBeNull();
+        expect(comp.territoryForm.get('contacts').get('technical').get('email').value).toBeNull();
       });
     });
 

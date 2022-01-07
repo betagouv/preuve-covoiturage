@@ -1,10 +1,9 @@
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Injectable } from '@angular/core';
-
+import { Operator } from '~/core/entities/operator/operator';
 import { CrudStore } from '~/core/services/store/crud-store';
-import { Contacts, Operator } from '~/core/entities/operator/operator';
-
+import { ContactsMapper } from '../../../core/entities/shared/contacts';
 import { OperatorApiService } from './operator-api.service';
 
 @Injectable({
@@ -16,7 +15,8 @@ export class OperatorStoreService extends CrudStore<Operator, Operator, any, Ope
   }
 
   patchContact(contactFormData: any, id: number): Observable<Operator> {
-    return this.rpcCrud.patchContact({ patch: new Contacts(contactFormData), _id: id }).pipe(
+    const contact = ContactsMapper.toModel(contactFormData);
+    return this.rpcCrud.patchContact({ patch: contact, _id: id }).pipe(
       tap((operator) => {
         this.entitySubject.next(operator);
         this.loadList();

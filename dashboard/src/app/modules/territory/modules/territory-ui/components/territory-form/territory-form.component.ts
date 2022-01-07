@@ -11,7 +11,6 @@ import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/C
 import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
-import { Contact } from '~/core/entities/shared/contact';
 import { TerritoryFormModel, TerritoryMapper } from '~/core/entities/territory/territory';
 import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
@@ -173,9 +172,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
   private initTerritoryForm(): void {
     let formOptions: any = {
       contacts: this.fb.group({
-        gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        gdpr_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+        gdpr_dpo: this.fb.group(new FormContact()),
+        gdpr_controller: this.fb.group(new FormContact()),
+        technical: this.fb.group(new FormContact()),
       }),
     };
     if (this.isRegistryGroup) {
@@ -195,17 +194,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
         ),
         company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
         contacts: this.fb.group({
-          gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-          gdpr_controller: this.fb.group(
-            new FormContact(
-              new Contact({
-                firstname: null,
-                lastname: null,
-                email: null,
-              }),
-            ),
-          ),
-          technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+          gdpr_dpo: this.fb.group(new FormContact()),
+          gdpr_controller: this.fb.group(new FormContact()),
+          technical: this.fb.group(new FormContact()),
         }),
       };
     }

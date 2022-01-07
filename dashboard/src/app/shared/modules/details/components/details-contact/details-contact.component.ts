@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-
-import { Contact } from '~/core/entities/shared/contact';
+import { ContactInterface } from '../../../../../../../../shared/common/interfaces/ContactInterface';
 
 @Component({
   selector: 'app-details-contact',
@@ -9,7 +8,7 @@ import { Contact } from '~/core/entities/shared/contact';
 })
 export class DetailsContactComponent implements OnInit {
   @Input() showPhoneNumber = true;
-  @Input() contact: Contact;
+  @Input() contact: ContactInterface;
 
   constructor() {}
 

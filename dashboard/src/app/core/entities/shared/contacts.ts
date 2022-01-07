@@ -1,7 +1,6 @@
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
 import { hasOneNotEmptyProperty, removeNullsProperties } from '~/core/entities/utils';
 import { ContactsInterface } from '../api/shared/common/interfaces/ContactsInterface';
-
 /* tslint:disable:variable-name */
 import { Contact } from './contact';
 
@@ -26,10 +25,6 @@ export class Contacts {
 }
 
 export class ContactsMapper {
-  static toForm(data: Contacts): FormGroup {
-    throw new Error('Method not implemented.');
-  }
-
   public static toModel(contactForm: AbstractControl): ContactsInterface {
     const contacts: ContactsInterface = {};
     if (hasOneNotEmptyProperty(contactForm.get('gdpr_controller').value))

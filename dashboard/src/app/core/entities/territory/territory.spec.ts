@@ -4,10 +4,8 @@ import { FormAddress } from '../../../shared/modules/form/forms/form-address';
 import { FormCompany } from '../../../shared/modules/form/forms/form-company';
 import { FormContact } from '../../../shared/modules/form/forms/form-contact';
 import { TerritoryLevelEnum } from '../api/shared/territory/common/interfaces/TerritoryInterface';
-
 import { Address } from '../shared/address';
 import { Company } from '../shared/company';
-import { Contact } from '../shared/contact';
 import { TerritoryMapper } from './territory';
 
 describe('TerritoryMapper', () => {
@@ -28,17 +26,9 @@ describe('TerritoryMapper', () => {
       ),
       company: fb.group(new FormCompany({ siret: '246900625', company: new Company() })),
       contacts: fb.group({
-        gdpr_dpo: fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        gdpr_controller: fb.group(
-          new FormContact(
-            new Contact({
-              firstname: null,
-              lastname: null,
-              email: null,
-            }),
-          ),
-        ),
-        technical: fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+        gdpr_dpo: fb.group(new FormContact()),
+        gdpr_controller: fb.group(new FormContact()),
+        technical: fb.group(new FormContact()),
       }),
     });
     const model: TerritoryBaseInterface = TerritoryMapper.toModel(territoryForm, null, null);
