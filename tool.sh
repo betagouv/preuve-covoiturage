@@ -76,7 +76,7 @@ e2e() {
   bootstrap && \
   start dashboard && \
   wait_for_app && \
-  run_e2e 2> /dev/null
+  run_e2e 2>&1
   EXIT=$?
   stop
   exit $EXIT
@@ -100,7 +100,7 @@ integration() {
   set_env "-f docker-compose.integration.yml" && \
   bootstrap && \
   start && \
-  run_integration 2> /dev/null
+  run_integration 2>&1
   EXIT=$?
   stop
   exit $EXIT
