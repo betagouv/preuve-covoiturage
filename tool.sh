@@ -93,7 +93,7 @@ local_e2e() {
 run_integration() {
   echo "Start integration test"
   echo $DC
-  $DC run --rm api sh -c "yarn install && yarn test:integration"
+  $DC run --rm api yarn test:integration
 }
 
 integration() {
