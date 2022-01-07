@@ -1,5 +1,4 @@
 import anyTest, { TestInterface } from 'ava';
-import pEvent from 'p-event';
 import { RedisConnection } from './RedisConnection';
 
 interface Context {
@@ -18,10 +17,11 @@ test.after(async (t) => {
   await t.context.connection.down();
 });
 
-test('Redis connection: works', async (t) => {
+test.cb('Redis connection: works', (t) => {
   t.plan(1);
-  const promise = pEvent(t.context.connection.getClient(), 'ready');
-  await t.context.connection.up();
-  await promise;
-  t.pass();
+  t.context.connection.getClient().on('ready', () => {
+    t.pass();
+    t.end();
+  });
+  t.context.connection.up();
 });
