@@ -1,47 +1,37 @@
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
-import { get } from 'lodash-es';
-
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-import { User } from '~/core/entities/authentication/user';
-import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
-import { Roles } from '~/core/enums/user/roles';
-import { UserApiService } from '~/modules/user/services/user-api.service';
+import { Injectable } from '@angular/core';
+import { get } from 'lodash-es';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 // import { UserStoreService } from '~/modules/user/services/user-store.service';
-
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { JsonRPCService } from '~/core/services/api/json-rpc.service';
-
+import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
+import { ParamsInterface as ChangePasswordParam } from '~/core/entities/api/shared/user/changePassword.contract';
 import {
   ParamsInterface as ChangePasswordWithPasswordParam,
   ResultInterface as ChangePasswordWithPasswordResult,
 } from '~/core/entities/api/shared/user/changePasswordWithToken.contract';
-
-import {
-  ParamsInterface as LoginParam,
-  ResultInterface as LoginResult,
-} from '~/core/entities/api/shared/user/login.contract';
-
-import { ParamsInterface as ChangePasswordParam } from '~/core/entities/api/shared/user/changePassword.contract';
-
-import {
-  ParamsInterface as ForgottenPasswordParam,
-  ResultInterface as ForgottenPasswordResult,
-} from '~/core/entities/api/shared/user/forgottenPassword.contract';
-
-import { ParamsInterface as SendInviteEmailParam } from '~/core/entities/api/shared/user/sendInvitationEmail.contract';
-
 import {
   ParamsInterface as ForgottenPasswordTokenParam,
   ResultInterface as ForgottenPasswordTokenResult,
 } from '~/core/entities/api/shared/user/checkForgottenToken.contract';
-
 import {
   ParamsInterface as ConfirmEmailParam,
   ResultInterface as ConfirmEmailResult,
 } from '~/core/entities/api/shared/user/confirmEmail.contract';
+import {
+  ParamsInterface as ForgottenPasswordParam,
+  ResultInterface as ForgottenPasswordResult,
+} from '~/core/entities/api/shared/user/forgottenPassword.contract';
+import {
+  ParamsInterface as LoginParam,
+  ResultInterface as LoginResult,
+} from '~/core/entities/api/shared/user/login.contract';
+import { ParamsInterface as SendInviteEmailParam } from '~/core/entities/api/shared/user/sendInvitationEmail.contract';
+import { User } from '~/core/entities/authentication/user';
+import { Roles } from '~/core/enums/user/roles';
+import { JsonRPCService } from '~/core/services/api/json-rpc.service';
+import { UserApiService } from '~/modules/user/services/user-api.service';
 
 @Injectable({
   providedIn: 'root',

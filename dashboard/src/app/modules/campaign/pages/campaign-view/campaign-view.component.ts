@@ -12,7 +12,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryInterface } from '../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 
 @Component({
   selector: 'app-campaign-view',

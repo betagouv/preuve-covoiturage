@@ -1,18 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
-import { AuthGuard } from '~/core/guards/auth-guard.service';
-import { ApiComponent } from '~/modules/administration/pages/api/api.component';
 import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
-import { AllTerritoriesComponent } from '~/modules/administration/pages/all-territories/all-territories.component';
+import { AuthGuard } from '~/core/guards/auth-guard.service';
 import { AllOperatorsComponent } from '~/modules/administration/pages/all-operators/all-operators.component';
-
-import { OperatorComponent } from './pages/operator/operator.component';
+import { ApiComponent } from '~/modules/administration/pages/api/api.component';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
+import { CertificateListComponent } from './pages/certificate-list/certificate-list.component';
+import { OperatorComponent } from './pages/operator/operator.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
-import { CertificateListComponent } from './pages/certificate-list/certificate-list.component';
 
 const routes: Routes = [
   {

@@ -1,7 +1,7 @@
 /* tslint:disable:variable-name*/
 import { AbstractControl } from '@angular/forms';
 import { removeNullsProperties } from '~/core/entities/utils';
-import { TerritoryInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { ContactInterface } from '../api/shared/common/interfaces/ContactInterface';
 import {
   TerritoryAddress,

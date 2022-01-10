@@ -2,18 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { signature as signatureFind } from 'shared/territory/find.contract';
+import { signature as signatureFind } from '~/shared/territory/find.contract';
 import {
   ParamsInterface as ParamsInterfaceFindByCode,
   ResultInterface as ResultInterfaceFindByCode,
   signature as signatureFindByCode,
-} from 'shared/territory/findGeoByCode.contract';
-import { ParamsInterface as TerritoryListFilter, signature as signatureList } from 'shared/territory/list.contract';
-import { ParamsInterface as ParamsInterfaceGeo, signature as signatureGeo } from 'shared/territory/listGeo.contract';
+} from '~/shared/territory/findGeoByCode.contract';
+import { ParamsInterface as TerritoryListFilter, signature as signatureList } from '~/shared/territory/list.contract';
+import { ParamsInterface as ParamsInterfaceGeo, signature as signatureGeo } from '~/shared/territory/listGeo.contract';
 import {
   ParamsInterface as PatchContactParamsInterface,
   signature as signaturePatch,
-} from 'shared/territory/patchContacts.contract';
+} from '~/shared/territory/patchContacts.contract';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { CrudActions } from '~/core/services/api/json-rpc.crud';

@@ -4,7 +4,7 @@ import { BehaviorSubject, merge } from 'rxjs';
 import { debounceTime, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
-import { TerritoryInterface } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 
 @Component({
   selector: 'app-territory-list-view',

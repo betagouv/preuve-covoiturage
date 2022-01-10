@@ -1,5 +1,5 @@
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { TerritoryBaseInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryBaseInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { FormAddress } from '../../../shared/modules/form/forms/form-address';
 import { FormCompany } from '../../../shared/modules/form/forms/form-company';
 import { FormContact } from '../../../shared/modules/form/forms/form-contact';

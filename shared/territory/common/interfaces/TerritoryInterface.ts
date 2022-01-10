@@ -1,5 +1,4 @@
 import { ContactsInterface } from '../../../common/interfaces/ContactsInterface';
-import { TerritoryDbMetaInterface } from './TerritoryDbMetaInterface';
 
 export enum TerritoryLevelEnum {
   Town = 'town',

@@ -5,7 +5,7 @@ import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil, tap, throttleTime } from 'rxjs/operators';
-import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
+import { TerritoryInsee } from '~/shared/territory/findGeoByCode.contract';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 import { Address } from '~/core/entities/shared/address';
@@ -18,15 +18,13 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { FormAddress } from '~/shared/modules/form/forms/form-address';
-import { FormCompany } from '~/shared/modules/form/forms/form-company';
-import { FormContact } from '~/shared/modules/form/forms/form-contact';
-import {
-  TerritoryBaseInterface,
-  TerritoryInterface,
-} from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
-import { ContactsInterface } from '../../../../../../core/entities/api/shared/common/interfaces/ContactsInterface';
-import { ContactsMapper } from '../../../../../../core/entities/shared/contacts';
+
+import { TerritoryBaseInterface, TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
+import { ContactsMapper } from '~/core/entities/shared/contacts';
+import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
+import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
+import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
 
 @Component({
   selector: 'app-territory-form',

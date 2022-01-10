@@ -5,8 +5,8 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Roles } from '~/core/enums/user/roles';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { TerritoryInterface } from '../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
-import { CompanyV2 } from '../../../../core/entities/shared/companyV2';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { CompanyV2 } from '~/core/entities/shared/companyV2';
 import { CompanyService } from '../../../company/services/company.service';
 
 @Component({

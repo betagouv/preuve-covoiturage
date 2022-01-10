@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Roles } from '~/core/enums/user/roles';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
-import { TerritoryInterface } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 
 @Component({
   selector: 'app-territory-list',

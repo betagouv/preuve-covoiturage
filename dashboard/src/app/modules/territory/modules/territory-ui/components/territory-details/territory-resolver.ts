@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { Observable } from 'rxjs';
-import { TerritoryBaseInterface } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryBaseInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { TerritoryApiService } from '../../../../services/territory-api.service';
 
 @Injectable({ providedIn: 'root' })

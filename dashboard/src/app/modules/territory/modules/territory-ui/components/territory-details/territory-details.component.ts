@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { TerritoryInterface } from '../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
-import { CompanyV2 } from '../../../../../../core/entities/shared/companyV2';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { CompanyV2 } from '~/core/entities/shared/companyV2';
 
 @Component({
   selector: 'app-territory-details',
