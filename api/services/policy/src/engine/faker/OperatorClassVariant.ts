@@ -1,7 +1,7 @@
 import sample from 'lodash/sample';
 
 import { AbstractVariant } from './AbstractVariant';
-import { PersonInterface } from '../../shared/policy/common/interfaces/PersonInterface';
+import { PersonInterface } from '~/shared/policy/common/interfaces/PersonInterface';
 
 type Params = string[];
 

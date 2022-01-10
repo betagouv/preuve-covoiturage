@@ -2,7 +2,7 @@ import * as faker from 'faker/locale/fr';
 import sampleSize from 'lodash/sampleSize';
 
 import { AbstractVariant } from './AbstractVariant';
-import { PersonInterface } from '../../shared/policy/common/interfaces/PersonInterface';
+import { PersonInterface } from '~/shared/policy/common/interfaces/PersonInterface';
 
 // Params = [nombre de personne, nombre de personne majeure, nombre de personne ayant un titre de transport];
 type Params = [number, number, number];

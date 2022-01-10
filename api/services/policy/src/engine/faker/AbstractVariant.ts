@@ -1,4 +1,4 @@
-import { PersonInterface } from '../../shared/policy/common/interfaces/PersonInterface';
+import { PersonInterface } from '~/shared/policy/common/interfaces/PersonInterface';
 
 export class AbstractVariant<P> {
   constructor(params: P) {}

@@ -3,7 +3,7 @@ import anyTest, { TestInterface } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../../helpers/fakeCampaign.helper.spec';
-import { ResultInterface as GetCampaignResultInterface } from '../../shared/policy/find.contract';
+import { ResultInterface as GetCampaignResultInterface } from '~/shared/policy/find.contract';
 import { CheckCampaign } from './CheckCampaign';
 
 interface Context {
