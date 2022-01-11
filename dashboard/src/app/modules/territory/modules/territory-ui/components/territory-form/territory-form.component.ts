@@ -341,7 +341,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
       this.territoryForm.reset();
     }
 
-    const territoryFormValue = TerritoryMapper.toForm(territory, this.isRegistryGroup);
+    const territoryFormValue = { ...territory, inseeString: '' };
 
     this.territoryForm.patchValue(territoryFormValue);
 

@@ -8,23 +8,9 @@ import {
   TerritoryBaseInterface,
   TerritoryLevelEnum,
 } from '../api/shared/territory/common/interfaces/TerritoryInterface';
-import { Address } from '../shared/address';
 import { ContactsMapper } from '../shared/contacts';
 
 export class TerritoryMapper {
-  static toForm(data: TerritoryBaseInterface, fullformMode = true): any {
-    return fullformMode
-      ? {
-          name: data.name ? data.name : '',
-          contacts: data.contacts ? data.contacts : undefined,
-          address: new Address(data.address).toFormValues(),
-          inseeString: '',
-        }
-      : {
-          contacts: data.contacts ? data.contacts : undefined,
-        };
-  }
-
   static toModel(
     territoryForm: AbstractControl,
     company_id: number,
