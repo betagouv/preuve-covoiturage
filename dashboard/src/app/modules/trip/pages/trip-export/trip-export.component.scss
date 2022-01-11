@@ -1,48 +1,31 @@
-.exportFilter {
-  margin-top: 30px;
-  margin-left: 30px;
-  &-message {
+.export-filter {
+
+  .form-flex {
     display: flex;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    height: 200px;
-  }
-  form {
-    .mat-form-field {
-      margin-right: 5px;
+    flex-wrap: wrap;
+
+    p {
+      text-align: left;
+      font-weight: 600;
     }
   }
-}
 
-.exportFilter-dates {
-  display: flex;
-  flex-direction: column;
-  max-width: 550px;
-  .mat-form-field,
-  app-operators-autocomplete {
+
+
+  background-color: #ffffff;
+  border-radius: 6px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  padding: 10px 15px 15px 15px;
+
+  .dates {
+    mat-form-field {
+      margin-right: 10px;
+    }
+  }
+
+  .actions {
     width: 100%;
   }
-  .dates {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    .mat-form-field {
-      width: 49%;
-      margin: 0;
-    }
-  }
-  .actions {
-    display: flex;
-    justify-content: flex-end;
-  }
-}
 
-.notice {
-  background-color: #dee8f5;
-  padding: 1em 2em;
-  display: inline-block;
-  p:last-of-type {
-    float: right;
-  }
 }

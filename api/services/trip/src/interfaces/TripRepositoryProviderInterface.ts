@@ -64,4 +64,8 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
   public async validateTz(tz?: string): Promise<TzResultInterface> {
     throw new Error('Not implemented');
   }
+
+  public async getTerritoryDescendants(territory_id: number): Promise<number[]> {
+    throw new Error('Not implemented');
+  }
 }

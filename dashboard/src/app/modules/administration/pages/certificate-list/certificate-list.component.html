@@ -1,7 +1,7 @@
 <div>
   <div class="FilterTop">
     <h3>Attestations</h3>
-    <app-operator-autocomplete *ngIf="!auth.isOperator()" [parentForm]="filterForm" cancellable="true">
+    <app-operator-autocomplete *ngIf="!auth.isOperatorOrAdmin()" [parentForm]="filterForm" cancellable="true">
     </app-operator-autocomplete>
   </div>
 

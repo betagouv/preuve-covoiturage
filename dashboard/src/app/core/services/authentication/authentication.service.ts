@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { get } from 'lodash-es';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-// import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { ParamsInterface as ChangePasswordParam } from '~/core/entities/api/shared/user/changePassword.contract';
@@ -32,6 +31,7 @@ import { User } from '~/core/entities/authentication/user';
 import { Roles } from '~/core/enums/user/roles';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { UserApiService } from '~/modules/user/services/user-api.service';
+import { Groups } from '../../enums/user/groups';
 
 @Injectable({
   providedIn: 'root',
@@ -67,8 +67,12 @@ export class AuthenticationService {
     return this.hasRole([Roles.TerritoryDemo], user);
   }
 
-  public static isOperator(user?: User): boolean {
+  public static isOperatorOrAdminRoles(user?: User): boolean {
     return this.hasRole([Roles.OperatorAdmin, Roles.OperatorUser], user);
+  }
+
+  public static isOperatorGroup(user?: User): boolean {
+    return user.group === Groups.Operator;
   }
 
   public static isTerritory(user?: User): boolean {
@@ -93,8 +97,12 @@ export class AuthenticationService {
     return this.user ? AuthenticationService.isRegistry(this.user) : false;
   }
 
-  public isOperator(): boolean {
-    return this.user ? AuthenticationService.isOperator(this.user) : false;
+  public isOperatorOrAdmin(): boolean {
+    return this.user ? AuthenticationService.isOperatorOrAdminRoles(this.user) : false;
+  }
+
+  public isOperatorGroup(): boolean {
+    return this.user ? AuthenticationService.isOperatorGroup(this.user) : false;
   }
 
   public isTerritoryDemo(): boolean {
