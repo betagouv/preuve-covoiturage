@@ -113,16 +113,8 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
       this.errorHandler(err);
     });
 
-    queue.on('waiting', (jobId) => {
-      console.info(`🐮/${name}: waiting ${jobId}`);
-    });
-
     queue.on('active', (job) => {
       console.info(`🐮/${name}: active ${job.id} ${job.data.method}`);
-    });
-
-    queue.on('stalled', (job) => {
-      console.info(`🐮/${name}: stalled ${job.id} ${job.data.method}`);
     });
 
     queue.on('progress', (job, progress) => {

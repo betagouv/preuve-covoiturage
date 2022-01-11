@@ -1,4 +1,4 @@
-FROM node:14.18 as builder
+FROM node:16.13 as builder
 
 RUN mkdir -p /app/shared
 RUN mkdir -p /app/dashboard

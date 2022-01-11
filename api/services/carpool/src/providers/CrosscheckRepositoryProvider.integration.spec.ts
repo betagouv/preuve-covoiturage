@@ -33,11 +33,13 @@ test.serial.skip('Should get a new uuid', async (t) => {
       lat: 0,
       lon: 0,
       territory_id: 0,
+      geo_code: '',
     },
     end: {
       lat: 0,
       lon: 0,
       territory_id: 0,
+      geo_code: '',
     },
     identity_uuid: '973b462f-6521-4b57-85c8-970c2d34fb10',
   };

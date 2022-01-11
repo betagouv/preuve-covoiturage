@@ -1,4 +1,5 @@
 import { Pool, PoolConfig } from 'pg';
+import { URL } from 'url';
 
 import { env } from '@ilos/core';
 import { ConnectionInterface } from '@ilos/common';

@@ -17,6 +17,5 @@
     "@ilos/common": "~0",
     "@ilos/connection-postgres": "~0",
     "@pdc/migrator": "~0"
-  },
-  "devDependencies": {}
+  }
 }

@@ -391,8 +391,8 @@ export class CampaignFormater {
     if (filters.insee.whiteList.length > 0) {
       const params: BlackListWhiteListGlobalRetributionRuleType = [];
       filters.insee.whiteList.forEach((insees) => {
-        const startInsees = insees.start.map((i) => i.insees);
-        const endInsees = insees.end.map((i) => i.insees);
+        const startInsees = insees.start.reduce((acc, val) => acc.concat(val.insees), []);
+        const endInsees = insees.end.reduce((acc, val) => acc.concat(val.insees), []);
         params.push({ start: startInsees, end: endInsees });
       });
       campaignGlobalRetributionRules.push(new WhiteListGlobalRetributionRule(params));
@@ -402,8 +402,8 @@ export class CampaignFormater {
     if (filters.insee.blackList.length > 0) {
       const params: BlackListWhiteListGlobalRetributionRuleType = [];
       filters.insee.blackList.forEach((insees) => {
-        const startInsees = insees.start.map((i) => i.insees);
-        const endInsees = insees.end.map((i) => i.insees);
+        const startInsees = insees.start.reduce((acc, val) => acc.concat(val.insees), []);
+        const endInsees = insees.end.reduce((acc, val) => acc.concat(val.insees), []);
         params.push({ start: startInsees, end: endInsees });
       });
       campaignGlobalRetributionRules.push(new BlackListGlobalRetributionRule(params));

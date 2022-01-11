@@ -21,8 +21,8 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
+    "@ilos/common": "^0.4.1",
     "inversify": "^5.0.5",
-    "reflect-metadata": "^0.1.13",
-    "@ilos/common": "^0.4.1"
+    "reflect-metadata": "^0.1.13"
   }
 }

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-DC_ENV="${DC_ENV:-e2e}"
-DC="$(which docker-compose) -p pdce2e -f docker-compose.$DC_ENV.yml"
-CERT_DIR="$(pwd)/docker/traefik/certs"
+set_env() {
+  DC="$(which docker-compose) -p pdce2e -f docker-compose.e2e.yml $1"
+  CERT_DIR="$(pwd)/docker/traefik/certs"
+}
 
 generate_certs() {
   echo "Generating certificates"
@@ -31,23 +32,23 @@ start_services() {
   $DC up -d s3 postgres
 }
 
-start_app() {
-  echo "Start app"
-  $DC up -d proxy
+start() {
+  echo "Start proxy $1"
+  $DC up -d proxy $1
 }
 
 wait_for_app() {
-  $DC run wait
+  $DC run --rm wait
 }
 
 seed_data() {
   echo "Seed data"
-  $DC run api yarn workspace @pdc/proxy ilos seed
+  $DC run --rm api yarn workspace @pdc/proxy ilos seed
 }
 
 create_bucket() {
   echo "Create bucket"
-  $DC run -e BUCKET=$1 s3-init
+  $DC run --rm -e BUCKET=$1 s3-init
 }
 
 bootstrap() {
@@ -55,9 +56,7 @@ bootstrap() {
   start_services && \
   seed_data && \
   create_bucket local-pdc-export && \
-  create_bucket local-pdc-public && \
-  start_app && \
-  wait_for_app
+  create_bucket local-pdc-public
 }
 
 stop() {
@@ -69,11 +68,15 @@ run_e2e() {
   echo "Start e2e test"
   mkdir -p /tmp/cypress/screenshots
   mkdir -p /tmp/cypress/videos
-  $DC run cypress
+  $DC run --rm cypress
 }
 
 e2e() {
-  bootstrap && run_e2e 2> /dev/null
+  set_env && \
+  bootstrap && \
+  start dashboard && \
+  wait_for_app && \
+  run_e2e 2>&1
   EXIT=$?
   stop
   exit $EXIT
@@ -89,11 +92,15 @@ local_e2e() {
 
 run_integration() {
   echo "Start integration test"
-  $DC run api sh -c "yarn install && yarn test:integration"
+  echo $DC
+  $DC run --rm api yarn test:integration
 }
 
 integration() {
-  bootstrap && run_integration 2> /dev/null
+  set_env "-f docker-compose.integration.yml" && \
+  bootstrap && \
+  start && \
+  run_integration 2>&1
   EXIT=$?
   stop
   exit $EXIT

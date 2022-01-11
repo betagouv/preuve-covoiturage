@@ -88,22 +88,16 @@ function makeRPCNotify(port: number, req: { method: string; params?: any }) {
   }
 }
 
-test.cb('Queue integration: works', (t) => {
-  t.plan(4);
-
+test('Queue integration: works', async (t) => {
   const data = { name: 'sam' };
-  makeRPCNotify(t.context.stringPort, { method: 'string:log', params: data })
-    .then((result) => {
-      t.is(result.data, '');
-      t.is(result.status, 204);
-      t.is(result.statusText, 'No Content');
+  const result = await makeRPCNotify(t.context.stringPort, { method: 'string:log', params: data });
+  t.is(result.data, '');
+  t.is(result.status, 204);
+  t.is(result.statusText, 'No Content');
 
-      setTimeout(() => {
-        const content = fs.readFileSync(logPath, { encoding: 'utf8', flag: 'r' });
-        console.info('reading file content', { content });
-        t.is(content, JSON.stringify(data));
-        t.end();
-      }, 200);
-    })
-    .catch(t.end);
+  await new Promise ((resolve) => setTimeout(resolve, 200));
+
+  const content = fs.readFileSync(logPath, { encoding: 'utf8', flag: 'r' });
+  console.info('reading file content', { content });
+  t.is(content, JSON.stringify(data));
 });

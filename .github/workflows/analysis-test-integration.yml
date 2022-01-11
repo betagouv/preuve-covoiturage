@@ -14,10 +14,10 @@ jobs:
     name: Test integration
     runs-on: ubuntu-latest
     steps:
-      - name: Install NodeJS 14
+      - name: Install NodeJS 16
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Start

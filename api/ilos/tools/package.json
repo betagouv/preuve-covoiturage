@@ -19,6 +19,5 @@
     "coverage:ci": "exit 0",
     "coverage": "exit 0",
     "watch": "tsc -w"
-  },
-  "dependencies": {}
+  }
 }

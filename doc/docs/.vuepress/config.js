@@ -51,8 +51,26 @@ module.exports = {
               ],
             },
             {
-              title: 'Générer une attestation',
-              path: '/operateurs/generer-attestation',
+              title: 'Attestations opérateurs',
+              path: '/operateurs/attestations',
+              children: [
+                {
+                  title: "Introduction",
+                  path: "attestations/",
+                },
+                {
+                  title: "Créer un attestation",
+                  path: "attestations/creer",
+                },
+                {
+                  title: "Télécharger",
+                  path: "attestations/telecharger",
+                },
+                {
+                  title: "Exemples",
+                  path: "attestations/exemples",
+                },
+              ]
             },
             {
               title: 'Outils',

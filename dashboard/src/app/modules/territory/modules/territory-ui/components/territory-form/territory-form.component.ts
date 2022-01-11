@@ -79,7 +79,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
     formValues.company_id = get(this, 'companyDetails._id', null);
 
-    if (!this.isRegistryGroup) {
+    if (!this.isRegistryGroup || !formValues.insee) {
       const contactModel: ContactsInterface = ContactsMapper.toModel(this.territoryForm.get('contacts'));
       this.territoryApi.patchContact({ patch: contactModel, _id: this.territoryId }).subscribe(
         (modifiedTerritory) => {
@@ -92,7 +92,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
       return;
     }
 
-    // split by and make unique
+    // split by coma and make unique
     const inseeList: string[] = [
       ...new Set(
         formValues.inseeString
