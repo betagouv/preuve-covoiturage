@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { endOfDay, startOfDay } from 'date-fns';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { BaseParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
+import { BaseParamsInterface as TripExportParamsInterface } from '~/shared/trip/export.contract';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 // eslint-disable-next-line
 import { TripSearchInterfaceWithPagination } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
