@@ -8,12 +8,9 @@ import { NouisliderModule } from 'ng2-nouislider';
 import { CampaignInseeFilterStartEndFormComponent } from '~/modules/campaign/components/campaign-form/step-2/campaign-insee-filter/campaign-insee-filter-start-end-form/campaign-insee-filter-start-end-form.component';
 import { CampaignRoutingModule } from '~/modules/campaign/campaign-routing.module';
 import { CampaignUiModule } from '~/modules/campaign/modules/campaign-ui/campaign-ui.module';
-import { MaterialModule } from '~/shared/modules/material/material.module';
 import { OperatorUiModule } from '~/modules/operator/modules/operator-ui/operator-ui.module';
 import { ParametersFormComponent } from '~/modules/campaign/components/campaign-form/step-3/parameters-form.component';
-import { SharedModule } from '~/shared/shared.module';
 import { StatUIModule } from '~/modules/stat/modules/stat-ui/stat-ui.module';
-import { TerritoriesToInseesAutocompleteComponent } from '~/shared/modules/territory-to-insees-autocomplete/components/territories-to-insees-autocomplete/territories-to-insees-autocomplete.component';
 import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/territory-ui.module';
 import { UiTripModule } from '~/modules/trip/modules/ui-trip/ui-trip.module';
 
@@ -34,6 +31,9 @@ import { RestrictionFormComponent } from './components/campaign-form/step-3/rest
 import { RetributionFormComponent } from './components/campaign-form/step-3/retribution-form/retribution-form.component';
 import { StaggeredFormComponent } from './components/campaign-form/step-3/staggered-form/staggered-form.component';
 import { SummaryFormComponent } from './components/campaign-form/step-4/summary-form.component';
+import { MaterialModule } from '../../shared/modules/material/material.module';
+import { TerritoriesToInseesAutocompleteComponent } from '../../shared/modules/territory-to-insees-autocomplete/components/territories-to-insees-autocomplete/territories-to-insees-autocomplete.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [

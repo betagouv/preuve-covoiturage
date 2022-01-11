@@ -8,14 +8,13 @@ import { BehaviorSubject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { REGEXP } from '~/core/const/validators.const';
-import { ResultRowInterface } from '~/core/entities/api/shared/certificate/common/interfaces/ResultRowInterface';
+import { ResultRowInterface, RowType } from '~/shared/certificate/common/interfaces/ResultRowInterface';
 import { ParamsInterface as ListParamsInterface } from '~/core/entities/api/shared/certificate/list.contract';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
 import { CertificateMetaDialogComponent } from './certificate-meta-dialog/certificate-meta-dialog.component';
-import { RowType } from 'shared/certificate/common/interfaces/ResultRowInterface';
 
 @Component({
   selector: 'app-certificate-list',

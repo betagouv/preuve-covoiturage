@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { DetailsModule } from '~/shared/modules/details/details.module';
-import { FormModule } from '~/shared/modules/form/form.module';
-import { MaterialModule } from '~/shared/modules/material/material.module';
-import { SharedModule } from '~/shared/shared.module';
+import { DetailsModule } from '../../../../shared/modules/details/details.module';
+import { FormModule } from '../../../../shared/modules/form/form.module';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { SharedModule } from '../../../../shared/shared.module';
 // eslint-disable-next-line
 import { TerritoriesAutocompleteComponent } from './components/territories-autocomplete/territories-autocomplete.component';
 import { TerritoryDetailsComponent } from './components/territory-details/territory-details.component';

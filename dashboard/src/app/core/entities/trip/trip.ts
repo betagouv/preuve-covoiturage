@@ -1,4 +1,4 @@
-import { LightTripInterface } from 'shared/trip/common/interfaces/LightTripInterface';
+import { LightTripInterface } from '~/shared/trip/common/interfaces/LightTripInterface';
 import { TripStatusEnum } from '../../enums/trip/trip-status.enum';
 
 export class LightTrip {

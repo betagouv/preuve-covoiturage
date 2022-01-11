@@ -1,9 +1,9 @@
 import { FormControl } from '@angular/forms';
 
 import { Bank } from '~/core/entities/shared/bank';
-import { ibanValidator } from '~/shared/modules/form/validators/iban.validator';
 
 import { bicValidator } from '../validators/bic.validator';
+import { ibanValidator } from '../validators/iban.validator';
 
 export class FormBank {
   bank_name = new FormControl(); // tslint:disable-line variable-name

@@ -4,8 +4,6 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { FrenchMatPaginatorIntl } from '~/shared/classes/french-paginator';
-
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { ButtonHrefDirective } from './directives/button-href.directive';
 import { ButtonSpinnerDirective } from './directives/button-spinner.directive';
@@ -25,6 +23,7 @@ import { PageContentComponent } from './components/page-content/page-content.com
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { RangeTimePickerComponent } from './components/range-time-picker/range-time-picker.component';
 import { UploadComponent } from './components/upload/upload.component';
+import { FrenchMatPaginatorIntl } from './classes/french-paginator';
 
 @NgModule({
   declarations: [

@@ -13,11 +13,11 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { CompanyService } from '~/modules/company/services/company.service';
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
-import { FormAddress } from '~/shared/modules/form/forms/form-address';
-import { FormBank } from '~/shared/modules/form/forms/form-bank';
-import { FormCompany } from '~/shared/modules/form/forms/form-company';
-import { FormContact } from '~/shared/modules/form/forms/form-contact';
-import { bankValidator } from '~/shared/modules/form/validators/bank.validator';
+import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
+import { FormBank } from '../../../../../../shared/modules/form/forms/form-bank';
+import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
+import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
+import { bankValidator } from '../../../../../../shared/modules/form/validators/bank.validator';
 
 @Component({
   selector: 'app-operator-form',

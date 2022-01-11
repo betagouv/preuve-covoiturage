@@ -4,8 +4,6 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { TripRoutingModule } from '~/modules/trip/trip-routing.module';
-import { MaterialModule } from '~/shared/modules/material/material.module';
-import { SharedModule } from '~/shared/shared.module';
 import { UiTripModule } from '~/modules/trip/modules/ui-trip/ui-trip.module';
 import { StatUIModule } from '~/modules/stat/modules/stat-ui/stat-ui.module';
 import { FilterModule } from '~/modules/filter/filter.module';
@@ -20,6 +18,8 @@ import { TripImportComponent } from './pages/trip-import/trip-import.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { OperatorUiModule } from '../operator/modules/operator-ui/operator-ui.module';
 import { TripExportDialogComponent } from './pages/trip-export-dialog/trip-export-dialog.component';
+import { MaterialModule } from '../../shared/modules/material/material.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [
