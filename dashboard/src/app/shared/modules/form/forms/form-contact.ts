@@ -1,6 +1,6 @@
 import { FormControl, Validators } from '@angular/forms';
 import { REGEXP } from '~/core/const/validators.const';
-import { ContactInterface } from '../../../../../../../shared/common/interfaces/ContactInterface';
+import { ContactInterface } from '~/shared/common/interfaces/ContactInterface';
 
 export class FormContact {
   firstname = new FormControl();

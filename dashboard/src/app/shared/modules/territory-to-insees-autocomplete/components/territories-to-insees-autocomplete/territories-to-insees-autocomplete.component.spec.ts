@@ -6,7 +6,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Observable, of } from 'rxjs';
-// import { TerritoryListFilter } from '../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { InseeAndTerritoryInterface } from '../../../../../core/entities/campaign/ux-format/incentive-filters';
 import { TerritoryApiService } from '../../../../../modules/territory/services/territory-api.service';
 import { TerritoriesToInseesAutocompleteComponent } from './territories-to-insees-autocomplete.component';

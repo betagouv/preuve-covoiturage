@@ -10,7 +10,7 @@ import { AuthenticationService as Auth } from '~/core/services/authentication/au
 import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryInterface } from '../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 
 @Injectable({
   providedIn: 'root',

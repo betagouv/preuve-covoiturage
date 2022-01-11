@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ContactInterface } from '../../../../../../../../shared/common/interfaces/ContactInterface';
+import { ContactInterface } from '~/shared/common/interfaces/ContactInterface';
 
 @Component({
   selector: 'app-details-contact',

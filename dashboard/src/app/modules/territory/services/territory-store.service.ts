@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { debounceTime, finalize, skip } from 'rxjs/operators';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { PaginationState } from '../../../core/services/store/PaginationState';
 import { StoreLoadingState } from '../../../core/services/store/StoreLoadingState';
 
