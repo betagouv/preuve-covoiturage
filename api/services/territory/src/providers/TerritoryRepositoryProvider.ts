@@ -130,18 +130,25 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     const resultData = result.rows[0];
 
-    if (data.insee !== undefined && data.insee.length > 0) {
-      const query = {
-        text: `INSERT INTO territory.territory_codes(territory_id,type,value) VALUES ${data.insee
-          .map((insee) => `($1,'insee',${insee})`)
-          .join(',')}`,
-        values: [resultData._id],
-      };
-
-      await this.connection.getClient().query(query);
+    if (data.children !== undefined && data.children.length > 0) {
+      await this.createRelations(resultData._id, data.children);
     }
 
     return resultData;
+  }
+
+  async createRelations(parentId: number, insee: number[]): Promise<any> {
+    const client = this.connection.getClient();
+
+    const parentIds: number[] = Array(insee.length).fill(parentId);
+
+    const query = {
+      text: `INSERT INTO ${this.relationTable}(parent_territory_id,child_territory_id) 
+      SELECT * FROM UNNEST($1::int[], $2::int[])`,
+      values: [parentIds, insee],
+    };
+
+    return client.query(query);
   }
 
   async delete(id: number): Promise<void> {

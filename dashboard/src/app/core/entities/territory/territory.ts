@@ -69,7 +69,7 @@ export class Territory
   company?: CompanyV2;
   active?: boolean;
   activable?: boolean;
-  children?: number[];
+  children: number[];
 
   active_since?: Date;
   population?: number;
