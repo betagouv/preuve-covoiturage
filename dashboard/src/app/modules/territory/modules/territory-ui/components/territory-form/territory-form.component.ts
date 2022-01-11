@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
@@ -44,6 +44,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     public authService: AuthenticationService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
+    private router: Router,
     private toastr: ToastrService,
     private companyService: CompanyService,
     private territoryApi: TerritoryApiService,
@@ -73,12 +74,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
   get canUpdate(): boolean {
     return this.authService.hasRole([Roles.RegistryAdmin, Roles.TerritoryAdmin]);
   }
-
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   if (changes['territory'] && this.territoryForm) {
-  //     this.setTerritoryFormValue(changes['territory'].currentValue);
-  //   }
-  // }
 
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
@@ -137,7 +132,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     );
     if (this.isNew()) {
       this.territoryApi.createNew(model).subscribe(() => {
-        this.toastr.success(`${formValues.name} a été mis à jour !`);
+        this.toastr.success(`${formValues.name} a été créé !`);
+        this.router.navigate(['../'], { relativeTo: this.route });
       });
       return;
     }
@@ -146,6 +142,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     this.territoryApi.updateNew(updateModel).subscribe(
       (modifiedTerritory) => {
         this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
+        this.router.navigate(['../'], { relativeTo: this.route });
       },
       (err) => {
         this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
@@ -329,9 +326,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
 
   private setTerritoryFormValue(territory: TerritoryInterface): void {
     this.territoryId = territory ? territory._id : null;
-
-    // const territoryEd = new Territory(territory);
-    // const formValues = territoryEd.toFormValues(this.isRegistryGroup);
 
     if (!this.territoryId) {
       ['company', 'address', 'contacts.gdpr_dpo', 'contacts.gdpr_controller', 'contacts.technical'].forEach((key) => {
