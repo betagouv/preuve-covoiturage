@@ -247,7 +247,7 @@ test.serial('Find geo zone by code', async (t) => {
   const response = await t.context.request(
     'territory:findGeoByCode',
     {
-      insees: ['91377'],
+      insees: ['91471'],
     },
     {
       call: {
@@ -259,6 +259,6 @@ test.serial('Find geo zone by code', async (t) => {
   );
   t.log(response);
   t.true(Array.isArray(response.result));
-  t.true(response.result.length >= 2);
-  t.is(response.result.filter((r) => r.name === name).length, 1);
+  t.true(response.result.length >= 1);
+  t.is(response.result.filter((r) => r.name === 'Orsay (91)').length, 1);
 });
