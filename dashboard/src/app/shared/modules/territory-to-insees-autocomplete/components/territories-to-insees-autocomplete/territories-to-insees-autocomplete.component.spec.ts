@@ -23,7 +23,7 @@ const damparis: InseeAndTerritoryInterface = {
 };
 
 class TerritoryApiServiceStub {
-  public getList(params: any): Observable<any> {
+  public geo(params: any): Observable<any> {
     if (params.search.startsWith('pa')) {
       return of({
         data: [damparis, paris10],
