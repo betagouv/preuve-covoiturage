@@ -84,7 +84,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
     formValues.company_id = get(this, 'companyDetails._id', null);
 
-    if (!this.fullFormMode) {
+    if (!this.fullFormMode || !formValues.insee) {
       this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId).subscribe(
         (modifiedTerritory) => {
           this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
@@ -97,7 +97,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
-    // split by and make unique
+    // split by coma and make unique
     const inseeList: string[] = [
       ...new Set(
         formValues.insee
@@ -336,7 +336,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
       const inseeControl = this.territoryForm.controls.insee;
 
-      inseeControl.setValidators([Validators.required, Validators.pattern('^( *[0-9]{5} *,? *)+$')]);
+      inseeControl.setValidators([Validators.pattern('^( *[0-9]{5} *,? *)+$')]);
       inseeControl.updateValueAndValidity();
       inseeControl.markAsUntouched();
     }
