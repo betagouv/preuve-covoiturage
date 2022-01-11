@@ -8,9 +8,9 @@ import { SeatVariant } from './SeatVariant';
 import { TerritoryVariant } from './TerritoryVariant';
 
 import { AbstractVariant } from './AbstractVariant';
-import { PersonInterface } from '~/shared/policy/common/interfaces/PersonInterface';
-import { TripInterface } from '~/shared/policy/common/interfaces/TripInterface';
-import { CampaignInterface } from '~/shared/policy/common/interfaces/CampaignInterface';
+import { PersonInterface } from '../../shared/policy/common/interfaces/PersonInterface';
+import { TripInterface } from '../../shared/policy/common/interfaces/TripInterface';
+import { CampaignInterface } from '../../shared/policy/common/interfaces/CampaignInterface';
 
 export class FakerEngine {
   constructor(protected readonly variants: AbstractVariant<any>[]) {}

@@ -1,7 +1,7 @@
 import random from 'lodash/random';
 
 import { AbstractVariant } from './AbstractVariant';
-import { PersonInterface } from '~/shared/policy/common/interfaces/PersonInterface';
+import { PersonInterface } from '../../shared/policy/common/interfaces/PersonInterface';
 
 export class SeatVariant extends AbstractVariant<void> {
   readonly propertyPath: string = 'seats';

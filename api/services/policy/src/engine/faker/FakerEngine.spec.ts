@@ -1,7 +1,7 @@
 import test from 'ava';
 
 import { FakerEngine } from './FakerEngine';
-import { CampaignInterface } from '~/shared/policy/common/interfaces/CampaignInterface';
+import { CampaignInterface } from '../../shared/policy/common/interfaces/CampaignInterface';
 
 test('should work', (t) => {
   const start_date = new Date();
