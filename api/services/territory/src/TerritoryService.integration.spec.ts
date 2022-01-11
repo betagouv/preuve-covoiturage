@@ -26,11 +26,18 @@ test.serial('Create a territory', async (t) => {
   const response = await t.context.request(
     'territory:create',
     {
-      name: name,
+      name,
       level: 'towngroup',
       active: false,
       activable: false,
-      insee: ['91377'],
+      company_id: 45,
+      children: [6, 7],
+      address: {
+        street: '1500 BD LEPIC',
+        postcode: '73100',
+        city: 'Aix Les Bains',
+        country: 'France',
+      },
     },
     {
       call: {
@@ -90,7 +97,7 @@ test.serial('Update a territory', async (t) => {
     .getClient()
     .query({
       text: `
-     SELECT _id, name, level, active, activable from territory.territories WHERE name = $1 
+     SELECT _id, name, level, active, activable, address, company_id from territory.territories WHERE name = $1 
     `,
       values: [name],
     });
@@ -101,8 +108,8 @@ test.serial('Update a territory', async (t) => {
     'territory:update',
     {
       ...dbResult.rows[0],
-      insee: ['91377'],
-      shortname: 'Yop',
+      name: 'Toto',
+      children: [7, 8],
     },
     {
       call: {
@@ -113,7 +120,7 @@ test.serial('Update a territory', async (t) => {
     },
   );
   t.log(response);
-  t.is(response.result.shortname, 'Yop');
+  t.is(response.result.name, 'Toto');
 });
 
 test.serial('Patch contact on a territory', async (t) => {
