@@ -195,3 +195,5 @@ INSERT INTO territory.territories (_id, level, name, company_id, shortname, acti
 INSERT INTO territory.territory_relation (parent_territory_id, child_territory_id) SELECT 1 as parent_territory_id, territory_id as child_territory_id from territory.territory_codes where type = 'insee' and value = ANY('{44047,44150,44101,44094,44162,44215,44020,44143,44009,44198,44204,44024,44114,44190,44026,44194,44120,44166,44018,44109,44074,44171,44035,44172}');
 
 INSERT INTO territory.territory_relation (parent_territory_id, child_territory_id) SELECT 2 as parent_territory_id, territory_id as child_territory_id from territory.territory_codes where type = 'insee' and value = ANY('{74062,74148,74267,74061,74142,74275,74002,74108,74186,74233,74004,74111,74194,74242,74097,74176,74310,74019,74282,74213,74299,74010,74112,74198,74303,74067,74060,74254,74054,74138,74232,74036,74137,74219}');
+
+SELECT setval('territory.territories__id_seq1', (SELECT MAX(_id) FROM territory.territories)+1);
