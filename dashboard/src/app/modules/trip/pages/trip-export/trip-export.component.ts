@@ -98,7 +98,6 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
     }
 
     if (!this.user.isOperatorGroup() && this.checkboxesForm.selectedOperators.length === 0) {
-      data.operators = this.checkboxesForm.operators;
       data.operator_id = this.checkboxesForm.operators.map((o) => o._id);
     }
 

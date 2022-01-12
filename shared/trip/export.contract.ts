@@ -1,6 +1,7 @@
 // operator_id could be number if set from middleware
-export interface ParamsInterface extends Omit<BaseParamsInterface, 'operator_id'> {
-  operator_id: number[] | number; // operator_id(s) fetch from midleware (for an operator) or form (for a territory)
+export interface ParamsInterface extends Omit<BaseParamsInterface, 'operator_id' | 'territory_id'> {
+  operator_id: number[]; // operator_id(s) fetch from midleware (for an operator) or form (for a territory)
+  territory_id: number[];
 }
 
 export interface BaseParamsInterface {
