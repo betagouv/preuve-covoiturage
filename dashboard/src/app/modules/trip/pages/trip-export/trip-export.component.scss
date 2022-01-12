@@ -10,6 +10,19 @@
     }
   }
 
+  .hints {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+
+    mat-hint { 
+      width: 100%;
+      margin: 12px;
+    }
+  
+  }
+
+
 
 
   background-color: #ffffff;
