@@ -237,8 +237,8 @@ test.serial('Lists all geo zones', async (t) => {
   t.log(response.result.meta.pagination);
   t.true('data' in response.result);
   t.true(Array.isArray(response.result.data));
-  t.is(response.result.data.length, 3);
-  t.is(response.result.meta.pagination.total, 3);
+  t.is(response.result.data.length, 1);
+  t.is(response.result.meta.pagination.total, 1);
   t.is(response.result.meta.pagination.offset, 0);
   t.is(response.result.meta.pagination.limit, 100);
 });

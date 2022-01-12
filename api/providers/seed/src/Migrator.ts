@@ -186,6 +186,10 @@ export class Migrator {
       values: [territory._id, territory.name, territory.level, territory.geo, territory.population, territory.surface],
     });
 
+    await this.connection.getClient().query(`
+    SELECT setval('territory.territories__id_seq1', (SELECT MAX(_id) FROM territory.territories)+1);
+    `);
+
     if (territory.insee) {
       const postcodes = territory.postcodes || [];
       await this.connection.getClient().query({
