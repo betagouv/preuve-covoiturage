@@ -1,10 +1,35 @@
+import { IncentiveMetaInterface } from '../shared/policy/common/interfaces/IncentiveInterface';
 import { MetadataWrapperInterface } from '../interfaces';
 
 export class MetadataWrapper implements MetadataWrapperInterface {
+  protected dataRegister: Map<string, string>;
   protected data: Map<string, number>;
+  protected extraData: Map<string, number>;
 
-  constructor(public readonly policy_id: number = 0, initialData?: [string, number][]) {
+  constructor(public readonly policy_id: number = 0, initialData?: [string, number][], extraData?: [string, number][]) {
     this.data = initialData ? new Map(initialData) : new Map();
+    this.extraData = extraData ? new Map(extraData) : new Map();
+  }
+
+  register(uuid: string, key: string): void {
+    this.dataRegister.set(uuid, key);
+  }
+
+  extraRegister(data: { [k: string]: number }): void {
+    for (const key of Object.keys(data)) {
+      this.extraData.set(key, data[key]);
+    }
+  }
+
+  export(): IncentiveMetaInterface {
+    return {
+      ...Object.fromEntries(this.dataRegister.entries()),
+      _extra: Object.fromEntries(this.extraData.entries()),
+    };
+  }
+
+  extraGet(key: string): number {
+    return this.extraData.get(key);
   }
 
   has(key: string): boolean {

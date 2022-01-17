@@ -49,7 +49,7 @@ test('should not call meta if wrong target', async (t) => {
     person: trip.find((p) => !p.is_driver),
   };
 
-  await t.notThrowsAsync(async () => rule.getStateKey(context, meta));
+  await t.notThrowsAsync(async () => rule.initState(context, meta));
 });
 
 test('should properly build build meta key and set initial state', async (t) => {
@@ -62,7 +62,8 @@ test('should properly build build meta key and set initial state', async (t) => 
     person: driver,
   };
 
-  const key = rule.getStateKey(context, meta);
+  rule.initState(context, meta);
+  const key = meta.export()[rule.uuid];
   const [day, month, year] = [trip.datetime.getDate(), trip.datetime.getMonth(), trip.datetime.getFullYear()];
   t.is(key, `${MaxAmountRestriction.slug}.${driver.identity_uuid}.day.${day}-${month}-${year}`);
   const value = meta.get(key);

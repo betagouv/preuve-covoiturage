@@ -35,6 +35,7 @@ export class PolicyEngine {
   ): Promise<{ carpool_id: number; policy_id: number; amount: number; status: IncentiveStatusEnum }> {
     const keys = pc.getMetaKeys(incentive);
     const meta = await this.metaRepository.get(pc.policy_id, keys, incentive.datetime);
+    meta.extraRegister(pc.getMetaExtra(incentive));
     const result = pc.applyStateful(incentive, meta);
     await this.metaRepository.set(pc.policy_id, meta, incentive.datetime);
     return result;

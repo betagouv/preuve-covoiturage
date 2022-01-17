@@ -37,7 +37,7 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
   abstract getPrefix(): string;
   abstract getErrorMessage(): string;
 
-  getStateKey(ctx: RuleHandlerContextInterface, meta: MetadataWrapperInterface): string | undefined {
+  protected getMetaKey(ctx: RuleHandlerContextInterface): string {
     if (
       this.parameters.target &&
       ((this.parameters.target === 'driver' && !ctx.person.is_driver) ||
@@ -53,6 +53,12 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
       this.parameters.target ? ctx.person.identity_uuid : 'global',
     );
     return key;
+  }
+
+  initState(ctx: RuleHandlerContextInterface, meta: MetadataWrapperInterface): void {
+    const key = this.getMetaKey(ctx);
+    meta.register(this.uuid, key);
+    meta.set(key, meta.get(key) || 1);
   }
 
   apply(result: number, state: number): number {

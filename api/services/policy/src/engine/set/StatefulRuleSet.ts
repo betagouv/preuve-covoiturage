@@ -21,17 +21,10 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
     return this.ruleSet.length;
   }
 
-  buildInitialState(context: RuleHandlerContextInterface, meta: MetadataWrapperInterface): Map<string, string> {
-    const incentiveState: Map<string, string> = new Map();
-
+  buildInitialState(context: RuleHandlerContextInterface, meta: MetadataWrapperInterface): void {
     for (const statefulRule of this.ruleSet) {
-      const key = statefulRule.getStateKey(context, meta);
-      if (key) {
-        incentiveState.set(statefulRule.uuid, key);
-      }
+      statefulRule.initState(context, meta);
     }
-
-    return incentiveState;
   }
 
   listStateKeys(incentive: IncentiveInterface): string[] {
