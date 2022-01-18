@@ -26,7 +26,7 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
         wheres: ['policy_id = $1'],
         values: [id],
       };
-      
+
       if (datetime) {
         clauses.wheres.push('datetime <= $2::timestamp');
         clauses.values.push(datetime);
@@ -38,9 +38,9 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
             SELECT distinct key FROM ${this.table}
             WHERE ${clauses.wheres.join(' AND ')}
           `,
-          values: clauses.values, 
+          values: clauses.values,
         });
-        keys.push(...result.rows.map(r => r.key));
+        keys.push(...result.rows.map((r) => r.key));
       }
 
       const result = [];
@@ -56,7 +56,7 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
           text: queryText,
           values: [...clauses.values, key],
         });
-        if(r.rows.length) {
+        if (r.rows.length) {
           result.push(r.rows[0]);
         }
       }
