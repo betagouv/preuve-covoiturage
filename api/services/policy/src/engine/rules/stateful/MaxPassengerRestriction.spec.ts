@@ -6,7 +6,10 @@ import { NotApplicableTargetException } from '../../exceptions/NotApplicableTarg
 import { MetadataWrapper } from '../../../providers/MetadataWrapper';
 import { TripInterface } from '../../../interfaces';
 
-function setup(cfg: Partial<MaxPassengerRestrictionParameters> = {}): { rule: MaxPassengerRestriction; trip: TripInterface } {
+function setup(cfg: Partial<MaxPassengerRestrictionParameters> = {}): {
+  rule: MaxPassengerRestriction;
+  trip: TripInterface;
+} {
   const basecfg: MaxPassengerRestrictionParameters = {
     uuid: 'test',
     amount: 10,
@@ -64,7 +67,7 @@ test('should export extra meta', async (t) => {
   const state = meta.export();
   t.deepEqual(state, {
     test: `${MaxPassengerRestriction.slug}.driver.${context.person.trip_id}`,
-    _extra: { passengers: 3 }
+    _extra: { passengers: 3 },
   });
 });
 
@@ -82,7 +85,7 @@ test('should do nothing if limit is not reached', async (t) => {
 
 test('should properly update state', async (t) => {
   const meta = new MetadataWrapper();
-  meta.extraRegister({ passengers: 3 })
+  meta.extraRegister({ passengers: 3 });
   const { rule } = setup();
   const result = rule.getNewState(5, 0, meta);
   t.is(result, 3);
@@ -90,7 +93,7 @@ test('should properly update state', async (t) => {
 
 test('should update result if limit will be reached', async (t) => {
   const meta = new MetadataWrapper();
-  meta.extraRegister({ passengers: 3 })
+  meta.extraRegister({ passengers: 3 });
   const { rule } = setup();
   const newResult = rule.apply(30, 9, meta);
   t.is(newResult, 10);

@@ -41,7 +41,9 @@ export class MaxPassengerRestriction extends AbstractStatefulRule<MaxPassengerRe
     const key = `${this.getPrefix()}.${this.parameters.target}.${ctx.person.trip_id}`;
     meta.register(this.uuid, key);
     meta.set(key, meta.get(key) || 0);
-    meta.extraRegister({ passengers: ctx.trip.filter((p) => !p.is_driver).reduce((acc, p) => acc + (p.seats || 1), 0) });
+    meta.extraRegister({
+      passengers: ctx.trip.filter((p) => !p.is_driver).reduce((acc, p) => acc + (p.seats || 1), 0),
+    });
   }
 
   apply(result: number, state: number, meta: MetadataWrapperInterface): number {
@@ -51,11 +53,11 @@ export class MaxPassengerRestriction extends AbstractStatefulRule<MaxPassengerRe
     }
     // test if next consuption will be > limit
     const next = meta.extraGet('passengers') || 0;
-    const diff = this.parameters.amount - (state + next)
+    const diff = this.parameters.amount - (state + next);
     if (diff < 0 && next > 0) {
-      return result / next * (next + diff);
+      return (result / next) * (next + diff);
     }
-  
+
     return result;
   }
 
