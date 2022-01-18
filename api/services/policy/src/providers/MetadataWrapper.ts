@@ -60,5 +60,4 @@ export class MetadataWrapper implements MetadataWrapperInterface {
   all(): [string, number][] {
     return [...this.data.entries()];
   }
-  h;
 }
