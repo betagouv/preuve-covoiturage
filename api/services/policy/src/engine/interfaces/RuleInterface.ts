@@ -38,7 +38,7 @@ export interface AppliableRuleInterface {
 export interface StatefulRuleInterface {
   readonly uuid: string;
   initState(context: RuleHandlerContextInterface, meta: MetadataWrapperInterface): void;
-  apply(result: number, state: number): number;
+  apply(result: number, state: number, meta: MetadataWrapperInterface): number;
   getNewState(result: number, oldState: number, meta: MetadataWrapperInterface): number;
 }
 

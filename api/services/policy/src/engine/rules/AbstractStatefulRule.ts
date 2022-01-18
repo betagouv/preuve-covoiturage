@@ -24,6 +24,6 @@ export abstract class AbstractStatefulRule<P extends StatefulParametersDefaultIn
   }
 
   abstract initState(context: RuleHandlerContextInterface, meta: MetadataWrapperInterface): void;
-  abstract apply(result: number, state: number): number;
+  abstract apply(result: number, state: number, meta: MetadataWrapperInterface): number;
   abstract getNewState(result: number, oldState: number, meta: MetadataWrapperInterface): number;
 }

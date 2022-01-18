@@ -39,7 +39,7 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
         const metaKey = incentive.meta[statefulRule.uuid];
         const state = meta.get(metaKey);
         try {
-          result = statefulRule.apply(result, state);
+          result = statefulRule.apply(result, state, meta);
           meta.set(metaKey, statefulRule.getNewState(result, state, meta));
         } catch (e) {
           if (!(e instanceof NotApplicableTargetException)) {
