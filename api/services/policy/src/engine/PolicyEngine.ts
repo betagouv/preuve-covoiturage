@@ -20,8 +20,8 @@ export class PolicyEngine {
 
   public async processStateless(pc: ProcessableCampaign, trip: TripInterface): Promise<IncentiveInterface[]> {
     const tripIncentives = TripIncentives.createFromTrip(trip);
-    const meta = new MetadataWrapper();
     for (const person of tripIncentives.getProcessablePeople()) {
+      const meta = new MetadataWrapper();
       const ctx = { trip, person, result: undefined, stack: [] };
       const incentive = pc.apply(ctx, meta);
       tripIncentives.addIncentive(incentive);
