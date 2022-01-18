@@ -16,52 +16,54 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
 
   constructor(protected connection: PostgresConnection) {}
 
-  async get(id: number, keys: string[] = [], datetime?: Date): Promise<MetadataWrapperInterface> {
-    const whereClauses: {
-      text: string;
-      value: any;
-    }[] = [
-      {
-        text: 'policy_id = $1',
-        value: id,
-      },
-    ];
+  async get(id: number, askedKeys: string[] = [], datetime?: Date): Promise<MetadataWrapperInterface> {
+    const connection = await this.connection.getClient().connect();
+    try {
+      const clauses: {
+        wheres: string[];
+        values: any[];
+      } = {
+        wheres: ['policy_id = $1'],
+        values: [id],
+      };
+      
+      if (datetime) {
+        clauses.wheres.push('datetime <= $2::timestamp');
+        clauses.values.push(datetime);
+      }
+      const keys: string[] = [...askedKeys];
+      if (!keys || !keys.length) {
+        const result = await connection.query({
+          text: `
+            SELECT distinct key FROM ${this.table}
+            WHERE ${clauses.wheres.join(' AND ')}
+          `,
+          values: clauses.values, 
+        });
+        keys.push(...result.rows.map(r => r.key));
+      }
 
-    if (keys.length > 0) {
-      whereClauses.push({
-        text: 'key = ANY($2::varchar[])',
-        value: keys,
-      });
+      const result = [];
+      const queryText = `
+        SELECT key, value FROM ${this.table}
+        WHERE ${[...clauses.wheres, `key = $${datetime ? '3' : '2'}::varchar`].join(' AND ')}
+        ORDER BY datetime DESC
+        LIMIT 1
+      `;
+      for (const key of keys) {
+        const r = await connection.query({
+          rowMode: 'array',
+          text: queryText,
+          values: [...clauses.values, key],
+        });
+        if(r.rows.length) {
+          result.push(r.rows[0]);
+        }
+      }
+      return new MetadataWrapper(id, result);
+    } finally {
+      connection.release();
     }
-
-    if (datetime) {
-      whereClauses.push({
-        text: `datetime <= ${keys.length ? '$3' : '$2'}::timestamp`,
-        value: datetime,
-      });
-    }
-
-    // get the latest value for a key
-    const query: {
-      rowMode: string;
-      text: string;
-      values: any[];
-    } = {
-      rowMode: 'array',
-      text: `
-        SELECT
-          key,
-          (max(array[extract('epoch' from datetime), value::int]))[2] as value
-        FROM ${this.table}
-        WHERE ${whereClauses.map((w) => w.text).join(' AND ')}
-        GROUP BY key
-      `,
-      values: [...whereClauses.map((w) => w.value)],
-    };
-
-    const result = await this.connection.getClient().query(query);
-
-    return new MetadataWrapper(id, result.rows);
   }
 
   async set(policyId: number, metadata: MetadataWrapperInterface, date: Date): Promise<void> {
