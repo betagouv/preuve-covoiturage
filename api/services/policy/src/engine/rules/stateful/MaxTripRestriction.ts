@@ -12,7 +12,7 @@ export class MaxTripRestriction extends AbstractStatefulRestriction {
     return MaxTripRestriction.description;
   }
 
-  setState(_result: number, state: number): number {
+  getNewState(_result: number, state: number): number {
     return state + 1;
   }
 }

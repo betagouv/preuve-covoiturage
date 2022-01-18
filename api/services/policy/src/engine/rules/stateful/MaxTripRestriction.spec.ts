@@ -80,6 +80,6 @@ test('should do nothing if limit is not reached', async (t) => {
 
 test('should properly update state', async (t) => {
   const { rule } = setup();
-  const result = rule.setState(5, 0);
+  const result = rule.getNewState(5, 0);
   t.is(result, 1);
 });

@@ -71,5 +71,5 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
     return result;
   }
 
-  abstract setState(result: number, state: number): number;
+  abstract getNewState(result: number, oldState: number, meta: MetadataWrapperInterface): number;
 }

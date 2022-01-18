@@ -40,13 +40,13 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
         const state = meta.get(metaKey);
         try {
           result = statefulRule.apply(result, state);
-          meta.set(metaKey, statefulRule.setState(result, state));
+          meta.set(metaKey, statefulRule.getNewState(result, state, meta));
         } catch (e) {
           if (!(e instanceof NotApplicableTargetException)) {
             throw e;
           }
           result = 0;
-          meta.set(metaKey, statefulRule.setState(result, state));
+          meta.set(metaKey, statefulRule.getNewState(result, state, meta));
         }
       }
     }
