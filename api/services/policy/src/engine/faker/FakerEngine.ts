@@ -1,4 +1,5 @@
 import random from 'lodash/random';
+import { v4 } from 'uuid';
 
 import { DatetimeVariant } from './DatetimeVariant';
 import { DistanceVariant } from './DistanceVariant';
@@ -18,6 +19,7 @@ export class FakerEngine {
   public static getBasicPerson(carpool_id = 1, is_driver = false): PersonInterface {
     return {
       carpool_id,
+      trip_id: v4(),
       is_driver,
       datetime: new Date(),
       identity_uuid: 'no one',
