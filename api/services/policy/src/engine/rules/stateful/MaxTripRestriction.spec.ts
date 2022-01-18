@@ -35,13 +35,8 @@ function setup(cfg: Partial<StatefulRestrictionParameters> = {}): { rule: MaxTri
   return { rule, trip };
 }
 
-test('should not call meta if wrong target', async (t) => {
-  class MetaWrapper extends MetadataWrapper {
-    get(k: string, fb: number): number {
-      throw new Error('This should not be called');
-    }
-  }
-  const meta = new MetaWrapper(0);
+test('should not export anything if wrong target', async (t) => {
+  const meta = new MetadataWrapper();
   const { rule, trip } = setup({ target: 'driver' });
   const context = {
     trip: trip,
@@ -49,7 +44,9 @@ test('should not call meta if wrong target', async (t) => {
     person: trip.find((p) => !p.is_driver),
   };
 
-  await t.notThrowsAsync(async () => rule.initState(context, meta));
+  rule.initState(context, meta);
+  const state = meta.export();
+  t.deepEqual(Object.keys(state), []);
 });
 
 test('should properly build build meta key and set initial state', async (t) => {
@@ -83,6 +80,6 @@ test('should do nothing if limit is not reached', async (t) => {
 
 test('should properly update state', async (t) => {
   const { rule } = setup();
-  const result = await rule.setState(5, 0);
+  const result = rule.setState(5, 0);
   t.is(result, 1);
 });

@@ -57,8 +57,10 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
 
   initState(ctx: RuleHandlerContextInterface, meta: MetadataWrapperInterface): void {
     const key = this.getMetaKey(ctx);
-    meta.register(this.uuid, key);
-    meta.set(key, meta.get(key) || 1);
+    if (key) {
+      meta.register(this.uuid, key);
+      meta.set(key, meta.get(key) || 0);
+    }
   }
 
   apply(result: number, state: number): number {

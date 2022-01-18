@@ -9,6 +9,7 @@ export class MetadataWrapper implements MetadataWrapperInterface {
   constructor(public readonly policy_id: number = 0, initialData?: [string, number][], extraData?: [string, number][]) {
     this.data = initialData ? new Map(initialData) : new Map();
     this.extraData = extraData ? new Map(extraData) : new Map();
+    this.dataRegister = new Map();
   }
 
   register(uuid: string, key: string): void {
@@ -22,9 +23,10 @@ export class MetadataWrapper implements MetadataWrapperInterface {
   }
 
   export(): IncentiveMetaInterface {
+    const haveExtra = this.dataRegister.size && this.extraData.size;
     return {
       ...Object.fromEntries(this.dataRegister.entries()),
-      _extra: Object.fromEntries(this.extraData.entries()),
+      ...(haveExtra ? { _extra: Object.fromEntries(this.extraData.entries()) } : {}),
     };
   }
 
@@ -58,4 +60,5 @@ export class MetadataWrapper implements MetadataWrapperInterface {
   all(): [string, number][] {
     return [...this.data.entries()];
   }
+  h;
 }
