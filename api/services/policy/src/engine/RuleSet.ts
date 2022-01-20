@@ -63,17 +63,16 @@ export class RuleSet {
       }, []);
   }
 
-  apply(context: RuleHandlerParamsInterface, meta: MetadataWrapperInterface): Map<string, string> {
+  apply(context: RuleHandlerParamsInterface, meta: MetadataWrapperInterface): void {
     let { result, ...ctx } = context;
     this.filterSet.filter(ctx);
-    const initialState = this.statefulSet.buildInitialState(ctx, meta);
+    this.statefulSet.buildInitialState(ctx, meta);
     ctx = this.transformerSet.transform(ctx);
     result = this.setterSet.set(ctx);
     result = this.modifierSet.modify(ctx, result);
     context.result = result;
     this.nativeSet.apply(context);
     context.stack.push(`pathresult: ${context.result}`);
-    return initialState;
   }
 
   listStateKeys(incentive: IncentiveInterface): string[] {

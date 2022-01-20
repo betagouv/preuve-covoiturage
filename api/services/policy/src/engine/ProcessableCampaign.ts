@@ -1,7 +1,6 @@
 import { RuleHandlerContextInterface } from './interfaces';
 import { NotApplicableTargetException } from './exceptions/NotApplicableTargetException';
 import { RuleSet } from './RuleSet';
-import { StatefulRuleSet } from './set/StatefulRuleSet';
 import {
   IncentiveStatusEnum,
   IncentiveStateEnum,
@@ -18,9 +17,7 @@ export class ProcessableCampaign {
   public readonly territory_id: number;
 
   protected globalSet: RuleSet;
-  protected globalStatefulSet: StatefulRuleSet;
   protected ruleSets: RuleSet[];
-  protected statefulRuleSets: StatefulRuleSet[];
 
   constructor(protected campaign: CampaignInterface) {
     this.policy_id = campaign._id;
@@ -39,6 +36,10 @@ export class ProcessableCampaign {
           .reduce((arr, curr) => [...arr, ...curr], []),
       ),
     ];
+  }
+
+  getMetaExtra(incentive: IncentiveInterface): { [k: string]: number } {
+    return (incentive.meta._extra as Record<string, number>) || {};
   }
 
   needStatefulApply(): boolean {
@@ -68,16 +69,14 @@ export class ProcessableCampaign {
   ): IncentiveInterface {
     let result = 0;
 
-    let incentiveState: Map<string, string> = new Map();
-
     try {
       const ctx = { ...context, result };
-      incentiveState = this.globalSet.apply(ctx, meta);
+      this.globalSet.apply(ctx, meta);
 
       for (const ruleSet of this.ruleSets) {
         const currentContext = { ...ctx, result: 0 };
         try {
-          incentiveState = new Map([...incentiveState, ...ruleSet.apply(currentContext, meta)]);
+          ruleSet.apply(currentContext, meta);
         } catch (e) {
           if (!(e instanceof NotApplicableTargetException)) {
             throw e;
@@ -96,13 +95,8 @@ export class ProcessableCampaign {
       result = 0;
     }
 
-    const initialMeta = [...incentiveState].reduce((obj, [k, v]) => {
-      obj[k] = v;
-      return obj;
-    }, {});
-
     return {
-      meta: initialMeta,
+      meta: meta.export(),
       carpool_id: context.person.carpool_id,
       policy_id: this.campaign._id,
       datetime: context.person.datetime,

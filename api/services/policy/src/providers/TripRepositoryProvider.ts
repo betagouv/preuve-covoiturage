@@ -131,6 +131,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
             json_build_object(
               'identity_uuid', t.identity_uuid,
               'carpool_id', t.carpool_id,
+              'trip_id', t.trip_id,
               'operator_id', t.operator_id,
               'operator_class', t.operator_class,
               'is_over_18', t.is_over_18,

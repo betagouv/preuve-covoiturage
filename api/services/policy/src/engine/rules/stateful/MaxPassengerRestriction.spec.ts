@@ -1,34 +1,39 @@
 import test from 'ava';
 
-import { MaxAmountRestriction } from './MaxAmountRestriction';
+import { MaxPassengerRestriction, MaxPassengerRestrictionParameters } from './MaxPassengerRestriction';
 import { faker } from '../../helpers/faker';
-import { StatefulRestrictionParameters } from './AbstractStatefulRestriction';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { MetadataWrapper } from '../../../providers/MetadataWrapper';
 import { TripInterface } from '../../../interfaces';
 
-function setup(cfg: Partial<StatefulRestrictionParameters> = {}): { rule: MaxAmountRestriction; trip: TripInterface } {
-  const basecfg: StatefulRestrictionParameters = {
+function setup(cfg: Partial<MaxPassengerRestrictionParameters> = {}): {
+  rule: MaxPassengerRestriction;
+  trip: TripInterface;
+} {
+  const basecfg: MaxPassengerRestrictionParameters = {
     uuid: 'test',
     amount: 10,
-    period: 'day',
+    target: 'driver',
   };
 
-  const rule = new MaxAmountRestriction({
+  const rule = new MaxPassengerRestriction({
     ...basecfg,
     ...cfg,
   });
 
   const trip = faker.trip([
     {
+      trip_id: 'custom_trip_id',
       carpool_id: 1,
       identity_uuid: 'driver',
       is_driver: true,
     },
     {
+      trip_id: 'custom_trip_id',
       carpool_id: 2,
       identity_uuid: 'passenger',
       is_driver: false,
+      seats: 3,
     },
   ]);
 
@@ -49,36 +54,47 @@ test('should not export anything if wrong target', async (t) => {
   t.deepEqual(Object.keys(state), []);
 });
 
-test('should properly build build meta key and set initial state', async (t) => {
+test('should export extra meta', async (t) => {
   const meta = new MetadataWrapper();
   const { rule, trip } = setup({ target: 'driver' });
-  const driver = trip.find((p) => p.is_driver);
   const context = {
     trip: trip,
     stack: [],
-    person: driver,
+    person: trip.find((p) => p.is_driver),
   };
 
   rule.initState(context, meta);
-  const key = meta.export()[rule.uuid];
-  const [day, month, year] = [trip.datetime.getDate(), trip.datetime.getMonth(), trip.datetime.getFullYear()];
-  t.is(key, `${MaxAmountRestriction.slug}.${driver.identity_uuid}.day.${day}-${month}-${year}`);
-  const value = meta.get(key);
-  t.is(value, 0);
+  const state = meta.export();
+  t.deepEqual(state, {
+    test: `${MaxPassengerRestriction.slug}.driver.${context.person.trip_id}`,
+    _extra: { passengers: 3 },
+  });
 });
 
 test('should throw an exception if limit is reached', async (t) => {
+  const meta = new MetadataWrapper();
   const { rule } = setup();
-  await t.throwsAsync<NotApplicableTargetException>(async () => rule.apply(20, 20));
+  await t.throwsAsync<NotApplicableTargetException>(async () => rule.apply(20, 20, meta));
 });
 
 test('should do nothing if limit is not reached', async (t) => {
+  const meta = new MetadataWrapper();
   const { rule } = setup();
-  await t.notThrowsAsync(async () => rule.apply(5, 0));
+  await t.notThrowsAsync(async () => rule.apply(5, 0, meta));
 });
 
 test('should properly update state', async (t) => {
+  const meta = new MetadataWrapper();
+  meta.extraRegister({ passengers: 3 });
   const { rule } = setup();
-  const result = rule.getNewState(5, 0);
-  t.is(result, 5);
+  const result = rule.getNewState(5, 0, meta);
+  t.is(result, 3);
+});
+
+test('should update result if limit will be reached', async (t) => {
+  const meta = new MetadataWrapper();
+  meta.extraRegister({ passengers: 3 });
+  const { rule } = setup();
+  const newResult = rule.apply(30, 9, meta);
+  t.is(newResult, 10);
 });

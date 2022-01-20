@@ -105,6 +105,7 @@ export class SimulateOnFutureAction extends AbstractAction {
 
     return {
       identity_uuid: v4(),
+      trip_id: v4(),
       carpool_id: isDriver ? SimulateOnFutureAction.DRIVER : SimulateOnFutureAction.PASSENGER,
       operator_id: input.operator_id,
       operator_class: input.operator_class,

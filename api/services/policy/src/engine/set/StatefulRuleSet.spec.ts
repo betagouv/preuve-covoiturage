@@ -47,7 +47,7 @@ test('should properly build initial state', async (t) => {
     },
   ]);
   const meta = new MetadataWrapper();
-  const incentive = statefulSet.buildInitialState(
+  statefulSet.buildInitialState(
     {
       trip,
       person: trip[0],
@@ -60,11 +60,11 @@ test('should properly build initial state', async (t) => {
   const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip[0].identity_uuid);
 
   // incentive state
-  t.true(incentive instanceof Map);
-  t.deepEqual([...incentive.keys()], ['max_amount_restriction_uuid', 'max_trip_restriction_uuid']);
+  const exportMeta = meta.export();
+  t.deepEqual(Object.keys(exportMeta), ['max_amount_restriction_uuid', 'max_trip_restriction_uuid']);
 
-  t.is(incentive.get('max_amount_restriction_uuid'), amountRestrictionKey);
-  t.is(incentive.get('max_trip_restriction_uuid'), tripRestrictionKey);
+  t.is(exportMeta['max_amount_restriction_uuid'], amountRestrictionKey);
+  t.is(exportMeta['max_trip_restriction_uuid'], tripRestrictionKey);
 
   // policy state
   // t.true(policy instanceof Map);
