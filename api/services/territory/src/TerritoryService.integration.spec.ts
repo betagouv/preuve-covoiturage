@@ -30,7 +30,7 @@ test.serial('Create a territory', async (t) => {
       level: 'towngroup',
       active: false,
       activable: false,
-      company_id: 45,
+      company_id: 3,
       children: [6, 7],
       address: {
         street: '1500 BD LEPIC',
@@ -238,7 +238,7 @@ test.serial('Lists all geo zones', async (t) => {
   t.true('data' in response.result);
   t.true(Array.isArray(response.result.data));
   t.is(response.result.data.length, 1);
-  t.is(response.result.meta.pagination.total, 3);
+  t.is(response.result.meta.pagination.total, 1);
   t.is(response.result.meta.pagination.offset, 0);
   t.is(response.result.meta.pagination.limit, 100);
 });
@@ -260,5 +260,5 @@ test.serial('Find geo zone by code', async (t) => {
   t.log(response);
   t.true(Array.isArray(response.result));
   t.true(response.result.length >= 1);
-  t.is(response.result.filter((r) => r.name === 'Orsay (91)').length, 1);
+  t.is(response.result.filter((r) => r.name === 'Orsay').length, 1);
 });
