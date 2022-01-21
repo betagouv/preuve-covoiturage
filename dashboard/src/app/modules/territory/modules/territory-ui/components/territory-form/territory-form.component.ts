@@ -1,16 +1,17 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil, tap, throttleTime } from 'rxjs/operators';
-import { TerritoryInsee } from '~/shared/territory/findGeoByCode.contract';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
+import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
 import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
+import { ContactsMapper } from '~/core/entities/shared/contacts';
 import { TerritoryFormModel, TerritoryMapper } from '~/core/entities/territory/territory';
 import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
@@ -18,10 +19,8 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-
 import { TerritoryBaseInterface, TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
-import { ContactsMapper } from '~/core/entities/shared/contacts';
+import { TerritoryInsee } from '~/shared/territory/findGeoByCode.contract';
 import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
 import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
 import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
@@ -31,7 +30,7 @@ import { FormContact } from '../../../../../../shared/modules/form/forms/form-co
   templateUrl: './territory-form.component.html',
   styleUrls: ['./territory-form.component.scss'],
 })
-export class TerritoryFormComponent extends DestroyObservable implements OnInit {
+export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
   @Input() territory: TerritoryInterface = null;
 
   public isRegistryGroup = false;
@@ -53,7 +52,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
   }
 
   ngOnInit(): void {
-    this.route.data.subscribe((data: { territory: TerritoryInterface }) => (this.territory = data.territory));
+    this.route.data.subscribe((data: { territory: TerritoryInterface }) => {
+      this.territory = data.territory;
+    });
     this.authService.user$
       .pipe(
         filter((user) => !!user),
@@ -61,10 +62,20 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
       )
       .subscribe((user) => {
         this.isRegistryGroup = user && user.group === Groups.Registry;
-        this.initTerritoryForm();
-        this.initTerritoryFormValue();
-        this.updateValidation();
+        this.initFormAndValidation();
       });
+  }
+
+  ngOnChanges() {
+    this.initFormAndValidation();
+  }
+
+  private initFormAndValidation() {
+    this.initTerritoryForm();
+    if (this.territory) {
+      this.setTerritoryFormValue(this.territory);
+      this.updateValidation();
+    }
   }
 
   get controls(): { [key: string]: AbstractControl } {
@@ -79,7 +90,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
     formValues.company_id = get(this, 'companyDetails._id', null);
 
-    if (!this.isRegistryGroup || !formValues.insee) {
+    if (!this.isRegistryGroup || !formValues.inseeString) {
       const contactModel: ContactsInterface = ContactsMapper.toModel(this.territoryForm.get('contacts'));
       this.territoryApi.patchContact({ patch: contactModel, _id: this.territoryId }).subscribe(
         (modifiedTerritory) => {
@@ -156,12 +167,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
 
   private hasSameLength(inseeList: string[], territories: TerritoryInsee[]): boolean {
     return inseeList.length === territories.length;
-  }
-
-  private initTerritoryFormValue(): void {
-    if (this.territory) {
-      this.setTerritoryFormValue(this.territory);
-    }
   }
 
   private initTerritoryForm(): void {

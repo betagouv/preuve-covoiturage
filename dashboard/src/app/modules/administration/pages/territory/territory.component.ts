@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, mergeMap, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Roles } from '~/core/enums/user/roles';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -33,11 +33,14 @@ export class TerritoryComponent extends DestroyObservable implements OnInit {
       map((user) => user && !this.auth.hasRole([Roles.TerritoryAdmin, Roles.TerritoryDemo, Roles.RegistryAdmin])),
     );
 
-    this.commonDataService.loadCurrentTerritory().subscribe((territory) => {
-      this.territory = territory;
-      this.companyService.getById(this.territory.company_id).subscribe((c) => {
-        this.company = c;
-      });
-    });
+    this.commonDataService
+      .loadCurrentTerritory()
+      .pipe(
+        takeUntil(this.destroy$),
+        tap((territory) => (this.territory = territory)),
+        mergeMap((territory) => this.companyService.getById(territory.company_id)),
+        tap((company) => (this.company = company)),
+      )
+      .subscribe();
   }
 }
