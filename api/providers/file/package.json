@@ -18,6 +18,6 @@
     "@ilos/core": "~0",
     "@pdc/provider-crypto": "~0",
     "aws-sdk": "^2.991.0",
-    "axios": "^0.24.0"
+    "axios": "^0.25.0"
   }
 }

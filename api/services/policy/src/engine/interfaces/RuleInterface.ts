@@ -37,14 +37,14 @@ export interface AppliableRuleInterface {
 
 export interface StatefulRuleInterface {
   readonly uuid: string;
-  getStateKey(context: RuleHandlerContextInterface, metaGetter: MetadataWrapperInterface): string | undefined;
-  apply(result: number, state: number): number;
-  setState(result: number, state: number): number;
+  initState(context: RuleHandlerContextInterface, meta: MetadataWrapperInterface): void;
+  apply(result: number, state: number, meta: MetadataWrapperInterface): number;
+  getNewState(result: number, oldState: number, meta: MetadataWrapperInterface): number;
 }
 
 export interface StatefulRuleSetInterface {
   length: number;
-  buildInitialState(context: RuleHandlerContextInterface, meta: MetadataWrapperInterface): Map<string, string>;
+  buildInitialState(context: RuleHandlerContextInterface, meta: MetadataWrapperInterface): void;
   listStateKeys(incentive: IncentiveInterface): string[];
   apply(incentive: IncentiveInterface, meta: MetadataWrapperInterface): number;
 }

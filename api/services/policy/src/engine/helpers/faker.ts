@@ -1,9 +1,11 @@
+import { v4 } from 'uuid';
 import { TripInterface, PersonInterface } from '../../interfaces';
 
 const datetime = new Date('2019-01-15');
 
 const basePerson: PersonInterface = {
   datetime,
+  trip_id: v4(),
   carpool_id: 1,
   identity_uuid: 'person',
   is_over_18: true,

@@ -21,17 +21,10 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
     return this.ruleSet.length;
   }
 
-  buildInitialState(context: RuleHandlerContextInterface, meta: MetadataWrapperInterface): Map<string, string> {
-    const incentiveState: Map<string, string> = new Map();
-
+  buildInitialState(context: RuleHandlerContextInterface, meta: MetadataWrapperInterface): void {
     for (const statefulRule of this.ruleSet) {
-      const key = statefulRule.getStateKey(context, meta);
-      if (key) {
-        incentiveState.set(statefulRule.uuid, key);
-      }
+      statefulRule.initState(context, meta);
     }
-
-    return incentiveState;
   }
 
   listStateKeys(incentive: IncentiveInterface): string[] {
@@ -46,14 +39,14 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
         const metaKey = incentive.meta[statefulRule.uuid];
         const state = meta.get(metaKey);
         try {
-          result = statefulRule.apply(result, state);
-          meta.set(metaKey, statefulRule.setState(result, state));
+          result = statefulRule.apply(result, state, meta);
+          meta.set(metaKey, statefulRule.getNewState(result, state, meta));
         } catch (e) {
           if (!(e instanceof NotApplicableTargetException)) {
             throw e;
           }
           result = 0;
-          meta.set(metaKey, statefulRule.setState(result, state));
+          meta.set(metaKey, statefulRule.getNewState(result, state, meta));
         }
       }
     }

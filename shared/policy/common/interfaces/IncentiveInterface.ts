@@ -11,6 +11,12 @@ export enum IncentiveStatusEnum {
   Error = 'error',
 }
 
+export type IncentiveMetaInterface =
+  | Record<string, string>
+  | {
+      _extra?: Record<string, number>;
+    };
+
 export interface IncentiveInterface {
   carpool_id: number;
   policy_id: number;
@@ -19,5 +25,5 @@ export interface IncentiveInterface {
   amount: number;
   state: IncentiveStateEnum;
   status: IncentiveStatusEnum;
-  meta: { [k: string]: string };
+  meta: IncentiveMetaInterface;
 }

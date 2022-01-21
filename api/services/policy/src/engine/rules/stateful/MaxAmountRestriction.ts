@@ -12,7 +12,7 @@ export class MaxAmountRestriction extends AbstractStatefulRestriction {
     return MaxAmountRestriction.description;
   }
 
-  setState(result: number, state: number): number {
+  getNewState(result: number, state: number): number {
     return state + result;
   }
 

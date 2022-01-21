@@ -1,6 +1,7 @@
 export interface PersonInterface {
   identity_uuid: string;
   carpool_id: number;
+  trip_id: string;
   operator_id: number;
   operator_class: string;
   is_over_18: boolean | null;
