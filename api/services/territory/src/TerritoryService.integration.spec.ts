@@ -30,7 +30,6 @@ test.serial('Create a territory', async (t) => {
       level: 'towngroup',
       active: false,
       activable: false,
-      company_id: 3,
       children: [6, 7],
       address: {
         street: '1500 BD LEPIC',
@@ -97,7 +96,7 @@ test.serial('Update a territory', async (t) => {
     .getClient()
     .query({
       text: `
-     SELECT _id, name, level, active, activable, address, company_id from territory.territories WHERE name = $1 
+     SELECT _id, name, level, active, activable, address from territory.territories WHERE name = $1 
     `,
       values: [name],
     });

@@ -5,7 +5,7 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
   return {
     $id: alias,
     type: 'object',
-    required: ['name', 'company_id', 'address', 'level', 'children', ...extrafieldKeys],
+    required: ['name', 'address', 'level', 'children', ...extrafieldKeys],
     additionalProperties: true,
     properties: {
       contacts: { contacts },
