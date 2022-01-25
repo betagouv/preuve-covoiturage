@@ -8,14 +8,14 @@ import { DataGouvProvider } from '../providers/DataGouvProvider';
 import { ParamsInterface } from '../shared/trip/publishOpenData.contract';
 import { BuildResourceDescription } from './opendata/BuildResourceDescription';
 import { PublishOpenDataAction } from './PublishOpenDataAction';
-import {GetRessourceIdIfExists} from './opendata/GetRessourceIdIfExists'
+import { GetRessourceIdIfExists } from './opendata/GetRessourceIdIfExists';
 
 interface Context {
   // Injected tokens
   dataGouvProvider: DataGouvProvider;
   buildResourceDescription: BuildResourceDescription;
   config: ConfigInterfaceResolver;
-  getRessourceIdIfExists: GetRessourceIdIfExists
+  getRessourceIdIfExists: GetRessourceIdIfExists;
 
   // Injected tokens method's stubs
   dataGouvProviderUpdateStub: SinonStub;
@@ -35,14 +35,14 @@ interface Context {
 const test = anyTest as TestFn<Partial<Context>>;
 
 test.before((t) => {
-  t.context.EXISTING_RESOURCE_ID = '83d3b230-37da-46e0-8ec7-2faee41b5904'
+  t.context.EXISTING_RESOURCE_ID = '83d3b230-37da-46e0-8ec7-2faee41b5904';
   t.context.DATASET_SLUG = 'dataset-slugs';
 });
 
 test.beforeEach((t) => {
   t.context.dataGouvProvider = new DataGouvProvider(null);
   t.context.buildResourceDescription = new BuildResourceDescription(null);
-  t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(null, null)
+  t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(null, null);
 
   t.context.publishOpenDataAction = new PublishOpenDataAction(
     new (class extends ConfigInterfaceResolver {
@@ -52,12 +52,12 @@ test.beforeEach((t) => {
     })(),
     t.context.dataGouvProvider,
     t.context.buildResourceDescription,
-    t.context.getRessourceIdIfExists
+    t.context.getRessourceIdIfExists,
   );
 
-  t.context.getRessourceIdIfExistsStub = sinon.stub(t.context.getRessourceIdIfExists, 'call')
+  t.context.getRessourceIdIfExistsStub = sinon.stub(t.context.getRessourceIdIfExists, 'call');
   t.context.dataGouvProviderUploadDatasetResourceStub = sinon.stub(t.context.dataGouvProvider, 'uploadDatasetResource');
-  t.context.dataGouvProviderUpdateDatasetResourceStub = sinon.stub(t.context.dataGouvProvider, 'updateDatasetResource')
+  t.context.dataGouvProviderUpdateDatasetResourceStub = sinon.stub(t.context.dataGouvProvider, 'updateDatasetResource');
   t.context.dataGouvProviderUpdateStub = sinon.stub(t.context.dataGouvProvider, 'updateResource');
   t.context.buildResourceDescriptionStub = sinon.stub(t.context.buildResourceDescription, 'call');
 });
@@ -85,7 +85,7 @@ test('PublishOpendataAction: should upload new opendata resource', async (t) => 
   const description: string = faker.lorem.words(600);
   t.context.dataGouvProviderUploadDatasetResourceStub.resolves(datasetResource);
   t.context.buildResourceDescriptionStub.resolves(description);
-  t.context.getRessourceIdIfExistsStub.resolves(undefined)
+  t.context.getRessourceIdIfExistsStub.resolves(undefined);
 
   // Act
   await t.context.publishOpenDataAction.handle(params, null);
@@ -96,8 +96,12 @@ test('PublishOpendataAction: should upload new opendata resource', async (t) => 
     params.tripSearchQueryParam,
     params.excludedTerritories,
   );
-  sinon.assert.calledOnceWithExactly(t.context.dataGouvProviderUploadDatasetResourceStub, t.context.DATASET_SLUG, params.filepath);
-  sinon.assert.notCalled(t.context.dataGouvProviderUpdateDatasetResourceStub)
+  sinon.assert.calledOnceWithExactly(
+    t.context.dataGouvProviderUploadDatasetResourceStub,
+    t.context.DATASET_SLUG,
+    params.filepath,
+  );
+  sinon.assert.notCalled(t.context.dataGouvProviderUpdateDatasetResourceStub);
   sinon.assert.calledOnceWithExactly(t.context.dataGouvProviderUpdateStub, t.context.DATASET_SLUG, {
     ...datasetResource,
     description,
@@ -107,10 +111,9 @@ test('PublishOpendataAction: should upload new opendata resource', async (t) => 
     t.context.dataGouvProviderUploadDatasetResourceStub,
     t.context.dataGouvProviderUpdateStub,
   );
-  sinon.assert.calledOnceWithExactly(t.context.getRessourceIdIfExistsStub, params.filepath)
+  sinon.assert.calledOnceWithExactly(t.context.getRessourceIdIfExistsStub, params.filepath);
   t.pass();
 });
-
 
 test('PublishOpendataAction: should update existing opendata resource', async (t) => {
   // Arrange
@@ -130,7 +133,7 @@ test('PublishOpendataAction: should update existing opendata resource', async (t
   const description: string = faker.lorem.words(600);
   t.context.dataGouvProviderUpdateDatasetResourceStub.resolves(datasetResource);
   t.context.buildResourceDescriptionStub.resolves(description);
-  t.context.getRessourceIdIfExistsStub.resolves(t.context.EXISTING_RESOURCE_ID)
+  t.context.getRessourceIdIfExistsStub.resolves(t.context.EXISTING_RESOURCE_ID);
 
   // Act
   await t.context.publishOpenDataAction.handle(params, null);
@@ -141,8 +144,13 @@ test('PublishOpendataAction: should update existing opendata resource', async (t
     params.tripSearchQueryParam,
     params.excludedTerritories,
   );
-  sinon.assert.notCalled(t.context.dataGouvProviderUploadDatasetResourceStub)
-  sinon.assert.calledOnceWithExactly(t.context.dataGouvProviderUpdateDatasetResourceStub, t.context.DATASET_SLUG, params.filepath, t.context.EXISTING_RESOURCE_ID);
+  sinon.assert.notCalled(t.context.dataGouvProviderUploadDatasetResourceStub);
+  sinon.assert.calledOnceWithExactly(
+    t.context.dataGouvProviderUpdateDatasetResourceStub,
+    t.context.DATASET_SLUG,
+    params.filepath,
+    t.context.EXISTING_RESOURCE_ID,
+  );
   sinon.assert.calledOnceWithExactly(t.context.dataGouvProviderUpdateStub, t.context.DATASET_SLUG, {
     ...datasetResource,
     description,
@@ -152,6 +160,6 @@ test('PublishOpendataAction: should update existing opendata resource', async (t
     t.context.dataGouvProviderUpdateDatasetResourceStub,
     t.context.dataGouvProviderUpdateStub,
   );
-  sinon.assert.calledOnceWithExactly(t.context.getRessourceIdIfExistsStub, params.filepath)
+  sinon.assert.calledOnceWithExactly(t.context.getRessourceIdIfExistsStub, params.filepath);
   t.pass();
 });

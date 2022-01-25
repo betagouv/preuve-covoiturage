@@ -17,7 +17,7 @@ export class PublishOpenDataAction extends Action {
     private config: ConfigInterfaceResolver,
     private datagouv: DataGouvProvider,
     private buildResourceDescription: BuildResourceDescription,
-    private getRessourceIdIfExists: GetRessourceIdIfExists
+    private getRessourceIdIfExists: GetRessourceIdIfExists,
   ) {
     super();
   }
@@ -28,9 +28,9 @@ export class PublishOpenDataAction extends Action {
     const description: string = await this.buildResourceDescription.call(tripSearchQueryParam, excludedTerritories);
     const existingResourceId: string = await this.getRessourceIdIfExists.call(filepath);
     let uploadResource: UploadedResource = null;
-    if(existingResourceId){
-      uploadResource = await this.datagouv.updateDatasetResource(datasetSlug, filepath, existingResourceId)
-    }else {
+    if (existingResourceId) {
+      uploadResource = await this.datagouv.updateDatasetResource(datasetSlug, filepath, existingResourceId);
+    } else {
       uploadResource = await this.datagouv.uploadDatasetResource(datasetSlug, filepath);
     }
     await this.datagouv.updateResource(datasetSlug, { ...uploadResource, description });

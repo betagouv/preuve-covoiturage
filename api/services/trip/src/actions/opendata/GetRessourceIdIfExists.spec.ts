@@ -22,27 +22,32 @@ interface Context {
 const test = anyTest as TestInterface<Partial<Context>>;
 
 test.before((t) => {
-  t.context.EXISTING_RESOURCE_ID = '83d3b230-37da-46e0-8ec7-2faee41b5904'
+  t.context.EXISTING_RESOURCE_ID = '83d3b230-37da-46e0-8ec7-2faee41b5904';
   t.context.dataset = {
-    resources: [{
-      id: t.context.EXISTING_RESOURCE_ID,
-      title: '2021-11.csv',
-      filetype: 'file',
-      format: 'csv',
-      type: 'main',
-      url: 'https://demo-satic.data.gouv.fr/resources/slug/2021-11.csv'
-    }]
+    resources: [
+      {
+        id: t.context.EXISTING_RESOURCE_ID,
+        title: '2021-11.csv',
+        filetype: 'file',
+        format: 'csv',
+        type: 'main',
+        url: 'https://demo-satic.data.gouv.fr/resources/slug/2021-11.csv',
+      },
+    ],
   };
   t.context.DATASET_SLUG = 'dataset-slugs';
 });
 
 test.beforeEach((t) => {
   t.context.dataGouvProvider = new DataGouvProvider(null);
-  t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(t.context.dataGouvProvider, new (class extends ConfigInterfaceResolver {
-    get(k: string, c: any) {
-      return t.context.DATASET_SLUG;
-    }
-  })(),);
+  t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(
+    t.context.dataGouvProvider,
+    new (class extends ConfigInterfaceResolver {
+      get(k: string, c: any) {
+        return t.context.DATASET_SLUG;
+      }
+    })(),
+  );
   t.context.dataGouvProviderStub = sinon.stub(t.context.dataGouvProvider, 'getDataset');
 });
 
@@ -53,13 +58,11 @@ test('GetRessourceIdIfExists: should retrieve resource id if matched resource na
   t.context.dataGouvProviderStub.resolves(t.context.dataset);
 
   // Act
-  const resourceId: string = await t.context.getRessourceIdIfExists.call(
-    '/tmp/2021-11.csv',
-  );
+  const resourceId: string = await t.context.getRessourceIdIfExists.call('/tmp/2021-11.csv');
 
   // Assert
-  sinon.assert.called(t.context.dataGouvProviderStub)
-  t.deepEqual(resourceId, t.context.EXISTING_RESOURCE_ID)
+  sinon.assert.called(t.context.dataGouvProviderStub);
+  t.deepEqual(resourceId, t.context.EXISTING_RESOURCE_ID);
 });
 
 test('GetRessourceIdIfExists: should return undefined if no matched resource name', async (t) => {
@@ -67,11 +70,9 @@ test('GetRessourceIdIfExists: should return undefined if no matched resource nam
   t.context.dataGouvProviderStub.resolves(t.context.dataset);
 
   // Act
-    const resourceId: string = await t.context.getRessourceIdIfExists.call(
-      '/tmp/2021-12.csv',
-    );
+  const resourceId: string = await t.context.getRessourceIdIfExists.call('/tmp/2021-12.csv');
 
   // Assert
-  sinon.assert.called(t.context.dataGouvProviderStub)
-  t.deepEqual(resourceId, undefined)
+  sinon.assert.called(t.context.dataGouvProviderStub);
+  t.deepEqual(resourceId, undefined);
 });
