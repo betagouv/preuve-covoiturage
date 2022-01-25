@@ -47,7 +47,7 @@ test.beforeEach((t) => {
     t.context.buildResourceDescription,
   );
 
-  t.context.dataGouvProviderUploadStub = sinon.stub(t.context.dataGouvProvider, 'uploadResources');
+  t.context.dataGouvProviderUploadStub = sinon.stub(t.context.dataGouvProvider, 'uploadDatasetResource');
   t.context.dataGouvProviderUpdateStub = sinon.stub(t.context.dataGouvProvider, 'updateResource');
   t.context.buildResourceDescriptionStub = sinon.stub(t.context.buildResourceDescription, 'call');
 });
