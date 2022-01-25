@@ -6,6 +6,7 @@ import { DataGouvProvider } from '../providers/DataGouvProvider';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/publishOpenData.contract';
 import { alias } from '../shared/trip/publishOpenData.schema';
 import { BuildResourceDescription } from './opendata/BuildResourceDescription';
+import { GetRessourceIdIfExists } from './opendata/GetRessourceIdIfExists';
 
 @handler({
   ...handlerConfig,
@@ -16,6 +17,7 @@ export class PublishOpenDataAction extends Action {
     private config: ConfigInterfaceResolver,
     private datagouv: DataGouvProvider,
     private buildResourceDescription: BuildResourceDescription,
+    private getRessourceIdIfExists: GetRessourceIdIfExists
   ) {
     super();
   }
@@ -24,7 +26,13 @@ export class PublishOpenDataAction extends Action {
     const { filepath, tripSearchQueryParam, excludedTerritories } = params;
     const datasetSlug = this.config.get('datagouv.datasetSlug');
     const description: string = await this.buildResourceDescription.call(tripSearchQueryParam, excludedTerritories);
-    const uploadResource: UploadedResource = await this.datagouv.uploadDatasetResource(datasetSlug, filepath);
+    const existingResourceId: string = await this.getRessourceIdIfExists.call(filepath);
+    let uploadResource: UploadedResource = null;
+    if(existingResourceId){
+      uploadResource = await this.datagouv.updateDatasetResource(datasetSlug, filepath, existingResourceId)
+    }else {
+      uploadResource = await this.datagouv.uploadDatasetResource(datasetSlug, filepath);
+    }
     await this.datagouv.updateResource(datasetSlug, { ...uploadResource, description });
   }
 }
