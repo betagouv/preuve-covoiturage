@@ -28,7 +28,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     );
   }
 
-  async uploadResources(slug: string, filepath: string): Promise<UploadedResource> {
+  async uploadDatasetResource(slug: string, filepath: string): Promise<UploadedResource> {
     const form = new FormData();
     form.append('file', fs.createReadStream(filepath), { knownLength: fs.statSync(filepath).size });
     const response = await this.client.post<UploadedResource>(`/datasets/${slug}/upload/`, form, {
@@ -39,6 +39,24 @@ export class DataGouvProvider implements DataGouvProviderInterface {
       maxContentLength: 100000000,
       maxBodyLength: 1000000000,
     });
+    return response.data;
+  }
+
+  async updateExistingDatasetResource(slug: string, filepath: string, resourceId: string): Promise<UploadedResource> {
+    const form = new FormData();
+    form.append('file', fs.createReadStream(filepath), { knownLength: fs.statSync(filepath).size });
+    const response = await this.client.post<UploadedResource>(
+      `/datasets/${slug}/resources/${resourceId}/upload/`,
+      form,
+      {
+        headers: {
+          ...form.getHeaders(),
+          'Content-Length': form.getLengthSync().toString(),
+        },
+        maxContentLength: 100000000,
+        maxBodyLength: 1000000000,
+      },
+    );
     return response.data;
   }
 
