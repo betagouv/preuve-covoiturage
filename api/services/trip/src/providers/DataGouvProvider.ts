@@ -2,7 +2,7 @@ import { ConfigInterfaceResolver, provider } from '@ilos/common';
 import axios, { AxiosInstance } from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
-import { DataGouvProviderInterface, Resource, UploadedResource } from '../interfaces';
+import { DataGouvProviderInterface, Dataset, Resource, UploadedResource } from '../interfaces';
 
 @provider()
 export class DataGouvProvider implements DataGouvProviderInterface {
@@ -28,6 +28,11 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     );
   }
 
+  async getDataset(slug: string): Promise<Dataset> {
+    const response = await this.client.get<Dataset>(`/datasets/${slug}`);
+    return response.data;
+  }
+
   async uploadDatasetResource(slug: string, filepath: string): Promise<UploadedResource> {
     const form = new FormData();
     form.append('file', fs.createReadStream(filepath), { knownLength: fs.statSync(filepath).size });
@@ -42,7 +47,7 @@ export class DataGouvProvider implements DataGouvProviderInterface {
     return response.data;
   }
 
-  async updateExistingDatasetResource(slug: string, filepath: string, resourceId: string): Promise<UploadedResource> {
+  async updateDatasetResource(slug: string, filepath: string, resourceId: string): Promise<UploadedResource> {
     const form = new FormData();
     form.append('file', fs.createReadStream(filepath), { knownLength: fs.statSync(filepath).size });
     const response = await this.client.post<UploadedResource>(
