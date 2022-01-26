@@ -1,7 +1,7 @@
-import { Dataset } from './../../../dist/interfaces/DataGouvInterface.d';
 import { ConfigInterfaceResolver, provider } from '@ilos/common';
 import { DataGouvProvider } from '../../providers/DataGouvProvider';
 import path from 'path';
+import { Dataset } from '../../interfaces/DataGouvInterface';
 
 @provider()
 export class GetRessourceIdIfExists {
