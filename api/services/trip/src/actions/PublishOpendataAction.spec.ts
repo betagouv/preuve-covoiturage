@@ -42,7 +42,7 @@ test.before((t) => {
 test.beforeEach((t) => {
   t.context.dataGouvProvider = new DataGouvProvider(null);
   t.context.buildResourceDescription = new BuildResourceDescription(null);
-  t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(null, null);
+  t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(null);
 
   t.context.publishOpenDataAction = new PublishOpenDataAction(
     new (class extends ConfigInterfaceResolver {
@@ -111,7 +111,7 @@ test('PublishOpendataAction: should upload new opendata resource', async (t) => 
     t.context.dataGouvProviderUploadDatasetResourceStub,
     t.context.dataGouvProviderUpdateStub,
   );
-  sinon.assert.calledOnceWithExactly(t.context.getRessourceIdIfExistsStub, params.filepath);
+  sinon.assert.calledOnceWithExactly(t.context.getRessourceIdIfExistsStub, t.context.DATASET_SLUG, params.filepath);
   t.pass();
 });
 
@@ -160,6 +160,6 @@ test('PublishOpendataAction: should update existing opendata resource', async (t
     t.context.dataGouvProviderUpdateDatasetResourceStub,
     t.context.dataGouvProviderUpdateStub,
   );
-  sinon.assert.calledOnceWithExactly(t.context.getRessourceIdIfExistsStub, params.filepath);
+  sinon.assert.calledOnceWithExactly(t.context.getRessourceIdIfExistsStub, t.context.DATASET_SLUG, params.filepath);
   t.pass();
 });

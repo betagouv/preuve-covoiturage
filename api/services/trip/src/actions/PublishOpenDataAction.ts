@@ -26,7 +26,7 @@ export class PublishOpenDataAction extends Action {
     const { filepath, tripSearchQueryParam, excludedTerritories } = params;
     const datasetSlug = this.config.get('datagouv.datasetSlug');
     const description: string = await this.buildResourceDescription.call(tripSearchQueryParam, excludedTerritories);
-    const existingResourceId: string = await this.getRessourceIdIfExists.call(filepath);
+    const existingResourceId: string = await this.getRessourceIdIfExists.call(datasetSlug, filepath);
     let uploadResource: UploadedResource = null;
     if (existingResourceId) {
       uploadResource = await this.datagouv.updateDatasetResource(datasetSlug, filepath, existingResourceId);
