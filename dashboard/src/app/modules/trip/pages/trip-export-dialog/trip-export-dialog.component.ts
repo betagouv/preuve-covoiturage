@@ -4,11 +4,9 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { get } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
+import { ParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
-// eslint-disable-next-line max-len
-import { ListOperatorItem } from '../../../operator/modules/operator-ui/components/operators-checkboxes/operators-checkboxes.component';
-import { TripExportParamWithOperators } from '../trip-export/trip-export.component';
 
 @Component({
   selector: 'app-trip-export-dialog',
@@ -17,6 +15,7 @@ import { TripExportParamWithOperators } from '../trip-export/trip-export.compone
 })
 export class TripExportDialogComponent extends DestroyObservable implements OnInit {
   private territories: { _id: number; name: string }[];
+  private operators: { _id: number; name: string }[];
   private operators_count: number;
 
   // helper for display
@@ -31,8 +30,8 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
     const p = {};
     const s = get(this.data, 'date.start');
     const e = get(this.data, 'date.end');
-    const o: ListOperatorItem[] = get(this.data, 'operators', []);
-    const t: number[] = get(this.data, 'territory_ids_filter', []);
+    const o: number[] = get(this.data, 'operator_id', []);
+    const t: number[] = get(this.data, 'territory_id', []);
 
     if (s) p['Début'] = format(this.castDate(s), 'PPPP', { locale: fr });
     if (e) p['Fin'] = format(this.castDate(e), 'PPPP', { locale: fr });
@@ -46,7 +45,8 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
     if (o.length === this.operators_count) {
       p['Opérateurs'] = 'tous';
     } else if (o.length) {
-      p[`Opérateur${o.length === 1 ? '' : 's'}`] = o
+      p[`Opérateur${o.length === 1 ? '' : 's'}`] = this.operators
+        .filter((op) => o.indexOf(op._id) > -1)
         .map((op) => op.name)
         .sort()
         .join(', ')
@@ -57,7 +57,7 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
   }
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) private data: TripExportParamWithOperators,
+    @Inject(MAT_DIALOG_DATA) private data: TripExportParamsInterface,
     private dialogRef: MatDialogRef<TripExportDialogComponent>,
     private commonDataService: CommonDataService,
   ) {
@@ -68,6 +68,10 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
     this.operators_count = this.commonDataService.operators.length;
     this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories) => {
       this.territories = territories.map(({ _id, name }) => ({ _id, name }));
+    });
+
+    this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+      this.operators = operators.map(({ _id, name }) => ({ _id, name }));
     });
   }
 
