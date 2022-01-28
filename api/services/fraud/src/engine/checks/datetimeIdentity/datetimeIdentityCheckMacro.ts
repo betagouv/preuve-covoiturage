@@ -24,7 +24,7 @@ interface DatetimeIdentityMacroInterface extends KernelBeforeAfter {
     KernelTestFn
   >;
 }
-
+export type DatetimeIdentityCheckMacroContext = KernelTestFn;
 export function datetimeIdentityCheckMacro(
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
   checkCtor: NewableType<HandleCheckInterface<DatetimeIdentityCheckParamsInterface>>,
