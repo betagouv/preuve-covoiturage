@@ -1,7 +1,6 @@
 import { NewableType, ServiceContainerInterface } from '@ilos/common';
-import { Macro, TestFn, ExecutionContext } from 'ava';
-
-import { makeKernel, KernelTestFn } from '@pdc/helper-test';
+import test, { ExecutionContext, Macro } from 'ava';
+import { makeKernelBeforeAfter, KernelBeforeAfter, KernelTestFn } from '@pdc/helper-test';
 
 import {
   SingleDatetimeIdentityCheckParamsInterface,
@@ -19,53 +18,44 @@ export function faker(
 
   return { ...defaultData, ...data };
 }
-
-export function datetimeIdentityCheckMacro<TestContext = unknown>(
-  anyTest: TestFn,
-  serviceProviderCtor: NewableType<ServiceContainerInterface>,
-  checkCtor: NewableType<HandleCheckInterface<DatetimeIdentityCheckParamsInterface>>,
-): {
-  test: TestFn<TestContext & KernelTestFn>;
+interface DatetimeIdentityMacroInterface extends KernelBeforeAfter {
   range: Macro<
     [Partial<SingleDatetimeIdentityCheckParamsInterface>[], number, number, boolean?],
-    TestContext & KernelTestFn
+    KernelTestFn
   >;
-} {
-  const test = anyTest as TestFn<TestContext & KernelTestFn>;
+}
 
-  test.before(async (t) => {
-    t.context.kernel = makeKernel(serviceProviderCtor);
-    await t.context.kernel.bootstrap();
-  });
-
-  test.after.always(async (t) => {
-    await t.context.kernel.shutdown();
-  });
-
+export function datetimeIdentityCheckMacro(
+  serviceProviderCtor: NewableType<ServiceContainerInterface>,
+  checkCtor: NewableType<HandleCheckInterface<DatetimeIdentityCheckParamsInterface>>,
+): DatetimeIdentityMacroInterface {
+  const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
   const range: Macro<
     [Partial<SingleDatetimeIdentityCheckParamsInterface>[], number, number, boolean?],
-    TestContext & KernelTestFn
-  > = async (
-    t: ExecutionContext<TestContext & KernelTestFn>,
-    input: Partial<SingleDatetimeIdentityCheckParamsInterface>[],
-    min: number,
-    max: number,
-  ) => {
-    const check = t.context.kernel
-      .get<ServiceContainerInterface>(serviceProviderCtor)
-      .get<HandleCheckInterface<DatetimeIdentityCheckParamsInterface>>(checkCtor);
-    const data = input.map((i) => faker(i));
-    const result = await check.handle(data);
-    t.log(data);
-    t.log(result);
-    t.true(result >= min);
-    t.true(result <= max);
-  };
-
-  range.title = (providedTitle = ''): string => `${providedTitle} range`.trim();
+    KernelTestFn
+  > = test.macro({
+      exec: async (
+        t: ExecutionContext<KernelTestFn>,
+        input: Partial<SingleDatetimeIdentityCheckParamsInterface>[],
+        min: number,
+        max: number,
+      ) => {
+        const check = t.context.kernel
+          .get<ServiceContainerInterface>(serviceProviderCtor)
+          .get<HandleCheckInterface<DatetimeIdentityCheckParamsInterface>>(checkCtor);
+        const data = input.map((i) => faker(i));
+        const result = await check.handle(data);
+        t.log(data);
+        t.log(result);
+        t.true(result >= min);
+        t.true(result <= max);
+      },
+      title(providedTitle = ''): string { return `${providedTitle} range`.trim(); },
+  });
 
   return {
     range,
-    test,
+    before,
+    after,
   };
 }
