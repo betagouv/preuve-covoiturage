@@ -52,9 +52,26 @@ interface TestContext extends KernelTestFn {
   policy_id: number;
 }
 
-const myTest = anyTest as TestFn<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
-myTest.after.always(async (t) => {
+const { before, after, success } = handlerMacro<ParamsInterface, ResultInterface, Error, TestContext>(
+  ServiceProvider,
+  handlerConfig,
+);
+
+test.before(async (t) => {
+  const { kernel } = await before();
+  t.context.kernel = kernel;
+
+  const policy = await t.context.kernel
+    .get(ServiceProvider)
+    .get(CampaignRepositoryProviderInterfaceResolver)
+    .create(fakeCampaign);
+
+  t.context.policy_id = policy._id;
+});
+
+test.after.always(async (t) => {
   if (t.context.policy_id) {
     t.context.kernel
       .get(ServiceProvider)
@@ -65,21 +82,7 @@ myTest.after.always(async (t) => {
         values: [t.context.policy_id],
       });
   }
-});
-
-const { test, success } = handlerMacro<ParamsInterface, ResultInterface, Error, TestContext>(
-  myTest,
-  ServiceProvider,
-  handlerConfig,
-);
-
-test.before(async (t) => {
-  const policy = await t.context.kernel
-    .get(ServiceProvider)
-    .get(CampaignRepositoryProviderInterfaceResolver)
-    .create(fakeCampaign);
-
-  t.context.policy_id = policy._id;
+  await after({ kernel: t.context.kernel });
 });
 
 test(
