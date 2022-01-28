@@ -33,7 +33,7 @@ test.afterEach((t) => {
 });
 
 test('regular dates 6 months ago', (t) => {
-  const src: ParamsInterface = {
+  const src: Required<ParamsInterface> = {
     start_at: new Date('2021-01-01T00:00:00Z'),
     end_at: new Date('2021-02-01T00:00:00Z'),
     positions: [],
