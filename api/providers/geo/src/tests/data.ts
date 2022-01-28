@@ -44,8 +44,8 @@ export const geoError = {
 export const inseeGeo = {
   code: '91377',
   position: {
-    lat: 48.7317,
-    lon: 2.268,
+    lat: 48.7263,
+    lon: 2.2696,
   },
 };
 
