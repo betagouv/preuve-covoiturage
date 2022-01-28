@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { URLSearchParams } from 'url';
 import { get } from 'lodash';
 import { NotFoundException, provider } from '@ilos/common';
 
@@ -10,8 +11,13 @@ export class EtalabGeoAdministriveProvider implements InseeCoderInterface {
 
   async positionToInsee(geo: PointInterface): Promise<string> {
     const { lon, lat } = geo;
-
-    let { data } = await axios.get(`${this.domain}/communes?lon=${lon}&lat=${lat}&fields=code&format=json`);
+    const params = new URLSearchParams({
+      lon: lon.toString(),
+      lat: lat.toString(),
+      fields: 'code',
+      format: 'json',
+    });
+    let { data } = await axios.get(`${this.domain}/communes`, { params });
 
     if (!data.length) {
       throw new NotFoundException(`Not found on Geo (${lat}, ${lon})`);
@@ -30,7 +36,12 @@ export class EtalabGeoAdministriveProvider implements InseeCoderInterface {
   }
 
   async inseeToPosition(insee: string): Promise<PointInterface> {
-    let { data } = await axios.get(`${this.domain}/communes?code=${insee}&fields=centre&format=json`);
+    const params = new URLSearchParams({
+      code: insee,
+      fields: 'centre',
+      format: 'json',
+    });
+    let { data } = await axios.get(`${this.domain}/communes`, { params });
 
     if (!data.length) {
       throw new NotFoundException(`Not found on insee code (${insee})`);

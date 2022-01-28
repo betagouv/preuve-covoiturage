@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { URLSearchParams } from 'url';
 import { NotFoundException, provider } from '@ilos/common';
 
 import { GeoCoderInterface, PointInterface } from '../interfaces';
@@ -8,9 +9,14 @@ export class OSMNominatimProvider implements GeoCoderInterface {
   private domain = 'https://nominatim.openstreetmap.org/';
 
   async literalToPosition(literal: string): Promise<PointInterface> {
-    let { data } = await axios.get(
-      `${this.domain}/search.php?q=${encodeURIComponent(literal)}&format=json&accept-language=fr-fr&limit=1`,
-    );
+    const params = new URLSearchParams({
+      q: literal,
+      format: 'json',
+      'accept-language': 'fr-fr',
+      limit: '1',
+    });
+  
+    let { data } = await axios.get(`${this.domain}/search.php`, { params });
 
     if (data.error || (Array.isArray(data) && data.length === 0)) {
       throw new NotFoundException(`Not found on Nominatim (${literal}). ${data.error}`);
