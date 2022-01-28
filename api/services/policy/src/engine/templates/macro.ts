@@ -1,6 +1,5 @@
-import anyTest, { TestFn, Macro, ExecutionContext } from 'ava';
-import { kernel as kernelDecorator, KernelInterface } from '@ilos/common';
-import { Kernel as AbstractKernel } from '@ilos/framework';
+import anyTest, { ExecutionContext, Macro, TestFn } from 'ava';
+import { makeKernelBeforeAfter, KernelTestFn, dbBeforeMacro } from '@pdc/helper-test';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { TripInterface } from '../../interfaces';
@@ -11,67 +10,66 @@ import { PolicyEngine } from '../PolicyEngine';
 import { MetadataRepositoryProvider } from '../../providers/MetadataRepositoryProvider';
 import { trips as defaultTrips } from './trips';
 
-interface TestContext {
-  kernel: KernelInterface;
-  engine: PolicyEngine;
-  policyId: number;
+interface TestContext extends KernelTestFn {
   policy: CampaignInterface;
 }
 
-export function macro(policy: CampaignInterface): {
+interface MacroInterface {
+  before: () => Promise<TestContext>;
+  after: (params: TestContext) => Promise<void>;
   test: TestFn<TestContext>;
   results: Macro<
     [{ carpool_id: number; amount: number; meta?: { [k: string]: string } }[], TripInterface[]?],
     TestContext
-  >;
-} {
-  const test = anyTest as TestFn<TestContext>;
+  >; 
+}
 
-  @kernelDecorator({
-    children: [ServiceProvider],
-  })
-  class Kernel extends AbstractKernel {}
+export function macro(policyDef: CampaignInterface): MacroInterface {
+  const { before: beforeKn, after: afterKn } = makeKernelBeforeAfter(ServiceProvider);
 
-  test.before(async (t) => {
-    t.context.kernel = new Kernel();
-    await t.context.kernel.bootstrap();
-    const repository = t.context.kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
-    t.context.policy = await repository.create(policy);
-    t.context.policyId = t.context.policy._id;
-    t.context.engine = t.context.kernel.get(ServiceProvider).get(PolicyEngine);
-  });
+  async function before(): Promise<TestContext> {
+    const { kernel } = await beforeKn();
+    const repository = kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
+    const policy = await repository.create(policyDef);
 
-  test.after.always(async (t) => {
-    if (t.context.policyId) {
-      const connection = t.context.kernel.get(ServiceProvider).get(PostgresConnection).getClient();
-      const campaignRepository = t.context.kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
-      const metaRepository = t.context.kernel.get(ServiceProvider).get(MetadataRepositoryProvider);
+    return {
+      kernel,
+      policy,
+    };
+  }
+
+  async function after(params: TestContext): Promise<void> {
+    if (params.policy._id) {
+      const connection = params.kernel.get(ServiceProvider).get(PostgresConnection).getClient();
+      const campaignRepository = params.kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
+      const metaRepository = params.kernel.get(ServiceProvider).get(MetadataRepositoryProvider);
       await connection.query({
         text: `DELETE FROM ${campaignRepository.table} WHERE _id = $1::int`,
-        values: [t.context.policyId],
+        values: [params.policy._id],
       });
 
       await connection.query({
         text: `DELETE FROM ${metaRepository.table} WHERE policy_id = $1::int`,
-        values: [t.context.policyId],
+        values: [params.policy._id],
       });
     }
-
-    await t.context.kernel.shutdown();
-  });
+    await afterKn({ kernel: params.kernel }); 
+  }
 
   const results: Macro<
     [{ carpool_id: number; amount: number; meta?: { [k: string]: string } }[], TripInterface[]?],
     TestContext
-  > = async (
+  > = anyTest.macro({
+    exec: async (
     t: ExecutionContext<TestContext>,
     expected: { carpool_id: number; amount: number; meta?: { [k: string]: string } }[],
     trips: TripInterface[] = defaultTrips,
   ) => {
+    const engine = t.context.kernel.get(ServiceProvider).get(PolicyEngine);
     const incentives = [];
-    const campaign = t.context.engine.buildCampaign(t.context.policy);
+    const campaign = engine.buildCampaign(t.context.policy);
     for (const trip of trips) {
-      const r = await t.context.engine.process(campaign, trip);
+      const r = await engine.process(campaign, trip);
       incentives.push(...r);
     }
     t.log(incentives);
@@ -86,9 +84,9 @@ export function macro(policy: CampaignInterface): {
                 t.map((v) => s.add(v));
                 return s;
               }, new Set())
-              .has(policy.territory_id) &&
-            tr.datetime >= policy.start_date &&
-            tr.datetime <= policy.end_date,
+              .has(policyDef.territory_id) &&
+            tr.datetime >= policyDef.start_date &&
+            tr.datetime <= policyDef.end_date,
         )
         .map((tr) => tr.length)
         .reduce((sum, i) => sum + i, 0),
@@ -101,12 +99,25 @@ export function macro(policy: CampaignInterface): {
         t.deepEqual(incentive.meta, meta);
       }
     }
-  };
-
-  results.title = (providedTitle = '', input, expected): string => `${providedTitle} ${input} = ${expected}`.trim();
+  },
+  title: (providedTitle = '', input, expected): string => `${providedTitle} ${input} = ${expected}`.trim(),
+});
+  
+  const test = anyTest as TestFn<TestContext>;
+  test.before(async (t) => {
+    const { kernel, policy } = await before();
+    t.context.kernel = kernel;
+    t.context.policy = policy;
+  });
+  test.after.always(async (t) => {
+    const { kernel, policy } = t.context;
+    await after({ kernel, policy });
+  });
 
   return {
-    test,
     results,
+    before,
+    after,
+    test,
   };
 }
