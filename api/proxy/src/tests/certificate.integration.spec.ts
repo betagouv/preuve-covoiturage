@@ -61,7 +61,6 @@ test.after.always(async (t) => {
   await dbAfterMacro(t.context.db);
 });
 
-
 test.serial('Generate a certificate', async (t) => {
   t.pass(); // FIXME
   return;

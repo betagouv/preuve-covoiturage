@@ -49,7 +49,7 @@ test.before(async (t) => {
   t.context.hi = 'you';
 });
 
-test.after(async t => {
+test.after(async (t) => {
   await after({ kernel: t.context.kernel });
 });
 

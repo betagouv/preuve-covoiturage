@@ -19,10 +19,7 @@ export function faker(
   return { ...defaultData, ...data };
 }
 interface DatetimeIdentityMacroInterface extends KernelBeforeAfter {
-  range: Macro<
-    [Partial<SingleDatetimeIdentityCheckParamsInterface>[], number, number, boolean?],
-    KernelTestFn
-  >;
+  range: Macro<[Partial<SingleDatetimeIdentityCheckParamsInterface>[], number, number, boolean?], KernelTestFn>;
 }
 export type DatetimeIdentityCheckMacroContext = KernelTestFn;
 export function datetimeIdentityCheckMacro(
@@ -30,10 +27,8 @@ export function datetimeIdentityCheckMacro(
   checkCtor: NewableType<HandleCheckInterface<DatetimeIdentityCheckParamsInterface>>,
 ): DatetimeIdentityMacroInterface {
   const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
-  const range: Macro<
-    [Partial<SingleDatetimeIdentityCheckParamsInterface>[], number, number, boolean?],
-    KernelTestFn
-  > = test.macro({
+  const range: Macro<[Partial<SingleDatetimeIdentityCheckParamsInterface>[], number, number, boolean?], KernelTestFn> =
+    test.macro({
       exec: async (
         t: ExecutionContext<KernelTestFn>,
         input: Partial<SingleDatetimeIdentityCheckParamsInterface>[],
@@ -50,8 +45,10 @@ export function datetimeIdentityCheckMacro(
         t.true(result >= min);
         t.true(result <= max);
       },
-      title(providedTitle = ''): string { return `${providedTitle} range`.trim(); },
-  });
+      title(providedTitle = ''): string {
+        return `${providedTitle} range`.trim();
+      },
+    });
 
   return {
     range,

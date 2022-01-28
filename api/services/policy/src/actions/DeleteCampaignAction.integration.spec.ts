@@ -59,7 +59,7 @@ const { before, after, success } = handlerMacro<ParamsInterface, ResultInterface
   handlerConfig,
 );
 
-test.before(async(t) => {
+test.before(async (t) => {
   const { kernel } = await before();
   t.context.kernel = kernel;
 

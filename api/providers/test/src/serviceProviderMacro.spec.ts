@@ -14,7 +14,7 @@ interface CustomInterface {
 
 const { before, after, boot } = serviceProviderMacro<CustomInterface>(ServiceProvider);
 
-const test = anyTest as TestFn<CustomInterface&ServiceProviderMacroContext>;
+const test = anyTest as TestFn<CustomInterface & ServiceProviderMacroContext>;
 
 test.before(async (t) => {
   const { kernel } = await before();

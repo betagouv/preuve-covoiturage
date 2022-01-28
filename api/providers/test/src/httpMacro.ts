@@ -13,13 +13,10 @@ export interface HttpMacroContext {
 interface HttpMacroInterface<C = unknown> {
   before(): Promise<HttpMacroContext>;
   after(ctxt: HttpMacroContext): Promise<void>;
-  query: Macro<[string, any, any, any], HttpMacroContext & C>; 
+  query: Macro<[string, any, any, any], HttpMacroContext & C>;
 }
 
-export function httpMacro<TestContext = unknown>(
-  transportCtor: transportCtorType,
-): HttpMacroInterface<TestContext> {
-
+export function httpMacro<TestContext = unknown>(transportCtor: transportCtorType): HttpMacroInterface<TestContext> {
   async function before() {
     const transport = await transportCtor('http', '0');
     const supertest = supert(transport.getInstance());
@@ -49,28 +46,29 @@ export function httpMacro<TestContext = unknown>(
       transport,
       supertest,
       request,
-    }
+    };
   }
 
   async function after(ctxt: HttpMacroContext) {
-   await ctxt.transport.down();
+    await ctxt.transport.down();
   }
 
   const query: Macro<[string, any, any, any], TestContext & HttpMacroContext> = test.macro({
-    async exec(t: ExecutionContext<TestContext&HttpMacroContext>,
-    method: string,
-    params: any,
-    context: any,
-    result: any,
-    ) {  
+    async exec(
+      t: ExecutionContext<TestContext & HttpMacroContext>,
+      method: string,
+      params: any,
+      context: any,
+      result: any,
+    ) {
       const response = await t.context.request(method, params, context);
       t.like(response, result);
     },
     title(providedTitle = '', method: string) {
       return `${providedTitle}: calling ${method}`;
-    }
+    },
   });
-  
+
   return {
     query,
     before,

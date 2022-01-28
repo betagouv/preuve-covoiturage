@@ -23,10 +23,7 @@ export function uuid(): string {
   return v4();
 }
 
-export function makeKernelBeforeAfter(
-  serviceProviderCtor: NewableType<ServiceContainerInterface>
-): KernelBeforeAfter 
-{
+export function makeKernelBeforeAfter(serviceProviderCtor: NewableType<ServiceContainerInterface>): KernelBeforeAfter {
   async function before(): Promise<KernelTestFn> {
     const kernel = makeKernel(serviceProviderCtor);
     await kernel.bootstrap();

@@ -92,11 +92,11 @@ const { before, after, success, error } = handlerMacro<ParamsInterface, ResultIn
 );
 
 const test = anyTest as TestFn<HandlerMacroContext>;
-test.before(async t => {
+test.before(async (t) => {
   t.context = await before();
 });
 
-test.after(async t => {
+test.after(async (t) => {
   await after(t.context);
 });
 

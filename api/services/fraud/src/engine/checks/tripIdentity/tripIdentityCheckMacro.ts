@@ -25,10 +25,7 @@ export function faker(data: Partial<SingleTripIdentityCheckParamsInterface>): Si
 }
 interface TripIdentityMacroInterface extends KernelBeforeAfter {
   test: TestFn<KernelTestFn>;
-  range: Macro<
-    [Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?],
-    KernelTestFn
-  >;
+  range: Macro<[Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?], KernelTestFn>;
 }
 
 export type SelfCheckMacroContext = KernelTestFn;
@@ -37,29 +34,27 @@ export function tripIdentityCheckMacro<TestContext = unknown>(
   checkCtor: NewableType<HandleCheckInterface<TripIdentityCheckParamsInterface>>,
 ): TripIdentityMacroInterface {
   const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
-  const range: Macro<
-    [Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?],
-    KernelTestFn
-    > = anyTest.macro({
-    exec: async (
-      t: ExecutionContext<TestContext & KernelTestFn>,
-      input: Partial<SingleTripIdentityCheckParamsInterface>[],
-      min: number,
-      max: number,
-    ) => {
-      const check = t.context.kernel
-        .get<ServiceContainerInterface>(serviceProviderCtor)
-        .get<HandleCheckInterface<TripIdentityCheckParamsInterface>>(checkCtor);
-      const data = input.map((i) => faker(i));
-      const result = await check.handle(data);
-      t.log(data);
-      t.log(result);
-      t.true(result >= min);
-      t.true(result <= max);
-    },
-  
-    title: (providedTitle = ''): string => `${providedTitle} range`.trim(),
-  });
+  const range: Macro<[Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?], KernelTestFn> =
+    anyTest.macro({
+      exec: async (
+        t: ExecutionContext<TestContext & KernelTestFn>,
+        input: Partial<SingleTripIdentityCheckParamsInterface>[],
+        min: number,
+        max: number,
+      ) => {
+        const check = t.context.kernel
+          .get<ServiceContainerInterface>(serviceProviderCtor)
+          .get<HandleCheckInterface<TripIdentityCheckParamsInterface>>(checkCtor);
+        const data = input.map((i) => faker(i));
+        const result = await check.handle(data);
+        t.log(data);
+        t.log(result);
+        t.true(result >= min);
+        t.true(result <= max);
+      },
+
+      title: (providedTitle = ''): string => `${providedTitle} range`.trim(),
+    });
 
   const test = anyTest as TestFn<KernelTestFn>;
   test.before(async (t) => {

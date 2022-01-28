@@ -13,16 +13,22 @@ type errorCheck<E = Error, C = any> = (params: E, t: ExecutionContext<C>) => Pro
 type paramsBuilder<P, C = any> = (t: ExecutionContext<C>) => Promise<P> | P;
 
 interface HandlerMacroInterface<P, R, E, C> extends KernelBeforeAfter {
-  success: Macro<[
-    P | paramsBuilder<P,HandlerMacroContext&C>,
-    Partial<R> | successCheck<R,HandlerMacroContext&C>,
-    Partial<ContextType>?,
-  ], HandlerMacroContext>;
-  error: Macro<[
-    P | paramsBuilder<P,HandlerMacroContext&C>,
-    string | errorCheck<E,HandlerMacroContext&C>,
-    Partial<ContextType>?,
-  ], HandlerMacroContext>;
+  success: Macro<
+    [
+      P | paramsBuilder<P, HandlerMacroContext & C>,
+      Partial<R> | successCheck<R, HandlerMacroContext & C>,
+      Partial<ContextType>?,
+    ],
+    HandlerMacroContext
+  >;
+  error: Macro<
+    [
+      P | paramsBuilder<P, HandlerMacroContext & C>,
+      string | errorCheck<E, HandlerMacroContext & C>,
+      Partial<ContextType>?,
+    ],
+    HandlerMacroContext
+  >;
 }
 export type HandlerMacroContext = KernelTestFn;
 
@@ -31,7 +37,7 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
   handlerConfig: HandlerConfigInterface,
 ): HandlerMacroInterface<ActionParams, ActionResult, ActionError, TestContext> {
   const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
-  
+
   const emptyContext: ContextType = {
     call: {
       user: {},
@@ -41,21 +47,24 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
     },
   };
 
-  const success: Macro<[
-    ActionParams | paramsBuilder<ActionParams,HandlerMacroContext&TestContext>,
-    Partial<ActionResult> | successCheck<ActionResult,HandlerMacroContext&TestContext>,
-    Partial<ContextType>?,
-  ], HandlerMacroContext> = test.macro({
-    async exec(t: ExecutionContext<HandlerMacroContext&TestContext>, params, response, currentContext = {}) {
+  const success: Macro<
+    [
+      ActionParams | paramsBuilder<ActionParams, HandlerMacroContext & TestContext>,
+      Partial<ActionResult> | successCheck<ActionResult, HandlerMacroContext & TestContext>,
+      Partial<ContextType>?,
+    ],
+    HandlerMacroContext
+  > = test.macro({
+    async exec(t: ExecutionContext<HandlerMacroContext & TestContext>, params, response, currentContext = {}) {
       const context = {
         ...emptyContext,
         ...currentContext,
       };
       const finalParams =
         typeof params === 'function'
-          ? await (params as paramsBuilder<ActionParams,HandlerMacroContext&TestContext>)(t)
+          ? await (params as paramsBuilder<ActionParams, HandlerMacroContext & TestContext>)(t)
           : params;
-  
+
       const kernel = t.context.kernel;
       const result = await kernel.call<ActionParams, ActionResult>(
         `${handlerConfig.service}:${handlerConfig.method}`,
@@ -74,12 +83,15 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
     },
   });
 
-  const error: Macro<[
-    ActionParams | paramsBuilder<ActionParams,HandlerMacroContext&TestContext>,
-    string | errorCheck<ActionError, TestContext & KernelTestFn>,
-    Partial<ContextType>?,
-  ], HandlerMacroContext> = test.macro({
-    async exec(t: ExecutionContext<HandlerMacroContext&TestContext>, params, message, currentContext = {}) {
+  const error: Macro<
+    [
+      ActionParams | paramsBuilder<ActionParams, HandlerMacroContext & TestContext>,
+      string | errorCheck<ActionError, TestContext & KernelTestFn>,
+      Partial<ContextType>?,
+    ],
+    HandlerMacroContext
+  > = test.macro({
+    async exec(t: ExecutionContext<HandlerMacroContext & TestContext>, params, message, currentContext = {}) {
       const context = {
         ...emptyContext,
         ...currentContext,

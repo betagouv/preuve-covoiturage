@@ -1,5 +1,5 @@
 import anyTest, { ExecutionContext, Macro, TestFn } from 'ava';
-import { makeKernelBeforeAfter, KernelTestFn, dbBeforeMacro } from '@pdc/helper-test';
+import { makeKernelBeforeAfter, KernelTestFn } from '@pdc/helper-test';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { TripInterface } from '../../interfaces';
@@ -21,7 +21,7 @@ interface MacroInterface {
   results: Macro<
     [{ carpool_id: number; amount: number; meta?: { [k: string]: string } }[], TripInterface[]?],
     TestContext
-  >; 
+  >;
 }
 
 export function macro(policyDef: CampaignInterface): MacroInterface {
@@ -53,7 +53,7 @@ export function macro(policyDef: CampaignInterface): MacroInterface {
         values: [params.policy._id],
       });
     }
-    await afterKn({ kernel: params.kernel }); 
+    await afterKn({ kernel: params.kernel });
   }
 
   const results: Macro<
@@ -61,48 +61,48 @@ export function macro(policyDef: CampaignInterface): MacroInterface {
     TestContext
   > = anyTest.macro({
     exec: async (
-    t: ExecutionContext<TestContext>,
-    expected: { carpool_id: number; amount: number; meta?: { [k: string]: string } }[],
-    trips: TripInterface[] = defaultTrips,
-  ) => {
-    const engine = t.context.kernel.get(ServiceProvider).get(PolicyEngine);
-    const incentives = [];
-    const campaign = engine.buildCampaign(t.context.policy);
-    for (const trip of trips) {
-      const r = await engine.process(campaign, trip);
-      incentives.push(...r);
-    }
-    t.log(incentives);
-    t.is(
-      incentives.length,
-      trips
-        .filter(
-          (tr) =>
-            tr
-              .map((p) => [...p.start_territory_id, ...p.end_territory_id])
-              .reduce((s, t) => {
-                t.map((v) => s.add(v));
-                return s;
-              }, new Set())
-              .has(policyDef.territory_id) &&
-            tr.datetime >= policyDef.start_date &&
-            tr.datetime <= policyDef.end_date,
-        )
-        .map((tr) => tr.length)
-        .reduce((sum, i) => sum + i, 0),
-    );
-    t.is(incentives.length, expected.length, 'every trip should have an incentive');
-    for (const { amount, carpool_id, meta } of expected) {
-      const incentive = incentives.find((i) => i.carpool_id === carpool_id);
-      t.is(incentive.amount, amount);
-      if (meta) {
-        t.deepEqual(incentive.meta, meta);
+      t: ExecutionContext<TestContext>,
+      expected: { carpool_id: number; amount: number; meta?: { [k: string]: string } }[],
+      trips: TripInterface[] = defaultTrips,
+    ) => {
+      const engine = t.context.kernel.get(ServiceProvider).get(PolicyEngine);
+      const incentives = [];
+      const campaign = engine.buildCampaign(t.context.policy);
+      for (const trip of trips) {
+        const r = await engine.process(campaign, trip);
+        incentives.push(...r);
       }
-    }
-  },
-  title: (providedTitle = '', input, expected): string => `${providedTitle} ${input} = ${expected}`.trim(),
-});
-  
+      t.log(incentives);
+      t.is(
+        incentives.length,
+        trips
+          .filter(
+            (tr) =>
+              tr
+                .map((p) => [...p.start_territory_id, ...p.end_territory_id])
+                .reduce((s, t) => {
+                  t.map((v) => s.add(v));
+                  return s;
+                }, new Set())
+                .has(policyDef.territory_id) &&
+              tr.datetime >= policyDef.start_date &&
+              tr.datetime <= policyDef.end_date,
+          )
+          .map((tr) => tr.length)
+          .reduce((sum, i) => sum + i, 0),
+      );
+      t.is(incentives.length, expected.length, 'every trip should have an incentive');
+      for (const { amount, carpool_id, meta } of expected) {
+        const incentive = incentives.find((i) => i.carpool_id === carpool_id);
+        t.is(incentive.amount, amount);
+        if (meta) {
+          t.deepEqual(incentive.meta, meta);
+        }
+      }
+    },
+    title: (providedTitle = '', input, expected): string => `${providedTitle} ${input} = ${expected}`.trim(),
+  });
+
   const test = anyTest as TestFn<TestContext>;
   test.before(async (t) => {
     const { kernel, policy } = await before();

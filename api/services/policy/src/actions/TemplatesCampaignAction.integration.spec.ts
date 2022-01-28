@@ -82,7 +82,7 @@ test.after.always(async (t) => {
         values: [t.context.policy_id],
       });
   }
-  await after({ kernel: t.context.kernel })
+  await after({ kernel: t.context.kernel });
 });
 
 test(

@@ -59,7 +59,7 @@ const { before, after, success } = handlerMacro<ParamsInterface, ResultInterface
   handlerConfig,
 );
 
-test.before(async(t) => {
+test.before(async (t) => {
   const { kernel } = await before();
   t.context.kernel = kernel;
 
@@ -69,7 +69,7 @@ test.before(async(t) => {
     .create(fakeCampaign);
 
   t.context.policy_id = policy._id;
-})
+});
 test.after.always(async (t) => {
   if (t.context.policy_id) {
     t.context.kernel

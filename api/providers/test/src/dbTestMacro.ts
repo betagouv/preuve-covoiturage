@@ -59,10 +59,8 @@ function getConfig(cfg: Partial<BeforeConfigInterface>): BeforeConfigInterface {
   };
 }
 
-export async function dbBeforeMacro(
-  cfg: Partial<BeforeConfigInterface> = {},
-): Promise<DbContextInterface> {
-  const config = getConfig(cfg); 
+export async function dbBeforeMacro(cfg: Partial<BeforeConfigInterface> = {}): Promise<DbContextInterface> {
+  const config = getConfig(cfg);
   // create database with admin connection
   const adminConnection = new PostgresConnection({ connectionString: config.pgConnectionString });
   await adminConnection.getClient().query(`CREATE DATABASE ${config.database}`);
@@ -132,4 +130,4 @@ export async function dbAfterMacro(cfg: AfterConfigInterface): Promise<void> {
   await cfg.adminConnection.down();
   process.env.APP_POSTGRES_URL = cfg.adminConnectionString;
   console.debug('Cleaned up');
-} 
+}

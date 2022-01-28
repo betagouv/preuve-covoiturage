@@ -8,7 +8,7 @@ test.before(async (t) => {
   t.context = await dbBeforeMacro();
 });
 
-test.after(async(t) => {
+test.after(async (t) => {
   await dbAfterMacro(t.context);
 });
 
@@ -21,7 +21,7 @@ const members = test.macro({
   },
   title(providedTitle = '', table: string, expected: number) {
     return providedTitle || `Check ${table} has ${expected} members`;
-  }
+  },
 });
 
 // run tests

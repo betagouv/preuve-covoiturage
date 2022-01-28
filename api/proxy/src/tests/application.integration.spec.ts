@@ -54,7 +54,7 @@ import { payloadV2 } from './mocks/payloadV2';
 // this must be done before using the macro to make sure this hook
 // runs before the one from the macro
 const test = anyTest as TestFn<ContextType>;
-test.before(async(t) => {
+test.before(async (t) => {
   t.context.db = await dbBeforeMacro();
   t.context.redis = new RedisConnection({
     connectionString: process.env.APP_REDIS_URL,

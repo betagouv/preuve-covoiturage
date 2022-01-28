@@ -39,10 +39,7 @@ export function faker(data: Partial<SelfCheckParamsInterface> = {}, deltaMode = 
 }
 
 interface SelfCheckMacroInterface extends KernelBeforeAfter {
-  range: Macro<
-    [Partial<SelfCheckParamsInterface>, number, number, boolean?],
-    KernelTestFn
-  >;
+  range: Macro<[Partial<SelfCheckParamsInterface>, number, number, boolean?], KernelTestFn>;
   test: TestFn<KernelTestFn>;
 }
 
@@ -52,40 +49,37 @@ export function selfCheckMacro<TestContext = unknown>(
   checkCtor: NewableType<HandleCheckInterface<SelfCheckParamsInterface>>,
 ): SelfCheckMacroInterface {
   const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
-  const range: Macro<
-    [Partial<SelfCheckParamsInterface>, number, number, boolean?],
-    KernelTestFn
-  > = anyTest.macro({
-      exec: async (
-        t: ExecutionContext<TestContext & KernelTestFn>,
-        input: Partial<SelfCheckParamsInterface>,
-        min: number,
-        max: number,
-        deltaMode?: boolean,
-      ) => {
-        const check = t.context.kernel
-          .get<ServiceContainerInterface>(serviceProviderCtor)
-          .get<HandleCheckInterface<SelfCheckParamsInterface>>(checkCtor);
-        const data = faker(input, deltaMode);
-        const result = await check.handle(data);
-        t.log(data);
-        t.log(result);
-        t.true(result >= min);
-        t.true(result <= max);
-      },
-      title: (providedTitle = ''): string => `${providedTitle} range`.trim(),
+  const range: Macro<[Partial<SelfCheckParamsInterface>, number, number, boolean?], KernelTestFn> = anyTest.macro({
+    exec: async (
+      t: ExecutionContext<TestContext & KernelTestFn>,
+      input: Partial<SelfCheckParamsInterface>,
+      min: number,
+      max: number,
+      deltaMode?: boolean,
+    ) => {
+      const check = t.context.kernel
+        .get<ServiceContainerInterface>(serviceProviderCtor)
+        .get<HandleCheckInterface<SelfCheckParamsInterface>>(checkCtor);
+      const data = faker(input, deltaMode);
+      const result = await check.handle(data);
+      t.log(data);
+      t.log(result);
+      t.true(result >= min);
+      t.true(result <= max);
+    },
+    title: (providedTitle = ''): string => `${providedTitle} range`.trim(),
   });
 
   const test = anyTest as TestFn<KernelTestFn>;
 
-  test.before(async(t) => {
+  test.before(async (t) => {
     const { kernel } = await before();
     t.context.kernel = kernel;
   });
 
-  test.after.always(async(t) => {
+  test.after.always(async (t) => {
     await after({ kernel: t.context.kernel });
-  })
+  });
 
   return {
     range,

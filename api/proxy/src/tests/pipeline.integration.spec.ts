@@ -7,7 +7,7 @@
  * are processed.
  */
 
-import { get } from 'lodash';
+// import { get } from 'lodash';
 import supertest from 'supertest';
 import anyTest, { TestFn } from 'ava';
 
@@ -19,7 +19,7 @@ import { dbBeforeMacro, dbAfterMacro, DbContextInterface } from '@pdc/helper-tes
 
 import { Kernel } from '../Kernel';
 import { HttpTransport } from '../HttpTransport';
-import { payloadV2 } from './mocks/payloadV2';
+// import { payloadV2 } from './mocks/payloadV2';
 import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
 import { cookieLoginHelper } from './helpers/cookieLoginHelper';
 
@@ -106,7 +106,6 @@ test.serial.skip('Pipeline check', async (t) => {
   //   .set('Authorization', `Bearer ${token}`);
   // // make sure the journey has been sent properly
   // t.is(response.status, 200);
-
   // const operator_journey_id = get(response, 'body.result.data.journey_id', '');
   // t.is(operator_journey_id, pl.journey_id);
 });
