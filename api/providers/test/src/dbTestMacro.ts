@@ -65,7 +65,7 @@ export async function dbBeforeMacro(
   const config = getConfig(cfg); 
   // create database with admin connection
   const adminConnection = new PostgresConnection({ connectionString: config.pgConnectionString });
-  adminConnection.getClient().query(`CREATE DATABASE ${config.database}`);
+  await adminConnection.getClient().query(`CREATE DATABASE ${config.database}`);
   console.debug(`Create database ${config.database}`);
 
   // create a connection and a pool for the client with this database
