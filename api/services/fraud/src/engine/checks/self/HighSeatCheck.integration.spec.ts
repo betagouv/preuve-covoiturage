@@ -1,20 +1,8 @@
-import anyTest, { TestFn } from 'ava';
-
-import { selfCheckMacro, SelfCheckMacroContext } from './selfCheckMacro';
+import { selfCheckMacro } from './selfCheckMacro';
 import { ServiceProvider } from '../../../ServiceProvider';
 import { HighSeatCheck } from './HighSeatCheck';
 
-const { before, after, range } = selfCheckMacro(ServiceProvider, HighSeatCheck);
-const test = anyTest as TestFn<SelfCheckMacroContext>;
-
-test.before(async (t) => {
-  const { kernel } = await before();
-  t.context.kernel = kernel;
-});
-
-test.after.always(async (t) => {
-  await after({ kernel: t.context.kernel });
-});
+const { test, range } = selfCheckMacro(ServiceProvider, HighSeatCheck);
 
 test('max', range, { passenger_seats: 18 }, 1, 1);
 test('min', range, { passenger_seats: 3 }, 0, 0);

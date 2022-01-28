@@ -1,20 +1,8 @@
-import anyTest, { TestFn } from 'ava';
-
-import { selfCheckMacro, SelfCheckMacroContext } from './selfCheckMacro';
+import { selfCheckMacro } from './selfCheckMacro';
 import { ServiceProvider } from '../../../ServiceProvider';
 import { StartLatitudeCollisionCheck } from './StartLatitudeCollisionCheck';
 
-const { before, after, range } = selfCheckMacro(ServiceProvider, StartLatitudeCollisionCheck);
-const test = anyTest as TestFn<SelfCheckMacroContext>;
-
-test.before(async (t) => {
-  const { kernel } = await before();
-  t.context.kernel = kernel;
-});
-
-test.after.always(async (t) => {
-  await after({ kernel: t.context.kernel });
-});
+const { test, range } = selfCheckMacro(ServiceProvider, StartLatitudeCollisionCheck);
 
 test('max', range, { driver_start_lat: 1 }, 1, 1, true);
 test('min', range, {}, 0, 0);

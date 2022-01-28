@@ -1,5 +1,5 @@
 import { NewableType, ServiceContainerInterface } from '@ilos/common';
-import test, { ExecutionContext, Macro } from 'ava';
+import anyTest, { ExecutionContext, Macro, TestFn } from 'ava';
 import { makeKernelBeforeAfter, KernelBeforeAfter, KernelTestFn } from '@pdc/helper-test';
 
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
@@ -43,6 +43,7 @@ interface SelfCheckMacroInterface extends KernelBeforeAfter {
     [Partial<SelfCheckParamsInterface>, number, number, boolean?],
     KernelTestFn
   >;
+  test: TestFn<KernelTestFn>;
 }
 
 export type SelfCheckMacroContext = KernelTestFn;
@@ -54,7 +55,7 @@ export function selfCheckMacro<TestContext = unknown>(
   const range: Macro<
     [Partial<SelfCheckParamsInterface>, number, number, boolean?],
     KernelTestFn
-  > = test.macro({
+  > = anyTest.macro({
       exec: async (
         t: ExecutionContext<TestContext & KernelTestFn>,
         input: Partial<SelfCheckParamsInterface>,
@@ -75,9 +76,21 @@ export function selfCheckMacro<TestContext = unknown>(
       title: (providedTitle = ''): string => `${providedTitle} range`.trim(),
   });
 
+  const test = anyTest as TestFn<KernelTestFn>;
+
+  test.before(async(t) => {
+    const { kernel } = await before();
+    t.context.kernel = kernel;
+  });
+
+  test.after.always(async(t) => {
+    await after({ kernel: t.context.kernel });
+  })
+
   return {
     range,
     before,
     after,
+    test,
   };
 }

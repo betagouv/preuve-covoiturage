@@ -1,20 +1,8 @@
-import anyTest, { TestFn } from 'ava';
-
-import { selfCheckMacro, SelfCheckMacroContext } from './selfCheckMacro';
+import { selfCheckMacro } from './selfCheckMacro';
 import { ServiceProvider } from '../../../ServiceProvider';
 import { TheoricalDistanceAndDurationCheck } from './TheoricalDistanceAndDurationCheck';
 
-const { before, after, range } = selfCheckMacro(ServiceProvider, TheoricalDistanceAndDurationCheck);
-const test = anyTest as TestFn<SelfCheckMacroContext>;
-
-test.before(async (t) => {
-  const { kernel } = await before();
-  t.context.kernel = kernel;
-});
-
-test.after.always(async (t) => {
-  await after({ kernel: t.context.kernel });
-});
+const { test, range } = selfCheckMacro(ServiceProvider, TheoricalDistanceAndDurationCheck);
 
 test('max by distance', range, { driver_distance: 1, driver_calc_distance: 1000 }, 0.99, 1);
 test('min by distance', range, {}, 0, 0);

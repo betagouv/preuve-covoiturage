@@ -92,7 +92,7 @@ test.serial.skip('Should get fraudcheck entries', async (t) => {
   t.log(data);
   t.deepEqual(data, {
     acquisition_id: t.context.acquisition_id,
-    status: 'error',
+    status: FraudCheckStatusEnum.Error,
     karma: 0,
     data: t.context.data,
   });
