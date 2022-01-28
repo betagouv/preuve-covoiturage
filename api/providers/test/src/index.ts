@@ -2,4 +2,4 @@ export { serviceProviderMacro, ServiceProviderMacroContext } from './serviceProv
 export { handlerMacro, HandlerMacroContext } from './handlerMacro';
 export * from './helpers';
 export { dbBeforeMacro, dbAfterMacro, DbContextInterface } from './dbTestMacro';
-export { httpMacro } from './httpMacro';
+export * from './httpMacro';

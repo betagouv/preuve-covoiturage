@@ -1,15 +1,29 @@
-import anyTest from 'ava';
-import { httpMacro } from '@pdc/helper-test';
+import anyTest, { TestFn } from 'ava';
+import { httpMacro, HttpMacroContext } from '@pdc/helper-test';
 
 import { bootstrap } from './bootstrap';
 import { PostgresConnection } from '@ilos/connection-postgres/dist';
 import { ServiceProvider } from './ServiceProvider';
 
 const name = 'Toto';
-function getDb(context: any): PostgresConnection {
+interface TestContext extends HttpMacroContext {
+  operator_id: number;
+}
+
+function getDb(context: TestContext): PostgresConnection {
   return context.transport.getKernel().getContainer().get(ServiceProvider).getContainer().get(PostgresConnection);
 }
-const { test } = httpMacro(anyTest, () => bootstrap.boot('http', 0));
+
+const test = anyTest as TestFn<TestContext>;
+const { before, after } = httpMacro<TestContext>(() => bootstrap.boot('http', 0));
+
+test.before(async (t) => {
+  const { transport, supertest, request } = await before();
+  t.context.transport = transport;
+  t.context.supertest = supertest;
+  t.context.request = request;
+  t.context.operator_id = Math.round(Math.random() * 1000);
+});
 
 test.after.always(async (t) => {
   await getDb(t.context)
@@ -20,6 +34,8 @@ test.after.always(async (t) => {
     `,
       values: [name],
     });
+  const { transport, supertest, request } = t.context;
+  await after({ transport, supertest, request });
 });
 
 test.serial('Create a territory', async (t) => {

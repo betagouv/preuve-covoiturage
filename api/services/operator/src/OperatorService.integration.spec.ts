@@ -1,13 +1,27 @@
-import anyTest from 'ava';
-import { httpMacro } from '@pdc/helper-test';
+import anyTest, { TestFn } from 'ava';
+import { httpMacro, HttpMacroContext } from '@pdc/helper-test';
 
 import { bootstrap } from './bootstrap';
 import { ContextType } from '@ilos/common';
 
-interface TestContext {
+interface TestContext extends HttpMacroContext {
   _id: number;
 }
-const { test } = httpMacro<TestContext>(anyTest, () => bootstrap.boot('http', 0));
+const { before, after } = httpMacro<TestContext>(() => bootstrap.boot('http', 0));
+
+const test = anyTest as TestFn<TestContext>;
+
+test.before.skip(async (t) => {
+  const { transport, supertest, request } = await before();
+  t.context.transport = transport;
+  t.context.supertest = supertest;
+  t.context.request = request;
+});
+
+test.after.skip(async (t) => {
+  const { transport, supertest, request } = t.context;
+  await after({ transport, supertest, request });
+});
 
 function contextFactory(permissions: string[]): ContextType {
   return {
