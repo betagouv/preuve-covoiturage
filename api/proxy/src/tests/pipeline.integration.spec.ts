@@ -73,41 +73,40 @@ test.beforeEach(async (t) => {
   t.context.cookies = await cookieLoginHelper(t.context.request, 'maxicovoit.admin@example.com', 'admin1234');
 });
 
-test.serial('Pipeline check', async (t) => {
-  t.pass(); // FIXME
-  return;
-  t.timeout(5 * 60 * 1000);
-  t.plan(3);
-  const token = await t.context.token.sign({
-    a: '1efacd36-a85b-47b2-99df-cabbf74202b3', // see @pdc/helper-test README.md
-    o: 1,
-    s: 'operator',
-    p: ['journey.create', 'certificate.create', 'certificate.download'],
-    v: 2,
-  });
-  const pl = payloadV2();
-  const normQueue = t.context.worker.getInstance().filter((q) => q.worker.name === 'normalization')[0].worker;
-  normQueue.on('completed', (job) => {
-    if (job.name === 'normalization:process') {
-      t.context.pool
-        .query({
-          text: 'SELECT count(*) as count FROM carpool.carpools WHERE operator_journey_id = $1',
-          values: [pl.journey_id],
-        })
-        .then((result) => {
-          t.is(get(result.rows, '0.count', '0'), '2');
-        });
-    }
-  });
-  const response = await t.context.request
-    .post(`/v2/journeys`)
-    .send(pl)
-    .set('Accept', 'application/json')
-    .set('Content-type', 'application/json')
-    .set('Authorization', `Bearer ${token}`);
-  // make sure the journey has been sent properly
-  t.is(response.status, 200);
+// FIXME
+test.serial.skip('Pipeline check', async (t) => {
+  // t.timeout(5 * 60 * 1000);
+  // t.plan(3);
+  // const token = await t.context.token.sign({
+  //   a: '1efacd36-a85b-47b2-99df-cabbf74202b3', // see @pdc/helper-test README.md
+  //   o: 1,
+  //   s: 'operator',
+  //   p: ['journey.create', 'certificate.create', 'certificate.download'],
+  //   v: 2,
+  // });
+  // const pl = payloadV2();
+  // const normQueue = t.context.worker.getInstance().filter((q) => q.worker.name === 'normalization')[0].worker;
+  // normQueue.on('completed', (job) => {
+  //   if (job.name === 'normalization:process') {
+  //     t.context.pool
+  //       .query({
+  //         text: 'SELECT count(*) as count FROM carpool.carpools WHERE operator_journey_id = $1',
+  //         values: [pl.journey_id],
+  //       })
+  //       .then((result) => {
+  //         t.is(get(result.rows, '0.count', '0'), '2');
+  //       });
+  //   }
+  // });
+  // const response = await t.context.request
+  //   .post(`/v2/journeys`)
+  //   .send(pl)
+  //   .set('Accept', 'application/json')
+  //   .set('Content-type', 'application/json')
+  //   .set('Authorization', `Bearer ${token}`);
+  // // make sure the journey has been sent properly
+  // t.is(response.status, 200);
 
-  const operator_journey_id = get(response, 'body.result.data.journey_id', '');
-  t.is(operator_journey_id, pl.journey_id);
+  // const operator_journey_id = get(response, 'body.result.data.journey_id', '');
+  // t.is(operator_journey_id, pl.journey_id);
 });
