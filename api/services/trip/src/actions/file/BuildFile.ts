@@ -2,7 +2,7 @@ import { provider } from '@ilos/common';
 import path from 'path';
 import { v4 } from 'uuid';
 import csvStringify, { Stringifier } from 'csv-stringify';
-import { normalize, normalizeOpendata } from '../../helpers/normalizeExportDataHelper';
+import { normalizeExport, normalizeOpendata } from '../../helpers/normalizeExportDataHelper';
 import fs from 'fs';
 import os from 'os';
 import { getOpenDataExportName } from '../../helpers/getOpenDataExportName';
@@ -27,7 +27,7 @@ export class BuildFile {
 
     // Write to file
     const stringifier = this.getStringifier(fd, params.type);
-    const normalizeMethod = isOpendata ? normalizeOpendata : normalize;
+    const normalizeMethod = isOpendata ? normalizeOpendata : normalizeExport;
     let count = 0;
     do {
       const results = await cursor.read(10);

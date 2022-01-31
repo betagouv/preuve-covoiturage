@@ -2,7 +2,7 @@ import anyTest, { TestInterface } from 'ava';
 import { Context } from 'vm';
 import { FlattenTripInterface } from '../actions/BuildExportAction';
 import { ExportTripInterface } from '../interfaces';
-import { normalize, normalizeOpendata } from './normalizeExportDataHelper';
+import { normalizeExport, normalizeOpendata } from './normalizeExportDataHelper';
 
 const test = anyTest as TestInterface<Context>;
 
@@ -85,7 +85,7 @@ test.before((t) => {
 
 test('normalizeExportHelper: should flattern trip list with driver_incentive for export', (t) => {
   // Act
-  const result: FlattenTripInterface = normalize(t.context.TRIP_WITH_DRIVER_INCENTIVE, 'Europe/Paris');
+  const result: FlattenTripInterface = normalizeExport(t.context.TRIP_WITH_DRIVER_INCENTIVE, 'Europe/Paris');
 
   // Assert
   t.is(result.driver_incentive_1_amount, 2);
