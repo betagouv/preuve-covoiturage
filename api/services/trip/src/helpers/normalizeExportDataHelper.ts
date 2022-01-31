@@ -33,8 +33,8 @@ export function normalizeOpendata(src: ExportTripInterface, timeZone: string): F
   data.has_incentive =
     driver_incentive_raw.length > 0 ||
     passenger_incentive_raw.length > 0 ||
-    data.driver_incentive_rpc_raw.length > 0 ||
-    data.passenger_incentive_rpc_raw.length > 0;
+    data.driver_incentive_rpc_raw?.length > 0 ||
+    data.passenger_incentive_rpc_raw?.length > 0;
 
   return data;
 }

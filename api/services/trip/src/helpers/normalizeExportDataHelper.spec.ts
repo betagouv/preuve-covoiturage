@@ -83,34 +83,81 @@ test.before((t) => {
   };
 });
 
-test('normalizeExportHelper: should flattern trip list with driver_incentive for export', (t) => {
+test('normalizeExportHelper: should flattern trip with driver_incentive for export', (t) => {
   // Act
   const result: FlattenTripInterface = normalizeExport(t.context.TRIP_WITH_DRIVER_INCENTIVE, 'Europe/Paris');
 
   // Assert
   t.is(result.driver_incentive_1_amount, 2);
+  t.is(result.driver_incentive_1_siret, '89015202800019');
+
   t.is(result.passenger_incentive_1_amount, 0);
   t.is(result.passenger_incentive_1_siret, undefined);
-  t.is(result.passenger_incentive_2_amount, 0);
-  t.is(result.passenger_incentive_2_siret, undefined);
-  t.is(result.driver_incentive_1_siret, '89015202800019');
 
   t.is(result.journey_start_datetime, '2021-09-26T14:00:00+02:00');
   t.is(result.driver_revenue, 5);
   t.is(result.has_incentive, undefined);
 });
 
-test('normalizeExportHelper: should flattern trip list with driver_incentive for opendata export', (t) => {
+test('normalizeExportHelper: should flattern trip with passenger incentive for export', (t) => {
+  // Act
+  const result: FlattenTripInterface = normalizeExport(t.context.TRIP_WITH_PASSENGER_INCENTIVE, 'Europe/Paris');
+
+  // Assert
+  t.is(result.passenger_incentive_1_amount, 2);
+  t.is(result.passenger_incentive_1_siret, '89015202800019');
+
+  t.is(result.driver_incentive_1_amount, 0);
+  t.is(result.driver_incentive_1_siret, undefined);
+
+  t.is(result.journey_start_datetime, '2021-09-26T14:00:00+02:00');
+  t.is(result.driver_revenue, 5);
+  t.is(result.has_incentive, undefined);
+});
+
+test('normalizeExportHelper: should flattern trip without driver_incentive for opendata export', (t) => {
   // Act
   const result: FlattenTripInterface = normalizeOpendata(t.context.TRIP_WITH_DRIVER_INCENTIVE, 'Europe/Paris');
 
   // Assert
   t.is(result.driver_incentive_1_amount, undefined);
+  t.is(result.driver_incentive_1_siret, undefined);
+
   t.is(result.passenger_incentive_1_amount, undefined);
   t.is(result.passenger_incentive_1_siret, undefined);
-  t.is(result.passenger_incentive_2_amount, undefined);
-  t.is(result.passenger_incentive_2_siret, undefined);
+
+  t.is(result.journey_start_datetime, '2021-09-26T14:00:00+02:00');
+  t.is(result.driver_revenue, 500);
+  t.is(result.has_incentive, true);
+});
+
+test('normalizeExportHelper: should flattern trip with incentive false for opendata export', (t) => {
+  // Act
+  const result: FlattenTripInterface = normalizeOpendata(t.context.TRIP_WITHOUT_INCENTIVE, 'Europe/Paris');
+
+  // Assert
+  t.is(result.driver_incentive_1_amount, undefined);
   t.is(result.driver_incentive_1_siret, undefined);
+
+  t.is(result.passenger_incentive_1_amount, undefined);
+  t.is(result.passenger_incentive_1_siret, undefined);
+
+  t.is(result.journey_start_datetime, '2021-09-26T14:00:00+02:00');
+  t.is(result.driver_revenue, 500);
+  t.is(result.has_incentive, false);
+});
+
+// eslint-disable-next-line max-len
+test('normalizeExportHelper: should flattern trip with incentive true for passenger incentives for opendata export', (t) => {
+  // Act
+  const result: FlattenTripInterface = normalizeOpendata(t.context.TRIP_WITH_PASSENGER_INCENTIVE, 'Europe/Paris');
+
+  // Assert
+  t.is(result.driver_incentive_1_amount, undefined);
+  t.is(result.driver_incentive_1_siret, undefined);
+
+  t.is(result.passenger_incentive_1_amount, undefined);
+  t.is(result.passenger_incentive_1_siret, undefined);
 
   t.is(result.journey_start_datetime, '2021-09-26T14:00:00+02:00');
   t.is(result.driver_revenue, 500);
