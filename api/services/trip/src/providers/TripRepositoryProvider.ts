@@ -319,18 +319,18 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'journey_distance_calculated',
       'journey_duration_anounced',
       'journey_duration_calculated',
+      'passenger_incentive_rpc_raw::json[]',
+      'driver_incentive_rpc_raw::json[]',
+      'passenger_incentive_raw::json[]',
+      'driver_incentive_raw::json[]',
     ];
 
     // all except opendata
     const financialFields = [
       'passenger_id',
       'passenger_contribution',
-      'passenger_incentive_raw::json[]',
-      'passenger_incentive_rpc_raw::json[]',
       'driver_id',
       'driver_revenue',
-      'driver_incentive_raw::json[]',
-      'driver_incentive_rpc_raw::json[]',
     ];
 
     let selectedFields = [...baseFields];

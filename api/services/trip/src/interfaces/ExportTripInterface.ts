@@ -1,6 +1,7 @@
 interface IncentiveInterface {
   siret: string;
   amount: number;
+  type: string;
 }
 
 export interface ExportTripInterface<T = Date> {

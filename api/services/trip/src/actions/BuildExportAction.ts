@@ -66,6 +66,7 @@ export interface FlattenTripInterface extends ExportTripInterface<string> {
   driver_incentive_rpc_4_siret?: string;
   driver_incentive_rpc_4_name?: string;
   driver_incentive_rpc_4_amount?: number;
+  has_incentive?: boolean;
 }
 @handler({
   ...handlerConfig,
@@ -142,6 +143,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     'operator_class',
     'journey_distance',
     'journey_duration',
+    'has_incentive',
   ];
 
   public static readonly financialFields = [
@@ -255,7 +257,12 @@ export class BuildExportAction extends Action implements InitHookInterface {
     }
 
     const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
-    const filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end);
+    const filepath: string = await this.buildFile.buildCsvFromCursor(
+      cursor,
+      params,
+      queryParams.date.end,
+      this.isOpendata(type),
+    );
     return this.handleCSVExport(type, filepath, queryParams, excluded_territories);
   }
 
