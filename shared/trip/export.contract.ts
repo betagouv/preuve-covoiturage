@@ -1,6 +1,6 @@
 // operator_id could be number if set from middleware
-export interface ParamsInterface extends Omit<BaseParamsInterface, 'operator_id'> {
-  operator_id: number[] | number; // operator_id(s) fetch from midleware (for an operator) or form (for a territory)
+export interface ParamsInterface extends Omit<BaseParamsInterface, 'territory_id'> {
+  territory_id?: number[];
 }
 
 export interface BaseParamsInterface {
@@ -9,8 +9,9 @@ export interface BaseParamsInterface {
     start: Date;
     end: Date;
   };
-  operator_id: number[]; // operator_id(s) fetch from form (for a territory)
-  territory_id?: number; // territory_id params, context fetch from middleware otherwise
+  // eslint-disable-next-line max-len
+  operator_id?: number[]; //optional operator_id(s) fetch from form (for a territory), fetched context from middleware if operator
+  territory_id?: number; // optional territory_id params
 }
 
 export type ResultInterface = void;

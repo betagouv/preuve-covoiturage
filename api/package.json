@@ -17,7 +17,8 @@
     "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
     "Nicolas Mérigot <nicolas.merigot@beta.gouv.fr>",
     "Gilles Boisson <gilles.boisson@beta.gouv.fr>",
-    "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
+    "Samuel Eyre <samuel.eyre@beta.gouv.fr>",
+    "Julien Parmentier <julien.parmentier@beta.gouv.fr>"
   ],
   "scripts": {
     "scalingo-postbuild": "/bin/sh ./scalingo/build.sh",
@@ -79,5 +80,8 @@
     "ts-node": "^10.2.1",
     "tsconfig-paths": "^3.11.0",
     "typescript": "^4.4.3"
+  },
+  "resolutions": {
+    "**/node-fetch": "2.6.7"
   }
 }

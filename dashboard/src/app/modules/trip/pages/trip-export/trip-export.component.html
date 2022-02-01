@@ -81,6 +81,13 @@
           Exporter les trajets
         </button>
       </div>
+
+      <div class="hints">
+        <mat-hint>*&nbsp;Dates : L'export des données est possible sur les 12 derniers mois. Nous contacter pour une période plus longue.</mat-hint>
+        <mat-hint>**&nbsp;Zones géographiques : Par défaut, la zone cible est l’ensemble de l’AOM. Pour restreindre le périmètre, utiliser avec le filtre "Territoire".</mat-hint>
+        <mat-hint *ngIf="!user.isOperatorOrAdmin()">***&nbsp;Opérateurs : "Tout décocher" permet de sélectionner par défaut tous les opérateurs pour lesquels des trajets sont enregistrés.</mat-hint>
+      </div>
+
     </div>
   </form>
 </div>

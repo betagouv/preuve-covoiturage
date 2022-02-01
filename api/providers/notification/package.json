@@ -19,7 +19,7 @@
   "dependencies": {
     "@ilos/common": "^0",
     "@pdc/provider-template": "~0",
-    "mjml": "^4.10.3",
+    "mjml": "^4.12.0",
     "nodemailer": "^6.6.3"
   },
   "devDependencies": {

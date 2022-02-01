@@ -10,16 +10,9 @@ import { takeUntil } from 'rxjs/operators';
 import { BaseParamsInterface as TripExportParamsInterface } from '~/shared/trip/export.contract';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import {
-  ListOperatorItem,
-  OperatorsCheckboxesComponent,
-} from '../../../operator/modules/operator-ui/components/operators-checkboxes/operators-checkboxes.component';
+import { OperatorsCheckboxesComponent } from '../../../operator/modules/operator-ui/components/operators-checkboxes/operators-checkboxes.component';
 import { TripApiService } from '../../services/trip-api.service';
 import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dialog.component';
-
-export interface TripExportParamWithOperators extends TripExportParamsInterface {
-  operators: ListOperatorItem[];
-}
 
 @Component({
   selector: 'app-trip-export',
@@ -83,13 +76,11 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   public export(): void {
-    const data: TripExportParamWithOperators = {
+    const data: TripExportParamsInterface = {
       date: {
         start: this.form.value.date.start.toDate(),
         end: this.form.value.date.end.toDate(),
       },
-      operators: !this.user.isOperatorGroup() ? this.checkboxesForm.selectedOperators : [],
-      operator_id: !this.user.isOperatorGroup() ? this.checkboxesForm.selectedOperators.map((o) => o._id) : [],
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
 
@@ -98,7 +89,6 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
     }
 
     if (!this.user.isOperatorGroup() && this.checkboxesForm.selectedOperators.length === 0) {
-      data.operators = this.checkboxesForm.operators;
       data.operator_id = this.checkboxesForm.operators.map((o) => o._id);
     }
 
@@ -109,7 +99,6 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
       .subscribe((result) => {
         if (result) {
           this.isExporting = true;
-          delete data.operators;
           this.tripService.exportTrips(data).subscribe(
             () => {
               this.toastr.success('Export en cours');
