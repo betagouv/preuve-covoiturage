@@ -16,8 +16,9 @@ interface FixtureConfig {
 }
 
 interface DbConfig {
-  pgConnectionString: string;
+  adminConnectionString: string;
   database: string;
+  tmpConnectionString: string;
 }
 
 export type BeforeConfigInterface = FixtureConfig & DbConfig;
@@ -34,8 +35,14 @@ export interface DbContextInterface extends AfterConfigInterface {
   tmpConnectionString: string;
 }
 
-function getConfig(cfg: Partial<BeforeConfigInterface>): BeforeConfigInterface {
+export function getDbMacroConfig(cfg: Partial<BeforeConfigInterface> = {}): BeforeConfigInterface {
+  const adminConnectionString = process.env.APP_POSTGRES_URL;
+  const database = `fixtures_${uuid().replace(/-/g, '_')}`;
+  const tmpConnectionString = adminConnectionString.replace(/\/[a-z_\-0-9]+$/i, `/${database}`);
   return {
+    adminConnectionString,
+    database,
+    tmpConnectionString,
     fixturePath: path.join(__dirname, 'fixtures'),
     /**
      * list all fixtures by their filename (without .sql extension)
@@ -53,41 +60,38 @@ function getConfig(cfg: Partial<BeforeConfigInterface>): BeforeConfigInterface {
       { cls: IdentityGenerator },
       { cls: TripGenerator, args: [{ identities, inserts: 100 }] },
     ],
-    pgConnectionString: process.env.APP_POSTGRES_URL,
-    database: `fixtures_${uuid().replace(/-/g, '_')}`,
     ...cfg,
   };
 }
 
-export async function dbBeforeMacro(cfg: Partial<BeforeConfigInterface> = {}): Promise<DbContextInterface> {
-  const config = getConfig(cfg);
+export async function dbBeforeMacro(config: BeforeConfigInterface): Promise<DbContextInterface> {
+  const { adminConnectionString, tmpConnectionString, database, fixturePath, fixtureSources } = config;
   // create database with admin connection
-  const adminConnection = new PostgresConnection({ connectionString: config.pgConnectionString });
-  await adminConnection.getClient().query(`CREATE DATABASE ${config.database}`);
-  console.debug(`Create database ${config.database}`);
+  const adminConnection = new PostgresConnection({ connectionString: adminConnectionString });
+  await adminConnection.getClient().query(`CREATE DATABASE ${database}`);
+  console.debug(`Create database ${database}`);
 
   // create a connection and a pool for the client with this database
-  const tmpConnectionString = config.pgConnectionString.replace(/\/[a-z_\-0-9]+$/i, `/${config.database}`);
   const tmpConnection = new PostgresConnection({ connectionString: tmpConnectionString });
   const pool = await tmpConnection.getClient().connect();
   try {
     // flash schemas
-    console.debug('Fixtures folder', config.fixturePath);
+    console.debug('Fixtures folder', fixturePath);
 
-    if (!fs.existsSync(`${config.fixturePath}/schemas.sql`)) throw new Error('schemas.sql file not found');
-    const schemasSql = fs.readFileSync(`${config.fixturePath}/schemas.sql`, { encoding: 'utf8' });
+    if (!fs.existsSync(`${fixturePath}/schemas.sql`)) throw new Error('schemas.sql file not found');
+    const schemasSql = fs.readFileSync(`${fixturePath}/schemas.sql`, { encoding: 'utf8' });
 
     console.debug('Create schemas');
     await pool.query(schemasSql);
 
     await pool.query('BEGIN');
     // flash data
-    for (const source of config.fixtureSources) {
+    for (const source of fixtureSources) {
       if (typeof source === 'string') {
-        const fixturePath = path.join(config.fixturePath, `${source}.sql`);
-        console.debug(`Flash ${fixturePath}`);
-        if (fs.existsSync(fixturePath)) {
-          const sql = fs.readFileSync(fixturePath, { encoding: 'utf8' });
+        const fullFixturePath = path.join(fixturePath, `${source}.sql`);
+        console.debug(`Flash ${fullFixturePath}`);
+        if (fs.existsSync(fullFixturePath)) {
+          const sql = fs.readFileSync(fullFixturePath, { encoding: 'utf8' });
           await pool.query(sql);
         } else {
           console.warn(`Failed to execute ${path}`);
@@ -100,19 +104,18 @@ export async function dbBeforeMacro(cfg: Partial<BeforeConfigInterface> = {}): P
     }
 
     // update serial indexes in all tables
-    const wrapSql = fs.readFileSync(`${config.fixturePath}/wrap.sql`, { encoding: 'utf8' });
+    const wrapSql = fs.readFileSync(`${fixturePath}/wrap.sql`, { encoding: 'utf8' });
     const wrapRes = await pool.query(wrapSql);
     for (const { query } of wrapRes.rows) {
       await pool.query(query);
     }
     await pool.query('COMMIT');
-    process.env.APP_POSTGRES_URL = tmpConnectionString;
     return {
-      database: config.database,
+      database,
       tmpConnectionString,
       tmpConnection,
       adminConnection,
-      adminConnectionString: config.pgConnectionString,
+      adminConnectionString,
     };
   } catch (e) {
     await pool.query('ROLLBACK');

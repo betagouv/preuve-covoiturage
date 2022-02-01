@@ -1,11 +1,12 @@
 import { get } from 'lodash';
-import { dbBeforeMacro, dbAfterMacro, DbContextInterface } from './dbTestMacro';
+import { dbBeforeMacro, dbAfterMacro, DbContextInterface, getDbMacroConfig } from './dbTestMacro';
 import anyTest, { TestFn } from 'ava';
 
 const test = anyTest as TestFn<DbContextInterface>;
 
 test.before(async (t) => {
-  t.context = await dbBeforeMacro();
+  const config = getDbMacroConfig();
+  t.context = await dbBeforeMacro(config);
 });
 
 test.after(async (t) => {
