@@ -53,6 +53,7 @@ export class Bootstrap {
   static setPaths(): void {
     process.env.APP_ROOT_PATH = process.cwd();
     const workingPath = Bootstrap.getWorkingPath();
+    // process.chdir is unavailable on child thread
     if (fs.existsSync(workingPath) && workingPath !== process.cwd() && isMainThread) {
       process.chdir(workingPath);
     }
