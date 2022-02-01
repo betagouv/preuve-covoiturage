@@ -5,7 +5,7 @@ import { debounceTime, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { GeoCodeTypeEnum } from 'shared/territory/common/geo';
+import { GeoCodeTypeEnum } from '~/shared/territory/common/geo';
 
 @Component({
   selector: 'app-territories-insee-autocomplete',

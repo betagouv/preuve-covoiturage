@@ -4,9 +4,6 @@ import { CommonModule } from '@angular/common';
 import { ChartjsModule } from '@ctrl/ngx-chartjs';
 import { FormsModule } from '@angular/forms';
 
-import { SharedModule } from '~/shared/shared.module';
-import { MaterialModule } from '~/shared/modules/material/material.module';
-
 import { StatChartContainerComponent } from './components/stat-graph/stat-chart-container/stat-chart-container.component';
 import { StatGraphCarbonComponent } from './components/stat-graph/stat-graph-carbon/stat-graph-carbon.component';
 import { StatGraphCarpoolersComponent } from './components/stat-graph/stat-graph-carpoolers/stat-graph-carpoolers.component';
@@ -20,6 +17,8 @@ import { StatGraphViewComponent } from './components/stat-graph-view/stat-graph-
 import { StatHonorComponent } from './components/stat-honor/stat-honor.component';
 import { StatNumbersNavComponent } from './components/stat-graph/stat-numbers-nav/stat-numbers-nav.component';
 import { StatViewComponent } from './components/stat-view/stat-view.component';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { SharedModule } from '../../../../shared/shared.module';
 
 @NgModule({
   declarations: [

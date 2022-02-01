@@ -26,11 +26,17 @@ test.serial('Create a territory', async (t) => {
   const response = await t.context.request(
     'territory:create',
     {
-      name: name,
+      name,
       level: 'towngroup',
       active: false,
       activable: false,
-      insee: ['91377'],
+      children: [6, 7],
+      address: {
+        street: '1500 BD LEPIC',
+        postcode: '73100',
+        city: 'Aix Les Bains',
+        country: 'France',
+      },
     },
     {
       call: {
@@ -90,7 +96,7 @@ test.serial('Update a territory', async (t) => {
     .getClient()
     .query({
       text: `
-     SELECT _id, name, level, active, activable from territory.territories WHERE name = $1 
+     SELECT _id, name, level, active, activable, address from territory.territories WHERE name = $1 
     `,
       values: [name],
     });
@@ -101,8 +107,8 @@ test.serial('Update a territory', async (t) => {
     'territory:update',
     {
       ...dbResult.rows[0],
-      insee: ['91377'],
-      shortname: 'Yop',
+      name: 'Toto',
+      children: [7, 8],
     },
     {
       call: {
@@ -113,7 +119,7 @@ test.serial('Update a territory', async (t) => {
     },
   );
   t.log(response);
-  t.is(response.result.shortname, 'Yop');
+  t.is(response.result.name, 'Toto');
 });
 
 test.serial('Patch contact on a territory', async (t) => {
@@ -226,7 +232,7 @@ test.serial('Lists all geo zones', async (t) => {
       },
     },
   );
-  t.log(response);
+  t.log(response.result.data);
   t.log(response.result.meta.pagination);
   t.true('data' in response.result);
   t.true(Array.isArray(response.result.data));
@@ -240,7 +246,7 @@ test.serial('Find geo zone by code', async (t) => {
   const response = await t.context.request(
     'territory:findGeoByCode',
     {
-      insees: ['91377'],
+      insees: ['91471'],
     },
     {
       call: {
@@ -252,6 +258,6 @@ test.serial('Find geo zone by code', async (t) => {
   );
   t.log(response);
   t.true(Array.isArray(response.result));
-  t.true(response.result.length >= 2);
-  t.is(response.result.filter((r) => r.name === name).length, 1);
+  t.true(response.result.length >= 1);
+  t.is(response.result.filter((r) => r.name === 'Orsay').length, 1);
 });

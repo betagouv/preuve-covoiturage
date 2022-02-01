@@ -23,14 +23,12 @@ export interface TerritoryAddress {
 export interface TerritoryBaseInterface {
   level: TerritoryLevelEnum | string;
   name: string;
-  shortname?: string;
   company_id?: number;
-  active?: boolean;
-  activable?: boolean;
   children: number[];
-  // active_since?: Date;
   contacts?: ContactsInterface;
-  density?: number;
   address: TerritoryAddress;
-  geo?: any; // TODO : geography type
+}
+
+export interface TerritoryInterface extends TerritoryBaseInterface {
+  _id: number;
 }

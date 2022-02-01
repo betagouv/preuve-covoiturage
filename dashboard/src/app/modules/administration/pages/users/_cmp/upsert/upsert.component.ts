@@ -8,7 +8,7 @@ import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
 import { Groups } from '~/core/enums/user/groups';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { AutocompleteItem } from '~/shared/components/autocomplete/autocomplete.component';
+import { AutocompleteItem } from '../../../../../../shared/components/autocomplete/autocomplete.component';
 
 @Component({
   selector: 'app-upsert',

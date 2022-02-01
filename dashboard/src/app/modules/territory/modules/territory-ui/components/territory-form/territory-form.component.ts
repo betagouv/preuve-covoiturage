@@ -1,27 +1,29 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
+import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
 import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { CompanyV2 } from '~/core/entities/shared/companyV2';
-import { Contact } from '~/core/entities/shared/contact';
-import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
+import { ContactsMapper } from '~/core/entities/shared/contacts';
+import { TerritoryFormModel, TerritoryMapper } from '~/core/entities/territory/territory';
 import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
-import { FormAddress } from '~/shared/modules/form/forms/form-address';
-import { FormCompany } from '~/shared/modules/form/forms/form-company';
-import { FormContact } from '~/shared/modules/form/forms/form-contact';
-import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
+import { TerritoryBaseInterface, TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryInsee } from '~/shared/territory/findGeoByCode.contract';
+import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
+import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
+import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
 
 @Component({
   selector: 'app-territory-form',
@@ -29,14 +31,10 @@ import { TerritoryInsee } from 'shared/territory/findGeoByCode.contract';
   styleUrls: ['./territory-form.component.scss'],
 })
 export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
-  @Input() isFormVisible = false;
-  @Input() closable = false;
-  @Input() territory: Territory = null;
+  @Input() territory: TerritoryInterface = null;
 
-  @Output() close = new EventEmitter();
-
+  public isRegistryGroup = false;
   public territoryForm: FormGroup;
-  public fullFormMode = false;
   public territoryId: number;
 
   private companyDetails: CompanyInterface;
@@ -44,26 +42,40 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
     private toastr: ToastrService,
     private companyService: CompanyService,
-    private territoryStore: TerritoryStoreService,
     private territoryApi: TerritoryApiService,
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.route.data.subscribe((data: { territory: TerritoryInterface }) => {
+      this.territory = data.territory;
+    });
     this.authService.user$
       .pipe(
         filter((user) => !!user),
         takeUntil(this.destroy$),
       )
       .subscribe((user) => {
-        this.fullFormMode = user && user.group === Groups.Registry;
-        this.initTerritoryForm();
-        this.initTerritoryFormValue();
-        this.updateValidation();
+        this.isRegistryGroup = user && user.group === Groups.Registry;
+        this.initFormAndValidation();
       });
+  }
+
+  ngOnChanges() {
+    this.initFormAndValidation();
+  }
+
+  private initFormAndValidation() {
+    this.initTerritoryForm();
+    if (this.territory) {
+      this.setTerritoryFormValue(this.territory);
+      this.updateValidation();
+    }
   }
 
   get controls(): { [key: string]: AbstractControl } {
@@ -74,21 +86,15 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     return this.authService.hasRole([Roles.RegistryAdmin, Roles.TerritoryAdmin]);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['territory'] && this.territoryForm) {
-      this.setTerritoryFormValue(changes['territory'].currentValue);
-    }
-  }
-
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
     formValues.company_id = get(this, 'companyDetails._id', null);
 
-    if (!this.fullFormMode || !formValues.insee) {
-      this.territoryStore.patchContact(this.territoryForm.value.contacts, this.territoryId).subscribe(
+    if (!this.isRegistryGroup || !formValues.inseeString) {
+      const contactModel: ContactsInterface = ContactsMapper.toModel(this.territoryForm.get('contacts'));
+      this.territoryApi.patchContact({ patch: contactModel, _id: this.territoryId }).subscribe(
         (modifiedTerritory) => {
           this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
-          this.close.emit();
         },
         (err) => {
           this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
@@ -100,7 +106,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     // split by coma and make unique
     const inseeList: string[] = [
       ...new Set(
-        formValues.insee
+        formValues.inseeString
           .split(/[\s,]/)
           .map((s) => s.trim())
           .filter((i) => i.length)
@@ -128,22 +134,26 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       this.toastr.error(`Certains codes INSEE n'ont pas de territoires correspondants`);
       return;
     }
-
-    // Map insees to territory_id
     formValues.children = territories.map((t) => t.territory_id);
 
+    const model: TerritoryBaseInterface = TerritoryMapper.toModel(
+      this.territoryForm,
+      this.companyDetails._id,
+      formValues.children,
+    );
     if (this.isNew()) {
-      this.territoryStore.create(formValues).subscribe(() => {
-        this.toastr.success(`${formValues.name} a été mis à jour !`);
-        this.close.emit();
+      this.territoryApi.createNew(model).subscribe(() => {
+        this.toastr.success(`${formValues.name} a été créé !`);
+        this.router.navigate(['../'], { relativeTo: this.route });
       });
       return;
     }
 
-    this.territoryStore.updateSelected(formValues).subscribe(
+    const updateModel: TerritoryInterface = { ...model, _id: this.territoryId };
+    this.territoryApi.updateNew(updateModel).subscribe(
       (modifiedTerritory) => {
         this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
-        this.close.emit();
+        this.router.navigate(['../'], { relativeTo: this.route });
       },
       (err) => {
         this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
@@ -159,31 +169,19 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     return inseeList.length === territories.length;
   }
 
-  public onClose(): void {
-    this.territoryForm.reset();
-    this.close.emit();
-  }
-
-  private initTerritoryFormValue(): void {
-    if (this.territory) {
-      this.setTerritoryFormValue(this.territory);
-    }
-  }
-
   private initTerritoryForm(): void {
     let formOptions: any = {
       contacts: this.fb.group({
-        gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        gdpr_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+        gdpr_dpo: this.fb.group(new FormContact()),
+        gdpr_controller: this.fb.group(new FormContact()),
+        technical: this.fb.group(new FormContact()),
       }),
     };
-    if (this.fullFormMode) {
+    if (this.isRegistryGroup) {
       formOptions = {
         ...formOptions,
         name: [''],
-        shortname: [''],
-        insee: [''],
+        inseeString: [''],
         address: this.fb.group(
           new FormAddress(
             new Address({
@@ -196,17 +194,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         ),
         company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
         contacts: this.fb.group({
-          gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-          gdpr_controller: this.fb.group(
-            new FormContact(
-              new Contact({
-                firstname: null,
-                lastname: null,
-                email: null,
-              }),
-            ),
-          ),
-          technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+          gdpr_dpo: this.fb.group(new FormContact()),
+          gdpr_controller: this.fb.group(new FormContact()),
+          technical: this.fb.group(new FormContact()),
         }),
       };
     }
@@ -308,13 +298,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private updateValidation(): void {
-    if (this.territoryForm && this.fullFormMode) {
-      this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
-      this.territoryForm.controls['shortname'].setValidators(this.fullFormMode ? Validators.max(12) : null);
+    if (this.territoryForm && this.isRegistryGroup) {
+      this.territoryForm.controls['name'].setValidators(this.isRegistryGroup ? Validators.required : null);
       this.territoryForm.controls['name'].updateValueAndValidity();
       this.territoryForm.controls['name'].markAsUntouched();
-      this.territoryForm.controls['shortname'].updateValueAndValidity();
-      this.territoryForm.controls['shortname'].markAsUntouched();
 
       // address is hidden and not required if territory is not activable (AOM)
       const fields = ['street', 'postcode', 'city', 'country'];
@@ -334,7 +321,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       siretControl.updateValueAndValidity();
       siretControl.markAsUntouched();
 
-      const inseeControl = this.territoryForm.controls.insee;
+      const inseeControl = this.territoryForm.controls.inseeString;
 
       inseeControl.setValidators([Validators.pattern('^( *[0-9]{5} *,? *)+$')]);
       inseeControl.updateValueAndValidity();
@@ -342,13 +329,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
   }
 
-  private setTerritoryFormValue(territory: Territory): void {
-    // base values for form
+  private setTerritoryFormValue(territory: TerritoryInterface): void {
     this.territoryId = territory ? territory._id : null;
-    const territoryEd = new Territory(territory);
-    const formValues = territoryEd.toFormValues(this.fullFormMode);
-
-    delete formValues.uiSelectionState;
 
     if (!this.territoryId) {
       ['company', 'address', 'contacts.gdpr_dpo', 'contacts.gdpr_controller', 'contacts.technical'].forEach((key) => {
@@ -358,9 +340,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       this.territoryForm.reset();
     }
 
-    this.territoryForm.setValue(formValues);
+    const territoryFormValue = { ...territory, inseeString: '' };
 
-    if (this.territoryId && this.fullFormMode) {
+    this.territoryForm.patchValue(territoryFormValue);
+
+    if (this.territoryId && this.isRegistryGroup) {
       if (territory.company_id) {
         this.companyService.getById(territory.company_id).subscribe((company) => {
           this.updateCompanyForm(company);

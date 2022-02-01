@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { DetailsContactComponent } from '~/shared/modules/details/components/details-contact/details-contact.component';
-import { MaterialModule } from '~/shared/modules/material/material.module';
+import { MaterialModule } from '../material/material.module';
+import { DetailsContactComponent } from './components/details-contact/details-contact.component';
 
 @NgModule({
   declarations: [DetailsContactComponent],

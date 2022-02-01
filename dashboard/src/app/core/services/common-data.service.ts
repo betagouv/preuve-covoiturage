@@ -4,22 +4,22 @@ import { map, mergeMap, tap } from 'rxjs/operators';
 import { User } from '~/core/entities/authentication/user';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { Operator } from '~/core/entities/operator/operator';
-import { Territory } from '~/core/entities/territory/territory';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { AuthenticationService as Auth } from '~/core/services/authentication/authentication.service';
 import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CommonDataService {
   private _currentOperator$ = new BehaviorSubject<Operator>(null);
-  private _currentTerritory$ = new BehaviorSubject<Territory>(null);
+  private _currentTerritory$ = new BehaviorSubject<TerritoryInterface>(null);
 
-  private _territories$ = new BehaviorSubject<Territory[]>([]);
+  private _territories$ = new BehaviorSubject<TerritoryInterface[]>([]);
   private _operators$ = new BehaviorSubject<Operator[]>([]);
   private _campaigns$ = new BehaviorSubject<Campaign[]>([]);
 
@@ -27,11 +27,11 @@ export class CommonDataService {
     return this._currentOperator$;
   }
 
-  get currentTerritory$(): Observable<Territory> {
+  get currentTerritory$(): Observable<TerritoryInterface> {
     return this._currentTerritory$;
   }
 
-  get territories$(): Observable<Territory[]> {
+  get territories$(): Observable<TerritoryInterface[]> {
     return this._territories$;
   }
 
@@ -47,11 +47,11 @@ export class CommonDataService {
     return this._currentOperator$.value;
   }
 
-  get currentTerritory(): Territory {
+  get currentTerritory(): TerritoryInterface {
     return this._currentTerritory$.value;
   }
 
-  get territories(): Territory[] {
+  get territories(): TerritoryInterface[] {
     return this._territories$.value;
   }
 
@@ -105,10 +105,10 @@ export class CommonDataService {
     );
   }
 
-  loadCurrentTerritory(): Observable<Territory> {
+  loadCurrentTerritory(): Observable<TerritoryInterface> {
     return this.auth.check().pipe(
       mergeMap((user: User) => {
-        if (!user || !user.territory_id) return of<Territory>(null);
+        if (!user || !user.territory_id) return of<TerritoryInterface>(null);
         return this.territoryApiService.getById(user.territory_id);
       }),
       tap((territory) => this._currentTerritory$.next(territory)),
@@ -122,7 +122,7 @@ export class CommonDataService {
     );
   }
 
-  loadTerritories(): Observable<Territory[]> {
+  loadTerritories(): Observable<TerritoryInterface[]> {
     return this.territoryApiService.getList().pipe(
       map((territories) => {
         return territories.data.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name));

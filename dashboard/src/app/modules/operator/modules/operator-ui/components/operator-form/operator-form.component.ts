@@ -1,25 +1,23 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { filter, takeUntil, tap, map, throttleTime } from 'rxjs/operators';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
-
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { Address, Bank, Company, Operator } from '~/core/entities/operator/operator';
-import { FormAddress } from '~/shared/modules/form/forms/form-address';
-import { FormCompany } from '~/shared/modules/form/forms/form-company';
-import { FormContact } from '~/shared/modules/form/forms/form-contact';
-import { Contact } from '~/core/entities/shared/contact';
-import { FormBank } from '~/shared/modules/form/forms/form-bank';
-import { bankValidator } from '~/shared/modules/form/validators/bank.validator';
+import { filter, map, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Groups } from '~/core/enums/user/groups';
-import { CompanyService } from '~/modules/company/services/company.service';
-import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
+import { Address, Bank, Company, Operator } from '~/core/entities/operator/operator';
+import { Groups } from '~/core/enums/user/groups';
 import { Roles } from '~/core/enums/user/roles';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CompanyService } from '~/modules/company/services/company.service';
+import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
+import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
+import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
+import { FormBank } from '../../../../../../shared/modules/form/forms/form-bank';
+import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
+import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
+import { bankValidator } from '../../../../../../shared/modules/form/validators/bank.validator';
 
 @Component({
   selector: 'app-operator-form',
@@ -167,9 +165,9 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   private initOperatorForm(): void {
     let formOptions: any = {
       contacts: this.fb.group({
-        gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        gdpr_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+        gdpr_dpo: this.fb.group(new FormContact()),
+        gdpr_controller: this.fb.group(new FormContact()),
+        technical: this.fb.group(new FormContact()),
       }),
       thumbnail: [null],
     };

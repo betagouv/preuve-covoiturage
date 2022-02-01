@@ -1,27 +1,23 @@
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 import { BehaviorSubject, merge } from 'rxjs';
 import { debounceTime, takeUntil, tap } from 'rxjs/operators';
-
-import { MatPaginator } from '@angular/material/paginator';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-
-import { Territory } from '~/core/entities/territory/territory';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+
 @Component({
   selector: 'app-territory-list-view',
   templateUrl: './territory-list-view.component.html',
   styleUrls: ['./territory-list-view.component.scss'],
 })
 export class TerritoryListViewComponent extends DestroyObservable implements OnInit, AfterViewInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
   public readonly PAGE_SIZE = 25;
+  public territoriesToShow: TerritoryInterface[];
 
   private _filterLiteral = new BehaviorSubject('');
-  isFormVisible = false;
-  territoryToEdit: Territory = null;
-
-  public territoriesToShow: Territory[];
-
-  @ViewChild(MatPaginator) paginator: MatPaginator;
   private _countTerritories = 0;
 
   constructor(private territoryStoreService: TerritoryStoreService) {
@@ -29,23 +25,9 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
   }
 
   ngOnInit(): void {
-    // bind and load all territories
     this.territoryStoreService.entities$
       .pipe(takeUntil(this.destroy$))
       .subscribe((data) => (this.territoriesToShow = data));
-    this.loadTerritories();
-
-    // load single entity
-    this.territoryStoreService.unselect();
-    this.territoryStoreService.entity$.subscribe((entity) => {
-      this.territoryToEdit = entity;
-      this.isFormVisible = !!entity;
-    });
-  }
-
-  // onclick: select new
-  onClickCreate(): void {
-    this.territoryStoreService.selectNew();
   }
 
   ngAfterViewInit(): void {
@@ -76,17 +58,5 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
 
   pipeFilter(literal: any): void {
     this._filterLiteral.next(literal);
-  }
-
-  onEdit(territory: any): void {
-    this.territoryStoreService.select(territory);
-  }
-
-  onClose(): void {
-    this.territoryStoreService.unselect();
-  }
-
-  loadTerritories(): void {
-    this.territoryStoreService.loadList();
   }
 }

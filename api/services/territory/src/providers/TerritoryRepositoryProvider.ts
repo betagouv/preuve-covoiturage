@@ -1,20 +1,20 @@
-import { provider, NotFoundException, KernelInterfaceResolver, ConflictException } from '@ilos/common';
+import { KernelInterfaceResolver, NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-
 import {
-  TerritoryRepositoryProviderInterfaceResolver,
-  TerritoryRepositoryProviderInterface,
+  CreateParamsInterface,
+  CreateResultInterface,
   FindParamsInterface,
   FindResultInterface,
-  ListResultInterface,
   ListParamsInterface,
-  UpdateResultInterface,
-  UpdateParamsInterface,
-  PatchContactsResultInterface,
+  ListResultInterface,
   PatchContactsParamsInterface,
-  CreateResultInterface,
-  CreateParamsInterface,
+  PatchContactsResultInterface,
+  TerritoryRepositoryProviderInterface,
+  TerritoryRepositoryProviderInterfaceResolver,
+  UpdateParamsInterface,
+  UpdateResultInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
+import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -29,7 +29,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     const result = await this.connection.getClient().query({
       text: `
         SELECT
-          _id, created_at, updated_at, name, shortname, level, company_id, contacts
+          _id, created_at, updated_at, name, level, company_id, contacts
         FROM ${this.table}
         WHERE 
           _id = $1 AND 
@@ -43,16 +43,6 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     }
 
     return result.rows[0];
-  }
-
-  async hasDoubleSiretThenFail(siret: string, id = 0): Promise<void> {
-    const query = {
-      text: `SELECT * from ${this.table} WHERE siret = $1 AND _id != $2 `,
-      values: [siret, id],
-    };
-
-    const rowCount = (await this.connection.getClient().query(query)).rowCount;
-    if (rowCount !== 0) throw new ConflictException(`Double siret is not allowed for territory ${id}`);
   }
 
   async list(params: ListParamsInterface): Promise<ListResultInterface> {
@@ -97,16 +87,15 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   }
 
   async create(data: CreateParamsInterface): Promise<CreateResultInterface> {
-    const fields = ['name', 'shortname', 'level', 'contacts', 'address', 'active', 'activable'];
+    const fields = ['name', 'level', 'contacts', 'address', 'active', 'activable'];
 
     const values: any[] = [
       data.name,
-      data.shortname || '',
-      data.level,
+      TerritoryLevelEnum.Towngroup, // level
       data.contacts || '{}',
       data.address || '{}',
-      data.active,
-      data.activable,
+      true, // active
+      true, // activable,
     ];
 
     if (data.company_id) {
@@ -171,16 +160,15 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   }
 
   async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
-    const fields = ['name', 'shortname', 'level', 'contacts', 'address', 'active', 'activable', 'company_id'];
+    const fields = ['name', 'level', 'contacts', 'address', 'active', 'activable', 'company_id'];
 
     const values: any[] = [
       data.name,
-      data.shortname || '',
       data.level,
       data.contacts || '{}',
       data.address || '{}',
-      data.active,
-      data.activable,
+      true, // active
+      true, // activable
       data.company_id ? data.company_id : null,
     ];
 

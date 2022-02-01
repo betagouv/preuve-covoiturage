@@ -6,10 +6,8 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 
-import { SharedModule } from '~/shared/shared.module';
 import { AuthGuard } from '~/core/guards/auth-guard.service';
 import { ConfirmDialogComponent } from '~/core/components/dialog/confirm-dialog.component';
-import { MaterialModule } from '~/shared/modules/material/material.module';
 
 // eslint-disable-next-line
 import { AuthenticatedLayoutComponent } from './components/authenticated-layout/authenticated-layout.component';
@@ -20,6 +18,8 @@ import { SentryErrorHandler } from './services/sentry-error-handler.service';
 import { ServiceUnavailableComponent } from './components/service-unavailable/service-unavailable.component';
 // eslint-disable-next-line
 import { NotAuthenticatedLayoutComponent } from './components/not-authenticated-layout/not-authenticated-layout.component';
+import { MaterialModule } from '../shared/modules/material/material.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [

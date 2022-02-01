@@ -1,50 +1,89 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { finalize, map, takeUntil, tap } from 'rxjs/operators';
-import { Contacts } from '~/core/entities/shared/contacts';
-import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
-import { CrudStore } from '~/core/services/store/crud-store';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { debounceTime, finalize, skip } from 'rxjs/operators';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { PaginationState } from '../../../core/services/store/PaginationState';
+import { StoreLoadingState } from '../../../core/services/store/StoreLoadingState';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TerritoryStoreService extends CrudStore<
-  Territory,
-  Territory,
-  any,
-  TerritoryApiService,
-  TerritoryFormModel
-> {
+export class TerritoryStoreService {
   constructor(protected territoryApi: TerritoryApiService) {
-    super(territoryApi, Territory);
+    this._setupFilterSubject();
   }
 
-  patchContact(contactFormData: any, id: number): Observable<Territory> {
-    return this.rpcCrud.patchContact({ patch: new Contacts(contactFormData), _id: id }).pipe(
-      tap((territory) => {
-        this.entitySubject.next(territory);
-        this.loadList();
-      }),
-    );
+  private entitiesSubject = new BehaviorSubject<TerritoryInterface[]>([]);
+
+  private readonly DEFAULT_PAGINATION = {
+    total: 0,
+    limit: 0,
+    offset: 0,
+  };
+
+  private paginationSubject = new BehaviorSubject<PaginationState>(this.DEFAULT_PAGINATION);
+
+  private _isError: boolean;
+  private _isLoaded = false;
+
+  private _entities$ = this.entitiesSubject.asObservable();
+  private _pagination$ = this.paginationSubject.asObservable();
+
+  private _listLoadingState = new BehaviorSubject<StoreLoadingState>(StoreLoadingState.Off);
+  private _filterSubject = new BehaviorSubject<any>(null);
+
+  get entities$(): Observable<TerritoryInterface[]> {
+    return this._entities$;
   }
 
-  public getById(id: number): Observable<Territory> {
-    this.dismissGetSubject.next();
-    this._loadCount += 1;
-    return (this.rpcCrud as TerritoryApiService)
-      .get({
-        _id: id,
-      })
+  get pagination$(): Observable<PaginationState> {
+    return this._pagination$;
+  }
+
+  get filterSubject(): BehaviorSubject<any> {
+    return this._filterSubject;
+  }
+
+  get finalFilterValue(): any {
+    return this.filterSubject.value;
+  }
+
+  get isLoading(): boolean {
+    return !this._isLoaded;
+  }
+
+  private _setupFilterSubject() {
+    this._filterSubject.pipe(debounceTime(100), skip(1)).subscribe((filt) => {
+      this.loadList();
+    });
+  }
+
+  loadList(): Observable<StoreLoadingState> {
+    this._isLoaded = false;
+    this._listLoadingState.next(StoreLoadingState.LoadStart);
+    this.territoryApi
+      .getList(this.finalFilterValue)
       .pipe(
         finalize(() => {
-          if (this._loadCount > 0) this._loadCount -= 1;
+          this._listLoadingState.next(StoreLoadingState.LoadComplete);
         }),
-        takeUntil(this.dismissGetSubject),
-        map((entity) => new this.modelType().map(entity)),
-        tap((entity) => {
-          this.entitySubject.next(entity);
-        }),
+      )
+      .subscribe(
+        (list) => {
+          this.entitiesSubject.next(list.data);
+          this._isLoaded = true;
+          this._isError = false;
+
+          this.paginationSubject.next(
+            list.meta && list.meta.pagination ? list.meta.pagination : this.DEFAULT_PAGINATION,
+          );
+        },
+        (error) => {
+          this._isError = true;
+          this._isLoaded = true;
+        },
       );
+    return this._listLoadingState.asObservable();
   }
 }

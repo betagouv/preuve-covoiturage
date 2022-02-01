@@ -10,8 +10,8 @@ import { OperatorUiModule } from '~/modules/operator/modules/operator-ui/operato
 import { OperatorModule } from '~/modules/operator/operator.module';
 import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/territory-ui.module';
 import { ProfileUiModule } from '~/modules/user/modules/profile-ui/profile-ui.module';
-import { MaterialModule } from '~/shared/modules/material/material.module';
-import { SharedModule } from '~/shared/shared.module';
+import { MaterialModule } from '../../shared/modules/material/material.module';
+import { SharedModule } from '../../shared/shared.module';
 import { CertificateModule } from '../certificate/certificate.module';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
 import { AdministrationRoutingModule } from './administration-routing.module';

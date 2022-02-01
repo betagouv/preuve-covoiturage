@@ -6,8 +6,8 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { Operator } from '~/core/entities/operator/operator';
-import { LightTripInterface } from 'shared/trip/common/interfaces/LightTripInterface';
 import { TOOLTIPS } from '~/core/const/tooltips.const';
+import { LightTripInterface } from '../../../../../../core/entities/api/shared/trip/common/interfaces/LightTripInterface';
 
 @Component({
   selector: 'app-trip-table',

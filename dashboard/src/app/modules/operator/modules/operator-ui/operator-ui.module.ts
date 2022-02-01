@@ -6,10 +6,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 
 // eslint-disable-next-line
 import { OperatorImportComponent } from '~/modules/operator/modules/operator-ui/components/operator-import/operator-import.component';
-import { SharedModule } from '~/shared/shared.module';
-import { FormModule } from '~/shared/modules/form/form.module';
-import { DetailsModule } from '~/shared/modules/details/details.module';
-import { MaterialModule } from '~/shared/modules/material/material.module';
 
 import { OperatorsAutocompleteComponent } from './components/operators-autocomplete/operators-autocomplete.component';
 import { OperatorFormComponent } from './components/operator-form/operator-form.component';
@@ -20,6 +16,10 @@ import { OperatorFilterComponent } from './components/operator-filter/operator-f
 import { OperatorDetailsComponent } from './components/operator-details/operator-details.component';
 import { OperatorLogoUploadComponent } from './components/operator-logo-upload/operator-logo-upload.component';
 import { OperatorsCheckboxesComponent } from './components/operators-checkboxes/operators-checkboxes.component';
+import { DetailsModule } from '../../../../shared/modules/details/details.module';
+import { FormModule } from '../../../../shared/modules/form/form.module';
+import { MaterialModule } from '../../../../shared/modules/material/material.module';
+import { SharedModule } from '../../../../shared/shared.module';
 
 @NgModule({
   declarations: [

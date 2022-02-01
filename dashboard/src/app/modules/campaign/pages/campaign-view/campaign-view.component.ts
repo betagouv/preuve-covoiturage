@@ -1,20 +1,18 @@
-import { of } from 'rxjs';
-import { ToastrService } from 'ngx-toastr';
-import { bufferTime, concatMap, map, take, takeUntil } from 'rxjs/operators';
-
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-
-import { Territory } from '~/core/entities/territory/territory';
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { ToastrService } from 'ngx-toastr';
+import { of } from 'rxjs';
+import { bufferTime, concatMap, map, take, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
-import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { DialogService } from '~/core/services/dialog.service';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { Roles } from '~/core/enums/user/roles';
 import { catchHttpError } from '~/core/operators/catchHttpStatus';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { DialogService } from '~/core/services/dialog.service';
+import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 
 @Component({
   selector: 'app-campaign-view',
@@ -22,7 +20,7 @@ import { catchHttpError } from '~/core/operators/catchHttpStatus';
   styleUrls: ['./campaign-view.component.scss'],
 })
 export class CampaignViewComponent extends DestroyObservable implements OnInit {
-  public territory: Territory;
+  public territory: TerritoryInterface;
   public campaignUx: CampaignUx;
   public showSummary = false;
   public isLoaded = false;
@@ -78,10 +76,10 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
           return of(campaign.territory_id);
         }),
         // fetch the territory data
-        concatMap((_id) => this._territoryApi.get({ _id })),
+        concatMap((_id) => this._territoryApi.getById(_id)),
         takeUntil(this.destroy$),
       )
-      .subscribe((territory: Territory) => {
+      .subscribe((territory: TerritoryInterface) => {
         this.territory = territory;
         this.isLoaded = true;
       });
