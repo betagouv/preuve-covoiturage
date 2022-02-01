@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { pEvent } from 'p-event';
+import pEvent from 'p-event';
 import { RedisConnection } from './RedisConnection';
 
 interface Context {
