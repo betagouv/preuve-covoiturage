@@ -1,10 +1,20 @@
-import anyTest from 'ava';
+import anyTest, { TestFn } from 'ava';
 
-import { datetimeIdentityCheckMacro } from './datetimeIdentityCheckMacro';
+import { datetimeIdentityCheckMacro, DatetimeIdentityCheckMacroContext } from './datetimeIdentityCheckMacro';
 import { ServiceProvider } from '../../../ServiceProvider';
 import { DatetimeIdentitySequenceCheck } from './DatetimeIdentitySequenceCheck';
 
-const { test, range } = datetimeIdentityCheckMacro(anyTest, ServiceProvider, DatetimeIdentitySequenceCheck);
+const { before, after, range } = datetimeIdentityCheckMacro(ServiceProvider, DatetimeIdentitySequenceCheck);
+const test = anyTest as TestFn<DatetimeIdentityCheckMacroContext>;
+
+test.before(async (t) => {
+  const { kernel } = await before();
+  t.context.kernel = kernel;
+});
+
+test.after.always(async (t) => {
+  await after({ kernel: t.context.kernel });
+});
 
 test('max', range, [{ interval: 0 }], 1, 1);
 test('min', range, [{ interval: 600 }], 0, 0);

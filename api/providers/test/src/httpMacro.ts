@@ -1,34 +1,32 @@
 import { ContextType, ParamsType, TransportInterface, ResultType } from '@ilos/common';
-import { Macro, TestInterface, ExecutionContext } from 'ava';
-import supertest from 'supertest';
+import test, { ExecutionContext, Macro } from 'ava';
+import supert from 'supertest';
 
 type transportCtorType = (type: string, ...opts: string[]) => Promise<TransportInterface>;
 
-interface HttpInterface {
+export interface HttpMacroContext {
   transport: TransportInterface;
-  supertest: supertest.SuperTest<supertest.Test>;
+  supertest: supert.SuperTest<supert.Test>;
   request: <P = ParamsType, R = ResultType>(method: string, params: P, context: Partial<ContextType>) => Promise<R>;
 }
 
-export function httpMacro<TestContext = unknown>(
-  anyTest: TestInterface,
-  transportCtor: transportCtorType,
-): {
-  test: TestInterface<TestContext & HttpInterface>;
-  query: Macro<[string, any, any, any], TestContext & HttpInterface>;
-} {
-  const test = anyTest as TestInterface<TestContext & HttpInterface>;
+interface HttpMacroInterface<C = unknown> {
+  before(): Promise<HttpMacroContext>;
+  after(ctxt: HttpMacroContext): Promise<void>;
+  query: Macro<[string, any, any, any], HttpMacroContext & C>;
+}
 
-  test.before(async (t) => {
-    t.context.transport = await transportCtor('http', '0');
-    t.context.supertest = supertest(t.context.transport.getInstance());
-    t.context.request = async <P = ParamsType>(method: string, params: P, context: Partial<ContextType>) => {
+export function httpMacro<TestContext = unknown>(transportCtor: transportCtorType): HttpMacroInterface<TestContext> {
+  async function before() {
+    const transport = await transportCtor('http', '0');
+    const supertest = supert(transport.getInstance());
+    const request = async <P = ParamsType>(method: string, params: P, context: Partial<ContextType>) => {
       const mergedContext: ContextType = {
         call: { user: {}, ...context.call },
         channel: { service: '', ...context.channel },
       };
 
-      const result = await t.context.supertest
+      const result = await supertest
         .post('/')
         .set('Accept', 'application/json')
         .set('Content-type', 'application/json')
@@ -44,26 +42,36 @@ export function httpMacro<TestContext = unknown>(
 
       return result.body;
     };
-  });
+    return {
+      transport,
+      supertest,
+      request,
+    };
+  }
 
-  test.after.always(async (t) => {
-    await t.context.transport.down();
-  });
+  async function after(ctxt: HttpMacroContext) {
+    await ctxt.transport.down();
+  }
 
-  const query: Macro<[string, any, any, any], TestContext & HttpInterface> = async (
-    t: ExecutionContext<TestContext & HttpInterface>,
-    method: string,
-    params: any,
-    context: any,
-    result: any,
-  ) => {
-    const response = await t.context.request(method, params, context);
-    t.like(response, result);
-  };
-  query.title = (providedTitle = ''): string => `${providedTitle} boot`.trim();
+  const query: Macro<[string, any, any, any], TestContext & HttpMacroContext> = test.macro({
+    async exec(
+      t: ExecutionContext<TestContext & HttpMacroContext>,
+      method: string,
+      params: any,
+      context: any,
+      result: any,
+    ) {
+      const response = await t.context.request(method, params, context);
+      t.like(response, result);
+    },
+    title(providedTitle = '', method: string) {
+      return `${providedTitle}: calling ${method}`;
+    },
+  });
 
   return {
     query,
-    test,
+    before,
+    after,
   };
 }

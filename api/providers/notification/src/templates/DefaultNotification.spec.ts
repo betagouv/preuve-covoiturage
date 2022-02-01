@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
 import { Extensions } from '@ilos/core';
 import { HandlebarsTemplateProvider } from '@pdc/provider-template';
@@ -16,7 +16,7 @@ interface TestContext {
   stub: sinon.SinonStubbedInstance<Mail>;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 test.beforeEach(async (t) => {
   class NotificationOverride extends NotificationMailTransporter {

@@ -1,34 +1,44 @@
 import { ServiceContainerInterface, NewableType } from '@ilos/common';
-import { Macro, TestInterface, ExecutionContext } from 'ava';
+import anyTest, { Macro, TestFn } from 'ava';
 
-import { makeKernel, KernelTestInterface } from './helpers';
+import { KernelTestFn, KernelBeforeAfter, makeKernelBeforeAfter } from './helpers';
 
-export function serviceProviderMacro<TestContext = unknown>(
-  anyTest: TestInterface,
+export type ServiceProviderMacroContext = KernelTestFn;
+
+interface ServiceProviderMacroInterface<C = unknown> extends KernelBeforeAfter {
+  boot: Macro<[], ServiceProviderMacroContext & C>;
+  test: TestFn<KernelTestFn>;
+}
+
+export function serviceProviderMacro<C = unknown>(
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
-): {
-  test: TestInterface<TestContext & KernelTestInterface>;
-  boot: Macro<[], TestContext & KernelTestInterface>;
-} {
-  const test = anyTest as TestInterface<TestContext & KernelTestInterface>;
+): ServiceProviderMacroInterface<C> {
+  const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
+
+  const boot = anyTest.macro({
+    exec(t) {
+      t.pass();
+    },
+    title(providedTitle = '') {
+      return `${providedTitle} boot`.trim();
+    },
+  });
+
+  const test = anyTest as TestFn<KernelTestFn>;
 
   test.before(async (t) => {
-    t.context.kernel = makeKernel(serviceProviderCtor);
+    const { kernel } = await before();
+    t.context.kernel = kernel;
   });
 
   test.after.always(async (t) => {
-    await t.context.kernel.shutdown();
+    await after({ kernel: t.context.kernel });
   });
-
-  const boot: Macro<[], TestContext & KernelTestInterface> = async (
-    t: ExecutionContext<TestContext & KernelTestInterface>,
-  ) => {
-    await t.notThrowsAsync(async () => t.context.kernel.bootstrap());
-  };
-  boot.title = (providedTitle = ''): string => `${providedTitle} boot`.trim();
 
   return {
     boot,
+    before,
+    after,
     test,
   };
 }

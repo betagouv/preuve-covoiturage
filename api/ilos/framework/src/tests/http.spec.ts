@@ -1,6 +1,6 @@
 import axios from 'axios';
 import getPort from 'get-port';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 
 import { HttpTransport } from '@ilos/transport-http';
 import { httpHandlerFactory } from '@ilos/handler-http';
@@ -20,7 +20,7 @@ interface Context {
   stringPort: number;
 }
 
-const test = anyTest as TestInterface<Context>;
+const test = anyTest as TestFn<Context>;
 
 test.before(async (t) => {
   t.context.mathPort = await getPort();

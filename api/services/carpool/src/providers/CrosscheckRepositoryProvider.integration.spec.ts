@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { CrosscheckRepositoryProvider } from './CrosscheckRepositoryProvider';
@@ -8,7 +8,7 @@ interface TestContext {
   repository: CrosscheckRepositoryProvider;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 test.before.skip(async (t) => {
   t.context.connection = new PostgresConnection({

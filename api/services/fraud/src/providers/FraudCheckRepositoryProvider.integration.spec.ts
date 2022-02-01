@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { FraudCheckRepositoryProvider } from './FraudCheckRepositoryProvider';
@@ -14,7 +14,7 @@ interface TestContext {
   data: FraudCheck[];
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 test.before.skip(async (t) => {
   t.context.connection = new PostgresConnection({ connectionString: process.env.APP_POSTGRES_URL });
@@ -92,7 +92,7 @@ test.serial.skip('Should get fraudcheck entries', async (t) => {
   t.log(data);
   t.deepEqual(data, {
     acquisition_id: t.context.acquisition_id,
-    status: 'error',
+    status: FraudCheckStatusEnum.Error,
     karma: 0,
     data: t.context.data,
   });

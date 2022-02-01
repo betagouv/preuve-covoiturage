@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import pino from 'pino';
+import { isMainThread } from 'worker_threads';
 
 import {
   kernel,
@@ -52,7 +53,8 @@ export class Bootstrap {
   static setPaths(): void {
     process.env.APP_ROOT_PATH = process.cwd();
     const workingPath = Bootstrap.getWorkingPath();
-    if (fs.existsSync(workingPath)) {
+    // process.chdir is unavailable on child thread
+    if (fs.existsSync(workingPath) && workingPath !== process.cwd() && isMainThread) {
       process.chdir(workingPath);
     }
     process.env.APP_WORKING_PATH = process.cwd();

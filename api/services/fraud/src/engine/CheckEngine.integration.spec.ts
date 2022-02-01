@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { makeKernel } from '@pdc/helper-test';
 
 import { ServiceProvider } from '../ServiceProvider';
@@ -13,7 +13,7 @@ interface TestContext {
   acquisitionId: number;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 test.before(async (t) => {
   t.context.acquisitionId = 1;

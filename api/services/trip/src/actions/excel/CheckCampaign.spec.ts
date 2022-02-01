@@ -1,5 +1,5 @@
 import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../../helpers/fakeCampaign.helper.spec';
@@ -21,7 +21,7 @@ interface Context {
   checkCampaign: CheckCampaign;
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.kernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();

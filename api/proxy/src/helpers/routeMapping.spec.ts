@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import supertest from 'supertest';
 import { Kernel as AbstractKernel } from '@ilos/core';
 import express from 'express';
@@ -21,7 +21,7 @@ class Kernel extends AbstractKernel {
   }
 }
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   kernel: KernelInterface;
   routeMap: (ObjectRouteMapType | ArrayRouteMapType)[];
   app: any;

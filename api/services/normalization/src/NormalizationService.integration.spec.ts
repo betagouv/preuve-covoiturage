@@ -1,9 +1,22 @@
-import anyTest from 'ava';
-import { httpMacro } from '@pdc/helper-test';
+import anyTest, { TestFn } from 'ava';
+import { httpMacro, HttpMacroContext } from '@pdc/helper-test';
 
 import { bootstrap } from './bootstrap';
 
-const { test, query } = httpMacro(anyTest, () => bootstrap.boot('http', 0));
+const test = anyTest as TestFn<HttpMacroContext>;
+const { before, after, query } = httpMacro(() => bootstrap.boot('http', 0));
+
+test.before.skip(async (t) => {
+  const { transport, supertest, request } = await before();
+  t.context.transport = transport;
+  t.context.supertest = supertest;
+  t.context.request = request;
+});
+
+test.after.always.skip(async (t) => {
+  const { transport, supertest, request } = t.context;
+  await after({ transport, supertest, request });
+});
 
 test.skip(
   'normalization succeeds in metropole',

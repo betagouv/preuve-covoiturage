@@ -1,5 +1,5 @@
 import { ContextType, KernelInterfaceResolver } from '@ilos/common';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
 import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
@@ -19,7 +19,7 @@ interface Context {
   activeCampaignExcelExportAction: ActiveCampaignExcelExportAction;
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();

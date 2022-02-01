@@ -1,4 +1,5 @@
 import { get } from 'lodash';
+import { URLSearchParams } from 'url';
 import axios from 'axios';
 import { NotFoundException, provider } from '@ilos/common';
 
@@ -26,7 +27,11 @@ export class PhotonProvider implements GeoCoderInterface {
   protected domain = 'https://photon.komoot.io/api';
 
   async literalToPosition(literal: string): Promise<PointInterface> {
-    const res: PhotonResponse = await axios.get(`${this.domain}/?q=${encodeURIComponent(literal)}&limit=1`);
+    const params = new URLSearchParams({
+      q: literal,
+      limit: '1',
+    });
+    const res: PhotonResponse = await axios.get(this.domain, { params });
 
     if (!get(res, 'data.features', []).length) {
       throw new NotFoundException(`Literal not found on Komoot (${literal})`);

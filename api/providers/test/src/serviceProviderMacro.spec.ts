@@ -1,8 +1,9 @@
-import anyTest from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { serviceProvider as serviceProviderDecorator } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 
 import { serviceProviderMacro } from './serviceProviderMacro';
+import { ServiceProviderMacroContext } from '.';
 
 @serviceProviderDecorator({})
 class ServiceProvider extends AbstractServiceProvider {}
@@ -11,10 +12,18 @@ interface CustomInterface {
   hi: string;
 }
 
-const { test, boot } = serviceProviderMacro<CustomInterface>(anyTest, ServiceProvider);
+const { before, after, boot } = serviceProviderMacro<CustomInterface>(ServiceProvider);
 
-test.before((t) => {
+const test = anyTest as TestFn<CustomInterface & ServiceProviderMacroContext>;
+
+test.before(async (t) => {
+  const { kernel } = await before();
+  t.context.kernel = kernel;
   t.context.hi = 'you';
+});
+
+test.after(async (t) => {
+  await after({ kernel: t.context.kernel });
 });
 
 test(boot);

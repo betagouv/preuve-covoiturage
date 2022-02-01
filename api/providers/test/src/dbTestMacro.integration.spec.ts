@@ -1,27 +1,37 @@
 import { get } from 'lodash';
-import { dbTestMacro, MacroTestContext } from './dbTestMacro';
-import test, { ExecutionContext } from 'ava';
+import { dbBeforeMacro, dbAfterMacro, DbContextInterface, getDbMacroConfig } from './dbTestMacro';
+import anyTest, { TestFn } from 'ava';
 
-const { test: macroTest } = dbTestMacro(test);
+const test = anyTest as TestFn<DbContextInterface>;
+
+test.before(async (t) => {
+  const config = getDbMacroConfig();
+  t.context = await dbBeforeMacro(config);
+});
+
+test.after(async (t) => {
+  await dbAfterMacro(t.context);
+});
 
 // create a macro
-const members = async (t: ExecutionContext<MacroTestContext>, table: string, expected: number): Promise<void> => {
-  const res = await t.context.pool.query(`select count(*) from ${table}`);
-  t.is(res.rowCount, 1);
-  t.is(Number(get(res.rows[0], 'count', -1)), expected);
-};
-
-// set the macro title dynamically
-members.title = (providedTitle: string | undefined, table: string, expected: number): string =>
-  providedTitle || `Check ${table} has ${expected} members`;
+const members = test.macro({
+  exec: async (t, table: string, expected: number) => {
+    const res = await t.context.tmpConnection.getClient().query(`select count(*) from ${table}`);
+    t.is(res.rowCount, 1);
+    t.is(Number(get(res.rows[0], 'count', -1)), expected);
+  },
+  title(providedTitle = '', table: string, expected: number) {
+    return providedTitle || `Check ${table} has ${expected} members`;
+  },
+});
 
 // run tests
-macroTest.serial.skip(members, 'common.roles', 7);
-macroTest.serial.skip(members, 'auth.users', 10);
-macroTest.serial.skip(members, 'company.companies', 4);
-macroTest.serial.skip(members, 'operator.operators', 2);
-macroTest.serial.skip(members, 'application.applications', 2);
-macroTest.serial.skip(members, 'territory.territories', 60);
-macroTest.serial.skip(members, 'carpool.identities', 10);
-macroTest.serial.skip(members, 'acquisition.acquisitions', 100);
-macroTest.serial.skip(members, 'carpool.carpools', 100 * 2);
+test.serial(members, 'common.roles', 7);
+test.serial(members, 'auth.users', 10);
+test.serial(members, 'company.companies', 4);
+test.serial(members, 'operator.operators', 2);
+test.serial(members, 'application.applications', 2);
+test.serial(members, 'territory.territories', 60);
+test.serial(members, 'carpool.identities', 10);
+test.serial(members, 'acquisition.acquisitions', 100);
+test.serial(members, 'carpool.carpools', 100 * 2);

@@ -1,16 +1,16 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { CompanyRepositoryProvider } from './CompanyRepositoryProvider';
 import { CompanyInterface } from '../shared/common/interfaces/CompanyInterface2';
 
-interface RepositoryTestInterface {
+interface RepositoryTestFn {
   connection: PostgresConnection;
   repository: CompanyRepositoryProvider;
   data: CompanyInterface;
 }
 
-const test = anyTest as TestInterface<RepositoryTestInterface>;
+const test = anyTest as TestFn<RepositoryTestFn>;
 
 test.before.skip(async (t) => {
   t.context.data = {

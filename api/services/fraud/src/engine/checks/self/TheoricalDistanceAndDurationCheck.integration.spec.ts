@@ -1,10 +1,8 @@
-import anyTest from 'ava';
-
 import { selfCheckMacro } from './selfCheckMacro';
 import { ServiceProvider } from '../../../ServiceProvider';
 import { TheoricalDistanceAndDurationCheck } from './TheoricalDistanceAndDurationCheck';
 
-const { test, range } = selfCheckMacro(anyTest, ServiceProvider, TheoricalDistanceAndDurationCheck);
+const { test, range } = selfCheckMacro(ServiceProvider, TheoricalDistanceAndDurationCheck);
 
 test('max by distance', range, { driver_distance: 1, driver_calc_distance: 1000 }, 0.99, 1);
 test('min by distance', range, {}, 0, 0);

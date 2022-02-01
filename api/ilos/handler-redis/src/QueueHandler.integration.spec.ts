@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { RedisConnection } from '@ilos/connection-redis';
 import { QueueHandler } from './QueueHandler';
 import { queueHandlerFactory } from './helpers/queueHandlerFactory';
@@ -9,7 +9,7 @@ interface Context {
   context: ContextType;
 }
 
-const test = anyTest as TestInterface<Context>;
+const test = anyTest as TestFn<Context>;
 
 test.beforeEach(async (t) => {
   t.context.context = {

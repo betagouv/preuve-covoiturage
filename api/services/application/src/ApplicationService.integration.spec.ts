@@ -1,17 +1,27 @@
-import anyTest from 'ava';
-import { httpMacro } from '@pdc/helper-test';
+import anyTest, { TestFn } from 'ava';
+import { httpMacro, HttpMacroContext } from '@pdc/helper-test';
 
 import { bootstrap } from './bootstrap';
 
-interface TestContext {
+interface TestContext extends HttpMacroContext {
   application: any;
   operator_id: number;
 }
 
-const { test } = httpMacro<TestContext>(anyTest, () => bootstrap.boot('http', 0));
+const test = anyTest as TestFn<TestContext>;
+const { before, after } = httpMacro<TestContext>(() => bootstrap.boot('http', 0));
 
-test.before.skip((t) => {
+test.before.skip(async (t) => {
+  const { transport, supertest, request } = await before();
+  t.context.transport = transport;
+  t.context.supertest = supertest;
+  t.context.request = request;
   t.context.operator_id = Math.round(Math.random() * 1000);
+});
+
+test.after.always.skip(async (t) => {
+  const { transport, supertest, request } = t.context;
+  await after({ transport, supertest, request });
 });
 
 test.serial.skip('#1 - Creates an application', async (t) => {

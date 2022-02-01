@@ -20,7 +20,6 @@
     "@types/node": "^17.0.8",
     "@types/sinon": "^10.0.6",
     "db-migrate": "^0.11.13",
-    "db-migrate-pg": "^1.2.2",
-    "ts-node": "^10.4.0"
+    "db-migrate-pg": "^1.2.2"
   }
 }

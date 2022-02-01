@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { ConfigInterfaceResolver } from '@ilos/common';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { UploadedResource } from '../interfaces/DataGouvInterface';
@@ -27,7 +27,7 @@ interface Context {
   publishOpenDataAction: PublishOpenDataAction;
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 test.before((t) => {
   t.context.DATASET_SLUG = 'dataset-slugs';

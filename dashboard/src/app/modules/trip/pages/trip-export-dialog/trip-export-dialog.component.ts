@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { get } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { ParamsInterface as TripExportParamsInterface } from 'shared/trip/export.contract';
+import { ParamsInterface as TripExportParamsInterface } from '~/shared/trip/export.contract';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 

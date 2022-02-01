@@ -1,10 +1,8 @@
-import anyTest from 'ava';
-
 import { tripIdentityCheckMacro } from './tripIdentityCheckMacro';
 import { ServiceProvider } from '../../../ServiceProvider';
 import { TripIdentityFirstnameCollisionCheck } from './TripIdentityFirstnameCollisionCheck';
 
-const { test, range } = tripIdentityCheckMacro(anyTest, ServiceProvider, TripIdentityFirstnameCollisionCheck);
+const { test, range } = tripIdentityCheckMacro(ServiceProvider, TripIdentityFirstnameCollisionCheck);
 
 test('max', range, [{ firstname: 'Léon' }, { firstname: 'Léon' }], 1, 1);
 test('min', range, [{ firstname: 'Léon' }, { firstname: 'Maxime' }], 0, 0);

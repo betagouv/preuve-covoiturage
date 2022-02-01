@@ -1,10 +1,8 @@
-import anyTest from 'ava';
-
 import { tripIdentityCheckMacro } from './tripIdentityCheckMacro';
 import { ServiceProvider } from '../../../ServiceProvider';
 import { TripIdentityTravelpassCollisionCheck } from './TripIdentityTravelpassCollisionCheck';
 
-const { test, range } = tripIdentityCheckMacro(anyTest, ServiceProvider, TripIdentityTravelpassCollisionCheck);
+const { test, range } = tripIdentityCheckMacro(ServiceProvider, TripIdentityTravelpassCollisionCheck);
 
 test(
   'max',

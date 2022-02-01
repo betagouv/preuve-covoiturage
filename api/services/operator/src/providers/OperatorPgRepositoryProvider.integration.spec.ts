@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { Kernel as AbstractKernel } from '@ilos/framework';
 import { kernel as kernelDecorator } from '@ilos/common';
 
@@ -12,7 +12,7 @@ interface TestContext {
   _id: number;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 test.before.skip(async (t) => {
   @kernelDecorator({

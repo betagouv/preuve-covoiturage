@@ -1,4 +1,5 @@
 import { get } from 'lodash';
+import { URLSearchParams } from 'url';
 import axios from 'axios';
 import { NotFoundException, provider } from '@ilos/common';
 
@@ -9,7 +10,13 @@ export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInt
   protected domain = 'https://api-adresse.data.gouv.fr';
 
   async literalToPosition(literal: string): Promise<PointInterface> {
-    const res = await axios.get(`${this.domain}/search?q=${encodeURIComponent(literal)}&limit=1&autocomplete=0`);
+    const params = new URLSearchParams({
+      q: literal,
+      limit: '1',
+      autocomplete: '0',
+    });
+  
+    const res = await axios.get(`${this.domain}/search`, { params });
 
     if (!get(res, 'data.features', []).length) {
       throw new NotFoundException();
@@ -28,7 +35,12 @@ export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInt
   }
   async positionToInsee(geo: PointInterface): Promise<string> {
     const { lat, lon } = geo;
-    const res = await axios.get(`${this.domain}/reverse?lon=${lon}&lat=${lat}`);
+    const params = new URLSearchParams({
+      lat: lat.toString(),
+      lon: lon.toString(),
+    });
+  
+    const res = await axios.get(`${this.domain}/reverse`, { params });
 
     if (!get(res, 'data.features', []).length) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);

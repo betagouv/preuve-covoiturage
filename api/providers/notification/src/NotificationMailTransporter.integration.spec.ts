@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { Extensions } from '@ilos/core';
 import { createTestAccount } from 'nodemailer';
 import { NotificationMailTransporter } from './NotificationMailTransporter';
@@ -9,7 +9,7 @@ interface TestContext {
   transporter: NotificationMailTransporter;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 test.before(async (t) => {
   const account = await createTestAccount();

@@ -7,12 +7,13 @@
 
 import { get } from 'lodash';
 import supertest from 'supertest';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 
 import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TokenProvider } from '@pdc/provider-token';
-import { dbTestMacro, getDbConfig } from '@pdc/helper-test';
+import { dbBeforeMacro, dbAfterMacro, DbContextInterface, getDbMacroConfig } from '@pdc/helper-test';
+import { Kernel } from '../Kernel';
 
 import { HttpTransport } from '../HttpTransport';
 import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
@@ -24,29 +25,18 @@ interface ContextType {
   crypto: CryptoProvider;
   token: TokenProvider;
   auth: string;
+  db: DbContextInterface;
 }
-
-// super hackish way to change the connectionString before the Kernel is loaded
-const { pgConnectionString, database, tmpConnectionString } = getDbConfig();
-process.env.APP_POSTGRES_URL = tmpConnectionString;
-import { Kernel } from '../Kernel';
 
 // create a test to configure the 'after' hook
 // this must be done before using the macro to make sure this hook
 // runs before the one from the macro
-const myTest = anyTest as TestInterface<ContextType>;
-myTest.after.always(async (t) => {
-  // shutdown app and connections
-  await t.context.app.down();
-  await t.context.kernel.shutdown();
-});
+const test = anyTest as TestFn<ContextType>;
+const config = getDbMacroConfig();
+process.env.APP_POSTGRES_URL = config.tmpConnectionString;
 
-const { test } = dbTestMacro<ContextType>(myTest, {
-  database,
-  pgConnectionString,
-});
-
-test.before(async (t) => {
+test.before.skip(async (t) => {
+  t.context.db = await dbBeforeMacro(config);
   t.context.crypto = new CryptoProvider();
   t.context.token = new TokenProvider(new MockJWTConfigProvider());
   await t.context.token.init();
@@ -67,10 +57,14 @@ test.before(async (t) => {
   await t.context.app.up(['0']);
   t.context.request = supertest(t.context.app.getInstance());
 });
+test.after.always.skip(async (t) => {
+  // shutdown app and connections
+  await t.context.app.down();
+  await t.context.kernel.shutdown();
+  await dbAfterMacro(t.context.db);
+});
 
-test.serial('Generate a certificate', async (t) => {
-  t.pass(); // FIXME
-  return;
+test.serial.skip('Generate a certificate', async (t) => {
   const response = await t.context.request
     .post(`/v2/certificates`)
     .send({
@@ -83,9 +77,7 @@ test.serial('Generate a certificate', async (t) => {
   t.is(response.status, 201);
 });
 
-test.serial('Download the certificate', async (t) => {
-  t.pass(); // FIXME
-  return;
+test.serial.skip('Download the certificate', async (t) => {
   // create the certificate
   const createResponse = await t.context.request
     .post(`/v2/certificates`)

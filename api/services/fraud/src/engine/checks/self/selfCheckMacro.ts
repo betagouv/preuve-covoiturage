@@ -1,7 +1,6 @@
 import { NewableType, ServiceContainerInterface } from '@ilos/common';
-import { Macro, TestInterface, ExecutionContext } from 'ava';
-
-import { makeKernel, KernelTestInterface } from '@pdc/helper-test';
+import anyTest, { ExecutionContext, Macro, TestFn } from 'ava';
+import { makeKernelBeforeAfter, KernelBeforeAfter, KernelTestFn } from '@pdc/helper-test';
 
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { HandleCheckInterface } from '../../../interfaces';
@@ -39,50 +38,53 @@ export function faker(data: Partial<SelfCheckParamsInterface> = {}, deltaMode = 
   return defaultData;
 }
 
+interface SelfCheckMacroInterface extends KernelBeforeAfter {
+  range: Macro<[Partial<SelfCheckParamsInterface>, number, number, boolean?], KernelTestFn>;
+  test: TestFn<KernelTestFn>;
+}
+
+export type SelfCheckMacroContext = KernelTestFn;
 export function selfCheckMacro<TestContext = unknown>(
-  anyTest: TestInterface,
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
   checkCtor: NewableType<HandleCheckInterface<SelfCheckParamsInterface>>,
-): {
-  test: TestInterface<TestContext & KernelTestInterface>;
-  range: Macro<[Partial<SelfCheckParamsInterface>, number, number, boolean?], TestContext & KernelTestInterface>;
-} {
-  const test = anyTest as TestInterface<TestContext & KernelTestInterface>;
+): SelfCheckMacroInterface {
+  const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
+  const range: Macro<[Partial<SelfCheckParamsInterface>, number, number, boolean?], KernelTestFn> = anyTest.macro({
+    exec: async (
+      t: ExecutionContext<TestContext & KernelTestFn>,
+      input: Partial<SelfCheckParamsInterface>,
+      min: number,
+      max: number,
+      deltaMode?: boolean,
+    ) => {
+      const check = t.context.kernel
+        .get<ServiceContainerInterface>(serviceProviderCtor)
+        .get<HandleCheckInterface<SelfCheckParamsInterface>>(checkCtor);
+      const data = faker(input, deltaMode);
+      const result = await check.handle(data);
+      t.log(data);
+      t.log(result);
+      t.true(result >= min);
+      t.true(result <= max);
+    },
+    title: (providedTitle = ''): string => `${providedTitle} range`.trim(),
+  });
+
+  const test = anyTest as TestFn<KernelTestFn>;
 
   test.before(async (t) => {
-    t.context.kernel = makeKernel(serviceProviderCtor);
-    await t.context.kernel.bootstrap();
+    const { kernel } = await before();
+    t.context.kernel = kernel;
   });
 
   test.after.always(async (t) => {
-    await t.context.kernel.shutdown();
+    await after({ kernel: t.context.kernel });
   });
-
-  const range: Macro<
-    [Partial<SelfCheckParamsInterface>, number, number, boolean?],
-    TestContext & KernelTestInterface
-  > = async (
-    t: ExecutionContext<TestContext & KernelTestInterface>,
-    input: Partial<SelfCheckParamsInterface>,
-    min: number,
-    max: number,
-    deltaMode?: boolean,
-  ) => {
-    const check = t.context.kernel
-      .get<ServiceContainerInterface>(serviceProviderCtor)
-      .get<HandleCheckInterface<SelfCheckParamsInterface>>(checkCtor);
-    const data = faker(input, deltaMode);
-    const result = await check.handle(data);
-    t.log(data);
-    t.log(result);
-    t.true(result >= min);
-    t.true(result <= max);
-  };
-
-  range.title = (providedTitle = ''): string => `${providedTitle} range`.trim();
 
   return {
     range,
+    before,
+    after,
     test,
   };
 }

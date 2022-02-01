@@ -92,7 +92,7 @@ services:
       dockerfile: ./docker/api/prod/Dockerfile
       context: .
     environment:
-      DEBUG: '*'
+      LOG_LEVEL: 'debug'
       APP_APP_URL: https://app.covoiturage.test
       APP_JWT_SECRET: thisIsASecret0000
       APP_SESSION_SECRET: thisIsAlsoASecret0000

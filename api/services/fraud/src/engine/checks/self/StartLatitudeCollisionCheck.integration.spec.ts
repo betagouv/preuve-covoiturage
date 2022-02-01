@@ -1,10 +1,8 @@
-import anyTest from 'ava';
-
 import { selfCheckMacro } from './selfCheckMacro';
 import { ServiceProvider } from '../../../ServiceProvider';
 import { StartLatitudeCollisionCheck } from './StartLatitudeCollisionCheck';
 
-const { test, range } = selfCheckMacro(anyTest, ServiceProvider, StartLatitudeCollisionCheck);
+const { test, range } = selfCheckMacro(ServiceProvider, StartLatitudeCollisionCheck);
 
 test('max', range, { driver_start_lat: 1 }, 1, 1, true);
 test('min', range, {}, 0, 0);

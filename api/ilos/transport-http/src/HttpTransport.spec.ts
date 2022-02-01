@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import supertest from 'supertest';
 import { Kernel } from '@ilos/core';
 import { RPCCallType, RPCResponseType } from '@ilos/common';
@@ -10,7 +10,7 @@ interface Context {
   httpTransport: HttpTransport;
 }
 
-const test = anyTest as TestInterface<Context>;
+const test = anyTest as TestFn<Context>;
 
 test.before(async (t) => {
   class BasicKernel extends Kernel {

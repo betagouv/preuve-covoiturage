@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import getPort from 'get-port';
 import fs from 'fs';
 import os from 'os';
@@ -25,7 +25,7 @@ interface Context {
   stringPort: number;
 }
 
-const test = anyTest as TestInterface<Context>;
+const test = anyTest as TestFn<Context>;
 
 test.before(async (t) => {
   t.context.stringPort = await getPort();

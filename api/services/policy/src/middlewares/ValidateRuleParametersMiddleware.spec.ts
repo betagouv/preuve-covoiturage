@@ -1,4 +1,4 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { AjvValidator } from '@pdc/provider-validator';
 import { ConfigInterfaceResolver, InvalidParamsException, ContextType } from '@ilos/common';
 
@@ -10,7 +10,7 @@ interface TestContext {
   middleware: ValidateRuleParametersMiddleware;
 }
 
-const test = anyTest as TestInterface<TestContext>;
+const test = anyTest as TestFn<TestContext>;
 
 class Config extends ConfigInterfaceResolver {
   get(k: string, fb: any): any {

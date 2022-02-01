@@ -1,7 +1,6 @@
 import { NewableType, ServiceContainerInterface } from '@ilos/common';
-import { Macro, TestInterface, ExecutionContext } from 'ava';
-
-import { makeKernel, KernelTestInterface } from '@pdc/helper-test';
+import anyTest, { ExecutionContext, Macro, TestFn } from 'ava';
+import { makeKernelBeforeAfter, KernelBeforeAfter, KernelTestFn } from '@pdc/helper-test';
 
 import {
   SingleTripIdentityCheckParamsInterface,
@@ -24,53 +23,52 @@ export function faker(data: Partial<SingleTripIdentityCheckParamsInterface>): Si
 
   return { ...defaultData, ...data };
 }
+interface TripIdentityMacroInterface extends KernelBeforeAfter {
+  test: TestFn<KernelTestFn>;
+  range: Macro<[Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?], KernelTestFn>;
+}
 
+export type SelfCheckMacroContext = KernelTestFn;
 export function tripIdentityCheckMacro<TestContext = unknown>(
-  anyTest: TestInterface,
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
   checkCtor: NewableType<HandleCheckInterface<TripIdentityCheckParamsInterface>>,
-): {
-  test: TestInterface<TestContext & KernelTestInterface>;
-  range: Macro<
-    [Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?],
-    TestContext & KernelTestInterface
-  >;
-} {
-  const test = anyTest as TestInterface<TestContext & KernelTestInterface>;
+): TripIdentityMacroInterface {
+  const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
+  const range: Macro<[Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?], KernelTestFn> =
+    anyTest.macro({
+      exec: async (
+        t: ExecutionContext<TestContext & KernelTestFn>,
+        input: Partial<SingleTripIdentityCheckParamsInterface>[],
+        min: number,
+        max: number,
+      ) => {
+        const check = t.context.kernel
+          .get<ServiceContainerInterface>(serviceProviderCtor)
+          .get<HandleCheckInterface<TripIdentityCheckParamsInterface>>(checkCtor);
+        const data = input.map((i) => faker(i));
+        const result = await check.handle(data);
+        t.log(data);
+        t.log(result);
+        t.true(result >= min);
+        t.true(result <= max);
+      },
 
+      title: (providedTitle = ''): string => `${providedTitle} range`.trim(),
+    });
+
+  const test = anyTest as TestFn<KernelTestFn>;
   test.before(async (t) => {
-    t.context.kernel = makeKernel(serviceProviderCtor);
-    await t.context.kernel.bootstrap();
+    const { kernel } = await before();
+    t.context.kernel = kernel;
   });
-
   test.after.always(async (t) => {
-    await t.context.kernel.shutdown();
+    await after({ kernel: t.context.kernel });
   });
-
-  const range: Macro<
-    [Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?],
-    TestContext & KernelTestInterface
-  > = async (
-    t: ExecutionContext<TestContext & KernelTestInterface>,
-    input: Partial<SingleTripIdentityCheckParamsInterface>[],
-    min: number,
-    max: number,
-  ) => {
-    const check = t.context.kernel
-      .get<ServiceContainerInterface>(serviceProviderCtor)
-      .get<HandleCheckInterface<TripIdentityCheckParamsInterface>>(checkCtor);
-    const data = input.map((i) => faker(i));
-    const result = await check.handle(data);
-    t.log(data);
-    t.log(result);
-    t.true(result >= min);
-    t.true(result <= max);
-  };
-
-  range.title = (providedTitle = ''): string => `${providedTitle} range`.trim();
 
   return {
     range,
+    after,
+    before,
     test,
   };
 }
