@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { ConfigInterfaceResolver } from '@ilos/common';
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { DataGouvProvider } from '../../providers/DataGouvProvider';
 import { Dataset } from './../../../dist/interfaces/DataGouvInterface.d';
@@ -19,7 +19,7 @@ interface Context {
   EXISTING_RESOURCE_ID: string;
 }
 
-const test = anyTest as TestInterface<Partial<Context>>;
+const test = anyTest as TestFn<Partial<Context>>;
 
 test.before((t) => {
   t.context.EXISTING_RESOURCE_ID = '83d3b230-37da-46e0-8ec7-2faee41b5904';
