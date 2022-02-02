@@ -115,6 +115,8 @@ export interface UploadedResource extends Resource {
 }
 
 export interface DataGouvProviderInterface extends InitHookInterface {
-  uploadResources(slug: string, filepath: string): Promise<UploadedResource>;
+  getDataset(slug: string): Promise<Dataset>;
   updateResource(datasetSlug: string, resource: Resource): Promise<Resource>;
+  uploadDatasetResource(slug: string, filepath: string): Promise<UploadedResource>;
+  updateDatasetResource(slug: string, filepath: string, resourceId: string): Promise<UploadedResource>;
 }
