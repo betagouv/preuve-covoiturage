@@ -15,7 +15,7 @@ export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInt
       limit: '1',
       autocomplete: '0',
     });
-  
+
     const res = await axios.get(`${this.domain}/search`, { params });
 
     if (!get(res, 'data.features', []).length) {
@@ -33,13 +33,14 @@ export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInt
       lat,
     };
   }
+
   async positionToInsee(geo: PointInterface): Promise<string> {
     const { lat, lon } = geo;
     const params = new URLSearchParams({
       lat: lat.toString(),
       lon: lon.toString(),
     });
-  
+
     const res = await axios.get(`${this.domain}/reverse`, { params });
 
     if (!get(res, 'data.features', []).length) {

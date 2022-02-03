@@ -18,10 +18,10 @@ import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { CrudActions } from '~/core/services/api/json-rpc.crud';
 import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { JsonRPCError } from '../../../core/entities/api/jsonRPCError';
-import { JsonRPCOptions } from '../../../core/entities/api/jsonRPCOptions';
-import { JsonRPCResponse } from '../../../core/entities/api/jsonRPCResponse';
-import { TerritoryBaseInterface } from '../../../core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
+import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
+import { JsonRPCOptions } from '~/core/entities/api/jsonRPCOptions';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+import { TerritoryBaseInterface } from '~/core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
 
 @Injectable({
   providedIn: 'root',
