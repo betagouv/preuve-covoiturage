@@ -7,7 +7,7 @@ export interface ParamsInterface {
   context?: ContextType;
 }
 
-export type ResultsInterface = string;
+export type ResultsInterface = string[];
 
 export interface FindPersonInterface {
   (params: ParamsInterface): Promise<ResultsInterface>;
@@ -18,7 +18,7 @@ export const findPerson = (kernel: KernelInterface): FindPersonInterface =>
     const { identity, operator_id } = params;
 
     return kernel.call(
-      'carpool:finduuid',
+      'carpool:findidentities',
       { identity, operator_id },
       {
         channel: { service: 'certificate' },

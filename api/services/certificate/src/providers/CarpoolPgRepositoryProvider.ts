@@ -18,9 +18,9 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
    * Find all carpools for an identity on a given period of time
    */
   async find(params: FindParamsInterface): Promise<CarpoolInterface[]> {
-    const { personUUID, operator_id, tz, start_at, end_at, positions = [], radius = 1000 } = params;
+    const { uuidList, operator_id, tz, start_at, end_at, positions = [], radius = 1000 } = params;
 
-    const values: any[] = [personUUID, operator_id, start_at, end_at];
+    const values: any[] = [uuidList, operator_id, start_at, end_at];
 
     const where_positions = positions
       .reduce((prev: string[], pos: PointInterface): string[] => {
@@ -62,7 +62,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           WHERE tl.operator_id = $2::int
             AND cc.is_driver = true
             AND cc.status = 'ok'
-            AND tl.driver_id = $1::uuid
+            AND tl.driver_id = ANY($1::uuid[])
             AND tl.journey_start_datetime >= $3
             AND tl.journey_start_datetime < $4
             ${where_positions.length ? `AND (${where_positions})` : ''}
@@ -79,7 +79,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           WHERE tl.operator_id = $2::int
             AND cc.is_driver = false
             AND cc.status = 'ok'
-            AND tl.passenger_id = $1::uuid
+            AND tl.passenger_id = ANY($1::uuid[])
             AND tl.journey_start_datetime >= $3
             AND tl.journey_start_datetime < $4
             ${where_positions.length ? `AND (${where_positions})` : ''}
