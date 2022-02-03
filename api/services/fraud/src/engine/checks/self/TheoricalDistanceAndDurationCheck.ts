@@ -39,7 +39,7 @@ export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<S
     if (theorical === 0) {
       return 1;
     }
-    if (announced === 0) {
+    if (!announced) {
       return 0.5;
     }
 
