@@ -326,12 +326,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     ];
 
     // all except opendata
-    const financialFields = [
-      'passenger_id',
-      'passenger_contribution',
-      'driver_id',
-      'driver_revenue',
-    ];
+    const financialFields = ['passenger_id', 'passenger_contribution', 'driver_id', 'driver_revenue'];
 
     let selectedFields = [...baseFields];
     const values = [];

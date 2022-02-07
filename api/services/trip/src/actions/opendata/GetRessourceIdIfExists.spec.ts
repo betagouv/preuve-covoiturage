@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-import { ConfigInterfaceResolver } from '@ilos/common';
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { DataGouvProvider } from '../../providers/DataGouvProvider';
@@ -40,9 +39,7 @@ test.before((t) => {
 
 test.beforeEach((t) => {
   t.context.dataGouvProvider = new DataGouvProvider(null);
-  t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(
-    t.context.dataGouvProvider,
-  );
+  t.context.getRessourceIdIfExists = new GetRessourceIdIfExists(t.context.dataGouvProvider);
   t.context.dataGouvProviderStub = sinon.stub(t.context.dataGouvProvider, 'getDataset');
 });
 

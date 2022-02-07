@@ -1,8 +1,7 @@
 import { utcToZonedTime } from 'date-fns-tz';
 
 export function endOfMonth(date: Date = new Date(), tz?: string): Date {
-  const endOfMonth: Date = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-  endOfMonth.setHours(0, 0, 0, -1);
+  const endOfMonth: Date = new Date(date.getFullYear(), date.getMonth() + 1, 1, 0, 0, 0, -1);
   return tz ? utcToZonedTime(endOfMonth, tz) : endOfMonth;
 }
 
