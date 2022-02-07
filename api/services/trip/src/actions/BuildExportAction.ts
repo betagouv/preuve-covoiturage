@@ -7,7 +7,7 @@ import fs from 'fs';
 import { get } from 'lodash';
 import os from 'os';
 import path from 'path';
-import { getDefaultEndDate } from '../helpers/getDefaultDates';
+import { endOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ExportTripInterface } from '../interfaces';
 import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
@@ -345,7 +345,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
   }
 
   private getDefaultQueryParams(params: ParamsInterface): TripSearchInterface {
-    const endDate = getDefaultEndDate();
+    const endDate = endOfPreviousMonthDate();
     const startDate = new Date(endDate.valueOf());
     startDate.setDate(1);
     startDate.setHours(0, 0, 0, 0);
