@@ -1,10 +1,10 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import { Context } from 'vm';
 import { FlattenTripInterface } from '../actions/BuildExportAction';
 import { ExportTripInterface } from '../interfaces';
 import { normalizeExport, normalizeOpendata } from './normalizeExportDataHelper';
 
-const test = anyTest as TestInterface<Context>;
+const test = anyTest as TestFn<Context>;
 
 test.before((t) => {
   const tripWithoutIncentive: ExportTripInterface = {
