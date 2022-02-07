@@ -7,7 +7,7 @@ import fs from 'fs';
 import { get } from 'lodash';
 import os from 'os';
 import path from 'path';
-import { endOfPreviousMonthDate } from '../helpers/getDefaultDates';
+import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ExportTripInterface } from '../interfaces';
 import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
@@ -228,6 +228,9 @@ export class BuildExportAction extends Action implements InitHookInterface {
       signature,
       {
         type: 'opendata',
+        format: {
+          tz: 'Europe/Paris',
+        },
       },
       {
         call: {
@@ -345,10 +348,8 @@ export class BuildExportAction extends Action implements InitHookInterface {
   }
 
   private getDefaultQueryParams(params: ParamsInterface): TripSearchInterface {
-    const endDate = endOfPreviousMonthDate();
-    const startDate = new Date(endDate.valueOf());
-    startDate.setDate(1);
-    startDate.setHours(0, 0, 0, 0);
+    const endDate = endOfPreviousMonthDate(params.format?.tz);
+    const startDate = startOfPreviousMonthDate(endDate, params.format?.tz);
 
     return {
       date: {
