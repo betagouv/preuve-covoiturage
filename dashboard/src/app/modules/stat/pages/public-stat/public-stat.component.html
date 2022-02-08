@@ -18,33 +18,11 @@
     </div>
   </div>
 
-  <!-- number navs and charts-->
-  <app-stat-view [isPublic]="true" [navList]="statsList"> </app-stat-view>
-
-  <div class="public-stat-header">
-    <div class="has-text-centered padding-fat-bottom">
-      <a
-        href="https://www.data.gouv.fr/fr/datasets/trajets-realises-en-covoiturage-registre-de-preuve-de-covoiturage/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Retrouvez l'historique des données ouvertes<br />
-        sur la plateforme ouverte des données publiques françaises
-      </a>
-    </div>
-  </div>
-
-  <!-- honor certificates -->
-  <div class="public-stat-honor">
-    <h2>Attestations sur l'honneur</h2>
-    <p>
-      Le générateur d'attestations sur l'honneur facilite la création d'un document à fournir aux employeurs du secteur
-      privé et du secteur public. Chaque création d'un document est enregistrée de façon anonyme.
-    </p>
-    <p>
-      <a href="https://attestation.covoiturage.beta.gouv.fr">https://attestation.covoiturage.beta.gouv.fr</a>
-    </p>
-    <!-- TODO: fixme -->
-    <!-- <app-stat-honor></app-stat-honor> -->
-  </div>
+  <iframe
+    src="https://stats.covoiturage.beta.gouv.fr/public/dashboard/3bec1692-1456-41c2-95a9-6606af329df9"
+    frameborder="0"
+    width="100%"
+    height="1500px"
+    allowtransparency></iframe>
+  
 </div>
