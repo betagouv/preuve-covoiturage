@@ -34,9 +34,6 @@ export const createGetCampaignResultInterface = (
 
   return {
     ...defaults,
-    start_date,
-    end_date,
-    name,
     global_rules: operator_ids__global_rules_slugs ? operator_ids__global_rules_slugs : [],
   };
 };
