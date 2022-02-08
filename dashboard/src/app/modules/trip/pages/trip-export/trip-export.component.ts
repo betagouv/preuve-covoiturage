@@ -10,6 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 import { BaseParamsInterface as TripExportParamsInterface } from '~/shared/trip/export.contract';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+// eslint-disable-next-line max-len
 import { OperatorsCheckboxesComponent } from '../../../operator/modules/operator-ui/components/operators-checkboxes/operators-checkboxes.component';
 import { TripApiService } from '../../services/trip-api.service';
 import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dialog.component';

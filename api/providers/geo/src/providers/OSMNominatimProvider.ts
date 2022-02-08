@@ -15,7 +15,7 @@ export class OSMNominatimProvider implements GeoCoderInterface {
       'accept-language': 'fr-fr',
       limit: '1',
     });
-  
+
     let { data } = await axios.get(`${this.domain}/search.php`, { params });
 
     if (data.error || (Array.isArray(data) && data.length === 0)) {

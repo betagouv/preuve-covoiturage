@@ -30,7 +30,7 @@ interface Context {
   // Constants
   OPERATOR_UUID: string;
   OPERATOR_NAME: string;
-  USER_RPC_UUID: string;
+  USER_RPC_UUID_LIST: string[];
   CERTIFICATE_UUID: string;
 
   // Tested token
@@ -72,7 +72,7 @@ test.beforeEach((t) => {
 
   t.context = {
     OPERATOR_UUID: faker.datatype.uuid(),
-    USER_RPC_UUID: faker.datatype.uuid(),
+    USER_RPC_UUID_LIST: [faker.datatype.uuid(), faker.datatype.uuid()],
     CERTIFICATE_UUID: faker.datatype.uuid(),
     OPERATOR_NAME: faker.random.alpha(),
     fakeKernelInterfaceResolver,
@@ -86,7 +86,7 @@ test.beforeEach((t) => {
   t.context.carpoolRepositoryFindStub = sinon.stub(t.context.carpoolRepositoryProviderInterfaceResolver, 'find');
   t.context.kernelCallStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call');
 
-  t.context.kernelCallStub.onCall(0).resolves(t.context.USER_RPC_UUID);
+  t.context.kernelCallStub.onCall(0).resolves(t.context.USER_RPC_UUID_LIST);
   t.context.kernelCallStub.onCall(1).resolves({ uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME });
 });
 
@@ -107,7 +107,7 @@ test('CreateCertificateAction: should generate certificate payload', async (t) =
   // Assert
   const expected = {
     tz: 'Europe/Paris',
-    identity: { uuid: t.context.USER_RPC_UUID },
+    identity: { uuid: t.context.USER_RPC_UUID_LIST[0] },
     operator: { uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME },
     positions: [],
     carpools: carpoolData,
@@ -133,7 +133,7 @@ test('CreateCertificateAction: should return empty cert if no trips', async (t) 
   // Assert
   const expected = {
     tz: 'Europe/Paris',
-    identity: { uuid: t.context.USER_RPC_UUID },
+    identity: { uuid: t.context.USER_RPC_UUID_LIST[0] },
     operator: { uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME },
     positions: [],
     carpools: [],
@@ -171,19 +171,21 @@ function stubCertificateCreateAndGetParams(t) {
   t.context.certificateRepositoryCreateStub.resolves({
     _id: 1,
     uuid: t.context.CERTIFICATE_UUID,
-    identity_uuid: t.context.USER_RPC_UUID,
+    identity_uuid: t.context.USER_RPC_UUID_LIST[0],
     operator_id: 4,
     meta: {
-      identity: { uuid: t.context.USER_RPC_UUID },
+      identity: { uuid: t.context.USER_RPC_UUID_LIST[0] },
     },
   } as CertificateInterface);
+
   const params: ParamsInterface = {
     tz: 'Europe/Paris',
     operator_id: 4,
     identity: {
       phone_trunc: '+33696989598',
-      uuid: t.context.USER_RPC_UUID,
+      uuid: t.context.USER_RPC_UUID_LIST[0],
     },
   };
+
   return params;
 }

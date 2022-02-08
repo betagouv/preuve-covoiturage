@@ -8,23 +8,25 @@ import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { config } from './config';
 import { binding as crosscheckBinding } from './shared/carpool/crosscheck.schema';
 import { binding as findUuidBinding } from './shared/carpool/finduuid.schema';
+import { binding as findIdentitiesBinding } from './shared/carpool/findidentities.schema';
 import { CarpoolRepositoryProvider } from './providers/CarpoolRepositoryProvider';
 import { CrosscheckAction } from './actions/CrosscheckAction';
 import { FindUuidAction } from './actions/FindUuidAction';
 import { CrosscheckRepositoryProvider } from './providers/CrosscheckRepositoryProvider';
 import { IdentityRepositoryProvider } from './providers/IdentityRepositoryProvider';
 import { UpdateStatusAction } from './actions/UpdateStatusAction';
+import { FindIdentitiesAction } from './actions/FindIdentitiesAction';
 
 @serviceProvider({
   config,
   providers: [CarpoolRepositoryProvider, CrosscheckRepositoryProvider, IdentityRepositoryProvider],
-  validator: [crosscheckBinding, findUuidBinding],
+  validator: [crosscheckBinding, findUuidBinding, findIdentitiesBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [CrosscheckAction, FindUuidAction, UpdateStatusAction],
+  handlers: [CrosscheckAction, FindUuidAction, FindIdentitiesAction, UpdateStatusAction],
   queues: ['carpool'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
