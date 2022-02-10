@@ -2,16 +2,16 @@ openapi: '3.0.2'
 info:
   title: API
   version: '2.0'
-  termsOfService: http://pathtoterm
+  termsOfService: https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/cgu-conditions-generales-dutilisation
   contact:
     name: Équipe technique
     email: technique@covoiturage.beta.gouv.fr
   license:
     name: Apache 2
-    url: http://pathtoapache2
+    url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/dev/LICENSE
 
 externalDocs:
-  url: http://path/to/doc 
+  url: https://doc.covoiturage.beta.gouv.fr/
   description: Documentation générale 
 
 servers:
@@ -60,7 +60,9 @@ components:
             example: 100
           siret:
             type: string
-            description: Numéro de SIRET de l'incitateur
+            description: | 
+              Numéro de SIRET de l'incitateur
+              Le SIRET est un identifiant unique par structure juridique. Toutes les entités incitatrices en possèdent un.
             example: "11000101300017"
     payments:
       type: array
@@ -96,6 +98,14 @@ components:
           type:
             type: string
             description: Nom du titre
+    lat:
+      type: number
+      description: Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84
+      example: 47.682821
+    lon:
+      type: number
+      description: Longitude comprise entre 180deg et -180deg décimaux en datum WSG-84
+      example: -0.557483
     geopoint:
       type: object
       additionalProperties: false
@@ -111,17 +121,19 @@ components:
         datetime:
           type: string
           format: date-time 
-          description: Date et heure du départ/arrivée au format ISO 8601. L'heure est exprimée en UTC.
-          example: YYYY-MM-DDThh:mm:ssZ
+          description: |
+            Date et heure du départ/arrivée au format ISO 8601. L'heure est exprimée en UTC (YYYY-MM-DDThh:mm:ssZ)
+            L'heure est exprimée en UTC \(Coordinated Universal Time\). UTC n'est pas ajusté sur l'heure d'été et hiver !
+          example: '2021-01-01T11:00:00Z'
         lat:
-          type: number
-          description: Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84
+          '$ref': "#/components/schemas/lat"
         lon:
-          type: number
-          description: Longitude comprise entre 180deg et -180deg décimaux en datum WSG-84
+          '$ref': "#/components/schemas/lon"
         insee:
           type: string
-          description: Code INSEE commune ou arrondissement de la position
+          description: |
+            Code INSEE commune ou arrondissement de la position
+            Pour le métropoles qui comportent un code INSEE global et des codes par arrondissement, utiliser le code arrondissement.
         literal:
           type: string
           description: Adresse littérale
@@ -132,7 +144,9 @@ components:
     geopointcoord:
       type: object
       additionalProperties: false
-      description: Position lat/lon + date 
+      description: |
+        Position lat/lon + date 
+        Attention, contrairement à la requête pour envoyer des preuves, la simulation ne supporte que les données géographiques sous forme lat/lon.
       required:
         - datetime
         - lat
@@ -141,14 +155,14 @@ components:
         datetime:
           type: string
           format: date-time 
-          description: Date et heure du départ/arrivée au format ISO 8601. L'heure est exprimée en UTC.
-          example: YYYY-MM-DDThh:mm:ssZ
+          description: |
+            Date et heure du départ/arrivée au format ISO 8601. L'heure est exprimée en UTC (YYYY-MM-DDThh:mm:ssZ)
+            L'heure est exprimée en UTC \(Coordinated Universal Time\). UTC n'est pas ajusté sur l'heure d'été et hiver !
+          example: '2021-01-01T11:00:00Z'
         lat:
-          type: number
-          description: Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84
+          '$ref': "#/components/schemas/lat"
         lon:
-          type: number
-          description: Longitude comprise entre 180deg et -180deg décimaux en datum WSG-84
+          '$ref': "#/components/schemas/lon"
     identity:
       type: object
       description: |
@@ -198,9 +212,11 @@ components:
         phone_trunc:
           type: string
           description: Numéro de téléphone à 8 chiffres. Obligatoire si le numéro de téléphone complet n'est pas fournit.
+          example: '+336123456'
         operator_user_id:
           type: string
           description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire si le numéro de téléphone complet n'est pas fournit.
+          example: "1111-222-333-4444"
         over_18:
           enum:
             - true
@@ -212,7 +228,7 @@ components:
               - false si mineur
               - null si non fournit
             
-            De nombreuses campagnes utilisent cette information pour s'assurer que les bénéficiaires d'incitations sont majeures. La valeur `NULL` les exclues.
+            > De nombreuses campagnes utilisent cette information pour s'assurer que les bénéficiaires d'incitations sont majeures. La valeur `NULL` les exclues.
     identitycert:
       type: object
       description: |
@@ -230,9 +246,11 @@ components:
         phone_trunc:
           type: string
           description: Numéro de téléphone à 8 chiffres. Obligatoire si le numéro de téléphone complet n'est pas fournit.
+          example: '+336123456'
         operator_user_id:
           type: string
           description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire si le numéro de téléphone complet n'est pas fournit.
+          example: "1111-222-333-4444"
     certificate_data:
       type: object
       additionalProperties: false
@@ -324,13 +342,13 @@ paths:
                 start_at:
                   type: string
                   format: date-time
-                  description: Date de début au format ISO
+                  description: Date de début au format ISO. Sélectionne les trajet >= date
                   example: 2021-01-01T00:00:00+0100
                 end_at:
                   type: string
                   format: date-time
-                  description: Date de fin au format ISO, supérieur à start_at
-                  example: 2021-01-01T00:00:00+0100
+                  description: Date de fin au format ISO nécessairement supérieur à start_at. Sélectionne les trajets < date
+                  example: 2021-07-01T00:00:00+0200
                 positions:
                   type: array
                   description: |
@@ -345,12 +363,9 @@ paths:
                     maxItems: 2
                     properties:
                       lat:
-                        type: number
-                        description: Latitude
+                        '$ref': "#/components/schemas/lat"
                       lon:
-                        type: number
-                        description: Longitude
-                      
+                        '$ref': "#/components/schemas/lon"
       responses:
         '201':
           description: OK
@@ -358,6 +373,9 @@ paths:
             'application/json':
               schema:
                 type: object
+                description: |
+                  Les données calculées de l'attestation sont retournées dans la réponse pour permettre leur affichage par votre application.
+                  Vous pouvez reconstruire l'URL de validation publique avec l'UUID.
                 properties:
                   uuid:
                     type: string
@@ -384,21 +402,37 @@ paths:
                           maxItems: 2
                           properties:
                             lat:
-                              type: number
-                              description: Latitude
+                              '$ref': "#/components/schemas/lat"
                             lon:
-                              type: number
-                              description: Longitude
+                              '$ref': "#/components/schemas/lon"
                       driver:
                         '$ref': '#/components/schemas/certificate_data'
                       passenger:
                         '$ref': '#/components/schemas/certificate_data'
         '401':
-          description: Unauthorized
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
         '403':
-          description: Forbidden
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
         '404':
-          description: Not found
+          description: L'identité n'a pu être trouvée. Vérifiez les identifiants envoyés.
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
   /certificates/pdf:
     post:
       summary: Télécharger une attestation
@@ -472,13 +506,33 @@ paths:
                         
       responses:
         '200':
-          description: OK, le fichier binaire est envoyé.
+          description: | 
+            OK, le fichier binaire est envoyé.
+            ![Attestations](/attestations.png)
         '401':
-          description: Unauthorized
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
         '403':
-          description: Forbidden
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
         '404':
-          description: Not found
+          description: L'attestation n'a pu être trouvée 
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
   /certificates/find/{uuid}:
     parameters:
       - name: uuid
@@ -554,21 +608,37 @@ paths:
                       maxItems: 2
                       properties:
                         lat:
-                          type: number
-                          description: Latitude
+                          '$ref': "#/components/schemas/lat"
                         lon:
-                          type: number
-                          description: Longitude
+                          '$ref': "#/components/schemas/lon"
                   driver:
                     '$ref': '#/components/schemas/certificate_data'
                   passenger:
                     '$ref': '#/components/schemas/certificate_data'
         '401':
-          description: Unauthorized
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
         '403':
-          description: Forbidden
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
         '404':
-          description: Not found
+          description: L'attestation n'a pu être trouvée 
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
   /journeys:
     post:
       summary: Envoyer un trajet
@@ -582,6 +652,16 @@ paths:
         - montants financiers en **centimes d'Euros**
         - distances en **mètres**
         - durées en **secondes**
+
+        ### Données financières
+
+        Le principe est de coller au plus près avec la réalité comptable \(transaction usager\) et d'avoir suffisamment d'informations pour recalculer le coût initial du trajet.
+        Ainsi, les propriétés `passenger.contribution` et `driver.revenue` combinées au tableau `icentives` doivent permettre ce calcul.
+        Ceci afin de s'assurer du respect de la définition du covoiturage et de la bonne application des politiques incitatives gérées par le registre.
+        > Les données envoyées en `passenger.contribution` et `driver.revenue` sont utilisées dans les attestations de covoiturage à destination des employeurs (Forfait Mobilités Durables).
+
+        ### Validation
+        Le schéma de données est présenté au format [JSON Schema Draft-07](https://json-schema.org/understanding-json-schema/index.html).
       security:
         - token: []
       operationId: acquisition:create
@@ -693,7 +773,7 @@ paths:
                       description: Nombre de sièges réservés par l'occupant passager.
       responses:
         '201':
-          description: OK
+          description: OK. Le trajet a bien été enregistré.
           content:
             'application/json':
                schema:
@@ -709,8 +789,34 @@ paths:
                      type: string
                      format: date-time
                      description: La date de création dans le registre
+        '400':
+          description: Mauvaise requête
+          content:
+            'application/json':
+              example:
+                id: 1
+                error:
+                  data: "data/driver/identity/phone_trunc must match format \"phonetrunc\", data/driver/identity/phone_trunc must pass \"macro\" keyword validation"
+                  code: -32602
+                  message: Invalid params
+                jsonrpc: '2.0'
         '401':
-          description: Unauthorized
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
   /journeys/{journey_id}:
     parameters:
       - name: journey_id
@@ -725,9 +831,17 @@ paths:
       security:
         - token: []
       operationId: acquisition:status
+      summary: Vérifier le statut d'un trajet envoyé
+      description: |
+        Lors de l'envoi d'un trajet, un code 201 et un payload avec le `journey_id` et la date de création vous sont renvoyés. Le trajet est alors enregistré dans notre base. Le processus de validation par lequel vont passer les données est complexe, asynchrone et dépend de différents services ayant de temps de réponse variables. De plus, les données d'affichage de la liste détaillée de l'interface d'administration n'est rafraichi que toutes les 24h.
+        Les trajets ne seront visibles dans l'interface utilisateurs que **5 jours** après leur envoi.
+        Il est possible de vérifier le statut d'un trajet envoyé directement pour s'assurer qu'il n'y pas pas eu d'erreur de format ou de traitement.
       responses:
         '200':
-          description: OK
+          description: |
+            OK
+            Le trajet a été trouvé et son statut est retourné.  
+            Attention, le trajet peut être en erreur malgré le code 200, vérifiez le statut retourné.
           content:
             'application/json':
               schema:
@@ -770,29 +884,72 @@ paths:
                       message:
                         type: string
         '401':
-          description: Unauthorized
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
         '403':
-          description: Forbidden
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
         '404':
-          description: Not found
+          description: Le trajet n'a pas été trouvé 
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
     delete:
+      summary: Invalider un trajet envoyé
       description: |
-        Annule un trajet déjà envoyé dans le registre. 
-        Exemple, si en tant qu'opérateur je détecte un cas frauduleux sur un trajet déjà envoyé, j'annule ce trajet auprès du registre.
+        Annule un trajet déjà envoyé dans le registre.
+        S'il détecte un comportement inhabituel ou une fraude avérée, un opérateur doit communiquer auprès du Service l'invalidation du trajet concerné dès lors qu'il est déjà inscrit dans le registre. Cette invalidation doit avoir lieu dès que l'opérateur a connaissance de cette irrégularité.
       security:
         - token: []
       operationId: acquisition:cancel
       responses:
         '200':
-          description: OK
+          description: |
+            Ok
+            La demande d'invalidation a été prise en compte
         '401':
-          description: Unauthorized
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
         '403':
-          description: Forbidden
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
         '404':
-          description: Not found
+          description: Le trajet n'a pas été trouvé 
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
   /policy/simulate:
     post:
+      summary: Simuler les incitations sur un trajet
+      description: |
+        Vous pouvez envoyer un trajet non réalisé afin de savoir à quelles incitations celui-ci serait éligible.
+        Les données de la requête sont les mêmes que pour envoyer une preuve, avec une restriction supplémentaire par rapport aux données géographiques.
       security:
         - token: []
       operationId: campaign:simulateOnFuture
@@ -884,7 +1041,8 @@ paths:
                       description: Nombre de sièges réservés par l'occupant passager.
       responses:
         '200':
-          description: OK
+          description: |
+            L'API retourne un objet avec les incitations du passager et les incitations du conducteur sur le trajet soumis. Attention, ce calcul n'est pas définitif en raison des seuils qui peuvent s'appliquer sur une campagne. Par exemple, une campagne limitant le nombre de trajets par jour à X. C'est donc un résultat provisoire - sans valeur contractuelle - qui est retourné.
           content:
             'application/json':
               schema:
