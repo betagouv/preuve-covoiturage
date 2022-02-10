@@ -9,68 +9,60 @@ module.exports = {
       description: 'Documentation technique du Registre de preuve de covoiturage',
     },
   },
+  theme: 'openapi',
   themeConfig: {
     logo: '/logo-rpc.png',
     locales: {
       '/': {
         nav: [
           { text: 'Opérateurs', link: '/operateurs/' },
-          { text: 'API', link: '/contribuer/api/' },
+          { text: 'Développeurs', link: '/contribuer/api/' },
           { text: 'Repo', link: '/contribuer/repo/' },
         ],
         sidebar: {
           '/operateurs/': [
             {
-              title: 'Preuves de covoiturage',
-              path: '/operateurs/preuves/',
+              title: 'API',
               children: [
                 {
-                  title: "Accéder à l'API",
-                  path: 'preuves/acces',
+                  title: "Accès",
+                  path: 'acces',
                 },
                 {
-                  title: "Envoyer un trajet",
-                  path: 'preuves/envoyer-un-trajet',
-                },
-                {
-                  title: 'Vérifier le statut',
-                  path: 'preuves/statut',
-                },
-                {
-                  title: 'Invalider un trajet',
-                  path: 'preuves/invalider',
-                },
-                {
-                  title: 'Simuler un trajet',
-                  path: 'preuves/simulation',
+                  title: "Documentation",
+                  path: 'api-v2',
                 },
                 {
                   title: 'Limites',
-                  path: 'preuves/limites',
+                  path: 'limites',
                 },
               ],
             },
             {
-              title: 'Attestations opérateurs',
-              path: '/operateurs/attestations',
+              title: 'Trajets',
               children: [
                 {
-                  title: "Introduction",
-                  path: "attestations/",
-                },
-                {
-                  title: "Créer un attestation",
-                  path: "attestations/creer",
-                },
-                {
-                  title: "Télécharger",
-                  path: "attestations/telecharger",
+                  title: "Schemas",
+                  path: 'preuves/schemas'
                 },
                 {
                   title: "Exemples",
-                  path: "attestations/exemples",
+                  path: 'preuves/exemples'
                 },
-              ]
+              ],
+            },
+            {
+              title: 'Attestations',
+              children: [
+                {
+                  title: "Fonctionnalités",
+                  path: 'attestations/fonctionnalites'
+                },
+                {
+                  title: "Exemples",
+                  path: 'attestations/exemples'
+                },
+              ],
             },
             {
               title: 'Outils',
