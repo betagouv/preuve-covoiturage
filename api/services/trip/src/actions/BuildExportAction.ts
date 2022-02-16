@@ -7,7 +7,7 @@ import fs from 'fs';
 import { get } from 'lodash';
 import os from 'os';
 import path from 'path';
-import { getDefaultEndDate } from '../helpers/getDefaultDates';
+import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ExportTripInterface } from '../interfaces';
 import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
@@ -66,6 +66,7 @@ export interface FlattenTripInterface extends ExportTripInterface<string> {
   driver_incentive_rpc_4_siret?: string;
   driver_incentive_rpc_4_name?: string;
   driver_incentive_rpc_4_amount?: number;
+  has_incentive?: boolean;
 }
 @handler({
   ...handlerConfig,
@@ -142,6 +143,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     'operator_class',
     'journey_distance',
     'journey_duration',
+    'has_incentive',
   ];
 
   public static readonly financialFields = [
@@ -226,6 +228,9 @@ export class BuildExportAction extends Action implements InitHookInterface {
       signature,
       {
         type: 'opendata',
+        format: {
+          tz: 'Europe/Paris',
+        },
       },
       {
         call: {
@@ -255,7 +260,12 @@ export class BuildExportAction extends Action implements InitHookInterface {
     }
 
     const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
-    const filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end);
+    const filepath: string = await this.buildFile.buildCsvFromCursor(
+      cursor,
+      params,
+      queryParams.date.end,
+      this.isOpendata(type),
+    );
     return this.handleCSVExport(type, filepath, queryParams, excluded_territories);
   }
 
@@ -338,10 +348,8 @@ export class BuildExportAction extends Action implements InitHookInterface {
   }
 
   private getDefaultQueryParams(params: ParamsInterface): TripSearchInterface {
-    const endDate = getDefaultEndDate();
-    const startDate = new Date(endDate.valueOf());
-    startDate.setDate(1);
-    startDate.setHours(0, 0, 0, 0);
+    const endDate = endOfPreviousMonthDate(params.format?.tz);
+    const startDate = startOfPreviousMonthDate(endDate, params.format?.tz);
 
     return {
       date: {

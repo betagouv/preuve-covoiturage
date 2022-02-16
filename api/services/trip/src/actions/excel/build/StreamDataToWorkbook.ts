@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 import { stream, Worksheet } from 'exceljs';
-import { normalize } from '../../../helpers/normalizeExportDataHelper';
+import { normalizeExport } from '../../../helpers/normalizeExportDataHelper';
 import { ExportTripInterface } from '../../../interfaces/ExportTripInterface';
 import { PgCursorHandler } from '../../../interfaces/PromisifiedPgCursor';
 import { BuildExportAction } from '../../BuildExportAction';
@@ -38,6 +38,6 @@ export class StreamDataToWorkBook {
 
   private async writeTrips(wb: stream.xlsx.WorkbookWriter, trips: ExportTripInterface[]) {
     const worsheetData: Worksheet = wb.getWorksheet(this.WORKSHEET_NAME);
-    trips.map((t) => worsheetData.addRow(normalize(t, 'Europe/Paris')).commit());
+    trips.map((t) => worsheetData.addRow(normalizeExport(t, 'Europe/Paris')).commit());
   }
 }

@@ -57,8 +57,8 @@ export class ReplayOpendataExportCommand implements CommandInterface {
 
     while (isBefore(dateCursor, dateEnd)) {
       intervals.push({
-        start: startOfMonth(dateCursor),
-        end: endOfMonth(dateCursor),
+        start: startOfMonth(dateCursor, 'Europe/Paris'),
+        end: endOfMonth(dateCursor, 'Europe/Paris'),
       });
       dateCursor = add(dateCursor, { months: 1 });
     }

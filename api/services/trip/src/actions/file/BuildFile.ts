@@ -2,7 +2,7 @@ import { provider } from '@ilos/common';
 import path from 'path';
 import { v4 } from 'uuid';
 import csvStringify, { Stringifier } from 'csv-stringify';
-import { normalize } from '../../helpers/normalizeExportDataHelper';
+import { normalizeExport, normalizeOpendata } from '../../helpers/normalizeExportDataHelper';
 import fs from 'fs';
 import os from 'os';
 import { getOpenDataExportName } from '../../helpers/getOpenDataExportName';
@@ -14,7 +14,12 @@ import { BuildExportAction } from '../BuildExportAction';
 export class BuildFile {
   constructor() {}
 
-  public async buildCsvFromCursor(cursor: PgCursorHandler, params: ParamsInterface, date: Date): Promise<string> {
+  public async buildCsvFromCursor(
+    cursor: PgCursorHandler,
+    params: ParamsInterface,
+    date: Date,
+    isOpendata: boolean,
+  ): Promise<string> {
     // CSV file
     const { filename, tz } = this.castFormat(params.type, params, date);
     const filepath = path.join(os.tmpdir(), filename);
@@ -22,12 +27,13 @@ export class BuildFile {
 
     // Write to file
     const stringifier = this.getStringifier(fd, params.type);
+    const normalizeMethod = isOpendata ? normalizeOpendata : normalizeExport;
     let count = 0;
     do {
       const results = await cursor.read(10);
       count = results.length;
       for (const line of results) {
-        stringifier.write(normalize(line, tz));
+        stringifier.write(normalizeMethod(line, tz));
       }
     } while (count !== 0);
 

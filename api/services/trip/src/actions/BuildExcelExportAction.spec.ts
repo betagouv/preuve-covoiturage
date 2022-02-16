@@ -5,6 +5,7 @@ import anyTest, { TestFn } from 'ava';
 import faker from 'faker';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
+import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 import { BuildExcelsExportAction } from './BuildExcelExportAction';
 import { BuildExcel } from './excel/BuildExcel';
@@ -88,24 +89,14 @@ test('BuildExcelExportAction: should create 1 xlsx file for last month if no dat
   );
 
   // Assert
-  const endDate = new Date();
-  endDate.setDate(1);
-  endDate.setHours(0, 0, 0, -1);
-  const startDate = new Date(endDate.valueOf());
-  startDate.setDate(1);
-  startDate.setHours(0, 0, 0, 0);
+  const endDate = endOfPreviousMonthDate('Europe/Paris');
+  const startDate = startOfPreviousMonthDate(endDate, 'Europe/Paris');
 
   t.deepEqual(result, [filename]);
   sinon.assert.calledOnceWithMatch(t.context.checkCampaignStub, campaign._id);
   sinon.assert.called(t.context.s3StorageProviderStub);
-  t.true(
-    new Date(t.context.checkCampaignStub.args[0][1]).toISOString().split('T')[0] ===
-      startDate.toISOString().split('T')[0],
-  );
-  t.true(
-    new Date(t.context.checkCampaignStub.args[0][2]).toISOString().split('T')[0] ===
-      endDate.toISOString().split('T')[0],
-  );
+  t.deepEqual(new Date(t.context.checkCampaignStub.args[0][1]), startDate);
+  t.deepEqual(new Date(t.context.checkCampaignStub.args[0][2]), endDate);
 });
 
 test('BuildExcelExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {

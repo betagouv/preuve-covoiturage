@@ -1,7 +1,7 @@
-import { getDefaultEndDate } from './getDefaultDates';
+import { endOfPreviousMonthDate } from './getDefaultDates';
 
 export function getOpenDataExportName(extension: string, inputDate?: Date): string {
-  const date = inputDate ?? getDefaultEndDate();
+  const date = inputDate ?? endOfPreviousMonthDate();
   return `${getYearMonthString(date)}.${extension}`;
 }
 

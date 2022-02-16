@@ -2,7 +2,7 @@ import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { getDefaultEndDate } from '../helpers/getDefaultDates';
+import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/excelExport.contract';
 import { alias } from '../shared/trip/excelExport.schema';
@@ -69,19 +69,13 @@ export class BuildExcelsExportAction extends Action {
 
   private castOrGetDefaultDates(params: ParamsInterface): { start_date: Date; end_date: Date } {
     if (!params.query.date) {
-      const endDate: Date = getDefaultEndDate();
-      return { start_date: this.startOfPreviousMonthDate(endDate), end_date: endDate };
+      const endDate: Date = endOfPreviousMonthDate(params.format?.tz);
+      const startDate: Date = startOfPreviousMonthDate(endDate, params.format?.tz);
+      return { start_date: startDate, end_date: endDate };
     } else {
       const start_date = new Date(params.query.date.start);
       const end_date = new Date(params.query.date.end);
       return { start_date, end_date };
     }
-  }
-
-  private startOfPreviousMonthDate(endDate: Date): Date {
-    const startDate = new Date(endDate.valueOf());
-    startDate.setDate(1);
-    startDate.setHours(0, 0, 0, 0);
-    return startDate;
   }
 }

@@ -1,5 +1,6 @@
 import { KernelInterfaceResolver } from '@ilos/common';
 import anyTest, { TestFn } from 'ava';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import sinon, { SinonStub } from 'sinon';
 import { endOfMonth, startOfMonth } from '../helpers/getDefaultDates';
 import { GetOldestTripDateRepositoryProvider } from './../providers/GetOldestTripRepositoryProvider';
@@ -47,10 +48,22 @@ test('ReplayOpendataExportCommand: should call n times BuildExport from 08 Octob
 
   // Assert
   const today: Date = new Date();
-  t.deepEqual(result[0], { start: new Date('2020-10-01T00:00:00'), end: new Date('2020-10-31T23:59:59.999') });
-  t.deepEqual(result[7], { start: new Date('2021-05-01T00:00:00'), end: new Date('2021-05-31T23:59:59.999') });
-  t.deepEqual(result[12], { start: new Date('2021-10-01T00:00:00'), end: new Date('2021-10-31T23:59:59.999') });
-  t.is(result[result.length - 1].start.toISOString().split('T')[0], startOfMonth(today).toISOString().split('T')[0]);
-  t.is(result[result.length - 1].end.toISOString(), endOfMonth(today).toISOString());
+  t.deepEqual(result[0], {
+    start: zonedTimeToUtc(new Date('2020-10-01T00:00:00'), 'Europe/Paris'),
+    end: zonedTimeToUtc(new Date('2020-10-31T23:59:59.999'), 'Europe/Paris'),
+  });
+  t.deepEqual(result[7], {
+    start: zonedTimeToUtc(new Date('2021-05-01T00:00:00'), 'Europe/Paris'),
+    end: zonedTimeToUtc(new Date('2021-05-31T23:59:59.999'), 'Europe/Paris'),
+  });
+  t.deepEqual(result[12], {
+    start: zonedTimeToUtc(new Date('2021-10-01T00:00:00'), 'Europe/Paris'),
+    end: zonedTimeToUtc(new Date('2021-10-31T23:59:59.999'), 'Europe/Paris'),
+  });
+  t.is(
+    result[result.length - 1].start.toISOString().split('T')[0],
+    startOfMonth(today, 'Europe/Paris').toISOString().split('T')[0],
+  );
+  t.is(result[result.length - 1].end.toISOString(), endOfMonth(today, 'Europe/Paris').toISOString());
   sinon.assert.callCount(t.context.fakeKernelInterfaceResolverStub, result.length);
 });
