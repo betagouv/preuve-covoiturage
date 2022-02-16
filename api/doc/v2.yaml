@@ -16,6 +16,7 @@ externalDocs:
 
 servers:
   - url: https://api.covoiturage.beta.gouv.fr/v2
+  - url: https://api.demo.covoiturage.beta.gouv.fr/v2
 
 components:
   securitySchemes:
@@ -290,6 +291,8 @@ components:
 paths:
   /certificates:
     post:
+      tags:
+      - attestation
       security:
         - token: []
       summary: Créer un certificat
@@ -435,6 +438,8 @@ paths:
                 error: Not found
   /certificates/pdf:
     post:
+      tags:
+      - attestation
       summary: Télécharger une attestation
       description: |
         ## Upload du logo opérateur
@@ -544,6 +549,8 @@ paths:
           format: uuid
         example: 9415300a-7a51-4296-96d1-68636e46485d 
     get:
+      tags:
+      - attestation
       summary: Vérifier un certificat
       security:
         - token: []
@@ -641,6 +648,8 @@ paths:
                 error: Not found
   /journeys:
     post:
+      tags:
+      - trajet
       summary: Envoyer un trajet
       description: |
         Un trajet est un couple passager.ère / conducteur.rice ayant des points et de horaires de départ et d'arrivée. Si une conductrice covoiture avec plusieurs passagères, plusieurs trajets sont déclarés.
@@ -828,6 +837,8 @@ paths:
           format: uuid
         example: 9415300a-7a51-4296-96d1-68636e46485d 
     get:
+      tags:
+      - trajet
       security:
         - token: []
       operationId: acquisition:status
@@ -908,6 +919,8 @@ paths:
                 code: 404
                 error: Not found
     delete:
+      tags:
+      - trajet
       summary: Invalider un trajet envoyé
       description: |
         Annule un trajet déjà envoyé dans le registre.
@@ -946,6 +959,8 @@ paths:
                 error: Not found
   /policy/simulate:
     post:
+      tags:
+      - incitation
       summary: Simuler les incitations sur un trajet
       description: |
         Vous pouvez envoyer un trajet non réalisé afin de savoir à quelles incitations celui-ci serait éligible.
