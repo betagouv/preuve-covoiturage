@@ -29,7 +29,7 @@ module.exports = {
                   path: 'acces',
                 },
                 {
-                  title: "Documentation",
+                  title: "Référence",
                   path: 'api-v2',
                 },
                 {
