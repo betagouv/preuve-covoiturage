@@ -51,11 +51,6 @@ const routes: Routes = [
         // prettier-ignore
         loadChildren: (): Promise<AdministrationModule> => import('./modules/administration/administration.module').then((mod) => mod.AdministrationModule),
       },
-      {
-        path: 'ui-guide',
-        // prettier-ignore
-        loadChildren: (): Promise<UiGuideModule> => import('./modules/ui-guide/ui-guide.module').then((mod) => mod.UiGuideModule),
-      },
     ],
   },
   {
