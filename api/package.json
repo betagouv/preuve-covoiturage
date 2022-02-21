@@ -37,11 +37,7 @@
     "test:pdc:integration": "lerna run --scope @pdc/* test:integration",
     "test:ilos:integration": "lerna run --scope @ilos/* test:integration",
     "seed:templates": "yarn workspace @pdc/service-policy ilos policy:seed",
-    "migrate": "if [ -z \"$SKIP_MIGRATIONS\" ]; then yarn migrate:up; else echo '>> Migrations skipped'; fi",
-    "migrate:up": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations",
-    "migrate:one": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up -c 1 --migrations-dir=db/migrations",
-    "migrate:down": "DATABASE_URL=$APP_POSTGRES_URL db-migrate down -c 1 --migrations-dir=db/migrations",
-    "migrate:check": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations --check",
+    "migrate": "if [ -z \"$SKIP_MIGRATIONS\" ]; then DATABASE_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator up && POSTGRES_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator geo:import; else echo '>> Migrations skipped'; fi",
     "process:journey": "yarn workspace @pdc/proxy ilos process:journey"
   },
   "keywords": [

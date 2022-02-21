@@ -200,10 +200,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@betagouvpdc/evolution-geo@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@betagouvpdc/evolution-geo/-/evolution-geo-1.0.1.tgz#a03f0932930c13e39fe81585e18f763587d42163"
-  integrity sha512-45rpQ5mvbcuaSPlWkk2L6HkMK4hC9xcCx4GKY4OuMATi6SppZRMzmMfBnWw++EEplsixZuxBVLamUT6xeeDCFw==
+"@betagouvpdc/evolution-geo@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@betagouvpdc/evolution-geo/-/evolution-geo-1.0.2.tgz#298a91a14af5508ab976515e0bf4117a4587216c"
+  integrity sha512-66zcm5oSH90fDuDj00t9X8S5vCKWTnkJaL+KFujd2YTEvmuKXVBO4+ov0/Co1lIdWUJ3n138Ta2sLPcA8ht9iw==
   dependencies:
     axios "^0.25.0"
     commander "^8.3.0"
