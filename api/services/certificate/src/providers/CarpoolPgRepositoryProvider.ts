@@ -56,15 +56,17 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
             SUBSTR((datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
             journey_start_datetime AT TIME ZONE $${values.length} AS datetime,
             journey_distance AS distance,
-            COALESCE(driver_revenue, 0) AS euros
+            COALESCE(i.amount, 0) AS payment
           FROM trip.list tl
           INNER JOIN carpool.carpools cc ON tl.trip_id = cc.trip_id
+          CROSS JOIN LATERAL UNNEST(tl.driver_incentive_raw) i
           WHERE tl.operator_id = $2::int
             AND cc.is_driver = true
             AND cc.status = 'ok'
-            AND tl.driver_id = ANY($1::uuid[])
             AND tl.journey_start_datetime >= $3
             AND tl.journey_start_datetime < $4
+            AND tl.driver_id = ANY($1::uuid[])
+            AND i.type = 'payment'
             ${where_positions.length ? `AND (${where_positions})` : ''}
         UNION
           SELECT
@@ -73,15 +75,17 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
             SUBSTR((datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
             journey_start_datetime AT TIME ZONE $${values.length} AS datetime,
             journey_distance AS distance,
-            COALESCE(passenger_contribution, 0) AS euros
+            COALESCE(i.amount, 0) AS payment
           FROM trip.list tl
           INNER JOIN carpool.carpools cc ON tl.trip_id = cc.trip_id
+          CROSS JOIN LATERAL UNNEST(tl.passenger_incentive_raw) i
           WHERE tl.operator_id = $2::int
             AND cc.is_driver = false
             AND cc.status = 'ok'
-            AND tl.passenger_id = ANY($1::uuid[])
             AND tl.journey_start_datetime >= $3
             AND tl.journey_start_datetime < $4
+            AND tl.passenger_id = ANY($1::uuid[])
+            AND i.type = 'payment'
             ${where_positions.length ? `AND (${where_positions})` : ''}
         )
 
@@ -90,7 +94,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           date,
           COUNT(*)::int trips,
           TRUNC(SUM(distance)::decimal/1000, 3)::real AS km,
-          TRUNC(SUM(euros)::decimal/100, 2)::real AS euros
+          TRUNC(SUM(payment)::decimal/100, 2)::real AS euros
       FROM trips
       GROUP BY (type, date)
       ORDER BY type, date DESC
