@@ -15,6 +15,8 @@ export function faker(data: Partial<SelfCheckParamsInterface> = {}, deltaMode = 
     driver_calc_distance: 100,
     driver_duration: 300,
     driver_calc_duration: 300,
+    driver_start_geocode: '91377',
+    driver_end_geocode: '91377',
     passenger_start_lat: 48.851047,
     passenger_start_lon: 2.309339,
     passenger_end_lat: 48.847218,
@@ -24,6 +26,8 @@ export function faker(data: Partial<SelfCheckParamsInterface> = {}, deltaMode = 
     passenger_duration: 300,
     passenger_calc_duration: 300,
     passenger_seats: 1,
+    passenger_start_geocode: '91377',
+    passenger_end_geocode: '91377',
   };
   if (!deltaMode) {
     return {
