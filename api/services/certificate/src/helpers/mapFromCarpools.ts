@@ -65,10 +65,14 @@ export const agg = (type: CarpoolTypeEnum, carpools: CarpoolInterface[]): MetaPe
   return {
     total: {
       ...total,
-      km: round(total.km, 3),
+      km: round(total.km, 1),
       euros: round(total.euros, 2),
     },
-    trips: subset,
+    trips: subset.map((trip) => ({
+      ...trip,
+      km: round(trip.km, 1),
+      euros: round(trip.euros, 2),
+    })),
   };
 };
 
