@@ -144,7 +144,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
             case 'campaign_id':
               return {
-                text: 'applied_policies && $#::int[]',
+                text: 'applied_policies && $#::int[] AND (passenger_incentive_rpc_sum > 0 OR driver_incentive_rpc_sum > 0)',
                 values: [filter.value],
               };
 
