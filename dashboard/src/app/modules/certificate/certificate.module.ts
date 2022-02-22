@@ -16,6 +16,7 @@ import { SharedModule } from '../../shared/shared.module';
 @NgModule({
   declarations: [CheckComponent, CertificateLayoutComponent, CertificateListComponent],
   imports: [
+    CertificateRoutingModule, // keep first to avoid clash with territory module
     CommonModule,
     MaterialModule,
     ToastrModule,
@@ -25,7 +26,6 @@ import { SharedModule } from '../../shared/shared.module';
     ReactiveFormsModule,
     MatPaginatorModule,
     SharedModule,
-    CertificateRoutingModule,
   ],
 })
 export class CertificateModule {}

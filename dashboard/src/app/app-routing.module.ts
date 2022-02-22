@@ -1,23 +1,19 @@
 /* eslint-disable max-len */
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-
-import { AuthGuard } from '~/core/guards/auth-guard.service';
-
+import { RouterModule, Routes } from '@angular/router';
 import { NotFoundComponent } from '~/core/components/not-found/not-found.component';
-import { ServiceUnavailableComponent } from './core/components/service-unavailable/service-unavailable.component';
-
-import { NotAuthenticatedLayoutComponent } from './core/components/not-authenticated-layout/not-authenticated-layout.component';
+import { AuthGuard } from '~/core/guards/auth-guard.service';
 import { AuthenticatedLayoutComponent } from './core/components/authenticated-layout/authenticated-layout.component';
+import { NotAuthenticatedLayoutComponent } from './core/components/not-authenticated-layout/not-authenticated-layout.component';
+import { ServiceUnavailableComponent } from './core/components/service-unavailable/service-unavailable.component';
+import { AdministrationModule } from './modules/administration/administration.module';
+import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { CampaignModule } from './modules/campaign/campaign.module';
 import { CertificateModule } from './modules/certificate/certificate.module';
-import { RegistryModule } from './modules/registry/registry.module';
-import { TripModule } from './modules/trip/trip.module';
-import { AdministrationModule } from './modules/administration/administration.module';
-import { UiGuideModule } from './modules/ui-guide/ui-guide.module';
-import { AuthenticationModule } from './modules/authentication/authentication.module';
-import { StatModule } from './modules/stat/stat.module';
 import { LogoutComponent } from './modules/logout/logout.component';
+import { RegistryModule } from './modules/registry/registry.module';
+import { StatModule } from './modules/stat/stat.module';
+import { TripModule } from './modules/trip/trip.module';
 
 const routes: Routes = [
   {
@@ -50,11 +46,6 @@ const routes: Routes = [
         canLoad: [AuthGuard],
         // prettier-ignore
         loadChildren: (): Promise<AdministrationModule> => import('./modules/administration/administration.module').then((mod) => mod.AdministrationModule),
-      },
-      {
-        path: 'ui-guide',
-        // prettier-ignore
-        loadChildren: (): Promise<UiGuideModule> => import('./modules/ui-guide/ui-guide.module').then((mod) => mod.UiGuideModule),
       },
     ],
   },
