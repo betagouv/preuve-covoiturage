@@ -1,14 +1,13 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { filter, takeUntil, tap } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-
+import { filter, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
-import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
-import { CommonDataService } from '~/core/services/common-data.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CommonDataService } from '~/core/services/common-data.service';
 
 @Component({
   selector: 'app-campaign-auto-complete',
