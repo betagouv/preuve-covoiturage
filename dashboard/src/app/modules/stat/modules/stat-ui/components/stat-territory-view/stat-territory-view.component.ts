@@ -70,7 +70,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     if (this.statService.isLoading) {
       return;
     }
-    this.statService.load(filter);
+    this.statService.updateFilterSubject(filter);
   }
 
   /**

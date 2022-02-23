@@ -67,7 +67,7 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
     if (this.statService.isLoading) {
       return;
     }
-    this.statService.load(filter);
+    this.statService.updateFilterSubject(filter);
   }
 
   /**

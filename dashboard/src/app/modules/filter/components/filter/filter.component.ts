@@ -38,7 +38,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   public filterForm: FormGroup;
   public classes = TRIP_RANKS;
   public tripStatusList = [TripStatusEnum.OK];
-  public minDate: string;
+  public minDate = new Date(new Date().getTime() - 31556952000 * 2); // 2 years ago;
   public maxDate = new Date(new Date().getTime() - 86400000 * 5); // 5 days ago
   public userIsTerritory: boolean;
 
