@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { cloneDeep } from 'lodash-es';
-import { BehaviorSubject, merge, Observable } from 'rxjs';
-import { debounceTime, map, mergeMap } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, of } from 'rxjs';
+import { catchError, debounceTime, map, mergeMap } from 'rxjs/operators';
 import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
@@ -27,7 +27,7 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     super(statApi as JsonRpcGetList<StatInterface, StatInterface, any, TripSearchInterface>);
   }
 
-  public load(filter: FilterInterface | {} = {}): void {
+  public updateFilterSubject(filter: FilterInterface | {} = {}): void {
     const params = cloneDeep(filter);
 
     if ('date' in filter && filter.date.start) {
@@ -104,13 +104,15 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
   }
 
   private callTotalStats(filter): Observable<StatInterface> {
-    return this.isPublic
+    const totalStatsObservable: Observable<StatInterface> = this.isPublic
       ? this.publicStatService
           .load({
             group_by: ApiGraphTimeMode.All,
           })
           .pipe(map((stats: StatInterface[]) => stats[0]))
       : (this.rpcGetList as StatApiService).getTotalStats(filter);
+    // return null value if any server error to avoid breaking the subject
+    return totalStatsObservable.pipe(catchError((err) => of(null)));
   }
 
   private callStats(filt: any) {

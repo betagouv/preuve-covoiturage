@@ -30,7 +30,7 @@ export class StatViewComponent extends DestroyObservable implements OnInit {
         if (this.statService.isLoading) {
           return;
         }
-        this.statService.load(filter);
+        this.statService.updateFilterSubject(filter);
       });
     }
     this.statService.isPublic = this.isPublic;

@@ -30,6 +30,6 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
 
     // reset stats on load
     this.statService.init();
-    this.statService.load();
+    this.statService.updateFilterSubject();
   }
 }
