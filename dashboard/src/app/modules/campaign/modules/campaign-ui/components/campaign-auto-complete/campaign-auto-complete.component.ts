@@ -1,14 +1,13 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { takeUntil, tap } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-
+import { filter, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
-import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
-import { CommonDataService } from '~/core/services/common-data.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CommonDataService } from '~/core/services/common-data.service';
 
 @Component({
   selector: 'app-campaign-auto-complete',
@@ -32,18 +31,17 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   ngOnInit(): void {
     this.initCampaigns();
     this.campaignCtrl.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .pipe(tap((literal) => this.filterCampaigns(literal)))
-      .subscribe();
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((val) => val !== null && typeof val !== 'number'),
+      )
+      .subscribe((literal) => this.filterCampaigns(literal));
   }
 
   get campaignIdsControl(): FormControl {
     return this.parentForm.get('campaignIds') as FormControl;
   }
 
-  /**
-   * todo: refactor when search is made server side
-   */
   getCampaignLabel(campaignId): string {
     return this.campaigns.find((campaign) => campaign._id === campaignId).name;
   }
@@ -89,7 +87,9 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   private filterCampaigns(literal = ''): void {
     const selectedCampaignIds = this.campaignIdsControl.value || [];
     this.filteredCampaigns = this.campaigns.filter(
-      (campaign) => selectedCampaignIds.indexOf(campaign._id) === -1 && campaign.name.toLowerCase().includes(literal),
+      (campaign) =>
+        selectedCampaignIds.indexOf(campaign._id) === -1 &&
+        campaign.name.toLowerCase().normalize().includes(literal.toLowerCase().normalize()),
     );
   }
 }
