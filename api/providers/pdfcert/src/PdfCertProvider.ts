@@ -80,16 +80,17 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
     // general
     this.text(page, `Période : du ${data.certificate.start_at} au ${data.certificate.end_at}`, {
-      x: 46,
-      y: 620,
+      x: PAGE_XMAX / 2,
+      y: 625,
       font: this.fonts.bold,
       size: 16,
+      align: TextAlignment.Center,
     });
 
     // driver
     await this.drawSummaryDetails(page, data.data.driver, CarpoolTypeEnum.DRIVER, "Résumé de l'activité conducteur", {
       x: 46,
-      y: 420,
+      y: 455,
     });
 
     // passenger
@@ -98,33 +99,40 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       data.data.passenger,
       CarpoolTypeEnum.PASSENGER,
       "Résumé de l'activité passager",
-      { x: 46, y: 220 },
+      { x: 46, y: 290 },
+    );
+
+    // Some legal stuff
+    this.text(
+      page,
+      [
+        'La présente attestation est fournie par le Registre de preuve de covoiturage réalisé par le ministère',
+        'des Transports. Cette attestation est réalisée grâce aux informations transmises par les opérateurs de',
+        'covoiturage participant au Registre. Le ministère des Transports ne saurait être tenue responsable des',
+        'informations transmises les opérateurs. Ce document est personnel. Toute personne le modifiant ou',
+        "procédant à une fausse déclaration s'expose aux sanctions prévues à l'article 441-1 du code pénal,",
+        "prévoyant des peines pouvant aller jusqu'à trois ans d'emprisonnement et 45 000 euros d'amende.",
+      ]
+        .map((s) => s.trim())
+        .join(' '),
+      { x: 46, y: 260, size: 8, font: this.fonts.italic, maxWidth: 480, lineHeight: 11 },
     );
 
     // Some help?
-    this.text(page, `Un problème, une question ?`, { x: 46, y: 178 });
-    this.text(page, 'Contactez nous par email à', { x: 46, y: 164 });
-    this.text(page, 'attestation@covoiturage.beta.gouv.fr', { x: 172, y: 164, color: rgb(0, 0, 0.8) });
+    this.text(page, `Un problème, une question ?`, { x: 46, y: 190 });
+    this.text(page, 'Contactez nous par email à', { x: 46, y: 176 });
+    this.text(page, 'attestation@covoiturage.beta.gouv.fr', { x: 172, y: 176, color: rgb(0, 0, 0.8) });
 
     // Notes
-    page.drawRectangle({
-      x: 32,
-      y: 42,
-      width: 400,
-      height: 110,
-      borderWidth: 0.25,
-      borderColor: rgb(0.67, 0.67, 0.67),
-    });
-
-    // title
-    this.text(page, 'Notes', {
-      x: 48,
-      y: 128,
-      size: 9,
-      font: this.fonts.bold,
-    });
-
     if ('notes' in data.header && data.header.notes !== '') {
+      // title
+      this.text(page, 'Notes', {
+        x: 48,
+        y: 128,
+        size: 9,
+        font: this.fonts.bold,
+      });
+
       // multilines text field
       this.text(page, data.header.notes.trim().substring(0, 440), {
         x: 48,
@@ -172,16 +180,22 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
     // data
     this.text(page, 'Nombre de trajets effectués au total :', { x: x + 245, y: y + 88, align: TextAlignment.Right });
-    this.text(page, `${data.total.trips} trajets`, { x: x + 255, y: y + 88 });
+    this.text(page, `${data.total.trips} trajet${data.total.trips > 1 ? 's' : ''}`, { x: x + 255, y: y + 88 });
 
     this.text(page, 'en semaine :', { x: x + 245, y: y + 74, align: TextAlignment.Right });
-    this.text(page, `${data.total.week_trips} trajets`, { x: x + 255, y: y + 74 });
+    this.text(page, `${data.total.week_trips} trajet${data.total.week_trips > 1 ? 's' : ''}`, {
+      x: x + 255,
+      y: y + 74,
+    });
 
     this.text(page, 'le weekend :', { x: x + 245, y: y + 60, align: TextAlignment.Right });
-    this.text(page, `${data.total.weekend_trips} trajets`, { x: x + 255, y: y + 60 });
+    this.text(page, `${data.total.weekend_trips} trajet${data.total.weekend_trips > 1 ? 's' : ''}`, {
+      x: x + 255,
+      y: y + 60,
+    });
 
     this.text(page, 'Kilomètres parcourus :', { x: x + 245, y: y + 36, align: TextAlignment.Right });
-    this.text(page, `${data.total.km} km`, { x: x + 255, y: y + 36 });
+    this.text(page, `${String(data.total.km).replace('.', ',')} km`, { x: x + 255, y: y + 36 });
 
     const eurosTitle = type === CarpoolTypeEnum.DRIVER ? 'Gain conducteur :' : 'Contribution passager :';
     this.text(page, eurosTitle, { x: x + 245, y: y + 22, align: TextAlignment.Right });
@@ -242,31 +256,57 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
     // draw a white rectangle below Marianne
     page.drawRectangle({
-      x: 26,
-      y: 794,
-      width: 60,
-      height: 31.2,
+      x: 16,
+      y: 815,
+      width: 28,
+      height: 10,
       color: rgb(1, 1, 1),
     });
-    this.marianne(page, { x: 16, y: 825.2, scale: 0.06 });
+    this.marianne(page, { x: 6, y: 835, scale: 0.12 });
 
     // title
-    this.text(page, 'Attestation de covoiturage', { x: 116, y: 810, font: this.fonts.bold, size: 14 });
-    this.text(page, `Date d'émission : ${data.certificate.created_at}`, {
-      x: 116,
-      y: 796,
+    this.multiline(page, 'Attestation\nde covoiturage', {
+      x: 132,
+      y: 793.5,
+      font: this.fonts.bold,
+      size: 18,
+      lineHeight: 15,
+    });
+    this.text(page, `émise le ${data.certificate.created_at}`, {
+      x: 134,
+      y: 764,
       font: this.fonts.regular,
-      size: 9,
+      size: 8,
+    });
+
+    // identification
+    this.text(page, `Attestation : ${data.certificate.uuid}`, {
+      x: 15,
+      y: 710,
+      font: this.fonts.monospace,
+      size: 8,
+    });
+    this.text(page, `Personne    : ${data.identity}`, {
+      x: 15,
+      y: 700,
+      font: this.fonts.monospace,
+      size: 8,
+    });
+    this.text(page, `Opérateur   : ${data.operator}`, {
+      x: 15,
+      y: 690,
+      font: this.fonts.monospace,
+      size: 8,
     });
 
     // metadata header
 
     // operator logo gray background - always there
     page.drawRectangle({
-      x: 508,
-      y: 754,
-      width: 72,
-      height: 72,
+      x: 529,
+      y: 764,
+      width: 50,
+      height: 50,
       color: rgb(0.92, 0.92, 0.92),
     });
 
@@ -274,8 +314,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       if ('operator' in data.header) {
         if (data.header.operator.name && data.header.operator.name !== '') {
           this.text(page, data.header.operator.name.trim().substring(0, 26), {
-            x: 500,
-            y: 810,
+            x: 522,
+            y: 799,
             size: 12,
             font: this.fonts.bold,
             align: TextAlignment.Right,
@@ -284,8 +324,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
         if (data.header.operator.content && data.header.operator.content !== '') {
           this.multiline(page, data.header.operator.content, {
-            x: 500,
-            y: 796,
+            x: 522,
+            y: 785,
             size: 9,
             maxChars: 42,
             maxLines: 6,
@@ -297,11 +337,11 @@ export class PdfCertProvider implements PdfCertProviderInterface {
           try {
             const imageBytes = Buffer.from(data.header.operator.image, 'base64');
             const image = await this.pdfDoc.embedPng(imageBytes);
-            const { width, height } = image.scaleToFit(70, 70);
+            const { width, height } = image.scaleToFit(48, 48);
 
             page.drawImage(image, {
-              x: 508 + (70 - width) / 2,
-              y: 754 + (70 - height) / 2,
+              x: 530 + (48 - width) / 2,
+              y: 765 + (48 - height) / 2,
               width,
               height,
             });
@@ -314,54 +354,26 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       if ('identity' in data.header) {
         if (data.header.identity.name && data.header.identity.name !== '') {
           this.text(page, data.header.identity.name.trim().substring(0, 26), {
-            x: 16,
+            x: 578,
             y: 740,
             size: 12,
             font: this.fonts.bold,
+            align: TextAlignment.Right,
           });
         }
 
         if (data.header.identity.content && data.header.identity.content !== '') {
           this.multiline(page, data.header.identity.content, {
-            x: 16,
+            x: 578,
             y: 728,
             size: 8,
             maxChars: 120,
             maxLines: 5,
+            align: TextAlignment.Right,
           });
         }
       }
     }
-
-    // identification
-    this.text(page, "Identification de l'attestation", {
-      x: 578,
-      y: 722,
-      font: this.fonts.bold,
-      size: 8,
-      align: TextAlignment.Right,
-    });
-    this.text(page, `Attestation : ${data.certificate.uuid}`, {
-      x: 578,
-      y: 710,
-      font: this.fonts.monospace,
-      size: 8,
-      align: TextAlignment.Right,
-    });
-    this.text(page, `Personne    : ${data.identity}`, {
-      x: 578,
-      y: 700,
-      font: this.fonts.monospace,
-      size: 8,
-      align: TextAlignment.Right,
-    });
-    this.text(page, `Opérateur   : ${data.operator}`, {
-      x: 578,
-      y: 690,
-      font: this.fonts.monospace,
-      size: 8,
-      align: TextAlignment.Right,
-    });
 
     // page border
     page.drawRectangle({
@@ -374,7 +386,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     });
   }
 
-  private text(page: PDFPage, str: string, opts: TextOptions = {}, debug = false): void {
+  private text(page: PDFPage, str: string, opts: TextOptions = {}): void {
     const options = this.getDefaultOptions(page, opts);
 
     // filter out unsupported chars
@@ -395,7 +407,6 @@ export class PdfCertProvider implements PdfCertProviderInterface {
         break;
     }
 
-    // if (debug) console.debug({ x: options.x, y: options.y });
     page.drawText(clean, options);
   }
 
@@ -456,9 +467,13 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       )}`,
       { x: this.tableX + 40, y: rowY, size },
     );
-    this.text(page, `${row.trips}`, { x: this.tableX + 300, y: rowY, size });
-    this.text(page, `${row.km} km`, { x: this.tableX + 360, y: rowY, size });
-    this.text(page, `${this.currency(row.euros)} €`, { x: this.tableX + 440, y: rowY, size });
+
+    const km = `${String(row.km).replace('.', ',')} km`;
+    const eu = `${this.currency(row.euros)} €`;
+
+    this.text(page, `${row.trips}`, { x: this.tableX + 320, y: rowY, size, align: TextAlignment.Right });
+    this.text(page, km, { x: this.tableX + 398, y: rowY, size, align: TextAlignment.Right });
+    this.text(page, eu, { x: this.tableX + 466, y: rowY, size, align: TextAlignment.Right });
   }
 
   private marianne(page: PDFPage, opts: { x: number; y: number; scale: number }): void {
