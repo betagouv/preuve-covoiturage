@@ -42,7 +42,7 @@ export class TripExportDialogComponent extends DestroyObservable implements OnIn
         .sort()
         .join(', ')
         .trim();
-    if (o.length === this.operators_count) {
+    if (o.length === this.operators_count || o.length == 0) {
       p['Opérateurs'] = 'tous';
     } else if (o.length) {
       p[`Opérateur${o.length === 1 ? '' : 's'}`] = this.operators

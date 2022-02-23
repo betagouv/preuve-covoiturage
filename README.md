@@ -101,6 +101,6 @@ The project follows the [semver](https://semver.org/) specification.
 
 # License
 
-DINUM, 2017-2021.
+DINUM, 2017-2022.
 
 The source code is published under [Apache license 2.0](./LICENSE).
