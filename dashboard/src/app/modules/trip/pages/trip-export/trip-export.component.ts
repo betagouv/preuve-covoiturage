@@ -89,8 +89,8 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
       data.territory_id = this.form.value.territoryIds;
     }
 
-    if (!this.user.isOperatorGroup() && this.checkboxesForm.selectedOperators.length === 0) {
-      data.operator_id = this.checkboxesForm.operators.map((o) => o._id);
+    if (!this.user.isOperatorGroup() && this.checkboxesForm.selectedOperators.length !== 0) {
+      data.operator_id = this.checkboxesForm.selectedOperators.map((o) => o._id);
     }
 
     this.dialog
