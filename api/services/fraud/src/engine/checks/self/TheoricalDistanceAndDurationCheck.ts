@@ -21,19 +21,19 @@ export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<S
       driver_duration,
       driver_calc_distance,
       driver_calc_duration,
-      driver_start_geocode,
-      driver_end_geocode,
+      driver_start_geo_code,
+      driver_end_geo_code,
       passenger_distance,
       passenger_duration,
       passenger_calc_distance,
       passenger_calc_duration,
-      passenger_start_geocode,
-      passenger_end_geocode,
+      passenger_start_geo_code,
+      passenger_end_geo_code,
     } = params;
     // Disable this check if insee geo code is in COM (insee 97/98*)
     if (
-      [driver_start_geocode, driver_end_geocode, passenger_start_geocode, passenger_end_geocode].filter(
-        (code) => code.startsWith('97') || code.startsWith('98'),
+      [driver_start_geo_code, driver_end_geo_code, passenger_start_geo_code, passenger_end_geo_code].filter(
+        (code) => code && (code.startsWith('97') || code.startsWith('98')),
       ).length
     ) {
       return 0;
