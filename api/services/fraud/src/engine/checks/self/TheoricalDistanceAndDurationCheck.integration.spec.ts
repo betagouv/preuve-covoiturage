@@ -18,14 +18,14 @@ test('between by null distance', range, { driver_distance: 0, driver_calc_distan
 test(
   'should be deactivate in COM 97',
   range,
-  { driver_end_geocode: '97501', driver_duration: 1, driver_calc_duration: 1000 },
+  { driver_end_geo_code: '97501', driver_duration: 1, driver_calc_duration: 1000 },
   0,
   0,
 );
 test(
   'should be deactivate in COM 98',
   range,
-  { passenger_end_geocode: '98501', passenger_duration: 1, passenger_calc_duration: 1000 },
+  { passenger_end_geo_code: '98501', passenger_duration: 1, passenger_calc_duration: 1000 },
   0,
   0,
 );
