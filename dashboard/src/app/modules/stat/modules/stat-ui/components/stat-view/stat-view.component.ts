@@ -17,7 +17,6 @@ export class StatViewComponent extends DestroyObservable implements OnInit {
   public statsCalculationDoc: string = URLS.statsCalculationDoc;
 
   @Input() navList = PUBLIC_STATS;
-  @Input() isPublic = false;
   public graphName: StatNavName = this.navList[0];
 
   constructor(public statService: StatFilteredStoreService, public filterService: FilterService) {
@@ -25,15 +24,12 @@ export class StatViewComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.isPublic) {
-      this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
-        if (this.statService.isLoading) {
-          return;
-        }
-        this.statService.updateFilterSubject(filter);
-      });
-    }
-    this.statService.isPublic = this.isPublic;
+    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
+      if (this.statService.isLoading) {
+        return;
+      }
+      this.statService.updateFilterSubject(filter);
+    });
   }
 
   get loading(): boolean {
