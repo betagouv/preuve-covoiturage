@@ -59,6 +59,7 @@ export class BuildFile {
       header: true,
       columns: BuildExportAction.getColumns(type),
       cast: {
+        boolean: (b: Boolean): string => (b ? 'OUI' : 'NON'),
         date: (d: Date): string => d.toISOString(),
         number: (n: Number): string => n.toString().replace('.', ','),
       },
