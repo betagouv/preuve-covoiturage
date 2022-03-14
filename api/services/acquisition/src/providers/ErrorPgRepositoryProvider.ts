@@ -171,7 +171,7 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     const result = await this.connection.getClient().query({
       text: `
         SELECT * FROM ${this.table}
-        WHERE journey_id = $1::varchar AND operator_id = $2::int
+        WHERE journey_id = $1::varchar AND operator_id = $2::int AND source <> 'logrequest'
       `,
       values: [journey_id, operator_id],
     });
