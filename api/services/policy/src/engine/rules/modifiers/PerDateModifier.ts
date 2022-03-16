@@ -18,6 +18,7 @@ export class PerDateModifier extends ModifierRule<PerDateModifierInterface> {
         items: {
           type: 'string',
           format: 'date',
+          maxLength: 100,
         },
       },
       coef: {
