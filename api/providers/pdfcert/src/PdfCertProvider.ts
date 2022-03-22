@@ -60,8 +60,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     await this.drawSummaryPage(data);
 
     // add pages for driver and passenger trips
-    await this.drawDetailPages(data, CarpoolTypeEnum.DRIVER, 'Gains conducteur');
-    await this.drawDetailPages(data, CarpoolTypeEnum.PASSENGER, 'Contributions passager');
+    await this.drawDetailPages(data, CarpoolTypeEnum.DRIVER, 'Gains conducteur', 'gain');
+    await this.drawDetailPages(data, CarpoolTypeEnum.PASSENGER, 'Contributions passager', 'coût');
 
     // number all pages
     await this.drawPageNumbers();
@@ -202,7 +202,12 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.text(page, `${this.currency(data.total.euros)} €`, { x: x + 255, y: y + 22 });
   }
 
-  private async drawDetailPages(data: PdfTemplateData, type: CarpoolTypeEnum, title: string): Promise<void> {
+  private async drawDetailPages(
+    data: PdfTemplateData,
+    type: CarpoolTypeEnum,
+    title: string,
+    money: string,
+  ): Promise<void> {
     let page: PDFPage | null = null;
     let index = 0;
 
@@ -220,7 +225,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
         this.text(page, 'date', { x: this.tableX + 40, ...opts });
         this.text(page, 'trajets', { x: this.tableX + 300, ...opts });
         this.text(page, 'distance', { x: this.tableX + 360, ...opts });
-        this.text(page, 'gains', { x: this.tableX + 440, ...opts });
+        this.text(page, money, { x: this.tableX + 444, ...opts });
       }
 
       if (!page) return;
