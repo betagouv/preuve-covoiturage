@@ -1,14 +1,14 @@
 <div class="public-stat">
   <div class="public-stat-header">
-    <h1>Statistiques</h1>
+    <h1>Statistiques et impactes du Registre de Preuve de covoiturage</h1>
 
     <!-- Disclaimer -->
     <div class="public-stat-disclaimer">
       <p>
         Ces données sont collectées à partir des informations communiquées par les
-        <a target="_blank" rel="noopener noreferrer" href="http://covoiturage.beta.gouv.fr/operateurs"
-          >opérateurs partenaires</a
-        >.<br />Il s'agit d'une représentation de l'activité du registre de preuve de covoiturage. En outre il ne
+        <a target="_blank" rel="noopener noreferrer" href="http://covoiturage.beta.gouv.fr/operateurs">opérateurs
+          partenaires</a>.<br />Il s'agit d'une représentation de l'activité du registre de preuve de covoiturage. En
+        outre il ne
         saurait s'agir&nbsp;:
       </p>
       <ul>
@@ -16,35 +16,21 @@
         <li>d'un outil permettant le calcul de part de marché d'un acteur du covoiturage.</li>
       </ul>
     </div>
-  </div>
 
-  <!-- number navs and charts-->
-  <app-stat-view [isPublic]="true" [navList]="statsList"> </app-stat-view>
+    <div class="public-stat-methods">
+      <a target="_blank" rel="noopener noreferrer"
+        href="https://doc.covoiturage.beta.gouv.fr/acteurs-de-la-mobilite-utiliser-les-donnees-ouvertes-du-covoiturage/open-data-donnees-de-limpact-du-covoiturage/methodes-de-calcul-utilisees">Informations
+        sur les méthodes de calcules utilisées </a>
+    </div>
 
-  <div class="public-stat-header">
-    <div class="has-text-centered padding-fat-bottom">
-      <a
-        href="https://www.data.gouv.fr/fr/datasets/trajets-realises-en-covoiturage-registre-de-preuve-de-covoiturage/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Retrouvez l'historique des données ouvertes<br />
-        sur la plateforme ouverte des données publiques françaises
-      </a>
+    <div class="public-stat-methods">
+      <a target="_blank" rel="noopener noreferrer"
+        href="https://doc.covoiturage.beta.gouv.fr/acteurs-de-la-mobilite-utiliser-les-donnees-ouvertes-du-covoiturage/open-data-donnees-de-limpact-du-covoiturage/methodes-de-calcul-utilisees">Retrouvez l'historique des données ouvertes
+        sur la plateforme ouverte des données publiques françaises </a>
     </div>
   </div>
 
-  <!-- honor certificates -->
-  <div class="public-stat-honor">
-    <h2>Attestations sur l'honneur</h2>
-    <p>
-      Le générateur d'attestations sur l'honneur facilite la création d'un document à fournir aux employeurs du secteur
-      privé et du secteur public. Chaque création d'un document est enregistrée de façon anonyme.
-    </p>
-    <p>
-      <a href="https://attestation.covoiturage.beta.gouv.fr">https://attestation.covoiturage.beta.gouv.fr</a>
-    </p>
-    <!-- TODO: fixme -->
-    <!-- <app-stat-honor></app-stat-honor> -->
-  </div>
+  <iframe src="https://stats.covoiturage.beta.gouv.fr/public/dashboard/3bec1692-1456-41c2-95a9-6606af329df9"
+    frameborder="0" width="100%" height="2500px" allowtransparency></iframe>
+
 </div>

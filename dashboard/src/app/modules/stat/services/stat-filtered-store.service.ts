@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
 import { cloneDeep } from 'lodash-es';
 import { BehaviorSubject, merge, Observable, of } from 'rxjs';
-import { catchError, debounceTime, map, mergeMap } from 'rxjs/operators';
+import { catchError, debounceTime, mergeMap } from 'rxjs/operators';
 import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { FormatedStatsInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 import { GetListStore } from '~/core/services/store/getlist-store';
-import { StoreLoadingState } from '~/core/services/store/StoreLoadingState';
 import { StatApiService } from '~/modules/stat/services/stat-api.service';
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
-import { StatPublicService } from './stat-public.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +19,8 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
   protected _timeMode: BehaviorSubject<ApiGraphTimeMode>;
   protected _totalStats = new BehaviorSubject<StatInterface>(null);
   private _currentFilterSignature: string;
-  public isPublic: Boolean;
 
-  constructor(statApi: StatApiService, private publicStatService: StatPublicService) {
+  constructor(statApi: StatApiService) {
     super(statApi as JsonRpcGetList<StatInterface, StatInterface, any, TripSearchInterface>);
   }
 
@@ -84,7 +81,7 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
           const currentSignature = this.filterSignature;
           if (this.hasFilterSignatureChanged(currentSignature)) {
             this._currentFilterSignature = currentSignature;
-            this.callStats(filter);
+            this.loadList();
             firstLoad = !firstLoad || !!filter;
           } else {
             setTimeout(() => this.entitiesSubject.next(this.entitiesSubject.value), 0);
@@ -104,39 +101,13 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
   }
 
   private callTotalStats(filter): Observable<StatInterface> {
-    const totalStatsObservable: Observable<StatInterface> = this.isPublic
-      ? this.publicStatService
-          .load({
-            group_by: ApiGraphTimeMode.All,
-          })
-          .pipe(map((stats: StatInterface[]) => stats[0]))
-      : (this.rpcGetList as StatApiService).getTotalStats(filter);
+    const totalStatsObservable: Observable<StatInterface> = (this.rpcGetList as StatApiService).getTotalStats(filter);
     // return null value if any server error to avoid breaking the subject
     return totalStatsObservable.pipe(catchError((err) => of(null)));
   }
 
-  private callStats(filt: any) {
-    if (this.isPublic) {
-      this.loadPublicStats(filt as ApiGraphTimeMode);
-    } else {
-      this.loadList();
-    }
-  }
-
   private hasFilterSignatureChanged(currentSignature: string): Boolean {
     return this._currentFilterSignature !== currentSignature;
-  }
-
-  private loadPublicStats(filt: ApiGraphTimeMode) {
-    this._listLoadingState.next(StoreLoadingState.LoadStart);
-    this.publicStatService
-      .load({
-        group_by: filt,
-      })
-      .subscribe((stats: StatInterface[]) => {
-        this._listLoadingState.next(StoreLoadingState.LoadComplete);
-        this.entitiesSubject.next(stats);
-      });
   }
 
   get finalFilterValue(): any {

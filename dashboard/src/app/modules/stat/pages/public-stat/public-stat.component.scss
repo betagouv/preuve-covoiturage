@@ -30,7 +30,7 @@ a:hover {
   }
 
   &-disclaimer {
-    text-align: center;
+    text-align: left;
     padding: 20px;
     background: $color-background-help;
     border: 2px solid $color-border-help;
@@ -39,16 +39,12 @@ a:hover {
       text-align: left;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      justify-content: left;
+      align-items: flex-start;
     }
   }
 
-  &-honor {
-    max-width: 960px;
-    margin: 2em auto 1em;
-    h2 {
-      text-align: center;
-    }
+  &-methods {
+    margin-top: 40px;
   }
 }
