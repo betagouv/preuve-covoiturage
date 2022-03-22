@@ -18,6 +18,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   public searchedTerritoryInsees: InseeAndTerritoryInterface[] = [];
   @Input() parentForm: FormGroup;
   @Input() fieldName: string;
+  @Input() geoMesh: GeoCodeTypeEnum = GeoCodeTypeEnum.City;
 
   @ViewChild('territoryInseeInput') territoryInseeInput: ElementRef;
 
@@ -59,7 +60,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   private filterTerritoryInsee(literal = ''): void {
     this.territoryApiService
       .geo({
-        type: GeoCodeTypeEnum.City,
+        type: this.geoMesh,
         search: literal,
       })
       .pipe(takeUntil(this.destroy$))

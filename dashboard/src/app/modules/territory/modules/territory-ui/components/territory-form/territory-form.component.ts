@@ -181,6 +181,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       formOptions = {
         ...formOptions,
         name: [''],
+        parentRegion: '',
         inseeString: [''],
         address: this.fb.group(
           new FormAddress(

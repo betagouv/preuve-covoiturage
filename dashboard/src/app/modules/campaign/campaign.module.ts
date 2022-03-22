@@ -34,6 +34,7 @@ import { SummaryFormComponent } from './components/campaign-form/step-4/summary-
 import { MaterialModule } from '../../shared/modules/material/material.module';
 import { TerritoriesToInseesAutocompleteComponent } from '../../shared/modules/territory-to-insees-autocomplete/components/territories-to-insees-autocomplete/territories-to-insees-autocomplete.component';
 import { SharedModule } from '../../shared/shared.module';
+import { TerritoryToInseesAutocompleteModule } from '../../shared/modules/territory-to-insees-autocomplete/territory-to-insees-autocomplete.module';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,7 @@ import { SharedModule } from '../../shared/shared.module';
     RetributionFormComponent,
     StaggeredFormComponent,
     SummaryFormComponent,
-    TerritoriesToInseesAutocompleteComponent,
+    // TerritoriesToInseesAutocompleteComponent,
   ],
   imports: [
     CampaignRoutingModule,
@@ -72,8 +73,10 @@ import { SharedModule } from '../../shared/shared.module';
     StatUIModule,
     TerritoryUiModule,
     UiTripModule,
+    TerritoryToInseesAutocompleteModule,
+    // TerritoriesToInseesAutocompleteComponent,
   ],
   providers: [CurrencyPipe, DecimalPipe],
-  exports: [CampaignsListComponent, TerritoriesToInseesAutocompleteComponent],
+  exports: [CampaignsListComponent],
 })
 export class CampaignModule {}
