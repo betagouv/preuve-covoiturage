@@ -123,6 +123,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       await this.createRelations(resultData._id, data.children);
     }
 
+    if (data.parent) {
+      await this.createRelations(data.parent, [resultData._id]);
+    }
+
     return resultData;
   }
 
