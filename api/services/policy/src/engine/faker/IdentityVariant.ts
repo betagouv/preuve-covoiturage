@@ -1,4 +1,4 @@
-import * as faker from 'faker/locale/fr';
+import faker from '@faker-js/faker/locale/fr';
 import sampleSize from 'lodash/sampleSize';
 
 import { AbstractVariant } from './AbstractVariant';
