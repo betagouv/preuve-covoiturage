@@ -3,6 +3,7 @@ import test from 'ava';
 import { faker } from '../../helpers/faker';
 import { PerDateModifier } from './PerDateModifier';
 import { TripInterface } from '../../../interfaces';
+import { RuleHandlerParamsInterface } from '../../interfaces';
 
 function setup(): { rule: PerDateModifier; trip: TripInterface } {
   const rule = new PerDateModifier({
@@ -35,4 +36,16 @@ test('should not multiply result if not in date', async (t) => {
   };
   rule.apply(context);
   t.is(context.result, 10);
+});
+
+test('should work with string', async (t) => {
+  const { trip, rule } = setup();
+  const context = {
+    trip,
+    stack: [],
+    result: 10,
+    person: { ...trip[0], datetime: '2021-01-02' },
+  };
+  rule.apply(context as unknown as RuleHandlerParamsInterface);
+  t.is(context.result, 25);
 });
