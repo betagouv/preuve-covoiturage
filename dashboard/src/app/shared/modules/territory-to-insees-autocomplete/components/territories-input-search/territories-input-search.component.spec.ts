@@ -3,7 +3,6 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Observable, of } from 'rxjs';
 import { InseeAndTerritoryInterface } from '../../../../../core/entities/campaign/ux-format/incentive-filters';
@@ -51,7 +50,7 @@ fdescribe('app-territories-input-search', () => {
     }).compileComponents(),
   );
 
-  it('should create component and add input', async () => {
+  it('should create component and select territory', async () => {
     // Arrange
     const fixture = TestBed.createComponent(TerritoriesInputSearchComponent);
     fixture.componentInstance.parentForm = new FormGroup({ district: new FormControl() });

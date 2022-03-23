@@ -3,9 +3,10 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { debounceTime, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { GeoCodeTypeEnum } from '~/shared/territory/common/geo';
+import { SingleResultInterface as GeoSearchResult } from '~/shared/territory/listGeo.contract';
+import { JsonRPCResult } from '../../../../../core/entities/api/jsonRPCResult';
 
 @Component({
   selector: 'app-territories-input-search',
@@ -15,7 +16,7 @@ import { GeoCodeTypeEnum } from '~/shared/territory/common/geo';
 export class TerritoriesInputSearchComponent extends DestroyObservable implements OnInit {
   public territoryInseeInputCtrl = new FormControl();
 
-  public searchedTerritoryInsees: InseeAndTerritoryInterface[] = [];
+  public searchedTerritoryInsees: GeoSearchResult[] = [];
   @Input() parentForm: FormGroup;
   @Input() fieldName: string;
   @Input() geoMesh: GeoCodeTypeEnum = GeoCodeTypeEnum.District;
@@ -43,7 +44,7 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
   }
 
   public onTerritoryInseeSelect(event: MatAutocompleteSelectedEvent): void {
-    this.territoryInseeInputCtrl.setValue(event.option.value);
+    this.territoryInseeInputCtrl.setValue(event.option.value.name);
     this.territoryInseeInputCtrl.markAsUntouched();
   }
 
@@ -54,12 +55,8 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
         search: literal,
       })
       .pipe(takeUntil(this.destroy$))
-      .subscribe((foundTerritories: any) => {
-        this.searchedTerritoryInsees = foundTerritories.data.map((terr) => ({
-          territory_literal: terr.name,
-          context: terr.name,
-          insees: terr.insee,
-        }));
+      .subscribe((foundTerritories: JsonRPCResult) => {
+        this.searchedTerritoryInsees = foundTerritories.data;
       });
   }
 }
