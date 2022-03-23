@@ -1,4 +1,4 @@
-import faker from 'faker';
+import faker from '@faker-js/faker';
 import { RuleInterface } from '../shared/common/interfaces/RuleInterface';
 import { ResultInterface as GetCampaignResultInterface } from '../shared/policy/find.contract';
 

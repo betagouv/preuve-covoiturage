@@ -227,6 +227,11 @@
   dependencies:
     "@cspotcode/source-map-consumer" "0.8.0"
 
+"@faker-js/faker@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-6.0.0.tgz#b613ebf5f5ebb2ab987afb567d8b7fe860199c13"
+  integrity sha512-10zLCKhp3YEmBuko71ivcMoIZcCLXgQVck6aNswX+AWwaek/L8S3yz9i8m3tHigRkcF6F2vI+qtdtyySHK+bGA==
+
 "@fast-csv/format@4.3.5":
   version "4.3.5"
   resolved "https://registry.yarnpkg.com/@fast-csv/format/-/format-4.3.5.tgz#90d83d1b47b6aaf67be70d6118f84f3e12ee1ff3"
@@ -3521,10 +3526,6 @@ eyes@0.1.x:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/eyes/-/eyes-0.1.8.tgz#62cf120234c683785d902348a800ef3e0cc20bc0"
   integrity sha1-Ys8SAjTGg3hdkCNIqADvPgzCC8A=
-
-faker@nmrgt/faker:
-  version "5.5.3"
-  resolved "https://codeload.github.com/nmrgt/faker/tar.gz/2f2d7b5cc907eb56915125e1166f0924abe2bbea"
 
 fast-csv@^4.3.1:
   version "4.3.6"

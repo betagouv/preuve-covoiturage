@@ -1,6 +1,6 @@
 import test from 'ava';
 import { Workbook, Worksheet } from 'exceljs';
-import faker from 'faker';
+import faker from '@faker-js/faker';
 import { ExportTripInterface } from '../../../interfaces';
 import { BuildExportAction } from '../../BuildExportAction';
 import { StreamDataToWorkBook } from './StreamDataToWorkbook';
