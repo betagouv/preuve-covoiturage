@@ -18,7 +18,7 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
   public searchedTerritoryInsees: InseeAndTerritoryInterface[] = [];
   @Input() parentForm: FormGroup;
   @Input() fieldName: string;
-  @Input() geoMesh: GeoCodeTypeEnum = GeoCodeTypeEnum.City;
+  @Input() geoMesh: GeoCodeTypeEnum = GeoCodeTypeEnum.District;
 
   @ViewChild('territoryInseeInput') territoryInseeInput: ElementRef;
 

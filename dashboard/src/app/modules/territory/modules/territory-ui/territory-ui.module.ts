@@ -5,8 +5,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { DetailsModule } from '../../../../shared/modules/details/details.module';
 import { FormModule } from '../../../../shared/modules/form/form.module';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
-import { TerritoriesToInseesAutocompleteComponent } from '../../../../shared/modules/territory-to-insees-autocomplete/components/territories-to-insees-autocomplete/territories-to-insees-autocomplete.component';
-import { TerritoryToInseesAutocompleteModule } from '../../../../shared/modules/territory-to-insees-autocomplete/territory-to-insees-autocomplete.module';
+// eslint-disable-next-line max-len
+import { TerritoriesInputSearchComponent } from '../../../../shared/modules/territory-to-insees-autocomplete/components/territories-input-search/territories-input-search.component';
 import { SharedModule } from '../../../../shared/shared.module';
 // eslint-disable-next-line
 import { TerritoriesAutocompleteComponent } from './components/territories-autocomplete/territories-autocomplete.component';
@@ -25,7 +25,7 @@ import { TerritoryUiRoutingModule } from './territory-ui-routing.module';
     TerritoryFilterComponent,
     TerritoryListViewComponent,
     TerritoryDetailsComponent,
-    // TerritoriesToInseesAutocompleteComponent,
+    TerritoriesInputSearchComponent,
   ],
   imports: [
     CommonModule,
@@ -37,8 +37,6 @@ import { TerritoryUiRoutingModule } from './territory-ui-routing.module';
     DetailsModule,
     MatPaginatorModule,
     TerritoryUiRoutingModule,
-    // TerritoriesToInseesAutocompleteComponent,
-    TerritoryToInseesAutocompleteModule,
   ],
   exports: [
     TerritoryFormComponent,
