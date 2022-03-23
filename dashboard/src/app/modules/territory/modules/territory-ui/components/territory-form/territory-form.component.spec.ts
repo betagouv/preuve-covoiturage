@@ -4,7 +4,11 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
-import { TerritoryLevelEnum } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import {
+  TerritoryBaseInterface,
+  TerritoryInterface,
+  TerritoryLevelEnum,
+} from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { User } from '../../../../../../core/entities/authentication/user';
 import { CompanyV2 } from '../../../../../../core/entities/shared/companyV2';
 import { Groups } from '../../../../../../core/enums/user/groups';
@@ -26,12 +30,13 @@ describe('TerritoryFormComponent', () => {
     address_postcode: '69210',
   };
 
-  const territory = {
+  const territory: TerritoryInterface = {
     _id: 44,
     level: TerritoryLevelEnum.Towngroup,
     name: "Communauté de communes du Pays de L'Arbresle",
     company_id: 3,
     children: [1, 2],
+    parent: 5,
     contacts: {
       gdpr_dpo: {
         firstname: 'gdpr',
@@ -182,6 +187,7 @@ describe('TerritoryFormComponent', () => {
         expect(territoryApiServiceSpy.createNew).toHaveBeenCalledWith({
           name: "Communauté de communes du Pays de L'Arbresle",
           company_id: 4,
+          parent: 5,
           contacts: {
             gdpr_dpo: {
               firstname: 'gdpr',
