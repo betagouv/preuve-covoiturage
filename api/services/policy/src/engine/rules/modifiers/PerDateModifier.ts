@@ -31,7 +31,9 @@ export class PerDateModifier extends ModifierRule<PerDateModifierInterface> {
   };
 
   modify(ctx: RuleHandlerContextInterface, result: number): number {
-    const ctxDate = ctx.person.datetime.toISOString().split('T')[0];
+    const date = ctx.person.datetime;
+    const dateStr = typeof date.toISOString === 'function' ? date.toISOString() : new Date(date).toISOString();
+    const ctxDate = dateStr.split('T')[0];
     if (this.parameters.dates.indexOf(ctxDate) >= 0) {
       return result * this.parameters.coef;
     }

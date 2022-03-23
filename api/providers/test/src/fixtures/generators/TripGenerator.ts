@@ -1,6 +1,6 @@
 import { merge, omit, has, set } from 'lodash';
 import { v4 as uuid } from 'uuid';
-import faker from 'faker/locale/fr';
+import faker from '@faker-js/faker/locale/fr';
 import { PoolClient } from '@ilos/connection-postgres';
 
 import { Generator } from './Generator';

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { ConfigInterfaceResolver } from '@ilos/common';
 import anyTest, { TestFn } from 'ava';
-import faker from 'faker';
+import faker from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
 import { UploadedResource } from '../interfaces/DataGouvInterface';
 import { DataGouvProvider } from '../providers/DataGouvProvider';

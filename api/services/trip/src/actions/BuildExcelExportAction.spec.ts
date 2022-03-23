@@ -2,7 +2,7 @@
 import { uuid } from '@pdc/helper-test/dist';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import anyTest, { TestFn } from 'ava';
-import faker from 'faker';
+import faker from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
