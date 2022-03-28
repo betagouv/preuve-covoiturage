@@ -18,10 +18,7 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
 
   public searchedTerritoryInsees: GeoSearchResult[] = [];
   @Input() parentForm: FormGroup;
-  @Input() fieldName: string;
   @Input() geoMesh: GeoCodeTypeEnum = GeoCodeTypeEnum.District;
-
-  @ViewChild('territoryInseeInput') territoryInseeInput: ElementRef;
 
   constructor(private territoryApiService: TerritoryApiService) {
     super();
@@ -37,10 +34,6 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe();
-  }
-
-  get territoryInseesControl(): FormControl {
-    return this.parentForm.get(this.fieldName) as FormControl;
   }
 
   public onTerritoryInseeSelect(event: MatAutocompleteSelectedEvent): void {
