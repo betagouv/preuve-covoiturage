@@ -1,6 +1,7 @@
 import { StaticRuleInterface } from '../../interfaces/RuleInterface';
 
 import { AdultOnlyFilter } from './AdultOnlyFilter';
+import { DateFilter } from './DateFilter';
 import { DistanceRangeFilter } from './DistanceRangeFilter';
 import { DriverOnlyFilter } from './DriverOnlyFilter';
 import { InseeBlacklistFilter, InseeWhitelistFilter } from './InseeFilter';
@@ -13,6 +14,7 @@ import { PassengerOnlyFilter } from './PassengerOnlyFilter';
 
 export const filters: StaticRuleInterface[] = [
   AdultOnlyFilter,
+  DateFilter,
   DistanceRangeFilter,
   DriverOnlyFilter,
   InseeBlacklistFilter,
