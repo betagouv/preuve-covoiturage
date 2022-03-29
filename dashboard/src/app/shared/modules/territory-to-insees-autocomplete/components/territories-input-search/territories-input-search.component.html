@@ -3,6 +3,9 @@
 
   <input type="text" matInput [formControl]="territoryInseeInputCtrl" [matAutocomplete]="auto" />
 
+  <mat-error *ngIf="territoryInseeInputCtrl.hasError('required')">Le département parent est obligatoire
+  </mat-error>
+
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTerritoryInseeSelect($event)">
     <mat-option *ngFor="let territory of searchedTerritoryInsees" [value]="territory">
       <span [title]="territory.name">{{ territory.name }} </span>

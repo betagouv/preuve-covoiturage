@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { debounceTime, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -36,6 +36,8 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe();
+      
+      this.territoryInseeInputCtrl.setValidators([Validators.required]);
   }
 
   public onTerritoryInseeSelect(event: MatAutocompleteSelectedEvent): void {
