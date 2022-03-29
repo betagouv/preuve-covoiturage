@@ -10,7 +10,10 @@ function setup(): { rule: PerDateModifier; trip: TripInterface } {
     dates: ['2021-01-02'],
     coef: 2.5,
   });
-  const trip = faker.trip([{ datetime: new Date('2021-01-02') }, { datetime: new Date('2021-02-02') }]);
+  const trip = faker.trip([
+    { datetime: new Date('2021-01-02T13:00:00.000Z') },
+    { datetime: new Date('2021-02-02T13:00:00.000Z') },
+  ]);
 
   return { rule, trip };
 }
@@ -44,7 +47,7 @@ test('should work with string', async (t) => {
     trip,
     stack: [],
     result: 10,
-    person: { ...trip[0], datetime: '2021-01-02' },
+    person: { ...trip[0], datetime: '2021-01-02T14:00:00.000Z' },
   };
   rule.apply(context as unknown as RuleHandlerParamsInterface);
   t.is(context.result, 25);
