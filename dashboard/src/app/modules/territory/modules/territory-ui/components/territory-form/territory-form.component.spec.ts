@@ -4,11 +4,7 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
-import {
-  TerritoryBaseInterface,
-  TerritoryInterface,
-  TerritoryLevelEnum,
-} from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryInterface, TerritoryLevelEnum } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { User } from '../../../../../../core/entities/authentication/user';
 import { CompanyV2 } from '../../../../../../core/entities/shared/companyV2';
 import { Groups } from '../../../../../../core/enums/user/groups';

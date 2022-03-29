@@ -54,7 +54,6 @@ fdescribe('app-territories-input-search', () => {
     // Arrange
     const fixture = TestBed.createComponent(TerritoriesInputSearchComponent);
     fixture.componentInstance.parentForm = new FormGroup({ district: new FormControl() });
-    fixture.componentInstance.fieldName = 'district';
     fixture.detectChanges();
 
     // Assert : component loaded

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { debounceTime, filter, map, takeUntil, tap } from 'rxjs/operators';
@@ -14,12 +14,11 @@ import { JsonRPCResult } from '../../../../../core/entities/api/jsonRPCResult';
   styleUrls: ['./territories-input-search.component.scss'],
 })
 export class TerritoriesInputSearchComponent extends DestroyObservable implements OnInit {
-  
   public territoryInseeInputCtrl = new FormControl();
 
   public searchedTerritoryInsees: GeoSearchResult[] = [];
 
-  private selectedTerritory:GeoSearchResult;
+  private selectedTerritory: GeoSearchResult;
   private focusDebounceTimer;
 
   @Input() parentForm: FormGroup;
@@ -40,13 +39,13 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
       .pipe(takeUntil(this.destroy$))
       .subscribe();
 
-      this.territoryInseeInputCtrl.setValidators([Validators.required]);
+    this.territoryInseeInputCtrl.setValidators([Validators.required]);
   }
 
   public onTerritoryInseeSelect(event: MatAutocompleteSelectedEvent): void {
     this.territoryInseeInputCtrl.setValue(event.option.value.name);
     this.territoryInseeInputCtrl.markAsUntouched();
-    this.parentForm.controls.parent.setValue(event.option.value._id)
+    this.parentForm.controls.parent.setValue(event.option.value._id);
     clearTimeout(this.focusDebounceTimer);
     this.selectedTerritory = event.option.value;
   }
@@ -65,12 +64,9 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
 
   inputLostFocus(): void {
     clearTimeout(this.focusDebounceTimer);
-    this.focusDebounceTimer = setTimeout(
-      () =>  {
-        this.territoryInseeInputCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.name : '')
-        this.parentForm.controls.parent.setValue(this.selectedTerritory ? this.selectedTerritory._id : '')
-      },
-      300,
-    );
+    this.focusDebounceTimer = setTimeout(() => {
+      this.territoryInseeInputCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.name : '');
+      this.parentForm.controls.parent.setValue(this.selectedTerritory ? this.selectedTerritory._id : '');
+    }, 300);
   }
 }
