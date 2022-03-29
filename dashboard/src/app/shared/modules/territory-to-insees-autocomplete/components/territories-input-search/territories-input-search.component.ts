@@ -19,6 +19,9 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
 
   public searchedTerritoryInsees: GeoSearchResult[] = [];
 
+  private selectedTerritory:GeoSearchResult;
+  private focusDebounceTimer;
+
   @Input() parentForm: FormGroup;
   @Input() geoMesh: GeoCodeTypeEnum = GeoCodeTypeEnum.District;
 
@@ -36,7 +39,7 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe();
-      
+
       this.territoryInseeInputCtrl.setValidators([Validators.required]);
   }
 
@@ -44,6 +47,8 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
     this.territoryInseeInputCtrl.setValue(event.option.value.name);
     this.territoryInseeInputCtrl.markAsUntouched();
     this.parentForm.controls.parent.setValue(event.option.value._id)
+    clearTimeout(this.focusDebounceTimer);
+    this.selectedTerritory = event.option.value;
   }
 
   private filterTerritoryInsee(literal = ''): void {
@@ -56,5 +61,16 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
       .subscribe((foundTerritories: JsonRPCResult) => {
         this.searchedTerritoryInsees = foundTerritories.data;
       });
+  }
+
+  inputLostFocus(): void {
+    clearTimeout(this.focusDebounceTimer);
+    this.focusDebounceTimer = setTimeout(
+      () =>  {
+        this.territoryInseeInputCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.name : '')
+        this.parentForm.controls.parent.setValue(this.selectedTerritory ? this.selectedTerritory._id : '')
+      },
+      300,
+    );
   }
 }
