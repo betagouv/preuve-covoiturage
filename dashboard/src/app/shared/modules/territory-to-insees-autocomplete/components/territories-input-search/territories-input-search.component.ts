@@ -14,9 +14,11 @@ import { JsonRPCResult } from '../../../../../core/entities/api/jsonRPCResult';
   styleUrls: ['./territories-input-search.component.scss'],
 })
 export class TerritoriesInputSearchComponent extends DestroyObservable implements OnInit {
+  
   public territoryInseeInputCtrl = new FormControl();
 
   public searchedTerritoryInsees: GeoSearchResult[] = [];
+
   @Input() parentForm: FormGroup;
   @Input() geoMesh: GeoCodeTypeEnum = GeoCodeTypeEnum.District;
 
@@ -39,6 +41,7 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
   public onTerritoryInseeSelect(event: MatAutocompleteSelectedEvent): void {
     this.territoryInseeInputCtrl.setValue(event.option.value.name);
     this.territoryInseeInputCtrl.markAsUntouched();
+    this.parentForm.controls.parent.setValue(event.option.value._id)
   }
 
   private filterTerritoryInsee(literal = ''): void {
