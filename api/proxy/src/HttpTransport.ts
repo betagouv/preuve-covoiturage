@@ -613,6 +613,9 @@ export class HttpTransport implements TransportInterface {
       endpoint,
       apiRateLimiter(),
       asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
+        if (req.originalUrl === '/rpc?methods=trip:stats') {
+          res.setTimeout(120000);
+        }
         // inject the req.session.user to context in the body
         const isBatch = Array.isArray(req.body);
         let user = get(req, 'session.user', null);
