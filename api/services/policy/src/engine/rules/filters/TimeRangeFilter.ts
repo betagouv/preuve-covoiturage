@@ -1,5 +1,4 @@
-import { utcToZonedTime } from 'date-fns-tz';
-
+import { utcToZonedTime } from '../../helpers/utcToZonedTime';
 import { RuleHandlerContextInterface } from '../../interfaces';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { FilterRule } from '../FilterRule';
@@ -7,7 +6,7 @@ import { FilterRule } from '../FilterRule';
 interface Range {
   start: number;
   end: number;
-  tz: string;
+  tz?: string;
 }
 
 export class TimeRangeFilter extends FilterRule<Range[]> {

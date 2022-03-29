@@ -1,9 +1,11 @@
+import { utcToZonedTime } from '../../helpers/utcToZonedTime';
 import { RuleHandlerContextInterface } from '../../interfaces';
 import { ModifierRule } from '../ModifierRule';
 
 interface PerDateModifierInterface {
   dates: string[];
   coef: number;
+  tz?: string;
 }
 
 export class PerDateModifier extends ModifierRule<PerDateModifierInterface> {
@@ -27,12 +29,14 @@ export class PerDateModifier extends ModifierRule<PerDateModifierInterface> {
         maximum: 100,
         multipleOf: 0.01,
       },
+      tz: {
+        macro: 'tz',
+      },
     },
   };
 
   modify(ctx: RuleHandlerContextInterface, result: number): number {
-    const date = ctx.person.datetime;
-    const dateStr = typeof date.toISOString === 'function' ? date.toISOString() : new Date(date).toISOString();
+    const dateStr = utcToZonedTime(ctx.person.datetime, this.parameters.tz).toISOString();
     const ctxDate = dateStr.split('T')[0];
     if (this.parameters.dates.indexOf(ctxDate) >= 0) {
       return result * this.parameters.coef;
