@@ -4,12 +4,12 @@ import { PerPassengerModifier } from './PerPassengerModifier';
 import { PerSeatModifier } from './PerSeatModifier';
 import { PerKmModifier } from './PerKmModifier';
 import { BoundedModifier } from './BoundedModifier';
-import { PerDateModifier } from './PerDateModifier';
+import { FixedModifier } from './FixedModifier';
 
 export const modifiers: StaticRuleInterface[] = [
   PerKmModifier,
   PerSeatModifier,
   PerPassengerModifier,
   BoundedModifier,
-  PerDateModifier,
+  FixedModifier,
 ];

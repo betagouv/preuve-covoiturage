@@ -21,6 +21,7 @@ export class DateFilter extends FilterRule<DateFilterInterface> {
         items: {
           type: 'string',
           format: 'date',
+          minLength: 1,
           maxLength: 100,
         },
       },
@@ -29,6 +30,7 @@ export class DateFilter extends FilterRule<DateFilterInterface> {
         items: {
           type: 'string',
           format: 'date',
+          minLength: 1,
           maxLength: 100,
         },
       },
@@ -40,11 +42,17 @@ export class DateFilter extends FilterRule<DateFilterInterface> {
   filter(ctx: RuleHandlerContextInterface): void {
     const dateStr = utcToZonedTime(ctx.person.datetime, this.parameters.tz).toISOString();
     const ctxDate = dateStr.split('T')[0];
-    if (this.parameters.whitelist.length && this.parameters.whitelist.indexOf(ctxDate) >= 0) {
-      return;
-    }
-    if (this.parameters.blacklist.length && this.parameters.blacklist.indexOf(ctxDate) >= 0) {
+    if (Array.isArray(this.parameters.whitelist)) {
+      if (this.parameters.whitelist.indexOf(ctxDate) >= 0) {
+        return;
+      }
       throw new NotApplicableTargetException(DateFilter.description);
+    }
+    if (Array.isArray(this.parameters.blacklist)) {
+      if (this.parameters.blacklist.indexOf(ctxDate) >= 0) {
+        throw new NotApplicableTargetException(DateFilter.description);
+      }
+      return;
     }
   }
 }
