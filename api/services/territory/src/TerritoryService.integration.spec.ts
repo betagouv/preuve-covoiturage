@@ -46,6 +46,7 @@ test.serial('Create a territory', async (t) => {
       level: 'towngroup',
       active: false,
       activable: false,
+      parent: 4,
       children: [6, 7],
       address: {
         street: '1500 BD LEPIC',
@@ -124,6 +125,7 @@ test.serial('Update a territory', async (t) => {
     {
       ...dbResult.rows[0],
       name: 'Toto',
+      parent: 4,
       children: [7, 8],
     },
     {
