@@ -86,7 +86,6 @@ export class HttpTransport implements TransportInterface {
     this.registerSecurity();
     this.registerMetrics();
     this.registerGlobalMiddlewares();
-    this.registerStatsRoutes();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
     this.registerCertificateRoutes();
@@ -284,24 +283,6 @@ export class HttpTransport implements TransportInterface {
         )) as RPCResponseType;
 
         this.send(res, response);
-      }),
-    );
-  }
-
-  private registerStatsRoutes(): void {
-    this.app.post(
-      '/stats',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
-          createRPCPayload('trip:publicStats', req.body, {}),
-        )) as RPCResponseType;
-
-        if (!response || Array.isArray(response) || 'error' in response) {
-          res.status(mapStatusCode(response)).json(this.parseErrorData(response));
-        } else {
-          res.json(response.result);
-        }
       }),
     );
   }
@@ -632,6 +613,9 @@ export class HttpTransport implements TransportInterface {
       endpoint,
       apiRateLimiter(),
       asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
+        if (req.originalUrl === '/rpc?methods=trip:stats') {
+          res.setTimeout(120000);
+        }
         // inject the req.session.user to context in the body
         const isBatch = Array.isArray(req.body);
         let user = get(req, 'session.user', null);

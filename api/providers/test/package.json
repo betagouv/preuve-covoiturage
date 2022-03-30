@@ -19,7 +19,7 @@
     "@ilos/connection-postgres": "~0",
     "@ilos/framework": "~0",
     "@pdc/helper-seed": "~0",
-    "faker": "nmrgt/faker",
+    "@faker-js/faker": "^6.0.0",
     "supertest": "^6.1.6",
     "uuid": "^8.3.2"
   },

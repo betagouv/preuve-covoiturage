@@ -14,7 +14,6 @@ import { StatGraphPetrolComponent } from './components/stat-graph/stat-graph-pet
 import { StatGraphTimeModeNavComponent } from './components/stat-graph/stat-graph-timemode-nav/stat-graph-timemode-nav.component';
 import { StatGraphTripComponent } from './components/stat-graph/stat-graph-trip/stat-graph-trip.component';
 import { StatGraphViewComponent } from './components/stat-graph-view/stat-graph-view.component';
-import { StatHonorComponent } from './components/stat-honor/stat-honor.component';
 import { StatNumbersNavComponent } from './components/stat-graph/stat-numbers-nav/stat-numbers-nav.component';
 import { StatViewComponent } from './components/stat-view/stat-view.component';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
@@ -32,11 +31,10 @@ import { SharedModule } from '../../../../shared/shared.module';
     StatGraphTimeModeNavComponent,
     StatGraphTripComponent,
     StatGraphViewComponent,
-    StatHonorComponent,
     StatNumbersNavComponent,
     StatViewComponent,
   ],
   imports: [CommonModule, ChartjsModule, FormsModule, MaterialModule, SharedModule],
-  exports: [StatGraphComponent, StatViewComponent, StatGraphViewComponent, StatHonorComponent],
+  exports: [StatGraphComponent, StatViewComponent, StatGraphViewComponent],
 })
 export class StatUIModule {}
