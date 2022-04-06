@@ -13,7 +13,7 @@ export const schema = {
     },
     type: {
       type: 'string',
-      enum: ['city', 'region'],
+      enum: ['city', 'region', 'district'],
     },
     where: {
       type: 'object',

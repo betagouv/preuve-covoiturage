@@ -20,16 +20,22 @@
         <mat-form-field class="relation-textarea" appearance="outline">
           <mat-label>Codes INSEE *</mat-label>
           <textarea matInput formControlName="inseeString"></textarea>
-          <mat-error *ngIf="territoryForm.controls.inseeString.hasError('required')"
-            >Les codes INSEE sont obligatoires.</mat-error
-          >
-          <mat-error
-            *ngIf="
+          <mat-error *ngIf="territoryForm.controls.inseeString.hasError('required')">Les codes INSEE sont obligatoires.
+          </mat-error>
+          <mat-error *ngIf="
               !territoryForm.controls.inseeString.hasError('required') && territoryForm.controls.inseeString.hasError('pattern')
-            "
-            >Les codes sont au format INSEE (5 chiffres) et doivent être séparés par des virgules</mat-error
-          >
+            ">Les codes sont au format INSEE (5 chiffres) et doivent être séparés par des virgules</mat-error>
         </mat-form-field>
+
+        <div >
+          <div>
+            <h4>
+              Parent
+            </h4>
+            <app-territories-input-search [parentForm]="territoryForm">
+            </app-territories-input-search>
+          </div>
+        </div>
 
         <h3>Structure</h3>
 
@@ -38,49 +44,39 @@
         <h3>Adresse</h3>
 
         <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
-    </div>
-    </div>
-
-      <h2>Contacts et responsables</h2>
-      <div class="contacts">
-        <div>
-          <h3>Délégué à la protection des données</h3>
-
-          <app-form-contact
-            [parentForm]="territoryForm.get('contacts.gdpr_dpo')"
-            [showPhoneNumber]="false"
-          ></app-form-contact>
-        </div>
-
-        <div>
-          <h3>Responsable du traitement</h3>
-
-          <app-form-contact
-            [parentForm]="territoryForm.get('contacts.gdpr_controller')"
-            [showPhoneNumber]="false"
-          ></app-form-contact>
-        </div>
-
-        <div>
-          <h3>Responsable technique</h3>
-
-          <app-form-contact [parentForm]="territoryForm.get('contacts.technical')"></app-form-contact>
-        </div>
       </div>
-    
+    </div>
+
+    <h2>Contacts et responsables</h2>
+    <div class="contacts">
+      <div>
+        <h3>Délégué à la protection des données</h3>
+
+        <app-form-contact [parentForm]="territoryForm.get('contacts.gdpr_dpo')" [showPhoneNumber]="false">
+        </app-form-contact>
+      </div>
+
+      <div>
+        <h3>Responsable du traitement</h3>
+
+        <app-form-contact [parentForm]="territoryForm.get('contacts.gdpr_controller')" [showPhoneNumber]="false">
+        </app-form-contact>
+      </div>
+
+      <div>
+        <h3>Responsable technique</h3>
+
+        <app-form-contact [parentForm]="territoryForm.get('contacts.technical')"></app-form-contact>
+      </div>
+    </div>
+
     <div>
       <div class="actions">
-        <button type="button" class="large" routerLink="/admin/all-territories" mat-button *ngIf="isRegistryGroup">Annuler</button>
+        <button type="button" class="large" routerLink="/admin/all-territories" mat-button
+          *ngIf="isRegistryGroup">Annuler</button>
 
-        <button
-          *ngIf="canUpdate"
-          type="submit"
-          class="large"
-          mat-flat-button
-          (click)="onSubmit()"
-          [disabled]="territoryForm.invalid"
-          color="primary"
-        >
+        <button *ngIf="canUpdate" type="submit" class="large" mat-flat-button (click)="onSubmit()"
+          [disabled]="territoryForm.invalid" color="primary">
           {{ !!territoryId ? 'Mettre à jour' : 'Créer' }}
         </button>
       </div>

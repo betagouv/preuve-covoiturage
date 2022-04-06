@@ -20,6 +20,7 @@ export class TerritoryMapper {
     const territory: TerritoryBaseInterface = {
       name: territoryForm.get('name').value,
       company_id: company_id,
+      parent: territoryForm.get('parent').value,
       contacts: ContactsMapper.toModel(territoryForm.get('contacts')),
       level: TerritoryLevelEnum.Towngroup,
       address: removeNullsProperties(territoryForm.get('address').value),

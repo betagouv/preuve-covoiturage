@@ -181,6 +181,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       formOptions = {
         ...formOptions,
         name: [''],
+        parent: '',
         inseeString: [''],
         address: this.fb.group(
           new FormAddress(
@@ -316,16 +317,19 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       // Siret is hidden and not required if territory is not active (AOM)
       const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
       const siretControl = companyFormGroup.controls['siret'];
-
       siretControl.setValidators([Validators.required]);
       siretControl.updateValueAndValidity();
       siretControl.markAsUntouched();
 
       const inseeControl = this.territoryForm.controls.inseeString;
-
       inseeControl.setValidators([Validators.pattern('^( *[0-9]{5} *,? *)+$')]);
       inseeControl.updateValueAndValidity();
       inseeControl.markAsUntouched();
+
+      const parentControl = this.territoryForm.controls.parent;
+      parentControl.setValidators([Validators.required]);
+      parentControl.updateValueAndValidity();
+      parentControl.markAsUntouched();
     }
   }
 

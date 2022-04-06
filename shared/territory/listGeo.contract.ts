@@ -10,10 +10,10 @@ export interface ParamsInterface extends Partial<PaginationParamsInterface> {
   };
 }
 
-interface SingleResultInterface {
+export interface SingleResultInterface {
   _id: number;
-  code: string;
-  label: string;
+  // code: string;
+  name: string;
   insee: string;
 }
 
