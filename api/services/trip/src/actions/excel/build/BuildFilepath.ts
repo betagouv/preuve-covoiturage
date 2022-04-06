@@ -6,12 +6,13 @@ import { v4 } from 'uuid';
 @provider()
 export class BuildFilepath {
   call(campaign_name: string, operator_id: number, start_date: Date): string {
+    const startDatePlus6Days: Date = new Date(start_date.valueOf());
+    startDatePlus6Days.setDate(startDatePlus6Days.getDate() + 6);
     return `${path.join(
       os.tmpdir(),
-      `apdf-${this.sanitazeString(campaign_name)}-${operator_id}-${this.getMonthString(start_date)}-${v4().substring(
-        0,
-        6,
-      )}`,
+      `apdf-${this.sanitazeString(campaign_name)}-${operator_id}-${this.getMonthString(
+        startDatePlus6Days,
+      )}-${v4().substring(0, 6)}`,
     )}.xlsx`;
   }
 
