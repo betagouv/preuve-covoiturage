@@ -128,24 +128,29 @@ export class HttpTransport implements TransportInterface {
     const redis = new Redis(this.config.get('redis.connectionString'), { keyPrefix: 'proxy:' });
     const redisStore = createStore(expressSession);
 
-    this.app.use(
-      expressSession({
-        cookie: {
-          path: '/',
-          httpOnly: true,
-          maxAge: this.config.get('proxy.session.maxAge'),
-          // https everywhere but in local development
-          secure: env('APP_ENV', 'local') !== 'local',
-          sameSite: env('APP_ENV', 'local') !== 'local' ? 'none' : 'strict',
-        },
+    const sessionMiddleware = expressSession({
+      cookie: {
+        path: '/',
+        httpOnly: true,
+        maxAge: this.config.get('proxy.session.maxAge'),
+        // https everywhere but in local development
+        secure: env('APP_ENV', 'local') !== 'local',
+        sameSite: env('APP_ENV', 'local') !== 'local' ? 'none' : 'strict',
+      },
 
-        name: sessionName,
-        secret: sessionSecret,
-        resave: false,
-        saveUninitialized: false,
-        store: new redisStore({ client: redis }),
-      }),
-    );
+      name: sessionName,
+      secret: sessionSecret,
+      resave: false,
+      saveUninitialized: false,
+      store: new redisStore({ client: redis }),
+    });
+
+    this.app.use(function (req, res, next) {
+      if (req.headers.authorization) {
+        return next();
+      }
+      return sessionMiddleware(req, res, next);
+    });
   }
 
   private registerSecurity(): void {
