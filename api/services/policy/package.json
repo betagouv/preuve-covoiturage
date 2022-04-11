@@ -19,6 +19,7 @@
     "app": {}
   },
   "dependencies": {
+    "@faker-js/faker": "^6.0.0",
     "@ilos/cli": "~0",
     "@ilos/common": "~0",
     "@ilos/connection-manager": "~0",
@@ -31,9 +32,8 @@
     "@pdc/provider-validator": "~0",
     "csv-stringify": "^5.6.5",
     "date-fns-tz": "^1.1.6",
-    "@faker-js/faker": "^6.0.0",
     "lodash": "^4.17.21",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
