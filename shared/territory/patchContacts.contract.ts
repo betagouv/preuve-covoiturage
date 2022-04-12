@@ -1,11 +1,12 @@
 import { ContactsInterface } from '../common/interfaces/ContactsInterface';
-import { TerritoryInterface } from './common/interfaces/TerritoryInterface';
+import { TerritoryGroupInterface } from './common/interfaces/TerritoryInterface';
 
 export interface ParamsInterface {
   _id: number;
   patch: Partial<ContactsInterface>;
 }
-export interface ResultInterface extends TerritoryInterface {}
+export interface ResultInterface extends TerritoryGroupInterface {}
+
 export const handlerConfig = {
   service: 'territory',
   method: 'patchContacts',

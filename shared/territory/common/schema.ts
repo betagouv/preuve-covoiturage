@@ -1,11 +1,23 @@
 import { contacts } from '../../common/schemas/contacts';
+import { TerritoryCodeEnum } from './interfaces/TerritoryCodeInterface';
 
-export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
-  const extrafieldKeys = Reflect.ownKeys(extrafields);
+export const territoryCodeSchema = {
+  type: 'object',
+  minProperties: 1,
+  maxPropeties: 3,
+  propertyNames: {
+    enum: [Object.values(TerritoryCodeEnum)],
+  },
+  additionalProperties: {
+    type: 'string',
+  },
+};
+
+export function schema(alias: string, update = false) {
   return {
     $id: alias,
     type: 'object',
-    required: ['name', 'address', 'level', 'children', 'parent', ...extrafieldKeys],
+    required: ['name', 'shortname', 'address', 'contacts', 'selector', 'company_id', ...(update ? ['_id'] : [])],
     additionalProperties: true,
     properties: {
       contacts: { contacts },
@@ -22,13 +34,10 @@ export function schema(alias: string, extrafields: { [k: string]: any } = {}) {
           cedex: { type: 'string' },
         },
       },
-      parent: { macro: 'serial' },
-      children: {
-        type: 'array',
-        items: { macro: 'serial' },
-      },
+      selector: territoryCodeSchema,
       name: { macro: 'varchar' },
-      ...extrafields,
+      shortname: { macro: 'varchar' },
+      ...(update ? { _id: { macro: 'serial' } } : {}),
     },
   };
 }
