@@ -22,6 +22,7 @@ import {
   ParamsInterface as PatchContactsParamsInterface,
   ResultInterface as PatchContactsResultInterface,
 } from '../shared/territory/patchContacts.contract';
+import { TerritoryCodesInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export {
   CreateParamsInterface,
@@ -42,7 +43,7 @@ export interface TerritoryRepositoryProviderInterface {
   delete(_id: number): Promise<void>;
   update(data: UpdateParamsInterface): Promise<UpdateResultInterface>;
   patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface>;
-  getRelationCodes(params: { _id: number }): Promise<{ _id: number[] }>;
+  getRelationCodes(params: { _id: number }): Promise<TerritoryCodesInterface>;
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
@@ -70,7 +71,7 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async getRelationCodes(params: { _id: number }): Promise<{ _id: number[] }> {
+  async getRelationCodes(params: { _id: number }): Promise<TerritoryCodesInterface> {
     throw new Error();
   }
 }
