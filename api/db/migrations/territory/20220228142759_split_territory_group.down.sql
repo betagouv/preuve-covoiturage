@@ -1,1 +1,2 @@
-DELETE TABLE TERRITORY.TERRITORY_GROUP;
+DELETE TABLE territory.territory_group;
+DELETE TABLE territory.territory_group_selector;
