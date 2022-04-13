@@ -6,10 +6,11 @@ export const territoryCodeSchema = {
   minProperties: 1,
   maxPropeties: 3,
   propertyNames: {
-    enum: [Object.values(TerritoryCodeEnum)],
+    enum: [...Object.values(TerritoryCodeEnum)],
   },
   additionalProperties: {
-    type: 'string',
+    type: 'array',
+    items: { type: 'string' },
   },
 };
 

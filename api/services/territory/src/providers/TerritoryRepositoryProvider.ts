@@ -30,12 +30,12 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       text: `
         WITH selector_raw AS (
           SELECT
-            territory_group_id
-            selector_type
+            territory_group_id,
+            selector_type,
             ARRAY_AGG(selector_value) as selector_value
           FROM ${this.relationTable}
           WHERE territory_group_id = $1
-          GROUP BY territory_group_id
+          GROUP BY territory_group_id, selector_type
         ),
         selector AS (
           SELECT
@@ -55,7 +55,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
           tg.name,
           tg.shortname,
           tg.contacts,
-          tg.address
+          tg.address,
           tgs.selector
         FROM ${this.table} AS tg
         JOIN selector AS tgs
@@ -164,10 +164,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
           arr[0].push(v[0]);
           arr[1].push(v[1]);
           arr[2].push(v[2]);
+          return arr;
         },
         [[], [], []],
       );
-
     await connection.query({
       text: `
         DELETE FROM ${this.relationTable}
@@ -270,12 +270,12 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       text: `
         WITH selector_raw AS (
           SELECT
-            territory_group_id
-            selector_type
+            territory_group_id,
+            selector_type,
             ARRAY_AGG(selector_value) as selector_value
           FROM ${this.relationTable}
           WHERE territory_group_id = $1
-          GROUP BY territory_group_id
+          GROUP BY territory_group_id, selector_type
         )
         SELECT
           territory_group_id,

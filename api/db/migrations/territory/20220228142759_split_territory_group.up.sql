@@ -8,6 +8,7 @@ SELECT
 	tt.company_id,
 	COALESCE(tt.created_at, NOW()) as created_at,
 	COALESCE(tt.updated_at, NOW()) as updated_at,
+  tt.deleted_at as deleted_at,
 	tt.name,
 	COALESCE(tt.shortname, '') as shortname,
 	COALESCE(tt.contacts, '{}'::json) as contacts,
@@ -34,6 +35,7 @@ ALTER TABLE territory.territory_group
   ALTER COLUMN updated_at SET NOT NULL,
   ADD CONSTRAINT territory_group_pkey PRIMARY KEY (_id),
   ADD CONSTRAINT territory_group_company_fk FOREIGN KEY (company_id) REFERENCES company.companies (_id);
+CREATE INDEX territory_group_deleted_idx ON territory.territory_group (deleted_at);
 CREATE INDEX territory_group_name_idx ON territory.territory_group (name);
 
 CREATE TRIGGER touch_territory_group_updated_at BEFORE UPDATE

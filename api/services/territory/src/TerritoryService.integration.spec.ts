@@ -6,6 +6,9 @@ import { PostgresConnection } from '@ilos/connection-postgres/dist';
 import { ServiceProvider } from './ServiceProvider';
 
 const name = 'Toto';
+const territoryGroupTable = 'territory.territory_group';
+const territorySelectorTable = 'territory.territory_group_selector';
+
 interface TestContext extends HttpMacroContext {
   operator_id: number;
 }
@@ -26,14 +29,18 @@ test.before(async (t) => {
 });
 
 test.after.always(async (t) => {
-  await getDb(t.context)
-    .getClient()
-    .query({
-      text: `
-     DELETE FROM territory.territories WHERE name = $1 
-    `,
-      values: [name],
-    });
+  for (const text of [
+    `DELETE FROM ${territorySelectorTable} WHERE territory_group_id IN 
+      (SELECT _id FROM ${territoryGroupTable} WHERE name = $1)`,
+    `DELETE FROM ${territoryGroupTable} WHERE name = $1`,
+  ]) {
+    await getDb(t.context)
+      .getClient()
+      .query({
+        text,
+        values: [name],
+      });
+  }
   const { transport, supertest, request } = t.context;
   await after({ transport, supertest, request });
 });
@@ -43,16 +50,17 @@ test.serial('Create a territory', async (t) => {
     'territory:create',
     {
       name,
-      level: 'towngroup',
-      active: false,
-      activable: false,
-      parent: 4,
-      children: [6, 7],
+      shortname: 'toto',
+      company_id: 1,
+      contacts: {},
       address: {
         street: '1500 BD LEPIC',
         postcode: '73100',
         city: 'Aix Les Bains',
         country: 'France',
+      },
+      selector: {
+        _id: ['6', '7'],
       },
     },
     {
@@ -70,7 +78,7 @@ test.serial('Create a territory', async (t) => {
     .getClient()
     .query({
       text: `
-     SELECT _id, name from territory.territories WHERE name = $1 
+     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
     `,
       values: [name],
     });
@@ -84,7 +92,7 @@ test.serial('Find a territory', async (t) => {
     .getClient()
     .query({
       text: `
-     SELECT _id, name from territory.territories WHERE name = $1 
+     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
     `,
       values: [name],
     });
@@ -113,31 +121,63 @@ test.serial('Update a territory', async (t) => {
     .getClient()
     .query({
       text: `
-     SELECT _id, name, level, active, activable, address from territory.territories WHERE name = $1 
+     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
     `,
       values: [name],
     });
+
   t.true(dbResult.rowCount >= 1);
   t.is(dbResult.rows[0].name, name);
+  const _id = dbResult.rows[0]._id;
 
-  const response = await t.context.request(
-    'territory:update',
-    {
-      ...dbResult.rows[0],
-      name: 'Toto',
-      parent: 4,
-      children: [7, 8],
-    },
+  const initResponse = await t.context.request(
+    'territory:find',
+    { _id },
     {
       call: {
         user: {
-          permissions: ['registry.territory.update'],
+          permissions: ['common.territory.find'],
         },
       },
     },
   );
+  t.log(initResponse);
+  t.is(initResponse.result.name, name);
+
+  const updateData = {
+    ...initResponse.result,
+    shortname: 'Toto inc',
+    selector: {
+      _id: ['7', '8'],
+    },
+  };
+  t.log(updateData);
+  const response = await t.context.request('territory:update', updateData, {
+    call: {
+      user: {
+        permissions: ['registry.territory.update'],
+      },
+    },
+  });
+
   t.log(response);
-  t.is(response.result.name, 'Toto');
+  t.is(response.result.shortname, 'Toto inc');
+
+  const finalResponse = await t.context.request(
+    'territory:find',
+    { _id },
+    {
+      call: {
+        user: {
+          permissions: ['common.territory.find'],
+        },
+      },
+    },
+  );
+  t.log(finalResponse);
+  const { updated_at: u1, ...t1 } = finalResponse.result;
+  const { updated_at: u2, ...t2 } = updateData;
+  t.deepEqual(t1, t2);
 });
 
 test.serial('Patch contact on a territory', async (t) => {
@@ -145,7 +185,7 @@ test.serial('Patch contact on a territory', async (t) => {
     .getClient()
     .query({
       text: `
-     SELECT _id, name from territory.territories WHERE name = $1 
+     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
     `,
       values: [name],
     });
@@ -182,7 +222,7 @@ test.serial('Get authorized codes', async (t) => {
     .getClient()
     .query({
       text: `
-     SELECT _id, name from territory.territories WHERE name = $1 
+     SELECT _id, name from ${territoryGroupTable} WHERE name = $1 
     `,
       values: [name],
     });
@@ -193,8 +233,12 @@ test.serial('Get authorized codes', async (t) => {
   await getDb(t.context)
     .getClient()
     .query({
-      text: `INSERT INTO territory.territory_relation (parent_territory_id, child_territory_id) VALUES ($1, $2)`,
-      values: [_id, 1],
+      text: `
+      INSERT INTO ${territorySelectorTable}
+      (territory_group_id, selector_type, selector_value) VALUES
+      ($1, $2, $3)
+      `,
+      values: [_id, '_id', 1],
     });
 
   const response = await t.context.request(
@@ -232,6 +276,7 @@ test.serial('Lists all territories', async (t) => {
   t.log(response);
   t.true('data' in response.result);
   t.true(Array.isArray(response.result.data));
+  t.log(response.result.data);
   const territory = response.result.data.filter((r) => r.name === name);
   t.is(territory.length, 1);
 });
