@@ -71,7 +71,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       throw new NotFoundException();
     }
 
-    return result.rows[0];
+    return {
+      ...result.rows[0],
+      selector: this.castSelectorId(result.rows[0].selector),
+    };
   }
 
   async list(params: ListParamsInterface): Promise<ListResultInterface> {
@@ -157,7 +160,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     selector: TerritoryCodesInterface,
   ): Promise<void> {
     const values: [number[], string[], string[]] = Object.keys(selector)
-      .map((type) => selector[type].map((value: string) => [groupId, type, value]))
+      .map((type) => selector[type].map((value: string | number) => [groupId, type, value.toString()]))
       .reduce((arr, v) => [...arr, ...v], [])
       .reduce(
         (arr, v) => {
@@ -290,12 +293,23 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     };
 
     const result = await this.connection.getClient().query(query);
-    const defaultResult = {
+    return this.castSelectorId(result.rows[0].selector);
+  }
+
+  // needed because _id must be numbers
+  protected castSelectorId(
+    input?: Partial<TerritoryCodesInterface & { _id?: string[] }>,
+  ): TerritoryCodesInterface & { _id: number[] } {
+    const defaultSelector = {
       _id: [],
     };
-    if (result.rowCount < 1) {
-      return defaultResult;
+    if (!input) {
+      return defaultSelector;
     }
-    return result.rows[0].selector || defaultResult;
+
+    return {
+      ...input,
+      _id: (input._id || []).map((v: string) => Number(v)),
+    };
   }
 }

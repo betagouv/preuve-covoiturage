@@ -5,6 +5,12 @@ export const territoryCodeSchema = {
   type: 'object',
   minProperties: 1,
   maxPropeties: 3,
+  properties: {
+    _id: {
+      type: 'array',
+      items: { macro: 'serial' },
+    },
+  },
   propertyNames: {
     enum: [...Object.values(TerritoryCodeEnum)],
   },

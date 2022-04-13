@@ -60,7 +60,7 @@ test.serial('Create a territory', async (t) => {
         country: 'France',
       },
       selector: {
-        _id: ['6', '7'],
+        _id: [6, 7],
       },
     },
     {
@@ -148,7 +148,7 @@ test.serial('Update a territory', async (t) => {
     ...initResponse.result,
     shortname: 'Toto inc',
     selector: {
-      _id: ['7', '8'],
+      _id: [7, 8],
     },
   };
   t.log(updateData);
@@ -238,7 +238,7 @@ test.serial('Get authorized codes', async (t) => {
       (territory_group_id, selector_type, selector_value) VALUES
       ($1, $2, $3)
       `,
-      values: [_id, '_id', 1],
+      values: [_id, '_id', '1'],
     });
 
   const response = await t.context.request(
@@ -257,6 +257,7 @@ test.serial('Get authorized codes', async (t) => {
   t.log(response);
   t.true(Array.isArray(response.result._id));
   t.true(response.result._id.length >= 1);
+  t.is(response.result._id[0], 1);
 });
 
 test.serial('Lists all territories', async (t) => {

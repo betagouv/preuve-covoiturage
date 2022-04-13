@@ -12,5 +12,5 @@ export interface TerritoryCodeInterface {
 export interface TerritoryCodesInterface {
   [TerritoryCodeEnum.Insee]?: string[];
   [TerritoryCodeEnum.Postcode]?: string[];
-  [TerritoryCodeEnum.Id]?: string[];
+  [TerritoryCodeEnum.Id]?: number[];
 }
