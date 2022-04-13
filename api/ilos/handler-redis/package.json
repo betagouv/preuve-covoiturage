@@ -27,6 +27,6 @@
   "dependencies": {
     "@ilos/common": "^0.4.1",
     "@ilos/connection-redis": "^0.4.1",
-    "bullmq": "^1.47.1"
+    "bullmq": "^1.79.0"
   }
 }
