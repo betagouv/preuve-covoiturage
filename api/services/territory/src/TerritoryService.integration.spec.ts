@@ -256,8 +256,8 @@ test.serial('Get authorized codes', async (t) => {
   );
   t.log(response);
   t.true(Array.isArray(response.result._id));
-  t.true(response.result._id.length >= 1);
-  t.is(response.result._id[0], 1);
+  t.true(response.result._id.length === 3);
+  t.deepEqual(response.result._id.sort(), [1, 7, 8]);
 });
 
 test.serial('Lists all territories', async (t) => {
