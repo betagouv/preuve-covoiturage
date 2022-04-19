@@ -30,7 +30,6 @@ export interface PersonInterface {
 }
 
 export interface FinalizePositionInterface extends GeoPositionInterface {
-  territory_id: number;
   geo_code: string;
 }
 

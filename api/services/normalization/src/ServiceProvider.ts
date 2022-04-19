@@ -7,9 +7,7 @@ import { RedisConnection } from '@ilos/connection-redis';
 import { GeoProvider } from '@pdc/provider-geo';
 
 import { config } from './config';
-import { TerritoryProvider } from './providers/TerritoryProvider';
 import { NormalizationGeoAction } from './actions/NormalizationGeoAction';
-import { NormalizationTerritoryAction } from './actions/NormalizationTerritoryAction';
 import { NormalizationCostAction } from './actions/NormalizationCostAction';
 import { NormalizationRouteAction } from './actions/NormalizationRouteAction';
 import { NormalizationIdentityAction } from './actions/NormalizationIdentityAction';
@@ -17,12 +15,11 @@ import { NormalizationProcessAction } from './actions/NormalizationProcessAction
 
 @serviceProvider({
   config,
-  providers: [GeoProvider, TerritoryProvider],
+  providers: [GeoProvider],
   handlers: [
     NormalizationProcessAction,
     NormalizationGeoAction,
     NormalizationRouteAction,
-    NormalizationTerritoryAction,
     NormalizationCostAction,
     NormalizationIdentityAction,
   ],
