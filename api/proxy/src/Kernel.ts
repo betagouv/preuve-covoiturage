@@ -20,10 +20,6 @@ import { bootstrap as honorBootstrap } from '@pdc/service-honor';
 
 import { config } from './config';
 import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
-import { SyncGeoShapeCommand } from './commands/SyncGeoShapeCommand';
-// import { SyncTerritoryInseeCommand } from './commands/SyncTerritoryInseeCommand';
-// import { SyncRegionDepCommand } from './commands/SyncRegionDepCommand';
-import { SyncGeoSurfacePopulationCommand } from './commands/SyncSurfacePopulationCommand';
 import { SeedCommand } from './commands/SeedCommand';
 
 @kernel({
@@ -47,11 +43,7 @@ import { SeedCommand } from './commands/SeedCommand';
   providers: [SentryProvider, TokenProvider],
   commands: [
     ProcessJourneyCommand,
-    // SyncTerritoryInseeCommand,
-    // SyncRegionDepCommand,
-    SyncGeoShapeCommand,
     SeedCommand,
-    SyncGeoSurfacePopulationCommand,
     Commands.CallCommand,
   ],
 })
