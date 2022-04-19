@@ -51,9 +51,11 @@ export class BuildResourceDescription {
     intersection: number,
     start_date: Date,
   ): string {
-    return `# Spécificités jeu de données ${start_date.toLocaleString('fr-FR', {
+    const startDatePlus6Days: Date = new Date(start_date.valueOf());
+    startDatePlus6Days.setDate(startDatePlus6Days.getDate() + 6);
+    return `# Spécificités jeu de données ${startDatePlus6Days.toLocaleString('fr-FR', {
       month: 'long',
-    })} ${start_date.getFullYear()}
+    })} ${startDatePlus6Days.getFullYear()}
 Les données concernent également les trajets dont le point de départ OU d'arrivée est situé en dehors du territoire français.
 
 * Nombre trajets collectés et validés par le registre de preuve de covoiturage **${total}**
