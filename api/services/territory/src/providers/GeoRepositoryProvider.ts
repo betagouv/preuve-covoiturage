@@ -17,8 +17,8 @@ import { GeoCodeTypeEnum } from '../shared/territory/common/geo';
   identifier: GeoRepositoryProviderInterfaceResolver,
 })
 export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
-  public readonly table = 'territory.territories';
-  public readonly relationTable = 'territory.territory_relation';
+  public readonly table = 'geo.perimeters';
+  public readonly relationTable = 'territory.territory_group_selector'
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
@@ -29,29 +29,42 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     const values = [];
 
     if (whereParams && whereParams._id && whereParams._id.length) {
-      where.push(`tt._id = ANY($${where.length + 1})`);
+      where.push(`gp.id = ANY($${where.length + 1})`);
       values.push(whereParams._id);
     }
 
-    if (type) {
-      // Ugly workaround to make new interface work with old territories model
-      const actualTerritoryType: string = type === GeoCodeTypeEnum.City ? 'town' : type;
-      where.push(`tt.level = $${where.length + 1}`);
-      values.push(`${actualTerritoryType}`);
+    let geoLevel = '';
+    
+    switch (type) {
+      case GeoCodeTypeEnum.Region:
+        geoLevel = 'reg';
+        break;
+
+      case GeoCodeTypeEnum.District:
+        geoLevel = 'dep';
+        break;
+
+      case GeoCodeTypeEnum.City:
+      default:
+        geoLevel = 'com';
+        break;
     }
+    const label = `l_${geoLevel.toString()}`;
 
     if (search) {
-      where.push(`LOWER(tt.name) LIKE $${where.length + 1}`);
+      where.push(`LOWER(gp.${label}) LIKE $${where.length + 1}`);
       values.push(`%${search.toLowerCase().trim()}%`);
     }
 
+    // dataset millesime
+    where.push(`year = $${where.length + 1}`);
+    values.push((new Date()).getFullYear());
+  
     const totalResult = await this.connection.getClient().query<{ count: string }>({
       values,
       text: `
-        SELECT count(*) FROM ${
-          this.table
-        } as tt LEFT OUTER JOIN territory.territory_codes as tc ON tt._id = tc.territory_id
-        WHERE (tc.type = 'insee' OR tc.type = 'codedep' OR tc.type IS NULL) AND ${where.join(' AND ')}
+        SELECT count(*) FROM ${this.table} AS gp
+        WHERE ${where.join(' AND ')}
       `,
     });
 
@@ -63,10 +76,12 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     const results = await this.connection.getClient().query({
       values,
       text: `
-        SELECT tt._id as _id, tt.name as name, tc.value as insee FROM ${
-          this.table
-        } as tt LEFT OUTER JOIN territory.territory_codes as tc ON tt._id = tc.territory_id
-        WHERE (tc.type = 'insee' OR tc.type = 'codedep' OR tc.type IS NULL) AND ${where.join(' AND ')}
+        SELECT
+          gp.id as _id,
+          gp.${label} as name,
+          ${geoLevel} as insee
+          FROM ${this.table} as gp
+        WHERE ${where.join(' AND ')}
         ORDER BY name ASC
         LIMIT $${where.length + 1}
         OFFSET $${where.length + 2}
@@ -89,16 +104,32 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     const client = this.connection.getClient();
     const query = {
       text: `
+        WITH data AS (
+          SELECT
+            arr,
+            com,
+            epci,
+            dep,
+            reg,
+            country,
+            aom,
+            reseau
+          FROM ${this.table}
+          WHERE
+            com = $1
+          ORDER BY year DESC
+          LIMIT 1
+        )
         SELECT
-          tt.name, 
-          tc.territory_id
-        FROM territory.territory_codes AS tc
-        JOIN ${this.table} AS tt
-          ON tc.territory_id = tt._id
-        WHERE 
-          tc.type = 'insee' AND 
-          tc.value = ANY($1) 
-        GROUP BY tc.territory_id, tt.name
+          tg.name,
+          tgs.territory_id
+        FROM ${this.relationTable} AS tgs
+        JOIN data AS d
+          ON (d.arr = tgs.selector_value AND tgs.selector_type = 'com')
+          OR (d.com = tgs.selector_value AND tgs.selector_type = 'com')
+          OR (d.reg = tgs.selector_value AND tgs.selector_type = 'region')
+        JOIN territory.territory_group AS tg
+          ON tgs.territory_group_id = tg._id
       `,
       values: [params.insees],
     };

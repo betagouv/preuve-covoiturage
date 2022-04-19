@@ -8,12 +8,12 @@ export interface PersonInterface {
   is_driver: boolean;
   has_travel_pass: boolean;
   datetime: Date;
-  start_insee?: string;
-  end_insee?: string;
   seats: number;
   duration: number;
   distance: number;
   cost: number;
-  start_territory_id: number[];
-  end_territory_id: number[];
+  start_insee?: string;
+  end_insee?: string;
+  start_territory_id: number[]; // to delete
+  end_territory_id: number[]; // to delete
 }

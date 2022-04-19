@@ -7,6 +7,8 @@ import { TerritoryRepositoryProviderInterface, TerritoryRepositoryProviderInterf
 })
 export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderInterface {
   protected readonly geoTable = 'territory.territories';
+  protected readonly territoryGroupTable = 'territory.territory_group';
+  protected readonly territoryGroupSelectorTable = 'territory.territory_group_selector';
   protected readonly companyTable = 'company.companies';
 
   constructor(protected connection: PostgresConnection) {}
@@ -23,10 +25,11 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
             ORDER BY ST_Area(geo, true) ASC
             LIMIT 1
           ) SELECT
-            UNNEST(
-              territory.get_ancestors(ARRAY[_id])
-            ) as _id
-            FROM data
+            tgs.territory_group_id as _id
+            FROM data as d
+            JOIN ${this.territoryGroupSelectorTable} as tgs
+            ON tgs.selector_value = d._id::varchar
+              AND tgs.selector_type = '_id'
         `,
         values: [lon, lat],
       });
@@ -43,7 +46,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       text: `
         SELECT
           t._id, c.siret
-        FROM ${this.geoTable} AS t
+        FROM ${this.territoryGroupTable} AS t
         LEFT JOIN ${this.companyTable} AS c
           ON c._id = t.company_id
         WHERE t._id = ${Array.isArray(_id) ? 'ANY($1)' : '$1'}
