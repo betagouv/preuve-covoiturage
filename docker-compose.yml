@@ -12,6 +12,7 @@ services:
       POSTGRES_PASSWORD: 'postgres'
       POSTGRES_DB: 'local'
       PGDATA: '/var/lib/postgresql/data/pgdata'
+    command: ["postgres", "-c", "log_statement=all"]
     volumes:
       - ./db/postgres:/var/lib/postgresql/data/pgdata
 
@@ -32,15 +33,18 @@ services:
       - back
 
   s3:
-    image: minio/minio:edge
+    image: minio/minio
     environment: 
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=admin789456123
     networks:
       - back
-    command: 'server /data'
+    command: 'server /data --console-address ":9001"'
+    volumes:
+      - ./db/s3:/data
     ports:
       - 9000:9000
+      - 9001:9001
 
   api:
     build:

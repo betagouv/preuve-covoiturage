@@ -10,6 +10,7 @@ import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 import { TripStatInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripStatInterface';
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
+import { endOfDay, startOfDay } from 'date-fns';
 
 @Injectable({
   providedIn: 'root',
@@ -31,18 +32,21 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
     }
 
     // init start
-    const start: Date = finalParams.date.start
-      ? new Date(finalParams.date.start)
-      : new Date(new Date().setMonth(new Date().getMonth() - 12));
-    start.setHours(2, 0, 0, 0);
-    finalParams.date.start = start.toISOString();
+    if (!finalParams.date.start) {
+      finalParams.date.start = new Date(new Date().setMonth(new Date().getMonth() - 12));
+    } else {
+      finalParams.date.start = new Date(finalParams.date.start);
+    }
 
     // init end
-    const end: Date = finalParams.date.end
-      ? new Date(finalParams.date.end)
-      : new Date(new Date().setDate(new Date().getDate() - 5));
-    end.setHours(2, 0, 0, 0);
-    finalParams.date.end = end.toISOString();
+    if (!finalParams.date.end) {
+      finalParams.date.end = new Date(new Date().setDate(new Date().getDate() - 5));
+    } else {
+      finalParams.date.end = new Date(finalParams.date.end);
+    }
+
+    finalParams.date.start = startOfDay(finalParams.date.start);
+    finalParams.date.end = endOfDay(finalParams.date.end);
 
     return new JsonRPCParam(`${this.method}:stats`, finalParams);
   }
