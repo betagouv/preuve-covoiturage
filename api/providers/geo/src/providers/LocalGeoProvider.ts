@@ -5,6 +5,8 @@ import { PointInterface, InseeCoderInterface } from '../interfaces';
 
 @provider()
 export class LocalGeoProvider implements InseeCoderInterface {
+  protected table = 'geo.perimeters';
+
   constructor(protected connection: PostgresConnection) {}
 
   async positionToInsee(geo: PointInterface): Promise<string> {
@@ -13,14 +15,12 @@ export class LocalGeoProvider implements InseeCoderInterface {
     const result = await this.connection.getClient().query({
       text: `
         SELECT
-          tc.value AS value
-        FROM territory.territories AS tt
-        JOIN territory.territory_codes AS tc
-        ON tc.territory_id = tt._id AND tc.type = 'insee'
+          com as value
+        FROM ${this.table}
         WHERE
-          tt.geo IS NOT NULL AND
-          ST_INTERSECTS(tt.geo, ST_POINT($1::float, $2::float))
-        ORDER BY ST_Area(tt.geo, true) ASC
+          geom IS NOT NULL AND
+          ST_INTERSECTS(geom, ST_POINT($1::float, $2::float)::GEOGRAPHY)
+        ORDER BY surface ASC, year DESC
         LIMIT 1
       `,
       values: [lon, lat],
