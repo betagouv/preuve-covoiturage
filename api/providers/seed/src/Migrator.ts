@@ -5,6 +5,7 @@ import { URL } from 'url';
 import { Operator, operators } from './operators';
 import { Territory, territories } from './territories';
 import { User, users } from './users';
+import { companies, Company } from './companies';
 
 export class Migrator {
   public connection: PostgresConnection;
@@ -62,6 +63,11 @@ export class Migrator {
     }
     await this.connection.getClient().query(`SET session_replication_role = 'replica'`);
 
+    for (const company of companies) {
+      console.debug(`Seeding company ${company.legal_name}`);
+      await this.seedCompany(company);
+    }
+
     for (const territory of territories) {
       console.debug(`Seeding territory ${territory.name}`);
       await this.seedTerritory(territory);
@@ -105,6 +111,36 @@ export class Migrator {
             +++ VIEWS +++ 
     */
     await this.connection.getClient().query(`SET session_replication_role = 'origin'`);
+  }
+
+  async seedCompany(company: Company) {
+    await this.connection.getClient().query({
+      text: `
+        INSERT INTO company.companies
+          (_id, siret, siren, nic, legal_name, company_naf_code, establishment_naf_code, headquarter)
+        VALUES (
+          $1::int,
+          $2::varchar,
+          $3::varchar,
+          $4::varchar,
+          $5::varchar,
+          $6::varchar,
+          $7::varchar,
+          $8::boolean
+        )
+        ON CONFLICT DO NOTHING
+      `,
+      values: [
+        company._id,
+        company.siret,
+        company.siren,
+        company.nic,
+        company.legal_name,
+        company.company_naf_code,
+        company.establishment_naf_code,
+        company.headquarter,
+      ],
+    });
   }
 
   async seedOperator(operator: Operator) {
