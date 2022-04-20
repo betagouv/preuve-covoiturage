@@ -56,7 +56,7 @@ export class TerritoryApiService {
 
   geo(params: ParamsInterfaceGeo): Observable<ResultWithPagination<TerritoryGeoResultInterface>> {
     const jsonRPCParam: JsonRPCParam = new JsonRPCParam(signatureGeo, params);
-    return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
+    return this.callOne(jsonRPCParam);
   }
 
   createNew(item: TerritoryBaseInterface): Observable<TerritoryInterface> {
