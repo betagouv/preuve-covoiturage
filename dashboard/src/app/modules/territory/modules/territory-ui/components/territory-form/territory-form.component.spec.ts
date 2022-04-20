@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { TerritoryInterface, TerritoryLevelEnum } from '~/shared/territory/common/interfaces/TerritoryInterface';
@@ -72,6 +73,7 @@ describe('TerritoryFormComponent', () => {
       TestBed.configureTestingModule({
         declarations: [TerritoryFormComponent],
         schemas: [NO_ERRORS_SCHEMA],
+        imports: [RouterTestingModule.withRoutes([])],
         providers: [
           FormBuilder,
           {
@@ -183,7 +185,6 @@ describe('TerritoryFormComponent', () => {
         expect(territoryApiServiceSpy.createNew).toHaveBeenCalledWith({
           name: "Communauté de communes du Pays de L'Arbresle",
           company_id: 4,
-          parent: 5,
           contacts: {
             gdpr_dpo: {
               firstname: 'gdpr',
@@ -201,14 +202,15 @@ describe('TerritoryFormComponent', () => {
               email: 'technical@mail.com',
             },
           },
-          level: TerritoryLevelEnum.Towngroup,
           address: {
             street: company.address_street,
             postcode: company.address_postcode,
             city: company.address_city,
             country: 'France',
           },
-          children: [1, 2],
+          selector: {
+            _id: [1, 2],
+          },
         });
       });
     });
@@ -219,6 +221,7 @@ describe('TerritoryFormComponent', () => {
       TestBed.configureTestingModule({
         declarations: [TerritoryFormComponent],
         schemas: [NO_ERRORS_SCHEMA],
+        imports: [RouterTestingModule.withRoutes([])],
         providers: [
           FormBuilder,
           {
