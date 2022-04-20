@@ -11,8 +11,8 @@ FROM (
     ON tcs.territory_id = cco.start_territory_id
     AND tcs.type = 'insee'
   JOIN territory.territory_codes as tce
-    ON tcs.territory_id = cco.end_territory_id
-    AND tcs.type = 'insee'
+    ON tce.territory_id = cco.end_territory_id
+    AND tce.type = 'insee'
   WHERE
     cco.start_geo_code IS NULL OR
     cco. end_geo_code IS NULL
