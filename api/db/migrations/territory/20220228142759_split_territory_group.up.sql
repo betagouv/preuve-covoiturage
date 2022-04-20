@@ -21,6 +21,7 @@ SELECT setval('territory.territory_group__id_seq', (SELECT max(_id) FROM territo
 
 ALTER TABLE territory.territory_group
   ALTER COLUMN _id SET DEFAULT nextval('territory.territory_group__id_seq'::regclass),
+  ALTER COLUMN company_id SET NOT NULL,
   ALTER COLUMN name SET NOT NULL,
   ALTER COLUMN shortname SET DEFAULT '',
   ALTER COLUMN shortname SET NOT NULL,
