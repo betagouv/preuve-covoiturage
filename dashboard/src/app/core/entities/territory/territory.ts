@@ -1,12 +1,10 @@
 /* tslint:disable:variable-name*/
 import { AbstractControl } from '@angular/forms';
 import { removeNullsProperties } from '~/core/entities/utils';
-import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { ContactInterface } from '../api/shared/common/interfaces/ContactInterface';
 import {
+  CreateTerritoryGroupInterface,
   TerritoryAddress,
-  TerritoryBaseInterface,
-  TerritoryLevelEnum,
 } from '../api/shared/territory/common/interfaces/TerritoryInterface';
 import { ContactsMapper } from '../shared/contacts';
 
@@ -15,23 +13,18 @@ export class TerritoryMapper {
     territoryForm: AbstractControl,
     company_id: number,
     children: number[],
-    territoryId?: number,
-  ): TerritoryBaseInterface | TerritoryInterface {
-    const territory: TerritoryBaseInterface = {
+  ): CreateTerritoryGroupInterface {
+    const territory: CreateTerritoryGroupInterface = {
       name: territoryForm.get('name').value,
       company_id: company_id,
-      parent: territoryForm.get('parent').value,
+      // parent: territoryForm.get('parent').value,
       contacts: ContactsMapper.toModel(territoryForm.get('contacts')),
-      level: TerritoryLevelEnum.Towngroup,
+      // level: TerritoryLevelEnum.Towngroup,
       address: removeNullsProperties(territoryForm.get('address').value),
-      children: children,
+      selector: {
+        _id: children,
+      },
     };
-    if (territoryId) {
-      return {
-        _id: territoryId,
-        ...territory,
-      };
-    }
     return territory;
   }
 }
@@ -51,5 +44,5 @@ export interface TerritoryFormModel {
   address?: TerritoryAddress;
   inseeString: string;
   insee?: string[];
-  children: number[];
+  // children: number[];
 }

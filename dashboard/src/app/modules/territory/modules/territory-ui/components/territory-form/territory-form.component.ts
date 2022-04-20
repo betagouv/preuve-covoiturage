@@ -19,8 +19,12 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryBaseInterface, TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { TerritoryInsee } from '~/shared/territory/findGeoByCode.contract';
+import {
+  CreateTerritoryGroupInterface,
+  TerritoryInterface,
+  UpdateTerritoryGroupInterface,
+} from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryInsee } from '../../../../../../../../../shared/territory/findGeoByCode.contract';
 import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
 import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
 import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
@@ -134,23 +138,22 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       this.toastr.error(`Certains codes INSEE n'ont pas de territoires correspondants`);
       return;
     }
-    formValues.children = territories.map((t) => t.territory_id);
 
-    const model: TerritoryBaseInterface = TerritoryMapper.toModel(
+    const createTerritory: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
       this.territoryForm,
       this.companyDetails._id,
-      formValues.children,
+      territories.map((t) => t.territory_id),
     );
     if (this.isNew()) {
-      this.territoryApi.createNew(model).subscribe(() => {
+      this.territoryApi.createNew(createTerritory).subscribe(() => {
         this.toastr.success(`${formValues.name} a été créé !`);
         this.router.navigate(['../'], { relativeTo: this.route });
       });
       return;
     }
 
-    const updateModel: TerritoryInterface = { ...model, _id: this.territoryId };
-    this.territoryApi.updateNew(updateModel).subscribe(
+    const updateTerritory: UpdateTerritoryGroupInterface = { ...createTerritory, _id: this.territoryId };
+    this.territoryApi.updateNew(updateTerritory).subscribe(
       (modifiedTerritory) => {
         this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
         this.router.navigate(['../'], { relativeTo: this.route });

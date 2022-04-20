@@ -17,11 +17,14 @@ import {
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { CrudActions } from '~/core/services/api/json-rpc.crud';
-import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import {
+  CreateTerritoryGroupInterface,
+  TerritoryInterface,
+  UpdateTerritoryGroupInterface,
+} from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
 import { JsonRPCOptions } from '~/core/entities/api/jsonRPCOptions';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
-import { TerritoryBaseInterface } from '~/core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
 import { SingleResultInterface as TerritoryGeoResultInterface } from '~/shared/territory/listGeo.contract';
 import { ResultWithPagination } from '../../../../../../shared/common/interfaces/ResultWithPagination';
 
@@ -59,12 +62,12 @@ export class TerritoryApiService {
     return this.callOne(jsonRPCParam);
   }
 
-  createNew(item: TerritoryBaseInterface): Observable<TerritoryInterface> {
+  createNew(item: CreateTerritoryGroupInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.METHOD}:${CrudActions.CREATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
   }
 
-  updateNew(item: TerritoryInterface): Observable<TerritoryInterface> {
+  updateNew(item: UpdateTerritoryGroupInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.METHOD}:${CrudActions.UPDATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
