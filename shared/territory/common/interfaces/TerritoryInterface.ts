@@ -16,7 +16,7 @@ export interface TerritoryGroupInterface {
 
 export type CreateTerritoryGroupInterface = Omit<
   TerritoryGroupInterface,
-  '_id' | 'created_at' | 'updated_at' | 'deleted_at'
+  '_id' | 'created_at' | 'updated_at' | 'deleted_at' | 'shortname'
 >;
 export type UpdateTerritoryGroupInterface = Omit<TerritoryGroupInterface, 'created_at' | 'updated_at' | 'deleted_at'>;
 
