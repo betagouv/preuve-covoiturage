@@ -22,6 +22,8 @@ import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
 import { JsonRPCOptions } from '~/core/entities/api/jsonRPCOptions';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import { TerritoryBaseInterface } from '~/core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
+import { SingleResultInterface as TerritoryGeoResultInterface } from '~/shared/territory/listGeo.contract';
+import { ResultWithPagination } from '../../../../../../shared/common/interfaces/ResultWithPagination';
 
 @Injectable({
   providedIn: 'root',
@@ -52,14 +54,14 @@ export class TerritoryApiService {
     return new JsonRPCParam(signatureFind, { _id: id });
   }
 
-  geo(params: ParamsInterfaceGeo): Observable<JsonRPCResult> {
+  geo(params: ParamsInterfaceGeo): Observable<ResultWithPagination<TerritoryGeoResultInterface>> {
     const jsonRPCParam: JsonRPCParam = new JsonRPCParam(signatureGeo, params);
-    return this.callOne(jsonRPCParam);
+    return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
   }
 
   createNew(item: TerritoryBaseInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.METHOD}:${CrudActions.CREATE}`, item);
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
+    return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
   }
 
   updateNew(item: TerritoryInterface): Observable<TerritoryInterface> {

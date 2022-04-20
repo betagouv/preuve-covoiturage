@@ -5,7 +5,7 @@ export const limit = {
 };
 export const offset = {
   type: 'integer',
-  minimum: 1,
+  minimum: 0,
   maximum: 50000,
 };
 export const pagination = {

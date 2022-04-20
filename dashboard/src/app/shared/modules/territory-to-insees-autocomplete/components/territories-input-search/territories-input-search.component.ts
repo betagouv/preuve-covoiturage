@@ -5,8 +5,8 @@ import { debounceTime, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { GeoCodeTypeEnum } from '~/shared/territory/common/geo';
-import { SingleResultInterface as GeoSearchResult } from '~/shared/territory/listGeo.contract';
-import { JsonRPCResult } from '../../../../../core/entities/api/jsonRPCResult';
+import { SingleResultInterface as TerritoryGeoResultInterface } from '~/shared/territory/listGeo.contract';
+import { ResultWithPagination } from '../../../../../../../../shared/common/interfaces/ResultWithPagination';
 
 @Component({
   selector: 'app-territories-input-search',
@@ -16,9 +16,9 @@ import { JsonRPCResult } from '../../../../../core/entities/api/jsonRPCResult';
 export class TerritoriesInputSearchComponent extends DestroyObservable implements OnInit {
   public territoryInseeInputCtrl = new FormControl();
 
-  public searchedTerritoryInsees: GeoSearchResult[] = [];
+  public searchedTerritoryInsees: TerritoryGeoResultInterface[] = [];
 
-  private selectedTerritory: GeoSearchResult;
+  private selectedTerritory: TerritoryGeoResultInterface;
   private focusDebounceTimer;
 
   @Input() parentForm: FormGroup;
@@ -57,8 +57,8 @@ export class TerritoriesInputSearchComponent extends DestroyObservable implement
         search: literal,
       })
       .pipe(takeUntil(this.destroy$))
-      .subscribe((foundTerritories: JsonRPCResult) => {
-        this.searchedTerritoryInsees = foundTerritories.data;
+      .subscribe((results: ResultWithPagination<TerritoryGeoResultInterface>) => {
+        this.searchedTerritoryInsees = results.data;
       });
   }
 
