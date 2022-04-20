@@ -22,6 +22,7 @@ import {
 export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderInterface {
   public readonly table = 'territory.territory_group';
   public readonly relationTable = 'territory.territory_group_selector';
+  public readonly GROUP_DEFAULT_SHORT_NAME = '';
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
@@ -124,7 +125,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     try {
       const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
 
-      const values: any[] = [data.name, data.shortname, data.contacts, data.address, data.company_id];
+      const values: any[] = [data.name, this.GROUP_DEFAULT_SHORT_NAME, data.contacts, data.address, data.company_id];
 
       const query = {
         text: `
