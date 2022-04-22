@@ -59,14 +59,8 @@ export class PolicyEngine {
   }
 
   protected guard(campaign: ProcessableCampaign, trip: TripInterface): boolean {
+    // TODO : selector check (?)
     if (
-      trip
-        .map((p) => [...p.start_territory_id, ...p.end_territory_id])
-        .reduce((s, t) => {
-          t.map((v) => s.add(v));
-          return s;
-        }, new Set())
-        .has(campaign.territory_id) &&
       trip.datetime >= campaign.start_date &&
       trip.datetime <= campaign.end_date
     ) {

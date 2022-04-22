@@ -31,8 +31,8 @@ export class FakerEngine {
       duration: 600,
       distance: 5000,
       cost: 2,
-      start_territory_id: [1],
-      end_territory_id: [1],
+      start: {},
+      end: {},
     };
   }
 

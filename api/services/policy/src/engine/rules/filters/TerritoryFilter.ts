@@ -1,10 +1,11 @@
 import { RuleHandlerContextInterface } from '../../interfaces';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { FilterRule } from '../FilterRule';
+import { TerritoryCodesInterface } from '../../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 interface TerritoryParamsInterface {
-  start: number[];
-  end: number[];
+  start: TerritoryCodesInterface;
+  end: TerritoryCodesInterface;
 }
 
 export abstract class TerritoryFilter extends FilterRule<TerritoryParamsInterface[]> {
@@ -16,15 +17,27 @@ export abstract class TerritoryFilter extends FilterRule<TerritoryParamsInterfac
       required: ['start', 'end'],
       properties: {
         start: {
-          type: 'array',
-          items: {
-            macro: 'serial',
+          type: 'object',
+          additionalProperties: {
+            type: 'array',
+            items: {
+              macro: 'serial',
+            },
+          },
+          propertyNames: {
+            enum: ['com', 'arr'],
           },
         },
         end: {
-          type: 'array',
-          items: {
-            macro: 'serial',
+          type: 'object',
+          additionalProperties: {
+            type: 'array',
+            items: {
+              macro: 'serial',
+            },
+          },
+          propertyNames: {
+            enum: ['com', 'arr'],
           },
         },
       },
@@ -33,9 +46,14 @@ export abstract class TerritoryFilter extends FilterRule<TerritoryParamsInterfac
   };
 }
 
-function inList(list: number[], territories: number[]): boolean {
-  for (const territory of territories) {
-    if (list.indexOf(territory) > -1) {
+function inList(selectors: TerritoryCodesInterface, territory: TerritoryCodesInterface): boolean {
+  if (!selectors) {
+    return true;
+  }
+  for (const selector of Object.keys(selectors)) {
+    const list = selectors[selector] || [];
+    const territoryCode = territory[selector] || [];
+    if (list.indexOf(territoryCode) > -1) {
       return true;
     }
   }
@@ -50,8 +68,8 @@ export class TerritoryWhitelistFilter extends TerritoryFilter {
     let whitelisted = false;
     for (const rule of this.parameters) {
       if (
-        (!rule.start.length || inList(rule.start, ctx.person.start_territory_id)) &&
-        (!rule.end.length || inList(rule.end, ctx.person.end_territory_id))
+        inList(rule.start, ctx.person.start) &&
+        inList(rule.end, ctx.person.end)
       ) {
         whitelisted = true;
       }
@@ -71,8 +89,8 @@ export class TerritoryBlacklistFilter extends TerritoryFilter {
     let blacklisted = false;
     for (const rule of this.parameters) {
       if (
-        (!rule.start.length || inList(rule.start, ctx.person.start_territory_id)) &&
-        (!rule.end.length || inList(rule.end, ctx.person.end_territory_id))
+        inList(rule.start, ctx.person.start) &&
+        inList(rule.end, ctx.person.end)
       ) {
         blacklisted = true;
       }

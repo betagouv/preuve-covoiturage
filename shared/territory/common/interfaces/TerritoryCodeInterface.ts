@@ -1,6 +1,7 @@
 export enum TerritoryCodeEnum {
-  Insee = 'insee',
-  Postcode = 'postcode',
+  Arr = 'arr',
+  City = 'com',
+  Mobility = 'aom',
   Id = '_id',
 }
 
@@ -10,7 +11,8 @@ export interface TerritoryCodeInterface {
 }
 
 export interface TerritoryCodesInterface {
-  [TerritoryCodeEnum.Insee]?: string[];
-  [TerritoryCodeEnum.Postcode]?: string[];
+  [TerritoryCodeEnum.Arr]?: string[];
+  [TerritoryCodeEnum.City]?: string[];
+  [TerritoryCodeEnum.Mobility]?: string[];
   [TerritoryCodeEnum.Id]?: number[];
 }
