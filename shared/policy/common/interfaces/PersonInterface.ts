@@ -1,3 +1,5 @@
+import { TerritoryCodesInterface } from '../../../territory/common/interfaces/TerritoryCodeInterface';
+
 export interface PersonInterface {
   identity_uuid: string;
   carpool_id: number;
@@ -12,8 +14,6 @@ export interface PersonInterface {
   duration: number;
   distance: number;
   cost: number;
-  start_insee?: string;
-  end_insee?: string;
-  start_territory_id: number[]; // to delete
-  end_territory_id: number[]; // to delete
+  start: TerritoryCodesInterface;
+  end: TerritoryCodesInterface;
 }

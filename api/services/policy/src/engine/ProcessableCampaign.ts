@@ -9,12 +9,14 @@ import {
   MetadataWrapperInterface,
 } from '../interfaces';
 import { MetadataWrapper } from '../providers/MetadataWrapper';
+import { TerritoryCodesInterface } from '../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export class ProcessableCampaign {
   public readonly policy_id: number;
   public readonly start_date: Date;
   public readonly end_date: Date;
   public readonly territory_id: number;
+  public readonly territory_selector: TerritoryCodesInterface;
 
   protected globalSet: RuleSet;
   protected ruleSets: RuleSet[];
