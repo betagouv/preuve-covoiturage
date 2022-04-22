@@ -38,12 +38,8 @@ import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProv
 
 import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateRuleParametersMiddleware';
 
-import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
-import { SeedCommand } from './commands/SeedCommand';
-
 @serviceProvider({
   config,
-  commands: [PolicyProcessCommand, SeedCommand],
   providers: [
     CampaignPgRepositoryProvider,
     MetadataRepositoryProvider,
