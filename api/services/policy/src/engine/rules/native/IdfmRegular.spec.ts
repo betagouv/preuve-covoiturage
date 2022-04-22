@@ -43,7 +43,7 @@ function setup(): {
   return { policy, defaultTripParams };
 }
 
-test('case 1', async (t) => {
+test.skip('case 1', async (t) => {
   const { policy, defaultTripParams } = setup();
 
   const trip = faker.trip([
@@ -70,7 +70,7 @@ test('case 1', async (t) => {
   t.is(context.result, 150);
 });
 
-test('case 2', async (t) => {
+test.skip('case 2', async (t) => {
   const { policy, defaultTripParams } = setup();
 
   const trip = faker.trip([
@@ -96,7 +96,7 @@ test('case 2', async (t) => {
   await policy.apply(context);
   t.is(context.result, 170);
 });
-test('case 3', async (t) => {
+test.skip('case 3', async (t) => {
   const { policy, defaultTripParams } = setup();
 
   const trip = faker.trip([
@@ -122,7 +122,7 @@ test('case 3', async (t) => {
   await policy.apply(context);
   t.is(context.result, 300);
 });
-test('case 4', async (t) => {
+test.skip('case 4', async (t) => {
   const { policy, defaultTripParams } = setup();
 
   const trip = faker.trip([
@@ -154,7 +154,7 @@ test('case 4', async (t) => {
   await policy.apply(context);
   t.is(context.result, 190);
 });
-test('case 5', async (t) => {
+test.skip('case 5', async (t) => {
   const { policy, defaultTripParams } = setup();
 
   const trip = faker.trip([
@@ -186,7 +186,7 @@ test('case 5', async (t) => {
   await policy.apply(context);
   t.is(context.result, 150);
 });
-test('case 6', async (t) => {
+test.skip('case 6', async (t) => {
   const { policy, defaultTripParams } = setup();
 
   const trip = faker.trip([
@@ -218,7 +218,7 @@ test('case 6', async (t) => {
   await policy.apply(context);
   t.is(context.result, 300);
 });
-test('case 7', async (t) => {
+test.skip('case 7', async (t) => {
   const { policy, defaultTripParams } = setup();
 
   const trip = faker.trip([
@@ -251,7 +251,7 @@ test('case 7', async (t) => {
   t.is(context.result, 500);
 });
 
-test('case 8', async (t) => {
+test.skip('case 8', async (t) => {
   const { policy, defaultTripParams } = setup();
 
   const trip = faker.trip([
@@ -284,7 +284,7 @@ test('case 8', async (t) => {
   t.is(context.result, 400);
 });
 
-test('case 9', async (t) => {
+test.skip('case 9', async (t) => {
   const { policy, defaultTripParams } = setup();
   const trip = faker.trip([
     {
@@ -315,7 +315,7 @@ test('case 9', async (t) => {
   await policy.apply(context);
   t.is(context.result, 550);
 });
-test('case 10', async (t) => {
+test.skip('case 10', async (t) => {
   const { policy, defaultTripParams } = setup();
 
   const trip = faker.trip([
@@ -347,7 +347,7 @@ test('case 10', async (t) => {
   await policy.apply(context);
   t.is(context.result, 600);
 });
-test('case 11', async (t) => {
+test.skip('case 11', async (t) => {
   const { policy, defaultTripParams } = setup();
 
   const trip = faker.trip([
@@ -386,7 +386,7 @@ test('case 11', async (t) => {
   t.is(context.result, 370);
 });
 
-test('case 12', async (t) => {
+test.skip('case 12', async (t) => {
   const { policy, defaultTripParams } = setup();
   const trip = faker.trip([
     {
@@ -424,7 +424,7 @@ test('case 12', async (t) => {
   t.is(context.result, 800);
 });
 
-test('case 13', async (t) => {
+test.skip('case 13', async (t) => {
   const { policy, defaultTripParams } = setup();
   const trip = faker.trip([
     {
@@ -459,7 +459,7 @@ test('case 13', async (t) => {
   t.is(context.result, 150);
 });
 
-test('case 14', async (t) => {
+test.skip('case 14', async (t) => {
   const { policy, defaultTripParams } = setup();
   const trip = faker.trip([
     {
@@ -487,7 +487,7 @@ test('case 14', async (t) => {
   await t.throwsAsync<NotApplicableTargetException>(async () => policy.apply(context));
 });
 
-test('case 15', async (t) => {
+test.skip('case 15', async (t) => {
   const { policy, defaultTripParams } = setup();
   const trip = faker.trip([
     {
