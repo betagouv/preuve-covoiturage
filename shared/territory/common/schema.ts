@@ -43,7 +43,6 @@ export function schema(alias: string, update = false) {
       },
       selector: territoryCodeSchema,
       name: { macro: 'varchar' },
-      shortname: { macro: 'varchar' },
       ...(update ? { _id: { macro: 'serial' } } : {}),
     },
   };

@@ -146,7 +146,6 @@ test.serial('Update a territory', async (t) => {
 
   const updateData = {
     ...initResponse.result,
-    shortname: 'Toto inc',
     selector: {
       _id: [7, 8],
     },
@@ -161,7 +160,7 @@ test.serial('Update a territory', async (t) => {
   });
 
   t.log(response);
-  t.is(response.result.shortname, 'Toto inc');
+  t.is(response.result.selector._id.length, 2);
 
   const finalResponse = await t.context.request(
     'territory:find',
