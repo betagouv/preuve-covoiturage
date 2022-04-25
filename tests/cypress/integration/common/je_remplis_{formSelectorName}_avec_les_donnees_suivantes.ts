@@ -28,7 +28,7 @@ When(`je remplis {formSelectorName} avec les données suivantes :`, function (fo
       case 'mat-autocomplete':
         // wait for element to be enabled (list data is loaded) before click and type value
         cy.get(inputSelector).get('input[type=text]').should('have.prop', 'disabled', false).click('right').type(value);
-        cy.wait(10000); // arbitrary list process time
+        cy.wait(1000); // arbitrary list process time
         cy.get('.mat-autocomplete-panel mat-option .mat-option-text').contains(value).click();
         break;
     }
