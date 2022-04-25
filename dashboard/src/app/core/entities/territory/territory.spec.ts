@@ -1,9 +1,9 @@
-import { CreateTerritoryGroupInterface } from './../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { TerritoryBaseInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { FormAddress } from '../../../shared/modules/form/forms/form-address';
 import { FormContact } from '../../../shared/modules/form/forms/form-contact';
 import { Address } from '../shared/address';
+// eslint-disable-next-line max-len
+import { CreateTerritoryGroupInterface } from './../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { TerritoryMapper } from './territory';
 
 describe('TerritoryMapper', () => {
