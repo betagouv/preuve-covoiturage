@@ -119,7 +119,7 @@ CREATE VIEW trip.list_view AS (
     cts.year = EXTRACT(YEAR FROM cpp.datetime)::smallint
   LEFT JOIN geo.perimeters AS cte ON
     cte.com = cpp.end_geo_code AND 
-    cte.year = EXTRACT(YEAR FROM cpp.datetime)::smallint
+    cte.year = EXTRACT(YEAR FROM cpp.datetime)::smallint,
   LATERAL (
     WITH data AS (
       SELECT
