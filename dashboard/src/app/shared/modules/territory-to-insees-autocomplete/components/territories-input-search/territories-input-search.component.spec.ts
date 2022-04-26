@@ -5,20 +5,20 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Observable, of } from 'rxjs';
-import { InseeAndTerritoryInterface } from '../../../../../core/entities/campaign/ux-format/incentive-filters';
+import { SingleResultInterface } from '../../../../../../../../shared/territory/listGeo.contract';
 import { TerritoryApiService } from '../../../../../modules/territory/services/territory-api.service';
 import { TerritoriesInputSearchComponent } from './territories-input-search.component';
 
-const paris10: InseeAndTerritoryInterface = {
-  territory_literal: 'Paris 10ème (75)',
-  context: 'Paris 10ème (75)',
-  insees: '9333',
+const paris10: SingleResultInterface = {
+  _id: 1,
+  name: 'Paris 10ème (75)',
+  insee: '9333',
 };
 
-const damparis: InseeAndTerritoryInterface = {
-  territory_literal: 'Damparis (39)',
-  context: 'Damparis (39)',
-  insees: '9333',
+const damparis: SingleResultInterface = {
+  _id: 2,
+  name: 'Damparis (39)',
+  insee: '9333',
 };
 
 class TerritoryApiServiceStub {
@@ -35,7 +35,7 @@ class TerritoryApiServiceStub {
   }
 }
 
-fdescribe('app-territories-input-search', () => {
+describe('app-territories-input-search', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
       declarations: [TerritoriesInputSearchComponent],
@@ -53,7 +53,7 @@ fdescribe('app-territories-input-search', () => {
   it('should create component and select territory', async () => {
     // Arrange
     const fixture = TestBed.createComponent(TerritoriesInputSearchComponent);
-    fixture.componentInstance.parentForm = new FormGroup({ district: new FormControl() });
+    fixture.componentInstance.parentForm = new FormGroup({ district: new FormControl(), parent: new FormControl() });
     fixture.detectChanges();
 
     // Assert : component loaded
@@ -65,6 +65,6 @@ fdescribe('app-territories-input-search', () => {
     fixture.componentInstance.onTerritoryInseeSelect(mockEventParis);
 
     // Assert value
-    expect(fixture.componentInstance.territoryInseeInputCtrl.value).toEqual(paris10);
+    expect(fixture.componentInstance.territoryInseeInputCtrl.value).toEqual(paris10.name);
   });
 });

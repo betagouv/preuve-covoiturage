@@ -1,9 +1,15 @@
-import { createDatabase, dropDatabase, migrate } from '@pdc/migrator';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { createDatabase, dropDatabase, migrate } from '@pdc/migrator';
 import { URL } from 'url';
-
+import { companies, Company } from './companies';
 import { Operator, operators } from './operators';
-import { Territory, territories } from './territories';
+import {
+  CreateTerritoryGroupInterface,
+  territories,
+  Territory,
+  TerritoryCodesInterface,
+  territory_groups,
+} from './territories';
 import { User, users } from './users';
 
 export class Migrator {
@@ -62,6 +68,11 @@ export class Migrator {
     }
     await this.connection.getClient().query(`SET session_replication_role = 'replica'`);
 
+    for (const company of companies) {
+      console.debug(`Seeding company ${company.legal_name}`);
+      await this.seedCompany(company);
+    }
+
     for (const territory of territories) {
       console.debug(`Seeding territory ${territory.name}`);
       await this.seedTerritory(territory);
@@ -75,6 +86,11 @@ export class Migrator {
     for (const user of users) {
       console.debug(`Seeding user ${user.email}`);
       await this.seedUser(user);
+    }
+
+    for (const territory_group of territory_groups) {
+      console.debug(`Seeding territory group ${territory_group.name}`);
+      await this.seedTerritoyGroup(territory_group);
     }
 
     /*
@@ -105,6 +121,36 @@ export class Migrator {
             +++ VIEWS +++ 
     */
     await this.connection.getClient().query(`SET session_replication_role = 'origin'`);
+  }
+
+  async seedCompany(company: Company) {
+    await this.connection.getClient().query({
+      text: `
+        INSERT INTO company.companies
+          (_id, siret, siren, nic, legal_name, company_naf_code, establishment_naf_code, headquarter)
+        VALUES (
+          $1::int,
+          $2::varchar,
+          $3::varchar,
+          $4::varchar,
+          $5::varchar,
+          $6::varchar,
+          $7::varchar,
+          $8::boolean
+        )
+        ON CONFLICT DO NOTHING
+      `,
+      values: [
+        company._id,
+        company.siret,
+        company.siren,
+        company.nic,
+        company.legal_name,
+        company.company_naf_code,
+        company.establishment_naf_code,
+        company.headquarter,
+      ],
+    });
   }
 
   async seedOperator(operator: Operator) {
@@ -165,6 +211,63 @@ export class Migrator {
         user.operator?._id,
       ],
     });
+  }
+
+  async seedTerritoyGroup(territory_group: CreateTerritoryGroupInterface) {
+    const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
+
+    const values: any[] = [
+      territory_group.name,
+      '',
+      territory_group.contacts,
+      territory_group.address,
+      territory_group.company_id,
+    ];
+    const query = {
+      text: `
+        INSERT INTO territory.territory_group (${fields.join(',')})
+        VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')})
+        RETURNING *
+      `,
+      values,
+    };
+    const resultData = await this.connection.getClient().query(query);
+    this.syncSelector(resultData.rows[0]._id, territory_group.selector);
+  }
+
+  async syncSelector(groupId: number, selector: TerritoryCodesInterface): Promise<void> {
+    const values: [number[], string[], string[]] = Object.keys(selector)
+      .map((type) => selector[type].map((value: string | number) => [groupId, type, value.toString()]))
+      .reduce((arr, v) => [...arr, ...v], [])
+      .reduce(
+        (arr, v) => {
+          arr[0].push(v[0]);
+          arr[1].push(v[1]);
+          arr[2].push(v[2]);
+          return arr;
+        },
+        [[], [], []],
+      );
+    await this.connection.getClient().query({
+      text: `
+        DELETE FROM territory.territory_group_selector
+        WHERE territory_group_id = $1
+      `,
+      values: [groupId],
+    });
+
+    const query = {
+      text: `
+        INSERT INTO territory.territory_group_selector (
+          territory_group_id,
+          selector_type,
+          selector_value
+        ) 
+        SELECT * FROM UNNEST($1::int[], $2::varchar[], $3::varchar[])`,
+      values,
+    };
+
+    await this.connection.getClient().query(query);
   }
 
   async seedTerritory(territory: Territory) {

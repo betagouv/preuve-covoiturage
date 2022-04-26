@@ -1,5 +1,6 @@
 import { KernelInterfaceResolver, NotFoundException, provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
+import { TerritoryCodesInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 import {
   CreateParamsInterface,
   CreateResultInterface,
@@ -14,26 +15,55 @@ import {
   UpdateParamsInterface,
   UpdateResultInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
-import { TerritoryLevelEnum } from '../shared/territory/common/interfaces/TerritoryInterface';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
 export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderInterface {
-  public readonly table = 'territory.territories';
-  public readonly relationTable = 'territory.territory_relation';
+  public readonly table = 'territory.territory_group';
+  public readonly relationTable = 'territory.territory_group_selector';
+  public readonly GROUP_DEFAULT_SHORT_NAME = '';
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
   async find(params: FindParamsInterface): Promise<FindResultInterface> {
     const result = await this.connection.getClient().query({
       text: `
+        WITH selector_raw AS (
+          SELECT
+            territory_group_id,
+            selector_type,
+            ARRAY_AGG(selector_value) as selector_value
+          FROM ${this.relationTable}
+          WHERE territory_group_id = $1
+          GROUP BY territory_group_id, selector_type
+        ),
+        selector AS (
+          SELECT
+            territory_group_id,
+            JSON_OBJECT_AGG(
+              selector_type,
+              selector_value
+            ) as selector
+          FROM selector_raw
+          GROUP BY territory_group_id
+        ) 
         SELECT
-          _id, created_at, updated_at, name, level, company_id, contacts
-        FROM ${this.table}
+          tg._id,
+          tg.company_id,
+          tg.created_at,
+          tg.updated_at,
+          tg.name,
+          tg.shortname,
+          tg.contacts,
+          tg.address,
+          tgs.selector
+        FROM ${this.table} AS tg
+        JOIN selector AS tgs
+          ON tgs.territory_group_id = tg._id
         WHERE 
-          _id = $1 AND 
-          deleted_at IS NULL
+          tg._id = $1 AND
+          tg.deleted_at IS NULL
       `,
       values: [params._id],
     });
@@ -42,7 +72,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       throw new NotFoundException();
     }
 
-    return result.rows[0];
+    return {
+      ...result.rows[0],
+      selector: this.castSelectorId(result.rows[0].selector),
+    };
   }
 
   async list(params: ListParamsInterface): Promise<ListResultInterface> {
@@ -87,61 +120,79 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   }
 
   async create(data: CreateParamsInterface): Promise<CreateResultInterface> {
-    const fields = ['name', 'level', 'contacts', 'address', 'active', 'activable'];
+    const connection = await this.connection.getClient().connect();
+    await connection.query('BEGIN');
+    try {
+      const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
 
-    const values: any[] = [
-      data.name,
-      TerritoryLevelEnum.Towngroup, // level
-      data.contacts || '{}',
-      data.address || '{}',
-      true, // active
-      true, // activable,
-    ];
+      const values: any[] = [data.name, this.GROUP_DEFAULT_SHORT_NAME, data.contacts, data.address, data.company_id];
 
-    if (data.company_id) {
-      fields.push('company_id');
-      values.push(data.company_id);
+      const query = {
+        text: `
+          INSERT INTO ${this.table} (${fields.join(',')})
+          VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')})
+          RETURNING *
+        `,
+        values,
+      };
+
+      const result = await connection.query(query);
+      if (result.rowCount !== 1) {
+        throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
+      }
+
+      const resultData = result.rows[0];
+
+      await this.syncSelector(connection, resultData._id, data.selector);
+
+      await connection.query('COMMIT');
+      return { ...resultData, selector: data.selector };
+    } catch (e) {
+      await connection.query('ROLLBACK');
+      throw e;
+    } finally {
+      connection.release();
     }
+  }
+
+  protected async syncSelector(
+    connection: PoolClient,
+    groupId: number,
+    selector: TerritoryCodesInterface,
+  ): Promise<void> {
+    const values: [number[], string[], string[]] = Object.keys(selector)
+      .map((type) => selector[type].map((value: string | number) => [groupId, type, value.toString()]))
+      .reduce((arr, v) => [...arr, ...v], [])
+      .reduce(
+        (arr, v) => {
+          arr[0].push(v[0]);
+          arr[1].push(v[1]);
+          arr[2].push(v[2]);
+          return arr;
+        },
+        [[], [], []],
+      );
+    await connection.query({
+      text: `
+        DELETE FROM ${this.relationTable}
+        WHERE territory_group_id = $1
+      `,
+      values: [groupId],
+    });
 
     const query = {
       text: `
-        INSERT INTO ${this.table} (${fields.join(',')})
-        VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')})
-        RETURNING *
-      `,
+        INSERT INTO ${this.relationTable} (
+          territory_group_id,
+          selector_type,
+          selector_value
+        ) 
+        SELECT * FROM UNNEST($1::int[], $2::varchar[], $3::varchar[])`,
       values,
     };
 
-    const result = await this.connection.getClient().query(query);
-    if (result.rowCount !== 1) {
-      throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
-    }
-
-    const resultData = result.rows[0];
-
-    if (data.children !== undefined && data.children.length > 0) {
-      await this.createRelations(resultData._id, data.children);
-    }
-
-    if (data.parent) {
-      await this.createRelations(data.parent, [resultData._id]);
-    }
-
-    return resultData;
-  }
-
-  async createRelations(parentId: number, insee: number[]): Promise<any> {
-    const client = this.connection.getClient();
-
-    const parentIds: number[] = Array(insee.length).fill(parentId);
-
-    const query = {
-      text: `INSERT INTO ${this.relationTable}(parent_territory_id,child_territory_id) 
-      SELECT * FROM UNNEST($1::int[], $2::int[])`,
-      values: [parentIds, insee],
-    };
-
-    return client.query(query);
+    await connection.query(query);
+    return;
   }
 
   async delete(id: number): Promise<void> {
@@ -164,58 +215,41 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   }
 
   async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
-    const fields = ['name', 'level', 'contacts', 'address', 'active', 'activable', 'company_id'];
+    const connection = await this.connection.getClient().connect();
+    await connection.query('BEGIN');
+    try {
+      const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
 
-    const values: any[] = [
-      data.name,
-      data.level,
-      data.contacts || '{}',
-      data.address || '{}',
-      true, // active
-      true, // activable
-      data.company_id ? data.company_id : null,
-    ];
+      const values: any[] = [data.name, '', data.contacts, data.address, data.company_id];
 
-    const client = this.connection.getClient();
-
-    const query = {
-      text: `
-        UPDATE ${this.table}
-        SET ${fields.map((val, ind) => `${val} = $${ind + 1}`).join(',')}
-        WHERE _id=${data._id}
-      `,
-      values,
-    };
-
-    const result = await client.query(query);
-    const cleanInseeQuery = {
-      text: `DELETE FROM territory.territory_codes WHERE territory_id = $1 AND type=$2`,
-      values: [data._id, 'insee'],
-    };
-
-    await client.query(cleanInseeQuery);
-
-    if (data.insee !== undefined && data.insee.length > 0) {
       const query = {
-        text: `INSERT INTO territory.territory_codes(territory_id,type,value) VALUES ${data.insee
-          .map((insee) => `($1,'insee',${insee})`)
-          .join(',')}`,
-        values: [data._id],
+        text: `
+          UPDATE ${this.table}
+          SET ${fields.map((val, ind) => `${val} = $${ind + 1}`).join(',')}
+          WHERE _id = ${data._id}
+          RETURNING *
+        `,
+        values,
       };
 
-      await client.query(query);
-    }
+      const result = await connection.query(query);
 
-    if (result.rowCount !== 1) {
-      throw new Error(`Unable to update territory (${JSON.stringify(data)})`);
-    }
+      if (result.rowCount !== 1) {
+        throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
+      }
 
-    return (
-      await client.query({
-        text: `SELECT * from ${this.table} WHERE _id = $1`,
-        values: [data._id],
-      })
-    ).rows[0];
+      const resultData = result.rows[0];
+
+      await this.syncSelector(connection, resultData._id, data.selector);
+
+      await connection.query('COMMIT');
+      return { ...resultData, selector: data.selector };
+    } catch (e) {
+      await connection.query('ROLLBACK');
+      throw e;
+    } finally {
+      connection.release();
+    }
   }
 
   async patchContacts(params: PatchContactsParamsInterface): Promise<PatchContactsResultInterface> {
@@ -235,18 +269,48 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     return modifiedTerritoryRes.rows[0];
   }
 
-  async getRelationCodes(params: { _id: number }): Promise<{ _id: number[] }> {
+  async getRelationCodes(params: { _id: number }): Promise<TerritoryCodesInterface> {
     const query = {
       text: `
-        SELECT *
-        FROM territory.get_descendants(ARRAY[$1]::int[]) as _id
+        WITH selector_raw AS (
+          SELECT
+            territory_group_id,
+            selector_type,
+            ARRAY_AGG(selector_value) as selector_value
+          FROM ${this.relationTable}
+          WHERE territory_group_id = $1
+          GROUP BY territory_group_id, selector_type
+        )
+        SELECT
+          territory_group_id,
+          JSON_OBJECT_AGG(
+            selector_type,
+            selector_value
+          ) as selector
+        FROM selector_raw
+        GROUP BY territory_group_id
       `,
       values: [params._id],
     };
 
     const result = await this.connection.getClient().query(query);
+    return this.castSelectorId(result.rows[0].selector);
+  }
+
+  // needed because _id must be numbers
+  protected castSelectorId(
+    input?: Partial<TerritoryCodesInterface & { _id?: string[] }>,
+  ): TerritoryCodesInterface & { _id: number[] } {
+    const defaultSelector = {
+      _id: [],
+    };
+    if (!input) {
+      return defaultSelector;
+    }
+
     return {
-      _id: result.rows[0]._id || [],
+      ...input,
+      _id: (input._id || []).map((v: string) => Number(v)),
     };
   }
 }

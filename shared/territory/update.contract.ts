@@ -1,9 +1,7 @@
-import { TerritoryInterface } from './common/interfaces/TerritoryInterface';
+import { TerritoryGroupInterface, UpdateTerritoryGroupInterface } from './common/interfaces/TerritoryInterface';
 
-export interface ParamsInterface extends TerritoryInterface {
-  insee?: string[];
-}
-export interface ResultInterface extends TerritoryInterface {}
+export interface ParamsInterface extends UpdateTerritoryGroupInterface {}
+export interface ResultInterface extends TerritoryGroupInterface {}
 
 export const handlerConfig = {
   service: 'territory',

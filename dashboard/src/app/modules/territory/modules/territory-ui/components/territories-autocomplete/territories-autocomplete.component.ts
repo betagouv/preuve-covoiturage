@@ -8,6 +8,8 @@ import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInt
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { ParamsInterface as ParamsInterfaceGeo } from '~/shared/territory/listGeo.contract';
+import { SingleResultInterface as TerritoryGeoResultInterface } from '~/shared/territory/listGeo.contract';
+import { ResultWithPagination } from '../../../../../../../../../shared/common/interfaces/ResultWithPagination';
 
 @Component({
   selector: 'app-territories-autocomplete',
@@ -84,8 +86,8 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
     this.territoryApiService
       .geo(params)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(({ data }: { data: { _id: number; name: string }[] }) => {
-        this.filteredTerritories = data.map(({ _id, name: shortname }) => ({ shortname, _id }));
+      .subscribe((result: ResultWithPagination<TerritoryGeoResultInterface>) => {
+        this.filteredTerritories = result.data.map(({ _id, name: shortname }) => ({ shortname, _id }));
       });
   }
 }

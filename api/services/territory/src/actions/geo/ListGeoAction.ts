@@ -2,9 +2,9 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { GeoRepositoryProviderInterfaceResolver } from '../interfaces/GeoRepositoryProviderInterface';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/territory/listGeo.contract';
-import { alias } from '../shared/territory/listGeo.schema';
+import { GeoRepositoryProviderInterfaceResolver } from '../../interfaces/GeoRepositoryProviderInterface';
+import { handlerConfig, ResultInterface, ParamsInterface } from '../../shared/territory/listGeo.contract';
+import { alias } from '../../shared/territory/listGeo.schema';
 
 @handler({
   ...handlerConfig,

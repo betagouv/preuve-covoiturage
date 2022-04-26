@@ -1,8 +1,9 @@
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { TerritoryBaseInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { FormAddress } from '../../../shared/modules/form/forms/form-address';
 import { FormContact } from '../../../shared/modules/form/forms/form-contact';
 import { Address } from '../shared/address';
+// eslint-disable-next-line max-len
+import { CreateTerritoryGroupInterface } from './../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { TerritoryMapper } from './territory';
 
 describe('TerritoryMapper', () => {
@@ -27,9 +28,9 @@ describe('TerritoryMapper', () => {
         technical: fb.group(new FormContact()),
       }),
     });
-    const model: TerritoryBaseInterface = TerritoryMapper.toModel(territoryForm, null, [66666, 66664]);
+    const model: CreateTerritoryGroupInterface = TerritoryMapper.toModel(territoryForm, null, [66666, 66664]);
     expect(model.name).toEqual("Communauté de communes du Pays de L'Arbresle");
-    expect(model.children).toEqual([66666, 66664]);
+    expect(model.selector._id).toEqual([66666, 66664]);
     expect(model.address.street).toEqual('117 RUE PIERRE PASSEMARD');
     expect(model.address.city).toEqual("L'ARBRESLE");
     expect(model.address.postcode).toEqual('69210');

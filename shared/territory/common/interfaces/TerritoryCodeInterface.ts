@@ -1,6 +1,7 @@
 export enum TerritoryCodeEnum {
   Insee = 'insee',
   Postcode = 'postcode',
+  Id = '_id',
 }
 
 export interface TerritoryCodeInterface {
@@ -9,6 +10,7 @@ export interface TerritoryCodeInterface {
 }
 
 export interface TerritoryCodesInterface {
-  [TerritoryCodeEnum.Insee]: string[];
-  [TerritoryCodeEnum.Postcode]: string[];
+  [TerritoryCodeEnum.Insee]?: string[];
+  [TerritoryCodeEnum.Postcode]?: string[];
+  [TerritoryCodeEnum.Id]?: number[];
 }

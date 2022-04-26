@@ -1,15 +1,10 @@
-import { TerritoryCodesInterface } from './common/interfaces/TerritoryCodeInterface';
-import { TerritoryBaseInterface } from './common/interfaces/TerritoryInterface';
-import { TerritoryDbMetaInterface } from './common/interfaces/TerritoryDbMetaInterface';
+import { TerritoryGroupInterface } from './common/interfaces/TerritoryInterface';
 
 export interface ParamsInterface {
   _id: number;
 }
 
-export interface ResultInterface
-  extends Partial<TerritoryBaseInterface>,
-    Partial<TerritoryDbMetaInterface>,
-    Partial<TerritoryCodesInterface> {}
+export interface ResultInterface extends TerritoryGroupInterface {}
 
 export const handlerConfig = {
   service: 'territory',
