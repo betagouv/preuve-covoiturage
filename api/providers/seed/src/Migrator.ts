@@ -1,11 +1,16 @@
-import { createDatabase, dropDatabase, migrate } from '@pdc/migrator';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { createDatabase, dropDatabase, migrate } from '@pdc/migrator';
 import { URL } from 'url';
-
-import { Operator, operators } from './operators';
-import { Territory, territories } from './territories';
-import { User, users } from './users';
 import { companies, Company } from './companies';
+import { Operator, operators } from './operators';
+import {
+  CreateTerritoryGroupInterface,
+  territories,
+  Territory,
+  TerritoryCodesInterface,
+  territory_groups,
+} from './territories';
+import { User, users } from './users';
 
 export class Migrator {
   public connection: PostgresConnection;
@@ -81,6 +86,11 @@ export class Migrator {
     for (const user of users) {
       console.debug(`Seeding user ${user.email}`);
       await this.seedUser(user);
+    }
+
+    for (const territory_group of territory_groups) {
+      console.debug(`Seeding territory group ${territory_group.name}`);
+      await this.seedTerritoyGroup(territory_group);
     }
 
     /*
@@ -201,6 +211,63 @@ export class Migrator {
         user.operator?._id,
       ],
     });
+  }
+
+  async seedTerritoyGroup(territory_group: CreateTerritoryGroupInterface) {
+    const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
+
+    const values: any[] = [
+      territory_group.name,
+      '',
+      territory_group.contacts,
+      territory_group.address,
+      territory_group.company_id,
+    ];
+    const query = {
+      text: `
+        INSERT INTO territory.territory_group (${fields.join(',')})
+        VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')})
+        RETURNING *
+      `,
+      values,
+    };
+    const resultData = await this.connection.getClient().query(query);
+    this.syncSelector(resultData.rows[0]._id, territory_group.selector);
+  }
+
+  async syncSelector(groupId: number, selector: TerritoryCodesInterface): Promise<void> {
+    const values: [number[], string[], string[]] = Object.keys(selector)
+      .map((type) => selector[type].map((value: string | number) => [groupId, type, value.toString()]))
+      .reduce((arr, v) => [...arr, ...v], [])
+      .reduce(
+        (arr, v) => {
+          arr[0].push(v[0]);
+          arr[1].push(v[1]);
+          arr[2].push(v[2]);
+          return arr;
+        },
+        [[], [], []],
+      );
+    await this.connection.getClient().query({
+      text: `
+        DELETE FROM territory.territory_group_selector
+        WHERE territory_group_id = $1
+      `,
+      values: [groupId],
+    });
+
+    const query = {
+      text: `
+        INSERT INTO territory.territory_group_selector (
+          territory_group_id,
+          selector_type,
+          selector_value
+        ) 
+        SELECT * FROM UNNEST($1::int[], $2::varchar[], $3::varchar[])`,
+      values,
+    };
+
+    await this.connection.getClient().query(query);
   }
 
   async seedTerritory(territory: Territory) {
