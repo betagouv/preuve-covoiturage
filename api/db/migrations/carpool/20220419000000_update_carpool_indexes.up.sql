@@ -15,7 +15,7 @@ FROM (
     AND tce.type = 'insee'
   WHERE
     cco.start_geo_code IS NULL OR
-    cco. end_geo_code IS NULL
+    cco.end_geo_code IS NULL
 ) AS sq
 WHERE carpools._id = sq.carpool_id;
 
