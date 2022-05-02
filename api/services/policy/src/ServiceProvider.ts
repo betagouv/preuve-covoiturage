@@ -26,7 +26,6 @@ import { FindCampaignAction } from './actions/FindCampaignAction';
 import { ApplyAction } from './actions/ApplyAction';
 import { FinalizeAction } from './actions/FinalizeAction';
 import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
-import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
 import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
 
 import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryProvider';
@@ -71,7 +70,6 @@ import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateR
     ApplyAction,
     FinalizeAction,
     SimulateOnPastAction,
-    SimulateOnFakeAction,
     SimulateOnFutureAction,
   ],
   connections: [
