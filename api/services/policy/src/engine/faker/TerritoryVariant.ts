@@ -2,7 +2,7 @@ import sample from 'lodash/sample';
 
 import { AbstractVariant } from './AbstractVariant';
 import { PersonInterface } from '../../shared/policy/common/interfaces/PersonInterface';
-import { TerritoryCodeInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritoryCodeInterface } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 interface Params {
   start: TerritoryCodeInterface[];

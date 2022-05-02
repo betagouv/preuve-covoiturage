@@ -4,7 +4,7 @@ import {
   TerritoryCodeInterface,
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
-} from '../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
+} from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 import { TerritoryRepositoryProviderInterface, TerritoryRepositoryProviderInterfaceResolver } from '../interfaces';
 
 @provider({

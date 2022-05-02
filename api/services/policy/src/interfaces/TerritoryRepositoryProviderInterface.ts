@@ -1,7 +1,7 @@
 import {
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from '../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
+} from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 export interface TerritoryRepositoryProviderInterface {
   findByPoint({ lon, lat }: { lon: number; lat: number }): Promise<TerritoryCodeInterface>;
   findSiretById(_id: number | number[]): Promise<{ _id: number; siret: string }[]>;

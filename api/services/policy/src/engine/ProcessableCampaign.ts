@@ -9,7 +9,7 @@ import {
   MetadataWrapperInterface,
 } from '../interfaces';
 import { MetadataWrapper } from '../providers/MetadataWrapper';
-import { TerritorySelectorsInterface } from '../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export class ProcessableCampaign {
   public readonly policy_id: number;

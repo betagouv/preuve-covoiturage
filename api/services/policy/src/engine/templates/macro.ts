@@ -9,7 +9,7 @@ import { CampaignInterface } from '../../interfaces';
 import { PolicyEngine } from '../PolicyEngine';
 import { MetadataRepositoryProvider } from '../../providers/MetadataRepositoryProvider';
 import { trips as defaultTrips } from './trips';
-import { TerritorySelectorsInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritorySelectorsInterface } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 interface TestContext extends KernelTestFn {
   policy: CampaignInterface;
