@@ -21,7 +21,7 @@ test('should work', (t) => {
     global_rules: [],
     rules: [],
   };
-  const fakerEngine = FakerEngine.fromPolicy(campaign);
+  const fakerEngine = FakerEngine.create(campaign.start_date, campaign.end_date, []);
   fakerEngine.generate(10);
 
   // const trips = fakerEngine.generate(10);

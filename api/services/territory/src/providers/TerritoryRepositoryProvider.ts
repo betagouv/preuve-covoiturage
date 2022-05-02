@@ -1,6 +1,6 @@
 import { KernelInterfaceResolver, NotFoundException, provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import { TerritoryCodesInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritorySelectorsInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 import {
   CreateParamsInterface,
   CreateResultInterface,
@@ -158,7 +158,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   protected async syncSelector(
     connection: PoolClient,
     groupId: number,
-    selector: TerritoryCodesInterface,
+    selector: TerritorySelectorsInterface,
   ): Promise<void> {
     const values: [number[], string[], string[]] = Object.keys(selector)
       .map((type) => selector[type].map((value: string | number) => [groupId, type, value.toString()]))
@@ -269,7 +269,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     return modifiedTerritoryRes.rows[0];
   }
 
-  async getRelationCodes(params: { _id: number }): Promise<TerritoryCodesInterface> {
+  async getRelationCodes(params: { _id: number }): Promise<TerritorySelectorsInterface> {
     const query = {
       text: `
         WITH selector_raw AS (
@@ -299,8 +299,8 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
   // needed because _id must be numbers
   protected castSelectorId(
-    input?: Partial<TerritoryCodesInterface & { _id?: string[] }>,
-  ): TerritoryCodesInterface & { _id: number[] } {
+    input?: Partial<TerritorySelectorsInterface & { _id?: string[] }>,
+  ): TerritorySelectorsInterface & { _id: number[] } {
     const defaultSelector = {
       _id: [],
     };

@@ -11,7 +11,7 @@ export interface TerritoryCodeInterface {
   value: string;
 }
 
-export interface TerritoryCodesInterface {
+export interface TerritorySelectorsInterface {
   [TerritoryCodeEnum.Insee]?: string[];
   [TerritoryCodeEnum.Postcode]?: string[];
   [TerritoryCodeEnum.Id]?: number[];
@@ -33,7 +33,7 @@ export interface TerritoryGroupInterface {
   created_at: Date;
   updated_at: Date;
   deleted_at?: Date;
-  selector: TerritoryCodesInterface;
+  selector: TerritorySelectorsInterface;
 }
 
 export type CreateTerritoryGroupInterface = Omit<

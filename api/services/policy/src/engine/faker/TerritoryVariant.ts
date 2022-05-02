@@ -2,11 +2,11 @@ import sample from 'lodash/sample';
 
 import { AbstractVariant } from './AbstractVariant';
 import { PersonInterface } from '../../shared/policy/common/interfaces/PersonInterface';
-import { TerritoryCodesInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritoryCodeInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 interface Params {
-  start: TerritoryCodesInterface[];
-  end: TerritoryCodesInterface[];
+  start: TerritoryCodeInterface[];
+  end: TerritoryCodeInterface[];
 }
 export class TerritoryVariant extends AbstractVariant<Params> {
   readonly startPropertyPath: string = 'start';

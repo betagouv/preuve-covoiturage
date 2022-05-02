@@ -1,7 +1,6 @@
 import { promisify } from 'util';
 import { provider } from '@ilos/common';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
-import { v4 } from 'uuid';
 
 import { TripRepositoryProviderInterface, TripRepositoryProviderInterfaceResolver, TripInterface } from '../interfaces';
 import { ProcessableCampaign } from '../engine/ProcessableCampaign';
@@ -60,11 +59,15 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
             )
           ) AS people
           FROM ${this.table} t
-          ${override ? '' : `
+          ${
+            override
+              ? ''
+              : `
           LEFT JOIN ${this.incentiveTable} pi
             ON t.carpool_id = pi.carpool_id
             AND pi.policy_id = $4::int
-          `}
+          `
+          }
           WHERE
             (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[])) AND
             t.datetime >= $2::timestamp AND

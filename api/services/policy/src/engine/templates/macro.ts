@@ -9,9 +9,11 @@ import { CampaignInterface } from '../../interfaces';
 import { PolicyEngine } from '../PolicyEngine';
 import { MetadataRepositoryProvider } from '../../providers/MetadataRepositoryProvider';
 import { trips as defaultTrips } from './trips';
+import { TerritorySelectorsInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 interface TestContext extends KernelTestFn {
   policy: CampaignInterface;
+  selectors: TerritorySelectorsInterface;
 }
 
 interface MacroInterface {
@@ -31,10 +33,14 @@ export function macro(policyDef: CampaignInterface): MacroInterface {
     const { kernel } = await beforeKn();
     const repository = kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
     const policy = await repository.create(policyDef);
+    const selectors = {
+      aom: ['217500016'],
+    };
 
     return {
       kernel,
       policy,
+      selectors,
     };
   }
 
@@ -67,30 +73,12 @@ export function macro(policyDef: CampaignInterface): MacroInterface {
     ) => {
       const engine = t.context.kernel.get(ServiceProvider).get(PolicyEngine);
       const incentives = [];
-      const campaign = engine.buildCampaign(t.context.policy);
+      const campaign = engine.buildCampaign(t.context.policy, t.context.selectors);
       for (const trip of trips) {
         const r = await engine.process(campaign, trip);
         incentives.push(...r);
       }
       t.log(incentives);
-      t.is(
-        incentives.length,
-        trips
-          .filter(
-            (tr) =>
-              tr
-                .map((p) => [...p.start_territory_id, ...p.end_territory_id])
-                .reduce((s, t) => {
-                  t.map((v) => s.add(v));
-                  return s;
-                }, new Set())
-                .has(policyDef.territory_id) &&
-              tr.datetime >= policyDef.start_date &&
-              tr.datetime <= policyDef.end_date,
-          )
-          .map((tr) => tr.length)
-          .reduce((sum, i) => sum + i, 0),
-      );
       t.is(incentives.length, expected.length, 'every trip should have an incentive');
       for (const { amount, carpool_id, meta } of expected) {
         const incentive = incentives.find((i) => i.carpool_id === carpool_id);
@@ -105,13 +93,14 @@ export function macro(policyDef: CampaignInterface): MacroInterface {
 
   const test = anyTest as TestFn<TestContext>;
   test.before(async (t) => {
-    const { kernel, policy } = await before();
+    const { kernel, policy, selectors } = await before();
     t.context.kernel = kernel;
     t.context.policy = policy;
+    t.context.selectors = selectors;
   });
   test.after.always(async (t) => {
-    const { kernel, policy } = t.context;
-    await after({ kernel, policy });
+    const { kernel, policy, selectors } = t.context;
+    await after({ kernel, policy, selectors });
   });
 
   return {
