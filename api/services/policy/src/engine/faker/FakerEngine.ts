@@ -11,7 +11,7 @@ import { TerritoryVariant } from './TerritoryVariant';
 import { AbstractVariant } from './AbstractVariant';
 import { PersonInterface } from '../../shared/policy/common/interfaces/PersonInterface';
 import { TripInterface } from '../../shared/policy/common/interfaces/TripInterface';
-import { TerritoryCodeInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritoryCodeInterface } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export class FakerEngine {
   constructor(protected readonly variants: AbstractVariant<any>[]) {}

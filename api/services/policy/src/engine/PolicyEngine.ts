@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { TerritorySelectorsInterface } from '../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 import {
   CampaignInterface,
   IncentiveInterface,

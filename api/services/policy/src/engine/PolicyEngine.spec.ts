@@ -6,7 +6,7 @@ import { MetadataRepositoryProviderInterfaceResolver, MetadataWrapperInterface }
 import { PolicyEngine } from './PolicyEngine';
 import { MetadataWrapper } from '../providers/MetadataWrapper';
 import { RuleInterface } from '../shared/common/interfaces/RuleInterface';
-import { TerritorySelectorsInterface } from '../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 function setup(rules: RuleInterface[] = []): {
   engine: PolicyEngine;
