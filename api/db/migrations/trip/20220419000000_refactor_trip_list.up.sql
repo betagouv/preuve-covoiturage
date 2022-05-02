@@ -1,6 +1,8 @@
 ALTER TABLE trip.list
   DROP COLUMN IF EXISTS start_territory_id,
-  DROP COLUMN IF EXISTS end_territory_id;
+  DROP COLUMN IF EXISTS end_territory_id,
+  DROP COLUMN IF EXISTS journey_start_postalcode,
+  DROP COLUMN IF EXISTS journey_end_postalcode;
 
 DROP VIEW IF EXISTS trip.list_view;
 CREATE VIEW trip.list_view AS (
