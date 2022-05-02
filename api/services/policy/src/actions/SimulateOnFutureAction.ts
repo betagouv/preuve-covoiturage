@@ -58,20 +58,24 @@ export class SimulateOnFutureAction extends AbstractAction {
       ...new Set([
         ...(await this.territoryRepository.findBySelector(normalizedTrip[0].start)),
         ...(await this.territoryRepository.findBySelector(normalizedTrip[0].end)),
-      ])
+      ]),
     ];
 
     // 3. Instanciate an InMemory engine
     const engine = new PolicyEngine(new InMemoryMetadataProvider());
 
     // 4. Find appliable campaigns and instanciate them
-    const campaigns = (
-      await this.campaignRepository.findWhere({
-        status: 'active',
-        territory_id: territories,
-        datetime: normalizedTrip.datetime,
-      })
-    ).map((c) => engine.buildCampaign(c));
+    const campaignsRaw = await this.campaignRepository.findWhere({
+      status: 'active',
+      territory_id: territories,
+      datetime: normalizedTrip.datetime,
+    });
+
+    const campaigns = [];
+    for (const campaignRaw of campaignsRaw) {
+      const selector = await this.territoryRepository.findSelectorFromId(campaignRaw.territory_id);
+      campaigns.push(engine.buildCampaign(campaignRaw, selector));
+    }
 
     // 5. Process campaigns
     const incentives: IncentiveInterface[] = [];

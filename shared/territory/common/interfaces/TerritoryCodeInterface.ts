@@ -6,11 +6,12 @@ export enum TerritoryCodeEnum {
 }
 
 export interface TerritoryCodeInterface {
-  type: TerritoryCodeEnum;
-  value: string;
+  [TerritoryCodeEnum.Arr]?: string;
+  [TerritoryCodeEnum.City]: string;
+  [TerritoryCodeEnum.Mobility]: string;
 }
 
-export interface TerritoryCodesInterface {
+export interface TerritorySelectorsInterface {
   [TerritoryCodeEnum.Arr]?: string[];
   [TerritoryCodeEnum.City]?: string[];
   [TerritoryCodeEnum.Mobility]?: string[];

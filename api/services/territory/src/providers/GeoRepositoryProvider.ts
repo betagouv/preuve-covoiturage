@@ -18,7 +18,7 @@ import { GeoCodeTypeEnum } from '../shared/territory/common/geo';
 })
 export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   public readonly table = 'geo.perimeters';
-  public readonly relationTable = 'territory.territory_group_selector'
+  public readonly relationTable = 'territory.territory_group_selector';
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
@@ -34,7 +34,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     }
 
     let geoLevel = '';
-    
+
     switch (type) {
       case GeoCodeTypeEnum.Region:
         geoLevel = 'reg';
@@ -58,8 +58,8 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
 
     // dataset millesime
     where.push(`year = $${where.length + 1}`);
-    values.push((new Date()).getFullYear());
-  
+    values.push(new Date().getFullYear());
+
     const totalResult = await this.connection.getClient().query<{ count: string }>({
       values,
       text: `

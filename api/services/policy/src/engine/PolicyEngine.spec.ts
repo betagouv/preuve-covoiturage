@@ -6,12 +6,22 @@ import { MetadataRepositoryProviderInterfaceResolver, MetadataWrapperInterface }
 import { PolicyEngine } from './PolicyEngine';
 import { MetadataWrapper } from '../providers/MetadataWrapper';
 import { RuleInterface } from '../shared/common/interfaces/RuleInterface';
+import { TerritorySelectorsInterface } from '../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
-function setup(rules: RuleInterface[] = []): { engine: PolicyEngine; start: Date; fakeCampaign: CampaignInterface } {
+function setup(rules: RuleInterface[] = []): {
+  engine: PolicyEngine;
+  start: Date;
+  fakeCampaign: CampaignInterface;
+  selectors: TerritorySelectorsInterface;
+} {
   const start = new Date('2019-01-01');
   const end = new Date('2019-03-01');
 
   const territory = 1;
+  const selectors = {
+    com: ['91377'],
+  };
+
   const meta = new MetadataWrapper(1, []);
   const fakeCampaign: CampaignInterface = {
     _id: 1,
@@ -69,13 +79,13 @@ function setup(rules: RuleInterface[] = []): { engine: PolicyEngine; start: Date
   }
   const engine: PolicyEngine = new PolicyEngine(new CampaignMetadataRepositoryProvider());
 
-  return { engine, start, fakeCampaign };
+  return { engine, start, fakeCampaign, selectors };
 }
 
 test('should boot', async (t) => {
-  const { engine, fakeCampaign } = setup();
+  const { engine, fakeCampaign, selectors } = setup();
   const trip = faker.trip([{}]);
-  const campaign = engine.buildCampaign(fakeCampaign);
+  const campaign = engine.buildCampaign(fakeCampaign, selectors);
   const result = await engine.process(campaign, trip);
 
   t.true(Array.isArray(result));
@@ -87,7 +97,7 @@ test('should boot', async (t) => {
 });
 
 test('should work with amount restriction', async (t) => {
-  const { engine, fakeCampaign } = setup([
+  const { engine, fakeCampaign, selectors } = setup([
     {
       slug: 'max_amount_restriction',
       parameters: {
@@ -99,7 +109,7 @@ test('should work with amount restriction', async (t) => {
     },
   ]);
 
-  const campaign = engine.buildCampaign(fakeCampaign);
+  const campaign = engine.buildCampaign(fakeCampaign, selectors);
   const result = await engine.process(
     campaign,
     faker.trip([
@@ -145,7 +155,7 @@ test('should work with amount restriction', async (t) => {
 });
 
 test('should work with trip restriction', async (t) => {
-  const { engine, fakeCampaign } = setup([
+  const { engine, fakeCampaign, selectors } = setup([
     {
       slug: 'max_trip_restriction',
       parameters: {
@@ -157,7 +167,7 @@ test('should work with trip restriction', async (t) => {
     },
   ]);
 
-  const campaign = engine.buildCampaign(fakeCampaign);
+  const campaign = engine.buildCampaign(fakeCampaign, selectors);
   const result = await engine.process(
     campaign,
     faker.trip([

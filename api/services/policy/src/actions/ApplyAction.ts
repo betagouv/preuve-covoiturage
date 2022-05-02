@@ -15,6 +15,7 @@ import {
   CampaignRepositoryProviderInterfaceResolver,
   IncentiveInterface,
   TripRepositoryProviderInterfaceResolver,
+  TerritoryRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
@@ -32,6 +33,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     private campaignRepository: CampaignRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
     private tripRepository: TripRepositoryProviderInterfaceResolver,
+    private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
     private engine: PolicyEngine,
     private kernel: KernelInterfaceResolver,
   ) {
@@ -78,7 +80,9 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     console.debug('PROCESS CAMPAIGN', { campaign_id, override_from });
 
     // 1. Find campaign and start engine
-    const campaign = this.engine.buildCampaign(await this.campaignRepository.find(campaign_id));
+    const campaignRaw = await this.campaignRepository.find(campaign_id);
+    const selector = await this.territoryRepository.findSelectorFromId(campaignRaw.territory_id);
+    const campaign = this.engine.buildCampaign(campaignRaw, selector);
 
     // benchmark
     const totalStart = new Date();

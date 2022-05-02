@@ -1,4 +1,4 @@
-import { TerritoryCodesInterface } from '../../../territory/common/interfaces/TerritoryCodeInterface';
+import { TerritoryCodeInterface } from '../../../territory/common/interfaces/TerritoryCodeInterface';
 
 export interface PersonInterface {
   identity_uuid: string;
@@ -14,6 +14,6 @@ export interface PersonInterface {
   duration: number;
   distance: number;
   cost: number;
-  start: TerritoryCodesInterface;
-  end: TerritoryCodesInterface;
+  start: TerritoryCodeInterface;
+  end: TerritoryCodeInterface;
 }

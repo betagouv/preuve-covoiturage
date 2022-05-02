@@ -7,7 +7,7 @@ import {
   CreateTerritoryGroupInterface,
   territories,
   Territory,
-  TerritoryCodesInterface,
+  TerritorySelectorsInterface,
   territory_groups,
 } from './territories';
 import { User, users } from './users';
@@ -235,7 +235,7 @@ export class Migrator {
     this.syncSelector(resultData.rows[0]._id, territory_group.selector);
   }
 
-  async syncSelector(groupId: number, selector: TerritoryCodesInterface): Promise<void> {
+  async syncSelector(groupId: number, selector: TerritorySelectorsInterface): Promise<void> {
     const values: [number[], string[], string[]] = Object.keys(selector)
       .map((type) => selector[type].map((value: string | number) => [groupId, type, value.toString()]))
       .reduce((arr, v) => [...arr, ...v], [])

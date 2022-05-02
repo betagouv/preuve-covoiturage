@@ -1,11 +1,14 @@
 import { RuleHandlerContextInterface } from '../../interfaces';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { FilterRule } from '../FilterRule';
-import { TerritoryCodesInterface } from '../../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import {
+  TerritoryCodeInterface,
+  TerritorySelectorsInterface,
+} from '../../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 interface TerritoryParamsInterface {
-  start: TerritoryCodesInterface;
-  end: TerritoryCodesInterface;
+  start: TerritorySelectorsInterface;
+  end: TerritorySelectorsInterface;
 }
 
 export abstract class TerritoryFilter extends FilterRule<TerritoryParamsInterface[]> {
@@ -46,8 +49,8 @@ export abstract class TerritoryFilter extends FilterRule<TerritoryParamsInterfac
   };
 }
 
-function inList(selectors: TerritoryCodesInterface, territory: TerritoryCodesInterface): boolean {
-  if (!selectors) {
+function inList(selectors: TerritorySelectorsInterface, territory: TerritoryCodeInterface): boolean {
+  if (!selectors || Object.keys(selectors).length === 0) {
     return true;
   }
   for (const selector of Object.keys(selectors)) {
@@ -67,10 +70,7 @@ export class TerritoryWhitelistFilter extends TerritoryFilter {
   filter(ctx: RuleHandlerContextInterface): void {
     let whitelisted = false;
     for (const rule of this.parameters) {
-      if (
-        inList(rule.start, ctx.person.start) &&
-        inList(rule.end, ctx.person.end)
-      ) {
+      if (inList(rule.start, ctx.person.start) && inList(rule.end, ctx.person.end)) {
         whitelisted = true;
       }
     }
@@ -88,10 +88,7 @@ export class TerritoryBlacklistFilter extends TerritoryFilter {
   filter(ctx: RuleHandlerContextInterface): void {
     let blacklisted = false;
     for (const rule of this.parameters) {
-      if (
-        inList(rule.start, ctx.person.start) &&
-        inList(rule.end, ctx.person.end)
-      ) {
+      if (inList(rule.start, ctx.person.start) && inList(rule.end, ctx.person.end)) {
         blacklisted = true;
       }
     }
