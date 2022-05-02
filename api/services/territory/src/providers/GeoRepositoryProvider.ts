@@ -82,7 +82,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
           ${geoLevel} as insee
           FROM ${this.table} as gp
         WHERE ${where.join(' AND ')}
-        ORDER BY name ASC
+        ORDER BY gp.${label} ASC
         LIMIT $${where.length + 1}
         OFFSET $${where.length + 2}
       `,
