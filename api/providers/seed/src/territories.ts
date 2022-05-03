@@ -30,21 +30,22 @@ export interface TerritoryGroupInterface {
 
 export type CreateTerritoryGroupInterface = Omit<
   TerritoryGroupInterface,
-  '_id' | 'created_at' | 'updated_at' | 'deleted_at' | 'shortname'
+  'created_at' | 'updated_at' | 'deleted_at' | 'shortname'
 >;
 
-export const territory_groups: CreateTerritoryGroupInterface[] = [
-  {
-    company_id: 1,
-    name: 'Ile-De-France-Mobilité',
-    contacts: {},
-    address: {
-      street: '39 bis-41 rue de Châteaudun',
-      postcode: '75009 Paris',
-      cedex: 'Paris',
-      city: 'Paris',
-      country: 'France',
-    },
-    selector: { _id: [2] },
+export const idfm: CreateTerritoryGroupInterface = {
+  _id: 1,
+  company_id: 1,
+  name: 'Ile-De-France-Mobilité',
+  contacts: {},
+  address: {
+    street: '39 bis-41 rue de Châteaudun',
+    postcode: '75009 Paris',
+    cedex: 'Paris',
+    city: 'Paris',
+    country: 'France',
   },
-];
+  selector: { _id: [2] },
+};
+
+export const territory_groups: CreateTerritoryGroupInterface[] = [idfm];
