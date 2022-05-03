@@ -16,6 +16,7 @@
   "dependencies": {
     "@ilos/common": "~0",
     "@ilos/connection-postgres": "~0",
-    "@pdc/migrator": "~0"
+    "@pdc/migrator": "~0",
+    "csv-parse": "^5.0.4"
   }
 }

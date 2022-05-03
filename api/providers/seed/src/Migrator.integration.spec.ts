@@ -22,7 +22,7 @@ test.after.always(async (t) => {
 
 test('should seed territories', async (t) => {
   const result = await t.context.db.connection.getClient().query({
-    text: 'SELECT count(*) FROM territory.territories',
+    text: 'SELECT count(*) FROM geo.perimeters',
   });
   t.is(result.rows[0].count, '17');
 });
