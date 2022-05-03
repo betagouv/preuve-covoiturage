@@ -4,6 +4,13 @@
 npm install -g db-migrate db-migrate-pg
 ```
 
+### Geo
+
+7zip doit être installé afin de créer la table du référentiel géographique 
+```
+yarn geo:import
+```
+
 # Usage
 
 - basic `DATABASE_URL=postgres://postgres:postgres@postgres:5432/local db-migrate up`
