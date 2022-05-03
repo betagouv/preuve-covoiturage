@@ -237,9 +237,10 @@ export class Migrator {
   }
 
   async seedTerritoyGroup(territory_group: CreateTerritoryGroupInterface) {
-    const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
+    const fields = ['_id', 'name', 'shortname', 'contacts', 'address', 'company_id'];
 
     const values: any[] = [
+      territory_group._id,
       territory_group.name,
       '',
       territory_group.contacts,
