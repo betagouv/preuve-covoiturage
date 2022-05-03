@@ -1,4 +1,5 @@
 const DBMigrate = require('db-migrate');
+const GeoMigrator = require('@betagouvpdc/evolution-geo');
 
 const instances = new Map();
 
@@ -23,8 +24,21 @@ function setInstance(config, instance) {
 }
 
 async function migrate(config, ...args) {
+    const geoInstance = GeoMigrator.buildMigrator({
+      pool: config,
+      app: {
+        targetSchema: 'geo',
+        migrations: [
+          GeoMigrator.datasets.CreateGeoTable,
+          GeoMigrator.datasets.CreateComEvolutionTable,
+        ],
+      },
+    });
+    await geoInstance.prepare();
+    await geoInstance.run();
+    await geoInstance.pool.end();
     const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
-    return instance.up(...args);
+    await instance.up(...args);
 }
 
 async function createDatabase(config, name) {
