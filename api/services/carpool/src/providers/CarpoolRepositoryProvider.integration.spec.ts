@@ -60,13 +60,11 @@ test.serial.skip('Should create carpool', async (t) => {
       start: {
         lat: 0,
         lon: 0,
-        territory_id: 0,
         geo_code: '',
       },
       end: {
         lat: 0,
         lon: 0,
-        territory_id: 0,
         geo_code: '',
       },
       seats: 0,
@@ -87,13 +85,11 @@ test.serial.skip('Should create carpool', async (t) => {
       start: {
         lat: 0,
         lon: 0,
-        territory_id: 0,
         geo_code: '',
       },
       end: {
         lat: 0,
         lon: 0,
-        territory_id: 0,
         geo_code: '',
       },
       seats: 0,
