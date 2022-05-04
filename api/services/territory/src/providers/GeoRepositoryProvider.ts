@@ -19,6 +19,7 @@ import { GeoCodeTypeEnum } from '../shared/territory/common/geo';
 export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   public readonly table = 'geo.perimeters';
   public readonly relationTable = 'territory.territory_group_selector';
+  public readonly getMillesimeFunction = 'geo.get_latest_millesime';
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
@@ -46,7 +47,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
 
       case GeoCodeTypeEnum.City:
       default:
-        geoLevel = 'com';
+        geoLevel = 'arr';
         break;
     }
     const label = `l_${geoLevel.toString()}`;
@@ -57,8 +58,10 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     }
 
     // dataset millesime
+    const yearRes = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
+    const year = yearRes.rows[0]?.year;
     where.push(`year = $${where.length + 1}`);
-    values.push(new Date().getFullYear());
+    values.push(year);
 
     const totalResult = await this.connection.getClient().query<{ count: string }>({
       values,
@@ -101,40 +104,27 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   }
 
   async findByCodes(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
-    const client = this.connection.getClient();
-    const query = {
-      text: `
-        WITH data AS (
-          SELECT
-            arr,
-            com,
-            epci,
-            dep,
-            reg,
-            country,
-            aom,
-            reseau
-          FROM ${this.table}
-          WHERE
-            com = $1
-          ORDER BY year DESC
-          LIMIT 1
-        )
-        SELECT
-          tg.name,
-          tgs.territory_id
-        FROM ${this.relationTable} AS tgs
-        JOIN data AS d
-          ON (d.arr = tgs.selector_value AND tgs.selector_type = 'com')
-          OR (d.com = tgs.selector_value AND tgs.selector_type = 'com')
-          OR (d.reg = tgs.selector_value AND tgs.selector_type = 'region')
-        JOIN territory.territory_group AS tg
-          ON tgs.territory_group_id = tg._id
-      `,
-      values: [params.insees],
-    };
-    const result = await client.query(query);
+    const where = [`gp.arr = ANY($1::varchar[])`];
+    const values = [params.insees];
 
-    return result.rows as FindByInseeResultInterface;
+    // dataset millesime
+    const yearRes = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
+    const year = yearRes.rows[0]?.year;
+    where.push(`year = $${where.length + 1}`);
+    values.push(year);
+
+    const results = await this.connection.getClient().query({
+      values,
+      text: `
+        SELECT
+          gp.id as _id,
+          gp.l_arr as name,
+          arr as insee
+          FROM ${this.table} as gp
+        WHERE ${where.join(' AND ')}
+      `,
+    });
+
+    return results.rows;
   }
 }

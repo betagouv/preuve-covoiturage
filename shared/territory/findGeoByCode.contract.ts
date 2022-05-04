@@ -1,13 +1,9 @@
+import { SingleResultInterface as GeoInterface } from './listGeo.contract';
 export interface ParamsInterface {
   insees: string[];
 }
 
-export type ResultInterface = TerritoryInsee[];
-
-export interface TerritoryInsee {
-  territory_id: number;
-  name: string;
-}
+export type ResultInterface = Array<GeoInterface>;
 
 export const handlerConfig = {
   service: 'territory',
