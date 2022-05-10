@@ -16,7 +16,7 @@ import { create } from './shared/territory/create.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
 import { binding as listGeoBinding } from './shared/territory/listGeo.schema';
 import { binding as findBinding } from './shared/territory/find.schema';
-import { binding as findGeoByCodeBinding } from './shared/territory/findGeoByCode.schema';
+import { binding as findGeoBySirenBinding } from './shared/territory/findGeoBySiren.schema';
 import { binding as listBinding } from './shared/territory/list.schema';
 import { patchContacts } from './shared/territory/patchContacts.schema';
 import { update } from './shared/territory/update.schema';
@@ -34,7 +34,7 @@ import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
     ['territory.patchContacts', patchContacts],
     findBinding,
     listBinding,
-    findGeoByCodeBinding,
+    findGeoBySirenBinding,
     listGeoBinding,
     getAuthorizedCodesBinding,
   ],

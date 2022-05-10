@@ -1,18 +1,12 @@
-import { provider, KernelInterfaceResolver } from '@ilos/common';
+import { KernelInterfaceResolver, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-
 import {
-  ParamsInterface as FindByInseeParamsInterface,
-  ResultInterface as FindByInseeResultInterface,
-} from '../shared/territory/findGeoByCode.contract';
-import {
+  GeoRepositoryProviderInterface,
+  GeoRepositoryProviderInterfaceResolver,
   ListGeoParamsInterface,
   ListGeoResultInterface,
-  GeoRepositoryProviderInterfaceResolver,
-  GeoRepositoryProviderInterface,
 } from '../interfaces/GeoRepositoryProviderInterface';
 import { GeoCodeTypeEnum } from '../shared/territory/common/geo';
-
 import {
   ParamsInterface as FindBySirenParamsInterface,
   ResultInterface as FindBySirenResultInterface,
@@ -106,31 +100,6 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
         },
       },
     };
-  }
-
-  async findByCodes(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
-    const where = [`gp.arr = ANY($1::varchar[])`];
-    const values = [params.insees];
-
-    // dataset millesime
-    const yearRes = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
-    const year = yearRes.rows[0]?.year;
-    where.push(`year = $${where.length + 1}`);
-    values.push(year);
-
-    const results = await this.connection.getClient().query({
-      values,
-      text: `
-        SELECT
-          gp.id as _id,
-          gp.l_arr as name,
-          arr as insee
-          FROM ${this.table} as gp
-        WHERE ${where.join(' AND ')}
-      `,
-    });
-
-    return results.rows;
   }
 
   async findBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface> {
