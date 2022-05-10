@@ -6,7 +6,7 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { CreateTerritoryAction } from './actions/group/CreateTerritoryAction';
 import { ListGeoAction } from './actions/geo/ListGeoAction';
 import { FindTerritoryAction } from './actions/group/FindTerritoryAction';
-import { FindGeoByCodeAction } from './actions/geo/FindGeoByCodeAction';
+import { FindGeoBySirenAction } from './actions/geo/FindGeoBySirenAction';
 import { ListTerritoryAction } from './actions/group/ListTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/group/PatchContactsTerritoryAction';
 import { UpdateTerritoryAction } from './actions/group/UpdateTerritoryAction';
@@ -47,7 +47,7 @@ import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
     CreateTerritoryAction,
-    FindGeoByCodeAction,
+    FindGeoBySirenAction,
     GetAuthorizedCodesAction,
   ],
   commands: [],
