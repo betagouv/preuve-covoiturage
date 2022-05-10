@@ -5,7 +5,7 @@ export const schema = {
   required: ['siren'],
   additionalProperties: false,
   properties: {
-    siren: { macro: 'siret' },
+    siren: { macro: 'varchar' }, // TODO: Add a siren macro
   },
 };
 export const binding = [alias, schema];
