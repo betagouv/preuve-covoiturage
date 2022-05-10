@@ -24,7 +24,6 @@ import {
   TerritoryInterface,
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { TerritoryInsee } from '../../../../../../../../../shared/territory/findGeoByCode.contract';
 import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
 import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
 import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
@@ -94,7 +93,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
     formValues.company_id = get(this, 'companyDetails._id', null);
 
-    if (!this.isRegistryGroup || !formValues.inseeString) {
+    if (!this.isRegistryGroup) {
       const contactModel: ContactsInterface = ContactsMapper.toModel(this.territoryForm.get('contacts'));
       this.territoryApi.patchContact({ patch: contactModel, _id: this.territoryId }).subscribe(
         (modifiedTerritory) => {
@@ -107,42 +106,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
-    // split by coma and make unique
-    const inseeList: string[] = [
-      ...new Set(
-        formValues.inseeString
-          .split(/[\s,]/)
-          .map((s) => s.trim())
-          .filter((i) => i.length)
-          .sort(),
-      ),
-    ];
-
-    this.territoryApi.findByInsees(inseeList).subscribe(
-      (territories) => {
-        this.handleInseeToTerritoriesAndUpdate(inseeList, territories, formValues);
-      },
-      (err) => {
-        console.error(err);
-        this.toastr.error(`Une erreur est survenue lors de la validation des codes insees`);
-      },
-    );
-  }
-
-  private handleInseeToTerritoriesAndUpdate(
-    inseeList: string[],
-    territories: TerritoryInsee[],
-    formValues: TerritoryFormModel,
-  ): void {
-    if (!this.hasSameLength(inseeList, territories)) {
-      this.toastr.error(`Certains codes INSEE n'ont pas de territoires correspondants`);
-      return;
-    }
-
     const createTerritory: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
       this.territoryForm,
       this.companyDetails._id,
-      territories.map((t) => t.territory_id),
+      null,
+      // territories.map((t) => t.territory_id),
     );
     if (this.isNew()) {
       this.territoryApi.createNew(createTerritory).subscribe(() => {
@@ -168,10 +136,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     return !this.territoryId;
   }
 
-  private hasSameLength(inseeList: string[], territories: TerritoryInsee[]): boolean {
-    return inseeList.length === territories.length;
-  }
-
   private initTerritoryForm(): void {
     let formOptions: any = {
       contacts: this.fb.group({
@@ -183,9 +147,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     if (this.isRegistryGroup) {
       formOptions = {
         ...formOptions,
-        name: [''],
-        parent: '',
-        inseeString: [''],
         address: this.fb.group(
           new FormAddress(
             new Address({
@@ -303,10 +264,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   private updateValidation(): void {
     if (this.territoryForm && this.isRegistryGroup) {
-      this.territoryForm.controls['name'].setValidators(this.isRegistryGroup ? Validators.required : null);
-      this.territoryForm.controls['name'].updateValueAndValidity();
-      this.territoryForm.controls['name'].markAsUntouched();
-
       // address is hidden and not required if territory is not activable (AOM)
       const fields = ['street', 'postcode', 'city', 'country'];
       const addressControl = this.territoryForm.controls['address'] as FormGroup;
@@ -323,16 +280,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       siretControl.setValidators([Validators.required]);
       siretControl.updateValueAndValidity();
       siretControl.markAsUntouched();
-
-      const inseeControl = this.territoryForm.controls.inseeString;
-      inseeControl.setValidators([Validators.pattern('^( *[0-9]{5} *,? *)+$')]);
-      inseeControl.updateValueAndValidity();
-      inseeControl.markAsUntouched();
-
-      const parentControl = this.territoryForm.controls.parent;
-      parentControl.setValidators([Validators.required]);
-      parentControl.updateValueAndValidity();
-      parentControl.markAsUntouched();
     }
   }
 
@@ -347,7 +294,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       this.territoryForm.reset();
     }
 
-    const territoryFormValue = { ...territory, inseeString: '' };
+    const territoryFormValue = { ...territory };
 
     this.territoryForm.patchValue(territoryFormValue);
 
