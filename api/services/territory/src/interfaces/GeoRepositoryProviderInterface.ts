@@ -8,6 +8,11 @@ import {
   ResultInterface as FindByInseeResultInterface,
 } from '../shared/territory/findGeoByCode.contract';
 
+import {
+  ParamsInterface as FindBySirenParamsInterface,
+  ResultInterface as FindBySirenResultInterface,
+} from '../shared/territory/findGeoBySiren.contract';
+
 export { ListGeoParamsInterface, ListGeoResultInterface };
 export interface GeoRepositoryProviderInterface {
   list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface>;
@@ -20,6 +25,10 @@ export abstract class GeoRepositoryProviderInterfaceResolver implements GeoRepos
   }
 
   async findByCodes(params: FindByInseeParamsInterface): Promise<FindByInseeResultInterface> {
+    throw new Error();
+  }
+
+  async findBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface> {
     throw new Error();
   }
 }
