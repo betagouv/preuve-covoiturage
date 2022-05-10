@@ -106,7 +106,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
 
   async findBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface> {
     const results = await this.connection.getClient().query<FindBySiretRawResultInterface>({
-      values: [params.siren, new Date().getFullYear()],
+      values: [params.siren, new Date().getFullYear() - 1],
       text: `
         SELECT l_aom, aom, epci, l_epci, com, l_com
         FROM GEO.perimeters
