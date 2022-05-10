@@ -13,6 +13,11 @@ import {
 } from '../interfaces/GeoRepositoryProviderInterface';
 import { GeoCodeTypeEnum } from '../shared/territory/common/geo';
 
+import {
+  ParamsInterface as FindBySirenParamsInterface,
+  ResultInterface as FindBySirenResultInterface,
+} from '../shared/territory/findGeoBySiren.contract';
+
 @provider({
   identifier: GeoRepositoryProviderInterfaceResolver,
 })
@@ -126,5 +131,9 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     });
 
     return results.rows;
+  }
+
+  async findBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface> {
+    return null;
   }
 }
