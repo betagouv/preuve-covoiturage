@@ -304,23 +304,3 @@ test.serial('Lists all geo zones', async (t) => {
   t.is(response.result.meta.pagination.offset, 0);
   t.is(response.result.meta.pagination.limit, 100);
 });
-
-test.serial('Find geo zone by code', async (t) => {
-  const response = await t.context.request(
-    'territory:findGeoByCode',
-    {
-      insees: ['91471'],
-    },
-    {
-      call: {
-        user: {
-          permissions: ['common.territory.list'],
-        },
-      },
-    },
-  );
-  t.log(response);
-  t.true(Array.isArray(response.result));
-  t.true(response.result.length >= 1);
-  t.is(response.result.filter((r) => r.name === 'Orsay').length, 1);
-});
