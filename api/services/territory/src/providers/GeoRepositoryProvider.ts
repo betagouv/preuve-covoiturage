@@ -1,5 +1,6 @@
 import { KernelInterfaceResolver, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { FindBySiretRawResultInterface } from '../interfaces/FindBySiretRawResultInterface';
 import {
   GeoRepositoryProviderInterface,
   GeoRepositoryProviderInterfaceResolver,
@@ -11,6 +12,7 @@ import {
   ParamsInterface as FindBySirenParamsInterface,
   ResultInterface as FindBySirenResultInterface,
 } from '../shared/territory/findGeoBySiren.contract';
+import { SingleResultInterface as GeoSingleResultInterface } from '../shared/territory/listGeo.contract';
 
 @provider({
   identifier: GeoRepositoryProviderInterfaceResolver,
@@ -103,6 +105,25 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   }
 
   async findBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface> {
-    return null;
+    const results = await this.connection.getClient().query<FindBySiretRawResultInterface>({
+      values: [params.siren, new Date().getFullYear()],
+      text: `
+        SELECT l_aom, aom, epci, l_epci, com, l_com
+        FROM GEO.perimeters
+        WHERE (aom = $1::varchar OR epci = $1::varchar) 
+          AND YEAR = $2::int
+      `,
+    });
+
+    return {
+      aom_name: results.rows[0].l_aom,
+      aom_siret: results.rows[0].aom,
+      epci_name: results.rows[0].l_epci,
+      epci_siret: results.rows[0].epci,
+      coms: <Array<GeoSingleResultInterface>>results.rows.map((g) => ({
+        insee: g.com,
+        name: g.l_com,
+      })),
+    };
   }
 }
