@@ -1,3 +1,4 @@
+import { Params } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -20,6 +21,11 @@ import {
   signature as signatureGeo,
   SingleResultInterface as TerritoryGeoResultInterface,
 } from '~/shared/territory/listGeo.contract';
+import {
+  ParamsInterface as ParamsInterfaceFindGeoBySiren,
+  signature as signatureFindGeoBySiren,
+  SingleResultInterface as FindGeoBySirenResultInterface,
+} from '~/shared/territory/findGeoBySiren.contract';
 import {
   ParamsInterface as PatchContactParamsInterface,
   signature as signaturePatch,
@@ -52,6 +58,11 @@ export class TerritoryApiService {
   geo(params: ParamsInterfaceGeo): Observable<ResultWithPagination<TerritoryGeoResultInterface>> {
     const jsonRPCParam: JsonRPCParam = new JsonRPCParam(signatureGeo, params);
     return this.callOne(jsonRPCParam);
+  }
+
+  findGeoBySiren(params: ParamsInterfaceFindGeoBySiren): Observable<FindGeoBySirenResultInterface> {
+    const jsonRPCParam: JsonRPCParam = new JsonRPCParam(signatureFindGeoBySiren, params);
+    return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
   }
 
   createNew(item: CreateTerritoryGroupInterface): Observable<TerritoryInterface> {
