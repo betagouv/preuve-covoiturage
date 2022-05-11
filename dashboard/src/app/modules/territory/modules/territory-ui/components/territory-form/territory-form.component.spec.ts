@@ -62,10 +62,17 @@ describe('TerritoryFormComponent', () => {
   const territoryApiServiceSpy = jasmine.createSpyObj<TerritoryApiService>('TerritoryApiService', {
     createNew: of(territory),
     updateNew: of(territory),
-    findByInsees: of([
-      { territory_id: 1, name: '' },
-      { territory_id: 2, name: '' },
-    ]),
+    findGeoBySiren: of({
+      aom_siret: '200052264',
+      aom_name: 'Grand Est',
+      epci_name: 'CC Ardennes Thiérache',
+      epci_siret: '200041622',
+      coms: [
+        { insee: '08015', name: 'Antheny', _id: null },
+        { insee: '08182', name: 'Le Fréty', _id: null },
+        { insee: '08167', name: 'La Férée', _id: null },
+      ],
+    }),
   });
 
   describe('Create', () => {
