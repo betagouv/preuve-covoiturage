@@ -1,4 +1,3 @@
-import { Params } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -15,17 +14,17 @@ import {
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { signature as signatureFind } from '~/shared/territory/find.contract';
+import {
+  ParamsInterface as ParamsInterfaceFindGeoBySiren,
+  signature as signatureFindGeoBySiren,
+  SingleResultInterface as FindGeoBySirenResultInterface,
+} from '~/shared/territory/findGeoBySiren.contract';
 import { ParamsInterface as TerritoryListFilter, signature as signatureList } from '~/shared/territory/list.contract';
 import {
   ParamsInterface as ParamsInterfaceGeo,
   signature as signatureGeo,
   SingleResultInterface as TerritoryGeoResultInterface,
 } from '~/shared/territory/listGeo.contract';
-import {
-  ParamsInterface as ParamsInterfaceFindGeoBySiren,
-  signature as signatureFindGeoBySiren,
-  SingleResultInterface as FindGeoBySirenResultInterface,
-} from '~/shared/territory/findGeoBySiren.contract';
 import {
   ParamsInterface as PatchContactParamsInterface,
   signature as signaturePatch,

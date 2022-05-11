@@ -3,10 +3,8 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { ActivatedRoute, Router } from '@angular/router';
 import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
 import { filter, map, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
 import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
@@ -38,8 +36,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public isRegistryGroup = false;
   public territoryForm: FormGroup;
-  public territoryId: number;
 
+  public territoryId: number;
   private companyId: number;
 
   constructor(
@@ -136,72 +134,71 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private initTerritoryForm(): void {
-    let formOptions: any = {
-      contacts: this.fb.group({
-        gdpr_dpo: this.fb.group(new FormContact()),
-        gdpr_controller: this.fb.group(new FormContact()),
-        technical: this.fb.group(new FormContact()),
-      }),
-    };
+    const contactFormGroup = this.buildNewFormContactsGroup();
+
+    this.territoryForm = this.fb.group({
+      contacts: contactFormGroup,
+    });
+
     if (this.isRegistryGroup) {
-      formOptions = {
-        ...formOptions,
-        address: this.fb.group(
-          new FormAddress(
-            new Address({
-              street: null,
-              city: null,
-              country: null,
-              postcode: null,
-            }),
-          ),
-        ),
-        company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
-        contacts: this.fb.group({
-          gdpr_dpo: this.fb.group(new FormContact()),
-          gdpr_controller: this.fb.group(new FormContact()),
-          technical: this.fb.group(new FormContact()),
-        }),
-      };
-    }
-
-    this.territoryForm = this.fb.group(formOptions);
-    const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
-
-    if (companyFormGroup) {
-      companyFormGroup
-        .get('siret')
-        .valueChanges.pipe(
-          throttleTime(300),
-          filter((v) => !!v),
-          map((value: string) => {
-            // remove all non-numbers chars and max out the length to 14
-            const val = value.replace(/[^0-9]/g, '').substring(0, 14);
-            companyFormGroup.get('siret').setValue(val, { emitEvent: false });
-
-            return val;
+      const companyFormGroup: FormGroup = this.fb.group(new FormCompany({ siret: '', company: new Company() }));
+      const addressFormGroup: FormGroup = this.fb.group(
+        new FormAddress(
+          new Address({
+            street: null,
+            city: null,
+            country: null,
+            postcode: null,
           }),
-          tap(() => this.resetCompanyForm(companyFormGroup)),
-          filter((value: string) => value && value.length === 14 && value.match(/[0-9]{14}/) !== null),
-          takeUntil(this.destroy$),
-        )
-        .subscribe((value) => {
-          this.companyService
-            .fetchCompany(value)
-            .pipe(
-              catchHttpStatus(404, (err) => {
-                this.toastr.error('Entreprise non trouvée');
-                throw err;
-              }),
-            )
+        ),
+      );
 
-            .subscribe((company) => {
-              this.updateCompanyForm(company, false);
-            });
-        });
+      this.siretValueChanges(companyFormGroup);
+      this.territoryForm.addControl('address', addressFormGroup);
+      this.territoryForm.addControl('company', companyFormGroup);
     }
-
     this.updateValidation();
+  }
+
+  private siretValueChanges(companyFormGroup: FormGroup) {
+    companyFormGroup
+      .get('siret')
+      .valueChanges.pipe(
+        throttleTime(300),
+        filter((v) => !!v),
+        map((value: string) => {
+          // remove all non-numbers chars and max out the length to 14
+          const val = value.replace(/[^0-9]/g, '').substring(0, 14);
+          companyFormGroup.get('siret').setValue(val, { emitEvent: false });
+
+          return val;
+        }),
+        tap(() => this.resetCompanyForm(companyFormGroup)),
+        filter((value: string) => value && value.length === 14 && value.match(/[0-9]{14}/) !== null),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((value) => {
+        this.companyService
+          .fetchCompany(value)
+          .pipe(
+            catchHttpStatus(404, (err) => {
+              this.toastr.error('Entreprise non trouvée');
+              throw err;
+            }),
+          )
+
+          .subscribe((company) => {
+            this.updateCompanyForm(company, false);
+          });
+      });
+  }
+
+  private buildNewFormContactsGroup() {
+    return this.fb.group({
+      gdpr_dpo: this.fb.group(new FormContact()),
+      gdpr_controller: this.fb.group(new FormContact()),
+      technical: this.fb.group(new FormContact()),
+    });
   }
 
   private updateCompanyForm(company: CompanyV2, resetIfNull = true): void {
