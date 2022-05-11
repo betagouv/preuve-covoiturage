@@ -40,7 +40,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   public territoryForm: FormGroup;
   public territoryId: number;
 
-  private companyDetails: CompanyInterface;
+  private companyId: number;
 
   constructor(
     public authService: AuthenticationService,
@@ -91,7 +91,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
-    formValues.company_id = get(this, 'companyDetails._id', null);
+    formValues.company_id = get(this, 'companyId', null);
 
     if (!this.isRegistryGroup) {
       const contactModel: ContactsInterface = ContactsMapper.toModel(this.territoryForm.get('contacts'));
@@ -108,9 +108,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     const createTerritory: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
       this.territoryForm,
-      this.companyDetails._id,
+      this.companyId,
       null,
-      // territories.map((t) => t.territory_id),
     );
     if (this.isNew()) {
       this.territoryApi.createNew(createTerritory).subscribe(() => {
@@ -166,8 +165,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       };
     }
 
-    const stopFindCompany = new Subject();
-
     this.territoryForm = this.fb.group(formOptions);
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
 
@@ -184,23 +181,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
             return val;
           }),
-          tap(() => {
-            stopFindCompany.next();
-            this.companyDetails = {
-              _id: null,
-              naf_entreprise: '',
-              nature_juridique: '',
-              rna: '',
-              vat_intra: '',
-            };
-
-            companyFormGroup.patchValue({
-              naf_entreprise: '',
-              nature_juridique: '',
-              rna: '',
-              vat_intra: '',
-            });
-          }),
+          tap(() => this.resetCompanyForm(companyFormGroup)),
           filter((value: string) => value && value.length === 14 && value.match(/[0-9]{14}/) !== null),
           takeUntil(this.destroy$),
         )
@@ -212,7 +193,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
                 this.toastr.error('Entreprise non trouvée');
                 throw err;
               }),
-              takeUntil(stopFindCompany),
             )
 
             .subscribe((company) => {
@@ -227,13 +207,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   private updateCompanyForm(company: CompanyV2, resetIfNull = true): void {
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
     if (company) {
-      this.companyDetails = {
-        _id: company._id,
-        naf_entreprise: company.company_naf_code || '',
-        nature_juridique: company.legal_nature_label || '',
-        rna: company.nonprofit_code || '',
-        vat_intra: company.intra_vat || '',
-      };
+      this.companyId = company._id;
 
       if (this.territoryForm.get('address.street')) {
         this.territoryForm.get('address.street').setValue(company.address_street);
@@ -250,16 +224,26 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
       this.territoryForm.get('address.country').setValue('France');
 
-      companyFormGroup.patchValue({ siret: company.siret, ...this.companyDetails });
-    } else if (resetIfNull) {
-      this.companyDetails = null;
       companyFormGroup.patchValue({
-        naf_entreprise: '',
-        nature_juridique: '',
-        rna: '',
-        vat_intra: '',
+        siret: company.siret,
+        _id: company._id,
+        naf_entreprise: company.company_naf_code || '',
+        nature_juridique: company.legal_nature_label || '',
+        rna: company.nonprofit_code || '',
+        vat_intra: company.intra_vat || '',
       });
+    } else if (resetIfNull) {
+      this.resetCompanyForm(companyFormGroup);
     }
+  }
+
+  private resetCompanyForm(companyFormGroup: FormGroup) {
+    companyFormGroup.patchValue({
+      naf_entreprise: '',
+      nature_juridique: '',
+      rna: '',
+      vat_intra: '',
+    });
   }
 
   private updateValidation(): void {
