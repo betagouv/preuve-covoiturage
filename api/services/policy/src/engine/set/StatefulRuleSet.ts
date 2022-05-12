@@ -47,6 +47,7 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
           }
           result = 0;
           meta.set(metaKey, statefulRule.getNewState(result, state, meta));
+          return result;
         }
       }
     }
