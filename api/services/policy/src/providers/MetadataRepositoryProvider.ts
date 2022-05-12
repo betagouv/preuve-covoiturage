@@ -29,7 +29,7 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
 
       if (datetime) {
         clauses.wheres.push('datetime <= $2::timestamp');
-        clauses.values.push(datetime);
+        clauses.values.push(datetime.toISOString());
       }
       const keys: string[] = [...askedKeys];
       if (!keys || !keys.length) {
@@ -47,7 +47,7 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
       const queryText = `
         SELECT key, value FROM ${this.table}
         WHERE ${[...clauses.wheres, `key = $${datetime ? '3' : '2'}::varchar`].join(' AND ')}
-        ORDER BY datetime DESC
+        ORDER BY datetime DESC, updated_at DESC
         LIMIT 1
       `;
       for (const key of keys) {
@@ -70,7 +70,7 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
     const keys = metadata.keys();
     const values = metadata.values();
     const policyIds = new Array(keys.length).fill(policyId);
-    const dates = new Array(keys.length).fill(date);
+    const dates = new Array(keys.length).fill(date.toISOString());
     const query = {
       text: `
         INSERT INTO ${this.table} (policy_id, key, value, datetime)
