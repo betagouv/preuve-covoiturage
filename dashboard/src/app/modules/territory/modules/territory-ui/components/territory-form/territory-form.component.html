@@ -1,5 +1,5 @@
 <h2 *ngIf="isRegistryGroup">
-  {{ !!territoryId ? 'Edition du territoire' : 'Ajouter un territoire' }}
+  {{ !!territory ? 'Edition du territoire' : 'Ajouter un territoire' }}
   <button mat-button routerLink="/admin/all-territories">retour à la liste</button>
 </h2>
 <div>
@@ -14,8 +14,6 @@
       <h3>Adresse</h3>
 
       <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
-
-      <!-- Get corresponding AOMs + communes enfants -->
     </div>
 
     <h2>Contacts et responsables</h2>
@@ -48,7 +46,7 @@
 
         <button *ngIf="canUpdate" type="submit" class="large" mat-flat-button (click)="onSubmit()"
           [disabled]="territoryForm.invalid" color="primary">
-          {{ !!territoryId ? 'Mettre à jour' : 'Créer' }}
+          {{ !!territory ? 'Mettre à jour' : 'Créer' }}
         </button>
       </div>
     </div>

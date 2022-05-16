@@ -90,7 +90,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     if (!this.isRegistryGroup) {
       const contactModel: ContactsInterface = ContactsMapper.toModel(this.territoryForm.get('contacts'));
-      this.territoryApi.patchContact({ patch: contactModel, _id: this.territoryId }).subscribe(
+      this.territoryApi.patchContact({ patch: contactModel, _id: this.territory._id }).subscribe(
         (modifiedTerritory) => {
           this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
         },
@@ -114,7 +114,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
-    const updateTerritory: UpdateTerritoryGroupInterface = { ...createTerritory, _id: this.territoryId };
+    const updateTerritory: UpdateTerritoryGroupInterface = { ...createTerritory, _id: this.territory._id };
     this.territoryApi.updateNew(updateTerritory).subscribe(
       (modifiedTerritory) => {
         this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
@@ -127,7 +127,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private isNew(): boolean {
-    return !this.territoryId;
+    return !this.territory._id;
   }
 
   private initTerritoryForm(): void {
@@ -237,8 +237,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   private setTerritoryFormValue(territory: TerritoryInterface): void {
     if (!territory) {
       return;
-    } else {
-      this.territoryId = territory._id;
     }
 
     this.updateContactsForm(territory.contacts);
