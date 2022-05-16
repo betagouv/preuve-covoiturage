@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { TerritoryInterface, TerritoryLevelEnum } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { User } from '../../../../../../core/entities/authentication/user';
-import { CompanyV2 } from '../../../../../../core/entities/shared/companyV2';
+import { ResultInterface as CompanyInterface } from '~/shared/company/find.contract';
 import { Groups } from '../../../../../../core/enums/user/groups';
 import { Roles } from '../../../../../../core/enums/user/roles';
 import { AuthenticationService } from '../../../../../../core/services/authentication/authentication.service';
@@ -92,10 +92,10 @@ describe('TerritoryFormComponent', () => {
           {
             provide: CompanyService,
             useValue: {
-              getById(id: number): Observable<Partial<CompanyV2>> {
+              getById(id: number): Observable<Partial<CompanyInterface>> {
                 return of(company);
               },
-              fetchCompany(siret: string): Observable<Partial<CompanyV2>> {
+              fetchCompany(siret: string): Observable<Partial<CompanyInterface>> {
                 return of({
                   _id: 4,
                   ...company,
@@ -245,10 +245,10 @@ describe('TerritoryFormComponent', () => {
           {
             provide: CompanyService,
             useValue: {
-              getById(id: number): Observable<Partial<CompanyV2>> {
+              getById(id: number): Observable<Partial<CompanyInterface>> {
                 return of(company);
               },
-              fetchCompany(siret: string): Observable<Partial<CompanyV2>> {
+              fetchCompany(siret: string): Observable<Partial<CompanyInterface>> {
                 return of({
                   _id: 4,
                   ...company,

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { CompanyV2 } from '~/core/entities/shared/companyV2';
+import { ResultInterface as CompanyInterface } from '~/shared/company/find.contract';
 
 @Component({
   selector: 'app-territory-details',
@@ -10,7 +10,7 @@ import { CompanyV2 } from '~/core/entities/shared/companyV2';
 export class TerritoryDetailsComponent {
   @Input() territory: TerritoryInterface;
   @Input() displayContacts = true;
-  @Input() company: CompanyV2;
+  @Input() company: CompanyInterface;
 
   constructor() {}
 }

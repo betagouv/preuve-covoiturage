@@ -8,7 +8,6 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
 import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
-import { CompanyV2 } from '~/core/entities/shared/companyV2';
 import { ContactsMapper } from '~/core/entities/shared/contacts';
 import { TerritoryFormModel, TerritoryMapper } from '~/core/entities/territory/territory';
 import { Groups } from '~/core/enums/user/groups';
@@ -17,6 +16,7 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { ResultInterface as CompanyInterface } from '~/shared/company/find.contract';
 import {
   CreateTerritoryGroupInterface,
   TerritoryInterface,
@@ -192,7 +192,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       });
   }
 
-  private updateCompanyForm(company: CompanyV2): void {
+  private updateCompanyForm(company: CompanyInterface): void {
     if (!company) {
       return;
     }
