@@ -4,17 +4,27 @@
 </h2>
 <div>
   <form class="territoryForm" [formGroup]="territoryForm">
-    <div *ngIf="isRegistryGroup">
-      <h2>Informations générales</h2>
+    <h2>Informations générales</h2>
 
-      <h3>Structure</h3>
+    <div class="line">
+      <div *ngIf="isRegistryGroup">
+        <h3>Structure</h3>
+        <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
 
-      <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
-
-      <h3>Adresse</h3>
-
-      <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
+        <h3>Adresse</h3>
+        <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
+      </div>
+      <div style="margin: auto">
+        <h3>Communes membres</h3>
+        <div>
+          <p *ngFor="let com of comComs; let idx = index">
+            {{ com.name }} ({{ com.insee }})<span *ngIf="idx !== comComs.length - 1">,&nbsp;</span>
+          </p>
+        </div>
+      </div>
     </div>
+
+
 
     <h2>Contacts et responsables</h2>
     <div class="contacts">
@@ -39,16 +49,16 @@
       </div>
     </div>
 
-    <div>
-      <div class="actions">
-        <button type="button" class="large" routerLink="/admin/all-territories" mat-button
-          *ngIf="isRegistryGroup">Annuler</button>
 
-        <button *ngIf="canUpdate" type="submit" class="large" mat-flat-button (click)="onSubmit()"
-          [disabled]="territoryForm.invalid" color="primary">
-          {{ !!territory ? 'Mettre à jour' : 'Créer' }}
-        </button>
-      </div>
+    <div class="actions">
+      <button type="button" class="large" routerLink="/admin/all-territories" mat-button
+        *ngIf="isRegistryGroup">Annuler</button>
+
+      <button *ngIf="canUpdate" type="submit" class="large" mat-flat-button (click)="onSubmit()"
+        [disabled]="territoryForm.invalid" color="primary">
+        {{ !!territory ? 'Mettre à jour' : 'Créer' }}
+      </button>
     </div>
+
   </form>
 </div>
