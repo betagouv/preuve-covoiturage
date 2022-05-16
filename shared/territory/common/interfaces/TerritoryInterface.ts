@@ -16,11 +16,11 @@ export interface TerritoryGroupInterface {
 
 export type CreateTerritoryGroupInterface = Omit<
   TerritoryGroupInterface,
-  '_id' | 'created_at' | 'updated_at' | 'deleted_at' | 'shortname'
+  '_id' | 'created_at' | 'updated_at' | 'deleted_at' | 'shortname' | 'name'
 >;
 export type UpdateTerritoryGroupInterface = Omit<
   TerritoryGroupInterface,
-  'created_at' | 'updated_at' | 'deleted_at' | 'shortname'
+  'created_at' | 'updated_at' | 'deleted_at' | 'shortname' | 'name'
 >;
 
 // OLD INTERFACES

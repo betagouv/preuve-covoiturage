@@ -60,8 +60,8 @@ describe('TerritoryFormComponent', () => {
   };
 
   const territoryApiServiceSpy = jasmine.createSpyObj<TerritoryApiService>('TerritoryApiService', {
-    createNew: of(territory),
-    updateNew: of(territory),
+    create: of(territory),
+    update: of(territory),
     findGeoBySiren: of({
       aom_siret: '200052264',
       aom_name: 'Grand Est',
@@ -133,8 +133,8 @@ describe('TerritoryFormComponent', () => {
     );
 
     afterEach(() => {
-      territoryApiServiceSpy.createNew.calls.reset();
-      territoryApiServiceSpy.updateNew.calls.reset();
+      territoryApiServiceSpy.create.calls.reset();
+      territoryApiServiceSpy.update.calls.reset();
     });
 
     it('should load empty form when new territory', async () => {
@@ -187,9 +187,9 @@ describe('TerritoryFormComponent', () => {
         comp.onSubmit();
 
         // Assert
-        expect(territoryApiServiceSpy.updateNew).not.toHaveBeenCalled();
-        expect(territoryApiServiceSpy.createNew).toHaveBeenCalled();
-        expect(territoryApiServiceSpy.createNew).toHaveBeenCalledWith({
+        expect(territoryApiServiceSpy.update).not.toHaveBeenCalled();
+        expect(territoryApiServiceSpy.create).toHaveBeenCalled();
+        expect(territoryApiServiceSpy.create).toHaveBeenCalledWith({
           name: "Communauté de communes du Pays de L'Arbresle",
           company_id: 4,
           contacts: {
@@ -286,8 +286,8 @@ describe('TerritoryFormComponent', () => {
     );
 
     afterEach(() => {
-      territoryApiServiceSpy.createNew.calls.reset();
-      territoryApiServiceSpy.updateNew.calls.reset();
+      territoryApiServiceSpy.create.calls.reset();
+      territoryApiServiceSpy.update.calls.reset();
     });
 
     it('should load existing territory with company if exists', async () => {
@@ -335,8 +335,8 @@ describe('TerritoryFormComponent', () => {
         comp.onSubmit();
 
         // Assert
-        expect(territoryApiServiceSpy.createNew).not.toHaveBeenCalled();
-        expect(territoryApiServiceSpy.updateNew).toHaveBeenCalled();
+        expect(territoryApiServiceSpy.create).not.toHaveBeenCalled();
+        expect(territoryApiServiceSpy.update).toHaveBeenCalled();
       });
     });
   });
