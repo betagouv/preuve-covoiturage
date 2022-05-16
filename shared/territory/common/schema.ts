@@ -24,7 +24,7 @@ export function schema(alias: string, update = false) {
   return {
     $id: alias,
     type: 'object',
-    required: ['name', 'address', 'contacts', 'selector', 'company_id', ...(update ? ['_id'] : [])],
+    required: ['address', 'contacts', 'selector', 'company_id', ...(update ? ['_id'] : [])],
     additionalProperties: true,
     properties: {
       contacts: { contacts },

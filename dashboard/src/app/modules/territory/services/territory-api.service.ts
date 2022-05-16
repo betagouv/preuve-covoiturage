@@ -64,12 +64,12 @@ export class TerritoryApiService {
     return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
   }
 
-  createNew(item: CreateTerritoryGroupInterface): Observable<TerritoryInterface> {
+  create(item: CreateTerritoryGroupInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.METHOD}:${CrudActions.CREATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
   }
 
-  updateNew(item: UpdateTerritoryGroupInterface): Observable<TerritoryInterface> {
+  update(item: UpdateTerritoryGroupInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.METHOD}:${CrudActions.UPDATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
