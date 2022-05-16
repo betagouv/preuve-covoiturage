@@ -8,7 +8,7 @@ export class FormContact {
   email = new FormControl();
   phone = new FormControl();
 
-  constructor(contact?: ContactInterface) {
+  constructor(contact?: Partial<ContactInterface>) {
     this.email.setValidators([Validators.pattern(REGEXP.email)]);
     this.phone.setValidators([Validators.pattern(REGEXP.phone)]);
     if (contact) {
