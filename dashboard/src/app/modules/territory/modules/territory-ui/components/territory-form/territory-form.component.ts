@@ -73,10 +73,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   private initFormAndValidation() {
     this.initTerritoryForm();
-    if (this.territory) {
-      this.setTerritoryFormValue(this.territory);
-      this.updateValidation();
-    }
+    this.setTerritoryFormValue(this.territory);
   }
 
   get controls(): { [key: string]: AbstractControl } {
@@ -134,7 +131,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private initTerritoryForm(): void {
-    const contactFormGroup = this.buildNewFormContactsGroup();
+    const contactFormGroup = this.fb.group({
+      gdpr_dpo: this.fb.group(new FormContact()),
+      gdpr_controller: this.fb.group(new FormContact()),
+      technical: this.fb.group(new FormContact()),
+    });
 
     this.territoryForm = this.fb.group({
       contacts: contactFormGroup,
@@ -153,11 +154,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         ),
       );
 
+      companyFormGroup.get('siret').setValidators([Validators.required]);
       this.siretValueChanges(companyFormGroup);
+
       this.territoryForm.addControl('address', addressFormGroup);
       this.territoryForm.addControl('company', companyFormGroup);
     }
-    this.updateValidation();
   }
 
   private siretValueChanges(companyFormGroup: FormGroup) {
@@ -186,52 +188,41 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
               throw err;
             }),
           )
-
-          .subscribe((company) => {
-            this.updateCompanyForm(company, false);
-          });
+          .subscribe((company) => this.updateCompanyForm(company));
       });
   }
 
-  private buildNewFormContactsGroup() {
-    return this.fb.group({
-      gdpr_dpo: this.fb.group(new FormContact()),
-      gdpr_controller: this.fb.group(new FormContact()),
-      technical: this.fb.group(new FormContact()),
-    });
-  }
-
-  private updateCompanyForm(company: CompanyV2, resetIfNull = true): void {
-    const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
-    if (company) {
-      this.companyId = company._id;
-
-      if (this.territoryForm.get('address.street')) {
-        this.territoryForm.get('address.street').setValue(company.address_street);
-      }
-      if (this.territoryForm.get('address.postcode')) {
-        this.territoryForm.get('address.postcode').setValue(company.address_postcode);
-      }
-      if (this.territoryForm.get('address.cedex')) {
-        this.territoryForm.get('address.cedex').setValue(company.address_cedex);
-      }
-      if (this.territoryForm.get('address.city')) {
-        this.territoryForm.get('address.city').setValue(company.address_city);
-      }
-
-      this.territoryForm.get('address.country').setValue('France');
-
-      companyFormGroup.patchValue({
-        siret: company.siret,
-        _id: company._id,
-        naf_entreprise: company.company_naf_code || '',
-        nature_juridique: company.legal_nature_label || '',
-        rna: company.nonprofit_code || '',
-        vat_intra: company.intra_vat || '',
-      });
-    } else if (resetIfNull) {
-      this.resetCompanyForm(companyFormGroup);
+  private updateCompanyForm(company: CompanyV2): void {
+    if (!company) {
+      return;
     }
+
+    const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
+    this.companyId = company._id;
+
+    if (this.territoryForm.get('address.street')) {
+      this.territoryForm.get('address.street').setValue(company.address_street);
+    }
+    if (this.territoryForm.get('address.postcode')) {
+      this.territoryForm.get('address.postcode').setValue(company.address_postcode);
+    }
+    if (this.territoryForm.get('address.cedex')) {
+      this.territoryForm.get('address.cedex').setValue(company.address_cedex);
+    }
+    if (this.territoryForm.get('address.city')) {
+      this.territoryForm.get('address.city').setValue(company.address_city);
+    }
+
+    this.territoryForm.get('address.country').setValue('France');
+
+    companyFormGroup.patchValue({
+      siret: company.siret,
+      _id: company._id,
+      naf_entreprise: company.company_naf_code || '',
+      nature_juridique: company.legal_nature_label || '',
+      rna: company.nonprofit_code || '',
+      vat_intra: company.intra_vat || '',
+    });
   }
 
   private resetCompanyForm(companyFormGroup: FormGroup) {
@@ -243,48 +234,34 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     });
   }
 
-  private updateValidation(): void {
-    if (this.territoryForm && this.isRegistryGroup) {
-      // address is hidden and not required if territory is not activable (AOM)
-      const fields = ['street', 'postcode', 'city', 'country'];
-      const addressControl = this.territoryForm.controls['address'] as FormGroup;
-
-      fields.forEach((field) => {
-        const ctr = addressControl.controls[field];
-        ctr.updateValueAndValidity();
-        ctr.markAsUntouched();
-      });
-
-      // Siret is hidden and not required if territory is not active (AOM)
-      const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
-      const siretControl = companyFormGroup.controls['siret'];
-      siretControl.setValidators([Validators.required]);
-      siretControl.updateValueAndValidity();
-      siretControl.markAsUntouched();
+  private setTerritoryFormValue(territory: TerritoryInterface): void {
+    if (!territory) {
+      return;
+    } else {
+      this.territoryId = territory._id;
     }
+
+    this.updateContactsForm(territory.contacts);
+    this.updateCompanyIfExists(territory.company_id);
   }
 
-  private setTerritoryFormValue(territory: TerritoryInterface): void {
-    this.territoryId = territory ? territory._id : null;
-
-    if (!this.territoryId) {
-      ['company', 'address', 'contacts.gdpr_dpo', 'contacts.gdpr_controller', 'contacts.technical'].forEach((key) => {
-        if (this.territoryForm.get(key) instanceof FormGroup) this.territoryForm.get(key).reset();
-      });
-
-      this.territoryForm.reset();
+  private updateCompanyIfExists(companyId: number) {
+    if (!companyId) {
+      return;
     }
+    this.companyService
+      .getById(companyId)
+      .pipe(
+        catchHttpStatus(404, (err) => {
+          this.toastr.error('Entreprise non trouvée');
+          throw err;
+        }),
+      )
+      .subscribe((company) => this.updateCompanyForm(company));
+  }
 
-    const territoryFormValue = { ...territory };
-
-    this.territoryForm.patchValue(territoryFormValue);
-
-    if (this.territoryId && this.isRegistryGroup) {
-      if (territory.company_id) {
-        this.companyService.getById(territory.company_id).subscribe((company) => {
-          this.updateCompanyForm(company);
-        });
-      }
-    }
+  private updateContactsForm(contacts: ContactsInterface) {
+    const contactsFormGroup: FormGroup = this.territoryForm.controls.contacts as FormGroup;
+    contactsFormGroup.patchValue({ ...contacts });
   }
 }
