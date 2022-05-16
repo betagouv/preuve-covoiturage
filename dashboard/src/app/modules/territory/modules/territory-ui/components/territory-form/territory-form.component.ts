@@ -1,9 +1,10 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { List } from 'lodash';
 import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
-import { filter, map, takeUntil, tap, throttleTime } from 'rxjs/operators';
+import { filter, map, mergeMap, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
 import { Address } from '~/core/entities/shared/address';
@@ -22,6 +23,8 @@ import {
   TerritoryInterface,
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { SingleResultInterface as FindGeoBySirenResultInterface } from '~/shared/territory/findGeoBySiren.contract';
+import { SingleResultInterface as GeoSingleResultInterface } from '~/shared/territory/listGeo.contract';
 import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
 import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
 import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
@@ -36,8 +39,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public isRegistryGroup = false;
   public territoryForm: FormGroup;
+  public comComs: List<GeoSingleResultInterface>;
 
-  public territoryId: number;
   private companyId: number;
 
   constructor(
@@ -187,9 +190,15 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
               this.toastr.error('Entreprise non trouvée');
               throw err;
             }),
+            tap((company) => this.updateCompanyForm(company)),
+            mergeMap((company) => this.territoryApi.findGeoBySiren({ siren: company.siren })),
           )
-          .subscribe((company) => this.updateCompanyForm(company));
+          .subscribe((geoBySirenResponse) => this.updateTerritoryGeoList(geoBySirenResponse));
       });
+  }
+
+  private updateTerritoryGeoList(geoBySirenResponse: FindGeoBySirenResultInterface): void {
+    this.comComs = geoBySirenResponse.coms;
   }
 
   private updateCompanyForm(company: CompanyInterface): void {
