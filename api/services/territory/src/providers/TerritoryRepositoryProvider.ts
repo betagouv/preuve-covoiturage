@@ -226,7 +226,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     try {
       const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
 
-      const values: any[] = [data.name, '', data.contacts, data.address, data.company_id];
+      const values: any[] = ['', '', data.contacts, data.address, data.company_id];
 
       const query = {
         text: `

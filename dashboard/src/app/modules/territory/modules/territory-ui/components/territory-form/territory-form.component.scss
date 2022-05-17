@@ -11,8 +11,14 @@ form {
     flex-wrap: wrap;
   }
 
-  .column {
-    // flex: 50%
+  .comcoms {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    div {
+      margin-bottom: 5px;
+    }
   }
 
   .mat-form-field {

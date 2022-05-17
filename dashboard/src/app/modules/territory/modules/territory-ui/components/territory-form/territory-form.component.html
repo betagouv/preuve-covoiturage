@@ -7,19 +7,19 @@
     <h2>Informations générales</h2>
 
     <div class="line">
-      <div *ngIf="isRegistryGroup">
+      <div *ngIf="isRegistryGroup" style="margin-right: 50px;">
         <h3>Structure</h3>
         <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
 
         <h3>Adresse</h3>
         <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
       </div>
-      <div style="margin: auto">
+      <div style="flex: 1;" *ngIf="comComs && comComs.length > 0">
         <h3>Communes membres</h3>
-        <div>
-          <p *ngFor="let com of comComs; let idx = index">
-            {{ com.name }} ({{ com.insee }})<span *ngIf="idx !== comComs.length - 1">,&nbsp;</span>
-          </p>
+        <div class="comcoms">
+          <div style="flex: 33%;" *ngFor="let com of comComs; let idx = index">
+            {{ com.name }}   ({{ com.insee }})
+          </div>
         </div>
       </div>
     </div>
