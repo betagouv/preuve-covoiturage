@@ -18,7 +18,7 @@ import { TerritoryFormComponent } from './territory-form.component';
 describe('TerritoryFormComponent', () => {
   const company = {
     siret: '24690062500012',
-    siren: null,
+    siren: '246900625',
     legal_name: 'COMMUNAUTE COMMUNES PAYS DE L ARBRESLE',
     company_naf_code: '8411Z',
     intra_vat: 'FR90246900625',
@@ -63,10 +63,10 @@ describe('TerritoryFormComponent', () => {
     create: of(territory),
     update: of(territory),
     findGeoBySiren: of({
-      aom_siret: '200052264',
-      aom_name: 'Grand Est',
-      epci_name: 'CC Ardennes Thiérache',
-      epci_siret: '200041622',
+      aom_siren: '246900625',
+      aom_name: "Communauté de communes du Pays de L'Arbresle",
+      epci_name: "Communauté de communes du Pays de L'Arbresle",
+      epci_siren: '246900622',
       coms: [
         { insee: '08015', name: 'Antheny', _id: null },
         { insee: '08182', name: 'Le Fréty', _id: null },
@@ -145,7 +145,6 @@ describe('TerritoryFormComponent', () => {
       expect(comp).toBeTruthy();
       fixture.detectChanges();
       await fixture.whenStable().then(() => {
-        expect(comp.territoryForm.get('name').value).toEqual('');
         expect(comp.territoryForm.get('address').get('street').value).toBeUndefined();
         expect(comp.territoryForm.get('address').get('city').value).toBeUndefined();
         expect(comp.territoryForm.get('address').get('postcode').value).toBeUndefined();
@@ -168,8 +167,6 @@ describe('TerritoryFormComponent', () => {
       fixture.detectChanges();
       await new Promise((resolve) => setTimeout(resolve, 300)); // wait for throttleTime
       comp.territoryForm.controls.company.get('siret').setValue('24690062500012');
-      comp.territoryForm.controls.name.setValue("Communauté de communes du Pays de L'Arbresle");
-      comp.territoryForm.controls.inseeString.setValue('69010,69021');
       comp.territoryForm.controls.contacts.get('gdpr_controller.email').setValue('gdpr_controller@mail.com');
       comp.territoryForm.controls.contacts.get('gdpr_controller.lastname').setValue('controller');
       comp.territoryForm.controls.contacts.get('gdpr_controller.firstname').setValue('gdpr');
@@ -216,7 +213,7 @@ describe('TerritoryFormComponent', () => {
             country: 'France',
           },
           selector: {
-            _id: [1, 2],
+            aom: [company.siren],
           },
         });
       });
@@ -300,8 +297,6 @@ describe('TerritoryFormComponent', () => {
 
       // Assert
       await fixture.whenStable().then(() => {
-        expect(comp.territoryForm.get('name').value).toEqual(territory.name);
-
         // contacts email
         expect(comp.territoryForm.get('contacts').get('gdpr_dpo').get('email').value).toEqual('gdpr_dpo@mail.com');
         expect(comp.territoryForm.get('contacts').get('gdpr_controller').get('email').value).toEqual(
@@ -328,7 +323,6 @@ describe('TerritoryFormComponent', () => {
 
       // Act
       comp.territoryForm.controls.contacts.get('gdpr_dpo.lastname').setValue('lastnameUpdate');
-      comp.territoryForm.controls.inseeString.setValue('69010,69021');
 
       // Assert
       await fixture.whenStable().then(() => {

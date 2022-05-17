@@ -105,12 +105,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
-    const aomSiren: string = this.getSiren();
+    const aomSiren: string = this.getAOMSiren();
     if (!aomSiren) {
       this.toastr.error(`Aucune EPCI ou AOM correspondant à ce numéro de SIREN`);
       return;
     }
-    const aomName: string = this.getName();
+    const aomName: string = this.getAOMName();
 
     const createTerritory: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
       this.territoryForm,
@@ -138,7 +138,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     );
   }
 
-  private getName(): string {
+  private getAOMName(): string {
     if (this.company.siren === this.findGeoBySiretResponse.aom_siren) {
       return this.findGeoBySiretResponse.aom_name;
     } else if (this.company.siren === this.findGeoBySiretResponse.epci_siren) {
@@ -146,7 +146,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     } else return null;
   }
 
-  private getSiren(): string {
+  private getAOMSiren(): string {
     if (
       this.company.siren === this.findGeoBySiretResponse.aom_siren ||
       this.company.siren === this.findGeoBySiretResponse.epci_siren
@@ -157,7 +157,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private isNew(): boolean {
-    return !this.territory._id;
+    return !(this.territory && this.territory._id);
   }
 
   private initTerritoryForm(): void {

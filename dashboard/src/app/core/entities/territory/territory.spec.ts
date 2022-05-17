@@ -11,7 +11,6 @@ describe('TerritoryMapper', () => {
     const fb = new FormBuilder();
     const territoryForm: FormGroup = fb.group({
       name: ["Communauté de communes du Pays de L'Arbresle"],
-      inseeString: [''],
       address: fb.group(
         new FormAddress(
           new Address({
@@ -28,13 +27,18 @@ describe('TerritoryMapper', () => {
         technical: fb.group(new FormContact()),
       }),
     });
-    const model: CreateTerritoryGroupInterface = TerritoryMapper.toModel(territoryForm, null, [66666, 66664]);
+    const model: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
+      territoryForm,
+      5,
+      '246900625',
+      "Communauté de communes du Pays de L'Arbresle",
+    );
     expect(model.name).toEqual("Communauté de communes du Pays de L'Arbresle");
-    expect(model.selector._id).toEqual([66666, 66664]);
+    expect(model.selector.aom).toEqual(['246900625']);
     expect(model.address.street).toEqual('117 RUE PIERRE PASSEMARD');
     expect(model.address.city).toEqual("L'ARBRESLE");
     expect(model.address.postcode).toEqual('69210');
-    expect(model.company_id).toEqual(null);
+    expect(model.company_id).toEqual(5);
     expect(model.contacts.gdpr_controller).toBeUndefined();
   });
 });
