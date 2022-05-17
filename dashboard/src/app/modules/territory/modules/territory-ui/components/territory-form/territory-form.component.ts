@@ -184,6 +184,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         ),
       );
 
+      Object.keys(addressFormGroup.controls).forEach((c) =>
+        addressFormGroup.get(c).setValidators([Validators.required]),
+      );
+
       companyFormGroup.get('siret').setValidators([Validators.required]);
       this.siretValueChanges(companyFormGroup);
 
