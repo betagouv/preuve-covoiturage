@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { List } from 'lodash';
 import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
 import { filter, map, mergeMap, takeUntil, tap, throttleTime } from 'rxjs/operators';
@@ -23,8 +22,8 @@ import {
   TerritoryInterface,
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { SingleResultInterface as FindGeoBySirenResultInterface } from '~/shared/territory/findGeoBySiren.contract';
 import { SingleResultInterface as GeoSingleResultInterface } from '~/shared/territory/listGeo.contract';
+import { SingleResultInterface as FindGeoBySirenResultInterface } from '~/shared/territory/findGeoBySiren.contract';
 import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
 import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
 import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
@@ -39,9 +38,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public isRegistryGroup = false;
   public territoryForm: FormGroup;
-  public comComs: List<GeoSingleResultInterface>;
+  public comComs: GeoSingleResultInterface[];
 
+  private findGeoBySiretResponse: FindGeoBySirenResultInterface;
   private companyId: number;
+  private company: CompanyInterface;
 
   constructor(
     public authService: AuthenticationService,
@@ -104,10 +105,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
+    const aomSiren: string = this.getSiren();
+    if (!aomSiren) {
+      this.toastr.error(`Aucune EPCI ou AOM correspondant à ce numéro de SIREN`);
+      return;
+    }
+    const aomName: string = this.getName();
+
     const createTerritory: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
       this.territoryForm,
       this.companyId,
-      null,
+      aomSiren,
+      aomName,
     );
     if (this.isNew()) {
       this.territoryApi.create(createTerritory).subscribe(() => {
@@ -127,6 +136,24 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
       },
     );
+  }
+
+  private getName(): string {
+    if (this.company.siren === this.findGeoBySiretResponse.aom_siret) {
+      return this.findGeoBySiretResponse.aom_name;
+    } else if (this.company.siren === this.findGeoBySiretResponse.epci_siret) {
+      return this.findGeoBySiretResponse.epci_name;
+    } else return null;
+  }
+
+  private getSiren(): string {
+    if (
+      this.company.siren === this.findGeoBySiretResponse.aom_siret ||
+      this.company.siren === this.findGeoBySiretResponse.epci_siret
+    ) {
+      return this.company.siren;
+    }
+    return null;
   }
 
   private isNew(): boolean {
@@ -198,6 +225,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private updateTerritoryGeoList(geoBySirenResponse: FindGeoBySirenResultInterface): void {
+    this.findGeoBySiretResponse = geoBySirenResponse;
     this.comComs = geoBySirenResponse.coms;
   }
 
@@ -208,6 +236,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
     this.companyId = company._id;
+    this.company = company;
 
     if (this.territoryForm.get('address.street')) {
       this.territoryForm.get('address.street').setValue(company.address_street);
