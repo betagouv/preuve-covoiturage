@@ -115,6 +115,10 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
       `,
     });
 
+    if (!results.rows[0]) {
+      return { aom_name: null, aom_siret: null, epci_name: null, epci_siret: null, coms: [] };
+    }
+
     return {
       aom_name: results.rows[0].l_aom,
       aom_siret: results.rows[0].aom,
