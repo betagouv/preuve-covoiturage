@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { ActivatedRoute, Router } from '@angular/router';
 import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
-import { filter, map, mergeMap, takeUntil, tap, throttleTime } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mergeMap, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
 import { Address } from '~/core/entities/shared/address';
@@ -22,8 +22,8 @@ import {
   TerritoryInterface,
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { SingleResultInterface as GeoSingleResultInterface } from '~/shared/territory/listGeo.contract';
 import { SingleResultInterface as FindGeoBySirenResultInterface } from '~/shared/territory/findGeoBySiren.contract';
+import { SingleResultInterface as GeoSingleResultInterface } from '~/shared/territory/listGeo.contract';
 import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
 import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
 import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
@@ -200,7 +200,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     companyFormGroup
       .get('siret')
       .valueChanges.pipe(
-        throttleTime(300),
         filter((v) => !!v),
         map((value: string) => {
           // remove all non-numbers chars and max out the length to 14
@@ -209,6 +208,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
           return val;
         }),
+        distinctUntilChanged(),
         tap(() => this.resetCompanyForm(companyFormGroup)),
         filter((value: string) => value && value.length === 14 && value.match(/[0-9]{14}/) !== null),
         takeUntil(this.destroy$),
