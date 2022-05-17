@@ -8,10 +8,10 @@ export interface ParamsInterface {
 }
 
 export interface SingleResultInterface {
-  aom_siret: string;
+  aom_siren: string;
   aom_name: string;
   epci_name: string;
-  epci_siret: string;
+  epci_siren: string;
   coms: Array<GeoSingleResultInterface>;
 }
 

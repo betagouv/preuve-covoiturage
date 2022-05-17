@@ -139,17 +139,17 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private getName(): string {
-    if (this.company.siren === this.findGeoBySiretResponse.aom_siret) {
+    if (this.company.siren === this.findGeoBySiretResponse.aom_siren) {
       return this.findGeoBySiretResponse.aom_name;
-    } else if (this.company.siren === this.findGeoBySiretResponse.epci_siret) {
+    } else if (this.company.siren === this.findGeoBySiretResponse.epci_siren) {
       return this.findGeoBySiretResponse.epci_name;
     } else return null;
   }
 
   private getSiren(): string {
     if (
-      this.company.siren === this.findGeoBySiretResponse.aom_siret ||
-      this.company.siren === this.findGeoBySiretResponse.epci_siret
+      this.company.siren === this.findGeoBySiretResponse.aom_siren ||
+      this.company.siren === this.findGeoBySiretResponse.epci_siren
     ) {
       return this.company.siren;
     }

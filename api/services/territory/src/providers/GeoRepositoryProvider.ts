@@ -116,14 +116,14 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     });
 
     if (!results.rows[0]) {
-      return { aom_name: null, aom_siret: null, epci_name: null, epci_siret: null, coms: [] };
+      return { aom_name: null, aom_siren: null, epci_name: null, epci_siren: null, coms: [] };
     }
 
     return {
       aom_name: results.rows[0].l_aom,
-      aom_siret: results.rows[0].aom,
+      aom_siren: results.rows[0].aom,
       epci_name: results.rows[0].l_epci,
-      epci_siret: results.rows[0].epci,
+      epci_siren: results.rows[0].epci,
       coms: <Array<GeoSingleResultInterface>>results.rows.map((g) => ({
         insee: g.com,
         name: g.l_com,
