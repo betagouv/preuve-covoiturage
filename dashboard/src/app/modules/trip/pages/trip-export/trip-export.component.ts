@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { endOfDay, startOfDay, sub } from 'date-fns';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { BaseParamsInterface as TripExportParamsInterface } from '~/shared/trip/export.contract';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -58,7 +58,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
 
   constructor(
     private tripService: TripApiService,
-    public user: AuthenticationService,
+    public authenticationService: AuthenticationService,
     private toastr: ToastrService,
     private fb: FormBuilder,
     private dialog: MatDialog,
@@ -89,30 +89,33 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
       data.territory_id = this.form.value.territoryIds;
     }
 
-    if (!this.user.isOperatorGroup() && this.checkboxesForm.selectedOperators.length !== 0) {
+    if (!this.authenticationService.isOperatorGroup() && this.checkboxesForm.selectedOperators.length !== 0) {
       data.operator_id = this.checkboxesForm.selectedOperators.map((o) => o._id);
+    } else if (this.authenticationService.isOperatorGroup()) {
+      data.operator_id = [this.authenticationService.user.operator_id];
     }
 
     this.dialog
       .open(TripExportDialogComponent, { data })
       .afterClosed()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((v) => !!v),
+      )
       .subscribe((result) => {
-        if (result) {
-          this.isExporting = true;
-          this.tripService.exportTrips(data).subscribe(
-            () => {
-              this.toastr.success('Export en cours');
-              setTimeout(() => {
-                this.isExporting = false;
-              }, 5000);
-            },
-            (err) => {
+        this.isExporting = true;
+        this.tripService.exportTrips(data).subscribe(
+          () => {
+            this.toastr.success('Export en cours');
+            setTimeout(() => {
               this.isExporting = false;
-              this.toastr.error(err.message);
-            },
-          );
-        }
+            }, 5000);
+          },
+          (err) => {
+            this.isExporting = false;
+            this.toastr.error(err.message);
+          },
+        );
       });
   }
 }
