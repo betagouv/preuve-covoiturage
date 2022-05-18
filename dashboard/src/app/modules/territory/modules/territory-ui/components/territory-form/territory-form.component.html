@@ -22,6 +22,7 @@
           </div>
         </div>
       </div>
+      <mat-error *ngIf="!(comComs && comComs.length > 0)">Aucune commune associée à ce numéro de SIRET</mat-error>
     </div>
 
 
