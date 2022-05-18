@@ -111,7 +111,7 @@ test('StreamDataToWorkBook: should stream data to a workbook file', async (t) =>
     exportTripInterface.trip_id,
   );
   t.deepEqual(
-    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell('AF').value,
+    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell('AD').value,
     exportTripInterface.operator,
   );
 });
