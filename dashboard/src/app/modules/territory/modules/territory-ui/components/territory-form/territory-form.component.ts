@@ -184,9 +184,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         ),
       );
 
-      Object.keys(addressFormGroup.controls).forEach((c) =>
-        addressFormGroup.get(c).setValidators([Validators.required]),
-      );
+      Object.keys(addressFormGroup.controls).forEach((c) => {
+        if (c != 'cedex') {
+          addressFormGroup.get(c).setValidators([Validators.required]);
+        }
+      });
 
       companyFormGroup.get('siret').setValidators([Validators.required]);
       this.siretValueChanges(companyFormGroup);
@@ -230,7 +232,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   private updateTerritoryGeoList(geoBySirenResponse: FindGeoBySirenResultInterface): void {
     this.findGeoBySiretResponse = geoBySirenResponse;
-    this.comComs = geoBySirenResponse.coms;
+    this.comComs = geoBySirenResponse.coms.sort((g1, g2) => g1.name.localeCompare(g2.name));
   }
 
   private updateCompanyForm(company: CompanyInterface): void {
