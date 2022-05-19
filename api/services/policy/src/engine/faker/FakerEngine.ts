@@ -19,6 +19,7 @@ export class FakerEngine {
   public static getBasicPerson(carpool_id = 1, is_driver = false): PersonInterface {
     const defaultPos = {
       com: '91377',
+      epci: '200056232',
       aom: '217500016',
     };
 

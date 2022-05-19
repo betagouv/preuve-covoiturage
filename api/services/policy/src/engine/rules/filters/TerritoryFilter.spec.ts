@@ -9,13 +9,13 @@ function setup(): { trip: TripInterface } {
   const trip = faker.trip([
     {
       is_driver: true,
-      start: { aom: '217500016', com: '91471' },
-      end: { aom: '217500016', com: '91471' },
+      start: { aom: '217500016', com: '91471', epci: '200056232' },
+      end: { aom: '217500016', com: '91471', epci: '200056232' },
     },
     {
       is_driver: false,
-      start: { aom: '217500016', com: '91471' },
-      end: { aom: '217500016', com: '91377' },
+      start: { aom: '217500016', com: '91471', epci: '200056232' },
+      end: { aom: '217500016', com: '91377', epci: '200056232' },
     },
   ]);
 

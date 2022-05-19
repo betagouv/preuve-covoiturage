@@ -87,11 +87,13 @@ const tripDefinitions = [
 const inside = {
   com: '91377',
   aom: '217500016',
+  epci: '200056232',
 };
 
 const outside = {
   com: '33063',
   aom: '243300316',
+  epci: '200056232',
 };
 
 export const trips: TripInterface[] = [

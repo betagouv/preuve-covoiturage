@@ -5,8 +5,8 @@ import { FakerEngine } from './FakerEngine';
 
 test('should fill territory', (t) => {
   const params = {
-    start: [{ com: '91471', aom: '217500016' }],
-    end: [{ com: '91471', aom: '217500016' }],
+    start: [{ com: '91471', aom: '217500016', epci: '200056232' }],
+    end: [{ com: '91471', aom: '217500016', epci: '200056232' }],
   };
   const territoryVariant = new TerritoryVariant(params);
   const trip = FakerEngine.getBasicTrip(3);
