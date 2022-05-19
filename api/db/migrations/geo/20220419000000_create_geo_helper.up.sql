@@ -2,6 +2,7 @@ CREATE INDEX IF NOT EXISTS geo_perimeters_year_idx ON geo.perimeters(year);
 CREATE INDEX IF NOT EXISTS geo_perimeters_surface_idx ON geo.perimeters(surface);
 CREATE INDEX IF NOT EXISTS geo_perimeters_arr_idx ON geo.perimeters(arr);
 CREATE INDEX IF NOT EXISTS geo_perimeters_aom_idx ON geo.perimeters(aom);
+CREATE INDEX IF NOT EXISTS geo_perimeters_epci_idx ON geo.perimeters(epci);
 
 CREATE OR REPLACE FUNCTION geo.get_latest_by_point(lon float, lat float) returns table (
   year smallint,

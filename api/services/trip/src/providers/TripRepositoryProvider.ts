@@ -57,7 +57,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     if (filters.territory_id) {
       const inseeQueryResults = await this.connection.getClient().query({
-        text: `SELECT ARRAY_AGG(com) as insees from policy.get_com_by_territory_id($1::int, 2021::smallint)`,
+        text: `SELECT ARRAY_AGG(com) as insees from territory.get_com_by_territory_id($1::int, 2021::smallint)`,
         values: [filters.territory_id],
       });
       if (inseeQueryResults.rowCount > 0 && inseeQueryResults.rows[0].insees) {

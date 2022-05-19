@@ -65,30 +65,3 @@ CREATE VIEW policy.trips AS (
   FROM carpool.carpools as cp
   LEFT JOIN carpool.identities as ci ON cp.identity_id = ci._id
 );
-
-CREATE OR REPLACE FUNCTION policy.get_com_by_territory_id(_id int, year smallint) returns table (com varchar) as $$
-  with data as (select * from territory.territory_group_selector where territory_group_id = $1)
-  select gp.com from geo.perimeters gp join data d 
-    on (d.selector_type = 'arr' OR d.selector_type = 'com') and d.selector_value = gp.arr
-  where year = $2
-  union
-  select gp.com from geo.perimeters gp join data d 
-    on d.selector_type = 'aom' and d.selector_value = gp.aom
-  where year = $2;
-$$ language sql stable;
-
-CREATE OR REPLACE FUNCTION policy.get_territory_id_by_selector(com varchar default null, aom varchar default null) returns table (_id int) as $$
-  SELECT
-    territory_group_id as _id
-  FROM territory.territory_group_selector
-  WHERE
-    (selector_type = 'com' OR selector_type = 'arr') AND
-    selector_value = $1
-  UNION
-  SELECT
-    territory_group_id as _id
-  FROM territory.territory_group_selector
-  WHERE
-    selector_type = 'aom' AND
-    selector_value = $2
-$$ language sql stable;

@@ -11,7 +11,7 @@ import { ProcessableCampaign } from '../engine/ProcessableCampaign';
 export class TripRepositoryProvider implements TripRepositoryProviderInterface {
   public readonly table = 'policy.trips';
   public readonly incentiveTable = 'policy.incentives';
-  public readonly getComFunction = 'policy.get_com_by_territory_id';
+  public readonly getComFunction = 'territory.get_com_by_territory_id';
 
   constructor(protected connection: PostgresConnection) {}
 
