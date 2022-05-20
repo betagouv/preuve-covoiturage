@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION territory.get_com_by_territory_id(_id int, year small
   union
   select gp.com from geo.perimeters gp join data d 
     on d.selector_type = 'aom' and d.selector_value = gp.aom
-  where year = $2;
+  where year = $2
   union
   select gp.com from geo.perimeters gp join data d 
     on d.selector_type = 'epci' and d.selector_value = gp.epci
