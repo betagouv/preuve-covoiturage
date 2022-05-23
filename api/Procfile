@@ -1,3 +1,3 @@
 web: yarn start:http
 worker: APP_POSTGRES_TIMEOUT=0 APP_REQUEST_TIMEOUT=0 yarn start:queue
-postdeploy: yarn migrate:sql && yarn seed:templates
+postdeploy: yarn migrate && yarn seed:templates
