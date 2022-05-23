@@ -28,7 +28,7 @@ export abstract class TerritoryFilter extends FilterRule<TerritoryParamsInterfac
             },
           },
           propertyNames: {
-            enum: ['com', 'arr'],
+            enum: ['com', 'arr', 'aom', 'epci'],
           },
         },
         end: {
@@ -40,7 +40,7 @@ export abstract class TerritoryFilter extends FilterRule<TerritoryParamsInterfac
             },
           },
           propertyNames: {
-            enum: ['com', 'arr'],
+            enum: ['com', 'arr', 'aom', 'epci'],
           },
         },
       },
