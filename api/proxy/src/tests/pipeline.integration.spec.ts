@@ -15,7 +15,6 @@ import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TokenProvider } from '@pdc/provider-token';
 import { QueueTransport } from '@ilos/transport-redis';
-import { dbBeforeMacro, dbAfterMacro, DbContextInterface, getDbMacroConfig } from '@pdc/helper-test';
 
 import { Kernel } from '../Kernel';
 import { HttpTransport } from '../HttpTransport';
@@ -38,17 +37,16 @@ interface ContextType {
   operatorAUser: any;
   application: any;
   cookies: string;
-  db: DbContextInterface;
 }
-const config = getDbMacroConfig();
-process.env.APP_POSTGRES_URL = config.tmpConnectionString;
+// const config = getDbMacroConfig();
+// process.env.APP_POSTGRES_URL = config.tmpConnectionString;
 
 // create a test to configure the 'after' hook
 // this must be done before using the macro to make sure this hook
 // runs before the one from the macro
 const test = anyTest as TestFn<ContextType>;
-test.before(async (t) => {
-  t.context.db = await dbBeforeMacro(config);
+test.before.skip(async (t) => {
+  // t.context.db = await dbBeforeMacro(config);
   t.context.crypto = new CryptoProvider();
   t.context.token = new TokenProvider(new MockJWTConfigProvider());
   await t.context.token.init();
@@ -63,14 +61,14 @@ test.before(async (t) => {
   t.context.request = supertest(t.context.app.getInstance());
 });
 
-test.after.always(async (t) => {
+test.after.always.skip(async (t) => {
   await t.context.worker.down();
   await t.context.app.down();
   await t.context.kernel.shutdown();
-  await dbAfterMacro(t.context.db);
+  // await dbAfterMacro(t.context.db);
 });
 
-test.beforeEach(async (t) => {
+test.beforeEach.skip(async (t) => {
   // login with the operator admin
   t.context.cookies = await cookieLoginHelper(t.context.request, 'maxicovoit.admin@example.com', 'admin1234');
 });
