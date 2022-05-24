@@ -26,11 +26,6 @@ import {
   ResultInterface as RouteResultInterface,
 } from '../shared/normalization/route.contract';
 import {
-  signature as territorySignature,
-  ParamsInterface as TerritoryParamsInterface,
-  ResultInterface as TerritoryResultInterface,
-} from '../shared/normalization/territory.contract';
-import {
   signature as crossCheckSignature,
   ParamsInterface as CrossCheckParamsInterface,
   ResultInterface as CrossCheckResultInterface,
@@ -131,13 +126,11 @@ export class NormalizationProcessAction extends AbstractAction {
       start: {
         lon: person.start.lon,
         lat: person.start.lat,
-        territory_id: person.start.territory_id,
         geo_code: person.start.geo_code,
       },
       end: {
         lon: person.end.lon,
         lat: person.end.lat,
-        territory_id: person.end.territory_id,
         geo_code: person.end.geo_code,
       },
       seats: person.seats || 0,
@@ -260,26 +253,6 @@ export class NormalizationProcessAction extends AbstractAction {
     } catch (e) {
       console.error(`[normalization]:geo: ${e.message}`, e);
       if (!isSubGeoError) await this.logError(NormalisationErrorStage.Geo, journey, e);
-      throw e;
-    }
-
-    // Territory ------------------------------------------------------------------------------------
-    try {
-      console.debug('[normalization]:territory start');
-      const territories = await this.kernel.call<TerritoryParamsInterface, TerritoryResultInterface>(
-        territorySignature,
-        {
-          start: finalPerson.start,
-          end: finalPerson.end,
-        },
-        this.context,
-      );
-
-      finalPerson.start.territory_id = territories.start;
-      finalPerson.end.territory_id = territories.end;
-    } catch (e) {
-      console.error(`[normalization]:territory: ${e.message}`, e);
-      await this.logError(NormalisationErrorStage.Territory, journey, e);
       throw e;
     }
 

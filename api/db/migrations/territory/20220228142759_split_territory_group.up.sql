@@ -17,7 +17,7 @@ FROM territory.territories AS tt
 JOIN territory_group_id AS tgid ON tt._id = tgid.territory_id;
 
 CREATE SEQUENCE territory.territory_group__id_seq;
-SELECT setval('territory.territory_group__id_seq', (SELECT max(_id) FROM territory.territory_group));
+SELECT setval('territory.territory_group__id_seq', (SELECT coalesce(max(_id),1) FROM territory.territory_group));
 
 ALTER TABLE territory.territory_group
   ALTER COLUMN _id SET DEFAULT nextval('territory.territory_group__id_seq'::regclass),

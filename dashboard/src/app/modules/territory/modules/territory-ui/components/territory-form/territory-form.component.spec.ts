@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { TerritoryInterface, TerritoryLevelEnum } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { User } from '../../../../../../core/entities/authentication/user';
-import { CompanyV2 } from '../../../../../../core/entities/shared/companyV2';
+import { ResultInterface as CompanyInterface } from '~/shared/company/find.contract';
 import { Groups } from '../../../../../../core/enums/user/groups';
 import { Roles } from '../../../../../../core/enums/user/roles';
 import { AuthenticationService } from '../../../../../../core/services/authentication/authentication.service';
@@ -18,7 +18,7 @@ import { TerritoryFormComponent } from './territory-form.component';
 describe('TerritoryFormComponent', () => {
   const company = {
     siret: '24690062500012',
-    siren: null,
+    siren: '246900625',
     legal_name: 'COMMUNAUTE COMMUNES PAYS DE L ARBRESLE',
     company_naf_code: '8411Z',
     intra_vat: 'FR90246900625',
@@ -60,12 +60,19 @@ describe('TerritoryFormComponent', () => {
   };
 
   const territoryApiServiceSpy = jasmine.createSpyObj<TerritoryApiService>('TerritoryApiService', {
-    createNew: of(territory),
-    updateNew: of(territory),
-    findByInsees: of([
-      { territory_id: 1, name: '' },
-      { territory_id: 2, name: '' },
-    ]),
+    create: of(territory),
+    update: of(territory),
+    findGeoBySiren: of({
+      aom_siren: '246900625',
+      aom_name: "Communauté de communes du Pays de L'Arbresle",
+      epci_name: "Communauté de communes du Pays de L'Arbresle",
+      epci_siren: '246900622',
+      coms: [
+        { insee: '08015', name: 'Antheny', _id: null },
+        { insee: '08182', name: 'Le Fréty', _id: null },
+        { insee: '08167', name: 'La Férée', _id: null },
+      ],
+    }),
   });
 
   describe('Create', () => {
@@ -85,10 +92,10 @@ describe('TerritoryFormComponent', () => {
           {
             provide: CompanyService,
             useValue: {
-              getById(id: number): Observable<Partial<CompanyV2>> {
+              getById(id: number): Observable<Partial<CompanyInterface>> {
                 return of(company);
               },
-              fetchCompany(siret: string): Observable<Partial<CompanyV2>> {
+              fetchCompany(siret: string): Observable<Partial<CompanyInterface>> {
                 return of({
                   _id: 4,
                   ...company,
@@ -126,8 +133,8 @@ describe('TerritoryFormComponent', () => {
     );
 
     afterEach(() => {
-      territoryApiServiceSpy.createNew.calls.reset();
-      territoryApiServiceSpy.updateNew.calls.reset();
+      territoryApiServiceSpy.create.calls.reset();
+      territoryApiServiceSpy.update.calls.reset();
     });
 
     it('should load empty form when new territory', async () => {
@@ -138,7 +145,6 @@ describe('TerritoryFormComponent', () => {
       expect(comp).toBeTruthy();
       fixture.detectChanges();
       await fixture.whenStable().then(() => {
-        expect(comp.territoryForm.get('name').value).toEqual('');
         expect(comp.territoryForm.get('address').get('street').value).toBeUndefined();
         expect(comp.territoryForm.get('address').get('city').value).toBeUndefined();
         expect(comp.territoryForm.get('address').get('postcode').value).toBeUndefined();
@@ -161,8 +167,6 @@ describe('TerritoryFormComponent', () => {
       fixture.detectChanges();
       await new Promise((resolve) => setTimeout(resolve, 300)); // wait for throttleTime
       comp.territoryForm.controls.company.get('siret').setValue('24690062500012');
-      comp.territoryForm.controls.name.setValue("Communauté de communes du Pays de L'Arbresle");
-      comp.territoryForm.controls.inseeString.setValue('69010,69021');
       comp.territoryForm.controls.contacts.get('gdpr_controller.email').setValue('gdpr_controller@mail.com');
       comp.territoryForm.controls.contacts.get('gdpr_controller.lastname').setValue('controller');
       comp.territoryForm.controls.contacts.get('gdpr_controller.firstname').setValue('gdpr');
@@ -180,9 +184,9 @@ describe('TerritoryFormComponent', () => {
         comp.onSubmit();
 
         // Assert
-        expect(territoryApiServiceSpy.updateNew).not.toHaveBeenCalled();
-        expect(territoryApiServiceSpy.createNew).toHaveBeenCalled();
-        expect(territoryApiServiceSpy.createNew).toHaveBeenCalledWith({
+        expect(territoryApiServiceSpy.update).not.toHaveBeenCalled();
+        expect(territoryApiServiceSpy.create).toHaveBeenCalled();
+        expect(territoryApiServiceSpy.create).toHaveBeenCalledWith({
           name: "Communauté de communes du Pays de L'Arbresle",
           company_id: 4,
           contacts: {
@@ -209,7 +213,7 @@ describe('TerritoryFormComponent', () => {
             country: 'France',
           },
           selector: {
-            _id: [1, 2],
+            aom: [company.siren],
           },
         });
       });
@@ -238,10 +242,10 @@ describe('TerritoryFormComponent', () => {
           {
             provide: CompanyService,
             useValue: {
-              getById(id: number): Observable<Partial<CompanyV2>> {
+              getById(id: number): Observable<Partial<CompanyInterface>> {
                 return of(company);
               },
-              fetchCompany(siret: string): Observable<Partial<CompanyV2>> {
+              fetchCompany(siret: string): Observable<Partial<CompanyInterface>> {
                 return of({
                   _id: 4,
                   ...company,
@@ -279,8 +283,8 @@ describe('TerritoryFormComponent', () => {
     );
 
     afterEach(() => {
-      territoryApiServiceSpy.createNew.calls.reset();
-      territoryApiServiceSpy.updateNew.calls.reset();
+      territoryApiServiceSpy.create.calls.reset();
+      territoryApiServiceSpy.update.calls.reset();
     });
 
     it('should load existing territory with company if exists', async () => {
@@ -293,8 +297,6 @@ describe('TerritoryFormComponent', () => {
 
       // Assert
       await fixture.whenStable().then(() => {
-        expect(comp.territoryForm.get('name').value).toEqual(territory.name);
-
         // contacts email
         expect(comp.territoryForm.get('contacts').get('gdpr_dpo').get('email').value).toEqual('gdpr_dpo@mail.com');
         expect(comp.territoryForm.get('contacts').get('gdpr_controller').get('email').value).toEqual(
@@ -321,15 +323,14 @@ describe('TerritoryFormComponent', () => {
 
       // Act
       comp.territoryForm.controls.contacts.get('gdpr_dpo.lastname').setValue('lastnameUpdate');
-      comp.territoryForm.controls.inseeString.setValue('69010,69021');
 
       // Assert
       await fixture.whenStable().then(() => {
         comp.onSubmit();
 
         // Assert
-        expect(territoryApiServiceSpy.createNew).not.toHaveBeenCalled();
-        expect(territoryApiServiceSpy.updateNew).toHaveBeenCalled();
+        expect(territoryApiServiceSpy.create).not.toHaveBeenCalled();
+        expect(territoryApiServiceSpy.update).toHaveBeenCalled();
       });
     });
   });

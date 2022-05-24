@@ -39,8 +39,10 @@ export class SimulateOnFutureAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     // 1. Normalize trip by adding territory_id and identity stuff
+    const normalizedDriverData = await this.normalize(params);
+    const normalizedPassengerData = await this.normalize(params, false);
     const normalizedTrip = new TripInterface(
-      ...[await this.normalize(params), await this.normalize(params, false)].filter((v) => v !== null),
+      ...[normalizedDriverData, normalizedPassengerData].filter((v) => v !== null),
     );
 
     if (normalizedTrip.length === 0) {
@@ -52,19 +54,28 @@ export class SimulateOnFutureAction extends AbstractAction {
     }
 
     // 2. Get involved territories
-    const territories = [...new Set(...normalizedTrip.map((t) => [...t.start_territory_id, ...t.end_territory_id]))];
+    const territories = [
+      ...new Set([
+        ...(await this.territoryRepository.findBySelector(normalizedTrip[0].start)),
+        ...(await this.territoryRepository.findBySelector(normalizedTrip[0].end)),
+      ]),
+    ];
 
     // 3. Instanciate an InMemory engine
     const engine = new PolicyEngine(new InMemoryMetadataProvider());
 
     // 4. Find appliable campaigns and instanciate them
-    const campaigns = (
-      await this.campaignRepository.findWhere({
-        status: 'active',
-        territory_id: territories,
-        datetime: normalizedTrip.datetime,
-      })
-    ).map((c) => engine.buildCampaign(c));
+    const campaignsRaw = await this.campaignRepository.findWhere({
+      status: 'active',
+      territory_id: territories,
+      datetime: normalizedTrip.datetime,
+    });
+
+    const campaigns = [];
+    for (const campaignRaw of campaignsRaw) {
+      const selector = await this.territoryRepository.findSelectorFromId(campaignRaw.territory_id);
+      campaigns.push(engine.buildCampaign(campaignRaw, selector));
+    }
 
     // 5. Process campaigns
     const incentives: IncentiveInterface[] = [];
@@ -117,8 +128,8 @@ export class SimulateOnFutureAction extends AbstractAction {
       duration: differenceInSeconds(target.end.datetime, target.start.datetime),
       distance: target.distance,
       cost: 'contribution' in target ? target.contribution : 0,
-      start_territory_id: await this.territoryRepository.findByPoint(target.start),
-      end_territory_id: await this.territoryRepository.findByPoint(target.end),
+      start: await this.territoryRepository.findByPoint(target.start),
+      end: await this.territoryRepository.findByPoint(target.end),
     };
   }
 }

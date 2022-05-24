@@ -1,10 +1,10 @@
-import { TerritoryCodesInterface } from './common/interfaces/TerritoryCodeInterface';
+import { TerritorySelectorsInterface } from './common/interfaces/TerritoryCodeInterface';
 
 export interface ParamsInterface {
   _id: number;
 }
 
-export type ResultInterface = TerritoryCodesInterface;
+export type ResultInterface = TerritorySelectorsInterface;
 
 export const handlerConfig = {
   service: 'territory',

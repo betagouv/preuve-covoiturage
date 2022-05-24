@@ -12,7 +12,6 @@ export interface ExportTripInterface<T = Date> {
   journey_start_lon: string;
   journey_start_lat: string;
   journey_start_insee: string;
-  journey_start_postalcode: string;
   journey_start_department: string;
   journey_start_town: string;
   journey_start_towngroup: string;
@@ -22,7 +21,6 @@ export interface ExportTripInterface<T = Date> {
   journey_end_lon: string;
   journey_end_lat: string;
   journey_end_insee: string;
-  journey_end_postalcode: string;
   journey_end_department: string;
   journey_end_town: string;
   journey_end_towngroup: string;

@@ -1,17 +1,14 @@
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { createDatabase, dropDatabase, migrate } from '@pdc/migrator';
+import { parse, Options as ParseOptions } from 'csv-parse';
+import fs from 'fs';
+import path from 'path';
+
 import { URL } from 'url';
 import { companies, Company } from './companies';
 import { Operator, operators } from './operators';
-import {
-  CreateTerritoryGroupInterface,
-  territories,
-  Territory,
-  TerritoryCodesInterface,
-  territory_groups,
-} from './territories';
+import { CreateTerritoryGroupInterface, TerritorySelectorsInterface, territory_groups } from './territories';
 import { User, users } from './users';
-
 export class Migrator {
   public connection: PostgresConnection;
   public config: {
@@ -73,10 +70,8 @@ export class Migrator {
       await this.seedCompany(company);
     }
 
-    for (const territory of territories) {
-      console.debug(`Seeding territory ${territory.name}`);
-      await this.seedTerritory(territory);
-    }
+    console.debug(`Seeding geo`);
+    await this.seedTerritory();
 
     for (const operator of operators) {
       console.debug(`Seeding operator ${operator.name}`);
@@ -121,6 +116,34 @@ export class Migrator {
             +++ VIEWS +++ 
     */
     await this.connection.getClient().query(`SET session_replication_role = 'origin'`);
+  }
+
+  protected async *dataFromCsv<P>(filename: string, options: ParseOptions = {}): AsyncIterator<P> {
+    const filepath = path.join(__dirname, filename);
+    const parser = fs.createReadStream(filepath).pipe(
+      parse({
+        cast: (v: any) => (v === '' ? null : v),
+        ...options,
+      }),
+    );
+    for await (const record of parser) {
+      yield record;
+    }
+  }
+
+  protected async seedFromCsv(filename: string, tablename: string, csvOptions: ParseOptions = {}) {
+    const cursor = this.dataFromCsv(filename);
+    let done = false;
+    do {
+      const data = await cursor.next();
+      if (data.value && Array.isArray(data.value)) {
+        await this.connection.getClient().query({
+          text: `INSERT INTO ${tablename} VALUES (${data.value.map((_, i) => `$${i + 1}`).join(', ')})`,
+          values: data.value,
+        });
+      }
+      done = !!data.done;
+    } while (!done);
   }
 
   async seedCompany(company: Company) {
@@ -214,9 +237,10 @@ export class Migrator {
   }
 
   async seedTerritoyGroup(territory_group: CreateTerritoryGroupInterface) {
-    const fields = ['name', 'shortname', 'contacts', 'address', 'company_id'];
+    const fields = ['_id', 'name', 'shortname', 'contacts', 'address', 'company_id'];
 
     const values: any[] = [
+      territory_group._id,
       territory_group.name,
       '',
       territory_group.contacts,
@@ -235,7 +259,7 @@ export class Migrator {
     this.syncSelector(resultData.rows[0]._id, territory_group.selector);
   }
 
-  async syncSelector(groupId: number, selector: TerritoryCodesInterface): Promise<void> {
+  async syncSelector(groupId: number, selector: TerritorySelectorsInterface): Promise<void> {
     const values: [number[], string[], string[]] = Object.keys(selector)
       .map((type) => selector[type].map((value: string | number) => [groupId, type, value.toString()]))
       .reduce((arr, v) => [...arr, ...v], [])
@@ -270,80 +294,8 @@ export class Migrator {
     await this.connection.getClient().query(query);
   }
 
-  async seedTerritory(territory: Territory) {
-    await this.connection.getClient().query({
-      text: `
-        INSERT INTO territory.territories
-          (_id, name, level, geo, population, surface)
-        VALUES
-          (
-            $1::int, 
-            $2::varchar, 
-            $3::territory.territory_level_enum, 
-            ST_GeomFromGeoJSON($4::json),
-            $5::int,
-            $6::int
-          )
-        ON CONFLICT DO NOTHING
-      `,
-      values: [territory._id, territory.name, territory.level, territory.geo, territory.population, territory.surface],
-    });
-
-    await this.connection.getClient().query(`
-    SELECT setval('territory.territories__id_seq1', (SELECT MAX(_id) FROM territory.territories)+1);
-    `);
-
-    if (territory.insee) {
-      const postcodes = territory.postcodes || [];
-      await this.connection.getClient().query({
-        text: `
-            INSERT INTO territory.territory_codes
-              (territory_id, type, value)
-            SELECT * FROM UNNEST($1::int[], $2::varchar[], $3::varchar[])
-            ON CONFLICT
-            DO NOTHING 
-          `,
-        values: [
-          ...[
-            { territory_id: territory._id, type: 'insee', value: territory.insee },
-            ...postcodes.map((c) => ({ territory_id: territory._id, type: 'postcode', value: c })),
-          ].reduce(
-            (acc, c) => {
-              const [tid, ct, cv] = acc;
-              tid.push(c.territory_id);
-              ct.push(c.type);
-              cv.push(c.value);
-              return [tid, ct, cv];
-            },
-            [[], [], []],
-          ),
-        ],
-      });
-    }
-
-    if (territory.children && territory.children.length) {
-      await this.connection.getClient().query({
-        text: `
-            INSERT INTO territory.territory_relation 
-              (parent_territory_id, child_territory_id)
-            SELECT * FROM UNNEST($1::int[], $2::int[])
-            ON CONFLICT DO NOTHING
-          `,
-        values: [
-          ...territory.children
-            .map((c) => ({ parent: territory._id, child: c._id }))
-            .reduce(
-              (acc, r) => {
-                const [parent, child] = acc;
-                parent.push(r.parent);
-                child.push(r.child);
-                return [parent, child];
-              },
-              [[], []],
-            ),
-        ],
-      });
-    }
+  async seedTerritory() {
+    await this.seedFromCsv('./geo.csv', 'geo.perimeters');
   }
 
   async down() {

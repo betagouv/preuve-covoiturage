@@ -1,3 +1,4 @@
+import { isAfter } from 'date-fns';
 import { handler, KernelInterfaceResolver, ContextType, InitHookInterface } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
@@ -14,6 +15,7 @@ import {
   CampaignRepositoryProviderInterfaceResolver,
   IncentiveInterface,
   TripRepositoryProviderInterfaceResolver,
+  TerritoryRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
@@ -31,6 +33,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     private campaignRepository: CampaignRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
     private tripRepository: TripRepositoryProviderInterfaceResolver,
+    private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
     private engine: PolicyEngine,
     private kernel: KernelInterfaceResolver,
   ) {
@@ -77,7 +80,9 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     console.debug('PROCESS CAMPAIGN', { campaign_id, override_from });
 
     // 1. Find campaign and start engine
-    const campaign = this.engine.buildCampaign(await this.campaignRepository.find(campaign_id));
+    const campaignRaw = await this.campaignRepository.find(campaign_id);
+    const selector = await this.territoryRepository.findSelectorFromId(campaignRaw.territory_id);
+    const campaign = this.engine.buildCampaign(campaignRaw, selector);
 
     // benchmark
     const totalStart = new Date();
@@ -86,7 +91,9 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
 
     // 2. Start a cursor to find trips
     const batchSize = 50;
-    const cursor = this.tripRepository.findTripByPolicy(campaign, batchSize, override_from);
+    const start = override_from ?? isAfter(override_from, campaign.start_date) ? override_from : campaign.start_date;
+    const end = isAfter(campaign.end_date, new Date()) ? new Date() : campaign.end_date;
+    const cursor = this.tripRepository.findTripByPolicy(campaign, start, end, batchSize, !!override_from);
     let done = false;
 
     do {

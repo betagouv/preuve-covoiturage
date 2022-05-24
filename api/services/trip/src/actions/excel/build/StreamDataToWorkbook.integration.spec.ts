@@ -15,7 +15,6 @@ const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   journey_start_lon: faker.address.longitude(),
   journey_start_lat: faker.address.longitude(),
   journey_start_insee: '',
-  journey_start_postalcode: faker.address.zipCode(),
   journey_start_department: faker.address.countryCode(),
   journey_start_town: faker.address.city(),
   journey_start_towngroup: '',
@@ -25,7 +24,6 @@ const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   journey_end_lon: faker.address.longitude(),
   journey_end_lat: faker.address.latitude(),
   journey_end_insee: '',
-  journey_end_postalcode: faker.address.zipCode(),
   journey_end_department: faker.address.countryCode(),
   journey_end_town: faker.address.city(),
   journey_end_towngroup: '',
@@ -113,7 +111,7 @@ test('StreamDataToWorkBook: should stream data to a workbook file', async (t) =>
     exportTripInterface.trip_id,
   );
   t.deepEqual(
-    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell('AF').value,
+    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell('AD').value,
     exportTripInterface.operator,
   );
 });

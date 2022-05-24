@@ -1,4 +1,5 @@
 import { provider } from '@ilos/common';
+import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 import {
   CampaignInterface,
   IncentiveInterface,
@@ -7,6 +8,7 @@ import {
   TripInterface,
 } from '../interfaces';
 import { MetadataWrapper } from '../providers/MetadataWrapper';
+import { isSelected } from './helpers/isSelected';
 import { ProcessableCampaign } from './ProcessableCampaign';
 import { TripIncentives } from './TripIncentives';
 
@@ -14,11 +16,14 @@ import { TripIncentives } from './TripIncentives';
 export class PolicyEngine {
   constructor(protected metaRepository: MetadataRepositoryProviderInterfaceResolver) {}
 
-  public buildCampaign(campaign: CampaignInterface): ProcessableCampaign {
-    return new ProcessableCampaign(campaign);
+  public buildCampaign(campaign: CampaignInterface, selectors: TerritorySelectorsInterface = {}): ProcessableCampaign {
+    return new ProcessableCampaign(campaign, selectors);
   }
 
   public async processStateless(pc: ProcessableCampaign, trip: TripInterface): Promise<IncentiveInterface[]> {
+    if (!this.guard(pc, trip)) {
+      return [];
+    }
     const tripIncentives = TripIncentives.createFromTrip(trip);
     for (const person of tripIncentives.getProcessablePeople()) {
       const meta = new MetadataWrapper();
@@ -42,10 +47,6 @@ export class PolicyEngine {
   }
 
   public async process(pc: ProcessableCampaign, trip: TripInterface): Promise<IncentiveInterface[]> {
-    if (!this.guard(pc, trip)) {
-      return [];
-    }
-
     const incentives = await this.processStateless(pc, trip);
     for (const [i, incentive] of incentives.entries()) {
       const { amount } = await this.processStateful(pc, incentive);
@@ -59,19 +60,29 @@ export class PolicyEngine {
   }
 
   protected guard(campaign: ProcessableCampaign, trip: TripInterface): boolean {
-    if (
-      trip
-        .map((p) => [...p.start_territory_id, ...p.end_territory_id])
-        .reduce((s, t) => {
-          t.map((v) => s.add(v));
-          return s;
-        }, new Set())
-        .has(campaign.territory_id) &&
-      trip.datetime >= campaign.start_date &&
-      trip.datetime <= campaign.end_date
-    ) {
+    if (trip.datetime < campaign.start_date) {
+      return false;
+    }
+
+    if (trip.datetime > campaign.end_date) {
+      return false;
+    }
+
+    if (!campaign.territory_selector || Object.keys(campaign.territory_selector).length <= 0) {
       return true;
     }
-    return false;
+
+    for (const starts of trip.map((t) => t.start)) {
+      if (!isSelected(starts, campaign.territory_selector)) {
+        return false;
+      }
+    }
+
+    for (const starts of trip.map((t) => t.end)) {
+      if (!isSelected(starts, campaign.territory_selector)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

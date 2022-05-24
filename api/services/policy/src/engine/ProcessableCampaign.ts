@@ -9,21 +9,24 @@ import {
   MetadataWrapperInterface,
 } from '../interfaces';
 import { MetadataWrapper } from '../providers/MetadataWrapper';
+import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export class ProcessableCampaign {
   public readonly policy_id: number;
   public readonly start_date: Date;
   public readonly end_date: Date;
   public readonly territory_id: number;
+  public readonly territory_selector: TerritorySelectorsInterface;
 
   protected globalSet: RuleSet;
   protected ruleSets: RuleSet[];
 
-  constructor(protected campaign: CampaignInterface) {
+  constructor(protected campaign: CampaignInterface, selectors: TerritorySelectorsInterface = {}) {
     this.policy_id = campaign._id;
     this.start_date = campaign.start_date;
     this.end_date = campaign.end_date;
     this.territory_id = campaign.territory_id;
+    this.territory_selector = selectors;
     this.globalSet = new RuleSet(campaign.global_rules);
     this.ruleSets = campaign.rules.map((set) => new RuleSet(set));
   }

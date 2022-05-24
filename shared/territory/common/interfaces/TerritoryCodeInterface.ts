@@ -1,16 +1,22 @@
 export enum TerritoryCodeEnum {
-  Insee = 'insee',
-  Postcode = 'postcode',
+  Arr = 'arr',
+  City = 'com',
+  CityGroup = 'epci',
+  Mobility = 'aom',
   Id = '_id',
 }
 
 export interface TerritoryCodeInterface {
-  type: TerritoryCodeEnum;
-  value: string;
+  [TerritoryCodeEnum.Arr]?: string;
+  [TerritoryCodeEnum.City]: string;
+  [TerritoryCodeEnum.Mobility]: string;
+  [TerritoryCodeEnum.CityGroup]: string;
 }
 
-export interface TerritoryCodesInterface {
-  [TerritoryCodeEnum.Insee]?: string[];
-  [TerritoryCodeEnum.Postcode]?: string[];
+export interface TerritorySelectorsInterface {
+  [TerritoryCodeEnum.Arr]?: string[];
+  [TerritoryCodeEnum.City]?: string[];
+  [TerritoryCodeEnum.Mobility]?: string[];
   [TerritoryCodeEnum.Id]?: number[];
+  [TerritoryCodeEnum.CityGroup]?: string[];
 }

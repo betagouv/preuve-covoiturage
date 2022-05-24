@@ -2,6 +2,11 @@ import { v4 } from 'uuid';
 import { TripInterface, PersonInterface } from '../../interfaces';
 
 const datetime = new Date('2019-01-15');
+const defaultPos = {
+  com: '91377',
+  aom: '217500016',
+  epci: '200056232',
+};
 
 const basePerson: PersonInterface = {
   datetime,
@@ -17,8 +22,8 @@ const basePerson: PersonInterface = {
   duration: 600,
   distance: 5000,
   cost: 2,
-  start_territory_id: [1],
-  end_territory_id: [1],
+  start: { ...defaultPos },
+  end: { ...defaultPos },
 };
 
 const baseTrip: TripInterface = new TripInterface();

@@ -8,7 +8,11 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/polic
 import { alias } from '../shared/policy/simulateOn.schema';
 import { PolicyEngine } from '../engine/PolicyEngine';
 import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvider';
-import { TripRepositoryProviderInterfaceResolver, IncentiveInterface } from '../interfaces';
+import {
+  TripRepositoryProviderInterfaceResolver,
+  IncentiveInterface,
+  TerritoryRepositoryProviderInterfaceResolver,
+} from '../interfaces';
 
 @handler({
   ...handlerConfig,
@@ -28,17 +32,21 @@ import { TripRepositoryProviderInterfaceResolver, IncentiveInterface } from '../
   ],
 })
 export class SimulateOnPastAction extends AbstractAction {
-  constructor(private tripRepository: TripRepositoryProviderInterfaceResolver) {
+  constructor(
+    private tripRepository: TripRepositoryProviderInterfaceResolver,
+    private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     // 1. Find campaign and start engine
     const engine = new PolicyEngine(new InMemoryMetadataProvider());
-    const campaign = engine.buildCampaign(params.campaign);
+    const selectors = await this.territoryRepository.findSelectorFromId(params.campaign.territory_id);
+    const campaign = engine.buildCampaign(params.campaign, selectors);
 
     // 2. Start a cursor to find trips
-    const cursor = await this.tripRepository.findTripByPolicy(campaign);
+    const cursor = await this.tripRepository.findTripByPolicy(campaign, campaign.start_date, campaign.end_date);
     let done = false;
 
     let trip_subsidized = 0;

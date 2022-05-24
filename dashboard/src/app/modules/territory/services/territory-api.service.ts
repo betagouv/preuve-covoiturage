@@ -2,19 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { signature as signatureFind } from '~/shared/territory/find.contract';
-import {
-  ParamsInterface as ParamsInterfaceFindByCode,
-  ResultInterface as ResultInterfaceFindByCode,
-  signature as signatureFindByCode,
-} from '~/shared/territory/findGeoByCode.contract';
-import { ParamsInterface as TerritoryListFilter, signature as signatureList } from '~/shared/territory/list.contract';
-import { ParamsInterface as ParamsInterfaceGeo, signature as signatureGeo } from '~/shared/territory/listGeo.contract';
-import {
-  ParamsInterface as PatchContactParamsInterface,
-  signature as signaturePatch,
-} from '~/shared/territory/patchContacts.contract';
+import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
+import { JsonRPCOptions } from '~/core/entities/api/jsonRPCOptions';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { CrudActions } from '~/core/services/api/json-rpc.crud';
 import {
@@ -22,10 +13,22 @@ import {
   TerritoryInterface,
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
-import { JsonRPCOptions } from '~/core/entities/api/jsonRPCOptions';
-import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
-import { SingleResultInterface as TerritoryGeoResultInterface } from '~/shared/territory/listGeo.contract';
+import { signature as signatureFind } from '~/shared/territory/find.contract';
+import {
+  ParamsInterface as ParamsInterfaceFindGeoBySiren,
+  signature as signatureFindGeoBySiren,
+  SingleResultInterface as FindGeoBySirenResultInterface,
+} from '~/shared/territory/findGeoBySiren.contract';
+import { ParamsInterface as TerritoryListFilter, signature as signatureList } from '~/shared/territory/list.contract';
+import {
+  ParamsInterface as ParamsInterfaceGeo,
+  signature as signatureGeo,
+  SingleResultInterface as TerritoryGeoResultInterface,
+} from '~/shared/territory/listGeo.contract';
+import {
+  ParamsInterface as PatchContactParamsInterface,
+  signature as signaturePatch,
+} from '~/shared/territory/patchContacts.contract';
 import { ResultWithPagination } from '../../../../../../shared/common/interfaces/ResultWithPagination';
 
 @Injectable({
@@ -47,12 +50,6 @@ export class TerritoryApiService {
     return new JsonRPCParam(signatureList, { ...this.DEFAULT_LIST_PARAMS, ...params });
   }
 
-  findByInsees(insees: string[]): Observable<ResultInterfaceFindByCode> {
-    const params: ParamsInterfaceFindByCode = { insees };
-    const jsonRPCParam = new JsonRPCParam(signatureFindByCode, params);
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
-  }
-
   paramGetById(id: number): JsonRPCParam<any> {
     return new JsonRPCParam(signatureFind, { _id: id });
   }
@@ -62,12 +59,17 @@ export class TerritoryApiService {
     return this.callOne(jsonRPCParam);
   }
 
-  createNew(item: CreateTerritoryGroupInterface): Observable<TerritoryInterface> {
+  findGeoBySiren(params: ParamsInterfaceFindGeoBySiren): Observable<FindGeoBySirenResultInterface> {
+    const jsonRPCParam: JsonRPCParam = new JsonRPCParam(signatureFindGeoBySiren, params);
+    return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
+  }
+
+  create(item: CreateTerritoryGroupInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.METHOD}:${CrudActions.CREATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
   }
 
-  updateNew(item: UpdateTerritoryGroupInterface): Observable<TerritoryInterface> {
+  update(item: UpdateTerritoryGroupInterface): Observable<TerritoryInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.METHOD}:${CrudActions.UPDATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }

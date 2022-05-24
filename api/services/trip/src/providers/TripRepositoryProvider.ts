@@ -56,13 +56,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
 
     if (filters.territory_id) {
-      const territoriesIds = typeof filters.territory_id === 'number' ? [filters.territory_id] : filters.territory_id;
-      const descendantsIds = await this.connection.getClient().query({
-        text: `SELECT * FROM territory.get_descendants($1::int[]) as _ids`,
-        values: [territoriesIds],
+      const inseeQueryResults = await this.connection.getClient().query({
+        text: `SELECT ARRAY_AGG(com) as insees from territory.get_com_by_territory_id($1::int, 2021::smallint)`,
+        values: [filters.territory_id],
       });
-      if (descendantsIds.rowCount > 0 && descendantsIds.rows[0]._ids) {
-        filters.territory_id = [...territoriesIds, ...descendantsIds.rows[0]._ids];
+      if (inseeQueryResults.rowCount > 0 && inseeQueryResults.rows[0].insees) {
+        filters.territory_id = inseeQueryResults.rows[0].insees;
       }
     }
 
@@ -84,7 +83,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
             case 'territory_id':
               const territoryFilterValue = Array.isArray(filter.value) ? filter.value : [filter.value];
               return {
-                text: `(start_territory_id = ANY($#::int[]) OR end_territory_id = ANY($#::int[]))`,
+                text: `(journey_start_insee = ANY($#::varchar[]) OR journey_end_insee = ANY($#::varchar[]))`,
                 values: [territoryFilterValue, territoryFilterValue],
               };
             case 'operator_id':
@@ -291,7 +290,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'journey_start_lon',
       'journey_start_lat',
       'journey_start_insee',
-      'journey_start_postalcode',
       'journey_start_department',
       'journey_start_town',
       'journey_start_towngroup',
@@ -300,7 +298,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'journey_end_lon',
       'journey_end_lat',
       'journey_end_insee',
-      'journey_end_postalcode',
       'journey_end_department',
       'journey_end_town',
       'journey_end_towngroup',

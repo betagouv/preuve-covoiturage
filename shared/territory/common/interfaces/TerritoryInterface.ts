@@ -1,5 +1,5 @@
 import { ContactsInterface } from '../../../common/interfaces/ContactsInterface';
-import { TerritoryCodesInterface } from './TerritoryCodeInterface';
+import { TerritorySelectorsInterface } from './TerritoryCodeInterface';
 
 export interface TerritoryGroupInterface {
   _id: number;
@@ -11,7 +11,7 @@ export interface TerritoryGroupInterface {
   created_at: Date;
   updated_at: Date;
   deleted_at?: Date;
-  selector: TerritoryCodesInterface;
+  selector: TerritorySelectorsInterface;
 }
 
 export type CreateTerritoryGroupInterface = Omit<

@@ -12,17 +12,16 @@ export class TerritoryMapper {
   static toModel(
     territoryForm: AbstractControl,
     company_id: number,
-    children: number[],
+    aomSiren: string,
+    aomName: string,
   ): CreateTerritoryGroupInterface {
     const territory: CreateTerritoryGroupInterface = {
-      name: territoryForm.get('name').value,
+      name: aomName,
       company_id: company_id,
-      // parent: territoryForm.get('parent').value,
       contacts: ContactsMapper.toModel(territoryForm.get('contacts')),
-      // level: TerritoryLevelEnum.Towngroup,
       address: removeNullsProperties(territoryForm.get('address').value),
       selector: {
-        _id: children,
+        aom: [aomSiren],
       },
     };
     return territory;

@@ -9,13 +9,13 @@ function setup(): { trip: TripInterface } {
   const trip = faker.trip([
     {
       is_driver: true,
-      start_territory_id: [1],
-      end_territory_id: [1],
+      start: { aom: '217500016', com: '91471', epci: '200056232' },
+      end: { aom: '217500016', com: '91471', epci: '200056232' },
     },
     {
       is_driver: false,
-      start_territory_id: [1],
-      end_territory_id: [2],
+      start: { aom: '217500016', com: '91471', epci: '200056232' },
+      end: { aom: '217500016', com: '91377', epci: '200056232' },
     },
   ]);
 
@@ -26,8 +26,8 @@ test('should throw error if start and end is in blacklist with AND operator', as
   const { trip } = setup();
   const rule = new TerritoryBlacklistFilter([
     {
-      start: [1],
-      end: [1],
+      start: { com: ['91471'] },
+      end: { com: ['91471'] },
     },
   ]);
   const err = await t.throwsAsync<NotApplicableTargetException>(async () =>
@@ -44,8 +44,8 @@ test('should do nothing if start and end is in blacklist with AND operator', asy
   const { trip } = setup();
   const rule = new TerritoryBlacklistFilter([
     {
-      start: [1],
-      end: [1],
+      start: { com: ['91471'] },
+      end: { com: ['91471'] },
     },
   ]);
   await t.notThrowsAsync(async () =>
@@ -60,8 +60,8 @@ test('should do nothing if start and end is in blacklist with AND operator', asy
 test('should throw error if start or end is in blacklist with OR operator', async (t) => {
   const { trip } = setup();
   const rule = new TerritoryBlacklistFilter([
-    { start: [1], end: [] },
-    { start: [], end: [1] },
+    { start: { com: ['91471'] }, end: {} },
+    { start: {}, end: { com: ['91471'] } },
   ]);
 
   const err = await t.throwsAsync<NotApplicableTargetException>(async () =>
@@ -78,8 +78,8 @@ test('should throw error if start and end is in whitelist with AND operator', as
   const { trip } = setup();
   const rule = new TerritoryWhitelistFilter([
     {
-      start: [1],
-      end: [1],
+      start: { com: ['91471'] },
+      end: { com: ['91471'] },
     },
   ]);
 
@@ -97,8 +97,8 @@ test('should do nothing if start and end is in whitelist with AND operator', asy
   const { trip } = setup();
   const rule = new TerritoryWhitelistFilter([
     {
-      start: [1],
-      end: [1],
+      start: { com: ['91471'] },
+      end: { com: ['91471'] },
     },
   ]);
   await t.notThrowsAsync(async () =>
@@ -113,8 +113,8 @@ test('should do nothing if start and end is in whitelist with AND operator', asy
 test('should do nothin if start or end is in whitelist with OR operator', async (t) => {
   const { trip } = setup();
   const rule = new TerritoryWhitelistFilter([
-    { start: [1], end: [] },
-    { start: [], end: [1] },
+    { start: { com: ['91471'] }, end: {} },
+    { start: {}, end: { com: ['91471'] } },
   ]);
   await t.notThrowsAsync(async () =>
     rule.filter({

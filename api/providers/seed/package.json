@@ -6,7 +6,8 @@
   "typings": "./dist/index.d.js",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc",
+    "copy-static": "cp -R ./src/*.csv ./dist/",
+    "build": "tsc && yarn copy-static",
     "watch": "tsc -w",
     "test:unit": "exit 0",
     "test:integration": "ava --config ava.integration.cjs",
@@ -16,6 +17,7 @@
   "dependencies": {
     "@ilos/common": "~0",
     "@ilos/connection-postgres": "~0",
-    "@pdc/migrator": "~0"
+    "@pdc/migrator": "~0",
+    "csv-parse": "^5.0.4"
   }
 }

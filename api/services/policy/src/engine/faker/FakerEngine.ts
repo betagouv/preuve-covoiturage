@@ -11,12 +11,18 @@ import { TerritoryVariant } from './TerritoryVariant';
 import { AbstractVariant } from './AbstractVariant';
 import { PersonInterface } from '../../shared/policy/common/interfaces/PersonInterface';
 import { TripInterface } from '../../shared/policy/common/interfaces/TripInterface';
-import { CampaignInterface } from '../../shared/policy/common/interfaces/CampaignInterface';
+import { TerritoryCodeInterface } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export class FakerEngine {
   constructor(protected readonly variants: AbstractVariant<any>[]) {}
 
   public static getBasicPerson(carpool_id = 1, is_driver = false): PersonInterface {
+    const defaultPos = {
+      com: '91377',
+      epci: '200056232',
+      aom: '217500016',
+    };
+
     return {
       carpool_id,
       trip_id: v4(),
@@ -31,8 +37,8 @@ export class FakerEngine {
       duration: 600,
       distance: 5000,
       cost: 2,
-      start_territory_id: [1],
-      end_territory_id: [1],
+      start: { ...defaultPos },
+      end: { ...defaultPos },
     };
   }
 
@@ -44,12 +50,12 @@ export class FakerEngine {
     return array;
   }
 
-  public static fromPolicy(policy: CampaignInterface): FakerEngine {
+  public static create(start: Date, end: Date, points: TerritoryCodeInterface[]): FakerEngine {
     const variants: AbstractVariant<any>[] = [];
     variants.push(
       new DatetimeVariant({
-        start: policy.start_date,
-        end: policy.end_date,
+        start,
+        end,
       }),
     );
     variants.push(new DistanceVariant([1, 50]));
@@ -58,8 +64,8 @@ export class FakerEngine {
     variants.push(new SeatVariant());
     variants.push(
       new TerritoryVariant({
-        start: [policy.territory_id],
-        end: [policy.territory_id],
+        start: [...points],
+        end: [...points],
       }),
     );
     return new FakerEngine(variants);

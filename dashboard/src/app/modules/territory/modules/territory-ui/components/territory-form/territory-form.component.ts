@@ -3,14 +3,11 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { ActivatedRoute, Router } from '@angular/router';
 import { cloneDeep, get } from 'lodash-es';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { filter, map, takeUntil, tap, throttleTime } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mergeMap, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
 import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
-import { CompanyV2 } from '~/core/entities/shared/companyV2';
 import { ContactsMapper } from '~/core/entities/shared/contacts';
 import { TerritoryFormModel, TerritoryMapper } from '~/core/entities/territory/territory';
 import { Groups } from '~/core/enums/user/groups';
@@ -19,12 +16,14 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { ResultInterface as CompanyInterface } from '~/shared/company/find.contract';
 import {
   CreateTerritoryGroupInterface,
   TerritoryInterface,
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { TerritoryInsee } from '../../../../../../../../../shared/territory/findGeoByCode.contract';
+import { SingleResultInterface as FindGeoBySirenResultInterface } from '~/shared/territory/findGeoBySiren.contract';
+import { SingleResultInterface as GeoSingleResultInterface } from '~/shared/territory/listGeo.contract';
 import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
 import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
 import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';
@@ -39,9 +38,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public isRegistryGroup = false;
   public territoryForm: FormGroup;
-  public territoryId: number;
+  public comComs: GeoSingleResultInterface[];
 
-  private companyDetails: CompanyInterface;
+  private findGeoBySiretResponse: FindGeoBySirenResultInterface;
+  private companyId: number;
+  private company: CompanyInterface;
 
   constructor(
     public authService: AuthenticationService,
@@ -76,10 +77,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   private initFormAndValidation() {
     this.initTerritoryForm();
-    if (this.territory) {
-      this.setTerritoryFormValue(this.territory);
-      this.updateValidation();
-    }
+    this.setTerritoryFormValue(this.territory);
   }
 
   get controls(): { [key: string]: AbstractControl } {
@@ -92,11 +90,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
-    formValues.company_id = get(this, 'companyDetails._id', null);
+    formValues.company_id = get(this, 'companyId', null);
 
-    if (!this.isRegistryGroup || !formValues.inseeString) {
+    if (!this.isRegistryGroup) {
       const contactModel: ContactsInterface = ContactsMapper.toModel(this.territoryForm.get('contacts'));
-      this.territoryApi.patchContact({ patch: contactModel, _id: this.territoryId }).subscribe(
+      this.territoryApi.patchContact({ patch: contactModel, _id: this.territory._id }).subscribe(
         (modifiedTerritory) => {
           this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
         },
@@ -107,53 +105,29 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
-    // split by coma and make unique
-    const inseeList: string[] = [
-      ...new Set(
-        formValues.inseeString
-          .split(/[\s,]/)
-          .map((s) => s.trim())
-          .filter((i) => i.length)
-          .sort(),
-      ),
-    ];
-
-    this.territoryApi.findByInsees(inseeList).subscribe(
-      (territories) => {
-        this.handleInseeToTerritoriesAndUpdate(inseeList, territories, formValues);
-      },
-      (err) => {
-        console.error(err);
-        this.toastr.error(`Une erreur est survenue lors de la validation des codes insees`);
-      },
-    );
-  }
-
-  private handleInseeToTerritoriesAndUpdate(
-    inseeList: string[],
-    territories: TerritoryInsee[],
-    formValues: TerritoryFormModel,
-  ): void {
-    if (!this.hasSameLength(inseeList, territories)) {
-      this.toastr.error(`Certains codes INSEE n'ont pas de territoires correspondants`);
+    const aomSiren: string = this.getAOMSiren();
+    if (!aomSiren) {
+      this.toastr.error(`Aucune EPCI ou AOM correspondant à ce numéro de SIREN`);
       return;
     }
+    const aomName: string = this.getAOMName();
 
     const createTerritory: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
       this.territoryForm,
-      this.companyDetails._id,
-      territories.map((t) => t.territory_id),
+      this.companyId,
+      aomSiren,
+      aomName,
     );
     if (this.isNew()) {
-      this.territoryApi.createNew(createTerritory).subscribe(() => {
+      this.territoryApi.create(createTerritory).subscribe(() => {
         this.toastr.success(`${formValues.name} a été créé !`);
         this.router.navigate(['../'], { relativeTo: this.route });
       });
       return;
     }
 
-    const updateTerritory: UpdateTerritoryGroupInterface = { ...createTerritory, _id: this.territoryId };
-    this.territoryApi.updateNew(updateTerritory).subscribe(
+    const updateTerritory: UpdateTerritoryGroupInterface = { ...createTerritory, _id: this.territory._id };
+    this.territoryApi.update(updateTerritory).subscribe(
       (modifiedTerritory) => {
         this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
         this.router.navigate(['../'], { relativeTo: this.route });
@@ -164,199 +138,172 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     );
   }
 
-  private isNew(): boolean {
-    return !this.territoryId;
+  private getAOMName(): string {
+    if (this.company.siren === this.findGeoBySiretResponse.aom_siren) {
+      return this.findGeoBySiretResponse.aom_name;
+    } else if (this.company.siren === this.findGeoBySiretResponse.epci_siren) {
+      return this.findGeoBySiretResponse.epci_name;
+    } else return null;
   }
 
-  private hasSameLength(inseeList: string[], territories: TerritoryInsee[]): boolean {
-    return inseeList.length === territories.length;
+  private getAOMSiren(): string {
+    if (
+      this.company.siren === this.findGeoBySiretResponse.aom_siren ||
+      this.company.siren === this.findGeoBySiretResponse.epci_siren
+    ) {
+      return this.company.siren;
+    }
+    return null;
+  }
+
+  private isNew(): boolean {
+    return !(this.territory && this.territory._id);
   }
 
   private initTerritoryForm(): void {
-    let formOptions: any = {
-      contacts: this.fb.group({
-        gdpr_dpo: this.fb.group(new FormContact()),
-        gdpr_controller: this.fb.group(new FormContact()),
-        technical: this.fb.group(new FormContact()),
-      }),
-    };
+    const contactFormGroup = this.fb.group({
+      gdpr_dpo: this.fb.group(new FormContact()),
+      gdpr_controller: this.fb.group(new FormContact()),
+      technical: this.fb.group(new FormContact()),
+    });
+
+    this.territoryForm = this.fb.group({
+      contacts: contactFormGroup,
+    });
+
     if (this.isRegistryGroup) {
-      formOptions = {
-        ...formOptions,
-        name: [''],
-        parent: '',
-        inseeString: [''],
-        address: this.fb.group(
-          new FormAddress(
-            new Address({
-              street: null,
-              city: null,
-              country: null,
-              postcode: null,
-            }),
-          ),
+      const companyFormGroup: FormGroup = this.fb.group(new FormCompany({ siret: '', company: new Company() }));
+      const addressFormGroup: FormGroup = this.fb.group(
+        new FormAddress(
+          new Address({
+            street: null,
+            city: null,
+            country: null,
+            postcode: null,
+          }),
         ),
-        company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
-        contacts: this.fb.group({
-          gdpr_dpo: this.fb.group(new FormContact()),
-          gdpr_controller: this.fb.group(new FormContact()),
-          technical: this.fb.group(new FormContact()),
+      );
+
+      Object.keys(addressFormGroup.controls).forEach((c) => {
+        if (c != 'cedex') {
+          addressFormGroup.get(c).setValidators([Validators.required]);
+        }
+      });
+
+      companyFormGroup.get('siret').setValidators([Validators.required]);
+      this.siretValueChanges(companyFormGroup);
+
+      this.territoryForm.addControl('address', addressFormGroup);
+      this.territoryForm.addControl('company', companyFormGroup);
+    }
+  }
+
+  private siretValueChanges(companyFormGroup: FormGroup) {
+    companyFormGroup
+      .get('siret')
+      .valueChanges.pipe(
+        filter((v) => !!v),
+        map((value: string) => {
+          // remove all non-numbers chars and max out the length to 14
+          const val = value.replace(/[^0-9]/g, '').substring(0, 14);
+          companyFormGroup.get('siret').setValue(val, { emitEvent: false });
+
+          return val;
         }),
-      };
-    }
-
-    const stopFindCompany = new Subject();
-
-    this.territoryForm = this.fb.group(formOptions);
-    const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
-
-    if (companyFormGroup) {
-      companyFormGroup
-        .get('siret')
-        .valueChanges.pipe(
-          throttleTime(300),
-          filter((v) => !!v),
-          map((value: string) => {
-            // remove all non-numbers chars and max out the length to 14
-            const val = value.replace(/[^0-9]/g, '').substring(0, 14);
-            companyFormGroup.get('siret').setValue(val, { emitEvent: false });
-
-            return val;
-          }),
-          tap(() => {
-            stopFindCompany.next();
-            this.companyDetails = {
-              _id: null,
-              naf_entreprise: '',
-              nature_juridique: '',
-              rna: '',
-              vat_intra: '',
-            };
-
-            companyFormGroup.patchValue({
-              naf_entreprise: '',
-              nature_juridique: '',
-              rna: '',
-              vat_intra: '',
-            });
-          }),
-          filter((value: string) => value && value.length === 14 && value.match(/[0-9]{14}/) !== null),
-          takeUntil(this.destroy$),
-        )
-        .subscribe((value) => {
-          this.companyService
-            .fetchCompany(value)
-            .pipe(
-              catchHttpStatus(404, (err) => {
-                this.toastr.error('Entreprise non trouvée');
-                throw err;
-              }),
-              takeUntil(stopFindCompany),
-            )
-
-            .subscribe((company) => {
-              this.updateCompanyForm(company, false);
-            });
-        });
-    }
-
-    this.updateValidation();
+        distinctUntilChanged(),
+        tap(() => this.resetCompanyForm(companyFormGroup)),
+        filter((value: string) => value && value.length === 14 && value.match(/[0-9]{14}/) !== null),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((value) => {
+        this.companyService
+          .fetchCompany(value)
+          .pipe(
+            catchHttpStatus(404, (err) => {
+              this.toastr.error('Entreprise non trouvée');
+              throw err;
+            }),
+            tap((company) => this.updateCompanyForm(company)),
+            mergeMap((company) => this.territoryApi.findGeoBySiren({ siren: company.siren })),
+          )
+          .subscribe((geoBySirenResponse) => this.updateTerritoryGeoList(geoBySirenResponse));
+      });
   }
 
-  private updateCompanyForm(company: CompanyV2, resetIfNull = true): void {
-    const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
-    if (company) {
-      this.companyDetails = {
-        _id: company._id,
-        naf_entreprise: company.company_naf_code || '',
-        nature_juridique: company.legal_nature_label || '',
-        rna: company.nonprofit_code || '',
-        vat_intra: company.intra_vat || '',
-      };
-
-      if (this.territoryForm.get('address.street')) {
-        this.territoryForm.get('address.street').setValue(company.address_street);
-      }
-      if (this.territoryForm.get('address.postcode')) {
-        this.territoryForm.get('address.postcode').setValue(company.address_postcode);
-      }
-      if (this.territoryForm.get('address.cedex')) {
-        this.territoryForm.get('address.cedex').setValue(company.address_cedex);
-      }
-      if (this.territoryForm.get('address.city')) {
-        this.territoryForm.get('address.city').setValue(company.address_city);
-      }
-
-      this.territoryForm.get('address.country').setValue('France');
-
-      companyFormGroup.patchValue({ siret: company.siret, ...this.companyDetails });
-    } else if (resetIfNull) {
-      this.companyDetails = null;
-      companyFormGroup.patchValue({
-        naf_entreprise: '',
-        nature_juridique: '',
-        rna: '',
-        vat_intra: '',
-      });
-    }
+  private updateTerritoryGeoList(geoBySirenResponse: FindGeoBySirenResultInterface): void {
+    this.findGeoBySiretResponse = geoBySirenResponse;
+    this.comComs = geoBySirenResponse.coms.sort((g1, g2) => g1.name.localeCompare(g2.name));
   }
 
-  private updateValidation(): void {
-    if (this.territoryForm && this.isRegistryGroup) {
-      this.territoryForm.controls['name'].setValidators(this.isRegistryGroup ? Validators.required : null);
-      this.territoryForm.controls['name'].updateValueAndValidity();
-      this.territoryForm.controls['name'].markAsUntouched();
-
-      // address is hidden and not required if territory is not activable (AOM)
-      const fields = ['street', 'postcode', 'city', 'country'];
-      const addressControl = this.territoryForm.controls['address'] as FormGroup;
-
-      fields.forEach((field) => {
-        const ctr = addressControl.controls[field];
-        ctr.updateValueAndValidity();
-        ctr.markAsUntouched();
-      });
-
-      // Siret is hidden and not required if territory is not active (AOM)
-      const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
-      const siretControl = companyFormGroup.controls['siret'];
-      siretControl.setValidators([Validators.required]);
-      siretControl.updateValueAndValidity();
-      siretControl.markAsUntouched();
-
-      const inseeControl = this.territoryForm.controls.inseeString;
-      inseeControl.setValidators([Validators.pattern('^( *[0-9]{5} *,? *)+$')]);
-      inseeControl.updateValueAndValidity();
-      inseeControl.markAsUntouched();
-
-      const parentControl = this.territoryForm.controls.parent;
-      parentControl.setValidators([Validators.required]);
-      parentControl.updateValueAndValidity();
-      parentControl.markAsUntouched();
+  private updateCompanyForm(company: CompanyInterface): void {
+    if (!company) {
+      return;
     }
+
+    const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
+    this.companyId = company._id;
+    this.company = company;
+
+    if (this.territoryForm.get('address.street')) {
+      this.territoryForm.get('address.street').setValue(company.address_street);
+    }
+    if (this.territoryForm.get('address.postcode')) {
+      this.territoryForm.get('address.postcode').setValue(company.address_postcode);
+    }
+    if (this.territoryForm.get('address.cedex')) {
+      this.territoryForm.get('address.cedex').setValue(company.address_cedex);
+    }
+    if (this.territoryForm.get('address.city')) {
+      this.territoryForm.get('address.city').setValue(company.address_city);
+    }
+
+    this.territoryForm.get('address.country').setValue('France');
+
+    companyFormGroup.patchValue({
+      siret: company.siret,
+      _id: company._id,
+      naf_entreprise: company.company_naf_code || '',
+      nature_juridique: company.legal_nature_label || '',
+      rna: company.nonprofit_code || '',
+      vat_intra: company.intra_vat || '',
+    });
+  }
+
+  private resetCompanyForm(companyFormGroup: FormGroup) {
+    companyFormGroup.patchValue({
+      naf_entreprise: '',
+      nature_juridique: '',
+      rna: '',
+      vat_intra: '',
+    });
   }
 
   private setTerritoryFormValue(territory: TerritoryInterface): void {
-    this.territoryId = territory ? territory._id : null;
-
-    if (!this.territoryId) {
-      ['company', 'address', 'contacts.gdpr_dpo', 'contacts.gdpr_controller', 'contacts.technical'].forEach((key) => {
-        if (this.territoryForm.get(key) instanceof FormGroup) this.territoryForm.get(key).reset();
-      });
-
-      this.territoryForm.reset();
+    if (!territory) {
+      return;
     }
 
-    const territoryFormValue = { ...territory, inseeString: '' };
+    this.updateContactsForm(territory.contacts);
+    this.updateCompanyIfExists(territory.company_id);
+  }
 
-    this.territoryForm.patchValue(territoryFormValue);
-
-    if (this.territoryId && this.isRegistryGroup) {
-      if (territory.company_id) {
-        this.companyService.getById(territory.company_id).subscribe((company) => {
-          this.updateCompanyForm(company);
-        });
-      }
+  private updateCompanyIfExists(companyId: number) {
+    if (!companyId) {
+      return;
     }
+    this.companyService
+      .getById(companyId)
+      .pipe(
+        catchHttpStatus(404, (err) => {
+          this.toastr.error('Entreprise non trouvée');
+          throw err;
+        }),
+      )
+      .subscribe((company) => this.updateCompanyForm(company));
+  }
+
+  private updateContactsForm(contacts: ContactsInterface) {
+    const contactsFormGroup: FormGroup = this.territoryForm.controls.contacts as FormGroup;
+    contactsFormGroup.patchValue({ ...contacts });
   }
 }

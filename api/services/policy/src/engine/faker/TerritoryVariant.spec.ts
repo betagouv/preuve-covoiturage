@@ -5,17 +5,14 @@ import { FakerEngine } from './FakerEngine';
 
 test('should fill territory', (t) => {
   const params = {
-    start: [1, 2],
-    end: [1],
+    start: [{ com: '91471', aom: '217500016', epci: '200056232' }],
+    end: [{ com: '91471', aom: '217500016', epci: '200056232' }],
   };
   const territoryVariant = new TerritoryVariant(params);
   const trip = FakerEngine.getBasicTrip(3);
   const completedTrip = territoryVariant.generate(trip);
-  const start = completedTrip.map((p) => p.start_territory_id).reduce((arr, i) => [...arr, ...i], []);
-  t.log(start);
-  start.map((s) => t.true(params.start.indexOf(s) > -1));
-
-  const end = completedTrip.map((p) => p.end_territory_id).reduce((arr, i) => [...arr, ...i], []);
-  t.log(end);
-  end.map((s) => t.true(params.end.indexOf(s) > -1));
+  const start = completedTrip.map((p) => p.start.com);
+  start.map((com) => t.true(params.start.findIndex((s) => s.com === com) >= 0));
+  const end = completedTrip.map((p) => p.end.com);
+  end.map((com) => t.true(params.end.findIndex((s) => s.com === com) >= 0));
 });

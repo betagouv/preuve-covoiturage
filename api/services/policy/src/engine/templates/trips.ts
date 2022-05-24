@@ -84,6 +84,18 @@ const tripDefinitions = [
   },
 ];
 
+const inside = {
+  com: '91377',
+  aom: '217500016',
+  epci: '200056232',
+};
+
+const outside = {
+  com: '33063',
+  aom: '243300316',
+  epci: '200056232',
+};
+
 export const trips: TripInterface[] = [
   ...tripDefinitions.map((def) =>
     faker.trip([
@@ -93,8 +105,8 @@ export const trips: TripInterface[] = [
         datetime: new Date(def.datetime),
         is_driver: true,
         identity_uuid: def.driver_identity_uuid,
-        start_territory_id: def.inside ? [1] : [2],
-        end_territory_id: def.inside ? [1] : [2],
+        start: def.inside ? { ...inside } : { ...outside },
+        end: def.inside ? { ...inside } : { ...outside },
       },
       {
         carpool_id: def.passenger_carpool_id,
@@ -103,8 +115,8 @@ export const trips: TripInterface[] = [
         is_driver: false,
         identity_uuid: def.passenger_identity_uuid,
         seats: def.passenger_seats,
-        start_territory_id: def.inside ? [1] : [2],
-        end_territory_id: def.inside ? [1] : [2],
+        start: def.inside ? { ...inside } : { ...outside },
+        end: def.inside ? { ...inside } : { ...outside },
       },
     ]),
   ),

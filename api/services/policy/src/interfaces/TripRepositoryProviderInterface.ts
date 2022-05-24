@@ -4,8 +4,10 @@ import { ProcessableCampaign } from '../engine/ProcessableCampaign';
 export interface TripRepositoryProviderInterface {
   findTripByPolicy(
     policy: ProcessableCampaign,
+    from: Date,
+    to: Date,
     batchSize?: number,
-    override_from?: Date,
+    override?: boolean,
   ): AsyncGenerator<TripInterface[], void, void>;
   listApplicablePoliciesId(): Promise<number[]>;
 }
@@ -14,7 +16,9 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
   abstract listApplicablePoliciesId(): Promise<number[]>;
   abstract findTripByPolicy(
     policy: ProcessableCampaign,
+    from: Date,
+    to: Date,
     batchSize?: number,
-    override_from?: Date,
+    override?: boolean,
   ): AsyncGenerator<TripInterface[], void, void>;
 }

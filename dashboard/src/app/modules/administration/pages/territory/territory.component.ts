@@ -6,7 +6,7 @@ import { Roles } from '~/core/enums/user/roles';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { CompanyV2 } from '~/core/entities/shared/companyV2';
+import { ResultInterface as CompanyInterface } from '~/shared/company/find.contract';
 import { CompanyService } from '../../../company/services/company.service';
 
 @Component({
@@ -17,7 +17,7 @@ import { CompanyService } from '../../../company/services/company.service';
 export class TerritoryComponent extends DestroyObservable implements OnInit {
   public readOnly$: Observable<boolean>;
   public territory: TerritoryInterface;
-  public company: CompanyV2;
+  public company: CompanyInterface;
 
   constructor(
     private auth: AuthenticationService,

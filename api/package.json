@@ -38,7 +38,7 @@
     "test:ilos:integration": "lerna run --scope @ilos/* test:integration",
     "seed:templates": "yarn workspace @pdc/service-policy ilos policy:seed",
     "migrate:sql": "if [ -z \"$SKIP_MIGRATIONS\" ]; then DATABASE_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator up; else echo '>> Migrations skipped'; fi",
-    "migrate": "if [ -z \"$SKIP_MIGRATIONS\" ]; then DATABASE_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator up && POSTGRES_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator geo:import; else echo '>> Migrations skipped'; fi",
+    "migrate": "if [ -z \"$SKIP_MIGRATIONS\" ]; then POSTGRES_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator geo:import && DATABASE_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator up; else echo '>> Migrations skipped'; fi",
     "process:journey": "yarn workspace @pdc/proxy ilos process:journey"
   },
   "keywords": [

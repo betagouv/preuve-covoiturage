@@ -26,7 +26,6 @@ import { FindCampaignAction } from './actions/FindCampaignAction';
 import { ApplyAction } from './actions/ApplyAction';
 import { FinalizeAction } from './actions/FinalizeAction';
 import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
-import { SimulateOnFakeAction } from './actions/SimulateOnFakeAction';
 import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
 
 import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryProvider';
@@ -38,12 +37,8 @@ import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProv
 
 import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateRuleParametersMiddleware';
 
-import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
-import { SeedCommand } from './commands/SeedCommand';
-
 @serviceProvider({
   config,
-  commands: [PolicyProcessCommand, SeedCommand],
   providers: [
     CampaignPgRepositoryProvider,
     MetadataRepositoryProvider,
@@ -75,7 +70,6 @@ import { SeedCommand } from './commands/SeedCommand';
     ApplyAction,
     FinalizeAction,
     SimulateOnPastAction,
-    SimulateOnFakeAction,
     SimulateOnFutureAction,
   ],
   connections: [

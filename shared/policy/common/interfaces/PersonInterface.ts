@@ -1,3 +1,5 @@
+import { TerritoryCodeInterface } from '../../../territory/common/interfaces/TerritoryCodeInterface';
+
 export interface PersonInterface {
   identity_uuid: string;
   carpool_id: number;
@@ -8,12 +10,10 @@ export interface PersonInterface {
   is_driver: boolean;
   has_travel_pass: boolean;
   datetime: Date;
-  start_insee?: string;
-  end_insee?: string;
   seats: number;
   duration: number;
   distance: number;
   cost: number;
-  start_territory_id: number[];
-  end_territory_id: number[];
+  start: TerritoryCodeInterface;
+  end: TerritoryCodeInterface;
 }

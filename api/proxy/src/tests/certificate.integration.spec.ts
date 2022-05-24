@@ -12,7 +12,6 @@ import anyTest, { TestFn } from 'ava';
 import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TokenProvider } from '@pdc/provider-token';
-import { dbBeforeMacro, dbAfterMacro, DbContextInterface, getDbMacroConfig } from '@pdc/helper-test';
 import { Kernel } from '../Kernel';
 
 import { HttpTransport } from '../HttpTransport';
@@ -25,18 +24,17 @@ interface ContextType {
   crypto: CryptoProvider;
   token: TokenProvider;
   auth: string;
-  db: DbContextInterface;
 }
 
 // create a test to configure the 'after' hook
 // this must be done before using the macro to make sure this hook
 // runs before the one from the macro
 const test = anyTest as TestFn<ContextType>;
-const config = getDbMacroConfig();
-process.env.APP_POSTGRES_URL = config.tmpConnectionString;
+// const config = getDbMacroConfig();
+// process.env.APP_POSTGRES_URL = config.tmpConnectionString;
 
 test.before.skip(async (t) => {
-  t.context.db = await dbBeforeMacro(config);
+  // t.context.db = await dbBeforeMacro(config);
   t.context.crypto = new CryptoProvider();
   t.context.token = new TokenProvider(new MockJWTConfigProvider());
   await t.context.token.init();
@@ -61,7 +59,7 @@ test.after.always.skip(async (t) => {
   // shutdown app and connections
   await t.context.app.down();
   await t.context.kernel.shutdown();
-  await dbAfterMacro(t.context.db);
+  // await dbAfterMacro(t.context.db);
 });
 
 test.serial.skip('Generate a certificate', async (t) => {
