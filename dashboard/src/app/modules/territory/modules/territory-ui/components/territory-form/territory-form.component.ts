@@ -115,10 +115,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
 
     const aomSiren: string = this.getAOMSiren();
-    if (!aomSiren) {
-      // TODO should be toasted when enterring siret
-      this.toastr.error(`Aucune EPCI ou AOM correspondant à ce numéro de SIREN`);
-    }
     const aomName: string = this.getTerritoryName();
 
     const createTerritory: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
@@ -235,11 +231,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             tap((company) => this.updateCompanyForm(company)),
             mergeMap((company) => this.territoryApi.findGeoBySiren({ siren: company.siren })),
           )
-          .subscribe((geoBySirenResponse) => this.updateTerritoryGeoList(geoBySirenResponse));
+          .subscribe((geoBySirenResponse) => this.updateTerritoryGeoListOrToastError(geoBySirenResponse));
       });
   }
 
-  private updateTerritoryGeoList(geoBySirenResponse: FindGeoBySirenResultInterface): void {
+  private updateTerritoryGeoListOrToastError(geoBySirenResponse: FindGeoBySirenResultInterface): void {
+    if (!!!geoBySirenResponse.coms.length) {
+      this.toastr.info(`Aucune EPCI ou AOM correspondant à ce numéro de SIREN`);
+    }
     this.findGeoBySiretResponse = geoBySirenResponse;
     this.comComs = geoBySirenResponse.coms.sort((g1, g2) => g1.name.localeCompare(g2.name));
   }
