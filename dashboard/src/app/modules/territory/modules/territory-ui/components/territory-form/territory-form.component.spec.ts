@@ -1,3 +1,5 @@
+import { CreateTerritoryGroupInterface } from './../../../../../../core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryGroupInterface } from './../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
@@ -27,13 +29,10 @@ describe('TerritoryFormComponent', () => {
     address_postcode: '69210',
   };
 
-  const territory: TerritoryInterface = {
+  const territory: TerritoryGroupInterface = {
     _id: 44,
-    level: TerritoryLevelEnum.Towngroup,
     name: "Communauté de communes du Pays de L'Arbresle",
     company_id: 3,
-    children: [1, 2],
-    parent: 5,
     contacts: {
       gdpr_dpo: {
         firstname: 'gdpr',
@@ -51,12 +50,16 @@ describe('TerritoryFormComponent', () => {
         email: 'technical@mail.com',
       },
     },
+    selector: {},
     address: {
       street: '',
       postcode: '',
       city: '',
       country: '',
     },
+    shortname: '',
+    created_at: new Date(),
+    updated_at: new Date(),
   };
 
   const territoryApiServiceSpy = jasmine.createSpyObj<TerritoryApiService>('TerritoryApiService', {
