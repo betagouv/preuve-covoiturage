@@ -4,6 +4,7 @@ import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { Roles } from '~/core/enums/user/roles';
 import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
+import { ResultInterface as CampaignInterface } from '~/shared/policy/find.contract';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
@@ -12,6 +13,7 @@ import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
   styleUrls: ['./campaign-rules-view.component.scss'],
 })
 export class CampaignRulesViewComponent implements OnInit {
+  @Input() campaignInterface: CampaignInterface;
   @Input() campaign: CampaignUx;
   constructor(private _authenticationService: AuthenticationService, private _campaignUiService: CampaignUiService) {}
 
@@ -24,14 +26,6 @@ export class CampaignRulesViewComponent implements OnInit {
       this.campaign.status === CampaignStatusEnum.DRAFT
     );
   }
-  get daysAndTimes(): string {
-    const weekDays = this.campaign.filters.weekday;
-    const timeRanges = this.campaign.filters.time;
-    if (!weekDays) {
-      return '';
-    }
-    return this._campaignUiService.daysAndTimes(weekDays, timeRanges);
-  }
 
   get targets(): string {
     const forDriver = this.campaign.ui_status.for_driver;
@@ -43,11 +37,11 @@ export class CampaignRulesViewComponent implements OnInit {
   }
 
   get ranks(): string {
-    const rank = this.campaign.filters.rank;
-    if (!rank) {
+    const rankSlug = this.campaignInterface.global_rules.find((r) => r.slug === 'rank_whitelist_filter');
+    if (!rankSlug) {
       return '';
     }
-    return this._campaignUiService.ranks(rank);
+    return this._campaignUiService.ranks(rankSlug.parameters);
   }
 
   get insee(): string {

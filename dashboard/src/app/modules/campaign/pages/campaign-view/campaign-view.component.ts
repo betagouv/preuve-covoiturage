@@ -6,6 +6,7 @@ import { bufferTime, concatMap, map, take, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { ResultInterface as CampaignInterface } from '~/shared/policy/find.contract';
 import { Roles } from '~/core/enums/user/roles';
 import { catchHttpError } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -21,6 +22,7 @@ import { TerritoryGroupInterface } from '~/shared/territory/common/interfaces/Te
 })
 export class CampaignViewComponent extends DestroyObservable implements OnInit {
   public territory: TerritoryGroupInterface;
+  public campaignInterface: CampaignInterface;
   public campaignUx: CampaignUx;
   public showSummary = false;
   public isLoaded = false;
@@ -71,8 +73,9 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
         }),
         // set the local var with a mapped version of the data
         // and pass its territory_id on
-        concatMap((campaign: Campaign) => {
-          this.campaignUx = new CampaignUx(campaign.toFormValues());
+        concatMap((campaign: CampaignInterface | Campaign) => {
+          this.campaignInterface = campaign as CampaignInterface;
+          this.campaignUx = new CampaignUx((campaign as Campaign).toFormValues());
           return of(campaign.territory_id);
         }),
         // fetch the territory data
