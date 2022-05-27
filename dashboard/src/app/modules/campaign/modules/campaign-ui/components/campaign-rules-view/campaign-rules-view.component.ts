@@ -1,3 +1,4 @@
+import { RuleInterface } from './../../../../../../core/entities/api/shared/common/interfaces/RuleInterface';
 import { Component, Input, OnInit } from '@angular/core';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
@@ -37,7 +38,10 @@ export class CampaignRulesViewComponent implements OnInit {
   }
 
   get ranks(): string {
-    const rankSlug = this.campaignInterface.global_rules.find((r) => r.slug === 'rank_whitelist_filter');
+    const rankSlug: RuleInterface = this._campaignUiService.findGlobalRule(
+      this.campaignInterface,
+      'rank_whitelist_filter',
+    );
     if (!rankSlug) {
       return '';
     }

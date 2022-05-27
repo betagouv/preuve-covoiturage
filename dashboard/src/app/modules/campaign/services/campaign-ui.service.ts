@@ -1,3 +1,4 @@
+import { CampaignInterface } from './../../../../../../shared/policy/common/interfaces/CampaignInterface';
 import { WeekDay } from '@angular/common';
 import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 
@@ -17,6 +18,7 @@ import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { DAYS } from '~/core/const/days.const';
 import { RestrictionUnitEnum } from '~/core/enums/campaign/restrictions.enum';
 import { CommonDataService } from '~/core/services/common-data.service';
+import { RuleInterface } from '../../../core/entities/api/shared/common/interfaces/RuleInterface';
 
 // todo: remove this duplicate
 enum RestrictionPeriodsEnum {
@@ -101,6 +103,10 @@ export class CampaignUiService {
       text += `.</li></b>`;
     }
     return text;
+  }
+
+  public findGlobalRule(campaign: CampaignInterface, slug: string): RuleInterface {
+    return campaign.global_rules.find((r) => r.slug === slug);
   }
 
   public formatWeekDays(weekDays: WeekDay[]): string {
