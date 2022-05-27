@@ -59,7 +59,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
           tg.address,
           tgs.selector
         FROM ${this.table} AS tg
-        JOIN selector AS tgs
+        LEFT JOIN selector AS tgs
           ON tgs.territory_group_id = tg._id
         WHERE 
           tg._id = $1 AND
@@ -143,7 +143,9 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
       const resultData = result.rows[0];
 
-      await this.syncSelector(connection, resultData._id, data.selector);
+      if (data.selector) {
+        await this.syncSelector(connection, resultData._id, data.selector);
+      }
 
       await connection.query('COMMIT');
       return { ...resultData, selector: data.selector };
@@ -240,7 +242,9 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
       const resultData = result.rows[0];
 
-      await this.syncSelector(connection, resultData._id, data.selector);
+      if (data.selector) {
+        await this.syncSelector(connection, resultData._id, data.selector);
+      }
 
       await connection.query('COMMIT');
       return { ...resultData, selector: data.selector };
