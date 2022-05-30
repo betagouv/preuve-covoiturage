@@ -53,7 +53,6 @@ export class HttpApiInterceptor implements HttpInterceptor {
             break;
 
           case 0: // Unknown error
-          case 503: // Maintenance mode
             if (this.can503(req)) this.router.navigate(['/503']);
             break;
 
