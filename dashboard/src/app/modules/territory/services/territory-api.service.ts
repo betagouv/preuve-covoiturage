@@ -10,7 +10,6 @@ import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { CrudActions } from '~/core/services/api/json-rpc.crud';
 import {
   CreateTerritoryGroupInterface,
-  TerritoryInterface,
   TerritoryGroupInterface,
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';

@@ -1,5 +1,3 @@
-import { CreateTerritoryGroupInterface } from './../../../../../../core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
-import { TerritoryGroupInterface } from './../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
@@ -7,14 +5,15 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
-import { TerritoryInterface, TerritoryLevelEnum } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { User } from '../../../../../../core/entities/authentication/user';
 import { ResultInterface as CompanyInterface } from '~/shared/company/find.contract';
+import { User } from '../../../../../../core/entities/authentication/user';
 import { Groups } from '../../../../../../core/enums/user/groups';
 import { Roles } from '../../../../../../core/enums/user/roles';
 import { AuthenticationService } from '../../../../../../core/services/authentication/authentication.service';
 import { CompanyService } from '../../../../../company/services/company.service';
 import { TerritoryApiService } from '../../../../services/territory-api.service';
+// eslint-disable-next-line max-len
+import { TerritoryGroupInterface } from './../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { TerritoryFormComponent } from './territory-form.component';
 
 describe('TerritoryFormComponent', () => {
