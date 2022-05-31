@@ -6,6 +6,8 @@
   <form class="territoryForm" [formGroup]="territoryForm">
     <h2>Informations générales</h2>
 
+    <mat-error *ngIf="!!territory && hasNoGeoReferential()">Aucun référentiel géographique configuré pour ce territoire</mat-error>
+
     <div class="line">
       <div *ngIf="isRegistryGroup" style="margin-right: 50px;">
         <h3>Structure</h3>
@@ -14,17 +16,16 @@
         <h3>Adresse</h3>
         <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
       </div>
-      <div style="flex: 1;" *ngIf="comComs && comComs.length > 0">
+      <div style="flex: 1;" >
         <h3>Communes membres</h3>
-        <div class="comcoms">
+        <div class="comcoms" *ngIf="comComs && comComs.length > 0">
           <div style="width: 50%;" *ngFor="let com of comComs; let idx = index">
             {{ com.name }}   ({{ com.insee }})
           </div>
         </div>
-      </div>
-      <mat-error *ngIf="!(comComs && comComs.length > 0)">Aucune commune associée à ce numéro de SIRET</mat-error>
+        <mat-hint *ngIf="!(comComs && comComs.length > 0)">Aucun référentiel géographique associé à ce numéro de SIRET</mat-hint>
+      </div>  
     </div>
-
 
 
     <h2>Contacts et responsables</h2>

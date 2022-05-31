@@ -12,7 +12,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryGroupInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 
 @Component({
   selector: 'app-campaign-view',
@@ -20,7 +20,7 @@ import { TerritoryInterface } from '~/shared/territory/common/interfaces/Territo
   styleUrls: ['./campaign-view.component.scss'],
 })
 export class CampaignViewComponent extends DestroyObservable implements OnInit {
-  public territory: TerritoryInterface;
+  public territory: TerritoryGroupInterface;
   public campaignUx: CampaignUx;
   public showSummary = false;
   public isLoaded = false;
@@ -79,7 +79,7 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
         concatMap((_id) => this._territoryApi.getById(_id)),
         takeUntil(this.destroy$),
       )
-      .subscribe((territory: TerritoryInterface) => {
+      .subscribe((territory: TerritoryGroupInterface) => {
         this.territory = territory;
         this.isLoaded = true;
       });

@@ -10,7 +10,7 @@ import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { CrudActions } from '~/core/services/api/json-rpc.crud';
 import {
   CreateTerritoryGroupInterface,
-  TerritoryInterface,
+  TerritoryGroupInterface,
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { signature as signatureFind } from '~/shared/territory/find.contract';
@@ -41,7 +41,7 @@ export class TerritoryApiService {
 
   constructor(private http: HttpClient) {}
 
-  patchContact(item: PatchContactParamsInterface): Observable<TerritoryInterface> {
+  patchContact(item: PatchContactParamsInterface): Observable<TerritoryGroupInterface> {
     const jsonRPCParam = new JsonRPCParam(signaturePatch, item);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
@@ -54,6 +54,7 @@ export class TerritoryApiService {
     return new JsonRPCParam(signatureFind, { _id: id });
   }
 
+  // TODO: split this separate api service
   geo(params: ParamsInterfaceGeo): Observable<ResultWithPagination<TerritoryGeoResultInterface>> {
     const jsonRPCParam: JsonRPCParam = new JsonRPCParam(signatureGeo, params);
     return this.callOne(jsonRPCParam);
@@ -64,22 +65,22 @@ export class TerritoryApiService {
     return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
   }
 
-  create(item: CreateTerritoryGroupInterface): Observable<TerritoryInterface> {
+  create(item: CreateTerritoryGroupInterface): Observable<TerritoryGroupInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.METHOD}:${CrudActions.CREATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((result) => result.data));
   }
 
-  update(item: UpdateTerritoryGroupInterface): Observable<TerritoryInterface> {
+  update(item: UpdateTerritoryGroupInterface): Observable<TerritoryGroupInterface> {
     const jsonRPCParam = new JsonRPCParam(`${this.METHOD}:${CrudActions.UPDATE}`, item);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  getById(id: number): Observable<TerritoryInterface> {
+  getById(id: number): Observable<TerritoryGroupInterface> {
     const jsonRPCParam = this.paramGetById(id);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  getList(params?: any): Observable<{ data: TerritoryInterface[]; meta: any }> {
+  getList(params?: any): Observable<{ data: TerritoryGroupInterface[]; meta: any }> {
     return this.callOne(this.paramGetList(params));
   }
 

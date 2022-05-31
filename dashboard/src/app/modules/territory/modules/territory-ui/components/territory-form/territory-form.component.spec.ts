@@ -5,14 +5,15 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
-import { TerritoryInterface, TerritoryLevelEnum } from '~/shared/territory/common/interfaces/TerritoryInterface';
-import { User } from '../../../../../../core/entities/authentication/user';
 import { ResultInterface as CompanyInterface } from '~/shared/company/find.contract';
+import { User } from '../../../../../../core/entities/authentication/user';
 import { Groups } from '../../../../../../core/enums/user/groups';
 import { Roles } from '../../../../../../core/enums/user/roles';
 import { AuthenticationService } from '../../../../../../core/services/authentication/authentication.service';
 import { CompanyService } from '../../../../../company/services/company.service';
 import { TerritoryApiService } from '../../../../services/territory-api.service';
+// eslint-disable-next-line max-len
+import { TerritoryGroupInterface } from './../../../../../../../../../shared/territory/common/interfaces/TerritoryInterface';
 import { TerritoryFormComponent } from './territory-form.component';
 
 describe('TerritoryFormComponent', () => {
@@ -27,13 +28,10 @@ describe('TerritoryFormComponent', () => {
     address_postcode: '69210',
   };
 
-  const territory: TerritoryInterface = {
+  const territory: TerritoryGroupInterface = {
     _id: 44,
-    level: TerritoryLevelEnum.Towngroup,
     name: "Communauté de communes du Pays de L'Arbresle",
     company_id: 3,
-    children: [1, 2],
-    parent: 5,
     contacts: {
       gdpr_dpo: {
         firstname: 'gdpr',
@@ -51,12 +49,16 @@ describe('TerritoryFormComponent', () => {
         email: 'technical@mail.com',
       },
     },
+    selector: {},
     address: {
       street: '',
       postcode: '',
       city: '',
       country: '',
     },
+    shortname: '',
+    created_at: new Date(),
+    updated_at: new Date(),
   };
 
   const territoryApiServiceSpy = jasmine.createSpyObj<TerritoryApiService>('TerritoryApiService', {

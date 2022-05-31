@@ -8,18 +8,15 @@
  * 4. Check wrong operator_id
  */
 
-import { get } from 'lodash';
-import supertest from 'supertest';
-import anyTest, { TestFn } from 'ava';
-
 import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TokenProvider } from '@pdc/provider-token';
-import { Kernel } from '../Kernel';
-
+import anyTest, { TestFn } from 'ava';
+import supertest from 'supertest';
 import { HttpTransport } from '../HttpTransport';
-import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
+import { Kernel } from '../Kernel';
 import { cookieLoginHelper } from './helpers/cookieLoginHelper';
+import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
 
 interface ContextType {
   kernel: KernelInterface;
@@ -92,7 +89,6 @@ test.skip("Status: check 'pending' journey", async (t) => {
   // `,
   //   values: [1, 1, journey_id, '{}'],
   // });
-
   // // check the status
   // const response = await t.context.request
   //   .get(`/v2/journeys/${journey_id}`)
@@ -118,7 +114,6 @@ test.skip("Status: check 'pending' journey", async (t) => {
 
 test.skip('Status: check wrong permissions', async (t) => {
   // const journey_id = uuid();
-
   // // check the status
   // const response = await t.context.request
   //   .get(`/v2/journeys/${journey_id}`)
@@ -136,7 +131,6 @@ test.skip('Status: check wrong permissions', async (t) => {
   //   );
   // t.log(response.body);
   // t.is(response.status, 403);
-
   // // FIX ME with RPC error code
   // t.deepEqual(get(response, 'body.error', {}), {
   //   code: 403,
@@ -147,7 +141,6 @@ test.skip('Status: check wrong permissions', async (t) => {
 
 test.skip('Status: check wrong journey_id', async (t) => {
   // const journey_id = uuid();
-
   // // manually create a journey in database
   // await t.context.db.tmpConnection.getClient().query({
   //   text: `
@@ -158,7 +151,6 @@ test.skip('Status: check wrong journey_id', async (t) => {
   // `,
   //   values: [1, 1, journey_id, '{}'],
   // });
-
   // // check the status
   // const response = await t.context.request
   //   .get(`/v2/journeys/${journey_id}-wrong`)
@@ -183,7 +175,6 @@ test.skip('Status: check wrong journey_id', async (t) => {
 
 test.skip('Status: check wrong operator_id', async (t) => {
   // const journey_id = `test-${Math.random()}`;
-
   // // manually create a journey in database
   // await t.context.db.tmpConnection.getClient().query({
   //   text: `
@@ -194,7 +185,6 @@ test.skip('Status: check wrong operator_id', async (t) => {
   // `,
   //   values: [1, 1000, journey_id, '{}'],
   // });
-
   // // check the status
   // const response = await t.context.request
   //   .get(`/v2/journeys/${journey_id}`)

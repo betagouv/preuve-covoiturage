@@ -1,3 +1,4 @@
+import { TerritorySelectorsInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 /* tslint:disable:variable-name*/
 import { AbstractControl } from '@angular/forms';
 import { removeNullsProperties } from '~/core/entities/utils';
@@ -15,14 +16,18 @@ export class TerritoryMapper {
     aomSiren: string,
     aomName: string,
   ): CreateTerritoryGroupInterface {
+    let selector: TerritorySelectorsInterface;
+    if (aomSiren) {
+      selector = {
+        aom: [aomSiren],
+      };
+    }
     const territory: CreateTerritoryGroupInterface = {
       name: aomName,
       company_id: company_id,
       contacts: ContactsMapper.toModel(territoryForm.get('contacts')),
       address: removeNullsProperties(territoryForm.get('address').value),
-      selector: {
-        aom: [aomSiren],
-      },
+      selector,
     };
     return territory;
   }

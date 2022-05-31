@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { debounceTime, finalize, skip } from 'rxjs/operators';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryGroupInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { PaginationState } from '../../../core/services/store/PaginationState';
 import { StoreLoadingState } from '../../../core/services/store/StoreLoadingState';
 
@@ -14,7 +14,7 @@ export class TerritoryStoreService {
     this._setupFilterSubject();
   }
 
-  private entitiesSubject = new BehaviorSubject<TerritoryInterface[]>([]);
+  private entitiesSubject = new BehaviorSubject<TerritoryGroupInterface[]>([]);
 
   private readonly DEFAULT_PAGINATION = {
     total: 0,
@@ -33,7 +33,7 @@ export class TerritoryStoreService {
   private _listLoadingState = new BehaviorSubject<StoreLoadingState>(StoreLoadingState.Off);
   private _filterSubject = new BehaviorSubject<any>(null);
 
-  get entities$(): Observable<TerritoryInterface[]> {
+  get entities$(): Observable<TerritoryGroupInterface[]> {
     return this._entities$;
   }
 

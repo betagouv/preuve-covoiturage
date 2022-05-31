@@ -11,7 +11,7 @@ export interface TerritoryGroupInterface {
   created_at: Date;
   updated_at: Date;
   deleted_at?: Date;
-  selector: TerritorySelectorsInterface;
+  selector?: TerritorySelectorsInterface;
 }
 
 export type CreateTerritoryGroupInterface = Omit<

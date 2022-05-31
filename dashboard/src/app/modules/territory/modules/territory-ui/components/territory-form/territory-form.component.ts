@@ -19,7 +19,7 @@ import { TerritoryApiService } from '~/modules/territory/services/territory-api.
 import { ResultInterface as CompanyInterface } from '~/shared/company/find.contract';
 import {
   CreateTerritoryGroupInterface,
-  TerritoryInterface,
+  TerritoryGroupInterface,
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { SingleResultInterface as FindGeoBySirenResultInterface } from '~/shared/territory/findGeoBySiren.contract';
@@ -34,7 +34,7 @@ import { FormContact } from '../../../../../../shared/modules/form/forms/form-co
   styleUrls: ['./territory-form.component.scss'],
 })
 export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
-  @Input() territory: TerritoryInterface = null;
+  @Input() territory: TerritoryGroupInterface = null;
 
   public isRegistryGroup = false;
   public territoryForm: FormGroup;
@@ -57,7 +57,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   ngOnInit(): void {
-    this.route.data.subscribe((data: { territory: TerritoryInterface }) => {
+    this.route.data.subscribe((data: { territory: TerritoryGroupInterface }) => {
       this.territory = data.territory;
     });
     this.authService.user$
@@ -88,6 +88,15 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     return this.authService.hasRole([Roles.RegistryAdmin, Roles.TerritoryAdmin]);
   }
 
+  public hasNoGeoReferential() {
+    return [
+      !!this.territory.selector._id?.length,
+      !!this.territory.selector.aom?.length,
+      !!this.territory.selector.com?.length,
+      !!this.territory.selector.epci?.length,
+    ].every((condition) => condition === false);
+  }
+
   public onSubmit(): void {
     const formValues: TerritoryFormModel = cloneDeep(this.territoryForm.value);
     formValues.company_id = get(this, 'companyId', null);
@@ -106,11 +115,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
 
     const aomSiren: string = this.getAOMSiren();
-    if (!aomSiren) {
-      this.toastr.error(`Aucune EPCI ou AOM correspondant à ce numéro de SIREN`);
-      return;
-    }
-    const aomName: string = this.getAOMName();
+    const aomName: string = this.getTerritoryName();
 
     const createTerritory: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
       this.territoryForm,
@@ -138,12 +143,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     );
   }
 
-  private getAOMName(): string {
+  private getTerritoryName(): string {
     if (this.company.siren === this.findGeoBySiretResponse.aom_siren) {
       return this.findGeoBySiretResponse.aom_name;
     } else if (this.company.siren === this.findGeoBySiretResponse.epci_siren) {
       return this.findGeoBySiretResponse.epci_name;
-    } else return null;
+    } else return this.company.legal_name;
   }
 
   private getAOMSiren(): string {
@@ -226,11 +231,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             tap((company) => this.updateCompanyForm(company)),
             mergeMap((company) => this.territoryApi.findGeoBySiren({ siren: company.siren })),
           )
-          .subscribe((geoBySirenResponse) => this.updateTerritoryGeoList(geoBySirenResponse));
+          .subscribe((geoBySirenResponse) => this.updateTerritoryGeoListOrToastError(geoBySirenResponse));
       });
   }
 
-  private updateTerritoryGeoList(geoBySirenResponse: FindGeoBySirenResultInterface): void {
+  private updateTerritoryGeoListOrToastError(geoBySirenResponse: FindGeoBySirenResultInterface): void {
+    if (!!!geoBySirenResponse.coms.length) {
+      this.toastr.info(`Aucune EPCI ou AOM correspondant à ce numéro de SIREN`);
+    }
     this.findGeoBySiretResponse = geoBySirenResponse;
     this.comComs = geoBySirenResponse.coms.sort((g1, g2) => g1.name.localeCompare(g2.name));
   }
@@ -278,7 +286,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     });
   }
 
-  private setTerritoryFormValue(territory: TerritoryInterface): void {
+  private setTerritoryFormValue(territory: TerritoryGroupInterface): void {
     if (!territory) {
       return;
     }

@@ -5,7 +5,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Roles } from '~/core/enums/user/roles';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { TerritoryInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryGroupInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { ResultInterface as CompanyInterface } from '~/shared/company/find.contract';
 import { CompanyService } from '../../../company/services/company.service';
 
@@ -16,7 +16,7 @@ import { CompanyService } from '../../../company/services/company.service';
 })
 export class TerritoryComponent extends DestroyObservable implements OnInit {
   public readOnly$: Observable<boolean>;
-  public territory: TerritoryInterface;
+  public territory: TerritoryGroupInterface;
   public company: CompanyInterface;
 
   constructor(
