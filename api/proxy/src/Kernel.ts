@@ -18,6 +18,7 @@ import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
 import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
+import { StatsRefreshCommand } from './commands/StatsRefreshCommand';
 import { SeedCommand } from './commands/SeedCommand';
 import { config } from './config';
 
@@ -40,6 +41,6 @@ import { config } from './config';
     ...honorBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [ProcessJourneyCommand, SeedCommand, Commands.CallCommand],
+  commands: [ProcessJourneyCommand, SeedCommand, StatsRefreshCommand, Commands.CallCommand],
 })
 export class Kernel extends BaseKernel {}
