@@ -36,25 +36,40 @@ export class HttpApiInterceptor implements HttpInterceptor {
     return next.handle(clonedRequest).pipe(
       catchError((err) => {
         switch (err.status) {
-          case 401:
-            // ignore toastr error
-            break;
-          case 429:
+          case 401: // UNAUTHORIZED
             /**
-             * Display a waiting time in seconds to the user
-             * Add info() to the console
+             * Invalid credentials. Ignore toasting this error on login screen
              */
-            const { limit, current, remaining, resetTime } = err.error.error;
+            break;
+
+          case 429: // TOO_MANY_REQUESTS
+            /**
+             * Too many requests. Display a waiting time in seconds to the user
+             */
+            const { resetTime } = err.error.error;
             const wait = new Date(resetTime).getTime() - new Date().getTime();
 
             this.toastr.error(`merci de réessayer dans ${(wait / 1000) | 0}s`, "Trop d'essais de connexion");
 
-            console.warn('Too many requests', { limit, current, remaining, resetTime });
+            break;
+
+          case 502: // BAD_GATEWAY
+            /**
+             * @see https://nodejs.org/api/net.html#socketsettimeouttimeout-callback
+             * This happens when expess socket timeout configuration is reached
+             */
+            this.toastr.error(`La requête a pris trop de temps et a été abandonnée`);
+            break;
+
+          case 503: // SERVICE_UNAVAILABLE
+            /**
+             * Maintenance mode is activated on server side
+             * */
+            if (this.can503(req)) this.router.navigate(['/503']);
             break;
 
           case 0: // Unknown error
-          case 503: // Maintenance mode
-            if (this.can503(req)) this.router.navigate(['/503']);
+            this.toastr.error(`Une erreur est survenue`);
             break;
 
           default:
