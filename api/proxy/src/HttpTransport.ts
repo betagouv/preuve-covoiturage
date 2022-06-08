@@ -723,7 +723,7 @@ export class HttpTransport implements TransportInterface {
   private async getTerritoryInfos(user): Promise<any> {
     if (user.territory_id) {
       const dt = {
-        _id: [],
+        com: [],
       };
 
       try {
@@ -733,10 +733,10 @@ export class HttpTransport implements TransportInterface {
           { call: { user }, channel: { service: 'proxy' } },
         );
 
-        dt._id = authorizedCodes._id || [];
+        dt.com = authorizedCodes.com || [];
       } catch (e) {}
 
-      user.authorizedZoneCodes = { _id: [user.territory_id, ...dt._id] };
+      user.authorizedZoneCodes = { ...dt };
 
       return user;
     }

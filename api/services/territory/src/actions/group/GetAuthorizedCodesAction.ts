@@ -16,6 +16,6 @@ export class GetAuthorizedCodesAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.territoryRepository.getRelationCodes(params);
+    return this.territoryRepository.getRelationCodesCom(params);
   }
 }

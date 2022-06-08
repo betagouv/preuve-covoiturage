@@ -301,6 +301,23 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     return this.castSelectorId(result.rows[0].selector);
   }
 
+  async getRelationCodesCom(params: { _id: number }): Promise<TerritorySelectorsInterface> {
+    const query = {
+      text: `
+      SELECT
+        ARRAY_AGG(com) AS com
+      FROM territory.get_com_by_territory_id(
+        $1::int,
+        (select * from geo.get_latest_millesime())
+      )
+      `,
+      values: [params._id],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    return result.rows[0];
+  }
+
   // needed because _id must be numbers
   protected castSelectorId(
     input?: Partial<TerritorySelectorsInterface & { _id?: string[] }>,
