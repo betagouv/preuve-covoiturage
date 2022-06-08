@@ -5,7 +5,7 @@ import { PointInterface, InseeCoderInterface } from '../interfaces';
 
 @provider()
 export class LocalGeoProvider implements InseeCoderInterface {
-  protected table = 'geo.perimeters';
+  protected fn = 'geo.get_latest_by_point';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -16,12 +16,7 @@ export class LocalGeoProvider implements InseeCoderInterface {
       text: `
         SELECT
           com as value
-        FROM ${this.table}
-        WHERE
-          geom IS NOT NULL AND
-          ST_INTERSECTS(geom, ST_POINT($1::float, $2::float)::GEOGRAPHY)
-        ORDER BY surface ASC, year DESC
-        LIMIT 1
+        FROM ${this.fn}($1::float, $2::float)
       `,
       values: [lon, lat],
     });
