@@ -2,12 +2,11 @@ import { identity } from './common/identity.schema';
 
 const positionSchema = {
   type: 'object',
-  required: ['lat', 'lon', 'territory_id'],
+  required: ['lat', 'lon', 'geo_code'],
   additionalProperties: false,
   properties: {
     lat: { macro: 'lat' },
     lon: { macro: 'lon' },
-    territory_id: { macro: 'serial' },
     geo_code: { macro: 'insee' },
   },
 };
