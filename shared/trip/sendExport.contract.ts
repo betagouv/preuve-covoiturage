@@ -1,3 +1,5 @@
+import { TerritorySelectorsInterface } from '../territory/common/interfaces/TerritoryCodeInterface';
+
 export interface ParamsInterface {
   format: {
     tz: string;
@@ -9,7 +11,7 @@ export interface ParamsInterface {
     };
     territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
     operator_id?: number[];
-    territory_id?: number[];
+    geo_selector?: TerritorySelectorsInterface;
   };
   type?: string;
   from: {

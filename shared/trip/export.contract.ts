@@ -1,7 +1,4 @@
-// operator_id could be number if set from middleware
-export interface ParamsInterface extends Omit<BaseParamsInterface, 'territory_id'> {
-  territory_id?: number[];
-}
+import { TerritorySelectorsInterface } from '../territory/common/interfaces/TerritoryCodeInterface';
 
 export interface BaseParamsInterface {
   tz?: string;
@@ -11,8 +8,10 @@ export interface BaseParamsInterface {
   };
   // eslint-disable-next-line max-len
   operator_id?: number[]; //optional operator_id(s) fetch from form (for a territory), fetched context from middleware if operator
-  territory_id?: number; // optional territory_id params
+  geo_selector?: TerritorySelectorsInterface;
 }
+
+export type ParamsInterface = BaseParamsInterface;
 
 export type ResultInterface = void;
 

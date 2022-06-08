@@ -1,3 +1,5 @@
+import { territoryCodeSchema } from '../../../territory/common/schema';
+
 const params = {
   tz: {
     macro: 'tz',
@@ -70,18 +72,7 @@ const params = {
       },
     ],
   },
-  territory_id: {
-    oneOf: [
-      {
-        type: 'array',
-        minItems: 1,
-        items: { macro: 'serial' },
-      },
-      {
-        macro: 'serial',
-      },
-    ],
-  },
+  geo_selector: territoryCodeSchema,
 };
 
 export const search = {

@@ -1,3 +1,5 @@
+import { TerritorySelectorsInterface } from '../territory/common/interfaces/TerritoryCodeInterface';
+
 export interface FormatInterface {
   tz: string;
   filename?: string;
@@ -9,7 +11,7 @@ export interface QueryInterface {
     end: Date;
   };
   operator_id?: number[];
-  territory_id?: number[];
+  geo_selector?: TerritorySelectorsInterface;
 }
 
 export interface ParamsInterface {

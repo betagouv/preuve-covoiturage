@@ -1,5 +1,5 @@
 export interface TerritoryTripsInterface {
-  start_territory_id?: number;
-  end_territory_id?: number;
+  start_geo_code?: string;
+  end_geo_code?: number;
   aggregated_trips_journeys: string[];
 }
