@@ -236,7 +236,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
           service: handlerConfig.service,
           metadata: {
             repeat: {
-              cron: '0 5 6 * *',
+              cron: '0 6 8 * *',
             },
             jobId: 'trip.open_data_export',
           },
