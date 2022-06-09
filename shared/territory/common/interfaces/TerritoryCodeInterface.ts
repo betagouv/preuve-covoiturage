@@ -22,3 +22,16 @@ export interface TerritorySelectorsInterface {
   [TerritoryCodeEnum.Id]?: number[];
   [TerritoryCodeEnum.CityGroup]?: string[];
 }
+
+export interface SelectorNameInterface {
+  code: string;
+  name: string;
+}
+
+export interface TerritorySelectorDetailsInterface {
+  [TerritoryCodeEnum.Arr]?: SelectorNameInterface[];
+  [TerritoryCodeEnum.City]?: SelectorNameInterface[];
+  [TerritoryCodeEnum.Mobility]?: SelectorNameInterface[];
+  [TerritoryCodeEnum.Id]?: SelectorNameInterface[];
+  [TerritoryCodeEnum.CityGroup]?: SelectorNameInterface[];
+}

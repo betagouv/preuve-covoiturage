@@ -4,6 +4,7 @@ import {
   TerritoryCodeInterface,
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
+  TerritorySelectorDetailsInterface,
 } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 import { TerritoryRepositoryProviderInterface, TerritoryRepositoryProviderInterfaceResolver } from '../interfaces';
 
@@ -89,5 +90,9 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       throw new NotFoundException();
     }
     return result.rows[0].selector;
+  }
+
+  async findSelectorDetails(data: Partial<TerritorySelectorsInterface>): Promise<TerritorySelectorDetailsInterface> {
+    return null;
   }
 }
