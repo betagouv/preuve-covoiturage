@@ -37,8 +37,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     values: any[];
   } | null> {
     const filtersToProcess = [
-      'territory_id',
-      'operator_id',
+      'geo_selector',
       'status',
       'date',
       'ranks',
@@ -46,8 +45,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'campaign_id',
       'days',
       'hour',
-      'excluded_start_territory_id',
-      'excluded_end_territory_id',
+      'excluded_start_geo_code',
+      'excluded_end_geo_code',
     ].filter((key) => key in filters);
 
     let orderedFilters = {
@@ -55,33 +54,32 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       values: [],
     };
 
-    if (filters.territory_id) {
-      const inseeQueryResults = await this.connection.getClient().query({
-        text: `SELECT ARRAY_AGG(com) as insees from territory.get_com_by_territory_id($1::int, 2021::smallint)`,
-        values: [filters.territory_id],
-      });
-      if (inseeQueryResults.rowCount > 0 && inseeQueryResults.rows[0].insees) {
-        filters.territory_id = inseeQueryResults.rows[0].insees;
-      }
-    }
-
     if (filtersToProcess.length > 0) {
       orderedFilters = filtersToProcess
         .map((key) => ({ key, value: filters[key] }))
         .map((filter) => {
           switch (filter.key) {
-            case 'excluded_start_territory_id':
+            case 'excluded_start_geo_code':
+              if (!filter.value || !Array.isArray(filter.value)) {
+                return;
+              }
               return {
-                text: `start_territory_id <> ALL($#::int[])`,
+                text: `journey_start_insee <> ALL($#::varchar[])`,
                 values: [filter.value],
               };
-            case 'excluded_end_territory_id':
+            case 'excluded_end_geo_code':
+              if (!filter.value || !Array.isArray(filter.value)) {
+                return;
+              }
               return {
-                text: `end_territory_id <> ALL($#::int[])`,
+                text: `journey_end_insee <> ALL($#::varchar[])`,
                 values: [filter.value],
               };
-            case 'territory_id':
-              const territoryFilterValue = Array.isArray(filter.value) ? filter.value : [filter.value];
+            case 'geo_selector':
+              if (!filter.value || !filter.value.com || !Array.isArray(filter.value?.com)) {
+                return;
+              }
+              const territoryFilterValue = filter.value.com;
               return {
                 text: `(journey_start_insee = ANY($#::varchar[]) OR journey_end_insee = ANY($#::varchar[]))`,
                 values: [territoryFilterValue, territoryFilterValue],
@@ -157,6 +155,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         })
         .reduce(
           (acc, current) => {
+            if (!current || !current.text) {
+              return acc;
+            }
             acc.text.push(current.text);
             acc.values.push(...current.values);
             return acc;
@@ -181,18 +182,26 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const where = await this.buildWhereClauses(params);
 
     const excluded_start_sql_text = this.numberPlaceholders(`
-    SELECT start_territory_id, null as end_territory_id, ARRAY_AGG(CONCAT(TRIP_ID,'~',JOURNEY_ID)) AS AGGREGATED_TRIPS_JOURNEYS
-    FROM ${this.table} 
-    WHERE ${where.text} 
-    GROUP BY start_territory_id 
-    HAVING COUNT (start_territory_id) < 6`);
+      SELECT
+        journey_start_insee AS start_geo_code,
+        null AS end_geo_code,
+        ARRAY_AGG(CONCAT(trip_id,'~',journey_id)) AS aggregated_trips_journeys
+      FROM ${this.table} 
+      WHERE ${where.text} 
+      GROUP BY journey_start_insee 
+      HAVING COUNT (journey_start_insee) < 6
+    `);
 
     const excluded_end_sql_text = this.numberPlaceholders(`
-    SELECT null as start_territory_id, end_territory_id, ARRAY_AGG(CONCAT(TRIP_ID,'~',JOURNEY_ID)) AS AGGREGATED_TRIPS_JOURNEYS
-    FROM ${this.table} 
-    WHERE ${where.text} 
-    GROUP BY end_territory_id 
-    HAVING COUNT (end_territory_id) < 6`);
+      SELECT
+        null AS start_geo_code,
+        journey_end_insee AS end_geo_code,
+        ARRAY_AGG(CONCAT(trip_id,'~',journey_id)) AS aggregated_trips_journeys
+      FROM ${this.table} 
+      WHERE ${where.text} 
+      GROUP BY journey_end_insee 
+      HAVING COUNT (journey_end_insee) < 6
+    `);
 
     const query = {
       text: `${excluded_start_sql_text} UNION ALL ${excluded_end_sql_text}`,

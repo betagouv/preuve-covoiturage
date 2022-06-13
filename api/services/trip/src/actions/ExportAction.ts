@@ -74,10 +74,6 @@ export class ExportAction extends Action {
       buildParams.query.operator_id = Array.isArray(params.operator_id) ? params.operator_id : [params.operator_id];
     }
 
-    if (params.territory_id) {
-      buildParams.query.territory_id = Array.isArray(params.territory_id) ? params.territory_id : [params.territory_id];
-    }
-
     await this.kernel.notify<SendExportParamsInterface>(sendExportSignature, buildParams, {
       channel: {
         service: 'trip',

@@ -11,7 +11,7 @@ import { alias } from '../../shared/territory/listGeo.schema';
   middlewares: [
     hasPermissionMiddleware('common.territory.list'),
     // set the on_territories to own authorizedZoneCodes  when user is a territory
-    copyFromContextMiddleware('call.user.authorizedZoneCodes._id', 'where._id'),
+    copyFromContextMiddleware('call.user.authorizedZoneCodes.com', 'where.insee'),
     ['validate', alias],
   ],
 })

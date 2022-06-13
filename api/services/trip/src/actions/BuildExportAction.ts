@@ -306,12 +306,12 @@ export class BuildExportAction extends Action implements InitHookInterface {
     queryParam: TripSearchInterface,
   ) {
     if (excluded_territories.length !== 0) {
-      queryParam.excluded_start_territory_id = excluded_territories
-        .filter((t) => t.start_territory_id)
-        .map((t) => t.start_territory_id);
-      queryParam.excluded_end_territory_id = excluded_territories
-        .filter((t) => t.end_territory_id)
-        .map((t) => t.end_territory_id);
+      queryParam.excluded_start_geo_code = excluded_territories
+        .filter((t) => t.start_geo_code)
+        .map((t) => t.start_geo_code);
+      queryParam.excluded_end_geo_code = excluded_territories
+        .filter((t) => t.end_geo_code)
+        .map((t) => t.end_geo_code);
     }
   }
 
