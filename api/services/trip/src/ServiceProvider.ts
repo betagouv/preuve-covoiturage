@@ -30,7 +30,7 @@ import { SendExportAction } from './actions/SendExportAction';
 import { PublishOpenDataAction } from './actions/PublishOpenDataAction';
 
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
-import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
+import { scopeToGroupBinding } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 import { BuildExcelsExportAction } from './actions/BuildExcelExportAction';
@@ -55,7 +55,7 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
   middlewares: [
     ...defaultMiddlewareBindings,
     ['validate', ValidatorMiddleware],
-    ['scopeToGroup', ScopeToGroupMiddleware],
+    scopeToGroupBinding,
   ],
   connections: [
     [RedisConnection, 'connections.redis'],

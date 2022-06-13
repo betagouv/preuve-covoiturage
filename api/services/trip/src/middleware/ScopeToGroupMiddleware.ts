@@ -7,24 +7,32 @@ import {
   InvalidParamsException,
   ForbiddenException,
 } from '@ilos/common';
+import { PostgresConnection } from '@ilos/connection-postgres/dist';
+import { ConfiguredMiddleware } from '@pdc/provider-middleware/dist';
+import { TerritorySelectorsInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export type ScopeToGroupMiddlewareParams = {
-  global: string;
+  registry: string;
   territory: string;
   operator: string;
 };
 
-// A VERIFIER
+interface ParamsInterface extends ParamsType {
+  geo_selector: TerritorySelectorsInterface;
+}
 
 @middleware()
 export class ScopeToGroupMiddleware implements MiddlewareInterface {
+  constructor(public connection: PostgresConnection) {}
+
   async process(
-    params: ParamsType,
+    initialParams: Partial<ParamsInterface>,
     context: ContextType,
     next: Function,
     options: ScopeToGroupMiddlewareParams,
   ): Promise<ResultType> {
-    const { global: basePermission, territory: territoryPermission, operator: operatorPermission } = options;
+    const params = await this.unnestComCode({ geo_selector: {}, ...initialParams });
+    const { registry: basePermission, territory: territoryPermission, operator: operatorPermission } = options;
 
     if (!basePermission || !territoryPermission || !operatorPermission) {
       throw new InvalidParamsException('No permissions defined');
@@ -49,17 +57,17 @@ export class ScopeToGroupMiddleware implements MiddlewareInterface {
     if (context.call.user.territory_id && permissions.indexOf(territoryPermission) > -1) {
       const normalizedParams = { ...params };
 
-      // if params doest have territory_id, add it
-      if (!params.territory_id || !params.territory_id.length) {
-        normalizedParams.territory_id = [context.call.user.territory_id];
+      // if params doest have geo selectore, add it
+      if (!params.geo_selector.com?.length) {
+        normalizedParams.geo_selector.com = context.call.user.authorizedZoneCodes.com;
       }
       // check if all territory_id in params are in authorized territories
-      const authorizedTerritories = context.call.user.authorizedZoneCodes?._id;
+      const authorizedTerritories = context.call.user.authorizedZoneCodes?.com;
       if (
         Array.isArray(authorizedTerritories) &&
-        Array.isArray(normalizedParams.territory_id) &&
+        Array.isArray(normalizedParams.geo_selector.com) &&
         authorizedTerritories.length > 0 &&
-        normalizedParams.territory_id.filter((id) => authorizedTerritories.indexOf(id) < 0).length === 0
+        normalizedParams.geo_selector.com.filter((id) => authorizedTerritories.indexOf(id) < 0).length === 0
       ) {
         return next(normalizedParams, context);
       }
@@ -86,4 +94,41 @@ export class ScopeToGroupMiddleware implements MiddlewareInterface {
 
     throw new ForbiddenException('Invalid permissions');
   }
+
+  protected async unnestComCode(params: ParamsInterface): Promise<ParamsInterface> {
+    const queries = Object.keys(params.geo_selector).map((t, i) => ({
+      text: `
+        SELECT distinct arr AS com
+        FROM geo.perimeters
+        WHERE ${t} = ANY($${i+1}::varchar[])
+      `,
+      values: params.geo_selector[t],
+    })).reduce((res, i) => {
+      res.text.push(i.text);
+      res.values.push(i.values);
+      return res;
+    }, { text: [], values: [] });
+
+    if (!queries.text.length) {
+      return params;
+    }
+
+    const res = await this.connection.getClient().query({
+      text: queries.text.join(' UNION '),
+      values: queries.values,
+    });
+
+    const com = res.rows.map(r => r.com);
+    return { ...params, geo_selector: { ...params.geo_selector, com }};
+  }
+}
+
+const alias = 'scopeToGroup';
+
+export const scopeToGroupBinding = [alias, ScopeToGroupMiddleware];
+
+export function scopeToGroupMiddleware(
+  params: ScopeToGroupMiddlewareParams
+): ConfiguredMiddleware<ScopeToGroupMiddlewareParams> {
+  return [alias, params];
 }

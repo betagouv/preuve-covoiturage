@@ -1,12 +1,17 @@
 export enum TerritoryCodeEnum {
-  Insee = 'insee',
-  Postcode = 'postcode',
+  Arr = 'arr',
+  City = 'com',
+  CityGroup = 'epci',
+  Mobility = 'aom',
   Id = '_id',
 }
+
 export interface TerritorySelectorsInterface {
-  [TerritoryCodeEnum.Insee]?: string[];
-  [TerritoryCodeEnum.Postcode]?: string[];
+  [TerritoryCodeEnum.Arr]?: string[];
+  [TerritoryCodeEnum.City]?: string[];
+  [TerritoryCodeEnum.Mobility]?: string[];
   [TerritoryCodeEnum.Id]?: number[];
+  [TerritoryCodeEnum.CityGroup]?: string[];
 }
 
 export interface TerritoryGroupInterface {
@@ -45,7 +50,7 @@ export const idfm: CreateTerritoryGroupInterface = {
     city: 'Paris',
     country: 'France',
   },
-  selector: { _id: [2] },
+  selector: { aom: ['217500016'] },
 };
 
 export const territory_groups: CreateTerritoryGroupInterface[] = [idfm];

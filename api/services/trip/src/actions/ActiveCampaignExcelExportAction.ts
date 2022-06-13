@@ -1,6 +1,6 @@
 import { ContextType, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import {
   ParamsInterface as ListCampaignsParamInterface,
   ResultInterface as ListCampaignsResultInterface,
