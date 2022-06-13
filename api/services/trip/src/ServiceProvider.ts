@@ -52,11 +52,7 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
     publishOpenDataBinding,
     excelExportBinding,
   ],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-    scopeToGroupBinding,
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware], scopeToGroupBinding],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],

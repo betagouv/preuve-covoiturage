@@ -96,18 +96,23 @@ export class ScopeToGroupMiddleware implements MiddlewareInterface {
   }
 
   protected async unnestComCode(params: ParamsInterface): Promise<ParamsInterface> {
-    const queries = Object.keys(params.geo_selector).map((t, i) => ({
-      text: `
+    const queries = Object.keys(params.geo_selector)
+      .map((t, i) => ({
+        text: `
         SELECT distinct arr AS com
         FROM geo.perimeters
-        WHERE ${t} = ANY($${i+1}::varchar[])
+        WHERE ${t} = ANY($${i + 1}::varchar[])
       `,
-      values: params.geo_selector[t],
-    })).reduce((res, i) => {
-      res.text.push(i.text);
-      res.values.push(i.values);
-      return res;
-    }, { text: [], values: [] });
+        values: params.geo_selector[t],
+      }))
+      .reduce(
+        (res, i) => {
+          res.text.push(i.text);
+          res.values.push(i.values);
+          return res;
+        },
+        { text: [], values: [] },
+      );
 
     if (!queries.text.length) {
       return params;
@@ -118,8 +123,8 @@ export class ScopeToGroupMiddleware implements MiddlewareInterface {
       values: queries.values,
     });
 
-    const com = res.rows.map(r => r.com);
-    return { ...params, geo_selector: { ...params.geo_selector, com }};
+    const com = res.rows.map((r) => r.com);
+    return { ...params, geo_selector: { ...params.geo_selector, com } };
   }
 }
 
@@ -128,7 +133,7 @@ const alias = 'scopeToGroup';
 export const scopeToGroupBinding = [alias, ScopeToGroupMiddleware];
 
 export function scopeToGroupMiddleware(
-  params: ScopeToGroupMiddlewareParams
+  params: ScopeToGroupMiddlewareParams,
 ): ConfiguredMiddleware<ScopeToGroupMiddlewareParams> {
   return [alias, params];
 }

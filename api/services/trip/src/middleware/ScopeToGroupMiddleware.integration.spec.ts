@@ -16,11 +16,7 @@ const test = anyTest as TestFn<{
 const territory_id = 1;
 const geo_selector = {
   aom: ['217500016'],
-  com: [
-    '91471',
-    '91477',
-    '91377',
-  ],
+  com: ['91471', '91477', '91377'],
 };
 
 const mockConnectedUser = {
@@ -29,7 +25,7 @@ const mockConnectedUser = {
 
 const mockTripParameters = {
   geo_selector: {
-    com: ['91477']
+    com: ['91477'],
   },
 };
 
@@ -144,7 +140,7 @@ test('Middleware Scopetogroup: has territory permission and search on unauthoriz
       t.context.contextFactory({
         permissions: ['territory.trip.list'],
         territory_id: 1,
-        authorizedZoneCodes: { com: ['91377']},
+        authorizedZoneCodes: { com: ['91377'] },
       }),
       () => 'next() called',
       middlewareConfig,

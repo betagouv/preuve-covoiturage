@@ -309,9 +309,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
       queryParam.excluded_start_geo_code = excluded_territories
         .filter((t) => t.start_geo_code)
         .map((t) => t.start_geo_code);
-      queryParam.excluded_end_geo_code = excluded_territories
-        .filter((t) => t.end_geo_code)
-        .map((t) => t.end_geo_code);
+      queryParam.excluded_end_geo_code = excluded_territories.filter((t) => t.end_geo_code).map((t) => t.end_geo_code);
     }
   }
 

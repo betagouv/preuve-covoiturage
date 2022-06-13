@@ -1,6 +1,4 @@
-import {
-  ListOfConfiguredMiddlewares,
-} from '@pdc/provider-middleware';
+import { ListOfConfiguredMiddlewares } from '@pdc/provider-middleware';
 import { scopeToGroupMiddleware, ScopeToGroupMiddlewareParams } from './ScopeToGroupMiddleware';
 
 export function groupPermissionMiddlewaresHelper(groups: {

@@ -3,7 +3,11 @@ import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/commo
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { signature, handlerConfig } from '../shared/trip/cacheWarmCron.contract';
-import { signature as getAuthorizedCodesSignature, ParamsInterface as GetAuthorizedCodesParamsInterface, ResultInterface as GetAuthorizedCodesResultInterface } from '../shared/territory/getAuthorizedCodes.contract';
+import {
+  signature as getAuthorizedCodesSignature,
+  ParamsInterface as GetAuthorizedCodesParamsInterface,
+  ResultInterface as GetAuthorizedCodesResultInterface,
+} from '../shared/territory/getAuthorizedCodes.contract';
 import { ApiGraphTimeMode } from '../shared/trip/common/interfaces/ApiGraphTimeMode';
 
 @handler({
@@ -81,7 +85,10 @@ export class TripCacheWarmCron extends Action implements InitHookInterface {
     if (!territories) return;
     for (const territory_id of territories) {
       console.info(`> Warm cache for territory ${territory_id}`);
-      const authorizedZoneCodes = await this.kernel.call<GetAuthorizedCodesParamsInterface,GetAuthorizedCodesResultInterface>(
+      const authorizedZoneCodes = await this.kernel.call<
+        GetAuthorizedCodesParamsInterface,
+        GetAuthorizedCodesResultInterface
+      >(
         getAuthorizedCodesSignature,
         {
           _id: territory_id,
