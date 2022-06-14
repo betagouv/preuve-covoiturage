@@ -34,7 +34,7 @@ export class FilterService {
         distance: filterUx.distance,
         ranks: filterUx.ranks,
         status: filterUx.status,
-        territory_id: filterUx.territoryIds,
+        geo_selector: filterUx.geo_selector,
         operator_id: filterUx.operatorIds,
         campaign_id: filterUx.campaignIds,
       }),

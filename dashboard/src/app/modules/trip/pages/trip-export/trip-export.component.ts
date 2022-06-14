@@ -85,8 +85,8 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
 
-    if (this.form.value.territoryIds && this.form.value.territoryIds.length !== 0) {
-      data.territory_id = this.form.value.territoryIds;
+    if (this.form.value.geo_selector) {
+      data.geo_selector = this.form.value.geo_selector;
     }
 
     if (!this.authenticationService.isOperatorGroup() && this.checkboxesForm.selectedOperators.length !== 0) {

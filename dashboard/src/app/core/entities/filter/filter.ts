@@ -5,6 +5,7 @@ import { set } from 'lodash-es';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { TerritorySelectorsInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export class Filter {
   campaign_id: number[];
@@ -25,7 +26,7 @@ export class Filter {
   ranks: TripRankEnum[];
   status: TripStatusEnum;
   operator_id: number[];
-  territory_id: number[];
+  geo_selector: TerritorySelectorsInterface;
 
   constructor(obj?: FilterInterface) {
     if (obj) this.map(obj);
@@ -54,7 +55,7 @@ export class Filter {
     if (data.ranks) this.ranks = data.ranks;
     if (data.status) this.status = data.status;
     if (data.operator_id) this.operator_id = data.operator_id;
-    if (data.territory_id) this.territory_id = data.territory_id;
+    if (data.geo_selector) this.geo_selector = data.geo_selector;
 
     return this;
   }
