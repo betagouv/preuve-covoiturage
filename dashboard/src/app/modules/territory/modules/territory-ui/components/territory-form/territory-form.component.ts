@@ -125,7 +125,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     );
     if (this.isNew()) {
       this.territoryApi.create(createTerritory).subscribe(() => {
-        this.toastr.success(`${formValues.name} a été créé !`);
+        this.toastr.success(`${this.company.legal_name} a été créé !`);
         this.router.navigate(['../'], { relativeTo: this.route });
       });
       return;
@@ -134,7 +134,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const updateTerritory: UpdateTerritoryGroupInterface = { ...createTerritory, _id: this.territory._id };
     this.territoryApi.update(updateTerritory).subscribe(
       (modifiedTerritory) => {
-        this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
+        this.toastr.success(`${this.company.legal_name} a été mis à jour !`);
         this.router.navigate(['../'], { relativeTo: this.route });
       },
       (err) => {
