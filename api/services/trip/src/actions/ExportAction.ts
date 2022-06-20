@@ -1,6 +1,6 @@
 import { ContextType, handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { copyGroupIdFromContextMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
+import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/provider-middleware';
 import { get } from 'lodash';
 import * as middlewareConfig from '../config/middlewares';
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
@@ -15,7 +15,7 @@ import {
 @handler({
   ...handlerConfig,
   middlewares: [
-    ...copyGroupIdFromContextMiddlewares(['operator_id'], null, true),
+    copyFromContextMiddleware(`call.user.operator_id`, 'operator_id', true),
     ...groupPermissionMiddlewaresHelper({
       territory: 'territory.trip.stats',
       operator: 'operator.trip.stats',

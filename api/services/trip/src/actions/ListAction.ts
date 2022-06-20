@@ -1,6 +1,6 @@
 import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { copyGroupIdFromContextMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
+import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/provider-middleware';
 import * as middlewareConfig from '../config/middlewares';
 import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
@@ -10,7 +10,7 @@ import { alias } from '../shared/trip/list.schema';
 @handler({
   ...handlerConfig,
   middlewares: [
-    ...copyGroupIdFromContextMiddlewares(['operator_id'], null, true),
+    copyFromContextMiddleware(`call.user.operator_id`, 'operator_id', true),
     ...groupPermissionMiddlewaresHelper({
       territory: 'territory.trip.stats',
       operator: 'operator.trip.stats',
