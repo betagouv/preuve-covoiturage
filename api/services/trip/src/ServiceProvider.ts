@@ -14,7 +14,6 @@ import { binding as statsBinding } from './shared/trip/stats.schema';
 import { binding as exportBinding } from './shared/trip/export.schema';
 import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
 import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
-import { binding as publicStatsBinding } from './shared/trip/publicStats.schema';
 import { binding as publishOpenDataBinding } from './shared/trip/publishOpenData.schema';
 import { binding as excelExportBinding } from './shared/trip/excelExport.schema';
 
@@ -48,7 +47,6 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
     exportBinding,
     buildExportBinding,
     sendExportBinding,
-    publicStatsBinding,
     publishOpenDataBinding,
     excelExportBinding,
   ],
