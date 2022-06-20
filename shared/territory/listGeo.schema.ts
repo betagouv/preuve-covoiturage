@@ -19,9 +19,9 @@ export const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        _id: {
+        insee: {
           type: 'array',
-          items: { macro: 'serial' },
+          items: { macro: 'insee' },
         },
       },
     },
