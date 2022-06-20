@@ -24,5 +24,6 @@ export interface FilterUxInterface {
   ranks: TripRankEnum[];
   status: TripStatusEnum;
   operatorIds: number[];
+  territoryIds: string[];
   geo_selector: TerritorySelectorsInterface;
 }
