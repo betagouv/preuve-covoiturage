@@ -14,6 +14,7 @@ export interface SingleResultInterface {
   _id: number;
   name: string;
   insee: string;
+  type: GeoCodeTypeEnum;
 }
 
 export type ResultInterface = ResultWithPagination<SingleResultInterface[]>;
