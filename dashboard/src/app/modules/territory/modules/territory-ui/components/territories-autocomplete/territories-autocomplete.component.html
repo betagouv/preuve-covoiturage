@@ -1,5 +1,5 @@
 <mat-form-field [formGroup]="parentForm" class="territoriesAutocomplete" appearance="outline">
-  <mat-label>{{ title }}</mat-label>
+  <mat-label>Territoires</mat-label>
   <mat-chip-list #chipList>
     <mat-chip
       *ngFor="let territory of this.territoryIdsControl.value"
@@ -12,8 +12,8 @@
     </mat-chip>
     <input
       matInput
-      [placeholder]="placeholder"
-      [attr.aria-label]="label"
+      [placeholder]="'AOM, EPCI, Commune...'"
+      [attr.aria-label]="'Filtrer par AOM, EPCI, Commune...'"
       #territoryInput
       [formControl]="territoryCtrl"
       [matAutocomplete]="auto"

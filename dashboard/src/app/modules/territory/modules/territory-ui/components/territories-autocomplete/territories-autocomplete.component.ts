@@ -21,9 +21,6 @@ import { SingleResultInterface as SingleGeoResult } from '~/shared/territory/lis
 })
 export class TerritoriesAutocompleteComponent extends DestroyObservable implements OnInit {
   @Input() parentForm: FormGroup;
-  @Input() placeholder = 'Ajouter un territoire';
-  @Input() title = 'Territoires';
-  @Input() label = 'Ajouter un territoire';
 
   @ViewChild('territoryInput') territoryInput: ElementRef;
 
