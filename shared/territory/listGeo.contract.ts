@@ -3,8 +3,7 @@ import { ResultWithPagination } from '../common/interfaces/ResultWithPagination'
 import { GeoCodeTypeEnum } from './common/geo';
 
 export interface ParamsInterface extends Partial<PaginationParamsInterface> {
-  search?: string;
-  type?: GeoCodeTypeEnum;
+  search: string;
   where?: {
     insee?: string[];
   };

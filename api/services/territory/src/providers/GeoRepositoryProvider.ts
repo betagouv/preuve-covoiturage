@@ -7,7 +7,6 @@ import {
   ListGeoParamsInterface,
   ListGeoResultInterface,
 } from '../interfaces/GeoRepositoryProviderInterface';
-import { GeoCodeTypeEnum } from '../shared/territory/common/geo';
 import {
   ParamsInterface as FindBySirenParamsInterface,
   ResultInterface as FindBySirenResultInterface,
@@ -25,68 +24,79 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
   async list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface> {
-    const { search, type, where: whereParams, limit, offset } = { limit: 100, offset: 0, ...params };
+    const { search, where: whereParams, limit, offset } = { limit: 100, offset: 0, ...params };
 
     const where = [];
     const values = [];
 
-    if (whereParams && whereParams.insee && whereParams.insee.length) {
-      where.push(`gp.arr = ANY($${where.length + 1})`);
-      values.push(whereParams.insee);
-    }
+    // search
+    where.push(`lower(l_com) like $1`);
+    values.push(`%${search.toLowerCase().trim()}%`); // $1
 
-    let geoLevel = '';
-
-    switch (type) {
-      case GeoCodeTypeEnum.Region:
-        geoLevel = 'reg';
-        break;
-
-      case GeoCodeTypeEnum.District:
-        geoLevel = 'dep';
-        break;
-
-      case GeoCodeTypeEnum.City:
-      default:
-        geoLevel = 'arr';
-        break;
-    }
-    const label = `l_${geoLevel.toString()}`;
-
-    if (search) {
-      where.push(`LOWER(gp.${label}) LIKE $${where.length + 1}`);
-      values.push(`%${search.toLowerCase().trim()}%`);
-    }
-
-    // dataset millesime
+    // year
     const yearRes = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
     const year = yearRes.rows[0]?.year;
     where.push(`year = $${where.length + 1}`);
-    values.push(year);
+    values.push(year); // $2
+
+    // insees constraints
+    if (whereParams && whereParams.insee && whereParams.insee.length) {
+      where.push(`arr = ANY($${where.length + 1})`);
+      values.push(whereParams.insee); //$3
+    }
 
     const totalResult = await this.connection.getClient().query<{ count: string }>({
       values,
       text: `
-        SELECT count(*) FROM ${this.table} AS gp
-        WHERE ${where.join(' AND ')}
+      WITH search as (
+        SELECT aom, l_aom, epci, l_epci, l_com, com, l_reg, reg, l_dep, dep from ${this.table}
+         where (l_aom like $1
+         or lower(l_com) like $1
+         or lower(l_epci) like $1
+         or lower(l_reg) like $1
+         or lower(l_dep) like $1) and year = $2 ${
+           whereParams && whereParams.insee && whereParams.insee.length ? 'and arr = ANY($3)' : ''
+         } ORDER BY YEAR DESC)
+     SELECT count(*) FROM 
+     (SELECT distinct l_aom as label, aom as insee, 'aom' as type from search where lower(l_aom) like $1
+      UNION
+      SELECT distinct l_epci as label, epci as insee, 'epci' as type from search where lower(l_epci) like $1
+      UNION
+      SELECT distinct l_reg as label, reg as insee, 'region' as type from search where lower(l_reg) like $1
+      UNION
+      SELECT distinct l_com as label, com as insee, 'city' as type from search where lower(l_com) like $1
+      UNION
+      SELECT distinct l_dep as label, dep as insee, 'district' as type from search where lower(l_dep) like $1) x
       `,
     });
 
     const total = parseFloat(totalResult.rows[0].count || '0');
 
-    values.push(limit);
-    values.push(offset);
+    values.push(limit); // $4
+    values.push(offset); // $5
 
     const results = await this.connection.getClient().query({
       values,
       text: `
-        SELECT
-          gp.id as _id,
-          gp.${label} as name,
-          ${geoLevel} as insee
-          FROM ${this.table} as gp
-        WHERE ${where.join(' AND ')}
-        ORDER BY gp.${label} ASC
+      WITH search as (
+        SELECT aom, l_aom, epci, l_epci, l_com, com, l_reg, reg, l_dep, dep from geo.perimeters 
+         where (l_aom like $1
+         or lower(l_com) like $1
+         or lower(l_epci) like $1
+         or lower(l_reg) like $1
+         or lower(l_dep) like $1) and year = $2 ${
+           whereParams && whereParams.insee && whereParams.insee.length ? 'and arr = ANY($3)' : ''
+         } ORDER BY YEAR DESC)
+     SELECT distinct l_aom as label, aom as insee, 'aom' as type from search where lower(l_aom) like $1
+     UNION
+     SELECT distinct l_epci as label, epci as insee, 'epci' as type from search where lower(l_epci) like $1
+     UNION
+     SELECT distinct l_reg as label, reg as insee, 'region' as type from search where lower(l_reg) like $1
+     UNION
+     SELECT distinct l_com as label, com as insee, 'city' as type from search where lower(l_com) like $1
+     UNION
+     SELECT distinct l_dep as label, dep as insee, 'district' as type from search where lower(l_dep) like $1
+        ORDER BY label ASC
         LIMIT $${where.length + 1}
         OFFSET $${where.length + 2}
       `,
