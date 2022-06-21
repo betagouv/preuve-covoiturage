@@ -64,6 +64,7 @@ export class ExportAction extends Action {
           start: start.toISOString(),
           end: end.toISOString(),
         },
+        geo_selector: params.geo_selector,
       },
       format: {
         tz: tz.name,
