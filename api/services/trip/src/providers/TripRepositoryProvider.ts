@@ -43,6 +43,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'ranks',
       'distance',
       'campaign_id',
+      'operator_id',
       'days',
       'hour',
       'excluded_start_geo_code',
