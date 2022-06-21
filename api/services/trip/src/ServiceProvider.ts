@@ -14,7 +14,6 @@ import { binding as statsBinding } from './shared/trip/stats.schema';
 import { binding as exportBinding } from './shared/trip/export.schema';
 import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
 import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
-import { binding as publicStatsBinding } from './shared/trip/publicStats.schema';
 import { binding as publishOpenDataBinding } from './shared/trip/publishOpenData.schema';
 import { binding as excelExportBinding } from './shared/trip/excelExport.schema';
 
@@ -30,7 +29,7 @@ import { SendExportAction } from './actions/SendExportAction';
 import { PublishOpenDataAction } from './actions/PublishOpenDataAction';
 
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
-import { ScopeToGroupMiddleware } from './middleware/ScopeToGroupMiddleware';
+import { scopeToGroupBinding } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 import { BuildExcelsExportAction } from './actions/BuildExcelExportAction';
@@ -48,15 +47,10 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
     exportBinding,
     buildExportBinding,
     sendExportBinding,
-    publicStatsBinding,
     publishOpenDataBinding,
     excelExportBinding,
   ],
-  middlewares: [
-    ...defaultMiddlewareBindings,
-    ['validate', ValidatorMiddleware],
-    ['scopeToGroup', ScopeToGroupMiddleware],
-  ],
+  middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware], scopeToGroupBinding],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],

@@ -1,9 +1,11 @@
 import anyTest, { TestFn } from 'ava';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { ContextType, ForbiddenException } from '@ilos/common';
 
 import { ScopeToGroupMiddleware } from './ScopeToGroupMiddleware';
 
 const test = anyTest as TestFn<{
+  connection: PostgresConnection;
   mockConnectedUser: any;
   mockTripParameters: any;
   contextFactory: Function;
@@ -11,12 +13,41 @@ const test = anyTest as TestFn<{
   middleware: ScopeToGroupMiddleware;
 }>;
 
-test.before((t) => {
+const territory_id = 1;
+const geo_selector = {
+  aom: ['217500016'],
+  com: ['91471', '91477', '91377'],
+};
+
+const mockConnectedUser = {
+  permissions: ['trip.list'],
+};
+
+const mockTripParameters = {
+  geo_selector: {
+    com: ['91477'],
+  },
+};
+
+const middlewareConfig = {
+  registry: 'trip.list',
+  territory: 'territory.trip.list',
+  operator: 'operator.trip.list',
+};
+
+test.before(async (t) => {
+  t.context.connection = new PostgresConnection({
+    connectionString:
+      'APP_POSTGRES_URL' in process.env
+        ? process.env.APP_POSTGRES_URL
+        : 'postgresql://postgres:postgres@localhost:5432/local',
+  });
+  await t.context.connection.up();
   t.context.contextFactory = (params): ContextType => {
     return {
       call: {
         user: {
-          ...t.context.mockConnectedUser,
+          ...mockConnectedUser,
           ...params,
         },
       },
@@ -26,29 +57,19 @@ test.before((t) => {
     };
   };
 
-  t.context.mockConnectedUser = {
-    permissions: ['trip.list'],
-  };
+  t.context.middleware = new ScopeToGroupMiddleware(t.context.connection);
+});
 
-  t.context.mockTripParameters = {
-    territory_id: [1],
-  };
-
-  t.context.middlewareConfig = {
-    global: 'trip.list',
-    territory: 'territory.trip.list',
-    operator: 'operator.trip.list',
-  };
-
-  t.context.middleware = new ScopeToGroupMiddleware();
+test.after.always(async (t) => {
+  await t.context.connection.down();
 });
 
 test('Middleware Scopetogroup: has global permission', async (t) => {
   const result = await t.context.middleware.process(
-    t.context.mockTripParameters,
+    mockTripParameters,
     t.context.contextFactory({ permissions: ['trip.list'] }),
     () => 'next() called',
-    t.context.middlewareConfig,
+    middlewareConfig,
   );
 
   t.is(result, 'next() called');
@@ -56,14 +77,14 @@ test('Middleware Scopetogroup: has global permission', async (t) => {
 
 test('Middleware Scopetogroup: has territory permission', async (t) => {
   const result = await t.context.middleware.process(
-    t.context.mockTripParameters,
+    mockTripParameters,
     t.context.contextFactory({
       permissions: ['territory.trip.list'],
-      territory_id: t.context.mockTripParameters.territory_id[0],
-      authorizedZoneCodes: { _id: t.context.mockTripParameters.territory_id },
+      territory_id: territory_id,
+      authorizedZoneCodes: geo_selector,
     }),
     () => 'next() called',
-    t.context.middlewareConfig,
+    middlewareConfig,
   );
 
   t.is(result, 'next() called');
@@ -74,27 +95,39 @@ test('Middleware Scopetogroup: has territory permission autoscope', async (t) =>
     {},
     t.context.contextFactory({
       permissions: ['territory.trip.list'],
-      territory_id: 2,
-      authorizedZoneCodes: { _id: [2] },
+      territory_id: 1,
+      authorizedZoneCodes: geo_selector,
     }),
-    (params) => params.territory_id,
-    t.context.middlewareConfig,
+    (params) => params.geo_selector,
+    middlewareConfig,
   );
+  t.deepEqual(result, { com: geo_selector.com });
+});
 
-  t.is(result.length, 1);
-  t.is(result[0], 2);
+test('Middleware Scopetogroup: has territory permission unnest selector', async (t) => {
+  const result = await t.context.middleware.process(
+    { aom: geo_selector.aom },
+    t.context.contextFactory({
+      permissions: ['territory.trip.list'],
+      territory_id: 1,
+      authorizedZoneCodes: geo_selector,
+    }),
+    (params) => params.geo_selector,
+    middlewareConfig,
+  );
+  t.deepEqual(result, { com: geo_selector.com });
 });
 
 test('Middleware Scopetogroup: has territory permission and search on authorized', async (t) => {
   const result = await t.context.middleware.process(
-    t.context.mockTripParameters,
+    mockTripParameters,
     t.context.contextFactory({
       permissions: ['territory.trip.list'],
-      territory_id: 2,
-      authorizedZoneCodes: { _id: [1, 2] },
+      territory_id: 1,
+      authorizedZoneCodes: geo_selector,
     }),
     () => 'next() called',
-    t.context.middlewareConfig,
+    middlewareConfig,
   );
 
   t.is(result, 'next() called');
@@ -103,14 +136,14 @@ test('Middleware Scopetogroup: has territory permission and search on authorized
 test('Middleware Scopetogroup: has territory permission and search on unauthorized', async (t) => {
   await t.throwsAsync(
     t.context.middleware.process(
-      t.context.mockTripParameters,
+      mockTripParameters,
       t.context.contextFactory({
         permissions: ['territory.trip.list'],
-        territory_id: 2,
-        authorizedZoneCodes: { _id: [2] },
+        territory_id: 1,
+        authorizedZoneCodes: { com: ['91377'] },
       }),
       () => 'next() called',
-      t.context.middlewareConfig,
+      middlewareConfig,
     ),
     { instanceOf: ForbiddenException },
   );
@@ -124,7 +157,7 @@ test('Middleware Scopetogroup: has operator permission', async (t) => {
       operator_id: 2,
     }),
     () => 'next() called',
-    t.context.middlewareConfig,
+    middlewareConfig,
   );
 
   t.is(result, 'next() called');
@@ -138,7 +171,7 @@ test('Middleware Scopetogroup: has operator permission autoscope', async (t) => 
       operator_id: 2,
     }),
     (params) => params.operator_id,
-    t.context.middlewareConfig,
+    middlewareConfig,
   );
 
   t.is(result.length, 1);
@@ -154,7 +187,7 @@ test('Middleware Scopetogroup: has operator permission and search on unauthorize
         operator_id: 2,
       }),
       () => 'next() called',
-      t.context.middlewareConfig,
+      middlewareConfig,
     ),
     { instanceOf: ForbiddenException },
   );
@@ -168,7 +201,7 @@ test('Middleware Scopetogroup: has no permission', async (t) => {
         permissions: [],
       }),
       () => 'next() called',
-      t.context.middlewareConfig,
+      middlewareConfig,
     ),
     { instanceOf: ForbiddenException },
   );

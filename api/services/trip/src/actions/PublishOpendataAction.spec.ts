@@ -72,7 +72,7 @@ test('PublishOpendataAction: should upload new opendata resource', async (t) => 
   const params: ParamsInterface = {
     filepath: '/tmp/2021-08.csv',
     tripSearchQueryParam: { status: 'ok', date: { start: new Date(), end: new Date() } },
-    excludedTerritories: [{ start_territory_id: 1, end_territory_id: 3, aggregated_trips_journeys: ['trip1'] }],
+    excludedTerritories: [{ start_geo_code: '1', end_geo_code: '3', aggregated_trips_journeys: ['trip1'] }],
   };
   const datasetResource: UploadedResource = {
     success: true,
@@ -120,7 +120,7 @@ test('PublishOpendataAction: should update existing opendata resource', async (t
   const params: ParamsInterface = {
     filepath: '/tmp/2021-09.csv',
     tripSearchQueryParam: { status: 'ok', date: { start: new Date(), end: new Date() } },
-    excludedTerritories: [{ start_territory_id: 1, end_territory_id: 3, aggregated_trips_journeys: ['trip1'] }],
+    excludedTerritories: [{ start_geo_code: '1', end_geo_code: '3', aggregated_trips_journeys: ['trip1'] }],
   };
   const datasetResource: UploadedResource = {
     success: true,

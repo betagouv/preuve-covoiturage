@@ -17,13 +17,13 @@ export const schema = {
         status: {
           macro: 'varchar',
         },
-        excluded_start_territory_id: {
+        excluded_start_code: {
           type: 'array',
-          items: { macro: 'serial' },
+          items: { macro: 'insee' },
         },
-        excluded_end_territory_id: {
+        excluded_end_code: {
           type: 'array',
-          items: { macro: 'serial' },
+          items: { macro: 'insee' },
         },
       },
     },

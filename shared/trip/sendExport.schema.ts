@@ -1,3 +1,5 @@
+import { territoryCodeSchema } from '../territory/common/schema';
+
 export const schema = {
   type: 'object',
   additionalProperties: false,
@@ -26,11 +28,7 @@ export const schema = {
           minItems: 1,
           items: { macro: 'serial' },
         },
-        territory_id: {
-          type: 'array',
-          minItems: 1,
-          items: { macro: 'serial' },
-        },
+        geo_selector: territoryCodeSchema,
         territory_authorized_operator_id: {
           type: 'array',
           items: { macro: 'serial' },

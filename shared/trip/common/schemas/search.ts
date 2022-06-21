@@ -1,3 +1,5 @@
+import { territoryCodeSchema } from '../../../territory/common/schema';
+
 const params = {
   tz: {
     macro: 'tz',
@@ -70,18 +72,7 @@ const params = {
       },
     ],
   },
-  territory_id: {
-    oneOf: [
-      {
-        type: 'array',
-        minItems: 1,
-        items: { macro: 'serial' },
-      },
-      {
-        macro: 'serial',
-      },
-    ],
-  },
+  geo_selector: territoryCodeSchema,
 };
 
 export const search = {
@@ -114,34 +105,6 @@ export const stats = {
     group_by: {
       type: 'string',
       enum: ['month', 'day', 'all'],
-    },
-  },
-};
-
-export const publicStats = {
-  type: 'object',
-  required: ['tz', 'group_by', 'date'],
-  additionalProperties: false,
-  properties: {
-    tz: {
-      macro: 'tz',
-    },
-    group_by: {
-      type: 'string',
-      enum: ['month', 'day', 'all'],
-    },
-    date: {
-      type: 'object',
-      additionalProperties: false,
-      minProperties: 1,
-      properties: {
-        start: {
-          macro: 'timestamp',
-        },
-        end: {
-          macro: 'timestamp',
-        },
-      },
     },
   },
 };

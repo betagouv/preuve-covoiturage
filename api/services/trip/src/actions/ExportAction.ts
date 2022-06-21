@@ -1,6 +1,6 @@
 import { ContextType, handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { copyGroupIdFromContextMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
+import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/provider-middleware';
 import { get } from 'lodash';
 import * as middlewareConfig from '../config/middlewares';
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
@@ -15,7 +15,7 @@ import {
 @handler({
   ...handlerConfig,
   middlewares: [
-    ...copyGroupIdFromContextMiddlewares(['territory_id', 'operator_id'], null, true),
+    copyFromContextMiddleware(`call.user.operator_id`, 'operator_id', true),
     ...groupPermissionMiddlewaresHelper({
       territory: 'territory.trip.stats',
       operator: 'operator.trip.stats',
@@ -64,6 +64,7 @@ export class ExportAction extends Action {
           start: start.toISOString(),
           end: end.toISOString(),
         },
+        geo_selector: params.geo_selector,
       },
       format: {
         tz: tz.name,
@@ -72,10 +73,6 @@ export class ExportAction extends Action {
 
     if (params.operator_id) {
       buildParams.query.operator_id = Array.isArray(params.operator_id) ? params.operator_id : [params.operator_id];
-    }
-
-    if (params.territory_id) {
-      buildParams.query.territory_id = Array.isArray(params.territory_id) ? params.territory_id : [params.territory_id];
     }
 
     await this.kernel.notify<SendExportParamsInterface>(sendExportSignature, buildParams, {

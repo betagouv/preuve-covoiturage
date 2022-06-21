@@ -26,40 +26,40 @@ test.before((t) => {
       start: new Date('2021-09-01'),
       end: new Date('2021-09-30'),
     },
-    excluded_start_territory_id: [589, 785, 5, 8],
-    excluded_end_territory_id: [8888, 77, 5, 8],
+    excluded_start_geo_code: ['589', '785', '5', '8'],
+    excluded_end_geo_code: ['8888', '77', '5', '8'],
   };
   t.context.excludedTerritories = [
     {
-      end_territory_id: 589,
+      end_geo_code: '589',
       aggregated_trips_journeys: ['trip1', 'trip2'],
     },
     {
-      end_territory_id: 785,
+      end_geo_code: '785',
       aggregated_trips_journeys: ['trip3', 'trip4'],
     },
     {
-      end_territory_id: 5,
+      end_geo_code: '5',
       aggregated_trips_journeys: ['trip5'],
     },
     {
-      end_territory_id: 8,
+      end_geo_code: '8',
       aggregated_trips_journeys: ['trip6'],
     },
     {
-      start_territory_id: 8888,
+      start_geo_code: '8888',
       aggregated_trips_journeys: ['trip6'],
     },
     {
-      start_territory_id: 77,
+      start_geo_code: '77',
       aggregated_trips_journeys: ['trip5'],
     },
     {
-      start_territory_id: 5,
+      start_geo_code: '5',
       aggregated_trips_journeys: ['trip7'],
     },
     {
-      start_territory_id: 8,
+      start_geo_code: '8',
       aggregated_trips_journeys: ['trip8', 'trip9'],
     },
   ];
@@ -92,7 +92,7 @@ test('BuildResourceDescription: should happen description to existing one', asyn
   const openDataQueryParamCopy: TripSearchInterface = {
     ...t.context.tripSearchQueryParams,
   };
-  delete openDataQueryParamCopy.excluded_end_territory_id;
-  delete openDataQueryParamCopy.excluded_start_territory_id;
+  delete openDataQueryParamCopy.excluded_end_geo_code;
+  delete openDataQueryParamCopy.excluded_start_geo_code;
   sinon.assert.calledWithMatch(t.context.tripRepositoryProviderStub.secondCall, openDataQueryParamCopy);
 });

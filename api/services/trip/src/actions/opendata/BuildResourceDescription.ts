@@ -14,10 +14,10 @@ export class BuildResourceDescription {
   ): Promise<string> {
     const total_truncated: string = await (await this.tripRepository.searchCount(tripSearchQueryParam)).count;
     const start_deleted: number = excludedTerritories
-      .filter((e) => e.start_territory_id)
+      .filter((e) => e.start_geo_code)
       .reduce((count, value) => count + value.aggregated_trips_journeys.length, 0);
     const end_deleted: number = excludedTerritories
-      .filter((e) => e.end_territory_id)
+      .filter((e) => e.end_geo_code)
       .reduce((count, value) => count + value.aggregated_trips_journeys.length, 0);
     const total: string = await this.getTotal(tripSearchQueryParam);
     const deleted = parseInt(total) - parseInt(total_truncated);
@@ -37,8 +37,8 @@ export class BuildResourceDescription {
     const tripSearchQueryParamCopy: TripSearchInterface = {
       ...tripSearchQueryParam,
     };
-    delete tripSearchQueryParamCopy.excluded_end_territory_id;
-    delete tripSearchQueryParamCopy.excluded_start_territory_id;
+    delete tripSearchQueryParamCopy.excluded_end_geo_code;
+    delete tripSearchQueryParamCopy.excluded_start_geo_code;
     return (await this.tripRepository.searchCount(tripSearchQueryParamCopy)).count;
   }
 

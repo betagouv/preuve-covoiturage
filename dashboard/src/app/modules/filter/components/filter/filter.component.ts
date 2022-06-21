@@ -92,11 +92,17 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   public onSubmit(): void {
-    const filterObj = this.filterForm.getRawValue();
+    const filterObj: FilterUxInterface = this.filterForm.getRawValue();
 
     if (filterObj.date) {
       if (!filterObj.date.start) delete filterObj.date.start;
       if (!filterObj.date.end) delete filterObj.date.end;
+    }
+
+    if (filterObj?.territoryIds.length) {
+      filterObj.geo_selector = {
+        com: filterObj.territoryIds,
+      };
     }
 
     setTimeout(() => {

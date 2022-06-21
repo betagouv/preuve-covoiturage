@@ -30,9 +30,9 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     const where = [];
     const values = [];
 
-    if (whereParams && whereParams._id && whereParams._id.length) {
-      where.push(`gp.id = ANY($${where.length + 1})`);
-      values.push(whereParams._id);
+    if (whereParams && whereParams.insee && whereParams.insee.length) {
+      where.push(`gp.arr = ANY($${where.length + 1})`);
+      values.push(whereParams.insee);
     }
 
     let geoLevel = '';

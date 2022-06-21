@@ -60,7 +60,7 @@ test.serial('Create a territory', async (t) => {
         country: 'France',
       },
       selector: {
-        _id: [6, 7],
+        com: ['91477', '91471'],
       },
     },
     {
@@ -147,7 +147,8 @@ test.serial('Update a territory', async (t) => {
   const updateData = {
     ...initResponse.result,
     selector: {
-      _id: [7, 8],
+      _id: [],
+      com: ['91471', '91377'],
     },
   };
   t.log(updateData);
@@ -160,7 +161,7 @@ test.serial('Update a territory', async (t) => {
   });
 
   t.log(response);
-  t.is(response.result.selector._id.length, 2);
+  t.is(response.result.selector.com.length, 2);
 
   const finalResponse = await t.context.request(
     'territory:find',
@@ -237,7 +238,7 @@ test.serial('Get authorized codes', async (t) => {
       (territory_group_id, selector_type, selector_value) VALUES
       ($1, $2, $3)
       `,
-      values: [_id, '_id', '1'],
+      values: [_id, 'com', '91477'],
     });
 
   const response = await t.context.request(
@@ -254,9 +255,9 @@ test.serial('Get authorized codes', async (t) => {
     },
   );
   t.log(response);
-  t.true(Array.isArray(response.result._id));
-  t.true(response.result._id.length === 3);
-  t.deepEqual(response.result._id.sort(), [1, 7, 8]);
+  t.true(Array.isArray(response.result.com));
+  t.true(response.result.com.length === 3);
+  t.deepEqual(response.result.com.sort(), ['91377', '91471', '91477']);
 });
 
 test.serial('Lists all territories', async (t) => {
