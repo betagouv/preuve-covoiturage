@@ -58,15 +58,15 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
            whereParams && whereParams.insee && whereParams.insee.length ? 'and arr = ANY($3)' : ''
          } ORDER BY YEAR DESC)
      SELECT count(*) FROM 
-     (SELECT distinct l_aom as label, aom as insee, 'aom' as type from search where lower(l_aom) like $1
+     (SELECT distinct l_aom as name, aom as insee, 'aom' as type from search where lower(l_aom) like $1
       UNION
-      SELECT distinct l_epci as label, epci as insee, 'epci' as type from search where lower(l_epci) like $1
+      SELECT distinct l_epci as name, epci as insee, 'epci' as type from search where lower(l_epci) like $1
       UNION
-      SELECT distinct l_reg as label, reg as insee, 'region' as type from search where lower(l_reg) like $1
+      SELECT distinct l_reg as name, reg as insee, 'region' as type from search where lower(l_reg) like $1
       UNION
-      SELECT distinct l_com as label, com as insee, 'city' as type from search where lower(l_com) like $1
+      SELECT distinct l_com as name, com as insee, 'city' as type from search where lower(l_com) like $1
       UNION
-      SELECT distinct l_dep as label, dep as insee, 'district' as type from search where lower(l_dep) like $1) x
+      SELECT distinct l_dep as name, dep as insee, 'district' as type from search where lower(l_dep) like $1) x
       `,
     });
 
@@ -87,16 +87,16 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
          or lower(l_dep) like $1) and year = $2 ${
            whereParams && whereParams.insee && whereParams.insee.length ? 'and arr = ANY($3)' : ''
          } ORDER BY YEAR DESC)
-     SELECT distinct l_aom as label, aom as insee, 'aom' as type from search where lower(l_aom) like $1
+     SELECT distinct l_aom as name, aom as insee, 'aom' as type from search where lower(l_aom) like $1
      UNION
-     SELECT distinct l_epci as label, epci as insee, 'epci' as type from search where lower(l_epci) like $1
+     SELECT distinct l_epci as name, epci as insee, 'epci' as type from search where lower(l_epci) like $1
      UNION
-     SELECT distinct l_reg as label, reg as insee, 'region' as type from search where lower(l_reg) like $1
+     SELECT distinct l_reg as name, reg as insee, 'region' as type from search where lower(l_reg) like $1
      UNION
-     SELECT distinct l_com as label, com as insee, 'city' as type from search where lower(l_com) like $1
+     SELECT distinct l_com as name, com as insee, 'city' as type from search where lower(l_com) like $1
      UNION
-     SELECT distinct l_dep as label, dep as insee, 'district' as type from search where lower(l_dep) like $1
-        ORDER BY label ASC
+     SELECT distinct l_dep as name, dep as insee, 'district' as type from search where lower(l_dep) like $1
+        ORDER BY name ASC
         LIMIT $${where.length + 1}
         OFFSET $${where.length + 2}
       `,

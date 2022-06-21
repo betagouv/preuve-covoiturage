@@ -72,7 +72,7 @@
 
         <div class="filter-content-column">
           <div class="filter-content-column-title">
-            <p>Géographie</p>
+            <p>Zone Géographique</p>
           </div>
 
           <!-- DISTANCE -->
@@ -91,11 +91,9 @@
           <div class="filter-territories">
             <app-territories-autocomplete
               [parentForm]="filterForm"
-              [title]="userIsTerritory ? 'Villes' : 'Territoires'"
-              [placeholder]="userIsTerritory ? 'Ville, EPCI...' : 'Territoire, ville, EPCI...'"
-              [label]="
-                userIsTerritory ? 'Ajouter une ville, une EPCI...' : 'Ajouter un territoire, une ville, une EPCI...'
-              "
+              [title]="'Territoires'"
+              [placeholder]="'AOM, EPCI, Commune...'"
+              [label]="'Ajouter une AOM, EPCI, Commune...'"
             ></app-territories-autocomplete>
           </div>
         </div>
