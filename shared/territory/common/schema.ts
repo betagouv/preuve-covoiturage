@@ -3,8 +3,6 @@ import { TerritoryCodeEnum } from './interfaces/TerritoryCodeInterface';
 
 export const territoryCodeSchema = {
   type: 'object',
-  minProperties: 1,
-  maxPropeties: 3,
   propertyNames: {
     enum: [...Object.values(TerritoryCodeEnum)],
   },
