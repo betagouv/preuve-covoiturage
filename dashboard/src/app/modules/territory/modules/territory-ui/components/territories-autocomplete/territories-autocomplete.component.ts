@@ -53,12 +53,8 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
       .subscribe();
   }
 
-  public getTerritoryLabel(territoryId): string {
-    return this.selectedTerritories.find((territory) => territory.insee === territoryId).name;
-  }
-
-  public remove(territoryId: string): void {
-    const index = this.territoryIdsControl.value.indexOf(territoryId);
+  public remove(territory: SingleGeoResult): void {
+    const index = this.territoryIdsControl.value.indexOf(territory);
 
     if (index >= 0) {
       const territories = [...this.territoryIdsControl.value];
@@ -66,7 +62,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
       this.territoryIdsControl.setValue(territories);
     }
 
-    const selectedTerritoriesInd = this.selectedTerritories.findIndex((terr) => terr.insee === territoryId);
+    const selectedTerritoriesInd = this.selectedTerritories.findIndex((terr) => terr.insee === territory.insee);
 
     if (selectedTerritoriesInd >= 0) {
       this.selectedTerritories.splice(selectedTerritoriesInd, 1);
