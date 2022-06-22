@@ -14,6 +14,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { OperatorsCheckboxesComponent } from '../../../operator/modules/operator-ui/components/operators-checkboxes/operators-checkboxes.component';
 import { TripApiService } from '../../services/trip-api.service';
 import { TripExportDialogComponent } from '../trip-export-dialog/trip-export-dialog.component';
+import { TerritoryCodeEnum } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 
 @Component({
   selector: 'app-trip-export',
@@ -87,7 +88,10 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
 
     if (this.form.value.territoryIds?.length) {
       data.geo_selector = {
-        com: this.form.value.territoryIds,
+        com: this.form.value.territoryIds.filter((t) => t.type == TerritoryCodeEnum.City).map((t) => t.insee),
+        arr: this.form.value.territoryIds.filter((t) => t.type == TerritoryCodeEnum.Arr).map((t) => t.insee),
+        aom: this.form.value.territoryIds.filter((t) => t.type == TerritoryCodeEnum.Mobility).map((t) => t.insee),
+        epci: this.form.value.territoryIds.filter((t) => t.type == TerritoryCodeEnum.CityGroup).map((t) => t.insee),
       };
     }
 

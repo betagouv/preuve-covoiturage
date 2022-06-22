@@ -5,15 +5,12 @@ export const schema = {
   $id: alias,
   type: 'object',
   additionalProperties: false,
+  required: ['search'],
   properties: {
     search: {
       type: 'string',
-      minLength: 1,
+      minLength: 2,
       maxLength: 256,
-    },
-    type: {
-      type: 'string',
-      enum: ['city', 'region', 'district'],
     },
     where: {
       type: 'object',

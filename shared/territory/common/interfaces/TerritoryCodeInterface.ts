@@ -3,7 +3,9 @@ export enum TerritoryCodeEnum {
   City = 'com',
   CityGroup = 'epci',
   Mobility = 'aom',
+  Region = 'reg',
   Id = '_id',
+  District = 'dep',
 }
 
 export interface TerritoryCodeInterface {

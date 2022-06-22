@@ -1,16 +1,17 @@
 import { WeekDay } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, AbstractControl, FormControl, Validators } from '@angular/forms';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 
-import { FilterService } from '~/modules/filter/services/filter.service';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
-import { TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { dayLabelCapitalized } from '~/core/const/days.const';
+import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
+import { TripStatusEnum, TRIP_STATUS_FR } from '~/core/enums/trip/trip-status.enum';
+import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { FilterService } from '~/modules/filter/services/filter.service';
+import { TerritoryCodeEnum } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 
 @Component({
   selector: 'app-filter',
@@ -101,7 +102,10 @@ export class FilterComponent extends DestroyObservable implements OnInit {
 
     if (filterObj?.territoryIds.length) {
       filterObj.geo_selector = {
-        com: filterObj.territoryIds,
+        com: filterObj.territoryIds.filter((t) => t.type == TerritoryCodeEnum.City).map((t) => t.insee),
+        arr: filterObj.territoryIds.filter((t) => t.type == TerritoryCodeEnum.Arr).map((t) => t.insee),
+        aom: filterObj.territoryIds.filter((t) => t.type == TerritoryCodeEnum.Mobility).map((t) => t.insee),
+        epci: filterObj.territoryIds.filter((t) => t.type == TerritoryCodeEnum.CityGroup).map((t) => t.insee),
       };
     }
 

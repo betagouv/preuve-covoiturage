@@ -6,7 +6,6 @@ import { DetailsModule } from '../../../../shared/modules/details/details.module
 import { FormModule } from '../../../../shared/modules/form/form.module';
 import { MaterialModule } from '../../../../shared/modules/material/material.module';
 // eslint-disable-next-line max-len
-import { TerritoriesInputSearchComponent } from '../../../../shared/modules/territory-to-insees-autocomplete/components/territories-input-search/territories-input-search.component';
 import { SharedModule } from '../../../../shared/shared.module';
 // eslint-disable-next-line
 import { TerritoriesAutocompleteComponent } from './components/territories-autocomplete/territories-autocomplete.component';
@@ -25,7 +24,6 @@ import { TerritoryUiRoutingModule } from './territory-ui-routing.module';
     TerritoryFilterComponent,
     TerritoryListViewComponent,
     TerritoryDetailsComponent,
-    TerritoriesInputSearchComponent,
   ],
   imports: [
     CommonModule,

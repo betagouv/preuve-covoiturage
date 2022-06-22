@@ -56,12 +56,9 @@
       </div>
     
       <div>
-        <p>Zones géographiques</p>
+        <p>Zone géographique</p>
         <app-territories-autocomplete   
-        [parentForm]="form"
-        [placeholder]="'Territoire, Ville, EPCI...'"
-        [title]="'Territoires'" 
-        [label]="'Territoire, Ville, EPCI...'"></app-territories-autocomplete>
+        [parentForm]="form"></app-territories-autocomplete>
       </div>
 
       <div *ngIf="!authenticationService.isOperatorOrAdmin()" style="width: 100%;">

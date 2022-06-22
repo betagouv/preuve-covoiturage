@@ -5,7 +5,6 @@ import { debounceTime, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { GeoCodeTypeEnum } from '~/shared/territory/common/geo';
 import { SingleResultInterface as TerritoryGeoResultInterface } from '~/shared/territory/listGeo.contract';
 import { ResultWithPagination } from '../../../../../../../../shared/common/interfaces/ResultWithPagination';
 
@@ -20,7 +19,6 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   public searchedTerritoryInsees: InseeAndTerritoryInterface[] = [];
   @Input() parentForm: FormGroup;
   @Input() fieldName: string;
-  @Input() geoMesh: GeoCodeTypeEnum = GeoCodeTypeEnum.City;
 
   @ViewChild('territoryInseeInput') territoryInseeInput: ElementRef;
 
@@ -62,7 +60,6 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   private filterTerritoryInsee(literal = ''): void {
     this.territoryApiService
       .geo({
-        type: this.geoMesh,
         search: literal,
       })
       .pipe(takeUntil(this.destroy$))
