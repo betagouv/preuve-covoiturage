@@ -53,6 +53,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           image-ref: betagouvpdc/api:${{ steps.docker_meta.outputs.version }}
           format: 'template'
@@ -125,6 +126,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           image-ref: betagouvpdc/dashboard:${{ steps.docker_meta.outputs.version }}
           format: 'template'
