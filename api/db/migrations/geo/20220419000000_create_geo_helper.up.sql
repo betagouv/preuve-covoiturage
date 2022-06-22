@@ -113,6 +113,14 @@ CREATE OR REPLACE FUNCTION geo.get_latest_millesime() returns smallint as $$
   FROM geo.perimeters
 $$ language sql;
 
+CREATE OR REPLACE FUNCTION geo.get_latest_millesime_or(l smallint) returns smallint as $$
+  SELECT max(year) as year FROM geo.perimeters WHERE year = l
+  UNION ALL
+  SELECT max(year) as year FROM geo.perimeters
+  ORDER BY year
+  LIMIT 1
+$$ language sql;
+
 CREATE OR REPLACE FUNCTION geo.get_by_point(lon float, lat float, year smallint) returns table (
   year smallint,
   l_arr varchar,

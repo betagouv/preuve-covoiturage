@@ -117,11 +117,11 @@ CREATE VIEW trip.list_view AS (
   LEFT JOIN carpool.identities AS cip ON cip._id = cpp.identity_id
   LEFT JOIN carpool.identities AS cid ON cid._id = cpd.identity_id
   LEFT JOIN geo.perimeters AS cts ON
-    cts.com = cpp.start_geo_code AND 
-    cts.year = EXTRACT(YEAR FROM cpp.datetime)::smallint
+    cts.arr = cpp.start_geo_code AND 
+    cts.year = geo.get_latest_millesime_or(EXTRACT(YEAR FROM cpp.datetime)::smallint)
   LEFT JOIN geo.perimeters AS cte ON
-    cte.com = cpp.end_geo_code AND 
-    cte.year = EXTRACT(YEAR FROM cpp.datetime)::smallint,
+    cte.arr = cpp.end_geo_code AND 
+    cte.year = geo.get_latest_millesime_or(EXTRACT(YEAR FROM cpp.datetime)::smallint),
   LATERAL (
     WITH data AS (
       SELECT
