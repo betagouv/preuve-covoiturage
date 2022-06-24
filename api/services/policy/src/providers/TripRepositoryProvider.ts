@@ -71,7 +71,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
           WHERE
             (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[])) AND
             t.datetime >= $2::timestamp AND
-            t.datime < $3::timestamp AND
+            t.datetime < $3::timestamp AND
             t.carpool_status = 'ok'::carpool.carpool_status_enum
             ${override ? '' : 'AND pi.carpool_id IS NULL'}
           GROUP BY t.acquisition_id
