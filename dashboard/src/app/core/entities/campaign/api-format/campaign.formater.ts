@@ -153,60 +153,6 @@ export class CampaignFormater {
           unit: RestrictionUnitEnum.AMOUNT,
         } as RestrictionUxInterface);
       }
-
-      // INSEE BLACKLIST : Verify data in ui-status is correct
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.BLACKLIST) {
-        const parameters = retributionRule.parameters as BlackListGlobalRetributionRule['parameters'];
-        const uiStatusStarts = campaign.ui_status.insee_filter.blackList.map((startEnd) =>
-          startEnd.start.reduce((acc: string[], val) => [...val.insees, ...acc], []),
-        );
-        const uiStatusEnds = campaign.ui_status.insee_filter.blackList.map((startEnd) =>
-          startEnd.end.reduce((acc: string[], val) => [...val.insees, ...acc], []),
-        );
-        parameters.forEach((inseeStartEnd, index) => {
-          let dataError = true;
-          uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
-            const startIsEqual = isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
-            if (startIsEqual) {
-              const endIsEqual = isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
-              if (endIsEqual) {
-                dataError = false;
-              }
-            }
-          });
-          if (dataError) {
-            // todo: send to sentry
-            console.error(`Insee filter data error ! No corresponding match for :`, inseeStartEnd);
-          }
-        });
-      }
-
-      // INSEE WHITELIST : Verify data in ui-status is correct
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WHITELIST) {
-        const parameters = retributionRule.parameters as WhiteListGlobalRetributionRule['parameters'];
-        const uiStatusStarts = campaign.ui_status.insee_filter.whiteList.map((startEnd) =>
-          startEnd.start.reduce((acc: string[], val) => [...val.insees, ...acc], []),
-        );
-        const uiStatusEnds = campaign.ui_status.insee_filter.whiteList.map((startEnd) =>
-          startEnd.end.reduce((acc: string[], val) => [...val.insees, ...acc], []),
-        );
-        parameters.forEach((inseeStartEnd, index) => {
-          let dataError = true;
-          uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
-            const startIsEqual = isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
-            if (startIsEqual) {
-              const endIsEqual = isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
-              if (endIsEqual) {
-                dataError = false;
-              }
-            }
-          });
-          if (dataError) {
-            // todo: send to sentry
-            console.error(`Insee filter data error ! No corresponding match for :`, inseeStartEnd);
-          }
-        });
-      }
     });
 
     // INSEE FILTER
