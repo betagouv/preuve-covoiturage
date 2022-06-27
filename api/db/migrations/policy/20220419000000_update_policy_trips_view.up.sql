@@ -38,7 +38,7 @@ CREATE VIEW policy.trips AS (
           'reseau',
           reseau
         )
-      FROM geo.get_by_code(cp.start_geo_code::varchar, EXTRACT(year FROM cp.datetime)::smallint) AS position 
+      FROM geo.get_by_code(cp.start_geo_code::varchar, geo.get_latest_millesime_or(EXTRACT(year FROM cp.datetime)::smallint)) AS position 
     ) as carpool_start,
     (
       SELECT
@@ -60,7 +60,7 @@ CREATE VIEW policy.trips AS (
           'reseau',
           reseau
         )
-      FROM geo.get_by_code(cp.end_geo_code::varchar, EXTRACT(year FROM cp.datetime)::smallint) AS position
+      FROM geo.get_by_code(cp.end_geo_code::varchar, geo.get_latest_millesime_or(EXTRACT(year FROM cp.datetime)::smallint)) AS position 
     ) as carpool_end
   FROM carpool.carpools as cp
   LEFT JOIN carpool.identities as ci ON cp.identity_id = ci._id
