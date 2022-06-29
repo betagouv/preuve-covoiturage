@@ -4,7 +4,7 @@ import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { TerritorySelectorsInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
-import { SingleResultInterface as GeoSingleResultInterface } from '~/shared/territory/listGeo.contract';
+import { SingleResultInterface as GeoSingleResultInterface } from '~/shared/territory/findGeoByName.contract';
 
 export interface FilterUxInterface {
   campaignIds: number[];

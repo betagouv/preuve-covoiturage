@@ -24,7 +24,7 @@ import {
   ParamsInterface as ParamsInterfaceGeo,
   signature as signatureGeo,
   SingleResultInterface as TerritoryGeoResultInterface,
-} from '~/shared/territory/listGeo.contract';
+} from '~/shared/territory/findGeoByName.contract';
 import {
   ParamsInterface as PatchContactParamsInterface,
   signature as signaturePatch,

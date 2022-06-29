@@ -22,6 +22,6 @@ export class FindGeoBySirenAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.geoRepository.findBySiren(params);
+    return this.geoRepository.findOneWithComsBySiren(params);
   }
 }

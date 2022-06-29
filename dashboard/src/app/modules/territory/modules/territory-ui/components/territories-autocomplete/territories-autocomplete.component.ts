@@ -10,9 +10,9 @@ import { ResultWithPagination } from '~/shared/common/interfaces/ResultWithPagin
 import {
   ParamsInterface as ParamsInterfaceGeo,
   SingleResultInterface as TerritoryGeoResultInterface,
-} from '~/shared/territory/listGeo.contract';
+} from '~/shared/territory/findGeoByName.contract';
 
-import { SingleResultInterface as SingleGeoResult } from '~/shared/territory/listGeo.contract';
+import { SingleResultInterface as SingleGeoResult } from '~/shared/territory/findGeoByName.contract';
 
 @Component({
   selector: 'app-territories-autocomplete',

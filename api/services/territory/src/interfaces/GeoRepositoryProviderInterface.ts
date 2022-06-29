@@ -5,20 +5,30 @@ import {
 import {
   ParamsInterface as ListGeoParamsInterface,
   ResultInterface as ListGeoResultInterface,
-} from '../shared/territory/listGeo.contract';
+} from '../shared/territory/findGeoByName.contract';
+
+import {
+  ResultInterface as FindGeoByCodeInterface,
+  ParamsInterface as FindGeoByCodeParamsInterface,
+} from '../shared/territory/findGeoByCode.contract';
 
 export { ListGeoParamsInterface, ListGeoResultInterface };
+
 export interface GeoRepositoryProviderInterface {
-  list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface>;
-  findBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface>;
+  findByName(params: ListGeoParamsInterface): Promise<ListGeoResultInterface>;
+  findOneWithComsBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface>;
+  findByCode(params: FindGeoByCodeParamsInterface): Promise<FindGeoByCodeInterface>;
 }
 
 export abstract class GeoRepositoryProviderInterfaceResolver implements GeoRepositoryProviderInterface {
-  async list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface> {
+  async findByName(params: ListGeoParamsInterface): Promise<ListGeoResultInterface> {
     throw new Error();
   }
 
-  async findBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface> {
+  async findOneWithComsBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface> {
+    throw new Error();
+  }
+  async findByCode(params: FindGeoByCodeParamsInterface): Promise<FindGeoByCodeInterface> {
     throw new Error();
   }
 }

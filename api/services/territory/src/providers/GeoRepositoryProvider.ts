@@ -1,4 +1,4 @@
-import { KernelInterfaceResolver, provider } from '@ilos/common';
+import { KernelInterfaceResolver, NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { FindBySiretRawResultInterface } from '../interfaces/FindBySiretRawResultInterface';
 import {
@@ -8,11 +8,12 @@ import {
   ListGeoResultInterface,
 } from '../interfaces/GeoRepositoryProviderInterface';
 import { TerritoryCodeEnum } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { ParamsInterface as FindGeoByCodeParamsInterface } from '../shared/territory/findGeoByCode.contract';
+import { SingleResultInterface as GeoSingleResultInterface } from '../shared/territory/findGeoByName.contract';
 import {
   ParamsInterface as FindBySirenParamsInterface,
   ResultInterface as FindBySirenResultInterface,
 } from '../shared/territory/findGeoBySiren.contract';
-import { SingleResultInterface as GeoSingleResultInterface } from '../shared/territory/listGeo.contract';
 
 @provider({
   identifier: GeoRepositoryProviderInterfaceResolver,
@@ -24,7 +25,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
-  async list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface> {
+  async findByName(params: ListGeoParamsInterface): Promise<ListGeoResultInterface> {
     const { search, where: whereParams, limit, offset } = { limit: 100, offset: 0, ...params };
 
     const where = [];
@@ -135,7 +136,44 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     };
   }
 
-  async findBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface> {
+  async findByCode(params: FindGeoByCodeParamsInterface): Promise<GeoSingleResultInterface> {
+    const values = [];
+
+    // year
+    const yearRes = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
+    const year = yearRes.rows[0]?.year;
+    values.push(year); // $1
+
+    // search
+    values.push(params.aom ? params.aom : []); // $2
+    values.push(params.com ? params.com : []); // $3
+    values.push(params.epci ? params.epci : []); // $4
+
+    const results = await this.connection.getClient().query({
+      values,
+      text: `
+      WITH search as (
+        SELECT aom, l_aom, epci, l_epci, l_com, com, l_reg, reg, l_dep, dep from geo.perimeters 
+        where year = $1 AND (
+          aom =  ANY($2::varchar[])
+          or com =  ANY($3::varchar[])
+          or epci =  ANY($4::varchar[]))  ORDER BY YEAR DESC)
+     SELECT distinct l_aom as name, aom as insee, '${TerritoryCodeEnum.Mobility}' as type from search where aom = ANY($2::varchar[])
+     UNION
+     SELECT distinct l_epci as name, epci as insee, '${TerritoryCodeEnum.CityGroup}' as type from search where epci =  ANY($3::varchar[])
+     UNION
+     SELECT distinct l_com as name, com as insee, '${TerritoryCodeEnum.City}' as type from search where com =  ANY($4::varchar[])
+      `,
+    });
+
+    if (!results.rows[0]) {
+      throw new NotFoundException(`Geo perimeters with code ${params} not found`);
+    }
+
+    return results.rows[0];
+  }
+
+  async findOneWithComsBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface> {
     const yearRes = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
     const year = yearRes.rows[0]?.year;
 

@@ -3,8 +3,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { GeoRepositoryProviderInterfaceResolver } from '../../interfaces/GeoRepositoryProviderInterface';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../../shared/territory/listGeo.contract';
-import { alias } from '../../shared/territory/listGeo.schema';
+import { handlerConfig, ResultInterface, ParamsInterface } from '../../shared/territory/findGeoByName.contract';
+import { alias } from '../../shared/territory/findGeoByName.schema';
 
 @handler({
   ...handlerConfig,
@@ -15,12 +15,12 @@ import { alias } from '../../shared/territory/listGeo.schema';
     ['validate', alias],
   ],
 })
-export class ListGeoAction extends AbstractAction {
+export class FindGeoByNameAction extends AbstractAction {
   constructor(private geoRepository: GeoRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.geoRepository.list(params);
+    return this.geoRepository.findByName(params);
   }
 }

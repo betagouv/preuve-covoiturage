@@ -4,9 +4,9 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CreateTerritoryAction } from './actions/group/CreateTerritoryAction';
-import { ListGeoAction } from './actions/geo/ListGeoAction';
+import { FindGeoByNameAction } from './actions/geo/FindByCodeAction';
 import { FindTerritoryAction } from './actions/group/FindTerritoryAction';
-import { FindGeoBySirenAction } from './actions/geo/FindGeoBySirenAction';
+import { FindGeoBySirenAction } from './actions/geo/FindOneWithComsBySirenAction';
 import { ListTerritoryAction } from './actions/group/ListTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/group/PatchContactsTerritoryAction';
 import { UpdateTerritoryAction } from './actions/group/UpdateTerritoryAction';
@@ -14,7 +14,7 @@ import { config } from './config';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { create } from './shared/territory/create.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
-import { binding as listGeoBinding } from './shared/territory/listGeo.schema';
+import { binding as listGeoBinding } from './shared/territory/findGeoByName.schema';
 import { binding as findBinding } from './shared/territory/find.schema';
 import { binding as findGeoBySirenBinding } from './shared/territory/findGeoBySiren.schema';
 import { binding as listBinding } from './shared/territory/list.schema';
@@ -43,7 +43,7 @@ import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
   handlers: [
     FindTerritoryAction,
     ListTerritoryAction,
-    ListGeoAction,
+    FindGeoByNameAction,
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
     CreateTerritoryAction,

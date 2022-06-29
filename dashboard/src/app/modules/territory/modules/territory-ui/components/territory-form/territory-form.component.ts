@@ -23,7 +23,7 @@ import {
   UpdateTerritoryGroupInterface,
 } from '~/shared/territory/common/interfaces/TerritoryInterface';
 import { SingleResultInterface as FindGeoBySirenResultInterface } from '~/shared/territory/findGeoBySiren.contract';
-import { SingleResultInterface as GeoSingleResultInterface } from '~/shared/territory/listGeo.contract';
+import { SingleResultInterface as GeoSingleResultInterface } from '~/shared/territory/findGeoByName.contract';
 import { FormAddress } from '../../../../../../shared/modules/form/forms/form-address';
 import { FormCompany } from '../../../../../../shared/modules/form/forms/form-company';
 import { FormContact } from '../../../../../../shared/modules/form/forms/form-contact';

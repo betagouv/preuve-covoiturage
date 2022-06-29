@@ -5,7 +5,7 @@ import { debounceTime, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
-import { SingleResultInterface as TerritoryGeoResultInterface } from '~/shared/territory/listGeo.contract';
+import { SingleResultInterface as TerritoryGeoResultInterface } from '~/shared/territory/findGeoByName.contract';
 import { ResultWithPagination } from '../../../../../../../../shared/common/interfaces/ResultWithPagination';
 
 @Component({
