@@ -27,12 +27,12 @@ export class ProcessAcquisitionCommand implements CommandInterface {
     {
       signature: '-s, --startdate <startdate>',
       description: 'Select carpool with a created_at date after <startdate>',
-      default: '2022-01-01T00:00:00+0100',
+      default: '2022-06-01T00:00:00+0200',
     },
     {
       signature: '-e, --enddate <enddate>',
       description: 'Select carpool with a created_at date before <enddate>',
-      default: '2022-02-01T00:00:00+0100',
+      default: '2022-07-01T00:00:00+0200',
     },
     {
       signature: '-l, --limit <limit>',
@@ -63,8 +63,9 @@ export class ProcessAcquisitionCommand implements CommandInterface {
         ON aa._id = carpool.carpools.acquisition_id::integer
         WHERE
           carpool.carpools.acquisition_id IS NULL
-          AND payload#>>'{driver,start,datetime}' >= $2
-          AND payload#>>'{driver,start,datetime}' <  $3
+          AND aa.created_at >= $2
+          AND (payload#>>'{driver,start,datetime}')::timestamp with time zone >= $2
+          AND (payload#>>'{driver,start,datetime}')::timestamp with time zone <  $3
         LIMIT $1
       `,
       values: [options.limit, options.startdate, options.enddate],
