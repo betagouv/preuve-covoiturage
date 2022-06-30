@@ -19,6 +19,7 @@ import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
 import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
 import { StatsRefreshCommand } from './commands/StatsRefreshCommand';
+import { ProcessAcquisitionCommand } from './commands/ProcessAcquisitionCommand';
 import { SeedCommand } from './commands/SeedCommand';
 import { config } from './config';
 
@@ -41,6 +42,6 @@ import { config } from './config';
     ...honorBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [ProcessJourneyCommand, SeedCommand, StatsRefreshCommand, Commands.CallCommand],
+  commands: [ProcessJourneyCommand, ProcessAcquisitionCommand, SeedCommand, StatsRefreshCommand, Commands.CallCommand],
 })
 export class Kernel extends BaseKernel {}
