@@ -12,7 +12,7 @@ import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 @command()
 export class ProcessAcquisitionCommand implements CommandInterface {
   static readonly signature: string = 'process:acquisition';
-  static readonly description: string = 'Push acquisition into the pipeline';
+  static readonly description: string = 'Push acquisition into the pipeline queue';
   static readonly options: CommandOptionType[] = [
     {
       signature: '-u, --database-uri <uri>',
@@ -48,8 +48,6 @@ export class ProcessAcquisitionCommand implements CommandInterface {
     await readConnection.up();
     const readClient = await readConnection.getClient().connect();
 
-    const handler = this.kernel.getContainer().getHandler({ signature: 'normalization:process' }) as any;
-
     // select acquisition missing a carpool
     const query = {
       text: `
@@ -75,7 +73,7 @@ export class ProcessAcquisitionCommand implements CommandInterface {
     const cursorCb = readClient.query(new Cursor(query.text, query.values));
     const cursor = promisify(cursorCb.read.bind(cursorCb));
     let count = 0;
-    const ROW_COUNT = 10000;
+    const ROW_COUNT = 100;
 
     const context: ContextType = {
       channel: {
@@ -94,7 +92,10 @@ export class ProcessAcquisitionCommand implements CommandInterface {
             ...line,
             created_at: line.created_at.toISOString(),
           };
-          await handler({ params, context });
+
+          // push normalization:process in the queue
+          await this.kernel.notify('normalization:process', params, context);
+
           console.info(`> Operation done for ${line._id}`);
         } catch (e) {
           console.error(`> FAILED ${line._id}`);
