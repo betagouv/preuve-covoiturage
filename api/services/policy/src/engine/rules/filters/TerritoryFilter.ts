@@ -6,7 +6,7 @@ import {
   TerritorySelectorsInterface,
 } from '../../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
-interface TerritoryParamsInterface {
+export interface TerritoryParamsInterface {
   start: TerritorySelectorsInterface;
   end: TerritorySelectorsInterface;
 }
