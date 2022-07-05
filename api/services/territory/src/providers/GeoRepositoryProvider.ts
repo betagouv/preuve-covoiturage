@@ -163,17 +163,17 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
           or epci =  ANY($4::varchar[]))  ORDER BY YEAR DESC)
      SELECT distinct l_aom as name, aom as insee, '${TerritoryCodeEnum.Mobility}' as type from search where aom = ANY($2::varchar[])
      UNION
-     SELECT distinct l_epci as name, epci as insee, '${TerritoryCodeEnum.CityGroup}' as type from search where epci =  ANY($3::varchar[])
+     SELECT distinct l_epci as name, epci as insee, '${TerritoryCodeEnum.CityGroup}' as type from search where epci =  ANY($4::varchar[])
      UNION
-     SELECT distinct l_com as name, com as insee, '${TerritoryCodeEnum.City}' as type from search where com =  ANY($4::varchar[])
+     SELECT distinct l_com as name, com as insee, '${TerritoryCodeEnum.City}' as type from search where com =  ANY($3::varchar[])
       `,
     });
 
-    if (!results.rows[0]) {
+    if (!results.rowCount) {
       throw new NotFoundException(`Geo perimeters with code ${params} not found`);
     }
 
-    return results.rows[0];
+    return results.rows;
   }
 
   async findOneWithComsBySiren(params: FindBySirenParamsInterface): Promise<FindBySirenResultInterface> {

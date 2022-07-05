@@ -152,7 +152,7 @@ test('MutateCampaignInseesFilter: should mutate once and no others if one global
   ]);
 });
 
-test('MutateCampaignInseesFilter: should mutate twice and no others if two global_rules matches', async (t) => {
+test.only('MutateCampaignInseesFilter: should mutate twice and no others if two global_rules matches', async (t) => {
   // Arrange
   const global_rules: RuleInterface[] = [
     t.context.RANDOM_RULE!,

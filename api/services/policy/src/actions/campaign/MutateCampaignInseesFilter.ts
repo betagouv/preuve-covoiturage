@@ -2,21 +2,14 @@ import { KernelInterfaceResolver, provider } from '@ilos/common';
 import { TerritoryCodeEnum } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 import { RuleInterface } from '../../engine/interfaces';
-import { TerritoryParamsInterface } from '../../engine/rules/filters/TerritoryFilter';
 import { ParamsInterface, ResultInterface, signature } from '../../shared/territory/findGeoByCode.contract';
 
 @provider()
 export class MutateCampaignInseesFilter {
   constructor(private readonly kernel: KernelInterfaceResolver) {}
   async call(global_rules: RuleInterface[]): Promise<RuleInterface[]> {
-    const mutatedGlobalRules: RuleInterface[] = global_rules;
-
-    const inseeBlacklistFilterRules: RuleInterface = mutatedGlobalRules.find(
-      (r) => r.slug === 'territory_blacklist_filter',
-    );
-    const inseeWhitelistFilterRules: RuleInterface = mutatedGlobalRules.find(
-      (r) => r.slug === 'territory_whitelist_filter',
-    );
+    const inseeBlacklistFilterRules: RuleInterface = global_rules.find((r) => r.slug === 'territory_blacklist_filter');
+    const inseeWhitelistFilterRules: RuleInterface = global_rules.find((r) => r.slug === 'territory_whitelist_filter');
 
     if (!inseeBlacklistFilterRules && !inseeWhitelistFilterRules) {
       return global_rules;
@@ -27,16 +20,19 @@ export class MutateCampaignInseesFilter {
     if (inseeWhitelistFilterRules && inseeWhitelistFilterRules.parameters) {
       inseeWhitelistFilterRules.parameters = await this.territoryFiltersWithName(inseeWhitelistFilterRules);
     }
-    return mutatedGlobalRules;
+    return global_rules;
   }
 
   private async territoryFiltersWithName(territoryFilterRules: RuleInterface) {
-    const territorySelectorsInterface: TerritoryParamsInterface[] = territoryFilterRules.parameters;
     const params: ParamsInterface = {
-      epci: territorySelectorsInterface.flatMap((s) => this.concatStartEndInsee(s.start?.epci, s.end?.epci)),
-      aom: territorySelectorsInterface.flatMap((s) => this.concatStartEndInsee(s.start?.aom, s.end?.aom)),
-      com: territorySelectorsInterface.flatMap((s) => this.concatStartEndInsee(s.start?.com, s.end?.com)),
+      epci: territoryFilterRules.parameters.flatMap((s) => this.concatStartEndInsee(s.start?.epci, s.end?.epci)),
+      aom: territoryFilterRules.parameters.flatMap((s) => this.concatStartEndInsee(s.start?.aom, s.end?.aom)),
+      com: territoryFilterRules.parameters.flatMap((s) => this.concatStartEndInsee(s.start?.com, s.end?.com)),
     };
+
+    if (params.aom.length === 0 && params.epci.length === 0 && params.com.length === 0) {
+      return territoryFilterRules.parameters;
+    }
 
     let selectors: ResultInterface;
     try {
@@ -44,39 +40,30 @@ export class MutateCampaignInseesFilter {
         channel: { service: 'policy' },
       });
     } catch (e) {
-      return territoryFilterRules;
+      console.error(e);
+      return territoryFilterRules.parameters;
     }
 
-    return territoryFilterRules.parameters.map((parameter) => {
-      if (parameter.start.epci) {
-        parameter.start.epci = parameter.start.epci.map((e) =>
-          this.findTerritoryInsee(selectors, TerritoryCodeEnum.CityGroup, e),
-        );
+    return territoryFilterRules.parameters.map((p) => {
+      if (p.start.epci) {
+        p.start.epci = p.start.epci.map((e) => this.findTerritoryInsee(selectors, TerritoryCodeEnum.CityGroup, e));
       }
-      if (parameter.end.epci) {
-        parameter.end.epci = parameter.end.epci.map((e) =>
-          this.findTerritoryInsee(selectors, TerritoryCodeEnum.CityGroup, e),
-        );
+      if (p.end.epci) {
+        p.end.epci = p.end.epci.map((e) => this.findTerritoryInsee(selectors, TerritoryCodeEnum.CityGroup, e));
       }
-      if (parameter.start.aom) {
-        parameter.start.aom = parameter.start.aom.map((e) =>
-          this.findTerritoryInsee(selectors, TerritoryCodeEnum.Mobility, e),
-        );
+      if (p.start.aom) {
+        p.start.aom = p.start.aom.map((e) => this.findTerritoryInsee(selectors, TerritoryCodeEnum.Mobility, e));
       }
-      if (parameter.end.aom) {
-        parameter.end.aom = parameter.end.aom.map((e) =>
-          this.findTerritoryInsee(selectors, TerritoryCodeEnum.Mobility, e),
-        );
+      if (p.end.aom) {
+        p.end.aom = p.end.aom.map((e) => this.findTerritoryInsee(selectors, TerritoryCodeEnum.Mobility, e));
       }
-      if (parameter.start.com) {
-        parameter.start.com = parameter.start.com.map((e) =>
-          this.findTerritoryInsee(selectors, TerritoryCodeEnum.City, e),
-        );
+      if (p.start.com) {
+        p.start.com = p.start.com.map((e) => this.findTerritoryInsee(selectors, TerritoryCodeEnum.City, e));
       }
-      if (parameter.end.com) {
-        parameter.end.com = parameter.end.com.map((e) => this.findTerritoryInsee(selectors, TerritoryCodeEnum.City, e));
+      if (p.end.com) {
+        p.end.com = p.end.com.map((e) => this.findTerritoryInsee(selectors, TerritoryCodeEnum.City, e));
       }
-      return parameter;
+      return p;
     });
   }
 
@@ -89,12 +76,12 @@ export class MutateCampaignInseesFilter {
   }
 
   private concatStartEndInsee(starts: string[], ends: string[]): string[] {
-    const arr: string[] = [];
+    let arr: string[] = [];
     if (starts) {
-      arr.concat(starts);
+      arr = arr.concat(starts);
     }
     if (ends) {
-      arr.concat(ends);
+      arr = arr.concat(ends);
     }
     return arr;
   }
