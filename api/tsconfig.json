@@ -10,6 +10,7 @@
     "noStrictGenericChecks": true,
     "resolveJsonModule": true,
     "sourceMap": true,
+    "strictNullChecks": false,
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

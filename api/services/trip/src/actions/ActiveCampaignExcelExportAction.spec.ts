@@ -1,5 +1,5 @@
-import { ContextType, KernelInterfaceResolver } from '@ilos/common';
 import anyTest, { TestFn } from 'ava';
+import { ContextType, KernelInterfaceResolver } from '@ilos/common';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
 import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';

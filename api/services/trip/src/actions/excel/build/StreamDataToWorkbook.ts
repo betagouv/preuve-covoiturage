@@ -4,6 +4,7 @@ import { normalizeExport } from '../../../helpers/normalizeExportDataHelper';
 import { ExportTripInterface } from '../../../interfaces/ExportTripInterface';
 import { PgCursorHandler } from '../../../interfaces/PromisifiedPgCursor';
 import { BuildExportAction } from '../../BuildExportAction';
+import { ResultInterface as Campaign } from '../../../shared/policy/find.contract';
 
 @provider()
 export class StreamDataToWorkBook {
@@ -11,7 +12,7 @@ export class StreamDataToWorkBook {
 
   public readonly WORKSHEET_NAME = 'Données';
 
-  async call(cursor: PgCursorHandler, filepath: string): Promise<void> {
+  async call(cursor: PgCursorHandler, filepath: string, campaign: Campaign): Promise<void> {
     const workbookWriter: stream.xlsx.WorkbookWriter = new stream.xlsx.WorkbookWriter({
       filename: filepath,
     });

@@ -1,3 +1,4 @@
+import { ResultInterface as Campaign } from '../../../shared/policy/find.contract';
 import test from 'ava';
 import { Workbook, Worksheet } from 'exceljs';
 import faker from '@faker-js/faker';
@@ -57,6 +58,23 @@ const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   driver_incentive_rpc_raw: null,
 };
 
+const campaign: Campaign = {
+  state: {
+    amount: 0,
+    trip_subsidized: 0,
+    trip_excluded: 0,
+  },
+  territory_id: 0,
+  name: '',
+  description: '',
+  start_date: new Date(),
+  end_date: new Date(),
+  unit: '',
+  status: '',
+  global_rules: [],
+  rules: [],
+};
+
 test.before((t) => {
   streamDataToWorkBook = new StreamDataToWorkBook();
 });
@@ -92,7 +110,7 @@ test('StreamDataToWorkBook: should stream data to a workbook file', async (t) =>
   const filename = '/tmp/stream-data-test.xlsx';
 
   // Act
-  await streamDataToWorkBook.call({ read: cursorCallback, release: () => {} }, filename);
+  await streamDataToWorkBook.call({ read: cursorCallback, release: () => {} }, filename, campaign);
 
   // Assert
   const workbook: Workbook = await new Workbook().xlsx.readFile(filename);

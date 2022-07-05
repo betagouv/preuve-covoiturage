@@ -3,6 +3,7 @@ import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { BuildFilepath } from './build/BuildFilepath';
 import { StreamDataToWorkBook } from './build/StreamDataToWorkbook';
+import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
 
 @provider()
 export class BuildExcel {
@@ -12,23 +13,17 @@ export class BuildExcel {
     private streamDataToWorkbook: StreamDataToWorkBook,
   ) {}
 
-  async call(
-    campaign_id: number,
-    start_date: Date,
-    end_date: Date,
-    campaign_name: string,
-    operator_id: number,
-  ): Promise<string> {
+  async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
     const tripCursor: PgCursorHandler = await this.getTripRepositoryCursor(
-      campaign_id,
+      campaign._id,
       start_date,
       end_date,
       operator_id,
     );
 
-    const filepath: string = this.buildFilepath.call(campaign_name, operator_id, start_date);
+    const filepath: string = this.buildFilepath.call(campaign.name, operator_id, start_date);
 
-    return this.streamDataToWorkbook.call(tripCursor, filepath).then(() => filepath);
+    return this.streamDataToWorkbook.call(tripCursor, filepath, campaign).then(() => filepath);
   }
 
   private getTripRepositoryCursor(
