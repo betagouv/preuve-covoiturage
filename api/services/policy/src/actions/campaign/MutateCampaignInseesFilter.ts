@@ -1,13 +1,9 @@
 import { KernelInterfaceResolver, provider } from '@ilos/common';
+import { TerritoryCodeEnum } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 import { RuleInterface } from '../../engine/interfaces';
 import { TerritoryParamsInterface } from '../../engine/rules/filters/TerritoryFilter';
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  signature,
-} from '../../shared/territory/findGeoByCode.contract';
+import { ParamsInterface, ResultInterface, signature } from '../../shared/territory/findGeoByCode.contract';
 
 @provider()
 export class MutateCampaignInseesFilter {
@@ -42,34 +38,49 @@ export class MutateCampaignInseesFilter {
       com: territorySelectorsInterface.flatMap((s) => this.concatStartEndInsee(s.start?.com, s.end?.com)),
     };
 
-    const selectors: ResultInterface = await this.kernel.call<ParamsInterface, ResultInterface>(signature, params, {
-      channel: { service: handlerConfig.service },
-    });
+    let selectors: ResultInterface;
+    try {
+      selectors = await this.kernel.call<ParamsInterface, ResultInterface>(signature, params, {
+        channel: { service: 'policy' },
+      });
+    } catch (e) {
+      return territoryFilterRules;
+    }
 
     return territoryFilterRules.parameters.map((parameter) => {
       if (parameter.start.epci) {
-        parameter.start.epci = parameter.start.epci.map((e) => this.findTerritoryInsee(selectors, 'epci', e));
+        parameter.start.epci = parameter.start.epci.map((e) =>
+          this.findTerritoryInsee(selectors, TerritoryCodeEnum.CityGroup, e),
+        );
       }
       if (parameter.end.epci) {
-        parameter.end.epci = parameter.end.epci.map((e) => this.findTerritoryInsee(selectors, 'epci', e));
+        parameter.end.epci = parameter.end.epci.map((e) =>
+          this.findTerritoryInsee(selectors, TerritoryCodeEnum.CityGroup, e),
+        );
       }
       if (parameter.start.aom) {
-        parameter.start.aom = parameter.start.aom.map((e) => this.findTerritoryInsee(selectors, 'aom', e));
+        parameter.start.aom = parameter.start.aom.map((e) =>
+          this.findTerritoryInsee(selectors, TerritoryCodeEnum.Mobility, e),
+        );
       }
       if (parameter.end.aom) {
-        parameter.end.aom = parameter.end.aom.map((e) => this.findTerritoryInsee(selectors, 'aom', e));
+        parameter.end.aom = parameter.end.aom.map((e) =>
+          this.findTerritoryInsee(selectors, TerritoryCodeEnum.Mobility, e),
+        );
       }
       if (parameter.start.com) {
-        parameter.start.com = parameter.start.com.map((e) => this.findTerritoryInsee(selectors, 'com', e));
+        parameter.start.com = parameter.start.com.map((e) =>
+          this.findTerritoryInsee(selectors, TerritoryCodeEnum.City, e),
+        );
       }
       if (parameter.end.com) {
-        parameter.end.com = parameter.end.com.map((e) => this.findTerritoryInsee(selectors, 'com', e));
+        parameter.end.com = parameter.end.com.map((e) => this.findTerritoryInsee(selectors, TerritoryCodeEnum.City, e));
       }
       return parameter;
     });
   }
 
-  private findTerritoryInsee(selectors: ResultInterface, selectorType: string, insee: string) {
+  private findTerritoryInsee(selectors: ResultInterface, selectorType: TerritoryCodeEnum, insee: string) {
     const territory = selectors.find((s) => s.type === selectorType && s.insee === insee);
     return {
       insee: territory.insee,

@@ -8,7 +8,10 @@ import {
   ListGeoResultInterface,
 } from '../interfaces/GeoRepositoryProviderInterface';
 import { TerritoryCodeEnum } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
-import { ParamsInterface as FindGeoByCodeParamsInterface } from '../shared/territory/findGeoByCode.contract';
+import {
+  ParamsInterface as FindGeoByCodeParamsInterface,
+  ResultInterface as FindGeoByCodeResultInterface,
+} from '../shared/territory/findGeoByCode.contract';
 import { SingleResultInterface as GeoSingleResultInterface } from '../shared/territory/findGeoByName.contract';
 import {
   ParamsInterface as FindBySirenParamsInterface,
@@ -136,7 +139,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     };
   }
 
-  async findByCode(params: FindGeoByCodeParamsInterface): Promise<GeoSingleResultInterface> {
+  async findByCode(params: FindGeoByCodeParamsInterface): Promise<FindGeoByCodeResultInterface> {
     const values = [];
 
     // year

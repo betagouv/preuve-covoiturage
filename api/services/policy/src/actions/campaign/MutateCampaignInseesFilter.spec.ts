@@ -1,4 +1,4 @@
-import { ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { RuleInterface } from '../../engine/interfaces';
@@ -259,4 +259,17 @@ test('MutateCampaignInseesFilter: should mutate twice and no others if two globa
       ],
     },
   ]);
+});
+
+test('MutateCampaignInseesFilter: should continue if any error while retrieving geo code', async (t) => {
+  // Arrange
+  const global_rules: RuleInterface[] = [t.context.TERRITORY_WHITELIST_RULE!];
+
+  t.context.kernelInterfaceResolverStub?.throws(NotFoundException);
+
+  // Act
+  const mutated_global_rules = await t.context.mutateCampaignInseeFilter!.call(global_rules);
+
+  // Assert
+  t.deepEqual(mutated_global_rules, global_rules);
 });
