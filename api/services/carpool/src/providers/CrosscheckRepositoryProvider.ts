@@ -67,8 +67,8 @@ export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProvide
           JOIN ${this.identityTable} as identity
           ON carpool.identity_id = identity._id
           WHERE identity.uuid = $1
-          AND carpool.datetime >= timestamptz '${startDateString}'::timestamptz - interval '2 hour'
-          AND carpool.datetime <= timestamptz '${startDateString}'::timestamptz + interval '2 hour'
+          AND carpool.datetime >= timestamptz '${startDateString}'::timestamptz - interval '10 minutes'
+          AND carpool.datetime <= timestamptz '${startDateString}'::timestamptz + interval '10 minutes'
           LIMIT 1
       `,
       values: [identity_uuid],
