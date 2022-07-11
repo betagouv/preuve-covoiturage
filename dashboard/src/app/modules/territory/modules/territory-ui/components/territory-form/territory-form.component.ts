@@ -90,7 +90,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public hasNoGeoReferential() {
     return [
-      !!this.territory.selector._id?.length,
       !!this.territory.selector.aom?.length,
       !!this.territory.selector.com?.length,
       !!this.territory.selector.epci?.length,

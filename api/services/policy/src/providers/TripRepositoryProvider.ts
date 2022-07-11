@@ -12,6 +12,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
   public readonly table = 'policy.trips';
   public readonly incentiveTable = 'policy.incentives';
   public readonly getComFunction = 'territory.get_com_by_territory_id';
+  public readonly getMillesimeFunction = 'geo.get_latest_millesime';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -27,11 +28,13 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
     batchSize = 100,
     override = false,
   ): AsyncGenerator<TripInterface[], void, void> {
+    const latestYear = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
+
     const comRes = await this.connection.getClient().query({
       text: `
         SELECT * FROM ${this.getComFunction}($1::int, $2::smallint)
       `,
-      values: [policy.territory_id, from.getFullYear()],
+      values: [policy.territory_id, latestYear],
     });
 
     const com = comRes.rowCount ? comRes.rows.map((r) => r.com) : [];
