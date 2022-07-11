@@ -28,13 +28,14 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
     batchSize = 100,
     override = false,
   ): AsyncGenerator<TripInterface[], void, void> {
-    const latestYear = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
+    const yearResult = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
+    const year = yearResult.rows[0]?.year;
 
     const comRes = await this.connection.getClient().query({
       text: `
         SELECT * FROM ${this.getComFunction}($1::int, $2::smallint)
       `,
-      values: [policy.territory_id, latestYear],
+      values: [policy.territory_id, year],
     });
 
     const com = comRes.rowCount ? comRes.rows.map((r) => r.com) : [];
