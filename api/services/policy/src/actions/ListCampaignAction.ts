@@ -19,26 +19,8 @@ export class ListCampaignAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const result = await this.campaignRepository.findWhere(params);
-    const userTerritoryId = get(context, 'call.user.territory_id');
-
-    if (!userTerritoryId || params.territory_id !== userTerritoryId) {
-      return result.map((c) => this.removeSensitiveRules(c));
-    }
-
-    return result;
-  }
-
-  protected removeSensitiveRules(campaign): CampaignInterface {
-    return {
-      ...campaign,
-      global_rules: Array.isArray(campaign.global_rules)
-        ? campaign.global_rules.filter((r) => this.sensitiveRules.indexOf(r.slug) < 0)
-        : [],
-      rules: Array.isArray(campaign.global_rules)
-        ? campaign.rules.filter((r) => this.sensitiveRules.indexOf(r.slug) < 0)
-        : [],
-    };
+    return result.map(r => ({ ...r, description: 'TODO '}));
   }
 }

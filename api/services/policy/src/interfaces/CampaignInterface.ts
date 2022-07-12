@@ -1,6 +1,5 @@
 export interface CampaignInterface {
   _id?: number;
-  parent_id?: number;
   territory_id: number;
   name: string;
   start_date: Date;
