@@ -27,7 +27,7 @@ export class FindCampaignAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const campaign =
       params.territory_id === null || params.territory_id === undefined
         ? await this.campaignRepository.find(params._id)
