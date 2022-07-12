@@ -2,7 +2,6 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
 
-import { validateRuleParametersMiddleware } from '../middlewares/ValidateRuleParametersMiddleware';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
 
 import { alias } from '../shared/policy/simulateOn.schema';
@@ -18,7 +17,6 @@ import {
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    validateRuleParametersMiddleware(),
     validateDateMiddleware({
       startPath: 'campaign.start_date',
       endPath: 'campaign.end_date',

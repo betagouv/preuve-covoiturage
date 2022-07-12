@@ -1,4 +1,4 @@
-import { schema as campaignSchema } from './create.schema';
+import { schema as campaignSchema } from './common/schemas/campaign';
 
 export const alias = 'campaign.simulateOn';
 

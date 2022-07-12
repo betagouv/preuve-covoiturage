@@ -1,11 +1,11 @@
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
 import {
+  CampaignInterface,
   CampaignRepositoryProviderInterface,
   CampaignRepositoryProviderInterfaceResolver,
-} from '../interfaces/CampaignRepositoryProviderInterface';
+} from '../interfaces';
 
 @provider({
   identifier: CampaignRepositoryProviderInterfaceResolver,
@@ -15,12 +15,17 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(id: number): Promise<CampaignInterface> {
+  async find(id: number, territoryId?: number): Promise<CampaignInterface> {
+    const values = [id];
+    if(!!territoryId) {
+      values.push(territoryId);
+    }
     const query = {
       text: `
         SELECT * FROM ${this.table}
         WHERE _id = $1
         AND deleted_at IS NULL
+        ${!!territoryId ? 'AND territory_id = $2' : ''}
         LIMIT 1
       `,
       values: [id],
@@ -39,44 +44,29 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     const query = {
       text: `
         INSERT INTO ${this.table} (
-          parent_id,
           territory_id,
           start_date,
           end_date,
           name,
-          description,
-          unit,
           status,
-          global_rules,
-          rules,
-          ui_status
+          uses
         ) VALUES (
           $1,
           $2,
           $3,
           $4,
           $5,
-          $6,
-          $7,
-          $8,
-          $9,
-          $10,
-          $11
+          $6
         )
         RETURNING *
       `,
       values: [
-        'parent_id' in data ? data.parent_id : null,
         data.territory_id,
         data.start_date,
         data.end_date,
         data.name,
-        'description' in data ? data.description : null,
-        data.unit,
         data.status,
-        JSON.stringify(data.global_rules),
-        JSON.stringify(data.rules),
-        JSON.stringify('ui_status' in data ? data.ui_status : {}),
+        data.uses,
       ],
     };
 
@@ -90,28 +80,17 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
 
   async patch(id: number, patch: Partial<CampaignInterface>): Promise<CampaignInterface> {
     const updatablefields = [
-      'ui_status',
       'name',
-      'description',
       'start_date',
       'end_date',
-      'unit',
-      'global_rules',
-      'rules',
       'status',
+      'uses'
     ].filter((k) => Object.keys(patch).indexOf(k) >= 0);
 
     const sets = {
       text: ['updated_at = NOW()'],
       values: [],
     };
-
-    for (const fieldName of updatablefields) {
-      sets.text.push(`${fieldName} = $#`);
-      sets.values.push(
-        ['global_rules', 'rules'].indexOf(fieldName) >= 0 ? JSON.stringify(patch[fieldName]) : patch[fieldName],
-      );
-    }
 
     const query = {
       text: `
@@ -140,14 +119,14 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows[0];
   }
 
-  async deleteDraftOrTemplate(id: number): Promise<void> {
+  async delete(id: number): Promise<void> {
     const query = {
       text: `
       UPDATE ${this.table}
         SET deleted_at = NOW()
-        WHERE _id = $1 AND status::text = ANY ($2::text[]) AND deleted_at IS NULL
+        WHERE _id = $1 AND deleted_at IS NULL
       `,
-      values: [id, ['draft', 'template']],
+      values: [id],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -157,79 +136,6 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     }
 
     return;
-  }
-
-  async patchWhereTerritory(
-    id: number,
-    territoryId: number,
-    patch: Partial<CampaignInterface>,
-  ): Promise<CampaignInterface> {
-    const updatablefields = [
-      'ui_status',
-      'name',
-      'description',
-      'start_date',
-      'end_date',
-      'unit',
-      'global_rules',
-      'rules',
-    ].filter((k) => Object.keys(patch).indexOf(k) >= 0);
-
-    const sets = {
-      text: ['updated_at = NOW()'],
-      values: [],
-    };
-
-    for (const fieldName of updatablefields) {
-      sets.text.push(`${fieldName} = $#`);
-      sets.values.push(
-        ['global_rules', 'rules'].indexOf(fieldName) >= 0 ? JSON.stringify(patch[fieldName]) : patch[fieldName],
-      );
-    }
-
-    const query = {
-      text: `
-      UPDATE ${this.table}
-        SET ${sets.text.join(',')}
-        WHERE _id = $#
-        AND territory_id = $#
-        AND deleted_at IS NULL
-        RETURNING *
-      `,
-      values: [...sets.values, id, territoryId],
-    };
-
-    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
-      if (idx === origin.length - 1) {
-        return `${acc}${current}`;
-      }
-
-      return `${acc}${current}$${idx + 1}`;
-    }, '');
-
-    const result = await this.connection.getClient().query(query);
-    if (result.rowCount !== 1) {
-      throw new NotFoundException(`campaign not found (${id})`);
-    }
-
-    return result.rows[0];
-  }
-
-  async findOneWhereTerritory(id: number, territoryId: number): Promise<CampaignInterface | null> {
-    const query = {
-      text: `
-        SELECT * FROM ${this.table}
-        WHERE _id = $1::int
-        AND territory_id = $2::int
-        AND deleted_at IS NULL
-        LIMIT 1
-      `,
-      values: [id, territoryId],
-    };
-
-    const result = await this.connection.getClient().query(query);
-
-    return result.rowCount ? result.rows[0] : null;
   }
 
   async findWhere(search: {
@@ -287,14 +193,6 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     if (result.rowCount === 0) {
       return [];
     }
-
-    return result.rows;
-  }
-
-  async getTemplates(): Promise<CampaignInterface[]> {
-    const result = await this.connection.getClient().query(`
-      SELECT * FROM ${this.table} WHERE status = 'template' AND deleted_at IS NULL ORDER BY slug
-    `);
 
     return result.rows;
   }

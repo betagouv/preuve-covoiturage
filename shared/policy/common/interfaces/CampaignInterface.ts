@@ -6,4 +6,5 @@ export interface CampaignInterface {
   start_date: Date;
   end_date: Date;
   status: string;
+  uses: string;
 }
