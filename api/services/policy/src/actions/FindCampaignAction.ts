@@ -28,10 +28,7 @@ export class FindCampaignAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const campaign =
-      params.territory_id === null || params.territory_id === undefined
-        ? await this.campaignRepository.find(params._id)
-        : await this.campaignRepository.findOneWhereTerritory(params._id, params.territory_id);
+    const campaign = await this.campaignRepository.find(params._id, params.territory_id);
 
     if (!campaign) {
       throw new NotFoundException(`Campaign #${params._id} not found`);
@@ -41,6 +38,7 @@ export class FindCampaignAction extends AbstractAction {
     return {
       ...campaign,
       state,
+      description: 'TODO',
     };
   }
 }
