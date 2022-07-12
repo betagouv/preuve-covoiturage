@@ -8,6 +8,7 @@ export interface CampaignRepositoryProviderInterface {
   findWhere(search: {
     territory_id?: number | number[] | null;
     status?: string;
+    datetime?: Date;
   }): Promise<CampaignInterface[]>;
 }
 
@@ -30,6 +31,7 @@ export abstract class CampaignRepositoryProviderInterfaceResolver implements Cam
   async findWhere(search: {
     territory_id?: number | null | number[];
     status?: string;
+    datetime?: Date;
   }): Promise<CampaignInterface[]> {
     throw new Error();
   }

@@ -22,13 +22,10 @@ function makeCampaign(data: Partial<CampaignInterface> = {}): CampaignInterface 
   return {
     territory_id: 0,
     name: 'Campaign',
-    description: 'Campaign description',
     start_date: start,
     end_date: end,
-    unit: 'euro',
     status: 'draft',
-    global_rules: [],
-    rules: [],
+    uses: '',
     ...data,
   };
 }
@@ -76,13 +73,13 @@ test.serial('Should find campaign', async (t) => {
 });
 
 test.serial('Should find campaign by territory', async (t) => {
-  const campaign = await t.context.repository.findOneWhereTerritory(t.context.campaign._id, t.context.territory_id);
+  const campaign = await t.context.repository.find(t.context.campaign._id, t.context.territory_id);
   t.is(campaign.name, t.context.campaign.name);
   t.is(campaign.status, t.context.campaign.status);
 });
 
 test.serial('Should not find campaign by territory', async (t) => {
-  const campaign = await t.context.repository.findOneWhereTerritory(t.context.campaign._id, 1);
+  const campaign = await t.context.repository.find(t.context.campaign._id, 1);
   t.is(campaign, null);
 });
 
@@ -101,40 +98,6 @@ test.serial('Should patch campaign', async (t) => {
   t.is(result.rows[0].name, name);
   t.context.campaign.name = name;
 });
-
-test.serial('Should patch campaign by territory id', async (t) => {
-  const name = 'Awesome campaign 2';
-  const campaign = await t.context.repository.patchWhereTerritory(t.context.campaign._id, t.context.territory_id, {
-    name,
-  });
-
-  const result = await t.context.connection.getClient().query({
-    text: `SELECT * FROM ${t.context.repository.table} WHERE _id = $1`,
-    values: [t.context.campaign._id],
-  });
-
-  t.not(campaign.name, t.context.campaign.name);
-  t.is(campaign.name, name);
-  t.is(result.rowCount, 1);
-  t.is(result.rows[0].name, name);
-  t.context.campaign.name = name;
-});
-
-test.serial('Should not patch campaign by territory id', async (t) => {
-  const name = 'Not updating!';
-  const err = await t.throwsAsync(async () =>
-    t.context.repository.patchWhereTerritory(t.context.campaign._id, 1, { name }),
-  );
-  t.is(err.message, 'Not found');
-
-  const result = await t.context.connection.getClient().query({
-    text: `SELECT * FROM ${t.context.repository.table} WHERE _id = $1`,
-    values: [t.context.campaign._id],
-  });
-  t.is(result.rowCount, 1);
-  t.not(result.rows[0].name, name);
-});
-
 // test.serial('Should not patch campaign if active', async (t) => {
 
 //   const name = 'Nope!';
@@ -154,7 +117,7 @@ test.serial('Should not delete campaign if active', async (t) => {
     text: `UPDATE ${t.context.repository.table} SET status = 'active'::policy.policy_status_enum WHERE _id = $1`,
     values: [t.context.campaign._id],
   });
-  const err = await t.throwsAsync(async () => t.context.repository.deleteDraftOrTemplate(t.context.campaign._id));
+  const err = await t.throwsAsync(async () => t.context.repository.delete(t.context.campaign._id));
   t.is(err.message, 'Not found');
 
   const result = await t.context.connection.getClient().query({
