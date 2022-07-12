@@ -37,7 +37,7 @@ export class FindCampaignAction extends AbstractAction {
       throw new NotFoundException(`Campaign #${params._id} not found`);
     }
 
-    const state = await this.incentiveRepository.getCampaignState(campaign._id);
+    const state = await this.incentiveRepository.getCampaignStats(campaign._id);
     return {
       ...campaign,
       state,
