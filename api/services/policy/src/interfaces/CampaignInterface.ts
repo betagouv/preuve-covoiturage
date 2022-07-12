@@ -15,7 +15,7 @@ export interface CampaignInterface {
   rules: RuleInterface[][];
 }
 
-export interface CampaignStateInterface {
+export interface CampaignStatsInterface {
   amount: number;
   trip_subsidized: number;
   trip_excluded: number;

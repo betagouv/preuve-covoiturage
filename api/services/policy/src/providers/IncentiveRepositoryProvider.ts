@@ -8,7 +8,7 @@ import {
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStateEnum,
   IncentiveStatusEnum,
-  CampaignStateInterface,
+  CampaignStatsInterface,
 } from '../interfaces';
 
 @provider({
@@ -232,7 +232,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     return;
   }
 
-  async getCampaignState(policy_id: number): Promise<CampaignStateInterface> {
+  async getCampaignStats(policy_id: number): Promise<CampaignStatsInterface> {
     const query = {
       text: `
         SELECT
