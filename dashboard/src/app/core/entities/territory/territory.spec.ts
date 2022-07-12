@@ -30,8 +30,8 @@ describe('TerritoryMapper', () => {
     const model: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
       territoryForm,
       5,
-      '246900625',
       "Communauté de communes du Pays de L'Arbresle",
+      '246900625',
     );
     expect(model.name).toEqual("Communauté de communes du Pays de L'Arbresle");
     expect(model.selector.aom).toEqual(['246900625']);

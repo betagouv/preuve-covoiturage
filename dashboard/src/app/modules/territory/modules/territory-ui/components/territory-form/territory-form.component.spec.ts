@@ -127,9 +127,9 @@ describe('TerritoryFormComponent', () => {
   });
 
   describe('Create Territory Group', () => {
+    let fixture;
     beforeEach(() => {
       territoryApiServiceSpy.findGeoBySiren.and.returnValue(of(findBySiretResult));
-
       companyApiServiceSpy.fetchCompany.and.returnValue(
         of({
           _id: 4,
@@ -180,6 +180,8 @@ describe('TerritoryFormComponent', () => {
           },
         ],
       }).compileComponents();
+
+      fixture = TestBed.createComponent(TerritoryFormComponent);
     });
 
     afterEach(() => {
@@ -187,11 +189,11 @@ describe('TerritoryFormComponent', () => {
       territoryApiServiceSpy.update.calls.reset();
 
       companyApiServiceSpy.fetchCompany.calls.reset();
+      fixture.destroy();
     });
 
     it('should load empty form when new territory', async () => {
       // Arrange
-      const fixture = TestBed.createComponent(TerritoryFormComponent);
       const comp = fixture.componentInstance;
       // Assert
       expect(comp).toBeTruthy();
@@ -210,14 +212,11 @@ describe('TerritoryFormComponent', () => {
     // TODO: merge scenario with previous test
     it('should create new territory with aom selector if siret form matches', async () => {
       // Arrange
-      const fixture = TestBed.createComponent(TerritoryFormComponent);
       const comp = fixture.componentInstance;
       expect(comp).toBeTruthy();
 
       // Act
-      // detect siret change
       fixture.detectChanges();
-      await new Promise((resolve) => setTimeout(resolve, 300)); // wait for throttleTime
       comp.territoryForm.controls.company.get('siret').setValue('24690062500012');
       comp.territoryForm.controls.contacts.get('gdpr_controller.email').setValue('gdpr_controller@mail.com');
       comp.territoryForm.controls.contacts.get('gdpr_controller.lastname').setValue('controller');
@@ -274,10 +273,8 @@ describe('TerritoryFormComponent', () => {
     it('should create territory with epci selector if siret form matches', async () => {
       // Arrange
       territoryApiServiceSpy.findGeoBySiren.and.returnValue(of(toursMetropoleFindGeoBySirenResult));
-
       companyApiServiceSpy.fetchCompany.and.returnValue(of(toursMetropoleValeLoireCompany));
 
-      const fixture = TestBed.createComponent(TerritoryFormComponent);
       const comp = fixture.componentInstance;
       expect(comp).toBeTruthy();
 
@@ -310,8 +307,10 @@ describe('TerritoryFormComponent', () => {
     });
   });
 
-  describe('Update', () => {
-    beforeEach(() =>
+  describe('Update Territory Group', () => {
+    let fixture;
+
+    beforeEach(() => {
       TestBed.configureTestingModule({
         declarations: [TerritoryFormComponent],
         schemas: [NO_ERRORS_SCHEMA],
@@ -369,17 +368,21 @@ describe('TerritoryFormComponent', () => {
             },
           },
         ],
-      }).compileComponents(),
-    );
+      }).compileComponents();
+      fixture = TestBed.createComponent(TerritoryFormComponent);
+    });
 
     afterEach(() => {
       territoryApiServiceSpy.create.calls.reset();
       territoryApiServiceSpy.update.calls.reset();
+
+      companyApiServiceSpy.fetchCompany.calls.reset();
+
+      fixture.destroy();
     });
 
     it('should load existing territory with company if exists', async () => {
       // Arrange
-      const fixture = TestBed.createComponent(TerritoryFormComponent);
       const comp = fixture.componentInstance;
       fixture.detectChanges();
 
@@ -405,7 +408,6 @@ describe('TerritoryFormComponent', () => {
     // TODO : merge with previous scenario
     it('should load existing territory and update', async () => {
       // Arrange
-      const fixture = TestBed.createComponent(TerritoryFormComponent);
       const comp = fixture.componentInstance;
       fixture.detectChanges();
 
