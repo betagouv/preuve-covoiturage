@@ -17,11 +17,11 @@ export const schema = {
         status: {
           macro: 'varchar',
         },
-        excluded_start_code: {
+        excluded_start_geo_code: {
           type: 'array',
           items: { macro: 'insee' },
         },
-        excluded_end_code: {
+        excluded_end_geo_code: {
           type: 'array',
           items: { macro: 'insee' },
         },
