@@ -7,7 +7,6 @@ import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { config } from './config';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
-import { binding as templatesSchemaBinding } from './shared/policy/templates.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
 import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOn.schema';
 import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
@@ -26,8 +25,6 @@ import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProv
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 
-import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateRuleParametersMiddleware';
-
 @serviceProvider({
   config,
   providers: [
@@ -37,11 +34,9 @@ import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateR
     PolicyEngine,
     IncentiveRepositoryProvider,
     TerritoryRepositoryProvider,
-    validateRuleParametersMiddlewareBinding,
   ],
   validator: [
     listSchemaBinding,
-    templatesSchemaBinding,
     findSchemaBinding,
     simulateOnSchemaBinding,
     simulateOnFutureSchemaBinding,
