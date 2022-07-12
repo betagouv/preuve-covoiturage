@@ -16,15 +16,10 @@ import { binding as findSchemaBinding } from './shared/policy/find.schema';
 import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOn.schema';
 import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
 
-import { CreateCampaignAction } from './actions/CreateCampaignAction';
-import { PatchCampaignAction } from './actions/PatchCampaignAction';
-import { LaunchCampaignAction } from './actions/LaunchCampaignAction';
-import { ListCampaignAction } from './actions/ListCampaignAction';
-import { DeleteCampaignAction } from './actions/DeleteCampaignAction';
-import { TemplatesCampaignAction } from './actions/TemplatesCampaignAction';
-import { FindCampaignAction } from './actions/FindCampaignAction';
 import { ApplyAction } from './actions/ApplyAction';
 import { FinalizeAction } from './actions/FinalizeAction';
+import { FindCampaignAction } from './actions/FindCampaignAction';
+import { ListCampaignAction } from './actions/ListCampaignAction';
 import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
 import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
 
@@ -61,11 +56,6 @@ import { CampaignStateAction } from './actions/GetCampaignStateAction';
     simulateOnFutureSchemaBinding,
   ],
   handlers: [
-    TemplatesCampaignAction,
-    CreateCampaignAction,
-    PatchCampaignAction,
-    LaunchCampaignAction,
-    DeleteCampaignAction,
     ListCampaignAction,
     FindCampaignAction,
     ApplyAction,
