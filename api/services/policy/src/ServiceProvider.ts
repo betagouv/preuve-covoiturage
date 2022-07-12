@@ -6,10 +6,6 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { config } from './config';
-import { binding as createSchemaBinding } from './shared/policy/create.schema';
-import { binding as patchSchemaBinding } from './shared/policy/patch.schema';
-import { binding as launchSchemaBinding } from './shared/policy/launch.schema';
-import { binding as deleteSchemaBinding } from './shared/policy/delete.schema';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as templatesSchemaBinding } from './shared/policy/templates.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
@@ -44,10 +40,6 @@ import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateR
     validateRuleParametersMiddlewareBinding,
   ],
   validator: [
-    createSchemaBinding,
-    patchSchemaBinding,
-    launchSchemaBinding,
-    deleteSchemaBinding,
     listSchemaBinding,
     templatesSchemaBinding,
     findSchemaBinding,
