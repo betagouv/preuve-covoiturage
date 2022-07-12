@@ -13,17 +13,22 @@ export class TerritoryMapper {
   static toModel(
     territoryForm: AbstractControl,
     company_id: number,
-    aomSiren: string,
-    aomName: string,
+    territoryGroupName: string,
+    aom?: string,
+    epci?: string,
   ): CreateTerritoryGroupInterface {
     let selector: TerritorySelectorsInterface;
-    if (aomSiren) {
+    if (aom) {
       selector = {
-        aom: [aomSiren],
+        aom: [aom],
+      };
+    } else if (epci) {
+      selector = {
+        epci: [epci],
       };
     }
     const territory: CreateTerritoryGroupInterface = {
-      name: aomName,
+      name: territoryGroupName,
       company_id: company_id,
       contacts: ContactsMapper.toModel(territoryForm.get('contacts')),
       address: removeNullsProperties(territoryForm.get('address').value),

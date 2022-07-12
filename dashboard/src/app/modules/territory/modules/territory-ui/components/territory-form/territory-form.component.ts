@@ -113,14 +113,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       return;
     }
 
-    const aomSiren: string = this.getAOMSiren();
+    const aomSiren: string =
+      this.findGeoBySiretResponse.aom_siren === this.company.siren ? this.findGeoBySiretResponse.aom_siren : null;
+    const epciSiren: string =
+      this.findGeoBySiretResponse.epci_siren === this.company.siren ? this.findGeoBySiretResponse.epci_siren : null;
     const aomName: string = this.getTerritoryName();
 
     const createTerritory: CreateTerritoryGroupInterface = TerritoryMapper.toModel(
       this.territoryForm,
       this.companyId,
-      aomSiren,
       aomName,
+      aomSiren,
+      epciSiren,
     );
     if (this.isNew()) {
       this.territoryApi.create(createTerritory).subscribe(() => {
@@ -148,16 +152,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     } else if (this.company.siren === this.findGeoBySiretResponse.epci_siren) {
       return this.findGeoBySiretResponse.epci_name;
     } else return this.company.legal_name;
-  }
-
-  private getAOMSiren(): string {
-    if (
-      this.company.siren === this.findGeoBySiretResponse.aom_siren ||
-      this.company.siren === this.findGeoBySiretResponse.epci_siren
-    ) {
-      return this.company.siren;
-    }
-    return null;
   }
 
   private isNew(): boolean {
