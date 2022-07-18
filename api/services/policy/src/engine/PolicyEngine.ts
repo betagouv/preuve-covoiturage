@@ -59,12 +59,12 @@ export class PolicyEngine {
     return incentives;
   }
 
-  protected guard(campaign: ProcessableCampaign, trip: TripInterface): boolean {
-    if (trip.datetime < campaign.start_date) {
+  protected guard(campaign: ProcessableCampaign, couples: TripInterface): boolean {
+    if (couples.datetime < campaign.start_date) {
       return false;
     }
 
-    if (trip.datetime > campaign.end_date) {
+    if (couples.datetime > campaign.end_date) {
       return false;
     }
 
@@ -72,17 +72,17 @@ export class PolicyEngine {
       return true;
     }
 
-    for (const starts of trip.map((t) => t.start)) {
-      if (!isSelected(starts, campaign.territory_selector)) {
-        return false;
+    for (const starts of couples.map((t) => t.start)) {
+      if (isSelected(starts, campaign.territory_selector)) {
+        return true;
       }
     }
 
-    for (const starts of trip.map((t) => t.end)) {
-      if (!isSelected(starts, campaign.territory_selector)) {
-        return false;
+    for (const starts of couples.map((t) => t.end)) {
+      if (isSelected(starts, campaign.territory_selector)) {
+        return true;
       }
     }
-    return true;
+    return false;
   }
 }
