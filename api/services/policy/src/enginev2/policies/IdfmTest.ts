@@ -18,7 +18,12 @@ import {
   endsAt,
   startsAt,
 } from '../helpers';
-import { setMax, watchForGlobalMaxAmount, watchForPersonMaxAmountByMonth, watchForPersonMaxTripByDay } from '../helpers/max';
+import {
+  setMax,
+  watchForGlobalMaxAmount,
+  watchForPersonMaxAmountByMonth,
+  watchForPersonMaxTripByDay,
+} from '../helpers/max';
 
 export class IdfmTest implements PolicyHandlerInterface<StepInterface> {
   protected operators = ['siret de klaxit', 'siret de karos'];
@@ -66,7 +71,7 @@ export class IdfmTest implements PolicyHandlerInterface<StepInterface> {
 
   processStateful(ctx: StatefulContextInterface): void {
     for (const limit of this.limits) {
-      const [_, stateful] = limit;
+      const [, stateful] = limit;
       stateful(ctx);
     }
   }

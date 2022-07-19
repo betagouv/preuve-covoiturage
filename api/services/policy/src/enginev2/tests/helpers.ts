@@ -19,7 +19,7 @@ const defaultCarpool: CarpoolInterface = {
   datetime: new Date('2019-01-15'),
   seats: 1,
   duration: 600,
-  distance: 5000, 
+  distance: 5000,
   cost: 20,
   start: { ...defaultPos },
   end: { ...defaultPos },
@@ -38,7 +38,7 @@ const defaultIncentive: SerializedIncentiveInterface = {
   statefulAmount: 100,
   status: IncentiveStatusEnum.Draft,
   state: IncentiveStateEnum.Regular,
-  meta: [], 
+  meta: [],
 };
 
 export function generateIncentive(incentive: Partial<SerializedIncentiveInterface> = {}): SerializedIncentiveInterface {

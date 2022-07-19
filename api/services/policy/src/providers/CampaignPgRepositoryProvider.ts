@@ -17,7 +17,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
 
   async find(id: number, territoryId?: number): Promise<CampaignInterface> {
     const values = [id];
-    if(!!territoryId) {
+    if (!!territoryId) {
       values.push(territoryId);
     }
     const query = {
@@ -60,14 +60,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
         )
         RETURNING *
       `,
-      values: [
-        data.territory_id,
-        data.start_date,
-        data.end_date,
-        data.name,
-        data.status,
-        data.uses,
-      ],
+      values: [data.territory_id, data.start_date, data.end_date, data.name, data.status, data.uses],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -78,14 +71,10 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows[0];
   }
 
-  async patch(id: number, patch: Partial<CampaignInterface>): Promise<CampaignInterface> {
-    const updatablefields = [
-      'name',
-      'start_date',
-      'end_date',
-      'status',
-      'uses'
-    ].filter((k) => Object.keys(patch).indexOf(k) >= 0);
+  async patch(id: number, _patch: Partial<CampaignInterface>): Promise<CampaignInterface> {
+    // const updatablefields = ['name', 'start_date', 'end_date', 'status', 'uses'].filter(
+    //   (k) => Object.keys(patch).indexOf(k) >= 0,
+    // );
 
     const sets = {
       text: ['updated_at = NOW()'],

@@ -11,7 +11,7 @@ function setup(operator_siret: string) {
 
 test('should throw if not in list', async (t) => {
   const ctx = setup('1234');
-  const err = await t.throwsAsync<NotEligibleTargetException>(async () => {
+  await t.throwsAsync<NotEligibleTargetException>(async () => {
     isOperatorOrThrow(ctx, ['5678']);
   });
 });

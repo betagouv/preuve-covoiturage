@@ -11,7 +11,7 @@ function setup(is_driver: boolean) {
 
 test('should throw if not a driver', async (t) => {
   const ctx = setup(false);
-  const err = await t.throwsAsync<NotEligibleTargetException>(async () => {
+  await t.throwsAsync<NotEligibleTargetException>(async () => {
     isDriverOrThrow(ctx);
   });
 });

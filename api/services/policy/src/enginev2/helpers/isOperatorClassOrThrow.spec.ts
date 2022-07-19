@@ -11,7 +11,7 @@ function setup(operator_class: string) {
 
 test('should throw if not in list', async (t) => {
   const ctx = setup('A');
-  const err = await t.throwsAsync<NotEligibleTargetException>(async () => {
+  await t.throwsAsync<NotEligibleTargetException>(async () => {
     isOperatorClassOrThrow(ctx, ['B']);
   });
 });

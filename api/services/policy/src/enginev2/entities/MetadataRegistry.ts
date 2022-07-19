@@ -6,7 +6,7 @@ import {
   MetadataVariableExport,
 } from '../interfaces';
 
-function getMetaKey( datetime: Date, metaDefinition: MetadataVariableDefinition): string {
+function getMetaKey(datetime: Date, metaDefinition: MetadataVariableDefinition): string {
   const date = typeof datetime.getMonth === 'function' ? datetime : new Date(datetime);
   const [day, month, year] = [date.getDate(), date.getMonth(), date.getFullYear()];
 

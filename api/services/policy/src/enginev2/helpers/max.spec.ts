@@ -4,50 +4,64 @@ import { StatefulContext, StatelessContext } from '../entities/Context';
 import { MetadataStore } from '../entities/MetadataStore';
 import { SerializedIncentiveInterface } from '../interfaces';
 import { generateCarpool, generateIncentive } from '../tests/helpers';
-import { applyForMaximum, watchForGlobalMaxAmount, watchForPersonMaxAmountByMonth, watchForPersonMaxTripByDay, watchForPersonMaxTripByMonth } from './max';
+import {
+  applyForMaximum,
+  watchForGlobalMaxAmount,
+  watchForPersonMaxAmountByMonth,
+  watchForPersonMaxTripByDay,
+  watchForPersonMaxTripByMonth,
+} from './max';
 
 function setupStateless() {
   return StatelessContext.fromCarpool(1, generateCarpool());
 }
 
 async function setupStateful(data: Partial<SerializedIncentiveInterface> = {}) {
-  return await StatefulContext.fromIncentive(new MetadataStore, generateIncentive(data));
+  return await StatefulContext.fromIncentive(new MetadataStore(), generateIncentive(data));
 }
 
 test('should watchForGlobalMaxAmount', async (t) => {
   const ctx = setupStateless();
-  watchForGlobalMaxAmount(ctx, '1'); 
-  t.deepEqual(ctx.meta.export(), [{
-    uuid: '1',
-    key: 'max_amount_restriction.global.campaign.global',
-  }]);
+  watchForGlobalMaxAmount(ctx, '1');
+  t.deepEqual(ctx.meta.export(), [
+    {
+      uuid: '1',
+      key: 'max_amount_restriction.global.campaign.global',
+    },
+  ]);
 });
 
 test('should watchForPersonMaxAmountByMonth', async (t) => {
   const ctx = setupStateless();
-  watchForPersonMaxAmountByMonth(ctx, '1'); 
-  t.deepEqual(ctx.meta.export(), [{
-    uuid: '1',
-    key: `max_amount_restriction.${ctx.carpool.identity_uuid}.month.0-2019`,
-  }]);
+  watchForPersonMaxAmountByMonth(ctx, '1');
+  t.deepEqual(ctx.meta.export(), [
+    {
+      uuid: '1',
+      key: `max_amount_restriction.${ctx.carpool.identity_uuid}.month.0-2019`,
+    },
+  ]);
 });
 
 test('should watchForPersonMaxTripByMonth', async (t) => {
   const ctx = setupStateless();
-  watchForPersonMaxTripByMonth(ctx, '1'); 
-  t.deepEqual(ctx.meta.export(), [{
-    uuid: '1',
-    key: `max_trip_restriction.${ctx.carpool.identity_uuid}.month.0-2019`,
-  }]);
+  watchForPersonMaxTripByMonth(ctx, '1');
+  t.deepEqual(ctx.meta.export(), [
+    {
+      uuid: '1',
+      key: `max_trip_restriction.${ctx.carpool.identity_uuid}.month.0-2019`,
+    },
+  ]);
 });
 
 test('should watchForPersonMaxTripByDay', async (t) => {
   const ctx = setupStateless();
-  watchForPersonMaxTripByDay(ctx, '1'); 
-  t.deepEqual(ctx.meta.export(), [{
-    uuid: '1',
-    key: `max_trip_restriction.${ctx.carpool.identity_uuid}.day.15-0-2019`,
-  }]);
+  watchForPersonMaxTripByDay(ctx, '1');
+  t.deepEqual(ctx.meta.export(), [
+    {
+      uuid: '1',
+      key: `max_trip_restriction.${ctx.carpool.identity_uuid}.day.15-0-2019`,
+    },
+  ]);
 });
 
 test('should drop incentive if max is reached', async (t) => {

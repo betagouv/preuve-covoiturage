@@ -1,12 +1,10 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { get } from 'lodash';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
 import { alias } from '../shared/policy/list.schema';
-import { CampaignInterface } from '../interfaces';
 
 @handler({
   ...handlerConfig,
@@ -21,6 +19,6 @@ export class ListCampaignAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const result = await this.campaignRepository.findWhere(params);
-    return result.map(r => ({ ...r, description: 'TODO '}));
+    return result.map((r) => ({ ...r, description: 'TODO ' }));
   }
 }

@@ -35,12 +35,7 @@ import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProv
     IncentiveRepositoryProvider,
     TerritoryRepositoryProvider,
   ],
-  validator: [
-    listSchemaBinding,
-    findSchemaBinding,
-    simulateOnSchemaBinding,
-    simulateOnFutureSchemaBinding,
-  ],
+  validator: [listSchemaBinding, findSchemaBinding, simulateOnSchemaBinding, simulateOnFutureSchemaBinding],
   handlers: [
     ListCampaignAction,
     FindCampaignAction,

@@ -10,12 +10,12 @@ function setup(datetime: Date) {
 
 test('should return false if not in list', async (t) => {
   const ctx = setup(new Date('2022-01-01'));
-  const res = atDate(ctx, { dates: []});
+  const res = atDate(ctx, { dates: [] });
   t.is(res, false);
 });
 
 test('should return true if in list', async (t) => {
   const ctx = setup(new Date('2022-01-01'));
-  const res = atDate(ctx, { dates: ['2022-01-01']});
+  const res = atDate(ctx, { dates: ['2022-01-01'] });
   t.is(res, true);
 });
