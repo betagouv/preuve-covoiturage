@@ -137,11 +137,11 @@ export interface StepInterface {
   end: number;
 }
 
-export interface PolicyRulesStaticInterface {
-  new (): PolicyRulesInterface;
+export interface PolicyHandlerStaticInterface {
+  new (): PolicyHandlerInterface;
 }
 
-export interface PolicyRulesInterface<P = StepRuleInterface> {
+export interface PolicyHandlerInterface<P = StepRuleInterface> {
   processStateless(context: StatelessContextInterface): void;
   processStateful(context: StatefulContextInterface): void;
   describe(): Array<P>;
@@ -156,7 +156,7 @@ export interface SerializedPolicyInterface {
   name: string;
   start_date: Date;
   end_date: Date;
-  uses: string;
+  handler: string;
   status: string;
 }
 
@@ -166,7 +166,7 @@ export interface PolicyInterface {
   name: string;
   start_date: Date;
   end_date: Date;
-  uses: PolicyRulesInterface;
+  handler: PolicyHandlerInterface;
   status: string;
 
   processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface>;

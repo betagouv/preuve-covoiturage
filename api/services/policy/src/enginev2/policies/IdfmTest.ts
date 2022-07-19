@@ -1,6 +1,6 @@
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
-  PolicyRulesInterface,
+  PolicyHandlerInterface,
   StatefulContextInterface,
   StatelessContextInterface,
   StepInterface,
@@ -20,7 +20,7 @@ import {
 } from '../helpers';
 import { setMax, watchForGlobalMaxAmount, watchForPersonMaxAmountByMonth, watchForPersonMaxTripByDay } from '../helpers/max';
 
-export class IdfmTest implements PolicyRulesInterface<StepInterface> {
+export class IdfmTest implements PolicyHandlerInterface<StepInterface> {
   protected operators = ['siret de klaxit', 'siret de karos'];
   protected limits = [
     setMax('99911EAF-89AB-C346-DDD5-BD2C7704F935', 600000000, watchForGlobalMaxAmount),
