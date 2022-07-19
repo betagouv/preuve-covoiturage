@@ -114,22 +114,22 @@ test('StreamDataToWorkBook: should stream data to a workbook file', async (t) =>
 
   // Assert
   const workbook: Workbook = await new Workbook().xlsx.readFile(filename);
-  const worksheet: Worksheet = workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME);
+  const worksheet: Worksheet = workbook.getWorksheet(streamDataToWorkBook.DATA_WORKSHEET_NAME);
   t.is(worksheet.actualRowCount, 21);
-  t.deepEqual(workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(1).values, [
+  t.deepEqual(workbook.getWorksheet(streamDataToWorkBook.DATA_WORKSHEET_NAME).getRow(1).values, [
     undefined,
     ...BuildExportAction.getColumns('territory'),
   ]);
   t.is(
-    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).values.length,
+    workbook.getWorksheet(streamDataToWorkBook.DATA_WORKSHEET_NAME).getRow(2).values.length,
     BuildExportAction.getColumns('territory').length + 1,
   );
   t.is(
-    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell(2).value,
+    workbook.getWorksheet(streamDataToWorkBook.DATA_WORKSHEET_NAME).getRow(2).getCell(2).value,
     exportTripInterface.trip_id,
   );
   t.deepEqual(
-    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell('AD').value,
+    workbook.getWorksheet(streamDataToWorkBook.DATA_WORKSHEET_NAME).getRow(2).getCell('AD').value,
     exportTripInterface.operator,
   );
 });

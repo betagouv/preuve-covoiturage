@@ -10,7 +10,8 @@ import { ResultInterface as Campaign } from '../../../shared/policy/find.contrac
 export class StreamDataToWorkBook {
   constructor() {}
 
-  public readonly WORKSHEET_NAME = 'Données';
+  public readonly DATA_WORKSHEET_NAME = 'Données';
+  public readonly SLICE_WORKSHEET_NAME = 'Tranches';
 
   async call(cursor: PgCursorHandler, filepath: string, campaign: Campaign): Promise<void> {
     const workbookWriter: stream.xlsx.WorkbookWriter = new stream.xlsx.WorkbookWriter({
@@ -30,14 +31,14 @@ export class StreamDataToWorkBook {
   }
 
   private writeColumnHeaders(wb: stream.xlsx.WorkbookWriter): void {
-    const worksheet: Worksheet = wb.addWorksheet(this.WORKSHEET_NAME);
+    const worksheet: Worksheet = wb.addWorksheet(this.DATA_WORKSHEET_NAME);
     worksheet.columns = BuildExportAction.getColumns('territory').map((c) => {
       return { header: c, key: c };
     });
   }
 
   private async writeTrips(wb: stream.xlsx.WorkbookWriter, trips: ExportTripInterface[]) {
-    const worsheetData: Worksheet = wb.getWorksheet(this.WORKSHEET_NAME);
+    const worsheetData: Worksheet = wb.getWorksheet(this.DATA_WORKSHEET_NAME);
     trips.map((t) => worsheetData.addRow(normalizeExport(t, 'Europe/Paris')).commit());
   }
 }

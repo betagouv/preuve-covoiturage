@@ -4,6 +4,7 @@ import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { BuildFilepath } from './build/BuildFilepath';
 import { StreamDataToWorkBook } from './build/StreamDataToWorkbook';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
+import { CreateSlicesSheetToWorkbook } from './build/CreateSlicesSheetToWorkbook';
 
 @provider()
 export class BuildExcel {
@@ -11,6 +12,7 @@ export class BuildExcel {
     private tripRepositoryProvider: TripRepositoryProvider,
     private buildFilepath: BuildFilepath,
     private streamDataToWorkbook: StreamDataToWorkBook,
+    private createSlicesSheetToWorkbook: CreateSlicesSheetToWorkbook,
   ) {}
 
   async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
@@ -22,8 +24,9 @@ export class BuildExcel {
     );
 
     const filepath: string = this.buildFilepath.call(campaign.name, operator_id, start_date);
-
-    return this.streamDataToWorkbook.call(tripCursor, filepath, campaign).then(() => filepath);
+    await this.streamDataToWorkbook.call(tripCursor, filepath, campaign);
+    await this.createSlicesSheetToWorkbook.call(filepath, campaign);
+    return filepath;
   }
 
   private getTripRepositoryCursor(
