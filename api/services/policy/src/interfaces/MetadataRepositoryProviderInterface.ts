@@ -30,4 +30,3 @@ export abstract class MetadataRepositoryProviderInterfaceResolverV2 {
     throw new Error();
   }
 }
-

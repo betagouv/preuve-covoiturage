@@ -10,12 +10,12 @@ function setup(datetime: Date) {
 
 test('should return false if not in range', async (t) => {
   const ctx = setup(new Date('2022-01-03'));
-  const res = isAfter(ctx, { date: new Date('2022-01-04')});
+  const res = isAfter(ctx, { date: new Date('2022-01-04') });
   t.is(res, false);
 });
 
 test('should return true if in range', async (t) => {
   const ctx = setup(new Date('2022-01-03'));
-  const res = isAfter(ctx, { date: new Date('2022-01-02')});
+  const res = isAfter(ctx, { date: new Date('2022-01-02') });
   t.is(res, true);
 });

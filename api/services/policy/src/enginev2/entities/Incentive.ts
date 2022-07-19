@@ -2,7 +2,6 @@ import {
   IncentiveStateEnum,
   IncentiveStatusEnum,
   MetadataRegistryInterface,
-  MetadataVariable,
   SerializedIncentiveInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,

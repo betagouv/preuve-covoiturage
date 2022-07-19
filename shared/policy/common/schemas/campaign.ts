@@ -4,7 +4,7 @@ export const schema = {
   required: ['territory_id', 'name', 'uses'],
   properties: {
     territory_id: {
-      macro: 'serial'
+      macro: 'serial',
     },
     name: {
       macro: 'varchar',

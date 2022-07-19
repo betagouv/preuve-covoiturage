@@ -11,7 +11,7 @@ function setup(is_over_18: boolean) {
 
 test('should throw if not an adult', async (t) => {
   const ctx = setup(false);
-  const err = await t.throwsAsync<NotEligibleTargetException>(async () => {
+  await t.throwsAsync<NotEligibleTargetException>(async () => {
     isAdultOrThrow(ctx);
   });
 });
