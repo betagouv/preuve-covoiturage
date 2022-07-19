@@ -48,8 +48,8 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
 
     const key = getMetaKey(
       this.getPrefix(),
-      ctx.person.datetime,
       this.parameters.period,
+      ctx.person.datetime,
       this.parameters.target ? ctx.person.identity_uuid : 'global',
     );
     return key;

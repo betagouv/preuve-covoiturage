@@ -56,8 +56,8 @@ test('should properly build initial state', async (t) => {
     meta,
   );
 
-  const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
-  const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip[0].identity_uuid);
+  const amountRestrictionKey = getMetaKey('max_amount_restriction', 'month', trip.datetime, 'global');
+  const tripRestrictionKey = getMetaKey('max_trip_restriction', 'day', trip.datetime, trip[0].identity_uuid);
 
   // incentive state
   const exportMeta = meta.export();
@@ -82,8 +82,8 @@ test('should list state keys', async (t) => {
     },
   ]);
 
-  const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
-  const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip[0].identity_uuid);
+  const amountRestrictionKey = getMetaKey('max_amount_restriction', 'month', trip.datetime, 'global');
+  const tripRestrictionKey = getMetaKey('max_trip_restriction', 'day', trip.datetime, trip[0].identity_uuid);
 
   const keys = statefulSet.listStateKeys({
     carpool_id: 1,
@@ -111,8 +111,8 @@ test('should apply stateful rules and update meta', async (t) => {
     },
   ]);
 
-  const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
-  const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip[0].identity_uuid);
+  const amountRestrictionKey = getMetaKey('max_amount_restriction', 'month', trip.datetime, 'global');
+  const tripRestrictionKey = getMetaKey('max_trip_restriction', 'day', trip.datetime, trip[0].identity_uuid);
 
   const meta = new MetadataWrapper(0, [
     [amountRestrictionKey, 50],
@@ -154,8 +154,8 @@ test('should do nothing if key is missing in incentive meta', async (t) => {
     },
   ]);
 
-  const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
-  const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip[0].identity_uuid);
+  const amountRestrictionKey = getMetaKey('max_amount_restriction', 'month', trip.datetime, 'global');
+  const tripRestrictionKey = getMetaKey('max_trip_restriction', 'day', trip.datetime, trip[0].identity_uuid);
 
   const meta = new MetadataWrapper(0, [
     [amountRestrictionKey, 50],
@@ -191,8 +191,8 @@ test('should use default value if key is missing in policy meta', async (t) => {
     },
   ]);
 
-  const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
-  const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip[0].identity_uuid);
+  const amountRestrictionKey = getMetaKey('max_amount_restriction', 'month', trip.datetime, 'global');
+  const tripRestrictionKey = getMetaKey('max_trip_restriction', 'day', trip.datetime, trip[0].identity_uuid);
 
   const meta = new MetadataWrapper(0, [
     // [amountRestrictionKey, 50],

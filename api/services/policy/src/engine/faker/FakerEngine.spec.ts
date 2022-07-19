@@ -16,10 +16,8 @@ test('should work', (t) => {
     territory_id: 1,
     name: 'Campaign',
     description: 'My campaign',
-    unit: 'euro',
     status: 'draft',
-    global_rules: [],
-    rules: [],
+    uses: 'toto',
   };
   const fakerEngine = FakerEngine.create(campaign.start_date, campaign.end_date, []);
   fakerEngine.generate(10);
