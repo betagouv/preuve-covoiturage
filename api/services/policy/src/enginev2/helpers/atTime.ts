@@ -1,4 +1,4 @@
-import { utcToZonedTime } from '~/engine/helpers/utcToZonedTime';
+import { utcToZonedTime } from './utcToZonedTime';
 import { StatelessContextInterface, StatelessRuleHelper } from '../interfaces';
 
 interface AtTimeParams {

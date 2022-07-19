@@ -1,3 +1,4 @@
+import { SerializedMetaInterface } from '~/enginev2/interfaces';
 import { MetadataWrapperInterface } from './MetadataWrapperInterface';
 
 export interface MetadataRepositoryProviderInterface {
@@ -19,3 +20,14 @@ export abstract class MetadataRepositoryProviderInterfaceResolver implements Met
     throw new Error();
   }
 }
+
+export abstract class MetadataRepositoryProviderInterfaceResolverV2 {
+  async get(policyId: number, keys: string[], datetime?: Date): Promise<SerializedMetaInterface[]> {
+    throw new Error();
+  }
+
+  async set(data: SerializedMetaInterface[]): Promise<void> {
+    throw new Error();
+  }
+}
+

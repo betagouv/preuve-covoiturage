@@ -26,5 +26,6 @@ export {
 export {
   MetadataRepositoryProviderInterface,
   MetadataRepositoryProviderInterfaceResolver,
+  MetadataRepositoryProviderInterfaceResolverV2,
 } from './MetadataRepositoryProviderInterface';
 export { MetadataWrapperInterface } from './MetadataWrapperInterface';
