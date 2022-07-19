@@ -1,7 +1,7 @@
 import {
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
+} from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 import { StatelessContextInterface, StatelessRuleHelper } from '../interfaces';
 
 function inList(selectors: TerritorySelectorsInterface, territory: TerritoryCodeInterface): boolean {

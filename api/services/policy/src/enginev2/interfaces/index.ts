@@ -59,6 +59,7 @@ export interface MetadataVariableExport {
 
 export interface MetadataVariable extends MetadataVariableExport {
   policy_id: number;
+  datetime: Date;
   value: number;
 }
 
@@ -72,16 +73,26 @@ export interface MetadataRegistryInterface extends MetadataCommonInterface {
   export(): Array<MetadataVariableExport>;
 }
 
+export interface MetadataExport {
+  key: string;
+  value: number;
+}
+
 export interface MetadataAccessorInterface extends MetadataCommonInterface {
   get(uuid: string): number;
   set(uuid: string, data: number): void;
-  export(): Record<string, number>;
+  export(): Array<MetadataExport>;
+}
+
+export interface SerializedMetaInterface extends MetadataExport {
+  policy_id: number;
+  datetime: Date;
 }
 
 export interface MetadataStoreInterface {
   load(registry: MetadataRegistryInterface): Promise<MetadataAccessorInterface>;
   save(data: MetadataAccessorInterface): Promise<void>;
-  store(lifetime: MetadataLifetime): Promise<Record<string, number>>;
+  store(lifetime: MetadataLifetime): Promise<Array<SerializedMetaInterface>>;
 }
 
 export interface SerializedIncentiveInterface {
