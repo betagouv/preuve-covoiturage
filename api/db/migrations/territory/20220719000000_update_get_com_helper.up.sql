@@ -16,3 +16,5 @@ CREATE OR REPLACE FUNCTION territory.get_com_by_territory_id(_id int, year small
     on d.selector_type = 'reg' and d.selector_value = gp.reg
   where year = $2;
 $$ language sql stable;
+
+CREATE INDEX IF NOT EXISTS geo_perimeters_reg_idx on geo.perimeters (reg) 
