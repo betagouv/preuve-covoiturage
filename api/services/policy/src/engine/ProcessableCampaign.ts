@@ -18,8 +18,7 @@ export class ProcessableCampaign {
   public readonly territory_id: number;
   public readonly territory_selector: TerritorySelectorsInterface;
 
-  protected globalSet: RuleSet;
-  protected ruleSets: RuleSet[];
+  protected rules: RuleSet;
 
   constructor(protected campaign: CampaignInterface, selectors: TerritorySelectorsInterface = {}) {
     this.policy_id = campaign._id;
@@ -27,18 +26,10 @@ export class ProcessableCampaign {
     this.end_date = campaign.end_date;
     this.territory_id = campaign.territory_id;
     this.territory_selector = selectors;
-    this.globalSet = new RuleSet(campaign.global_rules);
-    this.ruleSets = campaign.rules.map((set) => new RuleSet(set));
   }
 
   getMetaKeys(incentive: IncentiveInterface): string[] {
-    return [
-      ...new Set<string>(
-        [this.globalSet, ...this.ruleSets]
-          .map((r) => r.listStateKeys(incentive))
-          .reduce((arr, curr) => [...arr, ...curr], []),
-      ),
-    ];
+    return this.rules.listStateKeys(incentive);
   }
 
   getMetaExtra(incentive: IncentiveInterface): { [k: string]: number } {
@@ -46,20 +37,11 @@ export class ProcessableCampaign {
   }
 
   needStatefulApply(): boolean {
-    return [this.globalSet, ...this.ruleSets].map((s) => s.hasStatefulRule).reduce((r, s) => r || s, false);
+    return [this.rules].map((s) => s.hasStatefulRule).reduce((r, s) => r || s, false);
   }
 
   applyStateful(incentive: IncentiveInterface, meta: MetadataWrapperInterface): IncentiveInterface {
-    let amount = this.globalSet.applyStateful(incentive, meta);
-    for (const ruleSet of this.ruleSets) {
-      amount = ruleSet.applyStateful(
-        {
-          ...incentive,
-          result: amount,
-        },
-        meta,
-      );
-    }
+    const amount = this.rules.applyStateful(incentive, meta);
     return {
       ...incentive,
       amount,
@@ -74,21 +56,7 @@ export class ProcessableCampaign {
 
     try {
       const ctx = { ...context, result };
-      this.globalSet.apply(ctx, meta);
-
-      for (const ruleSet of this.ruleSets) {
-        const currentContext = { ...ctx, result: 0 };
-        try {
-          ruleSet.apply(currentContext, meta);
-        } catch (e) {
-          if (!(e instanceof NotApplicableTargetException)) {
-            throw e;
-          }
-          context.stack.push(e.message);
-        }
-        result += currentContext.result;
-      }
-
+      this.rules.apply(ctx, meta);
       context.stack.push(`result: ${result}`);
     } catch (e) {
       if (!(e instanceof NotApplicableTargetException)) {

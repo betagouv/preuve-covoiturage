@@ -8,45 +8,43 @@ function setup(): { campaign: ProcessableCampaign; trip: TripInterface } {
   const campaign = new ProcessableCampaign({
     territory_id: 1,
     name: 'test',
-    description: '',
     start_date: new Date(),
     end_date: new Date(),
-    unit: 'euro',
     status: 'draft',
-    global_rules: [],
-    rules: [
-      [
-        {
-          slug: 'date_modifier_meta',
-          parameters: {
-            dates: ['2021-01-02'],
-            coef: 2.5,
-          },
-        },
-        {
-          slug: 'fixed_amount_setter',
-          parameters: 30,
-        },
-        {
-          slug: 'per_km_modifier',
-        },
-      ],
-      [
-        {
-          slug: 'date_filter',
-          parameters: {
-            blacklist: ['2021-01-02'],
-          },
-        },
-        {
-          slug: 'fixed_amount_setter',
-          parameters: 30,
-        },
-        {
-          slug: 'per_km_modifier',
-        },
-      ],
-    ],
+    uses: '',
+    // rules: [
+    //   [
+    //     {
+    //       slug: 'date_modifier_meta',
+    //       parameters: {
+    //         dates: ['2021-01-02'],
+    //         coef: 2.5,
+    //       },
+    //     },
+    //     {
+    //       slug: 'fixed_amount_setter',
+    //       parameters: 30,
+    //     },
+    //     {
+    //       slug: 'per_km_modifier',
+    //     },
+    //   ],
+    //   [
+    //     {
+    //       slug: 'date_filter',
+    //       parameters: {
+    //         blacklist: ['2021-01-02'],
+    //       },
+    //     },
+    //     {
+    //       slug: 'fixed_amount_setter',
+    //       parameters: 30,
+    //     },
+    //     {
+    //       slug: 'per_km_modifier',
+    //     },
+    //   ],
+    // ],
   });
   const trip = faker.trip([
     { distance: 15000, datetime: new Date('2021-01-02') },
