@@ -3,7 +3,7 @@ import {
   CarpoolInterface,
   MetadataStoreInterface,
   PolicyInterface,
-  PolicyRulesInterface,
+  PolicyHandlerInterface,
   SerializedIncentiveInterface,
   SerializedPolicyInterface,
   StatefulIncentiveInterface,
@@ -19,12 +19,12 @@ export class Policy implements PolicyInterface {
     public name: string,
     public start_date: Date,
     public end_date: Date,
-    public uses: PolicyRulesInterface,
+    public handler: PolicyHandlerInterface,
     public status: string,
   ) {}
 
   static async import(data: SerializedPolicyInterface): Promise<Policy> {
-    const ctor = policies.get(data.uses);
+    const ctor = policies.get(data.handler);
     if (!ctor) {
       throw new UnknownHandlerException();
     }
@@ -34,7 +34,7 @@ export class Policy implements PolicyInterface {
 
   async processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface> {
     const context = StatelessContext.fromCarpool(this._id, carpool);
-    this.uses.processStateless(context);
+    this.handler.processStateless(context);
     return context.incentive;
   }
 
@@ -43,7 +43,7 @@ export class Policy implements PolicyInterface {
     incentive: SerializedIncentiveInterface,
   ): Promise<StatefulIncentiveInterface> {
     const context = await StatefulContext.fromIncentive(store, incentive);
-    this.uses.processStateful(context);
+    this.handler.processStateful(context);
     await store.save(context.meta);
     return context.incentive;
   }

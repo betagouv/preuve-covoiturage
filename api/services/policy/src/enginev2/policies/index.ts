@@ -1,3 +1,3 @@
-import { PolicyRulesStaticInterface } from '../interfaces';
+import { PolicyHandlerStaticInterface } from '../interfaces';
 
-export const policies: Map<string, PolicyRulesStaticInterface> = new Map([]);
+export const policies: Map<string, PolicyHandlerStaticInterface> = new Map([]);
