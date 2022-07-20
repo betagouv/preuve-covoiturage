@@ -1,5 +1,5 @@
 import { ExecutionContext } from 'ava';
-import { MetadataRepositoryProviderInterfaceResolverV2 } from '~/interfaces';
+import { MetadataRepositoryProviderInterfaceResolver } from '~/interfaces';
 import { MetadataStore } from '../entities/MetadataStore';
 import { Policy } from '../entities/Policy';
 import {
@@ -24,7 +24,7 @@ interface ProcessResult {
   meta?: Array<{ key: string; value: number }>;
 }
 
-class MemoryMetadataRepository implements MetadataRepositoryProviderInterfaceResolverV2 {
+class MemoryMetadataRepository implements MetadataRepositoryProviderInterfaceResolver {
   constructor(public data: SerializedStoredMetadataInterface[] = []) {}
 
   async get(policyId: number, keys: string[], datetime?: Date): Promise<SerializedStoredMetadataInterface[]> {
@@ -38,6 +38,7 @@ class MemoryMetadataRepository implements MetadataRepositoryProviderInterfaceRes
 export const process = async (t: ExecutionContext, input: ProcessParams, expected: ProcessResult) => {
   const policyDef: SerializedPolicyInterface = {
     _id: 1,
+    territory_id: 1,
     territory_selector: {},
     name: '',
     start_date: new Date(),
@@ -50,6 +51,7 @@ export const process = async (t: ExecutionContext, input: ProcessParams, expecte
   const policy = input.handler
     ? new Policy(
         policyDef._id,
+        policyDef.territory_id,
         policyDef.territory_selector,
         policyDef.name,
         policyDef.start_date,

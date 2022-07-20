@@ -1,4 +1,4 @@
-import { MetadataRepositoryProviderInterfaceResolverV2 } from '../../interfaces';
+import { MetadataRepositoryProviderInterfaceResolver } from '../../interfaces';
 import { UnknownMetaException } from '../exceptions/UnknownMetaException';
 import {
   MetadataAccessorInterface,
@@ -23,7 +23,7 @@ function getDefaultVariableDefinition(
 export class MetadataStore implements MetadataStoreInterface {
   public cache: Map<string, StoredMetadataVariableInterface> = new Map();
 
-  constructor(protected readonly repository?: MetadataRepositoryProviderInterfaceResolverV2) {}
+  constructor(protected readonly repository?: MetadataRepositoryProviderInterfaceResolver) {}
 
   async load(registry: MetadataRegistryInterface): Promise<MetadataAccessorInterface> {
     const variables = registry.export();

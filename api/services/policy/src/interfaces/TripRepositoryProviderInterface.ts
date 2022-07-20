@@ -1,24 +1,11 @@
-import { TripInterface } from '.';
-import { ProcessableCampaign } from '../engine/ProcessableCampaign';
+import { CarpoolInterface, PolicyInterface } from '~/engine/interfaces';
 
-export interface TripRepositoryProviderInterface {
-  findTripByPolicy(
-    policy: ProcessableCampaign,
-    from: Date,
-    to: Date,
-    batchSize?: number,
-    override?: boolean,
-  ): AsyncGenerator<TripInterface[], void, void>;
-  listApplicablePoliciesId(): Promise<number[]>;
-}
-
-export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryProviderInterface {
-  abstract listApplicablePoliciesId(): Promise<number[]>;
+export abstract class TripRepositoryProviderInterfaceResolver {
   abstract findTripByPolicy(
-    policy: ProcessableCampaign,
+    policy: PolicyInterface,
     from: Date,
     to: Date,
     batchSize?: number,
     override?: boolean,
-  ): AsyncGenerator<TripInterface[], void, void>;
+  ): AsyncGenerator<CarpoolInterface[], void, void>;
 }

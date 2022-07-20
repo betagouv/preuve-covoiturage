@@ -10,6 +10,7 @@ import {
   SerializedPolicyInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
+  StepInterface,
 } from '../interfaces';
 import { policies } from '../policies';
 import { StatefulContext, StatelessContext } from './Context';
@@ -17,6 +18,7 @@ import { StatefulContext, StatelessContext } from './Context';
 export class Policy implements PolicyInterface {
   constructor(
     public _id: number,
+    public territory_id: number,
     public territory_selector: TerritorySelectorsInterface,
     public name: string,
     public start_date: Date,
@@ -33,6 +35,7 @@ export class Policy implements PolicyInterface {
 
     return new Policy(
       data._id,
+      data.territory_id,
       data.territory_selector,
       data.name,
       data.start_date,
@@ -42,9 +45,22 @@ export class Policy implements PolicyInterface {
     );
   }
 
+  export(): SerializedPolicyInterface {
+    return {
+      _id: this._id,
+      territory_id: this.territory_id,
+      territory_selector: this.territory_selector,
+      name: this.name,
+      start_date: this.start_date,
+      end_date: this.end_date,
+      handler: this.handler.constructor.name,
+      status: this.status,
+    };
+  }
+
   async processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface> {
     const context = StatelessContext.fromCarpool(this._id, carpool);
-    if(this.guard(carpool)) {
+    if (this.guard(carpool)) {
       this.handler.processStateless(context);
     }
     return context.incentive;
@@ -80,7 +96,15 @@ export class Policy implements PolicyInterface {
     if (!isSelected(carpool.end, this.territory_selector)) {
       return false;
     }
-  
+
     return true;
+  }
+
+  describe(): Array<StepInterface> {
+    return this.handler.describe();
+  }
+
+  describeForHuman(): string {
+    return this.handler.describeForHuman();
   }
 }

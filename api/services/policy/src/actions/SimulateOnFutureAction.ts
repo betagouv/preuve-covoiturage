@@ -5,16 +5,10 @@ import { differenceInSeconds } from 'date-fns';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnFuture.contract';
 import { alias } from '../shared/policy/simulateOnFuture.schema';
-import { PolicyEngine } from '../engine/PolicyEngine';
-import {
-  CampaignRepositoryProviderInterfaceResolver,
-  IncentiveInterface,
-  TripInterface,
-  PersonInterface,
-  TerritoryRepositoryProviderInterfaceResolver,
-} from '../interfaces';
-import { InMemoryMetadataProvider } from '../engine/faker/InMemoryMetadataProvider';
+import { PolicyRepositoryProviderInterfaceResolver, TerritoryRepositoryProviderInterfaceResolver } from '../interfaces';
 import { v4 } from 'uuid';
+import { CarpoolInterface, PolicyInterface, StatelessIncentiveInterface } from '~/engine/interfaces';
+import { Policy } from '~/engine/entities/Policy';
 
 @handler({
   ...handlerConfig,
@@ -32,7 +26,7 @@ export class SimulateOnFutureAction extends AbstractAction {
 
   constructor(
     private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
-    private campaignRepository: CampaignRepositoryProviderInterfaceResolver,
+    private policyRepository: PolicyRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
@@ -41,58 +35,45 @@ export class SimulateOnFutureAction extends AbstractAction {
     // 1. Normalize trip by adding territory_id and identity stuff
     const normalizedDriverData = await this.normalize(params);
     const normalizedPassengerData = await this.normalize(params, false);
-    const normalizedTrip = new TripInterface(
-      ...[normalizedDriverData, normalizedPassengerData].filter((v) => v !== null),
-    );
-
-    if (normalizedTrip.length === 0) {
-      return {
-        journey_id: params.journey_id,
-        passenger: [],
-        driver: [],
-      };
-    }
 
     // 2. Get involved territories
     const territories = [
       ...new Set([
-        ...(await this.territoryRepository.findBySelector(normalizedTrip[0].start)),
-        ...(await this.territoryRepository.findBySelector(normalizedTrip[0].end)),
+        ...(await this.territoryRepository.findBySelector(normalizedDriverData.start)),
+        ...(await this.territoryRepository.findBySelector(normalizedDriverData.end)),
       ]),
     ];
 
-    // 3. Instanciate an InMemory engine
-    const engine = new PolicyEngine(new InMemoryMetadataProvider());
-
-    // 4. Find appliable campaigns and instanciate them
-    const campaignsRaw = await this.campaignRepository.findWhere({
+    // 3. Find appliable policys and instanciate them
+    const policysRaw = await this.policyRepository.findWhere({
       status: 'active',
       territory_id: territories,
-      datetime: normalizedTrip.datetime,
+      datetime: normalizedDriverData.datetime,
     });
 
-    const campaigns = [];
-    for (const campaignRaw of campaignsRaw) {
-      const selector = await this.territoryRepository.findSelectorFromId(campaignRaw.territory_id);
-      campaigns.push(engine.buildCampaign(campaignRaw, selector));
+    const policies: Array<PolicyInterface> = [];
+    for (const policyRaw of policysRaw) {
+      policies.push(await Policy.import(policyRaw));
     }
 
-    // 5. Process campaigns
-    const incentives: IncentiveInterface[] = [];
-    for (const campaign of campaigns) {
-      incentives.push(...(await engine.process(campaign, normalizedTrip)));
+    // 5. Process policies
+    const incentives: StatelessIncentiveInterface[] = [];
+    for (const policy of policies) {
+      incentives.push(await policy.processStateless(normalizedDriverData));
+      incentives.push(await policy.processStateless(normalizedPassengerData));
     }
 
-    // 6. Get siret code for appliable campaigns
-    const sirets = await this.territoryRepository.findSiretById(campaigns.map((c) => c.territory_id));
+    // 6. Get siret code for applied policies
+    const sirets = await this.territoryRepository.findSiretById(policies.map((c) => c.territory_id));
 
     // 7. Normalize incentives output and return
     const normalizedIncentives = incentives
-      .filter((i) => i.amount > 0)
+      .map((i) => i.export())
+      .filter((i) => i.statelessAmount > 0)
       .map((i) => ({
         carpool_id: i.carpool_id,
-        amount: i.amount,
-        siret: sirets.find((s) => s._id === campaigns.find((c) => c.policy_id === i.policy_id).territory_id).siret,
+        amount: i.statelessAmount,
+        siret: sirets.find((s) => s._id === policies.find((c) => c._id === i.policy_id).territory_id).siret,
       }));
 
     return {
@@ -106,7 +87,7 @@ export class SimulateOnFutureAction extends AbstractAction {
     };
   }
 
-  protected async normalize(input: ParamsInterface, isDriver = true): Promise<PersonInterface | null> {
+  protected async normalize(input: ParamsInterface, isDriver = true): Promise<CarpoolInterface> {
     const targetProperty = isDriver ? 'driver' : 'passenger';
     const target = input[targetProperty];
 
@@ -115,10 +96,10 @@ export class SimulateOnFutureAction extends AbstractAction {
     }
 
     return {
+      _id: isDriver ? SimulateOnFutureAction.DRIVER : SimulateOnFutureAction.PASSENGER,
       identity_uuid: v4(),
       trip_id: v4(),
-      carpool_id: isDriver ? SimulateOnFutureAction.DRIVER : SimulateOnFutureAction.PASSENGER,
-      operator_id: input.operator_id,
+      operator_siret: input.operator_id.toString(), // TODO
       operator_class: input.operator_class,
       is_over_18: target.identity.over_18,
       is_driver: isDriver,

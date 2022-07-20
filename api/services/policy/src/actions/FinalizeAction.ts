@@ -7,22 +7,23 @@ import {
   ParamsInterface,
   ResultInterface,
 } from '../shared/policy/finalize.contract';
-import { PolicyEngine } from '../engine/PolicyEngine';
-import { ProcessableCampaign } from '../engine/ProcessableCampaign';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import {
   IncentiveRepositoryProviderInterfaceResolver,
-  CampaignRepositoryProviderInterfaceResolver,
-  IncentiveStatusEnum,
+  MetadataRepositoryProviderInterfaceResolver,
+  PolicyRepositoryProviderInterfaceResolver,
 } from '../interfaces';
+import { IncentiveStatusEnum, MetadataLifetime, PolicyInterface } from '~/engine/interfaces';
+import { Policy } from '~/engine/entities/Policy';
+import { MetadataStore } from '~/engine/entities/MetadataStore';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class FinalizeAction extends AbstractAction implements InitHookInterface {
   constructor(
-    private campaignRepository: CampaignRepositoryProviderInterfaceResolver,
+    private policyRepository: PolicyRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
-    private engine: PolicyEngine,
+    private metaRepository: MetadataRepositoryProviderInterfaceResolver,
     private kernel: KernelInterfaceResolver,
   ) {
     super();
@@ -60,12 +61,12 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     // Update incentive on cancelled carpool
     await this.incentiveRepository.disableOnCanceledTrip();
 
-    const policyMap: Map<number, ProcessableCampaign> = new Map();
+    const policyMap: Map<number, PolicyInterface> = new Map();
 
     // Apply internal restriction of policies
-    console.debug(`START processing stateful campaigns`);
-    await this.processStatefulCampaigns(policyMap, to, params.from);
-    console.debug(`DONE processing stateful campaigns`);
+    console.debug(`START processing stateful policys`);
+    await this.processStatefulpolicys(policyMap, to, params.from);
+    console.debug(`DONE processing stateful policys`);
 
     // TODO: Apply external restriction (order) of policies
 
@@ -75,23 +76,20 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     console.debug('DONE locking');
   }
 
-  protected async processStatefulCampaigns(
-    policyMap: Map<number, ProcessableCampaign>,
+  protected async processStatefulpolicys(
+    policyMap: Map<number, PolicyInterface>,
     to: Date,
     from?: Date,
   ): Promise<void> {
+    // 0. Instanciate a meta store
+    const store = new MetadataStore(this.metaRepository);
     // 1. Start a cursor to find incentives
     const cursor = this.incentiveRepository.findDraftIncentive(to, 100, from);
     let done = false;
     do {
       const start = new Date().getTime();
 
-      const updatedIncentives: {
-        carpool_id: number;
-        policy_id: number;
-        amount: number;
-        status: IncentiveStatusEnum;
-      }[] = [];
+      const updatedIncentives = [];
       const results = await cursor.next();
       done = results.done;
       if (results.value) {
@@ -99,19 +97,19 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
           // 2. Get policy
           const policyId = incentive.policy_id;
           if (!policyMap.has(policyId)) {
-            policyMap.set(policyId, this.engine.buildCampaign(await this.campaignRepository.find(policyId)));
+            policyMap.set(policyId, await Policy.import(await this.policyRepository.find(policyId)));
           }
           const policy = policyMap.get(policyId);
 
-          // 3. Process stateful rule if needed
-          if (policy.needStatefulApply()) {
-            updatedIncentives.push(await this.engine.processStateful(policy, incentive));
-          }
+          // 3. Process stateful rule
+          updatedIncentives.push(await policy.processStateful(store, incentive));
         }
       }
       // 4. Update incentives
-      await this.incentiveRepository.updateManyAmount(updatedIncentives, IncentiveStatusEnum.Valitated);
+      await this.incentiveRepository.updateStatefulAmount(updatedIncentives, IncentiveStatusEnum.Valitated);
 
+      // 5. Persist meta
+      await store.store(MetadataLifetime.Day);
       const duration = new Date().getTime() - start;
       console.debug(
         `Finalized ${updatedIncentives.length} incentives in ${duration}ms (${(

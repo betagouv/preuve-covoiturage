@@ -2,19 +2,19 @@ import { provider } from '@ilos/common';
 import { promisify } from 'util';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
+import { IncentiveRepositoryProviderInterfaceResolver } from '../interfaces';
 import {
-  IncentiveInterface,
-  IncentiveRepositoryProviderInterface,
-  IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStateEnum,
   IncentiveStatusEnum,
-  CampaignStatsInterface,
-} from '../interfaces';
+  SerializedIncentiveInterface,
+  SerializedMetadataVariableDefinitionInterface,
+} from '~/engine/interfaces';
+import { IncentiveStatsInterface } from '~/interfaces/IncentiveRepositoryProviderInterface';
 
 @provider({
   identifier: IncentiveRepositoryProviderInterfaceResolver,
 })
-export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderInterface {
+export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderInterfaceResolver {
   public readonly table = 'policy.incentives';
   public readonly tripTable = 'policy.trips';
 
@@ -54,11 +54,10 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     await this.connection.getClient().query(query);
   }
 
-  async updateManyAmount(
-    data: { carpool_id: number; policy_id: number; amount: number; status: IncentiveStatusEnum }[],
-    status?: IncentiveStatusEnum,
-  ): Promise<void> {
+  async updateStatefulAmount(data: SerializedIncentiveInterface[], status?: IncentiveStatusEnum): Promise<void> {
     const idSet: Set<string> = new Set();
+
+    // get only last incentive for each carpool / policy
     const filteredData = data.reverse().filter((d) => {
       const key = `${d.policy_id}/${d.carpool_id}`;
       if (idSet.has(key)) {
@@ -69,8 +68,14 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     });
 
     // pick values for the given keys. Override status if defined
-    const values = ['policy_id', 'carpool_id', 'amount', 'status'].map((k) =>
-      filteredData.map((d) => (status && k === 'status' ? status : d[k])),
+    const values: [Array<number>, Array<number>, Array<IncentiveStatusEnum>] = filteredData.reduce(
+      ([ids, amounts, statuses], i) => {
+        ids.push(i._id);
+        amounts.push(i.statefulAmount);
+        statuses.push(status ?? i.status);
+        return [ids, amounts, statuses];
+      },
+      [[], [], []],
     );
 
     const query = {
@@ -78,17 +83,15 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       WITH data AS (
         SELECT * FROM UNNEST (
           $1::int[],
-          $2::int[],
           $3::int[],
           $4::policy.incentive_status_enum[]
         ) as t(
-          policy_id,
-          carpool_id,
+          _id,
           amount,
           status
         )
       )
-      UPDATE ${this.table} as pt
+      UPDATE ${this.table} as pi
       SET (
         amount,
         state,
@@ -100,8 +103,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       )
       FROM data
       WHERE
-        data.carpool_id = pt.carpool_id
-        AND data.policy_id = pt.policy_id
+        data._id = pi._id
       `,
       values: [...values],
     };
@@ -109,7 +111,11 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     await this.connection.getClient().query(query);
   }
 
-  async *findDraftIncentive(to: Date, batchSize = 100, from?: Date): AsyncGenerator<IncentiveInterface[], void, void> {
+  async *findDraftIncentive(
+    to: Date,
+    batchSize = 100,
+    from?: Date,
+  ): AsyncGenerator<SerializedIncentiveInterface[], void, void> {
     const resCount = await this.connection.getClient().query({
       text: `
       SELECT
@@ -128,13 +134,14 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     const query = {
       text: `
       SELECT
+        _id,
         carpool_id,
         policy_id,
         datetime,
-        result,
-        amount,
-        state,
+        result as statelessAmount,
+        amount as statefulAmount,
         status,
+        state,
         meta
       FROM ${this.table}
       WHERE
@@ -166,7 +173,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     cursor.close(() => client.release());
   }
 
-  async createOrUpdateMany(data: IncentiveInterface[]): Promise<void> {
+  async createOrUpdateMany(data: SerializedIncentiveInterface[]): Promise<void> {
     const idSet: Set<string> = new Set();
     const filteredData = data
       .reverse()
@@ -181,12 +188,30 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       .map((i) => ({
         ...i,
         status: i.status || 'validated',
-        state: i.amount === 0 ? IncentiveStateEnum.Null : IncentiveStateEnum.Regular,
+        state: i.statefulAmount === 0 ? IncentiveStateEnum.Null : IncentiveStateEnum.Regular,
         meta: i.meta || {},
       }));
 
-    const keys = ['policy_id', 'carpool_id', 'datetime', 'result', 'amount', 'status', 'state', 'meta'].map((k) =>
-      filteredData.map((d) => d[k]),
+    const values: [
+      Array<number>,
+      Array<number>,
+      Array<Date>,
+      Array<number>,
+      Array<number>,
+      Array<IncentiveStatusEnum>,
+      Array<IncentiveStateEnum>,
+      Array<SerializedMetadataVariableDefinitionInterface>,
+    ] = filteredData.reduce(
+      ([policyIds, carpoolIds, datetimes, statelessAmounts, statefulAmounts, statuses, states, metas], i) => {
+        policyIds.push(i.policy_id), carpoolIds.push(i.carpool_id), datetimes.push(i.datetime);
+        statelessAmounts.push(i.statelessAmount),
+          statefulAmounts.push(i.statefulAmount),
+          statuses.push(i.status),
+          states.push(i.state),
+          metas.push(i.meta);
+        return [policyIds, carpoolIds, datetimes, statelessAmounts, statefulAmounts, statuses, states, metas];
+      },
+      [[], [], [], [], [], [], [], []],
     );
 
     const query = {
@@ -225,14 +250,14 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           excluded.meta
         )
       `,
-      values: [...keys],
+      values,
     };
 
     await this.connection.getClient().query(query);
     return;
   }
 
-  async getCampaignStats(policy_id: number): Promise<CampaignStatsInterface> {
+  async getPolicyIncentiveStats(policy_id: number): Promise<IncentiveStatsInterface> {
     const query = {
       text: `
         SELECT
