@@ -21,7 +21,7 @@ export class Incentive implements StatelessIncentiveInterface, StatefulIncentive
     public meta: MetadataRegistryInterface,
   ) {}
 
-  static create(policy_id: number, carpool_id: number, datetime: Date): Incentive {
+  static create(policy_id: number, carpool_id: number, datetime: Date, meta?: MetadataRegistryInterface): Incentive {
     return new Incentive(
       undefined,
       policy_id,
@@ -31,7 +31,7 @@ export class Incentive implements StatelessIncentiveInterface, StatefulIncentive
       0,
       IncentiveStatusEnum.Draft,
       IncentiveStateEnum.Regular,
-      MetadataRegistry.create(policy_id, datetime),
+      meta || MetadataRegistry.create(policy_id, datetime),
     );
   }
 
@@ -72,6 +72,7 @@ export class Incentive implements StatelessIncentiveInterface, StatefulIncentive
       this.statefulAmount = amount;
     } else {
       this.statelessAmount = amount;
+      this.statefulAmount = amount;
     }
   }
 

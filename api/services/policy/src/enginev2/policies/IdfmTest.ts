@@ -17,13 +17,11 @@ import {
   perSeat,
   endsAt,
   startsAt,
-} from '../helpers';
-import {
   setMax,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers/max';
+} from '../helpers';
 
 export class IdfmTest implements PolicyHandlerInterface<StepInterface> {
   protected operators = ['siret de klaxit', 'siret de karos'];

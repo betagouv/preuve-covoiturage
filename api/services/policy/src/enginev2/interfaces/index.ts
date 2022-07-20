@@ -1,4 +1,7 @@
-import { TerritoryCodeInterface } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import {
+  TerritoryCodeInterface,
+  TerritorySelectorsInterface,
+} from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export interface CarpoolInterface {
   _id: number;
@@ -42,57 +45,56 @@ export enum IncentiveStatusEnum {
   Error = 'error',
 }
 
-export interface MetadataVariableDefinition {
+export interface MetadataVariableDefinitionInterface {
   uuid: string;
+  key?: string;
   name?: string;
   scope?: string;
   initialValue?: number;
   lifetime?: MetadataLifetime;
 }
 
-export interface MetadataVariableExport {
+export interface SerializedMetadataVariableDefinitionInterface {
   uuid: string;
   key: string;
   lifetime?: MetadataLifetime;
   initialValue?: number;
 }
 
-export interface MetadataVariable extends MetadataVariableExport {
+export interface StoredMetadataVariableInterface extends SerializedMetadataVariableDefinitionInterface {
   policy_id: number;
   datetime: Date;
   value: number;
 }
 
-interface MetadataCommonInterface {
+export interface MetadataRegistryInterface {
   datetime: Date;
-}
-
-export interface MetadataRegistryInterface extends MetadataCommonInterface {
   policy_id: number;
-  register(variable: MetadataVariableDefinition): void;
-  export(): Array<MetadataVariableExport>;
+  register(variable: MetadataVariableDefinitionInterface): void;
+  export(): Array<SerializedMetadataVariableDefinitionInterface>;
 }
 
-export interface MetadataExport {
+export interface SerializedAccessibleMetadataInterface {
+  policy_id: number;
   key: string;
   value: number;
 }
 
-export interface MetadataAccessorInterface extends MetadataCommonInterface {
+export interface MetadataAccessorInterface {
+  datetime: Date;
   get(uuid: string): number;
   set(uuid: string, data: number): void;
-  export(): Array<MetadataExport>;
+  export(): Array<SerializedAccessibleMetadataInterface>;
 }
 
-export interface SerializedMetaInterface extends MetadataExport {
-  policy_id: number;
+export interface SerializedStoredMetadataInterface extends SerializedAccessibleMetadataInterface {
   datetime: Date;
 }
 
 export interface MetadataStoreInterface {
   load(registry: MetadataRegistryInterface): Promise<MetadataAccessorInterface>;
   save(data: MetadataAccessorInterface): Promise<void>;
-  store(lifetime: MetadataLifetime): Promise<Array<SerializedMetaInterface>>;
+  store(lifetime: MetadataLifetime): Promise<Array<SerializedStoredMetadataInterface>>;
 }
 
 export interface SerializedIncentiveInterface {
@@ -104,7 +106,7 @@ export interface SerializedIncentiveInterface {
   statefulAmount: number;
   status: IncentiveStatusEnum;
   state: IncentiveStateEnum;
-  meta: Array<MetadataVariableExport>;
+  meta: Array<SerializedMetadataVariableDefinitionInterface>;
 }
 
 interface CommonIncentiveInterface {
@@ -132,13 +134,13 @@ export interface StatelessContextInterface {
   carpool: CarpoolInterface;
 }
 
+export interface PolicyHandlerStaticInterface {
+  new (): PolicyHandlerInterface;
+}
+
 export interface StepInterface {
   start: number;
   end: number;
-}
-
-export interface PolicyHandlerStaticInterface {
-  new (): PolicyHandlerInterface;
 }
 
 export interface PolicyHandlerInterface<P = StepRuleInterface> {
@@ -152,7 +154,7 @@ export type StatelessRuleHelper<P> = (ctx: StatelessContextInterface, params: P)
 
 export interface SerializedPolicyInterface {
   _id: number;
-  territory_id: number;
+  territory_selector: TerritorySelectorsInterface;
   name: string;
   start_date: Date;
   end_date: Date;
@@ -162,7 +164,7 @@ export interface SerializedPolicyInterface {
 
 export interface PolicyInterface {
   _id: number;
-  territory_id: number;
+  territory_selector: TerritorySelectorsInterface;
   name: string;
   start_date: Date;
   end_date: Date;
