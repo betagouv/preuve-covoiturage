@@ -11,6 +11,7 @@ import { TerritoryRepositoryProviderInterface, TerritoryRepositoryProviderInterf
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
 export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderInterface {
+  public readonly getTerritorySelectorFn = 'territory.get_selector_by_territory_id';
   protected readonly getByPointFunction = 'geo.get_latest_by_point';
   protected readonly getBySelectorFunction = 'policy.get_territory_id_by_selector';
   protected readonly territoryGroupTable = 'territory.territory_group';
@@ -64,23 +65,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   async findSelectorFromId(id: number): Promise<TerritorySelectorsInterface> {
     const query = {
       text: `
-        WITH selector_raw AS (
-          SELECT
-            territory_group_id,
-            selector_type,
-            ARRAY_AGG(selector_value) as selector_value
-          FROM ${this.territorySelectorTable}
-          WHERE territory_group_id = $1
-          GROUP BY territory_group_id, selector_type
-        )
-        SELECT
-          territory_group_id,
-          JSON_OBJECT_AGG(
-            selector_type,
-            selector_value
-          ) as selector
-        FROM selector_raw
-        GROUP BY territory_group_id
+        SELECT * FROM ${this.getTerritorySelectorFn}($1) 
       `,
       values: [id],
     };

@@ -134,6 +134,19 @@ export interface StatelessContextInterface {
   carpool: CarpoolInterface;
 }
 
+export type StatelessRuleHelper<P> = (ctx: StatelessContextInterface, params: P) => boolean;
+
+export interface SerializedPolicyInterface {
+  _id: number;
+  territory_id: number;
+  territory_selector: TerritorySelectorsInterface;
+  name: string;
+  start_date: Date;
+  end_date: Date;
+  handler: string;
+  status: string;
+}
+
 export interface PolicyHandlerStaticInterface {
   new (): PolicyHandlerInterface;
 }
@@ -143,27 +156,16 @@ export interface StepInterface {
   end: number;
 }
 
-export interface PolicyHandlerInterface<P = StepRuleInterface> {
+export interface PolicyHandlerInterface {
   processStateless(context: StatelessContextInterface): void;
   processStateful(context: StatefulContextInterface): void;
-  describe(): Array<P>;
+  describe(): Array<StepInterface>;
   describeForHuman(): string;
-}
-
-export type StatelessRuleHelper<P> = (ctx: StatelessContextInterface, params: P) => boolean;
-
-export interface SerializedPolicyInterface {
-  _id: number;
-  territory_selector: TerritorySelectorsInterface;
-  name: string;
-  start_date: Date;
-  end_date: Date;
-  handler: string;
-  status: string;
 }
 
 export interface PolicyInterface {
   _id: number;
+  territory_id: number;
   territory_selector: TerritorySelectorsInterface;
   name: string;
   start_date: Date;
@@ -171,9 +173,12 @@ export interface PolicyInterface {
   handler: PolicyHandlerInterface;
   status: string;
 
+  export(): SerializedPolicyInterface;
   processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface>;
   processStateful(
     store: MetadataStoreInterface,
     incentive: SerializedIncentiveInterface,
   ): Promise<StatefulIncentiveInterface>;
+  describe(): Array<StepInterface>;
+  describeForHuman(): string;
 }

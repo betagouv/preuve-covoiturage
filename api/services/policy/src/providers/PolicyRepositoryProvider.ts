@@ -1,31 +1,42 @@
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { SerializedPolicyInterface } from '~/engine/interfaces';
 
-import {
-  CampaignInterface,
-  CampaignRepositoryProviderInterface,
-  CampaignRepositoryProviderInterfaceResolver,
-} from '../interfaces';
+import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 
+// TODO migration
 @provider({
-  identifier: CampaignRepositoryProviderInterfaceResolver,
+  identifier: PolicyRepositoryProviderInterfaceResolver,
 })
-export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderInterface {
+export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfaceResolver {
   public readonly table = 'policy.policies';
+  public readonly getTerritorySelectorFn = 'territory.get_selector_by_territory_id';
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(id: number, territoryId?: number): Promise<CampaignInterface> {
+  async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface> {
     const values = [id];
     if (!!territoryId) {
       values.push(territoryId);
     }
+
     const query = {
       text: `
-        SELECT * FROM ${this.table}
-        WHERE _id = $1
-        AND deleted_at IS NULL
-        ${!!territoryId ? 'AND territory_id = $2' : ''}
+        SELECT
+          pp._id,
+          sel.selector as territory_selector,
+          pp.name,
+          pp.start_date,
+          pp.end_date,
+          pp.handler,
+          pp.status
+        FROM ${this.table} as pp,
+        LATERAL (
+          SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory])
+        ) as sel
+        WHERE pp._id = $1
+        AND pp.deleted_at IS NULL
+        ${!!territoryId ? 'AND pp.territory_id = $2' : ''}
         LIMIT 1
       `,
       values: [id],
@@ -40,7 +51,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows[0];
   }
 
-  async create(data: CampaignInterface): Promise<CampaignInterface> {
+  async create(data: SerializedPolicyInterface): Promise<SerializedPolicyInterface> {
     const query = {
       text: `
         INSERT INTO ${this.table} (
@@ -58,9 +69,9 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
           $5,
           $6
         )
-        RETURNING *
+        RETURNING _id
       `,
-      values: [data.territory_id, data.start_date, data.end_date, data.name, data.status, data.uses],
+      values: [data.territory_id, data.start_date, data.end_date, data.name, data.status, data.handler],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -68,44 +79,32 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       throw new Error(`Unable to create campaign (${JSON.stringify(data)})`);
     }
 
-    return result.rows[0];
+    return await this.find(result.rows[0]._id);
   }
 
-  async patch(id: number, _patch: Partial<CampaignInterface>): Promise<CampaignInterface> {
-    // const updatablefields = ['name', 'start_date', 'end_date', 'status', 'uses'].filter(
-    //   (k) => Object.keys(patch).indexOf(k) >= 0,
-    // );
-
-    const sets = {
-      text: ['updated_at = NOW()'],
-      values: [],
-    };
-
+  async patch(data: SerializedPolicyInterface): Promise<SerializedPolicyInterface> {
     const query = {
       text: `
       UPDATE ${this.table}
-        SET ${sets.text.join(',')}
-        WHERE _id = $#
+        SET
+           name = $2,
+           start_date = $3,
+           end_date = $4,
+           handler = $5,
+           status = $6
+        WHERE _id = $1
         AND deleted_at IS NULL
-        RETURNING *
+        RETURNING _id
       `,
-      values: [...sets.values, id],
+      values: [data._id, data.name, data.start_date, data.end_date, data.handler, data.status],
     };
-
-    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
-      if (idx === origin.length - 1) {
-        return `${acc}${current}`;
-      }
-
-      return `${acc}${current}$${idx + 1}`;
-    }, '');
 
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
-      throw new NotFoundException(`campaign not found (${id})`);
+      throw new NotFoundException(`campaign not found (${data._id})`);
     }
 
-    return result.rows[0];
+    return await this.find(result.rows[0]._id);
   }
 
   async delete(id: number): Promise<void> {
@@ -127,13 +126,18 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return;
   }
 
+  async listApplicablePoliciesId(): Promise<number[]> {
+    const results = await this.connection.getClient().query("SELECT _id FROM policy.policies WHERE status = 'active'");
+    return results.rows.map((r) => r._id);
+  }
+
   async findWhere(search: {
     _id?: number;
     territory_id?: number | null | number[];
     status?: string;
     datetime?: Date;
     ends_in_the_future?: boolean;
-  }): Promise<CampaignInterface[]> {
+  }): Promise<SerializedPolicyInterface[]> {
     const values = [];
     const whereClauses = ['deleted_at IS NULL'];
     for (const key of Reflect.ownKeys(search)) {
@@ -172,17 +176,23 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     const query = {
       values,
       text: `
-        SELECT * FROM ${this.table}
+        SELECT
+          pp._id,
+          sel.selector as territory_selector,
+          pp.name,
+          pp.start_date,
+          pp.end_date,
+          pp.handler,
+          pp.status
+        FROM ${this.table} as pp,
+        LATERAL (
+          SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory])
+        ) as sel
         WHERE ${whereClauses.join(' AND ')}
       `,
     };
 
     const result = await this.connection.getClient().query(query);
-
-    if (result.rowCount === 0) {
-      return [];
-    }
-
     return result.rows;
   }
 }

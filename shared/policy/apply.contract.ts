@@ -1,5 +1,5 @@
 export type ParamsInterface = {
-  campaign_id?: number;
+  policy_id?: number;
   override_from?: Date;
 };
 

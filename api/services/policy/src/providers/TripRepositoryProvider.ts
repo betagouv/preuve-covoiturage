@@ -2,13 +2,13 @@ import { promisify } from 'util';
 import { provider } from '@ilos/common';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
-import { TripRepositoryProviderInterface, TripRepositoryProviderInterfaceResolver, TripInterface } from '../interfaces';
-import { ProcessableCampaign } from '../engine/ProcessableCampaign';
+import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
+import { CarpoolInterface, PolicyInterface } from '~/engine/interfaces';
 
 @provider({
   identifier: TripRepositoryProviderInterfaceResolver,
 })
-export class TripRepositoryProvider implements TripRepositoryProviderInterface {
+export class TripRepositoryProvider implements TripRepositoryProviderInterfaceResolver {
   public readonly table = 'policy.trips';
   public readonly incentiveTable = 'policy.incentives';
   public readonly getComFunction = 'territory.get_com_by_territory_id';
@@ -16,18 +16,14 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
 
   constructor(protected connection: PostgresConnection) {}
 
-  async listApplicablePoliciesId(): Promise<number[]> {
-    const results = await this.connection.getClient().query("SELECT _id FROM policy.policies WHERE status = 'active'");
-    return results.rows.map((r) => r._id);
-  }
-
+  // TODO operator_siret
   async *findTripByPolicy(
-    policy: ProcessableCampaign,
+    policy: PolicyInterface,
     from: Date,
     to: Date,
     batchSize = 100,
     override = false,
-  ): AsyncGenerator<TripInterface[], void, void> {
+  ): AsyncGenerator<CarpoolInterface[], void, void> {
     const yearResult = await this.connection.getClient().query(`SELECT * from ${this.getMillesimeFunction}() as year`);
     const year = yearResult.rows[0]?.year;
 
@@ -45,10 +41,10 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
         SELECT
           json_agg(
             json_build_object(
-              'identity_uuid', t.identity_uuid,
-              'carpool_id', t.carpool_id,
+              '_id', t.carpool_id,
               'trip_id', t.trip_id,
-              'operator_id', t.operator_id,
+              'identity_uuid', t.identity_uuid,
+              'operator_siret', t.operator_siret,
               'operator_class', t.operator_class,
               'is_over_18', t.is_over_18,
               'is_driver', t.is_driver,
@@ -78,10 +74,9 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
             t.datetime < $3::timestamp AND
             t.carpool_status = 'ok'::carpool.carpool_status_enum
             ${override ? '' : 'AND pi.carpool_id IS NULL'}
-          GROUP BY t.acquisition_id
           ORDER BY min(t.datetime) ASC
       `,
-      values: override ? [com, from, to] : [com, from, to, policy.policy_id],
+      values: override ? [com, from, to] : [com, from, to, policy._id],
     };
 
     const client = await this.connection.getClient().connect();
@@ -94,11 +89,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
         const rows = await promisifiedCursorRead(batchSize);
         count = rows.length;
         if (count > 0) {
-          yield [
-            ...rows.map(
-              (r) => new TripInterface(...r.people.map((rp) => ({ ...rp, datetime: new Date(rp.datetime) }))),
-            ),
-          ];
+          yield rows;
         }
       } catch (e) {
         cursor.close(() => client.release());

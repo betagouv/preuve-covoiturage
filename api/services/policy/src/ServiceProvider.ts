@@ -18,20 +18,18 @@ import { ListCampaignAction } from './actions/ListCampaignAction';
 import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
 import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
 
-import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryProvider';
-import { PolicyEngine } from './engine/PolicyEngine';
 import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvider';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
+import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
 
 @serviceProvider({
   config,
   providers: [
-    CampaignPgRepositoryProvider,
+    PolicyRepositoryProvider,
     MetadataRepositoryProvider,
     TripRepositoryProvider,
-    PolicyEngine,
     IncentiveRepositoryProvider,
     TerritoryRepositoryProvider,
   ],

@@ -45,7 +45,7 @@ export function watchForPersonMaxTripByDay(ctx: StatelessContextInterface, uuid:
     lifetime: MetadataLifetime.Day,
   });
 }
-
+// TODO max trip
 export function applyForMaximum(ctx: StatefulContextInterface, uuid: string, max: number): void {
   const state = ctx.meta.get(uuid);
   if (state >= max) {
