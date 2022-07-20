@@ -1,5 +1,6 @@
 import { TerritorySelectorsInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
+import { isSelected } from '../helpers';
 import {
   CarpoolInterface,
   MetadataStoreInterface,
@@ -43,7 +44,9 @@ export class Policy implements PolicyInterface {
 
   async processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface> {
     const context = StatelessContext.fromCarpool(this._id, carpool);
-    this.handler.processStateless(context);
+    if(this.guard(carpool)) {
+      this.handler.processStateless(context);
+    }
     return context.incentive;
   }
 
@@ -55,5 +58,29 @@ export class Policy implements PolicyInterface {
     this.handler.processStateful(context);
     await store.save(context.meta);
     return context.incentive;
+  }
+
+  protected guard(carpool: CarpoolInterface): boolean {
+    if (carpool.datetime < this.start_date) {
+      return false;
+    }
+
+    if (carpool.datetime > this.end_date) {
+      return false;
+    }
+
+    if (!this.territory_selector || Object.keys(this.territory_selector).length <= 0) {
+      return true;
+    }
+
+    if (!isSelected(carpool.start, this.territory_selector)) {
+      return false;
+    }
+
+    if (!isSelected(carpool.end, this.territory_selector)) {
+      return false;
+    }
+  
+    return true;
   }
 }
