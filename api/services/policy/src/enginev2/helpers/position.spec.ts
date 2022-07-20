@@ -9,6 +9,15 @@ function setup(start: TerritoryCodeInterface, end: TerritoryCodeInterface) {
   return StatelessContext.fromCarpool(1, generateCarpool({ start, end }));
 }
 
+test('should return false if start list is empty', async (t) => {
+  const ctx = setup(
+    { aom: '217500016', com: '91471', epci: '200056232' },
+    { aom: '217500016', com: '91471', epci: '200056232' },
+  );
+  const res = startsAt(ctx, {});
+  t.is(res, false);
+});
+
 test('should return false if starts not in list', async (t) => {
   const ctx = setup(
     { aom: '217500016', com: '91471', epci: '200056232' },

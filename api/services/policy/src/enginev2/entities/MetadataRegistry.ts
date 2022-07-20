@@ -1,12 +1,14 @@
 import {
   MetadataLifetime,
   MetadataRegistryInterface,
-  MetadataVariable,
-  MetadataVariableDefinition,
-  MetadataVariableExport,
+  MetadataVariableDefinitionInterface,
+  SerializedMetadataVariableDefinitionInterface,
 } from '../interfaces';
 
-function getMetaKey(datetime: Date, metaDefinition: MetadataVariableDefinition): string {
+function getMetaKey(datetime: Date, metaDefinition: MetadataVariableDefinitionInterface): string {
+  if (metaDefinition.key) {
+    return metaDefinition.key;
+  }
   const date = typeof datetime.getMonth === 'function' ? datetime : new Date(datetime);
   const [day, month, year] = [date.getDate(), date.getMonth(), date.getFullYear()];
 
@@ -34,23 +36,23 @@ export class MetadataRegistry implements MetadataRegistryInterface {
   constructor(
     public readonly policy_id: number,
     public readonly datetime: Date,
-    public readonly data: Map<string, MetadataVariableDefinition> = new Map(),
+    public readonly data: Map<string, MetadataVariableDefinitionInterface> = new Map(),
   ) {}
 
   static create(policy_id: number, datetime: Date): MetadataRegistry {
     return new MetadataRegistry(policy_id, datetime);
   }
 
-  static import(policy_id: number, datetime: Date, data: Array<MetadataVariableDefinition>): MetadataRegistry {
+  static import(policy_id: number, datetime: Date, data: Array<MetadataVariableDefinitionInterface>): MetadataRegistry {
     const md = new Map(data.map((d) => [d.uuid, d]));
     return new MetadataRegistry(policy_id, datetime, md);
   }
 
-  register(variable: MetadataVariable): void {
+  register(variable: MetadataVariableDefinitionInterface): void {
     this.data.set(variable.uuid, variable);
   }
 
-  export(): Array<MetadataVariableExport> {
+  export(): Array<SerializedMetadataVariableDefinitionInterface> {
     return [...this.data.values()].map((d) => ({
       uuid: d.uuid,
       key: getMetaKey(this.datetime, d),

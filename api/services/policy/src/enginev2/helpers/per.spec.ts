@@ -26,6 +26,12 @@ test('should multiply by km', async (t) => {
   t.is(res, 10 * 20);
 });
 
+test('should multiply by 0 km', async (t) => {
+  const ctx = setup(0, 1);
+  const res = perKm(ctx, { amount: 20 });
+  t.is(res, 0);
+});
+
 test('should multiply by km with offset', async (t) => {
   const ctx = setup(10000, 1);
   const res = perKm(ctx, { amount: 20, offset: 3000 });

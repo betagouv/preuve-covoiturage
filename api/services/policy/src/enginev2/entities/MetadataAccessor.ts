@@ -1,21 +1,25 @@
-import { MetadataAccessorInterface, MetadataExport } from '../interfaces';
+import { MetadataAccessorInterface, SerializedAccessibleMetadataInterface } from '../interfaces';
 
 export class MetadataAccessor implements MetadataAccessorInterface {
-  constructor(public readonly datetime: Date, public readonly data: Map<string, number> = new Map()) {}
+  constructor(
+    public readonly datetime: Date,
+    public readonly data: Map<string, SerializedAccessibleMetadataInterface> = new Map(),
+  ) {}
 
-  static import(datetime: Date, data: Map<string, number>): MetadataAccessor {
+  static import(datetime: Date, data: Map<string, SerializedAccessibleMetadataInterface>): MetadataAccessor {
     return new MetadataAccessor(datetime, data);
   }
 
-  export(): Array<MetadataExport> {
-    return [...this.data.entries()].map(([key, value]) => ({ key, value }));
+  export(): Array<SerializedAccessibleMetadataInterface> {
+    return [...this.data.values()];
   }
 
   get(uuid: string): number {
-    return this.data.get(uuid);
+    return this.data.get(uuid).value;
   }
 
   set(uuid: string, value: number): void {
-    this.data.set(uuid, value);
+    const data = this.data.get(uuid);
+    this.data.set(uuid, { ...data, value });
   }
 }

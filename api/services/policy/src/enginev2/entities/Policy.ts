@@ -1,3 +1,4 @@
+import { TerritorySelectorsInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
 import {
   CarpoolInterface,
@@ -15,7 +16,7 @@ import { StatefulContext, StatelessContext } from './Context';
 export class Policy implements PolicyInterface {
   constructor(
     public _id: number,
-    public territory_id: number,
+    public territory_selector: TerritorySelectorsInterface,
     public name: string,
     public start_date: Date,
     public end_date: Date,
@@ -29,7 +30,15 @@ export class Policy implements PolicyInterface {
       throw new UnknownHandlerException();
     }
 
-    return new Policy(data._id, data.territory_id, data.name, data.start_date, data.end_date, new ctor(), data.status);
+    return new Policy(
+      data._id,
+      data.territory_selector,
+      data.name,
+      data.start_date,
+      data.end_date,
+      new ctor(),
+      data.status,
+    );
   }
 
   async processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface> {
