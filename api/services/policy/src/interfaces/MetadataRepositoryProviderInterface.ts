@@ -1,4 +1,4 @@
-import { SerializedStoredMetadataInterface } from '~/enginev2/interfaces';
+import { SerializedStoredMetadataInterface } from '~/engine/interfaces';
 import { MetadataWrapperInterface } from './MetadataWrapperInterface';
 
 export interface MetadataRepositoryProviderInterface {
