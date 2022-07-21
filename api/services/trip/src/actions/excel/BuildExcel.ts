@@ -1,3 +1,4 @@
+import { SlicesInterface } from './../../interfaces/SlicesInterface';
 import { provider } from '@ilos/common';
 import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
@@ -25,8 +26,36 @@ export class BuildExcel {
 
     const filepath: string = this.buildFilepath.call(campaign.name, operator_id, start_date);
     await this.streamDataToWorkbook.call(tripCursor, filepath, campaign);
-    await this.createSlicesSheetToWorkbook.call(filepath, campaign);
+    try {
+      const slices: SlicesInterface[] = await this.getFundCallSlices(campaign._id, start_date, end_date, operator_id);
+      await this.createSlicesSheetToWorkbook.call(filepath, slices);
+    } catch (e) {
+      console.error(`Error while computing slices for campaign fund call ${filepath}`, e);
+    }
     return filepath;
+  }
+
+  private getFundCallSlices(
+    campaign_id: number,
+    start_date: Date,
+    end_date: Date,
+    operator_id: number,
+  ): Promise<SlicesInterface[]> {
+    return this.tripRepositoryProvider.computeFundCallsSlices(
+      {
+        date: {
+          start: start_date,
+          end: end_date,
+        },
+        campaign_id: [campaign_id],
+        operator_id: [operator_id],
+      },
+      // TODO: fetch this from campaign
+      [
+        { min: 0, max: 2000 },
+        { min: 2000, max: 15000 },
+      ],
+    );
   }
 
   private getTripRepositoryCursor(

@@ -15,7 +15,8 @@ interface Context {
   createSlicesSheetToWorkbook: CreateSlicesSheetToWorkbook;
 
   // Injected tokens method's stubs
-  tripRepositoryProviderStub: SinonStub;
+  searchWithCursorStub: SinonStub;
+  computeFundCallsSlices: SinonStub;
   buildFilepathStub: SinonStub;
   streamDataToWorkbookStub: SinonStub;
   createSlicesSheetToWorkbookStub: SinonStub;
@@ -40,14 +41,15 @@ test.beforeEach((t) => {
   );
   t.context.buildFilepathStub = sinon.stub(t.context.buildFilepath, 'call');
   t.context.streamDataToWorkbookStub = sinon.stub(t.context.streamDataToWorkbook, 'call');
-  t.context.tripRepositoryProviderStub = sinon.stub(t.context.tripRepositoryProvider, 'searchWithCursor');
+  t.context.searchWithCursorStub = sinon.stub(t.context.tripRepositoryProvider, 'searchWithCursor');
+  t.context.computeFundCallsSlices = sinon.stub(t.context.tripRepositoryProvider, 'computeFundCallsSlices');
   t.context.createSlicesSheetToWorkbookStub = sinon.stub(t.context.createSlicesSheetToWorkbook, 'call');
 });
 
 test.afterEach((t) => {
   t.context.buildFilepathStub!.restore();
   t.context.streamDataToWorkbookStub!.restore();
-  t.context.tripRepositoryProviderStub!.restore();
+  t.context.searchWithCursorStub!.restore();
   t.context.createSlicesSheetToWorkbookStub!.restore();
 });
 
@@ -75,7 +77,7 @@ test('BuildExcel: should call stream data and create slice then return excel fil
   const operator_id = 4;
   const cursorCallback = () => {};
   const filepath = '/tmp/apdf-idfm';
-  t.context.tripRepositoryProviderStub!.returns(cursorCallback);
+  t.context.searchWithCursorStub!.returns(cursorCallback);
   t.context.buildFilepathStub!.returns(filepath);
   t.context.streamDataToWorkbookStub!.resolves();
   t.context.createSlicesSheetToWorkbookStub!.resolves();
@@ -85,7 +87,7 @@ test('BuildExcel: should call stream data and create slice then return excel fil
 
   // Assert
   sinon.assert.calledOnceWithExactly(
-    t.context.tripRepositoryProviderStub!,
+    t.context.searchWithCursorStub!,
     {
       date: { start: start_date, end: end_date },
       campaign_id: [campaign._id],
@@ -95,7 +97,8 @@ test('BuildExcel: should call stream data and create slice then return excel fil
   );
   sinon.assert.calledOnceWithExactly(t.context.buildFilepathStub!, campaign.name, operator_id, start_date);
   sinon.assert.calledOnceWithExactly(t.context.streamDataToWorkbookStub!, cursorCallback, filepath, campaign);
-  sinon.assert.calledOnceWithExactly(t.context.createSlicesSheetToWorkbookStub!, filepath, campaign);
+  sinon.assert.calledOnce(t.context.createSlicesSheetToWorkbookStub!);
+  sinon.assert.calledOnce(t.context.computeFundCallsSlices!);
   t.is(result, filepath);
 });
 
@@ -123,16 +126,16 @@ test('BuildExcel: should call stream data and return excel filepath with even if
   const operator_id = 4;
   const cursorCallback = () => {};
   const filepath = '/tmp/apdf-idfm';
-  t.context.tripRepositoryProviderStub!.returns(cursorCallback);
+  t.context.searchWithCursorStub!.returns(cursorCallback);
   t.context.buildFilepathStub!.returns(filepath);
-  t.context.streamDataToWorkbookStub!.rejects('Error while computing slices');
+  t.context.createSlicesSheetToWorkbookStub!.rejects('Error while computing slices');
 
   // Act
   const result: string = await t.context.buildExcel!.call(campaign, start_date, end_date, operator_id);
 
   // Assert
   sinon.assert.calledOnceWithExactly(
-    t.context.tripRepositoryProviderStub!,
+    t.context.searchWithCursorStub!,
     {
       date: { start: start_date, end: end_date },
       campaign_id: [campaign._id],
@@ -142,6 +145,7 @@ test('BuildExcel: should call stream data and return excel filepath with even if
   );
   sinon.assert.calledOnceWithExactly(t.context.buildFilepathStub!, campaign.name, operator_id, start_date);
   sinon.assert.calledOnceWithExactly(t.context.streamDataToWorkbookStub!, cursorCallback, filepath, campaign);
-  sinon.assert.calledOnceWithExactly(t.context.createSlicesSheetToWorkbookStub!, filepath, campaign);
+  sinon.assert.calledOnce(t.context.createSlicesSheetToWorkbookStub!);
+  sinon.assert.calledOnce(t.context.computeFundCallsSlices!);
   t.is(result, filepath);
 });

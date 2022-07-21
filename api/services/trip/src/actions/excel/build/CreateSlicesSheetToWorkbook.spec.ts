@@ -19,3 +19,14 @@ test('CreateSlicesSheetToWorkbook: should fetch and stream slices to workbook', 
   t.true(filepath.startsWith(path.join(os.tmpdir(), 'apdf-idfm_nor-4-sept-')));
   t.true(filepath.endsWith('.xlsx'));
 });
+
+test('CreateSlicesSheetToWorkbook: should not throw any exception if an error occurs', async (t) => {
+  // Arrange
+
+  // Act
+  const filepath: string = buildFilepath.call('IDFM normal', 4, start_date);
+
+  // Assert
+  t.true(filepath.startsWith(path.join(os.tmpdir(), 'apdf-idfm_nor-4-sept-')));
+  t.true(filepath.endsWith('.xlsx'));
+});
