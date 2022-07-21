@@ -17,6 +17,34 @@ export class BuildExcel {
   ) {}
 
   async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
+    const filepath: string = this.buildFilepath.call(campaign.name, operator_id, start_date);
+    await this.callDataToWorkbook(campaign, start_date, end_date, operator_id, filepath);
+    await this.callSlicesToWorkbook(campaign, start_date, end_date, operator_id, filepath);
+    return filepath;
+  }
+
+  private async callSlicesToWorkbook(
+    campaign: Campaign,
+    start_date: Date,
+    end_date: Date,
+    operator_id: number,
+    filepath: string,
+  ) {
+    try {
+      const slices: SlicesInterface[] = await this.getFundCallSlices(campaign._id, start_date, end_date, operator_id);
+      await this.createSlicesSheetToWorkbook.call(filepath, slices);
+    } catch (e) {
+      console.error(`Error while computing slices for campaign fund call ${filepath}`, e);
+    }
+  }
+
+  private async callDataToWorkbook(
+    campaign: Campaign,
+    start_date: Date,
+    end_date: Date,
+    operator_id: number,
+    filepath: string,
+  ) {
     const tripCursor: PgCursorHandler = await this.getTripRepositoryCursor(
       campaign._id,
       start_date,
@@ -24,15 +52,7 @@ export class BuildExcel {
       operator_id,
     );
 
-    const filepath: string = this.buildFilepath.call(campaign.name, operator_id, start_date);
     await this.streamDataToWorkbook.call(tripCursor, filepath, campaign);
-    try {
-      const slices: SlicesInterface[] = await this.getFundCallSlices(campaign._id, start_date, end_date, operator_id);
-      await this.createSlicesSheetToWorkbook.call(filepath, slices);
-    } catch (e) {
-      console.error(`Error while computing slices for campaign fund call ${filepath}`, e);
-    }
-    return filepath;
   }
 
   private getFundCallSlices(
