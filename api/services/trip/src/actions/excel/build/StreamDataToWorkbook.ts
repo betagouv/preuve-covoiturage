@@ -11,7 +11,6 @@ export class StreamDataToWorkBook {
   constructor() {}
 
   public readonly DATA_WORKSHEET_NAME = 'Données';
-  public readonly SLICE_WORKSHEET_NAME = 'Tranches';
 
   async call(cursor: PgCursorHandler, filepath: string, campaign: Campaign): Promise<void> {
     const workbookWriter: stream.xlsx.WorkbookWriter = new stream.xlsx.WorkbookWriter({

@@ -102,7 +102,7 @@ test('BuildExcel: should call stream data and create slice then return excel fil
   t.is(result, filepath);
 });
 
-test('BuildExcel: should call stream data and return excel filepath with even if create slice error occurs', async (t) => {
+test('BuildExcel: should call stream data and return excel filepath even if create slice error occurs', async (t) => {
   // Arrange
   const start_date: Date = new Date();
   const end_date: Date = new Date();
