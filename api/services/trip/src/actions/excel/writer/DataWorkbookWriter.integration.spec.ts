@@ -110,7 +110,7 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
   const filename = '/tmp/stream-data-test.xlsx';
 
   // Act
-  await dataWorkBookWriter.call({ read: cursorCallback, release: () => {} }, filename, campaign);
+  await dataWorkBookWriter.call({ read: cursorCallback, release: () => {} }, filename);
 
   // Assert
   const workbook: Workbook = await new Workbook().xlsx.readFile(filename);

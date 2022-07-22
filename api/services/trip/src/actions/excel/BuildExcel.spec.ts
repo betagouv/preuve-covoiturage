@@ -18,8 +18,8 @@ interface Context {
   searchWithCursorStub: SinonStub;
   computeFundCallsSlices: SinonStub;
   buildFilepathStub: SinonStub;
-  streamDataToWorkbookStub: SinonStub;
-  createSlicesSheetToWorkbookStub: SinonStub;
+  dataWorkbookWriterStub: SinonStub;
+  slicesWorkbookWriterStub: SinonStub;
 
   // Tested token
   buildExcel: BuildExcel;
@@ -45,10 +45,10 @@ test.beforeEach((t) => {
     t.context.createSlicesSheetToWorkbook,
   );
   t.context.buildFilepathStub = sinon.stub(t.context.buildFilepath, 'call');
-  t.context.streamDataToWorkbookStub = sinon.stub(t.context.streamDataToWorkbook, 'call');
+  t.context.dataWorkbookWriterStub = sinon.stub(t.context.streamDataToWorkbook, 'call');
   t.context.searchWithCursorStub = sinon.stub(t.context.tripRepositoryProvider, 'searchWithCursor');
   t.context.computeFundCallsSlices = sinon.stub(t.context.tripRepositoryProvider, 'computeFundCallsSlices');
-  t.context.createSlicesSheetToWorkbookStub = sinon.stub(t.context.createSlicesSheetToWorkbook, 'call');
+  t.context.slicesWorkbookWriterStub = sinon.stub(t.context.createSlicesSheetToWorkbook, 'call');
 });
 
 test.before((t) => {
@@ -90,9 +90,9 @@ test.before((t) => {
 
 test.afterEach((t) => {
   t.context.buildFilepathStub!.restore();
-  t.context.streamDataToWorkbookStub!.restore();
+  t.context.dataWorkbookWriterStub!.restore();
   t.context.searchWithCursorStub!.restore();
-  t.context.createSlicesSheetToWorkbookStub!.restore();
+  t.context.slicesWorkbookWriterStub!.restore();
 });
 
 test('BuildExcel: should call stream data and create slice then return excel filepath', async (t) => {
@@ -101,7 +101,7 @@ test('BuildExcel: should call stream data and create slice then return excel fil
   const cursorCallback = () => {};
   t.context.searchWithCursorStub!.returns(cursorCallback);
   t.context.buildFilepathStub!.returns(t.context.filepath);
-  t.context.streamDataToWorkbookStub!.resolves();
+  t.context.dataWorkbookWriterStub!.resolves();
 
   // Act
   const result: string = await t.context.buildExcel!.call(
@@ -127,13 +127,8 @@ test('BuildExcel: should call stream data and create slice then return excel fil
     t.context.operator_id,
     t.context.start_date,
   );
-  sinon.assert.calledOnceWithExactly(
-    t.context.streamDataToWorkbookStub!,
-    cursorCallback,
-    t.context.filepath,
-    t.context.campaign!.name,
-  );
-  sinon.assert.calledOnce(t.context.createSlicesSheetToWorkbookStub!);
+  sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.filepath);
+  sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
   sinon.assert.calledOnce(t.context.computeFundCallsSlices!);
   t.is(result, t.context.filepath!);
 });
@@ -143,7 +138,7 @@ test('BuildExcel: should call stream data and return excel filepath even if crea
   const cursorCallback = () => {};
   t.context.searchWithCursorStub!.returns(cursorCallback);
   t.context.buildFilepathStub!.returns(t.context.filepath);
-  t.context.createSlicesSheetToWorkbookStub!.rejects('Error while computing slices');
+  t.context.slicesWorkbookWriterStub!.rejects('Error while computing slices');
 
   // Act
   const result: string = await t.context.buildExcel!.call(
@@ -169,13 +164,8 @@ test('BuildExcel: should call stream data and return excel filepath even if crea
     t.context.operator_id,
     t.context.start_date,
   );
-  sinon.assert.calledOnceWithExactly(
-    t.context.streamDataToWorkbookStub!,
-    cursorCallback,
-    t.context.filepath,
-    t.context.campaign,
-  );
-  sinon.assert.calledOnce(t.context.createSlicesSheetToWorkbookStub!);
+  sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.filepath);
+  sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
   sinon.assert.calledOnce(t.context.computeFundCallsSlices!);
   t.is(result, t.context.filepath!);
 });
@@ -189,7 +179,7 @@ test('BuildExcel: should call stream data and return excel filepath without slic
   const cursorCallback = () => {};
   t.context.searchWithCursorStub!.returns(cursorCallback);
   t.context.buildFilepathStub!.returns(t.context.filepath);
-  t.context.createSlicesSheetToWorkbookStub!.rejects('Error while computing slices');
+  t.context.slicesWorkbookWriterStub!.rejects('Error while computing slices');
 
   // Act
   const result: string = await t.context.buildExcel!.call(
@@ -215,13 +205,8 @@ test('BuildExcel: should call stream data and return excel filepath without slic
     t.context.operator_id,
     t.context.start_date,
   );
-  sinon.assert.calledOnceWithExactly(
-    t.context.streamDataToWorkbookStub!,
-    cursorCallback,
-    t.context.filepath,
-    t.context.campaign,
-  );
-  sinon.assert.notCalled(t.context.createSlicesSheetToWorkbookStub!);
+  sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.filepath);
+  sinon.assert.notCalled(t.context.slicesWorkbookWriterStub!);
   sinon.assert.notCalled(t.context.computeFundCallsSlices!);
   t.is(result, t.context.filepath!);
 });
