@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { stream, Worksheet } from 'exceljs';
+import { Column, stream, Worksheet } from 'exceljs';
 import { SlicesInterface } from '../../../interfaces/SlicesInterface';
 
 /***
@@ -11,6 +11,11 @@ import { SlicesInterface } from '../../../interfaces/SlicesInterface';
 @provider()
 export class CreateSlicesSheetToWorkbook {
   public readonly SLICE_WORKSHEET_NAME = 'Tranches';
+  public readonly SLICE_WORKSHEET_COLUMN_HEADERS: Partial<Column>[] = [
+    { header: 'Tranche', key: 'slice' },
+    { header: 'Somme incitations', key: 'incentivesSum' },
+    { header: 'Nombre Trajet', key: 'tripCount' },
+  ];
 
   async call(filepath: string, slices: SlicesInterface[]): Promise<void> {
     const workbookWriter: stream.xlsx.WorkbookWriter = new stream.xlsx.WorkbookWriter({
@@ -18,8 +23,12 @@ export class CreateSlicesSheetToWorkbook {
     });
     const worksheet: Worksheet = workbookWriter.addWorksheet(this.SLICE_WORKSHEET_NAME);
 
+    worksheet.columns = this.SLICE_WORKSHEET_COLUMN_HEADERS;
     slices.forEach((s) => {
-      worksheet.addRow(s);
+      worksheet
+        .addRow([`De ${slices[0].slice.min} à ${slices[0].slice.max}`, s.incentivesSum / 100, s.tripCount])
+        .commit();
     });
+    return workbookWriter.commit();
   }
 }
