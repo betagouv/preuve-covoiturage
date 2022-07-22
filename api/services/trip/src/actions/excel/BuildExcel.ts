@@ -18,12 +18,12 @@ export class BuildExcel {
 
   async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
     const filepath: string = this.buildFilepath.call(campaign.name, operator_id, start_date);
-    await this.callDataToWorkbook(campaign, start_date, end_date, operator_id, filepath);
-    await this.callSlicesToWorkbook(campaign, start_date, end_date, operator_id, filepath);
+    await this.callDataWorkbookWriter(campaign, start_date, end_date, operator_id, filepath);
+    await this.callSlicesWorkbookWriter(campaign, start_date, end_date, operator_id, filepath);
     return filepath;
   }
 
-  private async callSlicesToWorkbook(
+  private async callSlicesWorkbookWriter(
     campaign: Campaign,
     start_date: Date,
     end_date: Date,
@@ -38,7 +38,7 @@ export class BuildExcel {
     }
   }
 
-  private async callDataToWorkbook(
+  private async callDataWorkbookWriter(
     campaign: Campaign,
     start_date: Date,
     end_date: Date,
@@ -52,7 +52,7 @@ export class BuildExcel {
       operator_id,
     );
 
-    await this.dataWorkbookWriter.call(tripCursor, filepath, campaign);
+    await this.dataWorkbookWriter.call(tripCursor, filepath);
   }
 
   private getFundCallSlices(

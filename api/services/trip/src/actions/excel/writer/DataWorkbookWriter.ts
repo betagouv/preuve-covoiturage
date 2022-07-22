@@ -1,10 +1,9 @@
 import { provider } from '@ilos/common';
-import { Column, stream, Worksheet } from 'exceljs';
+import { Column, Worksheet } from 'exceljs';
 import { normalizeExport } from '../../../helpers/normalizeExportDataHelper';
 import { ExportTripInterface } from '../../../interfaces/ExportTripInterface';
 import { PgCursorHandler } from '../../../interfaces/PromisifiedPgCursor';
 import { BuildExportAction } from '../../BuildExportAction';
-import { ResultInterface as Campaign } from '../../../shared/policy/find.contract';
 import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
 
 @provider()
@@ -16,7 +15,7 @@ export class DataWorkBookWriter extends AbstractWorkBookWriter {
     },
   );
 
-  async call(cursor: PgCursorHandler, filepath: string, campaign: Campaign): Promise<void> {
+  async call(cursor: PgCursorHandler, filepath: string): Promise<void> {
     const worksheet: Worksheet = this.prepareWorksheet(
       filepath,
       this.DATA_WORKSHEET_NAME,
