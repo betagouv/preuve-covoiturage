@@ -1,43 +1,38 @@
 import { provider } from '@ilos/common';
-import { stream, Worksheet } from 'exceljs';
+import { Column, stream, Worksheet } from 'exceljs';
 import { normalizeExport } from '../../../helpers/normalizeExportDataHelper';
 import { ExportTripInterface } from '../../../interfaces/ExportTripInterface';
 import { PgCursorHandler } from '../../../interfaces/PromisifiedPgCursor';
 import { BuildExportAction } from '../../BuildExportAction';
 import { ResultInterface as Campaign } from '../../../shared/policy/find.contract';
+import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
 
 @provider()
-export class StreamDataToWorkBook {
-  constructor() {}
-
+export class DataWorkBookWriter extends AbstractWorkBookWriter {
   public readonly DATA_WORKSHEET_NAME = 'Données';
+  public readonly DATA_WORKSHEET_COLUMN_HEADERS: Partial<Column>[] = BuildExportAction.getColumns('territory').map(
+    (c) => {
+      return { header: c, key: c };
+    },
+  );
 
   async call(cursor: PgCursorHandler, filepath: string, campaign: Campaign): Promise<void> {
-    const workbookWriter: stream.xlsx.WorkbookWriter = new stream.xlsx.WorkbookWriter({
-      filename: filepath,
-    });
-    this.writeColumnHeaders(workbookWriter);
+    const worksheet: Worksheet = this.prepareWorksheet(
+      filepath,
+      this.DATA_WORKSHEET_NAME,
+      this.DATA_WORKSHEET_COLUMN_HEADERS,
+    );
+
     const b1 = new Date();
     let results: ExportTripInterface[] = await cursor.read(10);
     while (results.length !== 0) {
-      this.writeTrips(workbookWriter, results);
+      results.map((t) => worksheet.addRow(normalizeExport(t, 'Europe/Paris')).commit());
       results = await cursor.read(10);
     }
     const b2 = new Date();
     cursor.release();
     console.debug(`[trip:buildExcelExport] writing trips took: ${(b2.getTime() - b1.getTime()) / 1000}s`);
-    return await workbookWriter.commit();
-  }
 
-  private writeColumnHeaders(wb: stream.xlsx.WorkbookWriter): void {
-    const worksheet: Worksheet = wb.addWorksheet(this.DATA_WORKSHEET_NAME);
-    worksheet.columns = BuildExportAction.getColumns('territory').map((c) => {
-      return { header: c, key: c };
-    });
-  }
-
-  private async writeTrips(wb: stream.xlsx.WorkbookWriter, trips: ExportTripInterface[]) {
-    const worsheetData: Worksheet = wb.getWorksheet(this.DATA_WORKSHEET_NAME);
-    trips.map((t) => worsheetData.addRow(normalizeExport(t, 'Europe/Paris')).commit());
+    return this.commitChanges();
   }
 }

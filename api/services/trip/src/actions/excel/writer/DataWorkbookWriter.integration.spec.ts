@@ -4,9 +4,9 @@ import { Workbook, Worksheet } from 'exceljs';
 import faker from '@faker-js/faker';
 import { ExportTripInterface } from '../../../interfaces';
 import { BuildExportAction } from '../../BuildExportAction';
-import { StreamDataToWorkBook } from './StreamDataToWorkbook';
+import { DataWorkBookWriter } from './DataWorkbookWriter';
 
-let streamDataToWorkBook: StreamDataToWorkBook;
+let dataWorkBookWriter: DataWorkBookWriter;
 
 const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   journey_id: faker.random.uuid(),
@@ -76,10 +76,10 @@ const campaign: Campaign = {
 };
 
 test.before((t) => {
-  streamDataToWorkBook = new StreamDataToWorkBook();
+  dataWorkBookWriter = new DataWorkBookWriter();
 });
 
-test('StreamDataToWorkBook: should stream data to a workbook file', async (t) => {
+test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
   // Arrange
   const tripCursor = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
     resolve([
@@ -110,26 +110,26 @@ test('StreamDataToWorkBook: should stream data to a workbook file', async (t) =>
   const filename = '/tmp/stream-data-test.xlsx';
 
   // Act
-  await streamDataToWorkBook.call({ read: cursorCallback, release: () => {} }, filename, campaign);
+  await dataWorkBookWriter.call({ read: cursorCallback, release: () => {} }, filename, campaign);
 
   // Assert
   const workbook: Workbook = await new Workbook().xlsx.readFile(filename);
-  const worksheet: Worksheet = workbook.getWorksheet(streamDataToWorkBook.DATA_WORKSHEET_NAME);
+  const worksheet: Worksheet = workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME);
   t.is(worksheet.actualRowCount, 21);
-  t.deepEqual(workbook.getWorksheet(streamDataToWorkBook.DATA_WORKSHEET_NAME).getRow(1).values, [
+  t.deepEqual(workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(1).values, [
     undefined,
     ...BuildExportAction.getColumns('territory'),
   ]);
   t.is(
-    workbook.getWorksheet(streamDataToWorkBook.DATA_WORKSHEET_NAME).getRow(2).values.length,
+    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).values.length,
     BuildExportAction.getColumns('territory').length + 1,
   );
   t.is(
-    workbook.getWorksheet(streamDataToWorkBook.DATA_WORKSHEET_NAME).getRow(2).getCell(2).value,
+    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).getCell(2).value,
     exportTripInterface.trip_id,
   );
   t.deepEqual(
-    workbook.getWorksheet(streamDataToWorkBook.DATA_WORKSHEET_NAME).getRow(2).getCell('AD').value,
+    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).getCell('AD').value,
     exportTripInterface.operator,
   );
 });

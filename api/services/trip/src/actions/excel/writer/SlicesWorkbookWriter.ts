@@ -1,7 +1,8 @@
 import { provider } from '@ilos/common';
-import { Column, stream, Worksheet } from 'exceljs';
+import { Column, Worksheet } from 'exceljs';
 import { SlicesInterface } from '../../../interfaces/SlicesInterface';
 import { ProgressiveDistanceRangeMetaParameters } from '../../../shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
+import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
 
 /***
  * Tranches       | Somme incentives  | Nombre trajet
@@ -10,7 +11,7 @@ import { ProgressiveDistanceRangeMetaParameters } from '../../../shared/policy/c
  */
 
 @provider()
-export class CreateSlicesSheetToWorkbook {
+export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
   public readonly SLICE_WORKSHEET_NAME = 'Tranches';
   public readonly SLICE_WORKSHEET_COLUMN_HEADERS: Partial<Column>[] = [
     { header: 'Tranche', key: 'slice' },
@@ -19,16 +20,17 @@ export class CreateSlicesSheetToWorkbook {
   ];
 
   async call(filepath: string, slices: SlicesInterface[]): Promise<void> {
-    const workbookWriter: stream.xlsx.WorkbookWriter = new stream.xlsx.WorkbookWriter({
-      filename: filepath,
-    });
-    const worksheet: Worksheet = workbookWriter.addWorksheet(this.SLICE_WORKSHEET_NAME);
+    const worksheet: Worksheet = this.prepareWorksheet(
+      filepath,
+      this.SLICE_WORKSHEET_NAME,
+      this.SLICE_WORKSHEET_COLUMN_HEADERS,
+    );
 
-    worksheet.columns = this.SLICE_WORKSHEET_COLUMN_HEADERS;
     slices.forEach((s) => {
       worksheet.addRow([this.formatSliceLabel(s.slice), s.incentivesSum / 100, s.tripCount]).commit();
     });
-    return workbookWriter.commit();
+
+    return this.commitChanges();
   }
 
   private formatSliceLabel(slice: ProgressiveDistanceRangeMetaParameters): string {

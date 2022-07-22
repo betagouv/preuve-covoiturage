@@ -2,18 +2,18 @@ import { SlicesInterface } from './../../interfaces/SlicesInterface';
 import { provider } from '@ilos/common';
 import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { BuildFilepath } from './build/BuildFilepath';
-import { StreamDataToWorkBook } from './build/StreamDataToWorkbook';
+import { BuildFilepath } from './BuildFilepath';
+import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
-import { CreateSlicesSheetToWorkbook } from './build/CreateSlicesSheetToWorkbook';
+import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
 @provider()
 export class BuildExcel {
   constructor(
     private tripRepositoryProvider: TripRepositoryProvider,
     private buildFilepath: BuildFilepath,
-    private streamDataToWorkbook: StreamDataToWorkBook,
-    private createSlicesSheetToWorkbook: CreateSlicesSheetToWorkbook,
+    private dataWorkbookWriter: DataWorkBookWriter,
+    private slicesWorkbookWriter: SlicesWorkbookWriter,
   ) {}
 
   async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
@@ -32,7 +32,7 @@ export class BuildExcel {
   ) {
     try {
       const slices: SlicesInterface[] = await this.getFundCallSlices(campaign._id, start_date, end_date, operator_id);
-      await this.createSlicesSheetToWorkbook.call(filepath, slices);
+      await this.slicesWorkbookWriter.call(filepath, slices);
     } catch (e) {
       console.error(`Error while computing slices for campaign fund call ${filepath}`, e);
     }
@@ -52,7 +52,7 @@ export class BuildExcel {
       operator_id,
     );
 
-    await this.streamDataToWorkbook.call(tripCursor, filepath, campaign);
+    await this.dataWorkbookWriter.call(tripCursor, filepath, campaign);
   }
 
   private getFundCallSlices(
