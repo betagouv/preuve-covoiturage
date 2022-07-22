@@ -1,3 +1,4 @@
+import { ProgressiveDistanceRangeMetaParameters } from '~/shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
 import { SlicesInterface } from './../../interfaces/SlicesInterface';
 import { provider } from '@ilos/common';
 import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
@@ -31,7 +32,19 @@ export class BuildExcel {
     filepath: string,
   ) {
     try {
-      const slices: SlicesInterface[] = await this.getFundCallSlices(campaign._id, start_date, end_date, operator_id);
+      const distanceRangeRules: ProgressiveDistanceRangeMetaParameters[] = campaign.global_rules
+        .filter((f) => f.slug == 'progressive_distance_range_meta')
+        .map((r) => r.parameters as ProgressiveDistanceRangeMetaParameters);
+      if (distanceRangeRules.length === 0) {
+        return;
+      }
+      const slices: SlicesInterface[] = await this.getFundCallSlices(
+        campaign,
+        start_date,
+        end_date,
+        operator_id,
+        distanceRangeRules,
+      );
       await this.slicesWorkbookWriter.call(filepath, slices);
     } catch (e) {
       console.error(`Error while computing slices for campaign fund call ${filepath}`, e);
@@ -56,10 +69,11 @@ export class BuildExcel {
   }
 
   private getFundCallSlices(
-    campaign_id: number,
+    campaign: Campaign,
     start_date: Date,
     end_date: Date,
     operator_id: number,
+    slices: ProgressiveDistanceRangeMetaParameters[],
   ): Promise<SlicesInterface[]> {
     return this.tripRepositoryProvider.computeFundCallsSlices(
       {
@@ -67,14 +81,10 @@ export class BuildExcel {
           start: start_date,
           end: end_date,
         },
-        campaign_id: [campaign_id],
+        campaign_id: [campaign._id],
         operator_id: [operator_id],
       },
-      // TODO: fetch this from campaign
-      [
-        { min: 0, max: 2000 },
-        { min: 2000, max: 15000 },
-      ],
+      slices,
     );
   }
 

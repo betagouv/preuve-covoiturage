@@ -2,17 +2,17 @@ import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
-import { BuildFilepath } from './build/BuildFilepath';
-import { CreateSlicesSheetToWorkbook } from './build/CreateSlicesSheetToWorkbook';
-import { StreamDataToWorkBook } from './build/StreamDataToWorkbook';
+import { BuildFilepath } from './BuildFilepath';
+import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
+import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { BuildExcel } from './BuildExcel';
 
 interface Context {
   // Injected tokens
   tripRepositoryProvider: TripRepositoryProvider;
   buildFilepath: BuildFilepath;
-  streamDataToWorkbook: StreamDataToWorkBook;
-  createSlicesSheetToWorkbook: CreateSlicesSheetToWorkbook;
+  streamDataToWorkbook: DataWorkBookWriter;
+  createSlicesSheetToWorkbook: SlicesWorkbookWriter;
 
   // Injected tokens method's stubs
   searchWithCursorStub: SinonStub;
@@ -24,15 +24,20 @@ interface Context {
   // Tested token
   buildExcel: BuildExcel;
   // Constants
+  campaign: Campaign;
+  start_date: Date;
+  end_date: Date;
+  operator_id: number;
+  filepath: string;
 }
 
 const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
-  t.context.createSlicesSheetToWorkbook = new CreateSlicesSheetToWorkbook();
+  t.context.createSlicesSheetToWorkbook = new SlicesWorkbookWriter();
   t.context.tripRepositoryProvider = new TripRepositoryProvider(null);
   t.context.buildFilepath = new BuildFilepath();
-  t.context.streamDataToWorkbook = new StreamDataToWorkBook();
+  t.context.streamDataToWorkbook = new DataWorkBookWriter();
   t.context.buildExcel = new BuildExcel(
     t.context.tripRepositoryProvider,
     t.context.buildFilepath,
@@ -46,6 +51,43 @@ test.beforeEach((t) => {
   t.context.createSlicesSheetToWorkbookStub = sinon.stub(t.context.createSlicesSheetToWorkbook, 'call');
 });
 
+test.before((t) => {
+  t.context.campaign = {
+    _id: 458,
+    name: 'IDFM normal',
+    state: {
+      amount: 0,
+      trip_subsidized: 0,
+      trip_excluded: 0,
+    },
+    territory_id: 0,
+    description: '',
+    start_date: new Date(),
+    end_date: new Date(),
+    unit: '',
+    status: '',
+    global_rules: [],
+    rules: [
+      [
+        {
+          slug: 'progressive_distance_range_meta',
+          parameters: { min: 2000, max: 150000 },
+        },
+      ],
+      [
+        {
+          slug: 'progressive_distance_range_meta',
+          parameters: { min: 150000, max: 30000 },
+        },
+      ],
+    ],
+  };
+  t.context.start_date = new Date();
+  t.context.end_date = new Date();
+  t.context.operator_id = 4;
+  t.context.filepath = '/tmp/apdf-idfm';
+});
+
 test.afterEach((t) => {
   t.context.buildFilepathStub!.restore();
   t.context.streamDataToWorkbookStub!.restore();
@@ -55,97 +97,131 @@ test.afterEach((t) => {
 
 test('BuildExcel: should call stream data and create slice then return excel filepath', async (t) => {
   // Arrange
-  const start_date: Date = new Date();
-  const end_date: Date = new Date();
-  const campaign: Campaign = {
-    _id: 458,
-    name: 'IDFM normal',
-    state: {
-      amount: 0,
-      trip_subsidized: 0,
-      trip_excluded: 0,
-    },
-    territory_id: 0,
-    description: '',
-    start_date: new Date(),
-    end_date: new Date(),
-    unit: '',
-    status: '',
-    global_rules: [],
-    rules: [],
-  };
-  const operator_id = 4;
+
   const cursorCallback = () => {};
-  const filepath = '/tmp/apdf-idfm';
   t.context.searchWithCursorStub!.returns(cursorCallback);
-  t.context.buildFilepathStub!.returns(filepath);
+  t.context.buildFilepathStub!.returns(t.context.filepath);
   t.context.streamDataToWorkbookStub!.resolves();
-  t.context.createSlicesSheetToWorkbookStub!.resolves();
 
   // Act
-  const result: string = await t.context.buildExcel!.call(campaign, start_date, end_date, operator_id);
+  const result: string = await t.context.buildExcel!.call(
+    t.context.campaign!,
+    t.context.start_date!,
+    t.context.end_date!,
+    t.context.operator_id!,
+  );
 
   // Assert
   sinon.assert.calledOnceWithExactly(
     t.context.searchWithCursorStub!,
     {
-      date: { start: start_date, end: end_date },
-      campaign_id: [campaign._id],
-      operator_id: [operator_id],
+      date: { start: t.context.start_date, end: t.context.end_date },
+      campaign_id: [t.context.campaign!._id],
+      operator_id: [t.context.operator_id],
     },
     'territory',
   );
-  sinon.assert.calledOnceWithExactly(t.context.buildFilepathStub!, campaign.name, operator_id, start_date);
-  sinon.assert.calledOnceWithExactly(t.context.streamDataToWorkbookStub!, cursorCallback, filepath, campaign);
+  sinon.assert.calledOnceWithExactly(
+    t.context.buildFilepathStub!,
+    t.context.campaign!.name,
+    t.context.operator_id,
+    t.context.start_date,
+  );
+  sinon.assert.calledOnceWithExactly(
+    t.context.streamDataToWorkbookStub!,
+    cursorCallback,
+    t.context.filepath,
+    t.context.campaign!.name,
+  );
   sinon.assert.calledOnce(t.context.createSlicesSheetToWorkbookStub!);
   sinon.assert.calledOnce(t.context.computeFundCallsSlices!);
-  t.is(result, filepath);
+  t.is(result, t.context.filepath!);
 });
 
 test('BuildExcel: should call stream data and return excel filepath even if create slice error occurs', async (t) => {
   // Arrange
-  const start_date: Date = new Date();
-  const end_date: Date = new Date();
-  const campaign: Campaign = {
-    _id: 458,
-    name: 'IDFM normal',
-    state: {
-      amount: 0,
-      trip_subsidized: 0,
-      trip_excluded: 0,
-    },
-    territory_id: 0,
-    description: '',
-    start_date: new Date(),
-    end_date: new Date(),
-    unit: '',
-    status: '',
-    global_rules: [],
-    rules: [],
-  };
-  const operator_id = 4;
   const cursorCallback = () => {};
-  const filepath = '/tmp/apdf-idfm';
   t.context.searchWithCursorStub!.returns(cursorCallback);
-  t.context.buildFilepathStub!.returns(filepath);
+  t.context.buildFilepathStub!.returns(t.context.filepath);
   t.context.createSlicesSheetToWorkbookStub!.rejects('Error while computing slices');
 
   // Act
-  const result: string = await t.context.buildExcel!.call(campaign, start_date, end_date, operator_id);
+  const result: string = await t.context.buildExcel!.call(
+    t.context.campaign!,
+    t.context.start_date!,
+    t.context.end_date!,
+    t.context.operator_id!,
+  );
 
   // Assert
   sinon.assert.calledOnceWithExactly(
     t.context.searchWithCursorStub!,
     {
-      date: { start: start_date, end: end_date },
-      campaign_id: [campaign._id],
-      operator_id: [operator_id],
+      date: { start: t.context.start_date, end: t.context.end_date },
+      campaign_id: [t.context.campaign!._id],
+      operator_id: [t.context.operator_id],
     },
     'territory',
   );
-  sinon.assert.calledOnceWithExactly(t.context.buildFilepathStub!, campaign.name, operator_id, start_date);
-  sinon.assert.calledOnceWithExactly(t.context.streamDataToWorkbookStub!, cursorCallback, filepath, campaign);
+  sinon.assert.calledOnceWithExactly(
+    t.context.buildFilepathStub!,
+    t.context.campaign!.name,
+    t.context.operator_id,
+    t.context.start_date,
+  );
+  sinon.assert.calledOnceWithExactly(
+    t.context.streamDataToWorkbookStub!,
+    cursorCallback,
+    t.context.filepath,
+    t.context.campaign,
+  );
   sinon.assert.calledOnce(t.context.createSlicesSheetToWorkbookStub!);
   sinon.assert.calledOnce(t.context.computeFundCallsSlices!);
-  t.is(result, filepath);
+  t.is(result, t.context.filepath!);
+});
+
+test('BuildExcel: should call stream data and return excel filepath without slices', async (t) => {
+  // Arrange
+  t.context.campaign = {
+    ...t.context.campaign!,
+    rules: [],
+  };
+  const cursorCallback = () => {};
+  t.context.searchWithCursorStub!.returns(cursorCallback);
+  t.context.buildFilepathStub!.returns(t.context.filepath);
+  t.context.createSlicesSheetToWorkbookStub!.rejects('Error while computing slices');
+
+  // Act
+  const result: string = await t.context.buildExcel!.call(
+    t.context.campaign!,
+    t.context.start_date!,
+    t.context.end_date!,
+    t.context.operator_id!,
+  );
+
+  // Assert
+  sinon.assert.calledOnceWithExactly(
+    t.context.searchWithCursorStub!,
+    {
+      date: { start: t.context.start_date, end: t.context.end_date },
+      campaign_id: [t.context.campaign!._id],
+      operator_id: [t.context.operator_id],
+    },
+    'territory',
+  );
+  sinon.assert.calledOnceWithExactly(
+    t.context.buildFilepathStub!,
+    t.context.campaign!.name,
+    t.context.operator_id,
+    t.context.start_date,
+  );
+  sinon.assert.calledOnceWithExactly(
+    t.context.streamDataToWorkbookStub!,
+    cursorCallback,
+    t.context.filepath,
+    t.context.campaign,
+  );
+  sinon.assert.notCalled(t.context.createSlicesSheetToWorkbookStub!);
+  sinon.assert.notCalled(t.context.computeFundCallsSlices!);
+  t.is(result, t.context.filepath!);
 });
