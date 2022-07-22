@@ -1,4 +1,4 @@
 export interface ProgressiveDistanceRangeMetaParameters {
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
 }
