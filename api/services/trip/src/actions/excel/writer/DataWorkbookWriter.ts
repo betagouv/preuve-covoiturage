@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { Column, Worksheet } from 'exceljs';
+import { Column, stream, Worksheet } from 'exceljs';
 import { normalizeExport } from '../../../helpers/normalizeExportDataHelper';
 import { ExportTripInterface } from '../../../interfaces/ExportTripInterface';
 import { PgCursorHandler } from '../../../interfaces/PromisifiedPgCursor';
@@ -32,6 +32,8 @@ export class DataWorkBookWriter extends AbstractWorkBookWriter {
     cursor.release();
     console.debug(`[trip:buildExcelExport] writing trips took: ${(b2.getTime() - b1.getTime()) / 1000}s`);
 
-    return this.commitChanges();
+    // this.commitWorksheetChanges();
+    // this.workbookWriter.commit();
+    return this.workbookWriter.commit();
   }
 }

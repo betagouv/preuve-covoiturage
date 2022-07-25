@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { Column, Worksheet } from 'exceljs';
+import { Column, stream, Worksheet } from 'exceljs';
 import { SlicesInterface } from '../../../interfaces/SlicesInterface';
 import { ProgressiveDistanceRangeMetaParameters } from '../../../shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
 import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
@@ -19,7 +19,7 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
     { header: 'Nombre Trajet', key: 'tripCount' },
   ];
 
-  async call(filepath: string, slices: SlicesInterface[]): Promise<void> {
+  async call(filepath: string, slices: SlicesInterface[]): Promise<stream.xlsx.WorkbookWriter> {
     const worksheet: Worksheet = this.prepareWorksheet(
       filepath,
       this.SLICE_WORKSHEET_NAME,
@@ -30,7 +30,8 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
       worksheet.addRow([this.formatSliceLabel(s.slice), s.incentivesSum / 100, s.tripCount]).commit();
     });
 
-    return this.commitChanges();
+    this.commitWorksheetChanges();
+    return this.workbookWriter;
   }
 
   private formatSliceLabel(slice: ProgressiveDistanceRangeMetaParameters): string {

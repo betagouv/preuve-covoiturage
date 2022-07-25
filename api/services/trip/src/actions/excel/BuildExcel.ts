@@ -2,7 +2,7 @@ import { provider } from '@ilos/common';
 import { ProgressiveDistanceRangeMetaParameters } from '~/shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
 import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
+import { ResultInterface as Campaign } from '~/shared/policy/find.contract';
 import { SlicesInterface } from './../../interfaces/SlicesInterface';
 import { BuildFilepath } from './BuildFilepath';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
@@ -19,8 +19,8 @@ export class BuildExcel {
 
   async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
     const filepath: string = this.buildFilepath.call(campaign.name, operator_id, start_date);
-    await this.callDataWorkbookWriter(campaign, start_date, end_date, operator_id, filepath);
     await this.callSlicesWorkbookWriter(campaign, start_date, end_date, operator_id, filepath);
+    await this.callDataWorkbookWriter(campaign, start_date, end_date, operator_id, filepath);
     return filepath;
   }
 

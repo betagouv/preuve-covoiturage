@@ -1,7 +1,7 @@
 import anyTest, { TestFn } from 'ava';
 import { SlicesInterface } from '../../../interfaces/SlicesInterface';
 
-import { Workbook, Worksheet } from 'exceljs';
+import { stream, Workbook, Worksheet } from 'exceljs';
 import { SlicesWorkbookWriter } from './SlicesWorkbookWriter';
 
 interface Context {
@@ -34,7 +34,11 @@ test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async 
   ];
 
   // Act
-  await t.context.slicesWorkbookWriter!.call(t.context.FILEPATH!, slices);
+  const workbookWriter: stream.xlsx.WorkbookWriter = await t.context.slicesWorkbookWriter!.call(
+    t.context.FILEPATH!,
+    slices,
+  );
+  await workbookWriter.commit(); // Simulate the final commit done by dataWorkbookWriter
 
   // Assert
   const workbook: Workbook = await new Workbook().xlsx.readFile(t.context.FILEPATH!);
