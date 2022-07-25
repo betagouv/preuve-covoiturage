@@ -6,8 +6,8 @@
       [selectable]="true"
       [removable]="true"
       (removed)="remove(territory)"
-    >
-    {{territory.name}}
+    > 
+    {{territory.name}} ({{ territory.type }})
       <mat-icon matChipRemove>remove</mat-icon>
     </mat-chip>
     <input

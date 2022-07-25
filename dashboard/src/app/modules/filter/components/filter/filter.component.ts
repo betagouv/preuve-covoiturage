@@ -104,6 +104,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
       filterObj.geo_selector = {
         com: filterObj.territoryIds.filter((t) => t.type == TerritoryCodeEnum.City).map((t) => t.insee),
         arr: filterObj.territoryIds.filter((t) => t.type == TerritoryCodeEnum.Arr).map((t) => t.insee),
+        reg: filterObj.territoryIds.filter((t) => t.type == TerritoryCodeEnum.Region).map((t) => t.insee),
         aom: filterObj.territoryIds.filter((t) => t.type == TerritoryCodeEnum.Mobility).map((t) => t.insee),
         epci: filterObj.territoryIds.filter((t) => t.type == TerritoryCodeEnum.CityGroup).map((t) => t.insee),
       };
