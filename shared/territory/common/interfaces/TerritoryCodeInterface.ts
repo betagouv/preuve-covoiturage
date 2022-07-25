@@ -8,6 +8,13 @@ export enum TerritoryCodeEnum {
   District = 'dep',
 }
 
+export interface TerritoryCodeInterface {
+  [TerritoryCodeEnum.Arr]?: string;
+  [TerritoryCodeEnum.City]: string;
+  [TerritoryCodeEnum.Mobility]: string;
+  [TerritoryCodeEnum.CityGroup]: string;
+}
+
 export interface TerritorySelectorsInterface {
   [TerritoryCodeEnum.Arr]?: string[];
   [TerritoryCodeEnum.City]?: string[];
