@@ -6,8 +6,8 @@
       [selectable]="true"
       [removable]="true"
       (removed)="remove(territory)"
-    >
-    {{territory.name}}
+    > 
+    {{territory.name}} ({{ territory.type }})
       <mat-icon matChipRemove>remove</mat-icon>
     </mat-chip>
     <input
@@ -25,7 +25,7 @@
   </mat-chip-list>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTerritorySelect($event)">
     <mat-option *ngFor="let territory of filteredTerritories" [value]="territory">
-      {{ territory.name }}
+      {{ territory.name }} ({{ territory.type }})
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

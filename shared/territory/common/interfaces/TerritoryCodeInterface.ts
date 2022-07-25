@@ -21,4 +21,5 @@ export interface TerritorySelectorsInterface {
   [TerritoryCodeEnum.Mobility]?: string[];
   [TerritoryCodeEnum.Id]?: number[];
   [TerritoryCodeEnum.CityGroup]?: string[];
+  [TerritoryCodeEnum.Region]?: string[];
 }
