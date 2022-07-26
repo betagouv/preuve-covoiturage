@@ -7,6 +7,7 @@ import { SlicesInterface } from './../../interfaces/SlicesInterface';
 import { BuildFilepath } from './BuildFilepath';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
+import { stream } from 'exceljs';
 
 @provider()
 export class BuildExcel {
@@ -19,8 +20,15 @@ export class BuildExcel {
 
   async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
     const filepath: string = this.buildFilepath.call(campaign.name, operator_id, start_date);
-    await this.callSlicesWorkbookWriter(campaign, start_date, end_date, operator_id, filepath);
-    await this.callDataWorkbookWriter(campaign, start_date, end_date, operator_id, filepath);
+    const workbookWriter: stream.xlsx.WorkbookWriter = await this.callDataWorkbookWriter(
+      campaign,
+      start_date,
+      end_date,
+      operator_id,
+      filepath,
+    );
+    await this.callSlicesWorkbookWriter(campaign, start_date, end_date, operator_id, filepath, workbookWriter);
+    await workbookWriter.commit();
     return filepath;
   }
 
@@ -30,6 +38,7 @@ export class BuildExcel {
     end_date: Date,
     operator_id: number,
     filepath: string,
+    workbookWriter: stream.xlsx.WorkbookWriter,
   ) {
     try {
       const distanceRangeRules: ProgressiveDistanceRangeMetaParameters[] = campaign.rules
@@ -46,9 +55,8 @@ export class BuildExcel {
         operator_id,
         distanceRangeRules,
       );
-      console.info(slices);
 
-      await this.slicesWorkbookWriter.call(filepath, slices);
+      await this.slicesWorkbookWriter.call(slices, workbookWriter);
     } catch (e) {
       console.error(`Error while computing slices for campaign fund call ${filepath}`, e);
     }
@@ -60,7 +68,7 @@ export class BuildExcel {
     end_date: Date,
     operator_id: number,
     filepath: string,
-  ) {
+  ): Promise<stream.xlsx.WorkbookWriter> {
     const tripCursor: PgCursorHandler = await this.getTripRepositoryCursor(
       campaign._id,
       start_date,

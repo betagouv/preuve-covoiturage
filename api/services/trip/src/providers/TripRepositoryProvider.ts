@@ -381,9 +381,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     const filtersString: string = slices
       .map((s, i) => {
-        `COUNT(journey_id) FILTER (
-        WHERE JOURNEY_DISTANCE > ${s.min} 
-        AND JOURNEY_DISTANCE <=  ${s.max}  
+        return `COUNT(journey_id) FILTER (
+        WHERE JOURNEY_DISTANCE > ${s.min}
+        AND JOURNEY_DISTANCE <=  ${s.max}
         AND (DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID = ${params.campaign_id} OR DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID =  ${params.campaign_id})) TRANCHE_${i}_COUNT,
       SUM (DRIVER_INCENTIVE_RPC_RAW[1].AMOUNT) FILTER (
         WHERE JOURNEY_DISTANCE > ${s.min}
@@ -398,21 +398,15 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     const lateralString: string = slices
       .map((s, i) => {
-        `(data.tranche_${i}_count, coalesce(data.tranche_${i}_sum_1)+ coalesce(data.tranche_${i}_sum_2, 0))`;
+        return `(data.tranche_${i}_count, coalesce(data.tranche_${i}_sum_1)+ coalesce(data.tranche_${i}_sum_2, 0))`;
       })
       .join(',');
 
     const values = [...(where ? where.values : [])];
     const text = `
-      WITH DATA as (SELECT
-      ${filtersString}
-      FROM ${this.table}
-      ${where.text ? `WHERE ${where.text}` : ''})
-
-      SELECT v.* from data, LATERAL(
-        VALUES 
-         ${lateralString}
-        ) v (trip_count, incentive_sum)
+      WITH DATA as (SELECT ${filtersString} FROM ${this.table} ${where.text ? `WHERE ${where.text}` : ''})
+      SELECT v.* from data,
+      LATERAL(VALUES ${lateralString}) v (trip_count, incentive_sum)
     `;
 
     const result = await this.connection.getClient().query({
@@ -423,8 +417,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     if (!result.rows[0]) {
       throw new Error(`Error while retrieving slices of campaign ${params.campaign_id}`);
     }
-
-    console.info(result.rows);
 
     return result.rows.map((r, i) => {
       return {

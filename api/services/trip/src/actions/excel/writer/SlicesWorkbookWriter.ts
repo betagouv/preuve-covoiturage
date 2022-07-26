@@ -19,8 +19,8 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
     { header: 'Nombre Trajet', key: 'tripCount' },
   ];
 
-  async call(filepath: string, slices: SlicesInterface[]): Promise<stream.xlsx.WorkbookWriter> {
-    const workbookWriter: stream.xlsx.WorkbookWriter = this.getWorkbookWriter(filepath);
+  call(slices: SlicesInterface[], workbookWriter: stream.xlsx.WorkbookWriter): void {
+    // const workbookWriter: stream.xlsx.WorkbookWriter = this.getWorkbookWriter(filepath);
     const worksheet: Worksheet = this.initWorkSheet(
       workbookWriter,
       this.SLICE_WORKSHEET_NAME,
@@ -31,8 +31,7 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
       worksheet.addRow([this.formatSliceLabel(s.slice), s.incentivesSum / 100, s.tripCount]).commit();
     });
 
-    // this.commitWorksheetChanges();
-    return workbookWriter;
+    worksheet.commit();
   }
 
   private formatSliceLabel(slice: ProgressiveDistanceRangeMetaParameters): string {
