@@ -39,9 +39,9 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
   ngOnInit(): void {
     this.territoryCtrl.valueChanges
       .pipe(
-        debounceTime(100),
+        debounceTime(1000),
         map((literal) => literal.trim()),
-        filter((literal) => !!literal && literal.length > 1),
+        filter((literal) => !!literal && literal.length > 2),
         tap((literal) => this.filterTerritory(literal)),
       )
       .pipe(takeUntil(this.destroy$))
