@@ -15,8 +15,7 @@ export class DataWorkBookWriter extends AbstractWorkBookWriter {
     },
   );
 
-  async call(cursor: PgCursorHandler, filepath: string): Promise<stream.xlsx.WorkbookWriter> {
-    const workbookWriter: stream.xlsx.WorkbookWriter = this.getWorkbookWriter(filepath);
+  async call(cursor: PgCursorHandler, workbookWriter): Promise<void> {
     const worksheet: Worksheet = this.initWorkSheet(
       workbookWriter,
       this.DATA_WORKSHEET_NAME,
@@ -34,6 +33,6 @@ export class DataWorkBookWriter extends AbstractWorkBookWriter {
     console.debug(`[trip:buildExcelExport] writing trips took: ${(b2.getTime() - b1.getTime()) / 1000}s`);
 
     worksheet.commit();
-    return workbookWriter;
+    return;
   }
 }

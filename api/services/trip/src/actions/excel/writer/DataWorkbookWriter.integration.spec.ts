@@ -1,10 +1,11 @@
 import { ResultInterface as Campaign } from '../../../shared/policy/find.contract';
 import test from 'ava';
-import { Workbook, Worksheet } from 'exceljs';
+import { stream, Workbook, Worksheet } from 'exceljs';
 import faker from '@faker-js/faker';
 import { ExportTripInterface } from '../../../interfaces';
 import { BuildExportAction } from '../../BuildExportAction';
 import { DataWorkBookWriter } from './DataWorkbookWriter';
+import { BuildExcel } from '../BuildExcel';
 
 let dataWorkBookWriter: DataWorkBookWriter;
 
@@ -107,13 +108,15 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
     return tripCursor;
   };
 
-  const filename = '/tmp/stream-data-test.xlsx';
+  const filepath = '/tmp/stream-data-test.xlsx';
 
   // Act
-  await dataWorkBookWriter.call({ read: cursorCallback, release: () => {} }, filename);
+  const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
+  await dataWorkBookWriter.call({ read: cursorCallback, release: () => {} }, workbookWriter);
+  await workbookWriter.commit();
 
   // Assert
-  const workbook: Workbook = await new Workbook().xlsx.readFile(filename);
+  const workbook: Workbook = await new Workbook().xlsx.readFile(filepath);
   const worksheet: Worksheet = workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME);
   t.is(worksheet.actualRowCount, 21);
   t.deepEqual(workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(1).values, [

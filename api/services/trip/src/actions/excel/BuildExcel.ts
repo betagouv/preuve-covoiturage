@@ -20,14 +20,9 @@ export class BuildExcel {
 
   async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
     const filepath: string = this.buildFilepath.call(campaign.name, operator_id, start_date);
-    const workbookWriter: stream.xlsx.WorkbookWriter = await this.callDataWorkbookWriter(
-      campaign,
-      start_date,
-      end_date,
-      operator_id,
-      filepath,
-    );
-    await this.callSlicesWorkbookWriter(campaign, start_date, end_date, operator_id, filepath, workbookWriter);
+    const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
+    await this.callDataWorkbookWriter(campaign, start_date, end_date, operator_id, workbookWriter);
+    await this.callSlicesWorkbookWriter(campaign, start_date, end_date, operator_id, workbookWriter);
     await workbookWriter.commit();
     return filepath;
   }
@@ -37,7 +32,6 @@ export class BuildExcel {
     start_date: Date,
     end_date: Date,
     operator_id: number,
-    filepath: string,
     workbookWriter: stream.xlsx.WorkbookWriter,
   ) {
     try {
@@ -56,9 +50,12 @@ export class BuildExcel {
         distanceRangeRules,
       );
 
-      await this.slicesWorkbookWriter.call(slices, workbookWriter);
+      return await this.slicesWorkbookWriter.call(slices, workbookWriter);
     } catch (e) {
-      console.error(`Error while computing slices for campaign fund call ${filepath}`, e);
+      console.error(
+        `Error while computing slices for campaign fund call ${campaign.name} and operator ${operator_id}`,
+        e,
+      );
     }
   }
 
@@ -67,8 +64,8 @@ export class BuildExcel {
     start_date: Date,
     end_date: Date,
     operator_id: number,
-    filepath: string,
-  ): Promise<stream.xlsx.WorkbookWriter> {
+    workbookWriter: stream.xlsx.WorkbookWriter,
+  ): Promise<void> {
     const tripCursor: PgCursorHandler = await this.getTripRepositoryCursor(
       campaign._id,
       start_date,
@@ -76,7 +73,13 @@ export class BuildExcel {
       operator_id,
     );
 
-    return await this.dataWorkbookWriter.call(tripCursor, filepath);
+    return await this.dataWorkbookWriter.call(tripCursor, workbookWriter);
+  }
+
+  public static initWorkbookWriter(filepath: string): stream.xlsx.WorkbookWriter {
+    return new stream.xlsx.WorkbookWriter({
+      filename: filepath,
+    });
   }
 
   private getFundCallSlices(
