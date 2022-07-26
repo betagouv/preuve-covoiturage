@@ -1,11 +1,12 @@
 import anyTest, { TestFn } from 'ava';
-import sinon, { SinonStub } from 'sinon';
+import sinon, { SinonStub, SinonStubStatic } from 'sinon';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
 import { BuildFilepath } from './BuildFilepath';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { BuildExcel } from './BuildExcel';
+import { stream } from 'exceljs';
 
 interface Context {
   // Injected tokens
@@ -20,6 +21,7 @@ interface Context {
   buildFilepathStub: SinonStub;
   dataWorkbookWriterStub: SinonStub;
   slicesWorkbookWriterStub: SinonStub;
+  workbookWriterStub: SinonStub;
 
   // Tested token
   buildExcel: BuildExcel;
@@ -29,6 +31,9 @@ interface Context {
   end_date: Date;
   operator_id: number;
   filepath: string;
+
+  // Fake workbookWriter
+  workbookWriterMock: any;
 }
 
 const test = anyTest as TestFn<Partial<Context>>;
@@ -86,6 +91,16 @@ test.before((t) => {
   t.context.end_date = new Date();
   t.context.operator_id = 4;
   t.context.filepath = '/tmp/apdf-idfm';
+  t.context.workbookWriterMock = {
+    commit: () => {
+      console.debug(`file is commited`);
+      return;
+    },
+  };
+
+  t.context.workbookWriterStub = sinon
+    .stub(BuildExcel, 'initWorkbookWriter')
+    .returns(t.context.workbookWriterMock as stream.xlsx.WorkbookWriter);
 });
 
 test.afterEach((t) => {
@@ -93,6 +108,7 @@ test.afterEach((t) => {
   t.context.dataWorkbookWriterStub!.restore();
   t.context.searchWithCursorStub!.restore();
   t.context.slicesWorkbookWriterStub!.restore();
+  t.context.workbookWriterStub!.restore();
 });
 
 test('BuildExcel: should call stream data and create slice then return excel filepath', async (t) => {
@@ -127,7 +143,7 @@ test('BuildExcel: should call stream data and create slice then return excel fil
     t.context.operator_id,
     t.context.start_date,
   );
-  sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.filepath);
+  sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
   sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
   sinon.assert.calledOnce(t.context.computeFundCallsSlices!);
   t.is(result, t.context.filepath!);
@@ -164,7 +180,7 @@ test('BuildExcel: should call stream data and return excel filepath even if crea
     t.context.operator_id,
     t.context.start_date,
   );
-  sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.filepath);
+  sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
   sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
   sinon.assert.calledOnce(t.context.computeFundCallsSlices!);
   t.is(result, t.context.filepath!);
@@ -205,7 +221,7 @@ test('BuildExcel: should call stream data and return excel filepath without slic
     t.context.operator_id,
     t.context.start_date,
   );
-  sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.filepath);
+  sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
   sinon.assert.notCalled(t.context.slicesWorkbookWriterStub!);
   sinon.assert.notCalled(t.context.computeFundCallsSlices!);
   t.is(result, t.context.filepath!);
