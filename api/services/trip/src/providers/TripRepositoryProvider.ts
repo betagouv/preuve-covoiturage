@@ -424,6 +424,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       throw new Error(`Error while retrieving slices of campaign ${params.campaign_id}`);
     }
 
+    console.info(result.rows);
+
     return result.rows.map((r, i) => {
       return {
         slice: slices[i],

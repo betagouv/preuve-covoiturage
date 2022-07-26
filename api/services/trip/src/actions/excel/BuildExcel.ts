@@ -46,6 +46,8 @@ export class BuildExcel {
         operator_id,
         distanceRangeRules,
       );
+      console.info(slices);
+
       await this.slicesWorkbookWriter.call(filepath, slices);
     } catch (e) {
       console.error(`Error while computing slices for campaign fund call ${filepath}`, e);
@@ -66,7 +68,7 @@ export class BuildExcel {
       operator_id,
     );
 
-    await this.dataWorkbookWriter.call(tripCursor, filepath);
+    return await this.dataWorkbookWriter.call(tripCursor, filepath);
   }
 
   private getFundCallSlices(
