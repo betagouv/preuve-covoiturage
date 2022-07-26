@@ -24,7 +24,7 @@
     />
   </mat-chip-list>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTerritorySelect($event)">
-    <mat-option *ngFor="let territory of filteredTerritories" [value]="territory">
+    <mat-option *ngFor="let territory of filteredTerritories" [value]="territory" matTooltip="{{ territory.name }} ({{ territory.type }})">
       {{ territory.name }} ({{ territory.type }})
     </mat-option>
   </mat-autocomplete>
