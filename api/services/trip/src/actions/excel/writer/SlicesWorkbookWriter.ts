@@ -3,6 +3,7 @@ import { Column, stream, Worksheet } from 'exceljs';
 import { SlicesInterface } from '../../../interfaces/SlicesInterface';
 import { ProgressiveDistanceRangeMetaParameters } from '~/shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
 import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
+import { TripRepositoryProvider } from '../../../providers/TripRepositoryProvider';
 
 /***
  * Tranches       | Somme incentives  | Nombre trajet
@@ -15,8 +16,8 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
   public readonly SLICE_WORKSHEET_NAME = 'Tranches';
   public readonly SLICE_WORKSHEET_COLUMN_HEADERS: Partial<Column>[] = [
     { header: 'Tranche', key: 'slice' },
-    { header: 'Somme incitations', key: 'incentivesSum' },
-    { header: 'Nombre Trajet', key: 'tripCount' },
+    { header: 'Somme rpc incentive (€)', key: 'incentivesSum' },
+    { header: 'Nombre de trip_id', key: 'tripCount' },
   ];
 
   call(slices: SlicesInterface[], workbookWriter: stream.xlsx.WorkbookWriter): void {
@@ -36,7 +37,7 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
   private formatSliceLabel(slice: ProgressiveDistanceRangeMetaParameters): string {
     if (!slice.min && slice.max) {
       return `Jusqu'à ${slice.max} km`;
-    } else if (slice.min && !slice.max) {
+    } else if (slice.max === TripRepositoryProvider.MAX_KM_LIMIT) {
       return `Supérieur à ${slice.min} km`;
     }
     return `De ${slice.min} km à ${slice.max} km`;

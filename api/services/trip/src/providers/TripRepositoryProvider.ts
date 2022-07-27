@@ -30,6 +30,7 @@ import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInte
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'trip.list';
+  public static readonly MAX_KM_LIMIT = 500000;
   private defaultTz: TzResultInterface = { name: 'GMT', utc_offset: '00:00:00' };
 
   constructor(public connection: PostgresConnection) {}
@@ -377,10 +378,15 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       return [];
     }
 
+    console.debug(`slices for campaign_id ${params.campaign_id} ${JSON.stringify(slices)}`);
+
     const where = await this.buildWhereClauses(params);
 
     const filtersString: string = slices
       .map((s, i) => {
+        if (!s.max) {
+          s.max = TripRepositoryProvider.MAX_KM_LIMIT;
+        }
         return `COUNT(journey_id) FILTER (
         WHERE JOURNEY_DISTANCE > ${s.min}
         AND JOURNEY_DISTANCE <=  ${s.max}

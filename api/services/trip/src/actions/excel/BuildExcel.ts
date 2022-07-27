@@ -38,7 +38,11 @@ export class BuildExcel {
       const distanceRangeRules: ProgressiveDistanceRangeMetaParameters[] = campaign.rules
         .flat()
         .filter((f) => f.slug == 'progressive_distance_range_meta')
-        .map((r) => r.parameters as ProgressiveDistanceRangeMetaParameters);
+        .map((r) => r.parameters as ProgressiveDistanceRangeMetaParameters)
+        .filter((v, i, s) => i === s.findIndex((t) => t.min === v.min && t.max === v.max)); // Remove duplicates
+
+      distanceRangeRules.push({ min: Math.max(...distanceRangeRules.map((e) => e.max)) }); // Add upper limit
+
       if (distanceRangeRules.length === 0) {
         return;
       }
