@@ -209,7 +209,7 @@ test('BuildExcelExportAction: should create 4 xlsx file if date range provided a
   t.is(t.context.checkCampaignStub!.args[1][0], campaign2._id);
 });
 
-test.only('BuildExcelExportAction: should send error and process other if 1 export failed', async (t) => {
+test('BuildExcelExportAction: should send error and process other if 1 export failed', async (t) => {
   // Arrange
   const campaign1: Campaign = createGetCampaignResultInterface('active');
   const campaign2: Campaign = createGetCampaignResultInterface('active');

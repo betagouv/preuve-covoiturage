@@ -35,17 +35,21 @@ export class BuildExcel {
     workbookWriter: stream.xlsx.WorkbookWriter,
   ) {
     try {
+      // Get progressive_distance_range_meta without duplicates
       const distanceRangeRules: ProgressiveDistanceRangeMetaParameters[] = campaign.rules
         .flat()
         .filter((f) => f.slug == 'progressive_distance_range_meta')
         .map((r) => r.parameters as ProgressiveDistanceRangeMetaParameters)
-        .filter((v, i, s) => i === s.findIndex((t) => t.min === v.min && t.max === v.max)); // Remove duplicates
+        .filter((v, i, s) => i === s.findIndex((t) => t.min === v.min && t.max === v.max));
 
-      distanceRangeRules.push({ min: Math.max(...distanceRangeRules.map((e) => e.max)) }); // Add upper limit
-
+      // No slice if no progressive_distance slug
       if (distanceRangeRules.length === 0) {
         return;
       }
+
+      // Add upper limit
+      distanceRangeRules.push({ min: Math.max(...distanceRangeRules.map((e) => e.max)) });
+
       const slices: SlicesInterface[] = await this.getFundCallSlices(
         campaign,
         start_date,
