@@ -12,19 +12,22 @@ export class LocalGeoProvider implements InseeCoderInterface {
   async positionToInsee(geo: PointInterface): Promise<string> {
     const { lat, lon } = geo;
 
-    const result = await this.connection.getClient().query({
+    const comResult = await this.connection.getClient().query({
       text: `
         SELECT
-          com as value
+          com, arr
         FROM ${this.fn}($1::float, $2::float)
       `,
       values: [lon, lat],
     });
 
-    if (result.rowCount === 0) {
+    if (comResult.rowCount === 0) {
       throw new NotFoundException();
     }
 
-    return result.rows[0].value;
+    if (!comResult.rows[0].com) {
+      return comResult.rows[0].arr;
+    }
+    return comResult.rows[0].com;
   }
 }
