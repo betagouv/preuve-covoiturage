@@ -36,10 +36,10 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
 
   private formatSliceLabel(slice: ProgressiveDistanceRangeMetaParameters): string {
     if (!slice.min && slice.max) {
-      return `Jusqu'à ${slice.max} km`;
+      return `Jusqu'à ${slice.max / 1000} km`;
     } else if (slice.max === TripRepositoryProvider.MAX_KM_LIMIT) {
-      return `Supérieur à ${slice.min} km`;
+      return `Supérieur à ${slice.min / 1000} km`;
     }
-    return `De ${slice.min} km à ${slice.max} km`;
+    return `De ${slice.min / 1000} km à ${slice.max / 1000} km`;
   }
 }
