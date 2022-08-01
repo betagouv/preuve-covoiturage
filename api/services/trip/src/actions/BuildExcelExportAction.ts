@@ -45,13 +45,7 @@ export class BuildExcelsExportAction extends Action {
           involedOperators.map(async (o_id) => {
             try {
               console.debug(`Building excel fund call for campaign ${checkedCampaign.name}, operator id ${o_id}`);
-              const filepath = await this.buildExcel.call(
-                checkedCampaign._id,
-                start_date,
-                end_date,
-                checkedCampaign.name,
-                o_id,
-              );
+              const filepath = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
               const s3key = await this.s3StorageProvider.upload(BucketName.Export, filepath);
               filepathes.push(s3key);
             } catch (error) {

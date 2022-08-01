@@ -1,5 +1,5 @@
-import { ContextType, KernelInterfaceResolver } from '@ilos/common';
 import anyTest, { TestFn } from 'ava';
+import { ContextType, KernelInterfaceResolver } from '@ilos/common';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
 import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
@@ -32,29 +32,29 @@ test.beforeEach((t) => {
 });
 
 test.afterEach((t) => {
-  t.context.kernelInterfaceResolverStub.restore();
+  t.context.kernelInterfaceResolverStub!.restore();
 });
 
 test('ActiveCampaignExportAction: should export 2 active campaigns and call build excel once', async (t) => {
   // Arrange
-  t.context.kernelInterfaceResolverStub.resolves(t.context.CAMPAIGNS);
+  t.context.kernelInterfaceResolverStub!.resolves(t.context.CAMPAIGNS);
 
   // Act
-  await t.context.activeCampaignExcelExportAction.handle({}, null);
+  await t.context.activeCampaignExcelExportAction!.handle({}, null);
 
   // Assert
   sinon.assert.calledWithExactly(
-    t.context.kernelInterfaceResolverStub,
+    t.context.kernelInterfaceResolverStub!,
     'campaign:list',
     { status: 'active' },
     { channel: { service: 'trip' }, call: { user: { permissions: ['common.policy.list'] } } },
   );
   sinon.assert.calledWithExactly(
-    t.context.kernelInterfaceResolverStub,
+    t.context.kernelInterfaceResolverStub!,
     'trip:excelExport',
     {
       format: { tz: 'Europe/Paris' },
-      query: { campaign_id: t.context.CAMPAIGNS.map((c) => c._id) },
+      query: { campaign_id: t.context.CAMPAIGNS!.map((c) => c._id) },
     },
     { channel: { service: 'trip' }, call: { user: { permissions: ['registry.trip.excelExport'] } } },
   );

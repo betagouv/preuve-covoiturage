@@ -10,8 +10,10 @@ import {
   TzResultInterface,
 } from '../interfaces';
 import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
+import { SlicesInterface } from '../interfaces/SlicesInterface';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+import { ProgressiveDistanceRangeMetaParameters } from '../shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
 import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
 import {
@@ -28,6 +30,7 @@ import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInte
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'trip.list';
+  public static readonly MAX_KM_LIMIT = 500000;
   private defaultTz: TzResultInterface = { name: 'GMT', utc_offset: '00:00:00' };
 
   constructor(public connection: PostgresConnection) {}
@@ -365,6 +368,69 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
       release: db.release,
     };
+  }
+
+  public async computeFundCallsSlices(
+    params: TripSearchInterface,
+    slices: ProgressiveDistanceRangeMetaParameters[],
+  ): Promise<SlicesInterface[]> {
+    if (!slices || slices.length === 0) {
+      return [];
+    }
+
+    console.debug(`slices for campaign_id ${params.campaign_id} ${JSON.stringify(slices)}`);
+
+    const where = await this.buildWhereClauses(params);
+
+    const filtersString: string = slices
+      .map((s, i) => {
+        if (!s.max) {
+          s.max = TripRepositoryProvider.MAX_KM_LIMIT;
+        }
+        return `COUNT(journey_id) FILTER (
+        WHERE JOURNEY_DISTANCE > ${s.min}
+        AND JOURNEY_DISTANCE <=  ${s.max}
+        AND (DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID = ${params.campaign_id} OR DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID =  ${params.campaign_id})) TRANCHE_${i}_COUNT,
+      SUM (DRIVER_INCENTIVE_RPC_RAW[1].AMOUNT) FILTER (
+        WHERE JOURNEY_DISTANCE > ${s.min}
+        AND JOURNEY_DISTANCE <= ${s.max}
+        AND DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID =  ${params.campaign_id}) TRANCHE_${i}_SUM_1,
+      SUM (DRIVER_INCENTIVE_RPC_RAW[2].AMOUNT) FILTER (
+        WHERE JOURNEY_DISTANCE > ${s.min}
+      AND JOURNEY_DISTANCE <= ${s.max}
+      AND DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID =  ${params.campaign_id}) TRANCHE_${i}_SUM_2`;
+      })
+      .join(',');
+
+    const lateralString: string = slices
+      .map((s, i) => {
+        return `(data.tranche_${i}_count, coalesce(data.tranche_${i}_sum_1)+ coalesce(data.tranche_${i}_sum_2, 0))`;
+      })
+      .join(',');
+
+    const values = [...(where ? where.values : [])];
+    const text = `
+      WITH DATA as (SELECT ${filtersString} FROM ${this.table} ${where.text ? `WHERE ${where.text}` : ''})
+      SELECT v.* from data,
+      LATERAL(VALUES ${lateralString}) v (trip_count, incentive_sum)
+    `;
+
+    const result = await this.connection.getClient().query({
+      values,
+      text: this.numberPlaceholders(text),
+    });
+
+    if (!result.rows[0]) {
+      throw new Error(`Error while retrieving slices of campaign ${params.campaign_id}`);
+    }
+
+    return result.rows.map((r, i) => {
+      return {
+        slice: slices[i],
+        tripCount: r.trip_count,
+        incentivesSum: r.incentive_sum,
+      };
+    });
   }
 
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {

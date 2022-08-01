@@ -1,11 +1,13 @@
+import { ResultInterface as Campaign } from '../../../shared/policy/find.contract';
 import test from 'ava';
-import { Workbook, Worksheet } from 'exceljs';
+import { stream, Workbook, Worksheet } from 'exceljs';
 import faker from '@faker-js/faker';
 import { ExportTripInterface } from '../../../interfaces';
 import { BuildExportAction } from '../../BuildExportAction';
-import { StreamDataToWorkBook } from './StreamDataToWorkbook';
+import { DataWorkBookWriter } from './DataWorkbookWriter';
+import { BuildExcel } from '../BuildExcel';
 
-let streamDataToWorkBook: StreamDataToWorkBook;
+let dataWorkBookWriter: DataWorkBookWriter;
 
 const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   journey_id: faker.random.uuid(),
@@ -57,11 +59,28 @@ const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   driver_incentive_rpc_raw: null,
 };
 
+const campaign: Campaign = {
+  state: {
+    amount: 0,
+    trip_subsidized: 0,
+    trip_excluded: 0,
+  },
+  territory_id: 0,
+  name: '',
+  description: '',
+  start_date: new Date(),
+  end_date: new Date(),
+  unit: '',
+  status: '',
+  global_rules: [],
+  rules: [],
+};
+
 test.before((t) => {
-  streamDataToWorkBook = new StreamDataToWorkBook();
+  dataWorkBookWriter = new DataWorkBookWriter();
 });
 
-test('StreamDataToWorkBook: should stream data to a workbook file', async (t) => {
+test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
   // Arrange
   const tripCursor = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
     resolve([
@@ -89,29 +108,31 @@ test('StreamDataToWorkBook: should stream data to a workbook file', async (t) =>
     return tripCursor;
   };
 
-  const filename = '/tmp/stream-data-test.xlsx';
+  const filepath = '/tmp/stream-data-test.xlsx';
 
   // Act
-  await streamDataToWorkBook.call({ read: cursorCallback, release: () => {} }, filename);
+  const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
+  await dataWorkBookWriter.call({ read: cursorCallback, release: () => {} }, workbookWriter);
+  await workbookWriter.commit();
 
   // Assert
-  const workbook: Workbook = await new Workbook().xlsx.readFile(filename);
-  const worksheet: Worksheet = workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME);
+  const workbook: Workbook = await new Workbook().xlsx.readFile(filepath);
+  const worksheet: Worksheet = workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME);
   t.is(worksheet.actualRowCount, 21);
-  t.deepEqual(workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(1).values, [
+  t.deepEqual(workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(1).values, [
     undefined,
     ...BuildExportAction.getColumns('territory'),
   ]);
   t.is(
-    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).values.length,
+    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).values.length,
     BuildExportAction.getColumns('territory').length + 1,
   );
   t.is(
-    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell(2).value,
+    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).getCell(2).value,
     exportTripInterface.trip_id,
   );
   t.deepEqual(
-    workbook.getWorksheet(streamDataToWorkBook.WORKSHEET_NAME).getRow(2).getCell('AD').value,
+    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).getCell('AD').value,
     exportTripInterface.operator,
   );
 });
