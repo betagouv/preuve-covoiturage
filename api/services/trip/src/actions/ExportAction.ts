@@ -26,7 +26,7 @@ import {
       startPath: 'date.start',
       endPath: 'date.end',
       minStart: () => new Date(new Date().getTime() - middlewareConfig.date.minStartDefault),
-      maxEnd: () => new Date(new Date().getTime() - middlewareConfig.date.maxEndDefault),
+      maxEnd: () => new Date(),
     }),
   ],
 })
