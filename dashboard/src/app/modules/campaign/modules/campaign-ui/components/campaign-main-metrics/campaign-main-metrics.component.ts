@@ -16,6 +16,8 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
   daysRemaining = 1;
   daysPassed = 0;
 
+  isLoaded = false;
+
   budgetTotal = 1;
   budgetRemaining = 1;
   budgetSpent = 0;
@@ -85,10 +87,9 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
         return;
       }
 
-      this.budgetSpent =
-        this.campaign.unit === IncentiveUnitEnum.EUR ? campaignState.amount / 100 : campaignState.amount;
-
+      this.budgetSpent = campaignState.amount / 100;
       this.budgetRemaining = this.campaign ? this.budgetTotal - this.budgetSpent : 1;
+      this.isLoaded = true;
     });
   }
 
