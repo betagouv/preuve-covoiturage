@@ -63,8 +63,8 @@ test.beforeEach((t) => {
 });
 
 test.afterEach((t) => {
-  t.context.checkCampaignStub.restore();
-  t.context.s3StorageProviderStub.restore();
+  t.context.checkCampaignStub!.restore();
+  t.context.s3StorageProviderStub!.restore();
 });
 
 test('BuildExcelExportAction: should create 1 xlsx file for last month if no date range provided, 1 campaign with 1 operator', async (t) => {
@@ -72,13 +72,13 @@ test('BuildExcelExportAction: should create 1 xlsx file for last month if no dat
   const campaign: Campaign = createGetCampaignResultInterface('active');
   const filename = `campaign-${uuid()}.xlsx`;
   const filepath = `/tmp/exports/${filename}`;
-  t.context.checkCampaignStub.resolves(campaign);
-  t.context.buildExcelStub.resolves(filepath);
-  t.context.s3StorageProviderStub.resolves(filename);
-  t.context.getCampaignInvolvedOperatorStub.resolves([4]);
+  t.context.checkCampaignStub!.resolves(campaign);
+  t.context.buildExcelStub!.resolves(filepath);
+  t.context.s3StorageProviderStub!.resolves(filename);
+  t.context.getCampaignInvolvedOperatorStub!.resolves([4]);
 
   // Act
-  const result = await t.context.buildExcelsExportAction.handle(
+  const result = await t.context.buildExcelsExportAction!.handle(
     {
       format: { tz: 'Europe/Paris' },
       query: {
