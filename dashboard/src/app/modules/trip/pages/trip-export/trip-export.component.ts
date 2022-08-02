@@ -46,8 +46,8 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   public form: FormGroup;
 
   // configure date picker limits
-  public minDateStart = sub(new Date(), { years: 1 });
-  public maxDateEnd = endOfDay(sub(new Date(), { days: 5 }));
+  public minDateStart;
+  public maxDateEnd;
 
   get maxDateStart(): Date | null {
     return this.form.get('date.end').value || null;
@@ -68,6 +68,10 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit(): void {
+    this.minDateStart = sub(new Date(), { years: 1 });
+    this.maxDateEnd = this.authenticationService.isOperatorGroup()
+      ? endOfDay(new Date())
+      : endOfDay(sub(new Date(), { days: 5 }));
     this.form = this.fb.group({
       date: this.fb.group({
         start: [moment(startOfDay(sub(new Date(), { months: 1 }))), [Validators.required]],
