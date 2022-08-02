@@ -2,11 +2,8 @@ import { RuleInterface } from '../../interfaces';
 import { MetaRule } from '../MetaRule';
 import { DistanceRangeFilter } from '../filters/DistanceRangeFilter';
 import { DistanceBoundingTransformer } from '../transformers/DistanceBoundingTransformer';
-
-interface ProgressiveDistanceRangeMetaParameters {
-  min: number;
-  max: number;
-}
+// eslint-disable-next-line max-len
+import { ProgressiveDistanceRangeMetaParameters } from '../../../shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
 
 export class ProgressiveDistanceRangeMeta extends MetaRule<ProgressiveDistanceRangeMetaParameters> {
   static readonly slug: string = 'progressive_distance_range_meta';
