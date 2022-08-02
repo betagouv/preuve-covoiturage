@@ -69,7 +69,6 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
           c.end = moment(this.timeState.endDate);
           c.territory_id = c.territory_id || this.auth.user.territory_id;
           delete c._id;
-          delete c.state;
           return c;
         }),
         map(CampaignFormater.toApi),
