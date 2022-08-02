@@ -1,12 +1,12 @@
 import anyTest, { TestFn } from 'ava';
-import sinon, { SinonStub, SinonStubStatic } from 'sinon';
+import { stream } from 'exceljs';
+import sinon, { SinonStub } from 'sinon';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
-import { BuildFilepath } from './BuildFilepath';
-import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
-import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { BuildExcel } from './BuildExcel';
-import { stream } from 'exceljs';
+import { BuildFilepath } from './BuildFilepath';
+import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
+import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
 interface Context {
   // Injected tokens
@@ -60,11 +60,6 @@ test.before((t) => {
   t.context.campaign = {
     _id: 458,
     name: 'IDFM normal',
-    state: {
-      amount: 0,
-      trip_subsidized: 0,
-      trip_excluded: 0,
-    },
     territory_id: 0,
     description: '',
     start_date: new Date(),
