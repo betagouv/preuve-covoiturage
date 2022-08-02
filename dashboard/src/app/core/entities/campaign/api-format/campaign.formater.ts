@@ -46,13 +46,12 @@ import { CampaignInterface } from '~/core/entities/api/shared/common/interfaces/
 
 export class CampaignFormater {
   static toUx(campaign: Campaign): CampaignUx {
-    const { _id, name, description, territory_id, status, unit, parent_id, ui_status, state } = campaign;
+    const { _id, name, description, territory_id, status, unit, parent_id, ui_status } = campaign;
     const campaignUx = {
       _id,
       name,
       description,
       territory_id,
-      state,
       parent_id,
       status,
       unit,
@@ -287,7 +286,6 @@ export class CampaignFormater {
       max_trips,
       only_adult,
       restrictions,
-      state,
       passenger_seat,
     } = cloneDeep(campaignUx);
 
@@ -489,7 +487,7 @@ export class CampaignFormater {
     const apiData: CampaignInterface = {
       _id,
       name,
-      state,
+      // state,
       description,
       territory_id,
       status,

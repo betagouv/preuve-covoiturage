@@ -16,6 +16,11 @@ import { ParamsInterface as ListParamsInterface } from '~/core/entities/api/shar
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
 import { CampaignInterface } from '~/core/entities/api/shared/policy/common/interfaces/CampaignInterface';
+import {
+  ResultInterface as CampaignStateResult,
+  ParamsInterface as CampaignStateParam,
+  signature as campaignStateSignature,
+} from '../../../../../../shared/policy/campaignState.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -55,6 +60,13 @@ export class CampaignApiService extends JsonRpcCrud<
         _id: params._id,
       })),
     );
+  }
+
+  stat(campaignId: number): Observable<CampaignStateResult> {
+    const jsonRPCParam: JsonRPCParam<CampaignStateParam> = new JsonRPCParam(campaignStateSignature, {
+      _id: campaignId,
+    });
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data as CampaignStateResult));
   }
 
   simulate(campaign: CampaignInterface): Observable<CampaignReducedStats> {

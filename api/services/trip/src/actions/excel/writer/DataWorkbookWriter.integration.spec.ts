@@ -59,23 +59,6 @@ const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   driver_incentive_rpc_raw: null,
 };
 
-const campaign: Campaign = {
-  state: {
-    amount: 0,
-    trip_subsidized: 0,
-    trip_excluded: 0,
-  },
-  territory_id: 0,
-  name: '',
-  description: '',
-  start_date: new Date(),
-  end_date: new Date(),
-  unit: '',
-  status: '',
-  global_rules: [],
-  rules: [],
-};
-
 test.before((t) => {
   dataWorkBookWriter = new DataWorkBookWriter();
 });

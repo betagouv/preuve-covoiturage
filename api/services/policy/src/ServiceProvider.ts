@@ -36,6 +36,7 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 
 import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateRuleParametersMiddleware';
+import { CampaignStateAction } from './actions/GetCampaignStateAction';
 
 @serviceProvider({
   config,
@@ -71,6 +72,7 @@ import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateR
     FinalizeAction,
     SimulateOnPastAction,
     SimulateOnFutureAction,
+    CampaignStateAction,
   ],
   connections: [
     [PostgresConnection, 'connections.postgres'],

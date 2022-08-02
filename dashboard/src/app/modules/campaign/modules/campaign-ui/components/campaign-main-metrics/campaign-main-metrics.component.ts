@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import * as moment from 'moment';
 import { ChartData, ChartOptions } from 'chart.js';
+import * as moment from 'moment';
+import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-campaign-main-metrics',
@@ -15,9 +15,11 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
   daysRemaining = 1;
   daysPassed = 0;
 
+  isLoaded = false;
+
   budgetTotal = 1;
   budgetRemaining = 1;
-  budgetSpent = 0;
+  budgetSpent;
 
   options: ChartOptions = {
     legend: {
@@ -38,7 +40,8 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
     hover: {},
   };
 
-  constructor() {}
+  constructor(private campaignApiService: CampaignApiService) {}
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.campaign) {
       this.initPeriod();
@@ -48,7 +51,6 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.initPeriod();
-    this.initBudget();
   }
 
   private initPeriod(): void {
@@ -73,15 +75,24 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
   }
 
   private initBudget(): void {
-    this.budgetTotal = this.campaign ? this.campaign.max_amount : 0;
+    if (!this.campaign) {
+      return;
+    }
 
-    this.budgetSpent =
-      this.campaign && this.campaign.state
-        ? this.campaign.unit === IncentiveUnitEnum.EUR
-          ? this.campaign.state.amount / 100
-          : this.campaign.state.amount
-        : 0;
-    this.budgetRemaining = this.campaign ? this.budgetTotal - this.budgetSpent : 1;
+    this.campaignApiService.stat(this.campaign._id).subscribe(
+      (campaignState) => {
+        this.budgetTotal = this.campaign ? this.campaign.max_amount : 0;
+
+        if (!campaignState) {
+          return;
+        }
+
+        this.budgetSpent = campaignState.amount / 100;
+        this.budgetRemaining = this.campaign ? this.budgetTotal - this.budgetSpent : 1;
+      },
+      (error) => {},
+      () => (this.isLoaded = true),
+    );
   }
 
   get periodChartData(): ChartData {

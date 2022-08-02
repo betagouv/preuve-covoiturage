@@ -20,11 +20,6 @@ export const createGetCampaignResultInterface = (
     start_date: start_date ? start_date : faker.date.past(1),
     end_date: end_date ? end_date : faker.date.future(1),
     status,
-    state: {
-      amount: faker.datatype.number(),
-      trip_excluded: faker.datatype.number(),
-      trip_subsidized: faker.datatype.number(),
-    },
   };
 
   let operator_ids__global_rules_slugs: RuleInterface[];
