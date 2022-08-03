@@ -46,7 +46,7 @@ export class ExportCapitalCallsAction extends Action {
             try {
               console.debug(`Building excel capital call for campaign ${checkedCampaign.name}, operator id ${o_id}`);
               const filepath = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
-              const s3key = await this.s3StorageProvider.upload(BucketName.CapitalCall, filepath);
+              const s3key = await this.s3StorageProvider.upload(BucketName.Export, filepath);
               filepathes.push(s3key);
             } catch (error) {
               // eslint-disable-next-line max-len
