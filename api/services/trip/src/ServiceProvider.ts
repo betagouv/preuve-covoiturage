@@ -32,7 +32,7 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
 import { scopeToGroupBinding } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
-import { ExportCapitalCallsAction } from './actions/ExportCapitalCallAction';
+import { ExportCapitalCallsAction } from './actions/ExportCapitalCallsAction';
 import { ActiveCampaignExcelExportAction } from './actions/ActiveCampaignExcelExportAction';
 import { DataGouvProvider } from './providers/DataGouvProvider';
 import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportCommand';

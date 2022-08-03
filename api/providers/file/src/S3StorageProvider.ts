@@ -1,9 +1,9 @@
+import S3, { PutObjectRequest } from 'aws-sdk/clients/s3';
 import fs from 'fs';
 import path from 'path';
-import S3 from 'aws-sdk/clients/s3';
 
-import { env } from '@ilos/core';
 import { ConfigInterfaceResolver, provider, ProviderInterface } from '@ilos/common';
+import { env } from '@ilos/core';
 import { BucketName } from './interfaces/BucketName';
 
 @provider()
@@ -39,6 +39,28 @@ export class S3StorageProvider implements ProviderInterface {
     });
   }
 
+  async findByOperator(operator_id: number): Promise<S3.ObjectList> {
+    const result = await this.s3Instances
+      .get(BucketName.Export)
+      .listObjectsV2({
+        Bucket: BucketName.Export,
+        Delimiter: `apdf-${operator_id}`,
+      })
+      .promise();
+    return result.Contents;
+  }
+
+  async findByTerritory(territory_id: number): Promise<S3.ObjectList> {
+    const result = await this.s3Instances
+      .get(BucketName.Export)
+      .listObjectsV2({
+        Bucket: BucketName.Export,
+        Prefix: `${territory_id}`,
+      })
+      .promise();
+    return result.Contents;
+  }
+
   async copy(
     inputBucket: BucketName,
     inputFileKey: string,
@@ -70,7 +92,7 @@ export class S3StorageProvider implements ProviderInterface {
     }
   }
 
-  async upload(bucket: BucketName, filepath: string, filename?: string): Promise<string> {
+  async upload(bucket: BucketName, filepath: string, filename?: string, prefix?: string): Promise<string> {
     const Bucket = this.getBucketName(bucket);
 
     await fs.promises.access(filepath, fs.constants.R_OK);
@@ -78,17 +100,26 @@ export class S3StorageProvider implements ProviderInterface {
     try {
       const rs = fs.createReadStream(filepath);
       const ext = path.extname(filepath);
-      const keyName =
+      let key =
         filename ??
         path
           .basename(filepath)
           .replace(ext, '')
           .replace(/[^a-z0-9_-]/g, '') + ext;
 
-      const params = { Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filepath=${keyName}` };
+      if (prefix) {
+        key = `${prefix}/${key}`;
+      }
+
+      const params: PutObjectRequest = {
+        Bucket,
+        Key: key,
+        Body: rs,
+        ContentDisposition: `attachment; filepath=${key}`,
+      };
       await this.s3Instances.get(bucket).upload(params).promise();
 
-      return keyName;
+      return key;
     } catch (e) {
       console.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
       throw e;

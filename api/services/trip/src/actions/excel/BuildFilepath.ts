@@ -5,12 +5,20 @@ import { v4 } from 'uuid';
 
 @provider()
 export class BuildFilepath {
-  call(campaign_name: string, operator_id: number, start_date: Date): string {
+  /**
+   * Build a filename with a specific scheme for capitalcall
+   * @param campaign_name
+   * @param territory_id
+   * @param operator_id
+   * @param start_date
+   * @returns 'apdf-${operator_id}-${territory_id}-${sanitazed_campaign_name}-${month_string}-${trunced_uuid}'
+   */
+  call(campaign_name: string, territory_id: number, operator_id: number, start_date: Date): string {
     const startDatePlus6Days: Date = new Date(start_date.valueOf());
     startDatePlus6Days.setDate(startDatePlus6Days.getDate() + 6);
     return `${path.join(
       os.tmpdir(),
-      `apdf-${operator_id}-${this.sanitazeString(campaign_name)}-${this.getMonthString(
+      `apdf-${operator_id}-${territory_id}-${this.sanitazeString(campaign_name)}-${this.getMonthString(
         startDatePlus6Days,
       )}-${v4().substring(0, 6)}`,
     )}.xlsx`;

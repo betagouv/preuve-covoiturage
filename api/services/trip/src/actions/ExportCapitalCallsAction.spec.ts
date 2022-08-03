@@ -7,7 +7,7 @@ import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
-import { BuildExcelsExportAction } from './BuildExcelExportAction';
+import { ExportCapitalCallsAction } from './ExportCapitalCallsAction';
 import { BuildExcel } from './excel/BuildExcel';
 import { CheckCampaign } from './excel/CheckCampaign';
 import { GetCampaignInvolvedOperator } from './excel/GetCampaignInvolvedOperators';
@@ -32,7 +32,7 @@ interface Context {
   END_DATE: Date;
 
   // Tested token
-  buildExcelsExportAction: BuildExcelsExportAction;
+  buildExcelsExportAction: ExportCapitalCallsAction;
 }
 
 const test = anyTest as TestFn<Partial<Context>>;
@@ -49,7 +49,7 @@ test.beforeEach((t) => {
   t.context.s3StorageProvider = new S3StorageProvider(null);
   t.context.buildExcel = new BuildExcel(null, null, null, null);
   t.context.getCampaignInvolvedOperator = new GetCampaignInvolvedOperator(null);
-  t.context.buildExcelsExportAction = new BuildExcelsExportAction(
+  t.context.buildExcelsExportAction = new ExportCapitalCallsAction(
     t.context.checkCampaign,
     t.context.s3StorageProvider,
     t.context.getCampaignInvolvedOperator,
@@ -67,7 +67,7 @@ test.afterEach((t) => {
   t.context.s3StorageProviderStub!.restore();
 });
 
-test('BuildExcelExportAction: should create 1 xlsx file for last month if no date range provided, 1 campaign with 1 operator', async (t) => {
+test('ExportCapitalCallsAction: should create 1 xlsx file for last month if no date range provided, 1 campaign with 1 operator', async (t) => {
   // Arrange
   const campaign: Campaign = createGetCampaignResultInterface('active');
   const filename = `campaign-${uuid()}.xlsx`;
@@ -105,7 +105,7 @@ test('BuildExcelExportAction: should create 1 xlsx file for last month if no dat
   t.deepEqual(new Date(t.context.checkCampaignStub!.args[0][2]), endDate);
 });
 
-test('BuildExcelExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
+test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
   // Arrange
   const campaign: Campaign = createGetCampaignResultInterface('active');
   const filename = `campaign-${uuid()}.xlsx`;
@@ -155,7 +155,7 @@ test('BuildExcelExportAction: should create 1 xlsx file if date range provided a
   t.deepEqual(result, [s3_key]);
 });
 
-test('BuildExcelExportAction: should create 4 xlsx file if date range provided and 2 campaigns with 2 operators each', async (t) => {
+test('ExportCapitalCallsAction: should create 4 xlsx file if date range provided and 2 campaigns with 2 operators each', async (t) => {
   // Arrange
   const campaign1: Campaign = createGetCampaignResultInterface('active');
   const campaign2: Campaign = createGetCampaignResultInterface('active');
@@ -209,7 +209,7 @@ test('BuildExcelExportAction: should create 4 xlsx file if date range provided a
   t.is(t.context.checkCampaignStub!.args[1][0], campaign2._id);
 });
 
-test('BuildExcelExportAction: should send error and process other if 1 export failed', async (t) => {
+test('ExportCapitalCallsAction: should send error and process other if 1 export failed', async (t) => {
   // Arrange
   const campaign1: Campaign = createGetCampaignResultInterface('active');
   const campaign2: Campaign = createGetCampaignResultInterface('active');
