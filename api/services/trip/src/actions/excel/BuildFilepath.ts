@@ -10,14 +10,14 @@ export class BuildFilepath {
     startDatePlus6Days.setDate(startDatePlus6Days.getDate() + 6);
     return `${path.join(
       os.tmpdir(),
-      `apdf-${this.sanitazeString(campaign_name)}-${operator_id}-${this.getMonthString(
+      `apdf-${operator_id}-${this.sanitazeString(campaign_name)}-${this.getMonthString(
         startDatePlus6Days,
       )}-${v4().substring(0, 6)}`,
     )}.xlsx`;
   }
 
   private sanitazeString(campaign_name: string): string {
-    return campaign_name.toLowerCase().substring(0, 8).replace(/\ /g, '_');
+    return campaign_name.toLowerCase().substring(0, 8).replace(/\ /g, '_').replace('-', '_');
   }
 
   private getMonthString(date: Date): string {

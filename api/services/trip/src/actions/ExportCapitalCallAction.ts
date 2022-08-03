@@ -36,17 +36,17 @@ export class ExportCapitalCallsAction extends Action {
         if (!checkedCampaign) {
           return;
         }
-        const involedOperators: number[] = await this.getCampaignInvolvedOperator.call(
+        const involvedOperatorIds: number[] = await this.getCampaignInvolvedOperator.call(
           checkedCampaign,
           start_date,
           end_date,
         );
         await Promise.all(
-          involedOperators.map(async (o_id) => {
+          involvedOperatorIds.map(async (o_id) => {
             try {
               console.debug(`Building excel capital call for campaign ${checkedCampaign.name}, operator id ${o_id}`);
               const filepath = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
-              const s3key = await this.s3StorageProvider.upload(BucketName.Export, filepath);
+              const s3key = await this.s3StorageProvider.upload(BucketName.CapitalCall, filepath);
               filepathes.push(s3key);
             } catch (error) {
               // eslint-disable-next-line max-len
