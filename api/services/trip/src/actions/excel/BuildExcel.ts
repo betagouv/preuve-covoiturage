@@ -61,7 +61,7 @@ export class BuildExcel {
       return await this.slicesWorkbookWriter.call(slices, workbookWriter);
     } catch (e) {
       console.error(
-        `Error while computing slices for campaign fund call ${campaign.name} and operator ${operator_id}`,
+        `Error while computing slices for campaign capital call ${campaign.name} and operator ${operator_id}`,
         e,
       );
     }

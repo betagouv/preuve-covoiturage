@@ -14,7 +14,7 @@ import { GetCampaignInvolvedOperator } from './excel/GetCampaignInvolvedOperator
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
 })
-export class BuildExcelsExportAction extends Action {
+export class ExportCapitalCallsAction extends Action {
   constructor(
     private checkCampaign: CheckCampaign,
     private s3StorageProvider: S3StorageProvider,
@@ -32,7 +32,7 @@ export class BuildExcelsExportAction extends Action {
       params.query.campaign_id.map(async (c_id) => {
         const checkedCampaign: Campaign | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
-          .catch((e) => console.info(`Not processing excel fund call for campaign ${c_id} :${e}`));
+          .catch((e) => console.info(`Not processing excel capital call for campaign ${c_id} :${e}`));
         if (!checkedCampaign) {
           return;
         }
@@ -44,7 +44,7 @@ export class BuildExcelsExportAction extends Action {
         await Promise.all(
           involedOperators.map(async (o_id) => {
             try {
-              console.debug(`Building excel fund call for campaign ${checkedCampaign.name}, operator id ${o_id}`);
+              console.debug(`Building excel capital call for campaign ${checkedCampaign.name}, operator id ${o_id}`);
               const filepath = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
               const s3key = await this.s3StorageProvider.upload(BucketName.Export, filepath);
               filepathes.push(s3key);

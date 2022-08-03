@@ -4,8 +4,8 @@ import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/provider
 import * as middlewareConfig from '../config/middlewares';
 import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
-import { alias } from '../shared/trip/list.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/listTrips.contract';
+import { alias } from '../shared/trip/listTrips.schema';
 
 @handler({
   ...handlerConfig,
@@ -26,7 +26,7 @@ import { alias } from '../shared/trip/list.schema';
     }),
   ],
 })
-export class ListAction extends Action {
+export class ListTripsAction extends Action {
   constructor(private pg: TripRepositoryProvider) {
     super();
   }

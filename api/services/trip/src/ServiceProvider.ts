@@ -8,7 +8,7 @@ import { CryptoProvider } from '@pdc/provider-crypto';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
-import { binding as listBinding } from './shared/trip/list.schema';
+import { binding as listBinding } from './shared/trip/listTrips.schema';
 import { binding as searchCountBinding } from './shared/trip/searchcount.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
 import { binding as exportBinding } from './shared/trip/export.schema';
@@ -19,7 +19,7 @@ import { binding as excelExportBinding } from './shared/trip/excelExport.schema'
 
 import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
-import { ListAction } from './actions/ListAction';
+import { ListTripsAction } from './actions/ListTripsAction';
 import { StatsAction } from './actions/StatsAction';
 import { ExportAction } from './actions/ExportAction';
 import { SearchCountAction } from './actions/SearchCountAction';
@@ -32,7 +32,7 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
 import { scopeToGroupBinding } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
-import { BuildExcelsExportAction } from './actions/BuildExcelExportAction';
+import { ExportCapitalCallsAction } from './actions/ExportCapitalCallAction';
 import { ActiveCampaignExcelExportAction } from './actions/ActiveCampaignExcelExportAction';
 import { DataGouvProvider } from './providers/DataGouvProvider';
 import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportCommand';
@@ -57,13 +57,13 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
   ],
   commands: [ReplayOpendataExportCommand],
   handlers: [
-    ListAction,
+    ListTripsAction,
     SearchCountAction,
     StatsAction,
     FinancialStatsAction,
     ExportAction,
     BuildExportAction,
-    BuildExcelsExportAction,
+    ExportCapitalCallsAction,
     ActiveCampaignExcelExportAction,
     TripCacheWarmCron,
     SendExportAction,

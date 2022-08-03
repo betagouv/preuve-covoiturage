@@ -14,8 +14,8 @@ export interface ParamsInterface {
 export type ResultInterface = string[];
 
 export const handlerConfig = {
-  service: 'trip',
-  method: 'excelExport',
+  service: 'capitalcall',
+  method: 'export',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
