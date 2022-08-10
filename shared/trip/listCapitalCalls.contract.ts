@@ -1,13 +1,12 @@
-import { ResultWithPagination } from '../common/interfaces/ResultWithPagination';
-import { LightTripInterface } from './common/interfaces/LightTripInterface';
-import { TripSearchInterfaceWithPagination } from './common/interfaces/TripSearchInterface';
+export type ResultInterface = {};
 
-export interface ParamsInterface extends TripSearchInterfaceWithPagination {}
-
-export type ResultInterface = ResultWithPagination<LightTripInterface>;
+export interface ParamsInterface {
+  operator_id?: number;
+  territory_id?: number;
+}
 
 export const handlerConfig = {
-  service: 'trip',
+  service: 'capitalcall',
   method: 'list',
 };
 

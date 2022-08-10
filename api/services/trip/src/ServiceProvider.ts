@@ -1,3 +1,4 @@
+import { ListCapitalCallAction } from './actions/ListCapitalCallsAction';
 import { CommandExtension } from '@ilos/cli';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
@@ -68,6 +69,7 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
     TripCacheWarmCron,
     SendExportAction,
     PublishOpenDataAction,
+    ListCapitalCallAction,
   ],
   queues: ['trip'],
 })

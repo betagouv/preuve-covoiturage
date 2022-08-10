@@ -50,6 +50,17 @@ export class S3StorageProvider implements ProviderInterface {
     return result.Contents;
   }
 
+  async findForRegistry(): Promise<S3.ObjectList> {
+    const result = await this.s3Instances
+      .get(BucketName.Export)
+      .listObjectsV2({
+        Bucket: BucketName.Export,
+        Delimiter: `apdf-`,
+      })
+      .promise();
+    return result.Contents;
+  }
+
   async findByTerritory(territory_id: number): Promise<S3.ObjectList> {
     const result = await this.s3Instances
       .get(BucketName.Export)
