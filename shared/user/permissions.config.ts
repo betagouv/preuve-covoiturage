@@ -65,7 +65,7 @@ const permissions = {
     'registry.user',
     'registry.admin',
   ],
-  'capitalcall.list': ['operator.admin, territory.admin', 'registry.admin'],
+  'capitalcall.list': ['operator.admin', 'territory.admin', 'registry.admin'],
   'capitalcall.export': ['registry.admin'],
   'trip.list': [
     'operator.user',
