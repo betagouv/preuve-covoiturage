@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
@@ -11,8 +10,8 @@ import { ResultInterface as CompanyInterface } from '~/shared/company/find.contr
   providedIn: 'root',
 })
 export class CompanyService extends JsonRpcGetList<CompanyInterface> {
-  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute) {
-    super(http, router, activatedRoute, 'company');
+  constructor(http: HttpClient) {
+    super(http, 'company');
   }
 
   fetchCompany(siret: string): Observable<CompanyInterface> {

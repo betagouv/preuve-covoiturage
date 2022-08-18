@@ -1,23 +1,17 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs/operators';
 
-import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
-import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 
 import { JsonRPCOptions } from '~/core/entities/api/jsonRPCOptions';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 
 export abstract class JsonRPC {
-  constructor(
-    protected http: HttpClient,
-    protected router: Router,
-    protected activedRoute: ActivatedRoute,
-    protected url = 'rpc',
-  ) {}
+  constructor(protected http: HttpClient, protected url = 'rpc') {}
 
   public callOne(method: JsonRPCParam, options?: JsonRPCOptions, throwErrors = true): Observable<JsonRPCResult> {
     return this.call([method], options, throwErrors).pipe(map((datas) => datas[0]));
@@ -74,7 +68,7 @@ export abstract class JsonRPC {
   providedIn: 'root',
 })
 export class JsonRPCService extends JsonRPC {
-  constructor(http: HttpClient, router: Router, activedRoute: ActivatedRoute) {
-    super(http, router, activedRoute);
+  constructor(http: HttpClient) {
+    super(http);
   }
 }

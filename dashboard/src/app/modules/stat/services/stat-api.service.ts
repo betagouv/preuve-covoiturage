@@ -1,23 +1,22 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 
+import { endOfDay, startOfDay } from 'date-fns';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { TripStatInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripStatInterface';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
-import { TripStatInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripStatInterface';
 import { ApiGraphTimeMode } from './ApiGraphTimeMode';
-import { endOfDay, startOfDay } from 'date-fns';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface, any, TripStatInterface> {
-  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute) {
-    super(http, router, activatedRoute, 'trip');
+  constructor(http: HttpClient) {
+    super(http, 'trip');
   }
 
   paramGetList(params?: TripStatInterface): JsonRPCParam {

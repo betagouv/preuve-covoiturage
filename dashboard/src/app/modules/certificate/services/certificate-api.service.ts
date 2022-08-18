@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -33,8 +32,8 @@ export interface CreateParamsInterface {
   providedIn: 'root',
 })
 export class CertificateApiService extends JsonRPC {
-  constructor(http: HttpClient, router: Router, activedRoute: ActivatedRoute) {
-    super(http, router, activedRoute);
+  constructor(http: HttpClient) {
+    super(http);
   }
 
   async downloadPrint(data: DownloadParamsInterface): Promise<void> {
