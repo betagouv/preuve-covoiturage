@@ -28,7 +28,7 @@ export class CampaignCapitalcallComponent implements OnInit {
   constructor(private capitalcallApiService: CapitalcallApiService) {}
 
   ngOnInit(): void {
-    this.capitalcallApiService.capitalcalls().subscribe((data) => {
+    this.capitalcallApiService.list().subscribe((data) => {
       this.capitalcallList = data.map((s3Object) => {
         return {
           key: s3Object.Key,
@@ -42,5 +42,9 @@ export class CampaignCapitalcallComponent implements OnInit {
     const splitArray: string[] = key.split('-');
     console.debug(this.SHORT_MONTHS_STRING[splitArray[splitArray.length - 2]]);
     return this.SHORT_MONTHS_STRING[splitArray[splitArray.length - 2]];
+  }
+
+  public download(key: string): void {
+    this.capitalcallApiService.download();
   }
 }

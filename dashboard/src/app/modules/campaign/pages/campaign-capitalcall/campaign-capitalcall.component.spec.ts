@@ -9,13 +9,13 @@ import { CampaignCapitalcallComponent } from './campaign-capitalcall.component';
 fdescribe('CampaignCapitalcallComponent', () => {
   let component: CampaignCapitalcallComponent;
   let fixture: ComponentFixture<CampaignCapitalcallComponent>;
-  const listCapitalCallSpy = jasmine.createSpyObj('CapitalcallApiService', ['capitalcalls']);
+  const capitalCallServiceSpy = jasmine.createSpyObj('CapitalcallApiService', ['list', 'download']);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CampaignCapitalcallComponent],
       imports: [HttpClientTestingModule, MatTableModule],
-      providers: [{ provide: CapitalcallApiService, useValue: listCapitalCallSpy }],
+      providers: [{ provide: CapitalcallApiService, useValue: capitalCallServiceSpy }],
     }).compileComponents();
   });
 
@@ -29,7 +29,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
 
   it('should create', () => {
     // Arrange
-    listCapitalCallSpy.capitalcalls.and.returnValue(of([]));
+    capitalCallServiceSpy.list.and.returnValue(of([]));
 
     // Act
     createComponent();
@@ -40,7 +40,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
 
   it('should show empty view', () => {
     // Arrange
-    listCapitalCallSpy.capitalcalls.and.returnValue(of([]));
+    capitalCallServiceSpy.list.and.returnValue(of([]));
 
     // Act
     createComponent();
@@ -52,7 +52,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
 
   it('should show table view with 2 elements', () => {
     // Arrange
-    listCapitalCallSpy.capitalcalls.and.returnValue(
+    capitalCallServiceSpy.list.and.returnValue(
       of([{ Key: 'apdf-3-329-idfm___p-sept-efff38.xlsx' }, { Key: 'apdf-4-329-idfm___p-octo-ee49c1.xlsx' }]),
     );
 
@@ -70,6 +70,22 @@ fdescribe('CampaignCapitalcallComponent', () => {
 
     // Data rows
     expect(tableRows[1].cells[0].textContent).toBe('Septembre');
+    expect(tableRows[1].cells[1].textContent).toBe('cloud_download');
     expect(tableRows[2].cells[0].textContent).toBe('Octobre');
+    expect(tableRows[2].cells[1].textContent).toBe('cloud_download');
+  });
+
+  it('should show table view and download on click', () => {
+    // Arrange
+    capitalCallServiceSpy.list.and.returnValue(
+      of([{ Key: 'apdf-3-329-idfm___p-sept-efff38.xlsx' }, { Key: 'apdf-4-329-idfm___p-octo-ee49c1.xlsx' }]),
+    );
+
+    // Act
+    createComponent();
+    fixture.componentInstance.download('apdf-3-329-idfm___p-sept-efff38.xlsx');
+
+    // Assert
+    expect(capitalCallServiceSpy.download).toHaveBeenCalled();
   });
 });

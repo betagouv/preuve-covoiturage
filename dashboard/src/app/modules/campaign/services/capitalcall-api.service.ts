@@ -18,8 +18,12 @@ export class CapitalcallApiService extends JsonRPCService {
     super(http);
   }
 
-  capitalcalls(): Observable<CapitalCallListResult> {
+  list(): Observable<CapitalCallListResult> {
     const jsonRPCParam: JsonRPCParam<{}> = new JsonRPCParam(capitalCallListSignature, {});
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data as CapitalCallListResult));
+  }
+
+  download() {
+    throw new Error('Method not implemented.');
   }
 }
