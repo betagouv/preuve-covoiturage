@@ -1,7 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { CampaignApiService } from '../../services/campaign-api.service';
+import { CapitalcallApiService } from '../../services/capitalcall-api.service';
 
 import { CampaignCapitalcallComponent } from './campaign-capitalcall.component';
 
@@ -18,8 +17,8 @@ fdescribe('CampaignCapitalcallComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CampaignCapitalcallComponent],
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      providers: [CampaignApiService],
+      imports: [HttpClientTestingModule],
+      providers: [CapitalcallApiService],
     }).compileComponents();
   });
 

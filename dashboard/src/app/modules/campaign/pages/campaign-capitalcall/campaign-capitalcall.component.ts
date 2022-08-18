@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CampaignApiService } from '../../services/campaign-api.service';
+import { CapitalcallApiService } from './../../services/capitalcall-api.service';
 
 @Component({
   selector: 'app-campaign-capitalcall',
@@ -7,7 +7,7 @@ import { CampaignApiService } from '../../services/campaign-api.service';
   styleUrls: ['./campaign-capitalcall.component.scss'],
 })
 export class CampaignCapitalcallComponent implements OnInit {
-  constructor(private campaignApiService: CampaignApiService) {}
+  constructor(private capitalcallApiService: CapitalcallApiService) {}
 
   ngOnInit(): void {}
 }
