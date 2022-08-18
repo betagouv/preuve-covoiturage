@@ -78,5 +78,8 @@
         <app-campaign-summary-text [campaign]="campaignUx"></app-campaign-summary-text>
       </div>
     </div>
+
+     <!-- capital call -->
+     <app-campaign-capitalcall *ngIf="!isDraft"></app-campaign-capitalcall>
   </div>
 </app-page-content>

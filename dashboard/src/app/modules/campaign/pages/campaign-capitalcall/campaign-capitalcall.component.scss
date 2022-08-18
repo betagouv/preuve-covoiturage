@@ -1,0 +1,11 @@
+@import 'variables';
+
+.campaign-capitalcall {
+  h4 {
+    color: $color-primary;
+  }
+  &-content {
+    background-color: white;
+    padding: 30px;
+  }
+}
