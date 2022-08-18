@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { endOfDay, startOfDay } from 'date-fns';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -15,8 +14,8 @@ import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
   providedIn: 'root',
 })
 export class TripApiService extends JsonRpcGetList<LightTrip, LightTrip, any, TripSearchInterfaceWithPagination> {
-  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute) {
-    super(http, router, activatedRoute, 'trip');
+  constructor(http: HttpClient) {
+    super(http, 'trip');
   }
 
   count(params?: TripSearchInterfaceWithPagination): Observable<string> {

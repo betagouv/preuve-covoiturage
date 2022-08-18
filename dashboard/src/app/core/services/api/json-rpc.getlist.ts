@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { JsonRPC } from '~/core/services/api/json-rpc.service';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { JsonRPC } from '~/core/services/api/json-rpc.service';
 
 export enum GetListActions {
   FIND = 'find',
@@ -12,8 +11,8 @@ export enum GetListActions {
 }
 
 export class JsonRpcGetList<EntityT, ListEntityT = EntityT, IGetT = any, IGetListT = any> extends JsonRPC {
-  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected method: string) {
-    super(http, router, activatedRoute);
+  constructor(http: HttpClient, protected method: string) {
+    super(http);
   }
 
   protected defaultListParam: any = {};

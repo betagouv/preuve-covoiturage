@@ -1,12 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { Model } from '~/core/entities/IModel';
-import { PatchParams } from '~/core/services/store/crud-store';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
+import { PatchParams } from '~/core/services/store/crud-store';
 
 export interface DeleteResponse {
   _id: number;
@@ -30,8 +29,8 @@ export class JsonRpcCrud<
   ICreateT = EntityT, // eslint-disable-line @typescript-eslint/no-unused-vars
   IUpdateT = EntityT, // eslint-disable-line @typescript-eslint/no-unused-vars
 > extends JsonRpcGetList<EntityT, ListEntityT, IGetT, IGetListT> {
-  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected method: string) {
-    super(http, router, activatedRoute, method);
+  constructor(http: HttpClient, protected method: string) {
+    super(http, method);
   }
 
   create(item: EntityT): Observable<EntityT> {
