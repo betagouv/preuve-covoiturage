@@ -96,6 +96,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
         arr: this.form.value.territoryIds.filter((t) => t.type == TerritoryCodeEnum.Arr).map((t) => t.insee),
         aom: this.form.value.territoryIds.filter((t) => t.type == TerritoryCodeEnum.Mobility).map((t) => t.insee),
         epci: this.form.value.territoryIds.filter((t) => t.type == TerritoryCodeEnum.CityGroup).map((t) => t.insee),
+        reg: this.form.value.territoryIds.filter((t) => t.type == TerritoryCodeEnum.Region).map((t) => t.insee),
       };
     }
 
