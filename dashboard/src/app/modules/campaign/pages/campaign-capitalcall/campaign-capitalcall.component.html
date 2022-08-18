@@ -1,7 +1,31 @@
 <div class="campaign-capitalcall">
-<h4> Appels de fonds - Récapitulatif des 3 derniers mois </h4>
-<div class="campaign-capitalcall-content">
-  
+  <h4> Appels de fonds - Récapitulatif des 3 derniers mois </h4>
+  <div class="campaign-capitalcall-content">
+    <div *ngIf="capitalcallList.length === 0" class="campaign-capitalcall-empty">
+      <p>Aucun appel fond</p>
+    </div>
 
-</div>
+    <table mat-table [dataSource]="capitalcallList">
+ 
+      <!-- Month -->
+      <ng-container matColumnDef="month">
+        <th mat-header-cell  *matHeaderCellDef>Mois</th>
+        <td mat-cell *matCellDef="let capitalcall">{{ capitalcall?.month }}</td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let capitalcall">
+          <button mat-icon-button (click)="download(row)">
+            <mat-icon color="primary" matTooltip="Télécharger">cloud_download</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+  </div>
 </div>

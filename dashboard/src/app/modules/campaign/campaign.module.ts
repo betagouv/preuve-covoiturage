@@ -33,6 +33,7 @@ import { CampaignCreateEditComponent } from './pages/campaign-create-edit/campai
 import { CampaignDashboardComponent } from './pages/campaign-dashboard/campaign-dashboard.component';
 import { CampaignViewComponent } from './pages/campaign-view/campaign-view.component';
 import { CampaignCapitalcallComponent } from './pages/campaign-capitalcall/campaign-capitalcall.component';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { CampaignCapitalcallComponent } from './pages/campaign-capitalcall/campa
     MaterialModule,
     MatPaginatorModule,
     NouisliderModule,
+    MatTableModule,
     OperatorUiModule,
     ReactiveFormsModule,
     SharedModule,

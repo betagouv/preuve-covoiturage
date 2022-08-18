@@ -8,4 +8,12 @@
     background-color: white;
     padding: 30px;
   }
+  &-empty {
+    height: 249px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
 }
