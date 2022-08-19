@@ -44,7 +44,7 @@ test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async 
   const workbook: Workbook = await new Workbook().xlsx.readFile(t.context.FILEPATH!);
   const worksheet: Worksheet = workbook.getWorksheet(t.context.slicesWorkbookWriter!.SLICE_WORKSHEET_NAME);
 
-  t.is(worksheet.actualRowCount, 5);
+  t.is(worksheet.actualRowCount, 4);
   t.deepEqual(workbook.getWorksheet(t.context.slicesWorkbookWriter!.SLICE_WORKSHEET_NAME).getRow(1).values, [
     undefined,
     ...t.context.slicesWorkbookWriter!.SLICE_WORKSHEET_COLUMN_HEADERS.map((h) => h.header! as string),
@@ -67,11 +67,5 @@ test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async 
     `Supérieur à ${slices[2].slice.min / 1000} km`,
     slices[2].incentivesSum / 100,
     slices[2].tripCount,
-  ]);
-  t.deepEqual(workbook.getWorksheet(t.context.slicesWorkbookWriter!.SLICE_WORKSHEET_NAME).getRow(5).values, [
-    undefined,
-    `Total`,
-    6636.42,
-    10500,
   ]);
 });
