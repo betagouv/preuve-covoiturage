@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { combineLatest } from 'rxjs';
+import { CommonDataService } from '../../../../core/services/common-data.service';
 import { CapitalcallApiService } from './../../services/capitalcall-api.service';
 
 @Component({
@@ -8,7 +10,7 @@ import { CapitalcallApiService } from './../../services/capitalcall-api.service'
 })
 export class CampaignCapitalcallComponent implements OnInit {
   public capitalcallList: { key: string; month: string }[] = [];
-  public displayedColumns: string[] = ['month', 'action'];
+  public displayedColumns: string[] = ['month', 'operator', 'action'];
 
   private SHORT_MONTHS_STRING: { [key: string]: string } = {
     janv: 'Janvier',
@@ -22,21 +24,27 @@ export class CampaignCapitalcallComponent implements OnInit {
     sept: 'Septembre',
     octo: 'Octobre',
     nove: 'Novembre',
-    dece: 'Decembre',
+    dece: 'Décembre',
   };
 
-  constructor(private capitalcallApiService: CapitalcallApiService) {}
+  constructor(private capitalcallApiService: CapitalcallApiService, private commonData: CommonDataService) {}
 
   ngOnInit(): void {
-    this.capitalcallApiService.list().subscribe((data) => {
-      this.capitalcallList = data.map((s3Object) => {
+    combineLatest(this.commonData.operators$, this.capitalcallApiService.list()).subscribe(([operators, s3objects]) => {
+      this.capitalcallList = s3objects.map((s3Object) => {
+        const operatorId: number = this.computeOperatorId(s3Object.key);
         return {
           key: s3Object.key,
           month: this.computeFullMonth(s3Object.key),
           signed_url: s3Object.signed_url,
+          operator: operators.find((o) => o._id === operatorId).name,
         };
       });
     });
+  }
+
+  private computeOperatorId(key: string): number {
+    return parseInt(key.split('-')[1]);
   }
 
   private computeFullMonth(key: string): string {

@@ -12,6 +12,12 @@
         <th mat-header-cell  *matHeaderCellDef>Mois</th>
         <td mat-cell *matCellDef="let capitalcall">{{ capitalcall?.month }}</td>
       </ng-container>
+      
+      <!-- Operator -->
+      <ng-container matColumnDef="operator">
+        <th mat-header-cell *matHeaderCellDef>Opérateur</th>
+        <td mat-cell *matCellDef="let capitalcall">{{capitalcall?.operator}}</td>
+      </ng-container>
 
       <!-- Actions -->
       <ng-container matColumnDef="action">
