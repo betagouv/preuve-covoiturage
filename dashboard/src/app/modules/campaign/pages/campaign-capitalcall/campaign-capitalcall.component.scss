@@ -5,14 +5,12 @@
     color: $color-primary;
   }
   &-content {
-    padding: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
   }
   &-empty {
-    height: 249px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    height: 150px;
+    text-align: center;
   }
   
 }

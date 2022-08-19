@@ -1,9 +1,6 @@
 <div class="campaign-capitalcall">
-  <h4> Appels de fonds - Récapitulatif des 3 derniers mois </h4>
+  <h4> Appels de fonds - Récapitulatif des 6 derniers mois </h4>
   <div class="campaign-capitalcall-content">
-    <div *ngIf="capitalcallList.length === 0" class="campaign-capitalcall-empty">
-      <p>Aucun appel fond</p>
-    </div>
 
     <table mat-table [dataSource]="capitalcallList">
  
@@ -29,6 +26,12 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr class="mat-row campaign-capitalcall-empty" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length" >
+            Aucun appel fond
+          </td>
+      </tr>
+
     </table>
 
   </div>
