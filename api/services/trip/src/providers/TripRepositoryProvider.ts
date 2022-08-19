@@ -428,8 +428,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return result.rows.map((r, i) => {
       return {
         slice: slices[i],
-        tripCount: r.trip_count,
-        incentivesSum: r.incentive_sum,
+        tripCount: parseInt(r.trip_count),
+        incentivesSum: parseInt(r.incentive_sum),
       };
     });
   }

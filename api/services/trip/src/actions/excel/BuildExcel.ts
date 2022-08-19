@@ -95,7 +95,7 @@ export class BuildExcel {
     start_date: Date,
     end_date: Date,
     operator_id: number,
-    slices: ProgressiveDistanceRangeMetaParameters[],
+    progressiveDistanceRangeArray: ProgressiveDistanceRangeMetaParameters[],
   ): Promise<SlicesInterface[]> {
     return this.tripRepositoryProvider.computeFundCallsSlices(
       {
@@ -106,7 +106,7 @@ export class BuildExcel {
         campaign_id: [campaign._id],
         operator_id: [operator_id],
       },
-      slices,
+      progressiveDistanceRangeArray,
     );
   }
 
