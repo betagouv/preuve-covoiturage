@@ -1,8 +1,8 @@
 import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { S3StorageProvider } from '@pdc/provider-file';
+import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
-import { handlerConfig, ParamsInterface, ResultInterface, S3Object } from '../shared/trip/listCapitalcalls.contract';
+import { handlerConfig, ParamsInterface, S3Object } from '../shared/trip/listCapitalcalls.contract';
 
 @handler({
   ...handlerConfig,
@@ -19,12 +19,32 @@ export class ListCapitalCallAction extends Action {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<S3Object[]> {
+    let s3Object: Partial<{ Key: string; Size; number }>[];
     if (params.operator_id) {
-      return this.s3StorageProvider.findByOperator(params.operator_id) as unknown as Promise<S3Object[]>;
+      // operator
+      s3Object = await this.s3StorageProvider.findByOperator(params.operator_id);
     } else if (params.territory_id) {
-      return this.s3StorageProvider.findByTerritory(params.territory_id) as unknown as Promise<S3Object[]>;
+      // territory
+      s3Object = await this.s3StorageProvider.findByTerritory(params.territory_id);
+    } else {
+      // registry
+      s3Object = await this.s3StorageProvider.findForRegistry();
     }
-    return this.s3StorageProvider.findForRegistry() as unknown as Promise<S3Object[]>;
+
+    return Promise.all(
+      s3Object.map(async (o) => {
+        const object: S3Object = {
+          signed_url: await this.s3StorageProvider.getSignedUrl(
+            BucketName.Export,
+            o.Key,
+            S3StorageProvider.TEN_MINUTES,
+          ),
+          key: o.Key,
+          size: o.Size,
+        };
+        return object;
+      }),
+    );
   }
 }

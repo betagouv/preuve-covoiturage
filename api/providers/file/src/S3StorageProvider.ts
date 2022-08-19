@@ -14,6 +14,9 @@ export class S3StorageProvider implements ProviderInterface {
   private prefix: string;
   private pathStyle: boolean;
 
+  public static readonly SEVEN_DAY: number = 7 * 86400;
+  public static readonly TEN_MINUTES: number = 7 * 600;
+
   constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {
@@ -143,7 +146,11 @@ export class S3StorageProvider implements ProviderInterface {
     return `${this.endpoint}/${this.getBucketName(bucket)}/${filekey}`;
   }
 
-  async getSignedUrl(bucket: BucketName, filekey: string, expires: number = 7 * 86400): Promise<string> {
+  async getSignedUrl(
+    bucket: BucketName,
+    filekey: string,
+    expires: number = S3StorageProvider.SEVEN_DAY,
+  ): Promise<string> {
     try {
       const Bucket = this.getBucketName(bucket);
 
