@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { CommonDataService } from '../../../../core/services/common-data.service';
 import { CapitalcallApiService } from './../../services/capitalcall-api.service';
@@ -9,6 +9,8 @@ import { CapitalcallApiService } from './../../services/capitalcall-api.service'
   styleUrls: ['./campaign-capitalcall.component.scss'],
 })
 export class CampaignCapitalcallComponent implements OnInit {
+  @Input() territoryId: number;
+
   public capitalcallList: { key: string; month: string }[] = [];
   public displayedColumns: string[] = ['month', 'operator', 'action'];
 
@@ -30,17 +32,19 @@ export class CampaignCapitalcallComponent implements OnInit {
   constructor(private capitalcallApiService: CapitalcallApiService, private commonData: CommonDataService) {}
 
   ngOnInit(): void {
-    combineLatest(this.commonData.operators$, this.capitalcallApiService.list()).subscribe(([operators, s3objects]) => {
-      this.capitalcallList = s3objects.map((s3Object) => {
-        const operatorId: number = this.computeOperatorId(s3Object.key);
-        return {
-          key: s3Object.key,
-          month: this.computeFullMonth(s3Object.key),
-          signed_url: s3Object.signed_url,
-          operator: operators.find((o) => o._id === operatorId).name,
-        };
-      });
-    });
+    combineLatest(this.commonData.operators$, this.capitalcallApiService.list(this.territoryId)).subscribe(
+      ([operators, s3objects]) => {
+        this.capitalcallList = s3objects.map((s3Object) => {
+          const operatorId: number = this.computeOperatorId(s3Object.key);
+          return {
+            key: s3Object.key,
+            month: this.computeFullMonth(s3Object.key),
+            signed_url: s3Object.signed_url,
+            operator: operators.find((o) => o._id === operatorId).name,
+          };
+        });
+      },
+    );
   }
 
   private computeOperatorId(key: string): number {

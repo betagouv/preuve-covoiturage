@@ -27,9 +27,6 @@ export class ListCapitalCallAction extends Action {
     } else if (params.territory_id) {
       // territory
       s3Object = await this.s3StorageProvider.findByTerritory(params.territory_id);
-    } else {
-      // registry
-      s3Object = await this.s3StorageProvider.findForRegistry();
     }
 
     return Promise.all(

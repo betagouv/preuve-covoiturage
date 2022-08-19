@@ -80,6 +80,6 @@
     </div>
 
      <!-- capital call -->
-     <app-campaign-capitalcall *ngIf="!isDraft"></app-campaign-capitalcall>
+     <app-campaign-capitalcall [territoryId]="campaignUx.territory_id" *ngIf="!isDraft"></app-campaign-capitalcall>
   </div>
 </app-page-content>

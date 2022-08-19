@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 
 import {
   ResultInterface as CapitalCallListResult,
+  ParamsInterface as CapitalCallListParams,
   signature as capitalCallListSignature,
 } from '~/shared/trip/listCapitalcalls.contract';
 import { JsonRPCParam } from '../../../core/entities/api/jsonRPCParam';
@@ -18,8 +19,11 @@ export class CapitalcallApiService extends JsonRPCService {
     super(http);
   }
 
-  list(): Observable<CapitalCallListResult> {
-    const jsonRPCParam: JsonRPCParam<{}> = new JsonRPCParam(capitalCallListSignature, {});
+  list(territoryId?: number): Observable<CapitalCallListResult> {
+    const jsonRPCParam: JsonRPCParam<CapitalCallListParams> = new JsonRPCParam(
+      capitalCallListSignature,
+      territoryId ? { territory_id: territoryId } : {},
+    );
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data as CapitalCallListResult));
   }
 }
