@@ -1,3 +1,4 @@
+import { S3Object } from './../../../../../../../shared/trip/listCapitalcalls.contract';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTableModule } from '@angular/material/table';
@@ -10,6 +11,10 @@ fdescribe('CampaignCapitalcallComponent', () => {
   let component: CampaignCapitalcallComponent;
   let fixture: ComponentFixture<CampaignCapitalcallComponent>;
   const capitalCallServiceSpy = jasmine.createSpyObj('CapitalcallApiService', ['list', 'download']);
+  const s3ObjectList: S3Object[] = [
+    { key: 'apdf-3-329-idfm___p-sept-efff38.xlsx', signed_url: 'https://s3-link-1.com' },
+    { key: 'apdf-4-329-idfm___p-octo-ee49c1.xlsx', signed_url: 'https://s3-link-2.com' },
+  ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -52,9 +57,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
 
   it('should show table view with 2 elements', () => {
     // Arrange
-    capitalCallServiceSpy.list.and.returnValue(
-      of([{ Key: 'apdf-3-329-idfm___p-sept-efff38.xlsx' }, { Key: 'apdf-4-329-idfm___p-octo-ee49c1.xlsx' }]),
-    );
+    capitalCallServiceSpy.list.and.returnValue(of(s3ObjectList));
 
     // Act
     createComponent();
@@ -73,19 +76,5 @@ fdescribe('CampaignCapitalcallComponent', () => {
     expect(tableRows[1].cells[1].textContent).toBe('cloud_download');
     expect(tableRows[2].cells[0].textContent).toBe('Octobre');
     expect(tableRows[2].cells[1].textContent).toBe('cloud_download');
-  });
-
-  it('should show table view and download on click', () => {
-    // Arrange
-    capitalCallServiceSpy.list.and.returnValue(
-      of([{ Key: 'apdf-3-329-idfm___p-sept-efff38.xlsx' }, { Key: 'apdf-4-329-idfm___p-octo-ee49c1.xlsx' }]),
-    );
-
-    // Act
-    createComponent();
-    fixture.componentInstance.download('apdf-3-329-idfm___p-sept-efff38.xlsx');
-
-    // Assert
-    expect(capitalCallServiceSpy.download).toHaveBeenCalled();
   });
 });
