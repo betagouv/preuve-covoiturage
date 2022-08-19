@@ -16,7 +16,7 @@ import { binding as exportBinding } from './shared/trip/export.schema';
 import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
 import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
 import { binding as publishOpenDataBinding } from './shared/trip/publishOpenData.schema';
-import { binding as excelExportBinding } from './shared/trip/excelExport.schema';
+import { binding as capitalcallExportBinding } from './shared/capitalcall/export.schema';
 
 import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
@@ -49,7 +49,7 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
     buildExportBinding,
     sendExportBinding,
     publishOpenDataBinding,
-    excelExportBinding,
+    capitalcallExportBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware], scopeToGroupBinding],
   connections: [

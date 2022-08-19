@@ -11,7 +11,7 @@ import {
   ParamsInterface as BuildExcelExportParamInterface,
   ResultInterface as BuildExcelExportResultInterface,
   signature as buildExcelExportSignature,
-} from '../shared/trip/excelExport.contract';
+} from '../shared/capitalcall/export.contract';
 
 @handler({
   ...handlerConfig,

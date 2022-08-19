@@ -7,7 +7,7 @@ import {
   ResultInterface as CapitalCallListResult,
   ParamsInterface as CapitalCallListParams,
   signature as capitalCallListSignature,
-} from '~/shared/trip/listCapitalcalls.contract';
+} from '~/shared/capitalcall/list.contract';
 import { JsonRPCParam } from '../../../core/entities/api/jsonRPCParam';
 import { JsonRPCService } from '../../../core/services/api/json-rpc.service';
 

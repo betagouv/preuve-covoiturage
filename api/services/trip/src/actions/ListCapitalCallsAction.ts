@@ -2,7 +2,7 @@ import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
-import { handlerConfig, ParamsInterface, S3Object } from '../shared/trip/listCapitalcalls.contract';
+import { handlerConfig, ParamsInterface, S3Object } from '../shared/capitalcall/list.contract';
 
 @handler({
   ...handlerConfig,

@@ -51,12 +51,12 @@ test('ActiveCampaignExportAction: should export 2 active campaigns and call buil
   );
   sinon.assert.calledWithExactly(
     t.context.kernelInterfaceResolverStub!,
-    'trip:excelExport',
+    'capitalcall:export',
     {
       format: { tz: 'Europe/Paris' },
       query: { campaign_id: t.context.CAMPAIGNS!.map((c) => c._id) },
     },
-    { channel: { service: 'trip' }, call: { user: { permissions: ['registry.trip.excelExport'] } } },
+    { channel: { service: 'trip' }, call: { user: { permissions: ['registry.capitalcall.export'] } } },
   );
   t.pass();
 });
