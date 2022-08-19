@@ -145,7 +145,13 @@ test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided
     t.context.START_DATE,
     t.context.END_DATE,
   );
-  sinon.assert.calledOnceWithExactly(t.context.s3StorageProviderStub!, BucketName.Export, filepath);
+  sinon.assert.calledOnceWithExactly(
+    t.context.s3StorageProviderStub!,
+    BucketName.Export,
+    filepath,
+    undefined,
+    `${campaign.territory_id}`,
+  );
   sinon.assert.calledOnceWithExactly(
     t.context.getCampaignInvolvedOperatorStub!,
     campaign,
