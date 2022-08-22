@@ -61,7 +61,7 @@ export class ActiveCampaignExcelExportAction extends Action implements InitHookI
       buildExcelExportParams,
       {
         channel: { service: handlerConfig.service },
-        call: { user: { permissions: ['registry.trip.excelExport'] } },
+        call: { user: { permissions: ['registry.capitalcall.export'] } },
       },
     );
   }
