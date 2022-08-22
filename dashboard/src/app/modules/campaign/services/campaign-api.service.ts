@@ -1,24 +1,23 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { CrudActions, DeleteResponse, JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
+import { CrudActions, DeleteResponse, JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 
-import { ResultInterface as LaunchResultInterface } from '~/core/entities/api/shared/policy/launch.contract';
-import { ParamsInterface as DeleteParamsInterface } from '~/core/entities/api/shared/policy/delete.contract';
-import { ParamsInterface as CreateParamsInterface } from '~/core/entities/api/shared/policy/create.contract';
-import { ParamsInterface as PatchParamsInterface } from '~/core/entities/api/shared/policy/patch.contract';
-import { ParamsInterface as ListParamsInterface } from '~/core/entities/api/shared/policy/list.contract';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
 import { CampaignInterface } from '~/core/entities/api/shared/policy/common/interfaces/CampaignInterface';
+import { ParamsInterface as CreateParamsInterface } from '~/core/entities/api/shared/policy/create.contract';
+import { ParamsInterface as DeleteParamsInterface } from '~/core/entities/api/shared/policy/delete.contract';
+import { ResultInterface as LaunchResultInterface } from '~/core/entities/api/shared/policy/launch.contract';
+import { ParamsInterface as ListParamsInterface } from '~/core/entities/api/shared/policy/list.contract';
+import { ParamsInterface as PatchParamsInterface } from '~/core/entities/api/shared/policy/patch.contract';
+import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import {
-  ResultInterface as CampaignStateResult,
   ParamsInterface as CampaignStateParam,
+  ResultInterface as CampaignStateResult,
   signature as campaignStateSignature,
 } from '../../../../../../shared/policy/campaignState.contract';
 
@@ -35,8 +34,8 @@ export class CampaignApiService extends JsonRpcCrud<
   any,
   CreateParamsInterface
 > {
-  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected auth: AuthenticationService) {
-    super(http, router, activatedRoute, 'campaign');
+  constructor(http: HttpClient, protected auth: AuthenticationService) {
+    super(http, 'campaign');
   }
 
   public launch(id: number): Observable<LaunchResultInterface> {

@@ -1,23 +1,22 @@
-import { Observable, of } from 'rxjs';
-import { ToastrService } from 'ngx-toastr';
-import { catchError, map, shareReplay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, of } from 'rxjs';
+import { catchError, map, shareReplay } from 'rxjs/operators';
 
-import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { User } from '~/core/entities/authentication/user';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
 import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
+import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
+import { User } from '~/core/entities/authentication/user';
 import { UserInterface } from '~/core/interfaces/user/profileInterface';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserApiService extends JsonRpcCrud<User, UserListInterface, UserPatchInterface> {
-  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected _toastr: ToastrService) {
-    super(http, router, activatedRoute, 'user');
+  constructor(http: HttpClient, protected _toastr: ToastrService) {
+    super(http, 'user');
   }
 
   me(): Observable<User> {

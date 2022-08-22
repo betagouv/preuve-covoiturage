@@ -1,21 +1,20 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 import { Application } from '~/core/entities/operator/application';
+import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 // tslint:disable-next-line:max-line-length
-import { ParamsInterface as ApplicationCreateInterface } from '~/core/entities/api/shared/application/create.contract';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { ParamsInterface as ApplicationCreateInterface } from '~/core/entities/api/shared/application/create.contract';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationApiService extends JsonRpcCrud<Application> {
-  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute) {
-    super(http, router, activatedRoute, 'application');
+  constructor(http: HttpClient) {
+    super(http, 'application');
   }
 
   public createApplicationAndList(application: ApplicationCreateInterface): Observable<any> {
