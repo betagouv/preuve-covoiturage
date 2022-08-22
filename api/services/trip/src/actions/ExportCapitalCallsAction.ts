@@ -4,17 +4,17 @@ import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/excelExport.contract';
-import { alias } from '../shared/trip/excelExport.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/capitalcall/export.contract';
+import { alias } from '../shared/capitalcall/export.schema';
 import { BuildExcel } from './excel/BuildExcel';
 import { CheckCampaign } from './excel/CheckCampaign';
 import { GetCampaignInvolvedOperator } from './excel/GetCampaignInvolvedOperators';
 
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
+  middlewares: [...internalOnlyMiddlewares('trip'), ['validate', alias]],
 })
-export class BuildExcelsExportAction extends Action {
+export class ExportCapitalCallsAction extends Action {
   constructor(
     private checkCampaign: CheckCampaign,
     private s3StorageProvider: S3StorageProvider,
@@ -32,21 +32,26 @@ export class BuildExcelsExportAction extends Action {
       params.query.campaign_id.map(async (c_id) => {
         const checkedCampaign: Campaign | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
-          .catch((e) => console.info(`Not processing excel fund call for campaign ${c_id} :${e}`));
+          .catch((e) => console.info(`Not processing excel capital call for campaign ${c_id} :${e}`));
         if (!checkedCampaign) {
           return;
         }
-        const involedOperators: number[] = await this.getCampaignInvolvedOperator.call(
+        const involvedOperatorIds: number[] = await this.getCampaignInvolvedOperator.call(
           checkedCampaign,
           start_date,
           end_date,
         );
         await Promise.all(
-          involedOperators.map(async (o_id) => {
+          involvedOperatorIds.map(async (o_id) => {
             try {
-              console.debug(`Building excel fund call for campaign ${checkedCampaign.name}, operator id ${o_id}`);
+              console.debug(`Building excel capital call for campaign ${checkedCampaign.name}, operator id ${o_id}`);
               const filepath = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
-              const s3key = await this.s3StorageProvider.upload(BucketName.Export, filepath);
+              const s3key = await this.s3StorageProvider.upload(
+                BucketName.Export,
+                filepath,
+                undefined,
+                `${checkedCampaign.territory_id}`,
+              );
               filepathes.push(s3key);
             } catch (error) {
               // eslint-disable-next-line max-len

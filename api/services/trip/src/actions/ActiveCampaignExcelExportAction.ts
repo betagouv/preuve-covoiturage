@@ -11,7 +11,7 @@ import {
   ParamsInterface as BuildExcelExportParamInterface,
   ResultInterface as BuildExcelExportResultInterface,
   signature as buildExcelExportSignature,
-} from '../shared/trip/excelExport.contract';
+} from '../shared/capitalcall/export.contract';
 
 @handler({
   ...handlerConfig,
@@ -61,7 +61,7 @@ export class ActiveCampaignExcelExportAction extends Action implements InitHookI
       buildExcelExportParams,
       {
         channel: { service: handlerConfig.service },
-        call: { user: { permissions: ['registry.trip.excelExport'] } },
+        call: { user: { permissions: ['registry.capitalcall.export'] } },
       },
     );
   }

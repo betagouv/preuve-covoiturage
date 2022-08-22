@@ -39,5 +39,5 @@ export const schema = {
   },
 };
 
-export const alias = 'trip.excelExport';
+export const alias = 'capitalcall.export';
 export const binding = [alias, schema];

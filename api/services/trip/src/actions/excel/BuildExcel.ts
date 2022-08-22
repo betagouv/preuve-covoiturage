@@ -19,7 +19,7 @@ export class BuildExcel {
   ) {}
 
   async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
-    const filepath: string = this.buildFilepath.call(campaign.name, operator_id, start_date);
+    const filepath: string = this.buildFilepath.call(campaign.name, campaign.territory_id, operator_id, start_date);
     const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
     await this.callDataWorkbookWriter(campaign, start_date, end_date, operator_id, workbookWriter);
     await this.callSlicesWorkbookWriter(campaign, start_date, end_date, operator_id, workbookWriter);
@@ -61,7 +61,7 @@ export class BuildExcel {
       return await this.slicesWorkbookWriter.call(slices, workbookWriter);
     } catch (e) {
       console.error(
-        `Error while computing slices for campaign fund call ${campaign.name} and operator ${operator_id}`,
+        `Error while computing slices for campaign capital call ${campaign.name} and operator ${operator_id}`,
         e,
       );
     }

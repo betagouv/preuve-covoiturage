@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { Column, Row, stream, Worksheet } from 'exceljs';
+import { Column, stream, Worksheet } from 'exceljs';
 import { SlicesInterface } from '../../../interfaces/SlicesInterface';
 import { ProgressiveDistanceRangeMetaParameters } from '~/shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
 import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
@@ -30,13 +30,6 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
     slices.forEach((s) => {
       worksheet.addRow([this.formatSliceLabel(s.slice), s.incentivesSum / 100, s.tripCount]).commit();
     });
-
-    const totalRow: Row = worksheet.addRow([
-      'Total',
-      slices.reduce((a, s) => a + s.incentivesSum, 0) / 100,
-      slices.reduce((a, s) => a + s.tripCount, 0),
-    ]);
-    totalRow.font = { bold: true };
 
     worksheet.commit();
   }

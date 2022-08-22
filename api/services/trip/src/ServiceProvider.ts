@@ -1,3 +1,4 @@
+import { ListCapitalCallAction } from './actions/ListCapitalCallsAction';
 import { CommandExtension } from '@ilos/cli';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
@@ -8,18 +9,18 @@ import { CryptoProvider } from '@pdc/provider-crypto';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
-import { binding as listBinding } from './shared/trip/list.schema';
+import { binding as listBinding } from './shared/trip/listTrips.schema';
 import { binding as searchCountBinding } from './shared/trip/searchcount.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
 import { binding as exportBinding } from './shared/trip/export.schema';
 import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
 import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
 import { binding as publishOpenDataBinding } from './shared/trip/publishOpenData.schema';
-import { binding as excelExportBinding } from './shared/trip/excelExport.schema';
+import { binding as capitalcallExportBinding } from './shared/capitalcall/export.schema';
 
 import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
-import { ListAction } from './actions/ListAction';
+import { ListTripsAction } from './actions/ListTripsAction';
 import { StatsAction } from './actions/StatsAction';
 import { ExportAction } from './actions/ExportAction';
 import { SearchCountAction } from './actions/SearchCountAction';
@@ -32,7 +33,7 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
 import { scopeToGroupBinding } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
-import { BuildExcelsExportAction } from './actions/BuildExcelExportAction';
+import { ExportCapitalCallsAction } from './actions/ExportCapitalCallsAction';
 import { ActiveCampaignExcelExportAction } from './actions/ActiveCampaignExcelExportAction';
 import { DataGouvProvider } from './providers/DataGouvProvider';
 import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportCommand';
@@ -48,7 +49,7 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
     buildExportBinding,
     sendExportBinding,
     publishOpenDataBinding,
-    excelExportBinding,
+    capitalcallExportBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware], scopeToGroupBinding],
   connections: [
@@ -57,17 +58,18 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
   ],
   commands: [ReplayOpendataExportCommand],
   handlers: [
-    ListAction,
+    ListTripsAction,
     SearchCountAction,
     StatsAction,
     FinancialStatsAction,
     ExportAction,
     BuildExportAction,
-    BuildExcelsExportAction,
+    ExportCapitalCallsAction,
     ActiveCampaignExcelExportAction,
     TripCacheWarmCron,
     SendExportAction,
     PublishOpenDataAction,
+    ListCapitalCallAction,
   ],
   queues: ['trip'],
 })

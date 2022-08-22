@@ -1,9 +1,9 @@
+import S3, { PutObjectRequest } from 'aws-sdk/clients/s3';
 import fs from 'fs';
 import path from 'path';
-import S3 from 'aws-sdk/clients/s3';
 
-import { env } from '@ilos/core';
 import { ConfigInterfaceResolver, provider, ProviderInterface } from '@ilos/common';
+import { env } from '@ilos/core';
 import { BucketName } from './interfaces/BucketName';
 
 @provider()
@@ -13,6 +13,9 @@ export class S3StorageProvider implements ProviderInterface {
   private region: string;
   private prefix: string;
   private pathStyle: boolean;
+
+  public static readonly SEVEN_DAY: number = 7 * 86400;
+  public static readonly TEN_MINUTES: number = 7 * 600;
 
   constructor(protected config: ConfigInterfaceResolver) {}
 
@@ -35,8 +38,30 @@ export class S3StorageProvider implements ProviderInterface {
       region: this.region,
       signatureVersion: 'v4',
       s3BucketEndpoint,
+      logger: console,
       ...this.config.get('file.bucket.options', {}),
     });
+  }
+
+  async findByOperator(operator_id: number): Promise<S3.ObjectList> {
+    const result = await this.s3Instances
+      .get(BucketName.Export)
+      .listObjectsV2({
+        Bucket: this.getBucketName(BucketName.Export),
+      })
+      .promise();
+    return result.Contents.filter((o) => o.Key.includes(`/apdf-${operator_id}`));
+  }
+
+  async findByTerritory(territory_id: number): Promise<S3.ObjectList> {
+    const result = await this.s3Instances
+      .get(BucketName.Export)
+      .listObjectsV2({
+        Bucket: this.getBucketName(BucketName.Export),
+        Prefix: `${territory_id}`,
+      })
+      .promise();
+    return result.Contents;
   }
 
   async copy(
@@ -70,7 +95,7 @@ export class S3StorageProvider implements ProviderInterface {
     }
   }
 
-  async upload(bucket: BucketName, filepath: string, filename?: string): Promise<string> {
+  async upload(bucket: BucketName, filepath: string, filename?: string, prefix?: string): Promise<string> {
     const Bucket = this.getBucketName(bucket);
 
     await fs.promises.access(filepath, fs.constants.R_OK);
@@ -78,17 +103,26 @@ export class S3StorageProvider implements ProviderInterface {
     try {
       const rs = fs.createReadStream(filepath);
       const ext = path.extname(filepath);
-      const keyName =
+      let key =
         filename ??
         path
           .basename(filepath)
           .replace(ext, '')
           .replace(/[^a-z0-9_-]/g, '') + ext;
 
-      const params = { Bucket, Key: keyName, Body: rs, ContentDisposition: `attachment; filepath=${keyName}` };
+      if (prefix) {
+        key = `${prefix}/${key}`;
+      }
+
+      const params: PutObjectRequest = {
+        Bucket,
+        Key: key,
+        Body: rs,
+        ContentDisposition: `attachment; filepath=${key}`,
+      };
       await this.s3Instances.get(bucket).upload(params).promise();
 
-      return keyName;
+      return key;
     } catch (e) {
       console.error(`S3StorageProvider Error: ${e.message} (${filepath})`);
       throw e;
@@ -102,7 +136,11 @@ export class S3StorageProvider implements ProviderInterface {
     return `${this.endpoint}/${this.getBucketName(bucket)}/${filekey}`;
   }
 
-  async getSignedUrl(bucket: BucketName, filekey: string, expires: number = 7 * 86400): Promise<string> {
+  async getSignedUrl(
+    bucket: BucketName,
+    filekey: string,
+    expires: number = S3StorageProvider.SEVEN_DAY,
+  ): Promise<string> {
     try {
       const Bucket = this.getBucketName(bucket);
 

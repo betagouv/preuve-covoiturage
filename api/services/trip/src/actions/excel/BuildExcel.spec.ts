@@ -135,6 +135,7 @@ test('BuildExcel: should call stream data and create slice then return excel fil
   sinon.assert.calledOnceWithExactly(
     t.context.buildFilepathStub!,
     t.context.campaign!.name,
+    t.context.campaign?.territory_id,
     t.context.operator_id,
     t.context.start_date,
   );
@@ -172,6 +173,7 @@ test('BuildExcel: should call stream data and return excel filepath even if crea
   sinon.assert.calledOnceWithExactly(
     t.context.buildFilepathStub!,
     t.context.campaign!.name,
+    t.context.campaign?.territory_id,
     t.context.operator_id,
     t.context.start_date,
   );
@@ -213,6 +215,7 @@ test('BuildExcel: should call stream data and return excel filepath without slic
   sinon.assert.calledOnceWithExactly(
     t.context.buildFilepathStub!,
     t.context.campaign!.name,
+    t.context.campaign?.territory_id,
     t.context.operator_id,
     t.context.start_date,
   );
