@@ -390,7 +390,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         return `COUNT(journey_id) FILTER (
         WHERE JOURNEY_DISTANCE > ${s.min}
         AND JOURNEY_DISTANCE <=  ${s.max}
-        AND (DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID = ${params.campaign_id} OR DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID =  ${params.campaign_id})) TRANCHE_${i}_COUNT,
+        AND (DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID = ${params.campaign_id} AND DRIVER_INCENTIVE_RPC_RAW[1].AMOUNT > 0 OR 
+             DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID = ${params.campaign_id} AND DRIVER_INCENTIVE_RPC_RAW[2].AMOUNT > 0)) TRANCHE_${i}_COUNT,
       SUM (DRIVER_INCENTIVE_RPC_RAW[1].AMOUNT) FILTER (
         WHERE JOURNEY_DISTANCE > ${s.min}
         AND JOURNEY_DISTANCE <= ${s.max}
@@ -427,8 +428,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return result.rows.map((r, i) => {
       return {
         slice: slices[i],
-        tripCount: r.trip_count,
-        incentivesSum: r.incentive_sum,
+        tripCount: parseInt(r.trip_count),
+        incentivesSum: parseInt(r.incentive_sum),
       };
     });
   }
