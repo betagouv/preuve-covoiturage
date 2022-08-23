@@ -192,6 +192,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         ARRAY_AGG(CONCAT(trip_id,'~',journey_id)) AS aggregated_trips_journeys
       FROM ${this.table} 
       WHERE ${where.text} 
+      AND journey_start_insee is not null
       GROUP BY journey_start_insee 
       HAVING COUNT (journey_start_insee) < 6
     `);
@@ -203,6 +204,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         ARRAY_AGG(CONCAT(trip_id,'~',journey_id)) AS aggregated_trips_journeys
       FROM ${this.table} 
       WHERE ${where.text} 
+      AND journey_end_insee is not null
       GROUP BY journey_end_insee 
       HAVING COUNT (journey_end_insee) < 6
     `);
