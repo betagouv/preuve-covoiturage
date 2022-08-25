@@ -3,7 +3,7 @@ import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
 import { Policy } from '~/engine/entities/Policy';
 
-import { IncentiveRepositoryProviderInterfaceResolver, PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
+import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/find.contract';
 import { alias } from '../shared/policy/find.schema';
 
@@ -20,7 +20,6 @@ import { alias } from '../shared/policy/find.schema';
 export class FindCampaignAction extends AbstractAction {
   constructor(
     private policyRepository: PolicyRepositoryProviderInterfaceResolver,
-    private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
@@ -32,11 +31,9 @@ export class FindCampaignAction extends AbstractAction {
       throw new NotFoundException(`policy #${params._id} not found`);
     }
     const policy = await Policy.import(policyData);
-
-    const state = await this.incentiveRepository.getPolicyIncentiveStats(policy._id);
+  
     return {
       ...policy.export(),
-      state,
       description: policy.describeForHuman(),
     };
   }

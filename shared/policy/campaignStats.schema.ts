@@ -1,4 +1,4 @@
-export const alias = 'campaign.find';
+export const alias = 'campaign.stats';
 export const schema = {
   type: 'object',
   additionalProperties: false,

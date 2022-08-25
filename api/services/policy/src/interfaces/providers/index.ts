@@ -1,7 +1,6 @@
 export { PolicyRepositoryProviderInterfaceResolver } from './PolicyRepositoryProviderInterface';
 export {
   IncentiveRepositoryProviderInterfaceResolver,
-  IncentiveCreateOptionsType,
   IncentiveStatsInterface,
 } from './IncentiveRepositoryProviderInterface';
 export { TripRepositoryProviderInterfaceResolver } from './TripRepositoryProviderInterface';

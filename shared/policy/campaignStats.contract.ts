@@ -1,6 +1,7 @@
 export interface ParamsInterface {
   _id: number;
 }
+
 export interface ResultInterface {
   amount: number;
   trip_subsidized: number;
@@ -9,7 +10,7 @@ export interface ResultInterface {
 
 export const handlerConfig = {
   service: 'campaign',
-  method: 'state',
+  method: 'stats',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

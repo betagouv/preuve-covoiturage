@@ -3,8 +3,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
 
 import { IncentiveRepositoryProviderInterfaceResolver } from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/campaignState.contract';
-import { alias } from '../shared/policy/campaignState.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/campaignStats.contract';
+import { alias } from '../shared/policy/campaignStats.schema';
 
 @handler({
   ...handlerConfig,
@@ -16,12 +16,13 @@ import { alias } from '../shared/policy/campaignState.schema';
     ['validate', alias],
   ],
 })
-export class CampaignStateAction extends AbstractAction {
+export class CampaignStatsAction extends AbstractAction {
   constructor(private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
-    return this.incentiveRepository.getCampaignState(params._id);
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    const stats = await this.incentiveRepository.getPolicyIncentiveStats(params._id);
+    return stats;
   }
 }
