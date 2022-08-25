@@ -43,6 +43,7 @@ export interface MetadataAccessorInterface {
   datetime: Date;
   get(uuid: string): number;
   set(uuid: string, data: number): void;
+  isEmpty(): boolean;
   export(): Array<SerializedAccessibleMetadataInterface>;
 }
 

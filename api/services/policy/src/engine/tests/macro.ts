@@ -16,7 +16,7 @@ interface ProcessParams {
   carpool: Array<Partial<CarpoolInterface>>;
   handler?: PolicyHandlerInterface;
   policy?: Partial<SerializedPolicyInterface>;
-  meta?: SerializedStoredMetadataInterface[];
+  meta?: Array<{ key: string; value: number } & Partial<SerializedStoredMetadataInterface>>;
 }
 
 interface ProcessResult {
@@ -36,13 +36,19 @@ class MemoryMetadataRepository implements MetadataRepositoryProviderInterfaceRes
   }
 }
 export const process = async (t: ExecutionContext, input: ProcessParams, expected: ProcessResult) => {
+  const inputMeta: Array<SerializedStoredMetadataInterface> = (input.meta || []).map(m => ({ datetime: new Date(), policy_id: 1, ...m }));
+  const carpools = input.carpool.map(c => generateCarpool(c));
+  const [start_date, end_date] = carpools.map(c => c.datetime).reduce(([oldest, newest],i) => [i<oldest ? i : oldest, i> newest? i : newest], [new Date,new Date]);
+
   const policyDef: SerializedPolicyInterface = {
+    start_date,
+    end_date,
     _id: 1,
     territory_id: 1,
-    territory_selector: {},
+    territory_selector: {
+      country: ['XXXXX'],
+    },
     name: '',
-    start_date: new Date(),
-    end_date: new Date(),
     status: 'active',
     handler: '',
     ...(input.policy || {}),
@@ -60,12 +66,10 @@ export const process = async (t: ExecutionContext, input: ProcessParams, expecte
         policyDef.status,
       )
     : await Policy.import(policyDef);
-  const store = new MetadataStore(new MemoryMetadataRepository(input.meta));
+  const store = new MetadataStore(new MemoryMetadataRepository(inputMeta));
   const incentives: SerializedIncentiveInterface[] = [];
-  for (const partialCarpool of input.carpool) {
-    const carpool = generateCarpool(partialCarpool);
+  for (const carpool of carpools) {
     const statelessIncentive = await policy.processStateless(carpool);
-    console.log(statelessIncentive, statelessIncentive.export());
     const statefulIncentive = await policy.processStateful(store, statelessIncentive.export());
     incentives.push(statefulIncentive.export());
   }

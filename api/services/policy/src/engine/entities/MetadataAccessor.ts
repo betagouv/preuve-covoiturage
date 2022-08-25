@@ -22,4 +22,8 @@ export class MetadataAccessor implements MetadataAccessorInterface {
     const data = this.data.get(uuid);
     this.data.set(uuid, { ...data, value });
   }
+
+  isEmpty(): boolean {
+    return this.data.size === 0;
+  }
 }

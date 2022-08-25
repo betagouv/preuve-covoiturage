@@ -14,6 +14,7 @@ import {
 } from '../../interfaces';
 import { policies } from '../policies';
 import { StatefulContext, StatelessContext } from './Context';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 
 export class Policy implements PolicyInterface {
   constructor(
@@ -61,7 +62,15 @@ export class Policy implements PolicyInterface {
   async processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface> {
     const context = StatelessContext.fromCarpool(this._id, carpool);
     if (this.guard(carpool)) {
-      this.handler.processStateless(context);
+      try {
+        this.handler.processStateless(context);
+      } catch (e) {
+        if (e instanceof NotEligibleTargetException) {
+          context.incentive.set(0);
+          return context.incentive;
+        }
+        throw e;
+      }
     }
     return context.incentive;
   }
@@ -71,6 +80,9 @@ export class Policy implements PolicyInterface {
     incentive: SerializedIncentiveInterface,
   ): Promise<StatefulIncentiveInterface> {
     const context = await StatefulContext.fromIncentive(store, incentive);
+    if(context.meta.isEmpty()) {
+      return context.incentive;
+    }
     this.handler.processStateful(context);
     await store.save(context.meta);
     return context.incentive;

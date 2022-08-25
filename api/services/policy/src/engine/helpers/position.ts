@@ -7,7 +7,7 @@ import {
 
 function inList(selectors: TerritorySelectorsInterface, territory: TerritoryCodeInterface): boolean {
   if (!selectors || Object.keys(selectors).length === 0) {
-    return true;
+    return false;
   }
   for (const selector of Object.keys(selectors)) {
     const list = selectors[selector] || [];
