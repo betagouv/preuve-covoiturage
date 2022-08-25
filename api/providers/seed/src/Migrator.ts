@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { URL } from 'url';
+import { Carpool, carpools } from './carpools';
 import { companies, Company } from './companies';
 import { Operator, operators } from './operators';
 import { CreateTerritoryGroupInterface, TerritorySelectorsInterface, territory_groups } from './territories';
@@ -88,6 +89,11 @@ export class Migrator {
       await this.seedTerritoyGroup(territory_group);
     }
 
+    for (const carpool of carpools) {
+      console.debug(`Seeding carpool ${carpool.acquisition_id}`);
+      await this.seedCarpool(carpool);
+    }
+
     /*
           - Territoires
             - company.companies
@@ -144,6 +150,76 @@ export class Migrator {
       }
       done = !!data.done;
     } while (!done);
+  }
+
+  async seedCarpool(carpool: Carpool) {
+    const result = await this.connection.getClient().query({
+      text: `
+        INSERT INTO carpool.identities 
+          (uuid, travel_pass_user_id, over_18)
+        VALUES (
+          $1::uuid,
+          $2::varchar,
+          $3::boolean
+        )
+        ON CONFLICT DO NOTHING
+        RETURNING _id
+      `,
+      values: [carpool.identity_uuid, carpool.identity_travel_pass, carpool.identity_over_18],
+    });
+
+    await this.connection.getClient().query({
+      text: `
+        INSERT INTO carpool.carpools 
+          (
+            identity_id,
+            acquisition_id,
+            operator_id,
+            trip_id,
+            status,
+            is_driver,
+            operator_class,
+            datetime,
+            duration,
+            start_position,
+            start_geo_code,
+            end_position,
+            end_geo_code,
+            distance,
+            seats,
+            operator_trip_id,
+            cost,
+            operator_journey_id,
+            meta
+          )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+        ON CONFLICT DO NOTHING
+      `,
+      values: [
+        result.rows[0]?._id,
+        carpool.acquisition_id,
+        carpool.operator_id,
+        carpool.trip_id,
+        carpool.status,
+        carpool.is_driver,
+        carpool.operator_class,
+        carpool.datetime,
+        carpool.duration,
+        `POINT(${carpool.start_position.lon} ${carpool.start_position.lat})`,
+        carpool.start_geo_code,
+        `POINT(${carpool.end_position.lon} ${carpool.end_position.lat})`,
+        carpool.end_geo_code,
+        carpool.distance,
+        carpool.seats,
+        carpool.operator_trip_id,
+        carpool.cost,
+        carpool.operator_journey_id,
+        JSON.stringify({
+          calc_distance: carpool.calc_distance,
+          calc_duration: carpool.calc_duration,
+        }),
+      ],
+    });
   }
 
   async seedCompany(company: Company) {
