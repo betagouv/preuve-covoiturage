@@ -13,7 +13,7 @@ import {
   StatelessIncentiveInterface,
 } from '../interfaces';
 import { v4 } from 'uuid';
-import { Policy } from '~/engine/entities/Policy';
+import { Policy } from '../engine/entities/Policy';
 
 @handler({
   ...handlerConfig,

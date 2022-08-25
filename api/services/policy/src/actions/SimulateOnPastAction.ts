@@ -6,8 +6,8 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/polic
 
 import { alias } from '../shared/policy/simulateOn.schema';
 import { TripRepositoryProviderInterfaceResolver, TerritoryRepositoryProviderInterfaceResolver } from '../interfaces';
-import { Policy } from '~/engine/entities/Policy';
-import { MetadataStore } from '~/engine/entities/MetadataStore';
+import { Policy } from '../engine/entities/Policy';
+import { MetadataStore } from '../engine/entities/MetadataStore';
 
 @handler({
   ...handlerConfig,

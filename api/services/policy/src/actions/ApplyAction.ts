@@ -15,7 +15,7 @@ import {
   PolicyRepositoryProviderInterfaceResolver,
   StatelessIncentiveInterface,
 } from '../interfaces';
-import { Policy } from '~/engine/entities/Policy';
+import { Policy } from '../engine/entities/Policy';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class ApplyAction extends AbstractAction implements InitHookInterface {

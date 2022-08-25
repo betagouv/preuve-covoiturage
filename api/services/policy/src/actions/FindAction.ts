@@ -1,7 +1,7 @@
 import { handler, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
-import { Policy } from '~/engine/entities/Policy';
+import { Policy } from '../engine/entities/Policy';
 
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/find.contract';

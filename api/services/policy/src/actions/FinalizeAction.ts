@@ -17,8 +17,8 @@ import {
   MetadataLifetime,
   PolicyInterface,
 } from '../interfaces';
-import { Policy } from '~/engine/entities/Policy';
-import { MetadataStore } from '~/engine/entities/MetadataStore';
+import { Policy } from '../engine/entities/Policy';
+import { MetadataStore } from '../engine/entities/MetadataStore';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class FinalizeAction extends AbstractAction implements InitHookInterface {

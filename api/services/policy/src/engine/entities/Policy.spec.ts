@@ -1,7 +1,7 @@
 import test from 'ava';
 import { applyForMaximum, watchForGlobalMaxAmount, perKm } from '../helpers';
 import { process } from '../tests/macro';
-import { PolicyHandlerInterface, StatefulContextInterface, StatelessContextInterface } from '../interfaces';
+import { PolicyHandlerInterface, StatefulContextInterface, StatelessContextInterface } from '../../interfaces';
 
 class TestHandler implements PolicyHandlerInterface {
   processStateless(ctx: StatelessContextInterface): void {

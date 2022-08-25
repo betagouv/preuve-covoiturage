@@ -7,7 +7,7 @@ import {
   SerializedIncentiveInterface,
   SerializedPolicyInterface,
   SerializedStoredMetadataInterface,
-} from '~/interfaces';
+} from '../../interfaces';
 import { MetadataStore } from '../entities/MetadataStore';
 import { Policy } from '../entities/Policy';
 import { generateCarpool } from './helpers';
@@ -65,6 +65,7 @@ export const process = async (t: ExecutionContext, input: ProcessParams, expecte
   for (const partialCarpool of input.carpool) {
     const carpool = generateCarpool(partialCarpool);
     const statelessIncentive = await policy.processStateless(carpool);
+    console.log(statelessIncentive, statelessIncentive.export());
     const statefulIncentive = await policy.processStateful(store, statelessIncentive.export());
     incentives.push(statefulIncentive.export());
   }

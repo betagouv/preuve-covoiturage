@@ -10,7 +10,7 @@ import {
   MetadataStoreInterface,
   SerializedIncentiveInterface,
   StatelessContextInterface,
-} from '../interfaces';
+} from '../../interfaces';
 import { generateCarpool, generateIncentive } from '../tests/helpers';
 import {
   applyForMaximum,
