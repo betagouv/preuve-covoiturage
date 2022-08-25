@@ -10,7 +10,7 @@ import { alias } from '../shared/policy/list.schema';
   ...handlerConfig,
   middlewares: [hasPermissionMiddleware('common.policy.list'), ['validate', alias]],
 })
-export class ListCampaignAction extends AbstractAction {
+export class ListAction extends AbstractAction {
   protected readonly sensitiveRules = ['operator_whitelist_filter'];
 
   constructor(private repository: PolicyRepositoryProviderInterfaceResolver) {

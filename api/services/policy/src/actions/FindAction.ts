@@ -17,7 +17,7 @@ import { alias } from '../shared/policy/find.schema';
     ['validate', alias],
   ],
 })
-export class FindCampaignAction extends AbstractAction {
+export class FindAction extends AbstractAction {
   constructor(
     private policyRepository: PolicyRepositoryProviderInterfaceResolver,
   ) {

@@ -1,11 +1,11 @@
-import { CampaignInterface } from './common/interfaces/CampaignInterface';
+import { PolicyInterface } from './common/interfaces/PolicyInterface';
 
 export interface ParamsInterface {
   territory_id?: number | null;
   status?: string;
 }
 
-export type ResultInterface = Array<Omit<CampaignInterface, 'description'>>;
+export type ResultInterface = Array<Omit<PolicyInterface, 'description'>>;
 
 export const handlerConfig = {
   service: 'campaign',

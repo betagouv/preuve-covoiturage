@@ -14,14 +14,14 @@ import { MetadataStore } from '~/engine/entities/MetadataStore';
   middlewares: [
     ['validate', alias],
     validateDateMiddleware({
-      startPath: 'campaign.start_date',
-      endPath: 'campaign.end_date',
+      startPath: 'policy.start_date',
+      endPath: 'policy.end_date',
       minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 5),
       maxEnd: () => new Date(),
     }),
     ...copyGroupIdAndApplyGroupPermissionMiddlewares(
       { territory: 'territory.policy.simulate.past', registry: 'registry.policy.simulate.past' },
-      'campaign',
+      'policy',
     ),
   ],
 })
@@ -35,8 +35,8 @@ export class SimulateOnPastAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     // 1. Find selector and instanciate policy
-    const territory_selector = await this.territoryRepository.findSelectorFromId(params.campaign.territory_id);
-    const policy = await Policy.import({ ...params.campaign, territory_selector, _id: 1 });
+    const territory_selector = await this.territoryRepository.findSelectorFromId(params.policy.territory_id);
+    const policy = await Policy.import({ ...params.policy, territory_selector, _id: 1 });
 
     // 2. Start a cursor to find trips
     const cursor = this.tripRepository.findTripByPolicy(policy, policy.start_date, policy.end_date);

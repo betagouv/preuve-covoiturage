@@ -1,10 +1,10 @@
-import { CampaignInterface } from './common/interfaces/CampaignInterface';
+import { PolicyInterface } from './common/interfaces/PolicyInterface';
 export interface ParamsInterface {
   _id: number;
   territory_id?: number;
 }
 
-export interface ResultInterface extends CampaignInterface {}
+export interface ResultInterface extends PolicyInterface {}
 
 export const handlerConfig = {
   service: 'campaign',

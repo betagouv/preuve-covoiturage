@@ -1,13 +1,13 @@
-import { schema as campaignSchema } from './common/schemas/campaign';
+import { schema as policySchema } from './common/schemas/policy';
 
 export const alias = 'campaign.simulateOn';
 
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['campaign'],
+  required: ['policy'],
   properties: {
-    campaign: campaignSchema,
+    policy: policySchema,
   },
 };
 

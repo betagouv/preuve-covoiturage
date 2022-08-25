@@ -1,7 +1,7 @@
-import { CampaignInterface } from './common/interfaces/CampaignInterface';
+import { PolicyInterface } from './common/interfaces/PolicyInterface';
 
 export interface ParamsInterface {
-  campaign: CampaignInterface;
+  policy: PolicyInterface;
 }
 
 export interface ResultInterface {

@@ -10,20 +10,21 @@ import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
 import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOn.schema';
 import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
+import { binding as statsSchemaBinding } from './shared/policy/stats.schema';
 
 import { ApplyAction } from './actions/ApplyAction';
 import { FinalizeAction } from './actions/FinalizeAction';
-import { FindCampaignAction } from './actions/FindCampaignAction';
-import { ListCampaignAction } from './actions/ListCampaignAction';
+import { FindAction } from './actions/FindAction';
+import { ListAction } from './actions/ListAction';
 import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
 import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
+import { StatsAction } from './actions/StatsAction';
 
 import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvider';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
-import { CampaignStatsAction } from './actions/CampaignStatsAction';
 
 @serviceProvider({
   config,
@@ -34,15 +35,21 @@ import { CampaignStatsAction } from './actions/CampaignStatsAction';
     IncentiveRepositoryProvider,
     TerritoryRepositoryProvider,
   ],
-  validator: [listSchemaBinding, findSchemaBinding, simulateOnSchemaBinding, simulateOnFutureSchemaBinding],
+  validator: [
+    listSchemaBinding,
+    findSchemaBinding,
+    simulateOnSchemaBinding,
+    simulateOnFutureSchemaBinding,
+    statsSchemaBinding,
+  ],
   handlers: [
-    ListCampaignAction,
-    FindCampaignAction,
     ApplyAction,
     FinalizeAction,
-    SimulateOnPastAction,
+    FindAction,
+    ListAction,
     SimulateOnFutureAction,
-    CampaignStatsAction,
+    SimulateOnPastAction,
+    StatsAction,
   ],
   connections: [
     [PostgresConnection, 'connections.postgres'],

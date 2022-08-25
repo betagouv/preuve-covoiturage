@@ -1,7 +1,7 @@
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['territory_id', 'name', 'uses'],
+  required: ['territory_id', 'name', 'handler'],
   properties: {
     territory_id: {
       macro: 'serial',
@@ -15,5 +15,10 @@ export const schema = {
     end_date: {
       macro: 'timestamp',
     },
+    handler: {
+      type: 'string',
+      maxLength: 30,
+      pattern: '^([A-Za-z])*$',
+    }
   },
 };

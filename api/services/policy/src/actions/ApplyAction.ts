@@ -64,7 +64,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       await this.dispatch();
       return;
     }
-    await this.processCampaign(params.policy_id, params.override_from);
+    await this.processPolicy(params.policy_id, params.override_from);
     console.debug('[policies] stateless finished');
   }
 
@@ -75,7 +75,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     }
   }
 
-  protected async processCampaign(policy_id: number, override_from?: Date): Promise<void> {
+  protected async processPolicy(policy_id: number, override_from?: Date): Promise<void> {
     console.debug(`[policy ${policy_id}] starting`, { policy_id, override_from });
 
     // 1. Find policy
