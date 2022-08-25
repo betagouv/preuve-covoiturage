@@ -37,6 +37,7 @@ export {
 } from './MetadataInterface';
 
 export {
+  CommonIncentiveInterface,
   IncentiveStateEnum,
   IncentiveStatusEnum,
   SerializedIncentiveInterface,

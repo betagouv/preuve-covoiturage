@@ -54,7 +54,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     await this.connection.getClient().query(query);
   }
 
-  async updateStatefulAmount(data: SerializedIncentiveInterface[], status?: IncentiveStatusEnum): Promise<void> {
+  async updateStatefulAmount(data: SerializedIncentiveInterface<number>[], status?: IncentiveStatusEnum): Promise<void> {
     const idSet: Set<string> = new Set();
 
     // get only last incentive for each carpool / policy
@@ -115,7 +115,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     to: Date,
     batchSize = 100,
     from?: Date,
-  ): AsyncGenerator<SerializedIncentiveInterface[], void, void> {
+  ): AsyncGenerator<SerializedIncentiveInterface<number>[], void, void> {
     const resCount = await this.connection.getClient().query({
       text: `
       SELECT
@@ -173,7 +173,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     cursor.close(() => client.release());
   }
 
-  async createOrUpdateMany(data: SerializedIncentiveInterface[]): Promise<void> {
+  async createOrUpdateMany(data: SerializedIncentiveInterface<undefined>[]): Promise<void> {
     const idSet: Set<string> = new Set();
     const filteredData = data
       .reverse()

@@ -13,8 +13,8 @@ export enum IncentiveStatusEnum {
   Error = 'error',
 }
 
-export interface SerializedIncentiveInterface {
-  _id: number;
+export interface SerializedIncentiveInterface<T = number> {
+  _id: T;
   policy_id: number;
   carpool_id: number;
   datetime: Date;
@@ -25,16 +25,17 @@ export interface SerializedIncentiveInterface {
   meta: Array<SerializedMetadataVariableDefinitionInterface>;
 }
 
-interface CommonIncentiveInterface {
+export interface CommonIncentiveInterface {
   get(): number;
   set(amount: number): void;
-  export(): SerializedIncentiveInterface;
 }
 
 export interface StatelessIncentiveInterface extends CommonIncentiveInterface {
+  export(): SerializedIncentiveInterface<undefined>;
   setMeta(registry: MetadataRegistryInterface): void;
 }
 
 export interface StatefulIncentiveInterface extends CommonIncentiveInterface {
+  export(): SerializedIncentiveInterface<number>;
   getMeta(): MetadataRegistryInterface;
 }

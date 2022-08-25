@@ -8,9 +8,9 @@ import {
 } from '../../interfaces';
 import { MetadataRegistry } from './MetadataRegistry';
 
-export class Incentive implements StatelessIncentiveInterface, StatefulIncentiveInterface {
+export class Incentive<T> { 
   constructor(
-    public readonly _id: number | undefined,
+    public readonly _id: T,
     public readonly policy_id: number,
     public readonly carpool_id: number,
     public readonly datetime: Date,
@@ -21,8 +21,8 @@ export class Incentive implements StatelessIncentiveInterface, StatefulIncentive
     public meta: MetadataRegistryInterface,
   ) {}
 
-  static create(policy_id: number, carpool_id: number, datetime: Date, meta?: MetadataRegistryInterface): Incentive {
-    return new Incentive(
+  static create(policy_id: number, carpool_id: number, datetime: Date, meta?: MetadataRegistryInterface): Incentive<undefined> {
+    return new StatelessIncentive(
       undefined,
       policy_id,
       carpool_id,
@@ -35,7 +35,7 @@ export class Incentive implements StatelessIncentiveInterface, StatefulIncentive
     );
   }
 
-  static import(data: SerializedIncentiveInterface): Incentive {
+  static import(data: SerializedIncentiveInterface): Incentive<number> {
     return new Incentive(
       data._id,
       data.policy_id,
@@ -49,7 +49,7 @@ export class Incentive implements StatelessIncentiveInterface, StatefulIncentive
     );
   }
 
-  export(): SerializedIncentiveInterface {
+  export(): SerializedIncentiveInterface<T> {
     return {
       _id: this._id,
       policy_id: this.policy_id,
@@ -82,5 +82,17 @@ export class Incentive implements StatelessIncentiveInterface, StatefulIncentive
 
   setMeta(registry: MetadataRegistryInterface): void {
     this.meta = registry;
+  }
+}
+
+export class StatelessIncentive extends Incentive<undefined> implements StatelessIncentiveInterface{
+  export(): SerializedIncentiveInterface<undefined> {
+    return super.export();
+  }
+}
+
+export class StatefulIncentive extends Incentive<number> implements StatefulIncentiveInterface {
+  export(): SerializedIncentiveInterface<number> {
+    return super.export();
   }
 }
