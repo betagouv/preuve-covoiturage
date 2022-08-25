@@ -19,8 +19,8 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
   ): Promise<SerializedStoredMetadataInterface> {
     const res = await client.query({
       text: `
-        SELECT key, value FROM ${this.table}
-        WHERE policy_id = $1, key = $2 ${datetime ? ', datetime <= $3' : ''}
+        SELECT datetime, policy_id, key, value FROM ${this.table}
+        WHERE policy_id = $1 AND key = $2 ${datetime ? 'AND datetime <= $3' : ''}
         ORDER BY datetime DESC, updated_at DESC
         LIMIT 1
       `,
@@ -34,13 +34,17 @@ export class MetadataRepositoryProvider implements MetadataRepositoryProviderInt
     try {
       const result = [];
       for (const key of keys) {
-        result.push(await this.getSingle(connection, policyId, key, datetime));
+        const r = await this.getSingle(connection, policyId, key, datetime);
+        if (r) {
+          result.push(r);
+        }
       }
       return result;
     } finally {
       connection.release();
     }
   }
+
   async set(data: SerializedStoredMetadataInterface[]): Promise<void> {
     const values: [Array<number>, Array<string>, Array<number>, Array<Date>] = data.reduce(
       ([policyIds, keys, values, dates], i) => {

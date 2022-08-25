@@ -1,46 +1,83 @@
 import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from '@ilos/connection-postgres';
-
+import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
+import { Policy } from '../engine/entities/Policy';
 import { TripRepositoryProvider } from './TripRepositoryProvider';
 
 interface TestContext {
-  connection: PostgresConnection;
+  db: DbContext;
   repository: TripRepositoryProvider;
 }
 
 const test = anyTest as TestFn<TestContext>;
+const { before, after } = makeDbBeforeAfter();
 
-test.before.skip(async (t) => {
-  t.context.connection = new PostgresConnection({
-    connectionString:
-      'APP_POSTGRES_URL' in process.env
-        ? process.env.APP_POSTGRES_URL
-        : 'postgresql://postgres:postgres@localhost:5432/local',
+test.before(async (t) => {
+  const db = await before();
+  t.context.db = db;
+  t.context.repository = new TripRepositoryProvider(t.context.db.connection);
+});
+
+test.after.always(async (t) => {
+  await after(t.context.db);
+});
+
+test.serial('Should find carpools', async (t) => {
+  const r = await t.context.db.connection.getClient().query(`SELECT * FROM carpool.carpools`);
+  const start_date = new Date('2022-06-01');
+  const end_date = new Date('2022-06-30');
+
+  const policy = await Policy.import({
+    _id: 1,
+    territory_id: 1,
+    territory_selector: { aom: ['217500016'] },
+    start_date,
+    end_date,
+    name: 'Policy',
+    handler: 'Idfm',
+    status: 'active',
   });
-  await t.context.connection.up();
-  t.context.repository = new TripRepositoryProvider(t.context.connection);
-});
 
-test.after.always.skip(async (t) => {
-  await t.context.connection.down();
-});
-
-test.skip('Should work', async (t) => {
-  // const i = await t.context.repository.findTripByPolicy(
-  //   new ProcessableCampaign({
-  //     territory_id: 310,
-  //     name: 'name',
-  //     description: 'description',
-  //     start_date: new Date('2019-07-15'),
-  //     end_date: new Date(),
-  //     unit: 'euros',
-  //     status: 'dontcare',
-  //     global_rules: [],
-  //     rules: [],
-  //   }),
-  // );
-  // need fixture to test this behavior
-  // t.log(await i.next());
-  // t.log(await i.next());
-  t.pass();
+  const cursor = t.context.repository.findTripByPolicy(policy, start_date, end_date);
+  const { value } = await cursor.next();
+  await cursor.next();
+  t.true(Array.isArray(value));
+  t.log(value);
+  t.deepEqual(
+    (value || [])
+      .map((c) => ({
+        start: c.start,
+        end: c.end,
+        operator_siret: c.operator_siret,
+        datetime: c.datetime,
+        distance: c.distance,
+        duration: c.duration,
+      }))
+      .shift(),
+    {
+      start: {
+        aom: '217500016',
+        arr: '91471',
+        com: '91471',
+        country: 'XXXXX',
+        dep: '91',
+        epci: '200056232',
+        reg: '11',
+        reseau: 232,
+      },
+      end: {
+        aom: '217500016',
+        arr: '91377',
+        com: '91377',
+        country: 'XXXXX',
+        dep: '91',
+        epci: '200056232',
+        reg: '11',
+        reseau: 232,
+      },
+      operator_siret: '89248032800012',
+      datetime: new Date('2022-06-15'),
+      distance: 10000,
+      duration: 900,
+    },
+  );
 });

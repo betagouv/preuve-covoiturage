@@ -54,7 +54,10 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     await this.connection.getClient().query(query);
   }
 
-  async updateStatefulAmount(data: SerializedIncentiveInterface<number>[], status?: IncentiveStatusEnum): Promise<void> {
+  async updateStatefulAmount(
+    data: SerializedIncentiveInterface<number>[],
+    status?: IncentiveStatusEnum,
+  ): Promise<void> {
     const idSet: Set<string> = new Set();
 
     // get only last incentive for each carpool / policy
@@ -83,8 +86,8 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       WITH data AS (
         SELECT * FROM UNNEST (
           $1::int[],
-          $3::int[],
-          $4::policy.incentive_status_enum[]
+          $2::int[],
+          $3::policy.incentive_status_enum[]
         ) as t(
           _id,
           amount,
@@ -138,8 +141,8 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         carpool_id,
         policy_id,
         datetime,
-        result as statelessAmount,
-        amount as statefulAmount,
+        result as stateless_amount,
+        amount as stateful_amount,
         status,
         state,
         meta
@@ -163,7 +166,14 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         const rows = await promisifiedCursorRead(batchSize);
         count = rows.length;
         if (count > 0) {
-          yield rows;
+          yield rows.map((r) => {
+            const { stateful_amount, stateless_amount, ...other } = r;
+            return {
+              ...other,
+              statefulAmount: r.stateful_amount,
+              statelessAmount: r.stateless_amount,
+            };
+          });
         }
       } catch (e) {
         cursor.close(() => client.release());
@@ -208,7 +218,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           statefulAmounts.push(i.statefulAmount),
           statuses.push(i.status),
           states.push(i.state),
-          metas.push(i.meta);
+          metas.push(JSON.stringify(i.meta));
         return [policyIds, carpoolIds, datetimes, statelessAmounts, statefulAmounts, statuses, states, metas];
       },
       [[], [], [], [], [], [], [], []],

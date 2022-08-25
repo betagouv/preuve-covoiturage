@@ -1,74 +1,72 @@
 import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 
 import { IncentiveRepositoryProvider } from './IncentiveRepositoryProvider';
 import { IncentiveStateEnum, IncentiveStatusEnum } from '../interfaces';
 
 interface TestContext {
-  connection: PostgresConnection;
+  db: DbContext;
   repository: IncentiveRepositoryProvider;
 }
 
 const test = anyTest as TestFn<TestContext>;
+const { before, after } = makeDbBeforeAfter();
 
-test.before.skip(async (t) => {
-  t.context.connection = new PostgresConnection({
-    connectionString:
-      'APP_POSTGRES_URL' in process.env
-        ? process.env.APP_POSTGRES_URL
-        : 'postgresql://postgres:postgres@localhost:5432/local',
-  });
-  await t.context.connection.up();
-  t.context.repository = new IncentiveRepositoryProvider(t.context.connection);
+test.before(async (t) => {
+  const db = await before();
+  t.context.db = db;
+  t.context.repository = new IncentiveRepositoryProvider(t.context.db.connection);
 });
 
-test.after.always.skip(async (t) => {
-  await t.context.connection.getClient().query({
-    text: `DELETE FROM ${t.context.repository.table} WHERE policy_id = $1`,
-    values: [0],
-  });
-  await t.context.connection.down();
+test.after.always(async (t) => {
+  await after(t.context.db);
 });
 
-test.serial.skip('Should create many incentives', async (t) => {
+test.serial('Should create many incentives', async (t) => {
   const incentives = [
     {
+      _id: undefined,
       policy_id: 0,
       carpool_id: 1,
       datetime: new Date(),
-      result: 0,
-      amount: 0,
+      statelessAmount: 0,
+      statefulAmount: 0,
       status: IncentiveStatusEnum.Draft,
       state: IncentiveStateEnum.Regular,
-      meta: {},
+      meta: [],
     },
     {
+      _id: undefined,
       policy_id: 0,
       carpool_id: 1,
       datetime: new Date(),
-      result: 100,
-      amount: 100,
+      statelessAmount: 100,
+      statefulAmount: 100,
       status: IncentiveStatusEnum.Draft,
       state: IncentiveStateEnum.Regular,
-      meta: {},
+      meta: [],
     },
     {
+      _id: undefined,
       policy_id: 0,
       carpool_id: 2,
       datetime: new Date(),
-      result: 200,
-      amount: 200,
+      statelessAmount: 200,
+      statefulAmount: 200,
       status: IncentiveStatusEnum.Draft,
       state: IncentiveStateEnum.Regular,
-      meta: {
-        my: 'meta',
-      },
+      meta: [
+        {
+          uuid: 'uuid',
+          key: 'key',
+        },
+      ],
     },
   ];
 
   await t.context.repository.createOrUpdateMany(incentives);
 
-  const incentiveResults = await t.context.connection.getClient().query({
+  const incentiveResults = await t.context.db.connection.getClient().query({
     text: `SELECT * FROM ${t.context.repository.table} WHERE policy_id = $1`,
     values: [0],
   });
@@ -77,45 +75,51 @@ test.serial.skip('Should create many incentives', async (t) => {
   t.is(incentiveResults.rows.find((i) => i.carpool_id === 2).result, 200);
 });
 
-test.serial.skip('Should update many incentives', async (t) => {
+test.serial('Should update many incentives', async (t) => {
   const incentives = [
     {
+      _id: undefined,
       policy_id: 0,
       carpool_id: 1,
       datetime: new Date(),
-      result: 0,
-      amount: 0,
+      statelessAmount: 0,
+      statefulAmount: 0,
       status: IncentiveStatusEnum.Draft,
       state: IncentiveStateEnum.Regular,
-      meta: {},
+      meta: [
+        {
+          uuid: 'uuid',
+          key: 'key',
+        },
+      ],
     },
     {
+      _id: undefined,
       policy_id: 0,
       carpool_id: 2,
       datetime: new Date(),
-      result: 500,
-      amount: 500,
+      statelessAmount: 500,
+      statefulAmount: 500,
       status: IncentiveStatusEnum.Draft,
       state: IncentiveStateEnum.Regular,
-      meta: {
-        my: 'meta',
-      },
+      meta: [],
     },
     {
+      _id: undefined,
       policy_id: 0,
       carpool_id: 3,
       datetime: new Date(),
-      result: 100,
-      amount: 100,
+      statelessAmount: 100,
+      statefulAmount: 100,
       status: IncentiveStatusEnum.Draft,
       state: IncentiveStateEnum.Regular,
-      meta: {},
+      meta: [],
     },
   ];
 
   await t.context.repository.createOrUpdateMany(incentives);
 
-  const incentiveResults = await t.context.connection.getClient().query({
+  const incentiveResults = await t.context.db.connection.getClient().query({
     text: `SELECT * FROM ${t.context.repository.table} WHERE policy_id = $1`,
     values: [0],
   });
@@ -127,25 +131,16 @@ test.serial.skip('Should update many incentives', async (t) => {
   t.is(incentiveResults.rows.find((i) => i.carpool_id === 3).result, 100);
 });
 
-test.serial.skip('Should update many incentives amount', async (t) => {
-  const data = [
-    {
-      policy_id: 0,
-      carpool_id: 3,
-      amount: 0,
-      status: IncentiveStatusEnum.Draft,
-    },
-    {
-      policy_id: 0,
-      carpool_id: 2,
-      amount: 0,
-      status: IncentiveStatusEnum.Draft,
-    },
-  ];
+test.serial('Should update many incentives amount', async (t) => {
+  const incentives = await t.context.db.connection.getClient().query({
+    text: `SELECT * FROM ${t.context.repository.table} WHERE policy_id = $1`,
+    values: [0],
+  });
 
-  await t.context.repository.updateManyAmount(data);
+  const data = incentives.rows.map((i) => ({ ...i, statefulAmount: 0 }));
+  await t.context.repository.updateStatefulAmount(data as any);
 
-  const incentiveResults = await t.context.connection.getClient().query({
+  const incentiveResults = await t.context.db.connection.getClient().query({
     text: `SELECT * FROM ${t.context.repository.table} WHERE policy_id = $1`,
     values: [0],
   });
@@ -153,4 +148,34 @@ test.serial.skip('Should update many incentives amount', async (t) => {
   t.log(incentiveResults.rows);
   t.is(incentiveResults.rowCount, 3);
   t.is(incentiveResults.rows.filter((i) => i.state === 'null').length, 3);
+});
+
+test.serial('Should list draft incentive', async (t) => {
+  const cursor = t.context.repository.findDraftIncentive(new Date());
+  const { value } = await cursor.next();
+  await cursor.next();
+  t.log(value);
+  t.true(Array.isArray(value));
+  const incentives = (Array.isArray(value) ? value : []).map((v) => ({
+    carpool_id: v.carpool_id,
+    statefulAmount: v.statefulAmount,
+    statelessAmount: v.statelessAmount,
+  }));
+  t.deepEqual(incentives, [
+    {
+      carpool_id: 1,
+      statefulAmount: 0,
+      statelessAmount: 0,
+    },
+    {
+      carpool_id: 2,
+      statefulAmount: 0,
+      statelessAmount: 500,
+    },
+    {
+      carpool_id: 3,
+      statefulAmount: 0,
+      statelessAmount: 100,
+    },
+  ]);
 });

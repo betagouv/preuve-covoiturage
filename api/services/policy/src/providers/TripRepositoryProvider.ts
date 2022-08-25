@@ -15,7 +15,6 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
 
   constructor(protected connection: PostgresConnection) {}
 
-  // TODO operator_siret
   async *findTripByPolicy(
     policy: PolicyInterface,
     from: Date,
@@ -38,43 +37,39 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
     const query = {
       text: `
         SELECT
-          json_agg(
-            json_build_object(
-              '_id', t.carpool_id,
-              'trip_id', t.trip_id,
-              'identity_uuid', t.identity_uuid,
-              'operator_siret', t.operator_siret,
-              'operator_class', t.operator_class,
-              'is_over_18', t.is_over_18,
-              'is_driver', t.is_driver,
-              'has_travel_pass', t.has_travel_pass,
-              'datetime', t.datetime,
-              'seats', t.seats,
-              'duration', t.duration,
-              'distance', t.distance,
-              'cost', t.cost,
-              'start', t.carpool_start,
-              'end', t.carpool_end
-            )
-          ) AS people
-          FROM ${this.table} t
-          ${
-            override
-              ? ''
-              : `
-          LEFT JOIN ${this.incentiveTable} pi
-            ON t.carpool_id = pi.carpool_id
-            AND pi.policy_id = $4::int
-          `
-          }
-          WHERE
-            (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[])) AND
-            t.datetime >= $2::timestamp AND
-            t.datetime < $3::timestamp AND
-            t.carpool_status = 'ok'::carpool.carpool_status_enum
-            ${override ? '' : 'AND pi.carpool_id IS NULL'}
-          ORDER BY min(t.datetime) ASC
-      `,
+          t.carpool_id as _id,
+          t.trip_id,
+          t.identity_uuid,
+          t.operator_siret,
+          t.operator_class,
+          t.is_over_18,
+          t.is_driver,
+          t.has_travel_pass,
+          t.datetime,
+          t.seats,
+          t.duration,
+          t.distance,
+          t.cost,
+          t.carpool_start as start,
+          t.carpool_end as end
+        FROM ${this.table} t
+        ${
+          override
+            ? ''
+            : `
+              LEFT JOIN ${this.incentiveTable} pi
+                ON t.carpool_id = pi.carpool_id
+                AND pi.policy_id = $4::int
+            `
+        }
+        WHERE
+          (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[])) AND
+          t.datetime >= $2::timestamp AND
+          t.datetime < $3::timestamp AND
+          t.carpool_status = 'ok'::carpool.carpool_status_enum
+          ${override ? '' : 'AND pi.carpool_id IS NULL'}
+        ORDER BY t.datetime ASC
+        `,
       values: override ? [com, from, to] : [com, from, to, policy._id],
     };
 

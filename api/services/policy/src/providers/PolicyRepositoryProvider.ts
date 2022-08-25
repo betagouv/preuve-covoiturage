@@ -13,7 +13,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface> {
+  async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined> {
     const values = [id];
     if (!!territoryId) {
       values.push(territoryId);
@@ -31,14 +31,14 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           pp.status
         FROM ${this.table} as pp,
         LATERAL (
-          SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory])
+          SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory_id])
         ) as sel
         WHERE pp._id = $1
         AND pp.deleted_at IS NULL
         ${!!territoryId ? 'AND pp.territory_id = $2' : ''}
         LIMIT 1
       `,
-      values: [id],
+      values: [id, ...(territoryId ? [territoryId] : [])],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -50,7 +50,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     return result.rows[0];
   }
 
-  async create(data: SerializedPolicyInterface): Promise<SerializedPolicyInterface> {
+  async create(data: Omit<SerializedPolicyInterface, '_id'>): Promise<SerializedPolicyInterface> {
     const query = {
       text: `
         INSERT INTO ${this.table} (
@@ -59,7 +59,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           end_date,
           name,
           status,
-          uses
+          handler
         ) VALUES (
           $1,
           $2,
@@ -143,30 +143,32 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       switch (key) {
         case '_id':
           values.push(search[key]);
-          whereClauses.push(`_id = $${values.length}`);
+          whereClauses.push(`pp._id = $${values.length}`);
           break;
         case 'status':
           values.push(search[key]);
-          whereClauses.push(`status::text = $${values.length}`);
+          whereClauses.push(`pp.status::text = $${values.length}`);
           break;
         case 'territory_id':
           const tid = search[key];
           if (tid === null) {
-            whereClauses.push('territory_id IS NULL');
+            whereClauses.push('pp.territory_id IS NULL');
           } else if (Array.isArray(tid)) {
             values.push(tid);
-            whereClauses.push(`territory_id = ANY($${values.length}::int[])`);
+            whereClauses.push(`pp.territory_id = ANY($${values.length}::int[])`);
           } else {
             values.push(tid);
-            whereClauses.push(`territory_id = $${values.length}::int`);
+            whereClauses.push(`pp.territory_id = $${values.length}::int`);
           }
           break;
         case 'datetime':
           values.push(search[key]);
-          whereClauses.push(`start_date <= $${values.length}::timestamp AND end_date >= $${values.length}::timestamp`);
+          whereClauses.push(
+            `pp.start_date <= $${values.length}::timestamp AND pp.end_date >= $${values.length}::timestamp`,
+          );
           break;
         case 'ends_in_the_future':
-          whereClauses.push(`end_date ${search[key] ? '>' : '<'} NOW()`);
+          whereClauses.push(`pp.end_date ${search[key] ? '>' : '<'} NOW()`);
           break;
         default:
           break;
@@ -185,7 +187,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           pp.status
         FROM ${this.table} as pp,
         LATERAL (
-          SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory])
+          SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory_id])
         ) as sel
         WHERE ${whereClauses.join(' AND ')}
       `,

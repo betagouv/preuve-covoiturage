@@ -1,159 +1,128 @@
 import anyTest, { TestFn } from 'ava';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 
 import { MetadataRepositoryProvider } from './MetadataRepositoryProvider';
-import { MetadataWrapper } from './MetadataWrapper';
 
 interface TestContext {
+  db: DbContext;
   repository: MetadataRepositoryProvider;
-  connection: PostgresConnection;
-  policyId: number;
 }
+
 const test = anyTest as TestFn<TestContext>;
+const { before, after } = makeDbBeforeAfter();
 
 test.before(async (t) => {
-  t.context.policyId = 0;
-  t.context.connection = new PostgresConnection({
-    connectionString:
-      'APP_POSTGRES_URL' in process.env
-        ? process.env.APP_POSTGRES_URL
-        : 'postgresql://postgres:postgres@localhost:5432/local',
-  });
-
-  await t.context.connection.up();
-  t.context.repository = new MetadataRepositoryProvider(t.context.connection);
+  const db = await before();
+  t.context.db = db;
+  t.context.repository = new MetadataRepositoryProvider(t.context.db.connection);
 });
 
 test.after.always(async (t) => {
-  // clean db
-  await t.context.connection.getClient().query({
-    text: `DELETE from ${t.context.repository.table} WHERE policy_id = $1`,
-    values: [t.context.policyId],
-  });
-
-  // shutdown connection
-  await t.context.connection.down();
+  await after(t.context.db);
 });
 
-test.serial('should always return a metadata wrapper', async (t) => {
-  const meta = await t.context.repository.get(t.context.policyId);
-  t.true(meta instanceof MetadataWrapper);
-  t.is(meta.keys().length, 0);
-});
-
-test.serial('should create metadata wrapper on database', async (t) => {
-  const meta = await t.context.repository.get(t.context.policyId);
-  t.true(meta instanceof MetadataWrapper);
-  t.is(meta.keys().length, 0);
-  meta.set('toto', 0);
-
-  await t.context.repository.set(t.context.policyId, meta, new Date('2021-01-01'));
-
-  const dbResult = await t.context.connection.getClient().query({
-    text: `SELECT value from ${t.context.repository.table} WHERE policy_id = $1 AND key = $2`,
-    values: [t.context.policyId, 'toto'],
-  });
-
-  t.log(dbResult.rows);
-  t.is(dbResult.rowCount, 1);
-  t.deepEqual(dbResult.rows, [
+test.serial('Should save meta', async (t) => {
+  const data = [
     {
+      policy_id: 1,
+      key: 'my_key',
       value: 0,
+      datetime: new Date('2021-01-01'),
     },
-  ]);
-});
-
-test.serial('should return metadata from database', async (t) => {
-  const meta = await t.context.repository.get(t.context.policyId);
-  t.true(meta instanceof MetadataWrapper);
-  t.is(meta.keys().length, 1);
-  const value = meta.get('toto');
-  t.is(value, 0);
-});
-
-test.serial('should create another metadata wrapper on database', async (t) => {
-  const meta = await t.context.repository.get(t.context.policyId);
-  t.true(meta instanceof MetadataWrapper);
-  t.is(meta.keys().length, 1);
-  meta.set('toto', 1);
-  await t.context.repository.set(t.context.policyId, meta, new Date('2021-02-01'));
-
-  const meta2 = await t.context.repository.get(t.context.policyId);
-  t.is(meta2.keys().length, 1);
-  t.is(meta2.get('toto'), 1);
-  meta2.set('toto', 2);
-  meta2.set('tata', 100);
-
-  await t.context.repository.set(t.context.policyId, meta2, new Date('2021-03-01'));
-
-  const dbResult = await t.context.connection.getClient().query({
-    text: `SELECT key, value from ${t.context.repository.table} WHERE policy_id = $1 ORDER BY key, datetime`,
-    values: [t.context.policyId],
-  });
-
-  t.is(dbResult.rowCount, 4);
-  t.deepEqual(dbResult.rows, [
     {
-      key: 'tata',
+      policy_id: 1,
+      key: 'my_key_2',
+      value: 500,
+      datetime: new Date('2021-02-01'),
+    },
+    {
+      policy_id: 1,
+      key: 'my_key',
       value: 100,
+      datetime: new Date('2021-03-01'),
     },
     {
-      key: 'toto',
-      value: 0,
+      policy_id: 1,
+      key: 'my_key',
+      value: 200,
+      datetime: new Date('2021-04-01'),
     },
-    {
-      key: 'toto',
-      value: 1,
-    },
-    {
-      key: 'toto',
-      value: 2,
-    },
-  ]);
-
-  const meta3 = await t.context.repository.get(t.context.policyId);
-  t.is(meta3.keys().length, 2);
-  t.is(meta3.get('toto'), 2);
-  t.is(meta3.get('tata'), 100);
-});
-
-test.serial('should get old meta if asked at datetime', async (t) => {
-  const meta = await t.context.repository.get(t.context.policyId, ['toto'], new Date('2021-02-01'));
-  t.true(meta instanceof MetadataWrapper);
-  t.is(meta.keys().length, 1);
-  const value = meta.get('toto');
-  t.is(value, 1);
-});
-
-test.serial('should delete from datetime', async (t) => {
-  await t.context.repository.delete(t.context.policyId, new Date('2021-03-01'));
-
-  const dbResult = await t.context.connection.getClient().query({
-    text: `SELECT key, value from ${t.context.repository.table} WHERE policy_id = $1 ORDER BY key, datetime`,
-    values: [t.context.policyId],
+  ];
+  await t.context.repository.set(data);
+  const result = await t.context.db.connection.getClient().query({
+    text: `SELECT policy_id, key, value, datetime FROM ${t.context.repository.table} WHERE policy_id = $1 ORDER BY datetime`,
+    values: [1],
   });
+  t.deepEqual(result.rows, data);
+});
 
-  t.is(dbResult.rowCount, 2);
-
-  t.deepEqual(dbResult.rows, [
+test.serial('Should read meta', async (t) => {
+  const result = await t.context.repository.get(1, ['my_key', 'my_key_2']);
+  t.deepEqual(result, [
     {
-      key: 'toto',
-      value: 0,
+      policy_id: 1,
+      key: 'my_key',
+      value: 200,
+      datetime: new Date('2021-04-01'),
     },
     {
-      key: 'toto',
-      value: 1,
+      policy_id: 1,
+      key: 'my_key_2',
+      value: 500,
+      datetime: new Date('2021-02-01'),
     },
   ]);
 });
 
-test.serial('should delete', async (t) => {
-  await t.context.repository.delete(t.context.policyId);
+test.serial('Should read meta in past', async (t) => {
+  const result = await t.context.repository.get(1, ['my_key', 'my_key_2'], new Date('2021-03-01'));
+  t.deepEqual(result, [
+    {
+      policy_id: 1,
+      key: 'my_key',
+      value: 100,
+      datetime: new Date('2021-03-01'),
+    },
+    {
+      policy_id: 1,
+      key: 'my_key_2',
+      value: 500,
+      datetime: new Date('2021-02-01'),
+    },
+  ]);
+});
 
-  const dbResult = await t.context.connection.getClient().query({
-    text: `SELECT key, value from ${t.context.repository.table} WHERE policy_id = $1 ORDER BY key, datetime`,
-    values: [t.context.policyId],
+test.serial('Should not throw if key not found', async (t) => {
+  const result = await t.context.repository.get(1, ['my_key', 'my_key_2', 'unknown_key'], new Date('2021-01-01'));
+  t.deepEqual(result, [
+    {
+      policy_id: 1,
+      key: 'my_key',
+      value: 0,
+      datetime: new Date('2021-01-01'),
+    },
+  ]);
+});
+
+test.serial('Should delete meta', async (t) => {
+  const data = [
+    {
+      policy_id: 1,
+      key: 'my_key',
+      value: 0,
+      datetime: new Date('2021-01-01'),
+    },
+    {
+      policy_id: 1,
+      key: 'my_key_2',
+      value: 500,
+      datetime: new Date('2021-02-01'),
+    },
+  ];
+  await t.context.repository.delete(1, new Date('2021-03-01'));
+  const result = await t.context.db.connection.getClient().query({
+    text: `SELECT policy_id, key, value, datetime FROM ${t.context.repository.table} WHERE policy_id = $1 ORDER BY datetime`,
+    values: [1],
   });
-
-  t.is(dbResult.rowCount, 0);
+  t.deepEqual(result.rows, data);
 });
