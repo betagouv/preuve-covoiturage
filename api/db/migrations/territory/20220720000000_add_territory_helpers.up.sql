@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION territory.get_selector_by_territory_id(_id int[]) ret
       territory_group_id,
       selector_type,
       ARRAY_AGG(selector_value) as selector_value
-    FROM ${this.territorySelectorTable}
+    FROM territory.territory_group_selector
     WHERE territory_group_id = ANY($1)
     GROUP BY territory_group_id, selector_type
   )
