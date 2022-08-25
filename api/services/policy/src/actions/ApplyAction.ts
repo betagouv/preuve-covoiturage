@@ -59,11 +59,13 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    console.debug('[policies] stateless starting');
     if (!('policy_id' in params)) {
       await this.dispatch();
       return;
     }
     await this.processCampaign(params.policy_id, params.override_from);
+    console.debug('[policies] stateless finished');
   }
 
   protected async dispatch(): Promise<void> {
@@ -74,7 +76,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
   }
 
   protected async processCampaign(policy_id: number, override_from?: Date): Promise<void> {
-    console.debug('PROCESS CAMPAIGN', { policy_id, override_from });
+    console.debug(`[policy ${policy_id}] starting`, { policy_id, override_from });
 
     // 1. Find policy
     const policy = await Policy.import(await this.policyRepository.find(policy_id));
@@ -105,13 +107,13 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       }
 
       // 4. Save incentives
-      console.debug(`STORE ${incentives.length} incentives`);
+      console.debug(`[policy ${policy_id}] stored ${incentives.length} incentives`);
       await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
 
       // benchmark
       const ms = new Date().getTime() - start.getTime();
       console.debug(
-        `[campaign ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(
+        `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(
           3,
         )}/s)`,
       );
@@ -119,6 +121,6 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       counter = 0;
     } while (!done);
 
-    console.debug(`TOTAL ${total} in ${new Date().getTime() - totalStart.getTime()}ms`);
+    console.debug(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - totalStart.getTime()}ms`);
   }
 }

@@ -66,16 +66,16 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     const policyMap: Map<number, PolicyInterface> = new Map();
 
     // Apply internal restriction of policies
-    console.debug(`START processing stateful policys`);
+    console.debug('[policies] stateful starting');
     await this.processStatefulpolicys(policyMap, to, params.from);
-    console.debug(`DONE processing stateful policys`);
+    console.debug('[policies] stateful finished');
 
     // TODO: Apply external restriction (order) of policies
 
     // Lock all
-    console.debug(`LOCK_ALL incentives to: ${to}`);
+    console.debug(`[policies] lock all incentive until ${to}`);
     await this.incentiveRepository.lockAll(to);
-    console.debug('DONE locking');
+    console.debug('[policies] lock finished'); 
   }
 
   protected async processStatefulpolicys(
@@ -114,7 +114,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
       await store.store(MetadataLifetime.Day);
       const duration = new Date().getTime() - start;
       console.debug(
-        `Finalized ${updatedIncentives.length} incentives in ${duration}ms (${(
+        `[policies] stateful incentive processing ${updatedIncentives.length} incentives done in ${duration}ms (${(
           (updatedIncentives.length / duration) *
           1000
         ).toFixed(3)}/s)`,
