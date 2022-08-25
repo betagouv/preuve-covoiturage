@@ -1,8 +1,9 @@
 import {
+  StatelessContextInterface,
+  StatelessRuleHelper,
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
-import { StatelessContextInterface, StatelessRuleHelper } from '../interfaces';
+} from '../../interfaces';
 
 function inList(selectors: TerritorySelectorsInterface, territory: TerritoryCodeInterface): boolean {
   if (!selectors || Object.keys(selectors).length === 0) {

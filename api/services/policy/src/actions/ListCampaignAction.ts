@@ -2,7 +2,7 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces/PolicyRepositoryProviderInterface';
+import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
 import { alias } from '../shared/policy/list.schema';
 

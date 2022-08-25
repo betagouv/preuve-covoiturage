@@ -1,4 +1,4 @@
-import { SerializedPolicyInterface } from '~/engine/interfaces';
+import { SerializedPolicyInterface } from '..';
 
 export abstract class PolicyRepositoryProviderInterfaceResolver {
   abstract find(id: number, territoryId?: number): Promise<SerializedPolicyInterface>;

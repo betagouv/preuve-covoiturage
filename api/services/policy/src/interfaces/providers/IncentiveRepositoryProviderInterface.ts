@@ -1,5 +1,5 @@
 import { PoolClient } from '@ilos/connection-postgres';
-import { SerializedIncentiveInterface, IncentiveStatusEnum } from '~/engine/interfaces';
+import { SerializedIncentiveInterface, IncentiveStatusEnum } from '..';
 
 export type IncentiveCreateOptionsType = { connection?: PoolClient | null; release?: boolean };
 

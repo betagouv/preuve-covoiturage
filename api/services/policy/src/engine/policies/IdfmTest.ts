@@ -4,7 +4,7 @@ import {
   StatefulContextInterface,
   StatelessContextInterface,
   StepInterface,
-} from '../interfaces';
+} from '../../interfaces';
 import {
   atDate,
   isAfter,

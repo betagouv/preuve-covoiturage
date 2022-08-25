@@ -3,7 +3,7 @@ import {
   MetadataRegistryInterface,
   MetadataVariableDefinitionInterface,
   SerializedMetadataVariableDefinitionInterface,
-} from '../interfaces';
+} from '../../interfaces';
 
 function getMetaKey(datetime: Date, metaDefinition: MetadataVariableDefinitionInterface): string {
   if (metaDefinition.key) {

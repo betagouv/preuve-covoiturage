@@ -23,6 +23,7 @@ import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProv
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
+import { CampaignStateAction } from './actions/GetCampaignStateAction';
 
 @serviceProvider({
   config,

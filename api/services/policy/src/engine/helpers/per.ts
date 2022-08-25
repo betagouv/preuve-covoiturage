@@ -1,4 +1,4 @@
-import { StatelessContextInterface } from '../interfaces';
+import { StatelessContextInterface } from '../../interfaces';
 
 export interface PerKmParams {
   amount: number;

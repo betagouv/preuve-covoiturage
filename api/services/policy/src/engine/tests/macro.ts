@@ -1,15 +1,15 @@
 import { ExecutionContext } from 'ava';
-import { MetadataRepositoryProviderInterfaceResolver } from '~/interfaces';
-import { MetadataStore } from '../entities/MetadataStore';
-import { Policy } from '../entities/Policy';
 import {
+  MetadataRepositoryProviderInterfaceResolver,
   CarpoolInterface,
   MetadataLifetime,
   PolicyHandlerInterface,
   SerializedIncentiveInterface,
   SerializedPolicyInterface,
   SerializedStoredMetadataInterface,
-} from '../interfaces';
+} from '~/interfaces';
+import { MetadataStore } from '../entities/MetadataStore';
+import { Policy } from '../entities/Policy';
 import { generateCarpool } from './helpers';
 
 interface ProcessParams {

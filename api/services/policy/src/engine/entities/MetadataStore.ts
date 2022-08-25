@@ -8,7 +8,7 @@ import {
   StoredMetadataVariableInterface,
   SerializedMetadataVariableDefinitionInterface,
   SerializedStoredMetadataInterface,
-} from '../interfaces';
+} from '../../interfaces';
 import { MetadataAccessor } from './MetadataAccessor';
 
 function getCacheKey(policy_id: number, key: string): string {

@@ -8,7 +8,7 @@ import {
   StatefulIncentiveInterface,
   StatelessContextInterface,
   StatelessIncentiveInterface,
-} from '../interfaces';
+} from '../../interfaces';
 import { Incentive } from './Incentive';
 import { MetadataRegistry } from './MetadataRegistry';
 

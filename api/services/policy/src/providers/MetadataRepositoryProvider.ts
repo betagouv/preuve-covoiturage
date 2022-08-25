@@ -1,8 +1,7 @@
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
 import { provider } from '@ilos/common';
 
-import { MetadataRepositoryProviderInterfaceResolver } from '../interfaces';
-import { SerializedStoredMetadataInterface } from '~/engine/interfaces';
+import { MetadataRepositoryProviderInterfaceResolver, SerializedStoredMetadataInterface } from '../interfaces';
 
 @provider({
   identifier: MetadataRepositoryProviderInterfaceResolver,

@@ -1,4 +1,4 @@
-import { MetadataLifetime, StatefulContextInterface, StatelessContextInterface } from '../interfaces';
+import { MetadataLifetime, StatefulContextInterface, StatelessContextInterface } from '../../interfaces';
 
 export function setMax(
   uuid: string,

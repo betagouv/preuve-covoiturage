@@ -1,4 +1,3 @@
-import { TerritorySelectorsInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
 import { isSelected } from '../helpers';
 import {
@@ -11,7 +10,8 @@ import {
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
   StepInterface,
-} from '../interfaces';
+  TerritorySelectorsInterface,
+} from '../../interfaces';
 import { policies } from '../policies';
 import { StatefulContext, StatelessContext } from './Context';
 

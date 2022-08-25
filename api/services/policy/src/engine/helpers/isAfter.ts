@@ -1,5 +1,5 @@
 import { utcToZonedTime } from './utcToZonedTime';
-import { StatelessContextInterface, StatelessRuleHelper } from '../interfaces';
+import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
 
 interface IsAfterParams {
   date: Date;

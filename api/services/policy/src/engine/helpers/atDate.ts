@@ -1,6 +1,6 @@
 import { MisconfigurationException } from '../exceptions/MisconfigurationException';
 import { utcToZonedTime } from './utcToZonedTime';
-import { StatelessContextInterface, StatelessRuleHelper } from '../interfaces';
+import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
 
 interface AtDateParams {
   dates: string[];

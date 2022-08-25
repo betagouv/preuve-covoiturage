@@ -1,5 +1,5 @@
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { StatelessContextInterface, StatelessRuleHelper } from '../interfaces';
+import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
 
 export const isDriver: StatelessRuleHelper<void> = (ctx: StatelessContextInterface): boolean => {
   if (ctx.carpool.is_driver !== null && !ctx.carpool.is_driver) {

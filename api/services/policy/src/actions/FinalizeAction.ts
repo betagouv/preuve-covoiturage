@@ -13,8 +13,10 @@ import {
   IncentiveRepositoryProviderInterfaceResolver,
   MetadataRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
+  IncentiveStatusEnum,
+  MetadataLifetime,
+  PolicyInterface,
 } from '../interfaces';
-import { IncentiveStatusEnum, MetadataLifetime, PolicyInterface } from '~/engine/interfaces';
 import { Policy } from '~/engine/entities/Policy';
 import { MetadataStore } from '~/engine/entities/MetadataStore';
 

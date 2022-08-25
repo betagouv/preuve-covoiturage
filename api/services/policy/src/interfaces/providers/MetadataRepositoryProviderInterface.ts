@@ -1,4 +1,4 @@
-import { SerializedStoredMetadataInterface } from '~/engine/interfaces';
+import { SerializedStoredMetadataInterface } from '..';
 
 export abstract class MetadataRepositoryProviderInterfaceResolver {
   abstract get(policyId: number, keys: string[], datetime?: Date): Promise<SerializedStoredMetadataInterface[]>;

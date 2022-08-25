@@ -2,7 +2,7 @@ import test from 'ava';
 
 import { StatelessContext } from '../entities/Context';
 import { generateCarpool } from '../tests/helpers';
-import { TerritoryCodeInterface } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritoryCodeInterface } from '../../interfaces';
 import { startsAt, endsAt } from './position';
 
 function setup(start: TerritoryCodeInterface, end: TerritoryCodeInterface) {

@@ -2,8 +2,7 @@ import { promisify } from 'util';
 import { provider } from '@ilos/common';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
-import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
-import { CarpoolInterface, PolicyInterface } from '~/engine/interfaces';
+import { TripRepositoryProviderInterfaceResolver, CarpoolInterface, PolicyInterface } from '../interfaces';
 
 @provider({
   identifier: TripRepositoryProviderInterfaceResolver,

@@ -1,6 +1,6 @@
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import { MisconfigurationException } from '../exceptions/MisconfigurationException';
-import { StatelessContextInterface, StatelessRuleHelper } from '../interfaces';
+import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
 
 export const isOperatorOrThrow: StatelessRuleHelper<Array<string>> = (
   ctx: StatelessContextInterface,

@@ -1,5 +1,10 @@
 import { v4 } from 'uuid';
-import { CarpoolInterface, IncentiveStateEnum, IncentiveStatusEnum, SerializedIncentiveInterface } from '../interfaces';
+import {
+  CarpoolInterface,
+  IncentiveStateEnum,
+  IncentiveStatusEnum,
+  SerializedIncentiveInterface,
+} from '../../interfaces';
 
 const defaultPos = {
   com: '91377',

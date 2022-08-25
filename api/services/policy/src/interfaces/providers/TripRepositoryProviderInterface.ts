@@ -1,4 +1,4 @@
-import { CarpoolInterface, PolicyInterface } from '~/engine/interfaces';
+import { CarpoolInterface, PolicyInterface } from '..';
 
 export abstract class TripRepositoryProviderInterfaceResolver {
   abstract findTripByPolicy(

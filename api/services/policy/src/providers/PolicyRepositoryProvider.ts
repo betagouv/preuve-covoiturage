@@ -1,8 +1,7 @@
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { SerializedPolicyInterface } from '~/engine/interfaces';
 
-import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
+import { PolicyRepositoryProviderInterfaceResolver, SerializedPolicyInterface } from '../interfaces';
 
 // TODO migration
 @provider({

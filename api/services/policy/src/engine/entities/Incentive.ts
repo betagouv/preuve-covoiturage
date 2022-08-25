@@ -5,7 +5,7 @@ import {
   SerializedIncentiveInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
-} from '../interfaces';
+} from '../../interfaces';
 import { MetadataRegistry } from './MetadataRegistry';
 
 export class Incentive implements StatelessIncentiveInterface, StatefulIncentiveInterface {

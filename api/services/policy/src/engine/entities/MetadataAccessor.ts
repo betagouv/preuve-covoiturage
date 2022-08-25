@@ -1,4 +1,4 @@
-import { MetadataAccessorInterface, SerializedAccessibleMetadataInterface } from '../interfaces';
+import { MetadataAccessorInterface, SerializedAccessibleMetadataInterface } from '../../interfaces';
 
 export class MetadataAccessor implements MetadataAccessorInterface {
   constructor(

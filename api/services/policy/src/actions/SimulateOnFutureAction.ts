@@ -5,9 +5,14 @@ import { differenceInSeconds } from 'date-fns';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnFuture.contract';
 import { alias } from '../shared/policy/simulateOnFuture.schema';
-import { PolicyRepositoryProviderInterfaceResolver, TerritoryRepositoryProviderInterfaceResolver } from '../interfaces';
+import {
+  PolicyRepositoryProviderInterfaceResolver,
+  TerritoryRepositoryProviderInterfaceResolver,
+  CarpoolInterface,
+  PolicyInterface,
+  StatelessIncentiveInterface,
+} from '../interfaces';
 import { v4 } from 'uuid';
-import { CarpoolInterface, PolicyInterface, StatelessIncentiveInterface } from '~/engine/interfaces';
 import { Policy } from '~/engine/entities/Policy';
 
 @handler({

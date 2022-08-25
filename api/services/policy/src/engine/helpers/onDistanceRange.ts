@@ -1,5 +1,5 @@
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { StatelessContextInterface, StatelessRuleHelper } from '../interfaces';
+import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
 
 interface OnDistanceParams {
   min?: number;
