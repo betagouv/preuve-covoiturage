@@ -18,9 +18,7 @@ import { alias } from '../shared/policy/find.schema';
   ],
 })
 export class FindAction extends AbstractAction {
-  constructor(
-    private policyRepository: PolicyRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private policyRepository: PolicyRepositoryProviderInterfaceResolver) {
     super();
   }
 
@@ -31,7 +29,7 @@ export class FindAction extends AbstractAction {
       throw new NotFoundException(`policy #${params._id} not found`);
     }
     const policy = await Policy.import(policyData);
-  
+
     return {
       ...policy.export(),
       description: policy.describeForHuman(),

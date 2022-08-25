@@ -11,10 +11,10 @@ const defaultPos = {
   com: '91377',
   aom: '217500016',
   epci: '200056232',
-  dep : '91',
-  reg : '11',
+  dep: '91',
+  reg: '11',
   country: 'XXXXX',
-  reseau : '232',
+  reseau: '232',
 };
 
 const defaultCarpool: CarpoolInterface = {

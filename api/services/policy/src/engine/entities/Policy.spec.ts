@@ -40,13 +40,24 @@ test(
 test(
   'should works with initial meta',
   process,
-  { handler: new TestHandler(), carpool: [{ distance: 10000 }], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 1950 }] },
+  {
+    handler: new TestHandler(),
+    carpool: [{ distance: 10000 }],
+    meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 1950 }],
+  },
   { incentive: [50], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 2000 }] },
 );
 
 test(
   'should works with dates',
   process,
-  { handler: new TestHandler(), carpool: [{ distance: 10000, datetime: new Date('2022-01-01') }, { distance: 10000, datetime: new Date('2022-12-01') }], meta: [] },
+  {
+    handler: new TestHandler(),
+    carpool: [
+      { distance: 10000, datetime: new Date('2022-01-01') },
+      { distance: 10000, datetime: new Date('2022-12-01') },
+    ],
+    meta: [],
+  },
   { incentive: [100, 100], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 200 }] },
 );

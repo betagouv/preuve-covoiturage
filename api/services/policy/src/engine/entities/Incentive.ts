@@ -8,7 +8,7 @@ import {
 } from '../../interfaces';
 import { MetadataRegistry } from './MetadataRegistry';
 
-export class Incentive<T> { 
+export class Incentive<T> {
   constructor(
     public readonly _id: T,
     public readonly policy_id: number,
@@ -21,7 +21,12 @@ export class Incentive<T> {
     public meta: MetadataRegistryInterface,
   ) {}
 
-  static create(policy_id: number, carpool_id: number, datetime: Date, meta?: MetadataRegistryInterface): Incentive<undefined> {
+  static create(
+    policy_id: number,
+    carpool_id: number,
+    datetime: Date,
+    meta?: MetadataRegistryInterface,
+  ): Incentive<undefined> {
     return new StatelessIncentive(
       undefined,
       policy_id,
@@ -85,7 +90,7 @@ export class Incentive<T> {
   }
 }
 
-export class StatelessIncentive extends Incentive<undefined> implements StatelessIncentiveInterface{
+export class StatelessIncentive extends Incentive<undefined> implements StatelessIncentiveInterface {
   export(): SerializedIncentiveInterface<undefined> {
     return super.export();
   }

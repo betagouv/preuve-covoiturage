@@ -113,9 +113,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       // benchmark
       const ms = new Date().getTime() - start.getTime();
       console.debug(
-        `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(
-          3,
-        )}/s)`,
+        `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(3)}/s)`,
       );
       total += counter;
       counter = 0;

@@ -75,7 +75,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     // Lock all
     console.debug(`[policies] lock all incentive until ${to}`);
     await this.incentiveRepository.lockAll(to);
-    console.debug('[policies] lock finished'); 
+    console.debug('[policies] lock finished');
   }
 
   protected async processStatefulpolicys(

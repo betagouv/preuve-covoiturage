@@ -7,7 +7,10 @@ export interface IncentiveStatsInterface {
 }
 
 export abstract class IncentiveRepositoryProviderInterfaceResolver {
-  abstract updateStatefulAmount(data: Array<SerializedIncentiveInterface<number>>, status?: IncentiveStatusEnum): Promise<void>;
+  abstract updateStatefulAmount(
+    data: Array<SerializedIncentiveInterface<number>>,
+    status?: IncentiveStatusEnum,
+  ): Promise<void>;
   abstract createOrUpdateMany(data: Array<SerializedIncentiveInterface<undefined>>): Promise<void>;
   abstract disableOnCanceledTrip(): Promise<void>;
   abstract lockAll(before: Date): Promise<void>;

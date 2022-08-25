@@ -36,9 +36,15 @@ class MemoryMetadataRepository implements MetadataRepositoryProviderInterfaceRes
   }
 }
 export const process = async (t: ExecutionContext, input: ProcessParams, expected: ProcessResult) => {
-  const inputMeta: Array<SerializedStoredMetadataInterface> = (input.meta || []).map(m => ({ datetime: new Date(), policy_id: 1, ...m }));
-  const carpools = input.carpool.map(c => generateCarpool(c));
-  const [start_date, end_date] = carpools.map(c => c.datetime).reduce(([oldest, newest],i) => [i<oldest ? i : oldest, i> newest? i : newest], [new Date,new Date]);
+  const inputMeta: Array<SerializedStoredMetadataInterface> = (input.meta || []).map((m) => ({
+    datetime: new Date(),
+    policy_id: 1,
+    ...m,
+  }));
+  const carpools = input.carpool.map((c) => generateCarpool(c));
+  const [start_date, end_date] = carpools
+    .map((c) => c.datetime)
+    .reduce(([oldest, newest], i) => [i < oldest ? i : oldest, i > newest ? i : newest], [new Date(), new Date()]);
 
   const policyDef: SerializedPolicyInterface = {
     start_date,
