@@ -24,7 +24,7 @@ import {
 } from '../helpers';
 
 // TODO test
-export class IdfmTest implements PolicyHandlerInterface {
+export class Idfm implements PolicyHandlerInterface {
   protected operators = ['siret de klaxit', 'siret de karos'];
   protected limits = [
     setMax('99911EAF-89AB-C346-DDD5-BD2C7704F935', 600000000, watchForGlobalMaxAmount),
