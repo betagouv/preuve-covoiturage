@@ -48,7 +48,7 @@ export {
 export {
   PolicyInterface,
   PolicyHandlerInterface,
-  PolicyHandlerParamsInterface, 
+  PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   SerializedPolicyInterface,
   SliceInterface,

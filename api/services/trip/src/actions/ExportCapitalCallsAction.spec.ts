@@ -17,7 +17,7 @@ interface Context {
   checkCampaign: CheckCampaign;
   s3StorageProvider: S3StorageProvider;
   buildExcel: BuildExcel;
-  tripRepository: TripRepositoryProviderInterfaceResolver, 
+  tripRepository: TripRepositoryProviderInterfaceResolver;
 
   // Injected tokens method's stubs
   checkCampaignStub: SinonStub;
@@ -49,7 +49,7 @@ test.beforeEach((t) => {
   t.context.checkCampaign = new CheckCampaign(null as any);
   t.context.s3StorageProvider = new S3StorageProvider(null as any);
   t.context.buildExcel = new BuildExcel(null as any, null as any, null as any, null as any);
-  t.context.tripRepository = new TR(); 
+  t.context.tripRepository = new TR();
   t.context.buildExcelsExportAction = new ExportCapitalCallsAction(
     t.context.checkCampaign,
     t.context.s3StorageProvider,

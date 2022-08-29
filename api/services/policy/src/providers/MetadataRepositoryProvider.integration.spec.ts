@@ -50,7 +50,11 @@ test.serial('Should save meta', async (t) => {
   ];
   await t.context.repository.set(data);
   const result = await t.context.db.connection.getClient().query({
-    text: `SELECT policy_id, key, value, datetime FROM ${t.context.repository.table} WHERE policy_id = $1 ORDER BY datetime`,
+    text: `
+      SELECT policy_id, key, value, datetime
+      FROM ${t.context.repository.table}
+      WHERE policy_id = $1 ORDER BY datetime
+    `,
     values: [1],
   });
   t.deepEqual(result.rows, data);
@@ -121,7 +125,11 @@ test.serial('Should delete meta', async (t) => {
   ];
   await t.context.repository.delete(1, new Date('2021-03-01'));
   const result = await t.context.db.connection.getClient().query({
-    text: `SELECT policy_id, key, value, datetime FROM ${t.context.repository.table} WHERE policy_id = $1 ORDER BY datetime`,
+    text: `
+      SELECT policy_id, key, value, datetime
+      FROM ${t.context.repository.table}
+      WHERE policy_id = $1 ORDER BY datetime
+    `,
     values: [1],
   });
   t.deepEqual(result.rows, data);

@@ -37,7 +37,12 @@ export class ExportCapitalCallsAction extends Action {
           return;
         }
 
-        const involvedOperatorIds = await this.tripRepositoryProvider.getPolicyInvoledOperators(checkedCampaign._id, start_date, end_date, checkedCampaign.params.operators);
+        const involvedOperatorIds = await this.tripRepositoryProvider.getPolicyInvoledOperators(
+          checkedCampaign._id,
+          start_date,
+          end_date,
+          checkedCampaign.params.operators,
+        );
         await Promise.all(
           involvedOperatorIds.map(async (o_id) => {
             try {

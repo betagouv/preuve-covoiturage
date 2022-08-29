@@ -70,7 +70,12 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
     throw new Error('Not implemented');
   }
 
-  public async getPolicyInvoledOperators(campaign_id: number, start_date: Date, end_date: Date, operatorsSiret?: Array<string>): Promise<number[]> {
+  public async getPolicyInvoledOperators(
+    campaign_id: number,
+    start_date: Date,
+    end_date: Date,
+    operatorsSiret?: Array<string>,
+  ): Promise<number[]> {
     throw new Error('Not implemented');
   }
 }

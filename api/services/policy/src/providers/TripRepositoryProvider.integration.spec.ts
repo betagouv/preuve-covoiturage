@@ -22,7 +22,6 @@ test.after.always(async (t) => {
 });
 
 test.serial('Should find carpools', async (t) => {
-  const r = await t.context.db.connection.getClient().query(`SELECT * FROM carpool.carpools`);
   const start_date = new Date('2022-06-01');
   const end_date = new Date('2022-06-30');
 

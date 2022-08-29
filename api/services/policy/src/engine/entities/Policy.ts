@@ -9,7 +9,7 @@ import {
   SerializedPolicyInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
-  PolicyHandlerParamsInterface, 
+  PolicyHandlerParamsInterface,
   TerritorySelectorsInterface,
 } from '../../interfaces';
 import { policies } from '../policies';

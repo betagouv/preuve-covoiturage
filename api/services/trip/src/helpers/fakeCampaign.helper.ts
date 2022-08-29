@@ -12,7 +12,7 @@ export const createGetCampaignResultInterface = (
     _id: faker.datatype.number(),
     name: name ? name : faker.random.word(),
     handler: '',
-    params: operator_ids ? { operators: operator_ids.map(o => o.toString()) } : {}, // FIXME : siret number here
+    params: operator_ids ? { operators: operator_ids.map((o) => o.toString()) } : {}, // FIXME : siret number here
     description: faker.random.words(8),
     territory_id: faker.datatype.number(),
     start_date: start_date ? start_date : faker.date.past(1),

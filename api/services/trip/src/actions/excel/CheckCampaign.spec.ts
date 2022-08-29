@@ -145,7 +145,7 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if draf
 
   // Act
   await t.throwsAsync(async () => {
-    await t.context.checkCampaign.call(faker.datatype.number(), new Date(), new Date()); 
+    await t.context.checkCampaign.call(faker.datatype.number(), new Date(), new Date());
   });
 
   // Assert
@@ -177,4 +177,3 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign date
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
-
