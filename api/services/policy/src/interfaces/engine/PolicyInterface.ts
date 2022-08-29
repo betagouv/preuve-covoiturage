@@ -25,7 +25,7 @@ export interface PolicyInterface {
     store: MetadataStoreInterface,
     incentive: SerializedIncentiveInterface,
   ): Promise<StatefulIncentiveInterface>;
-  getSlices(): Array<SliceInterface>;
+  params(): PolicyHandlerParamsInterface;
   describe(): string;
 }
 
@@ -49,10 +49,15 @@ export interface SliceInterface {
   end: number;
 }
 
+export interface PolicyHandlerParamsInterface {
+  slices?: Array<SliceInterface>;
+  operators?: Array<string>;
+}
+
 export interface PolicyHandlerInterface {
   processStateless(context: StatelessContextInterface): void;
   processStateful(context: StatefulContextInterface): void;
-  getSlices(): Array<SliceInterface>;
+  params(): PolicyHandlerParamsInterface;
   describe(): string;
 }
 

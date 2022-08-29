@@ -9,7 +9,7 @@ import {
   SerializedPolicyInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
-  SliceInterface, 
+  PolicyHandlerParamsInterface, 
   TerritorySelectorsInterface,
 } from '../../interfaces';
 import { policies } from '../policies';
@@ -112,8 +112,8 @@ export class Policy implements PolicyInterface {
     return true;
   }
 
-  getSlices(): SliceInterface[] {
-    return this.handler.getSlices();
+  params(): PolicyHandlerParamsInterface {
+    return this.handler.params();
   }
 
   describe(): string {

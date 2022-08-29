@@ -1,7 +1,7 @@
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   PolicyHandlerInterface,
-  SliceInterface,
+  PolicyHandlerParamsInterface,
   StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
@@ -75,8 +75,11 @@ export class Idfm implements PolicyHandlerInterface {
     }
   }
 
-  getSlices(): SliceInterface[] {
-    return [];
+  params(): PolicyHandlerParamsInterface {
+    return {
+      slices: [],
+      operators: [],
+    };
   }
 
   describe(): string {

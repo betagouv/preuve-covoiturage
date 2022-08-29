@@ -33,7 +33,7 @@ export class FindAction extends AbstractAction {
     return {
       ...policy.export(),
       description: policy.describe(),
-      slices: policy.getSlices(),
+      params: policy.params(),
     };
   }
 }

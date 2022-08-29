@@ -1,3 +1,5 @@
+import { SliceInterface } from './SliceInterface';
+
 export interface PolicyInterface {
   _id?: number;
   territory_id: number;
@@ -7,5 +9,8 @@ export interface PolicyInterface {
   end_date: Date;
   status: string;
   handler: string;
-  slices?: Array<{ min: number; max: number }>
+  params: {
+    slices?: Array<SliceInterface>;
+    operators?: Array<string>;
+  }
 }
