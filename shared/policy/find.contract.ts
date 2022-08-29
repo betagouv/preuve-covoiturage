@@ -4,7 +4,7 @@ export interface ParamsInterface {
   territory_id?: number;
 }
 
-export interface ResultInterface extends PolicyInterface {}
+export interface ResultInterface extends Required<PolicyInterface> {}
 
 export const handlerConfig = {
   service: 'campaign',

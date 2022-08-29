@@ -4,26 +4,26 @@ import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import anyTest, { TestFn } from 'ava';
 import faker from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
-import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
+import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 import { ExportCapitalCallsAction } from './ExportCapitalCallsAction';
 import { BuildExcel } from './excel/BuildExcel';
 import { CheckCampaign } from './excel/CheckCampaign';
-import { GetCampaignInvolvedOperator } from './excel/GetCampaignInvolvedOperators';
+import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 
 interface Context {
   // Injected tokens
   checkCampaign: CheckCampaign;
   s3StorageProvider: S3StorageProvider;
   buildExcel: BuildExcel;
-  getCampaignInvolvedOperator: GetCampaignInvolvedOperator;
+  tripRepository: TripRepositoryProviderInterfaceResolver, 
 
   // Injected tokens method's stubs
   checkCampaignStub: SinonStub;
   s3StorageProviderStub: SinonStub;
   buildExcelStub: SinonStub;
-  getCampaignInvolvedOperatorStub: SinonStub;
+  tripRepositoryStub: SinonStub;
 
   // Constants
   START_DATE_STRING: string;
@@ -35,7 +35,8 @@ interface Context {
   buildExcelsExportAction: ExportCapitalCallsAction;
 }
 
-const test = anyTest as TestFn<Partial<Context>>;
+class TR extends TripRepositoryProviderInterfaceResolver {}
+const test = anyTest as TestFn<Context>;
 
 test.before((t) => {
   t.context.START_DATE_STRING = '2020-01-08T00:00:00Z';
@@ -45,21 +46,21 @@ test.before((t) => {
 });
 
 test.beforeEach((t) => {
-  t.context.checkCampaign = new CheckCampaign(null);
-  t.context.s3StorageProvider = new S3StorageProvider(null);
-  t.context.buildExcel = new BuildExcel(null, null, null, null);
-  t.context.getCampaignInvolvedOperator = new GetCampaignInvolvedOperator(null);
+  t.context.checkCampaign = new CheckCampaign(null as any);
+  t.context.s3StorageProvider = new S3StorageProvider(null as any);
+  t.context.buildExcel = new BuildExcel(null as any, null as any, null as any, null as any);
+  t.context.tripRepository = new TR(); 
   t.context.buildExcelsExportAction = new ExportCapitalCallsAction(
     t.context.checkCampaign,
     t.context.s3StorageProvider,
-    t.context.getCampaignInvolvedOperator,
+    t.context.tripRepository,
     t.context.buildExcel,
   );
 
   t.context.checkCampaignStub = sinon.stub(t.context.checkCampaign, 'call');
   t.context.s3StorageProviderStub = sinon.stub(t.context.s3StorageProvider, 'upload');
   t.context.buildExcelStub = sinon.stub(t.context.buildExcel, 'call');
-  t.context.getCampaignInvolvedOperatorStub = sinon.stub(t.context.getCampaignInvolvedOperator, 'call');
+  t.context.tripRepositoryStub = sinon.stub(t.context.tripRepository, 'getPolicyInvoledOperators');
 });
 
 test.afterEach((t) => {
@@ -75,7 +76,7 @@ test('ExportCapitalCallsAction: should create 1 xlsx file for last month if no d
   t.context.checkCampaignStub!.resolves(campaign);
   t.context.buildExcelStub!.resolves(filepath);
   t.context.s3StorageProviderStub!.resolves(filename);
-  t.context.getCampaignInvolvedOperatorStub!.resolves([4]);
+  t.context.tripRepositoryStub!.resolves([4]);
 
   // Act
   const result = await t.context.buildExcelsExportAction!.handle(
@@ -114,7 +115,7 @@ test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided
   t.context.checkCampaignStub!.resolves(campaign);
   t.context.buildExcelStub!.resolves(filepath);
   t.context.s3StorageProviderStub!.resolves(s3_key);
-  t.context.getCampaignInvolvedOperatorStub!.resolves([4]);
+  t.context.tripRepositoryStub!.resolves([4]);
 
   // Act
   const result: string[] = await t.context.buildExcelsExportAction!.handle(
@@ -153,10 +154,11 @@ test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided
     `${campaign.territory_id}`,
   );
   sinon.assert.calledOnceWithExactly(
-    t.context.getCampaignInvolvedOperatorStub!,
-    campaign,
+    t.context.tripRepositoryStub!,
+    campaign._id,
     t.context.START_DATE,
     t.context.END_DATE,
+    undefined,
   );
   t.deepEqual(result, [s3_key]);
 });
@@ -173,7 +175,7 @@ test('ExportCapitalCallsAction: should create 4 xlsx file if date range provided
   });
   t.context.checkCampaignStub!.withArgs(campaign1._id).resolves(campaign1);
   t.context.checkCampaignStub!.withArgs(campaign2._id).resolves(campaign2);
-  t.context.getCampaignInvolvedOperatorStub!.resolves([4, 5]);
+  t.context.tripRepositoryStub!.resolves([4, 5]);
 
   // Act
   const result = await t.context.buildExcelsExportAction!.handle(
@@ -221,7 +223,7 @@ test('ExportCapitalCallsAction: should send error and process other if 1 export 
   const campaign2: Campaign = createGetCampaignResultInterface('active');
   t.context.checkCampaignStub!.withArgs(campaign1._id).resolves(campaign1);
   t.context.checkCampaignStub!.withArgs(campaign2._id).resolves(campaign2);
-  t.context.getCampaignInvolvedOperatorStub!.resolves([4, 5]);
+  t.context.tripRepositoryStub!.resolves([4, 5]);
   const filename = `${faker.system.fileName()}.xlsx`;
   t.context.buildExcelStub!.resolves(`/tmp/exports/${filename}`);
   t.context.s3StorageProviderStub!.resolves(filename);

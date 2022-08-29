@@ -1,8 +1,8 @@
 import anyTest, { TestFn } from 'ava';
 import { ContextType, KernelInterfaceResolver } from '@ilos/common';
 import sinon, { SinonStub } from 'sinon';
-import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper.spec';
-import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
+import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
+import { PolicyInterface } from '../shared/policy/common/interfaces/PolicyInterface';
 import { ActiveCampaignExcelExportAction } from './ActiveCampaignExcelExportAction';
 
 interface Context {
@@ -13,7 +13,7 @@ interface Context {
   kernelInterfaceResolverStub: SinonStub<[method: string, params: any, context: ContextType]>;
 
   // Constants
-  CAMPAIGNS: CampaignInterface[];
+  CAMPAIGNS: PolicyInterface[];
 
   // Tested token
   activeCampaignExcelExportAction: ActiveCampaignExcelExportAction;
@@ -40,7 +40,7 @@ test('ActiveCampaignExportAction: should export 2 active campaigns and call buil
   t.context.kernelInterfaceResolverStub!.resolves(t.context.CAMPAIGNS);
 
   // Act
-  await t.context.activeCampaignExcelExportAction!.handle({}, null);
+  await t.context.activeCampaignExcelExportAction!.handle({}, {} as ContextType);
 
   // Assert
   sinon.assert.calledWithExactly(
