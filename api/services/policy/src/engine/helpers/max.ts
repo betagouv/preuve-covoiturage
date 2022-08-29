@@ -4,10 +4,11 @@ export function setMax(
   uuid: string,
   max: number,
   fn: (ctx: StatelessContextInterface, uuid: string) => void,
+  forTrip: boolean = false,
 ): [(ctx: StatelessContextInterface) => void, (ctx: StatefulContextInterface) => void] {
   return [
     (ctx: StatelessContextInterface) => fn(ctx, uuid),
-    (ctx: StatefulContextInterface) => applyForMaximum(ctx, uuid, max),
+    (ctx: StatefulContextInterface) => applyForMaximum(ctx, uuid, max, forTrip),
   ];
 }
 
@@ -45,14 +46,22 @@ export function watchForPersonMaxTripByDay(ctx: StatelessContextInterface, uuid:
     lifetime: MetadataLifetime.Day,
   });
 }
-// TODO max trip
-export function applyForMaximum(ctx: StatefulContextInterface, uuid: string, max: number): void {
+
+export function applyForMaximum(ctx: StatefulContextInterface, uuid: string, max: number, forTrip: boolean): void {
   const state = ctx.meta.get(uuid);
   if (state >= max) {
     // limit is reached
     ctx.incentive.set(0);
     return;
   }
+
+  // apply for trip
+  if(forTrip) {
+    ctx.meta.set(uuid, state + 1);
+    return;
+  }
+
+  // apply for amount
   const incentive = ctx.incentive.get();
   const delta = state + incentive;
   if (delta >= max) {

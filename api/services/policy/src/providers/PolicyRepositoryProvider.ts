@@ -3,7 +3,6 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { PolicyRepositoryProviderInterfaceResolver, SerializedPolicyInterface } from '../interfaces';
 
-// TODO migration
 @provider({
   identifier: PolicyRepositoryProviderInterfaceResolver,
 })
