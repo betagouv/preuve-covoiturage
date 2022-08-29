@@ -1,4 +1,5 @@
- SELECT cpp.operator_id,
+ DROP VIEW IF EXISTS trip.list_view;
+CREATE VIEW trip.list_view AS (SELECT cpp.operator_id,
     COALESCE(pip.policy_id || pid.policy_id, ARRAY[]::integer[]) AS applied_policies,
     cpp.acquisition_id AS journey_id,
     cpp.trip_id,
@@ -135,4 +136,4 @@
            FROM json_array_elements(cpp.meta -> 'payments'::text) json_array_elements(value)) cpip,
     LATERAL ( SELECT array_agg(json_array_elements.value::trip.incentive) AS incentive
            FROM json_array_elements(cpd.meta -> 'payments'::text) json_array_elements(value)) cpid
-  WHERE cpp.is_driver = false;
+  WHERE cpp.is_driver = false);
