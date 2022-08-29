@@ -30,9 +30,9 @@ test.afterEach((t) => {});
 test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async (t) => {
   // Arrange
   const slices: SlicesInterface[] = [
-    { slice: { max: 2000 }, tripCount: 2500, incentivesSum: 154588 },
-    { slice: { min: 2000, max: 30000 }, tripCount: 3000, incentivesSum: 204598 },
-    { slice: { min: 30000, max: TripRepositoryProvider.MAX_KM_LIMIT }, tripCount: 5000, incentivesSum: 304456 },
+    { slice: { start: 0, end: 2000 }, tripCount: 2500, incentivesSum: 154588 },
+    { slice: { start: 2000, end: 30000 }, tripCount: 3000, incentivesSum: 204598 },
+    { slice: { start: 30000, end: TripRepositoryProvider.MAX_KM_LIMIT }, tripCount: 5000, incentivesSum: 304456 },
   ];
 
   // Act
@@ -52,19 +52,19 @@ test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async 
 
   t.deepEqual(workbook.getWorksheet(t.context.slicesWorkbookWriter!.SLICE_WORKSHEET_NAME).getRow(2).values, [
     undefined,
-    `Jusqu'à ${slices[0].slice.max / 1000} km`,
+    `Jusqu'à ${slices[0].slice.end / 1000} km`,
     slices[0].incentivesSum / 100,
     slices[0].tripCount,
   ]);
   t.deepEqual(workbook.getWorksheet(t.context.slicesWorkbookWriter!.SLICE_WORKSHEET_NAME).getRow(3).values, [
     undefined,
-    `De ${slices[1].slice.min / 1000} km à ${slices[1].slice.max / 1000} km`,
+    `De ${slices[1].slice.start / 1000} km à ${slices[1].slice.end / 1000} km`,
     slices[1].incentivesSum / 100,
     slices[1].tripCount,
   ]);
   t.deepEqual(workbook.getWorksheet(t.context.slicesWorkbookWriter!.SLICE_WORKSHEET_NAME).getRow(4).values, [
     undefined,
-    `Supérieur à ${slices[2].slice.min / 1000} km`,
+    `Supérieur à ${slices[2].slice.start / 1000} km`,
     slices[2].incentivesSum / 100,
     slices[2].tripCount,
   ]);
