@@ -28,6 +28,7 @@ export interface TripRepositoryInterface {
     type?: string,
   ): Promise<PgCursorHandler>;
   validateTz(tz?: string): Promise<TzResultInterface>;
+  getPolicyInvoledOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]> {
@@ -66,6 +67,10 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
   }
 
   public async getTerritoryDescendants(territory_id: number): Promise<number[]> {
+    throw new Error('Not implemented');
+  }
+
+  public async getPolicyInvoledOperators(campaign_id: number, start_date: Date, end_date: Date, operatorsSiret?: Array<string>): Promise<number[]> {
     throw new Error('Not implemented');
   }
 }

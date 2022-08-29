@@ -1,8 +1,8 @@
 // eslint-disable-next-line max-len
-import { ProgressiveDistanceRangeMetaParameters } from '~/shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
+import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
 
 export interface SlicesInterface {
-  slice: ProgressiveDistanceRangeMetaParameters;
+  slice: SliceInterface;
   tripCount: number;
   incentivesSum: number;
 }

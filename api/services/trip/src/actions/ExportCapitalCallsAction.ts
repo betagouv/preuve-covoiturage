@@ -8,7 +8,7 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/capit
 import { alias } from '../shared/capitalcall/export.schema';
 import { BuildExcel } from './excel/BuildExcel';
 import { CheckCampaign } from './excel/CheckCampaign';
-import { GetCampaignInvolvedOperator } from './excel/GetCampaignInvolvedOperators';
+import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 
 @handler({
   ...handlerConfig,
@@ -18,7 +18,7 @@ export class ExportCapitalCallsAction extends Action {
   constructor(
     private checkCampaign: CheckCampaign,
     private s3StorageProvider: S3StorageProvider,
-    private getCampaignInvolvedOperator: GetCampaignInvolvedOperator,
+    private tripRepositoryProvider: TripRepositoryProviderInterfaceResolver,
     private buildExcel: BuildExcel,
   ) {
     super();
@@ -36,11 +36,8 @@ export class ExportCapitalCallsAction extends Action {
         if (!checkedCampaign) {
           return;
         }
-        const involvedOperatorIds: number[] = await this.getCampaignInvolvedOperator.call(
-          checkedCampaign,
-          start_date,
-          end_date,
-        );
+
+        const involvedOperatorIds = await this.tripRepositoryProvider.getPolicyInvoledOperators(checkedCampaign._id, start_date, end_date, checkedCampaign.params.operators);
         await Promise.all(
           involvedOperatorIds.map(async (o_id) => {
             try {

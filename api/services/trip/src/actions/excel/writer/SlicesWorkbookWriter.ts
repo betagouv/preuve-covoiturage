@@ -1,9 +1,9 @@
 import { provider } from '@ilos/common';
 import { Column, stream, Worksheet } from 'exceljs';
 import { SlicesInterface } from '../../../interfaces/SlicesInterface';
-import { ProgressiveDistanceRangeMetaParameters } from '~/shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
 import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
 import { TripRepositoryProvider } from '../../../providers/TripRepositoryProvider';
+import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
 
 /***
  * Tranches       | Somme incentives  | Nombre trajet
@@ -34,12 +34,12 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
     worksheet.commit();
   }
 
-  private formatSliceLabel(slice: ProgressiveDistanceRangeMetaParameters): string {
-    if (!slice.min && slice.max) {
-      return `Jusqu'à ${slice.max / 1000} km`;
-    } else if (slice.max === TripRepositoryProvider.MAX_KM_LIMIT) {
-      return `Supérieur à ${slice.min / 1000} km`;
+  private formatSliceLabel(slice: SliceInterface): string {
+    if (!slice.start && slice.end) {
+      return `Jusqu'à ${slice.end / 1000} km`;
+    } else if (slice.end === TripRepositoryProvider.MAX_KM_LIMIT) {
+      return `Supérieur à ${slice.start / 1000} km`;
     }
-    return `De ${slice.min / 1000} km à ${slice.max / 1000} km`;
+    return `De ${slice.start / 1000} km à ${slice.end / 1000} km`;
   }
 }
