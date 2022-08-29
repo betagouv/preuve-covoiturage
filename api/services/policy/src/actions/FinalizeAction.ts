@@ -1,5 +1,6 @@
 import { handler, KernelInterfaceResolver, InitHookInterface } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { sub } from 'date-fns';
 
 import {
   signature as handlerSignature,
@@ -43,7 +44,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
           service: handlerConfig.service,
           metadata: {
             repeat: {
-              cron: '0 4 6 * *',
+              cron: '0 4 * * *',
             },
             jobId: 'policy.finalize.cron',
           },
@@ -53,12 +54,8 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    // Get last day of previous month
-    const defaultTo = new Date();
-    defaultTo.setDate(1);
-    defaultTo.setHours(0, 0, 0, -1);
-
-    const to = params.to ?? defaultTo;
+    // Get 7 days ago 
+    const to = params.to ?? sub(new Date(), { days: 7 });
 
     // Update incentive on cancelled carpool
     await this.incentiveRepository.disableOnCanceledTrip();
