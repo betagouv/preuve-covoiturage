@@ -32,7 +32,8 @@ export class FindAction extends AbstractAction {
 
     return {
       ...policy.export(),
-      description: policy.describeForHuman(),
+      description: policy.describe(),
+      slices: policy.getSlices(),
     };
   }
 }

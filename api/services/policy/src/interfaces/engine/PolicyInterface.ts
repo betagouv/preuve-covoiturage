@@ -25,8 +25,8 @@ export interface PolicyInterface {
     store: MetadataStoreInterface,
     incentive: SerializedIncentiveInterface,
   ): Promise<StatefulIncentiveInterface>;
-  describe(): Array<StepInterface>;
-  describeForHuman(): string;
+  getSlices(): Array<SliceInterface>;
+  describe(): string;
 }
 
 export interface SerializedPolicyInterface {
@@ -44,7 +44,7 @@ export interface PolicyHandlerStaticInterface {
   new (): PolicyHandlerInterface;
 }
 
-export interface StepInterface {
+export interface SliceInterface {
   start: number;
   end: number;
 }
@@ -52,8 +52,8 @@ export interface StepInterface {
 export interface PolicyHandlerInterface {
   processStateless(context: StatelessContextInterface): void;
   processStateful(context: StatefulContextInterface): void;
-  describe(): Array<StepInterface>;
-  describeForHuman(): string;
+  getSlices(): Array<SliceInterface>;
+  describe(): string;
 }
 
 export type StatelessRuleHelper<P> = (ctx: StatelessContextInterface, params: P) => boolean;

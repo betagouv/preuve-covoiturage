@@ -9,7 +9,7 @@ import {
   SerializedPolicyInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
-  StepInterface,
+  SliceInterface, 
   TerritorySelectorsInterface,
 } from '../../interfaces';
 import { policies } from '../policies';
@@ -112,11 +112,11 @@ export class Policy implements PolicyInterface {
     return true;
   }
 
-  describe(): Array<StepInterface> {
-    return this.handler.describe();
+  getSlices(): SliceInterface[] {
+    return this.handler.getSlices();
   }
 
-  describeForHuman(): string {
-    return this.handler.describeForHuman();
+  describe(): string {
+    return this.handler.describe();
   }
 }

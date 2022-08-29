@@ -1,9 +1,9 @@
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   PolicyHandlerInterface,
+  SliceInterface,
   StatefulContextInterface,
   StatelessContextInterface,
-  StepInterface,
 } from '../../interfaces';
 import {
   atDate,
@@ -75,11 +75,11 @@ export class Idfm implements PolicyHandlerInterface {
     }
   }
 
-  describe(): Array<StepInterface> {
+  getSlices(): SliceInterface[] {
     return [];
   }
 
-  describeForHuman(): string {
+  describe(): string {
     return 'Ceci est une super campagne';
   }
 }

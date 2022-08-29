@@ -7,4 +7,5 @@ export interface PolicyInterface {
   end_date: Date;
   status: string;
   handler: string;
+  slices?: Array<{ min: number; max: number }>
 }

@@ -50,8 +50,8 @@ export {
   PolicyHandlerInterface,
   PolicyHandlerStaticInterface,
   SerializedPolicyInterface,
+  SliceInterface,
   StatefulContextInterface,
   StatelessRuleHelper,
   StatelessContextInterface,
-  StepInterface,
 } from './PolicyInterface';
