@@ -147,7 +147,6 @@ test.serial('Update a territory', async (t) => {
   const updateData = {
     ...initResponse.result,
     selector: {
-      _id: [],
       com: ['91471', '91377'],
     },
   };

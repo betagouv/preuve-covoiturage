@@ -72,10 +72,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       throw new NotFoundException();
     }
 
-    return {
-      ...result.rows[0],
-      selector: this.castSelectorId(result.rows[0].selector),
-    };
+    return result.rows[0];
   }
 
   async list(params: ListParamsInterface): Promise<ListResultInterface> {
@@ -298,7 +295,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
     };
 
     const result = await this.connection.getClient().query(query);
-    return this.castSelectorId(result.rows[0].selector);
+    return result.rows[0].selector;
   }
 
   async getRelationCodesCom(params: { _id: number }): Promise<TerritorySelectorsInterface> {
@@ -316,22 +313,5 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
 
     const result = await this.connection.getClient().query(query);
     return result.rows[0];
-  }
-
-  // needed because _id must be numbers
-  protected castSelectorId(
-    input?: Partial<TerritorySelectorsInterface & { _id?: string[] }>,
-  ): TerritorySelectorsInterface & { _id: number[] } {
-    const defaultSelector = {
-      _id: [],
-    };
-    if (!input) {
-      return defaultSelector;
-    }
-
-    return {
-      ...input,
-      _id: (input._id || []).map((v: string) => Number(v)),
-    };
   }
 }
