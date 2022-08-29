@@ -47,7 +47,7 @@ export function watchForPersonMaxTripByDay(ctx: StatelessContextInterface, uuid:
   });
 }
 
-export function applyForMaximum(ctx: StatefulContextInterface, uuid: string, max: number, forTrip: boolean): void {
+export function applyForMaximum(ctx: StatefulContextInterface, uuid: string, max: number, forTrip: boolean = false): void {
   const state = ctx.meta.get(uuid);
   if (state >= max) {
     // limit is reached
