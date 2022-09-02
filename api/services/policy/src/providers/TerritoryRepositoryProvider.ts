@@ -54,11 +54,11 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       values: [_id],
     };
     const result = await this.connection.getClient().query(query);
-  
-    if(result.rowCount < 1) {
+
+    if (result.rowCount < 1) {
       throw new NotFoundException();
     }
-  
+
     return result.rows[0]?.siret;
   }
 

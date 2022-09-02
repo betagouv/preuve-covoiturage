@@ -4,7 +4,7 @@ export function setMax(
   uuid: string,
   max: number,
   fn: (ctx: StatelessContextInterface, uuid: string) => void,
-  forTrip: boolean = false,
+  forTrip = false,
 ): [(ctx: StatelessContextInterface) => void, (ctx: StatefulContextInterface) => void] {
   return [
     (ctx: StatelessContextInterface) => fn(ctx, uuid),
@@ -47,7 +47,7 @@ export function watchForPersonMaxTripByDay(ctx: StatelessContextInterface, uuid:
   });
 }
 
-export function applyForMaximum(ctx: StatefulContextInterface, uuid: string, max: number, forTrip: boolean = false): void {
+export function applyForMaximum(ctx: StatefulContextInterface, uuid: string, max: number, forTrip = false): void {
   const state = ctx.meta.get(uuid);
   if (state >= max) {
     // limit is reached
@@ -56,7 +56,7 @@ export function applyForMaximum(ctx: StatefulContextInterface, uuid: string, max
   }
 
   // apply for trip
-  if(forTrip) {
+  if (forTrip) {
     ctx.meta.set(uuid, state + 1);
     return;
   }

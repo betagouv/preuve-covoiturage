@@ -35,58 +35,63 @@ class MemoryMetadataRepository implements MetadataRepositoryProviderInterfaceRes
     this.data = data;
   }
 }
-export const process = async (t: ExecutionContext, input: ProcessParams, expected: ProcessResult) => {
-  const inputMeta: Array<SerializedStoredMetadataInterface> = (input.meta || []).map((m) => ({
-    datetime: new Date(),
-    policy_id: 1,
-    ...m,
-  }));
-  const carpools = input.carpool.map((c) => generateCarpool(c));
-  const [start_date, end_date] = carpools
-    .map((c) => c.datetime)
-    .reduce(([oldest, newest], i) => [i < oldest ? i : oldest, i > newest ? i : newest], [new Date(), new Date()]);
 
-  const policyDef: SerializedPolicyInterface = {
-    start_date,
-    end_date,
-    _id: 1,
-    territory_id: 1,
-    territory_selector: {
-      country: ['XXXXX'],
-    },
-    name: '',
-    status: 'active',
-    handler: '',
-    ...(input.policy || {}),
-  };
+export const makeProcessHelper = (cp?: CarpoolInterface) => {
+  return async (t: ExecutionContext, input: ProcessParams, expected: ProcessResult) => {
+    const inputMeta: Array<SerializedStoredMetadataInterface> = (input.meta || []).map((m) => ({
+      datetime: new Date(),
+      policy_id: 1,
+      ...m,
+    }));
+    const carpools = input.carpool.map((c) => generateCarpool(c, cp));
+    const [start_date, end_date] = carpools
+      .map((c) => c.datetime)
+      .reduce(([oldest, newest], i) => [i < oldest ? i : oldest, i > newest ? i : newest], [new Date(), new Date()]);
 
-  const policy = input.handler
-    ? new Policy(
-        policyDef._id,
-        policyDef.territory_id,
-        policyDef.territory_selector,
-        policyDef.name,
-        policyDef.start_date,
-        policyDef.end_date,
-        input.handler,
-        policyDef.status,
-      )
-    : await Policy.import(policyDef);
-  const store = new MetadataStore(new MemoryMetadataRepository(inputMeta));
-  const incentives: SerializedIncentiveInterface[] = [];
-  for (const carpool of carpools) {
-    const statelessIncentive = await policy.processStateless(carpool);
-    const statefulIncentive = await policy.processStateful(store, statelessIncentive.export());
-    incentives.push(statefulIncentive.export());
-  }
-  t.deepEqual(
-    incentives.map((i) => i.statefulAmount),
-    expected.incentive,
-  );
-  if (expected.meta) {
+    const policyDef: SerializedPolicyInterface = {
+      start_date,
+      end_date,
+      _id: 1,
+      territory_id: 1,
+      territory_selector: {
+        country: ['XXXXX'],
+      },
+      name: '',
+      status: 'active',
+      handler: '',
+      ...(input.policy || {}),
+    };
+
+    const policy = input.handler
+      ? new Policy(
+          policyDef._id,
+          policyDef.territory_id,
+          policyDef.territory_selector,
+          policyDef.name,
+          policyDef.start_date,
+          policyDef.end_date,
+          input.handler,
+          policyDef.status,
+        )
+      : await Policy.import(policyDef);
+    const store = new MetadataStore(new MemoryMetadataRepository(inputMeta));
+    const incentives: SerializedIncentiveInterface[] = [];
+    for (const carpool of carpools) {
+      const statelessIncentive = await policy.processStateless(carpool);
+      const statefulIncentive = await policy.processStateful(store, statelessIncentive.export());
+      incentives.push(statefulIncentive.export());
+    }
     t.deepEqual(
-      (await store.store(MetadataLifetime.Day)).map((m) => ({ key: m.key, value: m.value })),
-      expected.meta.map((m) => ({ key: m.key, value: m.value })),
+      incentives.map((i) => i.statefulAmount),
+      expected.incentive,
     );
-  }
+    if (expected.meta) {
+      t.deepEqual(
+        (await store.store(MetadataLifetime.Day)).map((m) => ({ key: m.key, value: m.value })),
+        expected.meta.map((m) => ({ key: m.key, value: m.value })),
+      );
+    }
+  };
 };
+
+export const process = makeProcessHelper();

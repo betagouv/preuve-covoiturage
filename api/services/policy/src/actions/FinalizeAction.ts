@@ -54,7 +54,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    // Get 7 days ago 
+    // Get 7 days ago
     const to = params.to ?? sub(new Date(), { days: 7 });
 
     // Update incentive on cancelled carpool

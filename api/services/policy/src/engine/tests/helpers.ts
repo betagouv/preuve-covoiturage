@@ -6,7 +6,7 @@ import {
   SerializedIncentiveInterface,
 } from '../../interfaces';
 
-const defaultPos = {
+const defaultPosition = {
   arr: '91377',
   com: '91377',
   aom: '217500016',
@@ -17,7 +17,7 @@ const defaultPos = {
   reseau: '232',
 };
 
-const defaultCarpool: CarpoolInterface = {
+const dftCarpool: CarpoolInterface = {
   _id: 1,
   trip_id: v4(),
   identity_uuid: v4(),
@@ -31,11 +31,14 @@ const defaultCarpool: CarpoolInterface = {
   duration: 600,
   distance: 5000,
   cost: 20,
-  start: { ...defaultPos },
-  end: { ...defaultPos },
+  start: { ...defaultPosition },
+  end: { ...defaultPosition },
 };
 
-export function generateCarpool(carpool: Partial<CarpoolInterface> = {}): CarpoolInterface {
+export function generateCarpool(
+  carpool: Partial<CarpoolInterface> = {},
+  defaultCarpool: CarpoolInterface = dftCarpool,
+): CarpoolInterface {
   return { ...defaultCarpool, ...carpool };
 }
 

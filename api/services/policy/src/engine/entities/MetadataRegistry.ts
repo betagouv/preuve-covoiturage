@@ -53,9 +53,14 @@ export class MetadataRegistry implements MetadataRegistryInterface {
   }
 
   export(): Array<SerializedMetadataVariableDefinitionInterface> {
-    return [...this.data.values()].map((d) => ({
-      uuid: d.uuid,
-      key: getMetaKey(this.datetime, d),
-    }));
+    return [...this.data.values()].map((d) => {
+      const { uuid, lifetime, initialValue } = d;
+      return {
+        uuid,
+        lifetime,
+        initialValue,
+        key: getMetaKey(this.datetime, d),
+      };
+    });
   }
 }

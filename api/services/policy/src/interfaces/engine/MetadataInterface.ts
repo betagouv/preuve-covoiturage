@@ -1,4 +1,5 @@
 export enum MetadataLifetime {
+  Carpool = -1,
   Day = 0,
   Month = 1,
   Always = 2,

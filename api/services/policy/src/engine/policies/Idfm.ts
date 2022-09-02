@@ -25,7 +25,11 @@ import {
 
 export class Idfm implements PolicyHandlerInterface {
   static readonly id = 'Idfm';
-  protected operators = ['siret de klaxit', 'siret de karos'];
+  protected operators = [
+    '80279897500024', // Karos
+    '75315323800047', // Klaxit
+    '49190454600034', // BBC
+  ];
   protected slices = [
     { start: 2000, end: 15000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     { start: 15000, end: 30000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
@@ -45,12 +49,11 @@ export class Idfm implements PolicyHandlerInterface {
     '2022-07-06',
   ];
 
-
   protected processExclusion(ctx: StatelessContextInterface) {
     isDriverOrThrow(ctx);
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2000, max: 150000 });
-    
+
     // Exclure les trajet Paris-Paris
     if (startsAt(ctx, { com: ['75056'] }) && endsAt(ctx, { com: ['75056'] })) {
       throw new NotEligibleTargetException();
@@ -71,7 +74,7 @@ export class Idfm implements PolicyHandlerInterface {
 
   processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
- 
+
     // Mise en place des limites
     for (const limit of this.limits) {
       const [staless] = limit;
@@ -80,19 +83,17 @@ export class Idfm implements PolicyHandlerInterface {
 
     // Par kilomètre
     let amount = 0;
-    for(const { start, end, fn } of this.slices) {
+    for (const { start, end, fn } of this.slices) {
       if (onDistanceRange(ctx, { min: start, max: end })) {
         amount = fn(ctx);
       }
     }
 
     // Jour de pollution
-    if (
-      atDate(ctx, { dates: this.pollutionAndStrikeDates })
-    ) {
-      (amount *= 1), 5;
+    if (atDate(ctx, { dates: this.pollutionAndStrikeDates })) {
+      amount *= 1.5;
     }
-  
+
     ctx.incentive.set(amount);
   }
 

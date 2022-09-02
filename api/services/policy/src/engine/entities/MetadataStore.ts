@@ -67,7 +67,7 @@ export class MetadataStore implements MetadataStoreInterface {
     const dataToSave: Array<SerializedStoredMetadataInterface> = [];
     for (const uuid of this.cache.keys()) {
       const data = this.cache.get(uuid);
-      if (data.lifetime >= lifetime) {
+      if (data.lifetime > lifetime) {
         dataToSave.push({
           policy_id: data.policy_id,
           datetime: data.datetime,
