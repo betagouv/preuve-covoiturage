@@ -40,6 +40,8 @@ test('should watchForGlobalMaxAmount', async (t) => {
     {
       uuid: '1',
       key: 'max_amount_restriction.global.campaign.global',
+      initialValue: undefined,
+      lifetime: MetadataLifetime.Always,
     },
   ]);
 });
@@ -51,6 +53,8 @@ test('should watchForPersonMaxAmountByMonth', async (t) => {
     {
       uuid: '1',
       key: `max_amount_restriction.${ctx.carpool.identity_uuid}.month.0-2019`,
+      initialValue: undefined,
+      lifetime: MetadataLifetime.Month,
     },
   ]);
 });
@@ -62,6 +66,8 @@ test('should watchForPersonMaxTripByMonth', async (t) => {
     {
       uuid: '1',
       key: `max_trip_restriction.${ctx.carpool.identity_uuid}.month.0-2019`,
+      initialValue: undefined,
+      lifetime: MetadataLifetime.Month,
     },
   ]);
 });
@@ -73,6 +79,8 @@ test('should watchForPersonMaxTripByDay', async (t) => {
     {
       uuid: '1',
       key: `max_trip_restriction.${ctx.carpool.identity_uuid}.day.15-0-2019`,
+      initialValue: undefined,
+      lifetime: MetadataLifetime.Day,
     },
   ]);
 });
@@ -130,6 +138,8 @@ test('should watch and apply', async (t) => {
     {
       uuid: 'uuid',
       key: 'max_amount_restriction.global.campaign.global',
+      initialValue: undefined,
+      lifetime: MetadataLifetime.Always,
     },
   ]);
   ctxStateless.incentive.set(100);
