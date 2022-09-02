@@ -23,8 +23,8 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 
-// TODO test
 export class Idfm implements PolicyHandlerInterface {
+  static readonly id = 'Idfm';
   protected operators = ['siret de klaxit', 'siret de karos'];
   protected slices = [
     { start: 2000, end: 15000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },

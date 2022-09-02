@@ -41,6 +41,7 @@ export interface SerializedPolicyInterface {
 }
 
 export interface PolicyHandlerStaticInterface {
+  readonly id: string;
   new (): PolicyHandlerInterface;
 }
 
