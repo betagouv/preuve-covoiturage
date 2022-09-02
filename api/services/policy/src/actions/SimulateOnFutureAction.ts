@@ -104,7 +104,7 @@ export class SimulateOnFutureAction extends AbstractAction {
       _id: isDriver ? SimulateOnFutureAction.DRIVER : SimulateOnFutureAction.PASSENGER,
       identity_uuid: v4(),
       trip_id: v4(),
-      operator_siret: input.operator_id.toString(), // TODO
+      operator_siret: await this.territoryRepository.findSiretByOperatorId(input.operator_id),
       operator_class: input.operator_class,
       is_over_18: target.identity.over_18,
       is_driver: isDriver,
