@@ -9,7 +9,6 @@ import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { Roles } from '~/core/enums/user/roles';
 import { catchHttpError } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { DialogService } from '~/core/services/dialog.service';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { TerritoryGroupInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
@@ -43,7 +42,6 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
     public auth: AuthenticationService,
     private _router: Router,
     private _route: ActivatedRoute,
-    private _dialog: DialogService,
     private _toastr: ToastrService,
     private _territoryApi: TerritoryApiService,
     private _campaignStoreService: CampaignStoreService,
@@ -82,43 +80,6 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
       .subscribe((territory: TerritoryGroupInterface) => {
         this.territory = territory;
         this.isLoaded = true;
-      });
-  }
-
-  launchCampaign(id: number): void {
-    if (this.userIsDemo) {
-      this._toastr.error(
-        `Vous ne pouvez pas lancer de campagne car vous êtes en mode découverte.
-        Veuillez contacter le registre de covoiturage pour activer votre compte.`,
-      );
-
-      return;
-    }
-
-    this._dialog
-      .confirm({
-        title: 'Lancement de la campagne',
-        message: 'Êtes-vous sûr de vouloir lancer la campagne ?',
-        confirmBtn: 'Confirmer',
-      })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((result) => {
-        if (result) {
-          this._campaignStoreService
-            .launch(id)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-              () => {
-                this._router.navigate(['/campaign']).then(() => {
-                  this._toastr.success(`Campagne lancée`);
-                });
-              },
-              (error) => {
-                console.error(error);
-                this._toastr.error('Erreur lors du lancement');
-              },
-            );
-        }
       });
   }
 }

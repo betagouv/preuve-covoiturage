@@ -11,20 +11,6 @@
       </div>
     </div>
 
-    <!-- Launchable campaign -->
-    <div *ngIf="isLaunchable && !hasExpired" class="launch-draft">
-      <div>
-        <mat-icon class="dot">fiber_manual_record</mat-icon>
-        <div>
-          <h4>Votre campagne est en attente et prête à être démarrée</h4>
-          <p>Vous pouvez vérifier l'ensemble des informations saisies, puis la lancer</p>
-        </div>
-      </div>
-      <button mat-flat-button type="button" color="primary" (click)="launchCampaign(campaignUx._id)">
-        Lancer ma campagne
-      </button>
-    </div>
-
     <!-- Expired campaign -->
     <div *ngIf="hasExpired" class="launch-draft">
       <div>

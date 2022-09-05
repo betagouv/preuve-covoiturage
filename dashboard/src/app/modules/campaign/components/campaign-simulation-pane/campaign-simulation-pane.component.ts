@@ -1,19 +1,20 @@
-import * as moment from 'moment';
 import { format, subDays, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { omit } from 'lodash-es';
+import * as moment from 'moment';
 import { BehaviorSubject, combineLatest, throwError } from 'rxjs';
 import { catchError, debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { CurrencyPipe } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChange } from '@angular/core';
 
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.formater';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.formater';
 import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { ParamsInterface as SimulateOnPastParam } from '~/shared/policy/stats.contract';
 
 import { CampaignApiService } from '../../services/campaign-api.service';
 
@@ -73,7 +74,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
         }),
         map(CampaignFormater.toApi),
         switchMap((c) =>
-          this.campaignApi.simulate(c).pipe(
+          this.campaignApi.simulate(c as SimulateOnPastParam).pipe(
             catchError((err) => {
               this.errors.simulation_failed = true;
               this.loading = false;

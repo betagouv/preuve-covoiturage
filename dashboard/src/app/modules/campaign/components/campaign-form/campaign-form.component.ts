@@ -1,21 +1,20 @@
-import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { takeUntil } from 'rxjs/operators';
 
-import { Router } from '@angular/router';
-import { MatStepper } from '@angular/material/stepper';
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatStepper } from '@angular/material/stepper';
+import { Router } from '@angular/router';
 
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
-import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
-import { CampaignInterface } from '~/core/entities/api/shared/policy/common/interfaces/CampaignInterface';
 
 import { uniqueRetributionValidator } from '../../validators/retribution-unique.validator';
 
@@ -135,9 +134,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
 
     if (this.creationFromScratch || this.creationFromParentId) {
       this.createCampaign(formValues);
-    } else {
-      const campaign = new Campaign();
-      this.patchCampaign(campaign.toCampaignPatch(formValues));
     }
   }
 
@@ -156,25 +152,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit, 
       campaign.filters.rank = [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C];
       this.setCampaignToForm(campaign, true);
     }
-  }
-
-  private patchCampaign(params: CampaignInterface): void {
-    this._campaignStoreService
-      .patchSelected(params)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (data) => {
-          this.requestLoading = false;
-          this._router.navigate([`/campaign/${this.campaignId}`]).then(() => {
-            this._toastr.success(`La campagne ${params.name} a bien été mise à jour`);
-          });
-        },
-        (error) => {
-          this.requestLoading = false;
-          console.error(error);
-          this._toastr.error('Une erreur est survenue lors de la mise à jour de la campagne');
-        },
-      );
   }
 
   private createCampaign(formValues: CampaignUx): void {
