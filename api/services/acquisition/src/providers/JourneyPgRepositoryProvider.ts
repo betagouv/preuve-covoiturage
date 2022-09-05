@@ -20,17 +20,18 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
   async create(
     journey: JourneyInterface,
     context: { operator_id: number; application_id: number },
+    apiVersion: number = 2,
   ): Promise<AcquisitionInterface> {
     const { operator_id, application_id } = context;
 
     const query = {
       text: `
         INSERT INTO ${this.table}
-        ( operator_id, application_id, journey_id, payload )
-        VALUES ( $1, $2, $3, $4 )
+        ( operator_id, application_id, journey_id, payload, api_version )
+        VALUES ( $1, $2, $3, $4, $5 )
         RETURNING *
       `,
-      values: [operator_id, application_id || 0, journey.journey_id, journey],
+      values: [operator_id, application_id || 0, journey.journey_id, journey, apiVersion],
     };
 
     const result = await this.connection.getClient().query(query);
