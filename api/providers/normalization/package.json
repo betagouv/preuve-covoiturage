@@ -1,10 +1,11 @@
 {
-  "name": "@pdc/service-normalization",
+  "name": "@pdc/provider-normalization",
   "version": "0.0.1",
   "private": true,
   "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "typings": "dist/index.d.js",
   "scripts": {
-    "ilos": "ilos",
     "build": "tsc",
     "watch": "tsc -w",
     "test:unit": "ava --config ava.unit.cjs",
@@ -12,15 +13,7 @@
     "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
     "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
   },
-  "main": "./dist/bootstrap.js",
-  "config": {
-    "workingDir": "./dist",
-    "bootstrap": "./bootstrap.js",
-    "app": {}
-  },
   "dependencies": {
-    "@ilos/cli": "~0",
-    "@ilos/common": "~0",
     "@ilos/connection-postgres": "~0",
     "@ilos/connection-redis": "~0",
     "@ilos/core": "~0",

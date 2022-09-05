@@ -1,6 +1,4 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, KernelInterfaceResolver } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import { KernelInterfaceResolver, provider } from '@ilos/common';
 
 import {
   signature as operatorFindSignature,
@@ -8,16 +6,11 @@ import {
   ResultInterface as OperatorFindResultInterface,
 } from '../shared/operator/find.contract';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/cost.contract';
-import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
+import { CostParamsInterface, CostResultInterface, CostNormalizerProviderInterface, IncentiveInterface, PaymentInterface } from '../interfaces';
 
-import { IncentiveInterface } from '../shared/common/interfaces/IncentiveInterface';
-
-@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
-export class NormalizationCostAction extends AbstractAction {
-  constructor(private kernel: KernelInterfaceResolver) {
-    super();
-  }
+@provider()
+export class CostNormalizerProvider implements CostNormalizerProviderInterface {
+  constructor(private kernel: KernelInterfaceResolver) {}
 
   protected async getSiret(operatorId): Promise<string> {
     try {
@@ -37,7 +30,7 @@ export class NormalizationCostAction extends AbstractAction {
     }
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: CostParamsInterface): Promise<CostResultInterface> {
     const siret = await this.getSiret(params.operator_id);
 
     const [cost, payments] = this.normalizeCost(

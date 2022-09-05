@@ -1,38 +1,11 @@
-import { Action as AbstractAction } from '@ilos/core';
-import { handler, KernelInterfaceResolver, ContextType } from '@ilos/common';
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import { provider } from '@ilos/common';
 
-import { ParamsInterface as LogErrorParamsInterface } from '../shared/acquisition/logerror.contract';
-import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
-
-import {
-  signature as costSignature,
-  ParamsInterface as CostParamsInterface,
-  ResultInterface as CostResultInterface,
-} from '../shared/normalization/cost.contract';
-import {
-  signature as identitySignature,
-  ParamsInterface as IdentityParamsInterface,
-  ResultInterface as IdentityResultInterface,
-} from '../shared/normalization/identity.contract';
-import {
-  signature as geoSignature,
-  ParamsInterface as GeoParamsInterface,
-  ResultInterface as GeoResultInterface,
-} from '../shared/normalization/geo.contract';
-import {
-  signature as routeSignature,
-  ParamsInterface as RouteParamsInterface,
-  ResultInterface as RouteResultInterface,
-} from '../shared/normalization/route.contract';
-import {
-  signature as crossCheckSignature,
-  ParamsInterface as CrossCheckParamsInterface,
-  ResultInterface as CrossCheckResultInterface,
-} from '../shared/carpool/crosscheck.contract';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/process.contract';
 import { PersonInterface, FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
-import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
+import { CostNormalizerProvider } from './CostNormalizerProvider';
+import { GeoNormalizerProvider } from './GeoNormalizerProvider';
+import { IdentityNormalizerProvider } from './IdentityNormalizerProvider';
+import { RouteNormalizerProvider } from './RouteNormalizerProvider';
+import { NormalizationProviderInterface, ParamsInterface, ResultInterface } from '../interfaces';
 
 enum NormalisationErrorStage {
   Cost = 'cost',
@@ -42,26 +15,17 @@ enum NormalisationErrorStage {
   Territory = 'territory',
 }
 
-@handler({
-  ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares('acquisition', 'policy', handlerConfig.service)],
-})
-export class NormalizationProcessAction extends AbstractAction {
-  private readonly context: ContextType = {
-    call: {
-      user: {},
-    },
-    channel: {
-      service: 'normalization',
-      transport: 'queue',
-    },
-  };
-
-  constructor(private kernel: KernelInterfaceResolver) {
-    super();
+@provider()
+export class NormalizationProvider implements NormalizationProviderInterface {
+  constructor(
+    protected costNormalizer: CostNormalizerProvider,
+    protected geoNormalizer: GeoNormalizerProvider,
+    protected identityNormalizer: IdentityNormalizerProvider,
+    protected routeNormalizer: RouteNormalizerProvider,
+  ) {
   }
 
-  public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
     const people: FinalizedPersonInterface[] = [];
 
     if (journey.payload.driver) {
@@ -73,7 +37,7 @@ export class NormalizationProcessAction extends AbstractAction {
       people.push(this.finalizePerson(passenger));
     }
 
-    const normalizedData: CrossCheckParamsInterface = {
+    const normalizedData: ResultInterface = {
       people,
       operator_trip_id: journey.payload.operator_journey_id,
       created_at: journey.created_at,
@@ -82,30 +46,6 @@ export class NormalizationProcessAction extends AbstractAction {
       acquisition_id: journey._id,
       operator_journey_id: journey.journey_id,
     };
-
-    // Notify only if query is from acquisition or self
-    if (['acquisition', handlerConfig.service].indexOf(context.channel.service) > -1) {
-      // mark all previously attempted normalisation failed request as resolved
-      this.kernel.notify<ResolveErrorParamsInterface>(
-        'acquisition:resolveerror',
-        {
-          operator_id: journey.operator_id,
-          journey_id: journey.journey_id,
-          error_stage: ErrorStage.Normalisation,
-        },
-        { channel: { service: 'acquisition' } },
-      );
-
-      // console.debug('[normalization]:call carpool:crosscheck', {
-      //   operator_journey_id: normalizedData.operator_journey_id,
-      // });
-
-      await this.kernel.call<CrossCheckParamsInterface, CrossCheckResultInterface>(
-        crossCheckSignature,
-        normalizedData,
-        this.context,
-      );
-    }
 
     return normalizedData;
   }
@@ -151,23 +91,23 @@ export class NormalizationProcessAction extends AbstractAction {
     e: Error,
     errorCode = '500',
   ): Promise<void> {
-    await this.kernel.notify<LogErrorParamsInterface>(
-      'acquisition:logerror',
-      {
-        error_stage: ErrorStage.Normalisation,
-        error_line: null,
-        operator_id: journey.operator_id,
-        journey_id: journey.journey_id,
-        source: 'api.v2',
-        error_message: e.message,
-        error_code: errorCode,
-        auth: {},
-        headers: {},
-        body: { journey, normalisationCode },
-        request_id: null,
-      },
-      { channel: { service: 'acquisition' } },
-    );
+    //  await this.kernel.notify<LogErrorParamsInterface>(
+    //    'acquisition:logerror',
+    //    {
+    //      error_stage: ErrorStage.Normalisation,
+    //      error_line: null,
+    //      operator_id: journey.operator_id,
+    //      journey_id: journey.journey_id,
+    //      source: 'api.v2',
+    //      error_message: e.message,
+    //      error_code: errorCode,
+    //      auth: {},
+    //      headers: {},
+    //      body: { journey, normalisationCode },
+    //      request_id: null,
+    //    },
+    //    { channel: { service: 'acquisition' } },
+    //  );
   }
 
   public async handlePerson(person: PersonInterface, journey: ParamsInterface): Promise<PersonInterface> {
@@ -177,8 +117,7 @@ export class NormalizationProcessAction extends AbstractAction {
 
     try {
       // console.debug('[normalization]:cost start');
-      const { cost, payments } = await this.kernel.call<CostParamsInterface, CostResultInterface>(
-        costSignature,
+      const { cost, payments } = await this.costNormalizer.handle( 
         {
           operator_id: journey.operator_id,
           revenue: finalPerson.revenue,
@@ -187,7 +126,6 @@ export class NormalizationProcessAction extends AbstractAction {
           payments: finalPerson.payments,
           isDriver: finalPerson.is_driver as boolean,
         },
-        this.context,
       );
 
       finalPerson['cost'] = cost;
@@ -202,10 +140,8 @@ export class NormalizationProcessAction extends AbstractAction {
 
     try {
       // console.debug('[normalization]:identity start');
-      finalPerson.identity = await this.kernel.call<IdentityParamsInterface, IdentityResultInterface>(
-        identitySignature,
+      finalPerson.identity = await this.identityNormalizer.handle(
         finalPerson.identity,
-        this.context,
       );
     } catch (e) {
       console.error(`[normalization]:identity: ${e.message}`, e);
@@ -217,13 +153,11 @@ export class NormalizationProcessAction extends AbstractAction {
     let isSubGeoError = false;
     try {
       // console.debug('[normalization]:geo start');
-      const { start, end } = await this.kernel.call<GeoParamsInterface, GeoResultInterface>(
-        geoSignature,
+      const { start, end } = await this.geoNormalizer.handle(
         {
           start: finalPerson.start,
           end: finalPerson.end,
         },
-        this.context,
       );
 
       finalPerson.start = { ...finalPerson.start, ...start };
@@ -232,13 +166,11 @@ export class NormalizationProcessAction extends AbstractAction {
       // Route ------------------------------------------------------------------------------------
       try {
         // console.debug('[normalization]:geo:route start');
-        const { calc_distance, calc_duration } = await this.kernel.call<RouteParamsInterface, RouteResultInterface>(
-          routeSignature,
+        const { calc_distance, calc_duration } = await this.routeNormalizer.handle(
           {
             start,
             end,
           },
-          this.context,
         );
 
         finalPerson.calc_distance = calc_distance;

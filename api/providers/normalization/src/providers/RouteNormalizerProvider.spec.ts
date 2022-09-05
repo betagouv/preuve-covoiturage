@@ -1,10 +1,10 @@
 import test from 'ava';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { PointInterface, RouteMeta } from '@pdc/provider-geo/dist/interfaces';
+import { PointInterface, RouteMeta } from '../interfaces';
 
-import { NormalizationRouteAction } from './NormalizationRouteAction';
+import { RouteNormalizerProvider } from './RouteNormalizerProvider';
 
-test('Route normalization action', async (t) => {
+test('Route normalization normalizer', async (t) => {
   class GeoProvider extends GeoProviderInterfaceResolver {
     async getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {
       return {
@@ -14,7 +14,7 @@ test('Route normalization action', async (t) => {
     }
   }
   const geoProvider = new GeoProvider();
-  const action = new NormalizationRouteAction(geoProvider);
+  const normalizer = new RouteNormalizerProvider(geoProvider);
   const params = {
     start: {
       lat: 0.001,
@@ -25,7 +25,7 @@ test('Route normalization action', async (t) => {
       lon: 0.004,
     },
   };
-  const result = await action.handle(params);
+  const result = await normalizer.handle(params);
 
   t.is(result.calc_distance, (params.start.lat + params.end.lat) * 1000, 'have calc_distance matching params');
   t.is(result.calc_duration, (params.start.lon + params.end.lon) * 1000, 'have calc_distance matching params');

@@ -1,10 +1,10 @@
 import test from 'ava';
 
-import { NormalizationIdentityAction } from './NormalizationIdentityAction';
-import { LegacyIdentityInterface } from '../shared/common/interfaces/LegacyIdentityInterface';
+import { IdentityNormalizerProvider } from './IdentityNormalizerProvider';
+import { LegacyIdentityInterface } from '../interfaces';
 
-test('Identity normalization action should work', async (t) => {
-  const action = new NormalizationIdentityAction();
+test('Identity normalizer should work', async (t) => {
+  const normalizer = new IdentityNormalizerProvider();
   const params: LegacyIdentityInterface = {
     firstname: 'Roger',
     travel_pass: {
@@ -12,7 +12,7 @@ test('Identity normalization action should work', async (t) => {
       user_id: 'user_test',
     },
   };
-  const res = await action.handle(params);
+  const res = await normalizer.handle(params);
 
   t.true(Reflect.ownKeys(res).indexOf('firstname') > -1, 'Should include identity');
   t.false(Reflect.ownKeys(res).indexOf('travel_pass') > -1, 'Should not include travel_pass');

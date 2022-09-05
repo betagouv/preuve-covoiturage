@@ -1,24 +1,25 @@
 import test from 'ava';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { PartialGeoInterface, GeoInterface } from '@pdc/provider-geo/dist/interfaces';
-
-import { NormalizationGeoAction } from './NormalizationGeoAction';
+import { PartialGeoInterface, GeoInterface } from '../interfaces';
+import { GeoNormalizerProvider } from './GeoNormalizerProvider';
 
 class GeoProvider extends GeoProviderInterfaceResolver {
   async checkAndComplete(data: PartialGeoInterface): Promise<GeoInterface> {
+    const lat = data.lat || 0;
+    const lon = data.lon || 0;
     return {
-      lat: data.lat,
-      lon: data.lon,
-      geo_code: `${data.lat.toString(10)}_${data.lon.toString(10)}`,
+      lat,
+      lon,
+      geo_code: `${(lat).toString(10)}_${lon.toString(10)}`,
     };
   }
 }
 
-test('Geo normalization action should return expected result', async (t) => {
+test('Geo normalizer should return expected result', async (t) => {
   const provider = new GeoProvider();
-  const action = new NormalizationGeoAction(provider);
+  const normalizer = new GeoNormalizerProvider(provider);
 
-  const result = await action.handle({
+  const result = await normalizer.handle({
     start: {
       lat: 0.0001,
       lon: 0.0002,

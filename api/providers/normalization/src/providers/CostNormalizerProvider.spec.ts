@@ -1,28 +1,23 @@
 import test from 'ava';
 
-import { NormalizationCostAction } from './NormalizationCostAction';
+import { CostNormalizerProvider } from './CostNormalizerProvider';
+import { CostParamsInterface, CostResultInterface } from '../interfaces';
+import { KernelInterfaceResolver } from '@ilos/common';
 
-import { ParamsInterface, ResultInterface } from '../shared/normalization/cost.contract';
-
-class MockedNormalizationCostAction extends NormalizationCostAction {
+class MockedNormalizationCostAction extends CostNormalizerProvider {
   constructor() {
-    super(null);
+    super(null as unknown as KernelInterfaceResolver);
   }
   protected async getSiret(): Promise<string> {
     return '53996626700012';
   }
 }
 
-function testPayments(t, params: ParamsInterface, result: ResultInterface, userType: string): void {
-  console.debug(
-    `params.payments.length : ${result.payments.length} | ${
-      params.payments.length + params.incentives.length + 1
-    } | ${userType}`,
-  );
-
+function testPayments(t, params: CostParamsInterface, result: CostResultInterface, userType: string): void {
+  const length = params.payments?.length || 0
   t.is(
     result.payments.length,
-    params.payments.length + params.incentives.length + 1,
+    2 * length + 1,
     'Resulted payments should be a concatenation of data incentives, contributions and a final calculated payments',
   );
 
@@ -32,7 +27,7 @@ function testPayments(t, params: ParamsInterface, result: ResultInterface, userT
   t.is(result.payments[1].type, 'payment', 'First resulted payment should an incentive');
 
   t.is(
-    lastPayment.amount,
+    lastPayment?.amount,
     Math.abs(result.cost) - result.payments.reduce((sum, item) => sum + item.amount, 0),
     'Last payment should match resulted cost and payments (payment + incentives)',
   );
