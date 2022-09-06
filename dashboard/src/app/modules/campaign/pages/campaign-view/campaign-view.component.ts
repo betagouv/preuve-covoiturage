@@ -26,7 +26,7 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
   public userIsDemo: boolean;
 
   get hasExpired(): boolean {
-    return this.campaignUx?.end_date.getTime() < new Date().getTime();
+    return this.campaignUx?.end_date < new Date();
   }
 
   constructor(

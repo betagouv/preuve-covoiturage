@@ -34,7 +34,6 @@
     <div class="content">
       <div>
         <app-campaign-main-metrics [campaign]="campaignUx"></app-campaign-main-metrics>
-        <app-campaign-simulation-pane [campaign]="campaignUx"></app-campaign-simulation-pane>
 
         <div class="contacts" *ngIf="territory.contacts?.technical">
           <h4>Contact technique</h4>
@@ -47,10 +46,7 @@
           </p>
         </div>
       </div>
-      <div>
         <app-campaign-rules-view [campaign]="campaignUx"></app-campaign-rules-view>
-        <app-campaign-retribution-view [campaign]="campaignUx"></app-campaign-retribution-view>
-      </div>
 
       <!-- summary -->
       <div class="summary">

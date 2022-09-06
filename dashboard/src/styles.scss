@@ -126,3 +126,28 @@ a.link:visited {
 .allow-cr {
   white-space: pre;
 }
+
+
+.campaignRulesView {
+  &-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    @include supportEdge(justify-content, space-around);
+    min-height: 330px;
+    min-width: 450px;
+    background-color: white;
+    padding: 30px;
+    &-row {
+      p:first-child {
+        width: 237px;
+        min-width: 237px;
+      }
+      display: flex;
+    }
+    &-actions {
+      margin-top: 5px;
+      text-align: center;
+    }
+  }
+}
