@@ -184,7 +184,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           pp.end_date,
           pp.handler,
           pp.status,
-          territory_id
+          pp.territory_id
         FROM ${this.table} as pp,
         LATERAL (
           SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory_id])
