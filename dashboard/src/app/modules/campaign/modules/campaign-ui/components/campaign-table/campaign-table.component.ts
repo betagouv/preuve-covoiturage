@@ -17,7 +17,7 @@ export class CampaignTableComponent {
     'name',
     'territory',
     // 'amount_spent',
-    'max_amount',
+    // 'max_amount',
     // 'trips_number',
     // 'max_trips',
   ];

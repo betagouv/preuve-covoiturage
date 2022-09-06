@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { bufferTime, concatMap, map, take, takeUntil } from 'rxjs/operators';
+import { concatMap, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Roles } from '~/core/enums/user/roles';
 import { catchHttpError } from '~/core/operators/catchHttpStatus';
@@ -44,27 +44,17 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
     this.userIsTerritory = this.auth.isTerritory();
     this.userIsDemo = this.auth.hasRole(Roles.TerritoryDemo);
 
-    this._route.paramMap
+    this._campaignStoreService
+      .getById(Number(this._route.snapshot.paramMap.get('campaignId')))
       .pipe(
-        // race condition on page load...
-        bufferTime(500),
-        take(1),
-        map((list) => list[0]),
-        // get the id from URL params
-        concatMap((params: ParamMap) => of(Number(params.get('campaignId')))),
-        // fetch the campaign
-        concatMap((_id: number) => this._campaignStoreService.getById(_id)),
         catchHttpError(404, () => {
           this._toastr.error('Campagne non trouvée');
           this._router.navigateByUrl('/campaign');
         }),
-        // set the local var with a mapped version of the data
-        // and pass its territory_id on
         concatMap((campaign: PolicyInterface) => {
           this.campaignUx = campaign;
           return of(campaign.territory_id);
         }),
-        // fetch the territory data
         concatMap((_id) => this._territoryApi.getById(_id)),
         takeUntil(this.destroy$),
       )
