@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { User } from '~/core/entities/authentication/user';
-import { Campaign } from '~/core/entities/campaign/api-format/campaign';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { Operator } from '~/core/entities/operator/operator';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
@@ -21,7 +21,7 @@ export class CommonDataService {
 
   private _territories$ = new BehaviorSubject<TerritoryGroupInterface[]>([]);
   private _operators$ = new BehaviorSubject<Operator[]>([]);
-  private _campaigns$ = new BehaviorSubject<Campaign[]>([]);
+  private _campaigns$ = new BehaviorSubject<PolicyInterface[]>([]);
 
   get currentOperator$(): Observable<Operator> {
     return this._currentOperator$;
@@ -39,7 +39,7 @@ export class CommonDataService {
     return this._operators$;
   }
 
-  get campaigns$(): Observable<Campaign[]> {
+  get campaigns$(): Observable<PolicyInterface[]> {
     return this._campaigns$;
   }
 
@@ -77,7 +77,7 @@ export class CommonDataService {
     return list;
   }
 
-  get campaigns(): Campaign[] {
+  get campaigns(): PolicyInterface[] {
     return this._campaigns$.value;
   }
 
@@ -131,7 +131,7 @@ export class CommonDataService {
     );
   }
 
-  loadCampaigns(): Observable<Campaign[]> {
+  loadCampaigns(): Observable<PolicyInterface[]> {
     return this.campaignApiService.getList().pipe(
       map((campaigns) => campaigns.data.sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name))),
       tap((campaigns) => this._campaigns$.next(campaigns)),

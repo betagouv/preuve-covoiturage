@@ -1,7 +1,7 @@
 import { SliceInterface } from './SliceInterface';
 
 export interface PolicyInterface {
-  _id?: number;
+  _id: number;
   territory_id: number;
   name: string;
   description: string;

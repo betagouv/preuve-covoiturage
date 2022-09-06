@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { filter, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Campaign } from '~/core/entities/campaign/api-format/campaign';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -66,16 +66,16 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   private initCampaigns(): void {
     const userTerritoryId = this.auth.user && this.auth.user.territory_id ? this.auth.user.territory_id : null;
 
-    this.commonDataService.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
+    this.commonDataService.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: PolicyInterface[]) => {
       this.campaigns = campaigns
         ? campaigns
             .filter(
               (campaign) =>
-                ((!userTerritoryId || userTerritoryId === (campaign as Campaign).territory_id) &&
+                ((!userTerritoryId || userTerritoryId === (campaign as PolicyInterface).territory_id) &&
                   campaign.status === CampaignStatusEnum.VALIDATED) ||
                 campaign.status === CampaignStatusEnum.ARCHIVED,
             )
-            .map((campaign: Campaign) => ({
+            .map((campaign: PolicyInterface) => ({
               _id: campaign._id,
               name: campaign.name,
             }))

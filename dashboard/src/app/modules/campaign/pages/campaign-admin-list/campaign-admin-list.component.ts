@@ -1,15 +1,15 @@
 import { merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, takeUntil, tap } from 'rxjs/operators';
 
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { CommonDataService } from '~/core/services/common-data.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
-import { CAMPAIGN_STATUS_FR, CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { CommonDataService } from '~/core/services/common-data.service';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
+import { CampaignApiService } from '../../services/campaign-api.service';
 
 @Component({
   selector: 'app-campaign-admin-list',
@@ -37,9 +37,9 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     'archive',
   ];
 
-  public filteredCampaigns: CampaignUx[];
-  public campaignsToShow: CampaignUx[];
-  public campaigns: CampaignUx[];
+  public filteredCampaigns: PolicyInterface[];
+  public campaignsToShow: PolicyInterface[];
+  public campaigns: PolicyInterface[];
   public searchFilters: FormGroup;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -59,7 +59,7 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
   }
 
   constructor(
-    private campaignStoreService: CampaignStoreService,
+    private campaignApiService: CampaignApiService,
     private fb: FormBuilder,
     private commonDataService: CommonDataService,
   ) {
@@ -70,27 +70,31 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     // search field
     this.searchFilters = this.fb.group({ query: [''] });
 
-    // API call
     merge(
-      this.campaignStoreService.campaignsUx$.pipe(
+      this.campaignApiService.getList().pipe(
         debounceTime(100),
-        map((list: CampaignUx[]): CampaignUx[] => {
-          let _ia: number, _ib: number;
-          return list
-            .filter((item) => this.statuses.indexOf(item.status) > -1)
-            .map((item: CampaignUx): CampaignUx => ({ ...item, status: this.extendStatus(item) }))
-            .map((item: CampaignUx): CampaignUx & { status_icon: string; status_locale: string } => ({
-              status_icon: this.icons[this.statuses.indexOf(item.status)],
-              status_locale: CAMPAIGN_STATUS_FR[item.status],
-              ...item,
-            }))
-            .sort((a, b) => {
-              _ia = this.statuses.indexOf(a.status);
-              _ib = this.statuses.indexOf(b.status);
-              return _ia > _ib ? 1 : _ia < _ib ? -1 : 0;
-            });
+        map((result: { data: PolicyInterface[]; meta: any }) => {
+          return result.data.sort((a, b) => (a.end_date > b.end_date ? 1 : 0));
         }),
-        tap((campaigns: CampaignUx[]) => (this.campaigns = campaigns)),
+        tap((campaigns: PolicyInterface[]) => (this.campaigns = campaigns)),
+        // map((list: { data: PolicyInterface[]; meta: any }[]): PolicyInterface[] => {
+        //   let _ia: number, _ib: number;
+        //   var hello = list.data.
+        //     .filter((item) => this.statuses.indexOf(item.status) > -1)
+        //     .map((item: PolicyInterface): PolicyInterface => ({ ...item, status: this.extendStatus(item) }))
+        //     .map((item: PolicyInterface): PolicyInterface & { status_icon: string; status_locale: string } => ({
+        //       status_icon: this.icons[this.statuses.indexOf(item.status)],
+        //       status_locale: CAMPAIGN_STATUS_FR[item.status],
+        //       ...item,
+        //     }))
+        //     .sort((a, b) => {
+        //       _ia = this.statuses.indexOf(a.status);
+        //       _ib = this.statuses.indexOf(b.status);
+        //       return _ia > _ib ? 1 : _ia < _ib ? -1 : 0;
+        //     });
+        //     return[]
+        // }),
+        // tap((campaigns: CampaignUx[]) => (this.campaigns = campaigns)),
       ),
       this.searchFilters.valueChanges,
     )
@@ -102,14 +106,13 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
 
     // load data
     this.commonDataService.loadTerritories();
-    this.campaignStoreService.loadList();
   }
 
   public paginationUpdate(): void {
     this.campaignsToShow = this.filterCampaignList();
   }
 
-  private filterCampaignList(page = this.paginator.pageIndex): CampaignUx[] {
+  private filterCampaignList(page = this.paginator.pageIndex): PolicyInterface[] {
     if (!this.campaigns) return [];
 
     const start = Number(page) * this.PAGE_SIZE;
@@ -125,10 +128,5 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
       });
 
     return this.filteredCampaigns.slice(start, end);
-  }
-
-  private extendStatus(c: CampaignUx): CampaignStatusEnum {
-    const isEnded = c.end.toDate().getTime() < new Date().getTime();
-    return c.status === CampaignStatusEnum.VALIDATED && isEnded ? CampaignStatusEnum.ENDED : c.status;
   }
 }

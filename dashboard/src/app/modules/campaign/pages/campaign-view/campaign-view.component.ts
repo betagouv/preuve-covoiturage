@@ -4,14 +4,13 @@ import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { bufferTime, concatMap, map, take, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Campaign } from '~/core/entities/campaign/api-format/campaign';
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { Roles } from '~/core/enums/user/roles';
 import { catchHttpError } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { TerritoryGroupInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
+import { CampaignApiService } from '../../services/campaign-api.service';
 
 @Component({
   selector: 'app-campaign-view',
@@ -20,22 +19,14 @@ import { TerritoryGroupInterface } from '~/shared/territory/common/interfaces/Te
 })
 export class CampaignViewComponent extends DestroyObservable implements OnInit {
   public territory: TerritoryGroupInterface;
-  public campaignUx: CampaignUx;
+  public campaignUx: PolicyInterface;
   public showSummary = false;
   public isLoaded = false;
   public userIsTerritory: boolean;
   public userIsDemo: boolean;
 
-  get isDraft(): boolean {
-    return this.campaignUx?.status === 'draft';
-  }
-
   get hasExpired(): boolean {
-    return this.campaignUx?.end.toDate().getTime() < new Date().getTime();
-  }
-
-  get isLaunchable(): boolean {
-    return this.isDraft && this.userIsTerritory && !this.userIsDemo;
+    return this.campaignUx?.end_date.getTime() < new Date().getTime();
   }
 
   constructor(
@@ -44,7 +35,7 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
     private _route: ActivatedRoute,
     private _toastr: ToastrService,
     private _territoryApi: TerritoryApiService,
-    private _campaignStoreService: CampaignStoreService,
+    private _campaignStoreService: CampaignApiService,
   ) {
     super();
   }
@@ -69,8 +60,8 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
         }),
         // set the local var with a mapped version of the data
         // and pass its territory_id on
-        concatMap((campaign: Campaign) => {
-          this.campaignUx = new CampaignUx(campaign.toFormValues());
+        concatMap((campaign: PolicyInterface) => {
+          this.campaignUx = campaign;
           return of(campaign.territory_id);
         }),
         // fetch the territory data

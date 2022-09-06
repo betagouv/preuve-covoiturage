@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { Campaign } from '~/core/entities/campaign/api-format/campaign';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 
 import { ParamsInterface as ListParamsInterface } from '~/core/entities/api/shared/policy/list.contract';
@@ -24,17 +24,28 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class CampaignApiService extends JsonRpcCrud<Campaign, Campaign, {}, any, any, ListParamsInterface, any, {}> {
+export class CampaignApiService extends JsonRpcCrud<
+  PolicyInterface,
+  PolicyInterface,
+  {},
+  any,
+  any,
+  ListParamsInterface,
+  any,
+  {}
+> {
   constructor(http: HttpClient, protected auth: AuthenticationService) {
     super(http, 'campaign');
   }
 
-  getById(id: number): Observable<Campaign> {
+  getById(id: number): Observable<PolicyInterface> {
     return this.get({ _id: id, territory_id: this.auth.user.territory_id } as any);
   }
 
-  loadTemplates(): Observable<Campaign[]> {
-    return this.callOne(new JsonRPCParam(`${this.method}:templates`, {})).pipe(map((data) => data.data as Campaign[]));
+  loadTemplates(): Observable<PolicyInterface[]> {
+    return this.callOne(new JsonRPCParam(`${this.method}:templates`, {})).pipe(
+      map((data) => data.data as PolicyInterface[]),
+    );
   }
 
   stat(campaignId: number): Observable<CampaignStateResult> {

@@ -33,8 +33,8 @@
 
     <div class="content">
       <div>
-        <app-campaign-main-metrics *ngIf="!isDraft" [campaign]="campaignUx"></app-campaign-main-metrics>
-        <app-campaign-simulation-pane *ngIf="isDraft" [campaign]="campaignUx"></app-campaign-simulation-pane>
+        <app-campaign-main-metrics [campaign]="campaignUx"></app-campaign-main-metrics>
+        <app-campaign-simulation-pane [campaign]="campaignUx"></app-campaign-simulation-pane>
 
         <div class="contacts" *ngIf="territory.contacts?.technical">
           <h4>Contact technique</h4>
@@ -66,6 +66,6 @@
     </div>
 
      <!-- capital call -->
-     <app-campaign-capitalcall [territoryId]="campaignUx.territory_id" *ngIf="!isDraft"></app-campaign-capitalcall>
+     <app-campaign-capitalcall [territoryId]="campaignUx.territory_id"></app-campaign-capitalcall>
   </div>
 </app-page-content>
