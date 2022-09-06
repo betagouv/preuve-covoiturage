@@ -33,7 +33,7 @@ export class CheckAction extends Action {
     await this.repository.createOrUpdate(results);
 
     if (results.status === FraudCheckStatusEnum.Done) {
-      await this.notifyScore(params.acquisition_id, results.karma);
+      // await this.notifyScore(params.acquisition_id, results.karma);
     }
 
     return;
