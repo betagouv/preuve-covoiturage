@@ -108,6 +108,9 @@ export class Idfm implements PolicyHandlerInterface {
     return {
       slices: this.slices,
       operators: this.operators,
+      limits: {
+        glob: 600000000,
+      },
     };
   }
 

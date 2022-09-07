@@ -81,7 +81,7 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
 
     this.campaignApiService.stat(this.campaign._id).subscribe(
       (campaignState) => {
-        // this.budgetTotal = this.campaign ? this.campaign.max_amount : 0;
+        this.budgetTotal = this.campaign ? this.campaign.params?.limit?.glob : 0;
         this.budgetTotal = 0;
         if (!campaignState) {
           return;
