@@ -53,6 +53,9 @@ export interface SliceInterface {
 export interface PolicyHandlerParamsInterface {
   slices?: Array<SliceInterface>;
   operators?: Array<string>;
+  limits?: {
+      glob?: number;
+  };
 }
 
 export interface PolicyHandlerInterface {
