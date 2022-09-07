@@ -25,10 +25,6 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
   public userIsTerritory: boolean;
   public userIsDemo: boolean;
 
-  get hasExpired(): boolean {
-    return this.campaignUx?.end_date < new Date();
-  }
-
   constructor(
     public auth: AuthenticationService,
     private _router: Router,
