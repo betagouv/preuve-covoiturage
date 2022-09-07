@@ -3,7 +3,6 @@ import { ToastrService } from 'ngx-toastr';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { UtilsService } from '~/core/services/utils.service';
-import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
 
 @Component({
   selector: 'app-campaign-summary-text',
@@ -13,14 +12,10 @@ import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.servi
 export class CampaignSummaryTextComponent {
   @Input() campaign: CampaignUx;
 
-  constructor(
-    private _utils: UtilsService,
-    private _campaignUiService: CampaignUiService,
-    private _toastr: ToastrService,
-  ) {}
+  constructor(private _utils: UtilsService, private _toastr: ToastrService) {}
 
   get summary(): string {
-    return this._campaignUiService.summary(this.campaign);
+    return this.campaign.description;
   }
 
   copySummary(): void {

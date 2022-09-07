@@ -46,19 +46,7 @@
           </p>
         </div>
       </div>
-        <app-campaign-rules-view [campaign]="campaignUx"></app-campaign-rules-view>
-
-      <!-- summary -->
-      <div class="summary">
-        <div>
-          <a mat-button (click)="showSummary = !showSummary">
-            {{ showSummary ? 'Cacher' : 'Voir' }} le texte récapitulatif
-          </a>
-        </div>
-      </div>
-      <div *ngIf="showSummary">
         <app-campaign-summary-text [campaign]="campaignUx"></app-campaign-summary-text>
-      </div>
     </div>
 
      <!-- capital call -->
