@@ -267,7 +267,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     return;
   }
 
-  async getPolicyIncentiveStats(policy_id: number): Promise<IncentiveStatsInterface> {
+  async getPolicyIncentiveStats(policy_id: number, territory_id?: number): Promise<IncentiveStatsInterface> {
     const query = {
       text: `
         SELECT
@@ -277,8 +277,9 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         FROM ${this.table}
         WHERE policy_id = $1
           AND state = 'regular'
+          ${!!territory_id ? 'AND territory_id = $2' : ''}
       `,
-      values: [policy_id],
+      values: [policy_id, ...(territory_id ? [territory_id] : [])],
     };
 
     const result = await this.connection.getClient().query(query);

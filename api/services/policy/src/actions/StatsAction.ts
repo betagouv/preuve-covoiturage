@@ -22,7 +22,6 @@ export class StatsAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const stats = await this.incentiveRepository.getPolicyIncentiveStats(params._id);
-    return stats;
+    return await this.incentiveRepository.getPolicyIncentiveStats(params._id, params.territoy_id);
   }
 }

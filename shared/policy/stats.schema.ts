@@ -7,6 +7,9 @@ export const schema = {
     _id: {
       macro: 'serial',
     },
+    territory_id: {
+      macro: 'serial',
+    },
   },
 };
 

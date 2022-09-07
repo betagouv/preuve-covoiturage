@@ -1,5 +1,6 @@
 export interface ParamsInterface {
   _id: number;
+  territoy_id?: number;
 }
 
 export interface ResultInterface {
