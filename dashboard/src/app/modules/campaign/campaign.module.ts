@@ -12,7 +12,6 @@ import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/terr
 import { UiTripModule } from '~/modules/trip/modules/ui-trip/ui-trip.module';
 import { MaterialModule } from '../../shared/modules/material/material.module';
 import { SharedModule } from '../../shared/shared.module';
-import { CampaignMenuComponent } from './components/campaign-menu/campaign-menu.component';
 import { CampaignSimulationPaneComponent } from './components/campaign-simulation-pane/campaign-simulation-pane.component';
 import { CampaignsListComponent } from './modules/campaign-ui/components/campaigns-list/campaigns-list.component';
 import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign-admin-list.component';
@@ -23,7 +22,6 @@ import { MatTableModule } from '@angular/material/table';
 @NgModule({
   declarations: [
     CampaignAdminListComponent,
-    CampaignMenuComponent,
     CampaignSimulationPaneComponent,
     CampaignsListComponent,
     CampaignViewComponent,
