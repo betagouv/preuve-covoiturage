@@ -20,13 +20,9 @@ import { CampaignApiService } from '../../services/campaign-api.service';
 export class CampaignViewComponent extends DestroyObservable implements OnInit {
   public territory: TerritoryGroupInterface;
   public campaignUx: PolicyInterface;
-  public showSummary = false;
   public isLoaded = false;
-  public userIsTerritory: boolean;
-  public userIsDemo: boolean;
 
   constructor(
-    public auth: AuthenticationService,
     private _router: Router,
     private _route: ActivatedRoute,
     private _toastr: ToastrService,
@@ -37,9 +33,6 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userIsTerritory = this.auth.isTerritory();
-    this.userIsDemo = this.auth.hasRole(Roles.TerritoryDemo);
-
     this._campaignStoreService
       .getById(Number(this._route.snapshot.paramMap.get('campaignId')))
       .pipe(
