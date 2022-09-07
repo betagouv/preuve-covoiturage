@@ -7,7 +7,6 @@ import { ChartjsModule } from '@ctrl/ngx-chartjs';
 import { RouterModule } from '@angular/router';
 
 import { CampaignAutoCompleteComponent } from './components/campaign-auto-complete/campaign-auto-complete.component';
-import { CampaignMainStatsViewComponent } from './components/campaign-main-stats-view/campaign-main-stats-view.component';
 import { CampaignSummaryTextComponent } from './components/campaign-summary-text/campaign-summary-text.component';
 import { CampaignMainMetricsComponent } from './components/campaign-main-metrics/campaign-main-metrics.component';
 import { CampaignTableComponent } from './components/campaign-table/campaign-table.component';
@@ -16,7 +15,6 @@ import { MaterialModule } from '../../../../shared/modules/material/material.mod
 @NgModule({
   declarations: [
     CampaignAutoCompleteComponent,
-    CampaignMainStatsViewComponent,
     CampaignSummaryTextComponent,
     CampaignMainMetricsComponent,
     CampaignTableComponent,
