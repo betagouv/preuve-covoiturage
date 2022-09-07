@@ -19,6 +19,10 @@ function inList(selectors: TerritorySelectorsInterface, territory: TerritoryCode
   return false;
 }
 
+export const startsAndEndsAt = (ctx: StatelessContextInterface, selector: TerritorySelectorsInterface): boolean => {
+  return startsAt(ctx, selector) && endsAt(ctx, selector);
+};
+
 export const startsAt: StatelessRuleHelper<TerritorySelectorsInterface> = (
   ctx: StatelessContextInterface,
   selector: TerritorySelectorsInterface,
