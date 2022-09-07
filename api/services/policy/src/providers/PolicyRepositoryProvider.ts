@@ -13,11 +13,6 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
   constructor(protected connection: PostgresConnection) {}
 
   async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined> {
-    const values = [id];
-    if (!!territoryId) {
-      values.push(territoryId);
-    }
-
     const query = {
       text: `
         SELECT
