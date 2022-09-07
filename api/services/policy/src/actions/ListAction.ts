@@ -1,6 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { hasPermissionMiddleware } from '@pdc/provider-middleware';
+import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
@@ -8,7 +8,11 @@ import { alias } from '../shared/policy/list.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [hasPermissionMiddleware('common.policy.list'), ['validate', alias]],
+  middlewares: [
+    hasPermissionMiddleware('common.policy.list'),
+    copyFromContextMiddleware('call.user.territory_id', 'territory_id'),
+    ['validate', alias],
+  ],
 })
 export class ListAction extends AbstractAction {
   protected readonly sensitiveRules = ['operator_whitelist_filter'];

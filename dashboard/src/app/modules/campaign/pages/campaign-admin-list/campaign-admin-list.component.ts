@@ -73,28 +73,10 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     merge(
       this.campaignApiService.getList().pipe(
         debounceTime(100),
-        map((result: { data: PolicyInterface[]; meta: any }) => {
-          return result.data.sort((a, b) => (a.end_date > b.end_date ? 1 : 0));
-        }),
+        map((result: { data: PolicyInterface[]; meta: any }) =>
+          result.data.sort((a, b) => new Date(b.end_date).getTime() - new Date(a.end_date).getTime()),
+        ),
         tap((campaigns: PolicyInterface[]) => (this.campaigns = campaigns)),
-        // map((list: { data: PolicyInterface[]; meta: any }[]): PolicyInterface[] => {
-        //   let _ia: number, _ib: number;
-        //   var hello = list.data.
-        //     .filter((item) => this.statuses.indexOf(item.status) > -1)
-        //     .map((item: PolicyInterface): PolicyInterface => ({ ...item, status: this.extendStatus(item) }))
-        //     .map((item: PolicyInterface): PolicyInterface & { status_icon: string; status_locale: string } => ({
-        //       status_icon: this.icons[this.statuses.indexOf(item.status)],
-        //       status_locale: CAMPAIGN_STATUS_FR[item.status],
-        //       ...item,
-        //     }))
-        //     .sort((a, b) => {
-        //       _ia = this.statuses.indexOf(a.status);
-        //       _ib = this.statuses.indexOf(b.status);
-        //       return _ia > _ib ? 1 : _ia < _ib ? -1 : 0;
-        //     });
-        //     return[]
-        // }),
-        // tap((campaigns: CampaignUx[]) => (this.campaigns = campaigns)),
       ),
       this.searchFilters.valueChanges,
     )
@@ -104,7 +86,6 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
         this.campaignsToShow = this.filterCampaignList();
       });
 
-    // load data
     this.commonDataService.loadTerritories();
   }
 

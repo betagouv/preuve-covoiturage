@@ -13,7 +13,7 @@ export interface PolicyInterface {
     slices?: Array<SliceInterface>;
     operators?: Array<string>;
     limits?: {
-      glob: number;
+      glob?: number;
     };
   };
 }
