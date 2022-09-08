@@ -2,7 +2,6 @@ export { atDate } from './atDate';
 export { atTime } from './atTime';
 export { isAdultOrThrow } from './isAdultOrThrow';
 export { isAfter } from './isAfter';
-export { isDriver, isDriverOrThrow } from './isDriver';
 export { isOperatorClassOrThrow } from './isOperatorClassOrThrow';
 export { isOperatorOrThrow } from './isOperatorOrThrow';
 export { isSelected } from './isSelected';

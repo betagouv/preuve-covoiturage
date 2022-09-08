@@ -26,9 +26,6 @@ import { Policy } from '../engine/entities/Policy';
   ],
 })
 export class SimulateOnFutureAction extends AbstractAction {
-  private static DRIVER = 1;
-  private static PASSENGER = 2;
-
   constructor(
     private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
     private policyRepository: PolicyRepositoryProviderInterfaceResolver,
@@ -38,14 +35,13 @@ export class SimulateOnFutureAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     // 1. Normalize trip by adding territory_id and identity stuff
-    const normalizedDriverData = await this.normalize(params);
-    const normalizedPassengerData = await this.normalize(params, false);
+    const data = await this.normalize(params);
 
     // 2. Get involved territories
     const territories = [
       ...new Set([
-        ...(await this.territoryRepository.findBySelector(normalizedDriverData.start)),
-        ...(await this.territoryRepository.findBySelector(normalizedDriverData.end)),
+        ...(await this.territoryRepository.findBySelector(data.start)),
+        ...(await this.territoryRepository.findBySelector(data.end)),
       ]),
     ];
 
@@ -53,7 +49,7 @@ export class SimulateOnFutureAction extends AbstractAction {
     const policysRaw = await this.policyRepository.findWhere({
       status: 'active',
       territory_id: territories,
-      datetime: normalizedDriverData.datetime,
+      datetime: data.datetime,
     });
 
     const policies: Array<PolicyInterface> = [];
@@ -64,8 +60,7 @@ export class SimulateOnFutureAction extends AbstractAction {
     // 5. Process policies
     const incentives: StatelessIncentiveInterface[] = [];
     for (const policy of policies) {
-      incentives.push(await policy.processStateless(normalizedDriverData));
-      incentives.push(await policy.processStateless(normalizedPassengerData));
+      incentives.push(await policy.processStateless(data));
     }
 
     // 6. Get siret code for applied policies
@@ -83,39 +78,33 @@ export class SimulateOnFutureAction extends AbstractAction {
 
     return {
       journey_id: params.journey_id,
-      driver: normalizedIncentives
-        .filter((i) => i.carpool_id === SimulateOnFutureAction.DRIVER)
-        .map((incentive, i) => ({ index: i, amount: incentive.amount, siret: incentive.siret })),
-      passenger: normalizedIncentives
-        .filter((i) => i.carpool_id === SimulateOnFutureAction.PASSENGER)
-        .map((incentive, i) => ({ index: i, amount: incentive.amount, siret: incentive.siret })),
+      driver: normalizedIncentives.map((incentive, i) => ({
+        index: i,
+        amount: incentive.amount,
+        siret: incentive.siret,
+      })),
+      passenger: [],
     };
   }
 
-  protected async normalize(input: ParamsInterface, isDriver = true): Promise<CarpoolInterface> {
-    const targetProperty = isDriver ? 'driver' : 'passenger';
-    const target = input[targetProperty];
-
-    if (!(targetProperty in input) || !target) {
-      return null;
-    }
-
+  protected async normalize(input: ParamsInterface): Promise<CarpoolInterface> {
     return {
-      _id: isDriver ? SimulateOnFutureAction.DRIVER : SimulateOnFutureAction.PASSENGER,
-      identity_uuid: v4(),
+      _id: 1,
+      driver_identity_uuid: v4(),
+      passenger_identity_uuid: v4(),
       trip_id: v4(),
       operator_siret: await this.territoryRepository.findSiretByOperatorId(input.operator_id),
       operator_class: input.operator_class,
-      is_over_18: target.identity.over_18,
-      is_driver: isDriver,
-      has_travel_pass: 'travel_pass' in target.identity,
-      datetime: target.start.datetime,
-      seats: 'seats' in target ? target.seats : 0,
-      duration: differenceInSeconds(target.end.datetime, target.start.datetime),
-      distance: target.distance,
-      cost: 'contribution' in target ? target.contribution : 0,
-      start: await this.territoryRepository.findByPoint(target.start),
-      end: await this.territoryRepository.findByPoint(target.end),
+      passenger_is_over_18: input.passenger.identity.over_18,
+      driver_has_travel_pass: 'travel_pass' in input.driver.identity,
+      passenger_has_travel_pass: 'travel_pass' in input.passenger.identity,
+      datetime: input.passenger.start.datetime,
+      seats: input.passenger.seats,
+      duration: differenceInSeconds(input.passenger.end.datetime, input.passenger.start.datetime),
+      distance: input.passenger.distance,
+      cost: input.passenger.contribution,
+      start: await this.territoryRepository.findByPoint(input.passenger.start),
+      end: await this.territoryRepository.findByPoint(input.passenger.end),
     };
   }
 }

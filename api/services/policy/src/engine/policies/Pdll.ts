@@ -7,7 +7,6 @@ import {
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   endsAt,
-  isDriverOrThrow,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
   onDistanceRange,
@@ -39,7 +38,6 @@ export class Pdll implements PolicyHandlerInterface {
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isDriverOrThrow(ctx);
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2000 });
 

@@ -1,5 +1,5 @@
 import test from 'ava';
-import { applyForMaximum, watchForGlobalMaxAmount, perKm, isDriverOrThrow } from '../helpers';
+import { applyForMaximum, watchForGlobalMaxAmount, perKm, isOperatorClassOrThrow } from '../helpers';
 import { process } from '../tests/macro';
 import {
   PolicyHandlerInterface,
@@ -10,7 +10,7 @@ import {
 
 class TestHandler implements PolicyHandlerInterface {
   processStateless(ctx: StatelessContextInterface): void {
-    isDriverOrThrow(ctx);
+    isOperatorClassOrThrow(ctx, ['C']);
     ctx.incentive.set(perKm(ctx, { amount: 10 }));
     watchForGlobalMaxAmount(ctx, 'max');
   }
@@ -29,16 +29,16 @@ class TestHandler implements PolicyHandlerInterface {
 }
 
 test(
-  'should works if driver',
+  'should works if class C',
   process,
   { handler: new TestHandler(), carpool: [{ distance: 1000 }, { distance: 2000 }], meta: [] },
   { incentive: [10, 20], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 30 }] },
 );
 
 test(
-  'should works if passenger',
+  'should works if not class C',
   process,
-  { handler: new TestHandler(), carpool: [{ distance: 1000, is_driver: false }], meta: [] },
+  { handler: new TestHandler(), carpool: [{ distance: 1000, operator_class: 'B' }], meta: [] },
   { incentive: [0], meta: [] },
 );
 

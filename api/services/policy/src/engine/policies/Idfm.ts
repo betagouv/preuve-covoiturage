@@ -8,7 +8,6 @@ import {
 import {
   atDate,
   isAfter,
-  isDriverOrThrow,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
   onDistanceRange,
@@ -37,7 +36,7 @@ export class Idfm implements PolicyHandlerInterface {
   protected limits = [
     setMax('99911EAF-89AB-C346-DDD5-BD2C7704F935', 600000000, watchForGlobalMaxAmount),
     setMax('ECDE3CD4-96FF-C9D2-BA88-45754205A798', 15000, watchForPersonMaxAmountByMonth),
-    setMax('56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, true),
+    setMax('56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, true, true),
   ];
   protected pollutionAndStrikeDates = [
     '2022-02-18',
@@ -50,7 +49,6 @@ export class Idfm implements PolicyHandlerInterface {
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isDriverOrThrow(ctx);
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2000, max: 150000 });
 

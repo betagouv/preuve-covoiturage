@@ -17,12 +17,13 @@ const defaultPosition = {
 const defaultCarpool = {
   _id: 1,
   trip_id: v4(),
-  identity_uuid: v4(),
+  passenger_identity_uuid: v4(),
+  driver_identity_uuid: v4(),
   operator_siret: '80279897500024',
   operator_class: 'C',
-  is_over_18: true,
-  is_driver: true,
-  has_travel_pass: true,
+  passenger_is_over_18: true,
+  passenger_has_travel_pass: true,
+  driver_has_travel_pass: true,
   datetime: new Date('2019-01-15'),
   seats: 1,
   duration: 600,
@@ -40,7 +41,6 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { is_driver: false },
       { operator_siret: 'not in list' },
       { distance: 100 },
       { distance: 200000 },
@@ -52,7 +52,7 @@ test(
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -61,10 +61,10 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5000, identity_uuid: 'one' },
-      { distance: 5000, seats: 2, identity_uuid: 'one' },
-      { distance: 25000, identity_uuid: 'two' },
-      { distance: 25000, identity_uuid: 'two', datetime: new Date('2022-03-28') },
+      { distance: 5000, driver_identity_uuid: 'one' },
+      { distance: 5000, seats: 2, driver_identity_uuid: 'one' },
+      { distance: 25000, driver_identity_uuid: 'two' },
+      { distance: 25000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
     ],
     meta: [],
   },
@@ -96,7 +96,7 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ distance: 5000, identity_uuid: 'one' }],
+    carpool: [{ distance: 5000, driver_identity_uuid: 'one' }],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
@@ -124,7 +124,7 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ distance: 5000, identity_uuid: 'one' }],
+    carpool: [{ distance: 5000, driver_identity_uuid: 'one' }],
     meta: [
       {
         key: 'max_amount_restriction.one.month.0-2019',
@@ -153,13 +153,13 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5000, identity_uuid: 'one' },
-      { distance: 5000, identity_uuid: 'one' },
-      { distance: 5000, identity_uuid: 'one' },
-      { distance: 5000, identity_uuid: 'one' },
-      { distance: 5000, identity_uuid: 'one' },
-      { distance: 5000, identity_uuid: 'one' },
-      { distance: 5000, identity_uuid: 'one' },
+      { distance: 5000, driver_identity_uuid: 'one' },
+      { distance: 5000, driver_identity_uuid: 'one' },
+      { distance: 5000, driver_identity_uuid: 'one' },
+      { distance: 5000, driver_identity_uuid: 'one' },
+      { distance: 5000, driver_identity_uuid: 'one' },
+      { distance: 5000, driver_identity_uuid: 'one' },
+      { distance: 5000, driver_identity_uuid: 'one' },
     ],
     meta: [],
   },

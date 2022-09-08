@@ -9,12 +9,13 @@ export { TerritoryCodeInterface, TerritoryCodeEnum, TerritorySelectorsInterface 
 export interface CarpoolInterface {
   _id: number;
   trip_id: string;
-  identity_uuid: string;
+  passenger_identity_uuid: string;
+  passenger_has_travel_pass: boolean;
+  passenger_is_over_18: boolean | null;
+  driver_identity_uuid: string;
+  driver_has_travel_pass: boolean;
   operator_siret: string;
   operator_class: string;
-  is_over_18: boolean | null;
-  is_driver: boolean;
-  has_travel_pass: boolean;
   datetime: Date;
   seats: number;
   duration: number;

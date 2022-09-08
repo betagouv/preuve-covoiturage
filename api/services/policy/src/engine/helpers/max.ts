@@ -3,11 +3,12 @@ import { MetadataLifetime, StatefulContextInterface, StatelessContextInterface }
 export function setMax(
   uuid: string,
   max: number,
-  fn: (ctx: StatelessContextInterface, uuid: string) => void,
+  fn: (ctx: StatelessContextInterface, uuid: string, forDriver: boolean) => void,
+  forDriver = true,
   forTrip = false,
 ): [(ctx: StatelessContextInterface) => void, (ctx: StatefulContextInterface) => void] {
   return [
-    (ctx: StatelessContextInterface) => fn(ctx, uuid),
+    (ctx: StatelessContextInterface) => fn(ctx, uuid, forDriver),
     (ctx: StatefulContextInterface) => applyForMaximum(ctx, uuid, max, forTrip),
   ];
 }
@@ -20,29 +21,29 @@ export function watchForGlobalMaxAmount(ctx: StatelessContextInterface, uuid: st
   });
 }
 
-export function watchForPersonMaxAmountByMonth(ctx: StatelessContextInterface, uuid: string): void {
+export function watchForPersonMaxAmountByMonth(ctx: StatelessContextInterface, uuid: string, forDriver = true): void {
   ctx.meta.register({
     uuid,
     name: 'max_amount_restriction',
-    scope: ctx.carpool.identity_uuid,
+    scope: forDriver ? ctx.carpool.driver_identity_uuid : ctx.carpool.passenger_identity_uuid,
     lifetime: MetadataLifetime.Month,
   });
 }
 
-export function watchForPersonMaxTripByMonth(ctx: StatelessContextInterface, uuid: string): void {
+export function watchForPersonMaxTripByMonth(ctx: StatelessContextInterface, uuid: string, forDriver = true): void {
   ctx.meta.register({
     uuid,
     name: 'max_trip_restriction',
-    scope: ctx.carpool.identity_uuid,
+    scope: forDriver ? ctx.carpool.driver_identity_uuid : ctx.carpool.passenger_identity_uuid,
     lifetime: MetadataLifetime.Month,
   });
 }
 
-export function watchForPersonMaxTripByDay(ctx: StatelessContextInterface, uuid: string): void {
+export function watchForPersonMaxTripByDay(ctx: StatelessContextInterface, uuid: string, forDriver = true): void {
   ctx.meta.register({
     uuid,
     name: 'max_trip_restriction',
-    scope: ctx.carpool.identity_uuid,
+    scope: forDriver ? ctx.carpool.driver_identity_uuid : ctx.carpool.passenger_identity_uuid,
     lifetime: MetadataLifetime.Day,
   });
 }

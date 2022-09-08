@@ -2,7 +2,7 @@ import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetExcep
 import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
 
 export const isAdultOrThrow: StatelessRuleHelper<void> = (ctx: StatelessContextInterface): boolean => {
-  if (ctx.carpool.is_over_18 !== null && !ctx.carpool.is_over_18) {
+  if (ctx.carpool.passenger_is_over_18 !== null && !ctx.carpool.passenger_is_over_18) {
     throw new NotEligibleTargetException();
   }
   return true;

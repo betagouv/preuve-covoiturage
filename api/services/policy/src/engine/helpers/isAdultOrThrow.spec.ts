@@ -5,8 +5,8 @@ import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetExcep
 import { generateCarpool } from '../tests/helpers';
 import { isAdultOrThrow } from './isAdultOrThrow';
 
-function setup(is_over_18: boolean) {
-  return StatelessContext.fromCarpool(1, generateCarpool({ is_over_18 }));
+function setup(passenger_is_over_18: boolean) {
+  return StatelessContext.fromCarpool(1, generateCarpool({ passenger_is_over_18 }));
 }
 
 test('should throw if not an adult', async (t) => {
