@@ -50,7 +50,7 @@ export class CancelJourneyAction extends AbstractAction {
     }
 
     // Perform cancelling action :)
-    await this.kernel.notify<UpdateStatusParams>(
+    await this.kernel.call<UpdateStatusParams>(
       updateStatusSignature,
       { acquisition_id: journeyData._id, status: 'canceled' },
       callContext,
