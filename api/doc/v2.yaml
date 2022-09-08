@@ -683,6 +683,8 @@ paths:
               required:
                 - journey_id
                 - operator_class
+                - driver
+                - passenger
               additionalProperties: false
               properties:
                 journey_id:

@@ -4,8 +4,7 @@ export const alias = 'journey.create';
 export const create = {
   $id: alias,
   type: 'object',
-  required: ['journey_id', 'operator_class'],
-  anyOf: [{ required: ['passenger'] }, { required: ['driver'] }],
+  required: ['driver', 'passenger', 'journey_id', 'operator_class'],
   additionalProperties: false,
   properties: {
     journey_id: { macro: 'varchar' },
