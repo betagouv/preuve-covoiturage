@@ -13,6 +13,14 @@ export function setMax(
   ];
 }
 
+export function watchForGlobalMaxTrip(ctx: StatelessContextInterface, uuid: string): void {
+  ctx.meta.register({
+    uuid,
+    name: 'max_trip_restriction',
+    lifetime: MetadataLifetime.Always,
+  });
+}
+
 export function watchForGlobalMaxAmount(ctx: StatelessContextInterface, uuid: string): void {
   ctx.meta.register({
     uuid,

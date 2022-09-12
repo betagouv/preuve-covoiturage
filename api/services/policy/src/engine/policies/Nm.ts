@@ -18,6 +18,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { watchForGlobalMaxTrip } from '../helpers/max';
 
 export class Nm implements PolicyHandlerInterface {
   static readonly id = '656';
@@ -30,19 +31,9 @@ export class Nm implements PolicyHandlerInterface {
   ];
   protected limits = [
     setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 1000000000, watchForGlobalMaxAmount),
+    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 10000000, watchForGlobalMaxTrip),
     setMax('286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay),
-    // setMax('6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 4, watchForPersonMaxTripByDay, false),
-    /*
-      {
-    "slug": "max_trip_restriction",
-    "parameters": {
-      "amount": 10000000,
-      "period": "campaign",
-      "uuid": "D1FED21B-5160-A1BF-C052-5DA7A190996C"
-    }
-  },
-  */
-    /*
+    /* TODO: implements
      {
     "slug": "max_passenger_restriction",
     "parameters": {
