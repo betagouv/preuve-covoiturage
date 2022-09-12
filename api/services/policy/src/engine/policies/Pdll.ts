@@ -40,6 +40,7 @@ export class Pdll implements PolicyHandlerInterface {
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2000 });
+    isOperatorClassOrThrow(ctx, ['B', 'C']);
 
     // Exclure les trajets NM->NM, Angers->Angers, Le Mans->Le Mans
     if (
@@ -55,9 +56,6 @@ export class Pdll implements PolicyHandlerInterface {
     if (!startsAt(ctx, { reg: ['52'] }) || !endsAt(ctx, { reg: ['52'] })) {
       throw new NotEligibleTargetException();
     }
-
-    // Classe de trajet
-    isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
 
   processStateless(ctx: StatelessContextInterface): void {
