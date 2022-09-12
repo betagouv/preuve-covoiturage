@@ -5,7 +5,6 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import {
-  isDriverOrThrow,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
   onDistanceRange,
@@ -32,7 +31,6 @@ export class Smt implements PolicyHandlerInterface {
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isDriverOrThrow(ctx);
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2000, max: 150000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);

@@ -18,11 +18,9 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { applyForMaximum, watchForMaxPassengerByTrip } from '../helpers/max';
-import { startsAndEndsAt } from '../helpers/position';
 
 export class Nm implements PolicyHandlerInterface {
-  static readonly id = '249';
+  static readonly id = '656';
   protected operators = [
     '75315323800047', // Klaxit
   ];
@@ -32,8 +30,8 @@ export class Nm implements PolicyHandlerInterface {
   ];
   protected limits = [
     setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 1000000000, watchForGlobalMaxAmount),
-    setMax('286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay, true),
-    setMax('6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 4, watchForPersonMaxTripByDay, false),
+    setMax('286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay),
+    // setMax('6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 4, watchForPersonMaxTripByDay, false),
     /*
       {
     "slug": "max_trip_restriction",
@@ -84,6 +82,7 @@ export class Nm implements PolicyHandlerInterface {
       }
     }
 
+    console.debug(amount);
     ctx.incentive.set(amount);
   }
 

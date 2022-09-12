@@ -5,7 +5,6 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import {
-  isDriverOrThrow,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
   onDistanceRange,
@@ -17,7 +16,7 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 
-export class Smt implements PolicyHandlerInterface {
+export class Laval implements PolicyHandlerInterface {
   static readonly id = '713';
   protected operators = [
     '75315323800047', // Klaxit
@@ -31,7 +30,6 @@ export class Smt implements PolicyHandlerInterface {
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isDriverOrThrow(ctx);
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2000, max: 150000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
