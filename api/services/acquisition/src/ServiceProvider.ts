@@ -25,7 +25,7 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
 
 @serviceProvider({
   config,
-  queues: ['normalization', 'acquisition'],
+  queues: ['acquisition'],
   providers: [JourneyPgRepositoryProvider, ErrorPgRepositoryProvider, CarpoolRepositoryProvider],
   validator: [
     ['journey.create', create],

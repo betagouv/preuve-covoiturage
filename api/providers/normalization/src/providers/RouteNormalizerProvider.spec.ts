@@ -4,7 +4,7 @@ import { PointInterface, RouteMeta } from '../interfaces';
 
 import { RouteNormalizerProvider } from './RouteNormalizerProvider';
 
-test('Route normalization normalizer', async (t) => {
+test('Route normalizer', async (t) => {
   class GeoProvider extends GeoProviderInterfaceResolver {
     async getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {
       return {

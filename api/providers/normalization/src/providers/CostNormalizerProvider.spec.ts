@@ -4,7 +4,7 @@ import { CostNormalizerProvider } from './CostNormalizerProvider';
 import { CostParamsInterface, CostResultInterface } from '../interfaces';
 import { KernelInterfaceResolver } from '@ilos/common';
 
-class MockedNormalizationCostAction extends CostNormalizerProvider {
+class MockedNormalizerCostAction extends CostNormalizerProvider {
   constructor() {
     super(null as unknown as KernelInterfaceResolver);
   }
@@ -34,7 +34,7 @@ function testPayments(t, params: CostParamsInterface, result: CostResultInterfac
 }
 
 test('Cost normalization driver', async (t) => {
-  const action = new MockedNormalizationCostAction();
+  const action = new MockedNormalizerCostAction();
   // driver
   const driverData = {
     operator_id: 1,
@@ -70,7 +70,7 @@ test('Cost normalization driver', async (t) => {
 });
 
 test('Passenger should', async (t) => {
-  const action = new MockedNormalizationCostAction();
+  const action = new MockedNormalizerCostAction();
 
   const passengerData = {
     operator_id: 1,
