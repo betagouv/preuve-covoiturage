@@ -11,7 +11,7 @@ import { CapitalcallApiService } from './../../services/capitalcall-api.service'
 export class CampaignCapitalcallComponent implements OnInit {
   @Input() territoryId: number;
 
-  public capitalcallList: { key: string; month: string }[] = [];
+  public capitalcallList: { key: string; month: string }[];
   public displayedColumns: string[] = ['month', 'operator', 'action'];
 
   private readonly SHORT_MONTHS_STRING: { [key: string]: string } = {
@@ -59,9 +59,9 @@ export class CampaignCapitalcallComponent implements OnInit {
               operator: operators.find((o) => o._id === operatorId).name,
             };
           })
-          .sort((a, b) => {
-            return this.SORTED_SHORT_MONTH_ARRAY.indexOf(a.month) - this.SORTED_SHORT_MONTH_ARRAY.indexOf(b.month);
-          });
+          .sort(
+            (a, b) => this.SORTED_SHORT_MONTH_ARRAY.indexOf(a.month) - this.SORTED_SHORT_MONTH_ARRAY.indexOf(b.month),
+          );
       },
     );
   }

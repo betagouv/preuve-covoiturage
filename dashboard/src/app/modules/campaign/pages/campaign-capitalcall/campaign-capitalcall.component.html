@@ -2,7 +2,11 @@
   <h4> Appels de fonds - Récapitulatif des 6 derniers mois </h4>
   <div class="campaign-capitalcall-content">
 
-    <table mat-table [dataSource]="capitalcallList">
+    <div class="loader" *ngIf="!capitalcallList">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <table *ngIf="capitalcallList" mat-table [dataSource]="capitalcallList">
  
       <!-- Month -->
       <ng-container matColumnDef="month">
