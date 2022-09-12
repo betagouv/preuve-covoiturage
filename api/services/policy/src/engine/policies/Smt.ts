@@ -55,6 +55,8 @@ export class Smt implements PolicyHandlerInterface {
       }
     }
 
+    // TODO gratuit pour les passager de 2 à 150km
+
     ctx.incentive.set(amount);
   }
 
@@ -63,8 +65,6 @@ export class Smt implements PolicyHandlerInterface {
       const [, stateful] = limit;
       stateful(ctx);
     }
-
-    // TODO gratuit pour les passager de 2 à 150km
   }
 
   params(): PolicyHandlerParamsInterface {
