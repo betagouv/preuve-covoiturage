@@ -59,7 +59,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should show empty view', () => {
+  it('should show empty view if no data', () => {
     // Arrange
     capitalCallServiceSpy.list.and.returnValue(of([]));
     commonDataServiceSpy.operators$ = of(operators);
@@ -72,7 +72,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
     expect(p.textContent).toContain('Aucun appel fond');
   });
 
-  fit('should show table view with 2 elements, sorted by month desc, for registry or territory user', () => {
+  it('should show table view with 2 elements, sorted by month desc, for registry or territory user', () => {
     // Arrange
     capitalCallServiceSpy.list.and.returnValue(of(s3ObjectList));
     console.debug(commonDataServiceSpy.operators$);
