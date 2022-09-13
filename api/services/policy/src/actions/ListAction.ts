@@ -32,6 +32,10 @@ export class ListAction extends AbstractAction {
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const result = await this.repository.findWhere(params);
 
+    if (!params.operator_id) {
+      return result;
+    }
+
     const operator: OperatorResultInterface = await this.kernel.call<OperatorParamsInterface, OperatorResultInterface>(
       operatorFindSignature,
       { _id: params.operator_id },
