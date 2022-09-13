@@ -1,11 +1,17 @@
-import { handler, NotFoundException } from '@ilos/common';
+import { ForbiddenException, handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
 import { Policy } from '../engine/entities/Policy';
 
-import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
+import { PolicyHandlerStaticInterface, PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/find.contract';
 import { alias } from '../shared/policy/find.schema';
+import {
+  ParamsInterface as OperatorParamsInterface,
+  ResultInterface as OperatorResultInterface,
+  signature as operatorFindSignature,
+} from '../shared/operator/find.contract';
+import { policies } from '../engine/policies';
 
 @handler({
   ...handlerConfig,
@@ -18,7 +24,10 @@ import { alias } from '../shared/policy/find.schema';
   ],
 })
 export class FindAction extends AbstractAction {
-  constructor(private policyRepository: PolicyRepositoryProviderInterfaceResolver) {
+  constructor(
+    private kernel: KernelInterfaceResolver,
+    private policyRepository: PolicyRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 
@@ -30,10 +39,28 @@ export class FindAction extends AbstractAction {
     }
     const policy = await Policy.import(policyData);
 
-    return {
+    const result: ResultInterface = {
       ...policy.export(),
       description: policy.describe(),
       params: policy.params(),
     };
+
+    if (!params.operator_id) {
+      return result;
+    }
+
+    const operator: OperatorResultInterface = await this.kernel.call<OperatorParamsInterface, OperatorResultInterface>(
+      operatorFindSignature,
+      { _id: params.operator_id },
+      {
+        channel: { service: handlerConfig.service },
+        call: { user: { permissions: ['registry.operator.find'] } },
+      },
+    );
+
+    if (!result.params.operators.includes(operator.siret)) {
+      throw new ForbiddenException('Invalid permissions');
+    }
+    return result;
   }
 }
