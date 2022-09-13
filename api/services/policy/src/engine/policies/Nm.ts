@@ -30,9 +30,9 @@ export class Nm implements PolicyHandlerInterface {
     { start: 20000, end: 150000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
   protected limits = [
-    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 1000000000, watchForGlobalMaxAmount),
-    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 10000000, watchForGlobalMaxTrip),
     setMax('286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay),
+    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 10000000, watchForGlobalMaxTrip),
+    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 1000000000, watchForGlobalMaxAmount),
     /* TODO: implements
      {
     "slug": "max_passenger_restriction",
@@ -73,7 +73,6 @@ export class Nm implements PolicyHandlerInterface {
       }
     }
 
-    console.debug(amount);
     ctx.incentive.set(amount);
   }
 

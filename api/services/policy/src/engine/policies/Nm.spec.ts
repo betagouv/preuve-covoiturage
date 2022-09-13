@@ -69,24 +69,20 @@ test.only(
     meta: [],
   },
   {
-    incentive: [200, 200, 200],
+    incentive: [200],
     meta: [
-      // {
-      //   key: 'max_amount_restriction.global.campaign.global',
-      //   value: 1075,
-      // },
-      // {
-      //   key: 'max_amount_restriction.one.month.0-2019',
-      //   value: 450,
-      // },
-      // {
-      //   key: 'max_amount_restriction.two.month.0-2019',
-      //   value: 250,
-      // },
-      // {
-      //   key: 'max_amount_restriction.two.month.2-2022',
-      //   value: 375,
-      // },
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 200,
+      },
+      {
+        key: 'max_trip_restriction.global.campaign.global',
+        value: 1,
+      },
+      {
+        key: 'max_amount_restriction.one.month.0-2019',
+        value: 200,
+      },
     ],
   },
 );
