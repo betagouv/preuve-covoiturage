@@ -10,7 +10,7 @@ class GeoProvider extends GeoProviderInterfaceResolver {
     return {
       lat,
       lon,
-      geo_code: `${(lat).toString(10)}_${lon.toString(10)}`,
+      geo_code: `${lat.toString(10)}_${lon.toString(10)}`,
     };
   }
 }

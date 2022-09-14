@@ -14,7 +14,7 @@ class MockedNormalizerCostAction extends CostNormalizerProvider {
 }
 
 function testPayments(t, params: CostParamsInterface, result: CostResultInterface, userType: string): void {
-  const length = params.payments?.length || 0
+  const length = params.payments?.length || 0;
   t.is(
     result.payments.length,
     2 * length + 1,

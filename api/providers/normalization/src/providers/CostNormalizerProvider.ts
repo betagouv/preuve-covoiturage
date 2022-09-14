@@ -6,7 +6,13 @@ import {
   ResultInterface as OperatorFindResultInterface,
 } from '../shared/operator/find.contract';
 
-import { CostParamsInterface, CostResultInterface, CostNormalizerProviderInterface, IncentiveInterface, PaymentInterface } from '../interfaces';
+import {
+  CostParamsInterface,
+  CostResultInterface,
+  CostNormalizerProviderInterface,
+  IncentiveInterface,
+  PaymentInterface,
+} from '../interfaces';
 
 @provider()
 export class CostNormalizerProvider implements CostNormalizerProviderInterface {

@@ -22,8 +22,7 @@ export class NormalizationProvider implements NormalizationProviderInterface {
     protected geoNormalizer: GeoNormalizerProvider,
     protected identityNormalizer: IdentityNormalizerProvider,
     protected routeNormalizer: RouteNormalizerProvider,
-  ) {
-  }
+  ) {}
 
   public async handle(journey: ParamsInterface): Promise<ResultInterface> {
     const people: FinalizedPersonInterface[] = [];
@@ -117,16 +116,14 @@ export class NormalizationProvider implements NormalizationProviderInterface {
 
     try {
       // console.debug('[normalization]:cost start');
-      const { cost, payments } = await this.costNormalizer.handle( 
-        {
-          operator_id: journey.operator_id,
-          revenue: finalPerson.revenue,
-          contribution: finalPerson.contribution,
-          incentives: finalPerson.incentives,
-          payments: finalPerson.payments,
-          isDriver: finalPerson.is_driver as boolean,
-        },
-      );
+      const { cost, payments } = await this.costNormalizer.handle({
+        operator_id: journey.operator_id,
+        revenue: finalPerson.revenue,
+        contribution: finalPerson.contribution,
+        incentives: finalPerson.incentives,
+        payments: finalPerson.payments,
+        isDriver: finalPerson.is_driver as boolean,
+      });
 
       finalPerson['cost'] = cost;
       finalPerson.payments = payments;
@@ -140,9 +137,7 @@ export class NormalizationProvider implements NormalizationProviderInterface {
 
     try {
       // console.debug('[normalization]:identity start');
-      finalPerson.identity = await this.identityNormalizer.handle(
-        finalPerson.identity,
-      );
+      finalPerson.identity = await this.identityNormalizer.handle(finalPerson.identity);
     } catch (e) {
       console.error(`[normalization]:identity: ${e.message}`, e);
       await this.logError(NormalisationErrorStage.Identity, journey, e);
@@ -153,12 +148,10 @@ export class NormalizationProvider implements NormalizationProviderInterface {
     let isSubGeoError = false;
     try {
       // console.debug('[normalization]:geo start');
-      const { start, end } = await this.geoNormalizer.handle(
-        {
-          start: finalPerson.start,
-          end: finalPerson.end,
-        },
-      );
+      const { start, end } = await this.geoNormalizer.handle({
+        start: finalPerson.start,
+        end: finalPerson.end,
+      });
 
       finalPerson.start = { ...finalPerson.start, ...start };
       finalPerson.end = { ...finalPerson.end, ...end };
@@ -166,12 +159,10 @@ export class NormalizationProvider implements NormalizationProviderInterface {
       // Route ------------------------------------------------------------------------------------
       try {
         // console.debug('[normalization]:geo:route start');
-        const { calc_distance, calc_duration } = await this.routeNormalizer.handle(
-          {
-            start,
-            end,
-          },
-        );
+        const { calc_distance, calc_duration } = await this.routeNormalizer.handle({
+          start,
+          end,
+        });
 
         finalPerson.calc_distance = calc_distance;
         finalPerson.calc_duration = calc_duration;
