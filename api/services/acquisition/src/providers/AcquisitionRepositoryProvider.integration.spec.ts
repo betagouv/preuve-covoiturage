@@ -60,7 +60,7 @@ test.serial('Should create acquisition', async (t) => {
   t.log(result.rows);
   t.deepEqual(
     result.rows,
-    data.map((d) => ({ ...d, status: 'todo', try_count: 0 })),
+    data.map((d) => ({ ...d, status: 'pending', try_count: 0 })),
   );
 });
 
@@ -93,7 +93,7 @@ test.serial('Should update acquisition', async (t) => {
   t.deepEqual(
     result.rows,
     [...data, ...initialData].map((d) => {
-      if (d.operator_journey_id !== '2') return { ...d, status: 'todo', try_count: 0 };
+      if (d.operator_journey_id !== '2') return { ...d, status: 'pending', try_count: 0 };
       return { ...d, request_id: 'my request id', status: 'ok', try_count: 50 };
     }),
   );
@@ -132,8 +132,8 @@ test.serial('Should update status', async (t) => {
       errors: { arbitrary: 'data' },
     },
     { operator_id: 1, operator_journey_id: '2', status: 'ok', error_stage: null, errors: null },
-    { operator_id: 1, operator_journey_id: '3', status: 'todo', error_stage: null, errors: null },
-    { operator_id: 1, operator_journey_id: '4', status: 'todo', error_stage: null, errors: null },
+    { operator_id: 1, operator_journey_id: '3', status: 'pending', error_stage: null, errors: null },
+    { operator_id: 1, operator_journey_id: '4', status: 'pending', error_stage: null, errors: null },
   ]);
 });
 
@@ -164,7 +164,7 @@ test.serial('Should get status', async (t) => {
 test.serial('Should find then update with selectors', async (t) => {
   const [result, fn] = await t.context.repository.findThenUpdate({
     limit: 2,
-    status: AcquisitionStatusEnum.Todo,
+    status: AcquisitionStatusEnum.Pending,
     to: new Date(),
   });
 
@@ -181,7 +181,7 @@ test.serial('Should find then update with selectors', async (t) => {
 test.serial('Should find and update with lock', async (t) => {
   const [result1, fn1] = await t.context.repository.findThenUpdate({
     limit: 1,
-    status: AcquisitionStatusEnum.Todo,
+    status: AcquisitionStatusEnum.Pending,
   });
 
   t.deepEqual(
@@ -191,7 +191,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   const [result2, fn2] = await t.context.repository.findThenUpdate({
     limit: 1,
-    status: AcquisitionStatusEnum.Todo,
+    status: AcquisitionStatusEnum.Pending,
   });
 
   t.deepEqual(
@@ -202,7 +202,7 @@ test.serial('Should find and update with lock', async (t) => {
   await fn1([]); // release lock 1
   const [result3, fn3] = await t.context.repository.findThenUpdate({
     limit: 1,
-    status: AcquisitionStatusEnum.Todo,
+    status: AcquisitionStatusEnum.Pending,
   });
 
   t.deepEqual(
@@ -213,7 +213,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   const [result4, fn4] = await t.context.repository.findThenUpdate({
     limit: 1,
-    status: AcquisitionStatusEnum.Todo,
+    status: AcquisitionStatusEnum.Pending,
   });
 
   t.deepEqual(result4, []);
@@ -225,14 +225,14 @@ test.serial('Should find with lock timeout', async (t) => {
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const { operator_id } = t.context;
   await t.context.db.connection.getClient().query({
-    text: `UPDATE ${t.context.repository.table} SET status = 'todo' WHERE operator_id = $1`,
+    text: `UPDATE ${t.context.repository.table} SET status = 'pending' WHERE operator_id = $1`,
     values: [operator_id],
   });
 
   const [result1, fn1] = await t.context.repository.findThenUpdate(
     {
       limit: 1,
-      status: AcquisitionStatusEnum.Todo,
+      status: AcquisitionStatusEnum.Pending,
     },
     1000,
   );
@@ -246,7 +246,7 @@ test.serial('Should find with lock timeout', async (t) => {
 
   const [result2, fn2] = await t.context.repository.findThenUpdate({
     limit: 1,
-    status: AcquisitionStatusEnum.Todo,
+    status: AcquisitionStatusEnum.Pending,
   });
 
   t.deepEqual(

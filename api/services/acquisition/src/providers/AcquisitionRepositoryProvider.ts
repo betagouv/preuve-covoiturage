@@ -44,7 +44,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
         application_id.push(d.application_id);
         api_version.push(d.api_version);
         request_id.push(d.request_id);
-        status.push(d.status || AcquisitionStatusEnum.Todo);
+        status.push(d.status || AcquisitionStatusEnum.Pending);
         error_stage.push(d.error_stage || null);
         errors.push(JSON.stringify(d.errors) || null);
         return [
@@ -103,7 +103,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           excluded.error_stage,
           excluded.errors
         ) WHERE acquisitions.status = ANY(ARRAY[
-          'todo'::acquisition.acquisition_status_enum,
+          'pending'::acquisition.acquisition_status_enum,
           'error'::acquisition.acquisition_status_enum
         ])
         RETURNING journey_id AS operator_journey_id, created_at

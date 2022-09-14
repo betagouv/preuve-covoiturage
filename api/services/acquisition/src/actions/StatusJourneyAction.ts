@@ -35,6 +35,5 @@ export class StatusJourneyAction extends AbstractAction {
         errors: acquisition.errors,
       },
     };
-    // Todo => pending
   }
 }

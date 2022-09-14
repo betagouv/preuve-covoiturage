@@ -1,7 +1,7 @@
 export enum AcquisitionStatusEnum {
   Ok = 'ok',
   Error = 'error',
-  Todo = 'todo',
+  Pending = 'pending',
   Canceled = 'canceled',
 }
 

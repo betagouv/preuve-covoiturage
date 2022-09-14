@@ -8,10 +8,10 @@ CREATE TRIGGER touch_acquisition_updated_at BEFORE UPDATE ON acquisition.acquisi
 ALTER TABLE acquisition.acquisitions
   ADD COLUMN IF NOT EXISTS request_id varchar;
 
-CREATE TYPE acquisition.acquisition_status_enum AS enum('ok', 'error', 'todo', 'canceled');
+CREATE TYPE acquisition.acquisition_status_enum AS enum('ok', 'error', 'pending', 'canceled');
 
 ALTER TABLE acquisition.acquisitions
-  ADD COLUMN IF NOT EXISTS status acquisition.acquisition_status_enum NOT NULL DEFAULT 'todo';
+  ADD COLUMN IF NOT EXISTS status acquisition.acquisition_status_enum NOT NULL DEFAULT 'pending';
 
 ALTER TABLE acquisition.acquisitions
   ADD COLUMN try_count SMALLINT NOT NULL DEFAULT 0;
