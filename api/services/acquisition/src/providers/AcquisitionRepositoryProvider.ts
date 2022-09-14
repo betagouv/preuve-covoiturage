@@ -1,7 +1,19 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
 import { Console } from 'console';
-import { AcquisitionCreateInterface, AcquisitionCreateResultInterface, AcquisitionRepositoryProviderInterface, AcquisitionSearchInterface, AcquisitionStatusEnum, AcquisitionStatusInterface, AcquisitionStatusSearchInterface, AcquisitionStatusSearchInterfaceA, AcquisitionStatusSearchInterfaceB, AcquisitionStatusUpdateInterface } from '../interfaces/AcquisitionRepositoryProviderInterface';
+import {
+  AcquisitionCreateInterface,
+  AcquisitionCreateResultInterface,
+  AcquisitionFindInterface,
+  AcquisitionRepositoryProviderInterface,
+  AcquisitionSearchInterface,
+  AcquisitionStatusEnum,
+  AcquisitionStatusInterface,
+  AcquisitionStatusSearchInterface,
+  AcquisitionStatusSearchInterfaceA,
+  AcquisitionStatusSearchInterfaceB,
+  AcquisitionStatusUpdateInterface,
+} from '../interfaces/AcquisitionRepositoryProviderInterface';
 
 @provider()
 export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProviderInterface {
@@ -12,18 +24,43 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
   async createOrUpdateMany<P = any>(
     data: Array<AcquisitionCreateInterface<P>>,
   ): Promise<Array<AcquisitionCreateResultInterface>> {
-     //status
-    const values = data.reduce((acc, d) => {
-      const [payload, operator_id, operator_journey_id, application_id, api_version, request_id, status] = acc;
-      payload.push(JSON.stringify(d.payload));
-      operator_id.push(d.operator_id);
-      operator_journey_id.push(d.operator_journey_id);
-      application_id.push(d.application_id);
-      api_version.push(d.api_version);
-      request_id.push(d.request_id);
-      status.push(AcquisitionStatusEnum.Todo);
-      return [payload, operator_id, operator_journey_id, application_id, api_version, request_id, status];
-    }, [[],[],[],[],[],[],[]]);
+    //status
+    const values = data.reduce(
+      (acc, d) => {
+        const [
+          payload,
+          operator_id,
+          operator_journey_id,
+          application_id,
+          api_version,
+          request_id,
+          status,
+          error_stage,
+          errors,
+        ] = acc;
+        payload.push(JSON.stringify(d.payload));
+        operator_id.push(d.operator_id);
+        operator_journey_id.push(d.operator_journey_id);
+        application_id.push(d.application_id);
+        api_version.push(d.api_version);
+        request_id.push(d.request_id);
+        status.push(d.status || AcquisitionStatusEnum.Todo);
+        error_stage.push(d.error_stage || null);
+        errors.push(JSON.stringify(d.errors) || null);
+        return [
+          payload,
+          operator_id,
+          operator_journey_id,
+          application_id,
+          api_version,
+          request_id,
+          status,
+          error_stage,
+          errors,
+        ];
+      },
+      [[], [], [], [], [], [], [], [], []],
+    );
     const query = {
       text: `
         INSERT INTO ${this.table} (
@@ -33,7 +70,9 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           application_id,
           api_version,
           request_id,
-          status
+          status,
+          error_stage,
+          errors
         )
         SELECT * FROM UNNEST(
           $1::json[],
@@ -42,7 +81,9 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           $4::int[],
           $5::smallint[],
           $6::varchar[],
-          $7::acquisition.acquisition_status_enum[]
+          $7::acquisition.acquisition_status_enum[],
+          $8::varchar[],
+          $9::json[]
         )
         ON CONFLICT (operator_id, journey_id)
         DO UPDATE SET (
@@ -50,13 +91,17 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           application_id,
           api_version,
           request_id,
-          status
+          status,
+          error_stage,
+          errors
         ) = (
           excluded.payload,
           excluded.application_id,
           excluded.api_version,
           excluded.request_id,
-          excluded.status
+          excluded.status,
+          excluded.error_stage,
+          excluded.errors
         ) WHERE acquisitions.status = ANY(ARRAY[
           'todo'::acquisition.acquisition_status_enum,
           'error'::acquisition.acquisition_status_enum
@@ -70,19 +115,19 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     return result.rows;
   }
 
-  async updateManyStatus(
-    data: Array<AcquisitionStatusUpdateInterface>,
-    poolClient?: PoolClient,
-  ): Promise<void> {
-    const pool = poolClient ?? await this.connection.getClient().connect();
-    const values = data.reduce((acc, d) => {
-      const [acquisition_id, status, error_stage, errors] = acc;
-      acquisition_id.push(d.acquisition_id);
-      status.push(d.status);
-      error_stage.push(d.error_stage);
-      errors.push(d.errors);
-      return [acquisition_id, status, error_stage, errors];
-    }, [[],[],[],[]]);
+  async updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>, poolClient?: PoolClient): Promise<void> {
+    const pool = poolClient ?? (await this.connection.getClient().connect());
+    const values = data.reduce(
+      (acc, d) => {
+        const [acquisition_id, status, error_stage, errors] = acc;
+        acquisition_id.push(d.acquisition_id);
+        status.push(d.status);
+        error_stage.push(d.error_stage);
+        errors.push(d.errors);
+        return [acquisition_id, status, error_stage, errors];
+      },
+      [[], [], [], []],
+    );
     const query = {
       text: `
       WITH data AS (
@@ -124,20 +169,27 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     }
   }
 
-  async getStatus(
-    search: AcquisitionStatusSearchInterface,
-  ): Promise<AcquisitionStatusInterface> {
-    const whereClauses = (search as AcquisitionStatusSearchInterfaceB).acquisition_id ? {
-      text: ['_id = $1'],
-      values: [(search as AcquisitionStatusSearchInterfaceB).acquisition_id]
-    } : {
-      text: ['operator_id = $1', 'journey_id = $2'],
-      values: [(search as AcquisitionStatusSearchInterfaceA).operator_id, (search as AcquisitionStatusSearchInterfaceA).operator_journey_id],
-    };
+  async getStatus(search: AcquisitionStatusSearchInterface): Promise<AcquisitionStatusInterface> {
+    const whereClauses = (search as AcquisitionStatusSearchInterfaceB).acquisition_id
+      ? {
+          text: ['_id = $1'],
+          values: [(search as AcquisitionStatusSearchInterfaceB).acquisition_id],
+        }
+      : {
+          text: ['operator_id = $1', 'journey_id = $2'],
+          values: [
+            (search as AcquisitionStatusSearchInterfaceA).operator_id,
+            (search as AcquisitionStatusSearchInterfaceA).operator_journey_id,
+          ],
+        };
+    // TODO : join on carpool status
     const query = {
       text: `
         SELECT 
+          _id,
           journey_id as operator_journey_id,
+          created_at,
+          updated_at,
           status,
           error_stage,
           errors
@@ -145,19 +197,19 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
         WHERE ${whereClauses.text.join(' AND ')}
       `,
       values: whereClauses.values,
-    }
+    };
     const result = await this.connection.getClient().query(query);
     return result.rows[0];
   }
 
   async findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,
-    timeout: number = 10000,
-  ): Promise<[Array<{ acquisition_id: number; payload: P }>, (data: Array<AcquisitionStatusUpdateInterface>) => Promise<void>]> {
+    timeout = 10000,
+  ): Promise<[Array<AcquisitionFindInterface<P>>, (data: Array<AcquisitionStatusUpdateInterface>) => Promise<void>]> {
     const whereClauses = ['from', 'to', 'status']
-      .filter(k => k in search)
+      .filter((k) => k in search)
       .map((k, i) => {
-        switch(k) {
+        switch (k) {
           case 'fromy':
             return {
               text: `created_at >= $${i + 1}::timestamp`,
@@ -167,33 +219,40 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
             return {
               text: `created_at < $${i + 1}::timestamp`,
               values: [search[k]],
-            }
+            };
           case 'status':
             return {
               text: `status = $${i + 1}::acquisition.acquisition_status_enum`,
               values: [search[k]],
-            }
+            };
         }
-      }).reduce((acc, v) => {
-        const { text, values } = acc;
-        text.push(v.text);
-        values.push(...v.values);
-        return { text, values };
-      }, {text: [], values: []})
-  
+      })
+      .reduce(
+        (acc, v) => {
+          const { text, values } = acc;
+          text.push(v.text);
+          values.push(...v.values);
+          return { text, values };
+        },
+        { text: [], values: [] },
+      );
+
     const query = {
       text: `
         SELECT 
-          _id as acquisition_id,
+          _id,
+          operator_id,
+          api_version,
+          created_at,
           payload
         FROM ${this.table}
         WHERE ${whereClauses.text.join(' AND ')}
-        ORDER BY acquisition_id
+        ORDER BY _id
         LIMIT $${whereClauses.values.length + 1}
         FOR UPDATE SKIP LOCKED
-      `, // SKIP LOCK
+      `,
       values: [...whereClauses.values, search.limit],
-    }
+    };
     const pool = await this.connection.getClient().connect();
     try {
       await pool.query('BEGIN');
@@ -201,13 +260,11 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       let hasTimeout = false;
       const timeoutFn = setTimeout(() => {
         hasTimeout = true;
-        pool
-          .query('ROLLBACK')
-          .finally(() => pool.release());
+        pool.query('ROLLBACK').finally(() => pool.release());
         // TODO TRY COUNT + log ERROR
       }, timeout);
       return [
-        result.rows, 
+        result.rows,
         async (data: Array<AcquisitionStatusUpdateInterface>) => {
           if (timeoutFn && !hasTimeout) {
             clearTimeout(timeoutFn);
@@ -215,14 +272,15 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
               await this.updateManyStatus(data, pool);
               // TODO: add try count
               await pool.query('COMMIT');
-            } catch(e) {
+            } catch (e) {
               await pool.query('ROLLBACK');
             } finally {
               pool.release();
             }
           }
-        }];
-    } catch(e) {
+        },
+      ];
+    } catch (e) {
       await pool.query('ROLLBACK');
       pool.release();
       throw e;

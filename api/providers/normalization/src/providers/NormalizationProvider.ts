@@ -44,7 +44,7 @@ export class NormalizationProvider implements NormalizationProviderInterface {
       operator_id: journey.operator_id,
       operator_class: journey.payload.operator_class,
       acquisition_id: journey._id,
-      operator_journey_id: journey.journey_id,
+      operator_journey_id: journey.payload.journey_id,
     };
 
     return normalizedData;
