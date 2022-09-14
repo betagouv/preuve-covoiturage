@@ -30,6 +30,7 @@
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-token": "~0",
     "@pdc/provider-validator": "~0",
+    "@pdc/provider-normalization": "~0",
     "lodash": "^4.17.21"
   }
 }

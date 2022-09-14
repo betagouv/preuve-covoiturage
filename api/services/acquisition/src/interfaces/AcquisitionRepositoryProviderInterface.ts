@@ -1,16 +1,18 @@
-enum AcquisitionStatusEnum {
+export enum AcquisitionStatusEnum {
   Ok = 'ok',
   Error = 'error',
   Todo = 'todo',
+  Canceled = 'canceled',
 }
 
-enum AcquisitionErrorStageEnum {
+export enum AcquisitionErrorStageEnum {
   Acquisition = 'acquisition',
   Normalisation = 'normalization',
   Fraud = 'fraud',
 }
 
-interface AcquisitionCreateContextInterface {
+export interface AcquisitionCreateInterface<P = any> {
+  payload: P;
   operator_id: number;
   operator_journey_id: string;
   application_id: number;
@@ -18,49 +20,72 @@ interface AcquisitionCreateContextInterface {
   request_id?: string;
 }
 
-interface AcquisitionCreateInterface {
+export interface AcquisitionCreateResultInterface {
   operator_journey_id: string;
   created_at: Date;
 }
 
-interface AcquisitionSearchInterface {
+export interface AcquisitionSearchInterface {
   from?: Date;
   to?: Date;
-  limit?: number;
+  limit: number;
   status?: AcquisitionStatusEnum;
 }
 
-interface AcquisitionStatusSearchInterface {
+export interface AcquisitionStatusSearchInterfaceA {
   operator_journey_id: string;
   operator_id: number;
+}
+
+export interface AcquisitionStatusSearchInterfaceB {
   acquisition_id: number;
 }
 
-interface AcquisitionStatusInterface {
+export type AcquisitionStatusSearchInterface = AcquisitionStatusSearchInterfaceA | AcquisitionStatusSearchInterfaceB;
+
+export interface AcquisitionStatusInterface {
   operator_journey_id: string;
   status: AcquisitionStatusEnum;
   error_stage?: AcquisitionErrorStageEnum;
-  errors: any;
+  errors?: any;
+}
+
+export interface AcquisitionStatusUpdateInterface {
+  acquisition_id: number;
+  status: AcquisitionStatusEnum;
+  error_stage?: AcquisitionErrorStageEnum;
+  errors?: any;
+}
+
+export interface AcquisitionDatabaseInterface<P> {
+  _id: number;
+  created_at: Date;
+  application_id: number;
+  operator_id: number;
+  journey_id: string;
+  payload: P;
+  api_version: number;
+  request_id?: string;
+  status: AcquisitionStatusEnum;
+  try_count: number;
+  error_stage?: AcquisitionErrorStageEnum;
+  errors?: any;
 }
 
 export interface AcquisitionRepositoryProviderInterface {
-  createOrUpdate(
-    payload: any,
-    context: AcquisitionCreateContextInterface,
-  ): Promise<AcquisitionCreateInterface>;
+  createOrUpdateMany<P = any>(
+    data: Array<AcquisitionCreateInterface<P>>,
+  ): Promise<Array<AcquisitionCreateResultInterface>>;
 
-  updateStatus(
-    acquisition_id: number,
-    status: AcquisitionStatusEnum,
-    error_stage?: AcquisitionErrorStageEnum,
-    errors?: any,
+  updateManyStatus(
+    data: Array<AcquisitionStatusUpdateInterface>,
   ): Promise<void>;
 
   getStatus(
     search: AcquisitionStatusSearchInterface
   ): Promise<AcquisitionStatusInterface>;
 
-  findThenUpdate(
+  findThenUpdate<P = any>(
     search: AcquisitionSearchInterface
-  ): Promise<[Array<{ acquisition_id: number; payload: any }>, (data: Array<{ acquisition_id: number; status: AcquisitionStatusEnum; error_stage?: AcquisitionErrorStageEnum; errors?: any }>) => Promise<void>]>
+  ): Promise<[Array<{ acquisition_id: number; payload: P }>, (data: Array<AcquisitionStatusUpdateInterface>) => Promise<void>]>
 }

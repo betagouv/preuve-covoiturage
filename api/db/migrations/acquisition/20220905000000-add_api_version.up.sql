@@ -1,12 +1,17 @@
 ALTER TABLE acquisition.acquisitions ADD COLUMN IF NOT EXISTS api_version SMALLINT NOT NULL DEFAULT 2;
 
+ALTER TABLE acquisition.acquisitions 
+  ADD COLUMN updated_at timestamp WITH time zone NOT NULL DEFAULT NOW();
+
+CREATE TRIGGER touch_acquisition_updated_at BEFORE UPDATE ON acquisition.acquisitions FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
+
 ALTER TABLE acquisition.acquisitions
   ADD COLUMN IF NOT EXISTS request_id varchar;
 
-CREATE TYPE acquisition.acquisition_status_enum AS enum('ok', 'error', 'todo');
+CREATE TYPE acquisition.acquisition_status_enum AS enum('ok', 'error', 'todo', 'canceled');
 
 ALTER TABLE acquisition.acquisitions
-  ADD COLUMN status acquisition.acquisition_status_enum IF NOT EXISTS NOT NULL DEFAULT 'todo';
+  ADD COLUMN IF NOT EXISTS status acquisition.acquisition_status_enum NOT NULL DEFAULT 'todo';
 
 ALTER TABLE acquisition.acquisitions
   ADD COLUMN try_count SMALLINT NOT NULL DEFAULT 0;

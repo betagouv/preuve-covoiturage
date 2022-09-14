@@ -4,6 +4,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
+import { NormalizationProvider } from '@pdc/provider-normalization';
 
 import { config } from './config';
 import { JourneyPgRepositoryProvider } from './providers/JourneyPgRepositoryProvider';
@@ -26,7 +27,7 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
 @serviceProvider({
   config,
   queues: ['acquisition'],
-  providers: [JourneyPgRepositoryProvider, ErrorPgRepositoryProvider, CarpoolRepositoryProvider],
+  providers: [JourneyPgRepositoryProvider, ErrorPgRepositoryProvider, CarpoolRepositoryProvider, NormalizationProvider],
   validator: [
     ['journey.create', create],
     ['journey.cancel', cancel],
