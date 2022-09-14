@@ -54,12 +54,13 @@ export class MetadataRegistry implements MetadataRegistryInterface {
 
   export(): Array<SerializedMetadataVariableDefinitionInterface> {
     return [...this.data.values()].map((d) => {
-      const { uuid, lifetime, initialValue } = d;
+      const { uuid, lifetime, initialValue, carpoolValue } = d;
       return {
         uuid,
         lifetime,
         initialValue,
         key: getMetaKey(this.datetime, d),
+        ...(carpoolValue ? { carpoolValue } : {}),
       };
     });
   }

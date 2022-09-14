@@ -18,6 +18,10 @@ export class MetadataAccessor implements MetadataAccessorInterface {
     return this.data.get(uuid).value;
   }
 
+  getRaw(uuid: string): SerializedAccessibleMetadataInterface {
+    return this.data.get(uuid);
+  }
+
   set(uuid: string, value: number): void {
     const data = this.data.get(uuid);
     this.data.set(uuid, { ...data, value });

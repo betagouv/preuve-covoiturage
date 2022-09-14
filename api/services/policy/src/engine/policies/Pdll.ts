@@ -18,6 +18,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { MaximumTargetEnum } from '../helpers/max';
 import { startsAndEndsAt } from '../helpers/position';
 
 export class Pdll implements PolicyHandlerInterface {
@@ -34,7 +35,7 @@ export class Pdll implements PolicyHandlerInterface {
   ];
   protected limits = [
     setMax('5499304F-2C64-AB1A-7392-52FF88F5E78D', 200000000, watchForGlobalMaxAmount),
-    setMax('8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, true),
+    setMax('8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {

@@ -16,7 +16,7 @@ class TestHandler implements PolicyHandlerInterface {
   }
 
   processStateful(ctx: StatefulContextInterface): void {
-    applyForMaximum(ctx, 'max', 2000);
+    applyForMaximum(ctx, 'max', 2000, watchForGlobalMaxAmount);
   }
 
   describe() {

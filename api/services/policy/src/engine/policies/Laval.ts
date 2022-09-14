@@ -15,6 +15,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { MaximumTargetEnum } from '../helpers/max';
 
 export class Laval implements PolicyHandlerInterface {
   static readonly id = '713';
@@ -26,7 +27,7 @@ export class Laval implements PolicyHandlerInterface {
   ];
   protected limits = [
     setMax('A2CEF9FE-D179-319F-1996-9D69E0157522', 900000, watchForGlobalMaxAmount),
-    setMax('70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, true),
+    setMax('70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {

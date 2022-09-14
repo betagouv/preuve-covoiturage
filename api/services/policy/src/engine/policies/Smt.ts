@@ -15,6 +15,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { MaximumTargetEnum } from '../helpers/max';
 
 export class Smt implements PolicyHandlerInterface {
   static readonly id = '713';
@@ -27,7 +28,7 @@ export class Smt implements PolicyHandlerInterface {
   ];
   protected limits = [
     setMax('B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', 4000000, watchForGlobalMaxAmount),
-    setMax('A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, true),
+    setMax('A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {

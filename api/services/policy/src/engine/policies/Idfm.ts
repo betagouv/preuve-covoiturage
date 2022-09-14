@@ -21,6 +21,7 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { MaximumTargetEnum } from '../helpers/max';
 
 export class Idfm implements PolicyHandlerInterface {
   static readonly id = '460';
@@ -35,8 +36,8 @@ export class Idfm implements PolicyHandlerInterface {
   ];
   protected limits = [
     setMax('99911EAF-89AB-C346-DDD5-BD2C7704F935', 600000000, watchForGlobalMaxAmount),
-    setMax('ECDE3CD4-96FF-C9D2-BA88-45754205A798', 15000, watchForPersonMaxAmountByMonth),
-    setMax('56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, true, true),
+    setMax('ECDE3CD4-96FF-C9D2-BA88-45754205A798', 15000, watchForPersonMaxAmountByMonth, MaximumTargetEnum.Driver),
+    setMax('56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
   ];
   protected pollutionAndStrikeDates = [
     '2022-02-18',

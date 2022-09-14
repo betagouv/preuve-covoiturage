@@ -14,8 +14,10 @@ import {
 import { generateCarpool, generateIncentive } from '../tests/helpers';
 import {
   applyForMaximum,
+  MaximumTargetEnum,
   setMax,
   watchForGlobalMaxAmount,
+  watchForPassengerMaxByTripByDay,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
   watchForPersonMaxTripByMonth,
@@ -52,7 +54,7 @@ test('should watchForPersonMaxAmountByMonth', async (t) => {
   t.deepEqual(ctx.meta.export(), [
     {
       uuid: '1',
-      key: `max_amount_restriction.${ctx.carpool.driver_identity_uuid}.month.0-2019`,
+      key: `max_amount_restriction.${ctx.carpool.passenger_identity_uuid}.month.0-2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Month,
     },
@@ -65,7 +67,7 @@ test('should watchForPersonMaxTripByMonth', async (t) => {
   t.deepEqual(ctx.meta.export(), [
     {
       uuid: '1',
-      key: `max_trip_restriction.${ctx.carpool.driver_identity_uuid}.month.0-2019`,
+      key: `max_trip_restriction.${ctx.carpool.passenger_identity_uuid}.month.0-2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Month,
     },
@@ -74,7 +76,7 @@ test('should watchForPersonMaxTripByMonth', async (t) => {
 
 test('should watchForPersonMaxTripByDay', async (t) => {
   const [ctx] = setupStateless();
-  watchForPersonMaxTripByDay(ctx, '1');
+  watchForPersonMaxTripByDay(ctx, '1', MaximumTargetEnum.Driver);
   t.deepEqual(ctx.meta.export(), [
     {
       uuid: '1',
@@ -95,7 +97,7 @@ test('should drop incentive if max is reached', async (t) => {
     ],
   });
   ctx.meta.set('uuid', 10);
-  applyForMaximum(ctx, 'uuid', 10);
+  applyForMaximum(ctx, 'uuid', 10, watchForGlobalMaxAmount);
   t.deepEqual(ctx.incentive.get(), 0);
   t.deepEqual(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 10 }]);
 });
@@ -110,7 +112,7 @@ test('should partially drop incentive if max will be reached', async (t) => {
     ],
   });
   ctx.meta.set('uuid', 30);
-  applyForMaximum(ctx, 'uuid', 100);
+  applyForMaximum(ctx, 'uuid', 100, watchForGlobalMaxAmount);
   t.deepEqual(ctx.incentive.get(), 70);
   t.deepEqual(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 100 }]);
 });
@@ -125,7 +127,7 @@ test('should increase meta if incentive is not null', async (t) => {
     ],
   });
   ctx.meta.set('uuid', 30);
-  applyForMaximum(ctx, 'uuid', 200);
+  applyForMaximum(ctx, 'uuid', 200, watchForGlobalMaxAmount);
   t.deepEqual(ctx.incentive.get(), 100);
   t.deepEqual(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 130 }]);
 });
@@ -187,4 +189,52 @@ test('should watch and apply', async (t) => {
       value: 150,
     },
   ]);
+});
+
+test('should watch and apply for custom data', async (t) => {
+  const [fnStateless, fnStateful] = setMax('uuid', 3, watchForPassengerMaxByTripByDay);
+  const [ctxStateless, carpool] = setupStateless();
+  fnStateless(ctxStateless);
+  t.deepEqual(ctxStateless.meta.export(), [
+    {
+      uuid: 'uuid',
+      key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`,
+      initialValue: undefined,
+      lifetime: MetadataLifetime.Day,
+      carpoolValue: 1,
+    },
+  ]);
+  ctxStateless.incentive.set(100);
+  t.deepEqual(ctxStateless.incentive.export(), {
+    _id: undefined,
+    carpool_id: ctxStateless.carpool._id,
+    datetime: ctxStateless.carpool.datetime,
+    meta: ctxStateless.meta.export(),
+    policy_id: ctxStateless.meta.policy_id,
+    state: IncentiveStateEnum.Regular,
+    status: IncentiveStatusEnum.Draft,
+    statefulAmount: 100,
+    statelessAmount: 100,
+  });
+
+  const [ctxStateful, store] = await setupStateful({ ...ctxStateless.incentive.export(), _id: 1 });
+  t.deepEqual(ctxStateful.meta.export(), [
+    { policy_id: 1, key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`, value: 0, carpoolValue: 1 },
+  ]);
+
+  fnStateful(ctxStateful);
+  t.is(ctxStateful.incentive.get(), 100);
+  t.deepEqual(ctxStateful.meta.export(), [
+    { policy_id: 1, key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`, value: 1, carpoolValue: 1 },
+  ]);
+  await store.save(ctxStateful.meta);
+  t.deepEqual(await store.store(MetadataLifetime.Day), []);
+
+  fnStateful(ctxStateful);
+  t.is(ctxStateful.incentive.get(), 100);
+  t.deepEqual(ctxStateful.meta.export(), [
+    { policy_id: 1, key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`, value: 2, carpoolValue: 1 },
+  ]);
+  await store.save(ctxStateful.meta);
+  t.deepEqual(await store.store(MetadataLifetime.Day), []);
 });

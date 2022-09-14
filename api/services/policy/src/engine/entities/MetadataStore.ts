@@ -45,7 +45,12 @@ export class MetadataStore implements MetadataStoreInterface {
       keys
         .map((k) => this.cache.get(getCacheKey(registry.policy_id, k)))
         .reduce((m, i) => {
-          m.set(i.uuid, { policy_id: i.policy_id, key: i.key, value: i.value });
+          m.set(i.uuid, {
+            policy_id: i.policy_id,
+            key: i.key,
+            value: i.value,
+            ...(i.carpoolValue ? { carpoolValue: i.carpoolValue } : {}),
+          });
           return m;
         }, new Map()),
     );
