@@ -52,7 +52,18 @@ test.serial('Should create acquisition', async (t) => {
   t.deepEqual(acqs.map((v) => v.operator_journey_id).sort(), ['1', '2', '3', '4']);
 
   const result = await t.context.db.connection.getClient().query({
-    text: `SELECT operator_id, journey_id as operator_journey_id, application_id, api_version, request_id, payload, status, try_count FROM ${t.context.repository.table} WHERE operator_id = $1`,
+    text: `
+      SELECT
+        operator_id,
+        journey_id as operator_journey_id,
+        application_id, api_version,
+        request_id,
+        payload,
+        status,
+        try_count
+      FROM ${t.context.repository.table}
+      WHERE operator_id = $1
+    `,
     values: [operator_id],
   });
 
@@ -67,7 +78,11 @@ test.serial('Should create acquisition', async (t) => {
 test.serial('Should update acquisition', async (t) => {
   const { operator_id } = t.context;
   await t.context.db.connection.getClient().query({
-    text: `UPDATE ${t.context.repository.table} SET status = 'ok', try_count = 50 WHERE operator_id = $1 AND journey_id = $2`,
+    text: `
+      UPDATE ${t.context.repository.table}
+      SET status = 'ok', try_count = 50
+      WHERE operator_id = $1 AND journey_id = $2
+    `,
     values: [operator_id, '2'],
   });
   const initialData = [{ operator_journey_id: '3' }, { operator_journey_id: '4' }].map(createPayload);
@@ -84,7 +99,19 @@ test.serial('Should update acquisition', async (t) => {
   );
 
   const result = await t.context.db.connection.getClient().query({
-    text: `SELECT operator_id, journey_id as operator_journey_id, application_id, api_version, request_id, payload, status, try_count FROM ${t.context.repository.table} WHERE operator_id = $1 ORDER BY journey_id`,
+    text: `
+      SELECT
+        operator_id,
+        journey_id as operator_journey_id,
+        application_id,
+        api_version,
+        request_id,
+        payload,
+        status,
+        try_count
+      FROM ${t.context.repository.table}
+      WHERE operator_id = $1 ORDER BY journey_id
+    `,
     values: [operator_id],
   });
 
@@ -117,7 +144,16 @@ test.serial('Should update status', async (t) => {
     },
   ]);
   const result = await t.context.db.connection.getClient().query({
-    text: `SELECT operator_id, journey_id as operator_journey_id, status, error_stage, errors FROM ${t.context.repository.table} WHERE operator_id = $1 ORDER BY journey_id`,
+    text: `
+      SELECT
+        operator_id,
+        journey_id as operator_journey_id,
+        status,
+        error_stage,
+        errors
+      FROM ${t.context.repository.table}
+      WHERE operator_id = $1 ORDER BY journey_id
+    `,
     values: [operator_id],
   });
 

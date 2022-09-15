@@ -60,7 +60,7 @@ export class ProcessJourneyAction extends AbstractAction {
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
     const [acquisitions, cb] = await this.repository.findThenUpdate({
-      limit: 10,
+      limit: 50,
       status: AcquisitionStatusEnum.Pending,
     });
     const results = [];

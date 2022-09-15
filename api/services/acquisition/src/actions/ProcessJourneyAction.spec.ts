@@ -2,10 +2,9 @@ import test from 'ava';
 import sinon, { SinonStubbedInstance } from 'sinon';
 import { ProcessJourneyAction } from './ProcessJourneyAction';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { ParseErrorException, KernelInterfaceResolver } from '@ilos/common';
+import { KernelInterfaceResolver } from '@ilos/common';
 import { NormalizationProvider } from '@pdc/provider-normalization';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
-import { sign } from 'crypto';
 import { signature } from '../shared/carpool/crosscheck.contract';
 import { callContext } from '../config/callContext';
 

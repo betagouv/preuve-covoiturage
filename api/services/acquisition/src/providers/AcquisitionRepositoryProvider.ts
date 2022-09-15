@@ -1,6 +1,5 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import { Console } from 'console';
 import {
   AcquisitionCreateInterface,
   AcquisitionCreateResultInterface,
