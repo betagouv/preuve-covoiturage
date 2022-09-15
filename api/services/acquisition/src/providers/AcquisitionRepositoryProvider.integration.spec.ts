@@ -137,7 +137,7 @@ test.serial('Should update status', async (t) => {
   ]);
 });
 
-test.serial('Should get status', async (t) => {
+test.serial('Should get status by _id', async (t) => {
   const { operator_id } = t.context;
   const { rows: data } = await t.context.db.connection.getClient().query<{ _id: number }>({
     text: `SELECT _id FROM ${t.context.repository.table} WHERE operator_id = $1 AND journey_id = $2`,
@@ -147,6 +147,7 @@ test.serial('Should get status', async (t) => {
   const { operator_journey_id, status, errors, error_stage } = await t.context.repository.getStatus({
     acquisition_id: data[0]._id,
   });
+
   t.deepEqual(
     { operator_journey_id, status, errors, error_stage },
     {
@@ -157,8 +158,38 @@ test.serial('Should get status', async (t) => {
     },
   );
 
-  const r2 = await t.context.repository.getStatus({ operator_id, operator_journey_id: '2' });
-  t.deepEqual(r2.status, AcquisitionStatusEnum.Ok);
+  // TODO: need carpool seed
+  // const r2 = await t.context.repository.getStatus({ operator_id, operator_journey_id: '2' });
+  // t.deepEqual(r2.status, AcquisitionStatusEnum.Ok);
+});
+
+test.serial('Should get status by operator_id and operator_journey_id', async (t) => {
+  const { operator_id } = t.context;
+  const { operator_journey_id, status, errors, error_stage } = await t.context.repository.getStatus({
+    operator_id,
+    operator_journey_id: '1',
+  });
+
+  t.deepEqual(
+    { operator_journey_id, status, errors, error_stage },
+    {
+      operator_journey_id: '1',
+      status: AcquisitionStatusEnum.Error,
+      errors: { arbitrary: 'data' },
+      error_stage: AcquisitionErrorStageEnum.Acquisition,
+    },
+  );
+});
+
+test.serial('Should find with date selectors', async (t) => {
+  const [result, fn] = await t.context.repository.findThenUpdate({
+    limit: 2,
+    status: AcquisitionStatusEnum.Pending,
+    from: new Date(),
+  });
+
+  t.deepEqual(result, []);
+  await fn([]);
 });
 
 test.serial('Should find then update with selectors', async (t) => {
@@ -256,4 +287,37 @@ test.serial('Should find with lock timeout', async (t) => {
 
   await fn1([]); // release lock 1
   await fn2([]); // release lock 2
+});
+
+test.serial('Should rollback if update error', async (t) => {
+  const [result1, fn1] = await t.context.repository.findThenUpdate(
+    {
+      limit: 1,
+      status: AcquisitionStatusEnum.Pending,
+    },
+    1000,
+  );
+
+  await t.throwsAsync(async () => {
+    await fn1(
+      result1.map((r) => {
+        return {
+          acquisition_id: r._id,
+          status: 'status_not_existing' as AcquisitionStatusEnum,
+        };
+      }),
+    ); // release lock 1
+  });
+});
+
+test.serial('Should rollback if find error', async (t) => {
+  await t.throwsAsync(async () => {
+    await t.context.repository.findThenUpdate(
+      {
+        limit: 'wrong' as unknown as number,
+        status: AcquisitionStatusEnum.Pending,
+      },
+      1000,
+    );
+  });
 });

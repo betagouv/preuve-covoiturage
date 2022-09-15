@@ -172,28 +172,33 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
   async getStatus(search: AcquisitionStatusSearchInterface): Promise<AcquisitionStatusInterface> {
     const whereClauses = (search as AcquisitionStatusSearchInterfaceB).acquisition_id
       ? {
-          text: ['_id = $1'],
+          text: ['aa._id = $1'],
           values: [(search as AcquisitionStatusSearchInterfaceB).acquisition_id],
         }
       : {
-          text: ['operator_id = $1', 'journey_id = $2'],
+          text: ['aa.operator_id = $1', 'aa.journey_id = $2'],
           values: [
             (search as AcquisitionStatusSearchInterfaceA).operator_id,
             (search as AcquisitionStatusSearchInterfaceA).operator_journey_id,
           ],
         };
-    // TODO : join on carpool status
     const query = {
       text: `
         SELECT 
-          _id,
-          journey_id as operator_journey_id,
-          created_at,
-          updated_at,
-          status,
-          error_stage,
-          errors
-        FROM ${this.table}
+          aa._id,
+          aa.journey_id as operator_journey_id,
+          aa.created_at,
+          aa.updated_at,
+          CASE
+            WHEN aa.status = 'ok'
+              THEN cc.status::varchar
+            ELSE aa.status::varchar
+          END AS status,
+          aa.error_stage,
+          aa.errors
+        FROM ${this.table} AS aa
+        LEFT JOIN carpool.carpools AS cc
+          ON aa._id = cc.acquisition_id
         WHERE ${whereClauses.text.join(' AND ')}
       `,
       values: whereClauses.values,
@@ -210,7 +215,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       .filter((k) => k in search)
       .map((k, i) => {
         switch (k) {
-          case 'fromy':
+          case 'from':
             return {
               text: `created_at >= $${i + 1}::timestamp`,
               values: [search[k]],
@@ -274,6 +279,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
               await pool.query('COMMIT');
             } catch (e) {
               await pool.query('ROLLBACK');
+              throw e;
             } finally {
               pool.release();
             }
