@@ -81,7 +81,7 @@ export class ProcessJourneyAction extends AbstractAction {
           acquisition_id: acquisition._id,
           status: AcquisitionStatusEnum.Error,
           error_stage: AcquisitionErrorStageEnum.Normalisation,
-          errors: e,
+          errors: [e],
         });
       }
     }

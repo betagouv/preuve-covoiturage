@@ -24,7 +24,6 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
   async createOrUpdateMany<P = any>(
     data: Array<AcquisitionCreateInterface<P>>,
   ): Promise<Array<AcquisitionCreateResultInterface>> {
-    //status
     const values = data.reduce(
       (acc, d) => {
         const [

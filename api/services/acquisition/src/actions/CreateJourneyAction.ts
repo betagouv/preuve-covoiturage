@@ -25,8 +25,8 @@ export class CreateJourneyAction extends AbstractAction {
   }
 
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const request_id = get(context, 'call.metadata.req.headers.x-request-id', null);
-    const { journey_id: operator_journey_id } = params;
+    const request_id = get(context, 'call.metadata.req.headers.x-request-id');
+    const operator_journey_id = get(params, 'journey_id');
     const operator_id = get(context, 'call.user.operator_id');
     const application_id = get(context, 'call.user.application_id');
     const api_version = 2;
@@ -44,12 +44,17 @@ export class CreateJourneyAction extends AbstractAction {
           payload: params,
         },
       ]);
-      // TODO:  throw new ConflictException('Journey already registered');
+      if (acquisitions.length !== 1) {
+        throw new ConflictException('Journey already registered');
+      }
       return {
         journey_id: acquisitions[0].operator_journey_id,
         created_at: acquisitions[0].created_at,
       };
     } catch (e) {
+      if (e instanceof ConflictException) {
+        throw e;
+      }
       console.error(e.message, { journey_id: params.journey_id, operator_id: params.operator_id });
       await this.repository.createOrUpdateMany([
         {
