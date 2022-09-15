@@ -40,7 +40,7 @@ export class ProcessJourneyAction extends AbstractAction {
   async init(): Promise<void> {
     await this.kernel.notify<ParamsInterface>(
       handlerSignature,
-      {},
+      undefined,
       {
         call: {
           user: {},

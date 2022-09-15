@@ -12,20 +12,20 @@ interface Context {
   end_at_max: Date;
 }
 
-const test = anyTest as TestFn<Partial<Context>>;
+const test = anyTest as TestFn<Context>;
 
+test.before((t) => {
+  t.context.clock = sinon.useFakeTimers(new Date('2021-06-01T00:00:00Z'));
+})
 test.beforeEach((t) => {
   const configIR = new (class extends ConfigInterfaceResolver {})();
-  const castParams = createCastParamsHelper(configIR);
+  t.context.castParams = createCastParamsHelper<ParamsInterface>(configIR);
   const configStub = sinon.stub(configIR, 'get');
   configStub.returns(6);
-
-  const clock = sinon.useFakeTimers(new Date('2021-06-01T00:00:00Z'));
-  const origin = new Date('2019-01-01T00:00:00+0100');
-  const start_at_max = new Date(new Date().getTime() - 7 * 86400000);
-  const end_at_max = new Date(new Date().getTime() - 6 * 86400000);
-
-  t.context = { configStub, castParams, clock, origin, start_at_max, end_at_max };
+  t.context.configStub = configStub;
+  t.context.origin = new Date('2019-01-01T00:00:00+0100');
+  t.context.start_at_max = new Date(new Date().getTime() - 7 * 86400000);
+  t.context.end_at_max = new Date(new Date().getTime() - 6 * 86400000);
 });
 
 test.afterEach((t) => {
