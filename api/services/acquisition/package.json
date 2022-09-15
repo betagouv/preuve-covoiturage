@@ -32,5 +32,8 @@
     "@pdc/provider-validator": "~0",
     "@pdc/provider-normalization": "~0",
     "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "sinon": "^14.0.0"
   }
 }
