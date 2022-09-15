@@ -39,6 +39,9 @@ function createPayload(data: Partial<AcquisitionCreateInterface>): AcquisitionCr
   };
 }
 
+const statusError = new Error('message');
+const errors = JSON.parse(JSON.stringify([statusError, statusError, statusError]));
+
 test.serial('Should create acquisition', async (t) => {
   const { operator_id } = t.context;
   const data = [
@@ -138,9 +141,7 @@ test.serial('Should update status', async (t) => {
       acquisition_id: data[0]._id,
       status: AcquisitionStatusEnum.Error,
       error_stage: AcquisitionErrorStageEnum.Acquisition,
-      errors: {
-        arbitrary: 'data',
-      },
+      errors: [statusError],
     },
   ]);
   const result = await t.context.db.connection.getClient().query({
@@ -150,7 +151,8 @@ test.serial('Should update status', async (t) => {
         journey_id as operator_journey_id,
         status,
         error_stage,
-        errors
+        errors,
+        try_count
       FROM ${t.context.repository.table}
       WHERE operator_id = $1 ORDER BY journey_id
     `,
@@ -165,11 +167,45 @@ test.serial('Should update status', async (t) => {
       operator_journey_id: '1',
       status: 'error',
       error_stage: 'acquisition',
-      errors: { arbitrary: 'data' },
+      errors: JSON.parse(JSON.stringify([statusError])),
+      try_count: 1,
     },
-    { operator_id: 1, operator_journey_id: '2', status: 'ok', error_stage: null, errors: null },
-    { operator_id: 1, operator_journey_id: '3', status: 'pending', error_stage: null, errors: null },
-    { operator_id: 1, operator_journey_id: '4', status: 'pending', error_stage: null, errors: null },
+    { operator_id: 1, operator_journey_id: '2', status: 'ok', error_stage: null, errors: [], try_count: 50 },
+    { operator_id: 1, operator_journey_id: '3', status: 'pending', error_stage: null, errors: [], try_count: 0 },
+    { operator_id: 1, operator_journey_id: '4', status: 'pending', error_stage: null, errors: [], try_count: 0 },
+  ]);
+
+  await t.context.repository.updateManyStatus([
+    {
+      acquisition_id: data[0]._id,
+      status: AcquisitionStatusEnum.Error,
+      error_stage: AcquisitionErrorStageEnum.Acquisition,
+      errors: [statusError, statusError],
+    },
+  ]);
+  const result2 = await t.context.db.connection.getClient().query({
+    text: `
+      SELECT
+        operator_id,
+        journey_id as operator_journey_id,
+        status,
+        error_stage,
+        errors,
+        try_count
+      FROM ${t.context.repository.table}
+      WHERE _id = $1
+    `,
+    values: [data[0]._id],
+  });
+  t.deepEqual(result2.rows, [
+    {
+      errors,
+      operator_id: 1,
+      operator_journey_id: '1',
+      status: 'error',
+      error_stage: 'acquisition',
+      try_count: 2,
+    },
   ]);
 });
 
@@ -187,9 +223,9 @@ test.serial('Should get status by _id', async (t) => {
   t.deepEqual(
     { operator_journey_id, status, errors, error_stage },
     {
+      errors,
       operator_journey_id: '1',
       status: AcquisitionStatusEnum.Error,
-      errors: { arbitrary: 'data' },
       error_stage: AcquisitionErrorStageEnum.Acquisition,
     },
   );
@@ -209,9 +245,9 @@ test.serial('Should get status by operator_id and operator_journey_id', async (t
   t.deepEqual(
     { operator_journey_id, status, errors, error_stage },
     {
+      errors,
       operator_journey_id: '1',
       status: AcquisitionStatusEnum.Error,
-      errors: { arbitrary: 'data' },
       error_stage: AcquisitionErrorStageEnum.Acquisition,
     },
   );

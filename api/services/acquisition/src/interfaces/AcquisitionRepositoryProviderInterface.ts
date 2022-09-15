@@ -60,22 +60,7 @@ export interface AcquisitionStatusUpdateInterface {
   acquisition_id: number;
   status: AcquisitionStatusEnum;
   error_stage?: AcquisitionErrorStageEnum;
-  errors?: any;
-}
-
-export interface AcquisitionDatabaseInterface<P> {
-  _id: number;
-  created_at: Date;
-  application_id: number;
-  operator_id: number;
-  journey_id: string;
-  payload: P;
-  api_version: number;
-  request_id?: string;
-  status: AcquisitionStatusEnum;
-  try_count: number;
-  error_stage?: AcquisitionErrorStageEnum;
-  errors?: any;
+  errors?: Error[];
 }
 
 export interface AcquisitionFindInterface<P> {

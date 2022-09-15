@@ -38,24 +38,20 @@ export class ProcessJourneyAction extends AbstractAction {
   }
 
   async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(
-      handlerSignature,
-      undefined,
-      {
-        call: {
-          user: {},
-        },
-        channel: {
-          service: handlerConfig.service,
-          metadata: {
-            repeat: {
-              cron: '*/5 * * * *',
-            },
-            jobId: 'acquisition.process.cron',
+    await this.kernel.notify<ParamsInterface>(handlerSignature, undefined, {
+      call: {
+        user: {},
+      },
+      channel: {
+        service: handlerConfig.service,
+        metadata: {
+          repeat: {
+            cron: '*/5 * * * *',
           },
+          jobId: 'acquisition.process.cron',
         },
       },
-    );
+    });
   }
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {

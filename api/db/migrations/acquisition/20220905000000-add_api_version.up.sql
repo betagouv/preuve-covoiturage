@@ -20,6 +20,6 @@ ALTER TABLE acquisition.acquisitions
   ADD COLUMN error_stage varchar(255);
 
 ALTER TABLE acquisition.acquisitions
-  ADD COLUMN errors JSON;
+  ADD COLUMN errors JSONB;
 
 CREATE INDEX IF NOT EXISTS acquisition_request_id_idx ON acquisition.acquisitions (request_id);

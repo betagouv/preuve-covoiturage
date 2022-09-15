@@ -44,7 +44,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
         request_id.push(d.request_id);
         status.push(d.status || AcquisitionStatusEnum.Pending);
         error_stage.push(d.error_stage || null);
-        errors.push(JSON.stringify(d.errors) || null);
+        errors.push(JSON.stringify(d.errors || []));
         return [
           payload,
           operator_id,
@@ -81,7 +81,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           $6::varchar[],
           $7::acquisition.acquisition_status_enum[],
           $8::varchar[],
-          $9::json[]
+          $9::jsonb[]
         )
         ON CONFLICT (operator_id, journey_id)
         DO UPDATE SET (
@@ -99,7 +99,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           excluded.request_id,
           excluded.status,
           excluded.error_stage,
-          excluded.errors
+          acquisitions.errors || excluded.errors
         ) WHERE acquisitions.status = ANY(ARRAY[
           'pending'::acquisition.acquisition_status_enum,
           'error'::acquisition.acquisition_status_enum
@@ -121,7 +121,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
         acquisition_id.push(d.acquisition_id);
         status.push(d.status);
         error_stage.push(d.error_stage);
-        errors.push(d.errors);
+        errors.push(JSON.stringify(d.errors));
         return [acquisition_id, status, error_stage, errors];
       },
       [[], [], [], []],
@@ -133,7 +133,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           $1::int[],
           $2::acquisition.acquisition_status_enum[],
           $3::varchar[],
-          $4::json[]
+          $4::jsonb[]
         ) as t(
           acquisition_id,
           status,
@@ -143,13 +143,15 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       )
       UPDATE ${this.table} as pt
       SET (
+        try_count,
         status,
         error_stage,
         errors
       ) = (
-        data.status,
-        data.error_stage,
-        data.errors
+        pt.try_count + 1,
+        CASE WHEN data.status IS NULL THEN pt.status ELSE data.status END,
+        CASE WHEN data.error_stage IS NULL THEN pt.error_stage ELSE data.error_stage END,
+        pt.errors || data.errors::jsonb
       )
       FROM data
       WHERE
@@ -263,8 +265,8 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       let hasTimeout = false;
       const timeoutFn = setTimeout(() => {
         hasTimeout = true;
+        // this.updateManyStatus(result.rows.map(r =>))
         pool.query('ROLLBACK').finally(() => pool.release());
-        // TODO TRY COUNT + log ERROR
       }, timeout);
       return [
         result.rows,
@@ -273,7 +275,6 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
             clearTimeout(timeoutFn);
             try {
               await this.updateManyStatus(data, pool);
-              // TODO: add try count
               await pool.query('COMMIT');
             } catch (e) {
               await pool.query('ROLLBACK');

@@ -16,7 +16,7 @@ const test = anyTest as TestFn<Context>;
 
 test.before((t) => {
   t.context.clock = sinon.useFakeTimers(new Date('2021-06-01T00:00:00Z'));
-})
+});
 test.beforeEach((t) => {
   const configIR = new (class extends ConfigInterfaceResolver {})();
   t.context.castParams = createCastParamsHelper<ParamsInterface>(configIR);
