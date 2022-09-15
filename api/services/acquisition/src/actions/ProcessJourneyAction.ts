@@ -3,7 +3,7 @@ import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { NormalizationProvider } from '@pdc/provider-normalization';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/process.contract';
+import { handlerConfig, signature as handlerSignature, ParamsInterface, ResultInterface } from '../shared/acquisition/process.contract';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import {
   AcquisitionErrorStageEnum,
@@ -30,6 +30,27 @@ export class ProcessJourneyAction extends AbstractAction {
     private kernel: KernelInterfaceResolver,
   ) {
     super();
+  }
+
+  async init(): Promise<void> {
+    await this.kernel.notify<ParamsInterface>(
+      handlerSignature,
+      {},
+      {
+        call: {
+          user: {},
+        },
+        channel: {
+          service: handlerConfig.service,
+          metadata: {
+            repeat: {
+              cron: '*/5 * * * *',
+            },
+            jobId: 'acquisition.process.cron',
+          },
+        },
+      },
+    );
   }
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
