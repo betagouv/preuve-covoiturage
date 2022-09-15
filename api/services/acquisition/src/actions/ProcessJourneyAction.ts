@@ -3,7 +3,12 @@ import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { NormalizationProvider } from '@pdc/provider-normalization';
 
-import { handlerConfig, signature as handlerSignature, ParamsInterface, ResultInterface } from '../shared/acquisition/process.contract';
+import {
+  handlerConfig,
+  signature as handlerSignature,
+  ParamsInterface,
+  ResultInterface,
+} from '../shared/acquisition/process.contract';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import {
   AcquisitionErrorStageEnum,
@@ -54,7 +59,10 @@ export class ProcessJourneyAction extends AbstractAction {
   }
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const [acquisitions, cb] = await this.repository.findThenUpdate({ limit: 10, status: AcquisitionStatusEnum.Pending });
+    const [acquisitions, cb] = await this.repository.findThenUpdate({
+      limit: 10,
+      status: AcquisitionStatusEnum.Pending,
+    });
     const results = [];
     for (const acquisition of acquisitions) {
       try {
