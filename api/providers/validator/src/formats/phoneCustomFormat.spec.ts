@@ -46,6 +46,7 @@ test('mobile Guyane', macro, '+594694021870', true);
 test('mobile Martinique', macro, '+596696739021', true);
 test('mobile La Reunion, Mayotte, Ocean Indien', macro, '+262692456789', true);
 test('mobile La Reunion, Mayotte, Ocean Indien', macro, '+262693456789', true);
+test('mobile La Reunion, Mayotte, Ocean Indien', macro, '+262693653300', true);
 test('00 international prefix', macro, '0033123456789', true);
 test('slash', macro, '01/23/45/67/89', true);
 test('comma', macro, '01,23,45,67,89', false);
