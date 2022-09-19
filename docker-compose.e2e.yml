@@ -108,10 +108,10 @@ services:
       APP_RATE_LIMIT_MAX_FACTOR: '0'
       APP_DATAGOUV_URL: http://data-gouv-url
       APP_DATAGOUV_KEY: thisIsASecret
-      APP_INSEE_API_KEY: ${APP_INSEE_API_KEY}
       PORT: 8080
       NODE_ENV: local
       APP_ENV: local
+      APP_INSEE_API_KEY:
     networks:
       - back
       - front
