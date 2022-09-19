@@ -23,3 +23,4 @@ ALTER TABLE acquisition.acquisitions
   ADD COLUMN errors JSONB;
 
 CREATE INDEX IF NOT EXISTS acquisition_request_id_idx ON acquisition.acquisitions (request_id);
+CREATE INDEX IF NOT EXISTS acquisition_status_idx ON acquisition.acquisitions (status);
