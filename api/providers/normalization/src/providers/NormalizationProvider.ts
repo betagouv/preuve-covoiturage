@@ -86,27 +86,10 @@ export class NormalizationProvider implements NormalizationProviderInterface {
 
   public async logError(
     normalisationCode: NormalisationErrorStage,
-    journey: ParamsInterface,
     e: Error,
-    errorCode = '500',
+    _journey?: ParamsInterface,
   ): Promise<void> {
-    //  await this.kernel.notify<LogErrorParamsInterface>(
-    //    'acquisition:logerror',
-    //    {
-    //      error_stage: ErrorStage.Normalisation,
-    //      error_line: null,
-    //      operator_id: journey.operator_id,
-    //      journey_id: journey.journey_id,
-    //      source: 'api.v2',
-    //      error_message: e.message,
-    //      error_code: errorCode,
-    //      auth: {},
-    //      headers: {},
-    //      body: { journey, normalisationCode },
-    //      request_id: null,
-    //    },
-    //    { channel: { service: 'acquisition' } },
-    //  );
+    console.debug(`[normalization]:${normalisationCode}: ${e.message}`, e);
   }
 
   public async handlePerson(person: PersonInterface, journey: ParamsInterface): Promise<PersonInterface> {
@@ -115,7 +98,6 @@ export class NormalizationProvider implements NormalizationProviderInterface {
     // Cost ------------------------------------------------------------------------------------
 
     try {
-      // console.debug('[normalization]:cost start');
       const { cost, payments } = await this.costNormalizer.handle({
         operator_id: journey.operator_id,
         revenue: finalPerson.revenue,
@@ -128,26 +110,22 @@ export class NormalizationProvider implements NormalizationProviderInterface {
       finalPerson['cost'] = cost;
       finalPerson.payments = payments;
     } catch (e) {
-      console.error(`[normalization]:cost: ${e.message}`, e);
-      await this.logError(NormalisationErrorStage.Cost, journey, e);
+      await this.logError(NormalisationErrorStage.Cost, e, journey);
       throw e;
     }
 
     // Identity ------------------------------------------------------------------------------------
 
     try {
-      // console.debug('[normalization]:identity start');
       finalPerson.identity = await this.identityNormalizer.handle(finalPerson.identity);
     } catch (e) {
-      console.error(`[normalization]:identity: ${e.message}`, e);
-      await this.logError(NormalisationErrorStage.Identity, journey, e);
+      await this.logError(NormalisationErrorStage.Identity, e, journey);
       throw e;
     }
 
     // Geo ------------------------------------------------------------------------------------
     let isSubGeoError = false;
     try {
-      // console.debug('[normalization]:geo start');
       const { start, end } = await this.geoNormalizer.handle({
         start: finalPerson.start,
         end: finalPerson.end,
@@ -158,7 +136,6 @@ export class NormalizationProvider implements NormalizationProviderInterface {
 
       // Route ------------------------------------------------------------------------------------
       try {
-        // console.debug('[normalization]:geo:route start');
         const { calc_distance, calc_duration } = await this.routeNormalizer.handle({
           start,
           end,
@@ -167,15 +144,12 @@ export class NormalizationProvider implements NormalizationProviderInterface {
         finalPerson.calc_distance = calc_distance;
         finalPerson.calc_duration = calc_duration;
       } catch (e) {
-        console.error(`[normalization]:geo:route: ${e.message}`, e);
-        await this.logError(NormalisationErrorStage.GeoRoute, journey, e);
+        await this.logError(NormalisationErrorStage.GeoRoute, e, journey);
         isSubGeoError = true;
-
         throw e;
       }
     } catch (e) {
-      console.error(`[normalization]:geo: ${e.message}`, e);
-      if (!isSubGeoError) await this.logError(NormalisationErrorStage.Geo, journey, e);
+      if (!isSubGeoError) await this.logError(NormalisationErrorStage.Geo, e, journey);
       throw e;
     }
 
