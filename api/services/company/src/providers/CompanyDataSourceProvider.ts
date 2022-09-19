@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import axios from 'axios';
-import { provider, NotFoundException } from '@ilos/common';
+import { provider, NotFoundException, ConfigInterfaceResolver } from '@ilos/common';
 
 import {
   CompanyDataSourceProviderInterfaceResolver,
@@ -14,18 +14,16 @@ import { env } from '@ilos/core';
   identifier: CompanyDataSourceProviderInterfaceResolver,
 })
 export class CompanyDataSourceProvider implements CompanyDataSourceProviderInterface {
-  protected domain = 'https://api.insee.fr/entreprises/sirene/V3';
-  private inseeApiKey: string;
-
-  async init(): Promise<void> {
-    this.inseeApiKey = env('APP_INSEE_API_KEY') as string;
-  }
+  constructor(
+    private readonly config: ConfigInterfaceResolver,
+  ) {}
 
   async find(siret: string): Promise<CompanyInterface> {
     try {
-      const { data } = await axios.get(`${this.domain}/siret/${siret}`, {
+      const { url, token } = this.config.get('dataSource');
+      const { data } = await axios.get(`${url}/siret/${siret}`, {
         headers: {
-          Authorization: `Bearer ${this.inseeApiKey}`,
+          Authorization: `Bearer ${token}`,
           Accept: 'application/json',
         },
       });
