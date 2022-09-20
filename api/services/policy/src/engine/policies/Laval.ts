@@ -52,7 +52,6 @@ export const Laval: PolicyHandlerStaticInterface = class implements PolicyHandle
       }
     }
 
-    // TODO flécher l'incentive vers le passager
     ctx.incentive.set(amount);
   }
 

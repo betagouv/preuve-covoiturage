@@ -56,7 +56,9 @@ export const Mrn: PolicyHandlerStaticInterface = class implements PolicyHandlerI
       }
     }
 
-    // TODO gratuit pour les passager de 2 à 150km
+    // Gratuité passager
+    amount += ctx.carpool.cost;
+  
     ctx.incentive.set(amount);
   }
 
