@@ -26,6 +26,7 @@ import {
 import { MaximumTargetEnum } from '../helpers/max';
 import { description } from './Idfm.html';
 
+// Politique d'Île-de-France Mobilité
 export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '460';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];

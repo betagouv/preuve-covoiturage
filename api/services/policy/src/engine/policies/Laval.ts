@@ -11,7 +11,6 @@ import {
   isOperatorOrThrow,
   onDistanceRange,
   onDistanceRangeOrThrow,
-  perKm,
   perSeat,
   setMax,
   watchForGlobalMaxAmount,
@@ -20,15 +19,14 @@ import {
 import { MaximumTargetEnum } from '../helpers/max';
 import { description } from './Laval.html';
 
+// Politique de la Communauté D'Agglomeration De Laval
 export const Laval: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
-  static readonly id = '713';
+  static readonly id = '695';
   protected operators = [OperatorsEnum.Klaxit];
-  protected slices = [
-    { start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 50 })) },
-  ];
+  protected slices = [{ start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
   protected limits = [
-    setMax('A2CEF9FE-D179-319F-1996-9D69E0157522', 9_000_00, watchForGlobalMaxAmount),
     setMax('70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
+    setMax('A2CEF9FE-D179-319F-1996-9D69E0157522', 9_000_00, watchForGlobalMaxAmount),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {

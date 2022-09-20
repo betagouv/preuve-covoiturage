@@ -1,17 +1,18 @@
 import test from 'ava';
 import { v4 } from 'uuid';
+import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Idfm as Handler } from './Idfm';
+import { Mrn as Handler } from './Mrn';
 
 const defaultPosition = {
-  arr: '91377',
-  com: '91377',
-  aom: '217500016',
-  epci: '200056232',
-  dep: '91',
-  reg: '11',
+  arr: '76540',
+  com: '76540',
+  aom: '200023414',
+  epci: '200023414',
+  dep: '76',
+  reg: '28',
   country: 'XXXXX',
-  reseau: '232',
+  reseau: '83',
 };
 
 const defaultCarpool = {
@@ -19,7 +20,7 @@ const defaultCarpool = {
   trip_id: v4(),
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
-  operator_siret: '80279897500024',
+  operator_siret: OperatorsEnum.Klaxit,
   operator_class: 'C',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
@@ -40,19 +41,10 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [
-      { operator_siret: 'not in list' },
-      { distance: 100 },
-      { distance: 200_000 },
-      { start: { ...defaultPosition, com: '75056' }, end: { ...defaultPosition, com: '75056' } },
-      { start: { ...defaultPosition, aom: 'not_ok' } },
-      { end: { ...defaultPosition, aom: 'not_ok' } },
-      { operator_class: 'A' },
-      { operator_class: 'B', datetime: new Date('2022-09-02') },
-    ],
+    carpool: [{ operator_siret: 'not in list' }, { distance: 100 }, { distance: 200_000 }, { operator_class: 'A' }],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -69,23 +61,11 @@ test(
     meta: [],
   },
   {
-    incentive: [150, 300, 250, 375],
+    incentive: [200, 400, 250, 250],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1075,
-      },
-      {
-        key: 'max_amount_restriction.one.month.0-2019',
-        value: 450,
-      },
-      {
-        key: 'max_amount_restriction.two.month.0-2019',
-        value: 250,
-      },
-      {
-        key: 'max_amount_restriction.two.month.2-2022',
-        value: 375,
+        value: 1100,
       },
     ],
   },
@@ -100,7 +80,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 5_999_999_50,
+        value: 799_999_50,
       },
     ],
   },
@@ -109,39 +89,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 6_000_000_00,
-      },
-      {
-        key: 'max_amount_restriction.one.month.0-2019',
-        value: 50,
-      },
-    ],
-  },
-);
-
-test(
-  'should works with month limits',
-  process,
-  {
-    policy: { handler: Handler.id },
-    carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
-    meta: [
-      {
-        key: 'max_amount_restriction.one.month.0-2019',
-        value: 149_00,
-      },
-    ],
-  },
-  {
-    incentive: [100],
-    meta: [
-      {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 150,
-      },
-      {
-        key: 'max_amount_restriction.one.month.0-2019',
-        value: 150_00,
+        value: 800_000_00,
       },
     ],
   },
@@ -164,15 +112,11 @@ test(
     meta: [],
   },
   {
-    incentive: [150, 150, 150, 150, 150, 150, 0],
+    incentive: [200, 200, 200, 200, 200, 200, 0],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 10_50,
-      },
-      {
-        key: 'max_amount_restriction.one.month.0-2019',
-        value: 10_50,
+        value: 12_00,
       },
     ],
   },

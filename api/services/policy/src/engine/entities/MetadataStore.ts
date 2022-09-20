@@ -40,20 +40,18 @@ export class MetadataStore implements MetadataStoreInterface {
         value,
       });
     }
-    return MetadataAccessor.import(
-      registry.datetime,
-      keys
-        .map((k) => this.cache.get(getCacheKey(registry.policy_id, k)))
-        .reduce((m, i) => {
-          m.set(i.uuid, {
-            policy_id: i.policy_id,
-            key: i.key,
-            value: i.value,
-            ...(i.carpoolValue ? { carpoolValue: i.carpoolValue } : {}),
-          });
-          return m;
-        }, new Map()),
-    );
+    const data = variables
+      .map((v) => [v, this.cache.get(getCacheKey(registry.policy_id, v.key))])
+      .reduce((m, [v, i]: [SerializedMetadataVariableDefinitionInterface, StoredMetadataVariableInterface]) => {
+        m.set(i.uuid, {
+          policy_id: i.policy_id,
+          key: i.key,
+          value: i.value,
+          ...(v.carpoolValue ? { carpoolValue: v.carpoolValue } : {}),
+        });
+        return m;
+      }, new Map());
+    return MetadataAccessor.import(registry.datetime, data);
   }
 
   async save(dataAccessor: MetadataAccessorInterface): Promise<void> {

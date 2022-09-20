@@ -14,6 +14,7 @@ export interface TerritoryCodeInterface {
   [TerritoryCodeEnum.City]: string;
   [TerritoryCodeEnum.Mobility]: string;
   [TerritoryCodeEnum.CityGroup]: string;
+  [TerritoryCodeEnum.Region]: string;
 }
 
 export interface TerritorySelectorsInterface {

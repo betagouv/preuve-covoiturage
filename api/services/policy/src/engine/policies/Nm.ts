@@ -23,6 +23,7 @@ import {
 import { MaximumTargetEnum, watchForGlobalMaxTrip, watchForPassengerMaxByTripByDay } from '../helpers/max';
 import { description } from './Nm.html';
 
+// Politique de Nantes Métropole
 export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '656';
   protected operators = [OperatorsEnum.Klaxit];
@@ -32,11 +33,11 @@ export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerIn
     { start: 20_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
   protected limits = [
-    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 10_000_000_00, watchForGlobalMaxAmount),
-    setMax('D1FED21B-5160-A1BF-C052-5DA7A190996C', 10_000_000, watchForGlobalMaxTrip),
-    setMax('286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
-    setMax('6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 4, watchForPersonMaxTripByDay, MaximumTargetEnum.Passenger),
     setMax('D5FA9FA9-E8CC-478E-80ED-96FDC5476689', 3, watchForPassengerMaxByTripByDay),
+    setMax('6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 4, watchForPersonMaxTripByDay, MaximumTargetEnum.Passenger),
+    setMax('286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
+    setMax('D1FED21B-5160-A1BF-C052-5DA7A190996C', 10_000_000, watchForGlobalMaxTrip),
+    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 10_000_000_00, watchForGlobalMaxAmount),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {

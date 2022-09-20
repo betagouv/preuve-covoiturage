@@ -24,6 +24,7 @@ import { MaximumTargetEnum } from '../helpers/max';
 import { startsAndEndsAt } from '../helpers/position';
 import { description } from './Pdll.html';
 
+// Politique de Pays de la Loire
 export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '249';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
@@ -32,8 +33,8 @@ export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandler
     { start: 20_000, end: 50_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
   protected limits = [
-    setMax('5499304F-2C64-AB1A-7392-52FF88F5E78D', 2_000_000_00, watchForGlobalMaxAmount),
     setMax('8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
+    setMax('5499304F-2C64-AB1A-7392-52FF88F5E78D', 2_000_000_00, watchForGlobalMaxAmount),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {

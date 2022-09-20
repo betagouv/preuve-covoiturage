@@ -20,6 +20,7 @@ import {
 import { MaximumTargetEnum } from '../helpers/max';
 import { description } from './Smt.html';
 
+// Politique du Syndicat des Mobilités de Touraine
 export const Smt: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '713';
   protected operators = [OperatorsEnum.Klaxit];
@@ -28,8 +29,8 @@ export const Smt: PolicyHandlerStaticInterface = class implements PolicyHandlerI
     { start: 20_000, end: 40_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
   protected limits = [
-    setMax('B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', 40_000_00, watchForGlobalMaxAmount),
     setMax('A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
+    setMax('B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', 40_000_00, watchForGlobalMaxAmount),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
@@ -56,7 +57,6 @@ export const Smt: PolicyHandlerStaticInterface = class implements PolicyHandlerI
     }
 
     // TODO gratuit pour les passager de 2 à 150km
-
     ctx.incentive.set(amount);
   }
 

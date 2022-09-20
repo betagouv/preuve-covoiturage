@@ -115,6 +115,10 @@ export function applyForMaximum(
   max: number,
   helper: MaximumStatelessHelper,
 ): void {
+  if (ctx.incentive.get() === 0) {
+    return;
+  }
+
   const state = ctx.meta.get(uuid);
   if (state >= max) {
     // limit is reached
