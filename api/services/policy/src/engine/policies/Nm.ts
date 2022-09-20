@@ -24,9 +24,7 @@ import { watchForGlobalMaxTrip } from '../helpers/max';
 
 export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '656';
-  protected operators = [
-    OperatorsEnum.Klaxit,
-  ];
+  protected operators = [OperatorsEnum.Klaxit];
   protected slices = [
     { start: 2000, end: 20000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     { start: 20000, end: 150000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
@@ -133,4 +131,4 @@ export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerIn
 </ul>
 </p>`;
   }
-}
+};

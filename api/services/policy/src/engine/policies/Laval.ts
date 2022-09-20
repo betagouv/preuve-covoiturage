@@ -21,9 +21,7 @@ import { MaximumTargetEnum } from '../helpers/max';
 
 export const Laval: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '713';
-  protected operators = [
-    OperatorsEnum.Klaxit,
-  ];
+  protected operators = [OperatorsEnum.Klaxit];
   protected slices = [
     { start: 2000, end: 150000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 50 })) },
   ];
@@ -96,4 +94,4 @@ export const Laval: PolicyHandlerStaticInterface = class implements PolicyHandle
     <p></p>
     </p>`;
   }
-}
+};

@@ -25,12 +25,7 @@ import { startsAndEndsAt } from '../helpers/position';
 
 export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '249';
-  protected operators = [
-    OperatorsEnum.BlaBlaDaily,
-    OperatorsEnum.Karos,
-    OperatorsEnum.Klaxit,
-    OperatorsEnum.Mobicoop,
-  ];
+  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
   protected slices = [
     { start: 2000, end: 20000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     { start: 20000, end: 50000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
@@ -161,4 +156,4 @@ export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandler
     </ul>
     </p>`;
   }
-}
+};

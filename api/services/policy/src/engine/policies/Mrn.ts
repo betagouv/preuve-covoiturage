@@ -21,9 +21,7 @@ import { MaximumTargetEnum } from '../helpers/max';
 
 export const Mrn: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '766';
-  protected operators = [
-    OperatorsEnum.Klaxit,
-  ];
+  protected operators = [OperatorsEnum.Klaxit];
   protected slices = [
     { start: 2000, end: 20000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     { start: 20000, end: 40000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
@@ -101,4 +99,4 @@ export const Mrn: PolicyHandlerStaticInterface = class implements PolicyHandlerI
     <p></p>
     </p>`;
   }
-}
+};
