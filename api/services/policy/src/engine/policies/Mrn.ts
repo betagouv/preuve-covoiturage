@@ -24,17 +24,17 @@ export const Mrn: PolicyHandlerStaticInterface = class implements PolicyHandlerI
   static readonly id = '766';
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [
-    { start: 2000, end: 20000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
-    { start: 20000, end: 40000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
+    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    { start: 20_000, end: 40_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
   protected limits = [
-    setMax('489A7D57-1948-61DA-E5FA-1AE3217325BA', 80000000, watchForGlobalMaxAmount),
+    setMax('489A7D57-1948-61DA-E5FA-1AE3217325BA', 800_000_00, watchForGlobalMaxAmount),
     setMax('E7B969E7-D701-2B9F-80D2-B30A7C3A5220', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2000, max: 150000 });
+    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
 
@@ -72,7 +72,7 @@ export const Mrn: PolicyHandlerStaticInterface = class implements PolicyHandlerI
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: 80000000,
+        glob: 800_000_00,
       },
     };
   }

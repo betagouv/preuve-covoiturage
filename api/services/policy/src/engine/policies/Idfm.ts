@@ -30,12 +30,12 @@ export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandler
   static readonly id = '460';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
   protected slices = [
-    { start: 2000, end: 15000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
-    { start: 15000, end: 30000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
+    { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
+    { start: 15_000, end: 30_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
   protected limits = [
-    setMax('99911EAF-89AB-C346-DDD5-BD2C7704F935', 600000000, watchForGlobalMaxAmount),
-    setMax('ECDE3CD4-96FF-C9D2-BA88-45754205A798', 15000, watchForPersonMaxAmountByMonth, MaximumTargetEnum.Driver),
+    setMax('99911EAF-89AB-C346-DDD5-BD2C7704F935', 6_000_000_00, watchForGlobalMaxAmount),
+    setMax('ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, MaximumTargetEnum.Driver),
     setMax('56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
   ];
   protected pollutionAndStrikeDates = [
@@ -50,7 +50,7 @@ export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandler
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2000, max: 150000 });
+    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
 
     // Exclure les trajet Paris-Paris
     if (startsAt(ctx, { com: ['75056'] }) && endsAt(ctx, { com: ['75056'] })) {
@@ -107,7 +107,7 @@ export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandler
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: 600000000,
+        glob: 6_000_000_00,
       },
     };
   }

@@ -24,16 +24,16 @@ export const Laval: PolicyHandlerStaticInterface = class implements PolicyHandle
   static readonly id = '713';
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [
-    { start: 2000, end: 150000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 50 })) },
+    { start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 50 })) },
   ];
   protected limits = [
-    setMax('A2CEF9FE-D179-319F-1996-9D69E0157522', 900000, watchForGlobalMaxAmount),
+    setMax('A2CEF9FE-D179-319F-1996-9D69E0157522', 9_000_00, watchForGlobalMaxAmount),
     setMax('70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2000, max: 150000 });
+    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
 
@@ -70,7 +70,7 @@ export const Laval: PolicyHandlerStaticInterface = class implements PolicyHandle
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: 900000,
+        glob: 9_000_00,
       },
     };
   }

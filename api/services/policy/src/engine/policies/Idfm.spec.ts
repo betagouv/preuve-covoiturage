@@ -27,7 +27,7 @@ const defaultCarpool = {
   datetime: new Date('2019-01-15'),
   seats: 1,
   duration: 600,
-  distance: 5000,
+  distance: 5_000,
   cost: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
@@ -43,7 +43,7 @@ test(
     carpool: [
       { operator_siret: 'not in list' },
       { distance: 100 },
-      { distance: 200000 },
+      { distance: 200_000 },
       { start: { ...defaultPosition, com: '75056' }, end: { ...defaultPosition, com: '75056' } },
       { start: { ...defaultPosition, aom: 'not_ok' } },
       { end: { ...defaultPosition, aom: 'not_ok' } },
@@ -61,10 +61,10 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5000, driver_identity_uuid: 'one' },
-      { distance: 5000, seats: 2, driver_identity_uuid: 'one' },
-      { distance: 25000, driver_identity_uuid: 'two' },
-      { distance: 25000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
+      { distance: 25_000, driver_identity_uuid: 'two' },
+      { distance: 25_000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
     ],
     meta: [],
   },
@@ -96,11 +96,11 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ distance: 5000, driver_identity_uuid: 'one' }],
+    carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 599999950,
+        value: 599_999_950,
       },
     ],
   },
@@ -109,7 +109,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 600000000,
+        value: 600_000_000,
       },
       {
         key: 'max_amount_restriction.one.month.0-2019',
@@ -124,11 +124,11 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ distance: 5000, driver_identity_uuid: 'one' }],
+    carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {
         key: 'max_amount_restriction.one.month.0-2019',
-        value: 14900,
+        value: 14_900,
       },
     ],
   },
@@ -141,7 +141,7 @@ test(
       },
       {
         key: 'max_amount_restriction.one.month.0-2019',
-        value: 15000,
+        value: 15_000,
       },
     ],
   },
@@ -153,13 +153,13 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5000, driver_identity_uuid: 'one' },
-      { distance: 5000, driver_identity_uuid: 'one' },
-      { distance: 5000, driver_identity_uuid: 'one' },
-      { distance: 5000, driver_identity_uuid: 'one' },
-      { distance: 5000, driver_identity_uuid: 'one' },
-      { distance: 5000, driver_identity_uuid: 'one' },
-      { distance: 5000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 5_000, driver_identity_uuid: 'one' },
     ],
     meta: [],
   },
@@ -168,11 +168,11 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1050,
+        value: 1_050,
       },
       {
         key: 'max_amount_restriction.one.month.0-2019',
-        value: 1050,
+        value: 1_050,
       },
     ],
   },

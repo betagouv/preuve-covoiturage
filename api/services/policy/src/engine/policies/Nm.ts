@@ -20,36 +20,29 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { watchForGlobalMaxTrip } from '../helpers/max';
+import { MaximumTargetEnum, watchForGlobalMaxTrip, watchForPassengerMaxByTripByDay } from '../helpers/max';
 import { description } from './Nm.html';
 
 export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '656';
   protected operators = [OperatorsEnum.Klaxit];
+  protected operatorClass = ['C'];
   protected slices = [
-    { start: 2000, end: 20000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
-    { start: 20000, end: 150000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
+    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    { start: 20_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
   protected limits = [
-    setMax('286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay),
-    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 10000000, watchForGlobalMaxTrip),
-    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 1000000000, watchForGlobalMaxAmount),
-    /* TODO: implements
-     {
-    "slug": "max_passenger_restriction",
-    "parameters": {
-      "target": "driver",
-      "amount": 3,
-      "uuid": "D5FA9FA9-E8CC-478E-80ED-96FDC5476689"
-    }
-  }
-    **/
+    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 10_000_000_00, watchForGlobalMaxAmount),
+    setMax('D1FED21B-5160-A1BF-C052-5DA7A190996C', 10_000_000, watchForGlobalMaxTrip),
+    setMax('286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
+    setMax('6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 4, watchForPersonMaxTripByDay, MaximumTargetEnum.Passenger),
+    setMax('D5FA9FA9-E8CC-478E-80ED-96FDC5476689', 3, watchForPassengerMaxByTripByDay),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2000 });
-    isOperatorClassOrThrow(ctx, ['C']);
+    onDistanceRangeOrThrow(ctx, { min: 2_000 });
+    isOperatorClassOrThrow(ctx, this.operatorClass);
 
     // Exclure les trajets qui ne sont pas dans l'aom NM
     if (!startsAt(ctx, { aom: ['244400404'] }) || !endsAt(ctx, { aom: ['244400404'] })) {
@@ -89,7 +82,7 @@ export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerIn
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: 200000000,
+        glob: 10_000_000_00,
       },
     };
   }

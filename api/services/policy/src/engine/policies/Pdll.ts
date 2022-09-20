@@ -28,17 +28,17 @@ export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandler
   static readonly id = '249';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
   protected slices = [
-    { start: 2000, end: 20000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
-    { start: 20000, end: 50000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
+    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    { start: 20_000, end: 50_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
   protected limits = [
-    setMax('5499304F-2C64-AB1A-7392-52FF88F5E78D', 200000000, watchForGlobalMaxAmount),
+    setMax('5499304F-2C64-AB1A-7392-52FF88F5E78D', 2_000_000_00, watchForGlobalMaxAmount),
     setMax('8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2000 });
+    onDistanceRangeOrThrow(ctx, { min: 2_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
 
     // Exclure les trajets NM->NM, Angers->Angers, Le Mans->Le Mans
@@ -89,7 +89,7 @@ export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandler
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: 200000000,
+        glob: 2_000_000_00,
       },
     };
   }
