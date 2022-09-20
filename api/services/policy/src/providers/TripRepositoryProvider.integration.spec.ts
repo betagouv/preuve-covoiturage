@@ -2,6 +2,7 @@ import anyTest, { TestFn } from 'ava';
 import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 import { Policy } from '../engine/entities/Policy';
 import { TripRepositoryProvider } from './TripRepositoryProvider';
+import { Idfm } from '../engine/policies/Idfm';
 
 interface TestContext {
   db: DbContext;
@@ -32,10 +33,11 @@ test.serial('Should find carpools', async (t) => {
     start_date,
     end_date,
     name: 'Policy',
-    handler: 'Idfm',
+    handler: Idfm.id,
     status: 'active',
   });
 
+  t.log((await t.context.db.connection.getClient().query('SELECT * FROM carpool.carpools')).rows);
   const cursor = t.context.repository.findTripByPolicy(policy, start_date, end_date);
   const { value } = await cursor.next();
   await cursor.next();
