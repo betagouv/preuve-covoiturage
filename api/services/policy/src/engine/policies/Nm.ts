@@ -1,6 +1,7 @@
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
+  PolicyHandlerStaticInterface,
   StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
@@ -20,7 +21,7 @@ import {
 } from '../helpers';
 import { watchForGlobalMaxTrip } from '../helpers/max';
 
-export class Nm implements PolicyHandlerInterface {
+export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '656';
   protected operators = [
     '75315323800047', // Klaxit

@@ -1,6 +1,7 @@
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
+  PolicyHandlerStaticInterface,
   StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
@@ -17,7 +18,7 @@ import {
 } from '../helpers';
 import { MaximumTargetEnum } from '../helpers/max';
 
-export class Smt implements PolicyHandlerInterface {
+export const Smt: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '713';
   protected operators = [
     '75315323800047', // Klaxit

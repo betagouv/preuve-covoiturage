@@ -57,3 +57,5 @@ export {
   StatelessRuleHelper,
   StatelessContextInterface,
 } from './PolicyInterface';
+
+export { OperatorsEnum } from './OperatorsEnum';

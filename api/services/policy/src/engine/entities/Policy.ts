@@ -29,7 +29,7 @@ export class Policy implements PolicyInterface {
   ) {}
 
   static async import(data: SerializedPolicyInterface): Promise<Policy> {
-    const ctor = policies().get(data.handler);
+    const ctor = policies.get(data.handler);
     if (!ctor) {
       throw new UnknownHandlerException();
     }

@@ -1,6 +1,7 @@
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
+  PolicyHandlerStaticInterface,
   StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
@@ -21,7 +22,7 @@ import {
 import { MaximumTargetEnum } from '../helpers/max';
 import { startsAndEndsAt } from '../helpers/position';
 
-export class Pdll implements PolicyHandlerInterface {
+export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '249';
   protected operators = [
     '80279897500024', // Karos

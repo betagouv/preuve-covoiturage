@@ -2,6 +2,7 @@ import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetExcep
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
+  PolicyHandlerStaticInterface,
   StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
@@ -23,7 +24,7 @@ import {
 } from '../helpers';
 import { MaximumTargetEnum } from '../helpers/max';
 
-export class Idfm implements PolicyHandlerInterface {
+export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '460';
   protected operators = [
     '80279897500024', // Karos

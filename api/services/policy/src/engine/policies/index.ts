@@ -6,13 +6,11 @@ import { Pdll } from './Pdll';
 import { Smt } from './Smt';
 import { Laval } from './Laval';
 
-export const policies = (): Map<string, PolicyHandlerStaticInterface> => {
-  const map: Map<string, PolicyHandlerStaticInterface> = new Map();
-  map.set(Idfm.id, Idfm);
-  map.set(Pdll.id, Pdll);
-  map.set(Smt.id, Smt);
-  map.set(Nm.id, Nm);
-  map.set(Laval.id, Laval);
-  map.set(Mrn.id, Mrn);
-  return map;
-};
+export const policies: Map<string, PolicyHandlerStaticInterface> = new Map ([
+  [Idfm.id, Idfm],
+  [Nm.id, Nm],
+  [Mrn.id, Mrn],
+  [Pdll.id, Pdll],
+  [Smt.id, Smt],
+  [Laval.id, Laval],
+]);
