@@ -1,4 +1,5 @@
 import {
+  OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
@@ -21,7 +22,7 @@ import { MaximumTargetEnum } from '../helpers/max';
 export const Smt: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '713';
   protected operators = [
-    '75315323800047', // Klaxit
+    OperatorsEnum.Klaxit,
   ];
   protected slices = [
     { start: 2000, end: 20000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },

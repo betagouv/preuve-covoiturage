@@ -1,4 +1,5 @@
 import {
+  OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
@@ -25,10 +26,10 @@ import { startsAndEndsAt } from '../helpers/position';
 export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '249';
   protected operators = [
-    '80279897500024', // Karos
-    '75315323800047', // Klaxit
-    '49190454600034', // BBC
-    '84403286200014', // Mobicoop
+    OperatorsEnum.BlaBlaDaily,
+    OperatorsEnum.Karos,
+    OperatorsEnum.Klaxit,
+    OperatorsEnum.Mobicoop,
   ];
   protected slices = [
     { start: 2000, end: 20000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },

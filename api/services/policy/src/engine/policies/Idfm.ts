@@ -1,5 +1,6 @@
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
+  OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
@@ -27,9 +28,9 @@ import { MaximumTargetEnum } from '../helpers/max';
 export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
   static readonly id = '460';
   protected operators = [
-    '80279897500024', // Karos
-    '75315323800047', // Klaxit
-    '49190454600034', // BBC
+    OperatorsEnum.BlaBlaDaily,
+    OperatorsEnum.Karos,
+    OperatorsEnum.Klaxit,
   ];
   protected slices = [
     { start: 2000, end: 15000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
