@@ -1,6 +1,6 @@
-<p id="summary">
-  <p>Campagne d’incitation au covoiturage du <b> jeudi 20 mai 2021 au samedi 31 décembre 2022</b>, limitée à lundi, mardi,
-    mercredi, jeudi, vendredi, samedi, dimanche
+export const description = `<p id="summary">
+  <p>Campagne d’incitation au covoiturage du <b> jeudi 20 mai 2021 au samedi 31 décembre 2022</b>,
+  limitée à lundi, mardi, mercredi, jeudi, vendredi, samedi, dimanche
   </p>
   <p>Cette campagne est limitée à
     <b>6000000 euros </b>.
@@ -15,11 +15,12 @@
     <li><b>6 trajets maximum pour le conducteur par jour.</b></li>
     <li><b>150 euros maximum pour le conducteur par mois.</b></li>
   </ul>
-  <p>La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe <b>B ou C</b>.
+  <p>La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit
+    proposant des preuves de classe <b>B ou C</b>.
   </p>
   <p>Les axes suivants ne sont pas incités : </p>
   <ul>
     <li>De <b>Paris (75)</b> à <b>Paris (75)</b>.</li>
     <p></p>
   </ul>
-</p>
+</p>`;

@@ -1,4 +1,4 @@
-<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
+export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
 <p>Campagne d’incitation au covoiturage du <b> jeudi 02 décembre 2021 au mardi 07 février 2023</b>, limitée à lundi,
   mardi, mercredi, jeudi, vendredi, samedi, dimanche
 </p>
@@ -32,4 +32,4 @@
       (44)</b> ou <b>Vertou (44)</b>.</li>
   <p></p>
 </ul>
-</p>
+</p>`;
