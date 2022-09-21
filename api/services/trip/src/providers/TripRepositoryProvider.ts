@@ -189,7 +189,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       SELECT
         journey_start_insee AS start_geo_code,
         null AS end_geo_code,
-        ARRAY_AGG(CONCAT(trip_id,'~',journey_id)) AS aggregated_trips_journeys
+        ARRAY_AGG(journey_id) AS aggregated_trips_journeys
       FROM ${this.table} 
       WHERE ${where.text} 
       AND journey_start_insee is not null
@@ -201,7 +201,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       SELECT
         null AS start_geo_code,
         journey_end_insee AS end_geo_code,
-        ARRAY_AGG(CONCAT(trip_id,'~',journey_id)) AS aggregated_trips_journeys
+        ARRAY_AGG(journey_id) AS aggregated_trips_journeys
       FROM ${this.table} 
       WHERE ${where.text} 
       AND journey_end_insee is not null
