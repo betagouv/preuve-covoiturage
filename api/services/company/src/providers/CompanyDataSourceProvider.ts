@@ -8,20 +8,18 @@ import {
 } from '../interfaces/CompanyDataSourceProviderInterface';
 
 import { CompanyInterface } from '../shared/common/interfaces/CompanyInterface2';
-import { env } from '@ilos/core';
 
 @provider({
   identifier: CompanyDataSourceProviderInterfaceResolver,
 })
 export class CompanyDataSourceProvider implements CompanyDataSourceProviderInterface {
-  constructor(
-    private readonly config: ConfigInterfaceResolver,
-  ) {}
+  constructor(private readonly config: ConfigInterfaceResolver) {}
 
   async find(siret: string): Promise<CompanyInterface> {
     try {
-      const { url, token } = this.config.get('dataSource');
+      const { url, token, timeout } = this.config.get('dataSource');
       const { data } = await axios.get(`${url}/siret/${siret}`, {
+        timeout,
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
@@ -48,14 +46,19 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
         legal_nature_label: get(data, 'etablissement.uniteLegale.nomenclatureActivitePrincipaleUniteLegale', null),
         nonprofit_code: null,
         intra_vat: `FR${`0${((parseInt(siren) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
-        // eslint-disable-next-line max-len
-        address: `${data.etablissement?.adresseEtablissement?.numeroVoieEtablissement} ${data.etablissement?.adresseEtablissement?.typeVoieEtablissement} ${data.etablissement?.adresseEtablissement?.libelleVoieEtablissement} ${data.etablissement?.adresseEtablissement?.codePostalEtablissement} ${data.etablissement?.adresseEtablissement?.libelleCommuneEtablissement}`,
-        address_street: get(data, 'etablissement.etablissement?.adresseEtablissement.libelleVoieEtablissement', null),
-        address_postcode: get(data, 'etablissement.etablissement?.adresseEtablissement.codePostalEtablissement', null),
-        address_cedex: get(data, 'etablissement.etablissement?.adresseEtablissement.libelleCedexEtablissement', null),
-        address_city: get(data, 'etablissement.etablissement?.adresseEtablissement.libelleCommuneEtablissement', null),
-        // lon: data.fields.geolocetablissement[0] || 0,
-        // lat: data.fields.geolocetablissement[1] || 0,
+        address: [
+          'etablissement.adresseEtablissement.numeroVoieEtablissement',
+          'etablissement.adresseEtablissement.typeVoieEtablissement',
+          'etablissement.adresseEtablissement.libelleVoieEtablissement',
+          'etablissement.adresseEtablissement.codePostalEtablissement',
+          'etablissement.adresseEtablissement.libelleCommuneEtablissement',
+        ]
+          .map((k) => get(data, k, ''))
+          .join(' '),
+        address_street: get(data, 'etablissement.etablissement.adresseEtablissement.libelleVoieEtablissement', null),
+        address_postcode: get(data, 'etablissement.etablissement.adresseEtablissement.codePostalEtablissement', null),
+        address_cedex: get(data, 'etablissement.etablissement.adresseEtablissement.libelleCedexEtablissement', null),
+        address_city: get(data, 'etablissement.etablissement.adresseEtablissement.libelleCommuneEtablissement', null),
         headquarter: get(data, 'etablissement.etablissementSiege', null) === true,
         updated_at: updated_at ? new Date(updated_at) : null,
       };

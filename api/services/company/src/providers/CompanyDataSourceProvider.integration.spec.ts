@@ -6,9 +6,11 @@ import { Extensions } from '@ilos/core';
 import * as dataSource from '../config/dataSource';
 
 test('should fetch from data source with a siret id', async (t) => {
-  const provider: CompanyDataSourceProvider = new CompanyDataSourceProvider(new Extensions.ConfigStore({
-    dataSource
-  }));
+  const provider: CompanyDataSourceProvider = new CompanyDataSourceProvider(
+    new Extensions.ConfigStore({
+      dataSource,
+    }),
+  );
   const data = await provider.find('12000101100010');
 
   t.is(data.siret, '12000101100010');
@@ -28,8 +30,10 @@ test('should fetch from data source with a siret id', async (t) => {
 });
 
 test('should fail with a wrong siret id', async (t) => {
-  const provider: CompanyDataSourceProvider = new CompanyDataSourceProvider(new Extensions.ConfigStore({
-    dataSource
-  }));
+  const provider: CompanyDataSourceProvider = new CompanyDataSourceProvider(
+    new Extensions.ConfigStore({
+      dataSource,
+    }),
+  );
   await t.throwsAsync<NotFoundException>(async () => provider.find('this_is_not_a_siret'));
 });
