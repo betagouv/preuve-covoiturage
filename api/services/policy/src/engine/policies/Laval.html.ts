@@ -1,6 +1,5 @@
 export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
-<p>Campagne d’incitation au covoiturage du <b> mardi 12 avril 2022 au samedi 31 décembre 2022</b>, limitée à lundi,
-  mardi, mercredi, jeudi, vendredi, samedi, dimanche
+<p>Campagne d’incitation au covoiturage du <b> mardi 12 avril 2022 au samedi 31 décembre 2022</b>, toute la semaine
 </p>
 <p>Cette campagne est limitée à
   <b>9000 euros </b>.
@@ -13,6 +12,6 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 <ul>
   <li><b>6 trajets maximum pour le conducteur par jour.</b></li>
 </ul>
-<p>La campagne est limitée à l'opérateur Klaxit proposant des preuves de classe <b>B ou C</b>.</p>
+<p>La campagne est limitée à l'opérateur <b>Klaxit</b> proposant des preuves de classe <b>B ou C</b>.</p>
 <p></p>
 </p>`;

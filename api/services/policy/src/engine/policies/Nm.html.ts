@@ -1,6 +1,5 @@
 export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
-<p>Campagne d’incitation au covoiturage du <b> jeudi 02 décembre 2021 au mardi 07 février 2023</b>, limitée à lundi,
-  mardi, mercredi, jeudi, vendredi, samedi, dimanche
+<p>Campagne d’incitation au covoiturage du <b> jeudi 02 décembre 2021 au mardi 07 février 2023</b>, toute la semaine
 </p>
 <p>Cette campagne est limitée à
   <b>10000000 euros et 10000000 trajets </b>.
@@ -15,21 +14,6 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
   <li><b>4 trajets maximum pour le conducteur par jour.</b></li>
   <li><b>4 trajets maximum pour le passager par jour.</b></li>
 </ul>
-<p>La campagne est limitée à l'opérateur Klaxit proposant des preuves de classe <b>C</b>.</p>
-<p>Les trajets incités doivent être sur les axes suivants : </p>
-<ul>
-  <li>De <b>Basse-Goulaine (44)</b>, <b>Bouaye (44)</b>, <b>Bouguenais (44)</b>, <b>Brains (44)</b>, <b>Carquefou
-      (44)</b>, <b>Couëron (44)</b>, <b>Indre (44)</b>, <b>La Chapelle-sur-Erdre (44)</b>, <b>La Montagne (44)</b>,
-    <b>Le Pellerin (44)</b>, <b>Les Sorinières (44)</b>, <b>Mauves-sur-Loire (44)</b>, <b>Nantes (44)</b>, <b>Orvault
-      (44)</b>, <b>Rezé (44)</b>, <b>Saint-Aignan-Grandlieu (44)</b>, <b>Saint-Herblain (44)</b>,
-    <b>Saint-Jean-de-Boiseau (44)</b>, <b>Saint-Léger-les-Vignes (44)</b>, <b>Saint-Sébastien-sur-Loire (44)</b>,
-    <b>Sautron (44)</b>, <b>Thouaré-sur-Loire (44)</b> ou <b>Vertou (44)</b> à <b>Basse-Goulaine (44)</b>, <b>Bouaye
-      (44)</b>, <b>Bouguenais (44)</b>, <b>Brains (44)</b>, <b>Carquefou (44)</b>, <b>Couëron (44)</b>, <b>Indre
-      (44)</b>, <b>La Chapelle-sur-Erdre (44)</b>, <b>La Montagne (44)</b>, <b>Le Pellerin (44)</b>, <b>Les Sorinières
-      (44)</b>, <b>Mauves-sur-Loire (44)</b>, <b>Nantes (44)</b>, <b>Orvault (44)</b>, <b>Rezé (44)</b>,
-    <b>Saint-Aignan-Grandlieu (44)</b>, <b>Saint-Herblain (44)</b>, <b>Saint-Jean-de-Boiseau (44)</b>,
-    <b>Saint-Léger-les-Vignes (44)</b>, <b>Saint-Sébastien-sur-Loire (44)</b>, <b>Sautron (44)</b>, <b>Thouaré-sur-Loire
-      (44)</b> ou <b>Vertou (44)</b>.</li>
-  <p></p>
-</ul>
+<p>La campagne est limitée à l'opérateur <b>Klaxit</b> proposant des preuves de classe <b>C</b>.</p>
+<p>Les trajets au départ et à l'arrivée de <b>Nantes Métropole (244400404)</b> sont incités.</p>
 </p>`;

@@ -16,45 +16,11 @@ export const description = `<p _ngcontent-fyn-c231="" id="summary" class="campai
 </ul>
 <p>La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit, Mobicoop proposant des preuves de classe <b>B
     ou C</b>.</p>
-<p>Les axes suivants ne sont pas incités : </p>
+<p>Les trajets au départ et à l'arrivée des AOMs suivantes ne sont pas incités : </p>
 <ul>
-  <li>De <b>Nantes (44)</b>, <b>Basse-Goulaine (44)</b>, <b>Bouaye (44)</b>, <b>Bouguenais (44)</b>, <b>Brains (44)</b>,
-    <b>Carquefou (44)</b>, <b>La Chapelle-sur-Erdre (44)</b>, <b>Couëron (44)</b>, <b>Indre (44)</b>,
-    <b>Mauves-sur-Loire (44)</b>, <b>La Montagne (44)</b>, <b>Orvault (44)</b>, <b>Le Pellerin (44)</b>, <b>Rezé
-      (44)</b>, <b>Saint-Aignan-Grandlieu (44)</b>, <b>Saint-Herblain (44)</b>, <b>Saint-Jean-de-Boiseau (44)</b>,
-    <b>Saint-Léger-les-Vignes (44)</b>, <b>Saint-Sébastien-sur-Loire (44)</b>, <b>Sautron (44)</b>, <b>Les Sorinières
-      (44)</b>, <b>Thouaré-sur-Loire (44)</b> ou <b>Vertou (44)</b> à <b>Nantes (44)</b>, <b>Basse-Goulaine (44)</b>,
-    <b>Bouaye (44)</b>, <b>Bouguenais (44)</b>, <b>Brains (44)</b>, <b>Carquefou (44)</b>, <b>La Chapelle-sur-Erdre
-      (44)</b>, <b>Couëron (44)</b>, <b>Indre (44)</b>, <b>Mauves-sur-Loire (44)</b>, <b>La Montagne (44)</b>,
-    <b>Orvault (44)</b>, <b>Le Pellerin (44)</b>, <b>Rezé (44)</b>, <b>Saint-Aignan-Grandlieu (44)</b>,
-    <b>Saint-Herblain (44)</b>, <b>Saint-Jean-de-Boiseau (44)</b>, <b>Saint-Léger-les-Vignes (44)</b>,
-    <b>Saint-Sébastien-sur-Loire (44)</b>, <b>Sautron (44)</b>, <b>Les Sorinières (44)</b>, <b>Thouaré-sur-Loire
-      (44)</b> ou <b>Vertou (44)</b>.</li>
-  <li>De <b>Angers (49)</b>, <b>Avrillé (49)</b>, <b>Beaucouzé (49)</b>, <b>Béhuard (49)</b>, <b>Bouchemaine (49)</b>,
-    <b>Briollay (49)</b>, <b>Cantenay-Épinard (49)</b>, <b>Écouflant (49)</b>, <b>Écuillé (49)</b>, <b>Feneu (49)</b>,
-    <b>Loire-Authion (49)</b>, <b>Longuenée-en-Anjou (49)</b>, <b>Montreuil-Juigné (49)</b>, <b>Mûrs-Erigné (49)</b>,
-    <b>Le Plessis-Grammoire (49)</b>, <b>Les Ponts-de-Cé (49)</b>, <b>Rives-du-Loir-en-Anjou (49)</b>,
-    <b>Saint-Barthélemy-d'Anjou (49)</b>, <b>Saint-Clément-de-la-Place (49)</b>, <b>Sainte-Gemmes-sur-Loire (49)</b>,
-    <b>Saint-Lambert-la-Potherie (49)</b>, <b>Saint-Léger-de-Linières (49)</b>, <b>Saint-Martin-du-Fouilloux (49)</b>,
-    <b>Sarrigné (49)</b>, <b>Savennières (49)</b>, <b>Soulaines-sur-Aubance (49)</b>, <b>Soulaire-et-Bourg (49)</b>,
-    <b>Trélazé (49)</b> ou <b>Verrières-en-Anjou (49)</b> à <b>Angers (49)</b>, <b>Avrillé (49)</b>, <b>Beaucouzé
-      (49)</b>, <b>Béhuard (49)</b>, <b>Bouchemaine (49)</b>, <b>Briollay (49)</b>, <b>Cantenay-Épinard (49)</b>,
-    <b>Écouflant (49)</b>, <b>Écuillé (49)</b>, <b>Feneu (49)</b>, <b>Loire-Authion (49)</b>, <b>Longuenée-en-Anjou
-      (49)</b>, <b>Montreuil-Juigné (49)</b>, <b>Mûrs-Erigné (49)</b>, <b>Le Plessis-Grammoire (49)</b>, <b>Les
-      Ponts-de-Cé (49)</b>, <b>Rives-du-Loir-en-Anjou (49)</b>, <b>Saint-Barthélemy-d'Anjou (49)</b>,
-    <b>Saint-Clément-de-la-Place (49)</b>, <b>Sainte-Gemmes-sur-Loire (49)</b>, <b>Saint-Lambert-la-Potherie (49)</b>,
-    <b>Saint-Léger-de-Linières (49)</b>, <b>Saint-Martin-du-Fouilloux (49)</b>, <b>Sarrigné (49)</b>, <b>Savennières
-      (49)</b>, <b>Soulaines-sur-Aubance (49)</b>, <b>Soulaire-et-Bourg (49)</b>, <b>Trélazé (49)</b> ou
-    <b>Verrières-en-Anjou (49)</b>.</li>
-  <li>De <b>Le Mans (72)</b>, <b>Aigné (72)</b>, <b>Allonnes (72)</b>, <b>Arnage (72)</b>, <b>Champagné (72)</b>, <b>La
-      Chapelle-Saint-Aubin (72)</b>, <b>Chaufour-Notre-Dame (72)</b>, <b>Coulaines (72)</b>, <b>Fay (72)</b>, <b>La
-      Milesse (72)</b>, <b>Mulsanne (72)</b>, <b>Pruillé-le-Chétif (72)</b>, <b>Rouillon (72)</b>, <b>Ruaudin (72)</b>,
-    <b>Saint-Georges-du-Bois (72)</b>, <b>Saint-Saturnin (72)</b>, <b>Sargé-lès-le-Mans (72)</b>, <b>Trangé (72)</b> ou
-    <b>Yvré-l'Évêque (72)</b> à <b>Le Mans (72)</b>, <b>Aigné (72)</b>, <b>Allonnes (72)</b>, <b>Arnage (72)</b>,
-    <b>Champagné (72)</b>, <b>La Chapelle-Saint-Aubin (72)</b>, <b>Chaufour-Notre-Dame (72)</b>, <b>Coulaines (72)</b>,
-    <b>Fay (72)</b>, <b>La Milesse (72)</b>, <b>Mulsanne (72)</b>, <b>Pruillé-le-Chétif (72)</b>, <b>Rouillon (72)</b>,
-    <b>Ruaudin (72)</b>, <b>Saint-Georges-du-Bois (72)</b>, <b>Saint-Saturnin (72)</b>, <b>Sargé-lès-le-Mans (72)</b>,
-    <b>Trangé (72)</b> ou <b>Yvré-l'Évêque (72)</b>.</li>
+  <li><b>CU d'Angers Loire Métropole (244900015)</b></li>
+  <li><b>Nantes Métropole (244400404)</b></b> </li>
+  <li><b>CU Le Mans Métropole (247200132)</b></li>
   <p></p>
 </ul>
 </p>`;

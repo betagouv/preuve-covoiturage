@@ -1,6 +1,5 @@
 export const description = `<p id="summary">
-  <p>Campagne d’incitation au covoiturage du <b> jeudi 20 mai 2021 au samedi 31 décembre 2022</b>,
-  limitée à lundi, mardi, mercredi, jeudi, vendredi, samedi, dimanche
+  <p>Campagne d’incitation au covoiturage du <b> jeudi 20 mai 2021 au samedi 31 décembre 2022</b>, toute la semaine
   </p>
   <p>Cette campagne est limitée à
     <b>6000000 euros </b>.

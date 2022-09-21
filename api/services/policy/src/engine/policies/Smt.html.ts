@@ -1,6 +1,5 @@
 export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
-<p>Campagne d’incitation au covoiturage du <b> jeudi 14 avril 2022 au mercredi 15 février 2023</b>, limitée à lundi,
-  mardi, mercredi, jeudi, vendredi, samedi, dimanche
+<p>Campagne d’incitation au covoiturage du <b> jeudi 14 avril 2022 au mercredi 15 février 2023</b>, toute la semaine
 </p>
 <p>Cette campagne est limitée à
   <b>40000 euros </b>.
@@ -8,9 +7,13 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 <p>Les <b> conducteurs et passagers </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes :
 </p>
 <ul>
-  <li><b>De 2 à 20 km : 2 euros par trajet par passager gratuit pour le(s) passager(s).</b></li>
-  <li><b>De 20 à 40 km : 0.1 euro par trajet par km par passager gratuit pour le(s) passager(s).</b></li>
-  <li><b>À partir de 40 km : gratuit pour le(s) passager(s).</b></li>
+  <li><b>De 2 à 20 km : 2 euros par trajet par passager </b></li>
+  <li><b>De 20 à 40 km : 0.1 euro par trajet par km par passager </b></li>
+</ul>
+<p>Les <b> passagers </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes :
+</p>
+<ul>
+  <li><b>Trajets gratuits s’il a une origine ou une destination sur le territoire Tours Métropole Val de Loire</b></li>
 </ul>
 <p>Les restrictions suivantes seront appliquées :</p>
 <ul>
