@@ -26,6 +26,10 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
     return this.auth.isTerritory();
   }
 
+  get isTerritoryDemo(): boolean {
+    return this.auth.isTerritoryDemo();
+  }
+
   get hasRegistryGroup(): boolean {
     return this.auth.isRegistry();
   }

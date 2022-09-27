@@ -10,13 +10,13 @@
       </div>
 
       <!-- Trajets -->
-      <div *ngIf="user" class="navbar-menu-item trip-menu-item" [routerLink]="'/trip'" routerLinkActive="active">
+      <div *ngIf="user && !isTerritoryDemo" class="navbar-menu-item trip-menu-item" [routerLink]="'/trip'" routerLinkActive="active">
         Trajets
       </div>
 
       <!-- Campagnes -->
       <div
-        *ngIf="(user && hasTerritoryGroup) || hasRegistryGroup"
+        *ngIf="((user && hasTerritoryGroup) || hasRegistryGroup) && !isTerritoryDemo"
         class="navbar-menu-item campaign-menu-item"
         [routerLink]="campaignLink"
         routerLinkActive="active"
