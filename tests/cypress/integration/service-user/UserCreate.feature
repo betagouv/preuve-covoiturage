@@ -3,7 +3,7 @@ Fonctionnalité: Créer un utilisateur
 
   En tant qu'administrateur je veux pouvoir créer et supprimer un utilisateur territoire
 
-  Scénario: Créer et supprimer un utilisateur découverte pour un territoire
+  Scénario: Créer et supprimer un utilisateur administrateur pour un territoire
 
     Étant donné que je suis connecté.e comme administrateur du registre
     Alors je vois le menu administration
@@ -24,7 +24,7 @@ Fonctionnalité: Créer un utilisateur
       | email | jcduss@example.com |
       | numéro de téléphone | 0600000000 |
       | groupe | Territoire |
-      | droits d'accès | Découverte |
+      | droits d'accès | Administration |
       | territoire | Ile-De-France | 
     Et que je clique sur le bouton enregistrer
     Alors je vois un message indiquant "L'utilisateur Jean-Claude DUSS a été créé"
