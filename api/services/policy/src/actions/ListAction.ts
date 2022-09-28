@@ -46,7 +46,7 @@ export class ListAction extends AbstractAction {
     );
 
     return result.filter((p) => {
-      const policyHandler: PolicyHandlerStaticInterface = policies().get(p._id.toString());
+      const policyHandler: PolicyHandlerStaticInterface = policies.get(p._id.toString());
       return policyHandler && new policyHandler().params().operators.includes(operator.siret);
     });
   }
