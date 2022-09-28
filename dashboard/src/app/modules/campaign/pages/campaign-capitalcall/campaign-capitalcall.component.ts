@@ -11,10 +11,10 @@ import { CapitalcallApiService } from './../../services/capitalcall-api.service'
 export class CampaignCapitalcallComponent implements OnInit {
   @Input() territoryId: number;
 
-  public capitalcallList: { key: string; month: string }[] = [];
+  public capitalcallList: { key: string; month: string }[];
   public displayedColumns: string[] = ['month', 'operator', 'action'];
 
-  private SHORT_MONTHS_STRING: { [key: string]: string } = {
+  private readonly SHORT_MONTHS_STRING: { [key: string]: string } = {
     janv: 'Janvier',
     fevr: 'Février',
     mars: 'Mars',
@@ -29,20 +29,39 @@ export class CampaignCapitalcallComponent implements OnInit {
     dece: 'Décembre',
   };
 
+  private readonly SORTED_SHORT_MONTH_ARRAY: string[] = [
+    'Janvier',
+    'Février',
+    'Mars',
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Aout',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
+  ];
+
   constructor(private capitalcallApiService: CapitalcallApiService, private commonData: CommonDataService) {}
 
   ngOnInit(): void {
     combineLatest(this.commonData.operators$, this.capitalcallApiService.list(this.territoryId)).subscribe(
       ([operators, s3objects]) => {
-        this.capitalcallList = s3objects.map((s3Object) => {
-          const operatorId: number = this.computeOperatorId(s3Object.key);
-          return {
-            key: s3Object.key,
-            month: this.computeFullMonth(s3Object.key),
-            signed_url: s3Object.signed_url,
-            operator: operators.find((o) => o._id === operatorId).name,
-          };
-        });
+        this.capitalcallList = s3objects
+          .map((s3Object) => {
+            const operatorId: number = this.computeOperatorId(s3Object.key);
+            return {
+              key: s3Object.key,
+              month: this.computeFullMonth(s3Object.key),
+              signed_url: s3Object.signed_url,
+              operator: operators.find((o) => o._id === operatorId).name,
+            };
+          })
+          .sort(
+            (a, b) => this.SORTED_SHORT_MONTH_ARRAY.indexOf(a.month) - this.SORTED_SHORT_MONTH_ARRAY.indexOf(b.month),
+          );
       },
     );
   }

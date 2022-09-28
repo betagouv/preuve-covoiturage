@@ -1,5 +1,5 @@
 import { Operator } from '~/core/entities/operator/operator';
-import { S3Object } from './../../../../../../../shared/trip/listCapitalcalls.contract';
+import { S3Object } from '~/shared/capitalcall/list.contract';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTableModule } from '@angular/material/table';
@@ -16,8 +16,8 @@ fdescribe('CampaignCapitalcallComponent', () => {
   const commonDataServiceSpy = jasmine.createSpyObj('CommonDataService', ['operators$']);
 
   const s3ObjectList: S3Object[] = [
-    { key: 'apdf-3-329-idfm___p-sept-efff38.xlsx', signed_url: 'https://s3-link-1.com' },
     { key: 'apdf-4-329-idfm___p-octo-ee49c1.xlsx', signed_url: 'https://s3-link-2.com' },
+    { key: 'apdf-3-329-idfm___p-sept-efff38.xlsx', signed_url: 'https://s3-link-1.com' },
   ];
 
   const operators: Partial<Operator>[] = [
@@ -59,7 +59,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should show empty view', () => {
+  it('should show empty view if no data', () => {
     // Arrange
     capitalCallServiceSpy.list.and.returnValue(of([]));
     commonDataServiceSpy.operators$ = of(operators);
@@ -72,7 +72,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
     expect(p.textContent).toContain('Aucun appel fond');
   });
 
-  it('should show table view with 2 elements for registry or territory user', () => {
+  it('should show table view with 2 elements, sorted by month desc, for registry or territory user', () => {
     // Arrange
     capitalCallServiceSpy.list.and.returnValue(of(s3ObjectList));
     console.debug(commonDataServiceSpy.operators$);
