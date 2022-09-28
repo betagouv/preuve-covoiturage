@@ -58,7 +58,7 @@ export const Mrn: PolicyHandlerStaticInterface = class implements PolicyHandlerI
 
     // Gratuité passager
     amount += ctx.carpool.cost;
-  
+
     ctx.incentive.set(amount);
   }
 

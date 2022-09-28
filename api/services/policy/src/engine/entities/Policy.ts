@@ -101,11 +101,7 @@ export class Policy implements PolicyInterface {
       return true;
     }
 
-    if (!isSelected(carpool.start, this.territory_selector)) {
-      return false;
-    }
-
-    if (!isSelected(carpool.end, this.territory_selector)) {
+    if (!isSelected(carpool.start, this.territory_selector) && !isSelected(carpool.end, this.territory_selector)) {
       return false;
     }
 
