@@ -28,7 +28,7 @@ import { description } from './Idfm.html';
 
 // Politique d'Île-de-France Mobilité
 export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
-  static readonly id = '460';
+  static readonly id = '459';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
   protected slices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
