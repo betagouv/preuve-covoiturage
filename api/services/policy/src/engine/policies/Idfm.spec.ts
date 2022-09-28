@@ -65,15 +65,16 @@ test(
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
       { distance: 25_000, driver_identity_uuid: 'two' },
       { distance: 25_000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
+      { distance: 55_000, driver_identity_uuid: 'three' },
     ],
     meta: [],
   },
   {
-    incentive: [150, 300, 250, 375],
+    incentive: [150, 300, 250, 375, 300],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1075,
+        value: 1375,
       },
       {
         key: 'max_amount_restriction.one.month.0-2019',
@@ -86,6 +87,10 @@ test(
       {
         key: 'max_amount_restriction.two.month.2-2022',
         value: 375,
+      },
+      {
+        key: 'max_amount_restriction.three.month.0-2019',
+        value: 300,
       },
     ],
   },
