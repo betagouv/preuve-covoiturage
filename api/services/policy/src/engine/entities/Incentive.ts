@@ -73,11 +73,12 @@ export class Incentive<T> {
   }
 
   set(amount: number): void {
+    const intAmount = Math.round(amount);
     if (this._id) {
-      this.statefulAmount = amount;
+      this.statefulAmount = intAmount;
     } else {
-      this.statelessAmount = amount;
-      this.statefulAmount = amount;
+      this.statelessAmount = intAmount;
+      this.statefulAmount = intAmount;
     }
   }
 
