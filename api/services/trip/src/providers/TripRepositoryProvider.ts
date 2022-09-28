@@ -403,7 +403,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     const lateralString: string = slices
       .map((s, i) => {
-        return `(data.tranche_${i}_count, coalesce(data.tranche_${i}_sum_1)+ coalesce(data.tranche_${i}_sum_2, 0))`;
+        return `(data.tranche_${i}_count, coalesce(data.tranche_${i}_sum_1, 0)+ coalesce(data.tranche_${i}_sum_2, 0))`;
       })
       .join(',');
 
