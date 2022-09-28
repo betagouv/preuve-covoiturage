@@ -13,7 +13,7 @@ import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { SlicesInterface } from '../interfaces/SlicesInterface';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
-import { ProgressiveDistanceRangeMetaParameters } from '../shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
+import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
 import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
 import {
@@ -374,7 +374,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async computeFundCallsSlices(
     params: TripSearchInterface,
-    slices: ProgressiveDistanceRangeMetaParameters[],
+    slices: SliceInterface[],
   ): Promise<SlicesInterface[]> {
     if (!slices || slices.length === 0) {
       return [];
@@ -386,20 +386,17 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     const filtersString: string = slices
       .map((s, i) => {
-        if (!s.max) {
-          s.max = TripRepositoryProvider.MAX_KM_LIMIT;
-        }
         return `COUNT(journey_id) FILTER (
-        WHERE JOURNEY_DISTANCE > ${s.min}
-        AND JOURNEY_DISTANCE <=  ${s.max}
+        WHERE JOURNEY_DISTANCE > ${s.start}
+        AND JOURNEY_DISTANCE <=  ${s.end}
         AND (DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID = ${params.campaign_id} OR DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID =  ${params.campaign_id})) TRANCHE_${i}_COUNT,
       SUM (DRIVER_INCENTIVE_RPC_RAW[1].AMOUNT) FILTER (
-        WHERE JOURNEY_DISTANCE > ${s.min}
-        AND JOURNEY_DISTANCE <= ${s.max}
+        WHERE JOURNEY_DISTANCE > ${s.start}
+        AND JOURNEY_DISTANCE <= ${s.end}
         AND DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID =  ${params.campaign_id}) TRANCHE_${i}_SUM_1,
       SUM (DRIVER_INCENTIVE_RPC_RAW[2].AMOUNT) FILTER (
-        WHERE JOURNEY_DISTANCE > ${s.min}
-      AND JOURNEY_DISTANCE <= ${s.max}
+        WHERE JOURNEY_DISTANCE > ${s.start}
+      AND JOURNEY_DISTANCE <= ${s.end}
       AND DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID =  ${params.campaign_id}) TRANCHE_${i}_SUM_2`;
       })
       .join(',');
@@ -527,5 +524,17 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         (acc, current, idx, origin) => (idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`),
         '',
       );
+  }
+
+  public async getPolicyInvoledOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
+    const result = await this.connection.getClient().query({
+      text: `SELECT distinct operator_id
+      FROM ${this.table}
+      WHERE JOURNEY_START_DATETIME >= $1::TIMESTAMP
+        AND JOURNEY_START_DATETIME <= $2::TIMESTAMP
+        AND $3 = ANY(APPLIED_POLICIES);`,
+      values: [start_date, end_date, campaign_id],
+    });
+    return result.rowCount ? result.rows.map((r) => r.operator_id) : [];
   }
 }

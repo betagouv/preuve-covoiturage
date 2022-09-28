@@ -1,5 +1,6 @@
 import { handler, KernelInterfaceResolver, InitHookInterface } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { sub } from 'date-fns';
 
 import {
   signature as handlerSignature,
@@ -7,22 +8,25 @@ import {
   ParamsInterface,
   ResultInterface,
 } from '../shared/policy/finalize.contract';
-import { PolicyEngine } from '../engine/PolicyEngine';
-import { ProcessableCampaign } from '../engine/ProcessableCampaign';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import {
   IncentiveRepositoryProviderInterfaceResolver,
-  CampaignRepositoryProviderInterfaceResolver,
+  MetadataRepositoryProviderInterfaceResolver,
+  PolicyRepositoryProviderInterfaceResolver,
   IncentiveStatusEnum,
+  MetadataLifetime,
+  PolicyInterface,
 } from '../interfaces';
+import { Policy } from '../engine/entities/Policy';
+import { MetadataStore } from '../engine/entities/MetadataStore';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class FinalizeAction extends AbstractAction implements InitHookInterface {
   constructor(
-    private campaignRepository: CampaignRepositoryProviderInterfaceResolver,
+    private policyRepository: PolicyRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
-    private engine: PolicyEngine,
+    private metaRepository: MetadataRepositoryProviderInterfaceResolver,
     private kernel: KernelInterfaceResolver,
   ) {
     super();
@@ -40,7 +44,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
           service: handlerConfig.service,
           metadata: {
             repeat: {
-              cron: '0 4 6 * *',
+              cron: '0 4 * * *',
             },
             jobId: 'policy.finalize.cron',
           },
@@ -50,48 +54,41 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    // Get last day of previous month
-    const defaultTo = new Date();
-    defaultTo.setDate(1);
-    defaultTo.setHours(0, 0, 0, -1);
-
-    const to = params.to ?? defaultTo;
+    // Get 7 days ago
+    const to = params.to ?? sub(new Date(), { days: 7 });
 
     // Update incentive on cancelled carpool
     await this.incentiveRepository.disableOnCanceledTrip();
 
-    const policyMap: Map<number, ProcessableCampaign> = new Map();
+    const policyMap: Map<number, PolicyInterface> = new Map();
 
     // Apply internal restriction of policies
-    console.debug(`START processing stateful campaigns`);
-    await this.processStatefulCampaigns(policyMap, to, params.from);
-    console.debug(`DONE processing stateful campaigns`);
+    console.debug('[policies] stateful starting');
+    await this.processStatefulpolicys(policyMap, to, params.from);
+    console.debug('[policies] stateful finished');
 
     // TODO: Apply external restriction (order) of policies
 
     // Lock all
-    console.debug(`LOCK_ALL incentives to: ${to}`);
+    console.debug(`[policies] lock all incentive until ${to}`);
     await this.incentiveRepository.lockAll(to);
-    console.debug('DONE locking');
+    console.debug('[policies] lock finished');
   }
 
-  protected async processStatefulCampaigns(
-    policyMap: Map<number, ProcessableCampaign>,
+  protected async processStatefulpolicys(
+    policyMap: Map<number, PolicyInterface>,
     to: Date,
     from?: Date,
   ): Promise<void> {
+    // 0. Instanciate a meta store
+    const store = new MetadataStore(this.metaRepository);
     // 1. Start a cursor to find incentives
     const cursor = this.incentiveRepository.findDraftIncentive(to, 100, from);
     let done = false;
     do {
       const start = new Date().getTime();
 
-      const updatedIncentives: {
-        carpool_id: number;
-        policy_id: number;
-        amount: number;
-        status: IncentiveStatusEnum;
-      }[] = [];
+      const updatedIncentives = [];
       const results = await cursor.next();
       done = results.done;
       if (results.value) {
@@ -99,22 +96,22 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
           // 2. Get policy
           const policyId = incentive.policy_id;
           if (!policyMap.has(policyId)) {
-            policyMap.set(policyId, this.engine.buildCampaign(await this.campaignRepository.find(policyId)));
+            policyMap.set(policyId, await Policy.import(await this.policyRepository.find(policyId)));
           }
           const policy = policyMap.get(policyId);
 
-          // 3. Process stateful rule if needed
-          if (policy.needStatefulApply()) {
-            updatedIncentives.push(await this.engine.processStateful(policy, incentive));
-          }
+          // 3. Process stateful rule
+          updatedIncentives.push(await policy.processStateful(store, incentive));
         }
       }
       // 4. Update incentives
-      await this.incentiveRepository.updateManyAmount(updatedIncentives, IncentiveStatusEnum.Valitated);
+      await this.incentiveRepository.updateStatefulAmount(updatedIncentives, IncentiveStatusEnum.Valitated);
 
+      // 5. Persist meta
+      await store.store(MetadataLifetime.Day);
       const duration = new Date().getTime() - start;
       console.debug(
-        `Finalized ${updatedIncentives.length} incentives in ${duration}ms (${(
+        `[policies] stateful incentive processing ${updatedIncentives.length} incentives done in ${duration}ms (${(
           (updatedIncentives.length / duration) *
           1000
         ).toFixed(3)}/s)`,

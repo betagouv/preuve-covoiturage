@@ -1,33 +1,40 @@
-import { TestFn } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { Migrator } from '@pdc/helper-seed';
 
-interface TestConfig {
+interface Config {
   connectionString: string;
 }
 
-export interface MacroTestContext {
+export interface DbContext {
   db: Migrator;
   connection: PostgresConnection;
 }
 
-export function dbMacro<TestContext = unknown>(
-  anyTest: TestFn,
-  cfg: TestConfig,
-): { test: TestFn<TestContext & MacroTestContext> } {
-  const test = anyTest as TestFn<TestContext & MacroTestContext>;
+export interface DbBeforeAfter {
+  before(): Promise<DbContext>;
+  after(cfg: DbContext): Promise<void>;
+}
 
-  test.serial.before(async (t) => {
-    t.context.db = new Migrator(cfg.connectionString);
-    await t.context.db.create();
-    await t.context.db.migrate();
-    await t.context.db.seed();
-    t.context.connection = t.context.db.connection;
-  });
+export function makeDbBeforeAfter(cfg?: Config): DbBeforeAfter {
+  return {
+    before: async (): Promise<DbContext> => {
+      const connectionString =
+        cfg?.connectionString || 'APP_POSTGRES_URL' in process.env
+          ? process.env.APP_POSTGRES_URL
+          : 'postgresql://postgres:postgres@localhost:5432/local';
 
-  test.serial.after.always(async (t) => {
-    await t.context.db.drop();
-  });
-
-  return { test };
+      const db = new Migrator(connectionString);
+      await db.create();
+      await db.migrate();
+      await db.seed();
+      return {
+        db,
+        connection: db.connection,
+      };
+    },
+    after: async (ctx: DbContext): Promise<void> => {
+      await ctx.db.down();
+      await ctx.db.drop();
+    },
+  };
 }

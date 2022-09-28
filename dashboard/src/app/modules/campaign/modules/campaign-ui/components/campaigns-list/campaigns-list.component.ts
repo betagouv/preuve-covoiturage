@@ -1,14 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
 
-import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-campaigns-list',
@@ -24,12 +20,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
 
   CampaignStatusEnum = CampaignStatusEnum;
 
-  constructor(
-    public auth: AuthenticationService,
-    private dialog: DialogService,
-    private _campaignStoreService: CampaignStoreService,
-    private toastr: ToastrService,
-  ) {
+  constructor(public auth: AuthenticationService) {
     super();
   }
 
@@ -61,33 +52,5 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
     return this.campaigns
       .filter((c: CampaignUx) => statusList.length === 0 || statusList.indexOf(c.status) !== -1)
       .sort((a, b) => (a.start.isAfter(b.start) ? -1 : 1));
-  }
-
-  deleteCampaign(campaign: CampaignUx): void {
-    this.dialog
-      .confirm({
-        title: `Êtes-vous sûr de vouloir supprimer la campagne : ${campaign.name} ?`,
-        confirmBtn: 'Supprimer',
-        color: 'warn',
-      })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((result) => {
-        if (result) {
-          const params = {
-            territory_id: this.auth.user.territory_id,
-          };
-          this._campaignStoreService
-            .deleteByTerritoryId({ _id: campaign._id, ...params })
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-              () => {
-                this.toastr.success('La campagne a bien été supprimée');
-              },
-              (err) => {
-                this.toastr.error(err.message);
-              },
-            );
-        }
-      });
   }
 }

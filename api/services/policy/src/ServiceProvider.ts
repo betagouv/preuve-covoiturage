@@ -6,73 +6,50 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { config } from './config';
-import { binding as createSchemaBinding } from './shared/policy/create.schema';
-import { binding as patchSchemaBinding } from './shared/policy/patch.schema';
-import { binding as launchSchemaBinding } from './shared/policy/launch.schema';
-import { binding as deleteSchemaBinding } from './shared/policy/delete.schema';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
-import { binding as templatesSchemaBinding } from './shared/policy/templates.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
 import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOn.schema';
 import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
+import { binding as statsSchemaBinding } from './shared/policy/stats.schema';
 
-import { CreateCampaignAction } from './actions/CreateCampaignAction';
-import { PatchCampaignAction } from './actions/PatchCampaignAction';
-import { LaunchCampaignAction } from './actions/LaunchCampaignAction';
-import { ListCampaignAction } from './actions/ListCampaignAction';
-import { DeleteCampaignAction } from './actions/DeleteCampaignAction';
-import { TemplatesCampaignAction } from './actions/TemplatesCampaignAction';
-import { FindCampaignAction } from './actions/FindCampaignAction';
 import { ApplyAction } from './actions/ApplyAction';
 import { FinalizeAction } from './actions/FinalizeAction';
+import { FindAction } from './actions/FindAction';
+import { ListAction } from './actions/ListAction';
 import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
 import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
+import { StatsAction } from './actions/StatsAction';
 
-import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryProvider';
-import { PolicyEngine } from './engine/PolicyEngine';
 import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvider';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
-
-import { validateRuleParametersMiddlewareBinding } from './middlewares/ValidateRuleParametersMiddleware';
-import { CampaignStateAction } from './actions/GetCampaignStateAction';
+import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
 
 @serviceProvider({
   config,
   providers: [
-    CampaignPgRepositoryProvider,
+    PolicyRepositoryProvider,
     MetadataRepositoryProvider,
     TripRepositoryProvider,
-    PolicyEngine,
     IncentiveRepositoryProvider,
     TerritoryRepositoryProvider,
-    validateRuleParametersMiddlewareBinding,
   ],
   validator: [
-    createSchemaBinding,
-    patchSchemaBinding,
-    launchSchemaBinding,
-    deleteSchemaBinding,
     listSchemaBinding,
-    templatesSchemaBinding,
     findSchemaBinding,
     simulateOnSchemaBinding,
     simulateOnFutureSchemaBinding,
+    statsSchemaBinding,
   ],
   handlers: [
-    TemplatesCampaignAction,
-    CreateCampaignAction,
-    PatchCampaignAction,
-    LaunchCampaignAction,
-    DeleteCampaignAction,
-    ListCampaignAction,
-    FindCampaignAction,
     ApplyAction,
     FinalizeAction,
-    SimulateOnPastAction,
+    FindAction,
+    ListAction,
     SimulateOnFutureAction,
-    CampaignStateAction,
+    SimulateOnPastAction,
+    StatsAction,
   ],
   connections: [
     [PostgresConnection, 'connections.postgres'],

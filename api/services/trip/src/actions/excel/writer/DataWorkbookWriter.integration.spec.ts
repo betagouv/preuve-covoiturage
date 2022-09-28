@@ -1,4 +1,3 @@
-import { ResultInterface as Campaign } from '../../../shared/policy/find.contract';
 import test from 'ava';
 import { stream, Workbook, Worksheet } from 'exceljs';
 import faker from '@faker-js/faker';
@@ -50,13 +49,13 @@ const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
 
   passenger_id: faker.random.uuid(),
   passenger_contribution: 8,
-  passenger_incentive_raw: null,
-  passenger_incentive_rpc_raw: null,
+  passenger_incentive_raw: [],
+  passenger_incentive_rpc_raw: [],
 
   driver_id: faker.random.uuid(),
   driver_revenue: 75,
-  driver_incentive_raw: null,
-  driver_incentive_rpc_raw: null,
+  driver_incentive_raw: [],
+  driver_incentive_rpc_raw: [],
 };
 
 test.before((t) => {

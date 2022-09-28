@@ -4,8 +4,9 @@ export enum TerritoryCodeEnum {
   CityGroup = 'epci',
   Mobility = 'aom',
   Region = 'reg',
-  Id = '_id',
   District = 'dep',
+  Network = 'reseau',
+  Country = 'country',
 }
 
 export interface TerritoryCodeInterface {
@@ -13,13 +14,14 @@ export interface TerritoryCodeInterface {
   [TerritoryCodeEnum.City]: string;
   [TerritoryCodeEnum.Mobility]: string;
   [TerritoryCodeEnum.CityGroup]: string;
+  [TerritoryCodeEnum.Region]: string;
 }
 
 export interface TerritorySelectorsInterface {
   [TerritoryCodeEnum.Arr]?: string[];
   [TerritoryCodeEnum.City]?: string[];
   [TerritoryCodeEnum.Mobility]?: string[];
-  [TerritoryCodeEnum.Id]?: number[];
   [TerritoryCodeEnum.CityGroup]?: string[];
   [TerritoryCodeEnum.Region]?: string[];
+  [TerritoryCodeEnum.Country]?: string[];
 }

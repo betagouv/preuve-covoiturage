@@ -3,7 +3,7 @@ import { ChartData, ChartOptions } from 'chart.js';
 import * as moment from 'moment';
 import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 
 @Component({
   selector: 'app-campaign-main-metrics',
@@ -11,7 +11,7 @@ import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
   styleUrls: ['./campaign-main-metrics.component.scss'],
 })
 export class CampaignMainMetricsComponent implements OnInit, OnChanges {
-  @Input() campaign: CampaignUx;
+  @Input() campaign: PolicyInterface;
   daysRemaining = 1;
   daysPassed = 0;
 
@@ -54,8 +54,8 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
   }
 
   private initPeriod(): void {
-    const start = moment(this.campaign.start);
-    const end = moment(this.campaign.end);
+    const start = moment(this.campaign.start_date);
+    const end = moment(this.campaign.end_date);
     const today = moment();
 
     const period = end.diff(start, 'days');
@@ -81,11 +81,11 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
 
     this.campaignApiService.stat(this.campaign._id).subscribe(
       (campaignState) => {
-        this.budgetTotal = this.campaign ? this.campaign.max_amount : 0;
-
         if (!campaignState) {
           return;
         }
+
+        this.budgetTotal = this.campaign.params?.limits ? this.campaign.params.limits?.glob / 100 : 0;
 
         this.budgetSpent = campaignState.amount / 100;
         this.budgetRemaining = this.campaign ? this.budgetTotal - this.budgetSpent : 1;

@@ -18,6 +18,7 @@
     "@ilos/common": "~0",
     "@ilos/connection-postgres": "~0",
     "@pdc/migrator": "~0",
-    "csv-parse": "^5.0.4"
+    "csv-parse": "^5.0.4",
+    "uuid": "^8.3.2"
   }
 }

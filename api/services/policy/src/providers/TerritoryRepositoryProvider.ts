@@ -1,21 +1,25 @@
 import { NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import {
+  TerritoryRepositoryProviderInterface,
+  TerritoryRepositoryProviderInterfaceResolver,
   TerritoryCodeInterface,
   TerritoryCodeEnum,
   TerritorySelectorsInterface,
-} from '../shared/territory/common/interfaces/TerritoryCodeInterface';
-import { TerritoryRepositoryProviderInterface, TerritoryRepositoryProviderInterfaceResolver } from '../interfaces';
+} from '../interfaces';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
 export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderInterface {
+  public readonly getTerritorySelectorFn = 'territory.get_selector_by_territory_id';
   protected readonly getByPointFunction = 'geo.get_latest_by_point';
   protected readonly getBySelectorFunction = 'policy.get_territory_id_by_selector';
   protected readonly territoryGroupTable = 'territory.territory_group';
   protected readonly territorySelectorTable = 'territory.territory_group_selector';
+  protected readonly operatorTable = 'operator.operators';
   protected readonly companyTable = 'company.companies';
+
   constructor(protected connection: PostgresConnection) {}
 
   async findByPoint({ lon, lat }: { lon: number; lat: number }): Promise<TerritoryCodeInterface> {
@@ -35,6 +39,27 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       console.error(e.message, e);
       return null;
     }
+  }
+
+  async findSiretByOperatorId(_id: number): Promise<string> {
+    const query = {
+      text: `
+        SELECT
+          o._id, c.siret
+        FROM ${this.operatorTable} AS o
+        LEFT JOIN ${this.companyTable} AS c
+          ON c._id = o.company_id
+        WHERE o._id = $1 LIMIT 1
+      `,
+      values: [_id],
+    };
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount < 1) {
+      throw new NotFoundException();
+    }
+
+    return result.rows[0]?.siret;
   }
 
   async findSiretById(_id: number | number[]): Promise<{ _id: number; siret: string }[]> {
@@ -64,23 +89,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   async findSelectorFromId(id: number): Promise<TerritorySelectorsInterface> {
     const query = {
       text: `
-        WITH selector_raw AS (
-          SELECT
-            territory_group_id,
-            selector_type,
-            ARRAY_AGG(selector_value) as selector_value
-          FROM ${this.territorySelectorTable}
-          WHERE territory_group_id = $1
-          GROUP BY territory_group_id, selector_type
-        )
-        SELECT
-          territory_group_id,
-          JSON_OBJECT_AGG(
-            selector_type,
-            selector_value
-          ) as selector
-        FROM selector_raw
-        GROUP BY territory_group_id
+        SELECT * FROM ${this.getTerritorySelectorFn}($1) 
       `,
       values: [id],
     };

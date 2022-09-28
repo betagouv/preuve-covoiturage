@@ -4,60 +4,47 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { Campaign } from '~/core/entities/campaign/api-format/campaign';
-import { CrudActions, DeleteResponse, JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
+import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 
-import { CampaignInterface } from '~/core/entities/api/shared/policy/common/interfaces/CampaignInterface';
-import { ParamsInterface as CreateParamsInterface } from '~/core/entities/api/shared/policy/create.contract';
-import { ParamsInterface as DeleteParamsInterface } from '~/core/entities/api/shared/policy/delete.contract';
-import { ResultInterface as LaunchResultInterface } from '~/core/entities/api/shared/policy/launch.contract';
 import { ParamsInterface as ListParamsInterface } from '~/core/entities/api/shared/policy/list.contract';
-import { ParamsInterface as PatchParamsInterface } from '~/core/entities/api/shared/policy/patch.contract';
-import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import {
   ParamsInterface as CampaignStateParam,
   ResultInterface as CampaignStateResult,
   signature as campaignStateSignature,
-} from '../../../../../../shared/policy/campaignState.contract';
+} from '../../../../../../shared/policy/stats.contract';
+
+import {
+  ParamsInterface as SimulateOnPastParam,
+  ResultInterface as SimulateOnPastResult,
+  signature as simulateOnPastSignature,
+} from '../../../../../../shared/policy/stats.contract';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CampaignApiService extends JsonRpcCrud<
-  Campaign,
-  Campaign,
-  PatchParamsInterface['patch'],
+  PolicyInterface,
+  PolicyInterface,
+  {},
   any,
   any,
   ListParamsInterface,
   any,
-  CreateParamsInterface
+  {}
 > {
   constructor(http: HttpClient, protected auth: AuthenticationService) {
     super(http, 'campaign');
   }
 
-  public launch(id: number): Observable<LaunchResultInterface> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:launch`, { _id: id });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
-  }
-
-  getById(id: number): Observable<Campaign> {
+  getById(id: number): Observable<PolicyInterface> {
     return this.get({ _id: id, territory_id: this.auth.user.territory_id } as any);
   }
 
-  loadTemplates(): Observable<Campaign[]> {
-    return this.callOne(new JsonRPCParam(`${this.method}:templates`, {})).pipe(map((data) => data.data as Campaign[]));
-  }
-
-  deleteByTerritoryId(params: DeleteParamsInterface): Observable<DeleteResponse> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:${CrudActions.DELETE}`, params);
-    return this.callOne(jsonRPCParam).pipe(
-      map((data) => ({
-        success: data.data,
-        _id: params._id,
-      })),
+  loadTemplates(): Observable<PolicyInterface[]> {
+    return this.callOne(new JsonRPCParam(`${this.method}:templates`, {})).pipe(
+      map((data) => data.data as PolicyInterface[]),
     );
   }
 
@@ -68,8 +55,8 @@ export class CampaignApiService extends JsonRpcCrud<
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data as CampaignStateResult));
   }
 
-  simulate(campaign: CampaignInterface): Observable<CampaignReducedStats> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:simulateOnPast`, { campaign });
+  simulate(campaign: SimulateOnPastParam): Observable<SimulateOnPastResult> {
+    const jsonRPCParam = new JsonRPCParam(simulateOnPastSignature, { campaign });
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 }

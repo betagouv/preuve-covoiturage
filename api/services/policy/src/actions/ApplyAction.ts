@@ -9,14 +9,13 @@ import {
   ParamsInterface,
   ResultInterface,
 } from '../shared/policy/apply.contract';
-import { PolicyEngine } from '../engine/PolicyEngine';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
-  CampaignRepositoryProviderInterfaceResolver,
-  IncentiveInterface,
   TripRepositoryProviderInterfaceResolver,
-  TerritoryRepositoryProviderInterfaceResolver,
+  PolicyRepositoryProviderInterfaceResolver,
+  StatelessIncentiveInterface,
 } from '../interfaces';
+import { Policy } from '../engine/entities/Policy';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class ApplyAction extends AbstractAction implements InitHookInterface {
@@ -30,11 +29,9 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
   };
 
   constructor(
-    private campaignRepository: CampaignRepositoryProviderInterfaceResolver,
+    private policyRepository: PolicyRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
     private tripRepository: TripRepositoryProviderInterfaceResolver,
-    private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
-    private engine: PolicyEngine,
     private kernel: KernelInterfaceResolver,
   ) {
     super();
@@ -62,27 +59,27 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (!('campaign_id' in params)) {
+    console.debug('[policies] stateless starting');
+    if (!('policy_id' in params)) {
       await this.dispatch();
       return;
     }
-    await this.processCampaign(params.campaign_id, params.override_from);
+    await this.processPolicy(params.policy_id, params.override_from);
+    console.debug('[policies] stateless finished');
   }
 
   protected async dispatch(): Promise<void> {
-    const campaignIds = await this.tripRepository.listApplicablePoliciesId();
-    for (const campaign_id of campaignIds) {
-      this.kernel.notify<ParamsInterface>(handlerSignature, { campaign_id }, this.context);
+    const policies = await this.policyRepository.findWhere({ status: 'active' });
+    for (const policy of policies) {
+      this.kernel.notify<ParamsInterface>(handlerSignature, { policy_id: policy._id }, this.context);
     }
   }
 
-  protected async processCampaign(campaign_id: number, override_from?: Date): Promise<void> {
-    console.debug('PROCESS CAMPAIGN', { campaign_id, override_from });
+  protected async processPolicy(policy_id: number, override_from?: Date): Promise<void> {
+    console.debug(`[policy ${policy_id}] starting`, { policy_id, override_from });
 
-    // 1. Find campaign and start engine
-    const campaignRaw = await this.campaignRepository.find(campaign_id);
-    const selector = await this.territoryRepository.findSelectorFromId(campaignRaw.territory_id);
-    const campaign = this.engine.buildCampaign(campaignRaw, selector);
+    // 1. Find policy
+    const policy = await Policy.import(await this.policyRepository.find(policy_id));
 
     // benchmark
     const totalStart = new Date();
@@ -91,43 +88,37 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
 
     // 2. Start a cursor to find trips
     const batchSize = 50;
-    const start = override_from ?? isAfter(override_from, campaign.start_date) ? override_from : campaign.start_date;
-    const end = isAfter(campaign.end_date, new Date()) ? new Date() : campaign.end_date;
-    const cursor = this.tripRepository.findTripByPolicy(campaign, start, end, batchSize, !!override_from);
+    const start = override_from ?? isAfter(override_from, policy.start_date) ? override_from : policy.start_date;
+    const end = isAfter(policy.end_date, new Date()) ? new Date() : policy.end_date;
+    const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, !!override_from);
     let done = false;
 
     do {
       const start = new Date();
-      const incentives: IncentiveInterface[] = [];
+      const incentives: Array<StatelessIncentiveInterface> = [];
       const results = await cursor.next();
       done = results.done;
       if (results.value) {
-        for (const trip of results.value) {
-          // skip trip if campaign is finished
-          if (campaign.end_date < trip.datetime) continue;
-
+        for (const carpool of results.value) {
           // 3. For each trip, process
           counter++;
-          incentives.push(...(await this.engine.processStateless(campaign, trip)));
+          incentives.push(await policy.processStateless(carpool));
         }
       }
 
       // 4. Save incentives
-      console.debug(`STORE ${incentives.length} incentives`);
-      await this.incentiveRepository.createOrUpdateMany(incentives);
+      console.debug(`[policy ${policy_id}] stored ${incentives.length} incentives`);
+      await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
 
       // benchmark
       const ms = new Date().getTime() - start.getTime();
       console.debug(
-        `[campaign ${campaign.policy_id}] ${counter} (${total}) trips done in ${ms}ms (${(
-          (counter / ms) *
-          1000
-        ).toFixed(3)}/s)`,
+        `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(3)}/s)`,
       );
       total += counter;
       counter = 0;
     } while (!done);
 
-    console.debug(`TOTAL ${total} in ${new Date().getTime() - totalStart.getTime()}ms`);
+    console.debug(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - totalStart.getTime()}ms`);
   }
 }

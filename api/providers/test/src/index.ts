@@ -2,3 +2,4 @@ export { serviceProviderMacro, ServiceProviderMacroContext } from './serviceProv
 export { handlerMacro, HandlerMacroContext } from './handlerMacro';
 export * from './helpers';
 export * from './httpMacro';
+export * from './dbMacro';

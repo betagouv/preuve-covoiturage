@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { ProgressiveDistanceRangeMetaParameters } from '~/shared/policy/common/interfaces/ProgressiveDistanceRangeMetaParameters';
+import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
 import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { ResultInterface as Campaign } from '~/shared/policy/find.contract';
@@ -35,27 +35,21 @@ export class BuildExcel {
     workbookWriter: stream.xlsx.WorkbookWriter,
   ) {
     try {
-      // Get progressive_distance_range_meta without duplicates
-      const distanceRangeRules: ProgressiveDistanceRangeMetaParameters[] = campaign.rules
-        .flat()
-        .filter((f) => f.slug == 'progressive_distance_range_meta')
-        .map((r) => r.parameters as ProgressiveDistanceRangeMetaParameters)
-        .filter((v, i, s) => i === s.findIndex((t) => t.min === v.min && t.max === v.max));
-
+      const arrayOfSlices = campaign.params.slices || [];
       // No slice if no progressive_distance slug
-      if (distanceRangeRules.length === 0) {
+      if (arrayOfSlices.length === 0) {
         return;
       }
 
       // Add upper limit
-      distanceRangeRules.push({ min: Math.max(...distanceRangeRules.map((e) => e.max)) });
+      // arrayOfSlices.push({ min: Math.max(...distanceRangeRules.map((e) => e.max)) });
 
       const slices: SlicesInterface[] = await this.getFundCallSlices(
         campaign,
         start_date,
         end_date,
         operator_id,
-        distanceRangeRules,
+        arrayOfSlices,
       );
 
       return await this.slicesWorkbookWriter.call(slices, workbookWriter);
@@ -95,7 +89,7 @@ export class BuildExcel {
     start_date: Date,
     end_date: Date,
     operator_id: number,
-    progressiveDistanceRangeArray: ProgressiveDistanceRangeMetaParameters[],
+    arrayOfSlices: SliceInterface[],
   ): Promise<SlicesInterface[]> {
     return this.tripRepositoryProvider.computeFundCallsSlices(
       {
@@ -106,7 +100,7 @@ export class BuildExcel {
         campaign_id: [campaign._id],
         operator_id: [operator_id],
       },
-      progressiveDistanceRangeArray,
+      arrayOfSlices,
     );
   }
 

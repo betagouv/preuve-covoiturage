@@ -40,7 +40,7 @@ const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.createSlicesSheetToWorkbook = new SlicesWorkbookWriter();
-  t.context.tripRepositoryProvider = new TripRepositoryProvider(null);
+  t.context.tripRepositoryProvider = new TripRepositoryProvider(null as any);
   t.context.buildFilepath = new BuildFilepath();
   t.context.streamDataToWorkbook = new DataWorkBookWriter();
   t.context.buildExcel = new BuildExcel(
@@ -64,23 +64,14 @@ test.before((t) => {
     description: '',
     start_date: new Date(),
     end_date: new Date(),
-    unit: '',
+    handler: '',
     status: '',
-    global_rules: [],
-    rules: [
-      [
-        {
-          slug: 'progressive_distance_range_meta',
-          parameters: { min: 2000, max: 150000 },
-        },
+    params: {
+      slices: [
+        { start: 2000, end: 150000 },
+        { start: 15000, end: 300000 },
       ],
-      [
-        {
-          slug: 'progressive_distance_range_meta',
-          parameters: { min: 150000, max: 30000 },
-        },
-      ],
-    ],
+    },
   };
   t.context.start_date = new Date();
   t.context.end_date = new Date();
@@ -187,7 +178,7 @@ test('BuildExcel: should call stream data and return excel filepath without slic
   // Arrange
   t.context.campaign = {
     ...t.context.campaign!,
-    rules: [],
+    params: {},
   };
   const cursorCallback = () => {};
   t.context.searchWithCursorStub!.returns(cursorCallback);

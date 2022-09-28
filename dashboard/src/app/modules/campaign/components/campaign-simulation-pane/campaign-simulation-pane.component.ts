@@ -1,19 +1,14 @@
-import * as moment from 'moment';
 import { format, subDays, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { omit } from 'lodash-es';
-import { BehaviorSubject, combineLatest, throwError } from 'rxjs';
-import { catchError, debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 
-import { CurrencyPipe } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChange } from '@angular/core';
 
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.formater';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CampaignReducedStats } from '~/core/entities/campaign/api-format/CampaignStats';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { ResultInterface as StatResultInterface } from '~/shared/policy/stats.contract';
 
 import { CampaignApiService } from '../../services/campaign-api.service';
 
@@ -34,7 +29,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
   @Input() campaign: CampaignUx;
 
   public loading = true;
-  public state: CampaignReducedStats = { trip_excluded: 0, trip_subsidized: 0, amount: 0 };
+  public state: StatResultInterface = { trip_excluded: 0, trip_subsidized: 0, amount: 0 };
   public timeState = getTimeState(1);
   public range$ = new BehaviorSubject<number>(1);
   public simulatedCampaign$ = new BehaviorSubject<CampaignUx>(null);
@@ -54,47 +49,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
     super();
   }
 
-  ngOnInit(): void {
-    combineLatest([this.range$, this.simulatedCampaign$])
-      .pipe(
-        debounceTime(250),
-        tap(() => {
-          this.loading = true;
-          Object.keys(this.errors).forEach((key) => (this.errors[key] = false));
-        }),
-        filter(([, campaign]) => this.auth.user && (!!campaign.territory_id || !!this.auth.user.territory_id)),
-        map(([r, c]: [number, CampaignUx]) => {
-          this.timeState = getTimeState(r);
-          c.start = moment(this.timeState.startDate);
-          c.end = moment(this.timeState.endDate);
-          c.territory_id = c.territory_id || this.auth.user.territory_id;
-          delete c._id;
-          return c;
-        }),
-        map(CampaignFormater.toApi),
-        switchMap((c) =>
-          this.campaignApi.simulate(c).pipe(
-            catchError((err) => {
-              this.errors.simulation_failed = true;
-              this.loading = false;
-              return throwError(err);
-            }),
-          ),
-        ),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((state: CampaignReducedStats) => {
-        this.state = {
-          ...state,
-          amount:
-            this.simulatedCampaign$.value.unit === IncentiveUnitEnum.EUR
-              ? (new CurrencyPipe('FR').transform(state.amount / 100, 'EUR', 'symbol', '1.2-2') as any)
-              : (`${state.amount} pt${state.amount > 1 ? 's' : ''}` as any),
-        };
-
-        this.loading = false;
-      });
-  }
+  ngOnInit(): void {}
 
   ngOnChanges({ campaign }: { campaign: SimpleChange }): void {
     const { previousValue, currentValue } = campaign;

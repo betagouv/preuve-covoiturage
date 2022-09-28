@@ -2,7 +2,7 @@ import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/c
 import anyTest, { TestFn } from 'ava';
 import faker from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
-import { createGetCampaignResultInterface } from '../../helpers/fakeCampaign.helper.spec';
+import { createGetCampaignResultInterface } from '../../helpers/fakeCampaign.helper';
 import { ResultInterface as GetCampaignResultInterface } from '../../shared/policy/find.contract';
 import { CheckCampaign } from './CheckCampaign';
 
@@ -21,7 +21,7 @@ interface Context {
   checkCampaign: CheckCampaign;
 }
 
-const test = anyTest as TestFn<Partial<Context>>;
+const test = anyTest as TestFn<Context>;
 
 test.beforeEach((t) => {
   t.context.kernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
@@ -36,10 +36,23 @@ test.afterEach((t) => {
   t.context.kernelInterfaceResolverStub.restore();
 });
 
+const successStubArrange = (ctx: Context, operator_ids: number[]): GetCampaignResultInterface => {
+  const campaign: GetCampaignResultInterface = createGetCampaignResultInterface(
+    'active',
+    ctx.CAMPAIGN_NAME,
+    new Date(new Date().getTime() - 1 * 365 * 24 * 60 * 60 * 1000),
+    new Date(new Date().getTime() + 1 * 365 * 24 * 60 * 60 * 1000),
+    operator_ids,
+  );
+
+  ctx.kernelInterfaceResolverStub.resolves(campaign);
+  return campaign;
+};
+
 // eslint-disable-next-line max-len
 test('GetCampaignAndCallBuildExcel: should campaign be valid if proveded dates are in date range and one operator', async (t) => {
   // Arrange
-  const campaign: GetCampaignResultInterface = successStubArrange(t, [5]);
+  const campaign: GetCampaignResultInterface = successStubArrange(t.context, [5]);
 
   const startOfMonth: Date = new Date();
   startOfMonth.setDate(1);
@@ -59,7 +72,7 @@ test('GetCampaignAndCallBuildExcel: should campaign be valid if proveded dates a
 test('GetCampaignAndCallBuildExcel: should campaign be valid provided dates intersect range and 2 operators', async (t) => {
   // Arrange
   const operator_ids = [5, 6];
-  const campaign: GetCampaignResultInterface = successStubArrange(t, operator_ids);
+  const campaign: GetCampaignResultInterface = successStubArrange(t.context, operator_ids);
 
   const todayMinus3Years: Date = new Date();
   todayMinus3Years.setFullYear(todayMinus3Years.getFullYear() - 3);
@@ -78,7 +91,7 @@ test('GetCampaignAndCallBuildExcel: should campaign be valid provided dates inte
 // eslint-disable-next-line max-len
 test('GetCampaignAndCallBuildExcel: should campaign be valid if dates are in larger date range and 1 operator', async (t) => {
   // Arrange
-  const campaign: GetCampaignResultInterface = successStubArrange(t, [5]);
+  const campaign: GetCampaignResultInterface = successStubArrange(t.context, [5]);
 
   const todayMinus3Years: Date = new Date();
   todayMinus3Years.setFullYear(todayMinus3Years.getFullYear() - 3);
@@ -97,7 +110,7 @@ test('GetCampaignAndCallBuildExcel: should campaign be valid if dates are in lar
 // eslint-disable-next-line max-len
 test('GetCampaignAndCallBuildExcel: should campaign be valid if dates are in larger date range and no operator whitelist', async (t) => {
   // Arrange
-  const campaign: GetCampaignResultInterface = successStubArrange(t, null);
+  const campaign: GetCampaignResultInterface = successStubArrange(t.context, []);
 
   const todayMinus3Years: Date = new Date();
   todayMinus3Years.setFullYear(todayMinus3Years.getFullYear() - 3);
@@ -119,7 +132,7 @@ test('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaig
 
   // Act
   await t.throwsAsync(async () => {
-    await t.context.checkCampaign.call(faker.datatype.number(), null, null);
+    await t.context.checkCampaign.call(faker.datatype.number(), new Date(), new Date());
   });
 
   // Assert
@@ -132,7 +145,7 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if draf
 
   // Act
   await t.throwsAsync(async () => {
-    await t.context.checkCampaign.call(faker.datatype.number(), null, null);
+    await t.context.checkCampaign.call(faker.datatype.number(), new Date(), new Date());
   });
 
   // Assert
@@ -164,16 +177,3 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign date
   // Assert
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
-
-const successStubArrange = (t, operator_ids: number[]): GetCampaignResultInterface => {
-  const campaign: GetCampaignResultInterface = createGetCampaignResultInterface(
-    'active',
-    t.context.CAMPAIGN_NAME,
-    new Date(new Date().getTime() - 1 * 365 * 24 * 60 * 60 * 1000),
-    new Date(new Date().getTime() + 1 * 365 * 24 * 60 * 60 * 1000),
-    operator_ids,
-  );
-
-  t.context.kernelInterfaceResolverStub.resolves(campaign);
-  return campaign;
-};

@@ -35,17 +35,11 @@
           >
         </div>
         <div class="CampaignsList-item-actions">
-          <button mat-button *ngIf="auth.isTerritory || auth.isAdmin" routerLink="/campaign/create/{{ campaign._id }}">
-            <mat-icon matTooltip="dupliquer" color="primary">content_copy</mat-icon>
-          </button>
           <button mat-button *ngIf="showEdition(campaign.status)" routerLink="/campaign/{{ campaign._id }}">
             <mat-icon matTooltip="voir le détail" color="primary">edit</mat-icon>
           </button>
           <button mat-button *ngIf="showValid(campaign.status)" routerLink="/campaign/{{ campaign._id }}">
             <mat-icon matTooltip="voir le détail">remove_red_eye</mat-icon>
-          </button>
-          <button mat-button (click)="deleteCampaign(campaign)" *ngIf="showDelete(campaign.status)">
-            <mat-icon matTooltip="supprimer" color="error">delete_outline</mat-icon>
           </button>
         </div>
       </div>

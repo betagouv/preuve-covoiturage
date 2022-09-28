@@ -1,7 +1,4 @@
-import {
-  TerritoryCodeInterface,
-  TerritorySelectorsInterface,
-} from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritoryCodeInterface, TerritorySelectorsInterface } from '../../interfaces';
 
 export function isSelected(code: TerritoryCodeInterface, selectors: TerritorySelectorsInterface): boolean {
   for (const key of Object.keys(selectors)) {

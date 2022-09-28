@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
@@ -9,7 +9,7 @@ import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
   styleUrls: ['./campaign-table.component.scss'],
 })
 export class CampaignTableComponent {
-  @Input() campaigns: CampaignUx[];
+  @Input() campaigns: PolicyInterface[];
   @Input() displayedColumns = [
     'status',
     'start',
@@ -17,7 +17,7 @@ export class CampaignTableComponent {
     'name',
     'territory',
     // 'amount_spent',
-    'max_amount',
+    // 'max_amount',
     // 'trips_number',
     // 'max_trips',
   ];
@@ -26,5 +26,10 @@ export class CampaignTableComponent {
 
   isEuro(unit: IncentiveUnitEnum): boolean {
     return unit === IncentiveUnitEnum.EUR;
+  }
+
+  isRunning(campaign: PolicyInterface): boolean {
+    const today = new Date();
+    return campaign.status === 'active' && new Date(campaign.end_date) > today && new Date(campaign.start_date) < today;
   }
 }
