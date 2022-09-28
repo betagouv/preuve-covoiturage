@@ -47,5 +47,5 @@ test('should multiply by km with limit', async (t) => {
 test('should multiply by km with offset and limit', async (t) => {
   const ctx = setup(10000, 1);
   const res = perKm(ctx, { amount: 20, offset: 1000, limit: 8000 });
-  t.is(res, 8 * 20);
+  t.is(res, 7 * 20);
 });
