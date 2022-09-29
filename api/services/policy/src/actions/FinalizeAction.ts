@@ -1,5 +1,5 @@
 import { handler, KernelInterfaceResolver, InitHookInterface } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
+import { Action as AbstractAction, env } from '@ilos/core';
 import { sub } from 'date-fns';
 
 import {
@@ -106,9 +106,6 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
       }
       // 4. Update incentives
       await this.incentiveRepository.updateStatefulAmount(updatedIncentives, IncentiveStatusEnum.Valitated);
-
-      // 5. Persist meta
-      await store.store(MetadataLifetime.Day);
       const duration = new Date().getTime() - start;
       console.debug(
         `[policies] stateful incentive processing ${updatedIncentives.length} incentives done in ${duration}ms (${(
@@ -117,5 +114,8 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
         ).toFixed(3)}/s)`,
       );
     } while (!done);
+
+    // 5. Persist meta
+    await store.store(MetadataLifetime.Day);
   }
 }
