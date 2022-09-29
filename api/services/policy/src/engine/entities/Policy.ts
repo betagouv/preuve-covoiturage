@@ -80,7 +80,7 @@ export class Policy implements PolicyInterface {
     incentive: SerializedIncentiveInterface,
   ): Promise<StatefulIncentiveInterface> {
     const context = await StatefulContext.fromIncentive(store, incentive);
-    if (context.meta.isEmpty()) {
+    if (context.meta.isEmpty() || context.incentive.get() === 0) {
       return context.incentive;
     }
     this.handler.processStateful(context);
