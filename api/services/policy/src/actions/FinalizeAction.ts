@@ -54,6 +54,10 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    if(!!env('APP_DISABLE_POLICY_PROCESSING', false)) {
+      return;
+    }
+
     // Get 7 days ago
     const to = params.to ?? sub(new Date(), { days: 7 });
 

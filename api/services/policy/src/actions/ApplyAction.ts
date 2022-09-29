@@ -1,6 +1,6 @@
 import { isAfter } from 'date-fns';
 import { handler, KernelInterfaceResolver, ContextType, InitHookInterface } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
+import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import {
@@ -59,6 +59,10 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    if(!!env('APP_DISABLE_POLICY_PROCESSING', false)) {
+      return;
+    }
+
     console.debug('[policies] stateless starting');
     if (!('policy_id' in params)) {
       await this.dispatch();
