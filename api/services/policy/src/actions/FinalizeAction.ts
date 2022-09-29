@@ -115,7 +115,9 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
       );
     } while (!done);
 
+    console.debug('[policies] store metadata');
     // 5. Persist meta
     await store.store(MetadataLifetime.Day);
+    console.debug('[policies] store metadata done');
   }
 }

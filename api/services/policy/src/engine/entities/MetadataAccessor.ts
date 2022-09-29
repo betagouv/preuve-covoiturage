@@ -17,7 +17,7 @@ export class MetadataAccessor implements MetadataAccessorInterface {
 
   get(uuid: string): number {
     const meta = this.data.get(uuid);
-    if (!meta || !!!meta.value) {
+    if (!meta || !('value' in meta)) {
       throw new UnknownMetaException(`${uuid} not found`);
     }
     return meta.value;
