@@ -89,10 +89,10 @@ export class Policy implements PolicyInterface {
       this.handler.processStateful(context);
       await store.save(context.meta);
       return context.incentive;
-    } catch(e) {
-        console.error(`Stateful incentive calculation failed for ${incentive._id}: ${e.message}`);
-        console.debug(e);
-        throw e;
+    } catch (e) {
+      console.error(`Stateful incentive calculation failed for ${incentive._id}: ${e.message}`);
+      console.debug(e);
+      throw e;
     }
   }
 

@@ -59,7 +59,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if(!!env('APP_DISABLE_POLICY_PROCESSING', false)) {
+    if (!!env('APP_DISABLE_POLICY_PROCESSING', false)) {
       return;
     }
 
