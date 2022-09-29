@@ -28,6 +28,7 @@ export class MetadataStore implements MetadataStoreInterface {
   async load(registry: MetadataRegistryInterface): Promise<MetadataAccessorInterface> {
     const variables = registry.export();
     const keys = variables.map((v) => v.key);
+    console.debug(`Policy meta keys loading ${keys.join(', ')}`);
     const keysToQuery = keys.filter((k) => !this.cache.has(getCacheKey(registry.policy_id, k)));
     const missingData = (await this.repository?.get(registry.policy_id, keysToQuery, registry.datetime)) || [];
     for (const key of keysToQuery) {
@@ -64,6 +65,7 @@ export class MetadataStore implements MetadataStoreInterface {
       }
       this.cache.set(cacheKey, { ...oldData, value });
     }
+    console.debug(`Policy meta keys in cache ${[...this.cache.keys()].join(', ')}`);
   }
 
   async store(lifetime: MetadataLifetime): Promise<Array<SerializedStoredMetadataInterface>> {
