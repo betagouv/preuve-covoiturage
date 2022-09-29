@@ -77,19 +77,19 @@ test(
         value: 1375,
       },
       {
-        key: 'max_amount_restriction.one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.0-2019',
         value: 450,
       },
       {
-        key: 'max_amount_restriction.two.month.0-2019',
+        key: 'max_amount_restriction.0-two.month.0-2019',
         value: 250,
       },
       {
-        key: 'max_amount_restriction.two.month.2-2022',
+        key: 'max_amount_restriction.0-two.month.2-2022',
         value: 375,
       },
       {
-        key: 'max_amount_restriction.three.month.0-2019',
+        key: 'max_amount_restriction.0-three.month.0-2019',
         value: 300,
       },
     ],
@@ -117,7 +117,7 @@ test(
         value: 6_000_000_00,
       },
       {
-        key: 'max_amount_restriction.one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.0-2019',
         value: 50,
       },
     ],
@@ -132,7 +132,7 @@ test(
     carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {
-        key: 'max_amount_restriction.one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.0-2019',
         value: 149_00,
       },
     ],
@@ -145,7 +145,7 @@ test(
         value: 150,
       },
       {
-        key: 'max_amount_restriction.one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.0-2019',
         value: 150_00,
       },
     ],
@@ -176,7 +176,7 @@ test(
         value: 10_50,
       },
       {
-        key: 'max_amount_restriction.one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.0-2019',
         value: 10_50,
       },
     ],
