@@ -57,7 +57,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     if (!!env('APP_DISABLE_POLICY_PROCESSING', false)) {
       return;
     }
-
+    console.time('[policies] stateful');
     // Get 7 days ago
     const to = params.to ?? sub(new Date(), { days: 7 });
 
@@ -66,17 +66,22 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
 
     const policyMap: Map<number, PolicyInterface> = new Map();
 
-    // Apply internal restriction of policies
-    console.debug('[policies] stateful starting');
-    await this.processStatefulpolicys(policyMap, to, params.from);
-    console.debug('[policies] stateful finished');
-
-    // TODO: Apply external restriction (order) of policies
-
-    // Lock all
-    console.debug(`[policies] lock all incentive until ${to}`);
-    await this.incentiveRepository.lockAll(to);
-    console.debug('[policies] lock finished');
+    try {
+      console.debug('[policies] stateful starting');
+      await this.processStatefulpolicys(policyMap, to, params.from);
+      console.debug('[policies] stateful finished');
+      // Lock all
+      console.debug(`[policies] lock all incentive until ${to}`);
+      await this.incentiveRepository.lockAll(to);
+      console.debug('[policies] lock finished');
+    } catch (e) {
+      console.debug(`[policies:failure] unlock all incentive until ${to}`);
+      await this.incentiveRepository.lockAll(to, true);
+      console.debug('[policies:failure] unlock finished');
+      throw e;
+    } finally {
+      console.timeEnd('[policies] stateful');
+    }
   }
 
   protected async processStatefulpolicys(
@@ -109,7 +114,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
         }
       }
       // 4. Update incentives
-      await this.incentiveRepository.updateStatefulAmount(updatedIncentives, IncentiveStatusEnum.Valitated);
+      await this.incentiveRepository.updateStatefulAmount(updatedIncentives, IncentiveStatusEnum.Pending);
       const duration = new Date().getTime() - start;
       console.debug(
         `[policies] stateful incentive processing ${updatedIncentives.length} incentives done in ${duration}ms (${(

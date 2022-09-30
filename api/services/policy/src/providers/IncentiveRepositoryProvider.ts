@@ -39,7 +39,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     await this.connection.getClient().query(query);
   }
 
-  async lockAll(before: Date): Promise<void> {
+  async lockAll(before: Date, failure = false): Promise<void> {
     const query = {
       text: `
         UPDATE ${this.table}
@@ -48,7 +48,11 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           datetime <= $2::timestamp AND
           status = $3::policy.incentive_status_enum
       `,
-      values: ['validated', before, 'draft'],
+      values: [
+        failure ? IncentiveStatusEnum.Draft : IncentiveStatusEnum.Valitated,
+        before,
+        IncentiveStatusEnum.Pending,
+      ],
     };
 
     await this.connection.getClient().query(query);
@@ -129,7 +133,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         ${from ? 'AND datetime >= $3::timestamp' : ''}
         AND datetime <= $2::timestamp
       `,
-      values: ['draft', to, ...(from ? [from] : [])],
+      values: [IncentiveStatusEnum.Draft, to, ...(from ? [from] : [])],
     });
 
     console.debug(`FOUND ${resCount.rows[0].count} incentives to process`);
@@ -153,7 +157,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         AND datetime <= $2::timestamp
       ORDER BY datetime ASC;
       `,
-      values: ['draft', to, ...(from ? [from] : [])],
+      values: [IncentiveStatusEnum.Draft, to, ...(from ? [from] : [])],
     };
 
     const client = await this.connection.getClient().connect();
@@ -197,7 +201,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       })
       .map((i) => ({
         ...i,
-        status: i.status || 'validated',
+        status: i.status || IncentiveStatusEnum.Draft,
         state: i.statefulAmount === 0 ? IncentiveStateEnum.Null : IncentiveStateEnum.Regular,
         meta: i.meta || {},
       }));
