@@ -45,7 +45,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         UPDATE ${this.table}
           SET status = $1::policy.incentive_status_enum
         WHERE
-          datetime <= $2::timestamp AND
+          datetime < $2::timestamp AND
           status = $3::policy.incentive_status_enum
       `,
       values: [
@@ -131,7 +131,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       WHERE
         status = $1::policy.incentive_status_enum
         ${from ? 'AND datetime >= $3::timestamp' : ''}
-        AND datetime <= $2::timestamp
+        AND datetime < $2::timestamp
       `,
       values: [IncentiveStatusEnum.Draft, to, ...(from ? [from] : [])],
     });
