@@ -54,7 +54,7 @@ export const Smt: PolicyHandlerStaticInterface = class implements PolicyHandlerI
 
     // Par kilomètre
     let amount = 0;
-    for (const { start, end, fn } of this.slices) {
+    for (const { start, fn } of this.slices) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);
       }
