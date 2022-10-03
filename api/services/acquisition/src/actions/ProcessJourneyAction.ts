@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, KernelInterfaceResolver } from '@ilos/common';
+import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { NormalizationProvider } from '@pdc/provider-normalization';
 
@@ -28,7 +28,7 @@ import { callContext } from '../config/callContext';
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
-export class ProcessJourneyAction extends AbstractAction {
+export class ProcessJourneyAction extends AbstractAction implements InitHookInterface {
   constructor(
     private repository: AcquisitionRepositoryProvider,
     private normalizer: NormalizationProvider,
@@ -46,7 +46,7 @@ export class ProcessJourneyAction extends AbstractAction {
         service: handlerConfig.service,
         metadata: {
           repeat: {
-            cron: '*/5 * * * *',
+            cron: '*/1 * * * *',
           },
           jobId: 'acquisition.process.cron',
         },
@@ -54,12 +54,15 @@ export class ProcessJourneyAction extends AbstractAction {
     });
   }
 
-  protected async handle(params: ParamsInterface): Promise<ResultInterface> {
+  protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
     const [acquisitions, cb] = await this.repository.findThenUpdate({
-      limit: 50,
+      limit: 100,
       status: AcquisitionStatusEnum.Pending,
     });
     const results = [];
+    const msg = `[acquisition] processed (${acquisitions.length})`;
+    console.debug(`Processing acquisition ${acquisitions.map((a) => a._id).join(', ')}`);
+    console.time(msg);
     for (const acquisition of acquisitions) {
       try {
         const normalizedAcquisition = await this.normalize(acquisition);
@@ -73,6 +76,7 @@ export class ProcessJourneyAction extends AbstractAction {
           status: AcquisitionStatusEnum.Ok,
         });
       } catch (e) {
+        console.debug(`[acquisition] error ${e.message} processing ${acquisition._id}`);
         results.push({
           acquisition_id: acquisition._id,
           status: AcquisitionStatusEnum.Error,
@@ -82,6 +86,7 @@ export class ProcessJourneyAction extends AbstractAction {
       }
     }
     await cb(results);
+    console.timeEnd(msg);
     return;
   }
 
@@ -89,14 +94,17 @@ export class ProcessJourneyAction extends AbstractAction {
     const journey = {
       ...data.payload,
     };
+
     // driver AND/OR passenger
     if ('driver' in journey) journey.driver = this.normalizePerson(journey.driver, true);
     if ('passenger' in journey) journey.passenger = this.normalizePerson(journey.passenger, false);
 
-    return await this.normalizer.handle({
+    const normalizedData = await this.normalizer.handle({
       ...data,
       payload: journey,
     });
+
+    return JSON.parse(JSON.stringify(normalizedData));
   }
 
   protected normalizePerson(person: PersonInterface, driver = false): PersonInterface {
