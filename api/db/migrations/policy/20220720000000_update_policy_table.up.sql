@@ -1,5 +1,6 @@
 ALTER TABLE policy.policies ALTER COLUMN unit DROP NOT NULL;
 ALTER TABLE policy.policies ADD COLUMN handler VARCHAR(256);
+ALTER TYPE policy.incentive_status_enum ADD VALUE 'pending' AFTER 'draft';
 
 DROP VIEW IF EXISTS policy.trips;
 CREATE VIEW policy.trips AS (

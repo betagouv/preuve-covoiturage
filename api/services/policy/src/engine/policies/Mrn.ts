@@ -26,7 +26,11 @@ export const Mrn: PolicyHandlerStaticInterface = class implements PolicyHandlerI
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
-    { start: 20_000, end: 40_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
+    {
+      start: 20_000,
+      end: 40_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+    },
   ];
   protected limits = [
     setMax('E7B969E7-D701-2B9F-80D2-B30A7C3A5220', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
@@ -50,9 +54,9 @@ export const Mrn: PolicyHandlerStaticInterface = class implements PolicyHandlerI
 
     // Par kilomètre
     let amount = 0;
-    for (const { start, end, fn } of this.slices) {
-      if (onDistanceRange(ctx, { min: start, max: end })) {
-        amount = fn(ctx);
+    for (const { start, fn } of this.slices) {
+      if (onDistanceRange(ctx, { min: start })) {
+        amount += fn(ctx);
       }
     }
 

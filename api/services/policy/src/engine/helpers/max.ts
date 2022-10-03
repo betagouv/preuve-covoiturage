@@ -17,6 +17,12 @@ interface MaximumStatelessHelper {
   (ctx: StatelessContextInterface, uuid: string, target?: MaximumTargetEnum): void;
 }
 
+function getTargetUuid(target: MaximumTargetEnum, ctx: StatelessContextInterface): string {
+  const uuid =
+    target === MaximumTargetEnum.Driver ? ctx.carpool.driver_identity_uuid : ctx.carpool.passenger_identity_uuid;
+  return `${target.toString()}-${uuid}`;
+}
+
 export function setMax(
   uuid: string,
   max: number,
@@ -58,8 +64,7 @@ export const watchForPersonMaxAmountByMonth: MaximumStatelessHelper = (() => {
     ctx.meta.register({
       uuid,
       name: 'max_amount_restriction',
-      scope:
-        target === MaximumTargetEnum.Driver ? ctx.carpool.driver_identity_uuid : ctx.carpool.passenger_identity_uuid,
+      scope: getTargetUuid(target, ctx),
       lifetime: MetadataLifetime.Month,
     });
   }
@@ -72,8 +77,7 @@ export const watchForPersonMaxTripByMonth: MaximumStatelessHelper = (() => {
     ctx.meta.register({
       uuid,
       name: 'max_trip_restriction',
-      scope:
-        target === MaximumTargetEnum.Driver ? ctx.carpool.driver_identity_uuid : ctx.carpool.passenger_identity_uuid,
+      scope: getTargetUuid(target, ctx),
       lifetime: MetadataLifetime.Month,
     });
   }
@@ -86,8 +90,7 @@ export const watchForPersonMaxTripByDay: MaximumStatelessHelper = (() => {
     ctx.meta.register({
       uuid,
       name: 'max_trip_restriction',
-      scope:
-        target === MaximumTargetEnum.Driver ? ctx.carpool.driver_identity_uuid : ctx.carpool.passenger_identity_uuid,
+      scope: getTargetUuid(target, ctx),
       lifetime: MetadataLifetime.Day,
     });
   }

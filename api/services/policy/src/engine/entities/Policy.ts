@@ -69,6 +69,8 @@ export class Policy implements PolicyInterface {
           context.incentive.set(0);
           return context.incentive;
         }
+        console.error(`Statelesss incentive calculation for carpool ${carpool._id} failed : ${e.message}`);
+        console.debug(e);
         throw e;
       }
     }
@@ -79,13 +81,19 @@ export class Policy implements PolicyInterface {
     store: MetadataStoreInterface,
     incentive: SerializedIncentiveInterface,
   ): Promise<StatefulIncentiveInterface> {
-    const context = await StatefulContext.fromIncentive(store, incentive);
-    if (context.meta.isEmpty()) {
+    try {
+      const context = await StatefulContext.fromIncentive(store, incentive);
+      if (context.meta.isEmpty() || context.incentive.get() === 0) {
+        return context.incentive;
+      }
+      this.handler.processStateful(context);
+      await store.save(context.meta);
       return context.incentive;
+    } catch (e) {
+      console.error(`Stateful incentive calculation failed for ${incentive._id}: ${e.message}`);
+      console.debug(e);
+      throw e;
     }
-    this.handler.processStateful(context);
-    await store.save(context.meta);
-    return context.incentive;
   }
 
   protected guard(carpool: CarpoolInterface): boolean {

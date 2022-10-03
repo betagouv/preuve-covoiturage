@@ -50,11 +50,11 @@ test('should watchForGlobalMaxAmount', async (t) => {
 
 test('should watchForPersonMaxAmountByMonth', async (t) => {
   const [ctx] = setupStateless();
-  watchForPersonMaxAmountByMonth(ctx, '1');
+  watchForPersonMaxAmountByMonth(ctx, '1', MaximumTargetEnum.Passenger);
   t.deepEqual(ctx.meta.export(), [
     {
       uuid: '1',
-      key: `max_amount_restriction.${ctx.carpool.passenger_identity_uuid}.month.0-2019`,
+      key: `max_amount_restriction.${MaximumTargetEnum.Passenger}-${ctx.carpool.passenger_identity_uuid}.month.0-2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Month,
     },
@@ -63,11 +63,11 @@ test('should watchForPersonMaxAmountByMonth', async (t) => {
 
 test('should watchForPersonMaxTripByMonth', async (t) => {
   const [ctx] = setupStateless();
-  watchForPersonMaxTripByMonth(ctx, '1');
+  watchForPersonMaxTripByMonth(ctx, '1', MaximumTargetEnum.Passenger);
   t.deepEqual(ctx.meta.export(), [
     {
       uuid: '1',
-      key: `max_trip_restriction.${ctx.carpool.passenger_identity_uuid}.month.0-2019`,
+      key: `max_trip_restriction.${MaximumTargetEnum.Passenger}-${ctx.carpool.passenger_identity_uuid}.month.0-2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Month,
     },
@@ -80,7 +80,7 @@ test('should watchForPersonMaxTripByDay', async (t) => {
   t.deepEqual(ctx.meta.export(), [
     {
       uuid: '1',
-      key: `max_trip_restriction.${ctx.carpool.driver_identity_uuid}.day.15-0-2019`,
+      key: `max_trip_restriction.${MaximumTargetEnum.Driver}-${ctx.carpool.driver_identity_uuid}.day.15-0-2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Day,
     },

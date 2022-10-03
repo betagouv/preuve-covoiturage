@@ -57,15 +57,16 @@ test(
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
       { distance: 25_000, driver_identity_uuid: 'two' },
       { distance: 25_000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
+      { distance: 55_000, driver_identity_uuid: 'two' },
     ],
     meta: [],
   },
   {
-    incentive: [220, 420, 270, 270],
+    incentive: [220, 420, 270, 270, 420],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1180,
+        value: 1600,
       },
     ],
   },

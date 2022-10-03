@@ -28,11 +28,15 @@ import { description } from './Idfm.html';
 
 // Politique d'Île-de-France Mobilité
 export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
-  static readonly id = '460';
+  static readonly id = '459';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
   protected slices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
-    { start: 15_000, end: 30_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
+    {
+      start: 15_000,
+      end: 30_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
+    },
   ];
   protected limits = [
     setMax('99911EAF-89AB-C346-DDD5-BD2C7704F935', 6_000_000_00, watchForGlobalMaxAmount),
@@ -82,9 +86,9 @@ export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandler
 
     // Par kilomètre
     let amount = 0;
-    for (const { start, end, fn } of this.slices) {
-      if (onDistanceRange(ctx, { min: start, max: end })) {
-        amount = fn(ctx);
+    for (const { start, fn } of this.slices) {
+      if (onDistanceRange(ctx, { min: start })) {
+        amount += fn(ctx);
       }
     }
 
