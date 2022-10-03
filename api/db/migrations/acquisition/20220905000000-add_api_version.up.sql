@@ -11,7 +11,10 @@ ALTER TABLE acquisition.acquisitions
 CREATE TYPE acquisition.acquisition_status_enum AS enum('ok', 'error', 'pending', 'canceled');
 
 ALTER TABLE acquisition.acquisitions
-  ADD COLUMN IF NOT EXISTS status acquisition.acquisition_status_enum NOT NULL DEFAULT 'pending';
+  ADD COLUMN IF NOT EXISTS status acquisition.acquisition_status_enum NOT NULL DEFAULT 'ok';
+
+ALTER TABLE acquisition.acquisitions
+  ALTER COLUMN status SET DEFAULT 'pending';
 
 ALTER TABLE acquisition.acquisitions
   ADD COLUMN try_count SMALLINT NOT NULL DEFAULT 0;
