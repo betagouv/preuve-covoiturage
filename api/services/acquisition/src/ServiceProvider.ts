@@ -5,6 +5,7 @@ import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { NormalizationProvider } from '@pdc/provider-normalization';
+import { GeoProvider } from '@pdc/provider-geo';
 
 import { config } from './config';
 import { AcquisitionRepositoryProvider } from './providers/AcquisitionRepositoryProvider';
@@ -16,11 +17,12 @@ import { status } from './shared/acquisition/status.schema';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { CancelJourneyAction } from './actions/CancelJourneyAction';
 import { StatusJourneyAction } from './actions/StatusJourneyAction';
+import { ProcessJourneyAction } from './actions/ProcessJourneyAction';
 
 @serviceProvider({
   config,
   queues: ['acquisition'],
-  providers: [AcquisitionRepositoryProvider, NormalizationProvider],
+  providers: [AcquisitionRepositoryProvider, NormalizationProvider, GeoProvider],
   validator: [
     ['journey.create', create],
     ['journey.cancel', cancel],
@@ -31,7 +33,7 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],
   ],
-  handlers: [CreateJourneyAction, CancelJourneyAction, StatusJourneyAction],
+  handlers: [CreateJourneyAction, CancelJourneyAction, StatusJourneyAction, ProcessJourneyAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
