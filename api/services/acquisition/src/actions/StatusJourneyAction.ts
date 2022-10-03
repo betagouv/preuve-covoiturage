@@ -32,7 +32,7 @@ export class StatusJourneyAction extends AbstractAction {
       created_at: acquisition.created_at,
       metadata: {
         error_stage: acquisition.error_stage,
-        errors: acquisition.errors,
+        errors: Array.isArray(acquisition.errors) ? acquisition.errors.map((e) => e?.message || '') : [],
       },
     };
   }
