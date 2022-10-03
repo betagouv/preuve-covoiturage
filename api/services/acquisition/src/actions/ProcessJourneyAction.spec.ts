@@ -23,7 +23,7 @@ function bootstap(): {
 
 test('should process if normalization ok', async (t) => {
   const { action, repository, normalizer, kernel } = bootstap();
-  const normalizedPayload = Symbol() as any;
+  const normalizedPayload = { normalized: 'data' } as any;
   normalizer.handle.resolves(normalizedPayload);
   const cbStub = sinon.stub();
   const acquisitions = [
@@ -79,7 +79,7 @@ test('should process if normalization ok', async (t) => {
 
 test('should fail if normalization fail', async (t) => {
   const { action, repository, normalizer, kernel } = bootstap();
-  const normalizedPayload = Symbol() as any;
+  const normalizedPayload = { normalized: 'data' } as any;
   const normalizationError = new Error('normalization');
   normalizer.handle.callsFake(async (data) => {
     if (data._id === 1) {
