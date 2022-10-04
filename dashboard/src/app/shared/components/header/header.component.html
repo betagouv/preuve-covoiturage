@@ -16,9 +16,9 @@
 
       <!-- Campagnes -->
       <div
-        *ngIf="(user && hasTerritoryGroup) || hasRegistryGroup"
+        *ngIf="user"
         class="navbar-menu-item campaign-menu-item"
-        [routerLink]="campaignLink"
+        [routerLink]="'/campaign'"
         routerLinkActive="active"
       >
         Campagnes

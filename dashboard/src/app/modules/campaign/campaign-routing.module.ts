@@ -14,12 +14,12 @@ const routes: Routes = [
       {
         path: '',
         component: CampaignAdminListComponent,
-        data: { groups: [Groups.Territory, Groups.Registry] },
+        data: { groups: [Groups.Territory, Groups.Registry, Groups.Operator] },
       },
       {
         path: ':campaignId',
         component: CampaignViewComponent,
-        data: { groups: [Groups.Territory, Groups.Registry] },
+        data: { groups: [Groups.Territory, Groups.Registry, Groups.Operator] },
       },
     ],
   },
