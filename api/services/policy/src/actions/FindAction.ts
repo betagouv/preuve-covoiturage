@@ -3,15 +3,14 @@ import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
 import { Policy } from '../engine/entities/Policy';
 
-import { PolicyHandlerStaticInterface, PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/find.contract';
-import { alias } from '../shared/policy/find.schema';
+import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
 } from '../shared/operator/find.contract';
-import { policies } from '../engine/policies';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/find.contract';
+import { alias } from '../shared/policy/find.schema';
 
 @handler({
   ...handlerConfig,
@@ -19,6 +18,7 @@ import { policies } from '../engine/policies';
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       territory: 'territory.policy.find',
       registry: 'registry.policy.find',
+      operator: 'operator.policy.find',
     }),
     ['validate', alias],
   ],
