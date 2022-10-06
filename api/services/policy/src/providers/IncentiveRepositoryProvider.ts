@@ -296,4 +296,36 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           trip_subsidized: 0,
         };
   }
+
+  /**
+   * List all operator_id having valid trips for a given campaign.
+   *
+   * This approach, although slower, is based on data on the contrary
+   * to instantiating the campaign engine class and getting the list
+   * of operators from the params() method. The latter does not keep
+   * history of in-campaign deleted operators.
+   *
+   * TODO de-duplicate with api/services/trip/src/providers/TripRepositoryProvider.ts:529
+   */
+  async getPolicyActiveOperators(policy_id: number): Promise<number[]> {
+    const query = {
+      text: `
+        SELECT cc.operator_id
+        FROM policy.incentives pi
+        JOIN carpool.carpools cc ON cc._id = pi.carpool_id
+        JOIN policy.policies pp ON pp._id = $1
+        WHERE
+              cc.datetime >= pp.start_date
+          AND cc.datetime <  pp.end_date
+          AND pi.policy_id = $1
+          AND pi.state = 'regular'
+        GROUP BY cc.operator_id
+        ORDER BY cc.operator_id
+      `,
+      values: [policy_id],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    return result.rowCount ? result.rows.map((o) => o.operator_id) : [];
+  }
 }

@@ -1,13 +1,14 @@
 import { provider } from '@ilos/common';
+import { APDFNameProvider } from '@pdc/provider-file';
+import { stream } from 'exceljs';
 import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
+import { ResultInterface as Campaign } from '~/shared/policy/find.contract';
 import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { ResultInterface as Campaign } from '~/shared/policy/find.contract';
 import { SlicesInterface } from './../../interfaces/SlicesInterface';
 import { BuildFilepath } from './BuildFilepath';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
-import { stream } from 'exceljs';
 
 @provider()
 export class BuildExcel {
@@ -16,10 +17,11 @@ export class BuildExcel {
     private buildFilepath: BuildFilepath,
     private dataWorkbookWriter: DataWorkBookWriter,
     private slicesWorkbookWriter: SlicesWorkbookWriter,
+    private apdfNameProvider: APDFNameProvider,
   ) {}
 
   async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
-    const filepath: string = this.buildFilepath.call(campaign.name, campaign.territory_id, operator_id, start_date);
+    const filepath: string = this.apdfNameProvider.stringify({ campaign, operator: operator_id, datetime: start_date });
     const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
     await this.callDataWorkbookWriter(campaign, start_date, end_date, operator_id, workbookWriter);
     await this.callSlicesWorkbookWriter(campaign, start_date, end_date, operator_id, workbookWriter);

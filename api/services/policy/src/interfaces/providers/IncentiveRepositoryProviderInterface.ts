@@ -20,4 +20,5 @@ export abstract class IncentiveRepositoryProviderInterfaceResolver {
     from?: Date,
   ): AsyncGenerator<Array<SerializedIncentiveInterface<number>>, void, void>;
   abstract getPolicyIncentiveStats(policy_id: number, territory_id?: number): Promise<IncentiveStatsInterface>;
+  abstract getPolicyActiveOperators(policy_id: number, start_at: Date, end_at: Date): Promise<number[]>;
 }

@@ -1,18 +1,18 @@
 import { Operator } from '~/core/entities/operator/operator';
-import { S3Object } from '~/shared/capitalcall/list.contract';
+import { S3Object } from '~/shared/policy/fundingRequestsList.contract';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTableModule } from '@angular/material/table';
 import { of } from 'rxjs';
-import { CapitalcallApiService } from '../../services/capitalcall-api.service';
+import { FundingRequestsApiService } from '../../services/fundingrequests-api.service';
 
-import { CampaignCapitalcallComponent } from './campaign-capitalcall.component';
+import { CampaignFundingRequestsComponent } from './campaign-fundingrequests.component';
 import { CommonDataService } from '../../../../core/services/common-data.service';
 
-fdescribe('CampaignCapitalcallComponent', () => {
-  let component: CampaignCapitalcallComponent;
-  let fixture: ComponentFixture<CampaignCapitalcallComponent>;
-  const capitalCallServiceSpy = jasmine.createSpyObj('CapitalcallApiService', ['list', 'download']);
+fdescribe('CampaignFundingRequestsComponent', () => {
+  let component: CampaignFundingRequestsComponent;
+  let fixture: ComponentFixture<CampaignFundingRequestsComponent>;
+  const fRequestsServiceSpy = jasmine.createSpyObj('FundingRequestsApiService', ['list', 'download']);
   const commonDataServiceSpy = jasmine.createSpyObj('CommonDataService', ['operators$']);
 
   const s3ObjectList: S3Object[] = [
@@ -27,10 +27,10 @@ fdescribe('CampaignCapitalcallComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CampaignCapitalcallComponent],
+      declarations: [CampaignFundingRequestsComponent],
       imports: [HttpClientTestingModule, MatTableModule],
       providers: [
-        { provide: CapitalcallApiService, useValue: capitalCallServiceSpy },
+        { provide: FundingRequestsApiService, useValue: fRequestsServiceSpy },
         {
           provide: CommonDataService,
           useValue: commonDataServiceSpy,
@@ -40,7 +40,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
   });
 
   const createComponent = () => {
-    fixture = TestBed.createComponent(CampaignCapitalcallComponent);
+    fixture = TestBed.createComponent(CampaignFundingRequestsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
     const app = fixture.debugElement.componentInstance;
@@ -49,7 +49,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
 
   it('should create', () => {
     // Arrange
-    capitalCallServiceSpy.list.and.returnValue(of([]));
+    fRequestsServiceSpy.list.and.returnValue(of([]));
     commonDataServiceSpy.operators$ = of([]);
 
     // Act
@@ -61,20 +61,20 @@ fdescribe('CampaignCapitalcallComponent', () => {
 
   it('should show empty view if no data', () => {
     // Arrange
-    capitalCallServiceSpy.list.and.returnValue(of([]));
+    fRequestsServiceSpy.list.and.returnValue(of([]));
     commonDataServiceSpy.operators$ = of(operators);
 
     // Act
     createComponent();
 
     // Assert
-    const p = fixture.nativeElement.querySelector('.campaign-capitalcall-empty');
+    const p = fixture.nativeElement.querySelector('.campaign-frequests-empty');
     expect(p.textContent).toContain('Aucun appel fond');
   });
 
   it('should show table view with 2 elements, sorted by month desc, for registry or territory user', () => {
     // Arrange
-    capitalCallServiceSpy.list.and.returnValue(of(s3ObjectList));
+    fRequestsServiceSpy.list.and.returnValue(of(s3ObjectList));
     console.debug(commonDataServiceSpy.operators$);
     commonDataServiceSpy.operators$ = of(operators);
 
@@ -103,7 +103,7 @@ fdescribe('CampaignCapitalcallComponent', () => {
 
   // it('should show table view with 2 elements and no operator column for operator user', () => {
   //   // Arrange
-  //   capitalCallServiceSpy.list.and.returnValue(of(s3ObjectList));
+  //   fRequestsServiceSpy.list.and.returnValue(of(s3ObjectList));
   //   commonDataServiceSpy.operators$ = of(operators);
 
   //   // Act

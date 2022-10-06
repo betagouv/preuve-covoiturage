@@ -25,14 +25,18 @@ import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProv
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
+import { FundingRequestsListAction } from './actions/FundingRequestsListAction';
+import { APDFNameProvider, S3StorageProvider } from '@pdc/provider-file';
 
 @serviceProvider({
   config,
   providers: [
+    APDFNameProvider,
     PolicyRepositoryProvider,
     MetadataRepositoryProvider,
     TripRepositoryProvider,
     IncentiveRepositoryProvider,
+    S3StorageProvider,
     TerritoryRepositoryProvider,
   ],
   validator: [
@@ -46,6 +50,7 @@ import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
     ApplyAction,
     FinalizeAction,
     FindAction,
+    FundingRequestsListAction,
     ListAction,
     SimulateOnFutureAction,
     SimulateOnPastAction,

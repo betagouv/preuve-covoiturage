@@ -1,17 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { combineLatest } from 'rxjs';
-import { CommonDataService } from '../../../../core/services/common-data.service';
-import { CapitalcallApiService } from './../../services/capitalcall-api.service';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { CommonDataService } from '~/core/services/common-data.service';
+import { FundingRequestsApiService } from '../../services/fundingrequests-api.service';
 
 @Component({
-  selector: 'app-campaign-capitalcall',
-  templateUrl: './campaign-capitalcall.component.html',
-  styleUrls: ['./campaign-capitalcall.component.scss'],
+  selector: 'app-campaign-fundingrequests',
+  templateUrl: './campaign-fundingrequests.component.html',
+  styleUrls: ['./campaign-fundingrequests.component.scss'],
 })
-export class CampaignCapitalcallComponent implements OnInit {
-  @Input() territoryId: number;
+export class CampaignFundingRequestsComponent implements OnInit {
+  @Input() campaign: CampaignUx;
 
-  public capitalcallList: { key: string; month: string }[];
+  public fRequestsList: { key: string; month: string }[];
   public displayedColumns: string[] = ['month', 'operator', 'action'];
 
   private readonly SHORT_MONTHS_STRING: { [key: string]: string } = {
@@ -44,13 +45,14 @@ export class CampaignCapitalcallComponent implements OnInit {
     'Décembre',
   ];
 
-  constructor(private capitalcallApiService: CapitalcallApiService, private commonData: CommonDataService) {}
+  constructor(private fRequestsApiService: FundingRequestsApiService, private commonData: CommonDataService) {}
 
   ngOnInit(): void {
-    combineLatest(this.commonData.operators$, this.capitalcallApiService.list(this.territoryId)).subscribe(
+    combineLatest([this.commonData.operators$, this.fRequestsApiService.list(this.campaign._id)]).subscribe(
       ([operators, s3objects]) => {
-        this.capitalcallList = s3objects
+        this.fRequestsList = s3objects
           .map((s3Object) => {
+            console.debug(s3Object);
             const operatorId: number = this.computeOperatorId(s3Object.key);
             return {
               key: s3Object.key,

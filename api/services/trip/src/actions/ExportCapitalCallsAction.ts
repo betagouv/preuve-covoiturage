@@ -32,12 +32,12 @@ export class ExportCapitalCallsAction extends Action {
       params.query.campaign_id.map(async (c_id) => {
         const checkedCampaign: Campaign | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
-          .catch((e) => console.info(`Not processing excel capital call for campaign ${c_id} :${e}`));
+          .catch((e) => console.info(`Not processing excel funding requests for campaign ${c_id} :${e}`));
         if (!checkedCampaign) {
           return;
         }
 
-        const involvedOperatorIds = await this.tripRepositoryProvider.getPolicyInvoledOperators(
+        const involvedOperatorIds = await this.tripRepositoryProvider.getPolicyInvolvedOperators(
           checkedCampaign._id,
           start_date,
           end_date,
@@ -46,7 +46,9 @@ export class ExportCapitalCallsAction extends Action {
         await Promise.all(
           involvedOperatorIds.map(async (o_id) => {
             try {
-              console.debug(`Building excel capital call for campaign ${checkedCampaign.name}, operator id ${o_id}`);
+              console.debug(
+                `Building excel funding requests for campaign ${checkedCampaign.name}, operator id ${o_id}`,
+              );
               const filepath = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
               const s3key = await this.s3StorageProvider.upload(
                 BucketName.Export,
