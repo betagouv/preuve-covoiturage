@@ -39,9 +39,9 @@ export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandler
     },
   ];
   protected limits = [
-    setMax('99911EAF-89AB-C346-DDD5-BD2C7704F935', 6_000_000_00, watchForGlobalMaxAmount),
-    setMax('ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, MaximumTargetEnum.Driver),
     setMax('56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
+    setMax('ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, MaximumTargetEnum.Driver),
+    setMax('99911EAF-89AB-C346-DDD5-BD2C7704F935', 6_000_000_00, watchForGlobalMaxAmount),
   ];
   protected pollutionAndStrikeDates = [
     '2022-02-18',
