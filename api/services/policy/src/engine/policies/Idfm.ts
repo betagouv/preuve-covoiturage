@@ -37,6 +37,11 @@ export const Idfm: PolicyHandlerStaticInterface = class implements PolicyHandler
       end: 30_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
+    {
+      start: 30_000,
+      end: 150_000,
+      fn: () => 0,
+    },
   ];
   protected limits = [
     setMax('99911EAF-89AB-C346-DDD5-BD2C7704F935', 6_000_000_00, watchForGlobalMaxAmount),
