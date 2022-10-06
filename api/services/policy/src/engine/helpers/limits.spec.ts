@@ -14,8 +14,10 @@ import {
 import { generateCarpool, generateIncentive } from '../tests/helpers';
 import {
   applyLimitOnStatefulStage,
+  applyLimitsOnStatefulStage,
+  applyLimitsOnStatelessStage,
+  ConfiguredLimitInterface,
   LimitTargetEnum,
-  configureLimit,
   watchForGlobalMaxAmount,
   watchForPassengerMaxByTripByDay,
   watchForPersonMaxAmountByMonth,
@@ -133,9 +135,9 @@ test('should increase meta if incentive is not null', async (t) => {
 });
 
 test('should watch and apply', async (t) => {
-  const [fnStateless, fnStateful] = configureLimit('uuid', 150, watchForGlobalMaxAmount);
+  const limit: ConfiguredLimitInterface = ['uuid', 150, watchForGlobalMaxAmount];
   const [ctxStateless, carpool] = setupStateless();
-  fnStateless(ctxStateless);
+  applyLimitsOnStatelessStage([limit], ctxStateless);
   t.deepEqual(ctxStateless.meta.export(), [
     {
       uuid: 'uuid',
@@ -161,7 +163,7 @@ test('should watch and apply', async (t) => {
   t.deepEqual(ctxStateful.meta.export(), [
     { policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 0 },
   ]);
-  fnStateful(ctxStateful);
+  applyLimitsOnStatefulStage([limit], ctxStateful);
   t.is(ctxStateful.incentive.get(), 100);
   t.deepEqual(ctxStateful.meta.export(), [
     { policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 100 },
@@ -175,7 +177,7 @@ test('should watch and apply', async (t) => {
       value: 100,
     },
   ]);
-  fnStateful(ctxStateful);
+  applyLimitsOnStatefulStage([limit], ctxStateful);
   t.is(ctxStateful.incentive.get(), 50);
   t.deepEqual(ctxStateful.meta.export(), [
     { policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 150 },
@@ -192,9 +194,9 @@ test('should watch and apply', async (t) => {
 });
 
 test('should watch and apply for custom data', async (t) => {
-  const [fnStateless, fnStateful] = configureLimit('uuid', 3, watchForPassengerMaxByTripByDay);
+  const limit: ConfiguredLimitInterface = ['uuid', 3, watchForPassengerMaxByTripByDay];
   const [ctxStateless, carpool] = setupStateless();
-  fnStateless(ctxStateless);
+  applyLimitsOnStatelessStage([limit], ctxStateless);
   t.deepEqual(ctxStateless.meta.export(), [
     {
       uuid: 'uuid',
@@ -222,7 +224,7 @@ test('should watch and apply for custom data', async (t) => {
     { policy_id: 1, key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`, value: 0, carpoolValue: 1 },
   ]);
 
-  fnStateful(ctxStateful);
+  applyLimitsOnStatefulStage([limit], ctxStateful);
   t.is(ctxStateful.incentive.get(), 100);
   t.deepEqual(ctxStateful.meta.export(), [
     { policy_id: 1, key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`, value: 1, carpoolValue: 1 },
@@ -230,7 +232,7 @@ test('should watch and apply for custom data', async (t) => {
   await store.save(ctxStateful.meta);
   t.deepEqual(await store.store(MetadataLifetime.Day), []);
 
-  fnStateful(ctxStateful);
+  applyLimitsOnStatefulStage([limit], ctxStateful);
   t.is(ctxStateful.incentive.get(), 100);
   t.deepEqual(ctxStateful.meta.export(), [
     { policy_id: 1, key: `max_passenger_restriction.${carpool.trip_id}.day.15-0-2019`, value: 2, carpoolValue: 1 },

@@ -3,7 +3,6 @@ import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
-  StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
@@ -15,7 +14,6 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  configureLimit,
   startsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,

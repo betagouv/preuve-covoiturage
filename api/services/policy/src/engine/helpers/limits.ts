@@ -26,23 +26,11 @@ function getTargetUuid(target: LimitTargetEnum, ctx: StatelessContextInterface):
   return `${target.toString()}-${uuid}`;
 }
 
-export function configureLimit(
-  uuid: string,
-  max: number,
-  fn: LimitStatelessStageHelper,
-  target: LimitTargetEnum = LimitTargetEnum.Passenger,
-): [(ctx: StatelessContextInterface) => void, (ctx: StatefulContextInterface) => void] {
-  return [
-    (ctx: StatelessContextInterface) => fn(ctx, uuid, target),
-    (ctx: StatefulContextInterface) => applyLimitOnStatefulStage(ctx, uuid, max, fn),
-  ];
-}
-
 export function applyLimitsOnStatelessStage(
   limits: Array<ConfiguredLimitInterface>,
   ctx: StatelessContextInterface,
 ): void {
-  for (const [uuid, _, fn, target] of limits) {
+  for (const [uuid, , fn, target] of limits) {
     fn(ctx, uuid, target);
   }
 }

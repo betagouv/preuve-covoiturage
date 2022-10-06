@@ -12,7 +12,6 @@ export {
   watchForGlobalMaxTrip,
   watchForPassengerMaxByTripByDay,
   watchForPersonMaxTripByMonth,
-  configureLimit,
   applyLimitOnStatefulStage,
   applyLimitsOnStatefulStage,
   applyLimitsOnStatelessStage,

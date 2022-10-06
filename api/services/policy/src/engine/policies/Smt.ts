@@ -3,7 +3,6 @@ import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
-  StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
 import {
@@ -13,7 +12,6 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  configureLimit,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
   LimitTargetEnum,
