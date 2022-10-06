@@ -13,15 +13,15 @@ import {
 } from '../../interfaces';
 import { generateCarpool, generateIncentive } from '../tests/helpers';
 import {
-  applyForMaximum,
-  MaximumTargetEnum,
-  setMax,
+  applyLimitOnStatefulStage,
+  LimitTargetEnum,
+  configureLimit,
   watchForGlobalMaxAmount,
   watchForPassengerMaxByTripByDay,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
   watchForPersonMaxTripByMonth,
-} from './max';
+} from './limits';
 
 function setupStateless(): [StatelessContextInterface, CarpoolInterface] {
   const carpool = generateCarpool();
@@ -50,11 +50,11 @@ test('should watchForGlobalMaxAmount', async (t) => {
 
 test('should watchForPersonMaxAmountByMonth', async (t) => {
   const [ctx] = setupStateless();
-  watchForPersonMaxAmountByMonth(ctx, '1', MaximumTargetEnum.Passenger);
+  watchForPersonMaxAmountByMonth(ctx, '1', LimitTargetEnum.Passenger);
   t.deepEqual(ctx.meta.export(), [
     {
       uuid: '1',
-      key: `max_amount_restriction.${MaximumTargetEnum.Passenger}-${ctx.carpool.passenger_identity_uuid}.month.0-2019`,
+      key: `max_amount_restriction.${LimitTargetEnum.Passenger}-${ctx.carpool.passenger_identity_uuid}.month.0-2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Month,
     },
@@ -63,11 +63,11 @@ test('should watchForPersonMaxAmountByMonth', async (t) => {
 
 test('should watchForPersonMaxTripByMonth', async (t) => {
   const [ctx] = setupStateless();
-  watchForPersonMaxTripByMonth(ctx, '1', MaximumTargetEnum.Passenger);
+  watchForPersonMaxTripByMonth(ctx, '1', LimitTargetEnum.Passenger);
   t.deepEqual(ctx.meta.export(), [
     {
       uuid: '1',
-      key: `max_trip_restriction.${MaximumTargetEnum.Passenger}-${ctx.carpool.passenger_identity_uuid}.month.0-2019`,
+      key: `max_trip_restriction.${LimitTargetEnum.Passenger}-${ctx.carpool.passenger_identity_uuid}.month.0-2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Month,
     },
@@ -76,11 +76,11 @@ test('should watchForPersonMaxTripByMonth', async (t) => {
 
 test('should watchForPersonMaxTripByDay', async (t) => {
   const [ctx] = setupStateless();
-  watchForPersonMaxTripByDay(ctx, '1', MaximumTargetEnum.Driver);
+  watchForPersonMaxTripByDay(ctx, '1', LimitTargetEnum.Driver);
   t.deepEqual(ctx.meta.export(), [
     {
       uuid: '1',
-      key: `max_trip_restriction.${MaximumTargetEnum.Driver}-${ctx.carpool.driver_identity_uuid}.day.15-0-2019`,
+      key: `max_trip_restriction.${LimitTargetEnum.Driver}-${ctx.carpool.driver_identity_uuid}.day.15-0-2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Day,
     },
@@ -97,7 +97,7 @@ test('should drop incentive if max is reached', async (t) => {
     ],
   });
   ctx.meta.set('uuid', 10);
-  applyForMaximum(ctx, 'uuid', 10, watchForGlobalMaxAmount);
+  applyLimitOnStatefulStage(ctx, 'uuid', 10, watchForGlobalMaxAmount);
   t.deepEqual(ctx.incentive.get(), 0);
   t.deepEqual(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 10 }]);
 });
@@ -112,7 +112,7 @@ test('should partially drop incentive if max will be reached', async (t) => {
     ],
   });
   ctx.meta.set('uuid', 30);
-  applyForMaximum(ctx, 'uuid', 100, watchForGlobalMaxAmount);
+  applyLimitOnStatefulStage(ctx, 'uuid', 100, watchForGlobalMaxAmount);
   t.deepEqual(ctx.incentive.get(), 70);
   t.deepEqual(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 100 }]);
 });
@@ -127,13 +127,13 @@ test('should increase meta if incentive is not null', async (t) => {
     ],
   });
   ctx.meta.set('uuid', 30);
-  applyForMaximum(ctx, 'uuid', 200, watchForGlobalMaxAmount);
+  applyLimitOnStatefulStage(ctx, 'uuid', 200, watchForGlobalMaxAmount);
   t.deepEqual(ctx.incentive.get(), 100);
   t.deepEqual(ctx.meta.export(), [{ policy_id: 1, key: 'max_amount_restriction.global.campaign.global', value: 130 }]);
 });
 
 test('should watch and apply', async (t) => {
-  const [fnStateless, fnStateful] = setMax('uuid', 150, watchForGlobalMaxAmount);
+  const [fnStateless, fnStateful] = configureLimit('uuid', 150, watchForGlobalMaxAmount);
   const [ctxStateless, carpool] = setupStateless();
   fnStateless(ctxStateless);
   t.deepEqual(ctxStateless.meta.export(), [
@@ -192,7 +192,7 @@ test('should watch and apply', async (t) => {
 });
 
 test('should watch and apply for custom data', async (t) => {
-  const [fnStateless, fnStateful] = setMax('uuid', 3, watchForPassengerMaxByTripByDay);
+  const [fnStateless, fnStateful] = configureLimit('uuid', 3, watchForPassengerMaxByTripByDay);
   const [ctxStateless, carpool] = setupStateless();
   fnStateless(ctxStateless);
   t.deepEqual(ctxStateless.meta.export(), [
