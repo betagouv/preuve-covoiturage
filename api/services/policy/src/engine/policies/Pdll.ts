@@ -35,6 +35,11 @@ export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandler
       end: 50_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 50_000 })),
     },
+    {
+      start: 50_000,
+      end: 150_000,
+      fn: () => 0,
+    },
   ];
   protected limits = [
     setMax('8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),

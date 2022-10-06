@@ -31,6 +31,11 @@ export const Mrn: PolicyHandlerStaticInterface = class implements PolicyHandlerI
       end: 40_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
+    {
+      start: 40_000,
+      end: 150_000,
+      fn: () => 0,
+    },
   ];
   protected limits = [
     setMax('E7B969E7-D701-2B9F-80D2-B30A7C3A5220', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
