@@ -43,16 +43,6 @@ export class S3StorageProvider implements ProviderInterface {
     });
   }
 
-  async findByOperator(operator_id: number): Promise<S3.ObjectList> {
-    const result = await this.s3Instances
-      .get(BucketName.Export)
-      .listObjectsV2({
-        Bucket: this.getBucketName(BucketName.Export),
-      })
-      .promise();
-    return result.Contents.filter((o) => o.Key.includes(`/apdf-${operator_id}`));
-  }
-
   async findByTerritory(territory_id: number): Promise<S3.ObjectList> {
     const result = await this.s3Instances
       .get(BucketName.Export)

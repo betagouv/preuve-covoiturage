@@ -8,7 +8,7 @@ export interface S3Object {
 
 export interface ParamsInterface {
   operator_id?: number;
-  territory_id?: number;
+  territory_id: number;
 }
 
 export const handlerConfig = {
