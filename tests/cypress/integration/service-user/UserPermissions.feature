@@ -32,20 +32,6 @@ Fonctionnalité: Valider les permissions sur /users
     Alors je vois la section "Modifier un utilisateur"
     Et je me déconnecte
 
-  Scénario: Compte découverte ne peut pas voir les utilisateurs
-
-    Étant donné que je suis connecté.e comme compte découverte
-    Alors je vois le menu administration
-    Lorsque je clique sur le menu administration
-    Alors je vois que la navigation de l'administration n'inclut pas "Utilisateurs & accès"
-    Lorsque je suis sur la page "/admin/users"
-    Alors je vois l'URL "/campaign"
-    Lorsque je suis sur la page "/admin/users/create"
-    Alors je vois l'URL "/campaign"
-    Lorsque je suis sur la page "/admin/users/1"
-    Alors je vois l'URL "/campaign"
-    Et je me déconnecte
-
   Scénario: Operator Admin peut administrer les utilisateurs
 
     Étant donné que je suis connecté.e comme administrateur d'un opérateur
