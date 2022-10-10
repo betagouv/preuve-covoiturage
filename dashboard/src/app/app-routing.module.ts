@@ -13,6 +13,7 @@ import { CertificateModule } from './modules/certificate/certificate.module';
 import { LogoutComponent } from './modules/logout/logout.component';
 import { RegistryModule } from './modules/registry/registry.module';
 import { StatModule } from './modules/stat/stat.module';
+import { TerritoryDemoHomeModule } from './modules/territory-demo-home/territory-demo-home.module';
 import { TripModule } from './modules/trip/trip.module';
 
 const routes: Routes = [
@@ -46,6 +47,12 @@ const routes: Routes = [
         canLoad: [AuthGuard],
         // prettier-ignore
         loadChildren: (): Promise<AdministrationModule> => import('./modules/administration/administration.module').then((mod) => mod.AdministrationModule),
+      },
+      {
+        path: 'demo',
+        canLoad: [AuthGuard],
+        // prettier-ignore
+        loadChildren: (): Promise<TerritoryDemoHomeModule> => import('./modules/territory-demo-home/territory-demo-home.module').then((mod) => mod.TerritoryDemoHomeModule),
       },
     ],
   },

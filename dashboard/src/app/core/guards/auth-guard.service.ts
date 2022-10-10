@@ -20,8 +20,9 @@ import { User } from '../entities/authentication/user';
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
-  private readonly defaultHomepage = '/trip/stats';
-  private readonly territoryHomepage = '/campaign';
+  private readonly DEFAULT_HOME = '/trip/stats';
+  private readonly TERRITORY_HOME = '/campaign';
+  private readonly TERRITORY_DEMO_HOME = '/demo';
 
   // map enums to their method counterpart
   private readonly groupsMap = {
@@ -76,8 +77,10 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
       map((pass) => {
         if (pass) return true;
 
+        if (this.auth.isTerritoryDemo()) return this.router.parseUrl(this.TERRITORY_DEMO_HOME);
+
         // redirect to home page
-        return this.router.parseUrl(this.auth.isTerritory() ? this.territoryHomepage : this.defaultHomepage);
+        return this.router.parseUrl(this.auth.isTerritory() ? this.TERRITORY_HOME : this.DEFAULT_HOME);
       }),
     );
   }

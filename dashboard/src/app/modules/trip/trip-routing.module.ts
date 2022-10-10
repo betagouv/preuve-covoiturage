@@ -14,10 +14,30 @@ const routes: Routes = [
       {
         path: 'stats',
         component: TripStatsComponent,
+        data: {
+          roles: [
+            Roles.TerritoryAdmin,
+            Roles.TerritoryUser,
+            Roles.OperatorAdmin,
+            Roles.OperatorUser,
+            Roles.RegistryAdmin,
+            Roles.RegistryUser,
+          ],
+        },
       },
       {
         path: 'list',
         component: TripListComponent,
+        data: {
+          roles: [
+            Roles.TerritoryAdmin,
+            Roles.TerritoryUser,
+            Roles.OperatorAdmin,
+            Roles.OperatorUser,
+            Roles.RegistryAdmin,
+            Roles.RegistryUser,
+          ],
+        },
       },
       {
         path: 'export',

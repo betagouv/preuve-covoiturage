@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { Groups } from '~/core/enums/user/groups';
 import { AuthGuard } from '~/core/guards/auth-guard.service';
+import { Roles } from '../../core/enums/user/roles';
 import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign-admin-list.component';
 import { CampaignViewComponent } from './pages/campaign-view/campaign-view.component';
 
@@ -14,12 +14,30 @@ const routes: Routes = [
       {
         path: '',
         component: CampaignAdminListComponent,
-        data: { groups: [Groups.Territory, Groups.Registry, Groups.Operator] },
+        data: {
+          roles: [
+            Roles.TerritoryAdmin,
+            Roles.TerritoryUser,
+            Roles.OperatorAdmin,
+            Roles.OperatorUser,
+            Roles.RegistryAdmin,
+            Roles.RegistryUser,
+          ],
+        },
       },
       {
         path: ':campaignId',
         component: CampaignViewComponent,
-        data: { groups: [Groups.Territory, Groups.Registry, Groups.Operator] },
+        data: {
+          roles: [
+            Roles.TerritoryAdmin,
+            Roles.TerritoryUser,
+            Roles.OperatorAdmin,
+            Roles.OperatorUser,
+            Roles.RegistryAdmin,
+            Roles.RegistryUser,
+          ],
+        },
       },
     ],
   },
