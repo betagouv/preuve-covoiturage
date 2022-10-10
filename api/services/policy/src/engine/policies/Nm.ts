@@ -3,7 +3,6 @@ import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
-  StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
@@ -15,16 +14,19 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  setMax,
   startsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
+  LimitTargetEnum,
+  watchForGlobalMaxTrip,
+  watchForPassengerMaxByTripByDay,
+  ConfiguredLimitInterface,
 } from '../helpers';
-import { MaximumTargetEnum, watchForGlobalMaxTrip, watchForPassengerMaxByTripByDay } from '../helpers/max';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Nm.html';
 
 // Politique de Nantes Métropole
-export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
+export const Nm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '656';
   protected operators = [OperatorsEnum.Klaxit];
   protected operatorClass = ['C'];
@@ -32,12 +34,12 @@ export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerIn
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     { start: 20_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
-  protected limits = [
-    setMax('D5FA9FA9-E8CC-478E-80ED-96FDC5476689', 3, watchForPassengerMaxByTripByDay),
-    setMax('6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 4, watchForPersonMaxTripByDay, MaximumTargetEnum.Passenger),
-    setMax('286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
-    setMax('D1FED21B-5160-A1BF-C052-5DA7A190996C', 10_000_000, watchForGlobalMaxTrip),
-    setMax('69FD0093-CEEE-0709-BB80-878D2E857630', 10_000_000_00, watchForGlobalMaxAmount),
+  protected limits: Array<ConfiguredLimitInterface> = [
+    ['D5FA9FA9-E8CC-478E-80ED-96FDC5476689', 3, watchForPassengerMaxByTripByDay],
+    ['6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 4, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
+    ['286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+    ['D1FED21B-5160-A1BF-C052-5DA7A190996C', 10_000_000, watchForGlobalMaxTrip],
+    ['69FD0093-CEEE-0709-BB80-878D2E857630', 10_000_000_00, watchForGlobalMaxAmount],
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
@@ -53,12 +55,7 @@ export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerIn
 
   processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
-
-    // Mise en place des limites
-    for (const limit of this.limits) {
-      const [staless] = limit;
-      staless(ctx);
-    }
+    super.processStateless(ctx);
 
     // Par kilomètre
     let amount = 0;
@@ -69,13 +66,6 @@ export const Nm: PolicyHandlerStaticInterface = class implements PolicyHandlerIn
     }
 
     ctx.incentive.set(amount);
-  }
-
-  processStateful(ctx: StatefulContextInterface): void {
-    for (const limit of this.limits) {
-      const [, stateful] = limit;
-      stateful(ctx);
-    }
   }
 
   params(): PolicyHandlerParamsInterface {

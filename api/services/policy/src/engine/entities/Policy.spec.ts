@@ -1,5 +1,5 @@
 import test from 'ava';
-import { applyForMaximum, watchForGlobalMaxAmount, perKm, isOperatorClassOrThrow } from '../helpers';
+import { applyLimitOnStatefulStage, watchForGlobalMaxAmount, perKm, isOperatorClassOrThrow } from '../helpers';
 import { process } from '../tests/macro';
 import {
   PolicyHandlerInterface,
@@ -16,7 +16,7 @@ class TestHandler implements PolicyHandlerInterface {
   }
 
   processStateful(ctx: StatefulContextInterface): void {
-    applyForMaximum(ctx, 'max', 2000, watchForGlobalMaxAmount);
+    applyLimitOnStatefulStage(ctx, 'max', 2000, watchForGlobalMaxAmount);
   }
 
   describe() {

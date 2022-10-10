@@ -3,7 +3,6 @@ import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
-  StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
 import {
@@ -12,21 +11,25 @@ import {
   onDistanceRange,
   onDistanceRangeOrThrow,
   perSeat,
-  setMax,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
+  LimitTargetEnum,
+  ConfiguredLimitInterface,
 } from '../helpers';
-import { MaximumTargetEnum } from '../helpers/max';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Laval.html';
 
 // Politique de la Communauté D'Agglomeration De Laval
-export const Laval: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
+export const Laval: PolicyHandlerStaticInterface = class
+  extends AbstractPolicyHandler
+  implements PolicyHandlerInterface
+{
   static readonly id = '695';
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [{ start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
-  protected limits = [
-    setMax('70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
-    setMax('A2CEF9FE-D179-319F-1996-9D69E0157522', 9_000_00, watchForGlobalMaxAmount),
+  protected limits: Array<ConfiguredLimitInterface> = [
+    ['70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+    ['A2CEF9FE-D179-319F-1996-9D69E0157522', 9_000_00, watchForGlobalMaxAmount],
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
@@ -37,12 +40,7 @@ export const Laval: PolicyHandlerStaticInterface = class implements PolicyHandle
 
   processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
-
-    // Mise en place des limites
-    for (const limit of this.limits) {
-      const [staless] = limit;
-      staless(ctx);
-    }
+    super.processStateless(ctx);
 
     // Par kilomètre
     let amount = 0;
@@ -53,13 +51,6 @@ export const Laval: PolicyHandlerStaticInterface = class implements PolicyHandle
     }
 
     ctx.incentive.set(amount);
-  }
-
-  processStateful(ctx: StatefulContextInterface): void {
-    for (const limit of this.limits) {
-      const [, stateful] = limit;
-      stateful(ctx);
-    }
   }
 
   params(): PolicyHandlerParamsInterface {

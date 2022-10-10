@@ -73,12 +73,12 @@ test(
     incentive: [150, 300, 250, 375, 300],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 1375,
-      },
-      {
         key: 'max_amount_restriction.0-one.month.0-2019',
         value: 450,
+      },
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 1375,
       },
       {
         key: 'max_amount_restriction.0-two.month.0-2019',
@@ -113,12 +113,12 @@ test(
     incentive: [50],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 6_000_000_00,
+        key: 'max_amount_restriction.0-one.month.0-2019',
+        value: 150,
       },
       {
-        key: 'max_amount_restriction.0-one.month.0-2019',
-        value: 50,
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 6_000_000_00,
       },
     ],
   },
@@ -141,12 +141,12 @@ test(
     incentive: [100],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 150,
-      },
-      {
         key: 'max_amount_restriction.0-one.month.0-2019',
         value: 150_00,
+      },
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 100,
       },
     ],
   },
@@ -172,12 +172,12 @@ test(
     incentive: [150, 150, 150, 150, 150, 150, 0],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 10_50,
+        key: 'max_amount_restriction.0-one.month.0-2019',
+        value: 900,
       },
       {
-        key: 'max_amount_restriction.0-one.month.0-2019',
-        value: 10_50,
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 900,
       },
     ],
   },

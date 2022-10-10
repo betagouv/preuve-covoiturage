@@ -3,7 +3,6 @@ import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
-  StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
@@ -15,17 +14,18 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  setMax,
   startsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
+  LimitTargetEnum,
+  startsAndEndsAt,
+  ConfiguredLimitInterface,
 } from '../helpers';
-import { MaximumTargetEnum } from '../helpers/max';
-import { startsAndEndsAt } from '../helpers/position';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Pdll.html';
 
 // Politique de Pays de la Loire
-export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
+export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '249';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
   protected slices = [
@@ -41,9 +41,9 @@ export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandler
       fn: () => 0,
     },
   ];
-  protected limits = [
-    setMax('8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
-    setMax('5499304F-2C64-AB1A-7392-52FF88F5E78D', 2_000_000_00, watchForGlobalMaxAmount),
+  protected limits: Array<ConfiguredLimitInterface> = [
+    ['8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+    ['5499304F-2C64-AB1A-7392-52FF88F5E78D', 2_000_000_00, watchForGlobalMaxAmount],
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
@@ -69,12 +69,7 @@ export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandler
 
   processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
-
-    // Mise en place des limites
-    for (const limit of this.limits) {
-      const [staless] = limit;
-      staless(ctx);
-    }
+    super.processStateless(ctx);
 
     // Par kilomètre
     let amount = 0;
@@ -85,13 +80,6 @@ export const Pdll: PolicyHandlerStaticInterface = class implements PolicyHandler
     }
 
     ctx.incentive.set(amount);
-  }
-
-  processStateful(ctx: StatefulContextInterface): void {
-    for (const limit of this.limits) {
-      const [, stateful] = limit;
-      stateful(ctx);
-    }
   }
 
   params(): PolicyHandlerParamsInterface {
