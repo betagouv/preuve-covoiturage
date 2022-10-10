@@ -1,9 +1,9 @@
+import S3 from 'aws-sdk/clients/s3';
 import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
 import { handlerConfig, ParamsInterface, S3Object } from '../shared/capitalcall/list.contract';
-
 @handler({
   ...handlerConfig,
   middlewares: [
@@ -20,17 +20,15 @@ export class ListCapitalCallAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<S3Object[]> {
-    let s3Object: Partial<{ Key: string; Size; number }>[];
+    let s3ObjectList: S3.Object[];
+    s3ObjectList = await this.s3StorageProvider.findByTerritory(params.territory_id);
+
     if (params.operator_id) {
-      // operator
-      s3Object = await this.s3StorageProvider.findByOperator(params.operator_id);
-    } else if (params.territory_id) {
-      // territory
-      s3Object = await this.s3StorageProvider.findByTerritory(params.territory_id);
+      s3ObjectList = s3ObjectList.filter((o) => o.Key.includes(`/apdf-${params.operator_id}`));
     }
 
     return Promise.all(
-      s3Object.map(async (o) => {
+      s3ObjectList.map(async (o) => {
         const object: S3Object = {
           signed_url: await this.s3StorageProvider.getSignedUrl(
             BucketName.Export,

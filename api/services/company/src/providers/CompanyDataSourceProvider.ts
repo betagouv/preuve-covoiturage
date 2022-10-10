@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import axios from 'axios';
-import { provider, NotFoundException } from '@ilos/common';
+import { provider, NotFoundException, ConfigInterfaceResolver } from '@ilos/common';
 
 import {
   CompanyDataSourceProviderInterfaceResolver,
@@ -13,42 +13,53 @@ import { CompanyInterface } from '../shared/common/interfaces/CompanyInterface2'
   identifier: CompanyDataSourceProviderInterfaceResolver,
 })
 export class CompanyDataSourceProvider implements CompanyDataSourceProviderInterface {
-  protected domain = 'https://entreprise.data.gouv.fr/api/sirene/v3';
+  constructor(private readonly config: ConfigInterfaceResolver) {}
 
   async find(siret: string): Promise<CompanyInterface> {
     try {
-      const { data } = await axios.get(`${this.domain}/etablissements/${siret}`);
+      const { url, token, timeout } = this.config.get('dataSource');
+      const { data } = await axios.get(`${url}/siret/${siret}`, {
+        timeout,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
 
       if (data.message) {
         throw new NotFoundException(`${data.message} (${siret})`);
       }
 
       const siren = siret.substring(0, 9);
-      const updated_at = get(data, 'etablissement.updated_at', null);
+      const updated_at = get(data, 'etablissement.dateDernierTraitementEtablissement', null);
 
       return {
         siret,
         siren,
         nic: get(data, 'etablissement.nic', null),
-        legal_name: get(data, 'etablissement.unite_legale.denomination', null),
-        company_naf_code: this.cleanNaf(get(data, 'etablissement.unite_legale.activite_principale', null)),
-        establishment_naf_code: this.cleanNaf(get(data, 'etablissement.activite_principale', null)),
-        legal_nature_code: get(data, 'etablissement.unite_legale.categorie_juridique', null),
-        legal_nature_label: get(data, 'etablissement.unite_legale.denomination', null),
-        nonprofit_code: null,
-        intra_vat: get(
-          data,
-          'etablissement.unite_legale.numero_tva_intra',
-          `FR${`0${((parseInt(siren) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
+        legal_name: get(data, 'etablissement.uniteLegale.denominationUniteLegale', null),
+        company_naf_code: this.cleanNaf(get(data, 'etablissement.uniteLegale.activitePrincipaleUniteLegale', null)),
+        establishment_naf_code: this.cleanNaf(
+          get(data, 'etablissement.uniteLegale.activitePrincipaleUniteLegale', null),
         ),
-        address: get(data, 'etablissement.geo_adresse', null),
-        address_street: get(data, 'etablissement.geo_l4', null),
-        address_postcode: get(data, 'etablissement.code_postal', null),
-        address_cedex: get(data, 'etablissement.code_cedex', null),
-        address_city: get(data, 'etablissement.libelle_commune', null),
-        lon: Number(get(data, 'etablissement.longitude', 0)) || 0,
-        lat: Number(get(data, 'etablissement.latitude', 0)) || 0,
-        headquarter: get(data, 'etablissement.etablissement_siege', null) === 'true',
+        legal_nature_code: get(data, 'etablissement.uniteLegale.categorieJuridiqueUniteLegale', null),
+        legal_nature_label: get(data, 'etablissement.uniteLegale.nomenclatureActivitePrincipaleUniteLegale', null),
+        nonprofit_code: null,
+        intra_vat: `FR${`0${((parseInt(siren) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
+        address: [
+          'etablissement.adresseEtablissement.numeroVoieEtablissement',
+          'etablissement.adresseEtablissement.typeVoieEtablissement',
+          'etablissement.adresseEtablissement.libelleVoieEtablissement',
+          'etablissement.adresseEtablissement.codePostalEtablissement',
+          'etablissement.adresseEtablissement.libelleCommuneEtablissement',
+        ]
+          .map((k) => get(data, k, ''))
+          .join(' '),
+        address_street: get(data, 'etablissement.etablissement.adresseEtablissement.libelleVoieEtablissement', null),
+        address_postcode: get(data, 'etablissement.etablissement.adresseEtablissement.codePostalEtablissement', null),
+        address_cedex: get(data, 'etablissement.etablissement.adresseEtablissement.libelleCedexEtablissement', null),
+        address_city: get(data, 'etablissement.etablissement.adresseEtablissement.libelleCommuneEtablissement', null),
+        headquarter: get(data, 'etablissement.etablissementSiege', null) === true,
         updated_at: updated_at ? new Date(updated_at) : null,
       };
     } catch (e) {

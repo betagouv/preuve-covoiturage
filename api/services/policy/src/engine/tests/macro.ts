@@ -17,6 +17,7 @@ interface ProcessParams {
   handler?: PolicyHandlerInterface;
   policy?: Partial<SerializedPolicyInterface>;
   meta?: Array<{ key: string; value: number } & Partial<SerializedStoredMetadataInterface>>;
+  lifetime?: MetadataLifetime;
 }
 
 interface ProcessResult {
@@ -87,7 +88,7 @@ export const makeProcessHelper = (cp?: CarpoolInterface) => {
     );
     if (expected.meta) {
       t.deepEqual(
-        (await store.store(MetadataLifetime.Day)).map((m) => ({ key: m.key, value: m.value })),
+        (await store.store(input.lifetime || MetadataLifetime.Day)).map((m) => ({ key: m.key, value: m.value })),
         expected.meta.map((m) => ({ key: m.key, value: m.value })),
       );
     }

@@ -2,6 +2,7 @@ import { PolicyInterface } from './common/interfaces/PolicyInterface';
 export interface ParamsInterface {
   _id: number;
   territory_id?: number;
+  operator_id?: number;
 }
 
 export interface ResultInterface extends Required<PolicyInterface> {}

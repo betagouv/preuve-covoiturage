@@ -65,27 +65,32 @@ test(
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
       { distance: 25_000, driver_identity_uuid: 'two' },
       { distance: 25_000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
+      { distance: 55_000, driver_identity_uuid: 'three' },
     ],
     meta: [],
   },
   {
-    incentive: [150, 300, 250, 375],
+    incentive: [150, 300, 250, 375, 300],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 1075,
-      },
-      {
-        key: 'max_amount_restriction.one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.0-2019',
         value: 450,
       },
       {
-        key: 'max_amount_restriction.two.month.0-2019',
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 1375,
+      },
+      {
+        key: 'max_amount_restriction.0-two.month.0-2019',
         value: 250,
       },
       {
-        key: 'max_amount_restriction.two.month.2-2022',
+        key: 'max_amount_restriction.0-two.month.2-2022',
         value: 375,
+      },
+      {
+        key: 'max_amount_restriction.0-three.month.0-2019',
+        value: 300,
       },
     ],
   },
@@ -108,12 +113,12 @@ test(
     incentive: [50],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 6_000_000_00,
+        key: 'max_amount_restriction.0-one.month.0-2019',
+        value: 150,
       },
       {
-        key: 'max_amount_restriction.one.month.0-2019',
-        value: 50,
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 6_000_000_00,
       },
     ],
   },
@@ -127,7 +132,7 @@ test(
     carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {
-        key: 'max_amount_restriction.one.month.0-2019',
+        key: 'max_amount_restriction.0-one.month.0-2019',
         value: 149_00,
       },
     ],
@@ -136,12 +141,12 @@ test(
     incentive: [100],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 150,
+        key: 'max_amount_restriction.0-one.month.0-2019',
+        value: 150_00,
       },
       {
-        key: 'max_amount_restriction.one.month.0-2019',
-        value: 150_00,
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 100,
       },
     ],
   },
@@ -167,12 +172,12 @@ test(
     incentive: [150, 150, 150, 150, 150, 150, 0],
     meta: [
       {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 10_50,
+        key: 'max_amount_restriction.0-one.month.0-2019',
+        value: 900,
       },
       {
-        key: 'max_amount_restriction.one.month.0-2019',
-        value: 10_50,
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 900,
       },
     ],
   },

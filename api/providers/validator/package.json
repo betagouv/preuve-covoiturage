@@ -17,9 +17,9 @@
     "@ilos/common": "~0",
     "@ilos/core": "~0",
     "@ilos/validator": "~0",
-    "google-libphonenumber": "^3.2.23",
-    "ibantools": "^3.3.1",
+    "google-libphonenumber": "^3.2.30",
+    "ibantools": "^4.1.6",
     "lodash": "^4.17.21",
-    "xss": "^1.0.8"
+    "xss": "^1.0.14"
   }
 }

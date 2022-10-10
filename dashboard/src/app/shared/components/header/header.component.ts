@@ -18,10 +18,6 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
   public user: User;
   public userMeta: string | null;
 
-  get campaignLink(): string {
-    return this.hasTerritoryGroup ? `/campaign/${this.user.territory_id}` : '/campaign';
-  }
-
   get hasTerritoryGroup(): boolean {
     return this.auth.isTerritory();
   }

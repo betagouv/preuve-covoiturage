@@ -11,6 +11,7 @@ export const schema = {
         },
       ],
     },
+    operator_id: { macro: 'serial' },
     status: {
       type: 'string',
       enum: ['template', 'draft', 'active', 'finished'],

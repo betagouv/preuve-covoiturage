@@ -189,7 +189,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       SELECT
         journey_start_insee AS start_geo_code,
         null AS end_geo_code,
-        ARRAY_AGG(CONCAT(trip_id,'~',journey_id)) AS aggregated_trips_journeys
+        ARRAY_AGG(journey_id) AS aggregated_trips_journeys
       FROM ${this.table} 
       WHERE ${where.text} 
       AND journey_start_insee is not null
@@ -201,7 +201,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       SELECT
         null AS start_geo_code,
         journey_end_insee AS end_geo_code,
-        ARRAY_AGG(CONCAT(trip_id,'~',journey_id)) AS aggregated_trips_journeys
+        ARRAY_AGG(journey_id) AS aggregated_trips_journeys
       FROM ${this.table} 
       WHERE ${where.text} 
       AND journey_end_insee is not null
@@ -389,7 +389,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         return `COUNT(journey_id) FILTER (
         WHERE JOURNEY_DISTANCE > ${s.start}
         AND JOURNEY_DISTANCE <=  ${s.end}
-        AND (DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID = ${params.campaign_id} OR DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID =  ${params.campaign_id})) TRANCHE_${i}_COUNT,
+        AND (
+          (DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID = ${params.campaign_id} AND DRIVER_INCENTIVE_RPC_RAW[1].AMOUNT > 0) OR 
+          (DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID =  ${params.campaign_id} AND DRIVER_INCENTIVE_RPC_RAW[2].AMOUNT > 0)
+        )
+      ) TRANCHE_${i}_COUNT,
       SUM (DRIVER_INCENTIVE_RPC_RAW[1].AMOUNT) FILTER (
         WHERE JOURNEY_DISTANCE > ${s.start}
         AND JOURNEY_DISTANCE <= ${s.end}
@@ -403,7 +407,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     const lateralString: string = slices
       .map((s, i) => {
-        return `(data.tranche_${i}_count, coalesce(data.tranche_${i}_sum_1)+ coalesce(data.tranche_${i}_sum_2, 0))`;
+        return `(data.tranche_${i}_count, coalesce(data.tranche_${i}_sum_1, 0)+ coalesce(data.tranche_${i}_sum_2, 0))`;
       })
       .join(',');
 

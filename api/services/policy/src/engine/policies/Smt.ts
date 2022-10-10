@@ -3,7 +3,6 @@ import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
-  StatefulContextInterface,
   StatelessContextInterface,
 } from '../../interfaces';
 import {
@@ -13,24 +12,34 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  setMax,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
+  LimitTargetEnum,
+  ConfiguredLimitInterface,
 } from '../helpers';
-import { MaximumTargetEnum } from '../helpers/max';
+import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Smt.html';
 
 // Politique du Syndicat des Mobilités de Touraine
-export const Smt: PolicyHandlerStaticInterface = class implements PolicyHandlerInterface {
+export const Smt: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '713';
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
-    { start: 20_000, end: 40_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
+    {
+      start: 20_000,
+      end: 40_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+    },
+    {
+      start: 40_000,
+      end: 150_000,
+      fn: () => 0,
+    },
   ];
-  protected limits = [
-    setMax('A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, MaximumTargetEnum.Driver),
-    setMax('B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', 40_000_00, watchForGlobalMaxAmount),
+  protected limits: Array<ConfiguredLimitInterface> = [
+    ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+    ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', 40_000_00, watchForGlobalMaxAmount],
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
@@ -41,30 +50,18 @@ export const Smt: PolicyHandlerStaticInterface = class implements PolicyHandlerI
 
   processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
-
-    // Mise en place des limites
-    for (const limit of this.limits) {
-      const [staless] = limit;
-      staless(ctx);
-    }
+    super.processStateless(ctx);
 
     // Par kilomètre
     let amount = 0;
-    for (const { start, end, fn } of this.slices) {
-      if (onDistanceRange(ctx, { min: start, max: end })) {
-        amount = fn(ctx);
+    for (const { start, fn } of this.slices) {
+      if (onDistanceRange(ctx, { min: start })) {
+        amount += fn(ctx);
       }
     }
 
     amount += ctx.carpool.cost;
     ctx.incentive.set(amount);
-  }
-
-  processStateful(ctx: StatefulContextInterface): void {
-    for (const limit of this.limits) {
-      const [, stateful] = limit;
-      stateful(ctx);
-    }
   }
 
   params(): PolicyHandlerParamsInterface {

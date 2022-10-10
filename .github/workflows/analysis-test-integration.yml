@@ -21,5 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Start
+        env:
+          APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}
         run: ./tool.sh integration
 

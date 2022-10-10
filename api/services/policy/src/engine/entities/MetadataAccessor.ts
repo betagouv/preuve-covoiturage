@@ -1,4 +1,5 @@
 import { MetadataAccessorInterface, SerializedAccessibleMetadataInterface } from '../../interfaces';
+import { UnknownMetaException } from '../exceptions/UnknownMetaException';
 
 export class MetadataAccessor implements MetadataAccessorInterface {
   constructor(
@@ -15,7 +16,12 @@ export class MetadataAccessor implements MetadataAccessorInterface {
   }
 
   get(uuid: string): number {
-    return this.data.get(uuid).value;
+    const meta = this.data.get(uuid);
+    if (!meta || !('value' in meta)) {
+      console.error(`key ${uuid} not found in [${[...this.data.keys()].join(', ')}] (${JSON.stringify(meta)})`);
+      throw new UnknownMetaException(`${uuid} not found`);
+    }
+    return meta.value;
   }
 
   getRaw(uuid: string): SerializedAccessibleMetadataInterface {

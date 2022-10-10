@@ -21,7 +21,8 @@ export const description = `<p id="summary">
     <li><b>Le 18/06/2022</b></li>
     <li><b>Le 6/07/2022</b></li>
   </ul>
-  <p>La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe <b>B ou C</b>.
+  <p>
+  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe <b>B ou C</b>.
   </p>
   <p>Les axes suivants ne sont pas incités : </p>
   <ul>

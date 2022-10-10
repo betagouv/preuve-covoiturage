@@ -93,6 +93,10 @@ export class AuthenticationService {
     return this.user ? AuthenticationService.isSuperAdmin(this.user) : false;
   }
 
+  public isOperator(): boolean {
+    return this.user ? AuthenticationService.isOperatorGroup(this.user) : false;
+  }
+
   public isRegistry(): boolean {
     return this.user ? AuthenticationService.isRegistry(this.user) : false;
   }

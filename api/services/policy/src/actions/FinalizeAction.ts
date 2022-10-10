@@ -1,6 +1,6 @@
-import { handler, KernelInterfaceResolver, InitHookInterface } from '@ilos/common';
-import { Action as AbstractAction } from '@ilos/core';
-import { sub } from 'date-fns';
+import { handler, KernelInterfaceResolver, InitHookInterface, ParseErrorException } from '@ilos/common';
+import { Action as AbstractAction, env } from '@ilos/core';
+import { isValid, parseISO, startOfDay, sub } from 'date-fns';
 
 import {
   signature as handlerSignature,
@@ -54,25 +54,58 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    // Get 7 days ago
-    const to = params.to ?? sub(new Date(), { days: 7 });
-
+    if (!!env('APP_DISABLE_POLICY_PROCESSING', false)) {
+      return;
+    }
+    console.time('[policies] stateful');
+    const { from, to } = this.getDate(params);
     // Update incentive on cancelled carpool
     await this.incentiveRepository.disableOnCanceledTrip();
 
     const policyMap: Map<number, PolicyInterface> = new Map();
 
-    // Apply internal restriction of policies
-    console.debug('[policies] stateful starting');
-    await this.processStatefulpolicys(policyMap, to, params.from);
-    console.debug('[policies] stateful finished');
+    try {
+      console.debug(`[policies] stateful starting from ${from ? from.toISOString() : 'start'} to ${to.toISOString()}`);
+      await this.processStatefulpolicys(policyMap, to, from);
+      console.debug('[policies] stateful finished');
+      // Lock all
+      console.debug(`[policies] lock all incentive until ${to}`);
+      await this.incentiveRepository.lockAll(to);
+      console.debug('[policies] lock finished');
+    } catch (e) {
+      console.debug(`[policies:failure] unlock all incentive until ${to.toISOString()}`);
+      await this.incentiveRepository.lockAll(to, true);
+      console.debug('[policies:failure] unlock finished');
+      throw e;
+    } finally {
+      console.timeEnd('[policies] stateful');
+    }
+  }
 
-    // TODO: Apply external restriction (order) of policies
+  protected getDate(params: ParamsInterface): { from: Date | undefined; to: Date } {
+    let to = params.to;
+    if (typeof to === 'string') {
+      to = parseISO(to);
+      if (!isValid(to)) {
+        throw new ParseErrorException(`To is not a valid date (${params.to})`);
+      }
+      to = startOfDay(to);
+    } else {
+      // Get 7 days ago
+      to = sub(startOfDay(new Date()), { days: 7 });
+    }
 
-    // Lock all
-    console.debug(`[policies] lock all incentive until ${to}`);
-    await this.incentiveRepository.lockAll(to);
-    console.debug('[policies] lock finished');
+    let from = params.from;
+    if (typeof from === 'string') {
+      from = startOfDay(parseISO(from));
+      if (!isValid(from)) {
+        throw new ParseErrorException(`From is not a valid date (${params.from})`);
+      }
+    } else {
+      from = undefined;
+    }
+
+    return { from, to };
   }
 
   protected async processStatefulpolicys(
@@ -105,10 +138,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
         }
       }
       // 4. Update incentives
-      await this.incentiveRepository.updateStatefulAmount(updatedIncentives, IncentiveStatusEnum.Valitated);
-
-      // 5. Persist meta
-      await store.store(MetadataLifetime.Day);
+      await this.incentiveRepository.updateStatefulAmount(updatedIncentives, IncentiveStatusEnum.Pending);
       const duration = new Date().getTime() - start;
       console.debug(
         `[policies] stateful incentive processing ${updatedIncentives.length} incentives done in ${duration}ms (${(
@@ -117,5 +147,10 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
         ).toFixed(3)}/s)`,
       );
     } while (!done);
+
+    console.debug('[policies] store metadata');
+    // 5. Persist meta
+    await store.store(MetadataLifetime.Day);
+    console.debug('[policies] store metadata done');
   }
 }

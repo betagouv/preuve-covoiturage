@@ -28,6 +28,11 @@ export class MetadataStore implements MetadataStoreInterface {
   async load(registry: MetadataRegistryInterface): Promise<MetadataAccessorInterface> {
     const variables = registry.export();
     const keys = variables.map((v) => v.key);
+
+    if (keys.length === 0) {
+      return MetadataAccessor.import(registry.datetime, new Map());
+    }
+
     const keysToQuery = keys.filter((k) => !this.cache.has(getCacheKey(registry.policy_id, k)));
     const missingData = (await this.repository?.get(registry.policy_id, keysToQuery, registry.datetime)) || [];
     for (const key of keysToQuery) {
@@ -43,7 +48,7 @@ export class MetadataStore implements MetadataStoreInterface {
     const data = variables
       .map((v) => [v, this.cache.get(getCacheKey(registry.policy_id, v.key))])
       .reduce((m, [v, i]: [SerializedMetadataVariableDefinitionInterface, StoredMetadataVariableInterface]) => {
-        m.set(i.uuid, {
+        m.set(v.uuid, {
           policy_id: i.policy_id,
           key: i.key,
           value: i.value,
@@ -51,6 +56,7 @@ export class MetadataStore implements MetadataStoreInterface {
         });
         return m;
       }, new Map());
+
     return MetadataAccessor.import(registry.datetime, data);
   }
 

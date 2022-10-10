@@ -12,12 +12,12 @@ export const perKm = (ctx: StatelessContextInterface, params: PerKmParams): numb
     return 0;
   }
 
-  if (params.offset) {
-    distance -= params.offset;
-  }
-
   if (params.limit) {
     distance = Math.min(distance, params.limit);
+  }
+
+  if (params.offset) {
+    distance -= params.offset;
   }
 
   return (distance / 1000) * params.amount;
