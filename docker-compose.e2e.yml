@@ -111,6 +111,7 @@ services:
       PORT: 8080
       NODE_ENV: local
       APP_ENV: local
+      APP_INSEE_API_KEY:
     networks:
       - back
       - front
