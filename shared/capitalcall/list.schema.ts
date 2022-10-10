@@ -1,6 +1,7 @@
 export const schema = {
   type: 'object',
   additionalProperties: false,
+  required: ['territory_id'],
   properties: {
     territory_id: { macro: 'serial' },
     operator_id: { macro: 'serial' },

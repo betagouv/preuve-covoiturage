@@ -21,18 +21,10 @@ export class ListCapitalCallAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<S3Object[]> {
     let s3ObjectList: S3.Object[];
+    s3ObjectList = await this.s3StorageProvider.findByTerritory(params.territory_id);
+
     if (params.operator_id) {
-      // operator
-      s3ObjectList = await this.s3StorageProvider.findByOperator(params.operator_id);
-      // filter by territory too
-      if (params.territory_id) {
-        s3ObjectList = s3ObjectList.filter((s3Object: S3.Object) => {
-          return new RegExp(`^${params.territory_id}/apdf-${params.operator_id}`).test(s3Object.Key);
-        });
-      }
-    } else if (params.territory_id) {
-      // territory
-      s3ObjectList = await this.s3StorageProvider.findByTerritory(params.territory_id);
+      s3ObjectList = s3ObjectList.filter((o) => o.Key.includes(`/apdf-${params.operator_id}`));
     }
 
     return Promise.all(
