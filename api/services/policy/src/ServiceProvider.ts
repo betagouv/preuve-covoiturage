@@ -1,13 +1,14 @@
-import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
-import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
+import { ExtensionInterface, NewableType, serviceProvider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
-import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
+import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
+import { APDFNameProvider, S3StorageProvider } from '@pdc/provider-file';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
+import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
 import { config } from './config';
-import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
+import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOn.schema';
 import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
 import { binding as statsSchemaBinding } from './shared/policy/stats.schema';
@@ -16,17 +17,17 @@ import { ApplyAction } from './actions/ApplyAction';
 import { FinalizeAction } from './actions/FinalizeAction';
 import { FindAction } from './actions/FindAction';
 import { ListAction } from './actions/ListAction';
-import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
 import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
+import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
 import { StatsAction } from './actions/StatsAction';
 
-import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvider';
-import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
-import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
-import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
-import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
 import { FundingRequestsListAction } from './actions/FundingRequestsListAction';
-import { APDFNameProvider, S3StorageProvider } from '@pdc/provider-file';
+import { FundingRequestsRepositoryProvider } from './providers/FundingRequestsRepositoryProvider';
+import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
+import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvider';
+import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
+import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
+import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 
 @serviceProvider({
   config,
@@ -38,6 +39,7 @@ import { APDFNameProvider, S3StorageProvider } from '@pdc/provider-file';
     IncentiveRepositoryProvider,
     S3StorageProvider,
     TerritoryRepositoryProvider,
+    FundingRequestsRepositoryProvider,
   ],
   validator: [
     listSchemaBinding,

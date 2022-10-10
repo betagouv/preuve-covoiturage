@@ -43,15 +43,15 @@ export class S3StorageProvider implements ProviderInterface {
     });
   }
 
-  async findByTerritory(territory_id: number): Promise<S3.ObjectList> {
-    const result = await this.s3Instances
-      .get(BucketName.Export)
-      .listObjectsV2({
-        Bucket: this.getBucketName(BucketName.Export),
-        Prefix: `${territory_id}`,
-      })
-      .promise();
-    return result.Contents;
+  async list(bucket: BucketName, prefix?: string): Promise<S3.ObjectList> {
+    const config: S3.ListObjectsV2Request = { Bucket: this.getBucketName(bucket) };
+
+    if (prefix) {
+      config.Prefix = prefix;
+    }
+
+    const result = await this.s3Instances.get(bucket).listObjectsV2(config).promise();
+    return result.Contents || [];
   }
 
   async copy(

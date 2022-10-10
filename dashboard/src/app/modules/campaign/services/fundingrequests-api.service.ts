@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
-  ResultInterface as FundingRequestsListResult,
+  ResultsInterface as FundingRequestsListResult,
   ParamsInterface as FundingRequestsListParams,
   signature as fundingRequestsListSignature,
 } from '~/shared/policy/fundingRequestsList.contract';
@@ -19,7 +19,7 @@ export class FundingRequestsApiService extends JsonRPCService {
     super(http);
   }
 
-  list(campaign_id?: number): Observable<FundingRequestsListResult> {
+  list(campaign_id: number): Observable<FundingRequestsListResult> {
     const jsonRPCParam: JsonRPCParam<FundingRequestsListParams> = new JsonRPCParam(
       fundingRequestsListSignature,
       campaign_id ? { campaign_id } : {},

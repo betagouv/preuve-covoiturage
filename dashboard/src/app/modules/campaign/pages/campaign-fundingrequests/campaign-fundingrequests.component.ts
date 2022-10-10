@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CommonDataService } from '~/core/services/common-data.service';
+import { ResultsInterface as FundingRequestsListResult } from '~/shared/policy/fundingRequestsList.contract';
 import { FundingRequestsApiService } from '../../services/fundingrequests-api.service';
-
 @Component({
   selector: 'app-campaign-fundingrequests',
   templateUrl: './campaign-fundingrequests.component.html',
@@ -12,68 +13,29 @@ import { FundingRequestsApiService } from '../../services/fundingrequests-api.se
 export class CampaignFundingRequestsComponent implements OnInit {
   @Input() campaign: CampaignUx;
 
-  public fRequestsList: { key: string; month: string }[];
+  public fRequestsList: FundingRequestsListResult;
   public displayedColumns: string[] = ['month', 'operator', 'action'];
-
-  private readonly SHORT_MONTHS_STRING: { [key: string]: string } = {
-    janv: 'Janvier',
-    fevr: 'Février',
-    mars: 'Mars',
-    avri: 'Avril',
-    mai: 'Mai',
-    juin: 'Juin',
-    juil: 'Juillet',
-    aout: 'Aout',
-    sept: 'Septembre',
-    octo: 'Octobre',
-    nove: 'Novembre',
-    dece: 'Décembre',
-  };
-
-  private readonly SORTED_SHORT_MONTH_ARRAY: string[] = [
-    'Janvier',
-    'Février',
-    'Mars',
-    'Avril',
-    'Mai',
-    'Juin',
-    'Juillet',
-    'Aout',
-    'Septembre',
-    'Octobre',
-    'Novembre',
-    'Décembre',
-  ];
 
   constructor(private fRequestsApiService: FundingRequestsApiService, private commonData: CommonDataService) {}
 
   ngOnInit(): void {
-    combineLatest([this.commonData.operators$, this.fRequestsApiService.list(this.campaign._id)]).subscribe(
-      ([operators, s3objects]) => {
-        this.fRequestsList = s3objects
-          .map((s3Object) => {
-            console.debug(s3Object);
-            const operatorId: number = this.computeOperatorId(s3Object.key);
-            return {
-              key: s3Object.key,
-              month: this.computeFullMonth(s3Object.key),
-              signed_url: s3Object.signed_url,
-              operator: operators.find((o) => o._id === operatorId).name,
-            };
-          })
-          .sort(
-            (a, b) => this.SORTED_SHORT_MONTH_ARRAY.indexOf(a.month) - this.SORTED_SHORT_MONTH_ARRAY.indexOf(b.month),
-          );
-      },
-    );
-  }
-
-  private computeOperatorId(key: string): number {
-    return parseInt(key.split('-')[1]);
-  }
-
-  private computeFullMonth(key: string): string {
-    const splitArray: string[] = key.split('-');
-    return this.SHORT_MONTHS_STRING[splitArray[splitArray.length - 2]];
+    // fetch funding requests for a given campaign
+    // add some display data as operator name and sort the results
+    combineLatest([this.commonData.operators$, this.fRequestsApiService.list(this.campaign._id)])
+      .pipe(
+        map(([operators, freq]: [any, any]) =>
+          freq
+            .map((fr) => {
+              const op = operators.find((o) => o._id === fr.operator_id);
+              const operator = op?.name;
+              const month = fr.datetime.substring(0, 7);
+              return { ...fr, month, operator, skey: `${month}-${operator}` };
+            })
+            .sort(({ skey: a }, { skey: b }) => (a > b ? -1 : a < b ? 1 : 0)),
+        ),
+      )
+      .subscribe((frequests: FundingRequestsListResult) => {
+        this.fRequestsList = frequests;
+      });
   }
 }
