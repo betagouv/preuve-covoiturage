@@ -1,0 +1,20 @@
+name: 'Close stale issues and PRs'
+on:
+  schedule:
+    - cron: '30 1 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v6
+        with:
+          stale-issue-message: "Ce ticket est marqué comme obsolète car cela fait 60 jours qu'il n'y a pas eu d'activité dessus. Retirez ce label ou ajoutez un commentaire sinon ce ticket sera fermé dans 5 jours."
+          stale-pr-message: "Cette PR est marquée comme obsolète car cela fait 60 jours qu'il n'y a pas eu d'activité dessus. Retirez ce label ou ajoutez un commentaire sinon cette PR sera fermée dans 5 jours."
+          close-issue-message: "Ce ticket a été fermé car cela fait 5 jours qu'il a été marqué comme obsolète sans activité"
+          close-pr-message: "Cette PR a été fermée car cela fait 5 jours qu'elle a été marquée comme obsolète sans activité"
+          days-before-stale: 60
+          days-before-close: 5
+          exempt-issue-labels: 'keep' 
+          enable-statistics: false
+
