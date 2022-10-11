@@ -6,7 +6,6 @@ import { ResultInterface as Campaign } from '~/shared/policy/find.contract';
 import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { SlicesInterface } from './../../interfaces/SlicesInterface';
-import { BuildFilepath } from './BuildFilepath';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
@@ -14,19 +13,33 @@ import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 export class BuildExcel {
   constructor(
     private tripRepositoryProvider: TripRepositoryProvider,
-    private buildFilepath: BuildFilepath,
     private dataWorkbookWriter: DataWorkBookWriter,
     private slicesWorkbookWriter: SlicesWorkbookWriter,
     private apdfNameProvider: APDFNameProvider,
   ) {}
 
-  async call(campaign: Campaign, start_date: Date, end_date: Date, operator_id: number): Promise<string> {
-    const filepath: string = this.apdfNameProvider.stringify({ campaign, operator: operator_id, datetime: start_date });
+  async call(
+    campaign: Campaign,
+    start_date: Date,
+    end_date: Date,
+    operator_id: number,
+  ): Promise<{ filename: string; filepath: string }> {
+    // generate the filename and filepath
+    const filename: string = this.apdfNameProvider.stringify({
+      name: campaign.name,
+      campaign_id: campaign._id,
+      operator_id,
+      datetime: start_date,
+    });
+    const filepath: string = this.apdfNameProvider.filepath(filename);
+
+    // create the Worksheet
     const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
     await this.callDataWorkbookWriter(campaign, start_date, end_date, operator_id, workbookWriter);
     await this.callSlicesWorkbookWriter(campaign, start_date, end_date, operator_id, workbookWriter);
     await workbookWriter.commit();
-    return filepath;
+
+    return { filename, filepath };
   }
 
   private async callSlicesWorkbookWriter(

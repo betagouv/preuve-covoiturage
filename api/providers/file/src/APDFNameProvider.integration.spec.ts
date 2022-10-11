@@ -2,20 +2,19 @@ import test from 'ava';
 import { APDFNameProvider } from './APDFNameProvider';
 
 function re(str: string): RegExp {
-  return new RegExp(`APDF-${str}-[a-z0-9]{6}.xslx`);
+  return new RegExp(`APDF-${str}.xslx`);
 }
 
 test('Stringify APDF', (t) => {
   const provider = new APDFNameProvider(t.log);
-  t.regex(
-    provider.stringify({
-      name: 'yolo',
-      datetime: new Date('2022-01-01T00:00:00Z'),
-      campaign_id: 1,
-      operator_id: 2,
-    }),
-    re('2022-01-1-2'),
-  );
+  const str = provider.stringify({
+    name: 'YOLO',
+    datetime: new Date('2022-01-01T00:00:00Z'),
+    campaign_id: 1,
+    operator_id: 2,
+  });
+  t.log(str);
+  t.regex(str, re('2022-01-1-2-yolo'));
 });
 
 test('Parse APDF: filename', (t) => {

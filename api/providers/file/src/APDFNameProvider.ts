@@ -1,7 +1,6 @@
-import os from 'os';
-import path from 'path';
-import { v4 } from 'uuid';
 import { provider, ProviderInterface } from '@ilos/common';
+import path from 'path';
+import os from 'os';
 
 export interface APDFNameParamsInterface {
   name: string;
@@ -15,7 +14,7 @@ export type APDFNameResultsInterface = string;
 @provider()
 export class APDFNameProvider implements ProviderInterface {
   private prefix = 'APDF';
-  private ext = 'xslx';
+  private ext = 'xlsx';
 
   constructor(private log = null) {
     /* eslint-disable-next-line */
@@ -23,7 +22,7 @@ export class APDFNameProvider implements ProviderInterface {
   }
 
   public stringify(params: APDFNameParamsInterface): APDFNameResultsInterface {
-    const { datetime, campaign_id, operator_id } = this.normalizeParams(params);
+    const { name, datetime, campaign_id, operator_id } = params;
 
     // KEEP ?
     // const startDatePlus6Days: Date = new Date(datetime.valueOf());
@@ -38,12 +37,17 @@ export class APDFNameProvider implements ProviderInterface {
       datetime.toISOString().substring(0, 7),
       campaign_id,
       operator_id,
-      v4().substring(0, 6),
+      this.sanitize(name),
     ]
       .filter((s: string | number) => ['string', 'number'].indexOf(typeof s) > -1 && String(s).length)
       .join('-');
 
-    return path.join(os.tmpdir(), `${filename}.${this.ext}`);
+    return `${filename}.${this.ext}`;
+  }
+
+  public filepath(params: string | APDFNameParamsInterface): APDFNameResultsInterface {
+    const filename = typeof params === 'string' ? params : this.stringify(params);
+    return path.join(os.tmpdir(), filename);
   }
 
   public parse(str: APDFNameResultsInterface): APDFNameParamsInterface {
@@ -58,13 +62,8 @@ export class APDFNameProvider implements ProviderInterface {
     };
   }
 
-  private normalizeParams(p: APDFNameParamsInterface): APDFNameParamsInterface {
-    // TODO : fetch data to fill the missing data
-    return p;
-  }
-
   private sanitize(str: string): string {
-    return str.toLowerCase().substring(0, 8).replace(/\ /g, '_').replace('-', '_');
+    return str.toLowerCase().substring(0, 16).replace(/\ /g, '_').replace('-', '_');
   }
 
   // KEEP ?

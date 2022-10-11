@@ -92,13 +92,7 @@ export class S3StorageProvider implements ProviderInterface {
 
     try {
       const rs = fs.createReadStream(filepath);
-      const ext = path.extname(filepath);
-      let key =
-        filename ??
-        path
-          .basename(filepath)
-          .replace(ext, '')
-          .replace(/[^a-z0-9_-]/g, '') + ext;
+      let key = filename ?? this.filenameFromPath(filepath);
 
       if (prefix) {
         key = `${prefix}/${key}`;
@@ -155,5 +149,15 @@ export class S3StorageProvider implements ProviderInterface {
 
   private getBucketUrl(bucket: BucketName): string {
     return env(`AWS_BUCKET_${bucket.toUpperCase()}_URL`, '') as string;
+  }
+
+  private filenameFromPath(filepath: string): string {
+    const ext = path.extname(filepath);
+    return (
+      path
+        .basename(filepath)
+        .replace(ext, '')
+        .replace(/[^a-z0-9_-]/g, '') + ext
+    );
   }
 }
