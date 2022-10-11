@@ -11,11 +11,21 @@ export class StatsRefreshCommand implements CommandInterface {
       description: 'Connection string to the database',
       default: process.env.APP_POSTGRES_URL,
     },
+    {
+      signature: '-t, --timeout',
+      description: 'pg query timeout',
+      default: 2 * 86_400_000, // 2 hours
+    },
   ];
 
   constructor(protected kernel: KernelInterfaceResolver) {}
 
-  public async call({ databaseUri }): Promise<ResultType> {
+  public async call({ databaseUri, timeout }): Promise<ResultType> {
+    // override the environment variable.
+    // the command is run once and this config override will not
+    // affect the global postgresql timeout
+    process.env.APP_POSTGRES_TIMEOUT = `${timeout}`;
+
     const connection = new PostgresConnection({ connectionString: databaseUri });
     await connection.up();
     const client = await connection.getClient().connect();
