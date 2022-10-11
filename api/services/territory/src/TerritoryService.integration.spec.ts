@@ -71,7 +71,6 @@ test.serial('Create a territory', async (t) => {
       },
     },
   );
-  t.log(response);
   t.is(response.result.name, name);
 
   const dbResult = await getDb(t.context)
@@ -112,7 +111,6 @@ test.serial('Find a territory', async (t) => {
       },
     },
   );
-  t.log(response);
   t.is(response.result.name, 'Toto');
 });
 
@@ -141,7 +139,6 @@ test.serial('Update a territory', async (t) => {
       },
     },
   );
-  t.log(initResponse);
   t.is(initResponse.result.name, name);
 
   const updateData = {
@@ -150,7 +147,6 @@ test.serial('Update a territory', async (t) => {
       com: ['91471', '91377'],
     },
   };
-  t.log(updateData);
   const response = await t.context.request('territory:update', updateData, {
     call: {
       user: {
@@ -159,7 +155,6 @@ test.serial('Update a territory', async (t) => {
     },
   });
 
-  t.log(response);
   t.is(response.result.selector.com.length, 2);
 
   const finalResponse = await t.context.request(
@@ -173,7 +168,6 @@ test.serial('Update a territory', async (t) => {
       },
     },
   );
-  t.log(finalResponse);
   const { updated_at: u1, ...t1 } = finalResponse.result;
   const { updated_at: u2, ...t2 } = updateData;
   t.deepEqual(t1, t2);
@@ -211,7 +205,6 @@ test.serial('Patch contact on a territory', async (t) => {
       },
     },
   );
-  t.log(response);
   t.is(response.result._id, _id);
   t.is(response.result.contacts.technical.firstname, 'Nicolas');
 });
@@ -253,7 +246,6 @@ test.serial('Get authorized codes', async (t) => {
       },
     },
   );
-  t.log(response);
   t.true(Array.isArray(response.result.com));
   t.true(response.result.com.length === 3);
   t.deepEqual(response.result.com.sort(), ['91377', '91471', '91477']);
@@ -273,10 +265,8 @@ test.serial('Lists all territories', async (t) => {
       },
     },
   );
-  t.log(response);
   t.true('data' in response.result);
   t.true(Array.isArray(response.result.data));
-  t.log(response.result.data);
   const territory = response.result.data.filter((r) => r.name === name);
   t.is(territory.length, 1);
 });
@@ -295,8 +285,6 @@ test.serial('Lists all geo zones', async (t) => {
       },
     },
   );
-  t.log(response.result.data);
-  t.log(response.result.meta.pagination);
   t.true('data' in response.result);
   t.true(Array.isArray(response.result.data));
   t.is(response.result.data.length, 1);

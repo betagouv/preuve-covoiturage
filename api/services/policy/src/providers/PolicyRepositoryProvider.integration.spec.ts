@@ -61,7 +61,6 @@ test.serial('Should create policy', async (t) => {
 });
 
 test.serial('Should find policy', async (t) => {
-  t.log(t.context.policy);
   const policy = await t.context.repository.find(t.context.policy._id);
   t.is(policy?.name, t.context.policy.name);
   t.is(policy?.status, t.context.policy.status);

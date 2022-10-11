@@ -60,7 +60,7 @@ test.beforeEach((t) => {
   t.context.checkCampaignStub = sinon.stub(t.context.checkCampaign, 'call');
   t.context.s3StorageProviderStub = sinon.stub(t.context.s3StorageProvider, 'upload');
   t.context.buildExcelStub = sinon.stub(t.context.buildExcel, 'call');
-  t.context.tripRepositoryStub = sinon.stub(t.context.tripRepository, 'getPolicyInvoledOperators');
+  t.context.tripRepositoryStub = sinon.stub(t.context.tripRepository, 'getPolicyInvolvedOperators');
 });
 
 test.afterEach((t) => {
@@ -113,7 +113,7 @@ test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided
   const filepath = `/tmp/exports/${filename}`;
   const s3_key: string = faker.system.fileName();
   t.context.checkCampaignStub!.resolves(campaign);
-  t.context.buildExcelStub!.resolves(filepath);
+  t.context.buildExcelStub!.resolves({ filename, filepath });
   t.context.s3StorageProviderStub!.resolves(s3_key);
   t.context.tripRepositoryStub!.resolves([4]);
 
@@ -150,8 +150,8 @@ test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided
     t.context.s3StorageProviderStub!,
     BucketName.Export,
     filepath,
-    undefined,
-    `${campaign.territory_id}`,
+    filename,
+    `${campaign._id}`,
   );
   sinon.assert.calledOnceWithExactly(
     t.context.tripRepositoryStub!,
@@ -169,7 +169,8 @@ test('ExportCapitalCallsAction: should create 4 xlsx file if date range provided
   const campaign2: Campaign = createGetCampaignResultInterface('active');
   const expectedFiles: string[] = [0, 1, 2, 3].map((i) => {
     const filename = `${faker.system.fileName()}.xlsx`;
-    t.context.buildExcelStub!.onCall(i).resolves(`/tmp/exports/${filename}`);
+    const filepath = `/tmp/exports/${filename}`;
+    t.context.buildExcelStub!.onCall(i).resolves({ filename, filepath });
     t.context.s3StorageProviderStub!.onCall(i).resolves(filename);
     return filename;
   });
@@ -225,7 +226,8 @@ test('ExportCapitalCallsAction: should send error and process other if 1 export 
   t.context.checkCampaignStub!.withArgs(campaign2._id).resolves(campaign2);
   t.context.tripRepositoryStub!.resolves([4, 5]);
   const filename = `${faker.system.fileName()}.xlsx`;
-  t.context.buildExcelStub!.resolves(`/tmp/exports/${filename}`);
+  const filepath = `/tmp/exports/${filename}`;
+  t.context.buildExcelStub!.resolves({ filename, filepath });
   t.context.s3StorageProviderStub!.resolves(filename);
   t.context.buildExcelStub!.onCall(3).rejects(`Error`);
 

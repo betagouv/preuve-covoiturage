@@ -16,18 +16,8 @@ export class APDFNameProvider implements ProviderInterface {
   private prefix = 'APDF';
   private ext = 'xlsx';
 
-  constructor(private log = null) {
-    /* eslint-disable-next-line */
-    this.log = log || console.log;
-  }
-
   public stringify(params: APDFNameParamsInterface): APDFNameResultsInterface {
     const { name, datetime, campaign_id, operator_id } = params;
-
-    // KEEP ?
-    // const startDatePlus6Days: Date = new Date(datetime.valueOf());
-    // startDatePlus6Days.setDate(startDatePlus6Days.getDate() + 6);
-    // const month = this.getMonthString(startDatePlus6Days);
 
     // APDF-2022-01-123-456-campaign-operator-hash.ext
     // 123: campaign_id
@@ -65,13 +55,4 @@ export class APDFNameProvider implements ProviderInterface {
   private sanitize(str: string): string {
     return str.toLowerCase().substring(0, 16).replace(/\ /g, '_').replace('-', '_');
   }
-
-  // KEEP ?
-  // private getMonthString(date: Date): string {
-  //   return date
-  //     .toLocaleString('fr-FR', { month: 'long' })
-  //     .substring(0, 4)
-  //     .normalize('NFD')
-  //     .replace(/[\u0300-\u036f]/g, '');
-  // }
 }

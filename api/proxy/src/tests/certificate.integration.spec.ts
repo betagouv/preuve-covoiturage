@@ -71,7 +71,6 @@ test.serial.skip('Generate a certificate', async (t) => {
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
     .set('Authorization', `Bearer ${t.context.auth}`);
-  t.log(response.body);
   t.is(response.status, 201);
 });
 
@@ -85,7 +84,6 @@ test.serial.skip('Download the certificate', async (t) => {
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
     .set('Authorization', `Bearer ${t.context.auth}`);
-  t.log(createResponse.body);
   t.is(createResponse.status, 201);
   const certificate: { uuid: string } = get(createResponse, 'body.result.data', {});
 
@@ -96,6 +94,5 @@ test.serial.skip('Download the certificate', async (t) => {
     .set('Accept', 'application/pdf')
     .set('Content-type', 'application/json')
     .set('Authorization', `Bearer ${t.context.auth}`);
-  console.debug(response.status, response.body);
   t.is(response.status, 200);
 });

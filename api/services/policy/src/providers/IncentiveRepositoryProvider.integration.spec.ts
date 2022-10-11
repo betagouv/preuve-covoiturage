@@ -145,7 +145,6 @@ test.serial('Should update many incentives amount', async (t) => {
     values: [0],
   });
 
-  t.log(incentiveResults.rows);
   t.is(incentiveResults.rowCount, 3);
   t.is(incentiveResults.rows.filter((i) => i.state === 'null').length, 3);
 });
@@ -154,7 +153,6 @@ test.serial('Should list draft incentive', async (t) => {
   const cursor = t.context.repository.findDraftIncentive(new Date());
   const { value } = await cursor.next();
   await cursor.next();
-  t.log(value);
   t.true(Array.isArray(value));
   const incentives = (Array.isArray(value) ? value : []).map((v) => ({
     carpool_id: v.carpool_id,

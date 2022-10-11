@@ -234,7 +234,6 @@ test.skip('Wrong permissions', async (t) => {
         v: 2,
       })}`,
     );
-  t.log(response.body);
   t.is(response.status, 403);
   t.is(get(response, 'body.error.message', ''), 'Forbidden Error');
 });

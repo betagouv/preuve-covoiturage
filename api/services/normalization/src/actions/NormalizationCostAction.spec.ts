@@ -28,8 +28,6 @@ function testPayments(t, params: ParamsInterface, result: ResultInterface, userT
 
   const lastPayment = result.payments.pop();
 
-  t.log('result.payments : ', result.payments);
-
   t.is(result.payments[0].type, 'incentive', 'First resulted payment should an actual payment');
   t.is(result.payments[1].type, 'payment', 'First resulted payment should an incentive');
 

@@ -10,11 +10,6 @@ import { BuildExcel } from './excel/BuildExcel';
 import { CheckCampaign } from './excel/CheckCampaign';
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 
-/**
- *
- * yarn workspace @pdc/proxy ilos call capitalcall:export -c '{"call":{"user":{}},"channel":{"service":"trip"}}' -p '{"query":{"date":{"start":"2022-08-01T00:00:00Z","end":"2022-09-01T00:00:00Z"},"campaign_id":[249]},"format":{"tz":"Europe\/Paris"}}'
- */
-
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares('trip'), ['validate', alias]],
