@@ -11,7 +11,8 @@ export const isAfter: StatelessRuleHelper<IsAfterParams> = (
   params: IsAfterParams,
 ): boolean => {
   const ctxDate = utcToZonedTime(ctx.carpool.datetime, params.tz);
-  if (ctxDate >= params.date) {
+  const paramsDate = utcToZonedTime(params.date, params.tz);
+  if (ctxDate >= paramsDate) {
     return true;
   }
   return false;
