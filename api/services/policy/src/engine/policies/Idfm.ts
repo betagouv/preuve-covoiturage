@@ -26,6 +26,7 @@ import { description } from './Idfm.html';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 
 // Politique d'Île-de-France Mobilité
+/* eslint-disable-next-line */
 export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '459';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
