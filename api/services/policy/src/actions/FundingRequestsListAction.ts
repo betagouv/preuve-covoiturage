@@ -32,20 +32,10 @@ export class FundingRequestsListAction extends Action {
     }
 
     const campaign = await this.policyProvider.find(campaign_id);
-    let operators = await this.policyProvider.activeOperators(campaign_id);
 
-    if (operator_id) {
-      if (operators.indexOf(operator_id) < 0) {
-        throw new InvalidParamsException(`No operator (${operator_id}) found on campaign (${campaign_id})`);
-      }
-
-      // override the list of operators with the current one
-      operators = [operator_id];
-    }
-
-    // curry operators filter
+    // curry operators and campaign filters
     // find policies, enrich and filter by operator
-    const opsFilter = this.frRepository.operatorsFilter(operators);
+    const opsFilter = this.frRepository.operatorsFilter(operator_id ? [operator_id] : []);
     const cmpFilter = this.frRepository.campaignsFilter([campaign_id]);
 
     return (await this.frRepository.enrich(await this.frRepository.findByCampaign(campaign)))

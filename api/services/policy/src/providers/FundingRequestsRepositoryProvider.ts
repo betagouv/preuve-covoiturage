@@ -32,14 +32,14 @@ export class FundingRequestsRepositoryProvider implements FundingRequestsReposit
   // use in a [].filter
   campaignsFilter(campaigns: number[]) {
     return (obj: EnrichedFundingRequestType): boolean => {
-      return campaigns.indexOf(obj.campaign_id) > -1;
+      return campaigns.length ? campaigns.indexOf(obj.campaign_id) > -1 : true;
     };
   }
 
   // use in a [].filter
   operatorsFilter(operators: number[]) {
     return (obj: EnrichedFundingRequestType): boolean => {
-      return operators.indexOf(obj.operator_id) > -1;
+      return operators.length ? operators.indexOf(obj.operator_id) > -1 : true;
     };
   }
 }
