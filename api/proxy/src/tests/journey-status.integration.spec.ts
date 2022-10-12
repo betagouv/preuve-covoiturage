@@ -129,7 +129,6 @@ test.skip('Status: check wrong permissions', async (t) => {
   //       v: 2,
   //     })}`,
   //   );
-  // t.log(response.body);
   // t.is(response.status, 403);
   // // FIX ME with RPC error code
   // t.deepEqual(get(response, 'body.error', {}), {

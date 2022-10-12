@@ -16,16 +16,16 @@ import { CampaignSimulationPaneComponent } from './components/campaign-simulatio
 import { CampaignsListComponent } from './modules/campaign-ui/components/campaigns-list/campaigns-list.component';
 import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign-admin-list.component';
 import { CampaignViewComponent } from './pages/campaign-view/campaign-view.component';
-import { CampaignCapitalcallComponent } from './pages/campaign-capitalcall/campaign-capitalcall.component';
+import { CampaignFundingRequestsComponent } from './pages/campaign-fundingrequests/campaign-fundingrequests.component';
 import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
     CampaignAdminListComponent,
+    CampaignFundingRequestsComponent,
     CampaignSimulationPaneComponent,
     CampaignsListComponent,
     CampaignViewComponent,
-    CampaignCapitalcallComponent,
   ],
   imports: [
     CampaignRoutingModule,
@@ -34,8 +34,8 @@ import { MatTableModule } from '@angular/material/table';
     FormsModule,
     MaterialModule,
     MatPaginatorModule,
-    NouisliderModule,
     MatTableModule,
+    NouisliderModule,
     OperatorUiModule,
     ReactiveFormsModule,
     SharedModule,

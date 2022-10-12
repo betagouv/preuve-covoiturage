@@ -43,15 +43,15 @@ export class S3StorageProvider implements ProviderInterface {
     });
   }
 
-  async findByTerritory(territory_id: number): Promise<S3.ObjectList> {
-    const result = await this.s3Instances
-      .get(BucketName.Export)
-      .listObjectsV2({
-        Bucket: this.getBucketName(BucketName.Export),
-        Prefix: `${territory_id}`,
-      })
-      .promise();
-    return result.Contents;
+  async list(bucket: BucketName, prefix?: string): Promise<S3.ObjectList> {
+    const config: S3.ListObjectsV2Request = { Bucket: this.getBucketName(bucket) };
+
+    if (prefix) {
+      config.Prefix = prefix;
+    }
+
+    const result = await this.s3Instances.get(bucket).listObjectsV2(config).promise();
+    return result.Contents || [];
   }
 
   async copy(
@@ -92,13 +92,7 @@ export class S3StorageProvider implements ProviderInterface {
 
     try {
       const rs = fs.createReadStream(filepath);
-      const ext = path.extname(filepath);
-      let key =
-        filename ??
-        path
-          .basename(filepath)
-          .replace(ext, '')
-          .replace(/[^a-z0-9_-]/g, '') + ext;
+      let key = filename ?? this.filenameFromPath(filepath);
 
       if (prefix) {
         key = `${prefix}/${key}`;
@@ -155,5 +149,15 @@ export class S3StorageProvider implements ProviderInterface {
 
   private getBucketUrl(bucket: BucketName): string {
     return env(`AWS_BUCKET_${bucket.toUpperCase()}_URL`, '') as string;
+  }
+
+  private filenameFromPath(filepath: string): string {
+    const ext = path.extname(filepath);
+    return (
+      path
+        .basename(filepath)
+        .replace(ext, '')
+        .replace(/[^a-z0-9_-]/g, '') + ext
+    );
   }
 }

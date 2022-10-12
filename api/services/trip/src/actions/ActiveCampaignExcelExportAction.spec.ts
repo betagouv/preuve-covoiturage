@@ -56,7 +56,7 @@ test('ActiveCampaignExportAction: should export 2 active campaigns and call buil
       format: { tz: 'Europe/Paris' },
       query: { campaign_id: t.context.CAMPAIGNS!.map((c) => c._id) },
     },
-    { channel: { service: 'trip' }, call: { user: { permissions: ['registry.capitalcall.export'] } } },
+    { channel: { service: 'trip' }, call: { user: { permissions: ['registry.policy.fundingRequestsExport'] } } },
   );
   t.pass();
 });

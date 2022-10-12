@@ -55,15 +55,13 @@ test.after.always.skip(async (t) => {
 });
 
 test.serial.skip('Should create fraudcheck entries', async (t) => {
-  t.log('trololo');
-
   await t.context.repository.createOrUpdate({
     acquisition_id: t.context.acquisition_id,
     karma: 0,
     data: t.context.data,
     status: FraudCheckStatusEnum.Error,
   });
-  t.log('tralalal');
+
   const result = await t.context.connection.getClient().query({
     text: `
       SELECT
@@ -84,12 +82,10 @@ test.serial.skip('Should create fraudcheck entries', async (t) => {
     result.rows,
     t.context.data.map((d) => ({ ...d, acquisition_id: t.context.acquisition_id })),
   );
-  t.log(result.rows, t.context.data);
 });
 
 test.serial.skip('Should get fraudcheck entries', async (t) => {
   const data = await t.context.repository.get(t.context.acquisition_id);
-  t.log(data);
   t.deepEqual(data, {
     acquisition_id: t.context.acquisition_id,
     status: FraudCheckStatusEnum.Error,

@@ -32,12 +32,12 @@ export class ExportCapitalCallsAction extends Action {
       params.query.campaign_id.map(async (c_id) => {
         const checkedCampaign: Campaign | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
-          .catch((e) => console.info(`Not processing excel capital call for campaign ${c_id} :${e}`));
+          .catch((e) => console.info(`Not processing excel funding requests for campaign ${c_id} :${e}`));
         if (!checkedCampaign) {
           return;
         }
 
-        const involvedOperatorIds = await this.tripRepositoryProvider.getPolicyInvoledOperators(
+        const involvedOperatorIds = await this.tripRepositoryProvider.getPolicyInvolvedOperators(
           checkedCampaign._id,
           start_date,
           end_date,
@@ -46,15 +46,13 @@ export class ExportCapitalCallsAction extends Action {
         await Promise.all(
           involvedOperatorIds.map(async (o_id) => {
             try {
-              console.debug(`Building excel capital call for campaign ${checkedCampaign.name}, operator id ${o_id}`);
-              const filepath = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
-              const s3key = await this.s3StorageProvider.upload(
-                BucketName.Export,
-                filepath,
-                undefined,
-                `${checkedCampaign.territory_id}`,
+              console.debug(
+                `Building excel funding requests for campaign ${checkedCampaign.name}, operator id ${o_id}`,
               );
-              filepathes.push(s3key);
+              const { filename, filepath } = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
+              filepathes.push(
+                await this.s3StorageProvider.upload(BucketName.Export, filepath, filename, `${checkedCampaign._id}`),
+              );
             } catch (error) {
               // eslint-disable-next-line max-len
               const message = `Error processing excel export for campaign ${checkedCampaign.name} and operator id ${o_id}`;

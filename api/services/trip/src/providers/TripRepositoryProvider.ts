@@ -530,7 +530,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       );
   }
 
-  public async getPolicyInvoledOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
+  public async getPolicyInvolvedOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
     const result = await this.connection.getClient().query({
       text: `SELECT distinct operator_id
       FROM ${this.table}

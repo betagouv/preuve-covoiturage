@@ -37,12 +37,10 @@ test.serial('Should find carpools', async (t) => {
     status: 'active',
   });
 
-  t.log((await t.context.db.connection.getClient().query('SELECT * FROM carpool.carpools')).rows);
   const cursor = t.context.repository.findTripByPolicy(policy, start_date, end_date);
   const { value } = await cursor.next();
   await cursor.next();
   t.true(Array.isArray(value));
-  t.log(value);
   t.deepEqual(
     (value || [])
       .map((c) => ({

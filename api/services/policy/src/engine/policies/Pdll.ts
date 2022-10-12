@@ -25,6 +25,7 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Pdll.html';
 
 // Politique de Pays de la Loire
+/* eslint-disable-next-line */
 export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '249';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];

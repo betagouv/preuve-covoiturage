@@ -9,8 +9,8 @@ import { BuildExcel } from '../BuildExcel';
 let dataWorkBookWriter: DataWorkBookWriter;
 
 const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
-  journey_id: faker.random.uuid(),
-  trip_id: faker.random.uuid(),
+  journey_id: faker.datatype.uuid(),
+  trip_id: faker.datatype.uuid(),
 
   journey_start_datetime: faker.date.past(2),
   journey_start_lon: faker.address.longitude(),
@@ -35,9 +35,9 @@ const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   passenger_over_18: true,
   passenger_seats: 1,
   operator_class: 'C',
-  operator_journey_id: faker.random.uuid(),
-  operator_passenger_id: faker.random.uuid(),
-  operator_driver_id: faker.random.uuid(),
+  operator_journey_id: faker.datatype.uuid(),
+  operator_passenger_id: faker.datatype.uuid(),
+  operator_driver_id: faker.datatype.uuid(),
   operator: faker.random.alphaNumeric(),
 
   journey_distance: 865,
@@ -47,12 +47,12 @@ const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
   journey_duration_anounced: 800,
   journey_duration_calculated: 800,
 
-  passenger_id: faker.random.uuid(),
+  passenger_id: faker.datatype.uuid(),
   passenger_contribution: 8,
   passenger_incentive_raw: [],
   passenger_incentive_rpc_raw: [],
 
-  driver_id: faker.random.uuid(),
+  driver_id: faker.datatype.uuid(),
   driver_revenue: 75,
   driver_incentive_raw: [],
   driver_incentive_rpc_raw: [],

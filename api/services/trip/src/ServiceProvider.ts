@@ -1,10 +1,9 @@
-import { ListCapitalCallAction } from './actions/ListCapitalCallsAction';
 import { CommandExtension } from '@ilos/cli';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
-import { S3StorageProvider } from '@pdc/provider-file';
+import { APDFNameProvider, S3StorageProvider } from '@pdc/provider-file';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
@@ -40,7 +39,14 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
 
 @serviceProvider({
   config,
-  providers: [TripRepositoryProvider, StatCacheRepositoryProvider, S3StorageProvider, CryptoProvider, DataGouvProvider],
+  providers: [
+    APDFNameProvider,
+    CryptoProvider,
+    DataGouvProvider,
+    S3StorageProvider,
+    StatCacheRepositoryProvider,
+    TripRepositoryProvider,
+  ],
   validator: [
     listBinding,
     searchCountBinding,
@@ -69,7 +75,6 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
     TripCacheWarmCron,
     SendExportAction,
     PublishOpenDataAction,
-    ListCapitalCallAction,
   ],
   queues: ['trip'],
 })
