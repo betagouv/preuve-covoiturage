@@ -25,7 +25,7 @@ export class BuildExcel {
     operator_id: number,
   ): Promise<{ filename: string; filepath: string }> {
     // generate the filename and filepath
-    const filename: string = this.apdfNameProvider.stringify({
+    const filename: string = this.apdfNameProvider.filename({
       name: campaign.name,
       campaign_id: campaign._id,
       operator_id,

@@ -16,7 +16,7 @@ export class APDFNameProvider implements ProviderInterface {
   private prefix = 'APDF';
   private ext = 'xlsx';
 
-  public stringify(params: APDFNameParamsInterface): APDFNameResultsInterface {
+  public filename(params: APDFNameParamsInterface): APDFNameResultsInterface {
     const { name, datetime, campaign_id, operator_id } = params;
 
     // APDF-2022-01-123-456-campaign-operator-hash.ext
@@ -36,7 +36,7 @@ export class APDFNameProvider implements ProviderInterface {
   }
 
   public filepath(params: string | APDFNameParamsInterface): APDFNameResultsInterface {
-    const filename = typeof params === 'string' ? params : this.stringify(params);
+    const filename = typeof params === 'string' ? params : this.filename(params);
     return path.join(os.tmpdir(), filename);
   }
 
@@ -52,7 +52,14 @@ export class APDFNameProvider implements ProviderInterface {
     };
   }
 
-  private sanitize(str: string): string {
-    return str.toLowerCase().substring(0, 16).replace(/\ /g, '_').replace('-', '_');
+  public sanitize(str: string): string {
+    return str
+      .replace(/\u20AC/g, 'e') // € -> e
+      .normalize('NFD')
+      .replace(/[\ \.\/]/g, '_')
+      .replace(/([\u0300-\u036f]|[^\w-_\ ])/g, '')
+      .replace('_-_', '-')
+      .toLowerCase()
+      .substring(0, 128);
   }
 }
