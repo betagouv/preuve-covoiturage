@@ -8,11 +8,10 @@ import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/terr
 import { CampaignModule } from '~/modules/campaign/campaign.module';
 
 import { FilterComponent } from './components/filter/filter.component';
-import { TownsAutocompleteComponent } from './components/towns-autocomplete/towns-autocomplete.component';
 import { MaterialModule } from '../../shared/modules/material/material.module';
 
 @NgModule({
-  declarations: [FilterComponent, TownsAutocompleteComponent],
+  declarations: [FilterComponent],
   imports: [
     CommonModule,
     MaterialModule,

@@ -13,7 +13,6 @@ import { UiTripModule } from '~/modules/trip/modules/ui-trip/ui-trip.module';
 import { MaterialModule } from '../../shared/modules/material/material.module';
 import { SharedModule } from '../../shared/shared.module';
 import { CampaignSimulationPaneComponent } from './components/campaign-simulation-pane/campaign-simulation-pane.component';
-import { CampaignsListComponent } from './modules/campaign-ui/components/campaigns-list/campaigns-list.component';
 import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign-admin-list.component';
 import { CampaignViewComponent } from './pages/campaign-view/campaign-view.component';
 import { CampaignFundingRequestsComponent } from './pages/campaign-fundingrequests/campaign-fundingrequests.component';
@@ -24,7 +23,6 @@ import { MatTableModule } from '@angular/material/table';
     CampaignAdminListComponent,
     CampaignFundingRequestsComponent,
     CampaignSimulationPaneComponent,
-    CampaignsListComponent,
     CampaignViewComponent,
   ],
   imports: [
@@ -44,6 +42,5 @@ import { MatTableModule } from '@angular/material/table';
     UiTripModule,
   ],
   providers: [CurrencyPipe, DecimalPipe],
-  exports: [CampaignsListComponent],
 })
 export class CampaignModule {}

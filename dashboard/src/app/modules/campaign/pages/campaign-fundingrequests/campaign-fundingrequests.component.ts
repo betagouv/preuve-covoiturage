@@ -1,17 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { ResultsInterface as FundingRequestsListResult } from '~/shared/policy/fundingRequestsList.contract';
 import { FundingRequestsApiService } from '../../services/fundingrequests-api.service';
+import { PolicyInterface } from './../../../../../../../shared/policy/common/interfaces/PolicyInterface';
+
 @Component({
   selector: 'app-campaign-fundingrequests',
   templateUrl: './campaign-fundingrequests.component.html',
   styleUrls: ['./campaign-fundingrequests.component.scss'],
 })
 export class CampaignFundingRequestsComponent implements OnInit {
-  @Input() campaign: CampaignUx;
+  @Input() campaign: PolicyInterface;
 
   public fRequestsList: FundingRequestsListResult;
   public displayedColumns: string[] = ['month', 'operator', 'action'];

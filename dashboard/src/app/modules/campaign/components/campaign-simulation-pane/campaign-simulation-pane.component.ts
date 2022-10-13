@@ -2,11 +2,11 @@ import { format, subDays, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { omit } from 'lodash-es';
 import { BehaviorSubject } from 'rxjs';
+import { PolicyInterface } from './../../../../../../../shared/policy/common/interfaces/PolicyInterface';
 
 import { Component, Input, OnChanges, OnInit, SimpleChange } from '@angular/core';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { ResultInterface as StatResultInterface } from '~/shared/policy/stats.contract';
 
@@ -26,13 +26,13 @@ interface SimulationDateRange {
   styleUrls: ['./campaign-simulation-pane.component.scss'],
 })
 export class CampaignSimulationPaneComponent extends DestroyObservable implements OnInit, OnChanges {
-  @Input() campaign: CampaignUx;
+  @Input() campaign: PolicyInterface;
 
   public loading = true;
   public state: StatResultInterface = { trip_excluded: 0, trip_subsidized: 0, amount: 0 };
   public timeState = getTimeState(1);
   public range$ = new BehaviorSubject<number>(1);
-  public simulatedCampaign$ = new BehaviorSubject<CampaignUx>(null);
+  public simulatedCampaign$ = new BehaviorSubject<PolicyInterface>(null);
   public errors = {
     simulation_failed: false,
   };
@@ -57,7 +57,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
     // keys not triggering a refresh
     const bypassKeys = ['name', 'description'];
     const hasChanged = !deepEqual(omit(previousValue, bypassKeys), omit(currentValue, bypassKeys));
-    if (hasChanged) this.simulatedCampaign$.next(new CampaignUx(currentValue));
+    if (hasChanged) this.simulatedCampaign$.next(currentValue);
   }
 }
 

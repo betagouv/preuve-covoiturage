@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 
-import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { UtilsService } from '~/core/services/utils.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { UtilsService } from '~/core/services/utils.service';
   styleUrls: ['./campaign-summary-text.component.scss'],
 })
 export class CampaignSummaryTextComponent {
-  @Input() campaign: CampaignUx;
+  @Input() campaign: PolicyInterface;
 
   constructor(private _utils: UtilsService, private _toastr: ToastrService) {}
 
