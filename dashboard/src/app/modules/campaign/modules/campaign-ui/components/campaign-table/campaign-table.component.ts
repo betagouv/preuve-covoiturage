@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 
 import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-campaign-table',
@@ -17,14 +16,14 @@ export class CampaignTableComponent {
     'name',
     'territory',
     // 'amount_spent',
-    // 'max_amount',
+    'max_amount',
     // 'trips_number',
     // 'max_trips',
   ];
 
   constructor() {}
 
-  isEuro(unit: IncentiveUnitEnum): boolean {
-    return unit === IncentiveUnitEnum.EUR;
+  centToEuro(amount: number): number {
+    return amount / 100;
   }
 }
