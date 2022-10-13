@@ -10,14 +10,3 @@ export interface InseeAndTerritoryInterface {
   insees: string;
   context: string;
 }
-
-export interface IncentiveTimeRuleUxInterface {
-  start: string;
-  end: string;
-}
-
-export interface IncentiveTimeRuleInterface {
-  start: number;
-  end: number;
-  tz: string;
-}

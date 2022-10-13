@@ -21,7 +21,6 @@ import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { PageContentComponent } from './components/page-content/page-content.component';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
-import { RangeTimePickerComponent } from './components/range-time-picker/range-time-picker.component';
 import { UploadComponent } from './components/upload/upload.component';
 import { FrenchMatPaginatorIntl } from './classes/french-paginator';
 
@@ -42,7 +41,6 @@ import { FrenchMatPaginatorIntl } from './classes/french-paginator';
     MenuCardComponent,
     PageContentComponent,
     PageHeaderComponent,
-    RangeTimePickerComponent,
     UploadComponent,
   ],
   imports: [MaterialModule, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule],
@@ -62,7 +60,6 @@ import { FrenchMatPaginatorIntl } from './classes/french-paginator';
     MenuCardComponent,
     PageContentComponent,
     PageHeaderComponent,
-    RangeTimePickerComponent,
     UploadComponent,
   ],
   providers: [{ provide: MatPaginatorIntl, useClass: FrenchMatPaginatorIntl }],
