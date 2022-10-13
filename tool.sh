@@ -56,6 +56,7 @@ bootstrap() {
   start_services && \
   seed_data && \
   create_bucket local-pdc-export && \
+  create_bucket local-pdc-appels-de-fonds && \
   create_bucket local-pdc-public
 }
 

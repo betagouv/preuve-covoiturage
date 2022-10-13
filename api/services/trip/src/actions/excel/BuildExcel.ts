@@ -76,12 +76,10 @@ export class BuildExcel {
         arrayOfSlices,
       );
 
-      return this.slicesWorkbookWriter.call(slices, workbookWriter);
+      return await this.slicesWorkbookWriter.call(slices, workbookWriter);
     } catch (e) {
-      console.error(
-        `Error while computing slices for campaign capital call ${campaign.name} and operator ${operator_id}`,
-        e,
-      );
+      console.error(`Error while computing slices for campaign ${campaign.name} and operator ${operator_id}`);
+      console.debug(e.message);
     }
   }
 

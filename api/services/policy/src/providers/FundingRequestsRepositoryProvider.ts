@@ -9,7 +9,7 @@ import { EnrichedFundingRequestType } from '../shared/policy/fundingRequestsList
   identifier: FundingRequestsRepositoryProviderInterfaceResolver,
 })
 export class FundingRequestsRepositoryProvider implements FundingRequestsRepositoryProviderInterfaceResolver {
-  private bucket: BucketName = BucketName.Export;
+  private bucket: BucketName = BucketName.APDF;
 
   constructor(private s3StorageProvider: S3StorageProvider, private APDFNameProvider: APDFNameProvider) {}
 

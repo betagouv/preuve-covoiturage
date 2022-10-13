@@ -51,7 +51,7 @@ export class ExportCapitalCallsAction extends Action {
               console.debug(`Exporting APDF: campaign ${checkedCampaign.name}, operator id ${o_id}`);
               const { filename, filepath } = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
               filepathes.push(
-                await this.s3StorageProvider.upload(BucketName.Export, filepath, filename, `${checkedCampaign._id}`),
+                await this.s3StorageProvider.upload(BucketName.APDF, filepath, filename, `${checkedCampaign._id}`),
               );
             } catch (error) {
               // eslint-disable-next-line max-len

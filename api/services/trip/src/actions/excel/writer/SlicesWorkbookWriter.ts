@@ -20,7 +20,7 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
     { header: 'Nombre de trip_id', key: 'tripCount' },
   ];
 
-  call(slices: SlicesInterface[], workbookWriter: stream.xlsx.WorkbookWriter): void {
+  async call(slices: SlicesInterface[], workbookWriter: stream.xlsx.WorkbookWriter): Promise<void> {
     const worksheet: Worksheet = this.initWorkSheet(
       workbookWriter,
       this.SLICE_WORKSHEET_NAME,
