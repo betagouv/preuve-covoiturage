@@ -26,4 +26,14 @@ export class CampaignTableComponent {
   centToEuro(amount: number): number {
     return amount / 100;
   }
+
+  isRunning(campaign: PolicyInterface): boolean {
+    const today = new Date();
+    return campaign.status === 'active' && new Date(campaign.end_date) > today && new Date(campaign.start_date) < today;
+  }
+
+  isOver(campaign: PolicyInterface): boolean {
+    const today = new Date();
+    return campaign.status === 'finished' || (campaign.status === 'active' && new Date(campaign.end_date) < today);
+  }
 }
