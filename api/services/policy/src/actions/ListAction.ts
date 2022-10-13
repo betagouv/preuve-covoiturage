@@ -1,7 +1,7 @@
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
-import { PolicyHandlerStaticInterface } from './../interfaces/engine/PolicyInterface';
+import { PolicyHandlerStaticInterface, SerializedPolicyInterface } from './../interfaces/engine/PolicyInterface';
 
 import { policies } from '../engine/policies/index';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
@@ -23,8 +23,6 @@ import { alias } from '../shared/policy/list.schema';
   ],
 })
 export class ListAction extends AbstractAction {
-  protected readonly sensitiveRules = ['operator_whitelist_filter'];
-
   constructor(private kernel: KernelInterfaceResolver, private repository: PolicyRepositoryProviderInterfaceResolver) {
     super();
   }
@@ -45,9 +43,15 @@ export class ListAction extends AbstractAction {
       },
     );
 
-    return result.filter((p) => {
-      const policyHandler: PolicyHandlerStaticInterface = policies.get(p._id.toString());
-      return policyHandler && new policyHandler().params().operators.includes(operator.siret);
-    });
+    return result.filter((p) => this.withOperator(p, operator)).filter((p) => this.wihtoutDraft(p));
+  }
+
+  private wihtoutDraft(p: SerializedPolicyInterface): boolean {
+    return p.status !== 'draft';
+  }
+
+  private withOperator(p: SerializedPolicyInterface, operator: OperatorResultInterface): boolean {
+    const policyHandler: PolicyHandlerStaticInterface = policies.get(p._id.toString());
+    return policyHandler && new policyHandler().params().operators.includes(operator.siret);
   }
 }
