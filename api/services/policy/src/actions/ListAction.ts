@@ -1,3 +1,4 @@
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
@@ -10,7 +11,7 @@ import {
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
 } from '../shared/operator/find.contract';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
+import { handlerConfig, ParamsInterface, ResultInterface, SingleResultInterface } from '../shared/policy/list.contract';
 import { alias } from '../shared/policy/list.schema';
 import { Policy } from '../engine/entities/Policy';
 
@@ -29,15 +30,19 @@ export class ListAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    let result: SerializedPolicyInterface[] = await this.repository.findWhere(params);
+    const policies: SerializedPolicyInterface[] = await this.repository.findWhere(params);
 
-    result = await Promise.all(
-      result.map(async (r) => {
-        const policy = await Policy.import(r);
-        return {
-          ...r,
-          params: policy.params(),
-        };
+    const result: ResultInterface = await Promise.all(
+      policies.map(async (r) => {
+        const policy: SingleResultInterface = { ...r, params: null };
+        try {
+          const importedPolicy = await Policy.import(r);
+          policy.params = importedPolicy.params();
+        } catch (e) {
+          console.error(`Could not build policy ${r._id}`, e);
+        } finally {
+          return policy;
+        }
       }),
     );
 
@@ -57,11 +62,12 @@ export class ListAction extends AbstractAction {
     return result.filter((p) => this.withOperator(p, operator)).filter((p) => this.wihtoutDraft(p));
   }
 
-  private wihtoutDraft(p: SerializedPolicyInterface): boolean {
+  private wihtoutDraft(p: SingleResultInterface): boolean {
     return p.status !== 'draft';
   }
 
-  private withOperator(p: SerializedPolicyInterface, operator: OperatorResultInterface): boolean {
+  private withOperator(p: SingleResultInterface, operator: OperatorResultInterface): boolean {
+    // TODO later this -> return p.params.operators.includes(operator.siret);
     const policyHandler: PolicyHandlerStaticInterface = policies.get(p._id.toString());
     return policyHandler && new policyHandler().params().operators.includes(operator.siret);
   }
