@@ -1,10 +1,9 @@
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
-import { PolicyHandlerStaticInterface, SerializedPolicyInterface } from './../interfaces/engine/PolicyInterface';
+import { SerializedPolicyInterface } from './../interfaces/engine/PolicyInterface';
 
-import { policies } from '../engine/policies/index';
+import { Policy } from '../engine/entities/Policy';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import {
   ParamsInterface as OperatorParamsInterface,
@@ -13,7 +12,6 @@ import {
 } from '../shared/operator/find.contract';
 import { handlerConfig, ParamsInterface, ResultInterface, SingleResultInterface } from '../shared/policy/list.contract';
 import { alias } from '../shared/policy/list.schema';
-import { Policy } from '../engine/entities/Policy';
 
 @handler({
   ...handlerConfig,
@@ -39,7 +37,7 @@ export class ListAction extends AbstractAction {
           const importedPolicy = await Policy.import(r);
           policy.params = importedPolicy.params();
         } catch (e) {
-          console.error(`Could not build policy ${r._id}`, e);
+          console.error(`Could not import policy ${r._id}`, e);
         } finally {
           return policy;
         }
@@ -67,8 +65,6 @@ export class ListAction extends AbstractAction {
   }
 
   private withOperator(p: SingleResultInterface, operator: OperatorResultInterface): boolean {
-    // TODO later this -> return p.params.operators.includes(operator.siret);
-    const policyHandler: PolicyHandlerStaticInterface = policies.get(p._id.toString());
-    return policyHandler && new policyHandler().params().operators.includes(operator.siret);
+    return p.params.operators.includes(operator.siret);
   }
 }
