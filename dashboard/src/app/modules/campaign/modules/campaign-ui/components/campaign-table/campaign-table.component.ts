@@ -27,9 +27,4 @@ export class CampaignTableComponent {
   isEuro(unit: IncentiveUnitEnum): boolean {
     return unit === IncentiveUnitEnum.EUR;
   }
-
-  isRunning(campaign: PolicyInterface): boolean {
-    const today = new Date();
-    return campaign.status === 'active' && new Date(campaign.end_date) > today && new Date(campaign.start_date) < today;
-  }
 }
