@@ -12,6 +12,7 @@ import {
 } from '../shared/operator/find.contract';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
 import { alias } from '../shared/policy/list.schema';
+import { Policy } from '../engine/entities/Policy';
 
 @handler({
   ...handlerConfig,
@@ -28,7 +29,17 @@ export class ListAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const result = await this.repository.findWhere(params);
+    let result: SerializedPolicyInterface[] = await this.repository.findWhere(params);
+
+    result = await Promise.all(
+      result.map(async (r) => {
+        const policy = await Policy.import(r);
+        return {
+          ...r,
+          params: policy.params(),
+        };
+      }),
+    );
 
     if (!params.operator_id) {
       return result;

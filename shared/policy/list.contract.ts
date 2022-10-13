@@ -6,7 +6,7 @@ export interface ParamsInterface {
   status?: string;
 }
 
-export type ResultInterface = Array<Omit<PolicyInterface, 'description' | 'params'>>;
+export type ResultInterface = Array<Omit<PolicyInterface, 'description' | 'handler'>>;
 
 export const handlerConfig = {
   service: 'campaign',
