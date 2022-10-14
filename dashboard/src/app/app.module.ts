@@ -17,7 +17,7 @@ registerLocaleData(fr);
   providers: [
     {
       provide: LOCALE_ID,
-      useValue: 'fr-FR',
+      useValue: 'fr',
     },
   ],
   bootstrap: [AppComponent],

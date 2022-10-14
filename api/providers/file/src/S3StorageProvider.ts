@@ -25,6 +25,7 @@ export class S3StorageProvider implements ProviderInterface {
     this.prefix = env('AWS_BUCKET_PREFIX', env('NODE_ENV', 'local')) as string;
     this.pathStyle = env('AWS_S3_PATH_STYLE', false) ? true : false;
 
+    this.s3Instances.set(BucketName.APDF, this.createInstance(BucketName.APDF));
     this.s3Instances.set(BucketName.Export, this.createInstance(BucketName.Export));
     this.s3Instances.set(BucketName.Public, this.createInstance(BucketName.Public));
   }

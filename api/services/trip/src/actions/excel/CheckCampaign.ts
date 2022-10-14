@@ -19,22 +19,23 @@ export class CheckCampaign {
       channel: { service: handlerConfig.service },
       call: { user: { permissions: ['registry.policy.find'] } },
     });
+
     if (!this.isCampaignActive(campaign)) {
       throw new InvalidRequestException(`Campaign ${campaign._id} is not active`);
     }
 
-    if (!this.isDateRangeInsideCampagnDate(campaign, start_date, end_date)) {
-      throw new InvalidRequestException(`Provided date range are not inside campaign ${campaign._id} periode`);
+    if (!this.isDateRangeInsideCampaignDate(campaign, start_date, end_date)) {
+      throw new InvalidRequestException(`Start date outside campaign time range (${campaign._id})`);
     }
 
     return campaign;
   }
 
-  private isCampaignActive(campaign): boolean {
+  private isCampaignActive(campaign: GetCampaignResultInterface): boolean {
     return campaign.status === 'active';
   }
 
-  private isDateRangeInsideCampagnDate(campaign: GetCampaignResultInterface, start_date: Date, end_date): boolean {
+  private isDateRangeInsideCampaignDate(campaign: GetCampaignResultInterface, start_date: Date, end_date): boolean {
     return (
       (campaign.start_date > start_date && campaign.start_date < end_date) ||
       (campaign.end_date < end_date && campaign.end_date > start_date) ||

@@ -170,7 +170,7 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
         data.address_postcode,
         data.address_cedex,
         data.address_city,
-        `POINT(${data.lon} ${data.lat})`,
+        data.lon ? `POINT(${data.lon} ${data.lat})` : null,
       ],
     };
 

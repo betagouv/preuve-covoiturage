@@ -12,6 +12,13 @@ export interface TzResultInterface {
   utc_offset: string;
 }
 
+export interface CampaignSearchParamsInterface {
+  campaign_id: number;
+  operator_id: number;
+  start_date: Date;
+  end_date: Date;
+}
+
 export interface TripRepositoryInterface {
   stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]>;
   financialStats(params: Partial<TripSearchInterface>): Promise<FinancialStatInterface[]>;
@@ -29,6 +36,8 @@ export interface TripRepositoryInterface {
   ): Promise<PgCursorHandler>;
   validateTz(tz?: string): Promise<TzResultInterface>;
   getPolicyInvolvedOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]>;
+  getPolicyTripCount(params: CampaignSearchParamsInterface): Promise<number>;
+  getPolicyTotalAmount(params: CampaignSearchParamsInterface): Promise<number>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]> {
@@ -76,6 +85,13 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
     end_date: Date,
     operatorsSiret?: Array<string>,
   ): Promise<number[]> {
+    throw new Error('Not implemented');
+  }
+
+  public async getPolicyTripCount(params: CampaignSearchParamsInterface): Promise<number> {
+    throw new Error('Not implemented');
+  }
+  public async getPolicyTotalAmount(params: CampaignSearchParamsInterface): Promise<number> {
     throw new Error('Not implemented');
   }
 }

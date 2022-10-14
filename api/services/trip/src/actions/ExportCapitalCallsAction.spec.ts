@@ -148,7 +148,7 @@ test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided
   );
   sinon.assert.calledOnceWithExactly(
     t.context.s3StorageProviderStub!,
-    BucketName.Export,
+    BucketName.APDF,
     filepath,
     filename,
     `${campaign._id}`,
@@ -268,12 +268,7 @@ test('ExportCapitalCallsAction: should send error and process other if 1 export 
   );
   t.deepEqual(
     result.sort(),
-    [
-      filename,
-      filename,
-      `Error processing excel export for campaign ${campaign2.name} and operator id 5`,
-      filename,
-    ].sort(),
+    [filename, filename, `Failed APDF export for operator 5 (campaign ${campaign2._id})`, filename].sort(),
   );
   t.is(t.context.checkCampaignStub!.args[0][0], campaign1._id);
   t.is(t.context.checkCampaignStub!.args[1][0], campaign2._id);
