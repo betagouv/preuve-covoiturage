@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import * as moment from 'moment';
-import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 
 import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 
@@ -40,7 +39,7 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
     hover: {},
   };
 
-  constructor(private campaignApiService: CampaignApiService) {}
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.campaign) {
@@ -79,20 +78,9 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.campaignApiService.stat(this.campaign._id).subscribe(
-      (campaignState) => {
-        if (!campaignState) {
-          return;
-        }
-
-        this.budgetTotal = this.campaign.params?.limits ? this.campaign.params.limits?.glob / 100 : 0;
-
-        this.budgetSpent = campaignState.amount / 100;
-        this.budgetRemaining = this.campaign ? this.budgetTotal - this.budgetSpent : 1;
-      },
-      (error) => {},
-      () => (this.isLoaded = true),
-    );
+    this.budgetTotal = this.campaign.params?.limits ? this.campaign.params.limits?.glob / 100 : 0;
+    this.budgetSpent = this.campaign.incentive_sum / 100;
+    this.budgetRemaining = this.campaign ? this.budgetTotal - this.budgetSpent : 1;
   }
 
   get periodChartData(): ChartData {

@@ -38,6 +38,7 @@ export interface SerializedPolicyInterface {
   end_date: Date;
   handler: string;
   status: string;
+  incentive_sum: number;
 }
 
 export interface PolicyHandlerStaticInterface {
