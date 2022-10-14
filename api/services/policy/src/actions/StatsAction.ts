@@ -1,27 +1,44 @@
-import { handler } from '@ilos/common';
+import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
 
 import { IncentiveRepositoryProviderInterfaceResolver } from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/stats.contract';
-import { alias } from '../shared/policy/stats.schema';
+import { handlerConfig, signature } from '../shared/policy/stats.contract';
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
-      territory: 'territory.policy.find',
-      registry: 'registry.policy.find',
-    }),
-    ['validate', alias],
-  ],
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
 export class StatsAction extends AbstractAction {
-  constructor(private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver) {
+  constructor(
+    private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
+  ) {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return await this.incentiveRepository.getPolicyIncentiveStats(params._id, params.territoy_id);
+  async init(): Promise<void> {
+    await this.kernel.notify<{}>(
+      signature,
+      {},
+      {
+        call: {
+          user: {},
+        },
+        channel: {
+          service: handlerConfig.service,
+          metadata: {
+            repeat: {
+              cron: '0 7 * * *',
+            },
+            jobId: 'policy.update_policy_incentive_sum',
+          },
+        },
+      },
+    );
+  }
+
+  public async handle(): Promise<void> {
+    return await this.incentiveRepository.updateIncentiveSum();
   }
 }

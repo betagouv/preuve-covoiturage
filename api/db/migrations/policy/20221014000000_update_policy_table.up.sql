@@ -1,1 +1,1 @@
-ALTER TABLE policy.policies ADD COLUMN incentives_sum int;
+ALTER TABLE policy.policies ADD COLUMN incentive_sum int;
