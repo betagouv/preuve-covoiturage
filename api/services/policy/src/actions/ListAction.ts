@@ -1,16 +1,16 @@
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
-import { PolicyHandlerStaticInterface } from './../interfaces/engine/PolicyInterface';
+import { SerializedPolicyInterface } from './../interfaces/engine/PolicyInterface';
 
-import { policies } from '../engine/policies/index';
+import { Policy } from '../engine/entities/Policy';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
 } from '../shared/operator/find.contract';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
+import { handlerConfig, ParamsInterface, ResultInterface, SingleResultInterface } from '../shared/policy/list.contract';
 import { alias } from '../shared/policy/list.schema';
 
 @handler({
@@ -23,14 +23,26 @@ import { alias } from '../shared/policy/list.schema';
   ],
 })
 export class ListAction extends AbstractAction {
-  protected readonly sensitiveRules = ['operator_whitelist_filter'];
-
   constructor(private kernel: KernelInterfaceResolver, private repository: PolicyRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const result = await this.repository.findWhere(params);
+    const policies: SerializedPolicyInterface[] = await this.repository.findWhere(params);
+
+    const result: ResultInterface = await Promise.all(
+      policies.map(async (r) => {
+        const policy: SingleResultInterface = { ...r, params: null };
+        try {
+          const importedPolicy = await Policy.import(r);
+          policy.params = importedPolicy.params();
+        } catch (e) {
+          console.error(`Could not import policy ${r._id}`, e);
+        } finally {
+          return policy;
+        }
+      }),
+    );
 
     if (!params.operator_id) {
       return result;
@@ -45,9 +57,14 @@ export class ListAction extends AbstractAction {
       },
     );
 
-    return result.filter((p) => {
-      const policyHandler: PolicyHandlerStaticInterface = policies.get(p._id.toString());
-      return policyHandler && new policyHandler().params().operators.includes(operator.siret);
-    });
+    return result.filter((p) => this.withOperator(p, operator)).filter((p) => this.withoutDraft(p));
+  }
+
+  private withoutDraft(p: SingleResultInterface): boolean {
+    return p.status !== 'draft';
+  }
+
+  private withOperator(p: SingleResultInterface, operator: OperatorResultInterface): boolean {
+    return !!p.params?.operators?.includes(operator.siret);
   }
 }

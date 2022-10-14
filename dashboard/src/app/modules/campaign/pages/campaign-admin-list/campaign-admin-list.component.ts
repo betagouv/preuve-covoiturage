@@ -74,7 +74,7 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
       this.campaignApiService.getList().pipe(
         debounceTime(100),
         map((result: { data: PolicyInterface[]; meta: any }) =>
-          result.data.sort((a, b) => new Date(b.end_date).getTime() - new Date(a.end_date).getTime()),
+          result.data.sort((a, b) => PolicyStatus[a.status] - PolicyStatus[b.status]),
         ),
         tap((campaigns: PolicyInterface[]) => (this.campaigns = campaigns)),
       ),
@@ -110,4 +110,10 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
 
     return this.filteredCampaigns.slice(start, end);
   }
+}
+
+export enum PolicyStatus {
+  active,
+  draft,
+  finished,
 }

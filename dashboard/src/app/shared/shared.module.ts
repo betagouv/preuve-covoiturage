@@ -14,7 +14,6 @@ import { ListItemComponent } from './components/list-item/list-item.component';
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { PageContentComponent } from './components/page-content/page-content.component';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
-import { RangeTimePickerComponent } from './components/range-time-picker/range-time-picker.component';
 import { UploadComponent } from './components/upload/upload.component';
 import { ButtonHrefDirective } from './directives/button-href.directive';
 import { ButtonSpinnerDirective } from './directives/button-spinner.directive';
@@ -24,7 +23,6 @@ import { EuroPipe } from './pipes/euro.pipe';
 import { FilesizePipe } from './pipes/filesize.pipe';
 import { IsNumberPipe } from './pipes/is-number.pipe';
 import { KilometerPipe } from './pipes/km.pipe';
-import { PointPipe } from './pipes/point.pipe';
 
 @NgModule({
   declarations: [
@@ -43,8 +41,6 @@ import { PointPipe } from './pipes/point.pipe';
     MenuCardComponent,
     PageContentComponent,
     PageHeaderComponent,
-    PointPipe,
-    RangeTimePickerComponent,
     UploadComponent,
   ],
   imports: [MaterialModule, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule],
@@ -64,8 +60,6 @@ import { PointPipe } from './pipes/point.pipe';
     MenuCardComponent,
     PageContentComponent,
     PageHeaderComponent,
-    PointPipe,
-    RangeTimePickerComponent,
     UploadComponent,
   ],
   providers: [{ provide: MatPaginatorIntl, useClass: FrenchMatPaginatorIntl }],

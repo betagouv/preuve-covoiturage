@@ -1,1 +1,0 @@
-export const CAMPAIGN_RULES_MAX_DISTANCE_KM = 150;

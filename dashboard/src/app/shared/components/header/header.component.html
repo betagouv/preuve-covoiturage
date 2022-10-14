@@ -16,8 +16,12 @@
       </div>
 
       <!-- Campagnes -->
-      <div *ngIf="user && !isTerritoryDemo" class="navbar-menu-item campaign-menu-item" [routerLink]="'/campaign'"
-        routerLinkActive="active">
+      <div
+        *ngIf="user && !isTerritoryDemo"
+        class="navbar-menu-item campaign-menu-item"
+        [routerLink]="'/campaign'"
+        routerLinkActive="active"
+      >
         Campagnes
       </div>
     </div>
