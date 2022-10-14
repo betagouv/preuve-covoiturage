@@ -12,6 +12,15 @@
     height: 150px;
     text-align: center;
   }
+  .download_link {
+    display: flex;
+    align-items: center;
+    color: $color-primary;
+    text-decoration: none;
+    span {
+      margin-left: 1em;
+    }
+  }
 }
 
 .loader {
@@ -19,4 +28,3 @@
   display: flex;
   justify-content: space-around;
 }
-
