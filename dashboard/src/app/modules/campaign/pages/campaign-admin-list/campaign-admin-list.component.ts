@@ -114,6 +114,6 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
 
 export enum PolicyStatus {
   active,
-  finished,
   draft,
+  finished,
 }
