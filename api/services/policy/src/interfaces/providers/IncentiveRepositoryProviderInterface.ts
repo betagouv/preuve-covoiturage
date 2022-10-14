@@ -19,5 +19,4 @@ export abstract class IncentiveRepositoryProviderInterfaceResolver {
     batchSize?: number,
     from?: Date,
   ): AsyncGenerator<Array<SerializedIncentiveInterface<number>>, void, void>;
-  abstract getPolicyIncentiveStats(policy_id: number, territory_id?: number): Promise<IncentiveStatsInterface>;
 }

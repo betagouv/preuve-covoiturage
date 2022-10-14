@@ -270,30 +270,4 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     await this.connection.getClient().query(query);
     return;
   }
-
-  async getPolicyIncentiveStats(policy_id: number, territory_id?: number): Promise<IncentiveStatsInterface> {
-    const query = {
-      text: `
-        SELECT
-          coalesce(sum(amount)::int, 0) as amount,
-          (count(*) FILTER (WHERE amount > 0))::int as trip_subsidized,
-          (count(*) FILTER (WHERE amount = 0))::int as trip_excluded
-        FROM ${this.table}
-        WHERE policy_id = $1
-          AND state = 'regular'
-          ${!!territory_id ? 'AND territory_id = $2' : ''}
-      `,
-      values: [policy_id, ...(territory_id ? [territory_id] : [])],
-    };
-
-    const result = await this.connection.getClient().query(query);
-
-    return result.rowCount
-      ? result.rows[0]
-      : {
-          amount: 0,
-          trip_excluded: 0,
-          trip_subsidized: 0,
-        };
-  }
 }
