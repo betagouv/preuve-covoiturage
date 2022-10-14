@@ -57,10 +57,10 @@ export class ListAction extends AbstractAction {
       },
     );
 
-    return result.filter((p) => this.withOperator(p, operator)).filter((p) => this.wihtoutDraft(p));
+    return result.filter((p) => this.withOperator(p, operator)).filter((p) => this.withoutDraft(p));
   }
 
-  private wihtoutDraft(p: SingleResultInterface): boolean {
+  private withoutDraft(p: SingleResultInterface): boolean {
     return p.status !== 'draft';
   }
 
