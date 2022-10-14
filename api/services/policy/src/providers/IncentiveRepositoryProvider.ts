@@ -273,14 +273,14 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
   async updateIncentiveSum(): Promise<void> {
     const query = {
-      text: `UPDATE POLICY.POLICIES
+      text: `UPDATE POLICY.POLICIES P
       SET INCENTIVE_SUM = POLICY_INCENTIVE_SUM.AMOUNT
       FROM
         (SELECT POLICY_ID, COALESCE(SUM(RESULT),0)::int AS AMOUNT
           FROM POLICY.INCENTIVES
           WHERE STATUS = 'validated'
           GROUP BY POLICY_ID) AS POLICY_INCENTIVE_SUM
-      WHERE POLICIES._ID = POLICY_INCENTIVES_SUM.POLICY_ID`,
+      WHERE P._ID = POLICY_INCENTIVE_SUM.POLICY_ID`,
     };
     await this.connection.getClient().query(query);
     return;

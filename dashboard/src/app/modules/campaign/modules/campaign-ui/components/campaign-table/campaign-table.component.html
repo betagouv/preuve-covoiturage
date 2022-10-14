@@ -34,18 +34,14 @@
   </ng-container>
 
   <!-- Amount spent -->
-  <!-- <ng-container matColumnDef="amount_spent">
-    <th mat-header-cell *matHeaderCellDef>Incitation</th>
+  <ng-container matColumnDef="amount_spent">
+    <th mat-header-cell *matHeaderCellDef>Consommation estimée</th>
     <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-role">
-      <ng-container *ngIf="campaign.amount_spent">
-        {{ campaign.amount_spent | currency: 'EUR':'symbol':'1.0-0' }}
+      <ng-container *ngIf="campaign.incentive_sum">
+        {{ campaign.incentive_sum | euro }}
       </ng-container>
-      <ng-container *ngIf="campaign.amount_spent">
-        {{ campaign.amount_spent }}
-      </ng-container>
-      <ng-container *ngIf="!campaign.amount_spent"> - </ng-container>
     </td>
-  </ng-container> -->
+  </ng-container>
 
   <!-- Max amount -->
   <ng-container matColumnDef="max_amount">

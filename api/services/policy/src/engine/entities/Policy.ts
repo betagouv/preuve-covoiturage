@@ -26,6 +26,7 @@ export class Policy implements PolicyInterface {
     public end_date: Date,
     public handler: PolicyHandlerInterface,
     public status: string,
+    public incentive_sum: number,
   ) {}
 
   static async import(data: SerializedPolicyInterface): Promise<Policy> {
@@ -43,6 +44,7 @@ export class Policy implements PolicyInterface {
       data.end_date,
       new ctor(),
       data.status,
+      data.incentive_sum,
     );
   }
 
@@ -56,6 +58,7 @@ export class Policy implements PolicyInterface {
       end_date: this.end_date,
       handler: this.handler.constructor.name,
       status: this.status,
+      incentive_sum: this.incentive_sum,
     };
   }
 
