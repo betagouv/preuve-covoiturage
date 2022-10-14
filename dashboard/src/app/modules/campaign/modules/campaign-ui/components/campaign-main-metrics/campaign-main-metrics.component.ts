@@ -14,8 +14,6 @@ export class CampaignMainMetricsComponent implements OnInit, OnChanges {
   daysRemaining = 1;
   daysPassed = 0;
 
-  isLoaded = false;
-
   budgetTotal = 1;
   budgetRemaining = 1;
   budgetSpent;
