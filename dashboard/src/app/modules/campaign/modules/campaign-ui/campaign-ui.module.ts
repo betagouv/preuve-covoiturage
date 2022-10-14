@@ -1,3 +1,4 @@
+import { SharedModule } from './../../../../shared/shared.module';
 /* eslint-disable max-len */
 
 import { NgModule } from '@angular/core';
@@ -19,7 +20,7 @@ import { MaterialModule } from '../../../../shared/modules/material/material.mod
     CampaignMainMetricsComponent,
     CampaignTableComponent,
   ],
-  imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, ChartjsModule, RouterModule],
+  imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, ChartjsModule, RouterModule, SharedModule],
   exports: [
     CampaignAutoCompleteComponent,
     CampaignSummaryTextComponent,

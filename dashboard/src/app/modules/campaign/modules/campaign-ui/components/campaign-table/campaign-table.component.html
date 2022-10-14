@@ -52,7 +52,7 @@
     <th mat-header-cell *matHeaderCellDef>Budget</th>
     <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-operator">
       <ng-container *ngIf="campaign.params && campaign.params.limits.glob">
-        {{ centToEuro(campaign.params.limits.glob) | currency: 'EUR':'symbol':'1.0-0' }}
+        {{ centToEuro(campaign.params.limits.glob) | euro }}
       </ng-container>
     </td>
   </ng-container>
