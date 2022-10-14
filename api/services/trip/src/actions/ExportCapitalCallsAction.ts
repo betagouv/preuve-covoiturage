@@ -32,7 +32,8 @@ export class ExportCapitalCallsAction extends Action {
       params.query.campaign_id.map(async (c_id) => {
         const checkedCampaign: Campaign | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
-          .catch((e) => console.info(`Not processing excel funding requests for campaign ${c_id} :${e}`));
+          .catch((e) => console.info(`Failed APDF export (campaign ${c_id}) :${e.message}`));
+
         if (!checkedCampaign) {
           return;
         }
@@ -43,19 +44,18 @@ export class ExportCapitalCallsAction extends Action {
           end_date,
           checkedCampaign.params.operators,
         );
+
         await Promise.all(
           involvedOperatorIds.map(async (o_id) => {
             try {
-              console.debug(
-                `Building excel funding requests for campaign ${checkedCampaign.name}, operator id ${o_id}`,
-              );
+              console.debug(`Exporting APDF: campaign ${checkedCampaign.name}, operator id ${o_id}`);
               const { filename, filepath } = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
               filepathes.push(
-                await this.s3StorageProvider.upload(BucketName.Export, filepath, filename, `${checkedCampaign._id}`),
+                await this.s3StorageProvider.upload(BucketName.APDF, filepath, filename, `${checkedCampaign._id}`),
               );
             } catch (error) {
               // eslint-disable-next-line max-len
-              const message = `Error processing excel export for campaign ${checkedCampaign.name} and operator id ${o_id}`;
+              const message = `Failed APDF export for operator ${o_id} (campaign ${checkedCampaign._id})`;
               console.error(message, error);
               filepathes.push(message);
             }
@@ -63,6 +63,7 @@ export class ExportCapitalCallsAction extends Action {
         );
       }),
     );
+
     return filepathes;
   }
 

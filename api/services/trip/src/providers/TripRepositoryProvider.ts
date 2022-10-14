@@ -4,6 +4,7 @@ import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
 import { map } from 'lodash';
 import { promisify } from 'util';
 import {
+  CampaignSearchParamsInterface,
   ExportTripInterface,
   TripRepositoryInterface,
   TripRepositoryProviderInterfaceResolver,
@@ -532,13 +533,62 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async getPolicyInvolvedOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
     const result = await this.connection.getClient().query({
-      text: `SELECT distinct operator_id
+      text: `SELECT DISTINCT operator_id
       FROM ${this.table}
-      WHERE JOURNEY_START_DATETIME >= $1::TIMESTAMP
-        AND JOURNEY_START_DATETIME <= $2::TIMESTAMP
+      WHERE journey_start_datetime >= $1::TIMESTAMP
+        AND journey_start_datetime <  $2::TIMESTAMP
+        AND status = 'ok'
         AND $3 = ANY(APPLIED_POLICIES);`,
       values: [start_date, end_date, campaign_id],
     });
+
     return result.rowCount ? result.rows.map((r) => r.operator_id) : [];
+  }
+
+  public async getPolicyTripCount(params: CampaignSearchParamsInterface): Promise<number> {
+    const { start_date, end_date, operator_id, campaign_id } = params;
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT COUNT(*)
+        FROM ${this.table}
+        WHERE journey_start_datetime >= $1::TIMESTAMP
+          AND journey_start_datetime <  $2::TIMESTAMP
+          AND status = 'ok'
+          AND operator_id = $3
+          AND $4 = ANY(APPLIED_POLICIES)
+      `,
+      values: [start_date, end_date, operator_id, campaign_id],
+    });
+
+    return result.rowCount ? parseInt(result.rows[0].count, 10) : 0;
+  }
+
+  /**
+   * Sum all incentives for one campaign and one operator
+   * which are not given by the operator itself
+   */
+  public async getPolicyTotalAmount(params: CampaignSearchParamsInterface): Promise<number> {
+    const { start_date, end_date, operator_id, campaign_id } = params;
+    const result = await this.connection.getClient().query({
+      text: `
+        select sum(dir.amount + pir.amount) as total
+        from trip.list tl
+        join policy.policies pp on pp._id = $4
+        join territory.territories tt on tt._id = pp.territory_id
+        join company.companies cc on cc._id = tt.company_id
+        join lateral unnest(tl.driver_incentive_raw) as dir(siret, amount, unit, policy_id, policy_name, type) on true
+        join lateral unnest(tl.passenger_incentive_raw) as pir(siret, amount, unit, policy_id, policy_name, type) on true
+        where
+          tl.journey_start_datetime >= $1
+          and tl.journey_start_datetime < $2
+          and tl.status = 'ok'
+          and tl.operator_id = $3
+          and $4 = any(tl.applied_policies)
+          and (dir.siret = cc.siret or pir.siret = cc.siret)
+      `,
+      values: [start_date, end_date, operator_id, campaign_id],
+    });
+
+    return result.rowCount ? parseInt(result.rows[0].total, 10) : 0;
   }
 }

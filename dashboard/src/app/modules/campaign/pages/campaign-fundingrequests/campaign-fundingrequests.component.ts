@@ -2,7 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { ResultsInterface as FundingRequestsListResult } from '~/shared/policy/fundingRequestsList.contract';
+import {
+  EnrichedFundingRequestType,
+  ResultsInterface as FundingRequestsListResult,
+} from '~/shared/policy/fundingRequestsList.contract';
 import { FundingRequestsApiService } from '../../services/fundingrequests-api.service';
 import { PolicyInterface } from './../../../../../../../shared/policy/common/interfaces/PolicyInterface';
 
@@ -15,7 +18,7 @@ export class CampaignFundingRequestsComponent implements OnInit {
   @Input() campaign: PolicyInterface;
 
   public fRequestsList: FundingRequestsListResult;
-  public displayedColumns: string[] = ['month', 'operator', 'action'];
+  public displayedColumns: string[] = ['month', 'operator', 'trips', 'amount', 'filesize', 'action'];
 
   constructor(private fRequestsApiService: FundingRequestsApiService, private commonData: CommonDataService) {}
 
@@ -26,10 +29,11 @@ export class CampaignFundingRequestsComponent implements OnInit {
       .pipe(
         map(([operators, freq]: [any, any]) =>
           freq
-            .map((fr) => {
+            .map((fr: EnrichedFundingRequestType) => {
               const op = operators.find((o) => o._id === fr.operator_id);
               const operator = op?.name;
-              const month = fr.datetime.substring(0, 7);
+              // the datetime is a string here as it hasn't been cast to Date
+              const month = (fr.datetime as unknown as string).substring(0, 7);
               return { ...fr, month, operator, skey: `${month}-${operator}` };
             })
             .sort(({ skey: a }, { skey: b }) => (a > b ? -1 : a < b ? 1 : 0)),

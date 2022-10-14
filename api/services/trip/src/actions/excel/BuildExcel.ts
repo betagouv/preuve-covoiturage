@@ -24,13 +24,22 @@ export class BuildExcel {
     end_date: Date,
     operator_id: number,
   ): Promise<{ filename: string; filepath: string }> {
+    const params = { start_date, end_date, operator_id, campaign_id: campaign._id };
+
+    // fetch aggregated data
+    const trips = await this.tripRepositoryProvider.getPolicyTripCount(params);
+    const amount = await this.tripRepositoryProvider.getPolicyTotalAmount(params);
+
     // generate the filename and filepath
-    const filename: string = this.apdfNameProvider.stringify({
+    const fileParams = {
       name: campaign.name,
       campaign_id: campaign._id,
       operator_id,
       datetime: start_date,
-    });
+      trips,
+      amount,
+    };
+    const filename: string = this.apdfNameProvider.filename(fileParams);
     const filepath: string = this.apdfNameProvider.filepath(filename);
 
     // create the Worksheet
@@ -69,10 +78,8 @@ export class BuildExcel {
 
       return await this.slicesWorkbookWriter.call(slices, workbookWriter);
     } catch (e) {
-      console.error(
-        `Error while computing slices for campaign capital call ${campaign.name} and operator ${operator_id}`,
-        e,
-      );
+      console.error(`Error while computing slices for campaign ${campaign.name} and operator ${operator_id}`);
+      console.debug(e.message);
     }
   }
 

@@ -20,12 +20,31 @@
         <td mat-cell *matCellDef="let frequests">{{frequests?.operator}}</td>
       </ng-container>
 
+      <!-- Number of trips -->
+      <ng-container matColumnDef="trips">
+        <th mat-header-cell *matHeaderCellDef>Trajets</th>
+        <td mat-cell *matCellDef="let frequests">{{frequests?.trips}}</td>
+      </ng-container>
+
+      <!-- Total amount -->
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>Montant total</th>
+        <td mat-cell *matCellDef="let frequests">{{frequests?.amount / 100 | euro}}</td>
+      </ng-container>
+
+      <!-- File size -->
+      <ng-container matColumnDef="filesize">
+        <th mat-header-cell *matHeaderCellDef>Taille</th>
+        <td mat-cell *matCellDef="let frequests">{{frequests?.size | filesize}}</td>
+      </ng-container>
+
       <!-- Actions -->
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef>Action</th>
         <td mat-cell *matCellDef="let frequests">
-          <a href="{{frequests.signed_url}}">
+          <a href="{{frequests.signed_url}}" class="download_link">
             <mat-icon color="primary" matTooltip="Télécharger">cloud_download</mat-icon>
+            <span>Télécharger</span>
           </a>
         </td>
       </ng-container>
