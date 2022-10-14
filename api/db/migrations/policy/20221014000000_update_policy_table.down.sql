@@ -1,0 +1,1 @@
+ALTER TABLE policy.policies DROP COLUMN incentives_sum int;
