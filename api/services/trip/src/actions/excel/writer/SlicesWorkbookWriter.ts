@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 import { Column, stream, Worksheet } from 'exceljs';
-import { SlicesInterface } from '../../../interfaces/SlicesInterface';
+import { SliceStatInterface } from '../../../interfaces/PolicySliceStatInterface';
 import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
 import { TripRepositoryProvider } from '../../../providers/TripRepositoryProvider';
 import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
@@ -20,7 +20,7 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
     { header: 'Nombre de trip_id', key: 'tripCount' },
   ];
 
-  async call(slices: SlicesInterface[], workbookWriter: stream.xlsx.WorkbookWriter): Promise<void> {
+  async call(workbookWriter: stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
     const worksheet: Worksheet = this.initWorkSheet(
       workbookWriter,
       this.SLICE_WORKSHEET_NAME,
@@ -28,7 +28,7 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
     );
 
     slices.forEach((s) => {
-      worksheet.addRow([this.formatSliceLabel(s.slice), s.incentivesSum / 100, s.tripCount]).commit();
+      worksheet.addRow([this.formatSliceLabel(s.slice), s.sum / 100, s.count]).commit();
     });
 
     worksheet.commit();

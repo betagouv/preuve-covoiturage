@@ -2,13 +2,14 @@ import { ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import fs from 'fs';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
-import { ResultInterface as Campaign } from '../shared/policy/find.contract';
+import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/capitalcall/export.contract';
 import { alias } from '../shared/capitalcall/export.schema';
+import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 import { BuildExcel } from './excel/BuildExcel';
 import { CheckCampaign } from './excel/CheckCampaign';
-import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 
 @handler({
   ...handlerConfig,
@@ -30,32 +31,32 @@ export class ExportCapitalCallsAction extends Action {
     const filepathes: string[] = [];
     await Promise.all(
       params.query.campaign_id.map(async (c_id) => {
-        const checkedCampaign: Campaign | void = await this.checkCampaign
+        const campaign: Campaign | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
           .catch((e) => console.info(`Failed APDF export (campaign ${c_id}) :${e.message}`));
 
-        if (!checkedCampaign) {
+        if (!campaign) {
           return;
         }
 
         const involvedOperatorIds = await this.tripRepositoryProvider.getPolicyInvolvedOperators(
-          checkedCampaign._id,
+          campaign._id,
           start_date,
           end_date,
-          checkedCampaign.params.operators,
+          campaign.params.operators,
         );
 
         await Promise.all(
           involvedOperatorIds.map(async (o_id) => {
             try {
-              console.debug(`Exporting APDF: campaign ${checkedCampaign.name}, operator id ${o_id}`);
-              const { filename, filepath } = await this.buildExcel.call(checkedCampaign, start_date, end_date, o_id);
-              filepathes.push(
-                await this.s3StorageProvider.upload(BucketName.APDF, filepath, filename, `${checkedCampaign._id}`),
-              );
+              console.debug(`Exporting APDF: campaign ${campaign.name}, operator id ${o_id}`);
+              const { filename, filepath } = await this.buildExcel.call(campaign, start_date, end_date, o_id);
+              const file = await this.s3StorageProvider.upload(BucketName.APDF, filepath, filename, `${campaign._id}`);
+              fs.unlinkSync(filepath);
+              filepathes.push(file);
             } catch (error) {
               // eslint-disable-next-line max-len
-              const message = `Failed APDF export for operator ${o_id} (campaign ${checkedCampaign._id})`;
+              const message = `Failed APDF export for operator ${o_id} (campaign ${campaign._id})`;
               console.error(message, error);
               filepathes.push(message);
             }

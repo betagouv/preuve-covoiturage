@@ -1,6 +1,7 @@
 import { provider, ProviderInterface } from '@ilos/common';
 import path from 'path';
 import os from 'os';
+import { utcToZonedTime } from 'date-fns-tz';
 
 export interface APDFNameParamsInterface {
   name: string;
@@ -26,7 +27,7 @@ export class APDFNameProvider implements ProviderInterface {
     // 456: operator_id
     const filename: string = [
       this.prefix,
-      datetime.toISOString().substring(0, 7),
+      utcToZonedTime(datetime, 'Europe/Paris').toISOString().substring(0, 7),
       campaign_id,
       operator_id,
       trips || 0,

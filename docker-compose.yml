@@ -3,6 +3,7 @@ services:
   postgres:
     build:
       context: ./docker/postgres
+    shm_size: 2g
     ports:
       - 5432:5432
     networks:
