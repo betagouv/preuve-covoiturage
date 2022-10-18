@@ -42,7 +42,7 @@ export class CheckAction extends Action {
   protected async notifyScore(acquisition_id: number, score: number): Promise<void> {
     try {
       if (score > 0.8) {
-        this.kernel.notify<UpdateStatusParamsInterface>(
+        await this.kernel.call<UpdateStatusParamsInterface>(
           updateStatusSignature,
           {
             acquisition_id,

@@ -1,11 +1,3 @@
-/**
- * #### CancelJourneyAction
- *
- * - signature: `acquisition:cancel`
- * - permissions: `['journey.create']`
- *
- * Cancel a stored journey from `carpool.carpools` table by setting the status to `canceled`.
- */
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
@@ -16,16 +8,9 @@ import {
   ParamsInterface as UpdateStatusParams,
 } from '../shared/carpool/updateStatus.contract';
 import { alias } from '../shared/acquisition/cancel.schema';
-import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
-
-const callContext = {
-  channel: {
-    service: 'acquisition',
-  },
-  call: {
-    user: {},
-  },
-};
+import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
+import { callContext } from '../config/callContext';
+import { AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
 
 @handler({
   ...handlerConfig,
@@ -35,24 +20,24 @@ const callContext = {
   ],
 })
 export class CancelJourneyAction extends AbstractAction {
-  constructor(
-    private kernel: KernelInterfaceResolver,
-    private journeyRepository: JourneyRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private kernel: KernelInterfaceResolver, private repository: AcquisitionRepositoryProvider) {
     super();
   }
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
     // Store in database
-    const journeyData = await this.journeyRepository.exists(params.journey_id, params.operator_id);
-    if (!journeyData) {
+    const acquisition = await this.repository.getStatus({
+      operator_id: params.operator_id,
+      operator_journey_id: params.journey_id,
+    });
+    if (!acquisition || acquisition.status !== AcquisitionStatusEnum.Ok) {
       throw new NotFoundException(`Journey ${params.journey_id} does not exist`);
     }
 
     // Perform cancelling action :)
-    await this.kernel.notify<UpdateStatusParams>(
+    await this.kernel.call<UpdateStatusParams>(
       updateStatusSignature,
-      { acquisition_id: journeyData._id, status: 'canceled' },
+      { acquisition_id: acquisition._id, status: 'canceled' },
       callContext,
     );
   }

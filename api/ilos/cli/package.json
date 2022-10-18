@@ -23,7 +23,7 @@
   "types": "./dist/index.d.ts",
   "devDependencies": {
     "@types/sinon": "^10.0.3",
-    "sinon": "^11.1.2"
+    "sinon": "^14.0.0"
   },
   "dependencies": {
     "@ilos/common": "^0.4.1",
