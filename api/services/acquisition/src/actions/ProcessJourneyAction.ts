@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { NormalizationProvider } from '@pdc/provider-normalization';
 
@@ -33,6 +33,7 @@ export class ProcessJourneyAction extends AbstractAction implements InitHookInte
     private repository: AcquisitionRepositoryProvider,
     private normalizer: NormalizationProvider,
     private kernel: KernelInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
@@ -55,10 +56,14 @@ export class ProcessJourneyAction extends AbstractAction implements InitHookInte
   }
 
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
-    const [acquisitions, cb] = await this.repository.findThenUpdate({
-      limit: 100,
-      status: AcquisitionStatusEnum.Pending,
-    });
+    const { timeout, batchSize } = this.config.get('acquisition.processing', {});
+    const [acquisitions, cb] = await this.repository.findThenUpdate(
+      {
+        limit: batchSize,
+        status: AcquisitionStatusEnum.Pending,
+      },
+      timeout,
+    );
     const results = [];
     const msg = `[acquisition] processed (${acquisitions.length})`;
     console.debug(`Processing acquisition ${acquisitions.map((a) => a._id).join(', ')}`);
