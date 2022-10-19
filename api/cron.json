@@ -3,6 +3,10 @@
     {
       "command": "0 3 * * 1 yarn workspace @pdc/proxy ilos stats:refresh",
       "size": "M"
+    },
+    {
+      "command": "*/1 * * * * yarn workspace @pdc/proxy ilos acquisition:process",
+      "size": "M"
     }
   ]
 }
