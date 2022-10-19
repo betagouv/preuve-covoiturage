@@ -53,12 +53,12 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       }
 
       await client.query('COMMIT');
-      await client.release();
       return;
     } catch (e) {
       await client.query('ROLLBACK');
-      await client.release();
       throw e;
+    } finally {
+      client.release();
     }
   }
 
@@ -100,7 +100,8 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
           operator_journey_id,
           meta
         )
-        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`,
+        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+        ON CONFLICT (acquisition_id, is_driver) DO NOTHING`,
       values: [
         shared.acquisition_id,
         shared.operator_id,
@@ -125,9 +126,6 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       ],
     };
 
-    const result = await client.query(query);
-    if (result.rowCount !== 1) {
-      throw new Error(`Unable to save journey ${shared.acquisition_id} on trip ${shared.trip_id}`);
-    }
+    await client.query(query);
   }
 }

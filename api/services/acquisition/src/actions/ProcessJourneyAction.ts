@@ -1,14 +1,9 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { NormalizationProvider } from '@pdc/provider-normalization';
 
-import {
-  handlerConfig,
-  signature as handlerSignature,
-  ParamsInterface,
-  ResultInterface,
-} from '../shared/acquisition/process.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/process.contract';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import {
   AcquisitionErrorStageEnum,
@@ -28,37 +23,25 @@ import { callContext } from '../config/callContext';
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
-export class ProcessJourneyAction extends AbstractAction implements InitHookInterface {
+export class ProcessJourneyAction extends AbstractAction {
   constructor(
     private repository: AcquisitionRepositoryProvider,
     private normalizer: NormalizationProvider,
     private kernel: KernelInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
 
-  async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(handlerSignature, undefined, {
-      call: {
-        user: {},
-      },
-      channel: {
-        service: handlerConfig.service,
-        metadata: {
-          repeat: {
-            cron: '*/1 * * * *',
-          },
-          jobId: 'acquisition.process.cron',
-        },
-      },
-    });
-  }
-
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
-    const [acquisitions, cb] = await this.repository.findThenUpdate({
-      limit: 100,
-      status: AcquisitionStatusEnum.Pending,
-    });
+    const { timeout, batchSize } = this.config.get('acquisition.processing', {});
+    const [acquisitions, cb] = await this.repository.findThenUpdate(
+      {
+        limit: batchSize,
+        status: AcquisitionStatusEnum.Pending,
+      },
+      timeout,
+    );
     const results = [];
     const msg = `[acquisition] processed (${acquisitions.length})`;
     console.debug(`Processing acquisition ${acquisitions.map((a) => a._id).join(', ')}`);

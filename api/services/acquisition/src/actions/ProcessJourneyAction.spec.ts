@@ -4,6 +4,8 @@ import { ProcessJourneyAction } from './ProcessJourneyAction';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { KernelInterfaceResolver } from '@ilos/common';
 import { NormalizationProvider } from '@pdc/provider-normalization';
+import { ConfigStore } from '@ilos/core/dist/extensions';
+
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
 import { signature } from '../shared/carpool/crosscheck.contract';
 import { callContext } from '../config/callContext';
@@ -17,7 +19,17 @@ function bootstap(): {
   const repository = sinon.createStubInstance(AcquisitionRepositoryProvider);
   const kernel = sinon.createStubInstance(KernelInterfaceResolver);
   const normalizer = sinon.createStubInstance(NormalizationProvider);
-  const action = new ProcessJourneyAction(repository, normalizer, kernel);
+  const action = new ProcessJourneyAction(
+    repository,
+    normalizer,
+    kernel,
+    new ConfigStore({
+      processing: {
+        batchSize: 10,
+        timeout: 10000,
+      },
+    }),
+  );
   return { action, repository, kernel, normalizer };
 }
 
