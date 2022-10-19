@@ -1,9 +1,14 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { NormalizationProvider } from '@pdc/provider-normalization';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/process.contract';
+import {
+  handlerConfig,
+  signature as handlerSignature,
+  ParamsInterface,
+  ResultInterface,
+} from '../shared/acquisition/process.contract';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import {
   AcquisitionErrorStageEnum,
@@ -23,7 +28,7 @@ import { callContext } from '../config/callContext';
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
-export class ProcessJourneyAction extends AbstractAction {
+export class ProcessJourneyAction extends AbstractAction implements InitHookInterface {
   constructor(
     private repository: AcquisitionRepositoryProvider,
     private normalizer: NormalizationProvider,
@@ -31,6 +36,23 @@ export class ProcessJourneyAction extends AbstractAction {
     private config: ConfigInterfaceResolver,
   ) {
     super();
+  }
+
+  async init(): Promise<void> {
+    await this.kernel.notify<ParamsInterface>(handlerSignature, undefined, {
+      call: {
+        user: {},
+      },
+      channel: {
+        service: handlerConfig.service,
+        metadata: {
+          repeat: {
+            cron: '*/1 * * * *',
+          },
+          jobId: 'acquisition.process.cron',
+        },
+      },
+    });
   }
 
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
