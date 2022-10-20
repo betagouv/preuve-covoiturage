@@ -28,7 +28,7 @@ export class ExportCapitalCallsAction extends Action {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const { start_date, end_date } = this.castOrGetDefaultDates(params);
 
-    const filepathes: string[] = [];
+    const files: string[] = [];
     await Promise.all(
       params.query.campaign_id.map(async (c_id) => {
         const campaign: Campaign | void = await this.checkCampaign
@@ -52,20 +52,27 @@ export class ExportCapitalCallsAction extends Action {
               console.debug(`Exporting APDF: campaign ${campaign.name}, operator id ${o_id}`);
               const { filename, filepath } = await this.buildExcel.call(campaign, start_date, end_date, o_id);
               const file = await this.s3StorageProvider.upload(BucketName.APDF, filepath, filename, `${campaign._id}`);
-              fs.unlinkSync(filepath);
-              filepathes.push(file);
+              
+              // maybe delete the file
+              try {
+                fs.unlinkSync(filepath);
+              } catch (e) {
+                console.warn(`Failed to unlink ${filepath} - ${e.message}`)
+              }
+
+              files.push(file);
             } catch (error) {
               // eslint-disable-next-line max-len
               const message = `Failed APDF export for operator ${o_id} (campaign ${campaign._id})`;
               console.error(message, error);
-              filepathes.push(message);
+              files.push(message);
             }
           }),
         );
       }),
     );
 
-    return filepathes;
+    return files;
   }
 
   private castOrGetDefaultDates(params: ParamsInterface): { start_date: Date; end_date: Date } {
