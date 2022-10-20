@@ -1,12 +1,10 @@
 {
-  "name": "@ilos/validator",
-  "version": "0.4.1",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.js",
+  "name": "@pdc/provider-normalization",
+  "version": "0.0.1",
+  "private": true,
   "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public"
-  },
+  "main": "./dist/index.js",
+  "typings": "dist/index.d.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -16,14 +14,12 @@
     "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
   },
   "dependencies": {
-    "@ilos/common": "^0.4.1",
-    "@ilos/core": "^0.4.1",
-    "ajv": "^8.6.3",
-    "ajv-formats": "^2.1.1",
-    "ajv-keywords": "^5.0.0"
-  },
-  "devDependencies": {
-    "@types/sinon": "^10.0.3",
-    "sinon": "^14.0.0"
+    "@ilos/connection-postgres": "~0",
+    "@ilos/connection-redis": "~0",
+    "@ilos/core": "~0",
+    "@pdc/helper-test": "~0",
+    "@pdc/provider-geo": "~0",
+    "@pdc/provider-middleware": "~0",
+    "lodash": "^4.17.21"
   }
 }

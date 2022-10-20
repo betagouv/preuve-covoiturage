@@ -3,10 +3,12 @@
   <ng-container matColumnDef="status">
     <th mat-header-cell *matHeaderCellDef>Statut</th>
     <td mat-cell *matCellDef="let campaign">
-      <mat-icon [class]="campaign.status"  *ngIf="isRunning(campaign)" [matTooltip]="'En cours'" matTooltipPosition="right">
+      <mat-icon [class]="campaign.status" *ngIf="isRunning(campaign)" [matTooltip]="'En cours'"
+        matTooltipPosition="right">
         play_circle_outline
       </mat-icon>
-      <mat-icon class="archived" *ngIf="campaign.status === 'draft'" [matTooltip]="'Brouillon'" matTooltipPosition="right">
+      <mat-icon class="archived" *ngIf="campaign.status === 'draft'" [matTooltip]="'Brouillon'"
+        matTooltipPosition="right">
         pause_circle_outline
       </mat-icon>
       <mat-icon class="ended" *ngIf="isOver(campaign)" [matTooltip]="'Terminée'" matTooltipPosition="right">
@@ -48,7 +50,7 @@
     <th mat-header-cell *matHeaderCellDef style="min-width: 88px;">Budget</th>
     <td mat-cell *matCellDef="let campaign">
       <ng-container *ngIf="campaign.params && campaign.params.limits.glob">
-        {{ centToEuro(campaign.params.limits.glob) | euro }}
+        {{ centToEuro(campaign.params.limits.glob) | currency: 'EUR':'symbol':'1.0-0' }}
       </ng-container>
     </td>
   </ng-container>

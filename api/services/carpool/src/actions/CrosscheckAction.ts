@@ -16,7 +16,7 @@ import { getStatus } from '../helpers/getStatus';
  */
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares('acquisition', 'normalization', handlerConfig.service), ['validate', alias]],
+  middlewares: [...internalOnlyMiddlewares('acquisition', handlerConfig.service), ['validate', alias]],
 })
 export class CrosscheckAction extends Action {
   constructor(

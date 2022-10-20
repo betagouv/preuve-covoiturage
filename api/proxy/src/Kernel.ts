@@ -11,15 +11,12 @@ import { bootstrap as companyBootstrap } from '@pdc/service-company';
 import { bootstrap as fraudBootstrap } from '@pdc/service-fraud';
 import { bootstrap as honorBootstrap } from '@pdc/service-honor';
 import { bootstrap as monitoringBootstrap } from '@pdc/service-monitoring';
-import { bootstrap as normalizationBootstrap } from '@pdc/service-normalization';
 import { bootstrap as operatorBootstrap } from '@pdc/service-operator';
 import { bootstrap as policyBootstrap } from '@pdc/service-policy';
 import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
-import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
 import { StatsRefreshCommand } from './commands/StatsRefreshCommand';
-import { ProcessAcquisitionCommand } from './commands/ProcessAcquisitionCommand';
 import { SeedCommand } from './commands/SeedCommand';
 import { config } from './config';
 
@@ -31,7 +28,6 @@ import { config } from './config';
     ...carpoolBootstrap.serviceProviders,
     ...companyBootstrap.serviceProviders,
     ...fraudBootstrap.serviceProviders,
-    ...normalizationBootstrap.serviceProviders,
     ...operatorBootstrap.serviceProviders,
     ...policyBootstrap.serviceProviders,
     ...territoryBootstrap.serviceProviders,
@@ -42,6 +38,6 @@ import { config } from './config';
     ...honorBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [ProcessJourneyCommand, ProcessAcquisitionCommand, SeedCommand, StatsRefreshCommand, Commands.CallCommand],
+  commands: [SeedCommand, StatsRefreshCommand, Commands.CallCommand],
 })
 export class Kernel extends BaseKernel {}
