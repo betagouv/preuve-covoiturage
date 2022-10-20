@@ -1,10 +1,10 @@
 import anyTest, { TestFn } from 'ava';
-import { SlicesInterface } from '../../../interfaces/SlicesInterface';
 
 import { stream, Workbook, Worksheet } from 'exceljs';
 import { SlicesWorkbookWriter } from './SlicesWorkbookWriter';
 import { BuildExcel } from '../BuildExcel';
 import { TripRepositoryProvider } from '../../../providers/TripRepositoryProvider';
+import { SliceStatInterface } from '../../../interfaces/PolicySliceStatInterface';
 
 interface Context {
   // Injected tokens
@@ -29,15 +29,15 @@ test.afterEach((t) => {});
 
 test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async (t) => {
   // Arrange
-  const slices: SlicesInterface[] = [
-    { slice: { start: 0, end: 2000 }, tripCount: 2500, incentivesSum: 154588 },
-    { slice: { start: 2000, end: 30000 }, tripCount: 3000, incentivesSum: 204598 },
-    { slice: { start: 30000, end: TripRepositoryProvider.MAX_KM_LIMIT }, tripCount: 5000, incentivesSum: 304456 },
+  const slices: SliceStatInterface[] = [
+    { slice: { start: 0, end: 2000 }, count: 2500, sum: 154588 },
+    { slice: { start: 2000, end: 30000 }, count: 3000, sum: 204598 },
+    { slice: { start: 30000, end: TripRepositoryProvider.MAX_KM_LIMIT }, count: 5000, sum: 304456 },
   ];
 
   // Act
   const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(t.context.FILEPATH!);
-  await t.context.slicesWorkbookWriter!.call(slices, workbookWriter);
+  await t.context.slicesWorkbookWriter!.call(workbookWriter, slices);
   await workbookWriter.commit();
 
   // Assert
@@ -53,19 +53,19 @@ test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async 
   t.deepEqual(workbook.getWorksheet(t.context.slicesWorkbookWriter!.SLICE_WORKSHEET_NAME).getRow(2).values, [
     undefined,
     `Jusqu'à ${slices[0].slice.end / 1000} km`,
-    slices[0].incentivesSum / 100,
-    slices[0].tripCount,
+    slices[0].sum / 100,
+    slices[0].count,
   ]);
   t.deepEqual(workbook.getWorksheet(t.context.slicesWorkbookWriter!.SLICE_WORKSHEET_NAME).getRow(3).values, [
     undefined,
     `De ${slices[1].slice.start / 1000} km à ${slices[1].slice.end / 1000} km`,
-    slices[1].incentivesSum / 100,
-    slices[1].tripCount,
+    slices[1].sum / 100,
+    slices[1].count,
   ]);
   t.deepEqual(workbook.getWorksheet(t.context.slicesWorkbookWriter!.SLICE_WORKSHEET_NAME).getRow(4).values, [
     undefined,
     `Supérieur à ${slices[2].slice.start / 1000} km`,
-    slices[2].incentivesSum / 100,
-    slices[2].tripCount,
+    slices[2].sum / 100,
+    slices[2].count,
   ]);
 });

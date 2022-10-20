@@ -18,6 +18,10 @@ export class BuildExcel {
     private apdfNameProvider: APDFNameProvider,
   ) {}
 
+  public static initWorkbookWriter(filepath: string): stream.xlsx.WorkbookWriter {
+    return new stream.xlsx.WorkbookWriter({ filename: filepath });
+  }
+
   async call(
     campaign: Campaign,
     start_date: Date,
@@ -61,10 +65,6 @@ export class BuildExcel {
 
   private async writeSlices(wkw: stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
     await this.slicesWorkbookWriter.call(wkw, slices);
-  }
-
-  private static initWorkbookWriter(filepath: string): stream.xlsx.WorkbookWriter {
-    return new stream.xlsx.WorkbookWriter({ filename: filepath });
   }
 
   private getTripsCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler> {
