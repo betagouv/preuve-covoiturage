@@ -1,11 +1,5 @@
 import { SerializedIncentiveInterface, IncentiveStatusEnum } from '..';
 
-export interface IncentiveStatsInterface {
-  amount: number;
-  trip_subsidized: number;
-  trip_excluded: number;
-}
-
 export abstract class IncentiveRepositoryProviderInterfaceResolver {
   abstract updateStatefulAmount(
     data: Array<SerializedIncentiveInterface<number>>,

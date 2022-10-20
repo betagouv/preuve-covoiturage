@@ -39,6 +39,6 @@ export class StatsAction extends AbstractAction {
   }
 
   public async handle(): Promise<void> {
-    // return await this.incentiveRepository.updateIncentiveSum();
+    return await this.incentiveRepository.updateIncentiveSum();
   }
 }

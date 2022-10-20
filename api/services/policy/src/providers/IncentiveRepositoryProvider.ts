@@ -4,7 +4,6 @@ import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
 import {
   IncentiveRepositoryProviderInterfaceResolver,
-  IncentiveStatsInterface,
   IncentiveStateEnum,
   IncentiveStatusEnum,
   SerializedIncentiveInterface,
