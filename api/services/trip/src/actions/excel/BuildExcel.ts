@@ -59,12 +59,21 @@ export class BuildExcel {
   }
 
   private async writeTrips(wkw: stream.xlsx.WorkbookWriter, params: CampaignSearchParamsInterface): Promise<void> {
-    const tripCursor: PgCursorHandler = await this.getTripsCursor(params);
-    await this.dataWorkbookWriter.call(tripCursor, wkw);
+    try {
+      const tripCursor: PgCursorHandler = await this.getTripsCursor(params);
+      await this.dataWorkbookWriter.call(tripCursor, wkw);
+    } catch (e) {
+      console.error('Error while writing trips');
+    }
   }
 
   private async writeSlices(wkw: stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
-    await this.slicesWorkbookWriter.call(wkw, slices);
+    try {
+      if (!slices.length) return;
+      await this.slicesWorkbookWriter.call(wkw, slices);
+    } catch (e) {
+      console.error('Error while computing slices');
+    }
   }
 
   private getTripsCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler> {

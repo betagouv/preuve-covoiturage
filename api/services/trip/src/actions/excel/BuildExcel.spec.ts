@@ -2,7 +2,10 @@ import { APDFNameProvider } from '@pdc/provider-file';
 import anyTest, { TestFn } from 'ava';
 import { stream } from 'exceljs';
 import sinon, { SinonStub } from 'sinon';
+import { CampaignSearchParamsInterface } from '../../interfaces';
+import { PolicyStatsInterface } from '../../interfaces/PolicySliceStatInterface';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
+import { SliceInterface } from '../../shared/policy/common/interfaces/SliceInterface';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
 import { BuildExcel } from './BuildExcel';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
@@ -17,14 +20,15 @@ interface Context {
 
   // Injected tokens method's stubs
   searchWithCursorStub: SinonStub;
-  computeFundCallsSlices: SinonStub;
+  policyStatsStub: SinonStub<
+    [params: CampaignSearchParamsInterface, slices: SliceInterface[]],
+    Promise<PolicyStatsInterface>
+  >;
   filenameStub: SinonStub;
   filepathStub: SinonStub;
   dataWorkbookWriterStub: SinonStub;
   slicesWorkbookWriterStub: SinonStub;
   workbookWriterStub: SinonStub;
-  policyTripCountStub: SinonStub;
-  policyTotalAmountStub: SinonStub;
 
   // Tested token
   buildExcel: BuildExcel;
@@ -57,9 +61,7 @@ test.beforeEach((t) => {
   t.context.filepathStub = sinon.stub(t.context.nameProvider, 'filepath');
   t.context.dataWorkbookWriterStub = sinon.stub(t.context.streamDataToWorkbook, 'call');
   t.context.searchWithCursorStub = sinon.stub(t.context.tripRepositoryProvider, 'searchWithCursor');
-  t.context.computeFundCallsSlices = sinon.stub(t.context.tripRepositoryProvider, 'computeFundCallsSlices');
-  t.context.policyTripCountStub = sinon.stub(t.context.tripRepositoryProvider, 'getPolicyTripCount');
-  t.context.policyTotalAmountStub = sinon.stub(t.context.tripRepositoryProvider, 'getPolicyTotalAmount');
+  t.context.policyStatsStub = sinon.stub(t.context.tripRepositoryProvider, 'getPolicyStats');
   t.context.slicesWorkbookWriterStub = sinon.stub(t.context.createSlicesSheetToWorkbook, 'call');
 });
 
@@ -103,8 +105,6 @@ test.afterEach((t) => {
   t.context.searchWithCursorStub!.restore();
   t.context.slicesWorkbookWriterStub!.restore();
   t.context.workbookWriterStub!.restore();
-  t.context.policyTripCountStub!.restore();
-  t.context.policyTotalAmountStub!.restore();
 });
 
 test('BuildExcel: should call stream data and create slice then return excel filepath', async (t) => {
@@ -112,11 +112,20 @@ test('BuildExcel: should call stream data and create slice then return excel fil
 
   const cursorCallback = () => {};
   t.context.searchWithCursorStub!.returns(cursorCallback);
-  t.context.policyTripCountStub!.returns(111);
-  t.context.policyTotalAmountStub!.returns(222_00);
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
   t.context.dataWorkbookWriterStub!.resolves();
+  t.context.policyStatsStub?.resolves({
+    count: 111,
+    sum: 222_00,
+    slices: [
+      {
+        count: 1,
+        sum: 2_00,
+        slice: { start: 0, end: 10_000 },
+      },
+    ],
+  });
 
   // Act
   const { filename, filepath } = await t.context.buildExcel!.call(
@@ -145,21 +154,30 @@ test('BuildExcel: should call stream data and create slice then return excel fil
     amount: 222_00,
   });
   sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
+  sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
-  sinon.assert.calledOnce(t.context.computeFundCallsSlices!);
   t.is(filename, t.context.filename!);
   t.is(filepath, t.context.filepath!);
 });
 
-test('BuildExcel: should call stream data and return excel filepath even if create slice error occurs', async (t) => {
+test('BuildExcel: should call stream data and return filepath even if create slice error occurs', async (t) => {
   // Arrange
   const cursorCallback = () => {};
   t.context.searchWithCursorStub!.returns(cursorCallback);
-  t.context.policyTripCountStub!.returns(111);
-  t.context.policyTotalAmountStub!.returns(222_00);
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
   t.context.slicesWorkbookWriterStub!.rejects('Error while computing slices');
+  t.context.policyStatsStub?.resolves({
+    count: 111,
+    sum: 222_00,
+    slices: [
+      {
+        count: 1,
+        sum: 2_00,
+        slice: { start: 0, end: 10_000 },
+      },
+    ],
+  });
 
   // Act
   const { filename, filepath } = await t.context.buildExcel!.call(
@@ -188,8 +206,8 @@ test('BuildExcel: should call stream data and return excel filepath even if crea
     amount: 222_00,
   });
   sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
+  sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
-  sinon.assert.calledOnce(t.context.computeFundCallsSlices!);
   t.is(filename, t.context.filename!);
   t.is(filepath, t.context.filepath!);
 });
@@ -202,11 +220,14 @@ test('BuildExcel: should call stream data and return excel filepath without slic
   };
   const cursorCallback = () => {};
   t.context.searchWithCursorStub!.returns(cursorCallback);
-  t.context.policyTripCountStub!.returns(111);
-  t.context.policyTotalAmountStub!.returns(222_00);
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
   t.context.slicesWorkbookWriterStub!.rejects('Error while computing slices');
+  t.context.policyStatsStub?.resolves({
+    count: 111,
+    sum: 222_00,
+    slices: [],
+  });
 
   // Act
   const { filename, filepath } = await t.context.buildExcel!.call(
@@ -235,8 +256,8 @@ test('BuildExcel: should call stream data and return excel filepath without slic
     amount: 222_00,
   });
   sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
+  sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.notCalled(t.context.slicesWorkbookWriterStub!);
-  sinon.assert.notCalled(t.context.computeFundCallsSlices!);
   t.is(filename, t.context.filename!);
   t.is(filepath, t.context.filepath!);
 });
