@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
 import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
-import { map } from 'lodash';
+import { map, set } from 'lodash';
 import { promisify } from 'util';
 import {
   CampaignSearchParamsInterface,
@@ -11,7 +11,7 @@ import {
   TzResultInterface,
 } from '../interfaces';
 import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
-import { SlicesInterface } from '../interfaces/SlicesInterface';
+import { PolicyStatsInterface } from '../interfaces/PolicySliceStatInterface';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
@@ -373,70 +373,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
   }
 
-  public async computeFundCallsSlices(
-    params: TripSearchInterface,
-    slices: SliceInterface[],
-  ): Promise<SlicesInterface[]> {
-    if (!slices || slices.length === 0) {
-      return [];
-    }
-
-    console.debug(`slices for campaign_id ${params.campaign_id} ${JSON.stringify(slices)}`);
-
-    const where = await this.buildWhereClauses(params);
-
-    const filtersString: string = slices
-      .map((s, i) => {
-        return `COUNT(journey_id) FILTER (
-        WHERE JOURNEY_DISTANCE > ${s.start}
-        AND JOURNEY_DISTANCE <=  ${s.end}
-        AND (
-          (DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID = ${params.campaign_id} AND DRIVER_INCENTIVE_RPC_RAW[1].AMOUNT > 0) OR 
-          (DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID =  ${params.campaign_id} AND DRIVER_INCENTIVE_RPC_RAW[2].AMOUNT > 0)
-        )
-      ) TRANCHE_${i}_COUNT,
-      SUM (DRIVER_INCENTIVE_RPC_RAW[1].AMOUNT) FILTER (
-        WHERE JOURNEY_DISTANCE > ${s.start}
-        AND JOURNEY_DISTANCE <= ${s.end}
-        AND DRIVER_INCENTIVE_RPC_RAW[1].POLICY_ID =  ${params.campaign_id}) TRANCHE_${i}_SUM_1,
-      SUM (DRIVER_INCENTIVE_RPC_RAW[2].AMOUNT) FILTER (
-        WHERE JOURNEY_DISTANCE > ${s.start}
-      AND JOURNEY_DISTANCE <= ${s.end}
-      AND DRIVER_INCENTIVE_RPC_RAW[2].POLICY_ID =  ${params.campaign_id}) TRANCHE_${i}_SUM_2`;
-      })
-      .join(',');
-
-    const lateralString: string = slices
-      .map((s, i) => {
-        return `(data.tranche_${i}_count, coalesce(data.tranche_${i}_sum_1, 0)+ coalesce(data.tranche_${i}_sum_2, 0))`;
-      })
-      .join(',');
-
-    const values = [...(where ? where.values : [])];
-    const text = `
-      WITH DATA as (SELECT ${filtersString} FROM ${this.table} ${where.text ? `WHERE ${where.text}` : ''})
-      SELECT v.* from data,
-      LATERAL(VALUES ${lateralString}) v (trip_count, incentive_sum)
-    `;
-
-    const result = await this.connection.getClient().query({
-      values,
-      text: this.numberPlaceholders(text),
-    });
-
-    if (!result.rows[0]) {
-      throw new Error(`Error while retrieving slices of campaign ${params.campaign_id}`);
-    }
-
-    return result.rows.map((r, i) => {
-      return {
-        slice: slices[i],
-        tripCount: parseInt(r.trip_count),
-        incentivesSum: parseInt(r.incentive_sum),
-      };
-    });
-  }
-
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {
     const where = await this.buildWhereClauses(params);
 
@@ -521,6 +457,88 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return resTimezone.rowCount ? resTimezone.rows[0] : this.defaultTz;
   }
 
+  public async getPolicyInvolvedOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
+    const result = await this.connection.getClient().query({
+      text: `SELECT DISTINCT operator_id
+      FROM ${this.table}
+      WHERE journey_start_datetime >= $1::TIMESTAMP
+        AND journey_start_datetime <  $2::TIMESTAMP
+        AND status = 'ok'
+        AND $3 = any(applied_policies);`,
+      values: [start_date, end_date, campaign_id],
+    });
+
+    return result.rowCount ? result.rows.map((r) => r.operator_id) : [];
+  }
+
+  public async getPolicyStats(
+    params: CampaignSearchParamsInterface,
+    slices: SliceInterface[],
+  ): Promise<PolicyStatsInterface> {
+    const { start_date, end_date, operator_id, campaign_id } = params;
+
+    // prepare slice filters
+    const sliceFilters: string = slices
+      .map(({ start, end }, i) => {
+        const f = `filter (where distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
+        return `
+          (count(*) ${f})::int as slice_${i}_count,
+          coalesce(sum(sum) ${f}, 0)::int as slice_${i}_sum,
+          ${start} as slice_${i}_start,
+          ${end} as slice_${i}_end
+        `;
+      })
+      .join(',');
+
+    // select all trips with a positive incentive calculated by us for a given campaign
+    // calculate a global count and incentive sum as well as details for each slice
+    const result = await this.connection.getClient().query({
+      text: `
+        with trips as (
+          select
+              tl.journey_distance as distance,
+              coalesce(dir.amount, 0) + coalesce(pir.amount, 0) as sum
+            from ${this.table} tl
+            join lateral unnest(tl.driver_incentive_rpc_raw) as dir(siret, amount, unit, policy_id, policy_name, type) on true
+            join lateral unnest(tl.passenger_incentive_rpc_raw) as pir(siret, amount, unit, policy_id, policy_name, type) on true
+            where
+              tl.journey_start_datetime >= $1
+              and tl.journey_start_datetime < $2
+              and tl.status = 'ok'
+              and tl.operator_id = $3
+              and $4 = any(tl.applied_policies)
+              and (dir.policy_id = $4 or pir.policy_id = $4)
+              and coalesce(dir.amount, 0) + coalesce(pir.amount, 0) > 0
+        )
+        select
+          count(*)::int,
+          coalesce(sum(sum), 0)::int as sum
+          ${sliceFilters.length ? `, ${sliceFilters}` : ''}
+        from trips
+        `,
+      values: [start_date, end_date, operator_id, campaign_id],
+    });
+
+    // return null results on missing data
+    if (!result.rowCount) return { count: 0, sum: 0, slices: [] };
+
+    // rearrange the return object
+    const row = result.rows[0];
+    return Object.keys(row).reduce(
+      (p, k) => {
+        if (!k.includes('slice_')) return p;
+        const [, i, prop] = k.split('_');
+        if (prop === 'start' || prop === 'end') {
+          set(p, `slices.${i}.slice.${prop}`, row[k]);
+        } else {
+          set(p, `slices.${i}.${prop}`, row[k]);
+        }
+        return p;
+      },
+      { count: row.count, sum: row.sum, slices: [] },
+    );
+  }
+
   // replace $# in query by $1, $2, ...
   private numberPlaceholders(str: string): string {
     return str
@@ -529,66 +547,5 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         (acc, current, idx, origin) => (idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`),
         '',
       );
-  }
-
-  public async getPolicyInvolvedOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
-    const result = await this.connection.getClient().query({
-      text: `SELECT DISTINCT operator_id
-      FROM ${this.table}
-      WHERE journey_start_datetime >= $1::TIMESTAMP
-        AND journey_start_datetime <  $2::TIMESTAMP
-        AND status = 'ok'
-        AND $3 = ANY(APPLIED_POLICIES);`,
-      values: [start_date, end_date, campaign_id],
-    });
-
-    return result.rowCount ? result.rows.map((r) => r.operator_id) : [];
-  }
-
-  public async getPolicyTripCount(params: CampaignSearchParamsInterface): Promise<number> {
-    const { start_date, end_date, operator_id, campaign_id } = params;
-    const result = await this.connection.getClient().query({
-      text: `
-        SELECT COUNT(*)
-        FROM ${this.table}
-        WHERE journey_start_datetime >= $1::TIMESTAMP
-          AND journey_start_datetime <  $2::TIMESTAMP
-          AND status = 'ok'
-          AND operator_id = $3
-          AND $4 = ANY(APPLIED_POLICIES)
-      `,
-      values: [start_date, end_date, operator_id, campaign_id],
-    });
-
-    return result.rowCount ? parseInt(result.rows[0].count, 10) : 0;
-  }
-
-  /**
-   * Sum all incentives for one campaign and one operator
-   * which are not given by the operator itself
-   */
-  public async getPolicyTotalAmount(params: CampaignSearchParamsInterface): Promise<number> {
-    const { start_date, end_date, operator_id, campaign_id } = params;
-    const result = await this.connection.getClient().query({
-      text: `
-        select sum(dir.amount + pir.amount) as total
-        from trip.list tl
-        join policy.policies pp on pp._id = $4
-        join territory.territories tt on tt._id = pp.territory_id
-        join company.companies cc on cc._id = tt.company_id
-        join lateral unnest(tl.driver_incentive_raw) as dir(siret, amount, unit, policy_id, policy_name, type) on true
-        join lateral unnest(tl.passenger_incentive_raw) as pir(siret, amount, unit, policy_id, policy_name, type) on true
-        where
-          tl.journey_start_datetime >= $1
-          and tl.journey_start_datetime < $2
-          and tl.status = 'ok'
-          and tl.operator_id = $3
-          and $4 = any(tl.applied_policies)
-          and (dir.siret = cc.siret or pir.siret = cc.siret)
-      `,
-      values: [start_date, end_date, operator_id, campaign_id],
-    });
-
-    return result.rowCount ? parseInt(result.rows[0].total, 10) : 0;
   }
 }

@@ -1,22 +1,26 @@
 import { provider } from '@ilos/common';
 import { APDFNameProvider } from '@pdc/provider-file';
 import { stream } from 'exceljs';
-import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
+import { CampaignSearchParamsInterface } from '~/interfaces';
+import { SliceStatInterface } from '~/interfaces/PolicySliceStatInterface';
 import { ResultInterface as Campaign } from '~/shared/policy/find.contract';
 import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { SlicesInterface } from './../../interfaces/SlicesInterface';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
 @provider()
 export class BuildExcel {
   constructor(
-    private tripRepositoryProvider: TripRepositoryProvider,
+    private tripRepoProvider: TripRepositoryProvider,
     private dataWorkbookWriter: DataWorkBookWriter,
     private slicesWorkbookWriter: SlicesWorkbookWriter,
     private apdfNameProvider: APDFNameProvider,
   ) {}
+
+  public static initWorkbookWriter(filepath: string): stream.xlsx.WorkbookWriter {
+    return new stream.xlsx.WorkbookWriter({ filename: filepath });
+  }
 
   async call(
     campaign: Campaign,
@@ -26,9 +30,12 @@ export class BuildExcel {
   ): Promise<{ filename: string; filepath: string }> {
     const params = { start_date, end_date, operator_id, campaign_id: campaign._id };
 
-    // fetch aggregated data
-    const trips = await this.tripRepositoryProvider.getPolicyTripCount(params);
-    const amount = await this.tripRepositoryProvider.getPolicyTotalAmount(params);
+    // fetch aggregated and slice data
+    const {
+      count: trips,
+      sum: amount,
+      slices,
+    } = await this.tripRepoProvider.getPolicyStats(params, campaign.params.slices || []);
 
     // generate the filename and filepath
     const fileParams = {
@@ -44,102 +51,40 @@ export class BuildExcel {
 
     // create the Worksheet
     const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
-    await this.callDataWorkbookWriter(campaign, start_date, end_date, operator_id, workbookWriter);
-    await this.callSlicesWorkbookWriter(campaign, start_date, end_date, operator_id, workbookWriter);
+    await this.writeTrips(workbookWriter, params);
+    await this.writeSlices(workbookWriter, slices);
     await workbookWriter.commit();
 
     return { filename, filepath };
   }
 
-  private async callSlicesWorkbookWriter(
-    campaign: Campaign,
-    start_date: Date,
-    end_date: Date,
-    operator_id: number,
-    workbookWriter: stream.xlsx.WorkbookWriter,
-  ) {
+  private async writeTrips(wkw: stream.xlsx.WorkbookWriter, params: CampaignSearchParamsInterface): Promise<void> {
     try {
-      const arrayOfSlices = campaign.params.slices || [];
-      // No slice if no progressive_distance slug
-      if (arrayOfSlices.length === 0) {
-        return;
-      }
-
-      // Add upper limit
-      // arrayOfSlices.push({ min: Math.max(...distanceRangeRules.map((e) => e.max)) });
-
-      const slices: SlicesInterface[] = await this.getFundCallSlices(
-        campaign,
-        start_date,
-        end_date,
-        operator_id,
-        arrayOfSlices,
-      );
-
-      return await this.slicesWorkbookWriter.call(slices, workbookWriter);
+      const tripCursor: PgCursorHandler = await this.getTripsCursor(params);
+      await this.dataWorkbookWriter.call(tripCursor, wkw);
     } catch (e) {
-      console.error(`Error while computing slices for campaign ${campaign.name} and operator ${operator_id}`);
-      console.debug(e.message);
+      console.error('Error while writing trips');
     }
   }
 
-  private async callDataWorkbookWriter(
-    campaign: Campaign,
-    start_date: Date,
-    end_date: Date,
-    operator_id: number,
-    workbookWriter: stream.xlsx.WorkbookWriter,
-  ): Promise<void> {
-    const tripCursor: PgCursorHandler = await this.getTripRepositoryCursor(
-      campaign._id,
-      start_date,
-      end_date,
-      operator_id,
-    );
-
-    return await this.dataWorkbookWriter.call(tripCursor, workbookWriter);
+  private async writeSlices(wkw: stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
+    try {
+      if (!slices.length) return;
+      await this.slicesWorkbookWriter.call(wkw, slices);
+    } catch (e) {
+      console.error('Error while computing slices');
+    }
   }
 
-  public static initWorkbookWriter(filepath: string): stream.xlsx.WorkbookWriter {
-    return new stream.xlsx.WorkbookWriter({
-      filename: filepath,
-    });
-  }
-
-  private getFundCallSlices(
-    campaign: Campaign,
-    start_date: Date,
-    end_date: Date,
-    operator_id: number,
-    arrayOfSlices: SliceInterface[],
-  ): Promise<SlicesInterface[]> {
-    return this.tripRepositoryProvider.computeFundCallsSlices(
+  private getTripsCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler> {
+    return this.tripRepoProvider.searchWithCursor(
       {
         date: {
-          start: start_date,
-          end: end_date,
+          start: params.start_date,
+          end: params.end_date,
         },
-        campaign_id: [campaign._id],
-        operator_id: [operator_id],
-      },
-      arrayOfSlices,
-    );
-  }
-
-  private getTripRepositoryCursor(
-    campaign_id: number,
-    start_date: Date,
-    end_date: Date,
-    operator_id: number,
-  ): Promise<PgCursorHandler> {
-    return this.tripRepositoryProvider.searchWithCursor(
-      {
-        date: {
-          start: start_date,
-          end: end_date,
-        },
-        campaign_id: [campaign_id],
-        operator_id: [operator_id],
+        campaign_id: [params.campaign_id],
+        operator_id: [params.operator_id],
       },
       'territory',
     );

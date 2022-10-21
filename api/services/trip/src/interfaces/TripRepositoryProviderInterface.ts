@@ -1,9 +1,11 @@
+import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
+import { PolicyStatsInterface } from './PolicySliceStatInterface';
 import { PgCursorHandler } from './PromisifiedPgCursor';
 import { FinancialStatInterface, StatInterface } from './StatInterface';
 
@@ -36,8 +38,7 @@ export interface TripRepositoryInterface {
   ): Promise<PgCursorHandler>;
   validateTz(tz?: string): Promise<TzResultInterface>;
   getPolicyInvolvedOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]>;
-  getPolicyTripCount(params: CampaignSearchParamsInterface): Promise<number>;
-  getPolicyTotalAmount(params: CampaignSearchParamsInterface): Promise<number>;
+  getPolicyStats(params: CampaignSearchParamsInterface, slices: SliceInterface[]): Promise<PolicyStatsInterface>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]> {
@@ -88,10 +89,10 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
     throw new Error('Not implemented');
   }
 
-  public async getPolicyTripCount(params: CampaignSearchParamsInterface): Promise<number> {
-    throw new Error('Not implemented');
-  }
-  public async getPolicyTotalAmount(params: CampaignSearchParamsInterface): Promise<number> {
+  public async getPolicyStats(
+    params: CampaignSearchParamsInterface,
+    slices: SliceInterface[],
+  ): Promise<PolicyStatsInterface> {
     throw new Error('Not implemented');
   }
 }
