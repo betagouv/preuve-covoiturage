@@ -18,7 +18,7 @@ import {
 export class CostNormalizerProvider implements CostNormalizerProviderInterface {
   constructor(private kernel: KernelInterfaceResolver) {}
 
-  protected async getSiret(operatorId): Promise<string> {
+  protected async getSiret(operatorId: number): Promise<string> {
     try {
       const { siret } = await this.kernel.call<OperatorFindParamsInterface, OperatorFindResultInterface>(
         operatorFindSignature,
@@ -39,17 +39,9 @@ export class CostNormalizerProvider implements CostNormalizerProviderInterface {
   public async handle(params: CostParamsInterface): Promise<CostResultInterface> {
     const siret = await this.getSiret(params.operator_id);
 
-    const [cost, payments] = this.normalizeCost(
-      siret,
-      params.revenue,
-      params.contribution,
-      params.incentives,
-      params.payments,
-      params.isDriver,
-    );
+    this.validate(params);
 
-    // finalPerson['cost'] = cost;
-    // finalPerson.payments = payments;
+    const [cost, payments] = this.normalizeCost(siret, params.contribution, params.incentives, params.payments);
 
     return { cost, payments };
   }
@@ -58,24 +50,18 @@ export class CostNormalizerProvider implements CostNormalizerProviderInterface {
 
   protected normalizeCost(
     siret: string,
-    revenue = 0,
-    contribution = 0,
-    incentives?: IncentiveInterface[],
-    payments?: PaymentInterface[],
-    isDriver = false,
+    contribution: number,
+    incentives: IncentiveInterface[],
+    payments: PaymentInterface[],
   ): [number, PaymentInterface[]] {
-    const cleanIncentives = incentives && incentives.length ? incentives : [];
-    const inputPayments = payments && payments.length ? payments : [];
-    const incentiveAmount = cleanIncentives.reduce((total, current) => total + current.amount, 0);
-    // const revenue = data.revenue || 0;
-
-    const cost = (isDriver ? -revenue - incentiveAmount : contribution + incentiveAmount) | 0;
+    const incentiveAmount = incentives.reduce((total, current) => total + current.amount, 0);
+    const cost = incentiveAmount + contribution;
 
     const isIncentive = (d: { type: string }): boolean => d.type === 'incentive';
 
     const cleanPayments = [
-      ...cleanIncentives.map((p) => ({ ...p, type: 'incentive' })),
-      ...inputPayments.map((p) => ({ ...p, type: 'payment', index: -1 })),
+      ...incentives.map((p) => ({ ...p, type: 'incentive' })),
+      ...payments.map((p) => ({ ...p, type: 'payment', index: -1 })),
     ]
       .sort((a, b) => {
         if (!isIncentive(a) && !isIncentive(b)) {
@@ -101,9 +87,16 @@ export class CostNormalizerProvider implements CostNormalizerProviderInterface {
       siret,
       index: cleanPayments.length,
       type: 'payment',
-      amount: ((isDriver ? Math.abs(cost) : cost) - cleanPayments.reduce((sum, item) => sum + item.amount, 0)) | 0,
+      amount: (cost - cleanPayments.reduce((sum, item) => sum + item.amount, 0)) | 0,
     });
 
     return [cost, cleanPayments];
+  }
+
+  protected validate(params: CostParamsInterface): void {
+    // Payments should not be greater than contribution
+    if (params.contribution < params.payments.reduce((acc, p) => acc + p.amount, 0)) {
+      throw new Error('Payments should not be greater than contribution');
+    }
   }
 }
