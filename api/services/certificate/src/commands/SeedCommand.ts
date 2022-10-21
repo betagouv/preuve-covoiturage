@@ -1,6 +1,6 @@
 import faker from '@faker-js/faker';
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
 
 interface CommandOptions {
   databaseUri: string;
@@ -11,7 +11,7 @@ interface CommandOptions {
 
 @command()
 export class SeedCommand implements CommandInterface {
-  private db;
+  private db: PoolClient;
 
   static readonly signature: string = 'seed:certificate';
   static readonly description: string = 'Seed fake identities, carpools and policies to fill out certificates';
@@ -43,7 +43,7 @@ export class SeedCommand implements CommandInterface {
     // connect DB
     const postgres = new PostgresConnection({ connectionString: options.databaseUri });
     await postgres.up();
-    this.db = postgres.getClient();
+    this.db = await postgres.getClient().connect();
 
     // 1. créer une identité dans carpool.identities
     // 2. créer un carpool.carpools avec identity_id
@@ -75,6 +75,8 @@ export class SeedCommand implements CommandInterface {
       console.error('Failed to seed identities, carpools and incentives for certificates');
       console.error(e.message);
       await this.db.query('ROLLBACK');
+    } finally {
+      this.db.release();
     }
   }
 

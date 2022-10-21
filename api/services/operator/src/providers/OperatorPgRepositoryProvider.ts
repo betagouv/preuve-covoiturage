@@ -1,5 +1,5 @@
 import { provider, NotFoundException, KernelInterfaceResolver } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
 
 import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
 import { OperatorDbInterface } from '../shared/operator/common/interfaces/OperatorDbInterface';
@@ -120,6 +120,8 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       });
     }
 
+    const connection = await this.connection.getClient().connect();
+    connection.query('BEGIN');
     try {
       const query = {
         text: `
@@ -153,10 +155,8 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         ],
       };
 
-      await this.connection.getClient().query('BEGIN');
-
       // store the operator
-      const result = await this.connection.getClient().query(query);
+      const result = await connection.query(query);
 
       if (result.rowCount !== 1) {
         throw new Error(`Unable to create operator (${JSON.stringify(data)})`);
@@ -164,15 +164,17 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
       // store the thumbnail
       if (data?.thumbnail?.length) {
-        await this.insertThumbnail(result.rows[0]._id, data.thumbnail);
+        await this.insertThumbnail(connection, result.rows[0]._id, data.thumbnail);
       }
 
-      await this.connection.getClient().query('COMMIT');
+      await connection.query('COMMIT');
 
       return result.rows[0];
     } catch (e) {
-      await this.connection.getClient().query('ROLLBACK');
+      await connection.query('ROLLBACK');
       throw e;
+    } finally {
+      connection.release();
     }
   }
 
@@ -220,6 +222,8 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         call: { user: { permissions: ['common.company.fetch'] } },
       });
     }
+    const connection = await this.connection.getClient().connect();
+    await connection.query('BEGIN');
 
     try {
       const updatablefields = [
@@ -263,9 +267,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         return `${acc}${current}$${idx + 1}`;
       }, '');
 
-      await this.connection.getClient().query('BEGIN');
-
-      const result = await this.connection.getClient().query(query);
+      const result = await connection.query(query);
 
       if (result.rowCount !== 1) {
         throw new NotFoundException(`operator not found (${id})`);
@@ -275,41 +277,53 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
       // if prop is missing, do nothing
       if ('thumbnail' in patch) {
         if (patch.thumbnail && patch.thumbnail.length) {
-          await this.insertThumbnail(id, patch.thumbnail);
+          await this.insertThumbnail(connection, id, patch.thumbnail);
         } else if (patch.thumbnail === null) {
-          await this.removeThumbnail(id);
+          await this.removeThumbnail(connection, id);
         }
       }
 
-      await this.connection.getClient().query('COMMIT');
+      await connection.query('COMMIT');
 
       return result.rows[0];
     } catch (e) {
-      await this.connection.getClient().query('ROLLBACK');
+      await connection.query('ROLLBACK');
       throw e;
+    } finally {
+      connection.release();
     }
   }
 
   public async patchThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {
-    if (base64Thumbnail && base64Thumbnail.length) {
-      await this.insertThumbnail(operator_id, base64Thumbnail);
-    } else if (base64Thumbnail === null) {
-      await this.removeThumbnail(operator_id);
+    const connection = await this.connection.getClient().connect();
+    await connection.query('BEGIN');
+    try {
+      if (base64Thumbnail && base64Thumbnail.length) {
+        await this.insertThumbnail(connection, operator_id, base64Thumbnail);
+      } else if (base64Thumbnail === null) {
+        await this.removeThumbnail(connection, operator_id);
+      }
+      await connection.query('COMMIT');
+    } catch (e) {
+      await connection.query('ROLLBACK');
+      throw e;
+    } finally {
+      connection.release();
     }
   }
 
-  private async insertThumbnail(operator_id: number, base64Thumbnail: string): Promise<void> {
+  private async insertThumbnail(connection: PoolClient, operator_id: number, base64Thumbnail: string): Promise<void> {
     // cleanup
-    await this.removeThumbnail(operator_id);
+    await this.removeThumbnail(connection, operator_id);
     // insert
-    await this.connection.getClient().query({
+    await connection.query({
       text: `INSERT INTO operator.thumbnails ( operator_id, data ) VALUES ( $1, decode($2, 'hex'))`,
       values: [operator_id, this.b64ToHex(base64Thumbnail)],
     });
   }
 
-  private async removeThumbnail(operator_id): Promise<void> {
-    await this.connection.getClient().query({
+  private async removeThumbnail(connection: PoolClient, operator_id: number): Promise<void> {
+    await connection.query({
       text: 'DELETE FROM operator.thumbnails WHERE operator_id = $1',
       values: [operator_id],
     });
