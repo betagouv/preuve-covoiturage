@@ -1,4 +1,4 @@
-import { handler, KernelInterfaceResolver } from '@ilos/common';
+import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
 
@@ -9,7 +9,7 @@ import { handlerConfig, signature } from '../shared/policy/stats.contract';
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
-export class StatsAction extends AbstractAction {
+export class StatsAction extends AbstractAction implements InitHookInterface {
   constructor(
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
     private kernel: KernelInterfaceResolver,
@@ -39,6 +39,6 @@ export class StatsAction extends AbstractAction {
   }
 
   public async handle(): Promise<void> {
-    // return await this.incentiveRepository.updateIncentiveSum();
+    return await this.incentiveRepository.updateIncentiveSum();
   }
 }
