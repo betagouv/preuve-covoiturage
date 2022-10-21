@@ -62,7 +62,7 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],
   ],
-  queues: ['campaign'],
+  queues: ['campaign', 'policy'],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
 })
 export class ServiceProvider extends AbstractServiceProvider {
