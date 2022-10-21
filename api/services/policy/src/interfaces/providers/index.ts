@@ -1,8 +1,5 @@
 export { PolicyRepositoryProviderInterfaceResolver } from './PolicyRepositoryProviderInterface';
-export {
-  IncentiveRepositoryProviderInterfaceResolver,
-  IncentiveStatsInterface,
-} from './IncentiveRepositoryProviderInterface';
+export { IncentiveRepositoryProviderInterfaceResolver } from './IncentiveRepositoryProviderInterface';
 export { TripRepositoryProviderInterfaceResolver } from './TripRepositoryProviderInterface';
 export {
   TerritoryRepositoryProviderInterface,

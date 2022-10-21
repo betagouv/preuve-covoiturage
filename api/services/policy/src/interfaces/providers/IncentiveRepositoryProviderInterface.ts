@@ -1,11 +1,5 @@
 import { SerializedIncentiveInterface, IncentiveStatusEnum } from '..';
 
-export interface IncentiveStatsInterface {
-  amount: number;
-  trip_subsidized: number;
-  trip_excluded: number;
-}
-
 export abstract class IncentiveRepositoryProviderInterfaceResolver {
   abstract updateStatefulAmount(
     data: Array<SerializedIncentiveInterface<number>>,
@@ -19,5 +13,5 @@ export abstract class IncentiveRepositoryProviderInterfaceResolver {
     batchSize?: number,
     from?: Date,
   ): AsyncGenerator<Array<SerializedIncentiveInterface<number>>, void, void>;
-  abstract getPolicyIncentiveStats(policy_id: number, territory_id?: number): Promise<IncentiveStatsInterface>;
+  abstract updateIncentiveSum(): Promise<void>;
 }

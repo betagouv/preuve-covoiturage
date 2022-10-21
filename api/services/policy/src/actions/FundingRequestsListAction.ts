@@ -1,10 +1,9 @@
-import { Action } from '@ilos/core';
 import { ContextType, handler, NotFoundException } from '@ilos/common';
+import { Action } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
-import { handlerConfig, ParamsInterface, ResultsInterface } from '../shared/policy/fundingRequestsList.contract';
-import { PolicyRepositoryProvider } from '../providers/PolicyRepositoryProvider';
 import { FundingRequestsRepositoryProviderInterfaceResolver } from '../interfaces';
-import { InvalidParamsException } from '@ilos/common/dist';
+import { PolicyRepositoryProvider } from '../providers/PolicyRepositoryProvider';
+import { handlerConfig, ParamsInterface, ResultsInterface } from '../shared/policy/fundingRequestsList.contract';
 
 @handler({
   ...handlerConfig,

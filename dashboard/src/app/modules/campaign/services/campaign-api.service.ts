@@ -4,22 +4,17 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 
 import { ParamsInterface as ListParamsInterface } from '~/core/entities/api/shared/policy/list.contract';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import {
-  ParamsInterface as CampaignStateParam,
-  ResultInterface as CampaignStateResult,
-  signature as campaignStateSignature,
-} from '../../../../../../shared/policy/stats.contract';
 
 import {
   ParamsInterface as SimulateOnPastParam,
   ResultInterface as SimulateOnPastResult,
   signature as simulateOnPastSignature,
-} from '../../../../../../shared/policy/stats.contract';
+} from '~/shared/policy/simulateOnPast.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -46,13 +41,6 @@ export class CampaignApiService extends JsonRpcCrud<
     return this.callOne(new JsonRPCParam(`${this.method}:templates`, {})).pipe(
       map((data) => data.data as PolicyInterface[]),
     );
-  }
-
-  stat(campaignId: number): Observable<CampaignStateResult> {
-    const jsonRPCParam: JsonRPCParam<CampaignStateParam> = new JsonRPCParam(campaignStateSignature, {
-      _id: campaignId,
-    });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data as CampaignStateResult));
   }
 
   simulate(campaign: SimulateOnPastParam): Observable<SimulateOnPastResult> {

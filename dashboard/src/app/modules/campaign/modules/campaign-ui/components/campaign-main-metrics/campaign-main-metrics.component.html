@@ -8,31 +8,19 @@
   </div>
   <div>
 
-    <div class="loader" *ngIf="!isLoaded">
-      <mat-spinner diameter="55"></mat-spinner>
-    </div>
-
-
     <ngx-chartjs [data]="budgetChartData" type="doughnut" [height]="60" [width]="60" [options]="options"
-      *ngIf="isLoaded && budgetSpent">
+      *ngIf="budgetSpent">
     </ngx-chartjs>
 
     <p>
       Estimation de la rétribution totale :<br />
-      <span *ngIf="isLoaded && budgetSpent" class="campaignMainMetrics-budgetSpend"><b>{{ budgetSpent | currency:
-          'EUR':'symbol':'1.0-2' }}</b></span>
-      <span *ngIf="isLoaded && budgetSpent"> sur </span><b *ngIf="isLoaded && budgetSpent"> {{ budgetTotal | currency:
-        'EUR':'symbol':'1.0-2' }}</b>
+      <span *ngIf="budgetSpent" class="campaignMainMetrics-budgetSpend"><b>{{ budgetSpent | euro }}</b></span>
+      <span *ngIf="budgetSpent"> sur </span><b *ngIf="budgetSpent"> {{ budgetTotal | euro }}</b>
 
-        <b style="font-size: medium" *ngIf="isLoaded && !budgetSpent">
+        <b style="font-size: medium" *ngIf="!budgetSpent">
           <mat-error > Une erreur est survenue</mat-error><br />
           <mat-error > Veuillez réessayer ultérieurement</mat-error>
         </b>
     </p>
-
-
-
   </div>
-
-  
 </div>

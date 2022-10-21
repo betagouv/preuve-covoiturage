@@ -4,7 +4,6 @@ import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
 import {
   IncentiveRepositoryProviderInterfaceResolver,
-  IncentiveStatsInterface,
   IncentiveStateEnum,
   IncentiveStatusEnum,
   SerializedIncentiveInterface,
@@ -271,29 +270,18 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     return;
   }
 
-  async getPolicyIncentiveStats(policy_id: number, territory_id?: number): Promise<IncentiveStatsInterface> {
+  async updateIncentiveSum(): Promise<void> {
     const query = {
-      text: `
-        SELECT
-          coalesce(sum(amount)::int, 0) as amount,
-          (count(*) FILTER (WHERE amount > 0))::int as trip_subsidized,
-          (count(*) FILTER (WHERE amount = 0))::int as trip_excluded
-        FROM ${this.table}
-        WHERE policy_id = $1
-          AND state = 'regular'
-          ${!!territory_id ? 'AND territory_id = $2' : ''}
-      `,
-      values: [policy_id, ...(territory_id ? [territory_id] : [])],
+      text: `UPDATE POLICY.POLICIES P
+      SET INCENTIVE_SUM = POLICY_INCENTIVE_SUM.AMOUNT
+      FROM
+        (SELECT POLICY_ID, COALESCE(SUM(RESULT),0)::int AS AMOUNT
+          FROM POLICY.INCENTIVES
+          WHERE STATUS = 'validated'
+          GROUP BY POLICY_ID) AS POLICY_INCENTIVE_SUM
+      WHERE P._ID = POLICY_INCENTIVE_SUM.POLICY_ID`,
     };
-
-    const result = await this.connection.getClient().query(query);
-
-    return result.rowCount
-      ? result.rows[0]
-      : {
-          amount: 0,
-          trip_excluded: 0,
-          trip_subsidized: 0,
-        };
+    await this.connection.getClient().query(query);
+    return;
   }
 }

@@ -20,7 +20,7 @@
   <!-- Name -->
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef>Nom</th>
-    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-name">
+    <td mat-cell *matCellDef="let campaign">
       <a class="link" [routerLink]="'/campaign/' + campaign._id">
         {{ campaign.name }}
       </a>
@@ -30,29 +30,25 @@
   <!-- Territory name -->
   <ng-container matColumnDef="territory">
     <th mat-header-cell *matHeaderCellDef>Territoire</th>
-    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-email">
+    <td mat-cell *matCellDef="let campaign" >
       {{ campaign.territory || '-' }}
     </td>
   </ng-container>
 
   <!-- Amount spent -->
-  <!-- <ng-container matColumnDef="amount_spent">
-    <th mat-header-cell *matHeaderCellDef>Incitation</th>
-    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-role">
-      <ng-container *ngIf="campaign.amount_spent">
-        {{ campaign.amount_spent | currency: 'EUR':'symbol':'1.0-0' }}
+  <ng-container matColumnDef="amount_spent">
+    <th mat-header-cell *matHeaderCellDef>Consommation estimée</th>
+    <td mat-cell *matCellDef="let campaign" >
+      <ng-container *ngIf="campaign.incentive_sum">
+        {{ centToEuro(campaign.incentive_sum) | euro }}
       </ng-container>
-      <ng-container *ngIf="campaign.amount_spent">
-        {{ campaign.amount_spent }}
-      </ng-container>
-      <ng-container *ngIf="!campaign.amount_spent"> - </ng-container>
     </td>
-  </ng-container> -->
+  </ng-container>
 
   <!-- Max amount -->
   <ng-container matColumnDef="max_amount">
-    <th mat-header-cell *matHeaderCellDef>Budget</th>
-    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-operator">
+    <th mat-header-cell *matHeaderCellDef style="min-width: 88px;">Budget</th>
+    <td mat-cell *matCellDef="let campaign">
       <ng-container *ngIf="campaign.params && campaign.params.limits.glob">
         {{ centToEuro(campaign.params.limits.glob) | currency: 'EUR':'symbol':'1.0-0' }}
       </ng-container>

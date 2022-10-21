@@ -8,7 +8,7 @@ import { Component, Input, OnChanges, OnInit, SimpleChange } from '@angular/core
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { ResultInterface as StatResultInterface } from '~/shared/policy/stats.contract';
+import { ResultInterface as StatResultInterface } from '~/shared/policy/simulateOnPast.contract';
 
 import { CampaignApiService } from '../../services/campaign-api.service';
 

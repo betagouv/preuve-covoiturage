@@ -18,5 +18,6 @@ export const createGetCampaignResultInterface = (
     start_date: start_date ? start_date : faker.date.past(1),
     end_date: end_date ? end_date : faker.date.future(1),
     status,
+    incentive_sum: faker.datatype.number(),
   };
 };

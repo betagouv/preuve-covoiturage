@@ -75,6 +75,7 @@ test.before((t) => {
     end_date: new Date('2022-02-01T00:00:00Z'),
     handler: 'handler.js',
     status: 'active',
+    incentive_sum: 4000,
     params: {
       slices: [
         { start: 2_000, end: 150_000 },

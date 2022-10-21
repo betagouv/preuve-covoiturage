@@ -9,17 +9,7 @@ import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterfa
 })
 export class CampaignTableComponent {
   @Input() campaigns: PolicyInterface[];
-  @Input() displayedColumns = [
-    'status',
-    'start',
-    'end',
-    'name',
-    'territory',
-    // 'amount_spent',
-    'max_amount',
-    // 'trips_number',
-    // 'max_trips',
-  ];
+  @Input() displayedColumns = ['status', 'start', 'end', 'name', 'territory', 'amount_spent', 'max_amount'];
 
   constructor() {}
 
