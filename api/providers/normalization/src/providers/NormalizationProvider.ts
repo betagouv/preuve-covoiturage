@@ -98,17 +98,19 @@ export class NormalizationProvider implements NormalizationProviderInterface {
     // Cost ------------------------------------------------------------------------------------
 
     try {
+      const { driver, passenger } = journey.payload;
       const { cost, payments } = await this.costNormalizer.handle({
         operator_id: journey.operator_id,
-        revenue: finalPerson.revenue,
-        contribution: finalPerson.contribution,
-        incentives: finalPerson.incentives,
-        payments: finalPerson.payments,
-        isDriver: finalPerson.is_driver as boolean,
+        contribution: driver.contribution || 0,
+        incentives: [
+          ...(Array.isArray(driver.incentives) ? driver.incentives : []),
+          ...(Array.isArray(passenger.incentives) ? passenger.incentives : []),
+        ],
+        payments: Array.isArray(passenger.payments) ? passenger.payments : [],
       });
 
-      finalPerson['cost'] = cost;
-      finalPerson.payments = payments;
+      finalPerson['cost'] = person.is_driver ? -cost : cost;
+      finalPerson.payments = person.is_driver ? [] : payments;
     } catch (e) {
       await this.logError(NormalisationErrorStage.Cost, e, journey);
       throw e;
