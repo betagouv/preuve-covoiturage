@@ -100,10 +100,12 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           excluded.status,
           excluded.error_stage,
           acquisitions.errors || excluded.errors
-        ) WHERE acquisitions.status = ANY(ARRAY[
-          'pending'::acquisition.acquisition_status_enum,
-          'error'::acquisition.acquisition_status_enum
-        ])
+        ) WHERE
+          acquisitions.status = 'pending'::acquisition.acquisition_status_enum OR
+          (
+            acquisitions.status = 'error'::acquisition.acquisition_status_enum AND
+            acquisitions.error_stage = ANY(ARRAY['acquisition','normalization'])
+          )
         RETURNING journey_id AS operator_journey_id, created_at
       `,
       values,
