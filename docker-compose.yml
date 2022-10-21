@@ -30,6 +30,7 @@ services:
       MH_CORS_ORIGIN: '*'
     ports:
       - 8025:8025
+      - 1025:1025
     networks:
       - back
 

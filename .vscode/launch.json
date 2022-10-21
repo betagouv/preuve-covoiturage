@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+      {
+        "type": "node",
+        "cwd": "${workspaceFolder}/api/services/trip",
+        "request": "launch",
+        "name": "Debug AVA test file",
+        "program": "${workspaceFolder}/api/node_modules/ava/entrypoints/cli.mjs",
+        "args": [
+          "--config",
+          "ava.unit.cjs",
+          "--ext",
+          "ts",
+          "--verbose",
+          "**/${fileBasename}"
+        ],
+        "outputCapture": "std",
+        "skipFiles": [
+          "<node_internals>/**/*.js",
+          "${workspaceFolder}/db/**"
+        ],
+      },
+      {
+        "type": "node",
+        "cwd": "${workspaceFolder}/api/proxy/dist",
+        "request": "launch",
+        "name": "Debug",
+        "runtimeExecutable": "${workspaceFolder}/api/proxy/node_modules/.bin/ilos",
+        "runtimeArgs": [
+          "http",
+          "8080",
+        ],
+        "envFile" : "${workspaceFolder}/api/.env",
+        "outputCapture": "std",
+      },
+  ]
+}
