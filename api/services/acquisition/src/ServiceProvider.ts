@@ -14,6 +14,7 @@ import { create } from './shared/acquisition/create.schema';
 import { cancel } from './shared/acquisition/cancel.schema';
 import { status } from './shared/acquisition/status.schema';
 
+import { AcquisitionProcessCommand } from './commands/AcquisitionProcessCommand';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { CancelJourneyAction } from './actions/CancelJourneyAction';
 import { StatusJourneyAction } from './actions/StatusJourneyAction';
@@ -21,6 +22,7 @@ import { ProcessJourneyAction } from './actions/ProcessJourneyAction';
 
 @serviceProvider({
   config,
+  commands: [AcquisitionProcessCommand],
   queues: ['acquisition'],
   providers: [AcquisitionRepositoryProvider, NormalizationProvider, GeoProvider],
   validator: [
