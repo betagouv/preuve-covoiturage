@@ -7,7 +7,7 @@ Bootstrap.createFromPath().then((app) => {
   app
     .boot(command, ...opts)
     .then(() => {
-      if (process.env.APP_NO_BANNER) return;
+      if (process.env?.APP_NO_BANNER) return;
       console.info(`
 
             |      ,sss.
@@ -18,7 +18,7 @@ Bootstrap.createFromPath().then((app) => {
             '-./' ;    ;: |    ██║███████╗╚██████╔╝███████║
             |     |\`  '|\`,;    ╚═╝╚══════╝ ╚═════╝ ╚══════╝
           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    `);
+      `);
     })
     .catch((e) => {
       console.error(e.message, e);
