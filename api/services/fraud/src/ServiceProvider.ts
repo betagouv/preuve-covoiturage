@@ -13,10 +13,11 @@ import { ProcessableCarpoolRepositoryProvider } from './providers/ProcessableCar
 import { CheckAction } from './actions/CheckAction';
 import { CheckEngine } from './engine/CheckEngine';
 import { ApplyAction } from './actions/ApplyAction';
+import { SearchCollisionsCommand } from './commands/SearchCollisionsCommand';
 
 @serviceProvider({
   config,
-  commands: [],
+  commands: [SearchCollisionsCommand],
   providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine, ProcessableCarpoolRepositoryProvider],
   validator: [],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
