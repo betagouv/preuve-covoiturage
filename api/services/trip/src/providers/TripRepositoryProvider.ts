@@ -508,7 +508,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               and tl.operator_id = $3
               and $4 = any(tl.applied_policies)
               and (dir.policy_id = $4 or pir.policy_id = $4)
-              and coalesce(dir.amount, 0) + coalesce(pir.amount, 0) > 0
         )
         select
           count(*)::int,
