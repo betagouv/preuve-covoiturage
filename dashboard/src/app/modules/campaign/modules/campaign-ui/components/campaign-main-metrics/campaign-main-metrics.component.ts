@@ -11,12 +11,12 @@ import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterfa
 })
 export class CampaignMainMetricsComponent implements OnInit, OnChanges {
   @Input() campaign: PolicyInterface;
-  daysRemaining = 1;
+  daysRemaining = 0;
   daysPassed = 0;
 
-  budgetTotal = 1;
-  budgetRemaining = 1;
-  budgetSpent;
+  budgetSpent = 0;
+  budgetTotal = 0;
+  budgetRemaining = 0;
 
   options: ChartOptions = {
     legend: {

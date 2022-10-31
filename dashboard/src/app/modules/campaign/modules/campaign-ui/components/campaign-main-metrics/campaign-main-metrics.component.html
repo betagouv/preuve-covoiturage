@@ -9,18 +9,18 @@
   <div>
 
     <ngx-chartjs [data]="budgetChartData" type="doughnut" [height]="60" [width]="60" [options]="options"
-      *ngIf="budgetSpent">
+      *ngIf="budgetTotal">
     </ngx-chartjs>
 
     <p>
       Estimation de la rétribution totale :<br />
-      <span *ngIf="budgetSpent" class="campaignMainMetrics-budgetSpend"><b>{{ budgetSpent | euro }}</b></span>
-      <span *ngIf="budgetSpent"> sur </span><b *ngIf="budgetSpent"> {{ budgetTotal | euro }}</b>
+      <span *ngIf="budgetTotal" class="campaignMainMetrics-budgetSpend"><b>{{ budgetSpent | euro }}</b></span>
+      <span *ngIf="budgetTotal"> sur </span><b *ngIf="budgetTotal"> {{ budgetTotal | euro }}</b>
 
-        <b style="font-size: medium" *ngIf="!budgetSpent">
-          <mat-error > Une erreur est survenue</mat-error><br />
-          <mat-error > Veuillez réessayer ultérieurement</mat-error>
-        </b>
+      <b style="font-size: medium" *ngIf="!budgetTotal">
+        <mat-error> Une erreur est survenue</mat-error><br />
+        <mat-error> Veuillez réessayer ultérieurement</mat-error>
+      </b>
     </p>
   </div>
 </div>
