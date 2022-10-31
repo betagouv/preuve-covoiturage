@@ -39,6 +39,6 @@ export class StatsAction extends AbstractAction implements InitHookInterface {
   }
 
   public async handle(): Promise<void> {
-    return await this.incentiveRepository.updateIncentiveSum();
+    await this.incentiveRepository.updateIncentiveSum();
   }
 }
