@@ -52,12 +52,12 @@ export class ExportCapitalCallsAction extends Action {
               console.debug(`Exporting APDF: campaign ${campaign.name}, operator id ${o_id}`);
               const { filename, filepath } = await this.buildExcel.call(campaign, start_date, end_date, o_id);
               const file = await this.s3StorageProvider.upload(BucketName.APDF, filepath, filename, `${campaign._id}`);
-              
+
               // maybe delete the file
               try {
                 fs.unlinkSync(filepath);
               } catch (e) {
-                console.warn(`Failed to unlink ${filepath} - ${e.message}`)
+                console.warn(`Failed to unlink ${filepath} - ${e.message}`);
               }
 
               files.push(file);

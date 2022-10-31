@@ -499,8 +499,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               tl.journey_distance as distance,
               coalesce(dir.amount, 0) + coalesce(pir.amount, 0) as sum
             from ${this.table} tl
-            join lateral unnest(tl.driver_incentive_rpc_raw) as dir(siret, amount, unit, policy_id, policy_name, type) on true
-            join lateral unnest(tl.passenger_incentive_rpc_raw) as pir(siret, amount, unit, policy_id, policy_name, type) on true
+            left join lateral unnest(tl.driver_incentive_rpc_raw) as dir(siret, amount, unit, policy_id, policy_name, type) on true
+            left join lateral unnest(tl.passenger_incentive_rpc_raw) as pir(siret, amount, unit, policy_id, policy_name, type) on true
             where
               tl.journey_start_datetime >= $1
               and tl.journey_start_datetime < $2
