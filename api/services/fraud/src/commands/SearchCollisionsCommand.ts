@@ -70,26 +70,37 @@ export class SearchCollisionsCommand implements CommandInterface {
     },
   ];
 
-  private slice = { hours: 4 };
+  // user timespan is split in small slices to spread
+  // the load between the available workers.
+  // https://date-fns.org/v2.29.3/docs/add
+  private slice: Duration = { hours: 4 };
+
+  // The number of PG pools to create. Each will accept
+  // many clients. This will be the number of parallel
+  // Postgres queries that can be run
   private MAX_POOLS = cpus().length - 1;
 
   public async call(options: CommandOptions): Promise<void> {
+    // create the connection pool
     const pools = await this.dbSetup(options);
     const { from, to, ...opts } = await this.normalizeOptions(pools[0], options);
 
+    // splice the user timespan
     let f = new Date(from.getTime());
     let t = add(f, this.slice);
 
+    // configure all queries for each slice
+    // which will be spread over the pools
     const queries = [];
     let index = 0;
     while (f.getTime() < to.getTime()) {
       queries.push(this.searchCollisions(pools[index % this.MAX_POOLS], { from: f, to: t, ...opts }));
-
       f = add(f, this.slice);
       t = add(f, this.slice);
       index++;
     }
 
+    // resolve the queries and compile results
     const slices = await Promise.all(queries);
     let fraud = 0;
     let total = 0;
@@ -118,6 +129,11 @@ export class SearchCollisionsCommand implements CommandInterface {
 
     const values = [from, to, `${timespan} minutes`, radius, siret].filter((i) => !!i);
     const text = `
+      --
+      -- group all carpools by their phone_trunc 
+      -- apply a geographical filter if the AOM/SIRET exists
+      -- keep the phone_trunc when the number of carpools > 1
+      --
       WITH group_phones AS (
         select
           ci.phone_trunc,
@@ -147,12 +163,28 @@ export class SearchCollisionsCommand implements CommandInterface {
         group by phone_trunc
         having array_length(array_agg(distinct cc._id), 1) > 1
       ),
+
+      --
+      -- list and de-duplicate the carpool_id list
+      --
       carpool_list AS (
         select unnest(carpool_id) carpool_id
         from group_phones
         group by carpool_id
         order by carpool_id
       ),
+
+      --
+      -- group carpools by timespan and geo radius proximity
+      -- carpool_id is the current carpool we're checking
+      -- pack is an array of the current carpool_id and the collisions
+      --
+      -- for each carpool, search for other carpools from carpool_list
+      -- where start and end datetimes are within the timepan,
+      --       carpool_id is not itself,
+      --       operator_id is different,
+      --       start and end positions are within the radius
+      --
       group_time_geo AS (
         select
           cc._id AS carpool_id,
@@ -176,12 +208,17 @@ export class SearchCollisionsCommand implements CommandInterface {
         ) cc2 on true
         group by cc._id
       )
+
+      --
+      -- summarize results for display
+      --
       select count(distinct carpool_id) from group_time_geo;
     `;
 
     const fraudRes = await db.query({ text, values });
     const fraudCount = fraudRes.rowCount ? fraudRes.rows[0].count : 0;
 
+    // aggregate totals for comparison
     const totalRes = await db.query({
       text: `
           SELECT count(*)
