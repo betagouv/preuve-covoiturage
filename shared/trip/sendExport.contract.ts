@@ -13,13 +13,16 @@ export interface ParamsInterface {
     operator_id?: number[];
     geo_selector?: TerritorySelectorsInterface;
   };
-  type?: string;
+  type?: ExportType;
   from: {
     type?: string;
     email: string;
     fullname: string;
   };
 }
+
+export type ExportType = 'opendata' | 'export' | 'registry' | 'operator' | 'territory';
+
 export type ResultInterface = void;
 
 export const handlerConfig = {

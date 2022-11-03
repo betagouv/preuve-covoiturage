@@ -1,4 +1,5 @@
 import { TerritorySelectorsInterface } from '../territory/common/interfaces/TerritoryCodeInterface';
+import { ExportType } from './sendExport.contract';
 
 export interface FormatInterface {
   tz: string;
@@ -17,7 +18,7 @@ export interface QueryInterface {
 export interface ParamsInterface {
   format?: FormatInterface;
   query?: QueryInterface;
-  type?: string;
+  type?: ExportType;
 }
 
 export type ResultInterface = string;

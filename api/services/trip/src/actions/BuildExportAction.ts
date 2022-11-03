@@ -19,6 +19,7 @@ import {
   ParamsInterface as PublishOpenDataParamsInterface,
   signature as publishOpenDataSignature,
 } from '../shared/trip/publishOpenData.contract';
+import { ExportType } from '../shared/trip/sendExport.contract';
 import { BuildFile } from './file/BuildFile';
 
 export interface FlattenTripInterface extends ExportTripInterface<string> {
@@ -198,6 +199,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
       'operator_journey_id',
       'operator_passenger_id',
       'operator_driver_id',
+      'status',
     ],
     territory: [
       'journey_distance',
@@ -216,6 +218,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
       'operator_journey_id',
       'operator_passenger_id',
       'operator_driver_id',
+      'status',
     ],
   };
 
@@ -248,25 +251,28 @@ export class BuildExportAction extends Action implements InitHookInterface {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const type = get(params, 'type', 'export');
     const queryParams: TripSearchInterface = this.getDefaultQueryParams(params);
+    console.info(queryParams);
+    const isOpendata: boolean = this.isOpendata(type);
+
     let excluded_territories: TerritoryTripsInterface[];
 
-    if (this.isOpendata(type)) {
+    if (isOpendata) {
       excluded_territories = await this.tripRepository.getOpendataExcludedTerritories(queryParams);
       this.addExcludedTerritoriesToQueryParams(excluded_territories, queryParams);
     }
 
     const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
-    const filepath: string = await this.buildFile.buildCsvFromCursor(
-      cursor,
-      params,
-      queryParams.date.end,
-      this.isOpendata(type),
-    );
-    return this.handleCSVExport(type, filepath, queryParams, excluded_territories);
+    const filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end, isOpendata);
+    return this.handleCSVExport(isOpendata, filepath, queryParams, excluded_territories);
   }
 
-  private async handleCSVExport(type: string, filepath: string, queryParams, excluded_territories): Promise<string> {
-    if (this.isOpendata(type)) {
+  private async handleCSVExport(
+    isOpenData: boolean,
+    filepath: string,
+    queryParams,
+    excluded_territories,
+  ): Promise<string> {
+    if (isOpenData) {
       return this.processOpendataExport(filepath, queryParams, excluded_territories);
     } else {
       return this.processOtherTypeExport(filepath);
@@ -313,7 +319,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
     }
   }
 
-  private isOpendata(type: any): boolean {
+  private isOpendata(type: ExportType): boolean {
     return type === 'opendata';
   }
 
@@ -352,7 +358,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
         ...params.query?.date,
       },
       ...params.query,
-      status: 'ok',
+      ...(params.type !== 'operator' && params.type !== 'registry' && { status: 'ok' }),
     };
   }
 

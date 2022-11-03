@@ -342,20 +342,18 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const financialFields = ['passenger_id', 'passenger_contribution', 'driver_id', 'driver_revenue'];
 
     let selectedFields = [...baseFields];
-    const values = [];
     switch (type) {
       case 'territory':
       case 'registry':
-        selectedFields = [...selectedFields, 'operator', ...financialFields];
+        selectedFields = [...selectedFields, 'operator', ...financialFields, 'status'];
         break;
       case 'operator':
-        selectedFields = [...selectedFields, ...financialFields];
+        selectedFields = [...selectedFields, ...financialFields, 'status'];
         break;
     }
 
     const where = await this.buildWhereClauses(params);
 
-    const queryValues = [...values, ...where.values];
     const queryText = this.numberPlaceholders(`
       SELECT
         ${selectedFields.join(', ')}
@@ -365,7 +363,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     `);
 
     const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(queryText, queryValues));
+    const cursorCb = db.query(new Cursor(queryText, where.values));
 
     return {
       read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
