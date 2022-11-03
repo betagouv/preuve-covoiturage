@@ -251,7 +251,6 @@ export class BuildExportAction extends Action implements InitHookInterface {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const type = get(params, 'type', 'export');
     const queryParams: TripSearchInterface = this.getDefaultQueryParams(params);
-    console.info(queryParams);
     const isOpendata: boolean = this.isOpendata(type);
 
     let excluded_territories: TerritoryTripsInterface[];
