@@ -13,6 +13,7 @@ export interface PolicyInterface {
   params: {
     slices?: Array<SliceInterface>;
     operators?: Array<string>;
+    operators_id?: Array<number>;
     limits?: {
       glob?: number;
     };

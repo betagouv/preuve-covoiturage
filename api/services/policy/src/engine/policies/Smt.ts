@@ -1,5 +1,6 @@
 import {
   OperatorsEnum,
+  OperatorsIdEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
@@ -24,6 +25,7 @@ import { description } from './Smt.html';
 export const Smt: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '713';
   protected operators = [OperatorsEnum.Klaxit];
+  protected operators_id = [OperatorsIdEnum.Klaxit];
   protected slices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
@@ -68,6 +70,7 @@ export const Smt: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
     return {
       slices: this.slices,
       operators: this.operators,
+      operators_id: this.operators_id,
       limits: {
         glob: 40_000_00,
       },

@@ -3,6 +3,8 @@ import {
   MetadataAccessorInterface,
   MetadataRegistryInterface,
   MetadataStoreInterface,
+  OperatorsEnum,
+  OperatorsIdEnum,
   SerializedIncentiveInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
@@ -53,7 +55,8 @@ export interface SliceInterface {
 
 export interface PolicyHandlerParamsInterface {
   slices?: Array<SliceInterface>;
-  operators?: Array<string>;
+  operators?: Array<OperatorsEnum>;
+  operators_id?: Array<OperatorsIdEnum>;
   limits?: {
     glob?: number;
   };

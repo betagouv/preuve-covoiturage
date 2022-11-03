@@ -1,6 +1,7 @@
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   OperatorsEnum,
+  OperatorsIdEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
@@ -30,6 +31,7 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '459';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
+  protected operators_id = [OperatorsIdEnum.BlaBlaDaily, OperatorsIdEnum.Karos, OperatorsIdEnum.Klaxit];
   protected slices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {
@@ -105,6 +107,7 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     return {
       slices: this.slices,
       operators: this.operators,
+      operators_id: this.operators_id,
       limits: {
         glob: 6_000_000_00,
       },

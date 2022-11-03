@@ -32,8 +32,9 @@ export class BuildExcel {
 
     // fetch aggregated and slice data
     const {
-      count: trips,
-      sum: amount,
+      total_count: trips,
+      total_sum: amount,
+      subsidized_count: subsidized,
       slices,
     } = await this.tripRepoProvider.getPolicyStats(params, campaign.params.slices || []);
 
@@ -44,6 +45,7 @@ export class BuildExcel {
       operator_id,
       datetime: start_date,
       trips,
+      subsidized,
       amount,
     };
     const filename: string = this.apdfNameProvider.filename(fileParams);

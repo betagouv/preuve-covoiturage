@@ -39,15 +39,15 @@ export class ExportCapitalCallsAction extends Action {
           return;
         }
 
-        const involvedOperatorIds = await this.tripRepositoryProvider.getPolicyInvolvedOperators(
+        const activeOperatorIds = await this.tripRepositoryProvider.getPolicyActiveOperators(
           campaign._id,
           start_date,
           end_date,
-          campaign.params.operators,
+          campaign.params.operators_id,
         );
 
         await Promise.all(
-          involvedOperatorIds.map(async (o_id) => {
+          activeOperatorIds.map(async (o_id) => {
             try {
               console.debug(`Exporting APDF: campaign ${campaign.name}, operator id ${o_id}`);
               const { filename, filepath } = await this.buildExcel.call(campaign, start_date, end_date, o_id);
