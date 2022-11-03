@@ -101,6 +101,7 @@ export class HttpTransport implements TransportInterface {
     this.registerContactformRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
+    this.registerGeoRoutes();
   }
 
   getApp(): express.Express {
@@ -165,7 +166,7 @@ export class HttpTransport implements TransportInterface {
     // apply CORS to all routes but /honor (for now)
     // TODO: improve if more routes are concerned
     this.app.use(
-      /\/((?!honor|contactform).)*/,
+      /\/((?!honor|contactform|geo\/search).)*/,
       cors({
         origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
@@ -182,6 +183,13 @@ export class HttpTransport implements TransportInterface {
     );
     this.app.use(
       '/contactform',
+      cors({
+        origin: this.config.get('proxy.showcase'),
+        optionsSuccessStatus: 200,
+      }),
+    );
+    this.app.use(
+      '/geo/search',
       cors({
         origin: this.config.get('proxy.showcase'),
         optionsSuccessStatus: 200,
@@ -293,6 +301,23 @@ export class HttpTransport implements TransportInterface {
         const user = get(req, 'session.user', null);
         const response = (await this.kernel.handle(
           createRPCPayload('campaign:simulateOnFuture', params, user, { req }),
+        )) as RPCResponseType;
+        this.send(res, response);
+      }),
+    );
+  }
+
+  private registerGeoRoutes(): void {
+    this.app.post(
+      '/geo/search',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = (await this.kernel.handle(
+          createRPCPayload(
+            'territory:listGeo',
+            { search: req.body.search },
+            { permissions: ['common.territory.list'] },
+          ),
         )) as RPCResponseType;
         this.send(res, response);
       }),
