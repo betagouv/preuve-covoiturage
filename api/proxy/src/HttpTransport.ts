@@ -161,7 +161,7 @@ export class HttpTransport implements TransportInterface {
     // apply CORS to all routes but /honor (for now)
     // TODO: improve if more routes are concerned
     this.app.use(
-      /\/((?!honor|contactform|geo\/search).)*/,
+      /\/((?!honor|contactform|geo\/search|policy\/simulate).)*/,
       cors({
         origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
@@ -185,6 +185,13 @@ export class HttpTransport implements TransportInterface {
     );
     this.app.use(
       '/geo/search',
+      cors({
+        origin: this.config.get('proxy.showcase'),
+        optionsSuccessStatus: 200,
+      }),
+    );
+    this.app.use(
+      '/policy/simulate',
       cors({
         origin: this.config.get('proxy.showcase'),
         optionsSuccessStatus: 200,
@@ -234,6 +241,17 @@ export class HttpTransport implements TransportInterface {
         this.send(res, response);
       }),
     );
+    this.app.post(
+      '/policy/simulate',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const { params } = req;
+        const response = (await this.kernel.handle(
+          createRPCPayload('campaign:simulateOnPast', params, { permissions: ['territory.policy.simulate.past'] }),
+        )) as RPCResponseType;
+        this.send(res, response);
+      }),
+    );
   }
 
   private registerGeoRoutes(): void {
@@ -241,14 +259,14 @@ export class HttpTransport implements TransportInterface {
       '/geo/search',
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
+        const response = await this.kernel.handle(
           createRPCPayload(
             'territory:listGeo',
             { search: req.body.search },
             { permissions: ['common.territory.list'] },
           ),
-        )) as RPCResponseType;
-        this.send(res, response);
+        );
+        this.send(res, response as RPCResponseType);
       }),
     );
   }
