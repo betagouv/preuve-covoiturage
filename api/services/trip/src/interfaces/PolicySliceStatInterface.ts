@@ -2,8 +2,9 @@
 import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
 
 export interface PolicyStatsInterface {
-  count: number;
-  sum: number;
+  total_count: number;
+  total_sum: number;
+  subsidized_count: number;
   slices: SliceStatInterface[];
 }
 

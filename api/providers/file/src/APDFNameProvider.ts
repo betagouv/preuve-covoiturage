@@ -9,6 +9,7 @@ export interface APDFNameParamsInterface {
   campaign_id: number;
   operator_id: number;
   trips: number;
+  subsidized: number;
   amount: number;
 }
 
@@ -20,7 +21,7 @@ export class APDFNameProvider implements ProviderInterface {
   private ext = 'xlsx';
 
   public filename(params: APDFNameParamsInterface): APDFNameResultsInterface {
-    const { name, datetime, campaign_id, operator_id, trips, amount } = params;
+    const { name, datetime, campaign_id, operator_id, trips, subsidized, amount } = params;
 
     // APDF-2022-01-123-456-campaign-operator-hash.ext
     // 123: campaign_id
@@ -31,6 +32,7 @@ export class APDFNameProvider implements ProviderInterface {
       campaign_id,
       operator_id,
       trips || 0,
+      subsidized || 0,
       amount || 0,
       this.sanitize(name),
     ]
@@ -55,7 +57,8 @@ export class APDFNameProvider implements ProviderInterface {
       campaign_id: parseInt(parts[2], 10),
       operator_id: parseInt(parts[3], 10),
       trips: parseInt(parts[4], 10),
-      amount: parseInt(parts[5], 10),
+      subsidized: parseInt(parts[5], 10),
+      amount: parseInt(parts[6], 10),
     };
   }
 

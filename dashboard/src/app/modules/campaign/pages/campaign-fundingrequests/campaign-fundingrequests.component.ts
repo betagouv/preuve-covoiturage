@@ -18,7 +18,7 @@ export class CampaignFundingRequestsComponent implements OnInit {
   @Input() campaign: PolicyInterface;
 
   public fRequestsList: FundingRequestsListResult;
-  public displayedColumns: string[] = ['month', 'operator', 'trips', 'amount', 'filesize', 'action'];
+  public displayedColumns: string[] = ['month', 'operator', 'trips', 'subsidized', 'amount', 'filesize', 'action'];
 
   constructor(private fRequestsApiService: FundingRequestsApiService, private commonData: CommonDataService) {}
 
