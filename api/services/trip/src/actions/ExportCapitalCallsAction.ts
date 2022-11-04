@@ -43,7 +43,6 @@ export class ExportCapitalCallsAction extends Action {
           campaign._id,
           start_date,
           end_date,
-          campaign.params.operators_id,
         );
 
         await Promise.all(

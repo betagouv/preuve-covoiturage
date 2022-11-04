@@ -66,4 +66,4 @@ export {
   StatelessContextInterface,
 } from './PolicyInterface';
 
-export { OperatorsEnum, OperatorsIdEnum } from './OperatorsEnum';
+export { OperatorsEnum } from './OperatorsEnum';

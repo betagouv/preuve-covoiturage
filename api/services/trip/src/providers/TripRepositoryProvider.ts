@@ -459,32 +459,26 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
    * List active operators having trips and incentives > 0
    * in the campaign for the given date range
    */
-  public async getPolicyActiveOperators(
-    campaign_id: number,
-    start_date: Date,
-    end_date: Date,
-    operators_id: Array<number> = [],
-  ): Promise<number[]> {
+  public async getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
     const result = await this.connection.getClient().query({
       text: `
-        SELECT operator_id
-        FROM ${this.table}
-        LEFT JOIN LATERAL unnest(driver_incentive_rpc_raw) AS dir(siret, amount) ON true
-        LEFT JOIN LATERAL unnest(passenger_incentive_rpc_raw) AS pir(siret, amount) ON true
-        WHERE journey_start_datetime >= $1::TIMESTAMP
-          AND journey_start_datetime <  $2::TIMESTAMP
-          AND status = 'ok'
-          AND $3 = any(applied_policies)
-          AND (dir.policy_id = $3 OR pir.policy_id = $3)
-          AND COALESCE(dir.amount, 0) + COALESCE(pir.amount, 0) > 0
-        GROUP BY operator_id
-        ORDER BY operator_id
+        select cc.operator_id
+        from policy.incentives pi
+        join carpool.carpools cc on cc._id = pi.carpool_id
+        where
+              pi.policy_id = $3
+          and pi.amount    >  0
+          and cc.datetime >= $1
+          and cc.datetime <  $2
+          and cc.status   = 'ok'
+        group by cc.operator_id
+        order by cc.operator_id
       `,
       values: [start_date, end_date, campaign_id],
     });
 
     // merge results with the list of campaign operators
-    return result.rowCount ? [...new Set([...result.rows.map((r) => r.operator_id), ...operators_id])] : operators_id;
+    return result.rowCount ? result.rows.map((r) => r.operator_id) : [];
   }
 
   public async getPolicyStats(

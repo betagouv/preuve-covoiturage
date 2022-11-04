@@ -1,6 +1,5 @@
 import {
   OperatorsEnum,
-  OperatorsIdEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
@@ -30,12 +29,6 @@ import { description } from './Pdll.html';
 export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '249';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
-  protected operators_id = [
-    OperatorsIdEnum.BlaBlaDaily,
-    OperatorsIdEnum.Karos,
-    OperatorsIdEnum.Klaxit,
-    OperatorsIdEnum.Mobicoop,
-  ];
   protected slices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
@@ -94,7 +87,6 @@ export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     return {
       slices: this.slices,
       operators: this.operators,
-      operators_id: this.operators_id,
       limits: {
         glob: 2_000_000_00,
       },

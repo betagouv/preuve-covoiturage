@@ -1,6 +1,5 @@
 import {
   OperatorsEnum,
-  OperatorsIdEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
@@ -27,7 +26,6 @@ export const Laval: PolicyHandlerStaticInterface = class
 {
   static readonly id = '695';
   protected operators = [OperatorsEnum.Klaxit];
-  protected operators_id = [OperatorsIdEnum.Klaxit];
   protected slices = [{ start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
   protected limits: Array<ConfiguredLimitInterface> = [
     ['70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
@@ -59,7 +57,6 @@ export const Laval: PolicyHandlerStaticInterface = class
     return {
       slices: this.slices,
       operators: this.operators,
-      operators_id: this.operators_id,
       limits: {
         glob: 9_000_00,
       },
