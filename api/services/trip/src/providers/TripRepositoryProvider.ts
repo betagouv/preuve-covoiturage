@@ -477,7 +477,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       values: [start_date, end_date, campaign_id],
     });
 
-    // merge results with the list of campaign operators
     return result.rowCount ? result.rows.map((r) => r.operator_id) : [];
   }
 
