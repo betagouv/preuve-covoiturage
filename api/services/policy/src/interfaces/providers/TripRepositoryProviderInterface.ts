@@ -8,4 +8,12 @@ export abstract class TripRepositoryProviderInterfaceResolver {
     batchSize?: number,
     override?: boolean,
   ): AsyncGenerator<CarpoolInterface[], void, void>;
+
+  abstract findTripByGeo(
+    insee: string,
+    from: Date,
+    to: Date,
+    batchSize?: number,
+    override?: boolean,
+  ): AsyncGenerator<CarpoolInterface[], void, void>;
 }

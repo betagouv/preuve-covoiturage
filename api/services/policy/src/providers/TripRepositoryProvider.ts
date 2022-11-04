@@ -15,6 +15,16 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
 
   constructor(protected connection: PostgresConnection) {}
 
+  findTripByGeo(
+    insee: string,
+    from: Date,
+    to: Date,
+    batchSize?: number,
+    override?: boolean,
+  ): AsyncGenerator<CarpoolInterface[], void, void> {
+    throw new Error('Method not implemented.');
+  }
+
   async *findTripByPolicy(
     policy: PolicyInterface,
     from: Date,
