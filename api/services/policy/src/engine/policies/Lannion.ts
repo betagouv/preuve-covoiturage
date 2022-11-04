@@ -26,11 +26,15 @@ export const Lannion: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'lannion_2022';
-  protected glob_limit =  60_684_87;
+  protected glob_limit = 60_684_87;
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
-    { start: 20_000, end: 40_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })) },
+    {
+      start: 20_000,
+      end: 40_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+    },
     { start: 40_000, end: 150_000, fn: () => 0 },
   ];
   protected limits: Array<ConfiguredLimitInterface> = [
@@ -50,7 +54,7 @@ export const Lannion: PolicyHandlerStaticInterface = class
 
     // Par kilomètre
     let amount = 0;
-    for (const { start, end, fn } of this.slices) {
+    for (const { start, fn } of this.slices) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);
       }

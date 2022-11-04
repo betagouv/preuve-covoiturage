@@ -41,11 +41,7 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [
-      { operator_siret: 'not in list' },
-      { distance: 100 },
-      { operator_class: 'A' },
-    ],
+    carpool: [{ operator_siret: 'not in list' }, { distance: 100 }, { operator_class: 'A' }],
     meta: [],
   },
   { incentive: [0, 0, 0], meta: [] },
@@ -90,11 +86,11 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one', start: { ...defaultPosition, arr: 'not_in_aom'} },
-      { distance: 5_000, seats: 2, driver_identity_uuid: 'one', start: { ...defaultPosition, arr: 'not_in_aom'} },
-      { distance: 25_000, driver_identity_uuid: 'two',start: { ...defaultPosition, arr: 'not_in_aom'}  },
-      { distance: 25_000, seats: 2, driver_identity_uuid: 'two', start: { ...defaultPosition, arr: 'not_in_aom'}  },
-      { distance: 55_000, driver_identity_uuid: 'two', start: { ...defaultPosition, arr: 'not_in_aom'}  },
+      { distance: 5_000, driver_identity_uuid: 'one', start: { ...defaultPosition, arr: 'not_in_aom' } },
+      { distance: 5_000, seats: 2, driver_identity_uuid: 'one', start: { ...defaultPosition, arr: 'not_in_aom' } },
+      { distance: 25_000, driver_identity_uuid: 'two', start: { ...defaultPosition, arr: 'not_in_aom' } },
+      { distance: 25_000, seats: 2, driver_identity_uuid: 'two', start: { ...defaultPosition, arr: 'not_in_aom' } },
+      { distance: 55_000, driver_identity_uuid: 'two', start: { ...defaultPosition, arr: 'not_in_aom' } },
     ],
     meta: [],
   },

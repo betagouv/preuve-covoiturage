@@ -22,4 +22,3 @@ export const description = `<p _ngcontent-moy-c231="" id="summary" class="campai
 <p>La campagne est limitée à l'opérateur <b>Klaxit</b> proposant des preuves de classe <b>B ou C</b>.</p>
 <p></p>
 </p>`;
-

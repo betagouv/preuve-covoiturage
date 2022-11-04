@@ -41,11 +41,7 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [
-      { operator_siret: 'not in list' },
-      { distance: 100 },
-      { operator_class: 'A' },
-    ],
+    carpool: [{ operator_siret: 'not in list' }, { distance: 100 }, { operator_class: 'A' }],
     meta: [],
   },
   { incentive: [0, 0, 0], meta: [] },

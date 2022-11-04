@@ -9,7 +9,7 @@ export { TerritoryCodeInterface, TerritoryCodeEnum, TerritorySelectorsInterface 
 export interface CarpoolMetaInterface {
   calc_distance?: number;
   calc_duration?: number;
-  payments?: Array<{ index?: number; amount?: number; siret?: string; type?: 'incentive' | 'payment'}>;
+  payments?: Array<{ index?: number; amount?: number; siret?: string; type?: 'incentive' | 'payment' }>;
 }
 
 export interface CarpoolInterface {

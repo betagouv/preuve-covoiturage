@@ -5,7 +5,8 @@ export const description = `<p _ngcontent-fyn-c231="" id="summary" class="campai
 </p>
 <p>Les <b> conducteurs </b> effectuant un trajet d'au moins 4 km sont incités selon les règles suivantes : </p>
 <ul>
-  <li><b>De 2 à 20 km : 2 euros par trajet par passager si le trajet démarre et arrive au sein du PMGF, 1 euros le cas échéant.</b></li>
+  <li><b>De 2 à 20 km : 2 euros par trajet par passager si le trajet démarre et arrive au sein du PMGF,
+  1 euros le cas échéant.</b></li>
   <li><b>De 20 à 40 km : 0.1 euro par trajet par km par passager</b></li>
 </ul>
 <p>Les restrictions suivantes seront appliquées :</p>

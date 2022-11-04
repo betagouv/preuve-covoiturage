@@ -52,7 +52,7 @@ test(
       { datetime: new Date('2022-11-07') }, // works on other day
       { start: { ...defaultPosition, reg: 'not_in_region' } }, // starts/end in region only
       // but not inside same aom if not region
-      { start: { ...defaultPosition, aom: 'aom1' }, end: { ...defaultPosition, aom: 'aom1' } }, 
+      { start: { ...defaultPosition, aom: 'aom1' }, end: { ...defaultPosition, aom: 'aom1' } },
       { start: { ...defaultPosition, aom: 'aom1' }, end: { ...defaultPosition, aom: 'aom2' } },
       { passenger_meta: undefined },
       { passenger_meta: undefined, datetime: new Date('2022-10-28') },
