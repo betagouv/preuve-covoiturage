@@ -19,9 +19,10 @@ import {
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Pdll.html';
+import { description } from './Pmgf.html';
 
 // Politique du Pôle Métropolitain Genevois Français
+// eslint-disable-next-line max-len
 export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'pmgf_2022';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];

@@ -21,7 +21,7 @@ import {
   isOperatorOrThrow,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Pdll.html';
+import { description } from './Occitanie.html';
 
 function getContribution(ctx: StatelessContextInterface): number {
   return (
