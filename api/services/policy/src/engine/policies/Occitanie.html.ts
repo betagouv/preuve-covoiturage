@@ -7,6 +7,8 @@ export const description = `<div _ngcontent-fyn-c231="" id="summary" class="camp
 <p>Les <b> conducteurs </b> effectuant un trajet jusqu'à 30 km sont incités selon les règles suivantes : </p>
 <ul>
   <li>Départ et arrivée dans la région Occitanie</li>
+  <li><b>de 0 à 20 km :</b> 2 euros par trajet par passager moins la contribution du passager</li>
+  <li><b>de 20 à 30 km :</b> 0.1 euro par trajet par km par passager moins la contribution du passager, plafonné à 2 euros</li>
 </ul>
 <p>Les restrictions suivantes seront appliquées :</p>
 <ul>
