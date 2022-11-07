@@ -18,7 +18,7 @@ import {
   perKm,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Laval.html';
+import { description } from './Lannion.html';
 
 // Politique de la Communauté D'Agglomeration De Lannion-Tregor
 export const Lannion: PolicyHandlerStaticInterface = class

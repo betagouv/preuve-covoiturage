@@ -48,6 +48,7 @@ test(
     carpool: [
       { distance: 40_000 }, // distance
       { operator_class: 'A' }, // operator_class
+      { operator_siret: 'not_a_real_operator' }, // operator
       { datetime: new Date('2022-11-06') }, // not on sunday
       { datetime: new Date('2022-11-07') }, // works on other day
       { start: { ...defaultPosition, reg: 'not_in_region' } }, // starts/end in region only
@@ -60,7 +61,7 @@ test(
     meta: [],
   },
   {
-    incentive: [0, 0, 0, 190, 0, 0, 190, 0, 200],
+    incentive: [0, 0, 0, 0, 190, 0, 0, 190, 0, 200],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
@@ -101,7 +102,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 269_999_00,
+        value: 69_999_00,
       },
     ],
   },
@@ -110,7 +111,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 270_000_00,
+        value: 70_000_00,
       },
     ],
   },
