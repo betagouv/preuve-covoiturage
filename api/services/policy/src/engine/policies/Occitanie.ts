@@ -1,4 +1,5 @@
 import {
+  OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
@@ -17,6 +18,7 @@ import {
   watchForPersonMaxTripByDay,
   onWeekday,
   isAfter,
+  isOperatorOrThrow,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Pdll.html';
@@ -35,9 +37,9 @@ export const Occitanie: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'occitanie_2022';
-  protected operators = [];
+  protected operators = [OperatorsEnum.Atchoum, OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
   protected operator_class = ['B', 'C'];
-  protected glob_limit = 270_000_00;
+  protected glob_limit = 70_000_00;
   protected slices = [
     { start: 0, end: 10_000, fn: (ctx: StatelessContextInterface) => 200 - getContribution(ctx) },
     {
@@ -54,7 +56,7 @@ export const Occitanie: PolicyHandlerStaticInterface = class
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    // isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { max: 30_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
     // Pas le dimanche
