@@ -13,7 +13,7 @@ export const description = `<p _ngcontent-moy-c231="" id="summary" class="campai
 <p>Les <b> passagers </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes :
 </p>
 <ul>
-  <li><b>Trajets gratuits s’il a une origine ou une destination sur le territoire</b></li>
+  <li><b>Trajets gratuits s’il a une origine ou une destination sur le territoire jusqu'à 40 km</b></li>
 </ul>
 <p>Les restrictions suivantes seront appliquées :</p>
 <ul>
