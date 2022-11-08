@@ -4,7 +4,6 @@ import { stream } from 'exceljs';
 import { CampaignSearchParamsInterface } from '~/interfaces';
 import { SliceStatInterface } from '~/interfaces/PolicySliceStatInterface';
 import { ResultInterface as Campaign } from '~/shared/policy/find.contract';
-import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
@@ -62,7 +61,7 @@ export class BuildExcel {
 
   private async writeTrips(wkw: stream.xlsx.WorkbookWriter, params: CampaignSearchParamsInterface): Promise<void> {
     try {
-      const tripCursor: PgCursorHandler = await this.getTripsCursor(params);
+      const tripCursor = await this.tripRepoProvider.getPolicyCursor(params, 'territory');
       await this.dataWorkbookWriter.call(tripCursor, wkw);
     } catch (e) {
       console.error('Error while writing trips');
@@ -76,19 +75,5 @@ export class BuildExcel {
     } catch (e) {
       console.error('Error while computing slices');
     }
-  }
-
-  private getTripsCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler> {
-    return this.tripRepoProvider.searchWithCursor(
-      {
-        date: {
-          start: params.start_date,
-          end: params.end_date,
-        },
-        campaign_id: [params.campaign_id],
-        operator_id: [params.operator_id],
-      },
-      'territory',
-    );
   }
 }
