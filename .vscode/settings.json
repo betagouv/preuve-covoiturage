@@ -30,6 +30,8 @@
     "db": true,
     "api/**/dist": false,
     "**/node_modules/**": false,
+    "tmp/yarn-*": true,
+    "tmp/v8-*": true,
   },
   "[html]": {
     "editor.defaultFormatter": "vscode.html-language-features"

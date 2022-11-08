@@ -75,6 +75,9 @@ services:
     build:
       dockerfile: ./docker/api/Dockerfile
       context: .
+    deploy:
+      mode: replicated
+      replicas: 3
     volumes:
       - ./api:/app/api
       - ./shared:/app/shared:ro
