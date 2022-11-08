@@ -50,7 +50,7 @@ const successStubArrange = (ctx: Context, operator_ids: number[]): GetCampaignRe
 };
 
 // eslint-disable-next-line max-len
-test('GetCampaignAndCallBuildExcel: should campaign be valid if proveded dates are in date range and one operator', async (t) => {
+test('GetCampaignAndCallBuildExcel: should campaign be valid if provided dates are in date range and one operator', async (t) => {
   // Arrange
   const campaign: GetCampaignResultInterface = successStubArrange(t.context, [5]);
 
@@ -139,7 +139,7 @@ test('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaig
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-test('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if draft campaign', async (t) => {
+test('GetCampaignAndCallBuildExcel: should throw Error if draft campaign', async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub.resolves(createGetCampaignResultInterface('draft', t.context.CAMPAIGN_NAME));
 
@@ -152,7 +152,7 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequestException if draf
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });
 
-test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign dates are not in date range', async (t) => {
+test('GetCampaignAndCallBuildExcel: should throw Error if campaign dates are not in date range', async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub.resolves(
     createGetCampaignResultInterface(
@@ -175,5 +175,159 @@ test('GetCampaignAndCallBuildExcel: should throw InvalidRequest if campaign date
   });
 
   // Assert
+  sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
+});
+
+test('isValidDateRange: lower = start. end = upper', async (t) => {
+  // Arrange
+  const campaign = createGetCampaignResultInterface(
+    'active',
+    t.context.CAMPAIGN_NAME,
+    new Date('2022-01-01T00:00:00+0100'),
+    new Date('2023-01-01T00:00:00+0100'),
+  );
+  t.context.kernelInterfaceResolverStub.resolves(campaign);
+
+  // Act
+  await t.context.checkCampaign.call(
+    campaign._id,
+    new Date('2022-01-01T00:00:00+0100'),
+    new Date('2023-01-01T00:00:00+0100'),
+  );
+
+  // Assert
+  t.pass();
+  sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
+});
+
+test('isValidDateRange: lower = start. end < upper', async (t) => {
+  // Arrange
+  const campaign = createGetCampaignResultInterface(
+    'active',
+    t.context.CAMPAIGN_NAME,
+    new Date('2022-01-01T00:00:00+0100'),
+    new Date('2023-01-01T00:00:00+0100'),
+  );
+  t.context.kernelInterfaceResolverStub.resolves(campaign);
+
+  // Act
+  await t.context.checkCampaign.call(
+    campaign._id,
+    new Date('2022-01-01T00:00:00+0100'),
+    new Date('2022-02-01T00:00:00+0100'),
+  );
+
+  // Assert
+  t.pass();
+  sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
+});
+
+test('isValidDateRange: lower < start. end = upper', async (t) => {
+  // Arrange
+  const campaign = createGetCampaignResultInterface(
+    'active',
+    t.context.CAMPAIGN_NAME,
+    new Date('2022-01-01T00:00:00+0100'),
+    new Date('2023-01-01T00:00:00+0100'),
+  );
+  t.context.kernelInterfaceResolverStub.resolves(campaign);
+
+  // Act
+  await t.context.checkCampaign.call(
+    campaign._id,
+    new Date('2022-02-01T00:00:00+0100'),
+    new Date('2023-01-01T00:00:00+0100'),
+  );
+
+  // Assert
+  t.pass();
+  sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
+});
+
+test('isValidDateRange: lower > start. end < upper', async (t) => {
+  // Arrange
+  const campaign = createGetCampaignResultInterface(
+    'active',
+    t.context.CAMPAIGN_NAME,
+    new Date('2022-01-01T00:00:00+0100'),
+    new Date('2023-01-01T00:00:00+0100'),
+  );
+  t.context.kernelInterfaceResolverStub.resolves(campaign);
+
+  // Act
+  await t.context.checkCampaign.call(
+    campaign._id,
+    new Date('2021-12-01T00:00:00+0100'),
+    new Date('2022-02-01T00:00:00+0100'),
+  );
+
+  // Assert
+  t.pass();
+  sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
+});
+
+test('isValidDateRange: lower < start. end > upper', async (t) => {
+  // Arrange
+  const campaign = createGetCampaignResultInterface(
+    'active',
+    t.context.CAMPAIGN_NAME,
+    new Date('2022-01-01T00:00:00+0100'),
+    new Date('2023-01-01T00:00:00+0100'),
+  );
+  t.context.kernelInterfaceResolverStub.resolves(campaign);
+
+  // Act
+  await t.context.checkCampaign.call(
+    campaign._id,
+    new Date('2022-12-01T00:00:00+0100'),
+    new Date('2023-02-01T00:00:00+0100'),
+  );
+
+  // Assert
+  t.pass();
+  sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
+});
+
+test('isValidDateRange: lower < start. end < upper', async (t) => {
+  // Arrange
+  const campaign = createGetCampaignResultInterface(
+    'active',
+    t.context.CAMPAIGN_NAME,
+    new Date('2022-01-01T00:00:00+0100'),
+    new Date('2023-01-01T00:00:00+0100'),
+  );
+  t.context.kernelInterfaceResolverStub.resolves(campaign);
+
+  // Act
+  await t.context.checkCampaign.call(
+    campaign._id,
+    new Date('2022-12-01T00:00:00+0100'),
+    new Date('2023-02-01T00:00:00+0100'),
+  );
+
+  // Assert
+  t.pass();
+  sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
+});
+
+test('isValidDateRange: lower > start. end > upper', async (t) => {
+  // Arrange
+  const campaign = createGetCampaignResultInterface(
+    'active',
+    t.context.CAMPAIGN_NAME,
+    new Date('2022-01-01T00:00:00+0100'),
+    new Date('2023-01-01T00:00:00+0100'),
+  );
+  t.context.kernelInterfaceResolverStub.resolves(campaign);
+
+  // Act
+  await t.context.checkCampaign.call(
+    campaign._id,
+    new Date('2021-12-01T00:00:00+0100'),
+    new Date('2023-02-01T00:00:00+0100'),
+  );
+
+  // Assert
+  t.pass();
   sinon.assert.calledOnce(t.context.kernelInterfaceResolverStub);
 });

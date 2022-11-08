@@ -65,6 +65,7 @@ export class BuildExcel {
       await this.dataWorkbookWriter.call(tripCursor, wkw);
     } catch (e) {
       console.error('Error while writing trips');
+      console.error(e.message);
     }
   }
 
@@ -74,6 +75,7 @@ export class BuildExcel {
       await this.slicesWorkbookWriter.call(wkw, slices);
     } catch (e) {
       console.error('Error while computing slices');
+      console.error(e.message);
     }
   }
 }
