@@ -451,10 +451,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         with trips as (
           select
               distinct cc.acquisition_id,
-              cc.distance,
+              tl.journey_distance as distance,
               coalesce(pi.amount, 0) as amount
           from policy.incentives pi
           join carpool.carpools cc on cc._id = pi.carpool_id
+          join trip.list tl on cc.acquisition_id = tl.journey_id
           where
                 cc.datetime >= $1
             and cc.datetime <  $2

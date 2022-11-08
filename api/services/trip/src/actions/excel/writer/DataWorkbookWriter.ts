@@ -28,6 +28,7 @@ export class DataWorkBookWriter extends AbstractWorkBookWriter {
       results.map((t) => worksheet.addRow(normalizeExport(t, 'Europe/Paris')).commit());
       results = await cursor.read(10);
     }
+
     const b2 = new Date();
     cursor.release();
     console.debug(`[trip:buildExcelExport] writing trips took: ${(b2.getTime() - b1.getTime()) / 1000}s`);
