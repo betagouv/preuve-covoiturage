@@ -298,65 +298,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   }
 
   public async searchWithCursor(params: TripSearchInterface, type = 'opendata'): Promise<PgCursorHandler> {
-    // all
-    const baseFields = [
-      'journey_id',
-      'trip_id',
-      'journey_start_datetime',
-      'journey_start_lon',
-      'journey_start_lat',
-      'journey_start_insee',
-      'journey_start_department',
-      'journey_start_town',
-      'journey_start_towngroup',
-      'journey_start_country',
-      'journey_end_datetime',
-      'journey_end_lon',
-      'journey_end_lat',
-      'journey_end_insee',
-      'journey_end_department',
-      'journey_end_town',
-      'journey_end_towngroup',
-      'journey_end_country',
-      'driver_card',
-      'passenger_card',
-      'passenger_over_18',
-      'passenger_seats',
-      'operator_class',
-      'operator_journey_id',
-      'operator_passenger_id',
-      'operator_driver_id',
-      'journey_distance',
-      'journey_duration',
-      'journey_distance_anounced',
-      'journey_distance_calculated',
-      'journey_duration_anounced',
-      'journey_duration_calculated',
-      'passenger_incentive_rpc_raw::json[]',
-      'driver_incentive_rpc_raw::json[]',
-      'passenger_incentive_raw::json[]',
-      'driver_incentive_raw::json[]',
-    ];
-
-    // all except opendata
-    const financialFields = ['passenger_id', 'passenger_contribution', 'driver_id', 'driver_revenue'];
-
-    let selectedFields = [...baseFields];
-    switch (type) {
-      case 'territory':
-      case 'registry':
-        selectedFields = [...selectedFields, 'operator', ...financialFields, 'status'];
-        break;
-      case 'operator':
-        selectedFields = [...selectedFields, ...financialFields, 'status'];
-        break;
-    }
-
     const where = await this.buildWhereClauses(params);
-
     const queryText = this.numberPlaceholders(`
       SELECT
-        ${selectedFields.join(', ')}
+        ${this.getFields(type).join(', ')}
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
@@ -557,6 +502,95 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         slices: [],
       },
     );
+  }
+
+  public async getPolicyCursor(params: CampaignSearchParamsInterface, type = 'opendata'): Promise<PgCursorHandler> {
+    const { start_date, end_date, operator_id, campaign_id } = params;
+
+    const queryText = `
+      with trips as (
+        select distinct cc.acquisition_id as journey_id
+        from policy.incentives pi
+        join carpool.carpools cc on cc._id = pi.carpool_id
+        where
+              cc.datetime >= $1
+          and cc.datetime <  $2
+          and cc.status = 'ok'
+          and cc.operator_id = $3
+          and pi.policy_id = $4
+          and pi.amount > 0
+        )
+        select ${this.getFields(type).join(', ')}
+        from trip.list
+        where journey_id in (select journey_id from trips)
+        order by journey_start_datetime asc
+    `;
+
+    const db = await this.connection.getClient().connect();
+    const cursorCb = db.query(new Cursor(queryText, [start_date, end_date, operator_id, campaign_id]));
+
+    return {
+      read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
+      release: db.release,
+    };
+  }
+
+  private getFields(type = 'opendata'): string[] {
+    // all
+    const baseFields = [
+      'journey_id',
+      'trip_id',
+      'journey_start_datetime',
+      'journey_start_lon',
+      'journey_start_lat',
+      'journey_start_insee',
+      'journey_start_department',
+      'journey_start_town',
+      'journey_start_towngroup',
+      'journey_start_country',
+      'journey_end_datetime',
+      'journey_end_lon',
+      'journey_end_lat',
+      'journey_end_insee',
+      'journey_end_department',
+      'journey_end_town',
+      'journey_end_towngroup',
+      'journey_end_country',
+      'driver_card',
+      'passenger_card',
+      'passenger_over_18',
+      'passenger_seats',
+      'operator_class',
+      'operator_journey_id',
+      'operator_passenger_id',
+      'operator_driver_id',
+      'journey_distance',
+      'journey_duration',
+      'journey_distance_anounced',
+      'journey_distance_calculated',
+      'journey_duration_anounced',
+      'journey_duration_calculated',
+      'passenger_incentive_rpc_raw::json[]',
+      'driver_incentive_rpc_raw::json[]',
+      'passenger_incentive_raw::json[]',
+      'driver_incentive_raw::json[]',
+    ];
+
+    // all except opendata
+    const financialFields = ['passenger_id', 'passenger_contribution', 'driver_id', 'driver_revenue'];
+
+    let selectedFields = [...baseFields];
+    switch (type) {
+      case 'territory':
+      case 'registry':
+        selectedFields = [...selectedFields, 'operator', ...financialFields, 'status'];
+        break;
+      case 'operator':
+        selectedFields = [...selectedFields, ...financialFields, 'status'];
+        break;
+    }
+
+    return selectedFields;
   }
 
   // replace $# in query by $1, $2, ...

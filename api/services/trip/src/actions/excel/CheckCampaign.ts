@@ -1,4 +1,4 @@
-import { InvalidRequestException, KernelInterfaceResolver, provider } from '@ilos/common';
+import { KernelInterfaceResolver, provider } from '@ilos/common';
 import {
   ParamsInterface as GetCampaignParamInterface,
   ResultInterface as GetCampaignResultInterface,
@@ -20,26 +20,27 @@ export class CheckCampaign {
       call: { user: { permissions: ['registry.policy.find'] } },
     });
 
-    if (!this.isCampaignActive(campaign)) {
-      throw new InvalidRequestException(`Campaign ${campaign._id} is not active`);
-    }
-
-    if (!this.isDateRangeInsideCampaignDate(campaign, start_date, end_date)) {
-      throw new InvalidRequestException(`Start date outside campaign time range (${campaign._id})`);
-    }
+    // checks
+    this.isActive(campaign);
+    this.isValidDateRange(campaign, start_date, end_date);
 
     return campaign;
   }
 
-  private isCampaignActive(campaign: GetCampaignResultInterface): boolean {
-    return campaign.status === 'active';
+  public isActive(campaign: GetCampaignResultInterface): void {
+    if (campaign.status !== 'active') throw new Error(`Campaign ${campaign._id} is inactive`);
   }
 
-  private isDateRangeInsideCampaignDate(campaign: GetCampaignResultInterface, start_date: Date, end_date): boolean {
-    return (
-      (campaign.start_date > start_date && campaign.start_date < end_date) ||
-      (campaign.end_date < end_date && campaign.end_date > start_date) ||
-      (campaign.start_date < start_date && campaign.end_date > end_date)
-    );
+  public isValidDateRange(campaign: GetCampaignResultInterface, start: Date, end: Date): void {
+    const { start_date: lower, end_date: upper } = campaign;
+
+    if (!lower) throw new Error(`Invalid campaign start_date`);
+    if (!upper) throw new Error(`Invalid campaign end_date`);
+    if (!start) throw new Error(`Invalid range start check`);
+    if (!end) throw new Error(`Invalid range end check`);
+    if (lower >= upper) throw new Error('campaign start cannot be >= campaign end');
+    if (start >= end) throw new Error('range start cannot be >= range end');
+    if (end < lower) throw new Error('Range is before campaign start');
+    if (start > upper) throw new Error('Range is after campaign start');
   }
 }
