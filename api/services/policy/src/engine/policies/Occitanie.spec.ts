@@ -83,11 +83,11 @@ test(
     meta: [],
   },
   {
-    incentive: [190, 290],
+    incentive: [190, 200],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 480,
+        value: 390,
       },
     ],
   },
