@@ -81,7 +81,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           CROSS JOIN LATERAL UNNEST(tl.passenger_incentive_raw) i
           WHERE tl.operator_id = $2::int
             AND cc.is_driver = false
-            AND cc.status = 'ok'
+            AND (cc.status = 'ok' OR cc.status = 'expired')
             AND tl.journey_start_datetime >= $3
             AND tl.journey_start_datetime < $4
             AND tl.passenger_id = ANY($1::uuid[])
