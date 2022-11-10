@@ -21,6 +21,7 @@ export class BaseUser implements Model, UserListInterface {
   public role: Roles;
   public operator_id: number | null;
   public territory_id: number | null;
+  public hidden: boolean;
 }
 
 export class User
@@ -36,6 +37,7 @@ export class User
     if (formValues.lastname) userPatch.lastname = formValues.lastname;
     if (formValues.phone) userPatch.phone = formValues.phone;
     if (formValues.role) userPatch.role = formValues.role;
+    if ('hidden' in formValues) userPatch.hidden = !!formValues.hidden;
 
     return userPatch;
   }
@@ -51,6 +53,7 @@ export class User
       phone: null,
       group: null,
       role: null,
+      hidden: false,
       permissions: [],
       ...obj,
     });
@@ -64,6 +67,7 @@ export class User
     if (obj.phone) this.phone = obj.phone;
     if (obj.group) this.group = obj.group;
     if (obj.role) this.role = obj.role;
+    if ('hidden' in obj) this.hidden = !!obj.hidden;
     if (obj.permissions) this.permissions = obj.permissions;
 
     if (obj.operator_id) {
@@ -85,6 +89,7 @@ export class User
       phone: this.phone ?? null,
       role: this.role ? this.role.split('.').pop() : null,
       group: this.group ?? null,
+      hidden: this.hidden ?? false,
       territory_id: this.territory_id ?? null,
       operator_id: this.operator_id ?? null,
     };
@@ -96,6 +101,7 @@ export class User
     this.email = formValues.email.trim();
     this.lastname = formValues.lastname.trim();
     this.firstname = formValues.firstname.trim();
+    this.hidden = !!this.hidden;
 
     formValues.phone = formValues.phone ?? null;
 

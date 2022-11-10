@@ -64,6 +64,7 @@ export class UpsertComponent extends DestroyObservable implements OnInit {
         group: new FormControl(null),
         territory_id: new FormControl(null),
         operator_id: new FormControl(null),
+        hidden: new FormControl(false),
       },
       {
         validators: [
@@ -123,6 +124,7 @@ export class UpsertComponent extends DestroyObservable implements OnInit {
       .subscribe(([operator, territory]) => {
         const values = {
           group: Groups.Registry,
+          hidden: false,
           ...this.user.toFormValues(),
         };
 

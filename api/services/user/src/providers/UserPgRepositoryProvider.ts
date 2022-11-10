@@ -22,7 +22,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   public readonly defaultLimit: number;
   public readonly maxLimit: number;
 
-  protected readonly availableFilters = ['_id', 'operator_id', 'territory_id', 'email'];
+  protected readonly availableFilters = ['_id', 'operator_id', 'territory_id', 'email', 'hidden'];
   protected readonly availableSets = [
     // 'operator_id',
     // 'territory_id',
@@ -32,6 +32,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     // 'role',
     // 'password',
     'phone',
+    'hidden',
     // 'status',
     // 'forgotten_token',
     // 'forgotten_at',
@@ -71,19 +72,24 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return `registry.${level}`;
   }
 
+  private coerceHidden(data: UserCreateInterface): boolean {
+    const [group] = data.role.split('.');
+    return group === 'registry' ? false : data.hidden;
+  }
+
   async create(data: UserCreateInterface): Promise<UserFindInterface> {
     // status: 'pending',
     const query = {
       text: `
         WITH data as(
           INSERT INTO ${this.table} (
-            email, firstname, lastname, role, phone, operator_id, territory_id
+            email, firstname, lastname, role, phone, hidden, operator_id, territory_id
           ) VALUES (
-            $1, $2, $3, $4, $5, $6, $7
+            $1, $2, $3, $4, $5, $6, $7, $8
           )
           RETURNING
             _id, status, created_at, updated_at, ui_status, email,
-            firstname, lastname, role, phone, operator_id, territory_id
+            firstname, lastname, role, phone, hidden, operator_id, territory_id
         )
       SELECT
         data.*,
@@ -96,6 +102,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
         data.lastname,
         this.coerceRole(data),
         data.phone,
+        this.coerceHidden(data),
         data.operator_id,
         data.territory_id,
       ],
@@ -206,6 +213,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           lastname,
           role,
           phone,
+          hidden,
           operator_id,
           territory_id,
           ${this.groupCastStatement}
@@ -240,26 +248,19 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     };
   }
 
-  protected buildWhereClauses(filters: any): {
-    text: string;
-    values: any[];
-  } {
+  protected buildWhereClauses(filters: any, join = 'AND'): { text: string; values: any[] } {
+    // no filters -> no clauses
     if (!filters || Object.keys(filters).length === 0) {
-      return {
-        text: '',
-        values: [],
-      };
+      return { text: '', values: [] };
     }
 
+    // white list filters
     const filtersToProcess = this.availableFilters.filter((key) => key in filters);
-
     if (filtersToProcess.length === 0) {
-      return {
-        text: '',
-        values: [],
-      };
+      return { text: '', values: [] };
     }
 
+    // convert text to placeholders for prepared queries
     const orderedFilters = filtersToProcess
       .map((key) => ({ key, value: filters[key] }))
       .map((filter) => ({ text: `${filter.key} = $#`, values: [filter.value] }))
@@ -269,19 +270,13 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           acc.values.push(...current.values);
           return acc;
         },
-        {
-          text: [],
-          values: [],
-        },
+        { text: [], values: [] },
       );
 
-    const whereClauses = `WHERE ${orderedFilters.text.join(' AND ')}`;
-    const whereClausesValues = orderedFilters.values;
+    const text = `WHERE ${orderedFilters.text.join(` ${join} `)}`;
+    const { values } = orderedFilters;
 
-    return {
-      text: whereClauses,
-      values: whereClausesValues,
-    };
+    return { text, values };
   }
 
   protected async findWhere(where: {
@@ -307,6 +302,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           lastname,
           role,
           phone,
+          hidden,
           operator_id,
           territory_id,
           ui_status,
@@ -439,6 +435,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           lastname,
           role,
           phone,
+          hidden,
           operator_id,
           territory_id
         )

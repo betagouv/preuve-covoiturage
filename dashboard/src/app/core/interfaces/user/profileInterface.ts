@@ -15,6 +15,7 @@ export interface UserInterface {
   phone: string;
   group: Groups;
   role: Roles;
+  hidden: boolean;
   operator_id?: number;
   territory_id?: number;
   permissions: string[];

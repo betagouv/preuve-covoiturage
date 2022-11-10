@@ -64,6 +64,7 @@
   </app-autocomplete>
 
   <div class="actions">
+    <mat-checkbox *ngIf="!groupIs('registry')" formControlName="hidden">caché</mat-checkbox>
     <button type="reset" mat-flat-button data-test="button-reset">Annuler</button>
     <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid" data-test="button-submit">
       Enregistrer
