@@ -8,9 +8,7 @@ import {
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   isOperatorClassOrThrow,
-  onDistanceRange,
   onDistanceRangeOrThrow,
-  perKm,
   watchForGlobalMaxAmount,
   LimitTargetEnum,
   startsAndEndsAt,
@@ -41,12 +39,8 @@ export const Occitanie: PolicyHandlerStaticInterface = class
   protected operator_class = ['B', 'C'];
   protected glob_limit = 70_000_00;
   protected slices = [
-    { start: 0, end: 10_000, fn: (ctx: StatelessContextInterface) => 200 - getContribution(ctx) },
-    {
-      start: 10_000,
-      end: 30_000,
-      fn: (ctx: StatelessContextInterface) => perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 }),
-    },
+    { start: 0, end: 10_000 },
+    { start: 10_000, end: 30_000 },
   ];
 
   protected limits: Array<ConfiguredLimitInterface> = [
@@ -83,13 +77,12 @@ export const Occitanie: PolicyHandlerStaticInterface = class
     this.processExclusion(ctx);
     super.processStateless(ctx);
 
-    // Par kilomètre
-    let amount = 0;
-    for (const { start, fn } of this.slices) {
-      if (onDistanceRange(ctx, { min: start })) {
-        amount += fn(ctx);
-      }
-    }
+    const amount = Math.min(
+      200,
+      200 -
+        getContribution(ctx) +
+        Math.round(Math.max(0, Math.min(10_000, ctx.carpool.distance - 20_000)) / 1_000) * 10,
+    );
 
     ctx.incentive.set(amount);
   }
