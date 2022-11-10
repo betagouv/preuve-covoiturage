@@ -48,7 +48,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     this.maxLimit = config.get('pagination.maxLimit', 1000);
   }
 
-  getPermissionsFromRole(role: string): string[] {
+  private getPermissionsFromRole(role: string): string[] {
     return this.config.get(`permissions.${role}.permissions`, []);
   }
 
@@ -64,48 +64,41 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     }
   }
 
+  private coerceRole(data: UserCreateInterface): string {
+    const [, level] = data.role.split('.');
+    if (data.operator_id) return `operator.${level}`;
+    if (data.territory_id) return `territory.${level}`;
+    return `registry.${level}`;
+  }
+
   async create(data: UserCreateInterface): Promise<UserFindInterface> {
     // status: 'pending',
     const query = {
       text: `
         WITH data as(
           INSERT INTO ${this.table} (
-            email,
-            firstname,
-            lastname,
-            role,
-            phone,
-            operator_id,
-            territory_id
+            email, firstname, lastname, role, phone, operator_id, territory_id
           ) VALUES (
-            $1,
-            $2,
-            $3,
-            $4,
-            $5,
-            $6,
-            $7
+            $1, $2, $3, $4, $5, $6, $7
           )
           RETURNING
-          _id,
-          status,
-          created_at,
-          updated_at,
-          ui_status,
-          email,
-          firstname,
-          lastname,
-          role,
-          phone,
-          operator_id,
-          territory_id
+            _id, status, created_at, updated_at, ui_status, email,
+            firstname, lastname, role, phone, operator_id, territory_id
         )
       SELECT
         data.*,
         ${this.groupCastStatement}
       FROM data
       `,
-      values: [data.email, data.firstname, data.lastname, data.role, data.phone, data.operator_id, data.territory_id],
+      values: [
+        data.email,
+        data.firstname,
+        data.lastname,
+        this.coerceRole(data),
+        data.phone,
+        data.operator_id,
+        data.territory_id,
+      ],
     };
 
     const result = await this.connection.getClient().query(query);
