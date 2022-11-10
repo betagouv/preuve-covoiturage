@@ -18,5 +18,5 @@ export const description = `<div _ngcontent-fyn-c231="" id="summary" class="camp
   <li>Exclusion des trajets le dimanche</li>
   <li>Exclusion des trajets dont la contribution passager est nulle hormis trajet effectué avant le 1er novembre non inclus</li>
 </ul>
-<p>La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit et Atchoum proposant des preuves de classe <b>B ou C</b>.</p>
+<p>La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit, Mobicoop et Atchoum proposant des preuves de classe <b>B ou C</b>.</p>
 </div>`;
