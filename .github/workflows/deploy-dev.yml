@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Prepare Docker tag
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
@@ -32,7 +32,7 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v1
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-buildx-
       - name: Build api image for test
         id: docker_test
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
@@ -66,7 +66,7 @@ jobs:
           sarif_file: 'trivy-results.sarif'
       - name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
@@ -78,7 +78,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
       - run: echo ${{ steps.docker_build.outputs.digest }} > api.digest && cat api.digest
       - name: Upload Image digest
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: api.digest
           path: api.digest
@@ -92,7 +92,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Prepare Docker tag
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
@@ -105,7 +105,7 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v1
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -113,7 +113,7 @@ jobs:
             ${{ runner.os }}-buildx-
       - name: Build dashboard image for test
         id: docker_test
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
@@ -139,7 +139,7 @@ jobs:
           sarif_file: 'trivy-results.sarif'
       - name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
@@ -151,7 +151,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
       - run: echo ${{ steps.docker_build.outputs.digest }} > dashboard.digest && cat dashboard.digest
       - name: Upload Image digest
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dashboard.digest
           path: dashboard.digest
@@ -161,20 +161,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout infra repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: betagouv/preuve-covoiturage-infra
           ssh-key: ${{ secrets.INFRA_SSH }}
           path: infra
       - name: Download dashboard digest
         id: dashboard-artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: dashboard.digest
           path: artifacts
       - name: Download api digest
         id: api-artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: api.digest
           path: artifacts
