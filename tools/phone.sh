@@ -13,7 +13,7 @@ generate() {
 
 shuffle() {
     echo "[shuffle] start"
-    cat $REGISTRY_FILE | shuf > $REGISTRY_FINAL_FILE
+    split -l 1000000 --filter='shuf' $REGISTRY_FILE > $REGISTRY_FINAL_FILE
     echo "[shuffle] done"
 }
 
