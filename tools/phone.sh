@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+
+# This script needs :
+# - node >= 16
+# - pigz (multithread gzip)
+# - pv (pipe viewer for progress bar)
+# - some commons tools (wc, awk, shuf, fallocate, shred, mkfs.ext4, ...)
+
 export WORKING_DIRECTORY=/media/tmp
 export FS_FILE=$(pwd)/tmp_fs
 
@@ -25,7 +32,7 @@ generate() {
 shuffle_registry() {
     echo "[shuffle] start"
     SIZE=$(wc -l $REGISTRY_FILE | awk '{ print $1 }')
-    split -l 1000000 --filter='shuf' $REGISTRY_FILE | $GZIP_CMD > $REGISTRY_DIRECTORY/$REGISTRY_FINAL_FILE.gz && rm $REGISTRY_FILE
+    split -l 1000000 --filter='shuf' $REGISTRY_FILE | pv -ptl -s$SIZE | $GZIP_CMD > $REGISTRY_DIRECTORY/$REGISTRY_FINAL_FILE.gz && rm $REGISTRY_FILE
     echo "[shuffle] done"
 }
 
