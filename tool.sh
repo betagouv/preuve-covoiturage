@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 set_env() {
-  DC="$(which docker-compose) -p pdce2e -f docker-compose.e2e.yml $1"
-  CERT_DIR="$(pwd)/docker/traefik/certs"
+  export DC="$(which docker-compose) -p pdce2e -f docker-compose.e2e.yml $1"
+  export CERT_DIR="$(pwd)/docker/traefik/certs"
 }
 
 generate_certs() {
@@ -52,6 +52,7 @@ create_bucket() {
 }
 
 bootstrap() {
+  set_env && \
   ensure_certs && \
   start_services && \
   seed_data && \
@@ -84,7 +85,7 @@ e2e() {
 }
 
 local_e2e() {
-  ( cd tests && \
+  ( cd tests && yarn && \
     CYPRESS_MAILHOG_URL=https://mailer.covoiturage.test/api \
     CYPRESS_BASE_URL=https://app.covoiturage.test \
     yarn cy:open
