@@ -13,9 +13,9 @@
   1. Créer un système de fichier dédié qui sera utilisé comme espace de stockage temporaire pour toutes les opérations ;
   2. Génère 4 fichiers CSV distincts :
     - 3 fichiers de transcription ("fichier de transcription opérateur") : Pour chaque numéro de téléphone portable possible ("+336" et "+337"), une chaîne aléatoire ("phone_number_signature"). Un par opérateur, avec des correspondances distinctes ;
-    - 1 fichier de collisions ("fichier registre") : contenant la mise en correspondance des 3 phone_number_signature"phone_number_signature" qui correspondent aux mêmes numéros dans les “fichiers de transcription” (mais pas les numéros eux-mêmes).
-  3. Compresse et déplace chaque fichier opérateur sur la clée dédiée ;
-  4. Mélange le fichier registre par paquet d'un milion de ligne, le compresse et le déplace sur la clée dédiée ;
+    - 1 fichier de collisions ("fichier registre") : contenant la mise en correspondance des 3 "phone_number_signature" qui correspondent aux mêmes numéros dans les “fichiers de transcription” (mais pas les numéros eux-mêmes).
+  3. Compresse et déplace chaque fichier opérateur sur la clé dédiée ;
+  4. Mélange le fichier registre par paquet d'un million de lignes, le compresse et le déplace sur la clé dédiée ;
   5. Détruit le système de fichier dédié via `shred`.
 
 5. Chaque opérateur reçoit sa clé et génère chacun un "fichier opérateur" au format CSV, contenant deux colonnes (“journey_id” et “phone_number_signature”) et autant de lignes que de trajets dans la journée de référence. Le fichier est placé à la racine de sa clé USB de l'opérateur ;
