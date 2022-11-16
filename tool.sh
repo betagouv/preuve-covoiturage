@@ -52,7 +52,6 @@ create_bucket() {
 }
 
 bootstrap() {
-  set_env && \
   ensure_certs && \
   start_services && \
   seed_data && \
