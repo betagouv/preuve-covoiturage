@@ -15,6 +15,9 @@ stdenv.mkDerivation {
         gcc10
         cmake
         p7zip
+        k6
+        pigz
+        pv
     ];
 
     shellHook = ''
