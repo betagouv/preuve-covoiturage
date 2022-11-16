@@ -1,4 +1,4 @@
-import { lastNameTruncSchema, phoneTruncSchema, timestampSchema } from './common/CeeApplicationInterface';
+import { lastNameTruncSchema, phoneTruncSchema, timestampSchema } from './common/ceeSchema';
 
 export const alias = 'campaign.importCeeApplication';
 export const schema = {

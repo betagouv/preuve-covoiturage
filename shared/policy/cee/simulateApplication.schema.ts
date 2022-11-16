@@ -1,4 +1,9 @@
-import { ceeJourneyTypeEnumSchema, drivingLicenseSchema, lastNameTruncSchema, phoneTruncSchema } from './common/CeeApplicationInterface';
+import {
+  ceeJourneyTypeEnumSchema,
+  drivingLicenseSchema,
+  lastNameTruncSchema,
+  phoneTruncSchema,
+} from './common/ceeSchema';
 
 export const alias = 'campaign.simulateCeeApplication';
 export const schema = {

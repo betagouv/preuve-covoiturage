@@ -1,4 +1,9 @@
-import { drivingLicenseSchema, lastNameTruncSchema, operatorJourneyIdSchema, phoneTruncSchema } from './common/CeeApplicationInterface';
+import {
+  drivingLicenseSchema,
+  lastNameTruncSchema,
+  operatorJourneyIdSchema,
+  phoneTruncSchema,
+} from './common/ceeSchema';
 
 export const alias = 'campaign.registerCeeApplication';
 export const schema = {
@@ -10,7 +15,7 @@ export const schema = {
       properties: {
         journey_type: {
           type: 'string',
-          enum: ['long']
+          enum: ['long'],
         },
         driving_license: drivingLicenseSchema,
         last_name_trunc: lastNameTruncSchema,
@@ -24,13 +29,13 @@ export const schema = {
       properties: {
         journey_type: {
           type: 'string',
-          enum: ['short']
+          enum: ['short'],
         },
         driving_license: drivingLicenseSchema,
         last_name_trunc: lastNameTruncSchema,
         operator_journey_id: operatorJourneyIdSchema,
       },
     },
-  ]
+  ],
 };
 export const binding = [alias, schema];
