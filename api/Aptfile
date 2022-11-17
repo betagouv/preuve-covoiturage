@@ -1,4 +1,3 @@
-build-essential
-gcc
+g++
 cmake
 p7zip-full
