@@ -1,1 +1,4 @@
+build-essential
+gcc
+cmake
 p7zip-full
