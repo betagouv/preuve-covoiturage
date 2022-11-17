@@ -10,6 +10,7 @@ export const create = {
     phone: { oneOf: [{ macro: 'phone' }, { type: 'null' }] },
     group: { macro: 'group' },
     role: { macro: 'role' },
+    hidden: { type: 'boolean' },
     operator_id: { macro: 'serial' },
     territory_id: { macro: 'serial' },
   },

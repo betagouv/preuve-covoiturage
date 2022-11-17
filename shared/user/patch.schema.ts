@@ -14,6 +14,7 @@ export const patch = {
         lastname: { macro: 'varchar' },
         firstname: { macro: 'varchar' },
         role: { macro: 'varchar' },
+        hidden: { type: 'boolean' },
         phone: { oneOf: [{ macro: 'phone' }, { type: 'null' }] },
       },
     },

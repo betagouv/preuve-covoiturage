@@ -6,6 +6,7 @@ import * as groups from './groups';
 import * as notification from './notification';
 import * as pagination from './pagination';
 import * as permissions from './permissions';
+import * as registration from './registration';
 import * as url from './url';
 import * as user from './user';
 
@@ -18,6 +19,7 @@ export const config = {
   notification,
   pagination,
   permissions,
+  registration,
   url,
   user,
 };

@@ -8,6 +8,7 @@ export const userWhiteListFilterOutput = [
   'permissions',
   'role',
   'phone',
+  'hidden',
   'status',
   'operator_id',
   'territory_id',

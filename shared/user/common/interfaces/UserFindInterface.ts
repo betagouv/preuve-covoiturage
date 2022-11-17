@@ -5,6 +5,7 @@ export interface UserFindInterface {
   phone: string;
   group: string;
   role: string;
+  hidden: boolean;
   operator_id?: number;
   territory_id?: number;
   permissions: string[];

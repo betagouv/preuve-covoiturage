@@ -44,8 +44,8 @@ export class EditComponent extends DestroyObservable implements OnInit {
   }
 
   public onSubmit(user: User): void {
-    const { _id, email, firstname, lastname, phone, role } = user;
-    this.userApi.patch(_id, { email, firstname, lastname, phone, role }).subscribe(
+    const { _id, email, firstname, lastname, phone, role, hidden } = user;
+    this.userApi.patch(_id, { email, firstname, lastname, phone, role, hidden }).subscribe(
       () => {
         this.toastr.success(`${user.firstname} ${user.lastname} a été mis à jour`);
         this.router.navigate(['/admin/users'], { queryParams: { query: user.email } });
