@@ -1,8 +1,13 @@
-import { handler } from '@ilos/common';
+import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPastGeo.contract';
+import {
+  signature as geoSignature,
+  ParamsInterface as GeoParamsInterface,
+  ResultInterface as GeoResultInterface,
+} from '../shared/territory/findGeoBySiren.contract';
 
 import { alias } from '../shared/policy/simulateOn.schema';
 import { TripRepositoryProviderInterfaceResolver, TerritoryRepositoryProviderInterfaceResolver } from '../interfaces';
@@ -28,18 +33,34 @@ import { MetadataStore } from '../engine/entities/MetadataStore';
 export class SimulateOnPastAction extends AbstractAction {
   constructor(
     private tripRepository: TripRepositoryProviderInterfaceResolver,
-    private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
   ) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    // 0 find related com
+    const geoParamsInterface: GeoParamsInterface = {
+      siren: params.territory_insee,
+    };
+    const geoResult: GeoResultInterface = await this.kernel.call<GeoParamsInterface>(geoSignature, geoParamsInterface, {
+      call: {
+        user: {},
+      },
+      channel: {
+        service: handlerConfig.service,
+      },
+    });
+
     // 1. Find selector and instanciate policy
-    const territory_selector = await this.territoryRepository.findSelectorFromId(params.policy.territory_id);
     const policy = await Policy.import({ ...params.policy, territory_selector, _id: 1 });
 
     // 2. Start a cursor to find trips
-    const cursor = this.tripRepository.findTripByPolicy(policy, policy.start_date, policy.end_date);
+    const cursor = this.tripRepository.findTripByGeo(
+      geoResult.coms.map((m) => m.insee),
+      policy.start_date,
+      policy.end_date,
+    );
     let done = false;
 
     let carpool_total = 0;

@@ -10,7 +10,7 @@ export abstract class TripRepositoryProviderInterfaceResolver {
   ): AsyncGenerator<CarpoolInterface[], void, void>;
 
   abstract findTripByGeo(
-    insee: string,
+    coms: string[],
     from: Date,
     to: Date,
     batchSize?: number,
