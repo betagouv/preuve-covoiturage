@@ -157,13 +157,13 @@ components:
       description: Demande de CEE
       additionalProperties: false
       required:
-        - timestamp
+        - datetime
         - uuid
         - journey_id
         - status
         - token
       properties:
-        timestamp:
+        datetime:
           type: number
         uuid:
           type: string
@@ -177,7 +177,7 @@ components:
           description: Statut du trajet correspondant à l'operator_journey_id envoyé.
         token:
           type: string
-          description: signature(sha512([SIRET_OPERATEUR]/[driving_license]/[TIMESTAMP UTC]))
+          description: signature(sha512([SIRET_OPERATEUR]/[driving_license]/[DATETIME UTC]))
 paths:
   /policies/cee:
     post:
