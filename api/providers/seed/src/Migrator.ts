@@ -36,7 +36,7 @@ export class Migrator {
       ssl: false,
     };
     this.dbIsCreated = newDatabase;
-    this.dbName = newDatabase ? `test-${Date.now().valueOf()}` : dbUrl.pathname.replace('/', '');
+    this.dbName = newDatabase ? `test_${Date.now().valueOf()}` : dbUrl.pathname.replace('/', '');
   }
 
   async up() {
