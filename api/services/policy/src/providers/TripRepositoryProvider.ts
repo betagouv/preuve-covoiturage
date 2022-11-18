@@ -15,14 +15,14 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
 
   constructor(protected connection: PostgresConnection) {}
 
-  findTripByGeo(
-    insee: string,
+  async *findTripByGeo(
+    coms: string[],
     from: Date,
     to: Date,
     batchSize?: number,
     override?: boolean,
   ): AsyncGenerator<CarpoolInterface[], void, void> {
-    throw new Error('Method not implemented.');
+    yield null;
   }
 
   async *findTripByPolicy(
@@ -42,7 +42,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
       values: [policy.territory_id, year],
     });
 
-    const com = comRes.rowCount ? comRes.rows.map((r) => r.com) : [];
+    const com: string[] = comRes.rowCount ? comRes.rows.map((r) => r.com) : [];
 
     const query = {
       text: `
