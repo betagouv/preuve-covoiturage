@@ -34,7 +34,9 @@ test.serial('Should create short application', async (t) => {
   await t.context.repository.registerShortApplication(application);
 
   const applicationResults = await t.context.db.connection.getClient().query({
-    text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${t.context.repository.table} WHERE operator_id = $1`,
+    text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${
+      t.context.repository.table
+    } WHERE operator_id = $1`,
     values: [1],
   });
 
@@ -84,7 +86,7 @@ test.serial('Should find short application with driver license if exists', async
   const search: SearchCeeApplication = {
     last_name_trunc: 'BBB',
     phone_trunc: '+3360000000001',
-    driving_license: 'driving_license_1'
+    driving_license: 'driving_license_1',
   };
 
   const result = await t.context.repository.searchForShortApplication(search);
@@ -96,9 +98,9 @@ test.serial('Should not find short application if criterias dont match', async (
   const search: SearchCeeApplication = {
     last_name_trunc: 'BBB',
     phone_trunc: '+3360000000001',
-    driving_license: 'driving_license_2'
+    driving_license: 'driving_license_2',
   };
 
   const result = await t.context.repository.searchForShortApplication(search);
   t.is(result, undefined);
-});;
+});

@@ -43,12 +43,15 @@ export interface SearchJourney {
 }
 
 @provider()
-export class CeeRepositoryProvider { 
+export class CeeRepositoryProvider {
   public readonly table = 'policy.cee_applications';
 
   constructor(protected connection: PostgresConnection) {}
 
-  protected async searchForApplication(journeyType: CeeJourneyTypeEnum, search: SearchCeeApplication): Promise<RegisteredCeeApplication | void> {
+  protected async searchForApplication(
+    journeyType: CeeJourneyTypeEnum,
+    search: SearchCeeApplication,
+  ): Promise<RegisteredCeeApplication | void> {
     const query = {
       text: `
         SELECT
@@ -64,7 +67,12 @@ export class CeeRepositoryProvider {
         ORDER BY datetime DESC
         LIMIT 1
       `,
-      values: [journeyType, search.last_name_trunc, search.phone_trunc, ...(search.driving_license ? [search.driving_license] : [])],
+      values: [
+        journeyType,
+        search.last_name_trunc,
+        search.phone_trunc,
+        ...(search.driving_license ? [search.driving_license] : []),
+      ],
     };
     const result = await this.connection.getClient().query<RegisteredCeeApplication>(query);
     return result.rows[0];
@@ -78,10 +86,13 @@ export class CeeRepositoryProvider {
     return await this.searchForApplication(CeeJourneyTypeEnum.Long, search);
   }
 
-  async searchForValidJourney(search: SearchJourney): Promise<ValidJourney | void> {
-  }
+  async searchForValidJourney(search: SearchJourney): Promise<ValidJourney | void> {}
 
-  protected async registerApplication(journeyType: CeeJourneyTypeEnum, data: ShortCeeApplication|LongCeeApplication|CeeApplication, duplicateConstraint = true): Promise<void> {
+  protected async registerApplication(
+    journeyType: CeeJourneyTypeEnum,
+    data: ShortCeeApplication | LongCeeApplication | CeeApplication,
+    duplicateConstraint = true,
+  ): Promise<void> {
     const fields = [
       ['journey_type', 'policy.journey_type_enum'],
       ['operator_id', 'int'],
@@ -89,16 +100,10 @@ export class CeeRepositoryProvider {
       ['phone_trunc', 'varchar'],
       ['datetime', 'timestamp'],
     ];
-    const values = [
-      journeyType,
-      data.operator_id,
-      data.last_name_trunc,
-      data.phone_trunc,
-      data.datetime,
-    ];
-  
+    const values = [journeyType, data.operator_id, data.last_name_trunc, data.phone_trunc, data.datetime];
+
     if (journeyType === CeeJourneyTypeEnum.Long || journeyType === CeeJourneyTypeEnum.Short) {
-      fields.push(['driving_license', 'varchar']); 
+      fields.push(['driving_license', 'varchar']);
       values.push('driving_license' in data ? data.driving_license : undefined);
     }
     if (journeyType === CeeJourneyTypeEnum.Short) {
@@ -111,13 +116,13 @@ export class CeeRepositoryProvider {
         INSERT INTO ${this.table} (${fields.map(([f]) => f).join(',')})
         SELECT tmp.* FROM (
           SELECT
-            ${fields.map(([f,c], i) => `$${i+1}::${c} as ${f}`).join(',')}
+            ${fields.map(([f, c], i) => `$${i + 1}::${c} as ${f}`).join(',')}
           ) AS tmp
       `,
       values,
     };
 
-    if(duplicateConstraint) {
+    if (duplicateConstraint) {
       query.text = `
         ${query.text}
         LEFT JOIN ${this.table} AS ce on 
@@ -128,10 +133,10 @@ export class CeeRepositoryProvider {
           ) AND
           ce.datetime >= tmp.datetime::timestamp - '3 years'::interval
         WHERE ce._id IS NULL;
-      `
+      `;
     }
     const result = await this.connection.getClient().query(query);
-    if(result.rowCount !== 1) {
+    if (result.rowCount !== 1) {
       throw new Error();
     }
     return;
