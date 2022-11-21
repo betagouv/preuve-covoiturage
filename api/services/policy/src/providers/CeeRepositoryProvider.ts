@@ -1,7 +1,6 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { CeeApplication, CeeRepositoryProviderInterfaceResolver, LongCeeApplication, RegisteredCeeApplication, SearchCeeApplication, SearchJourney, ShortCeeApplication, ValidJourney } from '../interfaces';
-import { CeeJourneyTypeEnum } from '../shared/policy/cee/common/CeeApplicationInterface';
+import { CeeApplication, CeeJourneyTypeEnum, CeeRepositoryProviderInterfaceResolver, LongCeeApplication, RegisteredCeeApplication, SearchCeeApplication, SearchJourney, ShortCeeApplication, ValidJourney } from '../interfaces';
 
 @provider({
   identifier: CeeRepositoryProviderInterfaceResolver, 
@@ -109,11 +108,16 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     return;
   }
 
-  async registerShortApplication(data: ShortCeeApplication, importOldApplication = false): Promise<void> {
-    return this.registerApplication(CeeJourneyTypeEnum.Short, data, importOldApplication);
+  async registerShortApplication(data: ShortCeeApplication): Promise<void> {
+    return this.registerApplication(CeeJourneyTypeEnum.Short, data);
   }
 
-  async registerLongApplication(data: LongCeeApplication, importOldApplication = false): Promise<void> {
-    return this.registerApplication(CeeJourneyTypeEnum.Long, data, importOldApplication);
+  async registerLongApplication(data: LongCeeApplication): Promise<void> {
+    return this.registerApplication(CeeJourneyTypeEnum.Long, data);
+  }
+
+  async importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void> {
+    const { journey_type, ...application } = data;
+    return this.registerApplication(journey_type, application, true);
   }
 }
