@@ -90,6 +90,9 @@ components:
      pattern: /^[a-z0-9]{1,256}$/
      minLength: 1
      maxLength: 256
+    journey_type:
+      type: string
+      enum: ['short', 'long']
     phone_trunc:
       type: string
       pattern: /^\+[0-9]{8,12}$/
@@ -111,7 +114,10 @@ components:
         - phone_trunc
         - last_name_trunc
         - datetime
+        - journey_type
       properties:
+        journey_type:
+          '$ref': '#/components/schemas/journey_type'
         phone_trunc:
           '$ref': '#/components/schemas/phone_trunc'
         last_name_trunc:
@@ -248,8 +254,7 @@ paths:
                 phone_trunc:
                   '$ref': '#/components/schemas/phone_trunc'
                 journey_type:
-                  type: string
-                  enum: ['short', 'long']
+                  '$ref': '#/components/schemas/journey_type'
       responses:
         '200':
           description: Ok, la demande est possible

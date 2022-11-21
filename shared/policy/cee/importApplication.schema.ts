@@ -1,11 +1,12 @@
-import { lastNameTruncSchema, phoneTruncSchema, timestampSchema } from './common/ceeSchema';
+import { ceeJourneyTypeEnumSchema, lastNameTruncSchema, phoneTruncSchema, timestampSchema } from './common/ceeSchema';
 
 export const alias = 'campaign.importCeeApplication';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['last_name_trunc', 'phone_trunc', 'datetime'],
+  required: ['journey_type', 'last_name_trunc', 'phone_trunc', 'datetime'],
   properties: {
+    journey_type: ceeJourneyTypeEnumSchema,
     last_name_trunc: lastNameTruncSchema,
     phone_trunc: phoneTruncSchema,
     datetime: timestampSchema,

@@ -43,6 +43,7 @@ export interface CeeSimulateInterface {
 }
 
 export interface CeeImportInterface {
+  journey_type: CeeJourneyTypeEnum;
   last_name_trunc: LastNameTrunc;
   phone_trunc: PhoneTrunc;
   datetime: Timestamp;
