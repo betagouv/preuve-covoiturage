@@ -7,3 +7,4 @@ export {
 } from './TerritoryRepositoryProviderInterface';
 export { MetadataRepositoryProviderInterfaceResolver } from './MetadataRepositoryProviderInterface';
 export * from './FundingRequestsRepositoryProviderInterface';
+export * from './CeeRepositoryProviderInterface';

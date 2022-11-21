@@ -1,52 +1,17 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { CeeApplication, CeeRepositoryProviderInterfaceResolver, LongCeeApplication, RegisteredCeeApplication, SearchCeeApplication, SearchJourney, ShortCeeApplication, ValidJourney } from '../interfaces';
 import { CeeJourneyTypeEnum } from '../shared/policy/cee/common/CeeApplicationInterface';
 
-export interface RegisteredCeeApplication {
-  _id: string;
-  operator_id: number;
-  datetime: Date;
-}
-
-export interface ValidJourney {
-  carpool_id: number;
-  phone_trunc: string;
-  datetime: Date;
-  status: string;
-}
-
-export interface CeeApplication {
-  operator_id: number;
-  last_name_trunc: string;
-  phone_trunc: string;
-  datetime: Date;
-}
-
-export interface LongCeeApplication extends CeeApplication {
-  driving_license: string;
-}
-
-export interface ShortCeeApplication extends CeeApplication {
-  driving_license: string;
-  carpool_id: number;
-}
-
-export interface SearchCeeApplication {
-  last_name_trunc: string;
-  phone_trunc: string;
-  driving_license?: string;
-}
-
-export interface SearchJourney {
-  operator_id: number;
-  operator_journey_id: number;
-}
-
-@provider()
-export class CeeRepositoryProvider {
+@provider({
+  identifier: CeeRepositoryProviderInterfaceResolver, 
+})
+export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolver {
   public readonly table = 'policy.cee_applications';
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: PostgresConnection) {
+    super();
+  }
 
   protected async searchForApplication(
     journeyType: CeeJourneyTypeEnum,
@@ -91,7 +56,7 @@ export class CeeRepositoryProvider {
   protected async registerApplication(
     journeyType: CeeJourneyTypeEnum,
     data: ShortCeeApplication | LongCeeApplication | CeeApplication,
-    duplicateConstraint = true,
+    importOldApplication = false,
   ): Promise<void> {
     const fields = [
       ['journey_type', 'policy.journey_type_enum'],
@@ -102,13 +67,15 @@ export class CeeRepositoryProvider {
     ];
     const values = [journeyType, data.operator_id, data.last_name_trunc, data.phone_trunc, data.datetime];
 
-    if (journeyType === CeeJourneyTypeEnum.Long || journeyType === CeeJourneyTypeEnum.Short) {
-      fields.push(['driving_license', 'varchar']);
-      values.push('driving_license' in data ? data.driving_license : undefined);
-    }
-    if (journeyType === CeeJourneyTypeEnum.Short) {
-      fields.push(['carpool_id', 'int']);
-      values.push('carpool_id' in data ? data.carpool_id : undefined);
+    if(!importOldApplication) {
+      if (journeyType === CeeJourneyTypeEnum.Long || journeyType === CeeJourneyTypeEnum.Short) {
+        fields.push(['driving_license', 'varchar']);
+        values.push('driving_license' in data ? data.driving_license : undefined);
+      }
+      if (journeyType === CeeJourneyTypeEnum.Short) {
+        fields.push(['carpool_id', 'int']);
+        values.push('carpool_id' in data ? data.carpool_id : undefined);
+      }
     }
 
     const query = {
@@ -122,7 +89,7 @@ export class CeeRepositoryProvider {
       values,
     };
 
-    if (duplicateConstraint) {
+    if (!importOldApplication) {
       query.text = `
         ${query.text}
         LEFT JOIN ${this.table} AS ce on 
@@ -142,15 +109,11 @@ export class CeeRepositoryProvider {
     return;
   }
 
-  async registerShortApplication(data: ShortCeeApplication): Promise<void> {
-    return this.registerApplication(CeeJourneyTypeEnum.Short, data);
+  async registerShortApplication(data: ShortCeeApplication, importOldApplication = false): Promise<void> {
+    return this.registerApplication(CeeJourneyTypeEnum.Short, data, importOldApplication);
   }
 
-  async registerLongApplication(data: LongCeeApplication): Promise<void> {
-    return this.registerApplication(CeeJourneyTypeEnum.Long, data);
+  async registerLongApplication(data: LongCeeApplication, importOldApplication = false): Promise<void> {
+    return this.registerApplication(CeeJourneyTypeEnum.Long, data, importOldApplication);
   }
-
-  // async registerOldApplication(data: CeeApplication): Promise<void> {
-  //   return this.registerApplication(CeeJourneyTypeEnum.Old, data);
-  // }
 }
