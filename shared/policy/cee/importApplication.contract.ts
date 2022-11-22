@@ -1,6 +1,6 @@
 import { CeeImportInterface, CeeImportResultInterface } from './common/CeeApplicationInterface';
 
-export type ParamsInterface = Array<CeeImportInterface>;
+export type ParamsInterface = Array<CeeImportInterface<Date>>;
 
 export type ResultInterface = CeeImportResultInterface;
 

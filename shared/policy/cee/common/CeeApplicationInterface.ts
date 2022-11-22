@@ -31,6 +31,7 @@ export interface CeeLongApplicationInterface {
   last_name_trunc: LastNameTrunc;
   driving_license: DrivingLicense;
   phone_trunc: PhoneTrunc;
+  datetime: Date;
 }
 
 export type CeeApplicationInterface = CeeShortApplicationInterface | CeeLongApplicationInterface;
@@ -42,15 +43,15 @@ export interface CeeSimulateInterface {
   driving_license?: DrivingLicense;
 }
 
-export interface CeeImportInterface {
+export interface CeeImportInterface<T> {
   journey_type: CeeJourneyTypeEnum;
   last_name_trunc: LastNameTrunc;
   phone_trunc: PhoneTrunc;
-  datetime: Timestamp;
+  datetime: T;
 }
 
 export interface CeeImportResultInterface {
   imported: number;
   failed: number;
-  failed_details: Array<CeeImportInterface & { error: string }>;
+  failed_details: Array<CeeImportInterface<string> & { error: string }>;
 }

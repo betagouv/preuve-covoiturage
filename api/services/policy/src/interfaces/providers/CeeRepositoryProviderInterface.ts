@@ -14,18 +14,18 @@ export interface ValidJourney {
   status: string;
 }
 
-export interface CeeApplication {
+export interface CeeApplication<T = Date> {
   operator_id: number;
   last_name_trunc: string;
   phone_trunc: string;
-  datetime: Date;
+  datetime: T;
 }
 
-export interface LongCeeApplication extends CeeApplication {
+export interface LongCeeApplication<T = Date> extends CeeApplication<T> {
   driving_license: string;
 }
 
-export interface ShortCeeApplication extends CeeApplication {
+export interface ShortCeeApplication<T = Date> extends CeeApplication<T> {
   driving_license: string;
   carpool_id: number;
 }

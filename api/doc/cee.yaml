@@ -66,6 +66,10 @@ components:
           '$ref': '#/components/schemas/last_name_trunc'
         phone_trunc:
           '$ref': '#/components/schemas/phone_trunc'
+        datetime:
+          type: string
+          format: datetime
+          description: Date de partage des frais.
     short_distance_application:
       type: object
       additionalProperties: false
