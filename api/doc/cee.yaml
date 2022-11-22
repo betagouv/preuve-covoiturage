@@ -183,7 +183,8 @@ components:
           description: Statut du trajet correspondant à l'operator_journey_id envoyé.
         token:
           type: string
-          description: signature(sha512([SIRET_OPERATEUR]/[driving_license]/[DATETIME UTC]))
+          description: signature(sha512([SIRET_OPERATEUR]/[journey_type]/[driving_license]//[DATETIME UTC]))
+          example: signature(sha512(13002526500013/short/051227308989/2022-11-22T08:54:19Z))
 paths:
   /policies/cee:
     post:
