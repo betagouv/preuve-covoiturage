@@ -44,6 +44,7 @@
     "@pdc/service-acquisition": "~0",
     "@pdc/service-application": "~0",
     "@pdc/service-carpool": "~0",
+    "@pdc/service-cee": "~0",
     "@pdc/service-certificate": "~0",
     "@pdc/service-company": "~0",
     "@pdc/service-fraud": "~0",

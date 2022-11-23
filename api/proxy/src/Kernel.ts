@@ -6,6 +6,7 @@ import { TokenProvider } from '@pdc/provider-token';
 import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
 import { bootstrap as applicationBootstrap } from '@pdc/service-application';
 import { bootstrap as carpoolBootstrap } from '@pdc/service-carpool';
+import { bootstrap as ceeBootstrap } from '@pdc/service-cee';
 import { bootstrap as certificateBootstrap } from '@pdc/service-certificate';
 import { bootstrap as companyBootstrap } from '@pdc/service-company';
 import { bootstrap as fraudBootstrap } from '@pdc/service-fraud';
@@ -26,6 +27,7 @@ import { config } from './config';
     ...applicationBootstrap.serviceProviders,
     ...acquisitionBootstrap.serviceProviders,
     ...carpoolBootstrap.serviceProviders,
+    ...ceeBootstrap.serviceProviders,
     ...companyBootstrap.serviceProviders,
     ...fraudBootstrap.serviceProviders,
     ...operatorBootstrap.serviceProviders,

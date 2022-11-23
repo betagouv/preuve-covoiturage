@@ -1,4 +1,4 @@
-import { CeeJourneyTypeEnum } from '../../shared/policy/cee/common/CeeApplicationInterface';
+import { CeeJourneyTypeEnum } from '../shared/cee/common/CeeApplicationInterface';
 export { CeeJourneyTypeEnum }
 
 export interface RegisteredCeeApplication {

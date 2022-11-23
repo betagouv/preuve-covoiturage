@@ -5,14 +5,14 @@ import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
-} from '../../shared/policy/cee/registerApplication.contract';
+} from '../shared/cee/registerApplication.contract';
 
-import { alias } from '../../shared/policy/cee/registerApplication.schema';
+import { alias } from '../shared/cee/registerApplication.schema';
 
 import {
   CeeJourneyTypeEnum,
   CeeRepositoryProviderInterfaceResolver,
-} from '../../interfaces';
+} from '../interfaces';
 
 @handler({
   ...handlerConfig, 
