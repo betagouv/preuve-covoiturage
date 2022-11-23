@@ -38,10 +38,10 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         FROM ${this.table}
         WHERE 
           journey_type = $1::cee.journey_type_enum AND
-          datetime >= (NOW() - $4::int * interval '1 year') AND
+          datetime >= ($6::timestamp - $4::int * interval '1 year') AND
           is_specific = false AND (
             (last_name_trunc = $2 AND phone_trunc = $3)
-            ${search.driving_license ? 'OR driving_license = $6' : ''}
+            ${search.driving_license ? 'OR driving_license = $7' : ''}
           )
         UNION
         SELECT
@@ -51,10 +51,10 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         FROM ${this.table}
         WHERE
           journey_type = $1::cee.journey_type_enum AND
-          datetime >= (NOW() - $5::int * interval '1 year') AND
+          datetime >= ($6::timestamp - $5::int * interval '1 year') AND
           is_specific = true AND (
             (last_name_trunc = $2 AND phone_trunc = $3)
-            ${search.driving_license ? 'OR driving_license = $6' : ''}
+            ${search.driving_license ? 'OR driving_license = $7' : ''}
           )
         ORDER BY datetime DESC
         LIMIT 1
@@ -65,6 +65,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         search.phone_trunc,
         journeyType === CeeJourneyTypeEnum.Short ? 5 : 12,
         journeyType === CeeJourneyTypeEnum.Short ? 3 : 5,
+        new Date(),
         ...(search.driving_license ? [search.driving_license] : []),
       ],
     };
