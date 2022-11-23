@@ -166,7 +166,12 @@ export class Migrator {
         ON CONFLICT DO NOTHING
         RETURNING _id
       `,
-      values: [carpool.identity_uuid, carpool.identity_travel_pass, carpool.identity_over_18, carpool.identity_phone_trunc],
+      values: [
+        carpool.identity_uuid,
+        carpool.identity_travel_pass,
+        carpool.identity_over_18,
+        carpool.identity_phone_trunc,
+      ],
     });
 
     await this.connection.getClient().query({

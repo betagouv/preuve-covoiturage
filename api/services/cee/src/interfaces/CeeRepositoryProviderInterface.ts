@@ -55,11 +55,11 @@ export interface ApplicationCooldownConstraint {
     specific: number;
     standardized: number;
   };
-  long: { 
+  long: {
     specific: number;
     standardized: number;
   };
-};
+}
 
 export interface TimeRangeConstraint {
   short: (d: Date) => boolean;
@@ -77,7 +77,13 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
     constraint: ApplicationCooldownConstraint,
   ): Promise<RegisteredCeeApplication | void>;
   abstract searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney>;
-  abstract registerShortApplication(data: ShortCeeApplication, constraint: ApplicationCooldownConstraint): Promise<string>;
-  abstract registerLongApplication(data: LongCeeApplication, constraint: ApplicationCooldownConstraint): Promise<string>;
+  abstract registerShortApplication(
+    data: ShortCeeApplication,
+    constraint: ApplicationCooldownConstraint,
+  ): Promise<string>;
+  abstract registerLongApplication(
+    data: LongCeeApplication,
+    constraint: ApplicationCooldownConstraint,
+  ): Promise<string>;
   abstract importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void>;
 }

@@ -13,7 +13,7 @@ export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
     specific: 3,
     standardized: 5,
   },
-  long: { 
+  long: {
     specific: 5,
     standardized: 12,
   },

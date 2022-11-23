@@ -75,11 +75,17 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     return result.rows[0];
   }
 
-  async searchForShortApplication(search: SearchCeeApplication, constraint: ApplicationCooldownConstraint): Promise<RegisteredCeeApplication | void> {
+  async searchForShortApplication(
+    search: SearchCeeApplication,
+    constraint: ApplicationCooldownConstraint,
+  ): Promise<RegisteredCeeApplication | void> {
     return await this.searchForApplication(CeeJourneyTypeEnum.Short, search, constraint);
   }
 
-  async searchForLongApplication(search: SearchCeeApplication, constraint: ApplicationCooldownConstraint): Promise<RegisteredCeeApplication | void> {
+  async searchForLongApplication(
+    search: SearchCeeApplication,
+    constraint: ApplicationCooldownConstraint,
+  ): Promise<RegisteredCeeApplication | void> {
     return await this.searchForApplication(CeeJourneyTypeEnum.Long, search, constraint);
   }
 
@@ -190,7 +196,9 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ced._id IS NULL
       `;
       values.push(journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific : constraint.long.specific);
-      values.push(journeyType === CeeJourneyTypeEnum.Short ? constraint.short.standardized : constraint.long.standardized);
+      values.push(
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.standardized : constraint.long.standardized,
+      );
     }
 
     query.text = `${query.text} RETURNING _id`;
@@ -201,7 +209,10 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     return result.rows[0]?._id;
   }
 
-  async registerShortApplication(data: ShortCeeApplication, constraint: ApplicationCooldownConstraint): Promise<string> {
+  async registerShortApplication(
+    data: ShortCeeApplication,
+    constraint: ApplicationCooldownConstraint,
+  ): Promise<string> {
     return this.registerApplication(CeeJourneyTypeEnum.Short, data, constraint);
   }
 
