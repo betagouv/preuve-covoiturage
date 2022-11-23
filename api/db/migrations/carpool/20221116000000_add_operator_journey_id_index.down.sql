@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS carpool.carpools_operator_journey_id_idx;

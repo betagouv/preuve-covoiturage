@@ -81,7 +81,6 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
   }
 
   async searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney> {
-    // TODO create index sur operator_journey_id
     const query = {
       text: `
         SELECT
