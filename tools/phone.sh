@@ -20,7 +20,7 @@ export OPERATOR_3_FILE=$WORKING_DIRECTORY/data_operator_3.csv
 
 export REGISTRY_DIRECTORY=$(pwd)
 export REGISTRY_FILE=$WORKING_DIRECTORY/data_registry.csv
-export REGISTRY_FINAL_FILE=$WORKING_DIRECTORY/data_registry_final.csv
+export REGISTRY_FINAL_FILE=$REGISTRY_DIRECTORY/data_registry_final.csv
 export GZIP_CMD=pigz
 
 generate() {
@@ -32,7 +32,7 @@ generate() {
 shuffle_registry() {
     echo "[shuffle] start"
     SIZE=$(wc -l $REGISTRY_FILE | awk '{ print $1 }')
-    split -l 1000000 --filter='shuf' $REGISTRY_FILE | pv -ptl -s$SIZE | $GZIP_CMD > $REGISTRY_DIRECTORY/$REGISTRY_FINAL_FILE.gz && rm $REGISTRY_FILE
+    split -l 1000000 --filter='shuf' $REGISTRY_FILE | pv -ptl -s$SIZE | $GZIP_CMD > $REGISTRY_FINAL_FILE.gz && rm $REGISTRY_FILE
     echo "[shuffle] done"
 }
 
