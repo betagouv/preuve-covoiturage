@@ -1,7 +1,8 @@
 import anyTest, { TestFn } from 'ava';
 import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 
-import { CeeRepositoryProvider, SearchCeeApplication, ShortCeeApplication } from './CeeRepositoryProvider';
+import { CeeRepositoryProvider } from './CeeRepositoryProvider';
+import { SearchCeeApplication, ShortCeeApplication } from '../interfaces';
 
 interface TestContext {
   db: DbContext;
