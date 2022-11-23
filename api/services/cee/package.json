@@ -19,7 +19,6 @@
     "app": {}
   },
   "dependencies": {
-    "@faker-js/faker": "^6.0.0",
     "@ilos/cli": "~0",
     "@ilos/common": "~0",
     "@ilos/connection-manager": "~0",
@@ -29,12 +28,7 @@
     "@ilos/framework": "~0",
     "@pdc/helper-test": "~0",
     "@pdc/provider-middleware": "~0",
-    "@pdc/provider-validator": "~0",
-    "csv-stringify": "^5.6.5",
-    "date-fns": "^2.24.0",
-    "date-fns-tz": "^1.1.6",
-    "lodash": "^4.17.21",
-    "uuid": "^8.3.2"
+    "@pdc/provider-validator": "~0"
   },
   "devDependencies": {
     "@types/uuid": "^8.3.1"
