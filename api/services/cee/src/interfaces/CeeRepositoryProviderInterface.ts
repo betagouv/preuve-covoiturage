@@ -8,6 +8,7 @@ export interface RegisteredCeeApplication {
 }
 
 export interface ValidJourney {
+  acquisition_id: number;
   carpool_id: number;
   phone_trunc: string;
   datetime: Date;
@@ -51,14 +52,19 @@ export interface ValidJourneyConstraint {
 
 export interface ApplicationCooldownConstraint {
   short: {
-    specific: number,
-    standardized: number,
-  },
+    specific: number;
+    standardized: number;
+  };
   long: { 
-    specific: number,
-    standardized: number,
-  },
+    specific: number;
+    standardized: number;
+  };
 };
+
+export interface TimeRangeConstraint {
+  short: (d: Date) => boolean;
+  long: (d: Date) => boolean;
+}
 
 export abstract class CeeRepositoryProviderInterfaceResolver {
   abstract readonly table: string;
@@ -71,7 +77,7 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
     constraint: ApplicationCooldownConstraint,
   ): Promise<RegisteredCeeApplication | void>;
   abstract searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney>;
-  abstract registerShortApplication(data: ShortCeeApplication, constraint: ApplicationCooldownConstraint): Promise<void>;
-  abstract registerLongApplication(data: LongCeeApplication, constraint: ApplicationCooldownConstraint): Promise<void>;
+  abstract registerShortApplication(data: ShortCeeApplication, constraint: ApplicationCooldownConstraint): Promise<string>;
+  abstract registerLongApplication(data: LongCeeApplication, constraint: ApplicationCooldownConstraint): Promise<string>;
   abstract importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void>;
 }

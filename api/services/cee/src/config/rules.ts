@@ -1,4 +1,4 @@
-import { ApplicationCooldownConstraint, ValidJourneyConstraint } from '../interfaces';
+import { ApplicationCooldownConstraint, TimeRangeConstraint, ValidJourneyConstraint } from '../interfaces';
 
 export const validJourneyConstraint: ValidJourneyConstraint = {
   operator_class: 'C',
@@ -16,5 +16,15 @@ export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
   long: { 
     specific: 5,
     standardized: 12,
+  },
+};
+
+// TODO : configure
+export const timeRangeConstraint: TimeRangeConstraint = {
+  short: (d: Date) => {
+    return true;
+  },
+  long: (d: Date) => {
+    return true;
   },
 };

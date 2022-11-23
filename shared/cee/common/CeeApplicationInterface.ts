@@ -12,11 +12,11 @@ export type Status = string;
 export type Token = string;
 
 export interface CeeAplicationResultInterface {
-  journey_type: CeeJourneyTypeEnum;
-  timestamp: Timestamp;
-  journey_id: JourneyId;
-  status: Status;
+  uuid: string;
+  datetime: Timestamp;
   token: Token;
+  journey_id?: JourneyId;
+  status?: Status;
 }
 
 export interface CeeShortApplicationInterface {
@@ -41,6 +41,11 @@ export interface CeeSimulateInterface {
   last_name_trunc: LastNameTrunc;
   phone_trunc: PhoneTrunc;
   driving_license?: DrivingLicense;
+}
+
+export interface CeeSimulateResultInterface {
+  datetime: Timestamp;
+  uuid?: string;
 }
 
 export interface CeeImportInterface<T> {

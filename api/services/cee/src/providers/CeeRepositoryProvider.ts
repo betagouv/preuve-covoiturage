@@ -87,6 +87,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     const query = {
       text: `
         SELECT
+          cc.acquisition_id AS acquisition_id,
           cc._id AS carpool_id,
           ci.phone_trunc AS phone_trunc,
           cc.datetime + cc.duration * interval '1 second' AS datetime,
@@ -130,7 +131,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     journeyType: CeeJourneyTypeEnum,
     data: ShortCeeApplication | LongCeeApplication | CeeApplication,
     constraint?: ApplicationCooldownConstraint,
-  ): Promise<void> {
+  ): Promise<string> {
     const fields = [
       ['journey_type', 'cee.journey_type_enum'],
       ['operator_id', 'int'],
@@ -192,23 +193,25 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       values.push(journeyType === CeeJourneyTypeEnum.Short ? constraint.short.standardized : constraint.long.standardized);
     }
 
+    query.text = `${query.text} RETURNING _id`;
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
       throw new Error();
     }
-    return;
+    return result.rows[0]?._id;
   }
 
-  async registerShortApplication(data: ShortCeeApplication, constraint: ApplicationCooldownConstraint): Promise<void> {
+  async registerShortApplication(data: ShortCeeApplication, constraint: ApplicationCooldownConstraint): Promise<string> {
     return this.registerApplication(CeeJourneyTypeEnum.Short, data, constraint);
   }
 
-  async registerLongApplication(data: LongCeeApplication, constraint: ApplicationCooldownConstraint): Promise<void> {
+  async registerLongApplication(data: LongCeeApplication, constraint: ApplicationCooldownConstraint): Promise<string> {
     return this.registerApplication(CeeJourneyTypeEnum.Long, data, constraint);
   }
 
   async importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void> {
     const { journey_type, ...application } = data;
-    return this.registerApplication(journey_type, application);
+    await this.registerApplication(journey_type, application);
+    return;
   }
 }

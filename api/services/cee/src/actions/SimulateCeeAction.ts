@@ -31,15 +31,20 @@ export class SimulateCeeAction extends AbstractAction {
     }
 
     const constraint: ApplicationCooldownConstraint = this.config.get('rules.applicationCooldownConstraint');
-
-    switch (params.journey_type) {
-      case CeeJourneyTypeEnum.Short:
-        await this.ceeRepository.searchForShortApplication(params, constraint);
-        break;
-      case CeeJourneyTypeEnum.Long:
-        await this.ceeRepository.searchForLongApplication(params, constraint);
-        break;
+    const data = params.journey_type === CeeJourneyTypeEnum.Short ? await this.ceeRepository.searchForShortApplication(params, constraint) : await this.ceeRepository.searchForLongApplication(params, constraint);
+    if (!data) {
+      return;
     }
-    return;
+    // TODO : error handling
+    if (data.operator_id === operator_id) {
+      return {
+        uuid: data._id,
+        datetime: data.datetime.toISOString(),
+      };
+    } else {
+      return {
+        datetime: data.datetime.toISOString(),
+      };
+    }
   }
 }

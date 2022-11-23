@@ -169,8 +169,6 @@ components:
       required:
         - datetime
         - uuid
-        - journey_id
-        - status
         - token
       properties:
         datetime:

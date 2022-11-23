@@ -1,8 +1,8 @@
-import { CeeSimulateInterface } from './common/CeeApplicationInterface';
+import { CeeSimulateInterface, CeeSimulateResultInterface } from './common/CeeApplicationInterface';
 
 export type ParamsInterface = CeeSimulateInterface;
 
-export type ResultInterface = void;
+export type ResultInterface = void | CeeSimulateResultInterface;
 
 export const handlerConfig = {
   service: 'campaign',

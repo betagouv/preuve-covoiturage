@@ -65,7 +65,7 @@ test.serial('Should create short application', async (t) => {
     carpool_id: 1,
   };
 
-  await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint);
+ await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint);
 
   const applicationResults = await t.context.db.connection.getClient().query({
     text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${
