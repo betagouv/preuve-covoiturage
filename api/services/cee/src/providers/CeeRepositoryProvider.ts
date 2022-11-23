@@ -168,16 +168,30 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     if (constraint) {
       query.text = `
         ${query.text}
-        LEFT JOIN ${this.table} AS ce on 
-          ce.journey_type = tmp.journey_type AND
+        LEFT JOIN ${this.table} AS cep on 
+          cep.is_specific = true AND
+          cep.journey_type = tmp.journey_type AND
           (
-            (ce.last_name_trunc = tmp.last_name_trunc AND ce.phone_trunc = tmp.phone_trunc) OR
-             ce.driving_license = tmp.driving_license
+            (cep.last_name_trunc = tmp.last_name_trunc AND cep.phone_trunc = tmp.phone_trunc) OR
+             cep.driving_license = tmp.driving_license
           ) AND
-          ce.datetime >= tmp.datetime::timestamp - '3 years'::interval
-        WHERE ce._id IS NULL;
+          cep.datetime >= tmp.datetime::timestamp - $${values.length + 1} * interval '1 year'
+        LEFT JOIN ${this.table} AS ced on 
+          ced.is_specific = false AND
+          ced.journey_type = tmp.journey_type AND
+          (
+            (ced.last_name_trunc = tmp.last_name_trunc AND ced.phone_trunc = tmp.phone_trunc) OR
+             ced.driving_license = tmp.driving_license
+          ) AND
+          ced.datetime >= tmp.datetime::timestamp - $${values.length + 2} * interval '1 year'
+        WHERE
+          cep._id IS NULL AND
+          ced._id IS NULL
       `;
+      values.push(journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific : constraint.long.specific);
+      values.push(journeyType === CeeJourneyTypeEnum.Short ? constraint.short.standardized : constraint.long.standardized);
     }
+
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
       throw new Error();
