@@ -7,6 +7,8 @@ import { CeeApplication, CeeJourneyTypeEnum, CeeRepositoryProviderInterfaceResol
 })
 export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolver {
   public readonly table = 'policy.cee_applications';
+  public readonly carpoolTable = 'carpool.carpools';
+  public readonly identityTable = 'carpool.identities';
 
   constructor(protected connection: PostgresConnection) {
     super();
@@ -24,7 +26,24 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           datetime
         FROM ${this.table}
         WHERE 
-          journey_type = $1 AND (
+          journey_type = $1 AND
+          datetime >= NOW() - $4::int * interval '1 year' 
+          is_specific = false AND (
+            (last_name_trunc = $2 AND phone_trunc = $3)
+            ${search.driving_license ? 'OR driving_license = $6' : ''}
+          )
+        ORDER BY datetime DESC
+        LIMIT 1
+        UNION
+        SELECT
+          _id,
+          operator_id,
+          datetime
+        FROM ${this.table}
+        WHERE
+          journey_type = $2 AND
+          datetime >= NOW() - $5::int * interval '1 year' 
+          is_specific = true AND (
             (last_name_trunc = $2 AND phone_trunc = $3)
             ${search.driving_license ? 'OR driving_license = $4' : ''}
           )
@@ -35,6 +54,8 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         journeyType,
         search.last_name_trunc,
         search.phone_trunc,
+        journeyType === CeeJourneyTypeEnum.Short ? 5 : 12,
+        journeyType === CeeJourneyTypeEnum.Short ? 3 : 5,
         ...(search.driving_license ? [search.driving_license] : []),
       ],
     };
@@ -50,7 +71,45 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     return await this.searchForApplication(CeeJourneyTypeEnum.Long, search);
   }
 
-  async searchForValidJourney(search: SearchJourney): Promise<ValidJourney | void> {}
+  async searchForValidJourney(search: SearchJourney): Promise<ValidJourney> {
+    // TODO create index sur operator_journey_id
+    const query = {
+      text: `
+        SELECT
+          cc._id AS carpool_id,
+          ci.phone_trunc AS phone_trunc,
+          cc.datetime + cc.duration * interval '1 second' AS datetime,
+          cc.status AS status
+        FROM ${this.carpoolTable} AS cc
+        JOIN ${this.identityTable} AS ci
+          ON cc.identity_id = ci._id
+        WHERE
+          cc.operator_id = $1 AND
+          cc.operator_journey_id = $2 AND
+          cc.operator_class = $3 AND
+          cc.datetime >= $4 AND
+          cc.datetime < $5 AND
+          cc.distance <= $6 AND
+          (cc.start_geo_code NOT LIKE $7 OR cc.end_geo_code NOT LIKE $7)
+        ORDER BY cc.datetime DESC
+        LIMIT 1
+      `,
+      values: [
+        search.operator_id,
+        search.operator_journey_id,
+        'C',
+        new Date('2023-01-01T00:00:00.000Z'),
+        new Date('2024-01-01T00:00:00.000Z'),
+        80_000,
+        '99%',
+      ],
+    }
+    const result = await this.connection.getClient().query<ValidJourney>(query);
+    if(!result.rows.length) {
+      throw new Error();
+    }
+    return result.rows[0];
+  }
 
   protected async registerApplication(
     journeyType: CeeJourneyTypeEnum,
@@ -64,7 +123,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       ['phone_trunc', 'varchar'],
       ['datetime', 'timestamp'],
     ];
-    const values = [journeyType, data.operator_id, data.last_name_trunc, data.phone_trunc, data.datetime];
+    const values: Array<any> = [journeyType, data.operator_id, data.last_name_trunc, data.phone_trunc, data.datetime];
 
     if(!importOldApplication) {
       if (journeyType === CeeJourneyTypeEnum.Long || journeyType === CeeJourneyTypeEnum.Short) {
@@ -75,6 +134,9 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         fields.push(['carpool_id', 'int']);
         values.push('carpool_id' in data ? data.carpool_id : undefined);
       }
+    } else {
+      fields.push(['is_specific', 'boolean']);
+      values.push(true);
     }
 
     const query = {
