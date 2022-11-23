@@ -38,14 +38,22 @@ export interface SearchCeeApplication {
 
 export interface SearchJourney {
   operator_id: number;
-  operator_journey_id: number;
+  operator_journey_id: string;
+}
+
+export interface ValidJourneyConstraint {
+  operator_class: 'A' | 'B' | 'C';
+  start_date: Date;
+  end_date: Date;
+  max_distance: number;
+  geo_pattern: string;
 }
 
 export abstract class CeeRepositoryProviderInterfaceResolver {
   abstract readonly table: string;
   abstract searchForShortApplication(search: SearchCeeApplication): Promise<RegisteredCeeApplication | void>;
   abstract searchForLongApplication(search: SearchCeeApplication): Promise<RegisteredCeeApplication | void>;
-  abstract searchForValidJourney(search: SearchJourney): Promise<ValidJourney | void>;
+  abstract searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney>;
   abstract registerShortApplication(data: ShortCeeApplication, importOldApplication?: boolean): Promise<void>;
   abstract registerLongApplication(data: LongCeeApplication, importOldApplication?: boolean): Promise<void>;
   abstract importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void>;

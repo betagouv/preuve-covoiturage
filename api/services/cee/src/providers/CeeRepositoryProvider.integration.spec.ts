@@ -2,7 +2,8 @@ import anyTest, { TestFn } from 'ava';
 import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 
 import { CeeRepositoryProvider } from './CeeRepositoryProvider';
-import { SearchCeeApplication, ShortCeeApplication } from '../interfaces';
+import { config } from '../config';
+import { SearchCeeApplication, SearchJourney, ShortCeeApplication, ValidJourneyConstraint } from '../interfaces';
 
 interface TestContext {
   db: DbContext;
@@ -104,4 +105,36 @@ test.serial('Should not find short application if criterias dont match', async (
 
   const result = await t.context.repository.searchForShortApplication(search);
   t.is(result, undefined);
+});
+
+test.serial('Should find a valid journey', async (t) => {
+  const search: SearchJourney = {
+    operator_id: 1,
+    operator_journey_id: 'operator_journey_id-1',
+  };
+
+  const constraint: ValidJourneyConstraint = {
+    ...config.rules.validJourneyConstraint,
+    start_date: new Date('2022-01-01'),
+  };
+
+  const result = await t.context.repository.searchForValidJourney(search, constraint);
+  t.not(result, undefined);
+  t.is(result.phone_trunc, '+336000000');
+});
+
+test.serial('Should throw error is no valid journey found', async (t) => {
+  const search: SearchJourney = {
+    operator_id: 1,
+    operator_journey_id: 'operator_journey_id-1',
+  };
+
+  const constraint: ValidJourneyConstraint = {
+    ...config.rules.validJourneyConstraint,
+    start_date: new Date('2022-01-01'),
+    max_distance: 0,
+  };
+
+  const error = await t.throwsAsync(async () => t.context.repository.searchForValidJourney(search, constraint));
+  t.not(error, undefined);
 });

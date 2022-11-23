@@ -27,6 +27,7 @@ const defaultCarpool: Carpool = {
   identity_uuid: v4(),
   identity_travel_pass: 'identity_travel_pass',
   identity_over_18: true,
+  identity_phone_trunc: '+336000000',
   cost: 100,
   status: 'ok',
 };
@@ -54,6 +55,7 @@ export interface Carpool {
   identity_uuid: string;
   identity_travel_pass: string;
   identity_over_18: boolean;
+  identity_phone_trunc: string;
   cost: number;
   calc_distance: number;
   calc_duration: number;

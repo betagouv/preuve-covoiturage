@@ -10,6 +10,7 @@ import {
   SearchJourney,
   ShortCeeApplication,
   ValidJourney,
+  ValidJourneyConstraint,
 } from '../interfaces';
 
 @provider({
@@ -79,7 +80,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     return await this.searchForApplication(CeeJourneyTypeEnum.Long, search);
   }
 
-  async searchForValidJourney(search: SearchJourney): Promise<ValidJourney> {
+  async searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney> {
     // TODO create index sur operator_journey_id
     const query = {
       text: `
@@ -105,13 +106,14 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       values: [
         search.operator_id,
         search.operator_journey_id,
-        'C',
-        new Date('2023-01-01T00:00:00.000Z'),
-        new Date('2024-01-01T00:00:00.000Z'),
-        80_000,
-        '99%',
+        constraint.operator_class,
+        constraint.start_date,
+        constraint.end_date,
+        constraint.max_distance,
+        constraint.geo_pattern,
       ],
     };
+
     const result = await this.connection.getClient().query<ValidJourney>(query);
     if (!result.rows.length) {
       throw new Error();

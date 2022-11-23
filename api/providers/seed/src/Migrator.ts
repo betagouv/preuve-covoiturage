@@ -156,16 +156,17 @@ export class Migrator {
     const result = await this.connection.getClient().query({
       text: `
         INSERT INTO carpool.identities 
-          (uuid, travel_pass_user_id, over_18)
+          (uuid, travel_pass_user_id, over_18, phone_trunc)
         VALUES (
           $1::uuid,
           $2::varchar,
-          $3::boolean
+          $3::boolean,
+          $4::varchar
         )
         ON CONFLICT DO NOTHING
         RETURNING _id
       `,
-      values: [carpool.identity_uuid, carpool.identity_travel_pass, carpool.identity_over_18],
+      values: [carpool.identity_uuid, carpool.identity_travel_pass, carpool.identity_over_18, carpool.identity_phone_trunc],
     });
 
     await this.connection.getClient().query({
