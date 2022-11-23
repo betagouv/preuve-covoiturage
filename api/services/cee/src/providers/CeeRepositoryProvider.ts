@@ -6,7 +6,7 @@ import { CeeApplication, CeeJourneyTypeEnum, CeeRepositoryProviderInterfaceResol
   identifier: CeeRepositoryProviderInterfaceResolver, 
 })
 export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolver {
-  public readonly table = 'policy.cee_applications';
+  public readonly table = 'cee.cee_applications';
   public readonly carpoolTable = 'carpool.carpools';
   public readonly identityTable = 'carpool.identities';
 
