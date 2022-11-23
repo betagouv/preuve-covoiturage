@@ -94,6 +94,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         FROM ${this.carpoolTable} AS cc
         JOIN ${this.identityTable} AS ci
           ON cc.identity_id = ci._id
+        LEFT JOIN ${this.table} ce ON ce.carpool_id = cc._id
         WHERE
           cc.operator_id = $1 AND
           cc.operator_journey_id = $2 AND
@@ -101,7 +102,9 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           cc.datetime >= $4 AND
           cc.datetime < $5 AND
           cc.distance <= $6 AND
-          (cc.start_geo_code NOT LIKE $7 OR cc.end_geo_code NOT LIKE $7)
+          (cc.start_geo_code NOT LIKE $7 OR cc.end_geo_code NOT LIKE $7) AND
+          cc.is_driver = true AND
+          ce._id IS NULL
         ORDER BY cc.datetime DESC
         LIMIT 1
       `,
