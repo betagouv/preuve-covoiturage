@@ -5,7 +5,7 @@ export type ParamsInterface = Array<CeeImportInterface<Date>>;
 export type ResultInterface = CeeImportResultInterface;
 
 export const handlerConfig = {
-  service: 'campaign',
+  service: 'cee',
   method: 'importCeeApplication',
 };
 

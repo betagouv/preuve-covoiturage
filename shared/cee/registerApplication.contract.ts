@@ -5,7 +5,7 @@ export type ParamsInterface = CeeApplicationInterface;
 export interface ResultInterface extends CeeAplicationResultInterface {}
 
 export const handlerConfig = {
-  service: 'campaign',
+  service: 'cee',
   method: 'registerCeeApplication',
 };
 

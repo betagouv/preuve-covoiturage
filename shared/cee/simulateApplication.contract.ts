@@ -5,7 +5,7 @@ export type ParamsInterface = CeeSimulateInterface;
 export type ResultInterface = void | CeeSimulateResultInterface;
 
 export const handlerConfig = {
-  service: 'campaign',
+  service: 'cee',
   method: 'simulateCeeApplication',
 };
 
