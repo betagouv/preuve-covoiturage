@@ -26,14 +26,12 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           datetime
         FROM ${this.table}
         WHERE 
-          journey_type = $1 AND
-          datetime >= NOW() - $4::int * interval '1 year' 
+          journey_type = $1::cee.journey_type_enum AND
+          datetime >= (NOW() - $4::int * interval '1 year') AND
           is_specific = false AND (
             (last_name_trunc = $2 AND phone_trunc = $3)
             ${search.driving_license ? 'OR driving_license = $6' : ''}
           )
-        ORDER BY datetime DESC
-        LIMIT 1
         UNION
         SELECT
           _id,
@@ -41,11 +39,11 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           datetime
         FROM ${this.table}
         WHERE
-          journey_type = $2 AND
-          datetime >= NOW() - $5::int * interval '1 year' 
+          journey_type = $1::cee.journey_type_enum AND
+          datetime >= (NOW() - $5::int * interval '1 year') AND
           is_specific = true AND (
             (last_name_trunc = $2 AND phone_trunc = $3)
-            ${search.driving_license ? 'OR driving_license = $4' : ''}
+            ${search.driving_license ? 'OR driving_license = $6' : ''}
           )
         ORDER BY datetime DESC
         LIMIT 1
@@ -117,7 +115,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     importOldApplication = false,
   ): Promise<void> {
     const fields = [
-      ['journey_type', 'policy.journey_type_enum'],
+      ['journey_type', 'cee.journey_type_enum'],
       ['operator_id', 'int'],
       ['last_name_trunc', 'varchar'],
       ['phone_trunc', 'varchar'],

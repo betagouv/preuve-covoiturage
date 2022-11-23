@@ -11,7 +11,7 @@ export const lastNameTruncSchema = {
   type: 'string',
   minLength: 3,
   maxLength: 3,
-  pattern: /^[A-Z ]{3}$/,
+  pattern: '/^[A-Z ]{3}$/',
 };
 
 export const drivingLicenseSchema = {
@@ -20,7 +20,7 @@ export const drivingLicenseSchema = {
       type: 'string',
       description: 'Numéro de permis de conduire composé de 12 chiffres après 1975.',
       example: '051227308989',
-      pattern: /^[0-9]{12}$/,
+      pattern: '/^[0-9]{12}$/',
       minLength: 12,
       maxLength: 12,
     },
@@ -28,7 +28,7 @@ export const drivingLicenseSchema = {
       type: 'string',
       description: 'Numéro de permis de conduire composé de 1 à 15 caractères suivis de 4 chiffres avant 1975.',
       example: '822146819',
-      pattern: /^[A-Z0-9]{1,15}[0-9]{4}$/,
+      pattern: '/^[A-Z0-9]{1,15}[0-9]{4}$/',
       minLength: 5,
       maxLength: 19,
     },
@@ -36,7 +36,7 @@ export const drivingLicenseSchema = {
       type: 'string',
       description: "Numéro de permis étranger préfixé de l'indicatif '99-'.",
       example: '99-X23836',
-      pattern: /^99-.*$/,
+      pattern: '/^99-.*$/',
       minLength: 4,
       maxLength: 64,
     },
