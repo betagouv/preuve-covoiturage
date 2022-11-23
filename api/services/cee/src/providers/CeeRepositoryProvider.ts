@@ -1,9 +1,19 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { CeeApplication, CeeJourneyTypeEnum, CeeRepositoryProviderInterfaceResolver, LongCeeApplication, RegisteredCeeApplication, SearchCeeApplication, SearchJourney, ShortCeeApplication, ValidJourney } from '../interfaces';
+import {
+  CeeApplication,
+  CeeJourneyTypeEnum,
+  CeeRepositoryProviderInterfaceResolver,
+  LongCeeApplication,
+  RegisteredCeeApplication,
+  SearchCeeApplication,
+  SearchJourney,
+  ShortCeeApplication,
+  ValidJourney,
+} from '../interfaces';
 
 @provider({
-  identifier: CeeRepositoryProviderInterfaceResolver, 
+  identifier: CeeRepositoryProviderInterfaceResolver,
 })
 export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolver {
   public readonly table = 'cee.cee_applications';
@@ -101,9 +111,9 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         80_000,
         '99%',
       ],
-    }
+    };
     const result = await this.connection.getClient().query<ValidJourney>(query);
-    if(!result.rows.length) {
+    if (!result.rows.length) {
       throw new Error();
     }
     return result.rows[0];
@@ -123,7 +133,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     ];
     const values: Array<any> = [journeyType, data.operator_id, data.last_name_trunc, data.phone_trunc, data.datetime];
 
-    if(!importOldApplication) {
+    if (!importOldApplication) {
       if (journeyType === CeeJourneyTypeEnum.Long || journeyType === CeeJourneyTypeEnum.Short) {
         fields.push(['driving_license', 'varchar']);
         values.push('driving_license' in data ? data.driving_license : undefined);

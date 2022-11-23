@@ -10,7 +10,6 @@ import { binding as importCeeBinding } from './shared/cee/importApplication.sche
 import { binding as registerCeeBinding } from './shared/cee/registerApplication.schema';
 import { binding as simulateCeeBinding } from './shared/cee/simulateApplication.schema';
 
-
 import { CeeRepositoryProvider } from './providers/CeeRepositoryProvider';
 import { ImportCeeAction } from './actions/ImportCeeAction';
 import { RegisterCeeAction } from './actions/RegisterCeeAction';
@@ -18,19 +17,9 @@ import { SimulateCeeAction } from './actions/SimulateCeeAction';
 
 @serviceProvider({
   config,
-  providers: [
-    CeeRepositoryProvider,
-  ],
-  validator: [
-    importCeeBinding,
-    registerCeeBinding,
-    simulateCeeBinding,
-  ],
-  handlers: [
-    ImportCeeAction,
-    RegisterCeeAction,
-    SimulateCeeAction,
-  ],
+  providers: [CeeRepositoryProvider],
+  validator: [importCeeBinding, registerCeeBinding, simulateCeeBinding],
+  handlers: [ImportCeeAction, RegisterCeeAction, SimulateCeeAction],
   connections: [
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],

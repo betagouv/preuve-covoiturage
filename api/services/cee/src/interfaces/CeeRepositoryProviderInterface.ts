@@ -1,5 +1,5 @@
 import { CeeJourneyTypeEnum } from '../shared/cee/common/CeeApplicationInterface';
-export { CeeJourneyTypeEnum }
+export { CeeJourneyTypeEnum };
 
 export interface RegisteredCeeApplication {
   _id: string;
@@ -45,7 +45,7 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
   abstract readonly table: string;
   abstract searchForShortApplication(search: SearchCeeApplication): Promise<RegisteredCeeApplication | void>;
   abstract searchForLongApplication(search: SearchCeeApplication): Promise<RegisteredCeeApplication | void>;
-  abstract searchForValidJourney(search: SearchJourney): Promise<ValidJourney | void>; 
+  abstract searchForValidJourney(search: SearchJourney): Promise<ValidJourney | void>;
   abstract registerShortApplication(data: ShortCeeApplication, importOldApplication?: boolean): Promise<void>;
   abstract registerLongApplication(data: LongCeeApplication, importOldApplication?: boolean): Promise<void>;
   abstract importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void>;
