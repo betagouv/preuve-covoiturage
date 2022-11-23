@@ -14,6 +14,7 @@ import { binding as simulateCeeBinding } from './shared/cee/simulateApplication.
 import { CeeRepositoryProvider } from './providers/CeeRepositoryProvider';
 import { ImportCeeAction } from './actions/ImportCeeAction';
 import { RegisterCeeAction } from './actions/RegisterCeeAction';
+import { SimulateCeeAction } from './actions/SimulateCeeAction';
 
 @serviceProvider({
   config,
@@ -28,6 +29,7 @@ import { RegisterCeeAction } from './actions/RegisterCeeAction';
   handlers: [
     ImportCeeAction,
     RegisterCeeAction,
+    SimulateCeeAction,
   ],
   connections: [
     [PostgresConnection, 'connections.postgres'],
