@@ -1,6 +1,7 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import {
+  ApplicationCooldownConstraint,
   CeeApplication,
   CeeJourneyTypeEnum,
   CeeRepositoryProviderInterfaceResolver,
@@ -28,6 +29,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
   protected async searchForApplication(
     journeyType: CeeJourneyTypeEnum,
     search: SearchCeeApplication,
+    constraint: ApplicationCooldownConstraint,
   ): Promise<RegisteredCeeApplication | void> {
     const query = {
       text: `
@@ -63,8 +65,8 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         journeyType,
         search.last_name_trunc,
         search.phone_trunc,
-        journeyType === CeeJourneyTypeEnum.Short ? 5 : 12,
-        journeyType === CeeJourneyTypeEnum.Short ? 3 : 5,
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.standardized : constraint.long.standardized,
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific : constraint.long.specific,
         new Date(),
         ...(search.driving_license ? [search.driving_license] : []),
       ],
@@ -73,12 +75,12 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     return result.rows[0];
   }
 
-  async searchForShortApplication(search: SearchCeeApplication): Promise<RegisteredCeeApplication | void> {
-    return await this.searchForApplication(CeeJourneyTypeEnum.Short, search);
+  async searchForShortApplication(search: SearchCeeApplication, constraint: ApplicationCooldownConstraint): Promise<RegisteredCeeApplication | void> {
+    return await this.searchForApplication(CeeJourneyTypeEnum.Short, search, constraint);
   }
 
-  async searchForLongApplication(search: SearchCeeApplication): Promise<RegisteredCeeApplication | void> {
-    return await this.searchForApplication(CeeJourneyTypeEnum.Long, search);
+  async searchForLongApplication(search: SearchCeeApplication, constraint: ApplicationCooldownConstraint): Promise<RegisteredCeeApplication | void> {
+    return await this.searchForApplication(CeeJourneyTypeEnum.Long, search, constraint);
   }
 
   async searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney> {
@@ -124,7 +126,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
   protected async registerApplication(
     journeyType: CeeJourneyTypeEnum,
     data: ShortCeeApplication | LongCeeApplication | CeeApplication,
-    importOldApplication = false,
+    constraint?: ApplicationCooldownConstraint,
   ): Promise<void> {
     const fields = [
       ['journey_type', 'cee.journey_type_enum'],
@@ -135,7 +137,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     ];
     const values: Array<any> = [journeyType, data.operator_id, data.last_name_trunc, data.phone_trunc, data.datetime];
 
-    if (!importOldApplication) {
+    if (constraint) {
       if (journeyType === CeeJourneyTypeEnum.Long || journeyType === CeeJourneyTypeEnum.Short) {
         fields.push(['driving_license', 'varchar']);
         values.push('driving_license' in data ? data.driving_license : undefined);
@@ -160,7 +162,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       values,
     };
 
-    if (!importOldApplication) {
+    if (constraint) {
       query.text = `
         ${query.text}
         LEFT JOIN ${this.table} AS ce on 
@@ -180,16 +182,16 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     return;
   }
 
-  async registerShortApplication(data: ShortCeeApplication): Promise<void> {
-    return this.registerApplication(CeeJourneyTypeEnum.Short, data);
+  async registerShortApplication(data: ShortCeeApplication, constraint: ApplicationCooldownConstraint): Promise<void> {
+    return this.registerApplication(CeeJourneyTypeEnum.Short, data, constraint);
   }
 
-  async registerLongApplication(data: LongCeeApplication): Promise<void> {
-    return this.registerApplication(CeeJourneyTypeEnum.Long, data);
+  async registerLongApplication(data: LongCeeApplication, constraint: ApplicationCooldownConstraint): Promise<void> {
+    return this.registerApplication(CeeJourneyTypeEnum.Long, data, constraint);
   }
 
   async importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void> {
     const { journey_type, ...application } = data;
-    return this.registerApplication(journey_type, application, true);
+    return this.registerApplication(journey_type, application);
   }
 }

@@ -33,7 +33,7 @@ test.serial('Should create short application', async (t) => {
     carpool_id: 1,
   };
 
-  await t.context.repository.registerShortApplication(application);
+  await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint);
 
   const applicationResults = await t.context.db.connection.getClient().query({
     text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${
@@ -56,7 +56,7 @@ test.serial('Should raise error if conflict short application', async (t) => {
     carpool_id: 1,
   };
 
-  const error = await t.throwsAsync(async () => await t.context.repository.registerShortApplication(application));
+  const error = await t.throwsAsync(async () => await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint));
   t.true(error instanceof Error);
 });
 
@@ -69,7 +69,7 @@ test.serial('Should raise error if missing fields in short application', async (
     driving_license: 'driving_license_1',
   };
 
-  const error = await t.throwsAsync(async () => await t.context.repository.registerShortApplication(application));
+  const error = await t.throwsAsync(async () => await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint));
   t.true(error instanceof Error);
 });
 
@@ -79,7 +79,7 @@ test.serial('Should find short application with id if exists', async (t) => {
     phone_trunc: '+3360000000000',
   };
 
-  const result = await t.context.repository.searchForShortApplication(search);
+  const result = await t.context.repository.searchForShortApplication(search, config.rules.applicationCooldownConstraint);
   t.not(result, undefined);
   t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
 });
@@ -91,7 +91,7 @@ test.serial('Should find short application with driver license if exists', async
     driving_license: 'driving_license_1',
   };
 
-  const result = await t.context.repository.searchForShortApplication(search);
+  const result = await t.context.repository.searchForShortApplication(search, config.rules.applicationCooldownConstraint);
   t.not(result, undefined);
   t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
 });
@@ -103,7 +103,7 @@ test.serial('Should not find short application if criterias dont match', async (
     driving_license: 'driving_license_2',
   };
 
-  const result = await t.context.repository.searchForShortApplication(search);
+  const result = await t.context.repository.searchForShortApplication(search, config.rules.applicationCooldownConstraint);
   t.is(result, undefined);
 });
 

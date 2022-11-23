@@ -1,4 +1,4 @@
-import { ValidJourneyConstraint } from '../interfaces';
+import { ApplicationCooldownConstraint, ValidJourneyConstraint } from '../interfaces';
 
 export const validJourneyConstraint: ValidJourneyConstraint = {
   operator_class: 'C',
@@ -6,4 +6,15 @@ export const validJourneyConstraint: ValidJourneyConstraint = {
   end_date: new Date('2024-01-01T00:00:00.000Z'),
   max_distance: 80_000,
   geo_pattern: '99%',
+};
+
+export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
+  short: {
+    specific: 3,
+    standardized: 5,
+  },
+  long: { 
+    specific: 5,
+    standardized: 12,
+  },
 };

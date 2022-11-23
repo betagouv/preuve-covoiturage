@@ -1,18 +1,21 @@
-import { ContextType, handler, UnauthorizedException } from '@ilos/common';
+import { ConfigInterfaceResolver, ContextType, handler, UnauthorizedException } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/cee/simulateApplication.contract';
 
 import { alias } from '../shared/cee/simulateApplication.schema';
 
-import { CeeRepositoryProviderInterfaceResolver } from '../interfaces';
+import { ApplicationCooldownConstraint, CeeJourneyTypeEnum, CeeRepositoryProviderInterfaceResolver } from '../interfaces';
 
 @handler({
   ...handlerConfig,
   middlewares: [['validate', alias]],
 })
 export class SimulateCeeAction extends AbstractAction {
-  constructor(protected ceeRepository: CeeRepositoryProviderInterfaceResolver) {
+  constructor(
+    protected ceeRepository: CeeRepositoryProviderInterfaceResolver,
+    protected config: ConfigInterfaceResolver,
+  ) {
     super();
   }
 
@@ -27,6 +30,16 @@ export class SimulateCeeAction extends AbstractAction {
       throw new UnauthorizedException();
     }
 
+    const constraint: ApplicationCooldownConstraint = this.config.get('rules.applicationCooldownConstraint');
+
+    switch (params.journey_type) {
+      case CeeJourneyTypeEnum.Short:
+        await this.ceeRepository.searchForShortApplication(params, constraint);
+        break;
+      case CeeJourneyTypeEnum.Long:
+        await this.ceeRepository.searchForLongApplication(params, constraint);
+        break;
+    }
     return;
   }
 }

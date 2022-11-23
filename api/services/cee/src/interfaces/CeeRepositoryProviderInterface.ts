@@ -49,12 +49,29 @@ export interface ValidJourneyConstraint {
   geo_pattern: string;
 }
 
+export interface ApplicationCooldownConstraint {
+  short: {
+    specific: number,
+    standardized: number,
+  },
+  long: { 
+    specific: number,
+    standardized: number,
+  },
+};
+
 export abstract class CeeRepositoryProviderInterfaceResolver {
   abstract readonly table: string;
-  abstract searchForShortApplication(search: SearchCeeApplication): Promise<RegisteredCeeApplication | void>;
-  abstract searchForLongApplication(search: SearchCeeApplication): Promise<RegisteredCeeApplication | void>;
+  abstract searchForShortApplication(
+    search: SearchCeeApplication,
+    constraint: ApplicationCooldownConstraint,
+  ): Promise<RegisteredCeeApplication | void>;
+  abstract searchForLongApplication(
+    search: SearchCeeApplication,
+    constraint: ApplicationCooldownConstraint,
+  ): Promise<RegisteredCeeApplication | void>;
   abstract searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney>;
-  abstract registerShortApplication(data: ShortCeeApplication, importOldApplication?: boolean): Promise<void>;
-  abstract registerLongApplication(data: LongCeeApplication, importOldApplication?: boolean): Promise<void>;
+  abstract registerShortApplication(data: ShortCeeApplication, constraint: ApplicationCooldownConstraint): Promise<void>;
+  abstract registerLongApplication(data: LongCeeApplication, constraint: ApplicationCooldownConstraint): Promise<void>;
   abstract importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void>;
 }
