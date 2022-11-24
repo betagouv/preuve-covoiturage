@@ -325,7 +325,7 @@ export class HttpTransport implements TransportInterface {
     );
     this.app.post(
       '/policy/showcase-simulate',
-      rateLimiter(),
+      rateLimiter({ max: 1 }),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
           createRPCPayload('campaign:simulateOnPastGeo', req.body),
