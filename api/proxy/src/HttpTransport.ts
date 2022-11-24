@@ -191,7 +191,7 @@ export class HttpTransport implements TransportInterface {
       }),
     );
     this.app.use(
-      '/policy/showcase-simulate',
+      '/policy/simulate',
       cors({
         origin: this.config.get('proxy.showcase'),
         optionsSuccessStatus: 200,
@@ -243,17 +243,6 @@ export class HttpTransport implements TransportInterface {
     );
     this.app.post(
       '/policy/simulate',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const { params } = req;
-        const response = (await this.kernel.handle(
-          createRPCPayload('campaign:simulateOnPast', params),
-        )) as RPCResponseType;
-        this.send(res, response);
-      }),
-    );
-    this.app.post(
-      '/policy/showcase-simulate',
       rateLimiter({ max: 1 }),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
