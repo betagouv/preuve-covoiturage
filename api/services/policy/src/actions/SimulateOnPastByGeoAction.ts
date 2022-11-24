@@ -17,7 +17,7 @@ import {
 
 import { SerializedPolicyInterface } from '../interfaces';
 import { hasPermissionMiddleware, internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
-import { PolicyTemplateOne } from '../engine/policies/PolicyTemplateOne';
+import { PolicyTemplateOne } from '../engine/policies/unbound/PolicyTemplateOne';
 
 @handler({
   ...handlerConfig,
@@ -63,7 +63,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
         _id: 1000,
         name: '',
         status: 'active',
-        handler: PolicyTemplateOne.id,
+        handler: params.policy_template_id,
         incentive_sum: 0,
         territory_id: 0,
         territory_selector: undefined,

@@ -7,8 +7,10 @@ import { Nm } from './Nm';
 import { Occitanie } from './Occitanie';
 import { Pdll } from './Pdll';
 import { Pmgf } from './Pmgf';
-import { PolicyTemplateOne } from './PolicyTemplateOne';
 import { Smt } from './Smt';
+import { PolicyTemplateOne } from './unbound/PolicyTemplateOne';
+import { PolicyTemplateThree } from './unbound/PolicyTemplateThree';
+import { PolicyTemplateTwo } from './unbound/PolicyTemplateTwo';
 
 export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
   // disable prettier to avoid having it reformat to a single line
@@ -24,6 +26,8 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Pdll,
     Pmgf,
     PolicyTemplateOne,
+    PolicyTemplateThree,
+    PolicyTemplateTwo,
     Smt,
   ].map((h) => [h.id, h]),
   /* eslint-enable prettier/prettier */
