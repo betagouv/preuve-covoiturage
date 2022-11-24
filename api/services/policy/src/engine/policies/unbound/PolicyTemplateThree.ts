@@ -3,11 +3,17 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { ConfiguredLimitInterface, onDistanceRange, perKm, perSeat } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+} from '../../../interfaces';
+import {
+  ConfiguredLimitInterface,
+  isOperatorClassOrThrow,
+  onDistanceRange,
+  onDistanceRangeOrThrow,
+  perSeat,
+} from '../../helpers';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 
-export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
+export const PolicyTemplateThree: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
@@ -18,23 +24,12 @@ export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
     throw new Error('Method not implemented.');
   }
 
-  static readonly id = '1';
+  static readonly id = '3';
 
-  protected slices = [
-    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
-    {
-      start: 20_000,
-      end: 50_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 50_000 })),
-    },
-    {
-      start: 50_000,
-      end: 150_000,
-      fn: () => 0,
-    },
-  ];
+  protected slices = [{ start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
 
   processStateless(ctx: StatelessContextInterface): void {
+    this.processExclusion(ctx);
     // Par kilomètre
     let amount = 0;
     for (const { start, fn } of this.slices) {
@@ -44,6 +39,10 @@ export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
     }
 
     ctx.incentive.set(amount);
+  }
+  processExclusion(ctx: StatelessContextInterface) {
+    isOperatorClassOrThrow(ctx, ['B', 'C']);
+    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
   }
 
   protected limits: Array<ConfiguredLimitInterface> = [];

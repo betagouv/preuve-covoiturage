@@ -1,6 +1,6 @@
 export interface ParamsInterface {
   territory_insee: string;
-  policy_template_id: 1 | 2;
+  policy_template_id: '1' | '2' | '3';
 }
 
 export interface ResultInterface {
