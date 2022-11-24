@@ -191,7 +191,7 @@ export class HttpTransport implements TransportInterface {
       }),
     );
     this.app.use(
-      '/policy/simulate',
+      '/policy/showcase-simulate',
       cors({
         origin: this.config.get('proxy.showcase'),
         optionsSuccessStatus: 200,
@@ -248,6 +248,16 @@ export class HttpTransport implements TransportInterface {
         const { params } = req;
         const response = (await this.kernel.handle(
           createRPCPayload('campaign:simulateOnPast', params),
+        )) as RPCResponseType;
+        this.send(res, response);
+      }),
+    );
+    this.app.post(
+      '/policy/showcase-simulate',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = (await this.kernel.handle(
+          createRPCPayload('campaign:simulateOnPastGeo', req.body, { permissions: ['common.user.contactform'] }),
         )) as RPCResponseType;
         this.send(res, response);
       }),
