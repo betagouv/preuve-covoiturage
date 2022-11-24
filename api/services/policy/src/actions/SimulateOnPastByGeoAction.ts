@@ -7,7 +7,7 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/polic
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
-import { alias } from '../shared/policy/simulateOn.schema';
+import { alias } from '../shared/policy/simulateOnPastGeo.schema';
 import { MemoryMetadataRepository } from './../providers/MemoryMetadataRepositoryProvider';
 
 import {
@@ -20,15 +20,9 @@ import { SerializedPolicyInterface } from '../interfaces';
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['validate', alias],
-    ...copyGroupIdAndApplyGroupPermissionMiddlewares(
-      { territory: 'territory.policy.simulate.past', registry: 'registry.policy.simulate.past' },
-      'policy',
-    ),
-  ],
+  middlewares: [['validate', alias]],
 })
-export class SimulateOnPastAction extends AbstractAction {
+export class SimulateOnPastByGeoAction extends AbstractAction {
   constructor(
     private kernel: KernelInterfaceResolver,
     private tripRepository: TripRepositoryProviderInterfaceResolver,
@@ -37,7 +31,7 @@ export class SimulateOnPastAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    // 0 find related com
+    // 0 Find related com
     const geoParamsInterface: GeoParamsInterface = {
       siren: params.territory_insee,
     };
@@ -50,7 +44,7 @@ export class SimulateOnPastAction extends AbstractAction {
       },
     });
 
-    const today = new Date();
+    const today = new Date('2022-07-10'); // new Date();
     const dateMinusOneMonth = new Date();
     dateMinusOneMonth.setMonth(today.getMonth() - 1);
 
