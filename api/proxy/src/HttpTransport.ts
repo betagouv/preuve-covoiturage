@@ -166,7 +166,7 @@ export class HttpTransport implements TransportInterface {
     // apply CORS to all routes but /honor (for now)
     // TODO: improve if more routes are concerned
     this.app.use(
-      /\/((?!honor|contactform|geo\/search|policy\/simulate).)*/,
+      /\/((?!honor|contactform|geo\/search|policy\/showcase-simulate).)*/,
       cors({
         origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
