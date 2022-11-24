@@ -318,7 +318,7 @@ export class HttpTransport implements TransportInterface {
       asyncHandler(async (req, res, next) => {
         const { params } = req;
         const response = (await this.kernel.handle(
-          createRPCPayload('campaign:simulateOnPast', params, { permissions: ['territory.policy.simulate.past'] }),
+          createRPCPayload('campaign:simulateOnPast', params),
         )) as RPCResponseType;
         this.send(res, response);
       }),
