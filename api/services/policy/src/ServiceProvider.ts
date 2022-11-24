@@ -10,6 +10,7 @@ import { config } from './config';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOn.schema';
+import { binding as simulateOnPastGeoSchemaBinding } from './shared/policy/simulateOnPastGeo.schema';
 import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
 import { binding as statsSchemaBinding } from './shared/policy/stats.schema';
 
@@ -28,6 +29,7 @@ import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvid
 import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
+import { SimulateOnPastByGeoAction } from './actions/SimulateOnPastByGeoAction';
 
 @serviceProvider({
   config,
@@ -47,6 +49,7 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
     simulateOnSchemaBinding,
     simulateOnFutureSchemaBinding,
     statsSchemaBinding,
+    simulateOnPastGeoSchemaBinding,
   ],
   handlers: [
     ApplyAction,
@@ -56,6 +59,7 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
     ListAction,
     SimulateOnFutureAction,
     SimulateOnPastAction,
+    SimulateOnPastByGeoAction,
     StatsAction,
   ],
   connections: [
