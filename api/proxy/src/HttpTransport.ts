@@ -257,7 +257,7 @@ export class HttpTransport implements TransportInterface {
       rateLimiter(),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
-          createRPCPayload('campaign:simulateOnPastGeo', req.body, { permissions: ['common.user.contactform'] }),
+          createRPCPayload('campaign:simulateOnPastGeo', req.body),
         )) as RPCResponseType;
         this.send(res, response);
       }),
