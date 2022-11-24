@@ -15,12 +15,11 @@ import {
   signature as geoSignature,
 } from '../shared/territory/findGeoBySiren.contract';
 
-import { hasPermissionMiddleware } from '@pdc/provider-middleware/dist';
 import { SerializedPolicyInterface } from '../interfaces';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias], hasPermissionMiddleware('common.user.contactform')],
+  middlewares: [['validate', alias]],
 })
 export class SimulateOnPastByGeoAction extends AbstractAction {
   constructor(
