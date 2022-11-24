@@ -31,23 +31,25 @@ export class ExportCapitalCallsAction extends Action {
     const files: string[] = [];
     await Promise.all(
       params.query.campaign_id.map(async (c_id) => {
+        // Make sure the campaign is active and within the date range
         const campaign: Campaign | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
-          .catch((e) => console.info(`Failed APDF export (campaign ${c_id}) :${e.message}`));
+          .catch((e) => console.error(`Failed APDF export (campaign ${c_id})`, e));
 
-        if (!campaign) {
-          return;
-        }
+        if (!campaign) return;
 
-        const involvedOperatorIds = await this.tripRepositoryProvider.getPolicyInvolvedOperators(
+        // List operators having subsidized trips
+        const activeOperatorIds = await this.tripRepositoryProvider.getPolicyActiveOperators(
           campaign._id,
           start_date,
           end_date,
-          campaign.params.operators,
         );
 
+        if (!activeOperatorIds.length) console.info(`Exporting APDF: No active operators for ${campaign.name}`);
+
+        // Generate XLSX files for each operator and upload to S3 storage
         await Promise.all(
-          involvedOperatorIds.map(async (o_id) => {
+          activeOperatorIds.map(async (o_id) => {
             try {
               console.debug(`Exporting APDF: campaign ${campaign.name}, operator id ${o_id}`);
               const { filename, filepath } = await this.buildExcel.call(campaign, start_date, end_date, o_id);

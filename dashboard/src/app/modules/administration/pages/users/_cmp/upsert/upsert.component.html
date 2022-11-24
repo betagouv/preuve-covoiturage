@@ -1,10 +1,5 @@
-<form
-  class="user-form"
-  (submit)="onSubmitForm($event)"
-  (reset)="onResetForm()"
-  [formGroup]="form"
-  data-test="user-upsert"
->
+<form class="user-form" (submit)="onSubmitForm($event)" (reset)="onResetForm()" [formGroup]="form"
+  data-test="user-upsert">
   <div class="group">
     <!-- First name -->
     <mat-form-field *ngIf="isShown('firstname')" appearance="outline" required>
@@ -37,7 +32,7 @@
   </mat-form-field>
 
   <!-- Group -->
-  <mat-radio-group *ngIf="isShown('group')" formControlName="group">
+  <mat-radio-group *ngIf="currentUserIsRegistry && isShown('group')" formControlName="group">
     <mat-label>Groupe</mat-label>
     <mat-radio-button value="registry">Registre</mat-radio-button>
     <mat-radio-button value="operators">Opérateur</mat-radio-button>
@@ -53,30 +48,23 @@
   </mat-radio-group>
 
   <!-- territory_id -->
-  <app-autocomplete
-    *ngIf="isShown('territory_id') && groupIs('territories')"
-    formControlName="territory_id"
-    label="Territoires"
-    [items$]="territories$"
-  >
+  <app-autocomplete *ngIf="currentUserIsRegistry && isShown('territory_id') && groupIs('territories')"
+    formControlName="territory_id" label="Territoires" [items$]="territories$">
     <mat-error *ngIf="form.hasError('territory_id') && form.get('territory_id').touched">
       Le territoire est requis
     </mat-error>
   </app-autocomplete>
 
   <!-- operator_id -->
-  <app-autocomplete
-    *ngIf="isShown('operator_id') && groupIs('operators')"
-    formControlName="operator_id"
-    label="Opérateurs"
-    [items$]="operators$"
-  >
+  <app-autocomplete *ngIf="currentUserIsRegistry && isShown('operator_id') && groupIs('operators')"
+    formControlName="operator_id" label="Opérateurs" [items$]="operators$">
     <mat-error *ngIf="form.hasError('operator_id') && form.get('operator_id').touched">
       L'opérateur est requis
     </mat-error>
   </app-autocomplete>
 
   <div class="actions">
+    <mat-checkbox *ngIf="!groupIs('registry')" formControlName="hidden">caché</mat-checkbox>
     <button type="reset" mat-flat-button data-test="button-reset">Annuler</button>
     <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid" data-test="button-submit">
       Enregistrer

@@ -1,5 +1,7 @@
 FROM node:16.13-alpine
 
+RUN apk add p7zip
+
 RUN yarn global add pm2 pino-pretty db-migrate db-migrate-pg
 RUN mkdir -p /app/shared
 RUN mkdir -p /app/api

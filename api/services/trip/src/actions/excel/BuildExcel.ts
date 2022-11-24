@@ -4,7 +4,6 @@ import { stream } from 'exceljs';
 import { CampaignSearchParamsInterface } from '~/interfaces';
 import { SliceStatInterface } from '~/interfaces/PolicySliceStatInterface';
 import { ResultInterface as Campaign } from '~/shared/policy/find.contract';
-import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
@@ -32,8 +31,9 @@ export class BuildExcel {
 
     // fetch aggregated and slice data
     const {
-      count: trips,
-      sum: amount,
+      total_count: trips,
+      total_sum: amount,
+      subsidized_count: subsidized,
       slices,
     } = await this.tripRepoProvider.getPolicyStats(params, campaign.params.slices || []);
 
@@ -44,6 +44,7 @@ export class BuildExcel {
       operator_id,
       datetime: start_date,
       trips,
+      subsidized,
       amount,
     };
     const filename: string = this.apdfNameProvider.filename(fileParams);
@@ -60,10 +61,11 @@ export class BuildExcel {
 
   private async writeTrips(wkw: stream.xlsx.WorkbookWriter, params: CampaignSearchParamsInterface): Promise<void> {
     try {
-      const tripCursor: PgCursorHandler = await this.getTripsCursor(params);
+      const tripCursor = await this.tripRepoProvider.getPolicyCursor(params, 'territory');
       await this.dataWorkbookWriter.call(tripCursor, wkw);
     } catch (e) {
       console.error('Error while writing trips');
+      console.error(e.message);
     }
   }
 
@@ -73,20 +75,7 @@ export class BuildExcel {
       await this.slicesWorkbookWriter.call(wkw, slices);
     } catch (e) {
       console.error('Error while computing slices');
+      console.error(e.message);
     }
-  }
-
-  private getTripsCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler> {
-    return this.tripRepoProvider.searchWithCursor(
-      {
-        date: {
-          start: params.start_date,
-          end: params.end_date,
-        },
-        campaign_id: [params.campaign_id],
-        operator_id: [params.operator_id],
-      },
-      'territory',
-    );
   }
 }

@@ -86,7 +86,7 @@ export class Migrator {
 
     for (const territory_group of territory_groups) {
       console.debug(`Seeding territory group ${territory_group.name}`);
-      await this.seedTerritoyGroup(territory_group);
+      await this.seedTerritoryGroup(territory_group);
     }
 
     for (const carpool of carpools) {
@@ -312,7 +312,7 @@ export class Migrator {
     });
   }
 
-  async seedTerritoyGroup(territory_group: CreateTerritoryGroupInterface) {
+  async seedTerritoryGroup(territory_group: CreateTerritoryGroupInterface) {
     const fields = ['_id', 'name', 'shortname', 'contacts', 'address', 'company_id'];
 
     const values: any[] = [

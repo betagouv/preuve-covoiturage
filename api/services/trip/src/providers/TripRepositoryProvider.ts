@@ -298,74 +298,17 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   }
 
   public async searchWithCursor(params: TripSearchInterface, type = 'opendata'): Promise<PgCursorHandler> {
-    // all
-    const baseFields = [
-      'journey_id',
-      'trip_id',
-      'journey_start_datetime',
-      'journey_start_lon',
-      'journey_start_lat',
-      'journey_start_insee',
-      'journey_start_department',
-      'journey_start_town',
-      'journey_start_towngroup',
-      'journey_start_country',
-      'journey_end_datetime',
-      'journey_end_lon',
-      'journey_end_lat',
-      'journey_end_insee',
-      'journey_end_department',
-      'journey_end_town',
-      'journey_end_towngroup',
-      'journey_end_country',
-      'driver_card',
-      'passenger_card',
-      'passenger_over_18',
-      'passenger_seats',
-      'operator_class',
-      'operator_journey_id',
-      'operator_passenger_id',
-      'operator_driver_id',
-      'journey_distance',
-      'journey_duration',
-      'journey_distance_anounced',
-      'journey_distance_calculated',
-      'journey_duration_anounced',
-      'journey_duration_calculated',
-      'passenger_incentive_rpc_raw::json[]',
-      'driver_incentive_rpc_raw::json[]',
-      'passenger_incentive_raw::json[]',
-      'driver_incentive_raw::json[]',
-    ];
-
-    // all except opendata
-    const financialFields = ['passenger_id', 'passenger_contribution', 'driver_id', 'driver_revenue'];
-
-    let selectedFields = [...baseFields];
-    const values = [];
-    switch (type) {
-      case 'territory':
-      case 'registry':
-        selectedFields = [...selectedFields, 'operator', ...financialFields];
-        break;
-      case 'operator':
-        selectedFields = [...selectedFields, ...financialFields];
-        break;
-    }
-
     const where = await this.buildWhereClauses(params);
-
-    const queryValues = [...values, ...where.values];
     const queryText = this.numberPlaceholders(`
       SELECT
-        ${selectedFields.join(', ')}
+        ${this.getFields(type).join(', ')}
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
     `);
 
     const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(queryText, queryValues));
+    const cursorCb = db.query(new Cursor(queryText, where.values));
 
     return {
       read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
@@ -457,14 +400,25 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return resTimezone.rowCount ? resTimezone.rows[0] : this.defaultTz;
   }
 
-  public async getPolicyInvolvedOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
+  /**
+   * List active operators having trips and incentives > 0
+   * in the campaign for the given date range
+   */
+  public async getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
     const result = await this.connection.getClient().query({
-      text: `SELECT DISTINCT operator_id
-      FROM ${this.table}
-      WHERE journey_start_datetime >= $1::TIMESTAMP
-        AND journey_start_datetime <  $2::TIMESTAMP
-        AND status = 'ok'
-        AND $3 = any(applied_policies);`,
+      text: `
+        select cc.operator_id
+        from policy.incentives pi
+        join carpool.carpools cc on cc._id = pi.carpool_id
+        where
+              pi.policy_id = $3
+          and pi.amount    >  0
+          and cc.datetime >= $1
+          and cc.datetime <  $2
+          and cc.status   = 'ok'
+        group by cc.operator_id
+        order by cc.operator_id
+      `,
       values: [start_date, end_date, campaign_id],
     });
 
@@ -480,10 +434,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     // prepare slice filters
     const sliceFilters: string = slices
       .map(({ start, end }, i) => {
-        const f = `filter (where distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
+        const f = `filter (where amount > 0 and distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
         return `
-          (count(*) ${f})::int as slice_${i}_count,
-          coalesce(sum(sum) ${f}, 0)::int as slice_${i}_sum,
+          (count(distinct acquisition_id) ${f})::int as slice_${i}_count,
+          (sum(amount) ${f})::int as slice_${i}_sum,
           ${start} as slice_${i}_start,
           ${end} as slice_${i}_end
         `;
@@ -496,22 +450,23 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: `
         with trips as (
           select
+              distinct cc.acquisition_id,
               tl.journey_distance as distance,
-              coalesce(dir.amount, 0) + coalesce(pir.amount, 0) as sum
-            from ${this.table} tl
-            left join lateral unnest(tl.driver_incentive_rpc_raw) as dir(siret, amount, unit, policy_id, policy_name, type) on true
-            left join lateral unnest(tl.passenger_incentive_rpc_raw) as pir(siret, amount, unit, policy_id, policy_name, type) on true
-            where
-              tl.journey_start_datetime >= $1
-              and tl.journey_start_datetime < $2
-              and tl.status = 'ok'
-              and tl.operator_id = $3
-              and $4 = any(tl.applied_policies)
-              and (dir.policy_id = $4 or pir.policy_id = $4)
+              coalesce(pi.amount, 0) as amount
+          from policy.incentives pi
+          join carpool.carpools cc on cc._id = pi.carpool_id
+          join trip.list tl on cc.acquisition_id = tl.journey_id
+          where
+                cc.datetime >= $1
+            and cc.datetime <  $2
+            and cc.status = 'ok'
+            and cc.operator_id = $3
+            and pi.policy_id = $4
         )
         select
-          count(*)::int,
-          coalesce(sum(sum), 0)::int as sum
+          count(distinct acquisition_id)::int as total_count,
+          sum(amount)::int as total_sum,
+          (count(distinct acquisition_id) filter (where amount > 0))::int as subsidized_count
           ${sliceFilters.length ? `, ${sliceFilters}` : ''}
         from trips
         `,
@@ -519,7 +474,14 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     });
 
     // return null results on missing data
-    if (!result.rowCount) return { count: 0, sum: 0, slices: [] };
+    if (!result.rowCount) {
+      return {
+        total_count: 0,
+        total_sum: 0,
+        subsidized_count: 0,
+        slices: [],
+      };
+    }
 
     // rearrange the return object
     const row = result.rows[0];
@@ -534,8 +496,102 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         }
         return p;
       },
-      { count: row.count, sum: row.sum, slices: [] },
+      {
+        total_count: row.total_count,
+        total_sum: row.total_sum,
+        subsidized_count: row.subsidized_count,
+        slices: [],
+      },
     );
+  }
+
+  public async getPolicyCursor(params: CampaignSearchParamsInterface, type = 'opendata'): Promise<PgCursorHandler> {
+    const { start_date, end_date, operator_id, campaign_id } = params;
+
+    const queryText = `
+      with trips as (
+        select distinct cc.acquisition_id as journey_id
+        from policy.incentives pi
+        join carpool.carpools cc on cc._id = pi.carpool_id
+        where
+              cc.datetime >= $1
+          and cc.datetime <  $2
+          and cc.status = 'ok'
+          and cc.operator_id = $3
+          and pi.policy_id = $4
+          and pi.amount > 0
+        )
+        select ${this.getFields(type).join(', ')}
+        from trip.list
+        where journey_id in (select journey_id from trips)
+        order by journey_start_datetime asc
+    `;
+
+    const db = await this.connection.getClient().connect();
+    const cursorCb = db.query(new Cursor(queryText, [start_date, end_date, operator_id, campaign_id]));
+
+    return {
+      read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
+      release: db.release,
+    };
+  }
+
+  private getFields(type = 'opendata'): string[] {
+    // all
+    const baseFields = [
+      'journey_id',
+      'trip_id',
+      'journey_start_datetime',
+      'journey_start_lon',
+      'journey_start_lat',
+      'journey_start_insee',
+      'journey_start_department',
+      'journey_start_town',
+      'journey_start_towngroup',
+      'journey_start_country',
+      'journey_end_datetime',
+      'journey_end_lon',
+      'journey_end_lat',
+      'journey_end_insee',
+      'journey_end_department',
+      'journey_end_town',
+      'journey_end_towngroup',
+      'journey_end_country',
+      'driver_card',
+      'passenger_card',
+      'passenger_over_18',
+      'passenger_seats',
+      'operator_class',
+      'operator_journey_id',
+      'operator_passenger_id',
+      'operator_driver_id',
+      'journey_distance',
+      'journey_duration',
+      'journey_distance_anounced',
+      'journey_distance_calculated',
+      'journey_duration_anounced',
+      'journey_duration_calculated',
+      'passenger_incentive_rpc_raw::json[]',
+      'driver_incentive_rpc_raw::json[]',
+      'passenger_incentive_raw::json[]',
+      'driver_incentive_raw::json[]',
+    ];
+
+    // all except opendata
+    const financialFields = ['passenger_id', 'passenger_contribution', 'driver_id', 'driver_revenue'];
+
+    let selectedFields = [...baseFields];
+    switch (type) {
+      case 'territory':
+      case 'registry':
+        selectedFields = [...selectedFields, 'operator', ...financialFields, 'status'];
+        break;
+      case 'operator':
+        selectedFields = [...selectedFields, ...financialFields, 'status'];
+        break;
+    }
+
+    return selectedFields;
   }
 
   // replace $# in query by $1, $2, ...

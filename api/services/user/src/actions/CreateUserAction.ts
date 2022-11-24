@@ -1,5 +1,11 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, InvalidRequestException } from '@ilos/common';
+import {
+  handler,
+  ContextType,
+  InvalidRequestException,
+  ConfigInterfaceResolver,
+  UnauthorizedException,
+} from '@ilos/common';
 import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/create.contract';
@@ -26,6 +32,7 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
 })
 export class CreateUserAction extends AbstractAction {
   constructor(
+    private config: ConfigInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private notification: UserNotificationProvider,
     private authRepository: AuthRepositoryProviderInterfaceResolver,
@@ -34,6 +41,12 @@ export class CreateUserAction extends AbstractAction {
   }
 
   public async handle(request: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    // Registration can be toggled by env var APP_USER_REGISTRATION_ENABLED
+    if (!this.config.get('registration.enabled')) {
+      console.warn('Registration disabled. Failed to create new user');
+      throw new UnauthorizedException('User registration is disabled');
+    }
+
     // check if the user exists already
     await this.userRepository.checkForDoubleEmailAndFail(request.email);
 

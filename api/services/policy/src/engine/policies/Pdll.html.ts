@@ -21,6 +21,7 @@ export const description = `<p _ngcontent-fyn-c231="" id="summary" class="campai
   <li><b>CU d'Angers Loire Métropole (244900015)</b></li>
   <li><b>Nantes Métropole (244400404)</b></b> </li>
   <li><b>CU Le Mans Métropole (247200132)</b></li>
+  <li><b>CA Agglomération du Choletais (200071678)</b></li>
   <p></p>
 </ul>
 </p>`;

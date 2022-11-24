@@ -1,12 +1,12 @@
-import { Observable } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { combineLatest, Observable } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { REGEXP } from '~/core/const/validators.const';
-
 import { User } from '~/core/entities/authentication/user';
 import { Groups } from '~/core/enums/user/groups';
+import { AuthenticationService as Auth } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { AutocompleteItem } from '../../../../../../shared/components/autocomplete/autocomplete.component';
 
@@ -33,8 +33,9 @@ export class UpsertComponent extends DestroyObservable implements OnInit {
   public form: FormGroup;
   public territories$: Observable<AutocompleteItem[]>;
   public operators$: Observable<AutocompleteItem[]>;
+  public currentUserIsRegistry = false;
 
-  constructor(private commonData: CommonDataService) {
+  constructor(private commonData: CommonDataService, private auth: Auth) {
     super();
   }
 
@@ -63,6 +64,7 @@ export class UpsertComponent extends DestroyObservable implements OnInit {
         group: new FormControl(null),
         territory_id: new FormControl(null),
         operator_id: new FormControl(null),
+        hidden: new FormControl(false),
       },
       {
         validators: [
@@ -115,7 +117,31 @@ export class UpsertComponent extends DestroyObservable implements OnInit {
       },
     );
 
-    this.form.setValue(this.user.toFormValues());
+    // fetch current operator and territory to find out
+    // about the connected user.
+    combineLatest([this.commonData.currentOperator$, this.commonData.currentTerritory$])
+      .pipe(takeUntil(this.destroy$), debounceTime(100))
+      .subscribe(([operator, territory]) => {
+        const values = {
+          group: Groups.Registry,
+          hidden: false,
+          ...this.user.toFormValues(),
+        };
+
+        if (operator?._id) {
+          values.group = Groups.Operator;
+          values.operator_id = operator._id;
+        }
+
+        if (territory?._id) {
+          values.group = Groups.Territory;
+          values.territory_id = territory._id;
+        }
+
+        this.currentUserIsRegistry = !(operator?._id || territory?._id);
+
+        this.form.setValue(values);
+      });
   }
 
   public onSubmitForm(event: Event): void {

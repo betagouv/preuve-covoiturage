@@ -20,6 +20,7 @@ export const description = `<p id="summary">
     <li><b>Du 25/03/2022 au 28/03/2022</b></li>
     <li><b>Le 18/06/2022</b></li>
     <li><b>Le 6/07/2022</b></li>
+    <li><b>Le 10/11/2022</b></li>
   </ul>
   <p>
   La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe <b>B ou C</b>.

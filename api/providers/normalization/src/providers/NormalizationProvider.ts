@@ -101,7 +101,7 @@ export class NormalizationProvider implements NormalizationProviderInterface {
       const { driver, passenger } = journey.payload;
       const { cost, payments } = await this.costNormalizer.handle({
         operator_id: journey.operator_id,
-        contribution: driver.contribution || 0,
+        contribution: passenger.contribution || 0,
         incentives: [
           ...(Array.isArray(driver.incentives) ? driver.incentives : []),
           ...(Array.isArray(passenger.incentives) ? passenger.incentives : []),
