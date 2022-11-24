@@ -6,7 +6,6 @@ export interface ParamsInterface {
 export interface ResultInterface {
   amount: number;
   trip_subsidized: number;
-  trip_excluded: number;
 }
 
 export const handlerConfig = {
