@@ -1,3 +1,4 @@
+import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 
@@ -19,7 +20,7 @@ import { SerializedPolicyInterface } from '../interfaces';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias]],
+  middlewares: [['validate', alias], hasPermissionMiddleware('policy.simulate.past')],
 })
 export class SimulateOnPastByGeoAction extends AbstractAction {
   constructor(
@@ -47,7 +48,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       throw Error(`Could not find any coms for territory_insee ${params.territory_insee}`);
     }
 
-    const today = new Date('2022-07-10'); // new Date();
+    const today = new Date();
     const dateMinusOneMonth = new Date();
     dateMinusOneMonth.setMonth(today.getMonth() - 5);
 

@@ -161,7 +161,7 @@ export class HttpTransport implements TransportInterface {
     // apply CORS to all routes but /honor (for now)
     // TODO: improve if more routes are concerned
     this.app.use(
-      /\/((?!honor|contactform|geo\/search|policy\/showcase-simulate).)*/,
+      /\/((?!honor|contactform|geo\/search|policy\/simulate).)*/,
       cors({
         origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
@@ -246,7 +246,7 @@ export class HttpTransport implements TransportInterface {
       rateLimiter({ max: 1 }),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
-          createRPCPayload('campaign:simulateOnPastGeo', req.body),
+          createRPCPayload('campaign:simulateOnPastGeo', req.body, { permissions: ['policy.simulate.past'] }),
         )) as RPCResponseType;
         this.send(res, response);
       }),
