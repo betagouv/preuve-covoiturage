@@ -1,5 +1,5 @@
 export interface ParamsInterface extends SimulateOnPasGeoRequiredParams {
-  monthes?: number;
+  months?: number;
 }
 
 export interface SimulateOnPasGeoRequiredParams {
