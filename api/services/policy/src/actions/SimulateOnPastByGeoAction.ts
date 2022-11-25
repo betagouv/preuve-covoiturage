@@ -52,7 +52,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
 
     const today = new Date();
     const dateMinusOneMonth = new Date();
-    dateMinusOneMonth.setMonth(today.getMonth() - (params.monthes | this.DEFAULT_TIME_FRAME_6_MONTHES));
+    dateMinusOneMonth.setMonth(today.getMonth() - (params.months | this.DEFAULT_TIME_FRAME_6_MONTHES));
 
     const policyTemplate: SerializedPolicyInterface = {
       start_date: dateMinusOneMonth,
