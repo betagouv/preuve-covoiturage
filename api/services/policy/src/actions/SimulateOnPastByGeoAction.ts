@@ -60,7 +60,10 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       handler: params.policy_template_id,
       incentive_sum: 0,
       territory_id: 0,
-      territory_selector: undefined,
+      territory_selector: {
+        aom: [geoResult.aom_siren],
+        epci: [geoResult.epci_siren],
+      },
     };
 
     // 1. Find selector and instanciate policy
