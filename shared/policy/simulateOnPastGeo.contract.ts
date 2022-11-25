@@ -1,4 +1,8 @@
-export interface ParamsInterface {
+export interface ParamsInterface extends SimulateOnPasGeoRequiredParams {
+  monthes?: number;
+}
+
+export interface SimulateOnPasGeoRequiredParams {
   territory_insee: string;
   policy_template_id: '1' | '2' | '3';
 }

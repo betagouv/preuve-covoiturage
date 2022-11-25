@@ -23,6 +23,8 @@ import { SerializedPolicyInterface } from '../interfaces';
   middlewares: [['validate', alias], hasPermissionMiddleware('policy.simulate.past')],
 })
 export class SimulateOnPastByGeoAction extends AbstractAction {
+  private readonly DEFAULT_TIME_FRAME_6_MONTHES = 6;
+
   constructor(
     private kernel: KernelInterfaceResolver,
     private tripRepository: TripRepositoryProviderInterfaceResolver,
@@ -50,9 +52,9 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
 
     const today = new Date();
     const dateMinusOneMonth = new Date();
-    dateMinusOneMonth.setMonth(today.getMonth() - 5);
+    dateMinusOneMonth.setMonth(today.getMonth() - (params.monthes | this.DEFAULT_TIME_FRAME_6_MONTHES));
 
-    const policyTemplateOneMonth: SerializedPolicyInterface = {
+    const policyTemplate: SerializedPolicyInterface = {
       start_date: dateMinusOneMonth,
       end_date: today,
       _id: 1000,
@@ -68,7 +70,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
     };
 
     // 1. Find selector and instanciate policy
-    const policy = await Policy.import(policyTemplateOneMonth);
+    const policy = await Policy.import(policyTemplate);
 
     // 2. Start a cursor to find trips
     const cursor = this.tripRepository.findTripByGeo(
