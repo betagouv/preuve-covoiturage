@@ -1,7 +1,7 @@
 ---
-title: Fraud
+title: Observatory
 ---
 
-# Fraud service
+# Observatory service
 
-Detects patterns from a batch of trips
+Ajoute les endpoints de l'observatoire du covoiturage au quotidien

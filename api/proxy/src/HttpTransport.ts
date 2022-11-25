@@ -92,6 +92,7 @@ export class HttpTransport implements TransportInterface {
     this.registerAcquisitionRoutes();
     this.registerSimulationRoutes();
     this.registerHonorRoutes();
+    this.registerObservatoryRoutes();
     this.registerUptimeRoute();
     this.registerContactformRoute();
     this.registerCallHandler();
@@ -540,6 +541,19 @@ export class HttpTransport implements TransportInterface {
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('honor:stats', {}, { permissions: ['common.honor.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+  }
+
+  private registerObservatoryRoutes() {
+    this.app.get(
+      '/observatory',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:stats', {}, { permissions: ['common.observatory.stats'] }),
         );
         this.send(res, response as RPCResponseType);
       }),

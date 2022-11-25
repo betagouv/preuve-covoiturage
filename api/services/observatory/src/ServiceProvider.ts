@@ -5,7 +5,7 @@ import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorMiddleware, ValidatorExtension } from '@pdc/provider-validator';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { GeoProvider } from '@pdc/provider-geo';
-
+import { StatsAction } from './actions/StatsAction';
 import { config } from './config';
 
 
@@ -21,7 +21,7 @@ import { config } from './config';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [],
+  handlers: [StatsAction],
   queues: ['observatory'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
