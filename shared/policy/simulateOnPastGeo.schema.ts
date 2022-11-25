@@ -7,6 +7,7 @@ export const schema = {
   properties: {
     territory_insee: { macro: 'varchar' },
     policy_template_id: { enum: ['1', '2', '3'] },
+    monthes: { macro: 'serial' },
   },
 };
 
