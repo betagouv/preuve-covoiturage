@@ -15,6 +15,7 @@ import {
   ForgottenPasswordNotification,
   InviteNotification,
 } from '../notifications';
+import { ParamsInterface as SimulationPolicyParamsInterface } from '../shared/user/simulatePolicyform.contract';
 
 import { ParamsInterface as SendMailParamsInterface } from '../shared/user/notify.contract';
 
@@ -167,6 +168,8 @@ link:  ${link}
       },
     });
   }
+
+  async simulationEmail(formParams: SimulationPolicyParamsInterface, simulationResult): Promise<void> {}
 
   /**
    * Send contactForm notification
