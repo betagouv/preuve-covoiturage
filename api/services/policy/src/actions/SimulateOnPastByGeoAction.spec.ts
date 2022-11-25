@@ -114,3 +114,5 @@ test('SimulateOnPastByGeoAction: should process trip with default time frame', a
   t.is(result.amount, 1000);
   t.is(result.trip_subsidized, 4);
 });
+
+// TODO add a test for geo.start and geo.end

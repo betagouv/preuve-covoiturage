@@ -1,4 +1,4 @@
-import { hasPermissionMiddleware } from '@pdc/provider-middleware';
+import { hasPermissionMiddleware, internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 
@@ -20,7 +20,7 @@ import { SerializedPolicyInterface } from '../interfaces';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias], hasPermissionMiddleware('policy.simulate.past')],
+  middlewares: [['validate', alias], ...internalOnlyMiddlewares('user')],
 })
 export class SimulateOnPastByGeoAction extends AbstractAction {
   private readonly DEFAULT_TIME_FRAME_6_MONTHES = 6;
