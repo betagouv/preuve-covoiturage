@@ -34,12 +34,12 @@ export class SimulatePolicyformAction extends AbstractAction {
   }
 
   private async simulatePolicy(
-    nbMonthes: number,
+    nbMonths: number,
     simulation: SimulateOnPasGeoRequiredParams,
   ): Promise<SimulateOnPastResult> {
     const simulateOnPasGeoParams: SimulateOnPasGeoParams = {
       ...simulation,
-      months: nbMonthes,
+      months: nbMonths,
     };
     return this.kernel.call<SimulateOnPasGeoParams>(simulateOnPastGeoSignature, simulateOnPasGeoParams, {
       call: {
