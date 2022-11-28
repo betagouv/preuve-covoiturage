@@ -1,12 +1,14 @@
-import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
-import { ValidatorMiddleware, ValidatorExtension } from '@pdc/provider-validator';
+import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
+import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
+import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
-import { GeoProvider } from '@pdc/provider-geo';
-import { StatsAction } from './actions/StatsAction';
+import { binding as statsBinding } from './shared/observatory/stats.schema';
+
 import { config } from './config';
+import { StatsAction } from './actions/StatsAction';
+import { ObservatoryRepositoryProvider } from './providers/ObservatoryRepositoryProvider';
 
 
 
@@ -14,8 +16,8 @@ import { config } from './config';
 @serviceProvider({
   config,
   commands: [],
-  providers: [ GeoProvider],
-  validator: [],
+  providers: [ObservatoryRepositoryProvider],
+  validator: [statsBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [RedisConnection, 'connections.redis'],

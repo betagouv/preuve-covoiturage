@@ -13,25 +13,20 @@ type StatsResponseRow = {
   total: number;
 };
 
-export interface HonorRepositoryInterface {
+export interface ObservatoryRepositoryInterface {
   stats(params: StatsParamsInterface): Promise<StatsResultInterface>;
-  save(type: string): Promise<void>;
 }
 
-export abstract class HonorRepositoryInterfaceResolver implements HonorRepositoryInterface {
+export abstract class ObservatoryRepositoryInterfaceResolver implements ObservatoryRepositoryInterface {
   async stats(params: StatsParamsInterface): Promise<StatsResultInterface> {
-    throw new Error('Method not implemented.');
-  }
-
-  async save(type: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }
 
 @provider({
-  identifier: HonorRepositoryInterfaceResolver,
+  identifier: ObservatoryRepositoryInterfaceResolver,
 })
-export class HonorRepositoryProvider implements HonorRepositoryInterface {
+export class ObservatoryRepositoryProvider implements ObservatoryRepositoryInterface {
   private readonly table = 'honor.tracking';
 
   constructor(private pg: PostgresConnection) {}
@@ -54,13 +49,6 @@ export class HonorRepositoryProvider implements HonorRepositoryInterface {
     });
 
     return this.statsConvert(response.rowCount ? response.rows : []);
-  }
-
-  async save(type: string): Promise<void> {
-    await this.pg.getClient().query({
-      text: 'INSERT INTO honor.tracking (type) VALUES ($1);',
-      values: [type],
-    });
   }
 
   /**

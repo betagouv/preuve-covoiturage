@@ -23,7 +23,7 @@ export interface ParamsInterface {
 }
 
 export const handlerConfig = {
-  service: 'honor',
+  service: 'observatory',
   method: 'stats',
 };
 
