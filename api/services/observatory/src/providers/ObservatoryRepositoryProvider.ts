@@ -7,12 +7,6 @@ import {
   ResultInterface as StatsResultInterface,
 } from '../shared/observatory/stats.contract';
 
-type StatsResponseRow = {
-  day: string | null;
-  type: 'public' | 'limited' | null;
-  total: number;
-};
-
 export interface ObservatoryRepositoryInterface {
   stats(params: StatsParamsInterface): Promise<StatsResultInterface>;
 }
@@ -27,65 +21,24 @@ export abstract class ObservatoryRepositoryInterfaceResolver implements Observat
   identifier: ObservatoryRepositoryInterfaceResolver,
 })
 export class ObservatoryRepositoryProvider implements ObservatoryRepositoryInterface {
-  private readonly table = 'honor.tracking';
+  private readonly table = 'geo.perimeters';
 
   constructor(private pg: PostgresConnection) {}
 
   async stats(params: StatsParamsInterface): Promise<StatsResultInterface> {
-    // substring from 11 for days
-    // substring from 8 for months
-    // TODO switch from days to months when we have enough data (starts 10/2020)
-    const response: { rowCount: number; rows: StatsResponseRow[] } = await this.pg.getClient().query({
+    let dataset:StatsResultInterface = {
+      data:[]
+    };
+    const response: { rowCount: number; rows: DataSetInterface[] } = await this.pg.getClient().query({
       text: `
         SELECT
-          to_char(journey_start_datetime::date, 'yyyy-mm-dd') as day
-          type,
-          SUM(1)::int as total
+          distinct l_arr
         FROM ${this.table}
-        GROUP BY day, type
-        ORDER BY day, type
+        WHERE year = 2022
       `,
-      values: [params.tz || 'Europe/Paris'],
+      values: [],
     });
-
-    return this.statsConvert(response.rowCount ? response.rows : []);
-  }
-
-  /**
-   * Convert the group by PostgreSQL response to a time series compatible with
-   * ChartJS library
-   */
-  private statsConvert(rows: StatsResponseRow[]): StatsResultInterface {
-    const count: { total: number; public: number; limited: number } = { total: 0, public: 0, limited: 0 };
-    const labels: string[] = [];
-    const datasets: DataSetInterface[] = [
-      {
-        label: 'Public',
-        data: [],
-      },
-      {
-        label: 'Limited',
-        data: [],
-      },
-    ];
-
-    rows.forEach((row: StatsResponseRow) => {
-      // create a new day in labels and init counts to 0
-      if (labels.indexOf(row.day) === -1) {
-        labels.push(row.day);
-        datasets[0].data[labels.length - 1] = 0;
-        datasets[1].data[labels.length - 1] = 0;
-      }
-
-      // set the public/limited values if exists
-      const idx = labels.indexOf(row.day);
-      datasets[row.type === 'public' ? 0 : 1].data[idx] = row.total;
-      count[row.type] += row.total;
-    });
-
-    // set grand total
-    count.total = count.public + count.limited;
-
-    return { labels, datasets, count };
+    dataset.data = response.rows;
+    return dataset;
   }
 }

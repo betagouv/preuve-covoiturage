@@ -16,6 +16,7 @@ import { bootstrap as policyBootstrap } from '@pdc/service-policy';
 import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
+import { bootstrap as observatoryBootstrap } from '@pdc/service-observatory';
 import { StatsRefreshCommand } from './commands/StatsRefreshCommand';
 import { SeedCommand } from './commands/SeedCommand';
 import { config } from './config';
@@ -36,6 +37,7 @@ import { config } from './config';
     ...certificateBootstrap.serviceProviders,
     ...monitoringBootstrap.serviceProviders,
     ...honorBootstrap.serviceProviders,
+    ...observatoryBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [SeedCommand, StatsRefreshCommand, Commands.CallCommand],

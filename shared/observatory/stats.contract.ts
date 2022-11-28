@@ -1,21 +1,11 @@
-export interface HonorStatInterface {
-  type: 'public' | 'limited';
-  count: number;
-}
+
 
 export interface DataSetInterface {
-  label: string;
-  data: number[];
+  l_arr: string | null;
 }
 
 export interface ResultInterface {
-  labels: string[];
-  datasets: DataSetInterface[];
-  count: {
-    total: number;
-    public: number;
-    limited: number;
-  };
+  data: DataSetInterface[];
 }
 
 export interface ParamsInterface {
