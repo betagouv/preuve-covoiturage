@@ -1,4 +1,4 @@
-import { ContextType, handler, UnauthorizedException } from '@ilos/common';
+import { ContextType, handler } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/cee/importApplication.contract';
@@ -7,6 +7,7 @@ import { alias } from '../shared/cee/importApplication.schema';
 
 import { CeeRepositoryProviderInterfaceResolver } from '../interfaces';
 import { ServiceDisabledError } from '../errors/ServiceDisabledError';
+import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
 
 @handler({
   ...handlerConfig,
@@ -22,11 +23,7 @@ export class ImportCeeAction extends AbstractAction {
       throw new ServiceDisabledError();
     }
 
-    const { operator_id }: { operator_id: number } = context.call?.user;
-
-    if (!operator_id || Number.isNaN(operator_id)) {
-      throw new UnauthorizedException();
-    }
+    const operator_id = getOperatorIdOrFail(context);
 
     const result: ResultInterface = {
       imported: 0,
