@@ -1,16 +1,15 @@
 CREATE SCHEMA IF NOT EXISTS cee;
 
 CREATE TYPE cee.journey_type_enum AS enum('short', 'long');
-CREATE TYPE cee.application_type_enum AS enum('specific', '2022');
 
 CREATE TABLE IF NOT EXISTS cee.cee_applications (
-  _id uuid PRIMARY KEY DEFAULT uuid_generate_v1mc(),
+  _id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   operator_id INT NOT NULL REFERENCES operator.operators,
   journey_type cee.journey_type_enum NOT NULL,
   is_specific BOOLEAN NOT NULL DEFAULT false,
-  last_name_trunc VARCHAR(4) NOT NULL,
+  last_name_trunc VARCHAR(3) NOT NULL,
   phone_trunc VARCHAR(32) NOT NULL,
   datetime TIMESTAMP NOT NULL,
   carpool_id INT REFERENCES carpool.carpools,
