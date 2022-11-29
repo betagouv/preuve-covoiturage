@@ -8,6 +8,7 @@ export const validJourneyConstraint: ValidJourneyConstraint = {
   geo_pattern: '99%',
 };
 
+// Le temps exprimé en année à partir duquel une nouvelle demande peut être réalisée
 export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
   short: {
     specific: 3,
