@@ -10,6 +10,7 @@ import {
   CeeJourneyTypeEnum,
   CeeRepositoryProviderInterfaceResolver,
 } from '../interfaces';
+import { ServiceDisabledError } from '../errors/ServiceDisabledError';
 
 @handler({
   ...handlerConfig,
@@ -25,7 +26,7 @@ export class SimulateCeeAction extends AbstractAction {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     if (!!env('APP_DISABLE_CEE_IMPORT', false)) {
-      return;
+      throw new ServiceDisabledError();
     }
 
     const { operator_id }: { operator_id: number } = context.call?.user;

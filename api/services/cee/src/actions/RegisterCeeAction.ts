@@ -12,6 +12,7 @@ import {
   TimeRangeConstraint,
   ValidJourneyConstraint,
 } from '../interfaces';
+import { ServiceDisabledError } from '../errors/ServiceDisabledError';
 
 @handler({
   ...handlerConfig,
@@ -27,7 +28,7 @@ export class RegisterCeeAction extends AbstractAction {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     if (!!env('APP_DISABLE_CEE_REGISTER', false)) {
-      return;
+      throw new ServiceDisabledError();
     }
 
     const { operator_id }: { operator_id: number } = context.call?.user;

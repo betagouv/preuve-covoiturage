@@ -6,6 +6,7 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/cee/i
 import { alias } from '../shared/cee/importApplication.schema';
 
 import { CeeRepositoryProviderInterfaceResolver } from '../interfaces';
+import { ServiceDisabledError } from '../errors/ServiceDisabledError';
 
 @handler({
   ...handlerConfig,
@@ -18,7 +19,7 @@ export class ImportCeeAction extends AbstractAction {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     if (!!env('APP_DISABLE_CEE_IMPORT', false)) {
-      return;
+      throw new ServiceDisabledError();
     }
 
     const { operator_id }: { operator_id: number } = context.call?.user;
