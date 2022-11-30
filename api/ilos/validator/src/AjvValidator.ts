@@ -23,6 +23,7 @@ export class AjvValidator implements ValidatorInterface {
       useDefaults: true,
       coerceTypes: false,
       ...this.config.get('ajv.config', {}),
+      allErrors: true, // for all errors for ajv errors plugin
     };
 
     this.ajv = new ajv.default(ajvConfig);
