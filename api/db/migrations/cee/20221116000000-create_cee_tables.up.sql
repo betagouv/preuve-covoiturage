@@ -32,3 +32,4 @@ CREATE INDEX IF NOT EXISTS cee_identity_idx ON cee.cee_applications(phone_trunc,
 CREATE INDEX IF NOT EXISTS cee_datetime_idx ON cee.cee_applications(datetime);
 CREATE INDEX IF NOT EXISTS cee_license_idx ON cee.cee_applications(driving_license);
 CREATE INDEX IF NOT EXISTS cee_atype_idx ON cee.cee_applications(is_specific);
+CREATE UNIQUE INDEX IF NOT EXISTS cee_operator_id_journey_type_is_specific_uniqueness ON cee.cee_applications(operator_id, journey_type, last_name_trunc, phone_trunc) WHERE (is_specific = true);
