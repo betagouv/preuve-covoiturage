@@ -89,4 +89,7 @@ function makeCarpoolsFromAcquisition(acquisition_id: number, data: Partial<Carpo
   ];
 }
 
-export const carpools: Carpool[] = [...makeCarpoolsFromAcquisition(1, { datetime: new Date('2022-06-15') })];
+export const carpools: Carpool[] = [
+  ...makeCarpoolsFromAcquisition(1, { datetime: new Date('2022-06-15') }),
+  ...makeCarpoolsFromAcquisition(2, { datetime: new Date('2022-06-16') }),
+];

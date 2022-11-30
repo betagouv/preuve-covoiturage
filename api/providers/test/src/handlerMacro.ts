@@ -75,7 +75,7 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
       if (typeof response === 'function') {
         await response(result, t);
       } else {
-        t.deepEqual(result, response as Awaited<ActionResult>);
+        t.like(result, response as Awaited<ActionResult>);
       }
     },
     title(providedTitle = '', params, response, currentContext) {

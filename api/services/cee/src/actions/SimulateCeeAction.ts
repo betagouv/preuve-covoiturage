@@ -12,6 +12,7 @@ import {
 } from '../interfaces';
 import { ServiceDisabledError } from '../errors/ServiceDisabledError';
 import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
+import { ConflictException } from '@ilos/common';
 
 @handler({
   ...handlerConfig,
@@ -40,16 +41,15 @@ export class SimulateCeeAction extends AbstractAction {
     if (!data) {
       return;
     }
-    // TODO : error handling
     if (data.operator_id === operator_id) {
-      return {
+      throw new ConflictException({
         uuid: data._id,
         datetime: data.datetime.toISOString(),
-      };
+      });
     } else {
-      return {
+      throw new ConflictException({
         datetime: data.datetime.toISOString(),
-      };
+      });
     }
   }
 }

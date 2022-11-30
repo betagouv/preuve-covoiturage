@@ -62,8 +62,8 @@ export interface ApplicationCooldownConstraint {
 }
 
 export interface TimeRangeConstraint {
-  short: (d: Date) => boolean;
-  long: (d: Date) => boolean;
+  short: number;
+  long: number;
 }
 
 export abstract class CeeRepositoryProviderInterfaceResolver {

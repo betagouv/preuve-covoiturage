@@ -1,41 +1,70 @@
 import {
+  ceeJourneyTypeEnumSchema,
   drivingLicenseSchema,
   lastNameTruncSchema,
   operatorJourneyIdSchema,
   phoneTruncSchema,
+  timestampSchema,
 } from './common/ceeSchema';
 
 export const alias = 'campaign.registerCeeApplication';
 export const schema = {
-  oneOf: [
+  allOf: [
     {
       type: 'object',
-      additionalProperties: false,
-      required: ['journey_type', 'driving_license', 'last_name_trunc', 'phone_trunc'],
+      required: ['journey_type', 'driving_license', 'last_name_trunc'],
       properties: {
-        journey_type: {
-          type: 'string',
-          enum: ['long'],
-        },
+        journey_type: ceeJourneyTypeEnumSchema,
         driving_license: drivingLicenseSchema,
         last_name_trunc: lastNameTruncSchema,
-        phone_trunc: phoneTruncSchema,
       },
     },
     {
-      type: 'object',
-      additionalProperties: false,
-      required: ['journey_type', 'driving_license', 'last_name_trunc', 'operator_journey_id'],
-      properties: {
-        journey_type: {
-          type: 'string',
-          enum: ['short'],
+      if: {
+        type: 'object',
+        required: ['journey_type'],
+        properties: {
+          journey_type: {
+            const: 'long',
+          },
         },
-        driving_license: drivingLicenseSchema,
-        last_name_trunc: lastNameTruncSchema,
-        operator_journey_id: operatorJourneyIdSchema,
+      },
+      then: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['journey_type', 'driving_license', 'last_name_trunc', 'datetime', 'phone_trunc'],
+        properties: {
+          journey_type: {},
+          driving_license: {},
+          last_name_trunc: {},
+          phone_trunc: phoneTruncSchema,
+          datetime: timestampSchema,
+        },
+      },
+    },
+    {
+      if: {
+        type: 'object',
+        required: ['journey_type'],
+        properties: {
+          journey_type: {
+            const: 'short',
+          },
+        },
+      },
+      then: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['journey_type', 'driving_license', 'last_name_trunc', 'operator_journey_id'],
+        properties: {
+          journey_type: {},
+          driving_license: {},
+          last_name_trunc: {},
+          operator_journey_id: operatorJourneyIdSchema,
+        },
       },
     },
   ],
 };
+
 export const binding = [alias, schema];

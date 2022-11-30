@@ -48,7 +48,9 @@ export const drivingLicenseSchema = {
 };
 
 export const timestampSchema = {
-  cast: 'isodate',
+  type: 'string',
+  format: 'date-time',
+  maxLength: 64,
   errorMessage: 'must be a valid is ISO 8601 UTC date',
 };
 
@@ -58,6 +60,7 @@ export const journeyIdSchema = {
 
 export const operatorJourneyIdSchema = {
   macro: 'varchar',
+  errorMessage: 'must be a valid operator journey id',
 };
 
 export const statusSchema = {

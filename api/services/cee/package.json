@@ -28,7 +28,8 @@
     "@ilos/framework": "~0",
     "@pdc/helper-test": "~0",
     "@pdc/provider-middleware": "~0",
-    "@pdc/provider-validator": "~0"
+    "@pdc/provider-validator": "~0",
+    "date-fns": "^2.24.0"
   },
   "devDependencies": {
     "@types/uuid": "^8.3.1"

@@ -8,6 +8,8 @@ import { alias } from '../shared/cee/importApplication.schema';
 import { CeeRepositoryProviderInterfaceResolver } from '../interfaces';
 import { ServiceDisabledError } from '../errors/ServiceDisabledError';
 import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
+import { getDateOrFail } from '../helpers/getDateOrFail';
+import { timestampSchema } from '../shared/cee/common/ceeSchema';
 
 @handler({
   ...handlerConfig,
@@ -24,6 +26,10 @@ export class ImportCeeAction extends AbstractAction {
     }
 
     const operator_id = getOperatorIdOrFail(context);
+    const data = params.map((d, i) => ({
+      ...d,
+      datetime: getDateOrFail(d.datetime, `data/${i}/datetime ${timestampSchema.errorMessage}`),
+    }));
 
     const result: ResultInterface = {
       imported: 0,
@@ -31,7 +37,7 @@ export class ImportCeeAction extends AbstractAction {
       failed_details: [],
     };
 
-    for (const application of params) {
+    for (const application of data) {
       try {
         await this.ceeRepository.importApplication({ ...application, operator_id });
         result.imported += 1;

@@ -1,3 +1,5 @@
+import { NotFoundException } from '@ilos/common';
+import { ConflictException } from '@ilos/common';
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import {
@@ -128,7 +130,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
 
     const result = await this.connection.getClient().query<ValidJourney>(query);
     if (!result.rows.length) {
-      throw new Error();
+      throw new NotFoundException(`${query.text} ${query.values.join(', ')}`);
     }
     return result.rows[0];
   }
@@ -204,7 +206,8 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     query.text = `${query.text} RETURNING _id`;
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
-      throw new Error();
+      // s'il n'y a pas eu d'enregistrement c'est qu'un autre est déjà actif
+      throw new ConflictException();
     }
     return result.rows[0]?._id;
   }

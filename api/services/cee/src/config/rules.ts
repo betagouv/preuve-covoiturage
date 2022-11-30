@@ -22,10 +22,6 @@ export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
 
 // TODO : configure
 export const timeRangeConstraint: TimeRangeConstraint = {
-  short: (d: Date) => {
-    return true;
-  },
-  long: (d: Date) => {
-    return true;
-  },
+  short: 7,
+  long: 7,
 };
