@@ -12,6 +12,7 @@ import { CreateTerritoryGroupInterface, TerritorySelectorsInterface, territory_g
 import { User, users } from './users';
 export class Migrator {
   public connection: PostgresConnection;
+  public currentConnectionString: string;
   public config: {
     driver: string;
     user: string;
@@ -37,6 +38,11 @@ export class Migrator {
     };
     this.dbIsCreated = newDatabase;
     this.dbName = newDatabase ? `test_${Date.now().valueOf()}` : dbUrl.pathname.replace('/', '');
+    const currentConnection = new URL(dbUrlString);
+    if (newDatabase) {
+      currentConnection.pathname = `/${this.dbName}`;
+    }
+    this.currentConnectionString = currentConnection.toString();
   }
 
   async up() {
