@@ -15,6 +15,6 @@ export const schema = {
       phone_trunc: phoneTruncSchema,
       datetime: timestampSchema,
     },
-  }
+  },
 };
 export const binding = [alias, schema];

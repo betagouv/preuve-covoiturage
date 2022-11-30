@@ -102,8 +102,9 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
           : params;
 
       const kernel = t.context.kernel;
-      const err = await t.throwsAsync<ActionError>(async () =>
-        await kernel.call<ActionParams>(`${handlerConfig.service}:${handlerConfig.method}`, finalParams, context),
+      const err = await t.throwsAsync<ActionError>(
+        async () =>
+          await kernel.call<ActionParams>(`${handlerConfig.service}:${handlerConfig.method}`, finalParams, context),
       );
       t.log(err.message);
       if (typeof message === 'function') {

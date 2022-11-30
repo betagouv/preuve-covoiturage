@@ -9,7 +9,7 @@ test('converts date full ISO', (t) => {
 
 test('converts date Y-m-d', (t) => {
   t.is(dateCast()('2019-01-01').toISOString(), new Date('2019-01-01').toISOString());
-  t.throws(() => dateCast(true)('2019-01-01').toISOString(), { instanceOf: Error}, 'Invalid Date');
+  t.throws(() => dateCast(true)('2019-01-01').toISOString(), { instanceOf: Error }, 'Invalid Date');
 });
 
 test('fails string', (t) => {

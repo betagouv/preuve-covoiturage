@@ -9,7 +9,7 @@ export class PostgresConnection implements ConnectionInterface<Pool> {
   protected pool: Pool;
 
   constructor(protected config: PoolConfig) {
-    this.pgUrl = config.connectionString || env('APP_POSTGRES_URL') as string;
+    this.pgUrl = config.connectionString || (env('APP_POSTGRES_URL') as string);
     const timeout = parseInt(env('APP_POSTGRES_TIMEOUT', '60000') as string, 10);
 
     this.pool = new Pool({
