@@ -1,10 +1,12 @@
 export const ceeJourneyTypeEnumSchema = {
   type: 'string',
   enum: ['short', 'long'],
+  errorMessage: 'must be either short or long',
 };
 
 export const phoneTruncSchema = {
   macro: 'phonetrunc',
+  errorMessage: 'must be a valid trunced phone number',
 };
 
 export const lastNameTruncSchema = {
@@ -12,10 +14,11 @@ export const lastNameTruncSchema = {
   minLength: 3,
   maxLength: 3,
   pattern: '^[A-Z ]{3}$',
+  errorMessage: 'must be 3 caps characters long string',
 };
 
 export const drivingLicenseSchema = {
-  oneOf: [
+  anyOf: [
     {
       type: 'string',
       description: 'Numéro de permis de conduire composé de 12 chiffres après 1975.',
@@ -41,10 +44,12 @@ export const drivingLicenseSchema = {
       maxLength: 64,
     },
   ],
+  errorMessage: 'must be a valid driving license id',
 };
 
 export const timestampSchema = {
   cast: 'isodate',
+  errorMessage: 'must be a valid is ISO 8601 UTC date',
 };
 
 export const journeyIdSchema = {

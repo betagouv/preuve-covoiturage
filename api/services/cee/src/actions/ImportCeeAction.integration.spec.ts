@@ -4,6 +4,12 @@ import { ServiceProvider } from '../ServiceProvider';
 import { ParamsInterface, ResultInterface, handlerConfig } from '../shared/cee/importApplication.contract';
 import { config } from '../config';
 import { ContextType } from '@ilos/common';
+import {
+  ceeJourneyTypeEnumSchema,
+  lastNameTruncSchema,
+  phoneTruncSchema,
+  timestampSchema,
+} from '../shared/cee/common/ceeSchema';
 
 const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
   ServiceProvider,
@@ -55,11 +61,7 @@ test.serial(
   [{ ...defaultPayload, last_name_trunc: 'abcd' }],
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(
-      e.rpcError?.data,
-      // eslint-disable-next-line max-len
-      'data/0/last_name_trunc must NOT have more than 3 characters, data/0/last_name_trunc must match pattern "^[A-Z ]{3}$"',
-    );
+    t.is(e.rpcError?.data, `data/0/last_name_trunc ${lastNameTruncSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -69,7 +71,7 @@ test.serial(
   [{ ...defaultPayload, journey_type: 'bip' }],
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, 'data/0/journey_type must be equal to one of the allowed values');
+    t.is(e.rpcError?.data, `data/0/journey_type ${ceeJourneyTypeEnumSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -79,7 +81,7 @@ test.serial(
   [{ ...defaultPayload, datetime: 'bip' }],
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, 'data/0/datetime must pass "cast" keyword validation');
+    t.is(e.rpcError?.data, `data/0/datetime ${timestampSchema.errorMessage}`);
   },
   defaultContext,
 );
@@ -89,11 +91,7 @@ test.serial(
   [{ ...defaultPayload, phone_trunc: 'bip' }],
   (e: any, t) => {
     t.is(e.message, 'Invalid params');
-    t.is(
-      e.rpcError?.data,
-      // eslint-disable-next-line max-len
-      'data/0/phone_trunc must NOT have fewer than 8 characters, data/0/phone_trunc must match format "phonetrunc", data/0/phone_trunc must pass "macro" keyword validation',
-    );
+    t.is(e.rpcError?.data, `data/0/phone_trunc ${phoneTruncSchema.errorMessage}`);
   },
   defaultContext,
 );
