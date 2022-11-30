@@ -1,12 +1,21 @@
-export function dateCast(data: string | number | Date): Date {
-  if (!data) {
-    throw new Error('Invalid Date');
-  }
+export function dateCast(iso: boolean = false): (data: string | number | Date) => Date {
+  return (data: string | number | Date): Date => {
+    if (
+      !data ||
+      (
+        iso &&
+        !/^\d\d\d\d-[0-1]\d-[0-3]\dt(?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)$/i.test(data.toString())
+      )
+    ) {
+      throw new Error('Invalid Date format');
+    }
 
-  const d: Date = new Date(data);
-  if (d.toString() === 'Invalid Date') {
-    throw new Error('Invalid Date');
-  }
+    const d: Date = new Date(data);
+    if (d.toString() === 'Invalid Date') {
+      throw new Error('Invalid Date');
+    }
 
-  return d;
+    return d;
+
+  }
 }
