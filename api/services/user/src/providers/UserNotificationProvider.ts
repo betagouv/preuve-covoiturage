@@ -14,8 +14,10 @@ import {
   ExportCSVNotification,
   ForgottenPasswordNotification,
   InviteNotification,
+  SimulatePolicyNotification,
 } from '../notifications';
 import { ParamsInterface as SimulationPolicyParamsInterface } from '../shared/user/simulatePolicyform.contract';
+import { ResultInterface as SimulateOnPastResult } from '../shared/policy/simulateOnPastGeo.contract';
 
 import { ParamsInterface as SendMailParamsInterface } from '../shared/user/notify.contract';
 
@@ -45,6 +47,7 @@ export class UserNotificationProvider {
       ExportCSVNotification: ExportCSVNotification,
       ForgottenPasswordNotification: ForgottenPasswordNotification,
       InviteNotification: InviteNotification,
+      SimulatePolicyNotification: SimulatePolicyNotification,
     }),
   );
 
@@ -169,7 +172,24 @@ link:  ${link}
     });
   }
 
-  async simulationEmail(formParams: SimulationPolicyParamsInterface, simulationResult): Promise<void> {}
+  async simulationEmail(
+    formParams: SimulationPolicyParamsInterface,
+    simulationResult: { [key: number]: SimulateOnPastResult },
+  ): Promise<void> {
+    const template = 'SimulatePolicyNotification';
+    this.log('SimulatePolicyNotification form', formParams.email, null, null);
+    await this.queueEmail({
+      template,
+      to: this.getTo(formParams.email, `${formParams.firstname} ${formParams.name}`),
+      data: {
+        // simulation_form_email: formParams.email,
+        // simulation_form_fullname: `${formParams.firstname} ${formParams.name}`,
+        // simulation_form_job: formParams.job,
+        simulation_form_simulation_param: formParams.simulation,
+        simulation_form_simulation_result: simulationResult,
+      },
+    });
+  }
 
   /**
    * Send contactForm notification

@@ -3,9 +3,8 @@ import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';
 import {
-  SimulateOnPasGeoRequiredParams,
-  ResultInterface as SimulateOnPastResult,
   signature as simulateOnPastGeoSignature,
+  SimulateOnPasGeoRequiredParams,
 } from '../shared/policy/simulateOnPastGeo.contract';
 import { ParamsInterface } from '../shared/user/simulatePolicyform.contract';
 import { SimulatePolicyformAction } from './SimulatePolicyformAction';
