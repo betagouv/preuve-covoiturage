@@ -1,5 +1,5 @@
-export const simulatePolicyform = {
-  $id: 'user.simulatePolicyform',
+export const sendSimulationEmail = {
+  $id: 'user.sendSimulationEmail',
   type: 'object',
   required: ['email', 'name', 'firstname', 'job', 'simulation'],
   additionalProperties: false,
@@ -20,4 +20,4 @@ export const simulatePolicyform = {
   },
 };
 
-export const alias = simulatePolicyform.$id;
+export const alias = sendSimulationEmail.$id;
