@@ -27,8 +27,8 @@ const defaultData: Partial<DefaultTemplateData> = {
   Récapitulatif de la demande :
 </p>
 <ul>
-  <li>Territoire sélectionné : [nom du territoire]</li>
-  <li>Scénario de campagne sélectionné : [titre du scénario]</li>
+  <li>Territoire sélectionné : {{ formParams.simulation.territory_name }} </li>
+  <li>Scénario de campagne sélectionné :  {{ formParams.simulation.policy_template_id }} </li>
   <li>Rappel des paramètres de la campagne :</li>
   <li>TODO</li>
 </ul>
@@ -41,22 +41,22 @@ const defaultData: Partial<DefaultTemplateData> = {
   <li>
     Simulation pour 1 mois :
     <ul>
-      <li> Volume de trajets incités : [nbre de trajets]</li>
-      <li> Montant incités distribués : [montant en €] €</li>
+      <li> Volume de trajets incités : {{ simulation_result_one_month_trip_subsidized }}</li>
+      <li> Montant incités distribués : {{ simulation_result_one_month_amount }} €</li>
     </ul>
   </li>
   <li>
     Simulation pour 3 mois :
     <ul>
-      <li> Volume de trajets incités : [nbre de trajets]</li>
-      <li> Montant incités distribués : [montant en €] €</li>
+      <li> Volume de trajets incités :{{ simulation_result_three_months_trip_subsidized }} </li>
+      <li> Montant incités distribués : {{ simulation_result_three_months_amount }} €</li>
     </ul>
   </li>
   <li>
     Simulation pour 6 mois :
     <ul>
-      <li> Volume de trajets incités : [nbre de trajets]</li>
-      <li> Montant incités distribués : [montant en €] €</li>
+      <li> Volume de trajets incités : {{ simulation_result_six_months_trip_subsidized }} </li>
+      <li> Montant incités distribués : {{ simulation_result_six_months_amount }} €</li>
     </ul>
   </li>
 </ul>
