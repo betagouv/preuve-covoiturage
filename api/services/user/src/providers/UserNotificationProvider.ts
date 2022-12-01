@@ -180,13 +180,23 @@ link:  ${link}
     this.log('SimulatePolicyNotification form', formParams.email, null, null);
     await this.queueEmail({
       template,
-      to: this.getTo(formParams.email, `${formParams.firstname} ${formParams.name}`),
+      to: `${this.getTo(formParams.email, `${formParams.firstname} ${formParams.name}`)}, ${this.config.get(
+        'contactform.to',
+      )}`,
       data: {
         // simulation_form_email: formParams.email,
         // simulation_form_fullname: `${formParams.firstname} ${formParams.name}`,
         // simulation_form_job: formParams.job,
         simulation_form_simulation_param: formParams.simulation,
-        simulation_form_simulation_result: simulationResult,
+
+        simulation_result_one_month_trip_subsidized: simulationResult['1'].trip_subsidized,
+        simulation_result_one_month_amount: simulationResult['1'].amount,
+
+        simulation_result_three_months_trip_subsidized: simulationResult['3'].trip_subsidized,
+        simulation_result_three_months_amount: simulationResult['3'].amount,
+
+        simulation_result_six_months_trip_subsidized: simulationResult['6'].trip_subsidized,
+        simulation_result_six_months_amount: simulationResult['6'].amount,
       },
     });
   }
