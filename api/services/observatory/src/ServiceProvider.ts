@@ -4,26 +4,23 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
-import { binding as statsBinding } from './shared/observatory/stats.schema';
+import { binding as statsBinding } from './shared/observatory/monthlyFlux.schema';
 
 import { config } from './config';
-import { StatsAction } from './actions/StatsAction';
-import { ObservatoryRepositoryProvider } from './providers/ObservatoryRepositoryProvider';
-
-
-
+import { MonthlyFluxAction } from './actions/MonthlyFluxAction';
+import { FluxRepositoryProvider } from './providers/FluxRepositoryProvider';
 
 @serviceProvider({
   config,
   commands: [],
-  providers: [ObservatoryRepositoryProvider],
+  providers: [FluxRepositoryProvider],
   validator: [statsBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [StatsAction],
+  handlers: [MonthlyFluxAction],
   queues: ['observatory'],
 })
 export class ServiceProvider extends AbstractServiceProvider {

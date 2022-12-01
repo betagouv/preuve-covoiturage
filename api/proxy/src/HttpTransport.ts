@@ -43,6 +43,7 @@ import {
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
 } from './shared/territory/getAuthorizedCodes.contract';
+import { monthlyFluxRoute } from './routes/observatory';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -548,16 +549,7 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerObservatoryRoutes() {
-    this.app.get(
-      '/observatory',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:stats', {}, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
+    monthlyFluxRoute(this.app,this.kernel);
   }
 
   private registerUptimeRoute() {
