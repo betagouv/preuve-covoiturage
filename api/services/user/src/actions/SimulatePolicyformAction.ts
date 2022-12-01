@@ -1,4 +1,4 @@
-import { SimulateOnPasGeoRequiredParams } from './../../../../../shared/policy/simulateOnPastGeo.contract';
+import { SimulateOnPasGeoRequiredParams } from '../shared/policy/simulateOnPastGeo.contract';
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
