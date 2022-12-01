@@ -23,7 +23,10 @@ export const description = `<p id="summary">
     <li><b>Le 10/11/2022</b></li>
   </ul>
   <p>
-  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe <b>B ou C</b>.
+  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe C</b>.
+  <p>
+  Les trajets de classe B ne sont plus éligibles depuis 01/09/2022
+  </p>
   </p>
   <p>Les axes suivants ne sont pas incités : </p>
   <ul>
