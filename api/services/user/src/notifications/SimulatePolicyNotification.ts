@@ -193,7 +193,7 @@ export class SimulatePolicyFormTextTemplate extends AbstractTemplate<SimulatePol
   <li>Territoire sélectionné : {{ formParams.simulation.territory_name }} </li>
   <li>Scénario de campagne sélectionné :  {{ formParams.simulation.policy_template_id }} </li>
   <li>Rappel des paramètres de la campagne :</li>
-  <li>TODO</li>
+  {{{ simulation_policy_description_html }}}
 </ul>
 <p>
   Résultat de la simulation :
