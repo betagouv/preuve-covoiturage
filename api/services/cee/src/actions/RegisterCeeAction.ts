@@ -1,3 +1,4 @@
+import { createSign } from 'crypto';
 import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 
@@ -9,6 +10,7 @@ import {
   ApplicationCooldownConstraint,
   CeeJourneyTypeEnum,
   CeeRepositoryProviderInterfaceResolver,
+  RegisteredCeeApplication,
   TimeRangeConstraint,
   ValidJourneyConstraint,
 } from '../interfaces';
@@ -67,13 +69,14 @@ export class RegisterCeeAction extends AbstractAction {
     );
     isBeforeOrFail(carpoolData.datetime, this.timeConstraint.short);
     try {
+      const application = await this.ceeRepository.registerShortApplication(
+        { ...params, ...carpoolData, operator_id },
+        this.cooldownConstraint,
+      );
       return {
-        uuid: await this.ceeRepository.registerShortApplication(
-          { ...params, ...carpoolData, operator_id },
-          this.cooldownConstraint,
-        ),
+        uuid: application.uuid,
         datetime: carpoolData.datetime.toISOString(),
-        token: await this.sign(operator_id, params.journey_type, params.driving_license, carpoolData.datetime),
+        token: await this.sign(application),
         journey_id: carpoolData.acquisition_id,
         status: carpoolData.status,
       };
@@ -106,13 +109,14 @@ export class RegisterCeeAction extends AbstractAction {
     const datetime = getDateOrFail(params.datetime, `data/datetime ${timestampSchema.errorMessage}`);
     isBeforeOrFail(datetime, this.timeConstraint.long);
     try {
+      const application = await this.ceeRepository.registerLongApplication(
+        { ...params, datetime, operator_id },
+        this.cooldownConstraint,
+      );
       return {
-        uuid: await this.ceeRepository.registerLongApplication(
-          { ...params, datetime, operator_id },
-          this.cooldownConstraint,
-        ),
+        uuid: application.uuid,
         datetime: datetime.toISOString(),
-        token: await this.sign(operator_id, params.journey_type, params.driving_license, datetime),
+        token: await this.sign(application),
       };
     } catch (e) {
       if (e instanceof ConflictException) {
@@ -135,12 +139,17 @@ export class RegisterCeeAction extends AbstractAction {
       throw e;
     }
   }
-  public async sign(
-    operator_id: number,
-    journey_type: CeeJourneyTypeEnum,
-    license: string,
-    datetime: Date,
-  ): Promise<string> {
-    return 'TODO';
+  public async sign(application: RegisteredCeeApplication): Promise<string> {
+    const private_key = this.config.get('signature.private_key');
+    const signer = createSign('RSA-SHA512');
+    const data = [
+      application.operator_siret.toString(),
+      application.journey_type.toString(),
+      application.driving_license,
+      application.datetime.toISOString(),
+    ].join('/');
+    signer.write(data);
+    signer.end();
+    return signer.sign(private_key, 'base64');
   }
 }

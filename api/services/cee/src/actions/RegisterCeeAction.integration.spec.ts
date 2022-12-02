@@ -1,4 +1,5 @@
 import anyTest, { TestFn } from 'ava';
+import { createSign } from 'crypto';
 import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 import { ServiceProvider } from '../ServiceProvider';
 import { ParamsInterface, ResultInterface, handlerConfig } from '../shared/cee/registerApplication.contract';
@@ -139,7 +140,15 @@ test.serial(
     datetime: '2022-06-15T00:15:00.000Z',
     journey_id: 1,
     status: 'ok',
-    token: 'TODO',
+    token: (function (): string {
+      const private_key = config.signature.private_key as string;
+      const signer = createSign('RSA-SHA512');
+      signer.write(
+        ['89248032800012', 'short', defaultShortPayload.driving_license, '2022-06-15T00:15:00.000Z'].join('/'),
+      );
+      signer.end();
+      return signer.sign(private_key, 'base64');
+    })(),
   },
   defaultContext,
 );

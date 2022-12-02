@@ -1,10 +1,18 @@
 import { CeeJourneyTypeEnum } from '../shared/cee/common/CeeApplicationInterface';
 export { CeeJourneyTypeEnum };
 
-export interface RegisteredCeeApplication {
+export interface ExistingCeeApplication {
   _id: string;
   operator_id: number;
   datetime: Date;
+}
+
+export interface RegisteredCeeApplication {
+  operator_siret: string;
+  journey_type: CeeJourneyTypeEnum;
+  driving_license?: string;
+  datetime: Date;
+  uuid: string;
 }
 
 export interface ValidJourney {
@@ -71,19 +79,19 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
   abstract searchForShortApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<RegisteredCeeApplication | void>;
+  ): Promise<ExistingCeeApplication | void>;
   abstract searchForLongApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<RegisteredCeeApplication | void>;
+  ): Promise<ExistingCeeApplication | void>;
   abstract searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney>;
   abstract registerShortApplication(
     data: ShortCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<string>;
+  ): Promise<RegisteredCeeApplication>;
   abstract registerLongApplication(
     data: LongCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<string>;
+  ): Promise<RegisteredCeeApplication>;
   abstract importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void>;
 }

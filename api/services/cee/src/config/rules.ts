@@ -20,7 +20,7 @@ export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
   },
 };
 
-// TODO : configure
+// A partir de combien de jour les demandes peuvent être envoyées
 export const timeRangeConstraint: TimeRangeConstraint = {
   short: 7,
   long: 7,

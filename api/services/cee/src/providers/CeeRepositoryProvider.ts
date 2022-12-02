@@ -1,4 +1,4 @@
-import { NotFoundException } from '@ilos/common';
+import { InvalidRequestException, NotFoundException } from '@ilos/common';
 import { ConflictException } from '@ilos/common';
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
@@ -8,12 +8,13 @@ import {
   CeeJourneyTypeEnum,
   CeeRepositoryProviderInterfaceResolver,
   LongCeeApplication,
-  RegisteredCeeApplication,
+  ExistingCeeApplication,
   SearchCeeApplication,
   SearchJourney,
   ShortCeeApplication,
   ValidJourney,
   ValidJourneyConstraint,
+  RegisteredCeeApplication,
 } from '../interfaces';
 
 @provider({
@@ -23,6 +24,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
   public readonly table = 'cee.cee_applications';
   public readonly carpoolTable = 'carpool.carpools';
   public readonly identityTable = 'carpool.identities';
+  public readonly operatorTable = 'operator.operators';
 
   constructor(protected connection: PostgresConnection) {
     super();
@@ -32,7 +34,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     journeyType: CeeJourneyTypeEnum,
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<RegisteredCeeApplication | void> {
+  ): Promise<ExistingCeeApplication | void> {
     const query = {
       text: `
         SELECT
@@ -73,21 +75,21 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         ...(search.driving_license ? [search.driving_license] : []),
       ],
     };
-    const result = await this.connection.getClient().query<RegisteredCeeApplication>(query);
+    const result = await this.connection.getClient().query<ExistingCeeApplication>(query);
     return result.rows[0];
   }
 
   async searchForShortApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<RegisteredCeeApplication | void> {
+  ): Promise<ExistingCeeApplication | void> {
     return await this.searchForApplication(CeeJourneyTypeEnum.Short, search, constraint);
   }
 
   async searchForLongApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<RegisteredCeeApplication | void> {
+  ): Promise<ExistingCeeApplication | void> {
     return await this.searchForApplication(CeeJourneyTypeEnum.Long, search, constraint);
   }
 
@@ -139,7 +141,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     journeyType: CeeJourneyTypeEnum,
     data: ShortCeeApplication | LongCeeApplication | CeeApplication,
     constraint?: ApplicationCooldownConstraint,
-  ): Promise<string> {
+  ): Promise<RegisteredCeeApplication> {
     const fields = [
       ['journey_type', 'cee.journey_type_enum'],
       ['operator_id', 'int'],
@@ -209,17 +211,36 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       // s'il n'y a pas eu d'enregistrement c'est qu'un autre est déjà actif
       throw new ConflictException();
     }
-    return result.rows[0]?._id;
+
+    const siretResult = await this.connection.getClient().query({
+      text: `SELECT siret FROM ${this.operatorTable} WHERE _id = $1`,
+      values: [data.operator_id],
+    });
+
+    if (result.rowCount !== 1) {
+      throw new InvalidRequestException('Operator not found');
+    }
+
+    return {
+      uuid: result.rows[0]?._id,
+      datetime: data.datetime,
+      operator_siret: siretResult.rows[0]?.siret,
+      journey_type: journeyType,
+      driving_license: 'driving_license' in data ? data.driving_license : undefined,
+    };
   }
 
   async registerShortApplication(
     data: ShortCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<string> {
+  ): Promise<RegisteredCeeApplication> {
     return this.registerApplication(CeeJourneyTypeEnum.Short, data, constraint);
   }
 
-  async registerLongApplication(data: LongCeeApplication, constraint: ApplicationCooldownConstraint): Promise<string> {
+  async registerLongApplication(
+    data: LongCeeApplication,
+    constraint: ApplicationCooldownConstraint,
+  ): Promise<RegisteredCeeApplication> {
     return this.registerApplication(CeeJourneyTypeEnum.Long, data, constraint);
   }
 
