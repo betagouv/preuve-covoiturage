@@ -332,7 +332,7 @@ export class HttpTransport implements TransportInterface {
         const response = await this.kernel.handle(
           createRPCPayload(
             'territory:listGeo',
-            { search: req.body.search },
+            { search: req.body.search, exclude_coms: req.body.exclude_coms },
             { permissions: ['common.territory.list'] },
           ),
         );

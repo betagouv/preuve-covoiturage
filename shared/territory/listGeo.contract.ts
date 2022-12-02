@@ -4,6 +4,7 @@ import { TerritoryCodeEnum } from './common/interfaces/TerritoryCodeInterface';
 
 export interface ParamsInterface extends Partial<PaginationParamsInterface> {
   search: string;
+  exclude_coms?: boolean;
   where?: {
     insee?: string[];
   };

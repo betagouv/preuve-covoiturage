@@ -12,6 +12,9 @@ export const schema = {
       minLength: 2,
       maxLength: 256,
     },
+    exclude_coms: {
+      type: 'boolean',
+    },
     where: {
       type: 'object',
       additionalProperties: false,
