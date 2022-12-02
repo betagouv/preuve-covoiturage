@@ -231,7 +231,12 @@ export class HttpTransport implements TransportInterface {
         const response = (await this.kernel.handle(
           createRPCPayload(registerCeeSignature, { ...req.body }, user, { req }),
         )) as RPCResponseType;
-        this.send(res, response);
+
+        if (!response || 'error' in response || !('result' in response)) {
+          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+        } else {
+          res.status(201).json(response.result);
+        }
       }),
     );
 
@@ -248,7 +253,11 @@ export class HttpTransport implements TransportInterface {
         const response = (await this.kernel.handle(
           createRPCPayload(simulateCeeSignature, { ...req.body }, user, { req }),
         )) as RPCResponseType;
-        this.send(res, response);
+        if (!response || 'error' in response || !('result' in response)) {
+          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+        } else {
+          res.status(200).json(response.result);
+        }
       }),
     );
 
@@ -265,7 +274,11 @@ export class HttpTransport implements TransportInterface {
         const response = (await this.kernel.handle(
           createRPCPayload(importCeeSignature, req.body, user, { req }),
         )) as RPCResponseType;
-        this.send(res, response);
+        if (!response || 'error' in response || !('result' in response)) {
+          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+        } else {
+          res.status(201).json(response.result);
+        }
       }),
     );
   }
