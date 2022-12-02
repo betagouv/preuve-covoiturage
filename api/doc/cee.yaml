@@ -1,0 +1,305 @@
+openapi: '3.0.3'
+info:
+  title: API
+  version: '3.0'
+  termsOfService: https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/cgu-conditions-generales-dutilisation
+  contact:
+    name: Équipe technique du registre
+    email: technique@covoiturage.beta.gouv.fr
+  license:
+    name: Licence Apache 2
+    url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/dev/LICENSE
+
+externalDocs:
+  url: https://doc.covoiturage.beta.gouv.fr/
+  description: Documentation générale 
+
+servers:
+  - url: https://api.covoiturage.beta.gouv.fr/v3
+  - url: https://api.demo.covoiturage.beta.gouv.fr/v3
+
+components:
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    driving_license:
+      description: |
+        Numéro de permis de conduire (également appelé code driving_license)
+        cf https://permisdeconduire.ants.gouv.fr/tout-savoir-sur-le-permis/le-numero-de-dossier-sur-un-permis-au-format-carte-bancaire 
+      oneOf:
+        - type: string
+          description: Numéro de permis de conduire composé de 12 chiffres après 1975.
+          example: '051227308989'
+          pattern: /^[0-9]{12}$/
+          minLength: 12
+          maxLength: 12
+        - type: string
+          description: Numéro de permis de conduire composé de 1 à 15 caractères suivis de 4 chiffres avant 1975.
+          example: '822146819'
+          pattern: /^[A-Z0-9]{1,15}[0-9]{4}$/
+          minLength: 5
+          maxLength: 19
+        - type: string
+          description: Numéro de permis étranger préfixé de l'indicatif '99-'.
+          example: '99-X23836'
+          pattern: /^99-.*$/
+          minLength: 4
+          maxLength: 64
+    long_distance_application:
+      type: object
+      additionalProperties: false
+      required:
+        - journey_type
+        - driving_license
+        - last_name_trunc
+        - phone_trunc
+        - datetime
+      properties:
+        journey_type:
+          type: string
+          enum: ['long']
+        driving_license:
+          '$ref': '#/components/schemas/driving_license'
+        last_name_trunc:
+          '$ref': '#/components/schemas/last_name_trunc'
+        phone_trunc:
+          '$ref': '#/components/schemas/phone_trunc'
+        datetime:
+          type: string
+          format: datetime
+          description: Date de partage des frais.
+    short_distance_application:
+      type: object
+      additionalProperties: false
+      required:
+        - journey_type
+        - driving_license
+        - last_name_trunc
+        - operator_journey_id
+      properties:
+        journey_type:
+          type: string
+          enum: ['short']
+        driving_license:
+          '$ref': '#/components/schemas/driving_license'
+        last_name_trunc:
+          '$ref': '#/components/schemas/last_name_trunc'
+        operator_journey_id:
+          '$ref': '#/components/schemas/operator_journey_id'
+    operator_journey_id:
+     type: string
+     description: Identifiant du trajet envoyé par l'opérateur
+     pattern: /^[a-z0-9]{1,256}$/
+     minLength: 1
+     maxLength: 256
+    journey_type:
+      type: string
+      enum: ['short', 'long']
+    phone_trunc:
+      type: string
+      pattern: /^\+[0-9]{8,12}$/
+      minLength: 10
+      maxLength: 14
+      description: Numéro de téléphone au format ITU-T E.164 tronqué des 2 derniers chiffres
+      example: '+336010203'
+    last_name_trunc:
+      type: string
+      pattern: /^[A-Z ]{3}$/
+      minLength: 3
+      maxLength: 3
+      description: Les trois premières lettres du nom de famille. Dans le cas où le nom comporterait moins de 3 lettres, compléter avec des espaces.
+    cee_application_import:
+      type: object
+      description: Précédente demande de CEE
+      additionalProperties: false
+      required:
+        - phone_trunc
+        - last_name_trunc
+        - datetime
+        - journey_type
+      properties:
+        journey_type:
+          '$ref': '#/components/schemas/journey_type'
+        phone_trunc:
+          '$ref': '#/components/schemas/phone_trunc'
+        last_name_trunc:
+          '$ref': '#/components/schemas/last_name_trunc'
+        datetime:
+          type: string
+          format: datetime
+          description: Date d'engagement de l'opération concernée.
+    cee_application_import_response:
+      type: object
+      description: Retour de la requête d'import des demandes CEE en batch
+      additionalProperties: false
+      required:
+        - imported
+        - failed
+        - failed_details
+      properties:
+        imported:
+          type: number
+          minimum: 0
+          maximum: 1000
+          description: Nombre de demandes importées avec succès
+        failed:
+          type: number
+          minimum: 0
+          maximum: 1000
+          description: Nombre de demandes non importées
+        failed_details:
+          type: array
+          minItems: 0
+          maxItems: 1000
+          items:
+            allOf:
+              - '$ref': '#/components/schemas/cee_application_import'
+              - type: object
+                required: 
+                  - error
+                properties:
+                  error:
+                    type: string
+    cee_application:
+      type: object
+      description: Demande de CEE
+      additionalProperties: false
+      required:
+        - datetime
+        - uuid
+        - token
+      properties:
+        datetime:
+          type: number
+        uuid:
+          type: string
+          format: uuid
+          description: UUID V4 de la demande
+        journey_id:
+          type: number
+          description: Numéro de trajet interne au rpc correspondant à l'operator_journey_id envoyé
+        status:
+          type: string
+          description: Statut du trajet correspondant à l'operator_journey_id envoyé.
+        token:
+          type: string
+          description: signature(sha512([SIRET_OPERATEUR]/[journey_type]/[driving_license]//[DATETIME UTC]))
+          example: signature(sha512(13002526500013/short/051227308989/2022-11-22T08:54:19Z))
+paths:
+  /policies/cee:
+    post:
+      tags:
+      - cee
+      summary: Enregistrer une demande CEE
+      description: |
+        *discussion* Sur le retour d'API sur cet appel, nous proposons une signature vérifiable directement par l'opérateur. Si cela n'est pas considéré comme utile, on aura un point d'API supplémentaire pour vérifier la conformité d'une demande via son uuid. 
+      security:
+        - token: []
+      operationId: policy:cee:register
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              oneOf:
+                - '$ref': '#/components/schemas/short_distance_application'
+                - '$ref': '#/components/schemas/long_distance_application'
+      responses:
+        '201':
+          description: Ok, la demande est enregistrée
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/cee_application'
+        '404':
+          description: Le trajet n'a pas été trouvé
+        '409':
+          description: La demande est déjà enregistrée
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  datetime:
+                    type: string
+                    format: datetime
+                    description: Date à laquelle la demande a été effectuée
+                  uuid:
+                    type: string
+                    format: uuid
+                    description: UUID V4 de la demande si la demande a déjà été effectuée par l'opérateur.
+  /policies/cee/simulate:
+    post:
+      tags:
+      - cee
+      summary: Simuler une demande CEE
+      security:
+        - token: []
+      operationId: policy:cee:simulate
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - last_name_trunc
+                - phone_trunc
+                - journey_type
+              properties:
+                driving_license:
+                  '$ref': '#/components/schemas/driving_license'
+                last_name_trunc:
+                  '$ref': '#/components/schemas/last_name_trunc'
+                phone_trunc:
+                  '$ref': '#/components/schemas/phone_trunc'
+                journey_type:
+                  '$ref': '#/components/schemas/journey_type'
+      responses:
+        '200':
+          description: Ok, la demande est possible
+        '409':
+          description: Une demande similaire a déjà été enregistrée
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  datetime:
+                    type: string
+                    format: datetime
+                    description: Date à laquelle la demande a été effectuée
+                  uuid:
+                    type: string
+                    format: uuid
+                    description: UUID V4 de la demande si la demande a déjà été effectuée par l'opérateur.
+  /policies/cee/import:
+    post:
+      tags:
+      - cee
+      summary: Importez des demandes CEE existantes par lot
+      description: |
+        *discussion* À noter que ce point d'API ne sera peut être pas mis en place et remplacé par un CSV standardisé.
+      security:
+        - token: []
+      operationId: policy:cee:import
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: array
+              maxItems: 1000
+              items:
+                '$ref': '#/components/schemas/cee_application_import'
+      responses:
+        '201':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/cee_application_import_response'

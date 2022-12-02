@@ -12,6 +12,7 @@ import { CreateTerritoryGroupInterface, TerritorySelectorsInterface, territory_g
 import { User, users } from './users';
 export class Migrator {
   public connection: PostgresConnection;
+  public currentConnectionString: string;
   public config: {
     driver: string;
     user: string;
@@ -36,7 +37,12 @@ export class Migrator {
       ssl: false,
     };
     this.dbIsCreated = newDatabase;
-    this.dbName = newDatabase ? `test-${Date.now().valueOf()}` : dbUrl.pathname.replace('/', '');
+    this.dbName = newDatabase ? `test_${Date.now().valueOf()}` : dbUrl.pathname.replace('/', '');
+    const currentConnection = new URL(dbUrlString);
+    if (newDatabase) {
+      currentConnection.pathname = `/${this.dbName}`;
+    }
+    this.currentConnectionString = currentConnection.toString();
   }
 
   async up() {
@@ -156,16 +162,22 @@ export class Migrator {
     const result = await this.connection.getClient().query({
       text: `
         INSERT INTO carpool.identities 
-          (uuid, travel_pass_user_id, over_18)
+          (uuid, travel_pass_user_id, over_18, phone_trunc)
         VALUES (
           $1::uuid,
           $2::varchar,
-          $3::boolean
+          $3::boolean,
+          $4::varchar
         )
         ON CONFLICT DO NOTHING
         RETURNING _id
       `,
-      values: [carpool.identity_uuid, carpool.identity_travel_pass, carpool.identity_over_18],
+      values: [
+        carpool.identity_uuid,
+        carpool.identity_travel_pass,
+        carpool.identity_over_18,
+        carpool.identity_phone_trunc,
+      ],
     });
 
     await this.connection.getClient().query({

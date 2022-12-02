@@ -44,6 +44,10 @@ import {
   signature as getAuthorizedCodesSignature,
 } from './shared/territory/getAuthorizedCodes.contract';
 
+import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
+import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
+import { signature as importCeeSignature } from './shared/cee/importApplication.contract';
+
 export class HttpTransport implements TransportInterface {
   app: express.Express;
   config: ConfigInterface;
@@ -91,6 +95,7 @@ export class HttpTransport implements TransportInterface {
     this.registerCertificateRoutes();
     this.registerAcquisitionRoutes();
     this.registerSimulationRoutes();
+    this.registerCeeRoutes();
     this.registerHonorRoutes();
     this.registerUptimeRoute();
     this.registerContactformRoute();
@@ -209,6 +214,59 @@ export class HttpTransport implements TransportInterface {
       '/metrics',
       rateLimiter({ windowMs: 60 * 1000, max: 60 / 15 + 1 }, `rate-metrics-${this.config.get('proxy.hostname')}`),
       prometheusMetricsFactory(),
+    );
+  }
+
+  private registerCeeRoutes(): void {
+    this.app.post(
+      '/v3/policies/cee',
+      acquisitionRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
+        );
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(registerCeeSignature, { ...req.body }, user, { req }),
+        )) as RPCResponseType;
+        this.send(res, response);
+      }),
+    );
+
+    this.app.post(
+      '/v3/policies/cee/simulate',
+      acquisitionRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
+        );
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(simulateCeeSignature, { ...req.body }, user, { req }),
+        )) as RPCResponseType;
+        this.send(res, response);
+      }),
+    );
+
+    this.app.post(
+      '/v3/policies/cee/import',
+      acquisitionRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
+        );
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(importCeeSignature, { ...req.body }, user, { req }),
+        )) as RPCResponseType;
+        this.send(res, response);
+      }),
     );
   }
 
