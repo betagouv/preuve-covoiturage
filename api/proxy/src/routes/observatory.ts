@@ -7,7 +7,7 @@ import { KernelInterface } from '@ilos/common';
 
 export function monthlyFluxRoute(app:Express, kernel:KernelInterface){
   app.get(
-    '/observatory',
+    '/observatory/monthly_flux',
     rateLimiter(),
     asyncHandler(async (req, res, next) => {
       const response = await kernel.handle(
