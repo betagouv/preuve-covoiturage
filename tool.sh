@@ -3,6 +3,19 @@
 set_env() {
   export DC="$(which docker-compose) -p pdce2e -f docker-compose.e2e.yml $1"
   export CERT_DIR="$(pwd)/docker/traefik/certs"
+  export KEY_DIR="$(pwd)/docker/api/certs"
+}
+
+generate_keys() {
+  echo "Generating keys"
+  openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -pkeyopt rsa_keygen_pubexp:3 -out "$KEY_DIR/privateKey.pem"
+  openssl pkey -in "$KEY_DIR/privateKey.pem" -out "$KEY_DIR/publicKey.pem" -pubout
+}
+
+ensure_keys() {
+  if [ ! -f $KEY_DIR/privateKey.pem ]; then
+      generate_keys
+  fi
 }
 
 generate_certs() {
@@ -53,6 +66,7 @@ create_bucket() {
 
 bootstrap() {
   ensure_certs && \
+  ensure_keys && \
   start_services && \
   seed_data && \
   create_bucket local-pdc-export && \
