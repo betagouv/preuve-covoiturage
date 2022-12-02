@@ -263,7 +263,7 @@ export class HttpTransport implements TransportInterface {
         );
 
         const response = (await this.kernel.handle(
-          createRPCPayload(importCeeSignature, { ...req.body }, user, { req }),
+          createRPCPayload(importCeeSignature, req.body, user, { req }),
         )) as RPCResponseType;
         this.send(res, response);
       }),
