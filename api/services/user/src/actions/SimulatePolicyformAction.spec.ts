@@ -65,6 +65,7 @@ test('SimulatePolicyformAction: should fails return geo error if any from Simula
         firstname: '',
         job: 'Developpeur',
         email: 'territory@gmail.com',
+        territory_name: 'Un pays',
         simulation: {
           territory_insee: '45612333333',
           policy_template_id: '1',
@@ -85,6 +86,7 @@ test('SimulatePolicyformAction: should call simulation for 1, 3 and 6 months per
     name: '',
     firstname: '',
     job: 'Developpeur',
+    territory_name: 'Un pays',
     email: 'territory@gmail.com',
     simulation,
   };

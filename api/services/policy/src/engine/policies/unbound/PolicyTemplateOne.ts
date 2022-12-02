@@ -13,6 +13,7 @@ import {
   perSeat,
 } from '../../helpers';
 import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
 
 export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
@@ -22,7 +23,7 @@ export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
     throw new Error('Method not implemented.');
   }
   describe(): string {
-    throw new Error('Method not implemented.');
+    return PolicyTemplateDescriptions.template_one_description_html;
   }
 
   static readonly id = '1';

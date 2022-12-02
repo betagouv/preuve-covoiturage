@@ -18,6 +18,7 @@ import {
 } from '../notifications';
 import { ParamsInterface as SimulationPolicyParamsInterface } from '../shared/user/simulatePolicyform.contract';
 import { ResultInterface as SimulateOnPastResult } from '../shared/policy/simulateOnPastGeo.contract';
+import { PolicyTemplateDescriptions } from '../shared/policy/common/classes/PolicyTemplateDescription';
 
 import { ParamsInterface as SendMailParamsInterface } from '../shared/user/notify.contract';
 
@@ -184,9 +185,11 @@ link:  ${link}
         'contactform.to',
       )}`,
       data: {
-        // simulation_form_email: formParams.email,
-        // simulation_form_fullname: `${formParams.firstname} ${formParams.name}`,
-        // simulation_form_job: formParams.job,
+        simulation_policy_description_html: PolicyTemplateDescriptions.get[formParams.simulation.policy_template_id],
+        simulation_territory_name: formParams.territory_name,
+        simulation_form_email: formParams.email,
+        simulation_form_fullname: `${formParams.firstname} ${formParams.name}`,
+        simulation_form_job: formParams.job,
         simulation_form_simulation_param: formParams.simulation,
 
         simulation_result_one_month_trip_subsidized: simulationResult['1'].trip_subsidized,

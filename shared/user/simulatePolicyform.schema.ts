@@ -1,11 +1,12 @@
 export const sendSimulationEmail = {
   $id: 'user.sendSimulationEmail',
   type: 'object',
-  required: ['email', 'name', 'firstname', 'job', 'simulation'],
+  required: ['email', 'name', 'firstname', 'job', 'simulation', 'territory_name'],
   additionalProperties: false,
   properties: {
     email: { macro: 'email' },
     job: { macro: 'varchar' },
+    territory_name: { macro: 'varchar' },
     name: { macro: 'varchar' },
     firstname: { macro: 'varchar' },
     simulation: {
