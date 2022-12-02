@@ -10,6 +10,10 @@ generate_keys() {
   echo "Generating keys"
   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -pkeyopt rsa_keygen_pubexp:3 -out "$KEY_DIR/privateKey.pem"
   openssl pkey -in "$KEY_DIR/privateKey.pem" -out "$KEY_DIR/publicKey.pem" -pubout
+
+  # avoid permission error on e2e tests
+  chmod a+r "$KEY_DIR/privateKey.pem"
+  chmod a+r "$KEY_DIR/publicKey.pem"
 }
 
 ensure_keys() {
