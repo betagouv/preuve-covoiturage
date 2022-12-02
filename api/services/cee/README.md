@@ -1,7 +1,6 @@
 ---
-title: Campagnes
+title: Cee
 ---
 
-# Policy (campaign) service
+# Cee service
 
-Configure and execute campaign algorithms.

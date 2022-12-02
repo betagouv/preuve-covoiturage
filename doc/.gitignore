@@ -11,3 +11,4 @@ docs/api/services/*
 
 # OpenAPI files are copied from api/doc/
 docs/.vuepress/public/specs/*
+!docs/.vuepress/public/specs/.gitkeep
