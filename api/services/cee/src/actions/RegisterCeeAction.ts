@@ -18,7 +18,7 @@ import { ServiceDisabledError } from '../errors/ServiceDisabledError';
 import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
 import { getDateOrFail } from '../helpers/getDateOrFail';
 import { timestampSchema } from '../shared/cee/common/ceeSchema';
-import { isBeforeOrFail } from '../helpers/isBeforeOrFail';
+import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail';
 import { ConflictException } from '@ilos/common';
 import {
   CeeLongApplicationInterface,
@@ -108,6 +108,7 @@ export class RegisterCeeAction extends AbstractAction {
   ): Promise<ResultInterface> {
     const datetime = getDateOrFail(params.datetime, `data/datetime ${timestampSchema.errorMessage}`);
     isBeforeOrFail(datetime, this.timeConstraint.long);
+    isBetweenOrFail(datetime, this.validJourneyConstraint.start_date, this.validJourneyConstraint.end_date);
     try {
       const application = await this.ceeRepository.registerLongApplication(
         { ...params, datetime, operator_id },
