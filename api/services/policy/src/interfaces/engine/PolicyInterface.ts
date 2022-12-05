@@ -78,4 +78,5 @@ export interface StatelessContextInterface {
   incentive: StatelessIncentiveInterface;
   meta: MetadataRegistryInterface;
   carpool: CarpoolInterface;
+  policy_territory_selector?: TerritorySelectorsInterface;
 }
