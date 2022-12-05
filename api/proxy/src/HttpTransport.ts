@@ -316,10 +316,10 @@ export class HttpTransport implements TransportInterface {
       '/policy/simulate',
       rateLimiter({ max: 1 }),
       asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
+        this.kernel.handle(
           createRPCPayload('user:sendSimulationEmail', req.body, { permissions: ['policy.simulate.past'] }),
-        )) as RPCResponseType;
-        this.send(res, response);
+        );
+        this.send(res, { id: 1, jsonrpc: '2.0' });
       }),
     );
   }
