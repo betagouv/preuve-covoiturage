@@ -61,11 +61,6 @@ export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
   processExclusion(ctx: StatelessContextInterface) {
     isOperatorClassOrThrow(ctx, ['B', 'C']);
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
-
-    // Exclure les trajets qui ne sont pas dans le selecteur géographique de la policy
-    if (!startsAt(ctx, ctx.policy_territory_selector) || !endsAt(ctx, ctx.policy_territory_selector)) {
-      throw new NotEligibleTargetException();
-    }
   }
 
   protected limits: Array<ConfiguredLimitInterface> = [];
