@@ -149,7 +149,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
       text: `
         SELECT l_aom, aom, epci, l_epci, com, l_com, l_reg, reg
         FROM GEO.perimeters
-        WHERE (aom = $1::varchar OR epci = $1::varchar) 
+        WHERE ${params.siren.length === 2 ? 'reg = $1::varchar' : '(aom = $1::varchar OR epci = $1::varchar)'} 
           AND YEAR = $2::int
       `,
     });
