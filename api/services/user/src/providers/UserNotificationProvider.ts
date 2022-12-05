@@ -193,13 +193,13 @@ link:  ${link}
         simulation_form_simulation_param: formParams.simulation,
 
         simulation_result_one_month_trip_subsidized: simulationResult['1'].trip_subsidized,
-        simulation_result_one_month_amount: simulationResult['1'].amount,
+        simulation_result_one_month_amount: simulationResult['1'].amount / 100,
 
         simulation_result_three_months_trip_subsidized: simulationResult['3'].trip_subsidized,
-        simulation_result_three_months_amount: simulationResult['3'].amount,
+        simulation_result_three_months_amount: simulationResult['3'].amount / 100,
 
         simulation_result_six_months_trip_subsidized: simulationResult['6'].trip_subsidized,
-        simulation_result_six_months_amount: simulationResult['6'].amount,
+        simulation_result_six_months_amount: simulationResult['6'].amount / 100,
       },
     });
   }
