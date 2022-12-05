@@ -11,6 +11,7 @@ import {
   StatelessIncentiveInterface,
   PolicyHandlerParamsInterface,
   TerritorySelectorsInterface,
+  StatelessContextInterface,
 } from '../../interfaces';
 import { policies } from '../policies';
 import { StatefulContext, StatelessContext } from './Context';
@@ -63,7 +64,8 @@ export class Policy implements PolicyInterface {
   }
 
   async processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface> {
-    const context = StatelessContext.fromCarpool(this._id, carpool);
+    const context: StatelessContextInterface = StatelessContext.fromCarpool(this._id, carpool);
+    context.policy_territory_selector = this.territory_selector;
     if (this.guard(carpool)) {
       try {
         this.handler.processStateless(context);
