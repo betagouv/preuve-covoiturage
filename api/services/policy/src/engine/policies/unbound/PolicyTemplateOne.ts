@@ -6,14 +6,17 @@ import {
 } from '../../../interfaces';
 import {
   ConfiguredLimitInterface,
+  endsAt,
   isOperatorClassOrThrow,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
+  startsAt,
 } from '../../helpers';
 import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
+import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
 
 export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
@@ -58,6 +61,11 @@ export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
   processExclusion(ctx: StatelessContextInterface) {
     isOperatorClassOrThrow(ctx, ['B', 'C']);
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
+
+    // Exclure les trajets qui ne sont pas dans le selecteur géographique de la policy
+    if (!startsAt(ctx, ctx.policy_territory_selector) || !endsAt(ctx, ctx.policy_territory_selector)) {
+      throw new NotEligibleTargetException();
+    }
   }
 
   protected limits: Array<ConfiguredLimitInterface> = [];
