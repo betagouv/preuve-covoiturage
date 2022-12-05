@@ -3,6 +3,7 @@ export class PolicyTemplateDescriptions {
   <div>
     <div>Trajets éligibles:</div>
     <ul>
+      <li> trajet avec origine OU destination sur le territoire</li>
       <li> De 2 à 15km: 2 euros par trajet par passager </li>
       <li> De 15 à 30 km: 0,1 euro par trajet par km par passager </li>
     </ul>

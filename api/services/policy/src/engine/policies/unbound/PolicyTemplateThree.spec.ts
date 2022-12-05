@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { TerritoryCodeEnum } from '../../../interfaces';
 import { makeProcessHelper } from '../../tests/macro';
-import { PolicyTemplateOne as Handler } from './PolicyTemplateOne';
+import { PolicyTemplateThree as Handler } from './PolicyTemplateThree';
 
 const defaultPosition = {
   arr: '91377',
@@ -48,10 +48,16 @@ test(
         [TerritoryCodeEnum.CityGroup]: ['248000531'],
       },
     },
-    carpool: [{ distance: 100 }, { distance: 200_000 }, { operator_class: 'A' }],
+    carpool: [
+      { distance: 1900 },
+      { operator_class: 'A' },
+      { end: { ...defaultPosition, aom: 'no_ok' } },
+      { end: { ...defaultPosition, [TerritoryCodeEnum.City]: '80160' } },
+      { start: { ...defaultPosition, [TerritoryCodeEnum.City]: '80160' } },
+    ],
     meta: [],
   },
-  { incentive: [0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -66,22 +72,19 @@ test(
       },
     },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
+      { distance: 2_000, driver_identity_uuid: 'one' },
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
-      { distance: 25_000, driver_identity_uuid: 'two' },
-      { distance: 55_000, driver_identity_uuid: 'three' },
       {
         distance: 50_000,
         driver_identity_uuid: 'four',
         start: { ...defaultPosition, [TerritoryCodeEnum.City]: '91666' },
         end: { ...defaultPosition, [TerritoryCodeEnum.City]: '77250' },
       },
-      { start: { ...defaultPosition, [TerritoryCodeEnum.City]: '80160' } },
     ],
     meta: [],
   },
   {
-    incentive: [200, 400, 250, 500, 500, 200],
+    incentive: [50, 100, 50],
     meta: [],
   },
 );

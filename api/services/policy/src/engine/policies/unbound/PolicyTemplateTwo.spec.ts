@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { TerritoryCodeEnum } from '../../../interfaces';
 import { makeProcessHelper } from '../../tests/macro';
-import { PolicyTemplateOne as Handler } from './PolicyTemplateOne';
+import { PolicyTemplateTwo as Handler } from './PolicyTemplateTwo';
 
 const defaultPosition = {
   arr: '91377',
@@ -48,10 +48,17 @@ test(
         [TerritoryCodeEnum.CityGroup]: ['248000531'],
       },
     },
-    carpool: [{ distance: 100 }, { distance: 200_000 }, { operator_class: 'A' }],
+    carpool: [
+      { distance: 100 },
+      { distance: 200_000 },
+      { operator_class: 'A' },
+      { end: { ...defaultPosition, aom: 'no_ok' } },
+      { end: { ...defaultPosition, [TerritoryCodeEnum.City]: '80160' } },
+      { start: { ...defaultPosition, [TerritoryCodeEnum.City]: '80160' } },
+    ],
     meta: [],
   },
-  { incentive: [0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -76,12 +83,11 @@ test(
         start: { ...defaultPosition, [TerritoryCodeEnum.City]: '91666' },
         end: { ...defaultPosition, [TerritoryCodeEnum.City]: '77250' },
       },
-      { start: { ...defaultPosition, [TerritoryCodeEnum.City]: '80160' } },
     ],
     meta: [],
   },
   {
-    incentive: [200, 400, 250, 500, 500, 200],
+    incentive: [150, 300, 250, 300, 300],
     meta: [],
   },
 );
