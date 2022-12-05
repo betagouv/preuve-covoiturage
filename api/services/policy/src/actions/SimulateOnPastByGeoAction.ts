@@ -34,26 +34,13 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     // 0 Find related com
-    const geoParamsInterface: GeoParamsInterface = {
-      siren: params.territory_insee,
-    };
-    const geoResult: GeoResultInterface = await this.kernel.call<GeoParamsInterface>(geoSignature, geoParamsInterface, {
-      call: {
-        user: {},
-      },
-      channel: {
-        service: handlerConfig.service,
-      },
-    });
+    const geoResult: GeoResultInterface = await this.findGeoBySiren(params);
 
-    if (geoResult.coms.length === 0) {
-      throw Error(`Could not find any coms for territory_insee ${params.territory_insee}`);
-    }
-
-    const today = new Date('2022-06-30');
-    const dateMinusOneMonth = new Date('2022-06-30'); // new Date();
+    const today = new Date();
+    const dateMinusOneMonth = new Date();
     dateMinusOneMonth.setMonth(today.getMonth() - (params.months | this.DEFAULT_TIME_FRAME_6_MONTHES));
 
+    // 1. Create a fake deserialized policy
     const policyTemplate: SerializedPolicyInterface = {
       start_date: dateMinusOneMonth,
       end_date: today,
@@ -70,10 +57,10 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       },
     };
 
-    // 1. Find selector and instanciate policy
+    // 2. Find selector and instanciate policy
     const policy = await Policy.import(policyTemplate);
 
-    // 2. Start a cursor to find trips
+    // 3. Start a cursor to find trips
     const cursor = this.tripRepository.findTripByGeo(
       geoResult.coms.map((m) => m.insee),
       policy.start_date,
@@ -90,7 +77,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       done = results.done;
       if (results.value) {
         for (const carpool of results.value) {
-          // 3. For each trip, process
+          // 3. Process stateless and stateful for each trip
           const incentive = await policy.processStateless(carpool);
           const finalIncentive = await policy.processStateful(store, incentive.export());
           const finalAmount = finalIncentive.get();
@@ -106,5 +93,24 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       trip_subsidized: carpool_subsidized,
       amount,
     };
+  }
+
+  private async findGeoBySiren(params: ParamsInterface) {
+    const geoParamsInterface: GeoParamsInterface = {
+      siren: params.territory_insee,
+    };
+    const geoResult: GeoResultInterface = await this.kernel.call<GeoParamsInterface>(geoSignature, geoParamsInterface, {
+      call: {
+        user: {},
+      },
+      channel: {
+        service: handlerConfig.service,
+      },
+    });
+
+    if (geoResult.coms.length === 0) {
+      throw Error(`Could not find any coms for territory_insee ${params.territory_insee}`);
+    }
+    return geoResult;
   }
 }
