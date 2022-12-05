@@ -5,4 +5,6 @@ export interface FindBySiretRawResultInterface {
   l_epci: string;
   com: string;
   l_com: string;
+  l_reg: string;
+  reg: string;
 }

@@ -147,7 +147,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     const results = await this.connection.getClient().query<FindBySiretRawResultInterface>({
       values: [params.siren, year],
       text: `
-        SELECT l_aom, aom, epci, l_epci, com, l_com
+        SELECT l_aom, aom, epci, l_epci, com, l_com, l_reg, reg
         FROM GEO.perimeters
         WHERE (aom = $1::varchar OR epci = $1::varchar) 
           AND YEAR = $2::int
@@ -155,10 +155,20 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     });
 
     if (!results.rows[0]) {
-      return { aom_name: null, aom_siren: null, epci_name: null, epci_siren: null, coms: [] };
+      return {
+        reg_name: null,
+        reg_siren: null,
+        aom_name: null,
+        aom_siren: null,
+        epci_name: null,
+        epci_siren: null,
+        coms: [],
+      };
     }
 
     return {
+      reg_name: results.rows[0].l_reg,
+      reg_siren: results.rows[0].reg,
       aom_name: results.rows[0].l_aom,
       aom_siren: results.rows[0].aom,
       epci_name: results.rows[0].l_epci,
