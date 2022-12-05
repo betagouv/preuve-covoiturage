@@ -1,6 +1,6 @@
-import { hasPermissionMiddleware, internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPastGeo.contract';
 
@@ -50,8 +50,8 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       throw Error(`Could not find any coms for territory_insee ${params.territory_insee}`);
     }
 
-    const today = new Date();
-    const dateMinusOneMonth = new Date();
+    const today = new Date('2022-06-30');
+    const dateMinusOneMonth = new Date('2022-06-30'); // new Date();
     dateMinusOneMonth.setMonth(today.getMonth() - (params.months | this.DEFAULT_TIME_FRAME_6_MONTHES));
 
     const policyTemplate: SerializedPolicyInterface = {
@@ -66,6 +66,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       territory_selector: {
         aom: [geoResult.aom_siren],
         epci: [geoResult.epci_siren],
+        reg: [geoResult.reg_siren],
       },
     };
 
