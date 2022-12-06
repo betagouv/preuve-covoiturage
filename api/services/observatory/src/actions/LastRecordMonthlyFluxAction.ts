@@ -2,23 +2,21 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../shared/observatory/flux/monthlyFlux.schema';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/observatory/flux/monthlyFlux.contract';
+import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/observatory/flux/lastRecordMonthlyFlux.contract';
 import { FluxRepositoryInterfaceResolver } from '../interfaces/FluxRepositoryProviderInterface';
 
 @handler({
   ...handlerConfig,
   middlewares: [
     hasPermissionMiddleware('common.observatory.stats'),
-    ['validate', alias],
   ],
 })
-export class MonthlyFluxAction extends AbstractAction {
+export class LastRecordMonthlyFluxAction extends AbstractAction {
   constructor(private fluxRepository: FluxRepositoryInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.fluxRepository.monthlyFlux(params);
+    return this.fluxRepository.lastRecordMonthlyFlux(params);
   }
 }

@@ -1,31 +1,54 @@
 import {
-  ParamsInterface as InsertFluxParamsInterface,
-  ResultInterface as InsertFluxResultInterface,
-} from '../shared/observatory/insertFlux.contract';
+  ParamsInterface as InsertLastMonthFluxParamsInterface,
+  ResultInterface as InsertLastMonthFluxResultInterface,
+} from '../shared/observatory/flux/insertLastMonthFlux.contract';
+import {
+  ParamsInterface as refreshAllFluxParamsInterface,
+  ResultInterface as refreshAllFluxResultInterface,
+} from '../shared/observatory/flux/refreshAllFlux.contract';
 import {
   ParamsInterface as MonthlyFluxParamsInterface,
   ResultInterface as MonthlyFluxResultInterface,
-} from '../shared/observatory/monthlyFlux.contract';
+} from '../shared/observatory/flux/monthlyFlux.contract';
+
+import {
+  ParamsInterface as lastRecordMonthlyFluxParamsInterface,
+  ResultInterface as lastRecordMonthlyFluxResultInterface,
+} from '../shared/observatory/flux/lastRecordMonthlyFlux.contract';
 
 export {
-  InsertFluxParamsInterface,
-  InsertFluxResultInterface,
+  InsertLastMonthFluxParamsInterface,
+  InsertLastMonthFluxResultInterface,
+  refreshAllFluxParamsInterface,
+  refreshAllFluxResultInterface,
   MonthlyFluxParamsInterface, 
-  MonthlyFluxResultInterface
+  MonthlyFluxResultInterface,
+  lastRecordMonthlyFluxParamsInterface,
+  lastRecordMonthlyFluxResultInterface,
 };
 
 export interface FluxRepositoryInterface {
-  insertFlux(params: InsertFluxParamsInterface): Promise<InsertFluxResultInterface>;
+  insertLastMonthFlux(params: InsertLastMonthFluxParamsInterface): Promise<InsertLastMonthFluxResultInterface>;
+  refreshAllFlux(params: refreshAllFluxParamsInterface): Promise<refreshAllFluxResultInterface>;
   monthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface>;
+  lastRecordMonthlyFlux(params: lastRecordMonthlyFluxParamsInterface): Promise<lastRecordMonthlyFluxResultInterface>;
 };
 
 export abstract class FluxRepositoryInterfaceResolver implements FluxRepositoryInterface {
   
-  async insertFlux(params: InsertFluxParamsInterface): Promise<InsertFluxResultInterface> {
+  async insertLastMonthFlux(params: InsertLastMonthFluxParamsInterface): Promise<InsertLastMonthFluxResultInterface> {
+    throw new Error();
+  };
+
+  async refreshAllFlux(params: refreshAllFluxParamsInterface): Promise<refreshAllFluxResultInterface> {
     throw new Error();
   };
 
   async monthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface> {
+    throw new Error();
+  };
+
+  async lastRecordMonthlyFlux(params: lastRecordMonthlyFluxParamsInterface): Promise<lastRecordMonthlyFluxResultInterface> {
     throw new Error();
   };
 };
