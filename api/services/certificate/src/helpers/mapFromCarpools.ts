@@ -7,7 +7,7 @@ import { PointInterface } from '../shared/common/interfaces/PointInterface';
 
 export interface ParamsInterface {
   person: { uuid: string };
-  operator: { _id: number; uuid: string; name: string };
+  operator: { _id: number; uuid: string; name: string; support: string };
   carpools: CarpoolInterface[];
   params: Partial<{
     tz: string;
@@ -29,7 +29,7 @@ export const mapFromCarpools = (params: ParamsInterface): CertificateBaseInterfa
     tz,
     positions,
     identity: { uuid: person.uuid },
-    operator: { uuid: operator.uuid, name: operator.name },
+    operator: { uuid: operator.uuid, name: operator.name, support: operator.support },
     driver: agg(CarpoolTypeEnum.DRIVER, carpools),
     passenger: agg(CarpoolTypeEnum.PASSENGER, carpools),
   };
