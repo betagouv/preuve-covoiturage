@@ -1,8 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../shared/observatory/flux/insertLastMonthFlux.contract';
-import { FluxRepositoryInterfaceResolver } from '../interfaces/FluxRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../../shared/observatory/flux/refreshAllFlux.contract';
+import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface';
 
 @handler({
   ...handlerConfig,
@@ -10,7 +10,7 @@ import { FluxRepositoryInterfaceResolver } from '../interfaces/FluxRepositoryPro
     ...internalOnlyMiddlewares(handlerConfig.service),
   ],
 })
-export class InsertLastMonthFluxAction extends AbstractAction implements InitHookInterface{
+export class RefreshAllFluxAction extends AbstractAction implements InitHookInterface{
   constructor(
     private kernel: KernelInterfaceResolver,
     private fluxRepository: FluxRepositoryInterfaceResolver,
@@ -20,19 +20,19 @@ export class InsertLastMonthFluxAction extends AbstractAction implements InitHoo
   
   public async init(): Promise<void> {
     await this.kernel.notify<ParamsInterface>(signature, null, {
+      call: {
+        user: {},
+      },
       channel: { 
         service: handlerConfig.service,
         metadata:{
-          jobId:'observatory.InsertMonthlyFlux.cron',
-          repeat:{
-            cron: '0 6 8 * *',
-          }
+          jobId:'observatory.RefreshAllFlux.action',
         } 
       }
     });
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.fluxRepository.insertLastMonthFlux(params);
+    return this.fluxRepository.refreshAllFlux(params);
   }
 };

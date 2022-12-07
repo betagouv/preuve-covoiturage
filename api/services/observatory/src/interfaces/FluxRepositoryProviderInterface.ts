@@ -16,6 +16,11 @@ import {
   ResultInterface as lastRecordMonthlyFluxResultInterface,
 } from '../shared/observatory/flux/lastRecordMonthlyFlux.contract';
 
+import {
+  ParamsInterface as EvolMonthlyFluxParamsInterface,
+  ResultInterface as EvolMonthlyFluxResultInterface,
+} from '../shared/observatory/flux/evolMonthlyFlux.contract';
+
 export {
   InsertLastMonthFluxParamsInterface,
   InsertLastMonthFluxResultInterface,
@@ -25,13 +30,16 @@ export {
   MonthlyFluxResultInterface,
   lastRecordMonthlyFluxParamsInterface,
   lastRecordMonthlyFluxResultInterface,
+  EvolMonthlyFluxParamsInterface,
+  EvolMonthlyFluxResultInterface,
 };
 
 export interface FluxRepositoryInterface {
   insertLastMonthFlux(params: InsertLastMonthFluxParamsInterface): Promise<InsertLastMonthFluxResultInterface>;
   refreshAllFlux(params: refreshAllFluxParamsInterface): Promise<refreshAllFluxResultInterface>;
-  monthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface>;
+  getMonthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface>;
   lastRecordMonthlyFlux(params: lastRecordMonthlyFluxParamsInterface): Promise<lastRecordMonthlyFluxResultInterface>;
+  getEvolMonthlyFlux(params: EvolMonthlyFluxParamsInterface): Promise<EvolMonthlyFluxResultInterface>;
 };
 
 export abstract class FluxRepositoryInterfaceResolver implements FluxRepositoryInterface {
@@ -44,11 +52,15 @@ export abstract class FluxRepositoryInterfaceResolver implements FluxRepositoryI
     throw new Error();
   };
 
-  async monthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface> {
+  async getMonthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface> {
     throw new Error();
   };
 
   async lastRecordMonthlyFlux(params: lastRecordMonthlyFluxParamsInterface): Promise<lastRecordMonthlyFluxResultInterface> {
+    throw new Error();
+  };
+
+  async getEvolMonthlyFlux(params: EvolMonthlyFluxParamsInterface): Promise<EvolMonthlyFluxResultInterface> {
     throw new Error();
   };
 };

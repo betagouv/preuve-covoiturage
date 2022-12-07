@@ -1,8 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../shared/observatory/occupation/insertLastMonthOccupation.contract';
-import { OccupationRepositoryInterfaceResolver } from '../interfaces/OccupationRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../../shared/observatory/occupation/insertLastMonthOccupation.contract';
+import { OccupationRepositoryInterfaceResolver } from '../../interfaces/OccupationRepositoryProviderInterface';
 
 @handler({
   ...handlerConfig,

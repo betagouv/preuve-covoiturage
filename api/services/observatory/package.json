@@ -27,7 +27,9 @@
     "@ilos/core": "~0",
     "@pdc/helper-test": "~0",
     "@pdc/provider-middleware": "~0",
-    "@pdc/provider-validator": "~0",
+    "@pdc/provider-validator": "~0"
+  },
+  "devDependencies": {
     "@types/geojson": "^7946.0.10"
   }
 }

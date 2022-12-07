@@ -8,15 +8,19 @@ import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { config } from './config';
 import { FluxRepositoryProvider } from './providers/FluxRepositoryProvider';
 import { binding as MonthlyFluxBinding } from './shared/observatory/flux/monthlyFlux.schema';
-import { MonthlyFluxAction } from './actions/MonthlyFluxAction';
-import { LastRecordMonthlyFluxAction } from './actions/LastRecordMonthlyFluxAction';
-import { InsertLastMonthFluxAction } from './actions/InsertLastMonthFluxAction';
-import { RefreshAllFluxAction } from './actions/RefreshAllFluxAction';
+import { MonthlyFluxAction } from './actions/flux/MonthlyFluxAction';
+import { LastRecordMonthlyFluxAction } from './actions/flux/LastRecordMonthlyFluxAction';
+import { InsertLastMonthFluxAction } from './actions/flux/InsertLastMonthFluxAction';
+import { RefreshAllFluxAction } from './actions/flux/RefreshAllFluxAction';
+import { binding as EvolMonthlyFluxBinding } from './shared/observatory/flux/evolMonthlyFlux.schema';
+import { EvolMonthlyFluxAction } from './actions/flux/EvolMonthlyFluxAction';
 import { OccupationRepositoryProvider } from './providers/OccupationRepositoryProvider';
 import { binding as MonthlyOccupationBinding } from './shared/observatory/occupation/monthlyOccupation.schema';
-import { MonthlyOccupationAction } from './actions/MonthlyOccupationAction';
-import { InsertLastMonthOccupationAction } from './actions/InsertLastMonthOccupationAction';
-import { RefreshAllOccupationAction } from './actions/RefreshAllOccupationAction';
+import { MonthlyOccupationAction } from './actions/occupation/MonthlyOccupationAction';
+import { InsertLastMonthOccupationAction } from './actions/occupation/InsertLastMonthOccupationAction';
+import { RefreshAllOccupationAction } from './actions/occupation/RefreshAllOccupationAction';
+import { binding as EvolMonthlyOccupationBinding } from './shared/observatory/occupation/evolMonthlyOccupation.schema';
+import { EvolMonthlyOccupationAction } from './actions/occupation/EvolMonthlyOccupationAction';
 
 @serviceProvider({
   config,
@@ -27,7 +31,9 @@ import { RefreshAllOccupationAction } from './actions/RefreshAllOccupationAction
   ],
   validator: [
     MonthlyFluxBinding,
+    EvolMonthlyFluxBinding,
     MonthlyOccupationBinding,
+    EvolMonthlyOccupationBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
@@ -39,9 +45,12 @@ import { RefreshAllOccupationAction } from './actions/RefreshAllOccupationAction
     RefreshAllFluxAction,
     MonthlyFluxAction,
     LastRecordMonthlyFluxAction,
+    EvolMonthlyFluxAction,
+    
     MonthlyOccupationAction,
     InsertLastMonthOccupationAction,
     RefreshAllOccupationAction,
+    EvolMonthlyOccupationAction,
   ],
   queues: ['observatory']
 })

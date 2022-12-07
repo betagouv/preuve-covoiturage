@@ -10,6 +10,10 @@ import {
   ParamsInterface as MonthlyOccupationParamsInterface,
   ResultInterface as MonthlyOccupationResultInterface,
 } from '../shared/observatory/occupation/monthlyOccupation.contract';
+import {
+  ParamsInterface as EvolMonthlyOccupationParamsInterface,
+  ResultInterface as EvolMonthlyOccupationResultInterface,
+} from '../shared/observatory/occupation/evolMonthlyOccupation.contract';
 
 
 export {
@@ -19,12 +23,15 @@ export {
   refreshAllOccupationResultInterface,
   MonthlyOccupationParamsInterface, 
   MonthlyOccupationResultInterface,
+  EvolMonthlyOccupationParamsInterface,
+  EvolMonthlyOccupationResultInterface,
 };
 
 export interface OccupationRepositoryInterface {
   insertLastMonthOccupation(params: InsertLastMonthOccupationParamsInterface): Promise<InsertLastMonthOccupationResultInterface>;
   refreshAllOccupation(params: refreshAllOccupationParamsInterface): Promise<refreshAllOccupationResultInterface>;
-  monthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface>;
+  getMonthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface>;
+  getEvolMonthlyOccupation(params: EvolMonthlyOccupationParamsInterface): Promise<EvolMonthlyOccupationResultInterface>;
 };
 
 export abstract class OccupationRepositoryInterfaceResolver implements OccupationRepositoryInterface {
@@ -37,7 +44,11 @@ export abstract class OccupationRepositoryInterfaceResolver implements Occupatio
     throw new Error();
   };
 
-  async monthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface> {
+  async getMonthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface> {
+    throw new Error();
+  };
+  
+  async getEvolMonthlyOccupation(params: EvolMonthlyOccupationParamsInterface): Promise<EvolMonthlyOccupationResultInterface> {
     throw new Error();
   };
 };

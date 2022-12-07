@@ -11,7 +11,10 @@ import {
   MonthlyFluxResultInterface,
   lastRecordMonthlyFluxParamsInterface,
   lastRecordMonthlyFluxResultInterface,
+  EvolMonthlyFluxParamsInterface,
+  EvolMonthlyFluxResultInterface,
 } from '../interfaces/FluxRepositoryProviderInterface';
+import { checkTerritoryParam, checkIndicParam } from '../helpers/checkParams';
 
 @provider({
   identifier: FluxRepositoryInterfaceResolver,
@@ -52,12 +55,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   };
   // Retourne les données de la table observatory.monthly_flux pour le mois et l'année et le type de territoire en paramètres
   // Paramètres optionnels t2 et code pour filtrer les résultats sur un territoire
-  async monthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface> {
-    const territoryTypes = ['com','epci','aom','dep','reg','country']
-    const checkTerritoryType = (territory:string) => {
-      return territoryTypes.find( d => d == territory) || 'com';
-    };
-
+  async getMonthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface> {
     const sql = {
       values:[params.year, params.month, params.t, params.code],  
       text: `SELECT 
@@ -70,11 +68,11 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       AND type = $3::observatory.monthly_flux_type_enum
       ${params.code ? 
         `AND (territory_1 IN (
-          SELECT ${checkTerritoryType(params.t)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
-          WHERE ${checkTerritoryType(params.t2)} = $4
+          SELECT ${checkTerritoryParam(params.t)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
+          WHERE ${checkTerritoryParam(params.t2)} = $4
         ) OR territory_2 IN (
-          SELECT ${checkTerritoryType(params.t)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
-          WHERE ${checkTerritoryType(params.t2)} = $4
+          SELECT ${checkTerritoryParam(params.t)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
+          WHERE ${checkTerritoryParam(params.t2)} = $4
         ))`
         : ''
       } 
@@ -95,4 +93,27 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     const response = await this.pg.getClient().query(sql);
     return response.rows[0];
   }
+
+  // Retourne les données pour les graphiques construits à partir de la table observatory.monthly_flux
+  async getEvolMonthlyFlux(params: EvolMonthlyFluxParamsInterface): Promise<EvolMonthlyFluxResultInterface> {
+    const checkArray = ['journeys','passengers','has_incentive','distance','duration'];
+    const indic = checkIndicParam(params.indic, checkArray, 'journeys');
+    const start = Number(params.year + String(params.month).padStart(2, '0'));
+    const limit = params.past ? Number(params.past) * 12 + 1 : 25;
+    const sql = {
+      values:[checkTerritoryParam(params.t), params.code, limit],  
+      text: `
+        SELECT year, month, sum(${indic}) AS ${indic}
+        FROM ${this.table}
+        WHERE concat(year::varchar,TO_CHAR(month, 'fm00'))::integer <= ${start}
+        AND type = $1::observatory.monthly_flux_type_enum
+        AND (territory_1 = $2 OR territory_2 = $2)
+        GROUP BY year, month
+        ORDER BY (year,month) DESC
+        LIMIT $3;
+      `
+    };
+    const response: { rowCount: number, rows: EvolMonthlyFluxResultInterface } = await this.pg.getClient().query(sql);
+    return response.rows;
+  };
 }
