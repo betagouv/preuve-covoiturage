@@ -3,7 +3,7 @@ import anyTest, { TestFn } from 'ava';
 import { stream } from 'exceljs';
 import sinon, { SinonStub } from 'sinon';
 import { CampaignSearchParamsInterface } from '../../interfaces';
-import { PolicyStatsInterface } from '../../interfaces/PolicySliceStatInterface';
+import { PolicyStatsInterface, SliceStatInterface } from '../../interfaces/PolicySliceStatInterface';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { SliceInterface } from '../../shared/policy/common/interfaces/SliceInterface';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
@@ -19,7 +19,7 @@ interface Context {
   createSlicesSheetToWorkbook: SlicesWorkbookWriter;
 
   // Injected tokens method's stubs
-  searchWithCursorStub: SinonStub;
+  getPolicyCursorStub: SinonStub;
   policyStatsStub: SinonStub<
     [params: CampaignSearchParamsInterface, slices: SliceInterface[]],
     Promise<PolicyStatsInterface>
@@ -60,7 +60,7 @@ test.beforeEach((t) => {
   t.context.filenameStub = sinon.stub(t.context.nameProvider, 'filename');
   t.context.filepathStub = sinon.stub(t.context.nameProvider, 'filepath');
   t.context.dataWorkbookWriterStub = sinon.stub(t.context.streamDataToWorkbook, 'call');
-  t.context.searchWithCursorStub = sinon.stub(t.context.tripRepositoryProvider, 'searchWithCursor');
+  t.context.getPolicyCursorStub = sinon.stub(t.context.tripRepositoryProvider, 'getPolicyCursor');
   t.context.policyStatsStub = sinon.stub(t.context.tripRepositoryProvider, 'getPolicyStats');
   t.context.slicesWorkbookWriterStub = sinon.stub(t.context.createSlicesSheetToWorkbook, 'call');
 });
@@ -88,11 +88,7 @@ test.before((t) => {
   t.context.operator_id = 4;
   t.context.filename = 'APDF-idfm.xlsx';
   t.context.filepath = '/tmp/APDF-idfm.xlsx';
-  t.context.workbookWriterMock = {
-    commit: () => {
-      return;
-    },
-  };
+  t.context.workbookWriterMock = { commit: () => {} };
 
   t.context.workbookWriterStub = sinon
     .stub(BuildExcel, 'initWorkbookWriter')
@@ -103,22 +99,22 @@ test.afterEach((t) => {
   t.context.filenameStub!.restore();
   t.context.filepathStub!.restore();
   t.context.dataWorkbookWriterStub!.restore();
-  t.context.searchWithCursorStub!.restore();
+  t.context.getPolicyCursorStub!.restore();
   t.context.slicesWorkbookWriterStub!.restore();
   t.context.workbookWriterStub!.restore();
 });
 
 test('BuildExcel: should call stream data and create slice then return excel filepath', async (t) => {
   // Arrange
-
   const cursorCallback = () => {};
-  t.context.searchWithCursorStub!.returns(cursorCallback);
+  t.context.getPolicyCursorStub!.returns(cursorCallback);
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
   t.context.dataWorkbookWriterStub!.resolves();
   t.context.policyStatsStub?.resolves({
-    count: 111,
-    sum: 222_00,
+    total_count: 111,
+    total_sum: 222_00,
+    subsidized_count: 111,
     slices: [
       {
         count: 1,
@@ -138,22 +134,37 @@ test('BuildExcel: should call stream data and create slice then return excel fil
 
   // Assert
   sinon.assert.calledOnceWithExactly(
-    t.context.searchWithCursorStub!,
+    t.context.policyStatsStub!,
     {
-      date: { start: t.context.start_date, end: t.context.end_date },
-      campaign_id: [t.context.campaign!._id],
-      operator_id: [t.context.operator_id],
+      campaign_id: t.context.campaign._id,
+      operator_id: t.context.operator_id,
+      start_date: t.context.start_date,
+      end_date: t.context.end_date,
+    },
+    t.context.campaign.params.slices,
+  );
+
+  sinon.assert.calledOnceWithExactly(
+    t.context.getPolicyCursorStub!,
+    {
+      campaign_id: t.context.campaign._id,
+      operator_id: t.context.operator_id,
+      start_date: t.context.start_date,
+      end_date: t.context.end_date,
     },
     'territory',
   );
+
   sinon.assert.calledOnceWithExactly(t.context.filenameStub!, {
     name: t.context.campaign!.name,
     campaign_id: t.context.campaign?._id,
     operator_id: t.context.operator_id,
     datetime: t.context.start_date,
     trips: 111,
+    subsidized: 111,
     amount: 222_00,
   });
+
   sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
   sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
@@ -164,13 +175,14 @@ test('BuildExcel: should call stream data and create slice then return excel fil
 test('BuildExcel: should call stream data and return filepath even if create slice error occurs', async (t) => {
   // Arrange
   const cursorCallback = () => {};
-  t.context.searchWithCursorStub!.returns(cursorCallback);
+  t.context.getPolicyCursorStub!.returns(cursorCallback);
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
   t.context.slicesWorkbookWriterStub!.rejects('Error while computing slices');
   t.context.policyStatsStub?.resolves({
-    count: 111,
-    sum: 222_00,
+    total_count: 111,
+    total_sum: 222_00,
+    subsidized_count: 111,
     slices: [
       {
         count: 1,
@@ -190,22 +202,37 @@ test('BuildExcel: should call stream data and return filepath even if create sli
 
   // Assert
   sinon.assert.calledOnceWithExactly(
-    t.context.searchWithCursorStub!,
+    t.context.policyStatsStub!,
     {
-      date: { start: t.context.start_date, end: t.context.end_date },
-      campaign_id: [t.context.campaign!._id],
-      operator_id: [t.context.operator_id],
+      campaign_id: t.context.campaign._id,
+      operator_id: t.context.operator_id,
+      start_date: t.context.start_date,
+      end_date: t.context.end_date,
+    },
+    t.context.campaign.params.slices,
+  );
+
+  sinon.assert.calledOnceWithExactly(
+    t.context.getPolicyCursorStub!,
+    {
+      campaign_id: t.context.campaign._id,
+      operator_id: t.context.operator_id,
+      start_date: t.context.start_date,
+      end_date: t.context.end_date,
     },
     'territory',
   );
+
   sinon.assert.calledOnceWithExactly(t.context.filenameStub!, {
     name: t.context.campaign!.name,
     campaign_id: t.context.campaign?._id,
     operator_id: t.context.operator_id,
     datetime: t.context.start_date,
     trips: 111,
+    subsidized: 111,
     amount: 222_00,
   });
+
   sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
   sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
@@ -215,18 +242,17 @@ test('BuildExcel: should call stream data and return filepath even if create sli
 
 test('BuildExcel: should call stream data and return excel filepath without slices', async (t) => {
   // Arrange
-  t.context.campaign = {
-    ...t.context.campaign!,
-    params: {},
-  };
+  t.context.campaign = { ...t.context.campaign!, params: { slices: [] } };
+
   const cursorCallback = () => {};
-  t.context.searchWithCursorStub!.returns(cursorCallback);
+  t.context.getPolicyCursorStub!.returns(cursorCallback);
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
   t.context.slicesWorkbookWriterStub!.rejects('Error while computing slices');
   t.context.policyStatsStub?.resolves({
-    count: 111,
-    sum: 222_00,
+    total_count: 111,
+    total_sum: 222_00,
+    subsidized_count: 111,
     slices: [],
   });
 
@@ -240,22 +266,37 @@ test('BuildExcel: should call stream data and return excel filepath without slic
 
   // Assert
   sinon.assert.calledOnceWithExactly(
-    t.context.searchWithCursorStub!,
+    t.context.policyStatsStub!,
     {
-      date: { start: t.context.start_date, end: t.context.end_date },
-      campaign_id: [t.context.campaign!._id],
-      operator_id: [t.context.operator_id],
+      campaign_id: t.context.campaign._id,
+      operator_id: t.context.operator_id,
+      start_date: t.context.start_date,
+      end_date: t.context.end_date,
+    },
+    t.context.campaign.params.slices,
+  );
+
+  sinon.assert.calledOnceWithExactly(
+    t.context.getPolicyCursorStub!,
+    {
+      campaign_id: t.context.campaign._id,
+      operator_id: t.context.operator_id,
+      start_date: t.context.start_date,
+      end_date: t.context.end_date,
     },
     'territory',
   );
+
   sinon.assert.calledOnceWithExactly(t.context.filenameStub!, {
     name: t.context.campaign!.name,
     campaign_id: t.context.campaign?._id,
     operator_id: t.context.operator_id,
     datetime: t.context.start_date,
     trips: 111,
+    subsidized: 111,
     amount: 222_00,
   });
+
   sinon.assert.calledOnceWithExactly(t.context.dataWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
   sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.notCalled(t.context.slicesWorkbookWriterStub!);

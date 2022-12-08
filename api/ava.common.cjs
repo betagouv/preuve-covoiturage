@@ -1,31 +1,34 @@
 const common = {
-    extensions: ['ts'],
-    require: ['ts-node/register'],
-    timeout: '1m',
+  typescript: {
+    rewritePaths: {
+      'src/': "dist/",
+    },
+    compile: false
+  },
 };
 
 const integration = {
-    ...common,
-    files: ['src/**/*.integration.spec.ts'],
+  ...common,
+  files: ['src/**/*.integration.spec.ts'],
 };
 
 const unit = {
-    ...common,
-    files: [
-        "src/**/*.spec.ts",
-        "!src/**/*.integration.spec.ts",
-        "!src/**/*.helper.spec.ts"
-    ],
+  ...common,
+  files: [
+    "src/**/*.spec.ts",
+    "!src/**/*.integration.spec.ts",
+    "!src/**/*.helper.spec.ts"
+  ],
 };
 
 const coverage = {
-    ...common,
-    files: ['src/**/*.spec.ts'],
+  ...common,
+  files: ['src/**/*.spec.ts'],
 }
 
 module.exports = {
-    common,
-    integration,
-    unit,
-    coverage,
+  common,
+  integration,
+  unit,
+  coverage,
 }
