@@ -99,7 +99,10 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         SELECT
           cc.acquisition_id AS acquisition_id,
           cc._id AS carpool_id,
-          ci.phone_trunc AS phone_trunc,
+          CASE 
+            WHEN ci.phone_trunc IS NULL THEN left(ci.phone, -2)
+            ELSE ci.phone_trunc
+          END AS phone_trunc,
           cc.datetime + cc.duration * interval '1 second' AS datetime,
           cc.status AS status
         FROM ${this.carpoolTable} AS cc
