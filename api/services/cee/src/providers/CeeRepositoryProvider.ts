@@ -132,7 +132,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
 
     const result = await this.connection.getClient().query<ValidJourney>(query);
     if (!result.rows.length) {
-      throw new NotFoundException(`${query.text} ${query.values.join(', ')}`);
+      throw new NotFoundException();
     }
     return result.rows[0];
   }
