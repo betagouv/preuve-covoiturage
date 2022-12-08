@@ -71,7 +71,7 @@ yarn test --browsers Firefox
 
 ```shell
 # standalone e2e (running in CI)
-./tool.sh e2e
+APP_INSEE_API_KEY=... ./tool.sh e2e
 ```
 
 ```shell
