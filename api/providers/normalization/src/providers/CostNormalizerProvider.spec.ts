@@ -17,6 +17,7 @@ test('Cost normalization should work', async (t) => {
   const data = {
     operator_id: 1,
     contribution: 10,
+    payment: 10,
     incentives: [
       {
         index: 0,
@@ -37,6 +38,7 @@ test('Cost normalization should work', async (t) => {
   const result = await action.handle(data);
   t.deepEqual(result, {
     cost: 20,
+    payment: 10,
     payments: [
       {
         index: 0,
