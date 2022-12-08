@@ -71,7 +71,6 @@ test.serial('Should create acquisition', async (t) => {
   });
 
   t.is(result.rowCount, data.length);
-  t.log(result.rows);
   t.deepEqual(
     result.rows,
     data.map((d) => ({ ...d, status: 'pending', try_count: 0 })),
@@ -119,7 +118,6 @@ test.serial('Should update acquisition', async (t) => {
   });
 
   t.is(result.rowCount, 4);
-  t.log(result.rows);
   t.deepEqual(
     result.rows,
     [...data, ...initialData].map((d) => {
@@ -160,7 +158,6 @@ test.serial('Should update status', async (t) => {
   });
 
   t.is(result.rowCount, 4);
-  t.log(result.rows);
   t.deepEqual(result.rows, [
     {
       operator_id: 1,
