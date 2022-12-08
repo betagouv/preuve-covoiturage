@@ -256,7 +256,7 @@ export class HttpTransport implements TransportInterface {
         if (!response || 'error' in response || !('result' in response)) {
           res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
         } else {
-          res.status(200).json(response.result);
+          res.status(200).end();
         }
       }),
     );
