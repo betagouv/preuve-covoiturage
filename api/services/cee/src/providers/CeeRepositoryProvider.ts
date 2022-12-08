@@ -104,7 +104,11 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
             ELSE ci.phone_trunc
           END AS phone_trunc,
           cc.datetime + cc.duration * interval '1 second' AS datetime,
-          cc.status AS status
+          cc.status AS status,
+          CASE
+            WHEN ce._id IS NULL THEN false
+            ELSE true
+          END as already_registered
         FROM ${this.carpoolTable} AS cc
         JOIN ${this.identityTable} AS ci
           ON cc.identity_id = ci._id
@@ -117,8 +121,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           cc.datetime < $5 AND
           cc.distance <= $6 AND
           (cc.start_geo_code NOT LIKE $7 OR cc.end_geo_code NOT LIKE $7) AND
-          cc.is_driver = true AND
-          ce._id IS NULL
+          cc.is_driver = true
         ORDER BY cc.datetime DESC
         LIMIT 1
       `,

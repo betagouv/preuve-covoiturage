@@ -21,6 +21,7 @@ export interface ValidJourney {
   phone_trunc: string;
   datetime: Date;
   status: string;
+  already_registered: boolean;
 }
 
 export interface CeeApplication<T = Date> {

@@ -69,6 +69,9 @@ export class RegisterCeeAction extends AbstractAction {
     );
     isBeforeOrFail(carpoolData.datetime, this.timeConstraint.short);
     try {
+      if (carpoolData.already_registered) {
+        throw new ConflictException();
+      }
       const application = await this.ceeRepository.registerShortApplication(
         { ...params, ...carpoolData, operator_id },
         this.cooldownConstraint,
