@@ -4,7 +4,10 @@ import { OperatorListInterface } from '../shared/operator/common/interfaces/Oper
 
 export interface OperatorRepositoryProviderInterface {
   find(id: number): Promise<OperatorDbInterface>;
-  quickFind(_id: number, withThumbnail: boolean): Promise<{ uuid: string; name: string; thumbnail?: string }>;
+  quickFind(
+    _id: number,
+    withThumbnail: boolean,
+  ): Promise<{ uuid: string; name: string; support: string; thumbnail?: string }>;
   all(): Promise<OperatorListInterface[]>;
   create(data: OperatorInterface): Promise<OperatorDbInterface>;
   delete(_id: number): Promise<void>;
@@ -22,7 +25,10 @@ export abstract class OperatorRepositoryProviderInterfaceResolver implements Ope
     throw new Error('Not implemented');
   }
 
-  async quickFind(_id: number, withThumbnail: boolean): Promise<{ uuid: string; name: string; thumbnail?: string }> {
+  async quickFind(
+    _id: number,
+    withThumbnail: boolean,
+  ): Promise<{ uuid: string; name: string; support: string; thumbnail?: string }> {
     throw new Error('Not implemented');
   }
   async all(): Promise<OperatorListInterface[]> {

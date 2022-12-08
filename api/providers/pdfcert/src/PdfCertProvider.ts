@@ -120,8 +120,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
 
     // Some help?
     this.text(page, `Un problème, une question ?`, { x: 46, y: 190 });
-    this.text(page, 'Contactez nous par email à', { x: 46, y: 176 });
-    this.text(page, 'attestation@covoiturage.beta.gouv.fr', { x: 172, y: 176, color: rgb(0, 0, 0.8) });
+    this.text(page, 'Contactez nous :', { x: 46, y: 176 });
+    this.text(page, data.support, { x: 124, y: 176, color: rgb(0, 0, 0.8) });
 
     // Notes
     if ('notes' in data.header && data.header.notes !== '') {
