@@ -27,6 +27,7 @@ export interface PersonInterface {
   calc_distance?: number;
   calc_duration?: number;
   cost?: number;
+  payment?: number;
 }
 
 export interface FinalizePositionInterface extends GeoPositionInterface {
@@ -43,6 +44,7 @@ export interface FinalizedPersonInterface {
   distance: number;
   duration: number;
   cost: number;
+  payment: number;
   meta: PersonMetaInterface;
 }
 

@@ -1734,7 +1734,7 @@
   dependencies:
     "@types/node" "*"
 
-"@xmldom/xmldom@^0.8.2":
+"@xmldom/xmldom@0.8.4", "@xmldom/xmldom@^0.8.2":
   version "0.8.4"
   resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.8.4.tgz#05b76034d3e09d4b9d309d9b862994de23e7687d"
   integrity sha512-JIsjTbWBWJHb2t1D4UNZIJ6ohlRYCdoGzeHSzTorMH2zOq3UKlSBzFBMBdFK3xnUD/ANHw/SUzl/vx0z0JrqRw==
@@ -2051,12 +2051,7 @@ asn1@^0.2.4:
   dependencies:
     safer-buffer "~2.1.0"
 
-async@3.2.3:
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/async/-/async-3.2.3.tgz#ac53dafd3f4720ee9e8a160628f18ea91df196c9"
-  integrity sha512-spZRyzKL5l5BZQrr/6m/SqFdBN0q3OCI0f9rjfBzCMBIP4p75P620rR3gTmaksNOhmzgdxcaxdNfMy6anrbM0g==
-
-async@^3.2.3:
+async@3.2.3, async@^3.2.3:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/async/-/async-3.2.4.tgz#2d22e00f8cddeb5fde5dd33522b56d1cf569a81c"
   integrity sha512-iAB+JbDEGXhyIUavoDl9WP/Jj106Kz9DEn1DPgYw5ruDn0e3Wgi3sKFm55sASdGBNOQB8F59d9qQ7deqrHA8wQ==
@@ -3163,10 +3158,10 @@ cycle@1.0.x:
   resolved "https://registry.yarnpkg.com/cycle/-/cycle-1.0.3.tgz#21e80b2be8580f98b468f379430662b046c34ad2"
   integrity sha512-TVF6svNzeQCOpjCqsy0/CSy8VgObG3wXusJ73xW2GbG5rGx7lC8zxDSURicsXI2UsGdi2L0QNRCi745/wUDvsA==
 
-"d3-color@1 - 2", d3-color@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/d3-color/-/d3-color-2.0.0.tgz#8d625cab42ed9b8f601a1760a389f7ea9189d62e"
-  integrity sha512-SPXi0TSKPD4g9tw0NMZFnR95XVgUZiBH+uUTqQuDu1OsE2zomHU7ho0FISciaPvosimixwHFl3WHLGabv6dDgQ==
+"d3-color@1 - 2", d3-color@2.0.0, d3-color@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/d3-color/-/d3-color-3.1.0.tgz#395b2833dfac71507f12ac2f7af23bf819de24e2"
+  integrity sha512-zg/chbXyeBtMQ1LbD/WSoW2DpC3I0mpmPdW+ynRTj/x2DAWYrIY7qeZIHidozwV24m4iavr15lNwIwLxRmOxhA==
 
 "d3-interpolate@1 - 2":
   version "2.0.1"

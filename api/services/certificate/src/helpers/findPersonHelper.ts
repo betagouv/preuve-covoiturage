@@ -7,7 +7,7 @@ export interface ParamsInterface {
   context?: ContextType;
 }
 
-export type ResultsInterface = string[];
+export type ResultsInterface = { datetime: Date; _id: number; uuid: string }[];
 
 export interface FindPersonInterface {
   (params: ParamsInterface): Promise<ResultsInterface>;

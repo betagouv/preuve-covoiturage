@@ -43,7 +43,7 @@ export class CostNormalizerProvider implements CostNormalizerProviderInterface {
 
     const [cost, payments] = this.normalizeCost(siret, params.contribution, params.incentives, params.payments);
 
-    return { cost, payments };
+    return { cost, payments, payment: params.payment || 0 };
   }
 
   //  ------------------------------------------------------------------------------------

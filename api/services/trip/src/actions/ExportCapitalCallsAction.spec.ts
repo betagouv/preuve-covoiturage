@@ -60,7 +60,7 @@ test.beforeEach((t) => {
   t.context.checkCampaignStub = sinon.stub(t.context.checkCampaign, 'call');
   t.context.s3StorageProviderStub = sinon.stub(t.context.s3StorageProvider, 'upload');
   t.context.buildExcelStub = sinon.stub(t.context.buildExcel, 'call');
-  t.context.tripRepositoryStub = sinon.stub(t.context.tripRepository, 'getPolicyInvolvedOperators');
+  t.context.tripRepositoryStub = sinon.stub(t.context.tripRepository, 'getPolicyActiveOperators');
 });
 
 test.afterEach((t) => {
@@ -141,24 +141,25 @@ test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided
 
   // Assert
   sinon.assert.calledOnceWithExactly(
-    t.context.checkCampaignStub!,
+    t.context.checkCampaignStub,
     campaign._id,
     t.context.START_DATE,
     t.context.END_DATE,
   );
+
   sinon.assert.calledOnceWithExactly(
-    t.context.s3StorageProviderStub!,
+    t.context.s3StorageProviderStub,
     BucketName.APDF,
     filepath,
     filename,
     `${campaign._id}`,
   );
+
   sinon.assert.calledOnceWithExactly(
-    t.context.tripRepositoryStub!,
+    t.context.tripRepositoryStub,
     campaign._id,
     t.context.START_DATE,
     t.context.END_DATE,
-    undefined,
   );
   t.deepEqual(result, [s3_key]);
 });

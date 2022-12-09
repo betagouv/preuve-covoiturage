@@ -7,7 +7,7 @@ import { PointInterface } from '../shared/common/interfaces/PointInterface';
 
 export interface ParamsInterface {
   person: { uuid: string };
-  operator: { _id: number; uuid: string; name: string; support: string };
+  operator: { _id: number; uuid: string; name: string; support?: string };
   carpools: CarpoolInterface[];
   params: Partial<{
     tz: string;
