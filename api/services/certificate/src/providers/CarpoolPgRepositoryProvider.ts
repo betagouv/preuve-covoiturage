@@ -72,7 +72,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
       
         SELECT
           cc.trip_id,
-          'driver' as type,
+          'passenger' as type,
           SUBSTR((datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
           datetime AT TIME ZONE $${values.length} AS datetime,
           distance,
@@ -80,7 +80,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
         FROM ${this.table} AS cc
         WHERE
           cc.operator_id = $2::int
-          AND cc.is_driver = true
+          AND cc.is_driver = false
           AND cc.status in ('ok', 'expired')
           AND cc.datetime >= $3
           AND cc.datetime <  $4
