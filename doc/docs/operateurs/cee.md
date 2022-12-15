@@ -1,14 +1,14 @@
 # API CEE
 
-## Présentation
-
-Dans le cadre des fiches standardisées et bonifiée pour le covoiturage courte et longue distance, le Registre de preuve de covoiturage met à disposition des opérateurs de covoiturage, une API (Application Programming Interface, voir [qu'est-ce qu'une API ?](https://api.gouv.fr/guides/api-definition)) permettant à ces derniers de vérifier en partie l'éligibilité d'un dossier de demande CEE (vérification de l'historique et du dédoublonnage) et  de récolter des données du RPC necessaire à la bonne constitution du dossier avant l'envoi de celui-ci par l'opérateur de covoiturage auprès du PNCEE.
-
-Cette API a pour but de fluidifier et de fiabiliser les demandes de dossier afin d'éviter un maximum de refus de ces derniers par le PNCEE en cas de doublon par exemple. 
-
 > Définitions : 
 > * CEE : Crédits d'Economie d'Energie
 > * PNCEE : Pôle National des Crédits d'Economie d'Energie
+
+## Présentation
+
+Dans le cadre des fiches standardisées et bonifiées pour le covoiturage courte et longue distance, le Registre de preuve de covoiturage met à disposition des opérateurs de covoiturage, une API (Application Programming Interface, voir [qu'est-ce qu'une API ?](https://api.gouv.fr/guides/api-definition)) permettant à ces derniers de vérifier en partie l'éligibilité d'un dossier de demande CEE (vérification de l'historique et du dédoublonnage) et de récolter des données du RPC nécessaires à la bonne constitution du dossier avant envoi de celui-ci par l'opérateur de covoiturage au PNCEE.
+
+Cette API a pour but de fluidifier et de fiabiliser les demandes de dossier afin d'éviter un maximum de refus de ces derniers par le PNCEE en cas de doublon par exemple. 
 
 ## Ressources utiles
 
@@ -18,11 +18,10 @@ Cette API a pour but de fluidifier et de fiabiliser les demandes de dossier afin
 ## Objectifs de l'API
 
 - vérification de l'éligibilité d'un usager à l'opération standardisée : 
-  - vérification de l'historique : invalidation des usagers ayant déjà bénéficiés d'opérations spécifiques 3 ans avant la réalisation du trajet. Comparatif sur la base des données transmises par les opérateurs
-  - vérification dédoublonnage : invalidation des usagers ayant déjà bénéficiés de l'opération standardisée quelque soit la plateforme de covoiturage utilisée.
+  - vérification de l'historique : invalidation des usagers ayant déjà bénéficié d'opérations spécifiques 3 ans avant la réalisation du trajet. Comparatif sur la base des données transmises par les opérateurs
+  - vérification dédoublonnage : invalidation des usagers ayant déjà bénéficié de l'opération standardisée quelque soit la plateforme de covoiturage utilisée.
 - confirmation de l'éligibilité et mise à disposition d'éléments constitutifs du dossier de demande de prime
   - transmission des éléments suivants : journey_id; status et token (signature RPC)
-
 
 ## Utilisation de l'API
 
@@ -31,7 +30,6 @@ L'utilisation de l'API nécessite la possession d'un token applicatif comme déc
 * 1 environnement de pré-production pour la réalisation des tests
 
 > Pré-production : https://api.demo.covoiturage.beta.gouv.fr (opens new window)
-
 
 * 1 environnement de production
 
@@ -50,9 +48,8 @@ Seront nécessaire : numéros de permis de conduire, trois premières lettres du
 
 > Vérification complète de l'éligibilité de l'usager (historique et dédoublonnage) et enregistrement de la demande CEE dans l'API CEE : 
 > * Si la conformité de la demande est valide, alors une réponse 201 est retournée validant l'enregistrement de la demande.
-> * Si une demande a déjà enregistrée pour l'usager en question, alors une réponse 409 est retournée avec la date à laquelle l'enregistremennt a été fait.
+> * Si une demande a déjà été enregistrée pour l'usager en question, alors une réponse 409 est retournée avec la date à laquelle l'enregistremennt a été fait.
 > * Si le trajet envoyé n'est pas trouvé, alors une réponse 404 est retournée.
-
 
 > **Ce point d'API est consultable à J+7 pour la courte et la longue distance, J étant la date de réalisation du trajet. 
 Il est prévu que ce délai soit réduit à 48h après la réalisation du trajet suite au déploiement de l’API V3.**
@@ -60,22 +57,23 @@ Il est prévu que ce délai soit réduit à 48h après la réalisation du trajet
 ### 3. Importer des demandes CEE existantes par lot
 
 > Envoi par chaque opérateur concerné de l'historique des bénéficiaires d'opérations spécifiques sur les 3 années précédents 2023. Pour chaque bénéficiaires les informations suivantes seront requises : phone_trunc, last_name_trunc, datetime et journey_type
-À noter que ce point d'API ne sera peut être pas mis en place et remplacé par un CSV standardisé.
+À noter que ce point d'API ne sera peut-être pas mis en place et remplacé par un CSV standardisé.
 
-> **Afin que l'API soit fonctionnelle, les opérateurs doivent faire remonter l'historique au plus tôtô au registre.**
+> **Afin que l'API soit fonctionnelle, les opérateurs doivent faire remonter l'historique au registre au plus tôt.**
 
 ## Vérifier un token
 
-Pour véfirier le token, il faut disposer des informations suivantes :
+Pour vérifier le token, il faut disposer des informations suivantes :
 - siret de l'opérateur ;
 - type de trajet (short ou long) ;
 - numéro de permis ;
 - horodatage au format ISO 8601 UTC (ex: "2022-11-22T08:54:19Z").
 
-Ces informations sont utilisées pour former une chaîne de caractères comme suit "siret/type/permis/horadatage", exemple : "13002526500013/short/051227308989/2022-11-22T08:54:19Z". Cette chaîne est haché via un SHA512 et constitue le message.
+Ces informations sont utilisées pour former une chaîne de caractères comme suit "siret/type/permis/horadatage", exemple : "13002526500013/short/051227308989/2022-11-22T08:54:19Z". Cette chaîne est hachée via un SHA512 et constitue le message.
 
-Ce message est signé via une clé RSA et peut donc être vérifié avec la clé publique du registre ci après :
+Ce message est signé via une clé RSA et peut donc être vérifié avec la clé publique du Registre ci après :
 
+```
 -----BEGIN PUBLIC KEY-----
 MIICIDANBgkqhkiG9w0BAQEFAAOCAg0AMIICCAKCAgEA0m019dxJhmGl9XKCEBxl
 fgfKkmsre3KXlAkgan34k1vPyBuc1vz+3IQPuVrnEABghaSG8E7FpZ1DV913bWQ+
@@ -90,6 +88,7 @@ vfmzoi/adJ46P5+WEbOnfBO31+yKd6nnX4p7XM1F6vkDw6RXj9dE/SOKtfAljySO
 vMq3Z5rUJEjjZzYrnNkooqAXtzhp4Tl/i4t1n2XFS3pqu2vqjtDQ9+cRt6Fv8Wsx
 7Ul3uRRHi8Nb63mjjmRmd2MCAQM=
 -----END PUBLIC KEY-----
+```
 
 ## Des questions ?
 
