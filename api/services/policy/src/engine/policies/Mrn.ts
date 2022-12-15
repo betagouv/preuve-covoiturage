@@ -39,7 +39,7 @@ export const Mrn: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
   ];
   protected limits: Array<ConfiguredLimitInterface> = [
     ['E7B969E7-D701-2B9F-80D2-B30A7C3A5220', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['489A7D57-1948-61DA-E5FA-1AE3217325BA', 800_000_00, watchForGlobalMaxAmount],
+    ['489A7D57-1948-61DA-E5FA-1AE3217325BA', 2_000_000_00, watchForGlobalMaxAmount],
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
