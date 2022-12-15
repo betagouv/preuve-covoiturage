@@ -81,7 +81,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1_999_999_99,
+        value: 1_999_999_50,
       },
     ],
   },
