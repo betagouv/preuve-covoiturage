@@ -1,4 +1,4 @@
-import { SimulateOnPasGeoRequiredParams } from '../shared/policy/simulateOnPastGeo.contract';
+import { SimulateOnPastGeoRequiredParams } from '../shared/policy/simulateOnPastGeo.contract';
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
@@ -35,7 +35,7 @@ export class SimulatePolicyformAction extends AbstractAction {
 
   private async simulatePolicy(
     nbMonths: number,
-    simulation: SimulateOnPasGeoRequiredParams,
+    simulation: SimulateOnPastGeoRequiredParams,
   ): Promise<SimulateOnPastResult> {
     const simulateOnPasGeoParams: SimulateOnPasGeoParams = {
       ...simulation,

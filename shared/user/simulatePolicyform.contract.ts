@@ -1,4 +1,4 @@
-import { SimulateOnPasGeoRequiredParams } from '../policy/simulateOnPastGeo.contract';
+import { SimulateOnPastGeoRequiredParams } from '../policy/simulateOnPastGeo.contract';
 
 export interface ParamsInterface {
   name: string;
@@ -6,7 +6,7 @@ export interface ParamsInterface {
   job: string;
   email: string;
   territory_name;
-  simulation: SimulateOnPasGeoRequiredParams;
+  simulation: SimulateOnPastGeoRequiredParams;
 }
 
 export const handlerConfig = {

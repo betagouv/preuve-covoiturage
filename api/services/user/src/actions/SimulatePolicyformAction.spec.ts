@@ -4,7 +4,7 @@ import sinon, { SinonStub } from 'sinon';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';
 import {
   signature as simulateOnPastGeoSignature,
-  SimulateOnPasGeoRequiredParams,
+  SimulateOnPastGeoRequiredParams,
 } from '../shared/policy/simulateOnPastGeo.contract';
 import { ParamsInterface } from '../shared/user/simulatePolicyform.contract';
 import { SimulatePolicyformAction } from './SimulatePolicyformAction';
@@ -53,7 +53,7 @@ test.afterEach((t) => {
   t.context.kernelInterfaceResolverStub!.restore();
 });
 
-test('SimulatePolicyformAction: should fails return geo error if any from SimulateOnPastByGeoAction', async (t) => {
+test('SimulatePolicyformAction: should fail and return geo error if error in SimulateOnPastByGeoAction', async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub!.throws(new Error('Could not find any coms for territory_insee 45612333333'));
 
@@ -81,7 +81,7 @@ test('SimulatePolicyformAction: should fails return geo error if any from Simula
 
 test('SimulatePolicyformAction: should call simulation for 1, 3 and 6 months period', async (t) => {
   // Arrange
-  const simulation: SimulateOnPasGeoRequiredParams = { territory_insee: '45612333333', policy_template_id: '1' };
+  const simulation: SimulateOnPastGeoRequiredParams = { territory_insee: '45612333333', policy_template_id: '1' };
   const params: ParamsInterface = {
     name: '',
     firstname: '',

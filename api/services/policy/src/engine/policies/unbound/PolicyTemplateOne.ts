@@ -4,19 +4,16 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../../interfaces';
+import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
 import {
   ConfiguredLimitInterface,
-  endsAt,
   isOperatorClassOrThrow,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  startsAt,
 } from '../../helpers';
 import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
-import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
-import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
 
 export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler

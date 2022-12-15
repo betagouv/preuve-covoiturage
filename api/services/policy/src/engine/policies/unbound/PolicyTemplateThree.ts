@@ -3,8 +3,9 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-  TerritorySelectorsInterface,
 } from '../../../interfaces';
+import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
+import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
 import {
   ConfiguredLimitInterface,
   endsAt,
@@ -15,8 +16,6 @@ import {
   startsAt,
 } from '../../helpers';
 import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
-import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
-import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
 
 export const PolicyTemplateThree: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler

@@ -1,6 +1,6 @@
 import { AbstractMailNotification } from '@pdc/provider-notification';
 import { AbstractTemplate } from '@pdc/provider-template';
-import { SimulateOnPasGeoRequiredParams } from '../shared/policy/simulateOnPastGeo.contract';
+import { SimulateOnPastGeoRequiredParams } from '../shared/policy/simulateOnPastGeo.contract';
 
 export interface SimulatePolicyFormTemplateData {
   title: string;
@@ -13,7 +13,7 @@ export interface SimulatePolicyFormTemplateData {
   simulation_form_email: string;
   simulation_form_fullname: string;
   simulation_form_job: string;
-  simulation_form_simulation_param: SimulateOnPasGeoRequiredParams;
+  simulation_form_simulation_param: SimulateOnPastGeoRequiredParams;
 
   simulation_result_one_month_trip_subsidized: number;
   simulation_result_one_month_amount: number;
