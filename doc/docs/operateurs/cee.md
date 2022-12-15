@@ -64,6 +64,33 @@ Il est prévu que ce délai soit réduit à 48h après la réalisation du trajet
 
 > **Afin que l'API soit fonctionnelle, les opérateurs doivent faire remonter l'historique au plus tôtô au registre.**
 
+## Vérifier un token
+
+Pour véfirier le token, il faut disposer des informations suivantes :
+- siret de l'opérateur ;
+- type de trajet (short ou long) ;
+- numéro de permis ;
+- horodatage au format ISO 8601 UTC (ex: "2022-11-22T08:54:19Z").
+
+Ces informations sont utilisées pour former une chaîne de caractères comme suit "siret/type/permis/horadatage", exemple : "13002526500013/short/051227308989/2022-11-22T08:54:19Z". Cette chaîne est haché via un SHA512 et constitue le message.
+
+Ce message est signé via une clé RSA et peut donc être vérifié avec la clé publique du registre ci après :
+
+-----BEGIN PUBLIC KEY-----
+MIICIDANBgkqhkiG9w0BAQEFAAOCAg0AMIICCAKCAgEA0m019dxJhmGl9XKCEBxl
+fgfKkmsre3KXlAkgan34k1vPyBuc1vz+3IQPuVrnEABghaSG8E7FpZ1DV913bWQ+
+0MTnnr801ZeE23wFYFlmpTfoOY7e89rvekLgB4oA1kisc28a5VAkGY+VggzGB9x+
+gWd82+LloPbzd1CgR3atNYXjPdQLqtEA1g6Pmj0eUNfSSr5SFUFlzmAhJyK0uUM4
+O/PKQFVBDqbrUU4fwhWJum6awmVc9G7OMUneOmu0wCl949U+Ek7VIstZpfmz3+JU
+4lMQ+9CU5OHR461WpyfC64cBcS9RbMflqivQGWMKoGgOBchVAB8vMn47ni66T5cV
+1SrKOe5IEbb4vEcHA5d1e5VwpCV4aoIRIQNzos/PO9rXOT3osTJV3wylQxIu2+5j
+yKDv0/mIKG+0HPt9fORA2TwqYZ0QEaBd8eCpgKHeKTZeAe15y1PKRUZuPKji1DL3
+1ceMIJY5iCvjMi5fwzD3rD20a1ttKvYRtqNFzYaVpmnxhnysSPUJp99KDZh6HO9g
+vfmzoi/adJ46P5+WEbOnfBO31+yKd6nnX4p7XM1F6vkDw6RXj9dE/SOKtfAljySO
+vMq3Z5rUJEjjZzYrnNkooqAXtzhp4Tl/i4t1n2XFS3pqu2vqjtDQ9+cRt6Fv8Wsx
+7Ul3uRRHi8Nb63mjjmRmd2MCAQM=
+-----END PUBLIC KEY-----
+
 ## Des questions ?
 
 Contactez equipe [chez] covoiturage.beta.gouv.fr
