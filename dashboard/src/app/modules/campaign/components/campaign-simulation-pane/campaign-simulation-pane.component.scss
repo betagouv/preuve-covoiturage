@@ -1,12 +1,30 @@
-.SimForm-summary {
-  background-color: #fafbfd;
-  border-radius: 5px;
-  padding: 25px 50px;
+// .SimForm-summary {
+//   background-color: white;
+//   border-radius: 5px;
+//   padding: 25px 50px;
+//   margin: 0;
+//   min-height: 230px;
+//   box-sizing: border-box;
+// }
+@import 'variables';
 
-  margin: 0;
-  min-height: 230px;
-  box-sizing: border-box;
+.campaign-simulation {
+  
+  h4 {
+    color: $color-primary;
+  }
+  &-content {
+    padding-left: 55px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: white;
+  }
+  &-empty {
+    height: 150px;
+    text-align: center;
+  }
 }
+
 
 h4,
 p {

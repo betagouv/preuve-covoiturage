@@ -29,7 +29,10 @@
       <app-campaign-summary-text [campaign]="campaignUx"></app-campaign-summary-text>
     </div>
 
+    <!-- simulation -->
+    <app-campaign-simulation-pane *ngIf="isDraft" [campaign]="campaignUx"></app-campaign-simulation-pane>
+
     <!-- capital call -->
-    <app-campaign-fundingrequests [campaign]="campaignUx"></app-campaign-fundingrequests>
+    <app-campaign-fundingrequests *ngIf="!isDraft" [campaign]="campaignUx"></app-campaign-fundingrequests>
   </div>
 </app-page-content>
