@@ -68,7 +68,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           AND cc.identity_id = ANY($1::int[])
           ${where_positions.length ? `AND (${where_positions})` : ''}
       
-        UNION
+        UNION ALL
       
         SELECT
           cc.trip_id,
