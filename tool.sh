@@ -60,7 +60,7 @@ wait_for_app() {
 
 seed_data() {
   echo "Seed data"
-  $DC run --rm api yarn workspace @pdc/proxy ilos seed --skip-migration
+  $DC run --rm api yarn workspace @pdc/proxy ilos seed
 }
 
 create_bucket() {
