@@ -101,6 +101,7 @@ export class HttpTransport implements TransportInterface {
     this.registerContactformRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
+    this.registerGeoRoutes();
   }
 
   getApp(): express.Express {
@@ -165,7 +166,7 @@ export class HttpTransport implements TransportInterface {
     // apply CORS to all routes but /honor (for now)
     // TODO: improve if more routes are concerned
     this.app.use(
-      /\/((?!honor|contactform).)*/,
+      /\/((?!honor|contactform|geo\/search|policy\/simulate).)*/,
       cors({
         origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
@@ -182,6 +183,20 @@ export class HttpTransport implements TransportInterface {
     );
     this.app.use(
       '/contactform',
+      cors({
+        origin: this.config.get('proxy.showcase'),
+        optionsSuccessStatus: 200,
+      }),
+    );
+    this.app.use(
+      '/geo/search',
+      cors({
+        origin: this.config.get('proxy.showcase'),
+        optionsSuccessStatus: 200,
+      }),
+    );
+    this.app.use(
+      '/policy/simulate',
       cors({
         origin: this.config.get('proxy.showcase'),
         optionsSuccessStatus: 200,
@@ -295,6 +310,33 @@ export class HttpTransport implements TransportInterface {
           createRPCPayload('campaign:simulateOnFuture', params, user, { req }),
         )) as RPCResponseType;
         this.send(res, response);
+      }),
+    );
+    this.app.post(
+      '/policy/simulate',
+      rateLimiter({ max: 1 }),
+      asyncHandler(async (req, res, next) => {
+        this.kernel.handle(
+          createRPCPayload('user:sendSimulationEmail', req.body, { permissions: ['policy.simulate.past'] }),
+        );
+        this.send(res, { id: 1, jsonrpc: '2.0' });
+      }),
+    );
+  }
+
+  private registerGeoRoutes(): void {
+    this.app.post(
+      '/geo/search',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload(
+            'territory:listGeo',
+            { search: req.body.search, exclude_coms: req.body.exclude_coms },
+            { permissions: ['common.territory.list'] },
+          ),
+        );
+        this.send(res, response as RPCResponseType);
       }),
     );
   }

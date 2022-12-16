@@ -15,6 +15,38 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
 
   constructor(protected connection: PostgresConnection) {}
 
+  async *findTripByGeo(coms: string[], from: Date, to: Date): AsyncGenerator<CarpoolInterface[], void, void> {
+    const query = {
+      text: `SELECT
+      t.carpool_id as _id,
+      t.trip_id,
+      t.operator_siret,
+      t.operator_class,
+      t.passenger_identity_uuid,
+      t.passenger_has_travel_pass,
+      t.passenger_is_over_18,
+      t.driver_identity_uuid,
+      t.driver_has_travel_pass,
+      t.datetime,
+      t.seats,
+      t.duration,
+      t.distance,
+      t.cost,
+      t.carpool_start as start,
+      t.carpool_end as end,
+      t.start_geo_code
+    FROM policy.trips t
+    WHERE
+    (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[])) AND
+    t.datetime >= $2::timestamp AND
+    t.datetime < $3::timestamp AND
+      t.carpool_status = 'ok'
+    ORDER BY t.datetime ASC`,
+      values: [coms, from, to],
+    };
+    await (yield* this.queryAndYieldRows(query, 300));
+  }
+
   async *findTripByPolicy(
     policy: PolicyInterface,
     from: Date,
@@ -32,7 +64,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
       values: [policy.territory_id, year],
     });
 
-    const com = comRes.rowCount ? comRes.rows.map((r) => r.com) : [];
+    const com: string[] = comRes.rowCount ? comRes.rows.map((r) => r.com) : [];
 
     const query = {
       text: `
@@ -76,6 +108,13 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
       values: override ? [com, from, to] : [com, from, to, policy._id],
     };
 
+    await (yield* this.queryAndYieldRows(query, batchSize));
+  }
+
+  private async *queryAndYieldRows(
+    query: { text: string; values: (number | Date | string[])[] },
+    batchSize: number,
+  ): AsyncGenerator<CarpoolInterface[], void, void> {
     const client = await this.connection.getClient().connect();
     const cursor = client.query(new Cursor(query.text, query.values));
     const promisifiedCursorRead = promisify(cursor.read.bind(cursor));

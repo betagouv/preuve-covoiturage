@@ -14,7 +14,11 @@ import {
   ExportCSVNotification,
   ForgottenPasswordNotification,
   InviteNotification,
+  SimulatePolicyNotification,
 } from '../notifications';
+import { ParamsInterface as SimulationPolicyParamsInterface } from '../shared/user/simulatePolicyform.contract';
+import { ResultInterface as SimulateOnPastResult } from '../shared/policy/simulateOnPastGeo.contract';
+import { PolicyTemplateDescriptions } from '../shared/policy/common/classes/PolicyTemplateDescription';
 
 import { ParamsInterface as SendMailParamsInterface } from '../shared/user/notify.contract';
 
@@ -44,6 +48,7 @@ export class UserNotificationProvider {
       ExportCSVNotification: ExportCSVNotification,
       ForgottenPasswordNotification: ForgottenPasswordNotification,
       InviteNotification: InviteNotification,
+      SimulatePolicyNotification: SimulatePolicyNotification,
     }),
   );
 
@@ -164,6 +169,37 @@ link:  ${link}
       data: {
         fullname,
         action_href: link,
+      },
+    });
+  }
+
+  async simulationEmail(
+    formParams: SimulationPolicyParamsInterface,
+    simulationResult: { [key: number]: SimulateOnPastResult },
+  ): Promise<void> {
+    const template = 'SimulatePolicyNotification';
+    this.log('SimulatePolicyNotification form', formParams.email, null, null);
+    await this.queueEmail({
+      template,
+      to: `${this.getTo(formParams.email, `${formParams.firstname} ${formParams.name}`)}, ${this.config.get(
+        'contactform.to',
+      )}`,
+      data: {
+        simulation_policy_description_html: PolicyTemplateDescriptions.get[formParams.simulation.policy_template_id],
+        simulation_territory_name: formParams.territory_name,
+        simulation_form_email: formParams.email,
+        simulation_form_fullname: `${formParams.firstname} ${formParams.name}`,
+        simulation_form_job: formParams.job,
+        simulation_form_simulation_param: formParams.simulation,
+
+        simulation_result_one_month_trip_subsidized: simulationResult['1'].trip_subsidized,
+        simulation_result_one_month_amount: simulationResult['1'].amount / 100,
+
+        simulation_result_three_months_trip_subsidized: simulationResult['3'].trip_subsidized,
+        simulation_result_three_months_amount: simulationResult['3'].amount / 100,
+
+        simulation_result_six_months_trip_subsidized: simulationResult['6'].trip_subsidized,
+        simulation_result_six_months_amount: simulationResult['6'].amount / 100,
       },
     });
   }
