@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { concatMap, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { catchHttpError } from '~/core/operators/catchHttpStatus';
+import { AuthenticationService as Auth } from '~/core/services/authentication/authentication.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { TerritoryGroupInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
@@ -26,6 +27,7 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
     private _toastr: ToastrService,
     private _territoryApi: TerritoryApiService,
     private _campaignStoreService: CampaignApiService,
+    private auth: Auth,
   ) {
     super();
   }
@@ -49,5 +51,9 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
         this.territory = territory;
         this.isLoaded = true;
       });
+  }
+
+  public authorized(): boolean {
+    return this.auth.isSuperAdmin();
   }
 }

@@ -30,6 +30,6 @@
     </div>
 
     <!-- capital call -->
-    <app-campaign-fundingrequests [campaign]="campaignUx"></app-campaign-fundingrequests>
+    <app-campaign-fundingrequests *ngIf="authorized()" [campaign]="campaignUx"></app-campaign-fundingrequests>
   </div>
 </app-page-content>
