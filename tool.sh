@@ -79,10 +79,10 @@ bootstrap() {
 }
 
 bootstrap_integrations() {
+  ensure_certs && \
+  ensure_keys && \
   start_services && \
   create_bucket local-pdc-export && \
-  create_bucket local-pdc-appels-de-fonds && \
-  create_bucket local-pdc-public
 }
 
 stop() {
