@@ -150,7 +150,9 @@ export class Migrator {
       const data = await cursor.next();
       if (data.value && Array.isArray(data.value)) {
         await this.connection.getClient().query({
-          text: `INSERT INTO ${tablename} VALUES (${data.value.map((_, i) => `$${i + 1}`).join(', ')})`,
+          text: `INSERT INTO ${tablename} VALUES (${data.value
+            .map((_, i) => `$${i + 1}`)
+            .join(', ')}) ON CONFLICT DO NOTHING`,
           values: data.value,
         });
       }
