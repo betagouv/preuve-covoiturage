@@ -5,7 +5,7 @@ import { PointInterface, InseeCoderInterface } from '../interfaces';
 
 @provider()
 export class LocalGeoProvider implements InseeCoderInterface {
-  protected fn = 'geo.get_latest_by_point';
+  protected fn = 'geo.get_closest_country';
 
   constructor(protected connection: PostgresConnection) {}
 
