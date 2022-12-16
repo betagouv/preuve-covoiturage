@@ -60,7 +60,7 @@ wait_for_app() {
 
 seed_data() {
   echo "Seed data"
-  $DC run --rm api yarn workspace @pdc/proxy ilos seed
+  $DC run --rm api yarn workspace @pdc/proxy ilos seed --skip-migration
 }
 
 create_bucket() {
@@ -73,6 +73,13 @@ bootstrap() {
   ensure_keys && \
   start_services && \
   seed_data && \
+  create_bucket local-pdc-export && \
+  create_bucket local-pdc-appels-de-fonds && \
+  create_bucket local-pdc-public
+}
+
+bootstrap_integrations() {
+  start_services && \
   create_bucket local-pdc-export && \
   create_bucket local-pdc-appels-de-fonds && \
   create_bucket local-pdc-public
@@ -117,7 +124,7 @@ run_integration() {
 
 integration() {
   set_env "-f docker-compose.integration.yml" && \
-  bootstrap && \
+  bootstrap_integrations && \
   start && \
   run_integration 2>&1
   EXIT=$?
