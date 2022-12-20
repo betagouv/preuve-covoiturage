@@ -16,6 +16,7 @@ import {
   watchForPersonMaxTripByDay,
   LimitTargetEnum,
   ConfiguredLimitInterface,
+  ensureFreeRide,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Mrn.html';
@@ -60,8 +61,7 @@ export const Mrn: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
       }
     }
 
-    // Gratuité passager
-    amount += ctx.carpool.cost;
+    amount += ensureFreeRide(ctx, amount);
 
     ctx.incentive.set(amount);
   }

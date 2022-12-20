@@ -16,6 +16,7 @@ import {
   LimitTargetEnum,
   ConfiguredLimitInterface,
   perKm,
+  ensureFreeRide,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Lannion.html';
@@ -60,8 +61,7 @@ export const Lannion: PolicyHandlerStaticInterface = class
       }
     }
 
-    // Gratuité passager
-    amount += ctx.carpool.cost;
+    amount += ensureFreeRide(ctx, amount);
     ctx.incentive.set(amount);
   }
 
