@@ -91,7 +91,7 @@ components:
           '$ref': '#/components/schemas/operator_journey_id'
     operator_journey_id:
      type: string
-     description: Identifiant du trajet envoyé par l'opérateur
+     description: Identifiant du trajet envoyé par l'opérateur. Attention, cela correspond au `journey_id` de la version 2 de l'API.
      pattern: /^[a-z0-9]{1,256}$/
      minLength: 1
      maxLength: 256
@@ -194,8 +194,6 @@ paths:
       tags:
       - cee
       summary: Enregistrer une demande CEE
-      description: |
-        *discussion* Sur le retour d'API sur cet appel, nous proposons une signature vérifiable directement par l'opérateur. Si cela n'est pas considéré comme utile, on aura un point d'API supplémentaire pour vérifier la conformité d'une demande via son uuid. 
       security:
         - token: []
       operationId: policy:cee:register
@@ -282,8 +280,6 @@ paths:
       tags:
       - cee
       summary: Importez des demandes CEE existantes par lot
-      description: |
-        *discussion* À noter que ce point d'API ne sera peut être pas mis en place et remplacé par un CSV standardisé.
       security:
         - token: []
       operationId: policy:cee:import
