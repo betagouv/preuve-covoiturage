@@ -52,8 +52,4 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
         this.isLoaded = true;
       });
   }
-
-  public authorized(): boolean {
-    return this.auth.isSuperAdmin();
-  }
 }
