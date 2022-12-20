@@ -63,11 +63,11 @@ test(
     meta: [],
   },
   {
-    incentive: [220, 420, 520, 270],
+    incentive: [200, 400, 500, 250],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1430,
+        value: 1350,
       },
     ],
   },
@@ -119,11 +119,11 @@ test(
     meta: [],
   },
   {
-    incentive: [220, 220, 220, 220, 220, 220, 0, 0],
+    incentive: [200, 200, 200, 200, 200, 200, 0, 0],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1320,
+        value: 1200,
       },
     ],
   },
