@@ -30,6 +30,8 @@ const defaultCarpool = {
   duration: 600,
   distance: 5_000,
   cost: 20,
+  driver_payment: 20,
+  passenger_payment: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
 };
@@ -62,11 +64,11 @@ test(
     meta: [],
   },
   {
-    incentive: [220, 420, 270, 270, 420],
+    incentive: [200, 400, 250, 250, 400],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1600,
+        value: 1500,
       },
     ],
   },
@@ -113,11 +115,11 @@ test(
     meta: [],
   },
   {
-    incentive: [220, 220, 220, 220, 220, 220, 0],
+    incentive: [200, 200, 200, 200, 200, 200, 0],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 13_20,
+        value: 12_00,
       },
     ],
   },
