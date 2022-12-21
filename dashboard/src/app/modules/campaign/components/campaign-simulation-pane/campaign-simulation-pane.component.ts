@@ -1,7 +1,7 @@
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { format, subDays, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { BehaviorSubject, throwError } from 'rxjs';
-import { PolicyInterface } from './../../../../../../../shared/policy/common/interfaces/PolicyInterface';
 
 import { Component, Input, OnInit } from '@angular/core';
 
@@ -9,7 +9,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { ResultInterface as StatResultInterface } from '~/shared/policy/simulateOnPast.contract';
 
-import { catchError } from 'rxjs/operators';
+import { catchError, debounceTime, map, tap } from 'rxjs/operators';
 import { CampaignReducedStats } from '../../../../core/entities/campaign/api-format/CampaignStats';
 import { CampaignApiService } from '../../services/campaign-api.service';
 
@@ -51,14 +51,39 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
   }
 
   ngOnInit(): void {
-    this.campaignApi.simulate({ policy: this.campaign}).pipe(
-      catchError((err) => {
-        this.errors.simulation_failed = true;
-        this.loading = false;
-        return throwError(err);
-      })).subscribe((state: CampaignReducedStats) => {
-        this.state = state
-        this.loading = false;
+    this.range$
+      .pipe(
+        debounceTime(250),
+        tap(() => {
+          this.loading = true;
+          Object.keys(this.errors).forEach((key) => (this.errors[key] = false));
+        }),
+        map((range: number) => {
+          this.timeState = this.getTimeState(range);
+          const policy: Partial<PolicyInterface> = {
+            territory_id: this.campaign.territory_id,
+            name: this.campaign.name,
+            handler: this.campaign.handler,
+            start_date: this.timeState.startDate,
+            end_date: this.timeState.endDate,
+          };
+          return policy;
+        }),
+      )
+      .subscribe((policy) => {
+        this.campaignApi
+          .simulate({ policy })
+          .pipe(
+            catchError((err) => {
+              this.errors.simulation_failed = true;
+              this.loading = false;
+              return throwError(err);
+            }),
+          )
+          .subscribe((state: CampaignReducedStats) => {
+            this.state = state;
+            this.loading = false;
+          });
       });
   }
 
@@ -66,7 +91,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
     // 5 days ago
     const endDate = subDays(new Date(), 5);
     const startDate = subMonths(endDate, nbMonth);
-  
+
     return {
       nbMonth,
       startDate,
@@ -75,5 +100,4 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
       endDateString: format(endDate, 'd MMMM yyyy', { locale: fr }),
     };
   }
-
 }

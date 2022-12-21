@@ -1,7 +1,7 @@
 import { PolicyInterface } from './common/interfaces/PolicyInterface';
 
 export interface ParamsInterface {
-  policy: PolicyInterface;
+  policy: Partial<PolicyInterface>;
 }
 
 export interface ResultInterface {

@@ -18,7 +18,7 @@ export const schema = {
     handler: {
       type: 'string',
       maxLength: 30,
-      pattern: '^([A-Za-z])*$',
+      pattern: '^([A-Za-z-_])*$',
     },
   },
 };
