@@ -20,6 +20,7 @@ export interface CeeAplicationResultInterface {
 }
 
 export interface CeeShortApplicationInterface {
+  application_timestamp: Timestamp;
   journey_type: CeeJourneyTypeEnum.Short;
   last_name_trunc: LastNameTrunc;
   driving_license: DrivingLicense;
@@ -27,6 +28,7 @@ export interface CeeShortApplicationInterface {
 }
 
 export interface CeeLongApplicationInterface {
+  application_timestamp: Timestamp;
   journey_type: CeeJourneyTypeEnum.Long;
   last_name_trunc: LastNameTrunc;
   driving_license: DrivingLicense;

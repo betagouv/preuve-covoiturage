@@ -40,6 +40,7 @@ test.before(async (t) => {
       last_name_trunc: 'ABC',
       driving_license: '051227308989',
       datetime: '2022-01-02T00:00:00.000Z',
+      application_timestamp: '2022-01-02T00:00:00.000Z',
       phone_trunc: '+336273488',
     },
     defaultContext,

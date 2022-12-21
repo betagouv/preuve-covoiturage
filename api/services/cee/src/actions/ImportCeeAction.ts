@@ -39,7 +39,11 @@ export class ImportCeeAction extends AbstractAction {
 
     for (const application of data) {
       try {
-        await this.ceeRepository.importApplication({ ...application, operator_id });
+        await this.ceeRepository.importApplication({
+          ...application,
+          operator_id,
+          application_timestamp: application.datetime,
+        });
         result.imported += 1;
       } catch (e) {
         result.failed += 1;

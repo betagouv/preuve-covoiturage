@@ -25,6 +25,7 @@ export interface ValidJourney {
 }
 
 export interface CeeApplication<T = Date> {
+  application_timestamp: T;
   operator_id: number;
   last_name_trunc: string;
   phone_trunc: string;

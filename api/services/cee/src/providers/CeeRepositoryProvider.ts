@@ -154,8 +154,16 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       ['last_name_trunc', 'varchar'],
       ['phone_trunc', 'varchar'],
       ['datetime', 'timestamp'],
+      ['application_timestamp', 'timestamp'],
     ];
-    const values: Array<any> = [journeyType, data.operator_id, data.last_name_trunc, data.phone_trunc, data.datetime];
+    const values: Array<any> = [
+      journeyType,
+      data.operator_id,
+      data.last_name_trunc,
+      data.phone_trunc,
+      data.datetime,
+      data.application_timestamp,
+    ];
 
     if (constraint) {
       if (journeyType === CeeJourneyTypeEnum.Long || journeyType === CeeJourneyTypeEnum.Short) {

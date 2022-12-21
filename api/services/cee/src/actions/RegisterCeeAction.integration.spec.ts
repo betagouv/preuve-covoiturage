@@ -47,6 +47,7 @@ const defaultShortPayload: any = {
   journey_type: 'short',
   last_name_trunc: 'ABC',
   driving_license: '051227308989',
+  application_timestamp: '2022-01-02T00:00:00.000Z',
   operator_journey_id: 'operator_journey_id-1',
 };
 
@@ -55,6 +56,7 @@ const defaultLongPayload: any = {
   last_name_trunc: 'ABC',
   driving_license: '051227308989',
   datetime: '2022-01-02T00:00:00.000Z',
+  application_timestamp: '2022-01-02T00:00:00.000Z',
   phone_trunc: '+336273488',
 };
 

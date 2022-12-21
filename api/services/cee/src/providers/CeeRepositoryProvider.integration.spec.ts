@@ -61,6 +61,7 @@ test.serial('Should create short application', async (t) => {
     last_name_trunc: 'AAA',
     phone_trunc: '+3360000000000',
     datetime: new Date('2022-11-01'),
+    application_timestamp: new Date('2022-11-01'),
     driving_license: 'driving_license_1',
     carpool_id: 1,
   };
@@ -84,6 +85,7 @@ test.serial('Should raise error if conflict short application', async (t) => {
     last_name_trunc: 'AAA',
     phone_trunc: '+3360000000000',
     datetime: new Date('2022-11-02'),
+    application_timestamp: new Date('2022-11-02'),
     driving_license: 'driving_license_1',
     carpool_id: 1,
   };
