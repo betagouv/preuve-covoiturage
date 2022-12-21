@@ -3,7 +3,13 @@ import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 
 import { CeeRepositoryProvider } from './CeeRepositoryProvider';
 import { config } from '../config';
-import { SearchCeeApplication, SearchJourney, ShortCeeApplication, ValidJourneyConstraint } from '../interfaces';
+import {
+  CeeJourneyTypeEnum,
+  SearchCeeApplication,
+  SearchJourney,
+  ShortCeeApplication,
+  ValidJourneyConstraint,
+} from '../interfaces';
 
 interface TestContext {
   db: DbContext;
@@ -154,4 +160,59 @@ test.serial('Should not find short application if criterias dont match', async (
     config.rules.applicationCooldownConstraint,
   );
   t.is(result, undefined);
+});
+
+test.serial('Should match cooldown criteria', async (t) => {
+  const app1 = {
+    application_timestamp: new Date('2014-01-01T00:00:00.000Z'),
+    operator_id: 1,
+    last_name_trunc: 'CCC',
+    phone_trunc: '+336123456',
+    datetime: new Date('2014-01-01T00:00:00.000Z'),
+    journey_type: CeeJourneyTypeEnum.Long,
+  };
+  const app2 = {
+    application_timestamp: new Date('2016-01-01T00:00:00.000Z'),
+    operator_id: 1,
+    last_name_trunc: 'DDD',
+    phone_trunc: '+336123457',
+    datetime: new Date('2016-01-01T00:00:00.000Z'),
+    journey_type: CeeJourneyTypeEnum.Long,
+  };
+  const data = [app1, app2];
+
+  for (const application of data) {
+    await t.context.repository.importApplication(application);
+  }
+
+  const result = await t.context.repository.searchForLongApplication(
+    {
+      last_name_trunc: 'CCC',
+      phone_trunc: '+336123456',
+    },
+    config.rules.applicationCooldownConstraint,
+  );
+  t.is(result, undefined);
+
+  const result2 = await t.context.repository.searchForLongApplication(
+    {
+      last_name_trunc: 'DDD',
+      phone_trunc: '+336123457',
+    },
+    config.rules.applicationCooldownConstraint,
+  );
+  t.like(result2, { datetime: new Date('2016-01-01T00:00:00.000Z') });
+
+  await t.notThrowsAsync(async () => {
+    await t.context.repository.registerLongApplication(
+      { ...app1, driving_license: 'toto' },
+      config.rules.applicationCooldownConstraint,
+    );
+  });
+  await t.throwsAsync(async () => {
+    await t.context.repository.registerLongApplication(
+      { ...app2, driving_license: 'toto2' },
+      config.rules.applicationCooldownConstraint,
+    );
+  });
 });

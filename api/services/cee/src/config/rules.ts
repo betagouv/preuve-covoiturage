@@ -12,12 +12,22 @@ export const validJourneyConstraint: ValidJourneyConstraint = {
 // Le temps exprimé en année à partir duquel une nouvelle demande peut être réalisée
 export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
   short: {
-    specific: 3,
-    standardized: 5,
+    specific: {
+      year: 3,
+      after: new Date('2020-01-01T00:00:00.000Z'),
+    },
+    standardized: {
+      year: 5,
+    },
   },
   long: {
-    specific: 5,
-    standardized: 12,
+    specific: {
+      year: 10,
+      after: new Date('2015-01-01T00:00:00.000Z'),
+    },
+    standardized: {
+      year: 12,
+    },
   },
 };
 

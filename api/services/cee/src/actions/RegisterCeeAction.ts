@@ -1,5 +1,5 @@
 import { createSign } from 'crypto';
-import { ConfigInterfaceResolver, ContextType, handler, InvalidParamsException } from '@ilos/common';
+import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/cee/registerApplication.contract';

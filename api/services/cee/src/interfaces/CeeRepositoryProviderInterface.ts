@@ -60,14 +60,19 @@ export interface ValidJourneyConstraint {
   geo_pattern: string;
 }
 
+interface CooldownConstraint {
+  year: number;
+  after?: Date;
+}
+
 export interface ApplicationCooldownConstraint {
   short: {
-    specific: number;
-    standardized: number;
+    specific: CooldownConstraint;
+    standardized: CooldownConstraint;
   };
   long: {
-    specific: number;
-    standardized: number;
+    specific: CooldownConstraint;
+    standardized: CooldownConstraint;
   };
 }
 

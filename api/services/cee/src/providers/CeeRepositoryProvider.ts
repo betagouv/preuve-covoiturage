@@ -44,10 +44,10 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         FROM ${this.table}
         WHERE 
           journey_type = $1::cee.journey_type_enum AND
-          datetime >= ($6::timestamp - $4::int * interval '1 year') AND
+          datetime >= ($7::timestamp - $4::int * interval '1 year') AND
           is_specific = false AND (
             (last_name_trunc = $2 AND phone_trunc = $3)
-            ${search.driving_license ? 'OR driving_license = $7' : ''}
+            ${search.driving_license ? 'OR driving_license = $8' : ''}
           )
         UNION
         SELECT
@@ -57,10 +57,13 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         FROM ${this.table}
         WHERE
           journey_type = $1::cee.journey_type_enum AND
-          datetime >= ($6::timestamp - $5::int * interval '1 year') AND
+          (
+            datetime >= ($7::timestamp - $5::int * interval '1 year') AND
+            datetime >= $6::timestamp
+          ) AND
           is_specific = true AND (
             (last_name_trunc = $2 AND phone_trunc = $3)
-            ${search.driving_license ? 'OR driving_license = $7' : ''}
+            ${search.driving_license ? 'OR driving_license = $8' : ''}
           )
         ORDER BY datetime DESC
         LIMIT 1
@@ -69,8 +72,11 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         journeyType,
         search.last_name_trunc,
         search.phone_trunc,
-        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.standardized : constraint.long.standardized,
-        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific : constraint.long.specific,
+        journeyType === CeeJourneyTypeEnum.Short
+          ? constraint.short.standardized.year
+          : constraint.long.standardized.year,
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.year : constraint.long.specific.year,
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.after : constraint.long.specific.after,
         new Date(),
         ...(search.driving_license ? [search.driving_license] : []),
       ],
@@ -199,8 +205,10 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           (
             (cep.last_name_trunc = tmp.last_name_trunc AND cep.phone_trunc = tmp.phone_trunc) OR
              cep.driving_license = tmp.driving_license
-          ) AND
-          cep.datetime >= tmp.datetime::timestamp - $${values.length + 1} * interval '1 year'
+          ) AND (
+            cep.datetime >= tmp.datetime::timestamp - $${values.length + 1} * interval '1 year' AND
+            cep.datetime >= $${values.length + 2}
+          )
         LEFT JOIN ${this.table} AS ced on 
           ced.is_specific = false AND
           ced.journey_type = tmp.journey_type AND
@@ -208,14 +216,21 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
             (ced.last_name_trunc = tmp.last_name_trunc AND ced.phone_trunc = tmp.phone_trunc) OR
              ced.driving_license = tmp.driving_license
           ) AND
-          ced.datetime >= tmp.datetime::timestamp - $${values.length + 2} * interval '1 year'
+          ced.datetime >= tmp.datetime::timestamp - $${values.length + 3} * interval '1 year'
         WHERE
           cep._id IS NULL AND
           ced._id IS NULL
       `;
-      values.push(journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific : constraint.long.specific);
       values.push(
-        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.standardized : constraint.long.standardized,
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.year : constraint.long.specific.year,
+      );
+      values.push(
+        journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.after : constraint.long.specific.after,
+      );
+      values.push(
+        journeyType === CeeJourneyTypeEnum.Short
+          ? constraint.short.standardized.year
+          : constraint.long.standardized.year,
       );
     }
 
