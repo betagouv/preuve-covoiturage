@@ -5,7 +5,8 @@ import { PointInterface, InseeCoderInterface } from '../interfaces';
 
 @provider()
 export class LocalGeoProvider implements InseeCoderInterface {
-  protected fn = 'geo.get_closest_country';
+  protected fn = 'geo.get_latest_by_point';
+  protected fb = 'geo.get_closest_country';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -14,9 +15,15 @@ export class LocalGeoProvider implements InseeCoderInterface {
 
     const comResult = await this.connection.getClient().query({
       text: `
-        SELECT
-          com, arr
+        SELECT com, arr
         FROM ${this.fn}($1::float, $2::float)
+        WHERE com IS NOT NULL
+
+        UNION
+
+        SELECT com, arr
+        FROM ${this.fb}($1::float, $2::float)
+        WHERE country <> 'XXXXX' AND com IS NULL
       `,
       values: [lon, lat],
     });

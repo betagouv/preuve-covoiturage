@@ -11,7 +11,7 @@ const o = {
   base_url: __ENV.LOAD_BASE_URL || 'http://localhost:8080',
   user: {
     email: 'operator@example.com',
-    password: 'admin1234',
+    password: 'password',
   },
 };
 
@@ -111,13 +111,13 @@ export default function (store) {
         },
         start: {
           datetime: new Date(start).toISOString(),
-          lat: 48.77826,
-          lon: 2.21223,
+          lat: 49.45218,
+          lon: 6.02627,
         },
         end: {
           datetime: new Date(end).toISOString(),
-          lat: 48.82338,
-          lon: 1.78668,
+          lat: 49.45218,
+          lon: 6.02627,
         },
       },
       driver: {
@@ -131,8 +131,8 @@ export default function (store) {
         },
         start: {
           datetime: new Date(start).toISOString(),
-          lat: 48.77826,
-          lon: 2.21223,
+          lat: 49.45218,
+          lon: 6.02627,
         },
         end: {
           datetime: new Date(end).toISOString(),
