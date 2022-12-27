@@ -2,7 +2,7 @@ export const description = `<p id="summary">
   <p>Campagne d’incitation au covoiturage du <b> jeudi 20 mai 2021 au samedi 31 décembre 2023</b>, toute la semaine
   </p>
   <p>Cette campagne est limitée à
-    <b>10 300 000 000 euros </b>.
+    <b>10 300 000,00 euros </b>.
   </p>
   <p>Les <b> conducteurs </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes : </p>
   <ul>
