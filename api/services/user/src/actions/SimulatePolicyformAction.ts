@@ -14,7 +14,7 @@ import { alias } from '../shared/user/simulatePolicyform.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias], hasPermissionMiddleware('policy.simulate.past')],
+  middlewares: [['validate', alias], hasPermissionMiddleware('common.user.policySimulate')],
 })
 export class SimulatePolicyformAction extends AbstractAction {
   readonly NB_MONHTHES_SIMULATION: number[] = [1, 3, 6];

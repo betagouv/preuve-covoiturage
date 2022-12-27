@@ -101,7 +101,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
     };
     const geoResult: GeoResultInterface = await this.kernel.call<GeoParamsInterface>(geoSignature, geoParamsInterface, {
       call: {
-        user: {},
+        user: { permissions: ['common.territory.list'] },
       },
       channel: {
         service: handlerConfig.service,
