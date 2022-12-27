@@ -120,7 +120,7 @@ test(
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 6_000_000_00,
+        value: 10_300_000_00,
       },
     ],
   },
