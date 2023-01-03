@@ -67,7 +67,8 @@ export class SimulatePolicyFormMJMLTemplate extends AbstractTemplate<SimulatePol
         Bonjour,
         </p>
         <p>
-        Vous trouverez ci-dessous le résultat ainsi que le récapitulatif de la demande de simulation qui nous a été adressée.
+        Vous trouverez ci-dessous le résultat ainsi que le récapitulatif 
+        de la demande de simulation qui nous a été adressée.
       </p>
       <p>
         <b>Récapitulatif de la demande :</b>
