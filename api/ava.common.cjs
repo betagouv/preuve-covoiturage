@@ -1,4 +1,5 @@
 const common = {
+  timeout: '1m',
   typescript: {
     rewritePaths: {
       'src/': "dist/",
