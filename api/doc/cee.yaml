@@ -28,7 +28,7 @@ components:
     application_timestamp:
       type: string
       format: datetime
-      description: Date de la signature de l'engagement.
+      description: Date de signature de l'engagement par le demandeur.
     driving_license:
       description: |
         Numéro de permis de conduire (également appelé code driving_license)
