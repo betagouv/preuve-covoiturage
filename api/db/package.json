@@ -16,7 +16,7 @@
     "coverage": "exit 0"
   },
   "dependencies": {
-    "@betagouvpdc/evolution-geo": "^1.2.2",
+    "@betagouvpdc/evolution-geo": "^1.2.3",
     "@types/node": "^17.0.8",
     "@types/sinon": "^10.0.6",
     "db-migrate": "^0.11.13",
