@@ -33,6 +33,6 @@ export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
 
 // A partir de combien de jour les demandes peuvent être envoyées
 export const timeRangeConstraint: TimeRangeConstraint = {
-  short: 7,
-  long: 7,
+  short: parseInt(env('APP_CEE_DELAY', '7') as string),
+  long: parseInt(env('APP_CEE_DELAY', '7') as string),
 };
