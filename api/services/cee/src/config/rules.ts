@@ -12,17 +12,27 @@ export const validJourneyConstraint: ValidJourneyConstraint = {
 // Le temps exprimé en année à partir duquel une nouvelle demande peut être réalisée
 export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
   short: {
-    specific: 3,
-    standardized: 5,
+    specific: {
+      year: 3,
+      after: new Date('2020-01-01T00:00:00.000Z'),
+    },
+    standardized: {
+      year: 5,
+    },
   },
   long: {
-    specific: 5,
-    standardized: 12,
+    specific: {
+      year: 10,
+      after: new Date('2015-01-01T00:00:00.000Z'),
+    },
+    standardized: {
+      year: 12,
+    },
   },
 };
 
 // A partir de combien de jour les demandes peuvent être envoyées
 export const timeRangeConstraint: TimeRangeConstraint = {
-  short: 7,
-  long: 7,
+  short: parseInt(env('APP_CEE_DELAY', '7') as string),
+  long: parseInt(env('APP_CEE_DELAY', '7') as string),
 };

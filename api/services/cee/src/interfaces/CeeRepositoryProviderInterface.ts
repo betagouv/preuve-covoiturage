@@ -25,6 +25,7 @@ export interface ValidJourney {
 }
 
 export interface CeeApplication<T = Date> {
+  application_timestamp: T;
   operator_id: number;
   last_name_trunc: string;
   phone_trunc: string;
@@ -59,14 +60,19 @@ export interface ValidJourneyConstraint {
   geo_pattern: string;
 }
 
+interface CooldownConstraint {
+  year: number;
+  after?: Date;
+}
+
 export interface ApplicationCooldownConstraint {
   short: {
-    specific: number;
-    standardized: number;
+    specific: CooldownConstraint;
+    standardized: CooldownConstraint;
   };
   long: {
-    specific: number;
-    standardized: number;
+    specific: CooldownConstraint;
+    standardized: CooldownConstraint;
   };
 }
 

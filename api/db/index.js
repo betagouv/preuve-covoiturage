@@ -28,10 +28,7 @@ async function migrate(config, ...args) {
       pool: config,
       app: {
         targetSchema: 'geo',
-        migrations: [
-          GeoMigrator.datasets.CreateGeoTable,
-          GeoMigrator.datasets.CreateComEvolutionTable,
-        ],
+        datasets: [],
       },
     });
     await geoInstance.prepare();

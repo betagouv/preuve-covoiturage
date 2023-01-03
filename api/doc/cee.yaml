@@ -25,6 +25,10 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    application_timestamp:
+      type: string
+      format: datetime
+      description: Date de signature de l'engagement par le demandeur.
     driving_license:
       description: |
         Numéro de permis de conduire (également appelé code driving_license)
@@ -57,6 +61,7 @@ components:
         - last_name_trunc
         - phone_trunc
         - datetime
+        - application_timestamp
       properties:
         journey_type:
           type: string
@@ -71,6 +76,8 @@ components:
           type: string
           format: datetime
           description: Date de partage des frais.
+        application_timestamp:
+          '$ref': '#/components/schemas/application_timestamp'
     short_distance_application:
       type: object
       additionalProperties: false
@@ -79,6 +86,7 @@ components:
         - driving_license
         - last_name_trunc
         - operator_journey_id
+        - application_timestamp
       properties:
         journey_type:
           type: string
@@ -89,6 +97,8 @@ components:
           '$ref': '#/components/schemas/last_name_trunc'
         operator_journey_id:
           '$ref': '#/components/schemas/operator_journey_id'
+        application_timestamp:
+          '$ref': '#/components/schemas/application_timestamp'
     operator_journey_id:
      type: string
      description: Identifiant du trajet envoyé par l'opérateur. Attention, cela correspond au `journey_id` de la version 2 de l'API.

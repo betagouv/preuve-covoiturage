@@ -3,7 +3,7 @@ import anyTest, { TestFn } from 'ava';
 import { stream } from 'exceljs';
 import sinon, { SinonStub } from 'sinon';
 import { CampaignSearchParamsInterface } from '../../interfaces';
-import { PolicyStatsInterface, SliceStatInterface } from '../../interfaces/PolicySliceStatInterface';
+import { PolicyStatsInterface } from '../../interfaces/PolicySliceStatInterface';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { SliceInterface } from '../../shared/policy/common/interfaces/SliceInterface';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';

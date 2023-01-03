@@ -67,13 +67,18 @@ export class RegisterCeeAction extends AbstractAction {
       { operator_id, operator_journey_id: params.operator_journey_id },
       this.validJourneyConstraint,
     );
+    const application_timestamp = getDateOrFail(
+      params.application_timestamp,
+      `data/application_timestamp ${timestampSchema.errorMessage}`,
+    );
+    isBeforeOrFail(application_timestamp, 0);
     isBeforeOrFail(carpoolData.datetime, this.timeConstraint.short);
     try {
       if (carpoolData.already_registered) {
         throw new ConflictException();
       }
       const application = await this.ceeRepository.registerShortApplication(
-        { ...params, ...carpoolData, operator_id },
+        { ...params, ...carpoolData, application_timestamp, operator_id },
         this.cooldownConstraint,
       );
       return {
@@ -110,11 +115,16 @@ export class RegisterCeeAction extends AbstractAction {
     params: CeeLongApplicationInterface,
   ): Promise<ResultInterface> {
     const datetime = getDateOrFail(params.datetime, `data/datetime ${timestampSchema.errorMessage}`);
+    const application_timestamp = getDateOrFail(
+      params.application_timestamp,
+      `data/application_timestamp ${timestampSchema.errorMessage}`,
+    );
+    isBeforeOrFail(application_timestamp, 0);
     isBeforeOrFail(datetime, this.timeConstraint.long);
     isBetweenOrFail(datetime, this.validJourneyConstraint.start_date, this.validJourneyConstraint.end_date);
     try {
       const application = await this.ceeRepository.registerLongApplication(
-        { ...params, datetime, operator_id },
+        { ...params, datetime, application_timestamp, operator_id },
         this.cooldownConstraint,
       );
       return {

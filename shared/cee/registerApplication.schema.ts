@@ -12,8 +12,9 @@ export const schema = {
   allOf: [
     {
       type: 'object',
-      required: ['journey_type', 'driving_license', 'last_name_trunc'],
+      required: ['journey_type', 'driving_license', 'last_name_trunc', 'application_timestamp'],
       properties: {
+        application_timestamp: timestampSchema,
         journey_type: ceeJourneyTypeEnumSchema,
         driving_license: drivingLicenseSchema,
         last_name_trunc: lastNameTruncSchema,
@@ -34,6 +35,7 @@ export const schema = {
         additionalProperties: false,
         required: ['journey_type', 'driving_license', 'last_name_trunc', 'datetime', 'phone_trunc'],
         properties: {
+          application_timestamp: {},
           journey_type: {},
           driving_license: {},
           last_name_trunc: {},
@@ -57,6 +59,7 @@ export const schema = {
         additionalProperties: false,
         required: ['journey_type', 'driving_license', 'last_name_trunc', 'operator_journey_id'],
         properties: {
+          application_timestamp: {},
           journey_type: {},
           driving_license: {},
           last_name_trunc: {},
