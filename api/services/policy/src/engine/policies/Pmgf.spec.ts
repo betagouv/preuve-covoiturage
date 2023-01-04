@@ -43,10 +43,15 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ operator_siret: 'not in list' }, { distance: 100 }, { operator_class: 'A' }],
+    carpool: [
+      { operator_siret: 'not in list' },
+      { distance: 100 },
+      { operator_class: 'A' },
+      { operator_siret: OperatorsEnum.Mobicoop },
+    ],
     meta: [],
   },
-  { incentive: [0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -138,6 +143,36 @@ test(
       {
         key: 'max_amount_restriction.global.campaign.global',
         value: 100_000_00,
+      },
+    ],
+  },
+);
+
+test(
+  'should include Mobicoop since 02 january 2023',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      {
+        distance: 5_000,
+        driver_identity_uuid: 'one',
+        operator_siret: OperatorsEnum.Mobicoop,
+        datetime: new Date('2023-01-02'),
+      },
+    ],
+    meta: [],
+  },
+  {
+    incentive: [200],
+    meta: [
+      {
+        key: 'max_amount_restriction.0-one.month.0-2023',
+        value: 200,
+      },
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 200,
       },
     ],
   },
