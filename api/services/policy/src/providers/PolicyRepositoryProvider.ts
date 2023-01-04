@@ -44,7 +44,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     const data = {
       ...(lockInformation || {}),
       error: JSON.parse(
-        lockInformation?.error && lockInformation?.error instanceof Error
+        lockInformation?.error instanceof Error
           ? JSON.stringify(lockInformation?.error, Object.getOwnPropertyNames(lockInformation?.error))
           : null,
       ),
