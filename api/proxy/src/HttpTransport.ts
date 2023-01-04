@@ -30,6 +30,7 @@ import {
   acquisitionRateLimiter,
   apiRateLimiter,
   authRateLimiter,
+  checkRateLimiter,
   contactformRateLimiter,
   loginRateLimiter,
   monHonorCertificateRateLimiter,
@@ -44,9 +45,9 @@ import {
   signature as getAuthorizedCodesSignature,
 } from './shared/territory/getAuthorizedCodes.contract';
 
+import { signature as importCeeSignature } from './shared/cee/importApplication.contract';
 import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
 import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
-import { signature as importCeeSignature } from './shared/cee/importApplication.contract';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -350,7 +351,7 @@ export class HttpTransport implements TransportInterface {
   private registerAcquisitionRoutes(): void {
     this.app.get(
       '/v2/journeys/:journey_id',
-      rateLimiter(),
+      checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const { params } = req;

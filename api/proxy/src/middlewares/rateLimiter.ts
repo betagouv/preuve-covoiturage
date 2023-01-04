@@ -48,6 +48,11 @@ export function acquisitionRateLimiter(opts: RateLimiterOptions = {}): RateLimit
   return rateLimiter({ windowMs: 1 * minute, max: 20000, ...opts }, 'rl-acquisition');
 }
 
+// shortcut for /v2/journeys/:id route
+export function checkRateLimiter(opts: RateLimiterOptions = {}): RateLimit {
+  return rateLimiter({ windowMs: 1 * minute, max: 2000, ...opts }, 'rl-acquisition-check');
+}
+
 // shortcut for /monitoring/honor route
 export function monHonorCertificateRateLimiter(opts: RateLimiterOptions = {}): RateLimit {
   return rateLimiter({ windowMs: 1 * minute, max: 10, ...opts }, 'rl-monitoring-cert');
