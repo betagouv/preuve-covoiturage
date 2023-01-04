@@ -20,7 +20,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
   constructor(protected connection: PostgresConnection) {}
 
   async disableOnCanceledTrip(): Promise<void> {
-    console.debug(`DISABLE_ON_CANCELED_TRIPS`);
     const query = {
       text: `
         UPDATE ${this.table} AS pi

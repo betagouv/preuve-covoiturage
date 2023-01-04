@@ -66,34 +66,33 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
 
     console.time('[policies] stateful');
     const { from, to } = this.getDate(params);
-    // Update incentive on cancelled carpool
+    // Update incentive on canceled carpool
     await this.incentiveRepository.disableOnCanceledTrip();
 
     const policyMap: Map<number, PolicyInterface> = new Map();
 
     try {
       console.debug(`[policies] stateful starting from ${from ? from.toISOString() : 'start'} to ${to.toISOString()}`);
-      await this.processStatefulpolicys(policyMap, to, from);
+      await this.processStatefulPolicies(policyMap, to, from);
       console.debug('[policies] stateful finished');
+
       // Lock all
       console.debug(`[policies] lock all incentive until ${to}`);
       await this.incentiveRepository.lockAll(to);
       console.debug('[policies] lock finished');
-      await this.policyRepository.releaseLock({
-        from_date: from,
-        to_date: to,
-      });
+
+      // Release the lock
+      await this.policyRepository.releaseLock({ from_date: from, to_date: to });
     } catch (e) {
       console.debug(`[policies:failure] unlock all incentive until ${to.toISOString()}`);
       await this.incentiveRepository.lockAll(to, true);
       console.debug('[policies:failure] unlock finished');
-      await this.policyRepository.releaseLock({
-        from_date: from,
-        to_date: to,
-        error: e,
-      });
+
+      // Release the lock
+      await this.policyRepository.releaseLock({ from_date: from, to_date: to, error: e });
       throw e;
     } finally {
+      // Release the lock ?
       console.timeEnd('[policies] stateful');
     }
   }
@@ -124,7 +123,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     return { from, to };
   }
 
-  protected async processStatefulpolicys(
+  protected async processStatefulPolicies(
     policyMap: Map<number, PolicyInterface>,
     to: Date,
     from?: Date,
