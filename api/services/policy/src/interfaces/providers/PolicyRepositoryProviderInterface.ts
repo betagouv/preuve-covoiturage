@@ -7,7 +7,7 @@ export interface LockInformationInterface {
 }
 
 export abstract class PolicyRepositoryProviderInterfaceResolver {
-  abstract getLock(): Promise<void>;
+  abstract getLock(): Promise<boolean>;
   abstract releaseLock(lockInformation: LockInformationInterface): Promise<void>;
   abstract find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined>;
   abstract create(data: Omit<SerializedPolicyInterface, '_id'>): Promise<SerializedPolicyInterface>;

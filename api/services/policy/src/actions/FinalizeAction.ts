@@ -57,17 +57,19 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     if (!!env('APP_DISABLE_POLICY_PROCESSING', false)) {
       return;
     }
+
+    const hasLock = await this.policyRepository.getLock();
+    if (!hasLock) {
+      console.debug('[policies] stateful already processing');
+      return;
+    }
+
     console.time('[policies] stateful');
     const { from, to } = this.getDate(params);
     // Update incentive on cancelled carpool
     await this.incentiveRepository.disableOnCanceledTrip();
 
     const policyMap: Map<number, PolicyInterface> = new Map();
-    try {
-      await this.policyRepository.getLock();
-    } catch (e) {
-      return;
-    }
 
     try {
       console.debug(`[policies] stateful starting from ${from ? from.toISOString() : 'start'} to ${to.toISOString()}`);

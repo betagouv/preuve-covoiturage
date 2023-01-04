@@ -17,50 +17,47 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
 
   constructor(protected connection: PostgresConnection) {}
 
-  async getLock(): Promise<void> {
+  async getLock(): Promise<boolean> {
     const conn = await this.connection.getClient().connect();
     await conn.query('BEGIN');
     try {
       const res = await conn.query(
-        `SELECT true FROM ${this.lockTable} WHERE _id = 1 AND stopped_at IS NOT NULL FOR UPDATE SKIP LOCKED`,
+        `SELECT true FROM ${this.lockTable} WHERE stopped_at IS NULL ORDER BY _id DESC LIMIT 1 FOR UPDATE`,
       );
-      if (res.rowCount != 1) {
-        throw new Error('Locked !');
+      if (res.rowCount >= 1) {
+        return false;
       }
       await conn.query(`
-        UPDATE ${this.lockTable}
-        SET _id = nextval('policy.lock__id_seq')
-        WHERE _id = 1
-      `);
-      await conn.query(`
-        INSERT INTO ${this.lockTable} (_id, started_at) VALUES (1, NOW())
+        INSERT INTO ${this.lockTable} (started_at) VALUES (NOW())
       `);
       await conn.query('COMMIT');
+      return true;
     } catch (e) {
       await conn.query('ROLLBACK');
+      throw e;
     } finally {
       conn.release();
     }
   }
 
-  async releaseLock(lockInformation: LockInformationInterface): Promise<void> {
+  async releaseLock(lockInformation?: LockInformationInterface): Promise<void> {
+    const data = {
+      ...(lockInformation || {}),
+      error: JSON.parse(
+        lockInformation?.error && lockInformation?.error instanceof Error
+          ? JSON.stringify(lockInformation?.error, Object.getOwnPropertyNames(lockInformation?.error))
+          : null,
+      ),
+    };
+
     await this.connection.getClient().query({
       text: `UPDATE ${this.lockTable} SET
         stopped_at = now(),
-        from_date = $1,
-        to_date = $2
-        success = $3
-        error = $4
-      WHERE _id = 1 AND stopped_at IS NULL
+        success = $1,
+        data = $2
+      WHERE stopped_at IS NULL
       `,
-      values: [
-        lockInformation.from_date,
-        lockInformation.to_date,
-        lockInformation.error ? false : true,
-        lockInformation.error && lockInformation.error instanceof Error
-          ? JSON.stringify(lockInformation.error, Object.getOwnPropertyNames(lockInformation.error))
-          : undefined,
-      ],
+      values: [lockInformation?.error ? false : true, JSON.stringify(data)],
     });
   }
 
