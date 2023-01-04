@@ -1,4 +1,4 @@
-import { isAfter } from 'date-fns';
+import { isAfter, startOfToday, sub } from 'date-fns';
 import { handler, KernelInterfaceResolver, ContextType, InitHookInterface } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
@@ -92,7 +92,8 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
 
     // 2. Start a cursor to find trips
     const batchSize = 50;
-    const start = override_from ?? isAfter(override_from, policy.start_date) ? override_from : policy.start_date;
+    const startParam = override_from ?? sub(startOfToday(), { days: 7 });
+    const start = isAfter(startParam, policy.start_date) ? startParam : policy.start_date;
     const end = isAfter(policy.end_date, new Date()) ? new Date() : policy.end_date;
     const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, !!override_from);
     let done = false;
