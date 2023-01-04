@@ -317,7 +317,7 @@ export class HttpTransport implements TransportInterface {
       rateLimiter({ max: 1 }),
       asyncHandler(async (req, res, next) => {
         this.kernel.handle(
-          createRPCPayload('user:sendSimulationEmail', req.body, { permissions: ['user.policy.simulate'] }),
+          createRPCPayload('user:sendSimulationEmail', req.body, { permissions: ['common.user.policySimulate'] }),
         );
         this.send(res, { id: 1, jsonrpc: '2.0' });
       }),
