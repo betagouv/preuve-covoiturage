@@ -17,6 +17,7 @@ import {
   startsAndEndsAt,
   ConfiguredLimitInterface,
   watchForPersonMaxAmountByMonth,
+  isAfter,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Pmgf.html';
@@ -25,7 +26,7 @@ import { description } from './Pmgf.html';
 // eslint-disable-next-line max-len
 export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'pmgf_2022';
-  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
+  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
   protected operator_class = ['B', 'C'];
   protected glob_limit = 100_000_00;
   protected slices = [
@@ -172,7 +173,12 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    // Ajout de mobicoop à partir du 2 janvier
+    if (isAfter(ctx, { date: new Date('2023-01-02') })) {
+      isOperatorOrThrow(ctx, this.operators);
+    } else {
+      isOperatorOrThrow(ctx, [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit]);
+    }
     onDistanceRangeOrThrow(ctx, { min: 4_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
   }

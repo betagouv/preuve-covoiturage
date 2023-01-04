@@ -13,6 +13,6 @@ export const description = `<p _ngcontent-fyn-c231="" id="summary" class="campai
 <ul>
   <li><b>120 euros par conducteur par mois.</b></li>
 </ul>
-<p>La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit, proposant des preuves de classe <b>B
-    ou C</b>.</p>
+<p>La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit, Mobicoop (depuis le 2 janvier 2023) 
+proposant des preuves de classe <b>B ou C</b>.</p>
 </p>`;
