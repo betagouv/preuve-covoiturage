@@ -33,7 +33,7 @@
     "@ilos/transport-http": "^0.4.1",
     "@ilos/transport-redis": "^0.4.1",
     "@ilos/validator": "^0.4.1",
-    "pino": "^6.13.2"
+    "pino": "^8.8.0"
   },
   "devDependencies": {
     "get-port": "^5.1.1"

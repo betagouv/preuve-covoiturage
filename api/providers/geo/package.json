@@ -18,7 +18,7 @@
     "@ilos/connection-postgres": "~0",
     "@ilos/core": "~0",
     "@pdc/provider-validator": "~0",
-    "axios": "^0.25.0",
+    "axios": "^1.2.2",
     "lodash": "^4.17.21"
   }
 }
