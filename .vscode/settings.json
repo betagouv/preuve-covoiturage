@@ -1,4 +1,5 @@
 {
+  "typescript.tsdk": "./api/node_modules/typescript/lib",
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
   "javascript.preferences.quoteStyle": "single",
