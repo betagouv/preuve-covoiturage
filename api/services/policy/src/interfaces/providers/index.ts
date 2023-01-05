@@ -1,4 +1,7 @@
-export { PolicyRepositoryProviderInterfaceResolver } from './PolicyRepositoryProviderInterface';
+export {
+  PolicyRepositoryProviderInterfaceResolver,
+  LockInformationInterface,
+} from './PolicyRepositoryProviderInterface';
 export { IncentiveRepositoryProviderInterfaceResolver } from './IncentiveRepositoryProviderInterface';
 export { TripRepositoryProviderInterfaceResolver } from './TripRepositoryProviderInterface';
 export {
