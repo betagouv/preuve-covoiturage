@@ -20,6 +20,7 @@
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,
+    "**/yarn.lock": true,
     "api/providers/*/src/shared": true,
     "api/services/*/src/shared": true,
     "api/proxy/src/shared": true,
