@@ -23,7 +23,7 @@ export class LocalGeoProvider implements InseeCoderInterface {
 
         SELECT com, arr
         FROM ${this.fb}($1::float, $2::float)
-        WHERE country <> 'XXXXX' AND com IS NULL
+        WHERE com IS NULL
       `,
       values: [lon, lat],
     });
