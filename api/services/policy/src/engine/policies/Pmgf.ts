@@ -28,7 +28,7 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
   static readonly id = 'pmgf_2022';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
   protected operator_class = ['B', 'C'];
-  protected glob_limit = 100_000_00;
+  protected MAX_GLOBAL_AMOUNT_LIMIT = 100_000_00;
   protected slices = [
     {
       start: 4_000,
@@ -49,7 +49,7 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
 
   protected limits: Array<ConfiguredLimitInterface> = [
     ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-    ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.glob_limit, watchForGlobalMaxAmount],
+    ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
   ];
 
   protected arr = [
@@ -203,7 +203,7 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.glob_limit,
+        glob: this.MAX_GLOBAL_AMOUNT_LIMIT,
       },
     };
   }

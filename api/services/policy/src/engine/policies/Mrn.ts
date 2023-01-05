@@ -38,9 +38,11 @@ export const Mrn: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
       fn: () => 0,
     },
   ];
+  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 2_000_000_00;
+
   protected limits: Array<ConfiguredLimitInterface> = [
     ['E7B969E7-D701-2B9F-80D2-B30A7C3A5220', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['489A7D57-1948-61DA-E5FA-1AE3217325BA', 2_000_000_00, watchForGlobalMaxAmount],
+    ['489A7D57-1948-61DA-E5FA-1AE3217325BA', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
@@ -71,7 +73,7 @@ export const Mrn: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: 800_000_00,
+        glob: this.MAX_GLOBAL_AMOUNT_LIMIT,
       },
     };
   }

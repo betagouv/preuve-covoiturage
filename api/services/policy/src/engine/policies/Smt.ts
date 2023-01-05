@@ -38,9 +38,11 @@ export const Smt: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
       fn: () => 0,
     },
   ];
+  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 4000000;
+
   protected limits: Array<ConfiguredLimitInterface> = [
     ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', 40_000_00, watchForGlobalMaxAmount],
+    ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {

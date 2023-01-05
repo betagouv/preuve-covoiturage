@@ -27,9 +27,11 @@ export const Laval: PolicyHandlerStaticInterface = class
   static readonly id = '695';
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [{ start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
+  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 9_000_00;
+
   protected limits: Array<ConfiguredLimitInterface> = [
     ['70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['A2CEF9FE-D179-319F-1996-9D69E0157522', 9_000_00, watchForGlobalMaxAmount],
+    ['A2CEF9FE-D179-319F-1996-9D69E0157522', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
