@@ -1,6 +1,7 @@
 import S3 from 'aws-sdk/clients/s3';
 import { provider } from '@ilos/common';
 import { S3StorageProvider, BucketName, APDFNameProvider } from '@pdc/provider-file';
+import { subMonths } from 'date-fns';
 import { SerializedPolicyInterface } from '../interfaces';
 import { FundingRequestsRepositoryProviderInterfaceResolver } from '../interfaces';
 import { EnrichedFundingRequestType } from '../shared/policy/fundingRequestsList.contract';
@@ -40,6 +41,25 @@ export class FundingRequestsRepositoryProvider implements FundingRequestsReposit
   operatorsFilter(operators: number[]) {
     return (obj: EnrichedFundingRequestType): boolean => {
       return operators.length ? operators.indexOf(obj.operator_id) > -1 : true;
+    };
+  }
+
+  // use in a [].filter
+  showCurrentMonthFilter(permissions: string[], show: boolean) {
+    return (obj: EnrichedFundingRequestType): boolean => {
+      // from config
+      if (show) return true;
+
+      // from permissions
+      if (permissions.indexOf('registry.policy.fundingRequestsListCurrentMonth') > -1) {
+        return true;
+      }
+
+      // show all but last month
+      const fileMonth = obj.datetime.toISOString().substring(0, 7);
+      const lastMonth = subMonths(new Date(), 1).toISOString().substring(0, 7);
+
+      return fileMonth !== lastMonth;
     };
   }
 }
