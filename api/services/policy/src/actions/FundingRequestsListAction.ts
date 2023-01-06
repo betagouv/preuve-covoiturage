@@ -1,4 +1,4 @@
-import { ContextType, handler, NotFoundException } from '@ilos/common';
+import { ContextType, handler, NotFoundException, ConfigInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import { FundingRequestsRepositoryProviderInterfaceResolver } from '../interfaces';
@@ -19,6 +19,7 @@ export class FundingRequestsListAction extends Action {
   constructor(
     private frRepository: FundingRequestsRepositoryProviderInterfaceResolver,
     private policyProvider: PolicyRepositoryProvider,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
@@ -37,8 +38,17 @@ export class FundingRequestsListAction extends Action {
     const opsFilter = this.frRepository.operatorsFilter(operator_id ? [operator_id] : []);
     const cmpFilter = this.frRepository.campaignsFilter([campaign_id]);
 
+    // month filter. We can hide the current month to operators and territories
+    // by setting the env var APP_APDF_SHOW_CURRENT_MONTH to 'false'
+    // default: true
+    const monthFilter = this.frRepository.showCurrentMonthFilter(
+      context.call.user.permissions,
+      this.config.get('apdf.showLastMonth'),
+    );
+
     return (await this.frRepository.enrich(await this.frRepository.findByCampaign(campaign)))
       .filter(cmpFilter)
-      .filter(opsFilter);
+      .filter(opsFilter)
+      .filter(monthFilter);
   }
 }

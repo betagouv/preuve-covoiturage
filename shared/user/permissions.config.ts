@@ -73,6 +73,7 @@ const permissions = {
     'registry.admin',
   ],
   'policy.fundingRequestsList': ['operator.admin', 'territory.admin', 'registry.admin'],
+  'policy.fundingRequestsListCurrentMonth': ['registry.admin'],
   'policy.fundingRequestsExport': ['registry.admin'],
   'trip.list': [
     'operator.user',
