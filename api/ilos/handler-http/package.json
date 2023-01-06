@@ -26,6 +26,6 @@
   "dependencies": {
     "@ilos/common": "^0.4.1",
     "@ilos/core": "^0.4.1",
-    "axios": "^0.25.0"
+    "axios": "^1.2.2"
   }
 }
