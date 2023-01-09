@@ -1,10 +1,13 @@
 import { env } from '@ilos/core';
 import { ApplicationCooldownConstraint, TimeRangeConstraint, ValidJourneyConstraint } from '../interfaces';
+import { utcToZonedTime } from 'date-fns-tz';
+
+export const defaultTz = 'Europe/Paris';
 
 export const validJourneyConstraint: ValidJourneyConstraint = {
   operator_class: 'C',
-  start_date: new Date(env('APP_CEE_START_DATE', '2023-01-01T00:00:00.000Z') as string),
-  end_date: new Date('2024-01-01T00:00:00.000Z'),
+  start_date: utcToZonedTime(new Date(env('APP_CEE_START_DATE', '2023-01-01T00:00:00+0100') as string), defaultTz),
+  end_date: utcToZonedTime(new Date('2024-01-01T00:00:00+0100'), defaultTz),
   max_distance: 80_000,
   geo_pattern: '99%',
 };

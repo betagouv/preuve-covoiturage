@@ -29,7 +29,8 @@
     "@pdc/helper-test": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-validator": "~0",
-    "date-fns": "^2.24.0"
+    "date-fns": "^2.24.0",
+    "date-fns-tz": "^1.1.6"
   },
   "devDependencies": {
     "@types/uuid": "^8.3.1"
