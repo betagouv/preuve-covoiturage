@@ -13,6 +13,8 @@ import {
   lastRecordMonthlyFluxResultInterface,
   EvolMonthlyFluxParamsInterface,
   EvolMonthlyFluxResultInterface,
+  BestMonthlyFluxParamsInterface,
+  BestMonthlyFluxResultInterface,
 } from '../interfaces/FluxRepositoryProviderInterface';
 import { checkTerritoryParam, checkIndicParam } from '../helpers/checkParams';
 
@@ -114,6 +116,30 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       `
     };
     const response: { rowCount: number, rows: EvolMonthlyFluxResultInterface } = await this.pg.getClient().query(sql);
+    return response.rows;
+  };
+
+  // Retourne les données pour les graphiques construits à partir de la table observatory.monthly_flux
+  async getBestMonthlyFlux(params: BestMonthlyFluxParamsInterface): Promise<BestMonthlyFluxResultInterface> {
+    const sql = {
+      values:[params.year, params.month, params.code, params.limit], 
+      text: `
+        SELECT l_territory_1, l_territory_2, journeys
+        FROM ${this.table}
+        WHERE year = $1
+        AND month = $2
+        AND (territory_1 IN (
+            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
+            WHERE ${checkTerritoryParam(params.t)} = $3) 
+          OR territory_2 IN (
+            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
+            WHERE ${checkTerritoryParam(params.t)} = $3)
+        ) 
+        ORDER BY journeys DESC
+        LIMIT $4;
+      `
+    };
+    const response: { rowCount: number, rows: BestMonthlyFluxResultInterface } = await this.pg.getClient().query(sql);
     return response.rows;
   };
 }

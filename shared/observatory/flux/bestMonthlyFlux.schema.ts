@@ -1,8 +1,8 @@
-export const alias = 'observatory.monthlyFlux';
+export const alias = 'observatory.bestMonthlyFlux';
 export const schema = {
   type: 'object',
   additionalProperties:false,
-  required:['year','month','t'],
+  required:['year','month','t','code'],
   properties:{
     year: {
       type:'integer',
@@ -18,15 +18,17 @@ export const schema = {
       type:'string',
       enum:['com','epci','aom','dep','reg','country'],
     },
-    t2: {
-      type:'string',
-      enum:['com','epci','aom','dep','reg','country'],
-    },
     code: {
       type:'string',
       minLength: 2,
       maxLength: 9,
-    }
+    },
+    limit: {
+      type:'integer',
+      minimum: 5,
+      maximum: 100,
+      default: 10
+    },
   }
 };
 

@@ -11,8 +11,8 @@ export interface SingleResultInterface {
 export type ResultInterface = SingleResultInterface[];
 
 export interface ParamsInterface {
-  year:string,
-  month:string,
+  year:number,
+  month:number,
   t:string, //type de territoire selectionné
   code:string, //code insee du territoire observé
   indic:string,

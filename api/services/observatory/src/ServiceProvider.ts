@@ -14,6 +14,8 @@ import { InsertLastMonthFluxAction } from './actions/flux/InsertLastMonthFluxAct
 import { RefreshAllFluxAction } from './actions/flux/RefreshAllFluxAction';
 import { binding as EvolMonthlyFluxBinding } from './shared/observatory/flux/evolMonthlyFlux.schema';
 import { EvolMonthlyFluxAction } from './actions/flux/EvolMonthlyFluxAction';
+import { binding as BestMonthlyFluxBinding } from './shared/observatory/flux/bestMonthlyFlux.schema';
+import { BestMonthlyFluxAction } from './actions/flux/BestMonthlyFluxAction';
 import { OccupationRepositoryProvider } from './providers/OccupationRepositoryProvider';
 import { binding as MonthlyOccupationBinding } from './shared/observatory/occupation/monthlyOccupation.schema';
 import { MonthlyOccupationAction } from './actions/occupation/MonthlyOccupationAction';
@@ -32,6 +34,7 @@ import { EvolMonthlyOccupationAction } from './actions/occupation/EvolMonthlyOcc
   validator: [
     MonthlyFluxBinding,
     EvolMonthlyFluxBinding,
+    BestMonthlyFluxBinding,
     MonthlyOccupationBinding,
     EvolMonthlyOccupationBinding,
   ],
@@ -41,11 +44,12 @@ import { EvolMonthlyOccupationAction } from './actions/occupation/EvolMonthlyOcc
     [PostgresConnection, 'connections.postgres'],
   ],
   handlers: [
+    MonthlyFluxAction,
     InsertLastMonthFluxAction,
     RefreshAllFluxAction,
-    MonthlyFluxAction,
-    LastRecordMonthlyFluxAction,
     EvolMonthlyFluxAction,
+    LastRecordMonthlyFluxAction,
+    BestMonthlyFluxAction,
     
     MonthlyOccupationAction,
     InsertLastMonthOccupationAction,

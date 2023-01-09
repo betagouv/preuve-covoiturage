@@ -558,7 +558,26 @@ export class HttpTransport implements TransportInterface {
         this.send(res, response as RPCResponseType);
       }),
     );
-
+    this.app.get(
+      '/observatory/evol_monthly_flux',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:evolMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/best_monthly_flux',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:bestMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
     this.app.get(
       '/observatory/monthly_flux/last',
       rateLimiter(),
@@ -569,7 +588,6 @@ export class HttpTransport implements TransportInterface {
         this.send(res, response as RPCResponseType);
       }),
     );
-
     this.app.get(
       '/observatory/monthly_occupation',
       rateLimiter(),
@@ -586,17 +604,6 @@ export class HttpTransport implements TransportInterface {
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:evolMonthlyOccupation', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-
-    this.app.get(
-      '/observatory/evol_monthly_flux',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:evolMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
         );
         this.send(res, response as RPCResponseType);
       }),

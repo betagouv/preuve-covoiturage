@@ -5,14 +5,14 @@ export const schema = {
   required:['year','month','t'],
   properties:{
     year: {
-      type:'string',
-      minLength: 4,
-      maxLength: 4,
+      type:'integer',
+      minimum: 2020,
+      maximum: new Date().getFullYear(),
     },
     month: {
-      type:'string',
-      minLength: 1,
-      maxLength: 2,
+      type:'integer',
+      minimum: 1,
+      maximum: 12,
     },
     t: {
       type:'string',
