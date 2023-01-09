@@ -8,23 +8,21 @@ import { GeoProvider } from '@pdc/provider-geo';
 
 import { config } from './config';
 import { FraudCheckRepositoryProvider } from './providers/FraudCheckRepositoryProvider';
-import { ProcessableCarpoolRepositoryProvider } from './providers/ProcessableCarpoolRepositoryProvider';
 
 import { CheckAction } from './actions/CheckAction';
 import { CheckEngine } from './engine/CheckEngine';
-import { ApplyAction } from './actions/ApplyAction';
 
 @serviceProvider({
   config,
   commands: [],
-  providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine, ProcessableCarpoolRepositoryProvider],
+  providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine],
   validator: [],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [CheckAction, ApplyAction],
+  handlers: [CheckAction],
   queues: ['fraudcheck'],
 })
 export class ServiceProvider extends AbstractServiceProvider {

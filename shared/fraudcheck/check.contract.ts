@@ -1,5 +1,5 @@
 export interface ParamsInterface {
-  acquisition_id: number;
+  acquisition_id?: number;
 }
 
 export type ResultInterface = void;

@@ -1,11 +1,19 @@
-import { FraudCheckEntry } from './FraudCheck';
+import { PoolClient } from '@ilos/connection-postgres';
+import { FraudCheckEntry, FraudCheckStatusEnum } from './FraudCheck';
 
-export interface FraudCheckRepositoryProviderInterface {
-  get(acquisitionId: number): Promise<FraudCheckEntry>;
-  createOrUpdate(data: FraudCheckEntry): Promise<void>;
+export type FraudCheckRepositoryUpdateCallback = (data?: FraudCheckEntry) => Promise<void>;
+
+export interface SearchInterface {
+  from?: Date;
+  to?: Date;
+  limit: number;
+  status?: FraudCheckStatusEnum;
 }
 
-export abstract class FraudCheckRepositoryProviderInterfaceResolver implements FraudCheckRepositoryProviderInterface {
-  abstract get(acquisitionId: number): Promise<FraudCheckEntry>;
-  abstract createOrUpdate(data: FraudCheckEntry): Promise<void>;
+export abstract class FraudCheckRepositoryProviderInterfaceResolver {
+  abstract createOrUpdate(data: FraudCheckEntry, pool?: PoolClient): Promise<void>;
+  abstract findThenUpdate(
+    search: SearchInterface,
+    timeout: number,
+  ): Promise<[Array<number>, FraudCheckRepositoryUpdateCallback]>;
 }

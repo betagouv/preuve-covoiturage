@@ -1,18 +1,13 @@
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { handler, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/fraudcheck/check.contract';
-import {
-  signature as updateStatusSignature,
-  ParamsInterface as UpdateStatusParamsInterface,
-} from '../shared/carpool/updateStatus.contract';
+import { handlerConfig, signature, ParamsInterface, ResultInterface } from '../shared/fraudcheck/check.contract';
 import { CheckEngine } from '../engine/CheckEngine';
-import { UncompletedTestException } from '../exceptions/UncompletedTestException';
 import { FraudCheckRepositoryProviderInterfaceResolver, FraudCheckStatusEnum } from '../interfaces';
 
 /*
- * Start a check on an acquisition_id
+ * Start check engine
  */
 @handler({
   ...handlerConfig,
@@ -23,45 +18,62 @@ export class CheckAction extends Action {
     private engine: CheckEngine,
     private kernel: KernelInterfaceResolver,
     private repository: FraudCheckRepositoryProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const input = await this.repository.get(params.acquisition_id);
-    const results = await this.engine.run(params.acquisition_id, input.data || []);
-    await this.repository.createOrUpdate(results);
-
-    if (results.status === FraudCheckStatusEnum.Done) {
-      // await this.notifyScore(params.acquisition_id, results.karma);
-    }
-
-    return;
+  async init(): Promise<void> {
+    await this.kernel.notify<ParamsInterface>(signature, undefined, {
+      call: {
+        user: {},
+      },
+      channel: {
+        service: handlerConfig.service,
+        metadata: {
+          repeat: {
+            cron: '*/1 * * * *',
+          },
+          jobId: 'fraudcheck.check.cron',
+        },
+      },
+    });
   }
 
-  protected async notifyScore(acquisition_id: number, score: number): Promise<void> {
-    try {
-      if (score > 0.8) {
-        await this.kernel.call<UpdateStatusParamsInterface>(
-          updateStatusSignature,
-          {
-            acquisition_id,
-            status: 'fraudcheck_error',
-          },
-          {
-            call: {
-              user: {},
-            },
-            channel: {
-              service: handlerConfig.service,
-            },
-          },
-        );
-      }
-    } catch (e) {
-      if (!(e instanceof UncompletedTestException)) {
-        throw e;
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    if (params.acquisition_id) {
+      const result = await this.engine.run(params.acquisition_id, []);
+      await this.repository.createOrUpdate(result);
+      return;
+    }
+
+    const { timeout, batchSize } = this.config.get('engine', {});
+    const [acquisitions, cb] = await this.repository.findThenUpdate(
+      {
+        limit: batchSize,
+        status: FraudCheckStatusEnum.Pending,
+      },
+      timeout,
+    );
+
+    const msg = `[fraudcheck] processed (${acquisitions.length})`;
+    console.debug(`Processing fraudcheck ${acquisitions.join(', ')}`);
+    console.time(msg);
+    for (const acquisition of acquisitions) {
+      try {
+        cb(await this.engine.run(acquisition, []));
+      } catch (e) {
+        console.debug(`[acquisition] error ${e.message} processing ${acquisition}`);
+        cb({
+          acquisition_id: acquisition,
+          status: FraudCheckStatusEnum.Error,
+          karma: 0,
+          data: [],
+        });
       }
     }
+    await cb();
+    console.timeEnd(msg);
+    return;
   }
 }

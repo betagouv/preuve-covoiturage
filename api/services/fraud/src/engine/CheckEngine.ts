@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { provider, ServiceContainerInterfaceResolver, NewableType } from '@ilos/common';
 
 import { checks as checkList } from './checks';
@@ -36,27 +37,32 @@ export class CheckEngine {
   }
 
   async apply(
-    acquisitionId: number,
+    acquisition_id: number,
     methods: Map<string, HandleCheckInterface>,
     preparerCtor: NewableType<PrepareCheckInterface>,
   ): Promise<FraudCheck[]> {
     const result: FraudCheck[] = [];
     const preparer = this.service.get<PrepareCheckInterface>(preparerCtor);
-    const data = await preparer.prepare(acquisitionId);
+    const data = await preparer.prepare(acquisition_id);
+    const uuid = randomUUID();
     for (const line of data) {
       for (const [name, instance] of methods) {
         try {
           result.push({
+            uuid,
+            acquisition_id,
             status: FraudCheckStatusEnum.Done,
             method: name,
             karma: await instance.handle(line),
           });
         } catch (e) {
           result.push({
+            uuid,
+            acquisition_id,
             status: FraudCheckStatusEnum.Error,
             method: name,
             karma: null,
-            meta: {
+            data: {
               error: e.message,
             },
           });
