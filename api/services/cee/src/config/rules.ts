@@ -6,8 +6,8 @@ export const defaultTz = 'Europe/Paris';
 
 export const validJourneyConstraint: ValidJourneyConstraint = {
   operator_class: 'C',
-  start_date: utcToZonedTime(new Date(env('APP_CEE_START_DATE', '2023-01-01T00:00:00.000Z') as string), defaultTz),
-  end_date: utcToZonedTime(new Date('2024-01-01T00:00:00.000Z'), defaultTz),
+  start_date: utcToZonedTime(new Date(env('APP_CEE_START_DATE', '2023-01-01T00:00:00+0100') as string), defaultTz),
+  end_date: utcToZonedTime(new Date('2024-01-01T00:00:00+0100'), defaultTz),
   max_distance: 80_000,
   geo_pattern: '99%',
 };
