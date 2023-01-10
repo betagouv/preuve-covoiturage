@@ -1,10 +1,8 @@
 import { InvalidParamsException } from '@ilos/common';
-import { isAfter, isBefore, sub, startOfToday } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
-import { defaultTz } from '../config/rules';
+import { isAfter, isBefore, sub } from 'date-fns';
 
 export function isBeforeOrFail(date: Date, days: number): void {
-  if (!isBefore(date, sub(utcToZonedTime(startOfToday(), defaultTz), { days }))) {
+  if (!isBefore(date, sub(new Date(), { days }))) {
     throw new InvalidParamsException(`Date should be before ${days} days from now`);
   }
 }
