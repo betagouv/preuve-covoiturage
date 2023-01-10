@@ -103,7 +103,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
     const sql = {
       values:[params.year, params.month, params.t2, params.code, params.limit], 
       text: `
-        SELECT l_territory, journeys
+        SELECT territory, l_territory, journeys
         FROM ${this.table}
         WHERE year = $1
         AND month = $2

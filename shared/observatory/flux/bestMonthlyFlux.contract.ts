@@ -1,8 +1,8 @@
 export interface SingleResultInterface {
-  ter1:string,
-  l_ter1:string,
-  ter2:string,
-  l_ter2:string,
+  territory_1:string,
+  l_territory_1:string,
+  territory_2:string,
+  l_territory_2:string,
   journeys:number,
 }
 

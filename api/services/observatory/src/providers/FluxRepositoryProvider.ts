@@ -124,7 +124,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     const sql = {
       values:[params.year, params.month, params.code, params.limit], 
       text: `
-        SELECT l_territory_1, l_territory_2, journeys
+        SELECT territory_1, l_territory_1, territory_2, l_territory_2, journeys
         FROM ${this.table}
         WHERE year = $1
         AND month = $2
