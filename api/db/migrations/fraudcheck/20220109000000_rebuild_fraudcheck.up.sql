@@ -27,8 +27,6 @@ CREATE TABLE IF NOT EXISTS fraudcheck.results (
   data json
 );
 
-CREATE INDEX ON fraudcheck.results(_id);
-CREATE INDEX ON fraudcheck.results(method);
 CREATE INDEX ON fraudcheck.results(uuid);
 CREATE INDEX ON fraudcheck.results(acquisition_id);
 
