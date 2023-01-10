@@ -608,6 +608,16 @@ export class HttpTransport implements TransportInterface {
         this.send(res, response as RPCResponseType);
       }),
     );
+    this.app.get(
+      '/observatory/best_monthly_territories',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:bestMonthlyTerritories', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
   }
 
   private registerUptimeRoute() {

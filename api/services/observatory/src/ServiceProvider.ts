@@ -23,6 +23,8 @@ import { InsertLastMonthOccupationAction } from './actions/occupation/InsertLast
 import { RefreshAllOccupationAction } from './actions/occupation/RefreshAllOccupationAction';
 import { binding as EvolMonthlyOccupationBinding } from './shared/observatory/occupation/evolMonthlyOccupation.schema';
 import { EvolMonthlyOccupationAction } from './actions/occupation/EvolMonthlyOccupationAction';
+import { binding as BestMonthlyTerritoriesBinding } from './shared/observatory/occupation/bestMonthlyTerritories.schema';
+import { BestMonthlyTerritoriesAction } from './actions/occupation/BestMonthlyTerritoriesAction';
 
 @serviceProvider({
   config,
@@ -37,6 +39,7 @@ import { EvolMonthlyOccupationAction } from './actions/occupation/EvolMonthlyOcc
     BestMonthlyFluxBinding,
     MonthlyOccupationBinding,
     EvolMonthlyOccupationBinding,
+    BestMonthlyTerritoriesBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
@@ -55,6 +58,7 @@ import { EvolMonthlyOccupationAction } from './actions/occupation/EvolMonthlyOcc
     InsertLastMonthOccupationAction,
     RefreshAllOccupationAction,
     EvolMonthlyOccupationAction,
+    BestMonthlyTerritoriesAction,
   ],
   queues: ['observatory']
 })

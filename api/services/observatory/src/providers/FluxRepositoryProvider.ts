@@ -119,7 +119,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     return response.rows;
   };
 
-  // Retourne les données pour les graphiques construits à partir de la table observatory.monthly_flux
+  // Retourne les données pour le top 10 des trajets dans le dashboard
   async getBestMonthlyFlux(params: BestMonthlyFluxParamsInterface): Promise<BestMonthlyFluxResultInterface> {
     const sql = {
       values:[params.year, params.month, params.code, params.limit], 

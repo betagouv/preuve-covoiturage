@@ -11,6 +11,8 @@ import {
   MonthlyOccupationResultInterface,
   EvolMonthlyOccupationParamsInterface,
   EvolMonthlyOccupationResultInterface,
+  BestMonthlyTerritoriesParamsInterface,
+  BestMonthlyTerritoriesResultInterface,
 } from '../interfaces/OccupationRepositoryProviderInterface';
 import { checkTerritoryParam, checkIndicParam } from '../helpers/checkParams';
 
@@ -93,6 +95,28 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
       `
     };
     const response: { rowCount: number, rows: EvolMonthlyOccupationResultInterface } = await this.pg.getClient().query(sql);
+    return response.rows;
+  };
+
+  // Retourne les données pour le top 10 des territoires dans le dashboard
+  async getBestMonthlyTerritories(params: BestMonthlyTerritoriesParamsInterface): Promise<BestMonthlyTerritoriesResultInterface> {
+    const sql = {
+      values:[params.year, params.month, params.t2, params.code, params.limit], 
+      text: `
+        SELECT l_territory, journeys
+        FROM ${this.table}
+        WHERE year = $1
+        AND month = $2
+        AND type = $3::observatory.monthly_occupation_type_enum
+        AND territory IN (
+          SELECT ${checkTerritoryParam(params.t2)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
+          WHERE ${checkTerritoryParam(params.t)} = $4
+        ) 
+        ORDER BY journeys DESC
+        LIMIT $5;
+      `
+    };
+    const response: { rowCount: number, rows: BestMonthlyTerritoriesResultInterface } = await this.pg.getClient().query(sql);
     return response.rows;
   };
 }
