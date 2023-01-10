@@ -69,12 +69,11 @@ export class CheckEngine {
           acquisition_id,
           status: FraudCheckStatusEnum.Error,
           method: name,
-          karma: null,
+          karma: 0,
           data: {
             error: e.message,
           },
         });
-        throw e;
       }
     }
     return [...result.values()];
@@ -117,7 +116,7 @@ export class CheckEngine {
     }
 
     const status = this.getStatus([...output.values()].map((v) => v.status));
-    const karma = await this.getGlobalScore(output);
+    const karma = status === FraudCheckStatusEnum.Done ? await this.getGlobalScore(output) : 0;
 
     return {
       acquisition_id: acquisitionId,
