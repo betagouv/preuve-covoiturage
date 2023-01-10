@@ -12,7 +12,7 @@ export class SelfCheckPreparator implements PrepareCheckInterface<SelfCheckParam
 
   constructor(private connection: PostgresConnection, private geoProvider: GeoProviderInterfaceResolver) {}
 
-  async prepare(acquisitionId: number): Promise<SelfCheckParamsInterface[]> {
+  async prepare(acquisitionId: number): Promise<SelfCheckParamsInterface> {
     const query = {
       text: `
         SELECT
@@ -82,7 +82,7 @@ export class SelfCheckPreparator implements PrepareCheckInterface<SelfCheckParam
       });
     }
 
-    return results;
+    return results[0];
   }
 
   protected async calcDistanceAndDuration(

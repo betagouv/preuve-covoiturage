@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 
-import { FraudCheckResult, HandleCheckInterface } from '../../../interfaces';
+import { CheckHandleCallback, HandleCheckInterface } from '../../../interfaces';
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { SelfCheckPreparator } from '../SelfCheckPreparator';
 import { step } from '../../helpers/math';
@@ -16,8 +16,8 @@ export class HighSeatCheck implements HandleCheckInterface<SelfCheckParamsInterf
   protected readonly max: number = 7; // above = 100
   protected readonly min: number = 4; // below = 0
 
-  async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
+  async handle(params: SelfCheckParamsInterface, cb: CheckHandleCallback): Promise<void> {
     const { passenger_seats } = params;
-    return step(passenger_seats, this.min, this.max);
+    cb(step(passenger_seats, this.min, this.max));
   }
 }

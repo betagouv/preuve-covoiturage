@@ -1,12 +1,12 @@
 import { TripIdentityCheckParamsInterface } from './TripIdentityCheckParamsInterface';
-import { HandleCheckInterface, FraudCheckResult } from '../../../interfaces';
+import { HandleCheckInterface, CheckHandleCallback } from '../../../interfaces';
 import { TripIdentityCheckPreparator } from '../TripIdentityCheckPreparator';
 
 export abstract class AbstractTripIdentityCheck implements HandleCheckInterface<TripIdentityCheckParamsInterface> {
   public readonly preparer = TripIdentityCheckPreparator;
   protected abstract keys: string[];
 
-  async handle(data: TripIdentityCheckParamsInterface): Promise<FraudCheckResult> {
+  async handle(data: TripIdentityCheckParamsInterface, cb: CheckHandleCallback): Promise<void> {
     const scopedData = data.map((d) => {
       const arr = [];
       for (const key of this.keys) {
@@ -14,7 +14,7 @@ export abstract class AbstractTripIdentityCheck implements HandleCheckInterface<
       }
       return arr;
     });
-    return this.count(scopedData) / data.length;
+    cb(this.count(scopedData) / data.length);
   }
 
   protected count(field: string[][]): number {

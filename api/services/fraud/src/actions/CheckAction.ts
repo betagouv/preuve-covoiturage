@@ -42,9 +42,17 @@ export class CheckAction extends Action {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     if (params.acquisition_id) {
-      const result = await this.engine.run(params.acquisition_id, []);
-      await this.repository.createOrUpdate(result);
-      return;
+      try {
+        console.debug(`[fraudcheck] start processing ${params.acquisition_id}`);
+        const result = await this.engine.run(params.acquisition_id, []);
+        await this.repository.createOrUpdate(result);
+        console.debug(`[fraudcheck] done processing ${params.acquisition_id}`);
+        return;
+      } catch (e) {
+        console.debug(`[fraudcheck] error processing ${params.acquisition_id}`);
+        console.debug(e);
+        throw e;
+      }
     }
 
     const { timeout, batchSize } = this.config.get('engine', {});
@@ -63,7 +71,7 @@ export class CheckAction extends Action {
       try {
         cb(await this.engine.run(acquisition, []));
       } catch (e) {
-        console.debug(`[acquisition] error ${e.message} processing ${acquisition}`);
+        console.debug(`[fraudcheck] error ${e.message} processing ${acquisition}`);
         cb({
           acquisition_id: acquisition,
           status: FraudCheckStatusEnum.Error,

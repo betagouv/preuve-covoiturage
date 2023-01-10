@@ -9,21 +9,23 @@ import {
   PrepareCheckInterface,
 } from '../interfaces/CheckInterface';
 
-import { FraudCheck, FraudCheckStatusEnum, FraudCheckEntry } from '../interfaces';
+import { FraudCheck, FraudCheckStatusEnum, FraudCheckEntry, FraudCheckResult } from '../interfaces';
 import { scoringRules, scoringFallback } from './helpers/scoring';
 
 @provider()
 export class CheckEngine {
-  public readonly checks: StaticCheckInterface[] = [...checkList];
+  public readonly checks: Map<string, StaticCheckInterface>;
 
-  constructor(private service: ServiceContainerInterfaceResolver) {}
+  constructor(private service: ServiceContainerInterfaceResolver) {
+    this.checks = new Map(checkList.map((c) => [c.key, c]));
+  }
 
   /**
    *  Get a processor ctor from a method string
    */
   protected getCheckProcessor(method: string): NewableType<CheckInterface | HandleCheckInterface> {
-    const processorCtor = this.checks.find((c) => c.key === method);
-    if (!processorCtor) {
+    const processorCtor = this.checks.get(method);
+    if (!processorCtor || typeof processorCtor !== 'function') {
       throw new Error(`Unknown check ${method}`);
     }
     return processorCtor;
@@ -33,7 +35,7 @@ export class CheckEngine {
    *  List all available fraud check methods
    */
   listAvailableMethods(): string[] {
-    return this.checks.map((c) => c.key).sort();
+    return [...this.checks.keys()];
   }
 
   async apply(
@@ -41,36 +43,41 @@ export class CheckEngine {
     methods: Map<string, HandleCheckInterface>,
     preparerCtor: NewableType<PrepareCheckInterface>,
   ): Promise<FraudCheck[]> {
-    const result: FraudCheck[] = [];
     const preparer = this.service.get<PrepareCheckInterface>(preparerCtor);
     const data = await preparer.prepare(acquisition_id);
+    if (!data) {
+      return [];
+    }
+    const result: Map<string, FraudCheck> = new Map();
     const uuid = randomUUID();
-    for (const line of data) {
-      for (const [name, instance] of methods) {
-        try {
-          result.push({
-            uuid,
-            acquisition_id,
-            status: FraudCheckStatusEnum.Done,
-            method: name,
-            karma: await instance.handle(line),
-          });
-        } catch (e) {
-          result.push({
-            uuid,
-            acquisition_id,
-            status: FraudCheckStatusEnum.Error,
-            method: name,
-            karma: null,
-            data: {
-              error: e.message,
-            },
-          });
-          throw e;
-        }
+    for (const [name, instance] of methods.entries()) {
+      const cb = (karma: FraudCheckResult, cbAcquisitionId = acquisition_id, data?: any) => {
+        result.set(`${name}-${cbAcquisitionId}`, {
+          uuid,
+          acquisition_id: cbAcquisitionId,
+          status: FraudCheckStatusEnum.Done,
+          method: name,
+          karma,
+          data,
+        });
+      };
+      try {
+        await instance.handle(data, cb);
+      } catch (e) {
+        result.set(`${name}-${acquisition_id}`, {
+          uuid,
+          acquisition_id,
+          status: FraudCheckStatusEnum.Error,
+          method: name,
+          karma: null,
+          data: {
+            error: e.message,
+          },
+        });
+        throw e;
       }
     }
-    return result;
+    return [...result.values()];
   }
 
   protected hasExternalPreparer(check: HandleCheckInterface | CheckInterface): check is HandleCheckInterface {
@@ -81,7 +88,6 @@ export class CheckEngine {
     const output: Map<string, FraudCheck> = new Map(input.map((i) => [i.method, i]));
     const processedMethods = input.filter((i) => i.status === 'done').map((i) => i.method);
     const methods = this.listAvailableMethods().filter((m) => processedMethods.indexOf(m) < 0);
-
     const methodInstancesMap = methods
       .map((s) => {
         return [s, this.getCheckProcessor(s)];
@@ -151,7 +157,7 @@ export class CheckEngine {
     const fallbackFiltered: { coef: number; rule: FraudCheck }[] = fallback.map((fb) => {
       const [coef, ruleName] = fb;
       if (!results.has(ruleName)) {
-        throw new Error(`Unknown test ${ruleName}`);
+        throw new Error(`Unknown fallback test ${ruleName}`);
       }
       const rule = results.get(ruleName);
       if (rule.status !== 'done') {
