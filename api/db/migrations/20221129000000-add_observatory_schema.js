@@ -8,6 +8,8 @@ var { setup, up, down } = createMigration(
     'observatory/002_create_monthly_occupation_table',
     'observatory/003_insert_monthly_flux_procedure',
     'observatory/004_insert_monthly_occupation_procedure',
+    'observatory/005_create_monthly_distribution_table',
+    'observatory/006_insert_monthly_distribution_procedure',
   ],
   __dirname,
 );
