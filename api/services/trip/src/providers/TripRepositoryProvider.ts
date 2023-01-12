@@ -444,18 +444,20 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       })
       .join(',');
 
+    // extract boundaries to scope global results
+    const boundaries = this.boundariesToClause(this.slicesToBoundaries(slices));
+
     // select all trips with a positive incentive calculated by us for a given campaign
     // calculate a global count and incentive sum as well as details for each slice
-    const result = await this.connection.getClient().query({
+    const query = {
       text: `
         with trips as (
           select
               distinct cc.acquisition_id,
-              tl.journey_distance as distance,
+              cc.distance,
               coalesce(pi.amount, 0) as amount
           from policy.incentives pi
           join carpool.carpools cc on cc._id = pi.carpool_id
-          join trip.list tl on cc.acquisition_id = tl.journey_id
           where
                 cc.datetime >= $1
             and cc.datetime <  $2
@@ -464,14 +466,16 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
             and pi.policy_id = $4
         )
         select
-          count(distinct acquisition_id)::int as total_count,
-          sum(amount)::int as total_sum,
-          (count(distinct acquisition_id) filter (where amount > 0))::int as subsidized_count
+          (count(distinct acquisition_id) filter (where true${boundaries}))::int as total_count,
+          (sum(amount) filter (where true${boundaries}))::int as total_sum,
+          (count(distinct acquisition_id) filter (where amount > 0${boundaries}))::int as subsidized_count
           ${sliceFilters.length ? `, ${sliceFilters}` : ''}
         from trips
         `,
       values: [start_date, end_date, operator_id, campaign_id],
-    });
+    };
+
+    const result = await this.connection.getClient().query(query);
 
     // return null results on missing data
     if (!result.rowCount) {
@@ -505,12 +509,17 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     );
   }
 
-  public async getPolicyCursor(params: CampaignSearchParamsInterface, type = 'opendata'): Promise<PgCursorHandler> {
+  public async getPolicyCursor(
+    params: CampaignSearchParamsInterface,
+    slices: SliceInterface[],
+    type = 'opendata',
+  ): Promise<PgCursorHandler> {
     const { start_date, end_date, operator_id, campaign_id } = params;
+    const boundaries = this.boundariesToClause(this.slicesToBoundaries(slices));
 
     const queryText = `
       with trips as (
-        select distinct cc.acquisition_id as journey_id
+        select cc.acquisition_id as journey_id
         from policy.incentives pi
         join carpool.carpools cc on cc._id = pi.carpool_id
         where
@@ -520,11 +529,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           and cc.operator_id = $3
           and pi.policy_id = $4
           and pi.amount > 0
-        )
-        select ${this.getFields(type).join(', ')}
-        from trip.list
-        where journey_id in (select journey_id from trips)
-        order by journey_start_datetime asc
+          ${boundaries}
+      )
+      select ${this.getFields(type).join(', ')}
+      from trip.list
+      where journey_id in (select journey_id from trips)
+      order by journey_start_datetime asc
     `;
 
     const db = await this.connection.getClient().connect();
@@ -602,5 +612,21 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         (acc, current, idx, origin) => (idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`),
         '',
       );
+  }
+
+  private slicesToBoundaries(slices: SliceInterface[]): SliceInterface {
+    return slices.reduce(
+      (p, c) => {
+        p.start = p.start === -1 ? c.start : Math.min(p.start, c.start);
+        p.end = Math.max(p.end, c.end);
+        return p;
+      },
+      { start: -1, end: -1 },
+    );
+  }
+
+  private boundariesToClause(bnd: SliceInterface): string {
+    const bndEnd = bnd.end > -1 ? ` and distance < ${bnd.end}` : '';
+    return bnd.start > -1 ? `  and distance >= ${bnd.start}${bndEnd}` : '';
   }
 }

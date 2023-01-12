@@ -39,7 +39,7 @@ export interface TripRepositoryInterface {
   validateTz(tz?: string): Promise<TzResultInterface>;
   getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]>;
   getPolicyStats(params: CampaignSearchParamsInterface, slices: SliceInterface[]): Promise<PolicyStatsInterface>;
-  getPolicyCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler>;
+  getPolicyCursor(params: CampaignSearchParamsInterface, slices: SliceInterface[]): Promise<PgCursorHandler>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]> {
@@ -92,7 +92,11 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
     throw new Error('Not implemented');
   }
 
-  public async getPolicyCursor(params: CampaignSearchParamsInterface, type = 'opendata'): Promise<PgCursorHandler> {
+  public async getPolicyCursor(
+    params: CampaignSearchParamsInterface,
+    slices: SliceInterface[],
+    type = 'opendata',
+  ): Promise<PgCursorHandler> {
     throw new Error('Not implemented');
   }
 }

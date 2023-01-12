@@ -3,6 +3,7 @@ import { APDFNameProvider } from '@pdc/provider-file';
 import { stream } from 'exceljs';
 import { CampaignSearchParamsInterface } from '~/interfaces';
 import { SliceStatInterface } from '~/interfaces/PolicySliceStatInterface';
+import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
 import { ResultInterface as Campaign } from '~/shared/policy/find.contract';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
@@ -52,16 +53,20 @@ export class BuildExcel {
 
     // create the Worksheet
     const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
-    await this.writeTrips(workbookWriter, params);
+    await this.writeTrips(workbookWriter, params, campaign.params.slices);
     await this.writeSlices(workbookWriter, slices);
     await workbookWriter.commit();
 
     return { filename, filepath };
   }
 
-  private async writeTrips(wkw: stream.xlsx.WorkbookWriter, params: CampaignSearchParamsInterface): Promise<void> {
+  private async writeTrips(
+    wkw: stream.xlsx.WorkbookWriter,
+    params: CampaignSearchParamsInterface,
+    slices: SliceInterface[],
+  ): Promise<void> {
     try {
-      const tripCursor = await this.tripRepoProvider.getPolicyCursor(params, 'territory');
+      const tripCursor = await this.tripRepoProvider.getPolicyCursor(params, slices, 'territory');
       await this.dataWorkbookWriter.call(tripCursor, wkw);
     } catch (e) {
       console.error('Error while writing trips');
