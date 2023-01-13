@@ -33,6 +33,14 @@ import { TerritoriesListAction } from './actions/territories/TerritoriesListActi
 import { binding as TerritoryNameBinding } from './shared/observatory/territories/name.schema';
 import { TerritoryNameAction } from './actions/territories/TerritoryNameAction';
 
+import { DistributionRepositoryProvider } from './providers/DistributionRepositoryProvider';
+import { InsertLastMonthDistributionAction } from './actions/distribution/InsertLastMonthDistributionAction';
+import { RefreshAllDistributionAction } from './actions/distribution/RefreshAllDistributionAction';
+import { binding as JourneysByHoursBinding } from './shared/observatory/distribution/journeysByHours.schema';
+import { JourneysByHoursAction } from './actions/distribution/JourneysByHoursAction';
+import { binding as JourneysByDistancesBinding } from './shared/observatory/distribution/journeysByDistances.schema';
+import { JourneysByDistancesAction } from './actions/distribution/JourneysByDistancesAction';
+
 @serviceProvider({
   config,
   commands: [],
@@ -40,6 +48,7 @@ import { TerritoryNameAction } from './actions/territories/TerritoryNameAction';
     FluxRepositoryProvider,
     OccupationRepositoryProvider,
     TerritoriesRepositoryProvider,
+    DistributionRepositoryProvider,
   ],
   validator: [
     MonthlyFluxBinding,
@@ -52,6 +61,9 @@ import { TerritoryNameAction } from './actions/territories/TerritoryNameAction';
 
     TerritoriesListBinding,
     TerritoryNameBinding,
+
+    JourneysByHoursBinding,
+    JourneysByDistancesBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
@@ -74,6 +86,11 @@ import { TerritoryNameAction } from './actions/territories/TerritoryNameAction';
 
     TerritoriesListAction,
     TerritoryNameAction,
+
+    InsertLastMonthDistributionAction,
+    RefreshAllDistributionAction,
+    JourneysByHoursAction,
+    JourneysByDistancesAction,
   ],
   queues: ['observatory']
 })

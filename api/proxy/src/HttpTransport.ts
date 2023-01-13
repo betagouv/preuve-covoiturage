@@ -637,6 +637,26 @@ export class HttpTransport implements TransportInterface {
         );
         this.send(res, response as RPCResponseType);
       }),
+    ); 
+    this.app.get(
+      '/observatory/journeys_by_hours',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:journeysByHours', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/journeys_by_distances',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:journeysByDistances', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
     );    
   }
 
