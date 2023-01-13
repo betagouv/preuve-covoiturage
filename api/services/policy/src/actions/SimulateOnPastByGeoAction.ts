@@ -37,12 +37,16 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
     const geoResult: GeoResultInterface = await this.findGeoBySiren(params);
 
     const today = new Date();
-    const dateMinusOneMonth = new Date();
-    dateMinusOneMonth.setMonth(today.getMonth() - (params.months | this.DEFAULT_TIME_FRAME_6_MONTHES));
+    const start_date = new Date();
+    start_date.setMonth(today.getMonth() - (params.months || this.DEFAULT_TIME_FRAME_6_MONTHES));
+
+    console.debug(`Nb months -> ${params.months}`);
+    console.debug(`Start date -> ${start_date}`);
+    console.debug(`End date -> ${today}`);
 
     // 1. Create a fake deserialized policy
     const policyTemplate: SerializedPolicyInterface = {
-      start_date: dateMinusOneMonth,
+      start_date: start_date,
       end_date: today,
       _id: 1000,
       name: '',
