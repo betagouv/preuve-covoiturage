@@ -5,7 +5,7 @@ export class PolicyTemplateDescriptions {
     <ul>
       <li> Trajets avec origine OU destination sur le territoire</li>
       <li> Trajets de plus de 2 km </li>
-      <li> Multiopérateur* </li>
+      <li> Multiopérateur<sup>*</sup> </li>
       <li> Classe de preuve B ou C</li>
     </ul>
   </div>
@@ -26,7 +26,7 @@ export class PolicyTemplateDescriptions {
     <ul>
       <li> Trajets avec Origine ET Destination sur le territoire</li>
       <li> Trajets de plus de 2 km</li>
-      <li> Multiopérateur*</li>
+      <li> Multiopérateur<sup>*</sup></li>
       <li> Class de preuve B et C</li>
     </ul>
   </div>
@@ -47,7 +47,7 @@ export class PolicyTemplateDescriptions {
     <ul>
       <li> Trajets avec Origine ET Destination sur le territoire</li>
       <li> Trajets de plus de 2 km</li>
-      <li> Multiopérateur</li>
+      <li> Multiopérateur<sup>*</sup></li>
       <li> Class de preuve B et C</li>
     </ul>
   </div>

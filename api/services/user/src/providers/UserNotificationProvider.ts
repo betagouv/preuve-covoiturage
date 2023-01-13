@@ -191,6 +191,7 @@ link:  ${link}
         simulation_form_fullname: `${formParams.firstname} ${formParams.name}`,
         simulation_form_job: formParams.job,
         simulation_form_simulation_param: formParams.simulation,
+        simulation_form_simulation_title: this.getSimulationTitle(formParams.simulation.policy_template_id),
 
         simulation_result_one_month_trip_subsidized: simulationResult['1'].trip_subsidized,
         simulation_result_one_month_amount: simulationResult['1'].amount / 100,
@@ -202,6 +203,17 @@ link:  ${link}
         simulation_result_six_months_amount: simulationResult['6'].amount / 100,
       },
     });
+  }
+
+  private getSimulationTitle(simulationId: '1' | '2' | '3'): string {
+    switch (simulationId) {
+      case '1':
+        return 'Modèle Ile-de-france Mobilité';
+      case '2':
+        return 'Modèle Nantes Métropole';
+      case '3':
+        return 'Laval';
+    }
   }
 
   /**

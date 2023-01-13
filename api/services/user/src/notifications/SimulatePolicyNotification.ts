@@ -75,7 +75,7 @@ export class SimulatePolicyFormMJMLTemplate extends AbstractTemplate<SimulatePol
       </p>
       <ul>
         <li>Territoire sélectionné : {{ simulation_territory_name }} </li>
-        <li>Scénario de campagne sélectionné :  {{ simulation_form_simulation_param.policy_template_id }} </li>
+        <li>Scénario de campagne sélectionné :  {{ simulation_form_simulation_title }} </li>
         <li>Rappel des paramètres de la campagne :</li>
         {{{ simulation_policy_description_html }}}
       </ul>
@@ -85,27 +85,42 @@ export class SimulatePolicyFormMJMLTemplate extends AbstractTemplate<SimulatePol
       <p>
       <ul>
         <li>
-          Simulation pour 1 mois* :
+          Simulation pour 1 mois<sup>**</sup> :
           <ul>
             <li> Volume de trajets incités : {{ simulation_result_one_month_trip_subsidized }}</li>
             <li> Montant incités distribués : {{ simulation_result_one_month_amount }} €</li>
           </ul>
         </li>
         <li>
-          Simulation pour 3 mois* :
+          Simulation pour 3 mois<sup>**</sup> :
           <ul>
-            <li> Volume de trajets incités :{{ simulation_result_three_months_trip_subsidized }} </li>
+            <li> Volume de trajets incités : {{ simulation_result_three_months_trip_subsidized }} </li>
             <li> Montant incités distribués : {{ simulation_result_three_months_amount }} €</li>
           </ul>
         </li>
         <li>
-          Simulation pour 6 mois* :
+          Simulation pour 6 mois<sup>**</sup> :
           <ul>
             <li> Volume de trajets incités : {{ simulation_result_six_months_trip_subsidized }} </li>
             <li> Montant incités distribués : {{ simulation_result_six_months_amount }} €</li>
           </ul>
         </li>
       </ul>
+      </p>
+      <p>
+      Précision sur le calcul de la simulation :
+      <div>
+       <sup>*</sup> La simulation est "multi-opérateur", 
+       elle prend en compte les volumes de trajets de l'ensemble des opérateurs sur votre territoire. 
+       Pour affiner la simulation sur un ou plusieurs opérateurs spécifiques, 
+       contactez territoire@covoiturage.beta.gouv.fr 
+       </div>
+       <div>
+       <sup>**</sup> La simulation est calculée à partir des volumes de trajets effectués les mois précédents 
+       (de m-1 à m-6 mois). 
+       Elle a donc une valeur approximative qui ne prend pas 
+       en compte les tendances d'évolution ni les effets contextuels ou saisonniers. 
+       </div>
       </p>
       <p>
         <b>Destinataire de la simulation : </b>
