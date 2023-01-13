@@ -3,17 +3,18 @@ export class PolicyTemplateDescriptions {
   <div>
     <div>Trajets éligibles:</div>
     <ul>
-      <li> trajet avec origine OU destination sur le territoire</li>
-      <li> De 2 à 15km: 2 euros par trajet par passager </li>
-      <li> De 15 à 30 km: 0,1 euro par trajet par km par passager </li>
+      <li> Trajets avec origine OU destination sur le territoire</li>
+      <li> Trajets de plus de 2 km </li>
+      <li> Multiopérateur* </li>
+      <li> Classe de preuve B ou C</li>
     </ul>
   </div>
   <div>
-    <div>Restrictions:</div>
+    <div>Incitation:</div>
     <ul>
-      <li>6 trajets maximum pour le conducteur par jour</li>
-      <li>150 euros maximum pour le conducteur par mois</li>
-      <li>Class de preuve B ou C</li>
+      <li> Versée au conducteur </li>
+      <li> De 2 à 20 km : 2 euros par trajet </li>
+      <li> À partir de 20 km : 0.1 euro par trajet par km </li>
     </ul>
   </div>
 </div>`;
@@ -24,16 +25,17 @@ export class PolicyTemplateDescriptions {
     <div>Trajets éligibles:</div>
     <ul>
       <li> Trajets avec Origine ET Destination sur le territoire</li>
-      <li> Trajets de plus de 2km</li>
-      <li> Multiopérateur</li>
+      <li> Trajets de plus de 2 km</li>
+      <li> Multiopérateur*</li>
       <li> Class de preuve B et C</li>
     </ul>
   </div>
   <div>
     <div>Incitation:</div>
     <ul>
-      <li> De 2 à 15km: 1,5 euros par trajet par passager</li>
-      <li> De 15 à 30km: 0,1 euro par trajet par km par passager</li>
+      <li> Versée au conducteur </li>
+      <li> De 2 à 15 km : 1,5 euros par trajet par passager</li>
+      <li> De 15 à 30 km : 0,1 euro par trajet par km par passager</li>
     </ul>
   </div>
 </div>`;
@@ -44,7 +46,7 @@ export class PolicyTemplateDescriptions {
     <div>Trajets éligibles:</div>
     <ul>
       <li> Trajets avec Origine ET Destination sur le territoire</li>
-      <li> Trajets de plus de 2km</li>
+      <li> Trajets de plus de 2 km</li>
       <li> Multiopérateur</li>
       <li> Class de preuve B et C</li>
     </ul>
@@ -52,7 +54,8 @@ export class PolicyTemplateDescriptions {
   <div>
     <div>Incitation:</div>
     <ul>
-      <li> A partir de 2km: 0,5 euros par trajet par passager</li>
+      <li> Versée au conducteur </li>
+      <li> A partir de 2 km : 0,5 euros par trajet par passager</li>
     </ul>
   </div>
 </div>`;

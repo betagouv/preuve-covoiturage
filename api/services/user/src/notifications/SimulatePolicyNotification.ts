@@ -85,21 +85,21 @@ export class SimulatePolicyFormMJMLTemplate extends AbstractTemplate<SimulatePol
       <p>
       <ul>
         <li>
-          Simulation pour 1 mois :
+          Simulation pour 1 mois* :
           <ul>
             <li> Volume de trajets incités : {{ simulation_result_one_month_trip_subsidized }}</li>
             <li> Montant incités distribués : {{ simulation_result_one_month_amount }} €</li>
           </ul>
         </li>
         <li>
-          Simulation pour 3 mois :
+          Simulation pour 3 mois* :
           <ul>
             <li> Volume de trajets incités :{{ simulation_result_three_months_trip_subsidized }} </li>
             <li> Montant incités distribués : {{ simulation_result_three_months_amount }} €</li>
           </ul>
         </li>
         <li>
-          Simulation pour 6 mois :
+          Simulation pour 6 mois* :
           <ul>
             <li> Volume de trajets incités : {{ simulation_result_six_months_trip_subsidized }} </li>
             <li> Montant incités distribués : {{ simulation_result_six_months_amount }} €</li>
