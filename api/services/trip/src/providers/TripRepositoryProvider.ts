@@ -464,11 +464,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
             and cc.status = 'ok'
             and cc.operator_id = $3
             and pi.policy_id = $4
+            ${boundaries}
         )
         select
-          (count(distinct acquisition_id) filter (where true${boundaries}))::int as total_count,
-          (sum(amount) filter (where true${boundaries}))::int as total_sum,
-          (count(distinct acquisition_id) filter (where amount > 0${boundaries}))::int as subsidized_count
+          count(distinct acquisition_id)::int as total_count,
+          sum(amount)::int as total_sum,
+          (count(distinct acquisition_id) filter (where amount > 0))::int as subsidized_count
           ${sliceFilters.length ? `, ${sliceFilters}` : ''}
         from trips
         `,
