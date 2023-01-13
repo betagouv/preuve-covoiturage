@@ -115,4 +115,36 @@ test('SimulateOnPastByGeoAction: should process trip with default time frame', a
   t.is(result.trip_subsidized, 4);
 });
 
-// TODO add a test for geo.start and geo.end
+test('SimulateOnPastByGeoAction: should exclude trip with start and end not in 200070340 epci perimeter', async (t) => {
+  // Arrange
+  t.context.kernelInterfaceResolverStub!.resolves({
+    aom_siren: '84',
+    reg_siren: '84',
+    epci_siren: '200070340',
+    coms: ['73040', '73290', '73117', '73223', '73023', '73322', '73157', '73026', '73119', '73047'],
+  });
+  t.context.tripRepositoryResolverStub!.callsFake(function* fake() {
+    const carpool: Partial<CarpoolInterface> = {
+      _id: 1,
+      trip_id: '',
+      operator_class: 'C',
+      datetime: faker.date.between(t.context.todayMinusSizMonthes, new Date()),
+      seats: 1,
+      distance: 25000,
+      start: { com: '73290', aom: '84', epci: '200070340', reg: '84' },
+      end: { com: '73194', aom: '84', epci: '247300452', reg: '84' },
+    };
+    const carpools: Partial<CarpoolInterface>[] = [carpool, carpool, carpool, carpool];
+    yield carpools;
+  });
+
+  // Act
+  const result: ResultInterface = await t.context.simulateOnPasGeoAction!.handle({
+    territory_insee: '200070340',
+    policy_template_id: '2',
+  });
+
+  // Assert
+  t.is(result.amount, 0);
+  t.is(result.trip_subsidized, 0);
+});

@@ -40,10 +40,6 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
     const start_date = new Date();
     start_date.setMonth(today.getMonth() - (params.months || this.DEFAULT_TIME_FRAME_6_MONTHES));
 
-    console.debug(`Nb months -> ${params.months}`);
-    console.debug(`Start date -> ${start_date}`);
-    console.debug(`End date -> ${today}`);
-
     // 1. Create a fake deserialized policy
     const policyTemplate: SerializedPolicyInterface = {
       start_date: start_date,
@@ -55,9 +51,9 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       incentive_sum: 0,
       territory_id: 0,
       territory_selector: {
-        aom: [geoResult.aom_siren],
-        epci: [geoResult.epci_siren],
-        reg: [geoResult.reg_siren],
+        ...(params.territory_insee === geoResult.aom_siren && { aom: [geoResult.aom_siren] }),
+        ...(params.territory_insee === geoResult.epci_siren && { epci: [geoResult.epci_siren] }),
+        ...(params.territory_insee === geoResult.reg_siren && { reg: [geoResult.reg_siren] }),
       },
     };
 
