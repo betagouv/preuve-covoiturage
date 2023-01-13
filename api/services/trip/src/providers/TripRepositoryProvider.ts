@@ -3,6 +3,8 @@ import { provider } from '@ilos/common';
 import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
 import { map, set } from 'lodash';
 import { promisify } from 'util';
+import { boundariesToClause } from '../helpers/boundariesToClause.helper';
+import { slicesToBoundaries } from '../helpers/slicesToBoundaries.helper';
 import {
   CampaignSearchParamsInterface,
   ExportTripInterface,
@@ -10,8 +12,8 @@ import {
   TripRepositoryProviderInterfaceResolver,
   TzResultInterface,
 } from '../interfaces';
-import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { PolicyStatsInterface } from '../interfaces/PolicySliceStatInterface';
+import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
@@ -444,9 +446,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       })
       .join(',');
 
-    // extract boundaries to scope global results
-    const boundaries = this.boundariesToClause(this.slicesToBoundaries(slices));
-
     // select all trips with a positive incentive calculated by us for a given campaign
     // calculate a global count and incentive sum as well as details for each slice
     const query = {
@@ -464,8 +463,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
             and cc.status = 'ok'
             and cc.operator_id = $3
             and pi.policy_id = $4
-            ${boundaries}
-        )
+            ${this.boundaries(slices)}
+          )
         select
           count(distinct acquisition_id)::int as total_count,
           sum(amount)::int as total_sum,
@@ -516,7 +515,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     type = 'opendata',
   ): Promise<PgCursorHandler> {
     const { start_date, end_date, operator_id, campaign_id } = params;
-    const boundaries = this.boundariesToClause(this.slicesToBoundaries(slices));
 
     const queryText = `
       with trips as (
@@ -530,7 +528,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           and cc.operator_id = $3
           and pi.policy_id = $4
           and pi.amount > 0
-          ${boundaries}
+          ${this.boundaries(slices)}
       )
       select ${this.getFields(type).join(', ')}
       from trip.list
@@ -615,19 +613,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       );
   }
 
-  private slicesToBoundaries(slices: SliceInterface[]): SliceInterface {
-    return slices.reduce(
-      (p, c) => {
-        p.start = p.start === -1 ? c.start : Math.min(p.start, c.start);
-        p.end = Math.max(p.end, c.end);
-        return p;
-      },
-      { start: -1, end: -1 },
-    );
-  }
-
-  private boundariesToClause(bnd: SliceInterface): string {
-    const bndEnd = bnd.end > -1 ? ` and distance < ${bnd.end}` : '';
-    return bnd.start > -1 ? `  and distance >= ${bnd.start}${bndEnd}` : '';
+  private boundaries(slices: SliceInterface[]): string {
+    return boundariesToClause(slicesToBoundaries(slices));
   }
 }
