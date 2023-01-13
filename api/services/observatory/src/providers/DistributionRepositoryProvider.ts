@@ -13,7 +13,6 @@ import {
   JourneysByHoursResultInterface,
   
 } from '../interfaces/DistributionRepositoryProviderInterface';
-import { checkTerritoryParam, checkIndicParam } from '../helpers/checkParams';
 
 @provider({
   identifier: DistributionRepositoryInterfaceResolver,
