@@ -76,7 +76,7 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
   async getJourneysByDistances(params: JourneysByDistancesParamsInterface): Promise<JourneysByDistancesResultInterface> {
     const filterDirection = params.direction ? `AND direction = '${params.direction}'::observatory.monthly_distribution_direction_enum` : '';
     const sql = {
-      values:[params.year, params.month, params.t, params.code, params.direction],  
+      values:[params.year, params.month, params.t, params.code],  
       text: `SELECT
         territory, 
         l_territory,
