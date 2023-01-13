@@ -54,7 +54,7 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
 
   async getJourneysByHours(params: JourneysByHoursParamsInterface): Promise<JourneysByHoursResultInterface> {
     
-    const filterDirection = params.direction ? `AND direction = ${params.direction}::observatory.monthly_distribution_direction_enum` : '';
+    const filterDirection = params.direction ? `AND direction = '${params.direction}'::observatory.monthly_distribution_direction_enum` : '';
     const sql = {
       values:[params.year, params.month, params.t, params.code],  
       text: `SELECT
@@ -74,7 +74,7 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
   };
 
   async getJourneysByDistances(params: JourneysByDistancesParamsInterface): Promise<JourneysByDistancesResultInterface> {
-    const filterDirection = params.direction ? `AND direction = ${params.direction}::observatory.monthly_distribution_direction_enum` : '';
+    const filterDirection = params.direction ? `AND direction = '${params.direction}'::observatory.monthly_distribution_direction_enum` : '';
     const sql = {
       values:[params.year, params.month, params.t, params.code, params.direction],  
       text: `SELECT
