@@ -208,11 +208,11 @@ link:  ${link}
   private getSimulationTitle(simulationId: '1' | '2' | '3'): string {
     switch (simulationId) {
       case '1':
-        return 'Modèle Ile-de-france Mobilité';
+        return 'Modèle Ile-de-France Mobilités';
       case '2':
         return 'Modèle Nantes Métropole';
       case '3':
-        return 'Laval';
+        return 'Laval Agglo';
     }
   }
 
