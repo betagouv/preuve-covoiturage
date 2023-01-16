@@ -41,6 +41,10 @@ import { JourneysByHoursAction } from './actions/distribution/JourneysByHoursAct
 import { binding as JourneysByDistancesBinding } from './shared/observatory/distribution/journeysByDistances.schema';
 import { JourneysByDistancesAction } from './actions/distribution/JourneysByDistancesAction';
 
+import { LocationRepositoryProvider } from './providers/LocationRepositoryProvider';
+import { binding as LocationBinding } from './shared/observatory/location/location.schema';
+import { LocationAction } from './actions/location/LocationAction';
+
 @serviceProvider({
   config,
   commands: [],
@@ -49,6 +53,7 @@ import { JourneysByDistancesAction } from './actions/distribution/JourneysByDist
     OccupationRepositoryProvider,
     TerritoriesRepositoryProvider,
     DistributionRepositoryProvider,
+    LocationRepositoryProvider,
   ],
   validator: [
     MonthlyFluxBinding,
@@ -64,6 +69,8 @@ import { JourneysByDistancesAction } from './actions/distribution/JourneysByDist
 
     JourneysByHoursBinding,
     JourneysByDistancesBinding,
+
+    LocationBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
@@ -91,6 +98,8 @@ import { JourneysByDistancesAction } from './actions/distribution/JourneysByDist
     RefreshAllDistributionAction,
     JourneysByHoursAction,
     JourneysByDistancesAction,
+
+    LocationAction,
   ],
   queues: ['observatory']
 })
