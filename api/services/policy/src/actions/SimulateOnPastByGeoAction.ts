@@ -23,7 +23,7 @@ import { SerializedPolicyInterface } from '../interfaces';
   middlewares: [['validate', alias], ...internalOnlyMiddlewares('user')],
 })
 export class SimulateOnPastByGeoAction extends AbstractAction {
-  private readonly DEFAULT_TIME_FRAME_6_MONTHES = 6;
+  private readonly DEFAULT_TIME_FRAME_6_MONTHS = 6;
 
   constructor(
     private kernel: KernelInterfaceResolver,
@@ -38,7 +38,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
 
     const today = new Date();
     const start_date = new Date();
-    start_date.setMonth(today.getMonth() - (params.months || this.DEFAULT_TIME_FRAME_6_MONTHES));
+    start_date.setMonth(today.getMonth() - (params.months || this.DEFAULT_TIME_FRAME_6_MONTHS));
 
     // 1. Create a fake deserialized policy
     const policyTemplate: SerializedPolicyInterface = {
