@@ -57,7 +57,7 @@ export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
 
   processExclusion(ctx: StatelessContextInterface) {
     isOperatorClassOrThrow(ctx, ['B', 'C']);
-    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
+    onDistanceRangeOrThrow(ctx, { min: 2_000 });
   }
 
   protected limits: Array<ConfiguredLimitInterface> = [];

@@ -23,7 +23,7 @@ import { SerializedPolicyInterface } from '../interfaces';
   middlewares: [['validate', alias], ...internalOnlyMiddlewares('user')],
 })
 export class SimulateOnPastByGeoAction extends AbstractAction {
-  private readonly DEFAULT_TIME_FRAME_6_MONTHES = 6;
+  private readonly DEFAULT_TIME_FRAME_6_MONTHS = 6;
 
   constructor(
     private kernel: KernelInterfaceResolver,
@@ -37,12 +37,12 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
     const geoResult: GeoResultInterface = await this.findGeoBySiren(params);
 
     const today = new Date();
-    const dateMinusOneMonth = new Date();
-    dateMinusOneMonth.setMonth(today.getMonth() - (params.months | this.DEFAULT_TIME_FRAME_6_MONTHES));
+    const start_date = new Date();
+    start_date.setMonth(today.getMonth() - (params.months || this.DEFAULT_TIME_FRAME_6_MONTHS));
 
     // 1. Create a fake deserialized policy
     const policyTemplate: SerializedPolicyInterface = {
-      start_date: dateMinusOneMonth,
+      start_date: start_date,
       end_date: today,
       _id: 1000,
       name: '',
@@ -51,9 +51,9 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       incentive_sum: 0,
       territory_id: 0,
       territory_selector: {
-        aom: [geoResult.aom_siren],
-        epci: [geoResult.epci_siren],
-        reg: [geoResult.reg_siren],
+        ...(params.territory_insee === geoResult.aom_siren && { aom: [geoResult.aom_siren] }),
+        ...(params.territory_insee === geoResult.epci_siren && { epci: [geoResult.epci_siren] }),
+        ...(params.territory_insee === geoResult.reg_siren && { reg: [geoResult.reg_siren] }),
       },
     };
 
