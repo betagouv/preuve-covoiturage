@@ -3,6 +3,8 @@ import { provider } from '@ilos/common';
 import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
 import { map, set } from 'lodash';
 import { promisify } from 'util';
+import { boundariesToClause } from '../helpers/boundariesToClause.helper';
+import { slicesToBoundaries } from '../helpers/slicesToBoundaries.helper';
 import {
   CampaignSearchParamsInterface,
   ExportTripInterface,
@@ -10,8 +12,8 @@ import {
   TripRepositoryProviderInterfaceResolver,
   TzResultInterface,
 } from '../interfaces';
-import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { PolicyStatsInterface } from '../interfaces/PolicySliceStatInterface';
+import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
@@ -446,23 +448,23 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     // select all trips with a positive incentive calculated by us for a given campaign
     // calculate a global count and incentive sum as well as details for each slice
-    const result = await this.connection.getClient().query({
+    const query = {
       text: `
         with trips as (
           select
               distinct cc.acquisition_id,
-              tl.journey_distance as distance,
+              cc.distance,
               coalesce(pi.amount, 0) as amount
           from policy.incentives pi
           join carpool.carpools cc on cc._id = pi.carpool_id
-          join trip.list tl on cc.acquisition_id = tl.journey_id
           where
                 cc.datetime >= $1
             and cc.datetime <  $2
             and cc.status = 'ok'
             and cc.operator_id = $3
             and pi.policy_id = $4
-        )
+            ${this.boundaries(slices)}
+          )
         select
           count(distinct acquisition_id)::int as total_count,
           sum(amount)::int as total_sum,
@@ -471,7 +473,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         from trips
         `,
       values: [start_date, end_date, operator_id, campaign_id],
-    });
+    };
+
+    const result = await this.connection.getClient().query(query);
 
     // return null results on missing data
     if (!result.rowCount) {
@@ -505,12 +509,16 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     );
   }
 
-  public async getPolicyCursor(params: CampaignSearchParamsInterface, type = 'opendata'): Promise<PgCursorHandler> {
+  public async getPolicyCursor(
+    params: CampaignSearchParamsInterface,
+    slices: SliceInterface[],
+    type = 'opendata',
+  ): Promise<PgCursorHandler> {
     const { start_date, end_date, operator_id, campaign_id } = params;
 
     const queryText = `
       with trips as (
-        select distinct cc.acquisition_id as journey_id
+        select cc.acquisition_id as journey_id
         from policy.incentives pi
         join carpool.carpools cc on cc._id = pi.carpool_id
         where
@@ -520,11 +528,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           and cc.operator_id = $3
           and pi.policy_id = $4
           and pi.amount > 0
-        )
-        select ${this.getFields(type).join(', ')}
-        from trip.list
-        where journey_id in (select journey_id from trips)
-        order by journey_start_datetime asc
+          ${this.boundaries(slices)}
+      )
+      select ${this.getFields(type).join(', ')}
+      from trip.list
+      where journey_id in (select journey_id from trips)
+      order by journey_start_datetime asc
     `;
 
     const db = await this.connection.getClient().connect();
@@ -602,5 +611,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         (acc, current, idx, origin) => (idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`),
         '',
       );
+  }
+
+  private boundaries(slices: SliceInterface[]): string {
+    return boundariesToClause(slicesToBoundaries(slices));
   }
 }
