@@ -242,7 +242,7 @@ export class SimulatePolicyFormTextTemplate extends AbstractTemplate<SimulatePol
 <p>
       Précision sur le calcul de la simulation :
       <div>
-       <sup>*</sup> La simulation est "multi-opérateur", 
+       <sup>*</sup> La simulation est "multi-opérateurs", 
        elle prend en compte les volumes de trajets de l'ensemble des opérateurs sur votre territoire. 
        Pour affiner la simulation sur un ou plusieurs opérateurs spécifiques, 
        contactez territoire@covoiturage.beta.gouv.fr 
