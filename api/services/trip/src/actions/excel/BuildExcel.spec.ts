@@ -144,17 +144,12 @@ test('BuildExcel: should call stream data and create slice then return excel fil
     t.context.campaign.params.slices,
   );
 
-  sinon.assert.calledOnceWithExactly(
-    t.context.getPolicyCursorStub!,
-    {
-      campaign_id: t.context.campaign._id,
-      operator_id: t.context.operator_id,
-      start_date: t.context.start_date,
-      end_date: t.context.end_date,
-    },
-    t.context.campaign.params.slices,
-    'territory',
-  );
+  sinon.assert.calledOnceWithExactly(t.context.getPolicyCursorStub!, {
+    campaign_id: t.context.campaign._id,
+    operator_id: t.context.operator_id,
+    start_date: t.context.start_date,
+    end_date: t.context.end_date,
+  });
 
   sinon.assert.calledOnceWithExactly(t.context.filenameStub!, {
     name: t.context.campaign!.name,
@@ -213,17 +208,12 @@ test('BuildExcel: should call stream data and return filepath even if create sli
     t.context.campaign.params.slices,
   );
 
-  sinon.assert.calledOnceWithExactly(
-    t.context.getPolicyCursorStub!,
-    {
-      campaign_id: t.context.campaign._id,
-      operator_id: t.context.operator_id,
-      start_date: t.context.start_date,
-      end_date: t.context.end_date,
-    },
-    t.context.campaign.params.slices,
-    'territory',
-  );
+  sinon.assert.calledOnceWithExactly(t.context.getPolicyCursorStub!, {
+    campaign_id: t.context.campaign._id,
+    operator_id: t.context.operator_id,
+    start_date: t.context.start_date,
+    end_date: t.context.end_date,
+  });
 
   sinon.assert.calledOnceWithExactly(t.context.filenameStub!, {
     name: t.context.campaign!.name,
@@ -278,17 +268,12 @@ test('BuildExcel: should call stream data and return excel filepath without slic
     t.context.campaign.params.slices,
   );
 
-  sinon.assert.calledOnceWithExactly(
-    t.context.getPolicyCursorStub!,
-    {
-      campaign_id: t.context.campaign._id,
-      operator_id: t.context.operator_id,
-      start_date: t.context.start_date,
-      end_date: t.context.end_date,
-    },
-    t.context.campaign.params.slices,
-    'territory',
-  );
+  sinon.assert.calledOnceWithExactly(t.context.getPolicyCursorStub!, {
+    campaign_id: t.context.campaign._id,
+    operator_id: t.context.operator_id,
+    start_date: t.context.start_date,
+    end_date: t.context.end_date,
+  });
 
   sinon.assert.calledOnceWithExactly(t.context.filenameStub!, {
     name: t.context.campaign!.name,

@@ -1,61 +1,48 @@
 import test from 'ava';
 import { stream, Workbook, Worksheet } from 'exceljs';
 import faker from '@faker-js/faker';
-import { ExportTripInterface } from '../../../interfaces';
+import { APDFTripInterface } from '../../../interfaces';
 import { BuildExportAction } from '../../BuildExportAction';
 import { DataWorkBookWriter } from './DataWorkbookWriter';
 import { BuildExcel } from '../BuildExcel';
 
 let dataWorkBookWriter: DataWorkBookWriter;
 
-const exportTripInterface: ExportTripInterface<Date> & { operator: string } = {
+const exportTripInterface: APDFTripInterface = {
   journey_id: faker.datatype.uuid(),
   trip_id: faker.datatype.uuid(),
-
-  journey_start_datetime: faker.date.past(2),
-  journey_start_lon: faker.address.longitude(),
-  journey_start_lat: faker.address.longitude(),
-  journey_start_insee: '',
-  journey_start_department: faker.address.countryCode(),
-  journey_start_town: faker.address.city(),
-  journey_start_towngroup: '',
-  journey_start_country: faker.address.country(),
-
-  journey_end_datetime: faker.date.future(2),
-  journey_end_lon: faker.address.longitude(),
-  journey_end_lat: faker.address.latitude(),
-  journey_end_insee: '',
-  journey_end_department: faker.address.countryCode(),
-  journey_end_town: faker.address.city(),
-  journey_end_towngroup: '',
-  journey_end_country: faker.address.country(),
-
-  driver_card: false,
-  passenger_card: false,
-  passenger_over_18: true,
-  passenger_seats: 1,
-  operator_class: 'C',
-  operator_journey_id: faker.datatype.uuid(),
-  operator_passenger_id: faker.datatype.uuid(),
+  operator_trip_id: faker.datatype.uuid(),
+  driver_uuid: faker.datatype.uuid(),
   operator_driver_id: faker.datatype.uuid(),
-  operator: faker.random.alphaNumeric(),
+  driver_rpc_incentive: faker.datatype.number(1000),
+  passenger_uuid: faker.datatype.uuid(),
+  operator_passenger_id: faker.datatype.uuid(),
+  passenger_rpc_incentive: faker.datatype.number(1000),
+  start_datetime: faker.date.past(2).toISOString(),
+  end_datetime: faker.date.future(2).toISOString(),
+  distance: 865,
+  duration: 78,
+  operator_class: 'C',
 
-  journey_distance: 865,
-  journey_duration: 78,
-  journey_distance_anounced: 800,
-  journey_distance_calculated: 800,
-  journey_duration_anounced: 800,
-  journey_duration_calculated: 800,
+  // operator: faker.random.alphaNumeric(),
+  // passenger_over_18: true,
+  // passenger_seats: 1,
 
-  passenger_id: faker.datatype.uuid(),
-  passenger_contribution: 8,
-  passenger_incentive_raw: [],
-  passenger_incentive_rpc_raw: [],
+  // start_lon: faker.address.longitude(),
+  // start_lat: faker.address.longitude(),
+  // start_insee: '',
+  // start_department: faker.address.countryCode(),
+  // start_town: faker.address.city(),
+  // start_towngroup: '',
+  // start_country: faker.address.country(),
 
-  driver_id: faker.datatype.uuid(),
-  driver_revenue: 75,
-  driver_incentive_raw: [],
-  driver_incentive_rpc_raw: [],
+  // end_lon: faker.address.longitude(),
+  // end_lat: faker.address.latitude(),
+  // end_insee: '',
+  // end_department: faker.address.countryCode(),
+  // end_town: faker.address.city(),
+  // end_towngroup: '',
+  // end_country: faker.address.country(),
 };
 
 test.before((t) => {
@@ -64,7 +51,7 @@ test.before((t) => {
 
 test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
   // Arrange
-  const tripCursor = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
+  const tripCursor = new Promise<APDFTripInterface[]>((resolve, reject) => {
     resolve([
       exportTripInterface,
       exportTripInterface,
@@ -78,11 +65,11 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
       exportTripInterface,
     ]);
   });
-  const cursorEndingResult = new Promise<ExportTripInterface<Date>[]>((resolve, reject) => {
+  const cursorEndingResult = new Promise<APDFTripInterface[]>((resolve, reject) => {
     resolve([]);
   });
   let counter = 20;
-  const cursorCallback = (count: number): Promise<ExportTripInterface<Date>[]> => {
+  const cursorCallback = (count: number): Promise<APDFTripInterface[]> => {
     if (counter <= 0) {
       return cursorEndingResult;
     }
@@ -112,9 +99,5 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
   t.is(
     workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).getCell(2).value,
     exportTripInterface.trip_id,
-  );
-  t.deepEqual(
-    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).getCell('AD').value,
-    exportTripInterface.operator,
   );
 });

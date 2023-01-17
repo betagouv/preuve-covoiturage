@@ -24,6 +24,7 @@ import {
   TripSearchInterfaceWithPagination,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
 import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
+import { APDFTripInterface } from '~/interfaces/APDFTripInterface';
 
 /*
  * Trip specific repository
@@ -299,7 +300,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return result.rowCount ? result.rows : [];
   }
 
-  public async searchWithCursor(params: TripSearchInterface, type = 'opendata'): Promise<PgCursorHandler> {
+  public async searchWithCursor(
+    params: TripSearchInterface,
+    type = 'opendata',
+  ): Promise<PgCursorHandler<ExportTripInterface>> {
     const where = await this.buildWhereClauses(params);
     const queryText = this.numberPlaceholders(`
       SELECT
@@ -405,6 +409,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   /**
    * List active operators having trips and incentives > 0
    * in the campaign for the given date range
+   * TODO move to @pdc/service-policy
    */
   public async getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
     const result = await this.connection.getClient().query({
@@ -427,6 +432,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return result.rowCount ? result.rows.map((r) => r.operator_id) : [];
   }
 
+  /**
+   * TODO move to @pdc/service-policy
+   */
   public async getPolicyStats(
     params: CampaignSearchParamsInterface,
     slices: SliceInterface[],
@@ -509,38 +517,76 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     );
   }
 
-  public async getPolicyCursor(
-    params: CampaignSearchParamsInterface,
-    slices: SliceInterface[],
-    type = 'opendata',
-  ): Promise<PgCursorHandler> {
+  /**
+   * TODO move to @pdc/service-policy
+   */
+  public async getPolicyCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler<APDFTripInterface>> {
     const { start_date, end_date, operator_id, campaign_id } = params;
 
     const queryText = `
-      with trips as (
-        select cc.acquisition_id as journey_id
-        from policy.incentives pi
-        join carpool.carpools cc on cc._id = pi.carpool_id
+      with ccd as (
+        select
+          _id,
+          identity_id,
+          datetime,
+          trip_id,
+          acquisition_id,
+          operator_trip_id,
+          operator_journey_id,
+          distance,
+          duration,
+          operator_class
+        from carpool.carpools
         where
-              cc.datetime >= $1
-          and cc.datetime <  $2
-          and cc.status = 'ok'
-          and cc.operator_id = $3
-          and pi.policy_id = $4
-          and pi.amount > 0
-          ${this.boundaries(slices)}
+          datetime >= $1
+          and datetime < $2
+          and status = 'ok'
+          and operator_id = $3
+          and is_driver = true
       )
-      select ${this.getFields(type).join(', ')}
-      from trip.list
-      where journey_id in (select journey_id from trips)
-      order by journey_start_datetime asc
+      -- list in api/services/trip/src/actions/excel/BuildExcel.ts
+      select
+        ccd.operator_journey_id as journey_id,
+        ccd.trip_id,
+        ccd.operator_trip_id,
+    
+        -- driver
+        cid.uuid as driver_uuid,
+        cid.operator_user_id as operator_driver_id,
+        pid.amount as driver_rpc_incentive,
+    
+        -- passenger
+        cip.uuid as passenger_uuid,
+        cip.operator_user_id as operator_passenger_id,
+        pip.amount as passenger_rpc_incentive,
+        -- ccd.seats as passenger_seats,
+        -- cip.over_18 as passenger_over_18,
+    
+        ccd.datetime as start_datetime,
+        ccd.datetime + (ccd.duration || ' seconds')::interval as end_datetime,
+        ccd.duration,
+        ccd.distance,
+        ccd.operator_class
+    
+      from ccd
+      left join carpool.carpools ccp on ccd.acquisition_id = ccp.acquisition_id and ccp.is_driver = false
+      left join carpool.identities cid on cid._id = ccd.identity_id
+      left join carpool.identities cip on cip._id = ccp.identity_id
+      left join policy.incentives pid on ccd._id = pid.carpool_id and pid.policy_id = $4 and pid.status = 'validated'
+      left join policy.incentives pip on ccp._id = pip.carpool_id and pip.policy_id = $4 and pid.status = 'validated'
+
+      where pid.policy_id is not null or pip.policy_id is not null
+
+      order by
+        ccd.trip_id,
+        ccd.datetime
     `;
 
     const db = await this.connection.getClient().connect();
     const cursorCb = db.query(new Cursor(queryText, [start_date, end_date, operator_id, campaign_id]));
 
     return {
-      read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
+      read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<APDFTripInterface[]>,
       release: db.release,
     };
   }

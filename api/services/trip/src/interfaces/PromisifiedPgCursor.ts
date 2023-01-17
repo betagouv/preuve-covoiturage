@@ -1,6 +1,4 @@
-import { ExportTripInterface } from './ExportTripInterface';
-
-export interface PgCursorHandler {
-  read: (count: number) => Promise<ExportTripInterface[]>;
+export interface PgCursorHandler<T> {
+  read: (count: number) => Promise<T[]>;
   release?: Function;
 }

@@ -11,6 +11,7 @@ import { ExportCapitalCallsAction } from './ExportCapitalCallsAction';
 import { BuildExcel } from './excel/BuildExcel';
 import { CheckCampaign } from './excel/CheckCampaign';
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
+import { ConfigInterfaceResolver } from '@ilos/common';
 
 interface Context {
   // Injected tokens
@@ -18,6 +19,7 @@ interface Context {
   s3StorageProvider: S3StorageProvider;
   buildExcel: BuildExcel;
   tripRepository: TripRepositoryProviderInterfaceResolver;
+  config: ConfigInterfaceResolver;
 
   // Injected tokens method's stubs
   checkCampaignStub: SinonStub;
@@ -49,12 +51,18 @@ test.beforeEach((t) => {
   t.context.checkCampaign = new CheckCampaign(null as any);
   t.context.s3StorageProvider = new S3StorageProvider(null as any);
   t.context.buildExcel = new BuildExcel(null as any, null as any, null as any, null as any);
+  t.context.config = {
+    get() {
+      return true; // enable upload
+    },
+  };
   t.context.tripRepository = new TR();
   t.context.buildExcelsExportAction = new ExportCapitalCallsAction(
     t.context.checkCampaign,
     t.context.s3StorageProvider,
     t.context.tripRepository,
     t.context.buildExcel,
+    t.context.config,
   );
 
   t.context.checkCampaignStub = sinon.stub(t.context.checkCampaign, 'call');

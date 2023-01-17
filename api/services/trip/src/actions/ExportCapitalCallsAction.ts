@@ -1,4 +1,4 @@
-import { ContextType, handler } from '@ilos/common';
+import { ContextType, handler, ConfigInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
@@ -21,6 +21,7 @@ export class ExportCapitalCallsAction extends Action {
     private s3StorageProvider: S3StorageProvider,
     private tripRepositoryProvider: TripRepositoryProviderInterfaceResolver,
     private buildExcel: BuildExcel,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
@@ -53,6 +54,12 @@ export class ExportCapitalCallsAction extends Action {
             try {
               console.debug(`Exporting APDF: campaign ${campaign.name}, operator id ${o_id}`);
               const { filename, filepath } = await this.buildExcel.call(campaign, start_date, end_date, o_id);
+
+              if (!this.config.get('apdf.s3UploadEnabled')) {
+                console.warn('APDF Upload disabled. Set APP_APDF_S3_UPLOAD_ENABLED=true to upload to S3');
+                return;
+              }
+
               const file = await this.s3StorageProvider.upload(BucketName.APDF, filepath, filename, `${campaign._id}`);
 
               // maybe delete the file

@@ -260,7 +260,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
       this.addExcludedTerritoriesToQueryParams(excluded_territories, queryParams);
     }
 
-    const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
+    const cursor: PgCursorHandler<ExportTripInterface> = await this.tripRepository.searchWithCursor(queryParams, type);
     const filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end, isOpendata);
     return this.handleCSVExport(isOpendata, filepath, queryParams, excluded_territories);
   }

@@ -5,6 +5,8 @@ import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
+import { APDFTripInterface } from './APDFTripInterface';
+import { ExportTripInterface } from './ExportTripInterface';
 import { PolicyStatsInterface } from './PolicySliceStatInterface';
 import { PgCursorHandler } from './PromisifiedPgCursor';
 import { FinancialStatInterface, StatInterface } from './StatInterface';
@@ -35,11 +37,11 @@ export interface TripRepositoryInterface {
       status?: string;
     },
     type?: string,
-  ): Promise<PgCursorHandler>;
+  ): Promise<PgCursorHandler<ExportTripInterface>>;
   validateTz(tz?: string): Promise<TzResultInterface>;
   getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]>;
   getPolicyStats(params: CampaignSearchParamsInterface, slices: SliceInterface[]): Promise<PolicyStatsInterface>;
-  getPolicyCursor(params: CampaignSearchParamsInterface, slices: SliceInterface[]): Promise<PgCursorHandler>;
+  getPolicyCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler<APDFTripInterface>>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]> {
@@ -69,7 +71,7 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
       status?: string;
     },
     type?: string,
-  ): Promise<PgCursorHandler> {
+  ): Promise<PgCursorHandler<ExportTripInterface>> {
     throw new Error('Not implemented');
   }
 
@@ -92,11 +94,7 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
     throw new Error('Not implemented');
   }
 
-  public async getPolicyCursor(
-    params: CampaignSearchParamsInterface,
-    slices: SliceInterface[],
-    type = 'opendata',
-  ): Promise<PgCursorHandler> {
+  public async getPolicyCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler<APDFTripInterface>> {
     throw new Error('Not implemented');
   }
 }
