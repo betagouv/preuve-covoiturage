@@ -1,4 +1,3 @@
-import { identity } from './../../../../../../dashboard/dist/out-tsc/dashboard/src/app/core/entities/api/shared/common/schemas/identity';
 import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
 import { isSelected } from '../helpers';
 import {
