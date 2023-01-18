@@ -1,29 +1,23 @@
-import Redis from 'ioredis';
 import { ConfigInterfaceResolver, handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
+import Redis from 'ioredis';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
 
-import { alias } from '../shared/policy/simulateOnPast.schema';
-import {
-  TripRepositoryProviderInterfaceResolver,
-  TerritoryRepositoryProviderInterfaceResolver,
-  SerializedPolicyInterface,
-} from '../interfaces';
-import { Policy } from '../engine/entities/Policy';
 import { MetadataStore } from '../engine/entities/MetadataStore';
+import { Policy } from '../engine/entities/Policy';
+import {
+  SerializedPolicyInterface,
+  TerritoryRepositoryProviderInterfaceResolver,
+  TripRepositoryProviderInterfaceResolver,
+} from '../interfaces';
+import { alias } from '../shared/policy/simulateOnPast.schema';
 
 @handler({
   ...handlerConfig,
   middlewares: [
     ['validate', alias],
-    validateDateMiddleware({
-      startPath: 'start_date',
-      endPath: 'end_date',
-      minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 5),
-      maxEnd: () => new Date(),
-    }),
     ...copyGroupIdAndApplyGroupPermissionMiddlewares({
       territory: 'territory.policy.simulate.past',
       registry: 'registry.policy.simulate.past',
@@ -32,6 +26,7 @@ import { MetadataStore } from '../engine/entities/MetadataStore';
 })
 export class SimulateOnPastAction extends AbstractAction {
   private redis: Redis.Redis;
+  private readonly ONE_DAY_IN_SECONDS: number = 86400;
 
   constructor(
     private tripRepository: TripRepositoryProviderInterfaceResolver,
@@ -39,13 +34,19 @@ export class SimulateOnPastAction extends AbstractAction {
     private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
   ) {
     super();
-    this.redis = new Redis(this.config.get('redis.connectionString'), { keyPrefix: 'simulation:' });
+    this.redis = new Redis(this.config.get('connections.redis'), { keyPrefix: 'simulation:' });
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const today = new Date();
     const start_date = new Date();
     start_date.setMonth(today.getMonth() - params.months);
+
+    // 0. Returns Redis cache result for a given territory and month number if present
+    const cachedResult: string = await this.redis.get(this.getSimulationCachingKey(params));
+    if (cachedResult) {
+      return JSON.parse(cachedResult);
+    }
 
     // 1. Find selector and instanciate policy
     const territory_selector = await this.territoryRepository.findSelectorFromId(params.territory_id);
@@ -88,8 +89,15 @@ export class SimulateOnPastAction extends AbstractAction {
       trip_subsidized: carpool_subsidized,
       amount,
     };
-
-    this.redis.set(`${params.territory_id}:`, result);
+    this.cacheSimultionResult(params, result);
     return result;
+  }
+
+  private cacheSimultionResult(params: ParamsInterface, result: ResultInterface): void {
+    this.redis.set(this.getSimulationCachingKey(params), JSON.stringify(result), 'EX', this.ONE_DAY_IN_SECONDS);
+  }
+
+  private getSimulationCachingKey(params: ParamsInterface): Redis.KeyType {
+    return `${params.territory_id}:${params.months}`;
   }
 }
