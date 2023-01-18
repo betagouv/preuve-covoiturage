@@ -1,10 +1,11 @@
-import { handler } from '@ilos/common';
+import Redis from 'ioredis';
+import { ConfigInterfaceResolver, handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware } from '@pdc/provider-middleware';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
 
-import { alias } from '../shared/policy/simulateOn.schema';
+import { alias } from '../shared/policy/simulateOnPast.schema';
 import {
   TripRepositoryProviderInterfaceResolver,
   TerritoryRepositoryProviderInterfaceResolver,
@@ -30,19 +31,29 @@ import { MetadataStore } from '../engine/entities/MetadataStore';
   ],
 })
 export class SimulateOnPastAction extends AbstractAction {
+  private redis: Redis.Redis;
+
   constructor(
     private tripRepository: TripRepositoryProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
     private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
   ) {
     super();
+    this.redis = new Redis(this.config.get('redis.connectionString'), { keyPrefix: 'simulation:' });
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    const today = new Date();
+    const start_date = new Date();
+    start_date.setMonth(today.getMonth() - params.months);
+
     // 1. Find selector and instanciate policy
     const territory_selector = await this.territoryRepository.findSelectorFromId(params.territory_id);
     const serialized_policy: SerializedPolicyInterface = {
       ...params,
       status: 'active',
+      start_date,
+      end_date: today,
       incentive_sum: 0,
       territory_selector,
       _id: 1,
@@ -73,9 +84,12 @@ export class SimulateOnPastAction extends AbstractAction {
       }
     } while (!done);
 
-    return {
+    const result: ResultInterface = {
       trip_subsidized: carpool_subsidized,
       amount,
     };
+
+    this.redis.set(`${params.territory_id}:`, result);
+    return result;
   }
 }

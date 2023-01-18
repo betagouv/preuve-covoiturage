@@ -60,15 +60,12 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
           Object.keys(this.errors).forEach((key) => (this.errors[key] = false));
         }),
         map((range: number) => {
-          this.timeState = this.getTimeState(range);
-          const simulateOnPasParam: SimulateOnPastParam = {
+          return {
             territory_id: this.campaign.territory_id,
             name: this.campaign.name,
             handler: this.campaign.handler,
-            start_date: this.timeState.startDate,
-            end_date: this.timeState.endDate,
+            months: range,
           };
-          return simulateOnPasParam;
         }),
       )
       .subscribe((simulateOnPasParam) => {

@@ -1,9 +1,10 @@
 export interface ParamsInterface {
   territory_id: number;
   name: string;
-  start_date: Date;
-  end_date: Date;
   handler: string;
+  months?: number;
+  // start_date: Date;
+  // end_date: Date;
 }
 
 export interface ResultInterface {

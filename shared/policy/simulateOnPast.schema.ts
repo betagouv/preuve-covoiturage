@@ -9,12 +9,7 @@ export const schema = {
     name: {
       macro: 'varchar',
     },
-    start_date: {
-      macro: 'timestamp',
-    },
-    end_date: {
-      macro: 'timestamp',
-    },
+    months: { macro: 'serial' },
     handler: {
       type: 'string',
       maxLength: 30,
@@ -22,3 +17,7 @@ export const schema = {
     },
   },
 };
+
+export const alias = 'campaign.simulateOnPast';
+
+export const binding = [alias, schema];
