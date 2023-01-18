@@ -26,7 +26,7 @@ import { alias } from '../shared/policy/simulateOnPast.schema';
 })
 export class SimulateOnPastAction extends AbstractAction {
   private redis: Redis.Redis;
-  private readonly ONE_DAY_IN_SECONDS: number = 86400;
+  private readonly FOUR_DAYS_IN_SECONDS: number = 4 * 86400;
 
   constructor(
     private tripRepository: TripRepositoryProviderInterfaceResolver,
@@ -94,7 +94,7 @@ export class SimulateOnPastAction extends AbstractAction {
   }
 
   private cacheSimultionResult(params: ParamsInterface, result: ResultInterface): void {
-    this.redis.set(this.getSimulationCachingKey(params), JSON.stringify(result), 'EX', this.ONE_DAY_IN_SECONDS);
+    this.redis.set(this.getSimulationCachingKey(params), JSON.stringify(result), 'EX', this.FOUR_DAYS_IN_SECONDS);
   }
 
   private getSimulationCachingKey(params: ParamsInterface): Redis.KeyType {
