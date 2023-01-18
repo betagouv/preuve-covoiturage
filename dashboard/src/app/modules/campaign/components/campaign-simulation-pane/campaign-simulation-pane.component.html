@@ -7,9 +7,8 @@
       <mat-radio-button class="radio-button" [value]="2">2&nbsp;mois</mat-radio-button>
       <mat-radio-button class="radio-button" [value]="3">3&nbsp;mois</mat-radio-button>
     </mat-radio-group>
-    <p>
-      Cette estimation se base sur les trajets réalisés du {{ timeState.startDateString }} au
-      {{ timeState.endDateString }}
+    <p *ngIf="!loading">
+      Cette estimation se base sur les trajets réalisés du au
     </p>
     <div class="row">
       <div class="sim-col">
@@ -20,11 +19,11 @@
       <div class="sim-col">
         <h5>Incitations distribuées</h5>
         <mat-spinner [diameter]="25" *ngIf="loading"></mat-spinner>
-        <p *ngIf="!loading">{{ state.amount }}</p>
+        <p *ngIf="!loading">{{state.amount / 100 | euro}}</p>
       </div>
     </div>
-    <div class="row" *ngIf="errors.simulation_failed">
-      <p>La simulation n'a pu être calculée.</p>
+    <div class="row" *ngIf="errors_simulation_failed">
+      <p>La simulation n'a pu être calculée. Veuillez rééssayer ultérieurement</p>
     </div>
   </div>
 

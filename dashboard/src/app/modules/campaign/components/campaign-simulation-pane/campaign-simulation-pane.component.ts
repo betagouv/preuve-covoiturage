@@ -1,8 +1,5 @@
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
-import { ParamsInterface as SimulateOnPastParam } from '~/shared/policy/simulateOnPast.contract';
-import { format, subDays, subMonths } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { BehaviorSubject, throwError } from 'rxjs';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 
 import { Component, Input, OnInit } from '@angular/core';
 
@@ -14,14 +11,6 @@ import { catchError, debounceTime, map, tap } from 'rxjs/operators';
 import { CampaignReducedStats } from '../../../../core/entities/campaign/api-format/CampaignStats';
 import { CampaignApiService } from '../../services/campaign-api.service';
 
-interface SimulationDateRange {
-  startDate: Date;
-  endDate: Date;
-  startDateString: string;
-  endDateString: string;
-  nbMonth: number;
-}
-
 @Component({
   selector: 'app-campaign-simulation-pane',
   templateUrl: './campaign-simulation-pane.component.html',
@@ -32,12 +21,9 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
 
   public loading = true;
   public state: StatResultInterface = { trip_subsidized: 0, amount: 0 };
-  public timeState = this.getTimeState(1);
   public range$ = new BehaviorSubject<number>(1);
   public simulatedCampaign$ = new BehaviorSubject<PolicyInterface>(null);
-  public errors = {
-    simulation_failed: false,
-  };
+  public errors_simulation_failed = false;
 
   get months(): number {
     return this.range$.value;
@@ -57,7 +43,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
         debounceTime(250),
         tap(() => {
           this.loading = true;
-          Object.keys(this.errors).forEach((key) => (this.errors[key] = false));
+          this.errors_simulation_failed = false;
         }),
         map((range: number) => {
           return {
@@ -73,7 +59,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
           .simulate(simulateOnPasParam)
           .pipe(
             catchError((err) => {
-              this.errors.simulation_failed = true;
+              this.errors_simulation_failed = true;
               this.loading = false;
               return throwError(err);
             }),
@@ -83,19 +69,5 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
             this.loading = false;
           });
       });
-  }
-
-  private getTimeState(nbMonth: number): SimulationDateRange {
-    // 5 days ago
-    const endDate = subDays(new Date(), 5);
-    const startDate = subMonths(endDate, nbMonth);
-
-    return {
-      nbMonth,
-      startDate,
-      endDate,
-      startDateString: format(startDate, 'd MMMM yyyy', { locale: fr }),
-      endDateString: format(endDate, 'd MMMM yyyy', { locale: fr }),
-    };
   }
 }
