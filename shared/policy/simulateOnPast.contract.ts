@@ -3,13 +3,13 @@ export interface ParamsInterface {
   name: string;
   handler: string;
   months?: number;
-  // start_date: Date;
-  // end_date: Date;
 }
 
 export interface ResultInterface {
   amount: number;
   trip_subsidized: number;
+  start_date: Date;
+  end_date: Date;
 }
 
 export const handlerConfig = {

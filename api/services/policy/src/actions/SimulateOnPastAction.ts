@@ -86,6 +86,8 @@ export class SimulateOnPastAction extends AbstractAction {
     } while (!done);
 
     const result: ResultInterface = {
+      start_date,
+      end_date: today,
       trip_subsidized: carpool_subsidized,
       amount,
     };

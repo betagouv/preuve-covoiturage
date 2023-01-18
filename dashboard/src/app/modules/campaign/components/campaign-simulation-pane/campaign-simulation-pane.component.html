@@ -8,7 +8,7 @@
       <mat-radio-button class="radio-button" [value]="3">3&nbsp;mois</mat-radio-button>
     </mat-radio-group>
     <p *ngIf="!loading">
-      Cette estimation se base sur les trajets réalisés du au
+      Cette estimation se base sur les trajets réalisés du {{ state.start_date }} au {{ state.end_date }} 
     </p>
     <div class="row">
       <div class="sim-col">

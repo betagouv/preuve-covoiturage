@@ -1,14 +1,12 @@
+import { Component, Input, OnInit } from '@angular/core';
 import { BehaviorSubject, throwError } from 'rxjs';
 import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 
-import { Component, Input, OnInit } from '@angular/core';
-
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { ResultInterface as StatResultInterface } from '~/shared/policy/simulateOnPast.contract';
+import { ResultInterface as SimulateOnPastResult } from '~/shared/policy/simulateOnPast.contract';
 
 import { catchError, debounceTime, map, tap } from 'rxjs/operators';
-import { CampaignReducedStats } from '../../../../core/entities/campaign/api-format/CampaignStats';
 import { CampaignApiService } from '../../services/campaign-api.service';
 
 @Component({
@@ -20,7 +18,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
   @Input() campaign: PolicyInterface;
 
   public loading = true;
-  public state: StatResultInterface = { trip_subsidized: 0, amount: 0 };
+  public state: SimulateOnPastResult;
   public range$ = new BehaviorSubject<number>(1);
   public simulatedCampaign$ = new BehaviorSubject<PolicyInterface>(null);
   public errors_simulation_failed = false;
@@ -64,7 +62,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
               return throwError(err);
             }),
           )
-          .subscribe((state: CampaignReducedStats) => {
+          .subscribe((state: SimulateOnPastResult) => {
             this.state = state;
             this.loading = false;
           });
