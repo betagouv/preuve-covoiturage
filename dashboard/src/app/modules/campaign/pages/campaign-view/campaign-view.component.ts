@@ -33,7 +33,7 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
   }
 
   isDraft(): boolean {
-    return this.campaignUx.status == 'draft'
+    return this.campaignUx.status == 'draft';
   }
 
   ngOnInit(): void {

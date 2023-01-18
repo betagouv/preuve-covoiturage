@@ -5,7 +5,11 @@ import { copyGroupIdAndApplyGroupPermissionMiddlewares, validateDateMiddleware }
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
 
 import { alias } from '../shared/policy/simulateOn.schema';
-import { TripRepositoryProviderInterfaceResolver, TerritoryRepositoryProviderInterfaceResolver } from '../interfaces';
+import {
+  TripRepositoryProviderInterfaceResolver,
+  TerritoryRepositoryProviderInterfaceResolver,
+  SerializedPolicyInterface,
+} from '../interfaces';
 import { Policy } from '../engine/entities/Policy';
 import { MetadataStore } from '../engine/entities/MetadataStore';
 
@@ -14,15 +18,15 @@ import { MetadataStore } from '../engine/entities/MetadataStore';
   middlewares: [
     ['validate', alias],
     validateDateMiddleware({
-      startPath: 'policy.start_date',
-      endPath: 'policy.end_date',
+      startPath: 'start_date',
+      endPath: 'end_date',
       minStart: () => new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 31 * 5),
       maxEnd: () => new Date(),
     }),
-    ...copyGroupIdAndApplyGroupPermissionMiddlewares(
-      { territory: 'territory.policy.simulate.past', registry: 'registry.policy.simulate.past' },
-      'policy',
-    ),
+    ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+      territory: 'territory.policy.simulate.past',
+      registry: 'registry.policy.simulate.past',
+    }),
   ],
 })
 export class SimulateOnPastAction extends AbstractAction {
@@ -35,14 +39,19 @@ export class SimulateOnPastAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     // 1. Find selector and instanciate policy
-    const territory_selector = await this.territoryRepository.findSelectorFromId(params.policy.territory_id);
-    const policy = await Policy.import({ ...params.policy, territory_selector, _id: 1 });
-
+    const territory_selector = await this.territoryRepository.findSelectorFromId(params.territory_id);
+    const serialized_policy: SerializedPolicyInterface = {
+      ...params,
+      status: 'active',
+      incentive_sum: 0,
+      territory_selector,
+      _id: 1,
+    };
+    const policy = await Policy.import(serialized_policy);
     // 2. Start a cursor to find trips
     const cursor = this.tripRepository.findTripByPolicy(policy, policy.start_date, policy.end_date);
     let done = false;
 
-    let carpool_total = 0;
     let carpool_subsidized = 0;
     let amount = 0;
 
@@ -56,7 +65,6 @@ export class SimulateOnPastAction extends AbstractAction {
           const incentive = await policy.processStateless(carpool);
           const finalIncentive = await policy.processStateful(store, incentive.export());
           const finalAmount = finalIncentive.get();
-          carpool_total += 1;
           if (finalAmount > 0) {
             carpool_subsidized += 1;
           }
@@ -65,10 +73,8 @@ export class SimulateOnPastAction extends AbstractAction {
       }
     } while (!done);
 
-    // TODO approximation à éviter
     return {
       trip_subsidized: carpool_subsidized,
-      trip_excluded: carpool_total / 2 - carpool_subsidized,
       amount,
     };
   }

@@ -1,3 +1,4 @@
+import { identity } from './../../../../../../dashboard/dist/out-tsc/dashboard/src/app/core/entities/api/shared/common/schemas/identity';
 import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
 import { isSelected } from '../helpers';
 import {
@@ -12,6 +13,7 @@ import {
   PolicyHandlerParamsInterface,
   TerritorySelectorsInterface,
   StatelessContextInterface,
+  PolicyHandlerStaticInterface,
 } from '../../interfaces';
 import { policies } from '../policies';
 import { StatefulContext, StatelessContext } from './Context';
@@ -57,7 +59,7 @@ export class Policy implements PolicyInterface {
       name: this.name,
       start_date: this.start_date,
       end_date: this.end_date,
-      handler: this.handler.constructor.name,
+      handler: (this.handler.constructor as PolicyHandlerStaticInterface).id,
       status: this.status,
       incentive_sum: this.incentive_sum,
     };

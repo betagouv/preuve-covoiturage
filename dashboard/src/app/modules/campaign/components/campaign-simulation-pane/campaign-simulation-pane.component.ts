@@ -1,4 +1,5 @@
 import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
+import { ParamsInterface as SimulateOnPastParam } from '~/shared/policy/simulateOnPast.contract';
 import { format, subDays, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { BehaviorSubject, throwError } from 'rxjs';
@@ -30,7 +31,7 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
   @Input() campaign: PolicyInterface;
 
   public loading = true;
-  public state: StatResultInterface = { trip_excluded: 0, trip_subsidized: 0, amount: 0 };
+  public state: StatResultInterface = { trip_subsidized: 0, amount: 0 };
   public timeState = this.getTimeState(1);
   public range$ = new BehaviorSubject<number>(1);
   public simulatedCampaign$ = new BehaviorSubject<PolicyInterface>(null);
@@ -60,19 +61,19 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
         }),
         map((range: number) => {
           this.timeState = this.getTimeState(range);
-          const policy: Partial<PolicyInterface> = {
+          const simulateOnPasParam: SimulateOnPastParam = {
             territory_id: this.campaign.territory_id,
             name: this.campaign.name,
             handler: this.campaign.handler,
             start_date: this.timeState.startDate,
             end_date: this.timeState.endDate,
           };
-          return policy;
+          return simulateOnPasParam;
         }),
       )
-      .subscribe((policy) => {
+      .subscribe((simulateOnPasParam) => {
         this.campaignApi
-          .simulate({ policy })
+          .simulate(simulateOnPasParam)
           .pipe(
             catchError((err) => {
               this.errors.simulation_failed = true;

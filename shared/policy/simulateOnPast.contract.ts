@@ -1,13 +1,14 @@
-import { PolicyInterface } from './common/interfaces/PolicyInterface';
-
 export interface ParamsInterface {
-  policy: Partial<PolicyInterface>;
+  territory_id: number;
+  name: string;
+  start_date: Date;
+  end_date: Date;
+  handler: string;
 }
 
 export interface ResultInterface {
   amount: number;
   trip_subsidized: number;
-  trip_excluded: number;
 }
 
 export const handlerConfig = {
