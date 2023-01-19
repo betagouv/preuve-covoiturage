@@ -44,7 +44,7 @@ export class CampaignApiService extends JsonRpcCrud<
   }
 
   simulate(campaign: SimulateOnPastParam): Observable<SimulateOnPastResult> {
-    const jsonRPCParam = new JsonRPCParam(simulateOnPastSignature, { campaign });
+    const jsonRPCParam = new JsonRPCParam(simulateOnPastSignature, campaign);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 }

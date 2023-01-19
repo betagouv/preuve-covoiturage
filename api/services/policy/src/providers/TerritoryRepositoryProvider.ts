@@ -12,7 +12,7 @@ import {
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
 export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderInterface {
-  public readonly getTerritorySelectorFn = 'territory.get_selector_by_territory_id';
+  protected readonly getTerritorySelectorFn = 'territory.get_selector_by_territory_id';
   protected readonly getByPointFunction = 'geo.get_latest_by_point';
   protected readonly getBySelectorFunction = 'policy.get_territory_id_by_selector';
   protected readonly territoryGroupTable = 'territory.territory_group';
@@ -91,7 +91,7 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
       text: `
         SELECT * FROM ${this.getTerritorySelectorFn}($1) 
       `,
-      values: [id],
+      values: [[id]],
     };
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {

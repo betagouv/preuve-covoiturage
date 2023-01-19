@@ -9,7 +9,7 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { config } from './config';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
-import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOn.schema';
+import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOnPast.schema';
 import { binding as simulateOnPastGeoSchemaBinding } from './shared/policy/simulateOnPastGeo.schema';
 import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
 import { binding as statsSchemaBinding } from './shared/policy/stats.schema';
