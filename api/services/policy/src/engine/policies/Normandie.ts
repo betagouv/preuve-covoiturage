@@ -25,7 +25,7 @@ export const Normandie: PolicyHandlerStaticInterface = class
   static readonly id = 'normandie_2023';
   protected operator_class = ['C'];
   private readonly MAX_GLOBAL_AMOUNT_LIMIT = 70_000_00;
-  private readonly NO_MOBILITY_COMPETENCE_EPCI = ['200069516', '200066801', '241400878', '200071652'];
+  private readonly EPCI_WITHOUT_MOBILITY_COMPETENCE = ['200069516', '200066801', '241400878', '200071652'];
 
   protected limits: Array<ConfiguredLimitInterface> = [
     ['E8E1B5F5-64D5-48B9-8BBB-A64C33C500D8', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
@@ -44,8 +44,8 @@ export const Normandie: PolicyHandlerStaticInterface = class
 
     // En excluant les trajets intra aom excepté les epci n'ayant pas la compétence mobilité
     if (
-      ctx.carpool.start.aom === ctx.carpool.end.aom &&
-      this.NO_MOBILITY_COMPETENCE_EPCI.includes(ctx.carpool.start.epci)
+      ctx.carpool.start.epci === ctx.carpool.end.epci &&
+      !this.EPCI_WITHOUT_MOBILITY_COMPETENCE.includes(ctx.carpool.start.epci)
     ) {
       throw new NotEligibleTargetException('Journey start/end inside aom');
     }
