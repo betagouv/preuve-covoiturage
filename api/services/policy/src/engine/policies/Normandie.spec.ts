@@ -60,23 +60,38 @@ test(
   },
 );
 
-test(
+test.only(
   'should works basic',
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
-      { distance: 25_000, driver_identity_uuid: 'two' },
+      { distance: 5_000 },
+      { distance: 25_000 },
+      {
+        distance: 25_000,
+        passenger_identity_uuid: 'one',
+        start: {
+          ...defaultPosition,
+          com: '14047',
+          epci: '241400555',
+          aom: '200022358',
+        },
+        end: {
+          ...defaultPosition,
+          com: '27617',
+          epci: '200071843',
+        },
+      },
     ],
     meta: [],
   },
   {
-    incentive: [100, 100],
+    incentive: [100, 100, 100],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 200,
+        value: 300,
       },
     ],
   },
