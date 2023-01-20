@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS fraudcheck.fraudchecks
   _id serial primary key,
   created_at timestamp with time zone NOT NULL DEFAULT NOW(),
   updated_at timestamp with time zone NOT NULL DEFAULT NOW(),
-  acquisition_id integer NOT NULL REFERENCES carpool.carpools(_id),
+  acquisition_id integer NOT NULL REFERENCES acquisition.acquisitions(_id),
   status fraudcheck.status_enum NOT NULL DEFAULT 'pending',
   karma float NOT NULL DEFAULT 0
 );
@@ -18,7 +18,7 @@ CREATE TRIGGER touch_fraud_updated_at BEFORE UPDATE ON fraudcheck.fraudchecks FO
 
 CREATE TABLE IF NOT EXISTS fraudcheck.results (
   _id serial primary key,
-  acquisition_id integer NOT NULL REFERENCES carpool.carpools(_id),
+  acquisition_id integer NOT NULL REFERENCES acquisition.acquisitions(_id),
   method varchar(128) NOT NULL,
   uuid uuid NOT NULL,
   status fraudcheck.status_enum NOT NULL DEFAULT 'pending',
@@ -30,18 +30,15 @@ CREATE TABLE IF NOT EXISTS fraudcheck.results (
 CREATE INDEX ON fraudcheck.results(uuid);
 CREATE INDEX ON fraudcheck.results(acquisition_id);
 
-CREATE OR REPLACE FUNCTION hydrate_fraud_from_carpool() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION populate_fraud_from_carpool(days int) RETURNS VOID AS $$
 BEGIN
     INSERT INTO fraudcheck.fraudchecks (acquisition_id)
-    SELECT cc.acquisition_id FROM carpool.carpools AS cc
-    WHERE cc._id = NEW._id AND cc.status = 'ok'
-    ON CONFLICT (acquisition_id)
-    DO UPDATE SET
-      status = 'pending';
-    RETURN NULL;
+    SELECT distinct cc.acquisition_id FROM carpool.carpools AS cc
+    LEFT JOIN fraudcheck.fraudchecks AS ff
+      ON ff.acquisition_id = cc.acquisition_id
+    WHERE
+      cc.datetime >= NOW() - $1 * '1 day'::interval AND
+      cc.status = 'ok' AND
+      ff.acquisition_id IS NULL;
 END;
 $$ language plpgsql;
-
-CREATE TRIGGER hydrate_fraud_from_carpool
-    AFTER INSERT OR UPDATE ON carpool.carpools
-    FOR EACH ROW EXECUTE PROCEDURE hydrate_fraud_from_carpool();
