@@ -1,7 +1,7 @@
 name: Deploy dashboard - production
 on:
-  release:
-    types: [published]
+  push:
+    branches: [dev]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
