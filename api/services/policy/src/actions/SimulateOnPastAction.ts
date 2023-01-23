@@ -1,10 +1,11 @@
-import { ConfigInterfaceResolver, handler } from '@ilos/common';
+import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import Redis from 'ioredis';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
 
+import { RedisConnection } from '@ilos/connection-redis/dist';
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
 import {
@@ -25,16 +26,14 @@ import { alias } from '../shared/policy/simulateOnPast.schema';
   ],
 })
 export class SimulateOnPastAction extends AbstractAction {
-  private redis: Redis.Redis;
   private readonly FOUR_DAYS_IN_SECONDS: number = 4 * 86400;
 
   constructor(
     private tripRepository: TripRepositoryProviderInterfaceResolver,
-    private config: ConfigInterfaceResolver,
+    private connection: RedisConnection,
     private territoryRepository: TerritoryRepositoryProviderInterfaceResolver,
   ) {
     super();
-    this.redis = new Redis(this.config.get('connections.redis'), { keyPrefix: 'simulation:' });
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
@@ -43,7 +42,7 @@ export class SimulateOnPastAction extends AbstractAction {
     start_date.setMonth(today.getMonth() - params.months);
 
     // 0. Returns Redis cache result for a given territory and month number if present
-    const cachedResult: string = await this.redis.get(this.getSimulationCachingKey(params));
+    const cachedResult: string = await this.connection.getClient().get(this.getSimulationCachingKey(params));
     if (cachedResult) {
       return JSON.parse(cachedResult);
     }
@@ -96,10 +95,12 @@ export class SimulateOnPastAction extends AbstractAction {
   }
 
   private cacheSimultionResult(params: ParamsInterface, result: ResultInterface): void {
-    this.redis.set(this.getSimulationCachingKey(params), JSON.stringify(result), 'EX', this.FOUR_DAYS_IN_SECONDS);
+    this.connection
+      .getClient()
+      .set(this.getSimulationCachingKey(params), JSON.stringify(result), 'EX', this.FOUR_DAYS_IN_SECONDS);
   }
 
   private getSimulationCachingKey(params: ParamsInterface): Redis.KeyType {
-    return `${params.territory_id}:${params.months}`;
+    return `simulations:${params.territory_id}:${params.months}`;
   }
 }
