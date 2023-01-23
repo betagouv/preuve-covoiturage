@@ -1,8 +1,10 @@
 import S3 from 'aws-sdk/clients/s3';
-import { SerializedPolicyInterface } from '..';
-import { EnrichedFundingRequestType } from '../../shared/policy/fundingRequestsList.contract';
+import { EnrichedFundingRequestType } from '../shared/apdf/list.contract';
 
-export abstract class FundingRequestsRepositoryProviderInterfaceResolver {
+// TODO fix
+export type SerializedPolicyInterface = any;
+
+export abstract class StorageRepositoryProviderInterfaceResolver {
   abstract findByCampaign(campaign: SerializedPolicyInterface): Promise<S3.ObjectList>;
   abstract campaignsFilter(campaigns: number[]): (obj: EnrichedFundingRequestType) => boolean;
   abstract operatorsFilter(operators: number[]): (obj: EnrichedFundingRequestType) => boolean;

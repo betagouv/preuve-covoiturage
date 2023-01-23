@@ -2,16 +2,17 @@ import { ExtensionInterface, NewableType, serviceProvider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
+import { APDFNameProvider, S3StorageProvider } from '@pdc/provider-file';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { ExportAction } from './actions/ExportAction';
 import { config } from './config';
 import { ExportCron } from './cron/ExportCron';
-import { APDFRepositoryProvider } from './providers/APDFRepositoryProvider';
+import { DataRepositoryProvider } from './providers/APDFRepositoryProvider';
 
 @serviceProvider({
   config,
-  providers: [APDFRepositoryProvider],
+  providers: [APDFNameProvider, DataRepositoryProvider, S3StorageProvider],
   validator: [
     // ['user.changePassword', changePassword],
   ],

@@ -4,14 +4,14 @@ import { stream } from 'exceljs';
 import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface';
 import { SliceStatInterface } from '../../shared/apdf/interfaces/PolicySliceStatInterface';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
-import { APDFRepositoryProvider } from '../APDFRepositoryProvider';
+import { DataRepositoryProvider } from '../APDFRepositoryProvider';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
 @provider()
 export class BuildExcel {
   constructor(
-    private apdfRepoProvider: APDFRepositoryProvider,
+    private apdfRepoProvider: DataRepositoryProvider,
     private dataWorkbookWriter: DataWorkBookWriter,
     private slicesWorkbookWriter: SlicesWorkbookWriter,
     private apdfNameProvider: APDFNameProvider,

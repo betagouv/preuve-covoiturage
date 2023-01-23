@@ -6,8 +6,8 @@ import { promisify } from 'util';
 import { boundariesToClause } from '../helpers/boundariesToClause.helper';
 import { slicesToBoundaries } from '../helpers/slicesToBoundaries.helper';
 import {
-  APDFRepositoryInterface,
-  APDFRepositoryProviderInterfaceResolver,
+  DataRepositoryInterface,
+  DataRepositoryProviderInterfaceResolver,
   CampaignSearchParamsInterface,
 } from '../interfaces/APDFRepositoryProviderInterface';
 import { APDFTripInterface } from '../interfaces/APDFTripInterface';
@@ -15,11 +15,8 @@ import { PolicyStatsInterface } from '../shared/apdf/interfaces/PolicySliceStatI
 import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
 
-/*
- * Trip specific repository
- */
-@provider({ identifier: APDFRepositoryProviderInterfaceResolver })
-export class APDFRepositoryProvider implements APDFRepositoryInterface {
+@provider({ identifier: DataRepositoryProviderInterfaceResolver })
+export class DataRepositoryProvider implements DataRepositoryInterface {
   public static readonly MAX_DISTANCE_METERS = 150_000;
 
   constructor(public connection: PostgresConnection) {}

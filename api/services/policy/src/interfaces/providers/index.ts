@@ -9,4 +9,3 @@ export {
   TerritoryRepositoryProviderInterfaceResolver,
 } from './TerritoryRepositoryProviderInterface';
 export { MetadataRepositoryProviderInterfaceResolver } from './MetadataRepositoryProviderInterface';
-export * from './FundingRequestsRepositoryProviderInterface';

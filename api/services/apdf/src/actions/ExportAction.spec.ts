@@ -7,7 +7,7 @@ import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
-import { APDFRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
+import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { BuildExcel } from '../providers/excel/BuildExcel';
 import { CheckCampaign } from '../providers/excel/CheckCampaign';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
@@ -18,7 +18,7 @@ interface Context {
   checkCampaign: CheckCampaign;
   s3StorageProvider: S3StorageProvider;
   buildExcel: BuildExcel;
-  apdfRepository: APDFRepositoryProviderInterfaceResolver;
+  apdfRepository: DataRepositoryProviderInterfaceResolver;
   config: ConfigInterfaceResolver;
 
   // Injected tokens method's stubs
@@ -37,7 +37,7 @@ interface Context {
   buildExcelsExportAction: ExportAction;
 }
 
-class TR extends APDFRepositoryProviderInterfaceResolver {}
+class TR extends DataRepositoryProviderInterfaceResolver {}
 const test = anyTest as TestFn<Context>;
 
 test.before((t) => {

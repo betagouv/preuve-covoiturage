@@ -6,14 +6,14 @@ import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryPr
 import { PolicyStatsInterface } from '../../shared/apdf/interfaces/PolicySliceStatInterface';
 import { SliceInterface } from '../../shared/policy/common/interfaces/SliceInterface';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
-import { APDFRepositoryProvider } from '../APDFRepositoryProvider';
+import { DataRepositoryProvider } from '../APDFRepositoryProvider';
 import { BuildExcel } from './BuildExcel';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
 interface Context {
   // Injected tokens
-  apdfRepositoryProvider: APDFRepositoryProvider;
+  apdfRepositoryProvider: DataRepositoryProvider;
   nameProvider: APDFNameProvider;
   streamDataToWorkbook: DataWorkBookWriter;
   createSlicesSheetToWorkbook: SlicesWorkbookWriter;
@@ -48,7 +48,7 @@ const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.createSlicesSheetToWorkbook = new SlicesWorkbookWriter();
-  t.context.apdfRepositoryProvider = new APDFRepositoryProvider(null as any);
+  t.context.apdfRepositoryProvider = new DataRepositoryProvider(null as any);
   t.context.nameProvider = new APDFNameProvider();
   t.context.streamDataToWorkbook = new DataWorkBookWriter();
   t.context.buildExcel = new BuildExcel(

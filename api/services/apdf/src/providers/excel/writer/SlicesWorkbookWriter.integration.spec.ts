@@ -4,7 +4,7 @@ import { stream, Workbook, Worksheet } from 'exceljs';
 import { SlicesWorkbookWriter } from './SlicesWorkbookWriter';
 import { BuildExcel } from '../BuildExcel';
 import { SliceStatInterface } from '../../../shared/apdf/interfaces/PolicySliceStatInterface';
-import { APDFRepositoryProvider } from '../../../providers/APDFRepositoryProvider';
+import { DataRepositoryProvider } from '../../../providers/APDFRepositoryProvider';
 
 interface Context {
   // Injected tokens
@@ -32,7 +32,7 @@ test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async 
   const slices: SliceStatInterface[] = [
     { slice: { start: 0, end: 2000 }, count: 2500, sum: 154588 },
     { slice: { start: 2000, end: 30000 }, count: 3000, sum: 204598 },
-    { slice: { start: 30000, end: APDFRepositoryProvider.MAX_DISTANCE_METERS }, count: 5000, sum: 304456 },
+    { slice: { start: 30000, end: DataRepositoryProvider.MAX_DISTANCE_METERS }, count: 5000, sum: 304456 },
   ];
 
   // Act

@@ -1,15 +1,16 @@
-import S3 from 'aws-sdk/clients/s3';
 import { provider } from '@ilos/common';
-import { S3StorageProvider, BucketName, APDFNameProvider } from '@pdc/provider-file';
+import { S3, S3StorageProvider, BucketName, APDFNameProvider } from '@pdc/provider-file';
 import { subMonths } from 'date-fns';
-import { SerializedPolicyInterface } from '../interfaces';
-import { FundingRequestsRepositoryProviderInterfaceResolver } from '../interfaces';
-import { EnrichedFundingRequestType } from '../shared/policy/fundingRequestsList.contract';
+import {
+  SerializedPolicyInterface,
+  StorageRepositoryProviderInterfaceResolver,
+} from '../interfaces/StorageRepositoryProviderInterface';
+import { EnrichedFundingRequestType } from '../shared/apdf/list.contract';
 
 @provider({
-  identifier: FundingRequestsRepositoryProviderInterfaceResolver,
+  identifier: StorageRepositoryProviderInterfaceResolver,
 })
-export class FundingRequestsRepositoryProvider implements FundingRequestsRepositoryProviderInterfaceResolver {
+export class StorageRepositoryProvider implements StorageRepositoryProviderInterfaceResolver {
   private bucket: BucketName = BucketName.APDF;
 
   constructor(private s3StorageProvider: S3StorageProvider, private APDFNameProvider: APDFNameProvider) {}

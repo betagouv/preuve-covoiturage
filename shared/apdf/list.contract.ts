@@ -16,8 +16,8 @@ export type EnrichedFundingRequestType = {
 export type ResultsInterface = EnrichedFundingRequestType[];
 
 export const handlerConfig = {
-  service: 'policy',
-  method: 'fundingRequestsList',
+  service: 'apdf',
+  method: 'list',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

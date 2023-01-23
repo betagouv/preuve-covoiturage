@@ -4,7 +4,7 @@ import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import fs from 'fs';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
-import { APDFRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
+import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { BuildExcel } from '../providers/excel/BuildExcel';
 import { CheckCampaign } from '../providers/excel/CheckCampaign';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/apdf/export.contract';
@@ -19,7 +19,7 @@ export class ExportAction extends Action {
   constructor(
     private checkCampaign: CheckCampaign,
     private s3StorageProvider: S3StorageProvider,
-    private tripRepositoryProvider: APDFRepositoryProviderInterfaceResolver,
+    private tripRepositoryProvider: DataRepositoryProviderInterfaceResolver,
     private buildExcel: BuildExcel,
     private config: ConfigInterfaceResolver,
   ) {

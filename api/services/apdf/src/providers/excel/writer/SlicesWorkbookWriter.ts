@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 import { Column, stream, Worksheet } from 'exceljs';
-import { APDFRepositoryProvider } from '../../../providers/APDFRepositoryProvider';
+import { DataRepositoryProvider } from '../../../providers/APDFRepositoryProvider';
 import { SliceStatInterface } from '../../../shared/apdf/interfaces/PolicySliceStatInterface';
 import { SliceInterface } from '../../../shared/policy/common/interfaces/SliceInterface';
 import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
@@ -37,7 +37,7 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
   private formatSliceLabel(slice: SliceInterface): string {
     if (!slice.start && slice.end) {
       return `Jusqu'à ${slice.end / 1000} km`;
-    } else if (slice.end === APDFRepositoryProvider.MAX_DISTANCE_METERS) {
+    } else if (slice.end === DataRepositoryProvider.MAX_DISTANCE_METERS) {
       return `Supérieur à ${slice.start / 1000} km`;
     }
     return `De ${slice.start / 1000} km à ${slice.end / 1000} km`;
