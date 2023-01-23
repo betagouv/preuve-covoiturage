@@ -1,23 +1,23 @@
-import { ContextType, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
+import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import {
+  ParamsInterface as BuildExcelExportParamInterface,
+  ResultInterface as BuildExcelExportResultInterface,
+  signature as buildExcelExportSignature,
+} from '../shared/apdf/export.contract';
 import {
   ParamsInterface as ListCampaignsParamInterface,
   ResultInterface as ListCampaignsResultInterface,
   signature as listCampaignsSignature,
 } from '../shared/policy/list.contract';
 import { handlerConfig, ResultInterface, signature } from '../shared/trip/activeCampaignExcelExport.contract';
-import {
-  ParamsInterface as BuildExcelExportParamInterface,
-  ResultInterface as BuildExcelExportResultInterface,
-  signature as buildExcelExportSignature,
-} from '../shared/capitalcall/export.contract';
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
-export class ActiveCampaignExcelExportAction extends Action implements InitHookInterface {
+export class ExportCron extends Action implements InitHookInterface {
   constructor(private kernel: KernelInterfaceResolver) {
     super();
   }
@@ -36,14 +36,14 @@ export class ActiveCampaignExcelExportAction extends Action implements InitHookI
             repeat: {
               cron: '0 5 6 * *',
             },
-            jobId: 'trip.active_campaign_excel_export',
+            jobId: 'apdf.export_cron',
           },
         },
       },
     );
   }
 
-  public async handle(params: {}, context: ContextType): Promise<ResultInterface> {
+  public async handle(): Promise<ResultInterface> {
     const activeCampaigns: ListCampaignsResultInterface = await this.findActiveCampaigns();
     return this.buildExcelsForCampaigns(activeCampaigns);
   }
@@ -61,7 +61,7 @@ export class ActiveCampaignExcelExportAction extends Action implements InitHookI
       buildExcelExportParams,
       {
         channel: { service: handlerConfig.service },
-        call: { user: { permissions: ['registry.policy.fundingRequestsExport'] } },
+        call: { user: { permissions: ['registry.apdf.export'] } },
       },
     );
   }

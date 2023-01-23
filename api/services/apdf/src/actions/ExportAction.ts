@@ -1,25 +1,25 @@
-import { ContextType, handler, ConfigInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import fs from 'fs';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
-import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/capitalcall/export.contract';
-import { alias } from '../shared/capitalcall/export.schema';
+import { APDFRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
+import { BuildExcel } from '../providers/excel/BuildExcel';
+import { CheckCampaign } from '../providers/excel/CheckCampaign';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/apdf/export.contract';
+import { alias } from '../shared/apdf/export.schema';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
-import { BuildExcel } from './excel/BuildExcel';
-import { CheckCampaign } from './excel/CheckCampaign';
 
 @handler({
   ...handlerConfig,
-  middlewares: [...internalOnlyMiddlewares('trip'), ['validate', alias]],
+  middlewares: [...internalOnlyMiddlewares('apdf'), ['validate', alias]],
 })
-export class ExportCapitalCallsAction extends Action {
+export class ExportAction extends Action {
   constructor(
     private checkCampaign: CheckCampaign,
     private s3StorageProvider: S3StorageProvider,
-    private tripRepositoryProvider: TripRepositoryProviderInterfaceResolver,
+    private tripRepositoryProvider: APDFRepositoryProviderInterfaceResolver,
     private buildExcel: BuildExcel,
     private config: ConfigInterfaceResolver,
   ) {

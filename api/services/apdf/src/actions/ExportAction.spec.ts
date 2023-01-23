@@ -1,31 +1,31 @@
 /* eslint-disable max-len */
+import faker from '@faker-js/faker';
+import { ConfigInterfaceResolver } from '@ilos/common';
 import { uuid } from '@pdc/helper-test/dist';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import anyTest, { TestFn } from 'ava';
-import faker from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
+import { APDFRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
+import { BuildExcel } from '../providers/excel/BuildExcel';
+import { CheckCampaign } from '../providers/excel/CheckCampaign';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
-import { ExportCapitalCallsAction } from './ExportCapitalCallsAction';
-import { BuildExcel } from './excel/BuildExcel';
-import { CheckCampaign } from './excel/CheckCampaign';
-import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
-import { ConfigInterfaceResolver } from '@ilos/common';
+import { ExportAction } from './ExportAction';
 
 interface Context {
   // Injected tokens
   checkCampaign: CheckCampaign;
   s3StorageProvider: S3StorageProvider;
   buildExcel: BuildExcel;
-  tripRepository: TripRepositoryProviderInterfaceResolver;
+  apdfRepository: APDFRepositoryProviderInterfaceResolver;
   config: ConfigInterfaceResolver;
 
   // Injected tokens method's stubs
   checkCampaignStub: SinonStub;
   s3StorageProviderStub: SinonStub;
   buildExcelStub: SinonStub;
-  tripRepositoryStub: SinonStub;
+  apdfRepositoryStub: SinonStub;
 
   // Constants
   START_DATE_STRING: string;
@@ -34,10 +34,10 @@ interface Context {
   END_DATE: Date;
 
   // Tested token
-  buildExcelsExportAction: ExportCapitalCallsAction;
+  buildExcelsExportAction: ExportAction;
 }
 
-class TR extends TripRepositoryProviderInterfaceResolver {}
+class TR extends APDFRepositoryProviderInterfaceResolver {}
 const test = anyTest as TestFn<Context>;
 
 test.before((t) => {
@@ -56,11 +56,11 @@ test.beforeEach((t) => {
       return true; // enable upload
     },
   };
-  t.context.tripRepository = new TR();
-  t.context.buildExcelsExportAction = new ExportCapitalCallsAction(
+  t.context.apdfRepository = new TR();
+  t.context.buildExcelsExportAction = new ExportAction(
     t.context.checkCampaign,
     t.context.s3StorageProvider,
-    t.context.tripRepository,
+    t.context.apdfRepository,
     t.context.buildExcel,
     t.context.config,
   );
@@ -68,7 +68,7 @@ test.beforeEach((t) => {
   t.context.checkCampaignStub = sinon.stub(t.context.checkCampaign, 'call');
   t.context.s3StorageProviderStub = sinon.stub(t.context.s3StorageProvider, 'upload');
   t.context.buildExcelStub = sinon.stub(t.context.buildExcel, 'call');
-  t.context.tripRepositoryStub = sinon.stub(t.context.tripRepository, 'getPolicyActiveOperators');
+  t.context.apdfRepositoryStub = sinon.stub(t.context.apdfRepository, 'getPolicyActiveOperators');
 });
 
 test.afterEach((t) => {
@@ -76,7 +76,7 @@ test.afterEach((t) => {
   t.context.s3StorageProviderStub!.restore();
 });
 
-test('ExportCapitalCallsAction: should create 1 xlsx file for last month if no date range provided, 1 campaign with 1 operator', async (t) => {
+test('ExportAction: should create 1 xlsx file for last month if no date range provided, 1 campaign with 1 operator', async (t) => {
   // Arrange
   const campaign: Campaign = createGetCampaignResultInterface('active');
   const filename = `campaign-${uuid()}.xlsx`;
@@ -84,7 +84,7 @@ test('ExportCapitalCallsAction: should create 1 xlsx file for last month if no d
   t.context.checkCampaignStub!.resolves(campaign);
   t.context.buildExcelStub!.resolves(filepath);
   t.context.s3StorageProviderStub!.resolves(filename);
-  t.context.tripRepositoryStub!.resolves([4]);
+  t.context.apdfRepositoryStub!.resolves([4]);
 
   // Act
   const result = await t.context.buildExcelsExportAction!.handle(
@@ -114,7 +114,7 @@ test('ExportCapitalCallsAction: should create 1 xlsx file for last month if no d
   t.deepEqual(new Date(t.context.checkCampaignStub!.args[0][2]), endDate);
 });
 
-test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
+test('ExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
   // Arrange
   const campaign: Campaign = createGetCampaignResultInterface('active');
   const filename = `campaign-${uuid()}.xlsx`;
@@ -123,7 +123,7 @@ test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided
   t.context.checkCampaignStub!.resolves(campaign);
   t.context.buildExcelStub!.resolves({ filename, filepath });
   t.context.s3StorageProviderStub!.resolves(s3_key);
-  t.context.tripRepositoryStub!.resolves([4]);
+  t.context.apdfRepositoryStub!.resolves([4]);
 
   // Act
   const result: string[] = await t.context.buildExcelsExportAction!.handle(
@@ -164,7 +164,7 @@ test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided
   );
 
   sinon.assert.calledOnceWithExactly(
-    t.context.tripRepositoryStub,
+    t.context.apdfRepositoryStub,
     campaign._id,
     t.context.START_DATE,
     t.context.END_DATE,
@@ -172,7 +172,7 @@ test('ExportCapitalCallsAction: should create 1 xlsx file if date range provided
   t.deepEqual(result, [s3_key]);
 });
 
-test('ExportCapitalCallsAction: should create 4 xlsx file if date range provided and 2 campaigns with 2 operators each', async (t) => {
+test('ExportAction: should create 4 xlsx file if date range provided and 2 campaigns with 2 operators each', async (t) => {
   // Arrange
   const campaign1: Campaign = createGetCampaignResultInterface('active');
   const campaign2: Campaign = createGetCampaignResultInterface('active');
@@ -185,7 +185,7 @@ test('ExportCapitalCallsAction: should create 4 xlsx file if date range provided
   });
   t.context.checkCampaignStub!.withArgs(campaign1._id).resolves(campaign1);
   t.context.checkCampaignStub!.withArgs(campaign2._id).resolves(campaign2);
-  t.context.tripRepositoryStub!.resolves([4, 5]);
+  t.context.apdfRepositoryStub!.resolves([4, 5]);
 
   // Act
   const result = await t.context.buildExcelsExportAction!.handle(
@@ -227,13 +227,13 @@ test('ExportCapitalCallsAction: should create 4 xlsx file if date range provided
   t.is(t.context.checkCampaignStub!.args[1][0], campaign2._id);
 });
 
-test('ExportCapitalCallsAction: should send error and process other if 1 export failed', async (t) => {
+test('ExportAction: should send error and process other if 1 export failed', async (t) => {
   // Arrange
   const campaign1: Campaign = createGetCampaignResultInterface('active');
   const campaign2: Campaign = createGetCampaignResultInterface('active');
   t.context.checkCampaignStub!.withArgs(campaign1._id).resolves(campaign1);
   t.context.checkCampaignStub!.withArgs(campaign2._id).resolves(campaign2);
-  t.context.tripRepositoryStub!.resolves([4, 5]);
+  t.context.apdfRepositoryStub!.resolves([4, 5]);
   const filename = `${faker.system.fileName()}.xlsx`;
   const filepath = `/tmp/exports/${filename}`;
   t.context.buildExcelStub!.resolves({ filename, filepath });

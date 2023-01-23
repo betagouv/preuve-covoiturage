@@ -51,7 +51,7 @@ export class FundingRequestsRepositoryProvider implements FundingRequestsReposit
       if (show) return true;
 
       // from permissions
-      if (permissions.indexOf('registry.policy.fundingRequestsListCurrentMonth') > -1) {
+      if (permissions.indexOf('registry.apdf.listCurrentMonth') > -1) {
         return true;
       }
 

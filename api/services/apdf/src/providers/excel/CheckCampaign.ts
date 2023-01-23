@@ -1,10 +1,10 @@
 import { KernelInterfaceResolver, provider } from '@ilos/common';
+import { handlerConfig } from '../../shared/apdf/export.contract';
 import {
   ParamsInterface as GetCampaignParamInterface,
   ResultInterface as GetCampaignResultInterface,
   signature as getCampaignSignature,
 } from '../../shared/policy/find.contract';
-import { handlerConfig } from '../../shared/capitalcall/export.contract';
 
 @provider()
 export class CheckCampaign {

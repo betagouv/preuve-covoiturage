@@ -14,7 +14,7 @@ export interface ParamsInterface {
 export type ResultInterface = string[];
 
 export const handlerConfig = {
-  service: 'capitalcall',
+  service: 'apdf',
   method: 'export',
 };
 

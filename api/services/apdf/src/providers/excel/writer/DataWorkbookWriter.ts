@@ -1,8 +1,8 @@
 import { provider } from '@ilos/common';
 import { Column, stream, Worksheet } from 'exceljs';
-import { APDFTripInterface } from '~/interfaces/APDFTripInterface';
 import { normalize } from '../../../helpers/normalizeAPDFDataHelper';
-import { PgCursorHandler } from '../../../interfaces/PromisifiedPgCursor';
+import { APDFTripInterface } from '../../../interfaces/APDFTripInterface';
+import { PgCursorHandler } from '../../../shared/common/PromisifiedPgCursor';
 import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
 
 @provider()
@@ -47,7 +47,7 @@ export class DataWorkBookWriter extends AbstractWorkBookWriter {
 
     const b2 = new Date();
     cursor.release();
-    console.debug(`[trip:buildExcelExport] writing trips took: ${(b2.getTime() - b1.getTime()) / 1000}s`);
+    console.debug(`[apdf:export] writing trips took: ${(b2.getTime() - b1.getTime()) / 1000}s`);
 
     worksheet.commit();
     return;

@@ -1,4 +1,4 @@
-import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
+import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
 
 export function boundariesToClause(bnd: SliceInterface): string {
   const bndStart = bnd.start > -1 ? ` and distance >= ${bnd.start}` : '';

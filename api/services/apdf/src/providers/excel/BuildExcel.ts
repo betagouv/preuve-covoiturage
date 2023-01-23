@@ -1,17 +1,17 @@
 import { provider } from '@ilos/common';
 import { APDFNameProvider } from '@pdc/provider-file';
 import { stream } from 'exceljs';
-import { CampaignSearchParamsInterface } from '~/interfaces';
-import { SliceStatInterface } from '~/interfaces/PolicySliceStatInterface';
-import { ResultInterface as Campaign } from '~/shared/policy/find.contract';
-import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
+import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface';
+import { SliceStatInterface } from '../../shared/apdf/interfaces/PolicySliceStatInterface';
+import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
+import { APDFRepositoryProvider } from '../APDFRepositoryProvider';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
 @provider()
 export class BuildExcel {
   constructor(
-    private tripRepoProvider: TripRepositoryProvider,
+    private apdfRepoProvider: APDFRepositoryProvider,
     private dataWorkbookWriter: DataWorkBookWriter,
     private slicesWorkbookWriter: SlicesWorkbookWriter,
     private apdfNameProvider: APDFNameProvider,
@@ -35,7 +35,7 @@ export class BuildExcel {
       total_sum: amount,
       subsidized_count: subsidized,
       slices,
-    } = await this.tripRepoProvider.getPolicyStats(params, campaign.params.slices || []);
+    } = await this.apdfRepoProvider.getPolicyStats(params, campaign.params.slices || []);
 
     // generate the filename and filepath
     const fileParams = {
@@ -61,7 +61,7 @@ export class BuildExcel {
 
   private async writeTrips(wkw: stream.xlsx.WorkbookWriter, params: CampaignSearchParamsInterface): Promise<void> {
     try {
-      const tripCursor = await this.tripRepoProvider.getPolicyCursor(params);
+      const tripCursor = await this.apdfRepoProvider.getPolicyCursor(params);
       await this.dataWorkbookWriter.call(tripCursor, wkw);
     } catch (e) {
       console.error('Error while writing trips');

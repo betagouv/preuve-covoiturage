@@ -9,7 +9,7 @@ import os from 'os';
 import path from 'path';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ExportTripInterface } from '../interfaces';
-import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
+import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../shared/trip/buildExport.contract';
 import { alias } from '../shared/trip/buildExport.schema';

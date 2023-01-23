@@ -1,9 +1,9 @@
-import anyTest, { TestFn } from 'ava';
 import { ContextType, KernelInterfaceResolver } from '@ilos/common';
+import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
 import { PolicyInterface } from '../shared/policy/common/interfaces/PolicyInterface';
-import { ActiveCampaignExcelExportAction } from './ActiveCampaignExcelExportAction';
+import { ExportCron } from './ExportCron';
 
 interface Context {
   // Injected tokens
@@ -16,16 +16,14 @@ interface Context {
   CAMPAIGNS: PolicyInterface[];
 
   // Tested token
-  activeCampaignExcelExportAction: ActiveCampaignExcelExportAction;
+  activeCampaignExcelExportAction: ExportCron;
 }
 
 const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
-  t.context.activeCampaignExcelExportAction = new ActiveCampaignExcelExportAction(
-    t.context.fakeKernelInterfaceResolver,
-  );
+  t.context.activeCampaignExcelExportAction = new ExportCron(t.context.fakeKernelInterfaceResolver);
 
   t.context.kernelInterfaceResolverStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call');
   t.context.CAMPAIGNS = [createGetCampaignResultInterface('active'), createGetCampaignResultInterface('active')];
@@ -40,7 +38,7 @@ test('ActiveCampaignExportAction: should export 2 active campaigns and call buil
   t.context.kernelInterfaceResolverStub!.resolves(t.context.CAMPAIGNS);
 
   // Act
-  await t.context.activeCampaignExcelExportAction!.handle({}, {} as ContextType);
+  await t.context.activeCampaignExcelExportAction!.handle();
 
   // Assert
   sinon.assert.calledWithExactly(
@@ -51,12 +49,12 @@ test('ActiveCampaignExportAction: should export 2 active campaigns and call buil
   );
   sinon.assert.calledWithExactly(
     t.context.kernelInterfaceResolverStub!,
-    'capitalcall:export',
+    'apdf:export',
     {
       format: { tz: 'Europe/Paris' },
       query: { campaign_id: t.context.CAMPAIGNS!.map((c) => c._id) },
     },
-    { channel: { service: 'trip' }, call: { user: { permissions: ['registry.policy.fundingRequestsExport'] } } },
+    { channel: { service: 'trip' }, call: { user: { permissions: ['registry.apdf.export'] } } },
   );
   t.pass();
 });

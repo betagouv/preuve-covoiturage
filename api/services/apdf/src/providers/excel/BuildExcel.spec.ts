@@ -2,18 +2,18 @@ import { APDFNameProvider } from '@pdc/provider-file';
 import anyTest, { TestFn } from 'ava';
 import { stream } from 'exceljs';
 import sinon, { SinonStub } from 'sinon';
-import { CampaignSearchParamsInterface } from '../../interfaces';
-import { PolicyStatsInterface } from '../../interfaces/PolicySliceStatInterface';
-import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
+import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface';
+import { PolicyStatsInterface } from '../../shared/apdf/interfaces/PolicySliceStatInterface';
 import { SliceInterface } from '../../shared/policy/common/interfaces/SliceInterface';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
+import { APDFRepositoryProvider } from '../APDFRepositoryProvider';
 import { BuildExcel } from './BuildExcel';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
 interface Context {
   // Injected tokens
-  tripRepositoryProvider: TripRepositoryProvider;
+  apdfRepositoryProvider: APDFRepositoryProvider;
   nameProvider: APDFNameProvider;
   streamDataToWorkbook: DataWorkBookWriter;
   createSlicesSheetToWorkbook: SlicesWorkbookWriter;
@@ -48,11 +48,11 @@ const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
   t.context.createSlicesSheetToWorkbook = new SlicesWorkbookWriter();
-  t.context.tripRepositoryProvider = new TripRepositoryProvider(null as any);
+  t.context.apdfRepositoryProvider = new APDFRepositoryProvider(null as any);
   t.context.nameProvider = new APDFNameProvider();
   t.context.streamDataToWorkbook = new DataWorkBookWriter();
   t.context.buildExcel = new BuildExcel(
-    t.context.tripRepositoryProvider,
+    t.context.apdfRepositoryProvider,
     t.context.streamDataToWorkbook,
     t.context.createSlicesSheetToWorkbook,
     t.context.nameProvider,
@@ -60,8 +60,8 @@ test.beforeEach((t) => {
   t.context.filenameStub = sinon.stub(t.context.nameProvider, 'filename');
   t.context.filepathStub = sinon.stub(t.context.nameProvider, 'filepath');
   t.context.dataWorkbookWriterStub = sinon.stub(t.context.streamDataToWorkbook, 'call');
-  t.context.getPolicyCursorStub = sinon.stub(t.context.tripRepositoryProvider, 'getPolicyCursor');
-  t.context.policyStatsStub = sinon.stub(t.context.tripRepositoryProvider, 'getPolicyStats');
+  t.context.getPolicyCursorStub = sinon.stub(t.context.apdfRepositoryProvider, 'getPolicyCursor');
+  t.context.policyStatsStub = sinon.stub(t.context.apdfRepositoryProvider, 'getPolicyStats');
   t.context.slicesWorkbookWriterStub = sinon.stub(t.context.createSlicesSheetToWorkbook, 'call');
 });
 

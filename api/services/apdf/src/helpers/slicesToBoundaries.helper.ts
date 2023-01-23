@@ -1,4 +1,4 @@
-import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
+import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
 
 export function slicesToBoundaries(slices: SliceInterface[], t?): SliceInterface {
   const start = Math.min(...sortList(slices.map(({ start: s }) => s)));
