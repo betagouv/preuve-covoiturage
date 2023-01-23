@@ -52,7 +52,7 @@ export class ExportCapitalCallsAction extends Action {
         await Promise.all(
           activeOperatorIds.map(async (o_id) => {
             try {
-              console.debug(`Exporting APDF: campaign ${campaign.name}, operator id ${o_id}`);
+              console.info(`Exporting APDF: campaign ${campaign.name}, operator id ${o_id}`);
               const { filename, filepath } = await this.buildExcel.call(campaign, start_date, end_date, o_id);
 
               if (!this.config.get('apdf.s3UploadEnabled')) {
@@ -66,14 +66,14 @@ export class ExportCapitalCallsAction extends Action {
               try {
                 fs.unlinkSync(filepath);
               } catch (e) {
-                console.warn(`Failed to unlink ${filepath} - ${e.message}`);
+                console.warn(`Failed to unlink ${filepath}`);
               }
 
               files.push(file);
             } catch (error) {
               // eslint-disable-next-line max-len
               const message = `Failed APDF export for operator ${o_id} (campaign ${campaign._id})`;
-              console.error(message, error);
+              console.error(message);
               files.push(message);
             }
           }),

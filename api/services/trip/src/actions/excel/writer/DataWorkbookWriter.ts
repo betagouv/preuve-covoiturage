@@ -16,15 +16,19 @@ export class DataWorkBookWriter extends AbstractWorkBookWriter {
     'end_datetime',
     'driver_rpc_incentive',
     'passenger_rpc_incentive',
+    'start_location',
+    'start_insee',
+    'end_location',
+    'end_insee',
+    'duration',
+    'distance',
+    'operator_class',
     'trip_id',
     'operator_trip_id',
     'driver_uuid',
     'operator_driver_id',
     'passenger_uuid',
     'operator_passenger_id',
-    'duration',
-    'distance',
-    'operator_class',
   ].map((header) => ({ header, key: header }));
 
   async call(cursor: PgCursorHandler<APDFTripInterface>, workbookWriter: stream.xlsx.WorkbookWriter): Promise<void> {

@@ -561,19 +561,25 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         pip.amount as passenger_rpc_incentive,
         -- ccd.seats as passenger_seats,
         -- cip.over_18 as passenger_over_18,
-    
+
         ccd.datetime as start_datetime,
         ccd.datetime + (ccd.duration || ' seconds')::interval as end_datetime,
+        gps.l_arr as start_location,
+        gps.arr as start_insee,
+        gpe.l_arr as end_location,
+        gpe.arr as end_insee,
         ccd.duration,
         ccd.distance,
         ccd.operator_class
-    
+
       from ccd
       left join carpool.carpools ccp on ccd.acquisition_id = ccp.acquisition_id and ccp.is_driver = false
       left join carpool.identities cid on cid._id = ccd.identity_id
       left join carpool.identities cip on cip._id = ccp.identity_id
       left join policy.incentives pid on ccd._id = pid.carpool_id and pid.policy_id = $4 and pid.status = 'validated'
       left join policy.incentives pip on ccp._id = pip.carpool_id and pip.policy_id = $4 and pid.status = 'validated'
+      left join geo.perimeters gps on ccp.start_geo_code = gps.arr and gps.year = extract(year from ccp.datetime)
+      left join geo.perimeters gpe on ccp.end_geo_code = gpe.arr and gpe.year = extract(year from (ccp.datetime + (ccd.duration || ' seconds')::interval))
 
       where pid.policy_id is not null or pip.policy_id is not null
 
