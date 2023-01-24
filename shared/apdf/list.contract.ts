@@ -3,7 +3,7 @@ export interface ParamsInterface {
   operator_id?: number;
 }
 
-export type EnrichedFundingRequestType = {
+export type EnrichedApdfType = {
   signed_url: string;
   key: string;
   size: number;
@@ -13,7 +13,7 @@ export type EnrichedFundingRequestType = {
   name: string;
 };
 
-export type ResultsInterface = EnrichedFundingRequestType[];
+export type ResultsInterface = EnrichedApdfType[];
 
 export const handlerConfig = {
   service: 'apdf',

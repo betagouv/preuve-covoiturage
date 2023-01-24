@@ -5,7 +5,7 @@ import {
   SerializedPolicyInterface,
   StorageRepositoryProviderInterfaceResolver,
 } from '../interfaces/StorageRepositoryProviderInterface';
-import { EnrichedFundingRequestType } from '../shared/apdf/list.contract';
+import { EnrichedApdfType } from '../shared/apdf/list.contract';
 
 @provider({
   identifier: StorageRepositoryProviderInterfaceResolver,
@@ -20,7 +20,7 @@ export class StorageRepositoryProvider implements StorageRepositoryProviderInter
     return list.filter((obj: S3.Object) => obj.Size > 0);
   }
 
-  async enrich(list: S3.ObjectList): Promise<EnrichedFundingRequestType[]> {
+  async enrich(list: S3.ObjectList): Promise<EnrichedApdfType[]> {
     return Promise.all(
       list.map(async (o: S3.Object) => ({
         ...this.APDFNameProvider.parse(o.Key),
@@ -33,21 +33,21 @@ export class StorageRepositoryProvider implements StorageRepositoryProviderInter
 
   // use in a [].filter
   campaignsFilter(campaigns: number[]) {
-    return (obj: EnrichedFundingRequestType): boolean => {
+    return (obj: EnrichedApdfType): boolean => {
       return campaigns.length ? campaigns.indexOf(obj.campaign_id) > -1 : true;
     };
   }
 
   // use in a [].filter
   operatorsFilter(operators: number[]) {
-    return (obj: EnrichedFundingRequestType): boolean => {
+    return (obj: EnrichedApdfType): boolean => {
       return operators.length ? operators.indexOf(obj.operator_id) > -1 : true;
     };
   }
 
   // use in a [].filter
   showCurrentMonthFilter(permissions: string[], show: boolean) {
-    return (obj: EnrichedFundingRequestType): boolean => {
+    return (obj: EnrichedApdfType): boolean => {
       // from config
       if (show) return true;
 
