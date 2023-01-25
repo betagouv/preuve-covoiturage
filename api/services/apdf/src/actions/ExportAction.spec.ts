@@ -4,9 +4,10 @@ import { ConfigInterfaceResolver } from '@ilos/common';
 import { uuid } from '@pdc/helper-test/dist';
 import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import anyTest, { TestFn } from 'ava';
+import { startOfMonth, subMonths } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
-import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { BuildExcel } from '../providers/excel/BuildExcel';
 import { CheckCampaign } from '../providers/excel/CheckCampaign';
@@ -104,8 +105,8 @@ test('ExportAction: should create 1 xlsx file for last month if no date range pr
   );
 
   // Assert
-  const endDate = endOfPreviousMonthDate('Europe/Paris');
-  const startDate = startOfPreviousMonthDate(endDate, 'Europe/Paris');
+  const endDate = zonedTimeToUtc(startOfMonth(subMonths(new Date(), 1)), 'Europe/Paris');
+  const startDate = zonedTimeToUtc(startOfMonth(new Date()), 'Europe/Paris');
 
   t.deepEqual(result, [filename]);
   sinon.assert.calledOnceWithMatch(t.context.checkCampaignStub!, campaign._id);

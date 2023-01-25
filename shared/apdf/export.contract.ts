@@ -3,11 +3,12 @@ export interface ParamsInterface {
     tz: string;
   };
   query: {
+    campaign_id: number[];
+    operator_id?: number[];
     date?: {
       start: Date;
       end: Date;
     };
-    campaign_id: number[];
   };
 }
 

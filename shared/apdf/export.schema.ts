@@ -26,6 +26,11 @@ export const schema = {
           minItems: 1,
           items: { macro: 'serial' },
         },
+        operator_id: {
+          type: 'array',
+          minItems: 1,
+          items: { macro: 'serial' },
+        },
       },
     },
     format: {
