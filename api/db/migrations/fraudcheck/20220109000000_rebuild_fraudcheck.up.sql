@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS fraudcheck.results (
   method varchar(128) NOT NULL,
   uuid uuid NOT NULL,
   status fraudcheck.status_enum NOT NULL DEFAULT 'pending',
-  runned_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  exec_at timestamp with time zone NOT NULL DEFAULT NOW(),
   karma float NOT NULL DEFAULT 0,
   data json
 );
