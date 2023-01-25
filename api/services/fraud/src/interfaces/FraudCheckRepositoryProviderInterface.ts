@@ -11,6 +11,7 @@ export interface SearchInterface {
 }
 
 export abstract class FraudCheckRepositoryProviderInterfaceResolver {
+  abstract populate(hours: number): Promise<void>;
   abstract createOrUpdate(data: FraudCheckEntry, pool?: PoolClient): Promise<void>;
   abstract findThenUpdate(
     search: SearchInterface,

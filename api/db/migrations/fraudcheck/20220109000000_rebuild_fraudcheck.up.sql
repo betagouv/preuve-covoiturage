@@ -37,7 +37,7 @@ BEGIN
     LEFT JOIN fraudcheck.fraudchecks AS ff
       ON ff.acquisition_id = cc.acquisition_id
     WHERE
-      cc.datetime >= NOW() - $1 * '1 day'::interval AND
+      cc.datetime >= NOW() - $1 * '1 hour'::interval AND
       cc.status = 'ok' AND
       ff.acquisition_id IS NULL;
 END;

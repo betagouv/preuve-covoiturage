@@ -55,6 +55,7 @@ export class CheckAction extends Action {
       }
     }
 
+    await this.repository.populate(1);
     const { timeout, batchSize } = this.config.get('engine', {});
     const [acquisitions, cb] = await this.repository.findThenUpdate(
       {

@@ -14,9 +14,17 @@ import {
 export class FraudCheckRepositoryProvider extends FraudCheckRepositoryProviderInterfaceResolver {
   public readonly table = 'fraudcheck.fraudchecks';
   public readonly resultTable = 'fraudcheck.results';
+  public readonly populateFn = 'populate_fraud_from_carpool';
 
   constructor(public connection: PostgresConnection) {
     super();
+  }
+
+  async populate(hours: number) {
+    await this.connection.getClient().query({
+      text: `SELECT ${this.populateFn}($1::int)`,
+      values: [hours],
+    });
   }
 
   async findThenUpdate(
