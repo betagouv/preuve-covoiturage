@@ -1,12 +1,20 @@
 @import 'variables';
 
 .campaign-frequests {
+  table.mat-table {
+    background-color: white;
+
+    .mat-header-row {
+      .mat-header-cell {
+        font-weight: 600;
+      }
+    }
+    .mat-row {
+      font-weight: 400;
+    }
+  }
   h4 {
     color: $color-primary;
-  }
-  &-content {
-    padding-top: 30px;
-    padding-bottom: 30px;
   }
   &-empty {
     height: 150px;
