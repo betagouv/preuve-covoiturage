@@ -232,6 +232,23 @@ export class Migrator {
         }),
       ],
     });
+
+    await this.connection.getClient().query({
+      text: `
+        INSERT INTO acquisition.acquisitions
+          (
+            _id,
+            application_id,
+            operator_id,
+            journey_id,
+            payload,
+            status
+          )
+        VALUES ($1, $2, $3, $4, $5, $6)
+        ON CONFLICT DO NOTHING
+      `,
+      values: [carpool.acquisition_id, 1, carpool.operator_id, carpool.operator_journey_id, JSON.stringify({}), 'ok'],
+    });
   }
 
   async seedCompany(company: Company) {
