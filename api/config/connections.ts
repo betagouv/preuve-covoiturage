@@ -22,7 +22,7 @@ const redisTls = {
 };
 
 export const redis = {
-  connectionString: env('APP_REDIS_URL'),
+  connectionString: env('APP_REDIS_URL') as string,
   ...(Object.keys(redisTls).length ? { tls: redisTls } : {}),
 };
 
@@ -33,8 +33,6 @@ const postgresTls = {
 };
 
 export const postgres = {
-  connectionString: env('APP_POSTGRES_URL'),
+  connectionString: env('APP_POSTGRES_URL') as string,
   ...(Object.keys(postgresTls).length ? { ssl: postgresTls } : {}),
 };
-
-console.log({ redis, postgres });
