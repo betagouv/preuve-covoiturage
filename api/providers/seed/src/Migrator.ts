@@ -249,6 +249,11 @@ export class Migrator {
       `,
       values: [carpool.acquisition_id, 1, carpool.operator_id, carpool.operator_journey_id, JSON.stringify({}), 'ok'],
     });
+    await this.connection
+      .getClient()
+      .query(
+        `SELECT setval('acquisition.acquisitions__id_seq', (SELECT max(_id) FROM acquisition.acquisitions), true)`,
+      );
   }
 
   async seedCompany(company: Company) {
