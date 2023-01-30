@@ -31,7 +31,7 @@ export {
   InsertLastMonthFluxResultInterface,
   refreshAllFluxParamsInterface,
   refreshAllFluxResultInterface,
-  MonthlyFluxParamsInterface, 
+  MonthlyFluxParamsInterface,
   MonthlyFluxResultInterface,
   lastRecordMonthlyFluxParamsInterface,
   lastRecordMonthlyFluxResultInterface,
@@ -48,31 +48,32 @@ export interface FluxRepositoryInterface {
   lastRecordMonthlyFlux(params: lastRecordMonthlyFluxParamsInterface): Promise<lastRecordMonthlyFluxResultInterface>;
   getEvolMonthlyFlux(params: EvolMonthlyFluxParamsInterface): Promise<EvolMonthlyFluxResultInterface>;
   getBestMonthlyFlux(params: BestMonthlyFluxParamsInterface): Promise<BestMonthlyFluxResultInterface>;
-};
+}
 
 export abstract class FluxRepositoryInterfaceResolver implements FluxRepositoryInterface {
-  
   async insertLastMonthFlux(params: InsertLastMonthFluxParamsInterface): Promise<InsertLastMonthFluxResultInterface> {
     throw new Error();
-  };
+  }
 
   async refreshAllFlux(params: refreshAllFluxParamsInterface): Promise<refreshAllFluxResultInterface> {
     throw new Error();
-  };
+  }
 
   async getMonthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface> {
     throw new Error();
-  };
+  }
 
-  async lastRecordMonthlyFlux(params: lastRecordMonthlyFluxParamsInterface): Promise<lastRecordMonthlyFluxResultInterface> {
+  async lastRecordMonthlyFlux(
+    params: lastRecordMonthlyFluxParamsInterface,
+  ): Promise<lastRecordMonthlyFluxResultInterface> {
     throw new Error();
-  };
+  }
 
   async getEvolMonthlyFlux(params: EvolMonthlyFluxParamsInterface): Promise<EvolMonthlyFluxResultInterface> {
     throw new Error();
-  };
+  }
 
   async getBestMonthlyFlux(params: BestMonthlyFluxParamsInterface): Promise<BestMonthlyFluxResultInterface> {
     throw new Error();
-  };
-};
+  }
+}

@@ -1,39 +1,39 @@
 export const alias = 'observatory.bestMonthlyTerritories';
 export const schema = {
   type: 'object',
-  additionalProperties:false,
-  required:['year','month','t','t2','code'],
-  properties:{
+  additionalProperties: false,
+  required: ['year', 'month', 't', 't2', 'code'],
+  properties: {
     year: {
-      type:'integer',
+      type: 'integer',
       minimum: 2020,
       maximum: new Date().getFullYear(),
     },
     month: {
-      type:'integer',
+      type: 'integer',
       minimum: 1,
       maximum: 12,
     },
     t: {
-      type:'string',
-      enum:['com','epci','aom','dep','reg','country'],
+      type: 'string',
+      enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
     },
     t2: {
-      type:'string',
-      enum:['com','epci','aom','dep','reg','country'],
+      type: 'string',
+      enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
     },
     code: {
-      type:'string',
+      type: 'string',
       minLength: 2,
       maxLength: 9,
     },
     limit: {
-      type:'integer',
+      type: 'integer',
       minimum: 5,
       maximum: 100,
-      default: 10
+      default: 10,
     },
-  }
+  },
 };
 
 export const binding = [alias, schema];

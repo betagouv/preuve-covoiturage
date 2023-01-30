@@ -8,10 +8,7 @@ import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepository
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    hasPermissionMiddleware('common.observatory.stats'),
-    ['validate', alias],
-  ],
+  middlewares: [hasPermissionMiddleware('common.observatory.stats'), ['validate', alias]],
 })
 export class MonthlyFluxAction extends AbstractAction {
   constructor(private repository: FluxRepositoryInterfaceResolver) {

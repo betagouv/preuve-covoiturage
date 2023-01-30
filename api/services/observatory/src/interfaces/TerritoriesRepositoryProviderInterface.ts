@@ -17,14 +17,14 @@ export {
 export interface TerritoriesRepositoryInterface {
   getTerritoriesList(params: TerritoriesListParamsInterface): Promise<TerritoriesListResultInterface>;
   getTerritoryName(params: TerritoryNameParamsInterface): Promise<TerritoryNameResultInterface>;
-};
+}
 
 export abstract class TerritoriesRepositoryInterfaceResolver implements TerritoriesRepositoryInterface {
   async getTerritoriesList(params: TerritoriesListParamsInterface): Promise<TerritoriesListResultInterface> {
     throw new Error();
-  };
+  }
 
   async getTerritoryName(params: TerritoryNameParamsInterface): Promise<TerritoryNameResultInterface> {
     throw new Error();
-  };
-};
+  }
+}

@@ -1,8 +1,8 @@
 export type ParamsInterface = void;
 
 export interface ResultInterface {
-  year:number,
-  month:number,
+  year: number;
+  month: number;
 }
 
 export const handlerConfig = {

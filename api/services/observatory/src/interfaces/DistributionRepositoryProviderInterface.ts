@@ -27,26 +27,34 @@ export {
 };
 
 export interface DistributionRepositoryInterface {
-  insertLastMonthDistribution(params: InsertLastMonthDistributionParamsInterface): Promise<InsertLastMonthDistributionResultInterface>;
+  insertLastMonthDistribution(
+    params: InsertLastMonthDistributionParamsInterface,
+  ): Promise<InsertLastMonthDistributionResultInterface>;
   refreshAllDistribution(params: refreshAllDistributionParamsInterface): Promise<refreshAllDistributionResultInterface>;
   getJourneysByHours(params: JourneysByHoursParamsInterface): Promise<JourneysByHoursResultInterface>;
   getJourneysByDistances(params: JourneysByDistancesParamsInterface): Promise<JourneysByDistancesResultInterface>;
-};
+}
 
 export abstract class DistributionRepositoryInterfaceResolver implements DistributionRepositoryInterface {
-  async insertLastMonthDistribution(params: InsertLastMonthDistributionParamsInterface): Promise<InsertLastMonthDistributionResultInterface> {
+  async insertLastMonthDistribution(
+    params: InsertLastMonthDistributionParamsInterface,
+  ): Promise<InsertLastMonthDistributionResultInterface> {
     throw new Error();
-  };
+  }
 
-  async refreshAllDistribution(params: refreshAllDistributionParamsInterface): Promise<refreshAllDistributionResultInterface> {
+  async refreshAllDistribution(
+    params: refreshAllDistributionParamsInterface,
+  ): Promise<refreshAllDistributionResultInterface> {
     throw new Error();
-  };
+  }
 
   async getJourneysByHours(params: JourneysByHoursParamsInterface): Promise<JourneysByHoursResultInterface> {
     throw new Error();
-  };
+  }
 
-  async getJourneysByDistances(params: JourneysByDistancesParamsInterface): Promise<JourneysByDistancesResultInterface> {
+  async getJourneysByDistances(
+    params: JourneysByDistancesParamsInterface,
+  ): Promise<JourneysByDistancesResultInterface> {
     throw new Error();
-  };
-};
+  }
+}

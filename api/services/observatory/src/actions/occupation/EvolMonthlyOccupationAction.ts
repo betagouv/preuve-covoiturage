@@ -3,15 +3,16 @@ import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { alias } from '../../shared/observatory/occupation/evolMonthlyOccupation.schema';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../../shared/observatory/occupation/evolMonthlyOccupation.contract';
+import {
+  handlerConfig,
+  ResultInterface,
+  ParamsInterface,
+} from '../../shared/observatory/occupation/evolMonthlyOccupation.contract';
 import { OccupationRepositoryInterfaceResolver } from '../../interfaces/OccupationRepositoryProviderInterface';
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    hasPermissionMiddleware('common.observatory.stats'),
-    ['validate', alias],
-  ],
+  middlewares: [hasPermissionMiddleware('common.observatory.stats'), ['validate', alias]],
 })
 export class EvolMonthlyOccupationAction extends AbstractAction {
   constructor(private repository: OccupationRepositoryInterfaceResolver) {

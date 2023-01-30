@@ -8,10 +8,7 @@ import { LocationRepositoryInterfaceResolver } from '../../interfaces/LocationRe
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    hasPermissionMiddleware('common.observatory.stats'),
-    ['validate', alias],
-  ],
+  middlewares: [hasPermissionMiddleware('common.observatory.stats'), ['validate', alias]],
 })
 export class LocationAction extends AbstractAction {
   constructor(private repository: LocationRepositoryInterfaceResolver) {

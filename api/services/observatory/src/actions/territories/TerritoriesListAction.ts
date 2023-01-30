@@ -8,17 +8,14 @@ import { TerritoriesRepositoryInterfaceResolver } from '../../interfaces/Territo
 
 @handler({
   ...handlerConfig,
-  middlewares: [
-    hasPermissionMiddleware('common.observatory.stats'),
-    ['validate', alias],
-  ],
+  middlewares: [hasPermissionMiddleware('common.observatory.stats'), ['validate', alias]],
 })
 export class TerritoriesListAction extends AbstractAction {
   constructor(private repository: TerritoriesRepositoryInterfaceResolver) {
     super();
   }
-  
+
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     return this.repository.getTerritoriesList(params);
   }
-};
+}

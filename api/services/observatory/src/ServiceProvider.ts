@@ -84,7 +84,7 @@ import { LocationAction } from './actions/location/LocationAction';
     EvolMonthlyFluxAction,
     LastRecordMonthlyFluxAction,
     BestMonthlyFluxAction,
-    
+
     MonthlyOccupationAction,
     InsertLastMonthOccupationAction,
     RefreshAllOccupationAction,
@@ -101,7 +101,7 @@ import { LocationAction } from './actions/location/LocationAction';
 
     LocationAction,
   ],
-  queues: ['observatory']
+  queues: ['observatory'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

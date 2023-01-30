@@ -20,21 +20,21 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
 
   async getTerritoriesList(params: TerritoriesListParamsInterface): Promise<TerritoriesListResultInterface> {
     const sql = {
-      values:[params.year], 
+      values: [params.year],
       text: `
         SELECT territory, l_territory, type
         FROM ${this.table}
         WHERE year = $1
         ORDER BY type,territory;
-      `
+      `,
     };
-    const response: { rowCount: number, rows: TerritoriesListResultInterface } = await this.pg.getClient().query(sql);
+    const response: { rowCount: number; rows: TerritoriesListResultInterface } = await this.pg.getClient().query(sql);
     return response.rows;
-  };
+  }
 
   async getTerritoryName(params: TerritoryNameParamsInterface): Promise<TerritoryNameResultInterface> {
     const sql = {
-      values:[params.year, params.code, params.t], 
+      values: [params.year, params.code, params.t],
       text: `
         SELECT distinct territory, l_territory, type
         FROM ${this.table}
@@ -42,9 +42,9 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
         AND territory = $2
         AND type = $3
         ORDER BY type,territory;
-      `
+      `,
     };
     const response = await this.pg.getClient().query(sql);
     return response.rows[0];
-  };
+  }
 }

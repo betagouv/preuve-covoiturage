@@ -20,13 +20,12 @@ import {
   ResultInterface as BestMonthlyTerritoriesResultInterface,
 } from '../shared/observatory/occupation/bestMonthlyTerritories.contract';
 
-
 export {
   InsertLastMonthOccupationParamsInterface,
   InsertLastMonthOccupationResultInterface,
   refreshAllOccupationParamsInterface,
   refreshAllOccupationResultInterface,
-  MonthlyOccupationParamsInterface, 
+  MonthlyOccupationParamsInterface,
   MonthlyOccupationResultInterface,
   EvolMonthlyOccupationParamsInterface,
   EvolMonthlyOccupationResultInterface,
@@ -35,32 +34,43 @@ export {
 };
 
 export interface OccupationRepositoryInterface {
-  insertLastMonthOccupation(params: InsertLastMonthOccupationParamsInterface): Promise<InsertLastMonthOccupationResultInterface>;
+  insertLastMonthOccupation(
+    params: InsertLastMonthOccupationParamsInterface,
+  ): Promise<InsertLastMonthOccupationResultInterface>;
   refreshAllOccupation(params: refreshAllOccupationParamsInterface): Promise<refreshAllOccupationResultInterface>;
   getMonthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface>;
   getEvolMonthlyOccupation(params: EvolMonthlyOccupationParamsInterface): Promise<EvolMonthlyOccupationResultInterface>;
-  getBestMonthlyTerritories(params: BestMonthlyTerritoriesParamsInterface): Promise<BestMonthlyTerritoriesResultInterface>;
-};
+  getBestMonthlyTerritories(
+    params: BestMonthlyTerritoriesParamsInterface,
+  ): Promise<BestMonthlyTerritoriesResultInterface>;
+}
 
 export abstract class OccupationRepositoryInterfaceResolver implements OccupationRepositoryInterface {
-  
-  async insertLastMonthOccupation(params: InsertLastMonthOccupationParamsInterface): Promise<InsertLastMonthOccupationResultInterface> {
+  async insertLastMonthOccupation(
+    params: InsertLastMonthOccupationParamsInterface,
+  ): Promise<InsertLastMonthOccupationResultInterface> {
     throw new Error();
-  };
+  }
 
-  async refreshAllOccupation(params: refreshAllOccupationParamsInterface): Promise<refreshAllOccupationResultInterface> {
+  async refreshAllOccupation(
+    params: refreshAllOccupationParamsInterface,
+  ): Promise<refreshAllOccupationResultInterface> {
     throw new Error();
-  };
+  }
 
   async getMonthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface> {
     throw new Error();
-  };
-  
-  async getEvolMonthlyOccupation(params: EvolMonthlyOccupationParamsInterface): Promise<EvolMonthlyOccupationResultInterface> {
-    throw new Error();
-  };
+  }
 
-  async getBestMonthlyTerritories(params: BestMonthlyTerritoriesParamsInterface): Promise<BestMonthlyTerritoriesResultInterface> {
+  async getEvolMonthlyOccupation(
+    params: EvolMonthlyOccupationParamsInterface,
+  ): Promise<EvolMonthlyOccupationResultInterface> {
     throw new Error();
-  };
-};
+  }
+
+  async getBestMonthlyTerritories(
+    params: BestMonthlyTerritoriesParamsInterface,
+  ): Promise<BestMonthlyTerritoriesResultInterface> {
+    throw new Error();
+  }
+}
