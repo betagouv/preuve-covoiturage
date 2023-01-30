@@ -55,7 +55,8 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       `,
     });
   }
-  // Retourne les données de la table observatory.monthly_flux pour le mois et l'année et le type de territoire en paramètres
+  // Retourne les données de la table observatory.monthly_flux pour le mois et l'année
+  // et le type de territoire en paramètres
   // Paramètres optionnels t2 et code pour filtrer les résultats sur un territoire
   async getMonthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface> {
     const sql = {

@@ -57,7 +57,8 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
       `,
     });
   }
-  // Retourne les données alimentant la carte de flux à partir de la table observatory.monthly_occupation pour le mois et l'année et le type de territoire en paramètres
+  // Retourne les données alimentant la carte de flux à partir de la table observatory.monthly_occupation
+  // pour le mois et l'année et le type de territoire en paramètres
   // Paramètres optionnels t2 et code pour filtrer les résultats sur un territoire
   async getMonthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface> {
     const sql = {
