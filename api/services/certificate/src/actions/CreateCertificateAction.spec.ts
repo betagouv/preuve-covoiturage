@@ -187,10 +187,7 @@ function stubCertificateCreateAndGetParams(t: ExecutionContext<Context>) {
   const params: ParamsInterface = {
     tz: 'Europe/Paris',
     operator_id: 4,
-    identity: {
-      phone_trunc: '+33696989598',
-      uuid: t.context.RPC_IDENTITIES[0].uuid,
-    },
+    identity: { operator_user_id: faker.datatype.uuid() },
   };
 
   return params;

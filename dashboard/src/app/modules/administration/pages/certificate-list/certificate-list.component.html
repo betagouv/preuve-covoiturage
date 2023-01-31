@@ -86,6 +86,41 @@
         <mat-error *ngIf="controls.operator_id.hasError('required')"> L'opérateur est obligatoire </mat-error>
       </div>
 
+      <h3>Identité</h3>
+
+      <div>
+        <mat-label>Format</mat-label>
+        <div class="form-group">
+          <mat-radio-group aria-label="Type de donnée" formControlName="identity_type">
+            <mat-radio-button value="operator_user_id">Identifiant de l'opérateur (operator_user_id)</mat-radio-button>
+            <mat-radio-button value="phone_number">Numéro de téléphone complet</mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+
+      <div *ngIf="any(['phone_number'])">
+        <mat-form-field appearance="outline">
+          <mat-label>Numéro de téléphone</mat-label>
+          <input matInput type="string" placeholder="+33300000000" formControlName="phone_number" autocomplete="off" />
+
+          <mat-error *ngIf="controls.phone_number.hasError('required')">
+            Le numéro de téléphone est obligatoire
+          </mat-error>
+          <mat-error *ngIf="controls.phone_number.hasError('pattern')">
+            Le numéro de téléphone est invalide.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div *ngIf="any(['operator_user_id'])">
+        <mat-form-field appearance="outline">
+          <mat-label>Identifiant de l'opérateur (operator_user_id)</mat-label>
+          <input matInput placeholder="0" formControlName="operator_user_id" autocomplete="off" />
+
+          <mat-error *ngIf="controls.operator_user_id.hasError('required')"> L'id est obligatoire </mat-error>
+        </mat-form-field>
+      </div>
+
       <div>
         <h3>Plage de temps</h3>
         <div class="form-group">
@@ -142,65 +177,6 @@
             </mat-error>
           </mat-form-field>
         </div>
-      </div>
-
-      <h3>Identité</h3>
-
-      <div>
-        <mat-label>Format</mat-label>
-        <div class="form-group">
-          <mat-radio-group aria-label="Type de donnée" formControlName="identity_type">
-            <mat-radio-button value="phone_number">Numéro de téléphone complet</mat-radio-button>
-            <mat-radio-button value="phone_number_trunc">Numéro de téléphone tronqué</mat-radio-button>
-            <mat-radio-button value="uuid">Identifiant unique</mat-radio-button>
-          </mat-radio-group>
-        </div>
-      </div>
-
-      <div *ngIf="certificateForm.value.identity_type === 'phone_number'">
-        <mat-form-field appearance="outline">
-          <mat-label>Numéro de téléphone</mat-label>
-          <input matInput type="string" placeholder="+33300000000" formControlName="phone_number" autocomplete="off" />
-
-          <mat-error *ngIf="controls.phone_number.hasError('required')">
-            Le numéro de téléphone est obligatoire
-          </mat-error>
-          <mat-error *ngIf="controls.phone_number.hasError('pattern')">
-            Le numéro de téléphone est invalide.
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <div *ngIf="certificateForm.value.identity_type === 'phone_number_trunc'">
-        <mat-form-field appearance="outline">
-          <mat-label>Numéro de téléphone tronqué</mat-label>
-          <input matInput type="string" placeholder="+333000000" formControlName="phone_number_trunc"
-            autocomplete="off" />
-
-          <mat-error *ngIf="controls.phone_number_trunc.hasError('required')">
-            Le numéro de téléphone tronqué est obligatoire
-          </mat-error>
-          <mat-error *ngIf="controls.phone_number_trunc.hasError('pattern')">
-            Le numéro de téléphone tronqué est invalide.
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Id utilisateur opérateur (operator_user_id)</mat-label>
-          <input matInput placeholder="0" formControlName="operator_user_id" autocomplete="off" />
-
-          <mat-error *ngIf="controls.operator_user_id.hasError('required')"> L'id est obligatoire </mat-error>
-        </mat-form-field>
-      </div>
-      <div *ngIf="certificateForm.value.identity_type === 'uuid'">
-        <mat-form-field appearance="outline">
-          <mat-label>Identifiant unique</mat-label>
-          <input matInput type="string" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXX" formControlName="identity_uuid"
-            autocomplete="off" />
-
-          <mat-error *ngIf="controls.identity_uuid.hasError('required')">
-            L'identifiant unique est obligatoire
-          </mat-error>
-        </mat-form-field>
       </div>
 
       <div class="CertificateForm-action">
