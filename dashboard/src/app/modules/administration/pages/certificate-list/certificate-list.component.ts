@@ -15,6 +15,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { CommonDataService } from '~/core/services/common-data.service';
 import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
 import { CertificateMetaDialogComponent } from './certificate-meta-dialog/certificate-meta-dialog.component';
+import { IdentityIdentifiersInterface } from '~/core/entities/api/shared/certificate/common/interfaces/IdentityIdentifiersInterface';
 
 @Component({
   selector: 'app-certificate-list',
@@ -89,10 +90,8 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       start_lng: [null, [Validators.pattern(REGEXP.lon)]],
       end_lat: [null, [Validators.pattern(REGEXP.lat)]],
       end_lng: [null, [Validators.pattern(REGEXP.lon)]],
-      phone_number_trunc: [],
       operator_user_id: [],
       phone_number: [],
-      identity_uuid: [],
     });
 
     this.certificateForm.setControl('start_date', new FormControl());
@@ -132,25 +131,17 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   }
 
   updateValidation(identity_type = this.certificateForm.value.identity_type): void {
-    ['phone_number_trunc', 'operator_user_id', 'phone_number', 'identity_uuid'].forEach((formName) => {
+    ['operator_user_id', 'phone_number'].forEach((formName) => {
       const formControl = this.certificateForm.get(formName);
       formControl.setValue(null);
       switch (formName) {
         case 'phone_number':
           formControl.setValidators(
-            identity_type === 'phone_number' ? [Validators.required, Validators.pattern(REGEXP.phone)] : [],
-          );
-          break;
-        case 'phone_number_trunc':
-          formControl.setValidators(
-            identity_type === 'phone_number_trunc' ? [Validators.required, Validators.pattern(REGEXP.phone_trunc)] : [],
+            this.any(['phone_number'], identity_type) ? [Validators.required, Validators.pattern(REGEXP.phone)] : [],
           );
           break;
         case 'operator_user_id':
-          formControl.setValidators(identity_type === 'phone_number_trunc' ? [Validators.required] : []);
-          break;
-        case 'identity_uuid':
-          formControl.setValidators(identity_type === 'uuid' ? [Validators.required] : []);
+          formControl.setValidators(this.any(['operator_user_id'], identity_type) ? [Validators.required] : []);
           break;
       }
 
@@ -165,12 +156,10 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
 
   showCreationForm(): void {
     this.certificateForm.setValue({
-      operator_id: this.auth.user.operator_id ? this.auth.user.operator_id : null,
-      identity_type: 'phone_number',
-      phone_number_trunc: null,
+      operator_id: this.auth?.user?.operator_id || null,
+      identity_type: 'operator_user_id',
       operator_user_id: null,
       phone_number: null,
-      identity_uuid: null,
       start_lat: null,
       start_lng: null,
       start_date: null,
@@ -180,7 +169,6 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     });
     this.updateValidation();
     this.certificateForm.get('operator_id').markAsUntouched();
-    // this.certificateForm.get('territory_id').markAsUntouched();
     this.showForm = true;
 
     for (const controlName in this.certificateForm.controls)
@@ -221,19 +209,14 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       operator_id: formVal.operator_id,
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
       positions: [],
-      identity:
-        formVal.identity_type === 'phone_number'
-          ? {
-              phone: formVal.phone_number.trim(),
-            }
-          : formVal.identity_type === 'phone_number_trunc'
-          ? {
-              phone_trunc: formVal.phone_number_trunc.trim(),
-              operator_user_id: formVal.operator_user_id.trim(),
-            }
-          : {
-              uuid: formVal.identity_uuid.trim(),
-            },
+      identity: ((): IdentityIdentifiersInterface => {
+        switch (formVal.identity_type) {
+          case 'phone_number':
+            return { phone: formVal.phone_number.trim() };
+          case 'operator_user_id':
+            return { operator_user_id: formVal.operator_user_id.trim() };
+        }
+      })(),
     };
 
     // cast and format dates
@@ -291,7 +274,10 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
         });
 
         sb.onAction().subscribe(() => {
-          this.certificateApi.downloadPrint({ uuid: certResponse.uuid });
+          this.certificateApi.downloadPrint({
+            uuid: certResponse.uuid,
+            operator_id: this.certificateForm.get('operator_id')?.value || this.auth.user?.operator_id,
+          });
         });
       });
   }
@@ -336,5 +322,9 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       default:
         return null;
     }
+  }
+
+  any(types: string[], identity_type: string = this.certificateForm.value.identity_type): boolean {
+    return types.indexOf(identity_type) > -1;
   }
 }

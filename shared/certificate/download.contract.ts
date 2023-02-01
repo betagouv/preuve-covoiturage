@@ -1,6 +1,6 @@
 export interface ParamsInterface {
   uuid: string;
-  operator_id?: number;
+  operator_id: number;
   meta?: {
     operator?: {
       content?: string;
