@@ -181,7 +181,10 @@ link:  ${link}
     this.log('SimulatePolicyNotification form', formParams.email, null, null);
     await this.queueEmail({
       template,
-      to: `${this.getTo(formParams.email, `${formParams.firstname} ${formParams.name}`)}, territoire@beta.gouv.fr`,
+      to: `${this.getTo(
+        formParams.email,
+        `${formParams.firstname} ${formParams.name}`,
+      )}, territoire@covoiturage.beta.gouv.fr`,
       data: {
         simulation_policy_description_html: PolicyTemplateDescriptions.get[formParams.simulation.policy_template_id],
         simulation_territory_name: formParams.territory_name,
