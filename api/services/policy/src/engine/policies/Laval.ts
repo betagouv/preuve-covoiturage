@@ -27,7 +27,7 @@ export const Laval: PolicyHandlerStaticInterface = class
   static readonly id = '695';
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [{ start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
-  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 9_000_00;
+  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 27_000_00;
 
   protected limits: Array<ConfiguredLimitInterface> = [
     ['70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],

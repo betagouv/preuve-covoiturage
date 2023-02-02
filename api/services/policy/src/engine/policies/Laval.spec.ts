@@ -82,7 +82,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 8_999_80,
+        value: 26_999_80,
       },
     ],
   },
@@ -91,7 +91,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 9_000_00,
+        value: 27_000_00,
       },
     ],
   },
