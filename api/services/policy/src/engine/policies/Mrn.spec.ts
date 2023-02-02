@@ -83,7 +83,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1_999_999_50,
+        value: 4_499_999_50,
       },
     ],
   },
@@ -92,7 +92,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 2_000_000_00,
+        value: 2_500_000_00,
       },
     ],
   },
