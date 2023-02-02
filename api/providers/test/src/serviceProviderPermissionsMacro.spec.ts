@@ -110,9 +110,9 @@ test(success, 'channel.service', 'dummy', {
   channel: { service: 'dummy' },
 });
 
-test('undefined permissions = Forbidden Error', error, 'call.user.permissions', 'Forbidden Error');
+test('undefined permissions = Invalid permissions', error, 'call.user.permissions', 'Invalid permissions');
 
-test(error, 'call.user.permissions', 'Forbidden Error', {
+test(error, 'call.user.permissions', 'Invalid permissions', {
   call: { user: { permissions: [] } },
   channel: { service: 'dummy' },
 });

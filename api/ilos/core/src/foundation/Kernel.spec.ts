@@ -162,7 +162,7 @@ test('Kernel: should return an error if service is unknown', async (t) => {
     error: {
       code: -32601,
       data: 'Unknown method or service nope:add',
-      message: 'Method not found',
+      message: 'Unknown method or service nope:add',
     },
   });
 });

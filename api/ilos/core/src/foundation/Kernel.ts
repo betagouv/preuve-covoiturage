@@ -102,7 +102,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
       throw new MethodNotFoundException(`Unknown method or service ${config.signature}`);
     }
 
-    // console.debug(`[kernel] ${config.signature} ${timeout}ms`);
+    console.debug(`[kernel] ${config.signature} ${timeout}ms`);
 
     if (timeout === 0) {
       return handler(call);
@@ -227,7 +227,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * Get the timeout from context (channel.metadata.timeout)
    */
   private getTimeout(context: ContextType, defaultTimeout = 0): number {
-    if (context && 'channel' in context && 'metadata' in context.channel && 'timeout' in context.channel.metadata) {
+    if ('timeout' in (context?.channel?.metadata || {})) {
       const { timeout } = context.channel.metadata;
       return timeout ?? defaultTimeout;
     }

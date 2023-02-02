@@ -1,11 +1,10 @@
-import { RPCErrorType } from '../types/call/RPCErrorType';
+import { RPCErrorData } from '../types';
+import { RPCException } from './RPCException';
 
-export class ServiceException extends Error {
-  serviceError = true;
-  rpcError: RPCErrorType;
+export class ServiceException extends RPCException {
+  public serviceError = true;
 
-  constructor(rpcError: RPCErrorType) {
-    super(rpcError.message);
-    this.rpcError = rpcError;
+  constructor(data: RPCErrorData = undefined) {
+    super(-32600, data);
   }
 }

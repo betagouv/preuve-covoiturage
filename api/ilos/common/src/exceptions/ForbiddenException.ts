@@ -1,12 +1,8 @@
+import { RPCErrorData } from '../types';
 import { RPCException } from './RPCException';
 
 export class ForbiddenException extends RPCException {
-  constructor(data?: any) {
-    super('Forbidden Error');
-    this.rpcError = {
-      data,
-      code: -32503,
-      message: this.message,
-    };
+  constructor(data: RPCErrorData = undefined) {
+    super(-32503, data);
   }
 }

@@ -5,7 +5,7 @@ export { ParamsType } from './ParamsType';
 export { ParamsWithContextType } from './ParamsWithContextType';
 export { ResultType } from './ResultType';
 export { RPCCallType } from './RPCCallType';
-export { RPCErrorType } from './RPCErrorType';
+export { RPCErrorType, RPCErrorLevel, RPCErrorData } from './RPCErrorType';
 export { RPCResponseType } from './RPCResponseType';
 export { RPCSingleCallType } from './RPCSingleCallType';
 export { RPCSingleResponseType } from './RPCSingleResponseType';

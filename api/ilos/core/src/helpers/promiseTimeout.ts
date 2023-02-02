@@ -1,4 +1,4 @@
-import { TimeoutException } from '@ilos/common';
+import { RPCException, RPCErrorLevel, TimeoutException } from '@ilos/common';
 
 export function promiseTimeout<T>(ms: number, promise: Promise<T>, signature?: string): Promise<T> {
   const s = new Date();
@@ -18,9 +18,29 @@ export function promiseTimeout<T>(ms: number, promise: Promise<T>, signature?: s
       console.debug(`[kernel] ${signature || ''} succeeded in ${(new Date().getTime() - s.getTime()) / 1000}s`);
       return res;
     })
-    .catch((err) => {
+    .catch((err: RPCException) => {
       clearTimeout(id);
-      console.error(`[kernel] ${signature || ''} failed`, { message: err.message });
+
+      const message = `[kernel] ${signature || ''} failed`;
+      const payload = { message: err.message };
+
+      switch (err.level) {
+        case RPCErrorLevel.SILENT:
+          break;
+        case RPCErrorLevel.WARN:
+          console.warn(message, payload);
+          break;
+        case RPCErrorLevel.INFO:
+          console.info(message, payload);
+          break;
+        case RPCErrorLevel.DEBUG:
+          console.debug(message, payload);
+          break;
+        case RPCErrorLevel.ERROR:
+        default:
+          console.error(message, payload);
+      }
+
       throw err;
     }) as Promise<T>;
 }
