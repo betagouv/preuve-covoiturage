@@ -7,6 +7,7 @@ import {
   handler,
   provider,
   serviceProvider,
+  RPCErrorLevel,
 } from '@ilos/common';
 
 import { Kernel } from './Kernel';
@@ -161,8 +162,12 @@ test('Kernel: should return an error if service is unknown', async (t) => {
     id: 1,
     error: {
       code: -32601,
-      data: 'Unknown method or service nope:add',
       message: 'Unknown method or service nope:add',
+      data: {
+        code: -32601,
+        level: RPCErrorLevel.ERROR,
+        message: 'Unknown method or service nope:add',
+      },
     },
   });
 });
