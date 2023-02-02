@@ -1,4 +1,4 @@
-import { ContextType, handler } from '@ilos/common';
+import { ContextType, handler, ServiceDisabledException } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/cee/importApplication.contract';
@@ -6,7 +6,6 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/cee/i
 import { alias } from '../shared/cee/importApplication.schema';
 
 import { CeeRepositoryProviderInterfaceResolver } from '../interfaces';
-import { ServiceDisabledError } from '../errors/ServiceDisabledError';
 import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
 import { getDateOrFail } from '../helpers/getDateOrFail';
 import { timestampSchema } from '../shared/cee/common/ceeSchema';
@@ -22,7 +21,7 @@ export class ImportCeeAction extends AbstractAction {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     if (!!env('APP_DISABLE_CEE_IMPORT', false)) {
-      throw new ServiceDisabledError();
+      throw new ServiceDisabledException();
     }
 
     const operator_id = getOperatorIdOrFail(context);

@@ -1,11 +1,23 @@
-import { createSign } from 'crypto';
-import { ConfigInterfaceResolver, ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common';
+import {
+  ConfigInterfaceResolver,
+  ContextType,
+  handler,
+  InvalidParamsException,
+  NotFoundException,
+  RPCErrorLevel,
+  ServiceDisabledException,
+} from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
+import { createSign } from 'crypto';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/cee/registerApplication.contract';
 
 import { alias } from '../shared/cee/registerApplication.schema';
 
+import { ConflictException } from '@ilos/common';
+import { getDateOrFail } from '../helpers/getDateOrFail';
+import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
+import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail';
 import {
   ApplicationCooldownConstraint,
   CeeApplicationError,
@@ -16,16 +28,11 @@ import {
   TimeRangeConstraint,
   ValidJourneyConstraint,
 } from '../interfaces';
-import { ServiceDisabledError } from '../errors/ServiceDisabledError';
-import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
-import { getDateOrFail } from '../helpers/getDateOrFail';
-import { timestampSchema } from '../shared/cee/common/ceeSchema';
-import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail';
-import { ConflictException } from '@ilos/common';
 import {
   CeeLongApplicationInterface,
   CeeShortApplicationInterface,
 } from '../shared/cee/common/CeeApplicationInterface';
+import { timestampSchema } from '../shared/cee/common/ceeSchema';
 
 @handler({
   ...handlerConfig,
@@ -48,7 +55,7 @@ export class RegisterCeeAction extends AbstractAction {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     if (!!env('APP_DISABLE_CEE_REGISTER', false)) {
-      throw new ServiceDisabledError();
+      throw new ServiceDisabledException();
     }
 
     const operator_id = getOperatorIdOrFail(context);
@@ -62,18 +69,18 @@ export class RegisterCeeAction extends AbstractAction {
       }
     } catch (e) {
       let errorType;
-      switch(true){
+      switch (true) {
         case e instanceof InvalidParamsException:
-            errorType = CeeApplicationErrorEnum.Date;
-            break;
+          errorType = CeeApplicationErrorEnum.Date;
+          break;
         case e instanceof NotFoundException:
-            errorType = CeeApplicationErrorEnum.NonEligible;
-            break;
+          errorType = CeeApplicationErrorEnum.NonEligible;
+          break;
         case e instanceof ConflictException:
-            errorType = CeeApplicationErrorEnum.Conflict;
-            break;
-        default: 
-            errorType = CeeApplicationErrorEnum.Validation;
+          errorType = CeeApplicationErrorEnum.Conflict;
+          break;
+        default:
+          errorType = CeeApplicationErrorEnum.Validation;
       }
       const errorData: CeeApplicationError = {
         operator_id,
@@ -145,6 +152,9 @@ export class RegisterCeeAction extends AbstractAction {
             });
           }
           throw new ConflictException({
+            message: 'Conflict',
+            level: RPCErrorLevel.WARN,
+            uuid: operator_id === old.operator_id ? old.uuid : undefined,
             datetime: old.datetime.toISOString(),
           });
         }
@@ -190,6 +200,8 @@ export class RegisterCeeAction extends AbstractAction {
           throw new Error('Boum');
         } else {
           throw new ConflictException({
+            message: 'Conflict',
+            level: RPCErrorLevel.WARN,
             uuid: operator_id === old.operator_id ? old.uuid : undefined,
             datetime: old.datetime.toISOString(),
           });
