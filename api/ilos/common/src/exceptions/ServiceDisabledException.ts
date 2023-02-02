@@ -1,5 +1,5 @@
-import { RPCException } from '@ilos/common';
 import { RPCErrorData } from '../types';
+import { RPCException } from './RPCException';
 
 export class ServiceDisabledException extends RPCException {
   constructor(data: RPCErrorData = undefined) {
