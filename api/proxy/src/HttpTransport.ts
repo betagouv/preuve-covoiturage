@@ -317,9 +317,12 @@ export class HttpTransport implements TransportInterface {
       '/policy/simulate',
       rateLimiter({ max: 1 }, 'rl-policy-simulate'),
       asyncHandler(async (req, res, next) => {
-        this.kernel.handle(
-          createRPCPayload('user:sendSimulationEmail', req.body, { permissions: ['common.user.policySimulate'] }),
-        );
+        this.kernel.notify('user:sendSimulationEmail', req.body, {
+          call: { user: { permissions: ['common.user.policySimulate'] } },
+          channel: {
+            service: 'proxy',
+          },
+        });
         this.send(res, { id: 1, jsonrpc: '2.0' });
       }),
     );

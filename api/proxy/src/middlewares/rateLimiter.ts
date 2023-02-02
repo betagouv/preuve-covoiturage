@@ -4,7 +4,6 @@ import RedisClient from 'ioredis';
 import { env } from '@ilos/core';
 import { config } from '../config';
 
-
 const minute = 60000;
 
 export function rateLimiter(opts: Partial<RateLimiterOptions> = {}, prefix = 'rl'): RateLimitRequestHandler {
