@@ -2,6 +2,8 @@
 
 yarn global add db-migrate db-migrate-pg
 
+git secret reveal
+
 npx lerna run --sort build
 
 chmod u+x node_modules/@ilos/framework/dist/cli.js
