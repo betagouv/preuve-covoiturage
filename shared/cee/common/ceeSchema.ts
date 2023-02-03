@@ -26,7 +26,7 @@ export const identityKeySchema = {
 
 export const phoneTruncSchema = {
   macro: 'phonetrunc',
-  errorMessage: 'must be a valid trunced phone number',
+  errorMessage: 'must be a valid truncated phone number',
 };
 
 export const lastNameTruncSchema = {
@@ -34,7 +34,7 @@ export const lastNameTruncSchema = {
   minLength: 3,
   maxLength: 3,
   pattern: '^[A-Z ]{3}$',
-  errorMessage: 'must be 3 caps characters long string',
+  errorMessage: 'must be 3 capital chars long string',
 };
 
 export const drivingLicenseSchema = {
