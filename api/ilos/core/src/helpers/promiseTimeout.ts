@@ -28,17 +28,17 @@ export function promiseTimeout<T>(ms: number, promise: Promise<T>, signature?: s
         case RPCErrorLevel.SILENT:
           break;
         case RPCErrorLevel.WARN:
-          console.warn(message, payload);
+          console.warn('%s', message, payload);
           break;
         case RPCErrorLevel.INFO:
-          console.info(message, payload);
+          console.info('%s', message, payload);
           break;
         case RPCErrorLevel.DEBUG:
-          console.debug(message, payload);
+          console.debug('%s', message, payload);
           break;
         case RPCErrorLevel.ERROR:
         default:
-          console.error(message, payload);
+          console.error('%s', message, payload);
       }
 
       throw err;
