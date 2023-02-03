@@ -2,7 +2,7 @@ import anyTest, { TestFn } from 'ava';
 import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 import { Policy } from '../engine/entities/Policy';
 import { TripRepositoryProvider } from './TripRepositoryProvider';
-import { Idfm } from '../engine/policies/Idfm';
+import { Idfm } from '../engine/policies/bound/Idfm';
 
 interface TestContext {
   db: DbContext;

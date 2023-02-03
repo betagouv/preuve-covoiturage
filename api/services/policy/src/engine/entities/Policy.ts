@@ -14,7 +14,7 @@ import {
   StatelessContextInterface,
   PolicyHandlerStaticInterface,
 } from '../../interfaces';
-import { policies } from '../policies';
+import { policies } from '../policies/bound';
 import { StatefulContext, StatelessContext } from './Context';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 
