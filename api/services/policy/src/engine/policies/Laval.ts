@@ -16,7 +16,7 @@ import {
   LimitTargetEnum,
   ConfiguredLimitInterface,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './Laval.html';
 
 // Politique de la Communauté D'Agglomeration De Laval

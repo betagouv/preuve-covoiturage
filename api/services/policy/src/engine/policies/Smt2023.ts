@@ -18,7 +18,7 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './Smt2023.html';
 
 // Politique du Syndicat des Mobilités de Touraine

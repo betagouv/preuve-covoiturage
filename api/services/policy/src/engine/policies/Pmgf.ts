@@ -19,7 +19,7 @@ import {
   watchForPersonMaxAmountByMonth,
   isAfter,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './Pmgf.html';
 
 // Politique du Pôle Métropolitain Genevois Français

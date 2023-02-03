@@ -22,7 +22,7 @@ import {
   watchForPassengerMaxByTripByDay,
   ConfiguredLimitInterface,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './Nm.html';
 
 // Politique de Nantes Métropole

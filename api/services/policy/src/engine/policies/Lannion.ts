@@ -18,7 +18,7 @@ import {
   perKm,
   ensureFreeRide,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './Lannion.html';
 
 // Politique de la Communauté D'Agglomeration De Lannion-Tregor

@@ -17,7 +17,7 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { ConfiguredLimitInterface, LimitTargetEnum } from '../helpers/limits';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './Montpellier.html';
 
 /* eslint-disable-next-line */

@@ -18,7 +18,7 @@ import {
   ConfiguredLimitInterface,
   ensureFreeRide,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './Mrn.html';
 
 // Politique de Métropole Rouen Normandie

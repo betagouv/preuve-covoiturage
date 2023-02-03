@@ -21,7 +21,7 @@ import {
   startsAndEndsAt,
   ConfiguredLimitInterface,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './Pdll.html';
 
 // Politique de Pays de la Loire

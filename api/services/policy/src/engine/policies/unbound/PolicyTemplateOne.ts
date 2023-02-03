@@ -13,7 +13,7 @@ import {
   perKm,
   perSeat,
 } from '../../helpers';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../../AbstractPolicyHandler';
 
 export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler

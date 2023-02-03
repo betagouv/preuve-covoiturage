@@ -16,7 +16,7 @@ import {
   perSeat,
   startsAt,
 } from '../../helpers';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../../AbstractPolicyHandler';
 
 export const PolicyTemplateTwo: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler

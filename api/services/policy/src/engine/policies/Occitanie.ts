@@ -18,7 +18,7 @@ import {
   isAfter,
   isOperatorOrThrow,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './Occitanie.html';
 
 function getContribution(ctx: StatelessContextInterface): number {

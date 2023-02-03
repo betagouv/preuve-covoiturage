@@ -18,7 +18,7 @@ import {
   ConfiguredLimitInterface,
   ensureFreeRide,
 } from '../helpers';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './Smt.html';
 
 // Politique du Syndicat des Mobilités de Touraine

@@ -16,7 +16,7 @@ import {
   startsAndEndsAt,
 } from '../helpers';
 import { ConfiguredLimitInterface } from '../helpers/limits';
-import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
 import { description } from './MetropoleSavoie.html';
 
 /* eslint-disable-next-line */
