@@ -19,7 +19,7 @@ import expressSession from 'express-session';
 import helmet from 'helmet';
 import http from 'http';
 import Redis from 'ioredis';
-import { get, pick } from 'lodash';
+import { get, pick, omit } from 'lodash';
 import { asyncHandler } from './helpers/asyncHandler';
 import { createRPCPayload } from './helpers/createRPCPayload';
 import { healthCheckFactory } from './helpers/healthCheckFactory';
@@ -246,7 +246,7 @@ export class HttpTransport implements TransportInterface {
         )) as RPCResponseType;
 
         if (!response || 'error' in response || !('result' in response)) {
-          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+          this.sendData(res, response);
         } else {
           res.status(201).json(response.result);
         }
@@ -267,7 +267,7 @@ export class HttpTransport implements TransportInterface {
           createRPCPayload(simulateCeeSignature, { ...req.body }, user, { req }),
         )) as RPCResponseType;
         if (!response || 'error' in response || !('result' in response)) {
-          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+          this.sendData(res, response);
         } else {
           res.status(200).end();
         }
@@ -288,7 +288,7 @@ export class HttpTransport implements TransportInterface {
           createRPCPayload(importCeeSignature, req.body, user, { req }),
         )) as RPCResponseType;
         if (!response || 'error' in response || !('result' in response)) {
-          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+          this.sendData(res, response);
         } else {
           res.status(201).json(response.result);
         }
@@ -1149,6 +1149,20 @@ export class HttpTransport implements TransportInterface {
     if (typeof data === 'object' && 'error' in data) {
       res.status(mapStatusCode(data));
       res.send(data.error);
+      return;
+    }
+
+    this.setHeaders(res, headers);
+    res.send(data);
+  }
+
+  /**
+   * Send the message only with configured headers
+   */
+  private sendData(res: Response, data: RPCResponseType, headers: { [key: string]: string } = {}): void {
+    if (typeof data === 'object' && 'error' in data) {
+      res.status(mapStatusCode(data));
+      res.send(omit(data.error.data, ['code', 'level']));
       return;
     }
 
