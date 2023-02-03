@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+} from '../../../interfaces';
+import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
 import {
   isOperatorClassOrThrow,
   onDistanceRangeOrThrow,
@@ -17,8 +17,8 @@ import {
   onWeekday,
   isAfter,
   isOperatorOrThrow,
-} from '../helpers';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+} from '../../helpers';
+import { AbstractPolicyHandler } from '../../AbstractPolicyHandler';
 import { description } from './Occitanie.html';
 
 function getContribution(ctx: StatelessContextInterface): number {

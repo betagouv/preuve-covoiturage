@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+} from '../../../interfaces';
+import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
 import {
   endsAt,
   isOperatorClassOrThrow,
@@ -21,8 +21,8 @@ import {
   watchForGlobalMaxTrip,
   watchForPassengerMaxByTripByDay,
   ConfiguredLimitInterface,
-} from '../helpers';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+} from '../../helpers';
+import { AbstractPolicyHandler } from '../../AbstractPolicyHandler';
 import { description } from './Nm.html';
 
 // Politique de Nantes Métropole

@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+} from '../../../interfaces';
+import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
 import {
   endsAt,
   isOperatorClassOrThrow,
@@ -20,8 +20,8 @@ import {
   LimitTargetEnum,
   startsAndEndsAt,
   ConfiguredLimitInterface,
-} from '../helpers';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+} from '../../helpers';
+import { AbstractPolicyHandler } from '../../AbstractPolicyHandler';
 import { description } from './Pdll.html';
 
 // Politique de Pays de la Loire

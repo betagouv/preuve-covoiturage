@@ -4,29 +4,26 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../../interfaces';
 import {
-  ConfiguredLimitInterface,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
   watchForGlobalMaxAmount,
-  watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
-import { description } from './Smt2023.html';
+  LimitTargetEnum,
+  ConfiguredLimitInterface,
+  ensureFreeRide,
+} from '../../helpers';
+import { AbstractPolicyHandler } from '../../AbstractPolicyHandler';
+import { description } from './Smt.html';
 
 // Politique du Syndicat des Mobilités de Touraine
-export const Smt2023: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
-  implements PolicyHandlerInterface
-{
-  static readonly id = 'smt_2023';
+export const Smt: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
+  static readonly id = '713';
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
@@ -37,21 +34,20 @@ export const Smt2023: PolicyHandlerStaticInterface = class
     },
     {
       start: 40_000,
-      end: 1_000_000,
+      end: 150_000,
       fn: () => 0,
     },
   ];
-  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 60_000_00;
+  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 4000000;
 
   protected limits: Array<ConfiguredLimitInterface> = [
     ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
     ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2_000 });
+    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
 
@@ -67,6 +63,7 @@ export const Smt2023: PolicyHandlerStaticInterface = class
       }
     }
 
+    amount += ensureFreeRide(ctx, amount);
     ctx.incentive.set(amount);
   }
 
@@ -75,7 +72,7 @@ export const Smt2023: PolicyHandlerStaticInterface = class
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.MAX_GLOBAL_AMOUNT_LIMIT,
+        glob: 40_000_00,
       },
     };
   }

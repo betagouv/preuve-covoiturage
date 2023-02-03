@@ -4,8 +4,8 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+} from '../../../interfaces';
+import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -14,9 +14,9 @@ import {
   perKm,
   perSeat,
   startsAndEndsAt,
-} from '../helpers';
-import { ConfiguredLimitInterface } from '../helpers/limits';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+} from '../../helpers';
+import { ConfiguredLimitInterface } from '../../helpers/limits';
+import { AbstractPolicyHandler } from '../../AbstractPolicyHandler';
 import { description } from './MetropoleSavoie.html';
 
 /* eslint-disable-next-line */

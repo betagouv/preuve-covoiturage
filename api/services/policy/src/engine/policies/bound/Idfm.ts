@@ -5,7 +5,7 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../../interfaces';
 import {
   atDate,
   isAfter,
@@ -20,10 +20,10 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-} from '../helpers';
-import { ConfiguredLimitInterface, LimitTargetEnum } from '../helpers/limits';
+} from '../../helpers';
+import { ConfiguredLimitInterface, LimitTargetEnum } from '../../helpers/limits';
 import { description } from './Idfm.html';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+import { AbstractPolicyHandler } from '../../AbstractPolicyHandler';
 
 // Politique d'Île-de-France Mobilité
 /* eslint-disable-next-line */

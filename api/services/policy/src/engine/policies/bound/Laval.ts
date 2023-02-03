@@ -4,7 +4,7 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../../interfaces';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -15,8 +15,8 @@ import {
   watchForPersonMaxTripByDay,
   LimitTargetEnum,
   ConfiguredLimitInterface,
-} from '../helpers';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+} from '../../helpers';
+import { AbstractPolicyHandler } from '../../AbstractPolicyHandler';
 import { description } from './Laval.html';
 
 // Politique de la Communauté D'Agglomeration De Laval

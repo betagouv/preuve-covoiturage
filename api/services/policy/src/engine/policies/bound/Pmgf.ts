@@ -4,7 +4,7 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../../interfaces';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -18,8 +18,8 @@ import {
   ConfiguredLimitInterface,
   watchForPersonMaxAmountByMonth,
   isAfter,
-} from '../helpers';
-import { AbstractPolicyHandler } from '../AbstractPolicyHandler';
+} from '../../helpers';
+import { AbstractPolicyHandler } from '../../AbstractPolicyHandler';
 import { description } from './Pmgf.html';
 
 // Politique du Pôle Métropolitain Genevois Français
