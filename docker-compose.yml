@@ -54,6 +54,7 @@ services:
       context: .
     volumes:
       - ./api:/app/api
+      - ./docker/api/certs:/app/certs:ro
       - ./shared:/app/shared:ro
       - ./tmp:/tmp
       - ${PWD}/docker/api/certs:/app/certs:ro

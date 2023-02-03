@@ -4,7 +4,7 @@ import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from 
 import { ServiceProvider } from '../ServiceProvider';
 import { ParamsInterface, ResultInterface, handlerConfig } from '../shared/cee/registerApplication.contract';
 import { config } from '../config';
-import { ContextType } from '@ilos/common';
+import { ContextType, RPCErrorLevel } from '@ilos/common';
 import {
   ceeJourneyTypeEnumSchema,
   drivingLicenseSchema,
@@ -66,8 +66,13 @@ test.serial(
   error,
   { ...defaultShortPayload, last_name_trunc: 'abcd' },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/last_name_trunc ${lastNameTruncSchema.errorMessage}`);
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `data/last_name_trunc ${lastNameTruncSchema.errorMessage}`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `data/last_name_trunc ${lastNameTruncSchema.errorMessage}`,
+    });
   },
   defaultContext,
 );
@@ -76,8 +81,13 @@ test.serial(
   error,
   { ...defaultShortPayload, journey_type: 'bip' },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/journey_type ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `data/journey_type ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `data/journey_type ${ceeJourneyTypeEnumSchema.errorMessage}`,
+    });
   },
   defaultContext,
 );
@@ -86,8 +96,13 @@ test.serial(
   error,
   { ...defaultShortPayload, driving_license: 'bip' },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/driving_license ${drivingLicenseSchema.errorMessage}`);
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `data/driving_license ${drivingLicenseSchema.errorMessage}`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `data/driving_license ${drivingLicenseSchema.errorMessage}`,
+    });
   },
   defaultContext,
 );
@@ -96,11 +111,13 @@ test.serial(
   error,
   { ...defaultShortPayload, operator_journey_id: 1 },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(
-      e.rpcError?.data,
-      `data/operator_journey_id ${operatorJourneyIdSchema.errorMessage}, data must match "then" schema`,
-    );
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `data/operator_journey_id ${operatorJourneyIdSchema.errorMessage}, data must match "then" schema`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `data/operator_journey_id ${operatorJourneyIdSchema.errorMessage}, data must match "then" schema`,
+    });
   },
   defaultContext,
 );
@@ -109,8 +126,13 @@ test.serial(
   error,
   { ...defaultLongPayload, datetime: 'bip' },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/datetime ${timestampSchema.errorMessage}, data must match "then" schema`);
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `data/datetime ${timestampSchema.errorMessage}, data must match "then" schema`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `data/datetime ${timestampSchema.errorMessage}, data must match "then" schema`,
+    });
   },
   defaultContext,
 );
@@ -119,20 +141,30 @@ test.serial(
   error,
   { ...defaultLongPayload, phone_trunc: 'bip' },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/phone_trunc ${phoneTruncSchema.errorMessage}, data must match "then" schema`);
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `data/phone_trunc ${phoneTruncSchema.errorMessage}, data must match "then" schema`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `data/phone_trunc ${phoneTruncSchema.errorMessage}, data must match "then" schema`,
+    });
   },
   defaultContext,
 );
 
-test.serial(error, defaultShortPayload, 'Unauthorized Error', { ...defaultContext, call: { user: {} } });
+test.serial(error, defaultShortPayload, 'UnauthorizedException', { ...defaultContext, call: { user: {} } });
 
 test.serial(
   error,
   { ...defaultLongPayload, datetime: new Date().toISOString() },
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `Date should be before 7 days from now`);
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `Date should be before 7 days from now`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `Date should be before 7 days from now`,
+    });
   },
   defaultContext,
 );
@@ -161,7 +193,7 @@ test.serial(
   error,
   { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-2' },
   (e: any, t) => {
-    t.log(e);
+    t.is(e.name, 'ConflictException');
     t.is(e.message, 'Conflict');
     t.like(e.rpcError.data, { datetime: '2022-06-15T00:15:00.000Z' });
   },
@@ -172,8 +204,8 @@ test.serial(
   error,
   { ...defaultShortPayload, operator_journey_id: 'operator_journey_id-wrong' },
   (e: any, t) => {
-    t.log(e);
-    t.is(e.message, 'Not found');
+    t.is(e.name, 'NotFoundException');
+    t.is(e.message, 'NotFoundException');
   },
   defaultContext,
 );

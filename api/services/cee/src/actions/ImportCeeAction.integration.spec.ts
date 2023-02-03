@@ -3,7 +3,7 @@ import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from 
 import { ServiceProvider } from '../ServiceProvider';
 import { ParamsInterface, ResultInterface, handlerConfig } from '../shared/cee/importApplication.contract';
 import { config } from '../config';
-import { ContextType } from '@ilos/common';
+import { ContextType, RPCErrorLevel } from '@ilos/common';
 import {
   ceeJourneyTypeEnumSchema,
   lastNameTruncSchema,
@@ -50,8 +50,13 @@ test.serial(
   error,
   [],
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, 'data must NOT have fewer than 1 items');
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, 'data must NOT have fewer than 1 items');
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: 'data must NOT have fewer than 1 items',
+    });
   },
   defaultContext,
 );
@@ -60,8 +65,13 @@ test.serial(
   error,
   [{ ...defaultPayload, last_name_trunc: 'abcd' }],
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/0/last_name_trunc ${lastNameTruncSchema.errorMessage}`);
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `data/0/last_name_trunc ${lastNameTruncSchema.errorMessage}`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `data/0/last_name_trunc ${lastNameTruncSchema.errorMessage}`,
+    });
   },
   defaultContext,
 );
@@ -70,8 +80,13 @@ test.serial(
   error,
   [{ ...defaultPayload, journey_type: 'bip' }],
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/0/journey_type ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `data/0/journey_type ${ceeJourneyTypeEnumSchema.errorMessage}`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `data/0/journey_type ${ceeJourneyTypeEnumSchema.errorMessage}`,
+    });
   },
   defaultContext,
 );
@@ -80,8 +95,13 @@ test.serial(
   error,
   [{ ...defaultPayload, datetime: 'bip' }],
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/0/datetime ${timestampSchema.errorMessage}`);
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `data/0/datetime ${timestampSchema.errorMessage}`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `data/0/datetime ${timestampSchema.errorMessage}`,
+    });
   },
   defaultContext,
 );
@@ -90,13 +110,18 @@ test.serial(
   error,
   [{ ...defaultPayload, phone_trunc: 'bip' }],
   (e: any, t) => {
-    t.is(e.message, 'Invalid params');
-    t.is(e.rpcError?.data, `data/0/phone_trunc ${phoneTruncSchema.errorMessage}`);
+    t.is(e.name, 'InvalidParamsException');
+    t.is(e.message, `data/0/phone_trunc ${phoneTruncSchema.errorMessage}`);
+    t.deepEqual(e.rpcError?.data, {
+      code: -32602,
+      level: RPCErrorLevel.ERROR,
+      message: `data/0/phone_trunc ${phoneTruncSchema.errorMessage}`,
+    });
   },
   defaultContext,
 );
 
-test.serial(error, [defaultPayload], 'Unauthorized Error', { ...defaultContext, call: { user: {} } });
+test.serial(error, [defaultPayload], 'UnauthorizedException', { ...defaultContext, call: { user: {} } });
 
 test.serial(
   success,
