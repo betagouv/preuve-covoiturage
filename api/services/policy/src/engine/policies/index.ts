@@ -13,6 +13,7 @@ import { Smt } from './Smt';
 import { PolicyTemplateOne } from './unbound/PolicyTemplateOne';
 import { PolicyTemplateThree } from './unbound/PolicyTemplateThree';
 import { PolicyTemplateTwo } from './unbound/PolicyTemplateTwo';
+import { MetropoleSavoie } from './MetropoleSavoie';
 
 export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
   // disable prettier to avoid having it reformat to a single line
@@ -33,6 +34,7 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Smt,
     Normandie,
     Montpellier,
+    MetropoleSavoie,
   ].map((h) => [h.id, h]),
   /* eslint-enable prettier/prettier */
 );
