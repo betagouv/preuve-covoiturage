@@ -1,6 +1,3 @@
 dist
 coverage
 .nyc_output
-
-api/services/policy/src/engine/policies/bound/
-api/services/policy/src/engine/policies/unbound/

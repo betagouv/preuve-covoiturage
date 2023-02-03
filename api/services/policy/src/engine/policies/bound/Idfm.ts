@@ -1,4 +1,4 @@
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
