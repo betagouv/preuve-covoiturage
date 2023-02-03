@@ -2,6 +2,11 @@
 
 yarn global add db-migrate db-migrate-pg
 
+echo $APP_GPG_GIT_SECRET_PRIVATE_KEY >> private.pgp
+echo $APP_GPG_GIT_SECRET_PUBLIC_KEY >> public.pgp
+gpg --import public.pgp
+gpg --import private.pgp
+
 git secret reveal
 
 npx lerna run --sort build
