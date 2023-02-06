@@ -56,6 +56,7 @@ export class SimulateOnPastAction extends AbstractAction {
       end_date: today,
       incentive_sum: 0,
       territory_selector,
+      policy_max_amount: 10_000_000_00,
       _id: 1,
     };
     const policy = await Policy.import(serialized_policy);

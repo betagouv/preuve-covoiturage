@@ -44,7 +44,7 @@ export class Policy implements PolicyInterface {
       data.name,
       data.start_date,
       data.end_date,
-      new ctor(),
+      new ctor(data.policy_max_amount),
       data.status,
       data.incentive_sum,
     );
@@ -58,9 +58,10 @@ export class Policy implements PolicyInterface {
       name: this.name,
       start_date: this.start_date,
       end_date: this.end_date,
-      handler: (this.handler.constructor as PolicyHandlerStaticInterface).id,
       status: this.status,
       incentive_sum: this.incentive_sum,
+      handler: (this.handler.constructor as PolicyHandlerStaticInterface).id,
+      policy_max_amount: (this.handler.constructor as PolicyHandlerStaticInterface).policy_max_amount,
     };
   }
 

@@ -40,11 +40,16 @@ export interface SerializedPolicyInterface {
   handler: string;
   status: string;
   incentive_sum: number;
+  policy_max_amount?: number;
 }
 
 export interface PolicyHandlerStaticInterface {
+  policy_max_amount?: number;
   readonly id: string;
-  new (): PolicyHandlerInterface;
+  /**
+   * Optional max amount to spend for the policy
+   */
+  new (policy_max_amount?: number): PolicyHandlerInterface;
 }
 
 export interface SliceInterface {
@@ -79,4 +84,5 @@ export interface StatelessContextInterface {
   meta: MetadataRegistryInterface;
   carpool: CarpoolInterface;
   policy_territory_selector?: TerritorySelectorsInterface;
+  policy_max_amount?: number;
 }
