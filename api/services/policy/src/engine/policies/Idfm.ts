@@ -29,7 +29,7 @@ import { description } from './Idfm.html';
 /* eslint-disable-next-line */
 export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '459';
-  private policy_max_amount: number;
+  policy_max_amount: number;
 
   constructor(policy_max_amount: number) {
     super();

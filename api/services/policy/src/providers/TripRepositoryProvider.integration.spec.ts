@@ -36,7 +36,7 @@ test.serial('Should find carpools', async (t) => {
     handler: Idfm.id,
     status: 'active',
     incentive_sum: 5000,
-    policy_max_amount: 10_000_000_00,
+    max_amount: 10_000_000_00,
   });
 
   const cursor = t.context.repository.findTripByPolicy(policy, start_date, end_date);

@@ -40,7 +40,7 @@ export interface SerializedPolicyInterface {
   handler: string;
   status: string;
   incentive_sum: number;
-  policy_max_amount?: number;
+  max_amount?: number;
 }
 
 export interface PolicyHandlerStaticInterface {
@@ -66,6 +66,8 @@ export interface PolicyHandlerParamsInterface {
 }
 
 export interface PolicyHandlerInterface {
+  // TODO: move that parameter mandatory
+  policy_max_amount?: number;
   processStateless(context: StatelessContextInterface): void;
   processStateful(context: StatefulContextInterface): void;
   params(): PolicyHandlerParamsInterface;

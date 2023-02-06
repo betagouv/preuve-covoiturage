@@ -61,7 +61,7 @@ export const makeProcessHelper = (cp?: CarpoolInterface) => {
       status: 'active',
       handler: '',
       incentive_sum: 0,
-      policy_max_amount: 10_000_000_00,
+      max_amount: 10_000_000_00,
       ...(input.policy || {}),
     };
 

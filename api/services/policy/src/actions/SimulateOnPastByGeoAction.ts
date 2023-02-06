@@ -50,7 +50,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       handler: params.policy_template_id,
       incentive_sum: 0,
       territory_id: 0,
-      policy_max_amount: 10_000_000_00,
+      max_amount: 10_000_000_00,
       territory_selector: {
         ...(params.territory_insee === geoResult.aom_siren && { aom: [geoResult.aom_siren] }),
         ...(params.territory_insee === geoResult.epci_siren && { epci: [geoResult.epci_siren] }),
