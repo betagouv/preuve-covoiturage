@@ -14,7 +14,7 @@ export class StatsRefreshCommand implements CommandInterface {
     {
       signature: '-t, --timeout',
       description: 'pg query timeout',
-      default: 2 * 86_400_000, // 2 hours
+      default: 2 * 3_600_000, // 2 hours
     },
   ];
 

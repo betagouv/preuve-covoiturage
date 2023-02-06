@@ -15,13 +15,13 @@ import { SharedModule } from '../../shared/shared.module';
 import { CampaignSimulationPaneComponent } from './components/campaign-simulation-pane/campaign-simulation-pane.component';
 import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign-admin-list.component';
 import { CampaignViewComponent } from './pages/campaign-view/campaign-view.component';
-import { CampaignFundingRequestsComponent } from './pages/campaign-fundingrequests/campaign-fundingrequests.component';
+import { CampaignApdfComponent } from './pages/campaign-apdf/campaign-apdf.component';
 import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
     CampaignAdminListComponent,
-    CampaignFundingRequestsComponent,
+    CampaignApdfComponent,
     CampaignSimulationPaneComponent,
     CampaignViewComponent,
   ],

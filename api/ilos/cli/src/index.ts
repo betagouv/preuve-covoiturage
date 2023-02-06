@@ -5,3 +5,4 @@ import { CommandExtension } from './extensions/CommandExtension';
 import { CliTransport } from './transports/CliTransport';
 
 export { CliTransport, CommandRegistry, Command, CommandExtension, Commands };
+export * from './helpers';

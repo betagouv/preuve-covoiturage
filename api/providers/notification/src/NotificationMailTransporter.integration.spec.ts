@@ -1,6 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { Extensions } from '@ilos/core';
-import { createTestAccount } from 'nodemailer';
+import { env, Extensions } from '@ilos/core';
 import { NotificationMailTransporter } from './NotificationMailTransporter';
 import { AbstractTemplate, HandlebarsTemplateProvider } from '@pdc/provider-template';
 import { AbstractMailNotification } from './AbstractNotification';
@@ -12,7 +11,6 @@ interface TestContext {
 const test = anyTest as TestFn<TestContext>;
 
 test.before(async (t) => {
-  const account = await createTestAccount();
   const config = {
     notification: {
       mail: {
@@ -26,12 +24,12 @@ test.before(async (t) => {
         },
         debug: true,
         smtp: {
-          host: account.smtp.host,
-          port: account.smtp.port,
-          secure: account.smtp.secure,
+          host: env('INTEGRATION_MAILER_SMTP_HOST', 'mailer'),
+          port: env('INTEGRATION_MAILER_SMTP_PORT', 1025),
+          secure: env('INTEGRATION_MAILER_SMTP_SECURE', false),
           auth: {
-            user: account.user,
-            pass: account.pass,
+            user: env('INTEGRATION_MAILER_SMTP_USER', 'test@example.com'),
+            pass: env('INTEGRATION_MAILER_SMTP_PASS', 'password'),
           },
         },
       },
@@ -49,7 +47,7 @@ test.after(async (t) => {
   await t.context.transporter.destroy();
 });
 
-test('should works', async (t) => {
+test('should work', async (t) => {
   class TemplateText extends AbstractTemplate<{ word: string }> {
     static template = 'Hello {{word}}';
   }

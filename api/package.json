@@ -39,7 +39,7 @@
     "migrate:geo": "POSTGRES_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator geo:import",
     "migrate:sql": "DATABASE_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator up",
     "migrate": "if [ -z \"$SKIP_MIGRATIONS\" ]; then yarn migrate:geo && yarn migrate:sql; else echo '>> Migrations skipped'; fi",
-    "process:journey": "yarn workspace @pdc/proxy ilos process:journey"
+    "ilos": "yarn workspace @pdc/proxy ilos"
   },
   "keywords": [
     "betagouv",
@@ -60,6 +60,7 @@
     "@types/express-session": "^1.17.4",
     "@types/google-libphonenumber": "^7.4.19",
     "@types/jsonwebtoken": "^8.5.5",
+    "@types/lodash": "^4.14.191",
     "@types/node": "16",
     "@types/node-mailjet": "^3.3.7",
     "@types/sinon": "^10.0.3",

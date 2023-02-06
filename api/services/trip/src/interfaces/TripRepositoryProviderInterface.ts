@@ -1,12 +1,11 @@
-import { SliceInterface } from '~/shared/policy/common/interfaces/SliceInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
-import { PolicyStatsInterface } from './PolicySliceStatInterface';
-import { PgCursorHandler } from './PromisifiedPgCursor';
+import { ExportTripInterface } from './ExportTripInterface';
 import { FinancialStatInterface, StatInterface } from './StatInterface';
 
 export interface TzResultInterface {
@@ -35,11 +34,8 @@ export interface TripRepositoryInterface {
       status?: string;
     },
     type?: string,
-  ): Promise<PgCursorHandler>;
+  ): Promise<PgCursorHandler<ExportTripInterface>>;
   validateTz(tz?: string): Promise<TzResultInterface>;
-  getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]>;
-  getPolicyStats(params: CampaignSearchParamsInterface, slices: SliceInterface[]): Promise<PolicyStatsInterface>;
-  getPolicyCursor(params: CampaignSearchParamsInterface, slices: SliceInterface[]): Promise<PgCursorHandler>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterface>): Promise<StatInterface[]> {
@@ -69,7 +65,7 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
       status?: string;
     },
     type?: string,
-  ): Promise<PgCursorHandler> {
+  ): Promise<PgCursorHandler<ExportTripInterface>> {
     throw new Error('Not implemented');
   }
 
@@ -78,25 +74,6 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
   }
 
   public async getTerritoryDescendants(territory_id: number): Promise<number[]> {
-    throw new Error('Not implemented');
-  }
-
-  public async getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
-    throw new Error('Not implemented');
-  }
-
-  public async getPolicyStats(
-    params: CampaignSearchParamsInterface,
-    slices: SliceInterface[],
-  ): Promise<PolicyStatsInterface> {
-    throw new Error('Not implemented');
-  }
-
-  public async getPolicyCursor(
-    params: CampaignSearchParamsInterface,
-    slices: SliceInterface[],
-    type = 'opendata',
-  ): Promise<PgCursorHandler> {
     throw new Error('Not implemented');
   }
 }
