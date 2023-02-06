@@ -1,3 +1,4 @@
+import { Vitre } from './Vitre';
 import { Montpellier } from './Montpellier';
 import { PolicyHandlerStaticInterface } from '../../interfaces';
 import { Idfm } from './Idfm';
@@ -36,7 +37,8 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Normandie,
     Montpellier,
     MetropoleSavoie,
-    Smt2023
+    Smt2023,
+    Vitre
   ].map((h) => [h.id, h]),
   /* eslint-enable prettier/prettier */
 );
