@@ -68,5 +68,5 @@ export const PolicyTemplateTwo: PolicyHandlerStaticInterface = class
     }
   }
 
-  protected limits: Array<ConfiguredLimitInterface> = [];
+  limits: Array<ConfiguredLimitInterface> = [];
 };

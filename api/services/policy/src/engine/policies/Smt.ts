@@ -6,17 +6,16 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import {
+  ensureFreeRide,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
+  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-  LimitTargetEnum,
-  ConfiguredLimitInterface,
-  ensureFreeRide,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Smt.html';
@@ -38,12 +37,15 @@ export const Smt: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
       fn: () => 0,
     },
   ];
-  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 4000000;
-
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
-  ];
+  policy_max_amount: number;
+  constructor(policy_max_amount: number) {
+    super();
+    this.policy_max_amount = policy_max_amount;
+    this.limits = [
+      ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.policy_max_amount, watchForGlobalMaxAmount],
+    ];
+  }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);

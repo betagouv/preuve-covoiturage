@@ -39,17 +39,21 @@ export const Occitanie: PolicyHandlerStaticInterface = class
     OperatorsEnum.Mobicoop,
   ];
   protected operator_class = ['B', 'C'];
-  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 70_000_00;
   protected slices = [
     { start: 0, end: 10_000 },
     { start: 10_000, end: 30_000 },
   ];
 
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['E8E1B5F5-64D5-48B9-8BBB-A64C33C500D8', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['CB39AF21-5ED5-4792-AA81-1F19EACB901C', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
-    ['6D6D0BBA-09C1-40C4-B3C7-2EECF1C6A2A3', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
-  ];
+  policy_max_amount: number;
+  constructor(policy_max_amount: number) {
+    super();
+    this.policy_max_amount = policy_max_amount;
+    this.limits = [
+      ['E8E1B5F5-64D5-48B9-8BBB-A64C33C500D8', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['CB39AF21-5ED5-4792-AA81-1F19EACB901C', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
+      ['6D6D0BBA-09C1-40C4-B3C7-2EECF1C6A2A3', policy_max_amount, watchForGlobalMaxAmount],
+    ];
+  }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
@@ -94,7 +98,7 @@ export const Occitanie: PolicyHandlerStaticInterface = class
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.MAX_GLOBAL_AMOUNT_LIMIT,
+        glob: this.policy_max_amount,
       },
     };
   }

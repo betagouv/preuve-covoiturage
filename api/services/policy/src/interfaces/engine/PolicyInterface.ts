@@ -66,7 +66,6 @@ export interface PolicyHandlerParamsInterface {
 }
 
 export interface PolicyHandlerInterface {
-  // TODO: move that parameter mandatory
   policy_max_amount?: number;
   processStateless(context: StatelessContextInterface): void;
   processStateful(context: StatefulContextInterface): void;

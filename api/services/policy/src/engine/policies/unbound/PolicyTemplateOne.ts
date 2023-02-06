@@ -60,5 +60,5 @@ export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
   }
 
-  protected limits: Array<ConfiguredLimitInterface> = [];
+  limits: Array<ConfiguredLimitInterface> = [];
 };

@@ -21,7 +21,7 @@ import {
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { ConfiguredLimitInterface, LimitTargetEnum } from '../helpers/limits';
+import { LimitTargetEnum } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Idfm.html';
 
@@ -55,8 +55,6 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       fn: () => 0,
     },
   ];
-
-  protected limits: Array<ConfiguredLimitInterface> = this.limits;
 
   protected pollutionAndStrikeDates = [
     '2022-02-18',
