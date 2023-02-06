@@ -42,10 +42,10 @@ class TR extends DataRepositoryProviderInterfaceResolver {}
 const test = anyTest as TestFn<Context>;
 
 test.before((t) => {
-  t.context.START_DATE_STRING = '2020-01-08T00:00:00Z';
-  t.context.END_DATE_STRING = '2020-02-08T00:00:00Z';
-  t.context.START_DATE = new Date(t.context.START_DATE_STRING);
-  t.context.END_DATE = new Date(t.context.END_DATE_STRING);
+  t.context.START_DATE = new Date('2020-01-08T00:00:00Z');
+  t.context.END_DATE = new Date('2020-02-08T00:00:00Z');
+  t.context.START_DATE_STRING = t.context.START_DATE.toISOString();
+  t.context.END_DATE_STRING = t.context.END_DATE.toISOString();
 });
 
 test.beforeEach((t) => {
@@ -105,8 +105,8 @@ test('ExportAction: should create 1 xlsx file for last month if no date range pr
   );
 
   // Assert
-  const endDate = zonedTimeToUtc(startOfMonth(subMonths(new Date(), 1)), 'Europe/Paris');
-  const startDate = zonedTimeToUtc(startOfMonth(new Date()), 'Europe/Paris');
+  const startDate = zonedTimeToUtc(startOfMonth(subMonths(new Date(), 1)), 'Europe/Paris');
+  const endDate = zonedTimeToUtc(startOfMonth(new Date()), 'Europe/Paris');
 
   t.deepEqual(result, [filename]);
   sinon.assert.calledOnceWithMatch(t.context.checkCampaignStub!, campaign._id);

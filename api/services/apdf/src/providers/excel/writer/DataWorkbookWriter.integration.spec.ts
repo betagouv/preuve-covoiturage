@@ -1,10 +1,12 @@
 // import faker from '@faker-js/faker';
-// import test from 'ava';
+import test from 'ava';
 // import { stream, Workbook, Worksheet } from 'exceljs';
 // import { ExportCron } from '../../../cron/ExportCron';
 // import { APDFTripInterface } from '../../../interfaces/APDFTripInterface';
 // import { BuildExcel } from '../BuildExcel';
 // import { DataWorkBookWriter } from './DataWorkbookWriter';
+
+test('disabled', (t) => t.true(true));
 
 // let dataWorkBookWriter: DataWorkBookWriter;
 
