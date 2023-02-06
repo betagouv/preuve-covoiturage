@@ -26,7 +26,7 @@ import { alias } from '../shared/policy/simulateOnPast.schema';
   ],
 })
 export class SimulateOnPastAction extends AbstractAction {
-  private readonly FOUR_DAYS_IN_SECONDS: number = 4 * 86400;
+  private readonly FOUR_DAYS_IN_SECONDS: number = 10 * 86400;
 
   constructor(
     private tripRepository: TripRepositoryProviderInterfaceResolver,
