@@ -2,17 +2,17 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Laval as Handler } from './Laval';
+import { Smt2023 as Handler } from './Smt2023';
 
 const defaultPosition = {
-  arr: '53130',
-  com: '53130',
-  aom: '200083392',
-  epci: '200083392',
-  dep: '53',
-  reg: '52',
+  arr: '37050',
+  com: '37050',
+  aom: '200085108',
+  epci: '243700754',
+  dep: '37',
+  reg: '24',
   country: 'XXXXX',
-  reseau: '52',
+  reseau: '96',
 };
 
 const defaultCarpool = {
@@ -21,11 +21,11 @@ const defaultCarpool = {
   passenger_identity_uuid: v4(),
   driver_identity_uuid: v4(),
   operator_siret: OperatorsEnum.Klaxit,
-  operator_class: 'C',
+  operator_class: 'B',
   passenger_is_over_18: true,
   passenger_has_travel_pass: true,
   driver_has_travel_pass: true,
-  datetime: new Date('2019-01-15'),
+  datetime: new Date('2023-04-15'),
   seats: 1,
   duration: 600,
   distance: 5_000,
@@ -43,7 +43,27 @@ test(
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ operator_siret: 'not in list' }, { distance: 100 }, { distance: 200_000 }, { operator_class: 'A' }],
+    carpool: [
+      { operator_siret: 'not in list' },
+      { distance: 100 },
+      { operator_class: 'A' },
+      {
+        start: {
+          arr: '37109',
+          com: '37109',
+          aom: '200085108',
+          epci: '243700754',
+          reg: '24',
+        },
+        end: {
+          arr: '37109',
+          com: '37109',
+          aom: '200085108',
+          epci: '243700754',
+          reg: '24',
+        },
+      },
+    ],
     meta: [],
   },
   { incentive: [0, 0, 0, 0], meta: [] },
@@ -57,17 +77,32 @@ test(
     carpool: [
       { distance: 5_000, driver_identity_uuid: 'one' },
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
-      { distance: 25_000, driver_identity_uuid: 'two' },
-      { distance: 25_000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
+      { distance: 25_000, driver_identity_uuid: 'one' },
+      { distance: 25_000, seats: 2, driver_identity_uuid: 'one' },
+      {
+        distance: 150_000,
+        driver_identity_uuid: 'one',
+        end: {
+          arr: '37109',
+          com: '37109',
+          aom: '200085108',
+          epci: '243700754',
+          reg: '24',
+        },
+      },
     ],
     meta: [],
   },
   {
-    incentive: [50, 100, 50, 50],
+    incentive: [200, 400, 250, 500, 400],
     meta: [
       {
+        key: 'max_amount_restriction.0-one.month.3-2023',
+        value: 1750,
+      },
+      {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 250,
+        value: 1750,
       },
     ],
   },
@@ -82,20 +117,25 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 26_999_80,
+        value: 59_999_50,
       },
     ],
   },
   {
-    incentive: [20],
+    incentive: [50],
     meta: [
       {
+        key: 'max_amount_restriction.0-one.month.3-2023',
+        value: 200,
+      },
+      {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 27_000_00,
+        value: 60_000_00,
       },
     ],
   },
 );
+
 test(
   'should works with day limits',
   process,
@@ -113,11 +153,15 @@ test(
     meta: [],
   },
   {
-    incentive: [50, 50, 50, 50, 50, 50, 0],
+    incentive: [200, 200, 200, 200, 200, 200, 0],
     meta: [
       {
+        key: 'max_amount_restriction.0-one.month.3-2023',
+        value: 1200,
+      },
+      {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 300,
+        value: 12_00,
       },
     ],
   },

@@ -13,41 +13,36 @@ import {
   perKm,
   perSeat,
   watchForGlobalMaxAmount,
+  watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
-  LimitTargetEnum,
-  ConfiguredLimitInterface,
-  ensureFreeRide,
 } from '../helpers';
+import { ConfiguredLimitInterface, LimitTargetEnum } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Mrn.html';
+import { description } from './Montpellier.html';
 
-// Politique de Métropole Rouen Normandie
-export const Mrn: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
-  static readonly id = '766';
+/* eslint-disable-next-line */
+export const Montpellier: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
+  static readonly id = 'montpellier_2022';
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [
-    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    { start: 2_000, end: 10_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
     {
-      start: 20_000,
-      end: 40_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
-    },
-    {
-      start: 40_000,
-      end: 150_000,
-      fn: () => 0,
+      start: 10_000,
+      end: 1_000_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
     },
   ];
-  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 2_500_000_00;
+  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 654_000_00;
 
   protected limits: Array<ConfiguredLimitInterface> = [
-    ['E7B969E7-D701-2B9F-80D2-B30A7C3A5220', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['489A7D57-1948-61DA-E5FA-1AE3217325BA', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
+    ['56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+    ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
+    ['99911EAF-89AB-C346-DDD5-BD2C7704F935', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
+    onDistanceRangeOrThrow(ctx, { min: 2_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
 
@@ -55,15 +50,13 @@ export const Mrn: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
     this.processExclusion(ctx);
     super.processStateless(ctx);
 
-    // Par kilomètre
+    // Calcul des incitations par tranche
     let amount = 0;
     for (const { start, fn } of this.slices) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);
       }
     }
-
-    amount += ensureFreeRide(ctx, amount);
 
     ctx.incentive.set(amount);
   }

@@ -4,7 +4,7 @@ export const description = `<div _ngcontent-fyn-c231="" id="summary" class="camp
 <p>Cette campagne est limitée à
   <b>70 000 euros </b>.
 </p>
-<p>Les trajets de plus de 5 km sont incités selon les règles suivantes : </p>
+<p>Les trajets de plus de 5 km sont incités à hauteur de 1€ selon les règles suivantes : </p>
 <ul>
   <li>Départ et arrivée dans la région Normandie</li>
 </ul>
