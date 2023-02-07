@@ -19,6 +19,7 @@
     "**/dist/**": true,
   },
   "search.exclude": {
+    "tmp/*": true,
     "**/node_modules": true,
     "**/dist": true,
     "**/yarn.lock": true,

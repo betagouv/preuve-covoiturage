@@ -15,7 +15,6 @@ import { binding as exportBinding } from './shared/trip/export.schema';
 import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
 import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
 import { binding as publishOpenDataBinding } from './shared/trip/publishOpenData.schema';
-import { binding as capitalcallExportBinding } from './shared/capitalcall/export.schema';
 
 import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
@@ -32,8 +31,6 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
 import { scopeToGroupBinding } from './middleware/ScopeToGroupMiddleware';
 
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
-import { ExportCapitalCallsAction } from './actions/ExportCapitalCallsAction';
-import { ActiveCampaignExcelExportAction } from './actions/ActiveCampaignExcelExportAction';
 import { DataGouvProvider } from './providers/DataGouvProvider';
 import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportCommand';
 
@@ -55,7 +52,6 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
     buildExportBinding,
     sendExportBinding,
     publishOpenDataBinding,
-    capitalcallExportBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware], scopeToGroupBinding],
   connections: [
@@ -70,8 +66,6 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
     FinancialStatsAction,
     ExportAction,
     BuildExportAction,
-    ExportCapitalCallsAction,
-    ActiveCampaignExcelExportAction,
     TripCacheWarmCron,
     SendExportAction,
     PublishOpenDataAction,

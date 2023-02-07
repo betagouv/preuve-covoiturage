@@ -4,6 +4,7 @@ import { Kernel as BaseKernel } from '@ilos/framework';
 import { SentryProvider } from '@pdc/provider-sentry';
 import { TokenProvider } from '@pdc/provider-token';
 import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
+import { bootstrap as apdfBootstrap } from '@pdc/service-apdf';
 import { bootstrap as applicationBootstrap } from '@pdc/service-application';
 import { bootstrap as carpoolBootstrap } from '@pdc/service-carpool';
 import { bootstrap as ceeBootstrap } from '@pdc/service-cee';
@@ -24,20 +25,21 @@ import { config } from './config';
 @kernel({
   config,
   children: [
-    ...applicationBootstrap.serviceProviders,
     ...acquisitionBootstrap.serviceProviders,
+    ...apdfBootstrap.serviceProviders,
+    ...applicationBootstrap.serviceProviders,
     ...carpoolBootstrap.serviceProviders,
     ...ceeBootstrap.serviceProviders,
+    ...certificateBootstrap.serviceProviders,
     ...companyBootstrap.serviceProviders,
     ...fraudBootstrap.serviceProviders,
+    ...honorBootstrap.serviceProviders,
+    ...monitoringBootstrap.serviceProviders,
     ...operatorBootstrap.serviceProviders,
     ...policyBootstrap.serviceProviders,
     ...territoryBootstrap.serviceProviders,
     ...tripcheckBootstrap.serviceProviders,
     ...userBootstrap.serviceProviders,
-    ...certificateBootstrap.serviceProviders,
-    ...monitoringBootstrap.serviceProviders,
-    ...honorBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [SeedCommand, StatsRefreshCommand, Commands.CallCommand],

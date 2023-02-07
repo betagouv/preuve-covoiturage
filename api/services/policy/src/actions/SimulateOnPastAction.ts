@@ -26,7 +26,7 @@ import { alias } from '../shared/policy/simulateOnPast.schema';
   ],
 })
 export class SimulateOnPastAction extends AbstractAction {
-  private readonly FOUR_DAYS_IN_SECONDS: number = 4 * 86400;
+  private readonly TEN_DAYS_IN_SECONDS: number = 10 * 86400;
 
   constructor(
     private tripRepository: TripRepositoryProviderInterfaceResolver,
@@ -73,14 +73,18 @@ export class SimulateOnPastAction extends AbstractAction {
       done = results.done;
       if (results.value) {
         for (const carpool of results.value) {
-          // 3. For each trip, process
-          const incentive = await policy.processStateless(carpool);
-          const finalIncentive = await policy.processStateful(store, incentive.export());
-          const finalAmount = finalIncentive.get();
-          if (finalAmount > 0) {
-            carpool_subsidized += 1;
+          // 3. For each trip, process stateless and stateful safely
+          try {
+            const incentive = await policy.processStateless(carpool);
+            const finalIncentive = await policy.processStateful(store, incentive.export());
+            const finalAmount = finalIncentive.get();
+            if (finalAmount > 0) {
+              carpool_subsidized += 1;
+            }
+            amount += finalAmount;
+          } catch (e) {
+            console.error(e);
           }
-          amount += finalAmount;
         }
       }
     } while (!done);
@@ -98,7 +102,7 @@ export class SimulateOnPastAction extends AbstractAction {
   private cacheSimultionResult(params: ParamsInterface, result: ResultInterface): void {
     this.connection
       .getClient()
-      .set(this.getSimulationCachingKey(params), JSON.stringify(result), 'EX', this.FOUR_DAYS_IN_SECONDS);
+      .set(this.getSimulationCachingKey(params), JSON.stringify(result), 'EX', this.TEN_DAYS_IN_SECONDS);
   }
 
   private getSimulationCachingKey(params: ParamsInterface): Redis.KeyType {

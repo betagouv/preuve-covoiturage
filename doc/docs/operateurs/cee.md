@@ -92,4 +92,6 @@ vMq3Z5rUJEjjZzYrnNkooqAXtzhp4Tl/i4t1n2XFS3pqu2vqjtDQ9+cRt6Fv8Wsx
 
 ## Des questions ?
 
-Contactez equipe [chez] covoiturage.beta.gouv.fr
+Contactez technique [chez] covoiturage.beta.gouv.fr
+
+## Schema OpenAPI

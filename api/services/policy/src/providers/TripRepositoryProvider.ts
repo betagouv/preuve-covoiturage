@@ -17,36 +17,39 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
 
   async *findTripByGeo(coms: string[], from: Date, to: Date): AsyncGenerator<CarpoolInterface[], void, void> {
     const query = {
-      text: `SELECT
-      t.carpool_id as _id,
-      t.trip_id,
-      t.operator_siret,
-      t.operator_class,
-      t.passenger_payment,
-      t.passenger_identity_uuid,
-      t.passenger_has_travel_pass,
-      t.passenger_is_over_18,
-      t.driver_payment,
-      t.driver_identity_uuid,
-      t.driver_has_travel_pass,
-      t.datetime,
-      t.seats,
-      t.duration,
-      t.distance,
-      t.cost,
-      t.carpool_start as start,
-      t.carpool_end as end,
-      t.start_geo_code
-    FROM policy.trips t
-    WHERE
-    (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[])) AND
-    t.datetime >= $2::timestamp AND
-    t.datetime < $3::timestamp AND
-      t.carpool_status = 'ok'
-    ORDER BY t.datetime ASC`,
+      text: `
+        SELECT
+          t.carpool_id as _id,
+          t.trip_id,
+          t.operator_siret,
+          t.operator_class,
+          t.passenger_payment,
+          t.passenger_identity_uuid,
+          t.passenger_has_travel_pass,
+          t.passenger_is_over_18,
+          t.driver_payment,
+          t.driver_identity_uuid,
+          t.driver_has_travel_pass,
+          t.datetime,
+          t.seats,
+          t.duration,
+          t.distance,
+          t.cost,
+          t.carpool_start as start,
+          t.carpool_end as end,
+          t.start_geo_code
+        FROM ${this.table} t
+        WHERE
+          (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[]))
+          AND t.datetime >= $2::timestamp
+          AND t.datetime < $3::timestamp
+          AND t.carpool_status = 'ok'
+        ORDER BY t.datetime ASC
+      `,
       values: [coms, from, to],
     };
-    await (yield* this.queryAndYieldRows(query, 300));
+
+    yield* this.queryAndYieldRows(query, 300);
   }
 
   async *findTripByPolicy(
@@ -102,10 +105,10 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
             `
         }
         WHERE
-          (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[])) AND
-          t.datetime >= $2::timestamp AND
-          t.datetime < $3::timestamp AND
-          t.carpool_status = 'ok'::carpool.carpool_status_enum
+          (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[]))
+          AND t.datetime >= $2::timestamp
+          AND t.datetime < $3::timestamp
+          AND t.carpool_status = 'ok'::carpool.carpool_status_enum
           ${override ? '' : 'AND pi.carpool_id IS NULL'}
         ORDER BY t.datetime ASC
         `,

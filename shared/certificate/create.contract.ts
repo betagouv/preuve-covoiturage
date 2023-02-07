@@ -14,7 +14,7 @@ export interface ParamsInterface {
 export interface ResultInterface {
   uuid: string;
   created_at: Date;
-  meta: CertificateMetaInterface;
+  meta: Omit<CertificateMetaInterface, 'identity' | 'operator'>;
 }
 
 export type RepositoryInterface = Required<ParamsInterface>;

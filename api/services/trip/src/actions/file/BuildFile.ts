@@ -6,16 +6,17 @@ import { normalizeExport, normalizeOpendata } from '../../helpers/normalizeExpor
 import fs from 'fs';
 import os from 'os';
 import { getOpenDataExportName } from '../../helpers/getOpenDataExportName';
-import { PgCursorHandler } from '../../interfaces/PromisifiedPgCursor';
+import { PgCursorHandler } from '../../shared/common/PromisifiedPgCursor';
 import { FormatInterface, ParamsInterface } from '../../shared/trip/buildExport.contract';
 import { BuildExportAction } from '../BuildExportAction';
+import { ExportTripInterface } from '~/interfaces';
 
 @provider()
 export class BuildFile {
   constructor() {}
 
   public async buildCsvFromCursor(
-    cursor: PgCursorHandler,
+    cursor: PgCursorHandler<ExportTripInterface>,
     params: ParamsInterface,
     date: Date,
     isOpendata: boolean,

@@ -22,8 +22,6 @@ import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
 import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
 import { StatsAction } from './actions/StatsAction';
 
-import { FundingRequestsListAction } from './actions/FundingRequestsListAction';
-import { FundingRequestsRepositoryProvider } from './providers/FundingRequestsRepositoryProvider';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvider';
 import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
@@ -41,7 +39,6 @@ import { SimulateOnPastByGeoAction } from './actions/SimulateOnPastByGeoAction';
     IncentiveRepositoryProvider,
     S3StorageProvider,
     TerritoryRepositoryProvider,
-    FundingRequestsRepositoryProvider,
   ],
   validator: [
     listSchemaBinding,
@@ -55,7 +52,6 @@ import { SimulateOnPastByGeoAction } from './actions/SimulateOnPastByGeoAction';
     ApplyAction,
     FinalizeAction,
     FindAction,
-    FundingRequestsListAction,
     ListAction,
     SimulateOnFutureAction,
     SimulateOnPastAction,
