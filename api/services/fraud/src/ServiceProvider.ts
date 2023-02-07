@@ -9,8 +9,9 @@ import { GeoProvider } from '@pdc/provider-geo';
 import { config } from './config';
 import { FraudCheckRepositoryProvider } from './providers/FraudCheckRepositoryProvider';
 
-import { CheckAction } from './actions/CheckAction';
 import { CheckEngine } from './engine/CheckEngine';
+import { CheckOneAction } from './actions/CheckOneAction';
+import { CheckPendingAction } from './actions/CheckPendingAction';
 
 @serviceProvider({
   config,
@@ -22,7 +23,7 @@ import { CheckEngine } from './engine/CheckEngine';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [CheckAction],
+  handlers: [CheckOneAction, CheckPendingAction],
   queues: ['fraudcheck'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
