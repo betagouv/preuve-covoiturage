@@ -14,10 +14,7 @@ import { FraudCheckRepositoryProviderInterfaceResolver } from '../interfaces';
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
 export class CheckOneAction extends Action {
-  constructor(
-    private engine: CheckEngine,
-    private repository: FraudCheckRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private engine: CheckEngine, private repository: FraudCheckRepositoryProviderInterfaceResolver) {
     super();
   }
 
