@@ -41,12 +41,6 @@ export class SimulateOnPastAction extends AbstractAction {
     const start_date = new Date();
     start_date.setMonth(today.getMonth() - params.months);
 
-    // 0. Returns Redis cache result for a given territory and month number if present
-    const cachedResult: string = await this.connection.getClient().get(this.getSimulationCachingKey(params));
-    if (cachedResult) {
-      return JSON.parse(cachedResult);
-    }
-
     // 1. Find selector and instanciate policy
     const territory_selector = await this.territoryRepository.findSelectorFromId(params.territory_id);
     const serialized_policy: SerializedPolicyInterface = {
