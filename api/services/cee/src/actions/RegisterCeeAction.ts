@@ -1,5 +1,5 @@
 import { createSign } from 'crypto';
-import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common';
+import { ConfigInterfaceResolver, ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/cee/registerApplication.contract';
@@ -8,6 +8,8 @@ import { alias } from '../shared/cee/registerApplication.schema';
 
 import {
   ApplicationCooldownConstraint,
+  CeeApplicationError,
+  CeeApplicationErrorEnum,
   CeeJourneyTypeEnum,
   CeeRepositoryProviderInterfaceResolver,
   RegisteredCeeApplication,
@@ -51,11 +53,38 @@ export class RegisterCeeAction extends AbstractAction {
 
     const operator_id = getOperatorIdOrFail(context);
 
-    switch (params.journey_type) {
-      case CeeJourneyTypeEnum.Short:
-        return this.processForShortApplication(operator_id, params);
-      case CeeJourneyTypeEnum.Long:
-        return this.proceesForLongApplication(operator_id, params);
+    try {
+      switch (params.journey_type) {
+        case CeeJourneyTypeEnum.Short:
+          return await this.processForShortApplication(operator_id, params);
+        case CeeJourneyTypeEnum.Long:
+          return await this.proceesForLongApplication(operator_id, params);
+      }
+    } catch (e) {
+      console.error('TOTO');
+      console.error(e.rpcError);
+      const errorData: CeeApplicationError = {
+        operator_id,
+        error_type:
+          e instanceof InvalidParamsException
+            ? CeeApplicationErrorEnum.Date
+            : e instanceof NotFoundException
+            ? CeeApplicationErrorEnum.NonEligible
+            : e instanceof ConflictException
+            ? CeeApplicationErrorEnum.Conflict
+            : CeeApplicationErrorEnum.Validation,
+        journey_type: params.journey_type,
+        payload: JSON.stringify(params),
+        last_name_trunc: params.last_name_trunc,
+        driving_license: params.driving_license,
+        phone_trunc: params['phone_trunc'] || undefined,
+        operator_journey_id: params['operator_journey_id'] || undefined,
+        application_id: e instanceof ConflictException ? e.rpcError.data?.uuid : undefined,
+      };
+      try {
+        await this.ceeRepository.registerApplicationError(errorData);
+      } catch {}
+      throw e;
     }
   }
 
