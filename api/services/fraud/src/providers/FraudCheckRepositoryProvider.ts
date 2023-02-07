@@ -6,6 +6,7 @@ import {
   FraudCheckEntry,
   FraudCheckRepositoryUpdateCallback,
   SearchInterface,
+  FraudCheck,
 } from '../interfaces';
 
 @provider({
@@ -111,6 +112,44 @@ export class FraudCheckRepositoryProvider extends FraudCheckRepositoryProviderIn
     }
   }
 
+  protected async createOrUpdateResults(data: FraudCheck[], pool: PoolClient): Promise<void> {
+    if (data && data.length) {
+      const values: [Array<number>, Array<string>, Array<string>, Array<string>, Array<number>, Array<string>] =
+        data.reduce(
+          ([acquisition_id, method, uuid, status, karma, extra], i) => {
+            acquisition_id.push(i.acquisition_id);
+            method.push(i.method);
+            uuid.push(i.uuid);
+            status.push(i.status);
+            karma.push(i.karma);
+            extra.push(JSON.stringify(i.data || {}));
+            return [acquisition_id, method, uuid, status, karma, extra];
+          },
+          [[], [], [], [], [], []],
+        );
+      await pool.query({
+        text: `
+          INSERT INTO ${this.resultTable} (
+            acquisition_id,
+            method,
+            uuid,
+            status,
+            karma,
+            data
+          ) SELECT * FROM UNNEST(
+            $1::int[],
+            $2::varchar[],
+            $3::uuid[],
+            $4::fraudcheck.status_enum[],
+            $5::float[],
+            $6::json[]
+          )
+        `,
+        values,
+      });
+    }
+  }
+
   public async createOrUpdate(data: FraudCheckEntry, poolClient?: PoolClient): Promise<void> {
     const pool = poolClient ?? (await this.connection.getClient().connect());
     await pool.query(poolClient ? 'SAVEPOINT results' : 'BEGIN');
@@ -138,41 +177,7 @@ export class FraudCheckRepositoryProvider extends FraudCheckRepositoryProviderIn
         values: [data.acquisition_id, data.status, data.karma],
       };
       await pool.query(query);
-      if (data.data && data.data.length) {
-        const values: [Array<number>, Array<string>, Array<string>, Array<string>, Array<number>, Array<string>] =
-          data.data.reduce(
-            ([acquisition_id, method, uuid, status, karma, extra], i) => {
-              acquisition_id.push(i.acquisition_id);
-              method.push(i.method);
-              uuid.push(i.uuid);
-              status.push(i.status);
-              karma.push(i.karma);
-              extra.push(JSON.stringify(i.data || {}));
-              return [acquisition_id, method, uuid, status, karma, extra];
-            },
-            [[], [], [], [], [], []],
-          );
-        await pool.query({
-          text: `
-            INSERT INTO ${this.resultTable} (
-              acquisition_id,
-              method,
-              uuid,
-              status,
-              karma,
-              data
-            ) SELECT * FROM UNNEST(
-              $1::int[],
-              $2::varchar[],
-              $3::uuid[],
-              $4::fraudcheck.status_enum[],
-              $5::float[],
-              $6::json[]
-            )
-          `,
-          values,
-        });
-      }
+      await this.createOrUpdateResults(data.data, pool);
       await pool.query(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
     } catch (e) {
       await pool.query(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
