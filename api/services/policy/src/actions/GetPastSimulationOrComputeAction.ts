@@ -1,4 +1,4 @@
-import { ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
+import { ContextType, handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import Redis from 'ioredis';
@@ -46,7 +46,7 @@ export class GetPastSimulationOrComputeAction extends AbstractAction {
       channel: { service: simulatePastHandler.service },
       call: context.call,
     });
-    throw Error(`[policy] No cached policy simulation for territory ${params.territory_id}`);
+    throw new NotFoundException(`[policy] No cached policy simulation for territory ${params.territory_id}`);
   }
 
   private getSimulationCachingKey(params: ParamsInterface): Redis.KeyType {
