@@ -6,7 +6,7 @@ export type ResultInterface = void;
 
 export const handlerConfig = {
   service: 'fraudcheck',
-  method: 'check',
+  method: 'checkOne',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

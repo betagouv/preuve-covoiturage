@@ -1,7 +1,7 @@
 import { provider } from '@ilos/common';
 
 import { DatetimeIdentityCheckParamsInterface } from './DatetimeIdentityCheckParamsInterface';
-import { HandleCheckInterface, FraudCheckResult } from '../../../interfaces';
+import { HandleCheckInterface, CheckHandleCallback } from '../../../interfaces';
 import { DatetimeIdentityCheckPreparator } from '../DatetimeIdentityCheckPreparator';
 import { step } from '../../helpers/math';
 
@@ -13,19 +13,21 @@ export class DatetimeIdentitySequenceCheck implements HandleCheckInterface<Datet
   protected readonly max: number = 600; // above = 0
   protected readonly min: number = 0; // below = 100
 
-  async handle(data: DatetimeIdentityCheckParamsInterface): Promise<FraudCheckResult> {
-    return data.length === 0
-      ? 0
-      : 1 -
-          step(
-            data
-              .filter((d) => d.interval > 0)
-              .reduce((max, i) => {
-                max = Math.max(max, i.interval);
-                return max;
-              }, 0),
-            this.min,
-            this.max,
-          );
+  async handle(data: DatetimeIdentityCheckParamsInterface, cb: CheckHandleCallback): Promise<void> {
+    cb(
+      data.length === 0
+        ? 0
+        : 1 -
+            step(
+              data
+                .filter((d) => d.interval > 0)
+                .reduce((max, i) => {
+                  max = Math.max(max, i.interval);
+                  return max;
+                }, 0),
+              this.min,
+              this.max,
+            ),
+    );
   }
 }

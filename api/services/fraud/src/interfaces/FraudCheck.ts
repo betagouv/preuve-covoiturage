@@ -6,17 +6,13 @@ export enum FraudCheckStatusEnum {
   Pending = 'pending',
 }
 
-export interface FraudCheckIdentifier {
+export interface FraudCheck {
+  acquisition_id: number;
   method: string;
-}
-
-export interface FraudCheckData {
-  karma: FraudCheckResult;
-  meta: any;
-}
-
-export interface FraudCheck extends FraudCheckIdentifier, Partial<FraudCheckData> {
+  uuid: string;
   status: FraudCheckStatusEnum;
+  karma: FraudCheckResult;
+  data?: any;
 }
 
 export interface FraudCheckEntry {
