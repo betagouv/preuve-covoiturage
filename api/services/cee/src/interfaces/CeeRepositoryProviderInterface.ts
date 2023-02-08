@@ -82,9 +82,13 @@ export interface TimeRangeConstraint {
 }
 
 export enum CeeApplicationErrorEnum {
+  /** Payload validation error */
   Validation = 'validation',
+  /** Date validation error (application too early) */
   Date = 'date',
+  /** Short distance journey not eligible (or not found) */
   NonEligible = 'non-eligible',
+  /** Another application is already registered */
   Conflict = 'conflict',
 }
 
