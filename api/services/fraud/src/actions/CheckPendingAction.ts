@@ -1,4 +1,4 @@
-import { Action } from '@ilos/core';
+import { Action, env } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
@@ -38,6 +38,10 @@ export class CheckPendingAction extends Action {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    if (!!env('APP_DISABLE_FRAUDCHECK', false)) {
+      return;
+    }
+
     await this.repository.populate(params?.last_hours || 1);
     const { timeout, batchSize } = this.config.get('engine', {});
     const [acquisitions, cb] = await this.repository.findThenUpdate(
