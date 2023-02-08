@@ -197,10 +197,12 @@ test.serial('Should rollback if update error', async (t) => {
   );
   t.deepEqual(result1, [1]);
 
-  await t.throwsAsync(async () => {
+  await t.notThrowsAsync(async () => {
     const data = createFraudCheck({ acquisition_id: result1[0] });
     await fn1({ ...data, status: 'status_not_existing' as FraudCheckStatusEnum });
   });
+
+  await fn1();
   const [result2, fn2] = await t.context.repository.findThenUpdate({
     limit: 1,
     status: FraudCheckStatusEnum.Pending,

@@ -55,21 +55,25 @@ export class CheckPendingAction extends Action {
     const msg = `[fraudcheck] processed (${acquisitions.length})`;
     console.debug(`Processing fraudcheck ${acquisitions.join(', ')}`);
     console.time(msg);
-    for (const acquisition of acquisitions) {
-      try {
-        cb(await this.engine.run(acquisition, []));
-      } catch (e) {
-        console.debug(`[fraudcheck] error ${e.message} processing ${acquisition}`);
-        cb({
-          acquisition_id: acquisition,
-          status: FraudCheckStatusEnum.Error,
-          karma: 0,
-          data: [],
-        });
+    try {
+      for (const acquisition of acquisitions) {
+        try {
+          const result = await this.engine.run(acquisition, []);
+          await cb(result);
+        } catch (e) {
+          console.debug(`[fraudcheck] error ${e.message} processing ${acquisition}`);
+          await cb({
+            acquisition_id: acquisition,
+            status: FraudCheckStatusEnum.Error,
+            karma: 0,
+            data: [],
+          });
+        }
       }
+    } finally {
+      await cb();
+      console.timeEnd(msg);
     }
-    await cb();
-    console.timeEnd(msg);
     return;
   }
 }
