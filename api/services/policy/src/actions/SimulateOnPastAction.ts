@@ -44,7 +44,7 @@ export class SimulateOnPastAction extends AbstractAction {
     // 0. Returns Redis cache result for a given territory and month number if present
     const cachedResult: string = await this.connection.getClient().get(this.getSimulationCachingKey(params));
     if (cachedResult) {
-      console.debug('Found cached simulation for territory ', params.territory_id);
+      console.debug('[policy] Found cached simulation for territory ', params.territory_id);
       return JSON.parse(cachedResult);
     }
 

@@ -36,15 +36,15 @@ export class GetPastSimulationOrComputeAction extends AbstractAction {
     // 0. Returns Redis cache result for a given territory and month number if present
     const cachedResult: string = await this.connection.getClient().get(this.getSimulationCachingKey(params));
     if (cachedResult) {
-      console.debug(`Found cached policy simulation for territory ${params.territory_id}`);
+      console.debug(`[policy] Found cached policy simulation for territory ${params.territory_id}`);
       return JSON.parse(cachedResult);
     }
 
     this.kernel.notify<SimulateOnPastParams>(simulatePastSignature, params, {
-      channel: { service: handlerConfig.service },
+      channel: { service: simulatePastHandler.service },
       call: context.call,
     });
-    throw Error(`No cached policy simulation for territory ${params.territory_id}`);
+    throw Error(`[policy] No cached policy simulation for territory ${params.territory_id}`);
   }
 
   private getSimulationCachingKey(params: ParamsInterface): Redis.KeyType {
