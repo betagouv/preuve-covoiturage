@@ -36,7 +36,9 @@ export class GetPastSimulationOrComputeAction extends AbstractAction {
     // 0. Returns Redis cache result for a given territory and month number if present
     const cachedResult: string = await this.connection.getClient().get(this.getSimulationCachingKey(params));
     if (cachedResult) {
-      console.debug(`[policy] Found cached policy simulation for territory ${params.territory_id}`);
+      console.debug(
+        `[policy] Found cached policy simulation for territory ${params.territory_id} and ${params.months} months`,
+      );
       return JSON.parse(cachedResult);
     }
 
