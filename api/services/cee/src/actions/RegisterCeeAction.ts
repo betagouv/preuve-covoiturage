@@ -61,7 +61,6 @@ export class RegisterCeeAction extends AbstractAction {
           return await this.proceesForLongApplication(operator_id, params);
       }
     } catch (e) {
-      console.error(e.rpcError);
       const errorData: CeeApplicationError = {
         operator_id,
         error_type:
