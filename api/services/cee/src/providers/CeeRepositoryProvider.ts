@@ -15,6 +15,7 @@ import {
   ValidJourney,
   ValidJourneyConstraint,
   RegisteredCeeApplication,
+  CeeApplicationError,
 } from '../interfaces';
 
 @provider({
@@ -22,6 +23,7 @@ import {
 })
 export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolver {
   public readonly table = 'cee.cee_applications';
+  public readonly errorTable = 'cee.cee_application_errors';
   public readonly carpoolTable = 'carpool.carpools';
   public readonly identityTable = 'carpool.identities';
   public readonly operatorTable = 'operator.operators';
@@ -277,5 +279,30 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     const { journey_type, ...application } = data;
     await this.registerApplication(journey_type, application);
     return;
+  }
+
+  async registerApplicationError(data: CeeApplicationError): Promise<void> {
+    const objectKeys = Object.keys(data);
+    const keys = [
+      'operator_id',
+      'error_type',
+      'journey_type',
+      'datetime',
+      'last_name_trunc',
+      'phone_trunc',
+      'driving_license',
+      'operator_journey_id',
+      'application_id',
+    ].filter((k) => objectKeys.includes(k));
+    const values = keys.map((k) => data[k]);
+
+    const query = {
+      values,
+      text: `
+        INSERT INTO ${this.errorTable} (${keys.join(',')}) VALUES(${keys.map((_, i) => `$${i + 1}`).join(',')})
+      `,
+    };
+
+    await this.connection.getClient().query(query);
   }
 }

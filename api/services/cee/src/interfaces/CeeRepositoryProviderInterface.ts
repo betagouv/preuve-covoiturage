@@ -81,6 +81,29 @@ export interface TimeRangeConstraint {
   long: number;
 }
 
+export enum CeeApplicationErrorEnum {
+  /** Payload validation error */
+  Validation = 'validation',
+  /** Date validation error (application too early) */
+  Date = 'date',
+  /** Short distance journey not eligible (or not found) */
+  NonEligible = 'non-eligible',
+  /** Another application is already registered */
+  Conflict = 'conflict',
+}
+
+export interface CeeApplicationError {
+  operator_id: number;
+  error_type: CeeApplicationErrorEnum;
+  journey_type: CeeJourneyTypeEnum;
+  datetime?: string;
+  last_name_trunc?: string;
+  phone_trunc?: string;
+  driving_license?: string;
+  operator_journey_id?: string;
+  application_id?: string;
+}
+
 export abstract class CeeRepositoryProviderInterfaceResolver {
   abstract readonly table: string;
   abstract searchForShortApplication(
@@ -101,4 +124,5 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
     constraint: ApplicationCooldownConstraint,
   ): Promise<RegisteredCeeApplication>;
   abstract importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void>;
+  abstract registerApplicationError(data: CeeApplicationError): Promise<void>;
 }

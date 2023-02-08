@@ -4,6 +4,7 @@ import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 import { CeeRepositoryProvider } from './CeeRepositoryProvider';
 import { config } from '../config';
 import {
+  CeeApplicationErrorEnum,
   CeeJourneyTypeEnum,
   SearchCeeApplication,
   SearchJourney,
@@ -215,4 +216,37 @@ test.serial('Should match cooldown criteria', async (t) => {
       config.rules.applicationCooldownConstraint,
     );
   });
+});
+
+test.serial('Should resgister application error', async (t) => {
+  const uuidResult = await t.context.db.connection
+    .getClient()
+    .query(`SELECT _id FROM ${t.context.repository.table} LIMIT 1`);
+  const data1 = {
+    operator_id: 1,
+    error_type: CeeApplicationErrorEnum.Conflict,
+    journey_type: CeeJourneyTypeEnum.Long,
+    last_name_trunc: 'TOT',
+    operator_journey_id: 'TOTO',
+  };
+  await t.context.repository.registerApplicationError(data1);
+
+  const data2 = {
+    operator_id: 1,
+    error_type: CeeApplicationErrorEnum.Date,
+    journey_type: CeeJourneyTypeEnum.Long,
+    datetime: new Date().toISOString(),
+    driving_license: 'TOTO',
+    application_id: uuidResult.rows[0]?._id,
+  };
+  await t.context.repository.registerApplicationError(data2);
+
+  const errorResults = await t.context.db.connection.getClient().query({
+    text: `SELECT * FROM ${t.context.repository.errorTable} ORDER BY created_at`,
+    values: [],
+  });
+
+  t.is(errorResults.rowCount, 2);
+  t.like(errorResults.rows[0], { ...data1 });
+  t.like(errorResults.rows[1], { ...data2 });
 });
