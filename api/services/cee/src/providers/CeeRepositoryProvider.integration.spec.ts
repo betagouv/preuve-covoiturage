@@ -226,7 +226,6 @@ test.serial('Should resgister application error', async (t) => {
     operator_id: 1,
     error_type: CeeApplicationErrorEnum.Conflict,
     journey_type: CeeJourneyTypeEnum.Long,
-    payload: JSON.stringify({ fake: 'payload' }),
     last_name_trunc: 'TOT',
     operator_journey_id: 'TOTO',
   };
@@ -236,7 +235,7 @@ test.serial('Should resgister application error', async (t) => {
     operator_id: 1,
     error_type: CeeApplicationErrorEnum.Date,
     journey_type: CeeJourneyTypeEnum.Long,
-    payload: JSON.stringify({ fake: 'payload' }),
+    datetime: new Date().toISOString(),
     driving_license: 'TOTO',
     application_id: uuidResult.rows[0]?._id,
   };
@@ -248,6 +247,6 @@ test.serial('Should resgister application error', async (t) => {
   });
 
   t.is(errorResults.rowCount, 2);
-  t.like(errorResults.rows[0], { ...data1, payload: JSON.parse(data1.payload) });
-  t.like(errorResults.rows[1], { ...data2, payload: JSON.parse(data1.payload) });
+  t.like(errorResults.rows[0], { ...data1 });
+  t.like(errorResults.rows[1], { ...data2 });
 });

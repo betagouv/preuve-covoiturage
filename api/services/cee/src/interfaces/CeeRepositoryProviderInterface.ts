@@ -92,7 +92,7 @@ export interface CeeApplicationError {
   operator_id: number;
   error_type: CeeApplicationErrorEnum;
   journey_type: CeeJourneyTypeEnum;
-  payload: string;
+  datetime?: string;
   last_name_trunc?: string;
   phone_trunc?: string;
   driving_license?: string;

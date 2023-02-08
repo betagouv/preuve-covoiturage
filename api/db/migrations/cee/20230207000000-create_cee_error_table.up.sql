@@ -6,11 +6,11 @@ CREATE TABLE IF NOT EXISTS cee.cee_application_errors (
   operator_id INT NOT NULL REFERENCES operator.operators,
   journey_type cee.journey_type_enum NOT NULL,
   error_type cee.application_error_enum NOT NULL,
-  payload JSON NOT NULL,
   last_name_trunc VARCHAR(3),
   phone_trunc VARCHAR(32),
   driving_license VARCHAR(64),
-  operator_journey_id varchar(256),
+  datetime VARCHAR(64),
+  operator_journey_id VARCHAR(256),
   application_id uuid REFERENCES cee.cee_applications
 );
 

@@ -61,7 +61,6 @@ export class RegisterCeeAction extends AbstractAction {
           return await this.proceesForLongApplication(operator_id, params);
       }
     } catch (e) {
-      console.error('TOTO');
       console.error(e.rpcError);
       const errorData: CeeApplicationError = {
         operator_id,
@@ -74,11 +73,11 @@ export class RegisterCeeAction extends AbstractAction {
             ? CeeApplicationErrorEnum.Conflict
             : CeeApplicationErrorEnum.Validation,
         journey_type: params.journey_type,
-        payload: JSON.stringify(params),
-        last_name_trunc: params.last_name_trunc,
-        driving_license: params.driving_license,
-        phone_trunc: params['phone_trunc'] || undefined,
-        operator_journey_id: params['operator_journey_id'] || undefined,
+        datetime: params['datetime'],
+        last_name_trunc: params['last_name_trunc'],
+        driving_license: params['driving_license'],
+        phone_trunc: params['phone_trunc'],
+        operator_journey_id: params['operator_journey_id'],
         application_id: e instanceof ConflictException ? e.rpcError.data?.uuid : undefined,
       };
       try {

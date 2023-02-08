@@ -287,7 +287,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       'operator_id',
       'error_type',
       'journey_type',
-      'payload',
+      'datetime',
       'last_name_trunc',
       'phone_trunc',
       'driving_license',
