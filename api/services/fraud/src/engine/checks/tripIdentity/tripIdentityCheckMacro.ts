@@ -33,7 +33,7 @@ export function tripIdentityCheckMacro<TestContext = unknown>(
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
   checkCtor: NewableType<HandleCheckInterface<TripIdentityCheckParamsInterface>>,
 ): TripIdentityMacroInterface {
-  const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
+  // const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
   const range: Macro<[Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?], KernelTestFn> =
     anyTest.macro({
       exec: async (
@@ -42,9 +42,7 @@ export function tripIdentityCheckMacro<TestContext = unknown>(
         min: number,
         max: number,
       ) => {
-        const check = t.context.kernel
-          .get<ServiceContainerInterface>(serviceProviderCtor)
-          .get<HandleCheckInterface<TripIdentityCheckParamsInterface>>(checkCtor);
+        const check = new checkCtor();
         const data = input.map((i) => faker(i));
         const box = { result: undefined };
         await check.handle(data, (nb: number) => (box.result = nb));
@@ -59,17 +57,17 @@ export function tripIdentityCheckMacro<TestContext = unknown>(
 
   const test = anyTest as TestFn<KernelTestFn>;
   test.before(async (t) => {
-    const { kernel } = await before();
-    t.context.kernel = kernel;
+    // const { kernel } = await before();
+    // t.context.kernel = kernel;
   });
   test.after.always(async (t) => {
-    await after({ kernel: t.context.kernel });
+    // await after({ kernel: t.context.kernel });
   });
 
   return {
     range,
-    after,
-    before,
+    after: null,
+    before: null,
     test,
   };
 }
