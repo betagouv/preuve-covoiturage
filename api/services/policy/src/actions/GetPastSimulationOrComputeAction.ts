@@ -1,9 +1,13 @@
-import { handler } from '@ilos/common';
+import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import Redis from 'ioredis';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
+import {
+  signature as simulatePastSignature,
+  ParamsInterface as SimulateOnPastParams,
+} from '../shared/policy/simulateOnPast.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/getPastSimulationOrCompute.contract';
 
 import { RedisConnection } from '@ilos/connection-redis/dist';
 import { alias } from '../shared/policy/simulateOnPast.schema';
@@ -19,7 +23,7 @@ import { alias } from '../shared/policy/simulateOnPast.schema';
   ],
 })
 export class GetPastSimulationOrComputeAction extends AbstractAction {
-  constructor(private connection: RedisConnection) {
+  constructor(private connection: RedisConnection, private kernel: KernelInterfaceResolver) {
     super();
   }
 
@@ -31,12 +35,15 @@ export class GetPastSimulationOrComputeAction extends AbstractAction {
     // 0. Returns Redis cache result for a given territory and month number if present
     const cachedResult: string = await this.connection.getClient().get(this.getSimulationCachingKey(params));
     if (cachedResult) {
+      console.debug('Found cached simulation for territory ', params.territory_id);
       return JSON.parse(cachedResult);
     }
 
-    //1. Compute async and return / throw ... ?
-    // Try retrieve after 45s (configured request Timeout esle throw)
-    return result;
+    await this.kernel.notify<SimulateOnPastParams>(simulatePastSignature, params, {
+      channel: { service: handlerConfig.service },
+      call: { user: { permissions: ['registry.operator.find'] } },
+    });
+    throw Error('');
   }
 
   private getSimulationCachingKey(params: ParamsInterface): Redis.KeyType {
