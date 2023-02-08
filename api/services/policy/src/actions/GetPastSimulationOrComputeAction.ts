@@ -1,10 +1,11 @@
-import { handler, KernelInterfaceResolver } from '@ilos/common';
+import { ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import Redis from 'ioredis';
 
 import {
   signature as simulatePastSignature,
+  handlerConfig as simulatePastHandler,
   ParamsInterface as SimulateOnPastParams,
 } from '../shared/policy/simulateOnPast.contract';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/getPastSimulationOrCompute.contract';
@@ -27,7 +28,7 @@ export class GetPastSimulationOrComputeAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const today = new Date();
     const start_date = new Date();
     start_date.setMonth(today.getMonth() - params.months);
@@ -35,15 +36,15 @@ export class GetPastSimulationOrComputeAction extends AbstractAction {
     // 0. Returns Redis cache result for a given territory and month number if present
     const cachedResult: string = await this.connection.getClient().get(this.getSimulationCachingKey(params));
     if (cachedResult) {
-      console.debug('Found cached simulation for territory ', params.territory_id);
+      console.debug(`Found cached policy simulation for territory ${params.territory_id}`);
       return JSON.parse(cachedResult);
     }
 
-    await this.kernel.notify<SimulateOnPastParams>(simulatePastSignature, params, {
+    this.kernel.notify<SimulateOnPastParams>(simulatePastSignature, params, {
       channel: { service: handlerConfig.service },
-      call: { user: { permissions: ['registry.operator.find'] } },
+      call: context.call,
     });
-    throw Error('');
+    throw Error(`No cached policy simulation for territory ${params.territory_id}`);
   }
 
   private getSimulationCachingKey(params: ParamsInterface): Redis.KeyType {
