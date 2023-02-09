@@ -192,14 +192,12 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       left join carpool.identities cip on cip._id = ccp.identity_id
       left join policy.incentives pid on ccd._id = pid.carpool_id and pid.policy_id = $4 and pid.status = 'validated'
       left join policy.incentives pip on ccp._id = pip.carpool_id and pip.policy_id = $4 and pid.status = 'validated'
-      left join geo.perimeters gps on ccp.start_geo_code = gps.arr and gps.year = extract(year from ccp.datetime)
-      left join geo.perimeters gpe on ccp.end_geo_code = gpe.arr and gpe.year = extract(year from (ccp.datetime + (ccd.duration || ' seconds')::interval))
+      left join geo.perimeters gps on ccp.start_geo_code = gps.arr and gps.year = geo.get_latest_millesime_or(extract(year from ccp.datetime)::smallint)
+      left join geo.perimeters gpe on ccp.end_geo_code = gpe.arr and gpe.year = geo.get_latest_millesime_or(extract(year from (ccp.datetime + (ccd.duration || ' seconds')::interval))::smallint)
 
       where pid.policy_id is not null or pip.policy_id is not null
 
-      order by
-        ccd.trip_id,
-        ccd.datetime
+      order by ccd.datetime
     `;
 
     const db = await this.connection.getClient().connect();
