@@ -3,13 +3,8 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import {
   FluxRepositoryInterface,
   FluxRepositoryInterfaceResolver,
-  InsertLastMonthFluxParamsInterface,
-  InsertLastMonthFluxResultInterface,
-  refreshAllFluxParamsInterface,
-  refreshAllFluxResultInterface,
   MonthlyFluxParamsInterface,
   MonthlyFluxResultInterface,
-  lastRecordMonthlyFluxParamsInterface,
   lastRecordMonthlyFluxResultInterface,
   EvolMonthlyFluxParamsInterface,
   EvolMonthlyFluxResultInterface,
@@ -25,31 +20,36 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   private readonly table = 'observatory.monthly_flux';
   private readonly perim_table = 'geo.perimeters';
   private readonly insert_procedure = 'observatory.insert_monthly_flux';
-  private readonly today = new Date();
-  private readonly startTime = new Date('2020-01-01').getTime();
-  private readonly endTime = new Date(this.today.setMonth(this.today.getMonth() - 1)).getTime();
+  private readonly startDate = new Date('2020-01-01');
 
   constructor(private pg: PostgresConnection) {}
 
-  async refreshAllFlux(params: refreshAllFluxParamsInterface): Promise<refreshAllFluxResultInterface> {
-    let currentTime = this.startTime;
+  get today() {
+    return new Date();
+  }
+
+  get endDate() {
+    return new Date(this.today.setMonth(this.today.getMonth() - 1));
+  }
+
+  async refreshAllFlux(): Promise<void> {
+    let currentDate = this.startDate;
     await this.pg.getClient().query(`TRUNCATE ${this.table};`);
 
-    while (currentTime <= this.endTime) {
+    while (currentDate <= this.endDate) {
       await this.pg.getClient().query({
-        values: [new Date(currentTime).getFullYear(), new Date(currentTime).getMonth() + 1],
+        values: [new Date(currentDate).getFullYear(), new Date(currentDate).getMonth() + 1],
         text: `
           CALL ${this.insert_procedure}($1, $2);
         `,
       });
-      const date = new Date(currentTime);
-      currentTime = new Date(date.setMonth(date.getMonth() + 1)).getTime();
+      currentDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
     }
   }
 
-  async insertLastMonthFlux(params: InsertLastMonthFluxParamsInterface): Promise<InsertLastMonthFluxResultInterface> {
+  async insertLastMonthFlux(): Promise<void> {
     await this.pg.getClient().query({
-      values: [new Date(this.endTime).getFullYear(), new Date(this.endTime).getMonth() + 1],
+      values: [new Date(this.endDate).getFullYear(), new Date(this.endDate).getMonth() + 1],
       text: `
         CALL ${this.insert_procedure}($1, $2);
       `,
@@ -57,10 +57,10 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   }
   // Retourne les données de la table observatory.monthly_flux pour le mois et l'année
   // et le type de territoire en paramètres
-  // Paramètres optionnels t2 et code pour filtrer les résultats sur un territoire
+  // Paramètres optionnels observe et code pour filtrer les résultats sur un territoire
   async getMonthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface> {
     const sql = {
-      values: [params.year, params.month, params.t, params.code],
+      values: [params.year, params.month, params.type, params.code],
       text: `SELECT 
         l_territory_1 as ter_1, lng_1, lat_1,
         l_territory_2 as ter_2, lng_2, lat_2,
@@ -72,15 +72,15 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       ${
         params.code
           ? `AND (territory_1 IN (
-          SELECT ${checkTerritoryParam(params.t)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+          SELECT ${checkTerritoryParam(params.type)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
             } WHERE year = $1) t 
-          WHERE ${checkTerritoryParam(params.t2)} = $4
+          WHERE ${checkTerritoryParam(params.observe)} = $4
         ) OR territory_2 IN (
-          SELECT ${checkTerritoryParam(params.t)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+          SELECT ${checkTerritoryParam(params.type)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
             } WHERE year = $1) t 
-          WHERE ${checkTerritoryParam(params.t2)} = $4
+          WHERE ${checkTerritoryParam(params.observe)} = $4
         ))`
           : ''
       } 
@@ -91,9 +91,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   }
 
   // Retourne l'année et le mois du dernier enregistrement de la table observatory.monthly_flux
-  async lastRecordMonthlyFlux(
-    params: lastRecordMonthlyFluxParamsInterface,
-  ): Promise<lastRecordMonthlyFluxResultInterface> {
+  async lastRecordMonthlyFlux(): Promise<lastRecordMonthlyFluxResultInterface> {
     const sql = `SELECT distinct year, month 
       FROM ${this.table} 
       WHERE type ='com' 
@@ -111,7 +109,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     const start = Number(params.year + String(params.month).padStart(2, '0'));
     const limit = params.past ? Number(params.past) * 12 + 1 : 25;
     const sql = {
-      values: [checkTerritoryParam(params.t), params.code, limit],
+      values: [checkTerritoryParam(params.type), params.code, limit],
       text: `
         SELECT year, month, sum(${indic}) AS ${indic}
         FROM ${this.table}
@@ -138,10 +136,10 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
         AND month = $2
         AND (territory_1 IN (
             SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
-            WHERE ${checkTerritoryParam(params.t)} = $3) 
+            WHERE ${checkTerritoryParam(params.type)} = $3) 
           OR territory_2 IN (
             SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
-            WHERE ${checkTerritoryParam(params.t)} = $3)
+            WHERE ${checkTerritoryParam(params.type)} = $3)
         ) 
         ORDER BY journeys DESC
         LIMIT $4;

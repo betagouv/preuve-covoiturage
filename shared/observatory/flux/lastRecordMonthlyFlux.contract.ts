@@ -1,5 +1,3 @@
-export type ParamsInterface = void;
-
 export interface ResultInterface {
   year: number;
   month: number;

@@ -1,12 +1,4 @@
 import {
-  ParamsInterface as InsertLastMonthDistributionParamsInterface,
-  ResultInterface as InsertLastMonthDistributionResultInterface,
-} from '../shared/observatory/distribution/insertLastMonthDistribution.contract';
-import {
-  ParamsInterface as refreshAllDistributionParamsInterface,
-  ResultInterface as refreshAllDistributionResultInterface,
-} from '../shared/observatory/distribution/refreshAllDistribution.contract';
-import {
   ParamsInterface as JourneysByHoursParamsInterface,
   ResultInterface as JourneysByHoursResultInterface,
 } from '../shared/observatory/distribution/journeysByHours.contract';
@@ -16,10 +8,6 @@ import {
 } from '../shared/observatory/distribution/journeysByDistances.contract';
 
 export {
-  InsertLastMonthDistributionParamsInterface,
-  InsertLastMonthDistributionResultInterface,
-  refreshAllDistributionParamsInterface,
-  refreshAllDistributionResultInterface,
   JourneysByHoursParamsInterface,
   JourneysByHoursResultInterface,
   JourneysByDistancesParamsInterface,
@@ -27,24 +15,18 @@ export {
 };
 
 export interface DistributionRepositoryInterface {
-  insertLastMonthDistribution(
-    params: InsertLastMonthDistributionParamsInterface,
-  ): Promise<InsertLastMonthDistributionResultInterface>;
-  refreshAllDistribution(params: refreshAllDistributionParamsInterface): Promise<refreshAllDistributionResultInterface>;
+  insertLastMonthDistribution(): Promise<void>;
+  refreshAllDistribution(): Promise<void>;
   getJourneysByHours(params: JourneysByHoursParamsInterface): Promise<JourneysByHoursResultInterface>;
   getJourneysByDistances(params: JourneysByDistancesParamsInterface): Promise<JourneysByDistancesResultInterface>;
 }
 
 export abstract class DistributionRepositoryInterfaceResolver implements DistributionRepositoryInterface {
-  async insertLastMonthDistribution(
-    params: InsertLastMonthDistributionParamsInterface,
-  ): Promise<InsertLastMonthDistributionResultInterface> {
+  async insertLastMonthDistribution(): Promise<void> {
     throw new Error();
   }
 
-  async refreshAllDistribution(
-    params: refreshAllDistributionParamsInterface,
-  ): Promise<refreshAllDistributionResultInterface> {
+  async refreshAllDistribution(): Promise<void> {
     throw new Error();
   }
 

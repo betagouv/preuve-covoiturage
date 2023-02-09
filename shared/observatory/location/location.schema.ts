@@ -6,11 +6,13 @@ export const schema = {
   properties: {
     start_date: {
       type: 'string',
+      format: 'date',
       minLength: 10,
       maxLength: 10,
     },
     end_date: {
       type: 'string',
+      format: 'date',
       minLength: 10,
       maxLength: 10,
     },
@@ -19,7 +21,7 @@ export const schema = {
       minimum: 0,
       maximum: 8,
     },
-    t: {
+    type: {
       type: 'string',
       enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
     },

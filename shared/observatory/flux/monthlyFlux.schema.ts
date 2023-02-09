@@ -14,11 +14,11 @@ export const schema = {
       minimum: 1,
       maximum: 12,
     },
-    t: {
+    type: {
       type: 'string',
       enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
     },
-    t2: {
+    observe: {
       type: 'string',
       enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
     },

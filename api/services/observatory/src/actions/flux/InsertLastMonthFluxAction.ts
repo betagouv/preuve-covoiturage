@@ -1,12 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  signature,
-} from '../../shared/observatory/flux/insertLastMonthFlux.contract';
+import { handlerConfig, signature } from '../../shared/observatory/flux/insertLastMonthFlux.contract';
 import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface';
 
 @handler({
@@ -19,7 +14,7 @@ export class InsertLastMonthFluxAction extends AbstractAction implements InitHoo
   }
 
   public async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(signature, null, {
+    await this.kernel.notify<void>(signature, null, {
       channel: {
         service: handlerConfig.service,
         metadata: {
@@ -32,7 +27,7 @@ export class InsertLastMonthFluxAction extends AbstractAction implements InitHoo
     });
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.fluxRepository.insertLastMonthFlux(params);
+  public async handle(): Promise<void> {
+    return this.fluxRepository.insertLastMonthFlux();
   }
 }

@@ -3,10 +3,6 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import {
   OccupationRepositoryInterface,
   OccupationRepositoryInterfaceResolver,
-  InsertLastMonthOccupationParamsInterface,
-  InsertLastMonthOccupationResultInterface,
-  refreshAllOccupationParamsInterface,
-  refreshAllOccupationResultInterface,
   MonthlyOccupationParamsInterface,
   MonthlyOccupationResultInterface,
   EvolMonthlyOccupationParamsInterface,
@@ -23,35 +19,36 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
   private readonly table = 'observatory.monthly_occupation';
   private readonly perim_table = 'geo.perimeters';
   private readonly insert_procedure = 'observatory.insert_monthly_occupation';
-  private readonly today = new Date();
-  private readonly startTime = new Date('2020-01-01').getTime();
-  private readonly endTime = new Date(this.today.setMonth(this.today.getMonth() - 1)).getTime();
+  private readonly startDate = new Date('2020-01-01');
 
   constructor(private pg: PostgresConnection) {}
 
-  async refreshAllOccupation(
-    params: refreshAllOccupationParamsInterface,
-  ): Promise<refreshAllOccupationResultInterface> {
-    let currentTime = this.startTime;
+  get today() {
+    return new Date();
+  }
+
+  get endDate() {
+    return new Date(this.today.setMonth(this.today.getMonth() - 1));
+  }
+
+  async refreshAllOccupation(): Promise<void> {
+    let currentDate = this.startDate;
     await this.pg.getClient().query(`TRUNCATE ${this.table};`);
 
-    while (currentTime <= this.endTime) {
+    while (currentDate <= this.endDate) {
       await this.pg.getClient().query({
-        values: [new Date(currentTime).getFullYear(), new Date(currentTime).getMonth() + 1],
+        values: [new Date(currentDate).getFullYear(), new Date(currentDate).getMonth() + 1],
         text: `
           CALL ${this.insert_procedure}($1, $2);
         `,
       });
-      const date = new Date(currentTime);
-      currentTime = new Date(date.setMonth(date.getMonth() + 1)).getTime();
+      currentDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
     }
   }
 
-  async insertLastMonthOccupation(
-    params: InsertLastMonthOccupationParamsInterface,
-  ): Promise<InsertLastMonthOccupationResultInterface> {
+  async insertLastMonthOccupation(): Promise<void> {
     await this.pg.getClient().query({
-      values: [new Date(this.endTime).getFullYear(), new Date(this.endTime).getMonth() + 1],
+      values: [new Date(this.endDate).getFullYear(), new Date(this.endDate).getMonth() + 1],
       text: `
         CALL ${this.insert_procedure}($1, $2);
       `,
@@ -62,7 +59,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
   // Paramètres optionnels t2 et code pour filtrer les résultats sur un territoire
   async getMonthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface> {
     const sql = {
-      values: [params.year, params.month, params.t, params.code],
+      values: [params.year, params.month, params.type, params.code],
       text: `SELECT year, month, type,
       territory, l_territory, journeys, trips,
       occupation_rate, geom
@@ -73,10 +70,10 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
       ${
         params.code
           ? `AND territory IN (
-          SELECT ${checkTerritoryParam(params.t)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+          SELECT ${checkTerritoryParam(params.type)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
             } WHERE year = $1) t 
-          WHERE ${checkTerritoryParam(params.t2)} = $4
+          WHERE ${checkTerritoryParam(params.observe)} = $4
         )`
           : ''
       };`,
@@ -93,7 +90,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
     const start = Number(params.year + String(params.month).padStart(2, '0'));
     const limit = params.past ? Number(params.past) * 12 + 1 : 25;
     const sql = {
-      values: [checkTerritoryParam(params.t), params.code, limit],
+      values: [checkTerritoryParam(params.type), params.code, limit],
       text: `
         SELECT year, month, ${checkIndicParam(params.indic, checkArray, 'journeys')}
         FROM ${this.table}
@@ -115,7 +112,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
     params: BestMonthlyTerritoriesParamsInterface,
   ): Promise<BestMonthlyTerritoriesResultInterface> {
     const sql = {
-      values: [params.year, params.month, params.t2, params.code, params.limit],
+      values: [params.year, params.month, params.observe, params.code, params.limit],
       text: `
         SELECT territory, l_territory, journeys
         FROM ${this.table}
@@ -123,10 +120,10 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
         AND month = $2
         AND type = $3::observatory.monthly_occupation_type_enum
         AND territory IN (
-          SELECT ${checkTerritoryParam(params.t2)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+          SELECT ${checkTerritoryParam(params.observe)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
         this.perim_table
       } WHERE year = $1) t 
-          WHERE ${checkTerritoryParam(params.t)} = $4
+          WHERE ${checkTerritoryParam(params.type)} = $4
         ) 
         ORDER BY journeys DESC
         LIMIT $5;

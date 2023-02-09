@@ -1,20 +1,10 @@
 import {
-  ParamsInterface as InsertLastMonthFluxParamsInterface,
-  ResultInterface as InsertLastMonthFluxResultInterface,
-} from '../shared/observatory/flux/insertLastMonthFlux.contract';
-import {
-  ParamsInterface as refreshAllFluxParamsInterface,
-  ResultInterface as refreshAllFluxResultInterface,
-} from '../shared/observatory/flux/refreshAllFlux.contract';
-import {
   ParamsInterface as MonthlyFluxParamsInterface,
   ResultInterface as MonthlyFluxResultInterface,
 } from '../shared/observatory/flux/monthlyFlux.contract';
 
-import {
-  ParamsInterface as lastRecordMonthlyFluxParamsInterface,
-  ResultInterface as lastRecordMonthlyFluxResultInterface,
-} from '../shared/observatory/flux/lastRecordMonthlyFlux.contract';
+// eslint-disable-next-line max-len
+import { ResultInterface as lastRecordMonthlyFluxResultInterface } from '../shared/observatory/flux/lastRecordMonthlyFlux.contract';
 
 import {
   ParamsInterface as EvolMonthlyFluxParamsInterface,
@@ -27,13 +17,8 @@ import {
 } from '../shared/observatory/flux/bestMonthlyFlux.contract';
 
 export {
-  InsertLastMonthFluxParamsInterface,
-  InsertLastMonthFluxResultInterface,
-  refreshAllFluxParamsInterface,
-  refreshAllFluxResultInterface,
   MonthlyFluxParamsInterface,
   MonthlyFluxResultInterface,
-  lastRecordMonthlyFluxParamsInterface,
   lastRecordMonthlyFluxResultInterface,
   EvolMonthlyFluxParamsInterface,
   EvolMonthlyFluxResultInterface,
@@ -42,20 +27,20 @@ export {
 };
 
 export interface FluxRepositoryInterface {
-  insertLastMonthFlux(params: InsertLastMonthFluxParamsInterface): Promise<InsertLastMonthFluxResultInterface>;
-  refreshAllFlux(params: refreshAllFluxParamsInterface): Promise<refreshAllFluxResultInterface>;
+  insertLastMonthFlux(): Promise<void>;
+  refreshAllFlux(): Promise<void>;
   getMonthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface>;
-  lastRecordMonthlyFlux(params: lastRecordMonthlyFluxParamsInterface): Promise<lastRecordMonthlyFluxResultInterface>;
+  lastRecordMonthlyFlux(): Promise<lastRecordMonthlyFluxResultInterface>;
   getEvolMonthlyFlux(params: EvolMonthlyFluxParamsInterface): Promise<EvolMonthlyFluxResultInterface>;
   getBestMonthlyFlux(params: BestMonthlyFluxParamsInterface): Promise<BestMonthlyFluxResultInterface>;
 }
 
 export abstract class FluxRepositoryInterfaceResolver implements FluxRepositoryInterface {
-  async insertLastMonthFlux(params: InsertLastMonthFluxParamsInterface): Promise<InsertLastMonthFluxResultInterface> {
+  async insertLastMonthFlux(): Promise<void> {
     throw new Error();
   }
 
-  async refreshAllFlux(params: refreshAllFluxParamsInterface): Promise<refreshAllFluxResultInterface> {
+  async refreshAllFlux(): Promise<void> {
     throw new Error();
   }
 
@@ -63,9 +48,7 @@ export abstract class FluxRepositoryInterfaceResolver implements FluxRepositoryI
     throw new Error();
   }
 
-  async lastRecordMonthlyFlux(
-    params: lastRecordMonthlyFluxParamsInterface,
-  ): Promise<lastRecordMonthlyFluxResultInterface> {
+  async lastRecordMonthlyFlux(): Promise<lastRecordMonthlyFluxResultInterface> {
     throw new Error();
   }
 

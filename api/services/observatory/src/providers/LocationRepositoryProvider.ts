@@ -20,10 +20,10 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
   constructor(private pg: PostgresConnection) {}
 
   async getLocation(params: LocationParamsInterface): Promise<LocationResultInterface> {
-    const year = params.end_date.substring(0, 4);
+    const year = new Date(params.end_date).getFullYear();
     const result: LocationResultInterface = [];
     const sql = {
-      values: [params.code, params.start_date, params.end_date],
+      values: [params.code, params.start_date, params.end_date, year],
       text: `
         SELECT st_y(start_position::geometry) as lon, 
         st_x(start_position::geometry) as lat 
@@ -32,14 +32,14 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
         AND status='ok'
         AND is_driver=false
         ${
-          params.t && params.code
+          params.type && params.code
             ? `AND (
             start_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = ${year}) t WHERE ${checkTerritoryParam(params.t)} = $1) 
+            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1) 
             OR end_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = ${year}) t WHERE ${checkTerritoryParam(params.t)} = $1)
+            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1)
           )`
             : ''
         }
@@ -51,14 +51,14 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
         AND status='ok'
         AND is_driver=false
         ${
-          params.t && params.code
+          params.type && params.code
             ? `AND (
             start_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = ${year}) t WHERE ${checkTerritoryParam(params.t)} = $1) 
+            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1) 
             OR end_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = ${year}) t WHERE ${checkTerritoryParam(params.t)} = $1)
+            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1)
           )`
             : ''
         }

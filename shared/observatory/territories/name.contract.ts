@@ -7,7 +7,7 @@ export interface ResultInterface {
 export interface ParamsInterface {
   year: number;
   code: string;
-  t: string;
+  type: string;
 }
 
 export const handlerConfig = {

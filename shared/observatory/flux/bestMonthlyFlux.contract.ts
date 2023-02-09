@@ -11,7 +11,7 @@ export type ResultInterface = SingleResultInterface[];
 export interface ParamsInterface {
   year: number;
   month: number;
-  t: string; //type de territoire selectionné
+  type: string; //type de territoire selectionné
   code: string; //code insee du territoire observé
   limit?: number; //Nb de résultats
 }

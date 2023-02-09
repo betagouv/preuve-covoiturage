@@ -3,6 +3,6 @@ export function checkTerritoryParam(territory: string): string {
   return checkArray.find((d) => d == territory) || 'com';
 }
 
-export function checkIndicParam(indic: string, checkArray: string[], callback: string): string {
-  return checkArray.find((d) => d == indic) || callback;
+export function checkIndicParam(indic: string, checkArray: string[], fallback: string): string {
+  return checkArray.find((d) => d == indic) || fallback;
 }

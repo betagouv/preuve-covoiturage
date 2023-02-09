@@ -13,10 +13,10 @@ export interface SingleResultInterface {
 export type ResultInterface = SingleResultInterface[];
 
 export interface ParamsInterface {
-  start_date: string;
-  end_date: string;
+  start_date: Date;
+  end_date: Date;
   zoom: number;
-  t?: string; //type de territoire observé
+  type?: string; //type de territoire observé
   code?: string; //code insee du territoire observé
 }
 

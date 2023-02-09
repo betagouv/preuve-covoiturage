@@ -2,12 +2,10 @@ export interface SingleResultInterface {
   territory: string;
   l_territory: string;
   direction: string;
-  distances: [
-    {
-      dist_classes: string;
-      journeys: number;
-    },
-  ];
+  distances: {
+    dist_classes: string;
+    journeys: number;
+  }[];
 }
 
 export type ResultInterface = SingleResultInterface[];
@@ -15,7 +13,7 @@ export type ResultInterface = SingleResultInterface[];
 export interface ParamsInterface {
   year: number;
   month: number;
-  t: string; //type de territoire selectionné
+  type: string; //type de territoire selectionné
   code: string; //code insee du territoire observé
   direction?: string;
 }

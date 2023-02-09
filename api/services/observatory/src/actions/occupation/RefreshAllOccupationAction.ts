@@ -1,12 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  signature,
-} from '../../shared/observatory/occupation/refreshAllOccupation.contract';
+import { handlerConfig, signature } from '../../shared/observatory/occupation/refreshAllOccupation.contract';
 import { OccupationRepositoryInterfaceResolver } from '../../interfaces/OccupationRepositoryProviderInterface';
 
 @handler({
@@ -19,7 +14,7 @@ export class RefreshAllOccupationAction extends AbstractAction implements InitHo
   }
 
   public async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(signature, null, {
+    await this.kernel.notify<void>(signature, null, {
       call: {
         user: {},
       },
@@ -32,7 +27,7 @@ export class RefreshAllOccupationAction extends AbstractAction implements InitHo
     });
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.fluxRepository.refreshAllOccupation(params);
+  public async handle(): Promise<void> {
+    return this.fluxRepository.refreshAllOccupation();
   }
 }

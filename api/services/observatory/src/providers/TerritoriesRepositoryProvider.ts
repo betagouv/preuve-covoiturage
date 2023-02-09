@@ -34,7 +34,7 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
 
   async getTerritoryName(params: TerritoryNameParamsInterface): Promise<TerritoryNameResultInterface> {
     const sql = {
-      values: [params.year, params.code, params.t],
+      values: [params.year, params.code, params.type],
       text: `
         SELECT distinct territory, l_territory, type
         FROM ${this.table}

@@ -1,12 +1,4 @@
 import {
-  ParamsInterface as InsertLastMonthOccupationParamsInterface,
-  ResultInterface as InsertLastMonthOccupationResultInterface,
-} from '../shared/observatory/occupation/insertLastMonthOccupation.contract';
-import {
-  ParamsInterface as refreshAllOccupationParamsInterface,
-  ResultInterface as refreshAllOccupationResultInterface,
-} from '../shared/observatory/occupation/refreshAllOccupation.contract';
-import {
   ParamsInterface as MonthlyOccupationParamsInterface,
   ResultInterface as MonthlyOccupationResultInterface,
 } from '../shared/observatory/occupation/monthlyOccupation.contract';
@@ -21,10 +13,6 @@ import {
 } from '../shared/observatory/occupation/bestMonthlyTerritories.contract';
 
 export {
-  InsertLastMonthOccupationParamsInterface,
-  InsertLastMonthOccupationResultInterface,
-  refreshAllOccupationParamsInterface,
-  refreshAllOccupationResultInterface,
   MonthlyOccupationParamsInterface,
   MonthlyOccupationResultInterface,
   EvolMonthlyOccupationParamsInterface,
@@ -34,10 +22,8 @@ export {
 };
 
 export interface OccupationRepositoryInterface {
-  insertLastMonthOccupation(
-    params: InsertLastMonthOccupationParamsInterface,
-  ): Promise<InsertLastMonthOccupationResultInterface>;
-  refreshAllOccupation(params: refreshAllOccupationParamsInterface): Promise<refreshAllOccupationResultInterface>;
+  insertLastMonthOccupation(): Promise<void>;
+  refreshAllOccupation(): Promise<void>;
   getMonthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface>;
   getEvolMonthlyOccupation(params: EvolMonthlyOccupationParamsInterface): Promise<EvolMonthlyOccupationResultInterface>;
   getBestMonthlyTerritories(
@@ -46,15 +32,11 @@ export interface OccupationRepositoryInterface {
 }
 
 export abstract class OccupationRepositoryInterfaceResolver implements OccupationRepositoryInterface {
-  async insertLastMonthOccupation(
-    params: InsertLastMonthOccupationParamsInterface,
-  ): Promise<InsertLastMonthOccupationResultInterface> {
+  async insertLastMonthOccupation(): Promise<void> {
     throw new Error();
   }
 
-  async refreshAllOccupation(
-    params: refreshAllOccupationParamsInterface,
-  ): Promise<refreshAllOccupationResultInterface> {
+  async refreshAllOccupation(): Promise<void> {
     throw new Error();
   }
 

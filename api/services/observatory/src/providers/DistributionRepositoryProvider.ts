@@ -3,10 +3,6 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import {
   DistributionRepositoryInterface,
   DistributionRepositoryInterfaceResolver,
-  InsertLastMonthDistributionParamsInterface,
-  InsertLastMonthDistributionResultInterface,
-  refreshAllDistributionParamsInterface,
-  refreshAllDistributionResultInterface,
   JourneysByDistancesParamsInterface,
   JourneysByDistancesResultInterface,
   JourneysByHoursParamsInterface,
@@ -19,35 +15,36 @@ import {
 export class DistributionRepositoryProvider implements DistributionRepositoryInterface {
   private readonly table = 'observatory.monthly_distribution';
   private readonly insert_procedure = 'observatory.insert_monthly_distribution';
-  private readonly today = new Date();
-  private readonly startTime = new Date('2020-01-01').getTime();
-  private readonly endTime = new Date(this.today.setMonth(this.today.getMonth() - 1)).getTime();
+  private readonly startDate = new Date('2020-01-01');
 
   constructor(private pg: PostgresConnection) {}
 
-  async refreshAllDistribution(
-    params: refreshAllDistributionParamsInterface,
-  ): Promise<refreshAllDistributionResultInterface> {
-    let currentTime = this.startTime;
+  get today() {
+    return new Date();
+  }
+
+  get endDate() {
+    return new Date(this.today.setMonth(this.today.getMonth() - 1));
+  }
+
+  async refreshAllDistribution(): Promise<void> {
+    let currentDate = this.startDate;
     await this.pg.getClient().query(`TRUNCATE ${this.table};`);
 
-    while (currentTime <= this.endTime) {
+    while (currentDate <= this.endDate) {
       await this.pg.getClient().query({
-        values: [new Date(currentTime).getFullYear(), new Date(currentTime).getMonth() + 1],
+        values: [new Date(currentDate).getFullYear(), new Date(currentDate).getMonth() + 1],
         text: `
           CALL ${this.insert_procedure}($1, $2);
         `,
       });
-      const date = new Date(currentTime);
-      currentTime = new Date(date.setMonth(date.getMonth() + 1)).getTime();
+      currentDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
     }
   }
 
-  async insertLastMonthDistribution(
-    params: InsertLastMonthDistributionParamsInterface,
-  ): Promise<InsertLastMonthDistributionResultInterface> {
+  async insertLastMonthDistribution(): Promise<void> {
     await this.pg.getClient().query({
-      values: [new Date(this.endTime).getFullYear(), new Date(this.endTime).getMonth() + 1],
+      values: [new Date(this.endDate).getFullYear(), new Date(this.endDate).getMonth() + 1],
       text: `
         CALL ${this.insert_procedure}($1, $2);
       `,
@@ -59,7 +56,7 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
       ? `AND direction = '${params.direction}'::observatory.monthly_distribution_direction_enum`
       : '';
     const sql = {
-      values: [params.year, params.month, params.t, params.code],
+      values: [params.year, params.month, params.type, params.code],
       text: `SELECT
         territory, 
         l_territory,
@@ -83,7 +80,7 @@ export class DistributionRepositoryProvider implements DistributionRepositoryInt
       ? `AND direction = '${params.direction}'::observatory.monthly_distribution_direction_enum`
       : '';
     const sql = {
-      values: [params.year, params.month, params.t, params.code],
+      values: [params.year, params.month, params.type, params.code],
       text: `SELECT
         territory, 
         l_territory,

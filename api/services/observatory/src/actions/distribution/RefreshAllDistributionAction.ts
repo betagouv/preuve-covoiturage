@@ -1,12 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  signature,
-} from '../../shared/observatory/distribution/refreshAllDistribution.contract';
+import { handlerConfig, signature } from '../../shared/observatory/distribution/refreshAllDistribution.contract';
 import { DistributionRepositoryInterfaceResolver } from '../../interfaces/DistributionRepositoryProviderInterface';
 
 @handler({
@@ -22,7 +17,7 @@ export class RefreshAllDistributionAction extends AbstractAction implements Init
   }
 
   public async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(signature, null, {
+    await this.kernel.notify<void>(signature, null, {
       call: {
         user: {},
       },
@@ -35,7 +30,7 @@ export class RefreshAllDistributionAction extends AbstractAction implements Init
     });
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.distributionRepository.refreshAllDistribution(params);
+  public async handle(): Promise<void> {
+    return this.distributionRepository.refreshAllDistribution();
   }
 }

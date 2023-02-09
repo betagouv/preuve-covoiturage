@@ -1,12 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  signature,
-} from '../../shared/observatory/distribution/insertLastMonthDistribution.contract';
+import { handlerConfig, signature } from '../../shared/observatory/distribution/insertLastMonthDistribution.contract';
 import { DistributionRepositoryInterfaceResolver } from '../../interfaces/DistributionRepositoryProviderInterface';
 
 @handler({
@@ -22,7 +17,7 @@ export class InsertLastMonthDistributionAction extends AbstractAction implements
   }
 
   public async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(signature, null, {
+    await this.kernel.notify<void>(signature, null, {
       channel: {
         service: handlerConfig.service,
         metadata: {
@@ -35,7 +30,7 @@ export class InsertLastMonthDistributionAction extends AbstractAction implements
     });
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.distributionRepository.insertLastMonthDistribution(params);
+  public async handle(): Promise<void> {
+    return this.distributionRepository.insertLastMonthDistribution();
   }
 }
