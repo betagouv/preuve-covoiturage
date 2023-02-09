@@ -86,21 +86,18 @@ export class FraudCheckRepositoryProvider extends FraudCheckRepositoryProviderIn
       }, timeout);
       return [
         result.rows.map((r) => r.acquisition_id),
+        // Callback à appeler pour enregistrer les résultats des tests
+        // ou les erreurs ayant eu lieu.
+        // Appelé sans data, le cb permet de commit la transaction
+        // Si le timeout a été atteint, aucune écriture n'est possible 
         async (data?: FraudCheckEntry) => {
           if (timeoutFn && !hasTimeout) {
-            try {
-              if (data) {
-                await this.createOrUpdate(data, pool);
-              } else {
-                clearTimeout(timeoutFn);
-                await pool.query('COMMIT');
-                pool.release();
-              }
-            } catch (e) {
+            if (data) {
+              await this.createOrUpdate(data, pool);
+            } else {
               clearTimeout(timeoutFn);
-              await pool.query('ROLLBACK');
+              await pool.query('COMMIT');
               pool.release();
-              throw e;
             }
           }
         },
@@ -181,7 +178,9 @@ export class FraudCheckRepositoryProvider extends FraudCheckRepositoryProviderIn
       await pool.query(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
     } catch (e) {
       await pool.query(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
-      throw e;
+      if(!poolClient) {
+        throw e;
+      }
     } finally {
       if (!poolClient) {
         pool.release();
