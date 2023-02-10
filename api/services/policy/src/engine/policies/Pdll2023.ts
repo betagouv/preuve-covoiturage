@@ -6,7 +6,6 @@ import {
 } from '../../interfaces';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
-  ConfiguredLimitInterface,
   endsAt,
   isOperatorClassOrThrow,
   LimitTargetEnum,
@@ -35,12 +34,14 @@ export const Pdll2023: PolicyHandlerStaticInterface = class extends AbstractPoli
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
   ];
-  private readonly MAX_GLOBAL_AMOUNT = 500_000_00;
 
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['5499304F-2C64-AB1A-7392-52FF88F5E78D', this.MAX_GLOBAL_AMOUNT, watchForGlobalMaxAmount],
-  ];
+  constructor(public max_amount: number) {
+    super();
+    this.limits = [
+      ['8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['5499304F-2C64-AB1A-7392-52FF88F5E78D', this.max_amount, watchForGlobalMaxAmount],
+    ];
+  }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     onDistanceRangeOrThrow(ctx, { min: 5_000, max: 80_001 });
@@ -88,7 +89,7 @@ export const Pdll2023: PolicyHandlerStaticInterface = class extends AbstractPoli
     return {
       slices: this.slices,
       limits: {
-        glob: this.MAX_GLOBAL_AMOUNT,
+        glob: this.max_amount,
       },
     };
   }

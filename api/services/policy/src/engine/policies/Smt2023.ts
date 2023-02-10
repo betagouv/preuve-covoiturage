@@ -6,7 +6,6 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import {
-  ConfiguredLimitInterface,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
   LimitTargetEnum,
@@ -41,13 +40,14 @@ export const Smt2023: PolicyHandlerStaticInterface = class
       fn: () => 0,
     },
   ];
-  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 60_000_00;
-
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-    ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
-  ];
+  constructor(public max_amount: number) {
+    super();
+    this.limits = [
+      ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
+      ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.max_amount, watchForGlobalMaxAmount],
+    ];
+  }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
@@ -75,7 +75,7 @@ export const Smt2023: PolicyHandlerStaticInterface = class
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.MAX_GLOBAL_AMOUNT_LIMIT,
+        glob: this.max_amount,
       },
     };
   }

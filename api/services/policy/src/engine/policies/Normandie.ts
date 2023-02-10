@@ -27,11 +27,14 @@ export const Normandie: PolicyHandlerStaticInterface = class
   private readonly MAX_GLOBAL_AMOUNT_LIMIT = 70_000_00;
   private readonly EPCI_WITHOUT_MOBILITY_COMPETENCE = ['200069516', '200066801', '241400878', '200071652'];
 
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['E8E1B5F5-64D5-48B9-8BBB-A64C33C500D8', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['CB39AF21-5ED5-4792-AA81-1F19EACB901C', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
-    ['6D6D0BBA-09C1-40C4-B3C7-2EECF1C6A2A3', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
-  ];
+  constructor(public max_amount: number) {
+    super();
+    this.limits = [
+      ['E8E1B5F5-64D5-48B9-8BBB-A64C33C500D8', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['CB39AF21-5ED5-4792-AA81-1F19EACB901C', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
+      ['6D6D0BBA-09C1-40C4-B3C7-2EECF1C6A2A3', max_amount, watchForGlobalMaxAmount],
+    ];
+  }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     onDistanceRangeOrThrow(ctx, { min: 5_000 });

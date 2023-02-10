@@ -73,7 +73,8 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           pp.handler,
           pp.status,
           pp.territory_id,
-          pp.incentive_sum
+          pp.incentive_sum,
+          pp.max_amount
         FROM ${this.table} as pp,
         LATERAL (
           SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory_id])
@@ -231,7 +232,8 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           pp.handler,
           pp.status,
           pp.territory_id,
-          pp.incentive_sum
+          pp.incentive_sum,
+          pp.max_amount
         FROM ${this.table} as pp,
         LATERAL (
           SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory_id])

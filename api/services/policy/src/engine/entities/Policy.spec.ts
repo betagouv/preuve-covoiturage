@@ -66,3 +66,43 @@ test(
   },
   { incentive: [100, 100], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 200 }] },
 );
+
+class MaxAmountPolicyHandler implements PolicyHandlerInterface {
+  max_amount: number;
+
+  constructor(max_amount: number) {
+    this.max_amount = max_amount;
+  }
+
+  processStateless(ctx: StatelessContextInterface): void {
+    isOperatorClassOrThrow(ctx, ['C']);
+    ctx.incentive.set(perKm(ctx, { amount: 10 }));
+    watchForGlobalMaxAmount(ctx, 'max');
+  }
+
+  processStateful(ctx: StatefulContextInterface): void {
+    applyLimitOnStatefulStage(ctx, 'max', this.max_amount, watchForGlobalMaxAmount);
+  }
+
+  describe() {
+    return '';
+  }
+
+  params(): PolicyHandlerParamsInterface {
+    return {};
+  }
+}
+
+test(
+  'should use constructor max amount',
+  process,
+  {
+    handler: new MaxAmountPolicyHandler(60_000),
+    carpool: [
+      { distance: 10000, datetime: new Date('2022-01-01') },
+      { distance: 10000, datetime: new Date('2022-12-01') },
+    ],
+    meta: [],
+  },
+  { incentive: [100, 100], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 200 }] },
+);

@@ -8,13 +8,12 @@ import {
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
+  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-  LimitTargetEnum,
-  ConfiguredLimitInterface,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Laval.html';
@@ -25,14 +24,17 @@ export const Laval: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = '695';
+
+  constructor(public max_amount: number) {
+    super();
+    this.limits = [
+      ['70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['A2CEF9FE-D179-319F-1996-9D69E0157522', max_amount, watchForGlobalMaxAmount],
+    ];
+  }
+
   protected operators = [OperatorsEnum.Klaxit];
   protected slices = [{ start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
-  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 27_000_00;
-
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['A2CEF9FE-D179-319F-1996-9D69E0157522', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
-  ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);

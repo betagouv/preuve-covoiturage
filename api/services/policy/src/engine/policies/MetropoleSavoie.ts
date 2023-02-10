@@ -14,8 +14,8 @@ import {
   perKm,
   perSeat,
   startsAndEndsAt,
+  watchForGlobalMaxAmount,
 } from '../helpers';
-import { ConfiguredLimitInterface } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './MetropoleSavoie.html';
 
@@ -31,9 +31,11 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000 })),
     },
   ];
-  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 150_000_00;
 
-  protected limits: Array<ConfiguredLimitInterface> = [];
+  constructor(public max_amount: number) {
+    super();
+    this.limits = [['99911EAF-89AB-C346-DDD5-BD2C7704F935', max_amount, watchForGlobalMaxAmount]];
+  }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
@@ -66,7 +68,7 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.MAX_GLOBAL_AMOUNT_LIMIT,
+        glob: this.max_amount,
       },
     };
   }
