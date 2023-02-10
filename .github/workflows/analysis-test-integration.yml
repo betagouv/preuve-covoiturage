@@ -22,6 +22,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Build
         run: sh rebuild.sh
+        working-directory: api
       - name: Start
         env:
           APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}
