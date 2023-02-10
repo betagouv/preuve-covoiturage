@@ -34,10 +34,8 @@ export const Nm: PolicyHandlerStaticInterface = class extends AbstractPolicyHand
     { start: 20_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
 
-  policy_max_amount: number;
-  constructor(policy_max_amount: number) {
+  constructor(public policy_max_amount: number) {
     super();
-    this.policy_max_amount = policy_max_amount;
     this.limits = [
       ['D5FA9FA9-E8CC-478E-80ED-96FDC5476689', 3, watchForPassengerMaxByTripByDay],
       ['6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 4, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],

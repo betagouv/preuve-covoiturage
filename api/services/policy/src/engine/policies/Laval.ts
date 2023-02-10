@@ -25,10 +25,8 @@ export const Laval: PolicyHandlerStaticInterface = class
 {
   static readonly id = '695';
 
-  policy_max_amount: number;
-  constructor(policy_max_amount: number) {
+  constructor(public policy_max_amount: number) {
     super();
-    this.policy_max_amount = policy_max_amount;
     this.limits = [
       ['70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['A2CEF9FE-D179-319F-1996-9D69E0157522', policy_max_amount, watchForGlobalMaxAmount],

@@ -28,10 +28,8 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
   protected operator_class = ['B', 'C'];
 
-  policy_max_amount: number;
-  constructor(policy_max_amount: number) {
+  constructor(public policy_max_amount: number) {
     super();
-    this.policy_max_amount = policy_max_amount;
     this.limits = [
       ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
       ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.policy_max_amount, watchForGlobalMaxAmount],

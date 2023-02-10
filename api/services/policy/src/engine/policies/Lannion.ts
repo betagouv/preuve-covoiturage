@@ -6,17 +6,16 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import {
+  ensureFreeRide,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
+  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
+  perKm,
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-  LimitTargetEnum,
-  ConfiguredLimitInterface,
-  perKm,
-  ensureFreeRide,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Lannion.html';
@@ -27,11 +26,9 @@ export const Lannion: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'lannion_2022';
-  policy_max_amount: number;
 
-  constructor(policy_max_amount: number) {
+  constructor(public policy_max_amount: number) {
     super();
-    this.policy_max_amount = policy_max_amount;
     this.limits = [
       ['CDCC69D1-0E76-E109-F87D-1D3AD738EFB2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['9E35A0F7-AA0B-5D94-AA79-66F5F3677934', this.policy_max_amount, watchForGlobalMaxAmount],

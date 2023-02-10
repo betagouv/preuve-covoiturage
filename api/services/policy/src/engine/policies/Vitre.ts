@@ -36,10 +36,8 @@ export const Vitre: PolicyHandlerStaticInterface = class
     },
   ];
 
-  policy_max_amount: number;
-  constructor(policy_max_amount: number) {
+  constructor(public policy_max_amount: number) {
     super();
-    this.policy_max_amount = policy_max_amount;
     this.limits = [
       ['6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
       ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],

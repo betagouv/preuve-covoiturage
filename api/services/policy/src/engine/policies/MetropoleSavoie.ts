@@ -31,10 +31,8 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
     },
   ];
 
-  policy_max_amount: number;
-  constructor(policy_max_amount: number) {
+  constructor(public policy_max_amount: number) {
     super();
-    this.policy_max_amount = policy_max_amount;
     this.limits = [];
   }
 

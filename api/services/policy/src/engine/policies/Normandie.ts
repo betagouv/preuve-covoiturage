@@ -27,10 +27,8 @@ export const Normandie: PolicyHandlerStaticInterface = class
   private readonly MAX_GLOBAL_AMOUNT_LIMIT = 70_000_00;
   private readonly EPCI_WITHOUT_MOBILITY_COMPETENCE = ['200069516', '200066801', '241400878', '200071652'];
 
-  policy_max_amount: number;
-  constructor(policy_max_amount: number) {
+  constructor(public policy_max_amount: number) {
     super();
-    this.policy_max_amount = policy_max_amount;
     this.limits = [
       ['E8E1B5F5-64D5-48B9-8BBB-A64C33C500D8', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['CB39AF21-5ED5-4792-AA81-1F19EACB901C', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],

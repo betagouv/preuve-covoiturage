@@ -42,10 +42,8 @@ export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     },
   ];
 
-  policy_max_amount: number;
-  constructor(policy_max_amount: number) {
+  constructor(public policy_max_amount: number) {
     super();
-    this.policy_max_amount = policy_max_amount;
     this.limits = [
       ['8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['5499304F-2C64-AB1A-7392-52FF88F5E78D', policy_max_amount, watchForGlobalMaxAmount],

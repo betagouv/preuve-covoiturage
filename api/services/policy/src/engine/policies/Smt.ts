@@ -37,10 +37,8 @@ export const Smt: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
       fn: () => 0,
     },
   ];
-  policy_max_amount: number;
-  constructor(policy_max_amount: number) {
+  constructor(public policy_max_amount: number) {
     super();
-    this.policy_max_amount = policy_max_amount;
     this.limits = [
       ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.policy_max_amount, watchForGlobalMaxAmount],
