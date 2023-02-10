@@ -93,7 +93,7 @@ class MaxAmountPolicyHandler implements PolicyHandlerInterface {
   }
 }
 
-test.only(
+test(
   'should use constructor max amount',
   process,
   {
