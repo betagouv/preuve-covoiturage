@@ -31,7 +31,13 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000 })),
     },
   ];
-  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 150_000_00;
+
+  policy_max_amount: number;
+  constructor(policy_max_amount: number) {
+    super();
+    this.policy_max_amount = policy_max_amount;
+    this.limits = [];
+  }
 
   protected limits: Array<ConfiguredLimitInterface> = [];
 
@@ -66,7 +72,7 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.MAX_GLOBAL_AMOUNT_LIMIT,
+        glob: this.policy_max_amount,
       },
     };
   }

@@ -6,7 +6,6 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import {
-  ConfiguredLimitInterface,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
   LimitTargetEnum,
@@ -36,14 +35,18 @@ export const Vitre: PolicyHandlerStaticInterface = class
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];
-  private readonly MAX_GLOBAL_AMOUNT_LIMIT = 180_000_00;
 
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
-    ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-    ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.MAX_GLOBAL_AMOUNT_LIMIT, watchForGlobalMaxAmount],
-  ];
+  policy_max_amount: number;
+  constructor(policy_max_amount: number) {
+    super();
+    this.policy_max_amount = policy_max_amount;
+    this.limits = [
+      ['6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
+      ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
+      ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.policy_max_amount, watchForGlobalMaxAmount],
+    ];
+  }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
@@ -71,7 +74,7 @@ export const Vitre: PolicyHandlerStaticInterface = class
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.MAX_GLOBAL_AMOUNT_LIMIT,
+        glob: this.policy_max_amount,
       },
     };
   }
