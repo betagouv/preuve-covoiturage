@@ -18,7 +18,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-        run: npm ci
+
+      - name: Install dependencies
+        working-directory: ./docker/lint
+        run: yarn ci
       
       - name: Run Linter
         working-directory: ./docker/lint
