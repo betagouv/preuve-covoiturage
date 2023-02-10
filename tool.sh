@@ -128,6 +128,7 @@ bootstrap_integration() {
 
 integration() {
   set_env "-f docker-compose.integration.yml" && \
+  export DC="$(which docker-compose) -p pdce2e -f docker-compose.integration.yml $1" && \
   start && \
   bootstrap_integration && \
   run_integration 2>&1
