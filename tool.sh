@@ -115,10 +115,20 @@ run_integration() {
   $DC run --rm api yarn test:integration
 }
 
+
+bootstrap_integration() {
+  ensure_certs && \
+  ensure_keys && \
+  start_services && \
+  create_bucket local-pdc-export && \
+  create_bucket local-pdc-appels-de-fonds && \
+  create_bucket local-pdc-public
+}
+
+
 integration() {
   set_env "-f docker-compose.integration.yml" && \
-  bootstrap && \
-  start && \
+  bootstrap_integration && \
   run_integration 2>&1
   EXIT=$?
   stop
