@@ -16,7 +16,7 @@ interface Options {
   operators?: number[];
   tz: string;
   verbose: boolean;
-  timeout: number;
+  sync: boolean;
 }
 
 @command()
@@ -56,20 +56,14 @@ export class ExportCommand implements CommandInterface {
       description: 'Display CLI specific console.info()',
     },
     {
-      signature: '-t, --timeout',
-      description: 'pg query timeout',
-      default: 15 * 60_000, // 15 minutes
+      signature: '--sync',
+      description: 'Run the export without the queue',
     },
   ];
 
   constructor(private kernel: KernelInterfaceResolver) {}
 
   public async call(options: Options): Promise<string> {
-    // override the environment variable.
-    // the command is run once and this config override will not
-    // affect the global postgresql timeout
-    process.env.APP_POSTGRES_TIMEOUT = `${options.timeout}`;
-
     const campaign_id = options.campaigns.length ? options.campaigns : await this.findActiveCampaigns();
 
     const params = {
@@ -86,7 +80,13 @@ export class ExportCommand implements CommandInterface {
     if (options.end) set(params, 'query.date.end', zonedTimeToUtc(options.end, options.tz).toISOString());
     if (options.operators?.length) set(params, 'query.operator_id', options.operators);
 
-    await this.kernel.call(exportSignature, params, context);
+    if (options.sync) {
+      console.info(`Running [${exportSignature}] in sync`);
+      await this.kernel.call(exportSignature, params, context);
+    } else {
+      console.info(`Pushed [${exportSignature}] to the queue for background execution`);
+      await this.kernel.notify(exportSignature, params, context);
+    }
 
     return '';
   }
