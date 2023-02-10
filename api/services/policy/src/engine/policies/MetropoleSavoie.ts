@@ -31,7 +31,7 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
     },
   ];
 
-  constructor(public policy_max_amount: number) {
+  constructor(public max_amount: number) {
     super();
     this.limits = [];
   }
@@ -67,7 +67,7 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.policy_max_amount,
+        glob: this.max_amount,
       },
     };
   }

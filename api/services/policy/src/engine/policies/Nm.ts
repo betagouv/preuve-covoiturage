@@ -34,14 +34,14 @@ export const Nm: PolicyHandlerStaticInterface = class extends AbstractPolicyHand
     { start: 20_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10 })) },
   ];
 
-  constructor(public policy_max_amount: number) {
+  constructor(public max_amount: number) {
     super();
     this.limits = [
       ['D5FA9FA9-E8CC-478E-80ED-96FDC5476689', 3, watchForPassengerMaxByTripByDay],
       ['6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 4, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
       ['286AAF87-5CDB-A7C0-A599-FBE7FB6C5442', 4, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['D1FED21B-5160-A1BF-C052-5DA7A190996C', 10_000_000, watchForGlobalMaxTrip],
-      ['69FD0093-CEEE-0709-BB80-878D2E857630', policy_max_amount, watchForGlobalMaxAmount],
+      ['69FD0093-CEEE-0709-BB80-878D2E857630', max_amount, watchForGlobalMaxAmount],
     ];
   }
 
@@ -76,7 +76,7 @@ export const Nm: PolicyHandlerStaticInterface = class extends AbstractPolicyHand
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.policy_max_amount,
+        glob: this.max_amount,
       },
     };
   }

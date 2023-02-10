@@ -28,11 +28,11 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
   protected operator_class = ['B', 'C'];
 
-  constructor(public policy_max_amount: number) {
+  constructor(public max_amount: number) {
     super();
     this.limits = [
       ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.policy_max_amount, watchForGlobalMaxAmount],
+      ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.max_amount, watchForGlobalMaxAmount],
     ];
   }
 
@@ -205,7 +205,7 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.policy_max_amount,
+        glob: this.max_amount,
       },
     };
   }

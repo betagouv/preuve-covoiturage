@@ -66,7 +66,7 @@ export interface PolicyHandlerParamsInterface {
 }
 
 export interface PolicyHandlerInterface {
-  policy_max_amount?: number;
+  max_amount?: number;
   processStateless(context: StatelessContextInterface): void;
   processStateful(context: StatefulContextInterface): void;
   params(): PolicyHandlerParamsInterface;

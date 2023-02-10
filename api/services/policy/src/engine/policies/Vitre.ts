@@ -36,13 +36,13 @@ export const Vitre: PolicyHandlerStaticInterface = class
     },
   ];
 
-  constructor(public policy_max_amount: number) {
+  constructor(public max_amount: number) {
     super();
     this.limits = [
       ['6456EC1D-2183-71DC-B08E-0B8FC30E4A4E', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
       ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.policy_max_amount, watchForGlobalMaxAmount],
+      ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.max_amount, watchForGlobalMaxAmount],
     ];
   }
 
@@ -72,7 +72,7 @@ export const Vitre: PolicyHandlerStaticInterface = class
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.policy_max_amount,
+        glob: this.max_amount,
       },
     };
   }

@@ -68,10 +68,10 @@ test(
 );
 
 class MaxAmountPolicyHandler implements PolicyHandlerInterface {
-  policy_max_amount: number;
+  max_amount: number;
 
-  constructor(policy_max_amount: number) {
-    this.policy_max_amount = policy_max_amount;
+  constructor(max_amount: number) {
+    this.max_amount = max_amount;
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -81,7 +81,7 @@ class MaxAmountPolicyHandler implements PolicyHandlerInterface {
   }
 
   processStateful(ctx: StatefulContextInterface): void {
-    applyLimitOnStatefulStage(ctx, 'max', this.policy_max_amount, watchForGlobalMaxAmount);
+    applyLimitOnStatefulStage(ctx, 'max', this.max_amount, watchForGlobalMaxAmount);
   }
 
   describe() {

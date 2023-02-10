@@ -30,12 +30,12 @@ import { description } from './Idfm.html';
 export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '459';
 
-  constructor(public policy_max_amount: number) {
+  constructor(public max_amount: number) {
     super();
     this.limits = [
       ['56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-      ['99911EAF-89AB-C346-DDD5-BD2C7704F935', policy_max_amount, watchForGlobalMaxAmount],
+      ['99911EAF-89AB-C346-DDD5-BD2C7704F935', max_amount, watchForGlobalMaxAmount],
     ];
   }
 
@@ -115,7 +115,7 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.policy_max_amount,
+        glob: this.max_amount,
       },
     };
   }

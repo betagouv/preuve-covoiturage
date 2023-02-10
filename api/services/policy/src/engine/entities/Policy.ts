@@ -61,7 +61,7 @@ export class Policy implements PolicyInterface {
       status: this.status,
       incentive_sum: this.incentive_sum,
       handler: (this.handler.constructor as PolicyHandlerStaticInterface).id,
-      max_amount: this.handler.policy_max_amount,
+      max_amount: this.handler.max_amount,
     };
   }
 
