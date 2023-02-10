@@ -2,17 +2,18 @@ import { readFileSync } from 'fs';
 import { env } from '@ilos/core';
 
 function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
-  if(baseEnvKey in process.env) {
-    const file = env(baseEnvKey) as string;
-    return { [key]: file };
+  const asVarEnvName = baseEnvKey;
+  const asPathEnvName = `${baseEnvKey}_PATH`;
+
+  let cert: string;
+  if (asVarEnvName in process.env) {
+    cert = env(asVarEnvName).toString().replace(/\\n/g, '\n');
+  } else if (asPathEnvName in process.env) {
+    cert = readFileSync(env(asPathEnvName) as string, 'utf-8');
+  } else {
+    return {};
   }
-  const envKey = `${baseEnvKey}_PATH`;
-  if(!(envKey in process.env)) {
-     return {};
-  }
-  const filePath = env(envKey) as string;
-  const file = readFileSync(filePath, 'utf-8');
-  return { [key]: file };
+  return { [key]: cert };
 }
 
 const redisTls = {
