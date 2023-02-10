@@ -31,7 +31,7 @@ export class PhotonProvider implements GeoCoderInterface {
     axiosRetry(axios, {
       retries: 3,
       retryDelay: (retryCount) => retryCount * 2000,
-      retryCondition: (error) => error.response.status <= 400,
+      retryCondition: (error) => error.response.status >= 400,
     });
   }
 
