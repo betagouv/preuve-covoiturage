@@ -4,6 +4,7 @@ import axios from 'axios';
 import { NotFoundException, provider } from '@ilos/common';
 
 import { PointInterface, GeoCoderInterface } from '../interfaces';
+import axiosRetry from 'axios-retry';
 
 interface Feature {
   properties: {
@@ -25,6 +26,14 @@ interface PhotonResponse {
 @provider()
 export class PhotonProvider implements GeoCoderInterface {
   protected domain = 'https://photon.komoot.io/api';
+
+  constructor() {
+    axiosRetry(axios, {
+      retries: 3,
+      retryDelay: (retryCount) => retryCount * 2000,
+      retryCondition: (error) => error.response.status <= 400,
+    });
+  }
 
   async literalToPosition(literal: string): Promise<PointInterface> {
     const params = new URLSearchParams({
