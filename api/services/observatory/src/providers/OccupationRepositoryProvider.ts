@@ -9,6 +9,8 @@ import {
   EvolMonthlyOccupationResultInterface,
   BestMonthlyTerritoriesParamsInterface,
   BestMonthlyTerritoriesResultInterface,
+  InsertMonthlyOccupationParamsInterface,
+  DeleteMonthlyOccupationParamsInterface,
 } from '../interfaces/OccupationRepositoryProviderInterface';
 import { checkTerritoryParam, checkIndicParam } from '../helpers/checkParams';
 
@@ -19,38 +21,23 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
   private readonly table = 'observatory.monthly_occupation';
   private readonly perim_table = 'geo.perimeters';
   private readonly insert_procedure = 'observatory.insert_monthly_occupation';
-  private readonly startDate = new Date('2020-01-01');
 
   constructor(private pg: PostgresConnection) {}
 
-  get today() {
-    return new Date();
-  }
-
-  get endDate() {
-    return new Date(this.today.setMonth(this.today.getMonth() - 1));
-  }
-
-  async refreshAllOccupation(): Promise<void> {
-    let currentDate = this.startDate;
-    await this.pg.getClient().query(`TRUNCATE ${this.table};`);
-
-    while (currentDate <= this.endDate) {
-      await this.pg.getClient().query({
-        values: [new Date(currentDate).getFullYear(), new Date(currentDate).getMonth() + 1],
-        text: `
-          CALL ${this.insert_procedure}($1, $2);
-        `,
-      });
-      currentDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
-    }
-  }
-
-  async insertLastMonthOccupation(): Promise<void> {
+  async insertOneMonthOccupation(params: InsertMonthlyOccupationParamsInterface): Promise<void> {
     await this.pg.getClient().query({
-      values: [new Date(this.endDate).getFullYear(), new Date(this.endDate).getMonth() + 1],
+      values: [params.year, params.month],
       text: `
         CALL ${this.insert_procedure}($1, $2);
+      `,
+    });
+  }
+
+  async deleteOneMonthOccupation(params: DeleteMonthlyOccupationParamsInterface): Promise<void> {
+    await this.pg.getClient().query({
+      values: [params.year, params.month],
+      text: `
+        DELETE FROM ${this.table} WHERE year = $1 AND month = $2;
       `,
     });
   }

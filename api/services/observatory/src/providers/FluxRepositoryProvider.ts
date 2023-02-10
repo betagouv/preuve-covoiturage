@@ -10,6 +10,8 @@ import {
   EvolMonthlyFluxResultInterface,
   BestMonthlyFluxParamsInterface,
   BestMonthlyFluxResultInterface,
+  InsertMonthlyFluxParamsInterface,
+  DeleteMonthlyFluxParamsInterface,
 } from '../interfaces/FluxRepositoryProviderInterface';
 import { checkTerritoryParam, checkIndicParam } from '../helpers/checkParams';
 
@@ -20,38 +22,23 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   private readonly table = 'observatory.monthly_flux';
   private readonly perim_table = 'geo.perimeters';
   private readonly insert_procedure = 'observatory.insert_monthly_flux';
-  private readonly startDate = new Date('2020-01-01');
 
   constructor(private pg: PostgresConnection) {}
 
-  get today() {
-    return new Date();
-  }
-
-  get endDate() {
-    return new Date(this.today.setMonth(this.today.getMonth() - 1));
-  }
-
-  async refreshAllFlux(): Promise<void> {
-    let currentDate = this.startDate;
-    await this.pg.getClient().query(`TRUNCATE ${this.table};`);
-
-    while (currentDate <= this.endDate) {
-      await this.pg.getClient().query({
-        values: [new Date(currentDate).getFullYear(), new Date(currentDate).getMonth() + 1],
-        text: `
-          CALL ${this.insert_procedure}($1, $2);
-        `,
-      });
-      currentDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
-    }
-  }
-
-  async insertLastMonthFlux(): Promise<void> {
+  async insertOneMonthFlux(params: InsertMonthlyFluxParamsInterface): Promise<void> {
     await this.pg.getClient().query({
-      values: [new Date(this.endDate).getFullYear(), new Date(this.endDate).getMonth() + 1],
+      values: [params.year, params.month],
       text: `
         CALL ${this.insert_procedure}($1, $2);
+      `,
+    });
+  }
+
+  async deleteOneMonthFlux(params: DeleteMonthlyFluxParamsInterface): Promise<void> {
+    await this.pg.getClient().query({
+      values: [params.year, params.month],
+      text: `
+        DELETE FROM ${this.table} WHERE year = $1 AND month = $2;
       `,
     });
   }

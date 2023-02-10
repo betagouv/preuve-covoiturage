@@ -1,7 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
-
 import { alias } from '../../shared/observatory/flux/bestMonthlyFlux.schema';
 import {
   handlerConfig,
@@ -9,6 +8,7 @@ import {
   ParamsInterface,
 } from '../../shared/observatory/flux/bestMonthlyFlux.contract';
 import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface';
+import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 
 @handler({
   ...handlerConfig,
@@ -20,6 +20,7 @@ export class BestMonthlyFluxAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    params.year = limitNumberParamWithinRange(params.year, 2020, new Date().getFullYear());
     return this.repository.getBestMonthlyFlux(params);
   }
 }

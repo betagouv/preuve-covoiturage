@@ -9,6 +9,7 @@ import {
   ParamsInterface,
 } from '../../shared/observatory/distribution/journeysByHours.contract';
 import { DistributionRepositoryInterfaceResolver } from '../../interfaces/DistributionRepositoryProviderInterface';
+import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 
 @handler({
   ...handlerConfig,
@@ -20,6 +21,7 @@ export class JourneysByHoursAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    params.year = limitNumberParamWithinRange(params.year, 2020, new Date().getFullYear());
     return this.repository.getJourneysByHours(params);
   }
 }

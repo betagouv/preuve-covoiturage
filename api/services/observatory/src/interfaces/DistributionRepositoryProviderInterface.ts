@@ -6,23 +6,33 @@ import {
   ParamsInterface as JourneysByDistancesParamsInterface,
   ResultInterface as JourneysByDistancesResultInterface,
 } from '../shared/observatory/distribution/journeysByDistances.contract';
+import {
+  ParamsInterface as InsertMonthlyDistributionParamsInterface,
+  ParamsInterface as DeleteMonthlyDistributionParamsInterface,
+} from '../shared/observatory/distribution/insertMonthlyDistribution.contract';
 
 export {
   JourneysByHoursParamsInterface,
   JourneysByHoursResultInterface,
   JourneysByDistancesParamsInterface,
   JourneysByDistancesResultInterface,
+  InsertMonthlyDistributionParamsInterface,
+  DeleteMonthlyDistributionParamsInterface,
 };
 
 export interface DistributionRepositoryInterface {
-  insertLastMonthDistribution(): Promise<void>;
-  refreshAllDistribution(): Promise<void>;
+  insertOneMonthDistribution(params: InsertMonthlyDistributionParamsInterface): Promise<void>;
+  deleteOneMonthDistribution(params: DeleteMonthlyDistributionParamsInterface): Promise<void>;
   getJourneysByHours(params: JourneysByHoursParamsInterface): Promise<JourneysByHoursResultInterface>;
   getJourneysByDistances(params: JourneysByDistancesParamsInterface): Promise<JourneysByDistancesResultInterface>;
 }
 
 export abstract class DistributionRepositoryInterfaceResolver implements DistributionRepositoryInterface {
-  async insertLastMonthDistribution(): Promise<void> {
+  async insertOneMonthDistribution(params: InsertMonthlyDistributionParamsInterface): Promise<void> {
+    throw new Error();
+  }
+
+  async deleteOneMonthDistribution(params: DeleteMonthlyDistributionParamsInterface): Promise<void> {
     throw new Error();
   }
 

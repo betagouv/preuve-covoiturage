@@ -7,7 +7,6 @@ export const schema = {
     year: {
       type: 'integer',
       minimum: 2020,
-      maximum: new Date().getFullYear(),
     },
     code: {
       type: 'string',

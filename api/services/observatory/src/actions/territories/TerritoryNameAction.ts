@@ -5,6 +5,7 @@ import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 import { alias } from '../../shared/observatory/territories/name.schema';
 import { handlerConfig, ResultInterface, ParamsInterface } from '../../shared/observatory/territories/name.contract';
 import { TerritoriesRepositoryInterfaceResolver } from '../../interfaces/TerritoriesRepositoryProviderInterface';
+import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 
 @handler({
   ...handlerConfig,
@@ -16,6 +17,7 @@ export class TerritoryNameAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    params.year = limitNumberParamWithinRange(params.year, 2020, new Date().getFullYear());
     return this.repository.getTerritoryName(params);
   }
 }

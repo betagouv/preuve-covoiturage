@@ -9,6 +9,7 @@ import {
   ParamsInterface,
 } from '../../shared/observatory/occupation/evolMonthlyOccupation.contract';
 import { OccupationRepositoryInterfaceResolver } from '../../interfaces/OccupationRepositoryProviderInterface';
+import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 
 @handler({
   ...handlerConfig,
@@ -20,6 +21,7 @@ export class EvolMonthlyOccupationAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    params.year = limitNumberParamWithinRange(params.year, 2020, new Date().getFullYear());
     return this.repository.getEvolMonthlyOccupation(params);
   }
 }
