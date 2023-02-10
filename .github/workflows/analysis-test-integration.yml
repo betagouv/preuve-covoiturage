@@ -20,6 +20,8 @@ jobs:
           node-version: '16'
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Build
+        run: sh rebuild.sh
       - name: Start
         env:
           APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}
