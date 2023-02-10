@@ -57,7 +57,36 @@ test(
   },
   {
     incentive: [200, 400, 800, 1600, 200],
-    meta: [],
+    meta: [
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 3200,
+      },
+    ],
+  },
+);
+
+test(
+  'should works with global limits',
+  process,
+  {
+    policy: { handler: Handler.id, max_amount: 150_000_00 },
+    carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
+    meta: [
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 149_999_50,
+      },
+    ],
+  },
+  {
+    incentive: [50],
+    meta: [
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 150_000_00,
+      },
+    ],
   },
 );
 
@@ -80,6 +109,11 @@ test(
   },
   {
     incentive: [0, 0],
-    meta: [],
+    meta: [
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 0,
+      },
+    ],
   },
 );

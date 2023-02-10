@@ -14,6 +14,7 @@ import {
   perKm,
   perSeat,
   startsAndEndsAt,
+  watchForGlobalMaxAmount,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './MetropoleSavoie.html';
@@ -33,7 +34,7 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
 
   constructor(public max_amount: number) {
     super();
-    this.limits = [];
+    this.limits = [['99911EAF-89AB-C346-DDD5-BD2C7704F935', max_amount, watchForGlobalMaxAmount]];
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
