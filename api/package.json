@@ -38,7 +38,7 @@
     "test:ilos:integration": "lerna run --scope @ilos/* test:integration",
     "migrate:geo": "POSTGRES_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator geo:import",
     "migrate:sql": "DATABASE_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator up",
-    "migrate": "if [ -z \"$SKIP_MIGRATIONS\" ]; then yarn migrate:geo && yarn migrate:sql; else echo '>> Migrations skipped'; fi",
+    "migrate": "if [ -z \"$SKIP_GEO_MIGRATIONS\" ]; then yarn migrate:geo; else echo 'Geo migration skipped'; fi && if [ -z \"$SKIP_SQL_MIGRATIONS\" ]; then yarn migrate:sql; else echo SQL migration skipped' fi",
     "ilos": "yarn workspace @pdc/proxy ilos"
   },
   "keywords": [
