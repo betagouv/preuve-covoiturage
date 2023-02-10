@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./docker/lint
-        run: yarn ci
+        run: yarn install --frozen-lockfile
       
       - name: Run Linter
         working-directory: ./docker/lint
