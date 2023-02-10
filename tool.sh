@@ -128,6 +128,7 @@ bootstrap_integration() {
 
 integration() {
   set_env "-f docker-compose.integration.yml" && \
+  start && \
   bootstrap_integration && \
   run_integration 2>&1
   EXIT=$?
