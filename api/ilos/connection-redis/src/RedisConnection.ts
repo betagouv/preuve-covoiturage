@@ -1,4 +1,5 @@
 import { Redis as RedisInterface } from 'ioredis';
+import { URL } from 'url';
 import Redis from 'ioredis';
 
 import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/common';
@@ -40,9 +41,15 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
 
     if (this.config.connectionString) {
       const { connectionString, ...other } = this.config;
-      return new Redis(connectionString, {
+      const connectionURL = new URL(connectionString);
+      return new Redis({
         ...defaultConfig,
         ...other,
+        host: connectionURL.hostname,
+        port: parseInt(connectionURL.port) || 6379,
+        username: connectionURL.username || null,
+        password: connectionURL.password || null,
+        db: parseInt(connectionURL.pathname.replace(/\//g, '')) || 0,
       });
     }
     return new Redis({
