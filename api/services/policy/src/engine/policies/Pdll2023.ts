@@ -37,7 +37,6 @@ export const Pdll2023: PolicyHandlerStaticInterface = class extends AbstractPoli
 
   constructor(public max_amount: number) {
     super();
-    this.max_amount = max_amount;
     this.limits = [
       ['8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['5499304F-2C64-AB1A-7392-52FF88F5E78D', this.max_amount, watchForGlobalMaxAmount],
