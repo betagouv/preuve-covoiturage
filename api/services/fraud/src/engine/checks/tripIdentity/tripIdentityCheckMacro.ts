@@ -1,12 +1,12 @@
-import { NewableType, ServiceContainerInterface } from '@ilos/common';
+import { NewableType } from '@ilos/common';
+import { KernelBeforeAfter, KernelTestFn } from '@pdc/helper-test';
 import anyTest, { ExecutionContext, Macro, TestFn } from 'ava';
-import { makeKernelBeforeAfter, KernelBeforeAfter, KernelTestFn } from '@pdc/helper-test';
 
+import { HandleCheckInterface } from '../../../interfaces';
 import {
   SingleTripIdentityCheckParamsInterface,
   TripIdentityCheckParamsInterface,
 } from './TripIdentityCheckParamsInterface';
-import { HandleCheckInterface } from '../../../interfaces';
 
 export function faker(data: Partial<SingleTripIdentityCheckParamsInterface>): SingleTripIdentityCheckParamsInterface {
   const defaultData = {
@@ -30,10 +30,8 @@ interface TripIdentityMacroInterface extends KernelBeforeAfter {
 
 export type SelfCheckMacroContext = KernelTestFn;
 export function tripIdentityCheckMacro<TestContext = unknown>(
-  serviceProviderCtor: NewableType<ServiceContainerInterface>,
   checkCtor: NewableType<HandleCheckInterface<TripIdentityCheckParamsInterface>>,
 ): TripIdentityMacroInterface {
-  // const { before, after } = makeKernelBeforeAfter(serviceProviderCtor);
   const range: Macro<[Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?], KernelTestFn> =
     anyTest.macro({
       exec: async (
@@ -56,13 +54,6 @@ export function tripIdentityCheckMacro<TestContext = unknown>(
     });
 
   const test = anyTest as TestFn<KernelTestFn>;
-  test.before(async (t) => {
-    // const { kernel } = await before();
-    // t.context.kernel = kernel;
-  });
-  test.after.always(async (t) => {
-    // await after({ kernel: t.context.kernel });
-  });
 
   return {
     range,

@@ -1,8 +1,7 @@
 import { tripIdentityCheckMacro } from './tripIdentityCheckMacro';
-import { ServiceProvider } from '../../../ServiceProvider';
 import { TripIdentityFirstnameCollisionCheck } from './TripIdentityFirstnameCollisionCheck';
 
-const { test, range } = tripIdentityCheckMacro(ServiceProvider, TripIdentityFirstnameCollisionCheck);
+const { test, range } = tripIdentityCheckMacro(TripIdentityFirstnameCollisionCheck);
 
 test('max', range, [{ firstname: 'Léon' }, { firstname: 'Léon' }], 1, 1);
 test('min', range, [{ firstname: 'Léon' }, { firstname: 'Maxime' }], 0, 0);

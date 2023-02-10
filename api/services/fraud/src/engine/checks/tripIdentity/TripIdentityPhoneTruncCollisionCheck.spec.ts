@@ -1,10 +1,9 @@
 import { tripIdentityCheckMacro } from './tripIdentityCheckMacro';
-// import { ServiceProvider } from '../../../ServiceProvider';
 import { TripIdentityPhoneTruncCollisionCheck } from './TripIdentityPhoneTruncCollisionCheck';
 
-const { test, range } = tripIdentityCheckMacro(null, TripIdentityPhoneTruncCollisionCheck);
+const { test, range } = tripIdentityCheckMacro(TripIdentityPhoneTruncCollisionCheck);
 
-test.only('max', range, [{ phone_trunc: '+338366565' }, { phone_trunc: '+338366565' }], 1, 1);
+test('max', range, [{ phone_trunc: '+338366565' }, { phone_trunc: '+338366565' }], 1, 1);
 test('min', range, [{ phone_trunc: '+338366564' }, { phone_trunc: '+338366565' }], 0, 0);
 test(
   'between',
