@@ -64,7 +64,7 @@ export class BuildExcel {
       const tripCursor = await this.apdfRepoProvider.getPolicyCursor(params);
       await this.dataWorkbookWriter.call(tripCursor, wkw);
     } catch (e) {
-      console.error('Error while writing trips');
+      console.error('[apdf:buildExcel] Error while writing trips');
       console.error(e.message);
     }
   }
@@ -74,7 +74,7 @@ export class BuildExcel {
       if (!slices.length) return;
       await this.slicesWorkbookWriter.call(wkw, slices);
     } catch (e) {
-      console.error('Error while computing slices');
+      console.error('[apdf:buildExcel] Error while computing slices');
       console.error(e.message);
     }
   }
