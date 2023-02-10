@@ -39,8 +39,6 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
     this.limits = [];
   }
 
-  protected limits: Array<ConfiguredLimitInterface> = [];
-
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 5_000 });
