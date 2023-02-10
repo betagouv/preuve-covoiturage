@@ -42,7 +42,7 @@ export class ExportAction extends Action {
         // Make sure the campaign is active and within the date range
         const campaign: Campaign | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
-          .catch((e) => console.error(`Failed campaign ${c_id} export: ${e.message}`));
+          .catch((e) => console.error(`[apdf:export] (campaign_id: ${c_id}) Check campaign failed: ${e.message}`));
 
         if (!campaign) return;
 
@@ -51,7 +51,7 @@ export class ExportAction extends Action {
           params.query.operator_id ||
           (await this.tripRepositoryProvider.getPolicyActiveOperators(campaign._id, start_date, end_date));
 
-        if (!activeOperatorIds.length) console.info(`Exporting APDF: No active operators for ${campaign.name}`);
+        if (!activeOperatorIds.length) console.info(`[apdf:export] (campaign: ${campaign.name}) No active operators`);
 
         if (verbose) {
           console.info(`
@@ -90,8 +90,7 @@ export class ExportAction extends Action {
 
               files.push(file);
             } catch (error) {
-              // eslint-disable-next-line max-len
-              const message = `Failed APDF export for operator ${o_id} (campaign ${campaign._id})`;
+              const message = `[apdf:export] (campaign: ${campaign.name}, operator_id: ${o_id}) Export failed`;
               console.error(message);
               files.push(message);
             }

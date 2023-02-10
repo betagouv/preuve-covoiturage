@@ -3,12 +3,10 @@ import { provider } from '@ilos/common';
 import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
 import { set } from 'lodash';
 import { promisify } from 'util';
-import { boundariesToClause } from '../helpers/boundariesToClause.helper';
-import { slicesToBoundaries } from '../helpers/slicesToBoundaries.helper';
 import {
+  CampaignSearchParamsInterface,
   DataRepositoryInterface,
   DataRepositoryProviderInterfaceResolver,
-  CampaignSearchParamsInterface,
 } from '../interfaces/APDFRepositoryProviderInterface';
 import { APDFTripInterface } from '../interfaces/APDFTripInterface';
 import { PolicyStatsInterface } from '../shared/apdf/interfaces/PolicySliceStatInterface';
@@ -85,7 +83,6 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
             and cc.status = 'ok'
             and cc.operator_id = $3
             and pi.policy_id = $4
-            ${this.boundaries(slices)}
           )
         select
           count(distinct acquisition_id)::int as total_count,
@@ -207,9 +204,5 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<APDFTripInterface[]>,
       release: db.release,
     };
-  }
-
-  private boundaries(slices: SliceInterface[]): string {
-    return boundariesToClause(slicesToBoundaries(slices));
   }
 }
