@@ -4,6 +4,9 @@ services:
     build:
       dockerfile: ./docker/api/Dockerfile
       context: .
+    depends_on:
+      - postgres
+      - s3
 
 networks:
   front:
