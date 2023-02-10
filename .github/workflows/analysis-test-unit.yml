@@ -18,7 +18,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Build
-        run: sh rebuild.sh
+        run: cd ./api && sh rebuild.sh
         working-directory: api
       - name: Run Unit test
         run: yarn test:unit
