@@ -88,6 +88,8 @@ services:
     environment:
       APP_WORKER: 'true'
       APP_RATE_LIMIT_MAX_FACTOR: '0'
+      APP_REQUEST_TIMEOUT: '0'
+      APP_POSTGRES_TIMEOUT: '0'
       # TODO
       # AWS_ACCESS_KEY_ID: minioadmin
       # AWS_SECRET_ACCESS_KEY: minioadmin
