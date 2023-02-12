@@ -14,7 +14,7 @@ interface CommandOptions {
 }
 @command()
 export class StatsRefreshCommand implements CommandInterface {
-  static readonly signature: string = 'stats:refresh';
+  static readonly signature: string = 'monitoring:stats:refresh';
   static readonly description: string = 'Refresh stats materialized views';
   static readonly options: CommandOptionType[] = [
     {
@@ -37,10 +37,10 @@ export class StatsRefreshCommand implements CommandInterface {
     };
 
     if (sync) {
-      console.info(`Running [stats:refresh] in sync for schema ${schema}`);
+      console.info(`Running [monitoring:stats:refresh] in sync for schema ${schema}`);
       await this.kernel.call(signature, { schema }, context);
     } else {
-      console.info(`Pushed [stats:refresh] to the queue for schema ${schema}`);
+      console.info(`Pushed [monitoring:stats:refresh] to the queue for schema ${schema}`);
       await this.kernel.notify(signature, { schema }, context);
     }
 
