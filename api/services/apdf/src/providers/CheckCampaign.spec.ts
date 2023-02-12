@@ -2,8 +2,8 @@ import faker from '@faker-js/faker';
 import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { createGetCampaignResultInterface } from '../../helpers/fakeCampaign.helper';
-import { ResultInterface as GetCampaignResultInterface } from '../../shared/policy/find.contract';
+import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
+import { ResultInterface as GetCampaignResultInterface } from '../shared/policy/find.contract';
 import { CheckCampaign } from './CheckCampaign';
 
 interface Context {
