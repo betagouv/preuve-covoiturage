@@ -50,16 +50,16 @@ export class StatsRefreshAction extends AbstractAction {
         .filter(({ freq }) => frequencies.indexOf(freq as CronFrequency) > -1)
         .map(({ table }: { table: string }) => table);
 
-      console.info(`[stats:refresh] Refresh materialised views: ${tables.sort().join(', ')}`);
+      console.info(`[monitoring:stats:refresh] Refresh materialised views: ${tables.sort().join(', ')}`);
 
       for (const table of tables) {
         const bench = new Date().getTime();
         await this.cn.query(`REFRESH MATERIALIZED VIEW stats.${table}`);
         const ms = (new Date().getTime() - bench) / 1000;
-        console.info(`[stats:refresh] Refreshed stats.${table} in ${ms} seconds`);
+        console.info(`[monitoring:stats:refresh] Refreshed stats.${table} in ${ms} seconds`);
       }
     } catch (e) {
-      console.error(`[stats:refresh] ${e.message}`);
+      console.error(`[monitoring:stats:refresh] ${e.message}`);
     } finally {
       this.cn.release();
     }

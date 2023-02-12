@@ -1,7 +1,7 @@
 {
   "jobs": [
     {
-      "command": "0 3 * * * yarn ilos stats:refresh",
+      "command": "0 3 * * * yarn ilos monitoring:stats:refresh",
       "size": "M"
     },
         {
