@@ -8,7 +8,7 @@ import fs from 'fs';
 import { get } from 'lodash';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { BuildExcel } from '../providers/excel/BuildExcel';
-import { CheckCampaign } from '../providers/excel/CheckCampaign';
+import { CheckCampaign } from '../providers/CheckCampaign';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/apdf/export.contract';
 import { alias } from '../shared/apdf/export.schema';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
@@ -21,7 +21,7 @@ export class ExportAction extends Action {
   constructor(
     private checkCampaign: CheckCampaign,
     private s3StorageProvider: S3StorageProvider,
-    private tripRepositoryProvider: DataRepositoryProviderInterfaceResolver,
+    private apdfRepositoryProvider: DataRepositoryProviderInterfaceResolver,
     private buildExcel: BuildExcel,
     private config: ConfigInterfaceResolver,
   ) {
@@ -49,7 +49,7 @@ export class ExportAction extends Action {
         // List operators having subsidized trips
         const activeOperatorIds =
           params.query.operator_id ||
-          (await this.tripRepositoryProvider.getPolicyActiveOperators(campaign._id, start_date, end_date));
+          (await this.apdfRepositoryProvider.getPolicyActiveOperators(campaign._id, start_date, end_date));
 
         if (!activeOperatorIds.length) console.info(`[apdf:export] (campaign: ${campaign.name}) No active operators`);
 

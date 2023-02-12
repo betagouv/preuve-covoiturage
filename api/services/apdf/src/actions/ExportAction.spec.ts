@@ -10,7 +10,7 @@ import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { BuildExcel } from '../providers/excel/BuildExcel';
-import { CheckCampaign } from '../providers/excel/CheckCampaign';
+import { CheckCampaign } from '../providers/CheckCampaign';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 import { ExportAction } from './ExportAction';
 
