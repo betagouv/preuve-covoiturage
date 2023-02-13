@@ -11,10 +11,10 @@ import { kernel } from '@ilos/common';
 })
 export class Kernel extends BaseKernel {
   readonly extensions = [
+    Extensions.Config,
     ConnectionManagerExtension,
     CommandExtension,
     ValidatorExtension,
-    Extensions.Config,
     Extensions.Middlewares,
     Extensions.Providers,
     Extensions.Handlers,

@@ -1,5 +1,23 @@
 import { readFileSync } from 'fs';
+import { URL } from 'url';
 import { env } from '@ilos/core';
+
+function unnestRedisConnectionString(connectionString: string): {
+  host?: string;
+  port?: number;
+  username?: string;
+  password?: string;
+  db?: number;
+} {
+  const connectionURL = new URL(connectionString);
+  return {
+    host: connectionURL.hostname,
+    port: parseInt(connectionURL.port) || 6379,
+    username: connectionURL.username || null,
+    password: connectionURL.password || null,
+    db: parseInt(connectionURL.pathname.replace(/\//g, '')) || 0,
+  };
+}
 
 function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
   const asVarEnvName = baseEnvKey;
@@ -23,8 +41,8 @@ const redisTls = {
 };
 
 export const redis = {
-  connectionString: env('APP_REDIS_URL') as string,
   ...(Object.keys(redisTls).length ? { tls: redisTls } : {}),
+  ...unnestRedisConnectionString(env('APP_REDIS_URL') as string),
 };
 
 const postgresTls = {

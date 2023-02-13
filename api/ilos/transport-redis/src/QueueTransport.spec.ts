@@ -105,7 +105,7 @@ test.afterEach((t) => {
 
 test('Queue transport: works', async (t) => {
   const queueTransport = t.context.transport;
-  await queueTransport.up([process.env.APP_REDIS_URL ?? 'redis://localhost']);
+  await queueTransport.up();
   t.is(queueTransport.queues.length, 1);
   t.is(queueTransport.queues[0].worker.name, 'math');
   // @ts-ignore
