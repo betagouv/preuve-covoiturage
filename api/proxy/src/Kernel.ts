@@ -1,6 +1,7 @@
 import { Commands } from '@ilos/cli';
 import { kernel } from '@ilos/common';
 import { Kernel as BaseKernel } from '@ilos/framework';
+import { RedisConnection } from '@ilos/connection-redis';
 import { SentryProvider } from '@pdc/provider-sentry';
 import { TokenProvider } from '@pdc/provider-token';
 import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
@@ -43,5 +44,6 @@ import { config } from './config';
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [SeedCommand, StatsRefreshCommand, Commands.CallCommand],
+  connections: [[RedisConnection, 'connections.redis']],
 })
 export class Kernel extends BaseKernel {}
