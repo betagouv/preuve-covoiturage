@@ -20,7 +20,7 @@ test.after.always(async (t) => {
   await t.context.db.drop();
 });
 
-test('should seed territories', async (t) => {
+test.only('should seed territories', async (t) => {
   const result = await t.context.db.connection.getClient().query({
     text: 'SELECT count(*) FROM geo.perimeters',
   });
