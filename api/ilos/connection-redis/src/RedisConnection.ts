@@ -1,5 +1,4 @@
 import { Redis as RedisInterface } from 'ioredis';
-import { URL } from 'url';
 import Redis from 'ioredis';
 
 import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/common';
@@ -8,7 +7,7 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
   protected client: RedisInterface;
   protected connected = false;
 
-  constructor(protected readonly config: ConnectionConfigurationType) {}
+  constructor(protected readonly config: ConnectionConfigurationType | string) {}
 
   async up() {
     if (!this.connected && this.getClient().status === 'wait') {
@@ -38,23 +37,13 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
       enableReadyCheck: false,
       // lazyConnect: true,
     };
-
-    if (this.config.connectionString) {
-      const { connectionString, ...other } = this.config;
-      const connectionURL = new URL(connectionString);
-      return new Redis({
-        ...defaultConfig,
-        ...other,
-        host: connectionURL.hostname,
-        port: parseInt(connectionURL.port) || 6379,
-        username: connectionURL.username || null,
-        password: connectionURL.password || null,
-        db: parseInt(connectionURL.pathname.replace(/\//g, '')) || 0,
-      });
+    if (typeof this.config === 'string') {
+      return new Redis(this.config, defaultConfig);
     }
-    return new Redis({
+    const conn = new Redis({
       ...defaultConfig,
       ...this.config,
     });
+    return conn;
   }
 }

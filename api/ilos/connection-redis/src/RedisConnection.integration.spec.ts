@@ -10,7 +10,7 @@ const test = anyTest as TestFn<Context>;
 
 test.before((t) => {
   t.context = {
-    connection: new RedisConnection({ connectionString: process.env.APP_REDIS_URL ?? 'redis://127.0.0.1:6379' }),
+    connection: new RedisConnection(process.env.APP_REDIS_URL ?? 'redis://127.0.0.1:6379'),
   };
 });
 

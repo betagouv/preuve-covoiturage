@@ -14,7 +14,7 @@ import {
   ParamsInterface as SimulateOnPastParam,
   ResultInterface as SimulateOnPastResult,
   signature as simulateOnPastSignature,
-} from '~/shared/policy/simulateOnPast.contract';
+} from '~/shared/policy/getPastSimulationOrCompute.contract';
 
 @Injectable({
   providedIn: 'root',

@@ -28,6 +28,7 @@ import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { SimulateOnPastByGeoAction } from './actions/SimulateOnPastByGeoAction';
+import { GetPastSimulationOrComputeAction } from './actions/GetPastSimulationOrComputeAction';
 
 @serviceProvider({
   config,
@@ -56,6 +57,7 @@ import { SimulateOnPastByGeoAction } from './actions/SimulateOnPastByGeoAction';
     SimulateOnFutureAction,
     SimulateOnPastAction,
     SimulateOnPastByGeoAction,
+    GetPastSimulationOrComputeAction,
     StatsAction,
   ],
   connections: [
