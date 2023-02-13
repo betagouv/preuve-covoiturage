@@ -62,7 +62,7 @@ export const Laval: PolicyHandlerStaticInterface = class
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: 9_000_00,
+        glob: this.max_amount,
       },
     };
   }
