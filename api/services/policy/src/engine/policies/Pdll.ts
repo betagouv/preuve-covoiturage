@@ -35,11 +35,11 @@ export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       end: 50_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 50_000 })),
     },
-    {
-      start: 50_000,
-      end: 150_000,
-      fn: () => 0,
-    },
+    // {
+    //   start: 50_000,
+    //   end: 150_000,
+    //   fn: () => 0,
+    // },
   ];
 
   constructor(public max_amount: number) {

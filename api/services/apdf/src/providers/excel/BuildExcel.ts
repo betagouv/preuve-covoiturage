@@ -1,10 +1,12 @@
 import { provider } from '@ilos/common';
 import { APDFNameProvider } from '@pdc/provider-file';
 import { stream } from 'exceljs';
+import { BoundedSlices } from '~/shared/policy/common/interfaces/SliceInterface';
 import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface';
 import { SliceStatInterface } from '../../shared/apdf/interfaces/PolicySliceStatInterface';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
 import { DataRepositoryProvider } from '../APDFRepositoryProvider';
+import { wrapSlicesHelper as wrapSlices } from './wrapSlicesHelper';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
@@ -35,7 +37,7 @@ export class BuildExcel {
       total_sum: amount,
       subsidized_count: subsidized,
       slices,
-    } = await this.apdfRepoProvider.getPolicyStats(params, campaign.params.slices || []);
+    } = await this.apdfRepoProvider.getPolicyStats(params, wrapSlices(campaign.params.slices as BoundedSlices));
 
     // generate the filename and filepath
     const fileParams = {
