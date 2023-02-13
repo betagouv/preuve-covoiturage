@@ -2,18 +2,14 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import { differenceInSeconds } from 'date-fns';
-
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnFuture.contract';
-import { alias } from '../shared/policy/simulateOnFuture.schema';
-import {
-  PolicyRepositoryProviderInterfaceResolver,
-  TerritoryRepositoryProviderInterfaceResolver,
-  CarpoolInterface,
-  PolicyInterface,
-  StatelessIncentiveInterface,
-} from '../interfaces';
 import { v4 } from 'uuid';
 import { Policy } from '../engine/entities/Policy';
+import { PolicyRepositoryProviderInterfaceResolver, TerritoryRepositoryProviderInterfaceResolver } from '../interfaces';
+import { CarpoolInterface } from '../shared/policy/common/interfaces/CarpoolInterface';
+import { StatelessIncentiveInterface } from '../shared/policy/common/interfaces/IncentiveInterface';
+import { PolicyInterface } from '../shared/policy/common/interfaces/PolicyInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnFuture.contract';
+import { alias } from '../shared/policy/simulateOnFuture.schema';
 
 @handler({
   ...handlerConfig,

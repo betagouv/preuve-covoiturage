@@ -1,4 +1,4 @@
-import { PolicyInterface } from './common/interfaces/PolicyInterface';
+import { CompiledPolicyInterface } from './common/interfaces/PolicyInterface';
 
 export interface ParamsInterface {
   territory_id?: number | null;
@@ -6,7 +6,7 @@ export interface ParamsInterface {
   status?: string;
 }
 
-export type SingleResultInterface = Omit<PolicyInterface, 'description' | 'handler'>;
+export type SingleResultInterface = Omit<CompiledPolicyInterface, 'description' | 'handler'>;
 
 export type ResultInterface = Array<SingleResultInterface>;
 

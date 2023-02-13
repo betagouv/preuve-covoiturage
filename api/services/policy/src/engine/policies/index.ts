@@ -1,7 +1,6 @@
 import { Pdll2023 } from './Pdll2023';
 import { Vitre } from './Vitre';
 import { Montpellier } from './Montpellier';
-import { PolicyHandlerStaticInterface } from '../../interfaces';
 import { Idfm } from './Idfm';
 import { Lannion } from './Lannion';
 import { Laval } from './Laval';
@@ -17,6 +16,7 @@ import { PolicyTemplateThree } from './unbound/PolicyTemplateThree';
 import { PolicyTemplateTwo } from './unbound/PolicyTemplateTwo';
 import { MetropoleSavoie } from './MetropoleSavoie';
 import { Smt2023 } from './Smt2023';
+import { PolicyHandlerStaticInterface } from '../../shared/policy/common/interfaces/PolicyInterface';
 
 export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
   // disable prettier to avoid having it reformat to a single line

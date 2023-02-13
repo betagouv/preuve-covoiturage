@@ -3,7 +3,7 @@ import {
   PolicyHandlerParamsInterface,
   StatefulContextInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/PolicyInterface';
 import { applyLimitsOnStatefulStage, applyLimitsOnStatelessStage, ConfiguredLimitInterface } from '../helpers';
 
 export abstract class AbstractPolicyHandler implements PolicyHandlerInterface {

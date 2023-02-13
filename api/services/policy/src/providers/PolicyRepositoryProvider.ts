@@ -1,11 +1,7 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-
-import {
-  LockInformationInterface,
-  PolicyRepositoryProviderInterfaceResolver,
-  SerializedPolicyInterface,
-} from '../interfaces';
+import { LockInformationInterface, PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
+import { SerializedPolicyInterface } from '../shared/policy/common/interfaces/PolicyInterface';
 
 @provider({
   identifier: PolicyRepositoryProviderInterfaceResolver,

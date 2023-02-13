@@ -1,4 +1,4 @@
-import { SerializedPolicyInterface } from '..';
+import { SerializedPolicyInterface } from '../../shared/policy/common/interfaces/PolicyInterface';
 
 export interface LockInformationInterface {
   from_date: Date;

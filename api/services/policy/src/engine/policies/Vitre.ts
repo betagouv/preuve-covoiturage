@@ -1,10 +1,11 @@
+import { OperatorsEnum } from '../../shared/policy/common/interfaces/OperatorsEnum';
 import {
-  OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
+  RunnableSlices,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/PolicyInterface';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -27,11 +28,10 @@ export const Vitre: PolicyHandlerStaticInterface = class
 {
   static readonly id = 'vitre';
   protected operators = [OperatorsEnum.Klaxit];
-  protected slices = [
+  protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {
       start: 15_000,
-      end: 1_000_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];

@@ -1,10 +1,11 @@
+import { OperatorsEnum } from '../../shared/policy/common/interfaces/OperatorsEnum';
 import {
-  OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
+  RunnableSlices,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/PolicyInterface';
 import {
   ensureFreeRide,
   isOperatorClassOrThrow,
@@ -24,17 +25,12 @@ import { description } from './Mrn.html';
 export const Mrn: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '766';
   protected operators = [OperatorsEnum.Klaxit];
-  protected slices = [
+  protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
       start: 20_000,
       end: 40_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
-    },
-    {
-      start: 40_000,
-      end: 150_000,
-      fn: () => 0,
     },
   ];
 

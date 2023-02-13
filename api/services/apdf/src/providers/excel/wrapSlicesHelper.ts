@@ -1,11 +1,17 @@
 import { BoundedSlices, UnboundedSlices } from '../../shared/policy/common/interfaces/SliceInterface';
 
-export function wrapSlicesHelper(slices: BoundedSlices | undefined | null): UnboundedSlices | [] {
+export function wrapSlices(slices: BoundedSlices | UnboundedSlices | undefined | null): UnboundedSlices | [] {
   if (!slices || !Array.isArray(slices) || !slices.length) return [];
-  const min = findBoundary('min', slices);
-  const max = findBoundary('max', slices);
-  if (min === 0) return [...slices, { start: max }];
-  return [{ start: 0, end: min }, ...slices, { start: max }];
+  const bounded = toBoundedSlices(slices);
+  const min = findBoundary('min', bounded);
+  const max = findBoundary('max', bounded);
+  if (min === 0) return [...bounded, { start: max }];
+  return [{ start: 0, end: min }, ...bounded, { start: max }];
+}
+
+export function toBoundedSlices(slices: BoundedSlices | UnboundedSlices): BoundedSlices {
+  const sorted = slices.sort(({ start: a }, { start: b }) => a - b);
+  return (sorted[sorted.length - 1]?.end ? slices : sorted.slice(0, sorted.length - 1)) as BoundedSlices;
 }
 
 export function findBoundary(boundary: 'min' | 'max', slices: BoundedSlices): number | null {

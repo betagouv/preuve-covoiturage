@@ -1,10 +1,11 @@
+import { OperatorsEnum } from '../../shared/policy/common/interfaces/OperatorsEnum';
 import {
-  OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
+  RunnableSlices,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/PolicyInterface';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -34,7 +35,7 @@ export const Laval: PolicyHandlerStaticInterface = class
   }
 
   protected operators = [OperatorsEnum.Klaxit];
-  protected slices = [{ start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
+  protected slices: RunnableSlices = [{ start: 2_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
@@ -48,8 +49,8 @@ export const Laval: PolicyHandlerStaticInterface = class
 
     // Par kilomètre
     let amount = 0;
-    for (const { start, end, fn } of this.slices) {
-      if (onDistanceRange(ctx, { min: start, max: end })) {
+    for (const { start, fn } of this.slices) {
+      if (onDistanceRange(ctx, { min: start })) {
         amount = fn(ctx);
       }
     }

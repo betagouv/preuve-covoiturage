@@ -1,18 +1,13 @@
 import { handler } from '@ilos/common';
+import { RedisConnection } from '@ilos/connection-redis/dist';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import Redis from 'ioredis';
-
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
-
-import { RedisConnection } from '@ilos/connection-redis/dist';
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
-import {
-  SerializedPolicyInterface,
-  TerritoryRepositoryProviderInterfaceResolver,
-  TripRepositoryProviderInterfaceResolver,
-} from '../interfaces';
+import { TerritoryRepositoryProviderInterfaceResolver, TripRepositoryProviderInterfaceResolver } from '../interfaces';
+import { SerializedPolicyInterface } from '../shared/policy/common/interfaces/PolicyInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
 import { alias } from '../shared/policy/simulateOnPast.schema';
 
 @handler({

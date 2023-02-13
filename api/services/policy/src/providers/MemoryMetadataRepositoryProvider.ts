@@ -1,4 +1,5 @@
-import { MetadataRepositoryProviderInterfaceResolver, SerializedStoredMetadataInterface } from '../interfaces';
+import { MetadataRepositoryProviderInterfaceResolver } from '../interfaces';
+import { SerializedStoredMetadataInterface } from '../shared/policy/common/interfaces/MetadataInterface';
 
 export class MemoryMetadataRepository implements MetadataRepositoryProviderInterfaceResolver {
   constructor(public data: SerializedStoredMetadataInterface[] = []) {}

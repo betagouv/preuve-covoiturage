@@ -1,25 +1,23 @@
-import { handler, KernelInterfaceResolver, InitHookInterface, ParseErrorException } from '@ilos/common';
+import { handler, InitHookInterface, KernelInterfaceResolver, ParseErrorException } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
-import { isValid, parseISO, startOfDay, sub } from 'date-fns';
-
-import {
-  signature as handlerSignature,
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from '../shared/policy/finalize.contract';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-
+import { isValid, parseISO, startOfDay, sub } from 'date-fns';
+import { MetadataStore } from '../engine/entities/MetadataStore';
+import { Policy } from '../engine/entities/Policy';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   MetadataRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
-  IncentiveStatusEnum,
-  MetadataLifetime,
-  PolicyInterface,
 } from '../interfaces';
-import { Policy } from '../engine/entities/Policy';
-import { MetadataStore } from '../engine/entities/MetadataStore';
+import { IncentiveStatusEnum } from '../shared/policy/common/interfaces/IncentiveInterface';
+import { MetadataLifetime } from '../shared/policy/common/interfaces/MetadataInterface';
+import { PolicyInterface } from '../shared/policy/common/interfaces/PolicyInterface';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+  signature as handlerSignature,
+} from '../shared/policy/finalize.contract';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class FinalizeAction extends AbstractAction implements InitHookInterface {

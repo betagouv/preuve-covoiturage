@@ -1,10 +1,11 @@
+import { OperatorsEnum } from '../../shared/policy/common/interfaces/OperatorsEnum';
 import {
-  OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
+  RunnableSlices,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/PolicyInterface';
 import {
   isAfter,
   isOperatorClassOrThrow,
@@ -36,7 +37,7 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     ];
   }
 
-  protected slices = [
+  protected slices: RunnableSlices = [
     {
       start: 4_000,
       end: 20_000,
@@ -46,11 +47,6 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       start: 20_000,
       end: 40_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
-    },
-    {
-      start: 40_000,
-      end: 150_000,
-      fn: () => 0,
     },
   ];
 

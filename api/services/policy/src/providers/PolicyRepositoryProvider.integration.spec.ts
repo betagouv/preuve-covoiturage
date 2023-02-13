@@ -1,8 +1,7 @@
+import { DbContext, makeDbBeforeAfter } from '@pdc/helper-test';
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
-
+import { SerializedPolicyInterface } from '../shared/policy/common/interfaces/PolicyInterface';
 import { PolicyRepositoryProvider } from './PolicyRepositoryProvider';
-import { SerializedPolicyInterface } from '../interfaces';
 
 interface TestContext {
   repository: PolicyRepositoryProvider;

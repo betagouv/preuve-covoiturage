@@ -15,6 +15,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { CommonDataService } from '~/core/services/common-data.service';
 import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
 import { CertificateMetaDialogComponent } from './certificate-meta-dialog/certificate-meta-dialog.component';
+// eslint-disable-next-line max-len
 import { IdentityIdentifiersInterface } from '~/core/entities/api/shared/certificate/common/interfaces/IdentityIdentifiersInterface';
 
 @Component({

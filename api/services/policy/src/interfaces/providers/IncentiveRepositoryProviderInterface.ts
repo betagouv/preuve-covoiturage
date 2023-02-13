@@ -1,4 +1,7 @@
-import { SerializedIncentiveInterface, IncentiveStatusEnum } from '..';
+import {
+  SerializedIncentiveInterface,
+  IncentiveStatusEnum,
+} from '../../shared/policy/common/interfaces/IncentiveInterface';
 
 export abstract class IncentiveRepositoryProviderInterfaceResolver {
   abstract updateStatefulAmount(

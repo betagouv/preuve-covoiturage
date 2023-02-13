@@ -1,10 +1,12 @@
-import anyTest, { TestFn } from 'ava';
-import { ContextType, KernelInterfaceResolver } from '@ilos/common';
-import sinon, { SinonStub } from 'sinon';
-import { SimulateOnPastByGeoAction } from './SimulateOnPastByGeoAction';
-import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces';
-import { ResultInterface } from '../shared/policy/simulateOnPastGeo.contract';
 import faker from '@faker-js/faker';
+import { KernelInterfaceResolver } from '@ilos/common';
+import anyTest, { TestFn } from 'ava';
+import sinon, { SinonStub } from 'sinon';
+import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
+import { CarpoolInterface } from '../shared/policy/common/interfaces/CarpoolInterface';
+import { PolicyInterface } from '../shared/policy/common/interfaces/PolicyInterface';
+import { ResultInterface } from '../shared/policy/simulateOnPastGeo.contract';
+import { SimulateOnPastByGeoAction } from './SimulateOnPastByGeoAction';
 
 interface Context {
   // Injected tokens
@@ -12,7 +14,7 @@ interface Context {
   tripRepository: TripRepositoryProviderInterfaceResolver;
 
   // Injected tokens method's stubs
-  kernelInterfaceResolverStub: SinonStub<[method: string, params: any, context: ContextType]>;
+  kernelInterfaceResolverStub: SinonStub;
   tripRepositoryResolverStub: SinonStub;
 
   // Tested token

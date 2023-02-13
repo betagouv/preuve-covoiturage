@@ -37,7 +37,7 @@ export class SlicesWorkbookWriter extends AbstractWorkBookWriter {
   private formatSliceLabel(slice: SliceInterface): string {
     if (!slice.start && slice.end) {
       return `Jusqu'à ${slice.end / 1000} km`;
-    } else if (slice.end === DataRepositoryProvider.MAX_DISTANCE_METERS) {
+    } else if (slice.start && !slice.end) {
       return `Supérieur à ${slice.start / 1000} km`;
     }
     return `De ${slice.start / 1000} km à ${slice.end / 1000} km`;

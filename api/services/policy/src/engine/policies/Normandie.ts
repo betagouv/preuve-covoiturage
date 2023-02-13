@@ -3,10 +3,9 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/PolicyInterface';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
-  ConfiguredLimitInterface,
   isOperatorClassOrThrow,
   LimitTargetEnum,
   onDistanceRangeOrThrow,

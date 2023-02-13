@@ -1,6 +1,7 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { CarpoolInterface, OperatorsEnum } from '../../interfaces';
+import { CarpoolInterface } from '../../shared/policy/common/interfaces/CarpoolInterface';
+import { OperatorsEnum } from '../../shared/policy/common/interfaces/OperatorsEnum';
 import { makeProcessHelper } from '../tests/macro';
 import { Montpellier as Handler } from './Montpellier';
 
@@ -15,7 +16,7 @@ const defaultPosition = {
   reseau: '76',
 };
 
-const defaultCarpool = {
+const defaultCarpool: CarpoolInterface = {
   _id: 1,
   trip_id: v4(),
   passenger_identity_uuid: v4(),
@@ -39,7 +40,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works basic',
+  'should work basic',
   process,
   {
     policy: { handler: Handler.id },
@@ -72,7 +73,7 @@ test(
 );
 
 test(
-  'should works with day limits',
+  'should work with day limits',
   process,
   {
     policy: { handler: Handler.id },
@@ -116,7 +117,7 @@ const generateCarpool = (): Partial<CarpoolInterface>[] => {
 };
 
 test(
-  'should works with driver month limits',
+  'should work with driver month limits',
   process,
   {
     policy: { handler: Handler.id },

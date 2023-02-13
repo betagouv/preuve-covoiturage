@@ -70,7 +70,7 @@ test('Json Schema provider: should raise exception if data unvalid', async (t) =
   t.is(err.message, 'data/hello must be string');
 });
 
-test('Json Schema provider: should works with ref', async (t) => {
+test('Json Schema provider: should work with ref', async (t) => {
   const subSchema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'myschema.world',

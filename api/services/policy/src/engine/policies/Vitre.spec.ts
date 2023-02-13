@@ -1,6 +1,6 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
+import { OperatorsEnum } from '../../shared/policy/common/interfaces/OperatorsEnum';
 import { makeProcessHelper } from '../tests/macro';
 import { Vitre as Handler } from './Vitre';
 
@@ -39,7 +39,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works with exclusion',
+  'should work with exclusion',
   process,
   {
     policy: { handler: Handler.id },
@@ -50,7 +50,7 @@ test(
 );
 
 test(
-  'should works basic',
+  'should work basic',
   process,
   {
     policy: { handler: Handler.id },
@@ -78,7 +78,7 @@ test(
 );
 
 test(
-  'should works with global limits',
+  'should work with global limits',
   process,
   {
     policy: { handler: Handler.id, max_amount: 180_000_00 },
@@ -106,7 +106,7 @@ test(
 );
 
 test(
-  'should works with number day driver limit',
+  'should work with number day driver limit',
   process,
   {
     policy: { handler: Handler.id },
@@ -137,7 +137,7 @@ test(
 );
 
 test(
-  'should works with number day passenger limit',
+  'should work with number day passenger limit',
   process,
   {
     policy: { handler: Handler.id },

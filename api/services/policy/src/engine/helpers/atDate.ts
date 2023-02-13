@@ -1,6 +1,6 @@
+import { StatelessContextInterface, StatelessRuleHelper } from '../../shared/policy/common/interfaces/PolicyInterface';
 import { MisconfigurationException } from '../exceptions/MisconfigurationException';
 import { utcToZonedTime } from './utcToZonedTime';
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
 
 interface AtDateParams {
   dates: string[];

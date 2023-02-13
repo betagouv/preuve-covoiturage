@@ -1,10 +1,10 @@
+import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../../interfaces';
-import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
+} from '../../../shared/policy/common/interfaces/PolicyInterface';
 import {
   ConfiguredLimitInterface,
   isOperatorClassOrThrow,
@@ -34,11 +34,6 @@ export const PolicyTemplateOne: PolicyHandlerStaticInterface = class
       start: 20_000,
       end: 50_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 50_000 })),
-    },
-    {
-      start: 50_000,
-      end: 150_000,
-      fn: () => 0,
     },
   ];
 

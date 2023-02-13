@@ -1,6 +1,6 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
+import { OperatorsEnum } from '../../shared/policy/common/interfaces/OperatorsEnum';
 import { makeProcessHelper } from '../tests/macro';
 import { Smt2023 as Handler } from './Smt2023';
 
@@ -39,7 +39,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works with exclusion',
+  'should work with exclusion',
   process,
   {
     policy: { handler: Handler.id },
@@ -70,7 +70,7 @@ test(
 );
 
 test(
-  'should works basic',
+  'should work basic',
   process,
   {
     policy: { handler: Handler.id },
@@ -109,7 +109,7 @@ test(
 );
 
 test(
-  'should works with global limits',
+  'should work with global limits',
   process,
   {
     policy: { handler: Handler.id, max_amount: 60_000_00 },
@@ -137,7 +137,7 @@ test(
 );
 
 test(
-  'should works with day limits',
+  'should work with day limits',
   process,
   {
     policy: { handler: Handler.id },

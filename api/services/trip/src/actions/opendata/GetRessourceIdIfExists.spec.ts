@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { Dataset } from '~/interfaces/DataGouvInterface';
+import { Dataset } from '../../interfaces/DataGouvInterface';
 import { DataGouvProvider } from '../../providers/DataGouvProvider';
 import { GetRessourceIdIfExists } from './GetRessourceIdIfExists';
 

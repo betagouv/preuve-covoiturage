@@ -1,15 +1,15 @@
 import {
+  ContextType,
+  ForbiddenException,
+  InvalidParamsException,
   middleware,
   MiddlewareInterface,
   ParamsType,
-  ContextType,
   ResultType,
-  InvalidParamsException,
-  ForbiddenException,
 } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres/dist';
 import { ConfiguredMiddleware } from '@pdc/provider-middleware/dist';
-import { TerritorySelectorsInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export type ScopeToGroupMiddlewareParams = {
   registry: string;

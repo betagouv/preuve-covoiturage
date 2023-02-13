@@ -1,5 +1,5 @@
+import { StatelessContextInterface, StatelessRuleHelper } from '../../shared/policy/common/interfaces/PolicyInterface';
 import { utcToZonedTime } from './utcToZonedTime';
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
 
 interface OnWeekdayParams {
   days: number[];

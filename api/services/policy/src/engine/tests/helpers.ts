@@ -1,10 +1,10 @@
 import { v4 } from 'uuid';
+import { CarpoolInterface } from '../../shared/policy/common/interfaces/CarpoolInterface';
 import {
-  CarpoolInterface,
   IncentiveStateEnum,
   IncentiveStatusEnum,
   SerializedIncentiveInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/IncentiveInterface';
 
 const defaultPosition = {
   arr: '91377',

@@ -1,22 +1,24 @@
 import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
 import { isSelected } from '../helpers';
-import {
-  CarpoolInterface,
-  MetadataStoreInterface,
-  PolicyInterface,
-  PolicyHandlerInterface,
-  SerializedIncentiveInterface,
-  SerializedPolicyInterface,
-  StatefulIncentiveInterface,
-  StatelessIncentiveInterface,
-  PolicyHandlerParamsInterface,
-  TerritorySelectorsInterface,
-  StatelessContextInterface,
-  PolicyHandlerStaticInterface,
-} from '../../interfaces';
 import { policies } from '../policies';
 import { StatefulContext, StatelessContext } from './Context';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+import { CarpoolInterface } from '../../shared/policy/common/interfaces/CarpoolInterface';
+import {
+  StatelessIncentiveInterface,
+  SerializedIncentiveInterface,
+  StatefulIncentiveInterface,
+} from '../../shared/policy/common/interfaces/IncentiveInterface';
+import { MetadataStoreInterface } from '../../shared/policy/common/interfaces/MetadataInterface';
+import {
+  PolicyInterface,
+  PolicyHandlerInterface,
+  SerializedPolicyInterface,
+  PolicyHandlerStaticInterface,
+  StatelessContextInterface,
+  PolicyHandlerParamsInterface,
+} from '../../shared/policy/common/interfaces/PolicyInterface';
+import { TerritorySelectorsInterface } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export class Policy implements PolicyInterface {
   constructor(

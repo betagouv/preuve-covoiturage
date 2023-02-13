@@ -1,16 +1,14 @@
 import test from 'ava';
-
-import { StatefulContext, StatelessContext } from '../entities/Context';
-import { MetadataStore } from '../entities/MetadataStore';
+import { CarpoolInterface } from '../../shared/policy/common/interfaces/CarpoolInterface';
 import {
-  CarpoolInterface,
   IncentiveStateEnum,
   IncentiveStatusEnum,
-  MetadataLifetime,
-  MetadataStoreInterface,
   SerializedIncentiveInterface,
-  StatelessContextInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/IncentiveInterface';
+import { MetadataLifetime, MetadataStoreInterface } from '../../shared/policy/common/interfaces/MetadataInterface';
+import { StatelessContextInterface } from '../../shared/policy/common/interfaces/PolicyInterface';
+import { StatefulContext, StatelessContext } from '../entities/Context';
+import { MetadataStore } from '../entities/MetadataStore';
 import { generateCarpool, generateIncentive } from '../tests/helpers';
 import {
   applyLimitOnStatefulStage,

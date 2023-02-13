@@ -1,4 +1,4 @@
-import { StatelessContextInterface } from '../../interfaces';
+import { StatelessContextInterface } from '../../shared/policy/common/interfaces/PolicyInterface';
 
 export interface PerKmParams {
   /**

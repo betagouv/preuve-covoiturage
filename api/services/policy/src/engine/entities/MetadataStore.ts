@@ -1,14 +1,14 @@
 import { MetadataRepositoryProviderInterfaceResolver } from '../../interfaces';
-import { UnknownMetaException } from '../exceptions/UnknownMetaException';
 import {
   MetadataAccessorInterface,
   MetadataLifetime,
   MetadataRegistryInterface,
   MetadataStoreInterface,
-  StoredMetadataVariableInterface,
   SerializedMetadataVariableDefinitionInterface,
   SerializedStoredMetadataInterface,
-} from '../../interfaces';
+  StoredMetadataVariableInterface,
+} from '../../shared/policy/common/interfaces/MetadataInterface';
+import { UnknownMetaException } from '../exceptions/UnknownMetaException';
 import { MetadataAccessor } from './MetadataAccessor';
 
 function getCacheKey(policy_id: number, key: string): string {

@@ -1,10 +1,11 @@
+import { OperatorsEnum } from '../../shared/policy/common/interfaces/OperatorsEnum';
 import {
-  OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
+  RunnableSlices,
   StatelessContextInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/PolicyInterface';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   isOperatorClassOrThrow,
@@ -23,11 +24,10 @@ import { description } from './MetropoleSavoie.html';
 export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'metropole_savoie_2022';
   protected operators = [OperatorsEnum.BlaBlaDaily];
-  protected slices = [
+  protected slices: RunnableSlices = [
     { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
       start: 20_000,
-      end: 1_000_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000 })),
     },
   ];

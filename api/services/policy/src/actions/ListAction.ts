@@ -1,7 +1,7 @@
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionMiddleware } from '@pdc/provider-middleware';
-import { SerializedPolicyInterface } from './../interfaces/engine/PolicyInterface';
+import { SerializedPolicyInterface } from '../shared/policy/common/interfaces/PolicyInterface';
 
 import { Policy } from '../engine/entities/Policy';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';

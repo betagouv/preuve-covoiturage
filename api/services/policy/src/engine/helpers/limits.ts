@@ -1,4 +1,8 @@
-import { MetadataLifetime, StatefulContextInterface, StatelessContextInterface } from '../../interfaces';
+import { MetadataLifetime } from '../../shared/policy/common/interfaces/MetadataInterface';
+import {
+  StatefulContextInterface,
+  StatelessContextInterface,
+} from '../../shared/policy/common/interfaces/PolicyInterface';
 import { MisconfigurationException } from '../exceptions/MisconfigurationException';
 
 export enum LimitTargetEnum {

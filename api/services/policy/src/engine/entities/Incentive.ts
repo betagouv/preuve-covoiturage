@@ -1,11 +1,11 @@
 import {
   IncentiveStateEnum,
   IncentiveStatusEnum,
-  MetadataRegistryInterface,
   SerializedIncentiveInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/IncentiveInterface';
+import { MetadataRegistryInterface } from '../../shared/policy/common/interfaces/MetadataInterface';
 import { MetadataRegistry } from './MetadataRegistry';
 
 export class Incentive<T> {

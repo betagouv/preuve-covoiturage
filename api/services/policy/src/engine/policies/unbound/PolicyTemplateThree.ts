@@ -1,10 +1,10 @@
+import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-} from '../../../interfaces';
-import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
+} from '../../../shared/policy/common/interfaces/PolicyInterface';
 import { NotEligibleTargetException } from '../../exceptions/NotEligibleTargetException';
 import {
   ConfiguredLimitInterface,
@@ -30,7 +30,7 @@ export const PolicyTemplateThree: PolicyHandlerStaticInterface = class
 
   static readonly id = '3';
 
-  protected slices = [{ start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
+  protected slices = [{ start: 2_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
 
   processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);

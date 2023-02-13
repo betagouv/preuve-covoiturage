@@ -1,4 +1,7 @@
-import { MetadataAccessorInterface, SerializedAccessibleMetadataInterface } from '../../interfaces';
+import {
+  MetadataAccessorInterface,
+  SerializedAccessibleMetadataInterface,
+} from '../../shared/policy/common/interfaces/MetadataInterface';
 import { UnknownMetaException } from '../exceptions/UnknownMetaException';
 
 export class MetadataAccessor implements MetadataAccessorInterface {

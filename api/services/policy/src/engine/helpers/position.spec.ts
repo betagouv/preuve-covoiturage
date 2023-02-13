@@ -1,9 +1,8 @@
 import test from 'ava';
-
+import { TerritoryCodeInterface } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 import { StatelessContext } from '../entities/Context';
 import { generateCarpool } from '../tests/helpers';
-import { TerritoryCodeInterface } from '../../interfaces';
-import { startsAt, endsAt } from './position';
+import { endsAt, startsAt } from './position';
 
 function setup(start: TerritoryCodeInterface, end: TerritoryCodeInterface) {
   return StatelessContext.fromCarpool(1, generateCarpool({ start, end }));

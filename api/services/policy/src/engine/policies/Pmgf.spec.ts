@@ -1,6 +1,6 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { OperatorsEnum } from '../../interfaces';
+import { OperatorsEnum } from '../../shared/policy/common/interfaces/OperatorsEnum';
 import { makeProcessHelper } from '../tests/macro';
 import { Pmgf as Handler } from './Pmgf';
 
@@ -39,7 +39,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works with exclusion',
+  'should work with exclusion',
   process,
   {
     policy: { handler: Handler.id },
@@ -55,7 +55,7 @@ test(
 );
 
 test(
-  'should works basic with start/end inside aom',
+  'should work basic with start/end inside aom',
   process,
   {
     policy: { handler: Handler.id },
@@ -88,7 +88,7 @@ test(
 );
 
 test(
-  'should works basic with start or end outside aom',
+  'should work basic with start or end outside aom',
   process,
   {
     policy: { handler: Handler.id },
@@ -121,7 +121,7 @@ test(
 );
 
 test(
-  'should works with global limits',
+  'should work with global limits',
   process,
   {
     policy: { handler: Handler.id, max_amount: 100_000_00 },
@@ -179,7 +179,7 @@ test(
 );
 
 test(
-  'should works with month limits',
+  'should work with month limits',
   process,
   {
     policy: { handler: Handler.id },

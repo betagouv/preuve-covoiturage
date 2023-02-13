@@ -1,21 +1,20 @@
-import { isAfter, startOfToday, sub } from 'date-fns';
-import { handler, KernelInterfaceResolver, ContextType, InitHookInterface } from '@ilos/common';
+import { ContextType, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-
+import { isAfter, startOfToday, sub } from 'date-fns';
+import { Policy } from '../engine/entities/Policy';
 import {
-  signature as handlerSignature,
+  IncentiveRepositoryProviderInterfaceResolver,
+  PolicyRepositoryProviderInterfaceResolver,
+  TripRepositoryProviderInterfaceResolver,
+} from '../interfaces';
+import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
+  signature as handlerSignature,
 } from '../shared/policy/apply.contract';
-import {
-  IncentiveRepositoryProviderInterfaceResolver,
-  TripRepositoryProviderInterfaceResolver,
-  PolicyRepositoryProviderInterfaceResolver,
-  StatelessIncentiveInterface,
-} from '../interfaces';
-import { Policy } from '../engine/entities/Policy';
+import { StatelessIncentiveInterface } from '../shared/policy/common/interfaces/IncentiveInterface';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class ApplyAction extends AbstractAction implements InitHookInterface {

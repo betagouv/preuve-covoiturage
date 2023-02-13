@@ -1,6 +1,7 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { CarpoolInterface, OperatorsEnum } from '../../interfaces';
+import { CarpoolInterface } from '../../shared/policy/common/interfaces/CarpoolInterface';
+import { OperatorsEnum } from '../../shared/policy/common/interfaces/OperatorsEnum';
 import { makeProcessHelper } from '../tests/macro';
 import { Normandie as Handler } from './Normandie';
 
@@ -43,7 +44,7 @@ const defaultCarpool: CarpoolInterface = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works with exclusion',
+  'should work with exclusion',
   process,
   {
     policy: { handler: Handler.id },
@@ -61,7 +62,7 @@ test(
 );
 
 test.only(
-  'should works basic',
+  'should work basic',
   process,
   {
     policy: { handler: Handler.id },
@@ -98,7 +99,7 @@ test.only(
 );
 
 test(
-  'should works with global limits',
+  'should work with global limits',
   process,
   {
     policy: { handler: Handler.id, max_amount: 70_000_00 },
@@ -122,7 +123,7 @@ test(
 );
 
 test(
-  'should works with driver day limits',
+  'should work with driver day limits',
   process,
   {
     policy: { handler: Handler.id },
@@ -149,7 +150,7 @@ test(
 );
 
 test(
-  'should works with passenger day limits',
+  'should work with passenger day limits',
   process,
   {
     policy: { handler: Handler.id },

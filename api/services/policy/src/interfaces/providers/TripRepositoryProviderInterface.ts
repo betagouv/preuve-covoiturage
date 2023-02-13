@@ -1,4 +1,5 @@
-import { CarpoolInterface, PolicyInterface } from '..';
+import { CarpoolInterface } from '../../shared/policy/common/interfaces/CarpoolInterface';
+import { PolicyInterface } from '../../shared/policy/common/interfaces/PolicyInterface';
 
 export abstract class TripRepositoryProviderInterfaceResolver {
   abstract findTripByPolicy(

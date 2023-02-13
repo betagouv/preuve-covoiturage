@@ -3,8 +3,10 @@ export interface SliceInterface {
   end?: number;
 }
 
+export type RunnableSlice<TFunction> = SliceInterface & { fn: TFunction };
+
 // BoundedSlices must have the 'end' property
-export type BoundedSlices = Required<SliceInterface>[];
+export type BoundedSlices<T = SliceInterface> = Required<T>[];
 
 // UnboundedSlices must have the 'end' property but the last one
-export type UnboundedSlices = [...BoundedSlices, SliceInterface];
+export type UnboundedSlices<T = SliceInterface> = [...BoundedSlices<T>, T];

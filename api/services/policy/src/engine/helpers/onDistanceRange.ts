@@ -1,5 +1,5 @@
+import { StatelessContextInterface, StatelessRuleHelper } from '../../shared/policy/common/interfaces/PolicyInterface';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
-import { StatelessContextInterface, StatelessRuleHelper } from '../../interfaces';
 
 interface OnDistanceParams {
   min?: number;
@@ -10,7 +10,7 @@ export const onDistanceRange: StatelessRuleHelper<OnDistanceParams> = (
   ctx: StatelessContextInterface,
   params: OnDistanceParams,
 ): boolean => {
-  if (params.min && ctx.carpool.distance < params.min) {
+  if ('min' in params && params.min !== null && ctx.carpool.distance < params.min) {
     return false;
   }
   if (params.max && ctx.carpool.distance >= params.max) {

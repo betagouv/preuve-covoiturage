@@ -1,14 +1,13 @@
 import { provider } from '@ilos/common';
+import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
 import { promisify } from 'util';
-import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
-
+import { IncentiveRepositoryProviderInterfaceResolver } from '../interfaces';
 import {
-  IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStateEnum,
   IncentiveStatusEnum,
   SerializedIncentiveInterface,
-  SerializedMetadataVariableDefinitionInterface,
-} from '../interfaces';
+} from '../shared/policy/common/interfaces/IncentiveInterface';
+import { SerializedMetadataVariableDefinitionInterface } from '../shared/policy/common/interfaces/MetadataInterface';
 
 @provider({
   identifier: IncentiveRepositoryProviderInterfaceResolver,

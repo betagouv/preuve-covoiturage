@@ -1,14 +1,18 @@
+import { CarpoolInterface } from '../../shared/policy/common/interfaces/CarpoolInterface';
 import {
-  CarpoolInterface,
+  SerializedIncentiveInterface,
+  StatefulIncentiveInterface,
+  StatelessIncentiveInterface,
+} from '../../shared/policy/common/interfaces/IncentiveInterface';
+import {
   MetadataAccessorInterface,
   MetadataRegistryInterface,
   MetadataStoreInterface,
-  SerializedIncentiveInterface,
+} from '../../shared/policy/common/interfaces/MetadataInterface';
+import {
   StatefulContextInterface,
-  StatefulIncentiveInterface,
   StatelessContextInterface,
-  StatelessIncentiveInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/PolicyInterface';
 import { Incentive } from './Incentive';
 import { MetadataRegistry } from './MetadataRegistry';
 

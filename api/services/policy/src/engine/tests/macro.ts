@@ -1,13 +1,15 @@
 import { ExecutionContext } from 'ava';
+import { MetadataRepositoryProviderInterfaceResolver } from '../../interfaces';
+import { CarpoolInterface } from '../../shared/policy/common/interfaces/CarpoolInterface';
+import { SerializedIncentiveInterface } from '../../shared/policy/common/interfaces/IncentiveInterface';
 import {
-  MetadataRepositoryProviderInterfaceResolver,
-  CarpoolInterface,
   MetadataLifetime,
-  PolicyHandlerInterface,
-  SerializedIncentiveInterface,
-  SerializedPolicyInterface,
   SerializedStoredMetadataInterface,
-} from '../../interfaces';
+} from '../../shared/policy/common/interfaces/MetadataInterface';
+import {
+  PolicyHandlerInterface,
+  SerializedPolicyInterface,
+} from '../../shared/policy/common/interfaces/PolicyInterface';
 import { MetadataStore } from '../entities/MetadataStore';
 import { Policy } from '../entities/Policy';
 import { generateCarpool } from './helpers';

@@ -1,8 +1,7 @@
+import { DbContext, makeDbBeforeAfter } from '@pdc/helper-test';
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
-
+import { IncentiveStateEnum, IncentiveStatusEnum } from '../shared/policy/common/interfaces/IncentiveInterface';
 import { IncentiveRepositoryProvider } from './IncentiveRepositoryProvider';
-import { IncentiveStateEnum, IncentiveStatusEnum } from '../interfaces';
 
 interface TestContext {
   db: DbContext;
