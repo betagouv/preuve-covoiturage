@@ -20,8 +20,10 @@ jobs:
           node-version: '16'
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Install
+        run: yarn install --frozen-lockfile --non-interactive
       - name: Build
-        run: sh rebuild.sh
+        run: yarn build:all
         working-directory: api
       - name: Start
         env:
