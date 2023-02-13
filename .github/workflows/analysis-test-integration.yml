@@ -26,8 +26,13 @@ jobs:
       - name: Build
         run: yarn build:all
         working-directory: api
+      - name: Add host entries
+        run: |
+          sudo echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
       - name: Start
         env:
           APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}
         run: ./tool.sh integration
-
