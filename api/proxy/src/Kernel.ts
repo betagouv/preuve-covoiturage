@@ -1,6 +1,7 @@
 import { Commands } from '@ilos/cli';
 import { kernel } from '@ilos/common';
 import { Kernel as BaseKernel } from '@ilos/framework';
+import { RedisConnection } from '@ilos/connection-redis';
 import { SentryProvider } from '@pdc/provider-sentry';
 import { TokenProvider } from '@pdc/provider-token';
 import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
@@ -21,7 +22,6 @@ import { bootstrap as userBootstrap } from '@pdc/service-user';
 import { StatsRefreshCommand } from './commands/StatsRefreshCommand';
 import { SeedCommand } from './commands/SeedCommand';
 import { config } from './config';
-import { RedisConnection } from '@ilos/connection-redis/dist';
 
 @kernel({
   config,
