@@ -1,13 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
-
-import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CommonDataService } from '~/core/services/common-data.service';
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
-import { Operator } from '~/core/entities/operator/operator';
 import { TOOLTIPS } from '~/core/const/tooltips.const';
 import { LightTripInterface } from '~/core/entities/api/shared/trip/common/interfaces/LightTripInterface';
+import { Operator } from '~/core/entities/operator/operator';
+import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
+import { CommonDataService } from '~/core/services/common-data.service';
+import { CompiledPolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 
 @Component({
   selector: 'app-trip-table',
@@ -18,7 +17,7 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
   @Input() displayedColumns: string[];
   @Input() data: LightTripInterface[] = [];
   private operators: Operator[];
-  private campaigns: PolicyInterface[];
+  private campaigns: CompiledPolicyInterface[];
 
   constructor(private commonData: CommonDataService) {
     super();

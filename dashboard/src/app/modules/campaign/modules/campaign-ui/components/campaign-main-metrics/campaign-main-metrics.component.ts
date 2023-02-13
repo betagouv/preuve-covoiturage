@@ -1,8 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import * as moment from 'moment';
-
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
+import { CompiledPolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 
 @Component({
   selector: 'app-campaign-main-metrics',
@@ -10,7 +9,7 @@ import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterfa
   styleUrls: ['./campaign-main-metrics.component.scss'],
 })
 export class CampaignMainMetricsComponent implements OnInit, OnChanges {
-  @Input() campaign: PolicyInterface;
+  @Input() campaign: CompiledPolicyInterface;
   daysRemaining = 0;
   daysPassed = 0;
 

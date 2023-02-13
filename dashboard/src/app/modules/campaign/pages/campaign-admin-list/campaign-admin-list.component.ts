@@ -1,14 +1,12 @@
-import { merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, takeUntil, tap } from 'rxjs/operators';
-
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-
+import { merge } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, takeUntil, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
+import { CompiledPolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { CampaignApiService } from '../../services/campaign-api.service';
 
 @Component({
@@ -37,9 +35,9 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     'archive',
   ];
 
-  public filteredCampaigns: PolicyInterface[];
-  public campaignsToShow: PolicyInterface[];
-  public campaigns: PolicyInterface[];
+  public filteredCampaigns: CompiledPolicyInterface[];
+  public campaignsToShow: CompiledPolicyInterface[];
+  public campaigns: CompiledPolicyInterface[];
   public searchFilters: FormGroup;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -73,10 +71,10 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     merge(
       this.campaignApiService.getList().pipe(
         debounceTime(100),
-        map((result: { data: PolicyInterface[]; meta: any }) =>
+        map((result: { data: CompiledPolicyInterface[]; meta: any }) =>
           result.data.sort((a, b) => PolicyStatus[a.status] - PolicyStatus[b.status]),
         ),
-        tap((campaigns: PolicyInterface[]) => (this.campaigns = campaigns)),
+        tap((campaigns: CompiledPolicyInterface[]) => (this.campaigns = campaigns)),
       ),
       this.searchFilters.valueChanges,
     )
@@ -93,7 +91,7 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     this.campaignsToShow = this.filterCampaignList();
   }
 
-  private filterCampaignList(page = this.paginator.pageIndex): PolicyInterface[] {
+  private filterCampaignList(page = this.paginator.pageIndex): CompiledPolicyInterface[] {
     if (!this.campaigns) return [];
 
     const start = Number(page) * this.PAGE_SIZE;

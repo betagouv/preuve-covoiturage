@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { User } from '~/core/entities/authentication/user';
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { Operator } from '~/core/entities/operator/operator';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
@@ -10,6 +9,7 @@ import { AuthenticationService as Auth } from '~/core/services/authentication/au
 import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { CompiledPolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { TerritoryGroupInterface } from '~/shared/territory/common/interfaces/TerritoryInterface';
 
 @Injectable({
@@ -21,7 +21,7 @@ export class CommonDataService {
 
   private _territories$ = new BehaviorSubject<TerritoryGroupInterface[]>([]);
   private _operators$ = new BehaviorSubject<Operator[]>([]);
-  private _campaigns$ = new BehaviorSubject<PolicyInterface[]>([]);
+  private _campaigns$ = new BehaviorSubject<CompiledPolicyInterface[]>([]);
 
   get currentOperator$(): Observable<Operator> {
     return this._currentOperator$;
@@ -39,7 +39,7 @@ export class CommonDataService {
     return this._operators$;
   }
 
-  get campaigns$(): Observable<PolicyInterface[]> {
+  get campaigns$(): Observable<CompiledPolicyInterface[]> {
     return this._campaigns$;
   }
 
@@ -77,7 +77,7 @@ export class CommonDataService {
     return list;
   }
 
-  get campaigns(): PolicyInterface[] {
+  get campaigns(): CompiledPolicyInterface[] {
     return this._campaigns$.value;
   }
 
@@ -131,7 +131,7 @@ export class CommonDataService {
     );
   }
 
-  loadCampaigns(): Observable<PolicyInterface[]> {
+  loadCampaigns(): Observable<CompiledPolicyInterface[]> {
     return this.campaignApiService.getList().pipe(
       map((campaigns) => campaigns.data.sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name))),
       tap((campaigns) => this._campaigns$.next(campaigns)),

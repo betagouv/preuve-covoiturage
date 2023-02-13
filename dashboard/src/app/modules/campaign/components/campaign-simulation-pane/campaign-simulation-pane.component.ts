@@ -1,12 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BehaviorSubject, throwError } from 'rxjs';
-import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
-
+import { catchError, debounceTime, map, tap } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CompiledPolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 import { ResultInterface as SimulateOnPastResult } from '~/shared/policy/simulateOnPast.contract';
-
-import { catchError, debounceTime, map, tap } from 'rxjs/operators';
 import { CampaignApiService } from '../../services/campaign-api.service';
 
 @Component({
@@ -15,12 +13,12 @@ import { CampaignApiService } from '../../services/campaign-api.service';
   styleUrls: ['./campaign-simulation-pane.component.scss'],
 })
 export class CampaignSimulationPaneComponent extends DestroyObservable implements OnInit {
-  @Input() campaign: PolicyInterface;
+  @Input() campaign: CompiledPolicyInterface;
 
   public loading = true;
   public state: SimulateOnPastResult;
   public range$ = new BehaviorSubject<number>(1);
-  public simulatedCampaign$ = new BehaviorSubject<PolicyInterface>(null);
+  public simulatedCampaign$ = new BehaviorSubject<CompiledPolicyInterface>(null);
   public errors_simulation_failed = false;
 
   get months(): number {
@@ -52,9 +50,9 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
           };
         }),
       )
-      .subscribe((simulateOnPasParam) => {
+      .subscribe((simulateOnPastParam) => {
         this.campaignApi
-          .simulate(simulateOnPasParam)
+          .simulate(simulateOnPastParam)
           .pipe(
             catchError((err) => {
               this.errors_simulation_failed = true;
