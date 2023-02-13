@@ -7,7 +7,7 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
   protected client: RedisInterface;
   protected connected = false;
 
-  constructor(protected readonly config: ConnectionConfigurationType) {}
+  constructor(protected readonly config: ConnectionConfigurationType | string) {}
 
   async up() {
     if (!this.connected && this.getClient().status === 'wait') {
@@ -37,7 +37,9 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
       enableReadyCheck: false,
       // lazyConnect: true,
     };
-
+    if (typeof this.config === 'string') {
+      return new Redis(this.config, defaultConfig);
+    }
     const conn = new Redis({
       ...defaultConfig,
       ...this.config,
