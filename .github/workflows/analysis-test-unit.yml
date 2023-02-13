@@ -17,6 +17,9 @@ jobs:
           node-version: '16'
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Install dev dependency
+        run: yarn install --frozen-lockfile --non-interactive
+        working-directory: api
       - name: Build
         run: yarn build:all
         working-directory: api
