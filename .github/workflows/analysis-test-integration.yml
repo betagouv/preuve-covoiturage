@@ -35,4 +35,5 @@ jobs:
       - name: Start
         env:
           APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}
+          APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
         run: ./tool.sh integration
