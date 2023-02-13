@@ -113,7 +113,7 @@ run_integration() {
   echo "Start integration test"
   # echo $DC
   # $DC run --rm api yarn test:integration
-  cd api && yarn test:integration
+  yarn --cwd api test:integration
 }
 
 
