@@ -7,6 +7,7 @@ import path from 'path';
 
 import { HttpTransport } from '@ilos/transport-http';
 import { QueueTransport } from '@ilos/transport-redis';
+import { RedisConnection } from '@ilos/connection-redis';
 import { TransportInterface, KernelInterface, serviceProvider, kernel as kernelDecorator } from '@ilos/common';
 
 import { Kernel } from '../Kernel';
@@ -32,19 +33,21 @@ test.before(async (t) => {
 
   @serviceProvider({
     config: {
-      redis: {
-        connectionString: process.env.APP_REDIS_URL,
-        connectionOptions: {},
-      },
+      redis: process.env.APP_REDIS_URL,
       log: {
         path: process.env.APP_LOG_PATH,
       },
     },
+    connections: [[RedisConnection, 'redis']],
   })
   class StringServiceProvider extends ParentStringServiceProvider {}
 
   @kernelDecorator({
     children: [StringServiceProvider],
+    config: {
+      redis: process.env.APP_REDIS_URL,
+    },
+    connections: [[RedisConnection, 'redis']],
   })
   class StringKernel extends Kernel {
     name = 'string';
