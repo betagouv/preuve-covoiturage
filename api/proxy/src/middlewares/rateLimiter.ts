@@ -7,8 +7,8 @@ import { config } from '../config';
 const minute = 60000;
 
 export function rateLimiter(opts: Partial<RateLimiterOptions> = {}, prefix = 'rl'): RateLimitRequestHandler {
-  const { connectionString, ...redisConfig } = config.redis;
-  const client = new RedisClient(connectionString, redisConfig);
+  const redisConfig = config.connections.redis;
+  const client = new RedisClient(redisConfig);
   const options = {
     store: new RedisStore({
       prefix,

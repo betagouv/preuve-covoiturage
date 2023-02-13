@@ -21,6 +21,7 @@ import { bootstrap as userBootstrap } from '@pdc/service-user';
 import { StatsRefreshCommand } from './commands/StatsRefreshCommand';
 import { SeedCommand } from './commands/SeedCommand';
 import { config } from './config';
+import { RedisConnection } from '@ilos/connection-redis/dist';
 
 @kernel({
   config,
@@ -43,5 +44,6 @@ import { config } from './config';
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [SeedCommand, StatsRefreshCommand, Commands.CallCommand],
+  connections: [[RedisConnection, 'connections.redis']],
 })
 export class Kernel extends BaseKernel {}
