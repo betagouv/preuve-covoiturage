@@ -2,9 +2,9 @@ import { ConfigInterfaceResolver, handler } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
-import { filterTables } from '~/helpers/filterTables.helper';
-import { todayFrequencies } from '~/helpers/todayFrequencies.helper';
-import { MatviewItem } from '~/interfaces/StatsRefreshInterfaces';
+import { filterTables } from '../helpers/filterTables.helper';
+import { todayFrequencies } from '../helpers/todayFrequencies.helper';
+import { MatviewItem } from '../interfaces/StatsRefreshInterfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/monitoring/statsrefresh.contract';
 import { alias } from '../shared/monitoring/statsrefresh.schema';
 

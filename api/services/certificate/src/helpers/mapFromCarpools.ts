@@ -1,6 +1,6 @@
 /* eslint-disable max-len,prettier/prettier */
-import { CertificateBaseInterface } from '~/shared/certificate/common/interfaces/CertificateBaseInterface';
 import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
+import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
 import { CertificateMetaInterface, MetaPersonInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
 import { PointInterface } from '../shared/common/interfaces/PointInterface';
 /* eslint-enable */
