@@ -11,7 +11,7 @@ import {
 import { APDFTripInterface } from '../interfaces/APDFTripInterface';
 import { PolicyStatsInterface } from '../shared/apdf/interfaces/PolicySliceStatInterface';
 import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
-import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
+import { UnboundedSlices } from '../shared/policy/common/interfaces/SliceInterface';
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {
@@ -49,19 +49,19 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
    */
   public async getPolicyStats(
     params: CampaignSearchParamsInterface,
-    slices: SliceInterface[],
+    slices: UnboundedSlices | [],
   ): Promise<PolicyStatsInterface> {
     const { start_date, end_date, operator_id, campaign_id } = params;
 
     // prepare slice filters
     const sliceFilters: string = slices
-      .map(({ start, end }, i) => {
+      .map(({ start, end }, i: number) => {
         const f = `filter (where amount > 0 and distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
         return `
           (count(distinct acquisition_id) ${f})::int as slice_${i}_count,
           (sum(amount) ${f})::int as slice_${i}_sum,
           ${start} as slice_${i}_start,
-          ${end} as slice_${i}_end
+          ${end ? end : "'Infinity'"} as slice_${i}_end
         `;
       })
       .join(',');
