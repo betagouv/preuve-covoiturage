@@ -63,7 +63,7 @@ seed_data() {
   echo "Seed data"
   # $DC run --rm api yarn workspace @pdc/proxy ilos seed
   # $DC run --rm api yarn test:integration
- yarn --cwd api yarn workspace @pdc/proxy ilos seed
+  yarn --cwd api workspace @pdc/proxy ilos seed
 }
 
 create_bucket() {
