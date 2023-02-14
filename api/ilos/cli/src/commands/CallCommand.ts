@@ -2,6 +2,17 @@ import { command, KernelInterfaceResolver, ResultType, CommandOptionType } from 
 
 import { Command } from '../parents/Command';
 
+function coerceToJson(s: string): object {
+  try {
+    if ('string' !== typeof s) return {};
+    if (!s.length) return {};
+    return JSON.parse(s);
+  } catch (e) {
+    console.error(e.message);
+    return {};
+  }
+}
+
 /**
  * Command that make an RPC call
  * @export
@@ -16,12 +27,14 @@ export class CallCommand extends Command {
     {
       signature: '-p, --params <params>',
       description: 'Set call parameters',
-      coerce: (val) => JSON.parse(val),
+      default: {},
+      coerce: coerceToJson,
     },
     {
       signature: '-c, --context <context>',
       description: 'Set call context',
-      coerce: (val) => JSON.parse(val),
+      default: {},
+      coerce: coerceToJson,
     },
   ];
 
