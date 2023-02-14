@@ -8,6 +8,7 @@ set_env() {
 
 generate_keys() {
   echo "Generating keys"
+  export KEY_DIR="$(pwd)/docker/api/certs"
   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -pkeyopt rsa_keygen_pubexp:3 -out "$KEY_DIR/privateKey.pem"
   openssl pkey -in "$KEY_DIR/privateKey.pem" -out "$KEY_DIR/publicKey.pem" -pubout
 
@@ -134,7 +135,7 @@ integration() {
   bootstrap_integration && \
   run_integration 2>&1
   EXIT=$?
-  stop
+  # stop
   exit $EXIT
 }
 

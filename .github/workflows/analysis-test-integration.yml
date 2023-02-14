@@ -35,5 +35,17 @@ jobs:
       - name: Start
         env:
           APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}
-          APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/test
+          APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
+          AWS_ACCESS_KEY_ID: minioadmin
+          AWS_SECRET_ACCESS_KEY: minioadmin
+          AWS_ENDPOINT: http://localhost:9000
+          APP_REDIS_URL: redis://localhost:6379
+          INTEGRATION_MAILER_SMTP_HOST: localhost
+          APP_CEE_PUBLIC_KEY_PATH: $(pwd)/docker/api/certs/publicKey.pem
+          APP_CEE_PRIVATE_KEY_PATH: $(pwd)/docker/api/certs/privateKey.pem
+          APP_MAIL_SMTP_URL: smtp:localhost:1025
+          APP_DATAGOUV_URL: null
+          APP_DATAGOUV_KEY: null
+          APP_JWT_SECRET: null
+          AWS_REGION: fr-par
         run: ./tool.sh integration

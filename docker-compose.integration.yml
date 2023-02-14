@@ -30,11 +30,26 @@ services:
           - s3.covoiturage.test
           - download.covoiturage.test
           - local-pdc-export.s3.covoiturage.test
-        
+
+  mailer:
+    image: mailhog/mailhog:v1.0.1
+    environment:
+      MH_CORS_ORIGIN: '*'
+    ports:
+      - 1025:1025
+    networks:
+      - back
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.mailer.rule=Host(`mailer.covoiturage.test`)'
+      - 'traefik.http.routers.mailer.entrypoints=websecure'
+      - 'traefik.http.routers.mailer.tls=true'
+      - 'traefik.http.services.mailer.loadbalancer.server.port=8025'
+
   postgres:
     build: ./docker/postgres
     ports:
-      - "5432:5432"
+      - 5432:5432
     networks:
       - back
     environment:
