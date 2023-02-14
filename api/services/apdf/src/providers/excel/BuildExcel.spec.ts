@@ -4,7 +4,7 @@ import { stream } from 'exceljs';
 import sinon, { SinonStub } from 'sinon';
 import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface';
 import { PolicyStatsInterface } from '../../shared/apdf/interfaces/PolicySliceStatInterface';
-import { SliceInterface } from '../../shared/policy/common/interfaces/SliceInterface';
+import { SliceInterface } from '../../shared/policy/common/interfaces/Slices';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
 import { DataRepositoryProvider } from '../APDFRepositoryProvider';
 import { BuildExcel } from './BuildExcel';

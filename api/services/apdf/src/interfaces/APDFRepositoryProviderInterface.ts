@@ -1,6 +1,6 @@
 import { PolicyStatsInterface } from '../shared/apdf/interfaces/PolicySliceStatInterface';
 import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
-import { UnboundedSlices } from '../shared/policy/common/interfaces/SliceInterface';
+import { UnboundedSlices } from '../shared/policy/common/interfaces/Slices';
 import { APDFTripInterface } from './APDFTripInterface';
 
 export interface TzResultInterface {

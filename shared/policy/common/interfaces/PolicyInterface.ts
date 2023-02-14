@@ -1,4 +1,4 @@
-import { BoundedSlices, UnboundedSlices } from './SliceInterface';
+import { BoundedSlices, UnboundedSlices } from './Slices';
 
 export interface PolicyInterface {
   _id: number;

@@ -2,7 +2,7 @@ import { provider } from '@ilos/common';
 import { Column, stream, Worksheet } from 'exceljs';
 import { DataRepositoryProvider } from '../../../providers/APDFRepositoryProvider';
 import { SliceStatInterface } from '../../../shared/apdf/interfaces/PolicySliceStatInterface';
-import { SliceInterface } from '../../../shared/policy/common/interfaces/SliceInterface';
+import { SliceInterface } from '../../../shared/policy/common/interfaces/Slices';
 import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
 
 /***
