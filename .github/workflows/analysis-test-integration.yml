@@ -27,7 +27,7 @@ jobs:
         run: yarn build:all
         working-directory: api
       - name: Add host entries
-        run: |
+        run: | 
           sudo echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
           sudo echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
           sudo echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
@@ -42,8 +42,8 @@ jobs:
           AWS_BUCKET_PREFIX: local-pdc
           APP_REDIS_URL: redis://localhost:6379
           INTEGRATION_MAILER_SMTP_HOST: localhost
-          APP_CEE_PUBLIC_KEY_PATH: `${{ env.GITHUB_WORKSPACE }}`/docker/api/certs/publicKey.pem
-          APP_CEE_PRIVATE_KEY_PATH: ./docker/api/certs/privateKey.pem
+          APP_CEE_PUBLIC_KEY_PATH: ${{ GITHUB_WORKSPACE }}/docker/api/certs/publicKey.pem
+          APP_CEE_PRIVATE_KEY_PATH: ${{ github.workspace }}/docker/api/certs/privateKey.pem
           APP_MAIL_SMTP_URL: smtp:localhost:1025
           APP_DATAGOUV_URL: null
           APP_DATAGOUV_KEY: null
