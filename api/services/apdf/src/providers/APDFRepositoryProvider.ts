@@ -15,8 +15,6 @@ import { UnboundedSlices } from '../shared/policy/common/interfaces/SliceInterfa
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {
-  public static readonly MAX_DISTANCE_METERS = 150_000;
-
   constructor(public connection: PostgresConnection) {}
 
   /**
@@ -56,9 +54,9 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
     // prepare slice filters
     const sliceFilters: string = slices
       .map(({ start, end }, i: number) => {
-        const f = `filter (where amount > 0 and distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
+        const f = `filter (where distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
         return `
-          (count(distinct acquisition_id) ${f})::int as slice_${i}_count,
+          (count(acquisition_id) ${f})::int as slice_${i}_count,
           (sum(amount) ${f})::int as slice_${i}_sum,
           ${start} as slice_${i}_start,
           ${end ? end : "'Infinity'"} as slice_${i}_end
@@ -85,9 +83,9 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
             and pi.policy_id = $4
           )
         select
-          count(distinct acquisition_id)::int as total_count,
+          count(acquisition_id)::int as total_count,
           sum(amount)::int as total_sum,
-          (count(distinct acquisition_id) filter (where amount > 0))::int as subsidized_count
+          (count(acquisition_id) filter (where amount > 0))::int as subsidized_count
           ${sliceFilters.length ? `, ${sliceFilters}` : ''}
         from trips
         `,
@@ -112,8 +110,11 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       (p, k) => {
         if (!k.includes('slice_')) return p;
         const [, i, prop] = k.split('_');
-        if (prop === 'start' || prop === 'end') {
-          set(p, `slices.${i}.slice.${prop}`, row[k]);
+        if (prop === 'start') {
+          set(p, `slices.${i}.slice.start`, row[k]);
+        } else if (prop === 'end') {
+          // Highest slice can return Infinity as boundary
+          set(p, `slices.${i}.slice.end`, row[k] === 'Infinity' ? undefined : row[k]);
         } else {
           set(p, `slices.${i}.${prop}`, row[k]);
         }

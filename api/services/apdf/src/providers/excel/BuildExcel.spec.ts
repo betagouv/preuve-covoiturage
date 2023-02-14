@@ -8,6 +8,7 @@ import { SliceInterface } from '../../shared/policy/common/interfaces/SliceInter
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
 import { DataRepositoryProvider } from '../APDFRepositoryProvider';
 import { BuildExcel } from './BuildExcel';
+import { wrapSlices } from './wrapSlicesHelper';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
@@ -141,7 +142,7 @@ test('BuildExcel: should call stream data and create slice then return excel fil
       start_date: t.context.start_date,
       end_date: t.context.end_date,
     },
-    t.context.campaign.params.slices,
+    wrapSlices(t.context.campaign.params.slices),
   );
 
   sinon.assert.calledOnceWithExactly(t.context.getPolicyCursorStub!, {
@@ -205,7 +206,7 @@ test('BuildExcel: should call stream data and return filepath even if create sli
       start_date: t.context.start_date,
       end_date: t.context.end_date,
     },
-    t.context.campaign.params.slices,
+    wrapSlices(t.context.campaign.params.slices),
   );
 
   sinon.assert.calledOnceWithExactly(t.context.getPolicyCursorStub!, {
@@ -265,7 +266,7 @@ test('BuildExcel: should call stream data and return excel filepath without slic
       start_date: t.context.start_date,
       end_date: t.context.end_date,
     },
-    t.context.campaign.params.slices,
+    wrapSlices(t.context.campaign.params.slices),
   );
 
   sinon.assert.calledOnceWithExactly(t.context.getPolicyCursorStub!, {

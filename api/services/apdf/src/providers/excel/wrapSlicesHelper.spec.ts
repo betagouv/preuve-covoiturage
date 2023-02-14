@@ -1,6 +1,6 @@
 import test from 'ava';
-import { BoundedSlices } from '~/shared/policy/common/interfaces/SliceInterface';
-import { wrapSlicesHelper as wrap, findBoundary } from './wrapSlicesHelper';
+import { BoundedSlices, UnboundedSlices } from '~/shared/policy/common/interfaces/SliceInterface';
+import { findBoundary, toBoundedSlices, wrapSlices as wrap } from './wrapSlicesHelper';
 
 test('[wrap] No valid slices returns empty array', (t) => {
   t.deepEqual(wrap(undefined), []);
@@ -23,6 +23,34 @@ test('[wrap] Add slices after', (t) => {
   ];
   const wrapped = wrap(slices);
   t.deepEqual(wrapped, [{ start: 0, end: 15 }, { start: 15, end: 30 }, { start: 30 }]);
+});
+
+test('[wrap] No additional end slice on Unbounded slices', (t) => {
+  const slices: UnboundedSlices = [{ start: 10, end: 15 }, { start: 15 }];
+  const wrapped = wrap(slices);
+  t.deepEqual(wrapped, [{ start: 0, end: 10 }, ...slices]);
+});
+
+test('[wrap] No wrapping on Unbounded slices', (t) => {
+  const slices: UnboundedSlices = [{ start: 0, end: 15 }, { start: 15 }];
+  const wrapped = wrap(slices);
+  t.deepEqual(wrapped, slices);
+});
+
+test('[toBoundedSlices] bounded to bounded', (t) => {
+  const slices: BoundedSlices = [
+    { start: 10, end: 15 },
+    { start: 15, end: 30 },
+  ];
+  t.deepEqual(toBoundedSlices(slices), slices);
+});
+
+test('[toBoundedSlices] unbounded to bounded', (t) => {
+  const slices: BoundedSlices = [
+    { start: 10, end: 15 },
+    { start: 15, end: 30 },
+  ];
+  t.deepEqual(toBoundedSlices([...slices, { start: 30 }] as UnboundedSlices), slices);
 });
 
 test('[boundaries] find min and max (sorted)', (t) => {
