@@ -1,3 +1,4 @@
+import { RunnableSlices } from '~/interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -34,7 +35,7 @@ export const Laval: PolicyHandlerStaticInterface = class
   }
 
   protected operators = [OperatorsEnum.Klaxit];
-  protected slices = [{ start: 2_000, end: 150_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
+  protected slices: RunnableSlices = [{ start: 2_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 50) }];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);

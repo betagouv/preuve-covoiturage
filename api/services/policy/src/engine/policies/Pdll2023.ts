@@ -1,3 +1,4 @@
+import { RunnableSlices } from '~/interfaces/engine/PolicyInterface';
 import {
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
@@ -26,11 +27,10 @@ import { description } from './Pdll.html';
 /* eslint-disable-next-line */
 export const Pdll2023: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'pdll_2023';
-  protected slices = [
+  protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
     {
       start: 20_000,
-      end: 1_000_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
   ];

@@ -6,7 +6,6 @@ import {
 } from '../../interfaces';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
-  ConfiguredLimitInterface,
   isOperatorClassOrThrow,
   LimitTargetEnum,
   onDistanceRangeOrThrow,

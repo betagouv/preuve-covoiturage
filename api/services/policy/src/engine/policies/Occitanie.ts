@@ -1,4 +1,5 @@
 import {
+  BoundedSlices,
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
@@ -38,7 +39,7 @@ export const Occitanie: PolicyHandlerStaticInterface = class
     OperatorsEnum.Mobicoop,
   ];
   protected operator_class = ['B', 'C'];
-  protected slices = [
+  protected slices: BoundedSlices = [
     { start: 0, end: 20_000 },
     { start: 20_000, end: 30_000 },
   ];
