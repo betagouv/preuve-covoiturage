@@ -39,6 +39,7 @@ jobs:
           AWS_ACCESS_KEY_ID: minioadmin
           AWS_SECRET_ACCESS_KEY: minioadmin
           AWS_ENDPOINT: http://localhost:9000
+          AWS_BUCKET_PREFIX: local-pdc
           APP_REDIS_URL: redis://localhost:6379
           INTEGRATION_MAILER_SMTP_HOST: localhost
           APP_CEE_PUBLIC_KEY_PATH: $(pwd)/docker/api/certs/publicKey.pem
