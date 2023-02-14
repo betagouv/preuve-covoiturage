@@ -1,5 +1,5 @@
 import { handler } from '@ilos/common';
-import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/monitoring/statsrefresh.contract';
@@ -13,17 +13,14 @@ type CronFrequency = typeof CronFrequencies[number];
   middlewares: [...internalOnlyMiddlewares('proxy'), ['validate', alias]],
 })
 export class StatsRefreshAction extends AbstractAction {
-  private cn: PoolClient;
-
   constructor(protected pg: PostgresConnection) {
     super();
   }
 
   public async handle({ schema }: ParamsInterface): Promise<ResultInterface> {
+    const cn = await this.pg.getClient().connect();
     try {
-      this.cn = await this.pg.getClient().connect();
-
-      const views = await this.cn.query({
+      const views = await cn.query({
         text: 'SELECT matviewname FROM pg_matviews WHERE schemaname = $1',
         values: [schema],
       });
@@ -54,14 +51,14 @@ export class StatsRefreshAction extends AbstractAction {
 
       for (const table of tables) {
         const bench = new Date().getTime();
-        await this.cn.query(`REFRESH MATERIALIZED VIEW stats.${table}`);
+        await cn.query(`REFRESH MATERIALIZED VIEW stats.${table}`);
         const ms = (new Date().getTime() - bench) / 1000;
         console.info(`[monitoring:stats:refresh] Refreshed stats.${table} in ${ms} seconds`);
       }
     } catch (e) {
       console.error(`[monitoring:stats:refresh] ${e.message}`);
     } finally {
-      this.cn.release();
+      cn.release();
     }
   }
 
