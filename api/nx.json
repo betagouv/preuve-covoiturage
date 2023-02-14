@@ -6,7 +6,6 @@
       "options": {
         "cacheableOperations": [
           "build",
-          "watch",
           "test:unit"
         ]
       }
