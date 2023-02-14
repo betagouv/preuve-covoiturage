@@ -1,26 +1,26 @@
-import { handler } from '@ilos/common';
+import { ConfigInterfaceResolver, handler } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
+import { filterTables } from '~/helpers/filterTables.helper';
+import { todayFrequencies } from '~/helpers/todayFrequencies.helper';
+import { MatviewItem } from '~/interfaces/StatsRefreshInterfaces';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/monitoring/statsrefresh.contract';
 import { alias } from '../shared/monitoring/statsrefresh.schema';
-
-const CronFrequencies = ['daily', 'weekly', 'monthly'] as const;
-type CronFrequency = typeof CronFrequencies[number];
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares('proxy'), ['validate', alias]],
 })
 export class StatsRefreshAction extends AbstractAction {
-  constructor(protected pg: PostgresConnection) {
+  constructor(protected pg: PostgresConnection, protected config: ConfigInterfaceResolver) {
     super();
   }
 
   public async handle({ schema }: ParamsInterface): Promise<ResultInterface> {
     const cn = await this.pg.getClient().connect();
     try {
-      const views = await cn.query({
+      const views = await cn.query<MatviewItem>({
         text: 'SELECT matviewname FROM pg_matviews WHERE schemaname = $1',
         values: [schema],
       });
@@ -31,21 +31,12 @@ export class StatsRefreshAction extends AbstractAction {
       }
 
       // get the frequencies that can run today
-      const frequencies = this.todayFrequencies();
+      const frequencies = todayFrequencies();
 
       // Filter the tables based on today's frequencies
       // Unprefixed tables will be run every day
-      const tables = views.rows
-        .map((t: { matviewname: string }) => t.matviewname)
-        .map((table: string) => {
-          const [freq] = table.split('_', 1);
-          return {
-            table,
-            freq: CronFrequencies.indexOf(freq as CronFrequency) > -1 ? freq : 'daily',
-          };
-        })
-        .filter(({ freq }) => frequencies.indexOf(freq as CronFrequency) > -1)
-        .map(({ table }: { table: string }) => table);
+      // Refreshing can be skipped by add 'schema.matview' to the config.refresh.skip list
+      const tables = filterTables(this.config, frequencies, schema, views.rows);
 
       console.info(`[monitoring:stats:refresh] Refresh materialised views: ${tables.sort().join(', ')}`);
 
@@ -60,18 +51,5 @@ export class StatsRefreshAction extends AbstractAction {
     } finally {
       cn.release();
     }
-  }
-
-  private todayFrequencies(d?: Date | string): CronFrequency[] {
-    const freq: CronFrequency[] = ['daily'];
-    const now = new Date(d || new Date());
-
-    // on Mondays
-    if (now.getDay() === 1) freq.push('weekly');
-
-    // on first day of the month
-    if (now.getDate() === 1) freq.push('monthly');
-
-    return freq;
   }
 }
