@@ -32,6 +32,11 @@ jobs:
           sudo echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
           sudo echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
           sudo echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
+      - name: Enable ilos CLI
+        run: | 
+          rm -Rf ./api/proxy/node_modules/
+          yarn install
+        working-directory: api
       - name: Start
         env:
           APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}

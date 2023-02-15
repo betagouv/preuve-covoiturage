@@ -45,7 +45,7 @@ test.after.always(async (t) => {
   await after({ transport, supertest, request });
 });
 
-test.serial.skip('Create a territory', async (t) => {
+test.serial('Create a territory', async (t) => {
   const response = await t.context.request(
     'territory:create',
     {
@@ -86,7 +86,7 @@ test.serial.skip('Create a territory', async (t) => {
   t.is(dbResult.rows[0].name, name);
 });
 
-test.serial.skip('Find a territory', async (t) => {
+test.serial('Find a territory', async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -114,7 +114,7 @@ test.serial.skip('Find a territory', async (t) => {
   t.is(response.result.name, 'Toto');
 });
 
-test.serial.skip('Update a territory', async (t) => {
+test.serial('Update a territory', async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -173,7 +173,7 @@ test.serial.skip('Update a territory', async (t) => {
   t.deepEqual(t1, t2);
 });
 
-test.serial.skip('Patch contact on a territory', async (t) => {
+test.serial('Patch contact on a territory', async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -209,7 +209,7 @@ test.serial.skip('Patch contact on a territory', async (t) => {
   t.is(response.result.contacts.technical.firstname, 'Nicolas');
 });
 
-test.serial.skip('Get authorized codes', async (t) => {
+test.serial('Get authorized codes', async (t) => {
   const dbResult = await getDb(t.context)
     .getClient()
     .query({
@@ -251,7 +251,7 @@ test.serial.skip('Get authorized codes', async (t) => {
   t.deepEqual(response.result.com.sort(), ['91377', '91471', '91477']);
 });
 
-test.serial.skip('Lists all territories', async (t) => {
+test.serial('Lists all territories', async (t) => {
   const response = await t.context.request(
     'territory:list',
     {
@@ -271,7 +271,7 @@ test.serial.skip('Lists all territories', async (t) => {
   t.is(territory.length, 1);
 });
 
-test.serial.skip('Lists all geo zones', async (t) => {
+test.serial('Lists all geo zones', async (t) => {
   const response = await t.context.request(
     'territory:listGeo',
     {
