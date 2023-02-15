@@ -47,4 +47,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.BUCKET_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
           AWS_S3_ENDPOINT: ${{ vars.BUCKET_ENDPOINT }}
+          AWS_REGION: ${{ vars.BUCKET_REGION }}
           SOURCE_DIR: 'dashboard/dist/dashboard'
