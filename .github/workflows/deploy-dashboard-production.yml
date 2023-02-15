@@ -4,6 +4,7 @@ on:
     branches: [dev]
 jobs:
   build-and-deploy:
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -37,3 +38,13 @@ jobs:
           source: dashboard/dist/dashboard/*
           target: www/production
           rm: true
+      - name: Deploy to bucket
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ vars.DASHBOARD_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.BUCKET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+          AWS_S3_ENDPOINT: ${{ vars.BUCKET_ENDPOINT }}
+          SOURCE_DIR: 'dashboard/dist/dashboard'
