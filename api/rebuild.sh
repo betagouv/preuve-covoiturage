@@ -22,6 +22,11 @@ drop_modules() {
   return 0
 }
 
+drop_proxy_module() {
+  echo "Drop proxy node_module directory"
+  rm -Rf ./proxy/node_modules/
+}
+
 # Drop dist folders
 drop_dist() {
   echo "Drop dist directories"
@@ -48,4 +53,4 @@ build() {
   return $?
 }
 
-info && check && drop_modules && drop_dist && install && build && drop_modules && install $1 && echo "Done!"
+info && check && drop_modules && drop_dist && install && build && drop_proxy_module && install $1 && echo "Done!"
