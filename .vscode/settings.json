@@ -12,7 +12,6 @@
   "eslint.options": {
     "overrideConfigFile": "docker/lint/.eslintrc.js"
   },
-  "eslint.alwaysShowStatus": true,
   "eslint.format.enable": true,
   "files.watcherExclude": {
     "**/node_modules": true,

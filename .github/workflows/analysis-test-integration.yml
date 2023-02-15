@@ -14,30 +14,38 @@ jobs:
     name: Test integration
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Install NodeJS 16
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - name: Checkout code
-        uses: actions/checkout@v3
+          cache: 'yarn'
+          cache-dependency-path: api/yarn.lock
+
       - name: Install
         run: yarn install --frozen-lockfile --non-interactive
         working-directory: api
+
       - name: Build
         run: yarn build:all
         working-directory: api
+
       - name: Add host entries
         run: | 
           sudo echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
           sudo echo "127.0.0.1 s3.covoiturage.test" | sudo tee -a /etc/hosts
           sudo echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
           sudo echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
-      - name: Enable ilos CLI
+
+      - name: Enable ilos cli
         run: | 
           rm -Rf ./proxy/node_modules/
           yarn install
         working-directory: api
-      - name: Start
+        
+      - name: Run integration tests
         env:
           APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}
           APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
@@ -54,4 +62,4 @@ jobs:
           APP_DATAGOUV_KEY: null
           APP_JWT_SECRET: null
           AWS_REGION: fr-par
-        run: ./tool.sh integration
+        run: ./integration.sh run

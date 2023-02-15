@@ -11,14 +11,14 @@ const { before, after } = httpMacro<TestContext>(() => bootstrap.boot('http', 0)
 
 const test = anyTest as TestFn<TestContext>;
 
-test.before.skip(async (t) => {
+test.before(async (t) => {
   const { transport, supertest, request } = await before();
   t.context.transport = transport;
   t.context.supertest = supertest;
   t.context.request = request;
 });
 
-test.after.skip(async (t) => {
+test.after(async (t) => {
   const { transport, supertest, request } = t.context;
   await after({ transport, supertest, request });
 });
@@ -37,7 +37,7 @@ function contextFactory(permissions: string[]): ContextType {
   };
 }
 
-test.serial.skip('Fails on wrong permissions', async (t) => {
+test.serial('Fails on wrong permissions', async (t) => {
   const result = await t.context.request(
     'operator:create',
     {
@@ -58,12 +58,13 @@ test.serial.skip('Create an operator', async (t) => {
       legal_name: 'Toto inc.',
       siret: `${String(Math.random() * Math.pow(10, 16)).substr(0, 14)}`,
     },
-    contextFactory(['operator.create']),
+    contextFactory(['registry.operator.create']),
   );
-  t.true('_id' in result);
-  t.is(result.name, 'Toto');
-  t.is(result.legal_name, 'Toto inc.');
-  t.context._id = result._id;
+  t.log(result);
+  t.true('_id' in result.result);
+  t.is(result.result.name, 'Toto');
+  t.is(result.result.legal_name, 'Toto inc.');
+  t.context._id = result.result._id;
 });
 
 test.serial.skip('Find an operator', async (t) => {
