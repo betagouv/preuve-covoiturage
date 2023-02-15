@@ -60,7 +60,7 @@ services:
   redis:
     build: './docker/redis'
     ports:
-      - "6379:6379"
+      - 6379:6379
     networks:
       - back
 

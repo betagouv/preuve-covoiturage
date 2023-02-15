@@ -46,8 +46,8 @@ rebuild() {
 
 start_services() {
   echo "Start services"
-  echo "$DC up -d s3 postgres mailer"
-  $DC up -d s3 postgres mailer
+  echo "$DC up -d s3 postgres redis mailer"
+  $DC up -d s3 postgres redis mailer
 }
 
 start() {
