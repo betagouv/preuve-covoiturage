@@ -1,15 +1,15 @@
 import { provider } from '@ilos/common';
-import path from 'path';
-import { v4 } from 'uuid';
 import csvStringify, { Stringifier } from 'csv-stringify';
-import { normalizeExport, normalizeOpendata } from '../../helpers/normalizeExportDataHelper';
 import fs from 'fs';
 import os from 'os';
+import path from 'path';
+import { v4 } from 'uuid';
 import { getOpenDataExportName } from '../../helpers/getOpenDataExportName';
+import { normalizeExport, normalizeOpendata } from '../../helpers/normalizeExportDataHelper';
+import { ExportTripInterface } from '../../interfaces';
 import { PgCursorHandler } from '../../shared/common/PromisifiedPgCursor';
 import { FormatInterface, ParamsInterface } from '../../shared/trip/buildExport.contract';
 import { BuildExportAction } from '../BuildExportAction';
-import { ExportTripInterface } from '~/interfaces';
 
 @provider()
 export class BuildFile {

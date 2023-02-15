@@ -43,7 +43,7 @@ export class CheckPendingAction extends Action {
     }
 
     await this.repository.populate(params?.last_hours || 1);
-    const { timeout, batchSize } = this.config.get('engine', {});
+    const { timeout, batchSize } = this.config.get('engine', { timeout: 0, batchSize: 100 });
     const [acquisitions, cb] = await this.repository.findThenUpdate(
       {
         limit: batchSize,
