@@ -17,9 +17,6 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
     "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"],
-    },
     "lib": ["es2020"]
   },
   "include": ["src/**/*"],

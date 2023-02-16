@@ -1,13 +1,16 @@
 import {
+  BoundedSlices,
   CarpoolInterface,
   MetadataAccessorInterface,
   MetadataRegistryInterface,
   MetadataStoreInterface,
   OperatorsEnum,
   SerializedIncentiveInterface,
+  SliceInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
   TerritorySelectorsInterface,
+  UnboundedSlices,
 } from '.';
 
 export interface PolicyInterface {
@@ -52,13 +55,8 @@ export interface PolicyHandlerStaticInterface {
   new (policy_max_amount?: number): PolicyHandlerInterface;
 }
 
-export interface SliceInterface {
-  start: number;
-  end: number;
-}
-
 export interface PolicyHandlerParamsInterface {
-  slices?: Array<SliceInterface>;
+  slices?: RunnableSlices | BoundedSlices;
   operators?: Array<OperatorsEnum>;
   limits?: {
     glob?: number;
@@ -87,3 +85,12 @@ export interface StatelessContextInterface {
   policy_territory_selector?: TerritorySelectorsInterface;
   policy_max_amount?: number;
 }
+
+/**
+ * Extend the public bounded and unbounded slices with a runnable function
+ * for use in the policy calculations
+ */
+export type RunnableSlice<TFunction> = SliceInterface & { fn: TFunction };
+export type RunnableSlices =
+  | BoundedSlices<RunnableSlice<(ctx: StatelessContextInterface) => number>>
+  | UnboundedSlices<RunnableSlice<(ctx: StatelessContextInterface) => number>>;

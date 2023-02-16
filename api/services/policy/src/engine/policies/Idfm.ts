@@ -5,6 +5,7 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   atDate,
@@ -40,17 +41,12 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
   }
 
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
-  protected slices = [
+  protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {
       start: 15_000,
       end: 30_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
-    },
-    {
-      start: 30_000,
-      end: 150_000,
-      fn: () => 0,
     },
   ];
 

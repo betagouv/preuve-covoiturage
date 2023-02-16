@@ -10,7 +10,7 @@ import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { BuildExcel } from '../providers/excel/BuildExcel';
-import { CheckCampaign } from '../providers/excel/CheckCampaign';
+import { CheckCampaign } from '../providers/CheckCampaign';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 import { ExportAction } from './ExportAction';
 
@@ -278,7 +278,7 @@ test('ExportAction: should send error and process other if 1 export failed', asy
   );
   t.deepEqual(
     result.sort(),
-    [filename, filename, `Failed APDF export for operator 5 (campaign ${campaign2._id})`, filename].sort(),
+    [filename, filename, `[apdf:export] (campaign: ${campaign2.name}, operator_id: 5) Export failed`, filename].sort(),
   );
   t.is(t.context.checkCampaignStub!.args[0][0], campaign1._id);
   t.is(t.context.checkCampaignStub!.args[1][0], campaign2._id);

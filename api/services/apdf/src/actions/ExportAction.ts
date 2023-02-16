@@ -8,7 +8,7 @@ import fs from 'fs';
 import { get } from 'lodash';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { BuildExcel } from '../providers/excel/BuildExcel';
-import { CheckCampaign } from '../providers/excel/CheckCampaign';
+import { CheckCampaign } from '../providers/CheckCampaign';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/apdf/export.contract';
 import { alias } from '../shared/apdf/export.schema';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
@@ -21,7 +21,7 @@ export class ExportAction extends Action {
   constructor(
     private checkCampaign: CheckCampaign,
     private s3StorageProvider: S3StorageProvider,
-    private tripRepositoryProvider: DataRepositoryProviderInterfaceResolver,
+    private apdfRepositoryProvider: DataRepositoryProviderInterfaceResolver,
     private buildExcel: BuildExcel,
     private config: ConfigInterfaceResolver,
   ) {
@@ -42,16 +42,16 @@ export class ExportAction extends Action {
         // Make sure the campaign is active and within the date range
         const campaign: Campaign | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
-          .catch((e) => console.error(`Failed campaign ${c_id} export: ${e.message}`));
+          .catch((e) => console.error(`[apdf:export] (campaign_id: ${c_id}) Check campaign failed: ${e.message}`));
 
         if (!campaign) return;
 
         // List operators having subsidized trips
         const activeOperatorIds =
           params.query.operator_id ||
-          (await this.tripRepositoryProvider.getPolicyActiveOperators(campaign._id, start_date, end_date));
+          (await this.apdfRepositoryProvider.getPolicyActiveOperators(campaign._id, start_date, end_date));
 
-        if (!activeOperatorIds.length) console.info(`Exporting APDF: No active operators for ${campaign.name}`);
+        if (!activeOperatorIds.length) console.info(`[apdf:export] (campaign: ${campaign.name}) No active operators`);
 
         if (verbose) {
           console.info(`
@@ -90,8 +90,7 @@ export class ExportAction extends Action {
 
               files.push(file);
             } catch (error) {
-              // eslint-disable-next-line max-len
-              const message = `Failed APDF export for operator ${o_id} (campaign ${campaign._id})`;
+              const message = `[apdf:export] (campaign: ${campaign.name}, operator_id: ${o_id}) Export failed`;
               console.error(message);
               files.push(message);
             }

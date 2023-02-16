@@ -82,6 +82,7 @@ services:
     volumes:
       - ./api:/app/api
       - ./shared:/app/shared:ro
+      - ./tmp:/tmp
     command: 'sh -c "pm2-runtime start pm2-worker.json | pino-pretty"'
     tty: true
     env_file: ./api/.env

@@ -5,6 +5,7 @@ import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryPr
 import { SliceStatInterface } from '../../shared/apdf/interfaces/PolicySliceStatInterface';
 import { ResultInterface as Campaign } from '../../shared/policy/find.contract';
 import { DataRepositoryProvider } from '../APDFRepositoryProvider';
+import { wrapSlices } from './wrapSlicesHelper';
 import { DataWorkBookWriter } from './writer/DataWorkbookWriter';
 import { SlicesWorkbookWriter } from './writer/SlicesWorkbookWriter';
 
@@ -35,7 +36,7 @@ export class BuildExcel {
       total_sum: amount,
       subsidized_count: subsidized,
       slices,
-    } = await this.apdfRepoProvider.getPolicyStats(params, campaign.params.slices || []);
+    } = await this.apdfRepoProvider.getPolicyStats(params, wrapSlices(campaign.params.slices));
 
     // generate the filename and filepath
     const fileParams = {
@@ -64,7 +65,7 @@ export class BuildExcel {
       const tripCursor = await this.apdfRepoProvider.getPolicyCursor(params);
       await this.dataWorkbookWriter.call(tripCursor, wkw);
     } catch (e) {
-      console.error('Error while writing trips');
+      console.error('[apdf:buildExcel] Error while writing trips');
       console.error(e.message);
     }
   }
@@ -74,7 +75,7 @@ export class BuildExcel {
       if (!slices.length) return;
       await this.slicesWorkbookWriter.call(wkw, slices);
     } catch (e) {
-      console.error('Error while computing slices');
+      console.error('[apdf:buildExcel] Error while computing slices');
       console.error(e.message);
     }
   }
