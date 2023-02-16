@@ -1,4 +1,3 @@
-import { RunnableSlices } from '~/interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,6 +5,7 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   atDate,
