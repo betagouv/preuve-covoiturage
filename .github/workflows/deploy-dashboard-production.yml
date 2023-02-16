@@ -1,10 +1,13 @@
-name: Deploy dashboard - production
+name: Deploy dashboard
 on:
   push:
     branches: [dev]
 jobs:
   build-and-deploy:
-    environment: production
+    strategy:
+      matrix:
+        env: [demo, production]
+    environment: ${{ matrix.env }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -18,9 +21,11 @@ jobs:
           node-version: '16'
 
       - name: Install and Build 🔧
+        env:
+          DEPLOY_ENV: ${{ matrix.env }}
         run: |
           cd dashboard
-          cat src/environments/environment.production.ts | sed 's/export const /window./' > src/assets/env.js
+          cat "src/environments/environment.$DEPLOY_ENV.ts" | sed 's/export const /window./' > src/assets/env.js
           yarn
           yarn build -c production
 
@@ -31,6 +36,7 @@ jobs:
 
       - name: Deploy 🚀
         uses: appleboy/scp-action@master
+        if: ${{ matrix.env === 'production' }}
         with:
           host: ${{ secrets.FRONT_HOST }}
           username: ${{ secrets.FRONT_USERNAME }}
