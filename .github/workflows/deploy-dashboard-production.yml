@@ -31,6 +31,7 @@ jobs:
 
       - name: Deploy 🚀
         uses: appleboy/scp-action@master
+        if: ${{ matrix.env == 'production' }}
         with:
           host: ${{ secrets.FRONT_HOST }}
           username: ${{ secrets.FRONT_USERNAME }}
