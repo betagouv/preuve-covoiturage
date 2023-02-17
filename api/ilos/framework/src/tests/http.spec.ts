@@ -98,7 +98,7 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
   }
 }
 
-test('Http only integration: should works', async (t) => {
+test('Http only integration: should work', async (t) => {
   const responseMath = await makeRPCCall(t.context.mathPort, [{ method: 'math:add', params: [1, 1] }]);
   t.deepEqual(responseMath.data, {
     jsonrpc: '2.0',
@@ -114,7 +114,7 @@ test('Http only integration: should works', async (t) => {
   });
 });
 
-test('Http only integration: should works with internal service call', async (t) => {
+test('Http only integration: should work with internal service call', async (t) => {
   const response = await makeRPCCall(t.context.stringPort, [
     { method: 'string:result', params: { name: 'sam', add: [1, 1] } },
   ]);
@@ -126,7 +126,7 @@ test('Http only integration: should works with internal service call', async (t)
   });
 });
 
-test('Http only integration: should works with batch call', async (t) => {
+test('Http only integration: should work with batch call', async (t) => {
   const response = await makeRPCCall(t.context.stringPort, [
     { method: 'string:result', params: { name: 'sam', add: [1, 1] } },
     { method: 'string:result', params: { name: 'john', add: [1, 10] } },
