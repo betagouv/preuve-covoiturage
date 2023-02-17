@@ -2,7 +2,7 @@
 
 yarn global add db-migrate db-migrate-pg
 
-npx lerna run --sort build
+npx lerna run build
 
 chmod u+x node_modules/@ilos/framework/dist/cli.js
 ln -svf ../@ilos/framework/dist/cli.js node_modules/.bin/ilos

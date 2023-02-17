@@ -4,6 +4,9 @@ services:
     build:
       dockerfile: ./docker/api/Dockerfile
       context: .
+    environment:
+      APP_INSEE_API_KEY: ${APP_INSEE_API_KEY}
+      NX_CLOUD_ACCESS_TOKEN: ${NX_CLOUD_ACCESS_TOKEN}
     depends_on:
       - postgres
       - s3
