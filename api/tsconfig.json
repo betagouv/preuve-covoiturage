@@ -16,6 +16,7 @@
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
+    "incremental": true,
     "baseUrl": ".",
     "lib": ["es2020"]
   },
