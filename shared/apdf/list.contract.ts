@@ -1,6 +1,7 @@
 export interface ParamsInterface {
   campaign_id: number;
   operator_id?: number;
+  territory_id?: number;
 }
 
 export type EnrichedApdfType = {
