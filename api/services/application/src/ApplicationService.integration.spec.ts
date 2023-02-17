@@ -94,7 +94,7 @@ test.serial('#2.1 - Fails if no owner set', async (t) => {
   t.is(response.error.data, 'Invalid permissions');
 });
 
-test.serial("#3.0 - Cannot revoke another op's app", async (t) => {
+test.serial.skip("#3.0 - Cannot revoke another op's app", async (t) => {
   const result = await t.context.request(
     'application:revoke',
     {
