@@ -1,4 +1,5 @@
 import {
+  BoundedSlices,
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
@@ -7,16 +8,15 @@ import {
 } from '../../interfaces';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
-  isOperatorClassOrThrow,
-  onDistanceRangeOrThrow,
-  watchForGlobalMaxAmount,
-  LimitTargetEnum,
-  startsAndEndsAt,
-  ConfiguredLimitInterface,
-  watchForPersonMaxTripByDay,
-  onWeekday,
   isAfter,
+  isOperatorClassOrThrow,
   isOperatorOrThrow,
+  LimitTargetEnum,
+  onDistanceRangeOrThrow,
+  onWeekday,
+  startsAndEndsAt,
+  watchForGlobalMaxAmount,
+  watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Occitanie.html';
@@ -39,9 +39,9 @@ export const Occitanie: PolicyHandlerStaticInterface = class
     OperatorsEnum.Mobicoop,
   ];
   protected operator_class = ['B', 'C'];
-  protected slices = [
-    { start: 0, end: 10_000 },
-    { start: 10_000, end: 30_000 },
+  protected slices: BoundedSlices = [
+    { start: 0, end: 20_000 },
+    { start: 20_000, end: 30_000 },
   ];
 
   constructor(public max_amount: number) {

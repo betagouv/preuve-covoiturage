@@ -1,3 +1,4 @@
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -24,11 +25,10 @@ import { description } from './Montpellier.html';
 export const Montpellier: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'montpellier_2022';
   protected operators = [OperatorsEnum.Klaxit];
-  protected slices = [
+  protected slices: RunnableSlices = [
     { start: 2_000, end: 10_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
     {
       start: 10_000,
-      end: 1_000_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
     },
   ];

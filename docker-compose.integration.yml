@@ -91,9 +91,6 @@ services:
       MINIO_REGION_NAME: fr-par
     entrypoint:
       ['sh', '-c', 'mc alias set minio $$MINIO_URL $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc mb minio/$$BUCKET']
-    depends_on:
-      - s3
-      - redis
 
 networks:
   back:

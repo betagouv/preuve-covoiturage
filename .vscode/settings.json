@@ -56,4 +56,5 @@
       "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc"
     }
   ],
+  "typescript.preferences.importModuleSpecifier": "relative",
 }

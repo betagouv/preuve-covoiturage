@@ -1,6 +1,6 @@
 import { PolicyStatsInterface } from '../shared/apdf/interfaces/PolicySliceStatInterface';
 import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
-import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
+import { UnboundedSlices } from '../shared/policy/common/interfaces/Slices';
 import { APDFTripInterface } from './APDFTripInterface';
 
 export interface TzResultInterface {
@@ -17,7 +17,7 @@ export interface CampaignSearchParamsInterface {
 
 export interface DataRepositoryInterface {
   getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]>;
-  getPolicyStats(params: CampaignSearchParamsInterface, slices: SliceInterface[]): Promise<PolicyStatsInterface>;
+  getPolicyStats(params: CampaignSearchParamsInterface, slices: UnboundedSlices | []): Promise<PolicyStatsInterface>;
   getPolicyCursor(params: CampaignSearchParamsInterface): Promise<PgCursorHandler<APDFTripInterface>>;
 }
 
@@ -28,7 +28,7 @@ export abstract class DataRepositoryProviderInterfaceResolver implements DataRep
 
   public async getPolicyStats(
     params: CampaignSearchParamsInterface,
-    slices: SliceInterface[],
+    slices: UnboundedSlices | [],
   ): Promise<PolicyStatsInterface> {
     throw new Error('Not implemented');
   }

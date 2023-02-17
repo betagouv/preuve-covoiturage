@@ -56,7 +56,7 @@ export class ProcessJourneyAction extends AbstractAction implements InitHookInte
   }
 
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
-    const { timeout, batchSize } = this.config.get('acquisition.processing', {});
+    const { timeout, batchSize } = this.config.get('acquisition.processing', { timeout: 0, batchSize: 100 });
     const [acquisitions, cb] = await this.repository.findThenUpdate(
       {
         limit: batchSize,

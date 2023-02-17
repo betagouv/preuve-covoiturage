@@ -49,7 +49,7 @@ install() {
 # Build
 build() {
   echo "Building app"
-  yarn build:all
+  yarn build
   return $?
 }
 
