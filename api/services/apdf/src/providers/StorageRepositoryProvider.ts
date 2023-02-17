@@ -16,8 +16,14 @@ export class StorageRepositoryProvider implements StorageRepositoryProviderInter
   constructor(private s3StorageProvider: S3StorageProvider, private APDFNameProvider: APDFNameProvider) {}
 
   async findByCampaign(campaign: SerializedPolicyInterface): Promise<S3.ObjectList> {
-    const list = await this.s3StorageProvider.list(this.bucket, `${campaign._id}`);
-    return list.filter((obj: S3.Object) => obj.Size > 0);
+    try {
+      const list = await this.s3StorageProvider.list(this.bucket, `${campaign._id}`);
+      return list.filter((obj: S3.Object) => obj.Size > 0);
+    } catch (e) {
+      console.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
+      console.debug(e.stack);
+      throw e;
+    }
   }
 
   async enrich(list: S3.ObjectList): Promise<EnrichedApdfType[]> {

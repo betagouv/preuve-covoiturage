@@ -5,6 +5,7 @@ export const schema = {
   properties: {
     campaign_id: { macro: 'serial' },
     operator_id: { macro: 'serial' },
+    territory_id: { macro: 'serial' },
   },
 };
 
