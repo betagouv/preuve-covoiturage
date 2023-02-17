@@ -10,6 +10,6 @@ export interface ResultInterface extends OperatorInterface {}
 export const handlerConfig = {
   service: 'operator',
   method: 'patch',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

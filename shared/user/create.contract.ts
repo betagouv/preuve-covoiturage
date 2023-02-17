@@ -8,6 +8,6 @@ export type ResultInterface = UserFindInterface;
 export const handlerConfig = {
   service: 'user',
   method: 'create',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

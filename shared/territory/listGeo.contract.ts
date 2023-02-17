@@ -22,6 +22,6 @@ export type ResultInterface = ResultWithPagination<SingleResultInterface[]>;
 export const handlerConfig = {
   service: 'territory',
   method: 'listGeo',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

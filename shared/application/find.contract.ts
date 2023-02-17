@@ -13,6 +13,6 @@ export type RepositoryInterface = ParamsInterface;
 export const handlerConfig = {
   service: 'application',
   method: 'find',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

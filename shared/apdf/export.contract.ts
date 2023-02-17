@@ -17,6 +17,6 @@ export type ResultInterface = string[];
 export const handlerConfig = {
   service: 'apdf',
   method: 'export',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

@@ -12,6 +12,6 @@ export interface ParamsInterface {
 export const handlerConfig = {
   service: 'user',
   method: 'sendSimulationEmail',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

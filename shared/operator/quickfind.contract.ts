@@ -13,6 +13,6 @@ export interface ResultInterface {
 export const handlerConfig = {
   service: 'operator',
   method: 'quickfind',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
