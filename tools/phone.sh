@@ -2,27 +2,15 @@
 
 # This script needs :
 # - node >= 16
-# - pigz (multithread gzip)
 # - pv (pipe viewer for progress bar)
 # - some commons tools (wc, awk, shuf, fallocate, shred, mkfs.ext4, ...)
 
 export WORKING_DIRECTORY=/media/tmp
 export FS_FILE=$(pwd)/tmp_fs
 
-# TODO : CONFIGURE BEFORE RUNNING
-export OPERATOR_1_DIRECTORY=$(pwd)
 export OPERATOR_1_FILE=$OPERATOR_1_DIRECTORY/data_operator_1.csv
-
-# TODO : CONFIGURE BEFORE RUNNING
-export OPERATOR_2_DIRECTORY=$(pwd)
 export OPERATOR_2_FILE=$OPERATOR_2_DIRECTORY/data_operator_2.csv
-
-# TODO : CONFIGURE BEFORE RUNNING
-export OPERATOR_3_DIRECTORY=$(pwd)
 export OPERATOR_3_FILE=$OPERATOR_3_DIRECTORY/data_operator_3.csv
-
-# TODO : CONFIGURE BEFORE RUNNING
-export REGISTRY_DIRECTORY=$(pwd)
 export REGISTRY_FILE=$WORKING_DIRECTORY/data_registry.csv
 export REGISTRY_FINAL_FILE=$REGISTRY_DIRECTORY/data_registry_final.csv
 
