@@ -1,5 +1,4 @@
-// eslint-disable-next-line max-len
-import { SliceInterface } from '../../policy/common/interfaces/SliceInterface';
+import { SliceInterface } from '../../policy/common/interfaces/Slices';
 
 export interface PolicyStatsInterface {
   total_count: number;

@@ -86,7 +86,7 @@ test(
   'should works with global amount limit',
   process,
   {
-    policy: { handler: Handler.id },
+    policy: { handler: Handler.id, max_amount: 10_000_000_00 },
     carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {

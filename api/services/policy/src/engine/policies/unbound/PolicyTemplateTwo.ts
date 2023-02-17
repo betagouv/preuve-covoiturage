@@ -38,11 +38,6 @@ export const PolicyTemplateTwo: PolicyHandlerStaticInterface = class
       end: 30_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
-    {
-      start: 30_000,
-      end: 150_000,
-      fn: () => 0,
-    },
   ];
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -68,5 +63,5 @@ export const PolicyTemplateTwo: PolicyHandlerStaticInterface = class
     }
   }
 
-  protected limits: Array<ConfiguredLimitInterface> = [];
+  limits: Array<ConfiguredLimitInterface> = [];
 };

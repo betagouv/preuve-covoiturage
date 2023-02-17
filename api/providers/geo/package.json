@@ -19,6 +19,7 @@
     "@ilos/core": "~0",
     "@pdc/provider-validator": "~0",
     "axios": "^1.2.2",
+    "axios-retry": "^3.4.0",
     "lodash": "^4.17.21"
   }
 }

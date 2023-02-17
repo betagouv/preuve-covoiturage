@@ -17,8 +17,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - name: Install dependencies
-        run: yarn --frozen-lockfile
       - name: 'Audit API dependencies'
         run: yarn audit --level moderate --groups dependencies && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
         working-directory: api

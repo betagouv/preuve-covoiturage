@@ -44,6 +44,9 @@ export class SimulateOnPastAction extends AbstractAction {
     // 0. Returns Redis cache result for a given territory and month number if present
     const cachedResult: string = await this.connection.getClient().get(this.getSimulationCachingKey(params));
     if (cachedResult) {
+      console.debug(
+        `[policy] Found cached policy simulation for territory ${params.territory_id} and ${params.months} months`,
+      );
       return JSON.parse(cachedResult);
     }
 
@@ -56,6 +59,7 @@ export class SimulateOnPastAction extends AbstractAction {
       end_date: today,
       incentive_sum: 0,
       territory_selector,
+      max_amount: 10_000_000_00,
       _id: 1,
     };
     const policy = await Policy.import(serialized_policy);

@@ -32,8 +32,8 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
     return this.queues;
   }
 
-  protected async getRedisConnection(connectionString: string): Promise<RedisInterface> {
-    const connection = new RedisConnection({ connectionString });
+  protected async getRedisConnection(): Promise<RedisInterface> {
+    const connection = this.kernel.get(RedisConnection);
     await connection.up();
     this.connections.push(connection);
     return connection.getClient();
@@ -49,24 +49,15 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
     return new QueueScheduler(name, options);
   }
 
-  protected async getWorkerAndScheduler(
-    connectionString: string,
-    name: string,
-    processor: Processor,
-  ): Promise<WorkerWithScheduler> {
-    const connection = await this.getRedisConnection(connectionString);
+  protected async getWorkerAndScheduler(name: string, processor: Processor): Promise<WorkerWithScheduler> {
+    const connection = await this.getRedisConnection();
     return {
       scheduler: this.getScheduler(connection, name),
       worker: this.getWorker(connection, name, processor),
     };
   }
 
-  async up(opts: string[] = []) {
-    const [redisUrl] = opts;
-    if (!redisUrl || !/^redis:\/\//.test(redisUrl)) {
-      throw new Error('Redis connection string not configured');
-    }
-
+  async up(_opts: string[] = []) {
     const container = this.kernel.getContainer();
     if (!container.isBound(QueueExtension.containerKey)) {
       throw new Error('No queue declared');
@@ -75,7 +66,7 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
     const services = container.getAll<string>(QueueExtension.containerKey);
     for (const service of services) {
       const key = service;
-      const { worker, scheduler } = await this.getWorkerAndScheduler(redisUrl, key, async (job) =>
+      const { worker, scheduler } = await this.getWorkerAndScheduler(key, async (job) =>
         this.kernel.call(job.data.method, job.data.params.params, {
           ...job.data.params._context,
           channel: {

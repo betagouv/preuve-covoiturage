@@ -1,10 +1,42 @@
+import { BoundedSlices, SliceInterface, UnboundedSlices } from '../../shared/policy/common/interfaces/Slices';
 import {
-  TerritoryCodeInterface,
   TerritoryCodeEnum,
+  TerritoryCodeInterface,
   TerritorySelectorsInterface,
 } from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
+export {
+  CommonIncentiveInterface,
+  IncentiveStateEnum,
+  IncentiveStatusEnum,
+  SerializedIncentiveInterface,
+  StatefulIncentiveInterface,
+  StatelessIncentiveInterface,
+} from './IncentiveInterface';
+export {
+  MetadataAccessorInterface,
+  MetadataLifetime,
+  MetadataRegistryInterface,
+  MetadataStoreInterface,
+  MetadataVariableDefinitionInterface,
+  SerializedAccessibleMetadataInterface,
+  SerializedMetadataVariableDefinitionInterface,
+  SerializedStoredMetadataInterface,
+  StoredMetadataVariableInterface,
+} from './MetadataInterface';
+export { OperatorsEnum } from './OperatorsEnum';
+export {
+  PolicyHandlerInterface,
+  PolicyHandlerParamsInterface,
+  PolicyHandlerStaticInterface,
+  PolicyInterface,
+  SerializedPolicyInterface,
+  StatefulContextInterface,
+  StatelessContextInterface,
+  StatelessRuleHelper,
+} from './PolicyInterface';
 export { TerritoryCodeInterface, TerritoryCodeEnum, TerritorySelectorsInterface };
+export { SliceInterface, BoundedSlices, UnboundedSlices };
 
 export interface CarpoolMetaInterface {
   calc_distance?: number;
@@ -34,38 +66,3 @@ export interface CarpoolInterface {
   start: TerritoryCodeInterface;
   end: TerritoryCodeInterface;
 }
-
-export {
-  MetadataAccessorInterface,
-  MetadataLifetime,
-  MetadataRegistryInterface,
-  MetadataStoreInterface,
-  MetadataVariableDefinitionInterface,
-  SerializedAccessibleMetadataInterface,
-  SerializedMetadataVariableDefinitionInterface,
-  SerializedStoredMetadataInterface,
-  StoredMetadataVariableInterface,
-} from './MetadataInterface';
-
-export {
-  CommonIncentiveInterface,
-  IncentiveStateEnum,
-  IncentiveStatusEnum,
-  SerializedIncentiveInterface,
-  StatefulIncentiveInterface,
-  StatelessIncentiveInterface,
-} from './IncentiveInterface';
-
-export {
-  PolicyInterface,
-  PolicyHandlerInterface,
-  PolicyHandlerParamsInterface,
-  PolicyHandlerStaticInterface,
-  SerializedPolicyInterface,
-  SliceInterface,
-  StatefulContextInterface,
-  StatelessRuleHelper,
-  StatelessContextInterface,
-} from './PolicyInterface';
-
-export { OperatorsEnum } from './OperatorsEnum';

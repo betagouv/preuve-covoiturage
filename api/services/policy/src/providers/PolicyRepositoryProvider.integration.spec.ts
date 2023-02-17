@@ -28,6 +28,7 @@ function makePolicy(data: Partial<SerializedPolicyInterface> = {}): Omit<Seriali
     status: 'draft',
     handler: 'Idfm',
     incentive_sum: 5000,
+    max_amount: 10_000_000_00,
     ...data,
   };
 }

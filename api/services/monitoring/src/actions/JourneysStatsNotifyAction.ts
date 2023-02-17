@@ -17,12 +17,12 @@ import {
   ResultInterface,
   ParamsInterface,
   signature,
-} from '../shared/monitoring/journeys/notifyStats.contract';
+} from '../shared/monitoring/notifyStats.contract';
 import {
   signature as statsSignature,
   ResultInterface as StatsResultInterface,
   ParamsInterface as StatsParamsInterface,
-} from '../shared/monitoring/journeys/stats.contract';
+} from '../shared/monitoring/journeystats.contract';
 import { StatNotification } from '../notifications/StatNotification';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })

@@ -1,4 +1,4 @@
-import { SliceInterface } from './SliceInterface';
+import { BoundedSlices, UnboundedSlices } from './Slices';
 
 export interface PolicyInterface {
   _id: number;
@@ -11,7 +11,7 @@ export interface PolicyInterface {
   handler: string;
   incentive_sum: number;
   params: {
-    slices?: Array<SliceInterface>;
+    slices?: BoundedSlices | UnboundedSlices;
     operators?: Array<string>;
     limits?: {
       glob?: number;

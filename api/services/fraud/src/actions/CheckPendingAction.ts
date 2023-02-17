@@ -1,4 +1,4 @@
-import { Action } from '@ilos/core';
+import { Action, env } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
@@ -38,8 +38,12 @@ export class CheckPendingAction extends Action {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    if (!!env('APP_DISABLE_FRAUDCHECK', false)) {
+      return;
+    }
+
     await this.repository.populate(params?.last_hours || 1);
-    const { timeout, batchSize } = this.config.get('engine', {});
+    const { timeout, batchSize } = this.config.get('engine', { timeout: 0, batchSize: 100 });
     const [acquisitions, cb] = await this.repository.findThenUpdate(
       {
         limit: batchSize,
@@ -51,21 +55,25 @@ export class CheckPendingAction extends Action {
     const msg = `[fraudcheck] processed (${acquisitions.length})`;
     console.debug(`Processing fraudcheck ${acquisitions.join(', ')}`);
     console.time(msg);
-    for (const acquisition of acquisitions) {
-      try {
-        cb(await this.engine.run(acquisition, []));
-      } catch (e) {
-        console.debug(`[fraudcheck] error ${e.message} processing ${acquisition}`);
-        cb({
-          acquisition_id: acquisition,
-          status: FraudCheckStatusEnum.Error,
-          karma: 0,
-          data: [],
-        });
+    try {
+      for (const acquisition of acquisitions) {
+        try {
+          const result = await this.engine.run(acquisition, []);
+          await cb(result);
+        } catch (e) {
+          console.debug(`[fraudcheck] error ${e.message} processing ${acquisition}`);
+          await cb({
+            acquisition_id: acquisition,
+            status: FraudCheckStatusEnum.Error,
+            karma: 0,
+            data: [],
+          });
+        }
       }
+    } finally {
+      await cb();
+      console.timeEnd(msg);
     }
-    await cb();
-    console.timeEnd(msg);
     return;
   }
 }

@@ -3,22 +3,18 @@ import { provider } from '@ilos/common';
 import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
 import { set } from 'lodash';
 import { promisify } from 'util';
-import { boundariesToClause } from '../helpers/boundariesToClause.helper';
-import { slicesToBoundaries } from '../helpers/slicesToBoundaries.helper';
 import {
+  CampaignSearchParamsInterface,
   DataRepositoryInterface,
   DataRepositoryProviderInterfaceResolver,
-  CampaignSearchParamsInterface,
 } from '../interfaces/APDFRepositoryProviderInterface';
 import { APDFTripInterface } from '../interfaces/APDFTripInterface';
 import { PolicyStatsInterface } from '../shared/apdf/interfaces/PolicySliceStatInterface';
 import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
-import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
+import { UnboundedSlices } from '../shared/policy/common/interfaces/Slices';
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {
-  public static readonly MAX_DISTANCE_METERS = 150_000;
-
   constructor(public connection: PostgresConnection) {}
 
   /**
@@ -51,19 +47,19 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
    */
   public async getPolicyStats(
     params: CampaignSearchParamsInterface,
-    slices: SliceInterface[],
+    slices: UnboundedSlices | [],
   ): Promise<PolicyStatsInterface> {
     const { start_date, end_date, operator_id, campaign_id } = params;
 
     // prepare slice filters
     const sliceFilters: string = slices
-      .map(({ start, end }, i) => {
-        const f = `filter (where amount > 0 and distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
+      .map(({ start, end }, i: number) => {
+        const f = `filter (where distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
         return `
-          (count(distinct acquisition_id) ${f})::int as slice_${i}_count,
+          (count(acquisition_id) ${f})::int as slice_${i}_count,
           (sum(amount) ${f})::int as slice_${i}_sum,
           ${start} as slice_${i}_start,
-          ${end} as slice_${i}_end
+          ${end ? end : "'Infinity'"} as slice_${i}_end
         `;
       })
       .join(',');
@@ -85,12 +81,11 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
             and cc.status = 'ok'
             and cc.operator_id = $3
             and pi.policy_id = $4
-            ${this.boundaries(slices)}
           )
         select
-          count(distinct acquisition_id)::int as total_count,
+          count(acquisition_id)::int as total_count,
           sum(amount)::int as total_sum,
-          (count(distinct acquisition_id) filter (where amount > 0))::int as subsidized_count
+          (count(acquisition_id) filter (where amount > 0))::int as subsidized_count
           ${sliceFilters.length ? `, ${sliceFilters}` : ''}
         from trips
         `,
@@ -115,8 +110,11 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       (p, k) => {
         if (!k.includes('slice_')) return p;
         const [, i, prop] = k.split('_');
-        if (prop === 'start' || prop === 'end') {
-          set(p, `slices.${i}.slice.${prop}`, row[k]);
+        if (prop === 'start') {
+          set(p, `slices.${i}.slice.start`, row[k]);
+        } else if (prop === 'end') {
+          // Highest slice can return Infinity as boundary
+          set(p, `slices.${i}.slice.end`, row[k] === 'Infinity' ? undefined : row[k]);
         } else {
           set(p, `slices.${i}.${prop}`, row[k]);
         }
@@ -192,14 +190,12 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       left join carpool.identities cip on cip._id = ccp.identity_id
       left join policy.incentives pid on ccd._id = pid.carpool_id and pid.policy_id = $4 and pid.status = 'validated'
       left join policy.incentives pip on ccp._id = pip.carpool_id and pip.policy_id = $4 and pid.status = 'validated'
-      left join geo.perimeters gps on ccp.start_geo_code = gps.arr and gps.year = extract(year from ccp.datetime)
-      left join geo.perimeters gpe on ccp.end_geo_code = gpe.arr and gpe.year = extract(year from (ccp.datetime + (ccd.duration || ' seconds')::interval))
+      left join geo.perimeters gps on ccp.start_geo_code = gps.arr and gps.year = geo.get_latest_millesime_or(extract(year from ccp.datetime)::smallint)
+      left join geo.perimeters gpe on ccp.end_geo_code = gpe.arr and gpe.year = geo.get_latest_millesime_or(extract(year from (ccp.datetime + (ccd.duration || ' seconds')::interval))::smallint)
 
       where pid.policy_id is not null or pip.policy_id is not null
 
-      order by
-        ccd.trip_id,
-        ccd.datetime
+      order by ccd.datetime
     `;
 
     const db = await this.connection.getClient().connect();
@@ -209,9 +205,5 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<APDFTripInterface[]>,
       release: db.release,
     };
-  }
-
-  private boundaries(slices: SliceInterface[]): string {
-    return boundariesToClause(slicesToBoundaries(slices));
   }
 }

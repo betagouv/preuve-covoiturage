@@ -1,3 +1,4 @@
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -10,16 +11,15 @@ import {
   endsAt,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
+  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
+  startsAndEndsAt,
   startsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-  LimitTargetEnum,
-  startsAndEndsAt,
-  ConfiguredLimitInterface,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Pdll.html';
@@ -29,25 +29,22 @@ import { description } from './Pdll.html';
 export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '249';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
-  protected slices = [
+  protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
       start: 20_000,
       end: 50_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 50_000 })),
     },
-    {
-      start: 50_000,
-      end: 150_000,
-      fn: () => 0,
-    },
   ];
-  private readonly MAX_GLOBAL_AMOUNT = 2_000_000_00;
 
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['5499304F-2C64-AB1A-7392-52FF88F5E78D', this.MAX_GLOBAL_AMOUNT, watchForGlobalMaxAmount],
-  ];
+  constructor(public max_amount: number) {
+    super();
+    this.limits = [
+      ['8C5251E8-AB82-EB29-C87A-2BF59D4F6328', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['5499304F-2C64-AB1A-7392-52FF88F5E78D', max_amount, watchForGlobalMaxAmount],
+    ];
+  }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
@@ -90,7 +87,7 @@ export const Pdll: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.MAX_GLOBAL_AMOUNT,
+        glob: this.max_amount,
       },
     };
   }

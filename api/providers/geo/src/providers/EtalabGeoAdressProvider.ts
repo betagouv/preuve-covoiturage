@@ -4,10 +4,19 @@ import axios from 'axios';
 import { NotFoundException, provider } from '@ilos/common';
 
 import { GeoCoderInterface, PointInterface, InseeCoderInterface } from '../interfaces';
+import axiosRetry from 'axios-retry';
 
 @provider()
 export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInterface {
   protected domain = 'https://api-adresse.data.gouv.fr';
+
+  constructor() {
+    axiosRetry(axios, {
+      retries: 3,
+      retryDelay: (retryCount) => retryCount * 2000,
+      retryCondition: (error) => error.response.status >= 400,
+    });
+  }
 
   async literalToPosition(literal: string): Promise<PointInterface> {
     const params = new URLSearchParams({

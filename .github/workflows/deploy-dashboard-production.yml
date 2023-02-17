@@ -1,9 +1,13 @@
-name: Deploy dashboard - production
+name: Deploy dashboard
 on:
   push:
     branches: [dev]
 jobs:
   build-and-deploy:
+    strategy:
+      matrix:
+        env: [demo, production]
+    environment: ${{ matrix.env }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -17,9 +21,11 @@ jobs:
           node-version: '16'
 
       - name: Install and Build 🔧
+        env:
+          DEPLOY_ENV: ${{ matrix.env }}
         run: |
           cd dashboard
-          cat src/environments/environment.production.ts | sed 's/export const /window./' > src/assets/env.js
+          cat "src/environments/environment.$DEPLOY_ENV.ts" | sed 's/export const /window./' > src/assets/env.js
           yarn
           yarn build -c production
 
@@ -30,6 +36,7 @@ jobs:
 
       - name: Deploy 🚀
         uses: appleboy/scp-action@master
+        if: ${{ matrix.env == 'production' }}
         with:
           host: ${{ secrets.FRONT_HOST }}
           username: ${{ secrets.FRONT_USERNAME }}
@@ -37,3 +44,14 @@ jobs:
           source: dashboard/dist/dashboard/*
           target: www/production
           rm: true
+      - name: Deploy to bucket
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ vars.DASHBOARD_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.BUCKET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+          AWS_S3_ENDPOINT: ${{ vars.BUCKET_ENDPOINT }}
+          AWS_REGION: ${{ vars.BUCKET_REGION }}
+          SOURCE_DIR: 'dashboard/dist/dashboard'
