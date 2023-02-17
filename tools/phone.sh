@@ -9,19 +9,22 @@
 export WORKING_DIRECTORY=/media/tmp
 export FS_FILE=$(pwd)/tmp_fs
 
+# TODO : CONFIGURE BEFORE RUNNING
 export OPERATOR_1_DIRECTORY=$(pwd)
-export OPERATOR_1_FILE=$WORKING_DIRECTORY/data_operator_1.csv
+export OPERATOR_1_FILE=$OPERATOR_1_DIRECTORY/data_operator_1.csv
 
+# TODO : CONFIGURE BEFORE RUNNING
 export OPERATOR_2_DIRECTORY=$(pwd)
-export OPERATOR_2_FILE=$WORKING_DIRECTORY/data_operator_2.csv
+export OPERATOR_2_FILE=$OPERATOR_2_DIRECTORY/data_operator_2.csv
 
+# TODO : CONFIGURE BEFORE RUNNING
 export OPERATOR_3_DIRECTORY=$(pwd)
-export OPERATOR_3_FILE=$WORKING_DIRECTORY/data_operator_3.csv
+export OPERATOR_3_FILE=$OPERATOR_3_DIRECTORY/data_operator_3.csv
 
+# TODO : CONFIGURE BEFORE RUNNING
 export REGISTRY_DIRECTORY=$(pwd)
 export REGISTRY_FILE=$WORKING_DIRECTORY/data_registry.csv
 export REGISTRY_FINAL_FILE=$REGISTRY_DIRECTORY/data_registry_final.csv
-export GZIP_CMD=pigz
 
 generate() {
     echo "[generate] start generating phone file"
@@ -32,23 +35,13 @@ generate() {
 shuffle_registry() {
     echo "[shuffle] start"
     SIZE=$(wc -l $REGISTRY_FILE | awk '{ print $1 }')
-    split -l 1000000 --filter='shuf' $REGISTRY_FILE | pv -ptl -s$SIZE | $GZIP_CMD > $REGISTRY_FINAL_FILE.gz && rm $REGISTRY_FILE
+    split -l 1000000 --filter='shuf' $REGISTRY_FILE | pv -ptl -s$SIZE > $REGISTRY_FINAL_FILE && rm $REGISTRY_FILE
     echo "[shuffle] done"
-}
-
-share_operator() {
-  echo "[share] start for operator 1"
-  $GZIP_CMD $OPERATOR_1_FILE && mv $OPERATOR_1_FILE.gz $OPERATOR_1_DIRECTORY
-  echo "[share] start for operator 2"
-  $GZIP_CMD $OPERATOR_2_FILE && mv $OPERATOR_2_FILE.gz $OPERATOR_2_DIRECTORY
-  echo "[share] start for operator 3"
-  $GZIP_CMD $OPERATOR_3_FILE && mv $OPERATOR_3_FILE.gz $OPERATOR_3_DIRECTORY
-  echo "[share] done"
 }
 
 mount_tmp() {
   echo "[prepare] Mounting tmpfs"
-  fallocate -l 64G $FS_FILE
+  fallocate -l 96G $FS_FILE
   mkfs.ext4 $FS_FILE
   sudo mkdir -p $WORKING_DIRECTORY
   sudo mount $FS_FILE $WORKING_DIRECTORY
@@ -61,13 +54,24 @@ umount_tmp() {
   shred -vu -n1 $FS_FILE
 }
 
+checks() {
+  OP1_WC=$(wc -l $OPERATOR_1_FILE)
+  OP2_WC=$(wc -l $OPERATOR_2_FILE)
+  OP3_WC=$(wc -l $OPERATOR_3_FILE)
+  RPC_WC=$(wc -l $REGISTRY_FINAL_FILE)
+  echo "Operator 1: $OP1_WC"
+  echo "Operator 2: $OP2_WC"
+  echo "Operator 3: $OP3_WC"
+  echo "Registry  : $RPC_WC"
+}
+
 start() {
   mount_tmp && \
   generate && \
-  share_operator && \
   shuffle_registry && \
   ls -l $WORKING_DIRECTORY && \
-  umount_tmp
+  umount_tmp && \
+  checks
 }
 
 "$@"
