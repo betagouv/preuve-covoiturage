@@ -4,11 +4,11 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 <p>Cette campagne est limitée à
   <b>150 000 euros </b>.
 </p>
-<p>Les <b> passagers </b> effectuant un trajet d'au moins 2 km, avec pour origine ou destination la CA du Cotentin, 
+<p>Les <b> passagers </b> effectuant un trajet d'au moins 2 km, avec pour origine ou destination la CA du Cotentin,
 sont incités selon les règles suivantes : </p>
 <ul>
-  <li><b>De 2 à 20km : 2 euro par trajet par passager.</b></li>
-  <li><b>De 20 à 40km : 0.1 euro par km par passager avec un maximum de 2€</b></li>
+  <li><b>De 2 à 20 km : 2 euros par trajet par passager.</b></li>
+  <li><b>De 20 à 40 km : 0.1 euros (10 centimes d'euro) par km par passager avec un maximum de 2 euros</b></li>
 </ul>
 <p>Les restrictions suivantes seront appliquées :</p>
 <ul>
