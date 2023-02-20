@@ -1,9 +1,9 @@
 import faker from '@faker-js/faker';
 import test from 'ava';
 import { Row, stream, Workbook, Worksheet } from 'exceljs';
-import { APDFTripInterface } from '../../../interfaces/APDFTripInterface';
-import { BuildExcel } from '../BuildExcel';
-import { DataWorkBookWriter } from './DataWorkbookWriter';
+import { APDFTripInterface } from '../../interfaces/APDFTripInterface';
+import { BuildExcel } from './BuildExcel';
+import { TripsWorksheetWriter } from './TripsWorksheetWriter';
 
 // tool to sort column names to be able to compare them
 function sortRowValues(values: Row['values']): Row['values'] {
@@ -12,7 +12,7 @@ function sortRowValues(values: Row['values']): Row['values'] {
   return values;
 }
 
-let dataWorkBookWriter: DataWorkBookWriter;
+let dataWorkBookWriter: TripsWorksheetWriter;
 
 const exportTripInterface: APDFTripInterface = {
   journey_id: faker.datatype.uuid(),
@@ -36,7 +36,7 @@ const exportTripInterface: APDFTripInterface = {
 };
 
 test.before((t) => {
-  dataWorkBookWriter = new DataWorkBookWriter();
+  dataWorkBookWriter = new TripsWorksheetWriter();
 });
 
 test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
@@ -76,18 +76,18 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
 
   // Assert
   const workbook: Workbook = await new Workbook().xlsx.readFile(filepath);
-  const worksheet: Worksheet = workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME);
+  const worksheet: Worksheet = workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME);
   t.is(worksheet.actualRowCount, 21);
   t.deepEqual<Row['values'], Row['values']>(
-    sortRowValues(workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(1).values),
+    sortRowValues(workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME).getRow(1).values),
     [undefined, ...Object.keys(exportTripInterface)].sort(),
   );
   t.is(
-    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).values.length,
+    workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME).getRow(2).values.length,
     Object.keys(exportTripInterface).length + 1,
   );
   t.is(
-    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).getCell(1).value,
+    workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME).getRow(2).getCell(1).value,
     exportTripInterface.journey_id,
   );
 });

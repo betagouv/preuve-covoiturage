@@ -9,6 +9,7 @@ export interface PolicyStatsInterface {
 
 export interface SliceStatInterface {
   count: number;
+  subsidized: number;
   sum: number;
   slice: SliceInterface;
 }

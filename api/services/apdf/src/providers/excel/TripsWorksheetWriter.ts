@@ -1,16 +1,16 @@
 import { provider } from '@ilos/common';
 import { Column, stream, Worksheet } from 'exceljs';
-import { normalize } from '../../../helpers/normalizeAPDFDataHelper';
-import { APDFTripInterface } from '../../../interfaces/APDFTripInterface';
-import { PgCursorHandler } from '../../../shared/common/PromisifiedPgCursor';
-import { AbstractWorkBookWriter } from './AbstractWorkbookWriter';
+import { normalize } from '../../helpers/normalizeAPDFDataHelper';
+import { APDFTripInterface } from '../../interfaces/APDFTripInterface';
+import { PgCursorHandler } from '../../shared/common/PromisifiedPgCursor';
+import { AbstractWorksheetWriter } from './AbstractWorksheetWriter';
 
 @provider()
-export class DataWorkBookWriter extends AbstractWorkBookWriter {
+export class TripsWorksheetWriter extends AbstractWorksheetWriter {
   public readonly CURSOR_BATCH_SIZE = 10;
-  public readonly DATA_WORKSHEET_NAME = 'trajets';
+  public readonly WORKSHEET_NAME = 'trajets';
   // TODO improve listing of columns
-  public readonly DATA_WORKSHEET_COLUMN_HEADERS: Partial<Column>[] = [
+  public readonly WORKSHEET_COLUMN_HEADERS: Partial<Column>[] = [
     'journey_id',
     'start_datetime',
     'end_datetime',
@@ -32,11 +32,7 @@ export class DataWorkBookWriter extends AbstractWorkBookWriter {
   ].map((header) => ({ header, key: header }));
 
   async call(cursor: PgCursorHandler<APDFTripInterface>, workbookWriter: stream.xlsx.WorkbookWriter): Promise<void> {
-    const worksheet: Worksheet = this.initWorkSheet(
-      workbookWriter,
-      this.DATA_WORKSHEET_NAME,
-      this.DATA_WORKSHEET_COLUMN_HEADERS,
-    );
+    const worksheet: Worksheet = this.initWorkSheet(workbookWriter, this.WORKSHEET_NAME, this.WORKSHEET_COLUMN_HEADERS);
 
     const b1 = new Date();
     let results: APDFTripInterface[] = await cursor.read(this.CURSOR_BATCH_SIZE);

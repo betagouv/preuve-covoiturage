@@ -80,7 +80,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
   }
 
   protected async processPolicy(policy_id: number, override_from?: Date): Promise<void> {
-    console.debug(`[policy ${policy_id}] starting`, { policy_id, override_from });
+    console.debug(`[policy ${policy_id}] starting`);
 
     // 1. Find policy
     const policy = await Policy.import(await this.policyRepository.find(policy_id));
