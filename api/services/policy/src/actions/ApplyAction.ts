@@ -1,23 +1,27 @@
-import { isAfter, parseISO, startOfToday, sub } from 'date-fns';
-import { handler, KernelInterfaceResolver, ContextType, InitHookInterface } from '@ilos/common';
+import { ContextType, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import { isAfter, startOfToday, sub } from 'date-fns';
 
+import { Policy } from '../engine/entities/Policy';
 import {
-  signature as handlerSignature,
+  IncentiveRepositoryProviderInterfaceResolver,
+  PolicyRepositoryProviderInterfaceResolver,
+  StatelessIncentiveInterface,
+  TripRepositoryProviderInterfaceResolver,
+} from '../interfaces';
+import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
+  signature as handlerSignature,
 } from '../shared/policy/apply.contract';
-import {
-  IncentiveRepositoryProviderInterfaceResolver,
-  TripRepositoryProviderInterfaceResolver,
-  PolicyRepositoryProviderInterfaceResolver,
-  StatelessIncentiveInterface,
-} from '../interfaces';
-import { Policy } from '../engine/entities/Policy';
+import { alias } from '../shared/policy/apply.schema';
 
-@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
+@handler({
+  ...handlerConfig,
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
+})
 export class ApplyAction extends AbstractAction implements InitHookInterface {
   private readonly context: ContextType = {
     call: {
@@ -64,11 +68,14 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     }
 
     console.debug('[policies] stateless starting');
+
     if (!('policy_id' in params)) {
+      console.debug('[policies] dispatch processing for all active policies');
       await this.dispatch();
       return;
     }
-    await this.processPolicy(params.policy_id, params.override_from);
+
+    await this.processPolicy(params.policy_id, params.override_from, params.override_until);
     console.debug('[policies] stateless finished');
   }
 
@@ -79,8 +86,12 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     }
   }
 
-  protected async processPolicy(policy_id: number, override_from?: Date): Promise<void> {
-    console.debug(`[policy ${policy_id}] starting`);
+  protected async processPolicy(policy_id: number, override_from?: Date, override_until?: Date): Promise<void> {
+    console.debug(
+      `[policy ${policy_id}] starting` +
+        ` from ${override_from?.toISOString()}` +
+        ` until ${override_until?.toISOString()}`,
+    );
 
     // 1. Find policy
     const policy = await Policy.import(await this.policyRepository.find(policy_id));
@@ -92,9 +103,10 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
 
     // 2. Start a cursor to find trips
     const batchSize = 50;
-    const startParam = override_from ? parseISO(override_from as any) : sub(startOfToday(), { days: 7 });
+    const startParam = override_from ?? sub(startOfToday(), { days: 7 });
+    const endParam = override_until ?? new Date();
     const start = isAfter(startParam, policy.start_date) ? startParam : policy.start_date;
-    const end = isAfter(policy.end_date, new Date()) ? new Date() : policy.end_date;
+    const end = isAfter(policy.end_date, endParam) ? endParam : policy.end_date;
     const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, !!override_from);
     let done = false;
 

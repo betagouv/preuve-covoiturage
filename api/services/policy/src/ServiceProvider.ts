@@ -7,6 +7,7 @@ import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
 import { config } from './config';
+import { binding as applySchemaBinding } from './shared/policy/apply.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOnPast.schema';
@@ -42,6 +43,7 @@ import { GetPastSimulationOrComputeAction } from './actions/GetPastSimulationOrC
     TerritoryRepositoryProvider,
   ],
   validator: [
+    applySchemaBinding,
     listSchemaBinding,
     findSchemaBinding,
     simulateOnSchemaBinding,

@@ -1,6 +1,7 @@
 export type ParamsInterface = {
   policy_id?: number;
   override_from?: Date;
+  override_until?: Date;
 };
 
 export type ResultInterface = void;
