@@ -39,7 +39,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works basic',
+  'should work basic',
   process,
   {
     policy: { handler: Handler.id },
@@ -72,7 +72,7 @@ test(
 );
 
 test(
-  'should works with day limits',
+  'should work with day limits',
   process,
   {
     policy: { handler: Handler.id },
@@ -116,7 +116,7 @@ const generateCarpool = (): Partial<CarpoolInterface>[] => {
 };
 
 test(
-  'should works with driver month limits',
+  'should work with driver month limits',
   process,
   {
     policy: { handler: Handler.id },

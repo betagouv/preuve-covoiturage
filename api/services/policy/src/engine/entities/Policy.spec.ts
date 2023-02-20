@@ -29,21 +29,21 @@ class TestHandler implements PolicyHandlerInterface {
 }
 
 test(
-  'should works if class C',
+  'should work if class C',
   process,
   { handler: new TestHandler(), carpool: [{ distance: 1000 }, { distance: 2000 }], meta: [] },
   { incentive: [10, 20], meta: [{ key: 'max_amount_restriction.global.campaign.global', value: 30 }] },
 );
 
 test(
-  'should works if not class C',
+  'should work if not class C',
   process,
   { handler: new TestHandler(), carpool: [{ distance: 1000, operator_class: 'B' }], meta: [] },
   { incentive: [0], meta: [] },
 );
 
 test(
-  'should works with initial meta',
+  'should work with initial meta',
   process,
   {
     handler: new TestHandler(),
@@ -54,7 +54,7 @@ test(
 );
 
 test(
-  'should works with dates',
+  'should work with dates',
   process,
   {
     handler: new TestHandler(),

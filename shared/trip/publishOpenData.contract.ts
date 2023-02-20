@@ -12,6 +12,6 @@ export type ResultInterface = void;
 export const handlerConfig = {
   service: 'trip',
   method: 'publishOpenData',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

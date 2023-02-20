@@ -38,7 +38,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works with exclusion',
+  'should work with exclusion',
   process,
   {
     policy: { handler: Handler.id },
@@ -59,7 +59,7 @@ test(
 );
 
 test(
-  'should works basic',
+  'should work basic',
   process,
   {
     policy: { handler: Handler.id },
@@ -84,7 +84,7 @@ test(
 );
 
 test(
-  'should works with global limits',
+  'should work with global limits',
   process,
   {
     policy: { handler: Handler.id, max_amount: 2_000_000_00 },
@@ -108,7 +108,7 @@ test(
 );
 
 test(
-  'should works with day limits',
+  'should work with day limits',
   process,
   {
     policy: { handler: Handler.id },

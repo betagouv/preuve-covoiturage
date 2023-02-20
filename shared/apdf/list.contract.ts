@@ -19,6 +19,6 @@ export type ResultsInterface = EnrichedApdfType[];
 export const handlerConfig = {
   service: 'apdf',
   method: 'list',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

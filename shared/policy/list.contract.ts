@@ -13,6 +13,6 @@ export type ResultInterface = Array<SingleResultInterface>;
 export const handlerConfig = {
   service: 'campaign',
   method: 'list',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

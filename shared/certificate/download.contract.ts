@@ -21,6 +21,6 @@ export interface ResultInterface {
 export const handlerConfig = {
   service: 'certificate',
   method: 'download',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

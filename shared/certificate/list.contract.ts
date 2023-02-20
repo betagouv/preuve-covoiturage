@@ -20,6 +20,6 @@ export type RepositoryInterface = ParamsInterface;
 export const handlerConfig = {
   service: 'certificate',
   method: 'list',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

@@ -19,6 +19,6 @@ export type ResultInterface = {
 export const handlerConfig = {
   service: 'monitoring',
   method: 'journeysstats',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
