@@ -10,7 +10,7 @@ const chunksize = 1_000_000;
 const total_by_prefix = 100_000_000;
 
 function* phone(prefix) {
-  for(let i = 0; i < 10; i++) {
+  for (let i = 0; i < 10; i++) {
     const phone_str = `${prefix}${i.toString()}`;
     if (phone_str.length === 12) {
       yield phone_str;
@@ -31,14 +31,14 @@ async function main() {
       let i = 0;
       for (let phoneStr of phone(prefix)) {
         data.push([phoneStr, crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()]);
-        if (data.length >= chunksize) { 
-          await operator_1_file.write(data.map(([nb, o1]) => [nb, o1].join(';')).join('\n'));
-          await operator_2_file.write(data.map(([nb, _, o2]) => [nb, o2].join(';')).join('\n'));
-          await operator_3_file.write(data.map(([nb, _, __, o3]) => [nb, o3].join(';')).join('\n'));
-          await registry_file.write(data.map(([_, o1, o2, o3]) => [o1, o2, o3].join(';')).join('\n'));
+        if (data.length >= chunksize) {
+          await operator_1_file.write(`${data.map(([nb, o1]) => [nb, o1].join(';')).join('\n')}\n`);
+          await operator_2_file.write(`${data.map(([nb, _, o2]) => [nb, o2].join(';')).join('\n')}\n`);
+          await operator_3_file.write(`${data.map(([nb, _, __, o3]) => [nb, o3].join(';')).join('\n')}\n`);
+          await registry_file.write(`${data.map(([_, o1, o2, o3]) => [o1, o2, o3].join(';')).join('\n')}\n`);
           data = [];
           i += 1;
-          console.log(`${Math.round(i * chunksize / total_by_prefix * 100)} per cent done for ${prefix}`);
+          console.log(`${Math.round(((i * chunksize) / total_by_prefix) * 100)} per cent done for ${prefix}`);
         }
       }
     }
