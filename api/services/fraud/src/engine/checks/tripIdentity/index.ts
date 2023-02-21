@@ -4,7 +4,6 @@ import { TripIdentityFullnameCollisionCheck } from './TripIdentityFullnameCollis
 import { TripIdentityLastnameCollisionCheck } from './TripIdentityLastnameCollisionCheck';
 import { TripIdentityPhoneCollisionCheck } from './TripIdentityPhoneCollisionCheck';
 import { TripIdentityPhoneTruncCollisionCheck } from './TripIdentityPhoneTruncCollisionCheck';
-import { TripIdentityTravelpassCollisionCheck } from './TripIdentityTravelpassCollisionCheck';
 import { TripIdentityUserIdCollisionCheck } from './TripIdentityUserIdCollisionCheck';
 
 export const tripIdentity = [
@@ -14,6 +13,5 @@ export const tripIdentity = [
   TripIdentityLastnameCollisionCheck,
   TripIdentityPhoneCollisionCheck,
   TripIdentityPhoneTruncCollisionCheck,
-  TripIdentityTravelpassCollisionCheck,
   TripIdentityUserIdCollisionCheck,
 ];

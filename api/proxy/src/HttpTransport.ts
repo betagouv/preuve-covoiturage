@@ -30,6 +30,7 @@ import {
   acquisitionRateLimiter,
   apiRateLimiter,
   authRateLimiter,
+  checkRateLimiter,
   contactformRateLimiter,
   loginRateLimiter,
   monHonorCertificateRateLimiter,
@@ -43,6 +44,10 @@ import {
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
 } from './shared/territory/getAuthorizedCodes.contract';
+
+import { signature as importCeeSignature } from './shared/cee/importApplication.contract';
+import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
+import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -91,12 +96,14 @@ export class HttpTransport implements TransportInterface {
     this.registerCertificateRoutes();
     this.registerAcquisitionRoutes();
     this.registerSimulationRoutes();
+    this.registerCeeRoutes();
     this.registerHonorRoutes();
     this.registerObservatoryRoutes();
     this.registerUptimeRoute();
     this.registerContactformRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
+    this.registerGeoRoutes();
   }
 
   getApp(): express.Express {
@@ -126,7 +133,8 @@ export class HttpTransport implements TransportInterface {
 
     const sessionSecret = this.config.get('proxy.session.secret');
     const sessionName = this.config.get('proxy.session.name');
-    const redis = new Redis(this.config.get('redis.connectionString'), { keyPrefix: 'proxy:' });
+    const redisConfig = this.config.get('connections.redis');
+    const redis = new Redis(redisConfig);
     const redisStore = createStore(expressSession);
 
     const sessionMiddleware = expressSession({
@@ -143,7 +151,7 @@ export class HttpTransport implements TransportInterface {
       secret: sessionSecret,
       resave: false,
       saveUninitialized: false,
-      store: new redisStore({ client: redis }),
+      store: new redisStore({ client: redis, keyPrefix: 'proxy:' }),
     });
 
     this.app.use(function (req, res, next) {
@@ -161,7 +169,7 @@ export class HttpTransport implements TransportInterface {
     // apply CORS to all routes but /honor (for now)
     // TODO: improve if more routes are concerned
     this.app.use(
-      /\/((?!honor|contactform).)*/,
+      /\/((?!honor|contactform|geo\/search|policy\/simulate).)*/,
       cors({
         origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
@@ -178,6 +186,20 @@ export class HttpTransport implements TransportInterface {
     );
     this.app.use(
       '/contactform',
+      cors({
+        origin: this.config.get('proxy.showcase'),
+        optionsSuccessStatus: 200,
+      }),
+    );
+    this.app.use(
+      '/geo/search',
+      cors({
+        origin: this.config.get('proxy.showcase'),
+        optionsSuccessStatus: 200,
+      }),
+    );
+    this.app.use(
+      '/policy/simulate',
       cors({
         origin: this.config.get('proxy.showcase'),
         optionsSuccessStatus: 200,
@@ -213,6 +235,72 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
+  private registerCeeRoutes(): void {
+    this.app.post(
+      '/v3/policies/cee',
+      acquisitionRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
+        );
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(registerCeeSignature, { ...req.body }, user, { req }),
+        )) as RPCResponseType;
+
+        if (!response || 'error' in response || !('result' in response)) {
+          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+        } else {
+          res.status(201).json(response.result);
+        }
+      }),
+    );
+
+    this.app.post(
+      '/v3/policies/cee/simulate',
+      acquisitionRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
+        );
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(simulateCeeSignature, { ...req.body }, user, { req }),
+        )) as RPCResponseType;
+        if (!response || 'error' in response || !('result' in response)) {
+          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+        } else {
+          res.status(200).end();
+        }
+      }),
+    );
+
+    this.app.post(
+      '/v3/policies/cee/import',
+      acquisitionRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
+        );
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(importCeeSignature, req.body, user, { req }),
+        )) as RPCResponseType;
+        if (!response || 'error' in response || !('result' in response)) {
+          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+        } else {
+          res.status(201).json(response.result);
+        }
+      }),
+    );
+  }
+
   private registerSimulationRoutes(): void {
     this.app.post(
       '/v2/policy/simulate',
@@ -227,6 +315,36 @@ export class HttpTransport implements TransportInterface {
         this.send(res, response);
       }),
     );
+    this.app.post(
+      '/policy/simulate',
+      rateLimiter({ max: 1 }, 'rl-policy-simulate'),
+      asyncHandler(async (req, res, next) => {
+        this.kernel.notify('user:sendSimulationEmail', req.body, {
+          call: { user: { permissions: ['common.user.policySimulate'] } },
+          channel: {
+            service: 'proxy',
+          },
+        });
+        this.send(res, { id: 1, jsonrpc: '2.0' });
+      }),
+    );
+  }
+
+  private registerGeoRoutes(): void {
+    this.app.post(
+      '/geo/search',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload(
+            'territory:listGeo',
+            { search: req.body.search, exclude_coms: req.body.exclude_coms },
+            { permissions: ['common.territory.list'] },
+          ),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
   }
 
   /**
@@ -238,7 +356,7 @@ export class HttpTransport implements TransportInterface {
   private registerAcquisitionRoutes(): void {
     this.app.get(
       '/v2/journeys/:journey_id',
-      rateLimiter(),
+      checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const { params } = req;

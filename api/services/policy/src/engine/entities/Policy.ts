@@ -11,6 +11,8 @@ import {
   StatelessIncentiveInterface,
   PolicyHandlerParamsInterface,
   TerritorySelectorsInterface,
+  StatelessContextInterface,
+  PolicyHandlerStaticInterface,
 } from '../../interfaces';
 import { policies } from '../policies';
 import { StatefulContext, StatelessContext } from './Context';
@@ -42,7 +44,7 @@ export class Policy implements PolicyInterface {
       data.name,
       data.start_date,
       data.end_date,
-      new ctor(),
+      new ctor(data.max_amount),
       data.status,
       data.incentive_sum,
     );
@@ -56,14 +58,16 @@ export class Policy implements PolicyInterface {
       name: this.name,
       start_date: this.start_date,
       end_date: this.end_date,
-      handler: this.handler.constructor.name,
       status: this.status,
       incentive_sum: this.incentive_sum,
+      handler: (this.handler.constructor as PolicyHandlerStaticInterface).id,
+      max_amount: this.handler.max_amount,
     };
   }
 
   async processStateless(carpool: CarpoolInterface): Promise<StatelessIncentiveInterface> {
-    const context = StatelessContext.fromCarpool(this._id, carpool);
+    const context: StatelessContextInterface = StatelessContext.fromCarpool(this._id, carpool);
+    context.policy_territory_selector = this.territory_selector;
     if (this.guard(carpool)) {
       try {
         this.handler.processStateless(context);

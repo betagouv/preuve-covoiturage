@@ -19,7 +19,7 @@ import { handlerMacro, HandlerMacroContext } from './handlerMacro';
 const handlerConfig = {
   service: 'test',
   method: 'run',
-};
+} as const;
 type ParamsInterface = string | null;
 type ResultInterface = string | string[];
 

@@ -1,20 +1,17 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
 import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
-import { map, set } from 'lodash';
+import { map } from 'lodash';
 import { promisify } from 'util';
 import {
-  CampaignSearchParamsInterface,
   ExportTripInterface,
   TripRepositoryInterface,
   TripRepositoryProviderInterfaceResolver,
   TzResultInterface,
 } from '../interfaces';
-import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
-import { PolicyStatsInterface } from '../interfaces/PolicySliceStatInterface';
+import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
-import { SliceInterface } from '../shared/policy/common/interfaces/SliceInterface';
 import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
 import {
@@ -31,7 +28,6 @@ import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInte
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'trip.list';
-  public static readonly MAX_KM_LIMIT = 500000;
   private defaultTz: TzResultInterface = { name: 'GMT', utc_offset: '00:00:00' };
 
   constructor(public connection: PostgresConnection) {}
@@ -297,7 +293,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return result.rowCount ? result.rows : [];
   }
 
-  public async searchWithCursor(params: TripSearchInterface, type = 'opendata'): Promise<PgCursorHandler> {
+  public async searchWithCursor(
+    params: TripSearchInterface,
+    type = 'opendata',
+  ): Promise<PgCursorHandler<ExportTripInterface>> {
     const where = await this.buildWhereClauses(params);
     const queryText = this.numberPlaceholders(`
       SELECT
@@ -398,142 +397,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     });
 
     return resTimezone.rowCount ? resTimezone.rows[0] : this.defaultTz;
-  }
-
-  /**
-   * List active operators having trips and incentives > 0
-   * in the campaign for the given date range
-   */
-  public async getPolicyActiveOperators(campaign_id: number, start_date: Date, end_date: Date): Promise<number[]> {
-    const result = await this.connection.getClient().query({
-      text: `
-        select cc.operator_id
-        from policy.incentives pi
-        join carpool.carpools cc on cc._id = pi.carpool_id
-        where
-              pi.policy_id = $3
-          and pi.amount    >  0
-          and cc.datetime >= $1
-          and cc.datetime <  $2
-          and cc.status   = 'ok'
-        group by cc.operator_id
-        order by cc.operator_id
-      `,
-      values: [start_date, end_date, campaign_id],
-    });
-
-    return result.rowCount ? result.rows.map((r) => r.operator_id) : [];
-  }
-
-  public async getPolicyStats(
-    params: CampaignSearchParamsInterface,
-    slices: SliceInterface[],
-  ): Promise<PolicyStatsInterface> {
-    const { start_date, end_date, operator_id, campaign_id } = params;
-
-    // prepare slice filters
-    const sliceFilters: string = slices
-      .map(({ start, end }, i) => {
-        const f = `filter (where amount > 0 and distance >= ${start}${end ? ` and distance < ${end}` : ''})`;
-        return `
-          (count(distinct acquisition_id) ${f})::int as slice_${i}_count,
-          (sum(amount) ${f})::int as slice_${i}_sum,
-          ${start} as slice_${i}_start,
-          ${end} as slice_${i}_end
-        `;
-      })
-      .join(',');
-
-    // select all trips with a positive incentive calculated by us for a given campaign
-    // calculate a global count and incentive sum as well as details for each slice
-    const result = await this.connection.getClient().query({
-      text: `
-        with trips as (
-          select
-              distinct cc.acquisition_id,
-              tl.journey_distance as distance,
-              coalesce(pi.amount, 0) as amount
-          from policy.incentives pi
-          join carpool.carpools cc on cc._id = pi.carpool_id
-          join trip.list tl on cc.acquisition_id = tl.journey_id
-          where
-                cc.datetime >= $1
-            and cc.datetime <  $2
-            and cc.status = 'ok'
-            and cc.operator_id = $3
-            and pi.policy_id = $4
-        )
-        select
-          count(distinct acquisition_id)::int as total_count,
-          sum(amount)::int as total_sum,
-          (count(distinct acquisition_id) filter (where amount > 0))::int as subsidized_count
-          ${sliceFilters.length ? `, ${sliceFilters}` : ''}
-        from trips
-        `,
-      values: [start_date, end_date, operator_id, campaign_id],
-    });
-
-    // return null results on missing data
-    if (!result.rowCount) {
-      return {
-        total_count: 0,
-        total_sum: 0,
-        subsidized_count: 0,
-        slices: [],
-      };
-    }
-
-    // rearrange the return object
-    const row = result.rows[0];
-    return Object.keys(row).reduce(
-      (p, k) => {
-        if (!k.includes('slice_')) return p;
-        const [, i, prop] = k.split('_');
-        if (prop === 'start' || prop === 'end') {
-          set(p, `slices.${i}.slice.${prop}`, row[k]);
-        } else {
-          set(p, `slices.${i}.${prop}`, row[k]);
-        }
-        return p;
-      },
-      {
-        total_count: row.total_count,
-        total_sum: row.total_sum,
-        subsidized_count: row.subsidized_count,
-        slices: [],
-      },
-    );
-  }
-
-  public async getPolicyCursor(params: CampaignSearchParamsInterface, type = 'opendata'): Promise<PgCursorHandler> {
-    const { start_date, end_date, operator_id, campaign_id } = params;
-
-    const queryText = `
-      with trips as (
-        select distinct cc.acquisition_id as journey_id
-        from policy.incentives pi
-        join carpool.carpools cc on cc._id = pi.carpool_id
-        where
-              cc.datetime >= $1
-          and cc.datetime <  $2
-          and cc.status = 'ok'
-          and cc.operator_id = $3
-          and pi.policy_id = $4
-          and pi.amount > 0
-        )
-        select ${this.getFields(type).join(', ')}
-        from trip.list
-        where journey_id in (select journey_id from trips)
-        order by journey_start_datetime asc
-    `;
-
-    const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(queryText, [start_date, end_date, operator_id, campaign_id]));
-
-    return {
-      read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
-      release: db.release,
-    };
   }
 
   private getFields(type = 'opendata'): string[] {

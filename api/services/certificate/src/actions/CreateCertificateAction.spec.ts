@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { ConfigInterfaceResolver, ContextType, KernelInterfaceResolver } from '@ilos/common';
-import anyTest, { TestFn } from 'ava';
+import anyTest, { ExecutionContext, TestFn } from 'ava';
 import faker from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
 import { mapFromCarpools } from '../helpers/mapFromCarpools';
@@ -30,14 +30,17 @@ interface Context {
   // Constants
   OPERATOR_UUID: string;
   OPERATOR_NAME: string;
-  USER_RPC_UUID_LIST: string[];
+  OPERATOR_SUPPORT: string;
+  RPC_IDENTITIES: { _id: number; uuid: string }[];
   CERTIFICATE_UUID: string;
 
   // Tested token
   createCertificateAction: CreateCertificateAction;
 }
 
-const test = anyTest as TestFn<Partial<Context>>;
+type CertMetaType = Omit<CertificateMetaInterface & { carpools: CarpoolInterface[] }, 'driver' | 'passenger'>;
+
+const test = anyTest as TestFn<Context>;
 
 const carpoolData: CarpoolInterface[] = [
   /* eslint-disable prettier/prettier */
@@ -53,41 +56,45 @@ const carpoolData: CarpoolInterface[] = [
 ];
 
 test.beforeEach((t) => {
+  /* eslint-disable prettier/prettier */
   const fakeKernelInterfaceResolver = new (class extends KernelInterfaceResolver {})();
   const configInterfaceResolver = new (class extends ConfigInterfaceResolver {})();
-  const certificateRepositoryProviderInterface =
-    new (class extends CertificateRepositoryProviderInterfaceResolver {})();
-  const carpoolRepositoryProviderInterfaceResolver =
-    new (class extends CarpoolRepositoryProviderInterfaceResolver {})();
-  const createCertificateAction = new CreateCertificateAction(
-    fakeKernelInterfaceResolver,
-    certificateRepositoryProviderInterface,
-    carpoolRepositoryProviderInterfaceResolver,
-    configInterfaceResolver,
-  );
+  const certificateRepositoryProviderInterface = new (class extends CertificateRepositoryProviderInterfaceResolver {})();
+  const carpoolRepositoryProviderInterfaceResolver = new (class extends CarpoolRepositoryProviderInterfaceResolver {})();
+  const createCertificateAction = new CreateCertificateAction(fakeKernelInterfaceResolver, certificateRepositoryProviderInterface, carpoolRepositoryProviderInterfaceResolver, configInterfaceResolver);
+  /* eslint-enable prettier/prettier */
 
   // Unchanged stubs results
   const configGetStub = sinon.stub(configInterfaceResolver, 'get');
   configGetStub.returns(6);
-
   t.context = {
     OPERATOR_UUID: faker.datatype.uuid(),
-    USER_RPC_UUID_LIST: [faker.datatype.uuid(), faker.datatype.uuid()],
+    RPC_IDENTITIES: [
+      { _id: 1, uuid: faker.datatype.uuid() },
+      { _id: 2, uuid: faker.datatype.uuid() },
+    ],
     CERTIFICATE_UUID: faker.datatype.uuid(),
     OPERATOR_NAME: faker.random.alpha(),
+    OPERATOR_SUPPORT: faker.internet.email(),
     fakeKernelInterfaceResolver,
     configInterfaceResolver,
     certificateRepositoryProviderInterface,
     carpoolRepositoryProviderInterfaceResolver,
     createCertificateAction,
     configGetStub,
+    certificateRepositoryCreateStub: sinon.stub(certificateRepositoryProviderInterface, 'create'),
+    carpoolRepositoryFindStub: sinon.stub(carpoolRepositoryProviderInterfaceResolver, 'find'),
+    kernelCallStub: sinon.stub(fakeKernelInterfaceResolver, 'call'),
   };
-  t.context.certificateRepositoryCreateStub = sinon.stub(t.context.certificateRepositoryProviderInterface, 'create');
-  t.context.carpoolRepositoryFindStub = sinon.stub(t.context.carpoolRepositoryProviderInterfaceResolver, 'find');
-  t.context.kernelCallStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call');
 
-  t.context.kernelCallStub.onCall(0).resolves(t.context.USER_RPC_UUID_LIST);
-  t.context.kernelCallStub.onCall(1).resolves({ uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME });
+  // kernel is called inside repository methods
+  // carpool:findidentities
+  t.context.kernelCallStub.onCall(0).resolves(t.context.RPC_IDENTITIES);
+
+  // operator:quickfind
+  t.context.kernelCallStub
+    .onCall(1)
+    .resolves({ uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME, support: t.context.OPERATOR_SUPPORT });
 });
 
 test.afterEach((t) => {
@@ -105,21 +112,20 @@ test('CreateCertificateAction: should generate certificate payload', async (t) =
   const result: WithHttpStatus<ResultInterface> = await t.context.createCertificateAction.handle(params, null);
 
   // Assert
-  const expected = {
+  const expected: CertMetaType = {
     tz: 'Europe/Paris',
-    identity: { uuid: t.context.USER_RPC_UUID_LIST[0] },
-    operator: { uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME },
+    identity: { uuid: t.context.RPC_IDENTITIES[0].uuid },
+    operator: { uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME, support: t.context.OPERATOR_SUPPORT },
     positions: [],
     carpools: carpoolData,
   };
 
   const expectCreateCertificateParams = getExpectedCertificateParams(expected, t);
-
   sinon.assert.calledOnceWithExactly(t.context.certificateRepositoryCreateStub, expectCreateCertificateParams);
   sinon.assert.calledOnce(t.context.carpoolRepositoryFindStub);
   sinon.assert.calledTwice(t.context.kernelCallStub);
   t.is(result.meta.httpStatus, 201);
-  t.is(result.data.uuid, t.context.CERTIFICATE_UUID);
+  t.is(result.data.uuid, t.context.CERTIFICATE_UUID as string);
 });
 
 test('CreateCertificateAction: should return empty cert if no trips', async (t) => {
@@ -131,10 +137,10 @@ test('CreateCertificateAction: should return empty cert if no trips', async (t) 
   const result: WithHttpStatus<ResultInterface> = await t.context.createCertificateAction.handle(params, null);
 
   // Assert
-  const expected = {
+  const expected: CertMetaType = {
     tz: 'Europe/Paris',
-    identity: { uuid: t.context.USER_RPC_UUID_LIST[0] },
-    operator: { uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME },
+    identity: { uuid: t.context.RPC_IDENTITIES[0].uuid },
+    operator: { uuid: t.context.OPERATOR_UUID, name: t.context.OPERATOR_NAME, support: t.context.OPERATOR_SUPPORT },
     positions: [],
     carpools: [],
   };
@@ -149,8 +155,8 @@ test('CreateCertificateAction: should return empty cert if no trips', async (t) 
 });
 
 function getExpectedCertificateParams(
-  certificateMeta: Partial<CertificateMetaInterface & { carpools: CarpoolInterface[] }>,
-  t,
+  certificateMeta: CertMetaType,
+  t: ExecutionContext<Context>,
 ): CertificateBaseInterface {
   const { identity, operator, tz, positions, carpools } = certificateMeta;
 
@@ -167,24 +173,21 @@ function getExpectedCertificateParams(
   });
 }
 
-function stubCertificateCreateAndGetParams(t) {
+function stubCertificateCreateAndGetParams(t: ExecutionContext<Context>) {
   t.context.certificateRepositoryCreateStub.resolves({
     _id: 1,
     uuid: t.context.CERTIFICATE_UUID,
-    identity_uuid: t.context.USER_RPC_UUID_LIST[0],
+    identity_uuid: t.context.RPC_IDENTITIES[0].uuid,
     operator_id: 4,
     meta: {
-      identity: { uuid: t.context.USER_RPC_UUID_LIST[0] },
+      identity: { uuid: t.context.RPC_IDENTITIES[0].uuid },
     },
   } as CertificateInterface);
 
   const params: ParamsInterface = {
     tz: 'Europe/Paris',
     operator_id: 4,
-    identity: {
-      phone_trunc: '+33696989598',
-      uuid: t.context.USER_RPC_UUID_LIST[0],
-    },
+    identity: { operator_user_id: faker.datatype.uuid() },
   };
 
   return params;

@@ -30,6 +30,8 @@ const defaultCarpool = {
   duration: 600,
   distance: 5_000,
   cost: 20,
+  driver_payment: 20,
+  passenger_payment: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
 };
@@ -37,18 +39,23 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works with exclusion',
+  'should work with exclusion',
   process,
   {
     policy: { handler: Handler.id },
-    carpool: [{ operator_siret: 'not in list' }, { distance: 100 }, { operator_class: 'A' }],
+    carpool: [
+      { operator_siret: 'not in list' },
+      { distance: 100 },
+      { operator_class: 'A' },
+      { operator_siret: OperatorsEnum.Mobicoop },
+    ],
     meta: [],
   },
-  { incentive: [0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0], meta: [] },
 );
 
 test(
-  'should works basic with start/end inside aom',
+  'should work basic with start/end inside aom',
   process,
   {
     policy: { handler: Handler.id },
@@ -81,7 +88,7 @@ test(
 );
 
 test(
-  'should works basic with start or end outside aom',
+  'should work basic with start or end outside aom',
   process,
   {
     policy: { handler: Handler.id },
@@ -114,10 +121,10 @@ test(
 );
 
 test(
-  'should works with global limits',
+  'should work with global limits',
   process,
   {
-    policy: { handler: Handler.id },
+    policy: { handler: Handler.id, max_amount: 100_000_00 },
     carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {
@@ -142,7 +149,37 @@ test(
 );
 
 test(
-  'should works with month limits',
+  'should include Mobicoop since 02 january 2023',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      {
+        distance: 5_000,
+        driver_identity_uuid: 'one',
+        operator_siret: OperatorsEnum.Mobicoop,
+        datetime: new Date('2023-01-02'),
+      },
+    ],
+    meta: [],
+  },
+  {
+    incentive: [200],
+    meta: [
+      {
+        key: 'max_amount_restriction.0-one.month.0-2023',
+        value: 200,
+      },
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 200,
+      },
+    ],
+  },
+);
+
+test(
+  'should work with month limits',
   process,
   {
     policy: { handler: Handler.id },

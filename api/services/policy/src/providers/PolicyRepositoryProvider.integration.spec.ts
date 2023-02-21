@@ -28,6 +28,7 @@ function makePolicy(data: Partial<SerializedPolicyInterface> = {}): Omit<Seriali
     status: 'draft',
     handler: 'Idfm',
     incentive_sum: 5000,
+    max_amount: 10_000_000_00,
     ...data,
   };
 }
@@ -113,4 +114,44 @@ test.serial('Should delete policy', async (t) => {
 
   t.is(result.rowCount, 1);
   t.not(result.rows[0].deleted_at, null);
+});
+
+test.serial('Should get lock', async (t) => {
+  const beforeLockResult = await t.context.db.connection
+    .getClient()
+    .query(`SELECT count(*) FROM ${t.context.repository.lockTable}`);
+  t.is(beforeLockResult.rows[0].count, '0');
+
+  const hasLock = await t.context.repository.getLock();
+  t.is(hasLock, true);
+
+  const result = await t.context.db.connection.getClient().query(`SELECT * FROM ${t.context.repository.lockTable}`);
+
+  t.is(result.rowCount, 1);
+  t.is(result.rows[0].stopped_at, null);
+
+  const data = {
+    from_date: new Date('2022-01-01'),
+    to_date: new Date('2022-01-02'),
+    error: new Error('Boum'),
+  };
+
+  const hasNoLock = await t.context.repository.getLock();
+  t.is(hasNoLock, false);
+
+  await t.notThrowsAsync(async () => await t.context.repository.releaseLock(data));
+  const afterLockResult = await t.context.db.connection
+    .getClient()
+    .query(`SELECT * FROM ${t.context.repository.lockTable} ORDER BY _id`);
+
+  t.is(afterLockResult.rowCount, 1);
+  t.not(afterLockResult.rows[0].stopped_at, null);
+  t.is(afterLockResult.rows[0].success, false);
+  t.like(afterLockResult.rows[0].data, {
+    error: {
+      message: 'Boum',
+    },
+    from_date: '2022-01-01T00:00:00.000Z',
+    to_date: '2022-01-02T00:00:00.000Z',
+  });
 });

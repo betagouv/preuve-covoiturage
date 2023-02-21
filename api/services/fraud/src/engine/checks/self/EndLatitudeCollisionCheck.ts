@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 
-import { HandleCheckInterface } from '../../../interfaces';
+import { CheckHandleCallback, HandleCheckInterface } from '../../../interfaces';
 import { SelfCheckPreparator } from '../SelfCheckPreparator';
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { step } from '../../helpers/math';
@@ -15,8 +15,8 @@ export class EndLatitudeCollisionCheck implements HandleCheckInterface<SelfCheck
   protected readonly max: number = 1; // above = 100
   protected readonly min: number = 0.001; // below = 0
 
-  async handle(params: SelfCheckParamsInterface): Promise<number> {
+  async handle(params: SelfCheckParamsInterface, cb: CheckHandleCallback): Promise<void> {
     const { driver_end_lat, passenger_end_lat } = params;
-    return step(Math.abs(passenger_end_lat - driver_end_lat), this.min, this.max);
+    cb(step(Math.abs(passenger_end_lat - driver_end_lat), this.min, this.max));
   }
 }

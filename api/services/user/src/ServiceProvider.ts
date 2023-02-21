@@ -51,6 +51,8 @@ import { FindInactiveCommand } from './commands/FindInactiveCommand';
 import { challengePasswordMiddlewareBinding } from './middlewares/ChallengePasswordMiddleware';
 import { challengeTokenMiddlewareBinding } from './middlewares/ChallengeTokenMiddleware';
 import { ContactformAction } from './actions/ContactformAction';
+import { SimulatePolicyformAction } from './actions/SimulatePolicyformAction';
+import { sendSimulationEmail } from './shared/user/simulatePolicyform.schema';
 
 @serviceProvider({
   config,
@@ -78,6 +80,7 @@ import { ContactformAction } from './actions/ContactformAction';
     ['user.patch', patch],
     ['user.sendConfirmEmail', sendConfirmEmail],
     ['user.sendInvitationEmail', sendInvitationEmail],
+    ['user.sendSimulationEmail', sendSimulationEmail],
   ],
   middlewares: [
     ...defaultMiddlewareBindings,
@@ -108,6 +111,7 @@ import { ContactformAction } from './actions/ContactformAction';
     SendConfirmEmailUserAction,
     SendInvitationEmailUserAction,
     HasUsersAction,
+    SimulatePolicyformAction,
   ],
   commands: [SeedUsersCommand, FindInactiveCommand],
   queues: ['user'],

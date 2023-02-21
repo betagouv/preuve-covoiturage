@@ -10,6 +10,6 @@ export interface ResultInterface extends Required<PolicyInterface> {}
 export const handlerConfig = {
   service: 'campaign',
   method: 'find',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

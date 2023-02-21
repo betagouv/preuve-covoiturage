@@ -1,13 +1,16 @@
 import {
+  BoundedSlices,
   CarpoolInterface,
   MetadataAccessorInterface,
   MetadataRegistryInterface,
   MetadataStoreInterface,
   OperatorsEnum,
   SerializedIncentiveInterface,
+  SliceInterface,
   StatefulIncentiveInterface,
   StatelessIncentiveInterface,
   TerritorySelectorsInterface,
+  UnboundedSlices,
 } from '.';
 
 export interface PolicyInterface {
@@ -40,20 +43,20 @@ export interface SerializedPolicyInterface {
   handler: string;
   status: string;
   incentive_sum: number;
+  max_amount?: number;
 }
 
 export interface PolicyHandlerStaticInterface {
+  policy_max_amount?: number;
   readonly id: string;
-  new (): PolicyHandlerInterface;
-}
-
-export interface SliceInterface {
-  start: number;
-  end: number;
+  /**
+   * Optional max amount to spend for the policy
+   */
+  new (policy_max_amount?: number): PolicyHandlerInterface;
 }
 
 export interface PolicyHandlerParamsInterface {
-  slices?: Array<SliceInterface>;
+  slices?: RunnableSlices | BoundedSlices;
   operators?: Array<OperatorsEnum>;
   limits?: {
     glob?: number;
@@ -61,6 +64,7 @@ export interface PolicyHandlerParamsInterface {
 }
 
 export interface PolicyHandlerInterface {
+  max_amount?: number;
   processStateless(context: StatelessContextInterface): void;
   processStateful(context: StatefulContextInterface): void;
   params(): PolicyHandlerParamsInterface;
@@ -78,4 +82,15 @@ export interface StatelessContextInterface {
   incentive: StatelessIncentiveInterface;
   meta: MetadataRegistryInterface;
   carpool: CarpoolInterface;
+  policy_territory_selector?: TerritorySelectorsInterface;
+  policy_max_amount?: number;
 }
+
+/**
+ * Extend the public bounded and unbounded slices with a runnable function
+ * for use in the policy calculations
+ */
+export type RunnableSlice<TFunction> = SliceInterface & { fn: TFunction };
+export type RunnableSlices =
+  | BoundedSlices<RunnableSlice<(ctx: StatelessContextInterface) => number>>
+  | UnboundedSlices<RunnableSlice<(ctx: StatelessContextInterface) => number>>;

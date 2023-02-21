@@ -8,7 +8,7 @@ import { DatetimeIdentityCheckParamsInterface } from './datetimeIdentity/Datetim
 export class DatetimeIdentityCheckPreparator implements PrepareCheckInterface<DatetimeIdentityCheckParamsInterface> {
   constructor(private connection: PostgresConnection) {}
 
-  async prepare(acquisitionId: number): Promise<DatetimeIdentityCheckParamsInterface[]> {
+  async prepare(acquisitionId: number): Promise<DatetimeIdentityCheckParamsInterface> {
     const query = {
       text: `
         WITH input AS (
@@ -61,6 +61,6 @@ export class DatetimeIdentityCheckPreparator implements PrepareCheckInterface<Da
     };
 
     const dbResult = await this.connection.getClient().query(query);
-    return [dbResult.rows];
+    return dbResult.rows;
   }
 }

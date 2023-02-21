@@ -8,7 +8,7 @@ import { TripIdentityCheckParamsInterface } from './tripIdentity/TripIdentityChe
 export class TripIdentityCheckPreparator implements PrepareCheckInterface<TripIdentityCheckParamsInterface> {
   constructor(private connection: PostgresConnection) {}
 
-  async prepare(acquisitionId: number): Promise<TripIdentityCheckParamsInterface[]> {
+  async prepare(acquisitionId: number): Promise<TripIdentityCheckParamsInterface> {
     const query = {
       text: `
         SELECT
@@ -41,6 +41,6 @@ export class TripIdentityCheckPreparator implements PrepareCheckInterface<TripId
     };
 
     const dbResult = await this.connection.getClient().query(query);
-    return [dbResult.rows];
+    return dbResult.rows;
   }
 }

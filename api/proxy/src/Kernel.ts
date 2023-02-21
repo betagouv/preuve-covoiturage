@@ -1,11 +1,14 @@
 import { Commands } from '@ilos/cli';
 import { kernel } from '@ilos/common';
 import { Kernel as BaseKernel } from '@ilos/framework';
+import { RedisConnection } from '@ilos/connection-redis';
 import { SentryProvider } from '@pdc/provider-sentry';
 import { TokenProvider } from '@pdc/provider-token';
 import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
+import { bootstrap as apdfBootstrap } from '@pdc/service-apdf';
 import { bootstrap as applicationBootstrap } from '@pdc/service-application';
 import { bootstrap as carpoolBootstrap } from '@pdc/service-carpool';
+import { bootstrap as ceeBootstrap } from '@pdc/service-cee';
 import { bootstrap as certificateBootstrap } from '@pdc/service-certificate';
 import { bootstrap as companyBootstrap } from '@pdc/service-company';
 import { bootstrap as fraudBootstrap } from '@pdc/service-fraud';
@@ -17,29 +20,31 @@ import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
 import { bootstrap as observatoryBootstrap } from '@pdc/service-observatory';
-import { StatsRefreshCommand } from './commands/StatsRefreshCommand';
 import { SeedCommand } from './commands/SeedCommand';
 import { config } from './config';
 
 @kernel({
   config,
   children: [
-    ...applicationBootstrap.serviceProviders,
     ...acquisitionBootstrap.serviceProviders,
+    ...apdfBootstrap.serviceProviders,
+    ...applicationBootstrap.serviceProviders,
     ...carpoolBootstrap.serviceProviders,
+    ...ceeBootstrap.serviceProviders,
+    ...certificateBootstrap.serviceProviders,
     ...companyBootstrap.serviceProviders,
     ...fraudBootstrap.serviceProviders,
+    ...honorBootstrap.serviceProviders,
+    ...monitoringBootstrap.serviceProviders,
     ...operatorBootstrap.serviceProviders,
     ...policyBootstrap.serviceProviders,
     ...territoryBootstrap.serviceProviders,
     ...tripcheckBootstrap.serviceProviders,
     ...userBootstrap.serviceProviders,
-    ...certificateBootstrap.serviceProviders,
-    ...monitoringBootstrap.serviceProviders,
-    ...honorBootstrap.serviceProviders,
     ...observatoryBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [SeedCommand, StatsRefreshCommand, Commands.CallCommand],
+  commands: [SeedCommand, Commands.CallCommand],
+  connections: [[RedisConnection, 'connections.redis']],
 })
 export class Kernel extends BaseKernel {}

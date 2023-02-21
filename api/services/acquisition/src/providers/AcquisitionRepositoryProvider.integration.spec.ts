@@ -66,12 +66,12 @@ test.serial('Should create acquisition', async (t) => {
         try_count
       FROM ${t.context.repository.table}
       WHERE operator_id = $1
+      AND request_id IS NOT NULL
     `,
     values: [operator_id],
   });
 
   t.is(result.rowCount, data.length);
-  t.log(result.rows);
   t.deepEqual(
     result.rows,
     data.map((d) => ({ ...d, status: 'pending', try_count: 0 })),
@@ -113,13 +113,14 @@ test.serial('Should update acquisition', async (t) => {
         status,
         try_count
       FROM ${t.context.repository.table}
-      WHERE operator_id = $1 ORDER BY journey_id
+      WHERE operator_id = $1
+      AND request_id IS NOT NULL
+      ORDER BY journey_id
     `,
     values: [operator_id],
   });
 
   t.is(result.rowCount, 4);
-  t.log(result.rows);
   t.deepEqual(
     result.rows,
     [...data, ...initialData].map((d) => {
@@ -154,13 +155,14 @@ test.serial('Should update status', async (t) => {
         errors,
         try_count
       FROM ${t.context.repository.table}
-      WHERE operator_id = $1 ORDER BY journey_id
+      WHERE operator_id = $1
+      AND request_id IS NOT NULL
+      ORDER BY journey_id
     `,
     values: [operator_id],
   });
 
   t.is(result.rowCount, 4);
-  t.log(result.rows);
   t.deepEqual(result.rows, [
     {
       operator_id: 1,
@@ -274,8 +276,8 @@ test.serial('Should find then update with selectors', async (t) => {
   t.deepEqual(
     result.map(({ created_at, ...r }) => r),
     [
-      { _id: 3, payload: {}, api_version: 1, operator_id: t.context.operator_id },
-      { _id: 4, payload: {}, api_version: 1, operator_id: t.context.operator_id },
+      { _id: 5, payload: {}, api_version: 1, operator_id: t.context.operator_id },
+      { _id: 6, payload: {}, api_version: 1, operator_id: t.context.operator_id },
     ],
   );
   await fn([]);
@@ -289,7 +291,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result1.map(({ created_at, ...r }) => r),
-    [{ _id: 3, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 5, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
   );
 
   const [result2, fn2] = await t.context.repository.findThenUpdate({
@@ -299,7 +301,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result2.map(({ created_at, ...r }) => r),
-    [{ _id: 4, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 6, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
   );
 
   await fn1([]); // release lock 1
@@ -310,9 +312,9 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result3.map(({ created_at, ...r }) => r),
-    [{ _id: 3, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 5, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
   );
-  await fn2([{ acquisition_id: 4, status: AcquisitionStatusEnum.Ok }]); // release lock 2
+  await fn2([{ acquisition_id: 6, status: AcquisitionStatusEnum.Ok }]); // release lock 2
 
   const [result4, fn4] = await t.context.repository.findThenUpdate({
     limit: 1,
@@ -342,7 +344,7 @@ test.serial('Should find with lock timeout', async (t) => {
 
   t.deepEqual(
     result1.map(({ created_at, ...r }) => r),
-    [{ _id: 1, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 1, payload: {}, api_version: 2, operator_id: t.context.operator_id }],
   );
 
   await delay(1500);
@@ -354,7 +356,7 @@ test.serial('Should find with lock timeout', async (t) => {
 
   t.deepEqual(
     result2.map(({ created_at, ...r }) => r),
-    [{ _id: 1, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 1, payload: {}, api_version: 2, operator_id: t.context.operator_id }],
   );
 
   await fn1([]); // release lock 1

@@ -1,5 +1,5 @@
 export const description = `<p _ngcontent-fyn-c231="" id="summary" class="campaignSummaryText-content-text">
-<p>Campagne d’incitation au covoiturage du <b> 2 novembre 2022 au 31 décembre 2022</b></p>
+<p>Campagne d’incitation au covoiturage du <b> 2 novembre 2022 au 31 décembre 2023</b></p>
 <p>Cette campagne est limitée à
   <b>100 000 euros </b>.
 </p>
@@ -13,6 +13,6 @@ export const description = `<p _ngcontent-fyn-c231="" id="summary" class="campai
 <ul>
   <li><b>120 euros par conducteur par mois.</b></li>
 </ul>
-<p>La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit, proposant des preuves de classe <b>B
-    ou C</b>.</p>
+<p>La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit, Mobicoop (depuis le 2 janvier 2023) 
+proposant des preuves de classe <b>B ou C</b>.</p>
 </p>`;

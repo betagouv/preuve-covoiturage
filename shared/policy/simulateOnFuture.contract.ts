@@ -59,6 +59,6 @@ export interface ResultInterface {
 export const handlerConfig = {
   service: 'campaign',
   method: 'simulateOnFuture',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

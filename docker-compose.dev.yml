@@ -18,7 +18,21 @@ services:
   mailer:
     ports:
       - 8025:8025
-
+  
+  arena:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./docker/arena
+    ports:
+      - 4567:4567
+    environment:
+      REDIS_HOST: 'redis'
+      REDIS_PASSWORD: ''
+      REDIS_PORT: '6379'
+      APP_QUEUE: 'trip;acquisition;policy;carpool;normalization;campaign'
+    networks:
+      - back
+    
   dashboard:
     build:
       dockerfile: ./docker/dashboard/Dockerfile

@@ -78,9 +78,17 @@ export class Bootstrap {
       });
   }
 
+  /**
+   * Setting log_level for pino
+   * https://getpino.io/#/docs/api?id=loggerlevel-string-gettersetter
+   *
+   * Level: 	trace 	debug 	info 	warn 	error 	fatal 	silent
+   * Value: 	10 	    20 	    30 	  40 	  50 	    60 	    Infinity
+   *
+   */
   static interceptConsole(): void {
     const logger = pino({
-      level: process.env.LOG_LEVEL ?? process.env.NODE_ENV !== 'production' ? 'debug' : 'error',
+      level: process.env.APP_LOG_LEVEL ?? (process.env.NODE_ENV !== 'production' ? 'debug' : 'error'),
     });
 
     interceptConsole(logger);

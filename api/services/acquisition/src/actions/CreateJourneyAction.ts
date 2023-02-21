@@ -55,6 +55,7 @@ export class CreateJourneyAction extends AbstractAction {
       if (e instanceof ConflictException) {
         throw e;
       }
+
       console.error(e.message, { journey_id: params.journey_id, operator_id: params.operator_id });
       await this.repository.createOrUpdateMany([
         {
@@ -69,7 +70,8 @@ export class CreateJourneyAction extends AbstractAction {
           errors: [e],
         },
       ]);
-      throw new InvalidParamsException(e.message);
+
+      throw e;
     }
   }
 

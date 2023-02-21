@@ -1,3 +1,4 @@
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,16 +7,16 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import {
+  isAfter,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
+  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  watchForGlobalMaxAmount,
-  LimitTargetEnum,
   startsAndEndsAt,
-  ConfiguredLimitInterface,
+  watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
@@ -25,10 +26,18 @@ import { description } from './Pmgf.html';
 // eslint-disable-next-line max-len
 export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'pmgf_2022';
-  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
+  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
   protected operator_class = ['B', 'C'];
-  protected glob_limit = 100_000_00;
-  protected slices = [
+
+  constructor(public max_amount: number) {
+    super();
+    this.limits = [
+      ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
+      ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.max_amount, watchForGlobalMaxAmount],
+    ];
+  }
+
+  protected slices: RunnableSlices = [
     {
       start: 4_000,
       end: 20_000,
@@ -39,16 +48,6 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       end: 40_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
-    {
-      start: 40_000,
-      end: 150_000,
-      fn: () => 0,
-    },
-  ];
-
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-    ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.glob_limit, watchForGlobalMaxAmount],
   ];
 
   protected arr = [
@@ -172,7 +171,12 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    // Ajout de mobicoop à partir du 2 janvier
+    if (isAfter(ctx, { date: new Date('2023-01-02') })) {
+      isOperatorOrThrow(ctx, this.operators);
+    } else {
+      isOperatorOrThrow(ctx, [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit]);
+    }
     onDistanceRangeOrThrow(ctx, { min: 4_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
@@ -197,7 +201,7 @@ export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.glob_limit,
+        glob: this.max_amount,
       },
     };
   }

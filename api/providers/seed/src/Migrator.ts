@@ -12,6 +12,7 @@ import { CreateTerritoryGroupInterface, TerritorySelectorsInterface, territory_g
 import { User, users } from './users';
 export class Migrator {
   public connection: PostgresConnection;
+  public currentConnectionString: string;
   public config: {
     driver: string;
     user: string;
@@ -36,7 +37,12 @@ export class Migrator {
       ssl: false,
     };
     this.dbIsCreated = newDatabase;
-    this.dbName = newDatabase ? `test-${Date.now().valueOf()}` : dbUrl.pathname.replace('/', '');
+    this.dbName = newDatabase ? `test_${Date.now().valueOf()}` : dbUrl.pathname.replace('/', '');
+    const currentConnection = new URL(dbUrlString);
+    if (newDatabase) {
+      currentConnection.pathname = `/${this.dbName}`;
+    }
+    this.currentConnectionString = currentConnection.toString();
   }
 
   async up() {
@@ -156,16 +162,22 @@ export class Migrator {
     const result = await this.connection.getClient().query({
       text: `
         INSERT INTO carpool.identities 
-          (uuid, travel_pass_user_id, over_18)
+          (uuid, travel_pass_user_id, over_18, phone_trunc)
         VALUES (
           $1::uuid,
           $2::varchar,
-          $3::boolean
+          $3::boolean,
+          $4::varchar
         )
         ON CONFLICT DO NOTHING
         RETURNING _id
       `,
-      values: [carpool.identity_uuid, carpool.identity_travel_pass, carpool.identity_over_18],
+      values: [
+        carpool.identity_uuid,
+        carpool.identity_travel_pass,
+        carpool.identity_over_18,
+        carpool.identity_phone_trunc,
+      ],
     });
 
     await this.connection.getClient().query({
@@ -220,6 +232,28 @@ export class Migrator {
         }),
       ],
     });
+
+    await this.connection.getClient().query({
+      text: `
+        INSERT INTO acquisition.acquisitions
+          (
+            _id,
+            application_id,
+            operator_id,
+            journey_id,
+            payload,
+            status
+          )
+        VALUES ($1, $2, $3, $4, $5, $6)
+        ON CONFLICT DO NOTHING
+      `,
+      values: [carpool.acquisition_id, 1, carpool.operator_id, carpool.operator_journey_id, JSON.stringify({}), 'ok'],
+    });
+    await this.connection
+      .getClient()
+      .query(
+        `SELECT setval('acquisition.acquisitions__id_seq', (SELECT max(_id) FROM acquisition.acquisitions), true)`,
+      );
   }
 
   async seedCompany(company: Company) {

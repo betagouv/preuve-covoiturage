@@ -3,6 +3,7 @@ import { PaymentInterface, IncentiveInterface } from '.';
 export type CostResultInterface = {
   cost: number;
   payments: PaymentInterface[];
+  payment: number;
 };
 
 export interface CostParamsInterface {
@@ -10,6 +11,7 @@ export interface CostParamsInterface {
   contribution: number;
   incentives: IncentiveInterface[];
   payments: PaymentInterface[];
+  payment: number;
 }
 
 export interface CostNormalizerProviderInterface {

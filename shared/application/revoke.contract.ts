@@ -11,6 +11,6 @@ export type RepositoryInterface = Required<ParamsInterface>;
 export const handlerConfig = {
   service: 'application',
   method: 'revoke',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 
-import { FraudCheckResult, HandleCheckInterface } from '../../../interfaces';
+import { CheckHandleCallback, HandleCheckInterface } from '../../../interfaces';
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { SelfCheckPreparator } from '../SelfCheckPreparator';
 import { limit } from '../../helpers/math';
@@ -15,7 +15,7 @@ export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<S
 
   constructor() {}
 
-  async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
+  async handle(params: SelfCheckParamsInterface, cb: CheckHandleCallback): Promise<void> {
     const {
       driver_distance,
       driver_duration,
@@ -36,7 +36,8 @@ export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<S
         (code) => code && (code.startsWith('97') || code.startsWith('98')),
       ).length
     ) {
-      return 0;
+      cb(0);
+      return;
     }
 
     const driver_distance_karma = this.calc(driver_distance, driver_calc_distance);
@@ -44,7 +45,7 @@ export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<S
     const passenger_distance_karma = this.calc(passenger_distance, passenger_calc_distance);
     const passenger_duration_karma = this.calc(passenger_duration, passenger_calc_duration);
 
-    return Math.max(driver_distance_karma, driver_duration_karma, passenger_distance_karma, passenger_duration_karma);
+    cb(Math.max(driver_distance_karma, driver_duration_karma, passenger_distance_karma, passenger_duration_karma));
   }
 
   protected calc(announced: number, theorical: number): number {

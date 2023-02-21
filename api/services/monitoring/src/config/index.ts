@@ -1,11 +1,13 @@
 import * as ajv from './ajv';
+import * as app from './app';
 import * as connections from './connections';
 import * as notification from './notification';
-import * as app from './app';
+import * as refresh from './refresh';
 
 export const config = {
   ajv,
   app,
   connections,
   notification,
+  refresh,
 };

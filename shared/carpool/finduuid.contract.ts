@@ -10,6 +10,6 @@ export type ResultInterface = string;
 export const handlerConfig = {
   service: 'carpool',
   method: 'finduuid',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

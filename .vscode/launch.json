@@ -34,5 +34,23 @@
         "envFile" : "${workspaceFolder}/api/.env",
         "outputCapture": "std",
       },
+      {
+        "type": "node",
+        "cwd": "${workspaceFolder}/api/proxy/dist",
+        "request": "launch",
+        "name": "Debug ilos cmd",
+        "runtimeExecutable": "${workspaceFolder}/api/proxy/node_modules/.bin/ilos",
+        "runtimeArgs": [
+          "call",
+          "trip:cacheWarmCron",
+          "-p",
+          "{}",
+          "-c",
+          "{ \"channel\" : {\"service\": \"trip\"}}"
+        ],
+        "envFile" : "${workspaceFolder}/api/.env",
+        "outputCapture": "std",
+      },
+      
   ]
 }

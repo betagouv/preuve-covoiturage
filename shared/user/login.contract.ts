@@ -10,6 +10,6 @@ export interface ResultInterface extends UserInterface {}
 export const handlerConfig = {
   service: 'user',
   method: 'login',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

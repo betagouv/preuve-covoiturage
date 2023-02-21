@@ -9,6 +9,6 @@ export type ResultInterface = boolean;
 export const handlerConfig = {
   service: 'user',
   method: 'sendConfirmEmail',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

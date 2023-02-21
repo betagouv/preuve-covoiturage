@@ -5,6 +5,7 @@ export interface PdfTemplateData {
   data: CertificateMetaInterface;
   identity: string;
   operator: string;
+  support: string;
   certificate: {
     uuid: string;
     created_at: string;
