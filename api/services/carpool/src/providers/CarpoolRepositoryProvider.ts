@@ -97,10 +97,11 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
           created_at,
           operator_trip_id,
           cost,
+          payment,
           operator_journey_id,
           meta
         )
-        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
         ON CONFLICT (acquisition_id, is_driver) DO NOTHING`,
       values: [
         shared.acquisition_id,
@@ -121,6 +122,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
         shared.created_at,
         shared.operator_trip_id,
         person.cost,
+        person.payment,
         shared.operator_journey_id,
         JSON.stringify(person.meta),
       ],

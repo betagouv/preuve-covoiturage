@@ -5,7 +5,8 @@ import { phoneCast } from './cast/phoneCast';
 import { phonetruncCast } from './cast/phonetruncCast';
 
 const castStore = {
-  date: dateCast,
+  date: dateCast(),
+  isodate: dateCast(true),
   phone: phoneCast,
   phonetrunc: phonetruncCast,
 };

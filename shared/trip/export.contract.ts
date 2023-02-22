@@ -18,6 +18,6 @@ export type ResultInterface = void;
 export const handlerConfig = {
   service: 'trip',
   method: 'export',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

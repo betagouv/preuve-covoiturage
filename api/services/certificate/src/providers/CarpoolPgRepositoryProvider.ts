@@ -12,15 +12,17 @@ import { PointInterface } from '../shared/common/interfaces/PointInterface';
   identifier: CarpoolRepositoryProviderInterfaceResolver,
 })
 export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInterface {
+  private table = 'carpool.carpools';
+
   constructor(protected connection: PostgresConnection) {}
 
   /**
    * Find all carpools for an identity on a given period of time
    */
   async find(params: FindParamsInterface): Promise<CarpoolInterface[]> {
-    const { uuidList, operator_id, tz, start_at, end_at, positions = [], radius = 1000 } = params;
+    const { identities, operator_id, tz, start_at, end_at, positions = [], radius = 1000 } = params;
 
-    const values: any[] = [uuidList, operator_id, start_at, end_at];
+    const values: any[] = [identities, operator_id, start_at, end_at];
 
     const where_positions = positions
       .reduce((prev: string[], pos: PointInterface): string[] => {
@@ -48,47 +50,43 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
     // TODO check driver_revenue / passenger_contribution normalisation
 
     const text = `
-      WITH
-        trips AS (
-          SELECT
-            DISTINCT tl.trip_id,
-            'driver' AS type,
-            SUBSTR((datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
-            journey_start_datetime AT TIME ZONE $${values.length} AS datetime,
-            journey_distance AS distance,
-            COALESCE(i.amount, 0) AS payment
-          FROM trip.list tl
-          INNER JOIN carpool.carpools cc ON tl.trip_id = cc.trip_id
-          CROSS JOIN LATERAL UNNEST(tl.driver_incentive_raw) i
-          WHERE tl.operator_id = $2::int
-            AND cc.is_driver = true
-            AND (cc.status = 'ok' OR cc.status = 'expired')
-            AND tl.journey_start_datetime >= $3
-            AND tl.journey_start_datetime < $4
-            AND tl.driver_id = ANY($1::uuid[])
-            AND i.type = 'payment'
-            ${where_positions.length ? `AND (${where_positions})` : ''}
-        UNION
-          SELECT
-            DISTINCT tl.trip_id,
-            'passenger' AS type,
-            SUBSTR((datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
-            journey_start_datetime AT TIME ZONE $${values.length} AS datetime,
-            journey_distance AS distance,
-            COALESCE(i.amount, 0) AS payment
-          FROM trip.list tl
-          INNER JOIN carpool.carpools cc ON tl.trip_id = cc.trip_id
-          CROSS JOIN LATERAL UNNEST(tl.passenger_incentive_raw) i
-          WHERE tl.operator_id = $2::int
-            AND cc.is_driver = false
-            AND (cc.status = 'ok' OR cc.status = 'expired')
-            AND tl.journey_start_datetime >= $3
-            AND tl.journey_start_datetime < $4
-            AND tl.passenger_id = ANY($1::uuid[])
-            AND i.type = 'payment'
-            ${where_positions.length ? `AND (${where_positions})` : ''}
-        )
-
+      WITH trips AS (
+        SELECT
+          cc.trip_id,
+          'driver' as type,
+          SUBSTR((datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
+          datetime AT TIME ZONE $${values.length} AS datetime,
+          distance,
+          COALESCE(payment, 0) AS payment
+        FROM ${this.table} AS cc
+        WHERE
+          cc.operator_id = $2::int
+          AND cc.is_driver = true
+          AND cc.status in ('ok', 'expired')
+          AND cc.datetime >= $3
+          AND cc.datetime <  $4
+          AND cc.identity_id = ANY($1::int[])
+          ${where_positions.length ? `AND (${where_positions})` : ''}
+      
+        UNION ALL
+      
+        SELECT
+          cc.trip_id,
+          'passenger' as type,
+          SUBSTR((datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
+          datetime AT TIME ZONE $${values.length} AS datetime,
+          distance,
+          COALESCE(payment, 0) AS payment
+        FROM ${this.table} AS cc
+        WHERE
+          cc.operator_id = $2::int
+          AND cc.is_driver = false
+          AND cc.status in ('ok', 'expired')
+          AND cc.datetime >= $3
+          AND cc.datetime <  $4
+          AND cc.identity_id = ANY($1::int[])
+          ${where_positions.length ? `AND (${where_positions})` : ''}
+      )
       SELECT
           type,
           date,

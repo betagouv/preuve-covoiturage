@@ -6,6 +6,10 @@ import { Extensions } from '@ilos/core';
 import * as dataSource from '../config/dataSource';
 
 test('should fetch from data source with a siret id', async (t) => {
+  if (!('APP_INSEE_API_KEY' in process.env) || process.env.APP_INSEE_API_KEY === '') {
+    t.pass();
+    return;
+  }
   const provider: CompanyDataSourceProvider = new CompanyDataSourceProvider(
     new Extensions.ConfigStore({
       dataSource,
@@ -30,6 +34,10 @@ test('should fetch from data source with a siret id', async (t) => {
 });
 
 test('should fail with a wrong siret id', async (t) => {
+  if (!('APP_INSEE_API_KEY' in process.env) || process.env.APP_INSEE_API_KEY === '') {
+    t.pass();
+    return;
+  }
   const provider: CompanyDataSourceProvider = new CompanyDataSourceProvider(
     new Extensions.ConfigStore({
       dataSource,

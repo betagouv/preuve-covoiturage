@@ -10,7 +10,7 @@ export type ResultInterface = boolean;
 export const handlerConfig = {
   service: 'user',
   method: 'changeRole',
-};
+} as const;
 
 // TODO: remove
 

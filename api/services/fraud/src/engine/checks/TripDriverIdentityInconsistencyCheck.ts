@@ -1,8 +1,7 @@
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { provider } from '@ilos/common';
 
-import { CheckInterface } from '../../interfaces/CheckInterface';
-import { FraudCheckResult } from '../../interfaces';
+import { CheckHandleCallback, CheckInterface } from '../../interfaces/CheckInterface';
 import { step } from '../helpers/math';
 
 interface TripDriverIdentityParamsInterface {
@@ -17,7 +16,7 @@ export class TripDriverIdentityInconsistencyCheck implements CheckInterface<Trip
 
   constructor(protected connection: PostgresConnection) {}
 
-  async prepare(acquisitionId: number): Promise<TripDriverIdentityParamsInterface[]> {
+  async prepare(acquisitionId: number): Promise<TripDriverIdentityParamsInterface> {
     const query = {
       text: `
         WITH data AS (
@@ -45,10 +44,10 @@ export class TripDriverIdentityInconsistencyCheck implements CheckInterface<Trip
     };
 
     const dbResult = await this.connection.getClient().query(query);
-    return [dbResult.rows.pop()];
+    return dbResult.rows[0];
   }
 
-  async handle(data: TripDriverIdentityParamsInterface): Promise<FraudCheckResult> {
-    return step(data.distinct_driver_uuid, this.min, this.max);
+  async handle(data: TripDriverIdentityParamsInterface, cb: CheckHandleCallback): Promise<void> {
+    cb(step(data.distinct_driver_uuid, this.min, this.max));
   }
 }

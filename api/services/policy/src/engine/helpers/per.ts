@@ -1,8 +1,17 @@
 import { StatelessContextInterface } from '../../interfaces';
 
 export interface PerKmParams {
+  /**
+   * amount per km
+   */
   amount: number;
+  /**
+   * The distance offset to start multiplication
+   */
   offset?: number;
+  /**
+   * The maximum distance to compute with
+   */
   limit?: number;
 }
 

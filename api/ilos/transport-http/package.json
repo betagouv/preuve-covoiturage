@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@types/supertest": "^2.0.10",
-    "supertest": "^6.1.6"
+    "supertest": "^6.3.3"
   },
   "dependencies": {
     "@ilos/common": "^0.4.1",

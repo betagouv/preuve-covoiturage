@@ -20,7 +20,6 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
   constructor(protected connection: PostgresConnection) {}
 
   async disableOnCanceledTrip(): Promise<void> {
-    console.debug(`DISABLE_ON_CANCELED_TRIPS`);
     const query = {
       text: `
         UPDATE ${this.table} AS pi
@@ -272,14 +271,14 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
   async updateIncentiveSum(): Promise<void> {
     await this.connection.getClient().query(`
-      UPDATE POLICY.POLICIES P
-      SET INCENTIVE_SUM = POLICY_INCENTIVE_SUM.AMOUNT
+      UPDATE policy.policies p
+      SET incentive_sum = policy_incentive_sum.amount
       FROM
-        (SELECT POLICY_ID, COALESCE(SUM(RESULT),0)::int AS AMOUNT
-          FROM POLICY.INCENTIVES
-          WHERE STATUS = 'validated'
-          GROUP BY POLICY_ID) AS POLICY_INCENTIVE_SUM
-      WHERE P._ID = POLICY_INCENTIVE_SUM.POLICY_ID
+        (SELECT policy_id, coalesce(sum(amount),0)::int AS amount
+          FROM policy.incentives
+          WHERE status = 'validated'
+          GROUP BY policy_id) AS policy_incentive_sum
+      WHERE p._id = policy_incentive_sum.policy_id
     `);
   }
 }

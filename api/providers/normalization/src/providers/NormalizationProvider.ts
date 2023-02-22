@@ -76,6 +76,7 @@ export class NormalizationProvider implements NormalizationProviderInterface {
       duration: driverDuration,
       distance: person.distance,
       cost: person.cost,
+      payment: person.payment,
       meta: {
         payments: [...person.payments],
         calc_distance: person.calc_distance,
@@ -99,9 +100,10 @@ export class NormalizationProvider implements NormalizationProviderInterface {
 
     try {
       const { driver, passenger } = journey.payload;
-      const { cost, payments } = await this.costNormalizer.handle({
+      const { cost, payments, payment } = await this.costNormalizer.handle({
         operator_id: journey.operator_id,
         contribution: passenger.contribution || 0,
+        payment: person.is_driver ? driver.revenue : passenger.contribution,
         incentives: [
           ...(Array.isArray(driver.incentives) ? driver.incentives : []),
           ...(Array.isArray(passenger.incentives) ? passenger.incentives : []),
@@ -110,6 +112,7 @@ export class NormalizationProvider implements NormalizationProviderInterface {
       });
 
       finalPerson['cost'] = person.is_driver ? -cost : cost;
+      finalPerson['payment'] = payment;
       finalPerson.payments = person.is_driver ? [] : payments;
     } catch (e) {
       await this.logError(NormalisationErrorStage.Cost, e, journey);

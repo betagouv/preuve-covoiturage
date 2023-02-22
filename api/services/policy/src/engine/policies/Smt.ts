@@ -1,3 +1,4 @@
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,16 +7,16 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import {
+  ensureFreeRide,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
+  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
-  LimitTargetEnum,
-  ConfiguredLimitInterface,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Smt.html';
@@ -24,23 +25,21 @@ import { description } from './Smt.html';
 export const Smt: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '713';
   protected operators = [OperatorsEnum.Klaxit];
-  protected slices = [
+  protected slices: RunnableSlices = [
     { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
       start: 20_000,
       end: 40_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
-    {
-      start: 40_000,
-      end: 150_000,
-      fn: () => 0,
-    },
   ];
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', 40_000_00, watchForGlobalMaxAmount],
-  ];
+  constructor(public max_amount: number) {
+    super();
+    this.limits = [
+      ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.max_amount, watchForGlobalMaxAmount],
+    ];
+  }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
@@ -60,7 +59,7 @@ export const Smt: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
       }
     }
 
-    amount += ctx.carpool.cost;
+    amount += ensureFreeRide(ctx, amount);
     ctx.incentive.set(amount);
   }
 

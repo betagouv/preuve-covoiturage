@@ -5,27 +5,6 @@ import { RowType, ResultRowInterface } from '../shared/certificate/common/interf
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import { CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
 
-const oldFormat: any = {
-  _id: 1,
-  uuid: 'eb2c49c3-2080-4575-88ca-1786614606e6',
-  identity_uuid: 'bbe1fb74-ef00-4009-aba2-22163874991e',
-  operator_id: 1,
-  start_at: new Date('2020-01-01T00:00:00Z'),
-  end_at: new Date('2021-01-01T00:00:00Z'),
-  created_at: new Date('2021-02-01T00:00:00Z'),
-  updated_at: new Date('2021-02-01T00:00:00Z'),
-  meta: {
-    tz: 'Europe/Paris',
-    rows: [{ cost: 1.5, index: 0, month: 'Mai 2019', trips: '1 trajet', distance: 29 }],
-    identity: { uuid: 'bbe1fb74-ef00-4009-aba2-22163874991e' },
-    operator: { name: 'MaxiCovoit', uuid: '5c211eea-27e2-4bd4-b854-9009ca1f18d8' },
-    total_km: 29,
-    remaining: 14,
-    total_cost: 2,
-    total_point: 0,
-  },
-};
-
 const newEmptyFormat: CertificateInterface = {
   _id: 2,
   uuid: '72d5d1c2-69b0-474a-b724-bada4a2377b1',
@@ -75,26 +54,6 @@ const newFormat: CertificateInterface = {
   },
 };
 /* eslint-enable prettier/prettier */
-
-test('old format returns empty values with expired status', (t) => {
-  const res: ResultRowInterface = mapCertForListHelper(oldFormat);
-  const exp: ResultRowInterface = {
-    type: RowType.EXPIRED,
-    uuid: oldFormat.uuid,
-    tz: oldFormat.meta.tz,
-    start_at: oldFormat.start_at,
-    end_at: oldFormat.end_at,
-    created_at: oldFormat.created_at,
-    identity: { uuid: oldFormat.identity_uuid },
-    operator: { _id: oldFormat.operator_id, ...oldFormat.meta.operator },
-    driver: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
-    passenger: { total: { trips: 0, week_trips: 0, weekend_trips: 0, km: 0, euros: 0 }, trips: [] },
-    positions: [],
-  };
-
-  t.is(res.type, RowType.EXPIRED);
-  t.deepEqual(exp, res);
-});
 
 test('new empty format returns empty values with OK status', (t) => {
   const res: ResultRowInterface = mapCertForListHelper(newEmptyFormat);

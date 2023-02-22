@@ -2,8 +2,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../shared/monitoring/journeys/stats.schema';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/monitoring/journeys/stats.contract';
+import { alias } from '../shared/monitoring/journeystats.schema';
+import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/monitoring/journeystats.contract';
 import { JourneyRepositoryProviderInterfaceResolver } from '../providers/JourneyRepositoryProvider';
 
 @handler({

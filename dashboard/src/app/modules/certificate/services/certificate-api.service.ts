@@ -15,8 +15,8 @@ import { JsonRPC } from '~/core/services/api/json-rpc.service';
 
 export type IdentityIdentifiersInterface =
   | { _id: number }
-  | { uuid: string }
   | { phone: string }
+  | { operator_user_id: string }
   | { phone_trunc: string; operator_user_id: string };
 
 export interface CreateParamsInterface {

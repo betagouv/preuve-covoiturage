@@ -13,6 +13,6 @@ export interface ResultInterface {
 export const handlerConfig = {
   service: 'acquisition',
   method: 'status',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

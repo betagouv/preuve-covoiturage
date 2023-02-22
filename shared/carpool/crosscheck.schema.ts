@@ -28,7 +28,7 @@ export const schema = {
       type: 'array',
       items: {
         type: 'object',
-        required: ['is_driver', 'datetime', 'start', 'end', 'seats', 'duration', 'identity', 'cost', 'meta'],
+        required: ['is_driver', 'datetime', 'start', 'end', 'seats', 'duration', 'identity', 'cost', 'payment', 'meta'],
         additionalProperties: false,
         properties: {
           identity,
@@ -53,6 +53,11 @@ export const schema = {
             maximum: 1000000,
           },
           cost: {
+            type: 'integer',
+            minimum: -1000000,
+            maximum: 1000000,
+          },
+          payment: {
             type: 'integer',
             minimum: -1000000,
             maximum: 1000000,

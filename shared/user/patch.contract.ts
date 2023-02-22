@@ -18,6 +18,6 @@ export interface ResultInterface extends UserInterface {}
 export const handlerConfig = {
   service: 'user',
   method: 'patch',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

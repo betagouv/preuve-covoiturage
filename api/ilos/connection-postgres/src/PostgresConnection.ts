@@ -5,10 +5,11 @@ import { env } from '@ilos/core';
 import { ConnectionInterface } from '@ilos/common';
 
 export class PostgresConnection implements ConnectionInterface<Pool> {
-  private readonly pgUrl = env('APP_POSTGRES_URL') as string;
+  private readonly pgUrl: string;
   protected pool: Pool;
 
   constructor(protected config: PoolConfig) {
+    this.pgUrl = config.connectionString || (env('APP_POSTGRES_URL') as string);
     const timeout = parseInt(env('APP_POSTGRES_TIMEOUT', '60000') as string, 10);
 
     this.pool = new Pool({

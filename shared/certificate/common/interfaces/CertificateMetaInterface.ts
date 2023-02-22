@@ -23,7 +23,7 @@ export interface CertificateMetaInterface {
   tz: string;
   positions: PointInterface[];
   identity: { uuid: string };
-  operator: { uuid: string; name: string };
+  operator: { uuid: string; name: string; support?: string };
   driver: MetaPersonInterface;
   passenger: MetaPersonInterface;
 }

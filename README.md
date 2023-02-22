@@ -45,7 +45,8 @@ terminal 2: docker-compose up dashboard
 ### Migrations
 
 ```shell
-// use SKIP_MIGRATIONS=true to skip migrations in an automated deployment process
+// use SKIP_GEO_MIGRATIONS=true to skip geo migrations 
+// use SKIP_SQL_MIGRATIONS=true to skip sql migrations
 
 cd api
 yarn migrate
@@ -101,6 +102,6 @@ The project follows the [semver](https://semver.org/) specification.
 
 # License
 
-DINUM, 2017-2022.
+DINUM, 2017-2023.
 
 The source code is published under [Apache license 2.0](./LICENSE).

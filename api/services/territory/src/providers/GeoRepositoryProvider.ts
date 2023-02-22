@@ -25,8 +25,7 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
   async list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface> {
-    const { search, where: whereParams, limit, offset } = { limit: 100, offset: 0, ...params };
-
+    const { search, where: whereParams, exclude_coms, limit, offset } = { limit: 100, offset: 0, ...params };
     const where = [];
     const values = [];
 
@@ -50,9 +49,9 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
       values,
       text: `
       WITH search as (
-        SELECT aom, l_aom, epci, l_epci, l_com, com, l_reg, reg, l_dep, dep from ${this.table}
+        SELECT aom, l_aom, epci, l_epci, ${exclude_coms ? '' : 'l_com, com,'} l_reg, reg, l_dep, dep from ${this.table}
          where (l_aom like $1
-         or lower(l_com) like $1
+         ${exclude_coms ? '' : 'or lower(l_com) like $1'}
          or lower(l_epci) like $1
          or lower(l_reg) like $1
          or lower(l_dep) like $1) and year = $2 ${
@@ -70,10 +69,12 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
       SELECT distinct l_reg as name, reg as insee, '${
         TerritoryCodeEnum.Region
       }' as type from search where lower(l_reg) like $1
-      UNION
-      SELECT distinct l_com as name, com as insee, '${
-        TerritoryCodeEnum.City
-      }' as type from search where lower(l_com) like $1
+      ${
+        exclude_coms
+          ? ''
+          : `UNION SELECT distinct l_com as name, com as insee, '${TerritoryCodeEnum.City}'
+          as type from search where lower(l_com) like $1`
+      }
       UNION
       SELECT distinct l_dep as name, dep as insee, '${
         TerritoryCodeEnum.District
@@ -90,9 +91,11 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
       values,
       text: `
       WITH search as (
-        SELECT aom, l_aom, epci, l_epci, l_com, com, l_reg, reg, l_dep, dep from geo.perimeters 
+        SELECT aom, l_aom, epci, l_epci, ${
+          exclude_coms ? '' : 'l_com, com,'
+        } l_reg, reg, l_dep, dep from geo.perimeters 
          where (l_aom like $1
-         or lower(l_com) like $1
+          ${exclude_coms ? '' : 'or lower(l_com) like $1'}
          or lower(l_epci) like $1
          or lower(l_reg) like $1
          or lower(l_dep) like $1) and year = $2 ${
@@ -109,10 +112,12 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
      SELECT distinct l_reg as name, reg as insee, '${
        TerritoryCodeEnum.Region
      }' as type from search where lower(l_reg) like $1
-     UNION
-     SELECT distinct l_com as name, com as insee, '${
-       TerritoryCodeEnum.City
-     }' as type from search where lower(l_com) like $1
+     ${
+       exclude_coms
+         ? ''
+         : `UNION SELECT distinct l_com as name, com as insee, '${TerritoryCodeEnum.City}'
+         as type from search where lower(l_com) like $1`
+     }
      UNION
      SELECT distinct l_dep as name, dep as insee, '${
        TerritoryCodeEnum.District
@@ -142,18 +147,28 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
     const results = await this.connection.getClient().query<FindBySiretRawResultInterface>({
       values: [params.siren, year],
       text: `
-        SELECT l_aom, aom, epci, l_epci, com, l_com
+        SELECT l_aom, aom, epci, l_epci, com, l_com, l_reg, reg
         FROM GEO.perimeters
-        WHERE (aom = $1::varchar OR epci = $1::varchar) 
+        WHERE ${params.siren.length === 2 ? 'reg = $1::varchar' : '(aom = $1::varchar OR epci = $1::varchar)'} 
           AND YEAR = $2::int
       `,
     });
 
     if (!results.rows[0]) {
-      return { aom_name: null, aom_siren: null, epci_name: null, epci_siren: null, coms: [] };
+      return {
+        reg_name: null,
+        reg_siren: null,
+        aom_name: null,
+        aom_siren: null,
+        epci_name: null,
+        epci_siren: null,
+        coms: [],
+      };
     }
 
     return {
+      reg_name: results.rows[0].l_reg,
+      reg_siren: results.rows[0].reg,
       aom_name: results.rows[0].l_aom,
       aom_siren: results.rows[0].aom,
       epci_name: results.rows[0].l_epci,

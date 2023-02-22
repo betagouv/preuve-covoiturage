@@ -8,10 +8,15 @@ export interface ParamsInterface {
 }
 
 export interface SingleResultInterface {
-  aom_siren: string;
+  reg_name: string;
+  reg_siren: string;
+
   aom_name: string;
+  aom_siren: string;
+
   epci_name: string;
   epci_siren: string;
+
   coms: Array<GeoSingleResultInterface>;
 }
 
@@ -20,5 +25,5 @@ export type ResultInterface = SingleResultInterface;
 export const handlerConfig = {
   service: 'territory',
   method: 'findGeoBySiren',
-};
+} as const;
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

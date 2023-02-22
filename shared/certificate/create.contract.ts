@@ -14,7 +14,7 @@ export interface ParamsInterface {
 export interface ResultInterface {
   uuid: string;
   created_at: Date;
-  meta: CertificateMetaInterface;
+  meta: Omit<CertificateMetaInterface, 'identity' | 'operator'>;
 }
 
 export type RepositoryInterface = Required<ParamsInterface>;
@@ -22,6 +22,6 @@ export type RepositoryInterface = Required<ParamsInterface>;
 export const handlerConfig = {
   service: 'certificate',
   method: 'create',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

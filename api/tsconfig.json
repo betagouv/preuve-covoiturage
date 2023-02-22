@@ -16,13 +16,10 @@
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
+    "incremental": true,
     "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"],
-      "~/*": ["src/*"]
-    },
     "lib": ["es2020"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/**/*.spec.ts"]
+  "exclude": ["node_modules"]
 }

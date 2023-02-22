@@ -1,16 +1,65 @@
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { PolicyRepositoryProviderInterfaceResolver, SerializedPolicyInterface } from '../interfaces';
+import {
+  LockInformationInterface,
+  PolicyRepositoryProviderInterfaceResolver,
+  SerializedPolicyInterface,
+} from '../interfaces';
 
 @provider({
   identifier: PolicyRepositoryProviderInterfaceResolver,
 })
 export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfaceResolver {
   public readonly table = 'policy.policies';
+  public readonly lockTable = 'policy.lock';
   public readonly getTerritorySelectorFn = 'territory.get_selector_by_territory_id';
 
   constructor(protected connection: PostgresConnection) {}
+
+  async getLock(): Promise<boolean> {
+    const conn = await this.connection.getClient().connect();
+    await conn.query('BEGIN');
+    try {
+      const res = await conn.query(
+        `SELECT true FROM ${this.lockTable} WHERE stopped_at IS NULL ORDER BY _id DESC LIMIT 1 FOR UPDATE`,
+      );
+      if (res.rowCount >= 1) {
+        return false;
+      }
+      await conn.query(`
+        INSERT INTO ${this.lockTable} (started_at) VALUES (NOW())
+      `);
+      await conn.query('COMMIT');
+      return true;
+    } catch (e) {
+      await conn.query('ROLLBACK');
+      throw e;
+    } finally {
+      conn.release();
+    }
+  }
+
+  async releaseLock(lockInformation?: LockInformationInterface): Promise<void> {
+    const data = {
+      ...(lockInformation || {}),
+      error: JSON.parse(
+        lockInformation?.error instanceof Error
+          ? JSON.stringify(lockInformation?.error, Object.getOwnPropertyNames(lockInformation?.error))
+          : null,
+      ),
+    };
+
+    await this.connection.getClient().query({
+      text: `UPDATE ${this.lockTable} SET
+        stopped_at = now(),
+        success = $1,
+        data = $2
+      WHERE stopped_at IS NULL
+      `,
+      values: [lockInformation?.error ? false : true, JSON.stringify(data)],
+    });
+  }
 
   async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined> {
     const query = {
@@ -24,7 +73,8 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           pp.handler,
           pp.status,
           pp.territory_id,
-          pp.incentive_sum
+          pp.incentive_sum,
+          pp.max_amount
         FROM ${this.table} as pp,
         LATERAL (
           SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory_id])
@@ -182,7 +232,8 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           pp.handler,
           pp.status,
           pp.territory_id,
-          pp.incentive_sum
+          pp.incentive_sum,
+          pp.max_amount
         FROM ${this.table} as pp,
         LATERAL (
           SELECT * FROM ${this.getTerritorySelectorFn}(ARRAY[pp.territory_id])

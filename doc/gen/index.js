@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 
 const { genServices } = require('./services');
 const { genProviders } = require('./providers');
 const { genApiLicenses } = require('./licenses');
+const { copyOpenApi } = require('./openapi');
 
 const config = {
   root: path.resolve(__dirname, '..'),
@@ -12,13 +14,16 @@ const config = {
 
 // copy README.md and append a list of actions
 // from all api/services/*
-console.log('📚 [apidoc:gen] Generate doc for services');
+console.debug('📚 [apidoc:gen] Generate doc for services');
 genServices(config);
 
 // from all api/providers/*
-console.log('📚 [apidoc:gen] Generate doc for providers');
+console.debug('📚 [apidoc:gen] Generate doc for providers');
 genProviders(config);
 
 // generate a table of all dependencies licenses
-console.log('📚 [apidoc:gen] Generate list of licenses');
+console.debug('📚 [apidoc:gen] Generate list of licenses');
 genApiLicenses(config);
+
+copyOpenApi('v2.yaml', 'operateurs-api-v2.yaml');
+copyOpenApi('cee.yaml', 'operateurs-cee.yaml');

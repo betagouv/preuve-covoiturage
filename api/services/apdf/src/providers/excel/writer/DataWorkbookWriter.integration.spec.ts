@@ -1,0 +1,93 @@
+import faker from '@faker-js/faker';
+import test from 'ava';
+import { Row, stream, Workbook, Worksheet } from 'exceljs';
+import { APDFTripInterface } from '../../../interfaces/APDFTripInterface';
+import { BuildExcel } from '../BuildExcel';
+import { DataWorkBookWriter } from './DataWorkbookWriter';
+
+// tool to sort column names to be able to compare them
+function sortRowValues(values: Row['values']): Row['values'] {
+  if (Array.isArray(values)) return values.sort();
+  if ('object' === typeof values) return Object.keys(values).sort();
+  return values;
+}
+
+let dataWorkBookWriter: DataWorkBookWriter;
+
+const exportTripInterface: APDFTripInterface = {
+  journey_id: faker.datatype.uuid(),
+  trip_id: faker.datatype.uuid(),
+  operator_trip_id: faker.datatype.uuid(),
+  driver_uuid: faker.datatype.uuid(),
+  operator_driver_id: faker.datatype.uuid(),
+  driver_rpc_incentive: faker.datatype.number(1000),
+  passenger_uuid: faker.datatype.uuid(),
+  operator_passenger_id: faker.datatype.uuid(),
+  passenger_rpc_incentive: faker.datatype.number(1000),
+  start_datetime: faker.date.past(2).toISOString(),
+  end_datetime: faker.date.future(2).toISOString(),
+  start_location: faker.address.cityName(),
+  start_insee: faker.random.numeric(5, { allowLeadingZeros: true }),
+  end_location: faker.address.cityName(),
+  end_insee: faker.random.numeric(5, { allowLeadingZeros: true }),
+  distance: faker.datatype.number({ min: 1_500, max: 150_000 }),
+  duration: faker.datatype.number({ min: 300, max: 3600 }),
+  operator_class: 'C',
+};
+
+test.before((t) => {
+  dataWorkBookWriter = new DataWorkBookWriter();
+});
+
+test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
+  // Arrange
+  const tripCursor = new Promise<APDFTripInterface[]>((resolve, reject) => {
+    resolve([
+      exportTripInterface,
+      exportTripInterface,
+      exportTripInterface,
+      exportTripInterface,
+      exportTripInterface,
+      exportTripInterface,
+      exportTripInterface,
+      exportTripInterface,
+      exportTripInterface,
+      exportTripInterface,
+    ]);
+  });
+  const cursorEndingResult = new Promise<APDFTripInterface[]>((resolve, reject) => {
+    resolve([]);
+  });
+  let counter = 20;
+  const cursorCallback = (count: number): Promise<APDFTripInterface[]> => {
+    if (counter <= 0) {
+      return cursorEndingResult;
+    }
+    counter = counter - 10;
+    return tripCursor;
+  };
+
+  const filepath = '/tmp/stream-data-test.xlsx';
+
+  // Act
+  const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
+  await dataWorkBookWriter.call({ read: cursorCallback, release: () => {} }, workbookWriter);
+  await workbookWriter.commit();
+
+  // Assert
+  const workbook: Workbook = await new Workbook().xlsx.readFile(filepath);
+  const worksheet: Worksheet = workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME);
+  t.is(worksheet.actualRowCount, 21);
+  t.deepEqual<Row['values'], Row['values']>(
+    sortRowValues(workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(1).values),
+    [undefined, ...Object.keys(exportTripInterface)].sort(),
+  );
+  t.is(
+    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).values.length,
+    Object.keys(exportTripInterface).length + 1,
+  );
+  t.is(
+    workbook.getWorksheet(dataWorkBookWriter.DATA_WORKSHEET_NAME).getRow(2).getCell(1).value,
+    exportTripInterface.journey_id,
+  );
+});

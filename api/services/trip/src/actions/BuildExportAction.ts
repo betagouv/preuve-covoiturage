@@ -9,7 +9,7 @@ import os from 'os';
 import path from 'path';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ExportTripInterface } from '../interfaces';
-import { PgCursorHandler } from '../interfaces/PromisifiedPgCursor';
+import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../shared/trip/buildExport.contract';
 import { alias } from '../shared/trip/buildExport.schema';
@@ -260,7 +260,7 @@ export class BuildExportAction extends Action implements InitHookInterface {
       this.addExcludedTerritoriesToQueryParams(excluded_territories, queryParams);
     }
 
-    const cursor: PgCursorHandler = await this.tripRepository.searchWithCursor(queryParams, type);
+    const cursor: PgCursorHandler<ExportTripInterface> = await this.tripRepository.searchWithCursor(queryParams, type);
     const filepath: string = await this.buildFile.buildCsvFromCursor(cursor, params, queryParams.date.end, isOpendata);
     return this.handleCSVExport(isOpendata, filepath, queryParams, excluded_territories);
   }

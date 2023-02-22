@@ -68,6 +68,10 @@ module.exports = {
               title: 'Outils',
               path: '/operateurs/outils',
             },
+            {
+              title: 'CEE',
+              path: '/operateurs/cee',
+            },
           ],
           '/contribuer/repo/': [
             {

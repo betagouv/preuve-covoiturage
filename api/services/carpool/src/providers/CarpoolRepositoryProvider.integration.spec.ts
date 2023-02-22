@@ -71,6 +71,7 @@ test.serial.skip('Should create carpool', async (t) => {
       duration: 0,
       distance: 0,
       cost: 0,
+      payment: 0,
       meta: {
         calc_distance: 0,
         calc_duration: 0,
@@ -96,6 +97,7 @@ test.serial.skip('Should create carpool', async (t) => {
       duration: 0,
       distance: 0,
       cost: 0,
+      payment: 0,
       meta: {
         calc_distance: 0,
         calc_duration: 0,

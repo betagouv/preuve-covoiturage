@@ -8,6 +8,6 @@ export interface ResultInterface extends OperatorDbInterface {}
 export const handlerConfig = {
   service: 'operator',
   method: 'create',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

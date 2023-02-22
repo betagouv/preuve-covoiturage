@@ -9,6 +9,8 @@ export interface ResultsInterface {
   _id: number;
   uuid: string;
   name: string;
+  support: string;
+  thumbnail?: string;
 }
 
 export interface FindOperatorInterface {

@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 
-import { FraudCheckResult, HandleCheckInterface } from '../../../interfaces';
+import { CheckHandleCallback, HandleCheckInterface } from '../../../interfaces';
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { SelfCheckPreparator } from '../SelfCheckPreparator';
 import { step } from '../../helpers/math';
@@ -16,13 +16,13 @@ export class StartEndLongitudeCollisionCheck implements HandleCheckInterface<Sel
   protected readonly max: number = 0.001; // above = 0
   protected readonly min: number = 0; // below = 100
 
-  async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
+  async handle(params: SelfCheckParamsInterface, cb: CheckHandleCallback): Promise<void> {
     const { passenger_start_lon, passenger_end_lon, driver_start_lon, driver_end_lon } = params;
 
     const passengerResult = this.calc(passenger_start_lon, passenger_end_lon);
     const driverResult = this.calc(driver_start_lon, driver_end_lon);
 
-    return Math.max(passengerResult, driverResult);
+    cb(Math.max(passengerResult, driverResult));
   }
 
   protected calc(start_lon: number, end_lon: number): number {
