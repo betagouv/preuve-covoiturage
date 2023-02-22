@@ -15,6 +15,7 @@ const permissions = {
   'honor.save': ['common'],
   'honor.stats': ['common'],
   'monitoring.journeysstats': ['registry.admin'],
+  'observatory.stats': ['common'],
   'operator.create': ['registry.admin'],
   'operator.list': ['common'],
   'operator.find': ['common', 'operator.user', 'operator.admin', 'registry.admin'],

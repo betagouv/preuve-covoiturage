@@ -1047,6 +1047,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/geojson@^7946.0.10":
+  version "7946.0.10"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.10.tgz#6dfbf5ea17142f7f9a043809f1cd4c448cb68249"
+  integrity sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==
+
 "@types/google-libphonenumber@^7.4.19":
   version "7.4.23"
   resolved "https://registry.yarnpkg.com/@types/google-libphonenumber/-/google-libphonenumber-7.4.23.tgz#c44c9125d45f042943694d605fd8d8d796cafc3b"
@@ -3871,6 +3876,11 @@ graceful-fs@4.2.10, graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2
   version "4.2.10"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.10.tgz#147d3a006da4ca3ce14728c7aefc287c367d7a6c"
   integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
+
+h3-js@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/h3-js/-/h3-js-4.0.1.tgz#3146307b7c669a82059664ef54c73fa264fce6f2"
+  integrity sha512-cZvkHAorS4QG5/t1XyWS6hnBFn2oKh/oDbl+nIMsbZfRfm1KP2robxH6cdVvYSr9gzwL02zAGUm5fGYw/VqCww==
 
 handlebars@^4.7.7:
   version "4.7.7"

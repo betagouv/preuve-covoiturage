@@ -98,6 +98,7 @@ export class HttpTransport implements TransportInterface {
     this.registerSimulationRoutes();
     this.registerCeeRoutes();
     this.registerHonorRoutes();
+    this.registerObservatoryRoutes();
     this.registerUptimeRoute();
     this.registerContactformRoute();
     this.registerCallHandler();
@@ -658,6 +659,133 @@ export class HttpTransport implements TransportInterface {
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('honor:stats', {}, { permissions: ['common.honor.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+  }
+
+  private registerObservatoryRoutes() {
+    this.app.get(
+      '/observatory/monthly_flux',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:monthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/evol_monthly_flux',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:evolMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/best_monthly_flux',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:bestMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/monthly_flux/last',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:lastRecordMonthlyFlux', null, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/monthly_occupation',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:monthlyOccupation', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/evol_monthly_occupation',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:evolMonthlyOccupation', req.query, {
+            permissions: ['common.observatory.stats'],
+          }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/best_monthly_territories',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:bestMonthlyTerritories', req.query, {
+            permissions: ['common.observatory.stats'],
+          }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/territories',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:territoriesList', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/territory',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:territoryName', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/journeys_by_hours',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:journeysByHours', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/journeys_by_distances',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:journeysByDistances', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
+      '/observatory/location',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:getLocation', req.query, { permissions: ['common.observatory.stats'] }),
         );
         this.send(res, response as RPCResponseType);
       }),
