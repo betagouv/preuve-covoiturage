@@ -102,6 +102,7 @@ export class ScopeToGroupMiddleware implements MiddlewareInterface {
         SELECT distinct arr AS com
         FROM geo.perimeters
         WHERE ${t} = ANY($${i + 1}::varchar[])
+        AND year = geo.get_latest_millesime()
       `,
         values: params.geo_selector[t],
       }))
