@@ -2,7 +2,7 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 <p>Campagne d’incitation au covoiturage du <b> 1 janvier 2023 au 31 décembre 2023</b>, toute la semaine
 </p>
 <p>Cette campagne est limitée à
-  <b>150 000 euros </b>.
+  <b>57 960 euros </b>.
 </p>
 <p>Les <b> passagers </b> effectuant un trajet d'au moins 2 km, avec pour origine ou destination la CA du Cotentin,
 sont incités selon les règles suivantes : </p>
