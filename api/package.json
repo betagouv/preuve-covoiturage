@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "scalingo-postbuild": "/bin/sh ./scalingo/build.sh",
-    "start": "if [ -z \"$IS_WORKER\" ]; then yarn start:http; else yarn start:queue; fi",
+    "start": "if [ \"$DO_MIGRATIONS\" ]; then yarn migrate; fi && if [ -z \"$IS_WORKER\" ]; then yarn start:http; else yarn start:queue; fi",
     "start:http": "yarn workspace @pdc/proxy ilos http $PORT",
     "start:queue": "yarn workspace @pdc/proxy ilos queue $APP_REDIS_URL",
     "clean": "rm -rf ./**/dist",
