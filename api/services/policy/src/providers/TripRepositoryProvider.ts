@@ -115,7 +115,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
       values: override ? [com, from, to] : [com, from, to, policy._id],
     };
 
-    await (yield* this.queryAndYieldRows(query, batchSize));
+    yield* this.queryAndYieldRows(query, batchSize);
   }
 
   private async *queryAndYieldRows(
