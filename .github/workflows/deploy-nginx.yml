@@ -37,7 +37,6 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./docker/nginx
-          file: ./docker/nginx/Dockerfile
           load: true
           push: false
           tags: ${{ steps.docker_meta.outputs.tags }}
