@@ -70,8 +70,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: .
-          file: ./docker/nginx/Dockerfile
+          context: /docker/nginx/Dockerfile
           push: true
           pull: false
           tags: ${{ steps.docker_meta.outputs.tags }}
