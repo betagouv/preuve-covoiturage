@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
+
         uses: actions/checkout@v3
 
       - name: Prepare Docker tag
@@ -22,6 +23,14 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       - name: Build nginx
         id: docker_test
         uses: docker/build-push-action@v3
@@ -33,6 +42,8 @@ jobs:
           push: false
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -64,4 +75,6 @@ jobs:
           push: true
           pull: false
           tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
       - run: echo ${{ steps.docker_build.outputs.digest }}
