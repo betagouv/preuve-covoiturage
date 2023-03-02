@@ -53,14 +53,13 @@ services:
     environment:
       PORT: 8080
       APP_RATE_LIMIT_MAX_FACTOR: '0'
+      DEBUG: 'api'
+      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
     volumes:
       - ${PWD}/api:/app/api
       - ${PWD}/shared:/app/shared:ro
     command: 'sh -c "pm2-runtime start pm2-api.json | pino-pretty"'
     tty: true
-    environment:
-      DEBUG: 'api'
-      APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
 
   worker:
     build:
