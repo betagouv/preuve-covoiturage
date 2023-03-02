@@ -36,8 +36,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: ./
-          file: ./docker/nginx/Dockerfile
+          context: ./docker/nginx
           load: true
           push: false
           tags: ${{ steps.docker_meta.outputs.tags }}
@@ -70,8 +69,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: .
-          file: ./docker/nginx/Dockerfile
+          context: ./docker/nginx
           push: true
           pull: false
           tags: ${{ steps.docker_meta.outputs.tags }}
