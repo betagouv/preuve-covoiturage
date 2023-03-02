@@ -22,11 +22,14 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     await conn.query('BEGIN');
     try {
       const res = await conn.query(
-        `SELECT true FROM ${this.lockTable} WHERE stopped_at IS NULL ORDER BY _id DESC LIMIT 1 FOR UPDATE`,
+        `SELECT true FROM ${this.lockTable} WHERE stopped_at IS NULL AND started_at >= NOW() - '23 hours'::interval ORDER BY _id DESC LIMIT 1 FOR UPDATE`,
       );
       if (res.rowCount >= 1) {
         return false;
       }
+      await conn.query(`
+        UPDATE ${this.lockTable} SET stopped_at = NOW(), success = false WHERE stopped_at IS NULL
+      `);
       await conn.query(`
         INSERT INTO ${this.lockTable} (started_at) VALUES (NOW())
       `);
