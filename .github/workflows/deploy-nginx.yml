@@ -2,7 +2,7 @@ name: Deploy nginx
 on:
   workflow_dispatch:
 jobs:
-  build-and-deploy-nginx:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
