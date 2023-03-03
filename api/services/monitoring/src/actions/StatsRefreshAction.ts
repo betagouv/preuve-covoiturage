@@ -1,6 +1,6 @@
 import { ConfigInterfaceResolver, handler } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { Action as AbstractAction } from '@ilos/core';
+import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
 import { filterTables } from '../helpers/filterTables.helper';
 import { todayFrequencies } from '../helpers/todayFrequencies.helper';
@@ -18,6 +18,9 @@ export class StatsRefreshAction extends AbstractAction {
   }
 
   public async handle({ schema }: ParamsInterface): Promise<ResultInterface> {
+    if (!!env('APP_DISABLE_STATS_REFRESH', false)) {
+      return;
+    }
     const cn = await this.pg.getClient().connect();
     try {
       const views = await cn.query<MatviewItem>({
