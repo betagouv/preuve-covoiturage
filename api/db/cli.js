@@ -17,16 +17,19 @@ function tlsSetup(key, baseEnvKey) {
   return { [key]: cert };
 }
 const postgresTls = {
+  rejectUnauthorized: false,
   ...tlsSetup('ca', 'APP_POSTGRES_CA'),
   ...tlsSetup('cert', 'APP_POSTGRES_CERT'),
   ...tlsSetup('key', 'APP_POSTGRES_KEY'),
 };
 
-const dbUrl = new URL(process.env.APP_POSTGRES_URL);
+const dbUrl = URL.parse(process.env.APP_POSTGRES_URL);
+const [user, ...password] = dbUrl.auth.split(':');
+
 const config = {
       driver: 'pg',
-      user: dbUrl.username,
-      password: dbUrl.password,
+      user,
+      password: password.join(''),
       host: dbUrl.hostname,
       database: dbUrl.pathname.replace('/', ''),
       port: parseInt(dbUrl.port),

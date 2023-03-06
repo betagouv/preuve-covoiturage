@@ -9,3 +9,6 @@ yarn-error.log
 !docker/dashboard
 dashboard/src/environments/environment.review.ts
 tmp
+*.pem
+*.crt
+*.key

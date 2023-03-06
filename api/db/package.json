@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "geo:import": "POSTGRES_SCHEMA=geo evolution-geo import",
-    "up": "db-migrate up",
-    "down": "db-migrate down",
+    "up": "node cli.js",
+    "down": "exit 0",
     "build": "exit 0",
     "watch": "exit 0",
     "test:unit": "exit 0",
