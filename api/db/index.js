@@ -23,13 +23,17 @@ function setInstance(config, instance) {
   return instance;
 }
 
-async function migrate(config, ...args) {
+async function migrate(config, skipDatasets = true, ...args) {
     const geoInstance = GeoMigrator.buildMigrator({
       pool: config,
-      app: {
-        targetSchema: 'geo',
-        datasets: [],
-      },
+      ...(
+        skipDatasets ? {
+          app: {
+            targetSchema: 'geo',
+            datasets: [],
+          },
+        } : {}
+      ),
     });
     await geoInstance.prepare();
     await geoInstance.run();
