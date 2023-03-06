@@ -24,22 +24,26 @@ function setInstance(config, instance) {
 }
 
 async function migrate(config, skipDatasets = true, ...args) {
-    const geoInstance = GeoMigrator.buildMigrator({
-      pool: config,
-      ...(
-        skipDatasets ? {
-          app: {
-            targetSchema: 'geo',
-            datasets: [],
-          },
-        } : {}
-      ),
-    });
-    await geoInstance.prepare();
-    await geoInstance.run();
-    await geoInstance.pool.end();
-    const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
-    await instance.up(...args);
+    if(!('SKIP_GEO_MIGRATIONS' in process.env)) {
+      const geoInstance = GeoMigrator.buildMigrator({
+        pool: config,
+        ...(
+          skipDatasets ? {
+            app: {
+              targetSchema: 'geo',
+              datasets: [],
+            },
+          } : {}
+        ),
+      });
+      await geoInstance.prepare();
+      await geoInstance.run();
+      await geoInstance.pool.end();
+    }
+    if(!('SKIP_SQL_MIGRATIONS' in process.env)) {
+      const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
+      await instance.up(...args);
+    }
 }
 
 async function createDatabase(config, name) {
