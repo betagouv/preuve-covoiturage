@@ -17,7 +17,6 @@ function tlsSetup(key, baseEnvKey) {
   return { [key]: cert };
 }
 const postgresTls = {
-  rejectUnauthorized: false,
   ...tlsSetup('ca', 'APP_POSTGRES_CA'),
   ...tlsSetup('cert', 'APP_POSTGRES_CERT'),
   ...tlsSetup('key', 'APP_POSTGRES_KEY'),
@@ -33,8 +32,8 @@ const config = {
       host: dbUrl.hostname,
       database: dbUrl.pathname.replace('/', ''),
       port: parseInt(dbUrl.port),
-  ...(Object.keys(postgresTls).length ? { ssl: postgresTls } : {}),
-    };
+  ...(Object.keys(postgresTls).length ? { ssl: {...postgresTls, rejectUnauthorized: false }} : {}),
+};
 
 migrate(config, false)
   .then(() => console.log('Done'))

@@ -5,8 +5,7 @@
   "license": "Apache-2.0",
   "main": "index.js",
   "scripts": {
-    "geo:import": "POSTGRES_SCHEMA=geo evolution-geo import",
-    "up": "node cli.js",
+    "up": "POSTGRES_SCHEMA=geo node cli.js",
     "down": "exit 0",
     "build": "exit 0",
     "watch": "exit 0",
