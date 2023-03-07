@@ -7,7 +7,7 @@ export enum RPCErrorLevel {
   DEBUG = 20,
 }
 
-export type RPCErrorData = string | { message: string; level: RPCErrorLevel; [k: string]: any } | undefined;
+export type RPCErrorData = string | { message: string; level: RPCErrorLevel; [key: string]: any } | undefined;
 
 // TODO legacy stuff to simplify
 export type RPCErrorType = {

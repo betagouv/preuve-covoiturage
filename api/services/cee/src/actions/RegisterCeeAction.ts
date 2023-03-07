@@ -91,7 +91,12 @@ export class RegisterCeeAction extends AbstractAction {
         driving_license: params['driving_license'],
         phone_trunc: params['phone_trunc'],
         operator_journey_id: params['operator_journey_id'],
-        application_id: e instanceof ConflictException ? e.rpcError.data?.uuid : undefined,
+        application_id:
+          e instanceof ConflictException
+            ? typeof e.rpcError.data === 'string'
+              ? typeof e.rpcError.data
+              : e.rpcError.data?.uuid
+            : undefined,
       };
       try {
         await this.ceeRepository.registerApplicationError(errorData);
