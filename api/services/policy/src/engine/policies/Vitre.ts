@@ -32,6 +32,7 @@ export const Vitre: PolicyHandlerStaticInterface = class
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {
       start: 15_000,
+      end: 30_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];
