@@ -65,21 +65,25 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
+      { distance: 1_000, driver_identity_uuid: 'one' },
       { distance: 5_000, driver_identity_uuid: 'one' },
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
+      { distance: 20_000, driver_identity_uuid: 'two' },
       { distance: 25_000, driver_identity_uuid: 'two' },
       { distance: 25_000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
+      { distance: 40_000, driver_identity_uuid: 'two' },
       { distance: 55_000, driver_identity_uuid: 'two' },
       { distance: 80_000, driver_identity_uuid: 'two' },
+      { distance: 90_000, driver_identity_uuid: 'two' },
     ],
     meta: [],
   },
   {
-    incentive: [100, 200, 150, 150, 300, 300],
+    incentive: [0, 100, 200, 100, 150, 150, 300, 300, 300, 0],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1200,
+        value: 1600,
       },
     ],
   },
