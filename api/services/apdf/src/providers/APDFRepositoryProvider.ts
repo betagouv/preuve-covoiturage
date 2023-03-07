@@ -77,11 +77,11 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
           from policy.incentives pi
           join carpool.carpools cc on cc._id = pi.carpool_id
           where
-                cc.datetime >= $1
-            and cc.datetime <  $2
-            and cc.status = 'ok'
-            and cc.operator_id = $3
+                pi.datetime >= $1
+            and pi.datetime <  $2
             and pi.policy_id = $4
+            and pi.status = 'validated'
+            and cc.operator_id = $3
           )
         select
           count(acquisition_id)::int as total_count,

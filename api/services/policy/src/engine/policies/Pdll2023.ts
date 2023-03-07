@@ -21,17 +21,22 @@ import {
 } from '../helpers';
 import { isAdultOrThrow } from './../helpers/isAdultOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Pdll.html';
+import { description } from './Pdll2023.html';
 
 // Politique de Pays de la Loire
 /* eslint-disable-next-line */
 export const Pdll2023: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'pdll_2023';
   protected slices: RunnableSlices = [
-    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
+    { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
     {
       start: 20_000,
+      end: 40_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+    },
+    {
+      start: 40_000,
+      fn: (ctx: StatelessContextInterface) => 0,
     },
   ];
 
