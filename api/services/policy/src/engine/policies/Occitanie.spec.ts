@@ -81,15 +81,16 @@ test(
     carpool: [
       { distance: 5_000, driver_identity_uuid: 'one' },
       { distance: 25_000, driver_identity_uuid: 'two' },
+      { distance: 30_000, driver_identity_uuid: 'two', passenger_identity_uuid: 'one' },
     ],
     meta: [],
   },
   {
-    incentive: [190, 200],
+    incentive: [190, 200, 200],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 390,
+        value: 590,
       },
     ],
   },

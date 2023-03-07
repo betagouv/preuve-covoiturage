@@ -55,7 +55,7 @@ export const Occitanie: PolicyHandlerStaticInterface = class
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { max: 30_000 });
+    onDistanceRangeOrThrow(ctx, { max: 30_001 });
     isOperatorClassOrThrow(ctx, this.operator_class);
     // Pas le dimanche
     if (onWeekday(ctx, { days: [0] })) {
