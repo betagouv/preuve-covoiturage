@@ -5,21 +5,10 @@ export const schema = {
   required: ['policy_id'],
   properties: {
     policy_id: { macro: 'serial' },
+    from: { macro: 'timestamp' },
+    to: { macro: 'timestamp' },
     tz: { macro: 'tz' },
-    // do not cast input dates yet
-    // it will be properly handled in the action
-    // depending on the timezone from the user
-    // or the policy
-    override_from: {
-      type: 'string',
-      format: 'date-time',
-      maxLength: 64,
-    },
-    override_until: {
-      type: 'string',
-      format: 'date-time',
-      maxLength: 64,
-    },
+    override: { type: 'boolean' },
   },
 };
 

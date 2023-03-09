@@ -1,11 +1,12 @@
 import { Timezone } from '@pdc/provider-validator';
 
-export type ParamsInterface = {
-  policy_id?: number;
-  override_from?: Date | string;
-  override_until?: Date | string;
-  tz?: Timezone;
-};
+export type ParamsInterface = Partial<{
+  policy_id: number;
+  from: Date;
+  to: Date;
+  tz: Timezone;
+  override: boolean;
+}>;
 
 export type ResultInterface = void;
 

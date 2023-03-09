@@ -20,34 +20,27 @@ export function toTzString(d: Date, tz?: Timezone): string {
   }
 }
 
-export function castUserStringToUTC(tz: Timezone, dates: Array<Date | string | undefined | null>): Date[] {
-  const cast: Date[] = [];
-  for (const d of dates) {
-    if (d === null || typeof d === 'undefined') continue;
+export function castUserStringToUTC(d: Date | string | undefined | null, tz?: Timezone): Date | undefined {
+  if (d === null || typeof d === 'undefined') return;
 
-    // a JS Date doesn't need to me offset.
-    // the User must set the right timezone by himself
-    if (typeof d !== 'string') {
-      cast.push(d);
-      continue;
-    }
-
-    // a short-form date (YYYY-MM-DD) has no timezone
-    // the User timezone is applied and the date is converted to UTC
-    if (/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(d)) {
-      cast.push(zonedTimeToUtc(d, tz || defaultTz));
-      continue;
-    }
-
-    // a full-short date (YYYY-MM-DDTHH:mm:ssZZ) has a timezone
-    // it is converted to UTC by the Date object
-    const dd = new Date(d);
-    if (dd.toString() === 'Invalid Date') continue;
-
-    cast.push(dd);
+  // a JS Date doesn't need to be offset.
+  // the User must set the right timezone by himself
+  if (typeof d !== 'string') {
+    return d;
   }
 
-  return cast;
+  // a short-form date (YYYY-MM-DD) has no timezone
+  // the User timezone is applied and the date is converted to UTC
+  if (/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(d)) {
+    return zonedTimeToUtc(d, tz || defaultTz);
+  }
+
+  // a full-short date (YYYY-MM-DDTHH:mm:ssZZ) has a timezone
+  // it is converted to UTC by the Date object
+  const dd = new Date(d);
+  if (dd.toString() === 'Invalid Date') return;
+
+  return dd;
 }
 
 export function today(tz?: Timezone): Date {

@@ -1,10 +1,16 @@
-import { ContextType, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
+import {
+  ContextType,
+  handler,
+  InitHookInterface,
+  InvalidParamsException,
+  KernelInterfaceResolver,
+  NotFoundException,
+} from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { isAfter, subDays } from 'date-fns';
-
 import { Policy } from '../engine/entities/Policy';
-import { castUserStringToUTC, today, toTzString } from '../helpers/dates.helper';
+import { today, toTzString } from '../helpers/dates.helper';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
@@ -70,38 +76,34 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
 
     console.debug('[policies] stateless starting');
 
+    // either dispatch the same action for all active policies to the worker
+    // or process current policy with given dates or defaults
     if (!('policy_id' in params)) {
-      console.debug('[policies] dispatch processing for all active policies');
       await this.dispatch();
-      return;
+    } else {
+      const { from, to, tz, override } = params;
+      await this.processPolicy(params.policy_id, from ?? subDays(today(tz), 7), to ?? today(tz), override);
     }
 
-    // cast input dates and process stateless
-    const { override_from, override_until, tz } = params;
-    let [from, until] = castUserStringToUTC(tz, [override_from, override_until]);
-
-    // apply defaults
-    from = from ?? subDays(today(tz), 7);
-    until = until ?? today(tz);
-
-    await this.processPolicy(params.policy_id, from, until);
     console.debug('[policies] stateless finished');
   }
 
   protected async dispatch(): Promise<void> {
     const policies = await this.policyRepository.findWhere({ status: 'active' });
     for (const policy of policies) {
+      console.debug(`[policies] dispatch processing for active policy ${policy._id}`);
       this.kernel.notify<ParamsInterface>(handlerSignature, { policy_id: policy._id }, this.context);
     }
   }
 
-  protected async processPolicy(policy_id: number, override_from: Date, override_until: Date): Promise<void> {
-    console.debug(
-      `[policy ${policy_id}] starting` + ` from ${toTzString(override_from)}` + ` until ${toTzString(override_until)}`,
-    );
-
+  protected async processPolicy(policy_id: number, from: Date, to: Date, override = false): Promise<void> {
     // 1. Find policy
-    const policy = await Policy.import(await this.policyRepository.find(policy_id));
+    const pol = await this.policyRepository.find(policy_id);
+    if (!pol) {
+      throw new NotFoundException(`[policy ${policy_id}] Not found`);
+    }
+
+    const policy = await Policy.import(pol);
 
     // init counter and benchmark
     const bench = new Date();
@@ -109,11 +111,20 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     let counter = 0;
 
     // 2. Start a cursor to find trips
-    const batchSize = 50;
-    const start = isAfter(override_from, policy.start_date) ? override_from : policy.start_date;
-    const end = isAfter(policy.end_date, override_until) ? override_until : policy.end_date;
+    const start = isAfter(from, policy.start_date) ? from : policy.start_date;
+    const end = isAfter(policy.end_date, to) ? to : policy.end_date;
+    const s = toTzString(start);
+    const e = toTzString(end);
 
-    const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, !!override_from);
+    // throw if no time span
+    if (end.getTime() - start.getTime() < 1) {
+      throw new InvalidParamsException(`[policy ${policy._id}] Invalid time span (from ${s} to ${e})`);
+    }
+
+    console.debug(`[policy ${policy_id}] starting from ${s} to ${e}`);
+
+    const batchSize = 50;
+    const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, override);
     let done = false;
 
     do {
