@@ -32,6 +32,7 @@ test.serial('Should find carpools', async (t) => {
     territory_selector: { aom: ['217500016'] },
     start_date,
     end_date,
+    tz: 'Europe/Paris',
     name: 'Policy',
     handler: Idfm.id,
     status: 'active',

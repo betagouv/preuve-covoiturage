@@ -57,6 +57,7 @@ export class SimulateOnPastAction extends AbstractAction {
       status: 'active',
       start_date,
       end_date: today,
+      tz: 'Europe/Paris',
       incentive_sum: 0,
       territory_selector,
       max_amount: 10_000_000_00,

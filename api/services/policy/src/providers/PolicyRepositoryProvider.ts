@@ -73,6 +73,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           pp.name,
           pp.start_date,
           pp.end_date,
+          pp.tz,
           pp.handler,
           pp.status,
           pp.territory_id,

@@ -96,46 +96,48 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     // 1. Find policy
     const policy = await Policy.import(await this.policyRepository.find(policy_id));
 
-    // benchmark
-    const totalStart = new Date();
-    let total = 0;
-    let counter = 0;
+    console.debug(policy);
 
-    // 2. Start a cursor to find trips
-    const batchSize = 50;
-    const startParam = override_from ?? sub(startOfToday(), { days: 7 });
-    const endParam = override_until ?? new Date();
-    const start = isAfter(startParam, policy.start_date) ? startParam : policy.start_date;
-    const end = isAfter(policy.end_date, endParam) ? endParam : policy.end_date;
-    const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, !!override_from);
-    let done = false;
+    //   // benchmark
+    //   const totalStart = new Date();
+    //   let total = 0;
+    //   let counter = 0;
 
-    do {
-      const start = new Date();
-      const incentives: Array<StatelessIncentiveInterface> = [];
-      const results = await cursor.next();
-      done = results.done;
-      if (results.value) {
-        for (const carpool of results.value) {
-          // 3. For each trip, process
-          counter++;
-          incentives.push(await policy.processStateless(carpool));
-        }
-      }
+    //   // 2. Start a cursor to find trips
+    //   const batchSize = 50;
+    //   const startParam = override_from ?? sub(startOfToday(), { days: 7 });
+    //   const endParam = override_until ?? new Date();
+    //   const start = isAfter(startParam, policy.start_date) ? startParam : policy.start_date;
+    //   const end = isAfter(policy.end_date, endParam) ? endParam : policy.end_date;
+    //   const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, !!override_from);
+    //   let done = false;
 
-      // 4. Save incentives
-      console.debug(`[policy ${policy_id}] stored ${incentives.length} incentives`);
-      await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
+    //   do {
+    //     const bs = new Date(); // benchmark start
+    //     const incentives: Array<StatelessIncentiveInterface> = [];
+    //     const results = await cursor.next();
+    //     done = results.done;
+    //     if (results.value) {
+    //       for (const carpool of results.value) {
+    //         // 3. For each trip, process
+    //         counter++;
+    //         incentives.push(await policy.processStateless(carpool));
+    //       }
+    //     }
 
-      // benchmark
-      const ms = new Date().getTime() - start.getTime();
-      console.debug(
-        `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(3)}/s)`,
-      );
-      total += counter;
-      counter = 0;
-    } while (!done);
+    //     // 4. Save incentives
+    //     console.debug(`[policy ${policy_id}] stored ${incentives.length} incentives`);
+    //     await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
 
-    console.debug(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - totalStart.getTime()}ms`);
+    //     // benchmark
+    //     const ms = new Date().getTime() - bs.getTime();
+    //     console.debug(
+    //       `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(3)}/s)`,
+    //     );
+    //     total += counter;
+    //     counter = 0;
+    //   } while (!done);
+
+    //   console.debug(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - totalStart.getTime()}ms`);
   }
 }

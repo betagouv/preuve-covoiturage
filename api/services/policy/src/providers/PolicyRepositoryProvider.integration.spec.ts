@@ -25,6 +25,7 @@ function makePolicy(data: Partial<SerializedPolicyInterface> = {}): Omit<Seriali
     name: 'policy',
     start_date,
     end_date,
+    tz: 'Europe/Paris',
     status: 'draft',
     handler: 'Idfm',
     incentive_sum: 5000,

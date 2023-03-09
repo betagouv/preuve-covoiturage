@@ -4,12 +4,13 @@ const GeoMigrator = require('@betagouvpdc/evolution-geo');
 const instances = new Map();
 
 async function createInstance(config) {
+  const silent = !('APP_MIGRATOR_VERBOSE' in process.env);
   const instance = DBMigrate.getInstance(true, {
         config: { dev: config },
         cwd: __dirname,
         throwUncatched: true,
     });
-    instance.silence(true);
+    instance.silence(silent);
     await instance.registerAPIHook();
     return instance;
 }
