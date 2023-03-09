@@ -1,9 +1,11 @@
 import { ContextType, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { isAfter, startOfToday, sub } from 'date-fns';
+import { isAfter, startOfDay, startOfToday, sub, subDays } from 'date-fns';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 import { Policy } from '../engine/entities/Policy';
+import { castUserStringToUTC, toISOString, toTzString, today } from '../helpers/dates.helper';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
@@ -75,7 +77,15 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       return;
     }
 
-    await this.processPolicy(params.policy_id, params.override_from, params.override_until);
+    // cast input dates and process stateless
+    const { override_from, override_until, tz } = params;
+    let [from, until] = castUserStringToUTC(tz, [override_from, override_until]);
+
+    // apply defaults
+    from = from ?? subDays(today(tz), 7);
+    until = until ?? today(tz);
+
+    await this.processPolicy(params.policy_id, from, until);
     console.debug('[policies] stateless finished');
   }
 
@@ -86,58 +96,53 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     }
   }
 
-  protected async processPolicy(policy_id: number, override_from?: Date, override_until?: Date): Promise<void> {
+  protected async processPolicy(policy_id: number, override_from: Date, override_until: Date): Promise<void> {
     console.debug(
-      `[policy ${policy_id}] starting` +
-        ` from ${override_from?.toISOString()}` +
-        ` until ${override_until?.toISOString()}`,
+      `[policy ${policy_id}] starting` + ` from ${toTzString(override_from)}` + ` until ${toTzString(override_until)}`,
     );
 
     // 1. Find policy
     const policy = await Policy.import(await this.policyRepository.find(policy_id));
 
-    console.debug(policy);
+    // init counter and benchmark
+    const bench = new Date();
+    let total = 0;
+    let counter = 0;
 
-    //   // benchmark
-    //   const totalStart = new Date();
-    //   let total = 0;
-    //   let counter = 0;
+    // 2. Start a cursor to find trips
+    const batchSize = 50;
+    const start = isAfter(override_from, policy.start_date) ? override_from : policy.start_date;
+    const end = isAfter(policy.end_date, override_until) ? override_until : policy.end_date;
 
-    //   // 2. Start a cursor to find trips
-    //   const batchSize = 50;
-    //   const startParam = override_from ?? sub(startOfToday(), { days: 7 });
-    //   const endParam = override_until ?? new Date();
-    //   const start = isAfter(startParam, policy.start_date) ? startParam : policy.start_date;
-    //   const end = isAfter(policy.end_date, endParam) ? endParam : policy.end_date;
-    //   const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, !!override_from);
-    //   let done = false;
+    const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, !!override_from);
+    let done = false;
 
-    //   do {
-    //     const bs = new Date(); // benchmark start
-    //     const incentives: Array<StatelessIncentiveInterface> = [];
-    //     const results = await cursor.next();
-    //     done = results.done;
-    //     if (results.value) {
-    //       for (const carpool of results.value) {
-    //         // 3. For each trip, process
-    //         counter++;
-    //         incentives.push(await policy.processStateless(carpool));
-    //       }
-    //     }
+    do {
+      const bs = new Date(); // benchmark start
+      const incentives: Array<StatelessIncentiveInterface> = [];
+      const results = await cursor.next();
+      done = results.done;
+      if (results.value) {
+        for (const carpool of results.value) {
+          // 3. For each trip, process
+          counter++;
+          incentives.push(await policy.processStateless(carpool));
+        }
+      }
 
-    //     // 4. Save incentives
-    //     console.debug(`[policy ${policy_id}] stored ${incentives.length} incentives`);
-    //     await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
+      // 4. Save incentives
+      console.debug(`[policy ${policy_id}] stored ${incentives.length} incentives`);
+      await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
 
-    //     // benchmark
-    //     const ms = new Date().getTime() - bs.getTime();
-    //     console.debug(
-    //       `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(3)}/s)`,
-    //     );
-    //     total += counter;
-    //     counter = 0;
-    //   } while (!done);
+      // benchmark
+      const ms = new Date().getTime() - bs.getTime();
+      console.debug(
+        `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(3)}/s)`,
+      );
+      total += counter;
+      counter = 0;
+    } while (!done);
 
-    //   console.debug(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - totalStart.getTime()}ms`);
+    console.debug(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - bench.getTime()}ms`);
   }
 }
