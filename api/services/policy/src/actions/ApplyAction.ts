@@ -1,11 +1,10 @@
 import { ContextType, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { isAfter, startOfDay, startOfToday, sub, subDays } from 'date-fns';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { isAfter, subDays } from 'date-fns';
 
 import { Policy } from '../engine/entities/Policy';
-import { castUserStringToUTC, toISOString, toTzString, today } from '../helpers/dates.helper';
+import { castUserStringToUTC, today, toTzString } from '../helpers/dates.helper';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,

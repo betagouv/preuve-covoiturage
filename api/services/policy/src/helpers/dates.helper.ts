@@ -1,6 +1,6 @@
 import { Timezone } from '@pdc/provider-validator';
-import { format } from 'date-fns';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { addDays, addMonths, startOfMonth, subDays } from 'date-fns';
+import { formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 export const defaultTz = 'Europe/Paris';
 
@@ -12,9 +12,9 @@ export function toISOString(d: Date): string {
   }
 }
 
-export function toTzString(d: Date): string {
+export function toTzString(d: Date, tz?: Timezone): string {
   try {
-    return format(d, "yyyy-MM-dd'T'HH:mm:ssXX");
+    return formatInTimeZone(d, tz || defaultTz, "yyyy-MM-dd'T'HH:mm:ssXX");
   } catch (e) {
     return d?.toString();
   }
@@ -52,4 +52,20 @@ export function castUserStringToUTC(tz: Timezone, dates: Array<Date | string | u
 
 export function today(tz?: Timezone): Date {
   return zonedTimeToUtc(new Date().toISOString().substring(0, 11), tz || defaultTz);
+}
+
+export function addDaysTz(d: Date, days: number, tz?: Timezone): Date {
+  return zonedTimeToUtc(addDays(utcToZonedTime(d, tz || defaultTz), days), tz || defaultTz);
+}
+
+export function subDaysTz(d: Date, days: number, tz?: Timezone): Date {
+  return zonedTimeToUtc(subDays(utcToZonedTime(d, tz || defaultTz), days), tz || defaultTz);
+}
+
+export function addMonthsTz(d: Date, months: number, tz?: Timezone): Date {
+  return zonedTimeToUtc(addMonths(utcToZonedTime(d, tz || defaultTz), months), tz || defaultTz);
+}
+
+export function startOfMonthTz(d: Date, tz?: Timezone): Date {
+  return zonedTimeToUtc(startOfMonth(utcToZonedTime(d, tz || defaultTz)), tz || defaultTz);
 }
