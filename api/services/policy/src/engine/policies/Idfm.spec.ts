@@ -99,6 +99,51 @@ test(
 );
 
 test(
+  'strike days',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      { distance: 23_920, driver_identity_uuid: '1', datetime: new Date('2023-02-07') },
+      { distance: 31_664, driver_identity_uuid: '2', datetime: new Date('2023-02-07') },
+      { distance: 43_373, driver_identity_uuid: '3', datetime: new Date('2023-02-07') },
+      { distance: 13_799, driver_identity_uuid: '4', datetime: new Date('2023-02-07') },
+      { distance: 6_306, driver_identity_uuid: '5', datetime: new Date('2023-02-07') },
+    ],
+    meta: [],
+  },
+  {
+    incentive: [Math.ceil(239 * 1.5), 300 * 1.5, 300 * 1.5, 150 * 1.5, 150 * 1.5],
+    meta: [
+      {
+        key: 'max_amount_restriction.0-1.month.1-2023',
+        value: 359,
+      },
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 1709,
+      },
+      {
+        key: 'max_amount_restriction.0-2.month.1-2023',
+        value: 450,
+      },
+      {
+        key: 'max_amount_restriction.0-3.month.1-2023',
+        value: 450,
+      },
+      {
+        key: 'max_amount_restriction.0-4.month.1-2023',
+        value: 225,
+      },
+      {
+        key: 'max_amount_restriction.0-5.month.1-2023',
+        value: 225,
+      },
+    ],
+  },
+);
+
+test(
   'should work with global limits',
   process,
   {
