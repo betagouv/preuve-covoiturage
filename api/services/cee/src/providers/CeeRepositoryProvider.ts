@@ -127,7 +127,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           cc.operator_class = $3 AND
           cc.datetime >= $4 AND
           cc.datetime < $5 AND
-          cc.distance <= $6 AND
+          (cc.distance <= $6 OR (cc.meta#>'{calc_distance}')::text::int <= $6) AND
           (cc.start_geo_code NOT LIKE $7 OR cc.end_geo_code NOT LIKE $7) AND
           cc.is_driver = true
         ORDER BY cc.datetime DESC
