@@ -20,5 +20,7 @@ export abstract class PolicyRepositoryProviderInterfaceResolver {
     datetime?: Date;
     ends_in_the_future?: boolean;
   }): Promise<SerializedPolicyInterface[]>;
+  abstract listApplicablePoliciesId(): Promise<number[]>;
   abstract activeOperators(policy_id: number): Promise<number[]>;
+  abstract syncMaxAmount(campaign_id: number): Promise<void>;
 }
