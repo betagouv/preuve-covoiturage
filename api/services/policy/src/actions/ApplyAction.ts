@@ -91,6 +91,8 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
 
       // To make sure the apply action has completed before finalizing
       // it is possible to chain the actions.
+      // Warning: Finalize targets ALL pending incentives. It is not restricted
+      //          to a single policy_id
       if (params.finalize) {
         console.info(`[campaign:apply] finalizing policy ${params.policy_id}`);
         const context: ContextType = { channel: { service: 'campaign' } };

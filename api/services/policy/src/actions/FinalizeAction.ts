@@ -1,25 +1,24 @@
-import { handler, KernelInterfaceResolver, InitHookInterface, ParseErrorException } from '@ilos/common';
+import { handler, InitHookInterface, KernelInterfaceResolver, ParseErrorException } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { isValid, parseISO, startOfDay, sub } from 'date-fns';
-
+import { MetadataStore } from '../engine/entities/MetadataStore';
+import { Policy } from '../engine/entities/Policy';
 import {
-  signature as handlerSignature,
+  IncentiveRepositoryProviderInterfaceResolver,
+  IncentiveStatusEnum,
+  MetadataLifetime,
+  MetadataRepositoryProviderInterfaceResolver,
+  PolicyInterface,
+  PolicyRepositoryProviderInterfaceResolver,
+} from '../interfaces';
+import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
+  signature as handlerSignature,
 } from '../shared/policy/finalize.contract';
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-
-import {
-  IncentiveRepositoryProviderInterfaceResolver,
-  MetadataRepositoryProviderInterfaceResolver,
-  PolicyRepositoryProviderInterfaceResolver,
-  IncentiveStatusEnum,
-  MetadataLifetime,
-  PolicyInterface,
-} from '../interfaces';
-import { Policy } from '../engine/entities/Policy';
-import { MetadataStore } from '../engine/entities/MetadataStore';
+import { signature as syncMaxAmountSignature } from '../shared/policy/syncMaxAmount.contract';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
 export class FinalizeAction extends AbstractAction implements InitHookInterface {
@@ -63,6 +62,11 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
       console.debug('[policies] stateful already processing');
       return;
     }
+
+    // resync max_amount for all policies
+    // call the action instead of the repo to avoid having
+    // to duplicate the listing of all campaigns
+    await this.kernel.call(syncMaxAmountSignature, {}, { channel: { service: handlerConfig.service } });
 
     console.time('[policies] stateful');
     const { from, to } = this.getDate(params);
