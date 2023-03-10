@@ -52,6 +52,7 @@ jobs:
           APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}
           APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
           AWS_ACCESS_KEY_ID: minioadmin
+          APP_POSTGRES_TIMEOUT: 120000
           AWS_SECRET_ACCESS_KEY: minioadmin
           AWS_ENDPOINT: http://localhost:9000
           AWS_BUCKET_PREFIX: local-pdc
