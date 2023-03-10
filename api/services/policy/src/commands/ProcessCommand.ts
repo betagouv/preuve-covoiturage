@@ -15,13 +15,15 @@ interface CommandOptions {
   from: string;
   to: string;
   tz: Timezone;
+  finalize: boolean;
+  detach: boolean;
   override: boolean;
 }
 
 @command()
-export class ApplyCommand implements CommandInterface {
-  static readonly signature: string = 'campaign:apply';
-  static readonly description: string = 'Apply stateless campaign rules';
+export class ProcessCommand implements CommandInterface {
+  static readonly signature: string = 'campaign:process';
+  static readonly description: string = 'Process campaign rules';
   static readonly options: CommandOptionType[] = [
     {
       signature: '-c, --campaign <campaign_id>',
@@ -44,6 +46,16 @@ export class ApplyCommand implements CommandInterface {
       default: 'Europe/Paris',
     },
     {
+      signature: '-f, --finalize',
+      description: 'run stateful ',
+      default: false,
+    },
+    {
+      signature: '-d, --detach',
+      description: 'detach execution to background jobs',
+      default: false,
+    },
+    {
       signature: '--override',
       description: 'override existing incentives',
       default: false,
@@ -53,15 +65,12 @@ export class ApplyCommand implements CommandInterface {
   constructor(protected kernel: KernelInterfaceResolver) {}
 
   public async call(options: CommandOptions): Promise<ResultType> {
-    const { campaign: policy_id, tz, override } = options;
+    const { campaign: policy_id, tz, finalize, override } = options;
 
-    const context: ContextType = {
-      channel: { service: 'campaign' },
-      call: { user: {} },
-    };
+    const context: ContextType = { channel: { service: 'campaign' } };
 
     // configure params to pass schema validation
-    const params: { [key: string]: any } = { policy_id, tz, override };
+    const params: Record<string, any> = { policy_id, tz, finalize, override };
 
     if ('from' in options && options.from) {
       params.from = toISOString(castUserStringToUTC(options.from, tz));
@@ -72,7 +81,12 @@ export class ApplyCommand implements CommandInterface {
     }
 
     // call the action
-    await this.kernel.call(signature, params, context);
+    if (options.detach) {
+      console.info(`[campaign:process] run in detached mode`);
+      await this.kernel.notify(signature, params, context);
+    } else {
+      await this.kernel.call(signature, params, context);
+    }
 
     return '';
   }

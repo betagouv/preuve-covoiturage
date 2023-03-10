@@ -24,6 +24,7 @@ import {
   signature as handlerSignature,
 } from '../shared/policy/apply.contract';
 import { alias } from '../shared/policy/apply.schema';
+import { signature } from '../shared/policy/finalize.contract';
 
 @handler({
   ...handlerConfig,
@@ -81,8 +82,20 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     if (!('policy_id' in params)) {
       await this.dispatch();
     } else {
-      const { from, to, tz, override } = params;
-      await this.processPolicy(params.policy_id, from ?? subDays(today(tz), 7), to ?? today(tz), override);
+      const { from: f, to: t, tz, override } = params;
+      const from = f ?? subDays(today(tz), 7);
+      const to = t ?? today(tz);
+
+      console.info(`[campaign:apply] processing policy ${params.policy_id}`);
+      await this.processPolicy(params.policy_id, from, to, override);
+
+      // To make sure the apply action has completed before finalizing
+      // it is possible to chain the actions.
+      if (params.finalize) {
+        console.info(`[campaign:apply] finalizing policy ${params.policy_id}`);
+        const context: ContextType = { channel: { service: 'campaign' } };
+        await this.kernel.call(signature, { from, to }, context);
+      }
     }
 
     console.debug('[policies] stateless finished');

@@ -30,7 +30,7 @@ import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProv
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { SimulateOnPastByGeoAction } from './actions/SimulateOnPastByGeoAction';
 import { GetPastSimulationOrComputeAction } from './actions/GetPastSimulationOrComputeAction';
-import { ApplyCommand } from './commands/ApplyCommand';
+import { ProcessCommand } from './commands/ProcessCommand';
 
 @serviceProvider({
   config,
@@ -63,7 +63,7 @@ import { ApplyCommand } from './commands/ApplyCommand';
     GetPastSimulationOrComputeAction,
     StatsAction,
   ],
-  commands: [ApplyCommand],
+  commands: [ProcessCommand],
   connections: [
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],
