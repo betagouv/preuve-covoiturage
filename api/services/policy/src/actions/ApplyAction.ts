@@ -82,11 +82,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     if (!('policy_id' in params)) {
       await this.dispatch();
     } else {
-      let { from, to, tz, override } = params;
-      from = from ?? subDaysTz(today(tz), 7);
-      to = to ?? today(tz);
-      tz = tz ?? defaultTz;
-      override = !!override;
+      const { from, to, tz, override } = this.defaultParams(params);
 
       console.info(`[campaign:apply] processing policy ${params.policy_id}`);
       await this.processPolicy(params.policy_id, from, to, override);
@@ -103,6 +99,19 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     }
 
     console.debug('[policies] stateless finished');
+  }
+
+  protected defaultParams(params: ParamsInterface): Required<ParamsInterface> {
+    const tz = params.tz ?? defaultTz;
+
+    return {
+      tz,
+      policy_id: params.policy_id,
+      from: params.from ?? subDaysTz(today(tz), 7),
+      to: params.to ?? today(tz),
+      finalize: !!params.finalize,
+      override: !!params.override,
+    };
   }
 
   protected async dispatch(): Promise<void> {

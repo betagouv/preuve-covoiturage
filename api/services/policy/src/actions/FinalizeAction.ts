@@ -64,13 +64,8 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
       return;
     }
 
-    // cast params
     console.time('[policies] stateful');
-    let { from, to, tz, sync_incentive_sum } = params;
-    tz = tz ?? defaultTz;
-    from = from ?? subDaysTz(today(tz), 7);
-    to = to ?? today(tz);
-    sync_incentive_sum = !!sync_incentive_sum;
+    const { from, to, sync_incentive_sum } = this.defaultParams(params);
 
     // resync incentive_sum for all policies
     // call the action instead of the repo to avoid having
@@ -108,6 +103,17 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
       // Release the lock ?
       console.timeEnd('[policies] stateful');
     }
+  }
+
+  protected defaultParams(params: ParamsInterface): Required<ParamsInterface> {
+    const tz = params.tz ?? defaultTz;
+
+    return {
+      tz,
+      from: params.from ?? subDaysTz(today(tz), 7),
+      to: params.to ?? today(tz),
+      sync_incentive_sum: !!params.sync_incentive_sum,
+    };
   }
 
   protected async processStatefulPolicies(
