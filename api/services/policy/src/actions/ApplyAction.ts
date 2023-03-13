@@ -10,7 +10,7 @@ import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { isAfter } from 'date-fns';
 import { Policy } from '../engine/entities/Policy';
-import { subDaysTz, today, toTzString } from '../helpers/dates.helper';
+import { defaultTz, subDaysTz, today, toTzString } from '../helpers/dates.helper';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
@@ -82,9 +82,11 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     if (!('policy_id' in params)) {
       await this.dispatch();
     } else {
-      const { from: f, to: t, tz, override } = params;
-      const from = f ?? subDaysTz(today(tz), 7);
-      const to = t ?? today(tz);
+      let { from, to, tz, override } = params;
+      from = from ?? subDaysTz(today(tz), 7);
+      to = to ?? today(tz);
+      tz = tz ?? defaultTz;
+      override = !!override;
 
       console.info(`[campaign:apply] processing policy ${params.policy_id}`);
       await this.processPolicy(params.policy_id, from, to, override);
@@ -96,7 +98,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       if (params.finalize) {
         console.info(`[campaign:apply] finalizing policy ${params.policy_id}`);
         const context: ContextType = { channel: { service: 'campaign' } };
-        await this.kernel.call(signature, { from, to }, context);
+        await this.kernel.call(signature, { from, to, tz, sync_incentive_sum: true }, context);
       }
     }
 
