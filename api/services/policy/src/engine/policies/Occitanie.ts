@@ -1,4 +1,5 @@
 import {
+  BoundedSlices,
   OperatorsEnum,
   PolicyHandlerInterface,
   PolicyHandlerParamsInterface,
@@ -7,26 +8,21 @@ import {
 } from '../../interfaces';
 import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
-  isOperatorClassOrThrow,
-  onDistanceRangeOrThrow,
-  watchForGlobalMaxAmount,
-  LimitTargetEnum,
-  startsAndEndsAt,
-  ConfiguredLimitInterface,
-  watchForPersonMaxTripByDay,
-  onWeekday,
   isAfter,
+  isOperatorClassOrThrow,
   isOperatorOrThrow,
+  LimitTargetEnum,
+  onDistanceRangeOrThrow,
+  onWeekday,
+  startsAndEndsAt,
+  watchForGlobalMaxAmount,
+  watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Occitanie.html';
 
 function getContribution(ctx: StatelessContextInterface): number {
-  return (
-    (ctx.carpool.passenger_meta?.payments || []).find(
-      (p) => p.type === 'payment' && p.siret === ctx.carpool.operator_siret,
-    )?.amount || 0
-  );
+  return ctx.carpool.passenger_payment || 0;
 }
 
 // Politique de la région Occitanie
@@ -43,21 +39,23 @@ export const Occitanie: PolicyHandlerStaticInterface = class
     OperatorsEnum.Mobicoop,
   ];
   protected operator_class = ['B', 'C'];
-  protected glob_limit = 70_000_00;
-  protected slices = [
-    { start: 0, end: 10_000 },
-    { start: 10_000, end: 30_000 },
+  protected slices: BoundedSlices = [
+    { start: 0, end: 20_000 },
+    { start: 20_000, end: 30_000 },
   ];
 
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['E8E1B5F5-64D5-48B9-8BBB-A64C33C500D8', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['CB39AF21-5ED5-4792-AA81-1F19EACB901C', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
-    ['6D6D0BBA-09C1-40C4-B3C7-2EECF1C6A2A3', this.glob_limit, watchForGlobalMaxAmount],
-  ];
+  constructor(public max_amount: number) {
+    super();
+    this.limits = [
+      ['E8E1B5F5-64D5-48B9-8BBB-A64C33C500D8', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['CB39AF21-5ED5-4792-AA81-1F19EACB901C', 2, watchForPersonMaxTripByDay, LimitTargetEnum.Passenger],
+      ['6D6D0BBA-09C1-40C4-B3C7-2EECF1C6A2A3', max_amount, watchForGlobalMaxAmount],
+    ];
+  }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { max: 30_000 });
+    onDistanceRangeOrThrow(ctx, { max: 30_001 });
     isOperatorClassOrThrow(ctx, this.operator_class);
     // Pas le dimanche
     if (onWeekday(ctx, { days: [0] })) {
@@ -98,7 +96,7 @@ export const Occitanie: PolicyHandlerStaticInterface = class
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: this.glob_limit,
+        glob: this.max_amount,
       },
     };
   }

@@ -108,10 +108,13 @@ services:
       APP_RATE_LIMIT_MAX_FACTOR: '0'
       APP_DATAGOUV_URL: http://data-gouv-url
       APP_DATAGOUV_KEY: thisIsASecret
+      APP_CEE_PUBLIC_KEY_PATH: /app/certs/publicKey.pem
+      APP_CEE_PRIVATE_KEY_PATH: /app/certs/privateKey.pem
       PORT: 8080
       NODE_ENV: local
       APP_ENV: local
       APP_INSEE_API_KEY: ${APP_INSEE_API_KEY}
+      NX_CLOUD_ACCESS_TOKEN: ${NX_CLOUD_ACCESS_TOKEN}
       APP_USER_REGISTRATION_ENABLED: 'true'
     networks:
       - back
@@ -128,6 +131,8 @@ services:
       - 'traefik.http.routers.api.entrypoints=websecure'
       - 'traefik.http.routers.api.tls=true'
       - 'traefik.http.services.api.loadbalancer.server.port=8080'
+    volumes:
+      - ${PWD}/docker/api/certs:/app/certs:ro
 
   worker:
     build:
@@ -153,6 +158,7 @@ services:
       APP_DATAGOUV_URL: http://data-gouv-url
       APP_DATAGOUV_KEY: thisIsASecret
       APP_INSEE_API_KEY: ${APP_INSEE_API_KEY}
+      NX_CLOUD_ACCESS_TOKEN: ${NX_CLOUD_ACCESS_TOKEN}
       APP_USER_REGISTRATION_ENABLED: 'true'
       PORT: 8080
       NODE_ENV: local

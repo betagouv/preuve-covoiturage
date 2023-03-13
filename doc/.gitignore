@@ -8,3 +8,7 @@ docs/api/providers/*
 !docs/api/providers/README.md
 docs/api/services/*
 !docs/api/services/README.md
+
+# OpenAPI files are copied from api/doc/
+docs/.vuepress/public/specs/*
+!docs/.vuepress/public/specs/.gitkeep

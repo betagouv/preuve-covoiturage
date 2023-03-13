@@ -30,6 +30,10 @@ export class CampaignViewComponent extends DestroyObservable implements OnInit {
     super();
   }
 
+  isDraft(): boolean {
+    return this.campaignUx.status == 'draft';
+  }
+
   ngOnInit(): void {
     this._campaignStoreService
       .getById(Number(this._route.snapshot.paramMap.get('campaignId')))

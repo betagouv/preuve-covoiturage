@@ -9,6 +9,6 @@ export type ResultInterface = ResultWithPagination<LightTripInterface>;
 export const handlerConfig = {
   service: 'trip',
   method: 'list',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

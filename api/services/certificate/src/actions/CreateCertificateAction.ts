@@ -48,15 +48,17 @@ export class CreateCertificateAction extends AbstractAction {
     const { identity, tz, operator_id, start_at, end_at, positions } = this.castParams(params);
 
     // fetch the data for this identity and operator and map to template object
-    const uuidList = await this.findPerson({ identity, operator_id });
+    const identities = await this.findPerson({ identity, operator_id });
+    const id_list = identities.flatMap((i) => i._id);
+    const uuid = identities[0].uuid;
     const operator = await this.findOperator({ operator_id, context });
 
     // fetch the data for this identity and operator and store the compiled data
-    const findParams: FindParamsInterface = { uuidList, operator_id, tz, start_at, end_at, positions };
+    const findParams: FindParamsInterface = { identities: id_list, operator_id, tz, start_at, end_at, positions };
     const carpools: CarpoolInterface[] = await this.carpoolRepository.find(findParams);
     const certificate: CertificateInterface = await this.certRepository.create(
       mapFromCarpools({
-        person: { uuid: uuidList[0] },
+        person: { uuid },
         operator,
         carpools,
         params: { tz, start_at, end_at, positions },

@@ -9,7 +9,7 @@ import { CustomProvider } from '../Providers/CustomProvider';
 
 @serviceProvider({
   config: {
-    redis: { connectionString: env('APP_REDIS_URL', 'redis://127.0.0.1:6379') },
+    redis: env('APP_REDIS_URL', 'redis://127.0.0.1:6379'),
     string: { hello: 'Hello world' },
   },
   providers: [CustomProvider],

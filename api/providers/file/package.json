@@ -17,7 +17,7 @@
     "@ilos/common": "~0",
     "@ilos/core": "~0",
     "@pdc/provider-crypto": "~0",
-    "aws-sdk": "^2.991.0",
-    "axios": "^0.25.0"
+    "aws-sdk": "^2.1289.0",
+    "axios": "^1.2.2"
   }
 }

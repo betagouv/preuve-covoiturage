@@ -7,7 +7,7 @@ import {
 import { applyLimitsOnStatefulStage, applyLimitsOnStatelessStage, ConfiguredLimitInterface } from '../helpers';
 
 export abstract class AbstractPolicyHandler implements PolicyHandlerInterface {
-  protected abstract limits: Array<ConfiguredLimitInterface>;
+  public limits: Array<ConfiguredLimitInterface>;
 
   processStateless(ctx: StatelessContextInterface): void {
     // Mise en place des limites

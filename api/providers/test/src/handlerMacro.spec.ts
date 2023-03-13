@@ -7,7 +7,7 @@ import { handlerMacro, HandlerMacroContext } from './handlerMacro';
 const handlerConfig = {
   service: 'test',
   method: 'hello',
-};
+} as const;
 type ParamsInterface = string;
 type ResultInterface = string;
 

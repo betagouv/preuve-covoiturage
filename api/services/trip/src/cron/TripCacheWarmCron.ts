@@ -102,14 +102,13 @@ export class TripCacheWarmCron extends Action implements InitHookInterface {
         await this.kernel.notify(
           'trip:stats',
           {
-            territory_id,
             tz: 'Europe/Paris',
             date: { start: this.oneYearAgo() },
             group_by: group_by.toLowerCase(),
           },
           {
             channel: { service: handlerConfig.service, metadata: { timeout: 0 } },
-            call: { user: { authorizedZoneCodes, permissions: ['territory.trip.stats'] } },
+            call: { user: { authorizedZoneCodes, territory_id, permissions: ['territory.trip.stats'] } },
           },
         );
       }

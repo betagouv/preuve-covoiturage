@@ -7,6 +7,6 @@ export interface ParamsInterface {
 export const handlerConfig = {
   service: 'honor',
   method: 'save',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

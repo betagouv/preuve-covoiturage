@@ -16,6 +16,6 @@
   "dependencies": {
     "@ilos/common": "~0",
     "@ilos/core": "~0",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^9.0.0"
   }
 }

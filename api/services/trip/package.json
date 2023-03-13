@@ -30,10 +30,9 @@
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-validator": "~0",
     "adm-zip": "^0.5.6",
-    "axios": "^0.25.0",
+    "axios": "^1.2.2",
     "csv-stringify": "^5.6.5",
     "date-fns-tz": "^1.1.6",
-    "exceljs": "^4.3.0",
     "form-data": "^4.0.0",
     "lodash": "^4.17.21",
     "uuid": "^8.3.2"

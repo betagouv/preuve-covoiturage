@@ -1,7 +1,7 @@
 import { provider } from '@ilos/common';
 
 import { SelfCheckPreparator } from '../SelfCheckPreparator';
-import { FraudCheckResult, HandleCheckInterface } from '../../../interfaces';
+import { CheckHandleCallback, HandleCheckInterface } from '../../../interfaces';
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { step } from '../../helpers/math';
 
@@ -16,9 +16,9 @@ export class LowDurationCheck implements HandleCheckInterface<SelfCheckParamsInt
   protected readonly max: number = 300; // above = 0
   protected readonly min: number = 1; // below = 100
 
-  async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
+  async handle(params: SelfCheckParamsInterface, cb: CheckHandleCallback): Promise<void> {
     const { driver_duration, passenger_duration } = params;
-    return Math.max(this.calc(driver_duration), this.calc(passenger_duration));
+    cb(Math.max(this.calc(driver_duration), this.calc(passenger_duration)));
   }
 
   protected calc(duration: number): number {

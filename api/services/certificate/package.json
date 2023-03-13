@@ -13,7 +13,6 @@
     "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
   },
   "main": "./dist/bootstrap.js",
-  "types": "./dist/index.d.ts",
   "config": {
     "workingDir": "./dist",
     "bootstrap": "./bootstrap.js"
@@ -31,5 +30,6 @@
     "@pdc/provider-pdfcert": "~0",
     "@pdc/provider-qrcode": "~0",
     "@pdc/provider-validator": "~0"
-  }
+  },
+  "devDependencies": {}
 }

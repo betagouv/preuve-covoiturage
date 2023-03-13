@@ -1,7 +1,7 @@
 import { PointInterface } from '../shared/common/interfaces/PointInterface';
 import { CarpoolInterface } from '../shared/certificate/common/interfaces/CarpoolInterface';
 export interface FindParamsInterface {
-  uuidList: string[];
+  identities: number[];
   operator_id: number;
   tz: string;
   start_at: Date;

@@ -68,7 +68,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit(): void {
-    this.minDateStart = sub(new Date(), { years: 1 });
+    this.minDateStart = sub(new Date(), { years: 2 });
     this.maxDateEnd = this.authenticationService.isOperatorGroup()
       ? endOfDay(new Date())
       : endOfDay(sub(new Date(), { days: 5 }));

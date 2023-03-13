@@ -1,6 +1,5 @@
 import { KernelInterfaceResolver, NotFoundException, provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import { TerritorySelectorsInterface } from '~/shared/territory/common/interfaces/TerritoryCodeInterface';
 import {
   CreateParamsInterface,
   CreateResultInterface,
@@ -15,6 +14,7 @@ import {
   UpdateParamsInterface,
   UpdateResultInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
+import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,

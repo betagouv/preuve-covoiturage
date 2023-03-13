@@ -1,5 +1,6 @@
 export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
-<p>Campagne d’incitation au covoiturage du <b> jeudi 02 décembre 2021 au mardi 07 février 2023</b>, toute la semaine
+<p>Campagne d’incitation au covoiturage du <b> jeudi 2 décembre 2021 
+                         au dimanche 31 décembre 2023</b>, toute la semaine
 </p>
 <p>Cette campagne est limitée à
   <b>10000000 euros et 10000000 trajets </b>.

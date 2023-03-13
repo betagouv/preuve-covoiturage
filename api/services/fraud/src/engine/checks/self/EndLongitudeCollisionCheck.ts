@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 
-import { FraudCheckResult, HandleCheckInterface } from '../../../interfaces';
+import { CheckHandleCallback, HandleCheckInterface } from '../../../interfaces';
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { SelfCheckPreparator } from '../SelfCheckPreparator';
 import { step } from '../../helpers/math';
@@ -16,8 +16,8 @@ export class EndLongitudeCollisionCheck implements HandleCheckInterface<SelfChec
   protected readonly max: number = 1; // above = 100
   protected readonly min: number = 0.001; // below = 0
 
-  async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
+  async handle(params: SelfCheckParamsInterface, cb: CheckHandleCallback): Promise<void> {
     const { driver_end_lon, passenger_end_lon } = params;
-    return step(Math.abs(passenger_end_lon - driver_end_lon), this.min, this.max);
+    cb(step(Math.abs(passenger_end_lon - driver_end_lon), this.min, this.max));
   }
 }

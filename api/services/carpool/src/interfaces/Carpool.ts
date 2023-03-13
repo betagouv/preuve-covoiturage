@@ -23,6 +23,7 @@ export interface PeopleInterface {
   distance?: number; // TODO: fix this as nullable :)
   cost: number; // TODO: add this !
   meta: PeopleMetaInterface; // TODO: add this !
+  payment: number;
 }
 
 export interface PeopleWithIdInterface extends PeopleInterface {

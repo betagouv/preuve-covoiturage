@@ -55,15 +55,9 @@ export class ExportAction extends Action {
 
     const buildParams: SendExportParamsInterface = {
       type: context.call.user.territory_id ? 'territory' : context.call.user.operator_id ? 'operator' : 'registry',
-      from: {
-        fullname,
-        email,
-      },
+      from: { fullname, email },
       query: {
-        date: {
-          start: start.toISOString(),
-          end: end.toISOString(),
-        },
+        date: { start, end },
         geo_selector: params.geo_selector,
       },
       format: {

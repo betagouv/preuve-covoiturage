@@ -4,7 +4,7 @@ const GeoMigrator = require('@betagouvpdc/evolution-geo');
 const instances = new Map();
 
 async function createInstance(config) {
-    const instance = DBMigrate.getInstance(true, {
+  const instance = DBMigrate.getInstance(true, {
         config: { dev: config },
         cwd: __dirname,
         throwUncatched: true,
@@ -23,22 +23,27 @@ function setInstance(config, instance) {
   return instance;
 }
 
-async function migrate(config, ...args) {
-    const geoInstance = GeoMigrator.buildMigrator({
-      pool: config,
-      app: {
-        targetSchema: 'geo',
-        migrations: [
-          GeoMigrator.datasets.CreateGeoTable,
-          GeoMigrator.datasets.CreateComEvolutionTable,
-        ],
-      },
-    });
-    await geoInstance.prepare();
-    await geoInstance.run();
-    await geoInstance.pool.end();
-    const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
-    await instance.up(...args);
+async function migrate(config, skipDatasets = true, ...args) {
+    if(!('SKIP_GEO_MIGRATIONS' in process.env)) {
+      const geoInstance = GeoMigrator.buildMigrator({
+        pool: config,
+        ...(
+          skipDatasets ? {
+            app: {
+              targetSchema: 'geo',
+              datasets: [],
+            },
+          } : {}
+        ),
+      });
+      await geoInstance.prepare();
+      await geoInstance.run();
+      await geoInstance.pool.end();
+    }
+    if(!('SKIP_SQL_MIGRATIONS' in process.env)) {
+      const instance = getInstance(config) ?? setInstance(config, await createInstance(config));
+      await instance.up(...args);
+    }
 }
 
 async function createDatabase(config, name) {

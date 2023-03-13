@@ -665,7 +665,7 @@ paths:
         ### Données financières
 
         Le principe est de coller au plus près avec la réalité comptable \(transaction usager\) et d'avoir suffisamment d'informations pour recalculer le coût initial du trajet.
-        Ainsi, les propriétés `passenger.contribution` et `driver.revenue` combinées au tableau `icentives` doivent permettre ce calcul.
+        Ainsi, les propriétés `passenger.contribution` et `driver.revenue` combinées au tableau `incentives` doivent permettre ce calcul.
         Ceci afin de s'assurer du respect de la définition du covoiturage et de la bonne application des politiques incitatives gérées par le registre.
         > Les données envoyées en `passenger.contribution` et `driver.revenue` sont utilisées dans les attestations de covoiturage à destination des employeurs (Forfait Mobilités Durables).
 

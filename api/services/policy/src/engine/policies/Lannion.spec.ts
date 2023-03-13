@@ -30,6 +30,8 @@ const defaultCarpool = {
   duration: 2_000,
   distance: 19_000,
   cost: 20,
+  driver_payment: 20,
+  passenger_payment: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
 };
@@ -37,7 +39,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works with exclusion',
+  'should work with exclusion',
   process,
   {
     policy: { handler: Handler.id },
@@ -48,7 +50,7 @@ test(
 );
 
 test(
-  'should works basic',
+  'should work basic',
   process,
   {
     policy: { handler: Handler.id },
@@ -61,21 +63,21 @@ test(
     meta: [],
   },
   {
-    incentive: [220, 420, 520, 270],
+    incentive: [200, 400, 500, 250],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1430,
+        value: 1350,
       },
     ],
   },
 );
 
 test(
-  'should works with global amount limit',
+  'should work with global amount limit',
   process,
   {
-    policy: { handler: Handler.id },
+    policy: { handler: Handler.id, max_amount: 60_684_87 },
     carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {
@@ -100,7 +102,7 @@ test(
 );
 
 test(
-  'should works with driver day limits',
+  'should work with driver day limits',
   process,
   {
     policy: { handler: Handler.id },
@@ -117,11 +119,11 @@ test(
     meta: [],
   },
   {
-    incentive: [220, 220, 220, 220, 220, 220, 0, 0],
+    incentive: [200, 200, 200, 200, 200, 200, 0, 0],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1320,
+        value: 1200,
       },
     ],
   },

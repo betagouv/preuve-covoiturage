@@ -18,7 +18,7 @@ test.beforeEach(async (t) => {
     },
   };
 
-  const connection = new RedisConnection({ connectionString: process.env.APP_REDIS_URL ?? 'redis://127.0.0.1:6379' });
+  const connection = new RedisConnection(process.env.APP_REDIS_URL ?? 'redis://127.0.0.1:6379');
 
   t.context.handler = new (queueHandlerFactory('basic', '0.0.1'))(connection);
   await t.context.handler.init();

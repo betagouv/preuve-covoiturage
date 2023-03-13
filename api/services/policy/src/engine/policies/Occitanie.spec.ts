@@ -33,6 +33,8 @@ const defaultCarpool: CarpoolInterface = {
   start: { ...defaultPosition },
   end: { ...defaultPosition },
   driver_meta: {},
+  driver_payment: 10,
+  passenger_payment: 10,
   passenger_meta: {
     payments: [{ siret: OperatorsEnum.BlaBlaDaily, type: 'payment', amount: 10 }],
   },
@@ -41,7 +43,7 @@ const defaultCarpool: CarpoolInterface = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works with exclusion',
+  'should work with exclusion',
   process,
   {
     policy: { handler: Handler.id },
@@ -55,8 +57,8 @@ test(
       // but not inside same aom if not region
       { start: { ...defaultPosition, aom: 'aom1' }, end: { ...defaultPosition, aom: 'aom1' } },
       { start: { ...defaultPosition, aom: 'aom1' }, end: { ...defaultPosition, aom: 'aom2' } },
-      { passenger_meta: undefined },
-      { passenger_meta: undefined, datetime: new Date('2022-10-28') },
+      { passenger_payment: 0 },
+      { passenger_payment: 0, datetime: new Date('2022-10-28') },
     ],
     meta: [],
   },
@@ -72,32 +74,33 @@ test(
 );
 
 test(
-  'should works basic',
+  'should work basic',
   process,
   {
     policy: { handler: Handler.id },
     carpool: [
       { distance: 5_000, driver_identity_uuid: 'one' },
       { distance: 25_000, driver_identity_uuid: 'two' },
+      { distance: 30_000, driver_identity_uuid: 'two', passenger_identity_uuid: 'one' },
     ],
     meta: [],
   },
   {
-    incentive: [190, 200],
+    incentive: [190, 200, 200],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 390,
+        value: 590,
       },
     ],
   },
 );
 
 test(
-  'should works with global limits',
+  'should work with global limits',
   process,
   {
-    policy: { handler: Handler.id },
+    policy: { handler: Handler.id, max_amount: 70_000_00 },
     carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {
@@ -118,7 +121,7 @@ test(
 );
 
 test(
-  'should works with driver day limits',
+  'should work with driver day limits',
   process,
   {
     policy: { handler: Handler.id },
@@ -145,7 +148,7 @@ test(
 );
 
 test(
-  'should works with passenger day limits',
+  'should work with passenger day limits',
   process,
   {
     policy: { handler: Handler.id },

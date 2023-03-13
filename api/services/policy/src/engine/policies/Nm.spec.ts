@@ -29,6 +29,8 @@ const defaultCarpool = {
   duration: 2_000,
   distance: 19_000,
   cost: 20,
+  driver_payment: 20,
+  passenger_payment: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
 };
@@ -36,7 +38,7 @@ const defaultCarpool = {
 const process = makeProcessHelper(defaultCarpool);
 
 test(
-  'should works with exclusion',
+  'should work with exclusion',
   process,
   {
     policy: { handler: Handler.id },
@@ -53,7 +55,7 @@ test(
 );
 
 test(
-  'should works basic',
+  'should work basic',
   process,
   {
     policy: { handler: Handler.id },
@@ -81,10 +83,10 @@ test(
 );
 
 test(
-  'should works with global amount limit',
+  'should work with global amount limit',
   process,
   {
-    policy: { handler: Handler.id },
+    policy: { handler: Handler.id, max_amount: 10_000_000_00 },
     carpool: [{ distance: 5_000, driver_identity_uuid: 'one' }],
     meta: [
       {
@@ -113,7 +115,7 @@ test(
 );
 
 test(
-  'should works with global trip limit',
+  'should work with global trip limit',
   process,
   {
     policy: { handler: Handler.id },
@@ -148,7 +150,7 @@ test(
 );
 
 test(
-  'should works with driver day limits',
+  'should work with driver day limits',
   process,
   {
     policy: { handler: Handler.id },
@@ -178,7 +180,7 @@ test(
 );
 
 test(
-  'should works with passenger day limits',
+  'should work with passenger day limits',
   process,
   {
     policy: { handler: Handler.id },
@@ -208,7 +210,7 @@ test(
 );
 
 test(
-  'should works with passenger trip limit',
+  'should work with passenger trip limit',
   process,
   {
     policy: { handler: Handler.id },

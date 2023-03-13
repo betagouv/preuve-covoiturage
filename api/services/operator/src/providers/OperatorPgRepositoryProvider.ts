@@ -61,13 +61,17 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return operator;
   }
 
-  async quickFind(_id: number, withThumbnail = false): Promise<{ uuid: string; name: string; thumbnail?: string }> {
+  async quickFind(
+    _id: number,
+    withThumbnail = false,
+  ): Promise<{ uuid: string; name: string; support: string; thumbnail?: string }> {
     const selectThumbnail = withThumbnail ? ", encode(ot.data, 'hex')::text AS thumbnail" : '';
     const joinThumbnail = withThumbnail ? ' LEFT JOIN operator.thumbnails ot ON oo._id = ot.operator_id' : '';
 
     const result = await this.connection.getClient().query({
       text: `
-        SELECT uuid, name ${selectThumbnail} FROM ${this.table} oo
+        SELECT uuid, name ${selectThumbnail}, support
+        FROM ${this.table} oo
         ${joinThumbnail}
         WHERE oo._id = $1
         AND oo.deleted_at IS NULL

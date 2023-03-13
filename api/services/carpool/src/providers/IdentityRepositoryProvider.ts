@@ -163,7 +163,10 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
    * Similar to findUUID but returns a list of all UUID instead of limiting to 1 result.
    * Does not generate a UUID
    */
-  public async findIdentities(identity: IdentityInterface, meta: IdentityMetaInterface): Promise<string[]> {
+  public async findIdentities(
+    identity: IdentityInterface,
+    meta: IdentityMetaInterface,
+  ): Promise<{ _id: number; uuid: string }[]> {
     const opts: Pick<findUuidOptions, 'interval'> = { interval: 0 };
 
     const query = {
@@ -171,7 +174,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
         WITH list AS (
           -- search by complete phone number
           (
-            SELECT uuid, created_at FROM ${this.table}
+            SELECT _id, uuid, created_at FROM ${this.table}
             WHERE phone IS NOT NULL and phone = $1::varchar
             ${opts.interval > 0 ? `AND created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
             ORDER BY created_at DESC
@@ -183,7 +186,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
               ? `
             -- search by phone_trunc + operator_user_id + operator_id
             (
-              SELECT ci.uuid, ci.created_at FROM ${this.table} as ci
+              SELECT ci._id, uuid, ci.created_at FROM ${this.table} as ci
               JOIN carpool.carpools AS cp ON cp.identity_id = ci._id
               WHERE ci.phone_trunc IS NOT NULL AND ci.phone_trunc = $2::varchar
               AND cp.operator_id = $3::int AND ci.operator_user_id = $4::varchar
@@ -194,7 +197,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
               : `
             -- search by operator_user_id and operator_id
             (
-              SELECT ci.uuid, ci.created_at FROM ${this.table} as ci
+              SELECT ci._id, uuid, ci.created_at FROM ${this.table} as ci
               JOIN carpool.carpools AS cp ON cp.identity_id = ci._id
               WHERE ci.operator_user_id IS NOT NULL AND ci.operator_user_id = $4::varchar
               AND cp.operator_id = $3::int
@@ -206,14 +209,14 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
 
           -- search by travel_pass name
           (
-            SELECT uuid, created_at FROM ${this.table}
+            SELECT _id, uuid, created_at FROM ${this.table}
             WHERE phone_trunc IS NOT NULL AND phone_trunc = $2::varchar
             AND travel_pass_name = $5::varchar AND travel_pass_user_id = $6::varchar
             ${opts.interval > 0 ? `AND created_at >= (NOW() - '${opts.interval} days'::interval)::timestamp` : ''}
             ORDER BY created_at DESC
           )
         )
-        SELECT DISTINCT uuid FROM list
+        SELECT _id, uuid FROM list GROUP BY _id, uuid
         `,
       values: [
         identity.phone,
@@ -225,12 +228,12 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
       ],
     };
 
-    const result = await this.connection.getClient().query<{ datetime: Date; uuid: string }>(query);
+    const result = await this.connection.getClient().query<{ _id: number; uuid: string }>(query);
 
     if (!result.rowCount) {
-      throw new NotFoundException('Cannot find UUID for this person');
+      throw new NotFoundException('Cannot find identity for this person');
     }
 
-    return result.rows.flatMap((row) => row.uuid);
+    return result.rows;
   }
 }

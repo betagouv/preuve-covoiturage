@@ -1,41 +1,27 @@
-import { format, subDays, subMonths } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { omit } from 'lodash-es';
-import { BehaviorSubject } from 'rxjs';
-import { PolicyInterface } from './../../../../../../../shared/policy/common/interfaces/PolicyInterface';
-
-import { Component, Input, OnChanges, OnInit, SimpleChange } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { BehaviorSubject, throwError } from 'rxjs';
+import { PolicyInterface } from '~/shared/policy/common/interfaces/PolicyInterface';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { ResultInterface as StatResultInterface } from '~/shared/policy/simulateOnPast.contract';
+import { ResultInterface as SimulateOnPastResult } from '~/shared/policy/simulateOnPast.contract';
 
+import { catchError, debounceTime, map, tap } from 'rxjs/operators';
 import { CampaignApiService } from '../../services/campaign-api.service';
-
-interface SimulationDateRange {
-  startDate: Date;
-  endDate: Date;
-  startDateString: string;
-  endDateString: string;
-  nbMonth: number;
-}
 
 @Component({
   selector: 'app-campaign-simulation-pane',
   templateUrl: './campaign-simulation-pane.component.html',
   styleUrls: ['./campaign-simulation-pane.component.scss'],
 })
-export class CampaignSimulationPaneComponent extends DestroyObservable implements OnInit, OnChanges {
+export class CampaignSimulationPaneComponent extends DestroyObservable implements OnInit {
   @Input() campaign: PolicyInterface;
 
   public loading = true;
-  public state: StatResultInterface = { trip_excluded: 0, trip_subsidized: 0, amount: 0 };
-  public timeState = getTimeState(1);
+  public state: SimulateOnPastResult;
   public range$ = new BehaviorSubject<number>(1);
   public simulatedCampaign$ = new BehaviorSubject<PolicyInterface>(null);
-  public errors = {
-    simulation_failed: false,
-  };
+  public errors_simulation_failed = false;
 
   get months(): number {
     return this.range$.value;
@@ -49,55 +35,37 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
     super();
   }
 
-  ngOnInit(): void {}
-
-  ngOnChanges({ campaign }: { campaign: SimpleChange }): void {
-    const { previousValue, currentValue } = campaign;
-
-    // keys not triggering a refresh
-    const bypassKeys = ['name', 'description'];
-    const hasChanged = !deepEqual(omit(previousValue, bypassKeys), omit(currentValue, bypassKeys));
-    if (hasChanged) this.simulatedCampaign$.next(currentValue);
+  ngOnInit(): void {
+    this.range$
+      .pipe(
+        debounceTime(250),
+        tap(() => {
+          this.loading = true;
+          this.errors_simulation_failed = false;
+        }),
+        map((range: number) => {
+          return {
+            territory_id: this.campaign.territory_id,
+            name: this.campaign.name,
+            handler: this.campaign.handler,
+            months: range,
+          };
+        }),
+      )
+      .subscribe((simulateOnPasParam) => {
+        this.campaignApi
+          .simulate(simulateOnPasParam)
+          .pipe(
+            catchError((err) => {
+              this.errors_simulation_failed = true;
+              this.loading = false;
+              return throwError(err);
+            }),
+          )
+          .subscribe((state: SimulateOnPastResult) => {
+            this.state = state;
+            this.loading = false;
+          });
+      });
   }
-}
-
-/**
- * ------------------------------------------------------------------------------------------------
- *  Helper functions
- * ------------------------------------------------------------------------------------------------
- */
-
-function getTimeState(nbMonth: number): SimulationDateRange {
-  // 5 days ago
-  const endDate = subDays(new Date(), 5);
-  const startDate = subMonths(endDate, nbMonth);
-
-  return {
-    nbMonth,
-    startDate,
-    endDate,
-    startDateString: format(startDate, 'd MMMM yyyy', { locale: fr }),
-    endDateString: format(endDate, 'd MMMM yyyy', { locale: fr }),
-  };
-}
-
-function deepEqual(obj1: any, obj2: any): boolean {
-  if (typeof obj1 === 'undefined' && typeof obj2 === 'undefined') return true;
-  if (typeof obj1 === 'undefined' || typeof obj2 === 'undefined') return false;
-  if (obj1 === obj2) return true;
-  if (isPrimitive(obj1) && isPrimitive(obj2)) return obj1 === obj2;
-  if (Object.keys(obj1).length !== Object.keys(obj2).length) return false;
-
-  // compare objects with same number of keys
-  for (const key in obj1) {
-    if (!(key in obj2)) return false; //other object doesn't have this prop
-    if (!deepEqual(obj1[key], obj2[key])) return false;
-  }
-
-  return true;
-}
-
-//check if value is primitive
-function isPrimitive(obj) {
-  return obj !== Object(obj);
 }

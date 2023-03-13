@@ -1,8 +1,8 @@
 export const description = `<p id="summary">
-  <p>Campagne d’incitation au covoiturage du <b> jeudi 20 mai 2021 au samedi 31 décembre 2022</b>, toute la semaine
+  <p>Campagne d’incitation au covoiturage du <b> jeudi 20 mai 2021 au samedi 31 décembre 2023</b>, toute la semaine
   </p>
   <p>Cette campagne est limitée à
-    <b>6000000 euros </b>.
+    <b>10 300 000,00 euros </b>.
   </p>
   <p>Les <b> conducteurs </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes : </p>
   <ul>
@@ -21,9 +21,17 @@ export const description = `<p id="summary">
     <li><b>Le 18/06/2022</b></li>
     <li><b>Le 6/07/2022</b></li>
     <li><b>Le 10/11/2022</b></li>
+    <li><b>Le 19/01/2023</b></li>
+    <li><b>Le 31/01/2023</b></li>
+    <li><b>Le 07/02/2023</b></li>
+    <li><b>Le 07/03/2023</b></li>
+    <li><b>Le 08/03/2023</b></li>
   </ul>
   <p>
-  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe <b>B ou C</b>.
+  La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe C</b>.
+  <p>
+  Les trajets de classe B ne sont plus éligibles depuis 01/09/2022
+  </p>
   </p>
   <p>Les axes suivants ne sont pas incités : </p>
   <ul>

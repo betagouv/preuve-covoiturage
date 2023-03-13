@@ -39,11 +39,14 @@ export function datetimeIdentityCheckMacro(
           .get<ServiceContainerInterface>(serviceProviderCtor)
           .get<HandleCheckInterface<DatetimeIdentityCheckParamsInterface>>(checkCtor);
         const data = input.map((i) => faker(i));
-        const result = await check.handle(data);
+        const box = {
+          result: undefined,
+        };
+        await check.handle(data, (nb: number) => (box.result = nb));
         t.log(data);
-        t.log(result);
-        t.true(result >= min);
-        t.true(result <= max);
+        t.log(box.result);
+        t.true(box.result >= min);
+        t.true(box.result <= max);
       },
       title(providedTitle = ''): string {
         return `${providedTitle} range`.trim();

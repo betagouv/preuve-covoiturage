@@ -1,7 +1,11 @@
 {
   "jobs": [
     {
-      "command": "0 3 * * 1 yarn workspace @pdc/proxy ilos stats:refresh",
+      "command": "0 3 * * * yarn ilos monitoring:stats:refresh",
+      "size": "M"
+    },
+        {
+      "command": "0 5 6 * * yarn ilos apdf:export",
       "size": "M"
     }
   ]

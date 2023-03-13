@@ -1,6 +1,8 @@
 import anyTest, { TestFn } from 'ava';
 import sinon from 'sinon';
+import { RedisConnection } from '@ilos/connection-redis';
 import { Extensions, Action, ServiceProvider, Kernel } from '@ilos/core';
+import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
 import { handler, serviceProvider, kernel as kernelDecorator, ParamsType, ContextType, ResultType } from '@ilos/common';
 import { QueueTransport } from './QueueTransport';
@@ -69,9 +71,13 @@ test.beforeEach(async (t) => {
   }
 
   @kernelDecorator({
+    config: { redis: {} },
     children: [BasicServiceProvider],
+    connections: [[RedisConnection, 'redis']],
   })
-  class BasicKernel extends Kernel {}
+  class BasicKernel extends Kernel {
+    readonly extensions = [Extensions.Config, ConnectionManagerExtension];
+  }
 
   const kernel = new BasicKernel();
   await kernel.bootstrap();
@@ -105,7 +111,7 @@ test.afterEach((t) => {
 
 test('Queue transport: works', async (t) => {
   const queueTransport = t.context.transport;
-  await queueTransport.up([process.env.APP_REDIS_URL ?? 'redis://localhost']);
+  await queueTransport.up();
   t.is(queueTransport.queues.length, 1);
   t.is(queueTransport.queues[0].worker.name, 'math');
   // @ts-ignore

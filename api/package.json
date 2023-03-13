@@ -22,13 +22,14 @@
   ],
   "scripts": {
     "scalingo-postbuild": "/bin/sh ./scalingo/build.sh",
+    "start": "if [ \"$DO_MIGRATIONS\" ]; then yarn migrate; fi && if [ -z \"$IS_WORKER\" ]; then yarn start:http; else yarn start:queue; fi",
     "start:http": "yarn workspace @pdc/proxy ilos http $PORT",
     "start:queue": "yarn workspace @pdc/proxy ilos queue $APP_REDIS_URL",
     "clean": "rm -rf ./**/dist",
-    "build": "lerna run --scope @pdc/* --sort build",
-    "build:all": "lerna run --sort build",
-    "coverage-ci": "lerna run --parallel --scope @pdc/* coverage-ci",
-    "coverage": "lerna run --parallel --scope @pdc/* coverage",
+    "build": "lerna run build",
+    "watch": "lerna watch -- lerna run build --scope=\\$LERNA_PACKAGE_NAME",
+    "coverage-ci": "lerna run --scope @pdc/* coverage-ci",
+    "coverage": "lerna run --scope @pdc/* coverage",
     "audit:deps": "yarn audit --level moderate --groups dependencies",
     "test:unit": "lerna run test:unit",
     "test:pdc:unit": "lerna run --scope @pdc/* test:unit",
@@ -36,10 +37,8 @@
     "test:integration": "lerna run test:integration",
     "test:pdc:integration": "lerna run --scope @pdc/* test:integration",
     "test:ilos:integration": "lerna run --scope @ilos/* test:integration",
-    "migrate:geo": "POSTGRES_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator geo:import",
-    "migrate:sql": "DATABASE_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator up",
-    "migrate": "if [ -z \"$SKIP_MIGRATIONS\" ]; then yarn migrate:geo && yarn migrate:sql; else echo '>> Migrations skipped'; fi",
-    "process:journey": "yarn workspace @pdc/proxy ilos process:journey"
+    "migrate": "DATABASE_URL=$APP_POSTGRES_URL yarn workspace @pdc/migrator up",
+    "ilos": "yarn workspace @pdc/proxy ilos"
   },
   "keywords": [
     "betagouv",
@@ -59,25 +58,28 @@
     "@types/express": "^4.17.13",
     "@types/express-session": "^1.17.4",
     "@types/google-libphonenumber": "^7.4.19",
-    "@types/helmet": "^4.0.0",
     "@types/jsonwebtoken": "^8.5.5",
-    "@types/node": "^17.0.8",
+    "@types/lodash": "^4.14.191",
+    "@types/node": "16",
     "@types/node-mailjet": "^3.3.7",
     "@types/sinon": "^10.0.3",
     "@types/uuid": "^8.3.1",
-    "ava": "^4.0.0",
-    "axios": "^0.25.0",
-    "lerna": "^6.0.1",
+    "ava": "4",
+    "axios": "^1.2.2",
+    "lerna": "^6.5.1",
     "lodash": "^4.17.21",
+    "nx": "15.7.0",
     "nyc": "^15.1.0",
     "sinon": "^14.0.0",
-    "supertest": "^6.1.6",
-    "ts-node": "^10.4.0",
+    "supertest": "^6.3.3",
+    "ts-node": "^10.9.1",
     "tsconfig-paths": "^3.11.0",
-    "typescript": "^4.4.3"
+    "typescript": "^4.9.4",
+    "@nrwl/nx-cloud": "latest"
   },
   "resolutions": {
     "**/async": "^3.2.3",
-    "**/mapshaper/**/d3-color": "3.1.0"
+    "**/mapshaper/**/d3-color": "3.1.0",
+    "**/@xmldom/xmldom": "0.8"
   }
 }

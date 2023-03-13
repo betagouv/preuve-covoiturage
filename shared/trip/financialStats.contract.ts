@@ -21,6 +21,6 @@ export type ResultInterface = SingleResultInterface[];
 export const handlerConfig = {
   service: 'trip',
   method: 'financialStats',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

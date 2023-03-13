@@ -1,4 +1,3 @@
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,8 +5,11 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   atDate,
+  endsAt,
   isAfter,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -15,38 +17,37 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  endsAt,
   startsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
-import { ConfiguredLimitInterface, LimitTargetEnum } from '../helpers/limits';
-import { description } from './Idfm.html';
+import { LimitTargetEnum } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
+import { description } from './Idfm.html';
 
 // Politique d'Île-de-France Mobilité
 /* eslint-disable-next-line */
 export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = '459';
+
+  constructor(public max_amount: number) {
+    super();
+    this.limits = [
+      ['56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
+      ['99911EAF-89AB-C346-DDD5-BD2C7704F935', max_amount, watchForGlobalMaxAmount],
+    ];
+  }
+
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
-  protected slices = [
+  protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {
       start: 15_000,
       end: 30_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
-    {
-      start: 30_000,
-      end: 150_000,
-      fn: () => 0,
-    },
-  ];
-  protected limits: Array<ConfiguredLimitInterface> = [
-    ['56042464-852C-95B8-2009-8DD4808C9370', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-    ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
-    ['99911EAF-89AB-C346-DDD5-BD2C7704F935', 6_000_000_00, watchForGlobalMaxAmount],
   ];
 
   protected pollutionAndStrikeDates = [
@@ -58,6 +59,11 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     '2022-06-18',
     '2022-07-06',
     '2022-11-10',
+    '2023-01-19',
+    '2023-01-31',
+    '2023-02-07',
+    '2023-03-07',
+    '2023-03-08',
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
@@ -107,7 +113,7 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       slices: this.slices,
       operators: this.operators,
       limits: {
-        glob: 6_000_000_00,
+        glob: this.max_amount,
       },
     };
   }

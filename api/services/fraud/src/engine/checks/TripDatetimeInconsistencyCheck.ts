@@ -1,8 +1,7 @@
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { provider } from '@ilos/common';
 
-import { CheckInterface } from '../../interfaces/CheckInterface';
-import { FraudCheckResult } from '../../interfaces';
+import { CheckHandleCallback, CheckInterface } from '../../interfaces/CheckInterface';
 import { step } from '../helpers/math';
 
 interface TripDatetimeParamsInterface {
@@ -17,7 +16,7 @@ export class TripDatetimeInconsistencyCheck implements CheckInterface<TripDateti
 
   constructor(protected connection: PostgresConnection) {}
 
-  async prepare(acquisitionId: number): Promise<TripDatetimeParamsInterface[]> {
+  async prepare(acquisitionId: number): Promise<TripDatetimeParamsInterface> {
     const query = {
       text: `
         WITH data AS(
@@ -44,10 +43,10 @@ export class TripDatetimeInconsistencyCheck implements CheckInterface<TripDateti
     };
 
     const dbResult = await this.connection.getClient().query(query);
-    return [dbResult.rows.pop()];
+    return dbResult.rows[0];
   }
 
-  async handle(data: TripDatetimeParamsInterface): Promise<FraudCheckResult> {
-    return step(data.start_delta, this.min, this.max);
+  async handle(data: TripDatetimeParamsInterface, cb: CheckHandleCallback): Promise<void> {
+    cb(step(data.start_delta, this.min, this.max));
   }
 }

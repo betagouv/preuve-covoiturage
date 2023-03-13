@@ -13,6 +13,6 @@ export interface ResultInterface extends CompanyInterface {}
 export const handlerConfig = {
   service: 'company',
   method: 'find',
-};
+} as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

@@ -103,6 +103,8 @@ export class SimulateOnFutureAction extends AbstractAction {
       duration: differenceInSeconds(input.passenger.end.datetime, input.passenger.start.datetime),
       distance: input.passenger.distance,
       cost: input.passenger.contribution,
+      driver_payment: input.driver.revenue,
+      passenger_payment: input.passenger.contribution,
       start: await this.territoryRepository.findByPoint(input.passenger.start),
       end: await this.territoryRepository.findByPoint(input.passenger.end),
     };

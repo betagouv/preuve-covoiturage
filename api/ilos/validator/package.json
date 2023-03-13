@@ -20,7 +20,8 @@
     "@ilos/core": "^0.4.1",
     "ajv": "^8.6.3",
     "ajv-formats": "^2.1.1",
-    "ajv-keywords": "^5.0.0"
+    "ajv-keywords": "^5.0.0",
+    "ajv-errors": "^3.0.0"
   },
   "devDependencies": {
     "@types/sinon": "^10.0.3",
