@@ -5,7 +5,6 @@ export type ParamsInterface = Partial<{
   from: Date;
   to: Date;
   tz: Timezone;
-  finalize: boolean;
   override: boolean;
 }>;
 

@@ -3,7 +3,7 @@ import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
-import { defaultTz, subDaysTz, today } from '../helpers/dates.helper';
+import { defaultTz, subDaysTz, today, toTzString } from '../helpers/dates.helper';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStatusEnum,
@@ -80,19 +80,20 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     const policyMap: Map<number, PolicyInterface> = new Map();
 
     try {
-      console.debug(`[policies] stateful starting from ${from ? from.toISOString() : 'start'} to ${to.toISOString()}`);
+      // eslint-disable-next-line prettier/prettier,max-len
+      console.debug(`[policies] stateful starting from ${from ? toTzString(from) : 'start'} until ${to ? toTzString(to) : 'now' }`);
       await this.processStatefulPolicies(policyMap, to, from);
       console.debug('[policies] stateful finished');
 
       // Lock all
-      console.debug(`[policies] lock all incentive until ${to}`);
+      console.debug(`[policies] lock all incentive until ${toTzString(to)}`);
       await this.incentiveRepository.lockAll(to);
       console.debug('[policies] lock finished');
 
       // Release the lock
       await this.policyRepository.releaseLock({ from_date: from, to_date: to });
     } catch (e) {
-      console.debug(`[policies:failure] unlock all incentive until ${to.toISOString()}`);
+      console.debug(`[policies:failure] unlock all incentive until ${toTzString(to)}`);
       await this.incentiveRepository.lockAll(to, true);
       console.debug('[policies:failure] unlock finished');
 

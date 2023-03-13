@@ -8,7 +8,6 @@ export const schema = {
     from: { macro: 'timestamp' },
     to: { macro: 'timestamp' },
     tz: { macro: 'tz' },
-    finalize: { type: 'boolean' },
     override: { type: 'boolean' },
   },
 };

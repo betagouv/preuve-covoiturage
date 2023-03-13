@@ -24,7 +24,6 @@ import {
   signature as handlerSignature,
 } from '../shared/policy/apply.contract';
 import { alias } from '../shared/policy/apply.schema';
-import { signature } from '../shared/policy/finalize.contract';
 
 @handler({
   ...handlerConfig,
@@ -75,30 +74,9 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       return;
     }
 
-    console.debug('[policies] stateless starting');
-
-    // either dispatch the same action for all active policies to the worker
-    // or process current policy with given dates or defaults
-    if (!('policy_id' in params)) {
-      await this.dispatch();
-    } else {
-      const { from, to, tz, override } = this.defaultParams(params);
-
-      console.info(`[campaign:apply] processing policy ${params.policy_id}`);
-      await this.processPolicy(params.policy_id, from, to, override);
-
-      // To make sure the apply action has completed before finalizing
-      // it is possible to chain the actions.
-      // Warning: Finalize targets ALL pending incentives. It is not restricted
-      //          to a single policy_id
-      if (params.finalize) {
-        console.info(`[campaign:apply] finalizing policy ${params.policy_id}`);
-        const context: ContextType = { channel: { service: 'campaign' } };
-        await this.kernel.call(signature, { from, to, tz, sync_incentive_sum: true }, context);
-      }
-    }
-
-    console.debug('[policies] stateless finished');
+    const { from, to, override } = this.defaultParams(params);
+    console.info(`[campaign:apply] processing policy ${params.policy_id}`);
+    await this.processPolicy(params.policy_id, from, to, override);
   }
 
   protected defaultParams(params: ParamsInterface): Required<ParamsInterface> {
@@ -109,17 +87,8 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       policy_id: params.policy_id,
       from: params.from ?? subDaysTz(today(tz), 7),
       to: params.to ?? today(tz),
-      finalize: !!params.finalize,
       override: !!params.override,
     };
-  }
-
-  protected async dispatch(): Promise<void> {
-    const policies = await this.policyRepository.findWhere({ status: 'active' });
-    for (const policy of policies) {
-      console.debug(`[policies] dispatch processing for active policy ${policy._id}`);
-      this.kernel.notify<ParamsInterface>(handlerSignature, { policy_id: policy._id }, this.context);
-    }
   }
 
   protected async processPolicy(policy_id: number, from: Date, to: Date, override = false): Promise<void> {
