@@ -2,14 +2,14 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/syncMaxAmount.contract';
-import { alias } from '../shared/policy/syncMaxAmount.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/syncIncentiveSum.contract';
+import { alias } from '../shared/policy/syncIncentiveSum.schema';
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
 })
-export class syncMaxAmountAction extends AbstractAction {
+export class syncIncentiveSumAction extends AbstractAction {
   constructor(private policyRepository: PolicyRepositoryProviderInterfaceResolver) {
     super();
   }
@@ -24,7 +24,7 @@ export class syncMaxAmountAction extends AbstractAction {
     }
 
     for (const campaign_id of list) {
-      await this.policyRepository.syncMaxAmount(campaign_id);
+      await this.policyRepository.syncIncentiveSum(campaign_id);
     }
   }
 }

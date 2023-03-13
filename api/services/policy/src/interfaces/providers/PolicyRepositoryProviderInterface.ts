@@ -22,5 +22,5 @@ export abstract class PolicyRepositoryProviderInterfaceResolver {
   }): Promise<SerializedPolicyInterface[]>;
   abstract listApplicablePoliciesId(): Promise<number[]>;
   abstract activeOperators(policy_id: number): Promise<number[]>;
-  abstract syncMaxAmount(campaign_id: number): Promise<void>;
+  abstract syncIncentiveSum(campaign_id: number): Promise<void>;
 }

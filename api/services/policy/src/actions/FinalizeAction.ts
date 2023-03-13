@@ -1,9 +1,9 @@
-import { handler, InitHookInterface, KernelInterfaceResolver, ParseErrorException } from '@ilos/common';
+import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { isValid, parseISO, startOfDay, sub } from 'date-fns';
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
+import { defaultTz, subDaysTz, today } from '../helpers/dates.helper';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStatusEnum,
@@ -18,9 +18,10 @@ import {
   ResultInterface,
   signature as handlerSignature,
 } from '../shared/policy/finalize.contract';
-import { signature as syncMaxAmountSignature } from '../shared/policy/syncMaxAmount.contract';
+import { alias } from '../shared/policy/finalize.schema';
+import { signature as syncincentivesumSignature } from '../shared/policy/syncIncentiveSum.contract';
 
-@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
+@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]] })
 export class FinalizeAction extends AbstractAction implements InitHookInterface {
   constructor(
     private policyRepository: PolicyRepositoryProviderInterfaceResolver,
@@ -63,13 +64,21 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
       return;
     }
 
-    // resync max_amount for all policies
+    // cast params
+    console.time('[policies] stateful');
+    let { from, to, tz, sync_incentive_sum } = params;
+    tz = tz ?? defaultTz;
+    from = from ?? subDaysTz(today(tz), 7);
+    to = to ?? today(tz);
+    sync_incentive_sum = !!sync_incentive_sum;
+
+    // resync incentive_sum for all policies
     // call the action instead of the repo to avoid having
     // to duplicate the listing of all campaigns
-    await this.kernel.call(syncMaxAmountSignature, {}, { channel: { service: handlerConfig.service } });
+    if (sync_incentive_sum) {
+      await this.kernel.call(syncincentivesumSignature, {}, { channel: { service: handlerConfig.service } });
+    }
 
-    console.time('[policies] stateful');
-    const { from, to } = this.getDate(params);
     // Update incentive on canceled carpool
     await this.incentiveRepository.disableOnCanceledTrip();
 
@@ -101,32 +110,6 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     }
   }
 
-  protected getDate(params: ParamsInterface): { from: Date | undefined; to: Date } {
-    let to = params.to;
-    if (typeof to === 'string') {
-      to = parseISO(to);
-      if (!isValid(to)) {
-        throw new ParseErrorException(`To is not a valid date (${params.to})`);
-      }
-      to = startOfDay(to);
-    } else {
-      // Get 7 days ago
-      to = sub(startOfDay(new Date()), { days: 5 });
-    }
-
-    let from = params.from;
-    if (typeof from === 'string') {
-      from = startOfDay(parseISO(from));
-      if (!isValid(from)) {
-        throw new ParseErrorException(`From is not a valid date (${params.from})`);
-      }
-    } else {
-      from = undefined;
-    }
-
-    return { from, to };
-  }
-
   protected async processStatefulPolicies(
     policyMap: Map<number, PolicyInterface>,
     to: Date,
@@ -138,8 +121,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     const cursor = this.incentiveRepository.findDraftIncentive(to, 100, from);
     let done = false;
     do {
-      const start = new Date().getTime();
-
+      const bench = new Date().getTime();
       const updatedIncentives = [];
       const results = await cursor.next();
       done = results.done;
@@ -156,9 +138,10 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
           updatedIncentives.push(await policy.processStateful(store, incentive));
         }
       }
+
       // 4. Update incentives
       await this.incentiveRepository.updateStatefulAmount(updatedIncentives, IncentiveStatusEnum.Pending);
-      const duration = new Date().getTime() - start;
+      const duration = new Date().getTime() - bench;
       console.debug(
         `[policies] stateful incentive processing ${updatedIncentives.length} incentives done in ${duration}ms (${(
           (updatedIncentives.length / duration) *
@@ -167,8 +150,8 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
       );
     } while (!done);
 
-    console.debug('[policies] store metadata');
     // 5. Persist meta
+    console.debug('[policies] store metadata');
     await store.store(MetadataLifetime.Day);
     console.debug('[policies] store metadata done');
   }

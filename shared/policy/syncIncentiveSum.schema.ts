@@ -1,4 +1,4 @@
-export const alias = 'campaign.syncmaxamount';
+export const alias = 'campaign.syncincentivesum';
 export const schema = {
   type: 'object',
   additionalProperties: false,

@@ -8,13 +8,14 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 
 import { config } from './config';
 import { binding as applySchemaBinding } from './shared/policy/apply.schema';
+import { binding as finalizeSchemaBinding } from './shared/policy/finalize.schema';
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
-import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOnPast.schema';
 import { binding as simulateOnPastGeoSchemaBinding } from './shared/policy/simulateOnPastGeo.schema';
+import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOnPast.schema';
 import { binding as statsSchemaBinding } from './shared/policy/stats.schema';
-import { binding as syncMaxAmountSchemaBinding } from './shared/policy/syncMaxAmount.schema';
+import { binding as syncIncentiveSumSchemaBinding } from './shared/policy/syncIncentiveSum.schema';
 
 import { ApplyAction } from './actions/ApplyAction';
 import { FinalizeAction } from './actions/FinalizeAction';
@@ -26,7 +27,7 @@ import { StatsAction } from './actions/StatsAction';
 
 import { GetPastSimulationOrComputeAction } from './actions/GetPastSimulationOrComputeAction';
 import { SimulateOnPastByGeoAction } from './actions/SimulateOnPastByGeoAction';
-import { syncMaxAmountAction } from './actions/SyncMaxAmountAction';
+import { syncIncentiveSumAction } from './actions/SyncIncentiveSumAction';
 import { ProcessCommand } from './commands/ProcessCommand';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvider';
@@ -47,13 +48,14 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
   ],
   validator: [
     applySchemaBinding,
+    finalizeSchemaBinding,
     findSchemaBinding,
     listSchemaBinding,
     simulateOnFutureSchemaBinding,
     simulateOnPastGeoSchemaBinding,
     simulateOnSchemaBinding,
     statsSchemaBinding,
-    syncMaxAmountSchemaBinding,
+    syncIncentiveSumSchemaBinding,
   ],
   handlers: [
     ApplyAction,
@@ -65,7 +67,7 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
     SimulateOnPastAction,
     SimulateOnPastByGeoAction,
     StatsAction,
-    syncMaxAmountAction,
+    syncIncentiveSumAction,
   ],
   commands: [ProcessCommand],
   connections: [

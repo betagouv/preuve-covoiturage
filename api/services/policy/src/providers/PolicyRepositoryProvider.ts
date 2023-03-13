@@ -297,8 +297,8 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
    *       validated incentive but the datetime of the first value used to
    *       create the key. #FIXME
    */
-  async syncMaxAmount(campaign_id: number): Promise<void> {
-    const pf = '[campaign:syncMaxAmount]';
+  async syncIncentiveSum(campaign_id: number): Promise<void> {
+    const pf = '[campaign:syncincentivesum]';
     const key_name = 'max_amount_restriction.global.campaign.global';
 
     // update the campaign with the sum of validated incentives

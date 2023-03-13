@@ -47,7 +47,7 @@ export class ProcessCommand implements CommandInterface {
     },
     {
       signature: '-f, --finalize',
-      description: 'run stateful ',
+      description: 'finalize incentive calculations depending on context. (applies to ALL campaigns)',
       default: false,
     },
     {

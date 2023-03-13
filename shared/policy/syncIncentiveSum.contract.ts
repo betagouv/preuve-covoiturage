@@ -3,7 +3,7 @@ export type ResultInterface = void;
 
 export const handlerConfig = {
   service: 'campaign',
-  method: 'syncmaxamount',
+  method: 'syncincentivesum',
 } as const;
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

@@ -8,9 +8,9 @@ import {
 } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { isAfter, subDays } from 'date-fns';
+import { isAfter } from 'date-fns';
 import { Policy } from '../engine/entities/Policy';
-import { today, toTzString } from '../helpers/dates.helper';
+import { subDaysTz, today, toTzString } from '../helpers/dates.helper';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
@@ -83,7 +83,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       await this.dispatch();
     } else {
       const { from: f, to: t, tz, override } = params;
-      const from = f ?? subDays(today(tz), 7);
+      const from = f ?? subDaysTz(today(tz), 7);
       const to = t ?? today(tz);
 
       console.info(`[campaign:apply] processing policy ${params.policy_id}`);
