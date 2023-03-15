@@ -95,6 +95,7 @@ export const Pdll2023: PolicyHandlerStaticInterface = class extends AbstractPoli
   params(): PolicyHandlerParamsInterface {
     return {
       slices: this.slices,
+      operators: this.operators,
       limits: {
         glob: this.max_amount,
       },
