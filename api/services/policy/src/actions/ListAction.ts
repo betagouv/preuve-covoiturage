@@ -37,7 +37,7 @@ export class ListAction extends AbstractAction {
           const importedPolicy = await Policy.import(r);
           policy.params = importedPolicy.params();
         } catch (e) {
-          console.error(`Could not import policy ${r._id}`, e);
+          console.warn(`Could not import policy ${r._id}`, e.message);
         } finally {
           return policy;
         }
@@ -65,6 +65,6 @@ export class ListAction extends AbstractAction {
   }
 
   private withOperator(p: SingleResultInterface, operator: OperatorResultInterface): boolean {
-    return !!p.params?.operators?.includes(operator.siret);
+    return p.params?.operators?.includes(operator.siret);
   }
 }
