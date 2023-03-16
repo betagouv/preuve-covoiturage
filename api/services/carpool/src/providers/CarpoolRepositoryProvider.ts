@@ -6,7 +6,7 @@ import {
   CarpoolRepositoryProviderInterfaceResolver,
 } from '../interfaces/CarpoolRepositoryProviderInterface';
 
-import { PeopleWithIdInterface } from '../interfaces/Carpool';
+import { PeopleWithIdInterface, IncentiveInterface } from '../interfaces/Carpool';
 
 /*
  * Trip specific repository
@@ -16,6 +16,7 @@ import { PeopleWithIdInterface } from '../interfaces/Carpool';
 })
 export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInterface {
   public readonly table = 'carpool.carpools';
+  public readonly incentiveTable = 'carpool.incentives';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -41,6 +42,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       operator_trip_id: string;
       trip_id: string;
       status: string;
+      incentives: IncentiveInterface[];
     },
     people: PeopleWithIdInterface[],
   ): Promise<void> {
@@ -51,6 +53,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       for (const person of people) {
         await this.addParticipant(client, shared, person);
       }
+      await this.addIncentives(client, shared.acquisition_id, people[0].datetime, shared.incentives);
 
       await client.query('COMMIT');
       return;
@@ -60,6 +63,48 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
     } finally {
       client.release();
     }
+  }
+
+  protected async addIncentives(
+    client: PoolClient,
+    acquisition_id: number,
+    datetime: Date,
+    incentives: IncentiveInterface[],
+  ) {
+    const values = incentives
+      .map((i) => ({ acquisition_id: acquisition_id, idx: i.index, datetime, siret: i.siret, amount: i.amount }))
+      .reduce(
+        ([acq, idx, datet, siret, amount], i) => {
+          acq.push(i.acquisition_id);
+          idx.push(i.idx);
+          datet.push(i.datetime);
+          siret.push(i.siret);
+          amount.push(i.amount);
+          return [acq, idx, datet, siret, amount];
+        },
+        [[], [], [], [], []],
+      );
+    const query = {
+      text: `
+        INSERT INTO ${this.incentiveTable} (
+          acquisition_id,
+          idx,
+          datetime,
+          siret,
+          amount
+        )
+        SELECT * FROM UNNEST(
+          $1::int[],
+          $2::smallint[],
+          $3::timestamp[],
+          $4::varchar[],
+          $5::int[]
+        )
+        ON CONFLICT (acquisition_id, idx) DO NOTHING`,
+      values,
+    };
+
+    await client.query(query);
   }
 
   protected async addParticipant(
@@ -73,6 +118,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       trip_id: string;
       operator_trip_id: string;
       status: string;
+      incentives: IncentiveInterface[];
     },
     person: PeopleWithIdInterface,
   ): Promise<void> {

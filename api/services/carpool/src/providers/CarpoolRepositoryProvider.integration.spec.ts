@@ -3,6 +3,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { CarpoolRepositoryProvider } from './CarpoolRepositoryProvider';
 import { PeopleWithIdInterface } from '../interfaces/Carpool';
+import { IncentiveInterface } from '../shared/common/interfaces/IncentiveInterface';
 
 interface TestContext {
   connection: PostgresConnection;
@@ -40,6 +41,7 @@ test.serial.skip('Should create carpool', async (t) => {
     operator_class: string;
     trip_id: string;
     status: string;
+    incentives: Array<IncentiveInterface>;
   } = {
     acquisition_id: 0,
     operator_id: 0,
@@ -49,6 +51,13 @@ test.serial.skip('Should create carpool', async (t) => {
     operator_class: 'A',
     trip_id: '973b462f-6521-4b57-85c8-970c2d34fb10',
     status: 'ok',
+    incentives: [
+      {
+        index: 1,
+        siret: '12345',
+        amount: 100,
+      },
+    ],
   };
 
   const people: PeopleWithIdInterface[] = [
@@ -116,4 +125,11 @@ test.serial.skip('Should create carpool', async (t) => {
     result.rows.map((r) => r.operator_journey_id),
     [data.operator_journey_id, data.operator_journey_id],
   );
+
+  const incentiveResult = await t.context.connection.getClient().query({
+    text: `SELECT idx as index, siret, amount from ${t.context.repository.incentiveTable} WHERE acquisition_id = $1`,
+    values: [0],
+  });
+  t.is(incentiveResult.rowCount, 1);
+  t.deepEqual(incentiveResult.rows, data.incentives);
 });
