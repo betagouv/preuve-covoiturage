@@ -30,6 +30,7 @@ export interface CeeApplication<T = Date> {
   last_name_trunc: string;
   phone_trunc: string;
   datetime: T;
+  identity_key?: string;
 }
 
 export interface LongCeeApplication<T = Date> extends CeeApplication<T> {

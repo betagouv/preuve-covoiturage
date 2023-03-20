@@ -18,6 +18,11 @@ export const schema = {
         journey_type: ceeJourneyTypeEnumSchema,
         driving_license: drivingLicenseSchema,
         last_name_trunc: lastNameTruncSchema,
+        identity_key: {
+          type: 'string',
+          minLength: 64,
+          maxLength: 64,
+        },
       },
     },
     {
