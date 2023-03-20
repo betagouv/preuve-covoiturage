@@ -26,6 +26,7 @@ export const description = `<p id="summary">
     <li><b>Le 07/02/2023</b></li>
     <li><b>Le 07/03/2023</b></li>
     <li><b>Le 08/03/2023</b></li>
+    <li><b>Le 16/03/2023</b></li>
     <li><b>Le 17/03/2023</b></li>
   </ul>
   <p>
