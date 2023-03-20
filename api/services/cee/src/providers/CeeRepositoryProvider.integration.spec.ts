@@ -6,6 +6,7 @@ import { config } from '../config';
 import {
   CeeApplicationErrorEnum,
   CeeJourneyTypeEnum,
+  LongCeeApplication,
   SearchCeeApplication,
   SearchJourney,
   ShortCeeApplication,
@@ -84,6 +85,31 @@ test.serial('Should create short application', async (t) => {
 
   t.is(applicationResults.rowCount, 1);
   t.deepEqual(applicationResults.rows[0], { journey_type: 'short', ...application });
+});
+
+test.serial('Should create long application', async (t) => {
+  const application: LongCeeApplication = {
+    operator_id: 2,
+    last_name_trunc: 'AAA',
+    phone_trunc: '+3360000000000',
+    datetime: new Date('2022-11-01'),
+    application_timestamp: new Date('2022-11-01'),
+    driving_license: 'driving_license_1',
+    identity_key: 'test',
+  };
+
+  await t.context.repository.registerLongApplication(application, config.rules.applicationCooldownConstraint);
+
+  const applicationResults = await t.context.db.connection.getClient().query({
+    text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${
+      t.context.repository.table
+    } WHERE operator_id = $1`,
+    values: [2],
+  });
+
+  t.is(applicationResults.rowCount, 1);
+  t.is(applicationResults.rows[0]?.journey_type, 'long');
+  t.truthy(!!applicationResults.rows[0]?.identity_key);
 });
 
 test.serial('Should raise error if conflict short application', async (t) => {

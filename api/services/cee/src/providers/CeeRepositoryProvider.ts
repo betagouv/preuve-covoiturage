@@ -1,7 +1,8 @@
-import { InvalidRequestException, NotFoundException } from '@ilos/common';
+import { ConfigInterfaceResolver, InvalidRequestException, NotFoundException } from '@ilos/common';
 import { ConflictException } from '@ilos/common';
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { hash } from '../helpers/crypt';
 import {
   ApplicationCooldownConstraint,
   CeeApplication,
@@ -172,6 +173,11 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       data.datetime,
       data.application_timestamp,
     ];
+
+    if(data.identity_key) {
+      fields.push(['identity_key', 'varchar']);
+      values.push(hash(data.identity_key));
+    }
 
     if (constraint) {
       if (journeyType === CeeJourneyTypeEnum.Long || journeyType === CeeJourneyTypeEnum.Short) {
