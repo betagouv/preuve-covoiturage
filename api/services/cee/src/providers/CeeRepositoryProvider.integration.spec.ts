@@ -79,8 +79,8 @@ test.serial('Should create short application', async (t) => {
   const applicationResults = await t.context.db.connection.getClient().query({
     text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${
       t.context.repository.table
-    } WHERE operator_id = $1`,
-    values: [1],
+    } WHERE operator_id = $1 and last_name_trunc = $2`,
+    values: [1, 'AAA'],
   });
 
   t.is(applicationResults.rowCount, 1);
@@ -89,8 +89,8 @@ test.serial('Should create short application', async (t) => {
 
 test.serial('Should create long application', async (t) => {
   const application: LongCeeApplication = {
-    operator_id: 2,
-    last_name_trunc: 'AAA',
+    operator_id: 1,
+    last_name_trunc: 'BBB',
     phone_trunc: '+3360000000000',
     datetime: new Date('2022-11-01'),
     application_timestamp: new Date('2022-11-01'),
@@ -103,8 +103,8 @@ test.serial('Should create long application', async (t) => {
   const applicationResults = await t.context.db.connection.getClient().query({
     text: `SELECT ${Object.keys(application).join(',')}, journey_type FROM ${
       t.context.repository.table
-    } WHERE operator_id = $1`,
-    values: [2],
+    } WHERE operator_id = $1 AND last_name_trunc = $2`,
+    values: [1, 'BBB'],
   });
 
   t.is(applicationResults.rowCount, 1);
