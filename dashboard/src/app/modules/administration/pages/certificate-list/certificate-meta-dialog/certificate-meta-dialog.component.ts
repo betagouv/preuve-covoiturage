@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { set } from 'lodash';
 import { ToastrService } from 'ngx-toastr';
 import { ResultRowInterface } from '~/core/entities/api/shared/certificate/common/interfaces/ResultRowInterface';
-import { ParamsInterface as DownloadParamsInterface } from '~/core/entities/api/shared/certificate/download.contract';
+import { DowloadCertificateBase } from '~/core/entities/api/shared/certificate/download.contract';
 import { CertificateApiService } from '~/modules/certificate/services/certificate-api.service';
 
 @Component({
@@ -47,7 +47,7 @@ export class CertificateMetaDialogComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     try {
-      await this.certificateApi.downloadPrint(this.mapToParams());
+      await this.certificateApi.downloadPrint(this.data.uuid, this.mapToParams());
 
       this.dialogRef.close(true);
     } catch (e) {
@@ -59,9 +59,8 @@ export class CertificateMetaDialogComponent implements OnInit {
     this.dialogRef.close(false);
   }
 
-  private mapToParams(): DownloadParamsInterface {
-    const params: DownloadParamsInterface = {
-      uuid: this.data.uuid,
+  private mapToParams(): DowloadCertificateBase {
+    const params: DowloadCertificateBase = {
       operator_id: this.data.operator._id,
     };
 

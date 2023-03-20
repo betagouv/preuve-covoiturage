@@ -1,5 +1,4 @@
-export interface ParamsInterface {
-  uuid: string;
+export interface DowloadCertificateBase {
   operator_id: number;
   meta?: {
     operator?: {
@@ -11,6 +10,10 @@ export interface ParamsInterface {
     };
     notes?: string;
   };
+}
+
+export interface ParamsInterface extends DowloadCertificateBase {
+  uuid: string;
 }
 
 export interface ResultInterface {

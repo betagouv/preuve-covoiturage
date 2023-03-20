@@ -13,8 +13,12 @@ import { ParamsInterface as ListParamsInterface } from '~/core/entities/api/shar
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
+import { CertificateApiService } from '../../../certificate/services/certificate-api.service';
 import { CertificateMetaDialogComponent } from './certificate-meta-dialog/certificate-meta-dialog.component';
+import {
+  ParamsInterface as CreateParamsInterface,
+  ResultInterface as CreateResultInterface,
+} from '~/core/entities/api/shared/certificate/create.contract';
 import { IdentityIdentifiersInterface } from '~/core/entities/api/shared/certificate/common/interfaces/IdentityIdentifiersInterface';
 
 @Component({
@@ -182,7 +186,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
    */
   async download(row: ResultRowInterface): Promise<void> {
     try {
-      await this.certificateApi.downloadPrint({ uuid: row.uuid, operator_id: row.operator._id });
+      await this.certificateApi.downloadPrint(row.uuid, { operator_id: row.operator._id });
       this.toastr.success('Attestation générée');
     } catch (e) {
       this.toastr.error(e.message);
@@ -220,8 +224,8 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     };
 
     // cast and format dates
-    if (formVal.start_date) certificate.start_at = (formVal.start_date as Date).toISOString();
-    if (formVal.end_date) certificate.end_at = (formVal.end_date as Date).toISOString();
+    if (formVal.start_date) certificate.start_at = formVal.start_date;
+    if (formVal.end_date) certificate.end_at = formVal.end_date;
 
     // add start and end positions
     if (formVal.start_lat || formVal.start_lng) {
@@ -266,7 +270,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
         }),
         takeUntil(this.destroy$),
       )
-      .subscribe((certResponse: { created_at: Date; pdf_url: string; uuid: string }) => {
+      .subscribe((certResponse: CreateResultInterface) => {
         this.updateList();
         this.showForm = false;
         const sb = this.snackbar.open('Attestation créé.', 'Télécharger le PDF', {
@@ -274,8 +278,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
         });
 
         sb.onAction().subscribe(() => {
-          this.certificateApi.downloadPrint({
-            uuid: certResponse.uuid,
+          this.certificateApi.downloadPrint(certResponse.uuid, {
             operator_id: this.certificateForm.get('operator_id')?.value || this.auth.user?.operator_id,
           });
         });

@@ -1,6 +1,9 @@
 import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
+import {
+  channelServiceWhitelistMiddleware,
+  copyGroupIdAndApplyGroupPermissionMiddlewares,
+} from '@pdc/provider-middleware';
 import { omit } from 'lodash';
 import { createCastParamsHelper, CreateCastParamsInterface } from '../helpers/createCastParamsHelper';
 import { findOperator, FindOperatorInterface } from '../helpers/findOperatorHelper';
@@ -24,6 +27,7 @@ import { WithHttpStatus } from '../shared/common/handler/WithHttpStatus';
       operator: 'operator.certificate.create',
       registry: 'registry.certificate.create',
     }),
+    channelServiceWhitelistMiddleware('proxy'),
     ['validate', alias],
   ],
 })
