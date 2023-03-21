@@ -25,6 +25,15 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    identity_key:
+      type: string
+      minLength: 64
+      maxLength: 64
+      description: |
+        Correspond au sha d'une chaîne concaténée tel que : sha256(*phone_number*-*last_name*) ou
+        - `phone_number` correspond au numéro de téléphone complet au format international sans espace ni tiret. Exemple : +33601020304
+        - `last_name` correspond au nom de famille complet en majuscule sans accent 
+
     application_timestamp:
       type: string
       format: datetime
@@ -184,6 +193,7 @@ components:
       properties:
         datetime:
           type: number
+          description: Date de l'opération, en l'occurence date de fin du trajet pour la courte distance et date de paiement pour la longue.
         uuid:
           type: string
           format: uuid
@@ -223,7 +233,20 @@ paths:
               schema:
                 '$ref': '#/components/schemas/cee_application'
         '404':
-          description: Le trajet n'a pas été trouvé
+          description: |
+            La demande n'a pas pu aboutir car un trajet éligible n'a pas été trouvé soit parce que
+            l'identifiant envoyé ne correspond pas à un trajet inscrit dans le registre,
+            soit parce que celui-ci ne correspond pas au critères d'éligibilité.
+            Pour rappel, un trajet éligible est un trajet:
+              - après le 1er janvier 2023
+              - de moins de 80 km
+              - dont le départ ou l'arrivée est en France
+              - de classe C
+        '400':
+          description: |
+            - "expired" : correspond a un trajet envoyé "hors délais". Il faut qu’il soit enregistré dans le RPC dans les 5 jours qui suivent sa réalisation
+            - "Date should be before 7 days from now" : correspondant à un appel à l’API CEE qui aurait été fait à moins de J+7 de la date de fin du trajet 
+              sur la courte distance et à moins de J+7 de la date de paiement au conducteur par l'opérateur sur le longue distance.
         '409':
           description: La demande est déjà enregistrée
           content:
