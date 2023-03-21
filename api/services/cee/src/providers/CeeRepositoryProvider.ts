@@ -176,7 +176,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
 
     if(data.identity_key) {
       fields.push(['identity_key', 'varchar']);
-      values.push(hash(data.identity_key));
+      values.push(await hash(data.identity_key));
     }
 
     if (constraint) {
