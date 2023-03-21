@@ -54,10 +54,9 @@ export class NormalizationProvider implements NormalizationProviderInterface {
     driverIncentives?: IncentiveInterface[],
     passengerIncentives?: IncentiveInterface[],
   ): Array<IncentiveInterface> {
-    return [
-      ...(driverIncentives || []),
-      ...(passengerIncentives || []).map((d) => ({ ...d, index: d.index + 100 })),
-    ].map((incentive, i) => ({ ...incentive, index: i }));
+    return [...(driverIncentives || []), ...(passengerIncentives || []).map((d) => ({ ...d, index: d.index + 100 }))]
+      .sort((a, b) => a.index - b.index)
+      .map((incentive, i) => ({ ...incentive, index: i }));
   }
 
   public finalizePerson(person: PersonInterface): FinalizedPersonInterface {
