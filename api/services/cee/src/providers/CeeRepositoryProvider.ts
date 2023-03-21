@@ -1,4 +1,4 @@
-import { ConfigInterfaceResolver, InvalidRequestException, NotFoundException } from '@ilos/common';
+import { InvalidRequestException, NotFoundException } from '@ilos/common';
 import { ConflictException } from '@ilos/common';
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
@@ -174,7 +174,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       data.application_timestamp,
     ];
 
-    if(data.identity_key) {
+    if (data.identity_key) {
       fields.push(['identity_key', 'varchar']);
       values.push(await hash(data.identity_key));
     }
