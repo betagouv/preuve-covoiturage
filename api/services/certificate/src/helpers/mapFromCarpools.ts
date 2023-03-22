@@ -1,9 +1,10 @@
-/* eslint-disable max-len,prettier/prettier */
 import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
 import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
-import { CertificateMetaInterface, MetaPersonInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
+import {
+  CertificateMetaInterface,
+  MetaPersonInterface,
+} from '../shared/certificate/common/interfaces/CertificateMetaInterface';
 import { PointInterface } from '../shared/common/interfaces/PointInterface';
-/* eslint-enable */
 
 export interface ParamsInterface {
   person: { uuid: string };
@@ -49,29 +50,29 @@ export const agg = (type: CarpoolTypeEnum, carpools: CarpoolInterface[]): MetaPe
         trips: p.trips + c.trips,
         week_trips: p.week_trips + (isWeek ? c.trips : 0),
         weekend_trips: p.weekend_trips + (isWeek ? 0 : c.trips),
-        km: p.km + c.km,
-        euros: p.euros + c.euros,
+        distance: p.distance + c.distance,
+        amount: p.amount + c.amount,
       };
     },
     {
       trips: 0,
       week_trips: 0,
       weekend_trips: 0,
-      km: 0,
-      euros: 0,
+      distance: 0,
+      amount: 0,
     },
   );
 
   return {
     total: {
       ...total,
-      km: round(total.km, 1),
-      euros: round(total.euros, 2),
+      distance: round(total.distance, 1),
+      amount: round(total.amount, 2),
     },
     trips: subset.map((trip) => ({
       ...trip,
-      km: round(trip.km, 1),
-      euros: round(trip.euros, 2),
+      distance: round(trip.distance, 1),
+      amount: round(trip.amount, 2),
     })),
   };
 };

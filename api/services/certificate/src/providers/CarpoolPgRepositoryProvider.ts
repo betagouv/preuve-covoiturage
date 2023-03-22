@@ -91,8 +91,8 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           type,
           date,
           COUNT(*)::int trips,
-          TRUNC(SUM(distance)::decimal/1000, 3)::real AS km,
-          TRUNC(SUM(payment)::decimal/100, 2)::real AS euros
+          TRUNC(SUM(distance)::decimal/1000, 3)::real AS distance,
+          TRUNC(SUM(payment)::decimal/100, 2)::real AS amount
       FROM trips
       GROUP BY (type, date)
       ORDER BY type, date DESC
@@ -105,8 +105,8 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
         type: row.type,
         datetime: new Date(row.date),
         trips: row.trips,
-        km: row.km,
-        euros: row.euros,
+        distance: row.distance,
+        amount: row.amount,
       }),
     );
   }

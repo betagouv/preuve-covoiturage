@@ -571,6 +571,27 @@ export class HttpTransport implements TransportInterface {
           createRPCPayload('certificate:find', { uuid: req.params.uuid }, { permissions: ['common.certificate.find'] }),
         )) as RPCResponseType;
 
+        // Temporary solution to map v3 certificate model to v2
+        response.result.data.driver.km = response.result.data.driver.distance;
+        response.result.data.driver.euro = response.result.data.driver.amount;
+
+        response.result.data.passenger.km = response.result.data.passenger.distance;
+        response.result.data.passenger.euro = response.result.data.passenger.amount;
+
+        delete response.result.data.driver.distance;
+        delete response.result.data.driver.amount;
+        delete response.result.data.passenger.distance;
+        delete response.result.data.passenger.amount;
+
+        response.result.data.driver.trips &&
+          response.result.data.driver.trips.length > 0 &&
+          response.result.data.driver.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance }));
+
+        response.result.data.passenger.trips &&
+          response.result.data.passenger.trips.length > 0 &&
+          response.result.data.passenger.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance }));
+        // Temporary solution to map v3 certificate model to v2
+
         this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
       }),
     );

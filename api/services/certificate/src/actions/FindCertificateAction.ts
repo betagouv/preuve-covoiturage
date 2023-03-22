@@ -21,7 +21,7 @@ export class FindCertificateAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const { uuid, operator_id = null } = params;
-
-    return mapCertForListHelper(await this.certRepository.findByUuid(uuid, operator_id, true));
+    const certificate = await this.certRepository.findByUuid(uuid, operator_id, true);
+    return mapCertForListHelper(certificate);
   }
 }

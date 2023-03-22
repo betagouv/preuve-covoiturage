@@ -1,14 +1,12 @@
-import { map } from 'lodash';
-import { provider, NotFoundException } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
-import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
-import { CertificateMetaInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
-import { CertificateAccessLogInterface } from '../shared/certificate/common/interfaces/CertificateAccessLogInterface';
+import { map } from 'lodash';
 import {
   CertificateRepositoryProviderInterface,
   CertificateRepositoryProviderInterfaceResolver,
 } from '../interfaces/CertificateRepositoryProviderInterface';
+import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
+import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import { Pagination } from '../shared/certificate/list.contract';
 
 type QueryConfig = { text: string; values: any[] };
@@ -85,18 +83,37 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
 
     if (!result.rowCount) throw new NotFoundException(`Certificate not found: ${operator_id} - ${uuid}`);
 
+    // Temporary solution for mapping v2 cert in v3 compatibility
+    if (this.hasDriverTrips(result) && this.isV2Generated(result)) {
+      result.rows[0].meta.driver.trips = result.rows[0].meta.driver.trips.map((t) => ({
+        ...t,
+        amount: t.euros,
+        distance: t.km,
+      }));
+    }
+
+    if (this.hasPassengerTrips(result) && this.isV2Generated(result)) {
+      result.rows[0].meta.passenger.trips = result.rows[0].meta.passenger.trips.map((t) => ({
+        ...t,
+        amount: t.euros,
+        distance: t.km,
+      }));
+    }
+    // Temporary solution for Mapping v2 cert in v3 compatibility
+
     return withLog ? this.withLog(result.rows[0]) : result.rows[0];
   }
 
-  async findById(_id: string, withLog = false): Promise<CertificateInterface> {
-    const result = await this.connection.getClient().query({
-      text: `SELECT * FROM ${this.table} WHERE _id = $1 LIMIT 1`,
-      values: [_id],
-    });
+  private hasPassengerTrips(result) {
+    return result.rows[0].meta.passenger.trips && result.rows[0].meta.passenger.trips.length > 0;
+  }
 
-    if (!result.rowCount) throw new NotFoundException(`Certificate not found: ${_id}`);
+  private isV2Generated(result) {
+    return result.rows[0].meta.driver.trips.some((t) => !!t.euros);
+  }
 
-    return withLog ? this.withLog(result.rows[0]) : result.rows[0];
+  private hasDriverTrips(result) {
+    return result.rows[0].meta.driver.trips && result.rows[0].meta.driver.trips.length > 0;
   }
 
   async findByOperatorId(
@@ -135,39 +152,6 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     if (!result.rowCount) throw new Error('Failed to create certificate');
 
     return result.rows[0];
-  }
-
-  async patchMeta(_id: string, params: CertificateMetaInterface): Promise<CertificateInterface> {
-    const result = await this.connection.getClient().query({
-      text: `
-        UPDATE ${this.table}
-        SET meta = $2
-        WHERE _id = $1
-        RETURNING *
-      `,
-      values: [_id, params],
-    });
-
-    if (!result.rowCount) throw new Error("Failed to patch certificate's meta data");
-
-    return result.rows[0];
-  }
-
-  /**
-   * Append a record to the access_log table for the certificate _id
-   */
-  async logAccess(_id: string, params: CertificateAccessLogInterface): Promise<void> {
-    const { ip, user_agent, user_id, content_type } = params;
-    const result = await this.connection.getClient().query({
-      text: `
-        INSERT INTO ${this.accessLogTable}
-        ( certificate_id, ip, user_agent, user_id, content_type )
-        VALUES ( $1, $2, $3, $4, $5 )
-      `,
-      values: [_id, ip, user_agent, user_id, content_type],
-    });
-
-    if (!result.rowCount) throw new Error('Failed to append to certificate log');
   }
 
   /**

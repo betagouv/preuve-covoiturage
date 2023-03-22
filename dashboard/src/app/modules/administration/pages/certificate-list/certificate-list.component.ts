@@ -19,6 +19,7 @@ import {
   ParamsInterface as CreateParamsInterface,
   ResultInterface as CreateResultInterface,
 } from '~/core/entities/api/shared/certificate/create.contract';
+// eslint-disable-next-line max-len
 import { IdentityIdentifiersInterface } from '~/core/entities/api/shared/certificate/common/interfaces/IdentityIdentifiersInterface';
 
 @Component({
