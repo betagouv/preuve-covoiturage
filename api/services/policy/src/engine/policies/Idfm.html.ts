@@ -28,6 +28,7 @@ export const description = `<p id="summary">
     <li><b>Le 08/03/2023</b></li>
     <li><b>Le 16/03/2023</b></li>
     <li><b>Le 17/03/2023</b></li>
+    <li><b>Le 23/03/2023</b></li>
   </ul>
   <p>
   La campagne est limitée aux opérateurs BlaBlaCar Daily, Karos, Klaxit proposant des preuves de classe C</b>.
