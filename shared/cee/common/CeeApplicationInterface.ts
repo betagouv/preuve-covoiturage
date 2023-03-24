@@ -25,6 +25,7 @@ export interface CeeShortApplicationInterface {
   last_name_trunc: LastNameTrunc;
   driving_license: DrivingLicense;
   operator_journey_id: OperatorJourneyId;
+  identity_key?: string;
 }
 
 export interface CeeLongApplicationInterface {
@@ -34,6 +35,7 @@ export interface CeeLongApplicationInterface {
   driving_license: DrivingLicense;
   phone_trunc: PhoneTrunc;
   datetime: Date;
+  identity_key?: string;
 }
 
 export type CeeApplicationInterface = CeeShortApplicationInterface | CeeLongApplicationInterface;
