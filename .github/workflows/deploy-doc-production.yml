@@ -1,7 +1,7 @@
 name: Deploy documentation - production
 on:
   push:
-    branches: [dev, fix/deploy_doc_production]
+    branches: [dev]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
