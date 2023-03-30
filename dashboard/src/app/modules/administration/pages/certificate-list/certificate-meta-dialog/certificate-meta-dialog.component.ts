@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { set } from 'lodash';
 import { ToastrService } from 'ngx-toastr';
 import { ResultRowInterface } from '~/core/entities/api/shared/certificate/common/interfaces/ResultRowInterface';
-import { DowloadCertificateBase } from '~/core/entities/api/shared/certificate/download.contract';
+import { DownloadCertificateBase } from '~/core/entities/api/shared/certificate/download.contract';
 import { CertificateApiService } from '~/modules/certificate/services/certificate-api.service';
 
 @Component({
@@ -59,8 +59,8 @@ export class CertificateMetaDialogComponent implements OnInit {
     this.dialogRef.close(false);
   }
 
-  private mapToParams(): DowloadCertificateBase {
-    const params: DowloadCertificateBase = {
+  private mapToParams(): DownloadCertificateBase {
+    const params: DownloadCertificateBase = {
       operator_id: this.data.operator._id,
     };
 

@@ -4,7 +4,7 @@ import { saveAs } from 'file-saver';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { DowloadCertificateBase } from '~/core/entities/api/shared/certificate/download.contract';
+import { DownloadCertificateBase } from '~/core/entities/api/shared/certificate/download.contract';
 import { ResultInterface as FindResultInterface } from '~/core/entities/api/shared/certificate/find.contract';
 import {
   ParamsInterface as ListParamsInterface,
@@ -30,7 +30,7 @@ export class CertificateApiService extends JsonRPC {
     super(http);
   }
 
-  async downloadPrint(uuid: string, data: DowloadCertificateBase): Promise<void> {
+  async downloadPrint(uuid: string, data: DownloadCertificateBase): Promise<void> {
     return this.http
       .post(`v3/certificates/${uuid}/attachment`, data, { responseType: 'arraybuffer', withCredentials: true })
       .toPromise()

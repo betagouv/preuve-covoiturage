@@ -1,4 +1,4 @@
-export interface DowloadCertificateBase {
+export interface DownloadCertificateBase {
   operator_id: number;
   meta?: {
     operator?: {
@@ -12,7 +12,7 @@ export interface DowloadCertificateBase {
   };
 }
 
-export interface ParamsInterface extends DowloadCertificateBase {
+export interface ParamsInterface extends DownloadCertificateBase {
   uuid: string;
 }
 
