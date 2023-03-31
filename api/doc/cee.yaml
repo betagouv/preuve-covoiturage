@@ -214,6 +214,8 @@ paths:
       tags:
       - cee
       summary: Enregistrer une demande CEE
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
       security:
         - token: []
       operationId: policy:cee:register
@@ -267,6 +269,8 @@ paths:
       tags:
       - cee
       summary: Simuler une demande CEE
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
       security:
         - token: []
       operationId: policy:cee:simulate
@@ -313,6 +317,8 @@ paths:
       tags:
       - cee
       summary: Importez des demandes CEE existantes par lot
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
       security:
         - token: []
       operationId: policy:cee:import
