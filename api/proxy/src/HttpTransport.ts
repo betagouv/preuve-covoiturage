@@ -30,6 +30,7 @@ import {
   acquisitionRateLimiter,
   apiRateLimiter,
   authRateLimiter,
+  ceeRateLimiter,
   checkRateLimiter,
   contactformRateLimiter,
   loginRateLimiter,
@@ -238,7 +239,7 @@ export class HttpTransport implements TransportInterface {
   private registerCeeRoutes(): void {
     this.app.post(
       '/v3/policies/cee',
-      acquisitionRateLimiter(),
+      ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
@@ -260,7 +261,7 @@ export class HttpTransport implements TransportInterface {
 
     this.app.post(
       '/v3/policies/cee/simulate',
-      acquisitionRateLimiter(),
+      ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
@@ -281,7 +282,7 @@ export class HttpTransport implements TransportInterface {
 
     this.app.post(
       '/v3/policies/cee/import',
-      acquisitionRateLimiter(),
+      ceeRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
