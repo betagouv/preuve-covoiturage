@@ -1,5 +1,6 @@
 import test from 'ava';
 import { v4 } from 'uuid';
+import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
 import { Idfm as Handler } from './Idfm';
 
@@ -51,10 +52,11 @@ test(
       { end: { ...defaultPosition, aom: 'not_ok' } },
       { operator_class: 'A' },
       { operator_class: 'B', datetime: new Date('2022-09-02') },
+      { operator_siret: OperatorsEnum.Ynstant },
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -68,11 +70,17 @@ test(
       { distance: 25_000, driver_identity_uuid: 'two' },
       { distance: 25_000, driver_identity_uuid: 'two', datetime: new Date('2022-03-28') },
       { distance: 55_000, driver_identity_uuid: 'three' },
+      {
+        distance: 5_000,
+        operator_siret: OperatorsEnum.Ynstant,
+        datetime: new Date('2023-03-22'),
+        driver_identity_uuid: 'four',
+      },
     ],
     meta: [],
   },
   {
-    incentive: [150, 300, 250, 375, 300],
+    incentive: [150, 300, 250, 375, 300, 150],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.0-2019',
@@ -80,7 +88,7 @@ test(
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1375,
+        value: 1525,
       },
       {
         key: 'max_amount_restriction.0-two.month.0-2019',
@@ -93,6 +101,10 @@ test(
       {
         key: 'max_amount_restriction.0-three.month.0-2019',
         value: 300,
+      },
+      {
+        key: 'max_amount_restriction.0-four.month.2-2023',
+        value: 150,
       },
     ],
   },
