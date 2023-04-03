@@ -40,7 +40,7 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     ];
   }
 
-  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
+  protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Ynstant];
   protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {
@@ -72,7 +72,12 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    // Ajout de mobicoop à partir du 2 janvier
+    if (isAfter(ctx, { date: new Date('2023-03-22') })) {
+      isOperatorOrThrow(ctx, this.operators);
+    } else {
+      isOperatorOrThrow(ctx, [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit]);
+    }
     onDistanceRangeOrThrow(ctx, { min: 2_000, max: 150_000 });
 
     // Exclure les trajet Paris-Paris

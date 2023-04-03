@@ -4,4 +4,5 @@ export enum OperatorsEnum {
   Karos = '80279897500024',
   Klaxit = '75315323800047',
   Mobicoop = '84403286200014',
+  Ynstant = '91234298700019',
 }
