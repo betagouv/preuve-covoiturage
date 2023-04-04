@@ -27,7 +27,7 @@ module.exports = {
       }
 
       fs.writeFileSync(
-        `${config.root}/docs/api/licenses-list.md`,
+        `${config.root}/docs/contribuer/api/licenses-list.md`,
         `# Licences
 
 Liste des licences des dépendances utilisées dans l'API.

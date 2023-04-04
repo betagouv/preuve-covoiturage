@@ -98,18 +98,45 @@ Liste des licences des dépendances utilisées dans l'API.
 | [@babel/preset-env](https://github.com/babel/babel.git) (7.12.11) | MIT | [Henry Zhu](https://babeljs.io/) |
 | [@babel/preset-modules](Unknown) (0.1.4) | MIT | Unknown |
 | [@babel/runtime](https://github.com/babel/babel.git) (7.12.5) | MIT | [Sebastian McKenzie](https://babeljs.io/) |
+| [@babel/runtime](https://github.com/babel/babel.git) (7.17.2) | MIT | [The Babel Team](https://babel.dev/docs/en/next/babel-runtime) |
+| [@babel/runtime-corejs3](https://github.com/babel/babel.git) (7.17.2) | MIT | [The Babel Team](https://babel.dev/team) |
 | [@babel/template](https://github.com/babel/babel.git) (7.12.7) | MIT | [Sebastian McKenzie](https://babeljs.io/) |
 | [@babel/traverse](https://github.com/babel/babel.git) (7.12.12) | MIT | [Sebastian McKenzie](https://babeljs.io/) |
 | [@babel/types](https://github.com/babel/babel.git) (7.12.12) | MIT | [Sebastian McKenzie](https://babeljs.io/) |
+| [@braintree/sanitize-url](git+https://github.com/braintree/sanitize-url.git) (5.0.2) | MIT | [Unknown](https://github.com/braintree/sanitize-url#readme) |
+| [@kyleshockey/object-assign-deep](https://github.com/saikojosh/Object-Assign-Deep.git) (0.4.2) | MIT | [Josh Cole](http://www.JoshuaCole.me) |
+| [@kyleshockey/xml](http://github.com/shockey/node-xml) (1.0.2) | MIT | [Dylan Greene](http://github.com/dylang/node-xml) |
 | [@mrmlnc/readdir-enhanced](https://github.com/bigstickcarpet/readdir-enhanced.git) (2.2.1) | MIT | [James Messinger](https://github.com/bigstickcarpet/readdir-enhanced) |
 | [@nodelib/fs.stat](https://github.com/nodelib/nodelib/tree/master/packages/fs/fs.stat) (1.1.3) | MIT | Unknown |
 | [@sindresorhus/is](https://github.com/sindresorhus/is.git) (0.14.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [@szmarczak/http-timer](git+https://github.com/szmarczak/http-timer.git) (1.1.2) | MIT | [Szymon Marczak](https://github.com/szmarczak/http-timer#readme) |
+| [@types/body-parser](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (1.19.2) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/body-parser) |
+| [@types/connect](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (3.4.35) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/connect) |
+| [@types/connect-history-api-fallback](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (1.3.5) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/connect-history-api-fallback) |
+| [@types/express](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (4.17.14) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/express) |
+| [@types/express-serve-static-core](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (4.17.31) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/express-serve-static-core) |
 | [@types/glob](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (7.1.3) | MIT | Unknown |
+| [@types/hast](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (2.3.4) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/hast) |
+| [@types/highlight.js](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (9.12.4) | MIT | Unknown |
+| [@types/http-proxy](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (1.17.9) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/http-proxy) |
 | [@types/json-schema](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (7.0.6) | MIT | Unknown |
+| [@types/linkify-it](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (3.0.2) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/linkify-it) |
+| [@types/markdown-it](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (10.0.3) | MIT | Unknown |
+| [@types/mdurl](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (1.0.2) | MIT | Unknown |
+| [@types/mime](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (3.0.1) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mime) |
 | [@types/minimatch](https://www.github.com/DefinitelyTyped/DefinitelyTyped.git) (3.0.3) | MIT | Unknown |
 | [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (14.14.20) | MIT | Unknown |
 | [@types/q](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (1.5.4) | MIT | Unknown |
+| [@types/qs](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (6.9.7) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/qs) |
+| [@types/range-parser](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (1.2.4) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/range-parser) |
+| [@types/serve-static](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (1.15.0) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/serve-static) |
+| [@types/source-list-map](https://www.github.com/DefinitelyTyped/DefinitelyTyped.git) (0.1.2) | MIT | Unknown |
+| [@types/tapable](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (1.0.8) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/tapable) |
+| [@types/uglify-js](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (3.17.1) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/uglify-js) |
+| [@types/unist](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (2.0.6) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/unist) |
+| [@types/webpack](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (4.41.33) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/webpack) |
+| [@types/webpack-dev-server](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (3.11.6) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/webpack-dev-server) |
+| [@types/webpack-sources](https://github.com/DefinitelyTyped/DefinitelyTyped.git) (3.2.0) | MIT | [Unknown](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/webpack-sources) |
 | [@vue/babel-helper-vue-jsx-merge-props](https://github.com/vuejs/jsx/tree/master/packages/babel-helper-vue-jsx-merge-props) (1.2.1) | MIT | Evan You |
 | [@vue/babel-helper-vue-transform-on](Unknown) (1.0.0) | MIT | Amour1688 |
 | [@vue/babel-plugin-jsx](git+https://github.com/vuejs/jsx-next.git) (1.0.1) | MIT | [Amour1688](https://github.com/vuejs/jsx-next/tree/dev/packages/babel-plugin-jsx#readme) |
@@ -123,16 +150,18 @@ Liste des licences des dépendances utilisées dans l'API.
 | [@vue/babel-sugar-v-model](https://github.com/vuejs/jsx/tree/master/packages/babel-sugar-v-model) (1.2.3) | MIT | Nick Messing |
 | [@vue/babel-sugar-v-on](https://github.com/vuejs/jsx/tree/master/packages/babel-sugar-v-on) (1.2.3) | MIT | Nick Messing |
 | [@vue/component-compiler-utils](git+https://github.com/vuejs/component-compiler-utils.git) (3.2.0) | MIT | [Evan You](https://github.com/vuejs/component-compiler-utils#readme) |
-| [@vuepress/core](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [Evan You](https://github.com/vuejs/vuepress#readme) |
-| [@vuepress/markdown](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/markdown#readme) |
-| [@vuepress/markdown-loader](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/markdown-loader#readme) |
-| [@vuepress/plugin-active-header-links](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-active-header-links#readme) |
-| [@vuepress/plugin-last-updated](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-last-updated#readme) |
-| [@vuepress/plugin-nprogress](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-nprogress#readme) |
-| [@vuepress/plugin-register-components](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-register-components#readme) |
-| [@vuepress/plugin-search](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-search#readme) |
+| [@vuepress/core](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [Evan You](https://github.com/vuejs/vuepress#readme) |
+| [@vuepress/markdown](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/markdown#readme) |
+| [@vuepress/markdown-loader](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/markdown-loader#readme) |
+| [@vuepress/plugin-active-header-links](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-active-header-links#readme) |
+| [@vuepress/plugin-last-updated](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-last-updated#readme) |
+| [@vuepress/plugin-nprogress](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-nprogress#readme) |
+| [@vuepress/plugin-register-components](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-register-components#readme) |
+| [@vuepress/plugin-search](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/plugin-search#readme) |
+| [@vuepress/shared-utils](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/shared-utils#readme) |
 | [@vuepress/shared-utils](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/shared-utils#readme) |
-| [@vuepress/theme-default](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/theme-default#readme) |
+| [@vuepress/theme-default](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [Evan You](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/theme-default#readme) |
+| [@vuepress/types](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [ULIVZ](https://github.com/vuejs/vuepress/blob/master/packages/@vuepress/types#readme) |
 | [@webassemblyjs/ast](https://github.com/xtuc/webassemblyjs.git) (1.9.0) | MIT | Sven Sauleau |
 | [@webassemblyjs/floating-point-hex-parser](https://github.com/xtuc/webassemblyjs.git) (1.9.0) | MIT | Mauro Bringolf |
 | [@webassemblyjs/helper-api-error](Unknown) (1.9.0) | MIT | Sven Sauleau |
@@ -175,6 +204,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [array-union](https://github.com/sindresorhus/array-union.git) (1.0.2) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [array-uniq](https://github.com/sindresorhus/array-uniq.git) (1.0.3) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [array-unique](https://github.com/jonschlinkert/array-unique.git) (0.3.2) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/array-unique) |
+| [asap](https://github.com/kriskowal/asap.git) (2.0.6) | MIT | Unknown |
 | [asn1](git://github.com/joyent/node-asn1.git) (0.2.4) | MIT | [Joyent](joyent.com) |
 | [asn1.js](git@github.com:indutny/asn1.js) (5.4.1) | MIT | [Fedor Indutny](https://github.com/indutny/asn1.js) |
 | [assert](git://github.com/browserify/commonjs-assert.git) (1.5.0) | MIT | [Unknown](https://github.com/browserify/commonjs-assert) |
@@ -185,10 +215,13 @@ Liste des licences des dépendances utilisées dans l'API.
 | [async-limiter](https://github.com/strml/async-limiter.git) (1.0.1) | MIT | Samuel Reed |
 | [asynckit](git+https://github.com/alexindigo/asynckit.git) (0.4.0) | MIT | [Alex Indigo](https://github.com/alexindigo/asynckit#readme) |
 | [autocomplete.js](https://github.com/algolia/autocomplete.js.git) (0.36.0) | MIT | [Unknown](https://github.com/algolia/autocomplete.js) |
+| [autolinker](git://github.com/gregjacobs/Autolinker.js.git) (3.14.3) | MIT | [Gregory Jacobs](https://github.com/gregjacobs/Autolinker.js) |
 | [autoprefixer](https://github.com/postcss/autoprefixer.git) (9.8.6) | MIT | Andrey Sitnik |
 | [aws4](https://github.com/mhart/aws4.git) (1.11.0) | MIT | [Michael Hart](https://github.com/mhart) |
+| [axios](https://github.com/axios/axios.git) (0.21.4) | MIT | [Matt Zabriskie](https://axios-http.com/) |
 | [babel-loader](https://github.com/babel/babel-loader.git) (8.2.2) | MIT | [Luis Couto](https://github.com/babel/babel-loader) |
 | [babel-plugin-dynamic-import-node](git+https://github.com/airbnb/babel-plugin-dynamic-import-node.git) (2.3.3) | MIT | [Jordan Gensler](https://github.com/airbnb/babel-plugin-dynamic-import-node#readme) |
+| [babel-runtime](https://github.com/babel/babel/tree/master/packages/babel-runtime) (6.26.0) | MIT | Sebastian McKenzie |
 | [balanced-match](git://github.com/juliangruber/balanced-match.git) (1.0.0) | MIT | [Julian Gruber](https://github.com/juliangruber/balanced-match) |
 | [base](https://github.com/node-base/base.git) (0.11.2) | MIT | [Jon Schlinkert](https://github.com/node-base/base) |
 | [base64-js](git://github.com/beatgammit/base64-js.git) (1.5.1) | MIT | [T. Jameson Little](https://github.com/beatgammit/base64-js) |
@@ -220,6 +253,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [buffer-json](git+https://github.com/jprichardson/buffer-json.git) (2.0.0) | MIT | [JP Richardson](https://github.com/jprichardson/buffer-json#readme) |
 | [buffer-xor](https://github.com/crypto-browserify/buffer-xor.git) (1.0.3) | MIT | [Daniel Cousens](https://github.com/crypto-browserify/buffer-xor) |
 | [builtin-status-codes](https://github.com/bendrucker/builtin-status-codes.git) (3.0.0) | MIT | [Ben Drucker](bendrucker.me) |
+| [bundle-require](Unknown) (2.1.8) | MIT | Unknown |
 | [bytes](https://github.com/visionmedia/bytes.js.git) (3.0.0) | MIT | [TJ Holowaychuk](http://tjholowaychuk.com) |
 | [bytes](https://github.com/visionmedia/bytes.js.git) (3.1.0) | MIT | [TJ Holowaychuk](http://tjholowaychuk.com) |
 | [cac](https://github.com/egoist/cac.git) (6.7.1) | MIT | egoist |
@@ -238,6 +272,9 @@ Liste des licences des dépendances utilisées dans l'API.
 | [chalk](https://github.com/chalk/chalk.git) (3.0.0) | MIT | Unknown |
 | [chalk](https://github.com/chalk/chalk.git) (2.4.2) | MIT | Unknown |
 | [chalk](https://github.com/chalk/chalk.git) (1.1.3) | MIT | Unknown |
+| [character-entities](https://github.com/wooorm/character-entities.git) (1.2.4) | MIT | [Titus Wormer](https://wooorm.com) |
+| [character-entities-legacy](https://github.com/wooorm/character-entities-legacy.git) (1.1.4) | MIT | [Titus Wormer](https://wooorm.com) |
+| [character-reference-invalid](https://github.com/wooorm/character-reference-invalid.git) (1.1.4) | MIT | [Titus Wormer](https://wooorm.com) |
 | [chokidar](https://github.com/paulmillr/chokidar.git) (2.1.8) | MIT | [Paul Miller](https://github.com/paulmillr/chokidar) |
 | [chokidar](git+https://github.com/paulmillr/chokidar.git) (3.5.0) | MIT | [Paul Miller](https://github.com/paulmillr/chokidar) |
 | [chrome-trace-event](github.com:samccone/chrome-trace-event) (1.0.2) | MIT | Trent Mick, Sam Saccone |
@@ -245,6 +282,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [ci-info](https://github.com/watson/ci-info.git) (1.6.0) | MIT | [Thomas Watson Steen](https://github.com/watson/ci-info) |
 | [cipher-base](git+https://github.com/crypto-browserify/cipher-base.git) (1.0.4) | MIT | [Calvin Metcalf](https://github.com/crypto-browserify/cipher-base#readme) |
 | [class-utils](https://github.com/jonschlinkert/class-utils.git) (0.3.6) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/class-utils) |
+| [classnames](https://github.com/JedWatson/classnames.git) (2.3.1) | MIT | Jed Watson |
 | [clean-css](https://github.com/jakubpawlowicz/clean-css.git) (4.2.3) | MIT | [Jakub Pawlowicz](https://github.com/jakubpawlowicz/clean-css) |
 | [cli-boxes](https://github.com/sindresorhus/cli-boxes.git) (2.2.1) | MIT | [Sindre Sorhus](https://sindresorhus.com) |
 | [clipboard](https://github.com/zenorocha/clipboard.js.git) (2.0.6) | MIT | Unknown |
@@ -259,6 +297,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [color-string](https://github.com/Qix-/color-string.git) (1.5.4) | MIT | Heather Arthur |
 | [colorette](https://github.com/jorgebucaran/colorette.git) (1.2.1) | MIT | [Jorge Bucaran](https://github.com/jorgebucaran/colorette) |
 | [combined-stream](git://github.com/felixge/node-combined-stream.git) (1.0.8) | MIT | [Felix Geisendörfer](https://github.com/felixge/node-combined-stream) |
+| [comma-separated-tokens](https://github.com/wooorm/comma-separated-tokens.git) (1.0.8) | MIT | [Titus Wormer](https://wooorm.com) |
 | [commander](https://github.com/tj/commander.js.git) (2.17.1) | MIT | TJ Holowaychuk |
 | [commander](https://github.com/tj/commander.js.git) (2.19.0) | MIT | TJ Holowaychuk |
 | [commander](https://github.com/tj/commander.js.git) (2.20.3) | MIT | TJ Holowaychuk |
@@ -277,16 +316,23 @@ Liste des licences des dépendances utilisées dans l'API.
 | [content-type](https://github.com/jshttp/content-type.git) (1.0.4) | MIT | Douglas Christopher Wilson |
 | [convert-source-map](git://github.com/thlorenz/convert-source-map.git) (1.7.0) | MIT | [Thorsten Lorenz](https://github.com/thlorenz/convert-source-map) |
 | [cookie](https://github.com/jshttp/cookie.git) (0.4.0) | MIT | Roman Shtylman |
+| [cookie](https://github.com/jshttp/cookie.git) (0.4.2) | MIT | Roman Shtylman |
 | [cookie-signature](https://github.com/visionmedia/node-cookie-signature.git) (1.0.6) | MIT | TJ Holowaychuk |
 | [copy-descriptor](https://github.com/jonschlinkert/copy-descriptor.git) (0.1.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/copy-descriptor) |
+| [copy-to-clipboard](git+https://github.com/sudodoki/copy-to-clipboard) (3.3.1) | MIT | sudodoki |
 | [copy-webpack-plugin](https://github.com/webpack-contrib/copy-webpack-plugin.git) (5.1.2) | MIT | [Len Boyette](https://github.com/webpack-contrib/copy-webpack-plugin) |
 | [core-js](https://github.com/zloirock/core-js.git) (3.8.2) | MIT | Unknown |
+| [core-js](https://github.com/zloirock/core-js.git) (1.2.7) | MIT | Unknown |
+| [core-js](https://github.com/zloirock/core-js.git) (2.6.12) | MIT | Unknown |
 | [core-js-compat](https://github.com/zloirock/core-js.git) (3.8.2) | MIT | Unknown |
+| [core-js-pure](https://github.com/zloirock/core-js.git) (3.21.0) | MIT | Unknown |
 | [core-util-is](git://github.com/isaacs/core-util-is) (1.0.2) | MIT | [Isaac Z. Schlueter](http://blog.izs.me/) |
 | [cosmiconfig](git+https://github.com/davidtheclark/cosmiconfig.git) (5.2.1) | MIT | [David Clark](https://github.com/davidtheclark/cosmiconfig#readme) |
 | [create-ecdh](https://github.com/crypto-browserify/createECDH.git) (4.0.4) | MIT | [Calvin Metcalf](https://github.com/crypto-browserify/createECDH) |
 | [create-hash](git@github.com:crypto-browserify/createHash.git) (1.2.0) | MIT | [Unknown](https://github.com/crypto-browserify/createHash) |
 | [create-hmac](https://github.com/crypto-browserify/createHmac.git) (1.1.7) | MIT | [Unknown](https://github.com/crypto-browserify/createHmac) |
+| [create-react-class](git+https://github.com/facebook/react.git) (15.7.0) | MIT | [Unknown](https://facebook.github.io/react/) |
+| [cross-fetch](https://github.com/lquixada/cross-fetch.git) (3.1.5) | MIT | [Leonardo Quixada](https://github.com/lquixada/cross-fetch) |
 | [cross-spawn](git@github.com:moxystudio/node-cross-spawn.git) (6.0.5) | MIT | [André Cruz](https://github.com/moxystudio/node-cross-spawn) |
 | [crypto-browserify](git://github.com/crypto-browserify/crypto-browserify.git) (3.12.0) | MIT | [Dominic Tarr](https://github.com/crypto-browserify/crypto-browserify) |
 | [crypto-random-string](https://github.com/sindresorhus/crypto-random-string.git) (2.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
@@ -298,6 +344,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [css-select-base-adapter](https://github.com/nrkn/css-select-base-adapter.git) (0.1.1) | MIT | [Nik Coughlin](https://github.com/nrkn/css-select-base-adapter#readme) |
 | [css-tree](https://github.com/csstree/csstree.git) (1.0.0-alpha.37) | MIT | [Roman Dvornov](https://github.com/lahmatiy) |
 | [css-tree](https://github.com/csstree/csstree.git) (1.1.2) | MIT | [Roman Dvornov](https://github.com/lahmatiy) |
+| [css.escape](https://github.com/mathiasbynens/CSS.escape.git) (1.5.1) | MIT | [Mathias Bynens](https://mths.be/cssescape) |
 | [cssesc](https://github.com/mathiasbynens/cssesc.git) (3.0.0) | MIT | [Mathias Bynens](https://mths.be/cssesc) |
 | [cssnano](https://github.com/cssnano/cssnano.git) (4.1.10) | MIT | [Ben Briggs](https://github.com/cssnano/cssnano) |
 | [cssnano-preset-default](https://github.com/cssnano/cssnano.git) (4.0.7) | MIT | [Ben Briggs](https://github.com/cssnano/cssnano) |
@@ -319,6 +366,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [deep-equal](http://github.com/substack/node-deep-equal.git) (1.1.1) | MIT | [James Halliday](http://substack.net) |
 | [deep-extend](git://github.com/unclechu/node-deep-extend.git) (0.6.0) | MIT | [Viacheslav Lotsmanov](https://github.com/unclechu/node-deep-extend) |
 | [deepmerge](git://github.com/KyleAMathews/deepmerge.git) (1.5.2) | MIT | [Nick Fisher](https://github.com/KyleAMathews/deepmerge) |
+| [deepmerge](git://github.com/TehShrike/deepmerge.git) (4.2.2) | MIT | [Unknown](https://github.com/TehShrike/deepmerge) |
 | [defer-to-connect](git+https://github.com/szmarczak/defer-to-connect.git) (1.1.3) | MIT | [Szymon Marczak](https://github.com/szmarczak/defer-to-connect#readme) |
 | [define-properties](git://github.com/ljharb/define-properties.git) (1.1.3) | MIT | Jordan Harband |
 | [define-property](https://github.com/jonschlinkert/define-property.git) (2.0.2) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/define-property) |
@@ -350,6 +398,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [emojis-list](git+https://github.com/kikobeats/emojis-list.git) (3.0.0) | MIT | [Kiko Beats](https://nidecoc.io/Kikobeats/emojis-list) |
 | [emojis-list](git+https://github.com/kikobeats/emojis-list.git) (2.1.0) | MIT | [Kiko Beats](https://github.com/Kikobeats/emojis-list) |
 | [encodeurl](https://github.com/pillarjs/encodeurl.git) (1.0.2) | MIT | Unknown |
+| [encoding](https://github.com/andris9/encoding.git) (0.1.13) | MIT | Andris Reinman |
 | [end-of-stream](git://github.com/mafintosh/end-of-stream.git) (1.4.4) | MIT | [Mathias Buus](https://github.com/mafintosh/end-of-stream) |
 | [enhanced-resolve](git://github.com/webpack/enhanced-resolve.git) (4.5.0) | MIT | [Tobias Koppers @sokra](http://github.com/webpack/enhanced-resolve) |
 | [envify](git://github.com/hughsk/envify.git) (4.1.0) | MIT | [Hugh Kennedy](http://hughskennedy.com/) |
@@ -359,13 +408,17 @@ Liste des licences des dépendances utilisées dans l'API.
 | [es-abstract](git://github.com/ljharb/es-abstract.git) (1.18.0-next.1) | MIT | [Jordan Harband](http://ljharb.codes) |
 | [es-abstract](git://github.com/ljharb/es-abstract.git) (1.17.7) | MIT | [Jordan Harband](http://ljharb.codes) |
 | [es-to-primitive](git://github.com/ljharb/es-to-primitive.git) (1.2.1) | MIT | Jordan Harband |
+| [es6-iterator](git://github.com/medikoo/es6-iterator.git) (2.0.3) | MIT | [Mariusz Nowak](http://www.medikoo.com/) |
 | [es6-promise](git://github.com/stefanpenner/es6-promise.git) (4.2.8) | MIT | [Yehuda Katz, Tom Dale, Stefan Penner and contributors](https://github.com/stefanpenner/es6-promise) |
+| [esbuild](https://github.com/evanw/esbuild) (0.14.7) | MIT | Unknown |
+| [esbuild-linux-64](https://github.com/evanw/esbuild) (0.14.7) | MIT | Unknown |
 | [escalade](https://github.com/lukeed/escalade.git) (3.1.1) | MIT | [Luke Edwards](https://lukeed.com) |
 | [escape-goat](https://github.com/sindresorhus/escape-goat.git) (2.1.1) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [escape-html](https://github.com/component/escape-html.git) (1.0.3) | MIT | Unknown |
 | [escape-string-regexp](https://github.com/sindresorhus/escape-string-regexp.git) (1.0.5) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [escape-string-regexp](https://github.com/sindresorhus/escape-string-regexp.git) (2.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [etag](https://github.com/jshttp/etag.git) (1.8.1) | MIT | Unknown |
+| [event-emitter](git://github.com/medikoo/event-emitter.git) (0.3.5) | MIT | [Mariusz Nowak](http://www.medikoo.com/) |
 | [eventemitter3](git://github.com/primus/eventemitter3.git) (4.0.7) | MIT | Arnout Kazemier |
 | [events](git://github.com/Gozala/events.git) (3.2.0) | MIT | [Irakli Gozalishvili](http://jeditoolkit.com) |
 | [events](git://github.com/Gozala/events.git) (1.1.1) | MIT | [Irakli Gozalishvili](http://jeditoolkit.com) |
@@ -382,9 +435,13 @@ Liste des licences des dépendances utilisées dans l'API.
 | [extsprintf](git://github.com/davepacheco/node-extsprintf.git) (1.4.0) | MIT | Unknown |
 | [fast-deep-equal](git+https://github.com/epoberezkin/fast-deep-equal.git) (3.1.3) | MIT | [Evgeny Poberezkin](https://github.com/epoberezkin/fast-deep-equal#readme) |
 | [fast-glob](https://github.com/mrmlnc/fast-glob.git) (2.2.7) | MIT | [Denis Malinochkin](canonium.com) |
+| [fast-json-patch](git://github.com/Starcounter-Jack/JSON-Patch.git) (3.1.0) | MIT | [Joachim Wester](https://github.com/Starcounter-Jack/JSON-Patch) |
 | [fast-json-stable-stringify](git://github.com/epoberezkin/fast-json-stable-stringify.git) (2.1.0) | MIT | [James Halliday](https://github.com/epoberezkin/fast-json-stable-stringify) |
+| [fault](https://github.com/wooorm/fault.git) (1.0.4) | MIT | [Titus Wormer](https://wooorm.com) |
+| [fbjs](https://github.com/facebook/fbjs.git) (0.8.18) | MIT | Unknown |
 | [figures](https://github.com/sindresorhus/figures.git) (3.2.0) | MIT | [Sindre Sorhus](https://sindresorhus.com) |
 | [file-loader](https://github.com/webpack-contrib/file-loader.git) (3.0.1) | MIT | [Tobias Koppers @sokra](https://github.com/webpack-contrib/file-loader) |
+| [file-saver](https://github.com/eligrey/FileSaver.js) (2.0.5) | MIT | [Eli Grey](https://github.com/eligrey/FileSaver.js#readme) |
 | [file-uri-to-path](git://github.com/TooTallNate/file-uri-to-path.git) (1.0.0) | MIT | [Nathan Rajlich](https://github.com/TooTallNate/file-uri-to-path) |
 | [fill-range](https://github.com/jonschlinkert/fill-range.git) (4.0.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/fill-range) |
 | [fill-range](https://github.com/jonschlinkert/fill-range.git) (7.0.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/fill-range) |
@@ -395,9 +452,13 @@ Liste des licences des dépendances utilisées dans l'API.
 | [find-up](https://github.com/sindresorhus/find-up.git) (4.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [flush-write-stream](https://github.com/mafintosh/flush-write-stream.git) (1.1.1) | MIT | [Mathias Buus](https://github.com/mafintosh/flush-write-stream) |
 | [follow-redirects](git@github.com:follow-redirects/follow-redirects.git) (1.13.1) | MIT | [Ruben Verborgh](https://github.com/follow-redirects/follow-redirects) |
+| [follow-redirects](git@github.com:follow-redirects/follow-redirects.git) (1.14.8) | MIT | [Ruben Verborgh](https://github.com/follow-redirects/follow-redirects) |
 | [for-in](https://github.com/jonschlinkert/for-in.git) (1.0.2) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/for-in) |
 | [foreach](git://github.com/manuelstofer/foreach) (2.0.5) | MIT | Manuel Stofer |
 | [form-data](git://github.com/form-data/form-data.git) (2.3.3) | MIT | [Felix Geisendörfer](http://debuggable.com/) |
+| [form-data-encoder](https://github.com/octet-stream/form-data-encoder.git) (1.7.1) | MIT | Nick K. |
+| [format](git://github.com/samsonjs/format.git) (0.2.2) | MIT | [Sami Samhuri](http://samhuri.net/proj/format) |
+| [formdata-node](https://github.com/octet-stream/form-data.git) (4.3.2) | MIT | Nick K. |
 | [forwarded](https://github.com/jshttp/forwarded.git) (0.1.2) | MIT | Unknown |
 | [fragment-cache](https://github.com/jonschlinkert/fragment-cache.git) (0.2.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/fragment-cache) |
 | [fresh](https://github.com/jshttp/fresh.git) (0.5.2) | MIT | [TJ Holowaychuk](http://tjholowaychuk.com) |
@@ -434,6 +495,8 @@ Liste des licences des dépendances utilisées dans l'API.
 | [hash-base](https://github.com/crypto-browserify/hash-base.git) (3.1.0) | MIT | [Kirill Fomichev](https://github.com/crypto-browserify/hash-base) |
 | [hash-sum](git://github.com/bevacqua/hash-sum.git) (1.0.2) | MIT | [Unknown](https://github.com/bevacqua/hash-sum) |
 | [hash.js](git@github.com:indutny/hash.js) (1.1.7) | MIT | [Fedor Indutny](https://github.com/indutny/hash.js) |
+| [hast-util-parse-selector](https://github.com/syntax-tree/hast-util-parse-selector.git) (2.2.5) | MIT | [Titus Wormer](https://wooorm.com) |
+| [hastscript](https://github.com/syntax-tree/hastscript.git) (6.0.0) | MIT | [Titus Wormer](https://wooorm.com) |
 | [he](https://github.com/mathiasbynens/he.git) (1.2.0) | MIT | [Mathias Bynens](https://mths.be/he) |
 | [hex-color-regex](https://github.com/regexps/hex-color-regex.git) (1.1.0) | MIT | [Charlike Mike Reagent](http://www.tunnckocore.tk) |
 | [hmac-drbg](git+ssh://git@github.com/indutny/hmac-drbg.git) (1.0.1) | MIT | [Fedor Indutny](https://github.com/indutny/hmac-drbg#readme) |
@@ -453,13 +516,16 @@ Liste des licences des dépendances utilisées dans l'API.
 | [http-parser-js](git://github.com/creationix/http-parser-js.git) (0.5.3) | MIT | [Tim Caswell](https://github.com/creationix) |
 | [http-proxy](https://github.com/http-party/node-http-proxy.git) (1.18.1) | MIT | Charlie Robbins |
 | [http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware.git) (0.19.1) | MIT | [Steven Chim](https://github.com/chimurai/http-proxy-middleware) |
+| [http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware.git) (1.3.1) | MIT | [Steven Chim](https://github.com/chimurai/http-proxy-middleware#readme) |
 | [http-signature](git://github.com/joyent/node-http-signature.git) (1.2.0) | MIT | [Joyent, Inc](https://github.com/joyent/node-http-signature/) |
 | [https-browserify](git://github.com/substack/https-browserify.git) (1.0.0) | MIT | [James Halliday](https://github.com/substack/https-browserify) |
 | [iconv-lite](git://github.com/ashtuchkin/iconv-lite.git) (0.4.24) | MIT | [Alexander Shtuchkin](https://github.com/ashtuchkin/iconv-lite) |
+| [iconv-lite](git://github.com/ashtuchkin/iconv-lite.git) (0.6.3) | MIT | [Alexander Shtuchkin](https://github.com/ashtuchkin/iconv-lite) |
 | [iferr](https://github.com/shesek/iferr) (0.1.5) | MIT | [Nadav Ivgi](https://github.com/shesek/iferr) |
 | [ignore](git@github.com:kaelzhang/node-ignore.git) (4.0.6) | MIT | kael |
 | [ignore](git@github.com:kaelzhang/node-ignore.git) (3.3.10) | MIT | kael |
 | [immediate](git://github.com/calvinmetcalf/immediate.git) (3.3.0) | MIT | Unknown |
+| [immutable](git://github.com/facebook/immutable-js.git) (3.8.2) | MIT | [Lee Byron](https://facebook.github.com/immutable-js) |
 | [import-cwd](https://github.com/sindresorhus/import-cwd.git) (2.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [import-fresh](https://github.com/sindresorhus/import-fresh.git) (2.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [import-from](https://github.com/sindresorhus/import-from.git) (2.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
@@ -468,6 +534,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [imurmurhash](https://github.com/jensyt/imurmurhash-js) (0.1.4) | MIT | [Jens Taylor](https://github.com/jensyt/imurmurhash-js) |
 | [indexes-of](git://github.com/dominictarr/indexes-of.git) (1.0.1) | MIT | [Dominic Tarr](https://github.com/dominictarr/indexes-of) |
 | [internal-ip](https://github.com/sindresorhus/internal-ip.git) (4.3.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
+| [invariant](https://github.com/zertosh/invariant) (2.2.4) | MIT | Andres Suarez |
 | [ip](http://github.com/indutny/node-ip.git) (1.1.5) | MIT | [Fedor Indutny](https://github.com/indutny/node-ip) |
 | [ip-regex](https://github.com/sindresorhus/ip-regex.git) (2.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [ipaddr.js](git://github.com/whitequark/ipaddr.js) (1.9.1) | MIT | whitequark |
@@ -475,6 +542,8 @@ Liste des licences des dépendances utilisées dans l'API.
 | [is-absolute-url](https://github.com/sindresorhus/is-absolute-url.git) (2.1.0) | MIT | [Sindre Sorhus](http://sindresorhus.com) |
 | [is-accessor-descriptor](https://github.com/jonschlinkert/is-accessor-descriptor.git) (1.0.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-accessor-descriptor) |
 | [is-accessor-descriptor](https://github.com/jonschlinkert/is-accessor-descriptor.git) (0.1.6) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-accessor-descriptor) |
+| [is-alphabetical](https://github.com/wooorm/is-alphabetical.git) (1.0.4) | MIT | [Titus Wormer](https://wooorm.com) |
+| [is-alphanumerical](https://github.com/wooorm/is-alphanumerical.git) (1.0.4) | MIT | [Titus Wormer](https://wooorm.com) |
 | [is-arguments](git://github.com/inspect-js/is-arguments.git) (1.1.0) | MIT | [Jordan Harband](https://github.com/inspect-js/is-arguments) |
 | [is-arrayish](https://github.com/qix-/node-is-arrayish.git) (0.2.1) | MIT | [Qix](http://github.com/qix-) |
 | [is-arrayish](https://github.com/qix-/node-is-arrayish.git) (0.3.2) | MIT | [Qix](http://github.com/qix-) |
@@ -488,9 +557,11 @@ Liste des licences des dépendances utilisées dans l'API.
 | [is-data-descriptor](https://github.com/jonschlinkert/is-data-descriptor.git) (1.0.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-data-descriptor) |
 | [is-data-descriptor](https://github.com/jonschlinkert/is-data-descriptor.git) (0.1.4) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-data-descriptor) |
 | [is-date-object](git://github.com/ljharb/is-date-object.git) (1.0.2) | MIT | Jordan Harband |
+| [is-decimal](https://github.com/wooorm/is-decimal.git) (1.0.4) | MIT | [Titus Wormer](https://wooorm.com) |
 | [is-descriptor](https://github.com/jonschlinkert/is-descriptor.git) (1.0.2) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-descriptor) |
 | [is-descriptor](https://github.com/jonschlinkert/is-descriptor.git) (0.1.6) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-descriptor) |
 | [is-directory](https://github.com/jonschlinkert/is-directory.git) (0.3.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-directory) |
+| [is-dom](https://github.com/npm-dom/is-dom.git) (1.1.0) | MIT | Unknown |
 | [is-extendable](https://github.com/jonschlinkert/is-extendable.git) (0.1.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-extendable) |
 | [is-extendable](https://github.com/jonschlinkert/is-extendable.git) (1.0.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-extendable) |
 | [is-extglob](https://github.com/jonschlinkert/is-extglob.git) (2.1.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-extglob) |
@@ -498,23 +569,29 @@ Liste des licences des dépendances utilisées dans l'API.
 | [is-fullwidth-code-point](https://github.com/sindresorhus/is-fullwidth-code-point.git) (2.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [is-glob](https://github.com/micromatch/is-glob.git) (4.0.1) | MIT | [Jon Schlinkert](https://github.com/micromatch/is-glob) |
 | [is-glob](https://github.com/jonschlinkert/is-glob.git) (3.1.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-glob) |
+| [is-hexadecimal](https://github.com/wooorm/is-hexadecimal.git) (1.0.4) | MIT | [Titus Wormer](https://wooorm.com) |
 | [is-installed-globally](https://github.com/sindresorhus/is-installed-globally.git) (0.3.2) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [is-negative-zero](git://github.com/inspect-js/is-negative-zero.git) (2.0.1) | MIT | [Jordan Harband](https://github.com/inspect-js/is-negative-zero) |
 | [is-npm](https://github.com/sindresorhus/is-npm.git) (4.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [is-number](https://github.com/jonschlinkert/is-number.git) (3.0.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-number) |
 | [is-number](https://github.com/jonschlinkert/is-number.git) (7.0.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-number) |
 | [is-obj](https://github.com/sindresorhus/is-obj.git) (2.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
+| [is-object](git://github.com/inspect-js/is-object.git) (1.0.2) | MIT | [Raynos](https://github.com/inspect-js/is-object) |
 | [is-path-cwd](https://github.com/sindresorhus/is-path-cwd.git) (2.2.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [is-path-in-cwd](https://github.com/sindresorhus/is-path-in-cwd.git) (2.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [is-path-inside](https://github.com/sindresorhus/is-path-inside.git) (3.0.2) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [is-path-inside](https://github.com/sindresorhus/is-path-inside.git) (2.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
+| [is-plain-obj](https://github.com/sindresorhus/is-plain-obj.git) (3.0.0) | MIT | [Sindre Sorhus](https://sindresorhus.com) |
 | [is-plain-obj](https://github.com/sindresorhus/is-plain-obj.git) (1.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [is-plain-object](https://github.com/jonschlinkert/is-plain-object.git) (2.0.4) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-plain-object) |
+| [is-plain-object](https://github.com/jonschlinkert/is-plain-object.git) (5.0.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-plain-object) |
+| [is-promise](https://github.com/then/is-promise.git) (2.2.2) | MIT | ForbesLindesay |
 | [is-regex](git://github.com/ljharb/is-regex.git) (1.1.1) | MIT | [Jordan Harband](https://github.com/ljharb/is-regex) |
 | [is-stream](https://github.com/sindresorhus/is-stream.git) (1.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [is-svg](https://github.com/sindresorhus/is-svg.git) (3.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [is-symbol](git://github.com/inspect-js/is-symbol.git) (1.0.3) | MIT | Jordan Harband |
 | [is-typedarray](git://github.com/hughsk/is-typedarray.git) (1.0.0) | MIT | [Hugh Kennedy](https://github.com/hughsk/is-typedarray) |
+| [is-window](git+https://github.com/gearcase/is-window.git) (1.0.2) | MIT | [bubkoo](https://github.com/gearcase/is-window#readme) |
 | [is-windows](https://github.com/jonschlinkert/is-windows.git) (1.0.2) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/is-windows) |
 | [is-wsl](https://github.com/sindresorhus/is-wsl.git) (1.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [is-yarn-global](git@github.com:LitoMore/is-yarn-global.git) (0.3.0) | MIT | [LitoMore](litomore@gmail.com) |
@@ -522,11 +599,15 @@ Liste des licences des dépendances utilisées dans l'API.
 | [isarray](git://github.com/juliangruber/isarray.git) (1.0.0) | MIT | [Julian Gruber](https://github.com/juliangruber/isarray) |
 | [isobject](https://github.com/jonschlinkert/isobject.git) (3.0.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/isobject) |
 | [isobject](https://github.com/jonschlinkert/isobject.git) (2.1.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/isobject) |
+| [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch.git) (2.2.1) | MIT | [Matt Andrews](https://github.com/matthew-andrews/isomorphic-fetch/issues) |
 | [isstream](https://github.com/rvagg/isstream.git) (0.1.2) | MIT | [Rod Vagg](https://github.com/rvagg/isstream) |
 | [javascript-stringify](https://github.com/blakeembrey/javascript-stringify.git) (2.0.1) | MIT | [Blake Embrey](https://github.com/blakeembrey/javascript-stringify) |
 | [javascript-stringify](https://github.com/blakeembrey/javascript-stringify.git) (1.6.0) | MIT | [Blake Embrey](http://blakeembrey.me) |
+| [js-file-download](git@github.com:kennethjiang/js-file-download.git) (0.4.12) | MIT | [Kenneth Jiang](https://github.com/kennethjiang/js-file-download) |
 | [js-tokens](https://github.com/lydell/js-tokens.git) (4.0.0) | MIT | Simon Lydell |
 | [js-yaml](https://github.com/nodeca/js-yaml.git) (3.14.1) | MIT | [Vladimir Zapparov](https://github.com/nodeca/js-yaml) |
+| [js-yaml](https://github.com/nodeca/js-yaml.git) (4.1.0) | MIT | Vladimir Zapparov |
+| [js-yaml-loader](https://github.com/wwilsman/js-yaml-loader.git) (1.2.2) | MIT | Wil Wilsman |
 | [jsbn](https://github.com/andyperlitch/jsbn.git) (0.1.1) | MIT | Tom Wu |
 | [jsesc](https://github.com/mathiasbynens/jsesc.git) (2.5.2) | MIT | [Mathias Bynens](https://mths.be/jsesc) |
 | [jsesc](https://github.com/mathiasbynens/jsesc.git) (0.5.0) | MIT | [Mathias Bynens](http://mths.be/jsesc) |
@@ -554,6 +635,8 @@ Liste des licences des dépendances utilisées dans l'API.
 | [locate-path](https://github.com/sindresorhus/locate-path.git) (3.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [locate-path](https://github.com/sindresorhus/locate-path.git) (5.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [lodash](https://github.com/lodash/lodash.git) (4.17.20) | MIT | [John-David Dalton](https://lodash.com/) |
+| [lodash](https://github.com/lodash/lodash.git) (4.17.21) | MIT | [John-David Dalton](https://lodash.com/) |
+| [lodash-es](https://github.com/lodash/lodash.git) (4.17.21) | MIT | [John-David Dalton](https://lodash.com/custom-builds) |
 | [lodash._reinterpolate](https://github.com/lodash/lodash.git) (3.0.0) | MIT | [John-David Dalton](https://lodash.com/) |
 | [lodash.clonedeep](https://github.com/lodash/lodash.git) (4.5.0) | MIT | [John-David Dalton](https://lodash.com/) |
 | [lodash.debounce](https://github.com/lodash/lodash.git) (4.0.8) | MIT | [John-David Dalton](https://lodash.com/) |
@@ -563,9 +646,12 @@ Liste des licences des dépendances utilisées dans l'API.
 | [lodash.templatesettings](https://github.com/lodash/lodash.git) (4.2.0) | MIT | [John-David Dalton](https://lodash.com/) |
 | [lodash.uniq](https://github.com/lodash/lodash.git) (4.5.0) | MIT | [John-David Dalton](https://lodash.com/) |
 | [loglevel](git://github.com/pimterry/loglevel.git) (1.7.1) | MIT | [Tim Perry](https://github.com/pimterry/loglevel) |
+| [loose-envify](git://github.com/zertosh/loose-envify.git) (1.4.0) | MIT | [Andres Suarez](https://github.com/zertosh/loose-envify) |
 | [lower-case](git://github.com/blakeembrey/lower-case.git) (1.1.4) | MIT | [Blake Embrey](https://github.com/blakeembrey/lower-case) |
 | [lowercase-keys](https://github.com/sindresorhus/lowercase-keys.git) (1.0.1) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [lowercase-keys](https://github.com/sindresorhus/lowercase-keys.git) (2.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
+| [lowlight](https://github.com/wooorm/lowlight.git) (1.20.0) | MIT | [Titus Wormer](https://wooorm.com) |
+| [lru-queue](git://github.com/medikoo/lru-queue.git) (0.1.0) | MIT | [Mariusz Nowak](http://www.medikoo.com/) |
 | [make-dir](https://github.com/sindresorhus/make-dir.git) (3.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [make-dir](https://github.com/sindresorhus/make-dir.git) (2.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [map-cache](https://github.com/jonschlinkert/map-cache.git) (0.2.2) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/map-cache) |
@@ -585,6 +671,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [merge2](git@github.com:teambition/merge2.git) (1.4.1) | MIT | [Unknown](https://github.com/teambition/merge2) |
 | [methods](https://github.com/jshttp/methods.git) (1.1.2) | MIT | Unknown |
 | [micromatch](https://github.com/micromatch/micromatch.git) (3.1.10) | MIT | [Jon Schlinkert](https://github.com/micromatch/micromatch) |
+| [micromatch](https://github.com/micromatch/micromatch.git) (4.0.5) | MIT | [Jon Schlinkert](https://github.com/micromatch/micromatch) |
 | [miller-rabin](git@github.com:indutny/miller-rabin) (4.0.1) | MIT | [Fedor Indutny](https://github.com/indutny/miller-rabin) |
 | [mime](https://github.com/broofa/mime) (2.4.7) | MIT | [Robert Kieffer](http://github.com/broofa) |
 | [mime](https://github.com/broofa/node-mime) (1.6.0) | MIT | [Robert Kieffer](http://github.com/broofa) |
@@ -609,8 +696,12 @@ Liste des licences des dépendances utilisées dans l'API.
 | [nanomatch](https://github.com/micromatch/nanomatch.git) (1.2.13) | MIT | [Jon Schlinkert](https://github.com/micromatch/nanomatch) |
 | [negotiator](https://github.com/jshttp/negotiator.git) (0.6.2) | MIT | Unknown |
 | [neo-async](git@github.com:suguru03/neo-async.git) (2.6.2) | MIT | [Unknown](https://github.com/suguru03/neo-async) |
+| [next-tick](git://github.com/medikoo/next-tick.git) (1.0.0) | MIT | [Mariusz Nowak](http://www.medikoo.com/) |
 | [nice-try](https://github.com/electerious/nice-try.git) (1.0.5) | MIT | [Unknown](https://github.com/electerious/nice-try) |
 | [no-case](git://github.com/blakeembrey/no-case.git) (2.3.2) | MIT | [Blake Embrey](https://github.com/blakeembrey/no-case) |
+| [node-domexception](git+https://github.com/jimmywarting/node-domexception.git) (1.0.0) | MIT | [Jimmy Wärting](https://github.com/jimmywarting/node-domexception#readme) |
+| [node-fetch](https://github.com/bitinn/node-fetch.git) (2.6.7) | MIT | [David Frank](https://github.com/bitinn/node-fetch) |
+| [node-fetch](https://github.com/bitinn/node-fetch.git) (1.7.3) | MIT | [David Frank](https://github.com/bitinn/node-fetch) |
 | [node-libs-browser](git+https://github.com/webpack/node-libs-browser.git) (2.2.1) | MIT | [Tobias Koppers @sokra](http://github.com/webpack/node-libs-browser) |
 | [node-releases](git+https://github.com/chicoxyzzy/node-releases.git) (1.1.69) | MIT | Sergey Rubanov |
 | [nopt](http://github.com/isaacs/nopt) (1.0.10) | MIT | [Isaac Z. Schlueter](http://blog.izs.me/) |
@@ -626,6 +717,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [object-assign](https://github.com/sindresorhus/object-assign.git) (4.1.1) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [object-copy](https://github.com/jonschlinkert/object-copy.git) (0.1.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/object-copy) |
 | [object-inspect](git://github.com/inspect-js/object-inspect.git) (1.9.0) | MIT | [James Halliday](https://github.com/inspect-js/object-inspect) |
+| [object-inspect](git://github.com/inspect-js/object-inspect.git) (1.12.0) | MIT | [James Halliday](https://github.com/inspect-js/object-inspect) |
 | [object-is](git://github.com/es-shims/object-is.git) (1.1.4) | MIT | [Jordan Harband](https://github.com/es-shims/object-is) |
 | [object-keys](git://github.com/ljharb/object-keys.git) (1.1.1) | MIT | [Jordan Harband](http://ljharb.codes) |
 | [object-visit](https://github.com/jonschlinkert/object-visit.git) (1.0.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/object-visit) |
@@ -652,6 +744,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [package-json](https://github.com/sindresorhus/package-json.git) (6.5.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [parallel-transform](git://github.com/mafintosh/parallel-transform) (1.2.0) | MIT | Mathias Buus Madsen |
 | [param-case](git://github.com/blakeembrey/param-case.git) (2.1.1) | MIT | [Blake Embrey](https://github.com/blakeembrey/param-case) |
+| [parse-entities](https://github.com/wooorm/parse-entities.git) (2.0.0) | MIT | [Titus Wormer](https://wooorm.com) |
 | [parse-json](https://github.com/sindresorhus/parse-json.git) (4.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [parseurl](https://github.com/pillarjs/parseurl.git) (1.3.3) | MIT | Unknown |
 | [pascalcase](https://github.com/jonschlinkert/pascalcase.git) (0.1.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/pascalcase) |
@@ -666,7 +759,9 @@ Liste des licences des dépendances utilisées dans l'API.
 | [path-type](https://github.com/sindresorhus/path-type.git) (3.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [pbkdf2](https://github.com/crypto-browserify/pbkdf2.git) (3.1.1) | MIT | [Daniel Cousens](https://github.com/crypto-browserify/pbkdf2) |
 | [performance-now](git://github.com/braveg1rl/performance-now.git) (2.1.0) | MIT | [Braveg1rl](https://github.com/braveg1rl/performance-now) |
+| [performance-now](git://github.com/meryn/performance-now.git) (0.2.0) | MIT | [Meryn Stol](https://github.com/meryn/performance-now) |
 | [picomatch](https://github.com/micromatch/picomatch.git) (2.2.2) | MIT | [Jon Schlinkert](https://github.com/micromatch/picomatch) |
+| [picomatch](https://github.com/micromatch/picomatch.git) (2.3.1) | MIT | [Jon Schlinkert](https://github.com/micromatch/picomatch) |
 | [pify](https://github.com/sindresorhus/pify.git) (4.0.1) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [pify](https://github.com/sindresorhus/pify.git) (3.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [pify](https://github.com/sindresorhus/pify.git) (2.3.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
@@ -717,8 +812,13 @@ Liste des licences des dépendances utilisées dans l'API.
 | [pretty-error](https://github.com/AriaMinaei/pretty-error.git) (2.1.2) | MIT | Aria Minaei |
 | [pretty-time](https://github.com/jonschlinkert/pretty-time.git) (1.1.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/pretty-time) |
 | [prismjs](https://github.com/PrismJS/prism.git) (1.23.0) | MIT | Lea Verou |
+| [prismjs](https://github.com/PrismJS/prism.git) (1.26.0) | MIT | Lea Verou |
+| [prismjs](https://github.com/PrismJS/prism.git) (1.25.0) | MIT | Lea Verou |
 | [process](git://github.com/shtylman/node-process.git) (0.11.10) | MIT | Roman Shtylman |
 | [process-nextick-args](https://github.com/calvinmetcalf/process-nextick-args.git) (2.0.1) | MIT | [Unknown](https://github.com/calvinmetcalf/process-nextick-args) |
+| [promise](https://github.com/then/promise.git) (7.3.1) | MIT | ForbesLindesay |
+| [prop-types](https://github.com/facebook/prop-types.git) (15.8.1) | MIT | [Unknown](https://facebook.github.io/react/) |
+| [property-information](https://github.com/wooorm/property-information.git) (5.6.0) | MIT | [Titus Wormer](https://wooorm.com) |
 | [proxy-addr](https://github.com/jshttp/proxy-addr.git) (2.0.6) | MIT | Douglas Christopher Wilson |
 | [prr](https://github.com/rvagg/prr.git) (1.0.1) | MIT | [Rod Vagg](https://github.com/rvagg/prr) |
 | [psl](git@github.com:lupomontero/psl.git) (1.8.0) | MIT | [Lupo Montero](https://lupomontero.com/) |
@@ -735,18 +835,33 @@ Liste des licences des dépendances utilisées dans l'API.
 | [querystring](git://github.com/Gozala/querystring.git) (0.2.0) | MIT | Irakli Gozalishvili |
 | [querystring-es3](git://github.com/mike-spainhower/querystring.git) (0.2.1) | MIT | Irakli Gozalishvili |
 | [querystringify](https://github.com/unshiftio/querystringify) (2.2.0) | MIT | [Arnout Kazemier](https://github.com/unshiftio/querystringify) |
+| [raf](git://github.com/chrisdickinson/raf.git) (3.4.1) | MIT | Chris Dickinson |
 | [randombytes](git@github.com:crypto-browserify/randombytes.git) (2.1.0) | MIT | [Unknown](https://github.com/crypto-browserify/randombytes) |
 | [randomfill](https://github.com/crypto-browserify/randomfill.git) (1.0.4) | MIT | [Unknown](https://github.com/crypto-browserify/randomfill) |
 | [range-parser](https://github.com/jshttp/range-parser.git) (1.2.1) | MIT | [TJ Holowaychuk](http://tjholowaychuk.com) |
 | [raw-body](https://github.com/stream-utils/raw-body.git) (2.4.0) | MIT | [Jonathan Ong](http://jongleberry.com) |
+| [react](git+https://github.com/facebook/react.git) (15.7.0) | MIT | [Unknown](https://facebook.github.io/react/) |
+| [react-copy-to-clipboard](https://github.com/nkbt/react-copy-to-clipboard.git) (5.0.3) | MIT | [Nik Butenko](https://github.com/nkbt/react-copy-to-clipboard) |
+| [react-debounce-input](https://github.com/nkbt/react-debounce-input.git) (3.2.5) | MIT | [Nik Butenko](https://github.com/nkbt/react-debounce-input) |
+| [react-dom](git+https://github.com/facebook/react.git) (15.7.0) | MIT | [Unknown](https://facebook.github.io/react/) |
+| [react-immutable-proptypes](https://github.com/HurricaneJames/react-immutable-proptypes) (2.2.0) | MIT | [James Burnett](https://github.com/HurricaneJames/react-immutable-proptypes) |
+| [react-immutable-pure-component](https://github.com/Monar/react-immutable-pure-component) (1.2.4) | MIT | Piotr Tomasz Monarski |
+| [react-inspector](https://github.com/xyc/react-inspector.git) (2.3.1) | MIT | [Xiaoyi Chen](https://github.com/xyc/react-inspector) |
+| [react-is](https://github.com/facebook/react.git) (16.13.1) | MIT | [Unknown](https://reactjs.org/) |
+| [react-motion](https://github.com/chenglou/react-motion.git) (0.5.2) | MIT | Unknown |
+| [react-redux](https://github.com/reactjs/react-redux.git) (4.4.10) | MIT | [Dan Abramov](https://github.com/gaearon/react-redux) |
+| [react-syntax-highlighter](git+https://github.com/react-syntax-highlighter/react-syntax-highlighter.git) (15.4.5) | MIT | [Conor Hastings](https://github.com/react-syntax-highlighter/react-syntax-highlighter#readme) |
 | [readable-stream](git://github.com/nodejs/readable-stream) (2.3.7) | MIT | Unknown |
 | [readable-stream](git://github.com/nodejs/readable-stream) (3.6.0) | MIT | Unknown |
 | [readdirp](git://github.com/paulmillr/readdirp.git) (2.2.1) | MIT | [Thorsten Lorenz](https://github.com/paulmillr/readdirp) |
 | [readdirp](git://github.com/paulmillr/readdirp.git) (3.5.0) | MIT | [Thorsten Lorenz](https://github.com/paulmillr/readdirp) |
 | [reduce](git://github.com/Raynos/reduce.git) (1.0.2) | MIT | [Raynos](https://github.com/Raynos/reduce) |
+| [redux](https://github.com/reactjs/redux.git) (3.7.2) | MIT | [Unknown](http://redux.js.org/) |
+| [refractor](https://github.com/wooorm/refractor.git) (3.5.0) | MIT | [Titus Wormer](https://wooorm.com) |
 | [regenerate](https://github.com/mathiasbynens/regenerate.git) (1.4.2) | MIT | [Mathias Bynens](https://mths.be/regenerate) |
 | [regenerate-unicode-properties](https://github.com/mathiasbynens/regenerate-unicode-properties.git) (8.2.0) | MIT | [Mathias Bynens](https://github.com/mathiasbynens/regenerate-unicode-properties) |
 | [regenerator-runtime](https://github.com/facebook/regenerator/tree/master/packages/regenerator-runtime) (0.13.7) | MIT | Ben Newman |
+| [regenerator-runtime](https://github.com/facebook/regenerator/tree/master/packages/regenerator-runtime) (0.11.1) | MIT | Ben Newman |
 | [regenerator-transform](https://github.com/facebook/regenerator/tree/master/packages/regenerator-transform) (0.14.5) | MIT | Ben Newman |
 | [regex-not](https://github.com/jonschlinkert/regex-not.git) (1.0.2) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/regex-not) |
 | [regexp.prototype.flags](git://github.com/es-shims/RegExp.prototype.flags.git) (1.3.0) | MIT | Jordan Harband |
@@ -755,11 +870,13 @@ Liste des licences des dépendances utilisées dans l'API.
 | [registry-url](https://github.com/sindresorhus/registry-url.git) (5.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [regjsgen](https://github.com/bnjmnt4n/regjsgen.git) (0.5.2) | MIT | [Benjamin Tan](https://github.com/bnjmnt4n/regjsgen) |
 | [relateurl](git://github.com/stevenvachon/relateurl.git) (0.2.7) | MIT | [Steven Vachon](https://github.com/stevenvachon/relateurl) |
+| [remarkable](https://github.com/jonschlinkert/remarkable) (2.0.1) | MIT | [Unknown](https://github.com/jonschlinkert/remarkable) |
 | [renderkid](https://github.com/AriaMinaei/RenderKid.git) (2.0.5) | MIT | Aria Minaei |
 | [repeat-element](https://github.com/jonschlinkert/repeat-element.git) (1.1.3) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/repeat-element) |
 | [repeat-string](https://github.com/jonschlinkert/repeat-string.git) (1.6.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/repeat-string) |
 | [require-directory](git://github.com/troygoode/node-require-directory.git) (2.1.1) | MIT | [Troy Goode](https://github.com/troygoode/node-require-directory/) |
 | [requires-port](https://github.com/unshiftio/requires-port) (1.0.0) | MIT | [Arnout Kazemier](https://github.com/unshiftio/requires-port) |
+| [reselect](https://github.com/reduxjs/reselect.git) (4.1.5) | MIT | Unknown |
 | [resolve](git://github.com/browserify/resolve.git) (1.19.0) | MIT | [James Halliday](http://substack.net) |
 | [resolve-cwd](https://github.com/sindresorhus/resolve-cwd.git) (2.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [resolve-from](https://github.com/sindresorhus/resolve-from.git) (3.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
@@ -782,12 +899,14 @@ Liste des licences des dépendances utilisées dans l'API.
 | [selfsigned](git://github.com/jfromaniello/selfsigned.git) (1.10.8) | MIT | [José F. Romaniello](http://joseoncode.com) |
 | [semver-diff](https://github.com/sindresorhus/semver-diff.git) (3.1.1) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [send](https://github.com/pillarjs/send.git) (0.17.1) | MIT | TJ Holowaychuk |
+| [serialize-error](https://github.com/sindresorhus/serialize-error.git) (8.1.0) | MIT | [Sindre Sorhus](https://sindresorhus.com) |
 | [serve-index](https://github.com/expressjs/serve-index.git) (1.9.1) | MIT | Douglas Christopher Wilson |
 | [serve-static](https://github.com/expressjs/serve-static.git) (1.14.1) | MIT | Douglas Christopher Wilson |
 | [set-value](https://github.com/jonschlinkert/set-value.git) (2.0.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/set-value) |
 | [setimmediate](https://github.com/YuzuJS/setImmediate.git) (1.0.5) | MIT | YuzuJS |
 | [shebang-command](https://github.com/kevva/shebang-command.git) (1.2.0) | MIT | [Kevin Martensson](github.com/kevva) |
 | [shebang-regex](https://github.com/sindresorhus/shebang-regex.git) (1.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
+| [side-channel](git+https://github.com/ljharb/side-channel.git) (1.0.4) | MIT | [Jordan Harband](https://github.com/ljharb/side-channel#readme) |
 | [simple-swizzle](https://github.com/qix-/node-simple-swizzle.git) (0.2.2) | MIT | [Qix](http://github.com/qix-) |
 | [slash](https://github.com/sindresorhus/slash.git) (2.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [slash](https://github.com/sindresorhus/slash.git) (1.0.0) | MIT | [Sindre Sorhus](http://sindresorhus.com) |
@@ -802,6 +921,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [source-map-resolve](https://github.com/lydell/source-map-resolve.git) (0.5.3) | MIT | Simon Lydell |
 | [source-map-support](https://github.com/evanw/node-source-map-support) (0.5.19) | MIT | Unknown |
 | [source-map-url](https://github.com/lydell/source-map-url.git) (0.4.0) | MIT | Simon Lydell |
+| [space-separated-tokens](https://github.com/wooorm/space-separated-tokens.git) (1.1.5) | MIT | [Titus Wormer](https://wooorm.com) |
 | [spdy](git://github.com/indutny/node-spdy.git) (4.0.2) | MIT | [Fedor Indutny](https://github.com/indutny/node-spdy) |
 | [spdy-transport](git://github.com/spdy-http2/spdy-transport.git) (3.0.0) | MIT | [Fedor Indutny](https://github.com/spdy-http2/spdy-transport) |
 | [split-string](https://github.com/jonschlinkert/split-string.git) (3.1.0) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/split-string) |
@@ -811,6 +931,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [static-extend](https://github.com/jonschlinkert/static-extend.git) (0.1.2) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/static-extend) |
 | [statuses](https://github.com/jshttp/statuses.git) (1.5.0) | MIT | Unknown |
 | [std-env](https://github.com/jsless/std-env.git) (2.2.1) | MIT | Unknown |
+| [stream](git://github.com/juliangruber/stream.git) (0.0.2) | MIT | Julian Gruber |
 | [stream-browserify](git://github.com/browserify/stream-browserify.git) (2.0.2) | MIT | [James Halliday](https://github.com/browserify/stream-browserify) |
 | [stream-each](https://github.com/mafintosh/stream-each.git) (1.2.3) | MIT | [Mathias Buus](https://github.com/mafintosh/stream-each) |
 | [stream-http](git://github.com/jhiesey/stream-http.git) (2.8.3) | MIT | [John Hiesey](https://github.com/jhiesey/stream-http#readme) |
@@ -837,6 +958,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [supports-color](https://github.com/chalk/supports-color.git) (2.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [svg-tags](git://github.com/element-io/svg-tags.git) (1.0.0) | MIT | Athan Reines |
 | [svgo](git://github.com/svg/svgo.git) (1.3.2) | MIT | [Kir Belevich](https://github.com/svg/svgo) |
+| [symbol-observable](https://github.com/blesh/symbol-observable.git) (1.2.0) | MIT | Ben Lesh |
 | [tapable](http://github.com/webpack/tapable.git) (1.1.3) | MIT | [Tobias Koppers @sokra](https://github.com/webpack/tapable) |
 | [term-size](https://github.com/sindresorhus/term-size.git) (2.2.1) | MIT | [Sindre Sorhus](https://sindresorhus.com) |
 | [terser-webpack-plugin](https://github.com/webpack-contrib/terser-webpack-plugin.git) (1.4.5) | MIT | [webpack Contrib Team](https://github.com/webpack-contrib/terser-webpack-plugin) |
@@ -855,14 +977,19 @@ Liste des licences des dépendances utilisées dans l'API.
 | [to-regex](https://github.com/jonschlinkert/to-regex.git) (3.0.2) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/to-regex) |
 | [to-regex-range](https://github.com/micromatch/to-regex-range.git) (2.1.1) | MIT | [Jon Schlinkert](https://github.com/micromatch/to-regex-range) |
 | [to-regex-range](https://github.com/micromatch/to-regex-range.git) (5.0.1) | MIT | [Jon Schlinkert](https://github.com/micromatch/to-regex-range) |
+| [toggle-selection](git+https://github.com/sudodoki/toggle-selection) (1.0.6) | MIT | [sudodoki](sudodoki.name) |
 | [toidentifier](https://github.com/component/toidentifier.git) (1.0.0) | MIT | Douglas Christopher Wilson |
 | [toml](git://github.com/BinaryMuse/toml-node.git) (3.0.0) | MIT | Michelle Tilley |
 | [toposort](https://github.com/marcelklehr/toposort.git) (1.0.7) | MIT | Marcel Klehr |
+| [tr46](git+https://github.com/Sebmaster/tr46.js.git) (0.0.3) | MIT | [Sebastian Mayr](https://github.com/Sebmaster/tr46.js#readme) |
+| [traverse](git://github.com/substack/js-traverse.git) (0.6.6) | MIT | [James Halliday](https://github.com/substack/js-traverse) |
 | [tty-browserify](git://github.com/substack/tty-browserify.git) (0.0.0) | MIT | [James Halliday](https://github.com/substack/tty-browserify) |
 | [type-is](https://github.com/jshttp/type-is.git) (1.6.18) | MIT | Unknown |
 | [typedarray](git://github.com/substack/typedarray.git) (0.0.6) | MIT | [James Halliday](https://github.com/substack/typedarray) |
 | [typedarray-to-buffer](git://github.com/feross/typedarray-to-buffer.git) (3.1.5) | MIT | [Feross Aboukhadijeh](http://feross.org/) |
+| [ua-parser-js](https://github.com/faisalman/ua-parser-js.git) (0.7.31) | MIT | [Faisal Salman](https://github.com/faisalman/ua-parser-js) |
 | [uc.micro](https://github.com/markdown-it/uc.micro.git) (1.0.6) | MIT | Unknown |
+| [un-eval](git+ssh://git@github.com/tiansh/un_eval.js.git) (1.2.0) | MIT | [ts](https://github.com/tiansh/un_eval.js#readme) |
 | [unicode-canonical-property-names-ecmascript](https://github.com/mathiasbynens/unicode-canonical-property-names-ecmascript.git) (1.0.4) | MIT | [Mathias Bynens](https://github.com/mathiasbynens/unicode-canonical-property-names-ecmascript) |
 | [unicode-match-property-ecmascript](https://github.com/mathiasbynens/unicode-match-property-ecmascript.git) (1.0.4) | MIT | [Mathias Bynens](https://github.com/mathiasbynens/unicode-match-property-ecmascript) |
 | [unicode-match-property-value-ecmascript](https://github.com/mathiasbynens/unicode-match-property-value-ecmascript.git) (1.2.0) | MIT | [Mathias Bynens](https://github.com/mathiasbynens/unicode-match-property-value-ecmascript) |
@@ -881,6 +1008,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [url](https://github.com/defunctzombie/node-url.git) (0.11.0) | MIT | Unknown |
 | [url-loader](https://github.com/webpack-contrib/url-loader.git) (1.1.2) | MIT | [Tobias Koppers @sokra](https://github.com/webpack-contrib/url-loader) |
 | [url-parse](https://github.com/unshiftio/url-parse.git) (1.4.7) | MIT | Arnout Kazemier |
+| [url-parse](https://github.com/unshiftio/url-parse.git) (1.5.4) | MIT | Arnout Kazemier |
 | [url-parse-lax](https://github.com/sindresorhus/url-parse-lax.git) (3.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [use](https://github.com/jonschlinkert/use.git) (3.1.1) | MIT | [Jon Schlinkert](https://github.com/jonschlinkert/use) |
 | [util](git://github.com/defunctzombie/node-util) (0.11.1) | MIT | [Joyent](https://github.com/defunctzombie/node-util) |
@@ -903,13 +1031,14 @@ Liste des licences des dépendances utilisées dans l'API.
 | [vue-style-loader](git@github.com:vuejs/vue-style-loader.git) (4.1.2) | MIT | Evan You |
 | [vue-template-compiler](git+https://github.com/vuejs/vue.git) (2.6.12) | MIT | [Evan You](https://github.com/vuejs/vue/tree/dev/packages/vue-template-compiler#readme) |
 | [vue-template-es2015-compiler](https://github.com/vuejs/vue-template-es2015-compiler) (1.9.1) | MIT | Evan You |
-| [vuepress](git+https://github.com/vuejs/vuepress.git) (1.8.0) | MIT | [Evan You](https://github.com/vuejs/vuepress#readme) |
+| [vuepress](git+https://github.com/vuejs/vuepress.git) (1.9.9) | MIT | [Evan You](https://github.com/vuejs/vuepress#readme) |
 | [vuepress-html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin.git) (3.2.0) | MIT | [Charles Blaxland](https://github.com/jantimon/html-webpack-plugin) |
 | [vuepress-plugin-container](git+https://github.com/vuepress/vuepress-community.git) (2.1.5) | MIT | [Shigma](https://github.com/vuepress) |
 | [vuepress-plugin-smooth-scroll](git+https://github.com/meteorlxy/vuepress-plugin-smooth-scroll.git) (0.0.3) | MIT | [meteorlxy](https://github.com/meteorlxy/vuepress-plugin-smooth-scroll#readme) |
 | [watchpack](https://github.com/webpack/watchpack.git) (1.7.5) | MIT | [Tobias Koppers @sokra](https://github.com/webpack/watchpack) |
 | [watchpack-chokidar2](https://github.com/webpack/watchpack.git) (2.0.1) | MIT | [Tobias Koppers @sokra](https://github.com/webpack/watchpack) |
 | [wbuf](git@github.com:indutny/wbuf) (1.7.3) | MIT | [Fedor Indutny](https://github.com/indutny/wbuf) |
+| [web-streams-polyfill](git+https://github.com/MattiasBuelens/web-streams-polyfill.git) (4.0.0-beta.1) | MIT | [Mattias Buelens](https://github.com/MattiasBuelens/web-streams-polyfill#readme) |
 | [webpack](https://github.com/webpack/webpack.git) (4.46.0) | MIT | [Tobias Koppers @sokra](https://github.com/webpack/webpack) |
 | [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware.git) (3.7.3) | MIT | [Tobias Koppers @sokra](https://github.com/webpack/webpack-dev-middleware) |
 | [webpack-dev-server](https://github.com/webpack/webpack-dev-server.git) (3.11.1) | MIT | [Tobias Koppers @sokra](https://github.com/webpack/webpack-dev-server#readme) |
@@ -917,12 +1046,15 @@ Liste des licences des dépendances utilisées dans l'API.
 | [webpack-merge](https://github.com/survivejs/webpack-merge.git) (4.2.2) | MIT | [Juho Vepsalainen](https://github.com/survivejs/webpack-merge) |
 | [webpack-sources](git+https://github.com/webpack/webpack-sources.git) (1.4.3) | MIT | [Tobias Koppers @sokra](https://github.com/webpack/webpack-sources#readme) |
 | [webpackbar](https://github.com/nuxt/webpackbar.git) (3.2.0) | MIT | [Pooya Parsa](https://github.com/nuxt/webpackbar) |
+| [whatwg-fetch](https://github.com/github/fetch.git) (3.6.2) | MIT | Unknown |
+| [whatwg-url](https://github.com/jsdom/whatwg-url.git) (5.0.0) | MIT | Sebastian Mayr |
 | [when](https://github.com/cujojs/when) (3.6.4) | MIT | [Unknown](http://cujojs.com/) |
 | [widest-line](https://github.com/sindresorhus/widest-line.git) (3.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [worker-farm](https://github.com/rvagg/node-worker-farm.git) (1.7.0) | MIT | [Unknown](https://github.com/rvagg/node-worker-farm) |
 | [wrap-ansi](https://github.com/chalk/wrap-ansi.git) (5.1.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
 | [ws](https://github.com/websockets/ws.git) (6.2.1) | MIT | [Einar Otto Stangvik](https://github.com/websockets/ws) |
 | [xdg-basedir](https://github.com/sindresorhus/xdg-basedir.git) (4.0.0) | MIT | [Sindre Sorhus](sindresorhus.com) |
+| [xml-but-prettier](https://github.com/shockey/xml-but-prettier) (1.0.1) | MIT | Kyle Shockey |
 | [xtend](git://github.com/Raynos/xtend.git) (4.0.2) | MIT | [Raynos](https://github.com/Raynos/xtend) |
 | [yargs](https://github.com/yargs/yargs.git) (13.3.2) | MIT | [Unknown](https://yargs.js.org/) |
 | [zepto](https://github.com/madrobby/zepto.git) (1.2.0) | MIT | [Unknown](http://zeptojs.com/) |
@@ -930,6 +1062,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [abbrev](http://github.com/isaacs/abbrev-js) (1.1.1) | ISC | Isaac Z. Schlueter |
 | [ansi-align](git+https://github.com/nexdrew/ansi-align.git) (3.0.0) | ISC | [nexdrew](https://github.com/nexdrew/ansi-align#readme) |
 | [anymatch](https://github.com/micromatch/anymatch) (2.0.0) | ISC | [Elan Shanker](https://github.com/micromatch/anymatch) |
+| [anymatch](https://github.com/micromatch/anymatch) (3.1.3) | ISC | [Elan Shanker](https://github.com/micromatch/anymatch) |
 | [anymatch](https://github.com/micromatch/anymatch) (3.1.1) | ISC | [Elan Shanker](https://github.com/micromatch/anymatch) |
 | [aproba](https://github.com/iarna/aproba) (1.2.0) | ISC | [Rebecca Turner](https://github.com/iarna/aproba) |
 | [boolbase](https://github.com/fb55/boolbase) (1.0.0) | ISC | [Felix Boehm](https://github.com/fb55/boolbase) |
@@ -938,8 +1071,13 @@ Liste des licences des dépendances utilisées dans l'API.
 | [chownr](git://github.com/isaacs/chownr.git) (1.1.4) | ISC | [Isaac Z. Schlueter](http://blog.izs.me/) |
 | [cliui](http://github.com/yargs/cliui.git) (5.0.0) | ISC | Ben Coe |
 | [copy-concurrently](git+https://github.com/npm/copy-concurrently.git) (1.0.5) | ISC | [Rebecca Turner](https://www.npmjs.com/package/copy-concurrently) |
+| [d](git://github.com/medikoo/d.git) (1.0.1) | ISC | [Mariusz Nowak](http://www.medikoo.com/) |
 | [detect-node](https://github.com/iliakan/detect-node) (2.0.4) | ISC | [Ilya Kantor](https://github.com/iliakan/detect-node) |
 | [electron-to-chromium](https://github.com/kilian/electron-to-chromium/) (1.3.636) | ISC | Kilian Valkhof |
+| [es5-ext](https://github.com/medikoo/es5-ext.git) (0.10.53) | ISC | [Mariusz Nowak](http://www.medikoo.com/) |
+| [es6-symbol](git://github.com/medikoo/es6-symbol.git) (3.1.3) | ISC | [Mariusz Nowak](http://www.medikoo.com/) |
+| [es6-weak-map](git://github.com/medikoo/es6-weak-map.git) (2.0.3) | ISC | [Mariusz Nowak](http://www.medikoo.com/) |
+| [ext](https://github.com/medikoo/es5-ext#ext) (1.6.0) | ISC | [Mariusz Nowak](http://www.medikoo.com/) |
 | [figgy-pudding](https://github.com/npm/figgy-pudding) (3.5.2) | ISC | Kat Marchán |
 | [fs-write-stream-atomic](https://github.com/npm/fs-write-stream-atomic) (1.0.10) | ISC | [Isaac Z. Schlueter](https://github.com/npm/fs-write-stream-atomic) |
 | [fs.realpath](git+https://github.com/isaacs/fs.realpath.git) (1.0.0) | ISC | [Isaac Z. Schlueter](http://blog.izs.me/) |
@@ -964,9 +1102,11 @@ Liste des licences des dépendances utilisées dans l'API.
 | [killable](https://github.com/marten-de-vries/killable.git) (1.0.1) | ISC | Marten de Vries |
 | [lru-cache](git://github.com/isaacs/node-lru-cache.git) (5.1.1) | ISC | Isaac Z. Schlueter |
 | [lru-cache](git://github.com/isaacs/node-lru-cache.git) (4.1.5) | ISC | Isaac Z. Schlueter |
+| [memoizee](git://github.com/medikoo/memoizee.git) (0.4.15) | ISC | [Mariusz Nowak](http://www.medikoo.com/) |
 | [minimalistic-assert](https://github.com/calvinmetcalf/minimalistic-assert.git) (1.0.1) | ISC | [Unknown](https://github.com/calvinmetcalf/minimalistic-assert) |
 | [minimatch](git://github.com/isaacs/minimatch.git) (3.0.4) | ISC | [Isaac Z. Schlueter](http://blog.izs.me) |
 | [move-concurrently](git+https://github.com/npm/move-concurrently.git) (1.0.1) | ISC | [Rebecca Turner](https://www.npmjs.com/package/move-concurrently) |
+| [next-tick](git://github.com/medikoo/next-tick.git) (1.1.0) | ISC | [Mariusz Nowak](http://www.medikoo.com/) |
 | [once](git://github.com/isaacs/once) (1.4.0) | ISC | [Isaac Z. Schlueter](http://blog.izs.me/) |
 | [parse-asn1](git://github.com/crypto-browserify/parse-asn1.git) (5.1.6) | ISC | Unknown |
 | [postcss-modules-extract-imports](https://github.com/css-modules/postcss-modules-extract-imports.git) (2.0.0) | ISC | [Glen Maddern](https://github.com/css-modules/postcss-modules-extract-imports) |
@@ -987,8 +1127,12 @@ Liste des licences des dépendances utilisées dans l'API.
 | [setprototypeof](https://github.com/wesleytodd/setprototypeof.git) (1.1.0) | ISC | [Wes Todd](https://github.com/wesleytodd/setprototypeof) |
 | [signal-exit](https://github.com/tapjs/signal-exit.git) (3.0.3) | ISC | [Ben Coe](https://github.com/tapjs/signal-exit) |
 | [ssri](https://github.com/zkat/ssri) (6.0.1) | ISC | Kat Marchán |
+| [timers-ext](git://github.com/medikoo/timers-ext.git) (0.1.7) | ISC | [Mariusz Nowak](http://www.medikoo.com/) |
+| [type](https://github.com/medikoo/type.git) (1.2.0) | ISC | [Mariusz Nowak](https://www.medikoo.com/) |
+| [type](https://github.com/medikoo/type.git) (2.6.0) | ISC | [Mariusz Nowak](https://www.medikoo.com/) |
 | [unique-filename](https://github.com/iarna/unique-filename.git) (1.1.1) | ISC | [Rebecca Turner](https://github.com/iarna/unique-filename) |
 | [unique-slug](git://github.com/iarna/unique-slug.git) (2.0.2) | ISC | [Rebecca Turner](http://re-becca.org) |
+| [vuepress-theme-openapi](/vuepress-theme-openapi) (1.6.0) | ISC | Unknown |
 | [which](git://github.com/isaacs/node-which.git) (1.3.1) | ISC | [Isaac Z. Schlueter](http://blog.izs.me) |
 | [which-module](git+https://github.com/nexdrew/which-module.git) (2.0.0) | ISC | [nexdrew](https://github.com/nexdrew/which-module#readme) |
 | [wrappy](https://github.com/npm/wrappy) (1.0.2) | ISC | [Isaac Z. Schlueter](https://github.com/npm/wrappy) |
@@ -996,13 +1140,19 @@ Liste des licences des dépendances utilisées dans l'API.
 | [y18n](git@github.com:yargs/y18n.git) (4.0.1) | ISC | [Ben Coe](https://github.com/yargs/y18n) |
 | [yallist](git+https://github.com/isaacs/yallist.git) (3.1.1) | ISC | [Isaac Z. Schlueter](http://blog.izs.me/) |
 | [yallist](git+https://github.com/isaacs/yallist.git) (2.1.2) | ISC | [Isaac Z. Schlueter](http://blog.izs.me/) |
+| [yaml](https://github.com/eemeli/yaml.git) (1.10.2) | ISC | [Eemeli Aro](https://eemeli.org/yaml/v1/) |
 | [yargs-parser](git@github.com:yargs/yargs-parser.git) (13.1.2) | ISC | Ben Coe |
 | [@xtuc/ieee754](git://github.com/feross/ieee754.git) (1.2.0) | BSD-3-Clause | [Feross Aboukhadijeh](http://feross.org) |
 | [bcrypt-pbkdf](git://github.com/joyent/node-bcrypt-pbkdf.git) (1.0.2) | BSD-3-Clause | Unknown |
 | [duplexer3](https://github.com/floatdrop/duplexer3.git) (0.1.4) | BSD-3-Clause | [Conrad Pankoff](http://www.fknsrs.biz/) |
+| [highlight.js](git://github.com/highlightjs/highlight.js.git) (9.18.5) | BSD-3-Clause | [Ivan Sagalaev](https://highlightjs.org/) |
+| [highlight.js](git://github.com/highlightjs/highlight.js.git) (10.7.3) | BSD-3-Clause | [Ivan Sagalaev](https://highlightjs.org/) |
+| [hoist-non-react-statics](git://github.com/mridgway/hoist-non-react-statics.git) (3.3.2) | BSD-3-Clause | Michael Ridgway |
 | [ieee754](git://github.com/feross/ieee754.git) (1.2.1) | BSD-3-Clause | [Feross Aboukhadijeh](https://feross.org) |
 | [qs](https://github.com/ljharb/qs.git) (6.7.0) | BSD-3-Clause | [Unknown](https://github.com/ljharb/qs) |
 | [qs](https://github.com/ljharb/qs.git) (6.5.2) | BSD-3-Clause | [Unknown](https://github.com/ljharb/qs) |
+| [qs](https://github.com/ljharb/qs.git) (6.10.3) | BSD-3-Clause | [Unknown](https://github.com/ljharb/qs) |
+| [redux-immutable](https://github.com/gajus/redux-immutable) (3.1.0) | BSD-3-Clause | [Gajus Kuizinas](http://gajus.com) |
 | [serialize-javascript](git+https://github.com/yahoo/serialize-javascript.git) (4.0.0) | BSD-3-Clause | [Eric Ferraiuolo](https://github.com/yahoo/serialize-javascript) |
 | [serialize-javascript](git+https://github.com/yahoo/serialize-javascript.git) (3.1.0) | BSD-3-Clause | [Eric Ferraiuolo](https://github.com/yahoo/serialize-javascript) |
 | [source-map](http://github.com/mozilla/source-map.git) (0.5.7) | BSD-3-Clause | [Nick Fitzgerald](https://github.com/mozilla/source-map) |
@@ -1020,11 +1170,15 @@ Liste des licences des dépendances utilisées dans l'API.
 | [hogan.js](https://github.com/twitter/hogan.js.git) (3.0.2) | Apache-2.0 | [Twitter Inc.](http://twitter.github.com/hogan.js/) |
 | [oauth-sign](https://github.com/mikeal/oauth-sign) (0.9.0) | Apache-2.0 | [Mikeal Rogers](http://www.futurealoof.com) |
 | [request](https://github.com/request/request.git) (2.88.2) | Apache-2.0 | Mikeal Rogers |
+| [swagger-client](git@github.com:swagger-api/swagger-js.git) (3.18.4) | Apache-2.0 | Unknown |
+| [swagger-ui](git@github.com:swagger-api/swagger-ui.git) (3.52.5) | Apache-2.0 | [Unknown](https://github.com/swagger-api/swagger-ui) |
 | [tunnel-agent](https://github.com/mikeal/tunnel-agent) (0.6.0) | Apache-2.0 | [Mikeal Rogers](http://www.futurealoof.com) |
 | [websocket-driver](git://github.com/faye/websocket-driver-node.git) (0.7.4) | Apache-2.0 | [James Coglan](https://github.com/faye/websocket-driver-node) |
 | [websocket-extensions](git://github.com/faye/websocket-extensions-node.git) (0.1.4) | Apache-2.0 | [James Coglan](http://github.com/faye/websocket-extensions-node) |
+| [argparse](https://github.com/nodeca/argparse.git) (2.0.1) | Python-2.0 | Unknown |
 | [atob](git://git.coolaj86.com/coolaj86/atob.js.git) (2.1.2) | (MIT OR Apache-2.0) | [AJ ONeal](https://git.coolaj86.com/coolaj86/atob.js.git) |
-| [caniuse-lite](https://github.com/ben-eb/caniuse-lite.git) (1.0.30001174) | CC-BY-4.0 | [Ben Briggs](http://beneb.info) |
+| [btoa](git://git.coolaj86.com/coolaj86/btoa.js.git) (1.2.1) | (MIT OR Apache-2.0) | [AJ ONeal](https://git.coolaj86.com/coolaj86/btoa.js.git) |
+| [caniuse-lite](https://github.com/browserslist/caniuse-lite.git) (1.0.30001434) | CC-BY-4.0 | [Ben Briggs](http://beneb.info) |
 | [configstore](https://github.com/yeoman/configstore.git) (5.0.1) | BSD-2-Clause | [Sindre Sorhus](sindresorhus.com) |
 | [css-select](git://github.com/fb55/css-select.git) (2.1.0) | BSD-2-Clause | Felix Boehm |
 | [css-what](https://github.com/fb55/css-what) (3.4.2) | BSD-2-Clause | [Felix Böhm](http://feedic.com) |
@@ -1049,10 +1203,14 @@ Liste des licences des dépendances utilisées dans l'API.
 | [uglify-js](https://github.com/mishoo/UglifyJS2.git) (3.4.10) | BSD-2-Clause | [Mihai Bazon](http://lisperator.net/) |
 | [update-notifier](https://github.com/yeoman/update-notifier.git) (4.1.3) | BSD-2-Clause | [Sindre Sorhus](https://sindresorhus.com) |
 | [uri-js](http://github.com/garycourt/uri-js) (4.4.1) | BSD-2-Clause | [Gary Court](https://github.com/garycourt/uri-js) |
+| [webidl-conversions](https://github.com/jsdom/webidl-conversions.git) (3.0.1) | BSD-2-Clause | [Domenic Denicola](https://domenic.me/) |
+| [dompurify](git://github.com/cure53/DOMPurify.git) (2.3.5) | (MPL-2.0 OR Apache-2.0) | [Mario Heiderich](https://github.com/cure53/DOMPurify) |
+| [emitter-component](https://github.com/component/emitter.git) (1.1.1) | UNKNOWN | Unknown |
 | [glob-to-regexp](https://github.com/fitzgen/glob-to-regexp.git) (0.3.0) | BSD | Nick Fitzgerald |
 | [json-schema](http://github.com/kriszyp/json-schema) (0.2.3) | BSD* | Kris Zyp |
 | [markdown-it-anchor](https://github.com/valeriangalliat/markdown-it-anchor.git) (5.3.0) | Unlicense | [Unknown](https://github.com/valeriangalliat/markdown-it-anchor) |
 | [tweetnacl](https://github.com/dchest/tweetnacl-js.git) (0.14.5) | Unlicense | [TweetNaCl-js contributors](https://tweetnacl.js.org/) |
+| [zenscroll](https://github.com/zengabor/zenscroll.git) (4.0.2) | Unlicense | [Gabor Lenard](https://zengabor.github.io/zenscroll/) |
 | [mdn-data](https://github.com/mdn/data.git) (2.0.4) | CC0-1.0 | [Mozilla Developer Network](https://developer.mozilla.org/) |
 | [mdn-data](https://github.com/mdn/data.git) (2.0.14) | CC0-1.0 | [Mozilla Developer Network](https://developer.mozilla.org/) |
 | [node-forge](https://github.com/digitalbazaar/forge) (0.10.0) | (BSD-3-Clause OR GPL-2.0) | [Digital Bazaar, Inc.](https://github.com/digitalbazaar/forge) |
@@ -1063,6 +1221,7 @@ Liste des licences des dépendances utilisées dans l'API.
 | [tslib](https://github.com/Microsoft/tslib.git) (1.14.1) | 0BSD | [Microsoft Corp.](https://www.typescriptlang.org/) |
 | [type-fest](https://github.com/sindresorhus/type-fest.git) (0.8.1) | (MIT OR CC0-1.0) | [Sindre Sorhus](sindresorhus.com) |
 | [type-fest](https://github.com/sindresorhus/type-fest.git) (0.11.0) | (MIT OR CC0-1.0) | [Sindre Sorhus](sindresorhus.com) |
+| [type-fest](https://github.com/sindresorhus/type-fest.git) (0.20.2) | (MIT OR CC0-1.0) | [Sindre Sorhus](https://sindresorhus.com) |
 | [webpack-chain](https://github.com/neutrinojs/webpack-chain.git) (6.5.1) | MPL-2.0 | Eli Perelman |
 | [webpack-chain](https://github.com/neutrinojs/webpack-chain.git) (4.12.1) | MPL-2.0 | Eli Perelman |
 
