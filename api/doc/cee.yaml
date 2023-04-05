@@ -250,7 +250,10 @@ paths:
             - "Date should be before 7 days from now" : correspondant à un appel à l’API CEE qui aurait été fait à moins de J+7 de la date de fin du trajet 
               sur la courte distance et à moins de J+7 de la date de paiement au conducteur par l'opérateur sur le longue distance.
         '409':
-          description: La demande est déjà enregistrée
+          description: |
+            Une demande similaire a déjà enregistrée.
+            Si elle a déjà été enregistrée par le même opérateur, alors la réponse contient l'UUID de la demande.
+            Dans le cas contraire, seul le champs datetime correspondant à la date de l'opération est renvoyé.
           content:
             'application/json':
               schema:
@@ -259,7 +262,7 @@ paths:
                   datetime:
                     type: string
                     format: datetime
-                    description: Date à laquelle la demande a été effectuée
+                    description: Date de l'opération, en l'occurence date de fin du trajet pour la courte distance et date de paiement pour la longue.
                   uuid:
                     type: string
                     format: uuid
