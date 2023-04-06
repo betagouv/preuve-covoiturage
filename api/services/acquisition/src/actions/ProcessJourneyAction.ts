@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { Action as AbstractAction } from '@ilos/core';
 import { ConfigInterfaceResolver, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
@@ -56,6 +57,7 @@ export class ProcessJourneyAction extends AbstractAction implements InitHookInte
   }
 
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
+    const runUUID = randomUUID();
     const { timeout, batchSize } = this.config.get('acquisition.processing', { timeout: 0, batchSize: 100 });
     const [acquisitions, cb] = await this.repository.findThenUpdate(
       {
@@ -65,8 +67,8 @@ export class ProcessJourneyAction extends AbstractAction implements InitHookInte
       timeout,
     );
     const results = [];
-    const msg = `[acquisition] processed (${acquisitions.length})`;
-    console.debug(`Processing acquisition ${acquisitions.map((a) => a._id).join(', ')}`);
+    const msg = `[acquisition] processed (${acquisitions.length}) *${runUUID}*`;
+    console.debug(`Processing acquisition ${acquisitions.map((a) => a._id).join(', ')} *${runUUID}*`);
     console.time(msg);
     for (const acquisition of acquisitions) {
       try {
@@ -81,7 +83,7 @@ export class ProcessJourneyAction extends AbstractAction implements InitHookInte
           status: AcquisitionStatusEnum.Ok,
         });
       } catch (e) {
-        console.debug(`[acquisition] error ${e.message} processing ${acquisition._id}`);
+        console.debug(`[acquisition] error ${e.message} processing ${acquisition._id} *${runUUID}`);
         results.push({
           acquisition_id: acquisition._id,
           status: AcquisitionStatusEnum.Error,

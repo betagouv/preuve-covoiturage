@@ -164,8 +164,67 @@ test('should fail if normalization fail', async (t) => {
   ]);
 });
 
+test('should fail if carpool fail', async (t) => {
+  const { action, repository, normalizer, kernel } = bootstap();
+  const normalizedPayload = { normalized: 'data' } as any;
+  normalizer.handle.callsFake((data) => ({ ...normalizedPayload, acquisition_id: data._id }));
+  const kernelError = new Error('Boum');
+  kernel.call.callsFake(async (_method, params: any) => {
+    if (params.acquisition_id === 2) {
+      throw kernelError;
+    }
+  });
+  const cbStub = sinon.stub();
+  const acquisitions = [
+    {
+      _id: 1,
+      operator_id: 1,
+      api_version: 2,
+      created_at: new Date(),
+      payload: {},
+    },
+    {
+      _id: 2,
+      operator_id: 1,
+      api_version: 2,
+      created_at: new Date(),
+      payload: {},
+    },
+  ];
+  repository.findThenUpdate.resolves([acquisitions, cbStub]);
+  const inputData = {
+    method: '',
+    params: {},
+    context: {
+      call: { user: {} },
+      channel: {
+        service: '',
+      },
+    },
+  };
+  await action.call(inputData);
+
+  t.true(cbStub.calledOnce);
+  const cbParams = cbStub.getCall(0).args[0];
+  t.log(JSON.stringify(cbParams));
+  t.deepEqual(cbParams, [
+    {
+      acquisition_id: 1,
+      status: AcquisitionStatusEnum.Ok,
+    },
+    {
+      acquisition_id: 2,
+      status: AcquisitionStatusEnum.Error,
+      error_stage: AcquisitionErrorStageEnum.Normalisation,
+      errors: [kernelError],
+    },
+  ]);
+});
+
 test('should normalize person', async (t) => {
   const { action, repository, normalizer } = bootstap();
+  const normalizedPayload = { normalized: 'data' } as any;
+  normalizer.handle.resolves(normalizedPayload);
   const cbStub = sinon.stub();
   const acquisitions = [
     {
