@@ -107,7 +107,7 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
       to = startOfDay(to);
     } else {
       // Get 7 days ago
-      to = sub(startOfDay(new Date()), { days: 7 });
+      to = sub(startOfDay(new Date()), { days: 5 });
     }
 
     let from = params.from;
