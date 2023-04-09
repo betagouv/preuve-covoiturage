@@ -1,0 +1,1211 @@
+openapi: '3.0.2'
+info:
+  title: API
+  version: '3.0'
+  termsOfService: https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/kit-de-communication/cgu-conditions-generales-dutilisation
+  contact:
+    name: Équipe technique
+    email: technique@covoiturage.beta.gouv.fr
+  license:
+    name: Apache 2
+    url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/dev/LICENSE
+
+externalDocs:
+  url: https://doc.covoiturage.beta.gouv.fr/
+  description: Documentation générale 
+
+servers:
+  - url: https://api.covoiturage.beta.gouv.fr/v2
+  - url: https://api.demo.covoiturage.beta.gouv.fr/v2
+
+components:
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    offset:
+      type: number
+      multipleOf: 1
+      minimum: 0
+      description: Offset
+    total:
+      type: number
+      multipleOf: 1
+      minimum: 0
+      description: Limite
+    limit:
+      type: number
+      multipleOf: 1
+      minimum: 0
+      description: Limite
+    pagination:
+      type: object
+      required:
+        - offset
+        - limit
+      additionalProperties: false
+      properties:
+        offset:
+          '$ref': '#/components/schemas/offset'
+        limit:
+          '$ref': '#/components/schemas/limit'
+        total:
+          '$ref': '#/components/schemas/total'
+    operator_trip_id:
+      type: string
+      description: Identifiant généré par l'opérateur pour regrouper des trajets (plusieurs passagers avec un même conducteur)
+    operator_class:
+      enum:
+        - A
+        - B
+        - C
+      description: classe de preuve correspondant aux spécifications définies dans [Classes de preuve de covoiturage](https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite/classes-a-b-c).
+    licence_plate:
+      type: string
+      description: Plaque d'immatriculation du véhicule
+    driver:
+      type: object
+      additionalProperties: false
+      required:
+        - identity
+        - revenue
+      properties:
+        identity:
+          '$ref': '#/components/schemas/identity'
+        revenue:
+          type: number
+          minimum: 0
+          multipleOf: 1
+          description: |
+            La somme réellement perçue par le conducteur **APRÈS** que toutes les incitations (subventions employeurs, promotions opérateurs, incitations AOM, etc.), contributions des passagers aient été versées et que la commission de l’opérateur soit prise.
+            Somme exprimée en centimes.
+    passenger:
+      type: object
+      additionalProperties: false
+      required:
+        - identity
+        - contribution
+      properties:
+        identity:
+          '$ref': '#/components/schemas/identity'
+        payments:
+          '$ref': '#/components/schemas/payments'
+        contribution:
+          type: number
+          minimum: 0
+          multipleOf: 1
+          description: |
+            Coût réel total du service pour l’occupant passager en fonction du nombre de sièges réservés **APRÈS** que toutes les possibles incitations aient été versées (subventions employeurs, promotions opérateurs, incitations AOM, etc).|
+            Somme exprimée en centimes.
+        seats:
+          type: number
+          minimum: 1
+          maximum: 8
+          multipleOf: 1
+          default: 1
+          description: Nombre de sièges réservés par l'occupant passager.
+    operator_journey_id:
+      type: string
+      description: Identifiant généré par l'opérateur. Doit être unique par couple conducteur/passager
+    status:
+      type: string
+      enum:
+        - acquisition_error
+        - normalization_error
+        - fraud_error
+        - ok
+        - expired
+        - canceled
+        - pending
+      description: | 
+        Statut du trajet tel que :
+          - acquisition_error : le trajet n'a pas du tout été enregistré
+          - normalization_error : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisée.
+          - fraud_error : le trajet a été enregistré et standardisé mais il a été considéré comme anormal
+          - ok : le trajet a correctement été traité
+          - pending : le trajet a été enregistré mais n'a pas encore été traité
+          - canceled : le trajet a été annulé par l'opérateur
+          - expired : le trajet a été envoyé trop tard. Cf: engagement de délais d'envoi par les opérateurs
+    duration:
+      type: number
+      minimum: 0
+      multipleOf: 1
+      maximum: 36000
+      description: Durée exprimée en seconde
+    distance:
+      type: number
+      minimum: 0
+      multipleOf: 1
+      maximum: 1000000
+      description: Distance exprimée en mètre
+    incentive_counterparts:
+      type: array
+      description: |
+        Tableau reprenant la liste complète des contreparties à l'incitation ayant eu un impact sur le coût du trajet (cible, montant, identifiant de l'incitateur).
+        Par exemple, un trajet pris en charge dans le cadre d'un engagement des opérateurs à rendre gratuit le trajet passager pour les porteurs d'une carte de transport
+        donnerait lieu à une inscription de cette prise en charge dans ce tableau.
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - target
+          - amount
+          - siret
+        properties:
+          target:
+            type: string
+            enum:
+              - driver
+              - passenger
+          amount:
+            type: number
+            minimum: 0
+            multipleOf: 1
+            description: Montant de l'incitation en centimes d'euros
+            example: 100
+          siret:
+            type: string
+            description: | 
+              Numéro de SIRET de l'incitateur
+              Le SIRET est un identifiant unique par structure juridique. Toutes les entités incitatrices en possèdent un.
+            example: "11000101300017"
+    incentives:
+      type: array
+      description: |
+        Tableau reprenant la liste complète des incitations appliquées (ordre d'application, montant, identifiant de l'incitateur). Si aucune incitation, envoyer un tableau vide
+        Attention, il s'agit ici des incitations générées par le trajet mais pas forcément "consommé" par celui-ci (objet à remplir dans le tableau "incentive_counterparts").
+
+        ## Ordre par défaut
+        Par défaut, l'ordre d'application des politiques incitatives est le suivant :
+        1. Territoire (AOM, Région, ...)
+        2. Sponsors (incitations employeur, CE, etc.)
+        3. Opérateur (opération promotionnelle, offres, etc.)
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - index
+          - amount
+          - siret
+        properties:
+          index:
+            type: number
+            minimum: 0
+            multipleOf: 1
+            description: Ordre d'application
+            example: 0
+          amount:
+            type: number
+            minimum: 0
+            multipleOf: 1
+            description: Montant de l'incitation en centimes d'euros
+            example: 100
+          siret:
+            type: string
+            description: | 
+              Numéro de SIRET de l'incitateur
+              Le SIRET est un identifiant unique par structure juridique. Toutes les entités incitatrices en possèdent un.
+            example: "11000101300017"
+    payments:
+      type: array
+      description: |
+        Zéro, une ou plusieurs méthodes de paiement utilisées (ex. carte employeur préchargée permettant de payer directement le covoiturage sur une application).
+        ### Tip 
+        La prise en charge des frais de transports personnel (carburant et forfait mobilité) pourra prendre la forme d’une solution de paiement spécifique, dématérialisée et prépayée, intitulée « titre-mobilité ». Ainsi, il apparaît comme pertinent de détailler la solution de paiement utilisée dans le cadre d'un trajet covoituré, s'il s'agit de Titre-Mobilité.
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - index
+          - siret
+          - type
+          - amount
+        properties:
+          index:
+            type: number
+            minimum: 0
+            multipleOf: 1
+            description: Ordre d'application
+            example: 0
+          amount:
+            type: number
+            minimum: 0
+            multipleOf: 1
+            description: Montant du paiement en centimes d'euros
+            example: 100
+          siret:
+            type: string
+            description: Numéro de SIRET du payeur
+            example: "11000101300017"
+          type:
+            type: string
+            description: Nom du titre
+    lat:
+      type: number
+      description: Latitude comprise entre 90deg et -90deg décimaux en datum WSG-84
+      example: 47.682821
+    lon:
+      type: number
+      description: Longitude comprise entre 180deg et -180deg décimaux en datum WSG-84
+      example: -0.557483
+    geopoint:
+      type: object
+      additionalProperties: false
+      description: |
+        Position lat/lon
+      required:
+        - lat
+        - lon
+      properties:
+        lat:
+          '$ref': "#/components/schemas/lat"
+        lon:
+          '$ref': "#/components/schemas/lon"
+    datetime:
+      type: string
+      format: date-time 
+      description: |
+        Date et heure du départ/arrivée au format ISO 8601. L'heure est exprimée en UTC (YYYY-MM-DDThh:mm:ssZ)
+        L'heure est exprimée en UTC \(Coordinated Universal Time\). UTC n'est pas ajusté sur l'heure d'été et hiver !
+      example: '2021-01-01T11:00:00Z'
+    time_geopoint:
+      type: object
+      additionalProperties: false
+      description: |
+        Position lat/lon + date 
+      required:
+        - datetime
+        - lat
+        - lon
+      properties:
+        datetime:
+          '$ref': "#/components/schemas/datetime"
+        lat:
+          '$ref': "#/components/schemas/lat"
+        lon:
+          '$ref': "#/components/schemas/lon"
+    identity:
+      type: object
+      description: |
+        Ces données personnelles permettent d'identifier la personne effectuant le covoiturage afin de pouvoir comptabiliser ses trajets et lui distribuer des incitations en fonction des politiques applicables.
+        Deux options sont disponibles pour la transmission du numéro de téléphone :
+        - Numéro complet à 10 chiffres (phone)
+        - Numéro tronqué à 8 chiffres (phone_trunc) + identifiant unique de l'opérateur (operator_user_id)
+      additionalProperties: false
+      required:
+        - operator_user_id
+        - identity_key
+      properties:
+        identity_key:
+          type: string
+          minLength: 64
+          maxLength: 64
+          description: |
+            Correspond au sha d'une chaîne concaténée tel que : sha256(*phone_number*-*last_name*) ou
+            - `phone_number` correspond au numéro de téléphone complet au format international sans espace ni tiret. Exemple : +33601020304
+            - `last_name` correspond au nom de famille complet en majuscule sans accent 
+        travel_pass:
+          type: object
+          description: |
+            Numéro de carte de transport (TCL, Navigo, Trabool, etc.) de l'occupant.
+            Obligatoire si l'information est disponible.
+            Actuellement supporté: Navigo
+          additionalProperties: false
+          required: 
+            - name
+            - user_id
+          properties:
+            name:
+              enum:
+                - navigo
+              description: Nom du titre
+              example: navigo
+            user_id:
+              type: string
+              description: Numéro de carte de transport
+              example: 00-MFR-6782929
+        phone:
+          type: string
+          description: Numéro de téléphone à 10 chiffre au format ITU E.164
+          example: '+33123456789'
+        phone_trunc:
+          type: string
+          description: Numéro de téléphone à 8 chiffres. Obligatoire si le numéro de téléphone complet n'est pas fournit.
+          example: '+336123456'
+        driving_license:
+            description: |
+              Numéro de permis de conduire (également appelé code driving_license)
+              cf https://permisdeconduire.ants.gouv.fr/tout-savoir-sur-le-permis/le-numero-de-dossier-sur-un-permis-au-format-carte-bancaire 
+            oneOf:
+              - type: string
+                description: Numéro de permis de conduire composé de 12 chiffres après 1975.
+                example: '051227308989'
+                pattern: /^[0-9]{12}$/
+                minLength: 12
+                maxLength: 12
+              - type: string
+                description: Numéro de permis de conduire composé de 1 à 15 caractères suivis de 4 chiffres avant 1975.
+                example: '822146819'
+                pattern: /^[A-Z0-9]{1,15}[0-9]{4}$/
+                minLength: 5
+                maxLength: 19
+              - type: string
+                description: Numéro de permis étranger préfixé de l'indicatif '99-'.
+                example: '99-X23836'
+                pattern: /^99-.*$/
+                minLength: 4
+                maxLength: 64
+        operator_user_id:
+          type: string
+          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire si le numéro de téléphone complet n'est pas fournit.
+          example: "1111-222-333-4444"
+        over_18:
+          enum:
+            - true
+            - false
+            - null
+          description: | 
+            Applicable seulement au passager.
+              - true si majeur
+              - false si mineur
+              - null si non fournit
+            
+            > De nombreuses campagnes utilisent cette information pour s'assurer que les bénéficiaires d'incitations sont majeures. La valeur `NULL` les exclues.
+    identitycert:
+      type: object
+      description: |
+        L'identité peut être passée de 3 manières différentes :
+        1. `phone` : le numéro de téléphone complet au format ISO
+        2. `phone_trunc` + `operator_user_id` : le numéro de téléphone tronqué plus votre identifiant utilisateur
+        3. `operator_user_id` : votre identifiant utilisateur uniquement (valable uniquement si vous avez transmis des trajets avec le couple `phone_trunc` + `operator_user_id`)
+      additionalProperties: false
+      properties:
+        phone:
+          type: string
+          description: Numéro de téléphone à 10 chiffre au format ITU E.164
+          example: '+33123456789'
+        phone_trunc:
+          type: string
+          description: Numéro de téléphone à 8 chiffres. Obligatoire si le numéro de téléphone complet n'est pas fournit.
+          example: '+336123456'
+        operator_user_id:
+          type: string
+          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire si le numéro de téléphone complet n'est pas fournit.
+          example: "1111-222-333-4444"
+    certificate_data:
+      type: object
+      additionalProperties: false
+      properties:
+        total:
+          type: object
+          properties:
+            trips:
+              type: integer
+            week_trips:
+              type: integer
+            weekend_trips:
+              type: integer
+            distance:
+              '$ref': '#/components/schemas/distance'
+            amount:
+              type: number
+              description: montant en centimes d'euros
+        trips:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                  - driver
+                  - passenger
+              datetime:
+                type: string
+                format: date-time
+              trips:
+                type: integer
+              distance:
+                '$ref': '#/components/schemas/distance'
+              amount:
+                type: number
+                description: montant en centimes d'euros
+paths:
+  /geo/distance:
+    get:
+      tags:
+      - geo
+      security:
+        - token: []
+      summary: Calcul théorique de la distance et de la durée
+      parameters:
+        - name: start
+          in: query
+          required: true
+          schema:
+            '$ref': '#/components/schemas/geopoint'
+        - name: end
+          in: query
+          required: true
+          schema:
+            '$ref': '#/components/schemas/geopoint'
+      responses:
+        '200':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - distance
+                  - duration
+                properties:
+                  distance:
+                    '$ref': '#/components/schemas/distance'
+                  duration:
+                    '$ref': '#/components/schemas/duration'
+  /geo/point/by_address:
+    get:
+      tags:
+      - geo
+      security:
+        - token: []
+      summary: Geocoding à partir d'une adresse litérale
+      parameters:
+        - name: literal
+          in: query
+          description: Adresse littérale
+          example: 5 rue du Paradis, 75010 Paris
+          required: true
+          schema:
+            type: string
+        - name: country
+          in: query
+          description: Nom complet du pays
+          example: France
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/geopoint'
+  /geo/point/by_insee:
+    get:
+      tags:
+      - geo
+      security:
+        - token: []
+      summary: Geocoding à partir d'un code insee
+      parameters:
+        - name: code
+          in: query
+          description: |
+            Code INSEE commune ou arrondissement de la position
+            Pour le métropoles qui comportent un code INSEE global et des codes par arrondissement, utiliser le code arrondissement.
+          example: "91177"
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/geopoint'
+  /certificates:
+    post:
+      tags:
+      - attestation
+      security:
+        - token: []
+      summary: Créer un certificat
+      description: | 
+        ## Configuration de la requête
+        
+        1. La requête est authentifiée avec un [token applicatif](/operateurs/preuves/acces) à ajouter à l'entête de la requête : `Authorization: Bearer <token>`
+        2. Le fuseau horaire est requis
+        2. L'identité est requise
+        3. Le filtrage géographique est optionnel
+        4. Les dates de début et de fin sont optionnelles
+        5. La date de fin la plus récente possible est J-6
+        6. La date de début la plus ancienne est le 1er janvier de l'année précédente
+        
+        > Voir la [création avancée](#creation-avancee) pour le détail des options
+        
+        ## Création simple
+        
+        Les données requises pour la création ne concernent que l'identité de la personne et le fuseau horaire.
+        
+        Par défaut, l'attestation sera générée pour l'année précédente sans restrictions géographiques.
+        
+        Chaque appel, même si les paramètres sont les mêmes, entraine la création d'une attestation unique.
+        
+        Les attestations ne peuvent être supprimées. [Contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr) au besoin.
+        
+        ### Astuce
+        Vous pouvez récupérer le fuseau horaire de l'utilisateur en Javascript.
+        ```js
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        ```
+      operationId: certificate:create
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - identity
+                - tz
+              additionalProperties: false
+              properties:
+                identity:
+                  '$ref': '#/components/schemas/identitycert'
+                tz:
+                  type: string
+                  description: fuseau horaire
+                  example: Europe/Paris
+                start_at:
+                  type: string
+                  format: date-time
+                  description: Date de début au format ISO. Sélectionne les trajet >= date
+                  example: 2021-01-01T00:00:00+0100
+                end_at:
+                  type: string
+                  format: date-time
+                  description: Date de fin au format ISO nécessairement supérieur à start_at. Sélectionne les trajets < date
+                  example: 2021-07-01T00:00:00+0200
+                positions:
+                  type: array
+                  description: |
+                    Pour sélectionner des trajets en fonction de leur point de départ et d'arrivée, il est possible de les préciser avec la clé `positions`.
+                    Tous les trajets ayant un départ **et** une arrivée dans un rayon de `1km` autour des points donnés seront inclus à l'attestation.
+                  items:
+                    '$ref': "#/components/schemas/geopoint"
+      responses:
+        '201':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: object
+                description: |
+                  Les données calculées de l'attestation sont retournées dans la réponse pour permettre leur affichage par votre application.
+                  Vous pouvez reconstruire l'URL de validation publique avec l'UUID.
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                    example: 8a9d2da9-39e3-4db7-be8e-12b4d2179fda
+                  created_at:
+                    type: string
+                    format: date-time
+                    example: 2020-01-01T00:00:00+0100
+                  meta:
+                    type: object
+                    properties:
+                      tz:
+                        type: string
+                        example: Europe/Paris
+                      positions:
+                        type: array
+                        items:
+                          '$ref': "#/components/schemas/geopoint"
+                      driver:
+                        '$ref': '#/components/schemas/certificate_data'
+                      passenger:
+                        '$ref': '#/components/schemas/certificate_data'
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '404':
+          description: L'identité n'a pu être trouvée. Vérifiez les identifiants envoyés.
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
+  /certificates/{uuid}/attachment:
+    parameters:
+      - name: uuid
+        in: path
+        description: Identifiant du certificat précédemment créé.
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags:
+      - attestation
+      summary: Télécharger une attestation
+      description: |
+        ## Upload du logo opérateur
+        
+        Vous pouvez personnaliser le logo opérateur présent sur l'attestation.
+        
+        Contrairement aux meta-données envoyées lors de la création de l'attestation, le logo est configuré au préalable via le page de profil de votre opérateur.
+        
+        - [Ajouter mon logo en production](https://app.covoiturage.beta.gouv.fr/admin/operator)
+        - [Ajouter mon logo pour les tests](https://app.demo.covoiturage.beta.gouv.fr/admin/operator)
+        
+        > _Le poids de l'image est de 2Mo maximum et sa taille de 1024x1024 pixels._
+        
+        ## Téléchargement
+        
+        Une fois l’attestation créée en base \(201 created\), on peut télécharger un PDF en y ajoutant des données permettant une identification simplifiée de la personne.
+        
+        Ces meta-données optionnelles ne sont pas stockées sur nos serveurs, elles sont ajoutées au document généré à la volée.
+        
+        Le PDF généré n'est pas stocké sur nos serveurs. L'appel d'API vous renvoie un fichier binaire que vous sauvegardez de votre côté. Vous pouvez générer le PDF d'une attestation plusieurs fois de suite.
+      security:
+        - token: []
+      operationId: certificate:download
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                meta:
+                  type: object
+                  description: |
+                    personnalisation optionnelle de l'en-tête
+                    omettre 'meta' si pas de personnalisation
+                    toutes les propriétés sont facultatives
+                  properties:
+                    operator:
+                      type: string
+                      maxLength: 305
+                      description: |
+                        zone de texte. Maximum de 305 caractères
+                        Maximum de 6 lignes séparées par \n
+                    identity:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          maxLength: 26
+                          description: Nom de la personne
+                        content:
+                          type: string
+                          maxLength: 305
+                          description: |
+                            zone de texte. Maximum de 305 caractères
+                            Maximum de 6 lignes séparées par \n
+                    note:
+                      type: string
+                      description: |
+                        zone de texte. Maximum de 440 caractères
+                        Retour à la ligne automatique
+                        
+      responses:
+        '200':
+          description: | 
+            OK, le fichier binaire est envoyé.
+            ![Attestations](/attestations.png)
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '404':
+          description: L'attestation n'a pu être trouvée 
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
+  /certificates/{uuid}:
+    parameters:
+      - name: uuid
+        in: path
+        description: Identifiant du certificat précédemment créé.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 9415300a-7a51-4296-96d1-68636e46485d 
+    get:
+      tags:
+      - attestation
+      summary: Vérifier un certificat
+      security:
+        - token: []
+      operationId: certificate:verify
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum: 
+                      - ok
+                      - expired
+                  uuid:
+                    type: string
+                    format: uuid
+                    example: 8a9d2da9-39e3-4db7-be8e-12b4d2179fda
+                  tz:
+                    type: string
+                    example: Europe/Paris
+                  start_at:
+                    type: string
+                    format: date-time
+                    example: 2020-01-01T00:00:00+0100
+                  end_at:
+                    type: string
+                    format: date-time
+                    example: 2020-01-01T00:00:00+0100
+                  created_at:
+                    type: string
+                    format: date-time
+                    example: 2020-01-01T00:00:00+0100
+                  identity:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                  operator:
+                    type: object
+                    properties:
+                      _id:
+                        type: integer
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                  positions:
+                    type: array
+                    items:
+                      '$ref': "#/components/schemas/geopoint"
+                  driver:
+                    '$ref': '#/components/schemas/certificate_data'
+                  passenger:
+                    '$ref': '#/components/schemas/certificate_data'
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '404':
+          description: L'attestation n'a pu être trouvée 
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
+  /journeys:
+    post:
+      tags:
+      - trajet
+      summary: Envoyer un trajet
+      description: |
+        Un trajet est un couple passager.ère / conducteur.rice ayant des points et de horaires de départ et d'arrivée. Si une conductrice covoiture avec plusieurs passagères, plusieurs trajets sont déclarés.
+
+        ### Unités de mesure
+
+        Les unités utilisées pour les valeurs sont :
+        
+        - montants financiers en **centimes d'Euros**
+        - distances en **mètres**
+
+        ### Données financières
+
+        Le principe est de coller au plus près avec la réalité comptable \(transaction usager\) et d'avoir suffisamment d'informations pour recalculer le coût initial du trajet.
+        Ainsi, les propriétés `passenger.contribution` et `driver.revenue` combinées au tableau `incentives` doivent permettre ce calcul.
+        Ceci afin de s'assurer du respect de la définition du covoiturage et de la bonne application des politiques incitatives gérées par le registre.
+        > Les données envoyées en `passenger.contribution` et `driver.revenue` sont utilisées dans les attestations de covoiturage à destination des employeurs (Forfait Mobilités Durables).
+
+        ### Validation
+        Le schéma de données est présenté au format [JSON Schema Draft-07](https://json-schema.org/understanding-json-schema/index.html).
+      security:
+        - token: []
+      operationId: acquisition:create
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - operator_journey_id
+                - incentives
+                - incentive_counterparts
+                - operator_class
+                - start
+                - end
+                - distance
+                - driver
+                - passenger
+              additionalProperties: false
+              properties:
+                incentive_counterparts:
+                  '$ref': '#/components/schemas/incentive_counterparts'
+                operator_journey_id:
+                  '$ref': '#/components/schemas/operator_journey_id'
+                operator_trip_id:
+                  '$ref': '#/components/schemas/operator_trip_id'
+                operator_class:
+                  '$ref': '#/components/schemas/operator_class'
+                incentives:
+                  '$ref': '#/components/schemas/incentives'
+                licence_plate:
+                  '$ref': '#/components/schemas/licence_plate'
+                start:
+                  '$ref': '#/components/schemas/time_geopoint'
+                end:
+                  '$ref': '#/components/schemas/time_geopoint'
+                distance:
+                  '$ref': '#/components/schemas/distance'
+                driver:
+                  '$ref': '#/components/schemas/driver'
+                passenger:
+                  '$ref': '#/components/schemas/passenger'
+      responses:
+        '201':
+          description: OK. Le trajet a bien été enregistré.
+          content:
+            'application/json':
+               schema:
+                 type: object
+                 required:
+                   - operator_journey_id
+                   - created_at
+                 properties:
+                   operator_journey_id:
+                     '$ref': '#/components/schemas/operator_journey_id'
+                   created_at:
+                     type: string
+                     format: date-time
+                     description: La date de création dans le registre
+        '400':
+          description: Mauvaise requête
+          content:
+            'application/json':
+              example:
+                id: 1
+                error:
+                  data: "data/driver/identity/phone_trunc must match format \"phonetrunc\", data/driver/identity/phone_trunc must pass \"macro\" keyword validation"
+                  code: -32602
+                  message: Invalid params
+                jsonrpc: '2.0'
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+    get:
+      summary: Liste des trajets
+      description: La liste est toujours ordonnée de manière antechronologique.
+      parameters:
+        - name: status 
+          in: query
+          description: Statut du trajet
+          required: true
+          example: "invalidated"
+          schema:
+            '$ref': '#/components/schemas/status'
+        - name: limit
+          in: query
+          description: Limite
+          schema:
+            '$ref': '#/components/schemas/limit'
+        - name: after
+          in: query
+          required: false
+          description: Date de début de recherche
+          schema:
+            '$ref': '#/components/schemas/datetime'
+        - name: offset
+          in: query
+          description: Offset
+          required: true
+          schema:
+            '$ref': '#/components/schemas/offset'
+      responses:
+        '200':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  '$ref': '#/components/schemas/operator_journey_id'
+  /journeys/{operator_journey_id}:
+    parameters:
+      - name: operator_journey_id
+        in: path
+        description: operator_journey_id of the journey created
+        required: true
+        schema:
+          '$ref': '#/components/schemas/operator_journey_id'
+    get:
+      tags:
+      - trajet
+      security:
+        - token: []
+      operationId: acquisition:status
+      summary: Vérifier le statut d'un trajet envoyé
+      description: |
+        Lors de l'envoi d'un trajet, un code 201 et un payload avec le `operator_journey_id` et la date de création vous sont renvoyés. Le trajet est alors enregistré dans notre base. Le processus de validation par lequel vont passer les données est complexe, asynchrone et dépend de différents services ayant de temps de réponse variables. De plus, les données d'affichage de la liste détaillée de l'interface d'administration n'est rafraichi que toutes les 24h.
+        Les trajets ne seront visibles dans l'interface utilisateurs que **5 jours** après leur envoi.
+        Il est possible de vérifier le statut d'un trajet envoyé directement pour s'assurer qu'il n'y pas pas eu d'erreur de format ou de traitement.
+      responses:
+        '200':
+          description: |
+            OK
+            Le trajet a été trouvé et son statut est retourné.  
+            Attention, le trajet peut être en erreur malgré le code 200, vérifiez le statut retourné.
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - status
+                  - operator_journey_id
+                  - created_at
+                properties:
+                  status:
+                    '$ref': '#/components/schemas/status'
+                  operator_journey_id:
+                    '$ref': '#/components/schemas/operator_journey_id'
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
+                  data: 
+                    type: object
+                    description: champ libre de données
+                    required:
+                      - message
+                    properties:
+                      message:
+                        type: string
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '404':
+          description: Le trajet n'a pas été trouvé 
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
+    put:
+      tags:
+      - trajet
+      security:
+        - token: []
+      summary: Mettre à jour un trajet
+      operationId: acquisition:update
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - incentives
+                - operator_class
+                - start
+                - end
+                - distance
+              additionalProperties: false
+              properties:
+                operator_trip_id:
+                  '$ref': '#/components/schemas/operator_trip_id'
+                operator_class:
+                  '$ref': '#/components/schemas/operator_class'
+                incentive_counterparts:
+                  '$ref': '#/components/schemas/incentive_counterparts'
+                incentives:
+                  '$ref': '#/components/schemas/incentives'
+                start:
+                  '$ref': '#/components/schemas/time_geopoint'
+                end:
+                  '$ref': '#/components/schemas/time_geopoint'
+                distance:
+                  '$ref': '#/components/schemas/distance'
+      responses:
+        '200':
+          description: ok
+    delete:
+      tags:
+      - trajet
+      summary: Invalider un trajet envoyé
+      description: |
+        Annule un trajet déjà envoyé dans le registre.
+        S'il détecte un comportement inhabituel ou une fraude avérée, un opérateur doit communiquer auprès du Service l'invalidation du trajet concerné dès lors qu'il est déjà inscrit dans le registre. Cette invalidation doit avoir lieu dès que l'opérateur a connaissance de cette irrégularité.
+      security:
+        - token: []
+      operationId: acquisition:cancel
+      requestBody:
+        required: false
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - code
+                - message
+              additionalProperties: false
+              properties:
+                code:
+                  type: string
+                  pattern: /^[0-9A-Za-z_-]{0,32}$/
+                message:
+                  type: string
+                  maxLength: 512
+      responses:
+        '200':
+          description: |
+            Ok
+            La demande d'invalidation a été prise en compte
+        '401':
+          description: Non authentifié. Le token applicatif est manquant ou invalide
+          content:
+            'application/json':
+              example:
+                code: 401
+                error: Unauthorized
+        '403':
+          description: |
+            Accès refusé
+            Les permissions de votre token applicatif ne vous permettent pas de créer une attestation.  
+            Vous pouvez générer un nouveau token et réessayer. Si le problème persiste, [contactez notre équipe](mailto:technique@covoiturage.beta.gouv.fr).
+          content:
+            'application/json':
+              example:
+                code: 403
+                error: Forbidden
+        '404':
+          description: Le trajet n'a pas été trouvé 
+          content:
+            'application/json':
+              example:
+                code: 404
+                error: Not found
+  /policies/simulate:
+    post:
+      summary: simuler incitations
+      security:
+        - token: []
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - operator_class
+                - start
+                - end
+                - distance
+                - driver
+                - passenger
+              additionalProperties: false
+              properties:
+                operator_class:
+                  '$ref': '#/components/schemas/operator_class'
+                start:
+                  '$ref': '#/components/schemas/time_geopoint'
+                end:
+                  '$ref': '#/components/schemas/time_geopoint'
+                distance:
+                  '$ref': '#/components/schemas/distance'
+                driver:
+                  '$ref': '#/components/schemas/driver'
+                passenger:
+                  '$ref': '#/components/schemas/passenger'
+      responses:
+        '200':
+          description: |
+            L'API retourne un objet avec les incitations sur le trajet soumis. Attention, ce calcul n'est pas définitif en raison des seuils qui peuvent s'appliquer sur une campagne. Par exemple, une campagne limitant le nombre de trajets par jour à X. C'est donc un résultat provisoire - sans valeur contractuelle - qui est retourné.
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - incentives
+                properties:
+                  incentives:
+                    '$ref': '#/components/schemas/incentives'
