@@ -67,8 +67,6 @@ export function selfCheckMacro<TestContext = unknown>(
       const data = faker(input, deltaMode);
       const box = { result: undefined };
       await check.handle(data, (nb: number) => (box.result = nb));
-      t.log(data);
-      t.log(box.result);
       t.true(box.result >= min);
       t.true(box.result <= max);
     },

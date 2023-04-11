@@ -47,7 +47,7 @@ test.serial('Fails on wrong permissions', async (t) => {
     contextFactory(['wrong.permission']),
   );
   t.true('error' in result);
-  t.is(result.error.data, 'Invalid permissions');
+  t.is(result.error.message, 'Invalid permissions');
 });
 
 test.serial.skip('Create an operator', async (t) => {
@@ -60,7 +60,6 @@ test.serial.skip('Create an operator', async (t) => {
     },
     contextFactory(['registry.operator.create']),
   );
-  t.log(result);
   t.true('_id' in result.result);
   t.is(result.result.name, 'Toto');
   t.is(result.result.legal_name, 'Toto inc.');

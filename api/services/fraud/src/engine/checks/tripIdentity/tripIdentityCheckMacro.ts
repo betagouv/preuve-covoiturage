@@ -44,8 +44,6 @@ export function tripIdentityCheckMacro<TestContext = unknown>(
         const data = input.map((i) => faker(i));
         const box = { result: undefined };
         await check.handle(data, (nb: number) => (box.result = nb));
-        t.log(data);
-        t.log(box.result);
         t.true(box.result >= min);
         t.true(box.result <= max);
       },

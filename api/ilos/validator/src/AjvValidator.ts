@@ -97,7 +97,7 @@ export class AjvValidator implements ValidatorInterface {
       throw new Error(`No schema provided for this type (${resolver})`);
     }
     const validator = this.bindings.get(resolver);
-    const valid = await validator(data);
+    const valid = validator(data);
     if (!valid) throw new Error(this.ajv.errorsText(validator.errors));
 
     return true;

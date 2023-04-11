@@ -55,7 +55,7 @@ export function errorHandlerMiddleware(
   try {
     const { id, method } = Array.isArray(_req.body) ? _req.body.pop() : _req.body;
 
-    console.error(`[errorHandler] ${err.name} ${code} ${err.message}\n${err.stack}`, { id, method });
+    console.error(`[errorHandler] ${err.name} ${code} ${err.message}`, { id, method });
   } catch (e) {}
 
   if (res.headersSent) return;

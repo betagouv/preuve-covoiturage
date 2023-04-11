@@ -214,7 +214,6 @@ test.serial('Should have register errors', async (t) => {
   const result = await t.context.db.connection.getClient().query(`
     SELECT * FROM cee.cee_application_errors ORDER BY created_at
   `);
-  t.log(result.rows);
   t.is(result.rowCount, 3);
   t.like(result.rows[0], { error_type: 'date' });
   t.like(result.rows[1], { error_type: 'conflict' });
