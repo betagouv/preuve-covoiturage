@@ -1,11 +1,4 @@
-import {
-  ContextType,
-  handler,
-  InitHookInterface,
-  InvalidParamsException,
-  KernelInterfaceResolver,
-  NotFoundException,
-} from '@ilos/common';
+import { ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { isAfter } from 'date-fns';
@@ -17,19 +10,14 @@ import {
   StatelessIncentiveInterface,
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  signature as handlerSignature,
-} from '../shared/policy/apply.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/apply.contract';
 import { alias } from '../shared/policy/apply.schema';
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
 })
-export class ApplyAction extends AbstractAction implements InitHookInterface {
+export class ApplyAction extends AbstractAction {
   private readonly context: ContextType = {
     call: {
       user: {},
@@ -43,30 +31,8 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     private policyRepository: PolicyRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
     private tripRepository: TripRepositoryProviderInterfaceResolver,
-    private kernel: KernelInterfaceResolver,
   ) {
     super();
-  }
-
-  async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(
-      handlerSignature,
-      {},
-      {
-        call: {
-          user: {},
-        },
-        channel: {
-          service: handlerConfig.service,
-          metadata: {
-            repeat: {
-              cron: '0 3 * * *',
-            },
-            jobId: 'policy.apply.cron',
-          },
-        },
-      },
-    );
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
@@ -79,6 +45,10 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     await this.processPolicy(params.policy_id, from, to, override);
   }
 
+  /**
+   * Incentives are calculated for the last week (from -7 days til today).
+   * Finalization will be applied until the last 5 days
+   */
   protected defaultParams(params: ParamsInterface): Required<ParamsInterface> {
     const tz = params.tz ?? defaultTz;
 

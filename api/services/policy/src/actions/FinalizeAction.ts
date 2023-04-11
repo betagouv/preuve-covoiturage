@@ -1,4 +1,4 @@
-import { handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
+import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { MetadataStore } from '../engine/entities/MetadataStore';
@@ -12,17 +12,12 @@ import {
   PolicyInterface,
   PolicyRepositoryProviderInterfaceResolver,
 } from '../interfaces';
-import {
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-  signature as handlerSignature,
-} from '../shared/policy/finalize.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/finalize.contract';
 import { alias } from '../shared/policy/finalize.schema';
 import { signature as syncincentivesumSignature } from '../shared/policy/syncIncentiveSum.contract';
 
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]] })
-export class FinalizeAction extends AbstractAction implements InitHookInterface {
+export class FinalizeAction extends AbstractAction {
   constructor(
     private policyRepository: PolicyRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
@@ -30,27 +25,6 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     private kernel: KernelInterfaceResolver,
   ) {
     super();
-  }
-
-  async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(
-      handlerSignature,
-      {},
-      {
-        call: {
-          user: {},
-        },
-        channel: {
-          service: handlerConfig.service,
-          metadata: {
-            repeat: {
-              cron: '0 4 * * *',
-            },
-            jobId: 'policy.finalize.cron',
-          },
-        },
-      },
-    );
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
@@ -106,13 +80,17 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     }
   }
 
+  /**
+   * Trips are finalized until 5 days ago to make sure the data is sent by the operators
+   * and make sure the trips are finalized before APDF are generated on the 6th of every month
+   */
   protected defaultParams(params: ParamsInterface): Required<ParamsInterface> {
     const tz = params.tz ?? defaultTz;
 
     return {
       tz,
-      from: params.from ?? subDaysTz(today(tz), 7),
-      to: params.to ?? today(tz),
+      from: params.from ?? subDaysTz(today(tz), 15),
+      to: params.to ?? subDaysTz(today(tz), 5),
       sync_incentive_sum: !!params.sync_incentive_sum,
     };
   }

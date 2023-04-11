@@ -95,11 +95,13 @@ export class ProcessCommand implements CommandInterface {
         const params: Record<string, any> = { policy_id, tz, override };
 
         if ('from' in options && options.from) {
-          params.from = toISOString(castUserStringToUTC(options.from, tz));
+          const from = castUserStringToUTC(options.from, tz);
+          params.from = from ? toISOString(from) : undefined;
         }
 
         if ('to' in options && options.to) {
-          params.to = toISOString(castUserStringToUTC(options.to, tz));
+          const to = castUserStringToUTC(options.to, tz);
+          params.to = to ? toISOString(to) : undefined;
         }
 
         // warn the user if 'override' and 'to' are used together
@@ -126,16 +128,10 @@ export class ProcessCommand implements CommandInterface {
           }
 
           console.info(`[campaign:process] finalize all campaigns`);
-          await this.kernel.call(
-            finalize,
-            {
-              to: toISOString(params.to),
-              from: toISOString(params.from),
-              tz: params.tz,
-              sync_incentive_sum: options.resync,
-            },
-            context,
-          );
+          const finalizeParams: Record<string, any> = { tz: params.tz, sync_incentive_sum: options.resync };
+          if (params.to) finalizeParams.to = params.to;
+          if (params.from) finalizeParams.from = params.from;
+          await this.kernel.call(finalize, finalizeParams, context);
         }
       }
 
