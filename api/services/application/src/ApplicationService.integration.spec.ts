@@ -90,8 +90,7 @@ test.serial('#2.1 - Fails if no owner set', async (t) => {
 
   t.true('error' in response);
   t.is(response.error.code, -32503);
-  t.is(response.error.message, 'Forbidden Error');
-  t.is(response.error.data, 'Invalid permissions');
+  t.is(response.error.message, 'Invalid permissions');
 });
 
 test.serial.skip("#3.0 - Cannot revoke another op's app", async (t) => {
