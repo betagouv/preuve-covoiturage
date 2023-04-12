@@ -7,15 +7,18 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "eslint.nodePath": "./docker/lint/node_modules",
   "eslint.options": {
     "overrideConfigFile": "docker/lint/.eslintrc.js"
   },
   "eslint.format.enable": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript][javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
   "files.watcherExclude": {
     "**/node_modules": true,
-    "**/dist/**": true,
+    "**/dist/**": true
   },
   "search.exclude": {
     "tmp/*": true,
@@ -32,12 +35,9 @@
     "**/*.postman_collection.json": true,
     "db": true,
     "api/**/dist": false,
-    "**/node_modules/**": false,
+    "**/node_modules/**": false
   },
-  "[html]": {
-    "editor.defaultFormatter": "vscode.html-language-features"
-  },
-  "githubIssues.queries":[
+  "githubIssues.queries": [
     {
       "label": "Attestations",
       "query": "repo:${owner}/${repository} is:issue is:open label:ATTESTATION"
@@ -55,5 +55,5 @@
       "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc"
     }
   ],
-  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "relative"
 }

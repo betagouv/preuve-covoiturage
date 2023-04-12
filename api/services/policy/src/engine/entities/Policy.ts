@@ -1,3 +1,4 @@
+import { Timezone } from '@pdc/provider-validator';
 import { UnknownHandlerException } from '../exceptions/UnknownHandlerException';
 import { isSelected } from '../helpers';
 import {
@@ -26,6 +27,7 @@ export class Policy implements PolicyInterface {
     public name: string,
     public start_date: Date,
     public end_date: Date,
+    public tz: Timezone,
     public handler: PolicyHandlerInterface,
     public status: string,
     public incentive_sum: number,
@@ -44,6 +46,7 @@ export class Policy implements PolicyInterface {
       data.name,
       data.start_date,
       data.end_date,
+      data.tz,
       new ctor(data.max_amount),
       data.status,
       data.incentive_sum,
@@ -58,6 +61,7 @@ export class Policy implements PolicyInterface {
       name: this.name,
       start_date: this.start_date,
       end_date: this.end_date,
+      tz: this.tz,
       status: this.status,
       incentive_sum: this.incentive_sum,
       handler: (this.handler.constructor as PolicyHandlerStaticInterface).id,

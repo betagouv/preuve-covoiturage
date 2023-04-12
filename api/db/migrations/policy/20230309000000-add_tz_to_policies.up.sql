@@ -1,0 +1,1 @@
+ALTER TABLE policy.policies ADD COLUMN tz VARCHAR(64) NOT NULL DEFAULT 'Europe/Paris';

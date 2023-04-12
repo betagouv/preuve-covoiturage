@@ -1,5 +1,6 @@
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { toISOString } from '../helpers/dates.helper';
 
 import {
   LockInformationInterface,
@@ -21,9 +22,14 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     const conn = await this.connection.getClient().connect();
     await conn.query('BEGIN');
     try {
-      const res = await conn.query(
-        `SELECT true FROM ${this.lockTable} WHERE stopped_at IS NULL AND started_at >= NOW() - '23 hours'::interval ORDER BY _id DESC LIMIT 1 FOR UPDATE`,
-      );
+      const res = await conn.query(`
+        SELECT true
+        FROM ${this.lockTable}
+        WHERE stopped_at IS NULL AND started_at >= NOW() - '23 hours'::interval
+        ORDER BY _id DESC
+        LIMIT 1
+        FOR UPDATE
+      `);
       if (res.rowCount >= 1) {
         return false;
       }
@@ -73,6 +79,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
           pp.name,
           pp.start_date,
           pp.end_date,
+          pp.tz,
           pp.handler,
           pp.status,
           pp.territory_id,
@@ -279,5 +286,83 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
 
     const result = await this.connection.getClient().query(query);
     return result.rowCount ? result.rows.map((o: { operator_id: number }) => o.operator_id) : [];
+  }
+
+  /**
+   * Synchronise max_amount_restriction.global.campaign.global key
+   * from policy.policy_metas table to the computed sum of all validated
+   * incentives at the date of the last validated incentive.
+   *
+   * note: the datetime of the key does not reflect the datetime of the last
+   *       validated incentive but the datetime of the first value used to
+   *       create the key. #FIXME
+   */
+  async syncIncentiveSum(campaign_id: number): Promise<void> {
+    const pf = '[campaign:syncincentivesum]';
+    const key_name = 'max_amount_restriction.global.campaign.global';
+
+    // update the campaign with the sum of validated incentives
+    // get the key
+    const resKey = await this.connection.getClient().query<{ _id: number; datetime: Date }>({
+      text: `
+          SELECT _id, datetime FROM policy.policy_metas
+          WHERE policy_id = $1 AND key = $2
+          ORDER BY datetime DESC
+          LIMIT 1
+        `,
+      values: [campaign_id, key_name],
+    });
+
+    if (!resKey.rowCount) {
+      console.warn(`${pf} ${key_name} key not found for campaign ${campaign_id}`);
+      return;
+    }
+
+    const { _id: key_id, datetime } = resKey.rows[0];
+
+    // compute incentive_sum
+    const resSum = await this.connection.getClient().query<{ incentive_sum: number }>({
+      text: `
+          WITH latest_incentive AS (
+            SELECT MAX(datetime)
+            FROM policy.incentives
+            WHERE policy_id = $1
+              AND status = 'validated'
+          )
+          SELECT SUM(amount)::int AS incentive_sum
+          FROM policy.incentives
+          WHERE policy_id = $1
+            AND datetime <= (SELECT max FROM latest_incentive)
+            AND status = 'validated'
+          `,
+      values: [campaign_id],
+    });
+
+    if (!resSum.rowCount) {
+      console.warn(`${pf} Could not calculate incentive sum for campaign ${campaign_id}`);
+      return;
+    }
+
+    const { incentive_sum } = resSum.rows[0];
+
+    // update max_amount_restriction.global.campaign.global
+    console.info(
+      `${pf} Setting policy_meta (${key_id}) ` +
+        `to ${incentive_sum} ` +
+        `at ${toISOString(datetime)} ` +
+        `for campaign ${campaign_id}`,
+    );
+
+    await this.connection.getClient().query({
+      text: `UPDATE policy.policy_metas SET value = $2 WHERE _id = $1`,
+      values: [key_id, incentive_sum],
+    });
+
+    // update incentive_sum in the policy
+    console.info(`${pf} Set incentive_sum ${incentive_sum} in policy ${campaign_id}`);
+    await this.connection.getClient().query({
+      text: `UPDATE policy.policies SET incentive_sum = $2 WHERE _id = $1`,
+      values: [campaign_id, incentive_sum],
+    });
   }
 }

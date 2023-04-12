@@ -114,6 +114,10 @@ module.exports = {
               title: 'Licences',
               path: '/contribuer/api/licenses-list',
             },
+            {
+              title: 'Gestion des dates',
+              path: '/contribuer/api/dates',
+            },
           ],
         },
       },

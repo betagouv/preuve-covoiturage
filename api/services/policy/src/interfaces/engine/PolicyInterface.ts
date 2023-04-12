@@ -1,3 +1,4 @@
+import { Timezone } from '@pdc/provider-validator';
 import {
   BoundedSlices,
   CarpoolInterface,
@@ -20,6 +21,7 @@ export interface PolicyInterface {
   name: string;
   start_date: Date;
   end_date: Date;
+  tz: Timezone;
   handler: PolicyHandlerInterface;
   status: string;
 
@@ -40,6 +42,7 @@ export interface SerializedPolicyInterface {
   name: string;
   start_date: Date;
   end_date: Date;
+  tz: Timezone;
   handler: string;
   status: string;
   incentive_sum: number;

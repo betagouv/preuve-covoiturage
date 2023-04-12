@@ -46,6 +46,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       end_date: today,
       _id: 1000,
       name: '',
+      tz: 'Europe/Paris',
       status: 'active',
       handler: params.policy_template_id,
       incentive_sum: 0,

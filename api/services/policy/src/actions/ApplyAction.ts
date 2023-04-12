@@ -1,24 +1,23 @@
-import { isAfter, parseISO, startOfToday, sub } from 'date-fns';
-import { handler, KernelInterfaceResolver, ContextType, InitHookInterface } from '@ilos/common';
+import { ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-
-import {
-  signature as handlerSignature,
-  handlerConfig,
-  ParamsInterface,
-  ResultInterface,
-} from '../shared/policy/apply.contract';
+import { isAfter } from 'date-fns';
+import { Policy } from '../engine/entities/Policy';
+import { defaultTz, subDaysTz, today, toTzString } from '../helpers/dates.helper';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
-  TripRepositoryProviderInterfaceResolver,
   PolicyRepositoryProviderInterfaceResolver,
   StatelessIncentiveInterface,
+  TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
-import { Policy } from '../engine/entities/Policy';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/apply.contract';
+import { alias } from '../shared/policy/apply.schema';
 
-@handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service)] })
-export class ApplyAction extends AbstractAction implements InitHookInterface {
+@handler({
+  ...handlerConfig,
+  middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
+})
+export class ApplyAction extends AbstractAction {
   private readonly context: ContextType = {
     call: {
       user: {},
@@ -32,30 +31,8 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
     private policyRepository: PolicyRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
     private tripRepository: TripRepositoryProviderInterfaceResolver,
-    private kernel: KernelInterfaceResolver,
   ) {
     super();
-  }
-
-  async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(
-      handlerSignature,
-      {},
-      {
-        call: {
-          user: {},
-        },
-        channel: {
-          service: handlerConfig.service,
-          metadata: {
-            repeat: {
-              cron: '0 3 * * *',
-            },
-            jobId: 'policy.apply.cron',
-          },
-        },
-      },
-    );
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
@@ -63,43 +40,60 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       return;
     }
 
-    console.debug('[policies] stateless starting');
-    if (!('policy_id' in params)) {
-      await this.dispatch();
-      return;
-    }
-    await this.processPolicy(params.policy_id, params.override_from);
-    console.debug('[policies] stateless finished');
+    const { from, to, override } = this.defaultParams(params);
+    console.info(`[campaign:apply] processing policy ${params.policy_id}`);
+    await this.processPolicy(params.policy_id, from, to, override);
   }
 
-  protected async dispatch(): Promise<void> {
-    const policies = await this.policyRepository.findWhere({ status: 'active' });
-    for (const policy of policies) {
-      this.kernel.notify<ParamsInterface>(handlerSignature, { policy_id: policy._id }, this.context);
-    }
+  /**
+   * Incentives are calculated for the last week (from -7 days til today).
+   * Finalization will be applied until the last 5 days
+   */
+  protected defaultParams(params: ParamsInterface): Required<ParamsInterface> {
+    const tz = params.tz ?? defaultTz;
+
+    return {
+      tz,
+      policy_id: params.policy_id,
+      from: params.from ?? subDaysTz(today(tz), 7),
+      to: params.to ?? today(tz),
+      override: !!params.override,
+    };
   }
 
-  protected async processPolicy(policy_id: number, override_from?: Date): Promise<void> {
-    console.debug(`[policy ${policy_id}] starting`);
-
+  protected async processPolicy(policy_id: number, from: Date, to: Date, override = false): Promise<void> {
     // 1. Find policy
-    const policy = await Policy.import(await this.policyRepository.find(policy_id));
+    const pol = await this.policyRepository.find(policy_id);
+    if (!pol) {
+      throw new NotFoundException(`[policy ${policy_id}] Not found`);
+    }
 
-    // benchmark
-    const totalStart = new Date();
+    const policy = await Policy.import(pol);
+
+    // init counter and benchmark
+    const bench = new Date();
     let total = 0;
     let counter = 0;
 
     // 2. Start a cursor to find trips
+    const start = isAfter(from, policy.start_date) ? from : policy.start_date;
+    const end = isAfter(policy.end_date, to) ? to : policy.end_date;
+    const s = toTzString(start);
+    const e = toTzString(end);
+
+    // throw if no time span
+    if (end.getTime() - start.getTime() < 1) {
+      throw new InvalidParamsException(`[policy ${policy._id}] Invalid time span (from ${s} to ${e})`);
+    }
+
+    console.debug(`[policy ${policy_id}] starting from ${s} to ${e}`);
+
     const batchSize = 50;
-    const startParam = override_from ? parseISO(override_from as any) : sub(startOfToday(), { days: 7 });
-    const start = isAfter(startParam, policy.start_date) ? startParam : policy.start_date;
-    const end = isAfter(policy.end_date, new Date()) ? new Date() : policy.end_date;
-    const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, !!override_from);
+    const cursor = this.tripRepository.findTripByPolicy(policy, start, end, batchSize, override);
     let done = false;
 
     do {
-      const start = new Date();
+      const bs = new Date(); // benchmark start
       const incentives: Array<StatelessIncentiveInterface> = [];
       const results = await cursor.next();
       done = results.done;
@@ -116,7 +110,7 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       await this.incentiveRepository.createOrUpdateMany(incentives.map((i) => i.export()));
 
       // benchmark
-      const ms = new Date().getTime() - start.getTime();
+      const ms = new Date().getTime() - bs.getTime();
       console.debug(
         `[policy ${policy._id}] ${counter} (${total}) trips done in ${ms}ms (${((counter / ms) * 1000).toFixed(3)}/s)`,
       );
@@ -124,6 +118,6 @@ export class ApplyAction extends AbstractAction implements InitHookInterface {
       counter = 0;
     } while (!done);
 
-    console.debug(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - totalStart.getTime()}ms`);
+    console.debug(`[policy ${policy_id}] finished - ${total} in ${new Date().getTime() - bench.getTime()}ms`);
   }
 }

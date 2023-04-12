@@ -76,13 +76,65 @@ Seuls les services listés sont autorisés.
 id: `has_permission`  
 fn: `hasPermissionMiddleware(string[])`
 
-#### HasPermissionByScope
+### HasPermissionByScope
 
 id: `has_permission.by_scope`  
 fn: `hasPermissionByScopeMiddleware(globalPermission: string, [string, string, string][])`
 
 ```typescript
 // TODO
+```
+
+## Helpers
+
+Des helpers sont disponibles pour simplifier l'utilisation répétitive des middlewares.
+
+#### `copyGroupIdFromContextMiddlewares`
+
+1. Copie l'identifiant du group du contexte aux paramètres
+
+Il est possible de définir un préfixe pour la clé. Passer `null` si vous devez utiliser le troisième argument `preserve`.
+
+On peut aussi décider de conserver la valeur des paramètres si elle existe déjà.
+
+Retourne un tableau de middlewares.
+
+```ts
+middlewares: [
+  ...copyGroupIdFromContextMiddlewares(['territory_id', 'operator_id'], null, true),
+]
+```
+
+#### `copyGroupIdAndApplyGroupPermissionMiddlewares`
+
+1. Copie l'identifiant groupe ou utilisateur (`_id`, `territory_id`, `operator_id`) dans les paramètres de la requête à partir du contexte utilisateur ;
+2. Configure les permissions du groupe.
+
+Retourne un tableau de middlewares.
+
+```ts
+middlewares: [
+  ...copyGroupIdAndApplyGroupPermissionMiddlewares({
+    operator: 'operator.service.action',
+    registry: 'registry.service.action',
+  })
+]
+```
+
+#### `internalOnlyMiddlewares`
+
+Retourne un tableau de middlewares avec les services en liste blanche s'ils sont passés en argument ou une liste noire comportant `proxy`, le seul service externe.
+
+```ts
+// exclure le proxy et autoriser tous les autres services
+middlewares: [
+  ...internalOnlyMiddlewares(),
+]
+
+// exclure une liste de services
+middlewares: [
+  ...internalOnlyMiddlewares('acquisition', 'carpool'),
+]
 ```
 
 ### Logger
@@ -96,7 +148,7 @@ Les erreurs sont attrapées et affichées.
 
 :warning: la position du middleware dans la liste fait varier les résultats.
 
-```typescript
+```ts
 middlewares: [
   someMiddleware(),
   loggerMiddleware(),
@@ -109,7 +161,7 @@ middlewares: [
 id: `validate.date`  
 fn:
 
-```typescript
+```ts
   validateDateMiddleware({
     startPath: string,
     endPath: string,

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@ilos/common": "^0",
+    "@pdc/provider-validator": "^0",
     "pdf-lib": "^1.16.0"
   }
 }
