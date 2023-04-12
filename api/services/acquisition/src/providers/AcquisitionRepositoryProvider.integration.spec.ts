@@ -374,7 +374,6 @@ test.serial('Should partial rollback if update error', async (t) => {
     },
     1000,
   );
-  t.log(result1);
   await fn1({
     acquisition_id: result1[0]._id,
     status: AcquisitionStatusEnum.Ok,
@@ -390,7 +389,6 @@ test.serial('Should partial rollback if update error', async (t) => {
     values: [result1.map((r) => r._id)],
   });
 
-  t.log(data);
   t.deepEqual(data, [
     {
       _id: result1[0]._id,
