@@ -571,26 +571,28 @@ export class HttpTransport implements TransportInterface {
           createRPCPayload('certificate:find', { uuid: req.params.uuid }, { permissions: ['common.certificate.find'] }),
         )) as RPCResponseType;
 
-        // Temporary solution to map v3 certificate model to v2
-        response.result.data.driver.km = response.result.data.driver.distance;
-        response.result.data.driver.euro = response.result.data.driver.amount;
+        if (response.result.driver.total.distance && response.result.passenger.total.distance) {
+          // Temporary solution to map v3 generated certificate model to v2 API model
+          response.result.driver.total.km = response.result.driver.total.distance / 1000;
+          response.result.driver.total.euro = response.result.driver.total.amount;
 
-        response.result.data.passenger.km = response.result.data.passenger.distance;
-        response.result.data.passenger.euro = response.result.data.passenger.amount;
+          response.result.passenger.total.km = response.result.passenger.total.distance / 1000;
+          response.result.passenger.total.euro = response.result.passenger.total.amount;
 
-        delete response.result.data.driver.distance;
-        delete response.result.data.driver.amount;
-        delete response.result.data.passenger.distance;
-        delete response.result.data.passenger.amount;
+          delete response.result.driver.total.distance;
+          delete response.result.driver.total.amount;
+          delete response.result.passenger.total.distance;
+          delete response.result.passenger.total.amount;
 
-        response.result.data.driver.trips &&
-          response.result.data.driver.trips.length > 0 &&
-          response.result.data.driver.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance }));
+          response.result.driver.trips &&
+            response.result.driver.trips.length > 0 &&
+            response.result.driver.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance / 1000 }));
 
-        response.result.data.passenger.trips &&
-          response.result.data.passenger.trips.length > 0 &&
-          response.result.data.passenger.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance }));
-        // Temporary solution to map v3 certificate model to v2
+          response.result.passenger.trips &&
+            response.result.passenger.trips.length > 0 &&
+            response.result.passenger.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance / 1000 }));
+        }
+        // Temporary solution to map v3 generated certificate model to v2 API model
 
         this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
       }),

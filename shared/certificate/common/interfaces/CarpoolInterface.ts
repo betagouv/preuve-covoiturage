@@ -7,7 +7,8 @@ export interface CarpoolInterface {
   type: CarpoolTypeEnum;
   datetime: Date;
   trips: number;
-  distance: number;
+  distance?: number;
+  km?: number;
   amount: number;
 }
 

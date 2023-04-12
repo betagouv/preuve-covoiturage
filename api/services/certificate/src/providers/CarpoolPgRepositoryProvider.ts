@@ -91,7 +91,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           type,
           date,
           COUNT(*)::int trips,
-          TRUNC(SUM(distance)::decimal/1000, 3)::real AS distance,
+          TRUNC(SUM(distance)::decimal, 3)::real AS distance,
           TRUNC(SUM(payment)::decimal/100, 2)::real AS amount
       FROM trips
       GROUP BY (type, date)
