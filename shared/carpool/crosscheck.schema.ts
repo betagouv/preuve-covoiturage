@@ -11,11 +11,43 @@ const positionSchema = {
   },
 };
 
+const incentivesSchema = {
+  type: 'array',
+  items: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['index', 'amount', 'siret'],
+    properties: {
+      index: {
+        type: 'integer',
+        minimum: 0,
+        maximum: 64,
+      },
+      amount: {
+        type: 'integer',
+        minimum: 0,
+        maximum: 1000000,
+      },
+      siret: {
+        macro: 'siret',
+      },
+    },
+  },
+};
+
 export const alias = 'carpool.crosscheck';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['acquisition_id', 'operator_id', 'operator_journey_id', 'created_at', 'operator_class', 'people'],
+  required: [
+    'acquisition_id',
+    'operator_id',
+    'operator_journey_id',
+    'created_at',
+    'operator_class',
+    'people',
+    'incentives',
+  ],
   additionalProperties: false,
   properties: {
     operator_trip_id: { macro: 'varchar' },
@@ -24,6 +56,7 @@ export const schema = {
     operator_journey_id: { macro: 'varchar' },
     created_at: { macro: 'timestamp' },
     operator_class: { enum: ['A', 'B', 'C'] },
+    incentives: incentivesSchema,
     people: {
       type: 'array',
       items: {
@@ -32,6 +65,7 @@ export const schema = {
         additionalProperties: false,
         properties: {
           identity,
+          incentives: incentivesSchema,
           is_driver: { type: 'boolean' },
           datetime: { macro: 'timestamp' },
           start: positionSchema,
