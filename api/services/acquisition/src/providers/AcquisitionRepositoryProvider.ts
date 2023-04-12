@@ -117,6 +117,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
 
   async updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>, poolClient?: PoolClient): Promise<void> {
     const pool = poolClient ?? (await this.connection.getClient().connect());
+    await pool.query(poolClient ? 'SAVEPOINT results' : 'BEGIN');
     const values = data.reduce(
       (acc, d) => {
         const [acquisition_id, status, error_stage, errors] = acc;
@@ -163,7 +164,13 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     };
     try {
       await pool.query(query);
+      await pool.query(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
       return;
+    } catch (e) {
+      await pool.query(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
+      if (!poolClient) {
+        throw e;
+      }
     } finally {
       if (!poolClient) {
         pool.release();
@@ -212,7 +219,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
   async findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,
     timeout = 10000,
-  ): Promise<[Array<AcquisitionFindInterface<P>>, (data: Array<AcquisitionStatusUpdateInterface>) => Promise<void>]> {
+  ): Promise<[Array<AcquisitionFindInterface<P>>, (data?: AcquisitionStatusUpdateInterface) => Promise<void>]> {
     const whereClauses = ['from', 'to', 'status']
       .filter((k) => k in search)
       .map((k, i) => {
@@ -267,22 +274,20 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       let hasTimeout = false;
       const timeoutFn = setTimeout(() => {
         hasTimeout = true;
-        // this.updateManyStatus(result.rows.map(r =>))
-        pool.query('ROLLBACK').finally(() => pool.release());
+        pool.query('COMMIT').finally(() => pool.release());
       }, timeout);
       return [
         result.rows,
-        async (data: Array<AcquisitionStatusUpdateInterface>) => {
+        async (data?: AcquisitionStatusUpdateInterface) => {
           if (timeoutFn && !hasTimeout) {
-            clearTimeout(timeoutFn);
-            try {
-              await this.updateManyStatus(data, pool);
-              await pool.query('COMMIT');
-            } catch (e) {
-              await pool.query('ROLLBACK');
-              throw e;
-            } finally {
-              pool.release();
+            if (timeoutFn && !hasTimeout) {
+              if (data) {
+                await this.updateManyStatus([data], pool);
+              } else {
+                clearTimeout(timeoutFn);
+                await pool.query('COMMIT');
+                pool.release();
+              }
             }
           }
         },

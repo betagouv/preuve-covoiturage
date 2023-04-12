@@ -66,34 +66,40 @@ export class ProcessJourneyAction extends AbstractAction implements InitHookInte
       },
       timeout,
     );
-    const results = [];
     const msg = `[acquisition] processed (${acquisitions.length}) *${runUUID}*`;
-    console.debug(`Processing acquisition ${acquisitions.map((a) => a._id).join(', ')} *${runUUID}*`);
+    console.debug(`[acquisition] processing batch ${acquisitions.map((a) => a._id).join(', ')} *${runUUID}*`);
     console.time(msg);
-    for (const acquisition of acquisitions) {
-      try {
-        const normalizedAcquisition = await this.normalize(acquisition);
-        await this.kernel.call<CrosscheckParamsInterface, CrosscheckResultInterface>(
-          crosscheckSignature,
-          normalizedAcquisition,
-          callContext,
-        );
-        results.push({
-          acquisition_id: acquisition._id,
-          status: AcquisitionStatusEnum.Ok,
-        });
-      } catch (e) {
-        console.debug(`[acquisition] error ${e.message} processing ${acquisition._id} *${runUUID}`);
-        results.push({
-          acquisition_id: acquisition._id,
-          status: AcquisitionStatusEnum.Error,
-          error_stage: AcquisitionErrorStageEnum.Normalisation,
-          errors: [e],
-        });
+    try {
+      for (const acquisition of acquisitions) {
+        const timerMsg = `[acquisition] processed (${acquisition._id} *${runUUID}*`;
+        console.time(timerMsg);
+        try {
+          const normalizedAcquisition = await this.normalize(acquisition);
+          await this.kernel.call<CrosscheckParamsInterface, CrosscheckResultInterface>(
+            crosscheckSignature,
+            normalizedAcquisition,
+            callContext,
+          );
+          await cb({
+            acquisition_id: acquisition._id,
+            status: AcquisitionStatusEnum.Ok,
+          });
+        } catch (e) {
+          console.debug(`[acquisition] error ${e.message} processing ${acquisition._id} *${runUUID}`);
+          await cb({
+            acquisition_id: acquisition._id,
+            status: AcquisitionStatusEnum.Error,
+            error_stage: AcquisitionErrorStageEnum.Normalisation,
+            errors: [e],
+          });
+        } finally {
+          console.timeEnd(timerMsg);
+        }
       }
+    } finally {
+      await cb();
+      console.timeEnd(msg);
     }
-    await cb(results);
-    console.timeEnd(msg);
     return;
   }
 

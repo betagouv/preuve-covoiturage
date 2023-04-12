@@ -79,14 +79,12 @@ test('should process if normalization ok', async (t) => {
   t.is(kernelSignature, signature);
   t.deepEqual(kernelContext, callContext);
   t.deepEqual(kernelParams, [normalizedPayload]);
-  t.true(cbStub.calledOnce);
+  t.true(cbStub.calledTwice);
   const cbParams = cbStub.getCall(0).args[0];
-  t.deepEqual(cbParams, [
-    {
-      acquisition_id: 1,
-      status: AcquisitionStatusEnum.Ok,
-    },
-  ]);
+  t.deepEqual(cbParams, {
+    acquisition_id: 1,
+    status: AcquisitionStatusEnum.Ok,
+  });
 });
 
 test('should fail if normalization fail', async (t) => {
@@ -148,9 +146,8 @@ test('should fail if normalization fail', async (t) => {
   t.is(kernelSignature, signature);
   t.deepEqual(kernelContext, callContext);
   t.deepEqual(kernelParams, [normalizedPayload]);
-  t.true(cbStub.calledOnce);
-  const cbParams = cbStub.getCall(0).args[0];
-  t.deepEqual(cbParams, [
+  const calls = cbStub.getCalls().map((c) => c.args[0]);
+  t.deepEqual(calls, [
     {
       acquisition_id: 1,
       status: AcquisitionStatusEnum.Ok,
@@ -161,6 +158,7 @@ test('should fail if normalization fail', async (t) => {
       error_stage: AcquisitionErrorStageEnum.Normalisation,
       errors: [normalizationError],
     },
+    undefined,
   ]);
 });
 
@@ -204,10 +202,8 @@ test('should fail if carpool fail', async (t) => {
   };
   await action.call(inputData);
 
-  t.true(cbStub.calledOnce);
-  const cbParams = cbStub.getCall(0).args[0];
-  t.log(JSON.stringify(cbParams));
-  t.deepEqual(cbParams, [
+  const calls = cbStub.getCalls().map((c) => c.args[0]);
+  t.deepEqual(calls, [
     {
       acquisition_id: 1,
       status: AcquisitionStatusEnum.Ok,
@@ -218,6 +214,7 @@ test('should fail if carpool fail', async (t) => {
       error_stage: AcquisitionErrorStageEnum.Normalisation,
       errors: [kernelError],
     },
+    undefined,
   ]);
 });
 
