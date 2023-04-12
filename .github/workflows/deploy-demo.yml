@@ -149,23 +149,14 @@ jobs:
     needs: [api-build, dashboard-build]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout infra repo
-        uses: actions/checkout@v3
+      - name: Trigger Workflow
+        uses: actions/github-script@v6
         with:
-          repository: betagouv/preuve-covoiturage-infra
-          ssh-key: ${{ secrets.INFRA_SSH }}
-          path: infra
-      - name: Update image tags
-        run: |
-          export RELEASE_VERSION=${GITHUB_REF#refs/*/}
-          sh infra/cluster/app/overlays/update.sh demo $RELEASE_VERSION $RELEASE_VERSION
-      - name: Commit
-        run: |
-          cd infra
-          export RELEASE_VERSION=${GITHUB_REF#refs/*/}
-          git checkout -b update-$RELEASE_VERSION
-          git add .
-          git -c user.name="GitHub Actions" -c user.email="actions@github.com" \
-            commit -m "Update deme image tag" \
-            --author="${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
-          git push --force --no-verify --set-upstream origin update-$RELEASE_VERSION
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: 'preuve-covoiturage-infra',
+              workflow_id: 'test.yml',
+              ref: 'production',
+              inputs: {},
+            })
