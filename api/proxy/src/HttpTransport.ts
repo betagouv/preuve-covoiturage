@@ -562,7 +562,7 @@ export class HttpTransport implements TransportInterface {
 
   private registerCertificateRoutes(): void {
     /**
-     * Public route to check a certificate
+     * v2 Public route to check a certificate
      */
     this.app.get(
       '/v2/certificates/find/:uuid',
@@ -572,12 +572,35 @@ export class HttpTransport implements TransportInterface {
           createRPCPayload('certificate:find', { uuid: req.params.uuid }, { permissions: ['common.certificate.find'] }),
         )) as RPCResponseType;
 
+        if (response.result.driver.total.distance && response.result.passenger.total.distance) {
+          // Temporary solution to map v3 generated certificate model to v2 API model
+          response.result.driver.total.km = response.result.driver.total.distance / 1000;
+          response.result.driver.total.euro = response.result.driver.total.amount;
+
+          response.result.passenger.total.km = response.result.passenger.total.distance / 1000;
+          response.result.passenger.total.euro = response.result.passenger.total.amount;
+
+          delete response.result.driver.total.distance;
+          delete response.result.driver.total.amount;
+          delete response.result.passenger.total.distance;
+          delete response.result.passenger.total.amount;
+
+          response.result.driver.trips &&
+            response.result.driver.trips.length > 0 &&
+            response.result.driver.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance / 1000 }));
+
+          response.result.passenger.trips &&
+            response.result.passenger.trips.length > 0 &&
+            response.result.passenger.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance / 1000 }));
+        }
+        // Temporary solution to map v3 generated certificate model to v2 API model
+
         this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
       }),
     );
 
     /**
-     * Download PDF of the certificate
+     * v2 Download PDF of the certificate
      * - accessible with an application token
      * - print a PDF returned back to the caller
      */
@@ -594,7 +617,7 @@ export class HttpTransport implements TransportInterface {
     );
 
     /**
-     * Public route for operators to generate a certificate
+     * v2 Public route for operators to generate a certificate
      * based on params (identity, start date, end date, ...)
      * - accessible with an application token
      * - generate a certificate to be printed when calling /v2/certificates/download/{uuid}
@@ -607,10 +630,64 @@ export class HttpTransport implements TransportInterface {
         const response = (await this.kernel.handle(
           createRPCPayload('certificate:create', req.body, get(req, 'session.user', undefined)),
         )) as RPCResponseType;
-
         res
           .status(get(response, 'result.meta.httpStatus', mapStatusCode(response)))
           .send(get(response, 'result.data', this.parseErrorData(response)));
+      }),
+    );
+
+    /**
+     * v3 Public route for operators to generate a certificate
+     * based on params (identity, start date, end date, ...)
+     * - accessible with an application token
+     * - generate a certificate to be printed when calling /v3/certificates/{uuid}/attachment
+     */
+    this.app.post(
+      '/v3/certificates',
+      rateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const call = createRPCPayload('certificate:create', req.body, get(req, 'session.user', undefined));
+        const response = (await this.kernel.handle(call)) as RPCResponseType;
+        res
+          .status(get(response, 'result.meta.httpStatus', mapStatusCode(response)))
+          .send(get(response, 'result.data', this.parseErrorData(response)));
+      }),
+    );
+
+    /**
+     * v3 Download PDF of the certificate
+     * - accessible with an application token
+     * - print a PDF returned back to the caller
+     */
+    this.app.post(
+      '/v3/certificates/:uuid/attachment',
+      rateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const call = createRPCPayload(
+          'certificate:download',
+          { ...req.body, uuid: req.params.uuid },
+          get(req, 'session.user', undefined),
+        );
+        const response = (await this.kernel.handle(call)) as RPCResponseType;
+
+        this.raw(res, get(response, 'result.body', response), get(response, 'result.headers', {}));
+      }),
+    );
+
+    /**
+     * v3 Public route to retrieve a certificate
+     */
+    this.app.get(
+      '/v3/certificates/:uuid',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = (await this.kernel.handle(
+          createRPCPayload('certificate:find', { uuid: req.params.uuid }, { permissions: ['common.certificate.find'] }),
+        )) as RPCResponseType;
+
+        this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
       }),
     );
   }

@@ -195,11 +195,18 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     });
 
     this.text(page, 'Kilomètres parcourus :', { x: x + 245, y: y + 36, align: TextAlignment.Right });
-    this.text(page, `${String(data.total.km).replace('.', ',')} km`, { x: x + 255, y: y + 36 });
+    this.text(
+      page,
+      `${String(data.total.distance === 0 ? 0 : data.total.distance / 1000 || data.total.km).replace('.', ',')} km`,
+      {
+        x: x + 255,
+        y: y + 36,
+      },
+    );
 
     const eurosTitle = type === CarpoolTypeEnum.DRIVER ? 'Gain conducteur :' : 'Contribution passager :';
     this.text(page, eurosTitle, { x: x + 245, y: y + 22, align: TextAlignment.Right });
-    this.text(page, `${this.currency(data.total.euros)} €`, { x: x + 255, y: y + 22 });
+    this.text(page, `${this.currency(data.total.amount)} €`, { x: x + 255, y: y + 22 });
   }
 
   private async drawDetailPages(
@@ -473,8 +480,8 @@ export class PdfCertProvider implements PdfCertProviderInterface {
       { x: this.tableX + 40, y: rowY, size },
     );
 
-    const km = `${String(row.km).replace('.', ',')} km`;
-    const eu = `${this.currency(row.euros)} €`;
+    const km = `${String(row.distance / 1000 || row.km).replace('.', ',')} km`;
+    const eu = `${this.currency(row.amount)} €`;
 
     this.text(page, `${row.trips}`, { x: this.tableX + 320, y: rowY, size, align: TextAlignment.Right });
     this.text(page, km, { x: this.tableX + 398, y: rowY, size, align: TextAlignment.Right });

@@ -44,14 +44,14 @@ const test = anyTest as TestFn<Context>;
 
 const carpoolData: CarpoolInterface[] = [
   /* eslint-disable prettier/prettier */
-  { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-01'), trips: 15, km: 100, euros: 10 },
-  { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-08'), trips: 10, km: 100, euros: 10 },
-  { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-09'), trips: 10, km: 100, euros: 10 },
-  { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-02-01'), trips: 2, km: 10, euros: 1 },
-  { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-01'), trips: 15, km: 100, euros: 10 },
-  { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-08'), trips: 10, km: 100, euros: 10 },
-  { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-09'), trips: 10, km: 100, euros: 10 },
-  { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-02-01'), trips: 2, km: 10, euros: 1 },
+  { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-01'), trips: 15, distance: 100, amount: 10 },
+  { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-08'), trips: 10, distance: 100, amount: 10 },
+  { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-01-09'), trips: 10, distance: 100, amount: 10 },
+  { type: CarpoolTypeEnum.DRIVER, datetime: new Date('2021-02-01'), trips: 2, distance: 10, amount: 1 },
+  { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-01'), trips: 15, distance: 100, amount: 10 },
+  { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-08'), trips: 10, distance: 100, amount: 10 },
+  { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-01-09'), trips: 10, distance: 100, amount: 10 },
+  { type: CarpoolTypeEnum.PASSENGER, datetime: new Date('2021-02-01'), trips: 2, distance: 10, amount: 1 },
   /* eslint-enable prettier/prettier */
 ];
 
