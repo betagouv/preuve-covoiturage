@@ -5,7 +5,7 @@ import { CostNormalizerProvider } from './CostNormalizerProvider';
 import { GeoNormalizerProvider } from './GeoNormalizerProvider';
 import { IdentityNormalizerProvider } from './IdentityNormalizerProvider';
 import { RouteNormalizerProvider } from './RouteNormalizerProvider';
-import { NormalizationProviderInterface, ParamsInterface, ResultInterface } from '../interfaces';
+import { IncentiveInterface, NormalizationProviderInterface, ParamsInterface, ResultInterface } from '../interfaces';
 
 enum NormalisationErrorStage {
   Cost = 'cost',
@@ -44,9 +44,19 @@ export class NormalizationProvider implements NormalizationProviderInterface {
       operator_class: journey.payload.operator_class,
       acquisition_id: journey._id,
       operator_journey_id: journey.payload.journey_id,
+      incentives: this.buildIncentives(journey.payload.driver.incentives, journey.payload.passenger.incentives),
     };
 
     return normalizedData;
+  }
+
+  public buildIncentives(
+    driverIncentives?: IncentiveInterface[],
+    passengerIncentives?: IncentiveInterface[],
+  ): Array<IncentiveInterface> {
+    return [...(driverIncentives || []), ...(passengerIncentives || []).map((d) => ({ ...d, index: d.index + 100 }))]
+      .sort((a, b) => a.index - b.index)
+      .map((incentive, i) => ({ ...incentive, index: i }));
   }
 
   public finalizePerson(person: PersonInterface): FinalizedPersonInterface {

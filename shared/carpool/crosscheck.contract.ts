@@ -1,3 +1,4 @@
+import { IncentiveInterface } from '../common/interfaces/IncentiveInterface';
 import { FinalizedPersonInterface } from '../common/interfaces/PersonInterface';
 
 export interface ParamsInterface {
@@ -8,6 +9,7 @@ export interface ParamsInterface {
   created_at: Date;
   operator_class: string;
   people: FinalizedPersonInterface[];
+  incentives: IncentiveInterface[];
 }
 
 export type ResultInterface = void;

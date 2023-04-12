@@ -2,6 +2,7 @@ import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
 import { GeoPositionInterface } from '../shared/common/interfaces/GeoPositionInterface';
 
 export { IdentityInterface } from '../shared/common/interfaces/IdentityInterface';
+export { IncentiveInterface } from '../shared/common/interfaces/IncentiveInterface';
 
 export interface PeopleMetaInterface {
   payments: PaymentInterface[];
@@ -20,9 +21,9 @@ export interface PeopleInterface {
   end: PositionInterface;
   seats: number;
   duration: number;
-  distance?: number; // TODO: fix this as nullable :)
-  cost: number; // TODO: add this !
-  meta: PeopleMetaInterface; // TODO: add this !
+  distance?: number;
+  cost: number;
+  meta: PeopleMetaInterface;
   payment: number;
 }
 
