@@ -15,8 +15,8 @@ externalDocs:
   description: Documentation générale 
 
 servers:
-  - url: https://api.covoiturage.beta.gouv.fr/v2
-  - url: https://api.demo.covoiturage.beta.gouv.fr/v2
+  - url: https://api.covoiturage.beta.gouv.fr/v3
+  - url: https://api.demo.covoiturage.beta.gouv.fr/v3
 
 components:
   securitySchemes:
@@ -433,7 +433,7 @@ components:
                 type: number
                 description: montant en centimes d'euros
 paths:
-  /geo/distance:
+  /geo/route:
     get:
       tags:
       - geo
@@ -960,6 +960,8 @@ paths:
                 code: 403
                 error: Forbidden
     get:
+      tags:
+      - trajet
       summary: Liste des trajets
       description: La liste est toujours ordonnée de manière antechronologique.
       parameters:
@@ -975,10 +977,16 @@ paths:
           description: Limite
           schema:
             '$ref': '#/components/schemas/limit'
-        - name: after
+        - name: start
           in: query
           required: false
           description: Date de début de recherche
+          schema:
+            '$ref': '#/components/schemas/datetime'
+        - name: end
+          in: query
+          required: false
+          description: Date de fin de recherche
           schema:
             '$ref': '#/components/schemas/datetime'
         - name: offset
@@ -1070,7 +1078,7 @@ paths:
               example:
                 code: 404
                 error: Not found
-    put:
+    patch:
       tags:
       - trajet
       security:
@@ -1108,7 +1116,15 @@ paths:
       responses:
         '200':
           description: ok
-    delete:
+  /journeys/{operator_journey_id}/cancel:
+    parameters:
+      - name: operator_journey_id
+        in: path
+        description: operator_journey_id of the journey created
+        required: true
+        schema:
+          '$ref': '#/components/schemas/operator_journey_id'
+    post:
       tags:
       - trajet
       summary: Invalider un trajet envoyé
