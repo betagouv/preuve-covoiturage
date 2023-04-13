@@ -992,7 +992,7 @@ paths:
         - name: offset
           in: query
           description: Offset
-          required: true
+          required: false
           schema:
             '$ref': '#/components/schemas/offset'
       responses:
@@ -1003,7 +1003,12 @@ paths:
               schema:
                 type: array
                 items:
-                  '$ref': '#/components/schemas/operator_journey_id'
+                  type: object
+                  required:
+                    - operator_journey_id
+                  properties:
+                    operator_journey_id:
+                      '$ref': '#/components/schemas/operator_journey_id'
   /journeys/{operator_journey_id}:
     parameters:
       - name: operator_journey_id
@@ -1142,7 +1147,6 @@ paths:
               type: object
               required:
                 - code
-                - message
               additionalProperties: false
               properties:
                 code:
