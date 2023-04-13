@@ -263,7 +263,7 @@ test.serial('Should find with date selectors', async (t) => {
   });
 
   t.deepEqual(result, []);
-  await fn([]);
+  await fn();
 });
 
 test.serial('Should find then update with selectors', async (t) => {
@@ -280,7 +280,7 @@ test.serial('Should find then update with selectors', async (t) => {
       { _id: 6, payload: {}, api_version: 1, operator_id: t.context.operator_id },
     ],
   );
-  await fn([]);
+  await fn();
 });
 
 test.serial('Should find and update with lock', async (t) => {
@@ -304,7 +304,7 @@ test.serial('Should find and update with lock', async (t) => {
     [{ _id: 6, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
   );
 
-  await fn1([]); // release lock 1
+  await fn1(); // release lock 1
   const [result3, fn3] = await t.context.repository.findThenUpdate({
     limit: 1,
     status: AcquisitionStatusEnum.Pending,
@@ -314,7 +314,9 @@ test.serial('Should find and update with lock', async (t) => {
     result3.map(({ created_at, ...r }) => r),
     [{ _id: 5, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
   );
-  await fn2([{ acquisition_id: 6, status: AcquisitionStatusEnum.Ok }]); // release lock 2
+  await fn2({ acquisition_id: 6, status: AcquisitionStatusEnum.Ok });
+  await fn2();
+  // release lock 2
 
   const [result4, fn4] = await t.context.repository.findThenUpdate({
     limit: 1,
@@ -322,8 +324,8 @@ test.serial('Should find and update with lock', async (t) => {
   });
 
   t.deepEqual(result4, []);
-  await fn3([]); // release lock 3
-  await fn4([]); // release lock 3
+  await fn3(); // release lock 3
+  await fn4(); // release lock 3
 });
 
 test.serial('Should find with lock timeout', async (t) => {
@@ -359,29 +361,44 @@ test.serial('Should find with lock timeout', async (t) => {
     [{ _id: 1, payload: {}, api_version: 2, operator_id: t.context.operator_id }],
   );
 
-  await fn1([]); // release lock 1
-  await fn2([]); // release lock 2
+  await fn1(); // release lock 1
+  await fn2(); // release lock 2
 });
 
-test.serial('Should rollback if update error', async (t) => {
+test.serial('Should partial rollback if update error', async (t) => {
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const [result1, fn1] = await t.context.repository.findThenUpdate(
     {
-      limit: 1,
+      limit: 2,
       status: AcquisitionStatusEnum.Pending,
     },
     1000,
   );
-
-  await t.throwsAsync(async () => {
-    await fn1(
-      result1.map((r) => {
-        return {
-          acquisition_id: r._id,
-          status: 'status_not_existing' as AcquisitionStatusEnum,
-        };
-      }),
-    ); // release lock 1
+  await fn1({
+    acquisition_id: result1[0]._id,
+    status: AcquisitionStatusEnum.Ok,
   });
+  await fn1({
+    acquisition_id: result1[1]._id,
+    status: 'status_not_existing' as AcquisitionStatusEnum,
+  });
+  await delay(1500);
+
+  const { rows: data } = await t.context.db.connection.getClient().query<{ _id: number }>({
+    text: `SELECT _id, status FROM ${t.context.repository.table} WHERE _id = ANY($1::int[]) ORDER BY _id`,
+    values: [result1.map((r) => r._id)],
+  });
+
+  t.deepEqual(data, [
+    {
+      _id: result1[0]._id,
+      status: AcquisitionStatusEnum.Ok,
+    },
+    {
+      _id: result1[1]._id,
+      status: AcquisitionStatusEnum.Pending,
+    },
+  ]);
 });
 
 test.serial('Should rollback if find error', async (t) => {
