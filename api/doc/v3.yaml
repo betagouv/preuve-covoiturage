@@ -127,7 +127,7 @@ components:
           - ok : le trajet a correctement été traité
           - pending : le trajet a été enregistré mais n'a pas encore été traité
           - canceled : le trajet a été annulé par l'opérateur
-          - expired : le trajet a été envoyé trop tard. Cf: engagement de délais d'envoi par les opérateurs
+          - expired : le trajet a été envoyé trop tard. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
     duration:
       type: number
       minimum: 0
@@ -194,7 +194,7 @@ components:
             type: number
             minimum: 0
             multipleOf: 1
-            description: Ordre d'application
+            description: Ordre d'application de l'incitation
             example: 0
           amount:
             type: number
@@ -1025,7 +1025,7 @@ paths:
       operationId: acquisition:status
       summary: Vérifier le statut d'un trajet envoyé
       description: |
-        Lors de l'envoi d'un trajet, un code 201 et un payload avec le `operator_journey_id` et la date de création vous sont renvoyés. Le trajet est alors enregistré dans notre base. Le processus de validation par lequel vont passer les données est complexe, asynchrone et dépend de différents services ayant de temps de réponse variables. De plus, les données d'affichage de la liste détaillée de l'interface d'administration n'est rafraichi que toutes les 24h.
+        Lors de l'envoi d'un trajet, un code 201 et un payload avec le `operator_journey_id` et la date de création vous sont renvoyés. Le trajet est alors enregistré dans notre base. Le processus de validation par lequel vont passer les données est complexe, asynchrone et dépend de différents services ayant de temps de réponse variables. De plus, les données d'affichage de la liste détaillée de l'interface d'administration n'est rafraîchie que toutes les 24h.
         Les trajets ne seront visibles dans l'interface utilisateurs que **24 heures** après leur envoi.
         Il est possible de vérifier le statut d'un trajet envoyé directement pour s'assurer qu'il n'y pas pas eu d'erreur de format ou de traitement.
       responses:
@@ -1135,7 +1135,7 @@ paths:
       summary: Invalider un trajet envoyé
       description: |
         Annule un trajet déjà envoyé dans le registre.
-        S'il détecte un comportement inhabituel ou une fraude avérée, un opérateur doit communiquer auprès du Service l'invalidation du trajet concerné dès lors qu'il est déjà inscrit dans le registre. Cette invalidation doit avoir lieu dès que l'opérateur a connaissance de cette irrégularité.
+        S'il détecte un comportement inhabituel ou une fraude avérée, un opérateur doit communiquer auprès du service l'invalidation du trajet concerné dès lors qu'il est déjà inscrit dans le registre. Cette invalidation doit avoir lieu dès que l'opérateur a connaissance de cette irrégularité.
       security:
         - token: []
       operationId: acquisition:cancel
