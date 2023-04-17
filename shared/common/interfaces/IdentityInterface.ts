@@ -15,4 +15,5 @@ export interface IdentityInterface {
   travel_pass_user_id?: string;
 
   over_18?: boolean | null;
+  identity_key?: string;
 }
