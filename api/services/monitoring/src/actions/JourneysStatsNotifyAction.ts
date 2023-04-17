@@ -12,12 +12,7 @@ import {
 } from '@pdc/provider-notification';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
-import {
-  handlerConfig,
-  ResultInterface,
-  ParamsInterface,
-  signature,
-} from '../shared/monitoring/notifyStats.contract';
+import { handlerConfig, ResultInterface, ParamsInterface, signature } from '../shared/monitoring/notifyStats.contract';
 import {
   signature as statsSignature,
   ResultInterface as StatsResultInterface,
