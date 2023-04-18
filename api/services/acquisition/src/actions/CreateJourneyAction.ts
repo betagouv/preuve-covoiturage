@@ -63,7 +63,7 @@ export class CreateJourneyAction extends AbstractAction {
           application_id,
           api_version,
           request_id,
-          payload: params,
+          payload,
           status: AcquisitionStatusEnum.Error,
           error_stage: AcquisitionErrorStageEnum.Acquisition,
           errors: [e],
