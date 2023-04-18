@@ -1,6 +1,12 @@
-import { JourneyInterface } from '../common/interfaces/JourneyInterface';
+import { JourneyInterface as PayloadV2 } from '../common/interfaces/JourneyInterface';
+import { CreateJourneyDTO as PayloadV3 } from './common/interfaces/CreateJourneyDTO';
 
-export interface ParamsInterface extends JourneyInterface {}
+interface Payload {
+  api_version: string;
+}
+
+export { PayloadV2, PayloadV3 };
+export type ParamsInterface = Payload & (PayloadV2 | PayloadV3);
 export interface ResultInterface {
   journey_id: string;
   created_at: Date;
