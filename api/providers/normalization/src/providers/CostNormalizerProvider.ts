@@ -83,12 +83,15 @@ export class CostNormalizerProvider implements CostNormalizerProviderInterface {
       })
       .map((p, i) => ({ ...p, index: i }));
 
-    cleanPayments.push({
-      siret,
-      index: cleanPayments.length,
-      type: 'payment',
-      amount: (cost - cleanPayments.reduce((sum, item) => sum + item.amount, 0)) | 0,
-    });
+    const amount = (cost - cleanPayments.reduce((sum, item) => sum + item.amount, 0)) | 0;
+    if (amount) {
+      cleanPayments.push({
+        amount,
+        siret,
+        index: cleanPayments.length,
+        type: 'payment',
+      });
+    }
 
     return [cost, cleanPayments];
   }

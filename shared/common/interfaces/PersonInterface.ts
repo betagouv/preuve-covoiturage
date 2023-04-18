@@ -19,7 +19,7 @@ export interface PersonInterface {
   seats?: number;
   contribution?: number;
   revenue?: number;
-  expense: number;
+  expense?: number;
   incentives?: IncentiveInterface[];
 
   payments?: PaymentInterface[];
