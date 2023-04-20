@@ -36,6 +36,16 @@ export const Smt2023: PolicyHandlerStaticInterface = class
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
     },
   ];
+
+  protected slices_after_april: RunnableSlices = [
+    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    {
+      start: 20_000,
+      end: 30_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 30_000 })),
+    },
+  ];
+
   constructor(public max_amount: number) {
     super();
     this.limits = [
@@ -49,6 +59,10 @@ export const Smt2023: PolicyHandlerStaticInterface = class
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
+
+    if (this.isAfter15April()) {
+      onDistanceRangeOrThrow(ctx, { max: 30_001 });
+    }
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -57,7 +71,7 @@ export const Smt2023: PolicyHandlerStaticInterface = class
 
     // Par kilomètre
     let amount = 0;
-    for (const { start, fn } of this.slices) {
+    for (const { start, fn } of this.getSlices()) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);
       }
@@ -66,9 +80,17 @@ export const Smt2023: PolicyHandlerStaticInterface = class
     ctx.incentive.set(amount);
   }
 
+  private getSlices() {
+    return this.isAfter15April() ? this.slices_after_april : this.slices;
+  }
+
+  private isAfter15April(): boolean {
+    return new Date() >= new Date('2023-04-15');
+  }
+
   params(): PolicyHandlerParamsInterface {
     return {
-      slices: this.slices,
+      slices: this.getSlices(),
       operators: this.operators,
       limits: {
         glob: this.max_amount,

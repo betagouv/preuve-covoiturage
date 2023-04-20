@@ -63,10 +63,11 @@ test(
           reg: '24',
         },
       },
+      { distance: 31_000, datetime: new Date('2023-04-17') },
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -80,7 +81,7 @@ test(
       { distance: 25_000, driver_identity_uuid: 'one' },
       { distance: 25_000, seats: 2, driver_identity_uuid: 'one' },
       {
-        distance: 150_000,
+        distance: 29_000,
         driver_identity_uuid: 'one',
         end: {
           arr: '37109',
@@ -94,15 +95,15 @@ test(
     meta: [],
   },
   {
-    incentive: [200, 400, 250, 500, 400],
+    incentive: [200, 400, 250, 500, 290],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.3-2023',
-        value: 1750,
+        value: 1640,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1750,
+        value: 1640,
       },
     ],
   },
