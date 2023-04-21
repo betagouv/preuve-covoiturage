@@ -23,7 +23,6 @@ import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Smt2023.html';
 
 // Pays Basque Adour
-// TODO: ajouter Ondres + Saint-Martin de Seignanx au référentiel geo
 export const PaysBasque: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
