@@ -49,7 +49,6 @@ jobs:
         
       - name: Run integration tests
         env:
-          APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}
           APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
           AWS_ACCESS_KEY_ID: minioadmin
           APP_POSTGRES_TIMEOUT: 120000
