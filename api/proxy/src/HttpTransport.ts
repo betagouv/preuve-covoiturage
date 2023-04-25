@@ -356,7 +356,28 @@ export class HttpTransport implements TransportInterface {
    */
   private registerAcquisitionRoutes(): void {
     this.app.get(
-      '/v2/journeys/:journey_id',
+      '/v2/journeys/:operator_journey_id',
+      checkRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const { params } = req;
+        const user = get(req, 'session.user', null);
+        const response = (await this.kernel.handle(
+          createRPCPayload('acquisition:status', params, user, { req }),
+        )) as RPCResponseType;
+        // Temporary solution to map v3 generated certificate model to v2 API model
+        const v3Result = response.result;
+        response.result = {
+          journey_id: v3Result.operator_journey_id,
+          metadata: v3Result.data,
+          created_at: v3Result.created_at,
+          status: v3Result.status,
+        }
+        this.send(res, response);
+      }),
+    );
+    this.app.get(
+      '/v3/journeys/:operator_journey_id',
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {

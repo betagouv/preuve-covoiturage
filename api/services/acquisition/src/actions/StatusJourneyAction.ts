@@ -19,18 +19,19 @@ export class StatusJourneyAction extends AbstractAction {
   }
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const { journey_id, operator_id } = params;
+    const { operator_journey_id, operator_id } = params;
 
-    const acquisition = await this.acquisitionRepository.getStatus({ operator_id, operator_journey_id: journey_id });
+    const acquisition = await this.acquisitionRepository.getStatus({ operator_id, operator_journey_id });
     if (!acquisition) {
       throw new NotFoundException();
     }
 
     return {
-      journey_id,
+      operator_journey_id,
       status: acquisition.status,
       created_at: acquisition.created_at,
-      metadata: {
+      data: {
+        message: 'Error',
         error_stage: acquisition.error_stage,
         errors: Array.isArray(acquisition.errors) ? acquisition.errors.map((e) => e?.message || '') : [],
       },
