@@ -28,10 +28,10 @@ export class CancelJourneyAction extends AbstractAction {
     const { operator_id, operator_journey_id } = params;
 
     // Store in database
-    const acquisition = await this.repository.getStatus({
+    const acquisition = await this.repository.getStatus(
       operator_id,
       operator_journey_id,
-    });
+    );
     if (!acquisition || acquisition.status !== AcquisitionStatusEnum.Ok) {
       throw new NotFoundException(`Journey ${operator_journey_id} does not exist`);
     }

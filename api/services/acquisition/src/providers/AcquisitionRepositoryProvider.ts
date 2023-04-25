@@ -8,9 +8,6 @@ import {
   AcquisitionSearchInterface,
   AcquisitionStatusEnum,
   AcquisitionStatusInterface,
-  AcquisitionStatusSearchInterface,
-  AcquisitionStatusSearchInterfaceA,
-  AcquisitionStatusSearchInterfaceB,
   AcquisitionStatusUpdateInterface,
 } from '../interfaces/AcquisitionRepositoryProviderInterface';
 
@@ -178,19 +175,17 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     }
   }
 
-  async getStatus(search: AcquisitionStatusSearchInterface): Promise<AcquisitionStatusInterface> {
-    const whereClauses = (search as AcquisitionStatusSearchInterfaceB).acquisition_id
-      ? {
-          text: ['aa._id = $1'],
-          values: [(search as AcquisitionStatusSearchInterfaceB).acquisition_id],
-        }
-      : {
-          text: ['aa.operator_id = $1', 'aa.journey_id = $2'],
-          values: [
-            (search as AcquisitionStatusSearchInterfaceA).operator_id,
-            (search as AcquisitionStatusSearchInterfaceA).operator_journey_id,
-          ],
-        };
+  async getStatus(
+    operator_id: number,
+    operator_journey_id: string,
+  ): Promise<AcquisitionStatusInterface> {
+    const whereClauses = {
+      text: ['aa.operator_id = $1', 'aa.journey_id = $2'],
+      values: [
+        operator_id,
+        operator_journey_id,
+      ],
+    };
     const query = {
       text: `
         SELECT 

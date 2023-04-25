@@ -21,7 +21,7 @@ export class StatusJourneyAction extends AbstractAction {
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
     const { operator_journey_id, operator_id } = params;
 
-    const acquisition = await this.acquisitionRepository.getStatus({ operator_id, operator_journey_id });
+    const acquisition = await this.acquisitionRepository.getStatus(operator_id, operator_journey_id);
     if (!acquisition) {
       throw new NotFoundException();
     }

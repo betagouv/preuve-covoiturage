@@ -35,17 +35,6 @@ export interface AcquisitionSearchInterface {
   status?: AcquisitionStatusEnum;
 }
 
-export interface AcquisitionStatusSearchInterfaceA {
-  operator_journey_id: string;
-  operator_id: number;
-}
-
-export interface AcquisitionStatusSearchInterfaceB {
-  acquisition_id: number;
-}
-
-export type AcquisitionStatusSearchInterface = AcquisitionStatusSearchInterfaceA | AcquisitionStatusSearchInterfaceB;
-
 export interface AcquisitionStatusInterface {
   _id: number;
   created_at: Date;
@@ -77,7 +66,10 @@ export interface AcquisitionRepositoryProviderInterface {
 
   updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>): Promise<void>;
 
-  getStatus(search: AcquisitionStatusSearchInterface): Promise<AcquisitionStatusInterface>;
+  getStatus(
+    operator_id: number,
+    operator_journey_id: string,
+  ): Promise<AcquisitionStatusInterface>;
 
   findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,
