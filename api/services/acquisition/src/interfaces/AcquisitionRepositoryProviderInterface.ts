@@ -60,6 +60,16 @@ export interface AcquisitionFindInterface<P> {
   created_at: Date;
   payload: P;
 }
+
+export interface StatusSearchInterface {
+  operator_id: number;
+  status: StatusEnum;
+  offset: number;
+  limit: number;
+  end: Date;
+  start: Date;
+}
+
 export interface AcquisitionRepositoryProviderInterface {
   createOrUpdateMany<P = any>(
     data: Array<AcquisitionCreateInterface<P>>,
@@ -71,6 +81,10 @@ export interface AcquisitionRepositoryProviderInterface {
     operator_id: number,
     operator_journey_id: string,
   ): Promise<AcquisitionStatusInterface | undefined>;
+
+  list(
+    search: StatusSearchInterface,
+  ): Promise<Array<{ operator_journey_id: string }>>
 
   findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,

@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import { castStatus } from '../helpers/castStatus';
+import { castStatus, fromStatus } from '../helpers/castStatus';
 import {
   AcquisitionCreateInterface,
   AcquisitionCreateResultInterface,
@@ -10,11 +10,13 @@ import {
   AcquisitionStatusEnum,
   AcquisitionStatusInterface,
   AcquisitionStatusUpdateInterface,
+  StatusSearchInterface,
 } from '../interfaces/AcquisitionRepositoryProviderInterface';
 
 @provider()
 export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProviderInterface {
   public readonly table = 'acquisition.acquisitions';
+  public readonly carpoolTable = 'carpool.carpools';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -298,5 +300,47 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       pool.release();
       throw e;
     }
+  }
+
+  async list(
+    search: StatusSearchInterface,
+  ): Promise<Array<{ operator_journey_id: string }>> {
+    const { start, end, limit, offset, operator_id, status } = search;
+    const { carpool_status, acquisition_status, acquisition_error } = fromStatus(status);
+    if(!carpool_status) {
+      const result = await this.connection.getClient().query({
+        text: `
+          SELECT journey_id as operator_journey_id
+          FROM ${this.table}
+          WHERE
+            created_at >= $1 AND
+            created_at < $2 AND
+            operator_id = $3 AND
+            status = $4 ${acquisition_error ? 'AND error_stage = $7': ''}
+          ORDER BY created_at DESC
+          LIMIT $5
+          OFFSET $6
+        `,
+        values: [start, end, operator_id, acquisition_status, limit, offset, ...(acquisition_error ? [acquisition_error] : [])],
+      });
+      return result.rows; 
+    }
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT operator_journey_id
+        FROM ${this.carpoolTable}
+        WHERE 
+            created_at >= $1 AND
+            created_at < $2 AND
+            operator_id = $3 AND
+            status = $4 AND
+            is_driver = true
+        ORDER BY created_at DESC
+        LIMIT $5
+        OFFSET $6
+      `,
+      values: [start, end, operator_id, carpool_status, limit, offset],
+    });
+    return result.rows;
   }
 }

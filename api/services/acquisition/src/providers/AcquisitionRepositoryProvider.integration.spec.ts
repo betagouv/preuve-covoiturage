@@ -7,6 +7,7 @@ import {
   AcquisitionStatusEnum,
 } from '../interfaces/AcquisitionRepositoryProviderInterface';
 import { StatusEnum } from '../shared/acquisition/status.contract';
+import { subDays } from 'date-fns';
 
 interface TestContext {
   repository: AcquisitionRepositoryProvider;
@@ -305,7 +306,7 @@ test.serial('Should find with lock timeout', async (t) => {
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const { operator_id } = t.context;
   await t.context.db.connection.getClient().query({
-    text: `UPDATE ${t.context.repository.table} SET status = 'pending' WHERE operator_id = $1`,
+    text: `UPDATE ${t.context.repository.table} SET status = 'pending' WHERE operator_id = $1 AND status <> 'error'`,
     values: [operator_id],
   });
 
@@ -384,4 +385,39 @@ test.serial('Should rollback if find error', async (t) => {
       1000,
     );
   });
+});
+
+test.serial('Should list acquisition status', async (t) => {
+  const search = {
+    operator_id: 1,
+    status: StatusEnum.Pending,
+    start: subDays(new Date(), 7),
+    end: new Date(),
+    offset: 0,
+    limit: 3,
+  };
+
+  const result = await t.context.repository.list(search);
+  t.deepEqual(result, [
+    { operator_journey_id: '3' },
+    { operator_journey_id: '2' },
+    { operator_journey_id: '4' },
+  ]);
+
+  const result1 = await t.context.repository.list({
+    ...search,
+    status: StatusEnum.AcquisitionError,
+  });
+  t.deepEqual(result1, [
+    { operator_journey_id: '1' },
+  ]);
+
+  const result2 = await t.context.repository.list({
+    ...search,
+    status: StatusEnum.Ok,
+  });
+  t.deepEqual(result2, [
+    { operator_journey_id: 'operator_journey_id-2' },
+    { operator_journey_id: 'operator_journey_id-1' },
+  ]);
 });

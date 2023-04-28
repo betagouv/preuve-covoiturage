@@ -977,29 +977,29 @@ paths:
           in: query
           description: Statut du trajet
           required: true
-          example: "invalidated"
+          example: "ok"
           schema:
             '$ref': '#/components/schemas/status'
         - name: limit
           in: query
-          description: Limite
+          description: Limite, par défaut 50.
           schema:
             '$ref': '#/components/schemas/limit'
         - name: start
           in: query
           required: false
-          description: Date de début de recherche
+          description: Date de début de recherche, par défaut dans la semaine qui précède.
           schema:
             '$ref': '#/components/schemas/datetime'
         - name: end
           in: query
           required: false
-          description: Date de fin de recherche
+          description: Date de fin de recherche, par défaut le jour même.
           schema:
             '$ref': '#/components/schemas/datetime'
         - name: offset
           in: query
-          description: Offset
+          description: Offset, par défaut 0.
           required: false
           schema:
             '$ref': '#/components/schemas/offset'
