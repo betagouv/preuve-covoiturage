@@ -4,16 +4,18 @@ export interface ParamsInterface {
 }
 
 export enum StatusEnum {
-  AcqusitionError = 'acquisition_error',
+  AcquisitionError = 'acquisition_error',
+  ValidationError = 'validation_error',
   NormalizationError = 'normalization_error',
   FraudError = 'fraud_error',
   Ok = 'ok',
   Expired = 'expired',
   Canceled = 'canceled',
   Pending = 'pending',
+  Unknown = 'unknown',
 }
 
-interface StatusData extends Record<string, any>{
+export interface StatusData extends Record<string, any>{
   message: string;
 }
 

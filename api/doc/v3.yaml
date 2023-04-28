@@ -112,6 +112,7 @@ components:
     status:
       type: string
       enum:
+        - validation_error 
         - acquisition_error
         - normalization_error
         - fraud_error
@@ -119,8 +120,10 @@ components:
         - expired
         - canceled
         - pending
+        - unknown
       description: | 
         Statut du trajet tel que :
+          - validation_error : les données envoyées ne sont pas valides
           - acquisition_error : le trajet n'a pas du tout été enregistré
           - normalization_error : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisée.
           - fraud_error : le trajet a été enregistré et standardisé mais il a été considéré comme anormal
@@ -128,6 +131,7 @@ components:
           - pending : le trajet a été enregistré mais n'a pas encore été traité
           - canceled : le trajet a été annulé par l'opérateur
           - expired : le trajet a été envoyé trop tard. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
+          - unknown : une erreur inconnue a affecté le trajet
     duration:
       type: number
       minimum: 0
@@ -522,6 +526,7 @@ paths:
     post:
       tags:
       - attestation
+      - done
       security:
         - token: []
       summary: Créer un certificat
@@ -657,6 +662,7 @@ paths:
     post:
       tags:
       - attestation
+      - done
       summary: Télécharger une attestation
       description: |
         ## Upload du logo opérateur
@@ -762,6 +768,7 @@ paths:
     get:
       tags:
       - attestation
+      - done
       summary: Vérifier un certificat
       security:
         - token: []
@@ -851,6 +858,7 @@ paths:
     post:
       tags:
       - trajet
+      - done
       summary: Envoyer un trajet
       description: |
         Un trajet est un couple passager.ère / conducteur.rice ayant des points et de horaires de départ et d'arrivée. Si une conductrice covoiture avec plusieurs passagères, plusieurs trajets sont déclarés.

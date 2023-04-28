@@ -30,11 +30,6 @@ export class StatusJourneyAction extends AbstractAction {
       operator_journey_id,
       status: acquisition.status,
       created_at: acquisition.created_at,
-      data: {
-        message: 'Error',
-        error_stage: acquisition.error_stage,
-        errors: Array.isArray(acquisition.errors) ? acquisition.errors.map((e) => e?.message || '') : [],
-      },
     };
   }
 }

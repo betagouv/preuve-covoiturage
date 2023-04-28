@@ -10,7 +10,7 @@ import {
 import { alias } from '../shared/acquisition/cancel.schema';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { callContext } from '../config/callContext';
-import { AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
+import { StatusEnum } from '../shared/acquisition/status.contract';
 
 @handler({
   ...handlerConfig,
@@ -32,8 +32,12 @@ export class CancelJourneyAction extends AbstractAction {
       operator_id,
       operator_journey_id,
     );
-    if (!acquisition || acquisition.status !== AcquisitionStatusEnum.Ok) {
+    if (!acquisition) {
       throw new NotFoundException(`Journey ${operator_journey_id} does not exist`);
+    }
+  
+    if([StatusEnum.Ok, StatusEnum.FraudError].indexOf(acquisition.status) < 0) {
+      throw new NotFoundException(`Journey ${operator_journey_id} is not cancelable`);
     }
 
     // Perform cancelling action :)

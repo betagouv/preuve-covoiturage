@@ -1,5 +1,6 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
+import { castStatus } from '../helpers/castStatus';
 import {
   AcquisitionCreateInterface,
   AcquisitionCreateResultInterface,
@@ -178,7 +179,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
   async getStatus(
     operator_id: number,
     operator_journey_id: string,
-  ): Promise<AcquisitionStatusInterface> {
+  ): Promise<AcquisitionStatusInterface | undefined> {
     const whereClauses = {
       text: ['aa.operator_id = $1', 'aa.journey_id = $2'],
       values: [
@@ -190,16 +191,11 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       text: `
         SELECT 
           aa._id,
-          aa.journey_id as operator_journey_id,
           aa.created_at,
           aa.updated_at,
-          CASE
-            WHEN aa.status = 'ok'
-              THEN cc.status::varchar
-            ELSE aa.status::varchar
-          END AS status,
-          aa.error_stage,
-          aa.errors
+          cc.status as carpool_status,
+          aa.status as acquisition_status,
+          aa.error_stage as acquisition_error_stage
         FROM ${this.table} AS aa
         LEFT JOIN carpool.carpools AS cc
           ON aa._id = cc.acquisition_id
@@ -208,7 +204,17 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       values: whereClauses.values,
     };
     const result = await this.connection.getClient().query(query);
-    return result.rows[0];
+    if (!result.rows.length) {
+      return;
+    }
+    const { _id, created_at, updated_at, carpool_status, acquisition_status, acquisition_error_stage } = result.rows[0];
+    return {
+      _id,
+      operator_journey_id,
+      created_at,
+      updated_at,
+      status: castStatus(carpool_status, acquisition_status, acquisition_error_stage),
+    };
   }
 
   async findThenUpdate<P = any>(

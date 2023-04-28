@@ -1,3 +1,5 @@
+import { StatusData, StatusEnum } from '../shared/acquisition/status.contract';
+
 export enum AcquisitionStatusEnum {
   Ok = 'ok',
   Error = 'error',
@@ -40,9 +42,8 @@ export interface AcquisitionStatusInterface {
   created_at: Date;
   updated_at: Date;
   operator_journey_id: string;
-  status: AcquisitionStatusEnum;
-  error_stage?: AcquisitionErrorStageEnum;
-  errors?: any;
+  status: StatusEnum;
+  data?: StatusData;
 }
 
 export interface AcquisitionStatusUpdateInterface {
@@ -69,7 +70,7 @@ export interface AcquisitionRepositoryProviderInterface {
   getStatus(
     operator_id: number,
     operator_journey_id: string,
-  ): Promise<AcquisitionStatusInterface>;
+  ): Promise<AcquisitionStatusInterface | undefined>;
 
   findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,
