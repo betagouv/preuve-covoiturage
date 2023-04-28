@@ -372,7 +372,7 @@ export class HttpTransport implements TransportInterface {
           metadata: v3Result.data,
           created_at: v3Result.created_at,
           status: v3Result.status,
-        }
+        };
         this.send(res, response);
       }),
     );

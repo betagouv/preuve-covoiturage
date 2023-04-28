@@ -215,10 +215,7 @@ test.serial('Should update status', async (t) => {
 
 test.serial('Should get status by operator_id and operator_journey_id', async (t) => {
   const { operator_id } = t.context;
-  const { operator_journey_id, status } = await t.context.repository.getStatus(
-    operator_id,
-    '1',
-  );
+  const { operator_journey_id, status } = await t.context.repository.getStatus(operator_id, '1');
 
   t.deepEqual(
     { operator_journey_id, status },
@@ -398,19 +395,13 @@ test.serial('Should list acquisition status', async (t) => {
   };
 
   const result = await t.context.repository.list(search);
-  t.deepEqual(result, [
-    { operator_journey_id: '3' },
-    { operator_journey_id: '2' },
-    { operator_journey_id: '4' },
-  ]);
+  t.deepEqual(result, [{ operator_journey_id: '3' }, { operator_journey_id: '2' }, { operator_journey_id: '4' }]);
 
   const result1 = await t.context.repository.list({
     ...search,
     status: StatusEnum.AcquisitionError,
   });
-  t.deepEqual(result1, [
-    { operator_journey_id: '1' },
-  ]);
+  t.deepEqual(result1, [{ operator_journey_id: '1' }]);
 
   const result2 = await t.context.repository.list({
     ...search,

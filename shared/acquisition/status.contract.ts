@@ -15,7 +15,7 @@ export enum StatusEnum {
   Unknown = 'unknown',
 }
 
-export interface StatusData extends Record<string, any>{
+export interface StatusData extends Record<string, any> {
   message: string;
 }
 

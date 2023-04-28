@@ -6,7 +6,6 @@ import {
   ParseErrorException,
   ConflictException,
   ValidatorInterfaceResolver,
-  InvalidParamsException,
 } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 

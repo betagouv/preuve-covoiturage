@@ -27,12 +27,7 @@ import { ListJourneyAction } from './actions/ListJourneyAction';
   commands: [AcquisitionProcessCommand],
   queues: ['acquisition'],
   providers: [AcquisitionRepositoryProvider, NormalizationProvider, GeoProvider],
-  validator: [
-    ['journey.create', create],
-    ['journey.cancel', cancel],
-    ['journey.status', status],
-    listBinding,
-  ],
+  validator: [['journey.create', create], ['journey.cancel', cancel], ['journey.status', status], listBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [PostgresConnection, 'connections.postgres'],

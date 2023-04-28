@@ -7,7 +7,16 @@ export const list = {
   properties: {
     status: {
       type: 'string',
-      enum: ['acquisition_error', 'validation_error', 'normalization_error', 'fraud_error', 'ok', 'expired', 'canceled', 'pending'],
+      enum: [
+        'acquisition_error',
+        'validation_error',
+        'normalization_error',
+        'fraud_error',
+        'ok',
+        'expired',
+        'canceled',
+        'pending',
+      ],
     },
     limit: {
       type: 'integer',
@@ -23,7 +32,7 @@ export const list = {
     },
     end: {
       macro: 'timestamp',
-    }
+    },
   },
 };
 

@@ -77,14 +77,9 @@ export interface AcquisitionRepositoryProviderInterface {
 
   updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>): Promise<void>;
 
-  getStatus(
-    operator_id: number,
-    operator_journey_id: string,
-  ): Promise<AcquisitionStatusInterface | undefined>;
+  getStatus(operator_id: number, operator_journey_id: string): Promise<AcquisitionStatusInterface | undefined>;
 
-  list(
-    search: StatusSearchInterface,
-  ): Promise<Array<{ operator_journey_id: string }>>
+  list(search: StatusSearchInterface): Promise<Array<{ operator_journey_id: string }>>;
 
   findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,

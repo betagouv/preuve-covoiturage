@@ -7,7 +7,7 @@ export function castStatus(carpoolStatus: string, acquisitionStatus: string, acq
     case 'pending':
       return StatusEnum.Pending;
     case 'error':
-      switch(acquisitionError) {
+      switch (acquisitionError) {
         case 'acquisition':
           return StatusEnum.AcquisitionError;
         case 'normalization':
@@ -18,7 +18,7 @@ export function castStatus(carpoolStatus: string, acquisitionStatus: string, acq
           return StatusEnum.Unknown;
       }
     case 'ok':
-      switch(carpoolStatus) {
+      switch (carpoolStatus) {
         case 'ok':
           return StatusEnum.Ok;
         case 'expired':
@@ -35,8 +35,12 @@ export function castStatus(carpoolStatus: string, acquisitionStatus: string, acq
   }
 }
 
-export function fromStatus(status: StatusEnum): { carpool_status?: string, acquisition_status: string, acquisition_error?: string } {
-  switch(status) {
+export function fromStatus(status: StatusEnum): {
+  carpool_status?: string;
+  acquisition_status: string;
+  acquisition_error?: string;
+} {
+  switch (status) {
     case StatusEnum.AcquisitionError:
       return { acquisition_status: 'error', acquisition_error: 'acquisition' };
     case StatusEnum.NormalizationError:

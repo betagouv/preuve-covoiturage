@@ -178,16 +178,10 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     }
   }
 
-  async getStatus(
-    operator_id: number,
-    operator_journey_id: string,
-  ): Promise<AcquisitionStatusInterface | undefined> {
+  async getStatus(operator_id: number, operator_journey_id: string): Promise<AcquisitionStatusInterface | undefined> {
     const whereClauses = {
       text: ['aa.operator_id = $1', 'aa.journey_id = $2'],
-      values: [
-        operator_id,
-        operator_journey_id,
-      ],
+      values: [operator_id, operator_journey_id],
     };
     const query = {
       text: `
@@ -302,12 +296,10 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     }
   }
 
-  async list(
-    search: StatusSearchInterface,
-  ): Promise<Array<{ operator_journey_id: string }>> {
+  async list(search: StatusSearchInterface): Promise<Array<{ operator_journey_id: string }>> {
     const { start, end, limit, offset, operator_id, status } = search;
     const { carpool_status, acquisition_status, acquisition_error } = fromStatus(status);
-    if(!carpool_status) {
+    if (!carpool_status) {
       const result = await this.connection.getClient().query({
         text: `
           SELECT journey_id as operator_journey_id
@@ -316,14 +308,22 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
             created_at >= $1 AND
             created_at < $2 AND
             operator_id = $3 AND
-            status = $4 ${acquisition_error ? 'AND error_stage = $7': ''}
+            status = $4 ${acquisition_error ? 'AND error_stage = $7' : ''}
           ORDER BY created_at DESC
           LIMIT $5
           OFFSET $6
         `,
-        values: [start, end, operator_id, acquisition_status, limit, offset, ...(acquisition_error ? [acquisition_error] : [])],
+        values: [
+          start,
+          end,
+          operator_id,
+          acquisition_status,
+          limit,
+          offset,
+          ...(acquisition_error ? [acquisition_error] : []),
+        ],
       });
-      return result.rows; 
+      return result.rows;
     }
     const result = await this.connection.getClient().query({
       text: `
