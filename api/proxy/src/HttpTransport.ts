@@ -386,7 +386,7 @@ export class HttpTransport implements TransportInterface {
         const response = (await this.kernel.handle(
           createRPCPayload('acquisition:status', params, user, { req }),
         )) as RPCResponseType;
-        this.send(res, response);
+        this.send(res, response, {}, true);
       }),
     );
 
@@ -429,6 +429,20 @@ export class HttpTransport implements TransportInterface {
         )) as RPCResponseType;
 
         this.send(res, response);
+      }),
+    );
+
+    this.app.get(
+      '/v3/journeys',
+      checkRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const { query } = req;
+        const user = get(req, 'session.user', null);
+        const response = (await this.kernel.handle(
+          createRPCPayload('acquisition:list', query, user, { req }),
+        )) as RPCResponseType;
+        this.send(res, response, {}, true);
       }),
     );
   }
@@ -1005,7 +1019,12 @@ export class HttpTransport implements TransportInterface {
    * - set the status code (converted from an RPC status code)
    * - set the body. Error patterns are parsed
    */
-  private send(res: Response, response: RPCResponseType, headers: { [key: string]: string } = {}): void {
+  private send(
+    res: Response,
+    response: RPCResponseType,
+    headers: { [key: string]: string } = {},
+    unnestResult = false,
+  ): void {
     if ('success' in (response as any)) {
       this.setHeaders(res, headers);
     }
@@ -1013,7 +1032,7 @@ export class HttpTransport implements TransportInterface {
     // get the HTTP status code from response meta or convert RPC code
     const status = get(response, 'result.meta.httpStatus', mapStatusCode(response));
 
-    res.status(status).json(this.parseErrorData(response));
+    res.status(status).json(this.parseErrorData(response, unnestResult));
   }
 
   /**
@@ -1045,8 +1064,8 @@ export class HttpTransport implements TransportInterface {
    * Parse JSON payloads passed to the error.data object
    * clean up data key to avoid leaks and reduce size
    */
-  private parseErrorData(response): RPCResponseType {
-    if (!('error' in response) || !('data' in response.error)) return response;
+  private parseErrorData(response, unnestResult = false): RPCResponseType {
+    if (!('error' in response) || !('data' in response.error)) return unnestResult ? response.result : response;
     if (typeof response.error.data !== 'string') return response;
 
     try {
