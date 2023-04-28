@@ -20,6 +20,7 @@ import {
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Smt2023.html';
+import { dateWithTz, today } from '../../helpers/dates.helper';
 
 // Politique du Syndicat des Mobilités de Touraine
 export const Smt2023: PolicyHandlerStaticInterface = class
@@ -85,7 +86,7 @@ export const Smt2023: PolicyHandlerStaticInterface = class
   }
 
   private isAfter15April(): boolean {
-    return new Date() >= new Date('2023-04-15');
+    return today() >= dateWithTz(new Date('2023-04-15'));
   }
 
   params(): PolicyHandlerParamsInterface {
