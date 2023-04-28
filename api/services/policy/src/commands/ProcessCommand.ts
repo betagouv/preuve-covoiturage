@@ -7,7 +7,7 @@ import {
   ResultType,
 } from '@ilos/common';
 import { Timezone } from '@pdc/provider-validator';
-import { castUserStringToUTC, toISOString } from '../helpers/dates.helper';
+import { castUserStringToUTC, toISOString } from '../helpers';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import { signature as apply } from '../shared/policy/apply.contract';
 import { signature as finalize } from '../shared/policy/finalize.contract';
