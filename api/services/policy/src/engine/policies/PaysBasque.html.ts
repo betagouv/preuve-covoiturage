@@ -9,7 +9,6 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 <ul>
   <li><b>De 5 à 20 km : 2 euros par trajet par passager </b></li>
   <li><b>De 20 à 30 km : 0.1 euro par trajet par km par passager </b></li>
-  <li><b>Au-delà de 30 km : pas d’incitation financière</b></li>
 </ul>
 <p>Les <b> passagers </b> effectuant un trajet d'au moins 5 km sont incités selon les règles suivantes :
 </p>
