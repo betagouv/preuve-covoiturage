@@ -31,9 +31,8 @@ export class ListJourneyAction extends AbstractAction {
     const todayDate = today();
     const endDate = castUserStringToUTC(end || todayDate);
     const startDate = castUserStringToUTC(start || subDaysTz(todayDate, 7));
-    if (isAfter(startDate, endDate) || isAfter(endDate, todayDate) || isBefore(startDate, subDaysTz(todayDate, 90))) {
-      throw new InvalidParamsException('Start/end are not valid');
-    }
+    this.validateStartEnd(startDate, endDate, todayDate);
+
     return {
       operator_id,
       status,
@@ -42,5 +41,18 @@ export class ListJourneyAction extends AbstractAction {
       offset: offset || 0,
       limit: limit || 50,
     };
+  }
+
+  protected validateStartEnd(startDate: Date, endDate: Date, todayDate: Date) {
+    if (isAfter(startDate, endDate)) {
+      throw new InvalidParamsException('Start should be before end');
+    }
+    if (isAfter(endDate, todayDate)) {
+      throw new InvalidParamsException('End should be before now');
+    }
+    const maxStartDate = subDaysTz(todayDate, 90);
+    if (isBefore(startDate, maxStartDate)) {
+      throw new InvalidParamsException(`Start should be after ${maxStartDate.toISOString()}`);
+    }
   }
 }
