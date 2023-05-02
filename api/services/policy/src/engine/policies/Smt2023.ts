@@ -20,7 +20,7 @@ import {
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Smt2023.html';
-import { dateWithTz, today } from '../../helpers/dates.helper';
+import { dateWithTz, today } from '../../helpers';
 
 // Politique du Syndicat des Mobilités de Touraine
 export const Smt2023: PolicyHandlerStaticInterface = class
