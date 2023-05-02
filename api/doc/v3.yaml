@@ -112,6 +112,7 @@ components:
     status:
       type: string
       enum:
+        - validation_error 
         - acquisition_error
         - normalization_error
         - fraud_error
@@ -119,8 +120,10 @@ components:
         - expired
         - canceled
         - pending
+        - unknown
       description: | 
         Statut du trajet tel que :
+          - validation_error : les données envoyées ne sont pas valides
           - acquisition_error : le trajet n'a pas du tout été enregistré
           - normalization_error : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisée.
           - fraud_error : le trajet a été enregistré et standardisé mais il a été considéré comme anormal
@@ -128,6 +131,7 @@ components:
           - pending : le trajet a été enregistré mais n'a pas encore été traité
           - canceled : le trajet a été annulé par l'opérateur
           - expired : le trajet a été envoyé trop tard. [Cf: engagement de délais d'envoi par les opérateurs](https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions#quel-est-le-delai-denvoi-des-preuves-de-covoiturage)
+          - unknown : une erreur inconnue a affecté le trajet
     duration:
       type: number
       minimum: 0
@@ -969,29 +973,29 @@ paths:
           in: query
           description: Statut du trajet
           required: true
-          example: "invalidated"
+          example: "ok"
           schema:
             '$ref': '#/components/schemas/status'
         - name: limit
           in: query
-          description: Limite
+          description: Limite, par défaut 50.
           schema:
             '$ref': '#/components/schemas/limit'
         - name: start
           in: query
           required: false
-          description: Date de début de recherche
+          description: Date de début de recherche, par défaut dans la semaine qui précède.
           schema:
             '$ref': '#/components/schemas/datetime'
         - name: end
           in: query
           required: false
-          description: Date de fin de recherche
+          description: Date de fin de recherche, par défaut le jour même.
           schema:
             '$ref': '#/components/schemas/datetime'
         - name: offset
           in: query
-          description: Offset
+          description: Offset, par défaut 0.
           required: false
           schema:
             '$ref': '#/components/schemas/offset'

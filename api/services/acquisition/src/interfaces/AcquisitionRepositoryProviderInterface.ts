@@ -1,3 +1,5 @@
+import { StatusData, StatusEnum } from '../shared/acquisition/status.contract';
+
 export enum AcquisitionStatusEnum {
   Ok = 'ok',
   Error = 'error',
@@ -35,25 +37,13 @@ export interface AcquisitionSearchInterface {
   status?: AcquisitionStatusEnum;
 }
 
-export interface AcquisitionStatusSearchInterfaceA {
-  operator_journey_id: string;
-  operator_id: number;
-}
-
-export interface AcquisitionStatusSearchInterfaceB {
-  acquisition_id: number;
-}
-
-export type AcquisitionStatusSearchInterface = AcquisitionStatusSearchInterfaceA | AcquisitionStatusSearchInterfaceB;
-
 export interface AcquisitionStatusInterface {
   _id: number;
   created_at: Date;
   updated_at: Date;
   operator_journey_id: string;
-  status: AcquisitionStatusEnum;
-  error_stage?: AcquisitionErrorStageEnum;
-  errors?: any;
+  status: StatusEnum;
+  data?: StatusData;
 }
 
 export interface AcquisitionStatusUpdateInterface {
@@ -70,6 +60,16 @@ export interface AcquisitionFindInterface<P> {
   created_at: Date;
   payload: P;
 }
+
+export interface StatusSearchInterface {
+  operator_id: number;
+  status: StatusEnum;
+  offset: number;
+  limit: number;
+  end: Date;
+  start: Date;
+}
+
 export interface AcquisitionRepositoryProviderInterface {
   createOrUpdateMany<P = any>(
     data: Array<AcquisitionCreateInterface<P>>,
@@ -77,7 +77,9 @@ export interface AcquisitionRepositoryProviderInterface {
 
   updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>): Promise<void>;
 
-  getStatus(search: AcquisitionStatusSearchInterface): Promise<AcquisitionStatusInterface>;
+  getStatus(operator_id: number, operator_journey_id: string): Promise<AcquisitionStatusInterface | undefined>;
+
+  list(search: StatusSearchInterface): Promise<Array<{ operator_journey_id: string }>>;
 
   findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,

@@ -31,6 +31,8 @@
     "@pdc/provider-token": "~0",
     "@pdc/provider-validator": "~0",
     "@pdc/provider-normalization": "~0",
+    "date-fns": "^2.24.0",
+    "date-fns-tz": "^1.1.6",
     "lodash": "^4.17.21"
   },
   "devDependencies": {

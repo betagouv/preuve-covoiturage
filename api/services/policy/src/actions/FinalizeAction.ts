@@ -3,7 +3,7 @@ import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
-import { defaultTz, subDaysTz, today, toTzString } from '../helpers/dates.helper';
+import { defaultTz, subDaysTz, today, toTzString } from '../helpers';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStatusEnum,

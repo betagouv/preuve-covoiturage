@@ -1,6 +1,6 @@
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { toISOString } from '../helpers/dates.helper';
+import { toISOString } from '../helpers';
 
 import {
   LockInformationInterface,

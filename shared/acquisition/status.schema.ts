@@ -2,10 +2,10 @@ export const alias = 'journey.status';
 export const status = {
   $id: alias,
   type: 'object',
-  required: ['journey_id'],
+  required: ['operator_journey_id'],
   additionalProperties: false,
   properties: {
-    journey_id: { macro: 'varchar' },
+    operator_journey_id: { macro: 'varchar' },
   },
 };
 

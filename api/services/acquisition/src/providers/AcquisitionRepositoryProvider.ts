@@ -1,5 +1,6 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
+import { castStatus, fromStatus } from '../helpers/castStatus';
 import {
   AcquisitionCreateInterface,
   AcquisitionCreateResultInterface,
@@ -8,15 +9,14 @@ import {
   AcquisitionSearchInterface,
   AcquisitionStatusEnum,
   AcquisitionStatusInterface,
-  AcquisitionStatusSearchInterface,
-  AcquisitionStatusSearchInterfaceA,
-  AcquisitionStatusSearchInterfaceB,
   AcquisitionStatusUpdateInterface,
+  StatusSearchInterface,
 } from '../interfaces/AcquisitionRepositoryProviderInterface';
 
 @provider()
 export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProviderInterface {
   public readonly table = 'acquisition.acquisitions';
+  public readonly carpoolTable = 'carpool.carpools';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -178,33 +178,20 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     }
   }
 
-  async getStatus(search: AcquisitionStatusSearchInterface): Promise<AcquisitionStatusInterface> {
-    const whereClauses = (search as AcquisitionStatusSearchInterfaceB).acquisition_id
-      ? {
-          text: ['aa._id = $1'],
-          values: [(search as AcquisitionStatusSearchInterfaceB).acquisition_id],
-        }
-      : {
-          text: ['aa.operator_id = $1', 'aa.journey_id = $2'],
-          values: [
-            (search as AcquisitionStatusSearchInterfaceA).operator_id,
-            (search as AcquisitionStatusSearchInterfaceA).operator_journey_id,
-          ],
-        };
+  async getStatus(operator_id: number, operator_journey_id: string): Promise<AcquisitionStatusInterface | undefined> {
+    const whereClauses = {
+      text: ['aa.operator_id = $1', 'aa.journey_id = $2'],
+      values: [operator_id, operator_journey_id],
+    };
     const query = {
       text: `
         SELECT 
           aa._id,
-          aa.journey_id as operator_journey_id,
           aa.created_at,
           aa.updated_at,
-          CASE
-            WHEN aa.status = 'ok'
-              THEN cc.status::varchar
-            ELSE aa.status::varchar
-          END AS status,
-          aa.error_stage,
-          aa.errors
+          cc.status as carpool_status,
+          aa.status as acquisition_status,
+          aa.error_stage as acquisition_error_stage
         FROM ${this.table} AS aa
         LEFT JOIN carpool.carpools AS cc
           ON aa._id = cc.acquisition_id
@@ -213,7 +200,17 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       values: whereClauses.values,
     };
     const result = await this.connection.getClient().query(query);
-    return result.rows[0];
+    if (!result.rows.length) {
+      return;
+    }
+    const { _id, created_at, updated_at, carpool_status, acquisition_status, acquisition_error_stage } = result.rows[0];
+    return {
+      _id,
+      operator_journey_id,
+      created_at,
+      updated_at,
+      status: castStatus(carpool_status, acquisition_status, acquisition_error_stage),
+    };
   }
 
   async findThenUpdate<P = any>(
@@ -297,5 +294,53 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       pool.release();
       throw e;
     }
+  }
+
+  async list(search: StatusSearchInterface): Promise<Array<{ operator_journey_id: string }>> {
+    const { start, end, limit, offset, operator_id, status } = search;
+    const { carpool_status, acquisition_status, acquisition_error } = fromStatus(status);
+    if (!carpool_status) {
+      const result = await this.connection.getClient().query({
+        text: `
+          SELECT journey_id as operator_journey_id
+          FROM ${this.table}
+          WHERE
+            created_at >= $1 AND
+            created_at < $2 AND
+            operator_id = $3 AND
+            status = $4 ${acquisition_error ? 'AND error_stage = $7' : ''}
+          ORDER BY created_at DESC
+          LIMIT $5
+          OFFSET $6
+        `,
+        values: [
+          start,
+          end,
+          operator_id,
+          acquisition_status,
+          limit,
+          offset,
+          ...(acquisition_error ? [acquisition_error] : []),
+        ],
+      });
+      return result.rows;
+    }
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT operator_journey_id
+        FROM ${this.carpoolTable}
+        WHERE 
+            created_at >= $1 AND
+            created_at < $2 AND
+            operator_id = $3 AND
+            status = $4 AND
+            is_driver = true
+        ORDER BY created_at DESC
+        LIMIT $5
+        OFFSET $6
+      `,
+      values: [start, end, operator_id, carpool_status, limit, offset],
+    });
+    return result.rows;
   }
 }
