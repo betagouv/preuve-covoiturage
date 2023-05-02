@@ -84,7 +84,7 @@ export class CostNormalizerProvider implements CostNormalizerProviderInterface {
       .map((p, i) => ({ ...p, index: i }));
 
     const amount = (cost - cleanPayments.reduce((sum, item) => sum + item.amount, 0)) | 0;
-    if (amount) {
+    if (amount > 0) {
       cleanPayments.push({
         amount,
         siret,
