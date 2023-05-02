@@ -1,5 +1,5 @@
 export interface ParamsInterface {
-  journey_id: string;
+  operator_journey_id: string;
   operator_id: number;
 }
 

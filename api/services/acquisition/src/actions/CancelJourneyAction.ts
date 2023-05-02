@@ -25,13 +25,15 @@ export class CancelJourneyAction extends AbstractAction {
   }
 
   protected async handle(params: ParamsInterface): Promise<ResultInterface> {
+    const { operator_id, operator_journey_id } = params;
+
     // Store in database
     const acquisition = await this.repository.getStatus({
-      operator_id: params.operator_id,
-      operator_journey_id: params.journey_id,
+      operator_id,
+      operator_journey_id,
     });
     if (!acquisition || acquisition.status !== AcquisitionStatusEnum.Ok) {
-      throw new NotFoundException(`Journey ${params.journey_id} does not exist`);
+      throw new NotFoundException(`Journey ${operator_journey_id} does not exist`);
     }
 
     // Perform cancelling action :)
