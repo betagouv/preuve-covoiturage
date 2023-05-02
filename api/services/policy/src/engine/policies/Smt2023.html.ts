@@ -8,13 +8,14 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 </p>
 <ul>
   <li><b>De 2 à 20 km : 2 euros par trajet par passager </b></li>
-  <li><b>De 20 à 40 km : 0.1 euro par trajet par km par passager </b></li>
+  <li><b>De 20 à 30 km : 0.1 euro par trajet par km par passager </b></li>
+  <li><b>Au-delà de 30 km : pas d’incitation financière</b></li>
 </ul>
 <p>Les <b> passagers </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes :
 </p>
 <ul>
-  <li><b>Trajets gratuits s’il a une origine ou une destination sur le territoire du 
-  Syndicat des Mobilités de Touraine</b></li>
+  <li><b>Les 10 premiers trajets sont gratuits s’il a une origine ou une destination sur le territoire du 
+  Syndicat des Mobilités de Touraine</b></li> (Cette règle ne peut pas être appliquée par le registre)
 </ul>
 <p>Les restrictions suivantes seront appliquées :</p>
 <ul>

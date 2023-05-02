@@ -7,6 +7,7 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import {
+  isAdultOrThrow,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
   LimitTargetEnum,
@@ -20,26 +21,16 @@ import {
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Smt2023.html';
-import { dateWithTz, today } from '../../helpers/dates.helper';
 
-// Politique du Syndicat des Mobilités de Touraine
-export const Smt2023: PolicyHandlerStaticInterface = class
+// Pays Basque Adour
+export const PaysBasque: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
-  static readonly id = 'smt_2023';
-  protected operators = [OperatorsEnum.Klaxit];
+  static readonly id = 'pays_basque_2023';
+  protected operators = [OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop, OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos];
   protected slices: RunnableSlices = [
-    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
-    {
-      start: 20_000,
-      end: 40_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
-    },
-  ];
-
-  protected slices_after_april: RunnableSlices = [
-    { start: 2_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
+    { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
       start: 20_000,
       end: 30_000,
@@ -51,19 +42,16 @@ export const Smt2023: PolicyHandlerStaticInterface = class
     super();
     this.limits = [
       ['A34719E4-DCA0-78E6-38E4-701631B106C2', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
-      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 120_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
+      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
       ['B15AD9E9-BF92-70FA-E8F1-B526D1BB6D4F', this.max_amount, watchForGlobalMaxAmount],
     ];
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2_000 });
-    isOperatorClassOrThrow(ctx, ['B', 'C']);
-
-    if (this.isAfter15April()) {
-      onDistanceRangeOrThrow(ctx, { max: 30_001 });
-    }
+    onDistanceRangeOrThrow(ctx, { min: 5_000 });
+    isOperatorClassOrThrow(ctx, ['C']);
+    isAdultOrThrow(ctx);
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -72,7 +60,7 @@ export const Smt2023: PolicyHandlerStaticInterface = class
 
     // Par kilomètre
     let amount = 0;
-    for (const { start, fn } of this.getSlices()) {
+    for (const { start, fn } of this.slices) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);
       }
@@ -81,17 +69,9 @@ export const Smt2023: PolicyHandlerStaticInterface = class
     ctx.incentive.set(amount);
   }
 
-  private getSlices() {
-    return this.isAfter15April() ? this.slices_after_april : this.slices;
-  }
-
-  private isAfter15April(): boolean {
-    return today() >= dateWithTz(new Date('2023-04-15'));
-  }
-
   params(): PolicyHandlerParamsInterface {
     return {
-      slices: this.getSlices(),
+      slices: this.slices,
       operators: this.operators,
       limits: {
         glob: this.max_amount,

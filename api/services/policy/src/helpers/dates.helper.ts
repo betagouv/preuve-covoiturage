@@ -43,8 +43,12 @@ export function castUserStringToUTC(d: Date | string | undefined | null, tz?: Ti
   return dd;
 }
 
+export function dateWithTz(date: Date, tz?: Timezone): Date {
+  return zonedTimeToUtc(date.toISOString().substring(0, 11), tz || defaultTz);
+}
+
 export function today(tz?: Timezone): Date {
-  return zonedTimeToUtc(new Date().toISOString().substring(0, 11), tz || defaultTz);
+  return dateWithTz(new Date(), tz);
 }
 
 export function addDaysTz(d: Date, days: number, tz?: Timezone): Date {

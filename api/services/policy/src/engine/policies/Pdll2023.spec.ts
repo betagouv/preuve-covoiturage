@@ -53,10 +53,11 @@ test(
       { start: { ...defaultPosition, reg: '11' } },
       { end: { ...defaultPosition, reg: '11' } },
       { distance: 90_000 },
+      { passenger_is_over_18: false },
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -85,6 +86,18 @@ test(
         key: 'max_amount_restriction.global.campaign.global',
         value: 1600,
       },
+      {
+        key: 'max_amount_restriction.0-one.month.3-2023',
+        value: 300,
+      },
+      {
+        key: 'max_amount_restriction.0-two.month.3-2023',
+        value: 1150,
+      },
+      {
+        key: 'max_amount_restriction.0-two.month.2-2022',
+        value: 150,
+      },
     ],
   },
 );
@@ -108,6 +121,10 @@ test(
       {
         key: 'max_amount_restriction.global.campaign.global',
         value: 500_000_00,
+      },
+      {
+        key: 'max_amount_restriction.0-one.month.3-2023',
+        value: 100,
       },
     ],
   },
@@ -134,6 +151,10 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
+        value: 600,
+      },
+      {
+        key: 'max_amount_restriction.0-one.month.3-2023',
         value: 600,
       },
     ],
