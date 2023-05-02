@@ -526,7 +526,6 @@ paths:
     post:
       tags:
       - attestation
-      - done
       security:
         - token: []
       summary: Créer un certificat
@@ -662,7 +661,6 @@ paths:
     post:
       tags:
       - attestation
-      - done
       summary: Télécharger une attestation
       description: |
         ## Upload du logo opérateur
@@ -768,7 +766,6 @@ paths:
     get:
       tags:
       - attestation
-      - done
       summary: Vérifier un certificat
       security:
         - token: []
@@ -858,7 +855,6 @@ paths:
     post:
       tags:
       - trajet
-      - done
       summary: Envoyer un trajet
       description: |
         Un trajet est un couple passager.ère / conducteur.rice ayant des points et de horaires de départ et d'arrivée. Si une conductrice covoiture avec plusieurs passagères, plusieurs trajets sont déclarés.
