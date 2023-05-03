@@ -1,17 +1,8 @@
-import { passengerSchema, driverSchema } from './common/schemas/person';
+import { createJourneySchemaV2 } from './common/schemas/createJourneySchemaV2';
+import { createJourneySchemaV3 } from './common/schemas/createJourneySchemaV3';
 
-export const alias = 'journey.create';
-export const create = {
-  $id: alias,
-  type: 'object',
-  required: ['driver', 'passenger', 'journey_id', 'operator_class'],
-  additionalProperties: false,
-  properties: {
-    journey_id: { macro: 'varchar' },
-    operator_id: { macro: 'serial' },
-    operator_journey_id: { macro: 'varchar' },
-    operator_class: { enum: ['A', 'B', 'C'] },
-    passenger: passengerSchema,
-    driver: driverSchema,
-  },
-};
+export const v2alias = 'journey.create.v2';
+export const v3alias = 'journey.create.v3';
+
+export const v2binding = [v2alias, createJourneySchemaV2];
+export const v3binding = [v3alias, createJourneySchemaV3];

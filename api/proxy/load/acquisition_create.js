@@ -11,7 +11,7 @@ const o = {
   base_url: __ENV.LOAD_BASE_URL || 'http://localhost:8080',
   user: {
     email: 'operator@example.com',
-    password: 'password',
+    password: 'admin1234',
   },
 };
 
@@ -20,6 +20,7 @@ export let options = {
   vus: 10,
   duration: '10s',
   throw: true,
+  insecureSkipTLSVerify: true,
 };
 
 export function setup() {
@@ -80,67 +81,123 @@ export function setup() {
   return store;
 }
 
-export default function (store) {
+function createPayload(version) {
   const start = new Date().getTime() - Math.random() * 10000000000;
   const end = start + Math.random() * 1000000;
+  switch (version) {
+    case 2: 
+      return [
+        `${o.base_url}/v2/journeys`,
+        JSON.stringify({
+          operator_class: 'B',
+          journey_id: `dfd2ae54-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-${(
+            parseInt(Math.random() * 10000, 10) + 10000
+          )
+            .toString(16)
+            .substr(0, 4)}-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-1769ea7e6f78`,
+          operator_journey_id: `a1c5848f-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-${(
+            parseInt(Math.random() * 10000, 10) + 10000
+          )
+            .toString(16)
+            .substr(0, 4)}-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-2256c3116b4c`,
+          passenger: {
+            distance: 34039,
+            duration: 1485,
+            incentives: [],
+            contribution: 76,
+            seats: 1,
+            identity: {
+              over_18: true,
+              phone: __ENV.LOAD_PASSENGER_ID || `+3376755${parseInt(Math.random() * 9000, 10) + 1000}`,
+            },
+            start: {
+              datetime: new Date(start).toISOString(),
+              lat: 49.45218,
+              lon: 6.02627,
+            },
+            end: {
+              datetime: new Date(end).toISOString(),
+              lat: 49.45218,
+              lon: 6.02627,
+            },
+          },
+          driver: {
+            distance: 34039,
+            duration: 1485,
+            incentives: [],
+            revenue: 376,
+            identity: {
+              over_18: true,
+              phone: __ENV.LOAD_DRIVER_ID || `+3378388${parseInt(Math.random() * 9000, 10) + 1000}`,
+            },
+            start: {
+              datetime: new Date(start).toISOString(),
+              lat: 49.45218,
+              lon: 6.02627,
+            },
+            end: {
+              datetime: new Date(end).toISOString(),
+              lat: 48.82338,
+              lon: 1.78668,
+            },
+          },
+        }),
+      ];
+      case 3:
+        return [
+          `${o.base_url}/v3/journeys`,
+          JSON.stringify({
+            operator_class: 'B',
+            operator_journey_id: `dfd2ae54-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-${(
+              parseInt(Math.random() * 10000, 10) + 10000
+            )
+              .toString(16)
+              .substr(0, 4)}-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-1769ea7e6f78`,
+            operator_trip_id: `a1c5848f-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-${(
+              parseInt(Math.random() * 10000, 10) + 10000
+            )
+              .toString(16)
+              .substr(0, 4)}-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-2256c3116b4c`,
+            start: {
+              datetime: new Date(start).toISOString(),
+              lat: 49.45218,
+              lon: 6.02627,
+            },
+            end: {
+              datetime: new Date(end).toISOString(),
+              lat: 49.45218,
+              lon: 6.02627,
+            },
+            distance: 34039,
+            incentives: [],
+            incentive_counterparts: [],
 
+            passenger: {
+              contribution: 76,
+              seats: 1,
+              identity: {
+                operator_user_id: __ENV.LOAD_PASSENGER_ID || (Math.random() + 1).toString(36).substring(2),
+                identity_key: (Math.random() + 1).toString(36).substring(2),
+              },
+            },
+            driver: {
+              revenue: 376,
+              identity: {
+                over_18: true,
+                operator_user_id: __ENV.LOAD_DRIVER_ID || (Math.random() + 1).toString(36).substring(2),
+                identity_key: (Math.random() + 1).toString(36).substring(2),
+              },
+            },
+          }),
+        ];
+  }
+}
+export default function (store) {
   // create a journey
+  const [url, payload] = createPayload(Math.random() < 0.5 ? 2 : 3);
   const response_acq = http.post(
-    `${o.base_url}/v2/journeys`,
-    JSON.stringify({
-      operator_class: 'B',
-      journey_id: `dfd2ae54-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-${(
-        parseInt(Math.random() * 10000, 10) + 10000
-      )
-        .toString(16)
-        .substr(0, 4)}-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-1769ea7e6f78`,
-      operator_journey_id: `a1c5848f-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-${(
-        parseInt(Math.random() * 10000, 10) + 10000
-      )
-        .toString(16)
-        .substr(0, 4)}-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-2256c3116b4c`,
-      passenger: {
-        distance: 34039,
-        duration: 1485,
-        incentives: [],
-        contribution: 76,
-        seats: 1,
-        identity: {
-          over_18: true,
-          phone: __ENV.LOAD_PASSENGER_ID || `+3376755${parseInt(Math.random() * 9000, 10) + 1000}`,
-        },
-        start: {
-          datetime: new Date(start).toISOString(),
-          lat: 49.45218,
-          lon: 6.02627,
-        },
-        end: {
-          datetime: new Date(end).toISOString(),
-          lat: 49.45218,
-          lon: 6.02627,
-        },
-      },
-      driver: {
-        distance: 34039,
-        duration: 1485,
-        incentives: [],
-        revenue: 376,
-        identity: {
-          over_18: true,
-          phone: __ENV.LOAD_DRIVER_ID || `+3378388${parseInt(Math.random() * 9000, 10) + 1000}`,
-        },
-        start: {
-          datetime: new Date(start).toISOString(),
-          lat: 49.45218,
-          lon: 6.02627,
-        },
-        end: {
-          datetime: new Date(end).toISOString(),
-          lat: 48.82338,
-          lon: 1.78668,
-        },
-      },
-    }),
+    url,
+    payload,
     {
       headers: {
         'Content-Type': 'application/json',

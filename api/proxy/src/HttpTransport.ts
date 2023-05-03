@@ -414,7 +414,7 @@ export class HttpTransport implements TransportInterface {
 
     // send a journey
     this.app.post(
-      '/v2/journeys',
+      '/:version/journeys',
       acquisitionRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
@@ -425,7 +425,7 @@ export class HttpTransport implements TransportInterface {
         );
 
         const response = (await this.kernel.handle(
-          createRPCPayload('acquisition:create', { ...req.body }, user, { req }),
+          createRPCPayload('acquisition:create', { api_version: req.params.version, ...req.body }, user, { req }),
         )) as RPCResponseType;
 
         this.send(res, response);

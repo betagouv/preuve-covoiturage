@@ -11,18 +11,12 @@ import {
   ResultInterface,
 } from '../shared/acquisition/process.contract';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import {
-  AcquisitionErrorStageEnum,
-  AcquisitionFindInterface,
-  AcquisitionStatusEnum,
-} from '../interfaces/AcquisitionRepositoryProviderInterface';
+import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
 import {
   ParamsInterface as CrosscheckParamsInterface,
   ResultInterface as CrosscheckResultInterface,
   signature as crosscheckSignature,
 } from '../shared/carpool/crosscheck.contract';
-import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
-import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { callContext } from '../config/callContext';
 
 @handler({
@@ -74,7 +68,7 @@ export class ProcessJourneyAction extends AbstractAction implements InitHookInte
         const timerMsg = `[acquisition] processed (${acquisition._id} *${runUUID}*`;
         console.time(timerMsg);
         try {
-          const normalizedAcquisition = await this.normalize(acquisition);
+          const normalizedAcquisition = await this.normalizer.handle(acquisition);
           await this.kernel.call<CrosscheckParamsInterface, CrosscheckResultInterface>(
             crosscheckSignature,
             normalizedAcquisition,
@@ -101,33 +95,5 @@ export class ProcessJourneyAction extends AbstractAction implements InitHookInte
       console.timeEnd(msg);
     }
     return;
-  }
-
-  protected async normalize(data: AcquisitionFindInterface<JourneyInterface>): Promise<CrosscheckParamsInterface> {
-    const journey = {
-      ...data.payload,
-    };
-
-    // driver AND/OR passenger
-    if ('driver' in journey) journey.driver = this.normalizePerson(journey.driver, true);
-    if ('passenger' in journey) journey.passenger = this.normalizePerson(journey.passenger, false);
-
-    const normalizedData = await this.normalizer.handle({
-      ...data,
-      payload: journey,
-    });
-
-    return JSON.parse(JSON.stringify(normalizedData));
-  }
-
-  protected normalizePerson(person: PersonInterface, driver = false): PersonInterface {
-    return {
-      expense: 0,
-      incentives: [],
-      payments: [],
-      ...person,
-      is_driver: driver,
-      seats: person && 'seats' in person ? person.seats : !driver ? 1 : 0,
-    };
   }
 }

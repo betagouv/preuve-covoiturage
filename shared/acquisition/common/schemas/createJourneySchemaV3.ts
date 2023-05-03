@@ -1,0 +1,106 @@
+import {
+  contributionSchema,
+  distanceSchema,
+  identityPropsSchema,
+  incentivesScema,
+  paymentsSchema,
+  seatSchema,
+} from './createJourneyCommon';
+
+const timeGeoPointSchema = {
+  type: 'object',
+  minProperties: 3,
+  additionalProperties: false,
+  properties: {
+    datetime: { macro: 'timestamp' },
+    lat: { macro: 'lat' },
+    lon: { macro: 'lon' },
+  },
+};
+
+const incentiveCounterpartSchema = {
+  type: 'object',
+  additionalProperties: false,
+  minProperties: 3,
+  properties: {
+    target: {
+      type: 'string',
+      enum: ['passenger', 'driver'],
+    },
+    siret: { macro: 'siret' },
+    amount: {
+      type: 'number',
+      minimum: 0,
+      maximum: 100000,
+    },
+  },
+};
+
+const identitySchema = {
+  type: 'object',
+  required: ['operator_user_id', 'identity_key'],
+  additionalProperties: false,
+  properties: {
+    identity_key: { macro: 'varchar' },
+    ...identityPropsSchema,
+  },
+};
+
+const driverSchema = {
+  type: 'object',
+  required: ['identity', 'revenue'],
+  additionalProperties: false,
+  properties: {
+    identity: identitySchema,
+    revenue: {
+      type: 'integer',
+      minimum: 0,
+      maximum: 1000000,
+    },
+  },
+};
+
+const passengerSchema = {
+  type: 'object',
+  required: ['identity', 'contribution'],
+  additionalProperties: false,
+  properties: {
+    identity: identitySchema,
+    contribution: contributionSchema,
+    payments: paymentsSchema,
+    seats: seatSchema,
+  },
+};
+
+export const createJourneySchemaV3 = {
+  type: 'object',
+  required: [
+    'operator_journey_id',
+    'operator_class',
+    'incentives',
+    'incentive_counterparts',
+    'start',
+    'end',
+    'distance',
+    'driver',
+    'passenger',
+  ],
+  additionalProperties: false,
+  properties: {
+    operator_id: { macro: 'serial' },
+    operator_journey_id: { macro: 'varchar' },
+    operator_trip_id: { macro: 'varchar' },
+    operator_class: { enum: ['A', 'B', 'C'] },
+    start: timeGeoPointSchema,
+    end: timeGeoPointSchema,
+    driver: driverSchema,
+    passenger: passengerSchema,
+    distance: distanceSchema,
+    licence_plate: { macro: 'varchar' },
+    incentives: incentivesScema,
+    incentive_counterparts: {
+      type: 'array',
+      items: incentiveCounterpartSchema,
+    },
+  },
+};

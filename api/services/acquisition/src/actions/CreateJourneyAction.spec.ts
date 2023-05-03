@@ -25,6 +25,7 @@ test('should return repository data if validator not fail', async (t) => {
   const inputData = {
     method: '',
     params: {
+      api_version: 'v2',
       journey_id: operator_journey_id,
       operator_journey_id: 'nope',
       operator_class: 'C',
@@ -43,16 +44,17 @@ test('should return repository data if validator not fail', async (t) => {
   const result = await action.call(inputData);
   t.log(result);
   t.deepEqual(result, { journey_id: operator_journey_id, created_at });
-  t.true(validator.validate.calledOnceWith(inputData.params));
+  const { api_version, ...payload } = inputData.params;
+  t.true(validator.validate.calledOnceWith(payload));
   t.true(
     repository.createOrUpdateMany.calledOnceWith([
       {
+        payload,
         operator_id: 2,
         operator_journey_id,
         application_id: 3,
         api_version: 2,
         request_id: 'request_id',
-        payload: inputData.params,
       },
     ]),
   );
@@ -69,6 +71,7 @@ test('should fail if validator fail', async (t) => {
   const inputData = {
     method: '',
     params: {
+      api_version: 'v2',
       journey_id: operator_journey_id,
       operator_journey_id: 'nope',
       operator_class: 'C',
@@ -85,8 +88,10 @@ test('should fail if validator fail', async (t) => {
     },
   };
   await t.throwsAsync(async () => await action.call(inputData));
-  t.true(validator.validate.calledOnceWith(inputData.params));
+  const { api_version, ...payload } = inputData.params;
+  t.true(validator.validate.calledOnceWith(payload));
   const repositoryAssertArgs = {
+    payload,
     api_version: 2,
     application_id: 3,
     error_stage: AcquisitionErrorStageEnum.Acquisition,
@@ -94,7 +99,6 @@ test('should fail if validator fail', async (t) => {
     operator_id: 2,
     operator_journey_id,
     request_id: 'request_id',
-    payload: inputData.params,
     status: AcquisitionStatusEnum.Error,
   };
   t.true(repository.createOrUpdateMany.calledOnceWith([repositoryAssertArgs]));
@@ -109,6 +113,7 @@ test('should fail if date validation fail', async (t) => {
   const inputData = {
     method: '',
     params: {
+      api_version: 'v2',
       journey_id: operator_journey_id,
       operator_journey_id: 'nope',
       operator_class: 'C',
@@ -130,8 +135,10 @@ test('should fail if date validation fail', async (t) => {
     },
   };
   await t.throwsAsync(async () => await action.call(inputData));
-  t.true(validator.validate.calledOnceWith(inputData.params));
+  const { api_version, ...payload } = inputData.params;
+  t.true(validator.validate.calledOnceWith(payload));
   const repositoryAssertArgs = {
+    payload,
     api_version: 2,
     application_id: 3,
     error_stage: AcquisitionErrorStageEnum.Acquisition,
@@ -139,7 +146,6 @@ test('should fail if date validation fail', async (t) => {
     operator_id: 2,
     operator_journey_id,
     request_id: 'request_id',
-    payload: inputData.params,
     status: AcquisitionStatusEnum.Error,
   };
   const repositoryArgs = repository.createOrUpdateMany.getCall(0).args[0];
@@ -154,6 +160,7 @@ test('should fail if journey already registred', async (t) => {
   const inputData = {
     method: '',
     params: {
+      api_version: 'v2',
       journey_id: operator_journey_id,
       operator_journey_id: 'nope',
       operator_class: 'C',
@@ -170,14 +177,15 @@ test('should fail if journey already registred', async (t) => {
     },
   };
   await t.throwsAsync(async () => await action.call(inputData));
-  t.true(validator.validate.calledOnceWith(inputData.params));
+  const { api_version, ...payload } = inputData.params;
+  t.true(validator.validate.calledOnceWith(payload));
   const repositoryAssertArgs = {
+    payload,
     operator_id: 2,
     operator_journey_id,
     application_id: 3,
     api_version: 2,
     request_id: 'request_id',
-    payload: inputData.params,
   };
   const repositoryArgs = repository.createOrUpdateMany.getCall(0).args[0];
   t.true(repository.createOrUpdateMany.calledOnce);

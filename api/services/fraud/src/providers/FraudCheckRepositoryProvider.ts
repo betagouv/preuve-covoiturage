@@ -89,7 +89,7 @@ export class FraudCheckRepositoryProvider extends FraudCheckRepositoryProviderIn
         // Callback à appeler pour enregistrer les résultats des tests
         // ou les erreurs ayant eu lieu.
         // Appelé sans data, le cb permet de commit la transaction
-        // Si le timeout a été atteint, aucune écriture n'est possible 
+        // Si le timeout a été atteint, aucune écriture n'est possible
         async (data?: FraudCheckEntry) => {
           if (timeoutFn && !hasTimeout) {
             if (data) {
@@ -178,7 +178,7 @@ export class FraudCheckRepositoryProvider extends FraudCheckRepositoryProviderIn
       await pool.query(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
     } catch (e) {
       await pool.query(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
-      if(!poolClient) {
+      if (!poolClient) {
         throw e;
       }
     } finally {
