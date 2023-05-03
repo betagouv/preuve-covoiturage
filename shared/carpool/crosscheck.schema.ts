@@ -35,6 +35,25 @@ const incentivesSchema = {
   },
 };
 
+const incentiveCounterpartSchema = {
+  type: 'object',
+  additionalProperties: false,
+  minProperties: 3,
+  properties: {
+    target: {
+      type: 'string',
+      enum: ['passenger', 'driver'],
+    },
+    siret: { macro: 'siret' },
+    amount: {
+      type: 'number',
+      minimum: 0,
+      maximum: 100000,
+    },
+  },
+};
+
+
 export const alias = 'carpool.crosscheck';
 export const schema = {
   $id: alias,
@@ -98,7 +117,7 @@ export const schema = {
           },
           meta: {
             type: 'object',
-            required: ['payments', 'calc_distance', 'calc_duration'],
+            required: ['payments', 'calc_distance', 'calc_duration', 'incentive_counterparts'],
             additionalProperties: false,
             properties: {
               payments: {
@@ -127,6 +146,10 @@ export const schema = {
               },
               calc_distance: { type: 'integer', minimum: 0, maximum: 2147483647 },
               calc_duration: { type: 'integer', minimum: 0, maximum: 2147483647 },
+              incentive_counterparts: {
+                type: 'array',
+                items: incentiveCounterpartSchema,
+              },
             },
           },
         },
