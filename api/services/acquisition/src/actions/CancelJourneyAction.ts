@@ -32,7 +32,7 @@ export class CancelJourneyAction extends AbstractAction {
     if (!acquisition) {
       throw new NotFoundException(`Journey ${operator_journey_id} does not exist`);
     }
-  
+
     if ([StatusEnum.Ok, StatusEnum.FraudError].indexOf(acquisition.status) < 0) {
       throw new NotFoundException(`Journey ${operator_journey_id} is not cancelable`);
     }

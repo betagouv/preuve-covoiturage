@@ -53,7 +53,6 @@ const incentiveCounterpartSchema = {
   },
 };
 
-
 export const alias = 'carpool.crosscheck';
 export const schema = {
   $id: alias,
@@ -73,7 +72,9 @@ export const schema = {
     acquisition_id: { macro: 'serial' },
     operator_id: { macro: 'serial' },
     operator_journey_id: { macro: 'varchar' },
-    created_at: { macro: 'timestamp' },
+    created_at: {
+      anyOf: [{ macro: 'timestamp' }, { instanceof: 'Date' }],
+    },
     operator_class: { enum: ['A', 'B', 'C'] },
     incentives: incentivesSchema,
     people: {
