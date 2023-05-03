@@ -304,14 +304,15 @@ export class HttpTransport implements TransportInterface {
 
   private registerSimulationRoutes(): void {
     this.app.post(
-      '/v2/policy/simulate',
+      '/:version/policy/simulate',
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
-        const { params } = req;
         const user = get(req, 'session.user', null);
         const response = (await this.kernel.handle(
-          createRPCPayload('campaign:simulateOnFuture', params, user, { req }),
+          createRPCPayload('campaign:simulateOnFuture', { api_version: req.params.version, ...req.body }, user, {
+            req,
+          }),
         )) as RPCResponseType;
         this.send(res, response);
       }),

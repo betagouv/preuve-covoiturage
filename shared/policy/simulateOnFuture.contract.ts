@@ -54,7 +54,7 @@ interface PassengerInterfaceV3 {
 }
 
 export interface ParamsInterfaceV2 {
-  api_version: 2;
+  api_version: 'v2';
   journey_id: string;
   operator_class: string;
   operator_id: number;
@@ -63,13 +63,14 @@ export interface ParamsInterfaceV2 {
 }
 
 export interface ParamsInterfaceV3 {
-  api_version: 3;
+  api_version: 'v3';
+  operator_id: number;
   operator_class: string;
   start: PositionInterface;
   end: PositionInterface;
   distance: number;
-  driver: DriverInterfaceV3; 
-  passenger: PassengerInterfaceV3; 
+  driver: DriverInterfaceV3;
+  passenger: PassengerInterfaceV3;
 }
 
 export type ParamsInterface = ParamsInterfaceV2 | ParamsInterfaceV3;

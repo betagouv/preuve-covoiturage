@@ -3,7 +3,13 @@ import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import { differenceInSeconds } from 'date-fns';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnFuture.contract';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ParamsInterfaceV2,
+  ParamsInterfaceV3,
+  ResultInterface,
+} from '../shared/policy/simulateOnFuture.contract';
 import { alias } from '../shared/policy/simulateOnFuture.schema';
 import {
   PolicyRepositoryProviderInterfaceResolver,
@@ -77,7 +83,7 @@ export class SimulateOnFutureAction extends AbstractAction {
       }));
 
     return {
-      journey_id: params.journey_id,
+      journey_id: 'journey_id' in params ? params.journey_id : undefined,
       driver: normalizedIncentives.map((incentive, i) => ({
         index: i,
         amount: incentive.amount,
@@ -88,7 +94,7 @@ export class SimulateOnFutureAction extends AbstractAction {
   }
 
   protected async normalize(input: ParamsInterface): Promise<CarpoolInterface> {
-    return {
+    const common = {
       _id: 1,
       driver_identity_uuid: v4(),
       passenger_identity_uuid: v4(),
@@ -98,15 +104,33 @@ export class SimulateOnFutureAction extends AbstractAction {
       passenger_is_over_18: input.passenger.identity.over_18,
       driver_has_travel_pass: 'travel_pass' in input.driver.identity,
       passenger_has_travel_pass: 'travel_pass' in input.passenger.identity,
-      datetime: input.passenger.start.datetime,
       seats: input.passenger.seats,
-      duration: differenceInSeconds(input.passenger.end.datetime, input.passenger.start.datetime),
-      distance: input.passenger.distance,
-      cost: input.passenger.contribution,
       driver_payment: input.driver.revenue,
       passenger_payment: input.passenger.contribution,
-      start: await this.territoryRepository.findByPoint(input.passenger.start),
-      end: await this.territoryRepository.findByPoint(input.passenger.end),
+      cost: input.passenger.contribution,
     };
+
+    switch (input.api_version) {
+      case 'v2':
+        const inputv2 = input as ParamsInterfaceV2;
+        return {
+          ...common,
+          datetime: inputv2.passenger.start.datetime,
+          duration: differenceInSeconds(inputv2.passenger.end.datetime, inputv2.passenger.start.datetime),
+          distance: inputv2.passenger.distance,
+          start: await this.territoryRepository.findByPoint(inputv2.passenger.start),
+          end: await this.territoryRepository.findByPoint(inputv2.passenger.end),
+        };
+      case 'v3':
+        const inputv3 = input as ParamsInterfaceV3;
+        return {
+          ...common,
+          datetime: inputv3.start.datetime,
+          duration: differenceInSeconds(inputv3.end.datetime, inputv3.start.datetime),
+          distance: inputv3.distance,
+          start: await this.territoryRepository.findByPoint(inputv3.start),
+          end: await this.territoryRepository.findByPoint(inputv3.end),
+        };
+    }
   }
 }

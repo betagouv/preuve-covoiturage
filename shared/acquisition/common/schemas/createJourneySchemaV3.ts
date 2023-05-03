@@ -7,7 +7,7 @@ import {
   seatSchema,
 } from './createJourneyCommon';
 
-const timeGeoPointSchema = {
+export const timeGeoPointSchema = {
   type: 'object',
   minProperties: 3,
   additionalProperties: false,
@@ -46,7 +46,7 @@ const identitySchema = {
   },
 };
 
-const driverSchema = {
+export const driverSchema = {
   type: 'object',
   required: ['identity', 'revenue'],
   additionalProperties: false,
@@ -60,7 +60,7 @@ const driverSchema = {
   },
 };
 
-const passengerSchema = {
+export const passengerSchema = {
   type: 'object',
   required: ['identity', 'contribution'],
   additionalProperties: false,
