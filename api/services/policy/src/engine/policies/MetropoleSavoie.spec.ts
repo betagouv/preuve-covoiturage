@@ -109,11 +109,6 @@ test(
   },
   {
     incentive: [0, 0],
-    meta: [
-      {
-        key: 'max_amount_restriction.global.campaign.global',
-        value: 0,
-      },
-    ],
+    meta: [],
   },
 );

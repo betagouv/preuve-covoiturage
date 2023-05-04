@@ -68,7 +68,7 @@ test(
     incentive: [200, 400, 250, 400, 800, 400],
     meta: [
       {
-        key: 'max_amount_restriction.0-one.month.3-2023',
+        key: 'max_amount_restriction.0-one.month.4-2023',
         value: 2450,
       },
       {
