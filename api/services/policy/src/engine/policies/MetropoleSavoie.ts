@@ -1,4 +1,3 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,7 +5,7 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -14,9 +13,9 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  startsAndEndsAt,
   watchForGlobalMaxAmount,
 } from '../helpers';
+import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './MetropoleSavoie.html';
 
@@ -41,16 +40,12 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 5_000 });
     isOperatorClassOrThrow(ctx, ['B', 'C']);
+    startAndEndAtOrThrow(ctx, { aom: ['200068674', '200069110'], epci: ['200041010'] });
   }
 
   processStateless(ctx: StatelessContextInterface): void {
     this.processExclusion(ctx);
     super.processStateless(ctx);
-
-    // Départ et arrivée dans l'aom
-    if (!startsAndEndsAt(ctx, { aom: ['200068674', '200069110'], epci: ['200041010'] })) {
-      throw new NotEligibleTargetException('Journey start & end not in region');
-    }
 
     // Calcul des incitations par tranche
     let amount = 0;
