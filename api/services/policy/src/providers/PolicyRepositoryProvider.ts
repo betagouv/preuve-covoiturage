@@ -329,7 +329,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
             WHERE policy_id = $1
               AND status = 'validated'
           )
-          SELECT SUM(amount)::int AS incentive_sum
+          SELECT COALESCE(SUM(amount)::int, 0) AS incentive_sum
           FROM policy.incentives
           WHERE policy_id = $1
             AND datetime <= (SELECT max FROM latest_incentive)
