@@ -60,7 +60,7 @@ export class ListAction extends Action {
     const cmpFilter = this.storageRepository.campaignsFilter([campaign_id]);
 
     // month filter. We can hide the current month to operators and territories
-    // by setting the env var APP_APDF_SHOW_CURRENT_MONTH to 'false'
+    // by setting the env var APP_APDF_SHOW_LAST_MONTH to 'false'
     // default: true
     const monthFilter = this.storageRepository.showCurrentMonthFilter(
       context.call.user.permissions,
