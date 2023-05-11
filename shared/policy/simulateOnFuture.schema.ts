@@ -96,7 +96,7 @@ export const aliasv2 = 'policy.simulateOnFuture.v2';
 export const schemav2 = {
   $id: aliasv2,
   type: 'object',
-  required: ['journey_id', 'operator_id', 'operator_class'],
+  required: ['api_version', 'journey_id', 'operator_id', 'operator_class'],
   anyOf: [{ required: ['passenger'] }, { required: ['driver'] }],
   additionalProperties: false,
   properties: {
@@ -113,7 +113,7 @@ export const aliasv3 = 'policy.simulateOnFuture.v3';
 export const schemav3 = {
   $id: aliasv3,
   type: 'object',
-  required: ['operator_id', 'operator_class', 'start', 'end', 'passenger', 'driver'],
+  required: ['api_version', 'operator_id', 'operator_class', 'start', 'end', 'passenger', 'driver'],
   additionalProperties: false,
   properties: {
     api_version: { const: 'v3' },
