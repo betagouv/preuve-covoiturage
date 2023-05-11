@@ -53,7 +53,7 @@ export class ProcessCommand implements CommandInterface {
       default: 'Europe/Paris',
     },
     {
-      signature: '-f, --finalize',
+      signature: '--finalize',
       description: 'finalize incentive calculations depending on context. (applies to ALL campaigns)',
       default: false,
     },
@@ -92,16 +92,16 @@ export class ProcessCommand implements CommandInterface {
         const context: ContextType = { channel: { service: 'campaign' } };
 
         // configure params to pass schema validation
-        const params: Record<string, any> = { policy_id, tz, override };
+        const params: { policy_id: number } & Partial<CommandOptions> = { policy_id, tz, override };
 
         if ('from' in options && options.from) {
           const from = castUserStringToUTC(options.from, tz);
-          params.from = from ? toISOString(from) : undefined;
+          if (from) params.from = toISOString(from);
         }
 
         if ('to' in options && options.to) {
           const to = castUserStringToUTC(options.to, tz);
-          params.to = to ? toISOString(to) : undefined;
+          if (to) params.to = toISOString(to);
         }
 
         // warn the user if 'override' and 'to' are used together
