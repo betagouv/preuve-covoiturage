@@ -47,7 +47,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           status = $3::policy.incentive_status_enum
       `,
       values: [
-        failure ? IncentiveStatusEnum.Draft : IncentiveStatusEnum.Valitated,
+        failure ? IncentiveStatusEnum.Draft : IncentiveStatusEnum.Validated,
         before,
         IncentiveStatusEnum.Pending,
       ],

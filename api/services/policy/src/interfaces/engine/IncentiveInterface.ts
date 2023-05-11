@@ -9,7 +9,7 @@ export enum IncentiveStateEnum {
 export enum IncentiveStatusEnum {
   Draft = 'draft',
   Pending = 'pending',
-  Valitated = 'validated',
+  Validated = 'validated',
   Warning = 'warning',
   Error = 'error',
 }
