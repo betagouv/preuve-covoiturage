@@ -412,3 +412,28 @@ test.serial('Should list acquisition status', async (t) => {
     { operator_journey_id: 'operator_journey_id-1' },
   ]);
 });
+
+test.serial('Should cancel acquisition', async (t) => {
+  await t.context.repository.cancel(1, '3');
+  await t.context.repository.cancel(1, '4', 'CODE1', 'TOTO');
+  const result = await t.context.db.connection.getClient().query({
+    text: `SELECT
+      journey_id as operator_journey_id, cancel_code, cancel_message
+    FROM ${t.context.repository.table}
+    WHERE operator_id = $1 AND status = 'canceled'
+    ORDER BY operator_journey_id`,
+    values: [1],
+  });
+  t.deepEqual(result.rows, [
+    {
+      operator_journey_id: '3',
+      cancel_code: null,
+      cancel_message: null,
+    },
+    {
+      operator_journey_id: '4',
+      cancel_code: 'CODE1',
+      cancel_message: 'TOTO',
+    },
+  ]);
+});

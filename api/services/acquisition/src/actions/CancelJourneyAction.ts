@@ -37,6 +37,8 @@ export class CancelJourneyAction extends AbstractAction {
       throw new NotFoundException(`Journey ${operator_journey_id} is not cancelable`);
     }
 
+    await this.repository.cancel(operator_id, operator_journey_id, params.code, params.message);
+
     // Perform cancelling action :)
     await this.kernel.call<UpdateStatusParams>(
       updateStatusSignature,
