@@ -178,6 +178,22 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     }
   }
 
+  async cancel(operator_id: number, operator_journey_id: string, code?: string, message?: string): Promise<void> {
+    await this.connection.getClient().query({
+      text: `
+        UPDATE ${this.table}
+          SET
+            status = 'canceled',
+            cancel_code = $3,
+            cancel_message = $4
+          WHERE
+            operator_id = $1 AND
+            journey_id = $2 
+      `,
+      values: [operator_id, operator_journey_id, code, message],
+    });
+  }
+
   async getStatus(operator_id: number, operator_journey_id: string): Promise<AcquisitionStatusInterface | undefined> {
     const whereClauses = {
       text: ['aa.operator_id = $1', 'aa.journey_id = $2'],

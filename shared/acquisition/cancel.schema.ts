@@ -1,10 +1,33 @@
 export const alias = 'journey.cancel';
 export const cancel = {
   $id: alias,
-  type: 'object',
-  required: ['operator_journey_id'],
-  additionalProperties: false,
-  properties: {
-    operator_journey_id: { macro: 'varchar' },
-  },
+  anyOf: [
+    {
+      type: 'object',
+      required: ['api_version', 'operator_journey_id'],
+      additionalProperties: false,
+      properties: {
+        api_version: { const: 'v2' },
+        operator_journey_id: { macro: 'varchar' },
+      },
+    },
+    {
+      type: 'object',
+      required: ['api_version', 'operator_journey_id', 'code'],
+      additionalProperties: false,
+      properties: {
+        api_version: { const: 'v3' },
+        operator_journey_id: { macro: 'varchar' },
+        code: {
+          type: 'string',
+          pattern: '^[0-9A-Za-z_-]{0,32}$',
+          maxLength: 32,
+        },
+        message: {
+          type: 'string',
+          maxLength: 512,
+        },
+      },
+    },
+  ],
 };

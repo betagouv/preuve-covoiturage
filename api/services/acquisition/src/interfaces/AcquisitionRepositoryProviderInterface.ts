@@ -81,6 +81,8 @@ export interface AcquisitionRepositoryProviderInterface {
 
   list(search: StatusSearchInterface): Promise<Array<{ operator_journey_id: string }>>;
 
+  cancel(operator_id: number, operator_journey_id: string, code?: string, message?: string): Promise<void>;
+
   findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,
   ): Promise<[Array<AcquisitionFindInterface<P>>, (data?: AcquisitionStatusUpdateInterface) => Promise<void>]>;

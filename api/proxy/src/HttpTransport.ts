@@ -392,7 +392,7 @@ export class HttpTransport implements TransportInterface {
 
     // cancel existing journey
     this.app.delete(
-      '/v(2|3)/journeys/:id',
+      '/v2/journeys/:id',
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
@@ -402,6 +402,30 @@ export class HttpTransport implements TransportInterface {
             'acquisition:cancel',
             {
               operator_journey_id: parseInt(req.params.id, 10),
+              api_version: 'v2',
+            },
+            user,
+            { req },
+          ),
+        )) as RPCResponseType;
+
+        this.send(res, response);
+      }),
+    );
+
+    this.app.post(
+      '/v3/journeys/:id/cancel',
+      rateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        const response = (await this.kernel.handle(
+          createRPCPayload(
+            'acquisition:cancel',
+            {
+              ...req.body,
+              operator_journey_id: parseInt(req.params.id, 10),
+              api_version: 'v3',
             },
             user,
             { req },
