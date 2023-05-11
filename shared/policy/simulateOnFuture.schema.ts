@@ -1,3 +1,5 @@
+import { driverSchema, passengerSchema, timeGeoPointSchema } from '../acquisition/common/schemas/createJourneySchemaV3';
+
 function positionSchema(isStart = true) {
   return {
     type: 'object',
@@ -43,7 +45,7 @@ const identitySchema = {
   },
 };
 
-const passengerSchema = {
+const passengerSchemaV2 = {
   type: 'object',
   required: ['start', 'end', 'distance', 'identity', 'seats', 'contribution'],
   additionalProperties: false,
@@ -69,7 +71,7 @@ const passengerSchema = {
     },
   },
 };
-const driverSchema = {
+const driverSchemaV2 = {
   type: 'object',
   required: ['start', 'end', 'distance', 'identity', 'revenue'],
   additionalProperties: false,
@@ -90,20 +92,43 @@ const driverSchema = {
   },
 };
 
-export const alias = 'policy.simulateOnFuture';
-export const schema = {
-  $id: alias,
+export const aliasv2 = 'policy.simulateOnFuture.v2';
+export const schemav2 = {
+  $id: aliasv2,
   type: 'object',
-  required: ['journey_id', 'operator_id', 'operator_class'],
+  required: ['api_version', 'journey_id', 'operator_id', 'operator_class'],
   anyOf: [{ required: ['passenger'] }, { required: ['driver'] }],
   additionalProperties: false,
   properties: {
+    api_version: { const: 'v2' },
     journey_id: { macro: 'varchar' },
     operator_id: { macro: 'serial' },
     operator_class: { enum: ['A', 'B', 'C'] },
+    passenger: passengerSchemaV2,
+    driver: driverSchemaV2,
+  },
+};
+
+export const aliasv3 = 'policy.simulateOnFuture.v3';
+export const schemav3 = {
+  $id: aliasv3,
+  type: 'object',
+  required: ['api_version', 'operator_id', 'operator_class', 'start', 'end', 'passenger', 'driver'],
+  additionalProperties: false,
+  properties: {
+    api_version: { const: 'v3' },
+    operator_id: { macro: 'serial' },
+    operator_class: { enum: ['A', 'B', 'C'] },
+    start: timeGeoPointSchema,
+    end: timeGeoPointSchema,
     passenger: passengerSchema,
     driver: driverSchema,
   },
 };
 
+export const alias = 'policy.simulateOnFuture';
+export const schema = {
+  $id: alias,
+  anyOf: [schemav2, schemav3],
+};
 export const binding = [alias, schema];
