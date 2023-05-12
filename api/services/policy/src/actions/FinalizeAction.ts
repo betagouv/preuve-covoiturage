@@ -1,4 +1,4 @@
-import { handler, KernelInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { MetadataStore } from '../engine/entities/MetadataStore';
@@ -22,14 +22,12 @@ import { signature as syncincentivesumSignature } from '../shared/policy/syncInc
 type DefaultParamsInterface = Omit<Required<ParamsInterface>, 'from' | 'to'> & { from: Date; to: Date };
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]] })
 export class FinalizeAction extends AbstractAction {
-  private readonly defaultFrom = 15;
-  private readonly defaultTo = 5;
-
   constructor(
     private policyRepository: PolicyRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
     private metaRepository: MetadataRepositoryProviderInterfaceResolver,
     private kernel: KernelInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
@@ -100,8 +98,8 @@ export class FinalizeAction extends AbstractAction {
    */
   protected defaultParams(params: ParamsInterface): DefaultParamsInterface {
     const tz = params.tz ?? defaultTz;
-    const from = castUserStringToUTC(params.from) || subDaysTz(today(tz), this.defaultFrom);
-    const to = castUserStringToUTC(params.to) || subDaysTz(today(tz), this.defaultTo);
+    const from = castUserStringToUTC(params.from) || subDaysTz(today(tz), this.config.get('policies.finalize.from'));
+    const to = castUserStringToUTC(params.to) || subDaysTz(today(tz), this.config.get('policies.finalize.to'));
 
     return { tz, from, to, sync_incentive_sum: !!params.sync_incentive_sum, clear: !!params.clear };
   }
