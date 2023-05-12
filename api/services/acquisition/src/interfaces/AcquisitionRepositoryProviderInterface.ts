@@ -77,6 +77,11 @@ export interface AcquisitionRepositoryProviderInterface {
 
   updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>): Promise<void>;
 
+  patchPayload<P = any>(
+    search: { operator_id: number; operator_journey_id: string; status: Array<AcquisitionStatusEnum> },
+    payload: P,
+  ): Promise<void>;
+
   getStatus(operator_id: number, operator_journey_id: string): Promise<AcquisitionStatusInterface | undefined>;
 
   list(search: StatusSearchInterface): Promise<Array<{ operator_journey_id: string }>>;

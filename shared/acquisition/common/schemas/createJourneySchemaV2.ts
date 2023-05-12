@@ -3,7 +3,7 @@ import {
   contributionSchema,
   distanceSchema,
   identityPropsSchema,
-  incentivesScema,
+  incentivesSchema,
   paymentsSchema,
   revenueSchema,
   seatSchema,
@@ -40,7 +40,7 @@ const driverSchema = {
     start: startSchema,
     end: endSchema,
     revenue: revenueSchema,
-    incentives: incentivesScema,
+    incentives: incentivesSchema,
     payments: paymentsSchema,
     distance: distanceSchema,
     duration: {
@@ -61,7 +61,7 @@ const passengerSchema = {
     end: endSchema,
     seats: seatSchema,
     contribution: contributionSchema,
-    incentives: incentivesScema,
+    incentives: incentivesSchema,
     payments: paymentsSchema,
     distance: distanceSchema,
     duration: {

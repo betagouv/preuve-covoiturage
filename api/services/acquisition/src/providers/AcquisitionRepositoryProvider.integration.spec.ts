@@ -8,6 +8,7 @@ import {
 } from '../interfaces/AcquisitionRepositoryProviderInterface';
 import { StatusEnum } from '../shared/acquisition/status.contract';
 import { subDays } from 'date-fns';
+import { NotFoundException } from '@ilos/common';
 
 interface TestContext {
   repository: AcquisitionRepositoryProvider;
@@ -36,7 +37,9 @@ function createPayload(data: Partial<AcquisitionCreateInterface>): AcquisitionCr
     application_id: 1,
     api_version: 1,
     request_id: 'my request id',
-    payload: {},
+    payload: {
+      test: '12345',
+    },
     ...data,
   };
 }
@@ -247,8 +250,8 @@ test.serial('Should find then update with selectors', async (t) => {
   t.deepEqual(
     result.map(({ created_at, ...r }) => r),
     [
-      { _id: 5, payload: {}, api_version: 1, operator_id: t.context.operator_id },
-      { _id: 6, payload: {}, api_version: 1, operator_id: t.context.operator_id },
+      { _id: 5, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
+      { _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
     ],
   );
   await fn();
@@ -262,7 +265,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result1.map(({ created_at, ...r }) => r),
-    [{ _id: 5, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 5, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
 
   const [result2, fn2] = await t.context.repository.findThenUpdate({
@@ -272,7 +275,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result2.map(({ created_at, ...r }) => r),
-    [{ _id: 6, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
 
   await fn1(); // release lock 1
@@ -283,7 +286,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result3.map(({ created_at, ...r }) => r),
-    [{ _id: 5, payload: {}, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 5, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
   await fn2({ acquisition_id: 6, status: AcquisitionStatusEnum.Ok });
   await fn2();
@@ -436,4 +439,41 @@ test.serial('Should cancel acquisition', async (t) => {
       cancel_message: 'TOTO',
     },
   ]);
+});
+
+test.serial('Should throw not found if trying to path unexisting acquistion', async (t) => {
+  const error1 = await t.throwsAsync(
+    async () =>
+      await t.context.repository.patchPayload({ operator_id: null, operator_journey_id: undefined, status: [] }, {}),
+  );
+  t.true(error1 instanceof NotFoundException);
+
+  const error2 = await t.throwsAsync(
+    async () =>
+      await t.context.repository.patchPayload(
+        { operator_id: 1, operator_journey_id: '4', status: [AcquisitionStatusEnum.Ok] },
+        {},
+      ),
+  );
+  t.true(error2 instanceof NotFoundException);
+});
+
+test.serial('Should patch payload', async (t) => {
+  await t.context.repository.patchPayload(
+    { operator_id: 1, operator_journey_id: '1', status: [AcquisitionStatusEnum.Error, AcquisitionStatusEnum.Pending] },
+    { test2: true },
+  );
+  const result = await t.context.db.connection.getClient().query({
+    text: `SELECT payload 
+    FROM ${t.context.repository.table}
+    WHERE operator_id = $1 AND journey_id = $2 
+    `,
+    values: [1, '1'],
+  });
+  t.deepEqual(result.rows[0], {
+    payload: {
+      test: '12345',
+      test2: true,
+    },
+  });
 });

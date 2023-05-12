@@ -39,7 +39,7 @@ export const incentiveSchema = {
   },
 };
 
-export const incentivesScema = {
+export const incentivesSchema = {
   type: 'array',
   minItems: 0,
   maxItems: 20,

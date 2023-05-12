@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
 import { castStatus, fromStatus } from '../helpers/castStatus';
 import {
@@ -358,5 +358,42 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       values: [start, end, operator_id, carpool_status, limit, offset],
     });
     return result.rows;
+  }
+
+  async patchPayload<P = any>(
+    search: { operator_id: number; operator_journey_id: string; status: Array<AcquisitionStatusEnum> },
+    payload: P,
+  ): Promise<void> {
+    const connection = await this.connection.getClient().connect();
+    await connection.query('BEGIN');
+    try {
+      const oldPayloadResult = await connection.query({
+        text: `
+          SELECT payload FROM ${this.table}
+          WHERE operator_id = $1 AND journey_id = $2 AND status = ANY($3)
+          FOR UPDATE SKIP LOCKED
+        `,
+        values: [search.operator_id, search.operator_journey_id, search.status],
+      });
+
+      if (!oldPayloadResult.rowCount) {
+        throw new NotFoundException();
+      }
+
+      const newPayload = { ...oldPayloadResult.rows[0].payload, ...payload };
+      await connection.query({
+        text: `
+          UPDATE ${this.table} SET payload = $4
+          WHERE operator_id = $1 AND journey_id = $2 AND status = ANY($3)
+        `,
+        values: [search.operator_id, search.operator_journey_id, search.status, JSON.stringify(newPayload)],
+      });
+      await connection.query('COMMIT');
+    } catch (e) {
+      await connection.query('ROLLBACK');
+      throw e;
+    } finally {
+      connection.release();
+    }
   }
 }
