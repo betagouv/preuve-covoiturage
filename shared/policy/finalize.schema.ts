@@ -7,6 +7,7 @@ export const schema = {
     to: { macro: 'timestamp' },
     tz: { macro: 'tz' },
     sync_incentive_sum: { type: 'boolean' },
+    clear: { type: 'boolean' },
   },
 };
 

@@ -9,7 +9,11 @@
       "size": "M"
     },
     {
-      "command": "0 3 * * * yarn ilos campaign:process --resync --finalize",
+      "command": "0 3 * * * yarn ilos campaign:apply --detach",
+      "size": "M"
+    },
+    {
+      "command": "0 4 * * * yarn ilos campaign:finalize --detach",
       "size": "M"
     }
   ]

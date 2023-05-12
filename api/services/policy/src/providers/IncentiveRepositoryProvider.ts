@@ -269,6 +269,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     return;
   }
 
+  // TODO dedup from PolicyRepositoryProvider.syncIncentiveSum
   async updateIncentiveSum(): Promise<void> {
     await this.connection.getClient().query(`
       UPDATE policy.policies p

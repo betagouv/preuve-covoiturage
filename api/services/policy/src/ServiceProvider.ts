@@ -12,23 +12,24 @@ import { binding as finalizeSchemaBinding } from './shared/policy/finalize.schem
 import { binding as findSchemaBinding } from './shared/policy/find.schema';
 import { binding as listSchemaBinding } from './shared/policy/list.schema';
 import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
-import { binding as simulateOnPastGeoSchemaBinding } from './shared/policy/simulateOnPastGeo.schema';
 import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOnPast.schema';
+import { binding as simulateOnPastGeoSchemaBinding } from './shared/policy/simulateOnPastGeo.schema';
 import { binding as statsSchemaBinding } from './shared/policy/stats.schema';
 import { binding as syncIncentiveSumSchemaBinding } from './shared/policy/syncIncentiveSum.schema';
 
 import { ApplyAction } from './actions/ApplyAction';
 import { FinalizeAction } from './actions/FinalizeAction';
 import { FindAction } from './actions/FindAction';
+import { GetPastSimulationOrComputeAction } from './actions/GetPastSimulationOrComputeAction';
 import { ListAction } from './actions/ListAction';
 import { SimulateOnFutureAction } from './actions/SimulateOnFutureAction';
 import { SimulateOnPastAction } from './actions/SimulateOnPastAction';
-import { StatsAction } from './actions/StatsAction';
-
-import { GetPastSimulationOrComputeAction } from './actions/GetPastSimulationOrComputeAction';
 import { SimulateOnPastByGeoAction } from './actions/SimulateOnPastByGeoAction';
+import { StatsAction } from './actions/StatsAction';
 import { syncIncentiveSumAction } from './actions/SyncIncentiveSumAction';
-import { ProcessCommand } from './commands/ProcessCommand';
+import { ApplyCommand } from './commands/ApplyCommand';
+import { FinalizeCommand } from './commands/FinalizeCommand';
+
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvider';
 import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
@@ -69,7 +70,7 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
     StatsAction,
     syncIncentiveSumAction,
   ],
-  commands: [ProcessCommand],
+  commands: [ApplyCommand, FinalizeCommand],
   connections: [
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],

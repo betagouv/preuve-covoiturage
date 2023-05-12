@@ -10,23 +10,20 @@ import { Timezone } from '@pdc/provider-validator';
 import { castUserStringToUTC, toISOString } from '../helpers';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
 import { signature as apply } from '../shared/policy/apply.contract';
-import { signature as finalize } from '../shared/policy/finalize.contract';
 
 interface CommandOptions {
   campaigns: number[];
   from: string;
   to: string;
   tz: Timezone;
-  finalize: boolean;
   detach: boolean;
-  resync: boolean;
   override: boolean;
 }
 
 @command()
-export class ProcessCommand implements CommandInterface {
-  static readonly signature: string = 'campaign:process';
-  static readonly description: string = 'Process campaign rules';
+export class ApplyCommand implements CommandInterface {
+  static readonly signature: string = 'campaign:apply';
+  static readonly description: string = 'Apply stateless campaign rules';
   static readonly options: CommandOptionType[] = [
     {
       signature: '-c, --campaigns <campaigns>',
@@ -53,18 +50,8 @@ export class ProcessCommand implements CommandInterface {
       default: 'Europe/Paris',
     },
     {
-      signature: '--finalize',
-      description: 'finalize incentive calculations depending on context. (applies to ALL campaigns)',
-      default: false,
-    },
-    {
       signature: '-d, --detach',
       description: 'detach execution to background jobs',
-      default: false,
-    },
-    {
-      signature: '--resync',
-      description: 'resync the max_amount_restriction keys to incentive_sum',
       default: false,
     },
     {
@@ -109,29 +96,15 @@ export class ProcessCommand implements CommandInterface {
         // of further incentives.
         if (params.override && params.to) {
           // eslint-disable-next-line prettier/prettier,max-len
-        console.warn('[campaign:process] Be careful when re-processing incentives with the --override option in conjunction with a --to end date. Further incentives will have to be re-processed and finalized too.');
+          console.warn('[campaign:apply] Be careful when re-processing incentives with the --override option in conjunction with a --to end date. Further incentives will have to be re-processed and finalized too.');
         }
 
         // call the action
         if (options.detach) {
-          console.info(`[campaign:process] run policy ${policy_id} in detached mode`);
+          console.info(`[campaign:apply] run policy ${policy_id} in detached mode`);
           await this.kernel.notify(apply, params, context);
         } else {
           await this.kernel.call(apply, params, context);
-        }
-
-        // finalize processed incentives once all campaigns are done
-        // works only in sync mode.
-        if (options.finalize) {
-          if (options.detach) {
-            return console.warn(`[campaign:process] --detach cannot be used with --finalize`);
-          }
-
-          console.info(`[campaign:process] finalize all campaigns`);
-          const finalizeParams: Record<string, any> = { tz: params.tz, sync_incentive_sum: options.resync };
-          if (params.to) finalizeParams.to = params.to;
-          if (params.from) finalizeParams.from = params.from;
-          await this.kernel.call(finalize, finalizeParams, context);
         }
       }
 
