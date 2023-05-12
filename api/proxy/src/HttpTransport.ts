@@ -430,6 +430,19 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
+    this.app.patch(
+      '/v3/journeys/:operator_journey_id',
+      checkRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', null);
+        const response = (await this.kernel.handle(
+          createRPCPayload('acquisition:patch', { operator_journey_id: req.params.operator_journey_id, ...req.body }, user, { req }),
+        )) as RPCResponseType;
+        this.send(res, response, {});
+      }),
+    );
+
     // cancel existing journey
     this.app.delete(
       '/v2/journeys/:id',
