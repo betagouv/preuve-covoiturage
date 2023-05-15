@@ -47,7 +47,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           status = $3::policy.incentive_status_enum
       `,
       values: [
-        failure ? IncentiveStatusEnum.Draft : IncentiveStatusEnum.Valitated,
+        failure ? IncentiveStatusEnum.Draft : IncentiveStatusEnum.Validated,
         before,
         IncentiveStatusEnum.Pending,
       ],
@@ -269,6 +269,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     return;
   }
 
+  // TODO dedup from PolicyRepositoryProvider.syncIncentiveSum
   async updateIncentiveSum(): Promise<void> {
     await this.connection.getClient().query(`
       UPDATE policy.policies p

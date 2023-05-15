@@ -1,10 +1,11 @@
 import { Timezone } from '@pdc/provider-validator';
 
 export type ParamsInterface = Partial<{
-  to: Date;
-  from: Date;
+  to: string;
+  from: string;
   tz: Timezone;
   sync_incentive_sum: boolean;
+  clear: boolean;
 }>;
 
 export type ResultInterface = void;

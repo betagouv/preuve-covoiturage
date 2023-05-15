@@ -1,9 +1,9 @@
-import { handler, KernelInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
-import { defaultTz, subDaysTz, today, toTzString } from '../helpers';
+import { castUserStringToUTC, defaultTz, subDaysTz, today, toISOString, toTzString } from '../helpers';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   IncentiveStatusEnum,
@@ -16,6 +16,10 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/polic
 import { alias } from '../shared/policy/finalize.schema';
 import { signature as syncincentivesumSignature } from '../shared/policy/syncIncentiveSum.contract';
 
+// TOFIX ?
+// from and to props must be strings to pass schema validation
+// we need Dates in the code.
+type DefaultParamsInterface = Omit<Required<ParamsInterface>, 'from' | 'to'> & { from: Date; to: Date };
 @handler({ ...handlerConfig, middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]] })
 export class FinalizeAction extends AbstractAction {
   constructor(
@@ -23,23 +27,31 @@ export class FinalizeAction extends AbstractAction {
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
     private metaRepository: MetadataRepositoryProviderInterfaceResolver,
     private kernel: KernelInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     if (!!env('APP_DISABLE_POLICY_PROCESSING', false)) {
-      return;
+      return console.warn('[campaign:finalize] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING');
     }
 
-    const hasLock = await this.policyRepository.getLock();
-    if (!hasLock) {
-      console.debug('[policies] stateful already processing');
-      return;
+    console.time('[campaign:finalize] stateful');
+    const { from, to, sync_incentive_sum, clear } = this.defaultParams(params);
+
+    // clear dead locks prior to finalization (meant to be used manually, not in CRON)
+    if (clear) {
+      await this.policyRepository.clearDeadLocks();
     }
 
-    console.time('[policies] stateful');
-    const { from, to, sync_incentive_sum } = this.defaultParams(params);
+    // create a lock to avoid parallel processing
+    const lock = await this.policyRepository.getLock();
+    if (!lock) {
+      return console.warn('[campaign:finalize] stateful already processing');
+    }
+
+    console.debug(`[campaign:finalize] Acquired lock #${lock._id} at ${toISOString(lock.started_at)}`);
 
     // resync incentive_sum for all policies
     // call the action instead of the repo to avoid having
@@ -55,28 +67,28 @@ export class FinalizeAction extends AbstractAction {
 
     try {
       // eslint-disable-next-line prettier/prettier,max-len
-      console.debug(`[policies] stateful starting from ${from ? toTzString(from) : 'start'} until ${to ? toTzString(to) : 'now' }`);
+      console.debug(`[campaign:finalize] stateful starting from ${from ? toTzString(from) : 'start'} until ${to ? toTzString(to) : 'now' }`);
       await this.processStatefulPolicies(policyMap, to, from);
-      console.debug('[policies] stateful finished');
+      console.debug('[campaign:finalize] stateful finished');
 
       // Lock all
-      console.debug(`[policies] lock all incentive until ${toTzString(to)}`);
+      console.debug(`[campaign:finalize] lock all incentive until ${toTzString(to)}`);
       await this.incentiveRepository.lockAll(to);
-      console.debug('[policies] lock finished');
+      console.debug('[campaign:finalize] lock finished');
 
       // Release the lock
       await this.policyRepository.releaseLock({ from_date: from, to_date: to });
     } catch (e) {
-      console.debug(`[policies:failure] unlock all incentive until ${toTzString(to)}`);
+      console.debug(`[campaign:finalize] unlock all incentive until ${toTzString(to)} in catch block`);
       await this.incentiveRepository.lockAll(to, true);
-      console.debug('[policies:failure] unlock finished');
+      console.debug('[campaign:finalize] unlock finished in catch block');
 
       // Release the lock
       await this.policyRepository.releaseLock({ from_date: from, to_date: to, error: e });
       throw e;
     } finally {
       // Release the lock ?
-      console.timeEnd('[policies] stateful');
+      console.timeEnd('[campaign:finalize] stateful');
     }
   }
 
@@ -84,15 +96,12 @@ export class FinalizeAction extends AbstractAction {
    * Trips are finalized until 5 days ago to make sure the data is sent by the operators
    * and make sure the trips are finalized before APDF are generated on the 6th of every month
    */
-  protected defaultParams(params: ParamsInterface): Required<ParamsInterface> {
+  protected defaultParams(params: ParamsInterface): DefaultParamsInterface {
     const tz = params.tz ?? defaultTz;
+    const from = castUserStringToUTC(params.from) || subDaysTz(today(tz), this.config.get('policies.finalize.from'));
+    const to = castUserStringToUTC(params.to) || subDaysTz(today(tz), this.config.get('policies.finalize.to'));
 
-    return {
-      tz,
-      from: params.from ?? subDaysTz(today(tz), 15),
-      to: params.to ?? subDaysTz(today(tz), 5),
-      sync_incentive_sum: !!params.sync_incentive_sum,
-    };
+    return { tz, from, to, sync_incentive_sum: !!params.sync_incentive_sum, clear: !!params.clear };
   }
 
   protected async processStatefulPolicies(
@@ -127,17 +136,14 @@ export class FinalizeAction extends AbstractAction {
       // 4. Update incentives
       await this.incentiveRepository.updateStatefulAmount(updatedIncentives, IncentiveStatusEnum.Pending);
       const duration = new Date().getTime() - bench;
-      console.debug(
-        `[policies] stateful incentive processing ${updatedIncentives.length} incentives done in ${duration}ms (${(
-          (updatedIncentives.length / duration) *
-          1000
-        ).toFixed(3)}/s)`,
-      );
+      const len = updatedIncentives.length;
+      const rate = ((len / duration) * 1000).toFixed(3);
+      console.debug(`[campaign:finalize] ${len} incentives done in ${duration}ms (${rate}/s)`);
     } while (!done);
 
     // 5. Persist meta
-    console.debug('[policies] store metadata');
+    console.debug('[campaign:finalize] store metadata');
     await store.store(MetadataLifetime.Day);
-    console.debug('[policies] store metadata done');
+    console.debug('[campaign:finalize] store metadata done');
   }
 }

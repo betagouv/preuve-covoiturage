@@ -18,7 +18,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
 
   constructor(protected connection: PostgresConnection) {}
 
-  async getLock(): Promise<boolean> {
+  async getLock(): Promise<{ _id: number; started_at: Date } | null> {
     const conn = await this.connection.getClient().connect();
     await conn.query('BEGIN');
     try {
@@ -31,16 +31,18 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
         FOR UPDATE
       `);
       if (res.rowCount >= 1) {
-        return false;
+        return null;
       }
       await conn.query(`
         UPDATE ${this.lockTable} SET stopped_at = NOW(), success = false WHERE stopped_at IS NULL
       `);
-      await conn.query(`
+      const lock = await conn.query(`
         INSERT INTO ${this.lockTable} (started_at) VALUES (NOW())
+        RETURNING _id, started_at
       `);
+      if (!lock.rowCount) throw new Error('Failed to acquire lock');
       await conn.query('COMMIT');
-      return true;
+      return lock.rows[0];
     } catch (e) {
       await conn.query('ROLLBACK');
       throw e;
@@ -68,6 +70,19 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
       `,
       values: [lockInformation?.error ? false : true, JSON.stringify(data)],
     });
+  }
+
+  async clearDeadLocks(): Promise<void> {
+    console.warn(`Clearing dead locks from ${this.lockTable} table`);
+
+    const res = await this.connection.getClient().query(`
+      UPDATE ${this.lockTable}
+      SET stopped_at = NOW(), success = false, data = '{"command":"campaign:finalize --clear","manual":true}'
+      WHERE stopped_at IS NULL
+      RETURNING _id
+    `);
+
+    console.warn(`Cleared ${res.rowCount} dead locks`);
   }
 
   async find(id: number, territoryId?: number): Promise<SerializedPolicyInterface | undefined> {
@@ -329,7 +344,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
             WHERE policy_id = $1
               AND status = 'validated'
           )
-          SELECT SUM(amount)::int AS incentive_sum
+          SELECT COALESCE(SUM(amount)::int, 0) AS incentive_sum
           FROM policy.incentives
           WHERE policy_id = $1
             AND datetime <= (SELECT max FROM latest_incentive)
