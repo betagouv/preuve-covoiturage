@@ -1,4 +1,3 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,9 +5,8 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
-import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
-  endsAt,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
   LimitTargetEnum,
@@ -16,12 +14,12 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
-  startsAt,
   watchForGlobalMaxAmount,
   watchForGlobalMaxTrip,
   watchForPassengerMaxByTripByDay,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Nm.html';
 
@@ -50,11 +48,8 @@ export const Nm: PolicyHandlerStaticInterface = class extends AbstractPolicyHand
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
     isOperatorClassOrThrow(ctx, this.operatorClass);
-
     // Exclure les trajets qui ne sont pas dans l'aom NM
-    if (!startsAt(ctx, { aom: ['244400404'] }) || !endsAt(ctx, { aom: ['244400404'] })) {
-      throw new NotEligibleTargetException();
-    }
+    startAndEndAtOrThrow(ctx, { aom: ['244400404'] });
   }
 
   processStateless(ctx: StatelessContextInterface): void {

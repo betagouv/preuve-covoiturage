@@ -9,10 +9,10 @@ import {
   isOperatorClassOrThrow,
   LimitTargetEnum,
   onDistanceRangeOrThrow,
-  startsAndEndsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxTripByDay,
 } from '../helpers';
+import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './Normandie.html';
 
@@ -38,11 +38,7 @@ export const Normandie: PolicyHandlerStaticInterface = class
   protected processExclusion(ctx: StatelessContextInterface) {
     onDistanceRangeOrThrow(ctx, { min: 5_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
-
-    // Dans la région
-    if (!startsAndEndsAt(ctx, { reg: ['28'] })) {
-      throw new NotEligibleTargetException('Journey start & end not in region');
-    }
+    startAndEndAtOrThrow(ctx, { reg: ['28'] });
 
     // En excluant les trajets intra aom excepté les epci n'ayant pas la compétence mobilité
     if (

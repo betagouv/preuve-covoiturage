@@ -11,7 +11,7 @@ export const description = `<p _ngcontent-fyn-c231="" id="summary" class="campai
 <p>Les restrictions suivantes seront appliquées :</p>
 <ul>
   <li><b>6 trajets maximum pour le conducteur par jour.</b></li>
-  <li><b>120€ maximum pour le conducteur par jour.</b></li>
+  <li><b>120€ maximum pour le conducteur par mois.</b></li>
 </ul>
 <p>La campagne est éligible à tous les opérateurs du RPC proposant des preuves de classe <b>C</b>.</p>
 <p>Les trajets au départ et à l'arrivée des AOMs suivantes ne sont pas incités : </p>

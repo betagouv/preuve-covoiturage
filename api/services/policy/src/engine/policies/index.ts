@@ -20,6 +20,8 @@ import { MetropoleSavoie } from './MetropoleSavoie';
 import { Smt2023 } from './Smt2023';
 import { LaRochelle } from './LaRochelle';
 import { PaysBasque } from './PaysBasque';
+import { Atmb } from './Atmb';
+import { Pmgf2023 } from './Pmgf2023';
 
 export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
   // disable prettier to avoid having it reformat to a single line
@@ -47,6 +49,8 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     Cotentin,
     LaRochelle,
     PaysBasque,
+    Atmb,
+    Pmgf2023
   ].map((h) => [h.id, h]),
   /* eslint-enable prettier/prettier */
 );
