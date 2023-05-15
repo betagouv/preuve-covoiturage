@@ -22,6 +22,7 @@ jobs:
         with:
           node-version: '16'
           cache: 'yarn'
+          working-directory: api
 
       - name: Install
         run: yarn install --frozen-lockfile --non-interactive
