@@ -18,7 +18,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
 
   constructor(protected connection: PostgresConnection) {}
 
-  async getLock(): Promise<{ _id: string; started_at: Date } | null> {
+  async getLock(): Promise<{ _id: number; started_at: Date } | null> {
     const conn = await this.connection.getClient().connect();
     await conn.query('BEGIN');
     try {

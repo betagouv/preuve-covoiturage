@@ -124,7 +124,7 @@ test.serial('Should get lock', async (t) => {
   t.is(beforeLockResult.rows[0].count, '0');
 
   const hasLock = await t.context.repository.getLock();
-  t.is(hasLock, true);
+  t.is(hasLock, { _id: 1, started_at: new Date('2022-01-01') });
 
   const result = await t.context.db.connection.getClient().query(`SELECT * FROM ${t.context.repository.lockTable}`);
 
@@ -138,7 +138,7 @@ test.serial('Should get lock', async (t) => {
   };
 
   const hasNoLock = await t.context.repository.getLock();
-  t.is(hasNoLock, false);
+  t.is(hasNoLock, null);
 
   await t.notThrowsAsync(async () => await t.context.repository.releaseLock(data));
   const afterLockResult = await t.context.db.connection
