@@ -6,6 +6,16 @@ title: Campagnes
 
 Configure and execute campaign algorithms.
 
+## Variables d'environnement
+
+Config : `src/config/policies.ts`
+
+| Variable | Type | Défaut | Commentaire |
+| --- | --- | --- | --- |
+| `APP_DISABLE_POLICY_PROCESSING` | `boolean` | `false` | Bloque l'execution de `apply` et `finalize` |
+| `APP_POLICY_FINALIZE_DEFAULT_FROM` | `number` | 15 | Nombre de jours pour le début de la plage de temps de finalisation. |
+| `APP_POLICY_FINALIZE_DEFAULT_TO` | `number` | 5 | Nombre de jours pour la fin de la plage de temps de finalisation. Les incitations seront finalisées entre -15 et -5 jours. |
+
 ## Actions
 
 ### Apply `yarn ilos campaign:apply`
@@ -57,3 +67,68 @@ Paramètres:
   --clear                         Supprime les locks morts dans la table policy.lock pour forcer
                                   l'exécution du finalize
 ```
+
+### Exemples d'utilisation
+
+> On préfixe la commande de `APP_POSTGRES_TIMEOUT=0 APP_REQUEST_TIMEOUT=0 APP_LOG_LEVEL=debug` pour éviter les timeout et avoir un maximum d'infos de debug (si besoin).  
+> L'execution de `apply` et `finalize` peut être bloquée par la variable `APP_DISABLE_POLICY_PROCESSING=true` que l'on peut débloquer en préfixant la commande avec `APP_DISABLE_POLICY_PROCESSING=false`.
+>
+> _Ces variables ne sont appliquées que dans le contexte de la commande_.
+
+#### CRON job quotidien
+
+Utilisé pour lancer quotidiennement le calcul des incitations et leur finalisation. Le `apply` est appliqué aux incitations jusqu'à aujourd'hui et le `finalize` aux incitations jusqu'à -5 jours.
+
+Ces commandes sont appelées dans le fichier `cron.json` utilisé par Scalingo.
+
+```shell
+# Stateless en background job sur toutes les campagnes
+yarn ilos campaign:apply --detach
+
+# Stateful en background job (toujours sur toutes les campagnes)
+# Sans re-synchro de la clé max_amount
+yarn ilos campaign:finalize --detach
+
+# Avec re-synchro de la clé max_amount
+yarn ilos campaign:finalize --detach --resync
+```
+
+#### Lancer / relancer le calcul des incitations
+
+Pour s'assurer que tout a bien été calculé, on peut relancer le calcul sans risque de doublons.
+
+```shell
+yarn ilos campaign:apply
+yarn ilos campaign:finalize
+```
+
+#### Forcer le déblocage du _lock_ s'il y a eu un problème
+
+Pour lister les locks, dans la DB.
+
+```sql
+SELECT * FROM policy.lock ORDER BY _id DESC LIMIT 50;
+```
+
+Si un _lock_ n'a pas de `stopped_at` c'est qu'il est en train de tourner. Si le process a crashé, on peut le débloquer.
+
+```shell
+yarn ilos campaign:finalize --clear
+```
+
+> Les _locks_ débloqués sont conservés en base avec un `stopped_at` à la date d'execution de la commande et un `success = false`.
+
+#### Rejouer des incitations sur une période donnée
+
+Si on constate des erreurs de calcul, qu'une règle a été modifiée dans le fichier `<Campagne>.ts` ou autre raison nécessitant le recalcul des incitations, c'est possible avec la commande suivante.
+
+On précise l'ID de la campagne, les dates de début (`-f`) et de fin (`-t`) et on écrase les valeurs (`--override`).
+
+:warning: Attention ! il faut refaire un `finalize` sur toutes les incitations à partir de cette date car l'application des seuils sera faussée. Il faut également utiliser `--resync` pour re-synchroniser la valeur de consommation de l'enveloppe (`max_amount`).
+
+```shell
+yarn ilos campaign:apply -c <campaign_id> -f <YYYY-MM-DD> -t <YYYY-MM-DD> --override
+yarn ilos campaign:finalize -f <YYYY-MM-DD> -t <YYYY-MM-DD> --resync
+```
+
+> Il est possible de nettoyer la base manuellement des incitations calculées avant de tout rejouer. Voir les tables `policy.incentives` et `policy.policy_metas`.
