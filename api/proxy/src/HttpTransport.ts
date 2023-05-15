@@ -347,6 +347,45 @@ export class HttpTransport implements TransportInterface {
         this.send(res, response as RPCResponseType);
       }),
     );
+
+    this.app.get(
+      '/v3/geo/route',
+      checkRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', null);
+        const response = (await this.kernel.handle(
+          createRPCPayload('geo:getRouteMeta', req.query, user, { req }),
+        )) as RPCResponseType;
+        this.send(res, response, {}, true);
+      }),
+    );
+
+    this.app.get(
+      '/v3/geo/point/by_address',
+      checkRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', null);
+        const response = (await this.kernel.handle(
+          createRPCPayload('geo:getPointByAddress', req.query, user, { req }),
+        )) as RPCResponseType;
+        this.send(res, response, {}, true);
+      }),
+    );
+
+    this.app.get(
+      '/v3/geo/point/by_insee',
+      checkRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', null);
+        const response = (await this.kernel.handle(
+          createRPCPayload('geo:getPointByCode', req.query, user, { req }),
+        )) as RPCResponseType;
+        this.send(res, response, {}, true);
+      }),
+    );
   }
 
   /**

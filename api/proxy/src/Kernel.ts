@@ -20,6 +20,7 @@ import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
 import { bootstrap as observatoryBootstrap } from '@pdc/service-observatory';
+import { bootstrap as geoBootstrap } from '@pdc/service-geo';
 import { SeedCommand } from './commands/SeedCommand';
 import { config } from './config';
 
@@ -42,6 +43,7 @@ import { config } from './config';
     ...tripcheckBootstrap.serviceProviders,
     ...userBootstrap.serviceProviders,
     ...observatoryBootstrap.serviceProviders,
+    ...geoBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [SeedCommand, Commands.CallCommand],
