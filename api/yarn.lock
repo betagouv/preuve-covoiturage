@@ -206,10 +206,10 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     to-fast-properties "^2.0.0"
 
-"@betagouvpdc/evolution-geo@^1.2.6":
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/@betagouvpdc/evolution-geo/-/evolution-geo-1.2.6.tgz#bb1c7692b01b4b824b241d0ad58fab6c489fe4bd"
-  integrity sha512-zhL0/cimOIN7E7wzlyHKVWSH0XImYje4ZCx2GK0vz5R3Mrz5MeKuH9zd+YUgMG713chY4wXael2rk9WqcG1rAQ==
+"@betagouvpdc/evolution-geo@^1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@betagouvpdc/evolution-geo/-/evolution-geo-1.2.7.tgz#8b125ed4c6f0224881b14ffb2a6b5711fb116f89"
+  integrity sha512-Nv/h9Ge2NMi9/H8Yg512VdUO80rCoINbectTx73R/iKS7aGyyBU8/zBYMauTuxVzpp6BS15zYPpvm6wvxyXjcA==
   dependencies:
     axios "^1.1.3"
     commander "^9.4.1"
@@ -219,7 +219,7 @@
     node-7z "^3.0.0"
     pg "^8.8.0"
     stream-json "^1.7.4"
-    xlsx "file:../../../.cache/yarn/v6/npm-@betagouvpdc-evolution-geo-1.2.6-bb1c7692b01b4b824b241d0ad58fab6c489fe4bd-integrity/node_modules/@betagouvpdc/evolution-geo/vendor/xlsx-0.19.3.tgz"
+    xlsx "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -9217,9 +9217,9 @@ write-pkg@4.0.0:
     type-fest "^0.4.1"
     write-json-file "^3.2.0"
 
-"xlsx@file:vendor/xlsx-0.19.3.tgz":
+"xlsx@https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz":
   version "0.19.3"
-  resolved "file:vendor/xlsx-0.19.3.tgz#f804c1850e2da5260165db0a059dc2a6099d55f3"
+  resolved "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz#f804c1850e2da5260165db0a059dc2a6099d55f3"
 
 xml2js@0.5.0:
   version "0.5.0"

@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: '16'
           cache: 'yarn'
-          working-directory: api
+          cache-dependency-path: api/yarn.lock
 
       - name: Install
         run: yarn install --frozen-lockfile --non-interactive
