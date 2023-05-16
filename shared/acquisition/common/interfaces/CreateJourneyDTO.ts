@@ -3,19 +3,19 @@ enum Target {
   Passenger = 'passenger',
 }
 
-interface Counterpart {
+export interface Counterpart {
   amount: number;
   siret: string;
   target: Target;
 }
 
-interface Incentive {
+export interface Incentive {
   index: number;
   amount: number;
   siret: string;
 }
 
-interface TimeGeoPoint {
+export interface TimeGeoPoint {
   lat: number;
   lon: number;
   datetime: Date;

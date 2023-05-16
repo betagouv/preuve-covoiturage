@@ -31,3 +31,5 @@ export const cancel = {
     },
   ],
 };
+
+export const binding = [alias, cancel];

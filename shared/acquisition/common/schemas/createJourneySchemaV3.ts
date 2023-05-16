@@ -2,7 +2,7 @@ import {
   contributionSchema,
   distanceSchema,
   identityPropsSchema,
-  incentivesScema,
+  incentivesSchema,
   paymentsSchema,
   seatSchema,
 } from './createJourneyCommon';
@@ -18,7 +18,7 @@ export const timeGeoPointSchema = {
   },
 };
 
-const incentiveCounterpartSchema = {
+export const incentiveCounterpartSchema = {
   type: 'object',
   additionalProperties: false,
   minProperties: 3,
@@ -97,7 +97,7 @@ export const createJourneySchemaV3 = {
     passenger: passengerSchema,
     distance: distanceSchema,
     licence_plate: { macro: 'varchar' },
-    incentives: incentivesScema,
+    incentives: incentivesSchema,
     incentive_counterparts: {
       type: 'array',
       items: incentiveCounterpartSchema,
