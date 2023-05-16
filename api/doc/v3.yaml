@@ -148,8 +148,14 @@ components:
       type: array
       description: |
         Tableau reprenant la liste complète des contreparties à l'incitation ayant eu un impact sur le coût du trajet (cible, montant, identifiant de l'incitateur).
+        La somme des contreparties conducteurs et revenue d'une part et des contreparties passagers et contribution d'autre part sont égales.
         Par exemple, un trajet pris en charge dans le cadre d'un engagement des opérateurs à rendre gratuit le trajet passager pour les porteurs d'une carte de transport
-        donnerait lieu à une inscription de cette prise en charge dans ce tableau.
+        donnerait lieu à une inscription de cette prise en charge dans ce tableau qui ne serait pas forcément du même montant que l'incitation versée par la collectivité.
+        Un trajet ayant une politique de gratuité passager et une incitation de 10cts du km pourrait donner la répartition suivante sur un trajet de 5 km :
+          - incentives : [{ siret: '1234567900012', amount: 50, index: 0 }] => montant de l'incitation 10cts / km
+          - driver.revenue: 75 => montant versé au conducteur
+          - passenger.contribution: 0 => montant versé par le passager
+          - incentive_counterparts: [{ siret: '12345678900012', amount: 75, target: 'passenger' }] => montant des contreparties "consommées" sur le trajet
       items:
         type: object
         additionalProperties: false
