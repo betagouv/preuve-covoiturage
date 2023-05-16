@@ -1,17 +1,27 @@
-import S3, { PutObjectRequest } from 'aws-sdk/clients/s3';
+import {
+  GetObjectCommand,
+  GetObjectCommandInput,
+  ListObjectsV2Command,
+  ListObjectsV2CommandInput,
+  ListObjectsV2CommandOutput,
+  PutObjectCommand,
+  PutObjectCommandInput,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import fs from 'fs';
-import path from 'path';
+import { S3ObjectList } from '.';
 
 import { ConfigInterfaceResolver, provider, ProviderInterface } from '@ilos/common';
 import { env } from '@ilos/core';
+import { filenameFromPath, getBucketName, getBucketUrl } from './helpers/buckets';
 import { BucketName } from './interfaces/BucketName';
 
 @provider()
 export class S3StorageProvider implements ProviderInterface {
-  private s3Instances: Map<BucketName, S3> = new Map();
+  private s3Instances: Map<BucketName, S3Client> = new Map();
   private endpoint: string;
   private region: string;
-  private prefix: string;
   private pathStyle: boolean;
 
   public static readonly SEVEN_DAY: number = 7 * 86400;
@@ -22,7 +32,6 @@ export class S3StorageProvider implements ProviderInterface {
   async init(): Promise<void> {
     this.endpoint = env('AWS_ENDPOINT') as string;
     this.region = env('AWS_REGION') as string;
-    this.prefix = env('AWS_BUCKET_PREFIX', env('NODE_ENV', 'local')) as string;
     this.pathStyle = env('AWS_S3_PATH_STYLE', false) ? true : false;
 
     this.s3Instances.set(BucketName.APDF, this.createInstance(BucketName.APDF));
@@ -30,82 +39,52 @@ export class S3StorageProvider implements ProviderInterface {
     this.s3Instances.set(BucketName.Public, this.createInstance(BucketName.Public));
   }
 
-  protected createInstance(bucket: BucketName): S3 {
-    const bucketUrl = this.getBucketUrl(bucket);
+  protected createInstance(bucket: BucketName): S3Client {
+    const bucketUrl = getBucketUrl(bucket);
     const s3BucketEndpoint = !this.pathStyle && bucketUrl !== '';
-    return new S3({
-      s3ForcePathStyle: this.pathStyle,
+
+    return new S3Client({
+      forcePathStyle: this.pathStyle,
       endpoint: s3BucketEndpoint ? bucketUrl : this.endpoint,
       region: this.region,
-      signatureVersion: 'v4',
-      s3BucketEndpoint,
       logger: console,
       ...this.config.get('file.bucket.options', {}),
     });
   }
 
-  async list(bucket: BucketName, prefix?: string): Promise<S3.ObjectList> {
-    const config: S3.ListObjectsV2Request = { Bucket: this.getBucketName(bucket) };
+  async list(bucket: BucketName, prefix?: string): Promise<S3ObjectList> {
+    const params: ListObjectsV2CommandInput = { Bucket: getBucketName(bucket) };
 
     if (prefix) {
-      config.Prefix = prefix;
+      params.Prefix = prefix;
     }
 
-    const result = await this.s3Instances.get(bucket).listObjectsV2(config).promise();
+    const command = new ListObjectsV2Command(params);
+    const result: ListObjectsV2CommandOutput = await this.s3Instances.get(bucket).send(command);
     return result.Contents || [];
   }
 
-  async copy(
-    inputBucket: BucketName,
-    inputFileKey: string,
-    targetBucket: BucketName,
-    targetFileKey: string,
-  ): Promise<void> {
-    await this.s3Instances
-      .get(inputBucket)
-      .copyObject({
-        CopySource: `${this.getBucketName(inputBucket)}/${inputFileKey}`,
-        Bucket: this.getBucketName(targetBucket),
-        Key: targetFileKey,
-      })
-      .promise();
-  }
-
-  async exists(bucket: BucketName, filepath: string): Promise<boolean> {
-    try {
-      await this.s3Instances
-        .get(bucket)
-        .headObject({ Bucket: this.getBucketName(bucket), Key: filepath })
-        .promise();
-      return true;
-    } catch (e) {
-      if (e.code === 'NotFound') {
-        return false;
-      }
-      throw e;
-    }
-  }
-
   async upload(bucket: BucketName, filepath: string, filename?: string, prefix?: string): Promise<string> {
-    const Bucket = this.getBucketName(bucket);
-
+    // Check if file exists
     await fs.promises.access(filepath, fs.constants.R_OK);
 
     try {
       const rs = fs.createReadStream(filepath);
-      let key = filename ?? this.filenameFromPath(filepath);
+      let key = filename ?? filenameFromPath(filepath);
 
       if (prefix) {
         key = `${prefix}/${key}`;
       }
 
-      const params: PutObjectRequest = {
-        Bucket,
+      const params: PutObjectCommandInput = {
+        Bucket: getBucketName(bucket),
         Key: key,
         Body: rs,
         ContentDisposition: `attachment; filepath=${key}`,
       };
-      await this.s3Instances.get(bucket).upload(params).promise();
+
+      const command = new PutObjectCommand(params);
+      await this.s3Instances.get(bucket).send(command);
 
       return key;
     } catch (e) {
@@ -118,23 +97,24 @@ export class S3StorageProvider implements ProviderInterface {
     if (bucket !== BucketName.Public) {
       return this.getSignedUrl(bucket, filekey);
     }
-    return `${this.endpoint}/${this.getBucketName(bucket)}/${filekey}`;
+
+    return `${this.endpoint}/${getBucketName(bucket)}/${filekey}`;
   }
 
   async getSignedUrl(
     bucket: BucketName,
     filekey: string,
-    expires: number = S3StorageProvider.SEVEN_DAY,
+    expiresIn: number = S3StorageProvider.SEVEN_DAY,
   ): Promise<string> {
     try {
-      const Bucket = this.getBucketName(bucket);
-
-      const url = await this.s3Instances.get(bucket).getSignedUrlPromise('getObject', {
-        Bucket,
+      const params: GetObjectCommandInput = {
+        Bucket: getBucketName(bucket),
         Key: filekey,
-        Expires: expires,
         ResponseContentDisposition: `attachment; filepath=${filekey}`,
-      });
+      };
+
+      const command = new GetObjectCommand(params);
+      const url = await getSignedUrl(this.s3Instances.get(bucket), command, { expiresIn });
 
       return url;
     } catch (e) {
@@ -142,23 +122,5 @@ export class S3StorageProvider implements ProviderInterface {
 
       throw e;
     }
-  }
-
-  private getBucketName(bucket: BucketName): string {
-    return `${this.prefix}-${bucket}`;
-  }
-
-  private getBucketUrl(bucket: BucketName): string {
-    return env(`AWS_BUCKET_${bucket.toUpperCase()}_URL`, '') as string;
-  }
-
-  private filenameFromPath(filepath: string): string {
-    const ext = path.extname(filepath);
-    return (
-      path
-        .basename(filepath)
-        .replace(ext, '')
-        .replace(/[^a-z0-9_-]/g, '') + ext
-    );
   }
 }

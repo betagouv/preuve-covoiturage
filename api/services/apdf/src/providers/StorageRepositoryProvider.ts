@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { S3, S3StorageProvider, BucketName, APDFNameProvider } from '@pdc/provider-file';
+import { S3Object, S3ObjectList, S3StorageProvider, BucketName, APDFNameProvider } from '@pdc/provider-file';
 import { subMonths } from 'date-fns';
 import {
   SerializedPolicyInterface,
@@ -15,10 +15,10 @@ export class StorageRepositoryProvider implements StorageRepositoryProviderInter
 
   constructor(private s3StorageProvider: S3StorageProvider, private APDFNameProvider: APDFNameProvider) {}
 
-  async findByCampaign(campaign: SerializedPolicyInterface): Promise<S3.ObjectList> {
+  async findByCampaign(campaign: SerializedPolicyInterface): Promise<S3ObjectList> {
     try {
       const list = await this.s3StorageProvider.list(this.bucket, `${campaign._id}`);
-      return list.filter((obj: S3.Object) => obj.Size > 0);
+      return list.filter((obj: S3Object) => obj.Size > 0);
     } catch (e) {
       console.error(`[Apdf:StorageRepo:findByCampaign] ${e.message}`);
       console.debug(e.stack);
@@ -26,9 +26,9 @@ export class StorageRepositoryProvider implements StorageRepositoryProviderInter
     }
   }
 
-  async enrich(list: S3.ObjectList): Promise<EnrichedApdfType[]> {
+  async enrich(list: S3ObjectList): Promise<EnrichedApdfType[]> {
     return Promise.all(
-      list.map(async (o: S3.Object) => ({
+      list.map(async (o: S3Object) => ({
         ...this.APDFNameProvider.parse(o.Key),
         signed_url: await this.s3StorageProvider.getSignedUrl(this.bucket, o.Key, S3StorageProvider.TEN_MINUTES),
         key: o.Key,
