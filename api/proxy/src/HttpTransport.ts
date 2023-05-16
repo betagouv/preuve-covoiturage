@@ -407,12 +407,14 @@ export class HttpTransport implements TransportInterface {
         )) as RPCResponseType;
         // Temporary solution to map v3 generated certificate model to v2 API model
         const v3Result = response.result;
-        response.result = {
-          journey_id: v3Result.operator_journey_id,
-          metadata: v3Result.data,
-          created_at: v3Result.created_at,
-          status: v3Result.status,
-        };
+        if(v3Result) {
+          response.result = {
+            journey_id: v3Result?.operator_journey_id,
+            metadata: v3Result?.data,
+            created_at: v3Result?.created_at,
+            status: v3Result?.status,
+          };
+        }
         this.send(res, response);
       }),
     );

@@ -26,4 +26,5 @@ console.debug('📚 [apidoc:gen] Generate list of licenses');
 genApiLicenses(config);
 
 copyOpenApi('v2.yaml', 'operateurs-api-v2.yaml');
+copyOpenApi('v3.yaml', 'operateurs-api-v3.yaml');
 copyOpenApi('cee.yaml', 'operateurs-cee.yaml');
