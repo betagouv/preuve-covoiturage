@@ -1,4 +1,4 @@
-FROM node:16.13-alpine
+FROM node:16.20-alpine
 
 RUN apk add p7zip python3 make g++ cmake
 
