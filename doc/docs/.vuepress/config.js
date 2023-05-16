@@ -29,8 +29,12 @@ module.exports = {
                   path: 'acces',
                 },
                 {
-                  title: "Référence",
+                  title: "Référence V2",
                   path: 'api-v2',
+                },
+                {
+                  title: "Référence V3",
+                  path: 'api-v3',
                 },
                 {
                   title: 'Limites',
