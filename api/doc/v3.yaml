@@ -316,7 +316,7 @@ components:
             Correspond au sha d'une chaîne concaténée tel que : sha256(*phone_number*-*last_name*) ou
             - `phone_number` correspond au numéro de téléphone complet au format international sans espace ni tiret. Exemple : +33601020304
             - `last_name` correspond au nom de famille complet en majuscule, sans accent ni tiret ni apostrophe (regexp: [A-Z ]*)
-            Par exemple, M. D'Hérûg-de-l'Hérault ayant le numéro 07 00 01 02 03 04 doit être formatté comme suit "+3370001020304-D HERUG DE L HERAULT"
+            Par exemple, M. D'Hérûg-de-l'Hérault ayant le numéro 07 01 02 03 04 doit être formatté comme suit "+33701020304-D HERUG DE L HERAULT"
         travel_pass:
           type: object
           description: |
