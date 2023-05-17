@@ -14,6 +14,7 @@ Le périmètre géographique de la campagne comprend les zones suivantes
   <li>Communauté de communes des Montagnes du Giffre</li>
   <li>Communauté de communes des 4 rivières</li>
   <li>Communauté de communes de Vallée Verte</li>
+  <li>Communauté de communes de Usses et Rhône</li>
 </ul>
 <p>Les <b> conducteurs </b> effectuant un trajet d'au moins 2 km, avec pour origine et destination le périmètre ci-dessus,
 sont incités selon les règles suivantes : </p>
