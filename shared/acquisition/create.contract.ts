@@ -8,7 +8,7 @@ interface Payload {
 export { PayloadV2, PayloadV3 };
 export type ParamsInterface = Payload & (PayloadV2 | PayloadV3);
 export interface ResultInterface {
-  journey_id: string;
+  operator_journey_id: string;
   created_at: Date;
 }
 export const handlerConfig = {
