@@ -43,7 +43,7 @@ test('should return repository data if validator not fail', async (t) => {
   };
   const result = await action.call(inputData);
   t.log(result);
-  t.deepEqual(result, { journey_id: operator_journey_id, created_at });
+  t.deepEqual(result, { operator_journey_id, created_at });
   const { api_version, ...payload } = inputData.params;
   t.true(validator.validate.calledOnceWith(payload));
   t.true(
