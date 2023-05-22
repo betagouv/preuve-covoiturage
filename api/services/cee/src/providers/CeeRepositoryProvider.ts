@@ -2,7 +2,6 @@ import { InvalidRequestException, NotFoundException } from '@ilos/common';
 import { ConflictException } from '@ilos/common';
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { hash } from '../helpers/crypt';
 import {
   ApplicationCooldownConstraint,
   CeeApplication,
@@ -176,7 +175,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
 
     if (data.identity_key) {
       fields.push(['identity_key', 'varchar']);
-      values.push(await hash(data.identity_key));
+      values.push(data.identity_key);
     }
 
     if (constraint) {
