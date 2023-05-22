@@ -34,10 +34,11 @@ export class SimulateCeeAction extends AbstractAction {
     const operator_id = getOperatorIdOrFail(context);
 
     const constraint: ApplicationCooldownConstraint = this.config.get('rules.applicationCooldownConstraint');
+    const search = { ...params, datetime: new Date() };
     const data =
       params.journey_type === CeeJourneyTypeEnum.Short
-        ? await this.ceeRepository.searchForShortApplication(params, constraint)
-        : await this.ceeRepository.searchForLongApplication(params, constraint);
+        ? await this.ceeRepository.searchForShortApplication(search, constraint)
+        : await this.ceeRepository.searchForLongApplication(search, constraint);
     if (!data) {
       return;
     }
