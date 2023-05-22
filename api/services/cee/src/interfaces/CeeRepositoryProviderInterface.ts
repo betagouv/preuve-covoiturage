@@ -43,6 +43,7 @@ export interface ShortCeeApplication<T = Date> extends CeeApplication<T> {
 }
 
 export interface SearchCeeApplication {
+  datetime: Date;
   last_name_trunc: string;
   phone_trunc: string;
   driving_license?: string;

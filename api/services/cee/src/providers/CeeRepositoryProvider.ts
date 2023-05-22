@@ -79,7 +79,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           : constraint.long.standardized.year,
         journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.year : constraint.long.specific.year,
         journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.after : constraint.long.specific.after,
-        new Date(),
+        search.datetime,
         ...(search.driving_license ? [search.driving_license] : []),
       ],
     };
