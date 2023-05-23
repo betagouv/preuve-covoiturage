@@ -118,6 +118,7 @@ export class RegisterCeeAction extends AbstractAction {
     } catch (e) {
       if (e instanceof ConflictException) {
         const search = {
+          datetime: carpoolData.datetime,
           last_name_trunc: params.last_name_trunc,
           phone_trunc: carpoolData.phone_trunc,
           driving_license: params.driving_license,
@@ -162,6 +163,7 @@ export class RegisterCeeAction extends AbstractAction {
     } catch (e) {
       if (e instanceof ConflictException) {
         const search = {
+          datetime,
           last_name_trunc: params.last_name_trunc,
           phone_trunc: params.phone_trunc,
           driving_license: params.driving_license,

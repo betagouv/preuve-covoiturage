@@ -150,6 +150,7 @@ test.serial('Should find short application with id if exists', async (t) => {
   const search: SearchCeeApplication = {
     last_name_trunc: 'AAA',
     phone_trunc: '+3360000000000',
+    datetime: new Date(),
   };
 
   const result = await t.context.repository.searchForShortApplication(
@@ -165,6 +166,7 @@ test.serial('Should find short application with driver license if exists', async
     last_name_trunc: 'BBB',
     phone_trunc: '+3360000000001',
     driving_license: 'driving_license_1',
+    datetime: new Date(),
   };
 
   const result = await t.context.repository.searchForShortApplication(
@@ -180,6 +182,7 @@ test.serial('Should not find short application if criterias dont match', async (
     last_name_trunc: 'BBB',
     phone_trunc: '+3360000000001',
     driving_license: 'driving_license_2',
+    datetime: new Date(),
   };
 
   const result = await t.context.repository.searchForShortApplication(
@@ -216,6 +219,7 @@ test.serial('Should match cooldown criteria', async (t) => {
     {
       last_name_trunc: 'CCC',
       phone_trunc: '+336123456',
+      datetime: new Date(),
     },
     config.rules.applicationCooldownConstraint,
   );
@@ -225,6 +229,7 @@ test.serial('Should match cooldown criteria', async (t) => {
     {
       last_name_trunc: 'DDD',
       phone_trunc: '+336123457',
+      datetime: new Date(),
     },
     config.rules.applicationCooldownConstraint,
   );
