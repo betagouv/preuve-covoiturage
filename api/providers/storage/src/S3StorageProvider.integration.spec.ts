@@ -9,17 +9,31 @@ import { BucketName } from './interfaces/BucketName';
 import { S3StorageProvider } from './S3StorageProvider';
 
 test('should be uploading file with bucket as sub-domain', async (t) => {
+  t.log('Start test');
   const httpsAgent = new https.Agent({ rejectUnauthorized: false });
   const config = new ConfigStore({ file: { bucket: { options: { httpOptions: { agent: httpsAgent } } } } });
   process.env.AWS_ENDPOINT = 'https://s3.covoiturage.test';
   const s3 = new S3StorageProvider(config);
+
+  t.log(`Init s3 client`);
   await s3.init();
+
   const filename = 'test2.csv';
   const filecontent = { hello: 'world' };
   const filepath = join(tmpdir(), filename);
+
+  t.log(`Write file to ${filepath}`);
   await writeFile(filepath, JSON.stringify(filecontent));
-  await s3.upload(BucketName.Export, filepath, filename);
+
+  t.log(`Start uploading ${filename} to bucket: ${BucketName.Export}`);
+  const key = await s3.upload(BucketName.Export, filepath, filename);
+  t.log(`Uploaded ${filename} to ${key}`);
+
   const url = await s3.getPublicUrl(BucketName.Export, filename);
+  t.log(`Public URL: ${url}`);
+
   const response = await axios.get(url, { httpsAgent });
+  t.log(`Response: ${JSON.stringify(response.data)}`);
+
   t.deepEqual(filecontent, response.data);
 });

@@ -45,7 +45,6 @@ export class S3StorageProvider implements ProviderInterface {
       forcePathStyle: false, // do not support path style
       endpoint: getBucketEndpoint(this.endpoint, bucket),
       region: this.region,
-      logger: console,
       ...this.config.get('file.bucket.options', {}),
     });
   }
