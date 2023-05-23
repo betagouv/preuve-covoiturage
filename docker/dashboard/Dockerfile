@@ -1,4 +1,4 @@
-FROM node:16.13-alpine
+FROM node:18.16-alpine
 
 RUN mkdir -p /app/shared
 RUN mkdir -p /app/dashboard

@@ -1,4 +1,4 @@
-FROM node:16.20 as builder
+FROM node:18.16 as builder
 
 RUN mkdir -p /app/shared
 RUN mkdir -p /app/api
@@ -9,7 +9,7 @@ COPY ./api /app/api
 WORKDIR /app/api
 RUN sh rebuild.sh production
 
-FROM node:16.13-alpine3.15
+FROM node:18.16-alpine3.17
 RUN apk add p7zip
 RUN mkdir /app && chown -R node:node /app
 COPY --chown=node:node --from=builder /app /app

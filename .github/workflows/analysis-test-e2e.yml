@@ -16,10 +16,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Install NodeJS 16
+      - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
       - name: Start
         env:
           APP_INSEE_API_KEY: ${{ secrets.APP_INSEE_API_KEY }}
