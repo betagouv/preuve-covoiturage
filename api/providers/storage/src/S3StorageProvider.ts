@@ -17,6 +17,8 @@ import { env } from '@ilos/core';
 import { filenameFromPath, getBucketName, getBucketEndpoint } from './helpers/buckets';
 import { BucketName } from './interfaces/BucketName';
 
+// @aws-sdk/client-s3 doc: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html
+
 @provider()
 export class S3StorageProvider implements ProviderInterface {
   private s3Instances: Map<BucketName, S3Client> = new Map();

@@ -11,7 +11,7 @@ import { S3StorageProvider } from './S3StorageProvider';
 test('should be uploading file with bucket as sub-domain', async (t) => {
   const httpsAgent = new https.Agent({ rejectUnauthorized: false });
   const config = new ConfigStore({ file: { bucket: { options: { httpOptions: { agent: httpsAgent } } } } });
-  process.env.AWS_BUCKET_EXPORT_URL = 'https://local-pdc-export.s3.covoiturage.test';
+  process.env.AWS_ENDPOINT = 'https://s3.covoiturage.test';
   const s3 = new S3StorageProvider(config);
   await s3.init();
   const filename = 'test2.csv';

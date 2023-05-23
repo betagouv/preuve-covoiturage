@@ -17,15 +17,16 @@ export function getBucketName(bucket: BucketName): string {
 
 export function getBucketEndpoint(endpoint: string, bucket: BucketName): string {
   const key = bucket.toUpperCase().replace('-', '_');
-  const bucketUrl = env(`AWS_BUCKET_${key}_URL`, '') as string;
+  const override = env(`AWS_BUCKET_${key}_ENDPOINT`, '') as string;
 
-  // force the bucket URL with an environment variable
-  if (bucketUrl !== '') {
-    return bucketUrl;
+  // Force the bucket endpoint with an environment variable.
+  // The endpoint does not include the bucket name in the hostname.
+  if (override !== '') {
+    return override;
   }
 
   // inject the bucket name into the URL
-  return endpoint.replace('://', `://${getBucketName(bucket)}.`);
+  return endpoint;
 }
 
 export function filenameFromPath(filepath: string): string {
