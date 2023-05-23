@@ -47,7 +47,7 @@ export class CreateJourneyAction extends AbstractAction {
         throw new ConflictException('Journey already registered');
       }
       return {
-        journey_id: acquisitions[0].operator_journey_id,
+        operator_journey_id: acquisitions[0].operator_journey_id,
         created_at: acquisitions[0].created_at,
       };
     } catch (e) {
