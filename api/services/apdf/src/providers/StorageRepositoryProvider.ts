@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { S3Object, S3ObjectList, S3StorageProvider, BucketName, APDFNameProvider } from '@pdc/provider-file';
+import { S3Object, S3ObjectList, S3StorageProvider, BucketName, APDFNameProvider } from '@pdc/provider-storage';
 import { subMonths } from 'date-fns';
 import {
   SerializedPolicyInterface,

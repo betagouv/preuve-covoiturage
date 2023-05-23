@@ -2,7 +2,7 @@
 import faker from '@faker-js/faker';
 import { ConfigInterfaceResolver } from '@ilos/common';
 import { uuid } from '@pdc/helper-test/dist';
-import { BucketName, S3StorageProvider } from '@pdc/provider-file';
+import { BucketName, S3StorageProvider } from '@pdc/provider-storage';
 import anyTest, { TestFn } from 'ava';
 import { startOfMonth, subMonths } from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';

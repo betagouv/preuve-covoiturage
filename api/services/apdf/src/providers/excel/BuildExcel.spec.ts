@@ -1,4 +1,4 @@
-import { APDFNameProvider } from '@pdc/provider-file';
+import { APDFNameProvider } from '@pdc/provider-storage';
 import anyTest, { TestFn } from 'ava';
 import { stream } from 'exceljs';
 import sinon, { SinonStub } from 'sinon';
