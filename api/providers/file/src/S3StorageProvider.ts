@@ -14,7 +14,7 @@ import { S3ObjectList } from '.';
 
 import { ConfigInterfaceResolver, provider, ProviderInterface } from '@ilos/common';
 import { env } from '@ilos/core';
-import { filenameFromPath, getBucketName, getBucketUrl } from './helpers/buckets';
+import { filenameFromPath, getBucketName, getBucketEndpoint } from './helpers/buckets';
 import { BucketName } from './interfaces/BucketName';
 
 @provider()
@@ -22,7 +22,6 @@ export class S3StorageProvider implements ProviderInterface {
   private s3Instances: Map<BucketName, S3Client> = new Map();
   private endpoint: string;
   private region: string;
-  private pathStyle: boolean;
 
   public static readonly SEVEN_DAY: number = 7 * 86400;
   public static readonly TEN_MINUTES: number = 7 * 600;
@@ -32,31 +31,28 @@ export class S3StorageProvider implements ProviderInterface {
   async init(): Promise<void> {
     this.endpoint = env('AWS_ENDPOINT') as string;
     this.region = env('AWS_REGION') as string;
-    this.pathStyle = env('AWS_S3_PATH_STYLE', false) ? true : false;
 
+    // Create s3 instances for all buckets in the BucketName list
     this.s3Instances.set(BucketName.APDF, this.createInstance(BucketName.APDF));
     this.s3Instances.set(BucketName.Export, this.createInstance(BucketName.Export));
     this.s3Instances.set(BucketName.Public, this.createInstance(BucketName.Public));
   }
 
   protected createInstance(bucket: BucketName): S3Client {
-    const bucketUrl = getBucketUrl(bucket);
-    const s3BucketEndpoint = !this.pathStyle && bucketUrl !== '';
-
     return new S3Client({
-      forcePathStyle: this.pathStyle,
-      endpoint: s3BucketEndpoint ? bucketUrl : this.endpoint,
+      forcePathStyle: false, // do not support path style
+      endpoint: getBucketEndpoint(this.endpoint, bucket),
       region: this.region,
       logger: console,
       ...this.config.get('file.bucket.options', {}),
     });
   }
 
-  async list(bucket: BucketName, prefix?: string): Promise<S3ObjectList> {
+  async list(bucket: BucketName, folder?: string): Promise<S3ObjectList> {
     const params: ListObjectsV2CommandInput = { Bucket: getBucketName(bucket) };
 
-    if (prefix) {
-      params.Prefix = prefix;
+    if (folder) {
+      params.Prefix = folder;
     }
 
     const command = new ListObjectsV2Command(params);
@@ -64,7 +60,7 @@ export class S3StorageProvider implements ProviderInterface {
     return result.Contents || [];
   }
 
-  async upload(bucket: BucketName, filepath: string, filename?: string, prefix?: string): Promise<string> {
+  async upload(bucket: BucketName, filepath: string, filename?: string, folder?: string): Promise<string> {
     // Check if file exists
     await fs.promises.access(filepath, fs.constants.R_OK);
 
@@ -72,8 +68,8 @@ export class S3StorageProvider implements ProviderInterface {
       const rs = fs.createReadStream(filepath);
       let key = filename ?? filenameFromPath(filepath);
 
-      if (prefix) {
-        key = `${prefix}/${key}`;
+      if (folder) {
+        key = `${folder}/${key}`;
       }
 
       const params: PutObjectCommandInput = {
