@@ -15,7 +15,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install NodeJS 16
+      - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: '18'
