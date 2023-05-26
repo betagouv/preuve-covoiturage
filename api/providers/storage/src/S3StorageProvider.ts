@@ -42,10 +42,10 @@ export class S3StorageProvider implements ProviderInterface {
 
   protected createInstance(bucket: BucketName): S3Client {
     return new S3Client({
-      forcePathStyle: false, // do not support path style
-      endpoint: getBucketEndpoint(this.endpoint, bucket),
+      forcePathStyle: true, // hosting uses path-style
+      endpoint: this.endpoint,
       region: this.region,
-      ...this.config.get('file.bucket.options', {}),
+      ...this.config.get('storage.bucket.options', {}),
     });
   }
 

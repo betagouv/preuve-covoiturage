@@ -7,11 +7,20 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { BucketName } from './interfaces/BucketName';
 import { S3StorageProvider } from './S3StorageProvider';
+// import { NodeHttp2Handler } from '@aws-sdk/node-http-handler';
+// import { NodeHttp2HandlerOptions } from '@aws-sdk/types';
 
 test('should be uploading file with bucket as sub-domain', async (t) => {
   t.log('Start test');
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+  // disable https checking
   const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-  const config = new ConfigStore({ file: { bucket: { options: { httpOptions: { agent: httpsAgent } } } } });
+
+  // const requestHandler = new NodeHttp2Handler({});
+  // const config = new ConfigStore({ storage: { bucket: { options: { requestHandler } } } });
+  const config = new ConfigStore({});
+
   process.env.AWS_ENDPOINT = 'https://s3.covoiturage.test';
   const s3 = new S3StorageProvider(config);
 
