@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import csvStringify, { Stringifier } from 'csv-stringify';
+import { Stringifier, stringify } from 'csv-stringify';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -22,13 +22,14 @@ export class BuildFile {
     isOpendata: boolean,
   ): Promise<string> {
     // CSV file
-    const { filename, tz } = this.castFormat(params.type, params, date);
+    const { filename, tz } = this.cast(params.type, params, date);
     const filepath = path.join(os.tmpdir(), filename);
     const fd = await fs.promises.open(filepath, 'a');
 
-    // Write to file
-    const stringifier = this.getStringifier(fd, params.type);
+    // Transform data
+    const stringifier = this.configure(fd, params.type);
     const normalizeMethod = isOpendata ? normalizeOpendata : normalizeExport;
+
     let count = 0;
     do {
       const results = await cursor.read(10);
@@ -38,15 +39,17 @@ export class BuildFile {
       }
     } while (count !== 0);
 
-    // Release
+    // Release the db, end the stream and close the file
     cursor.release();
     stringifier.end();
     await fd.close();
-    console.debug(`Finished export ${filepath}`);
+
+    console.debug(`Finished exporting file: ${filepath}`);
+
     return filepath;
   }
 
-  private castFormat(type: string, params: ParamsInterface, date: Date): Required<FormatInterface> {
+  private cast(type: string, params: ParamsInterface, date: Date): Required<FormatInterface> {
     return {
       tz: params.format?.tz ?? 'Europe/Paris',
       filename:
@@ -54,8 +57,8 @@ export class BuildFile {
     };
   }
 
-  private getStringifier(fd: fs.promises.FileHandle, type = 'opendata'): Stringifier {
-    const stringifier = csvStringify({
+  private configure(fd: fs.promises.FileHandle, type = 'opendata'): Stringifier {
+    const stringifier = stringify({
       delimiter: ';',
       header: true,
       columns: BuildExportAction.getColumns(type),
@@ -64,13 +67,20 @@ export class BuildFile {
         date: (d: Date): string => d.toISOString(),
         number: (n: Number): string => n.toString().replace('.', ','),
       },
+      quoted: true,
+      quoted_empty: true,
+      quoted_string: true,
     });
 
     stringifier.on('readable', async () => {
-      let row;
-      while (null !== (row = stringifier.read())) {
+      let row: string;
+      while ((row = stringifier.read()) !== null) {
         await fd.appendFile(row, { encoding: 'utf8' });
       }
+    });
+
+    stringifier.on('end', () => {
+      console.debug(`Finished exporting CSV`);
     });
 
     stringifier.on('error', (err) => {
