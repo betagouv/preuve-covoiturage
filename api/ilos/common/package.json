@@ -28,7 +28,7 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@types/node": "18",
+    "@types/node": "20",
     "nock": "^13.1.3"
   }
 }
