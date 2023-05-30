@@ -17,7 +17,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: 'Audit API dependencies'
         run: yarn audit --level moderate --groups dependencies && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)

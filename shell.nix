@@ -6,7 +6,7 @@ stdenv.mkDerivation {
     name = "node";
     buildInputs = [
         (yarn.override { nodejs = null; })
-        nodejs-18_x
+        unstable.nodejs_20
         act
         openssl
         unstable.cypress
