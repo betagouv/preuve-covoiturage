@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS common.roles
 );
 
 -- permissions are initialized empty
--- run yarn workspace @pdc/service-user ilos set-permissions
+-- run npm --workspace @pdc/service-user run ilos set-permissions
 -- to set the values calculated from permissions.ts
 INSERT INTO common.roles (slug, description, permissions) VALUES
 ('registry.admin', 'Administrateur du registre', '{}'),

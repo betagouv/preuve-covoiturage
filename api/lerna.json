@@ -2,7 +2,7 @@
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
   "packages": ["db", "ilos/*", "proxy", "providers/*", "services/*"],
   "version": "0.0.1",
-  "npmClient": "yarn",
+  "npmClient": "npm",
   "useNx": true,
   "useWorkspaces": true
 }

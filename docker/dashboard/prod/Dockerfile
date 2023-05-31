@@ -7,9 +7,9 @@ COPY ./shared /app/shared
 COPY ./dashboard /app/dashboard
 
 WORKDIR /app/dashboard
-RUN yarn install --frozen-lockfile --non-interactive
+RUN npm ci
 ENV NODE_ENV=production
-RUN yarn build
+RUN npm run build
 
 FROM nginx:1.21-alpine
 COPY --chown=nginx:nginx --from=builder /app/dashboard/dist/dashboard /usr/share/nginx/html

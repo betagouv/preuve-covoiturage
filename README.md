@@ -34,7 +34,7 @@ You will need `docker` and `docker-compose`.
 3. Edit the `api/.env` file
 4. `docker-compose build`
 5. `./rebuild.sh`
-6. `docker-compose run --rm migrator yarn migrate`
+6. `docker-compose run --rm migrator npm run migrate`
 
 ```shell
 terminal 1: docker-compose up api
@@ -49,23 +49,23 @@ terminal 2: docker-compose up dashboard
 // use SKIP_SQL_MIGRATIONS=true to skip sql migrations
 
 cd api
-yarn migrate
+npm run migrate
 // OR
-docker-compose run api yarn migrate
+docker-compose run api npm run migrate
 ```
 
 ### Frontend testing
 
 ```shell
 # default browser is Chrome
-yarn test
-yarn test --browsers ChromeHeadless
-CHROME_BIN=$(which chrome) yarn test
-CHROME_BIN=$(which chromium) yarn test
-CHROME_BIN=$(which brave-browser) yarn test
+npm run test
+npm run test --browsers ChromeHeadless
+CHROME_BIN=$(which chrome) npm run test
+CHROME_BIN=$(which chromium) npm run test
+CHROME_BIN=$(which brave-browser) npm run test
 
 # requires karma-firefox-launcher (installed)
-yarn test --browsers Firefox
+npm run test --browsers Firefox
 ```
 
 ### End-to-end testing

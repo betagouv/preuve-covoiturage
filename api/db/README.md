@@ -8,7 +8,7 @@ npm install -g db-migrate db-migrate-pg
 
 7zip doit être installé afin de créer la table du référentiel géographique 
 ```
-yarn geo:import
+npm run geo:import
 ```
 
 # Usage

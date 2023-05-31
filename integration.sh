@@ -45,7 +45,7 @@ start() {
 
 seed_data() {
   echo "Seed data"
-  yarn --cwd api workspace @pdc/proxy ilos seed
+  npm --prefix api --workspace @pdc/proxy run ilos seed
 }
 
 create_bucket() {
@@ -74,7 +74,7 @@ run() {
   create_bucket local-pdc-export && \
   create_bucket local-pdc-appels-de-fonds && \ 
   create_bucket local-pdc-public && \
-  yarn --cwd api test:integration 2>&1
+  npm --prefix api run test:integration 2>&1
   EXIT=$?
   stop
   exit $EXIT

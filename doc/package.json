@@ -11,8 +11,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "serve": "yarn dev",
-    "start": "yarn dev",
+    "serve": "npm run dev",
+    "start": "npm run dev",
     "dev": "vuepress dev --port 8081 docs",
     "gen": "node gen/index.js",
     "build": "vuepress build docs"

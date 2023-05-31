@@ -33,7 +33,7 @@ Les vues filtrées sont rafraichies à la suite. Executer les requêtes en paral
 ### Statistiques sur les trajets
 
 ```
-yarn ilos monitoring:journeysstats
+npm run ilos monitoring:journeysstats
 
 Options:
   -u, --database-uri     Connection string Postgresql
@@ -44,7 +44,7 @@ Options:
 Cette commande est appelée quotidiennement dans `cron.json`
 
 ```
-yarn ilos monitoring:stats:refresh
+npm run ilos monitoring:stats:refresh
 
 Options:
   -s, --schema           Schema de base à utiliser.

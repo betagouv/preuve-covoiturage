@@ -21,15 +21,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'yarn'
-          cache-dependency-path: api/yarn.lock
+          cache: 'npm'
+          cache-dependency-path: api/package-lock.json
 
       - name: Install
-        run: yarn install --frozen-lockfile --non-interactive
+        run: npm ci
         working-directory: api
 
       - name: Build
-        run: yarn build
+        run: npm run build
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
         working-directory: api
@@ -44,7 +44,7 @@ jobs:
       - name: Enable ilos cli
         run: | 
           rm -Rf ./proxy/node_modules/
-          yarn install
+          npm ci
         working-directory: api
         
       - name: Run integration tests

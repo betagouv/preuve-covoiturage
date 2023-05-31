@@ -60,7 +60,7 @@ wait_for_app() {
 
 seed_data() {
   echo "Seed data"
-  $DC run --rm api yarn workspace @pdc/proxy ilos seed
+  $DC run --rm api npm --workspace @pdc/proxy run ilos seed
 }
 
 create_bucket() {
@@ -102,17 +102,17 @@ e2e() {
 }
 
 local_e2e() {
-  ( cd tests && yarn && \
+  ( cd tests && npm ci && \
     CYPRESS_MAILHOG_URL=https://mailer.covoiturage.test/api \
     CYPRESS_BASE_URL=https://app.covoiturage.test \
-    yarn cy:open
+    npm run cy:open
   )
 }
 
 run_integration() {
   echo "Start integration test"
   echo $DC
-  $DC run --rm api yarn test:integration
+  $DC run --rm api npm run test:integration
 }
 
 integration() {

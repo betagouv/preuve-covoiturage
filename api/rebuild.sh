@@ -37,11 +37,10 @@ drop_dist() {
 # Install dependencies
 install() {
   echo "Installing dependencies ($1)"
-  args="--frozen-lockfile --non-interactive"
   if [ "$1" = "production" ]; then
-    yarn install $args --production
+    npm ci
   else
-    yarn install $args
+    npm install
   fi
   return $?
 }
@@ -49,7 +48,7 @@ install() {
 # Build
 build() {
   echo "Building app"
-  yarn build
+  npm run build
   return $?
 }
 

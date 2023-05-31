@@ -6,8 +6,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "yarn api & yarn dashboard",
-    "start:local": "yarn api:local & yarn dashboard:local",
+    "start": "npm run api & npm run dashboard",
+    "start:local": "npm run api:local & npm run dashboard:local",
     "api": "eslint --config .eslintrc.js --env node -f ./formatter.js '/code/api/**/src/**/*.ts'",
     "api:local": "eslint --config .eslintrc.js --env node '../../api/**/src/**/*.ts'",
     "dashboard": "eslint --config .eslintrc.js --env browser -f ./formatter.js '/code/dashboard/src/**/*.ts'",

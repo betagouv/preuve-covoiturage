@@ -1,19 +1,19 @@
 {
   "jobs": [
     {
-      "command": "0 6 * * * yarn ilos monitoring:stats:refresh",
+      "command": "0 6 * * * npm run ilos monitoring:stats:refresh",
       "size": "M"
     },
     {
-      "command": "0 5 6 * * yarn ilos apdf:export",
+      "command": "0 5 6 * * npm run ilos apdf:export",
       "size": "M"
     },
     {
-      "command": "0 3 * * * yarn ilos campaign:apply --detach",
+      "command": "0 3 * * * npm run ilos campaign:apply --detach",
       "size": "M"
     },
     {
-      "command": "0 4 * * * yarn ilos campaign:finalize --detach",
+      "command": "0 4 * * * npm run ilos campaign:finalize --detach",
       "size": "M"
     }
   ]

@@ -15,15 +15,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'yarn'
-          cache-dependency-path: doc/yarn.lock
+          cache: 'npm'
+          cache-dependency-path: doc/package-lock.json
 
       - name: Install and Build 🔧
         run: |
           cd doc
-          yarn
-          yarn gen
-          yarn build
+          npm ci
+          npm run gen
+          npm run build
 
       - name: Install SSH Client 🔑
         uses: webfactory/ssh-agent@v0.4.1

@@ -4,7 +4,7 @@ RUN mkdir -p /app
 
 WORKDIR /app
 COPY ./package.json /app
-COPY ./yarn.lock /app
-RUN yarn install
+COPY ./package-lock.json /app
+RUN npm ci
 COPY ./index.js /app
 CMD ["node", "index.js"]

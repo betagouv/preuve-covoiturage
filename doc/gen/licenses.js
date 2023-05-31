@@ -4,6 +4,7 @@ const { exec } = require('child_process');
 
 module.exports = {
   genApiLicenses(config) {
+    /** BROKEN : TO FIX WITH NPM
     exec('yarn -s licenses list --json', (error, stdout, stderr) => {
       if (error) {
         console.debug(`error: ${error.message}`);
@@ -36,5 +37,6 @@ ${md}
 `,
       );
     });
+    */
   },
 };
