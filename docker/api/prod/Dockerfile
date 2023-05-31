@@ -16,4 +16,4 @@ COPY --chown=node:node --from=builder /app /app
 
 USER node
 WORKDIR /app/api
-CMD ["yarn", "start"]
+CMD ["npm", "run", "start"]

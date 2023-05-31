@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "copy-static": "cp -R ./src/*.csv ./dist/",
-    "build": "tsc && yarn copy-static",
+    "build": "tsc && npm run copy-static",
     "watch": "tsc -w",
     "test:unit": "exit 0",
     "test:integration": "ava --config ava.integration.cjs",

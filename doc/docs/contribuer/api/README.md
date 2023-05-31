@@ -80,7 +80,7 @@ api/
 ├─ Procfile           # Scalingo containers' definitions
 ├─ rebuild.sh         # local tool to rebuild the whole project
 ├─ tsconfig.json      # tsc global config
-├─ yarn.lock
+├─ package-lock.json
 ```
 
 ## Hébergement

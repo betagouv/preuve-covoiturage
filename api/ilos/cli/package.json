@@ -12,7 +12,7 @@
   },
   "scripts": {
     "copy-static": "cp -R ./src/stubs ./dist/",
-    "build": "tsc && yarn copy-static",
+    "build": "tsc && npm run copy-static",
     "test:unit": "ava --config ava.unit.cjs",
     "test:integration": "exit 0",
     "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",

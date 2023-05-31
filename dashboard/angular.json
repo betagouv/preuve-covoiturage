@@ -206,6 +206,6 @@
   "defaultProject": "dashboard",
   "cli": {
     "analytics": false,
-    "packageManager": "yarn"
+    "packageManager": "npm"
   }
 }

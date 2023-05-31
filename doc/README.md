@@ -10,8 +10,8 @@ Documentation technique du Registre de preuve de covoiturage publiée sur [https
 ```shell
 git clone ...
 cd doc
-yarn
-yarn dev
+npm install
+npm run dev
 # browse to http://localhost:8080
 ```
 
@@ -22,13 +22,13 @@ La documentation des services et des providers est générée à partir des comm
 Les fichiers `README.md` des différents services et providers sont récupérés et les commentaires en tête des fichiers `*Action.ts` sont utilisés pour lister les actions à la suite.
 
 ```shell
-yarn gen
+npm run gen
 ```
 
 ## Build
 
 ```shell
-yarn build
+npm run build
 ```
 
 ## Déploiement

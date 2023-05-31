@@ -26,8 +26,8 @@ jobs:
         run: |
           cd dashboard
           cat "src/environments/environment.$DEPLOY_ENV.ts" | sed 's/export const /window./' > src/assets/env.js
-          yarn
-          yarn build -c production
+          npm install 
+          npm run build -c production
 
       - name: Install SSH Client 🔑
         uses: webfactory/ssh-agent@v0.4.1

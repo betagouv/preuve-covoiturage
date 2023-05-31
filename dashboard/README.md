@@ -16,7 +16,7 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 ## Running end-to-end tests
 
-Run `yarn run e2e` to execute the end-to-end tests
+Run `npm run e2e` to execute the end-to-end tests
 
 ## Further help
 

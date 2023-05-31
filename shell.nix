@@ -5,7 +5,6 @@ in
 stdenv.mkDerivation {
     name = "node";
     buildInputs = [
-        (yarn.override { nodejs = null; })
         unstable.nodejs_20
         act
         openssl

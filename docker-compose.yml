@@ -113,7 +113,7 @@ services:
     volumes:
       - ./api:/app/api:ro
     working_dir: /app/api
-    command: 'yarn migrate'
+    command: 'npm run migrate'
     tty: true
     env_file: ./api/.env
     networks:

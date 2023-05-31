@@ -171,7 +171,7 @@ services:
       - postgres
       - mailer
       - s3
-    command: ['yarn', 'start:queue']
+    command: ['npm', 'run', 'start:queue']
 
   s3:
     image: minio/minio:edge
