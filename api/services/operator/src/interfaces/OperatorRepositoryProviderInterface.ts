@@ -1,7 +1,7 @@
 import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
 import { OperatorDbInterface } from '../shared/operator/common/interfaces/OperatorDbInterface';
 import { OperatorListInterface } from '../shared/operator/common/interfaces/OperatorListInterface';
-
+import { ResultInterface as FindBySiretResultInterface } from '../shared/operator/findbysiret.contract';
 export interface OperatorRepositoryProviderInterface {
   find(id: number): Promise<OperatorDbInterface>;
   quickFind(
@@ -31,6 +31,11 @@ export abstract class OperatorRepositoryProviderInterfaceResolver implements Ope
   ): Promise<{ uuid: string; name: string; support: string; thumbnail?: string }> {
     throw new Error('Not implemented');
   }
+
+  async findBySiret(siret: string[]): Promise<FindBySiretResultInterface> {
+    throw new Error('Not implemented');
+  }
+
   async all(): Promise<OperatorListInterface[]> {
     throw new Error('Not implemented');
   }

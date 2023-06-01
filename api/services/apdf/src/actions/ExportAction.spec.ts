@@ -1,21 +1,22 @@
 /* eslint-disable max-len */
 import faker from '@faker-js/faker';
-import { ConfigInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
 import { uuid } from '@pdc/helper-test/dist';
 import { BucketName, S3StorageProvider } from '@pdc/provider-storage';
 import anyTest, { TestFn } from 'ava';
 import { startOfMonth, subMonths } from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import sinon, { SinonStub } from 'sinon';
-import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
+import { createGetCampaignResult } from '../helpers/createGetCampaignResult.helper';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
-import { BuildExcel } from '../providers/excel/BuildExcel';
 import { CheckCampaign } from '../providers/CheckCampaign';
+import { BuildExcel } from '../providers/excel/BuildExcel';
 import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 import { ExportAction } from './ExportAction';
 
 interface Context {
   // Injected tokens
+  kernel: KernelInterfaceResolver;
   checkCampaign: CheckCampaign;
   s3StorageProvider: S3StorageProvider;
   buildExcel: BuildExcel;
@@ -23,6 +24,7 @@ interface Context {
   config: ConfigInterfaceResolver;
 
   // Injected tokens method's stubs
+  kernelStub: SinonStub;
   checkCampaignStub: SinonStub;
   s3StorageProviderStub: SinonStub;
   buildExcelStub: SinonStub;
@@ -59,6 +61,7 @@ test.beforeEach((t) => {
   };
   t.context.apdfRepository = new TR();
   t.context.buildExcelsExportAction = new ExportAction(
+    t.context.kernel,
     t.context.checkCampaign,
     t.context.s3StorageProvider,
     t.context.apdfRepository,
@@ -66,6 +69,7 @@ test.beforeEach((t) => {
     t.context.config,
   );
 
+  t.context.kernelStub = sinon.stub(t.context.kernel, 'call');
   t.context.checkCampaignStub = sinon.stub(t.context.checkCampaign, 'call');
   t.context.s3StorageProviderStub = sinon.stub(t.context.s3StorageProvider, 'upload');
   t.context.buildExcelStub = sinon.stub(t.context.buildExcel, 'call');
@@ -79,7 +83,7 @@ test.afterEach((t) => {
 
 test('ExportAction: should create 1 xlsx file for last month if no date range provided, 1 campaign with 1 operator', async (t) => {
   // Arrange
-  const campaign: Campaign = createGetCampaignResultInterface('active');
+  const campaign: Campaign = createGetCampaignResult('active');
   const filename = `campaign-${uuid()}.xlsx`;
   const filepath = `/tmp/exports/${filename}`;
   t.context.checkCampaignStub!.resolves(campaign);
@@ -117,7 +121,7 @@ test('ExportAction: should create 1 xlsx file for last month if no date range pr
 
 test('ExportAction: should create 1 xlsx file if date range provided and 1 campaign id', async (t) => {
   // Arrange
-  const campaign: Campaign = createGetCampaignResultInterface('active');
+  const campaign: Campaign = createGetCampaignResult('active');
   const filename = `campaign-${uuid()}.xlsx`;
   const filepath = `/tmp/exports/${filename}`;
   const s3_key: string = faker.system.fileName();
@@ -175,8 +179,8 @@ test('ExportAction: should create 1 xlsx file if date range provided and 1 campa
 
 test('ExportAction: should create 4 xlsx file if date range provided and 2 campaigns with 2 operators each', async (t) => {
   // Arrange
-  const campaign1: Campaign = createGetCampaignResultInterface('active');
-  const campaign2: Campaign = createGetCampaignResultInterface('active');
+  const campaign1: Campaign = createGetCampaignResult('active');
+  const campaign2: Campaign = createGetCampaignResult('active');
   const expectedFiles: string[] = [0, 1, 2, 3].map((i) => {
     const filename = `${faker.system.fileName()}.xlsx`;
     const filepath = `/tmp/exports/${filename}`;
@@ -230,8 +234,8 @@ test('ExportAction: should create 4 xlsx file if date range provided and 2 campa
 
 test('ExportAction: should send error and process other if 1 export failed', async (t) => {
   // Arrange
-  const campaign1: Campaign = createGetCampaignResultInterface('active');
-  const campaign2: Campaign = createGetCampaignResultInterface('active');
+  const campaign1: Campaign = createGetCampaignResult('active');
+  const campaign2: Campaign = createGetCampaignResult('active');
   t.context.checkCampaignStub!.withArgs(campaign1._id).resolves(campaign1);
   t.context.checkCampaignStub!.withArgs(campaign2._id).resolves(campaign2);
   t.context.apdfRepositoryStub!.resolves([4, 5]);

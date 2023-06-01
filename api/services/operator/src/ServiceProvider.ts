@@ -9,6 +9,7 @@ import { binding as updateBinding } from './shared/operator/update.schema';
 import { binding as deleteBinding } from './shared/operator/delete.schema';
 import { binding as findBinding } from './shared/operator/find.schema';
 import { binding as quickfindBinding } from './shared/operator/quickfind.schema';
+import { binding as findbysiretBinding } from './shared/operator/findbysiret.schema';
 import { binding as patchContactsBinding } from './shared/operator/patchContacts.schema';
 import { binding as patchThumbnailBinding } from './shared/operator/patchThumbnail.schema';
 
@@ -22,6 +23,7 @@ import { FindOperatorAction } from './actions/FindOperatorAction';
 import { QuickFindOperatorAction } from './actions/QuickFindOperatorAction';
 import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorAction';
 import { PatchThumbnailOperatorAction } from './actions/PatchThumbnailOperatorAction';
+import { FindBySiretOperatorAction } from './actions/FindBySiretOperatorAction';
 
 @serviceProvider({
   config,
@@ -32,6 +34,7 @@ import { PatchThumbnailOperatorAction } from './actions/PatchThumbnailOperatorAc
     deleteBinding,
     findBinding,
     quickfindBinding,
+    findbysiretBinding,
     patchContactsBinding,
     patchThumbnailBinding,
   ],
@@ -42,6 +45,7 @@ import { PatchThumbnailOperatorAction } from './actions/PatchThumbnailOperatorAc
     DeleteOperatorAction,
     FindOperatorAction,
     QuickFindOperatorAction,
+    FindBySiretOperatorAction,
     PatchContactsOperatorAction,
     PatchThumbnailOperatorAction,
   ],
