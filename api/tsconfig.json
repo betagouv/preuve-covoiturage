@@ -3,7 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "ES2021",
+    "target": "ES2022",
     "allowJs": false,
     "declaration": true,
     "noImplicitAny": false,
@@ -18,7 +18,7 @@
     "outDir": "dist",
     "incremental": true,
     "baseUrl": ".",
-    "lib": ["ES2021"]
+    "lib": ["ES2022"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
