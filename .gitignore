@@ -11,3 +11,6 @@ tmp
 *.pem
 *.crt
 *.key
+
+# notebooks
+notebooks/playground/*

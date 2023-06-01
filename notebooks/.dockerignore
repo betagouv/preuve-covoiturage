@@ -1,0 +1,4 @@
+.venv
+playground
+scripts
+.pre-commit-config.yaml
