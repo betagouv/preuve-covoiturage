@@ -3,6 +3,9 @@ FROM node:20.2-alpine
 RUN mkdir -p /app/shared
 RUN mkdir -p /app/dashboard
 
+COPY ./shared /app/shared
+COPY ./dashboard /app/dashboard
+
 WORKDIR /app/dashboard
 RUN npm ci
 
