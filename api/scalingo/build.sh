@@ -1,6 +1,6 @@
 #!/bin/sh
 
-npm global add db-migrate db-migrate-pg
+npm install --global db-migrate db-migrate-pg
 
 npx lerna run build
 
