@@ -1,6 +1,6 @@
 import { ceeJourneyTypeEnumSchema, lastNameTruncSchema, phoneTruncSchema, timestampSchema } from './common/ceeSchema';
 
-export const alias = 'campaign.importCeeApplication';
+export const alias = 'cee.importCeeApplication';
 export const schema = {
   type: 'array',
   minItems: 1,

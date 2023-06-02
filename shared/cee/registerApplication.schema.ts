@@ -1,13 +1,14 @@
 import {
   ceeJourneyTypeEnumSchema,
   drivingLicenseSchema,
+  identityKeySchema,
   lastNameTruncSchema,
   operatorJourneyIdSchema,
   phoneTruncSchema,
   timestampSchema,
 } from './common/ceeSchema';
 
-export const alias = 'campaign.registerCeeApplication';
+export const alias = 'cee.registerCeeApplication';
 export const schema = {
   allOf: [
     {
@@ -18,11 +19,7 @@ export const schema = {
         journey_type: ceeJourneyTypeEnumSchema,
         driving_license: drivingLicenseSchema,
         last_name_trunc: lastNameTruncSchema,
-        identity_key: {
-          type: 'string',
-          minLength: 64,
-          maxLength: 64,
-        },
+        identity_key: identityKeySchema,
       },
     },
     {

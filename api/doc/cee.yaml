@@ -151,6 +151,42 @@ components:
           type: string
           format: datetime
           description: Date d'engagement de l'opération concernée.
+    cee_application_identity_import:
+      type: object
+      description: |
+        Précédente demande de CEE.
+        S'il s'agit d'une opération spécifique, le payload est le même que sur l'import, en ajoutant le champs "cee_application_type": "specific".
+        S'il s'agit d'une opération standartisée, il convient d'envoyer l'uuid de la demande tel que : { cee_application_type: 'standardized', cee_application_uuid: 'uuid de la demande', identity_key: 'clée' }. 
+      additionalProperties: false
+      oneOf:
+        - required:
+          - cee_application_type
+          - cee_application_uuid
+          - identity_key
+        - required:
+          - cee_application_type
+          - identity_key
+          - phone_trunc
+          - last_name_trunc
+          - journey_type
+          - datetime
+      properties:
+        cee_application_type:
+          '$ref': '#/components/schemas/cee_application_type'
+        cee_application_uuid:
+          '$ref': '#/components/schemas/cee_application_uuid'
+        identity_key:
+          '$ref': '#/components/schemas/identity_key'
+        journey_type:
+          '$ref': '#/components/schemas/journey_type'
+        phone_trunc:
+          '$ref': '#/components/schemas/phone_trunc'
+        last_name_trunc:
+          '$ref': '#/components/schemas/last_name_trunc'
+        datetime:
+          type: string
+          format: datetime
+          description: Date d'engagement de l'opération concernée.
     cee_application_import_response:
       type: object
       description: Retour de la requête d'import des demandes CEE en batch
@@ -183,6 +219,16 @@ components:
                 properties:
                   error:
                     type: string
+    cee_application_type:
+      type: string
+      description: Type de demande cee
+      enum:
+        - specific
+        - standartized
+    cee_application_uuid:
+      type: string
+      format: uuid
+      description: UUID V4 de la demande
     cee_application:
       type: object
       description: Demande de CEE
@@ -196,9 +242,7 @@ components:
           type: number
           description: Date de l'opération, en l'occurence date de fin du trajet pour la courte distance et date de paiement pour la longue.
         uuid:
-          type: string
-          format: uuid
-          description: UUID V4 de la demande
+          '$ref': '#/components/schemas/cee_application_uuid'
         journey_id:
           type: number
           description: Numéro de trajet interne au rpc correspondant à l'operator_journey_id envoyé
@@ -335,6 +379,32 @@ paths:
               maxItems: 1000
               items:
                 '$ref': '#/components/schemas/cee_application_import'
+      responses:
+        '201':
+          description: Ok
+          content:
+            'application/json':
+              schema:
+                '$ref': '#/components/schemas/cee_application_import_response'
+  /policies/cee/import/identity:
+    post:
+      tags:
+      - cee
+      summary: Importez les clées d'identité des demandes CEE existantes par lot
+      description: |
+        L'API peut être utilisée jusqu'à 20.000x par minute.
+      security:
+        - token: []
+      operationId: policy:cee:import
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: array
+              maxItems: 1000
+              items:
+                '$ref': '#/components/schemas/cee_application_identity_import'
       responses:
         '201':
           description: Ok

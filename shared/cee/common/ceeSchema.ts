@@ -4,6 +4,25 @@ export const ceeJourneyTypeEnumSchema = {
   errorMessage: 'must be either short or long',
 };
 
+export const ceeApplicationTypeEnumSchema = {
+  type: 'string',
+  enum: ['specific', 'standardized'],
+  errorMessage: 'must be either specific or standardized',
+};
+
+export const ceeApplicationUuidSchema = {
+  type: 'string',
+  format: 'uuid',
+  errorMessage: 'must be a valid uuid',
+};
+
+export const identityKeySchema = {
+  type: 'string',
+  minLength: 64,
+  maxLength: 64,
+  errorMessage: 'must be a valid identity key',
+};
+
 export const phoneTruncSchema = {
   macro: 'phonetrunc',
   errorMessage: 'must be a valid trunced phone number',

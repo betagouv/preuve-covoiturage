@@ -59,6 +59,19 @@ export interface CeeImportInterface<T> {
   datetime: T;
 }
 
+export interface CeeImportStandardizedApplicationIdentityInterface {
+  application_type: 'standardized';
+  cee_application_uuid: string;
+  identity_key: string;
+}
+
+export interface CeeImportSpecificApplicationIdentityInterface extends CeeImportInterface<Date> {
+  application_type: 'specific';
+  identity_key: string;
+}
+
+export type CeeImportIdentityInterface = CeeImportStandardizedApplicationIdentityInterface | CeeImportSpecificApplicationIdentityInterface;
+
 export interface CeeImportResultInterface {
   imported: number;
   failed: number;
