@@ -611,4 +611,4 @@ export const timezones = [
   'Zulu',
 ] as const;
 
-export type Timezone = typeof timezones[number];
+export type Timezone = (typeof timezones)[number];

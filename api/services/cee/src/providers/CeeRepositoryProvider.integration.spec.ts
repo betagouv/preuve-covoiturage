@@ -302,11 +302,14 @@ test.serial('Should import identity_key', async (t) => {
 
   await t.throwsAsync(async () => t.context.repository.importSpecificApplicationIdentity(app1));
 
-  const uuidResult = await t.context.db.connection
-    .getClient()
-    .query(
-      `SELECT _id as cee_application_uuid, operator_id FROM ${t.context.repository.table} WHERE identity_key is null AND is_specific = false LIMIT 1`,
-    );
+  const uuidResult = await t.context.db.connection.getClient().query(
+    `SELECT
+        _id as cee_application_uuid, operator_id
+      FROM ${t.context.repository.table}
+      WHERE
+        identity_key is null AND is_specific = false
+      LIMIT 1`,
+  );
   const app2 = {
     ...uuidResult.rows[0],
     identity_key: 'id2',

@@ -304,7 +304,8 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     const query = {
       values,
       text: `
-        INSERT INTO ${this.errorTable} (${keys.join(',')}) VALUES(${keys.map((_, i) => `$${i + 1}`).join(',')})
+        INSERT INTO ${this.errorTable} (${keys.join(',')})
+        VALUES(${keys.map((_, i) => `$${i + 1}`).join(',')})
       `,
     };
 
