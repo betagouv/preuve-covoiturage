@@ -47,6 +47,7 @@ import {
 } from './shared/territory/getAuthorizedCodes.contract';
 
 import { signature as importCeeSignature } from './shared/cee/importApplication.contract';
+import { signature as importIdentityCeeSignature } from './shared/cee/importApplicationIdentity.contract';
 import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
 import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
 
@@ -297,6 +298,27 @@ export class HttpTransport implements TransportInterface {
           res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
         } else {
           res.status(201).json(response.result);
+        }
+      }),
+    );
+
+    this.app.post(
+      '/v3/policies/cee/import/identity',
+      ceeRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
+        );
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(importIdentityCeeSignature, req.body, user, { req }),
+        )) as RPCResponseType;
+        if (!response || 'error' in response || !('result' in response)) {
+          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+        } else {
+          res.status(200).json(response.result);
         }
       }),
     );
