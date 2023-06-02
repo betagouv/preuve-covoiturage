@@ -187,6 +187,38 @@ components:
           type: string
           format: datetime
           description: Date d'engagement de l'opération concernée.
+    cee_application_identity_import_response:
+      type: object
+      description: Retour de la requête d'import des demandes CEE en batch
+      additionalProperties: false
+      required:
+        - imported
+        - failed
+        - failed_details
+      properties:
+        imported:
+          type: number
+          minimum: 0
+          maximum: 1000
+          description: Nombre de demandes importées avec succès
+        failed:
+          type: number
+          minimum: 0
+          maximum: 1000
+          description: Nombre de demandes non importées
+        failed_details:
+          type: array
+          minItems: 0
+          maxItems: 1000
+          items:
+            allOf:
+              - '$ref': '#/components/schemas/cee_application_identity_import'
+              - type: object
+                required: 
+                  - error
+                properties:
+                  error:
+                    type: string
     cee_application_import_response:
       type: object
       description: Retour de la requête d'import des demandes CEE en batch
@@ -406,9 +438,9 @@ paths:
               items:
                 '$ref': '#/components/schemas/cee_application_identity_import'
       responses:
-        '201':
+        '200':
           description: Ok
           content:
             'application/json':
               schema:
-                '$ref': '#/components/schemas/cee_application_import_response'
+                '$ref': '#/components/schemas/cee_application_identity_import_response'

@@ -13,6 +13,7 @@ export const ceeApplicationTypeEnumSchema = {
 export const ceeApplicationUuidSchema = {
   type: 'string',
   format: 'uuid',
+  maxLength: 36,
   errorMessage: 'must be a valid uuid',
 };
 
