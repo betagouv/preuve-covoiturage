@@ -1,7 +1,7 @@
 export const identity = {
   type: 'object',
   additionalProperties: false,
-  anyOf: [{ required: ['phone'] }, { required: ['phone_trunc', 'operator_user_id'] }],
+  anyOf: [{ required: ['phone'] }, { required: ['phone_trunc', 'operator_user_id'] }, { required: ['operator_user_id', 'identity_key'] }],
   properties: {
     firstname: { macro: 'varchar' },
     lastname: { macro: 'varchar' },
@@ -13,5 +13,6 @@ export const identity = {
     operator_user_id: { macro: 'varchar' },
     travel_pass_name: { macro: 'varchar' },
     travel_pass_user_id: { macro: 'varchar' },
+    identity_key: { macro: 'varchar' },
   },
 };
