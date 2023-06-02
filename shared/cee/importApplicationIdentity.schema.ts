@@ -1,4 +1,12 @@
-import { ceeApplicationTypeEnumSchema, ceeApplicationUuidSchema, ceeJourneyTypeEnumSchema, identityKeySchema, lastNameTruncSchema, phoneTruncSchema, timestampSchema } from './common/ceeSchema';
+import {
+  ceeApplicationTypeEnumSchema,
+  ceeApplicationUuidSchema,
+  ceeJourneyTypeEnumSchema,
+  identityKeySchema,
+  lastNameTruncSchema,
+  phoneTruncSchema,
+  timestampSchema,
+} from './common/ceeSchema';
 
 export const alias = 'cee.importCeeApplicationIdentity';
 export const schema = {
@@ -10,7 +18,16 @@ export const schema = {
     additionalProperties: false,
     anyOf: [
       { required: ['cee_application_type', 'cee_application_uuid', 'identity_key'] },
-      { required: ['cee_application_type', 'identity_key', 'phone_trunc', 'last_name_trunc', 'journey_type', 'datetime'] },
+      {
+        required: [
+          'cee_application_type',
+          'identity_key',
+          'phone_trunc',
+          'last_name_trunc',
+          'journey_type',
+          'datetime',
+        ],
+      },
     ],
     properties: {
       cee_application_type: ceeApplicationTypeEnumSchema,

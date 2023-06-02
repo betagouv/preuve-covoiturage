@@ -11,10 +11,7 @@ import {
   timestampSchema,
 } from '../shared/cee/common/ceeSchema';
 
-const { before, after, error } = handlerMacro<ParamsInterface, ResultInterface>(
-  ServiceProvider,
-  handlerConfig,
-);
+const { before, after, error } = handlerMacro<ParamsInterface, ResultInterface>(ServiceProvider, handlerConfig);
 const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
 
 interface TestContext extends HandlerMacroContext {

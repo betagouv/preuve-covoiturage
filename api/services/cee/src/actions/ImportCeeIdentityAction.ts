@@ -10,7 +10,10 @@ import { ServiceDisabledError } from '../errors/ServiceDisabledError';
 import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
 import { getDateOrFail } from '../helpers/getDateOrFail';
 import { timestampSchema } from '../shared/cee/common/ceeSchema';
-import { CeeImportSpecificApplicationIdentityInterface, CeeImportStandardizedApplicationIdentityInterface } from '../shared/cee/common/CeeApplicationInterface';
+import {
+  CeeImportSpecificApplicationIdentityInterface,
+  CeeImportStandardizedApplicationIdentityInterface,
+} from '../shared/cee/common/CeeApplicationInterface';
 
 @handler({
   ...handlerConfig,
@@ -35,13 +38,13 @@ export class ImportCeeIdentityAction extends AbstractAction {
     };
 
     const specificData = params
-      .filter(p => p.application_type === 'specific')
+      .filter((p) => p.application_type === 'specific')
       .map((d: CeeImportSpecificApplicationIdentityInterface, i) => ({
         ...d,
         operator_id,
         datetime: getDateOrFail(d.datetime, `data/${i}/datetime ${timestampSchema.errorMessage}`),
         application_timestamp: getDateOrFail(d.datetime, `data/${i}/datetime ${timestampSchema.errorMessage}`),
-    }));
+      }));
 
     for (const application of specificData) {
       try {
@@ -52,13 +55,13 @@ export class ImportCeeIdentityAction extends AbstractAction {
         result.failed_details.push({ ...application, error: e.message });
       }
     }
-  
+
     const standardizedData = params
-      .filter(p => p.application_type === 'standardized')
+      .filter((p) => p.application_type === 'standardized')
       .map((d: CeeImportStandardizedApplicationIdentityInterface, i) => ({
         ...d,
         operator_id,
-    }));
+      }));
 
     for (const application of standardizedData) {
       try {

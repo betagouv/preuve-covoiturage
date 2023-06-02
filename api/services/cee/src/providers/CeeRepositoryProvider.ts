@@ -311,7 +311,9 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     await this.connection.getClient().query(query);
   }
 
-  async importSpecificApplicationIdentity(data: Required<CeeApplication> & { journey_type: CeeJourneyTypeEnum }): Promise<void> {
+  async importSpecificApplicationIdentity(
+    data: Required<CeeApplication> & { journey_type: CeeJourneyTypeEnum },
+  ): Promise<void> {
     const result = await this.connection.getClient().query({
       text: `
         UPDATE ${this.table}
@@ -326,15 +328,26 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           identity_key IS NULL
         RETURNING _id
       `,
-      values: [data.identity_key, data.operator_id, data.journey_type, data.last_name_trunc, data.phone_trunc, data.application_timestamp],
+      values: [
+        data.identity_key,
+        data.operator_id,
+        data.journey_type,
+        data.last_name_trunc,
+        data.phone_trunc,
+        data.application_timestamp,
+      ],
     });
-  
+
     if (result.rowCount === 0) {
       throw new NotFoundException();
     }
   }
 
-  async importStandardizedApplicationIdentity(data: { cee_application_uuid: string; identity_key: string; operator_id: number }): Promise<void> {
+  async importStandardizedApplicationIdentity(data: {
+    cee_application_uuid: string;
+    identity_key: string;
+    operator_id: number;
+  }): Promise<void> {
     const result = await this.connection.getClient().query({
       text: `
         UPDATE ${this.table}
@@ -346,12 +359,11 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           identity_key IS NULL
         RETURNING _id
       `,
-      values: [data.identity_key, data.cee_application_uuid, data.operator_id]
+      values: [data.identity_key, data.cee_application_uuid, data.operator_id],
     });
-  
+
     if (result.rowCount === 0) {
       throw new NotFoundException();
     }
-
   }
 }

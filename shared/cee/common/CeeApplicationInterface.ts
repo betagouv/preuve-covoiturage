@@ -70,7 +70,9 @@ export interface CeeImportSpecificApplicationIdentityInterface extends CeeImport
   identity_key: string;
 }
 
-export type CeeImportIdentityInterface = CeeImportStandardizedApplicationIdentityInterface | CeeImportSpecificApplicationIdentityInterface;
+export type CeeImportIdentityInterface =
+  | CeeImportStandardizedApplicationIdentityInterface
+  | CeeImportSpecificApplicationIdentityInterface;
 
 export interface CeeImportResultInterface<T> {
   imported: number;

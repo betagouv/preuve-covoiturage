@@ -127,6 +127,12 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
   ): Promise<RegisteredCeeApplication>;
   abstract importApplication(data: CeeApplication & { journey_type: CeeJourneyTypeEnum }): Promise<void>;
   abstract registerApplicationError(data: CeeApplicationError): Promise<void>;
-  abstract importSpecificApplicationIdentity(data: Required<CeeApplication> & { journey_type: CeeJourneyTypeEnum }): Promise<void>;
-  abstract importStandardizedApplicationIdentity(data: { cee_application_uuid: string; identity_key: string; operator_id: number }): Promise<void>;
+  abstract importSpecificApplicationIdentity(
+    data: Required<CeeApplication> & { journey_type: CeeJourneyTypeEnum },
+  ): Promise<void>;
+  abstract importStandardizedApplicationIdentity(data: {
+    cee_application_uuid: string;
+    identity_key: string;
+    operator_id: number;
+  }): Promise<void>;
 }
