@@ -310,4 +310,48 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
 
     await this.connection.getClient().query(query);
   }
+
+  async importSpecificApplicationIdentity(data: Required<CeeApplication> & { journey_type: CeeJourneyTypeEnum }): Promise<void> {
+    const result = await this.connection.getClient().query({
+      text: `
+        UPDATE ${this.table}
+          SET identity_key = $1
+        WHERE
+          operator_id = $2 AND
+          journey_type = $3 AND
+          last_name_trunc = $4 AND
+          phone_trunc = $5 AND
+          datetime = $6 AND
+          is_specific = true AND
+          identity_key IS NULL
+        RETURNING _id
+      `,
+      values: [data.identity_key, data.operator_id, data.journey_type, data.last_name_trunc, data.phone_trunc, data.application_timestamp],
+    });
+  
+    if (result.rowCount === 0) {
+      throw new NotFoundException();
+    }
+  }
+
+  async importStandardizedApplicationIdentity(data: { cee_application_uuid: string; identity_key: string; operator_id: number }): Promise<void> {
+    const result = await this.connection.getClient().query({
+      text: `
+        UPDATE ${this.table}
+          SET identity_key = $1
+        WHERE
+          _id = $2 AND
+          operator_id = $3 AND
+          is_specific = false AND
+          identity_key IS NULL
+        RETURNING _id
+      `,
+      values: [data.identity_key, data.cee_application_uuid, data.operator_id]
+    });
+  
+    if (result.rowCount === 0) {
+      throw new NotFoundException();
+    }
+
+  }
 }

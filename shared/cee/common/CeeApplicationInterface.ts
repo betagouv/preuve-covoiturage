@@ -72,8 +72,8 @@ export interface CeeImportSpecificApplicationIdentityInterface extends CeeImport
 
 export type CeeImportIdentityInterface = CeeImportStandardizedApplicationIdentityInterface | CeeImportSpecificApplicationIdentityInterface;
 
-export interface CeeImportResultInterface {
+export interface CeeImportResultInterface<T> {
   imported: number;
   failed: number;
-  failed_details: Array<CeeImportInterface<string> & { error: string }>;
+  failed_details: Array<T>;
 }
