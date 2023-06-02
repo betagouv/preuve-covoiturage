@@ -33,7 +33,7 @@
   "files.exclude": {
     "**/*.postman_collection.json": true,
     "db": true,
-    "api/**/dist": false,
+    "api/**/dist": true,
     "**/node_modules/**": false
   },
   "githubIssues.queries": [

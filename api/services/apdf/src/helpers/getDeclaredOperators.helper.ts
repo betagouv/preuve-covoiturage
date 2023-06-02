@@ -22,7 +22,6 @@ export async function getDeclaredOperators(
     // catch and log to avoid blocking the whole export
     // on error, the list will not be filtered
     console.warn(`[apdf:export] (campaign_id: ${_id}) Get declared operators failed: ${e.message}`);
-  } finally {
     return [];
   }
 }
@@ -33,6 +32,7 @@ export async function getPolicySiretList(
   _id: number,
 ): Promise<string[]> {
   // Get the full campaign object with params and describe properties
+  // throws if not found
   const policy = await kernel.call<PolicyParamsInterface, PolicyResultInterface>(
     policyFindSignature,
     { _id },
@@ -42,9 +42,7 @@ export async function getPolicySiretList(
     },
   );
 
-  if (!policy) throw new NotFoundException(`Policy ${_id} not found`);
-
-  const list = policy.params?.operators || [];
+  const list = policy?.params?.operators || [];
   if (!list.length) throw new NotFoundException(`No SIRET declared in policy ${_id}`);
 
   return list;

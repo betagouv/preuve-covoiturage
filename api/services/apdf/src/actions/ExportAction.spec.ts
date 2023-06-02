@@ -51,6 +51,7 @@ test.before((t) => {
 });
 
 test.beforeEach((t) => {
+  t.context.kernel = new (class extends KernelInterfaceResolver {})();
   t.context.checkCampaign = new CheckCampaign(null as any);
   t.context.s3StorageProvider = new S3StorageProvider(null as any);
   t.context.buildExcel = new BuildExcel(null as any, null as any, null as any, null as any);
