@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es2020",
+    "target": "ES2022",
     "allowJs": false,
     "declaration": true,
     "noImplicitAny": false,
     "moduleResolution": "node",
-    "noStrictGenericChecks": true,
     "resolveJsonModule": true,
     "sourceMap": true,
     "strictNullChecks": false,
@@ -18,7 +18,7 @@
     "outDir": "dist",
     "incremental": true,
     "baseUrl": ".",
-    "lib": ["es2020"]
+    "lib": ["ES2022"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
