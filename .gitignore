@@ -13,4 +13,4 @@ tmp
 *.key
 
 # notebooks
-notebooks/playground/*
+notebooks/scripts/playground/*

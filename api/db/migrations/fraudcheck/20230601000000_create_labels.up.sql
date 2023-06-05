@@ -8,3 +8,4 @@ CREATE TABLE IF NOT EXISTS fraudcheck.labels
 );
 
 CREATE UNIQUE INDEX on fraudcheck.labels (carpool_id, label);
+CREATE INDEX on fraudcheck.labels (carpool_id);
