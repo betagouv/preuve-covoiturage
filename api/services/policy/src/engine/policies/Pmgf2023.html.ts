@@ -8,13 +8,6 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 Le périmètre géographique de la campagne comprend les zones suivantes
 </p>
 <ul>
-  <li>Communauté de communes Cluses Arve et Montagnes</li>
-  <li>Communauté de communes Pays du Mont Blanc</li>
-  <li>Communauté de communes Vallée de Chamonix</li>
-  <li>Communauté de communes des Montagnes du Giffre</li>
-  <li>Communauté de communes des 4 rivières</li>
-  <li>Communauté de communes de Vallée Verte</li>
-
   <li>CC du Genevois</li>
   <li>CA du Pays de Gex</li>
   <li>CC du Pays Bellegardien (CCPB)</li>
