@@ -281,3 +281,44 @@ test.serial('Should resgister application error', async (t) => {
   t.like(errorResults.rows[0], { ...data1 });
   t.like(errorResults.rows[1], { ...data2 });
 });
+
+test.serial('Should import identity_key', async (t) => {
+  const app1 = {
+    application_timestamp: new Date('2014-01-01T00:00:00.000Z'),
+    operator_id: 1,
+    last_name_trunc: 'CCC',
+    phone_trunc: '+336123456',
+    datetime: new Date('2014-01-01T00:00:00.000Z'),
+    journey_type: CeeJourneyTypeEnum.Long,
+    identity_key: 'id',
+  };
+
+  await t.context.repository.importSpecificApplicationIdentity(app1);
+  const result1 = await t.context.db.connection.getClient().query({
+    text: `SELECT identity_key FROM ${t.context.repository.table} WHERE phone_trunc = $1`,
+    values: [app1.phone_trunc],
+  });
+  t.is(result1.rows[0].identity_key, app1.identity_key);
+
+  await t.throwsAsync(async () => t.context.repository.importSpecificApplicationIdentity(app1));
+
+  const uuidResult = await t.context.db.connection.getClient().query(
+    `SELECT
+        _id as cee_application_uuid, operator_id
+      FROM ${t.context.repository.table}
+      WHERE
+        identity_key is null AND is_specific = false
+      LIMIT 1`,
+  );
+  const app2 = {
+    ...uuidResult.rows[0],
+    identity_key: 'id2',
+  };
+  await t.context.repository.importStandardizedApplicationIdentity(app2);
+  const result2 = await t.context.db.connection.getClient().query({
+    text: `SELECT identity_key FROM ${t.context.repository.table} WHERE _id = $1`,
+    values: [app2.cee_application_uuid],
+  });
+  t.is(result2.rows[0].identity_key, app2.identity_key);
+  await t.throwsAsync(async () => t.context.repository.importStandardizedApplicationIdentity(app2));
+});

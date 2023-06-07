@@ -5,7 +5,7 @@ import {
   phoneTruncSchema,
 } from './common/ceeSchema';
 
-export const alias = 'campaign.simulateCeeApplication';
+export const alias = 'cee.simulateCeeApplication';
 export const schema = {
   type: 'object',
   additionalProperties: false,

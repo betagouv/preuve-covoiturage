@@ -47,6 +47,7 @@ import {
 } from './shared/territory/getAuthorizedCodes.contract';
 
 import { signature as importCeeSignature } from './shared/cee/importApplication.contract';
+import { signature as importIdentityCeeSignature } from './shared/cee/importApplicationIdentity.contract';
 import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
 import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
 
@@ -300,6 +301,27 @@ export class HttpTransport implements TransportInterface {
         }
       }),
     );
+
+    this.app.post(
+      '/v3/policies/cee/import/identity',
+      ceeRateLimiter(),
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        Sentry.setUser(
+          pick(user, ['_id', 'application_id', 'operator_id', 'territory_id', 'permissions', 'role', 'status']),
+        );
+
+        const response = (await this.kernel.handle(
+          createRPCPayload(importIdentityCeeSignature, req.body, user, { req }),
+        )) as RPCResponseType;
+        if (!response || 'error' in response || !('result' in response)) {
+          res.status(mapStatusCode(response)).json(response.error?.data || { message: response.error?.message });
+        } else {
+          res.status(200).json(response.result);
+        }
+      }),
+    );
   }
 
   private registerSimulationRoutes(): void {
@@ -407,7 +429,7 @@ export class HttpTransport implements TransportInterface {
         )) as RPCResponseType;
         // Temporary solution to map v3 generated certificate model to v2 API model
         const v3Result = response.result;
-        if(v3Result) {
+        if (v3Result) {
           response.result = {
             journey_id: v3Result?.operator_journey_id,
             metadata: v3Result?.data,
@@ -439,7 +461,12 @@ export class HttpTransport implements TransportInterface {
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', null);
         const response = (await this.kernel.handle(
-          createRPCPayload('acquisition:patch', { operator_journey_id: req.params.operator_journey_id, ...req.body }, user, { req }),
+          createRPCPayload(
+            'acquisition:patch',
+            { operator_journey_id: req.params.operator_journey_id, ...req.body },
+            user,
+            { req },
+          ),
         )) as RPCResponseType;
         this.send(res, response, {});
       }),
@@ -509,7 +536,7 @@ export class HttpTransport implements TransportInterface {
 
         // Temporary solution to map v3 generated certificate model to v2 API model
         const v3Result = response.result;
-        if(v3Result && req.params?.version === 'v2') {
+        if (v3Result && req.params?.version === 'v2') {
           response.result = {
             journey_id: v3Result?.operator_journey_id,
             created_at: v3Result?.created_at,
