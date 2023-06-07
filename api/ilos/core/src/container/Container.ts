@@ -16,7 +16,7 @@ import { HandlerRegistry } from './HandlerRegistry';
 
 export class Container extends InversifyContainer implements ContainerInterface {
   protected handlersRegistry: HandlerRegistry = new HandlerRegistry(this);
-  parent: Container | null;
+  declare parent: Container | null;
 
   get root(): Container {
     if (this.parent) {
