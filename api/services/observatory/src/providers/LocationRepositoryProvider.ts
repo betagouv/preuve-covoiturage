@@ -25,8 +25,8 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
     const sql = {
       values: [params.code, params.start_date, params.end_date, year],
       text: `
-        SELECT st_y(start_position::geometry) as lon, 
-        st_x(start_position::geometry) as lat 
+        SELECT st_y(start_position::geometry) as lat, 
+        st_x(start_position::geometry) as lon 
         FROM ${this.table} 
         WHERE datetime BETWEEN $2 AND $3
         AND status='ok'
@@ -44,8 +44,8 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
             : ''
         }
         UNION ALL
-        SELECT st_y(end_position::geometry) as lon, 
-        st_x(end_position::geometry) as lat 
+        SELECT st_y(end_position::geometry) as lat, 
+        st_x(end_position::geometry) as lon 
         FROM ${this.table} 
         WHERE datetime BETWEEN $2 AND $3
         AND status='ok'
