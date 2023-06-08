@@ -1,6 +1,8 @@
 name: 'Deploy notebook'
 
-on: push
+on:
+  push:
+    branches: [dev]
 
 defaults:
   run:
