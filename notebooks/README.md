@@ -1,6 +1,6 @@
 # Regsitre de preuve data exploration 
 
-RPC Data exploration with jupiter notebook
+RPC Data exploration with jupyter notebook
 
 ## Python (3.10.6)
 
