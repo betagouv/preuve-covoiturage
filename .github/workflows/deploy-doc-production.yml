@@ -23,7 +23,7 @@ jobs:
           cd doc
           npm ci
           npm run gen
-          npm run build
+          NODE_OPTIONS=--openssl-legacy-provider npm run build
 
       - name: Install SSH Client 🔑
         uses: webfactory/ssh-agent@v0.4.1
