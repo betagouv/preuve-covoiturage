@@ -11,13 +11,13 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
       l_territory,
       type
       FROM geo.perimeters_centroid
-      WHERE year = '|| $1 ||'
+      WHERE year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
       UNION ALL
       SELECT territory,
       l_territory,
       ''com'' as type
       FROM geo.perimeters_centroid
-      WHERE year = '|| $1 ||'
+      WHERE year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
       AND type = ''country''
       AND territory <>''XXXXX''
     ),
@@ -168,7 +168,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
         a.hour,
         COUNT(*) AS journeys
         FROM	journeys a
-        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY b.epci, a.direction, a.hour
         HAVING b.epci IS NOT NULL
         ORDER BY b.epci, a.direction, a.hour
@@ -188,7 +188,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
         a.hour,
         COUNT(*) AS journeys
         FROM	journeys a
-        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY b.aom, a.direction, a.hour
         HAVING b.aom IS NOT NULL
         ORDER BY b.aom, a.direction, a.hour
@@ -208,7 +208,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
         a.hour,
         COUNT(*) AS journeys
         FROM	journeys a
-        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY b.dep, a.direction, a.hour
         HAVING b.dep IS NOT NULL
         ORDER BY b.dep, a.direction, a.hour
@@ -228,7 +228,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
         a.hour,
         COUNT(*) AS journeys
         FROM	journeys a
-        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY b.reg, a.direction, a.hour
         HAVING b.reg IS NOT NULL
         ORDER BY b.reg, a.direction, a.hour
@@ -248,7 +248,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
         a.hour,
         COUNT(*) AS journeys
         FROM	journeys a
-        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY b.country, a.direction, a.hour
         HAVING b.country IS NOT NULL
         ORDER BY b.country, a.direction, a.hour
@@ -286,7 +286,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
         a.dist_classes,
         COUNT(*) AS journeys
         FROM	journeys a
-        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY b.epci, a.direction, a.dist_classes
         HAVING b.epci IS NOT NULL
         ORDER BY b.epci, a.direction, a.dist_classes
@@ -306,7 +306,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
         a.dist_classes,
         COUNT(*) AS journeys
         FROM	journeys a
-        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY b.aom, a.direction, a.dist_classes
         HAVING b.aom IS NOT NULL
         ORDER BY b.aom, a.direction, a.dist_classes
@@ -326,7 +326,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
         a.dist_classes,
         COUNT(*) AS journeys
         FROM	journeys a
-        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY b.dep, a.direction, a.dist_classes
         HAVING b.dep IS NOT NULL
         ORDER BY b.dep, a.direction, a.dist_classes
@@ -346,7 +346,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
         a.dist_classes,
         COUNT(*) AS journeys
         FROM	journeys a
-        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY b.reg, a.direction, a.dist_classes
         HAVING b.reg IS NOT NULL
         ORDER BY b.reg, a.direction, a.dist_classes
@@ -366,7 +366,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_distribution(year int, mo
         a.dist_classes,
         COUNT(*) AS journeys
         FROM	journeys a
-        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY b.country, a.direction, a.dist_classes
         HAVING b.country IS NOT NULL
         ORDER BY b.country, a.direction, a.dist_classes

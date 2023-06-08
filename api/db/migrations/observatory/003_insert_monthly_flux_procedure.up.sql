@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
         ROUND(st_x(geom)::numeric,6) as lng,
         ROUND(st_y(geom)::numeric,6) as lat
         FROM geo.perimeters_centroid
-        WHERE year = '|| $1 ||'
+        WHERE year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         UNION
         SELECT territory,
         l_territory,
@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
         ROUND(st_x(geom)::numeric,6) as lng,
         ROUND(st_y(geom)::numeric,6) as lat
         FROM geo.perimeters_centroid
-        WHERE year = '|| $1 ||'
+        WHERE year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         AND type = ''country''
         AND territory <>''XXXXX''
       ),
@@ -111,7 +111,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
               FROM json_array_elements(c.meta -> ''payments''::text) json_array_elements(value)) as g
         WHERE a.is_driver = false
         AND a.status = ''ok''
-        AND date_part(''year'', a.datetime::timestamptz AT TIME ZONE ''UTC'') = '|| $1 ||'
+        AND date_part(''year'', a.datetime::timestamptz AT TIME ZONE ''UTC'') = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         AND date_part(''month'', a.datetime::timestamptz AT TIME ZONE ''UTC'') = '|| $2 ||'
       ),
       flux as ( 
@@ -132,8 +132,8 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
         round(sum(journey_distance)::numeric/1000,2) as distance,
         round(sum(journey_duration)::numeric/60,2) as duration
         FROM triplist a
-        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = '|| $1 ||'
-        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
+        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY LEAST(b.arr, c.arr), GREATEST(b.arr, c.arr)
         HAVING (LEAST(b.arr, c.arr)) IS NOT NULL OR (GREATEST(b.arr, c.arr)) IS NOT NULL
         UNION
@@ -154,8 +154,8 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
         round(sum(journey_distance)::numeric/1000,2) as distance,
         round(sum(journey_duration)::numeric/60,2) as duration
         FROM triplist a
-        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = '|| $1 ||'
-        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
+        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY LEAST(b.epci, c.epci), GREATEST(b.epci, c.epci)
         HAVING (LEAST(b.epci, c.epci)) IS NOT NULL OR (GREATEST(b.epci, c.epci)) IS NOT NULL
         UNION
@@ -176,8 +176,8 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
         round(sum(journey_distance)::numeric/1000,2) as distance,
         round(sum(journey_duration)::numeric/60,2) as duration
         FROM triplist a
-        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = '|| $1 ||'
-        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
+        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY LEAST(b.aom, c.aom), GREATEST(b.aom, c.aom)
         HAVING (LEAST(b.aom, c.aom)) IS NOT NULL OR (GREATEST(b.aom, c.aom)) IS NOT NULL
         UNION
@@ -198,8 +198,8 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
         round(sum(journey_distance)::numeric/1000,2) as distance,
         round(sum(journey_duration)::numeric/60,2) as duration
         FROM triplist a
-        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = '|| $1 ||'
-        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
+        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY LEAST(b.dep, c.dep), GREATEST(b.dep, c.dep)
         HAVING (LEAST(b.dep, c.dep)) IS NOT NULL OR (GREATEST(b.dep, c.dep)) IS NOT NULL
         UNION
@@ -220,8 +220,8 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
         round(sum(journey_distance)::numeric/1000,2) as distance,
         round(sum(journey_duration)::numeric/60,2) as duration
         FROM triplist a
-        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = '|| $1 ||'
-        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
+        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY LEAST(b.reg, c.reg), GREATEST(b.reg, c.reg)
         HAVING (LEAST(b.reg, c.reg)) IS NOT NULL OR (GREATEST(b.reg, c.reg)) IS NOT NULL
         UNION
@@ -242,8 +242,8 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
         round(sum(journey_distance)::numeric/1000,2) as distance,
         round(sum(journey_duration)::numeric/60,2) as duration
         FROM triplist a
-        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = '|| $1 ||'
-        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = '|| $1 ||'
+        LEFT JOIN geo.perimeters b ON a.journey_start_insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
+        LEFT JOIN geo.perimeters c ON a.journey_end_insee=c.arr and c.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
         GROUP BY LEAST(b.country, c.country), GREATEST(b.country, c.country)
         HAVING (LEAST(b.country, c.country)) IS NOT NULL OR (GREATEST(b.country, c.country)) IS NOT NULL
       )

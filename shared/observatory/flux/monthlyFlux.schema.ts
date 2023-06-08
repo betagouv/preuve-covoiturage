@@ -2,7 +2,7 @@ export const alias = 'observatory.monthlyFlux';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['year', 'month', 't'],
+  required: ['year', 'month', 'type', 'observe', 'code'],
   properties: {
     year: {
       type: 'integer',
