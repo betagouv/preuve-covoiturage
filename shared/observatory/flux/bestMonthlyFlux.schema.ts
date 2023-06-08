@@ -15,7 +15,7 @@ export const schema = {
     },
     type: {
       type: 'string',
-      enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
+      enum: perimeterTypes,
     },
     code: {
       type: 'string',

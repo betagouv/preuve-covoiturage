@@ -1,3 +1,5 @@
+import { indicTypes, perimeterTypes } from '../../geo/shared/Perimeter';
+
 export const alias = 'observatory.evolMonthlyFlux';
 export const schema = {
   type: 'object',
@@ -15,7 +17,7 @@ export const schema = {
     },
     type: {
       type: 'string',
-      enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
+      enum: perimeterTypes,
     },
     code: {
       type: 'string',
@@ -24,7 +26,7 @@ export const schema = {
     },
     indic: {
       type: 'string',
-      enum: ['journeys', 'passengers', 'distance', 'duration', 'has_incentive'],
+      enum: indicTypes,
     },
     past: {
       type: 'string',

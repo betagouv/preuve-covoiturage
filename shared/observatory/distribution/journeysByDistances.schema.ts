@@ -1,3 +1,5 @@
+import { directionTypes, perimeterTypes } from '../../geo/shared/Perimeter';
+
 export const alias = 'observatory.journeysByDistances';
 export const schema = {
   type: 'object',
@@ -15,7 +17,7 @@ export const schema = {
     },
     type: {
       type: 'string',
-      enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
+      enum: perimeterTypes,
     },
     code: {
       type: 'string',
@@ -24,7 +26,7 @@ export const schema = {
     },
     direction: {
       type: 'string',
-      enum: ['from', 'to'],
+      enum: directionTypes,
     },
   },
 };

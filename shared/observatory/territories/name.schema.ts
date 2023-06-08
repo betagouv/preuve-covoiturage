@@ -1,3 +1,5 @@
+import { perimeterTypes } from '../../geo/shared/Perimeter';
+
 export const alias = 'observatory.territoryName';
 export const schema = {
   type: 'object',
@@ -15,7 +17,7 @@ export const schema = {
     },
     type: {
       type: 'string',
-      enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
+      enum: perimeterTypes,
     },
   },
 };

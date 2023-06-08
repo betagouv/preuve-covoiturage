@@ -1,6 +1,8 @@
+import { INSEECode, PerimeterLabel, PerimeterType } from '../../geo/shared/Perimeter';
+
 export interface SingleResultInterface {
-  territory: string;
-  l_territory: string;
+  territory: PerimeterType;
+  l_territory: PerimeterLabel;
   journeys: number;
 }
 
@@ -9,9 +11,9 @@ export type ResultInterface = SingleResultInterface[];
 export interface ParamsInterface {
   year: number;
   month: number;
-  type: string; //type de territoire selectionné
-  observe: string; //type du territoire observé
-  code: string; //code insee du territoire observé
+  type: PerimeterType; //type de territoire selectionné
+  observe: PerimeterType; //type du territoire observé
+  code: INSEECode; //code insee du territoire observé
   limit?: number;
 }
 
