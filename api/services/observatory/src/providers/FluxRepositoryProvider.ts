@@ -56,6 +56,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       WHERE year = $1
       AND month = $2
       AND type = $3::observatory.monthly_flux_type_enum
+      AND distance <= 80
       ${
         params.code
           ? `AND (territory_1 IN (
