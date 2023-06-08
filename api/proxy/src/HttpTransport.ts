@@ -887,6 +887,16 @@ export class HttpTransport implements TransportInterface {
 
   private registerObservatoryRoutes() {
     this.app.get(
+      '/observatory/monthly_keyfigures',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:monthlyKeyfigures', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
+    this.app.get(
       '/observatory/monthly_flux',
       rateLimiter(),
       asyncHandler(async (req, res, next) => {

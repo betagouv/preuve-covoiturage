@@ -46,6 +46,10 @@ import { LocationRepositoryProvider } from './providers/LocationRepositoryProvid
 import { binding as LocationBinding } from './shared/observatory/location/location.schema';
 import { LocationAction } from './actions/location/LocationAction';
 
+import { KeyfiguresRepositoryProvider } from './providers/KeyfiguresRepositoryProvider';
+import { binding as MonthlyKeyfiguresBinding } from './shared/observatory/keyfigures/monthlyKeyfigures.schema';
+import { MonthlyKeyfiguresAction } from './actions/keyfigures/MonthlyKeyfiguresAction';
+
 @serviceProvider({
   config,
   commands: [],
@@ -55,6 +59,7 @@ import { LocationAction } from './actions/location/LocationAction';
     TerritoriesRepositoryProvider,
     DistributionRepositoryProvider,
     LocationRepositoryProvider,
+    KeyfiguresRepositoryProvider,
   ],
   validator: [
     MonthlyFluxBinding,
@@ -72,6 +77,7 @@ import { LocationAction } from './actions/location/LocationAction';
     JourneysByDistancesBinding,
 
     LocationBinding,
+    MonthlyKeyfiguresBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
@@ -101,6 +107,7 @@ import { LocationAction } from './actions/location/LocationAction';
     JourneysByDistancesAction,
 
     LocationAction,
+    MonthlyKeyfiguresAction,
   ],
   queues: ['observatory'],
 })
