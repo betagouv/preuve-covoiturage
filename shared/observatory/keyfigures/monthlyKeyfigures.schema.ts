@@ -2,7 +2,7 @@ export const alias = 'observatory.monthlyKeyfigures';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['year', 'month', 'type', 'observe', 'code'],
+  required: ['year', 'month', 'type', 'code'],
   properties: {
     year: {
       type: 'integer',
@@ -14,10 +14,6 @@ export const schema = {
       maximum: 12,
     },
     type: {
-      type: 'string',
-      enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
-    },
-    observe: {
       type: 'string',
       enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
     },

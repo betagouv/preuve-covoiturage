@@ -15,8 +15,8 @@ export interface ParamsInterface {
   year: number;
   month: number;
   type: string; //type de territoire selectionné
-  code?: string; //code insee du territoire observé
-  observe?: string; //type du territoire observé
+  code: string; //code insee du territoire selectionné
+  observe: string; //type du territoire observé
 }
 
 export const handlerConfig = {

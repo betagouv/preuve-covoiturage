@@ -46,21 +46,21 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
   // Paramètres optionnels t2 et code pour filtrer les résultats sur un territoire
   async getMonthlyOccupation(params: MonthlyOccupationParamsInterface): Promise<MonthlyOccupationResultInterface> {
     const sql = {
-      values: [params.year, params.month, params.type, params.code],
+      values: [params.year, params.month, params.code],
       text: `SELECT year, month, type,
       territory, l_territory, journeys, trips,
       occupation_rate, geom
       FROM ${this.table}
       WHERE year = $1
       AND month = $2
-      AND type = $3::observatory.monthly_occupation_type_enum
+      AND type = '${checkTerritoryParam(params.observe)}'::observatory.monthly_occupation_type_enum
       ${
         params.code
           ? `AND territory IN (
-          SELECT ${checkTerritoryParam(params.type)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+          SELECT ${checkTerritoryParam(params.observe)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
             } WHERE year = $1) t 
-          WHERE ${checkTerritoryParam(params.observe)} = $4
+          WHERE ${checkTerritoryParam(params.type)} = $3
         )`
           : ''
       };`,
