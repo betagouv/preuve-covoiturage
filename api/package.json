@@ -38,7 +38,7 @@
     "test:pdc:integration": "lerna run --scope @pdc/* test:integration",
     "test:ilos:integration": "lerna run --scope @ilos/* test:integration",
     "migrate": "DATABASE_URL=$APP_POSTGRES_URL npm --workspace @pdc/migrator run up",
-    "ilos": "npm --workspace @pdc/proxy run ilos"
+    "ilos": "npm run --workspace @pdc/proxy -- ilos"
   },
   "keywords": [
     "betagouv",
