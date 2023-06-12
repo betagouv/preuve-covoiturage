@@ -41,7 +41,7 @@ const identitySchema = {
   required: ['operator_user_id', 'identity_key'],
   additionalProperties: false,
   properties: {
-    identity_key: { macro: 'varchar' },
+    identity_key: { macro: 'varchar', minLength: 64, maxLength: 64 },
     ...identityPropsSchema,
   },
 };
