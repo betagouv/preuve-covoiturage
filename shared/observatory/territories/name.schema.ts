@@ -11,9 +11,12 @@ export const schema = {
       minimum: 2020,
     },
     code: {
-      type: 'string',
-      minLength: 2,
-      maxLength: 9,
+      oneOf: [
+        { macro: 'insee' },
+        { macro: 'dep' },
+        { macro: 'country' },
+        { macro: 'siren' },
+      ]
     },
     type: {
       type: 'string',
