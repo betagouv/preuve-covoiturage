@@ -11,3 +11,10 @@ tmp
 *.pem
 *.crt
 *.key
+
+# notebooks
+notebooks/scripts/playground/*
+
+# python
+*.pyc
+__pycache__
