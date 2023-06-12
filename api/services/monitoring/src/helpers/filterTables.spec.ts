@@ -12,8 +12,8 @@ function makeRows(l: string[]): MatviewItem[] {
 // pass a Set to be used as a result
 function makeConfig(s: Set<string>): ConfigInterface {
   return {
-    get(key: string, fallback?: Set<string>): Set<string> {
-      return s;
+    get<T>(key: string, fallback?: T): T {
+      return s as T;
     },
   };
 }
