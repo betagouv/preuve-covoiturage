@@ -17,7 +17,7 @@ const test = anyTest as TestFn<TestContext>;
 
 test.before.skip(async (t) => {
   class Config extends ConfigInterfaceResolver {
-    get(_k: string, fb: string): string {
+    get<T>(_k: string, fb: T): T {
       return fb;
     }
   }
