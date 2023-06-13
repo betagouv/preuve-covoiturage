@@ -53,8 +53,8 @@ test.beforeEach((t) => {
   t.context.s3StorageProvider = new S3StorageProvider(null as any);
   t.context.buildExcel = new BuildExcel(null as any, null as any, null as any, null as any);
   t.context.config = {
-    get() {
-      return true; // enable upload
+    get<T>(): T {
+      return true as T; // enable upload
     },
   };
   t.context.apdfRepository = new TR();

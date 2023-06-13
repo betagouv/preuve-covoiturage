@@ -46,8 +46,8 @@ test.beforeEach((t) => {
 
   t.context.publishOpenDataAction = new PublishOpenDataAction(
     new (class extends ConfigInterfaceResolver {
-      get(k: string, c: any) {
-        return t.context.DATASET_SLUG;
+      get<T>(k: string, c: T): T {
+        return t.context.DATASET_SLUG as T;
       }
     })(),
     t.context.dataGouvProvider,

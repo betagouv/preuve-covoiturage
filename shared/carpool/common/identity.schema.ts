@@ -17,6 +17,6 @@ export const identity = {
     operator_user_id: { macro: 'varchar' },
     travel_pass_name: { macro: 'varchar' },
     travel_pass_user_id: { macro: 'varchar' },
-    identity_key: { macro: 'varchar' },
+    identity_key: { macro: 'varchar', minLength: 64, maxLength: 64 },
   },
 };
