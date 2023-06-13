@@ -5,7 +5,7 @@ on:
     branches: [dev]
 
 jobs:
-  api-build:
+  release:
     name: Release
     runs-on: ubuntu-latest
     steps:
