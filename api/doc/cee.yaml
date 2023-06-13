@@ -76,6 +76,8 @@ components:
         journey_type:
           type: string
           enum: ['long']
+        identity_key:
+          '$ref': '#/components/schemas/identity_key'
         driving_license:
           '$ref': '#/components/schemas/driving_license'
         last_name_trunc:
@@ -101,6 +103,8 @@ components:
         journey_type:
           type: string
           enum: ['short']
+        identity_key:
+          '$ref': '#/components/schemas/identity_key'
         driving_license:
           '$ref': '#/components/schemas/driving_license'
         last_name_trunc:
