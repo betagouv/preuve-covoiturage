@@ -16,7 +16,7 @@ jobs:
         with:
           branches: |
             [
-              'dev',
+              'dev'
             ]
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACESS_TOKEN_RELEASE }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN_RELEASE }}
