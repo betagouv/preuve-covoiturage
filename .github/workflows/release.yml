@@ -2,7 +2,7 @@ name: 'Release'
 
 on:
   push:
-    branches: [fix/semantic_release]
+    branches: [dev]
 
 jobs:
   release:
