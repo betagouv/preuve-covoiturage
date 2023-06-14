@@ -16,7 +16,7 @@ jobs:
         with:
           branches: |
             [
-              'dev', 'fix/semantic_release'
+              'dev'
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
