@@ -2,7 +2,7 @@ name: 'Release'
 
 on:
   push:
-    branches: [dev]
+    branches: [fix/semantic_release]
 
 jobs:
   release:
@@ -19,4 +19,4 @@ jobs:
               'dev',
             ]
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACESS_TOKEN_RELEASE }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
