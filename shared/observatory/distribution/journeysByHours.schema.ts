@@ -20,7 +20,7 @@ export const schema = {
       enum: perimeterTypes,
     },
     code: {
-      oneOf: [{ macro: 'insee' }, { macro: 'dep' }, { macro: 'country' }, { macro: 'siren' },],
+      oneOf: [{ macro: 'insee' }, { macro: 'dep' }, { macro: 'country' }, { macro: 'siren' },]
     },
     direction: {
       type: 'string',
