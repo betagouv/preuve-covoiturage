@@ -11,12 +11,7 @@ export const schema = {
       minimum: 2020,
     },
     code: {
-      oneOf: [
-        { macro: 'insee' },
-        { macro: 'dep' },
-        { macro: 'country' },
-        { macro: 'siren' },
-      ]
+      oneOf: [{ macro: 'insee' }, { macro: 'dep' }, { macro: 'country' }, { macro: 'siren' },],
     },
     type: {
       type: 'string',
