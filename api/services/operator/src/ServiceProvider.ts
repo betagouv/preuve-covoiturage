@@ -3,7 +3,6 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
-import { S3StorageProvider } from '@pdc/provider-file';
 
 import { binding as createBinding } from './shared/operator/create.schema';
 import { binding as updateBinding } from './shared/operator/update.schema';
@@ -26,7 +25,7 @@ import { PatchThumbnailOperatorAction } from './actions/PatchThumbnailOperatorAc
 
 @serviceProvider({
   config,
-  providers: [OperatorPgRepositoryProvider, S3StorageProvider],
+  providers: [OperatorPgRepositoryProvider],
   validator: [
     createBinding,
     updateBinding,

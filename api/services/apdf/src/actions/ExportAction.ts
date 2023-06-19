@@ -1,6 +1,6 @@
 import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { BucketName, S3StorageProvider } from '@pdc/provider-file';
+import { BucketName, S3StorageProvider } from '@pdc/provider-storage';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';

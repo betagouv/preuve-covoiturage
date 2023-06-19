@@ -1,6 +1,6 @@
 import { ContextType, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { BucketName, S3StorageProvider } from '@pdc/provider-file';
+import { BucketName, S3StorageProvider } from '@pdc/provider-storage';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import AdmZip from 'adm-zip';
 import fs from 'fs';

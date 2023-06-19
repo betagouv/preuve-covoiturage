@@ -2,7 +2,7 @@ import { ExtensionInterface, NewableType, serviceProvider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
-import { APDFNameProvider, S3StorageProvider } from '@pdc/provider-file';
+import { APDFNameProvider, S3StorageProvider } from '@pdc/provider-storage';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { ExportAction } from './actions/ExportAction';
