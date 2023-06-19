@@ -91,6 +91,19 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return operator;
   }
 
+  async findBySiret(siret: string[]): Promise<{ id: number; siret: string }[]> {
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT * FROM ${this.table}
+        WHERE siret = ANY($1)
+        AND deleted_at IS NULL
+      `,
+      values: [siret],
+    });
+
+    return result.rowCount ? result.rows[0] : [];
+  }
+
   async all(): Promise<OperatorListInterface[]> {
     const query = {
       text: `
