@@ -60,13 +60,13 @@ export interface CeeImportInterface<T> {
 }
 
 export interface CeeImportStandardizedApplicationIdentityInterface {
-  application_type: 'standardized';
+  cee_application_type: 'standardized';
   cee_application_uuid: string;
   identity_key: string;
 }
 
 export interface CeeImportSpecificApplicationIdentityInterface extends CeeImportInterface<Date> {
-  application_type: 'specific';
+  cee_application_type: 'specific';
   identity_key: string;
 }
 

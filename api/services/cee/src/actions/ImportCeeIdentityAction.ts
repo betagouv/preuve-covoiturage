@@ -38,7 +38,7 @@ export class ImportCeeIdentityAction extends AbstractAction {
     };
 
     const specificData = params
-      .filter((p) => p.application_type === 'specific')
+      .filter((p) => p.cee_application_type === 'specific')
       .map((d: CeeImportSpecificApplicationIdentityInterface, i) => ({
         ...d,
         operator_id,
@@ -57,7 +57,7 @@ export class ImportCeeIdentityAction extends AbstractAction {
     }
 
     const standardizedData = params
-      .filter((p) => p.application_type === 'standardized')
+      .filter((p) => p.cee_application_type === 'standardized')
       .map((d: CeeImportStandardizedApplicationIdentityInterface, i) => ({
         ...d,
         operator_id,
