@@ -2,7 +2,7 @@ name: 'Deploy notebook'
 
 on:
   push:
-    branches: [dev]
+    branches: [dev, fix/notebook_deploy_release]
   release:
     types: [published]
 
@@ -87,3 +87,26 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
 
       - run: echo ${{ steps.docker_build.outputs.digest }}
+
+  trigger-infra-workflow:
+    name: Trigger Infra Workflow
+    needs: ['notebook-build']
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Workflow
+        uses: actions/github-script@v6
+        env: 
+          TARGET_VERSION: ${{ steps.docker_build.outputs.digest }}
+          TARGET_ENV: demo
+        github-token: ${{ secrets.GITHUB_INFRA_TOKEN }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: 'preuve-covoiturage-infra',
+              workflow_id: 'deploy.yml',
+              ref: 'main',
+              inputs: {
+                env: process.env.TARGET_ENV,
+                version: process.env.TARGET_VERSION,
+              },
+            })
