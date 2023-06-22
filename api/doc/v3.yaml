@@ -882,6 +882,10 @@ paths:
 
         ### Validation
         Le schéma de données est présenté au format [JSON Schema Draft-07](https://json-schema.org/understanding-json-schema/index.html).
+
+        ### Vérification
+        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 48h après la réalisation de celui-ci.
+        Ces trajets seront retournés avec un champs `status` à `fraud_error`.
       security:
         - token: []
       operationId: acquisition:create
@@ -977,6 +981,8 @@ paths:
       description: |
         La liste est toujours ordonnée de manière antechronologique.
         Les trajets apparaissent au plus tard 24h après leur envoi.
+        Dans le cadre de la fraude inter-opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 48h après la réalisation de celui-ci.
+        Ces trajets peuvent être listés en passant un paramètre `status` à `fraud_error`.
       parameters:
         - name: status 
           in: query
@@ -1040,7 +1046,11 @@ paths:
       description: |
         Lors de l'envoi d'un trajet, un code 201 et un payload avec le `operator_journey_id` et la date de création vous sont renvoyés. Le trajet est alors enregistré dans notre base. Le processus de validation par lequel vont passer les données est complexe, asynchrone et dépend de différents services ayant de temps de réponse variables.
         Les trajets ne seront visibles dans l'interface utilisateurs que **24 heures** après leur envoi.
+
         Il est possible de vérifier le statut d'un trajet envoyé directement pour s'assurer qu'il n'y pas pas eu d'erreur de format ou de traitement.
+
+        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 48h après la réalisation de celui-ci.
+        Un trajet detecté sera retourné avec un champ `status` à `fraud_error`.
       responses:
         '200':
           description: |
