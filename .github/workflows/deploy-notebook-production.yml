@@ -99,7 +99,7 @@ jobs:
           TARGET_VERSION: ${{ steps.docker_build.outputs.digest }}
           TARGET_ENV: demo
         github-token: ${{ secrets.GITHUB_INFRA_TOKEN }}
-          script: |
+        script: |
             github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: 'preuve-covoiturage-infra',
