@@ -260,7 +260,7 @@ components:
       description: Type de demande cee
       enum:
         - specific
-        - standartized
+        - standardized
     cee_application_uuid:
       type: string
       format: uuid
