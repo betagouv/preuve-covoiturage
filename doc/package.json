@@ -20,6 +20,5 @@
   "devDependencies": {
     "vuepress": "^1.9.9",
     "vuepress-theme-openapi": "^1.6.0"
-  },
-  "dependencies": {}
+  }
 }
