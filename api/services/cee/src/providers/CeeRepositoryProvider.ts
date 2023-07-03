@@ -37,21 +37,20 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
   ): Promise<ExistingCeeApplication | void> {
-    const { text, values } = [
-      ['identity_key'],
-      ['driving_license'],
-      ['last_name_trunc', 'phone_trunc'],
-    ]
-      .filter(k => !k.filter(kk => !(kk in search)).length)
+    const { text, values } = [['identity_key'], ['driving_license'], ['last_name_trunc', 'phone_trunc']]
+      .filter((k) => !k.filter((kk) => !(kk in search)).length)
       .map((k, i) => ({
-        text: `(${k.map((kk,ii) => `${kk} = $${(i + ii) + 6}`).join(' AND ')})`,
-        value: k.map(kk => search[kk]),
+        text: `(${k.map((kk, ii) => `${kk} = $${i + ii + 6}`).join(' AND ')})`,
+        value: k.map((kk) => search[kk]),
       }))
-      .reduce((acc, v) => {
-        acc.text.push(v.text);
-        acc.values.push(...v.value);
-        return acc;
-      }, { text: [], values: [] });
+      .reduce(
+        (acc, v) => {
+          acc.text.push(v.text);
+          acc.values.push(...v.value);
+          return acc;
+        },
+        { text: [], values: [] },
+      );
 
     const query = {
       text: `
@@ -92,7 +91,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.year : constraint.long.specific.year,
         journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.after : constraint.long.specific.after,
         search.datetime,
-        ...values
+        ...values,
       ],
     };
     const result = await this.connection.getClient().query<ExistingCeeApplication>(query);

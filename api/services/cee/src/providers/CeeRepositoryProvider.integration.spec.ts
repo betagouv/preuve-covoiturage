@@ -216,7 +216,7 @@ test.serial('Should find short application with id key if exists', async (t) => 
     phone_trunc: '+336000000777',
     driving_license: 'driving_license_777',
     datetime: new Date(),
-    identity_key: 'test'
+    identity_key: 'test',
   };
 
   const result = await t.context.repository.searchForLongApplication(
@@ -309,7 +309,7 @@ test.serial('Should resgister application error', async (t) => {
     journey_type: CeeJourneyTypeEnum.Long,
     last_name_trunc: 'TOT',
     operator_journey_id: 'TOTO',
-    identity_key: 'tototo'
+    identity_key: 'tototo',
   };
   await t.context.repository.registerApplicationError(data1);
 
