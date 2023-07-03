@@ -8,7 +8,6 @@ import {
   CeeJourneyTypeEnum,
   CeeRepositoryProviderInterfaceResolver,
   LongCeeApplication,
-  ExistingCeeApplication,
   SearchCeeApplication,
   SearchJourney,
   ShortCeeApplication,
@@ -36,11 +35,11 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     journeyType: CeeJourneyTypeEnum,
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<ExistingCeeApplication | void> {
+  ): Promise<RegisteredCeeApplication | void> {
     const { text, values } = [['identity_key'], ['driving_license'], ['last_name_trunc', 'phone_trunc']]
       .filter((k) => !k.filter((kk) => !(kk in search)).length)
       .map((k, i) => ({
-        text: `(${k.map((kk, ii) => `${kk} = $${i + ii + 6}`).join(' AND ')})`,
+        text: `(${k.map((kk, ii) => `ce.${kk} = $${i + ii + 6}`).join(' AND ')})`,
         value: k.map((kk) => search[kk]),
       }))
       .reduce(
@@ -55,29 +54,39 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     const query = {
       text: `
         SELECT
-          _id as uuid,
-          operator_id,
-          datetime
-        FROM ${this.table}
+          ce._id as uuid,
+          ce.operator_id,
+          ce.datetime,
+          ce.journey_type,
+          ce.driving_license,
+          op.siret as operator_siret
+        FROM ${this.table} AS ce
+        JOIN ${this.operatorTable} AS op
+          ON op._id = ce.operator_id
         WHERE 
-          journey_type = $1::cee.journey_type_enum AND
-          datetime >= ($5::timestamp - $2::int * interval '1 year') AND
-          is_specific = false AND (
+          ce.journey_type = $1::cee.journey_type_enum AND
+          ce.datetime >= ($5::timestamp - $2::int * interval '1 year') AND
+          ce.is_specific = false AND (
             ${values.length ? text.join(' OR ') : ''}
           )
         UNION
         SELECT
-          _id,
-          operator_id,
-          datetime
-        FROM ${this.table}
+          ce._id as uuid,
+          ce.operator_id,
+          ce.datetime,
+          ce.journey_type,
+          ce.driving_license,
+          op.siret as operator_siret
+        FROM ${this.table} AS ce
+        JOIN ${this.operatorTable} AS op
+          ON op._id = ce.operator_id
         WHERE
-          journey_type = $1::cee.journey_type_enum AND
+          ce.journey_type = $1::cee.journey_type_enum AND
           (
-            datetime >= ($5::timestamp - $3::int * interval '1 year') AND
-            datetime >= $4::timestamp
+            ce.datetime >= ($5::timestamp - $3::int * interval '1 year') AND
+            ce.datetime >= $4::timestamp
           ) AND
-          is_specific = true AND (
+          ce.is_specific = true AND (
             ${values.length ? text.join('OR') : ''}
           )
         ORDER BY datetime DESC
@@ -94,21 +103,21 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         ...values,
       ],
     };
-    const result = await this.connection.getClient().query<ExistingCeeApplication>(query);
+    const result = await this.connection.getClient().query<RegisteredCeeApplication>(query);
     return result.rows[0];
   }
 
   async searchForShortApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<ExistingCeeApplication | void> {
+  ): Promise<RegisteredCeeApplication | void> {
     return await this.searchForApplication(CeeJourneyTypeEnum.Short, search, constraint);
   }
 
   async searchForLongApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<ExistingCeeApplication | void> {
+  ): Promise<RegisteredCeeApplication | void> {
     return await this.searchForApplication(CeeJourneyTypeEnum.Long, search, constraint);
   }
 

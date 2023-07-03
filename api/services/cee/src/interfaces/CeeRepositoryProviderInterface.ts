@@ -1,12 +1,6 @@
 import { CeeJourneyTypeEnum } from '../shared/cee/common/CeeApplicationInterface';
 export { CeeJourneyTypeEnum };
 
-export interface ExistingCeeApplication {
-  uuid: string;
-  operator_id: number;
-  datetime: Date;
-}
-
 export interface RegisteredCeeApplication {
   uuid: string;
   datetime: Date;
@@ -114,11 +108,11 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
   abstract searchForShortApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<ExistingCeeApplication | void>;
+  ): Promise<RegisteredCeeApplication | void>;
   abstract searchForLongApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<ExistingCeeApplication | void>;
+  ): Promise<RegisteredCeeApplication | void>;
   abstract searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney>;
   abstract registerShortApplication(
     data: ShortCeeApplication,

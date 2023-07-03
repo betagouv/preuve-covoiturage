@@ -112,6 +112,31 @@ test.serial('Should create long application', async (t) => {
   t.truthy(!!applicationResults.rows[0]?.identity_key);
 });
 
+test.serial('Search should be equals as new registration', async (t) => {
+  const application: LongCeeApplication = {
+    operator_id: 1,
+    last_name_trunc: 'BBA',
+    phone_trunc: '+3361100000000',
+    datetime: new Date('2022-11-01'),
+    application_timestamp: new Date('2022-11-01'),
+    driving_license: 'driving_license_3',
+    identity_key: 'search_1',
+  };
+
+  const createResult = await t.context.repository.registerLongApplication(
+    application,
+    config.rules.applicationCooldownConstraint,
+  );
+  const searchResult = await t.context.repository.searchForLongApplication(
+    {
+      datetime: application.datetime,
+      identity_key: application.identity_key,
+    } as any,
+    config.rules.applicationCooldownConstraint,
+  );
+  t.deepEqual(createResult, searchResult);
+});
+
 test.serial('Should raise error if conflict short application', async (t) => {
   const application: ShortCeeApplication = {
     operator_id: 1,
