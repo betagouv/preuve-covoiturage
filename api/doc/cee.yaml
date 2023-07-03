@@ -333,7 +333,7 @@ paths:
         '409':
           description: |
             Une demande similaire a déjà enregistrée.
-            Si elle a déjà été enregistrée par le même opérateur, alors la réponse contient l'UUID de la demande.
+            Si elle a déjà été enregistrée par le même opérateur, alors la réponse contient l'UUID de la demande, le `journey_id` et le `status` si la demande initiale concerne la courte distance.
             Dans le cas contraire, seul le champs datetime correspondant à la date de l'opération est renvoyé.
           content:
             'application/json':

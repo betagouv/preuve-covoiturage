@@ -10,6 +10,11 @@ export interface RegisteredCeeApplication {
   driving_license?: string;
 }
 
+export interface ExistingCeeApplication extends RegisteredCeeApplication {
+  acquisition_id?: number;
+  acquisition_status?: string;
+}
+
 export interface ValidJourney {
   acquisition_id: number;
   carpool_id: number;
@@ -108,11 +113,11 @@ export abstract class CeeRepositoryProviderInterfaceResolver {
   abstract searchForShortApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<RegisteredCeeApplication | void>;
+  ): Promise<ExistingCeeApplication | void>;
   abstract searchForLongApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<RegisteredCeeApplication | void>;
+  ): Promise<ExistingCeeApplication | void>;
   abstract searchForValidJourney(search: SearchJourney, constraint: ValidJourneyConstraint): Promise<ValidJourney>;
   abstract registerShortApplication(
     data: ShortCeeApplication,

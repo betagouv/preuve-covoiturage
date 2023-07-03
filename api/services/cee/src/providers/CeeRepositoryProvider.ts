@@ -15,6 +15,7 @@ import {
   ValidJourneyConstraint,
   RegisteredCeeApplication,
   CeeApplicationError,
+  ExistingCeeApplication,
 } from '../interfaces';
 
 @provider({
@@ -35,7 +36,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     journeyType: CeeJourneyTypeEnum,
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<RegisteredCeeApplication | void> {
+  ): Promise<ExistingCeeApplication | void> {
     const { text, values } = [['identity_key'], ['driving_license'], ['last_name_trunc', 'phone_trunc']]
       .filter((k) => !k.filter((kk) => !(kk in search)).length)
       .map((k, i) => ({
@@ -59,10 +60,14 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ce.datetime,
           ce.journey_type,
           ce.driving_license,
-          op.siret as operator_siret
+          op.siret as operator_siret,
+          cc.acquisition_id,
+          cc.status as acquisition_status
         FROM ${this.table} AS ce
         JOIN ${this.operatorTable} AS op
           ON op._id = ce.operator_id
+        LEFT JOIN ${this.carpoolTable} AS cc
+          ON cc._id = ce.carpool_id
         WHERE 
           ce.journey_type = $1::cee.journey_type_enum AND
           ce.datetime >= ($5::timestamp - $2::int * interval '1 year') AND
@@ -76,10 +81,14 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ce.datetime,
           ce.journey_type,
           ce.driving_license,
-          op.siret as operator_siret
+          op.siret as operator_siret,
+          cc.acquisition_id,
+          cc.status as acquisition_status
         FROM ${this.table} AS ce
         JOIN ${this.operatorTable} AS op
           ON op._id = ce.operator_id
+        LEFT JOIN ${this.carpoolTable} AS cc
+          ON cc._id = ce.carpool_id
         WHERE
           ce.journey_type = $1::cee.journey_type_enum AND
           (
@@ -103,21 +112,21 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         ...values,
       ],
     };
-    const result = await this.connection.getClient().query<RegisteredCeeApplication>(query);
+    const result = await this.connection.getClient().query<ExistingCeeApplication>(query);
     return result.rows[0];
   }
 
   async searchForShortApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<RegisteredCeeApplication | void> {
+  ): Promise<ExistingCeeApplication | void> {
     return await this.searchForApplication(CeeJourneyTypeEnum.Short, search, constraint);
   }
 
   async searchForLongApplication(
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
-  ): Promise<RegisteredCeeApplication | void> {
+  ): Promise<ExistingCeeApplication | void> {
     return await this.searchForApplication(CeeJourneyTypeEnum.Long, search, constraint);
   }
 
