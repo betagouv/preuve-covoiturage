@@ -270,6 +270,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
 
     return {
       uuid: result.rows[0]?._id,
+      operator_id: data.operator_id,
       datetime: data.datetime,
       operator_siret: siretResult.rows[0]?.siret,
       journey_type: journeyType,

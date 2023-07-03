@@ -8,11 +8,12 @@ export interface ExistingCeeApplication {
 }
 
 export interface RegisteredCeeApplication {
+  uuid: string;
+  datetime: Date;
+  operator_id: number;
   operator_siret: string;
   journey_type: CeeJourneyTypeEnum;
   driving_license?: string;
-  datetime: Date;
-  uuid: string;
 }
 
 export interface ValidJourney {
