@@ -55,7 +55,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     const query = {
       text: `
         SELECT
-          _id,
+          _id as uuid,
           operator_id,
           datetime
         FROM ${this.table}

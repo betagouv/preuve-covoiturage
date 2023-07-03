@@ -2,7 +2,7 @@ import { CeeJourneyTypeEnum } from '../shared/cee/common/CeeApplicationInterface
 export { CeeJourneyTypeEnum };
 
 export interface ExistingCeeApplication {
-  _id: string;
+  uuid: string;
   operator_id: number;
   datetime: Date;
 }

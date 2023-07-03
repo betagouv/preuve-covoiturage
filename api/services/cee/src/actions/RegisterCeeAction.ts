@@ -129,7 +129,7 @@ export class RegisterCeeAction extends AbstractAction {
           throw new Error('Boum');
         } else {
           throw new ConflictException({
-            uuid: operator_id === old.operator_id ? old._id : undefined,
+            uuid: operator_id === old.operator_id ? old.uuid : undefined,
             datetime: old.datetime.toISOString(),
           });
         }
@@ -174,7 +174,7 @@ export class RegisterCeeAction extends AbstractAction {
           throw new Error('Boum');
         } else {
           throw new ConflictException({
-            uuid: operator_id === old.operator_id ? old._id : undefined,
+            uuid: operator_id === old.operator_id ? old.uuid : undefined,
             datetime: old.datetime.toISOString(),
           });
         }
