@@ -22,6 +22,7 @@ export interface ValidJourney {
   datetime: Date;
   status: string;
   already_registered: boolean;
+  identity_key?: string;
 }
 
 export interface CeeApplication<T = Date> {
@@ -47,6 +48,7 @@ export interface SearchCeeApplication {
   last_name_trunc: string;
   phone_trunc: string;
   driving_license?: string;
+  identity_key?: string;
 }
 
 export interface SearchJourney {
