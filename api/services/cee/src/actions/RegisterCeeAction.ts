@@ -128,8 +128,15 @@ export class RegisterCeeAction extends AbstractAction {
           // Server error
           throw new Error('Boum');
         } else {
+          if (operator_id === old.operator_id) {
+            throw new ConflictException({
+              uuid: old.uuid,
+              datetime: old.datetime.toISOString(),
+              journey_id: old.acquisition_id,
+              status: old.acquisition_status,
+            });
+          }
           throw new ConflictException({
-            uuid: operator_id === old.operator_id ? old._id : undefined,
             datetime: old.datetime.toISOString(),
           });
         }
@@ -174,7 +181,7 @@ export class RegisterCeeAction extends AbstractAction {
           throw new Error('Boum');
         } else {
           throw new ConflictException({
-            uuid: operator_id === old.operator_id ? old._id : undefined,
+            uuid: operator_id === old.operator_id ? old.uuid : undefined,
             datetime: old.datetime.toISOString(),
           });
         }
@@ -182,6 +189,7 @@ export class RegisterCeeAction extends AbstractAction {
       throw e;
     }
   }
+
   public async sign(application: RegisteredCeeApplication): Promise<string> {
     const private_key = this.config.get('signature.private_key');
     const signer = createSign('RSA-SHA512');

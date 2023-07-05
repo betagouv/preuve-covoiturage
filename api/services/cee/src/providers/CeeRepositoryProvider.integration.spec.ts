@@ -112,6 +112,35 @@ test.serial('Should create long application', async (t) => {
   t.truthy(!!applicationResults.rows[0]?.identity_key);
 });
 
+test.serial('Search should be equals as new registration', async (t) => {
+  const application: ShortCeeApplication = {
+    operator_id: 1,
+    last_name_trunc: 'BBA',
+    phone_trunc: '+3361100000000',
+    datetime: new Date('2022-11-01'),
+    application_timestamp: new Date('2022-11-01'),
+    driving_license: 'driving_license_3',
+    identity_key: 'search_1',
+    carpool_id: 2,
+  };
+
+  const createResult = await t.context.repository.registerShortApplication(
+    application,
+    config.rules.applicationCooldownConstraint,
+  );
+  const searchResult = await t.context.repository.searchForShortApplication(
+    {
+      datetime: application.datetime,
+      identity_key: application.identity_key,
+    } as any,
+    config.rules.applicationCooldownConstraint,
+  );
+  const { acquisition_id, acquisition_status, ...otherSearchResult } = searchResult || {};
+  t.deepEqual(createResult, otherSearchResult);
+  t.is(acquisition_id, 1);
+  t.is(acquisition_status, 'ok');
+});
+
 test.serial('Should raise error if conflict short application', async (t) => {
   const application: ShortCeeApplication = {
     operator_id: 1,
@@ -128,6 +157,39 @@ test.serial('Should raise error if conflict short application', async (t) => {
       await t.context.repository.registerShortApplication(application, config.rules.applicationCooldownConstraint),
   );
   t.true(error instanceof Error);
+});
+
+test.serial('Should raise error if conflict id key long application', async (t) => {
+  const application: LongCeeApplication = {
+    operator_id: 1,
+    last_name_trunc: 'CCC',
+    phone_trunc: '+3360000000066',
+    datetime: new Date('2022-11-02'),
+    application_timestamp: new Date('2022-11-02'),
+    driving_license: 'driving_license_66',
+    identity_key: 'test',
+  };
+
+  const error = await t.throwsAsync(
+    async () =>
+      await t.context.repository.registerLongApplication(application, config.rules.applicationCooldownConstraint),
+  );
+  t.true(error instanceof Error);
+
+  const application2: LongCeeApplication = {
+    operator_id: 1,
+    last_name_trunc: 'CCC',
+    phone_trunc: '+3360000000066',
+    datetime: new Date('2022-11-02'),
+    application_timestamp: new Date('2022-11-02'),
+    driving_license: 'driving_license_66',
+    identity_key: 'test2',
+  };
+
+  await t.notThrowsAsync(
+    async () =>
+      await t.context.repository.registerLongApplication(application2, config.rules.applicationCooldownConstraint),
+  );
 });
 
 test.serial('Should raise error if missing fields in short application', async (t) => {
@@ -170,6 +232,23 @@ test.serial('Should find short application with driver license if exists', async
   };
 
   const result = await t.context.repository.searchForShortApplication(
+    search,
+    config.rules.applicationCooldownConstraint,
+  );
+  t.not(result, undefined);
+  t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
+});
+
+test.serial('Should find short application with id key if exists', async (t) => {
+  const search: SearchCeeApplication = {
+    last_name_trunc: 'EEE',
+    phone_trunc: '+336000000777',
+    driving_license: 'driving_license_777',
+    datetime: new Date(),
+    identity_key: 'test',
+  };
+
+  const result = await t.context.repository.searchForLongApplication(
     search,
     config.rules.applicationCooldownConstraint,
   );
@@ -259,6 +338,7 @@ test.serial('Should resgister application error', async (t) => {
     journey_type: CeeJourneyTypeEnum.Long,
     last_name_trunc: 'TOT',
     operator_journey_id: 'TOTO',
+    identity_key: 'tototo',
   };
   await t.context.repository.registerApplicationError(data1);
 

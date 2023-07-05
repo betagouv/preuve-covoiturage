@@ -1,18 +1,18 @@
 import { CeeJourneyTypeEnum } from '../shared/cee/common/CeeApplicationInterface';
 export { CeeJourneyTypeEnum };
 
-export interface ExistingCeeApplication {
-  _id: string;
-  operator_id: number;
-  datetime: Date;
-}
-
 export interface RegisteredCeeApplication {
+  uuid: string;
+  datetime: Date;
+  operator_id: number;
   operator_siret: string;
   journey_type: CeeJourneyTypeEnum;
   driving_license?: string;
-  datetime: Date;
-  uuid: string;
+}
+
+export interface ExistingCeeApplication extends RegisteredCeeApplication {
+  acquisition_id?: number;
+  acquisition_status?: string;
 }
 
 export interface ValidJourney {
@@ -22,6 +22,7 @@ export interface ValidJourney {
   datetime: Date;
   status: string;
   already_registered: boolean;
+  identity_key?: string;
 }
 
 export interface CeeApplication<T = Date> {
@@ -47,6 +48,7 @@ export interface SearchCeeApplication {
   last_name_trunc: string;
   phone_trunc: string;
   driving_license?: string;
+  identity_key?: string;
 }
 
 export interface SearchJourney {
