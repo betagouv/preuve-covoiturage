@@ -71,6 +71,9 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     '2023-03-28',
     '2023-04-06',
     '2023-04-13',
+    '2023-08-12',
+    '2023-08-13',
+    '2023-08-14',
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
