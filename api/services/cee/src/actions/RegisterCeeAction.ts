@@ -61,16 +61,21 @@ export class RegisterCeeAction extends AbstractAction {
           return await this.proceesForLongApplication(operator_id, params);
       }
     } catch (e) {
+      let errorType;
+      switch(true){
+        case e instanceof InvalidParamsException:
+            errorType = CeeApplicationErrorEnum.Date;
+            break;
+        case e instanceof NotFoundException:
+            errorType = CeeApplicationErrorEnum.NonEligible;
+            break;
+        case e instanceof ConflictException:
+            errorType = CeeApplicationErrorEnum.Conflict;
+            break;
+        default: CeeApplicationErrorEnum.Validation;
       const errorData: CeeApplicationError = {
         operator_id,
-        error_type:
-          e instanceof InvalidParamsException
-            ? CeeApplicationErrorEnum.Date
-            : e instanceof NotFoundException
-            ? CeeApplicationErrorEnum.NonEligible
-            : e instanceof ConflictException
-            ? CeeApplicationErrorEnum.Conflict
-            : CeeApplicationErrorEnum.Validation,
+        error_type: errorType,
         journey_type: params.journey_type,
         datetime: params['datetime'],
         last_name_trunc: params['last_name_trunc'],
