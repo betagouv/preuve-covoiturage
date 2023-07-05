@@ -73,6 +73,7 @@ export class RegisterCeeAction extends AbstractAction {
             errorType = CeeApplicationErrorEnum.Conflict;
             break;
         default: CeeApplicationErrorEnum.Validation;
+      }
       const errorData: CeeApplicationError = {
         operator_id,
         error_type: errorType,
