@@ -3,6 +3,8 @@ name: 'Deploy notebook'
 on:
   push:
     branches: [dev]
+  release:
+    types: [published]
 
 defaults:
   run:
