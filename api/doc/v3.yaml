@@ -884,8 +884,10 @@ paths:
         Le schéma de données est présenté au format [JSON Schema Draft-07](https://json-schema.org/understanding-json-schema/index.html).
 
         ### Vérification
-        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 48h après la réalisation de celui-ci.
+        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 24h après la réalisation de celui-ci.
         Ces trajets seront retournés avec un champs `status` à `fraud_error`.
+        Le statut ne peut plus changer 48h après la date de fin du trajet. En cas d'indisponibilité du service, le trajet est considéré comme ok après 48h
+        L'algorithme de détection de fraude inter opérateurs est appliqué sur tous les trajets envoyés.
       security:
         - token: []
       operationId: acquisition:create
@@ -1049,8 +1051,10 @@ paths:
 
         Il est possible de vérifier le statut d'un trajet envoyé directement pour s'assurer qu'il n'y pas pas eu d'erreur de format ou de traitement.
 
-        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 48h après la réalisation de celui-ci.
+        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 24h après la réalisation de celui-ci.
         Un trajet detecté sera retourné avec un champ `status` à `fraud_error`.
+        Le statut ne peut plus changer 48h après la date de fin du trajet. En cas d'indisponibilité du service, le trajet est considéré comme ok après les 48h 
+        L'algorithme de détection de fraude inter opérateurs est appliqué sur tous les trajets envoyés.
       responses:
         '200':
           description: |
@@ -1112,6 +1116,8 @@ paths:
       security:
         - token: []
       summary: Mettre à jour un trajet
+      description: |
+        Permet de mettre à jour un trajet qui est en erreur suite à un problème de validation sur le payload. Par exemple suite à un problème de validation sur les coordonnées géographiques envoyées
       operationId: acquisition:update
       requestBody:
         required: true
@@ -1209,7 +1215,9 @@ paths:
                 error: Not found
   /policies/simulate:
     post:
-      summary: simuler incitations
+      tags: 
+        - simuler
+      summary: Simuler une incitation sur un trajet
       security:
         - token: []
       requestBody:
