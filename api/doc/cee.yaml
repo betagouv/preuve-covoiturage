@@ -160,7 +160,7 @@ components:
       description: |
         Précédente demande de CEE.
         S'il s'agit d'une opération spécifique, le payload est le même que sur l'import, en ajoutant le champs "cee_application_type": "specific".
-        S'il s'agit d'une opération standartisée, il convient d'envoyer l'uuid de la demande tel que : { cee_application_type: 'standardized', cee_application_uuid: 'uuid de la demande', identity_key: 'clée' }. 
+        S'il s'agit d'une opération standarisée, il convient d'envoyer l'uuid de la demande tel que : { cee_application_type: 'standardized', cee_application_uuid: 'uuid de la demande', identity_key: 'clée' }.
       additionalProperties: false
       oneOf:
         - required:
