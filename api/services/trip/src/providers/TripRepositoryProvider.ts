@@ -141,14 +141,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               };
             case 'campaign_id':
               // prevent sql injection
-              if (Number.isInteger(filter.value[0])) {
-                return {
-                  text: `applied_policies && $#::int[] AND (passenger_incentive_rpc_sum > 0 OR driver_incentive_rpc_sum > 0) and EXISTS (SELECT * FROM jsonb_array_elements(array_to_json(driver_incentive_rpc_raw)::jsonb ) as obj WHERE obj @> '{ "type": "incentive", "policy_id": ${filter.value[0]}}'::jsonb AND (obj->>'amount')::int > 0)`,
-                  values: [filter.value],
-                };
+              if (typeof filter.value[0] !== 'number') {
+                throw new Error('Value is not a number');
               }
               return {
-                text: 'applied_policies && $#::int[] AND (passenger_incentive_rpc_sum > 0 OR driver_incentive_rpc_sum > 0)',
+                text: `applied_policies && $#::int[] AND (passenger_incentive_rpc_sum > 0 OR driver_incentive_rpc_sum > 0) and EXISTS (SELECT * FROM jsonb_array_elements(array_to_json(driver_incentive_rpc_raw)::jsonb ) as obj WHERE obj @> '{ "type": "incentive", "policy_id": ${filter.value[0]}}'::jsonb AND (obj->>'amount')::int > 0)`,
                 values: [filter.value],
               };
 
