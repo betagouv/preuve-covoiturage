@@ -13,7 +13,6 @@ interface CommonIdentityInterface {
   };
 }
 
-
 interface IdentityInterfaceV3 extends CommonIdentityInterface {
   identity_key: string;
   operator_user_id: string;
