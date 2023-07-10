@@ -84,7 +84,7 @@ export function setup() {
 export default function (store) {
   // create a certificate
   const response_cert = http.post(
-    `${o.base_url}/v2/certificates`,
+    `${o.base_url}/v3/certificates`,
     JSON.stringify({
       tz: 'Europe/Paris',
       identity: {

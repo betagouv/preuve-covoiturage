@@ -45,7 +45,7 @@ export function apiRateLimiter(opts: Partial<RateLimiterOptions> = {}): RateLimi
   return rateLimiter({ windowMs: 5 * minute, max: 2000, ...opts }, 'rl-api');
 }
 
-// shortcut for /v2/journeys route
+// shortcut for acquisition route
 export function acquisitionRateLimiter(opts: Partial<RateLimiterOptions> = {}): RateLimitRequestHandler {
   return rateLimiter({ windowMs: 1 * minute, max: 20000, ...opts }, 'rl-acquisition');
 }
@@ -55,7 +55,7 @@ export function ceeRateLimiter(opts: Partial<RateLimiterOptions> = {}): RateLimi
   return rateLimiter({ windowMs: 1 * minute, max: 20000, ...opts }, 'rl-cee');
 }
 
-// shortcut for /v2/journeys/:id route
+// shortcut for journey status route
 export function checkRateLimiter(opts: Partial<RateLimiterOptions> = {}): RateLimitRequestHandler {
   return rateLimiter({ windowMs: 1 * minute, max: 2000, ...opts }, 'rl-acquisition-check');
 }

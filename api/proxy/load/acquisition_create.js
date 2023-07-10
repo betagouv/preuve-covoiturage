@@ -87,7 +87,7 @@ function createPayload(version) {
   switch (version) {
     case 2: 
       return [
-        `${o.base_url}/v2/journeys`,
+        `${o.base_url}/v3/journeys`,
         JSON.stringify({
           operator_class: 'B',
           journey_id: `dfd2ae54-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-${(

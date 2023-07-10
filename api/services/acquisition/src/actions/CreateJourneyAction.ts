@@ -5,8 +5,8 @@ import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-mid
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/create.contract';
 
-import { PayloadV2, PayloadV3 } from '../shared/acquisition/create.contract';
-import { v2alias, v3alias } from '../shared/acquisition/create.schema';
+import { PayloadV3 } from '../shared/acquisition/create.contract';
+import { v3alias } from '../shared/acquisition/create.schema';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
 
@@ -74,22 +74,8 @@ export class CreateJourneyAction extends AbstractAction {
     }
   }
 
-  protected async validate(apiVersionString: string, journey: PayloadV2 | PayloadV3): Promise<void> {
+  protected async validate(apiVersionString: string, journey: PayloadV3): Promise<void> {
     switch (apiVersionString) {
-      case 'v2': {
-        const v2Journey = journey as PayloadV2;
-        await this.validator.validate(v2Journey, v2alias);
-        // reject if happening in the future
-        const now = new Date();
-        const start_passenger = get(v2Journey, 'passenger.start.datetime');
-        const start_driver = get(v2Journey, 'driver.start.datetime');
-        const end_passenger = get(v2Journey, 'passenger.end.datetime');
-        const end_driver = get(v2Journey, 'driver.end.datetime');
-        if (end_passenger > now || end_driver > now || start_driver > end_driver || start_passenger > end_passenger) {
-          throw new ParseErrorException('Journeys cannot happen in the future');
-        }
-        return;
-      }
       case 'v3': {
         const v3Journey = journey as PayloadV3;
         await this.validator.validate(v3Journey, v3alias);

@@ -25,7 +25,7 @@ test('should return repository data if validator not fail', async (t) => {
   const inputData = {
     method: '',
     params: {
-      api_version: 'v2',
+      api_version: 'v3',
       journey_id: operator_journey_id,
       operator_journey_id: 'nope',
       operator_class: 'C',
@@ -71,7 +71,7 @@ test('should fail if validator fail', async (t) => {
   const inputData = {
     method: '',
     params: {
-      api_version: 'v2',
+      api_version: 'v3',
       journey_id: operator_journey_id,
       operator_journey_id: 'nope',
       operator_class: 'C',
@@ -113,7 +113,7 @@ test('should fail if date validation fail', async (t) => {
   const inputData = {
     method: '',
     params: {
-      api_version: 'v2',
+      api_version: 'v3',
       journey_id: operator_journey_id,
       operator_journey_id: 'nope',
       operator_class: 'C',
@@ -160,7 +160,7 @@ test('should fail if journey already registred', async (t) => {
   const inputData = {
     method: '',
     params: {
-      api_version: 'v2',
+      api_version: 'v3',
       journey_id: operator_journey_id,
       operator_journey_id: 'nope',
       operator_class: 'C',
