@@ -85,64 +85,6 @@ function createPayload(version) {
   const start = new Date().getTime() - Math.random() * 10000000000;
   const end = start + Math.random() * 1000000;
   switch (version) {
-    case 2: 
-      return [
-        `${o.base_url}/v3/journeys`,
-        JSON.stringify({
-          operator_class: 'B',
-          journey_id: `dfd2ae54-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-${(
-            parseInt(Math.random() * 10000, 10) + 10000
-          )
-            .toString(16)
-            .substr(0, 4)}-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-1769ea7e6f78`,
-          operator_journey_id: `a1c5848f-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-${(
-            parseInt(Math.random() * 10000, 10) + 10000
-          )
-            .toString(16)
-            .substr(0, 4)}-${(parseInt(Math.random() * 10000, 10) + 10000).toString(16).substr(0, 4)}-2256c3116b4c`,
-          passenger: {
-            distance: 34039,
-            duration: 1485,
-            incentives: [],
-            contribution: 76,
-            seats: 1,
-            identity: {
-              over_18: true,
-              phone: __ENV.LOAD_PASSENGER_ID || `+3376755${parseInt(Math.random() * 9000, 10) + 1000}`,
-            },
-            start: {
-              datetime: new Date(start).toISOString(),
-              lat: 49.45218,
-              lon: 6.02627,
-            },
-            end: {
-              datetime: new Date(end).toISOString(),
-              lat: 49.45218,
-              lon: 6.02627,
-            },
-          },
-          driver: {
-            distance: 34039,
-            duration: 1485,
-            incentives: [],
-            revenue: 376,
-            identity: {
-              over_18: true,
-              phone: __ENV.LOAD_DRIVER_ID || `+3378388${parseInt(Math.random() * 9000, 10) + 1000}`,
-            },
-            start: {
-              datetime: new Date(start).toISOString(),
-              lat: 49.45218,
-              lon: 6.02627,
-            },
-            end: {
-              datetime: new Date(end).toISOString(),
-              lat: 48.82338,
-              lon: 1.78668,
-            },
-          },
-        }),
-      ];
       case 3:
         return [
           `${o.base_url}/v3/journeys`,
@@ -194,7 +136,7 @@ function createPayload(version) {
 }
 export default function (store) {
   // create a journey
-  const [url, payload] = createPayload(Math.random() < 0.5 ? 2 : 3);
+  const [url, payload] = createPayload(3);
   const response_acq = http.post(
     url,
     payload,
