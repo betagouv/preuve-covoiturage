@@ -319,7 +319,7 @@ export class HttpTransport implements TransportInterface {
 
   private registerSimulationRoutes(): void {
     this.app.post(
-      '/:version/policy/simulate',
+      '/v3/policy/simulate',
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {

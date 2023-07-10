@@ -82,13 +82,11 @@ export class SimulateOnFutureAction extends AbstractAction {
       }));
 
     return {
-      journey_id: 'journey_id' in params ? params.journey_id : undefined,
-      driver: normalizedIncentives.map((incentive, i) => ({
+      incentives: normalizedIncentives.map((incentive, i) => ({
         index: i,
         amount: incentive.amount,
         siret: incentive.siret,
       })),
-      passenger: [],
     };
   }
 

@@ -55,9 +55,7 @@ interface IncentiveInterface {
 }
 
 export interface ResultInterface {
-  journey_id: string;
-  passenger: IncentiveInterface[];
-  driver: IncentiveInterface[];
+  incentives: IncentiveInterface[];
 }
 
 export const handlerConfig = {
