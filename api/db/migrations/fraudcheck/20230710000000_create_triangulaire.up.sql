@@ -1,5 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS fraudcheck;
-
 CREATE TABLE IF NOT EXISTS fraudcheck.phone_insights (
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
