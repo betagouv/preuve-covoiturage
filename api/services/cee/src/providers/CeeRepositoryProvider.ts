@@ -355,7 +355,6 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           journey_type = $3 AND
           last_name_trunc = $4 AND
           phone_trunc = $5 AND
-          datetime = $6 AND
           is_specific = true AND
           identity_key IS NULL
         RETURNING _id
@@ -366,7 +365,6 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         data.journey_type,
         data.last_name_trunc,
         data.phone_trunc,
-        data.application_timestamp,
       ],
     });
 
