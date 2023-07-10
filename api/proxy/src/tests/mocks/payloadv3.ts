@@ -1,6 +1,6 @@
 import { uuid } from '@pdc/helper-test';
 
-export function payloadV3(): any {
+export function payloadv3(): any {
   return {
     incentive_counterparts: [],
     operator_journey_id: uuid(),
