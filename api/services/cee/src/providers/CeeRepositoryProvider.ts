@@ -359,13 +359,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           identity_key IS NULL
         RETURNING _id
       `,
-      values: [
-        data.identity_key,
-        data.operator_id,
-        data.journey_type,
-        data.last_name_trunc,
-        data.phone_trunc,
-      ],
+      values: [data.identity_key, data.operator_id, data.journey_type, data.last_name_trunc, data.phone_trunc],
     });
 
     if (result.rowCount === 0) {
@@ -385,7 +379,6 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         WHERE
           _id = $2 AND
           operator_id = $3 AND
-          is_specific = false AND
           identity_key IS NULL
         RETURNING _id
       `,
