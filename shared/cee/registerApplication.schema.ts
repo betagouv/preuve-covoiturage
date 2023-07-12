@@ -13,7 +13,7 @@ export const schema = {
   allOf: [
     {
       type: 'object',
-      required: ['journey_type', 'driving_license', 'last_name_trunc', 'application_timestamp'],
+      required: ['journey_type', 'driving_license', 'last_name_trunc', 'application_timestamp', 'identity_key'],
       properties: {
         application_timestamp: timestampSchema,
         journey_type: ceeJourneyTypeEnumSchema,

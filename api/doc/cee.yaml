@@ -67,6 +67,7 @@ components:
       additionalProperties: false
       required:
         - journey_type
+        - identity_key
         - driving_license
         - last_name_trunc
         - phone_trunc
@@ -95,6 +96,7 @@ components:
       additionalProperties: false
       required:
         - journey_type
+        - identity_key
         - driving_license
         - last_name_trunc
         - operator_journey_id
