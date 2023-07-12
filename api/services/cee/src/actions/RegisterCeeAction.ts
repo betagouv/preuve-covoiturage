@@ -122,6 +122,7 @@ export class RegisterCeeAction extends AbstractAction {
           last_name_trunc: params.last_name_trunc,
           phone_trunc: carpoolData.phone_trunc,
           driving_license: params.driving_license,
+          identity_key: params.identity_key,
         };
         const old = await this.ceeRepository.searchForShortApplication(search, this.cooldownConstraint);
         if (!old) {
@@ -174,6 +175,7 @@ export class RegisterCeeAction extends AbstractAction {
           last_name_trunc: params.last_name_trunc,
           phone_trunc: params.phone_trunc,
           driving_license: params.driving_license,
+          identity_key: params.identity_key,
         };
         const old = await this.ceeRepository.searchForLongApplication(search, this.cooldownConstraint);
         if (!old) {
