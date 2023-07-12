@@ -25,7 +25,7 @@ export class ImportCeeIdentityAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if (!!env('APP_DISABLE_CEE_IMPORT', false)) {
+    if (!!env('APP_DISABLE_CEE_IMPORT_IDENTITY', false)) {
       throw new ServiceDisabledError();
     }
 
