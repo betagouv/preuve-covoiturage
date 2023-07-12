@@ -270,7 +270,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       );
     }
 
-    query.text = `${query.text} RETURNING _id`;
+    query.text = `${query.text} ON CONFLICT DO NOTHING RETURNING _id`;
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
       // s'il n'y a pas eu d'enregistrement c'est qu'un autre est déjà actif
