@@ -106,7 +106,7 @@ test.serial(
     failed_details: [
       {
         ...defaultPayload,
-        error: 'duplicate key value violates unique constraint "cee_operator_id_journey_type_is_specific_uniqueness"',
+        error: 'Conflict',
       },
     ],
     imported: 1,
