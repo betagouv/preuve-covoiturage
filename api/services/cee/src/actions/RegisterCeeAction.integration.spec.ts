@@ -49,6 +49,7 @@ const defaultShortPayload: any = {
   driving_license: '051227308989',
   application_timestamp: '2022-01-02T00:00:00.000Z',
   operator_journey_id: 'operator_journey_id-1',
+  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
 };
 
 const defaultLongPayload: any = {
@@ -58,6 +59,7 @@ const defaultLongPayload: any = {
   datetime: '2022-01-02T00:00:00.000Z',
   application_timestamp: '2022-01-02T00:00:00.000Z',
   phone_trunc: '+336273488',
+  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
 };
 
 test.serial(
