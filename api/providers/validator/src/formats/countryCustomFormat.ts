@@ -1,6 +1,6 @@
 import { Format } from '@ilos/validator';
 
-export const CustomFormat: Format = (data: string): boolean => {
+export const countryCustomFormat: Format = (data: string): boolean => {
   try {
     // TODO check against a real list of INSEE codes?
 

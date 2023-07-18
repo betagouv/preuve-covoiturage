@@ -8,7 +8,7 @@ import { euVatMacro } from './macros/euVatMacro';
 import { groupMacro } from './macros/groupMacro';
 import { ibanMacro } from './macros/ibanMacro';
 import { inseeMacro } from './macros/inseeMacro';
-import { depMacro } from './macros/depMacro';
+import { departmentMacro } from './macros/departmentMacro';
 import { countryMacro } from './macros/countryMacro';
 import { nafMacro } from './macros/nafMacro';
 import { nicMacro } from './macros/nicMacro';
@@ -42,7 +42,7 @@ const macroStore = {
   group: groupMacro,
   iban: ibanMacro,
   insee: inseeMacro,
-  dep: depMacro,
+  department: departmentMacro,
   country: countryMacro,
   integer: integerMacro,
   jwt: jwtMacro,
