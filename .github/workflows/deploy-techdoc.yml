@@ -26,21 +26,6 @@ jobs:
           npm run gen
           NODE_OPTIONS=--openssl-legacy-provider npm run build
 
-      - name: Install SSH Client 🔑
-        uses: webfactory/ssh-agent@v0.4.1
-        with:
-          ssh-private-key: ${{ secrets.FRONT_DEPLOY_KEY }}
-
-      - name: Deploy 🚀
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.FRONT_HOST }}
-          username: ${{ secrets.FRONT_USERNAME }}
-          key: ${{ secrets.FRONT_DEPLOY_KEY }}
-          source: doc/dist
-          target: www/doc
-          rm: true
-
       - name: Deploy to bucket
         uses: jakejarvis/s3-sync-action@master
         with:
@@ -51,4 +36,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
           AWS_S3_ENDPOINT: ${{ vars.BUCKET_ENDPOINT }}
           AWS_REGION: ${{ vars.BUCKET_REGION }}
-          SOURCE_DIR: 'dashboard/dist'
+          SOURCE_DIR: 'doc/dist'
