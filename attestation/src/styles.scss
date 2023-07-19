@@ -1,0 +1,65 @@
+@import "./scss/dsfr";
+@import "./scss/_partials/footer.scss";
+
+.padding-1em {
+  padding: 1em;
+}
+
+.rf-section {
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+.rf-section--secondary {
+  background-color: var(--g200);
+}
+
+.rf-input-group--actions {
+  text-align: right;
+}
+
+@media (max-width: 36em) {
+  .rf-xs-hidden {
+    display: none;
+  }
+}
+
+.rf-label-link {
+  display: flex;
+  box-shadow: none;
+}
+
+.rf-footer {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    color: var(--g300);
+  }
+
+  padding-top: 2em;
+  padding-bottom: 5em;
+  background-color: var(--g700);
+}
+
+.h-text-center {
+  text-align: center;
+}
+
+form .rf-highlight {
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+// app-autocomplete component global styles
+app-ac-address,
+app-ac-company {
+  &.ng-dirty.ng-invalid {
+    .rf-input {
+      box-shadow: inset 0 -2px 0 0 var(--error);
+    }
+  }
+}
