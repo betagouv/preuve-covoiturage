@@ -4,7 +4,10 @@ on:
     branches: [dev]
 jobs:
   build-and-deploy:
-    environment: production
+    strategy:
+      matrix:
+        env: [demo, production]
+    environment: ${{ matrix.env }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
