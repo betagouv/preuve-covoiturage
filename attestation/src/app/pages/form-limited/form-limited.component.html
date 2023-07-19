@@ -1,0 +1,113 @@
+<app-form-pickatype></app-form-pickatype>
+
+<form [formGroup]="profileForm" (submit)="onSubmit()" (reset)="onReset()">
+  <h4>Secteur privé</h4>
+
+  <p class="rf-highlight">
+    Les champs suivis d'un
+    <span class="rf-label--required"></span> sont obligatoires.
+  </p>
+
+  <!-- name -->
+  <div class="rf-input-group">
+    <label class="rf-label rf-label--required">Je soussigné·e</label>
+    <input class="rf-input" formControlName="name" required />
+    <p *ngIf="showError('name', 'required')" class="rf-error-text">
+      Le prénom est requis
+    </p>
+    <p *ngIf="showError('name', 'maxlength')" class="rf-error-text">
+      Le prénom ne peut dépasser 128 caractères
+    </p>
+  </div>
+
+  <!-- Address -->
+  <div class="rf-input-group">
+    <label class="rf-label rf-label--required">Adresse du domicile</label>
+    <app-ac-address formControlName="address"></app-ac-address>
+    <p *ngIf="showError('address', 'required')" class="rf-error-text">
+      L'adresse du domicile est requise
+    </p>
+    <p *ngIf="showError('address', 'maxlength')" class="rf-error-text">
+      L'adresse ne peut dépasser 256 caractères
+    </p>
+  </div>
+
+  <!-- Employer -->
+  <div class="rf-input-group">
+    <label class="rf-label rf-label--required">Nom de l'employeur</label>
+    <input class="rf-input" formControlName="employer" required />
+    <p *ngIf="showError('employer', 'required')" class="rf-error-text">
+      Le nom de l'employeur est requis
+    </p>
+    <p *ngIf="showError('employer', 'maxlength')" class="rf-error-text">
+      Le nom de l'employeur ne peut dépasser 256 caractères
+    </p>
+  </div>
+
+  <!-- Work Share -->
+  <div class="rf-input-group">
+    <label class="rf-label rf-label--required">Quotité de temps de travail (en pourcentage. 100 = temps plein)</label>
+    <input class="rf-input" formControlName="workshare" />
+    <p *ngIf="showError('workshare', 'maxlength')" class="rf-error-text">
+      La quotité ne peut dépasser 3 caractères
+    </p>
+    <p *ngIf="showError('workshare', 'pattern')" class="rf-error-text">
+      Ce champ n'accepte que les chiffres
+    </p>
+  </div>
+
+  <h4>Covoiturage</h4>
+
+  <!-- Distance -->
+  <div class="rf-input-group">
+    <label class="rf-label">Nombre de kilomètres par trajet <em>(facultatif)</em></label>
+    <input class="rf-input" formControlName="distance" maxlength="6" />
+    <p *ngIf="showError('distance', 'max')" class="rf-error-text">
+      La distance ne peut dépasser 100000&nbsp;km
+    </p>
+    <p *ngIf="showError('distance', 'min')" class="rf-error-text">
+      La distance ne peut inférieure à 1&nbsp;km
+    </p>
+    <p *ngIf="showError('distance', 'pattern')" class="rf-error-text">
+      Ce champ n'accepte que les chiffres
+    </p>
+  </div>
+
+  <!-- Days -->
+  <div class="rf-input-group">
+    <label class="rf-label">Nombre de jours covoiturés dans l'année <em>(facultatif)</em></label>
+    <input class="rf-input" formControlName="days" maxlength="3" />
+    <p *ngIf="showError('days', 'max')" class="rf-error-text">
+      Le nombre de jours ne peut dépasser 365
+    </p>
+    <p *ngIf="showError('days', 'min')" class="rf-error-text">
+      Le nombre de jours ne peut être inférieur à 1
+    </p>
+    <p *ngIf="showError('days', 'pattern')" class="rf-error-text">
+      Ce champ n'accepte que les chiffres
+    </p>
+  </div>
+
+  <h4>Signature</h4>
+
+  <!-- Location -->
+  <div class="rf-input-group">
+    <label class="rf-label rf-label--required">Fait à</label>
+    <input class="rf-input" formControlName="location" required />
+    <p *ngIf="showError('location', 'required')" class="rf-error-text">
+      La commune est requise
+    </p>
+    <p *ngIf="showError('location', 'maxlength')" class="rf-error-text">
+      La commune ne peut dépasser 128 caractères
+    </p>
+  </div>
+
+  <!-- Actions -->
+  <div class="rf-input-group rf-input-group--actions">
+    <button type="reset" class="rf-btn rf-btn--secondary">Annuler</button>
+    &nbsp;
+    <button type="submit" class="rf-btn" [disabled]="!profileForm.valid">
+      Générer
+    </button>
+  </div>
+</form>
