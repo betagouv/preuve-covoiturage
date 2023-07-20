@@ -44,7 +44,7 @@ export class SimulateCeeAction extends AbstractAction {
     }
     if (data.operator_id === operator_id) {
       throw new ConflictException({
-        uuid: data._id,
+        uuid: data.uuid,
         datetime: data.datetime.toISOString(),
       });
     } else {

@@ -1,17 +1,18 @@
-import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common';
+import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { BucketName, S3StorageProvider } from '@pdc/provider-file';
+import { BucketName, S3StorageProvider } from '@pdc/provider-storage';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import fs from 'fs';
 import { get } from 'lodash';
+import { getDeclaredOperators } from '../helpers/getDeclaredOperators.helper';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
-import { BuildExcel } from '../providers/excel/BuildExcel';
 import { CheckCampaign } from '../providers/CheckCampaign';
+import { BuildExcel } from '../providers/excel/BuildExcel';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/apdf/export.contract';
 import { alias } from '../shared/apdf/export.schema';
-import { ResultInterface as Campaign } from '../shared/policy/find.contract';
+import { ResultInterface as PolicyResultInterface } from '../shared/policy/find.contract';
 
 @handler({
   ...handlerConfig,
@@ -19,6 +20,7 @@ import { ResultInterface as Campaign } from '../shared/policy/find.contract';
 })
 export class ExportAction extends Action {
   constructor(
+    private kernel: KernelInterfaceResolver,
     private checkCampaign: CheckCampaign,
     private s3StorageProvider: S3StorageProvider,
     private apdfRepositoryProvider: DataRepositoryProviderInterfaceResolver,
@@ -40,16 +42,22 @@ export class ExportAction extends Action {
     await Promise.all(
       params.query.campaign_id.map(async (c_id) => {
         // Make sure the campaign is active and within the date range
-        const campaign: Campaign | void = await this.checkCampaign
+        const campaign: PolicyResultInterface | void = await this.checkCampaign
           .call(c_id, start_date, end_date)
           .catch((e) => console.error(`[apdf:export] (campaign_id: ${c_id}) Check campaign failed: ${e.message}`));
 
         if (!campaign) return;
 
-        // List operators having subsidized trips
-        const activeOperatorIds =
+        // Get declared operators
+        const declaredOperators = await getDeclaredOperators(this.kernel, handlerConfig.service, campaign._id);
+
+        // List operators having subsidized trips and filter them by the ones declared
+        // in the policy file (policy/src/engine/policies/<policy.ts>).
+        // Bypass when the declared list is empty.
+        const activeOperatorIds = (
           params.query.operator_id ||
-          (await this.apdfRepositoryProvider.getPolicyActiveOperators(campaign._id, start_date, end_date));
+          (await this.apdfRepositoryProvider.getPolicyActiveOperators(campaign._id, start_date, end_date))
+        ).filter((operator_id) => (declaredOperators.length ? declaredOperators.includes(operator_id) : true));
 
         if (!activeOperatorIds.length) console.info(`[apdf:export] (campaign: ${campaign.name}) No active operators`);
 
@@ -59,6 +67,7 @@ export class ExportAction extends Action {
             $$$  - start_date: ${campaign.start_date.toISOString()}
             $$$  - end_date:   ${campaign.end_date.toISOString()}
             $$$  - used:       ${campaign.incentive_sum / 100}€
+            $$$ Declared  :    ${declaredOperators.map((i) => `#${i}`).join(', ')}
             $$$ Operators :    ${activeOperatorIds.map((i) => `#${i}`).join(', ')}
           `);
         }

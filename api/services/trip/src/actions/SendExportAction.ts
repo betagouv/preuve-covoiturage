@@ -1,7 +1,7 @@
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
-import { BucketName, S3StorageProvider } from '@pdc/provider-file';
+import { BucketName, S3StorageProvider } from '@pdc/provider-storage';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/sendExport.contract';
 import { alias } from '../shared/trip/sendExport.schema';

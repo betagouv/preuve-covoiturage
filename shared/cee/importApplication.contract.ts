@@ -2,7 +2,7 @@ import { CeeImportInterface, CeeImportResultInterface } from './common/CeeApplic
 
 export type ParamsInterface = Array<CeeImportInterface<Date>>;
 
-export type ResultInterface = CeeImportResultInterface;
+export type ResultInterface = CeeImportResultInterface<CeeImportInterface<string> & { error: string }>;
 
 export const handlerConfig = {
   service: 'cee',

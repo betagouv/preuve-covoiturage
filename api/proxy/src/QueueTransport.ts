@@ -8,7 +8,7 @@ import { env } from '@ilos/core';
 
 import { healthCheckFactory } from './helpers/healthCheckFactory';
 import { prometheusMetricsFactory } from './helpers/prometheusMetricsFactory';
-import { rateLimiter } from './middlewares/rateLimiter';
+import { metricsMiddleware } from './middlewares/metricsMiddleware';
 
 export class MyQueueTransport extends QueueTransport implements TransportInterface {
   server: http.Server;
@@ -43,8 +43,8 @@ export class MyQueueTransport extends QueueTransport implements TransportInterfa
   }
 
   async setupServer() {
-    this.app.get('/health', rateLimiter(), healthCheckFactory([]));
-    this.app.get('/metrics', rateLimiter(), prometheusMetricsFactory());
+    this.app.get('/health', metricsMiddleware('health'), healthCheckFactory([]));
+    this.app.get('/metrics', metricsMiddleware('metrics'), prometheusMetricsFactory());
   }
 
   async startServer() {

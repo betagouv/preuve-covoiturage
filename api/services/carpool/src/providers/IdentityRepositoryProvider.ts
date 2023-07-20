@@ -40,8 +40,9 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
           travel_pass_name,
           travel_pass_user_id,
           over_18,
+          identity_key,
           uuid
-        ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )
+        ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 )
         RETURNING _id, uuid
       `,
       values: [
@@ -55,6 +56,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
         identity.travel_pass_name,
         identity.travel_pass_user_id,
         identity.over_18,
+        identity.identity_key,
         await this.findUuid(identity, meta, { generate: true, interval: 30 }),
       ],
     });

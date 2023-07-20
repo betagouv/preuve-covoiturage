@@ -8,7 +8,6 @@ import { Lannion } from './Lannion';
 import { Laval } from './Laval';
 import { Mrn } from './Mrn';
 import { Nm } from './Nm';
-import { Normandie } from './Normandie';
 import { Occitanie } from './Occitanie';
 import { Pdll } from './Pdll';
 import { Pmgf } from './Pmgf';
@@ -40,7 +39,6 @@ export const policies: Map<string, PolicyHandlerStaticInterface> = new Map(
     PolicyTemplateThree,
     PolicyTemplateTwo,
     Smt,
-    Normandie,
     Montpellier,
     MetropoleSavoie,
     Smt2023,

@@ -61,16 +61,23 @@ export class RegisterCeeAction extends AbstractAction {
           return await this.proceesForLongApplication(operator_id, params);
       }
     } catch (e) {
+      let errorType;
+      switch(true){
+        case e instanceof InvalidParamsException:
+            errorType = CeeApplicationErrorEnum.Date;
+            break;
+        case e instanceof NotFoundException:
+            errorType = CeeApplicationErrorEnum.NonEligible;
+            break;
+        case e instanceof ConflictException:
+            errorType = CeeApplicationErrorEnum.Conflict;
+            break;
+        default: 
+            errorType = CeeApplicationErrorEnum.Validation;
+      }
       const errorData: CeeApplicationError = {
         operator_id,
-        error_type:
-          e instanceof InvalidParamsException
-            ? CeeApplicationErrorEnum.Date
-            : e instanceof NotFoundException
-            ? CeeApplicationErrorEnum.NonEligible
-            : e instanceof ConflictException
-            ? CeeApplicationErrorEnum.Conflict
-            : CeeApplicationErrorEnum.Validation,
+        error_type: errorType,
         journey_type: params.journey_type,
         datetime: params['datetime'],
         last_name_trunc: params['last_name_trunc'],
@@ -90,7 +97,7 @@ export class RegisterCeeAction extends AbstractAction {
     operator_id: number,
     params: CeeShortApplicationInterface,
   ): Promise<ResultInterface> {
-    const carpoolData = await this.ceeRepository.searchForValidJourney(
+    const { identity_key: carpoolIdentityKey, ...carpoolData } = await this.ceeRepository.searchForValidJourney(
       { operator_id, operator_journey_id: params.operator_journey_id },
       this.validJourneyConstraint,
     );
@@ -122,14 +129,22 @@ export class RegisterCeeAction extends AbstractAction {
           last_name_trunc: params.last_name_trunc,
           phone_trunc: carpoolData.phone_trunc,
           driving_license: params.driving_license,
+          identity_key: params.identity_key,
         };
         const old = await this.ceeRepository.searchForShortApplication(search, this.cooldownConstraint);
         if (!old) {
           // Server error
           throw new Error('Boum');
         } else {
+          if (operator_id === old.operator_id) {
+            throw new ConflictException({
+              uuid: old.uuid,
+              datetime: old.datetime.toISOString(),
+              journey_id: old.acquisition_id,
+              status: old.acquisition_status,
+            });
+          }
           throw new ConflictException({
-            uuid: operator_id === old.operator_id ? old._id : undefined,
             datetime: old.datetime.toISOString(),
           });
         }
@@ -167,6 +182,7 @@ export class RegisterCeeAction extends AbstractAction {
           last_name_trunc: params.last_name_trunc,
           phone_trunc: params.phone_trunc,
           driving_license: params.driving_license,
+          identity_key: params.identity_key,
         };
         const old = await this.ceeRepository.searchForLongApplication(search, this.cooldownConstraint);
         if (!old) {
@@ -174,7 +190,7 @@ export class RegisterCeeAction extends AbstractAction {
           throw new Error('Boum');
         } else {
           throw new ConflictException({
-            uuid: operator_id === old.operator_id ? old._id : undefined,
+            uuid: operator_id === old.operator_id ? old.uuid : undefined,
             datetime: old.datetime.toISOString(),
           });
         }
@@ -182,6 +198,7 @@ export class RegisterCeeAction extends AbstractAction {
       throw e;
     }
   }
+
   public async sign(application: RegisteredCeeApplication): Promise<string> {
     const private_key = this.config.get('signature.private_key');
     const signer = createSign('RSA-SHA512');

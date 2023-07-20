@@ -38,7 +38,7 @@
     "test:pdc:integration": "lerna run --scope @pdc/* test:integration",
     "test:ilos:integration": "lerna run --scope @ilos/* test:integration",
     "migrate": "DATABASE_URL=$APP_POSTGRES_URL npm --workspace @pdc/migrator run up",
-    "ilos": "npm --workspace @pdc/proxy run ilos"
+    "ilos": "npm run --workspace @pdc/proxy -- ilos"
   },
   "keywords": [
     "betagouv",
@@ -75,7 +75,7 @@
     "supertest": "^6.3.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^3.11.0",
-    "typescript": "^4.9.4"
+    "typescript": "^5.0.4"
   },
   "resolutions": {
     "**/async": "^3.2.3",

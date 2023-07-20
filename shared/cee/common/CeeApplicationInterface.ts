@@ -45,6 +45,7 @@ export interface CeeSimulateInterface {
   last_name_trunc: LastNameTrunc;
   phone_trunc: PhoneTrunc;
   driving_license?: DrivingLicense;
+  identity_key?: string;
 }
 
 export interface CeeSimulateResultInterface {
@@ -59,8 +60,23 @@ export interface CeeImportInterface<T> {
   datetime: T;
 }
 
-export interface CeeImportResultInterface {
+export interface CeeImportStandardizedApplicationIdentityInterface {
+  cee_application_type: 'standardized';
+  cee_application_uuid: string;
+  identity_key: string;
+}
+
+export interface CeeImportSpecificApplicationIdentityInterface extends CeeImportInterface<Date> {
+  cee_application_type: 'specific';
+  identity_key: string;
+}
+
+export type CeeImportIdentityInterface =
+  | CeeImportStandardizedApplicationIdentityInterface
+  | CeeImportSpecificApplicationIdentityInterface;
+
+export interface CeeImportResultInterface<T> {
   imported: number;
   failed: number;
-  failed_details: Array<CeeImportInterface<string> & { error: string }>;
+  failed_details: Array<T>;
 }
