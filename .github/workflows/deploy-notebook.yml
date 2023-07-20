@@ -98,15 +98,16 @@ jobs:
         env: 
           TARGET_VERSION: ${{ steps.docker_build.outputs.digest }}
           TARGET_ENV: demo
-        github-token: ${{ secrets.GITHUB_INFRA_TOKEN }}
-        script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: 'preuve-covoiturage-infra',
-              workflow_id: 'deploy.yml',
-              ref: 'main',
-              inputs: {
-                env: process.env.TARGET_ENV,
-                version: process.env.TARGET_VERSION,
-              },
-            })
+        with:
+          github-token: ${{ secrets.GITHUB_INFRA_TOKEN }}
+          script: |
+              github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: 'preuve-covoiturage-infra',
+                workflow_id: 'deploy.yml',
+                ref: 'main',
+                inputs: {
+                  env: process.env.TARGET_ENV,
+                  version: process.env.TARGET_VERSION,
+                },
+              })
