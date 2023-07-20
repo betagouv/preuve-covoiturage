@@ -22,13 +22,13 @@ CREATE TABLE IF NOT EXISTS fraudcheck.phone_insights (
     operator_list VARCHAR(255)
 );
 
-CREATE UNIQUE INDEX on fraudcheck.phone_insights ('phone_trunc', 'departure_date', 'end_date');
+CREATE UNIQUE INDEX on fraudcheck.phone_insights (phone_trunc, departure_date, end_date);
 
 
 CREATE TABLE IF NOT EXISTS fraudcheck.potential_triangular_patterns (
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    group INTEGER,
+    groupe INTEGER,
     phone_trunc VARCHAR(20),
     num_participants INTEGER,
     num_trips INTEGER,
@@ -45,5 +45,5 @@ CREATE TABLE IF NOT EXISTS fraudcheck.potential_triangular_patterns (
     journey_id_list VARCHAR[]
 );
 
-CREATE UNIQUE INDEX on fraudcheck.potential_triangular_patterns ('id', 'group', 'phone_trunc');
+CREATE UNIQUE INDEX on fraudcheck.potential_triangular_patterns (id, groupe, phone_trunc);
 
