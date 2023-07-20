@@ -1078,14 +1078,6 @@ paths:
                     type: string
                     format: date-time
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
-                  data: 
-                    type: object
-                    description: champ libre de données
-                    required:
-                      - message
-                    properties:
-                      message:
-                        type: string
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
           content:
