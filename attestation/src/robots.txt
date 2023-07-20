@@ -1,0 +1,1 @@
+Sitemap: https://attestation.covoiturage.beta.gouv.fr/sitemap.xml

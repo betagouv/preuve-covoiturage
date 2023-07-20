@@ -42,6 +42,7 @@ test.before(async (t) => {
       datetime: '2022-01-02T00:00:00.000Z',
       application_timestamp: '2022-01-02T00:00:00.000Z',
       phone_trunc: '+336273488',
+      identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
     },
     defaultContext,
   );
@@ -58,6 +59,7 @@ const defaultShortPayload: any = {
   last_name_trunc: 'DEF',
   phone_trunc: '+336273488',
   driving_license: '051227308990',
+  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
 };
 
 const defaultLongPayload: any = {
@@ -65,6 +67,7 @@ const defaultLongPayload: any = {
   last_name_trunc: 'ABC',
   phone_trunc: '+336273488',
   driving_license: '051227308989',
+  identity_key: '0000000000000000000000000000000000000000000000000000000000000000',
 };
 
 test.serial(

@@ -45,6 +45,7 @@ export interface CeeSimulateInterface {
   last_name_trunc: LastNameTrunc;
   phone_trunc: PhoneTrunc;
   driving_license?: DrivingLicense;
+  identity_key?: string;
 }
 
 export interface CeeSimulateResultInterface {

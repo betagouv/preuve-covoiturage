@@ -8,7 +8,6 @@ import {
   CeeJourneyTypeEnum,
   CeeRepositoryProviderInterfaceResolver,
   LongCeeApplication,
-  ExistingCeeApplication,
   SearchCeeApplication,
   SearchJourney,
   ShortCeeApplication,
@@ -16,6 +15,7 @@ import {
   ValidJourneyConstraint,
   RegisteredCeeApplication,
   CeeApplicationError,
+  ExistingCeeApplication,
 } from '../interfaces';
 
 @provider({
@@ -37,50 +37,79 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
     search: SearchCeeApplication,
     constraint: ApplicationCooldownConstraint,
   ): Promise<ExistingCeeApplication | void> {
+    const { text, values } = [['identity_key'], ['driving_license'], ['last_name_trunc', 'phone_trunc']]
+      .filter((k) => !k.filter((kk) => !(kk in search)).length)
+      .map((k, i) => ({
+        text: `(${k.map((kk, ii) => `ce.${kk} = $${i + ii + 6}`).join(' AND ')})`,
+        value: k.map((kk) => search[kk]),
+      }))
+      .reduce(
+        (acc, v) => {
+          acc.text.push(v.text);
+          acc.values.push(...v.value);
+          return acc;
+        },
+        { text: [], values: [] },
+      );
+
     const query = {
       text: `
         SELECT
-          _id,
-          operator_id,
-          datetime
-        FROM ${this.table}
+          ce._id as uuid,
+          ce.operator_id,
+          ce.datetime,
+          ce.journey_type,
+          ce.driving_license,
+          op.siret as operator_siret,
+          cc.acquisition_id,
+          cc.status as acquisition_status
+        FROM ${this.table} AS ce
+        JOIN ${this.operatorTable} AS op
+          ON op._id = ce.operator_id
+        LEFT JOIN ${this.carpoolTable} AS cc
+          ON cc._id = ce.carpool_id
         WHERE 
-          journey_type = $1::cee.journey_type_enum AND
-          datetime >= ($7::timestamp - $4::int * interval '1 year') AND
-          is_specific = false AND (
-            (last_name_trunc = $2 AND phone_trunc = $3)
-            ${search.driving_license ? 'OR driving_license = $8' : ''}
+          ce.journey_type = $1::cee.journey_type_enum AND
+          ce.datetime >= ($5::timestamp - $2::int * interval '1 year') AND
+          ce.is_specific = false AND (
+            ${values.length ? text.join(' OR ') : ''}
           )
         UNION
         SELECT
-          _id,
-          operator_id,
-          datetime
-        FROM ${this.table}
+          ce._id as uuid,
+          ce.operator_id,
+          ce.datetime,
+          ce.journey_type,
+          ce.driving_license,
+          op.siret as operator_siret,
+          cc.acquisition_id,
+          cc.status as acquisition_status
+        FROM ${this.table} AS ce
+        JOIN ${this.operatorTable} AS op
+          ON op._id = ce.operator_id
+        LEFT JOIN ${this.carpoolTable} AS cc
+          ON cc._id = ce.carpool_id
         WHERE
-          journey_type = $1::cee.journey_type_enum AND
+          ce.journey_type = $1::cee.journey_type_enum AND
           (
-            datetime >= ($7::timestamp - $5::int * interval '1 year') AND
-            datetime >= $6::timestamp
+            ce.datetime >= ($5::timestamp - $3::int * interval '1 year') AND
+            ce.datetime >= $4::timestamp
           ) AND
-          is_specific = true AND (
-            (last_name_trunc = $2 AND phone_trunc = $3)
-            ${search.driving_license ? 'OR driving_license = $8' : ''}
+          ce.is_specific = true AND (
+            ${values.length ? text.join('OR') : ''}
           )
         ORDER BY datetime DESC
         LIMIT 1
       `,
       values: [
         journeyType,
-        search.last_name_trunc,
-        search.phone_trunc,
         journeyType === CeeJourneyTypeEnum.Short
           ? constraint.short.standardized.year
           : constraint.long.standardized.year,
         journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.year : constraint.long.specific.year,
         journeyType === CeeJourneyTypeEnum.Short ? constraint.short.specific.after : constraint.long.specific.after,
         search.datetime,
-        ...(search.driving_license ? [search.driving_license] : []),
+        ...values,
       ],
     };
     const result = await this.connection.getClient().query<ExistingCeeApplication>(query);
@@ -116,7 +145,8 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           CASE
             WHEN ce._id IS NULL THEN false
             ELSE true
-          END as already_registered
+          END as already_registered,
+          ci.identity_key
         FROM ${this.carpoolTable} AS cc
         JOIN ${this.identityTable} AS ci
           ON cc.identity_id = ci._id
@@ -163,6 +193,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       ['phone_trunc', 'varchar'],
       ['datetime', 'timestamp'],
       ['application_timestamp', 'timestamp'],
+      ['identity_key', 'varchar'],
     ];
     const values: Array<any> = [
       journeyType,
@@ -171,12 +202,8 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       data.phone_trunc,
       data.datetime,
       data.application_timestamp,
+      data.identity_key,
     ];
-
-    if (data.identity_key) {
-      fields.push(['identity_key', 'varchar']);
-      values.push(data.identity_key);
-    }
 
     if (constraint) {
       if (journeyType === CeeJourneyTypeEnum.Long || journeyType === CeeJourneyTypeEnum.Short) {
@@ -211,7 +238,8 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           cep.journey_type = tmp.journey_type AND
           (
             (cep.last_name_trunc = tmp.last_name_trunc AND cep.phone_trunc = tmp.phone_trunc) OR
-             cep.driving_license = tmp.driving_license
+             cep.driving_license = tmp.driving_license OR
+             cep.identity_key = tmp.identity_key
           ) AND (
             cep.datetime >= tmp.datetime::timestamp - $${values.length + 1} * interval '1 year' AND
             cep.datetime >= $${values.length + 2}
@@ -221,7 +249,8 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ced.journey_type = tmp.journey_type AND
           (
             (ced.last_name_trunc = tmp.last_name_trunc AND ced.phone_trunc = tmp.phone_trunc) OR
-             ced.driving_license = tmp.driving_license
+             ced.driving_license = tmp.driving_license OR
+             ced.identity_key = tmp.identity_key
           ) AND
           ced.datetime >= tmp.datetime::timestamp - $${values.length + 3} * interval '1 year'
         WHERE
@@ -241,7 +270,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       );
     }
 
-    query.text = `${query.text} RETURNING _id`;
+    query.text = `${query.text} ON CONFLICT DO NOTHING RETURNING _id`;
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
       // s'il n'y a pas eu d'enregistrement c'est qu'un autre est déjà actif
@@ -259,6 +288,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
 
     return {
       uuid: result.rows[0]?._id,
+      operator_id: data.operator_id,
       datetime: data.datetime,
       operator_siret: siretResult.rows[0]?.siret,
       journey_type: journeyType,
@@ -298,6 +328,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
       'driving_license',
       'operator_journey_id',
       'application_id',
+      'identity_key',
     ].filter((k) => objectKeys.includes(k));
     const values = keys.map((k) => data[k]);
 
@@ -324,19 +355,11 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           journey_type = $3 AND
           last_name_trunc = $4 AND
           phone_trunc = $5 AND
-          datetime = $6 AND
           is_specific = true AND
           identity_key IS NULL
         RETURNING _id
       `,
-      values: [
-        data.identity_key,
-        data.operator_id,
-        data.journey_type,
-        data.last_name_trunc,
-        data.phone_trunc,
-        data.application_timestamp,
-      ],
+      values: [data.identity_key, data.operator_id, data.journey_type, data.last_name_trunc, data.phone_trunc],
     });
 
     if (result.rowCount === 0) {
@@ -356,7 +379,6 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
         WHERE
           _id = $2 AND
           operator_id = $3 AND
-          is_specific = false AND
           identity_key IS NULL
         RETURNING _id
       `,

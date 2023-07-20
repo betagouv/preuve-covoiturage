@@ -1,0 +1,19 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Redirection of requests to index.html
+  RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
+  RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+  RewriteRule ^.*$ - [NC,L]
+  RewriteRule ^(.*) index.html [NC,L]
+</IfModule>
+
+# Do not cache the index.html File
+# Other files have a unique hash avoid cache issues btw deployments
+<Files index.html>
+FileETag None
+Header unset ETag
+Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+Header set Pragma "no-cache"
+Header set Expires "Fri, 6 Jan 1978 05:00:00 GMT"
+</Files>

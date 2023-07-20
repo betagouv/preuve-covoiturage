@@ -67,6 +67,7 @@ components:
       additionalProperties: false
       required:
         - journey_type
+        - identity_key
         - driving_license
         - last_name_trunc
         - phone_trunc
@@ -95,6 +96,7 @@ components:
       additionalProperties: false
       required:
         - journey_type
+        - identity_key
         - driving_license
         - last_name_trunc
         - operator_journey_id
@@ -160,7 +162,7 @@ components:
       description: |
         Précédente demande de CEE.
         S'il s'agit d'une opération spécifique, le payload est le même que sur l'import, en ajoutant le champs "cee_application_type": "specific".
-        S'il s'agit d'une opération standartisée, il convient d'envoyer l'uuid de la demande tel que : { cee_application_type: 'standardized', cee_application_uuid: 'uuid de la demande', identity_key: 'clée' }. 
+        S'il s'agit d'une opération standarisée, il convient d'envoyer l'uuid de la demande tel que : { cee_application_type: 'standardized', cee_application_uuid: 'uuid de la demande', identity_key: 'clée' }.
       additionalProperties: false
       oneOf:
         - required:
@@ -333,7 +335,7 @@ paths:
         '409':
           description: |
             Une demande similaire a déjà enregistrée.
-            Si elle a déjà été enregistrée par le même opérateur, alors la réponse contient l'UUID de la demande.
+            Si elle a déjà été enregistrée par le même opérateur, alors la réponse contient l'UUID de la demande, le `journey_id` et le `status` si la demande initiale concerne la courte distance.
             Dans le cas contraire, seul le champs datetime correspondant à la date de l'opération est renvoyé.
           content:
             'application/json':
@@ -378,6 +380,8 @@ paths:
                   '$ref': '#/components/schemas/phone_trunc'
                 journey_type:
                   '$ref': '#/components/schemas/journey_type'
+                identity_key:
+                  '$ref': '#/components/schemas/identity_key'
       responses:
         '200':
           description: Ok, la demande est possible

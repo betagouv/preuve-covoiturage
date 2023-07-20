@@ -25,7 +25,7 @@ export class ImportCeeIdentityAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if (!!env('APP_DISABLE_CEE_IMPORT', false)) {
+    if (!!env('APP_DISABLE_CEE_IMPORT_IDENTITY', false)) {
       throw new ServiceDisabledError();
     }
 
@@ -38,7 +38,7 @@ export class ImportCeeIdentityAction extends AbstractAction {
     };
 
     const specificData = params
-      .filter((p) => p.cee_application_type === 'specific')
+      .filter((p) => p.cee_application_type === 'specific' && !('cee_application_uuid' in p) && 'phone_trunc' in p)
       .map((d: CeeImportSpecificApplicationIdentityInterface, i) => ({
         ...d,
         operator_id,
@@ -56,20 +56,21 @@ export class ImportCeeIdentityAction extends AbstractAction {
       }
     }
 
-    const standardizedData = params
-      .filter((p) => p.cee_application_type === 'standardized')
-      .map((d: CeeImportStandardizedApplicationIdentityInterface, i) => ({
-        ...d,
-        operator_id,
-      }));
+    const standardizedData = params.filter(
+      (p) => p.cee_application_type === 'standardized' || 'cee_application_uuid' in p,
+    );
 
-    for (const application of standardizedData) {
+    for (const {
+      cee_application_uuid,
+      identity_key,
+    } of standardizedData as Array<CeeImportStandardizedApplicationIdentityInterface>) {
+      const application = { operator_id, cee_application_uuid, identity_key };
       try {
         await this.ceeRepository.importStandardizedApplicationIdentity(application);
         result.imported += 1;
       } catch (e) {
         result.failed += 1;
-        result.failed_details.push({ ...application, error: e.message });
+        result.failed_details.push({ ...application, cee_application_type: 'standardized', error: e.message });
       }
     }
 

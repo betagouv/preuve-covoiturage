@@ -50,6 +50,7 @@ import { signature as importCeeSignature } from './shared/cee/importApplication.
 import { signature as importIdentityCeeSignature } from './shared/cee/importApplicationIdentity.contract';
 import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
 import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
+import { metricsMiddleware } from './middlewares/metricsMiddleware';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -225,16 +226,8 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerMetrics(): void {
-    this.app.get(
-      '/health',
-      rateLimiter({ windowMs: 60 * 1000, max: 60 / 5 + 1 }, `rate-health-${this.config.get('proxy.hostname')}`),
-      healthCheckFactory([]),
-    );
-    this.app.get(
-      '/metrics',
-      rateLimiter({ windowMs: 60 * 1000, max: 60 / 15 + 1 }, `rate-metrics-${this.config.get('proxy.hostname')}`),
-      prometheusMetricsFactory(),
-    );
+    this.app.get('/health', metricsMiddleware('health'), healthCheckFactory([]));
+    this.app.get('/metrics', metricsMiddleware('metrics'), prometheusMetricsFactory());
   }
 
   private registerCeeRoutes(): void {

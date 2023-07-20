@@ -1,15 +1,12 @@
 import { KernelInterfaceResolver, NotFoundException, RPCException } from '@ilos/common';
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { getPolicySiretList, siretToOperatorId, getDeclaredOperators } from '../helpers/getDeclaredOperators.helper';
-import {
-  ParamsInterface as PolicyFindParams,
-  ResultInterface as PolicyFindResult,
-} from '../shared/policy/find.contract';
+import { getDeclaredOperators, getPolicySiretList, siretToOperatorId } from '../helpers/getDeclaredOperators.helper';
 import {
   ParamsInterface as FindBySiretParams,
   ResultInterface as FindBySiretResult,
 } from '../shared/operator/findbysiret.contract';
+import { ResultInterface as PolicyFindResult } from '../shared/policy/find.contract';
 
 interface Context {
   kernel: KernelInterfaceResolver;
