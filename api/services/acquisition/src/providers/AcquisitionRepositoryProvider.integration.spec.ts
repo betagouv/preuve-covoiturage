@@ -222,13 +222,14 @@ test.serial('Should update status', async (t) => {
 
 test.serial('Should get status by operator_id and operator_journey_id', async (t) => {
   const { operator_id } = t.context;
-  const { operator_journey_id, status } = await t.context.repository.getStatus(operator_id, '1');
+  const { operator_journey_id, status, fraud_error_labels } = await t.context.repository.getStatus(operator_id, '1');
 
   t.deepEqual(
-    { operator_journey_id, status },
+    { operator_journey_id, status, fraud_error_labels },
     {
       operator_journey_id: '1',
       status: StatusEnum.AcquisitionError,
+      fraud_error_labels: [],
     },
   );
 });
