@@ -19,6 +19,7 @@ export interface ResultInterface {
   operator_journey_id: string;
   status: StatusEnum;
   created_at: Date;
+  fraud_error_labels?: string[];
 }
 
 export const handlerConfig = {
