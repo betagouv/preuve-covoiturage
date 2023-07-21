@@ -104,7 +104,11 @@ export class ApplyCommand implements CommandInterface {
           console.info(`[campaign:apply] run policy ${policy_id} in detached mode`);
           await this.kernel.notify(apply, params, context);
         } else {
-          await this.kernel.call(apply, params, context);
+          try {
+            await this.kernel.call(apply, params, context);
+          } catch (e) {
+            console.error(e.message, { params });
+          }
         }
       }
 
