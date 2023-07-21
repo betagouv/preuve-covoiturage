@@ -209,12 +209,12 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           aa.status as acquisition_status,
           aa.error_stage as acquisition_error_stage
         FROM ${this.table} AS aa
-        LEFT JOIN carpool.carpools AS cc
-          ON aa._id = cc.acquisition_id
+        LEFT JOIN carpool.carpools AS cc ON aa._id = cc.acquisition_id
         WHERE ${whereClauses.text.join(' AND ')}
       `,
       values: whereClauses.values,
     };
+    //         LEFT JOIN fraudcheck.labels as fl ON cc._id = fl.carpool_id
     const result = await this.connection.getClient().query(query);
     if (!result.rows.length) {
       return;
