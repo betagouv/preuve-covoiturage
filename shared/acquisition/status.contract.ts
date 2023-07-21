@@ -15,15 +15,11 @@ export enum StatusEnum {
   Unknown = 'unknown',
 }
 
-export interface StatusData extends Record<string, any> {
-  message: string;
-}
-
 export interface ResultInterface {
   operator_journey_id: string;
   status: StatusEnum;
   created_at: Date;
-  data?: StatusData;
+  fraud_error_labels?: string[];
 }
 
 export const handlerConfig = {
