@@ -5,7 +5,7 @@
         "type": "node",
         "cwd": "${workspaceFolder}/api/services/trip",
         "request": "launch",
-        "name": "Debug AVA test file",
+        "name": "Debug AVA unit test file",
         "program": "${workspaceFolder}/api/node_modules/ava/entrypoints/cli.mjs",
         "args": [
           "--config",
@@ -15,6 +15,26 @@
           "--verbose",
           "**/${fileBasename}"
         ],
+        "outputCapture": "std",
+        "skipFiles": [
+          "<node_internals>/**/*.js",
+          "${workspaceFolder}/db/**"
+        ],
+      },
+      {
+        "type": "node",
+        "cwd": "${workspaceFolder}/api/services/acquisition",
+        "request": "launch",
+        "name": "Debug AVA integration test file",
+        "program": "${workspaceFolder}/api/node_modules/ava/entrypoints/cli.mjs",
+        "args": [
+          "--config",
+          "ava.integration.cjs",
+          "--ext",
+          "ts",
+          "**/${fileBasename}"
+        ],
+        "envFile" : "${workspaceFolder}/api/.env",
         "outputCapture": "std",
         "skipFiles": [
           "<node_internals>/**/*.js",
