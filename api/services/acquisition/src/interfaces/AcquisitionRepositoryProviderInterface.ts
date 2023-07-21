@@ -43,6 +43,7 @@ export interface AcquisitionStatusInterface {
   updated_at: Date;
   operator_journey_id: string;
   status: StatusEnum;
+  fraud_error_labels?: string[];
 }
 
 export interface AcquisitionStatusUpdateInterface {

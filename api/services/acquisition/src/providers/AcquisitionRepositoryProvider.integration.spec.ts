@@ -233,16 +233,25 @@ test.serial('Should get status by operator_id and operator_journey_id', async (t
   );
 });
 
-test.serial('Should get fraudcheck status for carpool', async (t) => {
+test.serial('Should get fraudcheck status and labels for carpool', async (t) => {
   // Arrange
-  const acquisition = await updateAcquistionJourneyId5ToOk(t.context);
-  await updateCarpoolToFraudErrorStatus(t.context, acquisition);
+  const acquisition_row = await updateAcquistionJourneyId5ToOk(t.context);
+  const carpool_id = await insertCarpoolWithFraudErrorStatus(t.context, acquisition_row);
+  await t.context.db.connection.getClient().query({
+    text: `
+    INSERT INTO fraudcheck.labels(
+      carpool_id, label, geo_code)
+      VALUES ($1, $2, $3);
+    `,
+    values: [carpool_id, 'interoperator_fraud', '76'],
+  });
 
   // Act
-  const { status } = await t.context.repository.getStatus(t.context.operator_id, '5');
+  const { status, fraud_error_labels } = await t.context.repository.getStatus(t.context.operator_id, '5');
 
   // Assert
   t.deepEqual(status, StatusEnum.FraudError);
+  t.deepEqual(fraud_error_labels, ['interoperator_fraud']);
 });
 
 test.serial('Should find with date selectors', async (t) => {
@@ -501,18 +510,18 @@ const updateAcquistionJourneyId5ToOk = async (context: TestContext): Promise<{ _
       UPDATE ${context.repository.table}
       SET status = 'ok'
       WHERE operator_id = $1 AND journey_id = $2
-      RETURNING _id, journey_id
+      RETURNING _id, journey_id;
     `,
     values: [context.operator_id, '5'],
   });
   return result.rows[0];
 };
 
-const updateCarpoolToFraudErrorStatus = async (
+const insertCarpoolWithFraudErrorStatus = async (
   context: TestContext,
   acquisition: { _id: number; journey_id: number },
-): Promise<void> => {
-  await context.db.connection.getClient().query({
+): Promise<number> => {
+  const result = await context.db.connection.getClient().query({
     text: `
     INSERT INTO carpool.carpools(
       acquisition_id, operator_id, trip_id, operator_trip_id, is_driver, 
@@ -522,7 +531,8 @@ const updateCarpoolToFraudErrorStatus = async (
       VALUES ($1, $2, $3, $4, $5, 
         $6, $7, $8, $9, $10, 
         $11, $12, $13, $14, $15, 
-        $16);
+        $16)
+      RETURNING _id;
     `,
     values: [
       acquisition._id,
@@ -543,4 +553,6 @@ const updateCarpoolToFraudErrorStatus = async (
       '91471',
     ],
   });
+
+  return result.rows[0]._id;
 };
