@@ -1,4 +1,4 @@
-openapi: '3.0.2'
+eopenapi: '3.0.2'
 info:
   title: API
   version: '3.0'
@@ -1080,7 +1080,7 @@ paths:
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
                   fraud_error_labels:
                     type: array
-                    description: Liste des etiquettes ayant aboutis au rejet du trajet.
+                    description: Raisons du rejet du trajet
                     items:
                       type: string
         '401':
@@ -1128,6 +1128,7 @@ paths:
                 - start
                 - end
                 - distance
+
               additionalProperties: false
               properties:
                 operator_trip_id:
