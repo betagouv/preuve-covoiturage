@@ -6,7 +6,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /notebooks
-WORKDIR /notebooks
 COPY ./notebooks/requirements.txt /notebooks
 COPY ./notebooks/scripts /notebooks/scripts
 
@@ -15,6 +14,8 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip install -r requirements.txt
+
+WORKDIR /notebooks/scripts
 
 ENTRYPOINT ["papermill"]
 
