@@ -6,6 +6,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /notebooks
+WORKDIR /notebooks
 COPY ./notebooks/requirements.txt /notebooks
 COPY ./notebooks/scripts /notebooks/scripts
 
