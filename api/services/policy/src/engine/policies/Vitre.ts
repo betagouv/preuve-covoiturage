@@ -81,8 +81,15 @@ export const Vitre: PolicyHandlerStaticInterface = class
     isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
 
+  /**
+   * Exclusion de Vitré du dispositif
+   * Exclure les trajets contenant une O ou D à Vitré et dont l'D ou O est en dehors du périmètre
+   */
   private notVitreComOrThrow(ctx: StatelessContextInterface) {
-    if (startsAt(ctx, { com: [this.vitre_com] }) || endsAt(ctx, { com: [this.vitre_com] })) {
+    if (
+      (startsAt(ctx, { com: [this.vitre_com] }) && !endsAt(ctx, { aom: ['200039022'] })) ||
+      (endsAt(ctx, { com: [this.vitre_com] }) && !startsAt(ctx, { aom: ['200039022'] }))
+    ) {
       throw new NotEligibleTargetException();
     }
   }
