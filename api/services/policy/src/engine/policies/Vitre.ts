@@ -7,6 +7,7 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import {
+  isAfter,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
   LimitTargetEnum,
@@ -27,6 +28,7 @@ export const Vitre: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'vitre';
+  private readonly policy_update_date = new Date('2023-07-17');
   protected operators = [OperatorsEnum.Klaxit];
   protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
@@ -50,6 +52,9 @@ export const Vitre: PolicyHandlerStaticInterface = class
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
+    if (isAfter(ctx, { date: this.policy_update_date })) {
+      onDistanceRangeOrThrow(ctx, { max: 60_001 });
+    }
     isOperatorClassOrThrow(ctx, ['B', 'C']);
   }
 
