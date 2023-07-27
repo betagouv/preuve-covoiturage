@@ -49,12 +49,21 @@ test(
       { operator_class: 'A' },
       { distance: 80_000, datetime: new Date('2023-07-18') },
       {
+        // Vitré
         start: {
           com: '35360',
           aom: '200039022',
           epci: '200039022',
           reg: '53',
           arr: '35360',
+        },
+        // Occitanie (Ussel)
+        end: {
+          arr: '46240',
+          com: '46240',
+          aom: '200053791',
+          epci: '200066371',
+          reg: '76',
         },
         datetime: new Date('2023-07-18'),
       },
