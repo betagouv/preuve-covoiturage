@@ -6,8 +6,10 @@ import {
   StatelessContextInterface,
 } from '../../interfaces';
 import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
   LimitTargetEnum,
+  endsAt,
   isAfter,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
@@ -15,6 +17,7 @@ import {
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
+  startsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
@@ -29,6 +32,12 @@ export const Vitre: PolicyHandlerStaticInterface = class
 {
   static readonly id = 'vitre';
   private readonly policy_update_date = new Date('2023-07-17');
+  /**
+   * Code commune de Vitré déprécié en 2023
+   * Changement de référentiel en 2023 https://www.insee.fr/fr/metadonnees/cog/commune/COM79353-vitre
+   * A changer avec le nouveau code commune de Beaussais-Vitré
+   */
+  private readonly vitre_com = '35360';
   protected operators = [OperatorsEnum.Klaxit];
   protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
@@ -67,8 +76,15 @@ export const Vitre: PolicyHandlerStaticInterface = class
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
     if (isAfter(ctx, { date: this.policy_update_date })) {
       onDistanceRangeOrThrow(ctx, { max: 60_001 });
+      this.notVitreComOrThrow(ctx);
     }
     isOperatorClassOrThrow(ctx, ['B', 'C']);
+  }
+
+  private notVitreComOrThrow(ctx: StatelessContextInterface) {
+    if (startsAt(ctx, { com: [this.vitre_com] }) || endsAt(ctx, { com: [this.vitre_com] })) {
+      throw new NotEligibleTargetException();
+    }
   }
 
   processStateless(ctx: StatelessContextInterface): void {

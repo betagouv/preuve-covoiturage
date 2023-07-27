@@ -5,8 +5,8 @@ import { makeProcessHelper } from '../tests/macro';
 import { Vitre as Handler } from './Vitre';
 
 const defaultPosition = {
-  arr: '35360',
-  com: '35360',
+  arr: '35361',
+  com: '35361',
   aom: '200039022',
   epci: '200039022',
   dep: '37',
@@ -48,10 +48,20 @@ test(
       { distance: 100 },
       { operator_class: 'A' },
       { distance: 80_000, datetime: new Date('2023-07-18') },
+      {
+        start: {
+          com: '35360',
+          aom: '200039022',
+          epci: '200039022',
+          reg: '53',
+          arr: '35360',
+        },
+        datetime: new Date('2023-07-18'),
+      },
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -66,6 +76,13 @@ test(
         distance: 25_000,
         driver_identity_uuid: 'one',
         passenger_identity_uuid: 'two',
+        start: {
+          com: '35360',
+          aom: '200039022',
+          epci: '200039022',
+          reg: '53',
+          arr: '35360',
+        },
         datetime: new Date('2023-07-01'),
       },
       {
@@ -96,11 +113,15 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.3-2023',
-        value: 1900,
+        value: 450,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
         value: 1900,
+      },
+      {
+        key: 'max_amount_restriction.0-one.month.6-2023',
+        value: 1450,
       },
     ],
   },
