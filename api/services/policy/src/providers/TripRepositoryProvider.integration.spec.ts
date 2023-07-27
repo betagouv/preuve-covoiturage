@@ -43,6 +43,9 @@ test.serial('Should find carpools', async (t) => {
   const cursor = t.context.repository.findTripByPolicy(policy, start_date, end_date);
   const { value } = await cursor.next();
   await cursor.next();
+  if (value) {
+    t.is(value.length, 2);
+  }
   t.true(Array.isArray(value));
   t.deepEqual(
     (value || [])
