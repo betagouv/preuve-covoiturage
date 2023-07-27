@@ -24,10 +24,7 @@ import { description } from './Pmgf.html';
 
 // Politique du Pôle Métropolitain Genevois Français
 // eslint-disable-next-line max-len
-export const Pmgf: PolicyHandlerStaticInterface = class
-  extends AbstractPolicyHandler
-  implements PolicyHandlerInterface
-{
+export const Pmgf: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'pmgf_2022';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop];
   protected operator_class = ['B', 'C'];

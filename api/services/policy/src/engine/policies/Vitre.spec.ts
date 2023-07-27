@@ -62,21 +62,45 @@ test(
     carpool: [
       { distance: 5_000, driver_identity_uuid: 'one' },
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
-      { distance: 25_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
-      { distance: 40_000, seats: 2, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
+      {
+        distance: 25_000,
+        driver_identity_uuid: 'one',
+        passenger_identity_uuid: 'two',
+        datetime: new Date('2023-07-01'),
+      },
+      {
+        distance: 40_000,
+        seats: 2,
+        driver_identity_uuid: 'one',
+        passenger_identity_uuid: 'three',
+        datetime: new Date('2023-07-01'),
+      },
+      {
+        distance: 25_000,
+        driver_identity_uuid: 'one',
+        passenger_identity_uuid: 'two',
+        datetime: new Date('2023-07-20'),
+      },
+      {
+        distance: 50_000,
+        seats: 2,
+        driver_identity_uuid: 'one',
+        passenger_identity_uuid: 'three',
+        datetime: new Date('2023-07-20'),
+      },
     ],
     meta: [],
   },
   {
-    incentive: [150, 300, 250, 600],
+    incentive: [150, 300, 250, 600, 200, 400],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.3-2023',
-        value: 1300,
+        value: 1900,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1300,
+        value: 1900,
       },
     ],
   },

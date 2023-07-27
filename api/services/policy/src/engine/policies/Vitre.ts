@@ -1,4 +1,3 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,11 +5,12 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
+  LimitTargetEnum,
   isAfter,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -39,6 +39,19 @@ export const Vitre: PolicyHandlerStaticInterface = class
     },
   ];
 
+  protected slices_after_policy_update: RunnableSlices = [
+    { start: 2_000, end: 10_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
+    {
+      start: 10_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
+    },
+    {
+      start: 20_000,
+      fn: (ctx: StatelessContextInterface) => 0,
+    },
+  ];
+
   constructor(public max_amount: number) {
     super();
     this.limits = [
@@ -64,7 +77,8 @@ export const Vitre: PolicyHandlerStaticInterface = class
 
     // Par kilomètre
     let amount = 0;
-    for (const { start, fn } of this.slices) {
+    const used_slices = isAfter(ctx, { date: this.policy_update_date }) ? this.slices_after_policy_update : this.slices;
+    for (const { start, fn } of used_slices) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);
       }
