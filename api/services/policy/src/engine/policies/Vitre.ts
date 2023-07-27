@@ -1,4 +1,3 @@
-import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
   OperatorsEnum,
   PolicyHandlerInterface,
@@ -6,14 +5,19 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../interfaces';
+import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
+import { NotEligibleTargetException } from '../exceptions/NotEligibleTargetException';
 import {
+  LimitTargetEnum,
+  endsAt,
+  isAfter,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
   perSeat,
+  startsAt,
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
@@ -27,6 +31,13 @@ export const Vitre: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'vitre';
+  private readonly policy_update_date = new Date('2023-07-17');
+  /**
+   * Code commune de Vitré déprécié en 2023
+   * Changement de référentiel en 2023 https://www.insee.fr/fr/metadonnees/cog/commune/COM79353-vitre
+   * A changer avec le nouveau code commune de Beaussais-Vitré
+   */
+  private readonly vitre_com = '35360';
   protected operators = [OperatorsEnum.Klaxit];
   protected slices: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
@@ -34,6 +45,19 @@ export const Vitre: PolicyHandlerStaticInterface = class
       start: 15_000,
       end: 30_000,
       fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
+    },
+  ];
+
+  protected slices_after_policy_update: RunnableSlices = [
+    { start: 2_000, end: 10_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
+    {
+      start: 10_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
+    },
+    {
+      start: 20_000,
+      fn: (ctx: StatelessContextInterface) => 0,
     },
   ];
 
@@ -50,7 +74,17 @@ export const Vitre: PolicyHandlerStaticInterface = class
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
     onDistanceRangeOrThrow(ctx, { min: 2_000 });
+    if (isAfter(ctx, { date: this.policy_update_date })) {
+      onDistanceRangeOrThrow(ctx, { max: 60_001 });
+      this.notVitreComOrThrow(ctx);
+    }
     isOperatorClassOrThrow(ctx, ['B', 'C']);
+  }
+
+  private notVitreComOrThrow(ctx: StatelessContextInterface) {
+    if (startsAt(ctx, { com: [this.vitre_com] }) || endsAt(ctx, { com: [this.vitre_com] })) {
+      throw new NotEligibleTargetException();
+    }
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -59,7 +93,8 @@ export const Vitre: PolicyHandlerStaticInterface = class
 
     // Par kilomètre
     let amount = 0;
-    for (const { start, fn } of this.slices) {
+    const used_slices = isAfter(ctx, { date: this.policy_update_date }) ? this.slices_after_policy_update : this.slices;
+    for (const { start, fn } of used_slices) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);
       }
