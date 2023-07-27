@@ -13,7 +13,7 @@ sont incités.
   <li><b>De 2 à 15 km : 1.5 euros par trajet par passager </b></li>
   <li><b>De 15 à 30 km : 0.1 euro par trajet par km par passager </b></li>
 </ul>
-<p>Les <b> conducteurs et passagers </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes après le 17 Juillet 2023:
+<p>Les <b> conducteurs et passagers </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes après le 17 Juillet 2023 (inclus):
 </p>
 <ul>
   <li><b>De 2 à 10 km : 1 euro par trajet par passager </b></li>
@@ -25,7 +25,7 @@ sont incités.
   <li><b>6 trajets maximum pour le conducteur par jour.</b></li>
   <li><b>120 euros maximum pour le conducteur par mois.</b></li>
   <li><b>Les trajets de plus de 60 km sont exclus après le 17 Juillet.</b></li>
-  <li><b>La commune de Vitré n'est plus prise en compte dans le dispositif après le 17 Juillet.</b></li>
+  <li><b>La commune de Vitré n'est plus prise en compte dans le dispositif après le 17 Juillet (inclus).</b></li>
 </ul>
 <p>La campagne est limitée à l'opérateur Klaxit proposant des preuves de classe <b>B ou C</b>.</p>
 <p></p>

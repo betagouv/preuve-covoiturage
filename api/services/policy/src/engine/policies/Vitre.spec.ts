@@ -47,7 +47,7 @@ test(
       { operator_siret: 'not in list' },
       { distance: 100 },
       { operator_class: 'A' },
-      { distance: 80_000, datetime: new Date('2023-07-18') },
+      { distance: 80_000, datetime: new Date('2023-07-17') },
       {
         // Vitré
         start: {
@@ -65,7 +65,7 @@ test(
           epci: '200066371',
           reg: '76',
         },
-        datetime: new Date('2023-07-18'),
+        datetime: new Date('2023-07-17'),
       },
     ],
     meta: [],
