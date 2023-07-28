@@ -276,8 +276,8 @@ test.serial('Should find then update with selectors', async (t) => {
   t.deepEqual(
     result.map(({ created_at, ...r }) => r),
     [
-      { _id: 5, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
       { _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
+      { _id: 7, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
     ],
   );
   await fn();
@@ -291,7 +291,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result1.map(({ created_at, ...r }) => r),
-    [{ _id: 5, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
 
   const [result2, fn2] = await t.context.repository.findThenUpdate({
@@ -301,7 +301,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result2.map(({ created_at, ...r }) => r),
-    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 7, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
 
   await fn1(); // release lock 1
@@ -312,9 +312,9 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result3.map(({ created_at, ...r }) => r),
-    [{ _id: 5, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
-  await fn2({ acquisition_id: 6, status: AcquisitionStatusEnum.Ok });
+  await fn2({ acquisition_id: 6, status: AcquisitionStatusEnum.Ok }); // <-- error
   await fn2({ acquisition_id: 7, status: AcquisitionStatusEnum.Ok });
   await fn2();
   // release lock 2
@@ -425,7 +425,7 @@ test.serial('Should list acquisition status', async (t) => {
   };
 
   const result = await t.context.repository.list(search);
-  t.deepEqual(result, [{ operator_journey_id: '3' }, { operator_journey_id: '2' }, { operator_journey_id: '5' }]);
+  t.deepEqual(result, [{ operator_journey_id: '4' }, { operator_journey_id: '2' }, { operator_journey_id: '5' }]);
 
   const result1 = await t.context.repository.list({
     ...search,
