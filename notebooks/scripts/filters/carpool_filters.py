@@ -13,7 +13,7 @@ class CarpoolFilters:
 
     @staticmethod 
     def filter_remove_carpool_with_same_passenger_no_overlap(df):
-        df_counted_other_phone = df.groupby(['other_phone_trunc']).count()
-        df_kept_passenger_trunc = df_counted_other_phone[df_counted_other_phone._id > 1].reset_index()['other_phone_trunc']
-        df_filtered = df[df['other_phone_trunc'].isin(df_kept_passenger_trunc)]
+        df_counted_other_identity_key = df.groupby(['other_identity_key']).count()
+        df_kept_passenger_key = df_counted_other_identity_key[df_counted_other_identity_key._id > 1].reset_index()['other_identity_key']
+        df_filtered = df[df['other_identity_key'].isin(df_kept_passenger_key)]
         return df_filtered

@@ -13,7 +13,7 @@ tmp
 *.key
 
 # notebooks
-notebooks/scripts/playground/*
+notebooks/scripts/playground
 
 # python
 *.pyc
