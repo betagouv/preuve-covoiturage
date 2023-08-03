@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 
-from scripts.filters.carpool_filters import CarpoolFilters
+from production.filters.carpool_filters import CarpoolFilters
 
 class TestFilterCarpoolWithOverlapOnSameOperator(unittest.TestCase):
 
@@ -9,13 +9,13 @@ class TestFilterCarpoolWithOverlapOnSameOperator(unittest.TestCase):
         # Arrange
         data = {
             '_id': [1, 2, 3, 4],
-            'other_phone_trunc': ['+33665588', '+33665587', '+33665588', '+33665586']
+            'other_identity_key': ['+33665588', '+33665587', '+33665588', '+33665586']
         }
         df = pd.DataFrame(data)
 
         expected_data = {
             '_id': [1, 3],
-            'other_phone_trunc': ['+33665588', '+33665588']
+            'other_identity_key': ['+33665588', '+33665588']
         }
         expected_df = pd.DataFrame(expected_data)
 
