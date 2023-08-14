@@ -12,14 +12,14 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
       type,
       geom
       FROM geo.perimeters_centroid
-      WHERE year = '|| $1 ||'
+      WHERE year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
       UNION
       SELECT territory,
       l_territory,
       ''com'' as type,
       geom
       FROM geo.perimeters_centroid
-      WHERE year = '|| $1 ||'
+      WHERE year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
       AND type = ''country''
       AND territory <>''XXXXX''
     ),
@@ -63,7 +63,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
                     GROUP BY pi.policy_id
                   ), incentive AS (
                   SELECT data.policy_id,
-                      ROW(cc.siret, data.amount::integer, pp.unit::character varying, data.policy_id, pp.name, ''incentive''::character varying)::trip.incentive AS value,
+                      ROW(cc.siret, data.amount::integer, pp.unit::character varying, data.policy_id, pp.name, ''incentive''::character varying) AS value,
                       data.amount,
                           CASE
                               WHEN pp.unit = ''point''::policy.policy_unit_enum THEN false
@@ -87,7 +87,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
                     GROUP BY pi.policy_id
                   ), incentive AS (
                   SELECT data.policy_id,
-                      ROW(cc.siret, data.amount::integer, pp.unit::character varying, data.policy_id, pp.name, ''incentive''::character varying)::trip.incentive AS value,
+                      ROW(cc.siret, data.amount::integer, pp.unit::character varying, data.policy_id, pp.name, ''incentive''::character varying) AS value,
                       data.amount,
                           CASE
                               WHEN pp.unit = ''point''::policy.policy_unit_enum THEN false
@@ -103,9 +103,9 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
               sum(incentive.amount) FILTER (WHERE incentive.financial IS TRUE) AS incentive_financial_sum,
               array_agg(incentive.policy_id) AS policy_id
             FROM incentive) as e,
-      LATERAL ( SELECT array_agg(json_array_elements.value::trip.incentive) AS incentive
+      LATERAL ( SELECT array_agg(json_array_elements.value) AS incentive
             FROM json_array_elements(a.meta -> ''payments''::text) json_array_elements(value)) as f,
-      LATERAL ( SELECT array_agg(json_array_elements.value::trip.incentive) AS incentive
+      LATERAL ( SELECT array_agg(json_array_elements.value) AS incentive
             FROM json_array_elements(c.meta -> ''payments''::text) json_array_elements(value)) as g
       WHERE a.is_driver = false
       AND a.status = ''ok''
@@ -165,7 +165,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
       sum(passengers_distance) as passengers_distance,
       sum(driver_distance) as driver_distance
       FROM distances a
-      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||' and b.com is not null
+      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint) and b.com is not null
       GROUP BY b.arr
       HAVING b.arr IS NOT NULL
       UNION
@@ -177,7 +177,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
       sum(passengers_distance) as passengers_distance,
       sum(driver_distance) as driver_distance
       FROM distances a
-      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
       GROUP BY b.epci, b.l_epci
       HAVING b.epci IS NOT NULL
       UNION
@@ -189,7 +189,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
       sum(passengers_distance) as passengers_distance,
       sum(driver_distance) as driver_distance
       FROM distances a
-      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
       GROUP BY b.aom, b.l_aom
       HAVING b.aom IS NOT NULL
       UNION
@@ -201,7 +201,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
       sum(passengers_distance) as passengers_distance,
       sum(driver_distance) as driver_distance
       FROM distances a
-      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
       GROUP BY b.dep, b.l_dep
       HAVING b.dep IS NOT NULL
       UNION
@@ -213,7 +213,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
       sum(passengers_distance) as passengers_distance,
       sum(driver_distance) as driver_distance
       FROM distances a
-      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
       GROUP BY b.reg, b.l_reg
       HAVING b.reg IS NOT NULL
       UNION
@@ -225,7 +225,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
       sum(passengers_distance) as passengers_distance,
       sum(driver_distance) as driver_distance
       FROM distances a
-      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = '|| $1 ||'
+      LEFT JOIN geo.perimeters b ON a.insee=b.arr and b.year = geo.get_latest_millesime_or('|| $1 ||'::smallint)
       GROUP BY b.country, b.l_country
       HAVING b.country IS NOT NULL
     )
