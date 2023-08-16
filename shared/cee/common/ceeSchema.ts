@@ -57,6 +57,14 @@ export const drivingLicenseSchema = {
     },
     {
       type: 'string',
+      description: 'Numéro de permis de conduire plus anciens composé de 1 à 15 caractères',
+      example: '123456A',
+      pattern: '^[A-Z0-9]{1,15}$',
+      minLength: 1,
+      maxLength: 15,
+    },
+    {
+      type: 'string',
       description: "Numéro de permis étranger préfixé de l'indicatif '99-'.",
       example: '99-X23836',
       pattern: '^99-.*$',
