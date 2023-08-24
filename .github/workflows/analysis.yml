@@ -27,8 +27,29 @@ jobs:
       - name: Run Linter
         working-directory: ./docker/lint
         run: npm run start:local
+
+  code-audit:
+    name: Code audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: 'Audit API dependencies'
+        run: npm audit --audit-level moderate --workspaces --include-workspace-root && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
+        working-directory: api
+      
+      - name: 'Audit dashboard dependencies'
+        run: npm audit --audit-level moderate --workspaces --include-workspace-root && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
+        working-directory: dashboard
+
   test:
-    needs: lint
+    needs: [lint, code-audit]
     name: Test
     runs-on: ubuntu-latest
     steps:
@@ -57,6 +78,7 @@ jobs:
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
         working-directory: api
+
   codeql:
     needs: test
     name: CodeQL
@@ -82,8 +104,9 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
+
   e2e:
-    needs: codeql
+    needs: test
     name: Test integration
     runs-on: ubuntu-latest
     steps:
@@ -139,23 +162,3 @@ jobs:
           AWS_REGION: fr-par
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
         run: ./integration.sh run
-  code-audit:
-    needs: e2e
-    name: Code audit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install NodeJS
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: 'Audit API dependencies'
-        run: npm audit --audit-level moderate --workspaces --include-workspace-root && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
-        working-directory: api
-      
-      - name: 'Audit dashboard dependencies'
-        run: npm audit --audit-level moderate --workspaces --include-workspace-root && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
-        working-directory: dashboard
