@@ -12,17 +12,11 @@ defaults:
   run:
     shell: bash
 
+env:
+  tag: ${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
+
 jobs:
-  extract_version:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.get_version.outputs.version }}
-    steps:
-      - name: Extract tag name
-        id: get_version
-        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
   build:
-    needs: extract_version
     name: Build ${{ matrix.image_name }}
     runs-on: ubuntu-latest
     strategy:
@@ -54,13 +48,13 @@ jobs:
           file: ${{ matrix.image.dockerfile }}
           load: true
           push: false
-          tags: betagouvpdc/${{ matrix.image.name }}:${{ needs.extract_version.outputs.version }}
+          tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
           labels: |
             org.opencontainers.image.title=${{ matrix.image.name }} Image
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.created=${{ steps.buildx.outputs.start }}
-            org.opencontainers.image.version=${{ needs.extract_version.outputs.version }}
+            org.opencontainers.image.version=${{ env.tag }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: Run Trivy vulnerability scanner
@@ -88,13 +82,13 @@ jobs:
           context: .
           file: ${{ matrix.image.dockerfile }}
           push: true
-          tags: betagouvpdc/${{ matrix.image.name }}:${{ needs.extract_version.outputs.version }}
+          tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
           labels: |
             org.opencontainers.image.title=${{ matrix.image.name }} Image
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.created=${{ steps.buildx.outputs.start }}
-            org.opencontainers.image.version=${{ needs.extract_version.outputs.version }}
+            org.opencontainers.image.version=${{ env.tag }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       - run: echo ${{ steps.docker_build.outputs.digest }}
@@ -106,7 +100,7 @@ jobs:
       - name: Trigger Workflow
         uses: actions/github-script@v6
         env: 
-          TARGET_VERSION: ${{ needs.extract_version.outputs.version }}
+          TARGET_VERSION: ${{ env.tag }}
           TARGET_ENV: demo
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN_RELEASE }}
