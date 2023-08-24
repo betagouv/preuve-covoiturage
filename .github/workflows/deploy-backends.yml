@@ -103,6 +103,7 @@ jobs:
           TARGET_VERSION: ${{ env.tag }}
           TARGET_ENV: demo
         with:
+          github-token: ${{ secrets.GA_PDC_TOKEN }}
           # github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN_RELEASE }}
           script: |
               github.rest.actions.createWorkflowDispatch({
