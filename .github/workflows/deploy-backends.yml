@@ -94,7 +94,7 @@ jobs:
       - run: echo ${{ steps.docker_build.outputs.digest }}
   deploy:
     name: Deploy
-    needs: [build, extract_version]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Workflow
