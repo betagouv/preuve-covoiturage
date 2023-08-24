@@ -36,10 +36,10 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
             ? `AND (
             start_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1) 
+            } WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${checkTerritoryParam(params.type)} = $1) 
             OR end_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1)
+            } WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${checkTerritoryParam(params.type)} = $1)
           )`
             : ''
         }
@@ -55,10 +55,10 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
             ? `AND (
             start_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1) 
+            } WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${checkTerritoryParam(params.type)} = $1) 
             OR end_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1)
+            } WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${checkTerritoryParam(params.type)} = $1)
           )`
             : ''
         }

@@ -59,7 +59,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
           ? `AND territory IN (
           SELECT ${checkTerritoryParam(params.observe)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $1) t 
+            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
           WHERE ${checkTerritoryParam(params.type)} = $3
         )`
           : ''
@@ -109,7 +109,7 @@ export class OccupationRepositoryProvider implements OccupationRepositoryInterfa
         AND territory IN (
           SELECT ${checkTerritoryParam(params.observe)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
         this.perim_table
-      } WHERE year = $1) t 
+      } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
           WHERE ${checkTerritoryParam(params.type)} = $4
         ) 
         ORDER BY journeys DESC

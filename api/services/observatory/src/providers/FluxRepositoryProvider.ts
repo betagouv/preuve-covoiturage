@@ -56,18 +56,18 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       WHERE year = $1
       AND month = $2
       AND type = '${checkTerritoryParam(params.observe)}'::observatory.monthly_flux_type_enum
-      AND distance <= 80
+      AND (distance/journeys) <= 80
       ${
         params.code
           ? `AND (territory_1 IN (
           SELECT ${checkTerritoryParam(params.observe)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $1) t 
+            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
           WHERE ${checkTerritoryParam(params.type)} = $3
         ) OR territory_2 IN (
           SELECT ${checkTerritoryParam(params.observe)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $1) t 
+            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
           WHERE ${checkTerritoryParam(params.type)} = $3
         ))`
           : ''
@@ -123,10 +123,10 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
         WHERE year = $1
         AND month = $2
         AND (territory_1 IN (
-            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
+            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
             WHERE ${checkTerritoryParam(params.type)} = $3) 
           OR territory_2 IN (
-            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
+            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
             WHERE ${checkTerritoryParam(params.type)} = $3)
         ) 
         ORDER BY journeys DESC
