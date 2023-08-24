@@ -16,85 +16,85 @@ env:
   tag: ${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
 
 jobs:
-  build:
-    name: Build ${{ matrix.image_name }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        image:
-          - { name: 'api', dockerfile: './docker/api/prod/Dockerfile' }
-          - { name: 'datatools', dockerfile: './docker/notebook/Dockerfile' }
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-      - name: Build ${{ matrix.image.name }} image for test
-        id: docker_test
-        uses: docker/build-push-action@v3
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: ./
-          file: ${{ matrix.image.dockerfile }}
-          load: true
-          push: false
-          tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
-          labels: |
-            org.opencontainers.image.title=${{ matrix.image.name }} Image
-            org.opencontainers.image.source=${{ github.event.repository.html_url }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.created=${{ steps.buildx.outputs.start }}
-            org.opencontainers.image.version=${{ env.tag }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: betagouvpdc/${{ matrix.image.name }}:${{ env.TAG_NAME }}
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results.sarif'
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
-        continue-on-error: true
-        with:
-          sarif_file: 'trivy-results.sarif'
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push ${{ matrix.image.name }}
-        id: docker_build
-        uses: docker/build-push-action@v3
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: .
-          file: ${{ matrix.image.dockerfile }}
-          push: true
-          tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
-          labels: |
-            org.opencontainers.image.title=${{ matrix.image.name }} Image
-            org.opencontainers.image.source=${{ github.event.repository.html_url }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.created=${{ steps.buildx.outputs.start }}
-            org.opencontainers.image.version=${{ env.tag }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-      - run: echo ${{ steps.docker_build.outputs.digest }}
+  # build:
+  #   name: Build ${{ matrix.image_name }}
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       image:
+  #         - { name: 'api', dockerfile: './docker/api/prod/Dockerfile' }
+  #         - { name: 'datatools', dockerfile: './docker/notebook/Dockerfile' }
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v1
+  #     - name: Set up Docker Buildx
+  #       id: buildx
+  #       uses: docker/setup-buildx-action@v1
+  #     - name: Cache Docker layers
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: /tmp/.buildx-cache
+  #         key: ${{ runner.os }}-buildx-${{ github.sha }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-buildx-
+  #     - name: Build ${{ matrix.image.name }} image for test
+  #       id: docker_test
+  #       uses: docker/build-push-action@v3
+  #       with:
+  #         builder: ${{ steps.buildx.outputs.name }}
+  #         context: ./
+  #         file: ${{ matrix.image.dockerfile }}
+  #         load: true
+  #         push: false
+  #         tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
+  #         labels: |
+  #           org.opencontainers.image.title=${{ matrix.image.name }} Image
+  #           org.opencontainers.image.source=${{ github.event.repository.html_url }}
+  #           org.opencontainers.image.revision=${{ github.sha }}
+  #           org.opencontainers.image.created=${{ steps.buildx.outputs.start }}
+  #           org.opencontainers.image.version=${{ env.tag }}
+  #         cache-from: type=local,src=/tmp/.buildx-cache
+  #         cache-to: type=local,dest=/tmp/.buildx-cache
+  #     - name: Run Trivy vulnerability scanner
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         image-ref: betagouvpdc/${{ matrix.image.name }}:${{ env.TAG_NAME }}
+  #         format: 'template'
+  #         template: '@/contrib/sarif.tpl'
+  #         output: 'trivy-results.sarif'
+  #     - name: Upload Trivy scan results to GitHub Security tab
+  #       uses: github/codeql-action/upload-sarif@v1
+  #       continue-on-error: true
+  #       with:
+  #         sarif_file: 'trivy-results.sarif'
+  #     - name: Login to DockerHub
+  #       uses: docker/login-action@v1
+  #       with:
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_PASSWORD }}
+  #     - name: Build and push ${{ matrix.image.name }}
+  #       id: docker_build
+  #       uses: docker/build-push-action@v3
+  #       with:
+  #         builder: ${{ steps.buildx.outputs.name }}
+  #         context: .
+  #         file: ${{ matrix.image.dockerfile }}
+  #         push: true
+  #         tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
+  #         labels: |
+  #           org.opencontainers.image.title=${{ matrix.image.name }} Image
+  #           org.opencontainers.image.source=${{ github.event.repository.html_url }}
+  #           org.opencontainers.image.revision=${{ github.sha }}
+  #           org.opencontainers.image.created=${{ steps.buildx.outputs.start }}
+  #           org.opencontainers.image.version=${{ env.tag }}
+  #         cache-from: type=local,src=/tmp/.buildx-cache
+  #         cache-to: type=local,dest=/tmp/.buildx-cache
+  #     - run: echo ${{ steps.docker_build.outputs.digest }}
   deploy:
     name: Deploy
-    needs: [build]
+    # needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Workflow
@@ -103,7 +103,7 @@ jobs:
           TARGET_VERSION: ${{ env.tag }}
           TARGET_ENV: demo
         with:
-          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN_RELEASE }}
+          # github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN_RELEASE }}
           script: |
               github.rest.actions.createWorkflowDispatch({
                 owner: context.repo.owner,
