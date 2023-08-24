@@ -237,7 +237,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           cep.is_specific = true AND
           cep.journey_type = tmp.journey_type AND
           (
-            (cep.last_name_trunc = tmp.last_name_trunc AND cep.phone_trunc = tmp.phone_trunc) OR
+            (cep.last_name_trunc = tmp.last_name_trunc AND cep.phone_trunc = tmp.phone_trunc AND cep.identity_key IS NULL) OR
              cep.driving_license = tmp.driving_license OR
              cep.identity_key = tmp.identity_key
           ) AND (
@@ -248,7 +248,7 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
           ced.is_specific = false AND
           ced.journey_type = tmp.journey_type AND
           (
-            (ced.last_name_trunc = tmp.last_name_trunc AND ced.phone_trunc = tmp.phone_trunc) OR
+            (ced.last_name_trunc = tmp.last_name_trunc AND ced.phone_trunc = tmp.phone_trunc AND ced.identity_key IS NULL) OR
              ced.driving_license = tmp.driving_license OR
              ced.identity_key = tmp.identity_key
           ) AND

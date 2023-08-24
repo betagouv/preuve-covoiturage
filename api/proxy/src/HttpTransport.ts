@@ -319,7 +319,7 @@ export class HttpTransport implements TransportInterface {
 
   private registerSimulationRoutes(): void {
     this.app.post(
-      '/:version/policy/simulate',
+      '/:version/policies/simulate',
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
@@ -476,7 +476,7 @@ export class HttpTransport implements TransportInterface {
           createRPCPayload(
             'acquisition:cancel',
             {
-              operator_journey_id: parseInt(req.params.id, 10),
+              operator_journey_id: req.params.id,
               api_version: 'v2',
             },
             user,
@@ -499,7 +499,7 @@ export class HttpTransport implements TransportInterface {
             'acquisition:cancel',
             {
               ...req.body,
-              operator_journey_id: parseInt(req.params.id, 10),
+              operator_journey_id: req.params.id,
               api_version: 'v3',
             },
             user,
