@@ -1,0 +1,24 @@
+{
+  "name": "etl",
+  "description": "Programme d'etl pour importer les données externes au RPC",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "config": {
+    "workingDir": "./dist"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint src --ext .ts",
+    "test": "ava --config ava.cjs"
+  },
+  "dependencies": {
+    "@betagouvpdc/evolution-geo": "^1.2.7",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1"
+  }
+}
