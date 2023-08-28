@@ -1,12 +1,13 @@
 import { AbstractDataset, ArchiveFileTypeEnum, FileTypeEnum, StaticAbstractDataset } from '@betagouvpdc/evolution-geo';
 
-export function AiresCovoiturage(year: number, url: string): StaticAbstractDataset {
+export function AiresCovoiturage(url: string): StaticAbstractDataset {
   return class extends AbstractDataset {
     static producer = 'transport_data_gouv';
     static dataset = 'aires_covoiturage';
-    static year = year;
+    static year = 2023;
     static url = url;
-    static table = `aires_covoiturage_${year}`;
+    static skipStatePersistence = true;
+    static table = `aires_covoiturage_temp`;
     readonly targetTable = 'aires_covoiturage';
     readonly fileArchiveType: ArchiveFileTypeEnum = ArchiveFileTypeEnum.None;
     readonly rows: Map<string, [string, string]> = new Map([

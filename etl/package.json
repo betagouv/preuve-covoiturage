@@ -4,11 +4,8 @@
   "version": "1.0.0",
   "license": "Apache-2.0",
   "main": "./dist/index.js",
-  "config": {
-    "workingDir": "./dist"
-  },
-  "scripts": {
-    "start": "node index.js",
+    "scripts": {
+    "start": "node ./dist/index.js",
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "eslint src --ext .ts",
