@@ -1,0 +1,14 @@
+.col {
+  display: flex;
+}
+.analyse {
+  align-items: stretch;
+  padding: 1rem;
+  width: 100%;
+  .title {
+    font-size: 1.4rem;
+  }
+  .content {
+    font-size: 0.9rem;
+  }
+}
