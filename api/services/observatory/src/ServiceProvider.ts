@@ -50,6 +50,10 @@ import { KeyfiguresRepositoryProvider } from './providers/KeyfiguresRepositoryPr
 import { binding as MonthlyKeyfiguresBinding } from './shared/observatory/keyfigures/monthlyKeyfigures.schema';
 import { MonthlyKeyfiguresAction } from './actions/keyfigures/MonthlyKeyfiguresAction';
 
+import { InfraRepositoryProvider } from './providers/InfraRepositoryProvider';
+import { binding as AiresCovoiturageBinding } from './shared/observatory/infra/airesCovoiturage.schema';
+import { AiresCovoiturageAction } from './actions/infra/AiresCovoiturageAction';
+
 @serviceProvider({
   config,
   commands: [],
@@ -60,6 +64,7 @@ import { MonthlyKeyfiguresAction } from './actions/keyfigures/MonthlyKeyfiguresA
     DistributionRepositoryProvider,
     LocationRepositoryProvider,
     KeyfiguresRepositoryProvider,
+    InfraRepositoryProvider,
   ],
   validator: [
     MonthlyFluxBinding,
@@ -78,6 +83,7 @@ import { MonthlyKeyfiguresAction } from './actions/keyfigures/MonthlyKeyfiguresA
 
     LocationBinding,
     MonthlyKeyfiguresBinding,
+    AiresCovoiturageBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
@@ -108,6 +114,7 @@ import { MonthlyKeyfiguresAction } from './actions/keyfigures/MonthlyKeyfiguresA
 
     LocationAction,
     MonthlyKeyfiguresAction,
+    AiresCovoiturageAction,
   ],
   queues: ['observatory'],
 })

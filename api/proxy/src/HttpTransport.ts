@@ -1020,6 +1020,16 @@ export class HttpTransport implements TransportInterface {
         this.send(res, response as RPCResponseType);
       }),
     );
+    this.app.get(
+      '/observatory/aires-covoiturage',
+      rateLimiter(),
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(
+          createRPCPayload('observatory:airesCovoiturage', req.query, { permissions: ['common.observatory.stats'] }),
+        );
+        this.send(res, response as RPCResponseType);
+      }),
+    );
   }
 
   private registerUptimeRoute() {
