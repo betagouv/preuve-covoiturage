@@ -11,5 +11,5 @@
       }
     }
   },
-  "defaultBase": "dev"
+  "defaultBase": "main"
 }
