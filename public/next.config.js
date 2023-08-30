@@ -8,6 +8,7 @@ const nextConfig = {
     serverActions: true,
   },
   images: {
+    dangerouslyAllowSVG: true,
     remotePatterns: [
       {
         protocol: 'https',

@@ -24,7 +24,7 @@ export default async function Home() {
   const tiles = [{
     desc:'Découvrez les bienfaits du covoiturage, mettez en place le Forfait Mobilité Durable et accompagnez vos salariés dans l\'usage du covoiturage',
     grey: true,
-    imageUrl: "//www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
+    imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
     linkProps:{
       href: '#'
     },
@@ -32,7 +32,7 @@ export default async function Home() {
   },{
     desc:"Comprendre le covoiturage au quotidien et réduire mon impact carbone au quotidien, suis-je éligible à une aide?",
     grey: true,
-    imageUrl: "//www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
+    imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
     linkProps:{
       href: '#'
     },
@@ -40,7 +40,7 @@ export default async function Home() {
   },{
     desc:"Découvrir le registre de preuve de covoiturage et en devenir partenaire",
     grey: true,
-    imageUrl: "//www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
+    imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
     linkProps:{
       href: '#'
     },
