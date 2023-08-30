@@ -21,7 +21,7 @@ on:
       bucket_name_var:
         required: true
         type: string
-      cache-dependency-path:
+      cache_dependency_path:
         required: true
         type: string
 jobs:
