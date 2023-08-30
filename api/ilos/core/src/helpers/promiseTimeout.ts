@@ -20,7 +20,7 @@ export function promiseTimeout<T>(ms: number, promise: Promise<T>, signature?: s
     })
     .catch((err) => {
       clearTimeout(id);
-      if (!!!err.rpcError?.nolog) {
+      if (!!!err.nolog) {
         console.error(`[kernel] ${signature || ''} failed`, { message: err.message });
       }
 
