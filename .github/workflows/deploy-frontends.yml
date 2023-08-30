@@ -17,6 +17,9 @@ jobs:
       dist_directory: ${{ matrix.dist_directory }}
       bucket_name_var: ${{ matrix.bucket_name_var }}
       cache_dependency_path: ${{ matrix.cache_dependency_path }}
+    secrets:
+      bucket_access_key: ${{ secrets.BUCKET_ACCESS_KEY }}
+      bucket_secret_key: ${{ secrets.BUCKET_SECRET_KEY }}
 
     strategy:
       matrix:
