@@ -2,17 +2,17 @@ import { INSEECode, PerimeterType } from '../../geo/shared/Perimeter';
 import { Feature } from 'geojson';
 
 export interface SingleResultInterface {
-  id_lieu: string; 
-  nom_lieu: string; 
-  com_lieu: string; 
-  type: string; 
-  date_maj: Date; 
-  nbre_pl: number; 
-  nbre_pmr: number;  
-  duree: number;  
+  id_lieu: string;
+  nom_lieu: string;
+  com_lieu: string;
+  type: string;
+  date_maj: Date;
+  nbre_pl: number;
+  nbre_pmr: number;
+  duree: number;
   horaires: string;
-  proprio: string; 
-  lumiere: boolean; 
+  proprio: string;
+  lumiere: boolean;
   geom: Feature;
 }
 
