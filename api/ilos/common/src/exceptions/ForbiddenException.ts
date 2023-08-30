@@ -5,6 +5,7 @@ export class ForbiddenException extends RPCException {
     super('Forbidden Error');
     this.rpcError = {
       data,
+      nolog: true,
       code: -32503,
       message: this.message,
     };

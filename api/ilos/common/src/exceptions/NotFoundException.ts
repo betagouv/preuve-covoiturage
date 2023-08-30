@@ -5,6 +5,7 @@ export class NotFoundException extends RPCException {
     super('Not found');
     this.rpcError = {
       data,
+      nolog: true,
       code: -32504,
       message: this.message,
     };

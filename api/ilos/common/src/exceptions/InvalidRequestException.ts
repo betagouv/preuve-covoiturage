@@ -5,6 +5,7 @@ export class InvalidRequestException extends RPCException {
     super('Invalid Request');
     this.rpcError = {
       data,
+      nolog: true,
       code: -32600,
       message: this.message,
     };

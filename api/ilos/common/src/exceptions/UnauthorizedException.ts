@@ -5,6 +5,7 @@ export class UnauthorizedException extends RPCException {
     super('Unauthorized Error');
     this.rpcError = {
       data,
+      nolog: true,
       code: -32501,
       message: this.message,
     };

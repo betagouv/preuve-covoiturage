@@ -5,6 +5,7 @@ export class ConflictException extends RPCException {
     super('Conflict');
     this.rpcError = {
       data,
+      nolog: true,
       code: -32509,
       message: this.message,
     };

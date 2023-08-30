@@ -5,6 +5,7 @@ export class ParseErrorException extends RPCException {
     super('Parse error');
     this.rpcError = {
       data,
+      nolog: true,
       code: -32700,
       message: this.message,
     };

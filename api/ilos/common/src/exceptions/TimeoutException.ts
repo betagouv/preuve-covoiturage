@@ -5,6 +5,7 @@ export class TimeoutException extends RPCException {
     super('Timeout');
     this.rpcError = {
       data,
+      nolog: false,
       code: -32408,
       message: this.message,
     };

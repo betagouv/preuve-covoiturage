@@ -5,6 +5,7 @@ export class TooManyRequestsException extends RPCException {
     super('Too Many Requests Error');
     this.rpcError = {
       data,
+      nolog: true,
       code: -32029,
       message: this.message,
     };
