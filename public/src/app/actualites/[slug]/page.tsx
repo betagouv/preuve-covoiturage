@@ -63,6 +63,8 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
           </figure>
           <div className={fr.cx('fr-text--lg')}>
             {data[0].description}
+            {/* https://github.com/hashicorp/next-mdx-remote/issues/366 */}
+            {/* @ts-expect-error Async Server Component */}
             <MDXRemote source={data[0].content} />
           </div>
           <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">

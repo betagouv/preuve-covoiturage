@@ -81,6 +81,8 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
       <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
         <div className={fr.cx('fr-col')}>
           <div className={fr.cx('fr-text--lg')}>
+            {/* https://github.com/hashicorp/next-mdx-remote/issues/366 */}
+            {/* @ts-expect-error Async Server Component */}
             <MDXRemote source={data ? data[0].content : ''} />
           </div>
         </div>

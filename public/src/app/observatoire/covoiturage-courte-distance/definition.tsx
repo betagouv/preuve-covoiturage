@@ -1,5 +1,5 @@
-import { ButtonsGroup } from '@codegouvfr/react-dsfr/ButtonsGroup';
 import { fr } from '@codegouvfr/react-dsfr';
+import { ButtonsGroup } from '@codegouvfr/react-dsfr/ButtonsGroup';
 
 export default function Definition() {
   const defTitle = `Le covoiturage, qu'est-ce que c’est ?`;

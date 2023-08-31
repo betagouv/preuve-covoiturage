@@ -1,47 +1,46 @@
-'use client'
-import { fr } from '@codegouvfr/react-dsfr';
-import dynamic from 'next/dynamic';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
-import PageTitle from '@/components/common/PageTitle';
-import SelectTerritory from '@/components/observatoire/SelectTerritory';
-import SelectPeriod from '@/components/observatoire/SelectPeriod';
-import KeyFigures from './KeyFigures';
-import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
-import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
-import BestFluxTable from './tables/BestFluxTable';
-import BestTerritoriesTable from './tables/BestTerritoriesTable';
-import { mapList, graphList } from '@/helpers/lists';
-import SelectInList from '@/components/common/SelectInList';
-import OccupationMap from './maps/OccupationMap';
-const SectionTitle = dynamic(() => import('@/components/common/SectionTitle'), {
-  ssr: false,
-});
-const FluxMap = dynamic(() => import('./maps/FluxMap'), {
-  ssr: false,
-});
-const DensiteMap = dynamic(() => import('./maps/DensiteMap'), {
-  ssr: false,
-});
-import TrajetsGraph from './graphs/TrajetsGraph';
-import DistanceGraph from './graphs/DistanceGraph';
-import { useDashboard } from '@/hooks/useDashboard';
-import { getPeriod } from '@/helpers/analyse';
-import SelectObserve from '@/components/observatoire/SelectObserve';
+'use client';
+// import PageTitle from '@/components/common/PageTitle';
+// import SelectInList from '@/components/common/SelectInList';
+// import SelectObserve from '@/components/observatoire/SelectObserve';
+// import SelectPeriod from '@/components/observatoire/SelectPeriod';
+// import SelectTerritory from '@/components/observatoire/SelectTerritory';
+// import { getPeriod } from '@/helpers/analyse';
+// import { graphList, mapList } from '@/helpers/lists';
+// import { useDashboard } from '@/hooks/useDashboard';
+// import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
+// import { fr } from '@codegouvfr/react-dsfr';
+// import SectionTitle from '../../../components/common/SectionTitle';
+// import KeyFigures from './KeyFigures';
+// import DistanceGraph from './graphs/DistanceGraph';
+// import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
+// import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
+// import TrajetsGraph from './graphs/TrajetsGraph';
+// import DensiteMap from './maps/DensiteMap';
+// import FluxMap from './maps/FluxMap';
+// import OccupationMap from './maps/OccupationMap';
+// import BestFluxTable from './tables/BestFluxTable';
+// import BestTerritoriesTable from './tables/BestTerritoriesTable';
 
-export default function Page({ searchParams }: { searchParams: SearchParamsInterface }) {
-  const title = 'Observer le covoiturage courte distance intermédié';
-  const { params, error, loading, onChangeTerritory, onChangePeriod, onChangeObserve, onChangeGraph, onChangeMap } = useDashboard(searchParams);
-  const period = getPeriod(params.year, params.month);
-  const observeLabel = params.map == 1 ? 'Flux entre:' : 'Territoires observés';
+// export default function Page({ searchParams }: { searchParams: SearchParamsInterface }) {
+  export default function Page() {
+  // const title = 'Observer le covoiturage courte distance intermédié';
+  // const { params, error, loading, onChangeTerritory, onChangePeriod, onChangeObserve, onChangeGraph, onChangeMap } = useDashboard(searchParams);
+  // const period = getPeriod(params.year, params.month);
+  // const observeLabel = params.map == 1 ? 'Flux entre:' : 'Territoires observés';
 
   return (
     <>
-      {!loading && !error &&(
+      {/* {!loading && !error && (
         <article id='content'>
           <PageTitle title={title} />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col')}>
-              <SelectTerritory code={params.code} type={params.observe} year={params.year} onChange={onChangeTerritory} />
+              <SelectTerritory
+                code={params.code}
+                type={params.observe}
+                year={params.year}
+                onChange={onChangeTerritory}
+              />
             </div>
             <div className={fr.cx('fr-col')}>
               <SelectPeriod year={params.year} month={params.month} onChange={onChangePeriod} />
@@ -54,7 +53,7 @@ export default function Page({ searchParams }: { searchParams: SearchParamsInter
           />
           <KeyFigures params={params} />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col','fr-col-md-6')}>
+            <div className={fr.cx('fr-col', 'fr-col-md-6')}>
               <RepartitionDistanceGraph title='Trajets par distance' direction='from' params={params} />
             </div>
           </div>
@@ -85,11 +84,16 @@ export default function Page({ searchParams }: { searchParams: SearchParamsInter
                 onChange={onChangeMap}
               />
             </div>
-            {[1,3].includes(params.map) && 
+            {[1, 3].includes(params.map) && (
               <div className={fr.cx('fr-col')}>
-                <SelectObserve label={observeLabel} type={params.type} value={params.observe} onChange={onChangeObserve} />
+                <SelectObserve
+                  label={observeLabel}
+                  type={params.type}
+                  value={params.observe}
+                  onChange={onChangeObserve}
+                />
               </div>
-            }
+            )}
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col')}>
@@ -123,7 +127,7 @@ export default function Page({ searchParams }: { searchParams: SearchParamsInter
             )}
           </div>
         </article>
-      )}
+      )} */}
     </>
   );
 }
