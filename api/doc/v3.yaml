@@ -8,7 +8,7 @@ info:
     email: technique@covoiturage.beta.gouv.fr
   license:
     name: Apache 2
-    url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/dev/LICENSE
+    url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE
 
 externalDocs:
   url: https://doc.covoiturage.beta.gouv.fr/
@@ -112,10 +112,10 @@ components:
     status:
       type: string
       enum:
+        - fraud_error
         - validation_error 
         - acquisition_error
         - normalization_error
-        - fraud_error
         - ok
         - expired
         - canceled
@@ -363,6 +363,12 @@ components:
                 minLength: 5
                 maxLength: 19
               - type: string
+                description: Numéro de permis de conduire plus anciens composé de 1 à 15 caractères.
+                example: '123456A'
+                pattern: /^[A-Z0-9]{1,15}$/
+                minLength: 1
+                maxLength: 15
+              - type: string
                 description: Numéro de permis étranger préfixé de l'indicatif '99-'.
                 example: '99-X23836'
                 pattern: /^99-.*$/
@@ -443,6 +449,13 @@ components:
               amount:
                 type: number
                 description: montant en centimes d'euros
+    fraudcheck_label:
+      type: string
+      enum:
+        - interoperator_fraud
+      description: | 
+        Etiquette possible pour un cas de fraude détectée :
+          - interoperator_fraud : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent 
 paths:
   /geo/route:
     get:
@@ -885,8 +898,9 @@ paths:
 
         ### Vérification
         Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 24h après la réalisation de celui-ci.
-        Ces trajets seront retournés avec un champs `status` à `fraud_error`.
-        Le statut ne peut plus changer 48h après la date de fin du trajet. En cas d'indisponibilité du service, le trajet est considéré comme ok après 48h
+        Ces trajets seront retournés avec un champs `status` à `fraud_error` et un label dans `fraud_error_labels` à `interoperator_fraud`.
+        Le statut ne peut plus changer 48h après la date de fin du trajet. 
+        En cas d'indisponibilité du service, le trajet est considéré comme `ok` après 48h
         L'algorithme de détection de fraude inter opérateurs est appliqué sur tous les trajets envoyés.
       security:
         - token: []
@@ -1078,14 +1092,11 @@ paths:
                     type: string
                     format: date-time
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
-                  data: 
-                    type: object
-                    description: champ libre de données
-                    required:
-                      - message
-                    properties:
-                      message:
-                        type: string
+                  fraud_error_labels:
+                    type: array
+                    description: Liste des étiquettes ayant abouti au rejet du trajet. vide si pas de fraude détectée
+                    items:
+                      '$ref': "#/components/schemas/fraudcheck_label"
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
           content:
@@ -1131,6 +1142,7 @@ paths:
                 - start
                 - end
                 - distance
+
               additionalProperties: false
               properties:
                 operator_trip_id:

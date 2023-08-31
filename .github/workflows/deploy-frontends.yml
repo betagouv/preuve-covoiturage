@@ -1,0 +1,70 @@
+name: Deploy frontends 
+on:
+  release:
+    types: [published]
+  workflow_call:
+jobs:
+  deploy:
+    name: Deploy ${{ matrix.project_name }}
+    strategy:
+      matrix:
+        env: [demo, production]
+        project_name: [attestation, dashboard, techdoc]
+        include:
+          - project_name: attestation
+            build_directory: attestation
+            build_command: |
+              NODE_OPTIONS=--openssl-legacy-provider npm run build
+            dist_directory: attestation/dist/attestation
+            bucket_name_var: ATTESTATION_BUCKET_NAME
+            cache_dependency_path: attestation/package-lock.json
+          - project_name: dashboard
+            build_directory: dashboard
+            build_command: |
+              cat "src/environments/environment.$DEPLOY_ENV.ts" | sed 's/export const /window./' > src/assets/env.js
+              NODE_OPTIONS=--openssl-legacy-provider npm run build -c production
+            dist_directory: dashboard/dist/dashboard
+            bucket_name_var: DASHBOARD_BUCKET_NAME
+            cache_dependency_path: dashboard/package-lock.json
+          - project_name: techdoc
+            build_directory: doc
+            build_command: |
+              npm run gen
+              NODE_OPTIONS=--openssl-legacy-provider npm run build
+            dist_directory: doc/dist
+            bucket_name_var: TECHDOC_BUCKET_NAME
+            cache_dependency_path: doc/package-lock.json
+    environment: ${{ matrix.env }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.cache_dependency_path }}
+
+      - name: Install and Build 🔧
+        env:
+          DEPLOY_ENV: ${{ matrix.env }}
+        run: |
+          cd ${{ matrix.build_directory }}
+          npm ci
+          ${{ matrix.build_command }} 
+
+      - name: Deploy to bucket
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ vars[matrix.bucket_name_var] }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.BUCKET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+          AWS_S3_ENDPOINT: ${{ vars.BUCKET_ENDPOINT }}
+          AWS_REGION: ${{ vars.BUCKET_REGION }}
+          SOURCE_DIR: ${{ matrix.dist_directory }}

@@ -108,7 +108,9 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
           (t.start_geo_code = ANY($1::varchar[]) OR t.end_geo_code = ANY($1::varchar[]))
           AND t.datetime >= $2::timestamp
           AND t.datetime < $3::timestamp
-          AND t.carpool_status = 'ok'::carpool.carpool_status_enum
+          AND ( t.carpool_status = 'ok'::carpool.carpool_status_enum 
+                or 
+                t.carpool_status = 'fraudcheck_error'::carpool.carpool_status_enum)
           ${override ? '' : 'AND pi.carpool_id IS NULL'}
         ORDER BY t.datetime ASC
         `,

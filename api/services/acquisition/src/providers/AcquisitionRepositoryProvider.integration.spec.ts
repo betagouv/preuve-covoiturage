@@ -54,10 +54,11 @@ test.serial('Should create acquisition', async (t) => {
     { operator_journey_id: '2' },
     { operator_journey_id: '3' },
     { operator_journey_id: '4' },
+    { operator_journey_id: '5' },
   ].map(createPayload);
 
   const acqs = await t.context.repository.createOrUpdateMany(data);
-  t.deepEqual(acqs.map((v) => v.operator_journey_id).sort(), ['1', '2', '3', '4']);
+  t.deepEqual(acqs.map((v) => v.operator_journey_id).sort(), ['1', '2', '3', '4', '5']);
 
   const result = await t.context.db.connection.getClient().query({
     text: `
@@ -93,7 +94,9 @@ test.serial('Should update acquisition', async (t) => {
     `,
     values: [operator_id, '2'],
   });
-  const initialData = [{ operator_journey_id: '3' }, { operator_journey_id: '4' }].map(createPayload);
+  const initialData = [{ operator_journey_id: '3' }, { operator_journey_id: '4' }, { operator_journey_id: '5' }].map(
+    createPayload,
+  );
   const data = [
     { operator_journey_id: '1', request_id: 'other request id' },
     { operator_journey_id: '2', request_id: 'other request id' },
@@ -125,7 +128,7 @@ test.serial('Should update acquisition', async (t) => {
     values: [operator_id],
   });
 
-  t.is(result.rowCount, 4);
+  t.is(result.rowCount, 5);
   t.deepEqual(
     result.rows,
     [...data, ...initialData].map((d) => {
@@ -167,7 +170,7 @@ test.serial('Should update status', async (t) => {
     values: [operator_id],
   });
 
-  t.is(result.rowCount, 4);
+  t.is(result.rowCount, 5);
   t.deepEqual(result.rows, [
     {
       operator_id: 1,
@@ -180,6 +183,7 @@ test.serial('Should update status', async (t) => {
     { operator_id: 1, operator_journey_id: '2', status: 'ok', error_stage: null, errors: [], try_count: 50 },
     { operator_id: 1, operator_journey_id: '3', status: 'pending', error_stage: null, errors: [], try_count: 0 },
     { operator_id: 1, operator_journey_id: '4', status: 'pending', error_stage: null, errors: [], try_count: 0 },
+    { operator_id: 1, operator_journey_id: '5', status: 'pending', error_stage: null, errors: [], try_count: 0 },
   ]);
 
   await t.context.repository.updateManyStatus([
@@ -218,15 +222,37 @@ test.serial('Should update status', async (t) => {
 
 test.serial('Should get status by operator_id and operator_journey_id', async (t) => {
   const { operator_id } = t.context;
-  const { operator_journey_id, status } = await t.context.repository.getStatus(operator_id, '1');
+  const { operator_journey_id, status, fraud_error_labels } = await t.context.repository.getStatus(operator_id, '1');
 
   t.deepEqual(
-    { operator_journey_id, status },
+    { operator_journey_id, status, fraud_error_labels },
     {
       operator_journey_id: '1',
       status: StatusEnum.AcquisitionError,
+      fraud_error_labels: [],
     },
   );
+});
+
+test.serial('Should get fraudcheck status and labels for carpool', async (t) => {
+  // Arrange
+  const acquisition_row = await updateAcquistionJourneyId5ToOk(t.context);
+  const carpool_id = await insertCarpoolWithFraudErrorStatus(t.context, acquisition_row);
+  await t.context.db.connection.getClient().query({
+    text: `
+    INSERT INTO fraudcheck.labels(
+      carpool_id, label, geo_code)
+      VALUES ($1, $2, $3);
+    `,
+    values: [carpool_id, 'interoperator_fraud', '76'],
+  });
+
+  // Act
+  const { status, fraud_error_labels } = await t.context.repository.getStatus(t.context.operator_id, '5');
+
+  // Assert
+  t.deepEqual(status, StatusEnum.FraudError);
+  t.deepEqual(fraud_error_labels, ['interoperator_fraud']);
 });
 
 test.serial('Should find with date selectors', async (t) => {
@@ -250,8 +276,8 @@ test.serial('Should find then update with selectors', async (t) => {
   t.deepEqual(
     result.map(({ created_at, ...r }) => r),
     [
-      { _id: 5, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
       { _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
+      { _id: 7, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id },
     ],
   );
   await fn();
@@ -265,7 +291,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result1.map(({ created_at, ...r }) => r),
-    [{ _id: 5, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
 
   const [result2, fn2] = await t.context.repository.findThenUpdate({
@@ -275,7 +301,7 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result2.map(({ created_at, ...r }) => r),
-    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 7, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
 
   await fn1(); // release lock 1
@@ -286,9 +312,10 @@ test.serial('Should find and update with lock', async (t) => {
 
   t.deepEqual(
     result3.map(({ created_at, ...r }) => r),
-    [{ _id: 5, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
+    [{ _id: 6, payload: { test: '12345' }, api_version: 1, operator_id: t.context.operator_id }],
   );
-  await fn2({ acquisition_id: 6, status: AcquisitionStatusEnum.Ok });
+  await fn2({ acquisition_id: 7, status: AcquisitionStatusEnum.Ok }); // <-- error
+  await fn2({ acquisition_id: 8, status: AcquisitionStatusEnum.Ok });
   await fn2();
   // release lock 2
 
@@ -398,7 +425,7 @@ test.serial('Should list acquisition status', async (t) => {
   };
 
   const result = await t.context.repository.list(search);
-  t.deepEqual(result, [{ operator_journey_id: '3' }, { operator_journey_id: '2' }, { operator_journey_id: '4' }]);
+  t.deepEqual(result, [{ operator_journey_id: '3' }, { operator_journey_id: '2' }, { operator_journey_id: '5' }]);
 
   const result1 = await t.context.repository.list({
     ...search,
@@ -477,3 +504,56 @@ test.serial('Should patch payload', async (t) => {
     },
   });
 });
+
+const updateAcquistionJourneyId5ToOk = async (context: TestContext): Promise<{ _id: number; journey_id: number }> => {
+  const result = await context.db.connection.getClient().query({
+    text: `
+      UPDATE ${context.repository.table}
+      SET status = 'ok'
+      WHERE operator_id = $1 AND journey_id = $2
+      RETURNING _id, journey_id;
+    `,
+    values: [context.operator_id, '5'],
+  });
+  return result.rows[0];
+};
+
+const insertCarpoolWithFraudErrorStatus = async (
+  context: TestContext,
+  acquisition: { _id: number; journey_id: number },
+): Promise<number> => {
+  const result = await context.db.connection.getClient().query({
+    text: `
+    INSERT INTO carpool.carpools(
+      acquisition_id, operator_id, trip_id, operator_trip_id, is_driver, 
+      operator_class, datetime, duration, distance, seats, 
+      identity_id, operator_journey_id, cost, status, 
+      start_geo_code, end_geo_code)
+      VALUES ($1, $2, $3, $4, $5, 
+        $6, $7, $8, $9, $10, 
+        $11, $12, $13, $14, $15, 
+        $16)
+      RETURNING _id;
+    `,
+    values: [
+      acquisition._id,
+      context.operator_id,
+      'trip_id_5',
+      'operator_trip_id_5',
+      true,
+      'C',
+      new Date(),
+      2500,
+      25000,
+      1,
+      4,
+      acquisition.journey_id,
+      0,
+      'fraudcheck_error',
+      '91471',
+      '91471',
+    ],
+  });
+
+  return result.rows[0]._id;
+};

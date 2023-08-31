@@ -2,13 +2,13 @@
 
 ## Branches
 
-The main branch of the project is `dev`.
-Branches or created from the `dev` branch with this naming pattern : `<type>/<issue-id>-<name>`
+The main branch of the project is `main`.
+Branches or created from the `main` branch with this naming pattern : `<type>/<issue-id>-<name>`
 
 | type        | branch from      | example               |
 | ----------- | ---------------- | --------------------- |
-| new feature | `dev`            | `feat/1234-coolstuff` |
-| bugfix      | `dev`            | `fix/1234-fixme`      |
+| new feature | `main`           | `feat/1234-coolstuff` |
+| bugfix      | `main`           | `fix/1234-fixme`      |
 | hotfix      | `release/vX.X.X` | `hotfix/1234-burning` |
 
 Push to git and create a PR (draft if not ready yet)
@@ -17,11 +17,11 @@ Push to git and create a PR (draft if not ready yet)
 git push -u origin <branch-name>
 ```
 
-Working on an old branch (couple of days) ? Please rebase `origin/dev` to make sure your code is up to date.
+Working on an old branch (couple of days) ? Please rebase `origin/main` to make sure your code is up to date.
 
 ```shell
 git fetch
-git rebase origin/dev
+git rebase origin/main
 git push -f # you've been rewriting the history on your branch
 ```
 
@@ -47,14 +47,14 @@ Please use the template for release pull requests and make sure all checkboxes a
 
 ### Development
 
-**dev** environment runs on Kubernetes. **Every commit** to the `dev` branch triggers an image build and a deployment PR on the [infra repository](https://github.com/betagouv/preuve-covoiturage-infra/pulls).
+**dev** environment runs on Kubernetes. **Every commit** to the `main` branch triggers an image build and a deployment PR on the [infra repository](https://github.com/betagouv/preuve-covoiturage-infra/pulls).
 When you merge this PR, the Terraform configuration of the cluster changes. [ArgoCD](https://cd.dev.covoiturage.beta.gouv.fr/) checks this repo every 5 minutes and deploys on changes.
 
 You can trigger a sync in ArgoCD manually.
 
 ### Demo
 
-**demo** environment runs on Kubernetes too. Deployments use the same process as _dev_ but they are triggered when a **tag** with the pattern `vX.X.X` is created.
+**demo** environment runs on Kubernetes too. Deployments use the same process as _main_ but they are triggered when a **tag** with the pattern `vX.X.X` is created.
 
 ### Production
 

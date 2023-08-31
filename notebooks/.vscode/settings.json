@@ -2,13 +2,10 @@
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        "scripts",
+        "./scripts",
         "-p",
         "test_*.py"
     ],
     "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true,
-    "python.testing.pytestArgs": [
-        "scripts"
-    ]
+    "python.testing.unittestEnabled": true
 }

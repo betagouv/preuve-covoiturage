@@ -1,4 +1,4 @@
-import { StatusData, StatusEnum } from '../shared/acquisition/status.contract';
+import { StatusEnum } from '../shared/acquisition/status.contract';
 
 export enum AcquisitionStatusEnum {
   Ok = 'ok',
@@ -43,7 +43,7 @@ export interface AcquisitionStatusInterface {
   updated_at: Date;
   operator_journey_id: string;
   status: StatusEnum;
-  data?: StatusData;
+  fraud_error_labels?: string[];
 }
 
 export interface AcquisitionStatusUpdateInterface {

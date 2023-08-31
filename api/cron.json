@@ -11,10 +11,6 @@
     {
       "command": "0 3 * * * npm run ilos campaign:apply --detach",
       "size": "M"
-    },
-    {
-      "command": "0 4 * * * npm run ilos campaign:finalize --detach",
-      "size": "M"
     }
   ]
 }
