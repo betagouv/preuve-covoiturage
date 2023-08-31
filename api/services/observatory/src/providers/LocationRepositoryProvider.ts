@@ -25,8 +25,8 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
     const sql = {
       values: [params.code, params.start_date, params.end_date, year],
       text: `
-        SELECT st_y(start_position::geometry) as lon, 
-        st_x(start_position::geometry) as lat 
+        SELECT st_y(start_position::geometry) as lat, 
+        st_x(start_position::geometry) as lon 
         FROM ${this.table} 
         WHERE datetime BETWEEN $2 AND $3
         AND status='ok'
@@ -36,16 +36,16 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
             ? `AND (
             start_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1) 
+            } WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${checkTerritoryParam(params.type)} = $1) 
             OR end_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1)
+            } WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${checkTerritoryParam(params.type)} = $1)
           )`
             : ''
         }
         UNION ALL
-        SELECT st_y(end_position::geometry) as lon, 
-        st_x(end_position::geometry) as lat 
+        SELECT st_y(end_position::geometry) as lat, 
+        st_x(end_position::geometry) as lon 
         FROM ${this.table} 
         WHERE datetime BETWEEN $2 AND $3
         AND status='ok'
@@ -55,10 +55,10 @@ export class LocationRepositoryProvider implements LocationRepositoryInterface {
             ? `AND (
             start_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1) 
+            } WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${checkTerritoryParam(params.type)} = $1) 
             OR end_geo_code IN (SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $4) t WHERE ${checkTerritoryParam(params.type)} = $1)
+            } WHERE year = geo.get_latest_millesime_or( $4::smallint)) t WHERE ${checkTerritoryParam(params.type)} = $1)
           )`
             : ''
         }

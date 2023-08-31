@@ -1,3 +1,5 @@
+import { perimeterTypes } from '../../geo/shared/Perimeter';
+
 export const alias = 'observatory.bestMonthlyFlux';
 export const schema = {
   type: 'object',
@@ -15,12 +17,10 @@ export const schema = {
     },
     type: {
       type: 'string',
-      enum: ['com', 'epci', 'aom', 'dep', 'reg', 'country'],
+      enum: perimeterTypes,
     },
     code: {
-      type: 'string',
-      minLength: 2,
-      maxLength: 9,
+      oneOf: [{ macro: 'insee' }, { macro: 'department' }, { macro: 'country' }, { macro: 'siren' }],
     },
     limit: {
       type: 'integer',

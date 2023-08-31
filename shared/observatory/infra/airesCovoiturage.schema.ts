@@ -1,25 +1,12 @@
 import { perimeterTypes } from '../../geo/shared/Perimeter';
 
-export const alias = 'observatory.monthlyOccupation';
+export const alias = 'observatory.airesCovoiturage';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['year', 'month', 'type'],
+  required: ['type', 'code'],
   properties: {
-    year: {
-      type: 'integer',
-      minimum: 2020,
-    },
-    month: {
-      type: 'integer',
-      minimum: 1,
-      maximum: 12,
-    },
     type: {
-      type: 'string',
-      enum: perimeterTypes,
-    },
-    observe: {
       type: 'string',
       enum: perimeterTypes,
     },

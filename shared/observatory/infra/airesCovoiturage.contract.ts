@@ -1,25 +1,31 @@
-import { INSEECode, PerimeterLabel, PerimeterType } from '../../geo/shared/Perimeter';
+import { INSEECode, PerimeterType } from '../../geo/shared/Perimeter';
+import { Feature } from 'geojson';
 
 export interface SingleResultInterface {
-  territory: PerimeterType;
-  l_territory: PerimeterLabel;
-  journeys: number;
+  id_lieu: string;
+  nom_lieu: string;
+  com_lieu: string;
+  type: string;
+  date_maj: Date;
+  nbre_pl: number;
+  nbre_pmr: number;
+  duree: number;
+  horaires: string;
+  proprio: string;
+  lumiere: boolean;
+  geom: Feature;
 }
 
 export type ResultInterface = SingleResultInterface[];
 
 export interface ParamsInterface {
-  year: number;
-  month: number;
   type: PerimeterType; //type de territoire selectionné
-  observe: PerimeterType; //type du territoire observé
   code: INSEECode; //code insee du territoire observé
-  limit?: number;
 }
 
 export const handlerConfig = {
   service: 'observatory',
-  method: 'bestMonthlyTerritories',
+  method: 'airesCovoiturage',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

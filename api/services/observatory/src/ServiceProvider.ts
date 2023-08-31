@@ -46,6 +46,14 @@ import { LocationRepositoryProvider } from './providers/LocationRepositoryProvid
 import { binding as LocationBinding } from './shared/observatory/location/location.schema';
 import { LocationAction } from './actions/location/LocationAction';
 
+import { KeyfiguresRepositoryProvider } from './providers/KeyfiguresRepositoryProvider';
+import { binding as MonthlyKeyfiguresBinding } from './shared/observatory/keyfigures/monthlyKeyfigures.schema';
+import { MonthlyKeyfiguresAction } from './actions/keyfigures/MonthlyKeyfiguresAction';
+
+import { InfraRepositoryProvider } from './providers/InfraRepositoryProvider';
+import { binding as AiresCovoiturageBinding } from './shared/observatory/infra/airesCovoiturage.schema';
+import { AiresCovoiturageAction } from './actions/infra/AiresCovoiturageAction';
+
 @serviceProvider({
   config,
   commands: [],
@@ -55,6 +63,8 @@ import { LocationAction } from './actions/location/LocationAction';
     TerritoriesRepositoryProvider,
     DistributionRepositoryProvider,
     LocationRepositoryProvider,
+    KeyfiguresRepositoryProvider,
+    InfraRepositoryProvider,
   ],
   validator: [
     MonthlyFluxBinding,
@@ -72,6 +82,8 @@ import { LocationAction } from './actions/location/LocationAction';
     JourneysByDistancesBinding,
 
     LocationBinding,
+    MonthlyKeyfiguresBinding,
+    AiresCovoiturageBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
@@ -101,6 +113,8 @@ import { LocationAction } from './actions/location/LocationAction';
     JourneysByDistancesAction,
 
     LocationAction,
+    MonthlyKeyfiguresAction,
+    AiresCovoiturageAction,
   ],
   queues: ['observatory'],
 })

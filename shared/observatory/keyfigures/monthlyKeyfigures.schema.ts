@@ -1,10 +1,10 @@
-import { indicTypes, perimeterTypes } from '../../geo/shared/Perimeter';
+import { perimeterTypes } from '../../geo/shared/Perimeter';
 
-export const alias = 'observatory.evolMonthlyFlux';
+export const alias = 'observatory.monthlyKeyfigures';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['year', 'month', 'type', 'code', 'indic'],
+  required: ['year', 'month', 'type', 'code'],
   properties: {
     year: {
       type: 'integer',
@@ -21,16 +21,6 @@ export const schema = {
     },
     code: {
       oneOf: [{ macro: 'insee' }, { macro: 'department' }, { macro: 'country' }, { macro: 'siren' }],
-    },
-    indic: {
-      type: 'string',
-      enum: indicTypes,
-    },
-    past: {
-      type: 'string',
-      minLength: 1,
-      maxLength: 2,
-      default: '2',
     },
   },
 };
