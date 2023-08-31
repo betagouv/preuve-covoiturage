@@ -1,36 +1,35 @@
 'use client';
-// import PageTitle from '@/components/common/PageTitle';
-// import SelectInList from '@/components/common/SelectInList';
-// import SelectObserve from '@/components/observatoire/SelectObserve';
-// import SelectPeriod from '@/components/observatoire/SelectPeriod';
-// import SelectTerritory from '@/components/observatoire/SelectTerritory';
-// import { getPeriod } from '@/helpers/analyse';
-// import { graphList, mapList } from '@/helpers/lists';
-// import { useDashboard } from '@/hooks/useDashboard';
-// import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
-// import { fr } from '@codegouvfr/react-dsfr';
-// import SectionTitle from '../../../components/common/SectionTitle';
-// import KeyFigures from './KeyFigures';
-// import DistanceGraph from './graphs/DistanceGraph';
-// import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
-// import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
-// import TrajetsGraph from './graphs/TrajetsGraph';
-// import DensiteMap from './maps/DensiteMap';
-// import FluxMap from './maps/FluxMap';
-// import OccupationMap from './maps/OccupationMap';
-// import BestFluxTable from './tables/BestFluxTable';
-// import BestTerritoriesTable from './tables/BestTerritoriesTable';
+import PageTitle from '@/components/common/PageTitle';
+import SelectInList from '@/components/common/SelectInList';
+import SelectObserve from '@/components/observatoire/SelectObserve';
+import SelectPeriod from '@/components/observatoire/SelectPeriod';
+import SelectTerritory from '@/components/observatoire/SelectTerritory';
+import { getPeriod } from '@/helpers/analyse';
+import { graphList, mapList } from '@/helpers/lists';
+import { useDashboard } from '@/hooks/useDashboard';
+import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
+import { fr } from '@codegouvfr/react-dsfr';
+import SectionTitle from '../../../components/common/SectionTitle';
+import KeyFigures from './KeyFigures';
+import DistanceGraph from './graphs/DistanceGraph';
+import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
+import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
+import TrajetsGraph from './graphs/TrajetsGraph';
+import DensiteMap from './maps/DensiteMap';
+import FluxMap from './maps/FluxMap';
+import OccupationMap from './maps/OccupationMap';
+import BestFluxTable from './tables/BestFluxTable';
+import BestTerritoriesTable from './tables/BestTerritoriesTable';
 
-// export default function Page({ searchParams }: { searchParams: SearchParamsInterface }) {
-  export default function Page() {
-  // const title = 'Observer le covoiturage courte distance intermédié';
-  // const { params, error, loading, onChangeTerritory, onChangePeriod, onChangeObserve, onChangeGraph, onChangeMap } = useDashboard(searchParams);
-  // const period = getPeriod(params.year, params.month);
-  // const observeLabel = params.map == 1 ? 'Flux entre:' : 'Territoires observés';
+export default function Page({ searchParams }: { searchParams: SearchParamsInterface }) {
+  const title = 'Observer le covoiturage courte distance intermédié';
+  const { params, error, loading, onChangeTerritory, onChangePeriod, onChangeObserve, onChangeGraph, onChangeMap } = useDashboard(searchParams);
+  const period = getPeriod(params.year, params.month);
+  const observeLabel = params.map == 1 ? 'Flux entre:' : 'Territoires observés';
 
   return (
     <>
-      {/* {!loading && !error && (
+      {!loading && !error && (
         <article id='content'>
           <PageTitle title={title} />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
@@ -127,7 +126,7 @@
             )}
           </div>
         </article>
-      )} */}
+      )}
     </>
   );
 }

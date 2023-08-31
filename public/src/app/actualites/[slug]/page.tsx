@@ -6,6 +6,20 @@ import Image from 'next/image';
 import { cmsHost, cmsInstance } from "@/helpers/cms";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
+export async function generateStaticParams() {
+  const { data } = await cmsInstance.items('Articles').readByQuery({
+    fields:'slug',
+    filter:{
+      status: {
+        '_eq': 'published',
+      }
+    }
+  });
+  return data ? data.map((post:any) => ({
+    slug: post.slug,
+  })) : []
+}
+
 export default async function ActuSingle({ params }: { params: { slug: string }}) {
   const hostUrl = Config.get<string>('next.public_url', 'http://localhost:4200');
   const location = `${hostUrl}/actualites/${params.slug}`;
@@ -63,8 +77,6 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
           </figure>
           <div className={fr.cx('fr-text--lg')}>
             {data[0].description}
-            {/* https://github.com/hashicorp/next-mdx-remote/issues/366 */}
-            {/* @ts-expect-error Async Server Component */}
             <MDXRemote source={data[0].content} />
           </div>
           <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">

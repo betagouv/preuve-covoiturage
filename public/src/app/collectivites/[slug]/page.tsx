@@ -11,6 +11,20 @@ import { Section } from "@/interfaces/cms/collectionsInterface";
 import { fr } from "@codegouvfr/react-dsfr";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
+export async function generateStaticParams() {
+  const { data } = await cmsInstance.items('Pages').readByQuery({
+    fields:'slug',
+    filter:{
+      status: {
+        '_eq': 'published',
+      }
+    }
+  });
+  return data ? data.map((post:any) => ({
+    slug: post.slug,
+  })) : []
+}
+
 export default async function CollectiviteSinglePage({ params }: { params: { slug: string }}) {
   //const location = `${Config.get<string>('next.public_url', 'http://localhost:4200')}/collectivites/${params.slug}`;
   const { data } = await cmsInstance.items('Pages').readByQuery({
@@ -81,8 +95,6 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
       <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
         <div className={fr.cx('fr-col')}>
           <div className={fr.cx('fr-text--lg')}>
-            {/* https://github.com/hashicorp/next-mdx-remote/issues/366 */}
-            {/* @ts-expect-error Async Server Component */}
             <MDXRemote source={data ? data[0].content : ''} />
           </div>
         </div>
@@ -91,7 +103,7 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
       <>
         <SectionTitle title='Ressources' />
         <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-          {ressources.map((r:any, i:number) =>  
+          {ressources && ressources.map((r:any, i:number) =>  
             <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
               <RessourceCard 
                 title={r.item.title}

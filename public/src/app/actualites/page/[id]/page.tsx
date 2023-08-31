@@ -5,6 +5,22 @@ import { cmsHost, cmsInstance, cmsActusByPage, shorten, getNbPages } from "@/hel
 import Pagination from "@/components/common/Pagination";
 import CategoryTags from "@/components/actualites/CategoryTags";
 
+export async function generateStaticParams() {
+  const { meta } = await cmsInstance.items('Articles').readByQuery({
+    fields:'id',
+    limit: cmsActusByPage,
+    filter:{
+      status: {
+        '_eq': 'published',
+      }
+    },
+    meta:'filter_count',
+  });
+  const pageCount = meta && meta.filter_count ? Math.round(meta.filter_count/cmsActusByPage) : 1
+  return Array.from({ length: pageCount }, (_, v) => ({
+    id: v + 1,
+  }));
+}
 
 export default async function ActuPage({ params }: { params: { id: number }}) {
   const { data, meta } = await cmsInstance.items('Articles').readByQuery({
