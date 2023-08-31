@@ -34,6 +34,7 @@ export interface MapInterface {
   bounds?: LngLatBoundsLike,
   children?: ReactNode,
   legend?: LegendInterface[],
+  cursor?: string,
   onMouseEnter?: (e:MapEvent<Map, MouseEvent>) => void;
   onMouseLeave?:(e:MapEvent<Map, MouseEvent>) => void;
   interactiveLayerIds?: string[],

@@ -81,6 +81,13 @@ export default function Navigation() {
               },
               text: 'Un particulier',
               isActive: pathname === '/vous-etes/particuliers',
+            },
+            {
+              linkProps: {
+                href: '/vous-etes/operateurs',
+              },
+              text: 'Un operateur',
+              isActive: pathname === '/vous-etes/operateurs',
             }
           ],
           text: 'Vous êtes',

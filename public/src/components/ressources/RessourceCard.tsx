@@ -1,8 +1,35 @@
 import { Card } from "@codegouvfr/react-dsfr/Card";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { RessourceCardProps } from "@/interfaces/ressources/componentsInterface";
+import { ButtonProps } from "@codegouvfr/react-dsfr/Button";
 
 export default function RessourceCard(props: RessourceCardProps) {
+  const buttonsGroup = () => {
+    const buttons = [];
+    if (props.link) {
+      buttons.push({
+        children: 'En savoir plus',
+        iconId: "fr-icon-external-link-fill",
+        iconPosition: "right",
+        priority:'secondary',
+        linkProps: {
+          href: props.link,
+        },
+      })
+    }
+    if (props.file) {
+      buttons.push({
+        children: 'Télécharger la ressource',
+        iconId: "fr-icon-download-fill",
+        iconPosition: "right",
+        linkProps: {
+          href: props.file,
+        },
+      })
+    }
+    return buttons as [ButtonProps, ...ButtonProps[]]
+  };
+  
   return(
     <Card
       title={props.title}
@@ -14,16 +41,7 @@ export default function RessourceCard(props: RessourceCardProps) {
         <ButtonsGroup
           alignment='right'
           buttonsEquisized
-          buttons={[
-            {
-              children: 'Télécharger la ressource',
-              iconId: "fr-icon-download-fill",
-              iconPosition: "right",
-              linkProps: {
-                href: props.href,
-              },
-            },
-          ]}
+          buttons={buttonsGroup()}
         />
       }
       horizontal={props.horizontal}

@@ -2,6 +2,7 @@ import PageTitle from "@/components/common/PageTitle";
 import Share from "@/components/common/Share";
 import { Config } from "@/config";
 import { fr } from "@codegouvfr/react-dsfr";
+import Tag from "@codegouvfr/react-dsfr/Tag";
 import Image from 'next/image';
 import { cmsHost, cmsInstance } from "@/helpers/cms";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -25,7 +26,7 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
   const location = `${hostUrl}/actualites/${params.slug}`;
 
   const { data } = await cmsInstance.items('Articles').readByQuery({
-    fields:'*,img.*',
+    fields:'*,img.*,categories.Categories_id.*',
     limit:1,
     filter:{
       status: {
@@ -65,10 +66,33 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
     <article id='actu-content'>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
       { data && 
-        <div className={fr.cx('fr-col-12')}>
+        <div className={fr.cx('fr-col')}>
           <PageTitle title={data[0].title} />
           <p>Publié le {new Date(data[0].date_created).toLocaleDateString('fr-FR')}</p>
-          <Share social={share} location={location} />
+          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
+            <div className={fr.cx('fr-col','fr-col-md-9')}>
+              <ul className={fr.cx('fr-tags-group')}>
+                {data[0].categories &&
+                  data[0].categories.map((c:any, i:number) => {
+                    return (
+                      <li key={i}>
+                        <Tag
+                          linkProps={{
+                            href: `/actualites/categorie/${c.Categories_id.slug}`
+                          }}
+                        >
+                          {c.Categories_id.name}
+                        </Tag>
+                      </li>
+                    )
+                  })
+                }
+              </ul>
+            </div>
+            <div className={fr.cx('fr-col','fr-col-md-3')}>
+              <Share social={share} location={location} />
+            </div>
+          </div>          
           <figure className={fr.cx('fr-content-media')} role="group" style={{textAlign:'center'}}>
             <div className={fr.cx('fr-content-media__img')}>
                 <Image className={fr.cx('fr-responsive-img', 'fr-responsive-img--16x9')} src={`${cmsHost}/assets/${data[0].img.id}`} alt={data[0].img_legend} width={data[0].img.width} height={data[0].img.height} />

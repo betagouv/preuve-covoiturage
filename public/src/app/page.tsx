@@ -87,7 +87,8 @@ export default async function Home() {
                 title={r.item.title}
                 content={shorten(r.item.content, 100)}
                 date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
-                href={`${cmsHost}/assets/${r.item.file}`}
+                link={r.item.link}
+                file={`${cmsHost}/assets/${r.item.file}`}
                 img={`${cmsHost}/assets/${r.item.img}`}
                 img_legend={r.item.img_legend}                
               />

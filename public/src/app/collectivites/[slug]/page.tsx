@@ -38,28 +38,7 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
   const blocks = data ? data[0].sections.filter((s:Section) => s.collection === 'Block') : null
   const lists = data ? data[0].sections.filter((s:Section) => s.collection === 'List') : null
   const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
-  /*const share = [
-    {
-      name:'Facebook', 
-      icon:'fr-share__link--facebook', 
-      href:`https://www.facebook.com/sharer.php?u=${location}`,
-    },
-    {
-      name:'Twitter', 
-      icon:'fr-share__link--twitter', 
-      href:`https://twitter.com/intent/tweet?url=${location}`,
-    },
-    {
-      name:'LinkedIn', 
-      icon:'fr-share__link--linkedin', 
-      href:`https://www.linkedin.com/shareArticle?url=${location}`,
-    },
-    {
-      name:'Email', 
-      icon:'fr-share__link--mail', 
-      href:`mailto:?subject=${content.title}&body=${content.desc} ${location}`,
-    }
-  ];*/
+  
   return(
     <article id='content'>
       {!hero && 
@@ -109,7 +88,8 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
                 title={r.item.title}
                 content={shorten(r.item.content, 100)}
                 date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
-                href={`${cmsHost}/assets/${r.item.file}`}
+                link={r.item.link}
+                file={`${cmsHost}/assets/${r.item.file}`}
                 img={`${cmsHost}/assets/${r.item.img}`}
                 img_legend={r.item.img_legend}                
               />

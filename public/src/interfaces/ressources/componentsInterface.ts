@@ -4,6 +4,7 @@
   date: string,
   img: string,
   img_legend?: string,
-  href: string,
+  link?: string,
+  file?: string,
   horizontal?: boolean
 }

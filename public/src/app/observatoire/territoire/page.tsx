@@ -18,6 +18,7 @@ import TrajetsGraph from './graphs/TrajetsGraph';
 import DensiteMap from './maps/DensiteMap';
 import FluxMap from './maps/FluxMap';
 import OccupationMap from './maps/OccupationMap';
+import AiresCovoiturageMap from './maps/AiresMap';
 import BestFluxTable from './tables/BestFluxTable';
 import BestTerritoriesTable from './tables/BestTerritoriesTable';
 
@@ -29,19 +30,14 @@ export default function Page({ searchParams }: { searchParams: SearchParamsInter
 
   return (
     <>
-      {!loading && !error && (
+      {!loading && !error &&(
         <article id='content'>
           <PageTitle title={title} />
-          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col')}>
-              <SelectTerritory
-                code={params.code}
-                type={params.observe}
-                year={params.year}
-                onChange={onChangeTerritory}
-              />
+          <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+            <div className={fr.cx('fr-col','fr-col-md-6')}>
+              <SelectTerritory code={params.code} type={params.observe} year={params.year} onChange={onChangeTerritory} />
             </div>
-            <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-col','fr-col-md-6')}>
               <SelectPeriod year={params.year} month={params.month} onChange={onChangePeriod} />
             </div>
           </div>
@@ -52,7 +48,7 @@ export default function Page({ searchParams }: { searchParams: SearchParamsInter
           />
           <KeyFigures params={params} />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col', 'fr-col-md-6')}>
+            <div className={fr.cx('fr-col','fr-col-md-6')}>
               <RepartitionDistanceGraph title='Trajets par distance' direction='from' params={params} />
             </div>
           </div>
@@ -83,22 +79,18 @@ export default function Page({ searchParams }: { searchParams: SearchParamsInter
                 onChange={onChangeMap}
               />
             </div>
-            {[1, 3].includes(params.map) && (
+            {[1,3].includes(params.map) && 
               <div className={fr.cx('fr-col')}>
-                <SelectObserve
-                  label={observeLabel}
-                  type={params.type}
-                  value={params.observe}
-                  onChange={onChangeObserve}
-                />
+                <SelectObserve label={observeLabel} type={params.type} value={params.observe} onChange={onChangeObserve} />
               </div>
-            )}
+            }
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col')}>
               {params.map == 1 && <FluxMap title={mapList[0].name} params={params} />}
               {params.map == 2 && <DensiteMap title={mapList[1].name} params={params} />}
               {params.map == 3 && <OccupationMap title={mapList[2].name} params={params} />}
+              {params.map == 4 && <AiresCovoiturageMap title={mapList[3].name} params={params} />}
             </div>
           </div>
           <SectionTitle title='Evolution' />

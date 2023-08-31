@@ -36,7 +36,7 @@ const AppMap = (props: MapInterface) => {
         mapStyle={props.mapStyle}
         onLoad={fitBounds}
         scrollZoom={props.scrollZoom}
-        cursor={cursor}
+        cursor={props.cursor ? props.cursor : cursor}
         onMouseEnter={props.onMouseEnter ? props.onMouseEnter : defaultOnMouseEnter}
         onMouseLeave={props.onMouseLeave ? props.onMouseLeave : defaultOnMouseLeave}
         interactiveLayerIds={props.interactiveLayerIds}

@@ -16,8 +16,8 @@ export async function generateStaticParams() {
     },
     meta:'filter_count',
   });
-  const pageCount = meta && meta.filter_count ? Math.round(meta.filter_count/cmsActusByPage) : 1
-  return Array.from({ length: pageCount }, (_, v) => ({
+  const nbPage = meta && meta.filter_count ? Math.round(meta.filter_count/cmsActusByPage) : 1
+  return Array.from({ length: nbPage }, (_, v) => ({
     id: v + 1,
   }));
 }

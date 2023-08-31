@@ -4,7 +4,24 @@ import RessourceCard from "@/components/ressources/RessourceCard";
 import { cmsInstance, cmsHost, getNbPages, cmsRessourcesByPage } from "@/helpers/cms";
 import Pagination from "@/components/common/Pagination";
 
-export default async function Ressources() {
+export async function generateStaticParams() {
+  const { meta } = await cmsInstance.items('Ressources').readByQuery({
+    fields:'id',
+    limit: cmsRessourcesByPage,
+    filter:{
+      status: {
+        '_eq': 'published',
+      }
+    },
+    meta:'filter_count',
+  });
+  const nbPage = meta && meta.filter_count ? Math.round(meta.filter_count/cmsRessourcesByPage) : 1
+  return Array.from({ length: nbPage }, (_, v) => ({
+    id: v + 1,
+  }));
+}
+
+export default async function RessourcePage({ params }: { params: { id: number }}) {
 
   const { data, meta } = await cmsInstance.items('Ressources').readByQuery({
     fields:'*,img.*,file.*',
@@ -18,7 +35,7 @@ export default async function Ressources() {
     meta:'filter_count',
   });
 
-  const pageTitle= 'Ressources'; 
+  const pageTitle= `Ressources page ${params.id}`; 
   const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsRessourcesByPage) : 1
 
   return (
@@ -46,6 +63,7 @@ export default async function Ressources() {
       </div>
       <Pagination
         count={nbPage}
+        defaultPage={params.id}
         href={`/ressources`}
       />    
     </article>
