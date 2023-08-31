@@ -49,15 +49,15 @@ jobs:
           node-version: '20'
 
       - name: 'Audit API dependencies'
-        run: npm audit --audit-level moderate --workspaces --include-workspace-root && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
+        run: npm audit --audit-level moderate && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
         working-directory: api
       
       - name: 'Audit dashboard dependencies'
-        run: npm audit --audit-level moderate --workspaces --include-workspace-root && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
+        run: npm audit --audit-level moderate && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
         working-directory: dashboard
 
       - name: 'Audit public site dependencies'
-        run: npm audit --audit-level moderate --workspaces --include-workspace-root && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
+        run: npm audit --audit-level moderate && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
         working-directory: public
 
   test:
