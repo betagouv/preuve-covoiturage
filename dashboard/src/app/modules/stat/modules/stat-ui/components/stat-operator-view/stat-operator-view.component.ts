@@ -33,7 +33,10 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
 
   statViewConfig = OPERATOR_STATS;
 
-  constructor(public statService: StatFilteredStoreService, public filterService: FilterService) {
+  constructor(
+    public statService: StatFilteredStoreService,
+    public filterService: FilterService,
+  ) {
     super();
   }
 

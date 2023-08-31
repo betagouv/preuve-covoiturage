@@ -9,7 +9,10 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
   styleUrls: ['./not-authenticated-layout.component.scss'],
 })
 export class NotAuthenticatedLayoutComponent implements OnInit {
-  constructor(private authService: AuthenticationService, private router: Router) {}
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {}
 }

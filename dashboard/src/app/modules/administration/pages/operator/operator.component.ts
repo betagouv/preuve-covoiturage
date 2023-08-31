@@ -17,7 +17,10 @@ export class OperatorComponent extends DestroyObservable implements OnInit {
   public readOnly$: Observable<boolean>;
   operator: Operator;
 
-  constructor(private auth: AuthenticationService, private commonData: CommonDataService) {
+  constructor(
+    private auth: AuthenticationService,
+    private commonData: CommonDataService,
+  ) {
     super();
   }
 

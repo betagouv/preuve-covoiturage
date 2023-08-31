@@ -20,13 +20,21 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Install Docker dependencies
         working-directory: ./docker/lint
         run: npm ci 
       
-      - name: Run Linter
+      - name: Run Docker Linter
         working-directory: ./docker/lint
         run: npm run start:local
+
+      - name: Install Public site dependencies
+        working-directory: public
+        run: npm ci
+
+      - name: 'Run Public site linter'
+        run: npm run lint
+        working-directory: public
 
   code-audit:
     name: Code audit
@@ -47,6 +55,10 @@ jobs:
       - name: 'Audit dashboard dependencies'
         run: npm audit --audit-level moderate --workspaces --include-workspace-root && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
         working-directory: dashboard
+
+      - name: 'Audit public site dependencies'
+        run: npm audit --audit-level moderate --workspaces --include-workspace-root && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
+        working-directory: public
 
   test:
     needs: [lint, code-audit]

@@ -20,7 +20,11 @@ export class ChangePasswordComponent extends DestroyObservable implements OnInit
   public passwordType = 'password';
   public confirmPasswordType = 'password';
 
-  constructor(private fb: FormBuilder, private authentication: AuthenticationService, private toastr: ToastrService) {
+  constructor(
+    private fb: FormBuilder,
+    private authentication: AuthenticationService,
+    private toastr: ToastrService,
+  ) {
     super();
   }
 

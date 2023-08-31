@@ -41,7 +41,11 @@ export class AuthenticationService {
 
   private _user$ = new BehaviorSubject<User>(null);
 
-  constructor(private userApiService: UserApiService, private jsonRPC: JsonRPCService, private http: HttpClient) {}
+  constructor(
+    private userApiService: UserApiService,
+    private jsonRPC: JsonRPCService,
+    private http: HttpClient,
+  ) {}
 
   get user$(): Observable<User> {
     return this._user$;
