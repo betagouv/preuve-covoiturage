@@ -5,7 +5,7 @@ const nextConfig = {
   experimental: {
     // Required:
     appDir: true,
-    serverActions: true,
+    // serverActions: true,
   },
   images: {
     dangerouslyAllowSVG: true,

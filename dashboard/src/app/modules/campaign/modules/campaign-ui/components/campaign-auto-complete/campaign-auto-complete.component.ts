@@ -24,7 +24,10 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
 
   @ViewChild('campaignInput') campaignInput: ElementRef;
 
-  constructor(private commonDataService: CommonDataService, private auth: AuthenticationService) {
+  constructor(
+    private commonDataService: CommonDataService,
+    private auth: AuthenticationService,
+  ) {
     super();
   }
 

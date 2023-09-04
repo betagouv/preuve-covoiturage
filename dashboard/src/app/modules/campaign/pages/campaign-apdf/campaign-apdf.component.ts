@@ -18,7 +18,11 @@ export class CampaignApdfComponent implements OnInit {
   public list: ApdfListResult;
   public displayedColumns: string[] = [];
 
-  constructor(private apdfApiService: ApdfApiService, private commonData: CommonDataService, private auth: Auth) {}
+  constructor(
+    private apdfApiService: ApdfApiService,
+    private commonData: CommonDataService,
+    private auth: Auth,
+  ) {}
 
   ngOnInit(): void {
     this.displayedColumns = this.auth.isSuperAdmin()

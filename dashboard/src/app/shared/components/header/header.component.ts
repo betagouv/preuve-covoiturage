@@ -30,7 +30,11 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
     return this.auth.isRegistry();
   }
 
-  constructor(public router: Router, public auth: Auth, private commonDataService: CommonDataService) {
+  constructor(
+    public router: Router,
+    public auth: Auth,
+    private commonDataService: CommonDataService,
+  ) {
     super();
   }
 

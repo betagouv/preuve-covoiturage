@@ -29,7 +29,10 @@ export class CampaignApiService extends JsonRpcCrud<
   any,
   {}
 > {
-  constructor(http: HttpClient, protected auth: AuthenticationService) {
+  constructor(
+    http: HttpClient,
+    protected auth: AuthenticationService,
+  ) {
     super(http, 'campaign');
   }
 

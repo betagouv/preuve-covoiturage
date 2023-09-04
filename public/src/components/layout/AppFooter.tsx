@@ -11,24 +11,32 @@ export function AppFooter() {
      Retrouvez toutes les informations et démarches administratives nécessaires au développement du covoiturage sur votre territoire.'
       operatorLogo={{
         alt: 'covoiturage courte distance',
-        imgUrl: 'static/media/placeholder.16x9.3d46f94c.png',
+        imgUrl: 'https://cms.covoiturage.beta.gouv.fr/assets/9733ec41-031e-4a93-b253-d4f20a109151.png',
         orientation: 'horizontal',
       }}
       partnersLogos={{
         sub: [
           {
             alt: 'CEREMA',
-            href: '#',
-            imgUrl: 'static/media/placeholder.16x9.3d46f94c.png',
+            href: 'https://www.cerema.fr',
+            imgUrl: 'https://www.cerema.fr/themes/custom/uas_base/images/LogoCerema_horizontal.svg',
           },
           {
             alt: 'ADEME',
-            href: '#',
-            imgUrl: 'static/media/placeholder.16x9.3d46f94c.png',
+            href: 'https://www.ademe.fr',
+            imgUrl: 'https://www.ademe.fr/wp-content/uploads/2022/11/ademe-logo-2022-1.svg',
           },
         ],
       }}
       bottomItems={[headerFooterDisplayItem]}
+      license={
+        <>
+          Sauf mention contraire, tous les contenus de ce site sont sous 
+          <a href={'https://github.com/etalab/licence-ouverte/blob/master/LO.md'}>licence etalab-2.0</a> 
+          {' '}Icon made by <a href={'https://www.flaticon.com/authors/freepik'}>Freepik</a> from 
+          {' '}<a href={'www.flaticon.com'}>www.flaticon.com</a>
+        </>
+      }
     />
   );
 }

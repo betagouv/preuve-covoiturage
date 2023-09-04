@@ -19,7 +19,10 @@ export class StatViewComponent extends DestroyObservable implements OnInit {
   @Input() navList = PUBLIC_STATS;
   public graphName: StatNavName = this.navList[0];
 
-  constructor(public statService: StatFilteredStoreService, public filterService: FilterService) {
+  constructor(
+    public statService: StatFilteredStoreService,
+    public filterService: FilterService,
+  ) {
     super();
   }
 

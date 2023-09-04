@@ -15,7 +15,11 @@ export class OperatorDetailsComponent extends DestroyObservable implements OnIni
   @Input() public operator: Operator;
   @Input() displayContacts = true;
 
-  constructor(public authService: AuthenticationService, private fb: FormBuilder, private toastr: ToastrService) {
+  constructor(
+    public authService: AuthenticationService,
+    private fb: FormBuilder,
+    private toastr: ToastrService,
+  ) {
     super();
   }
 

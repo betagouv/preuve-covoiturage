@@ -35,7 +35,10 @@ export class UpsertComponent extends DestroyObservable implements OnInit {
   public operators$: Observable<AutocompleteItem[]>;
   public currentUserIsRegistry = false;
 
-  constructor(private commonData: CommonDataService, private auth: Auth) {
+  constructor(
+    private commonData: CommonDataService,
+    private auth: Auth,
+  ) {
     super();
   }
 

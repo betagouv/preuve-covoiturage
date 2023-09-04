@@ -11,6 +11,20 @@ import { Section } from "@/interfaces/cms/collectionsInterface";
 import { fr } from "@codegouvfr/react-dsfr";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
+export async function generateStaticParams() {
+  const { data } = await cmsInstance.items('Pages').readByQuery({
+    fields:'slug',
+    filter:{
+      status: {
+        '_eq': 'published',
+      }
+    }
+  });
+  return data ? data.map((post:any) => ({
+    slug: post.slug,
+  })) : []
+}
+
 export default async function ProfilSinglePage({ params }: { params: { slug: string }}) {
   //const location = `${Config.get<string>('next.public_url', 'http://localhost:4200')}/collectivites/${params.slug}`;
   const { data } = await cmsInstance.items('Pages').readByQuery({
@@ -95,7 +109,8 @@ export default async function ProfilSinglePage({ params }: { params: { slug: str
                 title={r.item.title}
                 content={shorten(r.item.content, 100)}
                 date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
-                href={`${cmsHost}/assets/${r.item.file}`}
+                link={r.item.link}
+                file={`${cmsHost}/assets/${r.item.file}`}
                 img={`${cmsHost}/assets/${r.item.img}`}
                 img_legend={r.item.img_legend}                
               />

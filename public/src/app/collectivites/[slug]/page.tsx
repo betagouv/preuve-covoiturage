@@ -11,6 +11,20 @@ import { Section } from "@/interfaces/cms/collectionsInterface";
 import { fr } from "@codegouvfr/react-dsfr";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
+export async function generateStaticParams() {
+  const { data } = await cmsInstance.items('Pages').readByQuery({
+    fields:'slug',
+    filter:{
+      status: {
+        '_eq': 'published',
+      }
+    }
+  });
+  return data ? data.map((post:any) => ({
+    slug: post.slug,
+  })) : []
+}
+
 export default async function CollectiviteSinglePage({ params }: { params: { slug: string }}) {
   //const location = `${Config.get<string>('next.public_url', 'http://localhost:4200')}/collectivites/${params.slug}`;
   const { data } = await cmsInstance.items('Pages').readByQuery({
@@ -24,28 +38,7 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
   const blocks = data ? data[0].sections.filter((s:Section) => s.collection === 'Block') : null
   const lists = data ? data[0].sections.filter((s:Section) => s.collection === 'List') : null
   const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
-  /*const share = [
-    {
-      name:'Facebook', 
-      icon:'fr-share__link--facebook', 
-      href:`https://www.facebook.com/sharer.php?u=${location}`,
-    },
-    {
-      name:'Twitter', 
-      icon:'fr-share__link--twitter', 
-      href:`https://twitter.com/intent/tweet?url=${location}`,
-    },
-    {
-      name:'LinkedIn', 
-      icon:'fr-share__link--linkedin', 
-      href:`https://www.linkedin.com/shareArticle?url=${location}`,
-    },
-    {
-      name:'Email', 
-      icon:'fr-share__link--mail', 
-      href:`mailto:?subject=${content.title}&body=${content.desc} ${location}`,
-    }
-  ];*/
+  
   return(
     <article id='content'>
       {!hero && 
@@ -89,13 +82,14 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
       <>
         <SectionTitle title='Ressources' />
         <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-          {ressources.map((r:any, i:number) =>  
+          {ressources && ressources.map((r:any, i:number) =>  
             <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
               <RessourceCard 
                 title={r.item.title}
                 content={shorten(r.item.content, 100)}
                 date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
-                href={`${cmsHost}/assets/${r.item.file}`}
+                link={r.item.link}
+                file={`${cmsHost}/assets/${r.item.file}`}
                 img={`${cmsHost}/assets/${r.item.img}`}
                 img_legend={r.item.img_legend}                
               />

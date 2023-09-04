@@ -1,32 +1,26 @@
-'use client'
-import { fr } from '@codegouvfr/react-dsfr';
-import dynamic from 'next/dynamic';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
+'use client';
 import PageTitle from '@/components/common/PageTitle';
-import SelectTerritory from '@/components/observatoire/SelectTerritory';
+import SelectInList from '@/components/common/SelectInList';
+import SelectObserve from '@/components/observatoire/SelectObserve';
 import SelectPeriod from '@/components/observatoire/SelectPeriod';
+import SelectTerritory from '@/components/observatoire/SelectTerritory';
+import { getPeriod } from '@/helpers/analyse';
+import { graphList, mapList } from '@/helpers/lists';
+import { useDashboard } from '@/hooks/useDashboard';
+import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
+import { fr } from '@codegouvfr/react-dsfr';
+import SectionTitle from '../../../components/common/SectionTitle';
 import KeyFigures from './KeyFigures';
+import DistanceGraph from './graphs/DistanceGraph';
 import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
 import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
+import TrajetsGraph from './graphs/TrajetsGraph';
+import DensiteMap from './maps/DensiteMap';
+import FluxMap from './maps/FluxMap';
+import OccupationMap from './maps/OccupationMap';
+import AiresCovoiturageMap from './maps/AiresMap';
 import BestFluxTable from './tables/BestFluxTable';
 import BestTerritoriesTable from './tables/BestTerritoriesTable';
-import { mapList, graphList } from '@/helpers/lists';
-import SelectInList from '@/components/common/SelectInList';
-import OccupationMap from './maps/OccupationMap';
-const SectionTitle = dynamic(() => import('@/components/common/SectionTitle'), {
-  ssr: false,
-});
-const FluxMap = dynamic(() => import('./maps/FluxMap'), {
-  ssr: false,
-});
-const DensiteMap = dynamic(() => import('./maps/DensiteMap'), {
-  ssr: false,
-});
-import TrajetsGraph from './graphs/TrajetsGraph';
-import DistanceGraph from './graphs/DistanceGraph';
-import { useDashboard } from '@/hooks/useDashboard';
-import { getPeriod } from '@/helpers/analyse';
-import SelectObserve from '@/components/observatoire/SelectObserve';
 
 export default function Page({ searchParams }: { searchParams: SearchParamsInterface }) {
   const title = 'Observer le covoiturage courte distance intermédié';
@@ -39,11 +33,11 @@ export default function Page({ searchParams }: { searchParams: SearchParamsInter
       {!loading && !error &&(
         <article id='content'>
           <PageTitle title={title} />
-          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col')}>
+          <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+            <div className={fr.cx('fr-col','fr-col-md-6')}>
               <SelectTerritory code={params.code} type={params.observe} year={params.year} onChange={onChangeTerritory} />
             </div>
-            <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-col','fr-col-md-6')}>
               <SelectPeriod year={params.year} month={params.month} onChange={onChangePeriod} />
             </div>
           </div>
@@ -96,6 +90,7 @@ export default function Page({ searchParams }: { searchParams: SearchParamsInter
               {params.map == 1 && <FluxMap title={mapList[0].name} params={params} />}
               {params.map == 2 && <DensiteMap title={mapList[1].name} params={params} />}
               {params.map == 3 && <OccupationMap title={mapList[2].name} params={params} />}
+              {params.map == 4 && <AiresCovoiturageMap title={mapList[3].name} params={params} />}
             </div>
           </div>
           <SectionTitle title='Evolution' />

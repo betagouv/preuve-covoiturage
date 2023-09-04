@@ -55,7 +55,11 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   @Output() filtersCount = new EventEmitter();
   @ViewChild('townInput') townInput: ElementRef;
 
-  constructor(public auth: AuthenticationService, private fb: FormBuilder, private filterService: FilterService) {
+  constructor(
+    public auth: AuthenticationService,
+    private fb: FormBuilder,
+    private filterService: FilterService,
+  ) {
     super();
   }
 

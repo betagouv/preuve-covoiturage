@@ -45,6 +45,21 @@ export interface OccupationDataInterface {
   geom: Feature;
 }
 
+export interface AiresCovoiturageDataInterface {
+  id_lieu: string; 
+  nom_lieu: string; 
+  com_lieu: string; 
+  type: string; 
+  date_maj: Date; 
+  nbre_pl: number; 
+  nbre_pmr: number;  
+  duree: number;  
+  horaires: string;
+  proprio: string; 
+  lumiere: boolean; 
+  geom: Feature;
+}
+
 export interface TerritoryListInterface {
   territory: INSEECode;
   l_territory: PerimeterLabel;
