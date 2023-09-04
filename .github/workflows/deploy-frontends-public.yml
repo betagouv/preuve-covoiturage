@@ -27,7 +27,7 @@ jobs:
           - project_name: public
             build_directory: public
             build_command: |
-              NODE_OPTIONS=--openssl-legacy-provider npm run build
+              cp .env.example .env && NODE_OPTIONS=--openssl-legacy-provider npm run build
             dist_directory: public/out
             bucket_name_var: PUBLIC_BUCKET_NAME
             cache_dependency_path: public/package-lock.json
