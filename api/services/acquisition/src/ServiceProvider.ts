@@ -10,7 +10,7 @@ import { GeoProvider } from '@pdc/provider-geo';
 import { config } from './config';
 import { AcquisitionRepositoryProvider } from './providers/AcquisitionRepositoryProvider';
 
-import { v2binding, v3binding } from './shared/acquisition/create.schema';
+import { v3binding } from './shared/acquisition/create.schema';
 import { binding as cancelBinding } from './shared/acquisition/cancel.schema';
 import { binding as statusBinding } from './shared/acquisition/status.schema';
 import { binding as listBinding } from './shared/acquisition/list.schema';
@@ -29,7 +29,7 @@ import { PatchJourneyAction } from './actions/PatchJourneyAction';
   commands: [AcquisitionProcessCommand],
   queues: ['acquisition'],
   providers: [AcquisitionRepositoryProvider, NormalizationProvider, GeoProvider],
-  validator: [v2binding, v3binding, listBinding, cancelBinding, statusBinding, patchBinding],
+  validator: [v3binding, listBinding, cancelBinding, statusBinding, patchBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
     [PostgresConnection, 'connections.postgres'],

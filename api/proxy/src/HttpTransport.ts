@@ -319,7 +319,7 @@ export class HttpTransport implements TransportInterface {
 
   private registerSimulationRoutes(): void {
     this.app.post(
-      '/:version/policies/simulate',
+      '/v3/policies/simulate',
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
@@ -411,29 +411,6 @@ export class HttpTransport implements TransportInterface {
    */
   private registerAcquisitionRoutes(): void {
     this.app.get(
-      '/v2/journeys/:operator_journey_id',
-      checkRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const { params } = req;
-        const user = get(req, 'session.user', null);
-        const response = (await this.kernel.handle(
-          createRPCPayload('acquisition:status', params, user, { req }),
-        )) as RPCResponseType;
-        // Temporary solution to map v3 generated certificate model to v2 API model
-        const v3Result = response.result;
-        if (v3Result) {
-          response.result = {
-            journey_id: v3Result?.operator_journey_id,
-            metadata: v3Result?.data,
-            created_at: v3Result?.created_at,
-            status: v3Result?.status,
-          };
-        }
-        this.send(res, response);
-      }),
-    );
-    this.app.get(
       '/v3/journeys/:operator_journey_id',
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
@@ -465,29 +442,6 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
-    // cancel existing journey
-    this.app.delete(
-      '/v2/journeys/:id',
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = get(req, 'session.user', {});
-        const response = (await this.kernel.handle(
-          createRPCPayload(
-            'acquisition:cancel',
-            {
-              operator_journey_id: req.params.id,
-              api_version: 'v2',
-            },
-            user,
-            { req },
-          ),
-        )) as RPCResponseType;
-
-        this.send(res, response);
-      }),
-    );
-
     this.app.post(
       '/v3/journeys/:id/cancel',
       rateLimiter(),
@@ -513,7 +467,7 @@ export class HttpTransport implements TransportInterface {
 
     // send a journey
     this.app.post(
-      '/:version/journeys',
+      '/v3/journeys',
       acquisitionRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
@@ -524,17 +478,9 @@ export class HttpTransport implements TransportInterface {
         );
 
         const response = (await this.kernel.handle(
-          createRPCPayload('acquisition:create', { api_version: req.params.version, ...req.body }, user, { req }),
+          createRPCPayload('acquisition:create', { api_version: 'v3', ...req.body }, user, { req }),
         )) as RPCResponseType;
 
-        // Temporary solution to map v3 generated certificate model to v2 API model
-        const v3Result = response.result;
-        if (v3Result && req.params?.version === 'v2') {
-          response.result = {
-            journey_id: v3Result?.operator_journey_id,
-            created_at: v3Result?.created_at,
-          };
-        }
         this.send(res, response);
       }),
     );
@@ -703,81 +649,6 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerCertificateRoutes(): void {
-    /**
-     * v2 Public route to check a certificate
-     */
-    this.app.get(
-      '/v2/certificates/find/:uuid',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
-          createRPCPayload('certificate:find', { uuid: req.params.uuid }, { permissions: ['common.certificate.find'] }),
-        )) as RPCResponseType;
-
-        if (response.result.driver.total.distance && response.result.passenger.total.distance) {
-          // Temporary solution to map v3 generated certificate model to v2 API model
-          response.result.driver.total.km = response.result.driver.total.distance / 1000;
-          response.result.driver.total.euro = response.result.driver.total.amount;
-
-          response.result.passenger.total.km = response.result.passenger.total.distance / 1000;
-          response.result.passenger.total.euro = response.result.passenger.total.amount;
-
-          delete response.result.driver.total.distance;
-          delete response.result.driver.total.amount;
-          delete response.result.passenger.total.distance;
-          delete response.result.passenger.total.amount;
-
-          response.result.driver.trips &&
-            response.result.driver.trips.length > 0 &&
-            response.result.driver.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance / 1000 }));
-
-          response.result.passenger.trips &&
-            response.result.passenger.trips.length > 0 &&
-            response.result.passenger.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance / 1000 }));
-        }
-        // Temporary solution to map v3 generated certificate model to v2 API model
-
-        this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
-      }),
-    );
-
-    /**
-     * v2 Download PDF of the certificate
-     * - accessible with an application token
-     * - print a PDF returned back to the caller
-     */
-    this.app.post(
-      '/v2/certificates/pdf',
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const call = createRPCPayload('certificate:download', { ...req.body }, get(req, 'session.user', undefined));
-        const response = (await this.kernel.handle(call)) as RPCResponseType;
-
-        this.raw(res, get(response, 'result.body', response), get(response, 'result.headers', {}));
-      }),
-    );
-
-    /**
-     * v2 Public route for operators to generate a certificate
-     * based on params (identity, start date, end date, ...)
-     * - accessible with an application token
-     * - generate a certificate to be printed when calling /v2/certificates/download/{uuid}
-     */
-    this.app.post(
-      '/v2/certificates',
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
-          createRPCPayload('certificate:create', req.body, get(req, 'session.user', undefined)),
-        )) as RPCResponseType;
-        res
-          .status(get(response, 'result.meta.httpStatus', mapStatusCode(response)))
-          .send(get(response, 'result.data', this.parseErrorData(response)));
-      }),
-    );
-
     /**
      * v3 Public route for operators to generate a certificate
      * based on params (identity, start date, end date, ...)

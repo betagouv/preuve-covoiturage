@@ -82,7 +82,7 @@ export function setup() {
 
   // create a certificate
   const response_cert = http.post(
-    `${o.base_url}/v2/certificates`,
+    `${o.base_url}/v3/certificates`,
     JSON.stringify({
       tz: 'Europe/Paris',
       identity: {
@@ -125,7 +125,7 @@ export function setup() {
 }
 
 export default function(store) {
-  const response_pdf = http.get(`${o.base_url}/v2/certificates/pdf/${store.certificate.uuid}`, {
+  const response_pdf = http.get(`${o.base_url}/v3/certificates/pdf/${store.certificate.uuid}`, {
     headers: {
       Authorization: `Bearer ${store.token}`,
     },

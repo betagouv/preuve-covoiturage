@@ -64,7 +64,7 @@ test.after.always.skip(async (t) => {
 
 test.serial.skip('Generate a certificate', async (t) => {
   const response = await t.context.request
-    .post(`/v2/certificates`)
+    .post(`/v3/certificates`)
     .send({
       identity: { phone: '+33612345670' },
     })
@@ -77,7 +77,7 @@ test.serial.skip('Generate a certificate', async (t) => {
 test.serial.skip('Download the certificate', async (t) => {
   // create the certificate
   const createResponse = await t.context.request
-    .post(`/v2/certificates`)
+    .post(`/v3/certificates`)
     .send({
       identity: { phone: '+33612345670' },
     })
@@ -90,7 +90,7 @@ test.serial.skip('Download the certificate', async (t) => {
   // download it
   // !!! works only inside docker. first, up all container, then exec inside and test
   const response = await t.context.request
-    .get(`/v2/certificates/download/${certificate.uuid}`)
+    .get(`/v3/certificates/download/${certificate.uuid}`)
     .set('Accept', 'application/pdf')
     .set('Content-type', 'application/json')
     .set('Authorization', `Bearer ${t.context.auth}`);

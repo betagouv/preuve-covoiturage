@@ -13,8 +13,7 @@ export interface MetaPersonInterface {
     trips: number;
     week_trips: number;
     weekend_trips: number;
-    distance?: number; // v3 field
-    km?: number; // v2 field
+    distance?: number;
     amount: number;
   };
   trips: CarpoolInterface[];

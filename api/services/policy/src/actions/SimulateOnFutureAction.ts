@@ -6,7 +6,6 @@ import { differenceInSeconds } from 'date-fns';
 import {
   handlerConfig,
   ParamsInterface,
-  ParamsInterfaceV2,
   ParamsInterfaceV3,
   ResultInterface,
 } from '../shared/policy/simulateOnFuture.contract';
@@ -83,13 +82,11 @@ export class SimulateOnFutureAction extends AbstractAction {
       }));
 
     return {
-      journey_id: 'journey_id' in params ? params.journey_id : undefined,
-      driver: normalizedIncentives.map((incentive, i) => ({
+      incentives: normalizedIncentives.map((incentive, i) => ({
         index: i,
         amount: incentive.amount,
         siret: incentive.siret,
       })),
-      passenger: [],
     };
   }
 
@@ -111,16 +108,6 @@ export class SimulateOnFutureAction extends AbstractAction {
     };
 
     switch (input.api_version) {
-      case 'v2':
-        const inputv2 = input as ParamsInterfaceV2;
-        return {
-          ...common,
-          datetime: inputv2.passenger.start.datetime,
-          duration: differenceInSeconds(inputv2.passenger.end.datetime, inputv2.passenger.start.datetime),
-          distance: inputv2.passenger.distance,
-          start: await this.territoryRepository.findByPoint(inputv2.passenger.start),
-          end: await this.territoryRepository.findByPoint(inputv2.passenger.end),
-        };
       case 'v3':
         const inputv3 = input as ParamsInterfaceV3;
         return {

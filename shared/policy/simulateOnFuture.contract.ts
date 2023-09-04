@@ -13,8 +13,6 @@ interface CommonIdentityInterface {
   };
 }
 
-type IdentityInterfaceV2 = CommonIdentityInterface;
-
 interface IdentityInterfaceV3 extends CommonIdentityInterface {
   identity_key: string;
   operator_user_id: string;
@@ -26,40 +24,15 @@ interface PositionInterface {
   lat: number;
 }
 
-interface PersonInterfaceV2 {
-  start: PositionInterface;
-  end: PositionInterface;
-  distance: number;
-  identity: IdentityInterfaceV2;
-}
-
-interface DriverInterfaceV2 extends PersonInterfaceV2 {
-  revenue: number;
-}
-
 interface DriverInterfaceV3 {
   revenue: number;
   identity: IdentityInterfaceV3;
-}
-
-interface PassengerInterfaceV2 extends PersonInterfaceV2 {
-  seats: number;
-  contribution: number;
 }
 
 interface PassengerInterfaceV3 {
   seats: number;
   contribution: number;
   identity: IdentityInterfaceV3;
-}
-
-export interface ParamsInterfaceV2 {
-  api_version: 'v2';
-  journey_id: string;
-  operator_class: string;
-  operator_id: number;
-  passenger?: PassengerInterfaceV2;
-  driver?: DriverInterfaceV2;
 }
 
 export interface ParamsInterfaceV3 {
@@ -73,7 +46,7 @@ export interface ParamsInterfaceV3 {
   passenger: PassengerInterfaceV3;
 }
 
-export type ParamsInterface = ParamsInterfaceV2 | ParamsInterfaceV3;
+export type ParamsInterface = ParamsInterfaceV3;
 
 interface IncentiveInterface {
   index: number;
@@ -82,9 +55,7 @@ interface IncentiveInterface {
 }
 
 export interface ResultInterface {
-  journey_id: string;
-  passenger: IncentiveInterface[];
-  driver: IncentiveInterface[];
+  incentives: IncentiveInterface[];
 }
 
 export const handlerConfig = {
