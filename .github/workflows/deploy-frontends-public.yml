@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        env: [production]
+        env: [demo, production]
         project_name: [public]
         include:
           - project_name: public
