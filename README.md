@@ -32,8 +32,6 @@ You will need `docker` and `docker-compose`.
 
 ### Installation
 
-> Installer `git` et []`git lfs`](https://git-lfs.com/)
-
 1. Cloner le repo et `cd` dedans
 2. `cp api/.env.example api/.env`
 3. Modifier `api/.env`
