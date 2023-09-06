@@ -20,8 +20,5 @@
     "@ilos/connection-manager": "^0.4.1",
     "pg": "^8.7.1",
     "pg-cursor": "^2.7.1"
-  },
-  "devDependencies": {
-    "@types/pg": "^8.6.1"
   }
 }
