@@ -139,11 +139,10 @@ export default function AiresCovoiturageMap({ title, params }: { title: string; 
             ]
           }
           sidebar={switchFilters.map((s,i) =>(
-            <ul className={fr.cx('fr-toggle__list')}>
+            <ul key={i} className={fr.cx('fr-toggle__list')}>
               <li>
                 <ToggleSwitch 
                   className={fr.cx('fr-toggle--border-bottom')}
-                  key={i}
                   label={s.name}
                   labelPosition='left'
                   showCheckedHint={false}
