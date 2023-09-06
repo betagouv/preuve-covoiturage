@@ -6,6 +6,7 @@ import { DeckMapInterface } from '@/interfaces/observatoire/componentsInterfaces
 //css
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useRef, useEffect } from 'react';
+import { FrCxArg, fr } from '@codegouvfr/react-dsfr';
 
 function DeckGLOverlay(
   props: MapboxOverlayProps & {
@@ -31,29 +32,49 @@ const DeckMap = (props: DeckMapInterface) => {
     if (props.bounds) mapRef.current?.fitBounds(props.bounds, { padding: 20 }) ;
   }, [props.bounds]);
 
+  const inRange = (value: number, min: number, max: number) => {
+    return Math.trunc(value) >=min && Math.trunc(value) <= max ? true : false;
+  }
+  const sidebarClass = props.sidebarWidth && inRange(props.sidebarWidth,1,12) ? `fr-col-md-${Math.trunc(props.sidebarWidth)}` as FrCxArg : undefined;
+  const mapClass = props.sidebarWidth && inRange(props.sidebarWidth,1,12) ? `fr-col-md-${12 - Math.trunc(props.sidebarWidth)}` as FrCxArg : undefined;
+
   return (
     <div className='fr-callout'>
       <h3 className='fr-callout__title'>{props.title}</h3>
-      <Map
-        ref={mapRef}
-        initialViewState={props.initialView ? props.initialView : defaultView}
-        style={{
-          width: props.width ? props.width : '100%',
-          height: props.height ? props.height : '60vh',
-        }}
-        mapStyle={props.mapStyle}
-        onLoad={fitBounds}
-        scrollZoom={props.scrollZoom}
-      >
-        <DeckGLOverlay layers={props.layers} getTooltip={props.tooltip} />
-        <NavigationControl />
-        <FullscreenControl />
-        {props.legend &&
-          props.legend.map((l,i) =>
-            <Legend key={i} title={l.title} type={l.type} classes={l.classes} order={l.order} />
-          )
+      <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+        {props.sidebar && props.sidebarPosition == 'left' &&
+          <div className={fr.cx('fr-col', sidebarClass)}>
+            {props.sidebar}
+          </div>
         }
-      </Map>
+        <div className={fr.cx('fr-col', mapClass)}>
+          <Map
+            ref={mapRef}
+            initialViewState={props.initialView ? props.initialView : defaultView}
+            style={{
+              width: props.width ? props.width : '100%',
+              height: props.height ? props.height : '60vh',
+            }}
+            mapStyle={props.mapStyle}
+            onLoad={fitBounds}
+            scrollZoom={props.scrollZoom}
+          >
+            <DeckGLOverlay layers={props.layers} getTooltip={props.tooltip} />
+            <NavigationControl />
+            <FullscreenControl />
+            {props.legend &&
+              props.legend.map((l,i) =>
+                <Legend key={i} title={l.title} type={l.type} classes={l.classes} order={l.order} />
+              )
+            }
+          </Map>
+        </div>
+        {props.sidebar && props.sidebarPosition == 'right' &&
+          <div className={fr.cx('fr-col', sidebarClass)}>
+            {props.sidebar}
+          </div>
+        }
+      </div>
     </div>
   );
 };

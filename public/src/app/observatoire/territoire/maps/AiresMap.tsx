@@ -6,24 +6,39 @@ import type { AiresCovoiturageDataInterface } from '@/interfaces/observatoire/da
 import { fr } from '@codegouvfr/react-dsfr';
 import bbox from '@turf/bbox';
 import { feature, featureCollection } from '@turf/helpers';
-import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useCallback, useMemo, useState } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
+import { SwitchFilterInterface } from '@/interfaces/observatoire/helpersInterfaces';
+import { useSwitchFilters } from '@/hooks/useSwitchFilters';
+import ToggleSwitch from '@codegouvfr/react-dsfr/ToggleSwitch';
 
 export default function AiresCovoiturageMap({ title, params }: { title: string; params: SearchParamsInterface }) {
   const mapTitle = title;
   const apiUrl = Config.get<string>('next.public_api_url', '');
   const url = `${apiUrl}/aires-covoiturage?code=${params.code}&type=${params.type}`;
+  
+  const defaultFilters: SwitchFilterInterface[] = [
+    {name:'Supermarché', active:true},
+    {name:'Parking', active:true},
+    {name:'Aire de covoiturage', active:true},
+    {name:'Délaissé routier', active:true},
+    {name:'Auto-stop', active:true},
+    {name:'Parking relais', active:true},
+    {name:'Sortie d\'autoroute', active:true},
+    {name:'Autres',active:true},
+  ];
+  const { switchFilters, onChangeSwitchFilter } = useSwitchFilters(defaultFilters);
+
   const { data, error, loading } = useApi<AiresCovoiturageDataInterface[]>(url);
-  const geojson = useMemo(() => {
-    const airesData = data ? data : [];
-    return featureCollection(
-      airesData.map((d) =>
-        feature(d.geom, { ...d, ...{ geom: undefined }}),
-      ),
-    ) as unknown as FeatureCollection;
-  }, [data]);
+
+  const geojson = useMemo(()=>{
+    const features = data ? data.map((d) =>
+      feature(d.geom, { ...d, ...{ geom: undefined }}),
+    ) : [];
+    const activeFilters = switchFilters.filter(f => f.active === true).map(s => s.name);
+    return featureCollection(features.filter(f => activeFilters.includes(f.properties.type)))
+  }, [switchFilters, data]);
 
   const layer: CircleLayer = {
     id: 'aires',
@@ -68,8 +83,7 @@ export default function AiresCovoiturageMap({ title, params }: { title: string; 
     {color:[255, 217, 47],val:'Parking relais',width:10},
     {color:[229, 196, 148],val:'Sortie d\'autoroute',width:10},
     {color:[179, 179, 179],val:'Autres',width:10}
-    ];
-   
+  ];
 
   const bounds = useMemo(() => {
     const bounds = params.code === 'XXXXX' ? [-5.225, 41.333, 9.55, 51.2] : bbox(geojson);
@@ -111,23 +125,40 @@ export default function AiresCovoiturageMap({ title, params }: { title: string; 
       )}
       {!loading && !error && (
         <AppMap 
-        title={mapTitle} 
-        mapStyle={mapStyle} 
-        bounds={bounds} 
-        scrollZoom={false} 
-        legend={
-          [
-            {
-              title:`${geojson.features.length+1} ${mapTitle}`,
-              type:'categories',
-              classes: classes,
-            },
-          ]
-        }
-        interactiveLayerIds={['aires']}
-        cursor={cursor}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+          title={mapTitle} 
+          mapStyle={mapStyle} 
+          bounds={bounds} 
+          scrollZoom={false} 
+          legend={
+            [
+              {
+                title:`${geojson ? geojson.features.length+1 : ''} ${mapTitle}`,
+                type:'categories',
+                classes: classes,
+              },
+            ]
+          }
+          sidebar={switchFilters.map((s,i) =>(
+            <ul className={fr.cx('fr-toggle__list')}>
+              <li>
+                <ToggleSwitch 
+                  className={fr.cx('fr-toggle--border-bottom')}
+                  key={i}
+                  label={s.name}
+                  labelPosition='left'
+                  showCheckedHint={false}
+                  checked={s.active}
+                  onChange={checked => onChangeSwitchFilter({name: s.name, active: checked})}
+                />
+              </li>
+            </ul>
+          ))}
+          sidebarPosition='right'
+          sidebarWidth={3}
+          interactiveLayerIds={['aires']}
+          cursor={cursor}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
         >
           <Source id='aires' type='geojson' data={geojson}>
             <Layer {...layer} />
