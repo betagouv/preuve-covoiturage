@@ -181,7 +181,7 @@ export class HttpTransport implements TransportInterface {
       }),
     );
     this.app.use(
-      /\/observatory.*|geo\/search/,
+      /\/observatory.*|geo\/search/i,
       cors({
         origin: '*',
         optionsSuccessStatus: 200,
