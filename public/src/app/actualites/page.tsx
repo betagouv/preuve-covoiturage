@@ -21,7 +21,7 @@ export default async function Actualites() {
   const pageTitle = 'Actualités';
   const categories =  await cmsInstance.items('Categories').readByQuery({
     fields:'*',
-    meta:'*',
+    meta:'filter_count',
   });
   const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsActusByPage) : 1
 

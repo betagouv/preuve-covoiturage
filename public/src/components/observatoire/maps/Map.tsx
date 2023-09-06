@@ -4,6 +4,7 @@ import { MapInterface, ViewInterface } from '@/interfaces/observatoire/component
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Legend from './Legend';
 import { useCallback, useRef, useState, useEffect } from 'react';
+import { FrCxArg, fr } from '@codegouvfr/react-dsfr';
 
 const AppMap = (props: MapInterface) => {
   const mapRef = useRef<MapRef>(null);
@@ -22,34 +23,53 @@ const AppMap = (props: MapInterface) => {
   const [cursor, setCursor] = useState<string>('');
   const defaultOnMouseEnter = useCallback(() => setCursor('pointer'), []);
   const defaultOnMouseLeave = useCallback(() => setCursor(''), []);
+  const inRange = (value: number, min: number, max: number) => {
+    return Math.trunc(value) >=min && Math.trunc(value) <= max ? true : false;
+  }
+  const sidebarClass = props.sidebarWidth && inRange(props.sidebarWidth,1,12) ? `fr-col-md-${Math.trunc(props.sidebarWidth)}` as FrCxArg : undefined;
+  const mapClass = props.sidebarWidth && inRange(props.sidebarWidth,1,12) ? `fr-col-md-${12 - Math.trunc(props.sidebarWidth)}` as FrCxArg : undefined;
   
   return (
     <div className='fr-callout'>
       <h3 className='fr-callout__title'>{props.title}</h3>
-      <Map
-        ref={mapRef}
-        initialViewState={props.initialView ? props.initialView : defaultView}
-        style={{
-          width: props.width ? props.width : '100%',
-          height: props.height ? props.height : '60vh',
-        }}
-        mapStyle={props.mapStyle}
-        onLoad={fitBounds}
-        scrollZoom={props.scrollZoom}
-        cursor={props.cursor ? props.cursor : cursor}
-        onMouseEnter={props.onMouseEnter ? props.onMouseEnter : defaultOnMouseEnter}
-        onMouseLeave={props.onMouseLeave ? props.onMouseLeave : defaultOnMouseLeave}
-        interactiveLayerIds={props.interactiveLayerIds}
-      >
-        <NavigationControl />
-        <FullscreenControl />
-        {props.legend &&
-          props.legend.map((l,i) =>
-            <Legend key={i} title={l.title} type={l.type} classes={l.classes} order={l.order} />
-          )
+      <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+        {props.sidebar && props.sidebarPosition == 'left' &&
+          <div className={fr.cx('fr-col', sidebarClass)}>
+            {props.sidebar}
+          </div>
         }
-        {props.children}
-      </Map>
+        <div className={fr.cx('fr-col', mapClass)}>
+          <Map
+            ref={mapRef}
+            initialViewState={props.initialView ? props.initialView : defaultView}
+            style={{
+              width: props.width ? props.width : '100%',
+              height: props.height ? props.height : '60vh',
+            }}
+            mapStyle={props.mapStyle}
+            onLoad={fitBounds}
+            scrollZoom={props.scrollZoom}
+            cursor={props.cursor ? props.cursor : cursor}
+            onMouseEnter={props.onMouseEnter ? props.onMouseEnter : defaultOnMouseEnter}
+            onMouseLeave={props.onMouseLeave ? props.onMouseLeave : defaultOnMouseLeave}
+            interactiveLayerIds={props.interactiveLayerIds}
+          >
+            <NavigationControl />
+            <FullscreenControl />
+            {props.legend &&
+              props.legend.map((l,i) =>
+                <Legend key={i} title={l.title} type={l.type} classes={l.classes} order={l.order} />
+              )
+            }
+            {props.children}
+          </Map>
+        </div>
+        {props.sidebar && props.sidebarPosition == 'right' &&
+          <div className={fr.cx('fr-col', sidebarClass)}>
+            {props.sidebar}
+          </div>
+        }
+      </div>
     </div>
   );
 };

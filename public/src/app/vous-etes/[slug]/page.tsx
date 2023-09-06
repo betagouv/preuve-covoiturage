@@ -17,6 +17,11 @@ export async function generateStaticParams() {
     filter:{
       status: {
         '_eq': 'published',
+      },
+      tag:{
+        slug:{
+          '_in':['operateurs','particuliers','entreprises']
+        }
       }
     }
   });

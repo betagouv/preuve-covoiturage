@@ -1,19 +1,21 @@
+'use client'
 import { Config } from '@/config';
 import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation'
 
-export const useDashboard = (props: SearchParamsInterface) => {
+export const useDashboard = () => {
+  const searchParams = useSearchParams()
   const [params, setParams] = useState({
-    code: props.code ? props.code : 'XXXXX',
+    code: searchParams.get('code') ? searchParams.get('code') as string : 'XXXXX' ,
     name: 'France',
-    type: props.type ? props.type : 'country',
-    observe: props.observe ? props.observe : 'com',
-    year: props.year ? props.year : new Date().getFullYear(),
-    month: props.month ? props.month : new Date().getMonth(),
-    map: props.map ? props.map : 1,
-    graph: props.graph ? props.graph : 1,
+    type: searchParams.get('type') ? searchParams.get('type') as PerimeterType : 'country',
+    observe: searchParams.get('observe') ? searchParams.get('observe') as PerimeterType : 'com',
+    year: searchParams.get('year') ? Number(searchParams.get('year')) : new Date().getFullYear(),
+    month: searchParams.get('month') ? Number(searchParams.get('month')) : new Date().getMonth(),
+    map: searchParams.get('map') ? Number(searchParams.get('map')) : 1,
+    graph: searchParams.get('graph') ? Number(searchParams.get('graph')) : 1,
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);

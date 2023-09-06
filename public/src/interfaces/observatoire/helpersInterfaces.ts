@@ -3,3 +3,8 @@ export interface AnalyseInterface {
   color: [number, number, number];
   width: number;
 }
+
+export interface SwitchFilterInterface {
+  name: string;
+  active: boolean;
+}

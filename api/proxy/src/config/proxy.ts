@@ -5,6 +5,7 @@ export const appUrl = env('APP_APP_URL', 'http://localhost:4200');
 export const apiUrl = env('APP_API_URL', 'http://localhost:8080');
 export const certUrl = env('APP_CERT_URL', 'https://localhost:4200');
 export const showcase = env('APP_SHOWCASE_URL', 'https://localhost:1313');
+export const publicUrl = env('APP_PUBLIC_URL', 'http://localhost:4200');
 
 export const port = env('PORT', 8080);
 export const hostname = osHostname();

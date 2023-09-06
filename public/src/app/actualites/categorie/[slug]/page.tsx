@@ -5,6 +5,15 @@ import { cmsHost, cmsInstance, cmsActusByPage, shorten, getNbPages } from "@/hel
 import CategoryTags from "@/components/actualites/CategoryTags";
 import Pagination from "@/components/common/Pagination";
 
+export async function generateStaticParams() {
+  const { data } = await cmsInstance.items('Categories').readByQuery({
+    fields:'slug',
+    meta:'filter_count',
+  });
+  return data ? data.map((post:any) => ({
+    slug: post.slug,
+  })) : []
+}
 
 export default async function ActuCategoryPage({ params }: { params: { slug: string }}) {
   const { data, meta } = await cmsInstance.items('Articles').readByQuery({
