@@ -197,7 +197,7 @@ export class PdfCertProvider implements PdfCertProviderInterface {
     this.text(page, 'Kilomètres parcourus :', { x: x + 245, y: y + 36, align: TextAlignment.Right });
     this.text(
       page,
-      `${String(data.total.distance === 0 ? 0 : data.total.distance / 1000 || data.total.km).replace('.', ',')} km`,
+      `${String(data.total.distance === 0 ? 0 : data.total.distance / 1000).replace('.', ',')} km`,
       {
         x: x + 255,
         y: y + 36,
