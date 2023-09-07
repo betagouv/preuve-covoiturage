@@ -14,7 +14,7 @@ import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 import bodyParser from 'body-parser';
 import createStore from 'connect-redis';
 import cors from 'cors';
-import express, { Response } from 'express';
+import express, { Request, Response } from 'express';
 import expressSession from 'express-session';
 import helmet from 'helmet';
 import http from 'http';
@@ -46,11 +46,11 @@ import {
   signature as getAuthorizedCodesSignature,
 } from './shared/territory/getAuthorizedCodes.contract';
 
+import { metricsMiddleware } from './middlewares/metricsMiddleware';
 import { signature as importCeeSignature } from './shared/cee/importApplication.contract';
 import { signature as importIdentityCeeSignature } from './shared/cee/importApplicationIdentity.contract';
 import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
 import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
-import { metricsMiddleware } from './middlewares/metricsMiddleware';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -172,7 +172,7 @@ export class HttpTransport implements TransportInterface {
     // apply CORS to all routes but /honor (for now)
     // TODO: improve if more routes are concerned
     this.app.use(
-      /\/((?!honor|contactform|policy\/simulate|observatory|geo\/search).)*/,
+      /\/((?!honor|contactform|policy\/simulate|observatory).)*/,
       cors({
         origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
@@ -181,10 +181,14 @@ export class HttpTransport implements TransportInterface {
       }),
     );
     this.app.use(
-      /\/observatory.*|geo\/search/i,
-      cors({
-        origin: '*',
-        optionsSuccessStatus: 200,
+      '/observatory',
+      // Use CORS asynchronously to log the calls
+      cors((req: Request, callback) => {
+        console.debug(`CORS origin: ${req.header('Origin')}`);
+        callback(null, {
+          origin: true, // reflects the calling origin
+          optionsSuccessStatus: 200,
+        });
       }),
     );
     this.app.use(
