@@ -180,17 +180,22 @@ export class HttpTransport implements TransportInterface {
         credentials: true,
       }),
     );
+
+    // Use CORS asynchronously to log the calls and check against a list of domains
     this.app.use(
       '/observatory',
-      // Use CORS asynchronously to log the calls
       cors((req: Request, callback) => {
-        console.debug(`CORS origin: ${req.header('Origin')}`);
-        callback(null, {
-          origin: true, // reflects the calling origin
-          optionsSuccessStatus: 200,
-        });
+        const domains = [
+          'https://demo.covoiturage.beta.gouv.fr',
+          'https://covoiturage.beta.gouv.fr',
+          'http://localhost:4200',
+        ];
+        const origin = req.header('Origin') || '';
+        const error = domains.includes(origin) ? null : new Error(`CORS: ${origin} is not allowed`);
+        callback(error, { origin: true, optionsSuccessStatus: 200 });
       }),
     );
+
     this.app.use(
       '/honor',
       cors({
