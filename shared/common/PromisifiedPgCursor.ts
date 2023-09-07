@@ -1,4 +1,4 @@
 export interface PgCursorHandler<T> {
-  read: (count: number) => Promise<T[]>;
-  release?: Function;
+  read: (rowCount: number) => Promise<T[]>;
+  release: () => Promise<void>;
 }

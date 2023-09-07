@@ -2,7 +2,6 @@
 import { provider } from '@ilos/common';
 import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
 import { map } from 'lodash';
-import { promisify } from 'util';
 import {
   ExportTripInterface,
   TripRepositoryInterface,
@@ -313,8 +312,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const cursorCb = db.query(new Cursor(queryText, where.values));
 
     return {
-      read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
-      release: db.release,
+      read: cursorCb.read,
+      release: async () => {
+        await cursorCb.close();
+        db.release();
+      },
     };
   }
 

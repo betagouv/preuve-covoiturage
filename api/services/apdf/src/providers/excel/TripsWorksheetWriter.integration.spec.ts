@@ -71,7 +71,7 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
 
   // Act
   const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
-  await dataWorkBookWriter.call({ read: cursorCallback, release: () => {} }, workbookWriter);
+  await dataWorkBookWriter.call({ read: cursorCallback, release: async () => {} }, workbookWriter);
   await workbookWriter.commit();
 
   // Assert
