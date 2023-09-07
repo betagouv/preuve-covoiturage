@@ -42,25 +42,26 @@
     "@pdc/service-geo": "~0",
     "@pdc/service-honor": "~0",
     "@pdc/service-monitoring": "~0",
+    "@pdc/service-observatory": "~0",
     "@pdc/service-operator": "~0",
     "@pdc/service-policy": "~0",
     "@pdc/service-territory": "~0",
     "@pdc/service-trip": "~0",
     "@pdc/service-user": "~0",
-    "@pdc/service-observatory": "~0",
     "body-parser": "^1.19.0",
     "connect-redis": "^6.0.0",
     "cors": "^2.8.5",
+    "express": "^4.17.1",
     "express-mung": "^0.5.1",
     "express-rate-limit": "^6.7.0",
     "express-session": "^1.17.1",
-    "express": "^4.17.1",
     "helmet": "^4.4.1",
     "ioredis": "^4.27.9",
     "prom-client": "^14.0.0",
     "rate-limit-redis": "^3.0.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.14",
     "@types/express-rate-limit": "^5.1.3"
   }
 }
