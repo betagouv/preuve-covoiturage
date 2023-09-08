@@ -51,6 +51,7 @@ import { signature as importCeeSignature } from './shared/cee/importApplication.
 import { signature as importIdentityCeeSignature } from './shared/cee/importApplicationIdentity.contract';
 import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
 import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
+import { CacheMiddleware, cacheMiddleware } from './middlewares/cacheMiddleware';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -58,6 +59,7 @@ export class HttpTransport implements TransportInterface {
   port: string;
   server: http.Server;
   tokenProvider: TokenProviderInterfaceResolver;
+  cache: CacheMiddleware;
 
   constructor(private kernel: KernelInterface) {}
 
@@ -94,6 +96,7 @@ export class HttpTransport implements TransportInterface {
     this.registerSecurity();
     this.registerMetrics();
     this.registerGlobalMiddlewares();
+    this.registerCache();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
     this.registerCertificateRoutes();
@@ -239,6 +242,12 @@ export class HttpTransport implements TransportInterface {
 
     this.app.use(signResponseMiddleware);
     this.app.use(dataWrapMiddleware);
+  }
+
+  private registerCache(): void {
+    // create Redis connection
+    const driver = new Redis(this.config.get('connections.redis'));
+    this.cache = cacheMiddleware({ driver });
   }
 
   private registerMetrics(): void {
@@ -816,6 +825,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/monthly-flux/last',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory' }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:lastRecordMonthlyFlux', null, { permissions: ['common.observatory.stats'] }),
@@ -848,6 +858,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/best-monthly-territories',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory' }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:bestMonthlyTerritories', req.query, {
