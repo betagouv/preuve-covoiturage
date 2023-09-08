@@ -9,11 +9,11 @@ export default function IndicatorsRow(props: IndicatorsRowProps) {
     <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
       {props.indicators.length >= 1 &&
         props.indicators.map((i) => {
-          return <SingleIndicator key={i.value} value={i.value} unit={i.unit} info={i.info} text={i.text} />;
+          return <SingleIndicator key={i.value} value={i.value} unit={i.unit} info={i.info} text={i.text} icon={i.icon} />;
         })}
       {props.analyses && props.analyses.length >= 1 && 
         props.analyses.map((i) => {
-        return <Analyse title={i.title} content={i.content} link={i.link} />;
+        return <Analyse key={i.title} title={i.title} content={i.content} link={i.link} />;
         })}
     </div>
   );

@@ -1,136 +1,113 @@
-// import Hero from '@/components/common/Hero';
-import PageTitle from '@/components/common/PageTitle';
-// import SectionTitle from '@/components/common/SectionTitle';
-import { AnalyseProps } from '@/components/observatoire/indicators/Analyse';
-// import IndicatorsRow from '@/components/observatoire/indicators/IndicatorsRow';
-import { SingleIndicatorProps } from '@/components/observatoire/indicators/SingleIndicator';
+import Block from "@/components/common/Block";
+import Hero from "@/components/common/Hero";
+import ListHighlight from "@/components/common/ListHighlights";
+import PageTitle from "@/components/common/PageTitle";
+import SectionTitle from "@/components/common/SectionTitle";
+import RessourceCard from "@/components/ressources/RessourceCard";
+import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
+import { Section } from "@/interfaces/cms/collectionsInterface";
+import { fr } from "@codegouvfr/react-dsfr";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import IndicatorsRow from '../../../components/observatoire/indicators/IndicatorsRow';
 
-export type Content = {
-  pageTitle: string;
-  hero: any;
-  sections: {
-    title: string;
-    rows: {
-      indicators: SingleIndicatorProps[];
-      analyse?: AnalyseProps;
-    }[];
-  }[];
-};
-
-const content: Content = {
-  pageTitle: 'Comprendre la pratique du covoiturage en France',
-  hero: {
-    title: 'Le covoiturage, qu’est-ce que c’est ?',
-    content: `L’article L. 3132-1 du code des transports définit le covoiturage comme « l’utilisation en commun 
-    d’un véhicule terrestre à moteur par un conducteur et un ou plusieurs passagers, effectuée à titre non onéreux,
-     excepté le partage des frais, dans le cadre d’un déplacement que le conducteur effectue pour son propre compte.
-     Leur mise en relation, à cette fin, peut être effectuée à titre onéreux […] ». Il y a donc covoiturage dès le partage
-     d’un trajet entre un conducteur et un passager. En conséquence, le covoiturage peut donc être interne à la famille ou 
-     extra familial tel que pour des trajets réalisés dans le cadre de sorties de loisirs proches (réunion associative, etc.) 
-     ou plus éloignées (balade, cinéma, piscine, salle de sport, etc.).`,
-    buttons: [
-      {
-        children: 'Button 1 label',
-        iconId: 'fr-icon-git-commit-fill',
-        linkProps: {
-          href: '#',
-        },
-      },
-      {
-        children: 'Button 2 label (longer)',
-        iconId: 'fr-icon-chat-check-fill',
-        linkProps: {
-          href: '#',
-        },
-        priority: 'secondary',
-      },
-      {
-        children: 'Button 3 label',
-        iconId: 'fr-icon-bank-card-line',
-        linkProps: {
-          href: '#',
-        },
-      },
+export default async function ObservatoireSinglePage() {
+  const { data } = await cmsInstance.items('Pages').readByQuery({
+    filter: {
+      slug: { _eq: 'covoiturage-courte-distance' },
+    },
+    fields: [
+      '*',
+      'sections.*',
+      'sections.item.*',
+      'sections.item.highlights.Highlight_id.*',
+      'sections.item.categories.Categories_id.*',
+      'sections.item.composition.collection',
+      'sections.item.composition.item.*'
     ],
-  },
-  sections: [
-    {
-      title: 'Environ 900 000 trajets covoiturés chaque jour',
-      rows: [
-        {
-          indicators: [
-            { value: '59%', title: 'des déplacements en voiture sont réalisés à plusieurs' },
-            { value: '1,43', title: 'personnes par véhicule sur des distances inférieur à 100 km' },
-          ],
-          analyse: {
-            title: 'Analyse',
-            content: `En 2019, 59 % des déplacements en voiture sont effectués à plusieurs. Le covoiturage reste en revanche
-            une pratique peu développée puisque seuls 3 % des passagers déclarent avoir covoituré pour leurs
-            déplacements en voiture. L’usage individuel du véhicule, désigné par le terme d’« autosolisme » est
-            majoritaire pour les déplacements en voiture de moins de 50 km.`,
-          },
-        },
-      ],
-    },
-    {
-      title: 'Répartition des pratiques du covoiturage :',
-      rows: [
-        {
-          indicators: [{ value: '95%', title: 'de la pratique se fait de façon informelle' }],
-          analyse: {
-            title: 'Covoiturage informel',
-            content: `C'est la forme de covoiturage la plus répendue, Elle s’effectue en famille, avec ses collègues de travail ou ses amis. 
-            Elle est la plupart du temps gratuite pour le passager. Il est difficile de l'étudier car il est nécessaire de mettre en place 
-            des enquêtes lourdes et coûteuse afin d'analyser sa pratique par les français.`,
-          },
-        },
-        {
-          indicators: [{ value: '5%', title: 'de la pratique utilise une plateforme numérique dédiée' }],
-          analyse: {
-            title: 'Covoiturage utilisant une plateforme numérique dédiée',
-            content: `Cette forme de covoiturage est plus facile à étudier depuis la mise en place du registre de preuve de covoiturage qui collecte 
-            depuis 2020 tous les trajets effectués via les opérateurs de covoiturage. Même si les indicateurs produits ne reflètent qu’une petite partie
-            de la pratique, ils permettent de suivre plus régulièrement les tendances et peuvent mettre en évidence certains phénomènes très fin sur 
-            les territoires.`,
-            link: {
-              title: 'En savoir plus',
-              url: '/observatoire/territoire',
-            },
-          },
-        },
-      ],
-    },
-    {
-      title: 'Infrastructures dédiées',
-      rows: [
-        {
-          indicators: [
-            { value: '8500', title: 'Aires de covoiturage' },
-            { value: '20', title: 'Lignes de covoiturage' },
-            { value: '7', title: 'Voies de covoiturage' },
-          ],
-        },
-      ],
-    },
-  ],
-};
+    limit: 1,
+  });
+  const hero = data ? data[0].sections.find((s:Section) => s.collection === 'Hero') : null
+  const blocks = data ? data[0].sections.filter((s:Section) => s.collection === 'Block') : null
+  const lists = data ? data[0].sections.filter((s:Section) => s.collection === 'List') : null
+  const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
+  const rows = data ? data[0].sections.filter((s:Section) => s.collection === 'Row') : null
 
-
-export default function Page() {
-  return (
+  return(
     <article id='content'>
-      <PageTitle title={content.pageTitle} />
-      {/* <Hero title={content.hero.title} content={content.hero.content} buttons={content.hero.buttons} />
-      {content.sections.map((d, i) => {
-        return (
-          <>
-            <SectionTitle key={i} title={d.title} />
-            {d.rows.map((r, index) => {
-              return <IndicatorsRow key={index} indicators={r.indicators} analyse={r.analyse} />;
-            })}
-          </>
-        );
-      })} */}
+      {!hero && 
+        <PageTitle title={data ? data[0].title : ''} />
+      }
+      {hero && 
+        <Hero 
+          title={hero.item.title} 
+          subtitle={hero.item.subtitle}
+          content={hero.item.content} 
+          img={hero.item.img} 
+          alt={hero.item.alt} 
+          backgroundColor={hero.item.background_color} 
+          buttons={hero.item.buttons} 
+        />
+      }
+      {
+        rows && rows.map((r:any, i:number) =>
+        <>
+          <SectionTitle title={r.item.title} />
+          <IndicatorsRow 
+            key={i}
+            indicators={r.item.composition.filter((i:any) => i.collection === 'indicator').map((i:any) => i.item)} 
+            analyses={r.item.composition.filter((i:any) => i.collection === 'analyse').map((i:any) => i.item)}
+          />
+        </>
+      )}
+      {blocks && blocks.map((b:any, i:number) =>
+        <Block 
+          key={i}
+          title={b.item.title} 
+          content={b.item.content} 
+          img={b.item.img} 
+          alt={b.item.alt} 
+          buttons={b.item.buttons} 
+        />
+      )}
+      {lists && lists.map((l:any, i:number) =>
+        <div key={i} className={fr.cx('fr-grid-row')}>
+          <SectionTitle title={l.item.title} />
+          <ListHighlight highlights={l.item.highlights.map((h:any) => h.Highlight_id)} />
+        </div>
+      )}
+      <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
+        <div className={fr.cx('fr-col')}>
+          <div className={fr.cx('fr-text--lg')}>
+            <MDXRemote source={data ? data[0].content : ''} />
+          </div>
+        </div>
+      </div>
+      {ressources.length >=1 && 
+      <>
+        <SectionTitle title='Ressources' />
+        <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+          {ressources.map((r:any, i:number) =>  
+            <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
+              <RessourceCard 
+                title={r.item.title}
+                content={shorten(r.item.content, 100)}
+                date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
+                link={r.item.link}
+                file={`${cmsHost}/assets/${r.item.file}`}
+                img={`${cmsHost}/assets/${r.item.img}`}
+                img_legend={r.item.img_legend}                
+              />
+            </div>
+          )}
+        </div>
+      </>}
+      <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
+        <div className={fr.cx('fr-col')}>
+          <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">
+            Haut de page
+          </a>
+        </div>
+      </div>
     </article>
   );
 }
