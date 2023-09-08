@@ -3,13 +3,12 @@ import Hero from "@/components/common/Hero";
 import ListHighlight from "@/components/common/ListHighlights";
 import PageTitle from "@/components/common/PageTitle";
 import SectionTitle from "@/components/common/SectionTitle";
-//import Share from "@/components/common/Share";
 import RessourceCard from "@/components/ressources/RessourceCard";
-//import { Config } from "@/config";
 import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
 import { Section } from "@/interfaces/cms/collectionsInterface";
 import { fr } from "@codegouvfr/react-dsfr";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import IndicatorsRow from '../../../components/observatoire/indicators/IndicatorsRow';
 
 export async function generateStaticParams() {
   const { data } = await cmsInstance.items('Pages').readByQuery({
@@ -20,7 +19,7 @@ export async function generateStaticParams() {
       },
       tag:{
         slug:{
-          '_eq': 'collectivites',
+          '_eq':'observatoire',
         }
       }
     }
@@ -30,20 +29,28 @@ export async function generateStaticParams() {
   })) : []
 }
 
-export default async function CollectiviteSinglePage({ params }: { params: { slug: string }}) {
-  //const location = `${Config.get<string>('next.public_url', 'http://localhost:4200')}/collectivites/${params.slug}`;
+export default async function ObservatoireSinglePage({ params }: { params: { slug: string }}) {
   const { data } = await cmsInstance.items('Pages').readByQuery({
     filter: {
       slug: { _eq: params.slug },
     },
-    fields: ['*', 'sections.*', 'sections.item.*','sections.item.highlights.Highlight_id.*','sections.item.categories.Categories_id.*'],
+    fields: [
+      '*',
+      'sections.*',
+      'sections.item.*',
+      'sections.item.highlights.Highlight_id.*',
+      'sections.item.categories.Categories_id.*',
+      'sections.item.composition.collection',
+      'sections.item.composition.item.*'
+    ],
     limit: 1,
   });
   const hero = data ? data[0].sections.find((s:Section) => s.collection === 'Hero') : null
   const blocks = data ? data[0].sections.filter((s:Section) => s.collection === 'Block') : null
   const lists = data ? data[0].sections.filter((s:Section) => s.collection === 'List') : null
   const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
-  
+  const rows = data ? data[0].sections.filter((s:Section) => s.collection === 'Row') : null
+
   return(
     <article id='content'>
       {!hero && 
@@ -60,6 +67,16 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
           buttons={hero.item.buttons} 
         />
       }
+      {
+        rows && rows.map((r:any, i:number) =>
+        <>
+          <SectionTitle title={r.item.title} />
+          <IndicatorsRow 
+            indicators={r.item.composition.filter((i:any) => i.collection === 'indicator').map((i:any) => i.item)} 
+            analyses={r.item.composition.filter((i:any) => i.collection === 'analyse').map((i:any) => i.item)}
+          />
+        </>
+      )}
       {blocks && blocks.map((b:any, i:number) =>
         <Block 
           key={i}
@@ -87,7 +104,7 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
       <>
         <SectionTitle title='Ressources' />
         <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-          {ressources && ressources.map((r:any, i:number) =>  
+          {ressources.map((r:any, i:number) =>  
             <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
               <RessourceCard 
                 title={r.item.title}

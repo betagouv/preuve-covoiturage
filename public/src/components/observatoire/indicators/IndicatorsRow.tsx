@@ -1,30 +1,20 @@
 import { fr } from '@codegouvfr/react-dsfr';
 import SingleIndicator from './SingleIndicator';
 import Analyse from './Analyse';
+import { IndicatorsRowProps } from '@/interfaces/observatoire/componentsInterfaces';
 
-type IndicatorsRowProps = {
-  indicators: {
-    value: string;
-    info?: string;
-    title: string;
-  }[];
-  analyse?: {
-    title?: string;
-    content: string;
-    link?:{
-      title: string;
-      url: string;
-    }
-  };
-};
+
 export default function IndicatorsRow(props: IndicatorsRowProps) {
   return (
     <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-      {props.indicators.length > 0 &&
+      {props.indicators.length >= 1 &&
         props.indicators.map((i) => {
-          return <SingleIndicator key={i.value} value={i.value} info={i.info} title={i.title} style='fr-col-md-3' />;
+          return <SingleIndicator key={i.value} value={i.value} unit={i.unit} info={i.info} text={i.text} />;
         })}
-      {props.analyse && <Analyse title={props.analyse.title} content={props.analyse.content} link={props.analyse.link} />}
+      {props.analyses && props.analyses.length >= 1 && 
+        props.analyses.map((i) => {
+        return <Analyse title={i.title} content={i.content} link={i.link} />;
+        })}
     </div>
   );
 }
