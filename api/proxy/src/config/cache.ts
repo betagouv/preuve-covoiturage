@@ -1,4 +1,4 @@
 import { env } from '@ilos/core';
 
-export const enabled = env('APP_ROUTECACHE_ENABLED', true);
-export const authToken = env('APP_ROUTECACHE_AUTHTOKEN', '');
+export const enabled = env.or_true('APP_ROUTECACHE_ENABLED');
+export const authToken = env.or_fail('APP_ROUTECACHE_AUTHTOKEN');
