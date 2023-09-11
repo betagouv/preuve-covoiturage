@@ -23,19 +23,19 @@ export default function Navigation() {
             },
             {
               linkProps: {
+                href: '/observatoire/comprendre-covoiturage',
+              },
+              text: 'Comprendre le covoiturage courte distance',
+              isActive: pathname === '/observatoire/comprendre-covoiturage',
+            },
+            {
+              linkProps: {
                 href: '/observatoire/territoire',
               },
               text: 'Observer un territoire',
               isActive: pathname.startsWith('/observatoire/territoire'),
             },
-            {
-              linkProps: {
-                href: '/observatoire/recensement-actions',
-              },
-              text: 'Recensement des actions pour développer le covoiturage',
-              isActive: pathname === '/observatoire/recensement-actions',
-            },
-            {
+            /*{
               linkProps: {
                 href: '/observatoire/impact-actions',
               },
@@ -48,7 +48,7 @@ export default function Navigation() {
               },
               text: 'Evaluation du plan national covoiturage',
               isActive: pathname === '/observatoire/plan-covoiturage',
-            },
+            },*/
           ],
           text: 'Observatoire',
           isActive: pathname.startsWith('/observatoire'),

@@ -102,6 +102,18 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
           )}
         </div>
       </>}
+      {data && data[0].complement &&
+        <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
+          <SectionTitle title='Ressources complémentaires' />
+          <div className={fr.cx('fr-grid-row')}>
+            <div className={fr.cx('fr-col')}>
+              <div className={fr.cx('fr-text--lg')}>
+                <MDXRemote source={data ? data[0].complement : ''} />
+              </div>
+            </div>
+          </div>
+        </div>
+      }
       <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
         <div className={fr.cx('fr-col')}>
           <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">

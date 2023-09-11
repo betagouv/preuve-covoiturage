@@ -7,6 +7,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
 import RessourceCard from "@/components/ressources/RessourceCard";
 import { Section } from "@/interfaces/cms/collectionsInterface";
+import { MDXRemote } from "next-mdx-remote/rsc";
 
 export default async function Home() {
   const { data } = await cmsInstance.items('Pages').readByQuery({
@@ -96,6 +97,18 @@ export default async function Home() {
           )}
         </div>
       </>}
+      {data && data[0].complement &&
+        <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
+          <SectionTitle title='Ressources complémentaires' />
+          <div className={fr.cx('fr-grid-row')}>
+            <div className={fr.cx('fr-col')}>
+              <div className={fr.cx('fr-text--lg')}>
+                <MDXRemote source={data ? data[0].complement : ''} />
+              </div>
+            </div>
+          </div>
+        </div>
+      }
       <SectionTitle title='Vous êtes ?' />
       <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
         {tiles && tiles.map( (t, i) => 

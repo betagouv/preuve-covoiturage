@@ -75,6 +75,7 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
             key={i}
             indicators={r.item.composition.filter((i:any) => i.collection === 'indicator').map((i:any) => i.item)} 
             analyses={r.item.composition.filter((i:any) => i.collection === 'analyse').map((i:any) => i.item)}
+            map={r.item.composition.filter((i:any) => i.collection === 'map').item}
           />
         </>
       )}

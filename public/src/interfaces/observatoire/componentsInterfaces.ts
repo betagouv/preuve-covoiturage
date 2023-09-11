@@ -65,8 +65,9 @@ export interface SearchParamsInterface {
 }
 
 export interface IndicatorsRowProps {
-  indicators: IndicatorProps[];
+  indicators?: IndicatorProps[];
   analyses?: AnalyseProps[];
+  map?:SingleMapProps;
 };
 
 export interface IndicatorProps {
@@ -84,4 +85,9 @@ export interface AnalyseProps {
     title: string;
     url: string;
   }
+}
+
+export interface SingleMapProps {
+  title:string;
+  params: SearchParamsInterface;
 }
