@@ -13,9 +13,11 @@ import {
 import { getKey } from './cache/transformers';
 import { cacheStore } from './cache/redis';
 import { validate } from './cache/validators';
+import { ForbiddenException } from '@ilos/common';
 
 const defaultGlobalConfig: GlobalCacheConfig = {
   authorizedMethods: ['GET'],
+  authToken: '',
   enabled: true,
   prefix: 'routecache',
   driver: null,
@@ -101,6 +103,23 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
           _res_send.apply(res, [data, ...args]);
           return res;
         };
+
+        next();
+      };
+    },
+
+    auth() {
+      return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const token = String(globalConfig.authToken);
+        const header = req.headers['x-route-cache-auth'];
+
+        if (token === '') {
+          return next(new Error('Please set APP_ROUTE_CACHE_AUTH'));
+        }
+
+        if (token !== header) {
+          throw new ForbiddenException(`Invalid X-Route-Cache-Auth header`);
+        }
 
         next();
       };

@@ -22,6 +22,7 @@ export type GlobalCacheConfig = {
   prefix: CachePrefix;
   driver: StoreDriver;
   authorizedMethods: HttpVerb[];
+  authToken: string;
 };
 
 export type RouteCacheConfig = {
@@ -46,6 +47,7 @@ export type CacheMiddleware = {
   set: (
     userRouteConfig?: Partial<RouteCacheConfig>,
   ) => (req: Request, res: Response, next: NextFunction) => Promise<void>;
+  auth: () => (req: Request, res: Response, next: NextFunction) => Promise<void>;
   flush: (prefix: CachePrefix) => Promise<CacheFlushResponse>;
 };
 

@@ -248,11 +248,12 @@ export class HttpTransport implements TransportInterface {
     // create Redis connection only when the cache is enabled
     const enabled = this.config.get('cache.enabled');
     const driver = enabled ? new Redis(this.config.get('connections.redis')) : null;
-    this.cache = cacheMiddleware({ enabled, driver });
+    this.cache = cacheMiddleware({ enabled, driver, authToken: this.config.get('cache.authToken') });
 
     this.app.delete(
       '/cache',
       rateLimiter(),
+      this.cache.auth(),
       asyncHandler(async (req: Request, res: Response) => {
         const prefix = (req.query.prefix as string | undefined) || '*';
         const result = await this.cache.flush(prefix);
