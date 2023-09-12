@@ -18,8 +18,14 @@ export default function IndicatorsRow(props: IndicatorsRowProps) {
           return <Analyse key={i.title} title={i.title} content={i.content} link={i.link} />;
         })
       }
-      {props.map &&
-        <SingleMap title={props.map.title} params={props.map.params} /> 
+      {props.maps && props.maps.length >= 1 && 
+        props.maps.map((i) => {
+          return (
+            <div className={fr.cx('fr-col')}>
+              <SingleMap key={i.title} title={i.title} params={i.params} />
+            </div>
+          )
+        }) 
       }
     </div>
   );
