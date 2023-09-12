@@ -70,7 +70,7 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
       {
         rows && rows.map((r:any, i:number) =>
         <>
-          <SectionTitle title={r.item.title} />
+          {r.item.title && <SectionTitle title={r.item.title} />}
           <IndicatorsRow 
             key={i}
             indicators={r.item.composition.filter((i:any) => i.collection === 'indicator').map((i:any) => i.item)} 

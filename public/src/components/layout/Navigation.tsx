@@ -35,6 +35,13 @@ export default function Navigation() {
               text: 'Observer un territoire',
               isActive: pathname.startsWith('/observatoire/territoire'),
             },
+            {
+              linkProps: {
+                href: '/observatoire/evaluation-plan-covoiturage',
+              },
+              text: 'Evaluation du plan national covoiturage',
+              isActive: pathname === '/observatoire/evaluation-plan-covoiturage',
+            },
             /*{
               linkProps: {
                 href: '/observatoire/impact-actions',
@@ -42,13 +49,7 @@ export default function Navigation() {
               text: 'Impact des actions pour développer le covoiturage',
               isActive: pathname === '/observatoire/impact-actions',
             },
-            {
-              linkProps: {
-                href: '/observatoire/plan-covoiturage',
-              },
-              text: 'Evaluation du plan national covoiturage',
-              isActive: pathname === '/observatoire/plan-covoiturage',
-            },*/
+            */
           ],
           text: 'Observatoire',
           isActive: pathname.startsWith('/observatoire'),
