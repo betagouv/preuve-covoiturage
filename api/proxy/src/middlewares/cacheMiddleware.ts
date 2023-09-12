@@ -8,6 +8,7 @@ import {
   StoreConnection,
   CachePrefix,
   CacheStore,
+  CacheFlushResponse,
 } from './cache/types';
 import { getKey } from './cache/transformers';
 import { cacheStore } from './cache/redis';
@@ -25,7 +26,15 @@ const defaultRouteConfig: RouteCacheConfig = {
   ttl: CacheTTL.MINUTE,
 };
 
-export { CacheMiddleware, GlobalCacheConfig, RouteCacheConfig, CacheTTL, StoreConnection };
+export {
+  CacheMiddleware,
+  GlobalCacheConfig,
+  RouteCacheConfig,
+  CachePrefix,
+  CacheTTL,
+  CacheFlushResponse,
+  StoreConnection,
+};
 
 export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {}): CacheMiddleware {
   const globalConfig = { ...defaultGlobalConfig, ...userGlobalConfig };
@@ -97,8 +106,18 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
       };
     },
 
-    async flush(prefix: CachePrefix = '*') {
-      // flush all keys with the same prefix or all if *
+    async flush(prefix: CachePrefix = '*'): Promise<CacheFlushResponse> {
+      const userPrefix = prefix === '*' ? '*' : `${prefix}:*`;
+      const pattern = `${globalConfig.prefix}:${userPrefix}`;
+      const keys = await store.scan(pattern);
+      if (keys && keys.size) await store.del(keys);
+
+      console.debug(`[route-cache] flushed ${keys.size} keys from pattern: ${pattern}`);
+
+      return {
+        size: keys.size,
+        pattern,
+      };
     },
   };
 }

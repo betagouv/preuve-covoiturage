@@ -46,12 +46,12 @@ import {
   signature as getAuthorizedCodesSignature,
 } from './shared/territory/getAuthorizedCodes.contract';
 
+import { CacheMiddleware, CacheTTL, cacheMiddleware } from './middlewares/cacheMiddleware';
 import { metricsMiddleware } from './middlewares/metricsMiddleware';
 import { signature as importCeeSignature } from './shared/cee/importApplication.contract';
 import { signature as importIdentityCeeSignature } from './shared/cee/importApplicationIdentity.contract';
 import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
 import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
-import { CacheMiddleware, cacheMiddleware } from './middlewares/cacheMiddleware';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -249,6 +249,16 @@ export class HttpTransport implements TransportInterface {
     const enabled = this.config.get('cache.enabled');
     const driver = enabled ? new Redis(this.config.get('connections.redis')) : null;
     this.cache = cacheMiddleware({ enabled, driver });
+
+    this.app.delete(
+      '/cache',
+      rateLimiter(),
+      asyncHandler(async (req: Request, res: Response) => {
+        const prefix = (req.query.prefix as string | undefined) || '*';
+        const result = await this.cache.flush(prefix);
+        res.status(200).json({ id: 1, jsonrpc: '2.0', result });
+      }),
+    );
   }
 
   private registerMetrics(): void {
@@ -786,6 +796,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/monthly-keyfigures',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:monthlyKeyfigures', req.query, { permissions: ['common.observatory.stats'] }),
@@ -796,6 +807,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/monthly-flux',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:monthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
@@ -806,6 +818,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/evol-monthly-flux',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:evolMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
@@ -816,6 +829,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/best-monthly-flux',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:bestMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
@@ -826,7 +840,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/monthly-flux/last',
       rateLimiter(),
-      this.cache.set({ prefix: 'observatory' }),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:lastRecordMonthlyFlux', null, { permissions: ['common.observatory.stats'] }),
@@ -837,6 +851,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/monthly-occupation',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:monthlyOccupation', req.query, { permissions: ['common.observatory.stats'] }),
@@ -847,6 +862,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/evol-monthly-occupation',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:evolMonthlyOccupation', req.query, {
@@ -859,7 +875,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/best-monthly-territories',
       rateLimiter(),
-      this.cache.set({ prefix: 'observatory' }),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:bestMonthlyTerritories', req.query, {
@@ -872,6 +888,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/territories',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:territoriesList', req.query, { permissions: ['common.observatory.stats'] }),
@@ -882,6 +899,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/territory',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:territoryName', req.query, { permissions: ['common.observatory.stats'] }),
@@ -892,6 +910,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/journeys-by-hours',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:journeysByHours', req.query, { permissions: ['common.observatory.stats'] }),
@@ -902,6 +921,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/journeys-by-distances',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:journeysByDistances', req.query, { permissions: ['common.observatory.stats'] }),
@@ -912,6 +932,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/location',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:getLocation', req.query, { permissions: ['common.observatory.stats'] }),
@@ -922,6 +943,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/observatory/aires-covoiturage',
       rateLimiter(),
+      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
       asyncHandler(async (req, res, next) => {
         const response = await this.kernel.handle(
           createRPCPayload('observatory:airesCovoiturage', req.query, { permissions: ['common.observatory.stats'] }),

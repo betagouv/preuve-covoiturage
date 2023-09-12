@@ -1,17 +1,20 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Redis } from 'ioredis';
 
 export type CacheEnabled = boolean;
 export type CacheKey = string;
 export type CacheValue = any;
 export type CachePrefix = string;
+export type CachePattern = string;
 
 export type StoreConnection = Redis;
 export type StoreDriver = Redis | null;
 export type CacheStore = {
   get: (key: CacheKey) => Promise<CacheValue>;
   set: (key: CacheKey, value: CacheValue, ttl?: CacheTTL) => Promise<void>;
+  del: (keys: Set<CacheKey>) => Promise<number>;
   ttl: (key: CacheKey) => Promise<number | null>;
+  scan: (pattern: CachePattern) => Promise<Set<CacheKey>>;
 };
 
 export type GlobalCacheConfig = {
@@ -43,7 +46,7 @@ export type CacheMiddleware = {
   set: (
     userRouteConfig?: Partial<RouteCacheConfig>,
   ) => (req: Request, res: Response, next: NextFunction) => Promise<void>;
-  flush: (prefix: CachePrefix) => Promise<void>;
+  flush: (prefix: CachePrefix) => Promise<CacheFlushResponse>;
 };
 
 export type CacheValidatorParams = {
@@ -58,4 +61,9 @@ export type CacheValidatorResponse = {
   errors: Set<Error>;
   warnings: Set<Error>;
   headers: Map<string, string>;
+};
+
+export type CacheFlushResponse = {
+  size: number;
+  pattern: CachePattern;
 };

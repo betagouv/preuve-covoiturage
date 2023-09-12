@@ -26,7 +26,7 @@ export function getKey(
   hash.write(`${req.method} ${req.url} ${body}`);
   hash.end();
 
-  return `${globalConfig.prefix}:${pfx}:${sha.join('')}`;
+  return `${globalConfig.prefix}:${pfx}:${sha.join('')}` as CacheKey;
 }
 
 export function getValue(req: Request, res: Response): CacheValue {
