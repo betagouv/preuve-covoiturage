@@ -245,9 +245,10 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerCache(): void {
-    // create Redis connection
-    const driver = new Redis(this.config.get('connections.redis'));
-    this.cache = cacheMiddleware({ driver });
+    // create Redis connection only when the cache is enabled
+    const enabled = this.config.get('cache.enabled');
+    const driver = enabled ? new Redis(this.config.get('connections.redis')) : null;
+    this.cache = cacheMiddleware({ enabled, driver });
   }
 
   private registerMetrics(): void {
