@@ -793,164 +793,41 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerObservatoryRoutes() {
-    this.app.get(
-      '/observatory/monthly-keyfigures',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:monthlyKeyfigures', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
+    type ObservatoryMethod = string;
+    type ObservatoryURL = string;
+
+    const routes: Map<ObservatoryMethod, ObservatoryURL> = new Map(
+      Object.entries({
+        monthlyKeyfigures: 'monthly-keyfigures',
+        monthlyFlux: 'monthly-flux',
+        evolMonthlyFlux: 'evol-monthly-flux',
+        bestMonthlyFlux: 'best-monthly-flux',
+        lastRecordMonthlyFlux: 'monthly-flux/last',
+        monthlyOccupation: 'monthly-occupation',
+        evolMonthlyOccupation: 'evol-monthly-occupation',
+        bestMonthlyTerritories: 'best-monthly-territories',
+        territoriesList: 'territories',
+        territoryName: 'territory',
+        journeysByHours: 'journeys-by-hours',
+        journeysByDistances: 'journeys-by-distances',
+        getLocation: 'location',
+        airesCovoiturage: 'aires-covoiturage',
       }),
     );
-    this.app.get(
-      '/observatory/monthly-flux',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:monthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/evol-monthly-flux',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:evolMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/best-monthly-flux',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:bestMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/monthly-flux/last',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:lastRecordMonthlyFlux', null, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/monthly-occupation',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:monthlyOccupation', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/evol-monthly-occupation',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:evolMonthlyOccupation', req.query, {
-            permissions: ['common.observatory.stats'],
-          }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/best-monthly-territories',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:bestMonthlyTerritories', req.query, {
-            permissions: ['common.observatory.stats'],
-          }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/territories',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:territoriesList', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/territory',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:territoryName', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/journeys-by-hours',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:journeysByHours', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/journeys-by-distances',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:journeysByDistances', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/location',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:getLocation', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/aires-covoiturage',
-      rateLimiter(),
-      this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:airesCovoiturage', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
+
+    for (const [obsMethod, obsUrl] of routes) {
+      this.app.get(
+        `/observatory/${obsUrl}`,
+        rateLimiter(),
+        this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
+        asyncHandler(async (req: Request, res: Response) => {
+          const response = await this.kernel.handle(
+            createRPCPayload(`observatory:${obsMethod}`, req.query, { permissions: ['common.observatory.stats'] }),
+          );
+          this.send(res, response as RPCResponseType);
+        }),
+      );
+    }
   }
 
   private registerUptimeRoute() {
