@@ -3,14 +3,14 @@ import { Redis } from 'ioredis';
 
 export type CacheEnabled = boolean;
 export type CacheKey = string;
-export type CacheValue = any;
+export type CacheValue = string;
 export type CachePrefix = string;
 export type CachePattern = string;
 
 export type StoreConnection = Redis;
 export type StoreDriver = Redis | null;
 export type CacheStore = {
-  get: (key: CacheKey) => Promise<CacheValue>;
+  get: (key: CacheKey) => Promise<string | null>;
   set: (key: CacheKey, value: CacheValue, ttl?: CacheTTL) => Promise<void>;
   del: (keys: Set<CacheKey>) => Promise<number>;
   ttl: (key: CacheKey) => Promise<number | null>;

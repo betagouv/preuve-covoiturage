@@ -87,7 +87,7 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
         if (value) {
           res.setHeader('X-Route-Cache', 'HIT');
           res.setHeader('X-Route-Cache-TTL', ttl);
-          res.send(value);
+          res.send(JSON.parse(value));
           return;
         }
 

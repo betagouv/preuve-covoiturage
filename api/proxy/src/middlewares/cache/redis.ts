@@ -4,7 +4,7 @@ export function cacheStore(config: GlobalCacheConfig): CacheStore {
   const { driver } = config;
 
   return {
-    async get(key: CacheKey): Promise<CacheValue | null> {
+    async get(key: CacheKey): Promise<string | null> {
       if (!driver) return null;
       // console.debug('cache get', { key });
       return driver.get(key);
