@@ -55,5 +55,7 @@ export type CacheValidatorParams = {
 
 export type CacheValidatorResponse = {
   isValid: boolean;
-  errors: Error[];
+  errors: Set<Error>;
+  warnings: Set<Error>;
+  headers: Map<string, string>;
 };

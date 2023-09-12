@@ -44,10 +44,20 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
       }
 
       return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        const validation = await validate({ globalConfig, routeConfig, req, res });
-        if (!validation.isValid) {
-          for (const error of validation.errors) {
-            res.setHeader('X-Route-Cache-Error', error.message);
+        const { isValid, errors, warnings, headers } = await validate({ globalConfig, routeConfig, req, res });
+        if (!isValid) {
+          for (const [key, value] of headers.entries()) {
+            res.setHeader(key, value);
+          }
+
+          for (const warn of warnings.values()) {
+            console.warn({
+              'X-Route-Cache-Url': req.url,
+              'X-Route-Cache-Warn': warn.message,
+            });
+          }
+
+          for (const error of errors.values()) {
             console.error({
               'X-Route-Cache-Url': req.url,
               'X-Route-Cache-Error': error.message,
