@@ -93,5 +93,4 @@ export interface SingleMapProps {
   params: SearchParamsInterface;
 }
 
-export interface SingleGraphProps extends SingleMapProps{
-}
+export type SingleGraphProps = SingleMapProps;

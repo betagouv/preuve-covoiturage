@@ -20,19 +20,19 @@ export default function IndicatorsRow(props: IndicatorsRowProps) {
         })
       }
       {props.maps && props.maps.length >= 1 && 
-        props.maps.map((i) => {
+        props.maps.map((m, i) => {
           return (
-            <div className={fr.cx('fr-col')}>
-              <SingleMap key={i.title} title={i.title} params={i.params} />
+            <div key={i} className={fr.cx('fr-col')}>
+              <SingleMap title={m.title} params={m.params} />
             </div>
           )
         }) 
       }
       {props.graphs && props.graphs.length >= 1 && 
-        props.graphs.map((i) => {
+        props.graphs.map((g, i) => {
           return (
-            <div className={fr.cx('fr-col')}>
-              <SingleGraph key={i.title} title={i.title} params={i.params} />
+            <div key={i} className={fr.cx('fr-col')}>
+              <SingleGraph title={g.title} params={g.params} />
             </div>
           )
         }) 
