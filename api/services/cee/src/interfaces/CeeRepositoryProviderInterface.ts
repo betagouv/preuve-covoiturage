@@ -106,6 +106,7 @@ export interface CeeApplicationError {
   driving_license?: string;
   operator_journey_id?: string;
   application_id?: string;
+  identity_key?: string;
 }
 
 export abstract class CeeRepositoryProviderInterfaceResolver {
