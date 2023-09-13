@@ -3,6 +3,7 @@ import SingleIndicator from './SingleIndicator';
 import Analyse from './Analyse';
 import { IndicatorsRowProps } from '@/interfaces/observatoire/componentsInterfaces';
 import SingleMap from './SingleMap';
+import SingleGraph from './SingleGraph';
 
 
 export default function IndicatorsRow(props: IndicatorsRowProps) {
@@ -27,6 +28,16 @@ export default function IndicatorsRow(props: IndicatorsRowProps) {
           )
         }) 
       }
+      {props.graphs && props.graphs.length >= 1 && 
+        props.graphs.map((i) => {
+          return (
+            <div className={fr.cx('fr-col')}>
+              <SingleGraph key={i.title} title={i.title} params={i.params} />
+            </div>
+          )
+        }) 
+      }
+      
     </div>
   );
 }
