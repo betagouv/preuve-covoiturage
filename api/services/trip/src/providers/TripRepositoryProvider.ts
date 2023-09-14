@@ -8,8 +8,8 @@ import {
   TripRepositoryProviderInterfaceResolver,
   TzResultInterface,
 } from '../interfaces';
-import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
+import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
@@ -311,8 +311,19 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const db = await this.connection.getClient().connect();
     const cursorCb = db.query(new Cursor(queryText, where.values));
 
+    // Manually promisify the Cursor.read function as node:util.promisify
+    // doesn't do the job ;)
+    const read = async <T = ExportTripInterface<Date>[]>(rowCount: number) => {
+      return new Promise<T>((resolve, reject) => {
+        return cursorCb.read(rowCount, (err: Error, args?: T) => {
+          if (err) return reject(err);
+          resolve(args);
+        });
+      });
+    };
+
     return {
-      read: cursorCb.read,
+      read,
       release: async () => {
         await cursorCb.close();
         db.release();
