@@ -2,7 +2,7 @@ export function coerceIntList(s: string): number[] {
   if (!s || !s.length) return [];
   return s
     .split(',')
-    .map((i) => parseInt(i))
+    .map((i) => parseInt(i, 10))
     .filter((i) => i && !isNaN(i));
 }
 

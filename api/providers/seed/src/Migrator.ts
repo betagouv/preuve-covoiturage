@@ -33,7 +33,7 @@ export class Migrator {
       password: dbUrl.password,
       host: dbUrl.hostname,
       database: dbUrl.pathname.replace('/', ''),
-      port: parseInt(dbUrl.port),
+      port: parseInt(dbUrl.port, 10),
       ssl: false,
     };
     this.dbIsCreated = newDatabase;

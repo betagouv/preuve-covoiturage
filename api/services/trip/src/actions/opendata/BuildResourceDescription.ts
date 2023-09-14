@@ -20,7 +20,7 @@ export class BuildResourceDescription {
       .filter((e) => e.end_geo_code)
       .reduce((count, value) => count + value.aggregated_trips_journeys.length, 0);
     const total: string = await this.getTotal(tripSearchQueryParam);
-    const deleted = parseInt(total) - parseInt(total_truncated);
+    const deleted = parseInt(total, 10) - parseInt(total_truncated, 10);
     const intersection = deleted - start_deleted - end_deleted;
     return this.build(
       total,

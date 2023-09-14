@@ -24,7 +24,7 @@ export class CreateJourneyAction extends AbstractAction {
     const operator_id = get(context, 'call.user.operator_id');
     const application_id = get(context, 'call.user.application_id');
     const { api_version: apiVersionString, ...payload } = params;
-    const api_version = parseInt((apiVersionString || '').substring(1));
+    const api_version = parseInt((apiVersionString || '').substring(1), 10);
     if (Number.isNaN(api_version)) {
       throw new ParseErrorException(`Api version should be a number ${apiVersionString}`);
     }

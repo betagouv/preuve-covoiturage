@@ -31,7 +31,7 @@ const config = {
       password: password.join(''),
       host: dbUrl.hostname,
       database: dbUrl.pathname.replace('/', ''),
-      port: parseInt(dbUrl.port),
+      port: parseInt(dbUrl.port, 10),
   ...(Object.keys(postgresTls).length ? { ssl: {...postgresTls, rejectUnauthorized: false }} : {}),
 };
 
