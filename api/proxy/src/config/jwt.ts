@@ -15,7 +15,7 @@ export const secret = env.or_fail('APP_JWT_SECRET');
  * Time to life: Token lifetime in seconds
  * -1 means infinity
  */
-export const ttl = env.or_fail('APP_JWT_TTL', 86400);
+export const ttl = env.or_int('APP_JWT_TTL', 86400);
 
 export const alg = 'HS256';
 export const signOptions = {};
