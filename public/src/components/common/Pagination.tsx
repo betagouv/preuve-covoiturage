@@ -40,9 +40,9 @@ export default function Pagination(props:PaginationProps) {
               </p>
             }
             {defaultPage > 1 &&
-              <a className={fr.cx('fr-pagination__link', 'fr-pagination__link--first')} href={`${props.href}`}>
+              <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--first')} href={`${props.href}`}>
               Première page
-            </a>
+            </Link>
             }
           </li>
           <li>
@@ -52,9 +52,9 @@ export default function Pagination(props:PaginationProps) {
               </p>
             }
             {defaultPage > 1 &&
-              <a className={fr.cx('fr-pagination__link', 'fr-pagination__link--prev', 'fr-pagination__link--lg-label')} href={`${props.href}/page/${defaultPage-1}`}>
+              <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--prev', 'fr-pagination__link--lg-label')} href={`${props.href}/page/${defaultPage-1}`}>
                 Page précédente
-              </a>
+              </Link>
             }
           </li>
           {pages.map(p =>
@@ -65,9 +65,9 @@ export default function Pagination(props:PaginationProps) {
                 </p>
               }
               {!p.active &&
-                <a className={fr.cx('fr-pagination__link')} href={`${props.href}/page/${p.number}`}>
+                <Link className={fr.cx('fr-pagination__link')} href={`${props.href}/page/${p.number}`}>
                   {p.number}
-                </a>
+                </Link>
               }
             </li>   
           )}
@@ -90,9 +90,9 @@ export default function Pagination(props:PaginationProps) {
               </p>
             }
             {defaultPage != props.count &&
-              <a className={fr.cx('fr-pagination__link', 'fr-pagination__link--last')} href={`${props.href}/page/${props.count}`}>
+              <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--last')} href={`${props.href}/page/${props.count}`}>
                 Dernière page
-              </a>
+              </Link>
             }
           </li>
         </ul>
