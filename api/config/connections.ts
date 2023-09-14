@@ -53,5 +53,7 @@ const postgresTls = {
 
 export const postgres = {
   connectionString: env('APP_POSTGRES_URL') as string,
-  ...(Object.keys(postgresTls).length ? { ssl: postgresTls } : {}),
+  // FIXME: add host is a workarround to fix this issue
+  // https://github.com/brianc/node-postgres/issues/2263
+  ...(Object.keys(postgresTls).length ? { ssl: { ...postgresTls, host: env('APP_POSTGRES_HOST') } } : {}),
 };

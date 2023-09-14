@@ -85,6 +85,7 @@ export class RegisterCeeAction extends AbstractAction {
         phone_trunc: params['phone_trunc'],
         operator_journey_id: params['operator_journey_id'],
         application_id: e instanceof ConflictException ? e.rpcError.data?.uuid : undefined,
+        identity_key: params['identity_key'],
       };
       try {
         await this.ceeRepository.registerApplicationError(errorData);
