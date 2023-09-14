@@ -3,7 +3,7 @@ import path from 'node:path';
 import { BucketName } from '../interfaces/BucketName';
 
 export function getBucketPrefix(): string {
-  return env('AWS_BUCKET_PREFIX', '') as string;
+  return env.or_fail('AWS_BUCKET_PREFIX', '');
 }
 
 export function getBucketName(bucket: BucketName): string {
@@ -17,7 +17,7 @@ export function getBucketName(bucket: BucketName): string {
 
 export function getBucketEndpoint(endpoint: string, bucket: BucketName): string {
   const key = bucket.toUpperCase().replace('-', '_');
-  const override = env(`AWS_BUCKET_${key}_ENDPOINT`, '') as string;
+  const override = env.or_fail(`AWS_BUCKET_${key}_ENDPOINT`, '');
 
   // Force the bucket endpoint with an environment variable.
   // The endpoint does not include the bucket name in the hostname.

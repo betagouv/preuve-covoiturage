@@ -146,8 +146,8 @@ export class HttpTransport implements TransportInterface {
         httpOnly: true,
         maxAge: this.config.get('proxy.session.maxAge'),
         // https everywhere but in local development
-        secure: env('APP_ENV', 'local') !== 'local',
-        sameSite: env('APP_ENV', 'local') !== 'local' ? 'none' : 'strict',
+        secure: env.or_fail('APP_ENV', 'local') !== 'local',
+        sameSite: env.or_fail('APP_ENV', 'local') !== 'local' ? 'none' : 'strict',
       },
 
       name: sessionName,
@@ -229,7 +229,7 @@ export class HttpTransport implements TransportInterface {
   private registerGlobalMiddlewares(): void {
     // maintenance mode
     this.app.use((req, res, next) => {
-      if (env('APP_MAINTENANCE', false)) {
+      if (env.or_false(APP_MAINTENANCE)) {
         res.status(503).json({ code: 503, error: 'Service Unavailable' });
         return;
       }
@@ -965,7 +965,7 @@ export class HttpTransport implements TransportInterface {
      * List all RPC actions
      * - disabled when deployed
      */
-    if (env('APP_ENV', 'local') === 'local') {
+    if (env.or_fail('APP_ENV', 'local') === 'local') {
       this.app.get(
         endpoint,
         rateLimiter(),

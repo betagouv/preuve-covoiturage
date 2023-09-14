@@ -1,7 +1,7 @@
 import { env } from '@ilos/core';
 
-const apiUrl = env('APP_API_URL', 'http://localhost:8080');
-const appUrl = env('APP_APP_URL', 'http://localhost:4200');
+const apiUrl = env.or_fail('APP_API_URL', 'http://localhost:8080');
+const appUrl = env.or_fail('APP_APP_URL', 'http://localhost:4200');
 
 export const certificate = {
   apiUrl,

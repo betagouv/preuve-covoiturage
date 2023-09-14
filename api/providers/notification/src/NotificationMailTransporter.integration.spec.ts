@@ -24,12 +24,12 @@ test.before(async (t) => {
         },
         debug: true,
         smtp: {
-          host: env('INTEGRATION_MAILER_SMTP_HOST', 'mailer'),
-          port: env('INTEGRATION_MAILER_SMTP_PORT', 1025),
-          secure: env('INTEGRATION_MAILER_SMTP_SECURE', false),
+          host: env.or_fail('INTEGRATION_MAILER_SMTP_HOST', 'mailer'),
+          port: env.or_int('INTEGRATION_MAILER_SMTP_PORT', 1025),
+          secure: env.or_fail('INTEGRATION_MAILER_SMTP_SECURE', false),
           auth: {
-            user: env('INTEGRATION_MAILER_SMTP_USER', 'test@example.com'),
-            pass: env('INTEGRATION_MAILER_SMTP_PASS', 'password'),
+            user: env.or_fail('INTEGRATION_MAILER_SMTP_USER', 'test@example.com'),
+            pass: env.or_fail('INTEGRATION_MAILER_SMTP_PASS', 'password'),
           },
         },
       },

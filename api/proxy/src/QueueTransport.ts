@@ -28,7 +28,7 @@ export class MyQueueTransport extends QueueTransport implements TransportInterfa
 
   async up(opts: string[] = []): Promise<void> {
     await super.up(opts);
-    if (env('MONITORING', false)) {
+    if (env.or_false(MONITORING)) {
       this.app = express();
       this.setupServer();
       this.startServer();
@@ -48,7 +48,7 @@ export class MyQueueTransport extends QueueTransport implements TransportInterfa
   }
 
   async startServer() {
-    const port = env('PORT', 8080);
+    const port = env.or_int('PORT', 8080);
     this.server = this.app.listen(port, () => console.info(`Listening on port ${port}`));
   }
 }

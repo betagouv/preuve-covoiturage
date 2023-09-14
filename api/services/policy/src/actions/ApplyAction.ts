@@ -36,7 +36,7 @@ export class ApplyAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (!!env('APP_DISABLE_POLICY_PROCESSING', false)) {
+    if (env.or_false(APP_DISABLE_POLICY_PROCESSING)) {
       return console.warn('[campaign:apply] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING');
     }
 

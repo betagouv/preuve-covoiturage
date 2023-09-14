@@ -25,7 +25,7 @@ export function rateLimiter(opts: Partial<RateLimiterOptions> = {}, prefix = 'rl
     ...opts,
   };
 
-  const factor = parseFloat(String(env('APP_RATE_LIMIT_MAX_FACTOR', 1)));
+  const factor = parseFloat(env.or_fail('APP_RATE_LIMIT_MAX_FACTOR', '1'));
   options.max = Number(options.max) * (typeof factor === 'number' && !isNaN(factor) ? factor : 1);
 
   return rateLimit(options);

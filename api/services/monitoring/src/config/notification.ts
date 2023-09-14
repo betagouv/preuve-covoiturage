@@ -6,15 +6,15 @@ export const fromDays = 7;
 
 export const mail = {
   smtp: {
-    url: env('APP_MAIL_SMTP_URL'),
+    url: env.or_fail('APP_MAIL_SMTP_URL'),
   },
-  debug: env('APP_MAIL_DEBUG_MODE', false),
+  debug: env.or_false(APP_MAIL_DEBUG_MODE),
   from: {
-    name: env('APP_MAIL_FROM_NAME', ''),
-    email: env('APP_MAIL_FROM_EMAIL', ''),
+    name: env.or_fail('APP_MAIL_FROM_NAME', ''),
+    email: env.or_fail('APP_MAIL_FROM_EMAIL', ''),
   },
   to: {
-    name: env('APP_MAIL_DEBUG_NAME', ''),
-    email: env('APP_MAIL_DEBUG_EMAIL', ''),
+    name: env.or_fail('APP_MAIL_DEBUG_NAME', ''),
+    email: env.or_fail('APP_MAIL_DEBUG_EMAIL', ''),
   },
 };

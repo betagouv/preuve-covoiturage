@@ -31,8 +31,8 @@ export class S3StorageProvider implements ProviderInterface {
   constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {
-    this.endpoint = env('AWS_ENDPOINT') as string;
-    this.region = env('AWS_REGION') as string;
+    this.endpoint = env.or_fail('AWS_ENDPOINT');
+    this.region = env.or_fail('AWS_REGION');
 
     // Create s3 instances for all buckets in the BucketName list
     this.s3Instances.set(BucketName.APDF, this.createInstance(BucketName.APDF));

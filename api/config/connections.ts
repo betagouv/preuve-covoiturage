@@ -25,9 +25,9 @@ function tlsSetup(key: string, baseEnvKey: string): { [k: string]: string } {
 
   let cert: string;
   if (asVarEnvName in process.env) {
-    cert = env(asVarEnvName).toString().replace(/\\n/g, '\n');
+    cert = env.or_fail(asVarEnvName).replace(/\\n/g, '\n');
   } else if (asPathEnvName in process.env) {
-    cert = readFileSync(env(asPathEnvName) as string, 'utf-8');
+    cert = readFileSync(env.or_fail(asPathEnvName), 'utf-8');
   } else {
     return {};
   }
@@ -42,7 +42,7 @@ const redisTls = {
 
 export const redis = {
   ...(Object.keys(redisTls).length ? { tls: redisTls } : {}),
-  ...unnestRedisConnectionString(env('APP_REDIS_URL') as string),
+  ...unnestRedisConnectionString(env.or_fail('APP_REDIS_URL')),
 };
 
 const postgresTls = {
@@ -52,8 +52,8 @@ const postgresTls = {
 };
 
 export const postgres = {
-  connectionString: env('APP_POSTGRES_URL') as string,
+  connectionString: env.or_fail('APP_POSTGRES_URL'),
   // FIXME: add host is a workarround to fix this issue
   // https://github.com/brianc/node-postgres/issues/2263
-  ...(Object.keys(postgresTls).length ? { ssl: { ...postgresTls, host: env('APP_POSTGRES_HOST') } } : {}),
+  ...(Object.keys(postgresTls).length ? { ssl: { ...postgresTls, host: env.or_fail('APP_POSTGRES_HOST') } } : {}),
 };

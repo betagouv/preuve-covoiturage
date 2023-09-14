@@ -21,7 +21,7 @@ export class ImportCeeAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if (!!env('APP_DISABLE_CEE_IMPORT', false)) {
+    if (env.or_false(APP_DISABLE_CEE_IMPORT)) {
       throw new ServiceDisabledError();
     }
 
