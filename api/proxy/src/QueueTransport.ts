@@ -28,7 +28,7 @@ export class MyQueueTransport extends QueueTransport implements TransportInterfa
 
   async up(opts: string[] = []): Promise<void> {
     await super.up(opts);
-    if (env.or_false(MONITORING)) {
+    if (env.or_false('MONITORING')) {
       this.app = express();
       this.setupServer();
       this.startServer();

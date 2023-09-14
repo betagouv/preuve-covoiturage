@@ -35,7 +35,7 @@ export class QueueExtension implements RegisterHookInterface, InitHookInterface 
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    if (env.or_false(APP_WORKER)) {
+    if (env.or_false('APP_WORKER')) {
       this.isProcessable(serviceContainer);
     }
   }

@@ -33,7 +33,7 @@ export class FinalizeAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (env.or_false(APP_DISABLE_POLICY_PROCESSING)) {
+    if (env.or_false('APP_DISABLE_POLICY_PROCESSING')) {
       return console.warn('[campaign:finalize] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING');
     }
 

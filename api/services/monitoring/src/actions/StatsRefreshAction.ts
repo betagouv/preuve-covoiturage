@@ -18,7 +18,7 @@ export class StatsRefreshAction extends AbstractAction {
   }
 
   public async handle({ schema }: ParamsInterface): Promise<ResultInterface> {
-    if (env.or_false(APP_DISABLE_STATS_REFRESH)) {
+    if (env.or_false('APP_DISABLE_STATS_REFRESH')) {
       return;
     }
     const cn = await this.pg.getClient().connect();

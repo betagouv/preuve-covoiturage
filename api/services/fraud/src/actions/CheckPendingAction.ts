@@ -38,7 +38,7 @@ export class CheckPendingAction extends Action {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (env.or_false(APP_DISABLE_FRAUDCHECK)) {
+    if (env.or_false('APP_DISABLE_FRAUDCHECK')) {
       return;
     }
 

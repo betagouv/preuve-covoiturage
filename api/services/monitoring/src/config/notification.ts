@@ -8,7 +8,7 @@ export const mail = {
   smtp: {
     url: env.or_fail('APP_MAIL_SMTP_URL'),
   },
-  debug: env.or_false(APP_MAIL_DEBUG_MODE),
+  debug: env.or_false('APP_MAIL_DEBUG_MODE'),
   from: {
     name: env.or_fail('APP_MAIL_FROM_NAME', ''),
     email: env.or_fail('APP_MAIL_FROM_EMAIL', ''),
