@@ -58,10 +58,10 @@ export default function Navigation() {
           menuLinks: [
             {
               linkProps: {
-                href: '/collectivites/registre-preuve-covoiturage-tiers-de-confiance',
+                href: '/collectivites/planification-et-evaluation',
               },
-              text: 'Le registre de preuve de covoiturage, un tiers de confiance',
-              isActive: pathname === '/collectivites/registre-preuve-covoiturage-tiers-de-confiance',
+              text: 'Planification et évaluation',
+              isActive: pathname === '/collectivites/planification-et-evaluation',
             }
           ],
           text: 'Collectivités',

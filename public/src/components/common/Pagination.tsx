@@ -1,5 +1,6 @@
 import { PaginationProps } from "@/interfaces/common/componentsInterface";
 import { fr } from "@codegouvfr/react-dsfr";
+import Link from 'next/link';
 
 export default function Pagination(props:PaginationProps) {
   
@@ -77,9 +78,9 @@ export default function Pagination(props:PaginationProps) {
               </p>
             }
             {defaultPage != props.count &&
-              <a className={fr.cx('fr-pagination__link', 'fr-pagination__link--next', 'fr-pagination__link--lg-label')} href={`${props.href}/page/${defaultPage+1}`}>
+              <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--next', 'fr-pagination__link--lg-label')} href={`${props.href}/page/${defaultPage+1}`}>
                 Page suivante
-              </a>
+              </Link>
             }
           </li>
           <li>
