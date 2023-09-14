@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private titleService: Title
+    private titleService: Title,
   ) {}
   ngOnInit() {
     this.router.events
@@ -24,12 +24,8 @@ export class AppComponent implements OnInit {
           return route;
         }),
         filter((route) => route.outlet === 'primary'),
-        mergeMap((route) => route.data)
+        mergeMap((route) => route.data),
       )
-      .subscribe((event) =>
-        this.titleService.setTitle(
-          `${event['title']} - Attestation sur l'honneur de covoiturage`
-        )
-      );
+      .subscribe((event) => this.titleService.setTitle(`${event['title']} - Attestation sur l'honneur de covoiturage`));
   }
 }
