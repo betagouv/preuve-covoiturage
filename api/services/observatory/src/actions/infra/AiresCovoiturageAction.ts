@@ -3,7 +3,11 @@ import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { alias } from '../../shared/observatory/infra/airesCovoiturage.schema';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../../shared/observatory/infra/airesCovoiturage.contract';
+import {
+  handlerConfig,
+  ResultInterface,
+  ParamsInterface,
+} from '../../shared/observatory/infra/airesCovoiturage.contract';
 import { InfraRepositoryInterfaceResolver } from '../../interfaces/InfraRepositoryProviderInterface';
 
 @handler({

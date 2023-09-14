@@ -3,10 +3,7 @@ import {
   ResultInterface as AiresCovoiturageResultInterface,
 } from '../shared/observatory/infra/airesCovoiturage.contract';
 
-export {
-  AiresCovoiturageParamsInterface,
-  AiresCovoiturageResultInterface,
-};
+export { AiresCovoiturageParamsInterface, AiresCovoiturageResultInterface };
 
 export interface InfraRepositoryInterface {
   getAiresCovoiturage(params: AiresCovoiturageParamsInterface): Promise<AiresCovoiturageResultInterface>;

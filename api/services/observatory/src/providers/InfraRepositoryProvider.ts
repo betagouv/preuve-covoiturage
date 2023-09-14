@@ -11,7 +11,6 @@ import { checkTerritoryParam } from '../helpers/checkParams';
 @provider({
   identifier: InfraRepositoryInterfaceResolver,
 })
-
 export class InfraRepositoryProvider implements InfraRepositoryInterface {
   private readonly table = 'observatory.aires_covoiturage';
   private readonly perim_table = 'geo.perimeters';
@@ -35,8 +34,9 @@ export class InfraRepositoryProvider implements InfraRepositoryInterface {
       ST_AsGeoJSON(geom,6)::json as geom 
       FROM ${this.table}
       WHERE ouvert = true
-      ${ checkTerritoryParam(params.type) && params.code ?
-        `AND insee IN (
+      ${
+        checkTerritoryParam(params.type) && params.code
+          ? `AND insee IN (
           SELECT arr 
           FROM ${this.perim_table}
           WHERE year = geo.get_latest_millesime() 

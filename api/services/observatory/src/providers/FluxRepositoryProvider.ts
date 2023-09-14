@@ -123,10 +123,14 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
         WHERE year = $1
         AND month = $2
         AND (territory_1 IN (
-            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
+            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+              this.perim_table
+            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
             WHERE ${checkTerritoryParam(params.type)} = $3) 
           OR territory_2 IN (
-            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
+            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+              this.perim_table
+            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
             WHERE ${checkTerritoryParam(params.type)} = $3)
         ) 
         ORDER BY journeys DESC
