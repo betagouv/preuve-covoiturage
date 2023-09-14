@@ -12,21 +12,15 @@ import { format } from '../shared/helpers/date.helper';
   providedIn: 'root',
 })
 export class PdfPublicGeneratorService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  generate(
-    data: ProfilePublicFormInterface,
-    obs?: { onComplete?: Function; onError?: Function }
-  ) {
+  generate(data: ProfilePublicFormInterface, obs?: { onComplete?: Function; onError?: Function }) {
     const observer: Observer<ArrayBuffer> = {
       next: (pdfBytes: ArrayBuffer) => {
-        saveAs(
-          new Blob([pdfBytes], { type: 'application/pdf' }),
-          certFilename(data.name)
-        );
+        saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), certFilename(data.name));
       },
-      error: () => { },
-      complete: () => { },
+      error: () => {},
+      complete: () => {},
     };
 
     if (obs?.onError) observer['error'] = obs.onError as (err: any) => void;
@@ -38,24 +32,25 @@ export class PdfPublicGeneratorService {
         catchError(this.handleError),
 
         // convert the PDF load document to an observable
-        switchMap((pdfBuffer: ArrayBuffer) =>
-          from(PDFDocument.load(pdfBuffer))
-        ),
+        switchMap((pdfBuffer: ArrayBuffer) => from(PDFDocument.load(pdfBuffer))),
 
         // embed the font (Promise) and draw all text boxes
         // doc.save returns a Promise with a ArrayBuffer
         switchMap(async (doc: PDFDocument) => {
           const font = await doc.embedFont(StandardFonts.HelveticaBold);
           const page = doc.getPage(0);
-          const draw = ((p, f) => (text: string, x: number, y: number, size = 11) => {
-            p.drawText(text, {
-              x,
-              y,
-              size,
-              font: f,
-              color: rgb(0, 0, 0),
-            });
-          })(page, font);
+          const draw = (
+            (p, f) =>
+            (text: string, x: number, y: number, size = 11) => {
+              p.drawText(text, {
+                x,
+                y,
+                size,
+                font: f,
+                color: rgb(0, 0, 0),
+              });
+            }
+          )(page, font);
 
           draw(data.name, 420, 494);
           draw(data.days.toString(), 457, 350);
@@ -63,11 +58,7 @@ export class PdfPublicGeneratorService {
           draw(data.location, 380, 245);
 
           const now = new Date();
-          draw(
-            `${format(now.getDate())}/${format(now.getMonth() + 1)}/${now.getFullYear()}`,
-            380,
-            232
-          );
+          draw(`${format(now.getDate())}/${format(now.getMonth() + 1)}/${now.getFullYear()}`, 380, 232);
 
           draw(data.name, 79, 482, 10);
           page.drawText(data.ministry, {
@@ -126,13 +117,13 @@ export class PdfPublicGeneratorService {
           doc.setAuthor('Ministère de la Transition écologique');
 
           return doc.save();
-        })
+        }),
       )
       .subscribe(observer);
   }
 
   private handleError(err: any): ObservableInput<any> {
-    console.log(err);
+    console.error(err);
     return err;
   }
 }
