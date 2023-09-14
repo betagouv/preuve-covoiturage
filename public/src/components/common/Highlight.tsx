@@ -11,9 +11,9 @@ export default function AppHighlight(props: HighlightProps) {
       {
         props.img &&
         <div className={fr.cx('fr-col-md-2')}>
-          <figure className={fr.cx('fr-content-media')} role="group">
+          <figure className={fr.cx('fr-content-media')} style={{"margin":"0"}} role="group">
             <div className={fr.cx('fr-content-media__img')}>
-              <Image className={fr.cx('fr-responsive-img','fr-responsive-img--16x9')} src={props.img} alt={props.alt ? props.alt : ''} width={1200} height={800} />
+              <Image className={fr.cx('fr-responsive-img','fr-responsive-img--4x3')} src={props.img} alt={props.alt ? props.alt : ''} width={1200} height={800} />
             </div>
           </figure>
         </div>

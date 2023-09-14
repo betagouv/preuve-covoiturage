@@ -16,12 +16,15 @@ export async function generateStaticParams() {
     meta:'filter_count',
   });
   const nbPage = meta && meta.filter_count ? Math.round(meta.filter_count/cmsRessourcesByPage) : 1
-  return Array.from({ length: nbPage }, (_, v) => ({
-    id: v + 1,
-  }));
+  return Array.from({ length: nbPage }, (_, v) => {
+    const id = v + 1;
+    return {
+      id: id.toString(),
+    }
+  });
 }
 
-export default async function RessourcePage({ params }: { params: { id: number }}) {
+export default async function RessourcePage({ params }: { params: { id: string }}) {
 
   const { data, meta } = await cmsInstance.items('Ressources').readByQuery({
     fields:'*,img.*,file.*',
@@ -32,6 +35,7 @@ export default async function RessourcePage({ params }: { params: { id: number }
       },
     },
     sort:['-date_created'] as never[],
+    page:Number(params.id),
     meta:'filter_count',
   });
 
@@ -63,7 +67,7 @@ export default async function RessourcePage({ params }: { params: { id: number }
       </div>
       <Pagination
         count={nbPage}
-        defaultPage={params.id}
+        defaultPage={Number(params.id)}
         href={`/ressources`}
       />    
     </article>

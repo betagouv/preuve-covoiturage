@@ -81,6 +81,15 @@ export default async function ProfilSinglePage({ params }: { params: { slug: str
           buttons={hero.item.buttons} 
         />
       }
+      {data && data[0].content && 
+        <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
+          <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-text--lg')}>
+              <MDXRemote source={data[0].content} />
+            </div>
+          </div>
+        </div>
+      }
       {blocks && blocks.map((b:any, i:number) =>
         <Block 
           key={i}
@@ -97,32 +106,38 @@ export default async function ProfilSinglePage({ params }: { params: { slug: str
           <ListHighlight highlights={l.item.highlights.map((h:any) => h.Highlight_id)} />
         </div>
       )}
-      <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
-        <div className={fr.cx('fr-col')}>
-          <div className={fr.cx('fr-text--lg')}>
-            <MDXRemote source={data ? data[0].content : ''} />
+      {ressources.length >=1 && 
+        <>
+          <SectionTitle title='Ressources' />
+          <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+            {ressources.map((r:any, i:number) =>  
+              <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
+                <RessourceCard 
+                  title={r.item.title}
+                  content={shorten(r.item.content, 100)}
+                  date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
+                  link={r.item.link}
+                  file={`${cmsHost}/assets/${r.item.file}`}
+                  img={`${cmsHost}/assets/${r.item.img}`}
+                  img_legend={r.item.img_legend}                
+                />
+              </div>
+            )}
+          </div>
+        </>
+      }
+      {data && data[0].complement &&
+        <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
+          <SectionTitle title='Ressources complémentaires' />
+          <div className={fr.cx('fr-grid-row')}>
+            <div className={fr.cx('fr-col')}>
+              <div className={fr.cx('fr-text--lg')}>
+                <MDXRemote source={data ? data[0].complement : ''} />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      {ressources.length >=1 && 
-      <>
-        <SectionTitle title='Ressources' />
-        <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-          {ressources.map((r:any, i:number) =>  
-            <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
-              <RessourceCard 
-                title={r.item.title}
-                content={shorten(r.item.content, 100)}
-                date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
-                link={r.item.link}
-                file={`${cmsHost}/assets/${r.item.file}`}
-                img={`${cmsHost}/assets/${r.item.img}`}
-                img_legend={r.item.img_legend}                
-              />
-            </div>
-          )}
-        </div>
-      </>}
+      }
       <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
         <div className={fr.cx('fr-col')}>
           <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">

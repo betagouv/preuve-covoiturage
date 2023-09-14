@@ -63,3 +63,34 @@ export interface SearchParamsInterface {
   map?: number;
   graph?: number;
 }
+
+export interface IndicatorsRowProps {
+  indicators?: IndicatorProps[];
+  analyses?: AnalyseProps[];
+  maps?:SingleMapProps[];
+  graphs?:SingleMapProps[];
+};
+
+export interface IndicatorProps {
+  value: string,
+  unit: string,
+  text: string,
+  info?: string,
+  icon?: string,
+}
+
+export interface AnalyseProps {
+  title?: string;
+  content: string;
+  link?:{
+    title: string;
+    url: string;
+  }
+}
+
+export interface SingleMapProps {
+  title:string;
+  params: SearchParamsInterface;
+}
+
+export type SingleGraphProps = SingleMapProps;

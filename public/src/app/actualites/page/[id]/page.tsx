@@ -17,9 +17,12 @@ export async function generateStaticParams() {
     meta:'filter_count',
   });
   const nbPage = meta && meta.filter_count ? Math.round(meta.filter_count/cmsActusByPage) : 1
-  return Array.from({ length: nbPage }, (_, v) => ({
-    id: v + 1,
-  }));
+  return Array.from({ length: nbPage }, (_, v) => {
+    const id = v + 1;
+    return {
+      id: id.toString(),
+    }
+  });
 }
 
 export default async function ActuPage({ params }: { params: { id: number }}) {

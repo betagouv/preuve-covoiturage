@@ -1,5 +1,7 @@
+'use client'
 import { ButtonsGroup } from '@codegouvfr/react-dsfr/ButtonsGroup';
 import { fr } from '@codegouvfr/react-dsfr';
+import { useColors } from "@codegouvfr/react-dsfr/useColors";
 import { ButtonProps } from '@codegouvfr/react-dsfr/Button';
 import { CSSProperties } from 'react';
 import Image from 'next/image';
@@ -7,10 +9,14 @@ import { HeroProps } from '@/interfaces/common/componentsInterface';
 import { cmsHost } from '@/helpers/cms';
 
 export default function Hero(props:HeroProps) {
+  const theme = useColors();
   return (
     <div id='hero' 
       className={fr.cx('fr-grid-row', 'fr-p-2w', 'fr-p-md-10w','fr-mt-5w')}
-      style={props.backgroundColor ? {"backgroundColor": props.backgroundColor} as CSSProperties : undefined}
+      style={props.backgroundColor && !theme.isDark 
+        ? {"backgroundColor": props.backgroundColor} as CSSProperties 
+        : theme.isDark ? {"backgroundColor": "#272747"} as CSSProperties : undefined
+      }
     >
       <div className={fr.cx('fr-col-12', 'fr-col-md-9')}>
         <p className={fr.cx('fr-h1','fr-mb-2v')}>{props.title}</p>

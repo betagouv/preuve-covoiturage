@@ -1,5 +1,6 @@
 import { PaginationProps } from "@/interfaces/common/componentsInterface";
 import { fr } from "@codegouvfr/react-dsfr";
+import Link from 'next/link';
 
 export default function Pagination(props:PaginationProps) {
   
@@ -29,31 +30,31 @@ export default function Pagination(props:PaginationProps) {
 
   return(
     <div className={fr.cx('fr-grid-row', 'fr-grid-row--center', 'fr-mt-5w')}>
-      <div className={fr.cx('fr-col-5')}>
+      <div className={fr.cx('fr-col-6')}>
       <nav role="navigation" className={fr.cx('fr-pagination')} aria-label="Pagination">
         <ul className={fr.cx('fr-pagination__list')}>
           <li>
-            {defaultPage === 1 && 
+            {defaultPage == 1 && 
               <p className={fr.cx('fr-pagination__link', 'fr-pagination__link--first')} >
                 Première page
               </p>
             }
-            {defaultPage !== 1 &&
-              <a className={fr.cx('fr-pagination__link', 'fr-pagination__link--first')} href={`${props.href}`}>
+            {defaultPage > 1 &&
+              <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--first')} href={`${props.href}`}>
               Première page
-            </a>
+            </Link>
             }
           </li>
           <li>
-            {defaultPage === 1 && 
+            {defaultPage == 1 && 
               <p className={fr.cx('fr-pagination__link', 'fr-pagination__link--prev', 'fr-pagination__link--lg-label')} >
                 Page précédente
               </p>
             }
-            {defaultPage !== 1 &&
-              <a className={fr.cx('fr-pagination__link', 'fr-pagination__link--prev', 'fr-pagination__link--lg-label')} href={`${props.href}/page/${defaultPage-1}`}>
-              Page précédente
-            </a>
+            {defaultPage > 1 &&
+              <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--prev', 'fr-pagination__link--lg-label')} href={`${props.href}/page/${defaultPage-1}`}>
+                Page précédente
+              </Link>
             }
           </li>
           {pages.map(p =>
@@ -64,34 +65,34 @@ export default function Pagination(props:PaginationProps) {
                 </p>
               }
               {!p.active &&
-                <a className={fr.cx('fr-pagination__link')} href={`${props.href}page/${p.number}`}>
+                <Link className={fr.cx('fr-pagination__link')} href={`${props.href}/page/${p.number}`}>
                   {p.number}
-                </a>
+                </Link>
               }
             </li>   
           )}
           <li>
-            {defaultPage === props.count && 
+            {defaultPage == props.count && 
               <p className={fr.cx('fr-pagination__link', 'fr-pagination__link--next', 'fr-pagination__link--lg-label')} >
                 Page suivante
               </p>
             }
-            {defaultPage !== props.count &&
-              <a className={fr.cx('fr-pagination__link', 'fr-pagination__link--next', 'fr-pagination__link--lg-label')} href={`${props.href}page/${defaultPage+1}`}>
+            {defaultPage != props.count &&
+              <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--next', 'fr-pagination__link--lg-label')} href={`${props.href}/page/${defaultPage+1}`}>
                 Page suivante
-              </a>
+              </Link>
             }
           </li>
           <li>
-            {defaultPage === props.count && 
+            {defaultPage == props.count && 
               <p className={fr.cx('fr-pagination__link', 'fr-pagination__link--last')} >
                 Dernière page
               </p>
             }
-            {defaultPage !== props.count &&
-              <a className={fr.cx('fr-pagination__link', 'fr-pagination__link--last')} href={`${props.href}/page/${props.count}`}>
+            {defaultPage != props.count &&
+              <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--last')} href={`${props.href}/page/${props.count}`}>
                 Dernière page
-              </a>
+              </Link>
             }
           </li>
         </ul>

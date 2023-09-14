@@ -23,6 +23,13 @@ export default function Navigation() {
             },
             {
               linkProps: {
+                href: '/observatoire/comprendre-covoiturage',
+              },
+              text: 'Comprendre le covoiturage courte distance',
+              isActive: pathname === '/observatoire/comprendre-covoiturage',
+            },
+            {
+              linkProps: {
                 href: '/observatoire/territoire',
               },
               text: 'Observer un territoire',
@@ -30,25 +37,19 @@ export default function Navigation() {
             },
             {
               linkProps: {
-                href: '/observatoire/recensement-actions',
+                href: '/observatoire/evaluation-plan-covoiturage',
               },
-              text: 'Recensement des actions pour développer le covoiturage',
-              isActive: pathname === '/observatoire/recensement-actions',
+              text: 'Evaluation du plan national covoiturage',
+              isActive: pathname === '/observatoire/evaluation-plan-covoiturage',
             },
-            {
+            /*{
               linkProps: {
                 href: '/observatoire/impact-actions',
               },
               text: 'Impact des actions pour développer le covoiturage',
               isActive: pathname === '/observatoire/impact-actions',
             },
-            {
-              linkProps: {
-                href: '/observatoire/plan-covoiturage',
-              },
-              text: 'Evaluation du plan national covoiturage',
-              isActive: pathname === '/observatoire/plan-covoiturage',
-            },
+            */
           ],
           text: 'Observatoire',
           isActive: pathname.startsWith('/observatoire'),
@@ -57,10 +58,10 @@ export default function Navigation() {
           menuLinks: [
             {
               linkProps: {
-                href: '/collectivites/registre-preuve-covoiturage-tiers-de-confiance',
+                href: '/collectivites/planification-et-evaluation',
               },
-              text: 'Le registre de preuve de covoiturage, un tiers de confiance',
-              isActive: pathname === '/collectivites/registre-preuve-covoiturage-tiers-de-confiance',
+              text: 'Planification et évaluation',
+              isActive: pathname === '/collectivites/planification-et-evaluation',
             }
           ],
           text: 'Collectivités',
@@ -102,11 +103,6 @@ export default function Navigation() {
           linkProps: { href: '/ressources', target: '_self' },
           text: 'Ressources',
           isActive: pathname === '/ressources',
-        },
-        {
-          linkProps: { href: '/documentation', target: '_self' },
-          text: 'Documentation',
-          isActive: pathname === '/documentation',
         },
       ]}
     />

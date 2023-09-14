@@ -19,15 +19,6 @@ export function AppHeader() {
       }}
       serviceTitle='COVOITURAGE.ecologie.gouv.fr'
       serviceTagline='Développer le covoiturage courte distance'
-      quickAccessItems={[
-        {
-          iconId: 'fr-icon-account-line',
-          linkProps: {
-            href: 'https://app.covoiturage.beta.gouv.fr',
-          },
-          text: 'Connexion',
-        },
-      ]}
       navigation={<Navigation />}
     />
   );

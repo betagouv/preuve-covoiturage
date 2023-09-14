@@ -6,6 +6,16 @@ import { ButtonProps } from "@codegouvfr/react-dsfr/Button";
 export default function RessourceCard(props: RessourceCardProps) {
   const buttonsGroup = () => {
     const buttons = [];
+    if (props.file) {
+      buttons.push({
+        children: 'Télécharger la ressource',
+        iconId: "fr-icon-download-fill",
+        iconPosition: "right",
+        linkProps: {
+          href: props.file,
+        },
+      })
+    }
     if (props.link) {
       buttons.push({
         children: 'En savoir plus',
@@ -14,16 +24,6 @@ export default function RessourceCard(props: RessourceCardProps) {
         priority:'secondary',
         linkProps: {
           href: props.link,
-        },
-      })
-    }
-    if (props.file) {
-      buttons.push({
-        children: 'Télécharger la ressource',
-        iconId: "fr-icon-download-fill",
-        iconPosition: "right",
-        linkProps: {
-          href: props.file,
         },
       })
     }

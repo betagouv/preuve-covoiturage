@@ -10,10 +10,29 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import IndicatorsRow from '../../../components/observatoire/indicators/IndicatorsRow';
 
-export default async function ObservatoireSinglePage() {
+export async function generateStaticParams() {
+  const { data } = await cmsInstance.items('Pages').readByQuery({
+    fields:'slug',
+    filter:{
+      status: {
+        '_eq': 'published',
+      },
+      tag:{
+        slug:{
+          '_eq':'observatoire',
+        }
+      }
+    }
+  });
+  return data ? data.map((post:any) => ({
+    slug: post.slug,
+  })) : []
+}
+
+export default async function ObservatoireSinglePage({ params }: { params: { slug: string }}) {
   const { data } = await cmsInstance.items('Pages').readByQuery({
     filter: {
-      slug: { _eq: 'covoiturage-courte-distance' },
+      slug: { _eq: params.slug },
     },
     fields: [
       '*',
@@ -51,11 +70,13 @@ export default async function ObservatoireSinglePage() {
       {
         rows && rows.map((r:any, i:number) =>
         <>
-          <SectionTitle title={r.item.title} />
+          {r.item.title && <SectionTitle title={r.item.title} />}
           <IndicatorsRow 
             key={i}
             indicators={r.item.composition.filter((i:any) => i.collection === 'indicator').map((i:any) => i.item)} 
             analyses={r.item.composition.filter((i:any) => i.collection === 'analyse').map((i:any) => i.item)}
+            maps={r.item.composition.filter((i:any) => i.collection === 'map').map((i:any) => i.item)}
+            graphs={r.item.composition.filter((i:any) => i.collection === 'graph').map((i:any) => i.item)}
           />
         </>
       )}
