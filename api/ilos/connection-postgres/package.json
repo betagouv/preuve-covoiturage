@@ -18,7 +18,7 @@
   "dependencies": {
     "@ilos/common": "^0.4.1",
     "@ilos/connection-manager": "^0.4.1",
-    "pg": "^8.7.1",
-    "pg-cursor": "^2.7.1"
+    "pg": "^8.11.3",
+    "pg-cursor": "^2.10.3"
   }
 }
