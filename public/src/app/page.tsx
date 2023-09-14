@@ -62,6 +62,15 @@ export default async function Home() {
           buttons={hero.item.buttons} 
         />
       }
+      {data && data[0].content && 
+        <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
+          <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-text--lg')}>
+              <MDXRemote source={data[0].content} />
+            </div>
+          </div>
+        </div>
+      }
       {blocks && blocks.map((b:any, i:number) =>
         <Block 
           key={i}

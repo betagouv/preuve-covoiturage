@@ -104,11 +104,6 @@ export default function Navigation() {
           text: 'Ressources',
           isActive: pathname === '/ressources',
         },
-        {
-          linkProps: { href: '/documentation', target: '_self' },
-          text: 'Documentation',
-          isActive: pathname === '/documentation',
-        },
       ]}
     />
   );
