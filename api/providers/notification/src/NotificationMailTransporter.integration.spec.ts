@@ -26,7 +26,7 @@ test.before(async (t) => {
         smtp: {
           host: env.or_fail('INTEGRATION_MAILER_SMTP_HOST', 'mailer'),
           port: env.or_int('INTEGRATION_MAILER_SMTP_PORT', 1025),
-          secure: env.or_fail('INTEGRATION_MAILER_SMTP_SECURE', false),
+          secure: env.or_false('INTEGRATION_MAILER_SMTP_SECURE'),
           auth: {
             user: env.or_fail('INTEGRATION_MAILER_SMTP_USER', 'test@example.com'),
             pass: env.or_fail('INTEGRATION_MAILER_SMTP_PASS', 'password'),
