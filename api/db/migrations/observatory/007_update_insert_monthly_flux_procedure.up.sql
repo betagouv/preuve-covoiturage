@@ -65,7 +65,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
                       GROUP BY pi.policy_id
                     ), incentive AS (
                     SELECT data.policy_id,
-                        ROW(cc.siret, data.amount::integer, pp.unit::character varying, data.policy_id, pp.name, ''incentive''::character varying)::trip.incentive AS value,
+                        ROW(cc.siret, data.amount::integer, pp.unit::character varying, data.policy_id, pp.name, ''incentive''::character varying) AS value,
                         data.amount,
                             CASE
                                 WHEN pp.unit = ''point''::policy.policy_unit_enum THEN false
@@ -89,7 +89,7 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
                       GROUP BY pi.policy_id
                     ), incentive AS (
                     SELECT data.policy_id,
-                        ROW(cc.siret, data.amount::integer, pp.unit::character varying, data.policy_id, pp.name, ''incentive''::character varying)::trip.incentive AS value,
+                        ROW(cc.siret, data.amount::integer, pp.unit::character varying, data.policy_id, pp.name, ''incentive''::character varying) AS value,
                         data.amount,
                             CASE
                                 WHEN pp.unit = ''point''::policy.policy_unit_enum THEN false
@@ -105,13 +105,13 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_flux(year int, month int)
                 sum(incentive.amount) FILTER (WHERE incentive.financial IS TRUE) AS incentive_financial_sum,
                 array_agg(incentive.policy_id) AS policy_id
               FROM incentive) as e,
-        LATERAL ( SELECT array_agg(json_array_elements.value::trip.incentive) AS incentive
+        LATERAL ( SELECT array_agg(json_array_elements.value) AS incentive
               FROM json_array_elements(a.meta -> ''payments''::text) json_array_elements(value)) as f,
-        LATERAL ( SELECT array_agg(json_array_elements.value::trip.incentive) AS incentive
+        LATERAL ( SELECT array_agg(json_array_elements.value) AS incentive
               FROM json_array_elements(c.meta -> ''payments''::text) json_array_elements(value)) as g
         WHERE a.is_driver = false
         AND a.status = ''ok''
-        AND date_part(''year'', a.datetime::timestamptz AT TIME ZONE ''UTC'') = geo.get_latest_millesime_or('|| $1 ||'::smallint)
+        AND date_part(''year'', a.datetime::timestamptz AT TIME ZONE ''UTC'') = '|| $1 ||'
         AND date_part(''month'', a.datetime::timestamptz AT TIME ZONE ''UTC'') = '|| $2 ||'
       ),
       flux as ( 
