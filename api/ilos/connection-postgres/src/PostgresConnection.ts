@@ -1,8 +1,9 @@
 import { Pool, PoolConfig } from 'pg';
+import Cursor, { CursorQueryConfig } from 'pg-cursor';
 import { URL } from 'url';
 
-import { env } from '@ilos/core';
 import { ConnectionInterface } from '@ilos/common';
+import { env } from '@ilos/core';
 
 export class PostgresConnection implements ConnectionInterface<Pool> {
   private readonly pgUrl: string;
@@ -32,6 +33,23 @@ export class PostgresConnection implements ConnectionInterface<Pool> {
 
   getClient(): Pool {
     return this.pool;
+  }
+
+  async getCursor<T = any>(
+    text: string,
+    values: any[],
+    config: CursorQueryConfig = undefined,
+  ): Promise<{ read: Cursor['read']; release: () => Promise<void> }> {
+    const client = await this.pool.connect();
+    const cursor = client.query<Cursor<T>>(new Cursor(text, values, config));
+
+    return {
+      read: cursor.read.bind(cursor),
+      async release() {
+        await cursor.close();
+        client.release();
+      },
+    };
   }
 
   // https://www.postgresql.org/docs/current/libpq-ssl.html

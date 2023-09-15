@@ -301,34 +301,13 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   ): Promise<PgCursorHandler<ExportTripInterface>> {
     const where = await this.buildWhereClauses(params);
     const queryText = this.numberPlaceholders(`
-      SELECT
-        ${this.getFields(type).join(', ')}
+      SELECT ${this.getFields(type).join(', ')}
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
     `);
 
-    const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(queryText, where.values));
-
-    // Manually promisify the Cursor.read function as node:util.promisify
-    // doesn't do the job ;)
-    const read = async <T = ExportTripInterface<Date>[]>(rowCount: number) => {
-      return new Promise<T>((resolve, reject) => {
-        return cursorCb.read(rowCount, (err: Error, args?: T) => {
-          if (err) return reject(err);
-          resolve(args);
-        });
-      });
-    };
-
-    return {
-      read,
-      release: async () => {
-        await cursorCb.close();
-        db.release();
-      },
-    };
+    return await this.connection.getCursor(queryText, where.values);
   }
 
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {
