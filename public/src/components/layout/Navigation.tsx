@@ -55,15 +55,106 @@ export default function Navigation() {
           isActive: pathname.startsWith('/observatoire'),
         },
         {
-          menuLinks: [
-            {
-              linkProps: {
-                href: '/collectivites/planification-et-evaluation',
+          megaMenu: {
+            categories: [
+              {
+                categoryMainLink: {
+                  linkProps: {
+                    href: '#'
+                  },
+                  text: 'Préparer vos actions'
+                },
+                links: [
+                  {
+                    linkProps: {
+                      href: '/collectivites/planification-et-evaluation',
+                    },
+                    text: 'Planification et évaluation',
+                    isActive: pathname === '/collectivites/planification-et-evaluation',
+                  },
+                ]
               },
-              text: 'Planification et évaluation',
-              isActive: pathname === '/collectivites/planification-et-evaluation',
+              {
+                categoryMainLink: {
+                  linkProps: {
+                    href: '#',
+                  },
+                  text: 'Infrastructures et services de covoiturage'
+                },
+                links: [
+                  {
+                    linkProps: {
+                      href: '/collectivites/aires-covoiturage',
+                    },
+                    text: 'Aires',
+                    isActive: pathname === '/collectivites/aires-covoiturage',
+                  },
+                  {
+                    linkProps: {
+                      href: '/collectivites/ligne-de-covoiturage',
+                    },
+                    text: 'Lignes',
+                    isActive: pathname === '/collectivites/ligne-de-covoiturage',
+                  },
+                  {
+                    linkProps: {
+                      href: '/collectivites/auto-stop-organise',
+                    },
+                    text: 'Auto-stop organisé',
+                    isActive: pathname === '/collectivites/auto-stop-organise',
+                  },
+                  {
+                    linkProps: {
+                      href: '/collectivites/voies-reservees',
+                    },
+                    text: 'Voies réservées',
+                    isActive: pathname === '/collectivites/voies-reservees',
+                  },
+                  {
+                    linkProps: {
+                      href: '/collectivites/plateformes-numeriques',
+                    },
+                    text: 'Covoiturage intermédié',
+                    isActive: pathname === '/collectivites/plateformes-numeriques',
+                  },
+                ]
+              },
+              {
+                categoryMainLink: {
+                  linkProps: {
+                    href: '#'
+                  },
+                  text: 'Actions'
+                },
+                links: [
+                  {
+                    linkProps: {
+                      href: '/collectivites/campagnes-incitation-financieres',
+                    },
+                    text: 'Campagnes d\'incitation financières',
+                    isActive: pathname === '/collectivites/campagnes-incitation-financieres',
+                  },
+                  {
+                    linkProps: {
+                      href: '/collectivites/registre-preuve-covoiturage-tiers-de-confiance',
+                    },
+                    text: 'Registre de preuves de covoiturage',
+                    isActive: pathname === '/collectivites/registre-preuve-covoiturage-tiers-de-confiance',
+                  },                  
+                ]
+              },
+            ],
+            leader: {
+              link: {
+                linkProps: {
+                  href: '#'
+                },
+                text: 'Voir toute la rubrique'
+              },
+              paragraph: 'Lorem [...] elit ut.',
+              title: 'Vous êtes une collectivité'
             }
-          ],
+          },
           text: 'Collectivités',
           isActive: pathname.startsWith('/collectivites'),
         },
