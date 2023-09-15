@@ -49,6 +49,7 @@ export class BuildFile {
 
       return filepath;
     } catch (e) {
+      await cursor.release();
       await fd.close();
       console.error(e.message, e.stack);
       throw e;
