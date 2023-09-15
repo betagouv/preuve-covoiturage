@@ -33,6 +33,7 @@ import { scopeToGroupBinding } from './middleware/ScopeToGroupMiddleware';
 import { TripCacheWarmCron } from './cron/TripCacheWarmCron';
 import { DataGouvProvider } from './providers/DataGouvProvider';
 import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportCommand';
+import { PublishOpendataCommand } from './commands/PublishOpendataCommand';
 
 @serviceProvider({
   config,
@@ -58,7 +59,7 @@ import { ReplayOpendataExportCommand } from './commands/ReplayOpendataExportComm
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  commands: [ReplayOpendataExportCommand],
+  commands: [ReplayOpendataExportCommand, PublishOpendataCommand],
   handlers: [
     ListTripsAction,
     SearchCountAction,
