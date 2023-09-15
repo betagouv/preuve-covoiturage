@@ -1,9 +1,8 @@
+import { ConnectionInterface } from '@ilos/common';
+import { env } from '@ilos/core';
 import { Pool, PoolConfig } from 'pg';
 import Cursor, { CursorQueryConfig } from 'pg-cursor';
 import { URL } from 'url';
-
-import { ConnectionInterface } from '@ilos/common';
-import { env } from '@ilos/core';
 
 export class PostgresConnection implements ConnectionInterface<Pool> {
   private readonly pgUrl: string;

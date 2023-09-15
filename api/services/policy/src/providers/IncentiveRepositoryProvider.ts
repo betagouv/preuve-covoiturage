@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
 import {
   IncentiveRepositoryProviderInterfaceResolver,
@@ -157,8 +157,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       values: [IncentiveStatusEnum.Draft, to, ...(from ? [from] : [])],
     };
 
-    const client = await this.connection.getClient().connect();
-    const cursor = client.query(new Cursor(query.text, query.values));
+    const cursor = await this.connection.getCursor(query.text, query.values);
 
     let count = 0;
     do {
@@ -176,14 +175,12 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           });
         }
       } catch (e) {
-        await cursor.close();
-        client.release();
+        await cursor.release();
         throw e;
       }
     } while (count > 0);
 
-    await cursor.close();
-    client.release();
+    await cursor.release();
   }
 
   async createOrUpdateMany(data: SerializedIncentiveInterface<undefined>[]): Promise<void> {

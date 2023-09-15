@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
-import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { map } from 'lodash';
 import {
   ExportTripInterface,
@@ -307,7 +307,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       ORDER BY journey_start_datetime ASC
     `);
 
-    return await this.connection.getCursor(queryText, where.values);
+    return this.connection.getCursor(queryText, where.values);
   }
 
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {
