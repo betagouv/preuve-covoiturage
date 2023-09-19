@@ -226,7 +226,6 @@ export class BuildExportAction extends Action {
     const type = get(params, 'type', 'export');
     const queryParams: TripSearchInterface = this.getDefaultQueryParams(params);
     const isOpendata: boolean = this.isOpendata(type);
-
     let excluded_territories: TerritoryTripsInterface[];
 
     if (isOpendata) {

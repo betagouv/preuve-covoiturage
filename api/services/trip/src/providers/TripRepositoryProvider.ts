@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
-import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { map } from 'lodash';
 import {
   ExportTripInterface,
@@ -8,8 +8,8 @@ import {
   TripRepositoryProviderInterfaceResolver,
   TzResultInterface,
 } from '../interfaces';
-import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
+import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
@@ -301,23 +301,13 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   ): Promise<PgCursorHandler<ExportTripInterface>> {
     const where = await this.buildWhereClauses(params);
     const queryText = this.numberPlaceholders(`
-      SELECT
-        ${this.getFields(type).join(', ')}
+      SELECT ${this.getFields(type).join(', ')}
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
     `);
 
-    const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(queryText, where.values));
-
-    return {
-      read: cursorCb.read,
-      release: async () => {
-        await cursorCb.close();
-        db.release();
-      },
-    };
+    return this.connection.getCursor(queryText, where.values);
   }
 
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {

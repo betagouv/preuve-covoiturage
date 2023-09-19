@@ -198,15 +198,6 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       order by ccd.datetime
     `;
 
-    const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(queryText, [start_date, end_date, operator_id, campaign_id]));
-
-    return {
-      read: cursorCb.read,
-      release: async () => {
-        await cursorCb.close();
-        db.release();
-      },
-    };
+    return this.connection.getCursor(queryText, [start_date, end_date, operator_id, campaign_id]);
   }
 }
