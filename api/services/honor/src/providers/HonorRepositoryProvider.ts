@@ -15,7 +15,7 @@ type StatsResponseRow = {
 
 export interface HonorRepositoryInterface {
   stats(params: StatsParamsInterface): Promise<StatsResultInterface>;
-  save(type: string): Promise<void>;
+  save(type: string, employer: string): Promise<void>;
 }
 
 export abstract class HonorRepositoryInterfaceResolver implements HonorRepositoryInterface {
@@ -23,7 +23,7 @@ export abstract class HonorRepositoryInterfaceResolver implements HonorRepositor
     throw new Error('Method not implemented.');
   }
 
-  async save(type: string): Promise<void> {
+  async save(type: string, employer: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }
@@ -56,10 +56,10 @@ export class HonorRepositoryProvider implements HonorRepositoryInterface {
     return this.statsConvert(response.rowCount ? response.rows : []);
   }
 
-  async save(type: string): Promise<void> {
+  async save(type: string, employer: string): Promise<void> {
     await this.pg.getClient().query({
-      text: 'INSERT INTO honor.tracking (type) VALUES ($1);',
-      values: [type],
+      text: 'INSERT INTO honor.tracking (type, employer) VALUES ($1, $2);',
+      values: [type, employer],
     });
   }
 
