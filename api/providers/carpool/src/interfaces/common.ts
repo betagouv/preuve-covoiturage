@@ -1,0 +1,66 @@
+export type Lat = number;
+export type Lon = number;
+export type Id = number;
+export type Uuid = string;
+
+export type Position = {
+  lat: Lat;
+  lon: Lon;
+};
+
+export type Distance = number;
+export type LicencePlate = string;
+export type Financial = number;
+export type Seat = number;
+export type Phone = string;
+export type Email = string;
+export type Name = string;
+export type Siret = string;
+export type GeoCode = string;
+export type SerializedError = string;
+
+export enum OperatorClass {
+  A = 'A',
+  B = 'B',
+  C = 'C',
+}
+
+export type CarpoolIncentive = {
+  index: number;
+  siret: Siret;
+  amount: Financial;
+};
+
+export enum IncentiveCounterpartTarget {
+  Driver = 'driver',
+  Passenger = 'passenger',
+}
+
+export type CarpoolIncentiveCounterpart = {
+  target: IncentiveCounterpartTarget;
+  siret: Siret;
+  amount: Financial;
+};
+
+export type Payment = {
+  index: number;
+  amount: Financial;
+  siret: Siret;
+  type: Name;
+};
+
+export type Payload = string;
+export type ApiVersion = number;
+export type CancelCode = string;
+export type CancelMessage = string;
+
+export enum CarpoolStatusEnum {
+  Pending = 'pending',
+  Passed = 'passed',
+  Failed = 'failed',
+  Canceled = 'canceled',
+  Expired = 'expired',
+}
+
+export type CarpoolEventScope = string;
+export type CarpoolEventName = string;
