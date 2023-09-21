@@ -1,29 +1,24 @@
-import { randomUUID } from 'crypto';
+import { ConfigInterfaceResolver, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { ConfigInterfaceResolver, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { NormalizationProvider } from '@pdc/provider-normalization';
+import { randomUUID } from 'crypto';
 
-import {
-  handlerConfig,
-  signature as handlerSignature,
-  ParamsInterface,
-  ResultInterface,
-} from '../shared/acquisition/process.contract';
-import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
+import { callContext } from '../config/callContext';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
+import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/process.contract';
 import {
   ParamsInterface as CrosscheckParamsInterface,
   ResultInterface as CrosscheckResultInterface,
   signature as crosscheckSignature,
 } from '../shared/carpool/crosscheck.contract';
-import { callContext } from '../config/callContext';
 
 @handler({
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service)],
 })
-export class ProcessJourneyAction extends AbstractAction implements InitHookInterface {
+export class ProcessJourneyAction extends AbstractAction {
   constructor(
     private repository: AcquisitionRepositoryProvider,
     private normalizer: NormalizationProvider,
@@ -31,23 +26,6 @@ export class ProcessJourneyAction extends AbstractAction implements InitHookInte
     private config: ConfigInterfaceResolver,
   ) {
     super();
-  }
-
-  async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(handlerSignature, undefined, {
-      call: {
-        user: {},
-      },
-      channel: {
-        service: handlerConfig.service,
-        metadata: {
-          repeat: {
-            cron: '*/1 * * * *',
-          },
-          jobId: 'acquisition.process.cron',
-        },
-      },
-    });
   }
 
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {

@@ -1,10 +1,10 @@
+import { ConfigInterfaceResolver, KernelInterfaceResolver, handler } from '@ilos/common';
 import { Action, env } from '@ilos/core';
-import { handler, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
-import { handlerConfig, signature, ParamsInterface, ResultInterface } from '../shared/fraudcheck/checkPending.contract';
 import { CheckEngine } from '../engine/CheckEngine';
 import { FraudCheckRepositoryProviderInterfaceResolver, FraudCheckStatusEnum } from '../interfaces';
+import { ParamsInterface, ResultInterface, handlerConfig } from '../shared/fraudcheck/checkPending.contract';
 
 @handler({
   ...handlerConfig,
@@ -18,23 +18,6 @@ export class CheckPendingAction extends Action {
     private config: ConfigInterfaceResolver,
   ) {
     super();
-  }
-
-  async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(signature, undefined, {
-      call: {
-        user: {},
-      },
-      channel: {
-        service: handlerConfig.service,
-        metadata: {
-          repeat: {
-            cron: '*/1 * * * *',
-          },
-          jobId: 'fraudcheck.check.cron',
-        },
-      },
-    });
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
