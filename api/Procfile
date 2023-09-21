@@ -1,3 +1,0 @@
-web: npm run start:http
-worker: APP_POSTGRES_TIMEOUT=0 APP_REQUEST_TIMEOUT=0 npm run start:queue
-postdeploy: npm run migrate
