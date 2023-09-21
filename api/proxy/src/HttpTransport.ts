@@ -751,7 +751,11 @@ export class HttpTransport implements TransportInterface {
       monHonorCertificateRateLimiter(),
       asyncHandler(async (req, res, next) => {
         await this.kernel.handle(
-          createRPCPayload('honor:save', { type: req.body.type }, { permissions: ['common.honor.save'] }),
+          createRPCPayload(
+            'honor:save',
+            { type: req.body.type, employer: req.body.employer },
+            { permissions: ['common.honor.save'] },
+          ),
         );
         res.status(201).header('Location', `${process.env.APP_APP_URL}/honor/stats`).json({ saved: true });
       }),

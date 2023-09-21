@@ -9,11 +9,11 @@ export class CounterService {
 
   constructor(private http: HttpClient) {}
 
-  async save(origin: string, type: 'public' | 'limited'): Promise<void> {
+  async save(origin: string, type: 'public' | 'limited', employer: string): Promise<void> {
     if (this.allowedOrigins.indexOf(origin) === -1) {
       return console.error('[honor save] called from forbidden origin', origin);
     }
 
-    this.http.post(`${this.apiUrl}/honor`, { type }).subscribe(() => {}, console.info);
+    this.http.post(`${this.apiUrl}/honor`, { type, employer }).subscribe(() => {}, console.info);
   }
 }

@@ -8,6 +8,11 @@ export const schema = {
       type: 'string',
       enum: ['public', 'limited'],
     },
+    employer: {
+      type: 'string',
+      minLength: 0,
+      maxLength: 255,
+    },
   },
 };
 
