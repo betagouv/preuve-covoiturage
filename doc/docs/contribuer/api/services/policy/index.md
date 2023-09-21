@@ -18,7 +18,7 @@ Config : `src/config/policies.ts`
 
 ## Actions
 
-### Apply `npm run ilos campaign:apply`
+### Apply `npm run -w @pdc/proxy ilos campaign:apply`
 
 Applique les règles de calcul de la campagne sur les trajets éligibles. Stocke le résultat du calcul dans `policy.incentives` dans les champs `amount` et `result`.
 
@@ -44,7 +44,7 @@ Paramètres:
                                   les autres tables à nettoyer en cas de recalcul.
 ```
 
-### Finalize `npm run ilos campaign:finalize`
+### Finalize `npm run -w @pdc/proxy ilos campaign:finalize`
 
 Corrige le montant calculé en fonction du contexte global de la campagne. On parle de règles _stateful_.
 
@@ -79,18 +79,16 @@ Paramètres:
 
 Utilisé pour lancer quotidiennement le calcul des incitations et leur finalisation. Le `apply` est appliqué aux incitations jusqu'à aujourd'hui et le `finalize` aux incitations jusqu'à -5 jours.
 
-Ces commandes sont appelées dans le fichier `cron.json` utilisé par Scalingo.
-
 ```shell
 # Stateless en background job sur toutes les campagnes
-npm run ilos campaign:apply --detach
+npm run -w @pdc/proxy ilos campaign:apply --detach
 
 # Stateful en background job (toujours sur toutes les campagnes)
 # Sans re-synchro de la clé max_amount
-npm run ilos campaign:finalize --detach
+npm run -w @pdc/proxy ilos campaign:finalize --detach
 
 # Avec re-synchro de la clé max_amount
-npm run ilos campaign:finalize --detach --resync
+npm run -w @pdc/proxy ilos campaign:finalize --detach --resync
 ```
 
 #### Lancer / relancer le calcul des incitations
@@ -98,8 +96,8 @@ npm run ilos campaign:finalize --detach --resync
 Pour s'assurer que tout a bien été calculé, on peut relancer le calcul sans risque de doublons.
 
 ```shell
-npm run ilos campaign:apply
-npm run ilos campaign:finalize
+npm run -w @pdc/proxy ilos campaign:apply
+npm run -w @pdc/proxy ilos campaign:finalize
 ```
 
 #### Forcer le déblocage du _lock_ s'il y a eu un problème
@@ -113,7 +111,7 @@ SELECT * FROM policy.lock ORDER BY _id DESC LIMIT 50;
 Si un _lock_ n'a pas de `stopped_at` c'est qu'il est en train de tourner. Si le process a crashé, on peut le débloquer.
 
 ```shell
-npm run ilos campaign:finalize --clear
+npm run -w @pdc/proxy ilos campaign:finalize --clear
 ```
 
 > Les _locks_ débloqués sont conservés en base avec un `stopped_at` à la date d'execution de la commande et un `success = false`.
@@ -127,8 +125,8 @@ On précise l'ID de la campagne, les dates de début (`-f`) et de fin (`-t`) et 
 :warning: Attention ! il faut refaire un `finalize` sur toutes les incitations à partir de cette date car l'application des seuils sera faussée. Il faut également utiliser `--resync` pour re-synchroniser la valeur de consommation de l'enveloppe (`max_amount`).
 
 ```shell
-npm run ilos campaign:apply -c <campaign_id> -f <YYYY-MM-DD> -t <YYYY-MM-DD> --override
-npm run ilos campaign:finalize -f <YYYY-MM-DD> -t <YYYY-MM-DD> --resync
+npm run -w @pdc/proxy ilos campaign:apply -c <campaign_id> -f <YYYY-MM-DD> -t <YYYY-MM-DD> --override
+npm run -w @pdc/proxy ilos campaign:finalize -f <YYYY-MM-DD> -t <YYYY-MM-DD> --resync
 ```
 
 > Il est possible de nettoyer la base manuellement des incitations calculées avant de tout rejouer. Voir les tables `policy.incentives` et `policy.policy_metas`.

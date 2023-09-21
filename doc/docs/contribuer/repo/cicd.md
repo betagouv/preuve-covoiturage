@@ -52,16 +52,6 @@ When you merge this PR, the Terraform configuration of the cluster changes. [Arg
 
 You can trigger a sync in ArgoCD manually.
 
-### Demo
+### Environments
 
-**demo** environment runs on Kubernetes too. Deployments use the same process as _main_ but they are triggered when a **tag** with the pattern `vX.X.X` is created.
-
-### Production
-
-**production** runs on Scalingo. The PaaS doesn't support tag deployment. It is then required to create a branch from this tag with the naming pattern : `release/vX.X.X`.
-
-::: tip
-type the name in the _branch or tag_ field and Github will ask you to create a new one.
-:::
-
-On Scalingo, [create a new manual deploy from your branch](https://dashboard.scalingo.com/apps/osc-fr1/pdc-prod/deploy/manual). The build and migrations are run before deploying.
+**demo** and **production** environment runs on Kubernetes too. Deployments use the same process as _main_ but they are triggered when a **tag** with the pattern `vX.X.X` is created.
