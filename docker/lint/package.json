@@ -6,12 +6,14 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "npm run api & npm run dashboard",
-    "start:local": "npm run api:local & npm run dashboard:local",
+    "start": "npm run api & npm run dashboard & npm run etl",
+    "start:local": "npm run api:local & npm run dashboard:local & npm run etl:local",
     "api": "eslint --config .eslintrc.js --env node -f ./formatter.js '/code/api/**/src/**/*.ts'",
     "api:local": "eslint --config .eslintrc.js --env node '../../api/**/src/**/*.ts'",
     "dashboard": "eslint --config .eslintrc.js --env browser -f ./formatter.js '/code/dashboard/src/**/*.ts'",
     "dashboard:local": "eslint --config .eslintrc.js --env browser '../../dashboard/src/**/*.ts'",
+    "etl": "eslint --config .eslintrc.js --env browser -f ./formatter.js '/code/etl/src/**/*.ts'",
+    "etl:local": "eslint --config .eslintrc.js --env browser '../../etl/src/**/*.ts'",
     "clean": "rm -rf node_modules/*"
   },
   "dependencies": {

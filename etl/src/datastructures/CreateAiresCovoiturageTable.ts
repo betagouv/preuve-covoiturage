@@ -27,7 +27,8 @@ export class CreateAiresCovoiturageTable extends AbstractDatastructure {
         proprio varchar,
         lumiere varchar,
         comm varchar,
-        geom geometry(POINT,4326)
+        geom geometry(POINT,4326),
+        created_at TIMESTAMP(0) NOT NULL DEFAULT NOW()
       );
       CREATE INDEX IF NOT EXISTS ${this.indexWithSchema}_id_index ON ${this.tableWithSchema} USING btree (id);
       CREATE INDEX IF NOT EXISTS ${this.indexWithSchema}_geom_index ON ${this.tableWithSchema} USING gist (geom);

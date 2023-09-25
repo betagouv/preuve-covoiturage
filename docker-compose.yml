@@ -119,6 +119,21 @@ services:
     networks:
       - back
 
+  etl:
+    build:
+      dockerfile: ./docker/etl/Dockerfile
+      context: .
+    volumes:
+      - ./etl:/etl
+    working_dir: /etl
+    command: 'npm run start'
+    tty: true
+    env_file: ./etl/.env
+    depends_on:
+      - postgres
+    networks:
+      - back
+
   dashboard:
     build:
       dockerfile: ./docker/dashboard/Dockerfile
@@ -139,6 +154,7 @@ services:
     volumes:
       - ./api:/code/api:ro
       - ./dashboard:/code/dashboard:ro
+      - ./etl:/code/etl:ro
 
 networks:
   back:
