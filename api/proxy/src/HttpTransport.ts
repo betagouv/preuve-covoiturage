@@ -169,10 +169,9 @@ export class HttpTransport implements TransportInterface {
     // protect with typical headers and enable cors
     this.app.use(helmet());
 
-    // apply CORS to all routes but /honor (for now)
-    // TODO: improve if more routes are concerned
+    // apply CORS to all routes except the following ones
     this.app.use(
-      /\/((?!honor|contactform|policy\/simulate|observatory).)*/,
+      /\/((?!honor|contactform|policy\/simulate|observatory|geo\/search).)*/,
       cors({
         origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
@@ -181,9 +180,9 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
-    // Use CORS asynchronously to log the calls and check against a list of domains
+    // use CORS asynchronously to log the calls and check against a list of domains
     this.app.use(
-      '/observatory',
+      /\/(observatory|geo\/search)/,
       cors((req: Request, callback) => {
         const domains = [
           'https://demo.covoiturage.beta.gouv.fr',
@@ -196,6 +195,7 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
+    // apply specific cors policy
     this.app.use(
       '/honor',
       cors({
