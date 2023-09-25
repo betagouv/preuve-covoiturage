@@ -182,7 +182,7 @@ export class HttpTransport implements TransportInterface {
 
     // use CORS asynchronously to log the calls and check against a list of domains
     this.app.use(
-      /\/(observatory|geo\/search)/,
+      /\/(observatory|geo\/search)/i,
       cors((req: Request, callback) => {
         const domains = [
           'https://demo.covoiturage.beta.gouv.fr',
