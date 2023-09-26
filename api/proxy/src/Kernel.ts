@@ -33,7 +33,6 @@ import { config } from './config';
     ...ceeBootstrap.serviceProviders,
     ...certificateBootstrap.serviceProviders,
     ...companyBootstrap.serviceProviders,
-    ...fraudBootstrap.serviceProviders,
     ...honorBootstrap.serviceProviders,
     ...monitoringBootstrap.serviceProviders,
     ...operatorBootstrap.serviceProviders,
