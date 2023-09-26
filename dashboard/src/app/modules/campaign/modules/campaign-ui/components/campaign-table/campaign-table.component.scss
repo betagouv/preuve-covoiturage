@@ -5,14 +5,11 @@
     color: $color-success;
   }
 
+  &.draft,
   &.ended {
     color: $color-error;
   }
   
-  &.draft {
-    color: $color-error;
-  }
-
   &.paused {
     color: $color-warning
   }
