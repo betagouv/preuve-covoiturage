@@ -10,7 +10,8 @@ export function or_false(k: string): boolean {
 }
 
 export function or_true(k: string): boolean {
-  return k in process.env && process.env[k] === 'false';
+  if (k in process.env) return process.env[k] === 'true';
+  return true;
 }
 
 export function or_fail(k: string, fallback?: string): string {
