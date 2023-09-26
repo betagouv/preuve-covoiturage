@@ -22,7 +22,7 @@ export class CampaignTableComponent {
     return campaign.status === 'active' && new Date(campaign.end_date) > today && new Date(campaign.start_date) < today;
   }
 
-  isConsummed(campaign: PolicyInterface): boolean {
+  isConsumed(campaign: PolicyInterface): boolean {
     return campaign.status === 'active' && campaign.params && campaign.incentive_sum >= campaign.params.limits.glob;
   }
 
