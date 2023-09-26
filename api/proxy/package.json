@@ -38,7 +38,6 @@
     "@pdc/service-cee": "~0",
     "@pdc/service-certificate": "~0",
     "@pdc/service-company": "~0",
-    "@pdc/service-fraud": "~0",
     "@pdc/service-geo": "~0",
     "@pdc/service-honor": "~0",
     "@pdc/service-monitoring": "~0",

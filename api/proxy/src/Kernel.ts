@@ -11,7 +11,6 @@ import { bootstrap as carpoolBootstrap } from '@pdc/service-carpool';
 import { bootstrap as ceeBootstrap } from '@pdc/service-cee';
 import { bootstrap as certificateBootstrap } from '@pdc/service-certificate';
 import { bootstrap as companyBootstrap } from '@pdc/service-company';
-import { bootstrap as fraudBootstrap } from '@pdc/service-fraud';
 import { bootstrap as honorBootstrap } from '@pdc/service-honor';
 import { bootstrap as monitoringBootstrap } from '@pdc/service-monitoring';
 import { bootstrap as operatorBootstrap } from '@pdc/service-operator';
