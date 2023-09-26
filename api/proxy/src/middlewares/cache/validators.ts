@@ -1,15 +1,15 @@
 import { CacheValidatorParams, CacheValidatorResponse, HttpVerb } from './types';
 
 const validators = [
-  // Skip caching when the request contains a Cache-Control header with 'no-cache' value
+  // Skip caching when the request contains a Cache-Control header with 'no-store' value
   async function noCacheHeader({ req }: CacheValidatorParams): Promise<Partial<CacheValidatorResponse>> {
-    if (!req.header('Cache-Control').includes('no-cache')) return {};
+    if (!req.header('Cache-Control').includes('no-store')) return {};
     return {
       isValid: false,
-      warnings: new Set([new Error('Disabled by no-cache header')]),
+      warnings: new Set([new Error('Disabled by no-store header')]),
       headers: new Map([
-        ['Cache-Control', 'no-cache'],
-        ['X-Route-Cache-Disabled', 'no-cache'],
+        ['Cache-Control', 'no-store'],
+        ['X-Route-Cache-Disabled', 'no-store'],
       ]),
     };
   },
