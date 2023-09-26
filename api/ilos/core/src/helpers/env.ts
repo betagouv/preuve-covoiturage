@@ -9,6 +9,10 @@ export function or_false(k: string): boolean {
   return k in process.env && process.env[k] === 'true';
 }
 
+export function or_true(k: string): boolean {
+  return k in process.env && process.env[k] === 'false';
+}
+
 export function or_fail(k: string, fallback?: string): string {
   const val = k in process.env ? process.env[k] : fallback;
 
