@@ -12,16 +12,13 @@
     "ilos/*"
   ],
   "repository": "git@github.com:betagouv/preuve-covoiturage.git",
-  "author": "Beta Gouv <contact@covoiturage.beta.gouv.fr>",
+  "author": "Registre de preuve de covoiturage <contact@covoiturage.beta.gouv.fr>",
   "contributors": [
     "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
     "Nicolas Mérigot <nicolas.merigot@beta.gouv.fr>",
-    "Gilles Boisson <gilles.boisson@beta.gouv.fr>",
-    "Samuel Eyre <samuel.eyre@beta.gouv.fr>",
     "Julien Parmentier <julien.parmentier@beta.gouv.fr>"
   ],
   "scripts": {
-    "scalingo-postbuild": "/bin/sh ./scalingo/build.sh",
     "start": "if [ \"$DO_MIGRATIONS\" ]; then npm run migrate; fi && if [ -z \"$IS_WORKER\" ]; then npm run start:http; else npm run start:queue; fi",
     "start:http": "npm --workspace @pdc/proxy run ilos http $PORT",
     "start:queue": "npm --workspace @pdc/proxy run ilos queue $APP_REDIS_URL",
@@ -37,8 +34,7 @@
     "test:integration": "lerna run test:integration",
     "test:pdc:integration": "lerna run --scope @pdc/* test:integration",
     "test:ilos:integration": "lerna run --scope @ilos/* test:integration",
-    "migrate": "DATABASE_URL=$APP_POSTGRES_URL npm --workspace @pdc/migrator run up",
-    "ilos": "npm run --workspace @pdc/proxy -- ilos"
+    "migrate": "DATABASE_URL=$APP_POSTGRES_URL npm --workspace @pdc/migrator run up"
   },
   "keywords": [
     "betagouv",
