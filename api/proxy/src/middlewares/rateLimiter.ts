@@ -3,6 +3,7 @@ import RedisStore from 'rate-limit-redis';
 import RedisClient from 'ioredis';
 import { env } from '@ilos/core';
 import { config } from '../config';
+import { Request, Response } from 'express';
 
 const minute = 60000;
 
@@ -17,7 +18,7 @@ export function rateLimiter(opts: Partial<RateLimiterOptions> = {}, prefix = 'rl
     }),
     windowMs: 5 * minute,
     max: 100,
-    handler(req, res) {
+    handler(req: Request, res: Response) {
       res.status(429).json({
         error: { code: 429, message: 'Too many requests', ...req.rateLimit },
       });
