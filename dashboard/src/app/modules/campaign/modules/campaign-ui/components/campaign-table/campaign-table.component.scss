@@ -1,13 +1,20 @@
 @import 'variables';
 
 .mat-icon {
-  &.active,
-  &.ended {
+  &.active {
     color: $color-success;
   }
+
+  &.ended {
+    color: $color-error;
+  }
   
-  &.archived {
-    color: $color-warning;
+  &.draft {
+    color: $color-error;
+  }
+
+  &.paused {
+    color: $color-warning
   }
 }
 
