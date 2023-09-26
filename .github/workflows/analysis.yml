@@ -172,6 +172,7 @@ jobs:
           APP_DATAGOUV_KEY: null
           APP_JWT_SECRET: null
           APP_SESSION_SECRET: null
+          APP_ROUTECACHE_AUTHTOKEN: null
           AWS_REGION: fr-par
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
         run: ./integration.sh run
