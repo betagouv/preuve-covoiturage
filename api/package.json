@@ -34,6 +34,7 @@
     "test:integration": "lerna run test:integration",
     "test:pdc:integration": "lerna run --scope @pdc/* test:integration",
     "test:ilos:integration": "lerna run --scope @ilos/* test:integration",
+    "ilos": "npm run --workspace @pdc/proxy -- ilos",
     "migrate": "DATABASE_URL=$APP_POSTGRES_URL npm --workspace @pdc/migrator run up"
   },
   "keywords": [
