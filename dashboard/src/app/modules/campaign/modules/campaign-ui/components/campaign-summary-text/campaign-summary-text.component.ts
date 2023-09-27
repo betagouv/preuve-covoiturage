@@ -12,10 +12,7 @@ import { UtilsService } from '~/core/services/utils.service';
 export class CampaignSummaryTextComponent {
   @Input() campaign: PolicyInterface;
 
-  constructor(
-    private _utils: UtilsService,
-    private _toastr: ToastrService,
-  ) {}
+  constructor(private _utils: UtilsService, private _toastr: ToastrService) {}
 
   get summary(): string {
     return this.campaign.description;
