@@ -6,6 +6,63 @@ export function AppFooter() {
   return (
     <Footer
       className={fr.cx('fr-mt-10v')}
+      linkList={[
+        {
+          links: [
+            {
+              linkProps: {
+                href: 'https://covoiturage.beta.gouv.fr/',
+                target:'_blank'
+              },
+              text: 'Covoiturage.beta'
+            },
+          ]
+        },
+        {
+          links: [
+            {
+              linkProps: {
+                href: 'https://www.expertises-territoires.fr/',
+                target:'_blank'
+              },
+              text: 'Expertise territoire'
+            },
+          ]
+        },
+        {
+          links: [
+            {
+              linkProps: {
+                href: 'https://www.cerema.fr/',
+                target:'_blank'
+              },
+              text: 'Cerema'
+            },
+          ]
+        },
+        {
+          links: [
+            {
+              linkProps: {
+                href: 'https://www.ademe.fr/',
+                target:'_blank'
+              },
+              text: 'Ademe'
+            },
+          ]
+        },
+        {
+          links: [
+            {
+              linkProps: {
+                href: 'https://www.ecologie.gouv.fr/',
+                target:'_blank'
+              },
+              text: 'Ecologie.gouv'
+            },
+          ]
+        },
+      ]}
       accessibility='partially compliant'
       contentDescription='Le site officiel d’information sur le covoiturage de courte distance.
      Retrouvez toutes les informations et démarches administratives nécessaires au développement du covoiturage sur votre territoire.'
