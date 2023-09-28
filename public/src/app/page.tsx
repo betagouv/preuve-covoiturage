@@ -23,29 +23,29 @@ export default async function Home() {
   const lists = data ? data[0].sections.filter((s:Section) => s.collection === 'List') : null
   const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
   const tiles = [{
-    desc:'Découvrez les bienfaits du covoiturage, mettez en place le Forfait Mobilité Durable et accompagnez vos salariés dans l\'usage du covoiturage',
+    desc:'Forfait mobilités durables, animations covoiturage en entreprise, mise en relation entre salariés, charte employeur engagé dans le covoiturage',
     grey: true,
-    imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
+    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/6d16d7c5-82fe-4526-a32f-e13bd161bd8f",
     linkProps:{
-      href: '/vous-etes/entreprises'
+      href: '/autres-acteurs/entreprises'
     },
     title:"Une entreprise"
   },{
-    desc:"Comprendre le covoiturage au quotidien et réduire mon impact carbone au quotidien, suis-je éligible à une aide?",
+    desc:"Un bonus de 100€ pour les conducteurs réalisant leurs premiers trajets en covoiturage, un forfait mobilités durable jusqu'à 800€ par ans versé par votre employeur, quelques euros versés par votre collectivité à chaque trajet.",
     grey: true,
-    imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
+    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/03438e15-8661-4ff4-9090-d3936527c869",
     linkProps:{
-      href: '/vous-etes/particuliers'
+      href: '/autres-acteurs/particuliers'
     },
     title:"Un particulier"
   },{
     desc:"Découvrir le registre de preuve de covoiturage et en devenir partenaire",
     grey: true,
-    imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
+    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/ac8000a8-09b8-4e37-868e-bc877c231f71",
     linkProps:{
-      href: '/vous-etes/operateurs'
+      href: '/autres-acteurs/operateurs'
     },
-    title:"Un opérateur de covoiturage"
+    title:"Plateformes de covoiturage"
   }
 ]
 

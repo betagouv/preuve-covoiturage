@@ -126,28 +126,28 @@ export default function Navigation() {
           menuLinks: [
             {
               linkProps: {
-                href: '/vous-etes/entreprises',
+                href: '/autres-acteurs/covoitureurs',
               },
-              text: 'Une entreprise',
-              isActive: pathname === '/vous-etes/entreprises',
+              text: 'Covoitureurs',
+              isActive: pathname === '/autres-acteurs/covoitureurs',
             },
             {
               linkProps: {
-                href: '/vous-etes/particuliers',
+                href: '/autres-acteurs/employeurs',
               },
-              text: 'Un particulier',
-              isActive: pathname === '/vous-etes/particuliers',
+              text: 'Employeurs',
+              isActive: pathname === '/autres-acteurs/employeurs',
             },
             {
               linkProps: {
-                href: '/vous-etes/operateurs',
+                href: '/autres-acteurs/plateformes',
               },
-              text: 'Un operateur',
-              isActive: pathname === '/vous-etes/operateurs',
+              text: 'Plateformes de covoiturages',
+              isActive: pathname === '/autres-acteurs/plateformes',
             }
           ],
-          text: 'Vous êtes',
-          isActive: pathname.startsWith('/vous-etes'),
+          text: 'Autres acteurs',
+          isActive: pathname.startsWith('/autres-acteurs'),
         },
         {
           linkProps: { href: '/actualites', target: '_self' },
