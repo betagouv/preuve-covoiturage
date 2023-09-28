@@ -8,6 +8,8 @@ export class CarpoolRepository {
   constructor(protected connection: PostgresConnection) {}
 
   public async register(data: InsertableCarpool, client?: PoolClient): Promise<WritenCarpool> {
+    const cl = client ?? this.connection.getClient();
+    const sqlQuery = sql`SELECT`
     throw new Error();
   }
 
