@@ -27,7 +27,7 @@ export default async function Home() {
     grey: true,
     imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
     linkProps:{
-      href: '#'
+      href: '/vous-etes/entreprises'
     },
     title:"Une entreprise"
   },{
@@ -35,7 +35,7 @@ export default async function Home() {
     grey: true,
     imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
     linkProps:{
-      href: '#'
+      href: '/vous-etes/particuliers'
     },
     title:"Un particulier"
   },{
@@ -43,7 +43,7 @@ export default async function Home() {
     grey: true,
     imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
     linkProps:{
-      href: '#'
+      href: '/vous-etes/operateurs'
     },
     title:"Un opérateur de covoiturage"
   }
@@ -87,6 +87,20 @@ export default async function Home() {
           <ListHighlight highlights={l.item.highlights.map((h:any) => h.Highlight_id)} />
         </div>
       )}
+      <SectionTitle title='Vous êtes ?' />
+      <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+        {tiles && tiles.map( (t, i) => 
+          <div key={i} className={fr.cx('fr-col-12','fr-col-md-4')}>
+            <Tile 
+              title={t.title}
+              desc={t.desc}
+              grey={t.grey}
+              imageUrl={t.imageUrl}
+              linkProps={t.linkProps}
+            />
+          </div>
+        )}
+      </div>
       {ressources && 
       <>
         <SectionTitle title='Ressources' />
@@ -118,20 +132,6 @@ export default async function Home() {
           </div>
         </div>
       }
-      <SectionTitle title='Vous êtes ?' />
-      <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-        {tiles && tiles.map( (t, i) => 
-          <div key={i} className={fr.cx('fr-col-12','fr-col-md-4')}>
-            <Tile 
-              title={t.title}
-              desc={t.desc}
-              grey={t.grey}
-              imageUrl={t.imageUrl}
-              linkProps={t.linkProps}
-            />
-          </div>
-        )}
-      </div>
     </article>
   );
 }
