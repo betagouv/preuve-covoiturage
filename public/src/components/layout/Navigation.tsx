@@ -23,10 +23,10 @@ export default function Navigation() {
             },
             {
               linkProps: {
-                href: '/observatoire/comprendre-covoiturage',
+                href: '/observatoire/impact-politiques-mobilite',
               },
-              text: 'Comprendre le covoiturage courte distance',
-              isActive: pathname === '/observatoire/comprendre-covoiturage',
+              text: 'Impact des différents politiques mobilité',
+              isActive: pathname === '/observatoire/impact-politiques-mobilite',
             },
             {
               linkProps: {
@@ -41,6 +41,13 @@ export default function Navigation() {
               },
               text: 'Evaluation du plan national covoiturage',
               isActive: pathname === '/observatoire/evaluation-plan-covoiturage',
+            },
+            {
+              linkProps: {
+                href: '/observatoire/presentation',
+              },
+              text: 'A propos de l\'observatoire',
+              isActive: pathname === '/observatoire/presentation',
             },
             /*{
               linkProps: {

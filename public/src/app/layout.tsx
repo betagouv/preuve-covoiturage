@@ -1,4 +1,5 @@
 import { AppFooter } from '@/components/layout/AppFooter';
+import { Follow } from '@/components/layout/Follow';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { fr } from '@codegouvfr/react-dsfr';
 import MuiDsfrThemeProvider from '@codegouvfr/react-dsfr/mui';
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
           <MuiDsfrThemeProvider>
             <AppHeader />
             <div className={fr.cx('fr-container')}>{children}</div>
+            <Follow />
             <AppFooter />
           </MuiDsfrThemeProvider>
         </DsfrProvider>

@@ -99,7 +99,7 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
             </div>
             <figcaption className={fr.cx('fr-content-media__caption')}>{data[0].img_legend}</figcaption>
           </figure>
-          <div className={fr.cx('fr-text--lg')}>
+          <div>
             {data[0].description}
             <MDXRemote source={data[0].content} />
           </div>

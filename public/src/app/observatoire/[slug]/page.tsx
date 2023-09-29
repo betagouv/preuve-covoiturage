@@ -98,7 +98,7 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
       )}
       <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
         <div className={fr.cx('fr-col')}>
-          <div className={fr.cx('fr-text--lg')}>
+          <div>
             <MDXRemote source={data ? data[0].content : ''} />
           </div>
         </div>

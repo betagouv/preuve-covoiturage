@@ -65,7 +65,7 @@ export default async function Home() {
       {data && data[0].content && 
         <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
           <div className={fr.cx('fr-col')}>
-            <div className={fr.cx('fr-text--lg')}>
+            <div>
               <MDXRemote source={data[0].content} />
             </div>
           </div>
@@ -125,7 +125,7 @@ export default async function Home() {
           <SectionTitle title='Ressources complémentaires' />
           <div className={fr.cx('fr-grid-row')}>
             <div className={fr.cx('fr-col')}>
-              <div className={fr.cx('fr-text--lg')}>
+              <div>
                 <MDXRemote source={data ? data[0].complement : ''} />
               </div>
             </div>
