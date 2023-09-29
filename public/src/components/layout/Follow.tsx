@@ -13,7 +13,7 @@ export function Follow() {
                   Une question ? Écrivez-nous !
                 </p>
                 <p>
-                  Vous avez une question sur le covoiturage ? Ecrivez directement à l'équipe de covoiturage.beta
+                  Vous avez une question sur le covoiturage ? Ecrivez directement à l&apos;équipe de covoiturage.beta
                 </p>
                 <ButtonsGroup
                   buttons={[
