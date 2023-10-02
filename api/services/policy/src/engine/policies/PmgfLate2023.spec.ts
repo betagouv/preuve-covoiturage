@@ -69,11 +69,11 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.4-2023',
-        value: 2450,
+        value: 1650,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 2450,
+        value: 1650,
       },
     ],
   },

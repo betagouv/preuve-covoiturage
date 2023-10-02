@@ -25,7 +25,7 @@ export const PmgfLate2023: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
-  static readonly id = 'pmgf_2023';
+  static readonly id = 'pmgf_late_2023';
   protected operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
   protected operator_class = ['B', 'C'];
 
