@@ -3,6 +3,5 @@
   "packages": ["db", "ilos/*", "proxy", "providers/*", "services/*"],
   "version": "0.0.1",
   "npmClient": "npm",
-  "useNx": true,
-  "useWorkspaces": true
+  "useNx": true
 }
