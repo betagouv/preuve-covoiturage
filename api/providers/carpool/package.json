@@ -19,6 +19,6 @@
     "sql-template-tag": "^5.1.0"
   },
   "devDependencies": {
-    "intermock": "^0.2.5"
+    "@pdc/helper-test": "~0"
   }
 }
