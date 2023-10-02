@@ -112,7 +112,7 @@ export function handlerMacro<ActionParams, ActionResult, ActionError extends Err
       );
       t.log(err.message);
       if (typeof message === 'function') {
-        await message(err, t);
+        await message(err as any, t);
       } else {
         t.is(err.message, message);
       }
