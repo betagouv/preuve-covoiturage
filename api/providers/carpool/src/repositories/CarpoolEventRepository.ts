@@ -1,6 +1,5 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import sql, { empty, join, raw } from 'sql-template-tag';
 import { InsertableCarpoolEvent } from '../interfaces';
 
 @provider()

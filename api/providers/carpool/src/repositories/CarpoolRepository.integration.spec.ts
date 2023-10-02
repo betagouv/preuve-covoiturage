@@ -25,13 +25,20 @@ test.after.always(async (t) => {
 
 
 test.serial('Should create carpool', async (t) => {
-  const { operator_id } = t.context;
   const data = { ...insertableCarpool };
 
   const carpool = await t.context.repository.register(data);
   const result = await t.context.db.connection.getClient().query({
     text: `
-      SELECT *
+      SELECT *,
+        json_build_object(
+          'lat', ST_Y(start_position::geometry),
+          'lon', ST_X(start_position::geometry)
+        ) AS start_position,
+        json_build_object(
+          'lat', ST_Y(end_position::geometry),
+          'lon', ST_X(end_position::geometry)
+        ) AS end_position
       FROM ${t.context.repository.table}
       WHERE _id = $1
     `,
@@ -39,8 +46,8 @@ test.serial('Should create carpool', async (t) => {
   });
 
   t.deepEqual(
-    result,
-    { ...result, ...data},
+    result.rows.pop(),
+    { ...carpool, ...data},
   );
 });
 

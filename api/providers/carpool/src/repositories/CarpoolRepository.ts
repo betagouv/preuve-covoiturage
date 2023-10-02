@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import sql, { join, raw } from 'sql-template-tag';
+import sql, { join, raw } from '../helpers/sql';
 import { Id, InsertableCarpool, UpdatableCarpool, Uuid, WritenCarpool } from '../interfaces';
 
 @provider()
@@ -12,7 +12,7 @@ export class CarpoolRepository {
   public async register(data: InsertableCarpool, client?: PoolClient): Promise<WritenCarpool> {
     const cl = client ?? this.connection.getClient();
     const sqlQuery = sql`
-      INSERT INTO ${raw(this.table)} VALUES (
+      INSERT INTO ${raw(this.table)} (
         operator_id,
         operator_journey_id,
         operator_trip_id,
@@ -48,15 +48,15 @@ export class CarpoolRepository {
         passenger_seats,
         passenger_contribution,
         passenger_payments
-      ) VALUES (
+      ) VALUES(
         ${data.operator_id},
         ${data.operator_journey_id},
         ${data.operator_trip_id},
         ${data.operator_class},
-        ${data.start_datetime},
-        ${data.start_position},
+        ${data.start_datetime}::timestamp,
+        ST_SetSRID(ST_Point(${data.start_position.lon}, ${data.start_position.lat}), 4326),
         ${data.end_datetime},
-        ${data.end_position},
+        ST_SetSRID(ST_Point(${data.end_position.lon}, ${data.end_position.lat}), 4326),
         ${data.distance},
         ${data.licence_plate},
         ${data.driver_identity_key},
@@ -83,8 +83,9 @@ export class CarpoolRepository {
         ${data.passenger_over_18},
         ${data.passenger_seats},
         ${data.passenger_contribution},
-        ${data.passenger_payments}
-      ) RETURNING _id, created_at, updated_at
+        ${JSON.stringify(data.passenger_payments)}
+      )
+      RETURNING _id, created_at, updated_at
     `;
     const result = await cl.query<WritenCarpool>(sqlQuery);
     return result.rows.pop();

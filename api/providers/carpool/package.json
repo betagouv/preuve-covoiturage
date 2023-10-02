@@ -15,8 +15,7 @@
   },
   "dependencies": {
     "@ilos/common": "~0",
-    "@ilos/connection-postgres": "~0",
-    "sql-template-tag": "^5.1.0"
+    "@ilos/connection-postgres": "~0"
   },
   "devDependencies": {
     "@pdc/helper-test": "~0"

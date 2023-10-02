@@ -1,0 +1,5 @@
+test package type:
+  npm run --workspace {{ package }} build
+  APP_POSTGRES_URL=postgres://postgres:postgres@localhost:5432/local \
+  APP_REDIS_URL=redis://localhost:6379 \
+  npm run --workspace {{ package }} test:{{ type }}
