@@ -49,7 +49,7 @@
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "devDependencies": {
-    "@ava/typescript": "^3.0.1",
+    "@ava/typescript": "4",
     "@faker-js/faker": "^6.0.0",
     "@nrwl/nx-cloud": "latest",
     "@types/bcryptjs": "^2.4.2",
@@ -62,7 +62,7 @@
     "@types/node-mailjet": "^3.3.7",
     "@types/sinon": "^10.0.3",
     "@types/uuid": "^8.3.1",
-    "ava": "4",
+    "ava": "5",
     "axios": "^1.2.2",
     "lerna": "^6.5.1",
     "lodash": "^4.17.21",
