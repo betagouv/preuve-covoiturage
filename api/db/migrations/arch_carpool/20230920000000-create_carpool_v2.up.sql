@@ -86,7 +86,9 @@ CREATE TABLE IF NOT EXISTS carpool_v2.events
 CREATE INDEX IF NOT EXISTS carpool_events_carpool_id_idx ON carpool_v2.events (carpool_id);
 CREATE INDEX IF NOT EXISTS carpool_events_scope_idx ON carpool_v2.events (scope);
 
-CREATE TYPE carpool_v2.carpool_status_enum AS enum('pending', 'passed', 'failed', 'canceled', 'expired');
+CREATE TYPE carpool_v2.carpool_acquisition_status_enum AS enum('pending', 'passed', 'failed', 'canceled', 'expired');
+CREATE TYPE carpool_v2.carpool_incentive_status_enum AS enum('pending', 'applied', 'finalized', 'failed');
+CREATE TYPE carpool_v2.carpool_fraud_status_enum AS enum('pending', 'passed', 'failed');
 
 CREATE TABLE IF NOT EXISTS carpool_v2.status
 (
@@ -94,11 +96,11 @@ CREATE TABLE IF NOT EXISTS carpool_v2.status
   carpool_id INTEGER NOT NULL REFERENCES carpool_v2.carpools(_id),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   acquisition_last_event_id INTEGER REFERENCES carpool_v2.events(_id),
-  acquisition_status carpool_v2.carpool_status_enum NOT NULL DEFAULT 'pending',
+  acquisition_status carpool_v2.carpool_acquisition_status_enum NOT NULL DEFAULT 'pending',
   incentive_last_event_id INTEGER REFERENCES carpool_v2.events(_id),
-  incentive_status carpool_v2.carpool_status_enum NOT NULL DEFAULT 'pending',
+  incentive_status carpool_v2.carpool_incentive_status_enum NOT NULL DEFAULT 'pending',
   fraud_last_event_id INTEGER REFERENCES carpool_v2.events(_id),
-  fraud_status carpool_v2.carpool_status_enum NOT NULL DEFAULT 'pending',
+  fraud_status carpool_v2.carpool_fraud_status_enum NOT NULL DEFAULT 'pending',
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS carpool_status_carpool_id_idx ON carpool_v2.status (carpool_id);
@@ -121,7 +123,7 @@ CREATE INDEX IF NOT EXISTS carpool_geo_start_geo_code ON carpool_v2.geo(start_ge
 CREATE INDEX IF NOT EXISTS carpool_geo_end_geo_code ON carpool_v2.geo(end_geo_code);
 CREATE TRIGGER touch_geo_updated_at BEFORE UPDATE ON carpool_v2.geo FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
 
-CREATE TABLE carpool_v2.incentives (
+CREATE TABLE carpool_v2.operator_incentives (
   _id SERIAL PRIMARY KEY,
   carpool_id INTEGER NOT NULL REFERENCES carpool_v2.carpools(_id),
   idx SMALLINT NOT NULL,
@@ -129,11 +131,11 @@ CREATE TABLE carpool_v2.incentives (
   amount INT NOT NULL
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS carpool_incentives_carpool_id_idx ON carpool_v2.incentives(carpool_id, idx);
-CREATE INDEX IF NOT EXISTS carpool_incentives_carpool_id_idx ON carpool_v2.incentives (carpool_id);
-CREATE INDEX IF NOT EXISTS carpool_incentives_siret_idx ON carpool_v2.incentives (siret);
+CREATE UNIQUE INDEX IF NOT EXISTS carpool_incentives_carpool_id_idx ON carpool_v2.operator_incentives(carpool_id, idx);
+CREATE INDEX IF NOT EXISTS carpool_incentives_carpool_id_idx ON carpool_v2.operator_incentives (carpool_id);
+CREATE INDEX IF NOT EXISTS carpool_incentives_siret_idx ON carpool_v2.operator_incentives (siret);
 
-CREATE TABLE carpool_v2.incentive_counterparts (
+CREATE TABLE carpool_v2.operator_incentive_counterparts (
   _id SERIAL PRIMARY KEY,
   carpool_id INTEGER NOT NULL REFERENCES carpool_v2.carpools(_id),
   target_is_driver BOOLEAN NOT NULL,
@@ -141,5 +143,5 @@ CREATE TABLE carpool_v2.incentive_counterparts (
   amount INT NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS carpool_incentives_carpool_id_idx ON carpool_v2.incentive_counterparts (carpool_id);
-CREATE INDEX IF NOT EXISTS carpool_incentives_siret_idx ON carpool_v2.incentive_counterparts (siret);
+CREATE INDEX IF NOT EXISTS carpool_incentives_carpool_id_idx ON carpool_v2.operator_incentive_counterparts (carpool_id);
+CREATE INDEX IF NOT EXISTS carpool_incentives_siret_idx ON carpool_v2.operator_incentive_counterparts (siret);
