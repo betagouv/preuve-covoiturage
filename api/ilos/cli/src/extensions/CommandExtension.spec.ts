@@ -8,6 +8,7 @@ import { CommandExtension } from './CommandExtension';
 import { Command } from '../parents/Command';
 
 function setup() {
+  const fake = sinon.fake();
   @command()
   class BasicCommand extends Command {
     static readonly signature: string = 'hello <name>';
@@ -20,9 +21,7 @@ function setup() {
     ];
 
     public async call(name, options?): Promise<ResultType> {
-      if (options && 'hi' in options) {
-        return `Hi ${name}`;
-      }
+      fake(name, options);
       return `Hello ${name}`;
     }
   }
@@ -36,7 +35,7 @@ function setup() {
 
   const serviceProvider = new ServiceProvider();
 
-  return { serviceProvider };
+  return { serviceProvider, fake };
 }
 
 test('Command "call": should register', async (t) => {
@@ -47,25 +46,14 @@ test('Command "call": should register', async (t) => {
   const basicCommand = serviceProvider.getContainer().get(CommandRegistry).commands[0];
   t.is(basicCommand.name(), 'hello');
   t.is(basicCommand.description(), 'toto');
-
-  // const { description, flags, required, short } = basicCommand.options[0];
-  // t.is(description, 'Say hi');
-  // t.is(flags, '-h, --hi');
-  // t.is(required, false);
-  // t.is(short, '-h');
 });
 
 test('Command "call": should work', async (t) => {
-  t.plan(1);
-  const { serviceProvider } = setup();
+  const { serviceProvider, fake } = setup();
   const container = serviceProvider.getContainer();
   await serviceProvider.register();
   await serviceProvider.init();
   const commander = container.get<CommandRegistry>(CommandRegistry);
-  sinon.stub(commander, 'output').callsFake((...args: any[]) => {
-    t.is(args[0], 'Hello john');
-  });
-  container.unbind(CommandRegistry);
-  container.bind(CommandRegistry).toConstantValue(commander);
   commander.parse(['', '', 'hello', 'john']);
+  t.deepEqual(fake.getCalls().pop().args, ['john', {}]);
 });
