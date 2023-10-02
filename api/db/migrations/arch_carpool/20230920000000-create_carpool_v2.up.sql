@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS carpool_v2.status
   incentive_last_event_id INTEGER REFERENCES carpool_v2.events(_id),
   incentive_status carpool_v2.carpool_incentive_status_enum NOT NULL DEFAULT 'pending',
   fraud_last_event_id INTEGER REFERENCES carpool_v2.events(_id),
-  fraud_status carpool_v2.carpool_fraud_status_enum NOT NULL DEFAULT 'pending',
+  fraud_status carpool_v2.carpool_fraud_status_enum NOT NULL DEFAULT 'pending'
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS carpool_status_carpool_id_idx ON carpool_v2.status (carpool_id);
@@ -114,8 +114,8 @@ CREATE TABLE IF NOT EXISTS carpool_v2.geo
   _id SERIAL PRIMARY KEY,
   carpool_id INTEGER NOT NULL REFERENCES carpool_v2.carpools(_id),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  start_geo_code INTEGER REFERENCES geo.perimeters(arr),
-  end_geo_code INTEGER REFERENCES geo.perimeters(arr),
+  start_geo_code INTEGER,
+  end_geo_code INTEGER,
   error JSON
 );
 CREATE UNIQUE INDEX IF NOT EXISTS carpool_geo_carpool_id_idx ON carpool_v2.geo(carpool_id);
