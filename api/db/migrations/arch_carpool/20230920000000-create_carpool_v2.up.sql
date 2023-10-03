@@ -73,34 +73,53 @@ CREATE TABLE IF NOT EXISTS carpool_v2.requests
 );
 CREATE INDEX IF NOT EXISTS carpool_requests_carpool_id_idx ON carpool_v2.requests (carpool_id);
 
-CREATE TABLE IF NOT EXISTS carpool_v2.events
+CREATE TYPE carpool_v2.carpool_acquisition_status_enum AS enum('received', 'processed', 'failed', 'canceled', 'expired');
+CREATE TABLE IF NOT EXISTS carpool_v2.acquisition_events
 (
   _id SERIAL PRIMARY KEY,
   carpool_id INTEGER NOT NULL REFERENCES carpool_v2.carpools(_id),
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  scope VARCHAR(32) NOT NULL,
-  event VARCHAR(32) NOT NULL,
-  relation_id INTEGER NOT NULL
+  request_id INTEGER REFERENCES carpool_v2.requests(_id),
+  status carpool_v2.carpool_acquisition_status_enum NOT NULL
 );
+CREATE INDEX IF NOT EXISTS carpool_acquisition_events_carpool_id_idx ON carpool_v2.acquisition_events (carpool_id);
+CREATE INDEX IF NOT EXISTS carpool_acquisition_events_created_at_idx ON carpool_v2.acquisition_events (created_at);
 
-CREATE INDEX IF NOT EXISTS carpool_events_carpool_id_idx ON carpool_v2.events (carpool_id);
-CREATE INDEX IF NOT EXISTS carpool_events_scope_idx ON carpool_v2.events (scope);
-
-CREATE TYPE carpool_v2.carpool_acquisition_status_enum AS enum('pending', 'passed', 'failed', 'canceled', 'expired');
 CREATE TYPE carpool_v2.carpool_incentive_status_enum AS enum('pending', 'applied', 'finalized', 'failed');
+CREATE TABLE IF NOT EXISTS carpool_v2.incentive_events
+(
+  _id SERIAL PRIMARY KEY,
+  carpool_id INTEGER NOT NULL REFERENCES carpool_v2.carpools(_id),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  incentive_id INTEGER REFERENCES policy.incentives(_id),
+  status carpool_v2.carpool_incentive_status_enum NOT NULL
+);
+CREATE INDEX IF NOT EXISTS carpool_incentive_events_carpool_id_idx ON carpool_v2.incentive_events (carpool_id);
+CREATE INDEX IF NOT EXISTS carpool_incentive_events_created_at_idx ON carpool_v2.incentive_events (created_at);
+
 CREATE TYPE carpool_v2.carpool_fraud_status_enum AS enum('pending', 'passed', 'failed');
+CREATE TABLE IF NOT EXISTS carpool_v2.fraud_events
+(
+  _id SERIAL PRIMARY KEY,
+  carpool_id INTEGER NOT NULL REFERENCES carpool_v2.carpools(_id),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  fraud_id INTEGER,
+  status carpool_v2.carpool_fraud_status_enum NOT NULL
+);
+CREATE INDEX IF NOT EXISTS carpool_fraud_events_carpool_id_idx ON carpool_v2.fraud_events (carpool_id);
+CREATE INDEX IF NOT EXISTS carpool_fraud_events_created_at_idx ON carpool_v2.fraud_events (created_at);
 
 CREATE TABLE IF NOT EXISTS carpool_v2.status
 (
   _id SERIAL PRIMARY KEY,
   carpool_id INTEGER NOT NULL REFERENCES carpool_v2.carpools(_id),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  acquisition_last_event_id INTEGER REFERENCES carpool_v2.events(_id),
-  acquisition_status carpool_v2.carpool_acquisition_status_enum NOT NULL DEFAULT 'pending',
-  incentive_last_event_id INTEGER REFERENCES carpool_v2.events(_id),
-  incentive_status carpool_v2.carpool_incentive_status_enum NOT NULL DEFAULT 'pending',
-  fraud_last_event_id INTEGER REFERENCES carpool_v2.events(_id),
-  fraud_status carpool_v2.carpool_fraud_status_enum NOT NULL DEFAULT 'pending'
+  acquisition_last_event_id INTEGER REFERENCES carpool_v2.acquisition_events(_id),
+  acquisition_status carpool_v2.carpool_acquisition_status_enum NOT NULL,
+  incentive_last_event_id INTEGER REFERENCES carpool_v2.incentive_events(_id),
+  incentive_status carpool_v2.carpool_incentive_status_enum NOT NULL,
+  fraud_last_event_id INTEGER REFERENCES carpool_v2.fraud_events(_id),
+  fraud_status carpool_v2.carpool_fraud_status_enum NOT NULL
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS carpool_status_carpool_id_idx ON carpool_v2.status (carpool_id);
