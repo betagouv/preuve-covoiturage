@@ -2,7 +2,7 @@ import test from 'ava';
 import { v4 } from 'uuid';
 import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
-import { Pmgf2023 as Handler } from './Pmgf2023';
+import { PmgfLate2023 as Handler } from './PmgfLate2023';
 
 const defaultPosition = {
   arr: '74278',
@@ -65,15 +65,15 @@ test(
     meta: [],
   },
   {
-    incentive: [200, 400, 250, 400, 800, 400],
+    incentive: [100, 200, 150, 300, 600, 300],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.4-2023',
-        value: 2450,
+        value: 1650,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 2450,
+        value: 1650,
       },
     ],
   },
@@ -91,20 +91,20 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.4-2023',
-        value: 118_00,
+        value: 49_00,
       },
     ],
   },
   {
-    incentive: [200, 0],
+    incentive: [100, 0],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.4-2023',
-        value: 120_00,
+        value: 50_00,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 200,
+        value: 100,
       },
     ],
   },
