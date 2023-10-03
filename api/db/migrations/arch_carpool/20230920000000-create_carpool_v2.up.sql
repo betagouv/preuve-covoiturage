@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS carpool_v2.carpools
   passenger_over_18 BOOLEAN,
   passenger_seats SMALLINT NOT NULL,
   passenger_contribution INTEGER NOT NULL,
-  passenger_payments JSON
+  passenger_payments JSONB
 );
 
 CREATE INDEX IF NOT EXISTS carpool_operator_journey_id_idx ON carpool_v2.carpools (operator_journey_id);
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS carpool_v2.requests
   operator_id INTEGER NOT NULL REFERENCES operator.operators(_id),
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   operator_journey_id VARCHAR NOT NULL,
-  payload JSON NOT NULL,
+  payload JSONB NOT NULL,
   api_version SMALLINT NOT NULL,
   cancel_code VARCHAR(32),
   cancel_message VARCHAR(512)
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS carpool_v2.geo
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   start_geo_code INTEGER,
   end_geo_code INTEGER,
-  error JSON
+  errors JSONB
 );
 CREATE UNIQUE INDEX IF NOT EXISTS carpool_geo_carpool_id_idx ON carpool_v2.geo(carpool_id);
 CREATE INDEX IF NOT EXISTS carpool_geo_start_geo_code ON carpool_v2.geo(start_geo_code);
