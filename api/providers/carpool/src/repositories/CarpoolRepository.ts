@@ -1,16 +1,31 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import sql, { join, raw } from '../helpers/sql';
-import { Id, InsertableCarpool, UpdatableCarpool, Uuid, WritenCarpool } from '../interfaces';
+import sql, { bulk, join, raw } from '../helpers/sql';
+import {
+  CarpoolIncentive,
+  CarpoolIncentiveCounterpart,
+  Id,
+  IncentiveCounterpartTarget,
+  InsertableCarpool,
+  UpdatableCarpool,
+  Uuid,
+  WritenCarpool,
+} from '../interfaces';
 
 @provider()
 export class CarpoolRepository {
   readonly table = 'carpool_v2.carpools';
+  readonly incentiveTable = 'carpool_v2.operator_incentives';
+  readonly incentiveCounterpartTable = 'carpool_v2.operator_incentive_counterparts';
 
   constructor(protected connection: PostgresConnection) {}
 
   public async register(data: InsertableCarpool, client?: PoolClient): Promise<WritenCarpool> {
-    const cl = client ?? this.connection.getClient();
+    const cl = client ?? (await this.connection.getClient().connect());
+    if (!client) {
+      await cl.query('BEGIN');
+    }
+    // await cl.query(`SET TIMEZONE TO 'UTC'`);
     const sqlQuery = sql`
       INSERT INTO ${raw(this.table)} (
         operator_id,
@@ -53,7 +68,7 @@ export class CarpoolRepository {
         ${data.operator_journey_id},
         ${data.operator_trip_id},
         ${data.operator_class},
-        ${data.start_datetime}::timestamp,
+        ${data.start_datetime},
         ST_SetSRID(ST_Point(${data.start_position.lon}, ${data.start_position.lat}), 4326),
         ${data.end_datetime},
         ST_SetSRID(ST_Point(${data.end_position.lon}, ${data.end_position.lat}), 4326),
@@ -87,8 +102,22 @@ export class CarpoolRepository {
       )
       RETURNING _id, created_at, updated_at
     `;
-    const result = await cl.query<WritenCarpool>(sqlQuery);
-    return result.rows.pop();
+    try {
+      const result = await cl.query<WritenCarpool>(sqlQuery);
+      const carpool = result.rows.pop();
+      await this.syncIncentives(carpool._id, data.incentives, cl);
+      await this.syncIncentiveCounterparts(carpool._id, data.incentive_counterparts, cl);
+      return carpool;
+    } catch (e) {
+      if (!client) {
+        await cl.query('ROLLBACK');
+      }
+      throw e;
+    } finally {
+      if (!client) {
+        cl.release();
+      }
+    }
   }
 
   public async update(
@@ -97,15 +126,23 @@ export class CarpoolRepository {
     data: UpdatableCarpool,
     client?: PoolClient,
   ): Promise<WritenCarpool> {
-    const cl = client ?? this.connection.getClient();
+    const cl = client ?? (await this.connection.getClient().connect());
     const keys = Object.keys(data)
-      .filter(key => key in data)
-      .map(key => sql`${raw(key)} = ${data[key]}`);
+      .filter((key) => key in data && ['incentives', 'incentive_counterparts'].indexOf(key) < 0)
+      .map((key) => {
+        if (['start_position', 'end_position'].indexOf(key) >= 0) {
+          return sql`${raw(key)} = ST_SetSRID(ST_Point(${data[key].lon}, ${data[key].lat}), 4326)`;
+        }
+        if (key === 'passenger_payments') {
+          return sql`${raw(key)} = ${JSON.stringify(data[key])}`;
+        }
+        return sql`${raw(key)} = ${data[key]}`;
+      });
 
-    if (!!keys.length) {
+    if (!!!keys.length) {
       throw new Error('No data provided to be updated');
     }
-  
+
     const sqlQuery = sql`
        UPDATE ${raw(this.table)}
        SET ${join(keys, ',')}
@@ -114,7 +151,64 @@ export class CarpoolRepository {
          operator_journey_id = ${operator_journey_id}
        RETURNING _id, created_at, updated_at
     `;
-    const result = await cl.query<WritenCarpool>(sqlQuery);
-    return result.rows.pop();
+
+    if (!client) {
+      await cl.query('BEGIN');
+    }
+
+    try {
+      const result = await cl.query<WritenCarpool>(sqlQuery);
+      const carpool = result.rows.pop();
+
+      if (data.incentives) {
+        await this.syncIncentives(carpool._id, data.incentives, cl);
+      }
+
+      if (data.incentive_counterparts) {
+        await this.syncIncentiveCounterparts(carpool._id, data.incentive_counterparts, cl);
+      }
+
+      return carpool;
+    } catch (e) {
+      if (!client) {
+        await cl.query('ROLLBACK');
+      }
+      throw e;
+    } finally {
+      if (!client) {
+        cl.release();
+      }
+    }
+  }
+
+  protected async syncIncentives(
+    carpool_id: Id,
+    incentives: Array<CarpoolIncentive>,
+    client: PoolClient,
+  ): Promise<void> {
+    await client.query(sql`DELETE FROM ${raw(this.incentiveTable)} WHERE carpool_id = ${carpool_id}`);
+    const sqlQuery = sql`INSERT INTO ${raw(this.incentiveTable)} (carpool_id, idx, siret, amount) VALUES ${bulk(
+      incentives.map((i) => [carpool_id, i.index, i.siret, i.amount]),
+    )}`;
+    await client.query(sqlQuery);
+  }
+
+  protected async syncIncentiveCounterparts(
+    carpool_id: Id,
+    incentive_counterparts: Array<CarpoolIncentiveCounterpart>,
+    client: PoolClient,
+  ): Promise<void> {
+    await client.query(sql`DELETE FROM ${raw(this.incentiveCounterpartTable)} WHERE carpool_id = ${carpool_id}`);
+    const sqlQuery = sql`INSERT INTO ${raw(
+      this.incentiveCounterpartTable,
+    )} (carpool_id, target_is_driver, siret, amount) VALUES ${bulk(
+      incentive_counterparts.map((i) => [
+        carpool_id,
+        i.target === IncentiveCounterpartTarget.Driver,
+        i.siret,
+        i.amount,
+      ]),
+    )}`;
+    await client.query(sqlQuery);
   }
 }

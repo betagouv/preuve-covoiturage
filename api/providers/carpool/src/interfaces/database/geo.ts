@@ -1,14 +1,14 @@
-import { GeoCode, Id, SerializedError } from '../common';
+import { GeoCode, Id, SerializableError } from '../common';
 
-interface UpsertableSuccessCarpoolGeo {
+export interface UpsertableSuccessCarpoolGeo {
   carpool_id: Id;
   start_geo_code: GeoCode;
   end_geo_code: GeoCode;
 }
 
-interface UpsertableErrorCarpoolGeo {
+export interface UpsertableErrorCarpoolGeo {
   carpool_id: Id;
-  error: SerializedError;
+  error: SerializableError;
 }
 
 export type UpsertableCarpoolGeo = UpsertableSuccessCarpoolGeo | UpsertableErrorCarpoolGeo;

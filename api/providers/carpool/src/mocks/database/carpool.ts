@@ -1,4 +1,4 @@
-import { IncentiveCounterpartTarget, InsertableCarpool, OperatorClass } from '../../interfaces';
+import { IncentiveCounterpartTarget, InsertableCarpool, OperatorClass, UpdatableCarpool } from '../../interfaces';
 
 export const insertableCarpool: InsertableCarpool = {
   operator_id: 1,
@@ -41,7 +41,31 @@ export const insertableCarpool: InsertableCarpool = {
   passenger_over_18: true,
   passenger_seats: 1,
   passenger_contribution: 100,
-  passenger_payments: [{index: 0, amount: 100, siret: '1234678900013', type: 'Cash'}],
-  incentives: [ { index: 0, amount: 100, siret: '1234678900012'} ],
-  incentive_counterparts: [{ target: IncentiveCounterpartTarget.Passenger, amount: 100, siret: '1234678900012' }]
+  passenger_payments: [{ index: 0, amount: 100, siret: '1234678900013', type: 'Cash' }],
+  incentives: [
+    { index: 0, amount: 50, siret: '1234678900012' },
+    { index: 1, amount: 50, siret: '1234678900013' },
+  ],
+  incentive_counterparts: [
+    { target: IncentiveCounterpartTarget.Passenger, amount: 50, siret: '1234678900012' },
+    { target: IncentiveCounterpartTarget.Passenger, amount: 50, siret: '1234678900013' },
+  ],
+};
+
+export const updatableCarpool: UpdatableCarpool = {
+  operator_trip_id: 'operator_trip_id_2',
+  operator_class: OperatorClass.B,
+  end_datetime: new Date('2023-01-01T01:31:01.000Z'),
+  end_position: {
+    lat: 48.700001,
+    lon: 2.2380599,
+  },
+  passenger_firstname: 'Jean',
+  passenger_contribution: 50,
+  passenger_payments: [{ index: 0, amount: 50, siret: '1234678900013', type: 'Cash' }],
+  incentives: [
+    { index: 0, amount: 25, siret: '1234678900012' },
+    { index: 1, amount: 25, siret: '1234678900013' },
+  ],
+  incentive_counterparts: [{ target: IncentiveCounterpartTarget.Passenger, amount: 50, siret: '1234678900013' }],
 };

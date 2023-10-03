@@ -17,7 +17,7 @@ export type Email = string;
 export type Name = string;
 export type Siret = string;
 export type GeoCode = string;
-export type SerializedError = string;
+export type SerializableError = Error;
 
 export enum OperatorClass {
   A = 'A',
@@ -54,13 +54,10 @@ export type ApiVersion = number;
 export type CancelCode = string;
 export type CancelMessage = string;
 
-export enum CarpoolStatusEnum {
-  Pending = 'pending',
-  Passed = 'passed',
+export enum CarpoolAcquisitionStatusEnum {
+  Received = 'received',
+  Processed = 'processed',
   Failed = 'failed',
   Canceled = 'canceled',
   Expired = 'expired',
 }
-
-export type CarpoolEventScope = string;
-export type CarpoolEventName = string;

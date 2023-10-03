@@ -1,8 +1,7 @@
-import { CarpoolEventName, CarpoolEventScope, Id } from '../common';
+import { CarpoolAcquisitionStatusEnum, Id } from '../common';
 
-export interface InsertableCarpoolEvent {
+export interface InsertableCarpoolAcquisitionEvent {
   carpool_id: Id;
-  relation_id: Id;
-  scope: CarpoolEventScope;
-  event: CarpoolEventName;
+  request_id?: Id;
+  status: CarpoolAcquisitionStatusEnum;
 }

@@ -24,19 +24,15 @@ export class Sql {
   constructor(rawStrings: readonly string[], rawValues: readonly RawValue[]) {
     if (rawStrings.length - 1 !== rawValues.length) {
       if (rawStrings.length === 0) {
-        throw new TypeError("Expected at least 1 string");
+        throw new TypeError('Expected at least 1 string');
       }
 
-      throw new TypeError(
-        `Expected ${rawStrings.length} strings to have ${
-          rawStrings.length - 1
-        } values`
-      );
+      throw new TypeError(`Expected ${rawStrings.length} strings to have ${rawStrings.length - 1} values`);
     }
 
     const valuesLength = rawValues.reduce<number>(
       (len, value) => len + (value instanceof Sql ? value.values.length : 1),
-      0
+      0,
     );
 
     this.values = new Array(valuesLength);
@@ -98,55 +94,35 @@ export class Sql {
 /**
  * Create a SQL query for a list of values.
  */
-export function join(
-  values: readonly RawValue[],
-  separator = ",",
-  prefix = "",
-  suffix = ""
-) {
+export function join(values: readonly RawValue[], separator = ',', prefix = '', suffix = '') {
   if (values.length === 0) {
-    throw new TypeError(
-      "Expected `join([])` to be called with an array of multiple elements, but got an empty array"
-    );
+    throw new TypeError('Expected `join([])` to be called with an array of multiple elements, but got an empty array');
   }
 
-  return new Sql(
-    [prefix, ...Array(values.length - 1).fill(separator), suffix],
-    values
-  );
+  return new Sql([prefix, ...Array(values.length - 1).fill(separator), suffix], values);
 }
 
 /**
  * Create a SQL query for a list of structured values.
  */
-export function bulk(
-  data: ReadonlyArray<ReadonlyArray<RawValue>>,
-  separator = ",",
-  prefix = "",
-  suffix = ""
-) {
+export function bulk(data: ReadonlyArray<ReadonlyArray<RawValue>>, separator = ',', prefix = '', suffix = '') {
   const length = data.length && data[0].length;
 
   if (length === 0) {
     throw new TypeError(
-      "Expected `bulk([][])` to be called with a nested array of multiple elements, but got an empty array"
+      'Expected `bulk([][])` to be called with a nested array of multiple elements, but got an empty array',
     );
   }
 
   const values = data.map((item, index) => {
     if (item.length !== length) {
-      throw new TypeError(
-        `Expected \`bulk([${index}][])\` to have a length of ${length}, but got ${item.length}`
-      );
+      throw new TypeError(`Expected \`bulk([${index}][])\` to have a length of ${length}, but got ${item.length}`);
     }
 
-    return new Sql(["(", ...Array(item.length - 1).fill(separator), ")"], item);
+    return new Sql(['(', ...Array(item.length - 1).fill(separator), ')'], item);
   });
 
-  return new Sql(
-    [prefix, ...Array(values.length - 1).fill(separator), suffix],
-    values
-  );
+  return new Sql([prefix, ...Array(values.length - 1).fill(separator), suffix], values);
 }
 
 /**
@@ -159,14 +135,11 @@ export function raw(value: string) {
 /**
  * Placeholder value for "no text".
  */
-export const empty = raw("");
+export const empty = raw('');
 
 /**
  * Create a SQL object from a template string.
  */
-export default function sql(
-  strings: readonly string[],
-  ...values: readonly RawValue[]
-) {
+export default function sql(strings: readonly string[], ...values: readonly RawValue[]) {
   return new Sql(strings, values);
 }
