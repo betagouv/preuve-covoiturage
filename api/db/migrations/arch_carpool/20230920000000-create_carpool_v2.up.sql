@@ -114,8 +114,8 @@ CREATE TABLE IF NOT EXISTS carpool_v2.geo
   _id SERIAL PRIMARY KEY,
   carpool_id INTEGER NOT NULL REFERENCES carpool_v2.carpools(_id),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  start_geo_code INTEGER,
-  end_geo_code INTEGER,
+  start_geo_code VARCHAR(5),
+  end_geo_code VARCHAR(5),
   errors JSONB
 );
 CREATE UNIQUE INDEX IF NOT EXISTS carpool_geo_carpool_id_idx ON carpool_v2.geo(carpool_id);
