@@ -18,6 +18,7 @@
     "@ilos/connection-postgres": "~0"
   },
   "devDependencies": {
-    "@pdc/helper-test": "~0"
+    "@pdc/helper-test": "~0",
+    "sinon": "^14.0.0"
   }
 }

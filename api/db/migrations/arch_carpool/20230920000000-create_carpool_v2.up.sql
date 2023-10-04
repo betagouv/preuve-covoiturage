@@ -66,14 +66,14 @@ CREATE TABLE IF NOT EXISTS carpool_v2.requests
   operator_id INTEGER NOT NULL REFERENCES operator.operators(_id),
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   operator_journey_id VARCHAR NOT NULL,
-  payload JSONB NOT NULL,
+  payload JSONB,
   api_version SMALLINT NOT NULL,
   cancel_code VARCHAR(32),
   cancel_message VARCHAR(512)
 );
 CREATE INDEX IF NOT EXISTS carpool_requests_carpool_id_idx ON carpool_v2.requests (carpool_id);
 
-CREATE TYPE carpool_v2.carpool_acquisition_status_enum AS enum('received', 'processed', 'failed', 'canceled', 'expired');
+CREATE TYPE carpool_v2.carpool_acquisition_status_enum AS enum('received', 'updated', 'processed', 'failed', 'canceled', 'expired');
 CREATE TABLE IF NOT EXISTS carpool_v2.acquisition_events
 (
   _id SERIAL PRIMARY KEY,

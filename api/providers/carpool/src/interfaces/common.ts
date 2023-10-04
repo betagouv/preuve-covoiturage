@@ -49,15 +49,29 @@ export type Payment = {
   type: Name;
 };
 
-export type Payload = string;
+export type Payload = unknown;
 export type ApiVersion = number;
 export type CancelCode = string;
 export type CancelMessage = string;
 
 export enum CarpoolAcquisitionStatusEnum {
   Received = 'received',
+  Updated = 'updated',
   Processed = 'processed',
   Failed = 'failed',
   Canceled = 'canceled',
   Expired = 'expired',
+}
+
+export enum CarpoolIncentiveStatusEnum {
+  Pending = 'pending',
+  Applied = 'applied',
+  Finalized = 'finalized',
+  Failed = 'failed',
+}
+
+export enum CarpoolFraudStatusEnum {
+  Pending = 'pending',
+  Passed = 'passed',
+  Failed = 'failed',
 }
