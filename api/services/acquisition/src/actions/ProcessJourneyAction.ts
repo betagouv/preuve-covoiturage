@@ -30,7 +30,7 @@ export class ProcessJourneyAction extends AbstractAction {
 
   protected async handle(_params: ParamsInterface): Promise<ResultInterface> {
     const runUUID = randomUUID();
-    const { timeout, batchSize } = this.config.get('acquisition.processing', { timeout: 0, batchSize: 100 });
+    const { timeout, batchSize } = this.config.get('acquisition.processing', { timeout: 0, batchSize: 1000 });
     const [acquisitions, cb] = await this.repository.findThenUpdate(
       {
         limit: batchSize,
