@@ -18,7 +18,7 @@ Le périmètre géographique de la campagne comprend les zones suivantes
   <li>CA Thonon Agglomération</li>
 </ul>
 <p>Les <b> conducteurs </b> effectuant un trajet d'au moins 2 km,
-avec pour origine et destination le périmètre ci-dessus,
+avec pour origine OU destination le périmètre ci-dessus,
 sont incités selon les règles suivantes : </p>
 <ul>
   <li><b>De 4 à 20 km : 1 euros par trajet par passager transporté.</b></li>
