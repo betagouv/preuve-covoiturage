@@ -23,12 +23,13 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
 import { ProcessJourneyAction } from './actions/ProcessJourneyAction';
 import { ListJourneyAction } from './actions/ListJourneyAction';
 import { PatchJourneyAction } from './actions/PatchJourneyAction';
+import { CarpoolAcquisitionService } from '@pdc/provider-carpool/dist';
 
 @serviceProvider({
   config,
   commands: [AcquisitionProcessCommand],
   queues: ['acquisition'],
-  providers: [AcquisitionRepositoryProvider, NormalizationProvider, GeoProvider],
+  providers: [AcquisitionRepositoryProvider, NormalizationProvider, GeoProvider, CarpoolAcquisitionService],
   validator: [v3binding, listBinding, cancelBinding, statusBinding, patchBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   connections: [
