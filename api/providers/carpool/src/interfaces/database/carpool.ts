@@ -2,7 +2,6 @@ import {
   CarpoolIncentive,
   CarpoolIncentiveCounterpart,
   Distance,
-  Email,
   Financial,
   Id,
   LicencePlate,
@@ -30,10 +29,6 @@ export interface InsertableCarpool {
   driver_operator_user_id: Uuid;
   driver_phone: Phone;
   driver_phone_trunc: Phone;
-  driver_firstname: Name;
-  driver_lastname: Name;
-  driver_email: Email;
-  driver_company: Name;
   driver_travelpass_name: Name;
   driver_travelpass_user_id: Uuid;
   driver_revenue: Financial;
@@ -41,10 +36,6 @@ export interface InsertableCarpool {
   passenger_operator_user_id: Uuid;
   passenger_phone: Phone;
   passenger_phone_trunc: Phone;
-  passenger_firstname: Name;
-  passenger_lastname: Name;
-  passenger_email: Email;
-  passenger_company: Name;
   passenger_travelpass_name: Name;
   passenger_travelpass_user_id: Uuid;
   passenger_over_18: boolean;
@@ -68,10 +59,6 @@ export interface UpdatableCarpool {
   driver_operator_user_id?: Uuid;
   driver_phone?: Phone;
   driver_phone_trunc?: Phone;
-  driver_firstname?: Name;
-  driver_lastname?: Name;
-  driver_email?: Email;
-  driver_company?: Name;
   driver_travelpass_name?: Name;
   driver_travelpass_user_id?: Uuid;
   driver_revenue?: Financial;
@@ -79,10 +66,6 @@ export interface UpdatableCarpool {
   passenger_operator_user_id?: Uuid;
   passenger_phone?: Phone;
   passenger_phone_trunc?: Phone;
-  passenger_firstname?: Name;
-  passenger_lastname?: Name;
-  passenger_email?: Email;
-  passenger_company?: Name;
   passenger_travelpass_name?: Name;
   passenger_travelpass_user_id?: Uuid;
   passenger_over_18?: boolean;

@@ -13,7 +13,6 @@ export type LicencePlate = string;
 export type Financial = number;
 export type Seat = number;
 export type Phone = string;
-export type Email = string;
 export type Name = string;
 export type Siret = string;
 export type GeoCode = string;
