@@ -15,7 +15,7 @@ export async function generateStaticParams() {
     },
     meta:'filter_count',
   });
-  const nbPage = meta && meta.filter_count ? Math.round(meta.filter_count/cmsRessourcesByPage) : 1
+  const nbPage = meta && meta.filter_count ? Math.ceil(meta.filter_count/cmsRessourcesByPage) : 1
   return Array.from({ length: nbPage }, (_, v) => {
     const id = v + 1;
     return {

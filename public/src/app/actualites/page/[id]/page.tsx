@@ -16,7 +16,7 @@ export async function generateStaticParams() {
     },
     meta:'filter_count',
   });
-  const nbPage = meta && meta.filter_count ? Math.round(meta.filter_count/cmsActusByPage) : 1
+  const nbPage = meta && meta.filter_count ? Math.ceil(meta.filter_count/cmsActusByPage) : 1
   return Array.from({ length: nbPage }, (_, v) => {
     const id = v + 1;
     return {
@@ -25,11 +25,11 @@ export async function generateStaticParams() {
   });
 }
 
-export default async function ActuPage({ params }: { params: { id: number }}) {
+export default async function ActuPage({ params }: { params: { id: string }}) {
   const { data, meta } = await cmsInstance.items('Articles').readByQuery({
     fields:'*, categories.Categories_id.*',
     limit: cmsActusByPage,
-    page: params.id,
+    page: Number(params.id),
     filter:{
       status: {
         '_eq': 'published',
@@ -78,7 +78,7 @@ export default async function ActuPage({ params }: { params: { id: number }}) {
       </div> 
       <Pagination
         count={nbPage}
-        defaultPage={params.id}
+        defaultPage={Number(params.id)}
         href={`/actualites`}
       />     
     </article>
