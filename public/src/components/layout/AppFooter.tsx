@@ -1,6 +1,5 @@
 import { headerFooterDisplayItem } from '@codegouvfr/react-dsfr/Display';
 import { Footer } from '@codegouvfr/react-dsfr/Footer';
-import { fr } from '@codegouvfr/react-dsfr'
 
 export function AppFooter() {
   return (
