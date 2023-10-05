@@ -1,9 +1,11 @@
 import { fr } from '@codegouvfr/react-dsfr';
 import ButtonsGroup from '@codegouvfr/react-dsfr/ButtonsGroup';
+import Button from '@codegouvfr/react-dsfr/Button';
+import Link from 'next/link';
 
 export function Follow() {
   return (
-    <div className={fr.cx('fr-follow')}>
+    <div className={fr.cx('fr-follow','fr-footer','fr-mt-10v')}>
       <div className={fr.cx('fr-container')}>
         <div className={fr.cx('fr-grid-row')}>
           <div className={fr.cx('fr-col-12','fr-col-md-8')}>
@@ -13,7 +15,7 @@ export function Follow() {
                   Une question ? Écrivez-nous !
                 </p>
                 <p>
-                  Vous avez une question sur le covoiturage ? Ecrivez directement à l&apos;équipe de covoiturage.beta
+                  Nous vous répondrons au plus vite ou vous redirigerons vers le bon service
                 </p>
                 <ButtonsGroup
                   buttons={[
@@ -35,39 +37,32 @@ export function Follow() {
               <p className={fr.cx('fr-h5','fr-follow__title')}>
                 Suivez-nous sur les réseaux sociaux
               </p>
-              <ButtonsGroup
-                  buttons={[
-                    {
-                      children: 'test',
-                      iconId: 'fr-icon-twitter-fill',
-                      linkProps: {
-                        href: 'https://twitter.com/Covoitbetagouv'
-                      }
-                    },
-                    {
-                      children: 'test',
-                      iconId: 'fr-icon-linkedin-box-fill',
-                      linkProps: {
-                        href: 'https://www.linkedin.com/company/registre-de-preuve-de-covoiturage'
-                      }
-                    },
-                    {
-                      children: 'test',
-                      iconId: 'fr-icon-youtube-fill',
-                      linkProps: {
-                        href: 'https://www.youtube.com/channel/UC-Dge-XxJCIRG22jcGM-VtA'
-                      }
-                    },
-                    {
-                      children: 'test',
-                      iconId: 'fr-icon-github-fill',
-                      linkProps: {
-                        href: 'https://github.com/betagouv/preuve-covoiturage'
-                      }
-                    },
-                  ]}
-                  buttonsEquisized
-                />
+              <div>
+                <Link href='https://twitter.com/Covoitbetagouv' style={{"backgroundImage": "none","display":"inline-block"}}>
+                  <Button 
+                    iconId='fr-icon-twitter-fill'
+                    title="Label button"
+                  /> 
+                </Link>
+                <Link href='https://www.linkedin.com/company/registre-de-preuve-de-covoiturage' style={{"backgroundImage": "none","display":"inline-block"}}>
+                  <Button 
+                    iconId='fr-icon-linkedin-box-fill'
+                    title="LinkedIn"
+                  /> 
+                </Link>
+                <Link href='https://www.youtube.com/channel/UC-Dge-XxJCIRG22jcGM-VtA' style={{"backgroundImage": "none","display":"inline-block"}}>
+                  <Button 
+                    iconId='fr-icon-youtube-fill'
+                    title="You Tube"
+                  /> 
+                </Link>
+                <Link href='https://github.com/betagouv/preuve-covoiturage' style={{"backgroundImage": "none","display":"inline-block"}}>
+                  <Button 
+                    iconId='fr-icon-github-fill'
+                    title="GitHub"
+                  /> 
+                </Link>
+              </div>
             </div>
           </div>
         </div>

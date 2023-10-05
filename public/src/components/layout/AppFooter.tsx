@@ -5,32 +5,57 @@ import { fr } from '@codegouvfr/react-dsfr'
 export function AppFooter() {
   return (
     <Footer
-      className={fr.cx('fr-mt-10v')}
       linkList={[
         {
+          categoryName: 'Startup d\'Etat Covoiturage.gouv',
           links: [
             {
               linkProps: {
-                href: 'https://covoiturage.beta.gouv.fr/',
+                href: 'https://doc.covoiturage.beta.gouv.fr/bienvenue/qui-sommes-nous',
                 target:'_blank'
               },
-              text: 'Covoiturage.beta'
+              text: 'Qui sommes-nous ?'
+            },
+            {
+              linkProps: {
+                href: 'https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage',
+                target:'_blank'
+              },
+              text: 'Nos services'
+            },
+            {
+              linkProps: {
+                href: 'https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions',
+                target:'_blank'
+              },
+              text: 'FAQ'
             },
           ]
         },
         {
+          categoryName: 'Autres liens utiles',
           links: [
             {
               linkProps: {
                 href: 'https://www.expertises-territoires.fr/',
                 target:'_blank'
               },
-              text: 'Expertise territoire'
+              text: 'Expertises-territoires'
             },
-          ]
-        },
-        {
-          links: [
+            {
+              linkProps: {
+                href: 'https://www.ecologie.gouv.fr/',
+                target:'_blank'
+              },
+              text: 'Ecologie.gouv'
+            },
+            {
+              linkProps: {
+                href: 'https://www.ademe.fr/',
+                target:'_blank'
+              },
+              text: 'ADEME'
+            },
             {
               linkProps: {
                 href: 'https://www.cerema.fr/',
@@ -39,29 +64,7 @@ export function AppFooter() {
               text: 'Cerema'
             },
           ]
-        },
-        {
-          links: [
-            {
-              linkProps: {
-                href: 'https://www.ademe.fr/',
-                target:'_blank'
-              },
-              text: 'Ademe'
-            },
-          ]
-        },
-        {
-          links: [
-            {
-              linkProps: {
-                href: 'https://www.ecologie.gouv.fr/',
-                target:'_blank'
-              },
-              text: 'Ecologie.gouv'
-            },
-          ]
-        },
+        }
       ]}
       accessibility='partially compliant'
       contentDescription='Le site officiel d’information sur le covoiturage de courte distance.
