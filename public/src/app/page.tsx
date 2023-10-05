@@ -7,7 +7,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
 import RessourceCard from "@/components/ressources/RessourceCard";
 import { Section } from "@/interfaces/cms/collectionsInterface";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import MDContent from "@/components/common/MDContent";
 
 export default async function Home() {
   const { data } = await cmsInstance.items('Pages').readByQuery({
@@ -66,7 +66,7 @@ export default async function Home() {
         <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
           <div className={fr.cx('fr-col')}>
             <div>
-              <MDXRemote source={data[0].content} />
+              <MDContent source={data[0].content} />
             </div>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default async function Home() {
           <div className={fr.cx('fr-grid-row')}>
             <div className={fr.cx('fr-col')}>
               <div>
-                <MDXRemote source={data ? data[0].complement : ''} />
+                <MDContent source={data ? data[0].complement : ''} />
               </div>
             </div>
           </div>

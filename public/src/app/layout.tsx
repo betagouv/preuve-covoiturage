@@ -10,6 +10,8 @@ import Link from 'next/link';
 import { StartDsfr } from '@/components/layout/StartDsfr';
 import { defaultColorScheme } from '@/components/layout/defaultColorScheme';
 import Analytics from '@/components/layout/Analytics';
+import '../styles/global.scss';
+
 
 export default function RootLayout({ children }: { children: JSX.Element }) {
   //NOTE: The lang parameter is optional and defaults to "fr"

@@ -5,7 +5,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import Tag from "@codegouvfr/react-dsfr/Tag";
 import Image from 'next/image';
 import { cmsHost, cmsInstance } from "@/helpers/cms";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import MDContent from "@/components/common/MDContent";
 
 export async function generateStaticParams() {
   const { data } = await cmsInstance.items('Articles').readByQuery({
@@ -101,7 +101,7 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
           </figure>
           <div>
             {data[0].description}
-            <MDXRemote source={data[0].content} />
+            <MDContent source={data[0].content} />
           </div>
           <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">
             Haut de page
