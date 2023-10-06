@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 setup() {
+  # load environment variables
   if [ -e ".env" ]
   then
     source .env
@@ -9,6 +10,10 @@ setup() {
   else
     echo "Missing .env file. Please copy .env.example to .env and configure it"
   fi
+
+  # setup the playground folder
+  mkdir -p playground
+  echo "playground folder (untracked) created. Have fun!"
 }
 
 cleanup() {
