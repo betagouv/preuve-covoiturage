@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "donjayamanne.python-environment-manager",
+    "ms-toolsai.jupyter"
+  ]
+}

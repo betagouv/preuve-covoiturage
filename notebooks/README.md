@@ -1,4 +1,4 @@
-# Regsitre de preuve data exploration 
+# Registre de preuve data exploration
 
 RPC Data exploration with jupyter notebook
 
@@ -9,14 +9,24 @@ RPC Data exploration with jupyter notebook
 You can use vscode python extension or
 
 ```bash
-python3.10 -m venv .venv
+virtualenv .venv
 ```
 
 ## Use python virtual env
 
 Vscode does this automatically with a new terminal
+when the Python Environment Manager extension is installed.
 ```bash
 source ./.venv/bin/activate
+```
+
+Copy the `.env.example` to `.env` and setup the required variables.
+
+Add the following command at the end of `.venv/bin/activate` to load
+`.env` variables on activation.
+
+```bash
+[[ -e shell.sh ]] && source shell.sh && setup
 ```
 
 ## Exit python virtual env
@@ -25,14 +35,13 @@ source ./.venv/bin/activate
 deactivate
 ```
 
-## Install requierements (with venv activated) 
+## Install requierements (with venv activated)
 ```bash
-pip install -r requirements.txt 
-pip install -r requirements-dev.txt 
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
 
-
-## Install pre-commit hook to prevent sensitve data to be added to the repo
+## Install pre-commit hook to prevent sensitive data to be added to the repo
 
 This will create a pre-commit hook in `.git` folder
 ```
