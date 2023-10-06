@@ -21,13 +21,7 @@ source ./.venv/bin/activate
 ```
 
 Copy the `.env.example` to `.env` and setup the required variables.
-
-Add the following command at the end of `.venv/bin/activate` to load
-`.env` variables on activation.
-
-```bash
-[[ -e shell.sh ]] && source shell.sh && setup
-```
+It is loaded in scripts by `load_dotenv()` from `dotenv`.
 
 ## Exit python virtual env
 
