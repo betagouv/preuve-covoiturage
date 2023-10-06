@@ -34,10 +34,10 @@ export default function Page() {
         <article id='content'>
           <PageTitle title={title} />
           <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col','fr-col-md-6')}>
+            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <SelectTerritory code={params.code} type={params.observe} year={Number(params.year)} onChange={onChangeTerritory} />
             </div>
-            <div className={fr.cx('fr-col','fr-col-md-6')}>
+            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <SelectPeriod year={Number(params.year)} month={Number(params.month)} onChange={onChangePeriod} />
             </div>
           </div>
@@ -48,16 +48,11 @@ export default function Page() {
           />
           <KeyFigures params={params} />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col','fr-col-md-6')}>
-              <RepartitionDistanceGraph title='Trajets par distance' direction='from' params={params} />
-            </div>
-          </div>
-          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col')}>
-              <RepartitionHoraireGraph title='Trajets sortants par horaire' direction='from' params={params} />
+              <RepartitionHoraireGraph title='Trajets par horaire' params={params} />
             </div>
             <div className={fr.cx('fr-col')}>
-              <RepartitionHoraireGraph title='Trajets entrants par horaire' direction='to' params={params} />
+              <RepartitionDistanceGraph title='Trajets par distance' params={params} />
             </div>
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>

@@ -6,7 +6,7 @@ import 'material-symbols';
 
 export default function SingleIndicator(props: IndicatorProps) {
   return (
-    <div className={`${fr.cx('fr-col','fr-col-md-3')} ${style.col}`}>
+    <div className={`${fr.cx('fr-col-12','fr-col-md-3')} ${style.col}`}>
       <div className={`${fr.cx('fr-callout')} ${style.stat}`}>
         {props.info && <Badge severity='info'>{props.info}</Badge>}
         

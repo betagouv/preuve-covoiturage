@@ -11,18 +11,17 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend)
 
 export default function RepartitionHoraireGraph({
   title,
-  direction,
   params,
 }: {
   title: string;
-  direction: string;
   params: SearchParamsInterface;
 }) {
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins:{
       legend: {
-        display: false
+        display: params.type !== 'country' ? true : false
       }
     },
   };
@@ -43,17 +42,32 @@ export default function RepartitionHoraireGraph({
     const labels = ['0h','1h','2h','3h','4h','5h','6h','7h','8h','9h','10h','11h','12h','13h','14h','15h','16h','17h','18h','19h','20h','21h','22h','23h'];
     const datasets = [
       {
-        data: data ? dataWithNull(data.find((d) => d.direction === direction)?.hours || []).map((d) => d.journeys) : [],
+        label: 'Origine',
+        data: data ? dataWithNull(data.find((d) => d.direction === 'from')?.hours || []).map((d) => d.journeys) : [],
         borderColor:'#000091',
-        backgroundColor:'rgba(0, 0, 145, 0.2)',
+        backgroundColor:'rgba(106, 106, 244, 0.8)',
         tension: 0.1,
         datalabels: {
           labels: {
             title: null
           },
         },
-      },
+      }
     ];
+    params.type !== 'country' ? datasets.push(
+      {
+        label: 'Destination',
+        data: data ? dataWithNull(data.find((d) => d.direction === 'to')?.hours || []).map((d) => d.journeys) : [],
+        borderColor:'#000091',
+        backgroundColor:'rgba(183, 167, 63, 0.8)',
+        tension: 0.1,
+        datalabels: {
+          labels: {
+            title: null
+          },
+        },
+      }
+    ) : '';
     return { labels: labels, datasets: datasets };
   };
 
@@ -74,7 +88,7 @@ export default function RepartitionHoraireGraph({
       {!loading && !error && (
         <div className={fr.cx('fr-callout')}>
           <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
-          <div className='graph-wrapper' style={{ backgroundColor: '#fff' }}>
+          <div className='graph-wrapper' style={{ backgroundColor: '#fff', height:"350px" }}>
             <Bar options={options} data={chartData() as ChartData<"bar",number[]>} />
           </div>
         </div>
