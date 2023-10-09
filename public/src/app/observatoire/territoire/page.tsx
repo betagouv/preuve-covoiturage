@@ -13,7 +13,8 @@ import KeyFigures from './KeyFigures';
 import DistanceGraph from './graphs/DistanceGraph';
 import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
 import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
-import TrajetsGraph from './graphs/TrajetsGraph';
+import FluxGraph from './graphs/FluxGraph';
+import OccupationGraph from './graphs/OccupationGraph';
 import DensiteMap from './maps/DensiteMap';
 import FluxMap from './maps/FluxMap';
 import OccupationMap from './maps/OccupationMap';
@@ -103,12 +104,22 @@ export default function Page() {
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             {params.graph == 1 && (
               <div className={fr.cx('fr-col')}>
-                <TrajetsGraph title={graphList[0].name} params={params} />
+                <FluxGraph title={graphList[0].name} params={params} indic="journeys"/>
               </div>
             )}
             {params.graph == 2 && (
               <div className={fr.cx('fr-col')}>
                 <DistanceGraph title={graphList[1].name} params={params} />
+              </div>
+            )}
+            {params.graph == 3 && (
+              <div className={fr.cx('fr-col')}>
+                <OccupationGraph title={graphList[2].name} params={params} indic="occupation_rate"/>
+              </div>
+            )}
+            {params.graph == 4 && (
+              <div className={fr.cx('fr-col')}>
+                <OccupationGraph title={graphList[3].name} params={params} indic="trips"/>
               </div>
             )}
           </div>

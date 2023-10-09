@@ -1,8 +1,8 @@
 import { Config } from '@/config';
 import { monthList } from '@/helpers/lists';
 import { useApi } from '@/hooks/useApi';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
-import { EvolDistanceDataInterface } from '@/interfaces/observatoire/dataInterfaces';
+import { FluxIndicators, SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
+import { EvolFluxDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import {
   CategoryScale,
@@ -19,7 +19,7 @@ import { Line } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
-export default function DistanceGraph({ title, params }: { title: string; params: SearchParamsInterface }) {
+export default function TrajetsGraph({ title,indic, params }: { title: string, indic:FluxIndicators, params: SearchParamsInterface }) {
   const options = {
     responsive: true,
     plugins: {
@@ -30,8 +30,8 @@ export default function DistanceGraph({ title, params }: { title: string; params
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/evol-monthly-flux?indic=distance&code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}`;
-  const { data, error, loading } = useApi<EvolDistanceDataInterface[]>(url);
+  const url = `${apiUrl}/evol-monthly-flux?indic=${indic}&code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}`;
+  const { data, error, loading } = useApi<EvolFluxDataInterface[]>(url);
 
   const chartData = () => {
     const labels = data?.map((d) => {
@@ -40,7 +40,7 @@ export default function DistanceGraph({ title, params }: { title: string; params
     });
     const datasets = [
       {
-        data: data?.map((d) => d.distance/d.journeys).reverse(),
+        data: data?.map((d) => d[`${indic}`]).reverse(),
         fill: true,
         borderColor: '#000091',
         backgroundColor: 'rgba(0, 0, 145, 0.2)',

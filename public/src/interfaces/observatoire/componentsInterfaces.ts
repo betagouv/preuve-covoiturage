@@ -94,3 +94,6 @@ export interface SingleMapProps {
 }
 
 export type SingleGraphProps = SingleMapProps;
+
+export type FluxIndicators = 'journeys' | 'passengers' | 'has_incentive' | 'distance';
+export type OccupationIndicators = 'journeys' | 'trips' | 'has_incentive' | 'occupation_rate';

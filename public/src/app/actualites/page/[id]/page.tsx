@@ -60,7 +60,7 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
         {data &&
           data.map((a, i) => {
             if (i <= 1) return (
-              <div key={i} className={fr.cx('fr-col')}>
+              <div key={i} className={fr.cx('fr-col-12','fr-col-md-6')}>
                 <ActuCard 
                   title={a.title}
                   content={shorten(a.description,250)}

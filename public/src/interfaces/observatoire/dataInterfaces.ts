@@ -71,11 +71,22 @@ export interface EvolDataInterface {
   month: number;
 }
 
-export interface EvolJourneysDataInterface extends EvolDataInterface {
+export interface EvolFluxDataInterface extends EvolDataInterface {
   journeys: number;
+  has_incentive: number;
+  passengers: number;
+  distance: number;
 }
 export interface EvolDistanceDataInterface extends EvolDataInterface {
   distance: number;
+  journeys: number;
+}
+
+export interface EvolOccupationDataInterface extends EvolDataInterface {
+  journeys: number;
+  trips: number;
+  has_incentive: number;
+  occupation_rate: number;
 }
 
 export interface DistributionDistanceDataInterface {

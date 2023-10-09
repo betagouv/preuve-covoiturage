@@ -35,7 +35,7 @@ export default async function Actualites() {
         {data &&
           data.map((a, i) => {
             return (
-              <div key={i} className={fr.cx('fr-col')}>
+              <div key={i} className={fr.cx('fr-col-12','fr-col-md-6')}>
                 <ActuCard 
                   title={a.title}
                   content={shorten(a.description,250)}

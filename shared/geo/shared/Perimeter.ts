@@ -4,7 +4,7 @@ export type PerimeterLabel = string;
 
 export type INSEECode = string;
 
-export const indicTypes = ['journeys', 'trips', 'has_incentive', 'occupation_rate'] as const;
+export const indicTypes = ['journeys', 'trips', 'has_incentive', 'occupation_rate', 'distance'] as const;
 export type IndicType = (typeof indicTypes)[number];
 
 export const directionTypes = ['from', 'to'] as const;

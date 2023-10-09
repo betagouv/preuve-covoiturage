@@ -1,8 +1,8 @@
 import { Config } from '@/config';
 import { monthList } from '@/helpers/lists';
 import { useApi } from '@/hooks/useApi';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
-import { EvolJourneysDataInterface } from '@/interfaces/observatoire/dataInterfaces';
+import { OccupationIndicators, SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
+import { EvolOccupationDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import {
   CategoryScale,
@@ -19,14 +19,19 @@ import { Line } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
-export default function TrajetsGraph({ title, params }: { title: string; params: SearchParamsInterface }) {
+export default function TrajetsGraph({ title,indic, params }: { title: string, indic:OccupationIndicators, params: SearchParamsInterface }) {
   const options = {
     responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
   };
 
   const apiUrl = Config.get<string>('next.public_api_url', '');
-  const url = `${apiUrl}/evol-monthly-flux?indic=journeys&code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}`;
-  const { data, error, loading } = useApi<EvolJourneysDataInterface[]>(url);
+  const url = `${apiUrl}/evol-monthly-occupation?indic=${indic}&code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}`;
+  const { data, error, loading } = useApi<EvolOccupationDataInterface[]>(url);
 
   const chartData = () => {
     const labels = data?.map((d) => {
@@ -35,8 +40,7 @@ export default function TrajetsGraph({ title, params }: { title: string; params:
     });
     const datasets = [
       {
-        label: 'Nombre de trajets réalisés',
-        data: data?.map((d) => d.journeys).reverse(),
+        data: data?.map((d) => d[`${indic}`]).reverse(),
         fill: true,
         borderColor: '#000091',
         backgroundColor: 'rgba(0, 0, 145, 0.2)',
