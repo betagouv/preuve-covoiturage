@@ -70,7 +70,7 @@ export default function Page() {
               <SelectInList
                 label='Sélectionner une carte'
                 id={params.map}
-                list={mapList}
+                list={params.code=='XXXXX' ? mapList.filter( m => m.id !== 2) : mapList}
                 sx={{ minWidth: 300 }}
                 onChange={onChangeMap}
               />
