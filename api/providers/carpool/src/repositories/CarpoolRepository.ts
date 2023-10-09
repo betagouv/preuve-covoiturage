@@ -26,7 +26,7 @@ export class CarpoolRepository {
     if (!client) {
       await cl.query('BEGIN');
     }
-    // await cl.query(`SET TIMEZONE TO 'UTC'`);
+
     const sqlQuery = sql`
       INSERT INTO ${raw(this.table)} (
         operator_id,
