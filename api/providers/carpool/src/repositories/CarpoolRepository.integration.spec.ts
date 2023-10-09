@@ -75,7 +75,7 @@ test.serial('Should create carpool', async (t) => {
 });
 
 test.serial('Should update acquisition', async (t) => {
-  const insertData = { ...insertableCarpool };
+  const insertData = { ...insertableCarpool, operator_journey_id: 'journey_2' };
 
   const carpool = await t.context.repository.register(insertData);
 
