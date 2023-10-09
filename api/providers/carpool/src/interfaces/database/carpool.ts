@@ -76,7 +76,7 @@ export interface UpdatableCarpool {
   incentive_counterparts?: Array<CarpoolIncentiveCounterpart>;
 }
 
-export interface WritenCarpool {
+export interface WrittenCarpool {
   _id: Id;
   created_at: Date;
   updated_at: Date;

@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import { InsertableCarpoolRequest, WritenCarpoolRequest } from '../interfaces';
+import { InsertableCarpoolRequest, WrittenCarpoolRequest } from '../interfaces';
 import sql, { raw } from '../helpers/sql';
 
 @provider()
@@ -9,7 +9,7 @@ export class CarpoolRequestRepository {
 
   constructor(protected connection: PostgresConnection) {}
 
-  public async save(data: InsertableCarpoolRequest, client?: PoolClient): Promise<WritenCarpoolRequest> {
+  public async save(data: InsertableCarpoolRequest, client?: PoolClient): Promise<WrittenCarpoolRequest> {
     const cl = client ?? this.connection.getClient();
     const sqlQuery = sql`
       INSERT INTO ${raw(this.table)} (
@@ -25,7 +25,7 @@ export class CarpoolRequestRepository {
       )
       RETURNING _id, created_at
     `;
-    const result = await cl.query<WritenCarpoolRequest>(sqlQuery);
+    const result = await cl.query<WrittenCarpoolRequest>(sqlQuery);
     return result.rows.pop();
   }
 }

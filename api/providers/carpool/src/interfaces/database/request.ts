@@ -19,7 +19,7 @@ export interface InsertableCarpoolCancelRequest {
 
 export type InsertableCarpoolRequest = InsertableCarpoolCreateRequest | InsertableCarpoolCancelRequest;
 
-export interface WritenCarpoolRequest {
+export interface WrittenCarpoolRequest {
   _id: Id;
   created_at: Date;
 }

@@ -9,7 +9,7 @@ import {
   InsertableCarpool,
   UpdatableCarpool,
   Uuid,
-  WritenCarpool,
+  WrittenCarpool,
 } from '../interfaces';
 
 @provider()
@@ -20,7 +20,7 @@ export class CarpoolRepository {
 
   constructor(protected connection: PostgresConnection) {}
 
-  public async register(data: InsertableCarpool, client?: PoolClient): Promise<WritenCarpool> {
+  public async register(data: InsertableCarpool, client?: PoolClient): Promise<WrittenCarpool> {
     const cl = client ?? (await this.connection.getClient().connect());
     if (!client) {
       await cl.query('BEGIN');
@@ -87,7 +87,7 @@ export class CarpoolRepository {
       RETURNING _id, created_at, updated_at
     `;
     try {
-      const result = await cl.query<WritenCarpool>(sqlQuery);
+      const result = await cl.query<WrittenCarpool>(sqlQuery);
       const carpool = result.rows.pop();
       await this.syncIncentives(carpool._id, data.incentives, cl);
       await this.syncIncentiveCounterparts(carpool._id, data.incentive_counterparts, cl);
@@ -109,7 +109,7 @@ export class CarpoolRepository {
     operator_journey_id: Uuid,
     data: UpdatableCarpool,
     client?: PoolClient,
-  ): Promise<WritenCarpool> {
+  ): Promise<WrittenCarpool> {
     const cl = client ?? (await this.connection.getClient().connect());
     const keys = Object.keys(data)
       .filter((key) => key in data && ['incentives', 'incentive_counterparts'].indexOf(key) < 0)
@@ -141,7 +141,7 @@ export class CarpoolRepository {
     }
 
     try {
-      const result = await cl.query<WritenCarpool>(sqlQuery);
+      const result = await cl.query<WrittenCarpool>(sqlQuery);
       const carpool = result.rows.pop();
 
       if (data.incentives) {
