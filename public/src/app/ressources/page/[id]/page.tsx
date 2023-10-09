@@ -55,7 +55,7 @@ export default async function RessourcePage({ params }: { params: { id: string }
                   content={a.content}
                   date={new Date(a.date_created).toLocaleDateString('fr-FR')}
                   link={a.link}
-                  file={`${cmsHost}/assets/${a.file.id}`}
+                  file={`${a.file ? `${cmsHost}/assets/${a.file.id}` :'' }`}
                   img={`${cmsHost}/assets/${a.img.id}`}
                   img_legend={a.img_legend}
                   horizontal
