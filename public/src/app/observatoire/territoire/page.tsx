@@ -49,24 +49,24 @@ export default function Page() {
           />
           <KeyFigures params={params} />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <RepartitionHoraireGraph title='Trajets par horaire' params={params} />
             </div>
-            <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <RepartitionDistanceGraph title='Trajets par distance' params={params} />
             </div>
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <BestFluxTable title='Top 10 des trajets les plus covoiturés' limit={10} params={params} />
             </div>
-            <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <BestTerritoriesTable title='Top 10 des territoires' limit={10} params={params} />
             </div>
           </div>
           <SectionTitle title='Cartographie' />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <SelectInList
                 label='Sélectionner une carte'
                 id={params.map}
@@ -76,13 +76,13 @@ export default function Page() {
               />
             </div>
             {[1,3].includes(params.map) && 
-              <div className={fr.cx('fr-col')}>
+              <div className={fr.cx('fr-col-12','fr-col-md-6')}>
                 <SelectObserve label={observeLabel} type={params.type} value={params.observe} onChange={onChangeObserve} />
               </div>
             }
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-col-12')}>
               {params.map == 1 && <FluxMap title={mapList[0].name} params={params} />}
               {params.map == 2 && <DensiteMap title={mapList[1].name} params={params} />}
               {params.map == 3 && <OccupationMap title={mapList[2].name} params={params} />}
@@ -91,7 +91,7 @@ export default function Page() {
           </div>
           <SectionTitle title='Evolution' />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col')}>
+            <div className={fr.cx('fr-col-12')}>
               <SelectInList
                 label='Sélectionner un graphique'
                 id={params.graph}
@@ -102,26 +102,12 @@ export default function Page() {
             </div>
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            {params.graph == 1 && (
-              <div className={fr.cx('fr-col')}>
-                <FluxGraph title={graphList[0].name} params={params} indic="journeys"/>
-              </div>
-            )}
-            {params.graph == 2 && (
-              <div className={fr.cx('fr-col')}>
-                <DistanceGraph title={graphList[1].name} params={params} />
-              </div>
-            )}
-            {params.graph == 3 && (
-              <div className={fr.cx('fr-col')}>
-                <OccupationGraph title={graphList[2].name} params={params} indic="occupation_rate"/>
-              </div>
-            )}
-            {params.graph == 4 && (
-              <div className={fr.cx('fr-col')}>
-                <OccupationGraph title={graphList[3].name} params={params} indic="trips"/>
-              </div>
-            )}
+            <div className={fr.cx('fr-col-12')}>
+              {params.graph == 1 && <FluxGraph title={graphList[0].name} params={params} indic="journeys"/>}
+              {params.graph == 2 && <DistanceGraph title={graphList[1].name} params={params} />}
+              {params.graph == 3 && <OccupationGraph title={graphList[2].name} params={params} indic="occupation_rate"/>}
+              {params.graph == 4 && <OccupationGraph title={graphList[3].name} params={params} indic="trips"/>}
+            </div>
           </div>
         </article>
       )}
