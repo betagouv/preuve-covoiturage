@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { CarpoolEventRepository } from '../repositories/CarpoolEventRepository';
 import { CarpoolRepository } from '../repositories/CarpoolRepository';
@@ -80,6 +80,9 @@ export class CarpoolAcquisitionService {
     await conn.query('BEGIN');
     try {
       const carpool = await this.lookupRepository.findOneStatus(data.operator_id, data.operator_journey_id);
+      if(!carpool) {
+        throw new NotFoundException();
+      }
       const request = await this.requestRepository.save(
         {
           ...data,

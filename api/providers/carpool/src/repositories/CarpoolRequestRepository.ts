@@ -2,6 +2,7 @@ import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
 import { InsertableCarpoolRequest, WrittenCarpoolRequest } from '../interfaces';
 import sql, { raw } from '../helpers/sql';
+import { DatabaseException } from '../exceptions/DatabaseException';
 
 @provider()
 export class CarpoolRequestRepository {
@@ -26,6 +27,10 @@ export class CarpoolRequestRepository {
       RETURNING _id, created_at
     `;
     const result = await cl.query<WrittenCarpoolRequest>(sqlQuery);
-    return result.rows.pop();
+    const request = result.rows.pop();
+    if (!request) {
+      throw new DatabaseException();
+    }
+    return request;
   }
 }

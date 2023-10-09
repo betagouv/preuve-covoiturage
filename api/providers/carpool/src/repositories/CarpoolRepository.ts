@@ -11,6 +11,7 @@ import {
   Uuid,
   WrittenCarpool,
 } from '../interfaces';
+import { DatabaseException } from '../exceptions/DatabaseException';
 
 @provider()
 export class CarpoolRepository {
@@ -89,6 +90,9 @@ export class CarpoolRepository {
     try {
       const result = await cl.query<WrittenCarpool>(sqlQuery);
       const carpool = result.rows.pop();
+      if (!carpool) {
+        throw new DatabaseException();
+      }
       await this.syncIncentives(carpool._id, data.incentives, cl);
       await this.syncIncentiveCounterparts(carpool._id, data.incentive_counterparts, cl);
       return carpool;
@@ -143,6 +147,9 @@ export class CarpoolRepository {
     try {
       const result = await cl.query<WrittenCarpool>(sqlQuery);
       const carpool = result.rows.pop();
+      if (!carpool) {
+        throw new DatabaseException();
+      }
 
       if (data.incentives) {
         await this.syncIncentives(carpool._id, data.incentives, cl);
