@@ -1,1 +1,1 @@
-export { CarpoolAcquisitionService } from './providers/CarpoolAquisitionService';
+export { CarpoolAcquisitionService } from './providers/CarpoolAcquisitionService';

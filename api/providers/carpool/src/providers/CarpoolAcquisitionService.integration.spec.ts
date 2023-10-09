@@ -1,7 +1,7 @@
 import anyTest, { TestFn } from 'ava';
 import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool';
-import { CarpoolAcquisitionService } from './CarpoolAquisitionService';
+import { CarpoolAcquisitionService } from './CarpoolAcquisitionService';
 import Sinon, { SinonSandbox } from 'sinon';
 import { CarpoolEventRepository } from '../repositories/CarpoolEventRepository';
 import { CarpoolRequestRepository } from '../repositories/CarpoolRequestRepository';
