@@ -7,7 +7,7 @@ import RessourceCard from "@/components/ressources/RessourceCard";
 import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
 import { Section } from "@/interfaces/cms/collectionsInterface";
 import { fr } from "@codegouvfr/react-dsfr";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import MDContent from "@/components/common/MDContent";
 import IndicatorsRow from '../../../components/observatoire/indicators/IndicatorsRow';
 
 export default async function ObservatoireSinglePage() {
@@ -78,7 +78,7 @@ export default async function ObservatoireSinglePage() {
       <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
         <div className={fr.cx('fr-col')}>
           <div className={fr.cx('fr-text--lg')}>
-            <MDXRemote source={data ? data[0].content : ''} />
+            <MDContent source={data ? data[0].content : ''} />
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
 import RessourceCard from "@/components/ressources/RessourceCard";
 import { Section } from "@/interfaces/cms/collectionsInterface";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import MDContent from "@/components/common/MDContent";
 
 export default async function Home() {
   const { data } = await cmsInstance.items('Pages').readByQuery({
@@ -23,29 +23,29 @@ export default async function Home() {
   const lists = data ? data[0].sections.filter((s:Section) => s.collection === 'List') : null
   const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
   const tiles = [{
-    desc:'Découvrez les bienfaits du covoiturage, mettez en place le Forfait Mobilité Durable et accompagnez vos salariés dans l\'usage du covoiturage',
+    desc:'Forfait mobilités durables, animations covoiturage en entreprise, mise en relation entre salariés, charte employeur engagé dans le covoiturage',
     grey: true,
-    imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
+    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/6d16d7c5-82fe-4526-a32f-e13bd161bd8f",
     linkProps:{
-      href: '#'
+      href: '/autres-acteurs/entreprises'
     },
     title:"Une entreprise"
   },{
-    desc:"Comprendre le covoiturage au quotidien et réduire mon impact carbone au quotidien, suis-je éligible à une aide?",
+    desc:"Un bonus de 100€ pour les conducteurs réalisant leurs premiers trajets en covoiturage, un forfait mobilités durable jusqu'à 800€ par ans versé par votre employeur, quelques euros versés par votre collectivité à chaque trajet.",
     grey: true,
-    imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
+    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/03438e15-8661-4ff4-9090-d3936527c869",
     linkProps:{
-      href: '#'
+      href: '/autres-acteurs/particuliers'
     },
     title:"Un particulier"
   },{
     desc:"Découvrir le registre de preuve de covoiturage et en devenir partenaire",
     grey: true,
-    imageUrl: "https://www.gouvernement.fr/sites/default/files/static_assets/placeholder.1x1.png",
+    imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/ac8000a8-09b8-4e37-868e-bc877c231f71",
     linkProps:{
-      href: '#'
+      href: '/autres-acteurs/operateurs'
     },
-    title:"Un opérateur de covoiturage"
+    title:"Plateformes de covoiturage"
   }
 ]
 
@@ -65,8 +65,8 @@ export default async function Home() {
       {data && data[0].content && 
         <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
           <div className={fr.cx('fr-col')}>
-            <div className={fr.cx('fr-text--lg')}>
-              <MDXRemote source={data[0].content} />
+            <div>
+              <MDContent source={data[0].content} />
             </div>
           </div>
         </div>
@@ -87,6 +87,20 @@ export default async function Home() {
           <ListHighlight highlights={l.item.highlights.map((h:any) => h.Highlight_id)} />
         </div>
       )}
+      <SectionTitle title='Vous êtes ?' />
+      <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+        {tiles && tiles.map( (t, i) => 
+          <div key={i} className={fr.cx('fr-col-12','fr-col-md-4')}>
+            <Tile 
+              title={t.title}
+              desc={t.desc}
+              grey={t.grey}
+              imageUrl={t.imageUrl}
+              linkProps={t.linkProps}
+            />
+          </div>
+        )}
+      </div>
       {ressources && 
       <>
         <SectionTitle title='Ressources' />
@@ -111,27 +125,13 @@ export default async function Home() {
           <SectionTitle title='Ressources complémentaires' />
           <div className={fr.cx('fr-grid-row')}>
             <div className={fr.cx('fr-col')}>
-              <div className={fr.cx('fr-text--lg')}>
-                <MDXRemote source={data ? data[0].complement : ''} />
+              <div>
+                <MDContent source={data ? data[0].complement : ''} />
               </div>
             </div>
           </div>
         </div>
       }
-      <SectionTitle title='Vous êtes ?' />
-      <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-        {tiles && tiles.map( (t, i) => 
-          <div key={i} className={fr.cx('fr-col-12','fr-col-md-4')}>
-            <Tile 
-              title={t.title}
-              desc={t.desc}
-              grey={t.grey}
-              imageUrl={t.imageUrl}
-              linkProps={t.linkProps}
-            />
-          </div>
-        )}
-      </div>
     </article>
   );
 }

@@ -2,12 +2,11 @@ import { Badge } from '@codegouvfr/react-dsfr/Badge';
 import style from './SingleIndicator.module.scss';
 import { IndicatorProps } from '@/interfaces/observatoire/componentsInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
-import { MDXRemote } from "next-mdx-remote/rsc";
 import 'material-symbols';
 
 export default function SingleIndicator(props: IndicatorProps) {
   return (
-    <div className={`${fr.cx('fr-col','fr-col-md-3')} ${style.col}`}>
+    <div className={`${fr.cx('fr-col-12','fr-col-md-3')} ${style.col}`}>
       <div className={`${fr.cx('fr-callout')} ${style.stat}`}>
         {props.info && <Badge severity='info'>{props.info}</Badge>}
         
@@ -16,7 +15,7 @@ export default function SingleIndicator(props: IndicatorProps) {
           <h3 className={`${style.value}`}>{props.value} {props.unit ? props.unit : ''}</h3>
         </div>
         <div className={`fr-callout__text ${style.text}`}>
-          <MDXRemote source={props.text} />
+          {props.text}
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { CacheValidatorParams, CacheValidatorResponse, HttpVerb } from './types'
 const validators = [
   // Skip caching when the request contains a Cache-Control header with 'no-store' value
   async function noCacheHeader({ req }: CacheValidatorParams): Promise<Partial<CacheValidatorResponse>> {
-    if (!req.header('Cache-Control').includes('no-store')) return {};
+    if (req.header('Cache-Control') && !req.header('Cache-Control').includes('no-store')) return {};
     return {
       isValid: false,
       warnings: new Set([new Error('Disabled by no-store header')]),

@@ -1,4 +1,5 @@
 import { AppFooter } from '@/components/layout/AppFooter';
+import { Follow } from '@/components/layout/Follow';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { fr } from '@codegouvfr/react-dsfr';
 import MuiDsfrThemeProvider from '@codegouvfr/react-dsfr/mui';
@@ -9,6 +10,8 @@ import Link from 'next/link';
 import { StartDsfr } from '@/components/layout/StartDsfr';
 import { defaultColorScheme } from '@/components/layout/defaultColorScheme';
 import Analytics from '@/components/layout/Analytics';
+import '../styles/global.scss';
+
 
 export default function RootLayout({ children }: { children: JSX.Element }) {
   //NOTE: The lang parameter is optional and defaults to "fr"
@@ -39,6 +42,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
           <MuiDsfrThemeProvider>
             <AppHeader />
             <div className={fr.cx('fr-container')}>{children}</div>
+            <Follow />
             <AppFooter />
           </MuiDsfrThemeProvider>
         </DsfrProvider>

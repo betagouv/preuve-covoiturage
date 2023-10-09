@@ -23,10 +23,10 @@ export default function Navigation() {
             },
             {
               linkProps: {
-                href: '/observatoire/comprendre-covoiturage',
+                href: '/observatoire/impact-politiques-mobilite',
               },
-              text: 'Comprendre le covoiturage courte distance',
-              isActive: pathname === '/observatoire/comprendre-covoiturage',
+              text: 'Impact des différents politiques mobilité',
+              isActive: pathname === '/observatoire/impact-politiques-mobilite',
             },
             {
               linkProps: {
@@ -42,6 +42,13 @@ export default function Navigation() {
               text: 'Evaluation du plan national covoiturage',
               isActive: pathname === '/observatoire/evaluation-plan-covoiturage',
             },
+            {
+              linkProps: {
+                href: '/observatoire/presentation',
+              },
+              text: 'A propos de l\'observatoire',
+              isActive: pathname === '/observatoire/presentation',
+            },
             /*{
               linkProps: {
                 href: '/observatoire/impact-actions',
@@ -55,106 +62,70 @@ export default function Navigation() {
           isActive: pathname.startsWith('/observatoire'),
         },
         {
-          megaMenu: {
-            categories: [
-              {
-                categoryMainLink: {
-                  linkProps: {
-                    href: '#'
-                  },
-                  text: 'Préparer vos actions'
-                },
-                links: [
-                  {
-                    linkProps: {
-                      href: '/collectivites/planification-et-evaluation',
-                    },
-                    text: 'Planification et évaluation',
-                    isActive: pathname === '/collectivites/planification-et-evaluation',
-                  },
-                ]
+          menuLinks: [
+            {
+              linkProps: {
+                href: '/collectivites/planification-et-evaluation',
               },
-              {
-                categoryMainLink: {
-                  linkProps: {
-                    href: '#',
-                  },
-                  text: 'Infrastructures et services de covoiturage'
-                },
-                links: [
-                  {
-                    linkProps: {
-                      href: '/collectivites/aires-covoiturage',
-                    },
-                    text: 'Aires',
-                    isActive: pathname === '/collectivites/aires-covoiturage',
-                  },
-                  {
-                    linkProps: {
-                      href: '/collectivites/ligne-de-covoiturage',
-                    },
-                    text: 'Lignes',
-                    isActive: pathname === '/collectivites/ligne-de-covoiturage',
-                  },
-                  {
-                    linkProps: {
-                      href: '/collectivites/auto-stop-organise',
-                    },
-                    text: 'Auto-stop organisé',
-                    isActive: pathname === '/collectivites/auto-stop-organise',
-                  },
-                  {
-                    linkProps: {
-                      href: '/collectivites/voies-reservees',
-                    },
-                    text: 'Voies réservées',
-                    isActive: pathname === '/collectivites/voies-reservees',
-                  },
-                  {
-                    linkProps: {
-                      href: '/collectivites/plateformes-numeriques',
-                    },
-                    text: 'Covoiturage intermédié',
-                    isActive: pathname === '/collectivites/plateformes-numeriques',
-                  },
-                ]
+              text: 'Comprendre et planifier le covoiturage',
+              isActive: pathname === '/collectivites/planification-et-evaluation',
+            },
+            {
+              linkProps: {
+                href: '/collectivites/aires-covoiturage',
               },
-              {
-                categoryMainLink: {
-                  linkProps: {
-                    href: '#'
-                  },
-                  text: 'Actions'
-                },
-                links: [
-                  {
-                    linkProps: {
-                      href: '/collectivites/campagnes-incitation-financieres',
-                    },
-                    text: 'Campagnes d\'incitation financières',
-                    isActive: pathname === '/collectivites/campagnes-incitation-financieres',
-                  },
-                  {
-                    linkProps: {
-                      href: '/collectivites/registre-preuve-covoiturage-tiers-de-confiance',
-                    },
-                    text: 'Registre de preuves de covoiturage',
-                    isActive: pathname === '/collectivites/registre-preuve-covoiturage-tiers-de-confiance',
-                  },                  
-                ]
+              text: 'Infrastructures: Aires',
+              isActive: pathname === '/collectivites/aires-covoiturage',
+            },
+            {
+              linkProps: {
+                href: '/collectivites/voies-reservees',
               },
-            ],
-            leader: {
-              link: {
-                linkProps: {
-                  href: '#'
-                },
-                text: 'Voir toute la rubrique'
+              text: 'Infrastructures: Voies réservées',
+              isActive: pathname === '/collectivites/voies-reservees',
+            },
+            {
+              linkProps: {
+                href: '/collectivites/ligne-de-covoiturage',
               },
-              paragraph: 'Lorem [...] elit ut.',
-              title: 'Vous êtes une collectivité'
-            }
-          },
+              text: 'Infrastructures: Lignes',
+              isActive: pathname === '/collectivites/ligne-de-covoiturage',
+            },
+            {
+              linkProps: {
+                href: '/collectivites/auto-stop-organise',
+              },
+              text: 'Infrastructures: Auto-stop organisé',
+              isActive: pathname === '/collectivites/auto-stop-organise',
+            },
+            {
+              linkProps: {
+                href: '/collectivites/campagnes-incitation-financieres',
+              },
+              text: 'Services: Incitation financières',
+              isActive: pathname === '/collectivites/campagnes-incitation-financieres',
+            },
+            {
+              linkProps: {
+                href: '/collectivites/plateformes-numeriques',
+              },
+              text: 'Service : plateformes de covoiturage en propre',
+              isActive: pathname === '/collectivites/plateformes-numeriques',
+            },
+            {
+              linkProps: {
+                href: '/collectivites/communication-animation',
+              },
+              text: 'Service : Animation et communication',
+              isActive: pathname === '/collectivites/communication-animation',
+            },
+            {
+              linkProps: {
+                href: 'https://aides-territoires.beta.gouv.fr/programmes/fonds-vert/',
+              },
+              text: 'Demander le fond vert',
+            },
+          ],
           text: 'Collectivités',
           isActive: pathname.startsWith('/collectivites'),
         },
@@ -162,28 +133,28 @@ export default function Navigation() {
           menuLinks: [
             {
               linkProps: {
-                href: '/vous-etes/entreprises',
+                href: '/autres-acteurs/covoitureurs',
               },
-              text: 'Une entreprise',
-              isActive: pathname === '/vous-etes/entreprises',
+              text: 'Covoitureurs',
+              isActive: pathname === '/autres-acteurs/covoitureurs',
             },
             {
               linkProps: {
-                href: '/vous-etes/particuliers',
+                href: '/autres-acteurs/employeurs',
               },
-              text: 'Un particulier',
-              isActive: pathname === '/vous-etes/particuliers',
+              text: 'Employeurs',
+              isActive: pathname === '/autres-acteurs/employeurs',
             },
             {
               linkProps: {
-                href: '/vous-etes/operateurs',
+                href: '/autres-acteurs/plateformes',
               },
-              text: 'Un operateur',
-              isActive: pathname === '/vous-etes/operateurs',
+              text: 'Plateformes de covoiturages',
+              isActive: pathname === '/autres-acteurs/plateformes',
             }
           ],
-          text: 'Vous êtes',
-          isActive: pathname.startsWith('/vous-etes'),
+          text: 'Autres acteurs',
+          isActive: pathname.startsWith('/autres-acteurs'),
         },
         {
           linkProps: { href: '/actualites', target: '_self' },

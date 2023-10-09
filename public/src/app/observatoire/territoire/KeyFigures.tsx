@@ -23,7 +23,7 @@ export default function KeyFigures({ params }: { params: SearchParamsInterface }
             maximumFractionDigits: 1,
           })}`,
           unit:'%',
-          text: "Trajets réalisés à l'intérieur du territoire",
+          text: 'Trajets réalisés à l\'intérieur du territoire',
         },
       ] as IndicatorProps[]
     : [];

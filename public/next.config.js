@@ -1,14 +1,11 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   output: 'export',
   trailingSlash: true,
   reactStrictMode: true, // Recommended for the `pages` directory, default in `app`.
   swcMinify: true,
-  experimental: {
-    // Required:
-    appDir: true,
-    // serverActions: true,
-  },
   images: {
     dangerouslyAllowSVG: true,
     unoptimized: true,
