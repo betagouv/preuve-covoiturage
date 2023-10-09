@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS carpool_v2.carpools
   passenger_payments JSONB
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS carpool_operator_operator_journey_id_idx ON carpool_v2.status (operator_id, operator_journey_id);
+CREATE UNIQUE INDEX IF NOT EXISTS carpool_operator_operator_journey_id_idx ON carpool_v2.carpools (operator_id, operator_journey_id);
 CREATE INDEX IF NOT EXISTS carpool_operator_journey_id_idx ON carpool_v2.carpools (operator_journey_id);
 CREATE INDEX IF NOT EXISTS carpool_operator_id_idx ON carpool_v2.carpools (operator_id);
 CREATE INDEX IF NOT EXISTS carpool_created_at_idx ON carpool_v2.carpools (created_at);
