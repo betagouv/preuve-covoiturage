@@ -4,7 +4,7 @@ import { CreateJourneyAction } from './CreateJourneyAction';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { ParseErrorException, ValidatorInterfaceResolver } from '@ilos/common';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
-import { CarpoolAcquisitionService } from '@pdc/provider-carpool/dist';
+import { CarpoolAcquisitionService } from '@pdc/provider-carpool';
 
 function bootstap(): {
   action: CreateJourneyAction;
