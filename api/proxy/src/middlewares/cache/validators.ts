@@ -2,8 +2,15 @@ import { CacheValidatorParams, CacheValidatorResponse, HttpVerb } from './types'
 
 const validators = [
   // Skip caching when the request contains a Cache-Control header with 'no-store' value
-  async function noCacheHeader({ req }: CacheValidatorParams): Promise<Partial<CacheValidatorResponse>> {
-    if (req.header('Cache-Control') && !req.header('Cache-Control').includes('no-store')) return {};
+  //
+  // Cache-Control: no-cache
+  // The no-cache response directive indicates that the response can be stored in caches,
+  // but the response must be validated with the origin server before each reuse,
+  // even when the cache is disconnected from the origin server.
+  async function noStoreHeader({ req }: CacheValidatorParams): Promise<Partial<CacheValidatorResponse>> {
+    const header = req.header('cache-control') || '';
+    if (!header.includes('no-store')) return {};
+
     return {
       isValid: false,
       warnings: new Set([new Error('Disabled by no-store header')]),
