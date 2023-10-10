@@ -2,15 +2,16 @@ import { NextFunction, Request, Response } from 'express';
 import { Redis } from 'ioredis';
 
 export type CacheEnabled = boolean;
+export type CompressionEnabled = boolean;
 export type CacheKey = string;
-export type CacheValue = string;
+export type CacheValue = Buffer;
 export type CachePrefix = string;
 export type CachePattern = string;
 
 export type StoreConnection = Redis;
 export type StoreDriver = Redis | null;
 export type CacheStore = {
-  get: (key: CacheKey) => Promise<string | null>;
+  get: (key: CacheKey) => Promise<CacheValue | null>;
   set: (key: CacheKey, value: CacheValue, ttl?: CacheTTL) => Promise<void>;
   del: (keys: Set<CacheKey>) => Promise<number>;
   ttl: (key: CacheKey) => Promise<number | null>;
@@ -23,6 +24,7 @@ export type GlobalCacheConfig = {
   driver: StoreDriver;
   authorizedMethods: HttpVerb[];
   authToken: string;
+  gzipped: CompressionEnabled;
 };
 
 export type RouteCacheConfig = {
@@ -40,7 +42,7 @@ export enum CacheTTL {
   YEAR = 60 * 60 * 24 * 365,
 }
 
-export const HttpVerbs = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
+export const HttpVerbs = ['HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 export type HttpVerb = (typeof HttpVerbs)[number];
 
 export type CacheMiddleware = {

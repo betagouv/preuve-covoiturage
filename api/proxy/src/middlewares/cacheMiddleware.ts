@@ -1,24 +1,25 @@
 // create Redis connection
+import { ForbiddenException } from '@ilos/common';
 import { NextFunction, Request, Response } from 'express';
+import { cacheStore } from './cache/redis';
+import { deflate, getKey, inflate } from './cache/transformers';
 import {
+  CacheFlushResponse,
   CacheMiddleware,
-  GlobalCacheConfig,
-  RouteCacheConfig,
-  CacheTTL,
-  StoreConnection,
   CachePrefix,
   CacheStore,
-  CacheFlushResponse,
+  CacheTTL,
+  GlobalCacheConfig,
+  RouteCacheConfig,
+  StoreConnection,
 } from './cache/types';
-import { getKey } from './cache/transformers';
-import { cacheStore } from './cache/redis';
 import { validate } from './cache/validators';
-import { ForbiddenException } from '@ilos/common';
 
 const defaultGlobalConfig: GlobalCacheConfig = {
-  authorizedMethods: ['GET'],
+  authorizedMethods: ['HEAD', 'GET'],
   authToken: '',
   enabled: true,
+  gzipped: true,
   prefix: 'routecache',
   driver: null,
 };
@@ -29,12 +30,12 @@ const defaultRouteConfig: RouteCacheConfig = {
 };
 
 export {
+  CacheFlushResponse,
   CacheMiddleware,
-  GlobalCacheConfig,
-  RouteCacheConfig,
   CachePrefix,
   CacheTTL,
-  CacheFlushResponse,
+  GlobalCacheConfig,
+  RouteCacheConfig,
   StoreConnection,
 };
 
@@ -82,14 +83,24 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
         // check if the key exists, then return the value
         // or call the next middleware and store the response
         const key = getKey(req, res, globalConfig, routeConfig);
-        const value = await store.get(key);
+        const buf = await store.get(key);
         const ttl = await store.ttl(key);
 
         // return the cached value
-        if (value) {
+        if (buf) {
           res.setHeader('X-Route-Cache', 'HIT');
           res.setHeader('X-Route-Cache-TTL', ttl);
-          res.send(JSON.parse(value));
+
+          const acceptGzip = (req.header('accept-encoding') || '').includes('gzip');
+          if (acceptGzip && globalConfig.gzipped) {
+            res.setHeader('Content-Encoding', 'gzip');
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.send(buf);
+          } else {
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.send(inflate(buf));
+          }
+
           return;
         }
 
@@ -98,8 +109,8 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
 
         // patch the res.send function to intercept the response
         const _res_send = res.send;
-        res.send = (data: any, ...args) => {
-          store.set(key, data);
+        res.send = (data: string, ...args) => {
+          store.set(key, deflate(data), routeConfig.ttl);
           _res_send.apply(res, [data, ...args]);
           return res;
         };
@@ -114,7 +125,7 @@ export function cacheMiddleware(userGlobalConfig: Partial<GlobalCacheConfig> = {
         const header = req.headers['x-route-cache-auth'];
 
         if (token === '') {
-          return next(new Error('Please set APP_ROUTE_CACHE_AUTH'));
+          return next(new Error('Please set APP_ROUTECACHE_AUTHTOKEN'));
         }
 
         if (token !== header) {
