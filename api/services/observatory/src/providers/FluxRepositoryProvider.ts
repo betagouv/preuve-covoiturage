@@ -99,7 +99,8 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     const sql = {
       values: [checkTerritoryParam(params.type), params.code, limit],
       text: `
-        SELECT year, month, sum(${indic}) AS ${indic}
+        SELECT year, month, sum(${indic}) AS ${indic} 
+        ${indic == 'distance' ? ', sum(journeys) AS journeys' : ''}
         FROM ${this.table}
         WHERE concat(year::varchar,TO_CHAR(month, 'fm00'))::integer <= ${start}
         AND type = $1::observatory.monthly_flux_type_enum
