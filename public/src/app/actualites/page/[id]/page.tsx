@@ -5,6 +5,13 @@ import { cmsHost, cmsInstance, cmsActusByPage, shorten, getNbPages } from "@/hel
 import Pagination from "@/components/common/Pagination";
 import CategoryTags from "@/components/actualites/CategoryTags";
 
+export async function generateMetadata({ params }: { params: { id: string }}) {
+  return {
+    title: `Actualités page ${params.id} | Covoiturage courte distance`,
+    description: `Page ${params.id} des actualités sur le covoiturage de courte distance`,
+  }
+}
+
 export async function generateStaticParams() {
   const { meta } = await cmsInstance.items('Articles').readByQuery({
     fields:'id',

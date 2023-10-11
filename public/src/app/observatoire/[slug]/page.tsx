@@ -10,6 +10,29 @@ import { fr } from "@codegouvfr/react-dsfr";
 import MDContent from "@/components/common/MDContent";
 import IndicatorsRow from '../../../components/observatoire/indicators/IndicatorsRow';
 
+export async function generateMetadata({ params }: { params: { slug: string }}) {
+  const { data } = await cmsInstance.items('Pages').readByQuery({
+    fields:'*',
+    filter: {
+      slug: { _eq: params.slug },
+      status: {
+        '_eq': 'published',
+      },
+      tag:{
+        slug:{
+          '_eq':'observatoire',
+        }
+      }
+    },
+    limit: 1,
+  });
+  return {
+    title: `${data ? data[0].title : ''} | Covoiturage courte distance`,
+    description: shorten(`${data && data[0].content ? data[0].content :
+    'Observer le covoiturage de courte distance en France'}`,150),
+  }
+}
+
 export async function generateStaticParams() {
   const { data } = await cmsInstance.items('Pages').readByQuery({
     fields:'slug',
@@ -33,6 +56,14 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
   const { data } = await cmsInstance.items('Pages').readByQuery({
     filter: {
       slug: { _eq: params.slug },
+      status: {
+        '_eq': 'published',
+      },
+      tag:{
+        slug:{
+          '_eq':'observatoire',
+        }
+      }
     },
     fields: [
       '*',

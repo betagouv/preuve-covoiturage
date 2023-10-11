@@ -11,6 +11,12 @@ import { StartDsfr } from '@/components/layout/StartDsfr';
 import { defaultColorScheme } from '@/components/layout/defaultColorScheme';
 import Analytics from '@/components/layout/Analytics';
 import '../styles/global.scss';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Covoiturage.ecologie.gouv.fr',
+  description: 'Développer le covoiturage de courte distance',
+}
 
 
 export default function RootLayout({ children }: { children: JSX.Element }) {

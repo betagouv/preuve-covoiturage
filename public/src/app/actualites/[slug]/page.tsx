@@ -4,8 +4,25 @@ import { Config } from "@/config";
 import { fr } from "@codegouvfr/react-dsfr";
 import Tag from "@codegouvfr/react-dsfr/Tag";
 import Image from 'next/image';
-import { cmsHost, cmsInstance } from "@/helpers/cms";
+import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
 import MDContent from "@/components/common/MDContent";
+
+export async function generateMetadata({ params }: { params: { slug: string }}) {
+  const { data } = await cmsInstance.items('Articles').readByQuery({
+    fields:'*',
+    filter: {
+      slug: { _eq: params.slug },
+      status: {
+        '_eq': 'published',
+      },
+    },
+    limit: 1,
+  });
+  return {
+    title: `${data ? data[0].title : ''} | Covoiturage courte distance`,
+    description: shorten(`${data && data[0].description ? data[0].description : ''}`,150),
+  }
+}
 
 export async function generateStaticParams() {
   const { data } = await cmsInstance.items('Articles').readByQuery({

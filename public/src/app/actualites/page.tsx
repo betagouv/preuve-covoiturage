@@ -4,7 +4,12 @@ import ActuCard from "@/components/actualites/ActuCard";
 import { cmsHost, cmsInstance, cmsActusByPage, shorten, getNbPages } from "@/helpers/cms";
 import CategoryTags from "@/components/actualites/CategoryTags";
 import Pagination from "@/components/common/Pagination";
+import { Metadata } from 'next';
 
+export const metadata: Metadata = {
+  title: 'Actualités | Covoiturage courte distance',
+  description: 'Toutes les actualités sur le covoiturage de courte distance',
+}
 
 export default async function Actualites() {
   const { data, meta } = await cmsInstance.items('Articles').readByQuery({

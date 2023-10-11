@@ -4,6 +4,13 @@ import RessourceCard from "@/components/ressources/RessourceCard";
 import { cmsInstance, cmsHost, getNbPages, cmsRessourcesByPage } from "@/helpers/cms";
 import Pagination from "@/components/common/Pagination";
 
+export async function generateMetadata({ params }: { params: { id: string }}) {
+  return {
+    title: `Ressources page ${params.id} | Covoiturage courte distance`,
+    description: `Page ${params.id} des ressources sur le covoiturage de courte distance`,
+  }
+}
+
 export async function generateStaticParams() {
   const { meta } = await cmsInstance.items('Ressources').readByQuery({
     fields:'id',
