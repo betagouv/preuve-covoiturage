@@ -16,7 +16,7 @@ export default function SingleIndicator(props: AnalyseProps) {
     <div className={`${fr.cx('fr-col')} ${style.col}`}>
       <div className={`fr-callout ${style.analyse}`}>
         {props.title && <h3 className={`fr-callout__title ${style.title}`}>{props.title}</h3>}
-        <p className={`fr-callout__text ${style.content}`}>
+        <div className={`fr-callout__text ${style.content}`}>
           <MDContent source={props.content}/>
           { props.link && <ButtonsGroup
               alignment='right'
@@ -31,7 +31,7 @@ export default function SingleIndicator(props: AnalyseProps) {
               ]}
             />
           }
-        </p>
+        </div>
       </div>
     </div>
   );

@@ -132,7 +132,7 @@ export default function AiresCovoiturageMap({ title, params }: { title: string; 
           legend={
             [
               {
-                title:`${geojson ? geojson.features.length+1 : ''} ${mapTitle}`,
+                title:`${geojson ? geojson.features.length+1 : ''} aires de covoiturages`,
                 type:'categories',
                 classes: classes,
               },
