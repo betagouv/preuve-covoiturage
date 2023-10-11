@@ -1,6 +1,7 @@
-import { createHash } from 'crypto';
 import { Request, Response } from 'express';
-import { CacheKey, CacheValue, GlobalCacheConfig, RouteCacheConfig } from './types';
+import { createHash } from 'node:crypto';
+import { gunzipSync, gzipSync } from 'node:zlib';
+import { CacheKey, GlobalCacheConfig, RouteCacheConfig } from './types';
 
 export function getKey(
   req: Request,
@@ -29,6 +30,11 @@ export function getKey(
   return `${globalConfig.prefix}:${pfx}:${sha.join('')}` as CacheKey;
 }
 
-export function getValue(req: Request, res: Response): CacheValue {
-  return JSON.stringify(res.json());
+export function deflate(data: string): Buffer {
+  return gzipSync(data);
+}
+
+export function inflate(gzData: Buffer): string {
+  const buf = gunzipSync(gzData);
+  return buf.toString('utf8');
 }
