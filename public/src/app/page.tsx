@@ -8,6 +8,12 @@ import { cmsHost, cmsInstance, shorten } from "@/helpers/cms";
 import RessourceCard from "@/components/ressources/RessourceCard";
 import { Section } from "@/interfaces/cms/collectionsInterface";
 import MDContent from "@/components/common/MDContent";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Covoiturage.ecologie.gouv.fr',
+  description: 'Développer le covoiturage de courte distance',
+}
 
 export default async function Home() {
   const { data } = await cmsInstance.items('Pages').readByQuery({

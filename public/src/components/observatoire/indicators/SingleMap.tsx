@@ -9,9 +9,9 @@ export default function SingleMap(props: SingleMapProps) {
   return(
     <>
       {props.params.map == 1 && <FluxMap title={props.title} params={props.params} />}
-      {props.params.map== 2 && <DensiteMap title={props.title} params={props.params} />}
+      {props.params.map == 2 && <DensiteMap title={props.title} params={props.params} />}
       {props.params.map == 3 && <OccupationMap title={props.title} params={props.params} />}
-      {props.params.map== 4 && <AiresCovoiturageMap title={props.title} params={props.params} />}
+      {props.params.map == 4 && <AiresCovoiturageMap title={props.title} params={props.params} />}
     </>
   )
 };

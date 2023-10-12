@@ -23,8 +23,12 @@ import BestFluxTable from './tables/BestFluxTable';
 import BestTerritoriesTable from './tables/BestTerritoriesTable';
 import { Suspense } from 'react';
 
+
 export default function Page() {
-  const title = 'Observer le covoiturage courte distance intermédié';
+  const title = 'Observer les trajets par territoire';
+  const subtitle = 'Les données sont issues des plateformes de covoiturage partenaires du Registre de preuve de covoiturage et représentent environ 4% des trajets covoiturés chaque mois en 2023';
+  const content = "Bien que partielle, cette source de données est à ce jour la plus complète pour comprendre certaines pratiques du covoiturage quotidien à l'échelle du territoire national."
+
   const { params, error, loading, onChangeTerritory, onChangePeriod, onChangeObserve, onChangeGraph, onChangeMap } = useDashboard();
   const period = getPeriod(params.year, params.month);
   const observeLabel = params.map == 1 ? 'Flux entre:' : 'Territoires observés';
@@ -34,6 +38,8 @@ export default function Page() {
       {!loading && !error &&(
         <article id='content'>
           <PageTitle title={title} />
+          <h2 className={fr.cx('fr-h4')}>{subtitle}</h2>
+          <p className={fr.cx('fr-text--lg')}>{content}</p>
           <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <SelectTerritory code={params.code} type={params.observe} year={Number(params.year)} onChange={onChangeTerritory} />

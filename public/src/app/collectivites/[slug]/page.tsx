@@ -11,6 +11,29 @@ import { Section } from "@/interfaces/cms/collectionsInterface";
 import { fr } from "@codegouvfr/react-dsfr";
 import MDContent from "@/components/common/MDContent";
 
+export async function generateMetadata({ params }: { params: { slug: string }}) {
+  const { data } = await cmsInstance.items('Pages').readByQuery({
+    fields:'*',
+    filter: {
+      slug: { _eq: params.slug },
+      status: {
+        '_eq': 'published',
+      },
+      tag:{
+        slug:{
+          '_eq':'collectivites',
+        }
+      }
+    },
+    limit: 1,
+  });
+  return {
+    title: `${data ? data[0].title : ''} | Covoiturage courte distance`,
+    description: shorten(`${data && data[0].content ? data[0].content :
+    'Accompagner les collectivités dans la mise en place d\actions en faveur du covoiturage de courte distance en France'}`,150),
+  }
+}
+
 export async function generateStaticParams() {
   const { data } = await cmsInstance.items('Pages').readByQuery({
     fields:'slug',

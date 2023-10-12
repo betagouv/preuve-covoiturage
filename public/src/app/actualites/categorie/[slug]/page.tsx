@@ -5,6 +5,20 @@ import { cmsHost, cmsInstance, cmsActusByPage, shorten, getNbPages } from "@/hel
 import CategoryTags from "@/components/actualites/CategoryTags";
 import Pagination from "@/components/common/Pagination";
 
+export async function generateMetadata({ params }: { params: { slug: string }}) {
+  const { data } = await cmsInstance.items('Categories').readByQuery({
+    fields:'*',
+    filter: {
+      slug: { _eq: params.slug },
+    },
+    limit: 1,
+  });
+  return {
+    title: `Catégorie ${data ? data[0].name : ''} des actualités | Covoiturage courte distance`,
+    description: `Catégorie ${data ? data[0].name : ''} des actualités sur le covoiturage de courte distance`,
+  }
+}
+
 export async function generateStaticParams() {
   const { data } = await cmsInstance.items('Categories').readByQuery({
     fields:'slug',

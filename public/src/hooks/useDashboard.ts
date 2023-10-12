@@ -4,6 +4,7 @@ import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation'
+import { AutocompleteChangeReason } from '@mui/material';
 
 export const useDashboard = () => {
   const searchParams = useSearchParams()
@@ -21,10 +22,12 @@ export const useDashboard = () => {
   const [loading, setLoading] = useState(true);
   const apiUrl = Config.get('next.public_api_url', '');
   const url = `${apiUrl}/monthly-flux/last`;
-  const onChangeTerritory = useCallback((value: TerritoryListInterface) => {
+  const onChangeTerritory = useCallback((value: TerritoryListInterface | null, reason:AutocompleteChangeReason) => {
     setParams( p =>{
-      return{ ...p, code: value.territory, name: value.l_territory, type: value.type, observe:'com' }
-    });
+      const params = (reason === 'clear' || !value) ? {code: 'XXXXX', name: 'France', type: 'country'} : {code: value.territory, name: value.l_territory, type: value.type}
+      return { ...p, ...params, observe:'com' } as typeof p
+    }) 
+    
   },[]);
   const onChangePeriod = useCallback((value: { year: number; month: number }) => {
     setParams( p =>{

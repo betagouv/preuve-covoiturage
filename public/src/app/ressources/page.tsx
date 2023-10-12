@@ -3,6 +3,12 @@ import { fr } from "@codegouvfr/react-dsfr";
 import RessourceCard from "@/components/ressources/RessourceCard";
 import { cmsInstance, cmsHost, getNbPages, cmsRessourcesByPage } from "@/helpers/cms";
 import Pagination from "@/components/common/Pagination";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Ressources | Covoiturage courte distance',
+  description: 'Toutes les ressources sur le covoiturage de courte distance',
+}
 
 export default async function Ressources() {
 

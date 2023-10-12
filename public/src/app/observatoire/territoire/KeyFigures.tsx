@@ -11,27 +11,14 @@ export default function KeyFigures({ params }: { params: SearchParamsInterface }
   const row1 = data
     ? [
         { value: data[0].journeys.toLocaleString(), text: 'Covoiturages réalisés', icon:'airport_shuttle', },
-        {
+        /*{
           value: `${((data[0].has_incentive / data[0].journeys) * 100).toLocaleString('fr-FR', {
             maximumFractionDigits: 1,
           })}`,
           unit:'%',
           text: 'Trajets incités',
           icon:'euro',
-        },
-        {
-          value: `${((data[0].intra_journeys / data[0].journeys) * 100).toLocaleString('fr-FR', {
-            maximumFractionDigits: 1,
-          })}`,
-          unit:'%',
-          text: 'Trajets réalisés à l\'intérieur du territoire',
-          icon:'mobiledata_off',
-        },
-      ] as IndicatorProps[]
-    : [];
-
-  const row2 = data
-    ? [
+        },*/
         { value: `${data[0].occupation_rate.toLocaleString()}`,
           text: "personnes par véhicule",
           icon:'supervised_user_circle',
@@ -47,6 +34,19 @@ export default function KeyFigures({ params }: { params: SearchParamsInterface }
           unit:'min',
           text: 'Temps moyen des trajets',
           icon:'av_timer'
+        },
+      ] as IndicatorProps[]
+    : [];
+
+  const row2 = data
+    ? [
+        {
+          value: `${((data[0].intra_journeys / data[0].journeys) * 100).toLocaleString('fr-FR', {
+            maximumFractionDigits: 1,
+          })}`,
+          unit:'%',
+          text: 'Trajets réalisés à l\'intérieur du territoire',
+          icon:'mobiledata_off',
         },
         { 
           value: Math.round(data[0].distance * 0.000195).toLocaleString(), 
