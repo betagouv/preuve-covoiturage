@@ -4,6 +4,7 @@ import { CreateJourneyAction } from './CreateJourneyAction';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { ParseErrorException, ValidatorInterfaceResolver } from '@ilos/common';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
+import { CarpoolAcquisitionService } from '@pdc/provider-carpool';
 
 function bootstap(): {
   action: CreateJourneyAction;
@@ -12,7 +13,8 @@ function bootstap(): {
 } {
   const repository = sinon.createStubInstance(AcquisitionRepositoryProvider);
   const validator = sinon.createStubInstance(ValidatorInterfaceResolver);
-  const action = new CreateJourneyAction(repository, validator);
+  const service = sinon.createStubInstance(CarpoolAcquisitionService);
+  const action = new CreateJourneyAction(repository, validator, service);
   return { action, repository, validator };
 }
 

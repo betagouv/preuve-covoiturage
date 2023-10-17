@@ -1,7 +1,8 @@
 import { get } from 'lodash';
-import { Action as AbstractAction } from '@ilos/core';
+import { Action as AbstractAction, env } from '@ilos/core';
 import { handler, ContextType, ParseErrorException, ConflictException, ValidatorInterfaceResolver } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
+import { CarpoolAcquisitionService } from '@pdc/provider-carpool';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/create.contract';
 
@@ -15,7 +16,11 @@ import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/
   middlewares: [...copyGroupIdAndApplyGroupPermissionMiddlewares({ operator: 'operator.acquisition.create' })],
 })
 export class CreateJourneyAction extends AbstractAction {
-  constructor(private repository: AcquisitionRepositoryProvider, private validator: ValidatorInterfaceResolver) {
+  constructor(
+    private repository: AcquisitionRepositoryProvider,
+    private validator: ValidatorInterfaceResolver,
+    private acquisitionService: CarpoolAcquisitionService,
+  ) {
     super();
   }
 
@@ -46,6 +51,46 @@ export class CreateJourneyAction extends AbstractAction {
       if (acquisitions.length !== 1) {
         throw new ConflictException('Journey already registered');
       }
+      if (env.or_false('APP_ENABLE_CARPOOL_V2')) {
+        await this.acquisitionService.registerRequest({
+          api_version,
+          operator_id,
+          operator_journey_id,
+          operator_trip_id: payload.operator_trip_id,
+          operator_class: payload.operator_class as any,
+          start_datetime: payload.start.datetime,
+          start_position: {
+            lat: payload.start.lat,
+            lon: payload.start.lon,
+          },
+          end_datetime: payload.end.datetime,
+          end_position: {
+            lat: payload.end.lat,
+            lon: payload.end.lon,
+          },
+          distance: payload.distance,
+          licence_plate: payload.licence_plate,
+          driver_identity_key: payload.driver.identity.identity_key,
+          driver_operator_user_id: payload.driver.identity.operator_user_id,
+          driver_phone: payload.driver.identity.phone,
+          driver_phone_trunc: payload.driver.identity.phone_trunc,
+          driver_travelpass_name: payload.driver.identity.travel_pass.name,
+          driver_travelpass_user_id: payload.driver.identity.travel_pass.user_id,
+          driver_revenue: payload.driver.revenue,
+          passenger_identity_key: payload.passenger.identity.identity_key,
+          passenger_operator_user_id: payload.passenger.identity.operator_user_id,
+          passenger_phone: payload.passenger.identity.phone,
+          passenger_phone_trunc: payload.passenger.identity.phone_trunc,
+          passenger_travelpass_name: payload.passenger.identity.travel_pass.name,
+          passenger_travelpass_user_id: payload.passenger.identity.travel_pass.user_id,
+          passenger_over_18: payload.passenger.identity.over_18,
+          passenger_seats: payload.passenger.seats,
+          passenger_contribution: payload.passenger.contribution,
+          passenger_payments: payload.passenger.payments,
+          incentives: payload.incentives,
+          incentive_counterparts: payload.incentive_counterparts as any,
+        });
+      }
       return {
         operator_journey_id: acquisitions[0].operator_journey_id,
         created_at: acquisitions[0].created_at,
@@ -54,7 +99,6 @@ export class CreateJourneyAction extends AbstractAction {
       if (e instanceof ConflictException) {
         throw e;
       }
-
       console.error(e.message, { journey_id: operator_journey_id, operator_id });
       await this.repository.createOrUpdateMany([
         {
@@ -69,7 +113,6 @@ export class CreateJourneyAction extends AbstractAction {
           errors: [e],
         },
       ]);
-
       throw e;
     }
   }
