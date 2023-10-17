@@ -6,7 +6,7 @@ import { PointInterface, RouteMetaProviderInterface, RouteMeta } from '../interf
 
 @provider()
 export class OSRMProvider implements RouteMetaProviderInterface {
-  protected domain = 'http://router.project-osrm.org';
+  protected domain = 'http://osrm.covoiturage.beta.gouv.fr:5000';
 
   async getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {
     try {
@@ -24,7 +24,7 @@ export class OSRMProvider implements RouteMetaProviderInterface {
 
       return { distance, duration };
     } catch (e) {
-      switch (e.response.status) {
+      switch (e.response?.status) {
         case 429:
           throw new Error(`Too many requests on ${this.domain}`);
         default:

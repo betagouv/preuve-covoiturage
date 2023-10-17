@@ -6,22 +6,14 @@ import {
   GeoProviderInterface,
   GeoProviderInterfaceResolver,
   InseeCoderInterface,
+  InseeReverseCoderInterface,
   PartialGeoInterface,
   PointInterface,
   RouteMeta,
   RouteMetaProviderInterface,
-  InseeReverseCoderInterface,
 } from './interfaces';
 
-import {
-  EtalabGeoAdministriveProvider,
-  EtalabGeoAdressProvider,
-  LocalGeoProvider,
-  LocalOSRMProvider,
-  OSMNominatimProvider,
-  OSRMProvider,
-  PhotonProvider,
-} from './providers';
+import { EtalabGeoAdministriveProvider, EtalabGeoAdressProvider, LocalGeoProvider, OSRMProvider } from './providers';
 
 @provider({
   identifier: GeoProviderInterfaceResolver,
@@ -35,14 +27,11 @@ export class GeoProvider implements GeoProviderInterface {
   constructor(
     etalabGeoAdministriveProvider: EtalabGeoAdministriveProvider,
     etalabGeoAdressProvider: EtalabGeoAdressProvider,
-    localOsrmProvider: LocalOSRMProvider,
     localGeoProvider: LocalGeoProvider,
-    osmnominatimProvider: OSMNominatimProvider,
     osrmProvider: OSRMProvider,
-    photonProvider: PhotonProvider,
   ) {
     // Geocoders => litteral to point
-    this.geoCoderProviders = [etalabGeoAdressProvider, photonProvider, osmnominatimProvider];
+    this.geoCoderProviders = [etalabGeoAdressProvider];
 
     // InseeCoders => point to insee
     this.inseeCoderProviders = [localGeoProvider, etalabGeoAdministriveProvider, etalabGeoAdressProvider];
@@ -51,7 +40,7 @@ export class GeoProvider implements GeoProviderInterface {
     this.inseeReverseCoderProviders = [etalabGeoAdministriveProvider];
 
     // RouteMetaCoders => point,point to distance,duration
-    this.routeMetaProviders = [localOsrmProvider, osrmProvider];
+    this.routeMetaProviders = [osrmProvider];
   }
 
   async literalToPosition(literal: string): Promise<PointInterface> {
