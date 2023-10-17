@@ -62,18 +62,18 @@ export class RegisterCeeAction extends AbstractAction {
       }
     } catch (e) {
       let errorType;
-      switch(true){
+      switch (true) {
         case e instanceof InvalidParamsException:
-            errorType = CeeApplicationErrorEnum.Date;
-            break;
+          errorType = CeeApplicationErrorEnum.Date;
+          break;
         case e instanceof NotFoundException:
-            errorType = CeeApplicationErrorEnum.NonEligible;
-            break;
+          errorType = CeeApplicationErrorEnum.NonEligible;
+          break;
         case e instanceof ConflictException:
-            errorType = CeeApplicationErrorEnum.Conflict;
-            break;
-        default: 
-            errorType = CeeApplicationErrorEnum.Validation;
+          errorType = CeeApplicationErrorEnum.Conflict;
+          break;
+        default:
+          errorType = CeeApplicationErrorEnum.Validation;
       }
       const errorData: CeeApplicationError = {
         operator_id,
