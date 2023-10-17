@@ -18,15 +18,7 @@ test.before((t) => {
   localGeoProvider = new LocalGeoProvider(null);
   etalabGeoAdministriveProvider = new EtalabGeoAdministriveProvider();
   etalabGeoAdressProvider = new EtalabGeoAdressProvider();
-  geoProvider = new GeoProvider(
-    etalabGeoAdministriveProvider,
-    etalabGeoAdressProvider,
-    null,
-    localGeoProvider,
-    null,
-    null,
-    null,
-  );
+  geoProvider = new GeoProvider(etalabGeoAdministriveProvider, etalabGeoAdressProvider, localGeoProvider, null);
 });
 
 test.afterEach((t) => {
