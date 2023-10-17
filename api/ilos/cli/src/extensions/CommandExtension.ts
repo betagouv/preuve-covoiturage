@@ -63,8 +63,8 @@ export class CommandExtension implements RegisterHookInterface, InitHookInterfac
       const logger = registry.output;
       try {
         const result = await processCommand(...args);
-        logger(result);
-        return;
+        result && logger(result);
+        process.exit(0);
       } catch (e) {
         logger(e);
         throw e;
