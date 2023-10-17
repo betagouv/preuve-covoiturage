@@ -118,6 +118,7 @@ export class QueueTransport implements TransportInterface<WorkerWithScheduler[]>
 
     queue.on('failed', (job, err) => {
       console.error(`🐮/${name}: failed ${job.id}`, err.message);
+      console.error(err.stack);
       this.errorHandler(err, job);
     });
   }

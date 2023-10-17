@@ -45,7 +45,7 @@ export class CompanyDataSourceProvider implements CompanyDataSourceProviderInter
         legal_nature_code: get(data, 'etablissement.uniteLegale.categorieJuridiqueUniteLegale', null),
         legal_nature_label: get(data, 'etablissement.uniteLegale.nomenclatureActivitePrincipaleUniteLegale', null),
         nonprofit_code: null,
-        intra_vat: `FR${`0${((parseInt(siren) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
+        intra_vat: `FR${`0${((parseInt(siren, 10) % 97) * 3 + 12) % 97}${siren}`.substr(-11)}`,
         address: [
           'etablissement.adresseEtablissement.numeroVoieEtablissement',
           'etablissement.adresseEtablissement.typeVoieEtablissement',

@@ -11,17 +11,18 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test:unit": "exit 0",
-    "test:integration": "exit 0",
+    "test:integration": "ava --config ava.integration.cjs",
     "coverage:ci": "exit 0",
     "coverage": "exit 0"
   },
   "dependencies": {
     "@ilos/common": "^0.4.1",
     "@ilos/connection-manager": "^0.4.1",
-    "pg": "^8.7.1",
-    "pg-cursor": "^2.7.1"
+    "pg": "^8.11.3",
+    "pg-cursor": "^2.10.3"
   },
   "devDependencies": {
-    "@types/pg": "^8.6.1"
+    "@types/pg": "^8.10.2",
+    "@types/pg-cursor": "^2.7.0"
   }
 }

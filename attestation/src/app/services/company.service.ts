@@ -16,19 +16,15 @@ export class CompanyService {
 
     const name = encodeURIComponent(term.trim());
 
-    return this.http
-      .get<{ suggestions: string[] }>(`${this.endpoint}${name}`)
-      .pipe(
-        map((res) =>
-          // Uppercase the first char of each suggestion
-          res.suggestions.map(
-            (s: string) => s.substring(0, 1).toUpperCase() + s.substring(1)
-          )
-        ),
-        catchError((err) => {
-          console.log(err);
-          return of([]);
-        })
-      );
+    return this.http.get<{ suggestions: string[] }>(`${this.endpoint}${name}`).pipe(
+      map((res) =>
+        // Uppercase the first char of each suggestion
+        res.suggestions.map((s: string) => s.substring(0, 1).toUpperCase() + s.substring(1)),
+      ),
+      catchError((err) => {
+        console.error(err);
+        return of([]);
+      }),
+    );
   }
 }

@@ -83,37 +83,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
 
     if (!result.rowCount) throw new NotFoundException(`Certificate not found: ${operator_id} - ${uuid}`);
 
-    // Temporary solution for mapping v2 cert in v3 compatibility
-    if (this.hasDriverTrips(result) && this.isV2Generated(result)) {
-      result.rows[0].meta.driver.trips = result.rows[0].meta.driver.trips.map((t) => ({
-        ...t,
-        amount: t.euros,
-        distance: t.km,
-      }));
-    }
-
-    if (this.hasPassengerTrips(result) && this.isV2Generated(result)) {
-      result.rows[0].meta.passenger.trips = result.rows[0].meta.passenger.trips.map((t) => ({
-        ...t,
-        amount: t.euros,
-        distance: t.km,
-      }));
-    }
-    // Temporary solution for Mapping v2 cert in v3 compatibility
-
     return withLog ? this.withLog(result.rows[0]) : result.rows[0];
-  }
-
-  private hasPassengerTrips(result) {
-    return result.rows[0].meta.passenger.trips && result.rows[0].meta.passenger.trips.length > 0;
-  }
-
-  private isV2Generated(result) {
-    return result.rows[0].meta.driver.trips.some((t) => !!t.euros);
-  }
-
-  private hasDriverTrips(result) {
-    return result.rows[0].meta.driver.trips && result.rows[0].meta.driver.trips.length > 0;
   }
 
   async findByOperatorId(

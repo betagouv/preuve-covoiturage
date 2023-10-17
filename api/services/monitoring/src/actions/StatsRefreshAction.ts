@@ -13,12 +13,15 @@ import { alias } from '../shared/monitoring/statsrefresh.schema';
   middlewares: [...internalOnlyMiddlewares('proxy'), ['validate', alias]],
 })
 export class StatsRefreshAction extends AbstractAction {
-  constructor(protected pg: PostgresConnection, protected config: ConfigInterfaceResolver) {
+  constructor(
+    protected pg: PostgresConnection,
+    protected config: ConfigInterfaceResolver,
+  ) {
     super();
   }
 
   public async handle({ schema }: ParamsInterface): Promise<ResultInterface> {
-    if (!!env('APP_DISABLE_STATS_REFRESH', false)) {
+    if (env.or_false('APP_DISABLE_STATS_REFRESH')) {
       return;
     }
     const cn = await this.pg.getClient().connect();

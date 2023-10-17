@@ -91,9 +91,6 @@ Options:
 
 > **Note sur `--sync`
 >
-> La commande ext programmée par le scheduler Scalingo configuré dans `cron.json`. Ce scheduler
-peut lancer une tâche toutes les 10 minutes et le container _one-off_ créé pour cette occasion a une timeout de 15 minutes.
->
 > La génération des APDF prenant plus de temps, la commande programme l'execution de la tâche par la queue.
 >
 > Quand `--sync` est utilisé (en local, par exemple). Il est conseillé de passer les timeouts à 0 :

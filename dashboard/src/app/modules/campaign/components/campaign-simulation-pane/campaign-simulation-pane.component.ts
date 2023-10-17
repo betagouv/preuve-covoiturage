@@ -31,7 +31,10 @@ export class CampaignSimulationPaneComponent extends DestroyObservable implement
     this.range$.next(value);
   }
 
-  constructor(protected campaignApi: CampaignApiService, protected auth: AuthenticationService) {
+  constructor(
+    protected campaignApi: CampaignApiService,
+    protected auth: AuthenticationService,
+  ) {
     super();
   }
 

@@ -22,14 +22,12 @@ export class AddressService {
 
     const name = encodeURIComponent(term.trim());
 
-    return this.http
-      .get<{ features: Feature[] }>(`${this.endpoint}?q=${name}&limit=20`)
-      .pipe(
-        map((res) => res.features.map((f) => f.properties.label)),
-        catchError((err) => {
-          console.log(err);
-          return of([]);
-        })
-      );
+    return this.http.get<{ features: Feature[] }>(`${this.endpoint}?q=${name}&limit=20`).pipe(
+      map((res) => res.features.map((f) => f.properties.label)),
+      catchError((err) => {
+        console.error(err);
+        return of([]);
+      }),
+    );
   }
 }

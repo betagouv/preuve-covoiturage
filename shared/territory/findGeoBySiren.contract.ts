@@ -17,6 +17,9 @@ export interface SingleResultInterface {
   epci_name: string;
   epci_siren: string;
 
+  dep_name: string;
+  dep_siren: string;
+
   coms: Array<GeoSingleResultInterface>;
 }
 

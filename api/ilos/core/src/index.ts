@@ -1,8 +1,7 @@
 import * as helpers from './helpers';
 import * as Extensions from './extensions';
-import { env } from './helpers/env';
+export { env } from './helpers';
 
-export { env };
 export { helpers };
 export { Extensions };
 

@@ -14,7 +14,7 @@ import { S3ObjectList } from '.';
 
 import { ConfigInterfaceResolver, provider, ProviderInterface } from '@ilos/common';
 import { env } from '@ilos/core';
-import { filenameFromPath, getBucketName, getBucketEndpoint } from './helpers/buckets';
+import { filenameFromPath, getBucketName } from './helpers/buckets';
 import { BucketName } from './interfaces/BucketName';
 
 // @aws-sdk/client-s3 doc: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html
@@ -31,8 +31,8 @@ export class S3StorageProvider implements ProviderInterface {
   constructor(protected config: ConfigInterfaceResolver) {}
 
   async init(): Promise<void> {
-    this.endpoint = env('AWS_ENDPOINT') as string;
-    this.region = env('AWS_REGION') as string;
+    this.endpoint = env.or_fail('AWS_ENDPOINT');
+    this.region = env.or_fail('AWS_REGION');
 
     // Create s3 instances for all buckets in the BucketName list
     this.s3Instances.set(BucketName.APDF, this.createInstance(BucketName.APDF));

@@ -1,8 +1,7 @@
-import { promisify } from 'util';
 import { provider } from '@ilos/common';
-import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { TripRepositoryProviderInterfaceResolver, CarpoolInterface, PolicyInterface } from '../interfaces';
+import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces';
 
 @provider({
   identifier: TripRepositoryProviderInterfaceResolver,
@@ -124,25 +123,22 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterfaceRe
     query: { text: string; values: (number | Date | string[])[] },
     batchSize: number,
   ): AsyncGenerator<CarpoolInterface[], void, void> {
-    const client = await this.connection.getClient().connect();
-    const cursor = client.query(new Cursor(query.text, query.values));
-    const promisifiedCursorRead = promisify(cursor.read.bind(cursor));
-
+    const cursor = await this.connection.getCursor(query.text, query.values);
     let count = 0;
     do {
       try {
-        const rows = await promisifiedCursorRead(batchSize);
+        const rows = await cursor.read(batchSize);
         count = rows.length;
         if (count > 0) {
           yield rows;
         }
       } catch (e) {
-        cursor.close(() => client.release());
+        await cursor.release();
         throw e;
       }
     } while (count > 0);
 
     // done
-    cursor.close(() => client.release());
+    await cursor.release();
   }
 }

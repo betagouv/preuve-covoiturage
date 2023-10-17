@@ -36,7 +36,10 @@ export class OperatorsCheckboxesComponent extends DestroyObservable implements O
     return this.form;
   }
 
-  constructor(private fb: FormBuilder, private commonDataService: CommonDataService) {
+  constructor(
+    private fb: FormBuilder,
+    private commonDataService: CommonDataService,
+  ) {
     super();
   }
 

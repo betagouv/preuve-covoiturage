@@ -14,7 +14,7 @@ import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 import bodyParser from 'body-parser';
 import createStore from 'connect-redis';
 import cors from 'cors';
-import express, { Response } from 'express';
+import express, { Request, Response } from 'express';
 import expressSession from 'express-session';
 import helmet from 'helmet';
 import http from 'http';
@@ -46,11 +46,12 @@ import {
   signature as getAuthorizedCodesSignature,
 } from './shared/territory/getAuthorizedCodes.contract';
 
+import { CacheMiddleware, CacheTTL, cacheMiddleware } from './middlewares/cacheMiddleware';
+import { metricsMiddleware } from './middlewares/metricsMiddleware';
 import { signature as importCeeSignature } from './shared/cee/importApplication.contract';
 import { signature as importIdentityCeeSignature } from './shared/cee/importApplicationIdentity.contract';
 import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
 import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
-import { metricsMiddleware } from './middlewares/metricsMiddleware';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -58,6 +59,7 @@ export class HttpTransport implements TransportInterface {
   port: string;
   server: http.Server;
   tokenProvider: TokenProviderInterfaceResolver;
+  cache: CacheMiddleware;
 
   constructor(private kernel: KernelInterface) {}
 
@@ -94,6 +96,7 @@ export class HttpTransport implements TransportInterface {
     this.registerSecurity();
     this.registerMetrics();
     this.registerGlobalMiddlewares();
+    this.registerCache();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
     this.registerCertificateRoutes();
@@ -122,6 +125,7 @@ export class HttpTransport implements TransportInterface {
     this.kernel.getContainer().get(SentryProvider);
     this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
     Sentry.setTag('transport', 'http');
+    Sentry.setTag('version', this.config.get('sentry.version'));
   }
 
   private registerBodyHandler(): void {
@@ -146,8 +150,8 @@ export class HttpTransport implements TransportInterface {
         httpOnly: true,
         maxAge: this.config.get('proxy.session.maxAge'),
         // https everywhere but in local development
-        secure: env('APP_ENV', 'local') !== 'local',
-        sameSite: env('APP_ENV', 'local') !== 'local' ? 'none' : 'strict',
+        secure: env.or_fail('APP_ENV', 'local') !== 'local',
+        sameSite: env.or_fail('APP_ENV', 'local') !== 'local' ? 'none' : 'strict',
       },
 
       name: sessionName,
@@ -169,10 +173,9 @@ export class HttpTransport implements TransportInterface {
     // protect with typical headers and enable cors
     this.app.use(helmet());
 
-    // apply CORS to all routes but /honor (for now)
-    // TODO: improve if more routes are concerned
+    // apply CORS to all routes except the following ones
     this.app.use(
-      /\/((?!honor|contactform|geo\/search|policy\/simulate).)*/,
+      /\/((?!honor|contactform|policy\/simulate|observatory|geo\/search).)*/,
       cors({
         origin: this.config.get('proxy.cors'),
         optionsSuccessStatus: 200,
@@ -180,6 +183,23 @@ export class HttpTransport implements TransportInterface {
         credentials: true,
       }),
     );
+
+    // use CORS asynchronously to log the calls and check against a list of domains
+    this.app.use(
+      /\/(observatory|geo\/search)/i,
+      cors((req: Request, callback) => {
+        const domains = [
+          'https://demo.covoiturage.beta.gouv.fr',
+          'https://covoiturage.beta.gouv.fr',
+          'http://localhost:4200',
+        ];
+        const origin = req.header('Origin') || '';
+        const error = domains.includes(origin) ? null : new Error(`CORS: ${origin} is not allowed`);
+        callback(error, { origin: true, optionsSuccessStatus: 200 });
+      }),
+    );
+
+    // apply specific cors policy
     this.app.use(
       '/honor',
       cors({
@@ -213,7 +233,7 @@ export class HttpTransport implements TransportInterface {
   private registerGlobalMiddlewares(): void {
     // maintenance mode
     this.app.use((req, res, next) => {
-      if (env('APP_MAINTENANCE', false)) {
+      if (env.or_false('APP_MAINTENANCE')) {
         res.status(503).json({ code: 503, error: 'Service Unavailable' });
         return;
       }
@@ -223,6 +243,26 @@ export class HttpTransport implements TransportInterface {
 
     this.app.use(signResponseMiddleware);
     this.app.use(dataWrapMiddleware);
+  }
+
+  private registerCache(): void {
+    // create Redis connection only when the cache is enabled
+    const enabled = this.config.get('cache.enabled');
+    const gzipped = this.config.get('cache.gzipped');
+    const authToken = this.config.get('cache.authToken');
+    const driver = enabled ? new Redis(this.config.get('connections.redis')) : null;
+    this.cache = cacheMiddleware({ enabled, driver, gzipped, authToken });
+
+    this.app.delete(
+      '/cache',
+      rateLimiter(),
+      this.cache.auth(),
+      asyncHandler(async (req: Request, res: Response) => {
+        const prefix = (req.query.prefix as string | undefined) || '*';
+        const result = await this.cache.flush(prefix);
+        res.status(200).json({ id: 1, jsonrpc: '2.0', result });
+      }),
+    );
   }
 
   private registerMetrics(): void {
@@ -319,7 +359,7 @@ export class HttpTransport implements TransportInterface {
 
   private registerSimulationRoutes(): void {
     this.app.post(
-      '/:version/policy/simulate',
+      '/v3/policies/simulate',
       rateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
@@ -411,29 +451,6 @@ export class HttpTransport implements TransportInterface {
    */
   private registerAcquisitionRoutes(): void {
     this.app.get(
-      '/v2/journeys/:operator_journey_id',
-      checkRateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const { params } = req;
-        const user = get(req, 'session.user', null);
-        const response = (await this.kernel.handle(
-          createRPCPayload('acquisition:status', params, user, { req }),
-        )) as RPCResponseType;
-        // Temporary solution to map v3 generated certificate model to v2 API model
-        const v3Result = response.result;
-        if (v3Result) {
-          response.result = {
-            journey_id: v3Result?.operator_journey_id,
-            metadata: v3Result?.data,
-            created_at: v3Result?.created_at,
-            status: v3Result?.status,
-          };
-        }
-        this.send(res, response);
-      }),
-    );
-    this.app.get(
       '/v3/journeys/:operator_journey_id',
       checkRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
@@ -465,29 +482,6 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
-    // cancel existing journey
-    this.app.delete(
-      '/v2/journeys/:id',
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = get(req, 'session.user', {});
-        const response = (await this.kernel.handle(
-          createRPCPayload(
-            'acquisition:cancel',
-            {
-              operator_journey_id: parseInt(req.params.id, 10),
-              api_version: 'v2',
-            },
-            user,
-            { req },
-          ),
-        )) as RPCResponseType;
-
-        this.send(res, response);
-      }),
-    );
-
     this.app.post(
       '/v3/journeys/:id/cancel',
       rateLimiter(),
@@ -499,7 +493,7 @@ export class HttpTransport implements TransportInterface {
             'acquisition:cancel',
             {
               ...req.body,
-              operator_journey_id: parseInt(req.params.id, 10),
+              operator_journey_id: req.params.id,
               api_version: 'v3',
             },
             user,
@@ -513,7 +507,7 @@ export class HttpTransport implements TransportInterface {
 
     // send a journey
     this.app.post(
-      '/:version/journeys',
+      '/v3/journeys',
       acquisitionRateLimiter(),
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
@@ -524,17 +518,9 @@ export class HttpTransport implements TransportInterface {
         );
 
         const response = (await this.kernel.handle(
-          createRPCPayload('acquisition:create', { api_version: req.params.version, ...req.body }, user, { req }),
+          createRPCPayload('acquisition:create', { api_version: 'v3', ...req.body }, user, { req }),
         )) as RPCResponseType;
 
-        // Temporary solution to map v3 generated certificate model to v2 API model
-        const v3Result = response.result;
-        if (v3Result && req.params?.version === 'v2') {
-          response.result = {
-            journey_id: v3Result?.operator_journey_id,
-            created_at: v3Result?.created_at,
-          };
-        }
         this.send(res, response);
       }),
     );
@@ -704,81 +690,6 @@ export class HttpTransport implements TransportInterface {
 
   private registerCertificateRoutes(): void {
     /**
-     * v2 Public route to check a certificate
-     */
-    this.app.get(
-      '/v2/certificates/find/:uuid',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
-          createRPCPayload('certificate:find', { uuid: req.params.uuid }, { permissions: ['common.certificate.find'] }),
-        )) as RPCResponseType;
-
-        if (response.result.driver.total.distance && response.result.passenger.total.distance) {
-          // Temporary solution to map v3 generated certificate model to v2 API model
-          response.result.driver.total.km = response.result.driver.total.distance / 1000;
-          response.result.driver.total.euro = response.result.driver.total.amount;
-
-          response.result.passenger.total.km = response.result.passenger.total.distance / 1000;
-          response.result.passenger.total.euro = response.result.passenger.total.amount;
-
-          delete response.result.driver.total.distance;
-          delete response.result.driver.total.amount;
-          delete response.result.passenger.total.distance;
-          delete response.result.passenger.total.amount;
-
-          response.result.driver.trips &&
-            response.result.driver.trips.length > 0 &&
-            response.result.driver.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance / 1000 }));
-
-          response.result.passenger.trips &&
-            response.result.passenger.trips.length > 0 &&
-            response.result.passenger.trips.map((t) => ({ ...t, euros: t.amount, km: t.distance / 1000 }));
-        }
-        // Temporary solution to map v3 generated certificate model to v2 API model
-
-        this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
-      }),
-    );
-
-    /**
-     * v2 Download PDF of the certificate
-     * - accessible with an application token
-     * - print a PDF returned back to the caller
-     */
-    this.app.post(
-      '/v2/certificates/pdf',
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const call = createRPCPayload('certificate:download', { ...req.body }, get(req, 'session.user', undefined));
-        const response = (await this.kernel.handle(call)) as RPCResponseType;
-
-        this.raw(res, get(response, 'result.body', response), get(response, 'result.headers', {}));
-      }),
-    );
-
-    /**
-     * v2 Public route for operators to generate a certificate
-     * based on params (identity, start date, end date, ...)
-     * - accessible with an application token
-     * - generate a certificate to be printed when calling /v2/certificates/download/{uuid}
-     */
-    this.app.post(
-      '/v2/certificates',
-      rateLimiter(),
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
-          createRPCPayload('certificate:create', req.body, get(req, 'session.user', undefined)),
-        )) as RPCResponseType;
-        res
-          .status(get(response, 'result.meta.httpStatus', mapStatusCode(response)))
-          .send(get(response, 'result.data', this.parseErrorData(response)));
-      }),
-    );
-
-    /**
      * v3 Public route for operators to generate a certificate
      * based on params (identity, start date, end date, ...)
      * - accessible with an application token
@@ -864,7 +775,11 @@ export class HttpTransport implements TransportInterface {
       monHonorCertificateRateLimiter(),
       asyncHandler(async (req, res, next) => {
         await this.kernel.handle(
-          createRPCPayload('honor:save', { type: req.body.type }, { permissions: ['common.honor.save'] }),
+          createRPCPayload(
+            'honor:save',
+            { type: req.body.type, employer: req.body.employer },
+            { permissions: ['common.honor.save'] },
+          ),
         );
         res.status(201).header('Location', `${process.env.APP_APP_URL}/honor/stats`).json({ saved: true });
       }),
@@ -886,130 +801,41 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerObservatoryRoutes() {
-    this.app.get(
-      '/observatory/monthly_flux',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:monthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
+    type ObservatoryMethod = string;
+    type ObservatoryURL = string;
+
+    const routes: Map<ObservatoryMethod, ObservatoryURL> = new Map(
+      Object.entries({
+        monthlyKeyfigures: 'monthly-keyfigures',
+        monthlyFlux: 'monthly-flux',
+        evolMonthlyFlux: 'evol-monthly-flux',
+        bestMonthlyFlux: 'best-monthly-flux',
+        lastRecordMonthlyFlux: 'monthly-flux/last',
+        monthlyOccupation: 'monthly-occupation',
+        evolMonthlyOccupation: 'evol-monthly-occupation',
+        bestMonthlyTerritories: 'best-monthly-territories',
+        territoriesList: 'territories',
+        territoryName: 'territory',
+        journeysByHours: 'journeys-by-hours',
+        journeysByDistances: 'journeys-by-distances',
+        getLocation: 'location',
+        airesCovoiturage: 'aires-covoiturage',
       }),
     );
-    this.app.get(
-      '/observatory/evol_monthly_flux',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:evolMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/best_monthly_flux',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:bestMonthlyFlux', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/monthly_flux/last',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:lastRecordMonthlyFlux', null, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/monthly_occupation',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:monthlyOccupation', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/evol_monthly_occupation',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:evolMonthlyOccupation', req.query, {
-            permissions: ['common.observatory.stats'],
-          }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/best_monthly_territories',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:bestMonthlyTerritories', req.query, {
-            permissions: ['common.observatory.stats'],
-          }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/territories',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:territoriesList', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/territory',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:territoryName', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/journeys_by_hours',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:journeysByHours', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/journeys_by_distances',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:journeysByDistances', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
-    this.app.get(
-      '/observatory/location',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(
-          createRPCPayload('observatory:getLocation', req.query, { permissions: ['common.observatory.stats'] }),
-        );
-        this.send(res, response as RPCResponseType);
-      }),
-    );
+
+    for (const [obsMethod, obsUrl] of routes) {
+      this.app.get(
+        `/observatory/${obsUrl}`,
+        rateLimiter(),
+        this.cache.set({ prefix: 'observatory', ttl: CacheTTL.MONTH }),
+        asyncHandler(async (req: Request, res: Response) => {
+          const response = await this.kernel.handle(
+            createRPCPayload(`observatory:${obsMethod}`, req.query, { permissions: ['common.observatory.stats'] }),
+          );
+          this.send(res, response as RPCResponseType);
+        }),
+      );
+    }
   }
 
   private registerUptimeRoute() {
@@ -1058,7 +884,7 @@ export class HttpTransport implements TransportInterface {
      * List all RPC actions
      * - disabled when deployed
      */
-    if (env('APP_ENV', 'local') === 'local') {
+    if (env.or_fail('APP_ENV', 'local') === 'local') {
       this.app.get(
         endpoint,
         rateLimiter(),

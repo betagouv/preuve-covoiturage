@@ -24,7 +24,7 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
       text: `
         SELECT territory, l_territory, type
         FROM ${this.table}
-        WHERE year = $1
+        WHERE year = geo.get_latest_millesime_or($1::smallint)
         ORDER BY type,territory;
       `,
     };
@@ -38,7 +38,7 @@ export class TerritoriesRepositoryProvider implements TerritoriesRepositoryInter
       text: `
         SELECT distinct territory, l_territory, type
         FROM ${this.table}
-        WHERE year = $1
+        WHERE year = geo.get_latest_millesime_or($1::smallint)
         AND territory = $2
         AND type = $3
         ORDER BY type,territory;

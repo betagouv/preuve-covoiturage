@@ -1,3 +1,5 @@
+import { INSEECode, PerimeterType } from '../../geo/shared/Perimeter';
+
 export interface SingleSqlResultInterface {
   lon: number;
   lat: number;
@@ -16,8 +18,8 @@ export interface ParamsInterface {
   start_date: Date;
   end_date: Date;
   zoom: number;
-  type?: string; //type de territoire observé
-  code?: string; //code insee du territoire observé
+  type?: PerimeterType; //type de territoire observé
+  code?: INSEECode; //code insee du territoire observé
 }
 
 export const handlerConfig = {

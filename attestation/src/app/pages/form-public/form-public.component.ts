@@ -19,7 +19,6 @@ import { PdfPublicGeneratorService } from '../../services/pdfPublic.service';
   styleUrls: ['./form-public.component.scss'],
 })
 export class FormPublicComponent implements OnInit {
-  // Nuber 
   private readonly CHECKBOXES_COUNT = 8;
 
   // configure the form fields
@@ -28,10 +27,7 @@ export class FormPublicComponent implements OnInit {
 
   profileForm = new UntypedFormGroup({
     name: new UntypedFormControl('', [Validators.required, Validators.maxLength(51)]),
-    ministry: new UntypedFormControl('', [
-      Validators.required,
-      Validators.maxLength(120),
-    ]),
+    ministry: new UntypedFormControl('', [Validators.required, Validators.maxLength(120)]),
     workshare: new UntypedFormControl(null, [
       Validators.required,
       Validators.maxLength(3),
@@ -41,41 +37,27 @@ export class FormPublicComponent implements OnInit {
     year: new UntypedFormControl(this.currentYear, [Validators.required]),
     mobility: new UntypedFormControl('no', [Validators.required]),
     mobility_date: new UntypedFormControl(''),
-    days: new UntypedFormControl('', [
-      Validators.max(365),
-      Validators.pattern(/^[0-9]{0,6}$/),
-    ]),
-    home_address: new UntypedFormControl('', [
-      Validators.required,
-      Validators.maxLength(256),
-    ]),
-    work_address: new UntypedFormControl('', [
-      Validators.required,
-      Validators.maxLength(256),
-    ]),
+    days: new UntypedFormControl('', [Validators.max(365), Validators.pattern(/^[0-9]{0,6}$/)]),
+    home_address: new UntypedFormControl('', [Validators.required, Validators.maxLength(256)]),
+    work_address: new UntypedFormControl('', [Validators.required, Validators.maxLength(256)]),
     chk: new UntypedFormArray(
       [],
       [
         Validators.required,
         // validate array length
         (c: AbstractControl<string[]>): { [key: string]: any } | null =>
-          c.value.filter((i) => !!i && i !== '').length === this.CHECKBOXES_COUNT
-            ? null
-            : { arrayLength: true },
-      ]
+          c.value.filter((i) => !!i && i !== '').length === this.CHECKBOXES_COUNT ? null : { arrayLength: true },
+      ],
     ),
-    location: new UntypedFormControl('', [
-      Validators.required,
-      Validators.maxLength(128),
-    ]),
+    location: new UntypedFormControl('', [Validators.required, Validators.maxLength(128)]),
   });
 
   constructor(
     protected addressService: AddressService,
     protected companyService: CompanyService,
     private pdf: PdfPublicGeneratorService,
-    private counter: CounterService
-  ) { }
+    private counter: CounterService,
+  ) {}
 
   ngOnInit(): void {
     // reload saved data in a crash free way
@@ -95,27 +77,20 @@ export class FormPublicComponent implements OnInit {
           if (!box) return;
           // @ts-ignore
           box.checked = true;
-          (this.profileForm.get('chk') as UntypedFormArray).push(
-            new UntypedFormControl(box.getAttribute('id'))
-          );
+          (this.profileForm.get('chk') as UntypedFormArray).push(new UntypedFormControl(box.getAttribute('id')));
         });
 
         // save to localStorage
-        localStorage.setItem(
-          'formPublic',
-          JSON.stringify(this.profileForm.value)
-        );
+        localStorage.setItem('formPublic', JSON.stringify(this.profileForm.value));
       }
     } catch (e) {
       localStorage.removeItem('formPublic');
     }
 
     // auto-save
-    this.profileForm.valueChanges
-      .pipe(debounceTime(250), distinctUntilChanged())
-      .subscribe((o: object) => {
-        localStorage.setItem('formPublic', JSON.stringify(o));
-      });
+    this.profileForm.valueChanges.pipe(debounceTime(250), distinctUntilChanged()).subscribe((o: object) => {
+      localStorage.setItem('formPublic', JSON.stringify(o));
+    });
 
     // set mobility_date required stated
     this.profileForm.get('mobility')?.valueChanges.subscribe((value) => this.setMobilityValidators(value));
@@ -125,10 +100,7 @@ export class FormPublicComponent implements OnInit {
   }
 
   showError(fieldName: string, errorName: string) {
-    return (
-      this.profileForm.get(fieldName)?.dirty &&
-      this.profileForm.get(fieldName)?.hasError(errorName)
-    );
+    return this.profileForm.get(fieldName)?.dirty && this.profileForm.get(fieldName)?.hasError(errorName);
   }
 
   onChkChange(event: Event): void {
@@ -162,7 +134,7 @@ export class FormPublicComponent implements OnInit {
     this.pdf.generate(this.profileForm.value, {
       onComplete: () => alert('Attestation générée'),
     });
-    this.counter.save(window.origin, 'public');
+    this.counter.save(window.origin, 'public', this.profileForm.get('employer')?.value || '');
   }
 
   trackByFn(index: number, item: { id: number }) {

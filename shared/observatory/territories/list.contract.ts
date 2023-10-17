@@ -1,7 +1,9 @@
+import { PerimeterLabel, PerimeterType } from '../../geo/shared/Perimeter';
+
 export interface SingleResultInterface {
-  territory: string;
-  l_territory: string;
-  type: string;
+  territory: PerimeterType;
+  l_territory: PerimeterLabel;
+  type: PerimeterType;
 }
 
 export type ResultInterface = SingleResultInterface[];

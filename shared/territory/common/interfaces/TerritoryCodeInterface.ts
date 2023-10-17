@@ -21,6 +21,7 @@ export interface TerritorySelectorsInterface {
   [TerritoryCodeEnum.Arr]?: string[];
   [TerritoryCodeEnum.City]?: string[];
   [TerritoryCodeEnum.Mobility]?: string[];
+  [TerritoryCodeEnum.District]?: string[];
   [TerritoryCodeEnum.CityGroup]?: string[];
   [TerritoryCodeEnum.Region]?: string[];
   [TerritoryCodeEnum.Country]?: string[];

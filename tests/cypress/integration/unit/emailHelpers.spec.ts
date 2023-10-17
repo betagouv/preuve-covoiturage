@@ -9,8 +9,8 @@ import { forgottenCI } from './dummy-emails/forgottenCI';
 
 describe('escapeRegExp', () => {
   it('makes the URL RegExp compatible', () => {
-    const str = escapeRegExp('https://localhost:4200/api?a=query&b=ok');
-    expect(str).to.eq('https\\:\\/\\/localhost\\:4200\\/api\\?a=query&b=ok');
+    const str = escapeRegExp('http://localhost:4200/api?a=query&b=ok');
+    expect(str).to.eq('http\\:\\/\\/localhost\\:4200\\/api\\?a=query&b=ok');
   });
 });
 

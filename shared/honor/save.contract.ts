@@ -2,6 +2,7 @@ export type ResultInterface = void;
 
 export interface ParamsInterface {
   type: string;
+  employer: string | null;
 }
 
 export const handlerConfig = {

@@ -1,6 +1,7 @@
-export function checkTerritoryParam(territory: string): string {
-  const checkArray = ['com', 'epci', 'aom', 'dep', 'reg', 'country'];
-  return checkArray.find((d) => d == territory) || 'com';
+import { perimeterTypes, PerimeterType } from '../shared/geo/shared/Perimeter';
+
+export function checkTerritoryParam(territory: PerimeterType): PerimeterType {
+  return perimeterTypes.find((d) => d == territory) || 'com';
 }
 
 export function checkIndicParam(indic: string, checkArray: string[], fallback: string): string {

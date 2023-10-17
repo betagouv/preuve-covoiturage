@@ -91,7 +91,12 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     }
 
     // Exclure les trajets qui ne sont pas dans l'aom
-    if (!startsAt(ctx, { aom: ['217500016'] }) || !endsAt(ctx, { aom: ['217500016'] })) {
+    // Code insee de l'aom IDFM 2022: 217500016
+    // Code insee de l'aom IDFM 2023: 287500078
+    if (
+      (!startsAt(ctx, { aom: ['217500016'] }) || !endsAt(ctx, { aom: ['217500016'] })) &&
+      (!startsAt(ctx, { aom: ['287500078'] }) || !endsAt(ctx, { aom: ['287500078'] }))
+    ) {
       throw new NotEligibleTargetException();
     }
 

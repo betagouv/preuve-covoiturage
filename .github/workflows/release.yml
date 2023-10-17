@@ -2,7 +2,7 @@ name: 'Release'
 
 on:
   push:
-    branches: [dev]
+    branches: [main]
 
 jobs:
   release:
@@ -16,7 +16,7 @@ jobs:
         with:
           branches: |
             [
-              'dev'
+              'main'
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN_RELEASE }}

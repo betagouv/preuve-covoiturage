@@ -21,7 +21,11 @@ export class TripLayoutComponent extends DestroyObservable implements OnInit {
     return !this.auth.hasRole(Roles.TerritoryDemo);
   }
 
-  constructor(public auth: AuthenticationService, public router: Router, protected sanitizer: DomSanitizer) {
+  constructor(
+    public auth: AuthenticationService,
+    public router: Router,
+    protected sanitizer: DomSanitizer,
+  ) {
     super();
   }
 

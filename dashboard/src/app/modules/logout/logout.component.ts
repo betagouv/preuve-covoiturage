@@ -10,7 +10,10 @@ import { delay } from 'rxjs/operators';
   styleUrls: ['./logout.component.scss'],
 })
 export class LogoutComponent implements OnInit {
-  constructor(private router: Router, public authService: AuthenticationService) {}
+  constructor(
+    private router: Router,
+    public authService: AuthenticationService,
+  ) {}
 
   ngOnInit(): void {
     this.authService

@@ -8,7 +8,10 @@ import { ICONS } from '../const/icons.const';
   providedIn: 'root',
 })
 export class IconService {
-  constructor(private iconRegistry: MatIconRegistry, private sanitizer: DomSanitizer) {}
+  constructor(
+    private iconRegistry: MatIconRegistry,
+    private sanitizer: DomSanitizer,
+  ) {}
 
   public init(): void {
     ICONS.forEach((icon) => {

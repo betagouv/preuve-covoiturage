@@ -14,41 +14,20 @@ import { PdfLimitedGeneratorService } from '../../services/pdfLimited.service';
 export class FormLimitedComponent implements OnInit {
   // configure the form fields
   profileForm = new UntypedFormGroup({
-    name: new UntypedFormControl(null, [
-      Validators.required,
-      Validators.maxLength(128),
-    ]),
-    address: new UntypedFormControl(null, [
-      Validators.required,
-      Validators.maxLength(256),
-    ]),
-    employer: new UntypedFormControl(null, [
-      Validators.required,
-      Validators.maxLength(128),
-    ]),
-    workshare: new UntypedFormControl(null, [
-      Validators.maxLength(3),
-      Validators.pattern(/^[0-9]{0,3}$/),
-    ]),
-    distance: new UntypedFormControl(null, [
-      Validators.max(100000),
-      Validators.pattern(/^[0-9]{0,6}$/),
-    ]),
-    days: new UntypedFormControl(null, [
-      Validators.max(365),
-      Validators.pattern(/^[0-9]{0,6}$/),
-    ]),
-    location: new UntypedFormControl(null, [
-      Validators.required,
-      Validators.maxLength(128),
-    ]),
+    name: new UntypedFormControl(null, [Validators.required, Validators.maxLength(128)]),
+    address: new UntypedFormControl(null, [Validators.required, Validators.maxLength(256)]),
+    employer: new UntypedFormControl(null, [Validators.required, Validators.maxLength(128)]),
+    workshare: new UntypedFormControl(null, [Validators.maxLength(3), Validators.pattern(/^[0-9]{0,3}$/)]),
+    distance: new UntypedFormControl(null, [Validators.max(100000), Validators.pattern(/^[0-9]{0,6}$/)]),
+    days: new UntypedFormControl(null, [Validators.max(365), Validators.pattern(/^[0-9]{0,6}$/)]),
+    location: new UntypedFormControl(null, [Validators.required, Validators.maxLength(128)]),
   });
 
   constructor(
     protected addressService: AddressService,
     protected companyService: CompanyService,
     private pdf: PdfLimitedGeneratorService,
-    private counter: CounterService
+    private counter: CounterService,
   ) {}
 
   ngOnInit(): void {
@@ -63,18 +42,13 @@ export class FormLimitedComponent implements OnInit {
     }
 
     // auto-save
-    this.profileForm.valueChanges
-      .pipe(debounceTime(250), distinctUntilChanged())
-      .subscribe((o: object) => {
-        localStorage.setItem('formLtd', JSON.stringify(o));
-      });
+    this.profileForm.valueChanges.pipe(debounceTime(250), distinctUntilChanged()).subscribe((o: object) => {
+      localStorage.setItem('formLtd', JSON.stringify(o));
+    });
   }
 
   showError(fieldName: string, errorName: string) {
-    return (
-      this.profileForm.get(fieldName)?.dirty &&
-      this.profileForm.get(fieldName)?.hasError(errorName)
-    );
+    return this.profileForm.get(fieldName)?.dirty && this.profileForm.get(fieldName)?.hasError(errorName);
   }
 
   onFound(key: string, value: string): void {
@@ -90,6 +64,7 @@ export class FormLimitedComponent implements OnInit {
     this.pdf.generate(this.profileForm.value, {
       onComplete: () => alert('Attestation générée'),
     });
-    this.counter.save(window.origin, 'limited');
+
+    this.counter.save(window.origin, 'limited', this.profileForm.get('employer')?.value || '');
   }
 }

@@ -32,7 +32,7 @@ export class ApplyCommand implements CommandInterface {
       coerce(s: string): number[] {
         return s
           .split(',')
-          .map((i: string): number => parseInt(s))
+          .map((i: string): number => parseInt(s, 10))
           .filter((i: number): boolean => !!i);
       },
     },

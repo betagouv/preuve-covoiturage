@@ -27,6 +27,7 @@
     "@ilos/framework": "~0",
     "@ilos/queue": "~0",
     "@pdc/helper-test": "~0",
+    "@pdc/provider-carpool": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-token": "~0",
     "@pdc/provider-validator": "~0",

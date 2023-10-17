@@ -14,23 +14,17 @@ import { format } from '../shared/helpers/date.helper';
 export class PdfLimitedGeneratorService {
   constructor(private http: HttpClient) {}
 
-  generate(
-    data: ProfileLimitedFormInterface,
-    obs?: { onComplete?: Function; onError?: Function }
-  ) {
+  generate(data: ProfileLimitedFormInterface, obs?: { onComplete?: Function; onError?: Function }) {
     const observer: Observer<ArrayBuffer> = {
       next: (pdfBytes: ArrayBuffer) => {
-        saveAs(
-          new Blob([pdfBytes], { type: 'application/pdf' }),
-          certFilename(data.name)
-        );
+        saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), certFilename(data.name));
       },
       error: () => {},
       complete: () => {},
     };
 
     if (obs?.onError) observer['error'] = obs.onError as (err: any) => void;
-    if (obs?.onComplete) observer['complete'] = obs.onComplete  as () => void;
+    if (obs?.onComplete) observer['complete'] = obs.onComplete as () => void;
 
     this.http
       .get('/assets/certificate_ltd.pdf', { responseType: 'arraybuffer' })
@@ -38,9 +32,7 @@ export class PdfLimitedGeneratorService {
         catchError(this.handleError),
 
         // convert the PDF load document to an observable
-        switchMap((pdfBuffer: ArrayBuffer) =>
-          from(PDFDocument.load(pdfBuffer))
-        ),
+        switchMap((pdfBuffer: ArrayBuffer) => from(PDFDocument.load(pdfBuffer))),
 
         // embed the font (Promise) and draw all text boxes
         // doc.save returns a Promise with a ArrayBuffer
@@ -106,11 +98,7 @@ export class PdfLimitedGeneratorService {
           draw(data.location, 120, 239);
 
           const now = new Date();
-          draw(
-            `${format(now.getDate())}/${format(now.getMonth()+1)}/${now.getFullYear()}`,
-            120,
-            218
-          );
+          draw(`${format(now.getDate())}/${format(now.getMonth() + 1)}/${now.getFullYear()}`, 120, 218);
 
           // set metadata
           doc.setTitle("Attestation sur l'honneur de covoiturage");
@@ -121,13 +109,13 @@ export class PdfLimitedGeneratorService {
           doc.setAuthor('Ministère de la Transition écologique');
 
           return doc.save();
-        })
+        }),
       )
       .subscribe(observer);
   }
 
   private handleError(err: any): ObservableInput<any> {
-    console.log(err);
+    console.error(err);
     return err;
   }
 }
