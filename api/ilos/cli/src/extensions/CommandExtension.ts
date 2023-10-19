@@ -63,11 +63,17 @@ export class CommandExtension implements RegisterHookInterface, InitHookInterfac
       const logger = registry.output;
       try {
         const result = await processCommand(...args);
-        logger(result);
-        process.exit(0);
+        result && logger(result);
+
+        // exit(0) only when not running AVA tests as it overrides
+        // the process.exit function and crashes tests with a warning.
+        // If we don't process.exit(0) in regular commands, it will wait forever
+        if (/^ava /.test(process.env['npm_lifecycle_script']) === false) {
+          process.exit(0);
+        }
       } catch (e) {
-        logger(e);
-        process.exit(1);
+        logger(e.message);
+        throw e;
       }
     });
 
