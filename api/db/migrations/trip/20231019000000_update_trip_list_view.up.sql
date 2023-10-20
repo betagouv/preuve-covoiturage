@@ -164,22 +164,34 @@ CREATE VIEW trip.list_view AS (
         sum(incentive.amount) FILTER (WHERE incentive.financial IS TRUE) AS incentive_financial_sum,
         array_agg(incentive.policy_id) AS policy_id
       FROM incentive
-  ) pid,
+  ) pid
 
   -- EDIT: 2023-10-19
-  -- replace meta -> 'payments' by meta -> 'incentive_counterparts'
+  -- replace meta -> 'payments' by meta -> 'incentives'
 
   -- aggregate incentives for the passenger
-  LATERAL (
-    SELECT array_agg(json_array_elements.value::trip.incentive) AS incentive
-    FROM json_array_elements(cpp.meta -> 'incentive_counterparts'::text) json_array_elements(value)
-  ) cpip,
+   LEFT JOIN LATERAL (
+    SELECT array_agg(json_build_object(
+      'index', cci.idx::integer,
+      'siret', cci.siret::text,
+      'amount', cci.amount::integer
+    )::trip.incentive) as incentive
+    FROM carpool.incentives cci
+    WHERE cci.acquisition_id = cpp.acquisition_id
+      AND cpp.is_driver = false
+   ) cpip ON true
 
   -- aggregate incentives for the driver
-  LATERAL (
-    SELECT array_agg(json_array_elements.value::trip.incentive) AS incentive
-    FROM json_array_elements(cpd.meta -> 'incentive_counterparts'::text) json_array_elements(value)
-  ) cpid
+   LEFT JOIN LATERAL (
+    SELECT array_agg(json_build_object(
+      'index', cci.idx::integer,
+      'siret', cci.siret::text,
+      'amount', cci.amount::integer
+    )::trip.incentive) as incentive
+    FROM carpool.incentives cci
+    WHERE cci.acquisition_id = cpd.acquisition_id
+      AND cpp.is_driver = true
+   ) cpid ON true
 
   WHERE cpp.is_driver = false
 ); -- END CREATE VIEW
