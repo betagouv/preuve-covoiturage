@@ -11,6 +11,7 @@ defaults:
 
 env:
   tag: ${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
 jobs:
   build:
@@ -98,7 +99,6 @@ jobs:
         uses: actions/github-script@v6
         env: 
           TARGET_VERSION: ${{ env.tag }}
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
         with:
           github-token: ${{ secrets.GA_PDC_TOKEN }}
           script: |
