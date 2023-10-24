@@ -24,6 +24,7 @@
     "start:queue": "npm --workspace @pdc/proxy run ilos queue $APP_REDIS_URL",
     "clean": "rm -rf ./**/dist",
     "build": "lerna run build",
+    "build:production": "lerna run build --skip-nx-cache",
     "watch": "lerna watch -- lerna run build --scope=\\$LERNA_PACKAGE_NAME",
     "coverage-ci": "lerna run --scope @pdc/* coverage-ci",
     "coverage": "lerna run --scope @pdc/* coverage",

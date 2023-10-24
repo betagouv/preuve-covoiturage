@@ -47,9 +47,14 @@ install() {
 
 # Build
 build() {
-  echo "Building app"
-  npm run build
+  if [ "$1" = "production" ]; then
+    echo "Building app for production without NX cache"
+    npm run build:production
+  else
+    echo "Building app for development"
+    npm run build
+  fi
   return $?
 }
 
-info && check && drop_modules && drop_dist && install && build && drop_proxy_module && install $1 && echo "Done!"
+info && check && drop_modules && drop_dist && install && build $1 && drop_proxy_module && install $1 && echo "Done!"
