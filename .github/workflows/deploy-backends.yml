@@ -46,8 +46,6 @@ jobs:
           load: true
           push: false
           tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
-          env:
-            NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           labels: |
             org.opencontainers.image.title=${{ matrix.image.name }} Image
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
@@ -100,6 +98,7 @@ jobs:
         uses: actions/github-script@v6
         env: 
           TARGET_VERSION: ${{ env.tag }}
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
         with:
           github-token: ${{ secrets.GA_PDC_TOKEN }}
           script: |
