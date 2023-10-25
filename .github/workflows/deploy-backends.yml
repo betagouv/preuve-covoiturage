@@ -46,7 +46,7 @@ jobs:
           load: true
           push: false
           tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
-          build-args:
+          build-args: |
             DOCKER_NX_CLOUD_ACCESS_TOKEN=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
             DOCKER_NX_CLOUD_TEST=testing-1234-5678-9012-3456
           labels: |
