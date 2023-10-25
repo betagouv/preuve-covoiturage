@@ -68,8 +68,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache NX artifacts
-        id: cache-nx
+      - name: Nx Cache
+        id: nx-cache
         uses: actions/cache@v3
         with:
           path: api/.nx/cache
@@ -85,10 +85,6 @@ jobs:
       
       - name: Install
         run: npm ci
-        working-directory: api
-
-      - name: Build
-        run: npm run build
         working-directory: api
 
       - name: Run Unit test
@@ -129,8 +125,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache NX artifacts
-        id: cache-nx
+      - name: Nx Cache
+        id: nx-cache
         uses: actions/cache@v3
         with:
           path: api/.nx/cache

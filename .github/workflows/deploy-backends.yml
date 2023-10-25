@@ -23,7 +23,14 @@ jobs:
           - { name: 'datatools', dockerfile: './docker/notebook/Dockerfile' }
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Nx Cache
+        id: nx-cache
+        uses: actions/cache@v3
+        with:
+          path: api/.nx/cache
+          key: ${{ runner.os }}-nx-cache
+          restore-keys: ${{ runner.os }}-nx-cache
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -46,9 +53,6 @@ jobs:
           load: true
           push: false
           tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
-          build-args: |
-            DOCKER_NX_CLOUD_ACCESS_TOKEN=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-            DOCKER_NX_CLOUD_ENCRYPTION_KEY=${{ secrets.NX_CLOUD_ENCRYPTION_KEY }}
           labels: |
             org.opencontainers.image.title=${{ matrix.image.name }} Image
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
@@ -83,8 +87,6 @@ jobs:
           file: ${{ matrix.image.dockerfile }}
           push: true
           tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
-          build-args: |
-            DOCKER_NX_CLOUD_ACCESS_TOKEN=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           labels: |
             org.opencontainers.image.title=${{ matrix.image.name }} Image
             org.opencontainers.image.source=${{ github.event.repository.html_url }}

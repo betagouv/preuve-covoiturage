@@ -3,16 +3,15 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test:unit": {
       "cache": true,
-      "dependsOn": ["^build", "build"]
+      "dependsOn": ["^build"]
     },
     "coverage": {
-      "cache": true
+      "cache": true,
+      "dependsOn": ["^build"]
     }
   },
   "affected": {
