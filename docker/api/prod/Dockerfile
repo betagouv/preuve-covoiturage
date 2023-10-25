@@ -1,5 +1,8 @@
 FROM node:20.2 as builder
 
+ARG DOCKER_NX_CLOUD_ACCESS_TOKEN
+ENV NX_CLOUD_ACCESS_TOKEN=$DOCKER_NX_CLOUD_ACCESS_TOKEN
+
 RUN mkdir -p /app/shared
 RUN mkdir -p /app/api
 
