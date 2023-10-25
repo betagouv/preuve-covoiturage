@@ -13,12 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install Docker dependencies
         working-directory: ./docker/lint
@@ -41,12 +42,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: 'Audit API dependencies'
         run: npm audit --audit-level moderate && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
@@ -66,10 +68,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Cache NX artifacts
+        id: cache-nx
+        uses: actions/cache@v3
+        with:
+          path: api/.nx/cache
+          key: ${{ runner.os }}-nx-cache
+          restore-keys: ${{ runner.os }}-nx-cache
 
       - name: Install NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -81,14 +91,10 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
         working-directory: api
 
       - name: Run Unit test
         run: npm run test:unit
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
         working-directory: api
 
   codeql:
@@ -102,7 +108,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 2
 
@@ -123,10 +129,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Cache NX artifacts
+        id: cache-nx
+        uses: actions/cache@v3
+        with:
+          path: api/.nx/cache
+          key: ${{ runner.os }}-nx-cache
+          restore-keys: ${{ runner.os }}-nx-cache
 
       - name: Install NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -138,8 +152,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
         working-directory: api
 
       - name: Add host entries
@@ -174,5 +186,4 @@ jobs:
           APP_SESSION_SECRET: null
           APP_ROUTECACHE_AUTHTOKEN: null
           AWS_REGION: fr-par
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
         run: ./integration.sh run
