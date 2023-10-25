@@ -6,12 +6,10 @@
       "dependsOn": ["^build"]
     },
     "test:unit": {
-      "cache": true,
-      "dependsOn": ["^build"]
+      "cache": true
     },
     "coverage": {
-      "cache": true,
-      "dependsOn": ["^build"]
+      "cache": true
     }
   },
   "affected": {
