@@ -48,7 +48,6 @@ jobs:
           tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
           build-args: |
             DOCKER_NX_CLOUD_ACCESS_TOKEN=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-            DOCKER_NX_CLOUD_TEST=testing-1234-5678-9012-3456
           labels: |
             org.opencontainers.image.title=${{ matrix.image.name }} Image
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
@@ -83,6 +82,8 @@ jobs:
           file: ${{ matrix.image.dockerfile }}
           push: true
           tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
+          build-args: |
+            DOCKER_NX_CLOUD_ACCESS_TOKEN=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           labels: |
             org.opencontainers.image.title=${{ matrix.image.name }} Image
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
