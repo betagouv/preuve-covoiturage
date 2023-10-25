@@ -5,6 +5,7 @@ node_modules
 !.vscode/settings.json
 .env
 db/*
+api/.nx/cache
 
 !docker/dashboard
 dashboard/src/environments/environment.review.ts
