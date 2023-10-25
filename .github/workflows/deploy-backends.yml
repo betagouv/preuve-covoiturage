@@ -46,7 +46,7 @@ jobs:
           load: true
           push: false
           tags: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
-          secret-envs:
+          build-args:
             NX_CLOUD_ACCESS_TOKEN=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           labels: |
             org.opencontainers.image.title=${{ matrix.image.name }} Image
