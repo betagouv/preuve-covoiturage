@@ -27,7 +27,10 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
 {
   static readonly id = 'grand_poitier_2024';
   protected operators = [OperatorsEnum.Karos];
+  protected operatorsAfter16October = [OperatorsEnum.Karos, OperatorsEnum.Mobicoop];
   protected operator_class = ['C'];
+
+  private readonly SIXTEEN_OF_OCTOBER_DATE = new Date('2023-11-16');
 
   constructor(public max_amount: number) {
     super();
@@ -48,7 +51,9 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    const operators =
+      ctx.carpool.datetime < this.SIXTEEN_OF_OCTOBER_DATE ? this.operators : this.operatorsAfter16October;
+    isOperatorOrThrow(ctx, operators);
     onDistanceRangeOrThrow(ctx, { min: 4_999, max: 80_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
