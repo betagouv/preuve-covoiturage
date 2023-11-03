@@ -277,14 +277,14 @@ components:
       type: string
       format: date-time 
       description: |
-        Date et heure du départ/arrivée au format ISO 8601. L'heure est exprimée en UTC (YYYY-MM-DDThh:mm:ssZ)
+        Date et heure du départ/arrivée du passager au format ISO 8601. L'heure est exprimée en UTC (YYYY-MM-DDThh:mm:ssZ)
         L'heure est exprimée en UTC \(Coordinated Universal Time\). UTC n'est pas ajusté sur l'heure d'été et hiver !
       example: '2021-01-01T11:00:00Z'
     time_geopoint:
       type: object
       additionalProperties: false
       description: |
-        Position lat/lon + date 
+        Position lat/lon + date  du passager
       required:
         - datetime
         - lat
