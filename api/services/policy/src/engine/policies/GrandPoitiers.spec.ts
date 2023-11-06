@@ -50,10 +50,11 @@ test(
       { operator_class: 'A' },
       { operator_class: 'B' },
       { distance: 81_000 },
+      { operator_siret: OperatorsEnum.Mobicoop, datetime: new Date('2023-11-15') },
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -64,11 +65,17 @@ test(
     carpool: [
       { distance: 5_000, driver_identity_uuid: 'one' },
       { distance: 79_999, seats: 2, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
+      {
+        distance: 5_000,
+        driver_identity_uuid: 'two',
+        operator_siret: OperatorsEnum.Mobicoop,
+        datetime: new Date('2023-11-16'),
+      },
     ],
     meta: [],
   },
   {
-    incentive: [150, 300],
+    incentive: [150, 300, 150],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.10-2023',
@@ -76,7 +83,11 @@ test(
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 450,
+        value: 600,
+      },
+      {
+        key: 'max_amount_restriction.0-two.month.10-2023',
+        value: 150,
       },
     ],
   },
