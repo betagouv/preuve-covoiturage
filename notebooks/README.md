@@ -41,7 +41,16 @@ This will create a pre-commit hook in `.git` folder
 ```
 pre-commit install
 ```
-
 https://zhauniarovich.com/post/2020/2020-06-clearing-jupyter-output/
 
 Please use untracked playground folder as much as possible for local analysis
+
+## Industrialise notebook script
+In order to execute your notebook as a python script
+```
+jupyter nbconvert --to script scripts/overlap-anomalie-research.ipynb
+```
+
+Then it should be added to Dockerfile
+
+
