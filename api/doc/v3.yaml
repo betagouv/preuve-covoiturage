@@ -307,6 +307,7 @@ components:
       required:
         - operator_user_id
         - identity_key
+        - phone_trunc
       properties:
         identity_key:
           type: string
