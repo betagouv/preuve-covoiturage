@@ -34,6 +34,7 @@ export const mapList = [
   { id: 2, name: 'Densité de départs et arrivées dans une zone' },
   { id: 3, name: "Taux d'occupation et nombre de véhicules partagés" },
   { id: 4, name: "Aires de covoiturage" },
+  { id: 5, name: "Voies réservées de covoiturage" },
 ];
 
 export const graphList = [
