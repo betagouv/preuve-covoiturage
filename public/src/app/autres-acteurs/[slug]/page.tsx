@@ -116,7 +116,7 @@ export default async function ProfilSinglePage({ params }: { params: { slug: str
                   content={shorten(r.item.content, 100)}
                   date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
                   link={r.item.link}
-                  file={`${cmsHost}/assets/${r.item.file}`}
+                  file={`${r.item.file ? `${cmsHost}/assets/${r.item.file}` :'' }`}
                   img={`${cmsHost}/assets/${r.item.img}`}
                   img_legend={r.item.img_legend}                
                 />
