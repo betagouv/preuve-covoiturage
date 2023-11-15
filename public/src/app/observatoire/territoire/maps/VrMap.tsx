@@ -1,6 +1,6 @@
 import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
-import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
+//import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import { LineLayer, Layer, Source } from 'react-map-gl/maplibre';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { cmsHost } from "@/helpers/cms";
