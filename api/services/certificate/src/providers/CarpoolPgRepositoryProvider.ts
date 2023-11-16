@@ -55,7 +55,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
           cc.datetime AT TIME ZONE $${values.length} AS datetime,
           cc.distance,
-          meta.sum AS payment
+          GREATEST(COALESCE(meta.sum, 0)::int), cc.payment) AS payment
         FROM ${this.table} AS cc
         LEFT JOIN LATERAL (
           SELECT SUM(COALESCE(amount, 0)) AS sum
@@ -78,7 +78,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
           cc.datetime AT TIME ZONE $${values.length} AS datetime,
           cc.distance,
-          meta.sum AS payment
+          GREATEST(COALESCE(meta.sum, 0)::int), cc.payment) AS payment
         FROM ${this.table} AS cc
         LEFT JOIN LATERAL (
           SELECT SUM(COALESCE(amount, 0)) AS sum
