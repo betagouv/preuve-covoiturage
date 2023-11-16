@@ -24,13 +24,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Nx Cache
-        id: nx-cache
-        uses: actions/cache@v3
-        with:
-          path: api/.nx/cache
-          key: ${{ runner.os }}-nx-cache
-          restore-keys: ${{ runner.os }}-nx-cache
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
