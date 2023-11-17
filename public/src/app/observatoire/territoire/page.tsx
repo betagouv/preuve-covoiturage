@@ -25,7 +25,7 @@ import { Suspense } from 'react';
 
 
 export default function Page() {
-  const title = 'Observer les trajets par territoire';
+  const title = 'Comprendre le covoiturage quotidien sur votre territoire';
   const subtitle = 'Les données sont issues des plateformes de covoiturage partenaires du Registre de preuve de covoiturage et représentent environ 4% des trajets covoiturés chaque mois en 2023';
   const content = "Bien que partielle, cette source de données est à ce jour la plus complète pour comprendre certaines pratiques du covoiturage quotidien à l'échelle du territoire national."
 

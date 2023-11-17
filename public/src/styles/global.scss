@@ -9,3 +9,12 @@ table {
 .fr-text--lg > ul{
   font-size: 1rem;
 }
+.fr-card__img img, 
+.fr-card--horizontal .fr-card__img img,
+.fr-content-media__img img{
+  object-fit: contain;
+  height: auto;
+}
+.fr-content-media__img img{
+  aspect-ratio: 1 !important;
+}

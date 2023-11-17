@@ -77,7 +77,6 @@ export default async function ActuCategoryPage({ params }: { params: { slug: str
                   img={`${cmsHost}/assets/${a.img}`}
                   img_legend={a.img_legend}
                   categories={a.categories}
-                  horizontal
                 />
               </div>
             )

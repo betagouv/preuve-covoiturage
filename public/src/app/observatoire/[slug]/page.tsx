@@ -94,7 +94,6 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
           content={hero.item.content} 
           img={hero.item.img} 
           alt={hero.item.alt} 
-          backgroundColor={hero.item.background_color} 
           buttons={hero.item.buttons} 
         />
       }
