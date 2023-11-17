@@ -21,7 +21,7 @@ import OccupationMap from './maps/OccupationMap';
 import AiresCovoiturageMap from './maps/AiresMap';
 import BestFluxTable from './tables/BestFluxTable';
 import BestTerritoriesTable from './tables/BestTerritoriesTable';
-import { Suspense } from 'react';
+//import { Suspense } from 'react';
 
 
 export default function Page() {
@@ -34,7 +34,7 @@ export default function Page() {
   const observeLabel = params.map == 1 ? 'Flux entre:' : 'Territoires observés';
 
   return (
-    <Suspense>
+    <>
       {!loading && !error &&(
         <article id='content'>
           <PageTitle title={title} />
@@ -117,6 +117,6 @@ export default function Page() {
           </div>
         </article>
       )}
-    </Suspense>
+    </>
   );
 }
