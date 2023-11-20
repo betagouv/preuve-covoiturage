@@ -61,7 +61,7 @@ export function generateIncentive(incentive: Partial<SerializedIncentiveInterfac
   return { ...defaultIncentive, ...incentive };
 }
 
-export function generatePartialCarpools(count: number = 75): Partial<CarpoolInterface>[] {
+export function generatePartialCarpools(count = 75): Partial<CarpoolInterface>[] {
   const date: Date = new Date('2022-01-01');
   return [
     ...Array(count + 1 + 1)

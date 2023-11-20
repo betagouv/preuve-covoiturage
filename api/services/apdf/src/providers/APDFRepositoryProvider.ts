@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
-import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { set } from 'lodash';
 import {
   CampaignSearchParamsInterface,
