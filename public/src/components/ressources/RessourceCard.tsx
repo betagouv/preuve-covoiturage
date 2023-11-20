@@ -35,7 +35,7 @@ export default function RessourceCard(props: RessourceCardProps) {
       title={props.title}
       desc={props.content}
       detail={`Publié le ${props.date}`}
-      imageAlt={props.img_legend}
+      imageAlt={props.img_legend ? props.img_legend : ''}
       imageUrl={props.img}
       footer={
         <ButtonsGroup

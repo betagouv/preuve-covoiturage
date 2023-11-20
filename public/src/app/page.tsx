@@ -11,7 +11,7 @@ import MDContent from "@/components/common/MDContent";
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Covoiturage.ecologie.gouv.fr',
+  title: 'observatoire.covoiturage.gouv.fr',
   description: 'Développer le covoiturage de courte distance',
 }
 
@@ -64,7 +64,6 @@ export default async function Home() {
           content={hero.item.content} 
           img={hero.item.img} 
           alt={hero.item.alt} 
-          backgroundColor={hero.item.background_color} 
           buttons={hero.item.buttons} 
         />
       }

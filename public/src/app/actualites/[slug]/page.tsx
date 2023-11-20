@@ -83,7 +83,7 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
     <article id='actu-content'>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
       { data && 
-        <div className={fr.cx('fr-col')}>
+        <div className={fr.cx('fr-col','fr-col-12')}>
           <PageTitle title={data[0].title} />
           <p>Publié le {new Date(data[0].date_created).toLocaleDateString('fr-FR')}</p>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>

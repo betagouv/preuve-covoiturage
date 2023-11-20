@@ -17,11 +17,8 @@ export default function ActuCard(props: ActuCardProps) {
                 <li key={i}>
                   <Tag
                     small
-                    /*linkProps={{
-                      href: `/actualites/categorie/${c.Categories_id.slug}`
-                    }}*/
                   >
-                    {c.Categories_id.name}
+                    {c.Categories_id ? c.Categories_id.name : ''}
                   </Tag>
                 </li>
               )
@@ -32,6 +29,7 @@ export default function ActuCard(props: ActuCardProps) {
       detail={<><span className={fr.cx('fr-icon-arrow-right-line','fr-icon--sm','fr-mr-1v')} aria-hidden="true"></span><span>Publié le {props.date}</span></>}
       imageAlt={props.img_legend}
       imageUrl={props.img}
+      shadow={true}
       footer={
         <ButtonsGroup
           alignment='right'

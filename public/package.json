@@ -11,13 +11,13 @@
     "prebuild": "only-include-used-icons"
   },
   "dependencies": {
-    "@codegouvfr/react-dsfr": "^0.77.1",
-    "@directus/sdk": "^10.3.3",
+    "@codegouvfr/react-dsfr": "^0.78.6",
+    "@directus/sdk": "^10.3.5",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@material-design-icons/font": "^0.14.12",
-    "@mdi/font": "^7.2.96",
-    "@mui/material": "^5.13.4",
+    "@mdi/font": "^7.3.67",
+    "@mui/material": "^5.14.18",
     "@socialgouv/matomo-next": "^1.6.1",
     "@turf/bbox": "^6.5.0",
     "@turf/helpers": "^6.5.0",

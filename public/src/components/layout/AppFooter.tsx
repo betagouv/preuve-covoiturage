@@ -66,6 +66,15 @@ export function AppFooter() {
         }
       ]}
       accessibility='partially compliant'
+      termsLinkProps={{
+        href: '/mentions-legales'
+      }}
+      websiteMapLinkProps={{
+        href: '/plan-site'
+      }}
+      accessibilityLinkProps={{
+        href: '/accessibilite'
+      }}
       contentDescription='Le site officiel d’information sur le covoiturage de courte distance.
      Retrouvez toutes les informations et démarches administratives nécessaires au développement du covoiturage sur votre territoire.'
       operatorLogo={{
@@ -90,7 +99,7 @@ export function AppFooter() {
       bottomItems={[headerFooterDisplayItem]}
       license={
         <>
-          Sauf mention contraire, tous les contenus de ce site sont sous 
+          Sauf mention contraire, tous les contenus de ce site sont sous{' '}
           <a href={'https://github.com/etalab/licence-ouverte/blob/master/LO.md'}>licence etalab-2.0</a> 
           {' '}Icon made by <a href={'https://www.flaticon.com/authors/freepik'}>Freepik</a> from 
           {' '}<a href={'www.flaticon.com'}>www.flaticon.com</a>

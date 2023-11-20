@@ -16,10 +16,17 @@ export default function Navigation() {
           menuLinks: [
             {
               linkProps: {
-                href: '/observatoire/covoiturage-courte-distance',
+                href: '/observatoire/comprendre-covoiturage-quotidien',
               },
-              text: 'Le covoiturage courte distance en France',
-              isActive: pathname === '/observatoire/covoiturage-courte-distance',
+              text: 'Comprendre le covoiturage quotidien en France',
+              isActive: pathname === '/observatoire/comprendre-covoiturage-quotidien',
+            },
+            {
+              linkProps: {
+                href: '/observatoire/territoire',
+              },
+              text: 'Comprendre le covoiturage quotidien sur votre territoire',
+              isActive: pathname.startsWith('/observatoire/territoire'),
             },
             {
               linkProps: {
@@ -27,13 +34,6 @@ export default function Navigation() {
               },
               text: 'Impact des différents politiques mobilité',
               isActive: pathname === '/observatoire/impact-politiques-mobilite',
-            },
-            {
-              linkProps: {
-                href: '/observatoire/territoire',
-              },
-              text: 'Observer un territoire',
-              isActive: pathname.startsWith('/observatoire/territoire'),
             },
             {
               linkProps: {
@@ -46,7 +46,7 @@ export default function Navigation() {
               linkProps: {
                 href: '/observatoire/presentation',
               },
-              text: 'A propos de l\'observatoire',
+              text: 'L\'observatoire en quelques mots',
               isActive: pathname === '/observatoire/presentation',
             },
             /*{
@@ -65,58 +65,58 @@ export default function Navigation() {
           menuLinks: [
             {
               linkProps: {
-                href: '/collectivites/planification-et-evaluation',
+                href: '/collectivites/comprendre-et-planifier-le-covoiturage',
               },
               text: 'Comprendre et planifier le covoiturage',
-              isActive: pathname === '/collectivites/planification-et-evaluation',
+              isActive: pathname === '/collectivites/comprendre-et-planifier-le-covoiturage',
             },
             {
               linkProps: {
                 href: '/collectivites/aires-covoiturage',
               },
-              text: 'Infrastructures: Aires',
+              text: 'Construire des aires de covoiturage',
               isActive: pathname === '/collectivites/aires-covoiturage',
             },
             {
               linkProps: {
                 href: '/collectivites/voies-reservees',
               },
-              text: 'Infrastructures: Voies réservées',
+              text: 'Construire des voies réservées au covoiturage',
               isActive: pathname === '/collectivites/voies-reservees',
             },
             {
               linkProps: {
                 href: '/collectivites/ligne-de-covoiturage',
               },
-              text: 'Infrastructures: Lignes',
+              text: 'Construire des lignes de covoiturage',
               isActive: pathname === '/collectivites/ligne-de-covoiturage',
             },
             {
               linkProps: {
                 href: '/collectivites/auto-stop-organise',
               },
-              text: 'Infrastructures: Auto-stop organisé',
+              text: 'Construire un réseau d\'auto-stop organisé',
               isActive: pathname === '/collectivites/auto-stop-organise',
             },
             {
               linkProps: {
                 href: '/collectivites/campagnes-incitation-financieres',
               },
-              text: 'Services: Incitation financières',
+              text: 'Déployer une campagne d\'incitations financières',
               isActive: pathname === '/collectivites/campagnes-incitation-financieres',
             },
             {
               linkProps: {
                 href: '/collectivites/plateformes-numeriques',
               },
-              text: 'Service : plateformes de covoiturage en propre',
+              text: 'Déployer une plateforme numérique de covoiturage en marque blanche',
               isActive: pathname === '/collectivites/plateformes-numeriques',
             },
             {
               linkProps: {
                 href: '/collectivites/communication-animation',
               },
-              text: 'Service : Animation et communication',
+              text: 'Communiquer et animer son territoire',
               isActive: pathname === '/collectivites/communication-animation',
             },
             {

@@ -17,7 +17,7 @@ export function AppHeader() {
         href: '/',
         title: 'Accueil - Site national du covoiturage au quotidien',
       }}
-      serviceTitle='COVOITURAGE.ecologie.gouv.fr'
+      serviceTitle='Observatoire.covoiturage.gouv.fr'
       serviceTagline='Développer le covoiturage courte distance'
       navigation={<Navigation />}
     />

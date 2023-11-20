@@ -16,7 +16,6 @@ export interface BlockProps {
 
 export interface HeroProps extends BlockProps{
   subtitle?:string,
-  backgroundColor?: string,
 }
 
 export interface HighlightProps {

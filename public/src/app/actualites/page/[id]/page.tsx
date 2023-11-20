@@ -76,7 +76,6 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
                   img={`${cmsHost}/assets/${a.img}`}
                   img_legend={a.img_legend}
                   categories={a.categories}
-                  horizontal
                 />
               </div>
             )
