@@ -30,7 +30,7 @@ export function cacheStore(config: GlobalCacheConfig): CacheStore {
       return driver.ttl(key);
     },
 
-    async scan(pattern: CachePattern, batchSize: number = 50): Promise<Set<CacheKey>> {
+    async scan(pattern: CachePattern, batchSize = 50): Promise<Set<CacheKey>> {
       if (!driver) return null;
 
       let cursor = 0;

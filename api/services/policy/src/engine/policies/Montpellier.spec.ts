@@ -1,6 +1,6 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { CarpoolInterface, OperatorsEnum } from '../../interfaces';
+import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
 import { Montpellier as Handler } from './Montpellier';
 import { generatePartialCarpools } from '../tests/helpers';

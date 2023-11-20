@@ -80,7 +80,7 @@ export class CarpoolAcquisitionService {
     await conn.query('BEGIN');
     try {
       const carpool = await this.lookupRepository.findOneStatus(data.operator_id, data.operator_journey_id);
-      if(!carpool) {
+      if (!carpool) {
         throw new NotFoundException();
       }
       const request = await this.requestRepository.save(

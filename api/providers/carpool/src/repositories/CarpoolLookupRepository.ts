@@ -45,7 +45,11 @@ export class CarpoolLookupRepository {
     return result.rows.pop();
   }
 
-  public async findOne(operator_id: Id, operator_journey_id: Uuid, client?: PoolClient): Promise<SelectableCarpool | undefined> {
+  public async findOne(
+    operator_id: Id,
+    operator_journey_id: Uuid,
+    client?: PoolClient,
+  ): Promise<SelectableCarpool | undefined> {
     const cl = client ?? this.connection.getClient();
     const sqlQuery = sql`
       SELECT
