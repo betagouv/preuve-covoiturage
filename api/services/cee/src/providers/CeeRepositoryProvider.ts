@@ -39,10 +39,16 @@ export class CeeRepositoryProvider extends CeeRepositoryProviderInterfaceResolve
   ): Promise<ExistingCeeApplication | void> {
     const { text, values } = [['identity_key'], ['driving_license'], ['last_name_trunc', 'phone_trunc']]
       .filter((k) => !k.filter((kk) => !(kk in search)).length)
-      .map((k, i) => ({
-        text: `(${k.map((kk, ii) => `ce.${kk} = $${i + ii + 6}`).join(' AND ')})`,
-        value: k.map((kk) => search[kk]),
-      }))
+      .map((k, i) => {
+        let text = `${k.map((kk, ii) => `ce.${kk} = $${i + ii + 6}`).join(' AND ')}`;
+        if (k[0] == 'last_name_trunc') {
+          text = `${text} AND ce.identity_key IS NULL`;
+        }
+        return {
+          text: `(${text})`,
+          value: k.map((kk) => search[kk]),
+        };
+      })
       .reduce(
         (acc, v) => {
           acc.text.push(v.text);

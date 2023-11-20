@@ -239,6 +239,22 @@ test.serial('Should find short application with driver license if exists', async
   t.deepEqual((result || {}).datetime, new Date('2022-11-01'));
 });
 
+test.serial('Should not find long application with name match if id key is not null', async (t) => {
+  const search: SearchCeeApplication = {
+    last_name_trunc: 'BBB',
+    phone_trunc: '+3360000000000',
+    driving_license: 'driving_license_999',
+    datetime: new Date(),
+    identity_key: 'test_2',
+  };
+
+  const result = await t.context.repository.searchForLongApplication(
+    search,
+    config.rules.applicationCooldownConstraint,
+  );
+  t.is(result, undefined);
+});
+
 test.serial('Should find short application with id key if exists', async (t) => {
   const search: SearchCeeApplication = {
     last_name_trunc: 'EEE',
