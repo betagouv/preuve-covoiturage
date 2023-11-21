@@ -9,3 +9,5 @@ CREATE TABLE IF NOT EXISTS ANOMALY.LABELS (
 
  CREATE UNIQUE INDEX
     ON ANOMALY.LABELS (CARPOOL_ID, LABEL);
+
+ALTER TYPE acquisition.acquisition_status_enum ADD VALUE 'anomaly_error';
