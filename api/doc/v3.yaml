@@ -919,7 +919,7 @@ paths:
         ## Détection d'anomalie
 
         Le trajet est incohérent ou physiquement impossible.
-        Le trajet envoyé rentre en conflit avec un autre sur plan temporel ou spacial
+        Le trajet envoyé rentre en conflit avec un autre sur le plan temporel ou spatial
       security:
         - token: []
       operationId: acquisition:create
