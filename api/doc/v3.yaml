@@ -1112,12 +1112,12 @@ paths:
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
                   fraud_error_labels:
                     type: array
-                    description: Liste des étiquettes ou raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
+                    description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
                     items:
                       '$ref': "#/components/schemas/fraudcheck_label"
                   anomaly_error_labels:
                     type: array
-                    description: Liste des étiquettes (ou raisons) ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
+                    description: Liste des raisons ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
                     items:
                       '$ref': "#/components/schemas/anomaly_label"
                   anomaly_error_metas:
