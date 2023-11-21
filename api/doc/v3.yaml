@@ -113,6 +113,7 @@ components:
       type: string
       enum:
         - fraud_error
+        - anomaly_error
         - validation_error 
         - acquisition_error
         - normalization_error
@@ -124,9 +125,10 @@ components:
       description: | 
         Statut du trajet tel que :
           - validation_error : les données envoyées ne sont pas valides
+          - anomaly_error : le trajet est incohérent ou physiquement impossible
           - acquisition_error : le trajet n'a pas du tout été enregistré
           - normalization_error : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisée.
-          - fraud_error : le trajet a été enregistré et standardisé mais il a été considéré comme anormal
+          - fraud_error : le trajet a été enregistré et standardisé mais il a été considéré comme frauduleux
           - ok : le trajet a correctement été traité
           - pending : le trajet a été enregistré mais n'a pas encore été traité
           - canceled : le trajet a été annulé par l'opérateur
@@ -456,6 +458,13 @@ components:
       description: | 
         Etiquette possible pour un cas de fraude détectée :
           - interoperator_fraud : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent 
+    anomaly_label:
+      type: string
+      enum:
+        - temporal_overlap_anomaly
+      description: | 
+        Etiquette possible pour une anomalie détectée :
+          - temporal_overlap_anomaly : 2 trajets ont été déclarés pour un même opérateur et un même passager sur des bornes temporelles qui se chevauchent à au moins 70%
 paths:
   /geo/route:
     get:
@@ -897,11 +906,20 @@ paths:
         Le schéma de données est présenté au format [JSON Schema Draft-07](https://json-schema.org/understanding-json-schema/index.html).
 
         ### Vérification
+        Les vérifications sont faites de manière asynchrone.
+        Le statut ne peut plus changer 48h après la date de fin du trajet.
+        En cas d'indisponibilité du ou des services, le trajet est considéré comme `ok` après 48h
+        
+        ## Détection de fraude
+        
         Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 24h après la réalisation de celui-ci.
         Ces trajets seront retournés avec un champs `status` à `fraud_error` et un label dans `fraud_error_labels` à `interoperator_fraud`.
-        Le statut ne peut plus changer 48h après la date de fin du trajet. 
-        En cas d'indisponibilité du service, le trajet est considéré comme `ok` après 48h
         L'algorithme de détection de fraude inter opérateurs est appliqué sur tous les trajets envoyés.
+
+        ## Détection d'anomalie
+
+        Le trajet est incohérent ou physiquement impossible.
+        Le trajet envoyé rentre en conflit avec un autre sur plan temporel ou spacial
       security:
         - token: []
       operationId: acquisition:create
@@ -1094,9 +1112,21 @@ paths:
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
                   fraud_error_labels:
                     type: array
-                    description: Liste des étiquettes ayant abouti au rejet du trajet. vide si pas de fraude détectée
+                    description: Liste des étiquettes ou raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
                     items:
                       '$ref': "#/components/schemas/fraudcheck_label"
+                  anomaly_error_labels:
+                    type: array
+                    description: Liste des étiquettes (ou raisons) ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
+                    items:
+                      '$ref': "#/components/schemas/anomaly_label"
+                  anomaly_error_metas:
+                    type: object
+                    properties:
+                      conflicting_journey_id:
+                        type: string
+                        description: operator_journey_id impliqué dans l'anomalie
+                          
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
           content:
