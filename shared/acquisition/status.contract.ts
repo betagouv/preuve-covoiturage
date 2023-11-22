@@ -8,6 +8,7 @@ export enum StatusEnum {
   ValidationError = 'validation_error',
   NormalizationError = 'normalization_error',
   FraudError = 'fraud_error',
+  AnomalyError = 'anomaly_error',
   Ok = 'ok',
   Expired = 'expired',
   Canceled = 'canceled',

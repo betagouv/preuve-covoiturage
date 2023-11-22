@@ -98,7 +98,7 @@ def add_conflicting_carpool_id(row):
 
 df_labels = pd.DataFrame(df_row_to_flag[['_id', 'overlap_duration_ratio']])
 df_labels.columns = ['carpool_id', 'overlap_duration_ratio']
-df_labels = df_labels.assign(label='temporal_overlap')
+df_labels = df_labels.assign(label='temporal_overlap_anomaly')
 df_labels = df_labels.apply(lambda x: add_conflicting_carpool_id(x), axis=1)
 
 

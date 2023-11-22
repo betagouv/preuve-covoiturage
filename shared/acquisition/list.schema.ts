@@ -12,6 +12,7 @@ export const list = {
         'validation_error',
         'normalization_error',
         'fraud_error',
+        'anomaly_error',
         'ok',
         'expired',
         'canceled',

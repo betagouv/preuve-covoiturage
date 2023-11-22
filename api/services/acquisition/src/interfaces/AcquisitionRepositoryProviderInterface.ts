@@ -44,6 +44,7 @@ export interface AcquisitionStatusInterface {
   operator_journey_id: string;
   status: StatusEnum;
   fraud_error_labels?: string[];
+  anomaly_error_labels: string[];
 }
 
 export interface AcquisitionStatusUpdateInterface {
