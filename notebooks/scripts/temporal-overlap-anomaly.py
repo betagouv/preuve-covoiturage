@@ -115,7 +115,7 @@ def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
 
 df_labels.to_sql(
     name="labels",
-    schema="anomalies",
+    schema="anomaly",
     con=engine,
     if_exists="append",
     index=False,
