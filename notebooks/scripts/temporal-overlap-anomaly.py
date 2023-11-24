@@ -19,6 +19,10 @@ try: frame
 except NameError:
   frame = os.environ['FRAME']
 
+try: update_carpool_status
+except NameError:
+  update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] or True
+
 
 # In[3]:
 
@@ -55,7 +59,6 @@ with engine.connect() as conn:
 
 
 from production.computes.carpool_overlaps import CarpoolOverlaps
-
 
 df_carpool['overlap_group'] = 100
 df_carpool['overlap_duration'] = 0
@@ -101,6 +104,27 @@ df_labels = pd.DataFrame(df_row_to_flag[['_id', 'overlap_duration_ratio']])
 df_labels.columns = ['carpool_id', 'overlap_duration_ratio']
 df_labels = df_labels.assign(label='temporal_overlap_anomaly')
 df_labels = df_labels.apply(lambda x: add_conflicting_carpool_id(x), axis=1)
+
+
+# In[ ]:
+
+
+import sqlalchemy as sa
+
+if update_carpool_status is True:
+
+    metadata = sa.MetaData(schema='carpool')
+    metadata.reflect(bind=engine)
+
+    table = metadata.tables['carpool.carpools']
+    
+    where_clause = table.c._id.in_(df_labels['carpool_id'].to_list())
+
+    update_stmt = sa.update(table).where(where_clause).values(status='anomaly_error')
+
+    with engine.connect() as conn:
+        result = conn.execute(update_stmt)
+        conn.commit()
 
 
 # In[41]:

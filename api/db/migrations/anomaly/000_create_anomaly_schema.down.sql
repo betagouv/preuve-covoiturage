@@ -1,3 +1,5 @@
 DROP TABLE IF EXISTS ANOMALY.LABELS;
 
 DROP SCHEMA IF EXISTS ANOMALY;
+
+ALTER TYPE carpool.carpool_status_enum DROP VALUE 'anomaly_error';
