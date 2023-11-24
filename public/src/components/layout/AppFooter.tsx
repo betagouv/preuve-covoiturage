@@ -101,8 +101,7 @@ export function AppFooter() {
         <>
           Sauf mention contraire, tous les contenus de ce site sont sous{' '}
           <a href={'https://github.com/etalab/licence-ouverte/blob/master/LO.md'}>licence etalab-2.0</a> 
-          {' '}Icon made by <a href={'https://www.flaticon.com/authors/freepik'}>Freepik</a> from 
-          {' '}<a href={'www.flaticon.com'}>www.flaticon.com</a>
+          {' '}Toutes les illustrations sont réalisés par <a href={'https://www.freepik.com'}>Freepik</a>
         </>
       }
     />
