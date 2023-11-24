@@ -94,6 +94,7 @@ def add_conflicting_carpool_id(row):
     df_carpool_row_flaged = df_row_to_flag[df_row_to_flag_mask]
     conflicting_carpool_mask = (df_row_to_keep['identity_key'] == df_carpool_row_flaged['identity_key'].iloc[0]) & (df_row_to_keep['overlap_group'] == df_carpool_row_flaged['overlap_group'].iloc[0])
     row['conflicting_carpool_id'] = df_row_to_keep[conflicting_carpool_mask].iloc[0]._id
+    row['conflicting_operator_journey_id'] = df_row_to_keep[conflicting_carpool_mask].iloc[0].operator_journey_id
     return row
 
 df_labels = pd.DataFrame(df_row_to_flag[['_id', 'overlap_duration_ratio']])
@@ -120,3 +121,4 @@ df_labels.to_sql(
     index=False,
     method=insert_or_do_nothing_on_conflict
 )
+
