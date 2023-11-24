@@ -1126,7 +1126,7 @@ paths:
                         properties:
                           conflicting_journey_id:
                             type: string
-                            description: operator_journey_id impliqué dans l'anomalie
+                            description: l'`operator_journey_id` en conflict avec le trajet rejeté. Le trajet correspondant à ce journey_id ne sera pas retenu en statut `anomaly_error`.
                           temporal_overlap_duration_ratio:
                             type: float
                             description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
