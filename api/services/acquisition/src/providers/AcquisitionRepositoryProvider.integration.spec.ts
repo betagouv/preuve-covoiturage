@@ -1,3 +1,4 @@
+import { Carpool } from '@pdc/helper-seed/src/carpools';
 import anyTest, { TestFn } from 'ava';
 import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 import { AcquisitionRepositoryProvider } from './AcquisitionRepositoryProvider';
@@ -237,7 +238,7 @@ test.serial('Should get status by operator_id and operator_journey_id', async (t
 test.serial('Should get fraudcheck status and labels for carpool', async (t) => {
   // Arrange
   const acquisition_row = await updateAcquistionJourneyIdOk(t.context, '5');
-  const carpool_id = await insertCarpoolWithStatus(t.context, acquisition_row, 'fraudcheck_error');
+  const { _id: carpool_id } = await insertCarpoolWithStatus(t.context, acquisition_row, 'fraudcheck_error');
   await t.context.db.connection.getClient().query({
     text: `
     INSERT INTO fraudcheck.labels(
@@ -491,9 +492,9 @@ test.serial('Should patch payload', async (t) => {
     { test2: true },
   );
   const result = await t.context.db.connection.getClient().query({
-    text: `SELECT payload 
+    text: `SELECT payload
     FROM ${t.context.repository.table}
-    WHERE operator_id = $1 AND journey_id = $2 
+    WHERE operator_id = $1 AND journey_id = $2
     `,
     values: [1, '1'],
   });
@@ -516,25 +517,31 @@ test.serial('Should create new acquisition and get anomaly error with temporal o
   const acquisition_row_7 = await updateAcquistionJourneyIdOk(t.context, '7');
 
   // first is ok is ok second is conflicting
-  const carpool_id_6 = await insertCarpoolWithStatus(t.context, acquisition_row_6, 'ok');
-  const carpool_id_7 = await insertCarpoolWithStatus(t.context, acquisition_row_7, 'anomaly_error');
+  const { _id: carpool_id_6, operator_journey_id: operator_journey_id_6 } = await insertCarpoolWithStatus(
+    t.context,
+    acquisition_row_6,
+    'ok',
+  );
+  const { _id: carpool_id_7 } = await insertCarpoolWithStatus(t.context, acquisition_row_7, 'anomaly_error');
 
   // add anomaly label for carpool_id 7
   await t.context.db.connection.getClient().query({
     text: `
     INSERT INTO anomaly.labels(
-      carpool_id, label, overlap_duration_ratio, conflicting_carpool_id)
-      VALUES ($1, $2, $3, $4);
+      carpool_id, label, conflicting_carpool_id, conflicting_operator_journey_id, overlap_duration_ratio)
+      VALUES ($1, $2, $3, $4, $5);
     `,
-    values: [carpool_id_7, 'temporal_overlap_anomaly', '0.845', carpool_id_6],
+    values: [carpool_id_7, 'temporal_overlap_anomaly', carpool_id_6, operator_journey_id_6, 0.845],
   });
 
   // Act
-  const { status, anomaly_error_labels } = await t.context.repository.getStatus(t.context.operator_id, '7');
+  const { status, anomaly_error_details } = await t.context.repository.getStatus(t.context.operator_id, '7');
 
   // Assert
   t.deepEqual(status, StatusEnum.AnomalyError);
-  t.deepEqual(anomaly_error_labels, ['temporal_overlap_anomaly']);
+  t.deepEqual(anomaly_error_details[0].label, 'temporal_overlap_anomaly');
+  t.deepEqual(anomaly_error_details[0].metas.conflicting_journey_id, operator_journey_id_6);
+  t.deepEqual(anomaly_error_details[0].metas.temporal_overlap_duration_ratio, 0.845);
 });
 
 const updateAcquistionJourneyIdOk = async (
@@ -557,7 +564,7 @@ const insertCarpoolWithStatus = async (
   context: TestContext,
   acquisition: { _id: number; journey_id: number },
   status: 'fraudcheck_error' | 'anomaly_error' | 'ok',
-): Promise<number> => {
+): Promise<Carpool & { _id: number }> => {
   const result = await context.db.connection.getClient().query({
     text: `
     INSERT INTO carpool.carpools(
@@ -569,7 +576,7 @@ const insertCarpoolWithStatus = async (
         $6, $7, $8, $9, $10, 
         $11, $12, $13, $14, $15, 
         $16)
-      RETURNING _id;
+      RETURNING _id, operator_journey_id;
     `,
     values: [
       acquisition._id,
@@ -591,5 +598,5 @@ const insertCarpoolWithStatus = async (
     ],
   });
 
-  return result.rows[0]._id;
+  return result.rows[0];
 };

@@ -1115,18 +1115,21 @@ paths:
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
                     items:
                       '$ref': "#/components/schemas/fraudcheck_label"
-                  anomaly_error_labels:
+                  anomaly_error_details:
                     type: array
                     description: Liste des raisons ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
-                    items:
-                      '$ref': "#/components/schemas/anomaly_label"
-                  anomaly_error_metas:
-                    type: object
                     properties:
-                      conflicting_journey_id:
-                        type: string
-                        description: operator_journey_id impliqué dans l'anomalie
-                          
+                      label: 
+                       '$ref': "#/components/schemas/anomaly_label"
+                      metas:
+                        type: object
+                        properties:
+                          conflicting_journey_id:
+                            type: string
+                            description: operator_journey_id impliqué dans l'anomalie
+                          temporal_overlap_duration_ratio:
+                            type: float
+                            description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
           content:
