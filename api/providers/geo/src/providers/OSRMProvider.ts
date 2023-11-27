@@ -1,19 +1,25 @@
-import { get } from 'lodash';
-import axios from 'axios';
 import { provider } from '@ilos/common';
 import { env } from '@ilos/core';
-
-import { PointInterface, RouteMetaProviderInterface, RouteMeta } from '../interfaces';
+import axios from 'axios';
+import { Agent } from 'http';
+import { get } from 'lodash';
+import { PointInterface, RouteMeta, RouteMetaProviderInterface } from '../interfaces';
 
 @provider()
 export class OSRMProvider implements RouteMetaProviderInterface {
-  protected domain = env.or_fail("OSRM_URL", 'http://osrm.covoiturage.beta.gouv.fr:5000');
+  protected domain = env.or_fail('OSRM_URL', 'http://osrm.covoiturage.beta.gouv.fr:5000');
+
+  private static agent = new Agent({ keepAlive: false });
 
   async getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {
     try {
       const query = `${start.lon},${start.lat};${end.lon},${end.lat}`;
 
-      const res = await axios.get(`${this.domain}/route/v1/driving/${encodeURIComponent(query)}`);
+      console.time(`[OSRMProvider] ${query}`);
+      const res = await axios.get(`${this.domain}/route/v1/driving/${encodeURIComponent(query)}`, {
+        httpAgent: OSRMProvider.agent,
+      });
+      console.timeEnd(`[OSRMProvider] ${query}`);
       const distance = get(res, 'data.routes.0.distance', null);
       const duration = get(res, 'data.routes.0.duration', null);
 

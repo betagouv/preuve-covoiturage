@@ -35,13 +35,15 @@ export function createPayload(options, version) {
           operator_trip_id: uuid(),
           start: {
             datetime: new Date(start).toISOString(),
-            lat: 49.45218,
-            lon: 6.02627,
+            // centre de Limoges
+            lat: 45.83561150344249,
+            lon: 1.262073093025149,
           },
           end: {
             datetime: new Date(end).toISOString(),
-            lat: 49.45218,
-            lon: 6.02627,
+            // banlieue de Limoges
+            lat: 45.84250813419604,
+            lon: 1.1966100042481453,
           },
           distance: 34039,
           incentives: [{ index: 0, amount: 280, siret: '28750007800020' }],
