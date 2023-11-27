@@ -1,8 +1,6 @@
 name: 'Deploy docker images'
 
 on:
-  pull_request:
-    branches: [fix/trivy_scan_error]
   release:
     types: [published]
   workflow_dispatch:
@@ -60,7 +58,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: betagouvpdc/${{ matrix.image.name }}:${{ env.TAG_NAME }}
+          image-ref: betagouvpdc/${{ matrix.image.name }}:${{ env.tag }}
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
