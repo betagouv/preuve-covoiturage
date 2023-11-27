@@ -21,6 +21,7 @@ jobs:
         image:
           - { name: 'api', dockerfile: './docker/api/prod/Dockerfile' }
           - { name: 'datatools', dockerfile: './docker/notebook/Dockerfile' }
+          - { name: 'data', dockerfile: './docker/python/Dockerfile' }
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

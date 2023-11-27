@@ -27,6 +27,8 @@ export function castStatus(carpoolStatus: string, acquisitionStatus: string, acq
           return StatusEnum.Canceled;
         case 'fraudcheck_error':
           return StatusEnum.FraudError;
+        case 'anomaly_error':
+          return StatusEnum.AnomalyError;
         default:
           return StatusEnum.Unknown;
       }

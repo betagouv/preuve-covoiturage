@@ -1,3 +1,4 @@
+import { Carpool } from '@pdc/helper-seed/src/carpools';
 import anyTest, { TestFn } from 'ava';
 import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
 import { AcquisitionRepositoryProvider } from './AcquisitionRepositoryProvider';
@@ -50,11 +51,11 @@ const errors = JSON.parse(JSON.stringify([statusError, statusError, statusError]
 test.serial('Should create acquisition', async (t) => {
   const { operator_id } = t.context;
   const data = [
-    { operator_journey_id: '1' },
-    { operator_journey_id: '2' },
-    { operator_journey_id: '3' },
-    { operator_journey_id: '4' },
-    { operator_journey_id: '5' },
+    { operator_journey_id: '1' }, // pending -> pending (updated) -> acquisition_error
+    { operator_journey_id: '2' }, // pending -> ok
+    { operator_journey_id: '3' }, // pending -> ok
+    { operator_journey_id: '4' }, // pending -> ok
+    { operator_journey_id: '5' }, // pending -> fraudcheck_error
   ].map(createPayload);
 
   const acqs = await t.context.repository.createOrUpdateMany(data);
@@ -236,8 +237,8 @@ test.serial('Should get status by operator_id and operator_journey_id', async (t
 
 test.serial('Should get fraudcheck status and labels for carpool', async (t) => {
   // Arrange
-  const acquisition_row = await updateAcquistionJourneyId5ToOk(t.context);
-  const carpool_id = await insertCarpoolWithFraudErrorStatus(t.context, acquisition_row);
+  const acquisition_row = await updateAcquistionJourneyIdOk(t.context, '5');
+  const { _id: carpool_id } = await insertCarpoolWithStatus(t.context, acquisition_row, 'fraudcheck_error');
   await t.context.db.connection.getClient().query({
     text: `
     INSERT INTO fraudcheck.labels(
@@ -491,9 +492,9 @@ test.serial('Should patch payload', async (t) => {
     { test2: true },
   );
   const result = await t.context.db.connection.getClient().query({
-    text: `SELECT payload 
+    text: `SELECT payload
     FROM ${t.context.repository.table}
-    WHERE operator_id = $1 AND journey_id = $2 
+    WHERE operator_id = $1 AND journey_id = $2
     `,
     values: [1, '1'],
   });
@@ -505,7 +506,48 @@ test.serial('Should patch payload', async (t) => {
   });
 });
 
-const updateAcquistionJourneyId5ToOk = async (context: TestContext): Promise<{ _id: number; journey_id: number }> => {
+test.serial('Should create new acquisition and get anomaly error with temporal overlap label', async (t) => {
+  // Arrange
+  const data = [{ operator_journey_id: '6' }, { operator_journey_id: '7' }].map(createPayload);
+
+  await t.context.repository.createOrUpdateMany(data);
+
+  // acquisition should be processed and ok
+  const acquisition_row_6 = await updateAcquistionJourneyIdOk(t.context, '6');
+  const acquisition_row_7 = await updateAcquistionJourneyIdOk(t.context, '7');
+
+  // first is ok is ok second is conflicting
+  const { _id: carpool_id_6, operator_journey_id: operator_journey_id_6 } = await insertCarpoolWithStatus(
+    t.context,
+    acquisition_row_6,
+    'ok',
+  );
+  const { _id: carpool_id_7 } = await insertCarpoolWithStatus(t.context, acquisition_row_7, 'anomaly_error');
+
+  // add anomaly label for carpool_id 7
+  await t.context.db.connection.getClient().query({
+    text: `
+    INSERT INTO anomaly.labels(
+      carpool_id, label, conflicting_carpool_id, conflicting_operator_journey_id, overlap_duration_ratio)
+      VALUES ($1, $2, $3, $4, $5);
+    `,
+    values: [carpool_id_7, 'temporal_overlap_anomaly', carpool_id_6, operator_journey_id_6, 0.845],
+  });
+
+  // Act
+  const { status, anomaly_error_details } = await t.context.repository.getStatus(t.context.operator_id, '7');
+
+  // Assert
+  t.deepEqual(status, StatusEnum.AnomalyError);
+  t.deepEqual(anomaly_error_details[0].label, 'temporal_overlap_anomaly');
+  t.deepEqual(anomaly_error_details[0].metas.conflicting_journey_id, operator_journey_id_6);
+  t.deepEqual(anomaly_error_details[0].metas.temporal_overlap_duration_ratio, 0.845);
+});
+
+const updateAcquistionJourneyIdOk = async (
+  context: TestContext,
+  journey_id: string,
+): Promise<{ _id: number; journey_id: number }> => {
   const result = await context.db.connection.getClient().query({
     text: `
       UPDATE ${context.repository.table}
@@ -513,15 +555,16 @@ const updateAcquistionJourneyId5ToOk = async (context: TestContext): Promise<{ _
       WHERE operator_id = $1 AND journey_id = $2
       RETURNING _id, journey_id;
     `,
-    values: [context.operator_id, '5'],
+    values: [context.operator_id, journey_id],
   });
   return result.rows[0];
 };
 
-const insertCarpoolWithFraudErrorStatus = async (
+const insertCarpoolWithStatus = async (
   context: TestContext,
   acquisition: { _id: number; journey_id: number },
-): Promise<number> => {
+  status: 'fraudcheck_error' | 'anomaly_error' | 'ok',
+): Promise<Carpool & { _id: number }> => {
   const result = await context.db.connection.getClient().query({
     text: `
     INSERT INTO carpool.carpools(
@@ -533,7 +576,7 @@ const insertCarpoolWithFraudErrorStatus = async (
         $6, $7, $8, $9, $10, 
         $11, $12, $13, $14, $15, 
         $16)
-      RETURNING _id;
+      RETURNING _id, operator_journey_id;
     `,
     values: [
       acquisition._id,
@@ -549,11 +592,11 @@ const insertCarpoolWithFraudErrorStatus = async (
       4,
       acquisition.journey_id,
       0,
-      'fraudcheck_error',
+      status,
       '91471',
       '91471',
     ],
   });
 
-  return result.rows[0]._id;
+  return result.rows[0];
 };

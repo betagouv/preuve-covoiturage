@@ -208,10 +208,14 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           cc.status as carpool_status,
           aa.status as acquisition_status,
           aa.error_stage as acquisition_error_stage,
-          fl.label
+          fl.label as fraud_label,
+          al.label as anomaly_label,
+          al.conflicting_operator_journey_id,
+          al.overlap_duration_ratio
         FROM ${this.table} AS aa
         LEFT JOIN carpool.carpools AS cc ON aa._id = cc.acquisition_id
         LEFT JOIN fraudcheck.labels as fl ON cc._id = fl.carpool_id
+        LEFT JOIN anomaly.labels as al on cc._id = al.carpool_id
         WHERE ${whereClauses.text.join(' AND ')}
       `,
       values: whereClauses.values,
@@ -227,7 +231,16 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       created_at,
       updated_at,
       status: castStatus(carpool_status, acquisition_status, acquisition_error_stage),
-      fraud_error_labels: result.rows.map((r) => r.label).filter((l) => !!l),
+      fraud_error_labels: result.rows.map((r) => r.fraud_label).filter((l) => !!l),
+      anomaly_error_details: result.rows
+        .filter((l) => !!l.anomaly_label)
+        .map((a) => ({
+          label: a.anomaly_label,
+          metas: {
+            conflicting_journey_id: a.conflicting_operator_journey_id,
+            temporal_overlap_duration_ratio: a.overlap_duration_ratio,
+          },
+        })),
     };
   }
 
