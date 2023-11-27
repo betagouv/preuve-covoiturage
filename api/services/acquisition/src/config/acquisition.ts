@@ -9,5 +9,5 @@ export const timeLimit = env.or_fail('APP_ACQUISITION_TIMELIMIT', '5');
 
 export const processing = {
   batchSize: env.or_int('APP_ACQUISITION_PROCESSING_BATCH', 100),
-  timeout: env.or_int('APP_ACQUISITION_PROCESSING_TIMEOUT', 60000),
+  timeout: env.or_int('APP_ACQUISITION_PROCESSING_TIMEOUT', 10000),
 };

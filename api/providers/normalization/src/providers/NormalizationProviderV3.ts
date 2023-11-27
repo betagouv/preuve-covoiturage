@@ -6,7 +6,10 @@ import { Acquisition, NormalizationProviderInterface, PayloadV3, ResultInterface
 
 @provider()
 export class NormalizationProviderV3 implements NormalizationProviderInterface<PayloadV3> {
-  constructor(protected geoNormalizer: GeoNormalizerProvider, protected routeNormalizer: RouteNormalizerProvider) {}
+  constructor(
+    protected geoNormalizer: GeoNormalizerProvider,
+    protected routeNormalizer: RouteNormalizerProvider,
+  ) {}
 
   public async handle(data: Acquisition<PayloadV3>): Promise<ResultInterface> {
     const geoParams = { start: data.payload.start, end: data.payload.end };

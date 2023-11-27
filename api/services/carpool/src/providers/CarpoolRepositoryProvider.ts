@@ -49,14 +49,11 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
     const client = await this.connection.getClient().connect();
     try {
       await client.query('BEGIN');
-
       for (const person of people) {
         await this.addParticipant(client, shared, person);
       }
       await this.addIncentives(client, shared.acquisition_id, people[0].datetime, shared.incentives);
-
       await client.query('COMMIT');
-      return;
     } catch (e) {
       await client.query('ROLLBACK');
       throw e;

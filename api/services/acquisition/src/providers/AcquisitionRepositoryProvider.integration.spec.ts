@@ -338,13 +338,10 @@ test.serial('Should find with lock timeout', async (t) => {
     values: [operator_id],
   });
 
-  const [result1, fn1] = await t.context.repository.findThenUpdate(
-    {
-      limit: 1,
-      status: AcquisitionStatusEnum.Pending,
-    },
-    1000,
-  );
+  const [result1, fn1] = await t.context.repository.findThenUpdate({
+    limit: 1,
+    status: AcquisitionStatusEnum.Pending,
+  });
 
   t.deepEqual(
     result1.map(({ created_at, ...r }) => r),
@@ -369,13 +366,10 @@ test.serial('Should find with lock timeout', async (t) => {
 
 test.serial('Should partial rollback if update error', async (t) => {
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-  const [result1, fn1] = await t.context.repository.findThenUpdate(
-    {
-      limit: 2,
-      status: AcquisitionStatusEnum.Pending,
-    },
-    1000,
-  );
+  const [result1, fn1] = await t.context.repository.findThenUpdate({
+    limit: 2,
+    status: AcquisitionStatusEnum.Pending,
+  });
   await fn1({
     acquisition_id: result1[0]._id,
     status: AcquisitionStatusEnum.Ok,
@@ -405,13 +399,10 @@ test.serial('Should partial rollback if update error', async (t) => {
 
 test.serial('Should rollback if find error', async (t) => {
   await t.throwsAsync(async () => {
-    await t.context.repository.findThenUpdate(
-      {
-        limit: 'wrong' as unknown as number,
-        status: AcquisitionStatusEnum.Pending,
-      },
-      1000,
-    );
+    await t.context.repository.findThenUpdate({
+      limit: 'wrong' as unknown as number,
+      status: AcquisitionStatusEnum.Pending,
+    });
   });
 });
 
