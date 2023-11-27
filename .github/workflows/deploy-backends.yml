@@ -1,6 +1,8 @@
 name: 'Deploy docker images'
 
 on:
+  pull_request:
+    branches: [fix/trivy_scan_error]
   release:
     types: [published]
   workflow_dispatch:
