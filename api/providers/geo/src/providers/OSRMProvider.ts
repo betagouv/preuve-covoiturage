@@ -8,7 +8,6 @@ import { PointInterface, RouteMeta, RouteMetaProviderInterface } from '../interf
 @provider()
 export class OSRMProvider implements RouteMetaProviderInterface {
   protected domain = env.or_fail('OSRM_URL', 'http://osrm.covoiturage.beta.gouv.fr:5000');
-
   private static agent = new Agent({ keepAlive: false });
 
   async getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {

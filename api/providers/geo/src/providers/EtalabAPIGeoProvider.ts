@@ -1,13 +1,14 @@
-import axios from 'axios';
-import { URLSearchParams } from 'url';
-import { get } from 'lodash';
 import { NotFoundException, provider } from '@ilos/common';
-
+import axios from 'axios';
+import { Agent } from 'https';
+import { get } from 'lodash';
+import { URLSearchParams } from 'url';
 import { InseeCoderInterface, PointInterface } from '../interfaces';
 
 @provider()
-export class EtalabGeoAdministriveProvider implements InseeCoderInterface {
+export class EtalabAPIGeoProvider implements InseeCoderInterface {
   protected domain = 'https://geo.api.gouv.fr';
+  private static agent = new Agent({ keepAlive: false });
 
   async positionToInsee(geo: PointInterface): Promise<string> {
     const { lon, lat } = geo;
@@ -17,7 +18,13 @@ export class EtalabGeoAdministriveProvider implements InseeCoderInterface {
       fields: 'code',
       format: 'json',
     });
-    let { data } = await axios.get(`${this.domain}/communes`, { params });
+
+    console.time(`[EtalabAPIGeoProvider] ${lon},${lat}`);
+    let { data } = await axios.get(`${this.domain}/communes`, {
+      params,
+      httpsAgent: EtalabAPIGeoProvider.agent,
+    });
+    console.timeEnd(`[EtalabAPIGeoProvider] ${lon},${lat}`);
 
     if (!data.length) {
       throw new NotFoundException(`Not found on Geo (${lat}, ${lon})`);
@@ -41,7 +48,10 @@ export class EtalabGeoAdministriveProvider implements InseeCoderInterface {
       fields: 'centre',
       format: 'json',
     });
-    let { data } = await axios.get(`${this.domain}/communes`, { params });
+    let { data } = await axios.get(`${this.domain}/communes`, {
+      params,
+      httpsAgent: EtalabAPIGeoProvider.agent,
+    });
 
     if (!data.length) {
       throw new NotFoundException(`Not found on insee code (${insee})`);

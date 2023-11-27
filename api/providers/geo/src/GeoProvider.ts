@@ -13,7 +13,7 @@ import {
   RouteMetaProviderInterface,
 } from './interfaces';
 
-import { EtalabGeoAdministriveProvider, EtalabGeoAdressProvider, LocalGeoProvider, OSRMProvider } from './providers';
+import { EtalabBaseAdresseNationaleProvider, EtalabAPIGeoProvider, LocalGeoProvider, OSRMProvider } from './providers';
 
 @provider({
   identifier: GeoProviderInterfaceResolver,
@@ -25,19 +25,19 @@ export class GeoProvider implements GeoProviderInterface {
   protected routeMetaProviders: RouteMetaProviderInterface[] = [];
 
   constructor(
-    etalabGeoAdministriveProvider: EtalabGeoAdministriveProvider,
-    etalabGeoAdressProvider: EtalabGeoAdressProvider,
+    etalabAPIGeoProvider: EtalabAPIGeoProvider,
+    etalabBANProvider: EtalabBaseAdresseNationaleProvider,
     localGeoProvider: LocalGeoProvider,
     osrmProvider: OSRMProvider,
   ) {
     // Geocoders => litteral to point
-    this.geoCoderProviders = [etalabGeoAdressProvider];
+    this.geoCoderProviders = [etalabBANProvider];
 
     // InseeCoders => point to insee
-    this.inseeCoderProviders = [localGeoProvider, etalabGeoAdministriveProvider, etalabGeoAdressProvider];
+    this.inseeCoderProviders = [localGeoProvider, etalabAPIGeoProvider, etalabBANProvider];
 
     // InseeReverseCoders => insee to point
-    this.inseeReverseCoderProviders = [etalabGeoAdministriveProvider];
+    this.inseeReverseCoderProviders = [etalabAPIGeoProvider];
 
     // RouteMetaCoders => point,point to distance,duration
     this.routeMetaProviders = [osrmProvider];

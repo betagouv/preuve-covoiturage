@@ -1,7 +1,6 @@
-import { PostgresConnection } from '@ilos/connection-postgres';
 import { NotFoundException, provider } from '@ilos/common';
-
-import { PointInterface, InseeCoderInterface } from '../interfaces';
+import { PostgresConnection } from '@ilos/connection-postgres';
+import { InseeCoderInterface, PointInterface } from '../interfaces';
 
 @provider()
 export class LocalGeoProvider implements InseeCoderInterface {
@@ -15,6 +14,7 @@ export class LocalGeoProvider implements InseeCoderInterface {
     const pool = this.connection.getClient();
     const client = await pool.connect();
 
+    console.time(`[LocalGeoProvider] ${lon},${lat}`);
     try {
       const comResultInFrance = await client.query({
         text: `
@@ -48,6 +48,7 @@ export class LocalGeoProvider implements InseeCoderInterface {
       throw e;
     } finally {
       client.release();
+      console.timeEnd(`[LocalGeoProvider] ${lon},${lat}`);
     }
   }
 }
