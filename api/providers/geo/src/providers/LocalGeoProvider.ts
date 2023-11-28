@@ -14,7 +14,6 @@ export class LocalGeoProvider implements InseeCoderInterface {
     const pool = this.connection.getClient();
     const client = await pool.connect();
 
-    console.time(`[LocalGeoProvider] ${lon},${lat}`);
     try {
       const comResultInFrance = await client.query({
         text: `
@@ -48,7 +47,6 @@ export class LocalGeoProvider implements InseeCoderInterface {
       throw e;
     } finally {
       client.release();
-      console.timeEnd(`[LocalGeoProvider] ${lon},${lat}`);
     }
   }
 }

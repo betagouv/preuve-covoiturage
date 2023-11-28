@@ -54,12 +54,10 @@ export class EtalabBaseAdresseNationaleProvider implements GeoCoderInterface, In
       lon: lon.toString(),
     });
 
-    console.time(`[EtalabBaseAdresseNationaleProvider] ${lon},${lat}`);
     const res = await axios.get(`${this.domain}/reverse`, {
       params,
       httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
     });
-    console.timeEnd(`[EtalabBaseAdresseNationaleProvider] ${lon},${lat}`);
 
     if (!get(res, 'data.features', []).length) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);

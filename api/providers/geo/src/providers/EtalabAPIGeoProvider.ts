@@ -19,12 +19,10 @@ export class EtalabAPIGeoProvider implements InseeCoderInterface {
       format: 'json',
     });
 
-    console.time(`[EtalabAPIGeoProvider] ${lon},${lat}`);
     let { data } = await axios.get(`${this.domain}/communes`, {
       params,
       httpsAgent: EtalabAPIGeoProvider.agent,
     });
-    console.timeEnd(`[EtalabAPIGeoProvider] ${lon},${lat}`);
 
     if (!data.length) {
       throw new NotFoundException(`Not found on Geo (${lat}, ${lon})`);

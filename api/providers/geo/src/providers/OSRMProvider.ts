@@ -14,11 +14,9 @@ export class OSRMProvider implements RouteMetaProviderInterface {
     try {
       const query = `${start.lon},${start.lat};${end.lon},${end.lat}`;
 
-      console.time(`[OSRMProvider] ${query}`);
       const res = await axios.get(`${this.domain}/route/v1/driving/${encodeURIComponent(query)}`, {
         httpAgent: OSRMProvider.agent,
       });
-      console.timeEnd(`[OSRMProvider] ${query}`);
       const distance = get(res, 'data.routes.0.distance', null);
       const duration = get(res, 'data.routes.0.duration', null);
 
@@ -30,7 +28,7 @@ export class OSRMProvider implements RouteMetaProviderInterface {
 
       return { distance, duration };
     } catch (e) {
-      console.error('[OSRMProvider]', e.message);
+      console.error(`[OSRMProvider] ${e.message}`);
       switch (e.response?.status) {
         case 429:
           throw new Error(`[OSRMProvider] Too many requests on ${this.domain}`);

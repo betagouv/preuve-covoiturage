@@ -238,22 +238,8 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       values: [...whereClauses.values, search.limit],
     };
 
-    // setup listeners on the pool keep track
-    // of the released state.
-    // We need to filter the current pool client by processID
-    // as the pool belongs to the main connection and is shared
-    // when calling connection.getClient()
     const pool = this.connection.getClient();
     const poolClient = await pool.connect();
-
-    let isReleased = false;
-    pool.on('release', (err, client) => {
-      // We need to tame Typescript here as 'processID'
-      // is not a documented property and fails compilation.
-      // @ts-ignore
-      isReleased = client.processID === poolClient.processID;
-      err?.message && console.error(`[acquisition:findThenUpdate:on(release)] ${err.message}]`);
-    });
 
     try {
       await poolClient.query('BEGIN');
@@ -269,21 +255,13 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
 
         // commit and release
         async () => {
-          if (isReleased) {
-            return console.warn('[acquisition:findThenUpdate:commit] Pool has already been released');
-          }
-
           await poolClient.query('COMMIT');
           poolClient.release();
         },
       ];
     } catch (e) {
-      if (isReleased) {
-        console.warn('[acquisition:findThenUpdate:rollback] Pool has already been released');
-      } else {
-        await poolClient.query('ROLLBACK');
-        poolClient.release();
-      }
+      await poolClient.query('ROLLBACK');
+      poolClient.release();
 
       throw e;
     }
