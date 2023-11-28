@@ -1,12 +1,13 @@
 import { get } from 'lodash';
 import axios from 'axios';
 import { provider } from '@ilos/common';
+import { env } from '@ilos/core';
 
 import { PointInterface, RouteMetaProviderInterface, RouteMeta } from '../interfaces';
 
 @provider()
 export class OSRMProvider implements RouteMetaProviderInterface {
-  protected domain = 'http://osrm.covoiturage.beta.gouv.fr:5000';
+  protected domain = env.or_fail("OSRM_URL", 'http://osrm.covoiturage.beta.gouv.fr:5000');
 
   async getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {
     try {
