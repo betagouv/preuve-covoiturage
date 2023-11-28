@@ -178,6 +178,9 @@ export class CarpoolRepository {
     client: PoolClient,
   ): Promise<void> {
     await client.query(sql`DELETE FROM ${raw(this.incentiveTable)} WHERE carpool_id = ${carpool_id}`);
+    if (!incentives.length) {
+      return;
+    }
     const sqlQuery = sql`INSERT INTO ${raw(this.incentiveTable)} (carpool_id, idx, siret, amount) VALUES ${bulk(
       incentives.map((i) => [carpool_id, i.index, i.siret, i.amount]),
     )}`;
@@ -190,6 +193,9 @@ export class CarpoolRepository {
     client: PoolClient,
   ): Promise<void> {
     await client.query(sql`DELETE FROM ${raw(this.incentiveCounterpartTable)} WHERE carpool_id = ${carpool_id}`);
+    if (!incentive_counterparts.length) {
+      return;
+    }
     const sqlQuery = sql`INSERT INTO ${raw(
       this.incentiveCounterpartTable,
     )} (carpool_id, target_is_driver, siret, amount) VALUES ${bulk(
