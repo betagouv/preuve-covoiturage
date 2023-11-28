@@ -250,7 +250,7 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
 
         // update data
         async (data: AcquisitionStatusUpdateInterface) => {
-          await this.updateManyStatus([data], poolClient);
+          data && (await this.updateManyStatus([data], poolClient));
         },
 
         // commit and release
