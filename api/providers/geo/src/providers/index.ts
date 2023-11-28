@@ -1,4 +1,4 @@
-export * from './EtalabGeoAdministriveProvider';
-export * from './EtalabGeoAdressProvider';
+export * from './EtalabAPIGeoProvider';
+export * from './EtalabBaseAdresseNationaleProvider';
 export * from './LocalGeoProvider';
 export * from './OSRMProvider';

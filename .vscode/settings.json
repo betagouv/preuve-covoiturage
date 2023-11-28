@@ -23,20 +23,24 @@
     "public/.next": true
   },
   "search.exclude": {
-    "tmp/*": true,
-    "**/node_modules": true,
+    "**/.nyc_output": true,
     "**/dist": true,
+    "**/node_modules": true,
     "**/package-lock.json": true,
+    "**/*.d.ts": true,
+    "api/.nx": true,
     "api/providers/*/src/shared": true,
-    "api/services/*/src/shared": true,
     "api/proxy/src/shared": true,
+    "api/services/*/src/shared": true,
     "dashboard/src/app/core/entities/api/shared": true,
-    "public/.next": true
+    "public/.next": true,
+    "tmp/*": true
   },
   "files.exclude": {
     "**/*.postman_collection.json": true,
-    "db": true,
+    "**/node_modules/**": false,
+    "**/*.d.ts": true,
     "api/**/dist": true,
-    "**/node_modules/**": false
+    "db": true
   }
 }

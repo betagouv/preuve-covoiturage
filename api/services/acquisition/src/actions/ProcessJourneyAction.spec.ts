@@ -37,7 +37,8 @@ test('should process if normalization ok', async (t) => {
   const { action, repository, normalizer, kernel } = bootstap();
   const normalizedPayload = { normalized: 'data' } as any;
   normalizer.handle.resolves(normalizedPayload);
-  const cbStub = sinon.stub();
+  const updateCallbackStub = sinon.stub();
+  const commitCallbackStub = sinon.stub();
   const acquisitions = [
     {
       _id: 1,
@@ -47,7 +48,7 @@ test('should process if normalization ok', async (t) => {
       payload: {},
     },
   ];
-  repository.findThenUpdate.resolves([acquisitions, cbStub]);
+  repository.findThenUpdate.resolves([acquisitions, updateCallbackStub, commitCallbackStub]);
   const inputData = {
     method: '',
     params: {},
@@ -79,8 +80,9 @@ test('should process if normalization ok', async (t) => {
   t.is(kernelSignature, signature);
   t.deepEqual(kernelContext, callContext);
   t.deepEqual(kernelParams, [normalizedPayload]);
-  t.true(cbStub.calledTwice);
-  const cbParams = cbStub.getCall(0).args[0];
+  t.true(updateCallbackStub.calledOnce);
+  t.true(commitCallbackStub.calledOnce);
+  const cbParams = updateCallbackStub.getCall(0).args[0];
   t.deepEqual(cbParams, {
     acquisition_id: 1,
     status: AcquisitionStatusEnum.Ok,
@@ -97,7 +99,8 @@ test('should fail if normalization fail', async (t) => {
     }
     throw normalizationError;
   });
-  const cbStub = sinon.stub();
+  const updateCallbackStub = sinon.stub();
+  const commitCallbackStub = sinon.stub();
   const acquisitions = [
     {
       _id: 1,
@@ -114,7 +117,7 @@ test('should fail if normalization fail', async (t) => {
       payload: {},
     },
   ];
-  repository.findThenUpdate.resolves([acquisitions, cbStub]);
+  repository.findThenUpdate.resolves([acquisitions, updateCallbackStub, commitCallbackStub]);
   const inputData = {
     method: '',
     params: {},
@@ -146,7 +149,7 @@ test('should fail if normalization fail', async (t) => {
   t.is(kernelSignature, signature);
   t.deepEqual(kernelContext, callContext);
   t.deepEqual(kernelParams, [normalizedPayload]);
-  const calls = cbStub.getCalls().map((c) => c.args[0]);
+  const calls = updateCallbackStub.getCalls().map((c) => c.args[0]);
   t.deepEqual(calls, [
     {
       acquisition_id: 1,
@@ -158,7 +161,6 @@ test('should fail if normalization fail', async (t) => {
       error_stage: AcquisitionErrorStageEnum.Normalisation,
       errors: [normalizationError],
     },
-    undefined,
   ]);
 });
 
@@ -172,7 +174,8 @@ test('should fail if carpool fail', async (t) => {
       throw kernelError;
     }
   });
-  const cbStub = sinon.stub();
+  const updateCallbackStub = sinon.stub();
+  const commitCallbackStub = sinon.stub();
   const acquisitions = [
     {
       _id: 1,
@@ -189,7 +192,7 @@ test('should fail if carpool fail', async (t) => {
       payload: {},
     },
   ];
-  repository.findThenUpdate.resolves([acquisitions, cbStub]);
+  repository.findThenUpdate.resolves([acquisitions, updateCallbackStub, commitCallbackStub]);
   const inputData = {
     method: '',
     params: {},
@@ -202,7 +205,7 @@ test('should fail if carpool fail', async (t) => {
   };
   await action.call(inputData);
 
-  const calls = cbStub.getCalls().map((c) => c.args[0]);
+  const calls = updateCallbackStub.getCalls().map((c) => c.args[0]);
   t.deepEqual(calls, [
     {
       acquisition_id: 1,
@@ -214,6 +217,5 @@ test('should fail if carpool fail', async (t) => {
       error_stage: AcquisitionErrorStageEnum.Normalisation,
       errors: [kernelError],
     },
-    undefined,
   ]);
 });

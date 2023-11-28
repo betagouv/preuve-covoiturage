@@ -115,69 +115,6 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     return result.rows;
   }
 
-  async updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>, poolClient?: PoolClient): Promise<void> {
-    const pool = poolClient ?? (await this.connection.getClient().connect());
-    await pool.query(poolClient ? 'SAVEPOINT results' : 'BEGIN');
-    const values = data.reduce(
-      (acc, d) => {
-        const [acquisition_id, status, error_stage, errors] = acc;
-        acquisition_id.push(d.acquisition_id);
-        status.push(d.status);
-        error_stage.push(d.error_stage);
-        errors.push(JSON.stringify(d.errors));
-        return [acquisition_id, status, error_stage, errors];
-      },
-      [[], [], [], []],
-    );
-    const query = {
-      text: `
-      WITH data AS (
-        SELECT * FROM UNNEST (
-          $1::int[],
-          $2::acquisition.acquisition_status_enum[],
-          $3::varchar[],
-          $4::jsonb[]
-        ) as t(
-          acquisition_id,
-          status,
-          error_stage,
-          errors
-        )
-      )
-      UPDATE ${this.table} as pt
-      SET (
-        try_count,
-        status,
-        error_stage,
-        errors
-      ) = (
-        pt.try_count + 1,
-        CASE WHEN data.status IS NULL THEN pt.status ELSE data.status END,
-        CASE WHEN data.error_stage IS NULL THEN pt.error_stage ELSE data.error_stage END,
-        pt.errors || data.errors::jsonb
-      )
-      FROM data
-      WHERE
-        data.acquisition_id = pt._id
-      `,
-      values,
-    };
-    try {
-      await pool.query(query);
-      await pool.query(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
-      return;
-    } catch (e) {
-      await pool.query(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
-      if (!poolClient) {
-        throw e;
-      }
-    } finally {
-      if (!poolClient) {
-        pool.release();
-      }
-    }
-  }
-
   async cancel(operator_id: number, operator_journey_id: string, code?: string, message?: string): Promise<void> {
     await this.connection.getClient().query({
       text: `
@@ -246,8 +183,13 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
 
   async findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,
-    timeout = 10000,
-  ): Promise<[Array<AcquisitionFindInterface<P>>, (data?: AcquisitionStatusUpdateInterface) => Promise<void>]> {
+  ): Promise<
+    [
+      Array<AcquisitionFindInterface<P>>,
+      (data?: AcquisitionStatusUpdateInterface) => Promise<void>,
+      () => Promise<void>,
+    ]
+  > {
     const whereClauses = ['from', 'to', 'status']
       .filter((k) => k in search)
       .map((k, i) => {
@@ -295,35 +237,97 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       `,
       values: [...whereClauses.values, search.limit],
     };
-    const pool = await this.connection.getClient().connect();
+
+    const pool = this.connection.getClient();
+    const poolClient = await pool.connect();
+
     try {
-      await pool.query('BEGIN');
-      const result = await pool.query(query);
-      let hasTimeout = false;
-      const timeoutFn = setTimeout(() => {
-        hasTimeout = true;
-        pool.query('COMMIT').finally(() => pool.release());
-      }, timeout);
+      await poolClient.query('BEGIN');
+      const result = await poolClient.query(query);
+
       return [
         result.rows,
-        async (data?: AcquisitionStatusUpdateInterface) => {
-          if (timeoutFn && !hasTimeout) {
-            if (timeoutFn && !hasTimeout) {
-              if (data) {
-                await this.updateManyStatus([data], pool);
-              } else {
-                clearTimeout(timeoutFn);
-                await pool.query('COMMIT');
-                pool.release();
-              }
-            }
-          }
+
+        // update data
+        async (data: AcquisitionStatusUpdateInterface) => {
+          data && (await this.updateManyStatus([data], poolClient));
+        },
+
+        // commit and release
+        async () => {
+          await poolClient.query('COMMIT');
+          poolClient.release();
         },
       ];
     } catch (e) {
-      await pool.query('ROLLBACK');
-      pool.release();
+      await poolClient.query('ROLLBACK');
+      poolClient.release();
+
       throw e;
+    }
+  }
+
+  async updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>, poolClient?: PoolClient): Promise<void> {
+    const pool = poolClient ?? (await this.connection.getClient().connect());
+    await pool.query(poolClient ? 'SAVEPOINT results' : 'BEGIN');
+    const values = data.reduce(
+      (acc, d) => {
+        const [acquisition_id, status, error_stage, errors] = acc;
+        acquisition_id.push(d.acquisition_id);
+        status.push(d.status);
+        error_stage.push(d.error_stage);
+        errors.push(JSON.stringify(d.errors));
+        return [acquisition_id, status, error_stage, errors];
+      },
+      [[], [], [], []],
+    );
+    const query = {
+      text: `
+      WITH data AS (
+        SELECT * FROM UNNEST (
+          $1::int[],
+          $2::acquisition.acquisition_status_enum[],
+          $3::varchar[],
+          $4::jsonb[]
+        ) as t(
+          acquisition_id,
+          status,
+          error_stage,
+          errors
+        )
+      )
+      UPDATE ${this.table} as pt
+      SET (
+        try_count,
+        status,
+        error_stage,
+        errors
+      ) = (
+        pt.try_count + 1,
+        CASE WHEN data.status IS NULL THEN pt.status ELSE data.status END,
+        CASE WHEN data.error_stage IS NULL THEN pt.error_stage ELSE data.error_stage END,
+        pt.errors || data.errors::jsonb
+      )
+      FROM data
+      WHERE
+        data.acquisition_id = pt._id
+      `,
+      values,
+    };
+
+    try {
+      await pool.query(query);
+      await pool.query(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
+      return;
+    } catch (e) {
+      await pool.query(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
+      if (!poolClient) {
+        throw e;
+      }
+    } finally {
+      if (!poolClient) {
+        pool.release();
+      }
     }
   }
 

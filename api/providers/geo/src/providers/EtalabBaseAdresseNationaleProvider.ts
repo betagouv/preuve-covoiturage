@@ -1,14 +1,15 @@
+import { NotFoundException, provider } from '@ilos/common';
+import axios from 'axios';
+import axiosRetry from 'axios-retry';
+import { Agent } from 'https';
 import { get } from 'lodash';
 import { URLSearchParams } from 'url';
-import axios from 'axios';
-import { NotFoundException, provider } from '@ilos/common';
-
-import { GeoCoderInterface, PointInterface, InseeCoderInterface } from '../interfaces';
-import axiosRetry from 'axios-retry';
+import { GeoCoderInterface, InseeCoderInterface, PointInterface } from '../interfaces';
 
 @provider()
-export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInterface {
+export class EtalabBaseAdresseNationaleProvider implements GeoCoderInterface, InseeCoderInterface {
   protected domain = 'https://api-adresse.data.gouv.fr';
+  private static agent = new Agent({ keepAlive: false });
 
   constructor() {
     axiosRetry(axios, {
@@ -25,7 +26,10 @@ export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInt
       autocomplete: '0',
     });
 
-    const res = await axios.get(`${this.domain}/search`, { params });
+    const res = await axios.get(`${this.domain}/search`, {
+      params,
+      httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
+    });
 
     if (!get(res, 'data.features', []).length) {
       throw new NotFoundException();
@@ -50,7 +54,10 @@ export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInt
       lon: lon.toString(),
     });
 
-    const res = await axios.get(`${this.domain}/reverse`, { params });
+    const res = await axios.get(`${this.domain}/reverse`, {
+      params,
+      httpsAgent: EtalabBaseAdresseNationaleProvider.agent,
+    });
 
     if (!get(res, 'data.features', []).length) {
       throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);

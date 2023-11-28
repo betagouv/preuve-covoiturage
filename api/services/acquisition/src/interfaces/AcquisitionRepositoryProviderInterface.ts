@@ -91,5 +91,11 @@ export interface AcquisitionRepositoryProviderInterface {
 
   findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,
-  ): Promise<[Array<AcquisitionFindInterface<P>>, (data?: AcquisitionStatusUpdateInterface) => Promise<void>]>;
+  ): Promise<
+    [
+      Array<AcquisitionFindInterface<P>>,
+      (data?: AcquisitionStatusUpdateInterface) => Promise<void>,
+      () => Promise<void>,
+    ]
+  >;
 }
