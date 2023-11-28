@@ -35,8 +35,9 @@ export class CarpoolAcquisitionService {
       );
       await this.eventRepository.saveAcquisitionEvent(
         new CarpoolAcquisitionEvent(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Received),
+        conn,
       );
-      await this.eventRepository.syncStatus(carpool._id);
+      await this.eventRepository.syncStatus(carpool._id, conn);
       await conn.query('COMMIT');
     } catch (e) {
       await conn.query('ROLLBACK');
@@ -64,8 +65,9 @@ export class CarpoolAcquisitionService {
       );
       await this.eventRepository.saveAcquisitionEvent(
         new CarpoolAcquisitionEvent(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Updated),
+        conn,
       );
-      await this.eventRepository.syncStatus(carpool._id);
+      await this.eventRepository.syncStatus(carpool._id, conn);
       await conn.query('COMMIT');
     } catch (e) {
       await conn.query('ROLLBACK');
@@ -92,8 +94,9 @@ export class CarpoolAcquisitionService {
       );
       await this.eventRepository.saveAcquisitionEvent(
         new CarpoolAcquisitionEvent(carpool._id, request._id, CarpoolAcquisitionStatusEnum.Canceled),
+        conn,
       );
-      await this.eventRepository.syncStatus(carpool._id);
+      await this.eventRepository.syncStatus(carpool._id, conn);
       await conn.query('COMMIT');
     } catch (e) {
       await conn.query('ROLLBACK');
