@@ -1,4 +1,4 @@
-FROM python:3.11.6-bullseye
+FROM python:3-slim
 
 WORKDIR /usr/src/scripts
 
