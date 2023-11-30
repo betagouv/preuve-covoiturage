@@ -77,9 +77,9 @@ services:
     build:
       dockerfile: ./docker/api/Dockerfile
       context: .
-    deploy:
-      mode: replicated
-      replicas: 3
+    # deploy:
+    #   mode: replicated
+    #   replicas: 3
     volumes:
       - ./api:/app/api
       - ./shared:/app/shared:ro
@@ -116,6 +116,8 @@ services:
     command: 'npm run migrate'
     tty: true
     env_file: ./api/.env
+    environment:
+      - SKIP_GEO_MIGRATIONS=true
     networks:
       - back
 
@@ -139,6 +141,17 @@ services:
     volumes:
       - ./api:/code/api:ro
       - ./dashboard:/code/dashboard:ro
+
+  k6:
+    image: 'grafana/k6:latest'
+    tty: true
+    environment:
+      - LOAD_BASE_URL=http://api:8080
+    working_dir: /k6
+    volumes:
+      - ./api-load-testing:/k6:ro
+    networks:
+      - back
 
 networks:
   back:

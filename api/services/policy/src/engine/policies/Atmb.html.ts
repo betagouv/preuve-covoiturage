@@ -16,7 +16,8 @@ Le périmètre géographique de la campagne comprend les zones suivantes
   <li>Communauté de communes de Vallée Verte</li>
   <li>Communauté de communes de Usses et Rhône</li>
 </ul>
-<p>Les <b> conducteurs </b> effectuant un trajet d'au moins 2 km, avec pour origine et destination le périmètre ci-dessus,
+<p>Les <b> conducteurs </b> effectuant un trajet d'au moins 2 km,
+   avec pour origine et destination le périmètre ci-dessus,
 sont incités selon les règles suivantes : </p>
 <ul>
   <li><b>De 4 à 20 km : 2 euros par trajet par passager transporté.</b></li>
@@ -26,6 +27,7 @@ sont incités selon les règles suivantes : </p>
 <ul>
   <li><b>120 € maximum pour le conducteur par mois.</b></li>
 </ul>
-<p>La campagne est limitée aux opérateurs <b>Klaxit, Karos et BlablaCar Daily</b> proposant des preuves de classe <b>B ou C</b>.</p>
+<p>La campagne est limitée aux opérateurs <b>Klaxit, Karos et BlablaCar Daily</b>
+  proposant des preuves de classe <b>B ou C</b>.</p>
 <p></p>
 </p>`;

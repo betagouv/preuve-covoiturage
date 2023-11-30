@@ -2,7 +2,7 @@ import faker from '@faker-js/faker';
 import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { createGetCampaignResultInterface } from '../helpers/fakeCampaign.helper';
+import { createGetCampaignResult } from '../helpers/createGetCampaignResult.helper';
 import { ResultInterface as GetCampaignResultInterface } from '../shared/policy/find.contract';
 import { CheckCampaign } from './CheckCampaign';
 
@@ -37,7 +37,7 @@ test.afterEach((t) => {
 });
 
 const successStubArrange = (ctx: Context, operator_ids: number[]): GetCampaignResultInterface => {
-  const campaign: GetCampaignResultInterface = createGetCampaignResultInterface(
+  const campaign: GetCampaignResultInterface = createGetCampaignResult(
     'active',
     ctx.CAMPAIGN_NAME,
     new Date(new Date().getTime() - 1 * 365 * 24 * 60 * 60 * 1000),
@@ -141,7 +141,7 @@ test('GetCampaignAndCallBuildExcel: should throw NotFoundException if no campaig
 
 test('GetCampaignAndCallBuildExcel: should throw Error if draft campaign', async (t) => {
   // Arrange
-  t.context.kernelInterfaceResolverStub.resolves(createGetCampaignResultInterface('draft', t.context.CAMPAIGN_NAME));
+  t.context.kernelInterfaceResolverStub.resolves(createGetCampaignResult('draft', t.context.CAMPAIGN_NAME));
 
   // Act
   await t.throwsAsync(async () => {
@@ -155,7 +155,7 @@ test('GetCampaignAndCallBuildExcel: should throw Error if draft campaign', async
 test('GetCampaignAndCallBuildExcel: should throw Error if campaign dates are not in date range', async (t) => {
   // Arrange
   t.context.kernelInterfaceResolverStub.resolves(
-    createGetCampaignResultInterface(
+    createGetCampaignResult(
       'active',
       t.context.CAMPAIGN_NAME,
       new Date(new Date().getTime() - 1 * 365 * 24 * 60 * 60 * 1000),
@@ -180,7 +180,7 @@ test('GetCampaignAndCallBuildExcel: should throw Error if campaign dates are not
 
 test('isValidDateRange: lower = start. end = upper', async (t) => {
   // Arrange
-  const campaign = createGetCampaignResultInterface(
+  const campaign = createGetCampaignResult(
     'active',
     t.context.CAMPAIGN_NAME,
     new Date('2022-01-01T00:00:00+0100'),
@@ -202,7 +202,7 @@ test('isValidDateRange: lower = start. end = upper', async (t) => {
 
 test('isValidDateRange: lower = start. end < upper', async (t) => {
   // Arrange
-  const campaign = createGetCampaignResultInterface(
+  const campaign = createGetCampaignResult(
     'active',
     t.context.CAMPAIGN_NAME,
     new Date('2022-01-01T00:00:00+0100'),
@@ -224,7 +224,7 @@ test('isValidDateRange: lower = start. end < upper', async (t) => {
 
 test('isValidDateRange: lower < start. end = upper', async (t) => {
   // Arrange
-  const campaign = createGetCampaignResultInterface(
+  const campaign = createGetCampaignResult(
     'active',
     t.context.CAMPAIGN_NAME,
     new Date('2022-01-01T00:00:00+0100'),
@@ -246,7 +246,7 @@ test('isValidDateRange: lower < start. end = upper', async (t) => {
 
 test('isValidDateRange: lower > start. end < upper', async (t) => {
   // Arrange
-  const campaign = createGetCampaignResultInterface(
+  const campaign = createGetCampaignResult(
     'active',
     t.context.CAMPAIGN_NAME,
     new Date('2022-01-01T00:00:00+0100'),
@@ -268,7 +268,7 @@ test('isValidDateRange: lower > start. end < upper', async (t) => {
 
 test('isValidDateRange: lower < start. end > upper', async (t) => {
   // Arrange
-  const campaign = createGetCampaignResultInterface(
+  const campaign = createGetCampaignResult(
     'active',
     t.context.CAMPAIGN_NAME,
     new Date('2022-01-01T00:00:00+0100'),
@@ -290,7 +290,7 @@ test('isValidDateRange: lower < start. end > upper', async (t) => {
 
 test('isValidDateRange: lower < start. end < upper', async (t) => {
   // Arrange
-  const campaign = createGetCampaignResultInterface(
+  const campaign = createGetCampaignResult(
     'active',
     t.context.CAMPAIGN_NAME,
     new Date('2022-01-01T00:00:00+0100'),
@@ -312,7 +312,7 @@ test('isValidDateRange: lower < start. end < upper', async (t) => {
 
 test('isValidDateRange: lower > start. end > upper', async (t) => {
   // Arrange
-  const campaign = createGetCampaignResultInterface(
+  const campaign = createGetCampaignResult(
     'active',
     t.context.CAMPAIGN_NAME,
     new Date('2022-01-01T00:00:00+0100'),

@@ -1,16 +1,15 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
-import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { map } from 'lodash';
-import { promisify } from 'util';
 import {
   ExportTripInterface,
   TripRepositoryInterface,
   TripRepositoryProviderInterfaceResolver,
   TzResultInterface,
 } from '../interfaces';
-import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
+import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
 import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
@@ -139,10 +138,13 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
                 text: 'journey_distance < $#::int',
                 values: [filter.value.max],
               };
-
             case 'campaign_id':
+              // prevent sql injection
+              if (typeof filter.value[0] !== 'number') {
+                throw new Error('campaign_id parameter is not a number');
+              }
               return {
-                text: 'applied_policies && $#::int[] AND (passenger_incentive_rpc_sum > 0 OR driver_incentive_rpc_sum > 0)',
+                text: `applied_policies && $#::int[] AND (passenger_incentive_rpc_sum > 0 OR driver_incentive_rpc_sum > 0) and EXISTS (SELECT * FROM jsonb_array_elements(array_to_json(driver_incentive_rpc_raw)::jsonb ) as obj WHERE obj @> '{ "type": "incentive", "policy_id": ${filter.value[0]}}'::jsonb AND (obj->>'amount')::int > 0)`,
                 values: [filter.value],
               };
 
@@ -299,20 +301,13 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   ): Promise<PgCursorHandler<ExportTripInterface>> {
     const where = await this.buildWhereClauses(params);
     const queryText = this.numberPlaceholders(`
-      SELECT
-        ${this.getFields(type).join(', ')}
+      SELECT ${this.getFields(type).join(', ')}
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
       ORDER BY journey_start_datetime ASC
     `);
 
-    const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(queryText, where.values));
-
-    return {
-      read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>,
-      release: db.release,
-    };
+    return this.connection.getCursor(queryText, where.values);
   }
 
   public async searchCount(params: Partial<TripSearchInterfaceWithPagination>): Promise<{ count: string }> {

@@ -29,7 +29,10 @@ export class JsonRpcCrud<
   ICreateT = EntityT, // eslint-disable-line @typescript-eslint/no-unused-vars
   IUpdateT = EntityT, // eslint-disable-line @typescript-eslint/no-unused-vars
 > extends JsonRpcGetList<EntityT, ListEntityT, IGetT, IGetListT> {
-  constructor(http: HttpClient, protected method: string) {
+  constructor(
+    http: HttpClient,
+    protected method: string,
+  ) {
     super(http, method);
   }
 

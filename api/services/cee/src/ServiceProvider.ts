@@ -6,6 +6,7 @@ import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
 import { config } from './config';
+import { binding as importIdentityCeeBinding } from './shared/cee/importApplicationIdentity.schema';
 import { binding as importCeeBinding } from './shared/cee/importApplication.schema';
 import { binding as registerCeeBinding } from './shared/cee/registerApplication.schema';
 import { binding as simulateCeeBinding } from './shared/cee/simulateApplication.schema';
@@ -14,12 +15,13 @@ import { CeeRepositoryProvider } from './providers/CeeRepositoryProvider';
 import { ImportCeeAction } from './actions/ImportCeeAction';
 import { RegisterCeeAction } from './actions/RegisterCeeAction';
 import { SimulateCeeAction } from './actions/SimulateCeeAction';
+import { ImportCeeIdentityAction } from './actions/ImportCeeIdentityAction';
 
 @serviceProvider({
   config,
   providers: [CeeRepositoryProvider],
-  validator: [importCeeBinding, registerCeeBinding, simulateCeeBinding],
-  handlers: [ImportCeeAction, RegisterCeeAction, SimulateCeeAction],
+  validator: [importCeeBinding, importIdentityCeeBinding, registerCeeBinding, simulateCeeBinding],
+  handlers: [ImportCeeAction, RegisterCeeAction, SimulateCeeAction, ImportCeeIdentityAction],
   connections: [
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],

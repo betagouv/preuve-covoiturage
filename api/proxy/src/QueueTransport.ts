@@ -8,7 +8,7 @@ import { env } from '@ilos/core';
 
 import { healthCheckFactory } from './helpers/healthCheckFactory';
 import { prometheusMetricsFactory } from './helpers/prometheusMetricsFactory';
-import { rateLimiter } from './middlewares/rateLimiter';
+import { metricsMiddleware } from './middlewares/metricsMiddleware';
 
 export class MyQueueTransport extends QueueTransport implements TransportInterface {
   server: http.Server;
@@ -28,7 +28,7 @@ export class MyQueueTransport extends QueueTransport implements TransportInterfa
 
   async up(opts: string[] = []): Promise<void> {
     await super.up(opts);
-    if (env('MONITORING', false)) {
+    if (env.or_false('MONITORING')) {
       this.app = express();
       this.setupServer();
       this.startServer();
@@ -43,12 +43,12 @@ export class MyQueueTransport extends QueueTransport implements TransportInterfa
   }
 
   async setupServer() {
-    this.app.get('/health', rateLimiter(), healthCheckFactory([]));
-    this.app.get('/metrics', rateLimiter(), prometheusMetricsFactory());
+    this.app.get('/health', metricsMiddleware('health'), healthCheckFactory([]));
+    this.app.get('/metrics', metricsMiddleware('metrics'), prometheusMetricsFactory());
   }
 
   async startServer() {
-    const port = env('PORT', 8080);
+    const port = env.or_int('PORT', 8080);
     this.server = this.app.listen(port, () => console.info(`Listening on port ${port}`));
   }
 }

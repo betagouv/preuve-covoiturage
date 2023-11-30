@@ -4,6 +4,7 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 <p>Cette campagne est limitée à
   <b>50 000 euros </b>.
 </p>
+<p>Les trajets de + de 80km sont exclus à partir du 1er janvier 2024</p>
 <p>Les <b> conducteurs et passagers </b> effectuant un trajet d'au moins 5 km sont incités selon les règles suivantes :
 </p>
 <ul>

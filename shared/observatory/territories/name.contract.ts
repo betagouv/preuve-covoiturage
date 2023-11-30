@@ -1,13 +1,15 @@
+import { PerimeterLabel, PerimeterType } from '../../geo/shared/Perimeter';
+
 export interface ResultInterface {
-  territory: string;
-  l_territory: string;
-  type: string;
+  territory: PerimeterType;
+  l_territory: PerimeterLabel;
+  type: PerimeterType;
 }
 
 export interface ParamsInterface {
   year: number;
   code: string;
-  type: string;
+  type: PerimeterType;
 }
 
 export const handlerConfig = {

@@ -1,8 +1,8 @@
 /**
  * Test application creation for the operators.
  *
- * 3 types of token exist: V1, V2 varchar and V2 integer.
- * We need to make sure legacy versions (V1, V2 varchar) are still compatible.
+ * 3 types of token exist: V1, v3 varchar and v3 integer.
+ * We need to make sure legacy versions (V1, v3 varchar) are still compatible.
  *
  * Tested:
  * - operator creation
@@ -46,7 +46,7 @@ interface ContextType {
 }
 
 import { Kernel } from '../Kernel';
-import { payloadV2 } from './mocks/payloadV2';
+import { payloadv3 } from './mocks/payloadv3';
 
 // create a test to configure the 'after' hook
 // this must be done before using the macro to make sure this hook
@@ -110,10 +110,10 @@ test.after.always.skip(async (t) => {
  *
  */
 test.skip('Application V1', async (t) => {
-  const pl = payloadV2();
+  const pl = payloadv3();
 
   const response = await t.context.request
-    .post(`/v2/journeys`)
+    .post(`/v3/journeys`)
     .send(pl)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
@@ -128,11 +128,11 @@ test.skip('Application V1', async (t) => {
   t.is(get(response, 'body.result.data.journey_id', ''), pl.journey_id);
 });
 
-test.skip('Application V2 integer', async (t) => {
-  const pl = payloadV2();
+test.skip('Application v3 integer', async (t) => {
+  const pl = payloadv3();
 
   const response = await t.context.request
-    .post(`/v2/journeys`)
+    .post(`/v3/journeys`)
     .send(pl)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
@@ -150,11 +150,11 @@ test.skip('Application V2 integer', async (t) => {
   t.is(get(response, 'body.result.data.journey_id', ''), pl.journey_id);
 });
 
-test.skip('Application V2 varchar (old)', async (t) => {
-  const pl = payloadV2();
+test.skip('Application v3 varchar (old)', async (t) => {
+  const pl = payloadv3();
 
   const response = await t.context.request
-    .post(`/v2/journeys`)
+    .post(`/v3/journeys`)
     .send(pl)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
@@ -173,10 +173,10 @@ test.skip('Application V2 varchar (old)', async (t) => {
 });
 
 test.skip('Application Not Found', async (t) => {
-  const pl = payloadV2();
+  const pl = payloadv3();
 
   const response = await t.context.request
-    .post(`/v2/journeys`)
+    .post(`/v3/journeys`)
     .send(pl)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
@@ -195,10 +195,10 @@ test.skip('Application Not Found', async (t) => {
 });
 
 test.skip('Wrong operator', async (t) => {
-  const pl = payloadV2();
+  const pl = payloadv3();
 
   const response = await t.context.request
-    .post(`/v2/journeys`)
+    .post(`/v3/journeys`)
     .send(pl)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
@@ -217,10 +217,10 @@ test.skip('Wrong operator', async (t) => {
 });
 
 test.skip('Wrong permissions', async (t) => {
-  const pl = payloadV2();
+  const pl = payloadv3();
 
   const response = await t.context.request
-    .post(`/v2/journeys`)
+    .post(`/v3/journeys`)
     .send(pl)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
@@ -239,7 +239,7 @@ test.skip('Wrong permissions', async (t) => {
 });
 
 test.skip('Deleted application', async (t) => {
-  const pl = payloadV2();
+  const pl = payloadv3();
   const uuid = '71c3c3d8-208f-455e-9c08-6ea2d48abf69';
 
   // soft-delete the application
@@ -250,7 +250,7 @@ test.skip('Deleted application', async (t) => {
 
   // send a payload
   const response = await t.context.request
-    .post(`/v2/journeys`)
+    .post(`/v3/journeys`)
     .send(pl)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')

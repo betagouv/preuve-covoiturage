@@ -11,7 +11,10 @@ export enum GetListActions {
 }
 
 export class JsonRpcGetList<EntityT, ListEntityT = EntityT, IGetT = any, IGetListT = any> extends JsonRPC {
-  constructor(http: HttpClient, protected method: string) {
+  constructor(
+    http: HttpClient,
+    protected method: string,
+  ) {
     super(http);
   }
 

@@ -47,18 +47,20 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
     // add Timezone at last position of the values array
     values.push(tz || 'GMT');
 
-    // TODO check driver_revenue / passenger_contribution normalisation
-
     const text = `
       WITH trips AS (
         SELECT
           cc.trip_id,
           'driver' as type,
-          SUBSTR((datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
-          datetime AT TIME ZONE $${values.length} AS datetime,
-          distance,
-          COALESCE(payment, 0) AS payment
+          SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
+          cc.datetime AT TIME ZONE $${values.length} AS datetime,
+          cc.distance,
+          GREATEST(COALESCE(meta.sum, 0)::int, payment) AS payment
         FROM ${this.table} AS cc
+        LEFT JOIN LATERAL (
+          SELECT SUM(COALESCE(amount, 0)) AS sum
+          FROM json_to_recordset(cc.meta->'payments') x (type text, index int, siret text, amount int)
+        ) meta ON true
         WHERE
           cc.operator_id = $2::int
           AND cc.is_driver = true
@@ -73,11 +75,15 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
         SELECT
           cc.trip_id,
           'passenger' as type,
-          SUBSTR((datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
-          datetime AT TIME ZONE $${values.length} AS datetime,
-          distance,
-          COALESCE(payment, 0) AS payment
+          SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
+          cc.datetime AT TIME ZONE $${values.length} AS datetime,
+          cc.distance,
+          GREATEST(COALESCE(meta.sum, 0)::int, payment) AS payment
         FROM ${this.table} AS cc
+        LEFT JOIN LATERAL (
+          SELECT SUM(COALESCE(amount, 0)) AS sum
+          FROM json_to_recordset(cc.meta->'payments') x (type text, index int, siret text, amount int)
+        ) meta ON true
         WHERE
           cc.operator_id = $2::int
           AND cc.is_driver = false

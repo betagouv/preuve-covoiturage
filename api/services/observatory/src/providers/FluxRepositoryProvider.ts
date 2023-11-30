@@ -47,7 +47,7 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
   // Paramètres optionnels observe et code pour filtrer les résultats sur un territoire
   async getMonthlyFlux(params: MonthlyFluxParamsInterface): Promise<MonthlyFluxResultInterface> {
     const sql = {
-      values: [params.year, params.month, params.type, params.code],
+      values: [params.year, params.month, params.code],
       text: `SELECT 
         l_territory_1 as ter_1, lng_1, lat_1,
         l_territory_2 as ter_2, lng_2, lat_2,
@@ -55,19 +55,20 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
       FROM ${this.table}
       WHERE year = $1
       AND month = $2
-      AND type = $3::observatory.monthly_flux_type_enum
+      AND type = '${checkTerritoryParam(params.observe)}'::observatory.monthly_flux_type_enum
+      AND (distance/journeys) <= 80
       ${
         params.code
           ? `AND (territory_1 IN (
-          SELECT ${checkTerritoryParam(params.type)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+          SELECT ${checkTerritoryParam(params.observe)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $1) t 
-          WHERE ${checkTerritoryParam(params.observe)} = $4
+            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
+          WHERE ${checkTerritoryParam(params.type)} = $3
         ) OR territory_2 IN (
-          SELECT ${checkTerritoryParam(params.type)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+          SELECT ${checkTerritoryParam(params.observe)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
               this.perim_table
-            } WHERE year = $1) t 
-          WHERE ${checkTerritoryParam(params.observe)} = $4
+            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
+          WHERE ${checkTerritoryParam(params.type)} = $3
         ))`
           : ''
       } 
@@ -98,7 +99,8 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
     const sql = {
       values: [checkTerritoryParam(params.type), params.code, limit],
       text: `
-        SELECT year, month, sum(${indic}) AS ${indic}
+        SELECT year, month, sum(${indic}) AS ${indic} 
+        ${indic == 'distance' ? ', sum(journeys) AS journeys' : ''}
         FROM ${this.table}
         WHERE concat(year::varchar,TO_CHAR(month, 'fm00'))::integer <= ${start}
         AND type = $1::observatory.monthly_flux_type_enum
@@ -122,10 +124,14 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
         WHERE year = $1
         AND month = $2
         AND (territory_1 IN (
-            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
+            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+              this.perim_table
+            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
             WHERE ${checkTerritoryParam(params.type)} = $3) 
           OR territory_2 IN (
-            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${this.perim_table} WHERE year = $1) t 
+            SELECT com FROM (SELECT com,epci,aom,dep,reg,country FROM ${
+              this.perim_table
+            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
             WHERE ${checkTerritoryParam(params.type)} = $3)
         ) 
         ORDER BY journeys DESC

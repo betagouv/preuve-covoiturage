@@ -1,4 +1,4 @@
-import { StatusData, StatusEnum } from '../shared/acquisition/status.contract';
+import { AnomalyErrorDetails, StatusEnum } from '../shared/acquisition/status.contract';
 
 export enum AcquisitionStatusEnum {
   Ok = 'ok',
@@ -43,7 +43,8 @@ export interface AcquisitionStatusInterface {
   updated_at: Date;
   operator_journey_id: string;
   status: StatusEnum;
-  data?: StatusData;
+  fraud_error_labels?: string[];
+  anomaly_error_details: AnomalyErrorDetails[];
 }
 
 export interface AcquisitionStatusUpdateInterface {
@@ -90,5 +91,11 @@ export interface AcquisitionRepositoryProviderInterface {
 
   findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,
-  ): Promise<[Array<AcquisitionFindInterface<P>>, (data?: AcquisitionStatusUpdateInterface) => Promise<void>]>;
+  ): Promise<
+    [
+      Array<AcquisitionFindInterface<P>>,
+      (data?: AcquisitionStatusUpdateInterface) => Promise<void>,
+      () => Promise<void>,
+    ]
+  >;
 }

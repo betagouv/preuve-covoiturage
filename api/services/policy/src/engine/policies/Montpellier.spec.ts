@@ -1,8 +1,9 @@
 import test from 'ava';
 import { v4 } from 'uuid';
-import { CarpoolInterface, OperatorsEnum } from '../../interfaces';
+import { OperatorsEnum } from '../../interfaces';
 import { makeProcessHelper } from '../tests/macro';
 import { Montpellier as Handler } from './Montpellier';
+import { generatePartialCarpools } from '../tests/helpers';
 
 const defaultPosition = {
   arr: '34088',
@@ -102,25 +103,12 @@ test(
   },
 );
 
-const generateCarpool = (): Partial<CarpoolInterface>[] => {
-  const date: Date = new Date('2022-01-01');
-  return [
-    ...Array(75 + 1 + 1)
-      .slice(1)
-      .keys(),
-  ].map((x) => ({
-    datetime: x % 3 == 0 ? date.setDate(date.getDate() + 1) && new Date(date) : new Date(date),
-    distance: 25_000,
-    driver_identity_uuid: 'three',
-  }));
-};
-
 test(
   'should work with driver month limits',
   process,
   {
     policy: { handler: Handler.id },
-    carpool: generateCarpool(),
+    carpool: generatePartialCarpools(),
     meta: [],
   },
   {

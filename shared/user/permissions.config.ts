@@ -32,6 +32,7 @@ const permissions = {
     'registry.user',
     'registry.admin',
     'operator.admin',
+    'operator.user',
   ],
   'policy.launch': ['territory.admin'],
   'policy.list': ['common', 'territory.demo', 'territory.user', 'territory.admin', 'registry.user', 'registry.admin'],
@@ -73,7 +74,7 @@ const permissions = {
     'registry.user',
     'registry.admin',
   ],
-  'apdf.list': ['operator.admin', 'territory.admin', 'registry.admin'],
+  'apdf.list': ['operator.admin', 'territory.admin', 'registry.admin', 'operator.user'],
   'apdf.listCurrentMonth': ['registry.admin'],
   'apdf.export': ['registry.admin'],
   'trip.list': [

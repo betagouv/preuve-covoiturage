@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { APDFNameProvider } from '@pdc/provider-file';
+import { APDFNameProvider } from '@pdc/provider-storage';
 import { stream } from 'exceljs';
 import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface';
 import { SliceStatInterface } from '../../shared/apdf/interfaces/PolicySliceStatInterface';

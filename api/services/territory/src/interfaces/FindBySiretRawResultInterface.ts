@@ -7,4 +7,6 @@ export interface FindBySiretRawResultInterface {
   l_com: string;
   l_reg: string;
   reg: string;
+  l_dep: string;
+  dep: string;
 }

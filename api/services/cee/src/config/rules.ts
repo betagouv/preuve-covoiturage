@@ -3,7 +3,7 @@ import { ApplicationCooldownConstraint, TimeRangeConstraint, ValidJourneyConstra
 
 export const validJourneyConstraint: ValidJourneyConstraint = {
   operator_class: 'C',
-  start_date: new Date(env('APP_CEE_START_DATE', '2023-01-01T00:00:00+0100') as string),
+  start_date: new Date(env.or_fail('APP_CEE_START_DATE', '2023-01-01T00:00:00+0100')),
   end_date: new Date('2024-01-01T00:00:00+0100'),
   max_distance: 80_000,
   geo_pattern: '99%',
@@ -33,6 +33,6 @@ export const applicationCooldownConstraint: ApplicationCooldownConstraint = {
 
 // A partir de combien de jour les demandes peuvent être envoyées
 export const timeRangeConstraint: TimeRangeConstraint = {
-  short: parseInt(env('APP_CEE_DELAY', '7') as string),
-  long: parseInt(env('APP_CEE_DELAY', '7') as string),
+  short: env.or_int('APP_CEE_DELAY', 7),
+  long: env.or_int('APP_CEE_DELAY', 7),
 };

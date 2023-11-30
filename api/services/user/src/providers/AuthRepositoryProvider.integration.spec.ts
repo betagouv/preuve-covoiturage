@@ -24,7 +24,7 @@ test.before.skip(async (t) => {
       invitation: 7 * 86400,
       reset: 1 * 86400,
     };
-    get(k: string, fb: string): string {
+    get<T>(k: string, fb: T): T {
       const key = k.split('.').pop();
       if (key in this.config) {
         return this.config[key];

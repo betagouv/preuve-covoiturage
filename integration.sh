@@ -70,9 +70,10 @@ run() {
   ensure_certs && \
   ensure_keys && \
   start_services && \
+  sleep 10 && \
   seed_data && \
   create_bucket local-pdc-export && \
-  create_bucket local-pdc-appels-de-fonds && \ 
+  create_bucket local-pdc-appels-de-fonds && \
   create_bucket local-pdc-public && \
   npm --prefix api run test:integration 2>&1
   EXIT=$?

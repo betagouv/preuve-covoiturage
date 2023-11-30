@@ -10,7 +10,11 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
   providedIn: 'root',
 })
 export class ChangeEmailGuardService implements CanActivate {
-  constructor(private router: Router, private authService: AuthenticationService, private toastr: ToastrService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthenticationService,
+    private toastr: ToastrService,
+  ) {}
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
     return this.authService.confirmEmail(route.params.email, route.params.token).pipe(

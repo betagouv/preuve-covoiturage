@@ -1,8 +1,7 @@
 /* eslint-disable max-len */
 import { provider } from '@ilos/common';
-import { Cursor, PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { set } from 'lodash';
-import { promisify } from 'util';
 import {
   CampaignSearchParamsInterface,
   DataRepositoryInterface,
@@ -199,12 +198,6 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       order by ccd.datetime
     `;
 
-    const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(queryText, [start_date, end_date, operator_id, campaign_id]));
-
-    return {
-      read: promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<APDFTripInterface[]>,
-      release: db.release,
-    };
+    return this.connection.getCursor(queryText, [start_date, end_date, operator_id, campaign_id]);
   }
 }

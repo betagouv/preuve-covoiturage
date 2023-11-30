@@ -1,7 +1,7 @@
 import { ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { isAfter } from 'date-fns';
+import { isAfter, max, min } from 'date-fns';
 import { Policy } from '../engine/entities/Policy';
 import { defaultTz, subDaysTz, today, toTzString } from '../helpers';
 import {
@@ -36,7 +36,7 @@ export class ApplyAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    if (!!env('APP_DISABLE_POLICY_PROCESSING', false)) {
+    if (env.or_false('APP_DISABLE_POLICY_PROCESSING')) {
       return console.warn('[campaign:apply] policy processing is disabled by APP_DISABLE_POLICY_PROCESSING');
     }
 
@@ -76,10 +76,17 @@ export class ApplyAction extends AbstractAction {
     let counter = 0;
 
     // 2. Start a cursor to find trips
-    const start = isAfter(from, policy.start_date) ? from : policy.start_date;
-    const end = isAfter(policy.end_date, to) ? to : policy.end_date;
+    // handle date boundaries
+    const start = max([from, policy.start_date]);
+    const end = min([to, policy.end_date]);
     const s = toTzString(start);
     const e = toTzString(end);
+    const pe = toTzString(policy.end_date);
+
+    // throw if campaign start date is after policy end date
+    if (isAfter(start, policy.end_date)) {
+      throw new InvalidParamsException(`[policy ${policy._id}] 'from' (${s}) is after policy end_date (${pe})`);
+    }
 
     // throw if no time span
     if (end.getTime() - start.getTime() < 1) {

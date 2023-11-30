@@ -9,7 +9,10 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
   providedIn: 'root',
 })
 export class LoginGuardService implements CanActivate {
-  constructor(private router: Router, private authService: AuthenticationService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthenticationService,
+  ) {}
 
   canActivate(): Observable<boolean> {
     return this.authService.check().pipe(

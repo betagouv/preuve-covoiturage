@@ -15,7 +15,10 @@ import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
   providedIn: 'root',
 })
 export class UserApiService extends JsonRpcCrud<User, UserListInterface, UserPatchInterface> {
-  constructor(http: HttpClient, protected _toastr: ToastrService) {
+  constructor(
+    http: HttpClient,
+    protected _toastr: ToastrService,
+  ) {
     super(http, 'user');
   }
 

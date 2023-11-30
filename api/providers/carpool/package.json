@@ -1,0 +1,24 @@
+{
+  "name": "@pdc/provider-carpool",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test:unit": "exit 0",
+    "test:integration": "ava --config ava.integration.cjs",
+    "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
+  },
+  "dependencies": {
+    "@ilos/common": "~0",
+    "@ilos/connection-postgres": "~0"
+  },
+  "devDependencies": {
+    "@pdc/helper-test": "~0",
+    "sinon": "^14.0.0"
+  }
+}

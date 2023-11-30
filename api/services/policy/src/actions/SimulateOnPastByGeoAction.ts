@@ -54,6 +54,7 @@ export class SimulateOnPastByGeoAction extends AbstractAction {
       max_amount: 10_000_000_00,
       territory_selector: {
         ...(params.territory_insee === geoResult.aom_siren && { aom: [geoResult.aom_siren] }),
+        ...(params.territory_insee === geoResult.dep_siren && { dep: [geoResult.dep_siren] }),
         ...(params.territory_insee === geoResult.epci_siren && { epci: [geoResult.epci_siren] }),
         ...(params.territory_insee === geoResult.reg_siren && { reg: [geoResult.reg_siren] }),
       },

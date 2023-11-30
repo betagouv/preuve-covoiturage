@@ -13,7 +13,7 @@ export class EnvironmentBlacklistMiddleware implements MiddlewareInterface<Envir
     next: Function,
     environments: Partial<EnvironmentBlacklistMiddlewareParams>,
   ): Promise<ResultType> {
-    const appEnv = env('NODE_ENV') as string;
+    const appEnv = env.or_fail('NODE_ENV');
 
     if (environments.indexOf(appEnv) > -1) {
       throw new NotFoundException('Missing action');

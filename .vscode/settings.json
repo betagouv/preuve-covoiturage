@@ -4,6 +4,7 @@
   "editor.detectIndentation": false,
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
+  "typescript.preferences.importModuleSpecifier": "relative",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
@@ -18,41 +19,28 @@
   },
   "files.watcherExclude": {
     "**/node_modules": true,
-    "**/dist/**": true
+    "**/dist/**": true,
+    "public/.next": true
   },
   "search.exclude": {
-    "tmp/*": true,
-    "**/node_modules": true,
+    "**/.nyc_output": true,
     "**/dist": true,
+    "**/node_modules": true,
     "**/package-lock.json": true,
+    "**/*.d.ts": true,
+    "api/.nx": true,
     "api/providers/*/src/shared": true,
-    "api/services/*/src/shared": true,
     "api/proxy/src/shared": true,
-    "dashboard/src/app/core/entities/api/shared": true
+    "api/services/*/src/shared": true,
+    "dashboard/src/app/core/entities/api/shared": true,
+    "public/.next": true,
+    "tmp/*": true
   },
   "files.exclude": {
     "**/*.postman_collection.json": true,
-    "db": true,
-    "api/**/dist": false,
-    "**/node_modules/**": false
-  },
-  "githubIssues.queries": [
-    {
-      "label": "Attestations",
-      "query": "repo:${owner}/${repository} is:issue is:open label:ATTESTATION"
-    },
-    {
-      "label": "BUGS",
-      "query": "repo:${owner}/${repository} is:issue is:open label:BUG"
-    },
-    {
-      "label": "Mes tickets",
-      "query": "repo:${owner}/${repository} is:issue is:open assignee:${user}"
-    },
-    {
-      "label": "Created Issues",
-      "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc"
-    }
-  ],
-  "typescript.preferences.importModuleSpecifier": "relative"
+    "**/node_modules/**": false,
+    "**/*.d.ts": true,
+    "api/**/dist": true,
+    "db": true
+  }
 }

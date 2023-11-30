@@ -1,7 +1,7 @@
-import { ContextType, handler, InitHookInterface, KernelInterfaceResolver } from '@ilos/common';
+import { ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { BucketName, S3StorageProvider } from '@pdc/provider-file';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
+import { BucketName, S3StorageProvider } from '@pdc/provider-storage';
 import AdmZip from 'adm-zip';
 import fs from 'fs';
 import { get } from 'lodash';
@@ -9,9 +9,9 @@ import os from 'os';
 import path from 'path';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ExportTripInterface } from '../interfaces';
-import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { handlerConfig, ParamsInterface, ResultInterface, signature } from '../shared/trip/buildExport.contract';
+import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
 import { alias } from '../shared/trip/buildExport.schema';
 import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
 import { TripSearchInterface } from '../shared/trip/common/interfaces/TripSearchInterface';
@@ -73,7 +73,7 @@ export interface FlattenTripInterface extends ExportTripInterface<string> {
   ...handlerConfig,
   middlewares: [...internalOnlyMiddlewares(handlerConfig.service), ['validate', alias]],
 })
-export class BuildExportAction extends Action implements InitHookInterface {
+export class BuildExportAction extends Action {
   constructor(
     private tripRepository: TripRepositoryProvider,
     private fileProvider: S3StorageProvider,
@@ -222,37 +222,10 @@ export class BuildExportAction extends Action implements InitHookInterface {
     ],
   };
 
-  async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(
-      signature,
-      {
-        type: 'opendata',
-        format: {
-          tz: 'Europe/Paris',
-        },
-      },
-      {
-        call: {
-          user: {},
-        },
-        channel: {
-          service: handlerConfig.service,
-          metadata: {
-            repeat: {
-              cron: '0 6 8 * *',
-            },
-            jobId: 'trip.open_data_export',
-          },
-        },
-      },
-    );
-  }
-
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const type = get(params, 'type', 'export');
     const queryParams: TripSearchInterface = this.getDefaultQueryParams(params);
     const isOpendata: boolean = this.isOpendata(type);
-
     let excluded_territories: TerritoryTripsInterface[];
 
     if (isOpendata) {

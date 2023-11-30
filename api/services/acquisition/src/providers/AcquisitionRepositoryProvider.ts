@@ -115,69 +115,6 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
     return result.rows;
   }
 
-  async updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>, poolClient?: PoolClient): Promise<void> {
-    const pool = poolClient ?? (await this.connection.getClient().connect());
-    await pool.query(poolClient ? 'SAVEPOINT results' : 'BEGIN');
-    const values = data.reduce(
-      (acc, d) => {
-        const [acquisition_id, status, error_stage, errors] = acc;
-        acquisition_id.push(d.acquisition_id);
-        status.push(d.status);
-        error_stage.push(d.error_stage);
-        errors.push(JSON.stringify(d.errors));
-        return [acquisition_id, status, error_stage, errors];
-      },
-      [[], [], [], []],
-    );
-    const query = {
-      text: `
-      WITH data AS (
-        SELECT * FROM UNNEST (
-          $1::int[],
-          $2::acquisition.acquisition_status_enum[],
-          $3::varchar[],
-          $4::jsonb[]
-        ) as t(
-          acquisition_id,
-          status,
-          error_stage,
-          errors
-        )
-      )
-      UPDATE ${this.table} as pt
-      SET (
-        try_count,
-        status,
-        error_stage,
-        errors
-      ) = (
-        pt.try_count + 1,
-        CASE WHEN data.status IS NULL THEN pt.status ELSE data.status END,
-        CASE WHEN data.error_stage IS NULL THEN pt.error_stage ELSE data.error_stage END,
-        pt.errors || data.errors::jsonb
-      )
-      FROM data
-      WHERE
-        data.acquisition_id = pt._id
-      `,
-      values,
-    };
-    try {
-      await pool.query(query);
-      await pool.query(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
-      return;
-    } catch (e) {
-      await pool.query(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
-      if (!poolClient) {
-        throw e;
-      }
-    } finally {
-      if (!poolClient) {
-        pool.release();
-      }
-    }
-  }
-
   async cancel(operator_id: number, operator_journey_id: string, code?: string, message?: string): Promise<void> {
     await this.connection.getClient().query({
       text: `
@@ -207,10 +144,15 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
           aa.updated_at,
           cc.status as carpool_status,
           aa.status as acquisition_status,
-          aa.error_stage as acquisition_error_stage
+          aa.error_stage as acquisition_error_stage,
+          fl.label as fraud_label,
+          al.label as anomaly_label,
+          al.conflicting_operator_journey_id,
+          al.overlap_duration_ratio
         FROM ${this.table} AS aa
-        LEFT JOIN carpool.carpools AS cc
-          ON aa._id = cc.acquisition_id
+        LEFT JOIN carpool.carpools AS cc ON aa._id = cc.acquisition_id
+        LEFT JOIN fraudcheck.labels as fl ON cc._id = fl.carpool_id
+        LEFT JOIN anomaly.labels as al on cc._id = al.carpool_id
         WHERE ${whereClauses.text.join(' AND ')}
       `,
       values: whereClauses.values,
@@ -226,13 +168,28 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       created_at,
       updated_at,
       status: castStatus(carpool_status, acquisition_status, acquisition_error_stage),
+      fraud_error_labels: result.rows.map((r) => r.fraud_label).filter((l) => !!l),
+      anomaly_error_details: result.rows
+        .filter((l) => !!l.anomaly_label)
+        .map((a) => ({
+          label: a.anomaly_label,
+          metas: {
+            conflicting_journey_id: a.conflicting_operator_journey_id,
+            temporal_overlap_duration_ratio: a.overlap_duration_ratio,
+          },
+        })),
     };
   }
 
   async findThenUpdate<P = any>(
     search: AcquisitionSearchInterface,
-    timeout = 10000,
-  ): Promise<[Array<AcquisitionFindInterface<P>>, (data?: AcquisitionStatusUpdateInterface) => Promise<void>]> {
+  ): Promise<
+    [
+      Array<AcquisitionFindInterface<P>>,
+      (data?: AcquisitionStatusUpdateInterface) => Promise<void>,
+      () => Promise<void>,
+    ]
+  > {
     const whereClauses = ['from', 'to', 'status']
       .filter((k) => k in search)
       .map((k, i) => {
@@ -280,35 +237,97 @@ export class AcquisitionRepositoryProvider implements AcquisitionRepositoryProvi
       `,
       values: [...whereClauses.values, search.limit],
     };
-    const pool = await this.connection.getClient().connect();
+
+    const pool = this.connection.getClient();
+    const poolClient = await pool.connect();
+
     try {
-      await pool.query('BEGIN');
-      const result = await pool.query(query);
-      let hasTimeout = false;
-      const timeoutFn = setTimeout(() => {
-        hasTimeout = true;
-        pool.query('COMMIT').finally(() => pool.release());
-      }, timeout);
+      await poolClient.query('BEGIN');
+      const result = await poolClient.query(query);
+
       return [
         result.rows,
-        async (data?: AcquisitionStatusUpdateInterface) => {
-          if (timeoutFn && !hasTimeout) {
-            if (timeoutFn && !hasTimeout) {
-              if (data) {
-                await this.updateManyStatus([data], pool);
-              } else {
-                clearTimeout(timeoutFn);
-                await pool.query('COMMIT');
-                pool.release();
-              }
-            }
-          }
+
+        // update data
+        async (data: AcquisitionStatusUpdateInterface) => {
+          data && (await this.updateManyStatus([data], poolClient));
+        },
+
+        // commit and release
+        async () => {
+          await poolClient.query('COMMIT');
+          poolClient.release();
         },
       ];
     } catch (e) {
-      await pool.query('ROLLBACK');
-      pool.release();
+      await poolClient.query('ROLLBACK');
+      poolClient.release();
+
       throw e;
+    }
+  }
+
+  async updateManyStatus(data: Array<AcquisitionStatusUpdateInterface>, poolClient?: PoolClient): Promise<void> {
+    const pool = poolClient ?? (await this.connection.getClient().connect());
+    await pool.query(poolClient ? 'SAVEPOINT results' : 'BEGIN');
+    const values = data.reduce(
+      (acc, d) => {
+        const [acquisition_id, status, error_stage, errors] = acc;
+        acquisition_id.push(d.acquisition_id);
+        status.push(d.status);
+        error_stage.push(d.error_stage);
+        errors.push(JSON.stringify(d.errors));
+        return [acquisition_id, status, error_stage, errors];
+      },
+      [[], [], [], []],
+    );
+    const query = {
+      text: `
+      WITH data AS (
+        SELECT * FROM UNNEST (
+          $1::int[],
+          $2::acquisition.acquisition_status_enum[],
+          $3::varchar[],
+          $4::jsonb[]
+        ) as t(
+          acquisition_id,
+          status,
+          error_stage,
+          errors
+        )
+      )
+      UPDATE ${this.table} as pt
+      SET (
+        try_count,
+        status,
+        error_stage,
+        errors
+      ) = (
+        pt.try_count + 1,
+        CASE WHEN data.status IS NULL THEN pt.status ELSE data.status END,
+        CASE WHEN data.error_stage IS NULL THEN pt.error_stage ELSE data.error_stage END,
+        pt.errors || data.errors::jsonb
+      )
+      FROM data
+      WHERE
+        data.acquisition_id = pt._id
+      `,
+      values,
+    };
+
+    try {
+      await pool.query(query);
+      await pool.query(poolClient ? 'RELEASE SAVEPOINT results' : 'COMMIT');
+      return;
+    } catch (e) {
+      await pool.query(poolClient ? 'ROLLBACK TO SAVEPOINT results' : 'ROLLBACK');
+      if (!poolClient) {
+        throw e;
+      }
+    } finally {
+      if (!poolClient) {
+        pool.release();
+      }
     }
   }
 

@@ -1,6 +1,7 @@
 node_modules
 .DS_Store
 .idea
+.ignore
 !.vscode/settings.json
 .env
 db/*
@@ -13,7 +14,7 @@ tmp
 *.key
 
 # notebooks
-notebooks/scripts/playground/*
+notebooks/scripts/playground
 
 # python
 *.pyc

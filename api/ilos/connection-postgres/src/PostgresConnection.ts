@@ -1,16 +1,16 @@
-import { Pool, PoolConfig } from 'pg';
-import { URL } from 'url';
-
-import { env } from '@ilos/core';
 import { ConnectionInterface } from '@ilos/common';
+import { env } from '@ilos/core';
+import { Pool, PoolConfig } from 'pg';
+import Cursor, { CursorQueryConfig } from 'pg-cursor';
+import { URL } from 'url';
 
 export class PostgresConnection implements ConnectionInterface<Pool> {
   private readonly pgUrl: string;
   protected pool: Pool;
 
   constructor(protected config: PoolConfig) {
-    this.pgUrl = config.connectionString || (env('APP_POSTGRES_URL') as string);
-    const timeout = parseInt(env('APP_POSTGRES_TIMEOUT', '60000') as string, 10);
+    this.pgUrl = config.connectionString || env.or_fail('APP_POSTGRES_URL');
+    const timeout = env.or_int('APP_POSTGRES_TIMEOUT', 60000);
 
     this.pool = new Pool({
       ssl: this.hasSSL(this.pgUrl) ? { rejectUnauthorized: false } : false,
@@ -32,6 +32,23 @@ export class PostgresConnection implements ConnectionInterface<Pool> {
 
   getClient(): Pool {
     return this.pool;
+  }
+
+  async getCursor<T = any>(
+    text: string,
+    values: any[],
+    config: CursorQueryConfig = undefined,
+  ): Promise<{ read: Cursor['read']; release: () => Promise<void> }> {
+    const client = await this.pool.connect();
+    const cursor = client.query<Cursor<T>>(new Cursor(text, values, config));
+
+    return {
+      read: cursor.read.bind(cursor),
+      async release() {
+        await cursor.close();
+        client.release();
+      },
+    };
   }
 
   // https://www.postgresql.org/docs/current/libpq-ssl.html

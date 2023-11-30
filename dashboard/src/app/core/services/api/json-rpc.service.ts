@@ -11,7 +11,10 @@ import { JsonRPCOptions } from '~/core/entities/api/jsonRPCOptions';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 
 export abstract class JsonRPC {
-  constructor(protected http: HttpClient, protected url = 'rpc') {}
+  constructor(
+    protected http: HttpClient,
+    protected url = 'rpc',
+  ) {}
 
   public callOne(method: JsonRPCParam, options?: JsonRPCOptions, throwErrors = true): Observable<JsonRPCResult> {
     return this.call([method], options, throwErrors).pipe(map((datas) => datas[0]));
