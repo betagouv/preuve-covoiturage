@@ -1,7 +1,9 @@
 import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
 import { TerritoryListInterface } from '@/interfaces/observatoire/dataInterfaces';
-import { Autocomplete, AutocompleteChangeReason, TextField, createFilterOptions } from '@mui/material';
+import { createFilterOptions } from '@mui/material';
+import Autocomplete, { AutocompleteChangeReason } from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 
 type SelectTerritoryProps = {
   code: string;

@@ -3,10 +3,9 @@ import { MapboxOverlay, MapboxOverlayProps } from '@deck.gl/mapbox/typed';
 import { Map, useControl, NavigationControl, FullscreenControl, MapRef } from 'react-map-gl/maplibre';
 import Legend from './Legend';
 import { DeckMapInterface } from '@/interfaces/observatoire/componentsInterfaces';
-//css
-import 'maplibre-gl/dist/maplibre-gl.css';
 import { useRef, useEffect } from 'react';
 import { FrCxArg, fr } from '@codegouvfr/react-dsfr';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 function DeckGLOverlay(
   props: MapboxOverlayProps & {
