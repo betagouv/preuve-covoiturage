@@ -6,7 +6,8 @@ import { LngLatBoundsLike } from 'maplibre-gl';
 import { cmsHost } from "@/helpers/cms";
 import { useJson } from '@/hooks/useJson';
 import { FeatureCollection } from 'geojson';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { fr } from '@codegouvfr/react-dsfr';
 
 export default function VrMap({ title}: { title: string }) {
   const mapTitle = title;
@@ -27,6 +28,24 @@ export default function VrMap({ title}: { title: string }) {
       'line-opacity': 0.8
     },
   };
+  const [cursor, setCursor] = useState<string>('');
+  const [hoverInfo, setHoverInfo] = useState<{
+    longitude: number,
+    latitude: number,
+    properties: any
+  } | undefined>();
+  const onMouseEnter = useCallback((e:any) => {
+    setCursor('pointer');
+    setHoverInfo({
+      longitude: e.lngLat.lng,
+      latitude: e.lngLat.lat,
+      properties: e.features[0].properties
+    });
+  }, []);
+  const onMouseLeave = useCallback(() => {
+    setCursor('');
+    setHoverInfo(undefined);
+  }, []);
 
   return (
     <>
@@ -36,6 +55,18 @@ export default function VrMap({ title}: { title: string }) {
         bounds={bounds} 
         scrollZoom={false} 
         interactiveLayerIds={['vr']}
+        sidebar={
+          <ul  className={fr.cx('fr-toggle__list')}>
+            <li>
+              
+            </li>
+          </ul>
+        }
+        sidebarPosition='right'
+        sidebarWidth={3}
+        cursor={cursor}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
         <Source id='vr' type='geojson' data={geojson}>
           <Layer {...layer} />
