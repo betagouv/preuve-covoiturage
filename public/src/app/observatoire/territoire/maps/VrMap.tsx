@@ -4,8 +4,8 @@ import { Config } from '@/config';
 import { LineLayer, Layer, Source } from 'react-map-gl/maplibre';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { cmsHost } from "@/helpers/cms";
-import { useApi } from '@/hooks/useApi';
-import { FeatureCollection } from 'geojson';
+//import { useApi } from '@/hooks/useApi';
+//import { FeatureCollection } from 'geojson';
 
 export default function VrMap({ title}: { title: string }) {
   const mapTitle = title;
