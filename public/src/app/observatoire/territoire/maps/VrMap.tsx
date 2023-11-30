@@ -4,7 +4,7 @@ import { Config } from '@/config';
 import { LineLayer, Layer, Source } from 'react-map-gl/maplibre';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { cmsHost } from "@/helpers/cms";
-import { useApi } from '@/hooks/useApi';
+import { useJson } from '@/hooks/useJson';
 import { FeatureCollection } from 'geojson';
 import { useMemo } from 'react';
 
@@ -13,7 +13,7 @@ export default function VrMap({ title}: { title: string }) {
   const mapStyle = Config.get<string>('observatoire.mapStyle');
   const bounds = [-5.225, 41.333, 9.55, 51.2] as LngLatBoundsLike;
   const url = `${cmsHost}/assets/897ba3a7-847e-4522-aead-7d8dd0db63c6`;
-  const { data } = useApi<FeatureCollection>(url);
+  const { data } = useJson<FeatureCollection>(url);
   const geojson = useMemo(()=>{
     return data ? data : ''
   }, [data]);
@@ -39,7 +39,6 @@ export default function VrMap({ title}: { title: string }) {
       >
         <Source id='vr' type='geojson' data={geojson}>
           <Layer {...layer} />
-
         </Source>
       </AppMap>
     </>
