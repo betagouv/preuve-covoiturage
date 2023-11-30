@@ -1,7 +1,7 @@
 import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
 //import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
-import { LineLayer, Layer, Source } from 'react-map-gl/maplibre';
+import { LineLayer, Layer, Source, Popup } from 'react-map-gl/maplibre';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { cmsHost } from "@/helpers/cms";
 import { useJson } from '@/hooks/useJson';
@@ -70,6 +70,13 @@ export default function VrMap({ title}: { title: string }) {
       >
         <Source id='vr' type='geojson' data={geojson}>
           <Layer {...layer} />
+          <Popup longitude={hoverInfo ? hoverInfo.longitude : 0} latitude={hoverInfo ? hoverInfo.latitude : 0} closeButton={false}>
+              {hoverInfo && 
+                <div>
+                  {hoverInfo.properties.name && <p><b>nom : </b>{hoverInfo.properties.name}</p>}
+                </div>
+              }
+            </Popup>
         </Source>
       </AppMap>
     </>
