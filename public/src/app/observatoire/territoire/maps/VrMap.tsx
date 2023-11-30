@@ -33,7 +33,7 @@ export default function VrMap({ title}: { title: string }) {
         scrollZoom={false} 
         interactiveLayerIds={['vr']}
       >
-        <Source id='vr' type='geojson' data={data}>
+        <Source id='vr' type='geojson' data={url}>
           <Layer {...layer} />
 
         </Source>
