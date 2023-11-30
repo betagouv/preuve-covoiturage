@@ -4,6 +4,26 @@ export const ceeJourneyTypeEnumSchema = {
   errorMessage: 'must be either short or long',
 };
 
+export const ceeApplicationTypeEnumSchema = {
+  type: 'string',
+  enum: ['specific', 'standardized'],
+  errorMessage: 'must be either specific or standardized',
+};
+
+export const ceeApplicationUuidSchema = {
+  type: 'string',
+  format: 'uuid',
+  maxLength: 36,
+  errorMessage: 'must be a valid uuid',
+};
+
+export const identityKeySchema = {
+  type: 'string',
+  minLength: 64,
+  maxLength: 64,
+  errorMessage: 'must be a valid identity key',
+};
+
 export const phoneTruncSchema = {
   macro: 'phonetrunc',
   errorMessage: 'must be a valid trunced phone number',
@@ -34,6 +54,14 @@ export const drivingLicenseSchema = {
       pattern: '^[A-Z0-9]{1,15}[0-9]{4}$',
       minLength: 5,
       maxLength: 19,
+    },
+    {
+      type: 'string',
+      description: 'Numéro de permis de conduire plus anciens composé de 1 à 15 caractères',
+      example: '123456A',
+      pattern: '^[A-Z0-9]{1,15}$',
+      minLength: 1,
+      maxLength: 15,
     },
     {
       type: 'string',

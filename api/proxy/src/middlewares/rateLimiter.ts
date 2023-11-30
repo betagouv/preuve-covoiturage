@@ -3,6 +3,7 @@ import RedisStore from 'rate-limit-redis';
 import RedisClient from 'ioredis';
 import { env } from '@ilos/core';
 import { config } from '../config';
+import { Request, Response } from 'express';
 
 const minute = 60000;
 
@@ -17,7 +18,7 @@ export function rateLimiter(opts: Partial<RateLimiterOptions> = {}, prefix = 'rl
     }),
     windowMs: 5 * minute,
     max: 100,
-    handler(req, res) {
+    handler(req: Request, res: Response) {
       res.status(429).json({
         error: { code: 429, message: 'Too many requests', ...req.rateLimit },
       });
@@ -25,7 +26,7 @@ export function rateLimiter(opts: Partial<RateLimiterOptions> = {}, prefix = 'rl
     ...opts,
   };
 
-  const factor = parseFloat(String(env('APP_RATE_LIMIT_MAX_FACTOR', 1)));
+  const factor = parseFloat(env.or_fail('APP_RATE_LIMIT_MAX_FACTOR', '1'));
   options.max = Number(options.max) * (typeof factor === 'number' && !isNaN(factor) ? factor : 1);
 
   return rateLimit(options);
@@ -45,7 +46,7 @@ export function apiRateLimiter(opts: Partial<RateLimiterOptions> = {}): RateLimi
   return rateLimiter({ windowMs: 5 * minute, max: 2000, ...opts }, 'rl-api');
 }
 
-// shortcut for /v2/journeys route
+// shortcut for acquisition route
 export function acquisitionRateLimiter(opts: Partial<RateLimiterOptions> = {}): RateLimitRequestHandler {
   return rateLimiter({ windowMs: 1 * minute, max: 20000, ...opts }, 'rl-acquisition');
 }
@@ -55,7 +56,7 @@ export function ceeRateLimiter(opts: Partial<RateLimiterOptions> = {}): RateLimi
   return rateLimiter({ windowMs: 1 * minute, max: 20000, ...opts }, 'rl-cee');
 }
 
-// shortcut for /v2/journeys/:id route
+// shortcut for journey status route
 export function checkRateLimiter(opts: Partial<RateLimiterOptions> = {}): RateLimitRequestHandler {
   return rateLimiter({ windowMs: 1 * minute, max: 2000, ...opts }, 'rl-acquisition-check');
 }

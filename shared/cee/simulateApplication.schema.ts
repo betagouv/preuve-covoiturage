@@ -1,11 +1,12 @@
 import {
   ceeJourneyTypeEnumSchema,
   drivingLicenseSchema,
+  identityKeySchema,
   lastNameTruncSchema,
   phoneTruncSchema,
 } from './common/ceeSchema';
 
-export const alias = 'campaign.simulateCeeApplication';
+export const alias = 'cee.simulateCeeApplication';
 export const schema = {
   type: 'object',
   additionalProperties: false,
@@ -15,6 +16,7 @@ export const schema = {
     phone_trunc: phoneTruncSchema,
     journey_type: ceeJourneyTypeEnumSchema,
     driving_license: drivingLicenseSchema,
+    identity_key: identityKeySchema,
   },
 };
 export const binding = [alias, schema];

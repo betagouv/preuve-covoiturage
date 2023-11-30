@@ -25,7 +25,10 @@ export abstract class CrudStore<
   protected dismissDeleteSubject = new Subject();
   protected dismissUpdateCreateSubject = new Subject();
 
-  constructor(protected rpcCrud: JsonRpcCrudT, protected modelType: Type<EntityT>) {
+  constructor(
+    protected rpcCrud: JsonRpcCrudT,
+    protected modelType: Type<EntityT>,
+  ) {
     super(rpcCrud);
   }
 

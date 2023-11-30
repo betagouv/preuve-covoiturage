@@ -16,6 +16,8 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip install -r requirements.txt
 
+WORKDIR /notebooks/scripts
+
 ENTRYPOINT ["papermill"]
 
 CMD ["papermill", "--help"]

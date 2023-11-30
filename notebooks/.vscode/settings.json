@@ -1,14 +1,10 @@
 {
-    "python.testing.unittestArgs": [
-        "-v",
-        "-s",
-        "scripts",
-        "-p",
-        "test_*.py"
-    ],
-    "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true,
-    "python.testing.pytestArgs": [
-        "scripts"
-    ]
+  "python.languageServer": "Pylance",
+  "python.testing.unittestArgs": ["-v", "-s", "./scripts", "-p", "test_*.py"],
+  "python.testing.pytestEnabled": false,
+  "python.testing.unittestEnabled": true,
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/__init__.py": false
+  }
 }

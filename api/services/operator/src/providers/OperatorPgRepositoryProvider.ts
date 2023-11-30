@@ -1,20 +1,20 @@
-import { provider, NotFoundException, KernelInterfaceResolver } from '@ilos/common';
+import { KernelInterfaceResolver, NotFoundException, provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
 
-import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
-import { OperatorDbInterface } from '../shared/operator/common/interfaces/OperatorDbInterface';
-import { OperatorListInterface } from '../shared/operator/common/interfaces/OperatorListInterface';
 import {
   OperatorRepositoryProviderInterface,
   OperatorRepositoryProviderInterfaceResolver,
 } from '../interfaces/OperatorRepositoryProviderInterface';
+import { OperatorDbInterface } from '../shared/operator/common/interfaces/OperatorDbInterface';
+import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
+import { OperatorListInterface } from '../shared/operator/common/interfaces/OperatorListInterface';
 
+import { signature as companyFetchSignature } from '../shared/company/fetch.contract';
 import {
   signature as companyFindSignature,
   ParamsInterface as CompanyParamsInterface,
   ResultInterface as CompanyResultInterface,
 } from '../shared/company/find.contract';
-import { signature as companyFetchSignature } from '../shared/company/fetch.contract';
 
 @provider({
   identifier: OperatorRepositoryProviderInterfaceResolver,
@@ -89,6 +89,19 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     }
 
     return operator;
+  }
+
+  async findBySiret(siret: string[]): Promise<{ _id: number; siret: string }[]> {
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT _id, siret FROM ${this.table}
+        WHERE siret = ANY($1)
+        AND deleted_at IS NULL
+      `,
+      values: [siret],
+    });
+
+    return result.rowCount ? result.rows : [];
   }
 
   async all(): Promise<OperatorListInterface[]> {

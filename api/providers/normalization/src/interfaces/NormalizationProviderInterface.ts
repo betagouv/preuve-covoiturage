@@ -1,4 +1,3 @@
-import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
 import { CreateJourneyDTO } from '../shared/acquisition/common/interfaces/CreateJourneyDTO';
 
 export interface Acquisition<TPayload> {
@@ -11,7 +10,6 @@ export interface Acquisition<TPayload> {
 
 import { ParamsInterface as CrossCheckParamsInterface } from '../shared/carpool/crosscheck.contract';
 
-export { JourneyInterface as PayloadV2 };
 export { CreateJourneyDTO as PayloadV3 };
 export type ResultInterface = CrossCheckParamsInterface;
 

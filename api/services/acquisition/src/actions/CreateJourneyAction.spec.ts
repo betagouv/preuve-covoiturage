@@ -4,6 +4,7 @@ import { CreateJourneyAction } from './CreateJourneyAction';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { ParseErrorException, ValidatorInterfaceResolver } from '@ilos/common';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
+import { CarpoolAcquisitionService } from '@pdc/provider-carpool';
 
 function bootstap(): {
   action: CreateJourneyAction;
@@ -12,7 +13,8 @@ function bootstap(): {
 } {
   const repository = sinon.createStubInstance(AcquisitionRepositoryProvider);
   const validator = sinon.createStubInstance(ValidatorInterfaceResolver);
-  const action = new CreateJourneyAction(repository, validator);
+  const service = sinon.createStubInstance(CarpoolAcquisitionService);
+  const action = new CreateJourneyAction(repository, validator, service);
   return { action, repository, validator };
 }
 
@@ -25,9 +27,9 @@ test('should return repository data if validator not fail', async (t) => {
   const inputData = {
     method: '',
     params: {
-      api_version: 'v2',
-      journey_id: operator_journey_id,
-      operator_journey_id: 'nope',
+      operator_journey_id,
+      api_version: 'v3',
+      operator_trip_id: 'nope',
       operator_class: 'C',
       operator_id: 1,
     },
@@ -46,18 +48,16 @@ test('should return repository data if validator not fail', async (t) => {
   t.deepEqual(result, { operator_journey_id, created_at });
   const { api_version, ...payload } = inputData.params;
   t.true(validator.validate.calledOnceWith(payload));
-  t.true(
-    repository.createOrUpdateMany.calledOnceWith([
-      {
-        payload,
-        operator_id: 2,
-        operator_journey_id,
-        application_id: 3,
-        api_version: 2,
-        request_id: 'request_id',
-      },
-    ]),
-  );
+  t.deepEqual(repository.createOrUpdateMany.getCalls().pop().args.pop(), [
+    {
+      payload,
+      operator_id: 2,
+      operator_journey_id: '1',
+      application_id: 3,
+      api_version: 3,
+      request_id: 'request_id',
+    },
+  ]);
 });
 
 test('should fail if validator fail', async (t) => {
@@ -71,9 +71,9 @@ test('should fail if validator fail', async (t) => {
   const inputData = {
     method: '',
     params: {
-      api_version: 'v2',
-      journey_id: operator_journey_id,
-      operator_journey_id: 'nope',
+      operator_journey_id,
+      api_version: 'v3',
+      operator_trip_id: 'nope',
       operator_class: 'C',
       operator_id: 1,
     },
@@ -92,7 +92,7 @@ test('should fail if validator fail', async (t) => {
   t.true(validator.validate.calledOnceWith(payload));
   const repositoryAssertArgs = {
     payload,
-    api_version: 2,
+    api_version: 3,
     application_id: 3,
     error_stage: AcquisitionErrorStageEnum.Acquisition,
     errors: [validatorError],
@@ -101,7 +101,7 @@ test('should fail if validator fail', async (t) => {
     request_id: 'request_id',
     status: AcquisitionStatusEnum.Error,
   };
-  t.true(repository.createOrUpdateMany.calledOnceWith([repositoryAssertArgs]));
+  t.deepEqual(repository.createOrUpdateMany.getCalls().pop().args.pop(), [repositoryAssertArgs]);
 });
 
 test('should fail if date validation fail', async (t) => {
@@ -113,15 +113,13 @@ test('should fail if date validation fail', async (t) => {
   const inputData = {
     method: '',
     params: {
-      api_version: 'v2',
-      journey_id: operator_journey_id,
-      operator_journey_id: 'nope',
+      api_version: 'v3',
+      operator_journey_id,
+      operator_trip_id: 'nope',
       operator_class: 'C',
       operator_id: 1,
-      driver: {
-        end: {
-          datetime: new Date(new Date().valueOf() + 100000),
-        },
+      end: {
+        datetime: new Date(new Date().valueOf() + 100000),
       },
     },
     context: {
@@ -139,7 +137,7 @@ test('should fail if date validation fail', async (t) => {
   t.true(validator.validate.calledOnceWith(payload));
   const repositoryAssertArgs = {
     payload,
-    api_version: 2,
+    api_version: 3,
     application_id: 3,
     error_stage: AcquisitionErrorStageEnum.Acquisition,
     errors: [new ParseErrorException('Journeys cannot happen in the future')],
@@ -160,9 +158,9 @@ test('should fail if journey already registred', async (t) => {
   const inputData = {
     method: '',
     params: {
-      api_version: 'v2',
-      journey_id: operator_journey_id,
-      operator_journey_id: 'nope',
+      api_version: 'v3',
+      operator_journey_id,
+      operator_trip_id: 'nope',
       operator_class: 'C',
       operator_id: 1,
     },
@@ -184,7 +182,7 @@ test('should fail if journey already registred', async (t) => {
     operator_id: 2,
     operator_journey_id,
     application_id: 3,
-    api_version: 2,
+    api_version: 3,
     request_id: 'request_id',
   };
   const repositoryArgs = repository.createOrUpdateMany.getCall(0).args[0];

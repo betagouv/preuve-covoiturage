@@ -19,5 +19,8 @@
     "db-migrate": "^0.11.13",
     "db-migrate-pg": "^1.2.2",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.10"
   }
 }

@@ -4,15 +4,6 @@ export const cancel = {
   anyOf: [
     {
       type: 'object',
-      required: ['api_version', 'operator_journey_id'],
-      additionalProperties: false,
-      properties: {
-        api_version: { const: 'v2' },
-        operator_journey_id: { macro: 'varchar' },
-      },
-    },
-    {
-      type: 'object',
       required: ['api_version', 'operator_journey_id', 'code'],
       additionalProperties: false,
       properties: {

@@ -76,11 +76,17 @@ test(
         datetime: new Date('2023-03-22'),
         driver_identity_uuid: 'four',
       },
+      {
+        distance: 5_000,
+        driver_identity_uuid: 'four',
+        start: { ...defaultPosition, aom: '287500078' },
+        end: { ...defaultPosition, aom: '287500078' },
+      },
     ],
     meta: [],
   },
   {
-    incentive: [150, 300, 250, 375, 300, 150],
+    incentive: [150, 300, 250, 375, 300, 150, 150],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.0-2019',
@@ -88,7 +94,7 @@ test(
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1525,
+        value: 1675,
       },
       {
         key: 'max_amount_restriction.0-two.month.0-2019',
@@ -104,6 +110,10 @@ test(
       },
       {
         key: 'max_amount_restriction.0-four.month.2-2023',
+        value: 150,
+      },
+      {
+        key: 'max_amount_restriction.0-four.month.0-2019',
         value: 150,
       },
     ],

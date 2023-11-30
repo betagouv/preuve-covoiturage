@@ -1,0 +1,29 @@
+.pat-list {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  margin-left: -0.5em;
+  margin-right: -0.5em;
+  @media (max-width: 36em) {
+    flex-direction: column;
+  }
+}
+
+.pat-list-item {
+  flex: 1 1 0;
+  > a {
+    display: block;
+    margin: 0 0.5em 1em;
+    padding: 1em;
+    height: 100%;
+    border: 2px solid var(--bf500);
+    box-shadow: none;
+  }
+  &::before {
+    content: none;
+  }
+  &.pat-list-item--active > a {
+    color: var(--w-bf500);
+    background-color: var(--bf500);
+  }
+}

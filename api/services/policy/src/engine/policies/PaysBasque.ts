@@ -20,7 +20,7 @@ import {
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Smt2023.html';
+import { description } from './PaysBasque.html';
 
 // Pays Basque Adour
 export const PaysBasque: PolicyHandlerStaticInterface = class
@@ -38,6 +38,8 @@ export const PaysBasque: PolicyHandlerStaticInterface = class
     },
   ];
 
+  private readonly LAST_DAY_OF_YEAR_DATE = new Date('2023-12-31');
+
   constructor(public max_amount: number) {
     super();
     this.limits = [
@@ -49,7 +51,10 @@ export const PaysBasque: PolicyHandlerStaticInterface = class
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 5_000 });
+    onDistanceRangeOrThrow(ctx, {
+      min: 5_000,
+      max: ctx.carpool.datetime > this.LAST_DAY_OF_YEAR_DATE ? 80_000 : 100_000,
+    });
     isOperatorClassOrThrow(ctx, ['C']);
     isAdultOrThrow(ctx);
   }

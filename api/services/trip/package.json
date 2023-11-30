@@ -26,7 +26,7 @@
     "@ilos/connection-redis": "~0",
     "@ilos/core": "~0",
     "@pdc/helper-test": "~0",
-    "@pdc/provider-file": "~0",
+    "@pdc/provider-storage": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-validator": "~0",
     "adm-zip": "^0.5.10",

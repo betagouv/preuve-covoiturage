@@ -47,7 +47,11 @@ export class OperatorLogoUploadComponent implements OnInit, ControlValueAccessor
   result = new Subject<NullableString>();
   disabled = false;
 
-  constructor(private cd: ChangeDetectorRef, private utils: UtilsService, private toastr: ToastrService) {}
+  constructor(
+    private cd: ChangeDetectorRef,
+    private utils: UtilsService,
+    private toastr: ToastrService,
+  ) {}
   ngOnInit(): void {}
   writeValue(logoImg: NullableString, userChange = false): void {
     if (this.logoImg !== logoImg) {

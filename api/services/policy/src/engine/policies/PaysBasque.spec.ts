@@ -64,10 +64,11 @@ test(
         },
       },
       { passenger_is_over_18: false },
+      { distance: 90_000, datetime: new Date('2024-01-01') },
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -84,19 +85,25 @@ test(
         distance: 35_000,
         driver_identity_uuid: 'one',
       },
+      { distance: 90_000, datetime: new Date('2023-12-31'), driver_identity_uuid: 'one' },
+      { distance: 80_000, driver_identity_uuid: 'one' },
     ],
     meta: [],
   },
   {
-    incentive: [200, 400, 250, 500, 300],
+    incentive: [200, 400, 250, 500, 300, 300, 300],
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.3-2023',
-        value: 1650,
+        value: 1950,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1650,
+        value: 2250,
+      },
+      {
+        key: 'max_amount_restriction.0-one.month.11-2023',
+        value: 300,
       },
     ],
   },

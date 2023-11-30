@@ -69,7 +69,6 @@ api/
 ├─ node_modules/
 ├─ providers/         # global providers
 ├─ proxy/             # HTTP reverse proxy
-├─ scalingo/          # Scalingo specific scripts
 ├─ services/          # api micro-services
 ├─ .env               # local env vars configuration
 ├─ .env.example
@@ -77,7 +76,6 @@ api/
 ├─ lerna.json         # lerna.js configuration
 ├─ mocha-ts.json      # test suite config (legacy)
 ├─ package.json       # js packages
-├─ Procfile           # Scalingo containers' definitions
 ├─ rebuild.sh         # local tool to rebuild the whole project
 ├─ tsconfig.json      # tsc global config
 ├─ package-lock.json
@@ -85,10 +83,7 @@ api/
 
 ## Hébergement
 
-- L'API est hébergée chez Scalingo
-- L'app est hébergée chez Alwaysdata
-
-La nouvelle version sera en Kubernetes. Voir [l'infrastructure](/api/infra.html) pour plus de détails.
+Les apps sont hébergées dans un cluster Kubernetes chez Scaleway. Voir [l'infrastructure](/api/infra.html) pour plus de détails.
 
 Les environnements sont :
 
@@ -113,7 +108,6 @@ Services tierces
 - [Sentry](https://sentry.io/) _(auto hébergé)_
 - [Scaleway](https://www.scaleway.com/)
 - [Alwaysdata](https://www.alwaysdata.com/fr/)
-- [Scalingo](https://scalingo.com/)
 - [OpenStreetMap](https://www.openstreetmap.org/)
 
 ## Licences

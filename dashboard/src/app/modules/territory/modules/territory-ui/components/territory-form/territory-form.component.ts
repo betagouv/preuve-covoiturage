@@ -92,6 +92,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     return [
       !!this.territory.selector.aom?.length,
       !!this.territory.selector.com?.length,
+      !!this.territory.selector.dep?.length,
       !!this.territory.selector.epci?.length,
     ].every((condition) => condition === false);
   }

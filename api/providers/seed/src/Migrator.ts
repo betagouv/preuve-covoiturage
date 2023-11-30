@@ -33,11 +33,13 @@ export class Migrator {
       password: dbUrl.password,
       host: dbUrl.hostname,
       database: dbUrl.pathname.replace('/', ''),
-      port: parseInt(dbUrl.port),
+      port: parseInt(dbUrl.port, 10),
       ssl: false,
     };
     this.dbIsCreated = newDatabase;
-    this.dbName = newDatabase ? `test_${Date.now().valueOf()}` : dbUrl.pathname.replace('/', '');
+    this.dbName = newDatabase
+      ? `test_${Date.now().valueOf()}_${(Math.random() + 1).toString(36).substring(7)}`
+      : dbUrl.pathname.replace('/', '');
     const currentConnection = new URL(dbUrlString);
     if (newDatabase) {
       currentConnection.pathname = `/${this.dbName}`;

@@ -60,3 +60,17 @@ const defaultIncentive: SerializedIncentiveInterface = {
 export function generateIncentive(incentive: Partial<SerializedIncentiveInterface> = {}): SerializedIncentiveInterface {
   return { ...defaultIncentive, ...incentive };
 }
+
+export function generatePartialCarpools(count = 75): Partial<CarpoolInterface>[] {
+  const date: Date = new Date('2022-01-01');
+  return [
+    ...Array(count + 1 + 1)
+      .slice(1)
+      .keys(),
+  ].map((x) => ({
+    datetime: x % 3 == 0 ? date.setDate(date.getDate() + 1) && new Date(date) : new Date(date),
+    distance: 25_000,
+    driver_identity_uuid: 'three',
+    passenger_identity_uuid: v4(),
+  }));
+}

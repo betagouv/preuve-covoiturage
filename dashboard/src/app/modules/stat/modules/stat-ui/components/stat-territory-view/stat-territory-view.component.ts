@@ -35,7 +35,10 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
 
   statViewConfig = TERRITORY_STATS;
 
-  constructor(public statService: StatFilteredStoreService, public filterService: FilterService) {
+  constructor(
+    public statService: StatFilteredStoreService,
+    public filterService: FilterService,
+  ) {
     super();
   }
 

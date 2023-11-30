@@ -1,0 +1,23 @@
+.col {
+  display: flex;
+}
+.stat {
+  align-items: stretch;
+  padding: 2rem 1rem;
+  text-align: right;
+  width: 100%;
+  .value {
+    font-size: 2.5rem;
+    padding: 1rem 0;
+  }
+  .text {
+    font-size: 1rem;
+  }
+  .icon {
+    font-size:64px;
+    float:left;
+    padding-left:1rem;
+    color:#6a6af4;
+  }
+}
+

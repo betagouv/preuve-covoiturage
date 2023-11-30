@@ -2,6 +2,9 @@ import { ValidatorExtension as ValidatorParentExtension } from '@ilos/validator'
 import { ValidatorInterfaceResolver, ServiceContainerInterface, extension } from '@ilos/common';
 
 import { bicCustomFormat } from './formats/bicCustomFormat';
+import { coordinatesKeyword } from './keywords/coordinatesKeyword';
+import { countryCustomFormat } from './formats/countryCustomFormat';
+import { departmentCustomFormat } from './formats/departmentCustomFormat';
 import { euVatCustomFormat } from './formats/euVatCustomFormat';
 import { ibanCustomFormat } from './formats/ibanCustomFormat';
 import { inseeCustomFormat } from './formats/inseeCustomFormat';
@@ -11,10 +14,9 @@ import { objectidCustomFormat } from './formats/objectidCustomFormat';
 import { phoneCustomFormat } from './formats/phoneCustomFormat';
 import { phonetruncCustomFormat } from './formats/phonetruncCustomFormat';
 import { postcodeCustomFormat } from './formats/postcodeCustomFormat';
+import { rnaCustomFormat } from './formats/rnaCustomFormat';
 import { sirenCustomFormat } from './formats/sirenCustomFormat';
 import { siretCustomFormat } from './formats/siretCustomFormat';
-import { coordinatesKeyword } from './keywords/coordinatesKeyword';
-import { rnaCustomFormat } from './formats/rnaCustomFormat';
 
 import { macroKeyword } from './keywords/macroKeyword';
 import { castKeyword } from './keywords/castKeyword';
@@ -31,6 +33,8 @@ export class ValidatorExtension extends ValidatorParentExtension {
 
     // register string formats
     validator.registerCustomKeyword({ name: 'bic', type: 'format', definition: bicCustomFormat });
+    validator.registerCustomKeyword({ name: 'country', type: 'format', definition: countryCustomFormat });
+    validator.registerCustomKeyword({ name: 'department', type: 'format', definition: departmentCustomFormat });
     validator.registerCustomKeyword({ name: 'euvat', type: 'format', definition: euVatCustomFormat });
     validator.registerCustomKeyword({ name: 'iban', type: 'format', definition: ibanCustomFormat });
     validator.registerCustomKeyword({ name: 'insee', type: 'format', definition: inseeCustomFormat });
@@ -54,7 +58,7 @@ export class ValidatorExtension extends ValidatorParentExtension {
     await super.init(serviceContainer);
 
     // dump the registered schema for debug - uncomment for use
-    // if (require('@ilos/core').env('APP_ENV', 'unknown') === 'local') {
+    // if (require('@ilos/core').env.or_fail('APP_ENV', 'unknown') === 'local') {
     //   //@ts-ignore
     //   [...validator.bindings].map((b) => {
     //     console.info(b[0], b[1].schema);

@@ -53,7 +53,7 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
     createRPCPayload(
       'acquisition:logrequest',
       {
-        operator_id: parseInt(payload.o as any, 0) || 0,
+        operator_id: parseInt(payload.o as any, 10) || 0,
         source: 'serverTokenMiddleware',
         error_message: null,
         error_code: null,

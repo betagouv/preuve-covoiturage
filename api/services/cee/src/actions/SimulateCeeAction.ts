@@ -27,7 +27,7 @@ export class SimulateCeeAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if (!!env('APP_DISABLE_CEE_IMPORT', false)) {
+    if (env.or_false('APP_DISABLE_CEE_IMPORT')) {
       throw new ServiceDisabledError();
     }
 
@@ -44,7 +44,7 @@ export class SimulateCeeAction extends AbstractAction {
     }
     if (data.operator_id === operator_id) {
       throw new ConflictException({
-        uuid: data._id,
+        uuid: data.uuid,
         datetime: data.datetime.toISOString(),
       });
     } else {

@@ -71,6 +71,9 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     '2023-03-28',
     '2023-04-06',
     '2023-04-13',
+    '2023-08-12',
+    '2023-08-13',
+    '2023-08-14',
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
@@ -88,7 +91,12 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     }
 
     // Exclure les trajets qui ne sont pas dans l'aom
-    if (!startsAt(ctx, { aom: ['217500016'] }) || !endsAt(ctx, { aom: ['217500016'] })) {
+    // Code insee de l'aom IDFM 2022: 217500016
+    // Code insee de l'aom IDFM 2023: 287500078
+    if (
+      (!startsAt(ctx, { aom: ['217500016'] }) || !endsAt(ctx, { aom: ['217500016'] })) &&
+      (!startsAt(ctx, { aom: ['287500078'] }) || !endsAt(ctx, { aom: ['287500078'] }))
+    ) {
       throw new NotEligibleTargetException();
     }
 

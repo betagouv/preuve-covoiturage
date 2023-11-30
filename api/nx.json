@@ -1,15 +1,19 @@
 {
-  "$schema": "node_modules/nx/schemas/nx-schema.json",
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nrwl/nx-cloud",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "test:unit"
-        ]
-      }
+  "extends": "nx/presets/npm.json",
+  "targetDefaults": {
+    "build": {
+      "cache": true,
+      "dependsOn": ["^build"]
+    },
+    "test:unit": {
+      "cache": true
+    },
+    "coverage": {
+      "cache": true
     }
   },
-  "defaultBase": "dev"
+  "affected": {
+    "defaultBase": "main"
+  },
+  "parallel": 16
 }

@@ -1,17 +1,22 @@
-<table mat-table [dataSource]="campaigns">
+<table mat-table [dataSource]="policies">
   <!-- Status -->
-  <ng-container matColumnDef="status">
+  <ng-container matColumnDef="detailed_status">
     <th mat-header-cell *matHeaderCellDef>Statut</th>
     <td mat-cell *matCellDef="let campaign">
-      <mat-icon [class]="campaign.status" *ngIf="isRunning(campaign)" [matTooltip]="'En cours'"
+      <mat-icon class="active" *ngIf="campaign.detailed_status === 'active'" [matTooltip]="'En cours'"
         matTooltipPosition="right">
         play_circle_outline
       </mat-icon>
-      <mat-icon class="archived" *ngIf="campaign.status === 'draft'" [matTooltip]="'Brouillon'"
+      <mat-icon class="paused" *ngIf="campaign.detailed_status === 'consumed'" [matTooltip]="'Enveloppe consommée'"
         matTooltipPosition="right">
-        pause_circle_outline
+        play_circle_outline
       </mat-icon>
-      <mat-icon class="ended" *ngIf="isOver(campaign)" [matTooltip]="'Terminée'" matTooltipPosition="right">
+      <mat-icon class="draft" *ngIf="campaign.detailed_status === 'draft'" [matTooltip]="'Brouillon'"
+        matTooltipPosition="right">
+        edit_outline
+      </mat-icon>
+      <mat-icon class="ended" *ngIf="campaign.detailed_status === 'finished'" [matTooltip]="'Terminée'"
+        matTooltipPosition="right">
         check
       </mat-icon>
     </td>
@@ -30,7 +35,7 @@
   <!-- Territory name -->
   <ng-container matColumnDef="territory">
     <th mat-header-cell *matHeaderCellDef>Territoire</th>
-    <td mat-cell *matCellDef="let campaign" >
+    <td mat-cell *matCellDef="let campaign">
       {{ campaign.territory || '-' }}
     </td>
   </ng-container>
@@ -38,7 +43,7 @@
   <!-- Amount spent -->
   <ng-container matColumnDef="amount_spent">
     <th mat-header-cell *matHeaderCellDef>Consommation estimée</th>
-    <td mat-cell *matCellDef="let campaign" >
+    <td mat-cell *matCellDef="let campaign">
       <ng-container *ngIf="campaign.incentive_sum">
         {{ centToEuro(campaign.incentive_sum) | euro }}
       </ng-container>

@@ -30,6 +30,8 @@ export class StatusJourneyAction extends AbstractAction {
       operator_journey_id,
       status: acquisition.status,
       created_at: acquisition.created_at,
+      fraud_error_labels: acquisition.fraud_error_labels,
+      anomaly_error_details: acquisition.anomaly_error_details,
     };
   }
 }

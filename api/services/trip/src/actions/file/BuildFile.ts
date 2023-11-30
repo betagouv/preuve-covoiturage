@@ -30,23 +30,30 @@ export class BuildFile {
     const stringifier = this.configure(fd, params.type);
     const normalizeMethod = isOpendata ? normalizeOpendata : normalizeExport;
 
-    let count = 0;
-    do {
-      const results = await cursor.read(10);
-      count = results.length;
-      for (const line of results) {
-        stringifier.write(normalizeMethod(line, tz));
-      }
-    } while (count !== 0);
+    try {
+      let count = 0;
+      do {
+        const results = await cursor.read(10);
+        count = results.length;
+        for (const line of results) {
+          stringifier.write(normalizeMethod(line, tz));
+        }
+      } while (count !== 0);
 
-    // Release the db, end the stream and close the file
-    cursor.release();
-    stringifier.end();
-    await fd.close();
+      // Release the db, end the stream and close the file
+      await cursor.release();
+      stringifier.end();
+      await fd.close();
 
-    console.debug(`Finished exporting file: ${filepath}`);
+      console.debug(`Finished exporting file: ${filepath}`);
 
-    return filepath;
+      return filepath;
+    } catch (e) {
+      await cursor.release();
+      await fd.close();
+      console.error(e.message, e.stack);
+      throw e;
+    }
   }
 
   private cast(type: string, params: ParamsInterface, date: Date): Required<FormatInterface> {
