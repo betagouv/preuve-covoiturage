@@ -54,3 +54,7 @@ jupyter nbconvert --to script scripts/overlap-anomalie-research.ipynb
 Then it should be added to Dockerfile
 
 
+## Directory structure
+
+`/scripts` contains industrialised python script
+`/scripts/notebooks` is meant for data exploration sharing. It will not be part of industrialised code

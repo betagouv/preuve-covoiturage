@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 
-from production.filters.carpool_filters import CarpoolFilters
+from notebooks.filters.carpool_filters import CarpoolFilters
 
 class TestFilterCarpoolWithOverlapOnSameOperator(unittest.TestCase):
 

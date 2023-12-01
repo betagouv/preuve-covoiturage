@@ -29,6 +29,7 @@ except NameError:
 
 import pandas as pd
 from sqlalchemy import create_engine, text
+from scripts.helpers.apply_metods import add_overlap_columns 
 
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
@@ -58,14 +59,12 @@ with engine.connect() as conn:
 # In[4]:
 
 
-from production.computes.carpool_overlaps import CarpoolOverlaps
-
 df_carpool['overlap_group'] = 100
 df_carpool['overlap_duration'] = 0
 df_carpool['overlap_duration_ratio'] = 1
 grouped_tmp = df_carpool.groupby(['identity_key'],group_keys=False)
 
-df_only_grouped_with_overlap_group_filled = grouped_tmp.apply(lambda df: CarpoolOverlaps.add_overlap_columns(df, True)).reset_index(drop=True)
+df_only_grouped_with_overlap_group_filled = grouped_tmp.apply(lambda df: add_overlap_columns(df, True)).reset_index(drop=True)
 
 
 # In[5]:
