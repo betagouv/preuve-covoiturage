@@ -18,8 +18,8 @@ export default function VrMap({ title}: { title: string }) {
   const geojson = useMemo(()=>{
     return data ? data : ''
   }, [data]);
-  const selectList = geojson ? geojson.features?.map(f => {
-    return {id:f.properties!.findIndex(((p:any) => p.name == f.properties!.name)), name:f.properties?.name}
+  const selectList = geojson ? geojson.features?.map((f,i) => {
+    return {id:i, name:f.properties!.name}
   }): [];
   const [selected, setSelected] = useState(0);
   const onChangeSelect = useCallback((value: number) => {
