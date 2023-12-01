@@ -6,7 +6,7 @@ import { cmsHost } from "@/helpers/cms";
 import { useJson } from '@/hooks/useJson';
 import { FeatureCollection } from 'geojson';
 import { useCallback, useMemo, useState } from 'react';
-import { fr } from '@codegouvfr/react-dsfr';
+//import { fr } from '@codegouvfr/react-dsfr';
 import SelectInList from '@/components/common/SelectInList';
 
 export default function VrMap({ title}: { title: string }) {
