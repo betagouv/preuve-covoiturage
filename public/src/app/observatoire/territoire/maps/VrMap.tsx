@@ -1,6 +1,5 @@
 import AppMap from '@/components/observatoire/maps/Map';
 import { Config } from '@/config';
-//import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
 import { LineLayer, Layer, Source, Popup } from 'react-map-gl/maplibre';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { cmsHost } from "@/helpers/cms";
@@ -8,6 +7,7 @@ import { useJson } from '@/hooks/useJson';
 import { FeatureCollection } from 'geojson';
 import { useCallback, useMemo, useState } from 'react';
 import { fr } from '@codegouvfr/react-dsfr';
+import SelectInList from '@/components/common/SelectInList';
 
 export default function VrMap({ title}: { title: string }) {
   const mapTitle = title;
@@ -18,6 +18,11 @@ export default function VrMap({ title}: { title: string }) {
   const geojson = useMemo(()=>{
     return data ? data : ''
   }, [data]);
+  const selectList = geojson ? geojson.features?.map(f => {return {id:f.properties?.indexOf(f.properties?.name), name:f.properties?.name}}): [];
+  const [selected, setSelected] = useState(0);
+  const onChangeSelect = useCallback((value: number) => {
+    setSelected(value);
+  },[]);
   const layer: LineLayer = {
     id: 'vr',
     source:'vr',
@@ -56,11 +61,13 @@ export default function VrMap({ title}: { title: string }) {
         scrollZoom={false} 
         interactiveLayerIds={['vr']}
         sidebar={
-          <ul  className={fr.cx('fr-toggle__list')}>
-            <li>
-              
-            </li>
-          </ul>
+          <SelectInList
+            label='Sélectionner une voie'
+            id={selected}
+            list={selectList}
+            sx={{ minWidth: 300 }}
+            onChange={onChangeSelect}
+          />
         }
         sidebarPosition='right'
         sidebarWidth={3}
