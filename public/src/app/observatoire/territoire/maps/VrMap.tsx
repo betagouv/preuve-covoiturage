@@ -1,12 +1,12 @@
 import AppMap from '@/components/observatoire/maps/Map';
-import { useMap } from 'react-map-gl/maplibre';
+import { MapRef } from 'react-map-gl/maplibre';
 import { Config } from '@/config';
 import { LineLayer, Layer, Source, Popup } from 'react-map-gl/maplibre';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { cmsHost } from "@/helpers/cms";
 import { useJson } from '@/hooks/useJson';
 import { Feature, FeatureCollection } from 'geojson';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useRef } from 'react';
 //import { fr } from '@codegouvfr/react-dsfr';
 import Table from '@codegouvfr/react-dsfr/Table';
 import SelectInList from '@/components/common/SelectInList';
@@ -15,9 +15,10 @@ import bbox from '@turf/bbox';
 
 export default function VrMap({ title}: { title: string }) {
   const mapTitle = title;
-  const {current: map} = useMap();
+  const mapRef = useRef<MapRef>();
+
   const mapStyle = Config.get<string>('observatoire.mapStyle');
-  const bounds = [-5.225, 41.333, 9.55, 51.2] as LngLatBoundsLike;
+  const [bounds, setBounds] = useState<LngLatBoundsLike>([-5.225, 41.333, 9.55, 51.2]);
   const url = `${cmsHost}/assets/897ba3a7-847e-4522-aead-7d8dd0db63c6`;
   const { data } = useJson<FeatureCollection>(url);
   const geojson = useMemo(()=>{
@@ -32,10 +33,8 @@ export default function VrMap({ title}: { title: string }) {
   const onChangeSelect = useCallback((value: number) => {
     setSelected(value);
     setSelectedData(geojson ? geojson.features[value-1] : undefined);
-    map?.fitBounds(bbox(selectedData?.geometry) as LngLatBoundsLike, {
-      padding: 20
-    });
-  },[geojson]);
+    setBounds(bbox(selectedData?.geometry) as LngLatBoundsLike);
+  },[geojson, selectedData]);
   const layer: LineLayer = {
     id: 'vr',
     source:'vr',
