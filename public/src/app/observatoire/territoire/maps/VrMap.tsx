@@ -9,6 +9,7 @@ import { useCallback, useMemo, useState } from 'react';
 //import { fr } from '@codegouvfr/react-dsfr';
 import Table from '@codegouvfr/react-dsfr/Table';
 import SelectInList from '@/components/common/SelectInList';
+import Link from 'next/link';
 
 export default function VrMap({ title}: { title: string }) {
   const mapTitle = title;
@@ -81,7 +82,7 @@ export default function VrMap({ title}: { title: string }) {
                 ['Localisation', selectedData.properties.localisation],
                 ['Longueur', selectedData.properties.distance],
                 ['Année de mise en service', selectedData.properties.mise_en_service],
-                ['En savoir +', selectedData.properties.link],
+                [<Link href={selectedData.properties.link} target='_blank'>'En savoir +</Link>],
               ]}/>
             }
           </>          
