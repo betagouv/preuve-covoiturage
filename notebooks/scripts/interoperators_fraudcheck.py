@@ -27,6 +27,14 @@ try: connection_string
 except NameError:
   connection_string = os.environ['PG_CONNECTION_STRING']
 
+try: delay
+except NameError:
+  delay = os.environ['DELAY']
+
+try: frame
+except NameError:
+  frame = os.environ['FRAME'] 
+
 
 
 # In[ ]:
