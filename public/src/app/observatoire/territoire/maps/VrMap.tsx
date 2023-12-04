@@ -4,9 +4,10 @@ import { LineLayer, Layer, Source, Popup } from 'react-map-gl/maplibre';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { cmsHost } from "@/helpers/cms";
 import { useJson } from '@/hooks/useJson';
-import { FeatureCollection } from 'geojson';
+import { Feature, FeatureCollection } from 'geojson';
 import { useCallback, useMemo, useState } from 'react';
 //import { fr } from '@codegouvfr/react-dsfr';
+import Table from '@codegouvfr/react-dsfr/Table';
 import SelectInList from '@/components/common/SelectInList';
 
 export default function VrMap({ title}: { title: string }) {
@@ -22,8 +23,10 @@ export default function VrMap({ title}: { title: string }) {
     return {id:i, name:f.properties!.name}
   }): [];
   const [selected, setSelected] = useState(0);
+  const [selectedData, setSelectedData] = useState<Feature>();
   const onChangeSelect = useCallback((value: number) => {
     setSelected(value);
+    setSelectedData(geojson ? geojson.features[value] : undefined)
   },[]);
   const layer: LineLayer = {
     id: 'vr',
@@ -63,13 +66,25 @@ export default function VrMap({ title}: { title: string }) {
         scrollZoom={false} 
         interactiveLayerIds={['vr']}
         sidebar={
-          <SelectInList
-            label='Sélectionner une voie'
-            id={selected}
-            list={selectList}
-            sx={{ minWidth: 300 }}
-            onChange={onChangeSelect}
-          />
+          <>
+            <SelectInList
+              label='Sélectionner une voie'
+              id={selected}
+              list={selectList}
+              sx={{ minWidth: 300 }}
+              onChange={onChangeSelect}
+            />
+            {
+              selectedData && selectedData.properties && <Table data={[
+                ['Type', selectedData.properties.type],
+                ['Gestion', selectedData.properties.gestionnaire],
+                ['Localisation', selectedData.properties.localisation],
+                ['Longueur', selectedData.properties.distance],
+                ['Année de mise en service', selectedData.properties.mise_en_service],
+                ['En savoir +', selectedData.properties.link],
+              ]}/>
+            }
+          </>          
         }
         sidebarPosition='right'
         sidebarWidth={3}
