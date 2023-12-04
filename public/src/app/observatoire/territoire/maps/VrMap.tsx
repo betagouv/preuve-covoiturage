@@ -21,13 +21,13 @@ export default function VrMap({ title}: { title: string }) {
     return data ? data : ''
   }, [data]);
   const selectList = geojson ? geojson.features?.map((f,i) => {
-    return {id:i, name:f.properties!.name}
+    return {id:i+1, name:f.properties!.name}
   }): [];
   const [selected, setSelected] = useState(0);
   const [selectedData, setSelectedData] = useState<Feature>();
   const onChangeSelect = useCallback((value: number) => {
-    setSelected(value+1);
-    setSelectedData(geojson ? geojson.features[value+1] : undefined);
+    setSelected(value);
+    setSelectedData(geojson ? geojson.features[value] : undefined);
   },[geojson]);
   const layer: LineLayer = {
     id: 'vr',
