@@ -26,8 +26,8 @@ export default function VrMap({ title}: { title: string }) {
   const [selected, setSelected] = useState(0);
   const [selectedData, setSelectedData] = useState<Feature>();
   const onChangeSelect = useCallback((value: number) => {
-    setSelected(value);
-    setSelectedData(geojson ? geojson.features[value] : undefined);
+    setSelected(value+1);
+    setSelectedData(geojson ? geojson.features[value+1] : undefined);
   },[geojson]);
   const layer: LineLayer = {
     id: 'vr',
@@ -83,7 +83,7 @@ export default function VrMap({ title}: { title: string }) {
                 ['Longueur', selectedData.properties.distance],
                 ['Année de mise en service', selectedData.properties.mise_en_service],
                 [<Link key={selectedData.properties.name} href={selectedData.properties.link} target='_blank'>En savoir +</Link>],
-              ]}/>
+              ]} colorVariant={'blue-ecume'} />
             }
           </>          
         }
