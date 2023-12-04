@@ -9,8 +9,14 @@
 
 # In[ ]:
 
-
 import os
+
+import pandas as pd
+import sqlalchemy as sa
+from sqlalchemy import create_engine, text
+
+from scripts.helpers.apply_metods import add_overlap_columns, remove_carpool_with_same_passenger_and_no_overlap, remove_carpool_with_lowest_overlap_duration
+
 
 # Input params checks
 try: update_carpool_status
@@ -21,14 +27,9 @@ try: connection_string
 except NameError:
   connection_string = os.environ['PG_CONNECTION_STRING']
 
-from scripts.helpers.apply_metods import add_overlap_columns, remove_carpool_with_same_passenger_and_no_overlap, remove_carpool_with_lowest_overlap_duration
 
 
 # In[ ]:
-
-
-import pandas as pd
-from sqlalchemy import create_engine, text
 
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
@@ -74,8 +75,6 @@ phone_trunc_grouped_filtered = grouped_tmp.filter(lambda x: len(pd.unique(x['ope
 
 # In[ ]:
 
-
-from notebooks.computes.carpool_overlaps import CarpoolOverlaps
 
 df_only_grouped_with_overlap_group_filled = phone_trunc_grouped_filtered.assign(overlap_group=100)
 df_only_grouped_with_overlap_group_filled = df_only_grouped_with_overlap_group_filled.assign(overlap_duration=0)
@@ -198,7 +197,6 @@ assert (control_matrix['unique_operator_count'] > 1).all()
 # In[ ]:
 
 
-import sqlalchemy as sa
 
 if update_carpool_status is True:
 
