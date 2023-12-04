@@ -82,7 +82,7 @@ export default function VrMap({ title}: { title: string }) {
                 ['Localisation', selectedData.properties.localisation],
                 ['Longueur', selectedData.properties.distance],
                 ['Année de mise en service', selectedData.properties.mise_en_service],
-                [<Link href={selectedData.properties.link} target='_blank'>En savoir +</Link>],
+                [<Link key={selectedData.properties.name} href={selectedData.properties.link} target='_blank'>En savoir +</Link>],
               ]}/>
             }
           </>          
