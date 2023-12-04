@@ -44,7 +44,7 @@ CASE
       ELSE ci.phone_trunc
       END AS phone_trunc,
 cc.start_position, 
-cc.end_position, gmap_url(cc.start_position, cc.end_position)
+cc.end_position
 FROM CARPOOL.CARPOOLS CC
 JOIN carpool.identities ci on cc.identity_id = ci._id
     WHERE CC.DATETIME >= NOW() - '{delay} hours'::interval - '{frame} hours'::interval
