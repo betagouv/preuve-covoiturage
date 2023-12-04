@@ -31,7 +31,7 @@ export default function VrMap({ title}: { title: string }) {
   const [selectedData, setSelectedData] = useState<Feature>();
   const onChangeSelect = useCallback((value: number) => {
     setSelected(value);
-    setSelectedData(geojson ? geojson.features[value] : undefined);
+    setSelectedData(geojson ? geojson.features[value-1] : undefined);
     map!.fitBounds(bbox(selectedData?.geometry) as LngLatBoundsLike, {
       padding: 20
     });
