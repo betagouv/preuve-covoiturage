@@ -10,11 +10,12 @@ import { useCallback, useMemo, useState } from 'react';
 import Table from '@codegouvfr/react-dsfr/Table';
 import SelectInList from '@/components/common/SelectInList';
 import Link from 'next/link';
+import bbox from '@turf/bbox';
 
 export default function VrMap({ title}: { title: string }) {
   const mapTitle = title;
   const mapStyle = Config.get<string>('observatoire.mapStyle');
-  const bounds = [-5.225, 41.333, 9.55, 51.2] as LngLatBoundsLike;
+  const [bounds, setBounds] = useState<LngLatBoundsLike>([-5.225, 41.333, 9.55, 51.2]);
   const url = `${cmsHost}/assets/897ba3a7-847e-4522-aead-7d8dd0db63c6`;
   const { data } = useJson<FeatureCollection>(url);
   const geojson = useMemo(()=>{
@@ -28,6 +29,7 @@ export default function VrMap({ title}: { title: string }) {
   const onChangeSelect = useCallback((value: number) => {
     setSelected(value);
     setSelectedData(geojson ? geojson.features[value] : undefined);
+    setBounds(bbox(selectedData) as LngLatBoundsLike);
   },[geojson]);
   const layer: LineLayer = {
     id: 'vr',
