@@ -30,7 +30,7 @@ export default function VrMap({ title}: { title: string }) {
   const onChangeSelect = useCallback((value: number) => {
     setSelected(value);
     setSelectedData(geojson ? geojson.features[value-1] : undefined);
-    setBounds(bbox(selectedData?.geometry) as LngLatBoundsLike);
+    setBounds((selectedData ? bbox(selectedData?.geometry) : [-5.225, 41.333, 9.55, 51.2]) as LngLatBoundsLike);
   },[geojson, selectedData]);
   const layer: LineLayer = {
     id: 'vr',
