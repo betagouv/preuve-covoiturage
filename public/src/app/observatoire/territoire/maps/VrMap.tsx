@@ -26,8 +26,8 @@ export default function VrMap({ title}: { title: string }) {
   const [selectedData, setSelectedData] = useState<Feature>();
   const onChangeSelect = useCallback((value: number) => {
     setSelected(value);
-    setSelectedData(geojson ? geojson.features[value] : undefined)
-  },[]);
+    setSelectedData(geojson ? geojson.features[value] : undefined);
+  },[geojson]);
   const layer: LineLayer = {
     id: 'vr',
     source:'vr',
