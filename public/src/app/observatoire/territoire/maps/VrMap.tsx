@@ -87,7 +87,7 @@ export default function VrMap({ title}: { title: string }) {
           </>          
         }
         sidebarPosition='right'
-        sidebarWidth={3}
+        sidebarWidth={4}
         cursor={cursor}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
