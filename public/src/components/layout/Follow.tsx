@@ -37,32 +37,36 @@ export function Follow() {
               <p className={fr.cx('fr-h5','fr-follow__title')}>
                 Suivez-nous sur les réseaux sociaux
               </p>
-              <div>
-                <Link href='https://twitter.com/Covoitbetagouv' style={{"backgroundImage": "none","display":"inline-block"}}>
-                  <Button 
-                    iconId='fr-icon-twitter-fill'
-                    title="Label button"
-                  /> 
-                </Link>
-                <Link href='https://www.linkedin.com/company/registre-de-preuve-de-covoiturage' style={{"backgroundImage": "none","display":"inline-block"}}>
-                  <Button 
-                    iconId='fr-icon-linkedin-box-fill'
-                    title="LinkedIn"
-                  /> 
-                </Link>
-                <Link href='https://www.youtube.com/channel/UC-Dge-XxJCIRG22jcGM-VtA' style={{"backgroundImage": "none","display":"inline-block"}}>
-                  <Button 
-                    iconId='fr-icon-youtube-fill'
-                    title="You Tube"
-                  /> 
-                </Link>
-                <Link href='https://github.com/betagouv/preuve-covoiturage' style={{"backgroundImage": "none","display":"inline-block"}}>
-                  <Button 
-                    iconId='fr-icon-github-fill'
-                    title="GitHub"
-                  /> 
-                </Link>
-              </div>
+              <ul className={fr.cx('fr-btns-group')}>
+                <li>
+                  <a className={fr.cx('fr-btn--twitter','fr-btn')} 
+                    target="_blank" 
+                    href="https://twitter.com/Covoitbetagouv"
+                    title="Twitter - nouvelle fenêtre"
+                  />
+                </li>
+                <li>
+                  <a className={fr.cx('fr-btn--linkedin','fr-btn')} 
+                    target="_blank" 
+                    href="https://www.linkedin.com/company/registre-de-preuve-de-covoiturage"
+                    title="LinkedIn - nouvelle fenêtre"
+                  />
+                </li>
+                <li>
+                  <a className={fr.cx('fr-btn--youtube','fr-btn')} 
+                    target="_blank" 
+                    href="https://www.youtube.com/channel/UC-Dge-XxJCIRG22jcGM-VtA"
+                    title="YouTube - nouvelle fenêtre"
+                  />
+                </li>
+                <li>
+                  <a className={fr.cx('fr-btn--github','fr-btn')} 
+                    target="_blank" 
+                    href="https://github.com/betagouv/preuve-covoiturage"
+                    title="GitHub - nouvelle fenêtre"
+                  />
+                </li>
+              </ul>
             </div>
           </div>
         </div>
