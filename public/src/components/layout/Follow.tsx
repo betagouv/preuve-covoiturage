@@ -1,7 +1,5 @@
 import { fr } from '@codegouvfr/react-dsfr';
 import ButtonsGroup from '@codegouvfr/react-dsfr/ButtonsGroup';
-import Button from '@codegouvfr/react-dsfr/Button';
-import Link from 'next/link';
 
 export function Follow() {
   return (
