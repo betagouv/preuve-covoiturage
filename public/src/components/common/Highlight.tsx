@@ -13,7 +13,7 @@ export default function AppHighlight(props: HighlightProps) {
         <div className={fr.cx('fr-col-md-2')}>
           <figure className={fr.cx('fr-content-media')} style={{"margin":"0"}} role="group">
             <div className={fr.cx('fr-content-media__img')}>
-              <Image className={fr.cx('fr-responsive-img','fr-responsive-img--4x3')} src={props.img} alt={props.alt ? props.alt : ''} width={1200} height={800} />
+              <Image className={fr.cx('fr-responsive-img','fr-responsive-img--4x3')} src={props.img} alt={''} width={120} height={80} />
             </div>
           </figure>
         </div>
@@ -32,7 +32,9 @@ export default function AppHighlight(props: HighlightProps) {
               return {
                 children:b.title,
                 linkProps: {
-                  href: b.url
+                  href: b.url,
+                  title:`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
+                  target:`${b.url.startsWith('http') ? '_blank' : '_self'}`
                 },
                 iconId: b.icon ? b.icon : '',
                 priority: b.color ? b.color : 'primary',

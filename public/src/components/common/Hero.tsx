@@ -28,7 +28,9 @@ export default function Hero(props:HeroProps) {
                 return {
                   children:b.title,
                   linkProps: {
-                    href: b.url
+                    href: b.url,
+                    title:`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
+                    target:`${b.url.startsWith('http') ? '_blank' : '_self'}`
                   },
                   iconId: b.icon ? b.icon : '',
                   priority: b.color ? b.color : 'primary',
@@ -44,7 +46,7 @@ export default function Hero(props:HeroProps) {
         {props.img &&
           <figure className={fr.cx('fr-content-media')} role="group">
             <div className={fr.cx('fr-content-media__img')}>
-              <Image className={fr.cx('fr-responsive-img')} src={`${cmsHost}/assets/${props.img}`} alt={props.alt ? props.alt : ''} width={1200} height={800} />
+              <Image className={fr.cx('fr-responsive-img')} src={`${cmsHost}/assets/${props.img}`} alt={''} width={120} height={80} />
             </div>
           </figure>
         }
@@ -55,7 +57,9 @@ export default function Hero(props:HeroProps) {
               return {
                 children:b.title,
                 linkProps: {
-                  href: b.url
+                  href: b.url,
+                  title:`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
+                  target:`${b.url.startsWith('http') ? '_blank' : '_self'}`
                 },
                 iconId: b.icon ? b.icon : '',
                 priority: b.color ? b.color : 'primary',

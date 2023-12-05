@@ -11,21 +11,24 @@ export function AppFooter() {
             {
               linkProps: {
                 href: 'https://doc.covoiturage.beta.gouv.fr/bienvenue/qui-sommes-nous',
-                target:'_blank'
+                target:'_blank',
+                title:'Qui sommes-nous ? | nouvelle fenêtre'
               },
               text: 'Qui sommes-nous ?'
             },
             {
               linkProps: {
                 href: 'https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage',
-                target:'_blank'
+                target:'_blank',
+                title:'Nos services | nouvelle fenêtre'
               },
               text: 'Nos services'
             },
             {
               linkProps: {
                 href: 'https://doc.covoiturage.beta.gouv.fr/bienvenue/faq-foire-aux-questions',
-                target:'_blank'
+                target:'_blank',
+                title:'Foire aux questions | nouvelle fenêtre'
               },
               text: 'FAQ'
             },
@@ -37,28 +40,32 @@ export function AppFooter() {
             {
               linkProps: {
                 href: 'https://www.expertises-territoires.fr/',
-                target:'_blank'
+                target:'_blank',
+                title:'Expertise territoire | nouvelle fenêtre'
               },
               text: 'Expertises-territoires'
             },
             {
               linkProps: {
                 href: 'https://www.ecologie.gouv.fr/',
-                target:'_blank'
+                target:'_blank',
+                title:'Ecologie.gouv | nouvelle fenêtre'
               },
               text: 'Ecologie.gouv'
             },
             {
               linkProps: {
                 href: 'https://www.ademe.fr/',
-                target:'_blank'
+                target:'_blank',
+                title:'ADEME | nouvelle fenêtre'
               },
               text: 'ADEME'
             },
             {
               linkProps: {
                 href: 'https://www.cerema.fr/',
-                target:'_blank'
+                target:'_blank',
+                title:'Cerema | nouvelle fenêtre'
               },
               text: 'Cerema'
             },
@@ -67,13 +74,16 @@ export function AppFooter() {
       ]}
       accessibility='partially compliant'
       termsLinkProps={{
-        href: '/mentions-legales'
+        href: '/mentions-legales',
+        title: 'mentions légales | Observatoire.covoiturage.gouv.fr'
       }}
       websiteMapLinkProps={{
-        href: '/plan-site'
+        href: '/plan-site',
+        title: 'Plan du site | Observatoire.covoiturage.gouv.fr'
       }}
       accessibilityLinkProps={{
-        href: '/accessibilite'
+        href: '/accessibilite',
+        title: 'Accessibilité | Observatoire.covoiturage.gouv.fr'
       }}
       contentDescription='Le site officiel d’information sur le covoiturage de courte distance.
      Retrouvez toutes les informations et démarches administratives nécessaires au développement du covoiturage sur votre territoire.'
@@ -100,8 +110,19 @@ export function AppFooter() {
       license={
         <>
           Sauf mention contraire, tous les contenus de ce site sont sous{' '}
-          <a href={'https://github.com/etalab/licence-ouverte/blob/master/LO.md'}>licence etalab-2.0</a> 
-          {' '}Toutes les illustrations sont réalisés par <a href={'https://www.freepik.com'}>Freepik</a>
+          <a href={'https://github.com/etalab/licence-ouverte/blob/master/LO.md'} 
+            target="_blank" 
+            title="licence etalab-2.0 | nouvelle fenêtre"
+          >
+            licence etalab-2.0
+          </a> 
+          {' '}Toutes les illustrations sont réalisés par 
+          <a href={'https://www.freepik.com'}
+            target="_blank"
+            title="Freepik | nouvelle fenêtre"
+          >
+            Freepik
+          </a>
         </>
       }
     />

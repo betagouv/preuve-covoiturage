@@ -15,7 +15,7 @@ export function AppHeader() {
       }
       homeLinkProps={{
         href: '/',
-        title: 'Accueil - Site national du covoiturage au quotidien',
+        title: 'Accueil - Observatoire national du covoiturage au quotidien',
       }}
       serviceTitle='Observatoire.covoiturage.gouv.fr'
       serviceTagline='Développer le covoiturage courte distance'

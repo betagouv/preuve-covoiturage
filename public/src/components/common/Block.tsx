@@ -19,7 +19,9 @@ export default function Block(props:BlockProps) {
                 return {
                   children:b.title,
                   linkProps: {
-                    href: b.url
+                    href: b.url,
+                    title:`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
+                    target:`${b.url.startsWith('http') ? '_blank' : '_self'}`
                   },
                   iconId: b.icon ? b.icon : '',
                   priority: b.color ? b.color : 'primary',
@@ -46,7 +48,9 @@ export default function Block(props:BlockProps) {
               return {
                 children:b.title,
                 linkProps: {
-                  href: b.url
+                  href: b.url,
+                  title:`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
+                  target:`${b.url.startsWith('http') ? '_blank' : '_self'}`
                 },
                 iconId: b.icon ? b.icon : '',
                 priority: b.color ? b.color : 'primary',
