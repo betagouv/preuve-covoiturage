@@ -7,7 +7,7 @@ import CategoryTags from "@/components/actualites/CategoryTags";
 
 export async function generateMetadata({ params }: { params: { id: string }}) {
   return {
-    title: `Actualités page ${params.id} | Covoiturage courte distance`,
+    title: `Actualités page ${params.id} | Observatoire.covoiturage.gouv.fr`,
     description: `Page ${params.id} des actualités sur le covoiturage de courte distance`,
   }
 }

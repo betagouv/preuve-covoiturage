@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
     limit: 1,
   });
   return {
-    title: `${data ? data[0].title : ''} | Covoiturage courte distance`,
+    title: `${data ? data[0].title : ''} | Observatoire.covoiturage.gouv.fr`,
     description: shorten(`${data && data[0].content ? data[0].content :
     'Accompagner les différents acteurs du covoiturage de courte distance en France'}`,150),
   }

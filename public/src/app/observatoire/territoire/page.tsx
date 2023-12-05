@@ -21,6 +21,12 @@ import OccupationMap from './maps/OccupationMap';
 import AiresCovoiturageMap from './maps/AiresMap';
 import BestFluxTable from './tables/BestFluxTable';
 import BestTerritoriesTable from './tables/BestTerritoriesTable';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Comprendre le covoiturage quotidien sur votre territoire | Observatoire.covoiturage.gouv.fr',
+  description: 'Un tableau de bord territorial pour conprendre le covoiturage quotidien',
+}
 
 export default function Page() {
   const title = 'Comprendre le covoiturage quotidien sur votre territoire';

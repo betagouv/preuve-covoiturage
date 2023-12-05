@@ -11,7 +11,7 @@ import MDContent from "@/components/common/MDContent";
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'observatoire.covoiturage.gouv.fr',
+  title: 'Accueil | Observatoire.covoiturage.gouv.fr',
   description: 'Développer le covoiturage de courte distance',
 }
 

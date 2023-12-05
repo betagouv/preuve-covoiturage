@@ -6,7 +6,7 @@ import Pagination from "@/components/common/Pagination";
 
 export async function generateMetadata({ params }: { params: { id: string }}) {
   return {
-    title: `Ressources page ${params.id} | Covoiturage courte distance`,
+    title: `Ressources page ${params.id} | Observatoire.covoiturage.gouv.fr`,
     description: `Page ${params.id} des ressources sur le covoiturage de courte distance`,
   }
 }

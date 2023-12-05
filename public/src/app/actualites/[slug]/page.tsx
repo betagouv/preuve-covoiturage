@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
     limit: 1,
   });
   return {
-    title: `${data ? data[0].title : ''} | Covoiturage courte distance`,
+    title: `${data ? data[0].title : ''} | Observatoire.covoiturage.gouv.fr`,
     description: shorten(`${data && data[0].description ? data[0].description : ''}`,150),
   }
 }

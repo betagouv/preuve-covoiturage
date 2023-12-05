@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
     limit: 1,
   });
   return {
-    title: `Catégorie ${data ? data[0].name : ''} des actualités | Covoiturage courte distance`,
+    title: `Catégorie ${data ? data[0].name : ''} des actualités | Observatoire.covoiturage.gouv.fr`,
     description: `Catégorie ${data ? data[0].name : ''} des actualités sur le covoiturage de courte distance`,
   }
 }

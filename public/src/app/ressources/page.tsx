@@ -6,7 +6,7 @@ import Pagination from "@/components/common/Pagination";
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Ressources | Covoiturage courte distance',
+  title: 'Ressources | Observatoire.covoiturage.gouv.fr',
   description: 'Toutes les ressources sur le covoiturage de courte distance',
 }
 
