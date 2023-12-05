@@ -33,7 +33,8 @@ export default async function Home() {
     grey: true,
     imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/6d16d7c5-82fe-4526-a32f-e13bd161bd8f",
     linkProps:{
-      href: '/autres-acteurs/entreprises'
+      href: '/autres-acteurs/entreprises',
+      title:"Vous êtes une entreprise"
     },
     title:"Une entreprise"
   },{
@@ -41,7 +42,8 @@ export default async function Home() {
     grey: true,
     imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/03438e15-8661-4ff4-9090-d3936527c869",
     linkProps:{
-      href: '/autres-acteurs/particuliers'
+      href: '/autres-acteurs/particuliers',
+      title:"Vous êtes un particulier"
     },
     title:"Un particulier"
   },{
@@ -49,7 +51,8 @@ export default async function Home() {
     grey: true,
     imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/ac8000a8-09b8-4e37-868e-bc877c231f71",
     linkProps:{
-      href: '/autres-acteurs/operateurs'
+      href: '/autres-acteurs/operateurs',
+      title:"Vous êtes un opérateur de covoiturage"
     },
     title:"Plateformes de covoiturage"
   }

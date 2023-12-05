@@ -21,12 +21,6 @@ import OccupationMap from './maps/OccupationMap';
 import AiresCovoiturageMap from './maps/AiresMap';
 import BestFluxTable from './tables/BestFluxTable';
 import BestTerritoriesTable from './tables/BestTerritoriesTable';
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Comprendre le covoiturage quotidien sur votre territoire | Observatoire.covoiturage.gouv.fr',
-  description: 'Un tableau de bord territorial pour conprendre le covoiturage quotidien',
-}
 
 export default function Page() {
   const title = 'Comprendre le covoiturage quotidien sur votre territoire';
@@ -40,7 +34,7 @@ export default function Page() {
   return (
     <>
       {!loading && !error &&(
-        <article id='content'>
+        <div id='content'>
           <PageTitle title={title} />
           <h2 className={fr.cx('fr-h4')}>{subtitle}</h2>
           <p className={fr.cx('fr-text--lg')}>{content}</p>
@@ -119,7 +113,7 @@ export default function Page() {
               {params.graph == 4 && <OccupationGraph title={graphList[3].name} params={params} indic="trips"/>}
             </div>
           </div>
-        </article>
+        </div>
       )}
     </>
   );

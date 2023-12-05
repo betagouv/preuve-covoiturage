@@ -15,7 +15,7 @@ export default function Hero(props:HeroProps) {
       }}
     >
       <div className={fr.cx('fr-col-12', 'fr-col-md-9')}>
-        <p className={fr.cx('fr-h1','fr-mb-2v')}>{props.title}</p>
+        <h1 className={fr.cx('fr-h1','fr-mb-2v')}>{props.title}</h1>
         {props.subtitle && <p className={fr.cx('fr-h6')}>{props.subtitle}</p>}
         <div className={fr.cx('fr-pr-md-5v')}>
           <MDContent source={props.content} /> 

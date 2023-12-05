@@ -41,6 +41,7 @@ export default function ActuCard(props: ActuCardProps) {
               iconPosition: "right",
               linkProps: {
                 href: props.href,
+                title: `Lire l\'actualité "${props.title}"`
               },
             },
           ]}

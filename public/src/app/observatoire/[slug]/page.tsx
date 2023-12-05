@@ -83,7 +83,7 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
   const rows = data ? data[0].sections.filter((s:Section) => s.collection === 'Row') : null
 
   return(
-    <article id='content'>
+    <div id='content'>
       {!hero && 
         <PageTitle title={data ? data[0].title : ''} />
       }
@@ -158,6 +158,6 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
           </a>
         </div>
       </div>
-    </article>
+    </div>
   );
 }

@@ -19,7 +19,7 @@ export default function AppHighlight(props: HighlightProps) {
         </div>
       }
       <div className={!props.img ? fr.cx('fr-col-12') : fr.cx('fr-col-md-10')}>
-        <p className={fr.cx('fr-h3', 'fr-ml-md-5w')}>{props.title}</p>
+        <h3 className={fr.cx('fr-h3', 'fr-ml-md-5w')}>{props.title}</h3>
         <Highlight classes={props.classes}>
           {props.content}
         </Highlight>

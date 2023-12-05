@@ -9,7 +9,7 @@ export default function Block(props:BlockProps) {
   return (
     <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
       <div className={fr.cx('fr-col-12', 'fr-col-md-9')}>
-        <p className={fr.cx('fr-h2','fr-mb-2v')}>{props.title}</p>
+        <h2 className={fr.cx('fr-h2','fr-mb-2v')}>{props.title}</h2>
         <p className={fr.cx('fr-pr-md-5v')}>{props.content}</p>
         {props.buttons && props.img && 
           <div className={fr.cx('fr-pr-md-5v')}>

@@ -68,7 +68,7 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
   const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
   
   return(
-    <article id='content'>
+    <div id='content'>
       {!hero && 
         <PageTitle title={data ? data[0].title : ''} />
       }
@@ -146,6 +146,6 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
           </a>
         </div>
       </div>
-    </article>
+    </div>
   );
 }
