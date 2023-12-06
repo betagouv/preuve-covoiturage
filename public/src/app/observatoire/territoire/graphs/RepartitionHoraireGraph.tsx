@@ -94,7 +94,7 @@ export default function RepartitionHoraireGraph({
               <figcaption className={fr.cx('fr-sr-only')}>
                 {chartData().datasets[0] &&
                   <>
-                    <p>Données concernant les horaires à l'origine des trajets</p>
+                    <p>{'Données concernant les horaires à l\'origine des trajets'}</p>
                     <ul>
                       { chartData().datasets[0].data.map((d,i) =>{
                         return (

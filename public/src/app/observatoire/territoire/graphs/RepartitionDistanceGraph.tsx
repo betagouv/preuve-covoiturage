@@ -160,7 +160,7 @@ export default function RepartitionDistanceGraph({
               <figcaption className={fr.cx('fr-sr-only')}>
                 {datasetFrom &&
                   <>
-                    <p>Données de répartition en prenant en compte l'origine des trajets</p>
+                    <p>{'Données de répartition en prenant en compte l\'origine des trajets'}</p>
                     <ul>
                       { datasetFrom.map((d,i) =>{
                         return (
