@@ -65,7 +65,7 @@ export default async function CommunSinglePage({ params }: { params: { slug: str
   const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
   
   return(
-    <article id='content'>
+    <div id='content'>
       {!hero && 
         <PageTitle title={data ? data[0].title : ''} />
       }
@@ -136,13 +136,6 @@ export default async function CommunSinglePage({ params }: { params: { slug: str
           </div>
         </div>
       }
-      <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
-        <div className={fr.cx('fr-col')}>
-          <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">
-            Haut de page
-          </a>
-        </div>
-      </div>
-    </article>
+    </div>
   );
 }

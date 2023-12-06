@@ -59,7 +59,7 @@ export default async function Home() {
 ]
 
   return (
-    <article id='content'>
+    <div id='content'>
       {hero && 
         <Hero 
           title={hero.item.title} 
@@ -140,6 +140,6 @@ export default async function Home() {
           </div>
         </div>
       }
-    </article>
+    </div>
   );
 }

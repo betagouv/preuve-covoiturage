@@ -59,7 +59,7 @@ export default async function ActuCategoryPage({ params }: { params: { slug: str
   const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsActusByPage) : 1
 
   return (
-    <article id='content'>
+    <div id='content'>
       <PageTitle title={content.pageTitle} />
       <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
         {categories.data && <CategoryTags categories={categories.data} active={params.slug} />}
@@ -87,6 +87,6 @@ export default async function ActuCategoryPage({ params }: { params: { slug: str
         count={nbPage}
         href={`/actualites/categorie/${params.slug}`}
       />     
-    </article>
+    </div>
   );
 }

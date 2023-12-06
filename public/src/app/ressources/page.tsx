@@ -28,7 +28,7 @@ export default async function Ressources() {
   const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsRessourcesByPage) : 1
 
   return (
-    <article id='content'>
+    <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
@@ -54,6 +54,6 @@ export default async function Ressources() {
         count={nbPage}
         href={`/ressources`}
       />    
-    </article>
+    </div>
   );
 }

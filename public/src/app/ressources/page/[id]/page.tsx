@@ -50,7 +50,7 @@ export default async function RessourcePage({ params }: { params: { id: string }
   const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsRessourcesByPage) : 1
 
   return (
-    <article id='content'>
+    <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
@@ -77,6 +77,6 @@ export default async function RessourcePage({ params }: { params: { id: string }
         defaultPage={Number(params.id)}
         href={`/ressources`}
       />    
-    </article>
+    </div>
   );
 }

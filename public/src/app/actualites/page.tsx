@@ -31,7 +31,7 @@ export default async function Actualites() {
   const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsActusByPage) : 1
 
   return (
-    <article id='content'>
+    <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
         {categories.data && <CategoryTags categories={categories.data} />}
@@ -59,6 +59,6 @@ export default async function Actualites() {
         count={nbPage}
         href={`/actualites`}
       />   
-    </article>
+    </div>
   );
 }

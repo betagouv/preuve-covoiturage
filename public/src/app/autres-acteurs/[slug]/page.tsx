@@ -136,13 +136,6 @@ export default async function ProfilSinglePage({ params }: { params: { slug: str
           </div>
         </div>
       }
-      <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
-        <div className={fr.cx('fr-col')}>
-          <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">
-            Haut de page
-          </a>
-        </div>
-      </div>
     </div>
   );
 }

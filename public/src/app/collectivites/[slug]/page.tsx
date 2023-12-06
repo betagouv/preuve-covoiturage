@@ -139,13 +139,6 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
           </div>
         </div>
       }
-      <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
-        <div className={fr.cx('fr-col')}>
-          <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">
-            Haut de page
-          </a>
-        </div>
-      </div>
     </div>
   );
 }

@@ -32,7 +32,7 @@ export default function TrajetsGraph({ title,indic, params }: { title: string, i
   const apiUrl = Config.get<string>('next.public_api_url', '');
   const url = `${apiUrl}/evol-monthly-flux?indic=${indic}&code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}`;
   const { data, error, loading } = useApi<EvolFluxDataInterface[]>(url);
-
+  const dataset = data?.map((d) => d[`${indic}`]).reverse();
   const chartData = () => {
     const labels = data?.map((d) => {
       const month = monthList.find((m) => m.id == d.month);
@@ -40,7 +40,7 @@ export default function TrajetsGraph({ title,indic, params }: { title: string, i
     });
     const datasets = [
       {
-        data: data?.map((d) => d[`${indic}`]).reverse(),
+        data: dataset,
         fill: true,
         borderColor: '#000091',
         backgroundColor: 'rgba(0, 0, 145, 0.2)',
@@ -67,9 +67,20 @@ export default function TrajetsGraph({ title,indic, params }: { title: string, i
       {!loading && !error && (
         <div className={fr.cx('fr-callout')}>
           <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
-          <div className='graph-wrapper' style={{ backgroundColor: '#fff' }}>
+          <figure className='graph-wrapper' style={{ backgroundColor: '#fff' }}>
             <Line options={options} data={chartData()} />
-          </div>
+            { dataset &&
+              <figcaption className={fr.cx('fr-sr-only')}>
+                <ul>
+                  { dataset.map((d,i) =>{
+                    return (
+                      <li key={i}>{chartData().labels[i]} : {d} trajets</li>
+                    )
+                  })} 
+                </ul> 
+              </figcaption>
+            }
+          </figure> 
         </div>
       )}
     </>
