@@ -6,6 +6,7 @@ export default function Navigation() {
   const pathname = usePathname();
   return (
     <MainNavigation
+      id='header-navigation'
       items={[
         {
           linkProps: { href: '/', 

@@ -4,6 +4,7 @@ import { Footer } from '@codegouvfr/react-dsfr/Footer';
 export function AppFooter() {
   return (
     <Footer
+      id='footer'
       linkList={[
         {
           categoryName: 'Startup d\'Etat Covoiturage.gouv',
