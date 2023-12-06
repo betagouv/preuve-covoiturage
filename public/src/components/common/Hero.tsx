@@ -30,6 +30,7 @@ export default function Hero(props:HeroProps) {
                   linkProps: {
                     href: b.url,
                     title:`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
+                    "aria-label":`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
                     target:`${b.url.startsWith('http') ? '_blank' : '_self'}`
                   },
                   iconId: b.icon ? b.icon : '',
@@ -59,6 +60,7 @@ export default function Hero(props:HeroProps) {
                 linkProps: {
                   href: b.url,
                   title:`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
+                  "aria-label":`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
                   target:`${b.url.startsWith('http') ? '_blank' : '_self'}`
                 },
                 iconId: b.icon ? b.icon : '',

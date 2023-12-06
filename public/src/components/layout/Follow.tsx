@@ -23,6 +23,7 @@ export function Follow() {
                       linkProps: {
                         href: 'https://covoiturage.beta.gouv.fr/nous-contacter/',
                         title: "Nous contacter - nouvelle fenêtre",
+                        "aria-label": "Nous contacter - nouvelle fenêtre",
                         target: '_blank'
                       }
                     },
@@ -43,6 +44,8 @@ export function Follow() {
                     target="_blank" 
                     href="https://twitter.com/Covoitbetagouv"
                     title="Twitter - nouvelle fenêtre"
+                    aria-label="Twitter - nouvelle fenêtre"
+                    
                   />
                 </li>
                 <li>
@@ -50,6 +53,7 @@ export function Follow() {
                     target="_blank" 
                     href="https://www.linkedin.com/company/registre-de-preuve-de-covoiturage"
                     title="LinkedIn - nouvelle fenêtre"
+                    aria-label="LinkedIn - nouvelle fenêtre"
                   />
                 </li>
                 <li>
@@ -57,6 +61,7 @@ export function Follow() {
                     target="_blank" 
                     href="https://www.youtube.com/channel/UC-Dge-XxJCIRG22jcGM-VtA"
                     title="YouTube - nouvelle fenêtre"
+                    aria-label="YouTube - nouvelle fenêtre"
                   />
                 </li>
                 <li>
@@ -64,6 +69,7 @@ export function Follow() {
                     target="_blank" 
                     href="https://github.com/betagouv/preuve-covoiturage"
                     title="GitHub - nouvelle fenêtre"
+                    aria-label="GitHub - nouvelle fenêtre"
                   />
                 </li>
               </ul>

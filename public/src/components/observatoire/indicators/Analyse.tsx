@@ -26,6 +26,9 @@ export default function SingleIndicator(props: AnalyseProps) {
                   children: props.link.title,
                   linkProps: {
                     href: props.link.url,
+                    title:`${props.link.title} ${props.link.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
+                    "aria-label":`${props.link.title} ${props.link.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
+                    target:`${props.link.url.startsWith('http') ? '_blank' : '_self'}`
                   },
                 },
               ]}
