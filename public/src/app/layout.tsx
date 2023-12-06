@@ -1,5 +1,6 @@
 import { AppFooter } from '@/components/layout/AppFooter';
 import { Follow } from '@/components/layout/Follow';
+import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import { Skiplinks } from '@/components/layout/Skiplinks';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { fr } from '@codegouvfr/react-dsfr';
@@ -50,7 +51,10 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
             <Skiplinks />
             <AppHeader />
             <main>
-              <div className={fr.cx('fr-container')}>{children}</div>
+              <div className={fr.cx('fr-container')}>
+                {children}
+                <ScrollToTop />
+              </div>
               <Follow />
             </main>
             <AppFooter />

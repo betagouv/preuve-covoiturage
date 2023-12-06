@@ -11,7 +11,7 @@ export default function SingleIndicator(props: IndicatorProps) {
         {props.info && <Badge severity='info'>{props.info}</Badge>}
         
         <div className={`fr-callout__title`}>
-          {props.icon && <span className={`material-symbols-outlined ${style.icon}`}>{props.icon}</span>}
+          {props.icon && <span aria-hidden={true} className={`material-symbols-outlined ${style.icon}`}>{props.icon}</span>}
           <p className={`fr-h3 ${style.value}`}>{props.value} {props.unit ? props.unit : ''}</p>
         </div>
         <div className={`fr-callout__text ${style.text}`}>

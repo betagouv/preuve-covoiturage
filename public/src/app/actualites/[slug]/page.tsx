@@ -120,9 +120,6 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
             {data[0].description}
             <MDContent source={data[0].content} />
           </div>
-          <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">
-            Haut de page
-          </a>
         </div>
       }
       </div>
