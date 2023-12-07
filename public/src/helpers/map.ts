@@ -15,8 +15,8 @@ export const parseJSONFile = async (path:string) => {
 }
 
 export const downloadData = (filename:string, data:any[], type?:'csv') => {
-  const replacer = (value:any) => value === null ? '' : value // specify how you want to handle null values here
-  const header = Object.keys(data[0])
+  const replacer = (value:any) => value === null ? '' : value;
+  const header = Object.keys(data[0]);
   let blob = new Blob([JSON.stringify(data)],{type:'application/json'});
   if (type === 'csv'){
     const csv = [
@@ -26,9 +26,10 @@ export const downloadData = (filename:string, data:any[], type?:'csv') => {
     blob = new Blob([csv],{type:'text/csv'});
   }   
   const fileURL = window.URL.createObjectURL(blob);
-  var fileLink = document.createElement('a')
-  fileLink.href = fileURL
-  fileLink.setAttribute('download', `${filename}.${type ? type : 'json'}`)
-  document.body.appendChild(fileLink)
-  fileLink.click()
+  const fileLink = document.createElement('a');
+  fileLink.href = fileURL;
+  fileLink.title = `Télécharger le ficher ${filename}.${type ? type : 'json'}`;
+  fileLink.setAttribute('download', `${filename}.${type ? type : 'json'}`);
+  document.body.appendChild(fileLink);
+  fileLink.click();
 }
