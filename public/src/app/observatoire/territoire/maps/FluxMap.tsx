@@ -6,13 +6,14 @@ import { SearchParamsInterface } from '@/interfaces/observatoire/componentsInter
 import type { FluxDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
 import { ArcLayer } from '@deck.gl/layers/typed';
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import bbox from '@turf/bbox';
 import { multiPoint } from '@turf/helpers';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useMemo } from 'react';
+import { downloadData } from '@/helpers/map';
 
 export default function FluxMap({ title, params }: { title: string; params: SearchParamsInterface }) {
-  const mapTitle = title;
   const apiUrl = Config.get('next.public_api_url', '');
   const url = `${apiUrl}/monthly-flux?code=${params.code}&type=${params.type}&observe=${params.observe}&year=${params.year}&month=${params.month}`;
   const { data, error, loading } = useApi<FluxDataInterface[]>(url);
@@ -74,7 +75,9 @@ export default function FluxMap({ title, params }: { title: string; params: Sear
     <>
       {loading && (
         <div className={fr.cx('fr-callout')}>
-          <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
+          <h3 className={fr.cx('fr-callout__title')}>
+            {title}
+          </h3>
           <div>Chargement en cours...</div>
         </div>
       )}
@@ -86,7 +89,7 @@ export default function FluxMap({ title, params }: { title: string; params: Sear
       )}
       {!loading && !error && (
         <DeckMap 
-          title={mapTitle} 
+          title={title} 
           tooltip={tooltip} 
           mapStyle={mapStyle} 
           layers={[layer]} 
@@ -94,12 +97,21 @@ export default function FluxMap({ title, params }: { title: string; params: Sear
           scrollZoom={false}
           legend={[
             {
-              title: mapTitle,
+              title: title,
               type:'interval',
               classes: getLegendClasses(analyse,'interval')
             }
-          ]
-        }
+          ]}
+          download={
+            <Button onClick={function download(){
+                downloadData('flux',filteredData,'csv')
+              }}
+              iconId="fr-icon-download-fill"
+              iconPosition="right"
+            >
+              Télécharger les données de la carte
+            </Button>
+          }
         />
       )}
     </>
