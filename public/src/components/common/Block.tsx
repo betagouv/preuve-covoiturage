@@ -38,7 +38,7 @@ export default function Block(props:BlockProps) {
         {props.img &&
           <div className={fr.cx('fr-content-media')}>
             <div className={fr.cx('fr-content-media__img')}>
-              <Image className={fr.cx('fr-responsive-img','fr-responsive-img--16x9')} src={`${cmsHost}/assets/${props.img}`} alt={''} width={120} height={80} />
+              <Image className={fr.cx('fr-responsive-img','fr-responsive-img--16x9')} src={`${cmsHost}/assets/${props.img}`} alt={''} width={120} height={80} aria-hidden />
             </div>
           </div>
         }

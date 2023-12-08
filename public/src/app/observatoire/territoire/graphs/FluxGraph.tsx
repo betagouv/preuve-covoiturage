@@ -68,7 +68,7 @@ export default function TrajetsGraph({ title,indic, params }: { title: string, i
         <div className={fr.cx('fr-callout')}>
           <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
           <figure className='graph-wrapper' style={{ backgroundColor: '#fff' }}>
-            <Line options={options} data={chartData()} />
+            <Line options={options} data={chartData()} aria-hidden tabIndex={0}/>
             { dataset &&
               <figcaption className={fr.cx('fr-sr-only')}>
                 <ul>

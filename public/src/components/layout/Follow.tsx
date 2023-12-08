@@ -9,9 +9,9 @@ export function Follow() {
           <div className={fr.cx('fr-col-12','fr-col-md-8')}>
             <div className={fr.cx('fr-follow__newsletter')}>
               <div>
-                <p className={fr.cx('fr-h5','fr-follow__title')}>
+                <h2 className={fr.cx('fr-h5','fr-follow__title')}>
                   Une question ? Écrivez-nous !
-                </p>
+                </h2>
                 <p>
                   Nous vous répondrons au plus vite ou vous redirigerons vers le bon service
                 </p>
@@ -35,9 +35,9 @@ export function Follow() {
           </div>
           <div className={fr.cx('fr-col-12','fr-col-md-4')}>
             <div className={fr.cx('fr-follow__social')}>
-              <p className={fr.cx('fr-h5','fr-follow__title')}>
+              <h2 className={fr.cx('fr-h5','fr-follow__title')}>
                 Suivez-nous sur les réseaux sociaux
-              </p>
+              </h2>
               <ul className={fr.cx('fr-btns-group')}>
                 <li>
                   <a className={fr.cx('fr-btn--twitter','fr-btn')} 

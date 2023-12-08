@@ -50,7 +50,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
           <MuiDsfrThemeProvider>
             <Skiplinks />
             <AppHeader />
-            <main>
+            <main tabIndex={-1}>
               <div className={fr.cx('fr-container')}>
                 {children}
                 <ScrollToTop />

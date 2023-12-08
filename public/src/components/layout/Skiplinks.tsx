@@ -2,7 +2,7 @@ import { fr } from '@codegouvfr/react-dsfr';
 
 export function Skiplinks(){
   return(
-    <div id='top' className={fr.cx('fr-skiplinks')} tabIndex={-1}>
+    <div id='top' className={fr.cx('fr-skiplinks')}>
       <nav className={fr.cx('fr-container')} role="navigation" aria-label="Accès rapide">
         <ul className={fr.cx('fr-skiplinks__list')}>
           <li>

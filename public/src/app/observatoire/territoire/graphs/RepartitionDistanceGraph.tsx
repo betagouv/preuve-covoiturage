@@ -155,7 +155,7 @@ export default function RepartitionDistanceGraph({
         <div className={fr.cx('fr-callout')}>
           <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
           <figure className='graph-wrapper' style={{ backgroundColor: '#fff', height:"350px"}}>
-            <Doughnut options={options} plugins={plugins} data={chartData() as ChartData<"doughnut",number[]>} />
+            <Doughnut options={options} plugins={plugins} data={chartData() as ChartData<"doughnut",number[]>} aria-hidden tabIndex={0} />
             { chartData() &&
               <figcaption className={fr.cx('fr-sr-only')}>
                 {datasetFrom &&
