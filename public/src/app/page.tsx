@@ -104,6 +104,7 @@ export default async function Home() {
               desc={t.desc}
               grey={t.grey}
               imageUrl={t.imageUrl}
+              imageAlt={''}
               linkProps={t.linkProps}
             />
           </div>
