@@ -12,6 +12,9 @@ import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
 import { SwitchFilterInterface } from '@/interfaces/observatoire/helpersInterfaces';
 import { useSwitchFilters } from '@/hooks/useSwitchFilters';
 import ToggleSwitch from '@codegouvfr/react-dsfr/ToggleSwitch';
+import Button from '@codegouvfr/react-dsfr/Button';
+import { downloadData } from '@/helpers/map';
+import { FeatureCollection, GeoJsonProperties } from 'geojson';
 
 export default function AiresCovoiturageMap({ title, params }: { title: string; params: SearchParamsInterface }) {
   const mapTitle = title;
@@ -33,11 +36,12 @@ export default function AiresCovoiturageMap({ title, params }: { title: string; 
   const { data, error, loading } = useApi<AiresCovoiturageDataInterface[]>(url);
 
   const geojson = useMemo(()=>{
-    const features = data ? data.map((d) =>
-      feature(d.geom, { ...d, ...{ geom: undefined }}),
-    ) : [];
     const activeFilters = switchFilters.filter(f => f.active === true).map(s => s.name);
-    return featureCollection(features.filter(f => activeFilters.includes(f.properties.type)))
+    const features = data!.filter(f => activeFilters.includes(f.type)).map(f => {
+      const { geom, ...properties } = f;
+      return feature(f.geom, properties);
+    });
+    return featureCollection(features) as unknown as FeatureCollection;
   }, [switchFilters, data]);
 
   const layer: CircleLayer = {
@@ -158,6 +162,16 @@ export default function AiresCovoiturageMap({ title, params }: { title: string; 
           cursor={cursor}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
+          download={
+            <Button onClick={function download(){
+                downloadData('aires_de_covoiturage',geojson,'geojson')
+              }}
+              iconId="fr-icon-download-fill"
+              iconPosition="right"
+            >
+              Télécharger les données de la carte
+            </Button>
+          }
         >
           <Source id='aires' type='geojson' data={geojson}>
             <Layer {...layer} />
