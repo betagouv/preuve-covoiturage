@@ -52,9 +52,9 @@ export default async function Home() {
     imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/ac8000a8-09b8-4e37-868e-bc877c231f71",
     linkProps:{
       href: '/autres-acteurs/operateurs',
-      title:"Vous êtes un opérateur de covoiturage"
+      title:"Vous êtes une plateforme de covoiturage"
     },
-    title:"Plateformes de covoiturage"
+    title:"Une plateforme de covoiturage"
   }
 ]
 
