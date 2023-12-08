@@ -36,11 +36,11 @@ export default function Block(props:BlockProps) {
       </div>
       <div className={fr.cx('fr-col', 'fr-col-md-3','fr-my-auto')}>
         {props.img &&
-          <figure className={fr.cx('fr-content-media')} role="group">
+          <div className={fr.cx('fr-content-media')}>
             <div className={fr.cx('fr-content-media__img')}>
               <Image className={fr.cx('fr-responsive-img','fr-responsive-img--16x9')} src={`${cmsHost}/assets/${props.img}`} alt={''} width={120} height={80} />
             </div>
-          </figure>
+          </div>
         }
         {props.buttons && !props.img && 
           <ButtonsGroup
