@@ -39,7 +39,7 @@ export default function AiresCovoiturageMap({ title, params }: { title: string; 
     const activeFilters = switchFilters.filter(f => f.active === true).map(s => s.name);
     const features = data!.filter(f => activeFilters.includes(f.type)).map(f => {
       const { geom, ...properties } = f;
-      return feature(f.geom, properties);
+      return feature(geom, properties);
     });
     return featureCollection(features) as unknown as FeatureCollection;
   }, [switchFilters, data]);
