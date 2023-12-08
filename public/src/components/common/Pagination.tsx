@@ -40,7 +40,7 @@ export default function Pagination(props:PaginationProps) {
               </p>
             }
             {defaultPage > 1 &&
-              <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--first')} href={`${props.href}`} title="Première page">
+              <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--first')} href={`${props.href}`}>
               Première page
             </Link>
             }
@@ -54,7 +54,6 @@ export default function Pagination(props:PaginationProps) {
             {defaultPage > 1 &&
               <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--prev', 'fr-pagination__link--lg-label')} 
                 href={`${props.href}/page/${defaultPage-1}`}
-                title="Page précédente"
               >
                 Page précédente
               </Link>
@@ -63,14 +62,13 @@ export default function Pagination(props:PaginationProps) {
           {pages.map(p =>
             <li key={p.number}>
               {p.active && 
-                <p className={fr.cx('fr-pagination__link')} aria-current={'page'} title={`Page ${p.number}`}>
+                <p className={fr.cx('fr-pagination__link')} aria-current={'page'}>
                   {p.number}
                 </p>
               }
               {!p.active &&
                 <Link className={fr.cx('fr-pagination__link')} 
                   href={`${props.href}/page/${p.number}`}
-                  title={`Page ${p.number}`}
                 >
                   {p.number}
                 </Link>
@@ -86,7 +84,6 @@ export default function Pagination(props:PaginationProps) {
             {defaultPage != props.count &&
               <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--next', 'fr-pagination__link--lg-label')} 
                 href={`${props.href}/page/${defaultPage+1}`}
-                title="Page suivante"
               >
                 Page suivante
               </Link>
@@ -101,7 +98,6 @@ export default function Pagination(props:PaginationProps) {
             {defaultPage != props.count &&
               <Link className={fr.cx('fr-pagination__link', 'fr-pagination__link--last')} 
                 href={`${props.href}/page/${props.count}`}
-                title="Dernière page"
               >
                 Dernière page
               </Link>

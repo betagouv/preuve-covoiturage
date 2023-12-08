@@ -14,7 +14,7 @@ export default function RessourceCard(props: RessourceCardProps) {
         linkProps: {
           href: props.file,
           target: '_blank',
-          title: `Télécharger la ressource "${props.title}" | nouvelle fenêtre`
+          title: `Télécharger la ressource "${props.title}" - nouvelle fenêtre`
         },
       })
     }
@@ -27,7 +27,7 @@ export default function RessourceCard(props: RessourceCardProps) {
         linkProps: {
           href: props.link,
           target: '_blank',
-          title: `En savoir plus sur "${props.title}" | nouvelle fenêtre`
+          title: `En savoir plus sur "${props.title}" - nouvelle fenêtre`
         },
       })
     }

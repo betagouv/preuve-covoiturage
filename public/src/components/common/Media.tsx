@@ -28,10 +28,13 @@ export default function Media(props: MediaProps) {
             buttons={props.buttons.map(b => {
               return {
                 children:b.title,
-                linkProps: {
+                linkProps: b.url.startsWith('http') ? {
                   href: b.url,
-                  title:`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
-                  target:`${b.url.startsWith('http') ? '_blank' : '_self'}`
+                  title:`${b.title} - nouvelle fenêtre` ,
+                  "aria-label":`${b.title} - nouvelle fenêtre`,
+                  target:'_blank'
+                } : {
+                  href: b.url,
                 },
                 iconId: b.icon ? b.icon : '',
                 priority: b.color ? b.color : 'primary',

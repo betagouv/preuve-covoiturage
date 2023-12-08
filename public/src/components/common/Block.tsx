@@ -18,11 +18,13 @@ export default function Block(props:BlockProps) {
               buttons={props.buttons.map(b => {
                 return {
                   children:b.title,
-                  linkProps: {
+                  linkProps: b.url.startsWith('http') ? {
                     href: b.url,
-                    title:`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
-                    "aria-label":`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
-                    target:`${b.url.startsWith('http') ? '_blank' : '_self'}`
+                    title:`${b.title} - nouvelle fenêtre` ,
+                    "aria-label":`${b.title} - nouvelle fenêtre`,
+                    target:'_blank'
+                  } : {
+                    href: b.url,
                   },
                   iconId: b.icon ? b.icon : '',
                   priority: b.color ? b.color : 'primary',
@@ -38,7 +40,7 @@ export default function Block(props:BlockProps) {
         {props.img &&
           <div className={fr.cx('fr-content-media')}>
             <div className={fr.cx('fr-content-media__img')}>
-              <Image className={fr.cx('fr-responsive-img','fr-responsive-img--16x9')} src={`${cmsHost}/assets/${props.img}`} alt={''} width={120} height={80} aria-hidden />
+              <Image className={fr.cx('fr-responsive-img','fr-responsive-img--16x9')} src={`${cmsHost}/assets/${props.img}`} alt={''} width={120} height={80} aria-hidden={true} />
             </div>
           </div>
         }
@@ -48,11 +50,13 @@ export default function Block(props:BlockProps) {
             buttons={props.buttons.map(b => {
               return {
                 children:b.title,
-                linkProps: {
+                linkProps: b.url.startsWith('http') ? {
                   href: b.url,
-                  title:`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
-                  "aria-label":`${b.title} ${b.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
-                  target:`${b.url.startsWith('http') ? '_blank' : '_self'}`
+                  title:`${b.title} - nouvelle fenêtre` ,
+                  "aria-label":`${b.title} - nouvelle fenêtre`,
+                  target:'_blank'
+                } : {
+                  href: b.url,
                 },
                 iconId: b.icon ? b.icon : '',
                 priority: b.color ? b.color : 'primary',

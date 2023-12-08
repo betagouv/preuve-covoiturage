@@ -45,8 +45,7 @@ export function Follow() {
                     href="https://twitter.com/Covoitbetagouv"
                     title="Twitter - nouvelle fenêtre"
                     aria-label="Twitter - nouvelle fenêtre"
-                    
-                  />
+                  >Twitter<span className={fr.cx('fr-sr-only')}> - nouvelle fenêtre</span></a>
                 </li>
                 <li>
                   <a className={fr.cx('fr-btn--linkedin','fr-btn')} 
@@ -54,7 +53,7 @@ export function Follow() {
                     href="https://www.linkedin.com/company/registre-de-preuve-de-covoiturage"
                     title="LinkedIn - nouvelle fenêtre"
                     aria-label="LinkedIn - nouvelle fenêtre"
-                  />
+                  >LinkedIn<span className={fr.cx('fr-sr-only')}> - nouvelle fenêtre</span></a>
                 </li>
                 <li>
                   <a className={fr.cx('fr-btn--youtube','fr-btn')} 
@@ -62,7 +61,7 @@ export function Follow() {
                     href="https://www.youtube.com/channel/UC-Dge-XxJCIRG22jcGM-VtA"
                     title="YouTube - nouvelle fenêtre"
                     aria-label="YouTube - nouvelle fenêtre"
-                  />
+                  >YouTube<span className={fr.cx('fr-sr-only')}> - nouvelle fenêtre</span></a>
                 </li>
                 <li>
                   <a className={fr.cx('fr-btn--github','fr-btn')} 
@@ -70,7 +69,7 @@ export function Follow() {
                     href="https://github.com/betagouv/preuve-covoiturage"
                     title="GitHub - nouvelle fenêtre"
                     aria-label="GitHub - nouvelle fenêtre"
-                  />
+                  >Github<span className={fr.cx('fr-sr-only')}> - nouvelle fenêtre</span></a>
                 </li>
               </ul>
             </div>

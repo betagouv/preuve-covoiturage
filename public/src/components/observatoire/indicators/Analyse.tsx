@@ -24,11 +24,13 @@ export default function SingleIndicator(props: AnalyseProps) {
               buttons={[
                 {
                   children: props.link.title,
-                  linkProps: {
+                  linkProps: props.link.url.startsWith('http') ? {
                     href: props.link.url,
-                    title:`${props.link.title} ${props.link.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
-                    "aria-label":`${props.link.title} ${props.link.url.startsWith('http') ? '| nouvelle fenêtre' : ''}`,
-                    target:`${props.link.url.startsWith('http') ? '_blank' : '_self'}`
+                    title:`${props.link.title} - nouvelle fenêtre` ,
+                    "aria-label":`${props.link.title} - nouvelle fenêtre`,
+                    target:'_blank'
+                  } : {
+                    href: props.link.url,
                   },
                 },
               ]}
