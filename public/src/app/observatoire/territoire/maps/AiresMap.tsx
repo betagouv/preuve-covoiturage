@@ -14,7 +14,7 @@ import { useSwitchFilters } from '@/hooks/useSwitchFilters';
 import ToggleSwitch from '@codegouvfr/react-dsfr/ToggleSwitch';
 import Button from '@codegouvfr/react-dsfr/Button';
 import { downloadData } from '@/helpers/map';
-import { FeatureCollection, GeoJsonProperties } from 'geojson';
+import { FeatureCollection } from 'geojson';
 
 export default function AiresCovoiturageMap({ title, params }: { title: string; params: SearchParamsInterface }) {
   const mapTitle = title;
