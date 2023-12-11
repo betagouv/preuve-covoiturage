@@ -69,7 +69,7 @@ export default function DistanceGraph({ title, params }: { title: string; params
         <div className={fr.cx('fr-callout')}>
           <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
           <figure className='graph-wrapper' style={{ backgroundColor: '#fff' }}>
-            <Line options={options} data={chartData()} aria-hidden tabIndex={0} />
+            <Line options={options} data={chartData()} aria-hidden />
             { dataset &&
               <figcaption className={fr.cx('fr-sr-only')}>
                 <ul>
