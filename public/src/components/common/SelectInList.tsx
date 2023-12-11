@@ -17,7 +17,6 @@ export default function SelectInList(props: Props) {
       <FormControl sx={props.sx}>
         <InputLabel id='select-label'>{props.label}</InputLabel>
         <Select
-          labelId='select-label'
           value={props.id}
           label={props.label}
           onChange={(event) => props.onChange(event.target.value as number)}
