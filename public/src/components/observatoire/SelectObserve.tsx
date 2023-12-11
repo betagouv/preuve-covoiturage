@@ -19,9 +19,9 @@ export default function SelectObserve(props: SelectObserveProps) {
   return (
     <>
       <FormControl sx={{ minWidth: 200 }}>
-        <InputLabel id='select-label'>{props.label}</InputLabel>
+        <InputLabel>{props.label}</InputLabel>
         <Select
-          labelId='select-label'
+          labelId={props.label}
           value={props.value}
           label={props.label}
           onChange={(event) => handlerChangeObserve(event.target.value as PerimeterType)}
