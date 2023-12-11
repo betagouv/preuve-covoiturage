@@ -19,7 +19,7 @@ export default function SelectObserve(props: SelectObserveProps) {
   return (
     <>
       <FormControl sx={{ minWidth: 200 }}>
-        <InputLabel>{props.label}</InputLabel>
+        <InputLabel id={props.label}>{props.label}</InputLabel>
         <Select
           labelId={props.label}
           value={props.value}

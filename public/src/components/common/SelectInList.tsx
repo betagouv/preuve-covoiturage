@@ -15,7 +15,7 @@ export default function SelectInList(props: Props) {
   return (
     <>
       <FormControl sx={props.sx}>
-        <InputLabel>{props.label}</InputLabel>
+        <InputLabel id={props.label}>{props.label}</InputLabel>
         <Select
          labelId={props.label} 
           value={props.id}
