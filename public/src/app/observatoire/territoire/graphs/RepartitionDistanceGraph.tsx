@@ -46,7 +46,7 @@ export default function RepartitionDistanceGraph({
       {
         label: 'Origine',
         data: datasetFrom,
-        backgroundColor: ['#08519c', '#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#eff3ff'],
+        backgroundColor: ['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#eff3ff','#f4f6ff'],
         datalabels: {
           labels: {
             name: {
