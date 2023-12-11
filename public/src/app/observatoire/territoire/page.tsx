@@ -72,6 +72,7 @@ export default function Page() {
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <SelectInList
+                labelId='carte'
                 label='Sélectionner une carte'
                 id={params.map}
                 list={params.code=='XXXXX' ? mapList.filter( m => m.id !== 2) : mapList}
@@ -81,7 +82,7 @@ export default function Page() {
             </div>
             {[1,3].includes(params.map) && 
               <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-                <SelectObserve label={observeLabel} type={params.type} value={params.observe} onChange={onChangeObserve} />
+                <SelectObserve id='observe' label={observeLabel} type={params.type} value={params.observe} onChange={onChangeObserve} />
               </div>
             }
           </div>
@@ -97,6 +98,7 @@ export default function Page() {
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12')}>
               <SelectInList
+                labelId='graph'
                 label='Sélectionner un graphique'
                 id={params.graph}
                 list={graphList}

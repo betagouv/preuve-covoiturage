@@ -20,6 +20,7 @@ export default function SelectPeriod(props: SelectPeriodProps) {
   return (
     <>
       <SelectInList
+        labelId='mois'
         label='Mois'
         id={props.month}
         list={monthList}
@@ -27,6 +28,7 @@ export default function SelectPeriod(props: SelectPeriodProps) {
         onChange={handlerChangeMonth}
       />
       <SelectInList
+        labelId='annee'
         label='Année'
         id={props.year}
         list={yearList}

@@ -4,6 +4,7 @@ import { PerimeterType } from '@/interfaces/observatoire/Perimeter';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 type SelectObserveProps = {
+  id: string,
   label: string,
   type: PerimeterType,
   value: string,
@@ -19,9 +20,9 @@ export default function SelectObserve(props: SelectObserveProps) {
   return (
     <>
       <FormControl sx={{ minWidth: 200 }}>
-        <InputLabel id={props.label}>{props.label}</InputLabel>
+        <InputLabel id={props.id}>{props.label}</InputLabel>
         <Select
-          labelId={props.label}
+          labelId={props.id}
           value={props.value}
           label={props.label}
           onChange={(event) => handlerChangeObserve(event.target.value as PerimeterType)}
