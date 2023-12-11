@@ -40,7 +40,7 @@ export default async function Ressources() {
                   content={a.content}
                   date={new Date(a.date_created).toLocaleDateString('fr-FR')}
                   link={a.link}
-                  file={`${a.file ? `${cmsHost}/assets/${a.file.id}` :'' }`}
+                  file={a.file ? `${cmsHost}/assets/${a.file}` : undefined}
                   img={`${cmsHost}/assets/${a.img.id}`}
                   img_legend={a.img_legend}
                   horizontal

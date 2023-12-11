@@ -118,7 +118,7 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
                   content={shorten(r.item.content, 100)}
                   date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
                   link={r.item.link}
-                  file={`${r.item.file ? `${cmsHost}/assets/${r.item.file}` :'' }`}
+                  file={r.item.file ? `${cmsHost}/assets/${r.item.file}` : undefined}
                   img={`${cmsHost}/assets/${r.item.img}`}
                   img_legend={r.item.img_legend}                
                 />
