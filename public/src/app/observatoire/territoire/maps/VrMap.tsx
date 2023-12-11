@@ -72,6 +72,7 @@ export default function VrMap({ title}: { title: string }) {
         sidebar={
           <>
             <SelectInList
+              labelId='voies'
               label='Sélectionner une voie'
               id={selected}
               list={selectList}
