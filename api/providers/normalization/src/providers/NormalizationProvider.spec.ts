@@ -98,6 +98,10 @@ test('Should normalize v3', async (t) => {
         identity: {
           identity_key: randomUUID(),
           operator_user_id: randomUUID(),
+          travel_pass: {
+            name: 'navigo',
+            user_id: '111',
+          }
         },
         contribution: 50,
         payments: [
@@ -174,6 +178,8 @@ test('Should normalize v3', async (t) => {
         identity: {
           operator_user_id: data.payload.passenger.identity.operator_user_id,
           identity_key: data.payload.passenger.identity.identity_key,
+          travel_pass_name: data.payload.passenger.identity.travel_pass.name,
+          travel_pass_user_id: data.payload.passenger.identity.travel_pass.user_id,
         },
         meta: {
           calc_duration: 500,
