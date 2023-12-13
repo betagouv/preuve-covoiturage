@@ -15,7 +15,7 @@ import pandas as pd
 import sqlalchemy as sa
 from sqlalchemy import create_engine, text
 
-from scripts.helpers.apply_metods import add_overlap_columns, remove_carpool_with_same_passenger_and_no_overlap, remove_carpool_with_lowest_overlap_duration
+from helpers.apply_metods import add_overlap_columns, remove_carpool_with_same_passenger_and_no_overlap, remove_carpool_with_lowest_overlap_duration
 
 
 # Input params checks

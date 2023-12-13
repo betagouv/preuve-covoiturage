@@ -29,7 +29,7 @@ except NameError:
 
 import pandas as pd
 from sqlalchemy import create_engine, text
-from scripts.helpers.apply_metods import add_overlap_columns 
+from helpers.apply_metods import add_overlap_columns 
 
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
