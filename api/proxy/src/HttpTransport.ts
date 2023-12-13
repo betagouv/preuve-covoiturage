@@ -184,18 +184,11 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
-    // use CORS asynchronously to log the calls and check against a list of domains
     this.app.use(
       /\/(observatory|geo\/search)/i,
-      cors((req: Request, callback) => {
-        const domains = [
-          'https://demo.covoiturage.beta.gouv.fr',
-          'https://covoiturage.beta.gouv.fr',
-          'http://localhost:4200',
-        ];
-        const origin = req.header('Origin') || '';
-        const error = domains.includes(origin) ? null : new Error(`CORS: ${origin} is not allowed`);
-        callback(error, { origin: true, optionsSuccessStatus: 200 });
+      cors({
+        origin: this.config.get('proxy.observatoryCors'),
+        optionsSuccessStatus: 200,
       }),
     );
 
