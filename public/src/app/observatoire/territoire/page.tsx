@@ -12,7 +12,7 @@ import SectionTitle from '../../../components/common/SectionTitle';
 import KeyFigures from './KeyFigures';
 import DistanceGraph from './graphs/DistanceGraph';
 import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
-import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
+//import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
 import FluxGraph from './graphs/FluxGraph';
 import OccupationGraph from './graphs/OccupationGraph';
 import DensiteMap from './maps/DensiteMap';
@@ -53,11 +53,11 @@ export default function Page() {
           />
           <KeyFigures params={params} />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
+            {/*<div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <RepartitionHoraireGraph title='Trajets par horaire' params={params} />
-            </div>
+            </div>*/}
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-              <RepartitionDistanceGraph title='Trajets par distance' params={params} />
+              <RepartitionDistanceGraph title='Répartition des trajets par distance' params={params} />
             </div>
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
@@ -66,6 +66,27 @@ export default function Page() {
             </div>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <BestTerritoriesTable title='Top 10 des territoires' limit={10} params={params} />
+            </div>
+          </div>
+          <SectionTitle title='Evolution' />
+          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
+            <div className={fr.cx('fr-col-12')}>
+              <SelectInList
+                labelId='graph'
+                label='Sélectionner un graphique'
+                id={params.graph}
+                list={graphList}
+                sx={{ minWidth: 300 }}
+                onChange={onChangeGraph}
+              />
+            </div>
+          </div>
+          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
+            <div className={fr.cx('fr-col-12')}>
+              {params.graph == 1 && <FluxGraph title={graphList[0].name} params={params} indic="journeys"/>}
+              {params.graph == 2 && <DistanceGraph title={graphList[1].name} params={params} />}
+              {params.graph == 3 && <OccupationGraph title={graphList[2].name} params={params} indic="occupation_rate"/>}
+              {params.graph == 4 && <OccupationGraph title={graphList[3].name} params={params} indic="trips"/>}
             </div>
           </div>
           <SectionTitle title='Cartographie' />
@@ -93,28 +114,7 @@ export default function Page() {
               {params.map == 3 && <OccupationMap title={mapList[2].name} params={params} />}
               {params.map == 4 && <AiresCovoiturageMap title={mapList[3].name} params={params} />}
             </div>
-          </div>
-          <SectionTitle title='Evolution' />
-          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col-12')}>
-              <SelectInList
-                labelId='graph'
-                label='Sélectionner un graphique'
-                id={params.graph}
-                list={graphList}
-                sx={{ minWidth: 300 }}
-                onChange={onChangeGraph}
-              />
-            </div>
-          </div>
-          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col-12')}>
-              {params.graph == 1 && <FluxGraph title={graphList[0].name} params={params} indic="journeys"/>}
-              {params.graph == 2 && <DistanceGraph title={graphList[1].name} params={params} />}
-              {params.graph == 3 && <OccupationGraph title={graphList[2].name} params={params} indic="occupation_rate"/>}
-              {params.graph == 4 && <OccupationGraph title={graphList[3].name} params={params} indic="trips"/>}
-            </div>
-          </div>
+          </div>  
         </div>
       )}
     </>

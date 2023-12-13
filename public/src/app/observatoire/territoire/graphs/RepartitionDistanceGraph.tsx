@@ -39,7 +39,6 @@ export default function RepartitionDistanceGraph({
     });
     return sum;
   };
-  const datasetTo = data?.find((d) => d.direction === 'to')?.distances.map((d) => d.journeys);
   const chartData = () => {
     const labels = ['< 10 km', '10-20 km', '20-30 km', '30-40 km', '40-50 km', '> 50 km'];
     const datasets = [
@@ -88,52 +87,6 @@ export default function RepartitionDistanceGraph({
         },
       }
     ];
-    params.type !== 'country' ? datasets.push(
-      {
-        label: 'Destination',
-        data: datasetTo,
-        backgroundColor: ['#66673D', '#B7A73F', '#e2cf58', '#fbe769', '#fceeac', '#fef7da'],
-        datalabels: {
-          labels: {
-            name: {
-              align: 'middle',
-              font: (context: Context) => {
-                const avgSize = Math.round((context.chart.height + context.chart.width) / 2);
-                const params = {
-                  size: Math.round(avgSize / 24) > 10 ? 14 : Math.round(avgSize / 24),
-                  weight: 'bold',
-                };
-                return params;
-              },
-              color: 'black',
-              formatter: (value: number, ctx: Context) => {
-                return ctx.chart.data.labels ? ctx.chart.data.labels[ctx.dataIndex] : '';
-              },
-            },
-            value: {
-              align: 'bottom',
-              color: 'black',
-              font: (context: Context) => {
-                const avgSize = Math.round((context.chart.height + context.chart.width) / 2);
-                const params = {
-                  size: Math.round(avgSize / 24) > 10 ? 12 : Math.round(avgSize / 24),
-                };
-                return params;
-              },
-              formatter: (value: number, ctx: Context) => {
-                let sum = 0;
-                const dataArr = ctx.chart.data.datasets[1].data as number[];
-                dataArr.map((data: number) => {
-                  sum += data;
-                });
-                const percentage = ((value * 100) / sum).toFixed(1) + '%';
-                return percentage;
-              },
-            },
-          },
-        },
-      }
-    ) : '';
     return { labels: labels, datasets: datasets };
   };
 
@@ -165,18 +118,6 @@ export default function RepartitionDistanceGraph({
                       { datasetFrom.map((d,i) =>{
                         return (
                           <li key={i}>{chartData().labels[i]} : {((d * 100) / datasetSum(datasetFrom)).toFixed(1) + '%'}</li>
-                        )
-                      })} 
-                    </ul>
-                  </> 
-                }
-                {datasetTo &&
-                  <>
-                    <p>Données de répartition en prenant en compte la destination des trajets</p>
-                    <ul>
-                      { datasetTo.map((d,i) =>{
-                        return (
-                          <li key={i}>{chartData().labels[i]} : {((d * 100) / datasetSum(datasetTo)).toFixed(1) + '%'}</li>
                         )
                       })} 
                     </ul>
