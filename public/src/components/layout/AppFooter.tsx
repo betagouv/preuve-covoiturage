@@ -106,7 +106,7 @@ export function AppFooter() {
         sub: [
           {
             alt: 'CEREMA',
-            href: 'https://www.cerema.fr',
+            href: 'https://www.cerema.fr/fr/actualites/covoiturage-dossier-du-cerema',
             imgUrl: 'https://www.cerema.fr/themes/custom/uas_base/images/LogoCerema_horizontal.svg',
           },
           {

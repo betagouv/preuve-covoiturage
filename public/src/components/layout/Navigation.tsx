@@ -79,8 +79,8 @@ export default function Navigation() {
             {
               linkProps: {
                 href: '/collectivites/comprendre-et-planifier-le-covoiturage',
-                title: 'Comprendre et planifier le covoiturage',
-                'aria-label': 'Comprendre et planifier le covoiturage',
+                title: 'Planifier et évaluer le covoiturage',
+                'aria-label': 'Planifier et évaluer le covoiturage',
               },
               text: 'Comprendre et planifier le covoiturage',
               isActive: pathname === '/collectivites/comprendre-et-planifier-le-covoiturage',
