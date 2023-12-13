@@ -1,5 +1,7 @@
 import { AppFooter } from '@/components/layout/AppFooter';
 import { Follow } from '@/components/layout/Follow';
+import { ScrollToTop } from '@/components/layout/ScrollToTop';
+import { Skiplinks } from '@/components/layout/Skiplinks';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { fr } from '@codegouvfr/react-dsfr';
 import MuiDsfrThemeProvider from '@codegouvfr/react-dsfr/mui';
@@ -14,8 +16,8 @@ import '../styles/global.scss';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'observatoire.covoiturage.gouv.fr',
-  description: 'Développer le covoiturage de courte distance',
+  title: 'Comprendre le covoiturage quotidien sur votre territoire | Observatoire.covoiturage.gouv.fr',
+  description: 'Tableau de bord pour comprendre le covoiturage de courte distance',
 }
 
 
@@ -46,9 +48,15 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
       <body>
         <DsfrProvider>
           <MuiDsfrThemeProvider>
+            <Skiplinks />
             <AppHeader />
-            <div className={fr.cx('fr-container')}>{children}</div>
-            <Follow />
+            <main tabIndex={-1}>
+              <div className={fr.cx('fr-container')}>
+                {children}
+                <ScrollToTop />
+              </div>
+              <Follow />
+            </main>
             <AppFooter />
           </MuiDsfrThemeProvider>
         </DsfrProvider>

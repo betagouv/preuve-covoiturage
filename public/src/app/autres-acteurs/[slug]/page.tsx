@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
     limit: 1,
   });
   return {
-    title: `${data ? data[0].title : ''} | Covoiturage courte distance`,
+    title: `${data ? data[0].title : ''} | Observatoire.covoiturage.gouv.fr`,
     description: shorten(`${data && data[0].content ? data[0].content :
     'Accompagner les différents acteurs du covoiturage de courte distance en France'}`,150),
   }
@@ -65,7 +65,7 @@ export default async function ProfilSinglePage({ params }: { params: { slug: str
   const ressources = data ? data[0].sections.filter((s:Section) => s.collection === 'Ressources') : null
 
   return(
-    <article id='content'>
+    <div id='content'>
       {!hero && 
         <PageTitle title={data ? data[0].title : ''} />
       }
@@ -115,7 +115,7 @@ export default async function ProfilSinglePage({ params }: { params: { slug: str
                   content={shorten(r.item.content, 100)}
                   date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
                   link={r.item.link}
-                  file={`${r.item.file ? `${cmsHost}/assets/${r.item.file}` :'' }`}
+                  file={r.item.file ? `${cmsHost}/assets/${r.item.file}` : undefined}
                   img={`${cmsHost}/assets/${r.item.img}`}
                   img_legend={r.item.img_legend}                
                 />
@@ -136,13 +136,6 @@ export default async function ProfilSinglePage({ params }: { params: { slug: str
           </div>
         </div>
       }
-      <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
-        <div className={fr.cx('fr-col')}>
-          <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">
-            Haut de page
-          </a>
-        </div>
-      </div>
-    </article>
+    </div>
   );
 }

@@ -41,7 +41,7 @@ export default async function Plan() {
   });
 
   return (
-    <article id='content'>
+    <div id='content'>
       <PageTitle title='Plan du site' />
       <div className={fr.cx('fr-grid-row')}>
         <div className={fr.cx('fr-col')}>
@@ -158,6 +158,6 @@ export default async function Plan() {
           </a>
         </div>
       </div>
-    </article>
+    </div>
   );
 }

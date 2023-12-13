@@ -31,7 +31,12 @@ const AppMap = (props: MapInterface) => {
   
   return (
     <div className='fr-callout'>
-      <h3 className='fr-callout__title'>{props.title}</h3>
+      <h3 className='fr-callout__title'>
+        {props.title}
+        { props.download &&
+          <span className={fr.cx('fr-ml-5v')}>{props.download}</span>
+        }
+      </h3>
       <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
         {props.sidebar && props.sidebarPosition == 'left' &&
           <div className={fr.cx('fr-col', sidebarClass)}>

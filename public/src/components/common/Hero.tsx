@@ -15,7 +15,7 @@ export default function Hero(props:HeroProps) {
       }}
     >
       <div className={fr.cx('fr-col-12', 'fr-col-md-9')}>
-        <p className={fr.cx('fr-h1','fr-mb-2v')}>{props.title}</p>
+        <h1 className={fr.cx('fr-h1','fr-mb-2v')}>{props.title}</h1>
         {props.subtitle && <p className={fr.cx('fr-h6')}>{props.subtitle}</p>}
         <div className={fr.cx('fr-pr-md-5v')}>
           <MDContent source={props.content} /> 
@@ -27,8 +27,13 @@ export default function Hero(props:HeroProps) {
               buttons={props.buttons.map(b => {
                 return {
                   children:b.title,
-                  linkProps: {
-                    href: b.url
+                  linkProps: b.url.startsWith('http') ? {
+                    href: b.url,
+                    title:`${b.title} - nouvelle fenêtre` ,
+                    "aria-label":`${b.title} - nouvelle fenêtre`,
+                    target:'_blank'
+                  } : {
+                    href: b.url,
                   },
                   iconId: b.icon ? b.icon : '',
                   priority: b.color ? b.color : 'primary',
@@ -44,7 +49,7 @@ export default function Hero(props:HeroProps) {
         {props.img &&
           <figure className={fr.cx('fr-content-media')} role="group">
             <div className={fr.cx('fr-content-media__img')}>
-              <Image className={fr.cx('fr-responsive-img')} src={`${cmsHost}/assets/${props.img}`} alt={props.alt ? props.alt : ''} width={1200} height={800} />
+              <Image className={fr.cx('fr-responsive-img')} src={`${cmsHost}/assets/${props.img}`} alt={''} width={120} height={80} />
             </div>
           </figure>
         }
@@ -54,8 +59,13 @@ export default function Hero(props:HeroProps) {
             buttons={props.buttons.map(b => {
               return {
                 children:b.title,
-                linkProps: {
-                  href: b.url
+                linkProps: b.url.startsWith('http') ? {
+                  href: b.url,
+                  title:`${b.title} - nouvelle fenêtre` ,
+                  "aria-label":`${b.title} - nouvelle fenêtre`,
+                  target:'_blank'
+                } : {
+                  href: b.url,
                 },
                 iconId: b.icon ? b.icon : '',
                 priority: b.color ? b.color : 'primary',

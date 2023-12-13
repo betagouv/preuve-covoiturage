@@ -11,7 +11,6 @@ export default function ListHighlight(props:{ highlights: HighlightProps[]}) {
           title={h.title}
           content={h.content}
           img={`${cmsHost}/assets/${h.img}`}
-          alt={h.alt}
           buttons={h.buttons}
           classes={h.classes}
         />

@@ -11,7 +11,7 @@ import MDContent from "@/components/common/MDContent";
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'observatoire.covoiturage.gouv.fr',
+  title: 'Accueil | Observatoire.covoiturage.gouv.fr',
   description: 'Développer le covoiturage de courte distance',
 }
 
@@ -33,7 +33,8 @@ export default async function Home() {
     grey: true,
     imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/6d16d7c5-82fe-4526-a32f-e13bd161bd8f",
     linkProps:{
-      href: '/autres-acteurs/entreprises'
+      href: '/autres-acteurs/entreprises',
+      title:"Vous êtes une entreprise"
     },
     title:"Une entreprise"
   },{
@@ -41,7 +42,8 @@ export default async function Home() {
     grey: true,
     imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/03438e15-8661-4ff4-9090-d3936527c869",
     linkProps:{
-      href: '/autres-acteurs/particuliers'
+      href: '/autres-acteurs/particuliers',
+      title:"Vous êtes un particulier"
     },
     title:"Un particulier"
   },{
@@ -49,14 +51,15 @@ export default async function Home() {
     grey: true,
     imageUrl: "https://cms.covoiturage.beta.gouv.fr/assets/ac8000a8-09b8-4e37-868e-bc877c231f71",
     linkProps:{
-      href: '/autres-acteurs/operateurs'
+      href: '/autres-acteurs/operateurs',
+      title:"Vous êtes une plateforme de covoiturage"
     },
-    title:"Plateformes de covoiturage"
+    title:"Une plateforme de covoiturage"
   }
 ]
 
   return (
-    <article id='content'>
+    <div id='content'>
       {hero && 
         <Hero 
           title={hero.item.title} 
@@ -101,6 +104,7 @@ export default async function Home() {
               desc={t.desc}
               grey={t.grey}
               imageUrl={t.imageUrl}
+              imageAlt={''}
               linkProps={t.linkProps}
             />
           </div>
@@ -117,7 +121,7 @@ export default async function Home() {
                 content={shorten(r.item.content, 100)}
                 date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
                 link={r.item.link}
-                file={`${cmsHost}/assets/${r.item.file}`}
+                file={r.item.file ? `${cmsHost}/assets/${r.item.file}` : undefined}
                 img={`${cmsHost}/assets/${r.item.img}`}
                 img_legend={r.item.img_legend}                
               />
@@ -137,6 +141,6 @@ export default async function Home() {
           </div>
         </div>
       }
-    </article>
+    </div>
   );
 }

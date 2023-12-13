@@ -1,6 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Select, SxProps } from '@mui/material';
 
 interface Props {
+  labelId:string;
   label: string;
   id: number;
   list: {
@@ -15,9 +16,9 @@ export default function SelectInList(props: Props) {
   return (
     <>
       <FormControl sx={props.sx}>
-        <InputLabel id='select-label'>{props.label}</InputLabel>
+        <InputLabel id={props.labelId}>{props.label}</InputLabel>
         <Select
-          labelId='select-label'
+         labelId={props.labelId} 
           value={props.id}
           label={props.label}
           onChange={(event) => props.onChange(event.target.value as number)}

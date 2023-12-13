@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
     limit: 1,
   });
   return {
-    title: `${data ? data[0].title : ''} | Covoiturage courte distance`,
+    title: `${data ? data[0].title : ''} | Observatoire.covoiturage.gouv.fr`,
     description: shorten(`${data && data[0].description ? data[0].description : ''}`,150),
   }
 }
@@ -120,9 +120,6 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
             {data[0].description}
             <MDContent source={data[0].content} />
           </div>
-          <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">
-            Haut de page
-          </a>
         </div>
       }
       </div>

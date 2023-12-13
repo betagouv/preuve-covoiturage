@@ -88,9 +88,37 @@ export default function RepartitionHoraireGraph({
       {!loading && !error && (
         <div className={fr.cx('fr-callout')}>
           <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
-          <div className='graph-wrapper' style={{ backgroundColor: '#fff', height:"350px" }}>
-            <Bar options={options} data={chartData() as ChartData<"bar",number[]>} />
-          </div>
+          <figure className='graph-wrapper' style={{ backgroundColor: '#fff', height:"350px" }}>
+            <Bar options={options} data={chartData() as ChartData<"bar",number[]>} aria-hidden />
+            { chartData() &&
+              <figcaption className={fr.cx('fr-sr-only')}>
+                {chartData().datasets[0] &&
+                  <>
+                    <p>{'Données concernant les horaires à l\'origine des trajets'}</p>
+                    <ul>
+                      { chartData().datasets[0].data.map((d,i) =>{
+                        return (
+                          <li key={i}>{chartData().labels[i]} : {d} trajets</li>
+                        )
+                      })} 
+                    </ul>
+                  </> 
+                }
+                {chartData().datasets[1] &&
+                  <>
+                    <p>Données concernant les horaires à destination des trajets</p>
+                    <ul>
+                      { chartData().datasets[1].data.map((d,i) =>{
+                        return (
+                          <li key={i}>{chartData().labels[i]} : {d} trajets</li>
+                        )
+                      })} 
+                    </ul>
+                  </> 
+                }
+              </figcaption>
+            }
+          </figure>
         </div>
       )}
     </>

@@ -28,8 +28,13 @@ export default function Media(props: MediaProps) {
             buttons={props.buttons.map(b => {
               return {
                 children:b.title,
-                linkProps: {
-                  href: b.url
+                linkProps: b.url.startsWith('http') ? {
+                  href: b.url,
+                  title:`${b.title} - nouvelle fenêtre` ,
+                  "aria-label":`${b.title} - nouvelle fenêtre`,
+                  target:'_blank'
+                } : {
+                  href: b.url,
                 },
                 iconId: b.icon ? b.icon : '',
                 priority: b.color ? b.color : 'primary',
@@ -44,7 +49,7 @@ export default function Media(props: MediaProps) {
         <div className={fr.cx('fr-col-md-4')}>
           <figure className={fr.cx('fr-content-media')} role="group">
             <div className={fr.cx('fr-content-media__img')}>
-              <Image className={fr.cx('fr-responsive-img')} src={props.img} alt={props.alt} width={1200} height={800} />
+              <Image className={fr.cx('fr-responsive-img')} src={props.img} alt={props.alt} width={120} height={80} />
             </div>
           </figure>
         </div>

@@ -6,7 +6,7 @@ import Pagination from "@/components/common/Pagination";
 
 export async function generateMetadata({ params }: { params: { id: string }}) {
   return {
-    title: `Ressources page ${params.id} | Covoiturage courte distance`,
+    title: `Ressources page ${params.id} | Observatoire.covoiturage.gouv.fr`,
     description: `Page ${params.id} des ressources sur le covoiturage de courte distance`,
   }
 }
@@ -50,7 +50,7 @@ export default async function RessourcePage({ params }: { params: { id: string }
   const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsRessourcesByPage) : 1
 
   return (
-    <article id='content'>
+    <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
@@ -62,7 +62,7 @@ export default async function RessourcePage({ params }: { params: { id: string }
                   content={a.content}
                   date={new Date(a.date_created).toLocaleDateString('fr-FR')}
                   link={a.link}
-                  file={`${a.file ? `${cmsHost}/assets/${a.file.id}` :'' }`}
+                  file={a.file ? `${cmsHost}/assets/${a.file}` : undefined}
                   img={`${cmsHost}/assets/${a.img.id}`}
                   img_legend={a.img_legend}
                   horizontal
@@ -77,6 +77,6 @@ export default async function RessourcePage({ params }: { params: { id: string }
         defaultPage={Number(params.id)}
         href={`/ressources`}
       />    
-    </article>
+    </div>
   );
 }

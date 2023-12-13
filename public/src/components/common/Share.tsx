@@ -15,7 +15,8 @@ export default function Share(props:{social:ShareProps[], location: string}) {
         {props.social && props.social.map((s, i) => 
           <li key={i}>
             <a className={fr.cx('fr-share__link',s.icon as FrCxArg)} 
-              title={`Partager sur ${s.name}`} 
+              title={`Partager sur ${s.name} | nouvelle fenêtre`} 
+              aria-label={`Partager sur ${s.name} | nouvelle fenêtre`} 
               href={s.href} 
               target="_blank" 
               rel="noopener" 

@@ -27,7 +27,7 @@ export default function ActuCard(props: ActuCardProps) {
         </ul>
       }
       detail={<><span className={fr.cx('fr-icon-arrow-right-line','fr-icon--sm','fr-mr-1v')} aria-hidden="true"></span><span>Publié le {props.date}</span></>}
-      imageAlt={props.img_legend}
+      imageAlt={""}
       imageUrl={props.img}
       shadow={true}
       footer={

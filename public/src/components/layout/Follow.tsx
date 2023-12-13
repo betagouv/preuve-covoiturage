@@ -1,7 +1,5 @@
 import { fr } from '@codegouvfr/react-dsfr';
 import ButtonsGroup from '@codegouvfr/react-dsfr/ButtonsGroup';
-import Button from '@codegouvfr/react-dsfr/Button';
-import Link from 'next/link';
 
 export function Follow() {
   return (
@@ -11,9 +9,9 @@ export function Follow() {
           <div className={fr.cx('fr-col-12','fr-col-md-8')}>
             <div className={fr.cx('fr-follow__newsletter')}>
               <div>
-                <p className={fr.cx('fr-h5','fr-follow__title')}>
+                <h2 className={fr.cx('fr-h5','fr-follow__title')}>
                   Une question ? Écrivez-nous !
-                </p>
+                </h2>
                 <p>
                   Nous vous répondrons au plus vite ou vous redirigerons vers le bon service
                 </p>
@@ -23,7 +21,10 @@ export function Follow() {
                       children: 'Poser une question',
                       iconId: 'fr-icon-mail-line',
                       linkProps: {
-                        href: 'https://covoiturage.beta.gouv.fr/nous-contacter/'
+                        href: 'https://covoiturage.beta.gouv.fr/nous-contacter/',
+                        title: "Nous contacter - nouvelle fenêtre",
+                        "aria-label": "Nous contacter - nouvelle fenêtre",
+                        target: '_blank'
                       }
                     },
                   ]}
@@ -34,35 +35,43 @@ export function Follow() {
           </div>
           <div className={fr.cx('fr-col-12','fr-col-md-4')}>
             <div className={fr.cx('fr-follow__social')}>
-              <p className={fr.cx('fr-h5','fr-follow__title')}>
+              <h2 className={fr.cx('fr-h5','fr-follow__title')}>
                 Suivez-nous sur les réseaux sociaux
-              </p>
-              <div>
-                <Link href='https://twitter.com/Covoitbetagouv' style={{"backgroundImage": "none","display":"inline-block"}}>
-                  <Button 
-                    iconId='fr-icon-twitter-fill'
-                    title="Label button"
-                  /> 
-                </Link>
-                <Link href='https://www.linkedin.com/company/registre-de-preuve-de-covoiturage' style={{"backgroundImage": "none","display":"inline-block"}}>
-                  <Button 
-                    iconId='fr-icon-linkedin-box-fill'
-                    title="LinkedIn"
-                  /> 
-                </Link>
-                <Link href='https://www.youtube.com/channel/UC-Dge-XxJCIRG22jcGM-VtA' style={{"backgroundImage": "none","display":"inline-block"}}>
-                  <Button 
-                    iconId='fr-icon-youtube-fill'
-                    title="You Tube"
-                  /> 
-                </Link>
-                <Link href='https://github.com/betagouv/preuve-covoiturage' style={{"backgroundImage": "none","display":"inline-block"}}>
-                  <Button 
-                    iconId='fr-icon-github-fill'
-                    title="GitHub"
-                  /> 
-                </Link>
-              </div>
+              </h2>
+              <ul className={fr.cx('fr-btns-group')}>
+                <li>
+                  <a className={fr.cx('fr-btn--twitter','fr-btn')} 
+                    target="_blank" 
+                    href="https://twitter.com/Covoitbetagouv"
+                    title="Twitter - nouvelle fenêtre"
+                    aria-label="Twitter - nouvelle fenêtre"
+                  >Twitter<span className={fr.cx('fr-sr-only')}> - nouvelle fenêtre</span></a>
+                </li>
+                <li>
+                  <a className={fr.cx('fr-btn--linkedin','fr-btn')} 
+                    target="_blank" 
+                    href="https://www.linkedin.com/company/registre-de-preuve-de-covoiturage"
+                    title="LinkedIn - nouvelle fenêtre"
+                    aria-label="LinkedIn - nouvelle fenêtre"
+                  >LinkedIn<span className={fr.cx('fr-sr-only')}> - nouvelle fenêtre</span></a>
+                </li>
+                <li>
+                  <a className={fr.cx('fr-btn--youtube','fr-btn')} 
+                    target="_blank" 
+                    href="https://www.youtube.com/channel/UC-Dge-XxJCIRG22jcGM-VtA"
+                    title="YouTube - nouvelle fenêtre"
+                    aria-label="YouTube - nouvelle fenêtre"
+                  >YouTube<span className={fr.cx('fr-sr-only')}> - nouvelle fenêtre</span></a>
+                </li>
+                <li>
+                  <a className={fr.cx('fr-btn--github','fr-btn')} 
+                    target="_blank" 
+                    href="https://github.com/betagouv/preuve-covoiturage"
+                    title="GitHub - nouvelle fenêtre"
+                    aria-label="GitHub - nouvelle fenêtre"
+                  >Github<span className={fr.cx('fr-sr-only')}> - nouvelle fenêtre</span></a>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
