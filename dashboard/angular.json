@@ -38,6 +38,7 @@
             "assets": [
               "src/favicon.ico",
               "src/.htaccess",
+              "src/.well-known",
               "src/assets",
               "src/manual-503.html"
             ],
