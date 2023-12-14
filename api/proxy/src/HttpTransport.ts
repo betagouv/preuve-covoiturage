@@ -52,6 +52,7 @@ import { signature as importCeeSignature } from './shared/cee/importApplication.
 import { signature as importIdentityCeeSignature } from './shared/cee/importApplicationIdentity.contract';
 import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
 import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
+import path from 'node:path';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -110,6 +111,7 @@ export class HttpTransport implements TransportInterface {
     this.registerCallHandler();
     this.registerAfterAllHandlers();
     this.registerGeoRoutes();
+    this.registerStaticFolder();
   }
 
   getApp(): express.Express {
@@ -865,6 +867,15 @@ export class HttpTransport implements TransportInterface {
         this.send(res, response as RPCResponseType);
       }),
     );
+  }
+
+  /**
+   * Serve static files
+   * Files must be copied to dist/public folder
+   */
+  private registerStaticFolder() {
+    console.debug(`registerStaticFolder: ${path.join(__dirname, 'public/.well-known')}`);
+    this.app.use('/.well-known', express.static(path.join(__dirname, 'public/.well-known')));
   }
 
   /**
