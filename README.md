@@ -14,6 +14,10 @@ Le registre de preuve de covoiturage est un projet [beta.gouv.fr](https://beta.g
 - [Dépôt de l'infrastructure](https://github.com/betagouv/preuve-covoiturage-infra)
 - [Dépôt de l'observatoire](https://github.com/betagouv/observatoire-covoiturage) (obsolète)
 
+### Sécurité
+
+Politique de sécurité et contact : [SECURITY.md](SECURITY.md)
+
 ### Services
 
 An easy way to boot the application on your local machine is by using Docker.
