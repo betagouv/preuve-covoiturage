@@ -21,7 +21,7 @@ from helpers.apply_metods import add_overlap_columns, remove_carpool_with_same_p
 # Input params checks
 try: update_carpool_status
 except NameError:
-  update_carpool_status = False
+  update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 
 try: connection_string
 except NameError:
@@ -213,6 +213,8 @@ if update_carpool_status is True:
 
     table = metadata.tables['carpool.carpools']
     
+    print(f"Updating {len(df_final_result['_id'])} carpools with fraudcheck_error")
+
     where_clause = table.c._id.in_(df_final_result['_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(status='fraudcheck_error')
