@@ -213,6 +213,8 @@ if update_carpool_status is True:
 
     table = metadata.tables['carpool.carpools']
     
+    print(f"Updating {len(df_final_result['carpool_id'])} carpools with fraudcheck_error")
+
     where_clause = table.c._id.in_(df_final_result['_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(status='fraudcheck_error')
