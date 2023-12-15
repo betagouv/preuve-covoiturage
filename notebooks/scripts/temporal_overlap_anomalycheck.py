@@ -107,8 +107,6 @@ df_labels = df_labels.apply(lambda x: add_conflicting_carpool_id(x), axis=1)
 
 import sqlalchemy as sa
 
-print(len(df_labels['carpool_id']))
-
 
 if update_carpool_status is True:
     metadata = sa.MetaData(schema='carpool')
