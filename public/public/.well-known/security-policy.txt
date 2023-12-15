@@ -1,1 +1,138 @@
-coming soon...
+Registre de preuve de covoiturage (RPC)                    Décembre 2023
+Startup d'État du Ministère
+de la Transition Écologique et Solidaire
+https://covoiturage.beta.gouv.fr
+
+
+                         Politiques de sécurité
+                 et procédures de divulgation de failles
+
+Table des matières
+
+    1.  Introduction
+    2.  Signaler une faille
+        2.1.  Langue
+        2.2.  Version supportée
+        2.3.  Les failles qui nous intéressent
+        2.4.  Les failles qui ne nous intéressent pas
+    3.  Processus de divulgation et de correction
+    4.  Commentaires
+    5.  Remerciements
+    6.  Hall of Fame
+
+1.  Introduction
+
+   Ce document décrit les procédures de sécurité et les politiques
+   générales pour les différents projets de la Startup d'État
+   Covoiturage :
+
+      - Registre de preuve de covoiturage (frontend)
+      - Registre de preuve de covoiturage (backend)
+      - Observatoire du covoiturage
+      - Générateur d'attestations sur l'honneur
+      - site vitrine
+      - documentation publique et technique
+      - etc
+
+   L'équipe technique prend très à coeur la sécurité de ses utilisateurs
+   et de ses services. Nous apprécions grandement les efforts des
+   chercheurs en sécurité pour améliorer la sécurité de nos services.
+   Nous sommes prêts à travailler avec vous pour résoudre les problèmes
+   que vous découvrez, dans le respect de cette politique.
+
+2.  Signaler une faille
+
+   Merci de ne pas créer de ticket sur Github mais de nous contacter à
+   l'adresse ci-dessous en chiffrant votre message avec notre clé PGP.
+
+   security@covoiturage.beta.gouv.fr
+
+   https://covoiturage.beta.gouv.fr/.well-known/security.asc
+   Key fingerprint: 4810 3904 BA33 6554 3B27  BF28 F92C CE05 85A4 AE8F
+
+   L’équipe accusera réception de votre mail dans les 72 heures. Après
+   la réponse initiale à votre rapport, elle vous tiendra informé de la
+   progression vers une correction et une annonce complète, et pourra
+   vous demander des informations ou des conseils supplémentaires.
+
+2.1.   Langue
+
+   Vous pouvez nous contacter en français ou en anglais.
+
+2.2.   Version supportée
+
+   La version supportée est celle de la dernière release.
+   https://github.com/betagouv/preuve-covoiturage/releases
+
+2.3.   Les failles qui nous intéressent
+
+   Nous sommes intéressés par tout problème qui pourrait compromettre
+   l'intégrité ou la confidentialité des données de nos utilisateurs.
+   Cela inclut les failles de sécurité dans les applications web, les
+   applications mobiles, les API, les infrastructures, etc.
+
+   Voici quelques exemples de failles qui nous intéressent :
+
+      - Cross-site scripting (XSS)
+      - Cross-site request forgery (CSRF)
+      - Injection de code SQL
+      - Exécution de code à distance
+      - Escalade de privilèges sans autorisation
+      - Accès non autorisé aux données utilisateurs
+      - Accès non autorisé aux données (campagnes, trajets, etc)
+      - Accès non autorisé à tout document lié à la Startup d'État
+
+2.4.   Les failles qui ne nous intéressent pas
+
+   Nous pensons que les failles suivantes sont hors périmètre sauf si
+   vous considérez qu'elle peut faire l'objet d'une exception :
+
+      - Header HTTP manquant
+      - SPF/DKIM/DMARC manquant ou incomplet
+      - Rapports d'outils automatisés ou scans de vulnérabilités
+      - Attaques sans preuves d'exploitation
+      - Attaques par déni de service
+      - Attaques par force brute
+      - Social Engineering
+      - Attaques physiques
+      - Attaques par phishing
+      - Attaques par clickjacking
+      - Attaques par sniffing
+      - Attaques par MITM
+      - Attaques physiques
+      - DNSSEC
+
+3.  Processus de divulgation et de correction
+
+   Lorsque l’équipe reçoit un rapport sur une faille de sécurité, elle
+   procède aux étapes suivantes :
+
+      - Confirmer le problème et déterminer les versions affectées.
+      - Vérifier le code pour trouver tout problème similaire potentiel.
+      - Informer les instances concernées qu'une faille est en cours de
+        résolution
+      - Préparer les correctifs et les déployer en production
+      - Communiquer aux différentes instances concernées que le
+        correctif est déployé
+
+4.  Commentaires
+
+    Si vous avez des retours ou des suggestions sur la façon dont ce
+    processus pourrait être amélioré, merci de nous contacter :
+
+    tech@covoiturage.beta.gouv.fr
+
+5.  Remerciements
+
+    Merci à tous les chercheurs en sécurité qui ont contribué à
+    l'amélioration de la sécurité de nos services.
+
+    La structure et le contenu de ce document sont basés sur les
+    politiques de sécurité publiées par Démarches-Simplifiées, Carte
+    Verte de l'ADEME, Chatwoot.io, et d'autres.
+
+    [RFC9116]   https://www.rfc-editor.org/rfc/rfc9116
+
+    https://securitytxt.org/
+
+6.  Hall of Fame

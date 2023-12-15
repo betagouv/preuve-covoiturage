@@ -5,4 +5,3 @@ Encryption: https://covoiturage.beta.gouv.fr/.well-known/security.asc
 Preferred-Languages: fr, en
 Canonical: https://app.covoiturage.beta.gouv.fr/.well-known/security.txt
 Policy: https://covoiturage.beta.gouv.fr/.well-known/security-policy.txt
-Acknowledgments: https://covoiturage.beta.gouv.fr/.well-known/security-acknowledgments.txt
