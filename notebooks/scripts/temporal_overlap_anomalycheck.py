@@ -21,10 +21,7 @@ except NameError:
 
 try: update_carpool_status
 except NameError:
-  update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] or True
-
-
-# In[3]:
+  update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 
 
 import pandas as pd
@@ -110,13 +107,17 @@ df_labels = df_labels.apply(lambda x: add_conflicting_carpool_id(x), axis=1)
 
 import sqlalchemy as sa
 
-if update_carpool_status is True:
+print(len(df_labels['carpool_id']))
 
+
+if update_carpool_status is True:
     metadata = sa.MetaData(schema='carpool')
     metadata.reflect(bind=engine)
 
     table = metadata.tables['carpool.carpools']
     
+    print(f"Updating {len(df_labels['carpool_id'])} carpools with anomaly_error")
+
     where_clause = table.c._id.in_(df_labels['carpool_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(status='anomaly_error')

@@ -21,7 +21,7 @@ from helpers.apply_metods import add_overlap_columns, remove_carpool_with_same_p
 # Input params checks
 try: update_carpool_status
 except NameError:
-  update_carpool_status = False
+  update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 
 try: connection_string
 except NameError:
