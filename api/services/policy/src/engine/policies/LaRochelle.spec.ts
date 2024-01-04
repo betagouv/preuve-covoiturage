@@ -51,17 +51,18 @@ test(
       { distance: 80_000, seats: 2 },
       { distance: 10_000, datetime: new Date('2023-06-01') },
       { distance: 17_000, datetime: new Date('2023-06-01') },
+      { distance: 50_001, datetime: new Date('2023-06-01') },
       { distance: 70_001, datetime: new Date('2023-06-01') },
       { distance: 2_000, datetime: new Date('2023-06-01') },
     ],
     meta: [],
   },
   {
-    incentive: [150, 150, 300, 300, 600, 100, 170, 0, 0],
+    incentive: [150, 150, 300, 300, 600, 100, 170, 200, 0, 0],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
-        value: 1770,
+        value: 1970,
       },
       {
         key: 'max_amount_restriction.0-driver_id_one.month.0-2023',
@@ -69,7 +70,7 @@ test(
       },
       {
         key: 'max_amount_restriction.0-driver_id_one.month.5-2023',
-        value: 270,
+        value: 470,
       },
     ],
   },
