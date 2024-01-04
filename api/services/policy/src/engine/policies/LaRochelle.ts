@@ -15,6 +15,7 @@ import {
   perKm,
   perSeat,
   watchForGlobalMaxAmount,
+  watchForPersonMaxAmountByMonth,
   watchForPersonMaxTripByDay,
 } from '../helpers';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
@@ -24,7 +25,7 @@ import { description } from './LaRochelle.html';
 export const LaRochelle: PolicyHandlerStaticInterface = class extends AbstractPolicyHandler implements PolicyHandlerInterface {
   static readonly id = 'larochelle_2023';
   protected operators = [OperatorsEnum.Klaxit];
-  protected slices: RunnableSlices = [
+  protected slices_before_may: RunnableSlices = [
     { start: 2_000, end: 15_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150) },
     {
       start: 15_000,
@@ -33,18 +34,43 @@ export const LaRochelle: PolicyHandlerStaticInterface = class extends AbstractPo
     },
   ];
 
+  protected slices: RunnableSlices = [
+    { start: 5_000, end: 10_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 100) },
+    {
+      start: 10_000,
+      end: 20_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 10_000, limit: 20_000 })),
+    },
+    {
+      start: 20_000,
+      fn: (ctx: StatelessContextInterface) => 0,
+    },
+  ];
+
+  private updated_policy_date: Date = new Date('2023-05-01');
+
   constructor(public max_amount: number) {
     super();
     this.limits = [
       ['99911EAF-89AB-C346-DDD5-BD2C7704F935', max_amount, watchForGlobalMaxAmount],
       ['70CE7566-6FD5-F850-C039-D76AF6F8CEB5', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
+      /** /!\ Only apply after first of may 2023 /!\ **/
+      ['ECDE3CD4-96FF-C9D2-BA88-45754205A798', 80_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
     ];
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 2_000 });
+    if (this.isBeforeFirstOfMay(ctx)) {
+      onDistanceRangeOrThrow(ctx, { min: 2_000 });
+    } else {
+      onDistanceRangeOrThrow(ctx, { min: 5_000, max: 70_000 });
+    }
     isOperatorClassOrThrow(ctx, ['B', 'C']);
+  }
+
+  private isBeforeFirstOfMay(ctx: StatelessContextInterface) {
+    return ctx.carpool.datetime < this.updated_policy_date;
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -53,7 +79,7 @@ export const LaRochelle: PolicyHandlerStaticInterface = class extends AbstractPo
 
     // Calcul des incitations par tranche
     let amount = 0;
-    for (const { start, fn } of this.slices) {
+    for (const { start, fn } of this.isBeforeFirstOfMay(ctx) ? this.slices_before_may : this.slices) {
       if (onDistanceRange(ctx, { min: start })) {
         amount += fn(ctx);
       }
