@@ -12,9 +12,9 @@ Le périmètre géographique de la campagne comprend les zones suivantes
   <li>Communauté de communes Pays du Mont Blanc</li>
   <li>Communauté de communes Vallée de Chamonix</li>
   <li>Communauté de communes des Montagnes du Giffre</li>
-  <li>Communauté de communes des 4 rivières</li>
-  <li>Communauté de communes de Vallée Verte</li>
-  <li>Communauté de communes de Usses et Rhône</li>
+  <li>Communauté de communes des 4 rivières</li> (Supprimé à partir du 18 décembre)
+  <li>Communauté de communes de Vallée Verte</li> (Supprimé à partir du 18 décembre)
+  <li>Communauté de communes de Usses et Rhône</li> (Supprimé à partir du 18 décembre)
 </ul>
 <p>Les <b> conducteurs </b> effectuant un trajet d'au moins 2 km,
    avec pour origine et destination le périmètre ci-dessus,
@@ -25,7 +25,7 @@ sont incités selon les règles suivantes : </p>
 </ul>
 <p>Les restrictions suivantes seront appliquées :</p>
 <ul>
-  <li><b>120 € maximum pour le conducteur par mois.</b></li>
+  <li><b>120 € maximum pour le conducteur par mois.</b></li> (50€ à partir du 1 janvier 2024)
 </ul>
 <p>La campagne est limitée aux opérateurs <b>Klaxit, Karos et BlablaCar Daily</b>
   proposant des preuves de classe <b>B ou C</b>.</p>
