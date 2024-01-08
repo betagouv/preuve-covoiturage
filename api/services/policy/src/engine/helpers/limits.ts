@@ -74,6 +74,20 @@ export const watchForPersonMaxAmountByMonth: LimitStatelessStageHelper = (() => 
   return fn;
 })();
 
+export const watchForPersonMaxAmountByYear: LimitStatelessStageHelper = (() => {
+  function fn(ctx: StatelessContextInterface, uuid: string, target: LimitTargetEnum): void {
+    ctx.meta.register({
+      uuid,
+      name: 'max_amount_restriction',
+      scope: getTargetUuid(target, ctx),
+      lifetime: MetadataLifetime.Year,
+    });
+  }
+  fn.counter = LimitCounterTypeEnum.Amount;
+  fn.priority = 31;
+  return fn;
+})();
+
 export const watchForGlobalMaxTrip: LimitStatelessStageHelper = (() => {
   function fn(ctx: StatelessContextInterface, uuid: string): void {
     ctx.meta.register({

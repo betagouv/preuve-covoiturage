@@ -23,6 +23,10 @@ function getMetaKey(datetime: Date, metaDefinition: MetadataVariableDefinitionIn
       keyPeriod = `${month}-${year}`;
       period = 'month';
       break;
+    case MetadataLifetime.Year:
+      keyPeriod = `${year}`;
+      period = 'year';
+      break;
     default:
       keyPeriod = 'global';
       period = 'campaign';

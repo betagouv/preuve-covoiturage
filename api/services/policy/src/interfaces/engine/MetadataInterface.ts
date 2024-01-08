@@ -3,6 +3,7 @@ export enum MetadataLifetime {
   Day = 0,
   Month = 1,
   Always = 2,
+  Year = 3,
 }
 
 export interface MetadataVariableDefinitionInterface {

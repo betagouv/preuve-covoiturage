@@ -63,6 +63,19 @@ test('should watchForPersonMaxAmountByMonth', async (t) => {
   ]);
 });
 
+test('should watchForPersonMaxAmountByYear', async (t) => {
+  const [ctx] = setupStateless();
+  watchForPersonMaxAmountByMonth(ctx, '1', LimitTargetEnum.Driver);
+  t.deepEqual(ctx.meta.export(), [
+    {
+      uuid: '1',
+      key: `max_amount_restriction.${LimitTargetEnum.Driver}-${ctx.carpool.passenger_identity_uuid}.year.0-2019`,
+      initialValue: undefined,
+      lifetime: MetadataLifetime.Year,
+    },
+  ]);
+});
+
 test('should watchForPersonMaxTripByMonth', async (t) => {
   const [ctx] = setupStateless();
   watchForPersonMaxTripByMonth(ctx, '1', LimitTargetEnum.Passenger);
