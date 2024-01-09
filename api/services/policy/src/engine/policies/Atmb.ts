@@ -41,7 +41,7 @@ export const Atmb: PolicyHandlerStaticInterface = class
         50_00,
         watchForPersonMaxAmountByMonth,
         LimitTargetEnum.Driver,
-      ] /** /!\ Only apply after first of january 2024 /!\ **/,
+      ] /** /!\ Only apply after first of december 2023 /!\ **/,
       ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.max_amount, watchForGlobalMaxAmount],
     ];
   }

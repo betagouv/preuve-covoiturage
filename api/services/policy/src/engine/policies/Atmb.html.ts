@@ -25,7 +25,7 @@ sont incités selon les règles suivantes : </p>
 </ul>
 <p>Les restrictions suivantes seront appliquées :</p>
 <ul>
-  <li><b>120 € maximum pour le conducteur par mois.</b></li> (50€ à partir du 1 janvier 2024)
+  <li><b>120 € maximum pour le conducteur par mois.</b></li> (50€ à partir du 1 décembre 2023)
 </ul>
 <p>La campagne est limitée aux opérateurs <b>Klaxit, Karos et BlablaCar Daily</b>
   proposant des preuves de classe <b>B ou C</b>.</p>
