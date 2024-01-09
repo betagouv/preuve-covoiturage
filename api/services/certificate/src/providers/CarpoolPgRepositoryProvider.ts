@@ -12,7 +12,7 @@ import { PointInterface } from '../shared/common/interfaces/PointInterface';
   identifier: CarpoolRepositoryProviderInterfaceResolver,
 })
 export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInterface {
-  private table = 'carpool.carpools';
+  private table = 'carpool.carpools' as const;
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -47,6 +47,9 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
     // add Timezone at last position of the values array
     values.push(tz || 'GMT');
 
+    // list trips as driver and passenger for a given identity
+    // get the greatest payment amount from the trip, the meta payments
+    // and the meta counterparts to handle different versions of the meta field.
     const text = `
       WITH trips AS (
         SELECT
@@ -55,12 +58,21 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
           cc.datetime AT TIME ZONE $${values.length} AS datetime,
           cc.distance,
-          GREATEST(COALESCE(meta.sum, 0)::int, payment) AS payment
+          GREATEST(
+            COALESCE(meta_payments.sum, 0)::int,
+            COALESCE(meta_counterparts.sum, 0)::int,
+            payment
+          ) AS payment
         FROM ${this.table} AS cc
         LEFT JOIN LATERAL (
           SELECT SUM(COALESCE(amount, 0)) AS sum
           FROM json_to_recordset(cc.meta->'payments') x (type text, index int, siret text, amount int)
-        ) meta ON true
+        ) meta_payments ON true
+        LEFT JOIN LATERAL (
+          SELECT SUM(COALESCE(amount, 0)) AS sum
+          FROM json_to_recordset(cc.meta->'incentive_counterparts') x (target text, amount int, siret text)
+          WHERE x.target = 'driver'
+        ) meta_counterparts ON true
         WHERE
           cc.operator_id = $2::int
           AND cc.is_driver = true
@@ -69,21 +81,30 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           AND cc.datetime <  $4
           AND cc.identity_id = ANY($1::int[])
           ${where_positions.length ? `AND (${where_positions})` : ''}
-      
+
         UNION ALL
-      
+
         SELECT
           cc.trip_id,
           'passenger' as type,
           SUBSTR((cc.datetime AT TIME ZONE $${values.length})::text, 0, 11) AS date,
           cc.datetime AT TIME ZONE $${values.length} AS datetime,
           cc.distance,
-          GREATEST(COALESCE(meta.sum, 0)::int, payment) AS payment
+          GREATEST(
+            COALESCE(meta_payments.sum, 0)::int,
+            COALESCE(meta_counterparts.sum, 0)::int,
+            payment
+          ) AS payment
         FROM ${this.table} AS cc
         LEFT JOIN LATERAL (
           SELECT SUM(COALESCE(amount, 0)) AS sum
           FROM json_to_recordset(cc.meta->'payments') x (type text, index int, siret text, amount int)
-        ) meta ON true
+        ) meta_payments ON true
+        LEFT JOIN LATERAL (
+          SELECT SUM(COALESCE(amount, 0)) AS sum
+          FROM json_to_recordset(cc.meta->'incentive_counterparts') x (target text, amount int, siret text)
+          WHERE x.target = 'passenger'
+        ) meta_counterparts ON true
         WHERE
           cc.operator_id = $2::int
           AND cc.is_driver = false
