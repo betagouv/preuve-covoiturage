@@ -64,6 +64,7 @@ export interface PolicyHandlerParamsInterface {
   limits?: {
     glob?: number;
   };
+  booster_dates?: Array<string>;
 }
 
 export interface PolicyHandlerInterface {
