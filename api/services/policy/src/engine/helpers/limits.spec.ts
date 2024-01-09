@@ -21,6 +21,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPassengerMaxByTripByDay,
   watchForPersonMaxAmountByMonth,
+  watchForPersonMaxAmountByYear,
   watchForPersonMaxTripByDay,
   watchForPersonMaxTripByMonth,
 } from './limits';
@@ -65,11 +66,11 @@ test('should watchForPersonMaxAmountByMonth', async (t) => {
 
 test('should watchForPersonMaxAmountByYear', async (t) => {
   const [ctx] = setupStateless();
-  watchForPersonMaxAmountByMonth(ctx, '1', LimitTargetEnum.Driver);
+  watchForPersonMaxAmountByYear(ctx, '1', LimitTargetEnum.Passenger);
   t.deepEqual(ctx.meta.export(), [
     {
       uuid: '1',
-      key: `max_amount_restriction.${LimitTargetEnum.Driver}-${ctx.carpool.passenger_identity_uuid}.year.0-2019`,
+      key: `max_amount_restriction.${LimitTargetEnum.Passenger}-${ctx.carpool.passenger_identity_uuid}.year.2019`,
       initialValue: undefined,
       lifetime: MetadataLifetime.Year,
     },
