@@ -1,5 +1,5 @@
 export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
-<p>Campagne d’incitation au covoiturage du <b> 01 janvier 2024 au 31 décembre 2024</b>
+<p>Campagne d’incitation au covoiturage du <b> 01 janvier 2024 au 31 décembre 2025</b>
 </p>
 <p>Cette campagne est limitée à
   <b>30 000 euros </b>.
