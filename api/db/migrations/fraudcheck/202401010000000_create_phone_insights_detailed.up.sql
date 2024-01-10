@@ -40,4 +40,4 @@ CREATE TABLE IF NOT EXISTS fraudcheck.phone_insights_detailed (
     traveled_with_level_2 BOOLEAN,
     phone_trunc_changed FLOAT
 );
-CREATE UNIQUE INDEX on fraudcheck.phone_insights_detailed on('phone_trunc', 'departure_date', 'end_date');
+CREATE UNIQUE INDEX ON fraudcheck.phone_insights_detailed('phone_trunc', 'departure_date', 'end_date');

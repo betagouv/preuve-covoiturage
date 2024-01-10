@@ -12,4 +12,4 @@ CREATE TABLE IF NOT EXISTS fraudcheck.users_3_months_patterns (
     average_seats FLOAT
 );
 
-CREATE UNIQUE INDEX on fraudcheck.users_3_months_patterns on('id','phone_trunc');
+CREATE UNIQUE INDEX ON fraudcheck.users_3_months_patterns('id','phone_trunc');

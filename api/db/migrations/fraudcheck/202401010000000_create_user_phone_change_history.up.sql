@@ -6,4 +6,4 @@ CREATE TABLE IF NOT EXISTS fraudcheck.user_phone_change_history (
     year_month DATE,
     total_changes INTEGER
 );
-CREATE UNIQUE INDEX on fraudcheck.triangular_patterns on('year_month');
+CREATE UNIQUE INDEX ON fraudcheck.triangular_patterns('year_month');

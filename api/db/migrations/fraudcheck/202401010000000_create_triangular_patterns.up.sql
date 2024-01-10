@@ -14,4 +14,4 @@ CREATE TABLE IF NOT EXISTS fraudcheck.triangular_patterns (
     average_daily_trips FLOAT,
     "level" INTEGER
 );
-CREATE UNIQUE INDEX on fraudcheck.triangular_patterns on('phone_trunc', 'departure_date', 'end_date');
+CREATE UNIQUE INDEX ON fraudcheck.triangular_patterns('phone_trunc', 'departure_date', 'end_date');
