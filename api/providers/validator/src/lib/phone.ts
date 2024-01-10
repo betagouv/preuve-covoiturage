@@ -1,19 +1,16 @@
 import { PhoneNumberUtil, PhoneNumber, PhoneNumberFormat } from 'google-libphonenumber';
+import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
+
 export function formatPhone(input: string): string {
   if (!input) {
     return input;
   }
 
-  try {
-    const clean = input.replace(/ /g, '');
-
-    const phoneUtil: PhoneNumberUtil = PhoneNumberUtil.getInstance();
-    const phone: PhoneNumber = phoneUtil.parseAndKeepRawInput(clean, clean.substr(0, 1) === '+' ? null : 'FR');
-
-    return phoneUtil.format(phone, PhoneNumberFormat.E164);
-  } catch (e) {
+  const phone = parsePhoneNumber(input, { defaultCountry: 'FR', extract: false });
+  if (!phone) {
     return input;
   }
+  return phone.format('E.164');
 }
 
 export function formatPhoneTrunc(input: string): string {
@@ -25,14 +22,7 @@ export function formatPhoneTrunc(input: string): string {
 }
 
 export function isValidPhone(input: string): boolean {
-  try {
-    const phoneUtil: PhoneNumberUtil = PhoneNumberUtil.getInstance();
-    const phone: PhoneNumber = phoneUtil.parseAndKeepRawInput(input, input.substr(0, 1) === '+' ? null : 'FR');
-
-    return phoneUtil.isValidNumber(phone);
-  } catch (e) {
-    return false;
-  }
+  return isValidPhoneNumber(input, 'FR');
 }
 
 export function isValidPhoneTrunc(input: string): boolean {
