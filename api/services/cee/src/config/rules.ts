@@ -4,7 +4,7 @@ import { ApplicationCooldownConstraint, TimeRangeConstraint, ValidJourneyConstra
 export const validJourneyConstraint: ValidJourneyConstraint = {
   operator_class: 'C',
   start_date: new Date(env.or_fail('APP_CEE_START_DATE', '2023-01-01T00:00:00+0100')),
-  end_date: new Date('2024-01-01T00:00:00+0100'),
+  end_date: new Date(env.or_fail('APP_CEE_END_DATE', '2025-01-01T00:00:00+0100')),
   max_distance: 80_000,
   geo_pattern: '99%',
 };
