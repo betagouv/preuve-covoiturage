@@ -17,7 +17,7 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
-import { watchForPersonMaxAmountByYear, watchForPersonMaxTripByDay } from '../helpers/limits';
+import { watchForPersonMaxTripByDay } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
 import { description } from './SMTC.html';
 
