@@ -4,13 +4,12 @@ import {
   PolicyHandlerParamsInterface,
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
-  TerritorySelectorsInterface,
 } from '../../interfaces';
 import { RunnableSlices } from '../../interfaces/engine/PolicyInterface';
 import {
+  LimitTargetEnum,
   isOperatorClassOrThrow,
   isOperatorOrThrow,
-  LimitTargetEnum,
   onDistanceRange,
   onDistanceRangeOrThrow,
   perKm,
@@ -18,62 +17,45 @@ import {
   watchForGlobalMaxAmount,
   watchForPersonMaxAmountByMonth,
 } from '../helpers';
-import { startAndEndAtOrThrow } from '../helpers/startAndEndAtOrThrow';
+import { watchForPersonMaxTripByDay } from '../helpers/limits';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Atmb.html';
+import { description } from './SMTC.html';
 
-// Politique sur le réseau ATMB
-// eslint-disable-next-line max-len
-export const Atmb: PolicyHandlerStaticInterface = class
+// Politique Cannes
+export const Cannes: PolicyHandlerStaticInterface = class
   extends AbstractPolicyHandler
   implements PolicyHandlerInterface
 {
-  static readonly id = 'atmb_2023';
-  protected readonly operators = [OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos, OperatorsEnum.Klaxit];
-  protected readonly operator_class = ['B', 'C'];
-  protected readonly policy_change_date = new Date('2023-12-18');
+  static readonly id = 'cannes_2024';
+  protected operators = [OperatorsEnum.Klaxit];
+  protected operator_class = ['B', 'C'];
 
   constructor(public max_amount: number) {
     super();
     this.limits = [
-      [
-        'AFE1C47D-BF05-4FA9-9133-853D29797D09',
-        50_00,
-        watchForPersonMaxAmountByMonth,
-        LimitTargetEnum.Driver,
-      ] /** /!\ Only apply after first of december 2023 /!\ **/,
+      ['AFE1C47D-BF05-4FA9-9133-853D29797D09', 150_00, watchForPersonMaxAmountByMonth, LimitTargetEnum.Driver],
+      ['AFE1C47D-BF05-4FA9-9133-853D297AZEPD', 6, watchForPersonMaxTripByDay, LimitTargetEnum.Driver],
       ['98B26189-C6FC-4DB1-AC1C-41F779C5B3C7', this.max_amount, watchForGlobalMaxAmount],
     ];
   }
 
-  protected selector: TerritorySelectorsInterface = {
-    aom: ['200033116', '200023372', '247000623'],
-    epci: ['200034882', '200034098', '247400047', '200070852'],
-  };
-
-  protected new_selector: TerritorySelectorsInterface = {
-    aom: ['200033116', '200023372'],
-    epci: ['200034882', '200034098'],
-  };
-
   protected slices: RunnableSlices = [
     {
-      start: 4_000,
-      end: 20_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200),
+      start: 2_000,
+      end: 15_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, 150),
     },
     {
-      start: 20_000,
-      end: 40_000,
-      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 20_000, limit: 40_000 })),
+      start: 15_000,
+      end: 30_000,
+      fn: (ctx: StatelessContextInterface) => perSeat(ctx, perKm(ctx, { amount: 10, offset: 15_000, limit: 30_000 })),
     },
   ];
 
   protected processExclusion(ctx: StatelessContextInterface) {
     isOperatorOrThrow(ctx, this.operators);
-    onDistanceRangeOrThrow(ctx, { min: 4_000 });
+    onDistanceRangeOrThrow(ctx, { min: 2_000, max: 80_001 });
     isOperatorClassOrThrow(ctx, this.operator_class);
-    startAndEndAtOrThrow(ctx, ctx.carpool.datetime >= this.policy_change_date ? this.new_selector : this.selector);
   }
 
   processStateless(ctx: StatelessContextInterface): void {

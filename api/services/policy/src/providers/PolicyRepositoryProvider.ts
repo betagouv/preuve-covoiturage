@@ -209,7 +209,7 @@ export class PolicyRepositoryProvider implements PolicyRepositoryProviderInterfa
     ends_in_the_future?: boolean;
   }): Promise<SerializedPolicyInterface[]> {
     const values = [];
-    const whereClauses = ['deleted_at IS NULL'];
+    const whereClauses = ['deleted_at IS NULL and handler is not null'];
     for (const key of Reflect.ownKeys(search)) {
       switch (key) {
         case '_id':
