@@ -20,7 +20,7 @@ export default async function Ressources() {
         '_eq': 'published',
       },
     },
-    sort:['-date_created'] as never[],
+    sort:['-date_publi'] as never[],
     meta:'filter_count',
   });
 
@@ -38,7 +38,7 @@ export default async function Ressources() {
                 <RessourceCard 
                   title={a.title}
                   content={a.content}
-                  date={new Date(a.date_created).toLocaleDateString('fr-FR')}
+                  date={new Date(a.date_publi).toLocaleDateString('fr-FR')}
                   link={a.link}
                   file={a.file ? `${cmsHost}/assets/${a.file}` : undefined}
                   img={`${cmsHost}/assets/${a.img.id}`}

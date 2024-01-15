@@ -51,7 +51,7 @@ const DeckMap = (props: DeckMapInterface) => {
             {props.sidebar}
           </div>
         }
-        <div className={fr.cx('fr-col', mapClass)}>
+        <div className={fr.cx('fr-col', mapClass)} tabIndex={0}>
           <Map
             ref={mapRef}
             initialViewState={props.initialView ? props.initialView : defaultView}
