@@ -12,7 +12,7 @@ import SectionTitle from '../../../components/common/SectionTitle';
 import KeyFigures from './KeyFigures';
 import DistanceGraph from './graphs/DistanceGraph';
 import RepartitionDistanceGraph from './graphs/RepartitionDistanceGraph';
-//import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
+import RepartitionHoraireGraph from './graphs/RepartitionHoraireGraph';
 import FluxGraph from './graphs/FluxGraph';
 import OccupationGraph from './graphs/OccupationGraph';
 import DensiteMap from './maps/DensiteMap';
@@ -53,9 +53,9 @@ export default function Page() {
           />
           <KeyFigures params={params} />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            {/*<div className={fr.cx('fr-col-12','fr-col-md-6')}>
+            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <RepartitionHoraireGraph title='Trajets par horaire' params={params} />
-            </div>*/}
+            </div>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
               <RepartitionDistanceGraph title='Répartition des trajets par distance' params={params} />
             </div>
