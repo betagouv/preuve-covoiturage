@@ -17,4 +17,4 @@ export const handlerConfig = {
   method: 'territoriesList',
 };
 
-export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

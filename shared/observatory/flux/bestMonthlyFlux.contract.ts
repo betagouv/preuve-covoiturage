@@ -23,4 +23,4 @@ export const handlerConfig = {
   method: 'bestMonthlyFlux',
 };
 
-export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

@@ -1,0 +1,38 @@
+{
+  "name": "@pdc/service-export",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "scripts": {
+    "ilos": "ilos",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test:unit": "ava --config ava.unit.cjs",
+    "test:integration": "ava --config ava.integration.cjs",
+    "coverage:ci": "nyc --nycrc-path ../../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
+    "coverage": "nyc --nycrc-path ../../nyc.config.cjs --reporter=text ava --config ava.coverage.cjs"
+  },
+  "main": "./dist/bootstrap.js",
+  "config": {
+    "workingDir": "./dist",
+    "bootstrap": "./bootstrap.js",
+    "app": {}
+  },
+  "dependencies": {
+    "@ilos/cli": "~0",
+    "@ilos/common": "~0",
+    "@ilos/connection-postgres": "~0",
+    "@ilos/connection-redis": "~0",
+    "@ilos/core": "~0",
+    "@pdc/helper-test": "~0",
+    "@pdc/provider-middleware": "~0",
+    "@pdc/provider-storage": "~0",
+    "@pdc/provider-validator": "~0",
+    "adm-zip": "^0.5.10",
+    "csv-stringify": "^6.4.0",
+    "form-data": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.0"
+  }
+}

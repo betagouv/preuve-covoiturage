@@ -29,4 +29,4 @@ export const handlerConfig = {
   service: 'territory',
   method: 'findGeoBySiren',
 } as const;
-export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

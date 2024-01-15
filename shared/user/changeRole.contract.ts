@@ -14,4 +14,4 @@ export const handlerConfig = {
 
 // TODO: remove
 
-export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

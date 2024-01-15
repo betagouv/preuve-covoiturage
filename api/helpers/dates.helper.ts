@@ -1,5 +1,5 @@
 import { Timezone } from '@pdc/provider-validator';
-import { addDays, addMonths, startOfMonth, subDays } from 'date-fns';
+import { addDays, addMonths, startOfMonth, subDays, subMonths } from 'date-fns';
 import { formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 export const defaultTz = 'Europe/Paris';
@@ -61,6 +61,10 @@ export function subDaysTz(d: Date, days: number, tz?: Timezone): Date {
 
 export function addMonthsTz(d: Date, months: number, tz?: Timezone): Date {
   return zonedTimeToUtc(addMonths(utcToZonedTime(d, tz || defaultTz), months), tz || defaultTz);
+}
+
+export function subMonthsTz(d: Date, months: number, tz?: Timezone): Date {
+  return zonedTimeToUtc(subMonths(utcToZonedTime(d, tz || defaultTz), months), tz || defaultTz);
 }
 
 export function startOfMonthTz(d: Date, tz?: Timezone): Date {

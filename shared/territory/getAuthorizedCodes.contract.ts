@@ -10,4 +10,4 @@ export const handlerConfig = {
   service: 'territory',
   method: 'getAuthorizedCodes',
 } as const;
-export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;
