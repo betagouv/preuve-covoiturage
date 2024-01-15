@@ -19,6 +19,7 @@ sont incités selon les règles suivantes : </p>
 <p>Les restrictions suivantes seront appliquées :</p>
 <ul>
   <li><b>90 € maximum pour le conducteur par mois.</b></li>
+  <li><b>4 trajets par jour maximum par conducteur.</b></li>
   <li><b>540 € maximum pour le conducteur sur la durée de la campagne.</b></li>
 </ul>
 <p>La campagne est limitée aux opérateurs <b>Mobicoop</b>

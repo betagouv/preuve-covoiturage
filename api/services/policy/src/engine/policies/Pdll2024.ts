@@ -23,7 +23,7 @@ import {
 } from '../helpers';
 import { isAdultOrThrow } from '../helpers/isAdultOrThrow';
 import { AbstractPolicyHandler } from './AbstractPolicyHandler';
-import { description } from './Pdll2023.html';
+import { description } from './Pdll2024.html';
 
 // Politique de Pays de la Loire 2024
 /* eslint-disable-next-line */
