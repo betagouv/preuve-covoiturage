@@ -54,12 +54,18 @@ with engine.connect() as conn:
 
 
 import requests
+import logging
 
 def get_osrm_data(x):
-  response =  requests.get(f"{osrm_url}/route/v1/car/{x.start_x},{x.start_y};{x.end_x},{x.end_y}")
-  body = response.json()
-  x['osrm_duration'] = body['routes'][0]['duration']
-  x['osrm_distance'] = body['routes'][0]['distance']
+  try:
+    response =  requests.get(f"{osrm_url}/route/v1/car/{x.start_x},{x.start_y};{x.end_x},{x.end_y}")
+    body = response.json()
+    x['osrm_duration'] = body['routes'][0]['duration']
+    x['osrm_distance'] = body['routes'][0]['distance']
+  except requests.RequestException as e:
+    logging.warn('Error on osrm call ' + e)
+    # Handle exception, e.g., log error and continue, or re-raise with additional context
+    pass
   return x
 
 df_carpool = df_carpool.apply(get_osrm_data, axis = 1)
