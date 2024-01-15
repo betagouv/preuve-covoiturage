@@ -77,12 +77,18 @@ df_only_class_c_trip = df_carpool[operator_class_c_mask]
 # https://doc.covoiturage.beta.gouv.fr/nos-services/le-registre-de-preuve-de-covoiturage/quest-ce-que-cest/classes-de-preuve-and-identite/classes-a-b-c
 # 
 # # Relever les trajets : 
-# - Qui ont une distance estimée par osrm ou transmises inférieure à 300m.
-# - Qui ont une durée estimée par osrm ou transmises inférieures à 1 minutes.
-# - Qui ont une durée estimée par osrm supérieure à 2.5 fois le temps transmis. Exemple: temps estimé 25 minutes vs temps transmis 10 minutes
-# - Qui ont une distance estimée par osrm supérieure à 2.5 fois la distance transmise. Exemple: distance 1km sur une distance estimée 2.5km
-# - Qui ont une distance transmise supérieur à 4 fois la distance estimée osrm. 5 estimé 10 transmises (détours par rapport au plus court chemin possible) 
-# - Qui ont une durée transmise supérieure à 7 fois la durée estimée (embouteillage possible)
+# - Qui ont une distance estimée par osrm ou transmises inférieure à 300m. 
+#     * Le trajet est beaucoup trop court en termes de distance
+# - Qui ont une durée estimée par osrm ou transmises inférieures à 1 minute.
+#     * Le trajet est beaucoup trop court en termes de durée
+# - Qui ont une durée estimée par osrm supérieure à 2.5 fois le temps transmis. Exemple: temps estimé 25 minutes pour temps transmis 10 minutes
+#     * Le temps de trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
+# - Qui ont une distance estimée par osrm supérieure à 2.5 fois la distance transmise. Exemple: distance 10 km sur une distance estimée 25 km
+#     * La distance du trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
+# - Qui ont une distance transmise supérieur à 4 fois la distance estimée osrm. Exemple: 10 km estimé pour 40 km transmis
+#     * La distance transmise est très largement supérieure à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels détours par rapport au plus court chemin
+# - Qui ont une durée transmise supérieure à 7 fois la durée estimée. Exemple : 1h estimé vs 7h transmis
+#     * La durée transmise est très largement supérieure par rapport à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels embouteillage
 
 # In[8]:
 
