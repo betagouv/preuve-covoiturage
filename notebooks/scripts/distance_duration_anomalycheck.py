@@ -10,7 +10,7 @@ import os
 connection_string = os.environ['PG_CONNECTION_STRING']
 delay = os.environ['DELAY']
 frame = os.environ['FRAME']
-update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] or False
+update_carpool_status = os.getenv('UPDATE_CARPOOL_STATUS', False)
 osrm_url = os.environ['OSRM_URL']
 
 
