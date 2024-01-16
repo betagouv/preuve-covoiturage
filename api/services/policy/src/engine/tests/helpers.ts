@@ -17,6 +17,9 @@ const defaultPosition = {
   reseau: '232',
 };
 
+const defaultLat = 48.72565703413325;
+const defaultLon = 2.261827843187402;
+
 const dftCarpool: CarpoolInterface = {
   _id: 1,
   trip_id: v4(),
@@ -36,6 +39,10 @@ const dftCarpool: CarpoolInterface = {
   passenger_payment: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
+  start_lat: defaultLat,
+  start_lon: defaultLon,
+  end_lat: defaultLat,
+  end_lon: defaultLon,
 };
 
 export function generateCarpool(

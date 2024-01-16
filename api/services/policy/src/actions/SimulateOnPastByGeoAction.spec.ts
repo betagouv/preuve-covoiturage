@@ -53,7 +53,7 @@ test.beforeEach((t) => {
     t.context.tripRepository,
   );
 
-  t.context.kernelInterfaceResolverStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call');
+  t.context.kernelInterfaceResolverStub = sinon.stub(t.context.fakeKernelInterfaceResolver, 'call') as any;
   t.context.tripRepositoryResolverStub = sinon.stub(t.context.tripRepository, 'findTripByGeo');
 
   t.context.todayMinusSizMonthes = new Date();

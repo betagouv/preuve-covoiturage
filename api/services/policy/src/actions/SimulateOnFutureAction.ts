@@ -117,6 +117,10 @@ export class SimulateOnFutureAction extends AbstractAction {
           distance: inputv3.distance,
           start: await this.territoryRepository.findByPoint(inputv3.start),
           end: await this.territoryRepository.findByPoint(inputv3.end),
+          start_lat: inputv3.start.lat,
+          start_lon: inputv3.start.lon,
+          end_lat: inputv3.end.lat,
+          end_lon: inputv3.end.lon,
         };
     }
   }

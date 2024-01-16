@@ -1,4 +1,3 @@
-import { PhoneNumberUtil, PhoneNumber, PhoneNumberFormat } from 'google-libphonenumber';
 import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
 
 export function formatPhone(input: string): string {
