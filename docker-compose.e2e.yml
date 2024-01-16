@@ -134,6 +134,35 @@ services:
     volumes:
       - ${PWD}/docker/api/certs:/app/certs:ro
 
+  cms:
+    build:
+      dockerfile: ../docker/cms/prod/Dockerfile
+      context: ./cms
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: test
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      JWT_SECRET: REPLACE_ME
+      ADMIN_JWT_SECRET: REPLACE_ME
+      APP_KEYS: REPLACE_ME
+      NODE_ENV: production
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.api.rule=Host(`cms.covoiturage.test`)'
+      - 'traefik.http.routers.api.entrypoints=websecure'
+      - 'traefik.http.routers.api.tls=true'
+      - 'traefik.http.services.api.loadbalancer.server.port=1337'
+    networks:
+      - back
+      - front
+    depends_on:
+      - redis
+      - postgres
+      - mailer
+      - s3
+
   worker:
     build:
       dockerfile: ./docker/api/prod/Dockerfile

@@ -61,6 +61,21 @@ services:
     command: 'sh -c "pm2-runtime start pm2-api.json | pino-pretty"'
     tty: true
 
+  cms:
+    build:
+      dockerfile: ../docker/cms/Dockerfile
+      context: ./cms
+    volumes:
+      - ${PWD}/cms/config:/opt/app/config
+      - ${PWD}/cms/src:/opt/app/src
+      - ${PWD}/cms/package.json:/opt/package.json
+      - ${PWD}/cms/package-lock.json:/opt/package-lock.json
+    ports:
+      - "1337:1337"
+    environment:
+      NODE_ENV: dev
+      DATABASE_NAME: local
+
   worker:
     build:
       dockerfile: ./docker/api/Dockerfile
