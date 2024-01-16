@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_page_rows",
+  "info": {
+    "displayName": "row",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "row": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::row.row"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_row_indicators",
+  "info": {
+    "displayName": "indicator",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "info": {
+      "type": "string",
+      "required": false
+    },
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "unit": {
+      "type": "string"
+    },
+    "value": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_row_maps",
+  "info": {
+    "displayName": "Map",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "params": {
+      "type": "json",
+      "required": true
+    }
+  }
+}
