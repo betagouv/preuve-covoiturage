@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS fraudcheck.triangular_patterns (
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     phone_trunc VARCHAR(20),
-    num_participants 
+    num_participants INTEGER, 
     num_trips FLOAT,
     operator_list VARCHAR(255),
     num_operators INTEGER,

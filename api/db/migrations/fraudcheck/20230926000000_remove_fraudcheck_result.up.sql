@@ -7,5 +7,5 @@ DROP INDEX IF EXISTS fraudcheck.results_uuid_idx;
 
 DROP TRIGGER IF EXISTS touch_fraud_updated_at on fraudcheck.fraudchecks;
 
-DROP TABLE fraudcheck.fraudchecks;
-DROP TABLE fraudcheck.results;
+DROP TABLE IF EXISTS fraudcheck.fraudchecks;
+DROP TABLE IF EXISTS fraudcheck.results;
