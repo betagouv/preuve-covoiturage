@@ -90,6 +90,7 @@ export const LaRochelle: PolicyHandlerStaticInterface = class extends AbstractPo
 
   params(): PolicyHandlerParamsInterface {
     return {
+      tz: 'Europe/Paris',
       slices: this.slices,
       operators: this.operators,
       limits: {

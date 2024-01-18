@@ -96,6 +96,7 @@ export const Pdll2023: PolicyHandlerStaticInterface = class extends AbstractPoli
 
   params(): PolicyHandlerParamsInterface {
     return {
+      tz: 'Europe/Paris',
       slices: this.slices,
       operators: this.operators,
       limits: {

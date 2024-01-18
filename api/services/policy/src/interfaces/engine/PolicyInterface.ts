@@ -59,6 +59,7 @@ export interface PolicyHandlerStaticInterface {
 }
 
 export interface PolicyHandlerParamsInterface {
+  tz?: Timezone;
   slices?: RunnableSlices | BoundedSlices;
   operators?: Array<OperatorsEnum>;
   limits?: {

@@ -64,6 +64,7 @@ export const Montpellier: PolicyHandlerStaticInterface = class extends AbstractP
 
   params(): PolicyHandlerParamsInterface {
     return {
+      tz: 'Europe/Paris',
       slices: this.slices,
       operators: this.operators,
       limits: {

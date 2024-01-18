@@ -112,6 +112,7 @@ export const Vitre: PolicyHandlerStaticInterface = class
 
   params(): PolicyHandlerParamsInterface {
     return {
+      tz: 'Europe/Paris',
       slices: this.slices,
       operators: this.operators,
       limits: {
