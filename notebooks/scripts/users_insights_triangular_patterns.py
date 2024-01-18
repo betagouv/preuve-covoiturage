@@ -133,7 +133,7 @@ def is_changed(current, previous):
 # In[ ]:
 
 
-def create_insights_and_triangular_df(start_date, end_date, aom_insee, policy_id, connection_string,engine):
+def create_insights_and_triangular_df(delay, frame, aom_insee ,engine):
   
   query = f"""SELECT cc._id, cc.is_driver, ci.phone_trunc, cc.datetime, cc.duration, cc.operator_id, cc.seats,
   ST_AsText(cc.start_position) as start_wkt, ST_AsText(cc.end_position) as end_wkt, 
@@ -534,7 +534,7 @@ def create_insights_and_triangular_df(start_date, end_date, aom_insee, policy_id
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
 
-df_carpool,phone_trunc_insights_df,final_triangular_df,user_phone_change_history_df = create_insights_and_triangular_df(start_date, end_date, aom_insee, policy_id, connection_string,engine)
+df_carpool,phone_trunc_insights_df,final_triangular_df,user_phone_change_history_df = create_insights_and_triangular_df(delay, frame, aom_insee,engine)
 
 
 # ## 5.Storage
