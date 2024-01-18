@@ -13,7 +13,6 @@
 # - `aom_insee` :          '217500016'                                            -> Aom insee code representing geo perimeter to apply the algorithm
 # - `start_date` :         '2023-02-28 23:59:59'                                  -> Start date
 # - `end_date`:             '2023-04-30 00:00:01'                                 -> End date
-# - `policy_id`             : 459                                                 -> Policy id filter on incentive
 
 # In[ ]:
 
@@ -39,12 +38,10 @@ load_dotenv()
 
 
 connection_string = os.environ['PG_CONNECTION_STRING']
-
 delay = os.environ['DELAY'] 
 frame = os.environ['FRAME'] 
 
 # Hardcoded for now
-policy_id = 459
 aom_insee = '217500016'
 
 
@@ -133,7 +130,7 @@ def is_changed(current, previous):
 # In[ ]:
 
 
-def create_insights_and_triangular_df(start_date, end_date, aom_insee, policy_id, connection_string,engine):
+def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
   
   query = f"""SELECT cc._id, cc.is_driver, ci.phone_trunc, cc.datetime, cc.duration, cc.operator_id, cc.seats,
   ST_AsText(cc.start_position) as start_wkt, ST_AsText(cc.end_position) as end_wkt, 
@@ -504,7 +501,7 @@ def create_insights_and_triangular_df(start_date, end_date, aom_insee, policy_id
   FROM 
       carpool.identities
   WHERE 
-      operator_user_id IN ({formatted_ids}) AND updated_at < '{end_date}'::timestamp AT TIME ZONE 'EUROPE/PARIS';
+      operator_user_id IN ({formatted_ids}) AND updated_at < NOW() - '{delay} days'::interval';
   """
 
   with engine.connect() as conn:
@@ -534,7 +531,7 @@ def create_insights_and_triangular_df(start_date, end_date, aom_insee, policy_id
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
 
-df_carpool,phone_trunc_insights_df,final_triangular_df,user_phone_change_history_df = create_insights_and_triangular_df(start_date, end_date, aom_insee, policy_id, connection_string,engine)
+df_carpool,phone_trunc_insights_df,final_triangular_df,user_phone_change_history_df = create_insights_and_triangular_df(delay, frame, aom_insee ,engine)
 
 
 # ## 5.Storage
