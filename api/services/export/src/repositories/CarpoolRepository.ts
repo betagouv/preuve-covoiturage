@@ -44,7 +44,7 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
 
         // pass each line to the file writer
         for (const row of results) {
-          fileWriter.append(new CarpoolRow(row));
+          await fileWriter.append(new CarpoolRow(row));
         }
       } while (count !== 0);
     } catch (e) {

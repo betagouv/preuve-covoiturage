@@ -1,3 +1,5 @@
+import AdmZip from 'adm-zip';
+import { AddWorksheetOptions, Worksheet, stream } from 'exceljs';
 import os from 'node:os';
 import path from 'node:path';
 import { CarpoolRow } from './CarpoolRow';
@@ -12,24 +14,30 @@ export type ComputedField = {
 export type Options = {
   compress: boolean;
   dataSheetName: string;
+  dataSheetOptions: Partial<AddWorksheetOptions>;
   helpSheetName: string;
+  helpSheetOptions: Partial<AddWorksheetOptions>;
   fields: string[];
   computed: ComputedField[];
   datasources: Datasources;
 };
 
 export class XLSXWriter {
-  protected rawExt = 'xlsx';
-  protected compressedExt = 'zip';
+  protected workbook: stream.xlsx.WorkbookWriter;
+  protected dataSheet: Worksheet;
+  protected helpSheet: Worksheet;
+  protected workbookExt = 'xlsx';
+  protected archiveExt = 'zip';
   protected folder: string;
-  protected path: string;
-  protected filename: string;
+  protected basename: string;
   protected options: Options;
 
   protected readonly defaultConfig: Options = {
     compress: true,
     dataSheetName: 'Trajets',
+    dataSheetOptions: {},
     helpSheetName: 'Aide',
+    helpSheetOptions: {},
     fields: [],
     computed: [],
     datasources: new Map(),
@@ -38,14 +46,31 @@ export class XLSXWriter {
   constructor(filename: string, config: Partial<Options>) {
     this.options = { ...this.defaultConfig, ...config } as Options;
     this.folder = os.tmpdir();
-    this.filename = this.sanitize(filename);
-    this.path = path.join(this.folder, `${this.filename}.${this.rawExt}`);
+    this.basename = this.sanitize(filename);
   }
 
   // TODO create the workbook and the worksheets
+  public async create(): Promise<XLSXWriter> {
+    // create the Excel file
+    this.workbook = new stream.xlsx.WorkbookWriter({ filename: this.workbookPath, useStyles: true });
+
+    // Add the data sheet and configure the columns
+    this.dataSheet = this.workbook.addWorksheet(this.options.dataSheetName, this.options.dataSheetOptions);
+    this.dataSheet.columns = this.options.fields.map((header) => ({ header, key: header }));
+
+    // Add the help sheet
+    this.helpSheet = this.workbook.addWorksheet(this.options.helpSheetName, this.options.helpSheetOptions);
+
+    return this;
+  }
+
+  public async close(): Promise<XLSXWriter> {
+    await this.workbook.commit();
+    return this;
+  }
 
   // append lines to the data sheet
-  public append(carpoolRow: CarpoolRow): XLSXWriter {
+  public async append(carpoolRow: CarpoolRow): Promise<XLSXWriter> {
     // add computed fields to the carpool row
     this.options.computed.forEach((field: ComputedField) => {
       carpoolRow.addField(field.name, field.compute(carpoolRow, this.options.datasources));
@@ -54,35 +79,47 @@ export class XLSXWriter {
     // TODO use the XLSX library to write the line to the file
     // TODO get the list of fields from the config
     const row = carpoolRow.get(this.options.fields);
-    console.debug(row);
+    this.dataSheet.addRow(row).commit();
 
     return this;
   }
 
   // TODO print help in a separate sheet
-  public printHelp(): XLSXWriter {
+  public async printHelp(): Promise<XLSXWriter> {
+    console.info('TODO print help');
     return this;
   }
 
   // TODO compress the file with ZIP (for now)
-  public compress(): XLSXWriter {
+  public async compress(): Promise<XLSXWriter> {
     // TODO
-    this.filename = path.join(this.folder, `${this.filename}.${this.compressedExt}`);
+    const zip = new AdmZip();
+    zip.addLocalFile(this.workbookPath);
+    zip.writeZip(this.archivePath);
+
     return this;
   }
 
-  public remove(): XLSXWriter {
+  public async cleanup(): Promise<XLSXWriter> {
     // TODO
 
     return this;
   }
 
-  public getFilename(): string {
-    return this.filename;
+  public get workbookFilename(): string {
+    return `${this.basename}.${this.workbookExt}`;
   }
 
-  public getPath(): string {
-    return this.path;
+  public get workbookPath(): string {
+    return path.join(this.folder, this.workbookFilename);
+  }
+
+  public get archiveFilename(): string {
+    return `${this.basename}.${this.archiveExt}`;
+  }
+
+  public get archivePath(): string {
+    return path.join(this.folder, this.archiveFilename);
   }
 
   public addDatasource(key: string, value: any): XLSXWriter {

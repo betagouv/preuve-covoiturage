@@ -25,6 +25,16 @@ export class DebugCommand implements CommandInterface {
     const fileWriter = new XLSXWriter('send-test', {
       compress: true,
       fields: ['trip_id', 'policy_id', 'operator', 'campaign_mode'],
+
+      // define computed fields to be added to the carpool row
+      // it takes a name (snake case, lowercase, no spaces, no special characters...)
+      // and a compute function which will bind the datasources together to get the result.
+      //
+      // Try to put the logic in the models and use the compute function as a controller to
+      // bind tools together.
+      //
+      // Keep in mind this will run for EVERY SINGLE row of the file, so keep it fast
+      // and preload data in the datasources in the calling service.
       computed: [
         {
           name: 'campaign_mode',
@@ -36,8 +46,23 @@ export class DebugCommand implements CommandInterface {
       ],
     });
 
-    await this.build.run(params, fileWriter);
+    // create the Workbook and write data
+    try {
+      await fileWriter.create();
+      await this.build.run(params, fileWriter);
+      await fileWriter.printHelp();
+    } catch (e) {
+      console.error(e.message);
+    } finally {
+      await fileWriter.close();
+      console.info(`File written to ${fileWriter.workbookPath}`);
+    }
 
-    // TODO send the file to the user
+    // compress the file
+    await fileWriter.compress();
+    console.info(`File compressed to ${fileWriter.archivePath}`);
+
+    // TODO upload
+    // TODO cleanup
   }
 }
