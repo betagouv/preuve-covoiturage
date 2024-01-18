@@ -35,7 +35,7 @@ CASE
 ST_X(ST_AsText(cc.start_position)) start_x,
 ST_Y(ST_AsText(cc.start_position)) start_y, 
 ST_X(ST_AsText(cc.end_position)) end_x,
-ST_Y(ST_AsText(cc.end_position)) end_y,
+ST_Y(ST_AsText(cc.end_position)) end_y
 FROM CARPOOL.CARPOOLS CC
 JOIN carpool.identities ci on cc.identity_id = ci._id
  join geo.perimeters gps on cc.start_geo_code = gps.arr and gps.year = 2023
