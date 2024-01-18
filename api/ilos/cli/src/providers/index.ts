@@ -1,1 +1,0 @@
-export { CommandRegistry } from './CommandRegistry';

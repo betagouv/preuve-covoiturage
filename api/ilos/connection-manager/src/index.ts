@@ -1,1 +1,0 @@
-export { ConnectionManagerExtension } from './ConnectionManagerExtension';

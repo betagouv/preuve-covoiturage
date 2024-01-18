@@ -1,1 +1,0 @@
-DROP TABLE IF EXISTS fraudcheck.triangular_patterns;

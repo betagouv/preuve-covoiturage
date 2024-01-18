@@ -1,5 +1,0 @@
----
-title: Cee
----
-
-# Cee service

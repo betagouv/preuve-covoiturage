@@ -1,8 +1,0 @@
-node_modules
-data-dumps
-dist
-.idea
-.env
-coverage
-.nyc_output
-.nx/cache

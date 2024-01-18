@@ -1,1 +1,0 @@
-DELETE FROM common.roles WHERE slug = ANY('{"admin", "user", "territory.admin", "territory.user", "operator.user", "operator.admin"}');

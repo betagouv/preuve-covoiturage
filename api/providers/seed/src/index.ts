@@ -1,1 +1,0 @@
-export { Migrator } from './Migrator';

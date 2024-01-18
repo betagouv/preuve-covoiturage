@@ -12,6 +12,6 @@ CREATE TABLE IF NOT EXISTS fraudcheck.triangular_patterns (
     departure_date TIMESTAMP WITH TIME ZONE,
     end_date TIMESTAMP WITH TIME ZONE,
     average_daily_trips FLOAT,
-    level INTEGER
+    "level" INTEGER
 );
 CREATE UNIQUE INDEX ON fraudcheck.triangular_patterns(phone_trunc, departure_date, end_date);

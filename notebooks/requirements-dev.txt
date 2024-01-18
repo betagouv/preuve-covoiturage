@@ -1,6 +1,0 @@
-virtualenv==20.23.0
-pre-commit==3.2.2
-pytest==7.3.1
-matplotlib==3.7.1
-matplotlib-inline==0.1.6
-itables==1.6.1

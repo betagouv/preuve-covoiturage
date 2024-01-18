@@ -1,1 +1,0 @@
-export { QueueExtension } from './QueueExtension';
