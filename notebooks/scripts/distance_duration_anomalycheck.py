@@ -10,7 +10,7 @@ import os
 connection_string = os.environ['PG_CONNECTION_STRING']
 delay = os.environ['DELAY']
 frame = os.environ['FRAME']
-update_carpool_status = os.getenv('UPDATE_CARPOOL_STATUS', False)
+update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False 
 osrm_url = os.environ['OSRM_URL']
 
 
@@ -112,7 +112,7 @@ df_result = df_only_class_c_trip[less_than_300_meters_mask | less_than_1_minutes
 
 df_labels = df_result[['_id']]
 df_labels = df_labels.assign(label='distance_duration_anomaly')
-df_labels.rename(columns={"_id": "carpool_id"})
+df_labels = df_labels.rename(columns={"_id": "carpool_id"})
 
 
 # In[ ]:

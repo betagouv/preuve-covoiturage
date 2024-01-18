@@ -19,21 +19,10 @@ from helpers.apply_metods import add_overlap_columns, remove_carpool_with_same_p
 
 
 # Input params checks
-try: update_carpool_status
-except NameError:
-  update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
-
-try: connection_string
-except NameError:
-  connection_string = os.environ['PG_CONNECTION_STRING']
-
-try: delay
-except NameError:
-  delay = os.environ['DELAY']
-
-try: frame
-except NameError:
-  frame = os.environ['FRAME'] 
+update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
+connection_string = os.environ['PG_CONNECTION_STRING']
+delay = os.environ['DELAY']
+frame = os.environ['FRAME'] 
 
 
 
