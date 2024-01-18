@@ -16,5 +16,6 @@ export interface PolicyInterface {
     limits?: {
       glob?: number;
     };
+    booster_dates?: Array<string>;
   };
 }
