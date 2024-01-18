@@ -37,13 +37,15 @@ from datetime import datetime
 module_path = os.path.abspath(os.path.join('..'))
 load_dotenv()
 
-try: connection_string
-except NameError:
-  connection_string = os.environ['PG_CONNECTION_STRING']
 
-if module_path not in sys.path:
-    sys.path.append(module_path)
-sys.path.append('/notebooks/scripts')
+connection_string = os.environ['PG_CONNECTION_STRING']
+
+delay = os.environ['DELAY'] 
+frame = os.environ['FRAME'] 
+
+# Hardcoded for now
+policy_id = 459
+aom_insee = '217500016'
 
 
 # ## 2. Helper Functions
@@ -150,8 +152,8 @@ def create_insights_and_triangular_df(start_date, end_date, aom_insee, policy_id
     LEFT JOIN policy.incentives pi on pi.carpool_id = cc._id
     JOIN CARPOOL.CARPOOLS AS CC2 ON CC.OPERATOR_JOURNEY_ID = CC2.OPERATOR_JOURNEY_ID and CC.is_driver != cc2.is_driver
     JOIN CARPOOL.IDENTITIES AS CI2 on CC2.IDENTITY_ID = CI2._id
-      WHERE CC.DATETIME >= '{start_date}'::timestamp AT TIME ZONE 'EUROPE/PARIS'
-      AND CC.DATETIME < '{end_date}'::timestamp AT TIME ZONE 'EUROPE/PARIS'
+      WHERE CC.DATETIME >= NOW() - '{delay} days'::interval - '{frame} days'::interval
+	  AND CC.DATETIME < NOW() - '{delay} days'::interval
       {f"and (gps.aom = '{aom_insee}' or gpe.aom = '{aom_insee}' or gps.reg = '{aom_insee}' or gpe.reg = '{aom_insee}') and gps.year = 2022 and gpe.year = 2022" if aom_insee else ""}
   """
 
@@ -528,10 +530,7 @@ def create_insights_and_triangular_df(start_date, end_date, aom_insee, policy_id
 # In[ ]:
 
 
-aom_insee = '217500016'
-start_date ='2023-12-01 23:59:59' 
-end_date='2023-12-05 00:00:01'
-policy_id = 459
+
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
 
