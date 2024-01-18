@@ -130,6 +130,7 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
 
   params(): PolicyHandlerParamsInterface {
     return {
+      tz: 'Europe/Paris',
       slices: this.slices,
       operators: this.operators,
       limits: {

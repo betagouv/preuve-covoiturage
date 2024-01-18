@@ -91,6 +91,7 @@ export const Smt2023: PolicyHandlerStaticInterface = class
 
   params(): PolicyHandlerParamsInterface {
     return {
+      tz: 'Europe/Paris',
       slices: this.getSlices(),
       operators: this.operators,
       limits: {

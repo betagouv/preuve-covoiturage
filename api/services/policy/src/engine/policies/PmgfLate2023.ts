@@ -73,6 +73,7 @@ export const PmgfLate2023: PolicyHandlerStaticInterface = class
 
   params(): PolicyHandlerParamsInterface {
     return {
+      tz: 'Europe/Paris',
       slices: this.slices,
       operators: this.operators,
       limits: {

@@ -60,6 +60,7 @@ export const MetropoleSavoie: PolicyHandlerStaticInterface = class extends Abstr
 
   params(): PolicyHandlerParamsInterface {
     return {
+      tz: 'Europe/Paris',
       slices: this.slices,
       operators: this.operators,
       limits: {
