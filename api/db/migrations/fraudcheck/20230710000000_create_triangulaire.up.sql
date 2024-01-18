@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS fraudcheck.phone_insights (
 
 CREATE UNIQUE INDEX on fraudcheck.phone_insights (phone_trunc, departure_date, end_date);
 
-
 CREATE TABLE IF NOT EXISTS fraudcheck.potential_triangular_patterns (
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
