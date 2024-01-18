@@ -113,23 +113,23 @@ export class CarpoolListQuery extends Query {
       WHERE cc.is_driver = false
         AND cc.datetime >= $1
         AND cc.datetime <  $2
-        AND pi.policy_id IS NOT NULL -- TODO REMOVE THIS
     
       -- TODO chunk carpools by datetime in the application code
       ORDER BY cc.datetime DESC
-      LIMIT 10 -- TODO REMOVE THIS
+      -- LIMIT 10 -- TODO REMOVE THIS
     ),
     
     -- select latest geo data for start and end geo codes only
+    -- move country code and name in their own columns
     geo AS (
       SELECT DISTINCT ON (arr)
         arr,
-        CASE WHEN arr::int < 99000 THEN l_arr ELSE null END AS l_arr,
+        CASE WHEN arr <> country THEN l_arr ELSE null END AS l_arr,
         l_com,
         l_epci,
         l_dep,
         l_reg,
-        CASE WHEN arr::int < 99000 THEN l_country ELSE l_arr END AS l_country,
+        CASE WHEN arr <> country THEN l_country ELSE l_arr END AS l_country,
         l_aom,
         CASE
           WHEN surface > 0::double precision AND (pop::double precision / (surface::double precision / 100::double precision)) > 40::double precision THEN 3

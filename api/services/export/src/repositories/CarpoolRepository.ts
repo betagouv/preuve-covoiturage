@@ -41,6 +41,7 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
       do {
         const results = await cursor.read(this.batchSize);
         count = results.length;
+        console.debug(`[export:CarpoolRepository] read ${count} rows`);
 
         // pass each line to the file writer
         for (const row of results) {
@@ -48,7 +49,8 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
         }
       } while (count !== 0);
     } catch (e) {
-      console.error(e.message);
+      console.error(`[export:CarpoolRepository] ${e.message}`, { values });
+      console.debug(e.stack);
     } finally {
       await cursor.release();
     }

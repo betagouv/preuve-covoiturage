@@ -16,8 +16,8 @@ export class DebugCommand implements CommandInterface {
   public async call(): Promise<void> {
     // TODO normalise params
     const params = new ExportParams({
-      start_at: new Date('2023-08-14T08:00:00+0100'),
-      end_at: new Date('2023-08-14T12:00:00+0100'),
+      start_at: new Date('2023-08-14T00:00:00+0200'),
+      end_at: new Date('2023-08-15T00:00:00+0200'),
     });
 
     // TODO create ExportFile entity and pass it to the provider
@@ -40,7 +40,7 @@ export class DebugCommand implements CommandInterface {
           name: 'campaign_mode',
           compute(row, datasources) {
             const campaign = datasources.get('campaigns').get(row.value('campaign_id'));
-            return campaign.getModeAt([row.value('start_datetime_utc'), row.value('end_datetime_utc')]);
+            return campaign && campaign.getModeAt([row.value('start_datetime_utc'), row.value('end_datetime_utc')]);
           },
         },
       ],
@@ -56,6 +56,7 @@ export class DebugCommand implements CommandInterface {
     } finally {
       await fileWriter.close();
       console.info(`File written to ${fileWriter.workbookPath}`);
+      // TODO cleanup on failure
     }
 
     // compress the file
