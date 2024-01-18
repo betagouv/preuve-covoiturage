@@ -1,18 +1,5 @@
-import { PhoneNumberUtil, PhoneNumber, PhoneNumberFormat } from 'google-libphonenumber';
+import { formatPhone } from '../../lib/phone';
 
 export function phoneCast(data: string): string {
-  if (!data) {
-    return data;
-  }
-
-  try {
-    const clean = data.replace(/ /g, '');
-
-    const phoneUtil: PhoneNumberUtil = PhoneNumberUtil.getInstance();
-    const phone: PhoneNumber = phoneUtil.parseAndKeepRawInput(clean, clean.substr(0, 1) === '+' ? null : 'FR');
-
-    return phoneUtil.format(phone, PhoneNumberFormat.E164);
-  } catch (e) {
-    return data;
-  }
+  return formatPhone(data);
 }

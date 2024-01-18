@@ -3,12 +3,14 @@ import { provider } from '@ilos/common';
 import { GeoNormalizerProvider } from './GeoNormalizerProvider';
 import { RouteNormalizerProvider } from './RouteNormalizerProvider';
 import { Acquisition, NormalizationProviderInterface, PayloadV3, ResultInterface } from '../interfaces';
+import { IdentityNormalizerProvider } from './IdentityNormalizerProvider';
 
 @provider()
 export class NormalizationProviderV3 implements NormalizationProviderInterface<PayloadV3> {
   constructor(
     protected geoNormalizer: GeoNormalizerProvider,
     protected routeNormalizer: RouteNormalizerProvider,
+    protected identityNormalizer: IdentityNormalizerProvider,
   ) {}
 
   public async handle(data: Acquisition<PayloadV3>): Promise<ResultInterface> {
@@ -39,7 +41,7 @@ export class NormalizationProviderV3 implements NormalizationProviderInterface<P
 
     const driver = {
       ...common,
-      identity: data.payload.driver.identity,
+      identity: await this.identityNormalizer.handle(data.payload.driver.identity),
       is_driver: true,
       seats: 0,
       payment: data.payload.driver.revenue,
@@ -52,7 +54,7 @@ export class NormalizationProviderV3 implements NormalizationProviderInterface<P
 
     const passenger = {
       ...common,
-      identity: data.payload.passenger.identity,
+      identity: await this.identityNormalizer.handle(data.payload.passenger.identity),
       is_driver: false,
       seats: data.payload.passenger.seats || 1,
       payment: data.payload.passenger.contribution,

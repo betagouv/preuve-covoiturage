@@ -5,8 +5,9 @@
   "license": "Apache-2.0",
   "scripts": {
     "ilos": "ilos",
-    "build": "tsc",
+    "build": "tsc && npm run static",
     "watch": "tsc -w",
+    "static": "mkdir -p dist/public; rm -rf dist/public; cp -r src/public dist/",
     "test:unit": "exit 0; # ava --config ava.unit.cjs",
     "test:integration": "exit 0; # ava --config ava.integration.cjs",
     "coverage:ci": "nyc --nycrc-path ../nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",

@@ -6,7 +6,7 @@ import Pagination from "@/components/common/Pagination";
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Ressources | Covoiturage courte distance',
+  title: 'Ressources | Observatoire.covoiturage.gouv.fr',
   description: 'Toutes les ressources sur le covoiturage de courte distance',
 }
 
@@ -20,7 +20,7 @@ export default async function Ressources() {
         '_eq': 'published',
       },
     },
-    sort:['-date_created'] as never[],
+    sort:['-date_publi'] as never[],
     meta:'filter_count',
   });
 
@@ -28,7 +28,7 @@ export default async function Ressources() {
   const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsRessourcesByPage) : 1
 
   return (
-    <article id='content'>
+    <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
@@ -38,9 +38,9 @@ export default async function Ressources() {
                 <RessourceCard 
                   title={a.title}
                   content={a.content}
-                  date={new Date(a.date_created).toLocaleDateString('fr-FR')}
+                  date={new Date(a.date_publi).toLocaleDateString('fr-FR')}
                   link={a.link}
-                  file={`${a.file ? `${cmsHost}/assets/${a.file.id}` :'' }`}
+                  file={a.file ? `${cmsHost}/assets/${a.file}` : undefined}
                   img={`${cmsHost}/assets/${a.img.id}`}
                   img_legend={a.img_legend}
                   horizontal
@@ -54,6 +54,6 @@ export default async function Ressources() {
         count={nbPage}
         href={`/ressources`}
       />    
-    </article>
+    </div>
   );
 }

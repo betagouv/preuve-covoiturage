@@ -15,6 +15,12 @@ table {
   object-fit: contain;
   height: auto;
 }
+.fr-grid-row .fr-card {
+  z-index: 0;
+}
 .fr-content-media__img img{
   aspect-ratio: 1 !important;
+}
+.Mui-focusVisible{
+  background-color: #bbbbfc !important;
 }

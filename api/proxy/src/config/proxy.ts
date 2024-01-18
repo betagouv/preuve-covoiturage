@@ -25,3 +25,4 @@ export const rpc = {
 };
 
 export const cors = env.or_fail('APP_CORS', appUrl);
+export const observatoryCors = env.or_fail('APP_OBSERVATORY_CORS', appUrl).split(',');

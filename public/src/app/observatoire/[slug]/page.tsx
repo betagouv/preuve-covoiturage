@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
     limit: 1,
   });
   return {
-    title: `${data ? data[0].title : ''} | Covoiturage courte distance`,
+    title: `${data ? data[0].title : ''} | Observatoire.covoiturage.gouv.fr`,
     description: shorten(`${data && data[0].content ? data[0].content :
     'Observer le covoiturage de courte distance en France'}`,150),
   }
@@ -83,7 +83,7 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
   const rows = data ? data[0].sections.filter((s:Section) => s.collection === 'Row') : null
 
   return(
-    <article id='content'>
+    <div id='content'>
       {!hero && 
         <PageTitle title={data ? data[0].title : ''} />
       }
@@ -99,16 +99,15 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
       }
       {
         rows && rows.map((r:any, i:number) =>
-        <>
+        <div key={i}>
           {r.item.title && <SectionTitle title={r.item.title} />}
           <IndicatorsRow 
-            key={i}
             indicators={r.item.composition.filter((i:any) => i.collection === 'indicator').map((i:any) => i.item)} 
             analyses={r.item.composition.filter((i:any) => i.collection === 'analyse').map((i:any) => i.item)}
             maps={r.item.composition.filter((i:any) => i.collection === 'map').map((i:any) => i.item)}
             graphs={r.item.composition.filter((i:any) => i.collection === 'graph').map((i:any) => i.item)}
           />
-        </>
+        </div>
       )}
       {blocks && blocks.map((b:any, i:number) =>
         <Block 
@@ -152,13 +151,6 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
           )}
         </div>
       </>}
-      <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
-        <div className={fr.cx('fr-col')}>
-          <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">
-            Haut de page
-          </a>
-        </div>
-      </div>
-    </article>
+    </div>
   );
 }

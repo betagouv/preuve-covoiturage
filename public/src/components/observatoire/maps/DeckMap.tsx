@@ -3,10 +3,9 @@ import { MapboxOverlay, MapboxOverlayProps } from '@deck.gl/mapbox/typed';
 import { Map, useControl, NavigationControl, FullscreenControl, MapRef } from 'react-map-gl/maplibre';
 import Legend from './Legend';
 import { DeckMapInterface } from '@/interfaces/observatoire/componentsInterfaces';
-//css
-import 'maplibre-gl/dist/maplibre-gl.css';
 import { useRef, useEffect } from 'react';
 import { FrCxArg, fr } from '@codegouvfr/react-dsfr';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 function DeckGLOverlay(
   props: MapboxOverlayProps & {
@@ -40,14 +39,19 @@ const DeckMap = (props: DeckMapInterface) => {
 
   return (
     <div className='fr-callout'>
-      <h3 className='fr-callout__title'>{props.title}</h3>
+      <h3 className='fr-callout__title'>
+        {props.title}
+        { props.download &&
+          <span className={fr.cx('fr-ml-5v')}>{props.download}</span>
+        } 
+      </h3>
       <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
         {props.sidebar && props.sidebarPosition == 'left' &&
           <div className={fr.cx('fr-col', sidebarClass)}>
             {props.sidebar}
           </div>
         }
-        <div className={fr.cx('fr-col', mapClass)}>
+        <div className={fr.cx('fr-col', mapClass)} tabIndex={0}>
           <Map
             ref={mapRef}
             initialViewState={props.initialView ? props.initialView : defaultView}

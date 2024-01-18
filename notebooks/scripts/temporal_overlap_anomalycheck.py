@@ -21,14 +21,12 @@ except NameError:
 
 try: update_carpool_status
 except NameError:
-  update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] or True
-
-
-# In[3]:
+  update_carpool_status = os.environ['UPDATE_CARPOOL_STATUS'] == "true" or False
 
 
 import pandas as pd
 from sqlalchemy import create_engine, text
+from helpers.apply_metods import add_overlap_columns 
 
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
@@ -43,7 +41,7 @@ CASE
       ELSE ci.phone_trunc
       END AS phone_trunc,
 cc.start_position, 
-cc.end_position, gmap_url(cc.start_position, cc.end_position)
+cc.end_position
 FROM CARPOOL.CARPOOLS CC
 JOIN carpool.identities ci on cc.identity_id = ci._id
     WHERE CC.DATETIME >= NOW() - '{delay} hours'::interval - '{frame} hours'::interval
@@ -58,14 +56,12 @@ with engine.connect() as conn:
 # In[4]:
 
 
-from production.computes.carpool_overlaps import CarpoolOverlaps
-
 df_carpool['overlap_group'] = 100
 df_carpool['overlap_duration'] = 0
 df_carpool['overlap_duration_ratio'] = 1
 grouped_tmp = df_carpool.groupby(['identity_key'],group_keys=False)
 
-df_only_grouped_with_overlap_group_filled = grouped_tmp.apply(lambda df: CarpoolOverlaps.add_overlap_columns(df, True)).reset_index(drop=True)
+df_only_grouped_with_overlap_group_filled = grouped_tmp.apply(lambda df: add_overlap_columns(df, True)).reset_index(drop=True)
 
 
 # In[5]:
@@ -111,13 +107,15 @@ df_labels = df_labels.apply(lambda x: add_conflicting_carpool_id(x), axis=1)
 
 import sqlalchemy as sa
 
-if update_carpool_status is True:
 
+if update_carpool_status is True:
     metadata = sa.MetaData(schema='carpool')
     metadata.reflect(bind=engine)
 
     table = metadata.tables['carpool.carpools']
     
+    print(f"Updating {len(df_labels['carpool_id'])} carpools with anomaly_error")
+
     where_clause = table.c._id.in_(df_labels['carpool_id'].to_list())
 
     update_stmt = sa.update(table).where(where_clause).values(status='anomaly_error')

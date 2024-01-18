@@ -6,12 +6,14 @@ import { ClasseInterface, SearchParamsInterface } from '@/interfaces/observatoir
 import type { OccupationDataInterface } from '@/interfaces/observatoire/dataInterfaces';
 import { AnalyseInterface } from '@/interfaces/observatoire/helpersInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
+import Button from '@codegouvfr/react-dsfr/Button';
 import bbox from '@turf/bbox';
 import { feature, featureCollection } from '@turf/helpers';
 import { FeatureCollection } from 'geojson';
 import { LngLatBoundsLike } from 'maplibre-gl';
 import { useCallback, useMemo, useState } from 'react';
 import { CircleLayer, Layer, Popup, Source } from 'react-map-gl/maplibre';
+import { downloadData } from '@/helpers/map';
 
 export default function OccupationMap({ title, params }: { title: string; params: SearchParamsInterface }) {
   const mapTitle = title;
@@ -149,6 +151,16 @@ export default function OccupationMap({ title, params }: { title: string; params
         cursor={cursor}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        download={
+          <Button onClick={function download(){
+              downloadData('occupation',geojson,'geojson')
+            }}
+            iconId="fr-icon-download-fill"
+            iconPosition="right"
+          >
+            Télécharger les données de la carte
+          </Button>
+        }
         >
           <Source id='occupation' type='geojson' data={geojson}>
             <Layer {...layer} />

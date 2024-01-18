@@ -19,7 +19,7 @@ const defaultCarpool = {
   _id: 1,
   trip_id: v4(),
   passenger_identity_uuid: v4(),
-  driver_identity_uuid: v4(),
+  driver_identity_uuid: 'driver_id_one',
   operator_siret: OperatorsEnum.Klaxit,
   operator_class: 'C',
   passenger_is_over_18: true,
@@ -49,15 +49,63 @@ test(
       { distance: 6_000, seats: 2 },
       { distance: 80_000 },
       { distance: 80_000, seats: 2 },
+      { distance: 10_000, datetime: new Date('2023-06-01') },
+      { distance: 17_000, datetime: new Date('2023-06-01') },
+      { distance: 50_001, datetime: new Date('2023-06-01') },
+      { distance: 70_001, datetime: new Date('2023-06-01') },
+      { distance: 2_000, datetime: new Date('2023-06-01') },
     ],
     meta: [],
   },
   {
-    incentive: [150, 150, 300, 300, 600],
+    incentive: [150, 150, 300, 300, 600, 100, 170, 200, 0, 0],
     meta: [
       {
         key: 'max_amount_restriction.global.campaign.global',
+        value: 1970,
+      },
+      {
+        key: 'max_amount_restriction.0-driver_id_one.month.0-2023',
         value: 1500,
+      },
+      {
+        key: 'max_amount_restriction.0-driver_id_one.month.5-2023',
+        value: 470,
+      },
+    ],
+  },
+);
+
+test(
+  'should work with driver month limits of 80 €',
+  process,
+  {
+    policy: { handler: Handler.id },
+    carpool: [
+      { distance: 6_000, datetime: new Date('2023-06-01') },
+      { distance: 6_000, datetime: new Date('2023-06-01') },
+    ],
+    meta: [
+      {
+        key: 'max_amount_restriction.0-driver_id_one.month.5-2023',
+        value: 79_00,
+      },
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 79_00,
+      },
+    ],
+  },
+  {
+    incentive: [100, 0],
+    meta: [
+      {
+        key: 'max_amount_restriction.global.campaign.global',
+        value: 80_00,
+      },
+      {
+        key: 'max_amount_restriction.0-driver_id_one.month.5-2023',
+        value: 80_00,
       },
     ],
   },

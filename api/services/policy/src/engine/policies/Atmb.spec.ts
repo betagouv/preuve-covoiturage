@@ -49,10 +49,47 @@ test(
       { operator_class: 'A' },
       { start: { ...defaultPosition, aom: '11' } },
       { end: { ...defaultPosition, aom: '11' } },
+      {
+        start: {
+          ...defaultPosition,
+          epci: '200070852', // Usses et Rhône
+          aom: '200070852',
+        },
+        end: {
+          ...defaultPosition,
+          epci: '200070852',
+          aom: '200070852',
+        },
+        datetime: new Date('2023-12-18'),
+      },
+      {
+        start: {
+          ...defaultPosition,
+          epci: '247400047', // CC Vallée Verte
+          aom: '247400047',
+        },
+        end: {
+          ...defaultPosition,
+          epci: '247400047',
+          aom: '247400047',
+        },
+        datetime: new Date('2023-12-18'),
+      },
+      {
+        end: {
+          ...defaultPosition,
+          aom: '247000623', // CC Quatre Rivière
+        },
+        start: {
+          ...defaultPosition,
+          aom: '247000623',
+        },
+        datetime: new Date('2023-12-18'),
+      },
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
@@ -61,7 +98,14 @@ test(
   {
     policy: { handler: Handler.id },
     carpool: [
-      { distance: 5_000, driver_identity_uuid: 'one' },
+      {
+        distance: 5_000,
+        driver_identity_uuid: 'one',
+        start: {
+          ...defaultPosition,
+          epci: '200070852', // Usses et Rhône
+        },
+      },
       { distance: 5_000, seats: 2, driver_identity_uuid: 'one' },
       { distance: 25_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'two' },
       { distance: 40_000, driver_identity_uuid: 'one', passenger_identity_uuid: 'three' },
@@ -97,7 +141,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.3-2023',
-        value: 118_00,
+        value: 48_00,
       },
     ],
   },
@@ -106,7 +150,7 @@ test(
     meta: [
       {
         key: 'max_amount_restriction.0-one.month.3-2023',
-        value: 120_00,
+        value: 50_00,
       },
       {
         key: 'max_amount_restriction.global.campaign.global',

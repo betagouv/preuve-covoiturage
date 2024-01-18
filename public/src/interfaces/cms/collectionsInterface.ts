@@ -19,6 +19,7 @@ export interface Ressource {
   img_legend?:string,
   file:string,
   status:string,
+  date_publi: Date,
   date_created: Date,
   date_updated: Date,
   user_created: Date,

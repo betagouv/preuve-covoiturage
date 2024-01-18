@@ -7,7 +7,7 @@ import CategoryTags from "@/components/actualites/CategoryTags";
 
 export async function generateMetadata({ params }: { params: { id: string }}) {
   return {
-    title: `Actualités page ${params.id} | Covoiturage courte distance`,
+    title: `Actualités page ${params.id} | Observatoire.covoiturage.gouv.fr`,
     description: `Page ${params.id} des actualités sur le covoiturage de courte distance`,
   }
 }
@@ -58,7 +58,7 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
   const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsActusByPage) : 1
 
   return (
-    <article id='content'>
+    <div id='content'>
       <PageTitle title={content.pageTitle} />
       <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
         {categories.data && <CategoryTags categories={categories.data} />}
@@ -87,6 +87,6 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
         defaultPage={Number(params.id)}
         href={`/actualites`}
       />     
-    </article>
+    </div>
   );
 }

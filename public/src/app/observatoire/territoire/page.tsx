@@ -21,8 +21,6 @@ import OccupationMap from './maps/OccupationMap';
 import AiresCovoiturageMap from './maps/AiresMap';
 import BestFluxTable from './tables/BestFluxTable';
 import BestTerritoriesTable from './tables/BestTerritoriesTable';
-//import { Suspense } from 'react';
-
 
 export default function Page() {
   const title = 'Comprendre le covoiturage quotidien sur votre territoire';
@@ -36,7 +34,7 @@ export default function Page() {
   return (
     <>
       {!loading && !error &&(
-        <article id='content'>
+        <div id='content'>
           <PageTitle title={title} />
           <h2 className={fr.cx('fr-h4')}>{subtitle}</h2>
           <p className={fr.cx('fr-text--lg')}>{content}</p>
@@ -59,7 +57,7 @@ export default function Page() {
               <RepartitionHoraireGraph title='Trajets par horaire' params={params} />
             </div>
             <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-              <RepartitionDistanceGraph title='Trajets par distance' params={params} />
+              <RepartitionDistanceGraph title='Répartition des trajets par distance' params={params} />
             </div>
           </div>
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
@@ -70,35 +68,11 @@ export default function Page() {
               <BestTerritoriesTable title='Top 10 des territoires' limit={10} params={params} />
             </div>
           </div>
-          <SectionTitle title='Cartographie' />
-          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-              <SelectInList
-                label='Sélectionner une carte'
-                id={params.map}
-                list={params.code=='XXXXX' ? mapList.filter( m => m.id !== 2) : mapList}
-                sx={{ minWidth: 300 }}
-                onChange={onChangeMap}
-              />
-            </div>
-            {[1,3].includes(params.map) && 
-              <div className={fr.cx('fr-col-12','fr-col-md-6')}>
-                <SelectObserve label={observeLabel} type={params.type} value={params.observe} onChange={onChangeObserve} />
-              </div>
-            }
-          </div>
-          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
-            <div className={fr.cx('fr-col-12')}>
-              {params.map == 1 && <FluxMap title={mapList[0].name} params={params} />}
-              {params.map == 2 && <DensiteMap title={mapList[1].name} params={params} />}
-              {params.map == 3 && <OccupationMap title={mapList[2].name} params={params} />}
-              {params.map == 4 && <AiresCovoiturageMap title={mapList[3].name} params={params} />}
-            </div>
-          </div>
           <SectionTitle title='Evolution' />
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col-12')}>
               <SelectInList
+                labelId='graph'
                 label='Sélectionner un graphique'
                 id={params.graph}
                 list={graphList}
@@ -115,7 +89,33 @@ export default function Page() {
               {params.graph == 4 && <OccupationGraph title={graphList[3].name} params={params} indic="trips"/>}
             </div>
           </div>
-        </article>
+          <SectionTitle title='Cartographie' />
+          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
+            <div className={fr.cx('fr-col-12','fr-col-md-6')}>
+              <SelectInList
+                labelId='carte'
+                label='Sélectionner une carte'
+                id={params.map}
+                list={params.code=='XXXXX' ? mapList.filter( m => m.id !== 2) : mapList}
+                sx={{ minWidth: 300 }}
+                onChange={onChangeMap}
+              />
+            </div>
+            {[1,3].includes(params.map) && 
+              <div className={fr.cx('fr-col-12','fr-col-md-6')}>
+                <SelectObserve id='observe' label={observeLabel} type={params.type} value={params.observe} onChange={onChangeObserve} />
+              </div>
+            }
+          </div>
+          <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
+            <div className={fr.cx('fr-col-12')}>
+              {params.map == 1 && <FluxMap title={mapList[0].name} params={params} />}
+              {params.map == 2 && <DensiteMap title={mapList[1].name} params={params} />}
+              {params.map == 3 && <OccupationMap title={mapList[2].name} params={params} />}
+              {params.map == 4 && <AiresCovoiturageMap title={mapList[3].name} params={params} />}
+            </div>
+          </div>  
+        </div>
       )}
     </>
   );

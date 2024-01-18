@@ -2,7 +2,7 @@ import datetime
 import unittest
 import pandas as pd
 
-from production.computes.carpool_overlaps import CarpoolOverlaps
+from notebooks.computes.carpool_overlaps import CarpoolOverlaps
 
 class TestComputeCarpoolOverlaps(unittest.TestCase):
 

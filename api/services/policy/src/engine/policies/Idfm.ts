@@ -50,7 +50,7 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
     },
   ];
 
-  protected pollutionAndStrikeDates = [
+  protected boosterDates = [
     '2022-02-18',
     '2022-03-25',
     '2022-03-26',
@@ -120,8 +120,8 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
       }
     }
 
-    // Jour de pollution
-    if (atDate(ctx, { dates: this.pollutionAndStrikeDates })) {
+    // Jour de pollution/grève
+    if (atDate(ctx, { dates: this.boosterDates })) {
       amount *= 1.5;
     }
 
@@ -130,11 +130,13 @@ export const Idfm: PolicyHandlerStaticInterface = class extends AbstractPolicyHa
 
   params(): PolicyHandlerParamsInterface {
     return {
+      tz: 'Europe/Paris',
       slices: this.slices,
       operators: this.operators,
       limits: {
         glob: this.max_amount,
       },
+      booster_dates: [...this.boosterDates],
     };
   }
 

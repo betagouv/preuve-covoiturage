@@ -65,6 +65,7 @@ export const Smt: PolicyHandlerStaticInterface = class extends AbstractPolicyHan
 
   params(): PolicyHandlerParamsInterface {
     return {
+      tz: 'Europe/Paris',
       slices: this.slices,
       operators: this.operators,
       limits: {

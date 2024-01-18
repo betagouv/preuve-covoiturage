@@ -13,6 +13,8 @@ export default function RessourceCard(props: RessourceCardProps) {
         iconPosition: "right",
         linkProps: {
           href: props.file,
+          target: '_blank',
+          title: `Télécharger la ressource "${props.title}" - nouvelle fenêtre`
         },
       })
     }
@@ -24,6 +26,8 @@ export default function RessourceCard(props: RessourceCardProps) {
         priority:'secondary',
         linkProps: {
           href: props.link,
+          target: '_blank',
+          title: `En savoir plus sur "${props.title}" - nouvelle fenêtre`
         },
       })
     }
@@ -35,7 +39,7 @@ export default function RessourceCard(props: RessourceCardProps) {
       title={props.title}
       desc={props.content}
       detail={`Publié le ${props.date}`}
-      imageAlt={props.img_legend ? props.img_legend : ''}
+      imageAlt={''}
       imageUrl={props.img}
       footer={
         <ButtonsGroup

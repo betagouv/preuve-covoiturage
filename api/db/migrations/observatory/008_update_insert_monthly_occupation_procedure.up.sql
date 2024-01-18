@@ -27,11 +27,21 @@ CREATE OR REPLACE PROCEDURE observatory.insert_monthly_occupation(year int, mont
       SELECT 
       a.acquisition_id AS journey_id,
       a.trip_id,
-      ts_ceil(a.datetime, 600) AS journey_start_datetime,
+      CASE WHEN a.start_geo_code ~ ''^97[1-2]'' THEN a.datetime::timestamptz AT TIME ZONE ''America/Guadeloupe''
+        WHEN a.start_geo_code ~ ''^973'' THEN a.datetime::timestamptz AT TIME ZONE ''America/Guyana''
+        WHEN a.start_geo_code ~ ''^974'' THEN a.datetime::timestamptz AT TIME ZONE ''Indian/Reunion''
+        WHEN a.start_geo_code ~ ''^976'' THEN a.datetime::timestamptz AT TIME ZONE ''Indian/Mayotte''
+        ELSE a.datetime::timestamptz AT TIME ZONE ''Europe/Paris'' 
+      END AS journey_start_datetime,
       st_x(a.start_position::geometry)::numeric AS journey_start_lon,
       st_y(a.start_position::geometry)::numeric AS journey_start_lat,
       cts.arr AS journey_start_insee,
-      ts_ceil(a.datetime + ((a.duration || ''seconds''::text)::interval), 600) AS journey_end_datetime,
+      CASE WHEN a.start_geo_code ~ ''^97[1-2]'' THEN (a.datetime + ((a.duration || ''seconds''::text)::interval))::timestamptz AT TIME ZONE ''America/Guadeloupe''
+        WHEN a.start_geo_code ~ ''^973'' THEN (a.datetime + ((a.duration || ''seconds''::text)::interval))::timestamptz AT TIME ZONE ''America/Guyana''
+        WHEN a.start_geo_code ~ ''^974'' THEN (a.datetime + ((a.duration || ''seconds''::text)::interval))::timestamptz AT TIME ZONE ''Indian/Reunion''
+        WHEN a.start_geo_code ~ ''^976'' THEN (a.datetime + ((a.duration || ''seconds''::text)::interval))::timestamptz AT TIME ZONE ''Indian/Mayotte''
+        ELSE (a.datetime + ((a.duration || ''seconds''::text)::interval))::timestamptz AT TIME ZONE ''Europe/Paris'' 
+      END AS journey_end_datetime,
       st_x(a.end_position::geometry)::numeric AS journey_end_lon,
       st_y(a.end_position::geometry)::numeric AS journey_end_lat,
       cte.arr AS journey_end_insee,

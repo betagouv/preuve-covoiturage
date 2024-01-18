@@ -32,6 +32,7 @@ export interface MapInterface {
   mapStyle?: string,
   scrollZoom?: boolean,
   bounds?: LngLatBoundsLike,
+  download?: ReactNode,
   children?: ReactNode,
   legend?: LegendInterface[],
   sidebar?: ReactNode,

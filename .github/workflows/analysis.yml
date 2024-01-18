@@ -60,6 +60,22 @@ jobs:
         run: npm audit --audit-level moderate && exit 0 || $([[ $? -ge 8 ]] && exit 1 || exit 0)
         working-directory: public
 
+
+
+  python-code-audit:
+    name: Python code audit
+    runs-on: ubuntu-latest
+    env:
+      DEP_PATH: notebooks/requirements.txt
+    steps:
+      - name: Check out master
+        uses: actions/checkout@master
+
+      - name: Security vulnerabilities scan
+        uses: aufdenpunkt/python-safety-check@master
+        with:
+          scan_requirements_file_only: 'true'
+
   test:
     needs: [lint, code-audit]
     name: Test

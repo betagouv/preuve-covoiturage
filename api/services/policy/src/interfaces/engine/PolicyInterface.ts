@@ -59,11 +59,13 @@ export interface PolicyHandlerStaticInterface {
 }
 
 export interface PolicyHandlerParamsInterface {
+  tz?: Timezone;
   slices?: RunnableSlices | BoundedSlices;
   operators?: Array<OperatorsEnum>;
   limits?: {
     glob?: number;
   };
+  booster_dates?: Array<string>;
 }
 
 export interface PolicyHandlerInterface {

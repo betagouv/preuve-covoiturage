@@ -31,13 +31,21 @@ export default function RepartitionDistanceGraph({
   const url = `${apiUrl}/journeys-by-distances?code=${params.code}&type=${params.type}&year=${params.year}&month=${params.month}`;
   const { data, error, loading } = useApi<DistributionDistanceDataInterface[]>(url);
   const plugins: any = [ChartDataLabels];
+  const datasetFrom = data?.find((d) => d.direction === 'from')?.distances.map((d) => d.journeys);
+  const datasetSum = (dataset: number[]) => {
+    let sum = 0;
+    dataset.map((d) => {
+      sum += d;
+    });
+    return sum;
+  };
   const chartData = () => {
     const labels = ['< 10 km', '10-20 km', '20-30 km', '30-40 km', '40-50 km', '> 50 km'];
     const datasets = [
       {
         label: 'Origine',
-        data: data ? data.find((d) => d.direction === 'from')?.distances.map((d) => d.journeys) : [],
-        backgroundColor: ['#08519c', '#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#eff3ff'],
+        data: datasetFrom,
+        backgroundColor: ['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#eff3ff','#f4f6ff'],
         datalabels: {
           labels: {
             name: {
@@ -79,52 +87,6 @@ export default function RepartitionDistanceGraph({
         },
       }
     ];
-    params.type !== 'country' ? datasets.push(
-      {
-        label: 'Destination',
-        data: data ? data.find((d) => d.direction === 'to')?.distances.map((d) => d.journeys) : [],
-        backgroundColor: ['#66673D', '#B7A73F', '#e2cf58', '#fbe769', '#fceeac', '#fef7da'],
-        datalabels: {
-          labels: {
-            name: {
-              align: 'middle',
-              font: (context: Context) => {
-                const avgSize = Math.round((context.chart.height + context.chart.width) / 2);
-                const params = {
-                  size: Math.round(avgSize / 24) > 10 ? 14 : Math.round(avgSize / 24),
-                  weight: 'bold',
-                };
-                return params;
-              },
-              color: 'black',
-              formatter: (value: number, ctx: Context) => {
-                return ctx.chart.data.labels ? ctx.chart.data.labels[ctx.dataIndex] : '';
-              },
-            },
-            value: {
-              align: 'bottom',
-              color: 'black',
-              font: (context: Context) => {
-                const avgSize = Math.round((context.chart.height + context.chart.width) / 2);
-                const params = {
-                  size: Math.round(avgSize / 24) > 10 ? 12 : Math.round(avgSize / 24),
-                };
-                return params;
-              },
-              formatter: (value: number, ctx: Context) => {
-                let sum = 0;
-                const dataArr = ctx.chart.data.datasets[0].data as number[];
-                dataArr.map((data: number) => {
-                  sum += data;
-                });
-                const percentage = ((value * 100) / sum).toFixed(1) + '%';
-                return percentage;
-              },
-            },
-          },
-        },
-      }
-    ) : '';
     return { labels: labels, datasets: datasets };
   };
 
@@ -145,9 +107,25 @@ export default function RepartitionDistanceGraph({
       {!loading && !error && (
         <div className={fr.cx('fr-callout')}>
           <h3 className={fr.cx('fr-callout__title')}>{title}</h3>
-          <div className='graph-wrapper' style={{ backgroundColor: '#fff', height:"350px"}}>
-            <Doughnut options={options} plugins={plugins} data={chartData() as ChartData<"doughnut",number[]>} />
-          </div>
+          <figure className='graph-wrapper' style={{ backgroundColor: '#fff', height:"350px"}}>
+            <Doughnut options={options} plugins={plugins} data={chartData() as ChartData<"doughnut",number[]>} aria-hidden />
+            { chartData() &&
+              <figcaption className={fr.cx('fr-sr-only')}>
+                {datasetFrom &&
+                  <>
+                    <p>{'Données de répartition en prenant en compte l\'origine des trajets'}</p>
+                    <ul>
+                      { datasetFrom.map((d,i) =>{
+                        return (
+                          <li key={i}>{chartData().labels[i]} : {((d * 100) / datasetSum(datasetFrom)).toFixed(1) + '%'}</li>
+                        )
+                      })} 
+                    </ul>
+                  </> 
+                }
+              </figcaption>
+            }
+          </figure>
         </div>
       )}
     </>
