@@ -128,6 +128,7 @@ En cas d'erreur :
 # TODO
 
 - [ ] gérer les champs en fonction du type d'export (config)
+- [ ] spread des champs incentives
 - [ ] tester les repositories
 - [ ] migrations
 - [ ] tests

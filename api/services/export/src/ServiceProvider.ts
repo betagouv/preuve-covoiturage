@@ -10,15 +10,16 @@ import { DebugCommand } from './commands/DebugCommand';
 import { config } from './config';
 import { CampaignRepository } from './repositories/CampaignRepository';
 import { CarpoolRepository } from './repositories/CarpoolRepository';
-import { LogRepository } from './repositories/LogRepository';
-import { BuildService } from './services/BuildService';
-import { RecipientRepository } from './repositories/RecipientRepository';
 import { ExportRepository } from './repositories/ExportRepository';
+import { LogRepository } from './repositories/LogRepository';
+import { RecipientRepository } from './repositories/RecipientRepository';
+import { BuildService } from './services/BuildService';
+import { FieldService } from './services/FieldService';
 
 // Services are from the ./services folder
 // and are used to implement the business logic of the application.
 // They are injected in commands and handlers.
-const services = [BuildService];
+const services = [BuildService, FieldService];
 
 // Repositories are from the ./repositories folder
 // and are used to access the database or other data sources.

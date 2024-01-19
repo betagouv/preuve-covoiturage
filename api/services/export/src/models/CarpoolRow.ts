@@ -1,5 +1,10 @@
 import { pick } from 'lodash';
 
+export type AllowedComputedFields = {
+  campaign_mode: string;
+  has_incentive: boolean;
+};
+
 export type CarpoolRowData = {
   trip_id: string;
   operator_journey_id: string;
@@ -51,13 +56,6 @@ export type CarpoolRowData = {
 export class CarpoolRow {
   constructor(protected data: CarpoolRowData) {}
 
-  public addField(name: string, value: any): CarpoolRow {
-    if (name in this.data) throw new Error(`Field ${name} already exists`);
-    this.data[name] = value;
-
-    return this;
-  }
-
   public get(fields: string[] | undefined): Partial<CarpoolRowData> {
     // TODO transform if needed (dates, etc...)
 
@@ -69,5 +67,16 @@ export class CarpoolRow {
   // computed properties calling each other and creating race conditions.
   public value<K extends keyof CarpoolRowData>(name: K): CarpoolRowData[K] | null {
     return this.data[name] ?? null;
+  }
+
+  public addField(name: string, value: any): CarpoolRow {
+    if (name in this.data) throw new Error(`Field ${name} already exists`);
+    this.data[name] = value;
+
+    return this;
+  }
+
+  public hasIncentive(): boolean {
+    return true; // TODO sum incentive and check if > 0
   }
 }

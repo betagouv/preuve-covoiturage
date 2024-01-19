@@ -23,7 +23,6 @@ export enum ExportStatus {
   FAILURE = 'failure',
 }
 export enum ExportType {
-  REGULAR = 'regular',
   OPENDATA = 'opendata',
   OPERATOR = 'operator',
   TERRITORY = 'territory',

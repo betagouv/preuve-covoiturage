@@ -12,7 +12,7 @@ export abstract class BuildServiceInterfaceResolver implements BuildServiceInter
   protected async configure(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
     throw new Error('Not implemented');
   }
-  protected async init(): Promise<void> {
+  protected async initialize(): Promise<void> {
     throw new Error('Not implemented');
   }
   protected async data(): Promise<void> {
@@ -46,7 +46,7 @@ export class BuildService {
     this.fileWriter = fileWriter;
   }
 
-  protected async init(): Promise<void> {
+  protected async initialize(): Promise<void> {
     await this.fileWriter.create();
   }
 
@@ -74,7 +74,7 @@ export class BuildService {
   public async run(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
     try {
       await this.configure(params, fileWriter);
-      await this.init();
+      await this.initialize();
       await this.data();
       await this.help();
     } catch (e) {

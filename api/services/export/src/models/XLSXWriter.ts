@@ -2,13 +2,21 @@ import AdmZip from 'adm-zip';
 import { AddWorksheetOptions, Worksheet, stream } from 'exceljs';
 import os from 'node:os';
 import path from 'node:path';
-import { CarpoolRow } from './CarpoolRow';
+import { ExportType } from '../repositories/ExportRepository';
+import { AllowedComputedFields, CarpoolRow, CarpoolRowData } from './CarpoolRow';
 
 export type Datasources = Map<string, any>;
 
-export type ComputedField = {
-  name: string;
-  compute: (row: CarpoolRow, datasources: Datasources) => any;
+export type Fields = Array<keyof CarpoolRowData | keyof AllowedComputedFields>;
+
+export type FieldFilter = { type: ExportType; exclusions: Partial<Fields> };
+
+export type ComputedProcessors = Array<ComputedProcessor>;
+
+// TODO find a way to type the compute() return type depending on the name
+export type ComputedProcessor = {
+  name: keyof AllowedComputedFields;
+  compute: (row: CarpoolRow, datasources: Datasources) => AllowedComputedFields[keyof AllowedComputedFields];
 };
 
 export type Options = {
@@ -17,8 +25,8 @@ export type Options = {
   dataSheetOptions: Partial<AddWorksheetOptions>;
   helpSheetName: string;
   helpSheetOptions: Partial<AddWorksheetOptions>;
-  fields: string[];
-  computed: ComputedField[];
+  fields: Partial<Fields>;
+  computed: ComputedProcessors;
   datasources: Datasources;
 };
 
@@ -39,7 +47,21 @@ export class XLSXWriter {
     helpSheetName: 'Aide',
     helpSheetOptions: {},
     fields: [],
-    computed: [],
+    computed: [
+      {
+        name: 'campaign_mode',
+        compute(row, datasources) {
+          const campaign = datasources.get('campaigns').get(row.value('campaign_id'));
+          return campaign && campaign.getModeAt([row.value('start_datetime_utc'), row.value('end_datetime_utc')]);
+        },
+      },
+      {
+        name: 'has_incentive',
+        compute(row) {
+          return row.hasIncentive();
+        },
+      },
+    ],
     datasources: new Map(),
   };
 
@@ -72,7 +94,7 @@ export class XLSXWriter {
   // append lines to the data sheet
   public async append(carpoolRow: CarpoolRow): Promise<XLSXWriter> {
     // add computed fields to the carpool row
-    this.options.computed.forEach((field: ComputedField) => {
+    this.options.computed.forEach((field: ComputedProcessor) => {
       carpoolRow.addField(field.name, field.compute(carpoolRow, this.options.datasources));
     });
 
