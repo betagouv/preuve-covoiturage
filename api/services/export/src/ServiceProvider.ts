@@ -10,7 +10,10 @@ import { DebugCommand } from './commands/DebugCommand';
 import { config } from './config';
 import { CampaignRepository } from './repositories/CampaignRepository';
 import { CarpoolRepository } from './repositories/CarpoolRepository';
+import { LogRepository } from './repositories/LogRepository';
 import { BuildService } from './services/BuildService';
+import { RecipientRepository } from './repositories/RecipientRepository';
+import { ExportRepository } from './repositories/ExportRepository';
 
 // Services are from the ./services folder
 // and are used to implement the business logic of the application.
@@ -19,7 +22,7 @@ const services = [BuildService];
 
 // Repositories are from the ./repositories folder
 // and are used to access the database or other data sources.
-const repositories = [CarpoolRepository, CampaignRepository];
+const repositories = [ExportRepository, RecipientRepository, CampaignRepository, CarpoolRepository, LogRepository];
 
 // External providers are from the @pdc namespace
 const externalProviders = [S3StorageProvider];

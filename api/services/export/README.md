@@ -124,3 +124,16 @@ En cas d'erreur :
 
 - notifier l'utilisateur
 - notifier l'administration technique du site
+
+# TODO
+
+- [ ] gérer les champs en fonction du type d'export (config)
+- [ ] tester les repositories
+- [ ] migrations
+- [ ] tests
+- [ ] models (export, recipient, log)
+- [ ] validation (schemas)
+- [ ] permissions
+- [ ] actions
+- [ ] commands
+- [ ] CRON jobs (infra)

@@ -9,6 +9,21 @@ export type BuildServiceInterface = {
 };
 
 export abstract class BuildServiceInterfaceResolver implements BuildServiceInterface {
+  protected async configure(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
+    throw new Error('Not implemented');
+  }
+  protected async init(): Promise<void> {
+    throw new Error('Not implemented');
+  }
+  protected async data(): Promise<void> {
+    throw new Error('Not implemented');
+  }
+  protected async help(): Promise<void> {
+    throw new Error('Not implemented');
+  }
+  protected async wrap(): Promise<void> {
+    throw new Error('Not implemented');
+  }
   public async run(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
     throw new Error('Not implemented');
   }
@@ -18,20 +33,56 @@ export abstract class BuildServiceInterfaceResolver implements BuildServiceInter
   identifier: BuildServiceInterfaceResolver,
 })
 export class BuildService {
+  protected fileWriter: XLSXWriter;
+  protected params: ExportParams;
+
   constructor(
     protected carpoolRepository: CarpoolRepository,
     protected campaignRepository: CampaignRepository,
   ) {}
 
-  public async run(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
+  protected async configure(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
+    this.params = params;
+    this.fileWriter = fileWriter;
+  }
+
+  protected async init(): Promise<void> {
+    await this.fileWriter.create();
+  }
+
+  protected async data(): Promise<void> {
     // TODO load campaigns to access their configurations
     // TODO list carpools
     // TODO enrich rows with computed fields based on campaigns and carpools
     const campaigns = await this.campaignRepository.list();
 
     // add boosters as data source to file writer
-    fileWriter.addDatasource('campaigns', campaigns);
+    this.fileWriter.addDatasource('campaigns', campaigns);
 
-    await this.carpoolRepository.list(params, fileWriter);
+    await this.carpoolRepository.list(this.params, this.fileWriter);
+  }
+
+  protected async help(): Promise<void> {
+    await this.fileWriter.printHelp();
+  }
+
+  protected async wrap(): Promise<void> {
+    await this.fileWriter.close();
+    await this.fileWriter.compress();
+  }
+
+  public async run(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
+    try {
+      await this.configure(params, fileWriter);
+      await this.init();
+      await this.data();
+      await this.help();
+    } catch (e) {
+      console.error(e.message);
+    } finally {
+      await this.wrap();
+      console.info(`File written to ${this.fileWriter.workbookPath}`);
+      // TODO cleanup on failure
+    }
   }
 }

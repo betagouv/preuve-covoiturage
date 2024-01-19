@@ -92,7 +92,11 @@ export class XLSXWriter {
 
   // TODO compress the file with ZIP (for now)
   public async compress(): Promise<XLSXWriter> {
-    // TODO
+    if (!this.options.compress) {
+      console.info(`Skipped compression of ${this.workbookPath}`);
+      return this;
+    }
+
     const zip = new AdmZip();
     zip.addLocalFile(this.workbookPath);
     zip.writeZip(this.archivePath);
