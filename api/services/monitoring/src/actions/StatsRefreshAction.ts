@@ -5,7 +5,7 @@ import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
 import { filterTables } from '../helpers/filterTables.helper';
 import { todayFrequencies } from '../helpers/todayFrequencies.helper';
 import { MatviewItem } from '../interfaces/StatsRefreshInterfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/monitoring/statsrefresh.contract';
+import { ParamsInterface, ResultInterface, handlerConfig } from '../shared/monitoring/statsrefresh.contract';
 import { alias } from '../shared/monitoring/statsrefresh.schema';
 
 @handler({
@@ -13,7 +13,10 @@ import { alias } from '../shared/monitoring/statsrefresh.schema';
   middlewares: [...internalOnlyMiddlewares('proxy'), ['validate', alias]],
 })
 export class StatsRefreshAction extends AbstractAction {
-  constructor(protected pg: PostgresConnection, protected config: ConfigInterfaceResolver) {
+  constructor(
+    protected pg: PostgresConnection,
+    protected config: ConfigInterfaceResolver,
+  ) {
     super();
   }
 
@@ -44,10 +47,14 @@ export class StatsRefreshAction extends AbstractAction {
       console.info(`[monitoring:stats:refresh] Refresh materialised views: ${tables.sort().join(', ')}`);
 
       for (const table of tables) {
-        const bench = new Date().getTime();
-        await cn.query(`REFRESH MATERIALIZED VIEW stats.${table}`);
-        const ms = (new Date().getTime() - bench) / 1000;
-        console.info(`[monitoring:stats:refresh] Refreshed stats.${table} in ${ms} seconds`);
+        try {
+          const bench = new Date().getTime();
+          await cn.query(`REFRESH MATERIALIZED VIEW stats.${table}`);
+          const ms = (new Date().getTime() - bench) / 1000;
+          console.info(`[monitoring:stats:refresh] (stats.${table}) refreshed in ${ms} seconds`);
+        } catch (e) {
+          console.error(`[monitoring:stats:refresh] (stats.${table}) ${e.message}`);
+        }
       }
     } catch (e) {
       console.error(`[monitoring:stats:refresh] ${e.message}`);
