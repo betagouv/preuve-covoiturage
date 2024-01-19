@@ -3,6 +3,33 @@ import { pick } from 'lodash';
 export type AllowedComputedFields = {
   campaign_mode: string;
   has_incentive: boolean;
+
+  incentive_1_index: number;
+  incentive_1_siret: string;
+  incentive_1_amount: number;
+  incentive_2_index: number;
+  incentive_2_siret: string;
+  incentive_2_amount: number;
+  incentive_3_index: number;
+  incentive_3_siret: string;
+  incentive_3_amount: number;
+  incentive_4_index: number;
+  incentive_4_siret: string;
+  incentive_4_amount: number;
+
+  incentive_rpc_1_siret: string;
+  incentive_rpc_1_amount: number;
+  incentive_rpc_2_siret: string;
+  incentive_rpc_2_amount: number;
+  incentive_rpc_3_siret: string;
+  incentive_rpc_3_amount: number;
+  incentive_rpc_4_siret: string;
+  incentive_rpc_4_amount: number;
+
+  incentive_counterpart_1_siret: string;
+  incentive_counterpart_1_amount: number;
+  incentive_counterpart_2_siret: string;
+  incentive_counterpart_2_amount: number;
 };
 
 export type CarpoolRowData = {
@@ -45,12 +72,29 @@ export type CarpoolRowData = {
   driver_revenue: number;
   passenger_contribution: number;
   campaign_id: number;
-  incentive: any; // JSON
-  incentive_rpc: any; // JSON
-  incentive_counterpart: any; // JSON
+  incentive: Array<Incentive>;
+  incentive_rpc: Array<IncentiveRPC>;
+  incentive_counterpart: Array<IncentiveCounterpart>;
 
   offer_public: boolean;
   offer_accepted_at: Date;
+};
+
+export type Incentive = {
+  index: number;
+  siret: string;
+  amount: number;
+};
+
+export type IncentiveRPC = {
+  siret: string;
+  amount: number;
+};
+
+export type IncentiveCounterpart = {
+  siret: string;
+  amount: number;
+  target: 'passenger' | 'driver';
 };
 
 export class CarpoolRow {

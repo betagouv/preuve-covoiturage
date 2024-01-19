@@ -116,7 +116,7 @@ export class CarpoolListQuery extends Query {
     
       -- TODO chunk carpools by datetime in the application code
       ORDER BY cc.datetime DESC
-      -- LIMIT 10 -- TODO REMOVE THIS
+      LIMIT 10 -- TODO REMOVE THIS
     ),
     
     -- select latest geo data for start and end geo codes only
