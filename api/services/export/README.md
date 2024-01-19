@@ -86,6 +86,7 @@ Les actions sur les exports sont enregistrées dans la table `logs` pour garder 
 _id
 created_at
 updated_at
+deleted_at
 created_by
 uuid
 status (pending|processing|uploading|sending|error|expired)
@@ -127,8 +128,8 @@ En cas d'erreur :
 
 # TODO
 
-- [ ] gérer les champs en fonction du type d'export (config)
-- [ ] spread des champs incentives
+- [x] gérer les champs en fonction du type d'export (config)
+- [x] spread des champs incentives
 - [ ] tester les repositories
 - [ ] migrations
 - [ ] tests
