@@ -501,7 +501,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
   FROM 
       carpool.identities
   WHERE 
-      operator_user_id IN ({formatted_ids}) AND updated_at < NOW() - '{delay} days'::interval';
+      operator_user_id IN ({formatted_ids}) AND updated_at < NOW() - '{delay} days'::interval;
   """
 
   with engine.connect() as conn:
