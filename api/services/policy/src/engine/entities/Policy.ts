@@ -39,7 +39,10 @@ export class Policy implements PolicyInterface {
       throw new UnknownHandlerException();
     }
 
-    return new Policy(
+    const hler = new ctor(data.max_amount);
+    await hler.load();
+
+    const pcy = new Policy(
       data._id,
       data.territory_id,
       data.territory_selector,
@@ -47,10 +50,12 @@ export class Policy implements PolicyInterface {
       data.start_date,
       data.end_date,
       data.tz,
-      new ctor(data.max_amount),
+      hler,
       data.status,
       data.incentive_sum,
     );
+
+    return pcy;
   }
 
   export(): SerializedPolicyInterface {
