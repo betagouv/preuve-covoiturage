@@ -27,7 +27,7 @@ jobs:
     uses: ./.github/workflows/base-build-push-docker.yml
     with:
       name: cms
-      context: .
+      context: ./cms
       tag: ${{ needs.tag.outputs.value }}
       dockerfile: ./docker/cms/prod/Dockerfile 
     secrets:
