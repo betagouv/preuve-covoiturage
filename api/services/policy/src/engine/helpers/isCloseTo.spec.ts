@@ -2,7 +2,7 @@ import test from 'ava';
 
 import { StatelessContext } from '../entities/Context';
 import { generateCarpool } from '../tests/helpers';
-import { isCloseTo, haversineDistance } from './isCloseTo';
+import { isCloseTo } from './isCloseTo';
 
 const point1 = {
   lat: 48.85042145787021,
@@ -22,13 +22,6 @@ const point3 = {
 function setup(lat: number, lon: number) {
   return StatelessContext.fromCarpool(1, generateCarpool({ start_lat: lat, start_lon: lon }));
 }
-
-test('Should calculate haversine distance between two dot', (t) => {
-  const calc1 = haversineDistance(point1, point2);
-  t.is(Math.round(calc1), 448);
-  const calc2 = haversineDistance(point1, point3);
-  t.is(Math.round(calc2), 14288);
-});
 
 test('should return true if in range', async (t) => {
   const ctx = setup(point2.lat, point2.lon);
