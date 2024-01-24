@@ -55,7 +55,7 @@ test('Should return true if point is in shape', (t) => {
   t.is(res, true);
 });
 
-test('Should return false if point is in shape', (t) => {
+test('Should return false if point is not in shape', (t) => {
   const ctx = setup(point2.lat, point2.lon);
   const res = isInside(ctx, { shape });
   t.is(res, false);
