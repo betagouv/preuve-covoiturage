@@ -7,8 +7,8 @@ export default ({ env }) => ({
         secretAccessKey: env('S3_ACCESS_SECRET'),
         endpoint: env("S3_ENDPOINT"),
         region: env('S3_REGION'),
-        s3BucketEndpoint: true,
-        s3ForcePathStyle: true,
+        forcePathStyle: true,
+        signatureVersion: 'v4',
         params: {
           Bucket: env('S3_BUCKET'),
         },
@@ -19,12 +19,7 @@ export default ({ env }) => ({
     config: {
       provider: 'nodemailer',
       providerOptions: {
-        host: env('EMAIL_SMTP_HOST'),
-        port: env('EMAIL_SMTP_PORT'),
-        auth: {
-          user: env('EMAIL_SMTP_USER'),
-          pass: env('EMAIL_SMTP_PASSWORD'),
-        },
+        url: env('EMAIL_SMTP_URL'),
       },
       settings: {
         defaultFrom: env('EMAIL_ADDRESS_FROM'),
