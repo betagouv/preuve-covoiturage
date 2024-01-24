@@ -19,7 +19,7 @@ jobs:
     with:
       name: ${{ matrix.name }}
       context: .
-      tag: ${{ env.tag }}
+      tag: ${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
       dockerfile: ${{ matrix.dockerfile }}
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
