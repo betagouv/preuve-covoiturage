@@ -1,0 +1,58 @@
+name: 'Deploy CMS'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'cms/**'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    outputs:
+      value: ${{ steps.set_tag.outputs.value }}
+    steps:
+      - id: set_tag
+        run: echo "::set-output name=value::$(date +'%F.%H%M')"
+
+  build:
+    needs: tag
+    name: Build cms
+    uses: ./.github/workflows/base-build-push-docker.yml
+    with:
+      name: cms
+      context: ./cms
+      tag: ${{ needs.tag.outputs.value }}
+      dockerfile: ./Dockerfile 
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  # TODO
+  # deploy:
+  #   name: Deploy
+  #   needs: [tag, build]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Trigger Workflow
+  #       uses: actions/github-script@v6
+  #       env: 
+  #         TARGET_VERSION: ${{ needs.tag.outputs.value }}
+  #       with:
+  #         github-token: ${{ secrets.GA_PDC_TOKEN }}
+  #         script: |
+  #             github.rest.actions.createWorkflowDispatch({
+  #               owner: context.repo.owner,
+  #               repo: 'preuve-covoiturage-infra',
+  #               workflow_id: 'deploy.yml',
+  #               ref: 'main',
+  #               inputs: {
+  #                 cms_version: process.env.TARGET_VERSION,
+  #               },
+  #             })
