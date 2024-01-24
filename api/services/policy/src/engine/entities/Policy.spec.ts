@@ -9,6 +9,9 @@ import {
 } from '../../interfaces';
 
 class TestHandler implements PolicyHandlerInterface {
+  load(): Promise<void> {
+    return;
+  }
   processStateless(ctx: StatelessContextInterface): void {
     isOperatorClassOrThrow(ctx, ['C']);
     ctx.incentive.set(perKm(ctx, { amount: 10 }));
@@ -74,6 +77,9 @@ class MaxAmountPolicyHandler implements PolicyHandlerInterface {
     this.max_amount = max_amount;
   }
 
+  load(): Promise<void> {
+    return;
+  }
   processStateless(ctx: StatelessContextInterface): void {
     isOperatorClassOrThrow(ctx, ['C']);
     ctx.incentive.set(perKm(ctx, { amount: 10 }));

@@ -101,7 +101,7 @@ test('Should normalize v3', async (t) => {
           travel_pass: {
             name: 'navigo',
             user_id: '111',
-          }
+          },
         },
         contribution: 50,
         payments: [

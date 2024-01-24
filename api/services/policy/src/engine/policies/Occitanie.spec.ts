@@ -14,6 +14,8 @@ const defaultPosition = {
   country: 'XXXXX',
   reseau: '465',
 };
+const defaultLat = 48.72565703413325;
+const defaultLon = 2.261827843187402;
 
 const defaultCarpool: CarpoolInterface = {
   _id: 1,
@@ -32,6 +34,10 @@ const defaultCarpool: CarpoolInterface = {
   cost: 20,
   start: { ...defaultPosition },
   end: { ...defaultPosition },
+  start_lat: defaultLat,
+  start_lon: defaultLon,
+  end_lat: defaultLat,
+  end_lon: defaultLon,
   driver_meta: {},
   driver_payment: 10,
   passenger_payment: 10,

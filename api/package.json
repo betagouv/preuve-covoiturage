@@ -24,6 +24,7 @@
     "start:queue": "npm --workspace @pdc/proxy run ilos queue $APP_REDIS_URL",
     "clean": "rm -rf ./**/dist",
     "build": "nx run-many -t build",
+    "build:nocache": "nx run-many --skip-nx-cache -t build",
     "coverage-ci": "nx run-many --projects=@pdc/* -t coverage-ci",
     "coverage": "nx run-many --projects=@pdc/* -t coverage",
     "audit:deps": "npm audit --audit-level moderate --workspaces --include-workspace-root",

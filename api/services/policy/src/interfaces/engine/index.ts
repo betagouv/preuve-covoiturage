@@ -64,5 +64,9 @@ export interface CarpoolInterface {
   distance: number;
   cost: number;
   start: TerritoryCodeInterface;
+  start_lat: number;
+  start_lon: number;
   end: TerritoryCodeInterface;
+  end_lat: number;
+  end_lon: number;
 }
