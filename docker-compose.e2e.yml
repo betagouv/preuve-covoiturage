@@ -134,6 +134,45 @@ services:
     volumes:
       - ${PWD}/docker/api/certs:/app/certs:ro
 
+  cms:
+    build:
+      dockerfile: ../docker/cms/prod/Dockerfile
+      context: ./cms
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: test
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      APP_KEYS: REPLACE_ME
+      API_TOKEN_SALT: REPLACE_ME
+      JWT_SECRET: REPLACE_ME
+      ADMIN_JWT_SECRET: REPLACE_ME
+      TRANSFER_TOKEN_SALT: REPLACE_ME
+      NODE_ENV: production
+      EMAIL_SMTP_URL: smtp://mailer:1025
+      EMAIL_ADDRESS_FROM: noreply@covoiturage.beta.gouv.fr
+      EMAIL_ADDRESS_REPLY: technique@covoiturage.beta.gouv.fr
+      S3_ACCESS_KEY_ID: minioadmin
+      S3_ACCESS_SECRET: minioadmin
+      S3_ENDPOINT: http://s3:9000
+      S3_REGION: fr-par
+      S3_BUCKET: cms
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.api.rule=Host(`cms.covoiturage.test`)'
+      - 'traefik.http.routers.api.entrypoints=websecure'
+      - 'traefik.http.routers.api.tls=true'
+      - 'traefik.http.services.api.loadbalancer.server.port=1337'
+    networks:
+      - back
+      - front
+    depends_on:
+      - redis
+      - postgres
+      - mailer
+      - s3
+
   worker:
     build:
       dockerfile: ./docker/api/prod/Dockerfile

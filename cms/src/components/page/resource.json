@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_page_resources",
+  "info": {
+    "displayName": "resource"
+  },
+  "options": {},
+  "attributes": {
+    "resource": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::resource.resource"
+    }
+  }
+}

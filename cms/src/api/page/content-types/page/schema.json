@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pages",
+  "info": {
+    "singularName": "page",
+    "pluralName": "pages",
+    "displayName": "Page",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "sections": {
+      "type": "dynamiczone",
+      "components": [
+        "page.hero",
+        "page.block",
+        "shared.button",
+        "page.content",
+        "page.row",
+        "page.list",
+        "page.resource"
+      ]
+    },
+    "slug": {
+      "type": "string",
+      "regex": "^([a-zA-Z-]*)$",
+      "unique": true,
+      "required": true
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag",
+      "inversedBy": "pages"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "rows",
+  "info": {
+    "singularName": "row",
+    "pluralName": "rows",
+    "displayName": "Row",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "row.analyse",
+        "row.indicator",
+        "row.graph",
+        "row.map"
+      ],
+      "required": true
+    }
+  }
+}

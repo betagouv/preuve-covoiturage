@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_row_graphs",
+  "info": {
+    "displayName": "Graph",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "params": {
+      "type": "json",
+      "required": true
+    }
+  }
+}
