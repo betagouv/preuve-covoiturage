@@ -19,7 +19,7 @@ jobs:
       value: ${{ steps.set_tag.outputs.value }}
     steps:
       - id: set_tag
-        run: echo "::set-output name=value::$(date +'%F.%H%M')"
+        run: echo "value=$(date +'%F.%H%M')" >> $GITHUB_OUTPUT
 
   build:
     needs: tag
@@ -53,6 +53,7 @@ jobs:
   #               workflow_id: 'deploy.yml',
   #               ref: 'main',
   #               inputs: {
-  #                 cms_version: process.env.TARGET_VERSION,
+  #                 version: process.env.TARGET_VERSION,
+  #                 image: 'cms'
   #               },
   #             })
