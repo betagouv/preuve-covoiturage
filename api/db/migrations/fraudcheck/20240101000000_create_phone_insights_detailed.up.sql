@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS fraudcheck.phone_insights_detailed (
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     phone_trunc VARCHAR(20),
-    operator_user_id VARCHAR(255),
+    operator_user_id UUID,
     departure_date TIMESTAMP WITH TIME ZONE,
     end_date TIMESTAMP WITH TIME ZONE,
     num_days INTEGER,
