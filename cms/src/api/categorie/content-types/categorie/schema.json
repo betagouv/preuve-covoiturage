@@ -16,16 +16,15 @@
       "type": "string",
       "required": true
     },
-    "slug": {
-      "type": "string",
-      "required": true,
-      "regex": "^([a-zA-Z-]*)$"
-    },
     "articles": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::article.article",
       "mappedBy": "categorie"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "label"
     }
   }
 }

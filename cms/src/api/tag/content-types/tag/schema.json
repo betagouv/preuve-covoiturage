@@ -4,7 +4,8 @@
   "info": {
     "singularName": "tag",
     "pluralName": "tags",
-    "displayName": "Tag"
+    "displayName": "Tag",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -16,17 +17,15 @@
       "unique": false,
       "required": true
     },
-    "slug": {
-      "type": "string",
-      "regex": "^([a-zA-Z-]*)$",
-      "unique": true,
-      "required": true
-    },
     "pages": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::page.page",
       "mappedBy": "tags"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "label"
     }
   }
 }

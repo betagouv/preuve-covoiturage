@@ -16,12 +16,6 @@
       "type": "string",
       "required": true
     },
-    "slug": {
-      "type": "string",
-      "required": true,
-      "unique": true,
-      "regex": "^([a-zA-Z-]*)$"
-    },
     "content": {
       "type": "richtext",
       "required": true
@@ -29,6 +23,16 @@
     "public_date": {
       "type": "date",
       "required": true
+    },
+    "pages": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::page.page",
+      "mappedBy": "resources"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
     }
   }
 }
