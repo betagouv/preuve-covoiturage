@@ -27,4 +27,10 @@ export default ({ env }) => ({
       },
     },
   },
+  meilisearch: {
+    config: {
+      host: env('MEILISEARCH_HOST'),
+      apiKey: env('MEILISEARCH_MASTER_KEY'),
+    }
+  }
 });
