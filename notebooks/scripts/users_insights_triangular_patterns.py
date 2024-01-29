@@ -558,6 +558,13 @@ phone_trunc_insights_df.to_sql(
 
 # In[ ]:
 
+from datetime import date
+
+
+def cast_period_to_date(x):
+    return date(x.year_month.year, x.year_month.month, 1)
+
+user_phone_change_history_df['year_month'] = user_phone_change_history_df.apply(cast_period_to_date, axis=1)
 
 ## Store the final_triangular_df to the db
 
