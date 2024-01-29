@@ -16,12 +16,6 @@
       "type": "string",
       "required": true
     },
-    "slug": {
-      "type": "string",
-      "required": true,
-      "unique": true,
-      "regex": "^([a-zA-Z-]*)$"
-    },
     "description": {
       "type": "text",
       "required": true
@@ -45,6 +39,10 @@
       "relation": "manyToOne",
       "target": "api::categorie.categorie",
       "inversedBy": "articles"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
     }
   }
 }

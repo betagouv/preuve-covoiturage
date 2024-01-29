@@ -16,29 +16,49 @@
       "type": "string",
       "required": true
     },
-    "sections": {
-      "type": "dynamiczone",
-      "components": [
-        "page.hero",
-        "page.block",
-        "shared.button",
-        "page.content",
-        "page.row",
-        "page.list",
-        "page.resource"
-      ]
-    },
-    "slug": {
-      "type": "string",
-      "regex": "^([a-zA-Z-]*)$",
-      "unique": true,
-      "required": true
-    },
     "tags": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::tag.tag",
       "inversedBy": "pages"
+    },
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "page.hero"
+    },
+    "block": {
+      "type": "component",
+      "repeatable": false,
+      "component": "page.block"
+    },
+    "content": {
+      "type": "richtext",
+      "required": false
+    },
+    "rows": {
+      "type": "dynamiczone",
+      "components": [
+        "row.analyse",
+        "row.graph",
+        "row.indicator",
+        "row.map"
+      ]
+    },
+    "resources": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::resource.resource",
+      "inversedBy": "pages"
+    },
+    "list": {
+      "type": "component",
+      "repeatable": false,
+      "component": "page.list"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
     }
   }
 }
