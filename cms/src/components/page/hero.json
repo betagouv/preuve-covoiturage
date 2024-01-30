@@ -24,6 +24,11 @@
     "content": {
       "type": "richtext",
       "required": true
+    },
+    "buttons": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.button"
     }
   }
 }

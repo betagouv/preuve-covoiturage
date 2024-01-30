@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_page_list_titles",
+  "info": {
+    "displayName": "list title",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
