@@ -26,13 +26,19 @@
     },
     "pages": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "oneToMany",
       "target": "api::page.page",
-      "mappedBy": "resources"
+      "mappedBy": "resource"
     },
     "slug": {
       "type": "uid",
       "targetField": "title"
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::categorie.categorie",
+      "mappedBy": "resources"
     }
   }
 }

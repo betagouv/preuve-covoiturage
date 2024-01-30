@@ -22,10 +22,9 @@
       "type": "richtext",
       "required": true
     },
-    "button": {
-      "displayName": "button",
+    "buttons": {
       "type": "component",
-      "repeatable": false,
+      "repeatable": true,
       "component": "shared.button"
     }
   }

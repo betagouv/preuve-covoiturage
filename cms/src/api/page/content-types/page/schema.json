@@ -36,29 +36,32 @@
       "type": "richtext",
       "required": false
     },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
     "rows": {
       "type": "dynamiczone",
       "components": [
         "row.analyse",
         "row.graph",
         "row.indicator",
-        "row.map"
+        "row.map",
+        "row.title"
       ]
     },
-    "resources": {
+    "list": {
+      "type": "dynamiczone",
+      "components": [
+        "page.highlight",
+        "page.list-title"
+      ]
+    },
+    "resource": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "manyToOne",
       "target": "api::resource.resource",
       "inversedBy": "pages"
-    },
-    "list": {
-      "type": "component",
-      "repeatable": false,
-      "component": "page.list"
-    },
-    "slug": {
-      "type": "uid",
-      "targetField": "title"
     }
   }
 }

@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_row_titles",
+  "info": {
+    "displayName": "row title",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

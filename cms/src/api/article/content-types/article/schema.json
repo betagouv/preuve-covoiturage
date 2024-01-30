@@ -34,9 +34,9 @@
     "legend": {
       "type": "string"
     },
-    "categorie": {
+    "categories": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::categorie.categorie",
       "inversedBy": "articles"
     },
