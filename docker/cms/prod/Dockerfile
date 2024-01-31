@@ -12,6 +12,7 @@ ENV PATH /opt/node_modules/.bin:$PATH
 WORKDIR /opt/app
 COPY . .
 RUN npm run build
+RUN npm run build --workspaces
 
 # Creating final production image
 FROM node:18-alpine

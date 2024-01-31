@@ -1,0 +1,6 @@
+{
+  "name": "Betagouv",
+  "flow-flush_cache": "Flush cache",
+  "flow-deploy": "Deploy to production",
+  "action": "Launch"
+}

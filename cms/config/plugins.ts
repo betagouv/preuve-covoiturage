@@ -32,5 +32,9 @@ export default ({ env }) => ({
       host: env('MEILISEARCH_HOST'),
       apiKey: env('MEILISEARCH_MASTER_KEY'),
     }
-  }
+  },
+  betagouv: {
+    enabled: true,
+    resolve: './src/plugins/betagouv',
+  },
 });

@@ -2,6 +2,9 @@
   "name": "cms",
   "private": true,
   "version": "0.1.0",
+  "workspaces": [
+    "src/plugins/*"
+  ],
   "scripts": {
     "develop": "strapi develop",
     "start": "strapi start",
