@@ -458,14 +458,32 @@ components:
         - interoperator_fraud
       description: | 
         Etiquette possible pour un cas de fraude détectée :
-          - interoperator_fraud : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent 
+          - `interoperator_fraud` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent 
     anomaly_label:
       type: string
       enum:
         - temporal_overlap_anomaly
+        - distance_duration_anomaly
       description: | 
-        Etiquette possible pour une anomalie détectée :
-          - temporal_overlap_anomaly : 2 trajets ont été déclarés pour un même opérateur et un même passager sur des bornes temporelles qui se chevauchent à au moins 70%
+        #
+        # Etiquette possible pour une anomalie détectée
+          - `temporal_overlap_anomaly` : 2 trajets ont été déclarés pour un même opérateur et un même passager sur des bornes temporelles qui se chevauchent à au moins 70%
+          - `distance_duration_anomaly`: 1 trajet a été enregistré avec une durée et/ou une distance incohérente
+
+        ## Règles utilisées pour detecter les anomalies de type `distance_duration_anomaly`
+
+         - distance estimée par osrm ou transmises inférieure à 300m. 
+         Le trajet est beaucoup trop court en termes de distance.
+         - durée estimée par osrm ou transmise inférieure à 1 minute.
+         Le trajet est beaucoup trop court en termes de durée
+         - durée estimée par osrm supérieure à 2.5 fois le temps transmis. Exemple: temps estimé 25 minutes pour temps transmis de 10 minutes
+         Le temps de trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
+         - distance estimée par osrm supérieure à 2.5 fois la distance transmise. Exemple: distance 10 km sur une distance estimée 25 km
+         La distance du trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
+         - distance transmise supérieure à 4 fois la distance estimée osrm. Exemple: 10 km estimé pour 40 km transmis
+         La distance transmise est très largement supérieure à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels détours par rapport au plus court chemin
+         - durée transmise supérieure à 7 fois la durée estimée. Exemple : 1h estimé vs 7h transmis
+         La durée transmise est très largement supérieure par rapport à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels embouteillage
 paths:
   /geo/route:
     get:
@@ -920,7 +938,8 @@ paths:
         ## Détection d'anomalie
 
         Le trajet est incohérent ou physiquement impossible.
-        Le trajet envoyé rentre en conflit avec un autre sur le plan temporel ou spatial
+        Le trajet envoyé rentre en conflit avec un autre sur plan temporel ou spacial
+        Voir la section du schema "anomaly_label" pour plus de détails
       security:
         - token: []
       operationId: acquisition:create
