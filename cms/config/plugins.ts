@@ -3,14 +3,21 @@ export default ({ env }) => ({
     config: {
       provider: 'aws-s3',
       providerOptions: {
-        accessKeyId: env('S3_ACCESS_KEY_ID'),
-        secretAccessKey: env('S3_ACCESS_SECRET'),
-        endpoint: env("S3_ENDPOINT"),
-        region: env('S3_REGION'),
-        forcePathStyle: true,
-        signatureVersion: 'v4',
-        params: {
-          Bucket: env('S3_BUCKET'),
+        ...(
+          env('S3_PUBLIC_URL') ?
+            { baseUrl: env('S3_PUBLIC_URL') } :
+            {}
+        ),
+        s3Options: {
+          accessKeyId: env('S3_ACCESS_KEY_ID'),
+          secretAccessKey: env('S3_ACCESS_SECRET'),
+          endpoint: env("S3_ENDPOINT"),
+          region: env('S3_REGION'),
+          forcePathStyle: true,
+          signatureVersion: 'v4',
+          params: {
+            Bucket: env('S3_BUCKET'),
+          },
         },
       },
     },
