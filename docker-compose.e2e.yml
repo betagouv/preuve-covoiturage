@@ -158,6 +158,8 @@ services:
       S3_ENDPOINT: http://s3:9000
       S3_REGION: fr-par
       S3_BUCKET: cms
+      S3_PUBLIC_URL: https://cms.s3.covoiturage.test
+      TRUSTED_ROOT_DOMAIN: covoiturage.test
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.api.rule=Host(`cms.covoiturage.test`)'
@@ -221,7 +223,7 @@ services:
       MINIO_DOMAIN: s3.covoiturage.test
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.s3.rule=Host(`s3.covoiturage.test`, `local-pdc-export.s3.covoiturage.test`, `download.covoiturage.test`)'
+      - 'traefik.http.routers.s3.rule=Host(`s3.covoiturage.test`, `local-pdc-export.s3.covoiturage.test`, `download.covoiturage.test`, `cms.s3.covoiturage.test`)'
       - 'traefik.http.routers.s3.entrypoints=websecure'
       - 'traefik.http.routers.s3.tls=true'
       - 'traefik.http.services.s3.loadbalancer.server.port=9000'
