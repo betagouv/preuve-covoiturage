@@ -19,6 +19,9 @@
     },
     "value": {
       "type": "string"
+    },
+    "icon": {
+      "type": "string"
     }
   }
 }
