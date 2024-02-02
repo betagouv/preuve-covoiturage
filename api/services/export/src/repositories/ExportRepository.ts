@@ -4,13 +4,12 @@ import { ExportParams } from '../models/ExportParams';
 
 export type Export = {
   _id: number;
-  created_at: Date;
-  updated_at: Date;
-  created_by: number;
   uuid: string;
+  type: ExportType;
   status: ExportStatus;
   progress: number;
-  type: ExportType;
+  created_by: number;
+  download_url_expire_at: Date;
   download_url: string;
   params: ExportParams;
   error: any;

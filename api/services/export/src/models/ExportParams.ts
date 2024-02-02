@@ -1,5 +1,6 @@
-import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { Timezone } from '@pdc/provider-validator';
 import { subMonthsTz, today } from '../helpers/shared/dates.helper';
+import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export type Config = Partial<Params>;
 
@@ -8,10 +9,7 @@ export type Params = {
   end_at: Date;
   operator_id: number[];
   geo_selector: TerritorySelectorsInterface;
-  user_id: number | null;
-  recipient_email?: string | null;
-  recipient_fullname?: string | null;
-  recipient_message?: string | null;
+  tz?: Timezone;
 };
 
 export class ExportParams {
@@ -24,10 +22,7 @@ export class ExportParams {
     end_at: today(),
     operator_id: [],
     geo_selector: { country: ['XXXXX'] }, // FRANCE
-    user_id: null,
-    recipient_email: null,
-    recipient_fullname: null,
-    recipient_message: null,
+    tz: 'Europe/Paris',
   };
 
   constructor(protected config: Config) {

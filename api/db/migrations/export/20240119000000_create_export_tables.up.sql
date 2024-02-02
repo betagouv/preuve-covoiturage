@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS export.exports
 (
   _id serial PRIMARY KEY,
   uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+  type varchar(255) NOT NULL DEFAULT 'opendata',
   status varchar(255) NOT NULL DEFAULT 'pending',
   progress integer NOT NULL DEFAULT 0,
   created_by integer NOT NULL,

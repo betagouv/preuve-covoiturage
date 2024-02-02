@@ -86,7 +86,6 @@ Les actions sur les exports sont enregistrées dans la table `logs` pour garder 
 _id
 created_at
 updated_at
-deleted_at
 created_by
 uuid
 status (pending|processing|uploading|sending|error|expired)
