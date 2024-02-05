@@ -2,7 +2,7 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 <p>Campagne d’incitation au covoiturage du <b> 01 octobre 2023 au 22 Juin 2024</b>
 </p>
 <p>Cette campagne est limitée à
-  <b>93 000 euros </b>.
+  <b>141 000 euros </b>.
 </p>
 <p>
 Le périmètre géographique de la campagne comprend les zones suivantes
