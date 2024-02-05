@@ -543,7 +543,7 @@ df_carpool,phone_trunc_insights_df,final_triangular_df,user_phone_change_history
 
 def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
     insert_stmt = insert(table.table).values(list(data_iter))
-    on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['operator_user_id', 'departure_date', 'end_date'])
+    on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['phone_trunc', 'departure_date', 'end_date'])
     conn.execute(on_duplicate_key_stmt)
     
 phone_trunc_insights_df.to_sql(
@@ -573,7 +573,7 @@ def insert_or_do_nothing_on_conflict(table, conn, keys, data_iter):
     on_duplicate_key_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['phone_trunc', 'departure_date', 'end_date'])
     conn.execute(on_duplicate_key_stmt)
     
-phone_trunc_insights_df.to_sql(
+final_triangular_df.to_sql(
     name="triangular_patterns", 
     schema="fraudcheck",
     con=engine,

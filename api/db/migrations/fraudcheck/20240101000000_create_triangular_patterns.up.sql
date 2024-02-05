@@ -3,9 +3,9 @@ CREATE SCHEMA IF NOT EXISTS fraudcheck;
 CREATE TABLE IF NOT EXISTS fraudcheck.triangular_patterns (
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    phone_trunc VARCHAR(20),
+    phone_trunc VARCHAR(255),
     num_participants INTEGER, 
-    num_trips FLOAT,
+    num_trips INTEGER,
     operator_list VARCHAR(255),
     num_operators INTEGER,
     average_duration FLOAT,
