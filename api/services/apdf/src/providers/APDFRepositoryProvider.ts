@@ -147,12 +147,13 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
           operator_journey_id,
           distance,
           duration,
-          operator_class
+          operator_class,
+          operator_id
         from carpool.carpools
         where
           datetime >= $1
           and datetime < $2
-          and status = 'ok'
+          and status in ('ok', 'canceled')
           and operator_id = $3
           and is_driver = true
       )
@@ -165,23 +166,25 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
         -- driver
         cid.uuid as driver_uuid,
         cid.operator_user_id as operator_driver_id,
-        pid.amount as driver_rpc_incentive,
+        pid.amount as rpc_incentive,
     
         -- passenger
         cip.uuid as passenger_uuid,
         cip.operator_user_id as operator_passenger_id,
-        pip.amount as passenger_rpc_incentive,
-        -- ccd.seats as passenger_seats,
-        -- cip.over_18 as passenger_over_18,
 
         ccd.datetime as start_datetime,
         ccd.datetime + (ccd.duration || ' seconds')::interval as end_datetime,
         gps.l_arr as start_location,
         gps.arr as start_insee,
+        gps.l_epci as start_epci_name,
+        gps.epci as start_epci,
         gpe.l_arr as end_location,
         gpe.arr as end_insee,
+        gpe.l_epci as end_epci_name,
+        gpe.epci as end_epci,
         ccd.duration,
         ccd.distance,
+        oo.name as operator,
         ccd.operator_class
 
       from ccd
@@ -189,11 +192,11 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       left join carpool.identities cid on cid._id = ccd.identity_id
       left join carpool.identities cip on cip._id = ccp.identity_id
       left join policy.incentives pid on ccd._id = pid.carpool_id and pid.policy_id = $4 and pid.status = 'validated'
-      left join policy.incentives pip on ccp._id = pip.carpool_id and pip.policy_id = $4 and pid.status = 'validated'
       left join geo.perimeters gps on ccp.start_geo_code = gps.arr and gps.year = geo.get_latest_millesime_or(extract(year from ccp.datetime)::smallint)
       left join geo.perimeters gpe on ccp.end_geo_code = gpe.arr and gpe.year = geo.get_latest_millesime_or(extract(year from (ccp.datetime + (ccd.duration || ' seconds')::interval))::smallint)
+      left join operator.operators oo on oo._id = ccd.operator_id
 
-      where pid.policy_id is not null or pip.policy_id is not null
+      where pid.policy_id is not null
 
       order by ccd.datetime
     `;

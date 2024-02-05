@@ -1,3 +1,4 @@
+import { KernelInterfaceResolver } from '@ilos/common';
 import { APDFNameProvider } from '@pdc/provider-storage';
 import anyTest, { TestFn } from 'ava';
 import { stream } from 'exceljs';
@@ -14,12 +15,14 @@ import { wrapSlices } from './wrapSlicesHelper';
 
 interface Context {
   // Injected tokens
+  kernel: KernelInterfaceResolver;
   apdfRepositoryProvider: DataRepositoryProvider;
   nameProvider: APDFNameProvider;
   streamDataToWorkbook: TripsWorksheetWriter;
   createSlicesSheetToWorkbook: SlicesWorksheetWriter;
 
   // Injected tokens method's stubs
+  kernelStub: SinonStub;
   getPolicyCursorStub: SinonStub;
   policyStatsStub: SinonStub<
     [params: CampaignSearchParamsInterface, slices: SliceInterface[]],
@@ -40,6 +43,7 @@ interface Context {
   operator_id: number;
   filename: string;
   filepath: string;
+  booster_dates: Set<string>;
 
   // Fake workbookWriter
   workbookWriterMock: any;
@@ -48,11 +52,13 @@ interface Context {
 const test = anyTest as TestFn<Partial<Context>>;
 
 test.beforeEach((t) => {
+  t.context.kernel = new (class extends KernelInterfaceResolver {})();
   t.context.createSlicesSheetToWorkbook = new SlicesWorksheetWriter();
   t.context.apdfRepositoryProvider = new DataRepositoryProvider(null as any);
   t.context.nameProvider = new APDFNameProvider();
   t.context.streamDataToWorkbook = new TripsWorksheetWriter();
   t.context.buildExcel = new BuildExcel(
+    t.context.kernel,
     t.context.apdfRepositoryProvider,
     t.context.streamDataToWorkbook,
     t.context.createSlicesSheetToWorkbook,
@@ -60,6 +66,7 @@ test.beforeEach((t) => {
   );
   t.context.filenameStub = sinon.stub(t.context.nameProvider, 'filename');
   t.context.filepathStub = sinon.stub(t.context.nameProvider, 'filepath');
+  t.context.kernelStub = sinon.stub(t.context.kernel, 'call');
   t.context.tripsWorkbookWriterStub = sinon.stub(t.context.streamDataToWorkbook, 'call');
   t.context.getPolicyCursorStub = sinon.stub(t.context.apdfRepositoryProvider, 'getPolicyCursor');
   t.context.policyStatsStub = sinon.stub(t.context.apdfRepositoryProvider, 'getPolicyStats');
@@ -90,6 +97,7 @@ test.before((t) => {
   t.context.filename = 'APDF-idfm.xlsx';
   t.context.filepath = '/tmp/APDF-idfm.xlsx';
   t.context.workbookWriterMock = { commit: () => {} };
+  t.context.booster_dates = new Set<string>();
 
   t.context.workbookWriterStub = sinon
     .stub(BuildExcel, 'initWorkbookWriter')
@@ -99,6 +107,7 @@ test.before((t) => {
 test.afterEach((t) => {
   t.context.filenameStub!.restore();
   t.context.filepathStub!.restore();
+  t.context.kernelStub!.restore();
   t.context.tripsWorkbookWriterStub!.restore();
   t.context.getPolicyCursorStub!.restore();
   t.context.slicesWorkbookWriterStub!.restore();
@@ -112,6 +121,7 @@ test('BuildExcel: should call stream data and create slice then return excel fil
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
   t.context.tripsWorkbookWriterStub!.resolves();
+  t.context.kernelStub!.resolves(t.context.booster_dates);
   t.context.policyStatsStub?.resolves({
     total_count: 111,
     total_sum: 222_00,
@@ -163,7 +173,12 @@ test('BuildExcel: should call stream data and create slice then return excel fil
     amount: 222_00,
   });
 
-  sinon.assert.calledOnceWithExactly(t.context.tripsWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
+  sinon.assert.calledOnceWithExactly(
+    t.context.tripsWorkbookWriterStub!,
+    cursorCallback,
+    t.context.booster_dates,
+    t.context.workbookWriterMock,
+  );
   sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
   t.is(filename, t.context.filename!);
@@ -177,6 +192,7 @@ test('BuildExcel: should call stream data and return filepath even if create sli
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
   t.context.slicesWorkbookWriterStub!.rejects('Error while computing slices');
+  t.context.kernelStub!.resolves(t.context.booster_dates);
   t.context.policyStatsStub?.resolves({
     total_count: 111,
     total_sum: 222_00,
@@ -228,7 +244,12 @@ test('BuildExcel: should call stream data and return filepath even if create sli
     amount: 222_00,
   });
 
-  sinon.assert.calledOnceWithExactly(t.context.tripsWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
+  sinon.assert.calledOnceWithExactly(
+    t.context.tripsWorkbookWriterStub!,
+    cursorCallback,
+    t.context.booster_dates,
+    t.context.workbookWriterMock,
+  );
   sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.calledOnce(t.context.slicesWorkbookWriterStub!);
   t.is(filename, t.context.filename!);
@@ -244,6 +265,7 @@ test('BuildExcel: should call stream data and return excel filepath without slic
   t.context.filenameStub!.returns(t.context.filename);
   t.context.filepathStub!.returns(t.context.filepath);
   t.context.slicesWorkbookWriterStub!.rejects('Error while computing slices');
+  t.context.kernelStub!.resolves(t.context.booster_dates);
   t.context.policyStatsStub?.resolves({
     total_count: 111,
     total_sum: 222_00,
@@ -288,7 +310,12 @@ test('BuildExcel: should call stream data and return excel filepath without slic
     amount: 222_00,
   });
 
-  sinon.assert.calledOnceWithExactly(t.context.tripsWorkbookWriterStub!, cursorCallback, t.context.workbookWriterMock);
+  sinon.assert.calledOnceWithExactly(
+    t.context.tripsWorkbookWriterStub!,
+    cursorCallback,
+    t.context.booster_dates,
+    t.context.workbookWriterMock,
+  );
   sinon.assert.calledOnce(t.context.policyStatsStub!);
   sinon.assert.notCalled(t.context.slicesWorkbookWriterStub!);
   t.is(filename, t.context.filename!);

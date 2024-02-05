@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import faker from '@faker-js/faker';
 import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
-import { uuid } from '@pdc/helper-test/dist';
+import { uuid } from '@pdc/helper-test';
 import { BucketName, S3StorageProvider } from '@pdc/provider-storage';
 import anyTest, { TestFn } from 'ava';
 import { startOfMonth, subMonths } from 'date-fns';
@@ -54,7 +54,7 @@ test.beforeEach((t) => {
   t.context.kernel = new (class extends KernelInterfaceResolver {})();
   t.context.checkCampaign = new CheckCampaign(null as any);
   t.context.s3StorageProvider = new S3StorageProvider(null as any);
-  t.context.buildExcel = new BuildExcel(null as any, null as any, null as any, null as any);
+  t.context.buildExcel = new BuildExcel(null as any, null as any, null as any, null as any, null as any);
   t.context.config = {
     get<T>(): T {
       return true as T; // enable upload

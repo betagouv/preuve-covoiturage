@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common';
+import { KernelInterfaceResolver, provider } from '@ilos/common';
 import { APDFNameProvider } from '@pdc/provider-storage';
 import { stream } from 'exceljs';
 import { CampaignSearchParamsInterface } from '../../interfaces/APDFRepositoryProviderInterface';
@@ -12,6 +12,7 @@ import { wrapSlices } from './wrapSlicesHelper';
 @provider()
 export class BuildExcel {
   constructor(
+    private kernel: KernelInterfaceResolver,
     private apdfRepoProvider: DataRepositoryProvider,
     private TripsWsWriter: TripsWorksheetWriter,
     private slicesWsWriter: SlicesWorksheetWriter,
@@ -62,11 +63,13 @@ export class BuildExcel {
 
   private async writeTrips(wkw: stream.xlsx.WorkbookWriter, params: CampaignSearchParamsInterface): Promise<void> {
     try {
+      const booster_dates = await this.listBoosterDates(params.campaign_id);
       const tripCursor = await this.apdfRepoProvider.getPolicyCursor(params);
-      await this.TripsWsWriter.call(tripCursor, wkw);
+      await this.TripsWsWriter.call(tripCursor, booster_dates, wkw);
     } catch (e) {
       console.error('[apdf:buildExcel] Error while writing trips');
       console.error(e.message);
+      console.error(e.stack);
     }
   }
 
@@ -82,5 +85,15 @@ export class BuildExcel {
 
   private hasSliceTrips(slices: SliceStatInterface[]): boolean {
     return slices.reduce((acc, s) => acc + s.count, 0) > 0;
+  }
+
+  private async listBoosterDates(campaign_id: number): Promise<Set<string>> {
+    const campaign = await this.kernel.call(
+      'campaign:find',
+      { _id: campaign_id },
+      { channel: { service: 'apdf' }, call: { user: { permissions: ['registry.policy.find'] } } },
+    );
+
+    return new Set<string>(campaign?.params?.booster_dates);
   }
 }
