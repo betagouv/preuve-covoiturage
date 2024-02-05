@@ -59,7 +59,7 @@ Compilation des fichiers XLSX pour un mois donné. Les fichiers sont générés 
 Les exports sont programmés pour être calculés le 6 de chaque mois.
 ## Commandes
 
-### Export : `npm run -w @pdc/proxy ilos apdf:export`
+### Export : `npm run -w @pdc/proxy -- ilos apdf:export`
 
 Exporte les APDF et upload les fichiers sur le S3.
 

@@ -1,20 +1,32 @@
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { APDFTripInterface } from '../interfaces/APDFTripInterface';
 
-export function normalize(src: APDFTripInterface, timeZone: string): APDFTripInterface {
+export function normalize(src: APDFTripInterface, booster_dates: Set<string>, timeZone: string): APDFTripInterface {
   const sd = utcToZonedTime(src.start_datetime, timeZone);
   const ed = utcToZonedTime(src.end_datetime, timeZone);
+
+  // format and convert to user timezone
+  const sdf = format(sd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
+  const edf = format(ed, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
+
+  const s = sdf.substring(0, 10);
+  const e = edf.substring(0, 10);
+  let type: 'normal' | 'booster' = 'normal';
+  if (booster_dates.has(s) || booster_dates.has(e)) {
+    type = 'booster';
+  }
 
   const data: APDFTripInterface = {
     ...src,
 
-    // format and convert to user timezone
-    start_datetime: format(sd, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
-    end_datetime: format(ed, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+    start_datetime: sdf,
+    end_datetime: edf,
+
+    // check if the trip is in normal or booster mode
+    incentive_type: type,
 
     // incentives in euros
-    driver_rpc_incentive: src.driver_rpc_incentive / 100,
-    passenger_rpc_incentive: src.passenger_rpc_incentive / 100,
+    rpc_incentive: src.rpc_incentive / 100,
   };
 
   return data;

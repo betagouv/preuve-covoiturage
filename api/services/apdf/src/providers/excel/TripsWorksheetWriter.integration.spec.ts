@@ -20,10 +20,9 @@ const exportTripInterface: APDFTripInterface = {
   operator_trip_id: faker.datatype.uuid(),
   driver_uuid: faker.datatype.uuid(),
   operator_driver_id: faker.datatype.uuid(),
-  driver_rpc_incentive: faker.datatype.number(1000),
+  rpc_incentive: faker.datatype.number(1000),
   passenger_uuid: faker.datatype.uuid(),
   operator_passenger_id: faker.datatype.uuid(),
-  passenger_rpc_incentive: faker.datatype.number(1000),
   start_datetime: faker.date.past(2).toISOString(),
   end_datetime: faker.date.future(2).toISOString(),
   start_location: faker.address.cityName(),
@@ -32,7 +31,13 @@ const exportTripInterface: APDFTripInterface = {
   end_insee: faker.random.numeric(5, { allowLeadingZeros: true }),
   distance: faker.datatype.number({ min: 1_500, max: 150_000 }),
   duration: faker.datatype.number({ min: 300, max: 3600 }),
+  operator: faker.company.companyName(),
   operator_class: 'C',
+  incentive_type: faker.random.arrayElement(['normal', 'booster']),
+  start_epci_name: faker.address.cityName(),
+  start_epci: `${faker.random.alphaNumeric(5)}`,
+  end_epci_name: faker.address.cityName(),
+  end_epci: `${faker.random.alphaNumeric(5)}`,
 };
 
 test.before((t) => {
@@ -70,8 +75,9 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
   const filepath = '/tmp/stream-data-test.xlsx';
 
   // Act
+  const booster_dates = new Set<string>();
   const workbookWriter: stream.xlsx.WorkbookWriter = BuildExcel.initWorkbookWriter(filepath);
-  await dataWorkBookWriter.call({ read: cursorCallback, release: async () => {} }, workbookWriter);
+  await dataWorkBookWriter.call({ read: cursorCallback, release: async () => {} }, booster_dates, workbookWriter);
   await workbookWriter.commit();
 
   // Assert

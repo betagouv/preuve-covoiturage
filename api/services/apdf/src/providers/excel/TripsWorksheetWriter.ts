@@ -14,14 +14,14 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
     'journey_id',
     'start_datetime',
     'end_datetime',
-    'driver_rpc_incentive',
-    'passenger_rpc_incentive',
+    'rpc_incentive',
     'start_location',
     'start_insee',
     'end_location',
     'end_insee',
     'duration',
     'distance',
+    'operator',
     'operator_class',
     'trip_id',
     'operator_trip_id',
@@ -29,15 +29,24 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
     'operator_driver_id',
     'passenger_uuid',
     'operator_passenger_id',
+    'incentive_type',
+    'start_epci_name',
+    'start_epci',
+    'end_epci_name',
+    'end_epci',
   ].map((header) => ({ header, key: header }));
 
-  async call(cursor: PgCursorHandler<APDFTripInterface>, workbookWriter: stream.xlsx.WorkbookWriter): Promise<void> {
+  async call(
+    cursor: PgCursorHandler<APDFTripInterface>,
+    booster_dates: Set<string>,
+    workbookWriter: stream.xlsx.WorkbookWriter,
+  ): Promise<void> {
     const worksheet: Worksheet = this.initWorkSheet(workbookWriter, this.WORKSHEET_NAME, this.WORKSHEET_COLUMN_HEADERS);
 
     const b1 = new Date();
     let results: APDFTripInterface[] = await cursor.read(this.CURSOR_BATCH_SIZE);
     while (results.length !== 0) {
-      results.map((t) => worksheet.addRow(normalize(t, 'Europe/Paris')).commit());
+      results.map((t) => worksheet.addRow(normalize(t, booster_dates, 'Europe/Paris')).commit());
       results = await cursor.read(this.CURSOR_BATCH_SIZE);
     }
 

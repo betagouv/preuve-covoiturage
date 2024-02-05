@@ -1,3 +1,4 @@
+import { KernelInterfaceResolver } from '@ilos/common';
 import { APDFNameProvider } from '@pdc/provider-storage';
 import anyTest, { TestFn } from 'ava';
 import { stream } from 'exceljs';
@@ -14,6 +15,7 @@ import { wrapSlices } from './wrapSlicesHelper';
 
 interface Context {
   // Injected tokens
+  kernel: KernelInterfaceResolver;
   apdfRepositoryProvider: DataRepositoryProvider;
   nameProvider: APDFNameProvider;
   streamDataToWorkbook: TripsWorksheetWriter;
@@ -53,6 +55,7 @@ test.beforeEach((t) => {
   t.context.nameProvider = new APDFNameProvider();
   t.context.streamDataToWorkbook = new TripsWorksheetWriter();
   t.context.buildExcel = new BuildExcel(
+    t.context.kernel,
     t.context.apdfRepositoryProvider,
     t.context.streamDataToWorkbook,
     t.context.createSlicesSheetToWorkbook,
