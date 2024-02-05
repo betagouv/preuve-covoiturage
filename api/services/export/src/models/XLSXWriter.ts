@@ -4,7 +4,6 @@ import os from 'node:os';
 import path from 'node:path';
 import { ExportType } from '../repositories/ExportRepository';
 import { AllowedComputedFields, CarpoolRow, CarpoolRowData } from './CarpoolRow';
-import { get } from 'lodash';
 
 export type Datasources = Map<string, any>;
 
@@ -68,9 +67,6 @@ export class XLSXWriter {
     this.options = { ...this.options, ...config } as Options;
     this.folder = os.tmpdir();
     this.basename = this.sanitize(filename);
-
-    // add computed fields and build the list to explide incentive data in many fields
-    this.options.computed = [...this.options.computed, ...this.computeIncentivesFunctions()];
   }
 
   // TODO create the workbook and the worksheets
@@ -165,26 +161,5 @@ export class XLSXWriter {
       .replace('_-_', '-')
       .toLowerCase()
       .substring(0, 128);
-  }
-
-  protected computeIncentivesFunctions(): ComputedProcessors {
-    return this.options.fields
-      .filter((fieldName) => fieldName.startsWith('incentive_'))
-      .flatMap((fieldName: keyof AllowedComputedFields) => {
-        const [type, index, ...parts] = fieldName.split('_').reverse();
-        const dbName = parts.reverse().join('_') as keyof Pick<
-          CarpoolRowData,
-          'incentive' | 'incentive_rpc' | 'incentive_counterpart'
-        >;
-        return {
-          name: fieldName,
-          compute(row): AllowedComputedFields[typeof fieldName] | null {
-            const src = row.value(dbName);
-            const idx = parseInt(index);
-            const val = get(src, `${(isNaN(idx) ? 0 : idx) - 1}.${type}`, null);
-            return type === 'amount' && val ? parseInt(val) / 100 : val;
-          },
-        };
-      });
   }
 }

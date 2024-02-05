@@ -72,9 +72,22 @@ export type CarpoolRowData = {
   driver_revenue: number;
   passenger_contribution: number;
   campaign_id: number;
-  incentive: Array<Incentive>;
-  incentive_rpc: Array<IncentiveRPC>;
-  incentive_counterpart: Array<IncentiveCounterpart>;
+
+  incentive_0_index: number;
+  incentive_0_siret: string;
+  incentive_0_amount: number;
+  incentive_1_index: number;
+  incentive_1_siret: string;
+  incentive_1_amount: number;
+  incentive_2_index: number;
+  incentive_2_siret: string;
+
+  incentive_rpc_0_campaign_id: number;
+  incentive_rpc_0_amount: number;
+  incentive_rpc_1_campaign_id: number;
+  incentive_rpc_1_amount: number;
+  incentive_rpc_2_campaign_id: number;
+  incentive_rpc_2_amount: number;
 
   offer_public: boolean;
   offer_accepted_at: Date;
