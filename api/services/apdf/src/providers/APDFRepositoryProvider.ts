@@ -152,7 +152,7 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
         where
           datetime >= $1
           and datetime < $2
-          and status = 'ok'
+          and status in ('ok', 'canceled')
           and operator_id = $3
           and is_driver = true
       )
