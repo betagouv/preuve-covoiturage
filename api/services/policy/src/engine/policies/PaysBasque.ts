@@ -29,6 +29,7 @@ export const PaysBasque: PolicyHandlerStaticInterface = class
 {
   static readonly id = 'pays_basque_2023';
   protected operators = [OperatorsEnum.Klaxit, OperatorsEnum.Mobicoop, OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos];
+  protected operators_for_2024 = [OperatorsEnum.Klaxit, OperatorsEnum.BlaBlaDaily, OperatorsEnum.Karos];
   protected slices: RunnableSlices = [
     { start: 5_000, end: 20_000, fn: (ctx: StatelessContextInterface) => perSeat(ctx, 200) },
     {
@@ -50,13 +51,17 @@ export const PaysBasque: PolicyHandlerStaticInterface = class
   }
 
   protected processExclusion(ctx: StatelessContextInterface) {
-    isOperatorOrThrow(ctx, this.operators);
+    isOperatorOrThrow(ctx, this.isAfter2023(ctx) ? this.operators_for_2024 : this.operators);
     onDistanceRangeOrThrow(ctx, {
       min: 5_000,
-      max: ctx.carpool.datetime > this.LAST_DAY_OF_YEAR_DATE ? 80_000 : 100_000,
+      max: this.isAfter2023(ctx) ? 80_000 : 100_000,
     });
     isOperatorClassOrThrow(ctx, ['C']);
     isAdultOrThrow(ctx);
+  }
+
+  private isAfter2023(ctx: StatelessContextInterface) {
+    return ctx.carpool.datetime > this.LAST_DAY_OF_YEAR_DATE;
   }
 
   processStateless(ctx: StatelessContextInterface): void {
@@ -78,7 +83,7 @@ export const PaysBasque: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: this.operators_for_2024,
       limits: {
         glob: this.max_amount,
       },

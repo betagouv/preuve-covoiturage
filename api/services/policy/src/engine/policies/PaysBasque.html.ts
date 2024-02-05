@@ -2,7 +2,7 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 <p>Campagne d’incitation au covoiturage du <b> 1 avril 2023 au 31 décembre 2023</b>, toute la semaine
 </p>
 <p>Cette campagne est limitée à
-  <b>50 000 euros </b>.
+  <b>185 000 euros </b>.
 </p>
 <p>Les trajets de + de 80km sont exclus à partir du 1er janvier 2024</p>
 <p>Les <b> conducteurs et passagers </b> effectuant un trajet d'au moins 5 km sont incités selon les règles suivantes :
@@ -24,5 +24,6 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 </ul>
 <p>La campagne est limitée à aux opérateurs Klaxit, Karos, Blablacar Daily, 
 Mobicoop proposant des preuves de classe <b>C</b>.</p>
+*Mobicoop ne fait plus parti des opérateurs éligibles depuis le 1 Janvier 2024
 <p></p>
 </p>`;

@@ -71,10 +71,11 @@ test(
       },
       { passenger_is_over_18: false },
       { distance: 90_000, datetime: new Date('2024-01-01') },
+      { datetime: new Date('2024-01-01'), operator_siret: OperatorsEnum.Mobicoop },
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(
