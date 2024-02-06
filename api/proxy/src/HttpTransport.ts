@@ -106,7 +106,6 @@ export class HttpTransport implements TransportInterface {
     this.registerCeeRoutes();
     this.registerHonorRoutes();
     this.registerObservatoryRoutes();
-    this.registerUptimeRoute();
     this.registerContactformRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
@@ -831,19 +830,6 @@ export class HttpTransport implements TransportInterface {
         }),
       );
     }
-  }
-
-  private registerUptimeRoute() {
-    /**
-     * Simple GET route for uptime checking services
-     */
-    this.app.get(
-      '/uptime',
-      rateLimiter(),
-      asyncHandler(async (req, res, next) => {
-        res.json({ hello: 'world' });
-      }),
-    );
   }
 
   /**
