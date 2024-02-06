@@ -26,11 +26,26 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
   implements PolicyHandlerInterface
 {
   static readonly id = 'grand_poitier_2024';
-  protected operators = [OperatorsEnum.Karos];
-  protected operatorsAfter16October = [OperatorsEnum.Karos, OperatorsEnum.Mobicoop];
-  protected operator_class = ['C'];
 
-  private readonly SIXTEEN_OF_OCTOBER_DATE = new Date('2023-11-16');
+  // les opérateurs ont été ajoutés petit à petit à la campagne
+  // Karos : début
+  // Mobicoop : 16 octobre 2023
+  // BlaBlaDaily et Klaxit : 22 décembre 2023
+  protected operator_class = ['C'];
+  protected readonly operators = [
+    {
+      date: new Date('2023-09-27T00:00:00+0200'),
+      operators: [OperatorsEnum.Karos],
+    },
+    {
+      date: new Date('2023-10-16T00:00:00+0200'),
+      operators: [OperatorsEnum.Karos, OperatorsEnum.Mobicoop],
+    },
+    {
+      date: new Date('2023-12-22T00:00:00+0100'),
+      operators: [OperatorsEnum.Karos, OperatorsEnum.Mobicoop, OperatorsEnum.BlaBlaDaily, OperatorsEnum.Klaxit],
+    },
+  ];
 
   constructor(public max_amount: number) {
     super();
@@ -50,10 +65,23 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
     },
   ];
 
+  // get the list of operators for a given datetime
+  // or the last one if no datetime is provided
+  public getOperators(datetime?: Date): OperatorsEnum[] {
+    if (datetime) {
+      for (const { date, operators } of this.operators.reverse()) {
+        if (datetime.getTime() >= date.getTime()) {
+          return operators;
+        }
+      }
+    }
+
+    // return the last one anyway
+    return this.operators[this.operators.length - 1].operators;
+  }
+
   protected processExclusion(ctx: StatelessContextInterface) {
-    const operators =
-      ctx.carpool.datetime < this.SIXTEEN_OF_OCTOBER_DATE ? this.operators : this.operatorsAfter16October;
-    isOperatorOrThrow(ctx, operators);
+    isOperatorOrThrow(ctx, this.getOperators(ctx.carpool.datetime));
     onDistanceRangeOrThrow(ctx, { min: 4_999, max: 80_000 });
     isOperatorClassOrThrow(ctx, this.operator_class);
   }
@@ -77,7 +105,7 @@ export const GrandPoitiers: PolicyHandlerStaticInterface = class
     return {
       tz: 'Europe/Paris',
       slices: this.slices,
-      operators: this.operators,
+      operators: this.getOperators(),
       limits: {
         glob: this.max_amount,
       },

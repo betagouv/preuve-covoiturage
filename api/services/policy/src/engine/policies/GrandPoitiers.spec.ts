@@ -5,6 +5,40 @@ import { makeProcessHelper } from '../tests/macro';
 import { GrandPoitiers as Handler } from './GrandPoitiers';
 import { generatePartialCarpools } from '../tests/helpers';
 
+// Unit test the getOperators method
+
+test('should return the last operators if no datetime is provided', (t) => {
+  const handler = new Handler(100);
+  t.deepEqual(handler.getOperators(), [
+    OperatorsEnum.Karos,
+    OperatorsEnum.Mobicoop,
+    OperatorsEnum.BlaBlaDaily,
+    OperatorsEnum.Klaxit,
+  ]);
+});
+
+test('should return Karos only if datetime is before 16/10/2023', (t) => {
+  const handler = new Handler(100);
+  t.deepEqual(handler.getOperators(new Date('2023-10-15')), [OperatorsEnum.Karos]);
+});
+
+test('should return Karos and Mobicoop if datetime is after 16/10/2023', (t) => {
+  const handler = new Handler(100);
+  t.deepEqual(handler.getOperators(new Date('2023-10-16')), [OperatorsEnum.Karos, OperatorsEnum.Mobicoop]);
+});
+
+test('should return all operators if datetime is after 22/12/2023', (t) => {
+  const handler = new Handler(100);
+  t.deepEqual(handler.getOperators(new Date('2023-12-23')), [
+    OperatorsEnum.Karos,
+    OperatorsEnum.Mobicoop,
+    OperatorsEnum.BlaBlaDaily,
+    OperatorsEnum.Klaxit,
+  ]);
+});
+
+// Unit test calculations
+
 const defaultPosition = {
   arr: '74278',
   com: '74278',
