@@ -49,7 +49,7 @@ export default function Hero(props:HeroProps) {
         {props.img &&
           <figure className={fr.cx('fr-content-media')} role="group">
             <div className={fr.cx('fr-content-media__img')}>
-              <Image className={fr.cx('fr-responsive-img')} src={`${cmsHost}/assets/${props.img}`} alt={''} width={120} height={80} />
+              <Image className={fr.cx('fr-responsive-img')} src={props.img} alt={''} width={120} height={80} />
             </div>
           </figure>
         }
