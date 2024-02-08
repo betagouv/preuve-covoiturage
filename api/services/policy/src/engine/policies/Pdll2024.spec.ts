@@ -52,9 +52,20 @@ test(
     carpool: [
       { distance: 4999 },
       { operator_class: 'A' },
+
+      // Nantes Métropole (244400404)
+      { start: { ...defaultPosition, aom: '244400404' }, end: { ...defaultPosition, aom: '244400404' } },
+
+      // Angers (244900015)
       { start: { ...defaultPosition, aom: '244900015' }, end: { ...defaultPosition, aom: '244900015' } },
+
+      // Le Mans (247200132)
       { start: { ...defaultPosition, aom: '247200132' }, end: { ...defaultPosition, aom: '247200132' } },
+
+      // CA Agglomération du Choletais (200071678)
       { start: { ...defaultPosition, aom: '200071678' }, end: { ...defaultPosition, aom: '200071678' } },
+
+      // Région Île-de-France
       { start: { ...defaultPosition, reg: '11' } },
       { end: { ...defaultPosition, reg: '11' } },
       { distance: 60_001 },
@@ -62,7 +73,7 @@ test(
     ],
     meta: [],
   },
-  { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
+  { incentive: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], meta: [] },
 );
 
 test(

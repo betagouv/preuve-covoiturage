@@ -58,12 +58,14 @@ export const Pdll2024: PolicyHandlerStaticInterface = class extends AbstractPoli
     isAdultOrThrow(ctx);
 
     /*
-     Exclure les trajets :
-     - Angers->Angers,
-     - Le Mans->Le Mans, 
-     - CA Agglomération du Choletais->CA Agglomération du Choletais
+      Exclure les trajets :
+       - 244400404: Nantes Métropole -> Nantes Métropole,
+       - 244900015: Angers -> Angers,
+       - 247200132: Le Mans -> Le Mans, 
+       - 200071678: CA Agglomération du Choletais -> CA Agglomération du Choletais
      */
     if (
+      startsAndEndsAt(ctx, { aom: ['244400404'] }) ||
       startsAndEndsAt(ctx, { aom: ['244900015'] }) ||
       startsAndEndsAt(ctx, { aom: ['247200132'] }) ||
       startsAndEndsAt(ctx, { aom: ['200071678'] })
@@ -71,7 +73,7 @@ export const Pdll2024: PolicyHandlerStaticInterface = class extends AbstractPoli
       throw new NotEligibleTargetException();
     }
 
-    // Exclure les trajets qui ne sont pas dans l'aom
+    // Exclure les trajets qui ne sont pas dans l'AOM
     if (!startsAt(ctx, { reg: ['52'] }) || !endsAt(ctx, { reg: ['52'] })) {
       throw new NotEligibleTargetException();
     }
