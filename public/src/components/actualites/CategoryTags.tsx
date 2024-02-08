@@ -25,7 +25,7 @@ export default function CategoryTags(props: {categories: CategorieProps[], activ
                 }}
                 pressed={ t.attributes.slug === active ? true : false}
               >
-                {t.attributes.name}
+                {t.attributes.label}
               </Tag>
             </li>
           )

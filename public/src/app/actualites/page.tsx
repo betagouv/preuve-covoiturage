@@ -22,9 +22,7 @@ export default async function Actualites() {
   const { data, meta }  = await fetchAPI('/articles',query);
   const pageTitle = 'Actualités';
   const nbPage = meta ? meta.pagination.pageCount : 1;
-  const categories =  await fetchAPI('/categories',{
-    filters:'articles'
-  });
+  const categories =  await fetchAPI('/categories?filters[articles]');
 
   return (
     <div id='content'>
