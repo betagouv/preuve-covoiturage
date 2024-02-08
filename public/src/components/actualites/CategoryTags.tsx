@@ -20,12 +20,12 @@ export default function CategoryTags(props: {categories: CategorieProps[], activ
               <Tag
                 nativeButtonProps={{
                   onClick: () => {
-                    t.slug === active ? setActive(null) : setActive(t.slug)
+                    t.attributes.slug === active ? setActive(null) : setActive(t.attributes.slug)
                   }
                 }}
-                pressed={ t.slug === active ? true : false}
+                pressed={ t.attributes.slug === active ? true : false}
               >
-                {t.name}
+                {t.attributes.name}
               </Tag>
             </li>
           )

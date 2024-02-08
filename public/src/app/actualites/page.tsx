@@ -1,7 +1,7 @@
 import PageTitle from "@/components/common/PageTitle";
 import { fr } from "@codegouvfr/react-dsfr";
 import ActuCard from "@/components/actualites/ActuCard";
-import { cmsHost, cmsInstance, cmsActusByPage, shorten, getNbPages } from "@/helpers/cms";
+import { fetchAPI, cmsActusByPage, shorten } from "@/helpers/cms";
 import CategoryTags from "@/components/actualites/CategoryTags";
 import Pagination from "@/components/common/Pagination";
 import { Metadata } from 'next';
@@ -12,23 +12,19 @@ export const metadata: Metadata = {
 }
 
 export default async function Actualites() {
-  const { data, meta } = await cmsInstance.items('Articles').readByQuery({
-    fields:'*, categories.Categories_id.*',
-    limit: cmsActusByPage,
-    filter:{
-      status: {
-        '_eq': 'published',
-      },
-    },
-    sort:['-date_created'] as never[],
-    meta:'filter_count',
-  });
+  const query = {
+    populate: 'articles,img',
+    sort:'createdAt:desc',
+    pagination: {
+      pageSize: cmsActusByPage
+    }
+  };
+  const { data, meta }  = await fetchAPI('/articles',query);
   const pageTitle = 'Actualités';
-  const categories =  await cmsInstance.items('Categories').readByQuery({
-    fields:'*',
-    meta:'filter_count',
+  const nbPage = meta ? meta.pagination.pageCount : 1;
+  const categories =  await fetchAPI('/categories',{
+    filters:'articles'
   });
-  const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsActusByPage) : 1
 
   return (
     <div id='content'>
@@ -38,17 +34,17 @@ export default async function Actualites() {
       </div>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
-          data.map((a, i) => {
+          data.map((a:any, i:number) => {
             return (
               <div key={i} className={fr.cx('fr-col-12','fr-col-md-6')}>
                 <ActuCard 
-                  title={a.title}
-                  content={shorten(a.description,250)}
-                  date={new Date(a.date_created).toLocaleDateString('fr-FR')}
-                  href={`/actualites/${a.slug}`}
-                  img={`${cmsHost}/assets/${a.img}`}
-                  img_legend={a.img_legend}
-                  categories={a.categories}
+                  title={a.attributes.title}
+                  content={shorten(a.attributes.description,250)}
+                  date={new Date(a.attributes.date_created).toLocaleDateString('fr-FR')}
+                  href={`/actualites/${a.attributes.slug}`}
+                  img={a.attributes.img.data.attributes.url}
+                  img_legend={a.attributes.img_legend}
+                  categories={a.attributes.categories}
                 />
               </div>
             )

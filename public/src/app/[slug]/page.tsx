@@ -3,7 +3,7 @@ import Hero from "@/components/common/Hero";
 import PageTitle from "@/components/common/PageTitle";
 import SectionTitle from "@/components/common/SectionTitle";
 import RessourceCard from "@/components/ressources/RessourceCard";
-import { cmsHost, fetchAPI, shorten } from "@/helpers/cms";
+import { fetchAPI, shorten } from "@/helpers/cms";
 import { fr } from "@codegouvfr/react-dsfr";
 import MDContent from "@/components/common/MDContent";
 import Highlight from '../../components/common/Highlight';
@@ -25,8 +25,8 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
   const response  = await fetchAPI('/pages',query);
   const data = response.data[0]
   return {
-    title: `${data ? data.title : ''} | Observatoire.covoiturage.gouv.fr`,
-    description: shorten(`${data && data.content ? data.content :
+    title: `${data ? data.attributes.title : ''} | Observatoire.covoiturage.gouv.fr`,
+    description: shorten(`${data && data.attributes.content ? data.attributes.content :
     'Développer le covoiturage courte distance'}`,150),
   }
 }
@@ -69,10 +69,10 @@ export default async function CommunSinglePage({ params }: { params: { slug: str
     },  
   };
   const response  = await fetchAPI('/pages',query);
-  const data = response.data[0]
-  const hero = data.attributes.hero
-  const block = data.attributes.block
-  const list = data.attributes.list
+  const data = response.data[0];
+  const hero = data.attributes.hero;
+  const block = data.attributes.block;
+  const list = data.attributes.list;
     
   return(
     <div id='content'>

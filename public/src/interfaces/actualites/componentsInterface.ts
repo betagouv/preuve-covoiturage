@@ -13,6 +13,8 @@ export interface ActuCardProps {
 
 export interface CategorieProps {
   id: string | number,
-  name: string,
-  slug: string,
+  attributes:{
+    name: string,
+    slug: string,
+  }
 }
