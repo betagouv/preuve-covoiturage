@@ -106,7 +106,12 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
             </div>
           </div>          
           <figure style={{textAlign:'center'}}>
-              <Image className={fr.cx('fr-responsive-img', 'fr-responsive-img--16x9')} src={data.attributes.img.data.attributes.formats.large.url} alt={data.attributes.legend} width={data.attributes.img.data.attributes.formats.large.width} height={data.attributes.img.data.attributes.formats.large.height} />
+              <Image className={fr.cx('fr-responsive-img', 'fr-responsive-img--16x9')} 
+                src={data.attributes.img.data.attributes.formats.large ? data.attributes.img.data.attributes.formats.large.url: data.attributes.img.data.attributes.url } 
+                alt={data.attributes.legend} 
+                width={data.attributes.img.data.attributes.formats.large ? data.attributes.img.data.attributes.formats.large.width : data.attributes.img.data.attributes.width} 
+                height={data.attributes.img.data.attributes.formats.large ? data.attributes.img.data.attributes.formats.large.height : data.attributes.img.data.attributes.height} 
+              />
             <figcaption className={fr.cx('fr-content-media__caption')}>{data.attributes.legend}</figcaption>
           </figure>
           <div>

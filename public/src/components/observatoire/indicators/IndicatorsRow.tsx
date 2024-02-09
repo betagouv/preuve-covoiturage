@@ -1,9 +1,9 @@
 import { fr } from '@codegouvfr/react-dsfr';
-import SingleIndicator from './SingleIndicator';
+import Indicator from './Indicator';
 import Analyse from './Analyse';
 import { IndicatorsRowProps } from '@/interfaces/observatoire/componentsInterfaces';
-import SingleMap from './SingleMap';
-import SingleGraph from './SingleGraph';
+import Map from './Map';
+import Graph from './Graph';
 
 
 export default function IndicatorsRow(props: IndicatorsRowProps) {
@@ -11,7 +11,7 @@ export default function IndicatorsRow(props: IndicatorsRowProps) {
     <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
       {props.indicators && props.indicators.length >= 1 &&
         props.indicators.map((v, i) => {
-          return <SingleIndicator key={i} value={v.value} unit={v.unit} info={v.info} text={v.text} icon={v.icon} />;
+          return <Indicator key={i} value={v.value} unit={v.unit} info={v.info} text={v.text} icon={v.icon} />;
         })
       }
       {props.analyses && props.analyses.length >= 1 && 
@@ -23,7 +23,7 @@ export default function IndicatorsRow(props: IndicatorsRowProps) {
         props.maps.map((m, i) => {
           return (
             <div key={i} className={fr.cx('fr-col')}>
-              <SingleMap title={m.title} params={m.params} />
+              <Map title={m.title} params={m.params} />
             </div>
           )
         }) 
@@ -32,7 +32,7 @@ export default function IndicatorsRow(props: IndicatorsRowProps) {
         props.graphs.map((g, i) => {
           return (
             <div key={i} className={fr.cx('fr-col')}>
-              <SingleGraph title={g.title} params={g.params} />
+              <Graph title={g.title} params={g.params} />
             </div>
           )
         }) 

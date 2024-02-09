@@ -22,11 +22,10 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
     },
     fields:['title','content']
   };
-  const response  = await fetchAPI('/pages',query);
-  const data = response.data[0]
+  const {data}  = await fetchAPI('/pages',query);
   return {
-    title: `${data ? data.attributes.title : ''} | Observatoire.covoiturage.gouv.fr`,
-    description: shorten(`${data && data.attributes.content ? data.attributes.content :
+    title: `${data ? data[0].attributes.title : ''} | Observatoire.covoiturage.gouv.fr`,
+    description: shorten(`${data ? data[0].attributes.content :
     'Développer le covoiturage courte distance'}`,150),
   }
 }

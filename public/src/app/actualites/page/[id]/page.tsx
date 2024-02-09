@@ -19,7 +19,7 @@ export async function generateStaticParams() {
     }
   };
   const { meta }  = await fetchAPI('/articles',query);
-  const nbPage = meta ? meta.pagination.pageCount : 1;
+  const nbPage = meta.pagination.pageCount;
   return Array.from({ length: nbPage }, (_, v) => {
     const id = v + 1;
     return {
@@ -30,7 +30,7 @@ export async function generateStaticParams() {
 
 export default async function ActuPage({ params }: { params: { id: string }}) {
   const query = {
-    populate: 'articles,img',
+    populate: 'categories,img',
     sort:'createdAt:desc',
     pagination: {
       pageSize: cmsActusByPage,
@@ -38,9 +38,18 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
     }
   };
   const { data, meta }  = await fetchAPI('/articles',query);
-  const categories =  await fetchAPI('/categories?filters[articles]');
+  const catQuery = {
+    filters:{
+      articles:{
+        id:{
+          $notNull: true
+        }
+      }
+    }
+  }
+  const categories =  await fetchAPI('/categories',catQuery);
   const pageTitle=`Actualités page ${params.id}`;
-  const nbPage = meta ? meta.pagination.pageCount : 1;
+  const nbPage = meta.pagination.pageCount;
 
   return (
     <div id='content'>
@@ -60,7 +69,7 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
                   href={`/actualites/${a.attributes.slug}`}
                   img={a.attributes.img.data.attributes.url}
                   img_legend={a.attributes.img_legend}
-                  categories={a.attributes.categories}
+                  categories={a.attributes.categories.data}
                 />
               </div>
             )

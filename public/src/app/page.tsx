@@ -29,7 +29,7 @@ export default async function Home() {
         populate: 'buttons,img'
       },
       list: {
-        populate: 'buttons,img'
+        populate: '*'
       }
     },  
   };

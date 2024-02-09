@@ -11,12 +11,9 @@
     "prebuild": "only-include-used-icons"
   },
   "dependencies": {
-    "@codegouvfr/react-dsfr": "^1.0.0",
-    "@directus/sdk": "^10.3.5",
+    "@codegouvfr/react-dsfr": "^1.4.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@material-design-icons/font": "^0.14.12",
-    "@mdi/font": "^7.3.67",
     "@mui/material": "^5.14.18",
     "@socialgouv/matomo-next": "^1.6.1",
     "@turf/bbox": "^6.5.0",
@@ -28,7 +25,6 @@
     "eslint-config-next": "^13.4.9",
     "h3-js": "^4.1.0",
     "maplibre-gl": "^3.6.2",
-    "material-symbols": "^0.12.0",
     "next": "^13.5.4",
     "next-mdx-remote": "^4.4.1",
     "qs": "^6.11.2",
@@ -37,6 +33,7 @@
     "react-dom": "18.2.0",
     "react-map-gl": "^7.1.6",
     "remark-gfm": "^3.0.1",
+    "remixicon": "^4.1.0",
     "simple-statistics": "^7.8.3"
   },
   "devDependencies": {
