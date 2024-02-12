@@ -164,12 +164,10 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
         ccd.operator_trip_id,
     
         -- driver
-        cid.uuid as driver_uuid,
         cid.operator_user_id as operator_driver_id,
         pid.amount as rpc_incentive,
     
         -- passenger
-        cip.uuid as passenger_uuid,
         cip.operator_user_id as operator_passenger_id,
 
         ccd.datetime as start_datetime,
