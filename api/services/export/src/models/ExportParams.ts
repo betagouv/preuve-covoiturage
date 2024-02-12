@@ -15,14 +15,14 @@ export type Params = {
 export class ExportParams {
   protected params: Params;
 
-  protected readonly tz = 'Europe/Paris';
+  protected readonly tz = 'Europe/Paris' as Timezone;
   protected readonly schema = {};
   protected readonly defaultConfig: Params = {
     start_at: subMonthsTz(today(this.tz), 1),
     end_at: today(),
     operator_id: [],
     geo_selector: { country: ['XXXXX'] }, // FRANCE
-    tz: 'Europe/Paris',
+    tz: this.tz,
   };
 
   constructor(protected config: Config) {

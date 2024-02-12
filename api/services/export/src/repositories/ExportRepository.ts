@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { ExportParams } from '../models/ExportParams';
+import { Config as ExportParamsConfig } from '../models/ExportParams';
 
 export type Export = {
   _id: number;
@@ -11,9 +11,9 @@ export type Export = {
   created_by: number;
   download_url_expire_at: Date;
   download_url: string;
-  params: ExportParams;
-  error: any;
-  stats: any;
+  params: ExportParamsConfig;
+  error: any; // TODO
+  stats: any; // TODO
 };
 export enum ExportStatus {
   PENDING = 'pending',

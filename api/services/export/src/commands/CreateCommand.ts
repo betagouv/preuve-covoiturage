@@ -5,12 +5,13 @@ import { ExportRepository, ExportType } from '../repositories/ExportRepository';
 
 export type Options = {
   creator: number;
-  type: ExportType;
   operator_id?: number | null;
   territory_id?: number | null;
+  geo?: string | null;
   start?: Date;
   end?: Date;
   tz: Timezone;
+  sensitive: boolean;
 };
 
 @command()
@@ -23,18 +24,18 @@ export class CreateCommand implements CommandInterface {
       description: 'User id',
     },
     {
-      signature: '-t, --type <type>',
-      description: 'Export type',
-      default: ExportType.OPENDATA,
-    },
-    {
       signature: '-o, --operator_id <operator_id>',
       description: 'Operator id',
       default: null,
     },
     {
-      signature: '-tt, --territory_id <territory_id>',
+      signature: '-t, --territory <territory_id>',
       description: 'Territory id',
+      default: null,
+    },
+    {
+      signature: '-g --geo <geo>',
+      description: 'Geo selector <type>:<code> (types: aom, com, epci, dep, reg)',
       default: null,
     },
     {
@@ -54,17 +55,31 @@ export class CreateCommand implements CommandInterface {
       description: 'Output timezone',
       default: 'Europe/Paris',
     },
+    {
+      signature: '--sensitive',
+      description: 'Export sensitive fields',
+      default: false,
+    },
   ];
 
   constructor(protected exportRepository: ExportRepository) {}
 
   public async call(options: Options): Promise<void> {
     // TODO
-    const { creator, type, operator_id, territory_id, start, end, tz } = options;
+    const { creator, operator_id, territory_id, start, end, tz, sensitive } = options;
+    const params = {
+      start_at: start,
+      end_at: end,
+      operator_id: Array.isArray(operator_id) ? operator_id : [operator_id],
+      tz,
+    };
+
+    // TODO resolve geo_selector from --territory_id and --geo
+
     // TODO create ExportParams entity and pass it to the repository
     await this.exportRepository.create({
       created_by: creator,
-      type,
+      type: sensitive ? ExportType.OPERATOR : ExportType.OPENDATA,
       params,
     });
   }
