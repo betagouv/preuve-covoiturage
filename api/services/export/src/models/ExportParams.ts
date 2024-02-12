@@ -44,6 +44,25 @@ export class ExportParams {
     return this.params;
   }
 
+  public geoToSQL(mode: 'AND' | 'OR' = 'OR'): string {
+    // TODO convert geo_selector to SQL
+    const { geo_selector } = this.params;
+    const start = Object.keys(geo_selector)
+      .reduce((p, type) => {
+        // join all codes per type
+        const local = [];
+        geo_selector[type].forEach((code: string) => {
+          local.push(`gps.${type} = '${code}'`);
+        });
+
+        p.push(local.join(' OR '));
+        return p;
+      }, [])
+      .join(' OR ');
+
+    return `AND ((${start}) ${mode} (${start.replace(/gps\./g, 'gpe.')}))`;
+  }
+
   // TODO to AbstractParams class
   protected validate<T>(config: T): void {
     // TODO validate params against schema or throw InvalidParamsException

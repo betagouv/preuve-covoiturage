@@ -4,32 +4,22 @@ export type AllowedComputedFields = {
   campaign_mode: string;
   has_incentive: boolean;
 
+  incentive_0_index: number;
+  incentive_0_siret: string;
+  incentive_0_amount: string;
   incentive_1_index: number;
   incentive_1_siret: string;
   incentive_1_amount: number;
   incentive_2_index: number;
   incentive_2_siret: string;
   incentive_2_amount: number;
-  incentive_3_index: number;
-  incentive_3_siret: string;
-  incentive_3_amount: number;
-  incentive_4_index: number;
-  incentive_4_siret: string;
-  incentive_4_amount: number;
 
+  incentive_rpc_0_siret: string;
+  incentive_rpc_0_amount: number;
   incentive_rpc_1_siret: string;
   incentive_rpc_1_amount: number;
   incentive_rpc_2_siret: string;
   incentive_rpc_2_amount: number;
-  incentive_rpc_3_siret: string;
-  incentive_rpc_3_amount: number;
-  incentive_rpc_4_siret: string;
-  incentive_rpc_4_amount: number;
-
-  incentive_counterpart_1_siret: string;
-  incentive_counterpart_1_amount: number;
-  incentive_counterpart_2_siret: string;
-  incentive_counterpart_2_amount: number;
 };
 
 export type CarpoolRowData = {
@@ -57,12 +47,15 @@ export type CarpoolRowData = {
   start_departement: string;
   start_epci: string;
   start_aom: string;
+  start_region: string;
   start_pays: string;
+
   end_insee: string;
   end_commune: string;
   end_departement: string;
   end_epci: string;
   end_aom: string;
+  end_region: string;
   end_pays: string;
 
   operator: string;
@@ -71,7 +64,9 @@ export type CarpoolRowData = {
 
   driver_revenue: number;
   passenger_contribution: number;
-  campaign_id: number;
+
+  demande_cee: boolean;
+  campaigns: number[];
 
   incentive_0_index: number;
   incentive_0_siret: string;
@@ -122,8 +117,11 @@ export class CarpoolRow {
 
   // type makes sure the field exists in the root dataset to avoid having
   // computed properties calling each other and creating race conditions.
-  public value<K extends keyof CarpoolRowData>(name: K): CarpoolRowData[K] | null {
-    return this.data[name] ?? null;
+  public value<K extends keyof CarpoolRowData>(
+    name: K,
+    defaultResult: CarpoolRowData[K] | null = null,
+  ): CarpoolRowData[K] | null {
+    return this.data[name] ?? defaultResult;
   }
 
   public addField(name: string, value: any): CarpoolRow {

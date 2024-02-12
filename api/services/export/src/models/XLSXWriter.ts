@@ -49,8 +49,14 @@ export class XLSXWriter {
       {
         name: 'campaign_mode',
         compute(row, datasources) {
-          const campaign = datasources.get('campaigns').get(row.value('campaign_id'));
-          return campaign && campaign.getModeAt([row.value('start_datetime_utc'), row.value('end_datetime_utc')]);
+          // for each campaign, get the mode at the start date or the end date
+          // and return the higher one (booster)
+          return row.value('campaigns', []).reduce((acc, id) => {
+            const campaign = datasources.get('campaigns').get(id);
+            if (!campaign) return acc;
+            const mode = campaign.getModeAt([row.value('start_datetime_utc'), row.value('end_datetime_utc')]);
+            return acc === 'booster' ? acc : mode;
+          }, 'normal');
         },
       },
       {

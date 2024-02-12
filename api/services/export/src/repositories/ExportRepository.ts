@@ -29,20 +29,22 @@ export enum ExportType {
 }
 export type ExportCreateData = Pick<Export, 'created_by' | 'type' | 'params'>;
 export type ExportUpdateData = Partial<Pick<Export, 'status' | 'progress' | 'download_url' | 'error' | 'stats'>>;
+export type ExportProgress = (progress: number) => Promise<void>;
 
 export interface ExportRepositoryInterface {
   create(data: ExportCreateData): Promise<number>;
-  get(id: number): Promise<any>;
+  get(id: number): Promise<Export>;
   update(id: number, data: ExportUpdateData): Promise<void>;
   delete(id: number): Promise<void>;
-  list(): Promise<any[]>;
+  list(): Promise<Export[]>;
+  progress(id: number): Promise<ExportProgress>;
 }
 
 export abstract class ExportRepositoryInterfaceResolver implements ExportRepositoryInterface {
   public async create(data: ExportCreateData): Promise<number> {
     throw new Error('Not implemented');
   }
-  public async get(id: number): Promise<any> {
+  public async get(id: number): Promise<Export> {
     throw new Error('Not implemented');
   }
   public async update(id: number, data: ExportUpdateData): Promise<void> {
@@ -51,7 +53,10 @@ export abstract class ExportRepositoryInterfaceResolver implements ExportReposit
   public async delete(id: number): Promise<void> {
     throw new Error('Not implemented');
   }
-  public async list(): Promise<any[]> {
+  public async list(): Promise<Export[]> {
+    throw new Error('Not implemented');
+  }
+  public async progress(id: number): Promise<ExportProgress> {
     throw new Error('Not implemented');
   }
 }
@@ -72,7 +77,7 @@ export class ExportRepository implements ExportRepositoryInterface {
     return rows[0]._id;
   }
 
-  public async get(id: number): Promise<any> {
+  public async get(id: number): Promise<Export> {
     const { rows } = await this.connection.getClient().query({
       text: `SELECT * FROM ${this.table} WHERE _id = $1`,
       values: [id],
@@ -96,10 +101,21 @@ export class ExportRepository implements ExportRepositoryInterface {
     });
   }
 
-  public async list(): Promise<any[]> {
+  public async list(): Promise<Export[]> {
     const { rows } = await this.connection.getClient().query({
       text: `SELECT * FROM ${this.table}`,
     });
     return rows;
+  }
+
+  // progress callback to be injected in the carpool repository
+  // to be able to update the `progress` field of the export as the export is running
+  public async progress(id: number): Promise<ExportProgress> {
+    return async (progress: number) => {
+      await this.connection.getClient().query({
+        text: `UPDATE ${this.table} SET progress = $1::int WHERE _id = $2`,
+        values: [progress, id],
+      });
+    };
   }
 }

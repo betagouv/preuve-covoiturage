@@ -59,7 +59,10 @@ export class BuildService {
     // add boosters as data source to file writer
     this.fileWriter.addDatasource('campaigns', campaigns);
 
-    await this.carpoolRepository.list(this.params, this.fileWriter);
+    await this.carpoolRepository.list(this.params, this.fileWriter, async (progress: number) => {
+      // TODO update progress
+      console.info(`Progress: ${progress}%`);
+    });
   }
 
   protected async help(): Promise<void> {
