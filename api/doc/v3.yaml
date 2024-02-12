@@ -8,7 +8,7 @@ info:
     email: technique@covoiturage.beta.gouv.fr
   license:
     name: Apache 2
-    url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/main/LICENSE
+    url: https://raw.githubusercontent.com/betagouv/preuve-covoiturage/dev/LICENSE
 
 externalDocs:
   url: https://doc.covoiturage.beta.gouv.fr/
@@ -112,11 +112,10 @@ components:
     status:
       type: string
       enum:
-        - fraud_error
-        - anomaly_error
         - validation_error 
         - acquisition_error
         - normalization_error
+        - fraud_error
         - ok
         - expired
         - canceled
@@ -125,10 +124,9 @@ components:
       description: | 
         Statut du trajet tel que :
           - validation_error : les données envoyées ne sont pas valides
-          - anomaly_error : le trajet est incohérent ou physiquement impossible
           - acquisition_error : le trajet n'a pas du tout été enregistré
           - normalization_error : le trajet a été enregistré mais les données envoyées n'ont pas pu être standardisée.
-          - fraud_error : le trajet a été enregistré et standardisé mais il a été considéré comme frauduleux
+          - fraud_error : le trajet a été enregistré et standardisé mais il a été considéré comme anormal
           - ok : le trajet a correctement été traité
           - pending : le trajet a été enregistré mais n'a pas encore été traité
           - canceled : le trajet a été annulé par l'opérateur
@@ -279,14 +277,14 @@ components:
       type: string
       format: date-time 
       description: |
-        Date et heure du départ/arrivée du passager au format ISO 8601. L'heure est exprimée en UTC (YYYY-MM-DDThh:mm:ssZ)
+        Date et heure du départ/arrivée au format ISO 8601. L'heure est exprimée en UTC (YYYY-MM-DDThh:mm:ssZ)
         L'heure est exprimée en UTC \(Coordinated Universal Time\). UTC n'est pas ajusté sur l'heure d'été et hiver !
       example: '2021-01-01T11:00:00Z'
     time_geopoint:
       type: object
       additionalProperties: false
       description: |
-        Position lat/lon + date  du passager
+        Position lat/lon + date 
       required:
         - datetime
         - lat
@@ -304,12 +302,11 @@ components:
         Ces données personnelles permettent d'identifier la personne effectuant le covoiturage afin de pouvoir comptabiliser ses trajets et lui distribuer des incitations en fonction des politiques applicables.
         Deux options sont disponibles pour la transmission du numéro de téléphone :
         - Numéro complet à 10 chiffres (phone)
-        - Numéro tronqué à 8 chiffres (phone_trunc) + identifiant unique de l'opérateur (operator_user_id)
+        - Numéro tronqué à 8 chiffres (phone_trunc)
       additionalProperties: false
       required:
         - operator_user_id
         - identity_key
-        - phone_trunc
       properties:
         identity_key:
           type: string
@@ -366,12 +363,6 @@ components:
                 minLength: 5
                 maxLength: 19
               - type: string
-                description: Numéro de permis de conduire plus anciens composé de 1 à 15 caractères.
-                example: '123456A'
-                pattern: /^[A-Z0-9]{1,15}$/
-                minLength: 1
-                maxLength: 15
-              - type: string
                 description: Numéro de permis étranger préfixé de l'indicatif '99-'.
                 example: '99-X23836'
                 pattern: /^99-.*$/
@@ -379,7 +370,7 @@ components:
                 maxLength: 64
         operator_user_id:
           type: string
-          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire si le numéro de téléphone complet n'est pas fournit.
+          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire.
           example: "1111-222-333-4444"
         over_18:
           enum:
@@ -397,14 +388,16 @@ components:
       type: object
       description: |
         L'identité peut être passée de 3 manières différentes :
-        1. `phone` : le numéro de téléphone complet au format ISO
-        2. `phone_trunc` + `operator_user_id` : le numéro de téléphone tronqué plus votre identifiant utilisateur
-        3. `operator_user_id` : votre identifiant utilisateur uniquement (valable uniquement si vous avez transmis des trajets avec le couple `phone_trunc` + `operator_user_id`)
+        1. `phone` : le numéro de téléphone complet au format ISO ;
+        2. `phone_trunc` : le numéro de téléphone au format ISO tronqué des 2 derniers chiffres ;
+        3. `operator_user_id` : votre identifiant utilisateur uniquement. Obligatoire.
       additionalProperties: false
+      required:
+        - operator_user_id
       properties:
         phone:
           type: string
-          description: Numéro de téléphone à 10 chiffre au format ITU E.164
+          description: Numéro de téléphone à 10 chiffres au format ITU E.164
           example: '+33123456789'
         phone_trunc:
           type: string
@@ -412,7 +405,7 @@ components:
           example: '+336123456'
         operator_user_id:
           type: string
-          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire si le numéro de téléphone complet n'est pas fournit.
+          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire.
           example: "1111-222-333-4444"
     certificate_data:
       type: object
@@ -452,38 +445,6 @@ components:
               amount:
                 type: number
                 description: montant en centimes d'euros
-    fraudcheck_label:
-      type: string
-      enum:
-        - interoperator_fraud
-      description: | 
-        Etiquette possible pour un cas de fraude détectée :
-          - `interoperator_fraud` : le trajet a été déclaré chez un autre opérateur pour les mêmes personnes et avec des bornes temporelles qui se chevauchent 
-    anomaly_label:
-      type: string
-      enum:
-        - temporal_overlap_anomaly
-        - distance_duration_anomaly
-      description: | 
-        #
-        # Etiquette possible pour une anomalie détectée
-          - `temporal_overlap_anomaly` : 2 trajets ont été déclarés pour un même opérateur et un même passager sur des bornes temporelles qui se chevauchent à au moins 70%
-          - `distance_duration_anomaly`: 1 trajet a été enregistré avec une durée et/ou une distance incohérente
-
-        ## Règles utilisées pour detecter les anomalies de type `distance_duration_anomaly`
-
-         - distance estimée par osrm ou transmises inférieure à 300m. 
-         Le trajet est beaucoup trop court en termes de distance.
-         - durée estimée par osrm ou transmise inférieure à 1 minute.
-         Le trajet est beaucoup trop court en termes de durée
-         - durée estimée par osrm supérieure à 2.5 fois le temps transmis. Exemple: temps estimé 25 minutes pour temps transmis de 10 minutes
-         Le temps de trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
-         - distance estimée par osrm supérieure à 2.5 fois la distance transmise. Exemple: distance 10 km sur une distance estimée 25 km
-         La distance du trajet est trop faible par rapport au plus court chemin determiné par OSRM, le trajet est considéré comme physiquement impossible
-         - distance transmise supérieure à 4 fois la distance estimée osrm. Exemple: 10 km estimé pour 40 km transmis
-         La distance transmise est très largement supérieure à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels détours par rapport au plus court chemin
-         - durée transmise supérieure à 7 fois la durée estimée. Exemple : 1h estimé vs 7h transmis
-         La durée transmise est très largement supérieure par rapport à l'estimation. Le seuil est élevé pour prendre en compte d'éventuels embouteillage
 paths:
   /geo/route:
     get:
@@ -925,21 +886,8 @@ paths:
         Le schéma de données est présenté au format [JSON Schema Draft-07](https://json-schema.org/understanding-json-schema/index.html).
 
         ### Vérification
-        Les vérifications sont faites de manière asynchrone.
-        Le statut ne peut plus changer 48h après la date de fin du trajet.
-        En cas d'indisponibilité du ou des services, le trajet est considéré comme `ok` après 48h
-        
-        ## Détection de fraude
-        
-        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 24h après la réalisation de celui-ci.
-        Ces trajets seront retournés avec un champs `status` à `fraud_error` et un label dans `fraud_error_labels` à `interoperator_fraud`.
-        L'algorithme de détection de fraude inter opérateurs est appliqué sur tous les trajets envoyés.
-
-        ## Détection d'anomalie
-
-        Le trajet est incohérent ou physiquement impossible.
-        Le trajet envoyé rentre en conflit avec un autre sur plan temporel ou spacial
-        Voir la section du schema "anomaly_label" pour plus de détails
+        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 48h après la réalisation de celui-ci.
+        Ces trajets seront retournés avec un champs `status` à `fraud_error`.
       security:
         - token: []
       operationId: acquisition:create
@@ -1103,10 +1051,8 @@ paths:
 
         Il est possible de vérifier le statut d'un trajet envoyé directement pour s'assurer qu'il n'y pas pas eu d'erreur de format ou de traitement.
 
-        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 24h après la réalisation de celui-ci.
+        Dans le cadre de la fraude inter opérateurs, les opérateurs sont tenus de vérifier le statut du trajet au plus tôt 48h après la réalisation de celui-ci.
         Un trajet detecté sera retourné avec un champ `status` à `fraud_error`.
-        Le statut ne peut plus changer 48h après la date de fin du trajet. En cas d'indisponibilité du service, le trajet est considéré comme ok après les 48h 
-        L'algorithme de détection de fraude inter opérateurs est appliqué sur tous les trajets envoyés.
       responses:
         '200':
           description: |
@@ -1130,26 +1076,14 @@ paths:
                     type: string
                     format: date-time
                     description: la date d'enregistrement du trajet ou à défaut d'enregistrement, la date de l'erreur d'enregistrement
-                  fraud_error_labels:
-                    type: array
-                    description: Liste des raisons ayant abouti au rejet du trajet. vide si pas de fraude détectée
-                    items:
-                      '$ref': "#/components/schemas/fraudcheck_label"
-                  anomaly_error_details:
-                    type: array
-                    description: Liste des raisons ayant abouti au rejet du trajet. vide si pas d'anomalie détectée
+                  data: 
+                    type: object
+                    description: champ libre de données
+                    required:
+                      - message
                     properties:
-                      label: 
-                       '$ref': "#/components/schemas/anomaly_label"
-                      metas:
-                        type: object
-                        properties:
-                          conflicting_journey_id:
-                            type: string
-                            description: l'`operator_journey_id` en conflict avec le trajet rejeté. Le trajet correspondant à ce journey_id ne sera pas retenu en statut `anomaly_error`.
-                          temporal_overlap_duration_ratio:
-                            type: float
-                            description: ratio de temps de chevauchement entre les 2 trajets allant de 0 à 1. 1 désigne un chevauchement de temps total
+                      message:
+                        type: string
         '401':
           description: Non authentifié. Le token applicatif est manquant ou invalide
           content:
@@ -1180,8 +1114,6 @@ paths:
       security:
         - token: []
       summary: Mettre à jour un trajet
-      description: |
-        Permet de mettre à jour un trajet qui est en erreur suite à un problème de validation sur le payload. Par exemple suite à un problème de validation sur les coordonnées géographiques envoyées
       operationId: acquisition:update
       requestBody:
         required: true
@@ -1195,7 +1127,6 @@ paths:
                 - start
                 - end
                 - distance
-
               additionalProperties: false
               properties:
                 operator_trip_id:
@@ -1229,8 +1160,7 @@ paths:
       summary: Invalider un trajet envoyé
       description: |
         Annule un trajet déjà envoyé dans le registre.
-        S'il détecte un comportement inhabituel ou une fraude avérée, un opérateur doit communiquer auprès du service l'invalidation du trajet concerné dès lors qu'il est déjà inscrit dans le registre. 
-        Cette invalidation doit avoir lieu dès que l'opérateur a connaissance de cette irrégularité à tout moment.
+        S'il détecte un comportement inhabituel ou une fraude avérée, un opérateur doit communiquer auprès du service l'invalidation du trajet concerné dès lors qu'il est déjà inscrit dans le registre. Cette invalidation doit avoir lieu dès que l'opérateur a connaissance de cette irrégularité.
       security:
         - token: []
       operationId: acquisition:cancel
@@ -1281,9 +1211,7 @@ paths:
                 error: Not found
   /policies/simulate:
     post:
-      tags: 
-        - simuler
-      summary: Simuler une incitation sur un trajet
+      summary: simuler incitations
       security:
         - token: []
       requestBody:

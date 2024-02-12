@@ -59,7 +59,7 @@ Compilation des fichiers XLSX pour un mois donné. Les fichiers sont générés 
 Les exports sont programmés pour être calculés le 6 de chaque mois.
 ## Commandes
 
-### Export : `npm run ilos apdf:export`
+### Export : `npm run -w @pdc/proxy -- ilos apdf:export`
 
 Exporte les APDF et upload les fichiers sur le S3.
 
@@ -95,7 +95,7 @@ Options:
 >
 > Quand `--sync` est utilisé (en local, par exemple). Il est conseillé de passer les timeouts à 0 :
 > ```
-> APP_REQUEST_TIMEOUT=0 APP_POSTGRES_TIMEOUT=0 npm run ilos apdf:export
+> APP_REQUEST_TIMEOUT=0 APP_POSTGRES_TIMEOUT=0 npm run -w @pdc/proxy ilos apdf:export
 > ```
 > ou  
 > ```
@@ -108,13 +108,13 @@ Options:
 ```
 # Export de toutes les campagnes pour tous les opérateurs, le mois dernier
 # (commande executée en CRON)
-npm run ilos apdf:export
+npm run -w @pdc/proxy ilos apdf:export
 
 # Sur le mois de janvier 2023
-npm run ilos apdf:export -s 2023-01-01 -e 2023-02-01
+npm run -w @pdc/proxy ilos apdf:export -s 2023-01-01 -e 2023-02-01
 
 # Pour un opérateur spécifique
-npm run ilos apdf:export -o 1
+npm run -w @pdc/proxy ilos apdf:export -o 1
 ```
 
 > Lors de tests ou d'export en local, on peut suffixer la commande avec ` | pino-pretty -f` pour avoir une console plus lisible.  

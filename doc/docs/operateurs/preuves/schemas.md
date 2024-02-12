@@ -75,7 +75,7 @@
     },
     "identity": {
       "type": "object",
-      "anyOf": [{ "required": ["phone"] }, { "required": ["operator_user_id", "phone_trunc"] }],
+      "anyOf": [{ "required": ["operator_user_id", "phone"] }, { "required": ["operator_user_id", "phone_trunc"] }],
       "additionalProperties": false,
       "properties": {
         "firstname": {
@@ -349,7 +349,7 @@
     },
     "identity": {
       "type": "object",
-      "anyOf": [{ "required": ["phone"] }, { "required": ["operator_user_id", "phone_trunc"] }],
+      "anyOf": [{ "required": ["operator_user_id", "phone"] }, { "required": ["operator_user_id", "phone_trunc"] }],
       "additionalProperties": false,
       "properties": {
         "firstname": {
