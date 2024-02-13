@@ -3,9 +3,10 @@ import { CommandInterface, CommandOptionType, command } from '@ilos/common';
 import { Timezone } from '@pdc/provider-validator';
 import { ExportTarget } from '../models/Export';
 import { ExportParams } from '../models/ExportParams';
-import { ExportRepositoryInterfaceResolver } from '../repositories/ExportRepository';
-import { TerritoryServiceInterfaceResolver } from '../services/TerritoryService';
 import { ExportRecipient } from '../models/ExportRecipient';
+import { ExportRepositoryInterfaceResolver } from '../repositories/ExportRepository';
+import { RecipientServiceInterfaceResolver } from '../services/RecipientService';
+import { TerritoryServiceInterfaceResolver } from '../services/TerritoryService';
 
 export type Options = {
   created_by: number;
@@ -28,6 +29,9 @@ export class CreateCommand implements CommandInterface {
       signature: '-c, --created_by <created_by>',
       description: 'User id',
       default: 0,
+      coerce(value: string): number {
+        return parseInt(value, 10);
+      },
     },
     {
       signature: '-r, --recipient [recipient...]',
@@ -84,6 +88,7 @@ export class CreateCommand implements CommandInterface {
   constructor(
     protected exportRepository: ExportRepositoryInterfaceResolver,
     protected territoryService: TerritoryServiceInterfaceResolver,
+    protected recipientService: RecipientServiceInterfaceResolver,
   ) {}
 
   public async call(options: Options): Promise<void> {
@@ -98,10 +103,17 @@ export class CreateCommand implements CommandInterface {
       target: optionTarget,
     } = options;
 
+    // make sure we have at least one recipient
+    const emails = await this.recipientService.maybeAddCreator(recipients.map(ExportRecipient.fromEmail), created_by);
+    if (!emails.length) {
+      console.error('No recipient found! You must set "--created_by" or "--recipient"');
+      return;
+    }
+
     const { uuid, target, status, params } = await this.exportRepository.create({
       created_by,
       target: optionTarget,
-      recipients: recipients.map(ExportRecipient.fromEmail),
+      recipients: emails,
       params: new ExportParams({
         start_at,
         end_at,
