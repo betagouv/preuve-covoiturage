@@ -11,4 +11,4 @@ export const handlerConfig = {
   method: 'delete',
 } as const;
 
-export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

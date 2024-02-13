@@ -18,4 +18,4 @@ export const handlerConfig = {
   method: 'list',
 };
 
-export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

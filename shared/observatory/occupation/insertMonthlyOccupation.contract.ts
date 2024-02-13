@@ -8,4 +8,4 @@ export const handlerConfig = {
   method: 'insertMonthlyOccupation',
 };
 
-export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

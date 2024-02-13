@@ -6,4 +6,4 @@ export const handlerConfig = {
   method: 'statsrefresh',
 } as const;
 
-export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}` as const;

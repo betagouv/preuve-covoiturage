@@ -6,13 +6,6 @@ Cette page concerne les attestations fournies par les opérateurs de covoiturage
 Rendez-vous sur [https://attestation.covoiturage.beta.gouv.fr/](http://attestation.covoiturage.beta.gouv.fr/) pour générer votre attestation sur l'honneur.
 :::
 
-::: warning Cette fonctionnalité est en cours de développement.
-
-En tant qu'opérateur de covoiturage, contactez nous si vous souhaitez y participer : [technique@covoiturage.beta.gouv.fr](mailto:technique@covoiturage.beta.gouv.fr)
-
-Merci de [créer des tickets](https://github.com/betagouv/preuve-covoiturage/issues/new?template=certificate.md&labels=ATTESTATION&assignees=jonathanfallon) si vous rencontrez des problèmes.
-:::
-
 Une attestation de covoiturage est un document retraçant les trajets d'une personne sur une durée donnée.
 Cette attestation au format PDF imprimable A4 est produite à la demande de l'utilisateur·rice et au travers de la plateforme avec laquelle les trajets sont effectués.
 
@@ -28,7 +21,9 @@ Dans le cadre du Forfait Mobilités Durables par exemple, l'attestation permet �
 
 ## Étapes de génération d'une attestation PDF
 
-1. [Création de l'attestation](/operateurs/attestations/creer)  
+Les schémas de requêtes sont disponibles dans la [documentation de l'API](/operateurs/api-v3) et dans [les exemples](/operateurs/attestations/exemples).
+
+1. **Création de l'attestation**  
    Sur la base des données d'identité fournies, les données de trajet liées à cette personne sont compilées et sauvegardées avec un identifiant unique qui permettra de récupérer et vérifier l'attestation.
-2. [Téléchargement du PDF](/operateurs/attestations/telecharger)  
+2. **Téléchargement du PDF**  
    L'identifiant unique de l'attestation est utilisé pour générer un PDF imprimable. Les données stockées lors de la création de l'attestation sont mises en forme sur un document au format A4.

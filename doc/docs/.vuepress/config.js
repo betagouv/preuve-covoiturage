@@ -43,17 +43,8 @@ module.exports = {
               ],
             },
             {
-              title: 'Trajets',
-              children: [
-                {
-                  title: "Schemas",
-                  path: 'preuves/schemas'
-                },
-                {
-                  title: "Exemples",
-                  path: 'preuves/exemples'
-                },
-              ],
+              title: 'CEE',
+              path: '/operateurs/cee',
             },
             {
               title: 'Attestations',
@@ -71,10 +62,6 @@ module.exports = {
             {
               title: 'Outils',
               path: '/operateurs/outils',
-            },
-            {
-              title: 'CEE',
-              path: '/operateurs/cee',
             },
           ],
           '/contribuer/repo/': [

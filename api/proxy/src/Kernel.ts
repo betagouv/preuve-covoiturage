@@ -11,6 +11,7 @@ import { bootstrap as carpoolBootstrap } from '@pdc/service-carpool';
 import { bootstrap as ceeBootstrap } from '@pdc/service-cee';
 import { bootstrap as certificateBootstrap } from '@pdc/service-certificate';
 import { bootstrap as companyBootstrap } from '@pdc/service-company';
+import { bootstrap as exportBootstrap } from '@pdc/service-export';
 import { bootstrap as honorBootstrap } from '@pdc/service-honor';
 import { bootstrap as monitoringBootstrap } from '@pdc/service-monitoring';
 import { bootstrap as operatorBootstrap } from '@pdc/service-operator';
@@ -33,6 +34,7 @@ import { config } from './config';
     ...ceeBootstrap.serviceProviders,
     ...certificateBootstrap.serviceProviders,
     ...companyBootstrap.serviceProviders,
+    ...exportBootstrap.serviceProviders,
     ...honorBootstrap.serviceProviders,
     ...monitoringBootstrap.serviceProviders,
     ...operatorBootstrap.serviceProviders,
