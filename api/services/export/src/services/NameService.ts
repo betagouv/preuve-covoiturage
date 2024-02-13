@@ -1,5 +1,5 @@
 import { ConfigInterfaceResolver, provider } from '@ilos/common';
-import { ExportType } from '../repositories/ExportRepository';
+import { ExportType } from '../models/Export';
 
 export type Options = {
   uuid: string;

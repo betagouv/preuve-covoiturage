@@ -1,5 +1,5 @@
+import { ExportType } from '../models/Export';
 import { FieldFilter, Fields } from '../models/XLSXWriter';
-import { ExportType } from '../repositories/ExportRepository';
 
 export const prefix = 'RPC';
 

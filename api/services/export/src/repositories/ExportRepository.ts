@@ -1,33 +1,8 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { ExportParams } from '../models/ExportParams';
+import { Export, ExportStatus } from '../models/Export';
 import { LogServiceInterfaceResolver } from '../services/LogService';
 
-export type Export = {
-  _id: number;
-  uuid: string;
-  type: ExportType;
-  status: ExportStatus;
-  progress: number;
-  created_by: number;
-  download_url_expire_at: Date;
-  download_url: string;
-  params: ExportParams;
-  error: any; // TODO
-  stats: any; // TODO
-};
-export enum ExportStatus {
-  PENDING = 'pending',
-  RUNNING = 'running',
-  SUCCESS = 'success',
-  FAILURE = 'failure',
-}
-export enum ExportType {
-  OPENDATA = 'opendata',
-  OPERATOR = 'operator',
-  TERRITORY = 'territory',
-  REGISTRY = 'registry',
-}
 export type ExportCreateData = Pick<Export, 'created_by' | 'type' | 'params'>;
 export type ExportUpdateData = Partial<Pick<Export, 'status' | 'progress' | 'download_url' | 'error' | 'stats'>>;
 export type ExportProgress = (progress: number) => Promise<void>;
@@ -95,7 +70,7 @@ export class ExportRepository implements ExportRepositoryInterface {
       values: [data.created_by, data.type, data.params.get()],
     });
 
-    const exp = this.fromDb(rows[0]);
+    const exp = Export.fromJSON(rows[0]);
     await this.logger.created(exp._id);
 
     return exp;
@@ -106,7 +81,7 @@ export class ExportRepository implements ExportRepositoryInterface {
       text: `SELECT * FROM ${this.table} WHERE _id = $1`,
       values: [id],
     });
-    return this.fromDb(rows[0]);
+    return Export.fromJSON(rows[0]);
   }
 
   public async update(id: number, data: ExportUpdateData): Promise<void> {
@@ -129,7 +104,7 @@ export class ExportRepository implements ExportRepositoryInterface {
     const { rows } = await this.connection.getClient().query({
       text: `SELECT * FROM ${this.table}`,
     });
-    return rows.map(this.fromDb.bind(this));
+    return rows.map(Export.fromJSON);
   }
 
   public async status(id: number, status: ExportStatus): Promise<void> {
@@ -185,22 +160,6 @@ export class ExportRepository implements ExportRepositoryInterface {
         LIMIT 1
       `,
     });
-    return rowCount ? this.fromDb(rows[0]) : null;
-  }
-
-  private fromDb(data: any): Export {
-    return {
-      _id: data._id,
-      uuid: data.uuid,
-      type: data.type,
-      status: data.status,
-      progress: data.progress,
-      created_by: data.created_by,
-      download_url_expire_at: data.download_url_expire_at,
-      download_url: data.download_url,
-      params: new ExportParams(data.params),
-      error: data.error,
-      stats: data.stats,
-    };
+    return rowCount ? Export.fromJSON(rows[0]) : null;
   }
 }

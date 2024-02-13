@@ -1,6 +1,6 @@
 import { ConfigInterfaceResolver, provider } from '@ilos/common';
+import { ExportType } from '../models/Export';
 import { FieldFilter, Fields } from '../models/XLSXWriter';
-import { ExportType } from '../repositories/ExportRepository';
 
 export type FieldServiceInterface = {
   byType(type: ExportType): Partial<Fields>;

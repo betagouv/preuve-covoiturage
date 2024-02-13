@@ -1,7 +1,7 @@
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
+import { ExportType } from '../models/Export';
 import { ExportParams } from '../models/ExportParams';
 import { XLSXWriter } from '../models/XLSXWriter';
-import { ExportType } from '../repositories/ExportRepository';
 import { BuildServiceInterfaceResolver } from '../services/BuildService';
 import { FieldServiceInterfaceResolver } from '../services/FieldService';
 import { NameServiceInterfaceResolver } from '../services/NameService';

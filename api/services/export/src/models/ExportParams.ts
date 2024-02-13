@@ -68,4 +68,12 @@ export class ExportParams {
   protected validate<T>(config: T): void {
     // TODO validate params against schema or throw InvalidParamsException
   }
+
+  public static fromJSON(json: Config): ExportParams {
+    return new ExportParams(json);
+  }
+
+  public static toJSON(params: ExportParams): Config {
+    return params.get();
+  }
 }

@@ -1,8 +1,9 @@
 import { coerceDate } from '@ilos/cli';
 import { CommandInterface, CommandOptionType, command } from '@ilos/common';
 import { Timezone } from '@pdc/provider-validator';
+import { ExportType } from '../models/Export';
 import { ExportParams } from '../models/ExportParams';
-import { ExportRepositoryInterfaceResolver, ExportType } from '../repositories/ExportRepository';
+import { ExportRepositoryInterfaceResolver } from '../repositories/ExportRepository';
 import { TerritoryServiceInterfaceResolver } from '../services/TerritoryService';
 
 export type Options = {
