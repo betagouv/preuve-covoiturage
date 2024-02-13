@@ -1,20 +1,20 @@
 import { coerceDate } from '@ilos/cli';
 import { CommandInterface, CommandOptionType, command } from '@ilos/common';
 import { Timezone } from '@pdc/provider-validator';
-import { ExportType } from '../models/Export';
+import { ExportTarget } from '../models/Export';
 import { ExportParams } from '../models/ExportParams';
 import { ExportRepositoryInterfaceResolver } from '../repositories/ExportRepository';
 import { TerritoryServiceInterfaceResolver } from '../services/TerritoryService';
 
 export type Options = {
-  creator: number;
+  created_by: number;
   operator_id?: number[];
   territory_id?: number[];
+  target: ExportTarget;
   geo?: string[];
   start?: Date;
   end?: Date;
   tz: Timezone;
-  sensitive: boolean;
 };
 
 @command()
@@ -23,7 +23,7 @@ export class CreateCommand implements CommandInterface {
   static readonly description: string = 'Create an export request';
   static readonly options: CommandOptionType[] = [
     {
-      signature: '-c, --creator <creator>',
+      signature: '-c, --created_by <created_by>',
       description: 'User id',
       default: 0,
     },
@@ -37,6 +37,19 @@ export class CreateCommand implements CommandInterface {
     //   description: '[repeatable] Territory id',
     //   default: [],
     // },
+    {
+      signature: '--target <target>',
+      description: 'Select which fields to export (opendata*, operator, territory)',
+      default: ExportTarget.OPENDATA,
+      coerce(value: string): ExportTarget {
+        if (Object.values(ExportTarget).includes(value as ExportTarget)) {
+          return value as ExportTarget;
+        }
+
+        console.warn(`Invalid target: ${value}, using default: ${ExportTarget.OPENDATA}`);
+        return ExportTarget.OPENDATA;
+      },
+    },
     {
       signature: '-g --geo <geo...>',
       description: '[repeatable] Geo selector <type>:<code> (types: aom, com, epci, dep, reg)',
@@ -59,11 +72,6 @@ export class CreateCommand implements CommandInterface {
       description: 'Output timezone',
       default: 'Europe/Paris',
     },
-    {
-      signature: '--sensitive',
-      description: 'Export sensitive fields',
-      default: false,
-    },
   ];
 
   constructor(
@@ -72,14 +80,15 @@ export class CreateCommand implements CommandInterface {
   ) {}
 
   public async call(options: Options): Promise<void> {
-    const { creator, operator_id, geo, start, end, tz, sensitive } = options;
-    const { uuid, type, status, params } = await this.exportRepository.create({
-      created_by: creator,
-      type: sensitive ? ExportType.OPERATOR : ExportType.OPENDATA,
+    const { created_by, operator_id, geo, start: start_at, end: end_at, tz, target: optionTarget } = options;
+
+    const { uuid, target, status, params } = await this.exportRepository.create({
+      created_by,
+      target: optionTarget,
       params: new ExportParams({
-        start_at: start,
-        end_at: end,
-        operator_id: Array.isArray(operator_id) ? operator_id : [operator_id],
+        start_at,
+        end_at,
+        operator_id,
         // TODO add support for the territory_id (territory_group._id)
         // TODO add support for the SIREN to select the territory
         geo_selector: await this.territoryService.resolve({ geo }),
@@ -89,7 +98,7 @@ export class CreateCommand implements CommandInterface {
 
     console.info(`Export request created!
       UUID: ${uuid}
-      Type: ${type}
+      Target: ${target}
       Status: ${status}
       From: ${params.get().start_at} to ${params.get().end_at}
     `);

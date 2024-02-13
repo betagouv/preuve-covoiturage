@@ -1,5 +1,5 @@
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { ExportType } from '../models/Export';
+import { ExportTarget } from '../models/Export';
 import { ExportParams } from '../models/ExportParams';
 import { XLSXWriter } from '../models/XLSXWriter';
 import { BuildServiceInterfaceResolver } from '../services/BuildService';
@@ -11,7 +11,7 @@ export class DebugCommand implements CommandInterface {
   static readonly signature: string = 'export:debug';
   static readonly description: string = 'Test and debug the export service';
   static readonly options: CommandOptionType[] = [
-    // TODO add options to define the user email, the type of export, the date range, etc.
+    // TODO add options to define the user email, the target of the export, the date range, etc.
   ];
 
   constructor(
@@ -21,10 +21,10 @@ export class DebugCommand implements CommandInterface {
   ) {}
 
   public async call(): Promise<void> {
-    const fields = this.field.byType(ExportType.OPERATOR);
+    const fields = this.field.byTarget(ExportTarget.OPERATOR);
     const start_at = new Date('2023-08-14T08:00:00+0200');
     const end_at = new Date('2023-08-14T10:00:00+0200');
-    const filename = this.name.get({ type: ExportType.OPERATOR });
+    const filename = this.name.get({ target: ExportTarget.OPERATOR });
 
     // TODO normalise params
     // TODO create ExportFile entity and pass it to the provider

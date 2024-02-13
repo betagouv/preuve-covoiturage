@@ -40,9 +40,9 @@ export class ProcessCommand implements CommandInterface {
   }
 
   protected async process(exp: Export): Promise<void> {
-    const { _id, uuid, type, params } = exp;
-    const fields = this.fieldService.byType(type);
-    const filename = this.nameService.get({ type, uuid }); // TODO add support for territory name
+    const { _id, uuid, target, params } = exp;
+    const fields = this.fieldService.byTarget(target);
+    const filename = this.nameService.get({ target, uuid }); // TODO add support for territory name
 
     try {
       console.time(`Export finished processing ${uuid}`);

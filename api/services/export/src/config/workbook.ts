@@ -1,11 +1,11 @@
-import { ExportType } from '../models/Export';
+import { ExportTarget } from '../models/Export';
 import { FieldFilter, Fields } from '../models/XLSXWriter';
 
 export const prefix = 'RPC';
 
 export const filters: Array<FieldFilter> = [
   {
-    type: ExportType.OPENDATA,
+    target: ExportTarget.OPENDATA,
     exclusions: [
       'operator',
       'operator_journey_id',
@@ -16,15 +16,11 @@ export const filters: Array<FieldFilter> = [
     ],
   },
   {
-    type: ExportType.OPERATOR,
+    target: ExportTarget.OPERATOR,
     exclusions: ['operator', 'has_incentive'],
   },
   {
-    type: ExportType.REGISTRY,
-    exclusions: ['has_incentive'],
-  },
-  {
-    type: ExportType.TERRITORY,
+    target: ExportTarget.TERRITORY,
     exclusions: ['has_incentive'],
   },
 ];

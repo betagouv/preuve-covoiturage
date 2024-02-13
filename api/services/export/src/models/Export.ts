@@ -6,17 +6,16 @@ export enum ExportStatus {
   SUCCESS = 'success',
   FAILURE = 'failure',
 }
-export enum ExportType {
+export enum ExportTarget {
   OPENDATA = 'opendata',
   OPERATOR = 'operator',
   TERRITORY = 'territory',
-  REGISTRY = 'registry',
 }
 
 export class Export {
   public _id: number;
   public uuid: string;
-  public type: ExportType;
+  public target: ExportTarget;
   public status: ExportStatus;
   public progress: number;
   public created_by: number;
@@ -30,7 +29,7 @@ export class Export {
     const export_ = new Export();
     export_._id = data._id;
     export_.uuid = data.uuid;
-    export_.type = data.type;
+    export_.target = data.target;
     export_.status = data.status;
     export_.progress = data.progress;
     export_.created_by = data.created_by;
@@ -46,7 +45,7 @@ export class Export {
     return {
       _id: export_._id,
       uuid: export_.uuid,
-      type: export_.type,
+      target: export_.target,
       status: export_.status,
       progress: export_.progress,
       created_by: export_.created_by,

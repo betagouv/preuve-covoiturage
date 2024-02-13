@@ -3,7 +3,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import { Export, ExportStatus } from '../models/Export';
 import { LogServiceInterfaceResolver } from '../services/LogService';
 
-export type ExportCreateData = Pick<Export, 'created_by' | 'type' | 'params'>;
+export type ExportCreateData = Pick<Export, 'created_by' | 'target' | 'params'>;
 export type ExportUpdateData = Partial<Pick<Export, 'status' | 'progress' | 'download_url' | 'error' | 'stats'>>;
 export type ExportProgress = (progress: number) => Promise<void>;
 
@@ -63,11 +63,11 @@ export class ExportRepository implements ExportRepositoryInterface {
   public async create(data: ExportCreateData): Promise<Export> {
     const { rows } = await this.connection.getClient().query({
       text: `
-        INSERT INTO ${this.table} (created_by, type, params)
+        INSERT INTO ${this.table} (created_by, target, params)
         VALUES ($1, $2, $3)
         RETURNING *
       `,
-      values: [data.created_by, data.type, data.params.get()],
+      values: [data.created_by, data.target, data.params.get()],
     });
 
     const exp = Export.fromJSON(rows[0]);
@@ -143,7 +143,6 @@ export class ExportRepository implements ExportRepositoryInterface {
   // to be able to update the `progress` field of the export as the export is running
   public async progress(id: number): Promise<ExportProgress> {
     return async (progress: number): Promise<void> => {
-      console.debug(`Export ${id} progress: ${progress}%`);
       await this.connection.getClient().query({
         text: `UPDATE ${this.table} SET progress = $1::int WHERE _id = $2`,
         values: [progress, id],

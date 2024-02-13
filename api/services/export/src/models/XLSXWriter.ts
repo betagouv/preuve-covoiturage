@@ -2,14 +2,14 @@ import AdmZip from 'adm-zip';
 import { AddWorksheetOptions, Worksheet, stream } from 'exceljs';
 import os from 'node:os';
 import path from 'node:path';
-import { ExportType } from '../models/Export';
+import { ExportTarget } from '../models/Export';
 import { AllowedComputedFields, CarpoolRow, CarpoolRowData } from './CarpoolRow';
 
 export type Datasources = Map<string, any>;
 
 export type Fields = Array<keyof CarpoolRowData | keyof AllowedComputedFields>;
 
-export type FieldFilter = { type: ExportType; exclusions: Partial<Fields> };
+export type FieldFilter = { target: ExportTarget; exclusions: Partial<Fields> };
 
 export type ComputedProcessors = Array<ComputedProcessor>;
 
