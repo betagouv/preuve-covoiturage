@@ -6,7 +6,9 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { S3StorageProvider } from '@pdc/provider-storage';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
+import { CreateCommand } from './commands/CreateCommand';
 import { DebugCommand } from './commands/DebugCommand';
+import { ProcessCommand } from './commands/ProcessCommand';
 import { config } from './config';
 import { CampaignRepository } from './repositories/CampaignRepository';
 import { CarpoolRepository } from './repositories/CarpoolRepository';
@@ -32,7 +34,7 @@ const externalProviders = [S3StorageProvider];
 
 // Commands are from the ./commands folder
 // and are used to implement the CLI commands.
-const commands = [DebugCommand];
+const commands = [DebugCommand, CreateCommand, ProcessCommand];
 
 // Handlers are from the ./handlers folder
 // and are used to implement the API endpoints (also called actions).

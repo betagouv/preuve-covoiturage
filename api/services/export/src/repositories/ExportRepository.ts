@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { Config as ExportParamsConfig } from '../models/ExportParams';
+import { ExportParams } from '../models/ExportParams';
 
 export type Export = {
   _id: number;
@@ -11,7 +11,7 @@ export type Export = {
   created_by: number;
   download_url_expire_at: Date;
   download_url: string;
-  params: ExportParamsConfig;
+  params: ExportParams;
   error: any; // TODO
   stats: any; // TODO
 };
@@ -32,16 +32,19 @@ export type ExportUpdateData = Partial<Pick<Export, 'status' | 'progress' | 'dow
 export type ExportProgress = (progress: number) => Promise<void>;
 
 export interface ExportRepositoryInterface {
-  create(data: ExportCreateData): Promise<number>;
+  create(data: ExportCreateData): Promise<Export>;
   get(id: number): Promise<Export>;
   update(id: number, data: ExportUpdateData): Promise<void>;
   delete(id: number): Promise<void>;
   list(): Promise<Export[]>;
+  status(id: number, status: ExportStatus): Promise<void>;
+  error(id: number, error: string): Promise<void>;
   progress(id: number): Promise<ExportProgress>;
+  findPending(): Promise<Export[]>;
 }
 
 export abstract class ExportRepositoryInterfaceResolver implements ExportRepositoryInterface {
-  public async create(data: ExportCreateData): Promise<number> {
+  public async create(data: ExportCreateData): Promise<Export> {
     throw new Error('Not implemented');
   }
   public async get(id: number): Promise<Export> {
@@ -56,7 +59,16 @@ export abstract class ExportRepositoryInterfaceResolver implements ExportReposit
   public async list(): Promise<Export[]> {
     throw new Error('Not implemented');
   }
+  public async status(id: number, status: ExportStatus): Promise<void> {
+    throw new Error('Not implemented');
+  }
+  public async error(id: number, error: string): Promise<void> {
+    throw new Error('Not implemented');
+  }
   public async progress(id: number): Promise<ExportProgress> {
+    throw new Error('Not implemented');
+  }
+  public async findPending(): Promise<Export[]> {
     throw new Error('Not implemented');
   }
 }
@@ -69,12 +81,16 @@ export class ExportRepository implements ExportRepositoryInterface {
 
   constructor(protected connection: PostgresConnection) {}
 
-  public async create(data: ExportCreateData): Promise<number> {
+  public async create(data: ExportCreateData): Promise<Export> {
     const { rows } = await this.connection.getClient().query({
-      text: `INSERT INTO ${this.table} (created_by, type, params) VALUES ($1, $2, $3) RETURNING _id`,
-      values: [data.created_by, data.type, data.params],
+      text: `
+        INSERT INTO ${this.table} (created_by, type, params)
+        VALUES ($1, $2, $3)
+        RETURNING *
+      `,
+      values: [data.created_by, data.type, data.params.get()],
     });
-    return rows[0]._id;
+    return this.fromDb(rows[0]);
   }
 
   public async get(id: number): Promise<Export> {
@@ -82,7 +98,7 @@ export class ExportRepository implements ExportRepositoryInterface {
       text: `SELECT * FROM ${this.table} WHERE _id = $1`,
       values: [id],
     });
-    return rows[0];
+    return this.fromDb(rows[0]);
   }
 
   public async update(id: number, data: ExportUpdateData): Promise<void> {
@@ -105,17 +121,55 @@ export class ExportRepository implements ExportRepositoryInterface {
     const { rows } = await this.connection.getClient().query({
       text: `SELECT * FROM ${this.table}`,
     });
-    return rows;
+    return rows.map(this.fromDb.bind(this));
+  }
+
+  public async status(id: number, status: ExportStatus): Promise<void> {
+    await this.connection.getClient().query({
+      text: `UPDATE ${this.table} SET status = $1::text WHERE _id = $2`,
+      values: [status, id],
+    });
+  }
+
+  public async error(id: number, error: string): Promise<void> {
+    await this.connection.getClient().query({
+      text: `UPDATE ${this.table} SET status = $1, error = $2::text WHERE _id = $3`,
+      values: [ExportStatus.FAILURE, error, id],
+    });
   }
 
   // progress callback to be injected in the carpool repository
   // to be able to update the `progress` field of the export as the export is running
   public async progress(id: number): Promise<ExportProgress> {
-    return async (progress: number) => {
+    return async (progress: number): Promise<void> => {
+      console.debug(`Export ${id} progress: ${progress}%`);
       await this.connection.getClient().query({
         text: `UPDATE ${this.table} SET progress = $1::int WHERE _id = $2`,
         values: [progress, id],
       });
+    };
+  }
+
+  public async findPending(): Promise<Export[]> {
+    const { rows } = await this.connection.getClient().query({
+      text: `SELECT * FROM ${this.table} WHERE status = 'pending'`,
+    });
+    return rows.map(this.fromDb.bind(this));
+  }
+
+  private fromDb(data: any): Export {
+    return {
+      _id: data._id,
+      uuid: data.uuid,
+      type: data.type,
+      status: data.status,
+      progress: data.progress,
+      created_by: data.created_by,
+      download_url_expire_at: data.download_url_expire_at,
+      download_url: data.download_url,
+      params: new ExportParams(data.params),
+      error: data.error,
+      stats: data.stats,
     };
   }
 }

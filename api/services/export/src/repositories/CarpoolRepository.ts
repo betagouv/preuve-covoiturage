@@ -6,7 +6,6 @@ import { XLSXWriter } from '../models/XLSXWriter';
 import { ExportProgress } from './ExportRepository';
 import { CarpoolListQuery, TemplateKeys } from './queries/CarpoolListQuery';
 import { QueryTemplates } from './queries/Query';
-import { parse } from 'path';
 
 export interface CarpoolRepositoryInterface {
   list(params: ExportParams, fileWriter: XLSXWriter): Promise<void>;

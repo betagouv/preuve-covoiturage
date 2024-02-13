@@ -1,14 +1,14 @@
 import { coerceDate } from '@ilos/cli';
 import { CommandInterface, CommandOptionType, command } from '@ilos/common';
 import { Timezone } from '@pdc/provider-validator';
-import { Config as ExportParamsConfig } from '../models/ExportParams';
-import { ExportRepository, ExportType } from '../repositories/ExportRepository';
-import { TerritoryService } from '../services/TerritoryService';
+import { ExportParams } from '../models/ExportParams';
+import { ExportRepositoryInterfaceResolver, ExportType } from '../repositories/ExportRepository';
+import { TerritoryServiceInterfaceResolver } from '../services/TerritoryService';
 
 export type Options = {
   creator: number;
-  operator_id?: number | null;
-  territory_id?: number | null;
+  operator_id?: number[];
+  territory_id?: number[];
   geo?: string[];
   start?: Date;
   end?: Date;
@@ -24,16 +24,17 @@ export class CreateCommand implements CommandInterface {
     {
       signature: '-c, --creator <creator>',
       description: 'User id',
+      default: 0,
     },
     {
-      signature: '-o, --operator_id <operator_id>',
-      description: 'Operator id',
-      default: null,
+      signature: '-o, --operator_id <operator_id...>',
+      description: '[repeatable] Operator id',
+      default: [],
     },
     // {
-    //   signature: '-t, --territory <territory_id>',
-    //   description: 'Territory id',
-    //   default: null,
+    //   signature: '-t, --territory <territory_id...>',
+    //   description: '[repeatable] Territory id',
+    //   default: [],
     // },
     {
       signature: '-g --geo <geo...>',
@@ -65,29 +66,31 @@ export class CreateCommand implements CommandInterface {
   ];
 
   constructor(
-    protected exportRepository: ExportRepository,
-    protected territoryService: TerritoryService,
+    protected exportRepository: ExportRepositoryInterfaceResolver,
+    protected territoryService: TerritoryServiceInterfaceResolver,
   ) {}
 
   public async call(options: Options): Promise<void> {
-    // TODO
     const { creator, operator_id, geo, start, end, tz, sensitive } = options;
-    const params: ExportParamsConfig = {
-      start_at: start,
-      end_at: end,
-      operator_id: Array.isArray(operator_id) ? operator_id : [operator_id],
-      tz,
-    };
-
-    // TODO add support for the territory_id (territory_group._id)
-    // TODO add support for the SIREN to select the territory
-    params.geo_selector = await this.territoryService.resolve({ geo });
-
-    // TODO create ExportParams entity and pass it to the repository
-    await this.exportRepository.create({
+    const { uuid, type, status, params } = await this.exportRepository.create({
       created_by: creator,
       type: sensitive ? ExportType.OPERATOR : ExportType.OPENDATA,
-      params,
+      params: new ExportParams({
+        start_at: start,
+        end_at: end,
+        operator_id: Array.isArray(operator_id) ? operator_id : [operator_id],
+        // TODO add support for the territory_id (territory_group._id)
+        // TODO add support for the SIREN to select the territory
+        geo_selector: await this.territoryService.resolve({ geo }),
+        tz,
+      }),
     });
+
+    console.info(`Export request created!
+      UUID: ${uuid}
+      Type: ${type}
+      Status: ${status}
+      From: ${params.get().start_at} to ${params.get().end_at}
+    `);
   }
 }

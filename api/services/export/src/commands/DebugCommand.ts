@@ -24,7 +24,7 @@ export class DebugCommand implements CommandInterface {
     const fields = this.field.byType(ExportType.OPERATOR);
     const start_at = new Date('2023-08-14T08:00:00+0200');
     const end_at = new Date('2023-08-14T10:00:00+0200');
-    const filename = this.name.get({ type: ExportType.OPERATOR, operator: 'test' });
+    const filename = this.name.get({ type: ExportType.OPERATOR });
 
     // TODO normalise params
     // TODO create ExportFile entity and pass it to the provider

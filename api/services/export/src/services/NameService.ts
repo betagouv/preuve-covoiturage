@@ -3,7 +3,6 @@ import { ExportType } from '../repositories/ExportRepository';
 
 export type Options = {
   type: ExportType;
-  operator: string | null;
   territory: string | null;
 };
 
@@ -23,7 +22,6 @@ export abstract class NameServiceInterfaceResolver implements NameServiceInterfa
 export class NameService {
   protected options: Options = {
     type: ExportType.OPENDATA,
-    operator: null,
     territory: null,
   };
 
@@ -39,7 +37,6 @@ export class NameService {
     return [
       prefix,
       date,
-      this.options.operator,
       this.options.territory,
       // this.options.type,
     ].filter((i) => !!i).join('-');

@@ -3,9 +3,10 @@ import { ExportParams } from '../models/ExportParams';
 import { XLSXWriter } from '../models/XLSXWriter';
 import { CampaignRepository } from '../repositories/CampaignRepository';
 import { CarpoolRepository } from '../repositories/CarpoolRepository';
+import { ExportProgress } from '../repositories/ExportRepository';
 
 export type BuildServiceInterface = {
-  run(params: ExportParams, fileWriter: XLSXWriter): Promise<void>;
+  run(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void>;
 };
 
 export abstract class BuildServiceInterfaceResolver implements BuildServiceInterface {
@@ -24,7 +25,7 @@ export abstract class BuildServiceInterfaceResolver implements BuildServiceInter
   protected async wrap(): Promise<void> {
     throw new Error('Not implemented');
   }
-  public async run(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
+  public async run(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
     throw new Error('Not implemented');
   }
 }
@@ -35,15 +36,17 @@ export abstract class BuildServiceInterfaceResolver implements BuildServiceInter
 export class BuildService {
   protected fileWriter: XLSXWriter;
   protected params: ExportParams;
+  protected progress: ExportProgress;
 
   constructor(
     protected carpoolRepository: CarpoolRepository,
     protected campaignRepository: CampaignRepository,
   ) {}
 
-  protected async configure(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
+  protected async configure(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
     this.params = params;
     this.fileWriter = fileWriter;
+    this.progress = progress;
   }
 
   protected async initialize(): Promise<void> {
@@ -59,10 +62,7 @@ export class BuildService {
     // add boosters as data source to file writer
     this.fileWriter.addDatasource('campaigns', campaigns);
 
-    await this.carpoolRepository.list(this.params, this.fileWriter, async (progress: number) => {
-      // TODO update progress
-      console.info(`Progress: ${progress}%`);
-    });
+    await this.carpoolRepository.list(this.params, this.fileWriter, this.progress);
   }
 
   protected async help(): Promise<void> {
@@ -74,9 +74,9 @@ export class BuildService {
     await this.fileWriter.compress();
   }
 
-  public async run(params: ExportParams, fileWriter: XLSXWriter): Promise<void> {
+  public async run(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
     try {
-      await this.configure(params, fileWriter);
+      await this.configure(params, fileWriter, progress);
       await this.initialize();
       await this.data();
       await this.help();

@@ -44,8 +44,9 @@ export class ExportParams {
     return this.params;
   }
 
+  // convert geo_selector to SQL WHERE clause
+  // using AND or OR to join start and end positions
   public geoToSQL(mode: 'AND' | 'OR' = 'OR'): string {
-    // TODO convert geo_selector to SQL
     const { geo_selector } = this.params;
     const start = Object.keys(geo_selector)
       .reduce((p, type) => {
