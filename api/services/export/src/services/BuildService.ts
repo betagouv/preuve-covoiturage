@@ -6,7 +6,7 @@ import { CarpoolRepository } from '../repositories/CarpoolRepository';
 import { ExportProgress } from '../repositories/ExportRepository';
 
 export type BuildServiceInterface = {
-  run(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void>;
+  write(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void>;
 };
 
 export abstract class BuildServiceInterfaceResolver implements BuildServiceInterface {
@@ -25,7 +25,7 @@ export abstract class BuildServiceInterfaceResolver implements BuildServiceInter
   protected async wrap(): Promise<void> {
     throw new Error('Not implemented');
   }
-  public async run(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
+  public async write(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
     throw new Error('Not implemented');
   }
 }
@@ -74,7 +74,7 @@ export class BuildService {
     await this.fileWriter.compress();
   }
 
-  public async run(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
+  public async write(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
     try {
       await this.configure(params, fileWriter, progress);
       await this.initialize();

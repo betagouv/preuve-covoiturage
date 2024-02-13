@@ -29,7 +29,7 @@ export class ProcessCommand implements CommandInterface {
 
       try {
         await this.exportRepository.status(_id, ExportStatus.RUNNING);
-        await this.buildService.run(
+        await this.buildService.write(
           params,
           new XLSXWriter(filename, { fields }),
           await this.exportRepository.progress(_id),
