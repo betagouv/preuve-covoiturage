@@ -39,7 +39,6 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
 
     try {
       const total = await this.count(params); // total number of rows
-      console.info(`[export:CarpoolRepository] total rows: ${total}`);
       let done = 0; // track the number of rows read
       let count = 0; // number of rows read in the current batch
 

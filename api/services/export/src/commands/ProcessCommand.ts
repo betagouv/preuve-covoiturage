@@ -1,5 +1,5 @@
 import { CommandInterface, CommandOptionType, command } from '@ilos/common';
-import { ExportRepositoryInterfaceResolver, ExportStatus } from '../repositories/ExportRepository';
+import { Export, ExportRepositoryInterfaceResolver, ExportStatus } from '../repositories/ExportRepository';
 import { BuildServiceInterfaceResolver } from '../services/BuildService';
 import { FieldServiceInterfaceResolver } from '../services/FieldService';
 import { NameServiceInterfaceResolver } from '../services/NameService';
@@ -21,23 +21,44 @@ export class ProcessCommand implements CommandInterface {
   ) {}
 
   public async call(options: Options): Promise<void> {
-    const exports = await this.exportRepository.findPending();
-    for (const e of exports) {
-      const { _id, type, params } = e;
-      const fields = this.fieldService.byType(type);
-      const filename = this.nameService.get({ type }); // TODO add support for territory name
+    let killswitch = 50;
 
-      try {
-        await this.exportRepository.status(_id, ExportStatus.RUNNING);
-        await this.buildService.write(
-          params,
-          new XLSXWriter(filename, { fields }),
-          await this.exportRepository.progress(_id),
-        );
-        await this.exportRepository.status(_id, ExportStatus.SUCCESS);
-      } catch (e) {
-        await this.exportRepository.error(_id, e.message);
-      }
+    // process pending exports until there are no more
+    // picking one at a time to avoid concurrency issues
+    // and let multiple workers process the queue in parallel
+    let exp = await this.exportRepository.pickPending();
+    while (exp && killswitch > 0) {
+      await this.process(exp);
+      exp = await this.exportRepository.pickPending();
+      killswitch--;
+    }
+
+    console.info('No more pending exports. Bye!');
+  }
+
+  protected async process(exp: Export): Promise<void> {
+    const { _id, uuid, type, params } = exp;
+    const fields = this.fieldService.byType(type);
+    const filename = this.nameService.get({ type, uuid }); // TODO add support for territory name
+
+    try {
+      await this.exportRepository.status(_id, ExportStatus.RUNNING);
+
+      console.info(`Processing export ${uuid} (${type})...`);
+      console.info(`Writing to ${filename}`);
+      console.time(`Export finished processing ${uuid}`);
+
+      await this.buildService.write(
+        params,
+        new XLSXWriter(filename, { fields }),
+        await this.exportRepository.progress(_id),
+      );
+
+      await this.exportRepository.status(_id, ExportStatus.SUCCESS);
+      console.timeEnd(`Export finished processing ${uuid}`);
+    } catch (e) {
+      console.error(`Export FAILED ${uuid}: ${e.message}`);
+      await this.exportRepository.error(_id, e.message);
     }
   }
 }

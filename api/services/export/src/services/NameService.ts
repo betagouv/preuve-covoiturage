@@ -2,6 +2,7 @@ import { ConfigInterfaceResolver, provider } from '@ilos/common';
 import { ExportType } from '../repositories/ExportRepository';
 
 export type Options = {
+  uuid: string;
   type: ExportType;
   territory: string | null;
 };
@@ -21,6 +22,7 @@ export abstract class NameServiceInterfaceResolver implements NameServiceInterfa
 })
 export class NameService {
   protected options: Options = {
+    uuid: '',
     type: ExportType.OPENDATA,
     territory: null,
   };
@@ -38,7 +40,11 @@ export class NameService {
       prefix,
       date,
       this.options.territory,
-      // this.options.type,
-    ].filter((i) => !!i).join('-');
+      this.options.type,
+      this.options.uuid,
+    ].filter((i) => !!i)
+      .map((s) => String(s))
+      .filter((s) => s.length)
+      .join('-');
   }
 }

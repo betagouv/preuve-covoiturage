@@ -40,7 +40,7 @@ export interface ExportRepositoryInterface {
   status(id: number, status: ExportStatus): Promise<void>;
   error(id: number, error: string): Promise<void>;
   progress(id: number): Promise<ExportProgress>;
-  findPending(): Promise<Export[]>;
+  pickPending(): Promise<Export | null>;
 }
 
 export abstract class ExportRepositoryInterfaceResolver implements ExportRepositoryInterface {
@@ -68,7 +68,7 @@ export abstract class ExportRepositoryInterfaceResolver implements ExportReposit
   public async progress(id: number): Promise<ExportProgress> {
     throw new Error('Not implemented');
   }
-  public async findPending(): Promise<Export[]> {
+  public async pickPending(): Promise<Export | null> {
     throw new Error('Not implemented');
   }
 }
@@ -150,11 +150,16 @@ export class ExportRepository implements ExportRepositoryInterface {
     };
   }
 
-  public async findPending(): Promise<Export[]> {
-    const { rows } = await this.connection.getClient().query({
-      text: `SELECT * FROM ${this.table} WHERE status = 'pending'`,
+  public async pickPending(): Promise<Export | null> {
+    const { rows, rowCount } = await this.connection.getClient().query({
+      text: `
+        SELECT * FROM ${this.table}
+        WHERE status = 'pending'
+        ORDER BY created_at ASC
+        LIMIT 1
+      `,
     });
-    return rows.map(this.fromDb.bind(this));
+    return rowCount ? this.fromDb(rows[0]) : null;
   }
 
   private fromDb(data: any): Export {
