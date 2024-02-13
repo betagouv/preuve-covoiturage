@@ -4,6 +4,7 @@ import { BuildServiceInterfaceResolver } from '../services/BuildService';
 import { FieldServiceInterfaceResolver } from '../services/FieldService';
 import { NameServiceInterfaceResolver } from '../services/NameService';
 import { XLSXWriter } from '../models/XLSXWriter';
+import { LogServiceInterfaceResolver } from '../services/LogService';
 
 export type Options = {};
 
@@ -18,6 +19,7 @@ export class ProcessCommand implements CommandInterface {
     protected buildService: BuildServiceInterfaceResolver,
     protected fieldService: FieldServiceInterfaceResolver,
     protected nameService: NameServiceInterfaceResolver,
+    protected logger: LogServiceInterfaceResolver,
   ) {}
 
   public async call(options: Options): Promise<void> {
@@ -42,22 +44,18 @@ export class ProcessCommand implements CommandInterface {
     const filename = this.nameService.get({ type, uuid }); // TODO add support for territory name
 
     try {
-      await this.exportRepository.status(_id, ExportStatus.RUNNING);
-
-      console.info(`Processing export ${uuid} (${type})...`);
-      console.info(`Writing to ${filename}`);
       console.time(`Export finished processing ${uuid}`);
 
+      await this.exportRepository.status(_id, ExportStatus.RUNNING);
       await this.buildService.write(
         params,
         new XLSXWriter(filename, { fields }),
         await this.exportRepository.progress(_id),
       );
-
       await this.exportRepository.status(_id, ExportStatus.SUCCESS);
+
       console.timeEnd(`Export finished processing ${uuid}`);
     } catch (e) {
-      console.error(`Export FAILED ${uuid}: ${e.message}`);
       await this.exportRepository.error(_id, e.message);
     }
   }

@@ -1,6 +1,7 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ExportParams } from '../models/ExportParams';
+import { LogServiceInterfaceResolver } from '../services/LogService';
 
 export type Export = {
   _id: number;
@@ -79,7 +80,10 @@ export abstract class ExportRepositoryInterfaceResolver implements ExportReposit
 export class ExportRepository implements ExportRepositoryInterface {
   protected readonly table = 'export.exports';
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(
+    protected connection: PostgresConnection,
+    protected logger: LogServiceInterfaceResolver,
+  ) {}
 
   public async create(data: ExportCreateData): Promise<Export> {
     const { rows } = await this.connection.getClient().query({
@@ -90,7 +94,11 @@ export class ExportRepository implements ExportRepositoryInterface {
       `,
       values: [data.created_by, data.type, data.params.get()],
     });
-    return this.fromDb(rows[0]);
+
+    const exp = this.fromDb(rows[0]);
+    await this.logger.created(exp._id);
+
+    return exp;
   }
 
   public async get(id: number): Promise<Export> {
@@ -125,13 +133,31 @@ export class ExportRepository implements ExportRepositoryInterface {
   }
 
   public async status(id: number, status: ExportStatus): Promise<void> {
+    // update the export status
     await this.connection.getClient().query({
       text: `UPDATE ${this.table} SET status = $1::text WHERE _id = $2`,
       values: [status, id],
     });
+
+    // log depending on the status
+    switch (status) {
+      case ExportStatus.RUNNING:
+        await this.logger.running(id);
+        break;
+      case ExportStatus.SUCCESS:
+        await this.logger.success(id);
+        break;
+      case ExportStatus.FAILURE:
+        await this.logger.failure(id);
+        break;
+    }
   }
 
   public async error(id: number, error: string): Promise<void> {
+    // log error event
+    await this.logger.failure(id, error);
+
+    // update the export status
     await this.connection.getClient().query({
       text: `UPDATE ${this.table} SET status = $1, error = $2::text WHERE _id = $3`,
       values: [ExportStatus.FAILURE, error, id],

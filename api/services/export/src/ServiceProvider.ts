@@ -17,13 +17,14 @@ import { LogRepository } from './repositories/LogRepository';
 import { RecipientRepository } from './repositories/RecipientRepository';
 import { BuildService } from './services/BuildService';
 import { FieldService } from './services/FieldService';
+import { LogService } from './services/LogService';
 import { NameService } from './services/NameService';
 import { TerritoryService } from './services/TerritoryService';
 
 // Services are from the ./services folder
 // and are used to implement the business logic of the application.
 // They are injected in commands and handlers.
-const services = [BuildService, FieldService, NameService, TerritoryService];
+const services = [BuildService, FieldService, NameService, TerritoryService, LogService];
 
 // Repositories are from the ./repositories folder
 // and are used to access the database or other data sources.
