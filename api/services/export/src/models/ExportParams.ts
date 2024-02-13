@@ -9,7 +9,7 @@ export type Params = {
   end_at: Date;
   operator_id: number[];
   geo_selector: TerritorySelectorsInterface;
-  tz?: Timezone;
+  tz: Timezone;
 };
 
 export class ExportParams {

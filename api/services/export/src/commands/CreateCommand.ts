@@ -5,15 +5,17 @@ import { ExportTarget } from '../models/Export';
 import { ExportParams } from '../models/ExportParams';
 import { ExportRepositoryInterfaceResolver } from '../repositories/ExportRepository';
 import { TerritoryServiceInterfaceResolver } from '../services/TerritoryService';
+import { ExportRecipient } from '../models/ExportRecipient';
 
 export type Options = {
   created_by: number;
-  operator_id?: number[];
-  territory_id?: number[];
+  operator_id: number[];
+  territory_id: number[];
+  recipient: string[];
   target: ExportTarget;
-  geo?: string[];
-  start?: Date;
-  end?: Date;
+  geo: string[];
+  start: Date;
+  end: Date;
   tz: Timezone;
 };
 
@@ -28,15 +30,15 @@ export class CreateCommand implements CommandInterface {
       default: 0,
     },
     {
+      signature: '-r, --recipient [recipient...]',
+      description: '[repeatable] Recipient email ("fullname <email>" or "email" format)',
+      default: [],
+    },
+    {
       signature: '-o, --operator_id [operator_id...]',
       description: '[repeatable] Operator id',
       default: [],
     },
-    // {
-    //   signature: '-t, --territory <territory_id...>',
-    //   description: '[repeatable] Territory id',
-    //   default: [],
-    // },
     {
       signature: '--target <target>',
       description: 'Select which fields to export (opendata*, operator, territory)',
@@ -49,6 +51,11 @@ export class CreateCommand implements CommandInterface {
         console.warn(`Invalid target: ${value}, using default: ${ExportTarget.OPENDATA}`);
         return ExportTarget.OPENDATA;
       },
+    },
+    {
+      signature: '-t, --territory [territory_id...]',
+      description: '[repeatable] Territory id',
+      default: [],
     },
     {
       signature: '-g --geo <geo...>',
@@ -80,11 +87,21 @@ export class CreateCommand implements CommandInterface {
   ) {}
 
   public async call(options: Options): Promise<void> {
-    const { created_by, operator_id, geo, start: start_at, end: end_at, tz, target: optionTarget } = options;
+    const {
+      created_by,
+      recipient: recipients,
+      operator_id,
+      geo,
+      start: start_at,
+      end: end_at,
+      tz,
+      target: optionTarget,
+    } = options;
 
     const { uuid, target, status, params } = await this.exportRepository.create({
       created_by,
       target: optionTarget,
+      recipients: recipients.map(ExportRecipient.fromEmail),
       params: new ExportParams({
         start_at,
         end_at,

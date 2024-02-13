@@ -1,9 +1,10 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { Export, ExportStatus } from '../models/Export';
+import { ExportRecipient } from '../models/ExportRecipient';
 import { LogServiceInterfaceResolver } from '../services/LogService';
 
-export type ExportCreateData = Pick<Export, 'created_by' | 'target' | 'params'>;
+export type ExportCreateData = Pick<Export, 'created_by' | 'target' | 'params'> & { recipients: ExportRecipient[] };
 export type ExportUpdateData = Partial<Pick<Export, 'status' | 'progress' | 'download_url' | 'error' | 'stats'>>;
 export type ExportProgress = (progress: number) => Promise<void>;
 
@@ -17,6 +18,7 @@ export interface ExportRepositoryInterface {
   error(id: number, error: string): Promise<void>;
   progress(id: number): Promise<ExportProgress>;
   pickPending(): Promise<Export | null>;
+  addRecipient(export_id: number, recipient: ExportRecipient): Promise<void>;
 }
 
 export abstract class ExportRepositoryInterfaceResolver implements ExportRepositoryInterface {
@@ -47,13 +49,17 @@ export abstract class ExportRepositoryInterfaceResolver implements ExportReposit
   public async pickPending(): Promise<Export | null> {
     throw new Error('Not implemented');
   }
+  public async addRecipient(export_id: number, recipient: ExportRecipient): Promise<void> {
+    throw new Error('Not implemented');
+  }
 }
 
 @provider({
   identifier: ExportRepositoryInterfaceResolver,
 })
 export class ExportRepository implements ExportRepositoryInterface {
-  protected readonly table = 'export.exports';
+  protected readonly exportsTable = 'export.exports';
+  protected readonly recipientsTable = 'export.recipients';
 
   constructor(
     protected connection: PostgresConnection,
@@ -61,16 +67,24 @@ export class ExportRepository implements ExportRepositoryInterface {
   ) {}
 
   public async create(data: ExportCreateData): Promise<Export> {
+    const { created_by, target, params, recipients } = data;
+
     const { rows } = await this.connection.getClient().query({
       text: `
-        INSERT INTO ${this.table} (created_by, target, params)
+        INSERT INTO ${this.exportsTable} (created_by, target, params)
         VALUES ($1, $2, $3)
         RETURNING *
       `,
-      values: [data.created_by, data.target, data.params.get()],
+      values: [created_by, target, params.get()],
     });
-
     const exp = Export.fromJSON(rows[0]);
+
+    // add recipients
+    for (const recipient of recipients) {
+      await this.addRecipient(exp._id, recipient);
+    }
+
+    // log the creation event
     await this.logger.created(exp._id);
 
     return exp;
@@ -78,7 +92,7 @@ export class ExportRepository implements ExportRepositoryInterface {
 
   public async get(id: number): Promise<Export> {
     const { rows } = await this.connection.getClient().query({
-      text: `SELECT * FROM ${this.table} WHERE _id = $1`,
+      text: `SELECT * FROM ${this.exportsTable} WHERE _id = $1`,
       values: [id],
     });
     return Export.fromJSON(rows[0]);
@@ -86,7 +100,7 @@ export class ExportRepository implements ExportRepositoryInterface {
 
   public async update(id: number, data: ExportUpdateData): Promise<void> {
     await this.connection.getClient().query({
-      text: `UPDATE ${this.table} SET ${Object.keys(data)
+      text: `UPDATE ${this.exportsTable} SET ${Object.keys(data)
         .map((key, index) => `${key} = $${index + 2}`)
         .join(', ')} WHERE _id = $1`,
       values: [id, ...Object.values(data)],
@@ -95,14 +109,14 @@ export class ExportRepository implements ExportRepositoryInterface {
 
   public async delete(id: number): Promise<void> {
     await this.connection.getClient().query({
-      text: `DELETE FROM ${this.table} WHERE _id = $1`,
+      text: `DELETE FROM ${this.exportsTable} WHERE _id = $1`,
       values: [id],
     });
   }
 
   public async list(): Promise<Export[]> {
     const { rows } = await this.connection.getClient().query({
-      text: `SELECT * FROM ${this.table}`,
+      text: `SELECT * FROM ${this.exportsTable}`,
     });
     return rows.map(Export.fromJSON);
   }
@@ -110,7 +124,7 @@ export class ExportRepository implements ExportRepositoryInterface {
   public async status(id: number, status: ExportStatus): Promise<void> {
     // update the export status
     await this.connection.getClient().query({
-      text: `UPDATE ${this.table} SET status = $1::text WHERE _id = $2`,
+      text: `UPDATE ${this.exportsTable} SET status = $1::text WHERE _id = $2`,
       values: [status, id],
     });
 
@@ -134,7 +148,7 @@ export class ExportRepository implements ExportRepositoryInterface {
 
     // update the export status
     await this.connection.getClient().query({
-      text: `UPDATE ${this.table} SET status = $1, error = $2::text WHERE _id = $3`,
+      text: `UPDATE ${this.exportsTable} SET status = $1, error = $2::text WHERE _id = $3`,
       values: [ExportStatus.FAILURE, error, id],
     });
   }
@@ -144,7 +158,7 @@ export class ExportRepository implements ExportRepositoryInterface {
   public async progress(id: number): Promise<ExportProgress> {
     return async (progress: number): Promise<void> => {
       await this.connection.getClient().query({
-        text: `UPDATE ${this.table} SET progress = $1::int WHERE _id = $2`,
+        text: `UPDATE ${this.exportsTable} SET progress = $1::int WHERE _id = $2`,
         values: [progress, id],
       });
     };
@@ -153,12 +167,25 @@ export class ExportRepository implements ExportRepositoryInterface {
   public async pickPending(): Promise<Export | null> {
     const { rows, rowCount } = await this.connection.getClient().query({
       text: `
-        SELECT * FROM ${this.table}
+        SELECT * FROM ${this.exportsTable}
         WHERE status = 'pending'
         ORDER BY created_at ASC
         LIMIT 1
       `,
     });
     return rowCount ? Export.fromJSON(rows[0]) : null;
+  }
+
+  public async addRecipient(export_id: number, recipient: ExportRecipient): Promise<void> {
+    if (!export_id) throw new Error('Export _id is required');
+    if (!recipient.email) throw new Error('Recipient email is required');
+
+    await this.connection.getClient().query({
+      text: `
+        INSERT INTO ${this.recipientsTable} (export_id, email, fullname, message)
+        VALUES ($1, $2, $3, $4)
+      `,
+      values: [export_id, recipient.email, recipient.fullname, recipient.message],
+    });
   }
 }

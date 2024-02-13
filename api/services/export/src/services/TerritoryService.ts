@@ -5,7 +5,7 @@ import {
   TerritorySelectorsInterface,
 } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
 
-export type ResolveParams = Pick<Options, 'territory_id' | 'geo'>;
+export type ResolveParams = Partial<Pick<Options, 'territory_id' | 'geo'>>;
 export type ResolveResults = TerritorySelectorsInterface;
 
 export type TerritoryServiceInterface = {
