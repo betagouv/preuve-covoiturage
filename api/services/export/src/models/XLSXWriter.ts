@@ -39,7 +39,7 @@ export class XLSXWriter {
   protected folder: string;
   protected basename: string;
   protected options: Options = {
-    compress: true,
+    compress: false,
     dataSheetName: 'Trajets',
     dataSheetOptions: {},
     helpSheetName: 'Aide',
