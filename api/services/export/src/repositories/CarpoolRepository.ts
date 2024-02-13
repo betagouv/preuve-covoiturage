@@ -79,6 +79,7 @@ export class CarpoolRepository implements CarpoolRepositoryInterface {
     const values: [Date, Date, number] = [start_at, end_at, 2023];
     const templates: QueryTemplates<TemplateKeys> = new Map();
     templates.set('geo_selectors', params.geoToSQL());
+    templates.set('operator_id', params.operatorToSQL());
 
     return [values, templates];
   }

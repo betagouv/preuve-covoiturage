@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { Query } from './Query';
 
-export type TemplateKeys = 'geo_selectors';
+export type TemplateKeys = 'geo_selectors' | 'operator_id';
 
 export class CarpoolListQuery extends Query {
   protected countQuery = `
@@ -16,6 +16,7 @@ export class CarpoolListQuery extends Query {
       AND cc.datetime >= $1
       AND cc.datetime <  $2
       {{geo_selectors}}
+      {{operator_id}}
   `;
 
   protected query = `
@@ -120,6 +121,7 @@ export class CarpoolListQuery extends Query {
         AND cc.datetime >= $1
         AND cc.datetime <  $2
         {{geo_selectors}}
+        {{operator_id}}
     ),
 
     -- select latest geo data for start and end geo codes only

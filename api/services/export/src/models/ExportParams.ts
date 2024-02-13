@@ -64,6 +64,12 @@ export class ExportParams {
     return `AND ((${start}) ${mode} (${start.replace(/gps\./g, 'gpe.')}))`;
   }
 
+  // convert operator_id to SQL WHERE clause
+  public operatorToSQL(): string {
+    const { operator_id } = this.params;
+    return operator_id.length ? `AND cc.operator_id IN (${operator_id.join(',')})` : '';
+  }
+
   // TODO to AbstractParams class
   protected validate<T>(config: T): void {
     // TODO validate params against schema or throw InvalidParamsException

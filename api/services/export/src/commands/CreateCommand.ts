@@ -28,7 +28,7 @@ export class CreateCommand implements CommandInterface {
       default: 0,
     },
     {
-      signature: '-o, --operator_id <operator_id...>',
+      signature: '-o, --operator_id [operator_id...]',
       description: '[repeatable] Operator id',
       default: [],
     },
@@ -88,7 +88,7 @@ export class CreateCommand implements CommandInterface {
       params: new ExportParams({
         start_at,
         end_at,
-        operator_id,
+        operator_id: operator_id.map((s) => parseInt(s as unknown as string, 10)),
         // TODO add support for the territory_id (territory_group._id)
         // TODO add support for the SIREN to select the territory
         geo_selector: await this.territoryService.resolve({ geo }),
