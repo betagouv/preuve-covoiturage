@@ -24,12 +24,6 @@
       "type": "date",
       "required": true
     },
-    "pages": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::page.page",
-      "mappedBy": "resource"
-    },
     "slug": {
       "type": "uid",
       "targetField": "title"
@@ -57,6 +51,12 @@
       ],
       "type": "media",
       "multiple": false
+    },
+    "pages": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::page.page",
+      "mappedBy": "resources"
     }
   }
 }

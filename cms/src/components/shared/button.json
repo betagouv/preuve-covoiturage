@@ -20,10 +20,11 @@
     "color": {
       "type": "enumeration",
       "enum": [
-        "bleu",
-        "blanc"
+        "primary",
+        "secondary"
       ],
-      "required": true
+      "required": true,
+      "default": "primary"
     }
   }
 }
