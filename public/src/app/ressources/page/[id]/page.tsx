@@ -1,8 +1,9 @@
 import PageTitle from "@/components/common/PageTitle";
 import { fr } from "@codegouvfr/react-dsfr";
 import RessourceCard from "@/components/ressources/RessourceCard";
-import { cmsInstance, cmsHost, getNbPages, cmsRessourcesByPage } from "@/helpers/cms";
+import { fetchAPI, cmsRessourcesByPage } from "@/helpers/cms";
 import Pagination from "@/components/common/Pagination";
+import CategoryTags from '../../../../components/actualites/CategoryTags';
 
 export async function generateMetadata({ params }: { params: { id: string }}) {
   return {
@@ -12,17 +13,13 @@ export async function generateMetadata({ params }: { params: { id: string }}) {
 }
 
 export async function generateStaticParams() {
-  const { meta } = await cmsInstance.items('Ressources').readByQuery({
-    fields:'id',
-    limit: cmsRessourcesByPage,
-    filter:{
-      status: {
-        '_eq': 'published',
-      }
-    },
-    meta:'filter_count',
-  });
-  const nbPage = meta && meta.filter_count ? Math.ceil(meta.filter_count/cmsRessourcesByPage) : 1
+  const query = {
+    pagination: {
+      pageSize: cmsRessourcesByPage
+    }
+  };
+  const { meta }  = await fetchAPI('/resources',query);
+  const nbPage = meta.pagination.pageCount;
   return Array.from({ length: nbPage }, (_, v) => {
     const id = v + 1;
     return {
@@ -33,38 +30,48 @@ export async function generateStaticParams() {
 
 export default async function RessourcePage({ params }: { params: { id: string }}) {
 
-  const { data, meta } = await cmsInstance.items('Ressources').readByQuery({
-    fields:'*,img.*,file.*',
-    limit: cmsRessourcesByPage,
-    filter:{
-      status: {
-        '_eq': 'published',
-      },
-    },
-    sort:['-date_publi'] as never[],
-    page:Number(params.id),
-    meta:'filter_count',
-  });
-
+  const query = {
+    populate: 'img,file',
+    sort:'public_date:desc',
+    pagination: {
+      pageSize: cmsRessourcesByPage,
+      page: params.id,
+    }
+  };
+  const { data, meta }  = await fetchAPI('/resources',query);
+  const catQuery = {
+    filters:{
+      resources:{
+        id:{
+          $notNull: true
+        }
+      }
+    }
+  }
+  const categories =  await fetchAPI('/categories',catQuery);
+  const nbPage = meta.pagination.pageCount;
   const pageTitle= `Ressources page ${params.id}`; 
-  const nbPage = meta && meta.filter_count ? getNbPages(meta.filter_count, cmsRessourcesByPage) : 1
+
 
   return (
     <div id='content'>
       <PageTitle title={pageTitle} />
+      <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
+        {categories.data && <CategoryTags categories={categories.data} />}
+      </div>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
-          data.map((a, i) => {
+          data.map((a:any, i:number) => {
             return (
-              <div key={i} className={fr.cx('fr-col', 'fr-col-md-12')}>
+              <div key={i} className={fr.cx('fr-col-12','fr-col-md-6')}>
                 <RessourceCard 
-                  title={a.title}
-                  content={a.content}
-                  date={new Date(a.date_publi).toLocaleDateString('fr-FR')}
-                  link={a.link}
-                  file={a.file ? `${cmsHost}/assets/${a.file}` : undefined}
-                  img={`${cmsHost}/assets/${a.img.id}`}
-                  img_legend={a.img_legend}
+                  title={a.attributes.title}
+                  content={a.attributes.content}
+                  date={new Date(a.attributes.public_date).toLocaleDateString('fr-FR')}
+                  link={a.attributes.link}
+                  file={a.attributes.file}
+                  img={a.attributes.img.data.attributes.url}
+                  img_legend={a.attributes.img_legend}
                   horizontal
                 />
               </div>

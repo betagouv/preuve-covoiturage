@@ -30,7 +30,7 @@ export async function generateStaticParams() {
 
 export default async function ActuPage({ params }: { params: { id: string }}) {
   const query = {
-    populate: 'categories,img',
+    populate: 'img',
     sort:'createdAt:desc',
     pagination: {
       pageSize: cmsActusByPage,
@@ -54,9 +54,11 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
   return (
     <div id='content'>
       <PageTitle title={pageTitle} />
-      <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-        {categories.data && <CategoryTags categories={categories.data} />}
-      </div>
+      {categories.data && 
+        <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
+          <CategoryTags categories={categories.data} />
+        </div>
+      }
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
           data.map((a:any, i:number) => {
@@ -69,7 +71,7 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
                   href={`/actualites/${a.attributes.slug}`}
                   img={a.attributes.img.data.attributes.url}
                   img_legend={a.attributes.img_legend}
-                  categories={a.attributes.categories.data}
+                  categories={a.attributes.categories}
                 />
               </div>
             )

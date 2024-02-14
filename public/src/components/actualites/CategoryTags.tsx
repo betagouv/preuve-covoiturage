@@ -9,7 +9,7 @@ export default function CategoryTags(props: {categories: CategorieProps[], activ
   const router = useRouter();
   const [active, setActive] = useState<string | null>(props.active ? props.active : null);
   useEffect(()=>{
-    active ? router.push(`/actualites/categorie/${active}`) : router.push(`/actualites`)
+    active ? router.push(`/actualites/categorie/${active}`) : undefined
   })
   return (
     <ul className={fr.cx('fr-tags-group')}>

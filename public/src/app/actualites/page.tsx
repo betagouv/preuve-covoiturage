@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function Actualites() {
   const query = {
-    populate: 'articles,img',
+    populate: 'img',
     sort:'createdAt:desc',
     pagination: {
       pageSize: cmsActusByPage

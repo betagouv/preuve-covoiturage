@@ -116,11 +116,15 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
                   )
                 case 'row.map':
                   return(
-                    <Map key={i} title={r.title} params={r.params} />
+                    <div className={fr.cx('fr-col')}>
+                      <Map key={i} title={r.title} params={r.params} />
+                    </div>
                   )
                 case 'row.graph':
                   return(
-                    <Graph key={i} title={r.title} params={r.params} />
+                    <div className={fr.cx('fr-col')}>
+                      <Graph key={i} title={r.title} params={r.params} />
+                    </div>
                   )               
               }
             }            

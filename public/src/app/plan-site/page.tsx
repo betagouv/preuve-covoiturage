@@ -1,6 +1,6 @@
 
 import { fr } from "@codegouvfr/react-dsfr";
-import { cmsInstance } from "@/helpers/cms";
+import { fetchAPI } from "@/helpers/cms";
 import { Metadata } from 'next';
 import PageTitle from '@/components/common/PageTitle';
 
@@ -10,34 +10,37 @@ export const metadata: Metadata = {
 }
 
 export default async function Plan() {
-  const pages = await cmsInstance.items('Pages').readByQuery({
-    status: {
-      '_eq': 'published',
+  const query = {
+    populate: {
+      tags: {
+        populate: 'slug'
+      }
     },
-    fields: ['title','slug','tag.slug'],
-    limit: -1,
-    sort:['date_created'] as never[],
+    fields:['title','slug'],  
+    sort:'createdAt',
+    pagination:{
+      limit: -1
+    }
+  };
+  const {data}  = await fetchAPI('/pages',query);
+  const home = data ? data.find((p:any) => p.attributes.tags.data[0].attributes.slug === 'accueil') : []
+  const obs = data ? data.filter((p:any) => p.attributes.tags.data[0].attributes.slug === 'observatoire') : []
+  const collectivites = data ? data.filter((p:any) => p.attributes.tags.data[0].attributes.slug === 'collectivites') : []
+  const autresActeurs = data ? data.filter((p:any) => ['plateformes','covoitureurs','employeurs'].includes(p.attributes.tags.data[0].attributes.slug)) : []
+  const communs = data ? data.filter((p:any)=> p.attributes.tags.data[0].attributes.slug === 'commun') : []
+  const actus = await fetchAPI('/articles',{
+    fields:['title','slug'],
+    sort:'createdAt',
+    pagination:{
+      limit: -1
+    }
   });
-  const home = pages.data ? pages.data.find(p => p.tag.slug === 'accueil') : ''
-  const obs = pages.data ? pages.data.filter(p => p.tag.slug === 'observatoire') : ''
-  const collectivites = pages.data ? pages.data.filter(p => p.tag.slug === 'collectivites') : ''
-  const autresActeurs = pages.data ? pages.data.filter(p => ['plateformes','covoitureurs','employeurs'].includes(p.tag.slug)) : ''
-  const communs = pages.data ? pages.data.filter(p => p.tag.slug === 'commun') : ''
-  const actus = await cmsInstance.items('Articles').readByQuery({
-    status: {
-      '_eq': 'published',
-    },
-    fields: ['title','slug'],
-    limit: -1,
-    sort:['date_created'] as never[],
-  });
-  const ressources = await cmsInstance.items('Ressources').readByQuery({
-    status: {
-      '_eq': 'published',
-    },
-    fields: ['title','slug'],
-    limit: -1,
-    sort:['date_created'] as never[],
+  const ressources = await fetchAPI('/resources',{
+    fields:['title','slug'],
+    sort:'createdAt',
+    pagination:{
+      limit: -1
+    }
   });
 
   return (
@@ -48,7 +51,7 @@ export default async function Plan() {
           {home && 
             <ul>
               <li>
-                <a className={fr.cx('fr-link')}  href="/" target="_self">{home.title}</a>
+                <a className={fr.cx('fr-link')}  href="/" target="_self">{home.attributes.title}</a>
               </li>
             </ul>
           }
@@ -56,10 +59,10 @@ export default async function Plan() {
             <>
               <h2 className={fr.cx('fr-h3','fr-mb-0')}>Observatoire</h2> 
               <ul>
-                {obs.map((p, i)=>
+                {obs.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/observatoire/${p.slug}`} target="_self">
-                      {p.title}
+                    <a className={fr.cx('fr-link')}href={`/observatoire/${p.attributes.slug}`} target="_self">
+                      {p.attributes.title}
                     </a>
                   </li>
                 )}
@@ -75,10 +78,10 @@ export default async function Plan() {
             <>
               <h2 className={fr.cx('fr-h3','fr-mb-0')}>Collectivités</h2> 
               <ul>
-                {collectivites.map((p, i)=>
+                {collectivites.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/collectivites/${p.slug}`} target="_self">
-                      {p.title}
+                    <a className={fr.cx('fr-link')}href={`/collectivites/${p.attributes.slug}`} target="_self">
+                      {p.attributes.title}
                     </a>
                   </li>
                 )}
@@ -89,10 +92,10 @@ export default async function Plan() {
             <>
               <h2 className={fr.cx('fr-h3','fr-mb-0')}>Autres acteurs</h2> 
               <ul>
-                {autresActeurs.map((p, i)=>
+                {autresActeurs.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/autres-acteurs/${p.slug}`} target="_self">
-                      {p.title}
+                    <a className={fr.cx('fr-link')}href={`/autres-acteurs/${p.attributes.slug}`} target="_self">
+                      {p.attributes.title}
                     </a>
                   </li>
                 )}
@@ -107,10 +110,10 @@ export default async function Plan() {
                 </a>
               </h2> 
               <ul>
-                {actus.data.map((p, i)=>
+                {actus.data.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/actualites/${p.slug}`} target="_self">
-                      {p.title}
+                    <a className={fr.cx('fr-link')}href={`/actualites/${p.attributes.slug}`} target="_self">
+                      {p.attributes.title}
                     </a>
                   </li>
                 )}
@@ -125,10 +128,10 @@ export default async function Plan() {
                 </a>
               </h2> 
               <ul>
-                {ressources.data.map((p, i)=>
+                {ressources.data.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/ressources/${p.slug}`} target="_self">
-                      {p.title}
+                    <a className={fr.cx('fr-link')}href={`/ressources/${p.attributes.slug}`} target="_self">
+                      {p.attributes.title}
                     </a>
                   </li>
                 )}
@@ -139,23 +142,16 @@ export default async function Plan() {
             <>
               <h2 className={fr.cx('fr-h3','fr-mb-0')}>Autres pages</h2> 
               <ul>
-                {communs.map((p, i)=>
+                {communs.map((p:any, i:number)=>
                   <li key={i}> 
-                    <a className={fr.cx('fr-link')}href={`/${p.slug}`} target="_self">
-                      {p.title}
+                    <a className={fr.cx('fr-link')}href={`/${p.attributes.slug}`} target="_self">
+                      {p.attributes.title}
                     </a>
                   </li>
                 )}
               </ul>
             </>
           }
-        </div>
-      </div>
-      <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
-        <div className={fr.cx('fr-col')}>
-          <a className={fr.cx('fr-link', 'fr-icon-arrow-up-fill', 'fr-link--icon-left')} href="#top">
-            Haut de page
-          </a>
         </div>
       </div>
     </div>
