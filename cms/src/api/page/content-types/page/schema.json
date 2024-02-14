@@ -57,11 +57,14 @@
         "page.list-title"
       ]
     },
-    "resource": {
+    "resources": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::resource.resource",
       "inversedBy": "pages"
+    },
+    "complement": {
+      "type": "richtext"
     }
   }
 }
