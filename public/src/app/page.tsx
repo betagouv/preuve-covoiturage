@@ -75,7 +75,7 @@ export default async function Home() {
           title={hero.title} 
           subtitle={hero.subtitle}
           content={hero.content} 
-          img={hero.img.data.attributes.formats.medium.url} 
+          img={hero.img.data ? hero.img.data.attributes.formats.medium.url : undefined} 
           alt={hero.alt} 
           buttons={hero.buttons} 
         />

@@ -7,6 +7,7 @@ import { fetchAPI, shorten } from "@/helpers/cms";
 import { fr } from "@codegouvfr/react-dsfr";
 import MDContent from "@/components/common/MDContent";
 import Highlight from '@/components/common/Highlight';
+import Rows from '@/components/observatoire/indicators/Rows';
 
 export async function generateMetadata({ params }: { params: { slug: string }}) {
   const query = {
@@ -63,6 +64,9 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
       },
       list: {
         populate: 'buttons,img'
+      },
+      rows: {
+        populate: '*'
       }
     },  
   };
@@ -71,6 +75,8 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
   const hero = data.attributes.hero;
   const block = data.attributes.block;
   const list = data.attributes.list;
+  const rows = data.attributes.rows;
+
 
   return(
     <div id='content'>
@@ -82,7 +88,7 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
           title={hero.title} 
           subtitle={hero.subtitle}
           content={hero.content} 
-          img={hero.img} 
+          img={hero.img.data ? hero.img.data.attributes.formats.medium.url : undefined} 
           alt={hero.alt} 
           buttons={hero.buttons} 
         />
@@ -104,6 +110,9 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
           alt={block.alt} 
           buttons={block.buttons} 
         />
+      }
+      {rows && 
+        <Rows data={rows} />
       }
       {list && 
         <div className={fr.cx('fr-grid-row')}>

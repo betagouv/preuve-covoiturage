@@ -1,4 +1,4 @@
-import IndicatorsRow from '@/components/observatoire/indicators/IndicatorsRow';
+import Rows from '@/components/observatoire/indicators/Rows';
 import { Config } from '@/config';
 import { useApi } from '@/hooks/useApi';
 import { IndicatorProps, SearchParamsInterface } from '@/interfaces/observatoire/componentsInterfaces';
@@ -58,8 +58,8 @@ export default function KeyFigures({ params }: { params: SearchParamsInterface }
 
   return (
     <>
-      <IndicatorsRow indicators={row1} />
-      <IndicatorsRow indicators={row2} />
+      <Rows data={row1} />
+      <Rows data={row2} />
     </>
   );
 }

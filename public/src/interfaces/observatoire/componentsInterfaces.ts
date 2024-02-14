@@ -65,11 +65,8 @@ export interface SearchParamsInterface {
   graph?: number;
 }
 
-export interface IndicatorsRowProps {
-  indicators?: IndicatorProps[];
-  analyses?: AnalyseProps[];
-  maps?:SingleMapProps[];
-  graphs?:SingleMapProps[];
+export interface RowsProps {
+  data: any[],
 };
 
 export interface IndicatorProps {

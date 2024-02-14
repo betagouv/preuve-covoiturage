@@ -7,10 +7,7 @@ import { fetchAPI, shorten } from "@/helpers/cms";
 import { fr } from "@codegouvfr/react-dsfr";
 import MDContent from "@/components/common/MDContent";
 import Highlight from '@/components/common/Highlight';
-import Indicator from '@/components/observatoire/indicators/Indicator';
-import Analyse from '@/components/observatoire/indicators/Analyse';
-import Map from '@/components/observatoire/indicators/Map';
-import Graph from '@/components/observatoire/indicators/Graph';
+import Rows from '@/components/observatoire/indicators/Rows';
 
 export async function generateMetadata({ params }: { params: { slug: string }}) {
   const query = {
@@ -90,46 +87,13 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
           title={hero.title} 
           subtitle={hero.subtitle}
           content={hero.content} 
-          img={hero.img} 
+          img={hero.img.data ? hero.img.data.attributes.formats.medium.url : undefined} 
           alt={hero.alt} 
           buttons={hero.buttons} 
         />
       }
       {rows && 
-        <div className={fr.cx('fr-grid-row','fr-grid-row--gutters', 'fr-mt-5w')}>
-          {rows.map((r:any, i:number) =>
-            { 
-              switch(r.__component){
-                case 'row.title':
-                  return(
-                    <div key={i} className={fr.cx('fr-col-12')}>
-                      <h2>{r.title}</h2>
-                    </div>
-                  )
-                case 'row.indicator':
-                  return(
-                    <Indicator key={i} value={r.value} unit={r.unit} info={r.info} text={r.text} icon={r.icon} />
-                  )
-                case 'row.analyse':
-                  return(
-                    <Analyse key={i} title={r.title} content={r.content} link={r.link} />
-                  )
-                case 'row.map':
-                  return(
-                    <div className={fr.cx('fr-col')}>
-                      <Map key={i} title={r.title} params={r.params} />
-                    </div>
-                  )
-                case 'row.graph':
-                  return(
-                    <div className={fr.cx('fr-col')}>
-                      <Graph key={i} title={r.title} params={r.params} />
-                    </div>
-                  )               
-              }
-            }            
-          )}
-        </div>
+        <Rows data={rows} />
       }
       {block &&
         <Block 
