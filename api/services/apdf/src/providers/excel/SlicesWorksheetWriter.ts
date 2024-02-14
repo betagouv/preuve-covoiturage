@@ -40,6 +40,67 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     this.drawSliceTable(ws, slices, this.COLUMN_HEADERS_NORMAL, 'normale');
     this.drawSliceTable(ws, slices, this.COLUMN_HEADERS_BOOSTER, 'booster');
 
+    // Rules
+    /* eslint-disable prettier/prettier,max-len */
+
+    // Heading
+    ws.mergeCells('G1:L1');
+    ws.getCell('G1').value = 'RÈGLES DE CALCUL DES INCITATIONS RPC';
+    ws.getCell('G1').font = { name: 'Arial', size: 12, bold: true };
+    ws.getCell('G1').alignment = { horizontal: 'center', vertical: 'middle'};
+    ws.getCell('G1').border = { bottom: { style: 'thin' } };
+
+    // Rules body
+    ws.mergeCells('G3:L5');
+    ws.getCell('G3').value = 'Ce fichier est un récapitulatif des incitations financières calculées par le RPC à la demande des collectivités souhaitant un suivi mensuel des incitations versées.';
+    ws.getCell('G3').alignment = { wrapText: true, vertical: 'top' };
+
+    ws.mergeCells('G6:L10');
+    ws.getCell('G7').value = 'Le RPC applique alors le montant d\'incitation prévu aux trajets respectant les critères d\'acceptation RPC (status "ok" et "cancel") et les règles de la campagne d\'incitation résumées dans la "fiche descriptive de campagne" transmise par le RPC et validée par la collectivité et les opérateurs partenaires.';
+    ws.getCell('G7').alignment = { wrapText: true, vertical: 'top' };
+
+    // Heading
+    ws.mergeCells('G12:L12');
+    ws.getCell('G12').value = 'PRÉSENTATION DES ONGLETS';
+    ws.getCell('G12').font = { name: 'Arial', size: 12, bold: true };
+    ws.getCell('G12').alignment = { horizontal: 'center', vertical: 'middle' };
+    ws.getCell('G12').border = { bottom: { style: 'thin' } };
+
+    // First tab
+    ws.mergeCells('G14:L14');
+    ws.getCell('G14').value = {text: 'Synthèse par tranche', hyperlink: '#\'Synthèse par tranche\'!A1'};
+    ws.getCell('G14').font = { name: 'Arial', size: 12, bold: true };
+    ws.mergeCells('G15:L22');
+    ws.getCell('G15').value = 'La synthèse par tranche présente un résumé des montants d\'incitations financières en fonction des différentes tranches tarifaires de la campagnes d\'incitation.\n\nUn second tableau "Tranche "période booster" complète le premier pour les campagnes appliquant ponctuellement des règles de campagne différentes.';
+    ws.getCell('G15').alignment = { wrapText: true, vertical: 'top' };
+
+    // Second tab
+    ws.mergeCells('G23:L23');
+    ws.getCell('G23').value = { text: 'Trajets', hyperlink: '#\'Trajets\'!A1' };
+    ws.getCell('G23').font = { name: 'Arial', size: 12, bold: true };
+    ws.mergeCells('G24:L28');
+    ws.getCell('G24').value = 'L\'onglet "Trajets" présente l\'ensemble des trajets éligibles réalisés par un opérateur donné sur un mois donné.\n\nVoir définition de chacun des champs dans notre documentation publique.';
+    ws.getCell('G24').alignment = { wrapText: true, vertical: 'top' };
+    
+    // Heading
+    ws.mergeCells('G30:L30');
+    ws.getCell('G30').value = 'LIENS UTILES';
+    ws.getCell('G30').font = { name: 'Arial', size: 12, bold: true };
+    ws.getCell('G30').alignment = { horizontal: 'center', vertical: 'middle' };
+    ws.getCell('G30').border = { bottom: { style: 'thin' } };
+    
+    // Link to documentation
+    ws.mergeCells('G32:L32');
+    ws.getCell(`G32`).value = { text: 'Documentation générale', hyperlink: 'https://doc.covoiturage.beta.gouv.fr' };
+    ws.mergeCells('G33:L33');
+    ws.getCell(`G33`).value = { text: 'Documentation technique', hyperlink: 'https://tech.covoiturage.beta.gouv.fr' };
+    ws.mergeCells('G34:L34');
+    ws.getCell(`G34`).value = { text: 'Dashboard territoire du RPC', hyperlink: 'https://app.covoiturage.beta.gouv.fr' };
+    ws.mergeCells('G35:L35');
+    ws.getCell(`G35`).value = { text: 'contact@covoiturage.beta.gouv.fr', hyperlink: 'mailto:contact@covoiturage.beta.gouv.fr' };
+
+    /* eslint-enable prettier/prettier,max-len */
+
     ws.commit();
   }
 
@@ -53,9 +114,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
 
     // apply some margin between tables with empty rows
     const margin = ws.lastRow ? 2 : 0;
-    for (let i = 0; i < margin; i++) {
-      ws.addRow([]).commit();
-    }
+    this.pad(ws, margin);
 
     // headers
     const headers = ws.addRow(columns);
@@ -66,7 +125,6 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
       else c.alignment = { vertical: 'middle' };
       c.border = { bottom: { style: 'thin' } };
     });
-    headers.commit();
 
     // data
     // S : incentive_type
@@ -86,7 +144,6 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
       ]);
       r.height = 20;
       r.alignment = { vertical: 'middle' };
-      r.commit();
     }
 
     // add some totals at the bottom of the table
@@ -100,6 +157,12 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     ws.getCell(`C${last + 1}`).border = border;
     ws.getCell(`D${last + 1}`).value = { formula: `SUM(D${first}:D${last})`, date1904: false };
     ws.getCell(`D${last + 1}`).border = border;
+  }
+
+  private pad(ws: Worksheet, n: number): void {
+    for (let i = 0; i < n; i++) {
+      ws.addRow([]);
+    }
   }
 
   private formatSliceLabel(slice: SliceInterface): string {
