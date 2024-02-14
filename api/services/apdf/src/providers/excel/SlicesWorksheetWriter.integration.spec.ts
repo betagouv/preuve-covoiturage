@@ -45,7 +45,7 @@ test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async 
   t.is(worksheet.actualRowCount, 2 + slices.length);
   t.deepEqual(workbook.getWorksheet(t.context.slicesWorksheetWriter!.WORKSHEET_NAME).getRow(1).values, [
     undefined,
-    ...t.context.slicesWorksheetWriter!.WORKSHEET_COLUMN_HEADERS,
+    ...t.context.slicesWorksheetWriter!.COLUMN_HEADERS_NORMAL,
   ]);
 
   t.deepEqual(workbook.getWorksheet(t.context.slicesWorksheetWriter!.WORKSHEET_NAME).getRow(2).values, [

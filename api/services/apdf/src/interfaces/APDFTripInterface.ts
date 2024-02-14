@@ -15,7 +15,7 @@ export interface APDFTripInterface {
   operator_trip_id: string;
   operator_driver_id: string;
   operator_passenger_id: string;
-  incentive_type: 'normal' | 'booster';
+  incentive_type: 'normale' | 'booster';
   start_epci_name: string;
   start_epci: string;
   end_epci_name: string;

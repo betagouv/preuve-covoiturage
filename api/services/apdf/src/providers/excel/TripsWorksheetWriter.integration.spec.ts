@@ -31,7 +31,7 @@ const exportTripInterface: APDFTripInterface = {
   duration: faker.datatype.number({ min: 300, max: 3600 }),
   operator: faker.company.companyName(),
   operator_class: 'C',
-  incentive_type: faker.random.arrayElement(['normal', 'booster']),
+  incentive_type: faker.random.arrayElement(['normale', 'booster']),
   start_epci_name: faker.address.cityName(),
   start_epci: `${faker.random.alphaNumeric(5)}`,
   end_epci_name: faker.address.cityName(),
