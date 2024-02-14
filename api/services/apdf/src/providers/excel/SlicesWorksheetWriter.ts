@@ -6,7 +6,7 @@ import { AbstractWorksheetWriter } from './AbstractWorksheetWriter';
 
 @provider()
 export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
-  public readonly WORKSHEET_NAME = 'tranches';
+  public readonly WORKSHEET_NAME = 'Synthèse par tranche';
   public readonly WORKSHEET_COLUMN_HEADERS = ['Tranche', 'Incitations RPC', 'Tous les trajets', 'Trajets incités'];
 
   async call(wbWriter: stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {

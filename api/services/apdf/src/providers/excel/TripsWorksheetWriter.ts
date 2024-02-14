@@ -7,31 +7,29 @@ import { AbstractWorksheetWriter } from './AbstractWorksheetWriter';
 
 @provider()
 export class TripsWorksheetWriter extends AbstractWorksheetWriter {
-  public readonly CURSOR_BATCH_SIZE = 10;
-  public readonly WORKSHEET_NAME = 'trajets';
+  public readonly CURSOR_BATCH_SIZE = 100;
+  public readonly WORKSHEET_NAME = 'Trajets';
   // TODO improve listing of columns
   public readonly WORKSHEET_COLUMN_HEADERS: Partial<Column>[] = [
     'journey_id',
+    'trip_id',
+    'operator_trip_id',
     'start_datetime',
     'end_datetime',
-    'rpc_incentive',
     'start_location',
+    'start_epci_name',
     'start_insee',
     'end_location',
+    'end_epci_name',
     'end_insee',
     'duration',
     'distance',
     'operator',
     'operator_class',
-    'trip_id',
-    'operator_trip_id',
     'operator_driver_id',
     'operator_passenger_id',
+    'rpc_incentive',
     'incentive_type',
-    'start_epci_name',
-    'start_epci',
-    'end_epci_name',
-    'end_epci',
   ].map((header) => ({ header, key: header }));
 
   async call(
