@@ -303,8 +303,8 @@ components:
       description: |
         Ces données personnelles permettent d'identifier la personne effectuant le covoiturage afin de pouvoir comptabiliser ses trajets et lui distribuer des incitations en fonction des politiques applicables.
         Deux options sont disponibles pour la transmission du numéro de téléphone :
-        - Numéro complet à 10 chiffres (phone)
-        - Numéro tronqué à 8 chiffres (phone_trunc) + identifiant unique de l'opérateur (operator_user_id)
+        - Numéro complet au format ITU E.164 (phone) (ex. +33601020304, +590690101010)
+        - Numéro au format ITU E.164 tronqué des 2 derniers chiffres (phone_trunc) (ex. +336010203, +5906901010) + identifiant unique de l'opérateur (operator_user_id)
       additionalProperties: false
       required:
         - operator_user_id
@@ -316,7 +316,7 @@ components:
           minLength: 64
           maxLength: 64
           description: |
-            Correspond au sha d'une chaîne concaténée tel que : sha256(*phone_number*-*last_name*) ou
+            Correspond au SHA d'une chaîne concaténée tel que : sha256(*phone_number*-*last_name*) ou
             - `phone_number` correspond au numéro de téléphone complet au format international sans espace ni tiret. Exemple : +33601020304
             - `last_name` correspond au nom de famille complet en majuscule, sans accent ni tiret ni apostrophe (regexp: [A-Z ]*)
             Par exemple, M. D'Hérûg-de-l'Hérault ayant le numéro 07 01 02 03 04 doit être formatté comme suit "+33701020304-D HERUG DE L HERAULT"
@@ -342,12 +342,12 @@ components:
               example: 00-MFR-6782929
         phone:
           type: string
-          description: Numéro de téléphone à 10 chiffre au format ITU E.164
-          example: '+33123456789'
+          description: Numéro au format ITU E.164
+          example: '+33601020304, +590690101010'
         phone_trunc:
           type: string
-          description: Numéro de téléphone à 8 chiffres. Obligatoire si le numéro de téléphone complet n'est pas fournit.
-          example: '+336123456'
+          description: Numéro au format ITU E.164 tronqué des 2 derniers chiffres. Obligatoire si `phone` n'est pas renseigné.
+          example: '+336010203, +5906901010'
         driving_license:
             description: |
               Numéro de permis de conduire (également appelé code driving_license)
@@ -379,8 +379,8 @@ components:
                 maxLength: 64
         operator_user_id:
           type: string
-          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire si le numéro de téléphone complet n'est pas fournit.
-          example: "1111-222-333-4444"
+          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire.
+            example: "d2e8a6c4-9e3a-4b6f-8e8d-9f7a6b5c4d3e"
         over_18:
           enum:
             - true
@@ -390,7 +390,7 @@ components:
             Applicable seulement au passager.
               - true si majeur
               - false si mineur
-              - null si non fournit
+              - null si non fourni
             
             > De nombreuses campagnes utilisent cette information pour s'assurer que les bénéficiaires d'incitations sont majeures. La valeur `NULL` les exclues.
     identitycert:
@@ -404,16 +404,16 @@ components:
       properties:
         phone:
           type: string
-          description: Numéro de téléphone à 10 chiffre au format ITU E.164
-          example: '+33123456789'
+          description: Numéro au format ITU E.164
+          example: '+33601020304, +590690101010'
         phone_trunc:
           type: string
-          description: Numéro de téléphone à 8 chiffres. Obligatoire si le numéro de téléphone complet n'est pas fournit.
-          example: '+336123456'
+          description: Numéro au format ITU E.164 tronqué des 2 derniers chiffres. Obligatoire si `phone` n'est pas renseigné.
+          example: '+336010203, +5906901010'
         operator_user_id:
           type: string
-          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire si le numéro de téléphone complet n'est pas fournit.
-          example: "1111-222-333-4444"
+          description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire.
+          example: "d2e8a6c4-9e3a-4b6f-8e8d-9f7a6b5c4d3e"
     certificate_data:
       type: object
       additionalProperties: false
