@@ -5,10 +5,8 @@ export interface ActuCardProps {
   img: string,
   img_legend?: string,
   href: string,
-  horizontal?: boolean,
-  categories: {
-    Categories_id:CategorieProps
-  }[]
+  horizontal?: false | undefined,
+  categories: CategorieProps[]
 }
 
 export interface CategorieProps {

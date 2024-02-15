@@ -8,6 +8,7 @@ import RessourceCard from "@/components/ressources/RessourceCard";
 import MDContent from "@/components/common/MDContent";
 import { Metadata } from 'next';
 import Highlight from '@/components/common/Highlight';
+import Rows from '@/components/observatoire/indicators/Rows';
 
 export const metadata: Metadata = {
   title: 'Accueil | Observatoire.covoiturage.gouv.fr',
@@ -30,6 +31,12 @@ export default async function Home() {
       },
       list: {
         populate: '*'
+      },
+      rows:{
+        populate: '*'
+      },
+      resources:{
+        populate: '*'
       }
     },  
   };
@@ -38,6 +45,8 @@ export default async function Home() {
   const hero = data.attributes.hero
   const block = data.attributes.block
   const list = data.attributes.list
+  const rows = data.attributes.rows
+  const resources = data.attributes.resources
 
   const tiles = [{
     desc:'Forfait mobilités durables, animations covoiturage en entreprise, mise en relation entre salariés, charte employeur engagé dans le covoiturage',
@@ -98,6 +107,9 @@ export default async function Home() {
           buttons={block.buttons} 
         />
       }
+      {rows && 
+        <Rows data={rows} />
+      }
       {list && 
         <div className={fr.cx('fr-grid-row')}>
           {list.map((l:any, i:number) => 
@@ -128,26 +140,25 @@ export default async function Home() {
           </div>
         )}
       </div>
-      {/*data.attributes.resource.data && 
+      {resources.data.length > 0 && 
         <>
           <SectionTitle title='Ressources' />
           <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-            {data.attributes.resource.data.map((r:any, i:number) =>  
+            {resources.data.map((r:any, i:number) =>  
               <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
                 <RessourceCard 
-                  title={r.title}
-                  content={shorten(r.content, 100)}
-                  date={new Date(r.date_created).toLocaleDateString('fr-FR')}
-                  link={r.link}
-                  file={r.file ? `${cmsHost}/assets/${r.file}` : undefined}
-                  img={`${cmsHost}/assets/${r.img}`}
-                  img_legend={r.img_legend}                
+                  title={r.attributes.title}
+                  content={shorten(r.attributes.content, 100)}
+                  date={new Date(r.attributes.public_date).toLocaleDateString('fr-FR')}
+                  link={r.attributes.link}
+                  file={r.attributes.file.data ? r.attributes.file.data.attributes.url : null}
+                  img={r.attributes.img.data ? r.attributes.img.data.attributes.url : null}           
                 />
               </div>
             )}
           </div>
         </>
-            */}
+      }
     </div>
   );
 }

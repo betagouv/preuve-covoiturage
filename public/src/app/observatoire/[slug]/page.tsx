@@ -65,7 +65,10 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
       list: {
         populate: '*'
       },
-      rows: {
+      rows:{
+        populate: '*'
+      },
+      resources:{
         populate: '*'
       }
     },  
@@ -76,6 +79,7 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
   const block = data.attributes.block;
   const list = data.attributes.list;
   const rows = data.attributes.rows;
+  const resources = data.attributes.resources;
 
   return(
     <div id='content'>
@@ -87,7 +91,7 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
           title={hero.title} 
           subtitle={hero.subtitle}
           content={hero.content} 
-          img={hero.img.data ? hero.img.data.attributes.formats.medium.url : undefined} 
+          img={hero.img.data ? hero.img.data.attributes.url : undefined} 
           alt={hero.alt} 
           buttons={hero.buttons} 
         />
@@ -126,25 +130,25 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
           </div>
         </div>
       </div>
-      {/*ressources.length >=1 && 
-      <>
-        <SectionTitle title='Ressources' />
-        <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-          {ressources.map((r:any, i:number) =>  
-            <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
-              <RessourceCard 
-                title={r.item.title}
-                content={shorten(r.item.content, 100)}
-                date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
-                link={r.item.link}
-                file={`${cmsHost}/assets/${r.item.file}`}
-                img={`${cmsHost}/assets/${r.item.img}`}
-                img_legend={r.item.img_legend}                
-              />
-            </div>
-          )}
-        </div>
-          </>*/}
+      {resources.data.length > 0 && 
+        <>
+          <SectionTitle title='Ressources' />
+          <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
+            {resources.data.map((r:any, i:number) =>  
+              <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
+                <RessourceCard 
+                  title={r.attributes.title}
+                  content={shorten(r.attributes.content, 100)}
+                  date={new Date(r.attributes.public_date).toLocaleDateString('fr-FR')}
+                  link={r.attributes.link}
+                  file={r.attributes.file.data ? r.attributes.file.data.attributes.url : null}
+                  img={r.attributes.img.data ? r.attributes.img.data.attributes.url : null}           
+                />
+              </div>
+            )}
+          </div>
+        </>
+      }
     </div>
   );
 }

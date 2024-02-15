@@ -10,7 +10,11 @@ export default function KeyFigures({ params }: { params: SearchParamsInterface }
   const { data } = useApi<KeyFiguresDataInterface[]>(url);
   const row1 = data
     ? [
-        { value: data[0].journeys.toLocaleString(), text: 'Covoiturages réalisés', icon:'airport_shuttle', },
+        { __component: 'row.indicator',
+          value: data[0].journeys.toLocaleString(),
+          text: 'Covoiturages réalisés',
+          icon:'ri-car-line',
+        },
         /*{
           value: `${((data[0].has_incentive / data[0].journeys) * 100).toLocaleString('fr-FR', {
             maximumFractionDigits: 1,
@@ -19,39 +23,40 @@ export default function KeyFigures({ params }: { params: SearchParamsInterface }
           text: 'Trajets incités',
           icon:'euro',
         },*/
-        { value: `${data[0].occupation_rate.toLocaleString()}`,
+        { __component: 'row.indicator',
+          value: `${data[0].occupation_rate.toLocaleString()}`,
           text: "personnes par véhicule",
-          icon:'supervised_user_circle',
+          icon:'ri-group-2-line',
         },
-        {
+        { __component: 'row.indicator',
           value: `${Math.round(data[0].distance / data[0].passengers).toLocaleString()}`,
           unit:'km',
           text: 'Distance moyenne',
-          icon:'conversion_path'
+          icon:'ri-signpost-line'
         },
-        {
+        { __component: 'row.indicator',
           value: `${Math.round(data[0].duration / data[0].passengers).toLocaleString()}`,
           unit:'min',
           text: 'Temps moyen des trajets',
-          icon:'av_timer'
+          icon:'ri-time-line'
         },
       ] as IndicatorProps[]
     : [];
 
   const row2 = data
     ? [
-        {
+        { __component: 'row.indicator',
           value: `${((data[0].intra_journeys / data[0].journeys) * 100).toLocaleString('fr-FR', {
             maximumFractionDigits: 1,
           })}`,
           unit:'%',
           text: 'Trajets réalisés à l\'intérieur du territoire',
-          icon:'mobiledata_off',
+          icon:'ri-focus-line',
         },
-        { 
+        { __component: 'row.indicator',
           value: Math.round(data[0].distance * 0.000195).toLocaleString(), 
           text: 'Tonnes de CO₂ économisés',
-          icon: 'onsen'
+          icon: 'ri-haze-line'
         },
       ] as IndicatorProps[]
     : [];

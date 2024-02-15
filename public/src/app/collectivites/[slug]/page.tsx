@@ -65,7 +65,10 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
       list: {
         populate: 'buttons,img'
       },
-      rows: {
+      rows:{
+        populate: '*'
+      },
+      resources:{
         populate: '*'
       }
     },  
@@ -76,6 +79,7 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
   const block = data.attributes.block;
   const list = data.attributes.list;
   const rows = data.attributes.rows;
+  const resources = data.attributes.resources;
 
 
   return(
@@ -129,37 +133,36 @@ export default async function CollectiviteSinglePage({ params }: { params: { slu
           )}
         </div>
       }
-      {/*ressources.length >=1 && 
+      {resources && 
         <>
           <SectionTitle title='Ressources' />
           <div className={fr.cx('fr-grid-row','fr-grid-row--gutters')}>
-            {ressources && ressources.map((r:any, i:number) =>  
+            {resources.data.map((r:any, i:number) =>  
               <div key={i} className={fr.cx('fr-col', 'fr-col-md-4')}>
                 <RessourceCard 
-                  title={r.item.title}
-                  content={shorten(r.item.content, 100)}
-                  date={new Date(r.item.date_created).toLocaleDateString('fr-FR')}
-                  link={r.item.link}
-                  file={r.item.file ? `${cmsHost}/assets/${r.item.file}` : undefined}
-                  img={`${cmsHost}/assets/${r.item.img}`}
-                  img_legend={r.item.img_legend}                
+                  title={r.attributes.title}
+                  content={shorten(r.attributes.content, 100)}
+                  date={new Date(r.attributes.public_date).toLocaleDateString('fr-FR')}
+                  link={r.attributes.link}
+                  file={r.attributes.file.data ? r.attributes.file.data.attributes.url : null}
+                  img={r.attributes.img.data ? r.attributes.img.data.attributes.url : null}           
                 />
               </div>
             )}
           </div>
-        </>*/
+        </>
       }
-      {/*data && data[0].complement &&
+      {data.attributes.complement &&
         <div className={fr.cx('fr-grid-row','fr-mt-5w')}>
           <SectionTitle title='Ressources complémentaires' />
           <div className={fr.cx('fr-grid-row')}>
             <div className={fr.cx('fr-col')}>
               <div className={fr.cx('fr-text--lg')}>
-                <MDContent source={data ? data[0].complement : ''} />
+                <MDContent source={data.attributes.complement} />
               </div>
             </div>
           </div>
-        </div>*/
+        </div>
       }
     </div>
   );
