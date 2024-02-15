@@ -229,7 +229,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     for (const s of slices) {
       const { start, end } = s.slice;
       const mode_criteria = `Trajets!S:S,"${mode}"`;
-      const slice_criteria = `Trajets!M:M,">${start}",Trajets!M:M,"<${end}"`;
+      const slice_criteria = `Trajets!M:M,">${start}"${end ? `,Trajets!M:M,"<${end}"` : ''}`;
 
       // const r = ws.addRow([this.formatSliceLabel(s.slice), s.sum / 100, s.count, s.subsidized]);
       const r = ws.addRow([

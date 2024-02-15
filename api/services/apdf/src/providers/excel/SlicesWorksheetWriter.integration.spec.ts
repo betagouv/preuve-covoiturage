@@ -42,31 +42,28 @@ test('SlicesWorkbookWriter: should map slice into a dedicated worksheet', async 
   const workbook: Workbook = await new Workbook().xlsx.readFile(t.context.FILEPATH!);
   const worksheet: Worksheet = workbook.getWorksheet(t.context.slicesWorksheetWriter!.WORKSHEET_NAME);
 
-  t.is(worksheet.actualRowCount, 2 + slices.length);
-  t.deepEqual(workbook.getWorksheet(t.context.slicesWorksheetWriter!.WORKSHEET_NAME).getRow(1).values, [
-    undefined,
-    ...t.context.slicesWorksheetWriter!.COLUMN_HEADERS_NORMAL,
-  ]);
+  // Header 'normale'
+  t.is(worksheet.getCell('A1').value, t.context.slicesWorksheetWriter!.COLUMN_HEADERS_NORMAL[0]);
+  t.is(worksheet.getCell('B1').value, t.context.slicesWorksheetWriter!.COLUMN_HEADERS_NORMAL[1]);
+  t.is(worksheet.getCell('C1').value, t.context.slicesWorksheetWriter!.COLUMN_HEADERS_NORMAL[2]);
+  t.is(worksheet.getCell('D1').value, t.context.slicesWorksheetWriter!.COLUMN_HEADERS_NORMAL[3]);
 
-  t.deepEqual(workbook.getWorksheet(t.context.slicesWorksheetWriter!.WORKSHEET_NAME).getRow(2).values, [
-    undefined,
-    `Jusqu'à ${slices[0].slice.end / 1000} km`,
-    slices[0].sum / 100,
-    slices[0].count,
-    slices[0].subsidized,
-  ]);
-  t.deepEqual(workbook.getWorksheet(t.context.slicesWorksheetWriter!.WORKSHEET_NAME).getRow(3).values, [
-    undefined,
-    `De ${slices[1].slice.start / 1000} km à ${slices[1].slice.end / 1000} km`,
-    slices[1].sum / 100,
-    slices[1].count,
-    slices[1].subsidized,
-  ]);
-  t.deepEqual(workbook.getWorksheet(t.context.slicesWorksheetWriter!.WORKSHEET_NAME).getRow(4).values, [
-    undefined,
-    `Supérieure à ${slices[2].slice.start / 1000} km`,
-    slices[2].sum / 100,
-    slices[2].count,
-    slices[2].subsidized,
-  ]);
+  // Data
+  /* eslint-disable prettier/prettier,max-len */
+  t.is(worksheet.getCell('A2').value, `Jusqu'à ${slices[0].slice.end / 1000} km`);
+  t.deepEqual(worksheet.getCell('B2').value, { formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">0",Trajets!M:M,"<2000")' });
+  t.deepEqual(worksheet.getCell('C2').value, { formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">0",Trajets!M:M,"<2000")' });
+  t.deepEqual(worksheet.getCell('D2').value, { formula: 'COUNTIFS(Trajets!R:R,"<>0",Trajets!S:S,"normale",Trajets!M:M,">0",Trajets!M:M,"<2000")' });
+
+  t.is(worksheet.getCell('A3').value, `De ${slices[1].slice.start / 1000} km à ${slices[1].slice.end / 1000} km`);
+  t.deepEqual(worksheet.getCell('B3').value, { formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">2000",Trajets!M:M,"<30000")' });
+  t.deepEqual(worksheet.getCell('C3').value, { formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">2000",Trajets!M:M,"<30000")' });
+  t.deepEqual(worksheet.getCell('D3').value, { formula: 'COUNTIFS(Trajets!R:R,"<>0",Trajets!S:S,"normale",Trajets!M:M,">2000",Trajets!M:M,"<30000")' });
+
+  t.is(worksheet.getCell('A4').value, `Supérieure à ${slices[2].slice.start / 1000} km`);
+  t.deepEqual(worksheet.getCell('B4').value, { formula: 'SUMIFS(Trajets!R:R,Trajets!S:S,"normale",Trajets!M:M,">30000")' });
+  t.deepEqual(worksheet.getCell('C4').value, { formula: 'COUNTIFS(Trajets!S:S,"normale",Trajets!M:M,">30000")' });
+  t.deepEqual(worksheet.getCell('D4').value, { formula: 'COUNTIFS(Trajets!R:R,"<>0",Trajets!S:S,"normale",Trajets!M:M,">30000")' });
+
+  /* eslint-enable prettier/prettier,max-len */
 });
