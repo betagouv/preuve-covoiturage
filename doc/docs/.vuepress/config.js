@@ -22,7 +22,7 @@ module.exports = {
         sidebar: {
           '/operateurs/': [
             {
-              title: 'API',
+              title: 'API Trajets',
               children: [
                 {
                   title: "Accès",
@@ -43,7 +43,7 @@ module.exports = {
               ],
             },
             {
-              title: 'CEE',
+              title: 'API CEE',
               path: '/operateurs/cee',
             },
             {
@@ -70,16 +70,8 @@ module.exports = {
               path: '/contribuer/repo/'
             },
             {
-              title: 'Process',
-              path: '/contribuer/repo/process'
-            },
-            {
               title: 'CI/CD',
               path: '/contribuer/repo/cicd'
-            },
-            {
-              title: 'Infra',
-              path: '/contribuer/repo/infra'
             }
           ],
           '/contribuer/api/': [

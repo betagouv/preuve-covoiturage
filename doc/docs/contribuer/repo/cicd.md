@@ -45,13 +45,6 @@ Please use the template for release pull requests and make sure all checkboxes a
 
 ## Deployments
 
-### Development
-
-**dev** environment runs on Kubernetes. **Every commit** to the `main` branch triggers an image build and a deployment PR on the [infra repository](https://github.com/betagouv/preuve-covoiturage-infra/pulls).
-When you merge this PR, the Terraform configuration of the cluster changes. [ArgoCD](https://cd.dev.covoiturage.beta.gouv.fr/) checks this repo every 5 minutes and deploys on changes.
-
-You can trigger a sync in ArgoCD manually.
-
 ### Environments
 
 **demo** and **production** environment runs on Kubernetes too. Deployments use the same process as _main_ but they are triggered when a **tag** with the pattern `vX.X.X` is created.

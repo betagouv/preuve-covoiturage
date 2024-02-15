@@ -83,13 +83,12 @@ api/
 
 ## Hébergement
 
-Les apps sont hébergées dans un cluster Kubernetes chez Scaleway. Voir [l'infrastructure](/api/infra.html) pour plus de détails.
+Les apps sont hébergées dans un cluster Kubernetes chez Scaleway.
 
 Les environnements sont :
 
 - Production : [https://api.covoiturage.beta.gouv.fr](https://api.covoiturage.beta.gouv.fr)
 - Démo : [https://api.demo.covoiturage.beta.gouv.fr](https://api.demo.covoiturage.beta.gouv.fr)
-- Développement : [https://api.dev.covoiturage.beta.gouv.fr](https://api.dev.covoiturage.beta.gouv.fr)
 
 ## Services externes
 
@@ -102,10 +101,8 @@ API publiques de l'Etat
 
 Services tierces
 
-- [Sendinblue](https://www.sendinblue.com/)
+- [Brevo](https://www.brevo.com/)
 - [OSRM](http://project-osrm.org/) _(auto hébergé)_
-- [Komoot Photon](https://photon.komoot.io/)
-- [Sentry](https://sentry.io/) _(auto hébergé)_
 - [Scaleway](https://www.scaleway.com/)
 - [Alwaysdata](https://www.alwaysdata.com/fr/)
 - [OpenStreetMap](https://www.openstreetmap.org/)

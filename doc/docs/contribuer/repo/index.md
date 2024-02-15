@@ -17,7 +17,7 @@ docker-compose build lint
 ### Use the linter
 
 ```shell
-docker-compose run lint
+docker-compose run --rm lint
 ```
 
 > :information_source: the code is mounted in `read-only` mode to keep the linter from making changes. Fix'em yourself!
@@ -38,11 +38,11 @@ cd docker/lint && npm install
 
 ```shell
 # lint api and dashboard
-docker-compose run lint
+docker-compose run --rm lint
 
 # lint api or dashboard only
-docker-compose run lint npm run api
-docker-compose run lint npm run dashboard
+docker-compose run --rm lint npm run api
+docker-compose run --rm lint npm run dashboard
 ```
 
 > You can Ctrl-click on the file paths for the errors and it should jump to the right position in the file.
