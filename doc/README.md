@@ -43,4 +43,4 @@ Le déploiement est automatisé via [Github Actions](https://github.com/betagouv
 
 ## License
 
-License Apache-2.0 - © DINUM 2024
+License Apache-2.0 - © Ministère de la Transition Ecologique 2024

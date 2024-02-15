@@ -30,9 +30,11 @@ module.exports = {
         : getTopComment(fs.readFileSync(`${sourcePath}/ServiceProvider.ts`, { encoding: 'utf-8', flag: 'r' }));
 
       // get actions' doc
-      for (const action of fs.readdirSync(`${sourcePath}/actions`).filter((s) => /Action\.ts$/.test(s))) {
-        const top = fs.readFileSync(`${sourcePath}/actions/${action}`, { encoding: 'utf-8', flag: 'r' });
-        actions.push(getTopComment(top));
+      if (fs.existsSync(`${sourcePath}/actions`)) {
+        for (const action of fs.readdirSync(`${sourcePath}/actions`).filter((s) => /Action\.ts$/.test(s))) {
+          const top = fs.readFileSync(`${sourcePath}/actions/${action}`, { encoding: 'utf-8', flag: 'r' });
+          actions.push(getTopComment(top));
+        }
       }
 
       // prepare Markdown content
