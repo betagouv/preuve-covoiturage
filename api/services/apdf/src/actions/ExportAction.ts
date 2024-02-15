@@ -80,11 +80,7 @@ export class ExportAction extends Action {
               const { filename, filepath } = await this.buildExcel.call(campaign, start_date, end_date, o_id);
 
               if (!this.config.get('apdf.s3UploadEnabled')) {
-                console.warn(
-                  'APDF Upload disabled! ' +
-                    'Set APP_APDF_S3_UPLOAD_ENABLED=true in .env file' +
-                    'Files are available in {project}/tmp',
-                );
+                console.warn(`APDF Upload disabled! Set APP_APDF_S3_UPLOAD_ENABLED=true in .env file\n > ${filepath}`);
                 return;
               }
 

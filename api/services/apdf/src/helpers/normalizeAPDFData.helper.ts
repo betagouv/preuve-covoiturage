@@ -11,7 +11,7 @@ export function normalize(src: APDFTripInterface, booster_dates: Set<string>, ti
 
   const s = sdf.substring(0, 10);
   const e = edf.substring(0, 10);
-  let type: 'normal' | 'booster' = 'normal';
+  let type: 'normale' | 'booster' = 'normale';
   if (booster_dates.has(s) || booster_dates.has(e)) {
     type = 'booster';
   }
@@ -19,10 +19,16 @@ export function normalize(src: APDFTripInterface, booster_dates: Set<string>, ti
   const data: APDFTripInterface = {
     ...src,
 
+    operator_journey_id: src.operator_journey_id.toUpperCase(),
+    trip_id: src.trip_id.toUpperCase(),
+    operator_trip_id: src.operator_trip_id.toUpperCase(),
+    operator_driver_id: src.operator_driver_id.toUpperCase(),
+    operator_passenger_id: src.operator_passenger_id.toUpperCase(),
+
     start_datetime: sdf,
     end_datetime: edf,
 
-    // check if the trip is in normal or booster mode
+    // check if the trip is in regular or booster mode
     incentive_type: type,
 
     // incentives in euros
