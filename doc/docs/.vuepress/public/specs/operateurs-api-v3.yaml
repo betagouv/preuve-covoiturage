@@ -380,7 +380,7 @@ components:
         operator_user_id:
           type: string
           description: Identifiant de l'utilisateur chez l'opérateur. Obligatoire.
-            example: "d2e8a6c4-9e3a-4b6f-8e8d-9f7a6b5c4d3e"
+          example: "d2e8a6c4-9e3a-4b6f-8e8d-9f7a6b5c4d3e"
         over_18:
           enum:
             - true
