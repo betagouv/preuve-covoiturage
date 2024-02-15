@@ -11,16 +11,16 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
   public readonly WORKSHEET_NAME = 'Trajets';
   // TODO improve listing of columns
   public readonly WORKSHEET_COLUMN_HEADERS: Partial<Column>[] = [
-    'journey_id',
-    'trip_id',
+    'operator_journey_id',
     'operator_trip_id',
+    'trip_id',
     'start_datetime',
     'end_datetime',
     'start_location',
-    'start_epci_name',
+    'start_epci',
     'start_insee',
     'end_location',
-    'end_epci_name',
+    'end_epci',
     'end_insee',
     'duration',
     'distance',
@@ -40,27 +40,27 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
     const worksheet: Worksheet = this.initWorkSheet(workbookWriter, this.WORKSHEET_NAME, this.WORKSHEET_COLUMN_HEADERS);
 
     // style columns and apply optimised width
-    const font = { name: 'Mono', family: 3, size: 10 };
+    const font = { name: 'Courier', family: 3, size: 9 };
     const columns = {
-      A: { width: 33, font },
-      B: { width: 33, font },
-      C: { width: 33, font },
-      D: { width: 24, font },
-      E: { width: 24, font },
-      F: { width: 24, font },
-      G: { width: 36, font },
-      H: { width: 11, font },
-      I: { width: 24, font },
-      J: { width: 36, font },
-      K: { width: 11, font },
-      L: { width: 11, font },
-      M: { width: 11, font },
+      A: { width: 29, font },
+      B: { width: 29, font },
+      C: { width: 29, font },
+      D: { width: 21, font },
+      E: { width: 21, font },
+      F: { width: 21, font },
+      G: { width: 32, font },
+      H: { width: 10, font },
+      I: { width: 21, font },
+      J: { width: 32, font },
+      K: { width: 10, font },
+      L: { width: 10, font },
+      M: { width: 10, font },
       N: { width: 20, font },
       O: { width: 20, font },
-      P: { width: 33, font },
-      Q: { width: 33, font },
-      R: { width: 14, font },
-      S: { width: 14, font },
+      P: { width: 29, font },
+      Q: { width: 29, font },
+      R: { width: 12, font },
+      S: { width: 12, font },
     };
 
     Object.entries(columns).forEach(([key, value]) => {
@@ -70,7 +70,7 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
     });
 
     // style the header
-    worksheet.getRow(1).font = { name: 'Mono', family: 3, bold: true, size: 10 };
+    worksheet.getRow(1).font = { name: 'Courier', family: 3, bold: true, size: 9 };
 
     const b1 = new Date();
     let results: APDFTripInterface[] = await cursor.read(this.CURSOR_BATCH_SIZE);

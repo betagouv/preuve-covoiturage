@@ -159,29 +159,30 @@ export class DataRepositoryProvider implements DataRepositoryInterface {
       )
       -- list in api/services/trip/src/actions/excel/BuildExcel.ts
       select
-        ccd.operator_journey_id as journey_id,
+        ccd.operator_journey_id,
         ccd.trip_id,
         ccd.operator_trip_id,
-    
+
         -- driver
         cid.operator_user_id as operator_driver_id,
         pid.amount as rpc_incentive,
-    
+
         -- passenger
         cip.operator_user_id as operator_passenger_id,
 
         ccd.datetime as start_datetime,
         ccd.datetime + (ccd.duration || ' seconds')::interval as end_datetime,
+
         gps.l_arr as start_location,
         gps.arr as start_insee,
-        gps.l_epci as start_epci_name,
-        gps.epci as start_epci,
+        gps.l_epci as start_epci,
         gpe.l_arr as end_location,
         gpe.arr as end_insee,
-        gpe.l_epci as end_epci_name,
-        gpe.epci as end_epci,
+        gpe.l_epci as end_epci,
+
         ccd.duration,
         ccd.distance,
+
         oo.name as operator,
         ccd.operator_class
 

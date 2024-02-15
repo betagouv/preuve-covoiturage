@@ -15,27 +15,25 @@ function sortRowValues(values: Row['values']): Row['values'] {
 let dataWorkBookWriter: TripsWorksheetWriter;
 
 const exportTripInterface: APDFTripInterface = {
-  journey_id: faker.datatype.uuid(),
+  operator_journey_id: faker.datatype.uuid(),
   trip_id: faker.datatype.uuid(),
   operator_trip_id: faker.datatype.uuid(),
-  operator_driver_id: faker.datatype.uuid(),
-  rpc_incentive: faker.datatype.number(1000),
-  operator_passenger_id: faker.datatype.uuid(),
   start_datetime: faker.date.past(2).toISOString(),
   end_datetime: faker.date.future(2).toISOString(),
   start_location: faker.address.cityName(),
+  start_epci: faker.address.cityName(),
   start_insee: faker.random.numeric(5, { allowLeadingZeros: true }),
   end_location: faker.address.cityName(),
+  end_epci: faker.address.cityName(),
   end_insee: faker.random.numeric(5, { allowLeadingZeros: true }),
-  distance: faker.datatype.number({ min: 1_500, max: 150_000 }),
   duration: faker.datatype.number({ min: 300, max: 3600 }),
+  distance: faker.datatype.number({ min: 1_500, max: 150_000 }),
   operator: faker.company.companyName(),
   operator_class: 'C',
-  incentive_type: faker.random.arrayElement(['normale', 'booster']),
-  start_epci_name: faker.address.cityName(),
-  start_epci: `${faker.random.alphaNumeric(5)}`,
-  end_epci_name: faker.address.cityName(),
-  end_epci: `${faker.random.alphaNumeric(5)}`,
+  operator_driver_id: faker.datatype.uuid(),
+  operator_passenger_id: faker.datatype.uuid(),
+  incentive_type: faker.helpers.arrayElement(['normale', 'booster']),
+  rpc_incentive: faker.datatype.number(1000),
 };
 
 test.before((t) => {
@@ -92,6 +90,6 @@ test('DataWorkBookWriter: should stream data to a workbook file', async (t) => {
   );
   t.is(
     workbook.getWorksheet(dataWorkBookWriter.WORKSHEET_NAME).getRow(2).getCell(1).value,
-    exportTripInterface.journey_id,
+    exportTripInterface.operator_journey_id,
   );
 });

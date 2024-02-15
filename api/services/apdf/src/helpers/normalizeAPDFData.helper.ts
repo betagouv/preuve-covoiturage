@@ -19,6 +19,10 @@ export function normalize(src: APDFTripInterface, booster_dates: Set<string>, ti
   const data: APDFTripInterface = {
     ...src,
 
+    operator_journey_id: src.operator_journey_id.toUpperCase(),
+    trip_id: src.trip_id.toUpperCase(),
+    operator_trip_id: src.operator_trip_id.toUpperCase(),
+
     start_datetime: sdf,
     end_datetime: edf,
 

@@ -21,10 +21,14 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
   ];
 
   async call(wbWriter: stream.xlsx.WorkbookWriter, slices: SliceStatInterface[]): Promise<void> {
+    /* eslint-disable prettier/prettier,max-len */
+
     const options: Partial<AddWorksheetOptions> = { views: [{ showGridLines: false }] };
     const ws: Worksheet = this.initWorkSheet(wbWriter, this.WORKSHEET_NAME, undefined, options);
 
+    // --------------------------------------------------------------------------------
     // Layout
+    // --------------------------------------------------------------------------------
     const font = { name: 'Arial', size: 12 };
     ws.getColumn('A').width = 26;
     ws.getColumn('A').font = font;
@@ -36,12 +40,102 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     ws.getColumn('D').width = 20;
     ws.getColumn('D').font = font;
 
+    // --------------------------------------------------------------------------------
     // Data
+    // --------------------------------------------------------------------------------
     this.drawSliceTable(ws, slices, this.COLUMN_HEADERS_NORMAL, 'normale');
     this.drawSliceTable(ws, slices, this.COLUMN_HEADERS_BOOSTER, 'booster');
 
+    // --------------------------------------------------------------------------------
+    // Fields documentation
+    // --------------------------------------------------------------------------------
+
+    // Heading
+    ws.mergeCells('A20:D20');
+    ws.getCell('A20').value = 'DEFINITIONS DES CHAMPS';
+    ws.getCell('A20').font = { name: 'Arial', size: 12, bold: true };
+    ws.getCell('A20').alignment = { horizontal: 'center', vertical: 'middle'};
+    ws.getCell('A20').border = { bottom: { style: 'thin' } };
+
+    ws.getCell('A22').value = 'operator_journey_id';
+    ws.mergeCells('B22:D22');
+    ws.getCell('B22').value = 'Identifiant du trajet envoyé par l\'opérateur';
+
+    ws.getCell('A23').value = 'operator_trip_id';
+    ws.mergeCells('B23:D23');
+    ws.getCell('B23').value = 'Identifiant de regroupement par conducteur envoyé par l\'opérateur';
+
+    ws.getCell('A24').value = 'trip_id';
+    ws.mergeCells('B24:D24');
+    ws.getCell('B24').value = 'Identifiant de regroupement par conducteur calculé par le RPC';
+
+    ws.getCell('A25').value = 'start_datetime';
+    ws.mergeCells('B25:D25');
+    ws.getCell('B25').value = 'Date et heure de début du trajet (UTC)';
+
+    ws.getCell('A26').value = 'end_datetime';
+    ws.mergeCells('B26:D26');
+    ws.getCell('B26').value = 'Date et heure de fin du trajet (UTC)';
+
+    ws.getCell('A27').value = 'start_location';
+    ws.mergeCells('B27:D27');
+    ws.getCell('B27').value = 'Nom de la commune de départ';
+
+    ws.getCell('A28').value = 'start_epci';
+    ws.mergeCells('B28:D28');
+    ws.getCell('B28').value = 'Nom de l\'EPCI de départ';
+
+    ws.getCell('A29').value = 'start_insee';
+    ws.mergeCells('B29:D29');
+    ws.getCell('B29').value = 'Code INSEE de la commune de départ';
+
+    ws.getCell('A30').value = 'end_location';
+    ws.mergeCells('B30:D30');
+    ws.getCell('B30').value = 'Nom de la commune d\'arrivée';
+
+    ws.getCell('A31').value = 'end_epci';
+    ws.mergeCells('B31:D31');
+    ws.getCell('B31').value = 'Nom de l\'EPCI d\'arrivée';
+
+    ws.getCell('A32').value = 'end_insee';
+    ws.mergeCells('B32:D32');
+    ws.getCell('B32').value = 'Code INSEE de la commune d\'arrivée';
+
+    ws.getCell('A33').value = 'duration';
+    ws.mergeCells('B33:D33');
+    ws.getCell('B33').value = 'Durée du trajet en secondes';
+
+    ws.getCell('A34').value = 'distance';
+    ws.mergeCells('B34:D34');
+    ws.getCell('B34').value = 'Distance du trajet en mètres';
+
+    ws.getCell('A35').value = 'operator';
+    ws.mergeCells('B35:D35');
+    ws.getCell('B35').value = 'Nom de l\'opérateur';
+
+    ws.getCell('A36').value = 'operator_class';
+    ws.mergeCells('B36:D36');
+    ws.getCell('B36').value = 'Classe du trajet envoyée par l\'opérateur (A, B, C)';
+
+    ws.getCell('A37').value = 'operator_driver_id';
+    ws.mergeCells('B37:D37');
+    ws.getCell('B37').value = 'Identifiant du conducteur envoyé par l\'opérateur';
+
+    ws.getCell('A38').value = 'operator_passenger_id';
+    ws.mergeCells('B38:D38');
+    ws.getCell('B38').value = 'Identifiant du passager envoyé par l\'opérateur';
+
+    ws.getCell('A39').value = 'rpc_incentive';
+    ws.mergeCells('B39:D39');
+    ws.getCell('B39').value = 'Montant d\'incitation calculé par le RPC en euros';
+
+    ws.getCell('A40').value = 'incentive_type';
+    ws.mergeCells('B40:D40');
+    ws.getCell('B40').value = 'Type d\'incitation (normale ou booster)';
+
+    // --------------------------------------------------------------------------------
     // Rules
-    /* eslint-disable prettier/prettier,max-len */
+    // --------------------------------------------------------------------------------
 
     // Heading
     ws.mergeCells('G1:L1');
@@ -71,7 +165,7 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     ws.getCell('G14').value = {text: 'Synthèse par tranche', hyperlink: '#\'Synthèse par tranche\'!A1'};
     ws.getCell('G14').font = { name: 'Arial', size: 12, bold: true };
     ws.mergeCells('G15:L22');
-    ws.getCell('G15').value = 'La synthèse par tranche présente un résumé des montants d\'incitations financières en fonction des différentes tranches tarifaires de la campagnes d\'incitation.\n\nUn second tableau "Tranche "période booster" complète le premier pour les campagnes appliquant ponctuellement des règles de campagne différentes.';
+    ws.getCell('G15').value = 'La synthèse par tranche présente un résumé des montants d\'incitations financières en fonction des différentes tranches tarifaires de la campagnes d\'incitation.\n\nUn second tableau tranche "période booster" complète le premier pour les campagnes appliquant ponctuellement des règles de campagne différentes.';
     ws.getCell('G15').alignment = { wrapText: true, vertical: 'top' };
 
     // Second tab
@@ -81,14 +175,14 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     ws.mergeCells('G24:L28');
     ws.getCell('G24').value = 'L\'onglet "Trajets" présente l\'ensemble des trajets éligibles réalisés par un opérateur donné sur un mois donné.\n\nVoir définition de chacun des champs dans notre documentation publique.';
     ws.getCell('G24').alignment = { wrapText: true, vertical: 'top' };
-    
+
     // Heading
     ws.mergeCells('G30:L30');
     ws.getCell('G30').value = 'LIENS UTILES';
     ws.getCell('G30').font = { name: 'Arial', size: 12, bold: true };
     ws.getCell('G30').alignment = { horizontal: 'center', vertical: 'middle' };
     ws.getCell('G30').border = { bottom: { style: 'thin' } };
-    
+
     // Link to documentation
     ws.mergeCells('G32:L32');
     ws.getCell(`G32`).value = { text: 'Documentation générale', hyperlink: 'https://doc.covoiturage.beta.gouv.fr' };
@@ -97,11 +191,13 @@ export class SlicesWorksheetWriter extends AbstractWorksheetWriter {
     ws.mergeCells('G34:L34');
     ws.getCell(`G34`).value = { text: 'Dashboard territoire du RPC', hyperlink: 'https://app.covoiturage.beta.gouv.fr' };
     ws.mergeCells('G35:L35');
-    ws.getCell(`G35`).value = { text: 'contact@covoiturage.beta.gouv.fr', hyperlink: 'mailto:contact@covoiturage.beta.gouv.fr' };
+    ws.getCell(`G35`).value = { text: 'Conditions Générale d\'Utilisation du RPC', hyperlink: 'https://doc.covoiturage.beta.gouv.fr/nos-services/api-primo-conducteurs-cee/cgu' };
+    ws.mergeCells('G36:L36');
+    ws.getCell(`G36`).value = { text: 'contact@covoiturage.beta.gouv.fr', hyperlink: 'mailto:contact@covoiturage.beta.gouv.fr' };
 
-    /* eslint-enable prettier/prettier,max-len */
 
     ws.commit();
+    /* eslint-enable prettier/prettier,max-len */
   }
 
   private drawSliceTable(
