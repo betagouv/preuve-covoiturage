@@ -15,7 +15,7 @@
     "start": "npm run dev",
     "dev": "NODE_OPTIONS=--openssl-legacy-provider vuepress dev --port 8081 docs",
     "gen": "node gen/index.js",
-    "build": "vuepress build docs"
+    "build": "NODE_OPTIONS=--openssl-legacy-provider vuepress build docs"
   },
   "devDependencies": {
     "vuepress": "^1.9.10",

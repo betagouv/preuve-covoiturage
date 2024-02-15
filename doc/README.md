@@ -15,6 +15,12 @@ npm run dev
 # browse to http://localhost:8080
 ```
 
+## Documentation OpenAPI
+
+L'interface OpenAPI dans les pages V3, V2 et CEE est générée par le plugin `openapi` de VuePress.
+
+Les fichiers à modifiers sont dans le dossier `.vuepress/public/specs/`.
+
 ## Génération de la documentation
 
 La documentation des services et des providers est générée à partir des commentaires extraits directement du code de l'API.
