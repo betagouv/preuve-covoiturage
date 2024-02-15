@@ -15,9 +15,9 @@ function sortRowValues(values: Row['values']): Row['values'] {
 let dataWorkBookWriter: TripsWorksheetWriter;
 
 const exportTripInterface: APDFTripInterface = {
-  operator_journey_id: faker.datatype.uuid(),
-  trip_id: faker.datatype.uuid(),
-  operator_trip_id: faker.datatype.uuid(),
+  operator_journey_id: faker.datatype.uuid().toUpperCase(),
+  trip_id: faker.datatype.uuid().toUpperCase(),
+  operator_trip_id: faker.datatype.uuid().toUpperCase(),
   start_datetime: faker.date.past(2).toISOString(),
   end_datetime: faker.date.future(2).toISOString(),
   start_location: faker.address.cityName(),
@@ -30,8 +30,8 @@ const exportTripInterface: APDFTripInterface = {
   distance: faker.datatype.number({ min: 1_500, max: 150_000 }),
   operator: faker.company.companyName(),
   operator_class: 'C',
-  operator_driver_id: faker.datatype.uuid(),
-  operator_passenger_id: faker.datatype.uuid(),
+  operator_driver_id: faker.datatype.uuid().toUpperCase(),
+  operator_passenger_id: faker.datatype.uuid().toUpperCase(),
   incentive_type: faker.helpers.arrayElement(['normale', 'booster']),
   rpc_incentive: faker.datatype.number(1000),
 };

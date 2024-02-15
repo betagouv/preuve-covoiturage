@@ -22,6 +22,8 @@ export function normalize(src: APDFTripInterface, booster_dates: Set<string>, ti
     operator_journey_id: src.operator_journey_id.toUpperCase(),
     trip_id: src.trip_id.toUpperCase(),
     operator_trip_id: src.operator_trip_id.toUpperCase(),
+    operator_driver_id: src.operator_driver_id.toUpperCase(),
+    operator_passenger_id: src.operator_passenger_id.toUpperCase(),
 
     start_datetime: sdf,
     end_datetime: edf,
