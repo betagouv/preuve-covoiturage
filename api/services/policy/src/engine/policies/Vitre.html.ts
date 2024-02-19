@@ -1,10 +1,11 @@
-export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
-<p>Campagne d’incitation au covoiturage du <b> 01 janvier 2023 au 28 février 2024</b>, toute la semaine
+export const description =
+  `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
+<p>Campagne d’incitation au covoiturage du <b> 01 janvier 2023 au 31 décembre 2025</b>, toute la semaine
 </p>
 <p>Cette campagne est limitée à
-  <b>239 000 euros </b>.
+  <b>361 000 euros </b>.
 </p>
-<p>Les <b> passagers </b> effectuant un trajet d'au moins 2 km dans la l'AOM Vitré Communauté 
+<p>Les <b> passagers </b> effectuant un trajet d'au moins 2 km avec pour origine ET destination dans la l'AOM Vitré Communauté 
 sont incités.
 </p>
 <p>Les <b> conducteurs et passagers </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes avant le 17 Juillet 2023:
