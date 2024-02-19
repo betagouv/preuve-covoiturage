@@ -1,5 +1,6 @@
-export const description = `<p _ngcontent-moy-c231="" id="summary" class="campaignSummaryText-content-text">
-  <p>Campagne d’incitation au covoiturage du <b> 01 janvier 2023 au 24 février 2024</b>
+export const description =
+  `<p _ngcontent-moy-c231="" id="summary" class="campaignSummaryText-content-text">
+  <p>Campagne d’incitation au covoiturage du <b> 01 janvier 2023 au 31 décembre 2024</b>
   </p>
   <p>Cette campagne est limitée à <b>400 000,00</b> euros
   </p>
