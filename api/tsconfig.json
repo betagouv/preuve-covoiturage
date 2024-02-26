@@ -18,8 +18,18 @@
     "outDir": "dist",
     "incremental": true,
     "baseUrl": ".",
-    "lib": ["ES2022"]
+    "lib": ["ES2022"],
+    "paths": {
+      "@pdc/*": ["pdc/*"],
+      "@ilos/*": ["ilos/*"],
+      "@config/*": ["config/*"],
+    }
   },
-  "include": ["src/**/*"],
+  "include": [
+    "pdc/**/*",
+    "ilos/**/*",
+    "config/*",
+  ],
+
   "exclude": ["node_modules"]
 }
