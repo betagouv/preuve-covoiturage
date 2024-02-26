@@ -20,20 +20,15 @@
     "baseUrl": ".",
     "lib": ["ES2022"],
     "paths": {
-      "@pdc/*": ["pdc/*"],
-      "@ilos/*": ["ilos/*"],
-      "@config/*": ["config/*"],
-      "@shared/*": ["shared/*"],
-      "@db/*": ["db/*"],
+      "@pdc/*": ["src/pdc/*"],
+      "@ilos/*": ["src/ilos/*"],
+      "@config/*": ["src/config/*"],
+      "@shared/*": ["src/shared/*"],
+      "@db/*": ["src/db/*"],
     }
   },
   "include": [
-    "pdc/**/*",
-    "ilos/**/*",
-    "config/*",
-    "shared/**/*",
-    "db/**/*"
+    "src/**/*",
   ],
-
   "exclude": ["node_modules"]
 }

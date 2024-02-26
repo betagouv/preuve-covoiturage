@@ -1,11 +1,11 @@
-build package:
-  npm run --workspace {{ package }} build
+build:
+  npm run build
 
-test package type:
-  just build {{ package }}
+test type:
+  just build
   APP_POSTGRES_URL=postgres://postgres:postgres@localhost:5432/local \
   APP_REDIS_URL=redis://localhost:6379 \
-  npm run --workspace {{ package }} test:{{ type }}
+  npm run test:{{ type }}
 
 start_env:
   cd .. && docker-compose -f ./docker-compose.e2e.yml -f ./docker-compose.dev.yml up -d postgres redis
