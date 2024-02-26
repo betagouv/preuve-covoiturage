@@ -112,7 +112,7 @@ test.before(async (t) => {
   t.context.request = supertest(t.context.app);
 });
 
-test('[Route mapping] works', async (t) => {
+test.serial('[Route mapping] works', async (t) => {
   const response = await t.context.request
     .post('/user')
     .send({
@@ -132,7 +132,7 @@ test('[Route mapping] works', async (t) => {
   );
 });
 
-test('[Route mapping] works with url params', async (t) => {
+test.serial('[Route mapping] works with url params', async (t) => {
   const response = await t.context.request
     .post('/user/1')
     .send({
@@ -153,7 +153,7 @@ test('[Route mapping] works with url params', async (t) => {
   );
 });
 
-test('[Route mapping] works with query params', async (t) => {
+test.serial('[Route mapping] works with query params', async (t) => {
   const response = await t.context.request
     .get('/user/?orderBy=date')
     .set('Accept', 'application/json')
@@ -168,7 +168,7 @@ test('[Route mapping] works with query params', async (t) => {
   );
 });
 
-test('[Route mapping] works with response mapping', async (t) => {
+test.serial('[Route mapping] works with response mapping', async (t) => {
   const response = await t.context.request
     .get('/user/1')
     .set('Accept', 'application/json')

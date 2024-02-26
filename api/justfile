@@ -1,10 +1,10 @@
 build:
   npm run build
 
-test type:
+test type pattern:
   APP_POSTGRES_URL=postgres://postgres:postgres@localhost:5432/local \
   APP_REDIS_URL=redis://localhost:6379 \
-  npm run test:{{ type }}
+  npm run test:{{ type }} -- {{ pattern }}
 
 start_env:
   cd .. && docker-compose -f ./docker-compose.e2e.yml -f ./docker-compose.dev.yml up -d postgres redis
