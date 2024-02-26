@@ -4,7 +4,7 @@ import { kernel as kernelDecorator } from '@ilos/common';
 
 import { ServiceProvider } from '../ServiceProvider';
 import { OperatorPgRepositoryProvider } from './OperatorPgRepositoryProvider';
-import { PostgresConnection } from '@ilos/connection-postgres/dist';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
 interface TestContext {
   connection: PostgresConnection;

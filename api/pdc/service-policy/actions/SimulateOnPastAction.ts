@@ -3,9 +3,9 @@ import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import Redis from 'ioredis';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPast.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/simulateOnPast.contract';
 
-import { RedisConnection } from '@ilos/connection-redis/dist';
+import { RedisConnection } from '@ilos/connection-redis';
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
 import {
@@ -13,7 +13,7 @@ import {
   TerritoryRepositoryProviderInterfaceResolver,
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
-import { alias } from '../shared/policy/simulateOnPast.schema';
+import { alias } from '@shared/policy/simulateOnPast.schema';
 
 @handler({
   ...handlerConfig,

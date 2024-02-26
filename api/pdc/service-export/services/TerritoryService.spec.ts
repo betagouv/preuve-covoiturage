@@ -1,6 +1,6 @@
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
-import { TerritoryCodeEnum } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritoryCodeEnum } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
 import { TerritoryService } from './TerritoryService';
 import { KernelInterfaceResolver } from '@ilos/common';
 

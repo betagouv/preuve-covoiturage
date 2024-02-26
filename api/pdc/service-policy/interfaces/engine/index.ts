@@ -1,9 +1,9 @@
-import { BoundedSlices, SliceInterface, UnboundedSlices } from '../../shared/policy/common/interfaces/Slices';
+import { BoundedSlices, SliceInterface, UnboundedSlices } from '@shared/policy/common/interfaces/Slices';
 import {
   TerritoryCodeEnum,
   TerritoryCodeInterface,
   TerritorySelectorsInterface,
-} from '../../shared/territory/common/interfaces/TerritoryCodeInterface';
+} from '@shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export {
   CommonIncentiveInterface,

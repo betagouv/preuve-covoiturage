@@ -16,11 +16,11 @@ import {
   InviteNotification,
   SimulatePolicyNotification,
 } from '../notifications';
-import { ParamsInterface as SimulationPolicyParamsInterface } from '../shared/user/simulatePolicyform.contract';
-import { ResultInterface as SimulateOnPastResult } from '../shared/policy/simulateOnPastGeo.contract';
-import { PolicyTemplateDescriptions } from '../shared/policy/common/classes/PolicyTemplateDescription';
+import { ParamsInterface as SimulationPolicyParamsInterface } from '@shared/user/simulatePolicyform.contract';
+import { ResultInterface as SimulateOnPastResult } from '@shared/policy/simulateOnPastGeo.contract';
+import { PolicyTemplateDescriptions } from '@shared/policy/common/classes/PolicyTemplateDescription';
 
-import { ParamsInterface as SendMailParamsInterface } from '../shared/user/notify.contract';
+import { ParamsInterface as SendMailParamsInterface } from '@shared/user/notify.contract';
 
 @provider()
 export class UserNotificationProvider {

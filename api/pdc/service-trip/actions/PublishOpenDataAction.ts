@@ -3,8 +3,8 @@ import { Action } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { UploadedResource } from '../interfaces';
 import { DataGouvProvider } from '../providers/DataGouvProvider';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/publishOpenData.contract';
-import { alias } from '../shared/trip/publishOpenData.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/publishOpenData.contract';
+import { alias } from '@shared/trip/publishOpenData.schema';
 import { BuildResourceDescription } from './opendata/BuildResourceDescription';
 import { GetRessourceIdIfExists } from './opendata/GetRessourceIdIfExists';
 

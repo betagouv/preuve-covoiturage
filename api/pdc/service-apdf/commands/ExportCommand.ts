@@ -2,12 +2,12 @@ import { coerceDate, coerceIntList } from '@ilos/cli';
 import { command, CommandInterface, CommandOptionType, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { set } from 'lodash';
-import { signature as exportSignature } from '../shared/apdf/export.contract';
+import { signature as exportSignature } from '@shared/apdf/export.contract';
 import {
   ParamsInterface as ListCampaignsParams,
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
-} from '../shared/policy/list.contract';
+} from '@shared/policy/list.contract';
 
 interface Options {
   campaigns: number[];

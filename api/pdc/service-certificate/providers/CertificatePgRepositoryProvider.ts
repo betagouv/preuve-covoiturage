@@ -5,9 +5,9 @@ import {
   CertificateRepositoryProviderInterface,
   CertificateRepositoryProviderInterfaceResolver,
 } from '../interfaces/CertificateRepositoryProviderInterface';
-import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
-import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
-import { Pagination } from '../shared/certificate/list.contract';
+import { CertificateBaseInterface } from '@shared/certificate/common/interfaces/CertificateBaseInterface';
+import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface';
+import { Pagination } from '@shared/certificate/list.contract';
 
 type QueryConfig = { text: string; values: any[] };
 

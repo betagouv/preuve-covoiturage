@@ -1,10 +1,10 @@
 import { handler, ContextType } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware/dist';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/patchContacts.contract';
-import { alias } from '../shared/operator/patchContacts.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/operator/patchContacts.contract';
+import { alias } from '@shared/operator/patchContacts.schema';
 import { phoneComplianceHelper } from '../helpers/phoneComplianceHelper';
 
 @handler({

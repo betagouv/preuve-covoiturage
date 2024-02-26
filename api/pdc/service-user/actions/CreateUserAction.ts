@@ -8,8 +8,8 @@ import {
 } from '@ilos/common';
 import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/create.contract';
-import { alias } from '../shared/user/create.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/create.contract';
+import { alias } from '@shared/user/create.schema';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';

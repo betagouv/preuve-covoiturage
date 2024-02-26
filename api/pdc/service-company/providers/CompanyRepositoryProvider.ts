@@ -6,7 +6,7 @@ import {
   CompanyRepositoryProviderInterface,
 } from '../interfaces/CompanyRepositoryProviderInterface';
 
-import { CompanyInterface } from '../shared/common/interfaces/CompanyInterface2';
+import { CompanyInterface } from '@shared/common/interfaces/CompanyInterface2';
 
 @provider({
   identifier: CompanyRepositoryProviderInterfaceResolver,

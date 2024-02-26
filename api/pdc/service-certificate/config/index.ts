@@ -1,4 +1,4 @@
-import * as connections from './connections';
+import * as connections from '@config/connections';
 import * as templates from './templates';
 import * as url from './url';
 

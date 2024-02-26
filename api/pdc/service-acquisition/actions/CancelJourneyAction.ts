@@ -2,15 +2,15 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/cancel.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/cancel.contract';
 import {
   signature as updateStatusSignature,
   ParamsInterface as UpdateStatusParams,
-} from '../shared/carpool/updateStatus.contract';
-import { alias } from '../shared/acquisition/cancel.schema';
+} from '@shared/carpool/updateStatus.contract';
+import { alias } from '@shared/acquisition/cancel.schema';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { callContext } from '../config/callContext';
-import { StatusEnum } from '../shared/acquisition/status.contract';
+import { StatusEnum } from '@shared/acquisition/status.contract';
 
 @handler({
   ...handlerConfig,

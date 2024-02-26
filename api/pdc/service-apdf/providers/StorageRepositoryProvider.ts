@@ -5,7 +5,7 @@ import {
   SerializedPolicyInterface,
   StorageRepositoryProviderInterfaceResolver,
 } from '../interfaces/StorageRepositoryProviderInterface';
-import { EnrichedApdfType } from '../shared/apdf/list.contract';
+import { EnrichedApdfType } from '@shared/apdf/list.contract';
 
 @provider({
   identifier: StorageRepositoryProviderInterfaceResolver,

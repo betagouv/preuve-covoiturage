@@ -1,8 +1,8 @@
 import anyTest, { TestFn } from 'ava';
 import { createSign } from 'crypto';
-import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
+import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@pdc/provider-test';
 import { ServiceProvider } from '../ServiceProvider';
-import { ParamsInterface, ResultInterface, handlerConfig } from '../shared/cee/registerApplication.contract';
+import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/registerApplication.contract';
 import { config } from '../config';
 import { ContextType } from '@ilos/common';
 import {
@@ -12,7 +12,7 @@ import {
   operatorJourneyIdSchema,
   phoneTruncSchema,
   timestampSchema,
-} from '../shared/cee/common/ceeSchema';
+} from '@shared/cee/common/ceeSchema';
 
 const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
   ServiceProvider,

@@ -22,13 +22,13 @@ import { scopeToGroupBinding } from './middleware/ScopeToGroupMiddleware';
 import { DataGouvProvider } from './providers/DataGouvProvider';
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
-import { binding as buildExportBinding } from './shared/trip/buildExport.schema';
-import { binding as exportBinding } from './shared/trip/export.schema';
-import { binding as listBinding } from './shared/trip/listTrips.schema';
-import { binding as publishOpenDataBinding } from './shared/trip/publishOpenData.schema';
-import { binding as searchCountBinding } from './shared/trip/searchcount.schema';
-import { binding as sendExportBinding } from './shared/trip/sendExport.schema';
-import { binding as statsBinding } from './shared/trip/stats.schema';
+import { binding as buildExportBinding } from '@shared/trip/buildExport.schema';
+import { binding as exportBinding } from '@shared/trip/export.schema';
+import { binding as listBinding } from '@shared/trip/listTrips.schema';
+import { binding as publishOpenDataBinding } from '@shared/trip/publishOpenData.schema';
+import { binding as searchCountBinding } from '@shared/trip/searchcount.schema';
+import { binding as sendExportBinding } from '@shared/trip/sendExport.schema';
+import { binding as statsBinding } from '@shared/trip/stats.schema';
 
 @serviceProvider({
   config,

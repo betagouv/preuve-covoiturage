@@ -5,8 +5,8 @@ import { getDeclaredOperators, getPolicySiretList, siretToOperatorId } from './g
 import {
   ParamsInterface as FindBySiretParams,
   ResultInterface as FindBySiretResult,
-} from '../shared/operator/findbysiret.contract';
-import { ResultInterface as PolicyFindResult } from '../shared/policy/find.contract';
+} from '@shared/operator/findbysiret.contract';
+import { ResultInterface as PolicyFindResult } from '@shared/policy/find.contract';
 
 interface Context {
   kernel: KernelInterfaceResolver;

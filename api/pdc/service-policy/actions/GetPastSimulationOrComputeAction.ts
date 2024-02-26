@@ -7,11 +7,11 @@ import {
   signature as simulatePastSignature,
   handlerConfig as simulatePastHandler,
   ParamsInterface as SimulateOnPastParams,
-} from '../shared/policy/simulateOnPast.contract';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/getPastSimulationOrCompute.contract';
+} from '@shared/policy/simulateOnPast.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/getPastSimulationOrCompute.contract';
 
-import { RedisConnection } from '@ilos/connection-redis/dist';
-import { alias } from '../shared/policy/simulateOnPast.schema';
+import { RedisConnection } from '@ilos/connection-redis';
+import { alias } from '@shared/policy/simulateOnPast.schema';
 
 @handler({
   ...handlerConfig,

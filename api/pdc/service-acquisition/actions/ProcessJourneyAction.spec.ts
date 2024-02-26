@@ -4,10 +4,10 @@ import { ProcessJourneyAction } from './ProcessJourneyAction';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { KernelInterfaceResolver } from '@ilos/common';
 import { NormalizationProvider } from '@pdc/provider-normalization';
-import { ConfigStore } from '@ilos/core/dist/extensions';
+import { ConfigStore } from '@ilos/core/extensions';
 
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
-import { signature } from '../shared/carpool/crosscheck.contract';
+import { signature } from '@shared/carpool/crosscheck.contract';
 import { callContext } from '../config/callContext';
 
 function bootstap(): {

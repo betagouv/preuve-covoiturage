@@ -2,12 +2,12 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../../shared/observatory/keyfigures/monthlyKeyfigures.schema';
+import { alias } from '@shared/observatory/keyfigures/monthlyKeyfigures.schema';
 import {
   handlerConfig,
   ResultInterface,
   ParamsInterface,
-} from '../../shared/observatory/keyfigures/monthlyKeyfigures.contract';
+} from '@shared/observatory/keyfigures/monthlyKeyfigures.contract';
 import { KeyfiguresRepositoryInterfaceResolver } from '../../interfaces/KeyfiguresRepositoryProviderInterface';
 import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 

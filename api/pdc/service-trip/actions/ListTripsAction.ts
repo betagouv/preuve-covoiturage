@@ -4,8 +4,8 @@ import { copyFromContextMiddleware, validateDateMiddleware } from '@pdc/provider
 import * as middlewareConfig from '../config/middlewares';
 import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/listTrips.contract';
-import { alias } from '../shared/trip/listTrips.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/listTrips.contract';
+import { alias } from '@shared/trip/listTrips.schema';
 
 @handler({
   ...handlerConfig,

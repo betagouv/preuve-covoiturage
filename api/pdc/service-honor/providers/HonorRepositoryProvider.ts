@@ -5,7 +5,7 @@ import {
   DataSetInterface,
   ParamsInterface as StatsParamsInterface,
   ResultInterface as StatsResultInterface,
-} from '../shared/honor/stats.contract';
+} from '@shared/honor/stats.contract';
 
 type StatsResponseRow = {
   day: string | null;

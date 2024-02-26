@@ -19,8 +19,8 @@ import {
   PdfCertProviderInterfaceResolver,
 } from './interfaces/PdfCertProviderInterfaceResolver';
 import { PdfTemplateData } from './interfaces/PdfTemplateData';
-import { CarpoolInterface, CarpoolTypeEnum } from './shared/certificate/common/interfaces/CarpoolInterface';
-import { MetaPersonInterface } from './shared/certificate/common/interfaces/CertificateMetaInterface';
+import { CarpoolInterface, CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface';
+import { MetaPersonInterface } from '@shared/certificate/common/interfaces/CertificateMetaInterface';
 
 type TextOptions = Partial<PDFPageDrawTextOptions & { align: TextAlignment; maxChars: number; maxLines: number }>;
 

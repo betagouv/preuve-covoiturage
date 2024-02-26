@@ -1,8 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/confirmEmail.contract';
-import { alias } from '../shared/user/confirmEmail.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/confirmEmail.contract';
+import { alias } from '@shared/user/confirmEmail.schema';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 import { challengeTokenMiddleware } from '../middlewares/ChallengeTokenMiddleware';
 

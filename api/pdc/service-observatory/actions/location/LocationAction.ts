@@ -2,8 +2,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../../shared/observatory/location/location.schema';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../../shared/observatory/location/location.contract';
+import { alias } from '@shared/observatory/location/location.schema';
+import { handlerConfig, ResultInterface, ParamsInterface } from '@shared/observatory/location/location.contract';
 import { LocationRepositoryInterfaceResolver } from '../../interfaces/LocationRepositoryProviderInterface';
 
 @handler({

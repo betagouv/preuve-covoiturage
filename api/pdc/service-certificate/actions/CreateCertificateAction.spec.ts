@@ -6,12 +6,12 @@ import sinon, { SinonStub } from 'sinon';
 import { mapFromCarpools } from '../helpers/mapFromCarpools';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
-import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
-import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
-import { CertificateMetaInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
-import { ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
-import { WithHttpStatus } from '../shared/common/handler/WithHttpStatus';
+import { CarpoolInterface, CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface';
+import { CertificateBaseInterface } from '@shared/certificate/common/interfaces/CertificateBaseInterface';
+import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface';
+import { CertificateMetaInterface } from '@shared/certificate/common/interfaces/CertificateMetaInterface';
+import { ParamsInterface, ResultInterface } from '@shared/certificate/create.contract';
+import { WithHttpStatus } from '@shared/common/handler/WithHttpStatus';
 import { CreateCertificateAction } from './CreateCertificateAction';
 
 interface Context {

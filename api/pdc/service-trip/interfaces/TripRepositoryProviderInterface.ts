@@ -1,10 +1,10 @@
-import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
-import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
-import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
+import { ResultWithPagination } from '@shared/common/interfaces/ResultWithPagination';
+import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor';
+import { LightTripInterface } from '@shared/trip/common/interfaces/LightTripInterface';
 import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
-} from '../shared/trip/common/interfaces/TripSearchInterface';
+} from '@shared/trip/common/interfaces/TripSearchInterface';
 import { ExportTripInterface } from './ExportTripInterface';
 import { FinancialStatInterface, StatInterface } from './StatInterface';
 

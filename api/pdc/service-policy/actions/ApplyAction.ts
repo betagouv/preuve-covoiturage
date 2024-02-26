@@ -10,8 +10,8 @@ import {
   StatelessIncentiveInterface,
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/apply.contract';
-import { alias } from '../shared/policy/apply.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/apply.contract';
+import { alias } from '@shared/policy/apply.schema';
 
 @handler({
   ...handlerConfig,

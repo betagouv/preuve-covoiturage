@@ -2,12 +2,12 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, UnauthorizedException } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/sendInvitationEmail.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/sendInvitationEmail.contract';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { alias } from '../shared/user/sendInvitationEmail.schema';
+import { alias } from '@shared/user/sendInvitationEmail.schema';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';
-import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
+import { UserFindInterface } from '@shared/user/common/interfaces/UserFindInterface';
 
 /*
  * send the confirmation email to a user by _id

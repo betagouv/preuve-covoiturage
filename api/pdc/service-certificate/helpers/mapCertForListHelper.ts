@@ -1,5 +1,5 @@
-import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
-import { ResultRowInterface, RowType } from '../shared/certificate/common/interfaces/ResultRowInterface';
+import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface';
+import { ResultRowInterface, RowType } from '@shared/certificate/common/interfaces/ResultRowInterface';
 
 export function mapCertForListHelper(cert: CertificateInterface): ResultRowInterface {
   return {

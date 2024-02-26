@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { httpMacro, HttpMacroContext } from '@pdc/helper-test';
+import { httpMacro, HttpMacroContext } from '@pdc/provider-test';
 
 import { bootstrap } from './bootstrap';
 

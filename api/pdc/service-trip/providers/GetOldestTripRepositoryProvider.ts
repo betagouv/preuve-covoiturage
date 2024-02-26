@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres/dist';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
 @provider()
 export class GetOldestTripDateRepositoryProvider {

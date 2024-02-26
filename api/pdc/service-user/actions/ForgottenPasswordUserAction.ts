@@ -1,8 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/forgottenPassword.contract';
-import { alias } from '../shared/user/forgottenPassword.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/forgottenPassword.contract';
+import { alias } from '@shared/user/forgottenPassword.schema';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';

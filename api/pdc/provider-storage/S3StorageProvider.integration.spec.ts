@@ -1,4 +1,4 @@
-import { ConfigStore } from '@ilos/core/dist/extensions';
+import { ConfigStore } from '@ilos/core/extensions';
 import test from 'ava';
 import axios from 'axios';
 import { writeFile } from 'fs/promises';

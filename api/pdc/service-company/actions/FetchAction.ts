@@ -5,8 +5,8 @@ import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 import { CompanyDataSourceProviderInterfaceResolver } from '../interfaces/CompanyDataSourceProviderInterface';
 import { CompanyRepositoryProviderInterfaceResolver } from '../interfaces/CompanyRepositoryProviderInterface';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/company/fetch.contract';
-import { alias } from '../shared/company/fetch.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/company/fetch.contract';
+import { alias } from '@shared/company/fetch.schema';
 
 @handler({
   ...handlerConfig,

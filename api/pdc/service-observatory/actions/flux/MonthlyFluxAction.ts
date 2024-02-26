@@ -2,8 +2,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../../shared/observatory/flux/monthlyFlux.schema';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../../shared/observatory/flux/monthlyFlux.contract';
+import { alias } from '@shared/observatory/flux/monthlyFlux.schema';
+import { handlerConfig, ResultInterface, ParamsInterface } from '@shared/observatory/flux/monthlyFlux.contract';
 import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface';
 import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 

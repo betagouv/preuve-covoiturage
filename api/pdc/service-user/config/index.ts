@@ -1,5 +1,5 @@
 import * as ajv from './ajv';
-import * as connections from './connections';
+import * as connections from '@config/connections';
 import * as contactform from './contactform';
 import * as filterOutput from './filterOutput';
 import * as groups from './groups';

@@ -2,8 +2,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/changeRole.contract';
-import { alias } from '../shared/user/changeRole.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/changeRole.contract';
+import { alias } from '@shared/user/changeRole.schema';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
 /*

@@ -3,7 +3,7 @@ import { ContextType, KernelInterfaceResolver } from '@ilos/common';
 import sinon, { SinonStub } from 'sinon';
 import { SimulateOnPastByGeoAction } from './SimulateOnPastByGeoAction';
 import { CarpoolInterface, PolicyInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces';
-import { ResultInterface } from '../shared/policy/simulateOnPastGeo.contract';
+import { ResultInterface } from '@shared/policy/simulateOnPastGeo.contract';
 import faker from '@faker-js/faker';
 
 interface Context {

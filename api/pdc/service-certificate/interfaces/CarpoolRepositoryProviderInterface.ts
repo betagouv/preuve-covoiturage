@@ -1,5 +1,5 @@
-import { PointInterface } from '../shared/common/interfaces/PointInterface';
-import { CarpoolInterface } from '../shared/certificate/common/interfaces/CarpoolInterface';
+import { PointInterface } from '@shared/common/interfaces/PointInterface';
+import { CarpoolInterface } from '@shared/certificate/common/interfaces/CarpoolInterface';
 export interface FindParamsInterface {
   identities: number[];
   operator_id: number;

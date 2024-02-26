@@ -3,8 +3,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import { mapCertForListHelper } from '../helpers/mapCertForListHelper';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/list.contract';
-import { alias } from '../shared/certificate/list.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/certificate/list.contract';
+import { alias } from '@shared/certificate/list.schema';
 
 @handler({
   ...handlerConfig,

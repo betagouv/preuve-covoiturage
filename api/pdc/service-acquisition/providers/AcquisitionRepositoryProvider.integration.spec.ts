@@ -1,6 +1,6 @@
 import { NotFoundException } from '@ilos/common';
-import { Carpool } from '@pdc/helper-seed/src/carpools';
-import { DbContext, makeDbBeforeAfter } from '@pdc/helper-test';
+import { Carpool } from '@pdc/provider-seed/carpools';
+import { DbContext, makeDbBeforeAfter } from '@pdc/provider-test';
 import anyTest, { TestFn } from 'ava';
 import { subDays } from 'date-fns';
 import {
@@ -8,7 +8,7 @@ import {
   AcquisitionErrorStageEnum,
   AcquisitionStatusEnum,
 } from '../interfaces/AcquisitionRepositoryProviderInterface';
-import { StatusEnum } from '../shared/acquisition/status.contract';
+import { StatusEnum } from '@shared/acquisition/status.contract';
 import { AcquisitionRepositoryProvider } from './AcquisitionRepositoryProvider';
 
 interface TestContext {

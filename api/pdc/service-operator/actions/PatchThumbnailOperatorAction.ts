@@ -1,10 +1,10 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware/dist';
+import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/patchThumbnail.contract';
-import { alias } from '../shared/operator/patchThumbnail.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/operator/patchThumbnail.contract';
+import { alias } from '@shared/operator/patchThumbnail.schema';
 
 @handler({
   ...handlerConfig,

@@ -1,7 +1,7 @@
 import { Timezone } from '@pdc/provider-validator';
 import { get } from 'lodash';
-import { castUserStringToUTC, toTzString } from '../helpers/shared/dates.helper';
-import { SingleResultInterface as RawCampaignInterface } from '../shared/policy/list.contract';
+import { castUserStringToUTC, toTzString } from '../helpers';
+import { SingleResultInterface as RawCampaignInterface } from '@shared/policy/list.contract';
 
 export enum CampaignMode {
   Normal = 'normal',

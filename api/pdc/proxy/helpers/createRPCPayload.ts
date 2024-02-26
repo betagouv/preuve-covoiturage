@@ -1,5 +1,5 @@
 import { ParamsType, RPCSingleCallType } from '@ilos/common';
-import { UserInterface } from '../shared/user/common/interfaces/UserInterface';
+import { UserInterface } from '@shared/user/common/interfaces/UserInterface';
 import { injectContext } from './injectContext';
 
 export function createRPCPayload(

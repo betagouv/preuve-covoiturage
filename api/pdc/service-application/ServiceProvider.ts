@@ -5,10 +5,10 @@ import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { config } from './config';
-import { binding as listBinding } from './shared/application/list.schema';
-import { binding as findBinding } from './shared/application/find.schema';
-import { binding as createBinding } from './shared/application/create.schema';
-import { binding as revokeBinding } from './shared/application/revoke.schema';
+import { binding as listBinding } from '@shared/application/list.schema';
+import { binding as findBinding } from '@shared/application/find.schema';
+import { binding as createBinding } from '@shared/application/create.schema';
+import { binding as revokeBinding } from '@shared/application/revoke.schema';
 import { ListApplicationAction } from './actions/ListApplicationAction';
 import { FindApplicationAction } from './actions/FindApplicationAction';
 import { CreateApplicationAction } from './actions/CreateApplicationAction';

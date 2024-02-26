@@ -1,6 +1,6 @@
 import { StatInterface } from '../interfaces/StatInterface';
-import { ApiGraphTimeMode } from '../shared/trip/common/interfaces/ApiGraphTimeMode';
-import { ParamsInterface, ResultInterface } from '../shared/trip/stats.contract';
+import { ApiGraphTimeMode } from '@shared/trip/common/interfaces/ApiGraphTimeMode';
+import { ParamsInterface, ResultInterface } from '@shared/trip/stats.contract';
 
 export function fillWithZeroes(result: StatInterface[], params: ParamsInterface): ResultInterface {
   // results for totals don't need filling

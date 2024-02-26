@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
+import { makeDbBeforeAfter, DbContext } from '@pdc/provider-test';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool';
 import { CarpoolAcquisitionService } from './CarpoolAcquisitionService';
 import Sinon, { SinonSandbox } from 'sinon';

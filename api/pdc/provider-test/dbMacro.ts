@@ -1,5 +1,5 @@
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { Migrator } from '@pdc/helper-seed';
+import { Migrator } from '@pdc/provider-seed';
 
 interface Config {
   connectionString: string;

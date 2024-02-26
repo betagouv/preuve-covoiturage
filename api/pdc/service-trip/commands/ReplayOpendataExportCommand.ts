@@ -6,7 +6,7 @@ import {
   ParamsInterface as BuildExportParamInterface,
   ResultInterface as BuildExportResultInterface,
   signature as buildExportSignature,
-} from '../shared/trip/buildExport.contract';
+} from '@shared/trip/buildExport.contract';
 
 export interface StartEndDate {
   start: Date;

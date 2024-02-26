@@ -1,5 +1,5 @@
 import { ContextType, KernelInterface } from '@ilos/common';
-import { IdentityIdentifiersInterface } from '../shared/certificate/common/interfaces/IdentityIdentifiersInterface';
+import { IdentityIdentifiersInterface } from '@shared/certificate/common/interfaces/IdentityIdentifiersInterface';
 
 export interface ParamsInterface {
   identity: IdentityIdentifiersInterface;

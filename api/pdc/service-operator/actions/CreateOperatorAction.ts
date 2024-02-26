@@ -4,8 +4,8 @@ import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { phoneComplianceHelper } from '../helpers/phoneComplianceHelper';
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/create.contract';
-import { alias } from '../shared/operator/create.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/operator/create.contract';
+import { alias } from '@shared/operator/create.schema';
 
 @handler({
   ...handlerConfig,

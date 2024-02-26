@@ -2,7 +2,7 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { OccupationRepositoryInterfaceResolver } from '../../interfaces/OccupationRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface } from '../../shared/observatory/occupation/insertMonthlyOccupation.contract';
+import { handlerConfig, ParamsInterface } from '@shared/observatory/occupation/insertMonthlyOccupation.contract';
 
 @handler({
   ...handlerConfig,

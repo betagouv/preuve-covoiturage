@@ -3,8 +3,8 @@ import { set, get } from 'lodash';
 import { KernelInterface, UnauthorizedException, ForbiddenException } from '@ilos/common';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
-import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
-import { TokenPayloadInterface } from '../shared/application/common/interfaces/TokenPayloadInterface';
+import { ApplicationInterface } from '@shared/application/common/interfaces/ApplicationInterface';
+import { TokenPayloadInterface } from '@shared/application/common/interfaces/TokenPayloadInterface';
 import { createRPCPayload } from '../helpers/createRPCPayload';
 
 interface Request extends express.Request {

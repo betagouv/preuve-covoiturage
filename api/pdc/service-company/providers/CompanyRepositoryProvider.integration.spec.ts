@@ -2,7 +2,7 @@ import anyTest, { TestFn } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { CompanyRepositoryProvider } from './CompanyRepositoryProvider';
-import { CompanyInterface } from '../shared/common/interfaces/CompanyInterface2';
+import { CompanyInterface } from '@shared/common/interfaces/CompanyInterface2';
 
 interface RepositoryTestFn {
   connection: PostgresConnection;

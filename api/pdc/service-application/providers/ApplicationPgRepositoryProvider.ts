@@ -1,11 +1,11 @@
 import { provider, NotFoundException, ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { RepositoryInterface as ListInterface } from '../shared/application/list.contract';
-import { RepositoryInterface as FindInterface } from '../shared/application/find.contract';
-import { RepositoryInterface as CreateInterface } from '../shared/application/create.contract';
-import { RepositoryInterface as RevokeInterface } from '../shared/application/revoke.contract';
-import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
+import { RepositoryInterface as ListInterface } from '@shared/application/list.contract';
+import { RepositoryInterface as FindInterface } from '@shared/application/find.contract';
+import { RepositoryInterface as CreateInterface } from '@shared/application/create.contract';
+import { RepositoryInterface as RevokeInterface } from '@shared/application/revoke.contract';
+import { ApplicationInterface } from '@shared/application/common/interfaces/ApplicationInterface';
 import {
   ApplicationRepositoryProviderInterface,
   ApplicationRepositoryProviderInterfaceResolver,

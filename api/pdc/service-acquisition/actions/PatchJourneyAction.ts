@@ -3,9 +3,9 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/patch.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/patch.contract';
 
-import { alias } from '../shared/acquisition/patch.schema';
+import { alias } from '@shared/acquisition/patch.schema';
 
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';

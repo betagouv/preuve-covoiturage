@@ -1,11 +1,11 @@
 import {
   ParamsInterface as FindBySirenParamsInterface,
   ResultInterface as FindBySirenResultInterface,
-} from '../shared/territory/findGeoBySiren.contract';
+} from '@shared/territory/findGeoBySiren.contract';
 import {
   ParamsInterface as ListGeoParamsInterface,
   ResultInterface as ListGeoResultInterface,
-} from '../shared/territory/listGeo.contract';
+} from '@shared/territory/listGeo.contract';
 
 export { ListGeoParamsInterface, ListGeoResultInterface };
 export interface GeoRepositoryProviderInterface {

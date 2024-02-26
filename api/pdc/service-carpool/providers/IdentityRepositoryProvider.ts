@@ -6,7 +6,7 @@ import {
   IdentityRepositoryProviderInterface,
   IdentityRepositoryProviderInterfaceResolver,
 } from '../interfaces/IdentityRepositoryProviderInterface';
-import { IdentityInterface } from '../shared/common/interfaces/IdentityInterface';
+import { IdentityInterface } from '@shared/common/interfaces/IdentityInterface';
 
 /*
  * Trip specific repository

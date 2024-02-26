@@ -14,7 +14,7 @@ import {
   UpdateParamsInterface,
   UpdateResultInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
-import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,

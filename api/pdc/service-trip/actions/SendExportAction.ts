@@ -3,13 +3,13 @@ import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { BucketName, S3StorageProvider } from '@pdc/provider-storage';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/sendExport.contract';
-import { alias } from '../shared/trip/sendExport.schema';
-import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '../shared/user/notify.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/sendExport.contract';
+import { alias } from '@shared/trip/sendExport.schema';
+import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '@shared/user/notify.contract';
 import {
   signature as buildExportSignature,
   ParamsInterface as BuildExportParamsInterface,
-} from '../shared/trip/buildExport.contract';
+} from '@shared/trip/buildExport.contract';
 
 @handler({
   ...handlerConfig,

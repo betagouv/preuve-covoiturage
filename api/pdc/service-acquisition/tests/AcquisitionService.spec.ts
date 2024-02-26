@@ -4,7 +4,7 @@ import supertest from 'supertest';
 import { TransportInterface } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { bootstrap } from '../src/bootstrap';
+import { bootstrap } from '../bootstrap';
 import { callFactory } from './helpers/callFactory';
 
 import { test2MissingUserAuth } from './mocks/test2MissingUserAuth';

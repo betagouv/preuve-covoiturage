@@ -2,8 +2,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../../shared/observatory/territories/list.schema';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../../shared/observatory/territories/list.contract';
+import { alias } from '@shared/observatory/territories/list.schema';
+import { handlerConfig, ResultInterface, ParamsInterface } from '@shared/observatory/territories/list.contract';
 import { TerritoriesRepositoryInterfaceResolver } from '../../interfaces/TerritoriesRepositoryProviderInterface';
 import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 

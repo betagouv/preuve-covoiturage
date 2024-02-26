@@ -9,15 +9,15 @@ import {
   TzResultInterface,
 } from '../interfaces';
 import { FinancialStatInterface, StatInterface } from '../interfaces/StatInterface';
-import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
-import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
-import { LightTripInterface } from '../shared/trip/common/interfaces/LightTripInterface';
-import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
+import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor';
+import { ResultWithPagination } from '@shared/common/interfaces/ResultWithPagination';
+import { LightTripInterface } from '@shared/trip/common/interfaces/LightTripInterface';
+import { TerritoryTripsInterface } from '@shared/trip/common/interfaces/TerritoryTripsInterface';
 import {
   TripSearchInterface,
   TripSearchInterfaceWithPagination,
-} from '../shared/trip/common/interfaces/TripSearchInterface';
-import { TripStatInterface } from '../shared/trip/common/interfaces/TripStatInterface';
+} from '@shared/trip/common/interfaces/TripSearchInterface';
+import { TripStatInterface } from '@shared/trip/common/interfaces/TripStatInterface';
 
 /*
  * Trip specific repository

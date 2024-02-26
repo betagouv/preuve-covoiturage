@@ -3,8 +3,8 @@ import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../../interfaces/TerritoryRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../../shared/territory/delete.contract';
-import { alias } from '../../shared/territory/delete.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/territory/delete.contract';
+import { alias } from '@shared/territory/delete.schema';
 
 @handler({
   ...handlerConfig,

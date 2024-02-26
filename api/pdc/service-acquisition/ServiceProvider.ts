@@ -10,11 +10,11 @@ import { GeoProvider } from '@pdc/provider-geo';
 import { config } from './config';
 import { AcquisitionRepositoryProvider } from './providers/AcquisitionRepositoryProvider';
 
-import { v3binding } from './shared/acquisition/create.schema';
-import { binding as cancelBinding } from './shared/acquisition/cancel.schema';
-import { binding as statusBinding } from './shared/acquisition/status.schema';
-import { binding as listBinding } from './shared/acquisition/list.schema';
-import { binding as patchBinding } from './shared/acquisition/patch.schema';
+import { v3binding } from '@shared/acquisition/create.schema';
+import { binding as cancelBinding } from '@shared/acquisition/cancel.schema';
+import { binding as statusBinding } from '@shared/acquisition/status.schema';
+import { binding as listBinding } from '@shared/acquisition/list.schema';
+import { binding as patchBinding } from '@shared/acquisition/patch.schema';
 
 import { AcquisitionProcessCommand } from './commands/AcquisitionProcessCommand';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
@@ -23,7 +23,7 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
 import { ProcessJourneyAction } from './actions/ProcessJourneyAction';
 import { ListJourneyAction } from './actions/ListJourneyAction';
 import { PatchJourneyAction } from './actions/PatchJourneyAction';
-import { CarpoolAcquisitionService } from '@pdc/provider-carpool/dist';
+import { CarpoolAcquisitionService } from '@pdc/provider-carpool';
 
 @serviceProvider({
   config,

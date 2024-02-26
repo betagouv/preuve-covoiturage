@@ -9,9 +9,9 @@ import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
-} from '../shared/operator/find.contract';
-import { handlerConfig, ParamsInterface, ResultInterface, SingleResultInterface } from '../shared/policy/list.contract';
-import { alias } from '../shared/policy/list.schema';
+} from '@shared/operator/find.contract';
+import { handlerConfig, ParamsInterface, ResultInterface, SingleResultInterface } from '@shared/policy/list.contract';
+import { alias } from '@shared/policy/list.schema';
 
 @handler({
   ...handlerConfig,

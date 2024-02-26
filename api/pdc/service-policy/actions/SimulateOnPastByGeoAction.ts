@@ -2,19 +2,19 @@ import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/simulateOnPastGeo.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/simulateOnPastGeo.contract';
 
 import { MetadataStore } from '../engine/entities/MetadataStore';
 import { Policy } from '../engine/entities/Policy';
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
-import { alias } from '../shared/policy/simulateOnPastGeo.schema';
+import { alias } from '@shared/policy/simulateOnPastGeo.schema';
 import { MemoryMetadataRepository } from '../providers/MemoryMetadataRepositoryProvider';
 
 import {
   ParamsInterface as GeoParamsInterface,
   ResultInterface as GeoResultInterface,
   signature as geoSignature,
-} from '../shared/territory/findGeoBySiren.contract';
+} from '@shared/territory/findGeoBySiren.contract';
 
 import { SerializedPolicyInterface } from '../interfaces';
 

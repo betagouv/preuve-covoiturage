@@ -1,6 +1,6 @@
 import { ForbiddenException, handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware/dist';
+import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import { Policy } from '../engine/entities/Policy';
 
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
@@ -8,9 +8,9 @@ import {
   ParamsInterface as OperatorParamsInterface,
   ResultInterface as OperatorResultInterface,
   signature as operatorFindSignature,
-} from '../shared/operator/find.contract';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/find.contract';
-import { alias } from '../shared/policy/find.schema';
+} from '@shared/operator/find.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/find.contract';
+import { alias } from '@shared/policy/find.schema';
 
 @handler({
   ...handlerConfig,

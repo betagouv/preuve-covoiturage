@@ -2,12 +2,12 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../../shared/observatory/occupation/monthlyOccupation.schema';
+import { alias } from '@shared/observatory/occupation/monthlyOccupation.schema';
 import {
   handlerConfig,
   ResultInterface,
   ParamsInterface,
-} from '../../shared/observatory/occupation/monthlyOccupation.contract';
+} from '@shared/observatory/occupation/monthlyOccupation.contract';
 import { OccupationRepositoryInterfaceResolver } from '../../interfaces/OccupationRepositoryProviderInterface';
 import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 

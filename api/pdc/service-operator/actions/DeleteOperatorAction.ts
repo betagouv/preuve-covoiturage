@@ -5,8 +5,8 @@ import { Sentry } from '@pdc/provider-sentry';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/delete.contract';
-import { alias } from '../shared/operator/delete.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/operator/delete.contract';
+import { alias } from '@shared/operator/delete.schema';
 
 @handler({
   ...handlerConfig,

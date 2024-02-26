@@ -1,7 +1,7 @@
 import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver, ResultType } from '@ilos/common';
-import { signature as distrib } from '../shared/observatory/distribution/insertMonthlyDistribution.contract';
-import { signature as flux } from '../shared/observatory/flux/insertMonthlyFlux.contract';
-import { signature as occupation } from '../shared/observatory/occupation/insertMonthlyOccupation.contract';
+import { signature as distrib } from '@shared/observatory/distribution/insertMonthlyDistribution.contract';
+import { signature as flux } from '@shared/observatory/flux/insertMonthlyFlux.contract';
+import { signature as occupation } from '@shared/observatory/occupation/insertMonthlyOccupation.contract';
 
 @command()
 export class InsertCommand implements CommandInterface {

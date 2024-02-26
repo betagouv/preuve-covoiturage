@@ -2,9 +2,9 @@ import { createSign } from 'crypto';
 import { ConfigInterfaceResolver, ContextType, handler, InvalidParamsException, NotFoundException } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/cee/registerApplication.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/cee/registerApplication.contract';
 
-import { alias } from '../shared/cee/registerApplication.schema';
+import { alias } from '@shared/cee/registerApplication.schema';
 
 import {
   ApplicationCooldownConstraint,
@@ -19,13 +19,13 @@ import {
 import { ServiceDisabledError } from '../errors/ServiceDisabledError';
 import { getOperatorIdOrFail } from '../helpers/getOperatorIdOrFail';
 import { getDateOrFail } from '../helpers/getDateOrFail';
-import { timestampSchema } from '../shared/cee/common/ceeSchema';
+import { timestampSchema } from '@shared/cee/common/ceeSchema';
 import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail';
 import { ConflictException } from '@ilos/common';
 import {
   CeeLongApplicationInterface,
   CeeShortApplicationInterface,
-} from '../shared/cee/common/CeeApplicationInterface';
+} from '@shared/cee/common/CeeApplicationInterface';
 
 @handler({
   ...handlerConfig,

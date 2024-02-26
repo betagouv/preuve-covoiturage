@@ -1,8 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/changePasswordWithToken.contract';
-import { alias } from '../shared/user/changePasswordWithToken.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/changePasswordWithToken.contract';
+import { alias } from '@shared/user/changePasswordWithToken.schema';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 import { challengeTokenMiddleware } from '../middlewares/ChallengeTokenMiddleware';
 

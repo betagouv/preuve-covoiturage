@@ -16,10 +16,10 @@ import { FindCertificateAction } from './actions/FindCertificateAction';
 import { ListCertificateAction } from './actions/ListCertificateAction';
 import { DownloadCertificateAction } from './actions/DownloadCertificateAction';
 import { SeedCommand } from './commands/SeedCommand';
-import { binding as createBinding } from './shared/certificate/create.schema';
-import { binding as findBinding } from './shared/certificate/find.schema';
-import { binding as downloadBinding } from './shared/certificate/download.schema';
-import { binding as listBinding } from './shared/certificate/list.schema';
+import { binding as createBinding } from '@shared/certificate/create.schema';
+import { binding as findBinding } from '@shared/certificate/find.schema';
+import { binding as downloadBinding } from '@shared/certificate/download.schema';
+import { binding as listBinding } from '@shared/certificate/list.schema';
 
 @serviceProvider({
   config,

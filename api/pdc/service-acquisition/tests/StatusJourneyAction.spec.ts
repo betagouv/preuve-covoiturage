@@ -1,10 +1,10 @@
 import anyTest, { TestFn } from 'ava';
 
-import { makeKernel } from '@pdc/helper-test';
+import { makeKernel } from '@pdc/provider-test';
 import { KernelInterface, NotFoundException } from '@ilos/common';
 import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
 
-import { ServiceProvider } from '../src/ServiceProvider';
+import { ServiceProvider } from '../ServiceProvider';
 import { insertFactory } from './helpers/insertFactory';
 
 const test = anyTest as TestFn<{

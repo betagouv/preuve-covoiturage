@@ -4,10 +4,10 @@ import { handler, ContextType, ParseErrorException, ConflictException, Validator
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import { CarpoolAcquisitionService } from '@pdc/provider-carpool';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/create.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/create.contract';
 
-import { PayloadV3 } from '../shared/acquisition/create.contract';
-import { v3alias } from '../shared/acquisition/create.schema';
+import { PayloadV3 } from '@shared/acquisition/create.contract';
+import { v3alias } from '@shared/acquisition/create.schema';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
 

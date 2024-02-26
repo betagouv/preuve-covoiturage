@@ -8,7 +8,7 @@ import {
 } from '@ilos/common';
 import { Timezone } from '@pdc/provider-validator';
 import { castUserStringToUTC, toISOString } from '../helpers';
-import { ParamsInterface, signature as finalize } from '../shared/policy/finalize.contract';
+import { ParamsInterface, signature as finalize } from '@shared/policy/finalize.contract';
 
 interface CommandOptions {
   from: string;

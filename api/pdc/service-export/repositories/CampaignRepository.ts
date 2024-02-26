@@ -1,6 +1,6 @@
 import { KernelInterfaceResolver, provider } from '@ilos/common';
 import { Campaign } from '../models/Campaign';
-import { signature as campaignListSignature } from '../shared/policy/list.contract';
+import { signature as campaignListSignature } from '@shared/policy/list.contract';
 
 export interface CampaignRepositoryInterface {
   list(): Promise<Map<number, Campaign>>;

@@ -6,7 +6,7 @@ import {
   KernelInterfaceResolver,
   ContextType,
 } from '@ilos/common';
-import { signature } from '../shared/monitoring/statsrefresh.contract';
+import { signature } from '@shared/monitoring/statsrefresh.contract';
 
 interface CommandOptions {
   schema: string;

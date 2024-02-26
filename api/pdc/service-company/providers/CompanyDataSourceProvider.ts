@@ -7,7 +7,7 @@ import {
   CompanyDataSourceProviderInterface,
 } from '../interfaces/CompanyDataSourceProviderInterface';
 
-import { CompanyInterface } from '../shared/common/interfaces/CompanyInterface2';
+import { CompanyInterface } from '@shared/common/interfaces/CompanyInterface2';
 
 @provider({
   identifier: CompanyDataSourceProviderInterfaceResolver,

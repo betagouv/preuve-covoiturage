@@ -1,20 +1,20 @@
 import {
   ParamsInterface as MonthlyOccupationParamsInterface,
   ResultInterface as MonthlyOccupationResultInterface,
-} from '../shared/observatory/occupation/monthlyOccupation.contract';
+} from '@shared/observatory/occupation/monthlyOccupation.contract';
 import {
   ParamsInterface as EvolMonthlyOccupationParamsInterface,
   ResultInterface as EvolMonthlyOccupationResultInterface,
-} from '../shared/observatory/occupation/evolMonthlyOccupation.contract';
+} from '@shared/observatory/occupation/evolMonthlyOccupation.contract';
 
 import {
   ParamsInterface as BestMonthlyTerritoriesParamsInterface,
   ResultInterface as BestMonthlyTerritoriesResultInterface,
-} from '../shared/observatory/occupation/bestMonthlyTerritories.contract';
+} from '@shared/observatory/occupation/bestMonthlyTerritories.contract';
 import {
   ParamsInterface as InsertMonthlyOccupationParamsInterface,
   ParamsInterface as DeleteMonthlyOccupationParamsInterface,
-} from '../shared/observatory/occupation/insertMonthlyOccupation.contract';
+} from '@shared/observatory/occupation/insertMonthlyOccupation.contract';
 
 export {
   MonthlyOccupationParamsInterface,

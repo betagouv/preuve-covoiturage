@@ -3,8 +3,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../../interfaces/TerritoryRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../../shared/territory/patchContacts.contract';
-import { alias } from '../../shared/territory/patchContacts.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/territory/patchContacts.contract';
+import { alias } from '@shared/territory/patchContacts.schema';
 
 @handler({
   ...handlerConfig,

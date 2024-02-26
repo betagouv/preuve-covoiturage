@@ -1,7 +1,7 @@
 import anyTest, { TestFn } from 'ava';
-import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
+import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@pdc/provider-test';
 import { ServiceProvider } from '../ServiceProvider';
-import { ParamsInterface, ResultInterface, handlerConfig } from '../shared/cee/importApplicationIdentity.contract';
+import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/importApplicationIdentity.contract';
 import { config } from '../config';
 import { ContextType } from '@ilos/common';
 import {
@@ -9,7 +9,7 @@ import {
   lastNameTruncSchema,
   phoneTruncSchema,
   timestampSchema,
-} from '../shared/cee/common/ceeSchema';
+} from '@shared/cee/common/ceeSchema';
 
 const { before, after, error } = handlerMacro<ParamsInterface, ResultInterface>(ServiceProvider, handlerConfig);
 const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();

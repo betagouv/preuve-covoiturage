@@ -9,7 +9,7 @@ import {
 import { Timezone } from '@pdc/provider-validator';
 import { castUserStringToUTC, toISOString } from '../helpers';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
-import { signature as apply } from '../shared/policy/apply.contract';
+import { signature as apply } from '@shared/policy/apply.contract';
 
 interface CommandOptions {
   campaigns: number[];

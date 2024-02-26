@@ -7,12 +7,12 @@ import {
   ListGeoParamsInterface,
   ListGeoResultInterface,
 } from '../interfaces/GeoRepositoryProviderInterface';
-import { TerritoryCodeEnum } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { TerritoryCodeEnum } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
 import {
   ParamsInterface as FindBySirenParamsInterface,
   ResultInterface as FindBySirenResultInterface,
-} from '../shared/territory/findGeoBySiren.contract';
-import { SingleResultInterface as GeoSingleResultInterface } from '../shared/territory/listGeo.contract';
+} from '@shared/territory/findGeoBySiren.contract';
+import { SingleResultInterface as GeoSingleResultInterface } from '@shared/territory/listGeo.contract';
 
 @provider({
   identifier: GeoRepositoryProviderInterfaceResolver,

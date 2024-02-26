@@ -1,6 +1,6 @@
 import anyTest, { TestFn } from 'ava';
 import { stream, Workbook, Worksheet } from 'exceljs';
-import { SliceStatInterface } from '../../shared/apdf/interfaces/PolicySliceStatInterface';
+import { SliceStatInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface';
 import { BuildExcel } from './BuildExcel';
 import { SlicesWorksheetWriter } from './SlicesWorksheetWriter';
 

@@ -1,5 +1,5 @@
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { createDatabase, dropDatabase, migrate } from '@pdc/migrator';
+import { createDatabase, dropDatabase, migrate } from '@db/index';
 import { parse, Options as ParseOptions } from 'csv-parse';
 import fs from 'fs';
 import path from 'path';

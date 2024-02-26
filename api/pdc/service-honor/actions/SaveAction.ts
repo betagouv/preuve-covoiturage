@@ -2,8 +2,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../shared/honor/save.schema';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/honor/save.contract';
+import { alias } from '@shared/honor/save.schema';
+import { handlerConfig, ResultInterface, ParamsInterface } from '@shared/honor/save.contract';
 import { HonorRepositoryInterfaceResolver } from '../providers/HonorRepositoryProvider';
 
 @handler({

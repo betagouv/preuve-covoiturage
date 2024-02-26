@@ -7,14 +7,14 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { config } from './config';
 import { OperatorPgRepositoryProvider } from './providers/OperatorPgRepositoryProvider';
 
-import { binding as createBinding } from './shared/operator/create.schema';
-import { binding as deleteBinding } from './shared/operator/delete.schema';
-import { binding as findBinding } from './shared/operator/find.schema';
-import { binding as findbysiretBinding } from './shared/operator/findbysiret.schema';
-import { binding as patchContactsBinding } from './shared/operator/patchContacts.schema';
-import { binding as patchThumbnailBinding } from './shared/operator/patchThumbnail.schema';
-import { binding as quickfindBinding } from './shared/operator/quickfind.schema';
-import { binding as updateBinding } from './shared/operator/update.schema';
+import { binding as createBinding } from '@shared/operator/create.schema';
+import { binding as deleteBinding } from '@shared/operator/delete.schema';
+import { binding as findBinding } from '@shared/operator/find.schema';
+import { binding as findbysiretBinding } from '@shared/operator/findbysiret.schema';
+import { binding as patchContactsBinding } from '@shared/operator/patchContacts.schema';
+import { binding as patchThumbnailBinding } from '@shared/operator/patchThumbnail.schema';
+import { binding as quickfindBinding } from '@shared/operator/quickfind.schema';
+import { binding as updateBinding } from '@shared/operator/update.schema';
 
 import { CreateOperatorAction } from './actions/CreateOperatorAction';
 import { DeleteOperatorAction } from './actions/DeleteOperatorAction';

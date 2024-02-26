@@ -1,18 +1,18 @@
 import { provider, ConfigInterfaceResolver, ConflictException, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
-import { UserLastLoginInterface } from '../shared/user/common/interfaces/UserLastLoginInterface';
-import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
-import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
-import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchInterface';
+import { UserFindInterface } from '@shared/user/common/interfaces/UserFindInterface';
+import { UserLastLoginInterface } from '@shared/user/common/interfaces/UserLastLoginInterface';
+import { UserListFiltersInterface } from '@shared/user/common/interfaces/UserListFiltersInterface';
+import { UserListInterface } from '@shared/user/common/interfaces/UserListInterface';
+import { UserPatchInterface } from '@shared/user/common/interfaces/UserPatchInterface';
 import {
   UserRepositoryProviderInterface,
   UserRepositoryProviderInterfaceResolver,
 } from '../interfaces/UserRepositoryProviderInterface';
-import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
-import { UserCreateInterface } from '../shared/user/common/interfaces/UserCreateInterface';
-import { ResultInterface as HasUsersResultInterface } from '../shared/user/hasUsers.contract';
+import { PaginationParamsInterface } from '@shared/common/interfaces/PaginationParamsInterface';
+import { UserCreateInterface } from '@shared/user/common/interfaces/UserCreateInterface';
+import { ResultInterface as HasUsersResultInterface } from '@shared/user/hasUsers.contract';
 
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,

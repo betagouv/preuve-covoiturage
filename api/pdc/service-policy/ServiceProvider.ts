@@ -24,15 +24,15 @@ import { MetadataRepositoryProvider } from './providers/MetadataRepositoryProvid
 import { PolicyRepositoryProvider } from './providers/PolicyRepositoryProvider';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
-import { binding as applySchemaBinding } from './shared/policy/apply.schema';
-import { binding as finalizeSchemaBinding } from './shared/policy/finalize.schema';
-import { binding as findSchemaBinding } from './shared/policy/find.schema';
-import { binding as listSchemaBinding } from './shared/policy/list.schema';
-import { binding as simulateOnFutureSchemaBinding } from './shared/policy/simulateOnFuture.schema';
-import { binding as simulateOnSchemaBinding } from './shared/policy/simulateOnPast.schema';
-import { binding as simulateOnPastGeoSchemaBinding } from './shared/policy/simulateOnPastGeo.schema';
-import { binding as statsSchemaBinding } from './shared/policy/stats.schema';
-import { binding as syncIncentiveSumSchemaBinding } from './shared/policy/syncIncentiveSum.schema';
+import { binding as applySchemaBinding } from '@shared/policy/apply.schema';
+import { binding as finalizeSchemaBinding } from '@shared/policy/finalize.schema';
+import { binding as findSchemaBinding } from '@shared/policy/find.schema';
+import { binding as listSchemaBinding } from '@shared/policy/list.schema';
+import { binding as simulateOnFutureSchemaBinding } from '@shared/policy/simulateOnFuture.schema';
+import { binding as simulateOnSchemaBinding } from '@shared/policy/simulateOnPast.schema';
+import { binding as simulateOnPastGeoSchemaBinding } from '@shared/policy/simulateOnPastGeo.schema';
+import { binding as statsSchemaBinding } from '@shared/policy/stats.schema';
+import { binding as syncIncentiveSumSchemaBinding } from '@shared/policy/syncIncentiveSum.schema';
 
 @serviceProvider({
   config,

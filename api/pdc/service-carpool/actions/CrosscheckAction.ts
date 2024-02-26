@@ -2,9 +2,9 @@ import { Action } from '@ilos/core';
 import { handler, ConfigInterfaceResolver } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
-import { FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpool/crosscheck.contract';
-import { alias } from '../shared/carpool/crosscheck.schema';
+import { FinalizedPersonInterface } from '@shared/common/interfaces/PersonInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/crosscheck.contract';
+import { alias } from '@shared/carpool/crosscheck.schema';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface';
 import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';

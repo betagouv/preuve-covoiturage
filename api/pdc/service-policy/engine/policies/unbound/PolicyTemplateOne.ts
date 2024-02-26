@@ -4,7 +4,7 @@ import {
   PolicyHandlerStaticInterface,
   StatelessContextInterface,
 } from '../../../interfaces';
-import { PolicyTemplateDescriptions } from '../../../shared/policy/common/classes/PolicyTemplateDescription';
+import { PolicyTemplateDescriptions } from '@shared/policy/common/classes/PolicyTemplateDescription';
 import {
   ConfiguredLimitInterface,
   isOperatorClassOrThrow,

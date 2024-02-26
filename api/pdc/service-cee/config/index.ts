@@ -1,5 +1,5 @@
 import * as ajv from './ajv';
-import * as connections from './connections';
+import * as connections from '@config/connections';
 import * as rules from './rules';
 import * as signature from './signature';
 

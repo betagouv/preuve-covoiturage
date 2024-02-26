@@ -34,19 +34,19 @@ import { KeyfiguresRepositoryProvider } from './providers/KeyfiguresRepositoryPr
 import { LocationRepositoryProvider } from './providers/LocationRepositoryProvider';
 import { OccupationRepositoryProvider } from './providers/OccupationRepositoryProvider';
 import { TerritoriesRepositoryProvider } from './providers/TerritoriesRepositoryProvider';
-import { binding as JourneysByDistancesBinding } from './shared/observatory/distribution/journeysByDistances.schema';
-import { binding as JourneysByHoursBinding } from './shared/observatory/distribution/journeysByHours.schema';
-import { binding as BestMonthlyFluxBinding } from './shared/observatory/flux/bestMonthlyFlux.schema';
-import { binding as EvolMonthlyFluxBinding } from './shared/observatory/flux/evolMonthlyFlux.schema';
-import { binding as MonthlyFluxBinding } from './shared/observatory/flux/monthlyFlux.schema';
-import { binding as AiresCovoiturageBinding } from './shared/observatory/infra/airesCovoiturage.schema';
-import { binding as MonthlyKeyfiguresBinding } from './shared/observatory/keyfigures/monthlyKeyfigures.schema';
-import { binding as LocationBinding } from './shared/observatory/location/location.schema';
-import { binding as BestMonthlyTerritoriesBinding } from './shared/observatory/occupation/bestMonthlyTerritories.schema';
-import { binding as EvolMonthlyOccupationBinding } from './shared/observatory/occupation/evolMonthlyOccupation.schema';
-import { binding as MonthlyOccupationBinding } from './shared/observatory/occupation/monthlyOccupation.schema';
-import { binding as TerritoriesListBinding } from './shared/observatory/territories/list.schema';
-import { binding as TerritoryNameBinding } from './shared/observatory/territories/name.schema';
+import { binding as JourneysByDistancesBinding } from '@shared/observatory/distribution/journeysByDistances.schema';
+import { binding as JourneysByHoursBinding } from '@shared/observatory/distribution/journeysByHours.schema';
+import { binding as BestMonthlyFluxBinding } from '@shared/observatory/flux/bestMonthlyFlux.schema';
+import { binding as EvolMonthlyFluxBinding } from '@shared/observatory/flux/evolMonthlyFlux.schema';
+import { binding as MonthlyFluxBinding } from '@shared/observatory/flux/monthlyFlux.schema';
+import { binding as AiresCovoiturageBinding } from '@shared/observatory/infra/airesCovoiturage.schema';
+import { binding as MonthlyKeyfiguresBinding } from '@shared/observatory/keyfigures/monthlyKeyfigures.schema';
+import { binding as LocationBinding } from '@shared/observatory/location/location.schema';
+import { binding as BestMonthlyTerritoriesBinding } from '@shared/observatory/occupation/bestMonthlyTerritories.schema';
+import { binding as EvolMonthlyOccupationBinding } from '@shared/observatory/occupation/evolMonthlyOccupation.schema';
+import { binding as MonthlyOccupationBinding } from '@shared/observatory/occupation/monthlyOccupation.schema';
+import { binding as TerritoriesListBinding } from '@shared/observatory/territories/list.schema';
+import { binding as TerritoryNameBinding } from '@shared/observatory/territories/name.schema';
 /* eslint-enable */
 
 @serviceProvider({

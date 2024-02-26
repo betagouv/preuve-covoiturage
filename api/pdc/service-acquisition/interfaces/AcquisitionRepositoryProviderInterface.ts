@@ -1,4 +1,4 @@
-import { AnomalyErrorDetails, StatusEnum } from '../shared/acquisition/status.contract';
+import { AnomalyErrorDetails, StatusEnum } from '@shared/acquisition/status.contract';
 
 export enum AcquisitionStatusEnum {
   Ok = 'ok',

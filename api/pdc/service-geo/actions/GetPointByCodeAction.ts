@@ -1,8 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/geo/getPointByCode.contract';
-import { alias } from '../shared/geo/getPointByCode.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/geo/getPointByCode.contract';
+import { alias } from '@shared/geo/getPointByCode.schema';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 
 @handler({

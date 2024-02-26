@@ -3,7 +3,7 @@ import { Action as AbstractAction } from '@ilos/core';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../../interfaces/TerritoryRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../../shared/territory/list.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/territory/list.contract';
 
 @handler({
   ...handlerConfig,

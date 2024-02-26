@@ -1,5 +1,5 @@
 import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver, ResultType } from '@ilos/common';
-import { handlerConfig, signature as handlerSignature } from '../shared/policy/stats.contract';
+import { handlerConfig, signature as handlerSignature } from '@shared/policy/stats.contract';
 
 @command()
 export class StatsCommand implements CommandInterface {

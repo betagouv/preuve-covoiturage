@@ -5,7 +5,7 @@ import { DistributionRepositoryInterfaceResolver } from '../../interfaces/Distri
 import {
   handlerConfig,
   ParamsInterface,
-} from '../../shared/observatory/distribution/insertMonthlyDistribution.contract';
+} from '@shared/observatory/distribution/insertMonthlyDistribution.contract';
 
 @handler({
   ...handlerConfig,

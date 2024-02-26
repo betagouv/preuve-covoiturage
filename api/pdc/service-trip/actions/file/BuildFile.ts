@@ -7,8 +7,8 @@ import { v4 } from 'uuid';
 import { getOpenDataExportName } from '../../helpers/getOpenDataExportName';
 import { normalizeExport, normalizeOpendata } from '../../helpers/normalizeExportDataHelper';
 import { ExportTripInterface } from '../../interfaces';
-import { PgCursorHandler } from '../../shared/common/PromisifiedPgCursor';
-import { FormatInterface, ParamsInterface } from '../../shared/trip/buildExport.contract';
+import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor';
+import { FormatInterface, ParamsInterface } from '@shared/trip/buildExport.contract';
 import { BuildExportAction } from '../BuildExportAction';
 
 @provider()

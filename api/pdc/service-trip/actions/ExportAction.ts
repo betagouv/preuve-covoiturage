@@ -5,12 +5,12 @@ import { get } from 'lodash';
 import * as middlewareConfig from '../config/middlewares';
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces';
 import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
-import { alias } from '../shared/trip/export.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/export.contract';
+import { alias } from '@shared/trip/export.schema';
 import {
   ParamsInterface as SendExportParamsInterface,
   signature as sendExportSignature,
-} from '../shared/trip/sendExport.contract';
+} from '@shared/trip/sendExport.contract';
 
 @handler({
   ...handlerConfig,

@@ -8,12 +8,12 @@ import {
 import { Action } from '@ilos/core';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 import { StorageRepositoryProviderInterfaceResolver } from '../interfaces/StorageRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultsInterface } from '../shared/apdf/list.contract';
-import { alias } from '../shared/apdf/list.schema';
+import { handlerConfig, ParamsInterface, ResultsInterface } from '@shared/apdf/list.contract';
+import { alias } from '@shared/apdf/list.schema';
 import {
   ParamsInterface as CampaignFindParams,
   ResultInterface as CampaignFindResult,
-} from '../shared/policy/find.contract';
+} from '@shared/policy/find.contract';
 
 @handler({
   ...handlerConfig,

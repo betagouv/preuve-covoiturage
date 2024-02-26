@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
-import { handlerConfig } from '../../shared/observatory/distribution/refreshAllDistribution.contract';
+import { handlerConfig } from '@shared/observatory/distribution/refreshAllDistribution.contract';
 import { DistributionRepositoryInterfaceResolver } from '../../interfaces/DistributionRepositoryProviderInterface';
 
 @handler({

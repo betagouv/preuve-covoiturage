@@ -9,8 +9,8 @@ import { PdfCertProviderInterfaceResolver, PdfTemplateData } from '@pdc/provider
 import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
 import { get, set } from 'lodash';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/download.contract';
-import { alias } from '../shared/certificate/download.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/certificate/download.contract';
+import { alias } from '@shared/certificate/download.schema';
 
 @handler({
   ...handlerConfig,

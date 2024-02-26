@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
+import { makeDbBeforeAfter, DbContext } from '@pdc/provider-test';
 import { CarpoolRepository } from './CarpoolRepository';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool';
 import { Id, IncentiveCounterpartTarget } from '../interfaces';

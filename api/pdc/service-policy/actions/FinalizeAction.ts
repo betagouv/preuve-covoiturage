@@ -12,9 +12,9 @@ import {
   PolicyInterface,
   PolicyRepositoryProviderInterfaceResolver,
 } from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/finalize.contract';
-import { alias } from '../shared/policy/finalize.schema';
-import { signature as syncincentivesumSignature } from '../shared/policy/syncIncentiveSum.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/finalize.contract';
+import { alias } from '@shared/policy/finalize.schema';
+import { signature as syncincentivesumSignature } from '@shared/policy/syncIncentiveSum.contract';
 
 // TOFIX ?
 // from and to props must be strings to pass schema validation

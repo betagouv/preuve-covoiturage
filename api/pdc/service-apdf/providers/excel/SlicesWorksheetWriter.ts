@@ -1,7 +1,7 @@
 import { provider } from '@ilos/common';
 import { AddWorksheetOptions, Borders, stream, Worksheet } from 'exceljs';
-import { SliceStatInterface } from '../../shared/apdf/interfaces/PolicySliceStatInterface';
-import { SliceInterface } from '../../shared/policy/common/interfaces/Slices';
+import { SliceStatInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface';
+import { SliceInterface } from '@shared/policy/common/interfaces/Slices';
 import { AbstractWorksheetWriter } from './AbstractWorksheetWriter';
 
 @provider()

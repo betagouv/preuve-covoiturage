@@ -69,7 +69,7 @@ test.before(async (t) => {
   t.context.kernel = new Kernel();
   t.context.app = new HttpTransport(t.context.kernel);
 
-  // see @pdc/helper-test README.md
+  // see @pdc/provider-test README.md
   t.context.application = {
     _id: 1,
     uuid: '1efacd36-a85b-47b2-99df-cabbf74202b3',

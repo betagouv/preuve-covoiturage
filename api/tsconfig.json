@@ -23,12 +23,16 @@
       "@pdc/*": ["pdc/*"],
       "@ilos/*": ["ilos/*"],
       "@config/*": ["config/*"],
+      "@shared/*": ["shared/*"],
+      "@db/*": ["db/*"],
     }
   },
   "include": [
     "pdc/**/*",
     "ilos/**/*",
     "config/*",
+    "shared/**/*",
+    "db/**/*"
   ],
 
   "exclude": ["node_modules"]

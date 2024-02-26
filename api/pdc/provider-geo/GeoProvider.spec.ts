@@ -1,4 +1,4 @@
-import { NotFoundException } from '@ilos/common/src/exceptions/NotFoundException';
+import { NotFoundException } from '@ilos/common/exceptions/NotFoundException';
 import test from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { GeoProvider } from '.';

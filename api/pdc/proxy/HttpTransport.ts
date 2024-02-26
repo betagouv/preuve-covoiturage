@@ -38,20 +38,20 @@ import {
   rateLimiter,
 } from './middlewares/rateLimiter';
 import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
-import { TokenPayloadInterface } from './shared/application/common/interfaces/TokenPayloadInterface';
-import { RPCResponseType } from './shared/common/rpc/RPCResponseType';
+import { TokenPayloadInterface } from '@shared/application/common/interfaces/TokenPayloadInterface';
+import { RPCResponseType } from '@shared/common/rpc/RPCResponseType';
 import {
   ParamsInterface as GetAuthorizedCodesParams,
   ResultInterface as GetAuthorizedCodesResult,
   signature as getAuthorizedCodesSignature,
-} from './shared/territory/getAuthorizedCodes.contract';
+} from '@shared/territory/getAuthorizedCodes.contract';
 
 import { CacheMiddleware, CacheTTL, cacheMiddleware } from './middlewares/cacheMiddleware';
 import { metricsMiddleware } from './middlewares/metricsMiddleware';
-import { signature as importCeeSignature } from './shared/cee/importApplication.contract';
-import { signature as importIdentityCeeSignature } from './shared/cee/importApplicationIdentity.contract';
-import { signature as registerCeeSignature } from './shared/cee/registerApplication.contract';
-import { signature as simulateCeeSignature } from './shared/cee/simulateApplication.contract';
+import { signature as importCeeSignature } from '@shared/cee/importApplication.contract';
+import { signature as importIdentityCeeSignature } from '@shared/cee/importApplicationIdentity.contract';
+import { signature as registerCeeSignature } from '@shared/cee/registerApplication.contract';
+import { signature as simulateCeeSignature } from '@shared/cee/simulateApplication.contract';
 import path from 'node:path';
 
 export class HttpTransport implements TransportInterface {

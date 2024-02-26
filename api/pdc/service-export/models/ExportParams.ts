@@ -1,6 +1,6 @@
 import { Timezone } from '@pdc/provider-validator';
-import { subMonthsTz, today } from '../helpers/shared/dates.helper';
-import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
+import { subMonthsTz, today } from '../helpers';
+import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export type Config = Partial<Params>;
 

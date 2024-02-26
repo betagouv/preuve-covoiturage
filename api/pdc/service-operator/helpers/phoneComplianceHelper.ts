@@ -1,4 +1,4 @@
-import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
+import { ContactsInterface } from '@shared/common/interfaces/ContactsInterface';
 
 /**
  * Check the operator's contacts compliance

@@ -7,8 +7,8 @@ import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/Stat
 import { StatInterface } from '../interfaces/StatInterface';
 import { groupPermissionMiddlewaresHelper } from '../middleware/groupPermissionMiddlewaresHelper';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/stats.contract';
-import { alias } from '../shared/trip/stats.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/stats.contract';
+import { alias } from '@shared/trip/stats.schema';
 
 @handler({
   ...handlerConfig,

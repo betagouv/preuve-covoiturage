@@ -2,8 +2,8 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { PolicyRepositoryProviderInterfaceResolver } from '../interfaces';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/syncIncentiveSum.contract';
-import { alias } from '../shared/policy/syncIncentiveSum.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/policy/syncIncentiveSum.contract';
+import { alias } from '@shared/policy/syncIncentiveSum.schema';
 
 @handler({
   ...handlerConfig,

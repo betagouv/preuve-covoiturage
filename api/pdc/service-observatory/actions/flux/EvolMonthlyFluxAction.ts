@@ -2,12 +2,12 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../../shared/observatory/flux/evolMonthlyFlux.schema';
+import { alias } from '@shared/observatory/flux/evolMonthlyFlux.schema';
 import {
   handlerConfig,
   ResultInterface,
   ParamsInterface,
-} from '../../shared/observatory/flux/evolMonthlyFlux.contract';
+} from '@shared/observatory/flux/evolMonthlyFlux.contract';
 import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface';
 import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 

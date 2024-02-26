@@ -2,8 +2,8 @@ import { handler, ContextType } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { copyFromContextMiddleware, hasPermissionByScopeMiddleware } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/application/create.contract';
-import { alias } from '../shared/application/create.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/application/create.contract';
+import { alias } from '@shared/application/create.schema';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
 
 @handler({

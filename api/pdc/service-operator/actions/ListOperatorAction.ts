@@ -3,7 +3,7 @@ import { Action as AbstractAction } from '@ilos/core';
 import { hasPermissionMiddleware, contentBlacklistMiddleware } from '@pdc/provider-middleware';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/list.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/operator/list.contract';
 
 @handler({
   ...handlerConfig,

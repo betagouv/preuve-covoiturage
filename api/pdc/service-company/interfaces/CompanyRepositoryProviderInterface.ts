@@ -1,4 +1,4 @@
-import { CompanyInterface } from '../shared/common/interfaces/CompanyInterface2';
+import { CompanyInterface } from '@shared/common/interfaces/CompanyInterface2';
 
 export interface CompanyRepositoryProviderInterface {
   updateOrCreate(company: CompanyInterface): Promise<void>;

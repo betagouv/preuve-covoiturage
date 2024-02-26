@@ -3,8 +3,8 @@ import { handler, NotFoundException } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { alias } from '../shared/acquisition/status.schema';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/status.contract';
+import { alias } from '@shared/acquisition/status.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/status.contract';
 
 @handler({
   ...handlerConfig,

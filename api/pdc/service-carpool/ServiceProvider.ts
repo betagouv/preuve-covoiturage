@@ -6,9 +6,9 @@ import { ValidatorMiddleware, ValidatorExtension } from '@pdc/provider-validator
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { config } from './config';
-import { binding as crosscheckBinding } from './shared/carpool/crosscheck.schema';
-import { binding as findUuidBinding } from './shared/carpool/finduuid.schema';
-import { binding as findIdentitiesBinding } from './shared/carpool/findidentities.schema';
+import { binding as crosscheckBinding } from '@shared/carpool/crosscheck.schema';
+import { binding as findUuidBinding } from '@shared/carpool/finduuid.schema';
+import { binding as findIdentitiesBinding } from '@shared/carpool/findidentities.schema';
 import { CarpoolRepositoryProvider } from './providers/CarpoolRepositoryProvider';
 import { CrosscheckAction } from './actions/CrosscheckAction';
 import { FindUuidAction } from './actions/FindUuidAction';

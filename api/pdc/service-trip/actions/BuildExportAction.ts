@@ -10,16 +10,16 @@ import path from 'path';
 import { endOfPreviousMonthDate, startOfPreviousMonthDate } from '../helpers/getDefaultDates';
 import { ExportTripInterface } from '../interfaces';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
-import { alias } from '../shared/trip/buildExport.schema';
-import { TerritoryTripsInterface } from '../shared/trip/common/interfaces/TerritoryTripsInterface';
-import { TripSearchInterface } from '../shared/trip/common/interfaces/TripSearchInterface';
+import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/trip/buildExport.contract';
+import { alias } from '@shared/trip/buildExport.schema';
+import { TerritoryTripsInterface } from '@shared/trip/common/interfaces/TerritoryTripsInterface';
+import { TripSearchInterface } from '@shared/trip/common/interfaces/TripSearchInterface';
 import {
   ParamsInterface as PublishOpenDataParamsInterface,
   signature as publishOpenDataSignature,
-} from '../shared/trip/publishOpenData.contract';
-import { ExportType } from '../shared/trip/sendExport.contract';
+} from '@shared/trip/publishOpenData.contract';
+import { ExportType } from '@shared/trip/sendExport.contract';
 import { BuildFile } from './file/BuildFile';
 
 export interface FlattenTripInterface extends ExportTripInterface<string> {

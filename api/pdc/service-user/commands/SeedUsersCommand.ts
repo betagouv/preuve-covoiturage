@@ -2,7 +2,7 @@ import { command, CommandInterface, CommandOptionType } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { ParamsInterface } from '../shared/user/create.contract';
+import { ParamsInterface } from '@shared/user/create.contract';
 
 interface CreateUserInterface extends ParamsInterface {
   password: string;

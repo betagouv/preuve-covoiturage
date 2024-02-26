@@ -2,8 +2,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, ConflictException, UnauthorizedException } from '@ilos/common';
 import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/patch.contract';
-import { alias } from '../shared/user/patch.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/patch.contract';
+import { alias } from '@shared/user/patch.schema';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';

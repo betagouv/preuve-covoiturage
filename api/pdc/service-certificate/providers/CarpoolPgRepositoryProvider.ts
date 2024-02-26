@@ -5,8 +5,8 @@ import {
   CarpoolRepositoryProviderInterfaceResolver,
   FindParamsInterface,
 } from '../interfaces/CarpoolRepositoryProviderInterface';
-import { CarpoolInterface, DBCarpoolInterface } from '../shared/certificate/common/interfaces/CarpoolInterface';
-import { PointInterface } from '../shared/common/interfaces/PointInterface';
+import { CarpoolInterface, DBCarpoolInterface } from '@shared/certificate/common/interfaces/CarpoolInterface';
+import { PointInterface } from '@shared/common/interfaces/PointInterface';
 
 @provider({
   identifier: CarpoolRepositoryProviderInterfaceResolver,

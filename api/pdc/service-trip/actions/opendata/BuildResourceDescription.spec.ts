@@ -2,8 +2,8 @@
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { TripRepositoryProvider } from '../../providers/TripRepositoryProvider';
-import { TerritoryTripsInterface } from '../../shared/trip/common/interfaces/TerritoryTripsInterface';
-import { TripSearchInterface } from '../../shared/trip/common/interfaces/TripSearchInterface';
+import { TerritoryTripsInterface } from '@shared/trip/common/interfaces/TerritoryTripsInterface';
+import { TripSearchInterface } from '@shared/trip/common/interfaces/TripSearchInterface';
 import { BuildResourceDescription } from './BuildResourceDescription';
 
 interface Context {

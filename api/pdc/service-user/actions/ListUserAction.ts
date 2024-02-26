@@ -2,9 +2,9 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { contentWhitelistMiddleware, copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/list.contract';
-import { alias } from '../shared/user/list.schema';
-import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/list.contract';
+import { alias } from '@shared/user/list.schema';
+import { UserContextInterface } from '@shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
 const whiteList = [

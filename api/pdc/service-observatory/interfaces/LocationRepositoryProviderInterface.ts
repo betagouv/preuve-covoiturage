@@ -2,7 +2,7 @@ import {
   ParamsInterface as LocationParamsInterface,
   ResultInterface as LocationResultInterface,
   SqlResultInterface as LocationSqlResultInterface,
-} from '../shared/observatory/location/location.contract';
+} from '@shared/observatory/location/location.contract';
 
 export { LocationParamsInterface, LocationResultInterface, LocationSqlResultInterface };
 

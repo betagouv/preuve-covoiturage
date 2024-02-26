@@ -2,12 +2,12 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../../shared/observatory/distribution/journeysByDistances.schema';
+import { alias } from '@shared/observatory/distribution/journeysByDistances.schema';
 import {
   handlerConfig,
   ResultInterface,
   ParamsInterface,
-} from '../../shared/observatory/distribution/journeysByDistances.contract';
+} from '@shared/observatory/distribution/journeysByDistances.contract';
 import { DistributionRepositoryInterfaceResolver } from '../../interfaces/DistributionRepositoryProviderInterface';
 import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 

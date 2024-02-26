@@ -2,8 +2,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, UnauthorizedException } from '@ilos/common';
 import { contentWhitelistMiddleware } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/login.contract';
-import { alias } from '../shared/user/login.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/login.contract';
+import { alias } from '@shared/user/login.schema';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import faker from '@faker-js/faker';
 import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
-import { uuid } from '@pdc/helper-test';
+import { uuid } from '@pdc/provider-test';
 import { BucketName, S3StorageProvider } from '@pdc/provider-storage';
 import anyTest, { TestFn } from 'ava';
 import { startOfMonth, subMonths } from 'date-fns';
@@ -11,7 +11,7 @@ import { createGetCampaignResult } from '../helpers/createGetCampaignResult.help
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { CheckCampaign } from '../providers/CheckCampaign';
 import { BuildExcel } from '../providers/excel/BuildExcel';
-import { ResultInterface as Campaign } from '../shared/policy/find.contract';
+import { ResultInterface as Campaign } from '@shared/policy/find.contract';
 import { ExportAction } from './ExportAction';
 
 interface Context {

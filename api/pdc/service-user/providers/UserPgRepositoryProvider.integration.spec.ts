@@ -3,7 +3,7 @@ import { ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { UserPgRepositoryProvider } from './UserPgRepositoryProvider';
-import { UserCreateInterface } from '../shared/user/common/interfaces/UserCreateInterface';
+import { UserCreateInterface } from '@shared/user/common/interfaces/UserCreateInterface';
 
 interface TestContext {
   connection: PostgresConnection;

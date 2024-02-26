@@ -2,8 +2,8 @@ import { ConfigInterfaceResolver, handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
 
-import { alias } from '../shared/user/contactform.schema';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/contactform.contract';
+import { alias } from '@shared/user/contactform.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/user/contactform.contract';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';
 
 @handler({

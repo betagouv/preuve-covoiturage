@@ -1,28 +1,28 @@
 import {
   ParamsInterface as CreateParamsInterface,
   ResultInterface as CreateResultInterface,
-} from '../shared/territory/create.contract';
+} from '@shared/territory/create.contract';
 
 import {
   ParamsInterface as ListParamsInterface,
   ResultInterface as ListResultInterface,
-} from '../shared/territory/list.contract';
+} from '@shared/territory/list.contract';
 
 import {
   ParamsInterface as FindParamsInterface,
   ResultInterface as FindResultInterface,
-} from '../shared/territory/find.contract';
+} from '@shared/territory/find.contract';
 
 import {
   ParamsInterface as UpdateParamsInterface,
   ResultInterface as UpdateResultInterface,
-} from '../shared/territory/update.contract';
+} from '@shared/territory/update.contract';
 
 import {
   ParamsInterface as PatchContactsParamsInterface,
   ResultInterface as PatchContactsResultInterface,
-} from '../shared/territory/patchContacts.contract';
-import { TerritorySelectorsInterface } from '../shared/territory/common/interfaces/TerritoryCodeInterface';
+} from '@shared/territory/patchContacts.contract';
+import { TerritorySelectorsInterface } from '@shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export {
   CreateParamsInterface,

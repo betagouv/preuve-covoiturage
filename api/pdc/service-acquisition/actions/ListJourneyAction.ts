@@ -3,8 +3,8 @@ import { handler, InvalidParamsException } from '@ilos/common';
 import { copyGroupIdAndApplyGroupPermissionMiddlewares } from '@pdc/provider-middleware';
 
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { alias } from '../shared/acquisition/list.schema';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/list.contract';
+import { alias } from '@shared/acquisition/list.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/list.contract';
 import { StatusSearchInterface } from '../interfaces/AcquisitionRepositoryProviderInterface';
 import { castUserStringToUTC, subDaysTz, today } from '../helpers';
 import { isAfter, isBefore } from 'date-fns';

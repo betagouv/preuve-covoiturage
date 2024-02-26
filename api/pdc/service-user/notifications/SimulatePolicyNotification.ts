@@ -1,6 +1,6 @@
 import { AbstractMailNotification } from '@pdc/provider-notification';
 import { AbstractTemplate } from '@pdc/provider-template';
-import { SimulateOnPastGeoRequiredParams } from '../shared/policy/simulateOnPastGeo.contract';
+import { SimulateOnPastGeoRequiredParams } from '@shared/policy/simulateOnPastGeo.contract';
 
 export interface SimulatePolicyFormTemplateData {
   title: string;

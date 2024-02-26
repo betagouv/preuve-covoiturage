@@ -3,7 +3,7 @@ import { ContextType, KernelInterfaceResolver, NotFoundException } from '@ilos/c
 import anyTest, { TestFn } from 'ava';
 import sinon, { SinonStub } from 'sinon';
 import { createGetCampaignResult } from '../helpers/createGetCampaignResult.helper';
-import { ResultInterface as GetCampaignResultInterface } from '../shared/policy/find.contract';
+import { ResultInterface as GetCampaignResultInterface } from '@shared/policy/find.contract';
 import { CheckCampaign } from './CheckCampaign';
 
 interface Context {

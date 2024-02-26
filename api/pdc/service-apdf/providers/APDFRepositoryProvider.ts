@@ -8,9 +8,9 @@ import {
   DataRepositoryProviderInterfaceResolver,
 } from '../interfaces/APDFRepositoryProviderInterface';
 import { APDFTripInterface } from '../interfaces/APDFTripInterface';
-import { PolicyStatsInterface } from '../shared/apdf/interfaces/PolicySliceStatInterface';
-import { PgCursorHandler } from '../shared/common/PromisifiedPgCursor';
-import { UnboundedSlices } from '../shared/policy/common/interfaces/Slices';
+import { PolicyStatsInterface } from '@shared/apdf/interfaces/PolicySliceStatInterface';
+import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor';
+import { UnboundedSlices } from '@shared/policy/common/interfaces/Slices';
 
 @provider({ identifier: DataRepositoryProviderInterfaceResolver })
 export class DataRepositoryProvider implements DataRepositoryInterface {

@@ -2,7 +2,7 @@ import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpool/updateStatus.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/updateStatus.contract';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 
 /*

@@ -1,7 +1,7 @@
 import { PoolClient } from '@ilos/connection-postgres';
 
-import { AcquisitionInterface } from '../../src/shared/acquisition/common/interfaces/AcquisitionInterface';
-import { AcquisitionErrorInterface } from '../../src/shared/acquisition/common/interfaces/AcquisitionErrorInterface';
+import { AcquisitionInterface } from '@shared/acquisition/common/interfaces/AcquisitionInterface';
+import { AcquisitionErrorInterface } from '@shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 
 export function insertFactory(
   pool: PoolClient,

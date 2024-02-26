@@ -1,2 +1,2 @@
-export * from './shared/dates.helper';
+export * from '@pdc/helpers/dates.helper';
 export * from './castStatus';

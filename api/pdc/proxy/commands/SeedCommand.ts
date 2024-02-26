@@ -1,5 +1,5 @@
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { Migrator } from '@pdc/helper-seed';
+import { Migrator } from '@pdc/provider-seed';
 
 @command()
 export class SeedCommand implements CommandInterface {

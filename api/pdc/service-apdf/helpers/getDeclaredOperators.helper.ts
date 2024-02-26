@@ -3,12 +3,12 @@ import {
   ParamsInterface as FindBySiretParamsInterface,
   ResultInterface as FindBySiretResultInterface,
   signature as findBySiretSignature,
-} from '../shared/operator/findbysiret.contract';
+} from '@shared/operator/findbysiret.contract';
 import {
   ParamsInterface as PolicyParamsInterface,
   ResultInterface as PolicyResultInterface,
   signature as policyFindSignature,
-} from '../shared/policy/find.contract';
+} from '@shared/policy/find.contract';
 
 export async function getDeclaredOperators(
   kernel: KernelInterfaceResolver,

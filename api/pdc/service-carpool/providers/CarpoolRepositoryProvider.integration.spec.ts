@@ -3,7 +3,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { CarpoolRepositoryProvider } from './CarpoolRepositoryProvider';
 import { PeopleWithIdInterface } from '../interfaces/Carpool';
-import { IncentiveInterface } from '../shared/common/interfaces/IncentiveInterface';
+import { IncentiveInterface } from '@shared/common/interfaces/IncentiveInterface';
 
 interface TestContext {
   connection: PostgresConnection;

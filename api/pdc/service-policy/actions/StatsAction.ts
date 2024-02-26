@@ -1,8 +1,8 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { internalOnlyMiddlewares } from '@pdc/provider-middleware/dist';
+import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { IncentiveRepositoryProviderInterfaceResolver } from '../interfaces';
-import { handlerConfig } from '../shared/policy/stats.contract';
+import { handlerConfig } from '@shared/policy/stats.contract';
 
 @handler({
   ...handlerConfig,

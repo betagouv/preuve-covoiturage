@@ -2,7 +2,7 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { internalOnlyMiddlewares } from '@pdc/provider-middleware';
 import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface } from '../../shared/observatory/flux/insertMonthlyFlux.contract';
+import { handlerConfig, ParamsInterface } from '@shared/observatory/flux/insertMonthlyFlux.contract';
 
 @handler({
   ...handlerConfig,

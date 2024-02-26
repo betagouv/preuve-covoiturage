@@ -5,8 +5,8 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
 import { config } from './config';
-import { binding as fetchBinding } from './shared/company/fetch.schema';
-import { binding as findBinding } from './shared/company/find.schema';
+import { binding as fetchBinding } from '@shared/company/fetch.schema';
+import { binding as findBinding } from '@shared/company/find.schema';
 import { CompanyRepositoryProvider } from './providers/CompanyRepositoryProvider';
 import { CompanyDataSourceProvider } from './providers/CompanyDataSourceProvider';
 import { FetchAction } from './actions/FetchAction';

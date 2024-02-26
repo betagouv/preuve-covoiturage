@@ -1,4 +1,4 @@
-import { CertificateMetaInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
+import { CertificateMetaInterface } from '@shared/certificate/common/interfaces/CertificateMetaInterface';
 
 export interface PdfTemplateData {
   title: string;

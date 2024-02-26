@@ -2,7 +2,7 @@ import { provider } from '@ilos/common';
 import { Column, stream, Worksheet } from 'exceljs';
 import { normalize } from '../../helpers/normalizeAPDFData.helper';
 import { APDFTripInterface } from '../../interfaces/APDFTripInterface';
-import { PgCursorHandler } from '../../shared/common/PromisifiedPgCursor';
+import { PgCursorHandler } from '@shared/common/PromisifiedPgCursor';
 import { AbstractWorksheetWriter } from './AbstractWorksheetWriter';
 
 @provider()

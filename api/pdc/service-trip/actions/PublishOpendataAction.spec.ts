@@ -5,7 +5,7 @@ import faker from '@faker-js/faker';
 import sinon, { SinonStub } from 'sinon';
 import { UploadedResource } from '../interfaces/DataGouvInterface';
 import { DataGouvProvider } from '../providers/DataGouvProvider';
-import { ParamsInterface } from '../shared/trip/publishOpenData.contract';
+import { ParamsInterface } from '@shared/trip/publishOpenData.contract';
 import { BuildResourceDescription } from './opendata/BuildResourceDescription';
 import { PublishOpenDataAction } from './PublishOpenDataAction';
 import { GetRessourceIdIfExists } from './opendata/GetRessourceIdIfExists';

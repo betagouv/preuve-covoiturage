@@ -10,9 +10,9 @@ import { getDeclaredOperators } from '../helpers/getDeclaredOperators.helper';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { CheckCampaign } from '../providers/CheckCampaign';
 import { BuildExcel } from '../providers/excel/BuildExcel';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/apdf/export.contract';
-import { alias } from '../shared/apdf/export.schema';
-import { ResultInterface as PolicyResultInterface } from '../shared/policy/find.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/apdf/export.contract';
+import { alias } from '@shared/apdf/export.schema';
+import { ResultInterface as PolicyResultInterface } from '@shared/policy/find.contract';
 
 @handler({
   ...handlerConfig,

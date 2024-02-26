@@ -6,9 +6,9 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { GeoProvider } from '@pdc/provider-geo';
 import { config } from './config';
 
-import { binding as getPointByCodeBinding } from './shared/geo/getPointByCode.schema';
-import { binding as getPointByAddressBinding } from './shared/geo/getPointByAddress.schema';
-import { binding as getRouteMeta } from './shared/geo/getRouteMeta.schema';
+import { binding as getPointByCodeBinding } from '@shared/geo/getPointByCode.schema';
+import { binding as getPointByAddressBinding } from '@shared/geo/getPointByAddress.schema';
+import { binding as getRouteMeta } from '@shared/geo/getRouteMeta.schema';
 
 import { GetPointByAddressAction } from './actions/GetPointByAddressAction';
 import { GetPointByCodeAction } from './actions/GetPointByCodeAction';

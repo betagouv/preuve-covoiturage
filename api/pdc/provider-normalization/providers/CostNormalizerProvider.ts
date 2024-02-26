@@ -4,7 +4,7 @@ import {
   signature as operatorFindSignature,
   ParamsInterface as OperatorFindParamsInterface,
   ResultInterface as OperatorFindResultInterface,
-} from '../shared/operator/find.contract';
+} from '@shared/operator/find.contract';
 
 import {
   CostParamsInterface,

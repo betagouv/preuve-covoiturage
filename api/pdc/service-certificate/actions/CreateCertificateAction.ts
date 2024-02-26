@@ -14,11 +14,11 @@ import {
   FindParamsInterface,
 } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { CarpoolInterface } from '../shared/certificate/common/interfaces/CarpoolInterface';
-import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
-import { alias } from '../shared/certificate/create.schema';
-import { WithHttpStatus } from '../shared/common/handler/WithHttpStatus';
+import { CarpoolInterface } from '@shared/certificate/common/interfaces/CarpoolInterface';
+import { CertificateInterface } from '@shared/certificate/common/interfaces/CertificateInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/certificate/create.contract';
+import { alias } from '@shared/certificate/create.schema';
+import { WithHttpStatus } from '@shared/common/handler/WithHttpStatus';
 
 @handler({
   ...handlerConfig,

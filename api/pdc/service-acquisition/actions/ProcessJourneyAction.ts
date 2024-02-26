@@ -7,12 +7,12 @@ import { randomUUID } from 'crypto';
 import { callContext } from '../config/callContext';
 import { AcquisitionErrorStageEnum, AcquisitionStatusEnum } from '../interfaces/AcquisitionRepositoryProviderInterface';
 import { AcquisitionRepositoryProvider } from '../providers/AcquisitionRepositoryProvider';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/process.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/acquisition/process.contract';
 import {
   ParamsInterface as CrosscheckParamsInterface,
   ResultInterface as CrosscheckResultInterface,
   signature as crosscheckSignature,
-} from '../shared/carpool/crosscheck.contract';
+} from '@shared/carpool/crosscheck.contract';
 
 @handler({
   ...handlerConfig,

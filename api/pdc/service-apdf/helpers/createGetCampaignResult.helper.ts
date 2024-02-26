@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import faker from '@faker-js/faker';
-import { ResultInterface as GetCampaignResultInterface } from '../shared/policy/find.contract';
+import { ResultInterface as GetCampaignResultInterface } from '@shared/policy/find.contract';
 
 export const createGetCampaignResult = (
   status: string,

@@ -1,9 +1,9 @@
 import { ConfigInterfaceResolver, ContextType, handler } from '@ilos/common';
 import { Action as AbstractAction, env } from '@ilos/core';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/cee/simulateApplication.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/cee/simulateApplication.contract';
 
-import { alias } from '../shared/cee/simulateApplication.schema';
+import { alias } from '@shared/cee/simulateApplication.schema';
 
 import {
   ApplicationCooldownConstraint,

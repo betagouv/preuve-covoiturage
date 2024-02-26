@@ -1,4 +1,4 @@
-import { SimulateOnPastGeoRequiredParams } from '../shared/policy/simulateOnPastGeo.contract';
+import { SimulateOnPastGeoRequiredParams } from '@shared/policy/simulateOnPastGeo.contract';
 import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { hasPermissionMiddleware } from '@pdc/provider-middleware';
@@ -7,10 +7,10 @@ import {
   ParamsInterface as SimulateOnPasGeoParams,
   ResultInterface as SimulateOnPastResult,
   signature as simulateOnPastGeoSignature,
-} from '../shared/policy/simulateOnPastGeo.contract';
+} from '@shared/policy/simulateOnPastGeo.contract';
 
-import { handlerConfig, ParamsInterface } from '../shared/user/simulatePolicyform.contract';
-import { alias } from '../shared/user/simulatePolicyform.schema';
+import { handlerConfig, ParamsInterface } from '@shared/user/simulatePolicyform.contract';
+import { alias } from '@shared/user/simulatePolicyform.schema';
 
 @handler({
   ...handlerConfig,

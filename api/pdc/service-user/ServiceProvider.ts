@@ -7,22 +7,22 @@ import { RedisConnection } from '@ilos/connection-redis';
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 import { defaultNotificationBindings } from '@pdc/provider-notification';
 
-import { changePassword } from './shared/user/changePassword.schema';
-import { changePasswordWithToken } from './shared/user/changePasswordWithToken.schema';
-import { changeRole } from './shared/user/changeRole.schema';
-import { checkForgottenToken } from './shared/user/checkForgottenToken.schema';
-import { confirmEmail } from './shared/user/confirmEmail.schema';
-import { contactform } from './shared/user/contactform.schema';
-import { deleteUser } from './shared/user/delete.schema';
-import { deleteAssociatedUser } from './shared/user/deleteAssociated.schema';
-import { find } from './shared/user/find.schema';
-import { create } from './shared/user/create.schema';
-import { forgottenPassword } from './shared/user/forgottenPassword.schema';
-import { list } from './shared/user/list.schema';
-import { login } from './shared/user/login.schema';
-import { patch } from './shared/user/patch.schema';
-import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
-import { sendInvitationEmail } from './shared/user/sendInvitationEmail.schema';
+import { changePassword } from '@shared/user/changePassword.schema';
+import { changePasswordWithToken } from '@shared/user/changePasswordWithToken.schema';
+import { changeRole } from '@shared/user/changeRole.schema';
+import { checkForgottenToken } from '@shared/user/checkForgottenToken.schema';
+import { confirmEmail } from '@shared/user/confirmEmail.schema';
+import { contactform } from '@shared/user/contactform.schema';
+import { deleteUser } from '@shared/user/delete.schema';
+import { deleteAssociatedUser } from '@shared/user/deleteAssociated.schema';
+import { find } from '@shared/user/find.schema';
+import { create } from '@shared/user/create.schema';
+import { forgottenPassword } from '@shared/user/forgottenPassword.schema';
+import { list } from '@shared/user/list.schema';
+import { login } from '@shared/user/login.schema';
+import { patch } from '@shared/user/patch.schema';
+import { sendConfirmEmail } from '@shared/user/sendConfirmEmail.schema';
+import { sendInvitationEmail } from '@shared/user/sendInvitationEmail.schema';
 import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
 
 import { config } from './config';
@@ -52,7 +52,7 @@ import { challengePasswordMiddlewareBinding } from './middlewares/ChallengePassw
 import { challengeTokenMiddlewareBinding } from './middlewares/ChallengeTokenMiddleware';
 import { ContactformAction } from './actions/ContactformAction';
 import { SimulatePolicyformAction } from './actions/SimulatePolicyformAction';
-import { sendSimulationEmail } from './shared/user/simulatePolicyform.schema';
+import { sendSimulationEmail } from '@shared/user/simulatePolicyform.schema';
 
 @serviceProvider({
   config,

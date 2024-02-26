@@ -8,7 +8,7 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { StatsRefreshAction } from './actions/StatsRefreshAction';
 import { StatsRefreshCommand } from './commands/StatsRefreshCommand';
 import { config } from './config';
-import { binding as statsRefreshBinding } from './shared/monitoring/statsrefresh.schema';
+import { binding as statsRefreshBinding } from '@shared/monitoring/statsrefresh.schema';
 
 @serviceProvider({
   config,

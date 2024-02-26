@@ -3,7 +3,7 @@
  * Fill in with sensible defaults when not provided.
  */
 
-import { PointInterface } from '../shared/common/interfaces/PointInterface';
+import { PointInterface } from '@shared/common/interfaces/PointInterface';
 
 type Dates = { start_at: Date; end_at: Date };
 

@@ -1,5 +1,5 @@
 import anyTest, { TestFn } from 'ava';
-import { makeDbBeforeAfter, DbContext } from '@pdc/helper-test';
+import { makeDbBeforeAfter, DbContext } from '@pdc/provider-test';
 import { CarpoolRepository } from './CarpoolRepository';
 import { CarpoolGeoRepository } from './CarpoolGeoRepository';
 import { insertableCarpool } from '../mocks/database/carpool';

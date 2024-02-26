@@ -5,8 +5,8 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { defaultMiddlewareBindings } from '@pdc/provider-middleware';
 
 import { config } from './config';
-import { binding as saveBinding } from './shared/honor/save.schema';
-import { binding as statsBinding } from './shared/honor/stats.schema';
+import { binding as saveBinding } from '@shared/honor/save.schema';
+import { binding as statsBinding } from '@shared/honor/stats.schema';
 import { StatsAction } from './actions/StatsAction';
 import { SaveAction } from './actions/SaveAction';
 import { HonorRepositoryProvider } from './providers/HonorRepositoryProvider';

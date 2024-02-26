@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import anyTest, { TestFn } from 'ava';
-import { CarpoolInterface, CarpoolTypeEnum } from '../shared/certificate/common/interfaces/CarpoolInterface';
-import { MetaPersonInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
+import { CarpoolInterface, CarpoolTypeEnum } from '@shared/certificate/common/interfaces/CarpoolInterface';
+import { MetaPersonInterface } from '@shared/certificate/common/interfaces/CertificateMetaInterface';
 import { agg } from './mapFromCarpools';
 
 interface Context {

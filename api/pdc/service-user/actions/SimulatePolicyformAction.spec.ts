@@ -5,8 +5,8 @@ import { UserNotificationProvider } from '../providers/UserNotificationProvider'
 import {
   signature as simulateOnPastGeoSignature,
   SimulateOnPastGeoRequiredParams,
-} from '../shared/policy/simulateOnPastGeo.contract';
-import { ParamsInterface } from '../shared/user/simulatePolicyform.contract';
+} from '@shared/policy/simulateOnPastGeo.contract';
+import { ParamsInterface } from '@shared/user/simulatePolicyform.contract';
 import { SimulatePolicyformAction } from './SimulatePolicyformAction';
 
 interface Context {

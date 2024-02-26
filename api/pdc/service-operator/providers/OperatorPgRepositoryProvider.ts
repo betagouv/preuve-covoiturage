@@ -5,16 +5,16 @@ import {
   OperatorRepositoryProviderInterface,
   OperatorRepositoryProviderInterfaceResolver,
 } from '../interfaces/OperatorRepositoryProviderInterface';
-import { OperatorDbInterface } from '../shared/operator/common/interfaces/OperatorDbInterface';
-import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
-import { OperatorListInterface } from '../shared/operator/common/interfaces/OperatorListInterface';
+import { OperatorDbInterface } from '@shared/operator/common/interfaces/OperatorDbInterface';
+import { OperatorInterface } from '@shared/operator/common/interfaces/OperatorInterface';
+import { OperatorListInterface } from '@shared/operator/common/interfaces/OperatorListInterface';
 
-import { signature as companyFetchSignature } from '../shared/company/fetch.contract';
+import { signature as companyFetchSignature } from '@shared/company/fetch.contract';
 import {
   signature as companyFindSignature,
   ParamsInterface as CompanyParamsInterface,
   ResultInterface as CompanyResultInterface,
-} from '../shared/company/find.contract';
+} from '@shared/company/find.contract';
 
 @provider({
   identifier: OperatorRepositoryProviderInterfaceResolver,

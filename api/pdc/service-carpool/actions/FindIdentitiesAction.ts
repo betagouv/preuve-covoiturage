@@ -2,9 +2,9 @@ import { Action } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { copyFromContextMiddleware, internalOnlyMiddlewares } from '@pdc/provider-middleware';
 
-import { alias } from '../shared/carpool/findidentities.schema';
+import { alias } from '@shared/carpool/findidentities.schema';
 import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpool/findidentities.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/carpool/findidentities.contract';
 
 /*
  * Dispatch carpool to other service when ready

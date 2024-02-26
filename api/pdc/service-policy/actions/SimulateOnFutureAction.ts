@@ -8,8 +8,8 @@ import {
   ParamsInterface,
   ParamsInterfaceV3,
   ResultInterface,
-} from '../shared/policy/simulateOnFuture.contract';
-import { alias } from '../shared/policy/simulateOnFuture.schema';
+} from '@shared/policy/simulateOnFuture.contract';
+import { alias } from '@shared/policy/simulateOnFuture.schema';
 import {
   PolicyRepositoryProviderInterfaceResolver,
   TerritoryRepositoryProviderInterfaceResolver,

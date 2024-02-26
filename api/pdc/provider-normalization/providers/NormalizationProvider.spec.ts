@@ -4,7 +4,7 @@ import test from 'ava';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 import { NormalizationProvider } from './NormalizationProvider';
 import { CostNormalizerProvider } from './CostNormalizerProvider';
-import { PartialGeoInterface, PointInterface } from '@pdc/provider-geo/dist/interfaces';
+import { PartialGeoInterface, PointInterface } from '@pdc/provider-geo/interfaces';
 import { provider } from '@ilos/common';
 import { randomUUID } from 'crypto';
 
