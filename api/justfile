@@ -2,7 +2,6 @@ build:
   npm run build
 
 test type:
-  just build
   APP_POSTGRES_URL=postgres://postgres:postgres@localhost:5432/local \
   APP_REDIS_URL=redis://localhost:6379 \
   npm run test:{{ type }}

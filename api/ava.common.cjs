@@ -6,6 +6,9 @@ const common = {
     },
     compile: false
   },
+  require: [
+    "module-alias/register"
+  ]
 };
 
 const integration = {

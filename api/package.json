@@ -37,6 +37,13 @@
     "url": "https://github.com/betagouv/preuve-covoiturage/issues"
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
+  "_moduleAliases": {
+    "@pdc":    "dist/pdc",
+    "@ilos":   "dist/ilos",
+    "@config": "dist/config",
+    "@shared": "dist/shared",
+    "@db":     "src/db"
+  },
   "devDependencies": {
     "@ava/typescript": "4",
     "@faker-js/faker": "^6.0.0",
@@ -128,6 +135,7 @@
     "libphonenumber-js": "^1.10.53",
     "lodash": "^4.17.21",
     "mjml": "^4.12.0",
+    "module-alias": "^2.2.3",
     "nodemailer": "^6.9.1",
     "pdf-lib": "^1.16.0",
     "pg": "^8.11.3",
