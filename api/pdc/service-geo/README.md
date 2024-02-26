@@ -1,6 +1,0 @@
----
-title: Geo
----
-
-# Geo service
-
