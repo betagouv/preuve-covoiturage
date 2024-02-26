@@ -75,6 +75,7 @@
     "@types/ioredis": "^4.27.4",
     "@types/pg-cursor": "^2.7.0",
     "get-port": "^5.1.1",
+    "@types/supertest": "^2.0.10",
     "p-event": "^4.2.0"
   },
   "resolutions": {
@@ -92,6 +93,10 @@
     "pg-cursor": "^2.10.3",
     "ioredis": "^4.27.9",
     "pino": "^8.8.0",
-    "bullmq": "^1.79.0"
+    "bullmq": "^1.79.0",
+    "ajv": "^8.6.3",
+    "ajv-formats": "^2.1.1",
+    "ajv-keywords": "^5.0.0",
+    "ajv-errors": "^3.0.0"
   }
 }
