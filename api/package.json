@@ -74,6 +74,7 @@
     "@types/pg": "^8.10.2",
     "@types/ioredis": "^4.27.4",
     "@types/pg-cursor": "^2.7.0",
+    "get-port": "^5.1.1",
     "p-event": "^4.2.0"
   },
   "resolutions": {
@@ -82,12 +83,14 @@
     "**/@xmldom/xmldom": "0.8"
   },
   "dependencies": {
+    "axios": "^1.6.5",
     "libphonenumber-js": "^1.10.53",
     "commander": "^8.2.0",
     "inversify": "^5.0.5",
     "reflect-metadata": "^0.1.13",
     "pg": "^8.11.3",
     "pg-cursor": "^2.10.3",
-    "ioredis": "^4.27.9"
+    "ioredis": "^4.27.9",
+    "pino": "^8.8.0"
   }
 }
