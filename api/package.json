@@ -13,18 +13,19 @@
   ],
   "scripts": {
     "start": "if [ \"$DO_MIGRATIONS\" ]; then npm run migrate; fi && if [ -z \"$IS_WORKER\" ]; then npm run start:http; else npm run start:queue; fi",
-    "start:http": "npm --workspace @pdc/proxy run ilos http $PORT",
-    "start:queue": "npm --workspace @pdc/proxy run ilos queue $APP_REDIS_URL",
+    "start:http": "node dist/main.js http $PORT",
+    "start:queue": "node dist/main.js queue $APP_REDIS_URL",
     "clean": "rm -rf ./dist",
-    "build": "tsc",
+    "copy-static": "cp -R ./src/ilos/cli/stubs ./dist/ilos/cli; cp -R ./src/pdc/provider-seed/*.csv ./dist/pdc/provider-seed; cp -R ./src/pdc/proxy/public ./dist/pdc/proxy",
+    "build": "npm run copy-static && tsc",
     "watch": "tsc -w",
     "test:unit": "ava --config ava.unit.cjs",
     "test:integration": "ava --config ava.integration.cjs",
     "coverage:ci": "nyc --nycrc-path ./nyc.config.cjs --reporter=lcov ava --config ava.coverage.cjs",
     "coverage": "nyc --nycrc-path ./nyc.config.cjs --reporter=text ava --config ava.coverage.cjs",
     "audit:deps": "npm audit --audit-level moderate",
-    "ilos": "npm run --workspace @pdc/proxy -- ilos",
-    "migrate": "DATABASE_URL=$APP_POSTGRES_URL npm --workspace @pdc/migrator run up"
+    "ilos": "node dist/main.js",
+    "migrate": "DATABASE_URL=$APP_POSTGRES_URL POSTGRES_SCHEMA=geo node src/db/cli.js"
   },
   "keywords": [
     "betagouv",
