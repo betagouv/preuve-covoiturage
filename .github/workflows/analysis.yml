@@ -91,8 +91,10 @@ jobs:
           cache: 'npm'
           cache-dependency-path: api/package-lock.json
 
-      - run: sudo snap install --edge --classic just
-  
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just@1.24.0
+
       - name: Run unit test
         run: just ci_test_unit
         working-directory: api
@@ -137,7 +139,11 @@ jobs:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: api/package-lock.json
-      - run: sudo snap install --edge --classic just
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just@1.24.0
+
       - name: Add host entries
         run: | 
           sudo echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
