@@ -75,11 +75,11 @@ generate_certs skip=path_exists(join(cert_dir,"cert.key")):
   if {{ skip }}; then
     echo "Already exists"
   else
-    openssl genrsa -out $CERT_DIR/localCA.key 2048
-    openssl req -x509 -new -nodes -key $CERT_DIR/localCA.key -sha256 -days 1825 -out $CERT_DIR/localCA.pem -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=pdc/emailAddress=technique@covoiturage.beta.gouv.fr"
-    openssl genrsa -out $CERT_DIR/cert.key 2048
-    openssl req -new -key $CERT_DIR/cert.key -out $CERT_DIR/cert.csr -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=*.covoiturage.test/emailAddress=technique@covoiturage.beta.gouv.fr"
-    openssl x509 -req -in $CERT_DIR/cert.csr -CA $CERT_DIR/localCA.pem -CAkey $CERT_DIR/localCA.key -CAcreateserial -out $CERT_DIR/cert.crt -days 500 -sha256
+    openssl genrsa -out {{ cert_dir }}/localCA.key 2048
+    openssl req -x509 -new -nodes -key {{ cert_dir }}/localCA.key -sha256 -days 1825 -out {{ cert_dir }}/localCA.pem -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=pdc/emailAddress=technique@covoiturage.beta.gouv.fr"
+    openssl genrsa -out {{ cert_dir }}/cert.key 2048
+    openssl req -new -key {{ cert_dir }}/cert.key -out {{ cert_dir }}/cert.csr -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=*.covoiturage.test/emailAddress=technique@covoiturage.beta.gouv.fr"
+    openssl x509 -req -in {{ cert_dir }}/cert.csr -CA {{ cert_dir }}/localCA.pem -CAkey {{ cert_dir }}/localCA.key -CAcreateserial -out {{ cert_dir }}/cert.crt -days 500 -sha256
   fi
 
 # Seed data
@@ -98,7 +98,7 @@ wait domain port:
   sleep 10
 
 # CI integration test
-ci_test_integration: rebuild (start_e2e "proxy") generate_certs generate_keys start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test "integration") stop_e2e
+ci_test_integration: rebuild generate_certs generate_keys (start_e2e "proxy") start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test "integration") stop_e2e
 
 # CI unit test
 ci_test_unit: rebuild (test "unit") 
