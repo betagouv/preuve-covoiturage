@@ -7,8 +7,6 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { BucketName } from './interfaces/BucketName';
 import { S3StorageProvider } from './S3StorageProvider';
-// import { NodeHttp2Handler } from '@aws-sdk/node-http-handler';
-// import { NodeHttp2HandlerOptions } from '@aws-sdk/types';
 
 test('should be uploading file with bucket as sub-domain', async (t) => {
   t.log('Start test');
