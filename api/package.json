@@ -16,7 +16,7 @@
     "start:http": "node dist/main.js http $PORT",
     "start:queue": "node dist/main.js queue $APP_REDIS_URL",
     "clean": "rm -rf ./dist",
-    "copy-static": "mkdir -p dist/ilos/cli dist/pdc/provider-seed dist/pdc/proxy; cp -R ./src/ilos/cli/stubs ./dist/ilos/cli; cp -R ./src/pdc/provider-seed/*.csv ./dist/pdc/provider-seed; cp -R ./src/pdc/proxy/public ./dist/pdc/proxy",
+    "copy-static": "mkdir -p dist/ilos/cli dist/pdc/providers/seed dist/pdc/proxy; cp -R ./src/ilos/cli/stubs ./dist/ilos/cli; cp -R ./src/pdc/providers/seed/*.csv ./dist/pdc/providers/seed; cp -R ./src/pdc/proxy/public ./dist/pdc/proxy",
     "build": "npm run copy-static && tsc",
     "watch": "tsc -w",
     "test:unit": "ava --config ava.unit.cjs",
