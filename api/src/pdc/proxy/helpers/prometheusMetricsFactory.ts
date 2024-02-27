@@ -1,4 +1,4 @@
-// from https://github.com/banzaicloud/service-tools/blob/master/src/middleware/express/prometheus-metrics.ts
+// from https://github.com/banzaicloud/services/tools/blob/master/src/middleware/express/prometheus-metrics.ts
 import { Request, RequestHandler, Response } from 'express';
 import * as promClient from 'prom-client';
 

@@ -1,7 +1,7 @@
 import express from 'express';
 import { set, get } from 'lodash';
 import { KernelInterface, UnauthorizedException, ForbiddenException } from '@ilos/common';
-import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
+import { TokenProviderInterfaceResolver } from '@pdc/providers/token';
 
 import { ApplicationInterface } from '@shared/application/common/interfaces/ApplicationInterface';
 import { TokenPayloadInterface } from '@shared/application/common/interfaces/TokenPayloadInterface';

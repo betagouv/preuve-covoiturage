@@ -9,8 +9,8 @@ import {
 } from '@ilos/common';
 import { env } from '@ilos/core';
 import { mapStatusCode } from '@ilos/transport-http';
-import { Sentry, SentryProvider } from '@pdc/provider-sentry';
-import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
+import { Sentry, SentryProvider } from '@pdc/providers/sentry';
+import { TokenProviderInterfaceResolver } from '@pdc/providers/token';
 import bodyParser from 'body-parser';
 import createStore from 'connect-redis';
 import cors from 'cors';

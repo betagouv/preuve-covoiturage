@@ -1,4 +1,4 @@
-import { Timezone } from '@pdc/provider-validator';
+import { Timezone } from '@pdc/providers/validator';
 import { addDays, addMonths, startOfMonth, subDays, subMonths } from 'date-fns';
 import { formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 

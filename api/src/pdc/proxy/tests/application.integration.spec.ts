@@ -20,8 +20,8 @@ import supertest from 'supertest';
 import anyTest, { TestFn } from 'ava';
 
 import { KernelInterface, TransportInterface } from '@ilos/common';
-import { CryptoProvider } from '@pdc/provider-crypto';
-import { TokenProvider } from '@pdc/provider-token';
+import { CryptoProvider } from '@pdc/providers/crypto';
+import { TokenProvider } from '@pdc/providers/token';
 import { RedisConnection } from '@ilos/connection-redis';
 
 import { HttpTransport } from '../HttpTransport';
@@ -69,7 +69,7 @@ test.before(async (t) => {
   t.context.kernel = new Kernel();
   t.context.app = new HttpTransport(t.context.kernel);
 
-  // see @pdc/provider-test README.md
+  // see @pdc/providers/test README.md
   t.context.application = {
     _id: 1,
     uuid: '1efacd36-a85b-47b2-99df-cabbf74202b3',

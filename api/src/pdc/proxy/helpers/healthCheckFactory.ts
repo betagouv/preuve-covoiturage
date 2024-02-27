@@ -1,4 +1,4 @@
-// from https://github.com/banzaicloud/service-tools/blob/master/src/middleware/express/health-check.ts
+// from https://github.com/banzaicloud/services/tools/blob/master/src/middleware/express/health-check.ts
 import { Request, RequestHandler, Response } from 'express';
 
 export function healthCheckFactory(checks: Array<() => Promise<any>> = []): RequestHandler {

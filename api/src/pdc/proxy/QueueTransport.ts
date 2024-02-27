@@ -3,7 +3,7 @@ import http from 'http';
 import express from 'express';
 import { TransportInterface } from '@ilos/common';
 import { QueueTransport } from '@ilos/transport-redis';
-import { SentryProvider } from '@pdc/provider-sentry';
+import { SentryProvider } from '@pdc/providers/sentry';
 import { env } from '@ilos/core';
 
 import { healthCheckFactory } from './helpers/healthCheckFactory';

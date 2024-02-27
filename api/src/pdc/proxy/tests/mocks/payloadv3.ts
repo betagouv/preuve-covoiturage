@@ -1,4 +1,4 @@
-import { uuid } from '@pdc/provider-test';
+import { uuid } from '@pdc/providers/test';
 
 export function payloadv3(): any {
   return {
