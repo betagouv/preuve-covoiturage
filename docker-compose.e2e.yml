@@ -20,8 +20,8 @@ services:
       - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
       - '--entrypoints.web.http.redirections.entryPoint.permanent=true'
     volumes:
-      - ${PWD}/docker/traefik/config.yml:/etc/traefik/dynamic/config.yml
-      - ${PWD}/docker/traefik/certs:/etc/certs
+      - ./docker/traefik/config.yml:/etc/traefik/dynamic/config.yml
+      - ./docker/traefik/certs:/etc/certs
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     networks:
       back:
@@ -78,7 +78,7 @@ services:
 
   dashboard:
     volumes:
-      - ${PWD}/docker/dashboard/ci.env.js:/usr/share/nginx/html/assets/env.js:ro
+      - ./docker/dashboard/ci.env.js:/usr/share/nginx/html/assets/env.js:ro
     build:
       dockerfile: ./docker/dashboard/prod/Dockerfile
       context: .
@@ -138,7 +138,7 @@ services:
       - 'traefik.http.routers.api.tls=true'
       - 'traefik.http.services.api.loadbalancer.server.port=8080'
     volumes:
-      - ${PWD}/docker/api/certs:/app/certs:ro
+      - ./docker/api/certs:/app/certs:ro
 
   cms:
     build:
@@ -269,8 +269,8 @@ services:
     build: './docker/lint'
     tty: true
     volumes:
-      - ${PWD}/api:/code/api:ro
-      - ${PWD}/dashboard:/code/dashboard:ro
+      - ./api:/code/api:ro
+      - ./dashboard:/code/dashboard:ro
 
 networks:
   front:
