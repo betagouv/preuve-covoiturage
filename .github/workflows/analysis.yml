@@ -90,17 +90,11 @@ jobs:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: api/package-lock.json
-      
-      - name: Install
-        run: npm ci
-        working-directory: api
 
-      - name: Build
-        run: npm run build
-        working-directory: api
-
-      - name: Run Unit test
-        run: npm run test:unit
+      - run: sudo snap install --edge --classic just
+  
+      - name: Run unit test
+        run: just ci_test_unit
         working-directory: api
 
   codeql:
@@ -143,15 +137,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: api/package-lock.json
-
-      - name: Install
-        run: npm ci
-        working-directory: api
-
-      - name: Build
-        run: npm run build
-        working-directory: api
-
+      - run: sudo snap install --edge --classic just
       - name: Add host entries
         run: | 
           sudo echo "127.0.0.1 api.covoiturage.test" | sudo tee -a /etc/hosts
@@ -159,12 +145,6 @@ jobs:
           sudo echo "127.0.0.1 download.covoiturage.test" | sudo tee -a /etc/hosts
           sudo echo "127.0.0.1 local-pdc-export.s3.covoiturage.test" | sudo tee -a /etc/hosts
 
-      - name: Enable ilos cli
-        run: | 
-          rm -Rf ./proxy/node_modules/
-          npm ci
-        working-directory: api
-        
       - name: Run integration tests
         env:
           APP_POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test
@@ -184,4 +164,5 @@ jobs:
           APP_SESSION_SECRET: null
           APP_ROUTECACHE_AUTHTOKEN: null
           AWS_REGION: fr-par
-        run: ./integration.sh run
+        run: just ci_test_integration
+        working-directory: api

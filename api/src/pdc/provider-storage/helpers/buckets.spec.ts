@@ -3,6 +3,7 @@ import { BucketName } from '../interfaces/BucketName';
 import { getBucketEndpoint, getBucketName, getBucketPrefix } from './buckets';
 
 test('[getBucketPrefix] returns AWS_BUCKET_PREFIX or empty', (t) => {
+  process.env.AWS_BUCKET_PREFIX = '';
   t.is(getBucketPrefix(), '');
 
   process.env.AWS_BUCKET_PREFIX = 'test';

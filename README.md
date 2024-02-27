@@ -40,8 +40,7 @@ You will need `docker` and `docker-compose`.
 2. `cp api/.env.example api/.env`
 3. Modifier `api/.env`
 4. `docker-compose build`
-5. `./rebuild.sh`
-6. `docker-compose run --rm migrator npm run migrate`
+5. `docker-compose run --rm migrator npm run migrate`
 
 ```shell
 terminal 1: docker-compose up api
@@ -73,19 +72,6 @@ CHROME_BIN=$(which brave-browser) npm run test
 
 # requires karma-firefox-launcher (installed)
 npm run test --browsers Firefox
-```
-
-### End-to-end testing
-
-```shell
-# standalone e2e (running in CI)
-./tool.sh e2e
-```
-
-```shell
-# local e2e
-./tool.sh bootstrap
-./tool.sh local_e2e
 ```
 
 ##### Notes

@@ -98,4 +98,10 @@ wait domain port:
   sleep 10
 
 # CI integration test
-ci_test_integration: clean (install "production") build (start_e2e "proxy") generate_certs generate_keys start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test "integration") stop_e2e
+ci_test_integration: rebuild (start_e2e "proxy") generate_certs generate_keys start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test "integration") stop_e2e
+
+# CI unit test
+ci_test_unit: rebuild (test "unit") 
+
+# Rebuild for production
+rebuild: (install "production") build

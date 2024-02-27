@@ -76,7 +76,6 @@ api/
 ├─ lerna.json         # lerna.js configuration
 ├─ mocha-ts.json      # test suite config (legacy)
 ├─ package.json       # js packages
-├─ rebuild.sh         # local tool to rebuild the whole project
 ├─ tsconfig.json      # tsc global config
 ├─ package-lock.json
 ```
