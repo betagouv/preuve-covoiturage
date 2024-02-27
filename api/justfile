@@ -1,13 +1,102 @@
-build:
-  npm run build
+set dotenv-load
 
-test type pattern:
-  APP_POSTGRES_URL=postgres://postgres:postgres@localhost:5432/local \
-  APP_REDIS_URL=redis://localhost:6379 \
+cert_dir:=join(parent_directory(justfile_directory()),"docker","traefik","certs")
+key_dir:=join(parent_directory(justfile_directory()),"docker","api","certs")
+docker_compose_dev_file:=join(parent_directory(justfile_directory()),"docker-compose.dev.yml")
+docker_compose_e2e_file:=join(parent_directory(justfile_directory()),"docker-compose.e2e.yml")
+
+default:
+  @just --list
+
+# Build api
+build:
+    npm run build
+
+# Refresh your env
+clean:
+  rm -rf node_modules
+  rm -rf dist
+
+# Install
+install target="local":
+  npm {{ if target == "production" { "ci" } else { "install" } }}
+
+# Run test
+test type pattern="":
   npm run test:{{ type }} -- {{ pattern }}
 
-start_env:
-  cd .. && docker-compose -f ./docker-compose.e2e.yml -f ./docker-compose.dev.yml up -d postgres redis
+# Start docker services
+start *services="s3 postgres redis mailer":
+ just dc up -d {{ services }}
 
-stop_env:
-  cd .. && docker-compose -f ./docker-compose.e2e.yml -f ./docker-compose.dev.yml down
+# Start docker services for e2e
+[private]
+start_e2e *services="s3 postgres redis mailer":
+ just dc_e2e up -d {{ services }}
+
+# Stop docker services
+stop keep_volume="true":
+  just dc down {{ if keep_volume == "true" { "" } else { "-v" } }}
+
+# Stop docker services for e2e
+[private]
+stop_e2e:
+  just dc_e2e down -v
+
+# Run docker-compose dev
+[private]
+@dc *args:
+  docker-compose -f {{ docker_compose_e2e_file }} -f {{ docker_compose_dev_file }} {{ args }}
+
+# Run docker-compose e2e
+[private]
+@dc_e2e *args:
+  docker-compose -f {{ docker_compose_e2e_file }} {{ args }}
+
+# Generate keys
+[private]
+generate_keys skip=path_exists(join(key_dir,"privateKey.pem")):
+  #!/usr/bin/env bash
+  echo "Generating keys"
+  if {{ skip }}; then
+    echo "Already exists"
+  else
+    openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -pkeyopt rsa_keygen_pubexp:3 -out "{{key_dir}}/privateKey.pem"
+    openssl pkey -in "{{key_dir}}/privateKey.pem" -out "{{key_dir}}/publicKey.pem" -pubout
+    chmod a+r "{{key_dir}}/privateKey.pem"
+    chmod a+r "{{key_dir}}/publicKey.pem"
+  fi 
+
+# Generate cert
+[private]
+generate_certs skip=path_exists(join(cert_dir,"cert.key")):
+  #!/usr/bin/env bash
+  echo "Generating certs"
+  if {{ skip }}; then
+    echo "Already exists"
+  else
+    openssl genrsa -out $CERT_DIR/localCA.key 2048
+    openssl req -x509 -new -nodes -key $CERT_DIR/localCA.key -sha256 -days 1825 -out $CERT_DIR/localCA.pem -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=pdc/emailAddress=technique@covoiturage.beta.gouv.fr"
+    openssl genrsa -out $CERT_DIR/cert.key 2048
+    openssl req -new -key $CERT_DIR/cert.key -out $CERT_DIR/cert.csr -subj "/C=FR/ST=Idf/L=Paris/O=Local PDC/CN=*.covoiturage.test/emailAddress=technique@covoiturage.beta.gouv.fr"
+    openssl x509 -req -in $CERT_DIR/cert.csr -CA $CERT_DIR/localCA.pem -CAkey $CERT_DIR/localCA.key -CAcreateserial -out $CERT_DIR/cert.crt -days 500 -sha256
+  fi
+
+# Seed data
+seed:
+  npm run ilos seed
+
+# Create a new bucket
+[private]
+create_bucket name:
+  just dc run --rm -e BUCKET={{name}} s3-init
+
+# Wait for app
+[private]
+wait domain port:
+  until nc -zv {{ domain }} {{ port }} -w1; do echo "waiting"; sleep 1; done
+  sleep 10
+
+# CI integration test
+[private]
+ci_test_integration: clean (install "production") build (start_e2e "proxy") generate_certs generate_keys start_e2e (wait "localhost" "5432") seed (create_bucket "local-pdc-export") (create_bucket "local-pdc-appels-de-fonds") (create_bucket "local-pdc-public") (test "integration") stop_e2e
