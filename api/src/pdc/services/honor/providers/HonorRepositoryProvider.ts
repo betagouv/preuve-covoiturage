@@ -43,7 +43,7 @@ export class HonorRepositoryProvider implements HonorRepositoryInterface {
     const response: { rowCount: number; rows: StatsResponseRow[] } = await this.pg.getClient().query({
       text: `
         SELECT
-          to_char(journey_start_datetime::date, 'yyyy-mm-dd') as day
+          to_char(journey_start_datetime::date, 'yyyy-mm-dd') as day,
           type,
           SUM(1)::int as total
         FROM ${this.table}

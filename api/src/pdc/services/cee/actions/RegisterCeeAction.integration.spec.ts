@@ -13,6 +13,7 @@ import {
   phoneTruncSchema,
   timestampSchema,
 } from '@shared/cee/common/ceeSchema';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
 const { before, after, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
   ServiceProvider,
@@ -27,9 +28,9 @@ interface TestContext extends HandlerMacroContext {
 const test = anyTest as TestFn<TestContext>;
 test.before(async (t) => {
   const db = await dbBefore();
-  config.connections.postgres.connectionString = db.db.currentConnectionString;
   config.rules.validJourneyConstraint.start_date = new Date('2022-01-01');
   const { kernel } = await before();
+  kernel.getContainer().rebind(PostgresConnection).toConstantValue(new PostgresConnection({ connectionString: db.db.currentConnectionString }));
   t.context = { db, kernel };
 });
 

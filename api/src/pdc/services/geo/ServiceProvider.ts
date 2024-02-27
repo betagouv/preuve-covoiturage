@@ -19,7 +19,6 @@ import { GetRouteMetaAction } from './actions/GetRouteMetaAction';
   providers: [GeoProvider],
   validator: [getPointByAddressBinding, getPointByCodeBinding, getRouteMeta],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [GetPointByAddressAction, GetPointByCodeAction, GetRouteMetaAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {

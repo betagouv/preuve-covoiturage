@@ -1,7 +1,6 @@
 import anyTest, { TestFn } from 'ava';
 import { httpMacro, HttpMacroContext } from '@pdc/providers/test';
 
-import { bootstrap } from './bootstrap';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ServiceProvider } from './ServiceProvider';
 
@@ -18,7 +17,7 @@ function getDb(context: TestContext): PostgresConnection {
 }
 
 const test = anyTest as TestFn<TestContext>;
-const { before, after } = httpMacro<TestContext>(() => bootstrap.boot('http', 0));
+const { before, after } = httpMacro<TestContext>(ServiceProvider);
 
 test.before(async (t) => {
   const { transport, supertest, request } = await before();

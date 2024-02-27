@@ -32,10 +32,6 @@ import { CarpoolAcquisitionService } from '@pdc/providers/carpool';
   providers: [AcquisitionRepositoryProvider, NormalizationProvider, GeoProvider, CarpoolAcquisitionService],
   validator: [v3binding, listBinding, cancelBinding, statusBinding, patchBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  connections: [
-    [PostgresConnection, 'connections.postgres'],
-    [RedisConnection, 'connections.redis'],
-  ],
   handlers: [
     CreateJourneyAction,
     CancelJourneyAction,

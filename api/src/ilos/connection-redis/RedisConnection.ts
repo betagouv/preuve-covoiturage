@@ -1,13 +1,16 @@
+import { ConnectionConfigurationType, ConnectionInterface, DestroyHookInterface, InitHookInterface } from '@ilos/common';
 import { Redis as RedisInterface } from 'ioredis';
 import Redis from 'ioredis';
 
-import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/common';
-
-export class RedisConnection implements ConnectionInterface<RedisInterface> {
+export class RedisConnection implements ConnectionInterface<RedisInterface>, DestroyHookInterface, InitHookInterface {
   protected client: RedisInterface;
   protected connected = false;
 
   constructor(protected readonly config: ConnectionConfigurationType | string) {}
+  
+  async init(): Promise<void> {
+    await this.up();
+  }
 
   async up() {
     if (!this.connected && this.getClient().status === 'wait') {
@@ -15,6 +18,10 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
       this.connected = true;
       return;
     }
+  }
+
+  async destroy(): Promise<void> {
+    await this.down();
   }
 
   async down() {

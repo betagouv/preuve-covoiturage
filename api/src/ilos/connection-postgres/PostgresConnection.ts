@@ -1,10 +1,10 @@
-import { ConnectionInterface } from '@ilos/common';
+import { ConnectionInterface, DestroyHookInterface, InitHookInterface } from '@ilos/common';
 import { env } from '@ilos/core';
 import { Pool, PoolConfig } from 'pg';
 import Cursor, { CursorQueryConfig } from 'pg-cursor';
 import { URL } from 'url';
 
-export class PostgresConnection implements ConnectionInterface<Pool> {
+export class PostgresConnection implements ConnectionInterface<Pool>, InitHookInterface, DestroyHookInterface {
   private readonly pgUrl: string;
   protected pool: Pool;
 
@@ -21,9 +21,17 @@ export class PostgresConnection implements ConnectionInterface<Pool> {
     });
   }
 
+  async init(): Promise<void> {
+    await this.up();
+  }
+
   async up() {
     await this.pool.query('SELECT NOW()');
     return;
+  }
+
+  async destroy(): Promise<void> {
+    await this.down();
   }
 
   async down() {

@@ -50,10 +50,6 @@ import { binding as statsBinding } from '@shared/trip/stats.schema';
     publishOpenDataBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware], scopeToGroupBinding],
-  connections: [
-    [RedisConnection, 'connections.redis'],
-    [PostgresConnection, 'connections.postgres'],
-  ],
   commands: [ReplayOpendataExportCommand, PublishOpendataCommand],
   handlers: [
     ListTripsAction,

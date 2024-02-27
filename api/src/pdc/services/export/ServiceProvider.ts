@@ -49,10 +49,6 @@ const handlers = [];
   providers: [...externalProviders, ...repositories, ...services],
   validator: [],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  connections: [
-    [PostgresConnection, 'connections.postgres'],
-    [RedisConnection, 'connections.redis'],
-  ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [CommandExtension, ValidatorExtension];

@@ -16,7 +16,6 @@ import { HonorRepositoryProvider } from './providers/HonorRepositoryProvider';
   providers: [HonorRepositoryProvider],
   validator: [saveBinding, statsBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [StatsAction, SaveAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {

@@ -22,10 +22,6 @@ import { ImportCeeIdentityAction } from './actions/ImportCeeIdentityAction';
   providers: [CeeRepositoryProvider],
   validator: [importCeeBinding, importIdentityCeeBinding, registerCeeBinding, simulateCeeBinding],
   handlers: [ImportCeeAction, RegisterCeeAction, SimulateCeeAction, ImportCeeIdentityAction],
-  connections: [
-    [PostgresConnection, 'connections.postgres'],
-    [RedisConnection, 'connections.redis'],
-  ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
 })
 export class ServiceProvider extends AbstractServiceProvider {

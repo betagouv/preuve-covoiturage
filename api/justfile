@@ -105,3 +105,6 @@ ci_test_unit: rebuild (test "unit")
 
 # Rebuild for production
 rebuild: (install "production") build
+
+api *command:
+  npm run {{ command }}

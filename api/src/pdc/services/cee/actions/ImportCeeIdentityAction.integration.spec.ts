@@ -2,7 +2,6 @@ import anyTest, { TestFn } from 'ava';
 import { handlerMacro, HandlerMacroContext, makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
 import { ServiceProvider } from '../ServiceProvider';
 import { ParamsInterface, ResultInterface, handlerConfig } from '@shared/cee/importApplicationIdentity.contract';
-import { config } from '../config';
 import { ContextType } from '@ilos/common';
 import {
   ceeJourneyTypeEnumSchema,
@@ -10,6 +9,7 @@ import {
   phoneTruncSchema,
   timestampSchema,
 } from '@shared/cee/common/ceeSchema';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
 const { before, after, error } = handlerMacro<ParamsInterface, ResultInterface>(ServiceProvider, handlerConfig);
 const { before: dbBefore, after: dbAfter } = makeDbBeforeAfter();
@@ -21,8 +21,8 @@ interface TestContext extends HandlerMacroContext {
 const test = anyTest as TestFn<TestContext>;
 test.before(async (t) => {
   const db = await dbBefore();
-  config.connections.postgres.connectionString = db.db.currentConnectionString;
   const { kernel } = await before();
+  kernel.getContainer().rebind(PostgresConnection).toConstantValue(new PostgresConnection({ connectionString: db.db.currentConnectionString }));
   t.context = { db, kernel };
 });
 

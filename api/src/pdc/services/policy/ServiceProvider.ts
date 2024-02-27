@@ -68,10 +68,6 @@ import { binding as syncIncentiveSumSchemaBinding } from '@shared/policy/syncInc
     syncIncentiveSumAction,
   ],
   commands: [ApplyCommand, FinalizeCommand, StatsCommand],
-  connections: [
-    [PostgresConnection, 'connections.postgres'],
-    [RedisConnection, 'connections.redis'],
-  ],
   queues: ['campaign', 'policy'],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
 })

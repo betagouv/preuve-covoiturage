@@ -24,10 +24,6 @@ import { ExportCommand } from './commands/ExportCommand';
   handlers: [ListAction, ExportAction],
   commands: [ExportCommand],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  connections: [
-    [RedisConnection, 'connections.redis'],
-    [PostgresConnection, 'connections.postgres'],
-  ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

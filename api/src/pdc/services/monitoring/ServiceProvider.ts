@@ -16,10 +16,6 @@ import { binding as statsRefreshBinding } from '@shared/monitoring/statsrefresh.
   commands: [StatsRefreshCommand],
   validator: [statsRefreshBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  connections: [
-    [RedisConnection, 'connections.redis'],
-    [PostgresConnection, 'connections.postgres'],
-  ],
   handlers: [StatsRefreshAction],
   queues: ['monitoring'],
 })

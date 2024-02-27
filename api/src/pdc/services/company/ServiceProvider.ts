@@ -17,7 +17,6 @@ import { FindAction } from './actions/FindAction';
   providers: [CompanyRepositoryProvider, CompanyDataSourceProvider],
   validator: [fetchBinding, findBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [FetchAction, FindAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {

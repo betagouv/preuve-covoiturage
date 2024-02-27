@@ -88,10 +88,6 @@ import { sendSimulationEmail } from '@shared/user/simulatePolicyform.schema';
     challengeTokenMiddlewareBinding,
     ['validate', ValidatorMiddleware],
   ],
-  connections: [
-    [RedisConnection, 'connections.redis'],
-    [PostgresConnection, 'connections.postgres'],
-  ],
   handlers: [
     ChangePasswordUserAction,
     ChangePasswordWithTokenUserAction,

@@ -1,13 +1,13 @@
 import anyTest, { TestFn } from 'ava';
 import { httpMacro, HttpMacroContext } from '@pdc/providers/test';
 
-import { bootstrap } from './bootstrap';
 import { ContextType } from '@ilos/common';
+import { ServiceProvider } from './ServiceProvider';
 
 interface TestContext extends HttpMacroContext {
   _id: number;
 }
-const { before, after } = httpMacro<TestContext>(() => bootstrap.boot('http', 0));
+const { before, after } = httpMacro<TestContext>(ServiceProvider);
 
 const test = anyTest as TestFn<TestContext>;
 

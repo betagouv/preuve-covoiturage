@@ -1,7 +1,6 @@
 import anyTest, { TestFn } from 'ava';
 import { httpMacro, HttpMacroContext } from '@pdc/providers/test';
-
-import { bootstrap } from './bootstrap';
+import { ServiceProvider } from './ServiceProvider';
 
 interface TestContext extends HttpMacroContext {
   application: any;
@@ -9,7 +8,7 @@ interface TestContext extends HttpMacroContext {
 }
 
 const test = anyTest as TestFn<TestContext>;
-const { before, after } = httpMacro<TestContext>(() => bootstrap.boot('http', 0));
+const { before, after } = httpMacro<TestContext>(ServiceProvider);
 
 test.before(async (t) => {
   const { transport, supertest, request } = await before();

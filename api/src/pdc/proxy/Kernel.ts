@@ -23,6 +23,7 @@ import { bootstrap as observatoryBootstrap } from '@pdc/services/observatory/boo
 import { bootstrap as geoBootstrap } from '@pdc/services/geo/bootstrap';
 import { SeedCommand } from './commands/SeedCommand';
 import { config } from './config';
+import { PostgresConnection } from '../../ilos/connection-postgres';
 
 @kernel({
   config,
@@ -47,6 +48,9 @@ import { config } from './config';
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [SeedCommand, Commands.CallCommand],
-  connections: [[RedisConnection, 'connections.redis']],
+  connections: [
+    [RedisConnection, new RedisConnection(config.connections.redis)],
+    [PostgresConnection, new PostgresConnection(config.connections.postgres)]
+  ],
 })
 export class Kernel extends BaseKernel {}

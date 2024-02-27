@@ -22,10 +22,6 @@ import { FindIdentitiesAction } from './actions/FindIdentitiesAction';
   providers: [CarpoolRepositoryProvider, CrosscheckRepositoryProvider, IdentityRepositoryProvider],
   validator: [crosscheckBinding, findUuidBinding, findIdentitiesBinding],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  connections: [
-    [RedisConnection, 'connections.redis'],
-    [PostgresConnection, 'connections.postgres'],
-  ],
   handlers: [CrosscheckAction, FindUuidAction, FindIdentitiesAction, UpdateStatusAction],
   queues: ['carpool'],
 })

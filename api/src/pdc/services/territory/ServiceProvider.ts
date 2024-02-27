@@ -39,7 +39,6 @@ import { GeoRepositoryProvider } from './providers/GeoRepositoryProvider';
     getAuthorizedCodesBinding,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [
     FindTerritoryAction,
     ListTerritoryAction,

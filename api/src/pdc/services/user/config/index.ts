@@ -1,5 +1,4 @@
 import * as ajv from './ajv';
-import * as connections from '@config/connections';
 import * as contactform from './contactform';
 import * as filterOutput from './filterOutput';
 import * as groups from './groups';
@@ -12,7 +11,6 @@ import * as user from './user';
 
 export const config = {
   ajv,
-  connections,
   contactform,
   filterOutput,
   groups,

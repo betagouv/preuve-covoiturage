@@ -99,10 +99,6 @@ import { binding as TerritoryNameBinding } from '@shared/observatory/territories
     TerritoryNameAction,
   ],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
-  connections: [
-    [RedisConnection, 'connections.redis'],
-    [PostgresConnection, 'connections.postgres'],
-  ],
   queues: ['observatory'],
 })
 export class ServiceProvider extends AbstractServiceProvider {

@@ -50,7 +50,6 @@ import { UpdateOperatorAction } from './actions/UpdateOperatorAction';
     QuickFindOperatorAction,
     UpdateOperatorAction,
   ],
-  connections: [[PostgresConnection, 'connections.postgres']],
   middlewares: [...defaultMiddlewareBindings, ['validate', ValidatorMiddleware]],
   commands: [],
 })
