@@ -71,9 +71,8 @@ test.beforeEach(async (t) => {
   }
 
   @kernelDecorator({
-    config: { redis: {} },
     children: [BasicServiceProvider],
-    connections: [[RedisConnection, 'redis']],
+    connections: [[RedisConnection, new RedisConnection('redis://localhost:6379')]],
   })
   class BasicKernel extends Kernel {
     readonly extensions = [Extensions.Config, ConnectionManagerExtension];

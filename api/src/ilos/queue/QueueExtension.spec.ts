@@ -21,11 +21,8 @@ class ServiceTwoHandler extends Action {}
 test('Queue extension: should register queue name in container as worker', async (t) => {
   @serviceProvider({
     queues: ['serviceA', 'serviceB'],
-    config: {
-      redis: {},
-    },
     handlers: [ServiceOneHandler, ServiceTwoHandler],
-    connections: [[RedisConnection, 'redis']],
+    connections: [[RedisConnection, new RedisConnection('redis://localhost:6379')]],
   })
   class MyService extends ServiceProvider {
     extensions = [
@@ -55,11 +52,8 @@ test('should register queue name in container and handlers', async (t) => {
   @serviceProvider({
     env: null,
     queues: ['serviceA', 'serviceB'],
-    config: {
-      redis: {},
-    },
     handlers: [ServiceOneHandler, ServiceTwoHandler],
-    connections: [[RedisConnection, 'redis']],
+    connections: [[RedisConnection, new RedisConnection('redis://localhost:6379')]],
   })
   class MyService extends ServiceProvider {
     extensions = [Extensions.Config, Extensions.Handlers, QueueExtension, ConnectionManagerExtension];
