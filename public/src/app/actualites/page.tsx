@@ -2,7 +2,7 @@ import PageTitle from "@/components/common/PageTitle";
 import { fr } from "@codegouvfr/react-dsfr";
 import ActuCard from "@/components/actualites/ActuCard";
 import { fetchAPI, cmsActusByPage, shorten } from "@/helpers/cms";
-import CategoryTags from "@/components/actualites/CategoryTags";
+import CategoryTags from "@/components/common/CategoryTags";
 import Pagination from "@/components/common/Pagination";
 import { Metadata } from 'next';
 

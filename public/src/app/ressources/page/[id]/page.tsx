@@ -3,7 +3,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import RessourceCard from "@/components/ressources/RessourceCard";
 import { fetchAPI, cmsRessourcesByPage } from "@/helpers/cms";
 import Pagination from "@/components/common/Pagination";
-import CategoryTags from '../../../../components/actualites/CategoryTags';
+import CategoryTags from '../../../../components/common/CategoryTags';
 
 export async function generateMetadata({ params }: { params: { id: string }}) {
   return {
@@ -57,7 +57,7 @@ export default async function RessourcePage({ params }: { params: { id: string }
     <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-        {categories.data && <CategoryTags categories={categories.data} />}
+        {categories.data && <CategoryTags categories={categories.data} type={'ressources'} page={params.id}/>}
       </div>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&

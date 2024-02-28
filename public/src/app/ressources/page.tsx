@@ -4,7 +4,7 @@ import RessourceCard from "@/components/ressources/RessourceCard";
 import { fetchAPI, cmsRessourcesByPage } from "@/helpers/cms";
 import Pagination from "@/components/common/Pagination";
 import { Metadata } from 'next';
-import CategoryTags from '../../components/actualites/CategoryTags';
+import CategoryTags from '@/components/common/CategoryTags';
 
 export const metadata: Metadata = {
   title: 'Ressources | Observatoire.covoiturage.gouv.fr',
@@ -37,7 +37,7 @@ export default async function Ressources() {
     <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-        {categories.data && <CategoryTags categories={categories.data} />}
+        {categories.data && <CategoryTags categories={categories.data} type={'ressources'} />}
       </div>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&

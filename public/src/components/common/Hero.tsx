@@ -3,7 +3,6 @@ import { fr } from '@codegouvfr/react-dsfr';
 import { ButtonProps } from '@codegouvfr/react-dsfr/Button';
 import Image from 'next/image';
 import { HeroProps } from '@/interfaces/common/componentsInterface';
-import { cmsHost } from '@/helpers/cms';
 import MDContent from './MDContent';
 
 export default function Hero(props:HeroProps) {

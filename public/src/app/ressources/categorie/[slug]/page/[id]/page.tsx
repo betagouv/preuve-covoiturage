@@ -1,11 +1,11 @@
 import PageTitle from "@/components/common/PageTitle";
 import { fr } from "@codegouvfr/react-dsfr";
+import RessourceCard from "@/components/ressources/RessourceCard";
 import { fetchAPI, cmsRessourcesByPage } from "@/helpers/cms";
-import CategoryTags from "@/components/common/CategoryTags";
 import Pagination from "@/components/common/Pagination";
-import RessourceCard from '@/components/ressources/RessourceCard';
+import CategoryTags from '@/components/common/CategoryTags';
 
-export async function generateMetadata({ params }: { params: { slug: string }}) {
+export async function generateMetadata({ params }: { params: { slug: string, id: string }}) {
   const query = {
     filters: {
       slug: {
@@ -13,27 +13,48 @@ export async function generateMetadata({ params }: { params: { slug: string }}) 
       }
     }
   };
-  const {data} =  await fetchAPI('/categories',query);
+  const {data} =  await fetchAPI('/categories',query);  
   return {
-    title: `Catégorie ${data ? data[0].attributes.label : ''} des ressources | Observatoire.covoiturage.gouv.fr`,
-    description: `Catégorie ${data ? data[0].attributes.label : ''} des ressources sur le covoiturage de courte distance`,
+    title: `Ressources page ${params.id} pour la catégorie ${data ? data[0].attributes.label : ''}| Observatoire.covoiturage.gouv.fr`,
+    description: `Page ${params.id} des ressources sur le covoiturage de courte distance pour la catégorie ${data ? data[0].attributes.label : ''}`,
   }
 }
 
 export async function generateStaticParams() {
-  const query = {
+  const categories =  await fetchAPI('/categories',{
     fields: 'slug',
-  };
-  const {data} =  await fetchAPI('/categories',query);
-  
-  return data.map((post:any) => ({
-    slug: post.attributes.slug,
+  });
+  const data = await Promise.all(categories.data.map(async (c:any) => {
+    const query = {
+      filter:{
+        categories:{
+          slug:{
+            $eq: c.attributes.slug
+          }
+        }
+      },
+      pagination: {
+        pageSize: cmsRessourcesByPage
+      }
+    };
+    const { meta }  = await fetchAPI('/resources',query);
+    const nbPage = meta.pagination.pageCount;
+    return Array.from({ length: nbPage }, (_, v) => {
+      const id = v + 1;
+      return {
+        slug: c.attributes.slug,
+        id: id.toString(),
+      }
+    })
   }))
+  return data.flat()
 }
 
-export default async function ResourceCategoryPage({ params }: { params: { slug: string }}) {
+export default async function RessourceCategoriePage({ params }: { params: { slug: string, id: string }}) {
+
   const query = {
-    populate: 'categories,img,file',
+    populate: 'img,file',
+    sort:'public_date:desc',
     filters:{
       categories:{
         slug:{
@@ -41,9 +62,9 @@ export default async function ResourceCategoryPage({ params }: { params: { slug:
         }
       }
     },
-    sort:'public_date:desc',
     pagination: {
       pageSize: cmsRessourcesByPage,
+      page: params.id,
     }
   };
   const { data, meta }  = await fetchAPI('/resources',query);
@@ -57,14 +78,14 @@ export default async function ResourceCategoryPage({ params }: { params: { slug:
     }
   }
   const categories =  await fetchAPI('/categories',catQuery);
-  const pageTitle = 'Ressources';
   const nbPage = meta.pagination.pageCount;
+  const pageTitle= `Ressources de la catégorie ${categories.data.find((c:any) => c.attributes.slug = params.slug).attributes.label} page ${params.id}`; 
 
   return (
     <div id='content'>
       <PageTitle title={pageTitle} />
       <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-        {categories.data && <CategoryTags categories={categories.data} active={params.slug} type={'ressources'} />}
+        {categories.data && <CategoryTags categories={categories.data} active={params.slug} type={'ressources'} page={params.id}/>}
       </div>
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
         {data &&
@@ -86,8 +107,9 @@ export default async function ResourceCategoryPage({ params }: { params: { slug:
       </div>
       <Pagination
         count={nbPage}
-        href={`/ressources/categorie/${params.slug}`}
-      />     
+        defaultPage={Number(params.id)}
+        href={`/ressources`}
+      />    
     </div>
   );
 }

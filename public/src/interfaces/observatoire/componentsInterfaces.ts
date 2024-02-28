@@ -70,7 +70,7 @@ export interface RowsProps {
 };
 
 export interface IndicatorProps {
-  __component: string,
+  __component?: string,
   value: string,
   unit: string,
   text: string,
