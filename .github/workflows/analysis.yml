@@ -98,6 +98,9 @@ jobs:
       - name: Run unit test
         run: just ci_test_unit
         working-directory: api
+        env:
+          APP_POSTGRES_URL: postgres://
+          APP_REDIS_URL: redis://
 
   codeql:
     needs: test
@@ -163,7 +166,7 @@ jobs:
           INTEGRATION_MAILER_SMTP_HOST: localhost
           APP_CEE_PUBLIC_KEY_PATH: ${{ github.workspace }}/docker/api/certs/publicKey.pem
           APP_CEE_PRIVATE_KEY_PATH: ${{ github.workspace }}/docker/api/certs/privateKey.pem
-          APP_MAIL_SMTP_URL: smtp:localhost:1025
+          APP_MAIL_SMTP_URL: smtp://localhost:1025
           APP_DATAGOUV_URL: null
           APP_DATAGOUV_KEY: null
           APP_JWT_SECRET: null
