@@ -1,6 +1,6 @@
-FROM node:20.2-alpine
+FROM node:20.11-alpine
 
-RUN apk add p7zip python3 make g++ cmake
+RUN apk add p7zip python3 make g++ cmake just
 
 RUN npm install --global pm2 pino-pretty db-migrate db-migrate-pg
 RUN mkdir -p /app/shared
@@ -10,4 +10,4 @@ COPY ./shared /app/shared
 COPY ./api /app/api
 
 WORKDIR /app/api
-RUN sh rebuild.sh
+RUN just rebuild

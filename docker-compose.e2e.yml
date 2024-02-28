@@ -20,8 +20,8 @@ services:
       - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
       - '--entrypoints.web.http.redirections.entryPoint.permanent=true'
     volumes:
-      - ${PWD}/docker/traefik/config.yml:/etc/traefik/dynamic/config.yml
-      - ${PWD}/docker/traefik/certs:/etc/certs
+      - ./docker/traefik/config.yml:/etc/traefik/dynamic/config.yml
+      - ./docker/traefik/certs:/etc/certs
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     networks:
       back:
@@ -34,8 +34,25 @@ services:
           - download.covoiturage.test
           - local-pdc-export.s3.covoiturage.test
 
+  mailer:
+    image: mailhog/mailhog:v1.0.1
+    environment:
+      MH_CORS_ORIGIN: '*'
+    ports:
+      - 1025:1025
+    networks:
+      - back
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.mailer.rule=Host(`mailer.covoiturage.test`)'
+      - 'traefik.http.routers.mailer.entrypoints=websecure'
+      - 'traefik.http.routers.mailer.tls=true'
+      - 'traefik.http.services.mailer.loadbalancer.server.port=8025'
+
   postgres:
     build: ./docker/postgres
+    ports:
+      - 5432:5432
     networks:
       - back
     environment:
@@ -45,6 +62,8 @@ services:
 
   redis:
     build: './docker/redis'
+    ports:
+      - 6379:6379
     networks:
       - back
 
@@ -57,22 +76,9 @@ services:
       - back
     command: ['/bin/sh', '-c', 'until nc -zv $$DOMAIN $$PORT -w1; do echo "waiting for app"; sleep 1; done']
 
-  mailer:
-    image: mailhog/mailhog:v1.0.1
-    environment:
-      MH_CORS_ORIGIN: '*'
-    networks:
-      - back
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.mailer.rule=Host(`mailer.covoiturage.test`)'
-      - 'traefik.http.routers.mailer.entrypoints=websecure'
-      - 'traefik.http.routers.mailer.tls=true'
-      - 'traefik.http.services.mailer.loadbalancer.server.port=8025'
-
   dashboard:
     volumes:
-      - ${PWD}/docker/dashboard/ci.env.js:/usr/share/nginx/html/assets/env.js:ro
+      - ./docker/dashboard/ci.env.js:/usr/share/nginx/html/assets/env.js:ro
     build:
       dockerfile: ./docker/dashboard/prod/Dockerfile
       context: .
@@ -132,7 +138,7 @@ services:
       - 'traefik.http.routers.api.tls=true'
       - 'traefik.http.services.api.loadbalancer.server.port=8080'
     volumes:
-      - ${PWD}/docker/api/certs:/app/certs:ro
+      - ./docker/api/certs:/app/certs:ro
 
   cms:
     build:
@@ -219,6 +225,8 @@ services:
     networks:
       - back
     command: 'server /data'
+    ports:
+      - "9000:9000"
     environment:
       MINIO_DOMAIN: s3.covoiturage.test
     labels:
@@ -261,8 +269,8 @@ services:
     build: './docker/lint'
     tty: true
     volumes:
-      - ${PWD}/api:/code/api:ro
-      - ${PWD}/dashboard:/code/dashboard:ro
+      - ./api:/code/api:ro
+      - ./dashboard:/code/dashboard:ro
 
 networks:
   front:

@@ -1,5 +1,0 @@
----
-title: Acquisition
----
-
-# Acquisition service

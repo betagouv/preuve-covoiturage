@@ -17,6 +17,7 @@
               nodejs_20
               p7zip
               just
+              openssl
             ];
             shellHook = ''
               export PATH="$PWD/node_modules/.bin/:$PATH"

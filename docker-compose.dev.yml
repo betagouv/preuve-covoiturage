@@ -9,7 +9,7 @@ services:
       POSTGRES_DB: 'local'
       PGDATA: '/var/lib/postgresql/data/pgdata'
     volumes:
-      - ${PWD}/db/postgres:/var/lib/postgresql/data/pgdata
+      - ./db/postgres:/var/lib/postgresql/data/pgdata
 
   redis:
     ports:
@@ -38,9 +38,9 @@ services:
       dockerfile: ./docker/dashboard/Dockerfile
       context: .
     volumes:
-      - ${PWD}/dashboard:/app/dashboard
-      - ${PWD}/docker/dashboard/ci.env.js:/app/dashboard/src/assets/env.js:ro
-      - ${PWD}/shared:/app/shared:ro
+      - ./dashboard:/app/dashboard
+      - ./docker/dashboard/ci.env.js:/app/dashboard/src/assets/env.js:ro
+      - ./shared:/app/shared:ro
     tty: true
     labels:
       - 'traefik.http.services.dashboard.loadbalancer.server.port=4200'
@@ -56,8 +56,8 @@ services:
       DEBUG: 'api'
       APP_POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local
     volumes:
-      - ${PWD}/api:/app/api
-      - ${PWD}/shared:/app/shared:ro
+      - ./api:/app/api
+      - ./shared:/app/shared:ro
     command: 'sh -c "pm2-runtime start pm2-api.json | pino-pretty"'
     tty: true
 
@@ -66,10 +66,10 @@ services:
       dockerfile: ../docker/cms/Dockerfile
       context: ./cms
     volumes:
-      - ${PWD}/cms/config:/opt/app/config
-      - ${PWD}/cms/src:/opt/app/src
-      - ${PWD}/cms/package.json:/opt/package.json
-      - ${PWD}/cms/package-lock.json:/opt/package-lock.json
+      - ./cms/config:/opt/app/config
+      - ./cms/src:/opt/app/src
+      - ./cms/package.json:/opt/package.json
+      - ./cms/package-lock.json:/opt/package-lock.json
     ports:
       - "1337:1337"
     environment:
@@ -81,8 +81,8 @@ services:
       dockerfile: ./docker/api/Dockerfile
       context: .
     volumes:
-      - ${PWD}/api:/app/api
-      - ${PWD}/shared:/app/shared:ro
+      - ./api:/app/api
+      - ./shared:/app/shared:ro
     command: 'sh -c "pm2-runtime start pm2-worker.json | pino-pretty"'
     tty: true 
     environment:
