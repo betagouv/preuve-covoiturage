@@ -1,5 +1,5 @@
 export type ParamsInterface = void;
-export type ResultInterface = void;
+export type ResultInterface = boolean;
 export const handlerConfig = {
   service: 'acquisition',
   method: 'process',

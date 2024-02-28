@@ -102,6 +102,7 @@ export class ProcessJourneyAction extends AbstractAction {
     } finally {
       await commit();
       console.timeEnd(msg);
+      return acquisitions.length === batchSize;
     }
   }
 }
