@@ -96,9 +96,9 @@ Le processus de dédoublonnage permet d'identifier les bénéficiaires potentiel
 
 L'algorithme de dédoublonnage fonctionne de la manière suivante. Si l'un des champs suivants est similaire avec un enregistrement existant, la tentative d'enregistrement est considéré comme un doublon. 
 
-- Permis de conduire (`driver_license`): Le numéro de permis de conduire est un identifiant unique qui permet de dédoublonner les clients avec certitude.
-- Clé d'identité (`identity_key`): Si la clé d'identité est définie pour un client, elle est utilisée pour le dédoublonner de manière unique.
-- Nom tronqué et numéro de téléphone tronqué (`phone_trunc` & `last_name_trunc`): Cette combinaison permet de détecter les clients dont les noms et les numéros de téléphone sont similaires, même si l'orthographe exacte peut varier. Cette combinaire n'est utilisée que sur les enregistrements passés qui n'ont pas de clé d'identité.
+- Permis de conduire (`driver_license`): Le numéro de permis de conduire est un identifiant unique qui permet de dédoublonner les bénéficiaires avec certitude.
+- Clé d'identité (`identity_key`): Si la clé d'identité est définie pour un bénéficiaire, elle est utilisée pour le dédoublonner de manière unique.
+- Nom tronqué et numéro de téléphone tronqué (`phone_trunc` & `last_name_trunc`): Cette combinaison permet de détecter les bénéficiaires dont les noms et les numéros de téléphone sont similaires, même si l'orthographe exacte peut varier. Cette combinaire n'est utilisée que sur les enregistrements passés qui n'ont pas de clé d'identité.
 
 Cette correspondance est faite de manière distincte sur la courte et la longue distance. Elle est également limité dans le temps à la date de l'enregistrement qui a eu une correspondance en fonction de la nature de l'opération (spécifique ou standardisée).
 
