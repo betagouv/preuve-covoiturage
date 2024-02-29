@@ -28,7 +28,7 @@ sont incités selon les règles suivantes : </p>
 <ul>
   <li><b>120 € maximum pour le conducteur par mois.</b></li>
 </ul>
-<p>La campagne est limitée aux opérateurs <b>Klaxit, Karos et BlablaCar Daily</b>
+<p>La campagne est limitée aux opérateurs <b>Klaxit, Karos et BlaBlaCar Daily</b>
 proposant des preuves de classe <b>B ou C</b>.</p>
 <p></p>
 </p>`;

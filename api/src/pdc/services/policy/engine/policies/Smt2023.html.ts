@@ -1,10 +1,10 @@
 export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campaignSummaryText-content-text">
-<p>Campagne d’incitation au covoiturage du <b> 26 janvier 2023 au 14 février 2024</b>, toute la semaine
+<p>Campagne d’incitation au covoiturage du <b> 26 janvier 2023 au 14 février 2025</b>, toute la semaine
 </p>
 <p>Cette campagne est limitée à
-  <b>60 000 euros </b>.
+  <b>224 000 euros </b>.
 </p>
-<p>Les <b> conducteurs et passagers </b> effectuant un trajet d'au moins 2 km sont incités selon les règles suivantes :
+<p>Les <b> conducteurs et passagers </b> effectuant un trajet entre 2 km et 30 km sont incités selon les règles suivantes :
 </p>
 <ul>
   <li><b>De 2 à 20 km : 2 euros par trajet par passager </b></li>
@@ -20,8 +20,8 @@ export const description = `<p _ngcontent-pmm-c231="" id="summary" class="campai
 <p>Les restrictions suivantes seront appliquées :</p>
 <ul>
   <li><b>6 trajets maximum pour le conducteur par jour.</b></li>
-  <li><b>120 euros maximum pour le conducteur par mois.</b></li>
+  <li><b>120 euros maximum pour le conducteur par mois. (150 euros à partir du 15/02/2024)</b></li> 
 </ul>
-<p>La campagne est limitée à l'opérateur Klaxit proposant des preuves de classe <b>B ou C</b>.</p>
+<p>La campagne est limitée à l'opérateur Klaxit et BlaBlaCar Daily (à partir du 15/02/2024) proposant des preuves de classe <b>B ou C</b>.</p>
 <p></p>
 </p>`;
