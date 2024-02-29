@@ -197,7 +197,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
     'seats' : ['mean'],
     'night_21_to_6' : ['sum', lambda x: any(x), lambda x: x.mean()] ,
     'night_21_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()],
-    'night_22_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()]}) #24
+    'night_22_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()]})
   phone_trunc_insights_df.reset_index(inplace=True)
   phone_trunc_insights_df.columns = ['operator_user_id',
                                     'phone_trunc',
@@ -497,7 +497,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
   FROM 
       carpool.identities
   WHERE 
-      operator_user_id IN ({formatted_ids}) AND updated_at < '{end_date}'::timestamp AT TIME ZONE 'EUROPE/PARIS';
+      operator_user_id IN ({formatted_ids}) AND updated_at < NOW() - '{delay} days'::interval;
   """
 
   with engine.connect() as conn:
@@ -522,15 +522,10 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
 
 # In[ ]:
 
-
-aom_insee = '217500016'
-start_date ='2024-02-08 23:59:59' 
-end_date='2024-02-10 00:00:01'
-policy_id = 459
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
 
-df_carpool,phone_trunc_insights_df,final_triangular_df,user_phone_change_history_df = create_insights_and_triangular_df(start_date, end_date, aom_insee, policy_id, connection_string,engine)
+df_carpool,phone_trunc_insights_df,final_triangular_df,user_phone_change_history_df = create_insights_and_triangular_df(delay, frame, aom_insee,engine)
 
 
 # ## 5.Storage
