@@ -22,7 +22,7 @@ sont incités selon les règles suivantes : </p>
   <li><b>6 trajets maximum pour le conducteur par jour.</b></li>
   <li><b>2 trajets maximum pour le passager par jour.</b></li>
 </ul>
-<p>La campagne est limitée aux opérateurs <b>Karos</b> et <b> Mobicoop </b> (à partir du 16 Octobre)
-proposant des preuves de classe <b>C</b>.</p>
+<p>La campagne est limitée aux opérateurs <b>Karos</b>, <b> Mobicoop </b> (à partir du 16 Octobre)
+, BlablacarDaily et Klaxit (à partir du 22/12/2023) proposant des preuves de classe <b>C</b>.</p>
 <p></p>
 </p>`;
