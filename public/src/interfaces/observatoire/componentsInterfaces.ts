@@ -4,6 +4,7 @@ import { LngLatBoundsLike, Map } from 'maplibre-gl';
 import { ReactNode } from 'react';
 import { MapEvent } from 'react-map-gl/dist/esm/types/events';
 import { INSEECode, PerimeterType } from './Perimeter';
+import { FrCxArg } from '@codegouvfr/react-dsfr';
 
 export interface ViewInterface {
   latitude: number;
@@ -75,7 +76,7 @@ export interface IndicatorProps {
   unit: string,
   text: string,
   info?: string,
-  icon?: string,
+  icon?: FrCxArg,
 }
 
 export interface AnalyseProps {

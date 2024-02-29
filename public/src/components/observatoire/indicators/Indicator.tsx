@@ -1,8 +1,7 @@
 import { Badge } from '@codegouvfr/react-dsfr/Badge';
-import style from './SingleIndicator.module.scss';
+import style from './Indicator.module.scss';
 import { IndicatorProps } from '@/interfaces/observatoire/componentsInterfaces';
 import { fr } from '@codegouvfr/react-dsfr';
-import 'remixicon/fonts/remixicon.css';
 
 export default function Indicator(props: IndicatorProps) {
   return (

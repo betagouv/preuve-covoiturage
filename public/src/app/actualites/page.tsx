@@ -47,7 +47,7 @@ export default async function Actualites() {
                 <ActuCard 
                   title={a.attributes.title}
                   content={shorten(a.attributes.description,250)}
-                  date={new Date(a.attributes.date_created).toLocaleDateString('fr-FR')}
+                  date={new Date(a.attributes.createdAt).toLocaleDateString('fr-FR')}
                   href={`/actualites/${a.attributes.slug}`}
                   img={a.attributes.img.data.attributes.url}
                   img_legend={a.attributes.img_legend}

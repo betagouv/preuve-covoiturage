@@ -78,8 +78,8 @@ export default async function ActuSingle({ params }: { params: { slug: string }}
       { data && 
         <div className={fr.cx('fr-col','fr-col-12')}>
           <PageTitle title={data.attributes.title} />
-          { data.attributes.date_created &&
-            <p>Publié le {new Date(data.attributes.date_created).toLocaleDateString('fr-FR')}</p>
+          { data.attributes.createdAt &&
+            <p>Publié le {new Date(data.attributes.createdAt).toLocaleDateString('fr-FR')}</p>
           }
           <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
             <div className={fr.cx('fr-col','fr-col-md-9')}>

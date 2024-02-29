@@ -1,7 +1,7 @@
 import PageTitle from "@/components/common/PageTitle";
 import { fr } from "@codegouvfr/react-dsfr";
 import ActuCard from "@/components/actualites/ActuCard";
-import { fetchAPI, cmsRessourcesByPage, shorten } from "@/helpers/cms";
+import { fetchAPI, cmsActusByPage, shorten } from "@/helpers/cms";
 import Pagination from "@/components/common/Pagination";
 import CategoryTags from '@/components/common/CategoryTags';
 
@@ -23,6 +23,13 @@ export async function generateMetadata({ params }: { params: { slug: string, id:
 export async function generateStaticParams() {
   const categories =  await fetchAPI('/categories',{
     fields: 'slug',
+    filters:{
+      articles:{
+        id:{
+          $notNull: true
+        }
+      }
+    }
   });
   const data = await Promise.all(categories.data.map(async (c:any) => {
     const query = {
@@ -34,7 +41,7 @@ export async function generateStaticParams() {
         }
       },
       pagination: {
-        pageSize: cmsRessourcesByPage
+        pageSize: cmsActusByPage
       }
     };
     const { meta }  = await fetchAPI('/articles',query);
@@ -63,14 +70,14 @@ export default async function ActuCategoriePage({ params }: { params: { slug: st
       }
     },
     pagination: {
-      pageSize: cmsRessourcesByPage,
+      pageSize: cmsActusByPage,
       page: params.id,
     }
   };
   const { data, meta }  = await fetchAPI('/articles',query);
   const catQuery = {
     filters:{
-      resources:{
+      articles:{
         id:{
           $notNull: true
         }
@@ -78,7 +85,7 @@ export default async function ActuCategoriePage({ params }: { params: { slug: st
     }
   }
   const categories =  await fetchAPI('/categories',catQuery);
-  const nbPage = meta.pagination.pageCount;
+  const nbPage = meta ? meta.pagination.pageCount : 1;
   const pageTitle= `Actualités de la catégorie ${categories.data.find((c:any) => c.attributes.slug = params.slug).attributes.label} page ${params.id}`; 
 
   return (
@@ -95,7 +102,7 @@ export default async function ActuCategoriePage({ params }: { params: { slug: st
                 <ActuCard 
                   title={a.attributes.title}
                   content={shorten(a.attributes.description,250)}
-                  date={new Date(a.attributes.date_created).toLocaleDateString('fr-FR')}
+                  date={new Date(a.attributes.createdAt).toLocaleDateString('fr-FR')}
                   href={`/actualites/${a.attributes.slug}`}
                   img={a.attributes.img.data.attributes.formats.medium ? a.attributes.img.data.attributes.formats.medium.url : a.attributes.img.data.attributes.url}
                   img_legend={a.attributes.img_legend}

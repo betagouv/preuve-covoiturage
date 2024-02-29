@@ -92,7 +92,7 @@ export default async function CommunSinglePage({ params }: { params: { slug: str
           title={hero.title} 
           subtitle={hero.subtitle}
           content={hero.content} 
-          img={hero.img.data ? hero.img.data.attributes.formats.medium.url : undefined} 
+          img={hero.img.data ? hero.img.data.attributes.url : undefined} 
           alt={hero.alt} 
           buttons={hero.buttons} 
         />

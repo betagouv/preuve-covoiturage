@@ -23,6 +23,13 @@ export async function generateMetadata({ params }: { params: { slug: string, id:
 export async function generateStaticParams() {
   const categories =  await fetchAPI('/categories',{
     fields: 'slug',
+    filters:{
+      resources:{
+        id:{
+          $notNull: true
+        }
+      }
+    }
   });
   const data = await Promise.all(categories.data.map(async (c:any) => {
     const query = {
@@ -78,7 +85,7 @@ export default async function RessourceCategoriePage({ params }: { params: { slu
     }
   }
   const categories =  await fetchAPI('/categories',catQuery);
-  const nbPage = meta.pagination.pageCount;
+  const nbPage = meta ? meta.pagination.pageCount : 1;
   const pageTitle= `Ressources de la catégorie ${categories.data.find((c:any) => c.attributes.slug = params.slug).attributes.label} page ${params.id}`; 
 
   return (

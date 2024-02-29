@@ -56,7 +56,7 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
       <PageTitle title={pageTitle} />
       {categories.data && 
         <div className={fr.cx('fr-grid-row','fr-mb-3w')}>
-          <CategoryTags categories={categories.data} />
+          <CategoryTags categories={categories.data} page={params.id}/>
         </div>
       }
       <div className={fr.cx('fr-grid-row', 'fr-grid-row--gutters')}>
@@ -67,7 +67,7 @@ export default async function ActuPage({ params }: { params: { id: string }}) {
                 <ActuCard 
                   title={a.attributes.title}
                   content={shorten(a.attributes.description,250)}
-                  date={new Date(a.attributes.date_created).toLocaleDateString('fr-FR')}
+                  date={new Date(a.attributes.createdAt).toLocaleDateString('fr-FR')}
                   href={`/actualites/${a.attributes.slug}`}
                   img={a.attributes.img.data.attributes.url}
                   img_legend={a.attributes.img_legend}
