@@ -13,14 +13,14 @@
 # - `aom_insee` :          '217500016'                                            -> Aom insee code representing geo perimeter to apply the algorithm
 # - `start_date` :         '2023-02-28 23:59:59'                                  -> Start date
 # - `end_date`:             '2023-04-30 00:00:01'                                 -> End date
+# - `policy_id`             : 459                                                 -> Policy id filter on incentive
 
-# In[ ]:
+# In[2]:
 
 
 # Import necessary libraries
 import itertools
 import os
-import sys
 import math
 import numpy as np
 import networkx as nx
@@ -47,7 +47,7 @@ aom_insee = '217500016'
 
 # ## 2. Helper Functions
 
-# In[ ]:
+# In[3]:
 
 
 # Convert to french timezone 
@@ -160,8 +160,8 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
   
   # convert to french datetime
   df_carpool['datetime_france'] = df_carpool['datetime'].apply(convert_to_france_time)
-  df_carpool[['datetime','datetime_france']]
-  df_carpool[['datetime','datetime_france']]
+
+  df_carpool['day_month_year'] = df_carpool['datetime_france'].apply(lambda x: x.strftime('%Y-%m-%d'))
 
   # add boolean flags for night trips
   df_carpool['night_21_to_6'] = df_carpool['datetime_france'].apply(lambda x: is_night_time(x.time(), pd.Timestamp('21:00').time(), pd.Timestamp('06:00').time()))
@@ -182,10 +182,10 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
   df_carpool = df_carpool.merge(_temp,how='left',on='operator_journey_id').copy()
 
   # Creation of insights for each operator user id
-
   phone_trunc_insights_df = df_carpool.groupby('operator_user_id').agg({
     'phone_trunc': ['unique'],
     'datetime_france': ['min', 'max', list],
+    'day_month_year' : [list],
     'duration':  ['mean', 'count'],
     'distance': 'mean',
     'incentive': 'sum',
@@ -196,12 +196,13 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
     'seats' : ['mean'],
     'night_21_to_6' : ['sum', lambda x: any(x), lambda x: x.mean()] ,
     'night_21_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()],
-    'night_22_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()]})
+    'night_22_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()]}) 
   phone_trunc_insights_df.reset_index(inplace=True)
   phone_trunc_insights_df.columns = ['operator_user_id',
                                     'phone_trunc',
                                     'departure_date',
                                     'end_date',
+                                    'carpool_datetime_list',
                                     'carpool_day_list',
                                     'average_duration',
                                     'num_trips',
@@ -316,8 +317,6 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
   connected_components = nx.connected_components(G)
 
   group_data = []
-  group_degree_centrality = []
-  group_betweenness_centrality = []
 
   for idx, component in enumerate(connected_components):
       group_graph = G.subgraph(component)
@@ -330,7 +329,6 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
       group_duration = np.round(group_journeys['duration'].mean())
       group_operator_id = group_journeys['operator_journey_id'].copy()
       group_journeys['date'] = group_journeys['datetime'].dt.date.copy()
-      grouped = group_journeys.groupby('phone_trunc').size().reset_index(name='count')
       total_change_percentage = np.unique(group_journeys['total_change_percentage'].to_list())
     
       group_data.append({
@@ -378,8 +376,6 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
   connected_components = nx.connected_components(G)
 
   group_data = []
-  group_degree_centrality = []
-  group_betweenness_centrality = []
 
   for idx, component in enumerate(connected_components):
       group_graph = G.subgraph(component)
@@ -392,7 +388,6 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
       group_duration = np.round(group_journeys['duration'].mean())
       group_operator_id = group_journeys['operator_journey_id'].copy()
       group_journeys['date'] = group_journeys['datetime'].dt.date.copy()
-      grouped = group_journeys.groupby('phone_trunc').size().reset_index(name='count')
       total_change_percentage = np.unique(group_journeys['total_change_percentage'].to_list())
       
       group_data.append({
@@ -526,12 +521,10 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
 
 # In[ ]:
 
-
-
 engine = create_engine(connection_string, connect_args={'sslmode':'require'})
 
 
-df_carpool,phone_trunc_insights_df,final_triangular_df,user_phone_change_history_df = create_insights_and_triangular_df(delay, frame, aom_insee ,engine)
+df_carpool,phone_trunc_insights_df,final_triangular_df,user_phone_change_history_df = create_insights_and_triangular_df(delay, frame, aom_insee,engine)
 
 
 # ## 5.Storage
@@ -552,19 +545,16 @@ phone_trunc_insights_df.to_sql(
     con=engine,
     if_exists="append",
     index=False,
-    method=insert_or_do_nothing_on_conflict
-)
+    method=insert_or_do_nothing_on_conflict)
 
 
 # In[ ]:
 
-from datetime import date
+final_triangular_df['operator_list'] = final_triangular_df['operator_list'].apply(lambda x: list(map(int, x)))
 
 
-def cast_period_to_date(x):
-    return date(x.year_month.year, x.year_month.month, 1)
+# In[37]:
 
-user_phone_change_history_df['year_month'] = user_phone_change_history_df.apply(cast_period_to_date, axis=1)
 
 ## Store the final_triangular_df to the db
 
@@ -583,7 +573,13 @@ final_triangular_df.to_sql(
 )
 
 
-# In[ ]:
+# In[42]:
+
+
+user_phone_change_history_df['year_month'] = user_phone_change_history_df['year_month'].apply(lambda x: x.to_timestamp())
+
+
+# In[45]:
 
 
 # Store user_phone_change_history_df to the db 
