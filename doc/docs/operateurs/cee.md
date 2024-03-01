@@ -98,9 +98,9 @@ L'algorithme de dédoublonnage fonctionne de la manière suivante. Si l'un des c
 
 - Permis de conduire (`driver_license`): Le numéro de permis de conduire est un identifiant unique qui permet de dédoublonner les bénéficiaires avec certitude.
 - Clé d'identité (`identity_key`): Si la clé d'identité est définie pour un bénéficiaire, elle est utilisée pour le dédoublonner de manière unique.
-- Nom tronqué et numéro de téléphone tronqué (`phone_trunc` & `last_name_trunc`): Cette combinaison permet de détecter les bénéficiaires dont les noms et les numéros de téléphone sont similaires, même si l'orthographe exacte peut varier. Cette combinaire n'est utilisée que sur les enregistrements passés qui n'ont pas de clé d'identité.
+- Nom tronqué et numéro de téléphone tronqué (`phone_trunc` & `last_name_trunc`): Cette combinaison permet de détecter les bénéficiaires dont les noms et les numéros de téléphone sont similaires, même si l'orthographe exacte peut varier. Cette combinaison n'est utilisée que sur les enregistrements passés qui n'ont pas de clé d'identité.
 
-Cette correspondance est faite de manière distincte sur la courte et la longue distance. Elle est également limité dans le temps à la date de l'enregistrement qui a eu une correspondance en fonction de la nature de l'opération (spécifique ou standardisée).
+Cette correspondance est faite de manière distincte sur la courte et la longue distance. Elle est également limitée dans le temps à la date de l'enregistrement qui a eu une correspondance en fonction de la nature de l'opération (spécifique ou standardisée).
 
 ## Des questions ?
 
