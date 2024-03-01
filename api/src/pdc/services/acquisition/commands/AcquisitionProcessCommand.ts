@@ -6,16 +6,20 @@ export class AcquisitionProcessCommand implements CommandInterface {
   static readonly description: string = 'Import acquisition on carpool';
   static readonly options: CommandOptionType[] = [
     {
-      signature: '-u, --database-uri <uri>',
-      description: 'Connection string to the database',
-      default: process.env.APP_POSTGRES_URL,
+      signature: '-l, --loop',
+      description: 'Process acquisition while remaining',
+      default: false,
     },
   ];
 
   constructor(protected kernel: KernelInterfaceResolver) {}
 
-  public async call(): Promise<string> {
-    await this.kernel.call('acquisition:process', {}, { channel: { service: 'acquisition' }, call: { user: {} } });
+  public async call(options): Promise<string> {
+    let shouldContinue = true;
+
+    do {
+      shouldContinue = await this.kernel.call('acquisition:process', {}, { channel: { service: 'acquisition' }, call: { user: {} } });
+    } while(shouldContinue && options.loop)
 
     return 'done';
   }
