@@ -15,13 +15,12 @@
 # - `end_date`:             '2023-04-30 00:00:01'                                 -> End date
 # - `policy_id`             : 459                                                 -> Policy id filter on incentive
 
-# In[ ]:
+# In[2]:
 
 
 # Import necessary libraries
 import itertools
 import os
-import sys
 import math
 import numpy as np
 import networkx as nx
@@ -48,7 +47,7 @@ aom_insee = '217500016'
 
 # ## 2. Helper Functions
 
-# In[ ]:
+# In[3]:
 
 
 # Convert to french timezone 
@@ -197,7 +196,7 @@ def create_insights_and_triangular_df(delay, frame, aom_insee,engine):
     'seats' : ['mean'],
     'night_21_to_6' : ['sum', lambda x: any(x), lambda x: x.mean()] ,
     'night_21_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()],
-    'night_22_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()]})
+    'night_22_to_5' : ['sum', lambda x: any(x), lambda x: x.mean()]}) 
   phone_trunc_insights_df.reset_index(inplace=True)
   phone_trunc_insights_df.columns = ['operator_user_id',
                                     'phone_trunc',
@@ -551,13 +550,11 @@ phone_trunc_insights_df.to_sql(
 
 # In[ ]:
 
-from datetime import date
+final_triangular_df['operator_list'] = final_triangular_df['operator_list'].apply(lambda x: list(map(int, x)))
 
 
-def cast_period_to_date(x):
-    return date(x.year_month.year, x.year_month.month, 1)
+# In[37]:
 
-user_phone_change_history_df['year_month'] = user_phone_change_history_df.apply(cast_period_to_date, axis=1)
 
 ## Store the final_triangular_df to the db
 
@@ -576,7 +573,13 @@ final_triangular_df.to_sql(
 )
 
 
-# In[ ]:
+# In[42]:
+
+
+user_phone_change_history_df['year_month'] = user_phone_change_history_df['year_month'].apply(lambda x: x.to_timestamp())
+
+
+# In[45]:
 
 
 # Store user_phone_change_history_df to the db 
