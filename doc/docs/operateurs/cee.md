@@ -90,6 +90,18 @@ vMq3Z5rUJEjjZzYrnNkooqAXtzhp4Tl/i4t1n2XFS3pqu2vqjtDQ9+cRt6Fv8Wsx
 -----END PUBLIC KEY-----
 ```
 
+## Technique de dédoublonnage
+
+Le processus de dédoublonnage permet d'identifier les bénéficiaires potentiellement en double dans la base de données. Il s'appuie sur plusieurs critères pour comparer les enregistrements et déterminer s'ils correspondent à la même personne.
+
+L'algorithme de dédoublonnage fonctionne de la manière suivante. Si l'un des champs suivants est similaire avec un enregistrement existant, la tentative d'enregistrement est considéré comme un doublon. 
+
+- Permis de conduire (`driver_license`): Le numéro de permis de conduire est un identifiant unique qui permet de dédoublonner les bénéficiaires avec certitude.
+- Clé d'identité (`identity_key`): Si la clé d'identité est définie pour un bénéficiaire, elle est utilisée pour le dédoublonner de manière unique.
+- Nom tronqué et numéro de téléphone tronqué (`phone_trunc` & `last_name_trunc`): Cette combinaison permet de détecter les bénéficiaires dont les noms et les numéros de téléphone sont similaires, même si l'orthographe exacte peut varier. Cette combinaison n'est utilisée que sur les enregistrements passés qui n'ont pas de clé d'identité.
+
+Cette correspondance est faite de manière distincte sur la courte et la longue distance. Elle est également limitée dans le temps à la date de l'enregistrement qui a eu une correspondance en fonction de la nature de l'opération (spécifique ou standardisée).
+
 ## Des questions ?
 
 Contactez technique [chez] covoiturage.beta.gouv.fr
