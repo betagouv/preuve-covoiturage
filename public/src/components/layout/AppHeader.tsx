@@ -1,5 +1,6 @@
 import { Header } from '@codegouvfr/react-dsfr/Header';
 import Navigation from './Navigation';
+import SearchBar from './SearchBar'
 
 export function AppHeader() {
   return (
@@ -21,6 +22,14 @@ export function AppHeader() {
       serviceTitle='Observatoire.covoiturage.gouv.fr'
       serviceTagline='Développer le covoiturage courte distance'
       navigation={<Navigation />}
+      renderSearchInput={({ className, id, placeholder, type }) => (
+        <SearchBar
+            className={className}
+            id={id}
+            placeholder={placeholder}
+            type={type}
+        />
+      )}
     />
   );
 }
