@@ -111,9 +111,6 @@ refresh: clean install build
 
 # Run the API for local development (:8080)
 dev:
-  set -a
-  source ./.env
-  set +a
   npm run dev
 
 # Watch changes and recompile TypeScript
