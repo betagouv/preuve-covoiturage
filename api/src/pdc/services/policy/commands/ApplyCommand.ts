@@ -16,7 +16,6 @@ interface CommandOptions {
   from: string;
   to: string;
   tz: Timezone;
-  detach: boolean;
   override: boolean;
 }
 
@@ -48,11 +47,6 @@ export class ApplyCommand implements CommandInterface {
       signature: '--tz <tz>',
       description: 'timezone',
       default: 'Europe/Paris',
-    },
-    {
-      signature: '-d, --detach',
-      description: 'detach execution to background jobs',
-      default: false,
     },
     {
       signature: '--override',
@@ -100,15 +94,10 @@ export class ApplyCommand implements CommandInterface {
         }
 
         // call the action
-        if (options.detach) {
-          console.info(`[campaign:apply] run policy ${policy_id} in detached mode`);
-          await this.kernel.notify(apply, params, context);
-        } else {
-          try {
-            await this.kernel.call(apply, params, context);
-          } catch (e) {
-            console.error(e.message, { params });
-          }
+        try {
+          await this.kernel.call(apply, params, context);
+        } catch (e) {
+          console.error(e.message, { params });
         }
       }
 
