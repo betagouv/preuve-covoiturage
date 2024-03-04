@@ -7,8 +7,8 @@ const { genApiLicenses } = require('./licenses');
 
 const config = {
   root: path.resolve(__dirname, '..'),
-  providersRoot: path.resolve(__dirname, '../../api/providers'),
-  servicesRoot: path.resolve(__dirname, '../../api/services'),
+  providersRoot: path.resolve(__dirname, '../../api/src/pdc/providers'),
+  servicesRoot: path.resolve(__dirname, '../../api/src/pdc/services'),
 };
 
 // copy README.md and append a list of actions

@@ -1,5 +1,3 @@
----
-title: Acquisition
----
-
-# Acquisition service
+```
+// TODO
+```

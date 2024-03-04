@@ -22,7 +22,7 @@ module.exports = {
     // loop through services
     for (const service of fs.readdirSync(config.servicesRoot)) {
       const actions = [];
-      const sourcePath = `${config.servicesRoot}/${service}/src`;
+      const sourcePath = `${config.servicesRoot}/${service}`;
 
       // get general service doc from ServiceProvider.ts
       const sp = fs.existsSync(`${sourcePath}/../README.md`)
