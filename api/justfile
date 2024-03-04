@@ -124,3 +124,7 @@ ilos *command:
 # Run any npm script from the API
 api *command:
   npm run {{ command }}
+
+# List all the APP_ environment variables
+env:
+  env | grep APP_ | sort | column -t -s=
