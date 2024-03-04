@@ -18,8 +18,12 @@ export class AcquisitionProcessCommand implements CommandInterface {
     let shouldContinue = true;
 
     do {
-      shouldContinue = await this.kernel.call('acquisition:process', {}, { channel: { service: 'acquisition' }, call: { user: {} } });
-    } while(shouldContinue && options.loop)
+      shouldContinue = await this.kernel.call(
+        'acquisition:process',
+        {},
+        { channel: { service: 'acquisition' }, call: { user: {} } },
+      );
+    } while (shouldContinue && options.loop);
 
     return 'done';
   }

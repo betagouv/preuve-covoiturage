@@ -10,7 +10,6 @@ import { signature } from '@shared/monitoring/statsrefresh.contract';
 
 interface CommandOptions {
   schema: string;
-  sync: boolean;
 }
 @command()
 export class StatsRefreshCommand implements CommandInterface {
@@ -22,27 +21,18 @@ export class StatsRefreshCommand implements CommandInterface {
       description: 'DB schema to refresh',
       default: 'stats',
     },
-    {
-      signature: '--sync',
-      description: 'Run the command without the queue',
-    },
   ];
 
   constructor(protected kernel: KernelInterfaceResolver) {}
 
-  public async call({ schema, sync }: CommandOptions): Promise<ResultType> {
+  public async call({ schema }: CommandOptions): Promise<ResultType> {
     const context: ContextType = {
       channel: { service: 'proxy' },
       call: { user: {} },
     };
 
-    if (sync) {
-      console.info(`Running [monitoring:stats:refresh] in sync for schema ${schema}`);
-      await this.kernel.call(signature, { schema }, context);
-    } else {
-      console.info(`Pushed [monitoring:stats:refresh] to the queue for schema ${schema}`);
-      await this.kernel.notify(signature, { schema }, context);
-    }
+    console.info(`Running [monitoring:stats:refresh] for schema ${schema}`);
+    await this.kernel.call(signature, { schema }, context);
 
     return '';
   }

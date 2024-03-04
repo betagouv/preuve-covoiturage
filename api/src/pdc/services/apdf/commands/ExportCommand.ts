@@ -1,22 +1,21 @@
-import { coerceDate, coerceIntList } from '@ilos/cli';
-import { command, CommandInterface, CommandOptionType, ContextType, KernelInterfaceResolver } from '@ilos/common';
-import { zonedTimeToUtc } from 'date-fns-tz';
-import { set } from 'lodash';
-import { signature as exportSignature } from '@shared/apdf/export.contract';
+import { coerceIntList } from '@ilos/cli';
+import { CommandInterface, CommandOptionType, ContextType, KernelInterfaceResolver, command } from '@ilos/common';
+import { ParamsInterface as ExportParams, signature as exportSignature } from '@shared/apdf/export.contract';
 import {
   ParamsInterface as ListCampaignsParams,
   ResultInterface as ListCampaignsResults,
   signature as listCampaignsSignature,
 } from '@shared/policy/list.contract';
+import { zonedTimeToUtc } from 'date-fns-tz';
+import { set } from 'lodash';
 
 interface Options {
   campaigns: number[];
-  start?: Date;
-  end?: Date;
+  start?: string;
+  end?: string;
   operators?: number[];
   tz: string;
   verbose: boolean;
-  sync: boolean;
 }
 
 @command()
@@ -39,12 +38,11 @@ export class ExportCommand implements CommandInterface {
       signature: '-s, --start <start>',
       description: 'Start date (YYYY-MM-DD)',
       default: null,
-      coerce: coerceDate,
     },
     {
       signature: '-e, --end <end>',
       description: 'End date (YYYY-MM-DD)',
-      coerce: coerceDate,
+      default: null,
     },
     {
       signature: '--tz <tz>',
@@ -55,10 +53,6 @@ export class ExportCommand implements CommandInterface {
       signature: '--verbose',
       description: 'Display CLI specific console.info()',
     },
-    {
-      signature: '--sync',
-      description: 'Run the export without the queue',
-    },
   ];
 
   constructor(private kernel: KernelInterfaceResolver) {}
@@ -66,7 +60,7 @@ export class ExportCommand implements CommandInterface {
   public async call(options: Options): Promise<string> {
     const campaign_id = options.campaigns.length ? options.campaigns : await this.findActiveCampaigns();
 
-    const params = {
+    const params: ExportParams = {
       format: { tz: options.tz },
       query: { campaign_id },
     };
@@ -80,13 +74,8 @@ export class ExportCommand implements CommandInterface {
     if (options.end) set(params, 'query.date.end', zonedTimeToUtc(options.end, options.tz).toISOString());
     if (options.operators?.length) set(params, 'query.operator_id', options.operators);
 
-    if (options.sync) {
-      console.info(`Running [${exportSignature}] in sync`);
-      await this.kernel.call(exportSignature, params, context);
-    } else {
-      console.info(`Pushed [${exportSignature}] to the queue for background execution`);
-      await this.kernel.notify(exportSignature, params, context);
-    }
+    console.info(`Running [${exportSignature}]`);
+    await this.kernel.call(exportSignature, params, context);
 
     return '';
   }

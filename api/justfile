@@ -117,5 +117,14 @@ dev:
 watch:
   npm run watch
 
+# Run ilos commands wrapped for pretty printing
+ilos *command:
+  npm run ilos -- {{ command }} | pino-pretty -f
+
+# Run any npm script from the API
 api *command:
   npm run {{ command }}
+
+# List all the APP_ environment variables
+env:
+  env | grep APP_ | sort | column -t -s=
