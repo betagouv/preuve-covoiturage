@@ -25,7 +25,7 @@ install target="local":
 test type pattern="":
   npm run test:{{ type }} -- {{ pattern }}
 
-# Start docker services
+# Start docker services (detached)
 start *services="s3 postgres redis mailer":
  just dc up -d {{ services }}
 
@@ -105,6 +105,20 @@ ci_test_unit: rebuild (test "unit")
 
 # Rebuild for production
 rebuild: (install "production") build
+
+# Refresh local install for development
+refresh: clean install build
+
+# Run the API for local development (:8080)
+dev:
+  set -a
+  source ./.env
+  set +a
+  npm run dev
+
+# Watch changes and recompile TypeScript
+watch:
+  npm run watch
 
 api *command:
   npm run {{ command }}

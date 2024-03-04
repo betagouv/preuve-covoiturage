@@ -12,6 +12,7 @@
     "Julien Parmentier <julien.parmentier@beta.gouv.fr>"
   ],
   "scripts": {
+    "dev": "npm run start:http 8080 | pino-pretty -f",
     "start": "if [ \"$DO_MIGRATIONS\" ]; then npm run migrate; fi && if [ -z \"$IS_WORKER\" ]; then npm run start:http; else npm run start:queue; fi",
     "start:http": "node dist/main.js http $PORT",
     "start:queue": "node dist/main.js queue $APP_REDIS_URL",
@@ -72,6 +73,8 @@
     "lodash": "^4.17.21",
     "nock": "^13.1.3",
     "nyc": "^15.1.0",
+    "pino-pretty": "^10.3.1",
+    "pm2": "^5.3.1",
     "sinon": "^14.0.0",
     "supertest": "^6.3.3",
     "typescript": "^5.0.4"
