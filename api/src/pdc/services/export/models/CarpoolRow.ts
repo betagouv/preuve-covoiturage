@@ -99,12 +99,6 @@ export type IncentiveRPC = {
   amount: number;
 };
 
-export type IncentiveCounterpart = {
-  siret: string;
-  amount: number;
-  target: 'passenger' | 'driver';
-};
-
 export class CarpoolRow {
   constructor(protected data: CarpoolRowData) {}
 
