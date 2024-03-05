@@ -1,5 +1,5 @@
 import { distanceSchema, incentivesSchema } from './common/schemas/createJourneyCommon';
-import { incentiveCounterpartSchema, timeGeoPointSchema } from './common/schemas/createJourneySchemaV3';
+import { timeGeoPointSchema } from './common/schemas/createJourneySchemaV3';
 
 export const alias = 'journey.patch';
 export const schema = {
@@ -15,10 +15,7 @@ export const schema = {
     end: timeGeoPointSchema,
     distance: distanceSchema,
     incentives: incentivesSchema,
-    incentive_counterparts: {
-      type: 'array',
-      items: incentiveCounterpartSchema,
-    },
+    incentive_counterparts: {},
   },
 };
 

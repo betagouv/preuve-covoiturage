@@ -78,7 +78,6 @@ export const createJourneySchemaV3 = {
     'operator_journey_id',
     'operator_class',
     'incentives',
-    'incentive_counterparts',
     'start',
     'end',
     'distance',
@@ -98,9 +97,6 @@ export const createJourneySchemaV3 = {
     distance: distanceSchema,
     licence_plate: { macro: 'varchar' },
     incentives: incentivesSchema,
-    incentive_counterparts: {
-      type: 'array',
-      items: incentiveCounterpartSchema,
-    },
+    incentive_counterparts: {},
   },
 };

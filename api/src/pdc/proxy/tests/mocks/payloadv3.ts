@@ -2,7 +2,6 @@ import { uuid } from '@pdc/providers/test';
 
 export function payloadv3(): any {
   return {
-    incentive_counterparts: [],
     operator_journey_id: uuid(),
     operator_class: 'B',
     incentives: [],

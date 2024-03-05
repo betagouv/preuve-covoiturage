@@ -47,7 +47,6 @@ export function createPayload(options, version) {
           },
           distance: 34039,
           incentives: [{ index: 0, amount: 280, siret: '28750007800020' }],
-          incentive_counterparts: [{ target: 'passenger', amount: 280, siret: '28750007800020' }],
 
           passenger: {
             contribution: 76,

@@ -2,7 +2,7 @@ import anyTest, { TestFn } from 'ava';
 import { makeDbBeforeAfter, DbContext } from '@pdc/providers/test';
 import { CarpoolRepository } from './CarpoolRepository';
 import { insertableCarpool, updatableCarpool } from '../mocks/database/carpool';
-import { Id, IncentiveCounterpartTarget } from '../interfaces';
+import { Id } from '../interfaces';
 
 interface TestContext {
   repository: CarpoolRepository;
@@ -45,23 +45,10 @@ async function getCarpool(context: TestContext, id: Id) {
     values: [id],
   });
 
-  const incentiveCounterpartResult = await context.db.connection.getClient().query({
-    text: `
-      SELECT
-        target_is_driver, siret, amount
-      FROM ${context.repository.incentiveCounterpartTable}
-      WHERE carpool_id = $1`,
-    values: [id],
-  });
 
   return {
     ...result.rows.pop(),
     incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({ index: idx, siret, amount })),
-    incentive_counterparts: incentiveCounterpartResult.rows.map(({ target_is_driver, siret, amount }) => ({
-      target: target_is_driver ? IncentiveCounterpartTarget.Driver : IncentiveCounterpartTarget.Passenger,
-      siret,
-      amount,
-    })),
   };
 }
 

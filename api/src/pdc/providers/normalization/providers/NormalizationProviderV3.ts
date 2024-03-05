@@ -21,8 +21,7 @@ export class NormalizationProviderV3 implements NormalizationProviderInterface<P
       (new Date(data.payload.end.datetime).getTime() - new Date(data.payload.start.datetime).getTime()) / 1000,
     );
     const cost =
-      data.payload.incentive_counterparts
-        .filter((i) => i.target === 'passenger')
+      data.payload.incentives
         .reduce((total, current) => total + current.amount, 0) + data.payload.passenger.contribution;
 
     const common = {
@@ -47,7 +46,6 @@ export class NormalizationProviderV3 implements NormalizationProviderInterface<P
       payment: data.payload.driver.revenue,
       meta: {
         ...commonMeta,
-        incentive_counterparts: data.payload.incentive_counterparts.filter((i) => i.target === 'driver'),
         payments: [],
       },
     };
@@ -60,7 +58,6 @@ export class NormalizationProviderV3 implements NormalizationProviderInterface<P
       payment: data.payload.passenger.contribution,
       meta: {
         ...commonMeta,
-        incentive_counterparts: data.payload.incentive_counterparts.filter((i) => i.target === 'passenger'),
         payments: data.payload.passenger.payments || [],
       },
     };

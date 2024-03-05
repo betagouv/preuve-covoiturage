@@ -1,4 +1,4 @@
-import { IncentiveCounterpartTarget, InsertableCarpool, OperatorClass, UpdatableCarpool } from '../../interfaces';
+import { InsertableCarpool, OperatorClass, UpdatableCarpool } from '../../interfaces';
 
 export const insertableCarpool: InsertableCarpool = {
   operator_id: 1,
@@ -38,10 +38,6 @@ export const insertableCarpool: InsertableCarpool = {
     { index: 0, amount: 50, siret: '1234678900012' },
     { index: 1, amount: 50, siret: '1234678900013' },
   ],
-  incentive_counterparts: [
-    { target: IncentiveCounterpartTarget.Passenger, amount: 50, siret: '1234678900012' },
-    { target: IncentiveCounterpartTarget.Passenger, amount: 50, siret: '1234678900013' },
-  ],
 };
 
 export const updatableCarpool: UpdatableCarpool = {
@@ -59,5 +55,4 @@ export const updatableCarpool: UpdatableCarpool = {
     { index: 0, amount: 25, siret: '1234678900012' },
     { index: 1, amount: 25, siret: '1234678900013' },
   ],
-  incentive_counterparts: [{ target: IncentiveCounterpartTarget.Passenger, amount: 50, siret: '1234678900013' }],
 };

@@ -53,15 +53,8 @@ enum Target {
   Passenger = 'passenger',
 }
 
-interface Counterpart {
-  amount: number;
-  siret: string;
-  target: Target;
-}
-
 export interface PersonMetaInterface {
   payments: PaymentInterface[];
-  incentive_counterparts: Array<Counterpart>;
   calc_distance: number;
   calc_duration: number;
   licence_plate?: string;

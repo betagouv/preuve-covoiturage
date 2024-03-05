@@ -1,10 +1,9 @@
-import { Counterpart, Incentive, TimeGeoPoint } from './common/interfaces/CreateJourneyDTO';
+import { Incentive, TimeGeoPoint } from './common/interfaces/CreateJourneyDTO';
 
 export interface ParamsInterface {
   operator_journey_id: string;
   operator_trip_id?: string;
   operator_class: string;
-  incentive_counterparts?: Array<Counterpart>;
   incentives: Array<Incentive>;
   start: TimeGeoPoint;
   end: TimeGeoPoint;
