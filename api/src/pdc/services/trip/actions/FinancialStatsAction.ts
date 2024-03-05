@@ -29,7 +29,10 @@ import { alias } from '@shared/trip/stats.schema';
   ],
 })
 export class FinancialStatsAction extends Action {
-  constructor(private pg: TripRepositoryProvider, private cache: StatCacheRepositoryProviderInterfaceResolver) {
+  constructor(
+    private pg: TripRepositoryProvider,
+    private cache: StatCacheRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 

@@ -22,7 +22,10 @@ import {
 export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderInterface {
   public readonly table = 'operator.operators';
 
-  constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
+  constructor(
+    protected connection: PostgresConnection,
+    protected kernel: KernelInterfaceResolver,
+  ) {}
 
   async find(id: number, withThumbnail = false): Promise<OperatorDbInterface> {
     const selectThumbnail = withThumbnail ? ", encode(ot.data, 'hex')::text AS thumbnail" : '';

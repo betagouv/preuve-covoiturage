@@ -13,7 +13,10 @@ import { alias } from '@shared/monitoring/statsrefresh.schema';
   middlewares: [...internalOnlyMiddlewares('proxy'), ['validate', alias]],
 })
 export class StatsRefreshAction extends AbstractAction {
-  constructor(protected pg: PostgresConnection, protected config: ConfigInterfaceResolver) {
+  constructor(
+    protected pg: PostgresConnection,
+    protected config: ConfigInterfaceResolver,
+  ) {
     super();
   }
 

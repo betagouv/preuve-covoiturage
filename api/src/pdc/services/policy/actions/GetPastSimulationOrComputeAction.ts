@@ -24,7 +24,10 @@ import { alias } from '@shared/policy/simulateOnPast.schema';
   ],
 })
 export class GetPastSimulationOrComputeAction extends AbstractAction {
-  constructor(private connection: RedisConnection, private kernel: KernelInterfaceResolver) {
+  constructor(
+    private connection: RedisConnection,
+    private kernel: KernelInterfaceResolver,
+  ) {
     super();
   }
 

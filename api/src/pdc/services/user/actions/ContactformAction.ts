@@ -11,7 +11,10 @@ import { UserNotificationProvider } from '../providers/UserNotificationProvider'
   middlewares: [['validate', alias], hasPermissionMiddleware('common.user.contactform')],
 })
 export class ContactformAction extends AbstractAction {
-  constructor(private config: ConfigInterfaceResolver, private notify: UserNotificationProvider) {
+  constructor(
+    private config: ConfigInterfaceResolver,
+    private notify: UserNotificationProvider,
+  ) {
     super();
   }
 

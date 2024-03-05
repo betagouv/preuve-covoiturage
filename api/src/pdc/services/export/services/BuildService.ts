@@ -38,7 +38,10 @@ export class BuildService {
   protected params: ExportParams;
   protected progress: ExportProgress;
 
-  constructor(protected carpoolRepository: CarpoolRepository, protected campaignRepository: CampaignRepository) {}
+  constructor(
+    protected carpoolRepository: CarpoolRepository,
+    protected campaignRepository: CampaignRepository,
+  ) {}
 
   protected async configure(params: ExportParams, fileWriter: XLSXWriter, progress?: ExportProgress): Promise<void> {
     this.params = params;

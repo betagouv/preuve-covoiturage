@@ -16,7 +16,10 @@ import { CustomProvider } from '../../Providers/CustomProvider';
   method: 'result',
 })
 export class ResultAction extends Action {
-  constructor(private kernel: KernelInterfaceResolver, public custom: CustomProvider) {
+  constructor(
+    private kernel: KernelInterfaceResolver,
+    public custom: CustomProvider,
+  ) {
     super();
   }
 

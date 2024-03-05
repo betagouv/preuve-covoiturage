@@ -13,7 +13,10 @@ import { signature as fetchSignature } from '@shared/company/fetch.contract';
   middlewares: [hasPermissionMiddleware('common.company.find'), ['validate', alias]],
 })
 export class FindAction extends AbstractAction {
-  constructor(private repository: CompanyRepositoryProviderInterfaceResolver, private kernel: KernelInterfaceResolver) {
+  constructor(
+    private repository: CompanyRepositoryProviderInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
+  ) {
     super();
   }
 

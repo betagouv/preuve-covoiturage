@@ -25,7 +25,10 @@ export class SendExportAction extends Action {
     },
   };
 
-  constructor(private file: S3StorageProvider, private kernel: KernelInterfaceResolver) {
+  constructor(
+    private file: S3StorageProvider,
+    private kernel: KernelInterfaceResolver,
+  ) {
     super();
   }
 

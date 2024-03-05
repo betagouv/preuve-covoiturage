@@ -20,7 +20,10 @@ import { StatusEnum } from '@shared/acquisition/status.contract';
   ],
 })
 export class CancelJourneyAction extends AbstractAction {
-  constructor(private kernel: KernelInterfaceResolver, private repository: AcquisitionRepositoryProvider) {
+  constructor(
+    private kernel: KernelInterfaceResolver,
+    private repository: AcquisitionRepositoryProvider,
+  ) {
     super();
   }
 

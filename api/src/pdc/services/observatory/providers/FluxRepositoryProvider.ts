@@ -61,13 +61,13 @@ export class FluxRepositoryProvider implements FluxRepositoryInterface {
         params.code
           ? `AND (territory_1 IN (
           SELECT ${checkTerritoryParam(params.observe)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
-              this.perim_table
-            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
+            this.perim_table
+          } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
           WHERE ${checkTerritoryParam(params.type)} = $3
         ) OR territory_2 IN (
           SELECT ${checkTerritoryParam(params.observe)} FROM (SELECT com,epci,aom,dep,reg,country FROM ${
-              this.perim_table
-            } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
+            this.perim_table
+          } WHERE year = geo.get_latest_millesime_or( $1::smallint)) t 
           WHERE ${checkTerritoryParam(params.type)} = $3
         ))`
           : ''

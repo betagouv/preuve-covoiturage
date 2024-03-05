@@ -13,7 +13,10 @@ import { EnrichedApdfType } from '@shared/apdf/list.contract';
 export class StorageRepositoryProvider implements StorageRepositoryProviderInterfaceResolver {
   private bucket: BucketName = BucketName.APDF;
 
-  constructor(private s3StorageProvider: S3StorageProvider, private APDFNameProvider: APDFNameProvider) {}
+  constructor(
+    private s3StorageProvider: S3StorageProvider,
+    private APDFNameProvider: APDFNameProvider,
+  ) {}
 
   async findByCampaign(campaign: SerializedPolicyInterface): Promise<S3ObjectList> {
     try {
