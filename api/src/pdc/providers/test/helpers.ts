@@ -13,12 +13,14 @@ export interface KernelBeforeAfter {
   after(cfg: KernelTestFn): Promise<void>;
 }
 
-export function makeKernelCtor(serviceProviderCtor: NewableType<ServiceContainerInterface>): NewableType<KernelInterface> {
+export function makeKernelCtor(
+  serviceProviderCtor: NewableType<ServiceContainerInterface>,
+): NewableType<KernelInterface> {
   @kernelDecorator({
     children: [serviceProviderCtor],
     connections: [
       [RedisConnection, new RedisConnection(connections.redis)],
-      [PostgresConnection, new PostgresConnection(connections.postgres)]
+      [PostgresConnection, new PostgresConnection(connections.postgres)],
     ],
   })
   class Kernel extends AbstractKernel {}

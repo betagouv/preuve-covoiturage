@@ -2,8 +2,6 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/providers/validator';
 import { CryptoProvider } from '@pdc/providers/crypto';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { RedisConnection } from '@ilos/connection-redis';
 import { defaultMiddlewareBindings } from '@pdc/providers/middleware';
 import { defaultNotificationBindings } from '@pdc/providers/notification';
 

@@ -23,10 +23,7 @@ import { alias } from '@shared/policy/list.schema';
   ],
 })
 export class ListAction extends AbstractAction {
-  constructor(
-    private kernel: KernelInterfaceResolver,
-    private repository: PolicyRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private kernel: KernelInterfaceResolver, private repository: PolicyRepositoryProviderInterfaceResolver) {
     super();
   }
 

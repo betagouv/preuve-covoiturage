@@ -45,7 +45,6 @@ async function getCarpool(context: TestContext, id: Id) {
     values: [id],
   });
 
-
   return {
     ...result.rows.pop(),
     incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({ index: idx, siret, amount })),

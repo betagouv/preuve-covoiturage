@@ -1,4 +1,9 @@
-import { ConnectionConfigurationType, ConnectionInterface, DestroyHookInterface, InitHookInterface } from '@ilos/common';
+import {
+  ConnectionConfigurationType,
+  ConnectionInterface,
+  DestroyHookInterface,
+  InitHookInterface,
+} from '@ilos/common';
 import { Redis as RedisInterface } from 'ioredis';
 import Redis from 'ioredis';
 
@@ -7,7 +12,7 @@ export class RedisConnection implements ConnectionInterface<RedisInterface>, Des
   protected connected = false;
 
   constructor(protected readonly config: ConnectionConfigurationType | string) {}
-  
+
   async init(): Promise<void> {
     await this.up();
   }

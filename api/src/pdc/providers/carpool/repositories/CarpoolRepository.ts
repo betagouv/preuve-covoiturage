@@ -1,14 +1,7 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
 import sql, { bulk, join, raw } from '../helpers/sql';
-import {
-  CarpoolIncentive,
-  Id,
-  InsertableCarpool,
-  UpdatableCarpool,
-  Uuid,
-  WrittenCarpool,
-} from '../interfaces';
+import { CarpoolIncentive, Id, InsertableCarpool, UpdatableCarpool, Uuid, WrittenCarpool } from '../interfaces';
 import { DatabaseException } from '../exceptions/DatabaseException';
 
 @provider()

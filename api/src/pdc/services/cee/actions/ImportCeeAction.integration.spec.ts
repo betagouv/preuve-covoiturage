@@ -25,7 +25,10 @@ const test = anyTest as TestFn<TestContext>;
 test.before(async (t) => {
   const db = await dbBefore();
   const { kernel } = await before();
-  kernel.getContainer().rebind(PostgresConnection).toConstantValue(new PostgresConnection({ connectionString: db.db.currentConnectionString }));
+  kernel
+    .getContainer()
+    .rebind(PostgresConnection)
+    .toConstantValue(new PostgresConnection({ connectionString: db.db.currentConnectionString }));
   t.context = { db, kernel };
 });
 

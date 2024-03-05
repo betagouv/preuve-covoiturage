@@ -61,10 +61,7 @@ export class ExportRepository implements ExportRepositoryInterface {
   protected readonly exportsTable = 'export.exports';
   protected readonly recipientsTable = 'export.recipients';
 
-  constructor(
-    protected connection: PostgresConnection,
-    protected logger: LogServiceInterfaceResolver,
-  ) {}
+  constructor(protected connection: PostgresConnection, protected logger: LogServiceInterfaceResolver) {}
 
   public async create(data: ExportCreateData): Promise<Export> {
     const { created_by, target, params, recipients } = data;

@@ -21,8 +21,8 @@ export class NormalizationProviderV3 implements NormalizationProviderInterface<P
       (new Date(data.payload.end.datetime).getTime() - new Date(data.payload.start.datetime).getTime()) / 1000,
     );
     const cost =
-      data.payload.incentives
-        .reduce((total, current) => total + current.amount, 0) + data.payload.passenger.contribution;
+      data.payload.incentives.reduce((total, current) => total + current.amount, 0) +
+      data.payload.passenger.contribution;
 
     const common = {
       start,

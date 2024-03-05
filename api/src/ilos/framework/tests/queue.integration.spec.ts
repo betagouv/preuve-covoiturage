@@ -37,13 +37,13 @@ test.before(async (t) => {
         path: process.env.APP_LOG_PATH,
       },
     },
-    connections: [[RedisConnection, new RedisConnection({redis: process.env.APP_REDIS_URL })]],
+    connections: [[RedisConnection, new RedisConnection({ redis: process.env.APP_REDIS_URL })]],
   })
   class StringServiceProvider extends ParentStringServiceProvider {}
 
   @kernelDecorator({
     children: [StringServiceProvider],
-    connections: [[RedisConnection, new RedisConnection({redis: process.env.APP_REDIS_URL })]],
+    connections: [[RedisConnection, new RedisConnection({ redis: process.env.APP_REDIS_URL })]],
   })
   class StringKernel extends Kernel {
     name = 'string';

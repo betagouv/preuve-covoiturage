@@ -22,10 +22,7 @@ import { getDateOrFail } from '../helpers/getDateOrFail';
 import { timestampSchema } from '@shared/cee/common/ceeSchema';
 import { isBeforeOrFail, isBetweenOrFail } from '../helpers/isBeforeOrFail';
 import { ConflictException } from '@ilos/common';
-import {
-  CeeLongApplicationInterface,
-  CeeShortApplicationInterface,
-} from '@shared/cee/common/CeeApplicationInterface';
+import { CeeLongApplicationInterface, CeeShortApplicationInterface } from '@shared/cee/common/CeeApplicationInterface';
 
 @handler({
   ...handlerConfig,

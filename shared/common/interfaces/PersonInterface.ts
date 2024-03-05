@@ -48,11 +48,6 @@ export interface FinalizedPersonInterface {
   meta: PersonMetaInterface;
 }
 
-enum Target {
-  Driver = 'driver',
-  Passenger = 'passenger',
-}
-
 export interface PersonMetaInterface {
   payments: PaymentInterface[];
   calc_distance: number;

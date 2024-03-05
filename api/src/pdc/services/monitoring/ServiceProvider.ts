@@ -1,6 +1,4 @@
 import { ExtensionInterface, NewableType, serviceProvider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { RedisConnection } from '@ilos/connection-redis';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { defaultMiddlewareBindings } from '@pdc/providers/middleware';
 import { defaultNotificationBindings } from '@pdc/providers/notification';

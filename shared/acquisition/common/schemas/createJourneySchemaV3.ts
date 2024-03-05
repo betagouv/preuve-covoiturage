@@ -74,16 +74,7 @@ export const passengerSchema = {
 
 export const createJourneySchemaV3 = {
   type: 'object',
-  required: [
-    'operator_journey_id',
-    'operator_class',
-    'incentives',
-    'start',
-    'end',
-    'distance',
-    'driver',
-    'passenger',
-  ],
+  required: ['operator_journey_id', 'operator_class', 'incentives', 'start', 'end', 'distance', 'driver', 'passenger'],
   additionalProperties: false,
   properties: {
     operator_id: { macro: 'serial' },

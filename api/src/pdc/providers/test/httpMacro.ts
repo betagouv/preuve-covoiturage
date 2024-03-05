@@ -1,10 +1,15 @@
-import { ContextType, ParamsType, TransportInterface, ResultType, NewableType, ServiceContainerInterface } from '@ilos/common';
+import {
+  ContextType,
+  ParamsType,
+  TransportInterface,
+  ResultType,
+  NewableType,
+  ServiceContainerInterface,
+} from '@ilos/common';
 import test, { ExecutionContext, Macro } from 'ava';
 import { Bootstrap } from '@ilos/framework';
 import supert from 'supertest';
 import { makeKernelCtor } from './helpers';
-
-type transportCtorType = (type: string, ...opts: string[]) => Promise<TransportInterface>;
 
 export interface HttpMacroContext {
   transport: TransportInterface;
@@ -18,7 +23,9 @@ interface HttpMacroInterface<C = unknown> {
   query: Macro<[string, any, any, any], HttpMacroContext & C>;
 }
 
-export function httpMacro<TestContext = unknown>(serviceProviderCtor: NewableType<ServiceContainerInterface>): HttpMacroInterface<TestContext> {
+export function httpMacro<TestContext = unknown>(
+  serviceProviderCtor: NewableType<ServiceContainerInterface>,
+): HttpMacroInterface<TestContext> {
   async function before() {
     const kernel = makeKernelCtor(serviceProviderCtor);
     const bootstrap = Bootstrap.create({ kernel: () => kernel });
