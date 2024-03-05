@@ -50,7 +50,7 @@ import { PostgresConnection } from '../../ilos/connection-postgres';
   commands: [SeedCommand, Commands.CallCommand],
   connections: [
     [RedisConnection, new RedisConnection(config.connections.redis)],
-    [PostgresConnection, new PostgresConnection(config.connections.postgres)]
+    [PostgresConnection, new PostgresConnection(config.connections.postgres)],
   ],
 })
 export class Kernel extends BaseKernel {}

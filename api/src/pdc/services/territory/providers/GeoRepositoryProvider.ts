@@ -22,7 +22,10 @@ export class GeoRepositoryProvider implements GeoRepositoryProviderInterface {
   public readonly relationTable = 'territory.territory_group_selector';
   public readonly getMillesimeFunction = 'geo.get_latest_millesime';
 
-  constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
+  constructor(
+    protected connection: PostgresConnection,
+    protected kernel: KernelInterfaceResolver,
+  ) {}
 
   async list(params: ListGeoParamsInterface): Promise<ListGeoResultInterface> {
     const { search, where: whereParams, exclude_coms, limit, offset } = { limit: 100, offset: 0, ...params };

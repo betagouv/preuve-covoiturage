@@ -30,7 +30,10 @@ export class StatelessContext implements StatelessContextInterface {
 }
 
 export class StatefulContext implements StatefulContextInterface {
-  constructor(public incentive: StatefulIncentiveInterface, public meta: MetadataAccessorInterface) {}
+  constructor(
+    public incentive: StatefulIncentiveInterface,
+    public meta: MetadataAccessorInterface,
+  ) {}
 
   static async fromIncentive(
     store: MetadataStoreInterface,

@@ -19,7 +19,10 @@ import { alias } from '@shared/user/simulatePolicyform.schema';
 export class SimulatePolicyformAction extends AbstractAction {
   readonly NB_MONHTHES_SIMULATION: number[] = [1, 3, 6];
 
-  constructor(private kernel: KernelInterfaceResolver, private notification: UserNotificationProvider) {
+  constructor(
+    private kernel: KernelInterfaceResolver,
+    private notification: UserNotificationProvider,
+  ) {
     super();
   }
 

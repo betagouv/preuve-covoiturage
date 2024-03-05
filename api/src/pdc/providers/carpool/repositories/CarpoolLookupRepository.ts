@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 import { PoolClient, PostgresConnection } from '@ilos/connection-postgres';
-import { Id, IncentiveCounterpartTarget, Uuid } from '../interfaces';
+import { Id, Uuid } from '../interfaces';
 import { SelectableCarpool, SelectableCarpoolStatus } from '../interfaces/database/lookup';
 import sql, { raw } from '../helpers/sql';
 
@@ -9,7 +9,6 @@ export class CarpoolLookupRepository {
   readonly table = 'carpool_v2.carpools';
   readonly statusTable = 'carpool_v2.status';
   readonly incentiveTable = 'carpool_v2.operator_incentives';
-  readonly incentiveCounterpartTable = 'carpool_v2.operator_incentive_counterparts';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -87,18 +86,9 @@ export class CarpoolLookupRepository {
       WHERE carpool_id = ${carpool._id}
     `);
 
-    const incentiveCounterpartResult = await cl.query(sql`
-      SELECT target_is_driver, siret, amount FROM ${raw(this.incentiveCounterpartTable)} 
-      WHERE carpool_id = ${carpool._id}
-    `);
     return {
       ...carpool,
       incentives: incentiveResult.rows.map(({ idx, siret, amount }) => ({ index: idx, siret, amount })),
-      incentive_counterparts: incentiveCounterpartResult.rows.map(({ target_is_driver, siret, amount }) => ({
-        target: target_is_driver ? IncentiveCounterpartTarget.Driver : IncentiveCounterpartTarget.Passenger,
-        siret,
-        amount,
-      })),
     };
   }
 }

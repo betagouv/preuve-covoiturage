@@ -2,7 +2,6 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/providers/validator';
 import { defaultMiddlewareBindings } from '@pdc/providers/middleware';
-import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { config } from './config';
 import { binding as listBinding } from '@shared/application/list.schema';

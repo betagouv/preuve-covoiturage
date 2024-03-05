@@ -33,7 +33,10 @@ test.before(async (t) => {
   const db = await dbBefore();
   config.rules.validJourneyConstraint.start_date = new Date('2022-01-01');
   const { kernel } = await before();
-  kernel.getContainer().rebind(PostgresConnection).toConstantValue(new PostgresConnection({ connectionString: db.db.currentConnectionString }));
+  kernel
+    .getContainer()
+    .rebind(PostgresConnection)
+    .toConstantValue(new PostgresConnection({ connectionString: db.db.currentConnectionString }));
   await kernel.call(
     signature,
     {

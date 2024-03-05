@@ -1,4 +1,3 @@
-import { PostgresConnection } from '@ilos/connection-postgres';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/providers/validator';

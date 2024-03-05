@@ -6,5 +6,8 @@ export abstract class AbstractMailNotification<Data = any> implements MailTempla
   static readonly templateMJML: StaticTemplateInterface;
   static readonly subject: string;
 
-  constructor(public readonly to: string, public readonly data: Partial<Data>) {}
+  constructor(
+    public readonly to: string,
+    public readonly data: Partial<Data>,
+  ) {}
 }

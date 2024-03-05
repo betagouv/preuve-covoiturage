@@ -1,7 +1,5 @@
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/providers/validator';
 import { defaultMiddlewareBindings } from '@pdc/providers/middleware';
 import { NormalizationProvider } from '@pdc/providers/normalization';

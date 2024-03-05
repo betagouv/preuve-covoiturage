@@ -24,7 +24,10 @@ export class TerritoryRepositoryProvider implements TerritoryRepositoryProviderI
   public readonly relationTable = 'territory.territory_group_selector';
   public readonly GROUP_DEFAULT_SHORT_NAME = '';
 
-  constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
+  constructor(
+    protected connection: PostgresConnection,
+    protected kernel: KernelInterfaceResolver,
+  ) {}
 
   async find(params: FindParamsInterface): Promise<FindResultInterface> {
     const result = await this.connection.getClient().query({

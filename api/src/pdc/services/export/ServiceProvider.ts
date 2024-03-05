@@ -1,7 +1,5 @@
 import { CommandExtension } from '@ilos/cli';
 import { ExtensionInterface, NewableType, serviceProvider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { RedisConnection } from '@ilos/connection-redis';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { defaultMiddlewareBindings } from '@pdc/providers/middleware';
 import { S3StorageProvider } from '@pdc/providers/storage';

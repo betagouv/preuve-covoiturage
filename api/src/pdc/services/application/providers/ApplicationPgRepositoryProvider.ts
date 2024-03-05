@@ -17,7 +17,10 @@ import {
 export class ApplicationPgRepositoryProvider implements ApplicationRepositoryProviderInterface {
   public readonly table = 'application.applications';
 
-  constructor(protected connection: PostgresConnection, protected config: ConfigInterfaceResolver) {}
+  constructor(
+    protected connection: PostgresConnection,
+    protected config: ConfigInterfaceResolver,
+  ) {}
 
   async list({ owner_id, owner_service }: ListInterface): Promise<ApplicationInterface[]> {
     const query = {

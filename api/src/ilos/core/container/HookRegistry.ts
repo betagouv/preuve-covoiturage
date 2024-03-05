@@ -6,7 +6,10 @@ export class HookRegistry<T> {
   protected registry: Set<HookInterface> = new Set();
   protected dispatched = false;
 
-  constructor(protected method: string, protected authorizeIdentifierLookup = true) {
+  constructor(
+    protected method: string,
+    protected authorizeIdentifierLookup = true,
+  ) {
     //
   }
 

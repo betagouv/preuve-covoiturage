@@ -88,7 +88,6 @@ export class CreateJourneyAction extends AbstractAction {
           passenger_contribution: payload.passenger.contribution,
           passenger_payments: payload.passenger.payments,
           incentives: payload.incentives,
-          incentive_counterparts: payload.incentive_counterparts as any,
         });
       }
       return {

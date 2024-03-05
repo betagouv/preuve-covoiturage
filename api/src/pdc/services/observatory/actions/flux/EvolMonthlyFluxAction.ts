@@ -3,11 +3,7 @@ import { handler } from '@ilos/common';
 import { hasPermissionMiddleware } from '@pdc/providers/middleware';
 
 import { alias } from '@shared/observatory/flux/evolMonthlyFlux.schema';
-import {
-  handlerConfig,
-  ResultInterface,
-  ParamsInterface,
-} from '@shared/observatory/flux/evolMonthlyFlux.contract';
+import { handlerConfig, ResultInterface, ParamsInterface } from '@shared/observatory/flux/evolMonthlyFlux.contract';
 import { FluxRepositoryInterfaceResolver } from '../../interfaces/FluxRepositoryProviderInterface';
 import { limitNumberParamWithinRange } from '../../helpers/checkParams';
 

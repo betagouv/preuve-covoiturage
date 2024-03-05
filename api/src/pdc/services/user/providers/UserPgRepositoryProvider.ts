@@ -44,7 +44,10 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       ELSE 'registry'
     END as group`;
 
-  constructor(protected connection: PostgresConnection, protected config: ConfigInterfaceResolver) {
+  constructor(
+    protected connection: PostgresConnection,
+    protected config: ConfigInterfaceResolver,
+  ) {
     this.defaultLimit = config.get('pagination.defaultLimit', 10);
     this.maxLimit = config.get('pagination.maxLimit', 1000);
   }

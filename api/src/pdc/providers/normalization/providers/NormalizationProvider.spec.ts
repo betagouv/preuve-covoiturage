@@ -58,13 +58,6 @@ test('Should normalize v3', async (t) => {
     api_version: 3,
     created_at: new Date(),
     payload: {
-      incentive_counterparts: [
-        {
-          target: 'passenger' as any,
-          siret: '13002526500013',
-          amount: 150,
-        },
-      ],
       operator_journey_id: randomUUID(),
       operator_trip_id: randomUUID(),
       operator_class: 'C',
@@ -153,7 +146,6 @@ test('Should normalize v3', async (t) => {
         meta: {
           calc_duration: 500,
           calc_distance: 1000,
-          incentive_counterparts: [],
           payments: [],
         },
       },
@@ -184,7 +176,6 @@ test('Should normalize v3', async (t) => {
         meta: {
           calc_duration: 500,
           calc_distance: 1000,
-          incentive_counterparts: data.payload.incentive_counterparts,
           payments: data.payload.passenger.payments,
         },
       },

@@ -1,14 +1,3 @@
-enum Target {
-  Driver = 'driver',
-  Passenger = 'passenger',
-}
-
-export interface Counterpart {
-  amount: number;
-  siret: string;
-  target: Target;
-}
-
 export interface Incentive {
   index: number;
   amount: number;
@@ -54,7 +43,6 @@ interface Passenger {
 }
 
 export interface CreateJourneyDTO {
-  incentive_counterparts: Array<Counterpart>;
   operator_journey_id: string;
   operator_class: string;
   incentives: Array<Incentive>;

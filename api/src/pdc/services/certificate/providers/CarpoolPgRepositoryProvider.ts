@@ -49,7 +49,6 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
 
     // list trips as driver and passenger for a given identity
     // get the greatest payment amount from the trip, the meta payments
-    // and the meta counterparts to handle different versions of the meta field.
     const text = `
       WITH trips AS (
         SELECT
@@ -60,7 +59,6 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           cc.distance,
           GREATEST(
             COALESCE(meta_payments.sum, 0)::int,
-            COALESCE(meta_counterparts.sum, 0)::int,
             payment
           ) AS payment
         FROM ${this.table} AS cc
@@ -68,11 +66,6 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           SELECT SUM(COALESCE(amount, 0)) AS sum
           FROM json_to_recordset(cc.meta->'payments') x (type text, index int, siret text, amount int)
         ) meta_payments ON true
-        LEFT JOIN LATERAL (
-          SELECT SUM(COALESCE(amount, 0)) AS sum
-          FROM json_to_recordset(cc.meta->'incentive_counterparts') x (target text, amount int, siret text)
-          WHERE x.target = 'driver'
-        ) meta_counterparts ON true
         WHERE
           cc.operator_id = $2::int
           AND cc.is_driver = true
@@ -92,7 +85,6 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           cc.distance,
           GREATEST(
             COALESCE(meta_payments.sum, 0)::int,
-            COALESCE(meta_counterparts.sum, 0)::int,
             payment
           ) AS payment
         FROM ${this.table} AS cc
@@ -100,11 +92,6 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           SELECT SUM(COALESCE(amount, 0)) AS sum
           FROM json_to_recordset(cc.meta->'payments') x (type text, index int, siret text, amount int)
         ) meta_payments ON true
-        LEFT JOIN LATERAL (
-          SELECT SUM(COALESCE(amount, 0)) AS sum
-          FROM json_to_recordset(cc.meta->'incentive_counterparts') x (target text, amount int, siret text)
-          WHERE x.target = 'passenger'
-        ) meta_counterparts ON true
         WHERE
           cc.operator_id = $2::int
           AND cc.is_driver = false

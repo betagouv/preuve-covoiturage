@@ -147,48 +147,10 @@ components:
       multipleOf: 1
       maximum: 1000000
       description: Distance exprimée en mètre
-    incentive_counterparts:
-      type: array
-      description: |
-        Tableau reprenant la liste complète des contreparties à l'incitation ayant eu un impact sur le coût du trajet (cible, montant, identifiant de l'incitateur).
-        La somme des contreparties conducteurs et revenue d'une part et des contreparties passagers et contribution d'autre part sont égales.
-        Par exemple, un trajet pris en charge dans le cadre d'un engagement des opérateurs à rendre gratuit le trajet passager pour les porteurs d'une carte de transport
-        donnerait lieu à une inscription de cette prise en charge dans ce tableau qui ne serait pas forcément du même montant que l'incitation versée par la collectivité.
-        Un trajet ayant une politique de gratuité passager et une incitation de 10cts du km pourrait donner la répartition suivante sur un trajet de 5 km :
-          - incentives : [{ siret: '1234567900012', amount: 50, index: 0 }] => montant de l'incitation 10cts / km
-          - driver.revenue: 75 => montant versé au conducteur
-          - passenger.contribution: 0 => montant versé par le passager
-          - incentive_counterparts: [{ siret: '12345678900012', amount: 75, target: 'passenger' }] => montant des contreparties "consommées" sur le trajet
-      items:
-        type: object
-        additionalProperties: false
-        required:
-          - target
-          - amount
-          - siret
-        properties:
-          target:
-            type: string
-            enum:
-              - driver
-              - passenger
-          amount:
-            type: number
-            minimum: 0
-            multipleOf: 1
-            description: Montant de l'incitation en centimes d'euros
-            example: 100
-          siret:
-            type: string
-            description: |
-              Numéro de SIRET de l'incitateur
-              Le SIRET est un identifiant unique par structure juridique. Toutes les entités incitatrices en possèdent un.
-            example: "11000101300017"
     incentives:
       type: array
       description: |
-        Tableau reprenant la liste complète des incitations appliquées (ordre d'application, montant, identifiant de l'incitateur). Si aucune incitation, envoyer un tableau vide
-        Attention, il s'agit ici des incitations générées par le trajet mais pas forcément "consommé" par celui-ci (objet à remplir dans le tableau "incentive_counterparts").
+        Tableau reprenant la liste complète des incitations appliquées (ordre d'application, montant, identifiant de l'incitateur). Si aucune incitation, envoyer un tableau vide.
 
         ## Ordre par défaut
         Par défaut, l'ordre d'application des politiques incitatives est le suivant :
@@ -539,7 +501,6 @@ paths:
               required:
                 - operator_journey_id
                 - incentives
-                - incentive_counterparts
                 - operator_class
                 - start
                 - end
@@ -548,8 +509,6 @@ paths:
                 - passenger
               additionalProperties: false
               properties:
-                incentive_counterparts:
-                  '$ref': '#/components/schemas/incentive_counterparts'
                 operator_journey_id:
                   '$ref': '#/components/schemas/operator_journey_id'
                 operator_trip_id:
@@ -789,8 +748,6 @@ paths:
                   '$ref': '#/components/schemas/operator_trip_id'
                 operator_class:
                   '$ref': '#/components/schemas/operator_class'
-                incentive_counterparts:
-                  '$ref': '#/components/schemas/incentive_counterparts'
                 incentives:
                   '$ref': '#/components/schemas/incentives'
                 start:

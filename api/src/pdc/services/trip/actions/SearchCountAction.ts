@@ -28,7 +28,10 @@ import { alias } from '@shared/trip/searchcount.schema';
   ],
 })
 export class SearchCountAction extends Action {
-  constructor(private pg: TripRepositoryProvider, private kernel: KernelInterfaceResolver) {
+  constructor(
+    private pg: TripRepositoryProvider,
+    private kernel: KernelInterfaceResolver,
+  ) {
     super();
   }
 

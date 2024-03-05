@@ -74,17 +74,7 @@ export const passengerSchema = {
 
 export const createJourneySchemaV3 = {
   type: 'object',
-  required: [
-    'operator_journey_id',
-    'operator_class',
-    'incentives',
-    'incentive_counterparts',
-    'start',
-    'end',
-    'distance',
-    'driver',
-    'passenger',
-  ],
+  required: ['operator_journey_id', 'operator_class', 'incentives', 'start', 'end', 'distance', 'driver', 'passenger'],
   additionalProperties: false,
   properties: {
     operator_id: { macro: 'serial' },
@@ -98,9 +88,6 @@ export const createJourneySchemaV3 = {
     distance: distanceSchema,
     licence_plate: { macro: 'varchar' },
     incentives: incentivesSchema,
-    incentive_counterparts: {
-      type: 'array',
-      items: incentiveCounterpartSchema,
-    },
+    incentive_counterparts: {},
   },
 };

@@ -1,6 +1,5 @@
 import {
   CarpoolIncentive,
-  CarpoolIncentiveCounterpart,
   Distance,
   Financial,
   Id,
@@ -43,7 +42,6 @@ export interface InsertableCarpool {
   passenger_contribution: Financial;
   passenger_payments: Array<Payment>;
   incentives: Array<CarpoolIncentive>;
-  incentive_counterparts: Array<CarpoolIncentiveCounterpart>;
 }
 
 export interface UpdatableCarpool {
@@ -73,7 +71,6 @@ export interface UpdatableCarpool {
   passenger_contribution?: Financial;
   passenger_payments?: Array<Payment>;
   incentives?: Array<CarpoolIncentive>;
-  incentive_counterparts?: Array<CarpoolIncentiveCounterpart>;
 }
 
 export interface WrittenCarpool {
