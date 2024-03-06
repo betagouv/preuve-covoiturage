@@ -67,7 +67,7 @@ export class BuildExcel {
       const tripCursor = await this.apdfRepoProvider.getPolicyCursor(params);
       await this.TripsWsWriter.call(tripCursor, booster_dates, wkw);
     } catch (e) {
-      console.error('[apdf:buildExcel] Error while writing trips');
+      console.error(`[apdf:buildExcel] Error while writing trips. Campaign: ${params.campaign_id}`);
       console.error(e.message);
       console.error(e.stack);
     }

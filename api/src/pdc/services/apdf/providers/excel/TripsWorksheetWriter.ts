@@ -74,8 +74,8 @@ export class TripsWorksheetWriter extends AbstractWorksheetWriter {
 
     const b1 = new Date();
     let results: APDFTripInterface[] = await cursor.read(this.CURSOR_BATCH_SIZE);
-    while (results.length !== 0) {
-      results.map((t) => worksheet.addRow(normalize(t, booster_dates, 'Europe/Paris')).commit());
+    while (results.length > 0) {
+      results.forEach((t) => t && worksheet.addRow(normalize(t, booster_dates, 'Europe/Paris')).commit());
       results = await cursor.read(this.CURSOR_BATCH_SIZE);
     }
 
