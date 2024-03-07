@@ -1,18 +1,19 @@
 import { ConfigInterfaceResolver, ContextType, handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action } from '@ilos/core';
-import { BucketName, S3StorageProvider } from '@pdc/providers/storage';
 import { internalOnlyMiddlewares } from '@pdc/providers/middleware';
+import { BucketName, S3StorageProvider } from '@pdc/providers/storage';
+import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/apdf/export.contract';
+import { alias } from '@shared/apdf/export.schema';
+import { ResultInterface as PolicyResultInterface } from '@shared/policy/find.contract';
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import fs from 'fs';
 import { get } from 'lodash';
+import { castExportParams } from '../helpers/castExportParams.helper';
 import { getDeclaredOperators } from '../helpers/getDeclaredOperators.helper';
 import { DataRepositoryProviderInterfaceResolver } from '../interfaces/APDFRepositoryProviderInterface';
 import { CheckCampaign } from '../providers/CheckCampaign';
 import { BuildExcel } from '../providers/excel/BuildExcel';
-import { handlerConfig, ParamsInterface, ResultInterface } from '@shared/apdf/export.contract';
-import { alias } from '@shared/apdf/export.schema';
-import { ResultInterface as PolicyResultInterface } from '@shared/policy/find.contract';
 
 @handler({
   ...handlerConfig,
@@ -31,7 +32,7 @@ export class ExportAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const { start_date, end_date } = this.castOrGetDefaultDates(params);
+    const { start_date, end_date } = castExportParams(params);
     const verbose = this.isVerbose(context);
 
     if (verbose) {

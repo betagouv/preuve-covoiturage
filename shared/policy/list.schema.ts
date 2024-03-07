@@ -16,6 +16,9 @@ export const schema = {
       type: 'string',
       enum: ['template', 'draft', 'active', 'finished'],
     },
+    datetime: {
+      macro: 'timestamp',
+    },
   },
 };
 
