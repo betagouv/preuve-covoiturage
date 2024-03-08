@@ -31,7 +31,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
     "react-map-gl": "^7.1.7",
-    "remark-gfm": "^4.0.0",
+    "remark-gfm": "^3.0.1",
     "remixicon": "^4.2.0",
     "simple-statistics": "^7.8.3"
   },

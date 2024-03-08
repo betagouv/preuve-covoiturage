@@ -68,8 +68,7 @@ export default async function RessourcePage({ params }: { params: { id: string }
                   title={a.attributes.title}
                   content={a.attributes.content}
                   date={new Date(a.attributes.public_date).toLocaleDateString('fr-FR')}
-                  link={a.attributes.link}
-                  file={a.attributes.file.data ? a.attributes.file.data.attributes.url : null}
+                  href={`/ressources/${a.attributes.slug}`}
                   img={a.attributes.img.data ? a.attributes.img.data.attributes.url : null}
                 />
               </div>

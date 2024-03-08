@@ -140,8 +140,7 @@ export default async function ObservatoireSinglePage({ params }: { params: { slu
                   title={r.attributes.title}
                   content={shorten(r.attributes.content, 100)}
                   date={new Date(r.attributes.public_date).toLocaleDateString('fr-FR')}
-                  link={r.attributes.link}
-                  file={r.attributes.file.data ? r.attributes.file.data.attributes.url : null}
+                  href={`/ressources/${r.attributes.slug}`}
                   img={r.attributes.img.data ? r.attributes.img.data.attributes.url : null}           
                 />
               </div>
